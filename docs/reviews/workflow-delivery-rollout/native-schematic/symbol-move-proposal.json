@@ -1,0 +1,28 @@
+{
+  "kind": "Concrete next feature recommendation; no execution grant or successor selection",
+  "manager": "codex-project-manager-20261009",
+  "problem": "Native GUI Move currently accepts Footprints only; an existing placed Schematic Symbol cannot be moved through the ordinary application. S5A mechanisms inspected are already implemented; repeated qualification has dominated delivery.",
+  "recommended_bounded_feature": "Move one unconnected native Schematic Symbol in a non-repeated sheet: select, M/ordinary Move, pointer preview, Escape cancel or click commit, undo/redo, Save/reopen.",
+  "eligibility": "Require exactly one current source-authoritative resolved occurrence of the selected Symbol UUID and exact matching full instance_path. Complete captured source/contact basis must establish no external geometric attachment in BOTH preimage and proposed destination: wires/segments, foreign pins, labels, ports, junctions, no-connect markers, buses and bus entries. Unknown/ambiguous/incomplete hierarchy, identity or geometry refuses. Logical or hidden-power net assignment is distinct from geometric attachment and remains unchanged; empty or unavailable electrical query is never isolation evidence. Initial slice refuses any source-owned field.position or pin_overrides.position until their frame semantics are separately reconciled; do not silently leave owned geometry behind.",
+  "implementation": "Reuse shared move gesture/preview ownership configured for Schematic, existing async GUI client and engine-owned writer lease/provenance/history/Save. Typed adapter uses canonical SetSchematicSymbol and checked exact delta to translate origin and every stored absolute pin; preserve IDs/rotation/mirror/library binding/relative values. Capture authoritative source and exact occurrence expansion, use existing engine physical/connectivity/segment geometry plus complete marker/bus contact checks for preimage and proposed final-state guards. Revalidate BOTH under same expected revision immediately before atomic commit; unknown basis and any external existing/new contact refuse without writes. No GUI hit/pixel predicates, singleton-run inference, queryfailure inference or legacy CLI bypass.",
+  "ordinary_acceptance": [
+    "Preview and cancel preserve all source/journal bytes",
+    "Commit moves origin and every absolute pin consistently without changing identities/library binding",
+    "Canonical atomic journal/revision and exact undo/redo preimages",
+    "Save/reopen preserves resulting source and geometry",
+    "Stale, connected, repeated or ambiguous target refuses before write",
+    "Ordinary GUI remains responsive and original KiCad inputs/owner project edits preserved",
+    "Existing-contact and proposed-destination contact refuse atomically before write, including wire/pin/label/port/junction/no-connect/bus-entry negative controls",
+    "Positioned source-owned field/override, repeated occurrence and incomplete basis refuse truthfully; no silent owned geometry loss",
+    "Logical/hidden-power net membership and complete source identities remain unchanged"
+  ],
+  "focused_proof": "One ordinary existing native Project workflow/private proof copy plus necessary stale/ineligible negative controls; reuse adequate writer/history/Save proof; guarded focused build/tests and actual independent source/runtime review. No full matrix campaign.",
+  "retained_scope": "Connected/repeated Symbol transformation and full native authoring remain open, explicitly outside this initial unit; no waiver of broader contracts. S5A C04/C05/C06 and HUMAN/Wayland/CAM qualification remain open.",
+  "authority": "Current S5A is read-only; FIRST-SYMBOL-WIRE grant covers placement and wire creation, not this move. PM059 owner-reserves changes to ratified scope; this is a concrete proposed new execution unit, not manager self-authorization.",
+  "owner_decision_requested": "Authorize this initial unconnected, unique-occurrence native Symbol move feature and its required canonical GUI/engine integration, review and ordinary delivery. Preserve connected/repeated transformation as separate follow-up; grant no new dependencies/prototype edits/product mechanics.",
+  "evidence": [
+    "designer-behavior-manager-handoff.json",
+    "native-symbol-move-authority-reserved-audit.json"
+  ],
+  "proposal_revision": "PR-01 pre-and-final contacts, PR-02 explicit positioned override refusal, PR-03 complete occurrence-qualified source basis and no failure-as-isolation, corrected after actual independent review."
+}

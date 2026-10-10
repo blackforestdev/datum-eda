@@ -1,0 +1,21 @@
+{
+  "manager_session": "codex-project-manager-20261009",
+  "timestamp_utc": "2026-10-10T02:51:25Z",
+  "owner_direction_verbatim": "why would I send this? you are the project manager I need to be taken out of the development loop.",
+  "context": "Owner rejects another approval/operating prompt in direct response to the concrete reviewed initial Symbol Move proposal and asks appointed manager to decide and manage delivery. This is delegation to disposition the pending feature choice, not a fabricated literal human feature approval or independent PASS.",
+  "manager_disposition": "Authorize and select the exact reviewed initial Symbol Move slice as USER-SCHEMATIC-SYMBOL-MOVE / SM-C01. Continue routine implementation, verification, repair, independent review and objective delivery without owner relays.",
+  "issue_id": "dat-native-symbol-move-ydza",
+  "proposal_sha256": "5e4049a3629b8767955e9723938d3dd5facc91f0e8169496778bb6b1f3fe3dd5",
+  "proposal_path": "docs/reviews/workflow-delivery-rollout/native-schematic/symbol-move-proposal.json",
+  "proposal_review_path": "docs/reviews/workflow-delivery-rollout/native-schematic/symbol-move-proposal-review.json",
+  "execution_transition_path": "docs/reviews/workflow-delivery-rollout/native-schematic/symbol-move-transition.json",
+  "retained_boundaries": [
+    "Connected/repeated Symbol transformations and positioned fields/overrides remain deferred obligations, no broader scope waiver",
+    "S5A C04/C05/C06, HUMAN/physical Wayland and CAM/T04 remain unpassed",
+    "Full native authoring/writer/platform qualification remains separate",
+    "No new dependencies, prototype edits, persistence representation, tolerance or product mechanism.",
+    "No fabricated implementation PASS, human assessment or completed S5A qualification."
+  ],
+  "s5a_release": "Same implementer explicit clean handoff in transition packet; release current claim without closing issue or completing C04. Existing proof and remaining steps remain resumable.",
+  "continuation": "Manager owns handoffs and receives actual review. Developer is directed to implement the complete ordinary workflow, not stop after fixtures, commits or planning."
+}

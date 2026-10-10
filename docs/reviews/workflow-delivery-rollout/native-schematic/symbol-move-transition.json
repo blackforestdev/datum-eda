@@ -1,0 +1,78 @@
+{
+  "kind": "Proposed synchronized transition for appointed manager review; NOT executed; no production authority inferred",
+  "proposal_sha256": "5e4049a3629b8767955e9723938d3dd5facc91f0e8169496778bb6b1f3fe3dd5",
+  "manager": "codex-project-manager-20261009 / 01a122e5-f602-7f61-a144-0d1ce7116a77",
+  "new_task_key": "USER-SCHEMATIC-SYMBOL-MOVE",
+  "new_issue": "Create feature via br, capture actual returned ID; never invent it",
+  "selected_unit": "SM-C01 execution: deliver complete approved isolated unique-occurrence native Symbol Move through shared tooling/canonical writer, history/Save/reopen, focused ordinary build and reserved independent candidate review",
+  "authority_precondition": "Root must durably record latest owner delegation and its bounded execution disposition referencing corrected proposal5e4049a3 and ACTUAL reserved proposal PASS. Existing PM059 NSD-C06 only selected retained S5A; do not infer new grant from its old clause. Any new product-rule/scope waiver still outside delegation.",
+  "feature_delivery": {
+    "ordinary_workflow": [
+      "Select one eligible existing native Schematic Symbol and start Move with M or the ordinary shared Move action",
+      "Preview pointer translation; cancel with Escape or click to commit",
+      "Undo, redo, Save and reopen the moved Symbol"
+    ],
+    "safety_requirements": [
+      "Preview and cancel preserve source and journal bytes",
+      "Origin and all absolute pins translate by one checked exact delta while identities/library and unpositioned metadata remain intact",
+      "Fresh revision, writer exclusion and canonical atomic history guard every commit",
+      "Reject existing or proposed external contact, repeated/ambiguous occurrences, unsupported positioned fields/overrides and incomplete source basis before writes",
+      "Original KiCad sources and existing owner Project edits remain intact; input dispatch stays asynchronous"
+    ],
+    "qualification_followups": [
+      "Connected/repeated Symbol transformations and positioned fields/overrides remain deferred obligations, no broader scope waiver",
+      "S5A C04/C05/C06, HUMAN/physical Wayland and CAM/T04 remain unpassed",
+      "Full native authoring/writer/platform qualification remains separate"
+    ],
+    "prerequisite_reasons": {},
+    "development_ready": false,
+    "ordinary_evidence": []
+  },
+  "governance_paths": [
+    "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+    "docs/reviews/workflow-delivery-rollout/native-schematic/<manager-selected durable SymbolMove authority/delivery receipt>",
+    "specs/active_frontier.json",
+    "specs/PROGRESS.md",
+    ".beads/issues.jsonl"
+  ],
+  "release_s5a": {
+    "issue": "dat-uvt-s5a-build-1wv",
+    "claim": "codex-s5a-c04-takeover-20261009",
+    "dirty_implementation_paths": [],
+    "preserve": "C03complete; C04unfinished with all actual bounded proofs/failedtrials and unresolved qualification; C05/C06/CAM/HUMAN/Wayland unpassed. Do not close bead or mark C04complete.",
+    "transition": "canonical_next false; remove released claim; state ready; tracker open/unassigned; retain execution grant and C04 completion contract. If completion validator requires selected substep pending, mark pending resumable with explicit interruption record, never passed."
+  },
+  "new_claim": {
+    "agent": "codex",
+    "harness": "codex-cli",
+    "session": "codex-native-symbol-move-20261009",
+    "worktree": "/home/bfadmin/Documents/datum-eda",
+    "head": "Fresh actual HEAD at transaction",
+    "claimed_at": "Fresh UTC",
+    "heartbeat_at": "Fresh UTC",
+    "expires_at": "UTC within manifest claim_ttl_hours",
+    "scope": [
+      "crates/gui-app",
+      "crates/gui-protocol",
+      "crates/engine/src/api/native_write",
+      "crates/engine/src/connectivity",
+      "docs/reviews/workflow-delivery-rollout/native-schematic"
+    ],
+    "note": "No gui-render production ownership unless a concrete path is independently reconciled first; prototype HTML excluded."
+  },
+  "commands_in_order": [
+    "Inspect fresh git status; root retains its dirty Boardproof doc paths; do not stage them with worker code",
+    "Set BR_AGENT_NAME=codex BR_HARNESS=codex-cli BR_MODEL=gpt-6 for tracker audit",
+    "br --actor codex create <bounded Symbol Move title> -t feature -p 1 --slug native-symbol-move -d <exact disposition/scope> ; capture returned issue ID",
+    "br --actor codex update dat-uvt-s5a-build-1wv --status open --assignee \"\"",
+    "br --actor codex update <actual new issue ID> --claim",
+    "In same governance transaction update Frontier release/new canonical selection/authorization/completion+feature_delivery/structured lease and durable PM059 manager disposition with actual review receipt",
+    "br --actor codex sync --flush-only",
+    "python3 scripts/project_status.py render",
+    "python3 scripts/project_status.py check",
+    "python3 scripts/project_status.py check-render",
+    "python3 scripts/project_status.py next ; fresh output must select new SM-C01 execution and valid synchronized claim before coding",
+    "Required independent governance review of exact transaction; stage only owned governance paths and commit with source/evidence/boundaries; do not fabricate PASS"
+  ],
+  "after_transition": "Root issue direct implementation continuation. Worker reads exact governing receipt/current selector/claim, then codes engine-to-GUI coherent unit, focused guarded proof, ordinary build, fixes and reserved independent review. No further coverage-only S5A trials/builds. No new dependency/persistence/tolerance/prototype/source mechanism."
+}

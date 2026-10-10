@@ -836,3 +836,35 @@ dependency, scope reduction, waiver, destructive action, claim takeover or new
 successor execution grant is introduced. PM059 owner-reserved decisions retain
 their bounds. Independent governance review of the actual disposition receipt
 passed without findings; synchronized publication receives its own scoped review.
+
+
+<!-- REQ:USER-SCHEMATIC-SYMBOL-MOVE:SM-C01 -->
+### Manager-directed native Symbol Move delivery — 2026-10-09
+
+The appointed manager records the owner's renewed instruction to remove them
+from the development loop in `native-schematic/symbol-move-authority.json`,
+under `docs/reviews/workflow-delivery-rollout/`. In direct response to the exact
+reviewed proposal, the owner delegates the pending feature decision to management.
+The manager authorizes and selects USER-SCHEMATIC-SYMBOL-MOVE / SM-C01 (dat-native-symbol-move-ydza);
+this is a named delegated disposition, not a fabricated literal human approval.
+
+Implement one unconnected native Symbol Move in a unique resolved occurrence:
+ordinary selection and M/shared Move, pointer preview, Escape cancel or click
+commit, canonical undo/redo and Save/reopen. The exact proposal
+`symbol-move-proposal.json` has SHA-256 `5e4049a3629b8767955e9723938d3dd5facc91f0e8169496778bb6b1f3fe3dd5`;
+`symbol-move-proposal-review.json` records actual independent proposal-readiness
+PASS only, with no implementation acceptance. Translate origin and all absolute
+pins by one checked delta; preserve identities, binding and metadata. Require
+complete source-qualified unique occurrence and absence of external contacts in
+both preimage and destination. Unknown basis, repeated/ambiguous occurrence,
+positioned fields/overrides, stale revision and existing/new contact refuse before
+writes. Use shared gestures and the engine-owned canonical writer/history route.
+
+Release the clean S5A claim by its implementer's explicit handoff, leave C04
+uncompleted/resumable and C05/C06 open, and synchronize the new developer lease
+with tracker/export and generated Frontier. Connected/repeated/positioned Symbol
+transformations remain open follow-ups; no broader authoring, HUMAN, Wayland,
+CAM, numerical, dependency, source-health or visual-lane requirement is waived.
+Continue implementation through focused ordinary proof, fixes and actual
+independent candidate review, then manager objective disposition. No further
+coverage-only S5A campaign is a prerequisite for this slice.
