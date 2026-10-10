@@ -1,0 +1,979 @@
+{
+  "schema_version": 1,
+  "review_id": "GUI-SURFACE-SPECS-COMBINED-20261010",
+  "outcome": "PASS",
+  "reviewer_session": "/root/s5a_execution_readiness",
+  "reviewed_at_utc": "2026-10-10T13:03:49.787970+00:00",
+  "task": "GUI-SURFACE-SPECS",
+  "step": "SURFACE-REVIEW",
+  "source_head": "b28c664e66a673cb7e43d5cc9ed1512e234df6fe",
+  "scope": "Distinct combined planning-readiness review of complete schematic/library Product contracts, fourteen canonical clauses, reconciliation, actual S01-S04 evidence and final static visual handoff. Ready for owner S05 disposition; no owner disposition recorded here.",
+  "verdict": "No mandatory complete-contract, clause-disposition or final S04 handoff gap found at these pins. The full target is retained and current delivery is truthfully bounded. PASS is this reviewer's combined planning assessment, not copied visual acceptance or implementation qualification.",
+  "independence": "Reviewer authored none of the reviewed Product contracts, S04 packets, HTML candidates, actual visual review or manager acceptance. Authorship of this receipt alone does not self-accept any implementer work.",
+  "candidate_pins": [
+    {
+      "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "sha256": "4ee81d6235144fee52c269265a127eff75a1a52aa31e272eeb8bc55955849eba"
+    },
+    {
+      "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+      "sha256": "668374887357ea8c3e7b3d30a1207882051f5c4cfd9344bac03dc02235248b27"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json",
+      "sha256": "7618332dbc4fe998cfd89ea3729e598869a2defbe5e210b00723b4faede14c8c"
+    },
+    {
+      "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "sha256": "43770d113ceda03e506521b97a9fc434be055b1b4998e246eb53586a0f6fce51"
+    },
+    {
+      "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+      "sha256": "7d708f0fc1f694743f3654f73d660a3a0e6d9b923cbb3ea47c8c8d4ab321e699"
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
+      "sha256": "28e1a6187c7915a6e47b60ef303eabc249a7d9221e445b4186f17d537fa41024"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/library-surface-inventory-review.json",
+      "sha256": "e37eee20c8223551ff94539fa20f2bbe9514602da664bf7194a01df8abbb918b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+      "sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+      "sha256": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+      "sha256": "043b81d2664d807c2b70c46b66c497bd8e35e8ec343e03c5413eb55f24f017d9"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-reconciliation.json",
+      "sha256": "5934ff42228ab82efd495471d4b398b3dfcaa2f4d6c241c8b7fee83df5e1c529"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json",
+      "sha256": "3b60fe2f4d21df1df3d6a96ef4b51bd0fac922f5b1834a79e68790ea43ea9dff"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json",
+      "sha256": "a6755c8a3f297b909d45ea7112a0d692d98a32415cbbe872854cab41428e640c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-visual-review.json",
+      "sha256": "fbc16345571b990cfea38b9c9371562b10d45625ff77f4e920ab4ebd9ed463a8"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-s04-manager-acceptance.json",
+      "sha256": "d016d7619006743db857dfd356ec226c660ad9160f1c9c8a58cbb7718ccc4d91"
+    },
+    {
+      "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+      "sha256": "1598e0193e2735e01df882e61db40ef5683684e95822f5ff53bb9d3e281d2f0f"
+    },
+    {
+      "path": "docs/gui/prototypes/library-surfaces-study.html",
+      "sha256": "f18b7bd36b3e90679ee819ebb6fc60fbb67c4006e7748af5e9800998fd6d0cba"
+    },
+    {
+      "path": "specs/evidence_traceability_manifest.json",
+      "sha256": "0fe05324d44ddeacf8df35f915617d794edf1f7f568d82d6fdd7dc41601bee19"
+    },
+    {
+      "path": "specs/spec_governance_manifest.json",
+      "sha256": "0dc9050cea8b55f17b0dc6f06a9166902d181e05c57bc61ec8961ccccd42e936"
+    }
+  ],
+  "registered_route_verification": [
+    {
+      "id": "parametric-footprint-editor",
+      "registered_digest": "54c763ad970bc425ecbe90a3d362ff4a701e004ea7c34060bfd9304850e1d815",
+      "recomputed_digest": "54c763ad970bc425ecbe90a3d362ff4a701e004ea7c34060bfd9304850e1d815",
+      "status": "active",
+      "sources": [
+        "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_DXF_STOWAWAY_ADDENDUM.md",
+        "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md"
+      ],
+      "consumers": [
+        "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+        "docs/IPC_FOOTPRINT_SYSTEM.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+        "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation.json",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json",
+        "docs/reviews/workflow-delivery-rollout/surface-s04-manager-acceptance.json"
+      ]
+    },
+    {
+      "id": "prototype-editor-shell-and-panes",
+      "registered_digest": "67139e19ec547fe5cf68751936d7bf43e6a1ac70da7d1d71390bcd234ec54c7a",
+      "recomputed_digest": "67139e19ec547fe5cf68751936d7bf43e6a1ac70da7d1d71390bcd234ec54c7a",
+      "status": "active",
+      "sources": [
+        "docs/gui/prototypes/board-editor.html",
+        "docs/gui/prototypes/schematic-editor.html",
+        "docs/gui/prototypes/workspace-panes.html",
+        "docs/gui/prototypes/schematic-surfaces-study.html",
+        "docs/gui/prototypes/library-surfaces-study.html"
+      ],
+      "consumers": [
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+        "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+        "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+        "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+        "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation.json",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json",
+        "docs/reviews/workflow-delivery-rollout/surface-visual-review.json",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json",
+        "docs/reviews/workflow-delivery-rollout/surface-s04-manager-acceptance.json"
+      ]
+    }
+  ],
+  "review_method": {
+    "personally_read_complete_current": [
+      "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+      "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json"
+    ],
+    "personally_assessed_evidence": "Read S01/S02/S03 review assessments and retained limits; S04 reconciliation, bounded review, final visual review, final addendum clauses/reuse/limits and manager acceptance. Inspected complete changed authoring-contract amendment diffs and all fourteen canonical/frame mappings; read current owning-route and governance registration.",
+    "complete_owning_route_reuse": "Actual prior full untruncated source/consumer readings in both route preflights are reused at exact verified unchanged hashes. Changed Product was personally read in full; changed authoring-contract deltas were assessed and actual S04 consumer review reused, including complete Menu reading by that reviewer. No fresh personal complete reading of all historical route files is claimed.",
+    "final_visual_reuse": "Final HTML hashes and frame anchors verified. Reuse actual independent source/rendered-study receipt fbc16345 and registration support complete final HTML reading in addendum a6755c8a. This reviewer did not personally inspect final PNG pixels or read both final HTML files in full. Visual reviewer reused unaffected normal/narrow tiles and inspected affected tiles; this receipt does not broaden that coverage.",
+    "historical_receipt_treatment": "Immutable previsual packet5934ff42/review3b60fe2f and preacceptance addendum status remain scoped history. Final manager acceptance and landed b28c664e provide current S04 state; no old receipt is retroactively promoted."
+  },
+  "clause_count": 14,
+  "clauses": [
+    {
+      "id": "REQUIREMENTS-AUTHORITY",
+      "step_id": "SURFACE-S01",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S01"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "SURFACE-S01 inventories current schematic and library requirements, prototypes,"
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_PLANNING",
+      "assessment": "The current Product successor preserves controlling authority and separates specification work from implementation. S01 inventory and both complete route preflights account for the relevant requirements, prototypes, research and engine seams; the final candidates do not become higher authority.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 66,
+          "marker": "## Schematic and Library Surface Specification Successor"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-MAP",
+          "line": 880
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-MAP",
+          "line": 1044
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "RESEARCH-QUESTIONS",
+      "step_id": "SURFACE-S01",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S01"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "research, code seams, object authority, and unresolved product questions before"
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_WITH_OPEN_QUESTIONS",
+      "assessment": "Product retains research-derived provenance, basis, process and approval dimensions without converting proposed providers, generation rules or standards claims into adopted policy. Discovery/opening, approval presentation and declared cross-document conflicts remain explicit rather than silently resolved.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 42,
+          "marker": "## Reference Inputs"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 268,
+          "marker": "## Library GUI Target"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-B",
+          "line": 348
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-F",
+          "line": 721
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-MAP",
+          "line": 1044
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "SCHEMATIC-HIERARCHY",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "contract, including document/hierarchy behavior, viewport tooling inheritance,"
+        }
+      ],
+      "requires_owner_decision": true,
+      "review_disposition": "READY_FOR_OWNER_DISPOSITION",
+      "assessment": "The full schematic contract distinguishes document, source sheet and occurrence, selection versus navigation and pane composition. Final frame mappings cover hierarchy/source/occurrence and separate discovery/opening alternatives. This is a complete planning target with an unresolved owner choice, not a claim of complete hierarchy GUI delivery.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 499,
+          "marker": "**Document and pane composition.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 515,
+          "marker": "**Visual composition.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-A",
+          "line": 288
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-B",
+          "line": 348
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-I",
+          "line": 769
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "SCHEMATIC-AUTHORING",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "read-only versus authoring boundaries, accessibility, and honest conformance"
+        }
+      ],
+      "requires_owner_decision": true,
+      "review_disposition": "READY_FOR_OWNER_DISPOSITION",
+      "assessment": "Read-only inspection is separated from authoring readiness, library approval and mutation authority. Preview, cancel, refusal, stale/pending state, undo/redo, Save/reopen and accessibility obligations are retained. Actual bounded native paths and drawn target menu/history controls are distinguished; broad authoring remains a delivery obligation.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 549,
+          "marker": "**Readiness and authoring states.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 578,
+          "marker": "**Command and mutation boundary.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 603,
+          "marker": "**Accessibility.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-C",
+          "line": 402
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-D",
+          "line": 475
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-E",
+          "line": 541
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-F",
+          "line": 577
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-H",
+          "line": 735
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-I",
+          "line": 769
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "SCHEMATIC-OBJECTS",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "- symbols, pins, wires, labels, ports, buses, bus entries, junctions,"
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_FULL_TARGET_RETAINED",
+      "assessment": "Symbols, pins, wires, labels, ports, buses, entries, junctions, hierarchy/sheet pins, fields and electrical context remain in the full schematic contract. S-G/S-H/S-MAP give electrical and tool-family dispositions. Unshown retained families are disclosed targets, so the specification has not been reduced to the first symbol/wire or read-preview delivery.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 490,
+          "marker": "### Schematic Surface Contract"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 596,
+          "marker": "**Electrical context.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 611,
+          "marker": "**Delivery and conformance.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-G",
+          "line": 669
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-H",
+          "line": 735
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-MAP",
+          "line": 880
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "LIBRARY-OBJECTS",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "contract across symbols, units, parts, packages, footprints, padstacks,"
+        }
+      ],
+      "requires_owner_decision": true,
+      "review_disposition": "READY_FOR_OWNER_DISPOSITION",
+      "assessment": "Library contract and final L-B1 through L-B8 mappings retain eight distinct Pool object kinds and per-kind inspection/manual editing. Models are separate attachments, not a ninth Pool kind. Relationships, revisions, map context and writable-target questions survive the browser/editor candidate; runtime browser breadth is not asserted.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 298,
+          "marker": "**Browser and composition.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 318,
+          "marker": "**Per-kind inspection and editing target.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 382,
+          "marker": "**Models.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-A",
+          "line": 287
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B1",
+          "line": 365
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B2",
+          "line": 380
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B3",
+          "line": 412
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B4",
+          "line": 429
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B5",
+          "line": 456
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B6",
+          "line": 481
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B7",
+          "line": 507
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B8",
+          "line": 524
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-C",
+          "line": 546
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-E",
+          "line": 642
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "LIBRARY-VALIDATION",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "pin-pad maps, models, metadata, and validation, with honest conformance"
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_WITH_RUNTIME_OBLIGATIONS",
+      "assessment": "Library validation separates declared from resolved references, gate-qualified pin-pad correspondence, basis/process/approval and revision impact. Corrected static mapping leaves logical Nets/topology unchanged by physical-map edits; unknown/Inherit remains unresolved and synthetic checks are identified. No general graph, ERC or source qualification PASS is inferred.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 343,
+          "marker": "**Relationships and revisions.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 362,
+          "marker": "**Source, basis, process and approval.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 396,
+          "marker": "**Authoring, readiness and checks.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-C",
+          "line": 546
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-D",
+          "line": 591
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-F",
+          "line": 721
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-I",
+          "line": 817
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "LIBRARY-MANUAL-USE",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "to know object UUIDs or CLI incantations for basic library inspection."
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_MANUAL_TARGET_RETAINED",
+      "assessment": "Ordinary manual browsing, per-kind editing, model attachment/edit/detach, human guarded status changes, supported footprint synthesis/proposal/cancel/history and revision/update review remain explicit. Users need no object UUID or CLI incantation for these targets. Existing narrow picker delivery is qualified separately from the complete target.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 298,
+          "marker": "**Browser and composition.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 382,
+          "marker": "**Models.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 443,
+          "marker": "**Ordinary workflow and proof disposition.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-A",
+          "line": 287
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B",
+          "line": 353
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-E",
+          "line": 642
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-F",
+          "line": 721
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-G",
+          "line": 756
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-H",
+          "line": 791
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "SHARED-MUTATION",
+      "step_id": "SURFACE-S04",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S04"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "selection/inspection tooling, manual-first workflow, engine authority, visual"
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_SHARED_BOUNDARIES",
+      "assessment": "Both complete contracts inherit shared viewport/selection/Inspector, focus, panes, Console and Terminal rather than creating editor-local services. Manual and AI mutations converge on typed commit/journal/proposal authority. Accessibility and keyboard proof remain obligations, and static focus cues do not count as executed interaction proof.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 171,
+          "marker": "## Editor Authority"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 578,
+          "marker": "**Command and mutation boundary.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 427,
+          "marker": "**Accessibility and visual frames.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-C",
+          "line": 402
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-E",
+          "line": 541
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-F",
+          "line": 577
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-I",
+          "line": 769
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B",
+          "line": 353
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-I",
+          "line": 817
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-J",
+          "line": 886
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "GOVERNANCE-HANDOFF",
+      "step_id": "SURFACE-S04",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S04"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "prototype inventory, specification governance, and roadmap dependencies."
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_REGISTERED_HANDOFF",
+      "assessment": "Final Claude-owned candidate pins, actual independent static visual receipt and final addendum are registered in the single shell owning route. Historical reconciliation/review retain their original scope. Actual manager acceptance closes S04 at the landed checkpoint; the final addendum preacceptance wording is historical, not a current missing acceptance.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 635,
+          "marker": "**Owner disposition and visual reconciliation.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 463,
+          "marker": "**Owner decisions and implementation handoff.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 721,
+          "marker": "## Governance"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-MAP",
+          "line": 880
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-MAP",
+          "line": 1044
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "SURFACE-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "SURFACE-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "A distinct reviewer checks both complete surface contracts after SURFACE-S04"
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_BY_THIS_DISTINCT_REVIEW",
+      "assessment": "This reviewer did not author the current Product S02/S03 contracts, S04 reconciliation, visual candidates, visual review or manager acceptance. This assessment independently checks the complete current Product, clause inventory, retained scope and final evidence chain. It reuses actual scoped visual/route reviews openly; their PASS labels alone do not establish this verdict.",
+      "product_evidence": [],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-MAP",
+          "line": 880
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-MAP",
+          "line": 1044
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "FULL-SPECIFICATION-SCOPE",
+      "step_id": "SURFACE-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "SURFACE-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "option as completion of the full schematic/library specification."
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_FULL_SPECIFICATION_SCOPE",
+      "assessment": "Complete schematic and library target contracts include ordinary manual authoring, all retained object families, hierarchy/relationships, models, provenance, validation, shared services and accessibility. Phase 1 exclusions and bounded current runtime seams are not used to redefine complete specification. Unshown families remain named obligations and open owner choices remain visible.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 287,
+          "marker": "### Library Surface Contract"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 490,
+          "marker": "### Schematic Surface Contract"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-H",
+          "line": 735
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-MAP",
+          "line": 880
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-B",
+          "line": 353
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-MAP",
+          "line": 1044
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "SURFACE-S05",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S05"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "SURFACE-S05 records the owner's visual and product disposition, resolves or"
+        }
+      ],
+      "requires_owner_decision": true,
+      "review_disposition": "PENDING_OWNER_S05",
+      "assessment": "S05 owner product/visual disposition is still required. The contract names hierarchy discovery/opening, readiness/refusal/narrow composition and unsupported-family presentation, plus library browser/detail/editor composition, ranking/pool precedence/duplicates/writable target and nonapproved/UnknownBasis warning/block choices. This review selects none of them.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 635,
+          "marker": "**Owner disposition and visual reconciliation.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 463,
+          "marker": "**Owner decisions and implementation handoff.**"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-B",
+          "line": 348
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-H",
+          "line": 735
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-I",
+          "line": 769
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-A",
+          "line": 287
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-F",
+          "line": 721
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-H",
+          "line": 791
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-J",
+          "line": 886
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    },
+    {
+      "id": "SEPARATE-EXECUTION",
+      "step_id": "SURFACE-S05",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S05"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "implementation successor without granting execution authority implicitly."
+        }
+      ],
+      "requires_owner_decision": false,
+      "review_disposition": "SATISFIED_AUTHORITY_SEPARATION",
+      "assessment": "Planning readiness grants no implementation successor, source/provider adoption, approved seed, dependency, standards/generator/default change or runtime qualification. Later execution must be explicitly selected and authorized through existing governance after the appropriate owner disposition.",
+      "product_evidence": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 66,
+          "marker": "## Schematic and Library Surface Specification Successor"
+        }
+      ],
+      "visual_frame_evidence": [
+        {
+          "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+          "anchor": "S-MAP",
+          "line": 880
+        },
+        {
+          "path": "docs/gui/prototypes/library-surfaces-study.html",
+          "anchor": "L-MAP",
+          "line": 1044
+        }
+      ],
+      "visual_evidence_method": "Frame anchors/pins verified; rendered meaning relies on actual bounded independent surface-visual-review.json, not fresh personal PNG inspection."
+    }
+  ],
+  "findings": [],
+  "retained_open_obligations": [
+    {
+      "kind": "OWNER_S05",
+      "status": "OPEN",
+      "detail": "Owner product/visual choices enumerated in OWNER-RATIFICATION remain pending. No new product meaning, scope reduction or warning/block rule adopted."
+    },
+    {
+      "kind": "DECLARED_AUTHORITY_CONFLICTS",
+      "status": "OPEN_OUTSIDE_THIS_VERDICT",
+      "detail": "Native Circle/Rect versus Rendering Book rounded-pad direction and Library Authoring kind/map-direction conflicts remain disclosed for later authoritative reconciliation. No conflict is silently resolved or made a new prerequisite to bounded planning readiness."
+    },
+    {
+      "kind": "RUNTIME_AND_ACCESSIBILITY",
+      "status": "OPEN",
+      "detail": "Complete ordinary GUI workflows, retained authoring families, keyboard/focus/assistive-technology behavior, history/save/reopen/refusal and native visual parity require their authorized delivery proof. Static frames and isolated source checks supply no runtime or HUMAN acceptance."
+    },
+    {
+      "kind": "SOURCE_AND_STANDARDS",
+      "status": "UNRATIFIED",
+      "detail": "Synthetic first-party study content is no approved production library seed or manufacturer/datasheet/provider-rights qualification. Shared standards corpus was not newly fully reviewed; no IPC formula, generator, process Inherit, default, tolerance, DXF/catalog/file policy or dependency adopted."
+    }
+  ],
+  "checks_actually_performed": [
+    "Verified current exact candidate/receipt/metadata SHA256 pins.",
+    "Compared all fourteen canonical clause fields against final addendum without alteration.",
+    "Verified every listed final HTML frame anchor at its recorded line.",
+    "Verified reused unchanged and changed route member pins.",
+    "Recomputed both registered route digests and matched current reviewed_digest values.",
+    "Inspected clean landed baseline before writing only this receipt; no Cargo, runtime or desktop trial performed."
+  ],
+  "limits": [
+    "PASS covers complete specification planning readiness only; no step transition, objective acceptance, canonical successor selection or claim transfer is performed here.",
+    "Owner S05/HUMAN/product/visual ratification remains separate.",
+    "Static synthetic studies do not constitute native screenshots, golden/pixel parity, approved seed, live keyboard interaction or assistive-technology proof.",
+    "Normal frames compressed on narrow study pages are not a ratified narrow layout; bounded explicit narrow candidates and actual reviewed capture scope remain the evidence.",
+    "Drawn tokens, fonts, dimensions and keys remain candidate/placeholder content, not new defaults. Failed historical captures remain failed and are not proof.",
+    "This receipt introduces no inventory shape, mechanism, source adoption, production edit, build or test result."
+  ],
+  "mutation_scope": [
+    "docs/reviews/workflow-delivery-rollout/surface-specification-combined-review.json"
+  ],
+  "handoff": "Manager may register and review this distinct receipt through existing governance. It supports the existing S05 owner decision packet without choosing an option or granting implementation authority."
+}

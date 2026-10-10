@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "acceptance_id": "SURFACE-REVIEW-MANAGER-ACCEPTED-20261010",
+  "recorded_at_utc": "2026-10-10T13:06:01.960786+00:00",
+  "task": "GUI-SURFACE-SPECS",
+  "issue_id": "dat-gui-surface-specs-usb",
+  "step": "SURFACE-REVIEW",
+  "disposition": "ACCEPT",
+  "authority": "Explicit owner-appointed manager PM059 disposition against existing combined planning-readiness criteria; not owner visual/product/HUMAN disposition or support self-review.",
+  "manager_disposition_source": {
+    "thread_id": "01a122e5-f602-7f61-a144-0d1ce7116a77",
+    "instruction": "PM059 manager ACCEPT existing SURFACE-REVIEW planning criteria, not owner visual/product/HUMAN choices.",
+    "explicit_transition": "Complete existing SURFACE-REVIEW with actual receipt/acceptance; select existing S05 owner-decision boundary as specified with no agent claim, synchronized tracker release, unchanged unanswered owner packet and no successor/new rules."
+  },
+  "baseline_commit": "b28c664e66a673cb7e43d5cc9ed1512e234df6fe",
+  "visual_candidate_landing_commit": "40f9e1d67361753809bc75eb8417121776c837d2",
+  "s04_acceptance_commit": "b28c664e66a673cb7e43d5cc9ed1512e234df6fe",
+  "actual_combined_review": {
+    "path": "docs/reviews/workflow-delivery-rollout/surface-specification-combined-review.json",
+    "sha256": "2f822bc60368377cd0a3aff13dabadb30db95d9977d5116fe0820edd617fe404",
+    "review_id": "GUI-SURFACE-SPECS-COMBINED-20261010",
+    "outcome": "PASS",
+    "scope": "Distinct combined planning-readiness review of complete schematic/library Product contracts, fourteen canonical clauses, reconciliation, actual S01-S04 evidence and final static visual handoff. Ready for owner S05 disposition; no owner disposition recorded here."
+  },
+  "accepted_outcomes": [
+    "Distinct complete-contract combined planning assessment covers fourteen exact canonical clause definitions and final Product/visual/receipt chain at recorded pins.",
+    "Actual reviewer reports zero mandatory findings; full retained targets, honest current-delivery limits and unresolved owner choices remain explicit.",
+    "Actual scoped route/source/render review reuse and declared authority conflicts retained without new standards/source/native qualification."
+  ],
+  "retained_limits": [
+    "PASS covers complete specification planning readiness only; no step transition, objective acceptance, canonical successor selection or claim transfer is performed here.",
+    "Owner S05/HUMAN/product/visual ratification remains separate.",
+    "Static synthetic studies do not constitute native screenshots, golden/pixel parity, approved seed, live keyboard interaction or assistive-technology proof.",
+    "Normal frames compressed on narrow study pages are not a ratified narrow layout; bounded explicit narrow candidates and actual reviewed capture scope remain the evidence.",
+    "Drawn tokens, fonts, dimensions and keys remain candidate/placeholder content, not new defaults. Failed historical captures remain failed and are not proof.",
+    "This receipt introduces no inventory shape, mechanism, source adoption, production edit, build or test result."
+  ],
+  "retained_open_obligations": [
+    {
+      "kind": "OWNER_S05",
+      "status": "OPEN",
+      "detail": "Owner product/visual choices enumerated in OWNER-RATIFICATION remain pending. No new product meaning, scope reduction or warning/block rule adopted."
+    },
+    {
+      "kind": "DECLARED_AUTHORITY_CONFLICTS",
+      "status": "OPEN_OUTSIDE_THIS_VERDICT",
+      "detail": "Native Circle/Rect versus Rendering Book rounded-pad direction and Library Authoring kind/map-direction conflicts remain disclosed for later authoritative reconciliation. No conflict is silently resolved or made a new prerequisite to bounded planning readiness."
+    },
+    {
+      "kind": "RUNTIME_AND_ACCESSIBILITY",
+      "status": "OPEN",
+      "detail": "Complete ordinary GUI workflows, retained authoring families, keyboard/focus/assistive-technology behavior, history/save/reopen/refusal and native visual parity require their authorized delivery proof. Static frames and isolated source checks supply no runtime or HUMAN acceptance."
+    },
+    {
+      "kind": "SOURCE_AND_STANDARDS",
+      "status": "UNRATIFIED",
+      "detail": "Synthetic first-party study content is no approved production library seed or manufacturer/datasheet/provider-rights qualification. Shared standards corpus was not newly fully reviewed; no IPC formula, generator, process Inherit, default, tolerance, DXF/catalog/file policy or dependency adopted."
+    }
+  ],
+  "resulting_state": {
+    "completed_step": "SURFACE-REVIEW",
+    "canonical_next_step": "SURFACE-S05",
+    "next_step_status": "pending",
+    "task_state": "specified",
+    "authorization": "owner_decision",
+    "claim": "Explicitly released; no live agent claim at owner boundary.",
+    "tracker_status": "open",
+    "tracker_assignee": null,
+    "successor_authorized": false
+  },
+  "released_claim": {
+    "agent": "codex",
+    "claimed_at": "2026-10-10T03:38:04Z",
+    "expires_at": "2026-10-10T20:57:57Z",
+    "harness": "codex-cli",
+    "head": "40f9e1d67361753809bc75eb8417121776c837d2",
+    "heartbeat_at": "2026-10-10T12:57:57Z",
+    "scope": [
+      "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+      "docs/reviews/workflow-delivery-rollout",
+      "specs/active_frontier.json",
+      "specs/PROGRESS.md",
+      "specs/evidence_traceability_manifest.json",
+      ".beads/issues.jsonl",
+      "specs/spec_governance_manifest.json",
+      "specs/spec_parity_manifest.json",
+      "specs/SPEC_PARITY.md",
+      "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+      "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
+      "docs/gui/prototypes/schematic-surfaces-study.html",
+      "docs/gui/prototypes/library-surfaces-study.html"
+    ],
+    "session": "codex-library-foundation-20261009",
+    "worktree": "/home/bfadmin/Documents/datum-eda"
+  },
+  "unchanged_owner_input": {
+    "requests": [
+      {
+        "id": "SCHEMATIC-LIBRARY-SURFACE-DISPOSITION",
+        "question": "Which completed schematic-editor and library-browser visual/product contracts should Datum ratify, and what revisions are required before implementation selection?",
+        "recommended_response": "Approve or revise each presented contract only after reviewing its visual states, interaction and accessibility behavior, shared-tooling use, and mutation-authority boundary.",
+        "source_ref": {
+          "marker": "SURFACE-S05",
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
+        }
+      }
+    ],
+    "response_format": "Reply with the requested schematic and library surface disposition packet after reviewing the completed research, specifications, and visual prototypes."
+  },
+  "owner_disposition": "INPUT REQUIRED. No owner option chosen or recorded here.",
+  "verification": "Actual review fully assessed with truncated middle recovered by bounded structured reread; exact receipt and all candidate pins, fourteen canonical fields and frame/Product anchors verified. Affected metadata/selector checks follow synchronized recording; no HTML/Product/runtime/build edits."
+}
