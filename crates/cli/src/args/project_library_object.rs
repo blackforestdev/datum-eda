@@ -48,7 +48,7 @@ pub(crate) struct ProjectSetPoolLibraryObjectArgs {
     #[arg(long = "object")]
     pub(crate) object_uuid: Uuid,
     /// Replace a supported section instead of the whole object
-    #[arg(long, value_parser = ["fields", "drawings", "silkscreen", "fab"])]
+    #[arg(long, value_parser = ["fields", "drawings", "silkscreen", "fab", "aperture"])]
     pub(crate) section: Option<String>,
     /// JSON file containing the replacement object or section payload
     #[arg(long = "from-json")]

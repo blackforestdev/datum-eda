@@ -236,6 +236,7 @@ mod main_tests_project_pool_library_proposals;
 mod main_tests_project_pool_package_courtyard;
 mod main_tests_project_pool_package_geometry;
 mod main_tests_project_pool_package_proposals;
+mod main_tests_project_pool_padstack_aperture;
 mod main_tests_project_pool_part;
 mod main_tests_project_pool_part_pin_semantics;
 mod main_tests_project_pool_part_reference_validation;

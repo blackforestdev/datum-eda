@@ -7,8 +7,9 @@ use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
 use eda_engine::api::native_write::library_definition::{
-    symbol_with_drawings, symbol_with_fields, validate_footprint_replacement_references,
-    validate_part_replacement_references, validate_symbol_replacement_references,
+    padstack_with_aperture, symbol_with_drawings, symbol_with_fields,
+    validate_footprint_replacement_references, validate_part_replacement_references,
+    validate_symbol_replacement_references,
 };
 use eda_engine::api::native_write::library_footprint::{
     FootprintGraphicTarget, footprint_with_graphics,
@@ -40,8 +41,9 @@ pub(crate) fn set_native_project_pool_library_object(
         let required_kind = match section {
             "fields" | "drawings" => "symbols",
             "silkscreen" | "fab" => "footprints",
+            "aperture" => "padstacks",
             _ => bail!(
-                "unsupported pool library section {section}; expected fields, drawings, silkscreen or fab"
+                "unsupported pool library section {section}; expected fields, drawings, silkscreen, fab or aperture"
             ),
         };
         if object_kind != required_kind {
@@ -56,7 +58,7 @@ pub(crate) fn set_native_project_pool_library_object(
             object_id,
         )
         .map_err(definition_validation_error)?;
-        let array: serde_json::Value =
+        let value: serde_json::Value =
             serde_json::from_slice(&std::fs::read(source).with_context(|| {
                 format!("failed to read pool library {section} {}", source.display())
             })?)
@@ -67,12 +69,13 @@ pub(crate) fn set_native_project_pool_library_object(
                 )
             })?;
         let object = match section {
-            "fields" => symbol_with_fields(object, array),
-            "drawings" => symbol_with_drawings(object, array),
+            "fields" => symbol_with_fields(object, value),
+            "drawings" => symbol_with_drawings(object, value),
             "silkscreen" => {
-                footprint_with_graphics(object, FootprintGraphicTarget::Silkscreen, array)
+                footprint_with_graphics(object, FootprintGraphicTarget::Silkscreen, value)
             }
-            _ => footprint_with_graphics(object, FootprintGraphicTarget::Fab, array),
+            "fab" => footprint_with_graphics(object, FootprintGraphicTarget::Fab, value),
+            _ => padstack_with_aperture(object, value),
         }
         .map_err(definition_validation_error)?;
         (model, object)

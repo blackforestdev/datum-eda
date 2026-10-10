@@ -271,17 +271,36 @@ pub fn symbol_with_drawings(
 }
 
 pub(super) fn library_with_array<T: serde::de::DeserializeOwned>(
-    mut object: serde_json::Value,
+    object: serde_json::Value,
     kind: &str,
     section: &str,
     array: serde_json::Value,
 ) -> Result<serde_json::Value, EngineError> {
-    serde_json::from_value::<Vec<T>>(array.clone())
+    library_with_value::<Vec<T>>(object, kind, section, array)
+}
+
+/// Replace only copper aperture using the existing circle/rect/null schema and raw value.
+pub fn padstack_with_aperture(
+    object: serde_json::Value,
+    aperture: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    library_with_value::<Option<crate::pool::PadstackAperture>>(
+        object, "padstack", "aperture", aperture,
+    )
+}
+
+fn library_with_value<T: serde::de::DeserializeOwned>(
+    mut object: serde_json::Value,
+    kind: &str,
+    section: &str,
+    value: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    serde_json::from_value::<T>(value.clone())
         .map_err(|error| validation(format!("invalid {kind} {section}: {error}")))?;
     object
         .as_object_mut()
         .ok_or_else(|| validation(format!("{kind} payload must be an object")))?
-        .insert(section.to_string(), array);
+        .insert(section.to_string(), value);
     Ok(object)
 }
 

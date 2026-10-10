@@ -2352,10 +2352,23 @@ schema admission and append checks retain their separate numeric/text semantics;
 this adds no geometry threshold, graphic identity, normalization or propagation
 policy.
 
-The actual engine API inventory is 248 unique public function names, including
+Manual Padstack copper-aperture replacement uses
+`library_definition::padstack_with_aperture` through the existing Set action's
+aperture section for Padstacks. The shared internal typed-value admission owner
+validates the existing `Option<PadstackAperture>` schema and inserts the original
+raw circle, rectangle or explicit null value; existing array wrappers retain
+their admission and diagnostics. Only aperture changes against one fresh model
+with existing reference/source admission and canonical Set/history. Padstack
+UUID, drill, plating, layer span, process and other sibling metadata and absent
+defaults remain intact. Whole-object JSON numeric/null semantics and typed Create
+checks remain separate; this adds no positivity, drill comparison, manufacturing
+threshold, normalization or placed-propagation rule.
+
+The actual engine API inventory is 249 unique public function names, including
 the retained earlier inventory drift, definition admission helpers and native
 graphic builders. These APIs implement existing reference rules and manual
-fabrication, Symbol field authoring and shared graphic editing. GUI authoring,
+fabrication, Symbol field authoring, shared graphic editing and Padstack copper
+aperture editing. GUI authoring,
 SMD/process/standards policy, native
 file-type migration, library adoption and manufacturing qualification retain
 their separate authority and acceptance requirements.

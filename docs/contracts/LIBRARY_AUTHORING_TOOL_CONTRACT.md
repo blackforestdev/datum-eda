@@ -101,6 +101,15 @@ Existing append checks and whole-object Set remain separate. This adds no numeri
 policy, graphic identity rule, section MCP/proposal/GUI delivery, placed
 propagation or manufacturing qualification.
 
+Manual CLI Padstack copper-aperture editing uses
+`set-pool-library-object --kind padstacks --section aperture --from-json <value>`.
+Resize, shape change, explicit null clearing and restoration preserve the raw
+Circle/Rect value, sibling metadata and absent defaults through canonical
+Set/history; a new Footprint pad can reference the restored Padstack UUID.
+Existing whole-object schema admission and typed Create checks remain separate.
+This adds no numeric/drill/process policy, normalization, placed propagation,
+section MCP/proposal/GUI delivery or manufacturing qualification.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc
