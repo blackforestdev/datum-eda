@@ -386,6 +386,12 @@ does not execute a simulator or decrypt encrypted vendor content. Part behaviour
 attachment slices and path-only Package 3D references do not establish complete
 governed attachment behavior across every library target. Original model bytes
 and content provenance remain distinct from the native library object identity.
+Manual Models controls target attach, detach and attachment-metadata editing
+through the same library authoring/proposal path. They expose target, role,
+format, actual content/hash and applicable transform before committing. Missing
+content, invalid target/format/hash or unavailable support gives an actual
+refusal; it never creates a successful attachment indication. These complete
+GUI controls and their canonical history/Save/reopen proof remain pending.
 
 **Authoring, readiness and checks.** Per-kind forms and graphical editors use
 existing `library.author` semantics and engine native builders, typed
@@ -394,8 +400,12 @@ rename is not identity replacement. Preview/cancel causes no authored delta.
 Canonical history and project Save/reopen apply. Automated, placed-impact,
 standards-repair and library-update actions retain their existing proposal
 boundaries; the GUI gains no private shard writer. Approval remains a separate
-guarded status action with recorded actor; AI cannot approve its own content.
-Controls without an actual backed command remain visibly unavailable.
+guarded status action with recorded actor. Approved requires explicit human
+acceptance under the existing state-transition/deviation rules; AI auto-approval
+is prohibited for all library content. The status surface targets review/approval,
+lifecycle and unknown-basis marking without inventing uniform current fields or
+a default placement policy. Controls without an actual backed command remain
+visibly unavailable.
 
 Validation targets schema/reference/identity, pin/gate/map membership, geometry
 and process basis, model integrity and placed impact. Current path/UUID/shape
@@ -406,6 +416,13 @@ engine result; stale revision, unknown writer/target or unresolved dependency
 explains its actual refusal without partial source/journal writes. Unsupported
 generation families remain unavailable. Parametric/DXF research proposals and
 estimated numbers do not become adopted schemas, profiles or capabilities.
+
+For supported native footprint synthesis, the manual surface exposes the actual
+package family, source dimensions/tolerances, selected density, declared basis/
+version and process assumptions, then a reviewable generated geometry/validation
+result through the existing proposal boundary. This does not select a default
+basis or next family, adopt ParametricPackage/DXF mechanisms or claim complete
+family coverage. Inputs and basis remain available with the generated candidate.
 
 **Accessibility and visual frames.** All consequential controls have names,
 keyboard paths and visible focus. Map/relationship correspondence and status use
@@ -434,8 +451,11 @@ integration workflow and visual/accessibility receipt; no prose row is a PASS.
 | Inspect Unit/Symbol/Entity/Part and map across gates | Logical/graphic/orderable identities remain distinct; missing/duplicate/ambiguous pins/maps are explicit | Native producers/diagnostics and narrow picker reusable; complete GUI integration pending |
 | Inspect Package/Footprint/Padstack with copper/mask/paste/drill | Body/land/process separation; supported geometry faithful; unknown or unsupported basis/geometry not replaced with defaults | Bounded native schema/generator slices exist; systematic materialization and ordinary GUI proof pending |
 | Inspect provenance/basis/models/approval/lifecycle/findings | Missing metadata and stale/not-run checks explicit; no certification or approval inferred; no execution or authored delta | Stored metadata/model integrity seams exist; full context GUI proof pending |
+| Attach/detach a model or edit attachment metadata; preview/cancel; commit/history; Save/reopen | Correct target/role/format/content/hash; no execution/decryption; invalid or unsupported attachment refuses without partial write; history and reopened references agree | Current Part attachment/blob seams reusable; complete governed all-target GUI workflow pending |
+| Propose a review/approval/lifecycle/unknown-basis transition; decline or explicitly accept as human; history/reopen | Approval actor and accepted transition are recorded; unresolved basis obeys existing deviation rules; AI auto-approval refuses for all content; decline has no authored delta | Guarded status semantics inherited; complete ordinary GUI transition/refusal proof pending |
 | Choose a named Part/variant/footprint/map for placement and inspect eligibility | Current binding and qualification status remain distinct; unresolved/ambiguous choices explain their actual disposition; no implicit repair or adoption | Existing narrow Symbol placement receipt only at its recorded scope; full Part browser/map placement integration pending |
 | Create/edit/clone every kind; preview/cancel; commit; undo/redo; Save/reopen | Correct identity/revision and native transaction; cancel/refusal no write; reopened result agrees | Engine authoring seams exist; ordinary eight-kind GUI proof pending |
+| Generate a supported footprint from declared dimensions/basis; inspect copper/process output; cancel or accept proposal; history/reopen | Inputs/basis retained; unsupported families explicit; cancel no write; accepted native history agrees; no universal mask/paste repair | Bounded chip/SOIC engine slices reusable; complete wizard/proposal GUI pending |
 | Attempt stale/wrong-writer/invalid-reference or automated direct edit | Actual refusal, no partial source/journal delta; existing proposal boundary retained | Admission/validation seams reusable; complete ordinary refusal coverage pending |
 | Review placed update; inspect old/new, map/process diff, affected users/checks; decline/accept/history/reopen | No latest-wins; exact retained graph required; missing history/impact disclosed; accepted propagation canonical | General update workflow pending; frozen physical-pad history is narrower evidence |
 | Operate browser, map, forms, preview and findings by keyboard/assistive technology; compare pane sizes | Reachable names/focus, non-color feedback and inherited visuals | Shared checks plus complete ordinary-app/assistive and same-engine/HUMAN frames pending |
