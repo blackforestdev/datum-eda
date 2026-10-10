@@ -1,0 +1,139 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "0e66feecfe9cd260ac6e01af6d2f3634c6c5fca4",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda --format json project create-pool-unit /home/bfadmin/Documents/datum-eda/.datum/footprint-reference-audit/symbol-fields-audit/ordinary --unit 37c3743a-4b5e-40bf-99e7-ed914e45fbfc --name 'Fresh fields Unit'",
+  "workflow_results": {
+    "Create a native Unit and unplaced Symbol through the ordinary CLI": true,
+    "Add, change, remove and clear Symbol definition fields through the existing Set action": true,
+    "Query exact fields and preserved sibling content, then reopen the native project": true,
+    "Undo and redo field edits with exact payloads and canonical journal history": true,
+    "Use the existing whole-object Set mode with preserved behavior": true
+  },
+  "safety_results": {
+    "Preserve ordered duplicate field-key values, unknown field metadata and absent optional defaults": true,
+    "Preserve Symbol identity, Unit references, pins, anchors, graphics and other sibling content": true,
+    "Reject malformed fields, unsupported section or kind, missing Symbol and unauthorized writer without authored or journal changes": true,
+    "Use one fresh prepared model and the canonical Set commit path": true
+  },
+  "binary_sha256": "9a7f67b3f88c6dd05fa1d8948d19c6ab8f5df266f60b75df666b1030cd3c04b6",
+  "source_pins": {
+    "crates/cli/src/args/project_library.rs": {
+      "sha256": "e9cdb31418fbf21ef262fb83458967aaad9c0dbd0ed91fc99cd6e909333bf9ed",
+      "lines": 932
+    },
+    "crates/cli/src/args/project_library_object.rs": {
+      "sha256": "f42082755cee4f8c1b1b394058ea3b20d0d761003969cbccd0d4ad5bef19d572",
+      "lines": 56
+    },
+    "crates/cli/src/commands/library/library.rs": {
+      "sha256": "83577845fba58dfd0cd5096907cc08159eff908a3b16d55a810379b47d4b3106",
+      "lines": 2511
+    },
+    "crates/cli/src/commands/library/library/object_edit.rs": {
+      "sha256": "93d20ab2caff05a909bb871c630b27dd0170c352008673e994b6688f4352f2ff",
+      "lines": 135
+    },
+    "crates/engine/src/api/native_write/library_definition.rs": {
+      "sha256": "c0b0a11af956f9b87b89fb10bea84b2cd3d1c5ded4f9302ab0dfadfea9408e8e",
+      "lines": 644
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_symbol_fields.rs": {
+      "sha256": "a12f39870265308cf4af6fad7d6d74a8731fab39be34e4be1ba3849883a3a4d9",
+      "lines": 224
+    },
+    "crates/cli/src/main_tests/mod.rs": {
+      "sha256": "5c49e27b7b47bf55b7429f65318d154db657146c6b4d1930427c446e141da833",
+      "lines": 337
+    }
+  },
+  "evidence": {
+    ".datum/footprint-reference-audit/symbol-fields-audit/source-freeze.json": "28910b9173014a4627bab646a3abbe4cf681801f45ee4b624f14ef02d8617d0b",
+    ".datum/footprint-reference-audit/symbol-fields-audit/source-freeze-initial.json": "0c8717a41f3ebbe7b8f857f29321acf4a50557b473855a480e950f0685f915b2",
+    ".datum/footprint-reference-audit/symbol-fields-audit/source-freeze-pin-corrected.json": "785ab82bf1696e4ab9d62ada4f356c0b116674b15f6eb297591d840be8eb2357",
+    ".datum/footprint-reference-audit/symbol-fields-audit/regression-failed-pin-case.log": "26566889d7fda886833301d226a11f733bb837f0e01c5d0f70c8809b3cde8484",
+    ".datum/footprint-reference-audit/symbol-fields-audit/regression-corrected.log": "cb4c4859cf2caf4360017ab94423f52a88fd4c797a830338277140ee8847fcd3",
+    ".datum/footprint-reference-audit/symbol-fields-audit/regression-final.log": "7da3b1a0cf01d203c9464704c367fe99a2b4ff8daeb0ac4fbbab12172c9f3b72",
+    ".datum/footprint-reference-audit/symbol-fields-audit/compatibility-tests.log": "9bd370e5bedd8c0c9e4d36e40d44aee62219ebca9bf33dd9144ca6b83610aa3c",
+    ".datum/footprint-reference-audit/symbol-fields-audit/build-after.log": "a4eaff9197bd323c6dc1cbe3d885cfceab7ca6dbe4c86e88fa5d46929ac2ac2a",
+    ".datum/footprint-reference-audit/symbol-fields-audit/ordinary-results.json": "abda368976a4750c6fedf693b8761c78bee2466eda476a58a1d1f389566faa5f",
+    ".datum/footprint-reference-audit/symbol-fields-audit/compatibility-results.json": "7343c0bc8bc63e55a11208e8304fa34bb3e93d38d9bedbc52035822a40f6cf41",
+    ".datum/footprint-reference-audit/symbol-fields-audit/execution-receipts.json": "9d89db3f8b83b4ebb9232599adea44c42e6d7b8b79b6083f7ab4347b55741d33",
+    ".datum/footprint-reference-audit/symbol-fields-audit/failed-proof-execution-receipts.json": "5679926900b56711108b2f2c5910012a9325ebcd50b02319b94b6d20e4b8c7ef",
+    ".datum/footprint-reference-audit/symbol-fields-audit/full-drift.log": "aa22618902fff410508ea4408f641198210ad2821b889f8ec2bf5a59addefa2e"
+  },
+  "observed_results": {
+    "final_unique_tests": 6,
+    "ordinary_commands": 63,
+    "positive_commands": 40,
+    "refused_commands": 23,
+    "required_full_project_invariant_refusals": 22,
+    "extra_collision_refusal": "Authored files and journal unchanged; one recorded existing canonical staging scratch file retained.",
+    "exact_legacy_outcomes": 21,
+    "field_edits": [
+      "add",
+      "change",
+      "remove",
+      "clear"
+    ],
+    "validation": true
+  },
+  "review_receipts": {
+    "source_and_behavior": "Actual independent final seven source pins, actual completed proof logs/receipts, fresh creation, raw ordered array and sibling preservation, exact payload/history comparisons, required refusal invariance and exact legacy controls PASS.",
+    "documentation_and_landing": "Actual independent engineering/source-health, final factual Tool1, PROGRESS historical condensation and synchronized landing ownership records PASS.",
+    "full_drift": "Actual independent thirteen diagnostic texts and source locations match retained Fab drift; all five failing files byte-identical to prelanding HEAD."
+  },
+  "manager_disposition": "Owner-appointed PM059 manager accepts bounded existing-contract Symbol fields development availability after actual source landing; qualification remains separate.",
+  "proof_limits": [
+    "One-journal increments and unplaced exclusion were assertions in the completed ordinary script, not separately saved personal journal comparisons.",
+    "Foreign metadata UUID collision retains canonical staging scratch behavior; no full-project invariance claim for that extra control.",
+    "Two failed fixture attempts retained: existing enum casing and wrong Create diagnostic expected for Set. Only six final unique tests receive PASS credit."
+  ],
+  "full_workspace_result": {
+    "status": "FAIL",
+    "exit_code": 101,
+    "diagnostics": 13,
+    "unchanged_files": 5,
+    "later_gates": "unreached"
+  },
+  "pending_qualification": [
+    "Q5/Q6 graph promotion and placed propagation remain owner-reserved",
+    "GUI S05, MCP and editor breadth remain separate",
+    "Seed/source/license rights, standards and manufacturing adoption remain separate",
+    "Unrelated full-workspace Clippy and GUI parity failures remain open"
+  ],
+  "payload_checks": [
+    {
+      "action": "add",
+      "before_revision": 1,
+      "after_revision": 2,
+      "exact_expected_payload": true,
+      "payload_sha256": "8c7e70e3201a9afd4e641eef5c1eaa2ee900077c1d672c22f7c6871391e16d2f"
+    },
+    {
+      "action": "change",
+      "before_revision": 4,
+      "after_revision": 5,
+      "exact_expected_payload": true,
+      "payload_sha256": "43e66717d6db08ba960a17a919fc69c7161da85778e8ba1879389bd373ef55d5"
+    },
+    {
+      "action": "remove",
+      "before_revision": 7,
+      "after_revision": 8,
+      "exact_expected_payload": true,
+      "payload_sha256": "99f6a2cdfed5fb7f2b71a873cdd767f1954f350139dc1e745439c738ebb56479"
+    },
+    {
+      "action": "clear",
+      "before_revision": 10,
+      "after_revision": 11,
+      "exact_expected_payload": true,
+      "payload_sha256": "27458fbc69557fae79e19b00f899aebf49cdc6ecf746f0afc702d2df795eb480"
+    }
+  ],
+  "protected_files": {
+    "count": 13,
+    "unchanged": true,
+    "original_hash_map_sha256": "11a95a4f2c3496d70732661e5f2dc1ccce91b061f2c2b2e159b9af21ff8d06f8"
+  }
+}
