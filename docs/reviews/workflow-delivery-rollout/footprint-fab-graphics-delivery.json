@@ -1,0 +1,67 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "5300ec192c274456168a2d3e0df34dfe7793c5d7",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda --format json project create-pool-package /home/bfadmin/Documents/datum-eda/.datum/footprint-reference-audit/fab-graphics-baseline/positive --package d229b239-1852-45f1-a4e5-80c1412972f2 --name 'Fresh manual body'",
+  "workflow_results": {
+    "Create a native Package and unplaced Footprint through the ordinary CLI": true,
+    "Append line, rectangle, circle and polygon graphics to fabrication using the existing actions": true,
+    "Query the exact authored Footprint and reopen the native project": true,
+    "Undo and redo fabrication edits with exact payload and journal history": true,
+    "Use existing silkscreen commands and default target with preserved behavior": true
+  },
+  "safety_results": {
+    "Preserve sibling geometry, pads, IDs and unknown payload fields": true,
+    "Reject invalid target, invalid geometry and direct Tool or Assistant writes without authored or journal changes": true,
+    "Use the same prepared model and canonical Set commit path": true,
+    "Preserve existing silkscreen proposal behavior": true
+  },
+  "binary_sha256": "34d87f869fad8e5edace251957c77bf601a65540a0ce581a0771df0b845f9d75",
+  "evidence": {
+    ".datum/footprint-reference-audit/fab-graphics-baseline/before-results.json": "46601fd3cd746f6e5e70f15764c7e5ecfe626e0c2e0d303eff660e495d616b58",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/supplemental-before-controls.json": "e2def2540653011763b09f8685d4b99e153ba8ebede982f4de6c6ef8866b3bcf",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/supplemental-before-harness-failed.json": "5cf11ef37234ffeb7e8912a8a975549b6f046a2b1149e3d66a74a5d761283c80",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/regression.log": "e6d82b2186907cfa0f3a0fe8445c56ae05c7117345d72d2427e7d268dacf8908",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/compatibility.log": "d7007f96b4059916b5c3482806106fea7d18477db030c4acf0aed113d7d9db61",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/build-after.log": "6490ee0943584a3cc35710b600e9e27dd4feb097e86b0f4e141e3f16f7f598c9",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/after-controls.json": "47907643ac9ef934259b4bf76f28ad3db6f0adf7e27f4141cccf4d5e6f19e522",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/positive-results.json": "a3e0ccd029d3585728b9afe00c2ea69342213225bcd93f059311210aaf38ad49",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/runtime-execution-receipts.json": "75b6a77e9f0ff602269c74e79f048c951afc8f2fad7dc2abda1bbd8a4b8761fa",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/full-drift.log": "ceb25b38e7d59d81d19bcd024011f607421be0cf9aed2d58c0a7b25894b8ebc2",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/fresh-create-results.json": "585471bf1e6017c2563da84171435c81041d7400bb3e0dc189834e49cec53fd5",
+    ".datum/footprint-reference-audit/fab-graphics-baseline/fresh-create-execution-receipt.json": "d70f25dde6f5dca71c015c37b88a365941a1f0910aa10e899a4373d6a564a94d"
+  },
+  "observed_results": {
+    "focused_tests": 11,
+    "ordinary_shape_target_writes": 16,
+    "refused_commands_with_full_file_invariance": 50,
+    "byte_exact_legacy_refusals": 30,
+    "positive_commands": 67,
+    "fresh_creation_commands": 12,
+    "protected_preexisting_files_unchanged": 13,
+    "validation": true
+  },
+  "review_receipts": {
+    "source_behavior": "Actual independent frozen source/runtime review PASS; all seven source pins verified.",
+    "fresh_creation": "Actual independent complete script and original completed handle79920 exit0 review PASS; five exact queries and13protected hashes verified.",
+    "documentation_ownership": "Actual independent final source-health, Tool1/ENGINE, route digests, tracker and landing ownership review PASS."
+  },
+  "manager_disposition": "Owner-appointed PM059 manager accepts bounded existing-contract delivery. No new product policy or qualification waiver.",
+  "proof_limits": [
+    "One-journal increments and unplaced exclusion are executed assertions backed by original successful command completion, not separately saved journal comparisons.",
+    "Malformed collection coverage is helper-only.",
+    "Before-control harness failure retained; its accidental isolated write was canonically undone."
+  ],
+  "pending_qualification": [
+    "Graph diagnostic promotion and placed-impact owner questions remain open",
+    "GUI S05 and visual/editor breadth remain owner-reserved",
+    "Standards-derived dimensions, seed/source/license and manufacturing adoption are separate",
+    "Full workspace qualification retains unrelated Clippy and GUI parity blockers"
+  ],
+  "full_workspace_result": {
+    "exit_code": 101,
+    "diagnostics": 13,
+    "unchanged_files": 5,
+    "later_gates": "unreached",
+    "status": "FAIL"
+  }
+}
