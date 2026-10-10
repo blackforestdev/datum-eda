@@ -2226,6 +2226,34 @@ planner and recorded operations. Missing identities in nonempty historical sourc
 still require explicit adoption; reads never allocate them. No new persistence,
 identity rule, import behavior or full authoring acceptance is introduced.
 
-The engine API inventory is reconciled at its actual implemented surface (228
-names); this includes the already captured preexisting inventory drift and four
-new shared helpers. The count is an inventory, not qualification.
+The engine API inventory is maintained in `specs/SPEC_PARITY.md`; its counts
+describe the implemented surface and do not establish qualification.
+
+### LIBRARY-VALIDATION-CONVERGENCE — current implementation
+
+`api::native_write::library_definition` owns the manual Padstack input builder,
+Footprint pad input checks and payload construction, and resolved Project pool
+reference checks. `PadstackDefinitionInput` and `validated_padstack_payload`
+preserve optional null apertures, literal `circle`/`rect` aperture arguments with
+positive dimensions, positive optional drills, conflicting-input diagnostics
+and the existing payload fields.
+`FootprintPadDefinitionInput::validate` and `footprint_with_pad` preserve
+nonblank pad names without trimming stored names, any positive layer, entered
+coordinates, replacement by pad UUID and unrelated footprint payload fields.
+`validate_pool_definition_reference` checks pool domain and requested kind
+against the resolved model, without introducing a destination-pool restriction.
+That lookup does not establish support for additional authored pool paths;
+canonical source ownership and materialization restrictions still apply.
+
+Direct Padstack creation and its identical proposal-input profile consume the
+same builder. The complete CLI command lifecycles live in
+`commands/library/library/padstack.rs`, `proposals/padstack.rs` and
+`footprint/pad.rs`. Existing path checks, payload UUID checks, resolver context,
+diagnostics, proposal policy and canonical commit/history remain with their
+existing owners. Footprint proposals retain their distinct trimmed-name,
+layer-first validation and diagnostic profile; they are not unified here.
+
+The actual engine API inventory is 234 unique public function names, including
+the retained earlier inventory drift and these definition helpers. This is
+engineering convergence, not new GUI authoring, SMD/process/standards policy,
+native file-type migration, library adoption or manufacturing qualification.

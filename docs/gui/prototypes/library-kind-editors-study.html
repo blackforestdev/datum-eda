@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Datum — Library Surfaces Study — per-kind editors, process and models (SURFACE-S04 candidate)</title>
+<!--
+  Datum EDA — Library surfaces candidate study for GUI-SURFACE-SPECS / SURFACE-S04.
+  CANDIDATE ONLY. Realizes the frame coverage requested by
+  docs/gui/DATUM_GUI_PRODUCT_SPEC.md "Library Surface Contract — SURFACE-S03 Draft"
+  and the claude_handoff in docs/reviews/workflow-delivery-rollout/surface-reconciliation.json.
+  It ratifies nothing: no product rule, token, standards rule, generator family, threshold,
+  approval policy, pool precedence, process default or owner choice.
+  The historical studies board-editor.html / schematic-editor.html / workspace-panes.html
+  are unchanged and remain evidence at their recorded scope.
+  Every pool, object, name, manufacturer, MPN, identifier, hash, dimension and value drawn
+  here is an illustrative synthetic first-party example — never an approved library asset,
+  a manufacturer part, a standards-derived value, a real digest or a production seed.
+  Pixel sizes and font stacks are mockup placeholders; VISUAL_LANGUAGE.md tokens govern.
+  One of three pages of this study (library-surfaces-study.html, library-kind-editors-study.html, library-layout-accessibility-study.html); section markup is unchanged from the reviewed single-page
+  candidate, split by responsibility for source health. Styles: surface-studies.css (shared, same directory).
+  No network, no script dependency.
+-->
+<link rel="stylesheet" href="surface-studies.css">
+</head>
+<body class="study-library">
+<div class="wrap">
+
+<header>
+  <h1>Datum <b>·</b> Library Surfaces Study <span style="font-weight:400;color:var(--tx3)">— per-kind editors, process and models</span></h1>
+  <div style="margin:7px 0 10px">
+    <span class="statusmark" data-state="open">◐ OPEN CANDIDATE · SURFACE-S04 · not approved, not implemented, not product-ratified</span>
+  </div>
+  <p class="sub">Detail and manual editing for the eight Pool kinds, body / land / padstack process truth, and model attachments (frames L-B, L-B1–L-B8, L-D, L-E). This page is part of a three-page candidate study; the index, frame legend and frame → clause map are in
+  <code>library-surfaces-study.html</code>. Nothing here selects a presentation, a policy, a threshold or an implementation successor; the owner's SURFACE-S05 disposition is still ahead.</p>
+  <p class="sub">Every pool, object, manufacturer, MPN, identifier, hash, dimension and value drawn here is an <b>illustrative synthetic
+  first-party example</b>. None is an approved library asset, a real manufacturer part, a standards-derived number, a real digest or a production
+  seed. Where a number appears it is a made-up example that shows <i>where</i> a value is displayed and compared, not what it should be.
+  Pixel sizes and font stacks are mockup placeholders; tokens govern.</p>
+  <p class="sub"><b>Pad shape note.</b> Current native library apertures are Circle and Rect. Every land in this study is therefore drawn as a
+  plain square-cornered Rect. The Rendering Book's rounded-rectangle pad direction is not materialized by a native aperture today; a rounded
+  rectangle is shown only where it is explicitly marked unsupported (L-B7, L-D). That difference is shown, not resolved.</p>
+  <div class="legend" aria-label="Frame label legend">
+    <span><span class="tag cur">● CURRENT · bounded</span> reviewed delivery exists at its recorded scope only</span>
+    <span><span class="tag tgt">○ TARGET · not delivered</span> retained specification target; engine seams may exist, GUI does not</span>
+    <span><span class="tag own">◐ OWNER CHOICE · S05</span> candidate presentation or policy left open for the owner</span>
+    <span><span class="tag syn">◇ SYNTHETIC</span> illustrative content</span>
+  </div>
+  <nav class="toc" aria-label="Frames across the three pages of this study">
+    <a href="library-surfaces-study.html#L-A">L-A Browser states</a>
+    <a href="library-kind-editors-study.html#L-B1">L-B1 Unit</a>
+    <a href="library-kind-editors-study.html#L-B2">L-B2 Symbol</a>
+    <a href="library-kind-editors-study.html#L-B3">L-B3 Entity</a>
+    <a href="library-kind-editors-study.html#L-B4">L-B4 Part</a>
+    <a href="library-kind-editors-study.html#L-B5">L-B5 Package</a>
+    <a href="library-kind-editors-study.html#L-B6">L-B6 Footprint</a>
+    <a href="library-kind-editors-study.html#L-B7">L-B7 Padstack</a>
+    <a href="library-kind-editors-study.html#L-B8">L-B8 PinPadMap</a>
+    <a href="library-surfaces-study.html#L-C">L-C Relationships and gate map</a>
+    <a href="library-kind-editors-study.html#L-D">L-D Body / land / process</a>
+    <a href="library-kind-editors-study.html#L-E">L-E Models</a>
+    <a href="library-surfaces-study.html#L-F">L-F Provenance, basis, approval</a>
+    <a href="library-surfaces-study.html#L-G">L-G Footprint generation</a>
+    <a href="library-surfaces-study.html#L-H">L-H Placement eligibility</a>
+    <a href="library-surfaces-study.html#L-I">L-I Placed update</a>
+    <a href="library-layout-accessibility-study.html#L-J">L-J Layout and accessibility</a>
+    <a href="library-surfaces-study.html#L-MAP">Frame → clause map</a>
+  </nav>
+</header>
+
+<!-- shared synthetic drawings: one SOIC-8 body and one SOIC-8 land pattern, eight terminals / lands everywhere -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v6" stroke="var(--paste)" stroke-width="2"/></pattern>
+    <pattern id="lgrid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#141821" stroke-width="1"/></pattern>
+    <!-- land pattern: 8 plain Rect lands, pads 1-4 left top→bottom, 5-8 right bottom→top -->
+    <symbol id="fp8" viewBox="0 0 300 170">
+      <rect x="66" y="14" width="168" height="142" fill="none" stroke="var(--court)" stroke-dasharray="4 3"/>
+      <path d="M122 24h56M122 146h56" stroke="var(--silk)" stroke-width="1.6"/>
+      <g fill="var(--pad)"><rect x="76" y="34" width="38" height="13"/><rect x="76" y="62" width="38" height="13"/><rect x="76" y="90" width="38" height="13"/><rect x="76" y="118" width="38" height="13"/>
+      <rect x="186" y="34" width="38" height="13"/><rect x="186" y="62" width="38" height="13"/><rect x="186" y="90" width="38" height="13"/><rect x="186" y="118" width="38" height="13"/></g>
+      <g fill="#141619" font-size="8" font-family="monospace" text-anchor="middle"><text x="95" y="44">1</text><text x="95" y="72">2</text><text x="95" y="100">3</text><text x="95" y="128">4</text><text x="205" y="128">5</text><text x="205" y="100">6</text><text x="205" y="72">7</text><text x="205" y="44">8</text></g>
+      <circle cx="70" cy="28" r="2.2" fill="var(--silk)"/><path d="M144 85h12M150 79v12" stroke="var(--dim)" stroke-width="1"/>
+    </symbol>
+    <!-- package body: 8 terminals -->
+    <symbol id="pk8" viewBox="0 0 300 170">
+      <rect x="100" y="22" width="100" height="126" rx="3" fill="#151922" stroke="var(--bd-str)"/>
+      <g fill="#8C9299"><rect x="84" y="36" width="16" height="9"/><rect x="84" y="64" width="16" height="9"/><rect x="84" y="92" width="16" height="9"/><rect x="84" y="120" width="16" height="9"/>
+      <rect x="200" y="36" width="16" height="9"/><rect x="200" y="64" width="16" height="9"/><rect x="200" y="92" width="16" height="9"/><rect x="200" y="120" width="16" height="9"/></g>
+      <circle cx="110" cy="32" r="2.5" fill="var(--tx3)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ======================================================== L-B -->
+<section class="fr" id="L-B">
+  <div class="sec-label"><span class="n">L-B</span><span>Eight per-kind frames — each with detail AND manual editing</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag own">◐ OWNER CHOICE · S05 — editor presentation</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Every kind shows its detail and a manual create / edit surface, and every card carries the same three-state strip:
+  <b>editing</b> (a local preview — nothing authored), <b>review</b> (the listed changes), then <b>Commit</b> or <b>Cancel</b>. The current state is
+  the heavier, bold chip. Commit goes through the existing library authoring builders as one typed transaction on the canonical commit / journal
+  path, followed by resolver refresh; canonical undo / redo and project Save / reopen apply. <b>No editor here has its own writer.</b> Cancel leaves no
+  authored delta and no history entry. Clone creates a new identity; rename is not identity replacement. Where an object is bound to placed
+  components, the commit control becomes <b>Create proposal</b> — the existing boundary. Controls with no backed command are dashed and marked ∅.
+  The bottom strip of each card quotes the reusable seam and remaining delivery from the Product contract; a seam is not GUI delivery.</p>
+</section>
+
+<section class="fr sub2" id="L-B1">
+  <div class="grid2">
+    <div class="card">
+      <div class="it"><span class="ref">Demo Op-Amp — logic</span><span class="kind">Unit · demo-local · rev 1</span><span class="tag tgt">○ TARGET</span></div>
+      <table class="t in" aria-label="Unit logical pins; pin b being edited">
+        <tr><th>Logical pin</th><th>Name</th><th>Direction</th><th>Alternate names</th><th>Swap group</th></tr>
+        <tr><td class="n">pin a</td><td>IN+</td><td>Input</td><td>NONINV</td><td>∅ none declared</td></tr>
+        <tr class="ed"><td class="n">✎ pin b</td><td><span class="fld f">IN−</span></td><td><span class="fld">Input ▾</span></td><td><span class="fld ch">INV, IN_N</span></td><td><span class="fld na">∅ none</span></td></tr>
+        <tr><td class="n">pin c</td><td>OUT</td><td>Output</td><td>—</td><td>∅ none declared</td></tr>
+      </table>
+      <div class="steps"><span class="now">① editing · preview only</span><span>② review 1 change</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <ul class="rev"><li>pin b · alternate names: <code>INV</code> → <code>INV, IN_N</code></li></ul>
+      <div class="acts"><span class="btn">Add pin</span><span class="btn">Clone Unit…</span><span class="btn">Cancel</span><span class="btn pri">Review and commit</span></div>
+      <div class="seam"><b>L-B1 Unit.</b> Logical pin identity, name, electrical direction, alternate names, swap groups. <b>Seam:</b> Pool schema, resolver and typed pin authoring exist; full browser / editor proof pending.</div>
+    </div>
+    <div class="card" id="L-B2">
+      <div class="it"><span class="ref">Demo Op-Amp — body</span><span class="kind">Symbol · demo-local · rev 2</span><span class="tag tgt">○ TARGET</span><span class="tag cur">● picker + body/pin projection bounded</span></div>
+      <div class="phd" style="border-top:none"><span class="pt">Symbol graphics</span><span class="tools" role="toolbar" aria-label="Symbol drawing tools"><span class="tl">Sel</span><span class="tl on">Anchor</span><span class="tl">Line</span><span class="tl">Rect</span><span class="tl">Text</span><span class="tl na" title="Arc — no backed command">Arc ∅</span></span><span class="cx">grid <b>1.270 mm</b></span></div>
+      <div class="pv"><svg viewBox="0 0 420 160" role="img" aria-label="Symbol editor: pin anchor IN− being moved, one new graphic line previewed">
+        <rect width="420" height="160" fill="url(#lgrid)"/>
+        <rect x="160" y="32" width="100" height="96" rx="3" fill="#161A24" stroke="var(--sym)" stroke-width="1.5"/>
+        <g stroke="var(--sym)" stroke-width="1.3"><path d="M160 56h-22M260 80h22"/></g>
+        <g fill="var(--sym)"><circle cx="138" cy="56" r="2"/><circle cx="282" cy="80" r="2"/></g>
+        <!-- authored IN− anchor (stays until commit) -->
+        <g stroke="var(--sym)" stroke-width="1.3"><path d="M160 96h-22"/></g><circle cx="138" cy="96" r="2" fill="var(--sym)"/>
+        <!-- previewed new anchor position -->
+        <g stroke="var(--acc-h)" stroke-width="1.3" stroke-dasharray="5 3" fill="none"><path d="M160 112h-22"/><circle cx="138" cy="112" r="4"/></g>
+        <path d="M138 96v16" stroke="var(--acc)" stroke-width="1" stroke-dasharray="2 3"/>
+        <!-- previewed new graphic line -->
+        <path d="M176 44v72" stroke="var(--acc-h)" stroke-width="1.4" stroke-dasharray="5 3"/>
+        <g fill="var(--tx2)" font-size="10" font-family="monospace"><text x="184" y="60">IN+</text><text x="184" y="100">IN−</text><text x="253" y="84" text-anchor="end">OUT</text></g>
+        <text x="210" y="24" fill="var(--tx)" font-size="10" text-anchor="middle" font-family="monospace">U?</text>
+        <path d="M204 80h12M210 74v12" stroke="var(--dim)" stroke-width="1"/>
+        <text x="60" y="116" fill="var(--acc-h)" font-size="9" font-family="monospace">anchor preview</text><text x="60" y="148" fill="var(--tx3)" font-size="9" font-family="monospace">origin ✛ · dashed = uncommitted</text>
+      </svg></div>
+      <div class="kv"><span class="k">Unit link</span><span class="v"><span class="lnk">Demo Op-Amp — logic ↗</span></span></div>
+      <div class="kv"><span class="k">Anchor IN−</span><span class="v">pin <span class="fld">pin b ▾</span> · x <span class="fld">−2.540</span> y <span class="fld f ch">−2.540</span> mm · stub <span class="fld">2.540</span></span></div>
+      <div class="kv"><span class="k">Fields / prefix</span><span class="v"><span class="fld">U</span> <span class="fld">Reference</span> <span class="fld">Value</span></span></div>
+      <div class="kv"><span class="k">Style basis</span><span class="v"><span class="st na">? assertion stored, not verified here</span></span></div>
+      <div class="steps"><span class="now">① editing · preview only</span><span>② review 2 changes</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <ul class="rev"><li>move anchor for Unit pin b (IN−): y −1.270 → −2.540 mm</li><li>add graphic line inside body</li></ul>
+      <div class="acts"><span class="btn">Clone Symbol…</span><span class="btn">Cancel</span><span class="btn pri">Review and commit</span></div>
+      <div class="seam"><b>L-B2 Symbol.</b> Unit link, native graphics, pin anchors / stubs, fields, prefix, style assertions and basis. <b>Seam:</b> named picker and native body / pin projection delivered at bounded scope; complete detail / graphics editor pending. An anchor binds a graphic to a Unit pin; it does not create a logical pin. Imported symbols are not silently restyled.</div>
+    </div>
+  </div>
+</section>
+
+<section class="fr sub2" id="L-B3">
+  <div class="grid2">
+    <div class="card">
+      <div class="it"><span class="ref">Demo Dual Op-Amp</span><span class="kind">Entity · demo-local · rev 1</span><span class="tag tgt">○ TARGET</span></div>
+      <table class="t in" aria-label="Entity gates; gate PWR being edited">
+        <tr><th>Gate</th><th>Unit</th><th>Symbol</th><th>Reference state</th></tr>
+        <tr><td class="n">A</td><td><span class="lnk">Demo Op-Amp — logic ↗</span></td><td><span class="lnk">Demo Op-Amp — body ↗</span></td><td><span class="st ok">✓ resolved</span></td></tr>
+        <tr><td class="n">B</td><td><span class="lnk">Demo Op-Amp — logic ↗</span></td><td><span class="lnk">Demo Op-Amp — body ↗</span></td><td><span class="st ok">✓ resolved</span></td></tr>
+        <tr class="ed"><td class="n">✎ PWR</td><td><span class="fld">Demo Dual Supply ▾</span></td><td><span class="fld f ch">Demo Supply — body ▾</span></td><td><span class="st info">⧗ edited, not committed</span></td></tr>
+      </table>
+      <div class="kv"><span class="k">Prefix</span><span class="v"><span class="fld">U</span></span></div>
+      <div class="kv"><span class="k">Multiplicity</span><span class="v">3 named gates</span></div>
+      <div class="steps"><span>① editing</span><span class="now">② review 1 change</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <ul class="rev"><li>gate PWR · Symbol: ∅ none → Demo Supply — body (demo-local · rev 1)</li></ul>
+      <div class="acts"><span class="btn">Add gate</span><span class="btn">Clone Entity…</span><span class="btn">Back to editing</span><span class="btn">Cancel</span><span class="btn pri">Commit</span></div>
+      <div class="seam"><b>L-B3 Entity.</b> Named gates, their Unit / Symbol links, prefix and multiplicity. <b>Seam:</b> schema, gate authoring and reference diagnostics exist; complete multi-gate GUI pending.</div>
+    </div>
+    <div class="card" id="L-B4">
+      <div class="it"><span class="ref">DEMO-OPA2-D</span><span class="kind">Part · demo-local · rev 2</span><span class="tag tgt">○ TARGET</span></div>
+      <div class="sh" style="border-top:none">Orderable identity <span class="r">editable</span></div>
+      <div class="kv"><span class="k">Manufacturer</span><span class="v"><span class="fld">Example Devices</span></span></div>
+      <div class="kv"><span class="k">MPN</span><span class="v"><span class="fld">DEMO-OPA2-D</span></span></div>
+      <div class="kv"><span class="k">Description</span><span class="v"><span class="fld f ch">Dual op-amp, demo</span></span></div>
+      <div class="kv"><span class="k">Tags</span><span class="v"><span class="fld">opamp</span> <span class="fld">dual</span> <span class="btn">+ tag</span></span></div>
+      <div class="kv"><span class="k">Datasheet</span><span class="v"><span class="fld na">∅ none</span> <span class="btn">Attach reference…</span></span></div>
+      <div class="kv"><span class="k">Qualification</span><span class="v"><span class="st na">? unknown</span> — not an editable claim here</span></div>
+      <div class="sh">Parametrics <span class="r">as entered</span></div>
+      <div class="kv"><span class="k">Channels</span><span class="v"><span class="fld">2</span> <span class="btn">+ parameter</span></span></div>
+      <div class="sh">Logical and physical options</div>
+      <div class="kv"><span class="k">Entity</span><span class="v"><span class="fld">Demo Dual Op-Amp ▾</span> <span class="lnk">↗</span></span></div>
+      <div class="kv"><span class="k">Package</span><span class="v"><span class="fld">Demo SOIC-8 body ▾</span> <span class="lnk">↗</span></span></div>
+      <div class="kv"><span class="k">Footprint</span><span class="v"><span class="fld">Demo SOIC-8 land ▾</span> <span class="st ok">✓ default</span> <span class="btn">+ alternate</span></span></div>
+      <div class="kv"><span class="k">Pin-pad map</span><span class="v"><span class="fld">OPA2-D → SOIC-8 ▾</span> <span class="st ok">✓ default</span></span></div>
+      <div class="kv"><span class="k">Models</span><span class="v"><span class="lnk">1 attachment ↗</span> (L-E)</span></div>
+      <div class="sh">Guarded status <span class="r">separate action — L-F</span></div>
+      <div class="kv"><span class="k">Lifecycle</span><span class="v"><span class="st ok">✓ Active</span> <span class="btn">Propose change…</span></span></div>
+      <div class="steps"><span class="now">① editing · preview only</span><span>② review 1 change</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <ul class="rev"><li>description: “Dual op-amp” → “Dual op-amp, demo”</li></ul>
+      <div class="acts"><span class="btn">Clone Part…</span><span class="btn">Cancel</span><span class="btn pri">Review and commit</span></div>
+      <div class="seam"><b>L-B4 Part.</b> Manufacturer / orderable identity, lifecycle, parametrics, datasheet / qualification metadata, Entity and physical / map / model options. <b>Seam:</b> native metadata / binding builders exist; complete orderable-part browser / editor pending. Lifecycle and approval are not ordinary fields; they change only through the guarded status action.</div>
+    </div>
+  </div>
+</section>
+
+<section class="fr sub2" id="L-B5">
+  <div class="grid2">
+    <div class="card">
+      <div class="it"><span class="ref">Demo SOIC-8 body</span><span class="kind">Package · demo-local · rev 1</span><span class="tag tgt">○ TARGET</span></div>
+      <div class="phd" style="border-top:none"><span class="pt">Physical body</span><span class="tools" role="toolbar" aria-label="Body tools"><span class="tl on">Sel</span><span class="tl">Terminal</span><span class="tl">Measure</span></span><span class="cx">units <b>mm</b></span></div>
+      <div class="pv"><svg viewBox="0 0 420 170" role="img" aria-label="Package body, eight terminals, body length being edited with a dashed preview outline">
+        <svg x="60" y="0" width="300" height="170" viewBox="0 0 300 170"><use href="#pk8"/></svg>
+        <rect x="156" y="16" width="108" height="138" rx="3" fill="none" stroke="var(--acc-h)" stroke-width="1.4" stroke-dasharray="5 3"/>
+        <g stroke="var(--dim)" stroke-width="1" fill="none"><path d="M290 22v126M284 22h12M284 148h12"/></g>
+        <text x="300" y="88" fill="var(--dim)" font-size="9" font-family="monospace">D 4.90 → 5.00</text>
+        <text x="16" y="24" fill="var(--tx3)" font-size="9" font-family="monospace">physical body</text><text x="16" y="36" fill="var(--tx3)" font-size="9" font-family="monospace">and terminals —</text><text x="16" y="48" fill="var(--tx3)" font-size="9" font-family="monospace">not lands</text>
+        <text x="16" y="150" fill="var(--acc-h)" font-size="9" font-family="monospace">dashed = preview</text>
+      </svg></div>
+      <div class="kv"><span class="k">Family / code</span><span class="v"><span class="fld">SOIC ▾</span> · terminals <span class="fld">8</span></span></div>
+      <div class="kv"><span class="k">Body length D</span><span class="v">nom <span class="fld f ch">5.00</span> tol <span class="fld">± 0.10</span> mm <span class="tag syn">◇ made-up</span></span></div>
+      <div class="kv"><span class="k">Body width E</span><span class="v">nom <span class="fld">3.90</span> tol <span class="fld">± 0.10</span> mm <span class="tag syn">◇ made-up</span></span></div>
+      <div class="kv"><span class="k">Terminal pitch</span><span class="v"><span class="fld">1.27</span> mm <span class="tag syn">◇ made-up</span></span></div>
+      <div class="kv"><span class="k">Height</span><span class="v"><span class="fld na">∅ not entered</span></span></div>
+      <div class="kv"><span class="k">Mounting</span><span class="v"><span class="fld">Surface mount ▾</span></span></div>
+      <div class="kv"><span class="k">3D reference</span><span class="v"><span class="st warn">△ path only — no governed attachment</span></span></div>
+      <div class="steps"><span class="now">① editing · preview only</span><span>② review 1 change</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <ul class="rev"><li>body length D nominal: 4.90 → 5.00 mm (made-up values)</li></ul>
+      <div class="acts"><span class="btn">Clone Package…</span><span class="btn">Cancel</span><span class="btn pri">Review and commit</span></div>
+      <div class="seam"><b>L-B5 Package.</b> Physical body and terminals, family / code, dimensions / tolerances, height, mounting and model references. <b>Seam:</b> body schema / builders and compatibility geometry exist; complete physical-body GUI pending. Editing the body does not move any Footprint land.</div>
+    </div>
+    <div class="card" id="L-B6">
+      <div class="it"><span class="ref">Demo SOIC-8 land</span><span class="kind">Footprint · demo-local · rev 3</span><span class="tag tgt">○ TARGET</span></div>
+      <div class="phd" style="border-top:none"><span class="pt">Land pattern</span><span class="tools" role="toolbar" aria-label="Footprint tools"><span class="tl">Sel</span><span class="tl on">Move</span><span class="tl">Pad</span><span class="tl">Courtyard</span><span class="tl">Silk</span><span class="tl na" title="Fab / assembly graphics — no backed command">Fab ∅</span></span><span class="cx">grid <b>0.050 mm</b></span></div>
+      <div class="pv"><svg viewBox="0 0 420 170" role="img" aria-label="Footprint editor: eight plain Rect lands; pad 3 selected and being moved, ghost shows the proposed position">
+        <svg x="60" y="0" width="300" height="170" viewBox="0 0 300 170"><use href="#fp8"/>
+          <rect x="74" y="88" width="42" height="17" fill="none" stroke="var(--acc)" stroke-width="2"/>
+          <rect x="70" y="90" width="38" height="13" fill="none" stroke="var(--acc-h)" stroke-width="1.4" stroke-dasharray="5 3"/></svg>
+        <text x="16" y="100" fill="var(--acc-h)" font-size="9" font-family="monospace">pad 3 → ghost</text>
+        <text x="16" y="150" fill="var(--tx3)" font-size="9" font-family="monospace">dashed = preview</text>
+        <text x="372" y="24" fill="var(--tx3)" font-size="9" font-family="monospace">Rect</text><text x="372" y="36" fill="var(--tx3)" font-size="9" font-family="monospace">lands</text>
+      </svg></div>
+      <div class="kv"><span class="k">Package link</span><span class="v"><span class="fld">Demo SOIC-8 body ▾</span> <span class="lnk">↗</span></span></div>
+      <div class="kv"><span class="k">Pad 3</span><span class="v">name <span class="fld">3</span> · Padstack <span class="fld">Demo SMD rect pad ▾</span> <span class="lnk">↗</span></span></div>
+      <div class="kv"><span class="k">Pad 3 position</span><span class="v">x <span class="fld f ch">−2.75</span> y <span class="fld">−0.64</span> mm · rot <span class="fld">0°</span> <span class="tag syn">◇ made-up</span></span></div>
+      <div class="kv"><span class="k">Origin</span><span class="v"><span class="fld">body centre ▾</span></span></div>
+      <div class="kv"><span class="k">Courtyard</span><span class="v"><span class="st ok">✓ rectangle authored</span> <span class="btn">Edit…</span></span></div>
+      <div class="kv"><span class="k">Silk</span><span class="v">2 lines <span class="btn">Add line</span></span></div>
+      <div class="kv"><span class="k">Process geometry</span><span class="v"><span class="lnk">per pad and layer — L-D ↗</span></span></div>
+      <div class="steps"><span>① editing</span><span class="now">② review 1 change · bound to 2 placed components</span><span>③ create proposal / cancel · no change</span></div>
+      <ul class="rev"><li>pad 3 position x: −2.70 → −2.75 mm (made-up values)</li><li>affects placed U4, U7 — goes as a proposal, see L-I</li></ul>
+      <div class="acts"><span class="btn">Clone Footprint…</span><span class="btn">Back to editing</span><span class="btn">Cancel</span><span class="btn pri">Create proposal</span></div>
+      <div class="seam"><b>L-B6 Footprint.</b> Package link, positioned pads and Padstack links, origin, courtyard, silk / fab / assembly / mechanical and process geometry. <b>Seam:</b> typed pad / courtyard / basic silk authoring and bounded chip / SOIC slices exist; complete editor and process consumption pending.</div>
+    </div>
+  </div>
+</section>
+
+<section class="fr sub2" id="L-B7">
+  <div class="grid2">
+    <div class="card">
+      <div class="it"><span class="ref">Demo SMD rect pad</span><span class="kind">Padstack · demo-local · rev 1</span><span class="tag tgt">○ TARGET</span></div>
+      <table class="t in" aria-label="Padstack layers; paste policy being edited">
+        <tr><th>Layer role</th><th>Geometry</th><th>Policy</th><th>State</th></tr>
+        <tr><td class="n">Copper · top</td><td>Rect · <span class="fld">1.50</span> × <span class="fld">0.60</span> mm <span class="tag syn">◇</span></td><td>—</td><td><span class="st ok">✓ declared</span></td></tr>
+        <tr><td class="n">Mask · top</td><td>opening as declared</td><td><span class="fld">Explicit ▾</span></td><td><span class="st ok">✓ explicit, basis declared</span></td></tr>
+        <tr class="ed"><td class="n">✎ Paste · top</td><td><span class="st na">? no geometry until resolved</span></td><td><span class="fld f">Inherit ▾</span></td><td><span class="st na">? resolves outside this object</span></td></tr>
+        <tr><td class="n">Drill / plating / span</td><td>∅ none (surface pad)</td><td>—</td><td><span class="st na">∅ not applicable</span></td></tr>
+        <tr><td class="n">Annular / thermal / anti-pad</td><td><span class="fld na">∅ not entered</span></td><td>—</td><td><span class="st na">∅ not entered</span></td></tr>
+      </table>
+      <div class="kv"><span class="k">Copper shape</span><span class="v"><span class="fld">Rect ▾</span> · available: Circle, Rect · <span class="btn na">RoundRect ∅ not a native aperture</span></span></div>
+      <div class="steps"><span class="now">① editing · preview only</span><span>② review 0 changes</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <div class="acts"><span class="btn">Clone Padstack…</span><span class="btn">Cancel</span><span class="btn na">Review and commit — nothing changed</span></div>
+      <div class="seam"><b>L-B7 Padstack.</b> Copper by layer, drill / plating / span, annular / thermal / anti-pad and separate mask / paste policy. <b>Seam:</b> current library apertures are Circle / Rect with bounded process fields; broader geometry and systematic consumption pending. Choosing Inherit selects no value and is not replaced by zero.</div>
+    </div>
+    <div class="card" id="L-B8">
+      <div class="it"><span class="ref">OPA2-D → SOIC-8</span><span class="kind">PinPadMap · demo-local · rev 2</span><span class="tag tgt">○ TARGET</span></div>
+      <div class="kv"><span class="k">Part</span><span class="v"><span class="lnk">DEMO-OPA2-D ↗</span></span></div>
+      <div class="kv"><span class="k">Footprint</span><span class="v"><span class="lnk">Demo SOIC-8 land ↗</span></span></div>
+      <table class="t in" style="border-top:1px solid var(--bd-sub)" aria-label="Pad to gate and pin map, excerpt; pad 7 being edited">
+        <tr><th>Pad</th><th>→ Gate</th><th>→ Logical pin</th><th>State</th></tr>
+        <tr><td class="n">1</td><td class="n">A</td><td>OUT</td><td><span class="st ok">✓ mapped</span></td></tr>
+        <tr><td class="n">6</td><td class="n">B</td><td>IN−</td><td><span class="st ok">✓ mapped</span></td></tr>
+        <tr class="ed"><td class="n">✎ 7</td><td><span class="fld f ch">B ▾</span></td><td><span class="fld">OUT ▾</span></td><td><span class="st info">⧗ edited, not committed</span></td></tr>
+        <tr><td class="n">8</td><td><span class="fld na">∅ ▾</span></td><td><span class="fld na">∅ ▾</span></td><td><span class="st warn">△ unmapped pad</span></td></tr>
+        <tr><td class="n">…</td><td colspan="3">all eight pads in L-C; scrollable in a narrow pane in L-J</td></tr>
+      </table>
+      <div class="note">Canonical direction is <b>pad → {gate, pin}</b>. A name-matching suggestion is offered as a suggestion only and is never an accepted relationship.</div>
+      <div class="steps"><span>① editing</span><span class="now">② review 1 change</span><span>③ commit · 1 transaction / cancel · no change</span></div>
+      <ul class="rev"><li>pad 7: {A, OUT} (duplicate of pad 1) → {B, OUT}</li><li>still open after this change: pad 8 unmapped</li></ul>
+      <div class="acts"><span class="btn">Suggest by name…</span><span class="btn">Back to editing</span><span class="btn">Cancel</span><span class="btn pri">Commit</span></div>
+      <div class="seam"><b>L-B8 PinPadMap.</b> Physical pad to gate-qualified logical pin, referenced Part / Footprint and relevant Unit / Entity / Symbol / Package context. <b>Seam:</b> typed gate-aware map authoring / diagnostics exist; complete map-table GUI and placed-update flow pending.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== L-D -->
+<section class="fr" id="L-D">
+  <div class="sec-label"><span class="n">L-D</span><span>Package versus Footprint versus Padstack — copper, mask, paste, drill</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Three objects, three questions: the <b>Package</b> is the physical body and its eight terminals; the <b>Footprint</b> is the board land
+  pattern with its eight lands; the <b>Padstack</b> is the per-layer pad definition a Footprint pad points at. Copper, mask and paste are separately
+  inspectable by pad and layer with their actual geometry, policy and derivation basis. <b>Inherit, a zero offset, or looking like the neighbouring pads
+  does not establish correctness</b>, and no universal expansion or reduction is applied or suggested. Where a layer's geometry is not resolved,
+  <b>no geometry is drawn for it</b>.</p>
+  <div class="grid2">
+    <div class="card"><div class="phd0"><span>Package — body</span><span class="r">Demo SOIC-8 body · 8 terminals</span></div>
+      <div class="pv"><svg viewBox="0 0 300 170" role="img" aria-label="Body with eight terminals"><use href="#pk8"/></svg></div>
+      <div class="note">Terminals of the component. No copper, no mask, no paste lives here.</div></div>
+    <div class="card"><div class="phd0"><span>Footprint — lands</span><span class="r">Demo SOIC-8 land · 8 lands</span></div>
+      <div class="pv"><svg viewBox="0 0 300 170" role="img" aria-label="Eight plain Rect lands, courtyard, silk, origin"><use href="#fp8"/></svg></div>
+      <div class="note">Positioned pads, each linked to a Padstack; courtyard, silk, origin. Lands are native Rect.</div></div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card"><div class="phd0"><span>Padstack by layer — pad 1</span><span class="r">all three layers resolved, basis declared</span></div>
+      <div class="pv"><svg viewBox="0 0 420 160" role="img" aria-label="Pad 1 exploded by layer: copper solid, mask dashed outline, paste hatched; all drawn because all are resolved">
+        <rect x="40" y="56" width="84" height="34" fill="var(--pad)"/><text x="82" y="112" fill="var(--tx2)" font-size="9" text-anchor="middle" font-family="monospace">copper · solid</text><text x="82" y="124" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">Rect 1.50 × 0.60</text>
+        <rect x="165" y="53" width="90" height="40" fill="none" stroke="var(--mask)" stroke-width="2" stroke-dasharray="6 3"/><text x="210" y="112" fill="var(--tx2)" font-size="9" text-anchor="middle" font-family="monospace">mask · dashed outline</text><text x="210" y="124" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">Explicit 1.60 × 0.70</text>
+        <rect x="300" y="58" width="80" height="30" fill="url(#hatch)" stroke="var(--paste)"/><text x="340" y="112" fill="var(--tx2)" font-size="9" text-anchor="middle" font-family="monospace">paste · hatched</text><text x="340" y="124" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">Explicit 1.40 × 0.50</text>
+        <text x="210" y="24" fill="var(--tx3)" font-size="9" text-anchor="middle" font-family="monospace">made-up values · show where declared geometry appears</text>
+      </svg></div>
+      <div class="kv"><span class="k">Declared basis</span><span class="v">“demo process note A, v1” — a synthetic declared record, not a standard and not a default</span></div>
+      <div class="note">Layer identity uses pattern as well as hue: solid, dashed outline, hatch.</div></div>
+    <div class="card"><div class="phd0"><span>Padstack by layer — pad 3</span><span class="r">paste Inherit · unresolved here</span></div>
+      <div class="pv"><svg viewBox="0 0 420 160" role="img" aria-label="Pad 3 by layer: copper and mask drawn; paste not drawn because Inherit is unresolved; rounded rectangle marked unsupported">
+        <rect x="40" y="56" width="84" height="34" fill="var(--pad)"/><text x="82" y="112" fill="var(--tx2)" font-size="9" text-anchor="middle" font-family="monospace">copper · solid</text><text x="82" y="124" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">Rect 1.50 × 0.60</text>
+        <rect x="165" y="53" width="90" height="40" fill="none" stroke="var(--mask)" stroke-width="2" stroke-dasharray="6 3"/><text x="210" y="112" fill="var(--tx2)" font-size="9" text-anchor="middle" font-family="monospace">mask · dashed outline</text><text x="210" y="124" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">Explicit 1.60 × 0.70</text>
+        <text x="340" y="70" fill="var(--tx3)" font-size="20" text-anchor="middle" font-family="monospace">?</text>
+        <text x="340" y="86" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">no geometry drawn</text>
+        <text x="340" y="112" fill="var(--tx2)" font-size="9" text-anchor="middle" font-family="monospace">paste · Inherit</text><text x="340" y="124" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">unresolved in this object</text>
+        <text x="210" y="24" fill="var(--tx3)" font-size="9" text-anchor="middle" font-family="monospace">made-up values · paste intentionally absent</text>
+      </svg></div>
+      <div class="kv"><span class="k">Paste</span><span class="v"><span class="st na">? Inherit — the policy that would resolve it is not owned by this object and is not visible here</span></span></div>
+      <div class="note">Inherit is shown as Inherit. It is not drawn as a copy of the copper, not as zero, and not as the neighbouring pad's paste.</div></div>
+  </div>
+  <table class="t" style="margin-top:16px" aria-label="Process state by pad and layer">
+    <tr><th>Pad</th><th>Copper</th><th>Mask</th><th>Paste</th><th>Drill</th><th>Derivation basis</th></tr>
+    <tr><td class="n">1</td><td><span class="st ok">✓ Rect, declared</span></td><td><span class="st ok">✓ Explicit</span></td><td><span class="st ok">✓ Explicit</span></td><td><span class="st na">∅ n/a</span></td><td>Declared on the Padstack; synthetic basis record and version shown above</td></tr>
+    <tr><td class="n">3</td><td><span class="st ok">✓ Rect, declared</span></td><td><span class="st ok">✓ Explicit</span></td><td><span class="st na">? Inherit — unresolved here</span></td><td><span class="st na">∅ n/a</span></td><td>Paste depends on a policy not owned by this object; no paste geometry is shown</td></tr>
+    <tr><td class="n">5</td><td><span class="st ok">✓ Rect, declared</span></td><td><span class="st na">? Unknown — import-preserved</span></td><td><span class="st na">? Unknown — import-preserved</span></td><td><span class="st na">∅ n/a</span></td><td><span class="st na">∅ no basis recorded</span></td></tr>
+    <tr><td class="n">7</td><td><span class="st warn">△ degraded — source RoundRect shown as Rect</span></td><td><span class="st err">✕ unsupported aperture</span></td><td><span class="st err">✕ unsupported aperture</span></td><td><span class="st na">∅ n/a</span></td><td>Source shape is a rounded rectangle; native apertures are Circle / Rect. Disclosed as degraded, not silently converted</td></tr>
+    <tr><td class="n">TH example (a different footprint)</td><td><span class="st ok">✓ Circle, declared</span></td><td><span class="st ok">✓ Explicit</span></td><td><span class="st na">∅ none</span></td><td><span class="st ok">✓ plated, span declared</span></td><td>Declared on the Padstack</td></tr>
+  </table>
+  <p class="cell-cap"><b>D1 — process truth table.</b> Unknown and import-preserved facts stay explicit. The owner's stated references (ANSI Y32.2-1975 reaffirmed 1989,
+  IPC-7351B, ISO 10303-21) appear only as a record's <i>declared</i> basis where it has one; they certify nothing here. The full standards corpus was not reviewed for this study.</p>
+</section>
+
+<!-- ======================================================== L-E -->
+<section class="fr" id="L-E">
+  <div class="sec-label"><span class="n">L-E</span><span>Models — detail, attach, edit metadata, detach, preview; refusal and cancel</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Models are governed <b>attachments</b> on a library target, not a Pool kind. Inspection never executes a simulator and never decrypts
+  vendor content. Attach, detach and metadata edits go through the same library authoring / proposal path and show target, role, format, actual
+  content hash and transform <b>before</b> committing. Part behavioural attachment slices and path-only Package 3D references exist today; that is not
+  complete governed behaviour across every target. <b>Every file name, source and hash below is a made-up example</b> — the hash strings are
+  deliberately not valid digests — and nothing here is evidence that any real provider's model was read, validated or converted.</p>
+  <div class="grid2">
+    <div class="card"><div class="phd0"><span>Models</span><span class="r">DEMO-OPA2-D · 3 attachments</span></div>
+      <table class="t in" aria-label="Model attachments">
+        <tr><th>Role</th><th>Format / dialect</th><th>Content</th><th>Review</th></tr>
+        <tr class="ed"><td class="n">▸ Behavioural</td><td>SPICE subcircuit</td><td><span class="st ok">✓ present, hash recorded</span></td><td><span class="st warn">△ needs review</span></td></tr>
+        <tr><td class="n">3D body</td><td>STEP (ISO 10303-21)</td><td><span class="st err">✕ content missing</span></td><td><span class="st na">∅ unavailable</span></td></tr>
+        <tr><td class="n">Behavioural</td><td>encrypted vendor</td><td><span class="st na">▣ import-preserved, not decrypted</span></td><td><span class="st na">? validation unsupported</span></td></tr>
+      </table>
+      <div class="acts"><span class="btn">Attach model…</span><span class="btn">Edit metadata…</span><span class="btn">Detach…</span></div>
+      <div class="note">Missing content, unavailable metadata and unsupported validation are three different rows, not one “problem” badge.</div></div>
+    <div class="card"><div class="phd0"><span>Attachment detail</span><span class="r">Behavioural · SPICE subcircuit</span></div>
+      <div class="kv"><span class="k">Target</span><span class="v"><span class="lnk">DEMO-OPA2-D ↗</span> · Part · rev 2</span></div>
+      <div class="kv"><span class="k">Role</span><span class="v">Behavioural</span></div>
+      <div class="kv"><span class="k">Format / dialect</span><span class="v">SPICE subcircuit · dialect <span class="st na">? not declared</span></span></div>
+      <div class="kv"><span class="k">Content ref</span><span class="v m">models/demo_opa2.lib <span class="tag syn">◇ example path</span></span></div>
+      <div class="kv"><span class="k">Hash</span><span class="v m">sha256:EXAMPLE-NOT-A-REAL-DIGEST-0000 <span class="tag syn">◇ synthetic</span></span></div>
+      <div class="kv"><span class="k">Source</span><span class="v">“typed in by hand for this demo” <span class="tag syn">◇</span></span></div>
+      <div class="kv"><span class="k">Provenance</span><span class="v">attached manually · actor recorded · journal entry recorded</span></div>
+      <div class="kv"><span class="k">Transform</span><span class="v"><span class="st na">∅ not applicable to a behavioural model</span></span></div>
+      <div class="kv"><span class="k">Review state</span><span class="v"><span class="st warn">△ needs review</span></span></div>
+      <div class="kv"><span class="k">Execute / decrypt</span><span class="v"><span class="st na">∅ never, on attach or inspect</span></span></div>
+      <div class="note">The original model bytes and their provenance are distinct from the native library object's identity.</div></div>
+  </div>
+  <div class="grid3" style="margin-top:16px">
+    <div class="card"><div class="phd0"><span>Attach model</span><span class="r">② review before commit</span></div>
+      <div class="kv"><span class="k">Target</span><span class="v"><span class="lnk">Demo SOIC-8 body ↗</span> · Package</span></div>
+      <div class="kv"><span class="k">Role</span><span class="v"><span class="fld">3D body ▾</span></span></div>
+      <div class="kv"><span class="k">Format</span><span class="v"><span class="fld">STEP ▾</span></span></div>
+      <div class="kv"><span class="k">Content</span><span class="v m">demo_soic8.step <span class="tag syn">◇</span></span></div>
+      <div class="kv"><span class="k">Hash</span><span class="v m">sha256:EXAMPLE-NOT-A-REAL-DIGEST-0001 — computed from the actual bytes at attach</span></div>
+      <div class="kv"><span class="k">Transform</span><span class="v">offset <span class="fld f">0, 0, 0</span> mm · rot <span class="fld">0, 0, 0</span>° · scale <span class="fld">1</span></span></div>
+      <div class="steps"><span>① editing</span><span class="now">② review</span><span>③ attach · 1 transaction / cancel · no change</span></div>
+      <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Attach</span></div>
+      <div class="note">Cancel leaves no authored delta and no history entry.</div></div>
+    <div class="card"><div class="phd0"><span>Edit attachment metadata</span><span class="r">② review</span></div>
+      <table class="t in c" aria-label="Metadata changes">
+        <tr><th>Field</th><th>Before</th><th>After</th></tr>
+        <tr><td class="n">Dialect</td><td>? not declared</td><td><span class="fld f ch">generic SPICE3</span></td></tr>
+        <tr><td class="n">Review state</td><td>needs review</td><td>needs review <span class="st na">∅ unchanged</span></td></tr>
+        <tr><td class="n">Content / hash</td><td colspan="2">unchanged — metadata edits never replace content</td></tr>
+      </table>
+      <div class="steps"><span>① editing</span><span class="now">② review 1 change</span><span>③ commit / cancel</span></div>
+      <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Commit</span></div>
+      <div class="note">Result after commit: detail shows the new dialect; one journal entry; undo restores “not declared”. Review state is changed only through the guarded status action (L-F).</div></div>
+    <div class="card"><div class="phd0"><span>Detach model</span><span class="r">② review</span></div>
+      <div class="kv"><span class="k">Detaching</span><span class="v">Behavioural · SPICE subcircuit from DEMO-OPA2-D</span></div>
+      <div class="kv"><span class="k">Content file</span><span class="v">kept — detach removes the attachment record, not the bytes</span></div>
+      <div class="kv"><span class="k">Used by</span><span class="v">U4, U7 (placed) · <span class="st info">goes as a proposal</span></span></div>
+      <div class="steps"><span>① editing</span><span class="now">② review</span><span>③ create proposal / cancel</span></div>
+      <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Create proposal</span></div>
+      <div class="kv w"><span class="v"><span class="st na">∅ cancelled</span> Attachment still listed; nothing written.</span></div>
+      <div class="kv w"><span class="v"><span class="st ok">✓ detached</span> Row removed from Models; one journaled change; undo restores it.</span></div></div>
+  </div>
+  <div class="grid3" style="margin-top:16px">
+    <div class="card"><div class="phd0"><span>Preview — supported</span><span class="r">STEP, content present</span></div>
+      <div class="pv"><svg viewBox="0 0 300 160" role="img" aria-label="Synthetic body outline preview with transform axes"><g fill="none" stroke="var(--sym)" stroke-width="1.4"><path d="M90 60l80-20 60 30-80 22z"/><path d="M90 60v34l60 32v-34"/><path d="M150 126l80-22V70"/></g>
+        <g stroke-width="1.4"><path d="M40 130h34" stroke="var(--err)"/><path d="M40 130v-34" stroke="var(--ok)"/><path d="M40 130l-18 14" stroke="var(--info)"/></g>
+        <g fill="var(--tx3)" font-size="9" font-family="monospace"><text x="78" y="133">x</text><text x="37" y="90">y</text><text x="12" y="152">z</text><text x="150" y="150" text-anchor="middle">display only · nothing executed</text></g></svg></div>
+      <div class="note">A supported format with present content can be displayed with its declared transform. Display is not validation and not approval.</div></div>
+    <div class="card"><div class="phd0"><span>Preview — unsupported</span><span class="r">encrypted vendor content</span></div>
+      <div class="empty"><span class="st na">▣ preview unavailable</span><b>Content is preserved as imported and is not decrypted.</b>Role, format and hash remain inspectable.</div></div>
+    <div class="card"><div class="phd0"><span>Preview and attach — invalid</span></div>
+      <div class="kv w"><span class="v"><span class="st err">✕ refused</span> Content file not found. No preview, no attachment created.</span></div>
+      <div class="kv w"><span class="v"><span class="st err">✕ refused</span> Format does not match the declared role. No attachment created.</span></div>
+      <div class="kv w"><span class="v"><span class="st err">✕ refused</span> Hash differs from the declared value. No attachment created.</span></div>
+      <div class="kv w"><span class="v"><span class="st na">∅ unavailable</span> Attaching to a Footprint target — no backed command.</span></div>
+      <div class="note">A refusal never shows a successful attachment indication, and writes nothing partial.</div></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

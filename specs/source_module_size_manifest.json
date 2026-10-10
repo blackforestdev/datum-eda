@@ -128,7 +128,7 @@
     "crates/cli/src/commands/library/footprint.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1056
+        "pre_test_lines": 992
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -139,7 +139,7 @@
     "crates/cli/src/commands/library/library.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2657
+        "pre_test_lines": 2596
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -150,7 +150,7 @@
     "crates/cli/src/commands/library/proposals.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1172
+        "pre_test_lines": 1110
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

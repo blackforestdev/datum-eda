@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Datum — Schematic Surfaces Study — layout and accessibility (SURFACE-S04 candidate)</title>
+<!--
+  Datum EDA — Schematic surfaces candidate study for GUI-SURFACE-SPECS / SURFACE-S04.
+  CANDIDATE ONLY. Realizes the frame coverage requested by
+  docs/gui/DATUM_GUI_PRODUCT_SPEC.md "Schematic Surface Contract — SURFACE-S02 Draft"
+  and the claude_handoff in docs/reviews/workflow-delivery-rollout/surface-reconciliation.json.
+  It ratifies nothing: no product rule, token, threshold, mechanism or owner choice.
+  The historical studies board-editor.html / schematic-editor.html / workspace-panes.html
+  are unchanged and remain evidence at their recorded scope.
+  Every design, object, name, value and library item drawn here is an illustrative
+  synthetic first-party example — never an approved library asset or seed.
+  Pixel sizes and font stacks are mockup placeholders; VISUAL_LANGUAGE.md tokens govern.
+  One of three pages of this study (schematic-surfaces-study.html, schematic-authoring-states-study.html, schematic-layout-accessibility-study.html); section markup is unchanged from the reviewed single-page
+  candidate, split by responsibility for source health. Styles: surface-studies.css (shared, same directory).
+  No network, no script dependency.
+-->
+<link rel="stylesheet" href="surface-studies.css">
+</head>
+<body class="study-schematic">
+<div class="wrap">
+
+<header>
+  <h1>Datum <b>·</b> Schematic Surfaces Study <span style="font-weight:400;color:var(--tx3)">— layout and accessibility</span></h1>
+  <div style="margin:7px 0 10px">
+    <span class="statusmark" data-state="open">◐ OPEN CANDIDATE · SURFACE-S04 · not approved, not implemented, not product-ratified</span>
+  </div>
+  <p class="sub">Normal, narrow, tiled, Zoom, Stage, Terminal and keyboard-focus frames (frame S-I). This page is part of a three-page candidate study; the index, frame legend and frame → clause map are in
+  <code>schematic-surfaces-study.html</code>. Nothing here selects a presentation, a policy, a threshold or an implementation successor; the owner's SURFACE-S05 disposition is still ahead.</p>
+  <p class="sub">Every design, component, net, name and library item drawn here is an <b>illustrative synthetic first-party
+  example</b>. None is an approved library asset, a manufacturer part or a production seed. Pixel sizes and font stacks are
+  mockup placeholders; the Design Book tokens and Rendering Book govern values.</p>
+  <div class="legend" aria-label="Frame label legend">
+    <span><span class="tag cur">● CURRENT · bounded</span> reviewed delivery exists at its recorded scope only</span>
+    <span><span class="tag tgt">○ TARGET · not delivered</span> retained specification target, no GUI delivery claimed</span>
+    <span><span class="tag own">◐ OWNER CHOICE · S05</span> candidate presentation, left open for the owner</span>
+    <span><span class="tag syn">◇ SYNTHETIC</span> illustrative content</span>
+  </div>
+  <nav class="toc" aria-label="Frames across the three pages of this study">
+    <a href="schematic-surfaces-study.html#S-A">S-A Design, unselected</a>
+    <a href="schematic-surfaces-study.html#S-B">S-B Source / occurrence navigation</a>
+    <a href="schematic-surfaces-study.html#S-C">S-C Selected Symbol + library context</a>
+    <a href="schematic-surfaces-study.html#S-D">S-D Symbol picker / preview</a>
+    <a href="schematic-authoring-states-study.html#S-E">S-E Wire and Move</a>
+    <a href="schematic-authoring-states-study.html#S-F">S-F Readiness and authoring states</a>
+    <a href="schematic-surfaces-study.html#S-G">S-G Net, Bus, ERC</a>
+    <a href="schematic-authoring-states-study.html#S-H">S-H Tool families</a>
+    <a href="schematic-layout-accessibility-study.html#S-I">S-I Layout and accessibility matrix</a>
+    <a href="schematic-surfaces-study.html#S-MAP">Frame → clause map</a>
+  </nav>
+</header>
+
+<!-- shared synthetic drawings -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="sgrid" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M18 0H0V18" fill="none" stroke="#141821" stroke-width="1"/></pattern>
+    <symbol id="sch" viewBox="0 0 520 300">
+      <rect width="520" height="300" fill="url(#sgrid)"/>
+      <rect x="210" y="70" width="110" height="150" rx="3" fill="#161A24" stroke="var(--sym)" stroke-width="1.4"/>
+      <g stroke="var(--sym)" stroke-width="1.2" fill="none"><path d="M210 95h-14M210 125h-14M210 195h-14M320 95h14M320 125h14M320 155h14M320 185h14"/></g>
+      <g fill="var(--sym)"><circle cx="196" cy="95" r="1.7"/><circle cx="196" cy="125" r="1.7"/><circle cx="196" cy="195" r="1.7"/><circle cx="334" cy="95" r="1.7"/><circle cx="334" cy="125" r="1.7"/><circle cx="334" cy="155" r="1.7"/><circle cx="334" cy="185" r="1.7"/></g>
+      <text x="265" y="63" fill="var(--tx)" font-size="11" text-anchor="middle" font-family="monospace" font-weight="700">U1</text>
+      <text x="265" y="234" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">DEMO-MCU-A</text>
+      <g fill="var(--tx2)" font-size="8" font-family="monospace"><text x="216" y="98">VDD</text><text x="216" y="128">NRST</text><text x="216" y="198">VSS</text></g>
+      <g fill="var(--tx2)" font-size="8" font-family="monospace" text-anchor="end"><text x="314" y="98">TX</text><text x="314" y="128">RX</text><text x="314" y="158">SCK</text><text x="314" y="188">SDO</text></g>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M196 95H150V80"/><path d="M196 125H110V112"/><path d="M110 84V80H150"/><path d="M196 195H150v12"/></g>
+      <g stroke="var(--pwr)" stroke-width="1.5" fill="none"><path d="M150 80v-12M141 68h18"/><path d="M141 207h18M145 211h10M148 215h4"/></g>
+      <text x="150" y="62" fill="var(--pwr)" font-size="8" text-anchor="middle" font-family="monospace">+3V3</text>
+      <rect x="104" y="84" width="12" height="28" rx="1.5" fill="#161A24" stroke="var(--sym)" stroke-width="1.3"/>
+      <text x="98" y="97" fill="var(--tx2)" font-size="8" text-anchor="end" font-family="monospace">R1</text>
+      <text x="98" y="106" fill="var(--tx3)" font-size="7" text-anchor="end" font-family="monospace">10k</text>
+      <circle cx="150" cy="80" r="2.3" fill="var(--wire)"/>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M334 95h34M334 125h34"/></g>
+      <g font-family="monospace" font-size="8.5" text-anchor="middle">
+        <rect x="368" y="87" width="62" height="15" rx="3" fill="#151922" stroke="var(--bd-str)"/><text x="399" y="98" fill="var(--tx)">UART_TX</text>
+        <rect x="368" y="117" width="62" height="15" rx="3" fill="#151922" stroke="var(--bd-str)"/><text x="399" y="128" fill="var(--tx)">UART_RX</text>
+      </g>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M334 155h36l8 8"/><path d="M334 185h36l8 8"/></g>
+      <path d="M378 150v88h46" stroke="var(--bus)" stroke-width="3.2" fill="none" stroke-linejoin="round"/>
+      <text x="384" y="146" fill="var(--bus)" font-size="8" font-family="monospace">SPI[SCK,SDO]</text>
+      <rect x="424" y="212" width="76" height="56" rx="2" fill="#141821" stroke="var(--info)" stroke-width="1.4"/>
+      <text x="462" y="207" fill="var(--info)" font-size="8" text-anchor="middle" font-family="monospace">CH_A ▸ sensor_channel</text>
+      <g fill="var(--tx2)" font-size="7" font-family="monospace"><text x="429" y="241">SPI</text><text x="429" y="256">+3V3</text></g>
+      <g stroke="var(--tx2)" stroke-width="1.3"><path d="M60 160l8 8M68 160l-8 8"/></g>
+    </symbol>
+    <!-- placed capacitor C9 (used by completed / reopened frames) -->
+    <symbol id="c9" viewBox="0 0 520 300">
+      <g stroke="var(--sym)" stroke-width="1.6" fill="none"><path d="M50 238h22M50 246h22"/><path d="M61 238v-14M61 246v14"/></g>
+      <g fill="var(--sym)"><circle cx="61" cy="224" r="1.7"/><circle cx="61" cy="260" r="1.7"/></g>
+      <text x="78" y="240" fill="var(--tx2)" font-size="8" font-family="monospace">C9</text><text x="78" y="250" fill="var(--tx3)" font-size="7" font-family="monospace">100n</text>
+    </symbol>
+    <symbol id="brd" viewBox="0 0 300 200">
+      <rect x="14" y="14" width="272" height="172" rx="6" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".8" stroke-width="1.3"/>
+      <path d="M70 70h60l14 14h50" stroke="var(--cu-f)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M90 140h80v-40h50" stroke="var(--cu-b)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="180" y="60" width="52" height="52" rx="2" fill="#151922" stroke="var(--bd-str)"/><text x="206" y="90" fill="var(--silk)" font-size="9" text-anchor="middle" font-family="monospace">U1</text>
+      <rect x="52" y="60" width="22" height="12" fill="#151922" stroke="var(--bd-str)"/><text x="63" y="54" fill="var(--silk)" font-size="8" text-anchor="middle" font-family="monospace">R1</text>
+      <circle cx="170" cy="140" r="3.5" fill="#1a1206" stroke="var(--via)" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="symed" viewBox="0 0 300 200">
+      <rect width="300" height="200" fill="url(#sgrid)"/>
+      <g stroke="var(--sym)" stroke-width="2" fill="none"><path d="M120 92h60M120 108h60"/><path d="M150 92V52M150 108v40"/></g>
+      <g fill="var(--sym)"><circle cx="150" cy="52" r="2.2"/><circle cx="150" cy="148" r="2.2"/></g>
+      <text x="190" y="96" fill="var(--tx2)" font-size="10" font-family="monospace">C?</text>
+      <path d="M144 100h12M150 94v12" stroke="#7FB0C8" stroke-width="1"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ======================================================== S-I -->
+<section class="fr" id="S-I">
+  <div class="sec-label"><span class="n">S-I</span><span>Layout and accessibility matrix</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag own">◐ OWNER CHOICE · S05 — narrow presentation</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">One window, recursive panes, Zoom and Full-Screen Stage are inherited from PM019 / PM021 unchanged; no preset, detached window
+  or global editor mode is added. In every arrangement the focused pane carries the accent frame <b>and</b> the word FOCUS with a square glyph, the Console
+  sits lower-left of the focused pane only, the single Inspector follows focus, and document / source / occurrence stay reachable. How the Navigator
+  and Inspector are reached in a narrow window, and where refusal feedback sits, are <b>candidate presentations</b>. These are static frames:
+  keyboard, assistive-technology and reduced-motion qualification need the ordinary application.</p>
+
+  <div class="shell">
+    <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="m">Place</span><span class="m">Checks</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-sensor-node · rev 7c21e0</span></div>
+    <div class="ws" style="height:300px">
+      <div class="nav" style="flex-basis:180px"><div class="phd0"><span>Project</span></div><div class="row">demo-sensor-node</div><div class="row l2 sel">Schematic Design<span class="meta">A</span></div><div class="row l2">Board</div><div class="row l2">Library</div>
+        <div class="phd0" style="border-top:1px solid var(--bd-sub);margin-top:auto"><span>Design context</span></div><div class="row"><span class="g">◇</span>/ <span class="meta">root</span></div></div>
+      <div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">source <b>root</b></span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="tl btn" title="Zoom pane (Shift+F11); Shift+click = Stage (F11)">⤢</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/></svg><div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">tool select</span><span class="hb">▤ history</span></div></div></div></div></div>
+      <div class="insp" style="flex-basis:200px"><div class="phd0"><span>Inspector</span><span class="r">follows <b>A</b></span></div><div class="it"><span class="ref" style="font-size:13px;color:var(--tx2)">Nothing selected</span></div><div class="kv"><span class="k">Source</span><span class="v m">root</span></div><div class="kv"><span class="k">Occurrence</span><span class="v m">/</span></div><div class="kv"><span class="k">ERC</span><span class="v"><span class="st na">∅ not run</span></span></div></div>
+    </div><div class="dock"><span class="dt on">bash</span><span class="dt">+</span></div></div>
+  <p class="cell-cap"><b>I1 — normal, single pane.</b> Navigator, one focused Design pane with tools and the pane maximize control, Inspector, collapsed Terminal dock.</p>
+
+  <div class="grid4" style="margin-top:18px">
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn" title="Show Navigator">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="m">Menu ▾</span><span class="sp"></span><span class="tl btn" title="Show Inspector">Inspector ▸</span></div>
+      <div class="ws" style="height:300px"><div class="panes"><div class="pane focus">
+        <div class="phd"><span class="pt">Schematic Design</span><span class="fdot"><i></i>FOCUS</span><span class="ctx">source <b>sensor_channel</b></span><span class="ctx">occurrence <b>/CH_A</b></span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span><span class="tl btn">More ▾</span></span></div>
+        <div class="pbody"><svg class="cv" viewBox="150 40 260 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch" width="520" height="300"/></svg>
+          <div class="fstack" style="max-width:92%"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Move refused — R1 has connected wires. Nothing changed.</span><span class="hb">▤ history</span></div></div></div></div></div></div>
+      <div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>I2a — narrow, panels closed (candidate).</b> Navigator and Inspector are named buttons in the top row; the pane header wraps so source and occurrence are never clipped; the refusal truncates with an ellipsis and keeps its history control.</p></div>
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn kf">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
+      <div class="ws" style="height:300px"><div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span></div><div class="pbody"><svg class="cv" viewBox="150 40 260 220" aria-hidden="true" style="opacity:.45"><use href="#sch" width="520" height="300"/></svg></div></div></div>
+        <div class="drawer l" role="navigation" aria-label="Navigator"><div class="phd0"><span>Project</span><span class="r">Esc closes</span></div>
+          <div class="row">demo-sensor-node</div><div class="row l2 sel">Schematic Design</div><div class="row l2">Board</div><div class="row l2">Library</div>
+          <div class="phd0" style="border-top:1px solid var(--bd-sub)"><span>Design context</span></div>
+          <div class="row"><span class="g">◇</span>/ <span class="meta">root</span></div><div class="row l2 sel kf"><span class="g">◇</span>/CH_A<span class="meta">sensor_channel</span></div><div class="row l2"><span class="g">◇</span>/CH_B<span class="meta">sensor_channel</span></div></div></div>
+      <div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>I2b — Navigator opened (candidate).</b> The same project tree and Design context as the wide layout, over the pane; the focused row shows its keyboard ring.</p></div>
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn kf">Inspector ▸</span></div>
+      <div class="ws" style="height:300px"><div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span></div><div class="pbody"><svg class="cv" viewBox="150 40 260 220" aria-hidden="true" style="opacity:.45"><use href="#sch" width="520" height="300"/></svg></div></div></div>
+        <div class="drawer r" role="complementary" aria-label="Inspector"><div class="phd0"><span>Inspector</span><span class="r">follows focused pane</span></div>
+          <div class="it"><span class="ref">R1</span><span class="kind">Symbol · /CH_A</span></div>
+          <div class="kv"><span class="k">Value</span><span class="v m">10k</span></div>
+          <div class="kv"><span class="k">Symbol</span><span class="v"><span class="lnk">Demo Resistor ↗</span></span></div>
+          <div class="kv"><span class="k">Part binding</span><span class="v"><span class="st warn">△ unresolved</span></span></div>
+          <div class="kv"><span class="k">Approval</span><span class="v"><span class="st na">∅ unavailable</span></span></div>
+          <div class="kv"><span class="k">Move</span><span class="v"><span class="st na">∅ connected — refused</span></span></div></div></div>
+      <div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>I2c — Inspector opened (candidate).</b> The full contextual Inspector for the selected object, including the reason Move is unavailable.</p></div>
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
+      <div class="ws" style="height:300px"><div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><svg class="cv" viewBox="150 40 260 220" aria-hidden="true"><use href="#sch" width="520" height="300"/></svg>
+          <div class="hist" role="log" aria-label="Console history"><div class="hhd">session history<span class="flt"><span class="chip">all</span><span class="chip">ops</span><span class="chip on">errors</span></span></div>
+            <div class="hrow e"><span class="g">✕</span><span class="tx">Move refused — R1 has connected wires. Connected Move is not available. Source and journal are unchanged.</span><span class="pv">gui</span></div>
+            <div class="hrow e"><span class="g">✕</span><span class="tx">Place refused — Part binding unresolved for Demo Resistor. Nothing written.</span><span class="pv">gui</span></div></div>
+          <div class="fstack" style="max-width:92%"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Move refused — R1 has connected wires. Nothing changed.</span><span class="hb kf">▤ history</span></div></div></div></div></div></div>
+      <div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>I2d — complete refusal in history.</b> The truncated strip's history control (also View / Console History) opens bounded session history with the full refusal text, wrapped. The panel does not take keyboard focus.</p></div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div><div class="shell"><div class="ws" style="height:320px">
+      <div class="panes"><div class="pane focus" style="flex:1.3"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/><use href="#c9"/></svg><div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">placed <b>C9</b></span></div></div></div></div>
+      <div class="vsp"><div class="pane"><div class="phd"><span class="pt">Symbol · Demo Capacitor</span><span class="tools"><span class="tl">Sel</span><span class="tl">Pin</span></span><span class="nofocus">not focused</span></div><div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#symed"/></svg></div></div>
+        <div class="pane"><div class="phd"><span class="pt">Board · Layout</span><span class="tools"><span class="tl">Sel</span></span><span class="nofocus">not focused</span></div><div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#brd"/></svg></div></div></div></div>
+      <div class="insp" style="flex-basis:190px"><div class="phd0"><span>Inspector</span><span class="r">follows <b>Schematic</b></span></div><div class="it"><span class="ref">C9</span><span class="kind">Symbol · /</span></div><div class="kv"><span class="k">Symbol</span><span class="v"><span class="lnk">Demo Capacitor ↗</span></span></div><div class="note">The Symbol pane shows the related definition; it is not selected by selecting C9.</div></div></div></div>
+      <p class="cell-cap"><b>I3 — tiled (V · H).</b> Accent frame + FOCUS mark the one pane that owns tools and Inspector; the others say “not focused” and carry no Console strip. After the commit, every projection refreshes from the same resolved model.</p></div>
+    <div><div class="shell">
+      <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m open">View</span><span class="sp"></span><span class="pill">demo-sensor-node</span></div>
+      <div class="ws" style="height:289px">
+        <div class="nav" style="flex-basis:120px"><div class="phd0"><span>Project</span></div><div class="row l2 sel">Schematic Design</div><div class="row l2">Board</div></div>
+        <div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="st info">⤢ Zoom · 3 panes kept</span><span class="tl btn kf" title="Restore layout (Shift+F11)">Restore</span><span class="fdot"><i></i>FOCUS</span></div>
+          <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/><use href="#c9"/></svg><div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">zoom pane</span></div></div>
+            <div style="position:absolute;left:0;top:0;width:210px;background:var(--s03);border:1px solid var(--bd-str);border-radius:0 0 6px 6px;font-size:12px;padding:3px"><div class="row" style="color:var(--tx)">✓ Zoom Pane<span class="meta">Shift+F11</span></div><div class="row" style="color:var(--tx)">Full-Screen Stage<span class="meta">F11</span></div></div></div></div></div>
+        <div class="insp" style="flex-basis:130px"><div class="phd0"><span>Inspector</span></div><div class="it"><span class="ref" style="font-size:14px">C9</span></div></div></div></div>
+      <p class="cell-cap"><b>I4 — Zoom.</b> The focused pane fills the workspace while menu, Navigator, Inspector and dock remain. The header states that three panes are kept and offers Restore; the tile tree, ratios and focus return exactly.</p></div>
+    <div><div class="shell"><div class="pane focus"><div class="pbody" style="min-height:300px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/>
+        <path d="M196 195H80V168" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/><circle cx="80" cy="168" r="5" fill="none" stroke="var(--acc)" stroke-width="1.2"/></svg>
+        <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>wire</b> · <span class="kbd">LMB</span> vertex · <span class="kbd">Esc</span> cancel</span></div></div></div></div></div>
+      <p class="cell-cap"><b>I5 — Full-Screen Stage.</b> All chrome hidden, including pane headers; nothing persistent overlays the canvas except the viewport's own immediate overlays — here the Console tool prompt, which keeps the active tool legible. Exit is F11 or Escape, in the order gesture → Stage → selection. Same scene, camera and selection.</p></div>
+    <div><div class="shell"><div class="ws" style="height:150px"><div class="panes"><div class="pane"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="nofocus">not focused · keys go to Terminal</span></div>
+        <div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#sch"/></svg></div></div></div></div>
+      <div class="tm foc"><div class="tabs"><span class="tab on">shell 1</span><span class="tab">agent</span><span class="tab">+</span></div>
+        <div class="sl"><span>~/demo-sensor-node</span><span>/bin/bash</span><span class="s" style="color:var(--ok)">■ RUNNING · keyboard</span></div>
+        <div class="scr"><span class="p">$</span> datum-eda project validate .
+<span class="d">ok — 0 errors</span>
+<span class="p">$</span> <span class="cur-b"></span></div></div></div>
+      <p class="cell-cap"><b>I6 — Terminal open and focused.</b> A real shell with tabs; its status reads “keyboard” and the cursor is a solid block. The editor pane stays visible, says it is not focused, and shows no Console strip. With the editor focused instead, the terminal status reads “idle” and the cursor is hollow: <span class="cur-h"></span>. The Console never writes to the terminal and is never an input field.</p></div>
+    <div><div class="shell"><div class="ws" style="height:240px"><div class="panes"><div class="pane focus kbd"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl kf">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/></svg></div></div>
+        <div class="pane"><div class="phd"><span class="pt">Board · Layout</span><span class="nofocus">not focused</span></div><div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 300 200" aria-hidden="true"><use href="#brd"/></svg></div></div></div>
+      <div class="insp" style="flex-basis:190px"><div class="phd0"><span>Inspector</span></div><div class="kv"><span class="k">Reference</span><span class="v m">U1</span></div><div class="kv kf"><span class="k">Symbol</span><span class="v"><span class="lnk">Demo MCU A — body ↗</span></span></div><div class="kv"><span class="k">Part binding</span><span class="v"><span class="st ok">✓ resolved</span></span></div></div></div></div>
+      <p class="cell-cap"><b>I7 — keyboard focus.</b> Three drawn rings, each a dashed shape: the focused pane, the tool that Tab has reached, and an Inspector link row. Focus Next / Previous Pane moves the pane ring; picker rows, tools, Inspector rows and finding rows are each a named, reachable control.</p></div>
+    <div><table class="t" aria-label="Non-colour cues">
+      <tr><th>State</th><th>Glyph + word</th><th>Shape cue</th></tr>
+      <tr><td>Focused pane</td><td><span class="fdot" style="display:inline-flex;margin:0"><i></i>FOCUS</span></td><td>frame + square glyph + word</td></tr>
+      <tr><td>Keyboard focus</td><td><span class="tl kf" style="display:inline-flex">Sym</span></td><td>dashed ring</td></tr>
+      <tr><td>Ready / resolved / current</td><td><span class="st ok">✓ word</span></td><td>solid border</td></tr>
+      <tr><td>Pending</td><td><span class="st info">⧗ word</span></td><td>dotted geometry on canvas</td></tr>
+      <tr><td>Warning / stale</td><td><span class="st warn">△ word</span></td><td>triangle</td></tr>
+      <tr><td>Refused / error / mismatch</td><td><span class="st err">✕ / ≠ word</span></td><td>left rule on Console strip</td></tr>
+      <tr><td>Unavailable / unknown / not run</td><td><span class="st na">∅ / ? word</span></td><td>dashed border</td></tr>
+      </table>
+      <p class="cell-cap"><b>I8 — non-colour cues and motion.</b> Nothing pulses or animates; <code>prefers-reduced-motion</code> removes transitions.</p></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

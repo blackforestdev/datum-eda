@@ -223,6 +223,7 @@ mod main_tests_project_junction;
 mod main_tests_project_label;
 mod main_tests_project_new;
 mod main_tests_project_noconnect;
+mod main_tests_project_pool_definition_validation;
 mod main_tests_project_pool_footprint;
 mod main_tests_project_pool_footprint_proposals;
 mod main_tests_project_pool_footprint_silkscreen;

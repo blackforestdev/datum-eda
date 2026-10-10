@@ -1,9 +1,12 @@
+mod pad;
+use self::pad::set_native_project_pool_footprint_pad;
 use crate::*;
 use std::path::Path;
 
 use crate::IpcDensityLevelArg;
 use anyhow::{Context, Result, bail};
 use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::api::native_write::library_definition::validate_pool_definition_reference;
 use eda_engine::api::native_write::library_footprint::{
     generated_ipc_footprint_specs, pool_footprint_payload,
 };
@@ -16,7 +19,8 @@ use uuid::Uuid;
 
 use super::library::{
     NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
-    pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
+    definition_validation_error, pool_library_mutation_view, pool_library_relative_path,
+    validate_project_local_pool_path,
 };
 use super::payload::read_project_pool_object_payload;
 
@@ -258,67 +262,6 @@ pub(crate) fn ipc_density_level(value: IpcDensityLevelArg) -> IpcDensityLevel {
     }
 }
 
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn set_native_project_pool_footprint_pad(
-    root: &Path,
-    pool_path: &str,
-    footprint_id: Uuid,
-    pad_id: Uuid,
-    padstack_id: Uuid,
-    pad_name: String,
-    x_nm: i64,
-    y_nm: i64,
-    layer: i32,
-) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    validate_project_local_pool_path(pool_path)?;
-    if pad_name.trim().is_empty() {
-        bail!("footprint pad name must be non-empty");
-    }
-    if layer <= 0 {
-        bail!("footprint pad layer must be positive");
-    }
-    ensure_pool_object_exists(root, padstack_id, "padstacks", "padstack")?;
-    let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, footprint_id)?;
-    let mut object = previous_object.clone();
-    let object_map = object
-        .as_object_mut()
-        .ok_or_else(|| anyhow::anyhow!("footprint {footprint_id} payload is not an object"))?;
-    let pads = object_map
-        .entry("pads".to_string())
-        .or_insert_with(|| serde_json::json!({}));
-    let pads = pads
-        .as_object_mut()
-        .ok_or_else(|| anyhow::anyhow!("footprint {footprint_id} pads field is not an object"))?;
-    pads.insert(
-        pad_id.to_string(),
-        serde_json::json!({
-            "uuid": pad_id,
-            "name": pad_name,
-            "position": {"x": x_nm, "y": y_nm},
-            "padstack": padstack_id,
-            "layer": layer
-        }),
-    );
-    commit_pool_library_operations(
-        root,
-        format!("set native pool footprint {footprint_id} pad {pad_id}"),
-        None,
-        vec![PoolLibraryOperationSpec::Set {
-            target: PoolLibraryObjectTarget::new(pool_path, "footprints", footprint_id),
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
-        "set_footprint_pad",
-        pool_path,
-        "footprints",
-        footprint_id,
-        &relative_path,
-    )
-}
-
 pub(crate) fn set_native_project_pool_footprint_courtyard_rect(
     root: &Path,
     pool_path: &str,
@@ -498,15 +441,8 @@ fn ensure_pool_object_exists(root: &Path, object_id: Uuid, kind: &str, label: &s
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    if model
-        .objects
-        .get(&object_id)
-        .filter(|object| object.domain == "pool" && object.kind == kind)
-        .is_none()
-    {
-        bail!("missing pool {label} {object_id}");
-    }
-    Ok(())
+    validate_pool_definition_reference(&model, object_id, kind, label)
+        .map_err(definition_validation_error)
 }
 
 fn set_native_project_pool_footprint_courtyard(

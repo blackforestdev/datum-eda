@@ -1,3 +1,5 @@
+mod padstack;
+use self::padstack::create_native_project_pool_padstack;
 use crate::*;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
@@ -6,8 +8,7 @@ use anyhow::{Context, Result, bail};
 use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
     derive_pool_model_attachment_uuid, derive_pool_model_uuid, pool_entity_payload,
-    pool_padstack_payload, pool_part_payload, pool_symbol_payload, pool_unit_payload,
-    write_pool_model_blob,
+    pool_part_payload, pool_symbol_payload, pool_unit_payload, write_pool_model_blob,
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::ProjectResolver;
@@ -223,69 +224,6 @@ pub(crate) fn create_native_project_pool_entity(
     )
 }
 
-// CLI command handler threads individually parsed flag values.
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn create_native_project_pool_padstack(
-    root: &Path,
-    pool_path: &str,
-    padstack_id: Uuid,
-    name: String,
-    aperture: Option<String>,
-    diameter_nm: Option<i64>,
-    width_nm: Option<i64>,
-    height_nm: Option<i64>,
-    drill_nm: Option<i64>,
-) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    validate_project_local_pool_path(pool_path)?;
-    if drill_nm.is_some_and(|value| value <= 0) {
-        bail!("padstack drill-nm must be positive");
-    }
-    let aperture_value = match aperture.as_deref() {
-        None => {
-            if diameter_nm.is_some() || width_nm.is_some() || height_nm.is_some() {
-                bail!("padstack aperture dimensions require --aperture circle or rect");
-            }
-            serde_json::Value::Null
-        }
-        Some("circle") => {
-            if width_nm.is_some() || height_nm.is_some() {
-                bail!("circle padstack aperture does not accept width-nm or height-nm");
-            }
-            let diameter = positive_required_dimension(diameter_nm, "diameter-nm")?;
-            serde_json::json!({"circle": {"diameter_nm": diameter}})
-        }
-        Some("rect") => {
-            if diameter_nm.is_some() {
-                bail!("rect padstack aperture does not accept diameter-nm");
-            }
-            let width = positive_required_dimension(width_nm, "width-nm")?;
-            let height = positive_required_dimension(height_nm, "height-nm")?;
-            serde_json::json!({"rect": {"width_nm": width, "height_nm": height}})
-        }
-        Some(kind) => bail!("unsupported padstack aperture {kind}; expected circle or rect"),
-    };
-    let relative_path = pool_library_relative_path(pool_path, "padstacks", padstack_id);
-    let object = pool_padstack_payload(padstack_id, &name, aperture_value, drill_nm);
-    commit_pool_library_operations(
-        root,
-        format!("create native pool padstack {padstack_id}"),
-        Some(pool_path),
-        vec![PoolLibraryOperationSpec::Create {
-            target: PoolLibraryObjectTarget::new(pool_path, "padstacks", padstack_id),
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
-        "create_padstack",
-        pool_path,
-        "padstacks",
-        padstack_id,
-        &relative_path,
-    )
-}
-
-// CLI command handler threads individually parsed flag values.
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn create_native_project_pool_part(
     root: &Path,
@@ -1509,11 +1447,12 @@ pub(super) fn validate_pool_library_object_kind(kind: &str) -> Result<()> {
     }
 }
 
-fn positive_required_dimension(value: Option<i64>, name: &str) -> Result<i64> {
-    match value {
-        Some(value) if value > 0 => Ok(value),
-        Some(_) => bail!("padstack {name} must be positive"),
-        None => bail!("padstack {name} is required"),
+// Preserve the CLI's historical validation diagnostics without EngineError's
+// display prefix; resolution and commit errors keep their existing context.
+pub(super) fn definition_validation_error(error: eda_engine::error::EngineError) -> anyhow::Error {
+    match error {
+        eda_engine::error::EngineError::Validation(message) => anyhow::anyhow!(message),
+        other => other.into(),
     }
 }
 

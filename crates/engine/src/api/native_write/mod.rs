@@ -35,6 +35,7 @@ pub mod history;
 pub mod ids;
 pub mod imports;
 pub mod library;
+pub mod library_definition;
 pub mod library_footprint;
 pub mod library_pin_pad_map;
 pub mod manufacturing;

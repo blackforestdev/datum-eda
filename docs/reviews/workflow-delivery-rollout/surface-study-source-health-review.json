@@ -1,0 +1,459 @@
+{
+  "scope": "Independent bounded structural and static-presentation review of genuine Claude source-health split; no source or governance mutation.",
+  "base_commit": "79b6f7db5d9bfc49508476dca086478d5df50a9a",
+  "outcome": "PASS for the bounded seven-source structural/presentation-preservation scope; no mandatory findings.",
+  "source_pins": {
+    "docs/gui/prototypes/schematic-surfaces-study.html": "48b0237171d1195c9285170f472138d52b48265a2a465b7c11b90894bb85ae23",
+    "docs/gui/prototypes/schematic-authoring-states-study.html": "cdf39d286763bcc1c43381271cca309f0224d513c67765f53164eeedc5975385",
+    "docs/gui/prototypes/schematic-layout-accessibility-study.html": "1b1bd8811533637caacea1b0cefd7e107078f7cff77170e558f8aa4e937d55ef",
+    "docs/gui/prototypes/library-surfaces-study.html": "75a80482ca8e012b3369dfc800d17f54a48b9bb27ed4cf6ddad2cdcf8ca822db",
+    "docs/gui/prototypes/library-kind-editors-study.html": "04130b8689c3b71d299508cf726ef450aa43e8c563c8ccd4d9be3b28673415bd",
+    "docs/gui/prototypes/library-layout-accessibility-study.html": "068b181557c93a4430bccfc6a58c8702bad2173fe4306d37dbee09215248cbe6",
+    "docs/gui/prototypes/surface-studies.css": "638d09defeac1d22308beed1d721298e7b2f4a8bb427739d9800627a3dd92245"
+  },
+  "section_preservation": {
+    "schematic": 10,
+    "library": 15,
+    "byte_differences": 0
+  },
+  "style_preservation": {
+    "schematic": {
+      "original_declaration_count": 711,
+      "projected_new_declaration_count": 711,
+      "full_projected_order_equal": true
+    },
+    "library": {
+      "original_declaration_count": 791,
+      "projected_new_declaration_count": 791,
+      "full_projected_order_equal": true
+    }
+  },
+  "header_navigation": {
+    "main_header_before_navigation": "byte-identical",
+    "child_headers": "descriptive responsibility suffix/intro added; open-candidate, synthetic-content, legends and pending S05 authority retained",
+    "navigation_labels_and_order": "preserved",
+    "all_file_fragment_targets": "resolved",
+    "retained_svg_definitions": "byte-identical per retained ID; unused definitions partitioned",
+    "missing_svg_references": 0
+  },
+  "anchor_crosswalk": [
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-A",
+      "current": "docs/gui/prototypes/schematic-surfaces-study.html#S-A"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-B",
+      "current": "docs/gui/prototypes/schematic-surfaces-study.html#S-B"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-C",
+      "current": "docs/gui/prototypes/schematic-surfaces-study.html#S-C"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-D",
+      "current": "docs/gui/prototypes/schematic-surfaces-study.html#S-D"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-E",
+      "current": "docs/gui/prototypes/schematic-authoring-states-study.html#S-E"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-F",
+      "current": "docs/gui/prototypes/schematic-authoring-states-study.html#S-F"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-G",
+      "current": "docs/gui/prototypes/schematic-surfaces-study.html#S-G"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-H",
+      "current": "docs/gui/prototypes/schematic-authoring-states-study.html#S-H"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-I",
+      "current": "docs/gui/prototypes/schematic-layout-accessibility-study.html#S-I"
+    },
+    {
+      "old": "docs/gui/prototypes/schematic-surfaces-study.html#S-MAP",
+      "current": "docs/gui/prototypes/schematic-surfaces-study.html#S-MAP"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-A",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-A"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B1",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B1"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B2",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B2"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B3",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B3"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B4",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B4"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B5",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B5"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B6",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B6"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B7",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B7"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-B8",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-B8"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-C",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-C"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-D",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-D"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-E",
+      "current": "docs/gui/prototypes/library-kind-editors-study.html#L-E"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-F",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-F"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-G",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-G"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-H",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-H"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-I",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-I"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-J",
+      "current": "docs/gui/prototypes/library-layout-accessibility-study.html#L-J"
+    },
+    {
+      "old": "docs/gui/prototypes/library-surfaces-study.html#L-MAP",
+      "current": "docs/gui/prototypes/library-surfaces-study.html#L-MAP"
+    }
+  ],
+  "route_reuse": {
+    "unchanged": [
+      "docs/gui/prototypes/board-editor.html",
+      "docs/gui/prototypes/schematic-editor.html",
+      "docs/gui/prototypes/workspace-panes.html",
+      "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+      "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+      "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+      "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+      "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+      "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+      "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+      "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+      "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
+      "docs/reviews/workflow-delivery-rollout/surface-reconciliation.json",
+      "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json",
+      "docs/reviews/workflow-delivery-rollout/surface-visual-review.json",
+      "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json",
+      "docs/reviews/workflow-delivery-rollout/surface-s04-manager-acceptance.json",
+      "docs/reviews/workflow-delivery-rollout/surface-specification-combined-review.json",
+      "docs/reviews/workflow-delivery-rollout/surface-review-manager-acceptance.json"
+    ],
+    "changed": [
+      "docs/gui/prototypes/schematic-surfaces-study.html",
+      "docs/gui/prototypes/library-surfaces-study.html"
+    ]
+  },
+  "pixel_review": {
+    "capture_producer": "root fallback; initial reviewer attempt excluded",
+    "capture_commands": "ordinary Firefox --headless --no-remote, precreated private repo profile; file URI; 1680x13000 and 760x24000",
+    "capture_results": ".datum/surface-study-split-review/capture-results.json",
+    "captures": [
+      {
+        "path": ".datum/surface-study-split-review/library-kind-editors-study-normal.png",
+        "sha256": "65c08de24ad073d95ffb8eedab921807b4a89befdbb113d59a14cb4b80d365c0",
+        "dimensions": [
+          1680,
+          13000
+        ],
+        "content_bbox": [
+          68,
+          38,
+          1612,
+          5177
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/library-kind-editors-study-normal-tile-1.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-normal-tile-2.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-normal-tile-3.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-normal-tile-4.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/library-layout-accessibility-study-normal.png",
+        "sha256": "0f8fb4ad6f3e75357a79c8d6f8d32588775ded8046e0489872d4059b1cb134a2",
+        "dimensions": [
+          1680,
+          13000
+        ],
+        "content_bbox": [
+          68,
+          38,
+          1612,
+          2691
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/library-layout-accessibility-study-normal-tile-1.png",
+          ".datum/surface-study-split-review/library-layout-accessibility-study-normal-tile-2.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/library-surfaces-study-normal.png",
+        "sha256": "ba3856d9fbc5d7561f332963136edfec7010679533e6fb4effe93622894ba8ac",
+        "dimensions": [
+          1680,
+          13000
+        ],
+        "content_bbox": [
+          68,
+          38,
+          1612,
+          5184
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/library-surfaces-study-normal-tile-1.png",
+          ".datum/surface-study-split-review/library-surfaces-study-normal-tile-2.png",
+          ".datum/surface-study-split-review/library-surfaces-study-normal-tile-3.png",
+          ".datum/surface-study-split-review/library-surfaces-study-normal-tile-4.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/schematic-authoring-states-study-normal.png",
+        "sha256": "2f07dfca9cee0d5a1f71d749c30dfa499c128599ba2f4ffaba9285eb4aa664e1",
+        "dimensions": [
+          1680,
+          13000
+        ],
+        "content_bbox": [
+          68,
+          38,
+          1612,
+          2559
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/schematic-authoring-states-study-normal-tile-1.png",
+          ".datum/surface-study-split-review/schematic-authoring-states-study-normal-tile-2.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/schematic-layout-accessibility-study-normal.png",
+        "sha256": "a50b4e51be7157dd67186515e8e6c146b6c73ea62b37142a43462dd0fe12a06a",
+        "dimensions": [
+          1680,
+          13000
+        ],
+        "content_bbox": [
+          68,
+          38,
+          1612,
+          2291
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/schematic-layout-accessibility-study-normal-tile-1.png",
+          ".datum/surface-study-split-review/schematic-layout-accessibility-study-normal-tile-2.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/schematic-surfaces-study-normal.png",
+        "sha256": "bf534490b52b1ac93fb1680dc5e1ae8a76821f858495304a6eab9187906423f0",
+        "dimensions": [
+          1680,
+          13000
+        ],
+        "content_bbox": [
+          68,
+          38,
+          1612,
+          4177
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/schematic-surfaces-study-normal-tile-1.png",
+          ".datum/surface-study-split-review/schematic-surfaces-study-normal-tile-2.png",
+          ".datum/surface-study-split-review/schematic-surfaces-study-normal-tile-3.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/library-kind-editors-study-narrow.png",
+        "sha256": "4323da6b8f24813174d117f2191d23ab547ff2e4941dab56e0fef8d551bd7752",
+        "dimensions": [
+          760,
+          24000
+        ],
+        "content_bbox": [
+          28,
+          38,
+          732,
+          9431
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/library-kind-editors-study-narrow-tile-1.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-narrow-tile-2.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-narrow-tile-3.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-narrow-tile-4.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-narrow-tile-5.png",
+          ".datum/surface-study-split-review/library-kind-editors-study-narrow-tile-6.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/library-layout-accessibility-study-narrow.png",
+        "sha256": "c6c966e6a8075a3c8f7531519351362b998bfba6981465792df5d833772a83c4",
+        "dimensions": [
+          760,
+          24000
+        ],
+        "content_bbox": [
+          28,
+          38,
+          732,
+          5136
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/library-layout-accessibility-study-narrow-tile-1.png",
+          ".datum/surface-study-split-review/library-layout-accessibility-study-narrow-tile-2.png",
+          ".datum/surface-study-split-review/library-layout-accessibility-study-narrow-tile-3.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/library-surfaces-study-narrow.png",
+        "sha256": "723019f62d20f8f4b4ccc0d969c5b0a16fcf942e6a297a7f8697a20b43c28771",
+        "dimensions": [
+          760,
+          24000
+        ],
+        "content_bbox": [
+          27,
+          38,
+          732,
+          9337
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/library-surfaces-study-narrow-tile-1.png",
+          ".datum/surface-study-split-review/library-surfaces-study-narrow-tile-2.png",
+          ".datum/surface-study-split-review/library-surfaces-study-narrow-tile-3.png",
+          ".datum/surface-study-split-review/library-surfaces-study-narrow-tile-4.png",
+          ".datum/surface-study-split-review/library-surfaces-study-narrow-tile-5.png",
+          ".datum/surface-study-split-review/library-surfaces-study-narrow-tile-6.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/schematic-authoring-states-study-narrow.png",
+        "sha256": "0713a521dd9dda05b8edbf6e4ad836dfdcb00cee364e28601b2523a17ba8a865",
+        "dimensions": [
+          760,
+          24000
+        ],
+        "content_bbox": [
+          28,
+          38,
+          732,
+          5464
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/schematic-authoring-states-study-narrow-tile-1.png",
+          ".datum/surface-study-split-review/schematic-authoring-states-study-narrow-tile-2.png",
+          ".datum/surface-study-split-review/schematic-authoring-states-study-narrow-tile-3.png",
+          ".datum/surface-study-split-review/schematic-authoring-states-study-narrow-tile-4.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/schematic-layout-accessibility-study-narrow.png",
+        "sha256": "4874166997ecda323a1ed0bfc68e11cb3dd77758af44ca4a36d3e2517be38a73",
+        "dimensions": [
+          760,
+          24000
+        ],
+        "content_bbox": [
+          28,
+          38,
+          732,
+          4418
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/schematic-layout-accessibility-study-narrow-tile-1.png",
+          ".datum/surface-study-split-review/schematic-layout-accessibility-study-narrow-tile-2.png",
+          ".datum/surface-study-split-review/schematic-layout-accessibility-study-narrow-tile-3.png"
+        ]
+      },
+      {
+        "path": ".datum/surface-study-split-review/schematic-surfaces-study-narrow.png",
+        "sha256": "a73acb625233e8249dde181a905929d2b7fac096ea9a91fac84b30dfe3837acb",
+        "dimensions": [
+          760,
+          24000
+        ],
+        "content_bbox": [
+          28,
+          38,
+          732,
+          7304
+        ],
+        "tiles": [
+          ".datum/surface-study-split-review/schematic-surfaces-study-narrow-tile-1.png",
+          ".datum/surface-study-split-review/schematic-surfaces-study-narrow-tile-2.png",
+          ".datum/surface-study-split-review/schematic-surfaces-study-narrow-tile-3.png",
+          ".datum/surface-study-split-review/schematic-surfaces-study-narrow-tile-4.png",
+          ".datum/surface-study-split-review/schematic-surfaces-study-narrow-tile-5.png"
+        ]
+      }
+    ],
+    "all_current_content_tiles_inspected": 44,
+    "historical_comparison_tiles_inspected": [
+      "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-responsive-narrow-5.png",
+      "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-responsive-narrow-6.png",
+      "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-normal-4.png",
+      "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow-3.png",
+      "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow-9.png"
+    ],
+    "truncation": "none: occupied content ends at normal y2291\u20135184 and narrow y4418\u20139431, within actual capture heights",
+    "observations": "All six pages render at both widths; full frame/clause maps, eight library-kind cards, process/model geometry, named search, current-versus-target distinctions, shared Inspector/focus/Terminal, explicit narrow drawer/refusal-history candidates, wrapped tables and related-subject authored baseline preserved."
+  },
+  "failed_attempt": {
+    "log": ".datum/surface-study-split-review/firefox-first.log",
+    "result": "No image after67s; SWGL default framebuffer mapping error/no dt, profile directory absent; stopped only owned process340916. Root precreated-profile fallback succeeded. Failed attempt excluded from outcome."
+  },
+  "retained_boundaries": [
+    "Fourteen canonical clause fields and prior Product/frame scope retained through byte-identical original section bodies; no field or target reduced and no new combined specification verdict issued.",
+    "Normal multi-pane mockups compressed at narrow width retain prior compression/clipping; explicit S-I2/L-J2 narrow candidates carry the reviewed narrow reachability presentation.",
+    "CSS/token/font/key/geometry examples remain placeholders and illustrative synthetic first-party content, not new defaults, manufacturer facts, source/standards/production-library qualification or seed approval.",
+    "No owner S05 visual/product disposition, new policy, implementation successor grant, native runtime/physical-input/HUMAN/AT/keyboard-interaction or exact pixel-parity/golden PASS.",
+    "Historical reviews/capture pins remain byte-exact at their original scopes. Current report assesses source-health split and actual new static captures only."
+  ],
+  "mandatory_findings": [],
+  "mutation": "Only ignored .datum proof copies/comparisons/tiles/report created. No protected HTML/CSS/markers, scripts, manifests, tracker, Cargo, source dependencies or services changed.",
+  "frontier_key": "SURFACE-STUDY-SOURCE-HEALTH",
+  "issue_id": "dat-surface-study-source-health-3aio",
+  "recorded_at": "2026-10-10T19:48:00.217322+00:00",
+  "original_independent_report_sha256": "000689b0fa7f9bed8534033d0a1fece23f8cac2ad9a209fb33a860b30bbf8b15",
+  "manager_disposition": "Accept bounded structural/static presentation correction against existing source-health criteria using actual independent report; historical receipts remain valid only for original pinned blobs. S05 remains unchanged/unanswered.",
+  "source_health": "Actual root python3 scripts/check_source_health.py --base-ref HEAD PASS3035; original stylesheet/frame ownership extracted with no ceiling exception or gate change. Required complete drift script attempted once: exited101 at guarded workspace Clippy,13diagnostics in five byte-unchanged baseline engine files; later gates not reached. Original full log SHA637f0b2cedbbc857d92a31ea083c32c1f5d2c485d5624140c6a6c475f76963e4 preserved, separate intake dat-engine-clippy-baseline-cj97. No full drift PASS or lint waiver."
+}

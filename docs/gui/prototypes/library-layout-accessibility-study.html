@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Datum — Library Surfaces Study — layout and accessibility (SURFACE-S04 candidate)</title>
+<!--
+  Datum EDA — Library surfaces candidate study for GUI-SURFACE-SPECS / SURFACE-S04.
+  CANDIDATE ONLY. Realizes the frame coverage requested by
+  docs/gui/DATUM_GUI_PRODUCT_SPEC.md "Library Surface Contract — SURFACE-S03 Draft"
+  and the claude_handoff in docs/reviews/workflow-delivery-rollout/surface-reconciliation.json.
+  It ratifies nothing: no product rule, token, standards rule, generator family, threshold,
+  approval policy, pool precedence, process default or owner choice.
+  The historical studies board-editor.html / schematic-editor.html / workspace-panes.html
+  are unchanged and remain evidence at their recorded scope.
+  Every pool, object, name, manufacturer, MPN, identifier, hash, dimension and value drawn
+  here is an illustrative synthetic first-party example — never an approved library asset,
+  a manufacturer part, a standards-derived value, a real digest or a production seed.
+  Pixel sizes and font stacks are mockup placeholders; VISUAL_LANGUAGE.md tokens govern.
+  One of three pages of this study (library-surfaces-study.html, library-kind-editors-study.html, library-layout-accessibility-study.html); section markup is unchanged from the reviewed single-page
+  candidate, split by responsibility for source health. Styles: surface-studies.css (shared, same directory).
+  No network, no script dependency.
+-->
+<link rel="stylesheet" href="surface-studies.css">
+</head>
+<body class="study-library">
+<div class="wrap">
+
+<header>
+  <h1>Datum <b>·</b> Library Surfaces Study <span style="font-weight:400;color:var(--tx3)">— layout and accessibility</span></h1>
+  <div style="margin:7px 0 10px">
+    <span class="statusmark" data-state="open">◐ OPEN CANDIDATE · SURFACE-S04 · not approved, not implemented, not product-ratified</span>
+  </div>
+  <p class="sub">Normal, narrow, tiled, Zoom, Stage, Terminal and keyboard-focus frames (frame L-J). This page is part of a three-page candidate study; the index, frame legend and frame → clause map are in
+  <code>library-surfaces-study.html</code>. Nothing here selects a presentation, a policy, a threshold or an implementation successor; the owner's SURFACE-S05 disposition is still ahead.</p>
+  <p class="sub">Every pool, object, manufacturer, MPN, identifier, hash, dimension and value drawn here is an <b>illustrative synthetic
+  first-party example</b>. None is an approved library asset, a real manufacturer part, a standards-derived number, a real digest or a production
+  seed. Where a number appears it is a made-up example that shows <i>where</i> a value is displayed and compared, not what it should be.
+  Pixel sizes and font stacks are mockup placeholders; tokens govern.</p>
+  <p class="sub"><b>Pad shape note.</b> Current native library apertures are Circle and Rect. Every land in this study is therefore drawn as a
+  plain square-cornered Rect. The Rendering Book's rounded-rectangle pad direction is not materialized by a native aperture today; a rounded
+  rectangle is shown only where it is explicitly marked unsupported (L-B7, L-D). That difference is shown, not resolved.</p>
+  <div class="legend" aria-label="Frame label legend">
+    <span><span class="tag cur">● CURRENT · bounded</span> reviewed delivery exists at its recorded scope only</span>
+    <span><span class="tag tgt">○ TARGET · not delivered</span> retained specification target; engine seams may exist, GUI does not</span>
+    <span><span class="tag own">◐ OWNER CHOICE · S05</span> candidate presentation or policy left open for the owner</span>
+    <span><span class="tag syn">◇ SYNTHETIC</span> illustrative content</span>
+  </div>
+  <nav class="toc" aria-label="Frames across the three pages of this study">
+    <a href="library-surfaces-study.html#L-A">L-A Browser states</a>
+    <a href="library-kind-editors-study.html#L-B1">L-B1 Unit</a>
+    <a href="library-kind-editors-study.html#L-B2">L-B2 Symbol</a>
+    <a href="library-kind-editors-study.html#L-B3">L-B3 Entity</a>
+    <a href="library-kind-editors-study.html#L-B4">L-B4 Part</a>
+    <a href="library-kind-editors-study.html#L-B5">L-B5 Package</a>
+    <a href="library-kind-editors-study.html#L-B6">L-B6 Footprint</a>
+    <a href="library-kind-editors-study.html#L-B7">L-B7 Padstack</a>
+    <a href="library-kind-editors-study.html#L-B8">L-B8 PinPadMap</a>
+    <a href="library-surfaces-study.html#L-C">L-C Relationships and gate map</a>
+    <a href="library-kind-editors-study.html#L-D">L-D Body / land / process</a>
+    <a href="library-kind-editors-study.html#L-E">L-E Models</a>
+    <a href="library-surfaces-study.html#L-F">L-F Provenance, basis, approval</a>
+    <a href="library-surfaces-study.html#L-G">L-G Footprint generation</a>
+    <a href="library-surfaces-study.html#L-H">L-H Placement eligibility</a>
+    <a href="library-surfaces-study.html#L-I">L-I Placed update</a>
+    <a href="library-layout-accessibility-study.html#L-J">L-J Layout and accessibility</a>
+    <a href="library-surfaces-study.html#L-MAP">Frame → clause map</a>
+  </nav>
+</header>
+
+<!-- shared synthetic drawings: one SOIC-8 body and one SOIC-8 land pattern, eight terminals / lands everywhere -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="lgrid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#141821" stroke-width="1"/></pattern>
+    <!-- land pattern: 8 plain Rect lands, pads 1-4 left top→bottom, 5-8 right bottom→top -->
+    <symbol id="fp8" viewBox="0 0 300 170">
+      <rect x="66" y="14" width="168" height="142" fill="none" stroke="var(--court)" stroke-dasharray="4 3"/>
+      <path d="M122 24h56M122 146h56" stroke="var(--silk)" stroke-width="1.6"/>
+      <g fill="var(--pad)"><rect x="76" y="34" width="38" height="13"/><rect x="76" y="62" width="38" height="13"/><rect x="76" y="90" width="38" height="13"/><rect x="76" y="118" width="38" height="13"/>
+      <rect x="186" y="34" width="38" height="13"/><rect x="186" y="62" width="38" height="13"/><rect x="186" y="90" width="38" height="13"/><rect x="186" y="118" width="38" height="13"/></g>
+      <g fill="#141619" font-size="8" font-family="monospace" text-anchor="middle"><text x="95" y="44">1</text><text x="95" y="72">2</text><text x="95" y="100">3</text><text x="95" y="128">4</text><text x="205" y="128">5</text><text x="205" y="100">6</text><text x="205" y="72">7</text><text x="205" y="44">8</text></g>
+      <circle cx="70" cy="28" r="2.2" fill="var(--silk)"/><path d="M144 85h12M150 79v12" stroke="var(--dim)" stroke-width="1"/>
+    </symbol>
+    <symbol id="schmini" viewBox="0 0 300 170">
+      <rect width="300" height="170" fill="url(#lgrid)"/>
+      <rect x="110" y="40" width="80" height="90" rx="3" fill="#161A24" stroke="var(--sym)" stroke-width="1.4"/>
+      <g stroke="var(--sym)" stroke-width="1.2"><path d="M110 65h-16M110 105h-16M190 85h16"/></g>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M94 65H50M94 105H50M206 85h50"/></g>
+      <text x="150" y="34" fill="var(--tx)" font-size="10" text-anchor="middle" font-family="monospace">U4</text>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ======================================================== L-J -->
+<section class="fr" id="L-J">
+  <div class="sec-label"><span class="n">L-J</span><span>Layout and accessibility matrix</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag own">◐ OWNER CHOICE · S05 — narrow presentation</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">The library projection inherits the one-window recursive pane tree, focus-owned Inspector, pane-local output-only Console, Zoom
+  and Full-Screen Stage, with the Terminal as its own surface. No preset or detached window is introduced. The focused pane carries the accent frame
+  <b>and</b> the word FOCUS with a square glyph; map and relationship correspondence and every status use text and glyphs as well as colour. How pool, kind,
+  Navigator and Inspector are reached in a narrow window is a <b>candidate presentation</b>. Static frames: keyboard and assistive-technology
+  qualification require the ordinary application.</p>
+
+  <div class="shell">
+    <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-sensor-node</span></div>
+    <div class="ws" style="height:290px">
+      <div class="nav" style="flex-basis:170px"><div class="phd0"><span>Library</span></div><div class="row">demo-local</div><div class="row l2 sel">Parts<span class="meta">2</span></div><div class="row l2">Footprints<span class="meta">2</span></div><div class="row l2">Pin-pad maps<span class="meta">2</span></div><div class="row">demo-shared<span class="meta">read-only</span></div></div>
+      <div class="panes"><div class="pane pnl focus"><div class="phd"><span class="pt">Library browser</span><span class="cx">pool <b>demo-local</b></span><span class="cx">kind <b>Part</b></span><span class="tl btn" title="Zoom pane (Shift+F11); Shift+click = Stage (F11)">⤢</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="srch">opa</div><div class="res sel"><span class="kd">Part</span><span>DEMO-OPA2-D</span><span class="o">rev 2</span></div><div class="res"><span class="kd">Part</span><span>DEMO-OPA2-T</span><span class="o">rev 1</span></div>
+        <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">opened <b>DEMO-OPA2-D</b></span><span class="hb">▤ history</span></div></div></div>
+        <div class="pane"><div class="phd"><span class="pt">Preview · Footprint</span><span class="nofocus">not focused</span></div><div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#fp8"/></svg></div></div></div>
+      <div class="insp" style="flex-basis:210px"><div class="phd0"><span>Inspector</span><span class="r">follows <b>browser</b></span></div><div class="it"><span class="ref" style="font-size:14px">DEMO-OPA2-D</span><span class="kind">Part · rev 2</span></div><div class="kv"><span class="k">Lifecycle</span><span class="v"><span class="st ok">✓ Active</span></span></div><div class="kv"><span class="k">Approval</span><span class="v"><span class="st na">∅ unavailable</span></span></div><div class="kv"><span class="k">Footprint</span><span class="v"><span class="lnk">Demo SOIC-8 land ↗</span></span></div></div>
+    </div><div class="dock"><span class="dt on">bash</span><span class="dt">+</span></div></div>
+  <p class="cell-cap"><b>J1 — normal.</b> Pool / kind navigation, focused browser with search and results, a second pane previewing the related Footprint, Inspector, collapsed Terminal dock.</p>
+
+  <div class="grid4" style="margin-top:18px">
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn" title="Show Navigator">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn" title="Show Inspector">Inspector ▸</span></div>
+      <div class="ws" style="height:440px;flex:0 0 440px"><div class="panes"><div class="pane pnl focus">
+        <div class="phd"><span class="pt">Library browser</span><span class="fdot"><i></i>FOCUS</span><span class="tl btn" title="Choose pool">pool demo-local ▾</span><span class="tl btn" title="Choose kind">kind Part ▾</span></div>
+        <div class="srch f" role="searchbox">opa▏</div>
+        <div class="res sel"><span class="kd">Part</span><span>DEMO-OPA2-D</span><span class="o">rev 2</span></div>
+        <div class="res"><span class="kd">Part</span><span>DEMO-OPA2-T</span><span class="o">rev 1</span></div>
+        <div class="sh">Detail · DEMO-OPA2-D</div>
+        <div class="kv"><span class="k">Manufacturer</span><span class="v">Example Devices</span></div>
+        <div class="kv"><span class="k">Lifecycle</span><span class="v"><span class="st ok">✓ Active</span></span></div>
+        <div class="kv"><span class="k">Approval</span><span class="v"><span class="st na">∅ unavailable</span></span></div>
+        <div class="kv"><span class="k">Entity</span><span class="v"><span class="lnk">Demo Dual Op-Amp ↗</span></span></div>
+        <div class="kv"><span class="k">Footprint</span><span class="v"><span class="lnk">Demo SOIC-8 land ↗</span></span></div>
+        <div class="kv"><span class="k">Pin-pad map</span><span class="v"><span class="lnk">OPA2-D → SOIC-8 ↗</span></span></div>
+        <div style="flex:0 0 48px" aria-hidden="true"></div>
+        <div class="fstack" style="max-width:92%"><div class="fstrip"><span class="gl">·</span><span class="tx">opened <b>DEMO-OPA2-D</b></span><span class="hb">▤ history</span></div></div>
+      </div></div></div><div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>J2a — narrow browser (candidate).</b> One column in a fixed 440 px body: pool and kind as named controls, search, results, and the selected object's detail with its Entity, Footprint and Pin-pad map links. A reserved band below the last detail row keeps the Console strip clear of the links.</p></div>
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn kf">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
+      <div class="ws" style="height:380px;flex:0 0 380px"><div class="panes"><div class="pane pnl focus"><div class="phd"><span class="pt">Library browser</span></div><div class="srch" style="opacity:.4">opa</div></div></div>
+        <div class="drawer l" role="navigation" aria-label="Navigator, scrollable" tabindex="0"><div class="phd0"><span>Library</span><span class="r">Esc closes</span></div>
+          <div class="row"><span class="g">▾</span>demo-local<span class="meta">project pool</span></div>
+          <div class="row l2">Units<span class="meta">3</span></div><div class="row l2">Symbols<span class="meta">4</span></div><div class="row l2">Entities<span class="meta">2</span></div><div class="row l2 sel kf">Parts<span class="meta">2</span></div>
+          <div class="row l2">Packages<span class="meta">2</span></div><div class="row l2">Footprints<span class="meta">2</span></div><div class="row l2">Padstacks<span class="meta">2</span></div><div class="row l2">Pin-pad maps<span class="meta">2</span></div>
+          <div class="row"><span class="g">▸</span>demo-shared<span class="meta">read-only</span></div>
+          <div class="phd0" style="border-top:1px solid var(--bd-sub)"><span>Project</span></div><div class="row l2">Schematic Design</div><div class="row l2">Board</div></div></div>
+      <div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>J2b — Navigator opened (candidate).</b> The frame body is a fixed 380 px so the pool tree with all eight kinds and the project rows below it are drawn in full; the drawer is a keyboard-focusable scroll region for longer trees. Keyboard ring on the current row.</p></div>
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
+      <div class="ws" style="height:380px"><div class="panes"><div class="pane pnl focus">
+        <div class="phd"><span class="pt">PinPadMap · OPA2-D → SOIC-8</span><span class="fdot"><i></i>FOCUS</span><span class="cx">rev 2 · 8 pads</span></div>
+        <div class="scrollbox" style="height:178px" tabindex="0" role="region" aria-label="Gate map, scrollable">
+          <table class="t in c" aria-label="Pad to gate and pin map">
+            <tr><th>Pad</th><th>Gate</th><th>Pin</th><th>State</th></tr>
+            <tr><td class="n">1</td><td class="n">A</td><td>OUT</td><td><span class="st ok">✓</span></td></tr>
+            <tr><td class="n">2</td><td class="n">A</td><td>IN−</td><td><span class="st ok">✓</span></td></tr>
+            <tr><td class="n">3</td><td class="n">A</td><td>IN+</td><td><span class="st ok">✓</span></td></tr>
+            <tr><td class="n">4</td><td class="n">PWR</td><td>V−</td><td><span class="st ok">✓</span></td></tr>
+            <tr><td class="n">5</td><td class="n">B</td><td>IN+</td><td><span class="st ok">✓</span></td></tr>
+            <tr><td class="n">6</td><td class="n">B</td><td>IN−</td><td><span class="st ok">✓</span></td></tr>
+            <tr><td class="n">7</td><td class="n">A</td><td>OUT</td><td><span class="st err">✕ duplicate</span></td></tr>
+            <tr><td class="n">8</td><td>∅</td><td>∅</td><td><span class="st warn">△ unmapped</span></td></tr>
+          </table></div>
+        <div class="scrollhint"><span>rows 1–5 of 8 visible</span><span>▾ scroll · <span class="kbd">↓</span> <span class="kbd">PgDn</span></span><span>2 problems below</span></div>
+        <div class="acts"><span class="btn">Edit row…</span><span class="btn">Suggest by name…</span></div>
+        <div class="fstack" style="max-width:92%"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Commit refused — pad 7 duplicates {A, OUT} already mapped on pad 1. Nothing written.</span><span class="hb">▤ history</span></div></div>
+      </div></div></div><div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>J2c — real scrollable gate map.</b> All eight rows exist in a keyboard-focusable scroll region with a sticky header; a text line says how many rows are visible and that two problems are further down. The refusal truncates and keeps its history control.</p></div>
+    <div><div class="shell narrow">
+      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn kf">Inspector ▸</span></div>
+      <div class="ws" style="height:380px"><div class="panes"><div class="pane pnl focus"><div class="phd"><span class="pt">PinPadMap · OPA2-D → SOIC-8</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody">
+          <div class="hist" style="bottom:44px" role="log" aria-label="Console history"><div class="hhd">session history<span class="flt"><span class="chip">all</span><span class="chip">ops</span><span class="chip on">errors</span></span></div>
+            <div class="hrow e"><span class="g">✕</span><span class="tx">Commit refused — pad 7 duplicates {A, OUT} already mapped on pad 1. A pad target must be unique. Nothing written; source and journal unchanged.</span><span class="pv">gui</span></div>
+            <div class="hrow e"><span class="g">✕</span><span class="tx">Attach refused — content file not found for demo_soic8.step. No attachment created.</span><span class="pv">gui</span></div></div>
+          <div class="fstack" style="max-width:92%"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Commit refused — pad 7 duplicates {A, OUT} already mapped on pad 1.</span><span class="hb kf">▤ history</span></div></div></div></div></div>
+        <div class="drawer r" style="width:62%;bottom:auto;height:168px" role="complementary" aria-label="Inspector"><div class="phd0"><span>Inspector</span><span class="r">follows focus</span></div>
+          <div class="it"><span class="ref" style="font-size:14px">pad 7</span><span class="kind">map row</span></div>
+          <div class="kv" style="grid-template-columns:70px 1fr"><span class="k">Target</span><span class="v m">{A, OUT}</span></div>
+          <div class="kv" style="grid-template-columns:70px 1fr"><span class="k">State</span><span class="v"><span class="st err">✕ duplicate</span></span></div>
+          <div class="kv" style="grid-template-columns:70px 1fr"><span class="k">Also on</span><span class="v"><span class="lnk">pad 1 ↗</span></span></div>
+          <div class="kv" style="grid-template-columns:70px 1fr"><span class="k">Land</span><span class="v"><span class="lnk">Footprint pad 7 ↗</span></span></div></div></div>
+      <div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>J2d — Inspector and complete refusal (candidate).</b> The Inspector drawer for the focused row, and bounded session history (from the strip's control or View / Console History) with the full wrapped refusal. History never takes focus.</p></div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div><div class="shell"><div class="ws" style="height:340px">
+      <div class="panes"><div class="pane focus" style="flex:1.15"><div class="phd"><span class="pt">Footprint · Demo SOIC-8 land</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Move</span><span class="tl">Pad</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><svg class="cv" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Footprint editor, pad 3 selected"><use href="#fp8"/><rect x="74" y="88" width="42" height="17" fill="none" stroke="var(--acc)" stroke-width="2"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">selected <b>pad 3</b></span></div></div></div></div>
+      <div class="vsp"><div class="pane pnl"><div class="phd"><span class="pt">PinPadMap · OPA2-D → SOIC-8</span><span class="nofocus">not focused</span></div>
+          <table class="t in c" aria-label="Map pane: no row is highlighted by the footprint selection">
+            <tr><th>Pad</th><th>Gate</th><th>Pin</th></tr>
+            <tr><td class="n">1</td><td class="n">A</td><td>OUT</td></tr><tr><td class="n">2</td><td class="n">A</td><td>IN−</td></tr><tr><td class="n">3</td><td class="n">A</td><td>IN+</td></tr><tr><td class="n">4</td><td class="n">PWR</td><td>V−</td></tr>
+          </table></div>
+        <div class="pane"><div class="phd"><span class="pt">Schematic Design · /</span><span class="nofocus">not focused</span></div><div class="pbody" style="min-height:0"><svg class="cv" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#schmini"/></svg></div></div></div></div>
+      <div class="insp" style="flex-basis:215px"><div class="phd0"><span>Inspector</span><span class="r">follows <b>Footprint</b></span></div>
+        <div class="it"><span class="ref" style="font-size:14px">pad 3</span><span class="kind">Footprint pad · selected: 1</span></div>
+        <div class="kv" style="grid-template-columns:76px 1fr"><span class="k">Padstack</span><span class="v"><span class="lnk">Demo SMD rect pad ↗</span></span></div>
+        <div class="sh">Related <span class="r">not selected · not counted</span></div>
+        <div class="kv" style="grid-template-columns:76px 1fr"><span class="k">Map row</span><span class="v"><span class="lnk">pad 3 → {A, IN+} ↗</span></span></div>
+        <div class="kv" style="grid-template-columns:76px 1fr"><span class="k">Placed</span><span class="v"><span class="lnk">U4 ↗</span> · <span class="lnk">U7 ↗</span></span></div>
+        <div class="note">The map row for pad 3 keeps its exact authored appearance in the map pane. The relationship is explained here, in words.</div></div></div></div>
+      <p class="cell-cap"><b>J3 — tiled.</b> The one Inspector follows the focused definition editor (reconciles <code>workspace-panes.html</code> lines 169–219). Selecting Footprint pad 3 does <b>not</b>
+      accent, tint or mark the PinPadMap row for pad 3: a footprint pad and a map row are different identities joined by a relation, so the row is related context only — exact authored baseline, not selected, not counted (PM026). The link in the Inspector is the route to it.</p></div>
+    <div><div class="shell">
+      <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m open">View</span><span class="sp"></span><span class="pill">demo-sensor-node</span></div>
+      <div class="ws" style="height:309px">
+        <div class="nav" style="flex-basis:120px"><div class="phd0"><span>Library</span></div><div class="row l2">Parts</div><div class="row l2 sel">Footprints</div></div>
+        <div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Footprint · Demo SOIC-8 land</span><span class="st info">⤢ Zoom · 3 panes kept</span><span class="tl btn kf" title="Restore layout (Shift+F11)">Restore</span><span class="fdot"><i></i>FOCUS</span></div>
+          <div class="pbody"><svg class="cv" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#fp8"/></svg><div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">zoom pane</span></div></div>
+            <div style="position:absolute;left:0;top:0;width:210px;background:var(--s03);border:1px solid var(--bd-str);border-radius:0 0 6px 6px;font-size:12px;padding:3px"><div class="row" style="color:var(--tx)">✓ Zoom Pane<span class="meta">Shift+F11</span></div><div class="row" style="color:var(--tx)">Full-Screen Stage<span class="meta">F11</span></div></div></div></div></div>
+        <div class="insp" style="flex-basis:130px"><div class="phd0"><span>Inspector</span></div><div class="it"><span class="ref" style="font-size:13px;color:var(--tx2)">Nothing selected</span></div></div></div></div>
+      <p class="cell-cap"><b>J4 — Zoom.</b> The focused definition editor fills the workspace; menu, Navigator, Inspector and dock remain; the header says three panes are kept and offers Restore.</p></div>
+    <div><div class="shell"><div class="pane focus"><div class="pbody" style="min-height:300px"><svg class="cv" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#fp8"/>
+        <rect x="74" y="88" width="42" height="17" fill="none" stroke="var(--acc)" stroke-width="2"/><rect x="70" y="90" width="38" height="13" fill="none" stroke="var(--acc-h)" stroke-width="1.4" stroke-dasharray="5 3"/></svg>
+        <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>move</b> pad 3 · <span class="kbd">LMB</span> place · <span class="kbd">Esc</span> cancel</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J5 — Full-Screen Stage.</b> All chrome hidden, including pane headers; only the viewport's own overlays remain — the selection cue, the preview ghost and the Console tool prompt. Exit is F11 or Escape (gesture → Stage → selection). A universal pane behaviour, not a per-editor feature.</p></div>
+    <div><div class="shell"><div class="ws" style="height:150px"><div class="panes"><div class="pane pnl"><div class="phd"><span class="pt">Library browser</span><span class="cx">kind <b>Part</b></span><span class="nofocus">not focused · keys go to Terminal</span></div>
+        <div class="srch">opa</div><div class="res sel"><span class="kd">Part</span><span>DEMO-OPA2-D</span><span class="o">rev 2</span></div><div class="res"><span class="kd">Part</span><span>DEMO-OPA2-T</span><span class="o">rev 1</span></div></div></div></div>
+      <div class="tm foc"><div class="tabs"><span class="tab on">shell 1</span><span class="tab">agent</span><span class="tab">+</span></div>
+        <div class="sl"><span>~/demo-sensor-node</span><span>/bin/bash</span><span class="s" style="color:var(--ok)">■ RUNNING · keyboard</span></div>
+        <div class="scr"><span class="p">$</span> datum-eda project validate .
+<span class="d">ok — 0 errors</span>
+<span class="p">$</span> <span class="cur-b"></span></div></div></div>
+      <p class="cell-cap"><b>J6 — Terminal open and focused.</b> A real shell beside the browser — not how the browser inspects. Status reads “keyboard”, cursor is a solid block; the browser says it is not focused and shows no Console strip. With the browser focused the terminal reads “idle” with a hollow cursor: <span class="cur-h"></span>.</p></div>
+    <div><div class="shell"><div class="ws" style="height:250px"><div class="panes"><div class="pane pnl focus kbd"><div class="phd"><span class="pt">PinPadMap · OPA2-D → SOIC-8</span><span class="fdot"><i></i>FOCUS</span></div>
+        <table class="t in c" aria-label="Map with keyboard focus on one cell">
+          <tr><th>Pad</th><th>Gate</th><th>Pin</th><th>State</th></tr>
+          <tr><td class="n">6</td><td class="n">B</td><td>IN−</td><td><span class="st ok">✓ mapped</span></td></tr>
+          <tr><td class="n">7</td><td><span class="fld f">A ▾</span></td><td>OUT</td><td><span class="st err">✕ duplicate</span></td></tr>
+          <tr><td class="n">8</td><td>∅</td><td>∅</td><td><span class="st warn">△ unmapped</span></td></tr>
+        </table>
+        <div class="acts"><span class="btn">Suggest by name…</span><span class="btn">Cancel</span><span class="btn pri">Review and commit</span></div>
+        <div class="scrollhint"><span><span class="kbd">↑</span><span class="kbd">↓</span> row</span><span><span class="kbd">←</span><span class="kbd">→</span> cell</span><span><span class="kbd">Enter</span> edit</span><span><span class="kbd">Esc</span> cancel cell</span></div></div></div>
+        <div class="insp" style="flex-basis:180px"><div class="phd0"><span>Inspector</span></div><div class="kv" style="grid-template-columns:60px 1fr"><span class="k">Row</span><span class="v m">pad 7</span></div><div class="kv kf" style="grid-template-columns:60px 1fr"><span class="k">Also on</span><span class="v"><span class="lnk">pad 1 ↗</span></span></div></div></div></div>
+      <p class="cell-cap"><b>J7 — keyboard path.</b> Dashed rings mark the focused pane, the focused map cell and an Inspector link row; the key legend is drawn in the pane. Search, results, relationship links, map cells, form fields and action buttons are each named and reachable. Key assignments shown are placeholders.</p></div>
+    <div><table class="t" aria-label="Non-colour cues">
+      <tr><th>Meaning</th><th>Glyph + word</th><th>Shape cue</th></tr>
+      <tr><td>Focused pane</td><td><span class="fdot" style="display:inline-flex;margin:0"><i></i>FOCUS</span></td><td>frame + square glyph + word</td></tr>
+      <tr><td>Keyboard focus</td><td><span class="fld f">cell</span></td><td>dashed ring</td></tr>
+      <tr><td>Edited, uncommitted</td><td><span class="fld ch">value</span> · ✎ row</td><td>double border · pencil glyph</td></tr>
+      <tr><td>Resolved / mapped / declared</td><td><span class="st ok">✓ word</span></td><td>solid border</td></tr>
+      <tr><td>Pending / loading</td><td><span class="st info">⧗ word</span></td><td>—</td></tr>
+      <tr><td>Stale / degraded / ambiguous</td><td><span class="st warn">△ / ⋔ word</span></td><td>triangle / fork</td></tr>
+      <tr><td>Missing / refused / unsupported</td><td><span class="st err">✕ word</span></td><td>left rule on Console strip</td></tr>
+      <tr><td>Unavailable / unknown / not run</td><td><span class="st na">∅ / ? word</span></td><td>dashed border</td></tr>
+      <tr><td>Layer</td><td>copper · mask · paste</td><td>solid · dashed outline · hatch</td></tr></table>
+      <p class="cell-cap"><b>J8 — non-colour cues and motion.</b> Nothing animates; <code>prefers-reduced-motion</code> removes transitions.</p></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

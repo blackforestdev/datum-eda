@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Datum — Schematic Surfaces Study — authoring and readiness states (SURFACE-S04 candidate)</title>
+<!--
+  Datum EDA — Schematic surfaces candidate study for GUI-SURFACE-SPECS / SURFACE-S04.
+  CANDIDATE ONLY. Realizes the frame coverage requested by
+  docs/gui/DATUM_GUI_PRODUCT_SPEC.md "Schematic Surface Contract — SURFACE-S02 Draft"
+  and the claude_handoff in docs/reviews/workflow-delivery-rollout/surface-reconciliation.json.
+  It ratifies nothing: no product rule, token, threshold, mechanism or owner choice.
+  The historical studies board-editor.html / schematic-editor.html / workspace-panes.html
+  are unchanged and remain evidence at their recorded scope.
+  Every design, object, name, value and library item drawn here is an illustrative
+  synthetic first-party example — never an approved library asset or seed.
+  Pixel sizes and font stacks are mockup placeholders; VISUAL_LANGUAGE.md tokens govern.
+  One of three pages of this study (schematic-surfaces-study.html, schematic-authoring-states-study.html, schematic-layout-accessibility-study.html); section markup is unchanged from the reviewed single-page
+  candidate, split by responsibility for source health. Styles: surface-studies.css (shared, same directory).
+  No network, no script dependency.
+-->
+<link rel="stylesheet" href="surface-studies.css">
+</head>
+<body class="study-schematic">
+<div class="wrap">
+
+<header>
+  <h1>Datum <b>·</b> Schematic Surfaces Study <span style="font-weight:400;color:var(--tx3)">— authoring and readiness states</span></h1>
+  <div style="margin:7px 0 10px">
+    <span class="statusmark" data-state="open">◐ OPEN CANDIDATE · SURFACE-S04 · not approved, not implemented, not product-ratified</span>
+  </div>
+  <p class="sub">Wire and isolated Move, the seven readiness and authoring conditions, and tool-family dispositions (frames S-E, S-F, S-H). This page is part of a three-page candidate study; the index, frame legend and frame → clause map are in
+  <code>schematic-surfaces-study.html</code>. Nothing here selects a presentation, a policy, a threshold or an implementation successor; the owner's SURFACE-S05 disposition is still ahead.</p>
+  <p class="sub">Every design, component, net, name and library item drawn here is an <b>illustrative synthetic first-party
+  example</b>. None is an approved library asset, a manufacturer part or a production seed. Pixel sizes and font stacks are
+  mockup placeholders; the Design Book tokens and Rendering Book govern values.</p>
+  <div class="legend" aria-label="Frame label legend">
+    <span><span class="tag cur">● CURRENT · bounded</span> reviewed delivery exists at its recorded scope only</span>
+    <span><span class="tag tgt">○ TARGET · not delivered</span> retained specification target, no GUI delivery claimed</span>
+    <span><span class="tag own">◐ OWNER CHOICE · S05</span> candidate presentation, left open for the owner</span>
+    <span><span class="tag syn">◇ SYNTHETIC</span> illustrative content</span>
+  </div>
+  <nav class="toc" aria-label="Frames across the three pages of this study">
+    <a href="schematic-surfaces-study.html#S-A">S-A Design, unselected</a>
+    <a href="schematic-surfaces-study.html#S-B">S-B Source / occurrence navigation</a>
+    <a href="schematic-surfaces-study.html#S-C">S-C Selected Symbol + library context</a>
+    <a href="schematic-surfaces-study.html#S-D">S-D Symbol picker / preview</a>
+    <a href="schematic-authoring-states-study.html#S-E">S-E Wire and Move</a>
+    <a href="schematic-authoring-states-study.html#S-F">S-F Readiness and authoring states</a>
+    <a href="schematic-surfaces-study.html#S-G">S-G Net, Bus, ERC</a>
+    <a href="schematic-authoring-states-study.html#S-H">S-H Tool families</a>
+    <a href="schematic-layout-accessibility-study.html#S-I">S-I Layout and accessibility matrix</a>
+    <a href="schematic-surfaces-study.html#S-MAP">Frame → clause map</a>
+  </nav>
+</header>
+
+<!-- shared synthetic drawings -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="sgrid" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M18 0H0V18" fill="none" stroke="#141821" stroke-width="1"/></pattern>
+    <symbol id="sch" viewBox="0 0 520 300">
+      <rect width="520" height="300" fill="url(#sgrid)"/>
+      <rect x="210" y="70" width="110" height="150" rx="3" fill="#161A24" stroke="var(--sym)" stroke-width="1.4"/>
+      <g stroke="var(--sym)" stroke-width="1.2" fill="none"><path d="M210 95h-14M210 125h-14M210 195h-14M320 95h14M320 125h14M320 155h14M320 185h14"/></g>
+      <g fill="var(--sym)"><circle cx="196" cy="95" r="1.7"/><circle cx="196" cy="125" r="1.7"/><circle cx="196" cy="195" r="1.7"/><circle cx="334" cy="95" r="1.7"/><circle cx="334" cy="125" r="1.7"/><circle cx="334" cy="155" r="1.7"/><circle cx="334" cy="185" r="1.7"/></g>
+      <text x="265" y="63" fill="var(--tx)" font-size="11" text-anchor="middle" font-family="monospace" font-weight="700">U1</text>
+      <text x="265" y="234" fill="var(--tx3)" font-size="8.5" text-anchor="middle" font-family="monospace">DEMO-MCU-A</text>
+      <g fill="var(--tx2)" font-size="8" font-family="monospace"><text x="216" y="98">VDD</text><text x="216" y="128">NRST</text><text x="216" y="198">VSS</text></g>
+      <g fill="var(--tx2)" font-size="8" font-family="monospace" text-anchor="end"><text x="314" y="98">TX</text><text x="314" y="128">RX</text><text x="314" y="158">SCK</text><text x="314" y="188">SDO</text></g>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M196 95H150V80"/><path d="M196 125H110V112"/><path d="M110 84V80H150"/><path d="M196 195H150v12"/></g>
+      <g stroke="var(--pwr)" stroke-width="1.5" fill="none"><path d="M150 80v-12M141 68h18"/><path d="M141 207h18M145 211h10M148 215h4"/></g>
+      <text x="150" y="62" fill="var(--pwr)" font-size="8" text-anchor="middle" font-family="monospace">+3V3</text>
+      <rect x="104" y="84" width="12" height="28" rx="1.5" fill="#161A24" stroke="var(--sym)" stroke-width="1.3"/>
+      <text x="98" y="97" fill="var(--tx2)" font-size="8" text-anchor="end" font-family="monospace">R1</text>
+      <text x="98" y="106" fill="var(--tx3)" font-size="7" text-anchor="end" font-family="monospace">10k</text>
+      <circle cx="150" cy="80" r="2.3" fill="var(--wire)"/>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M334 95h34M334 125h34"/></g>
+      <g font-family="monospace" font-size="8.5" text-anchor="middle">
+        <rect x="368" y="87" width="62" height="15" rx="3" fill="#151922" stroke="var(--bd-str)"/><text x="399" y="98" fill="var(--tx)">UART_TX</text>
+        <rect x="368" y="117" width="62" height="15" rx="3" fill="#151922" stroke="var(--bd-str)"/><text x="399" y="128" fill="var(--tx)">UART_RX</text>
+      </g>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M334 155h36l8 8"/><path d="M334 185h36l8 8"/></g>
+      <path d="M378 150v88h46" stroke="var(--bus)" stroke-width="3.2" fill="none" stroke-linejoin="round"/>
+      <text x="384" y="146" fill="var(--bus)" font-size="8" font-family="monospace">SPI[SCK,SDO]</text>
+      <rect x="424" y="212" width="76" height="56" rx="2" fill="#141821" stroke="var(--info)" stroke-width="1.4"/>
+      <text x="462" y="207" fill="var(--info)" font-size="8" text-anchor="middle" font-family="monospace">CH_A ▸ sensor_channel</text>
+      <g fill="var(--tx2)" font-size="7" font-family="monospace"><text x="429" y="241">SPI</text><text x="429" y="256">+3V3</text></g>
+      <g stroke="var(--tx2)" stroke-width="1.3"><path d="M60 160l8 8M68 160l-8 8"/></g>
+    </symbol>
+    <!-- placed capacitor C9 (used by completed / reopened frames) -->
+    <symbol id="c9" viewBox="0 0 520 300">
+      <g stroke="var(--sym)" stroke-width="1.6" fill="none"><path d="M50 238h22M50 246h22"/><path d="M61 238v-14M61 246v14"/></g>
+      <g fill="var(--sym)"><circle cx="61" cy="224" r="1.7"/><circle cx="61" cy="260" r="1.7"/></g>
+      <text x="78" y="240" fill="var(--tx2)" font-size="8" font-family="monospace">C9</text><text x="78" y="250" fill="var(--tx3)" font-size="7" font-family="monospace">100n</text>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ======================================================== S-E -->
+<section class="fr" id="S-E">
+  <div class="sec-label"><span class="n">S-E</span><span>Wire preview / finish and isolated Move</span><span class="rule"></span>
+    <span class="tag cur">● CURRENT · bounded</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Reviewed scope only: Wire from a pin terminal through vertices to a pin terminal, with cancel, finish and canonical undo/redo;
+  Move for an <b>isolated, unique-occurrence</b> Symbol with preview, cancel and commit. Connected, repeated, ambiguous and positioned-owner
+  Move cases keep their current refusal. Auto-junction, polyline editing, rotate and mirror GUI are not delivered. One completed gesture is one
+  canonical history entry; the initial click focuses and dispatches together; Escape cancels the gesture before anything else.</p>
+  <div class="grid3">
+    <div>
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl">Sel</span><span class="tl">Sym</span><span class="tl on">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:240px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Wire preview from pin through one vertex"><use href="#sch"/>
+          <path d="M196 195H80V168" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>
+          <circle cx="196" cy="195" r="4" fill="none" stroke="var(--acc)" stroke-width="1.6"/><rect x="77" y="192" width="6" height="6" fill="var(--acc-h)"/>
+          <circle cx="80" cy="168" r="5" fill="none" stroke="var(--acc)" stroke-width="1.2"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>wire</b> · <span class="kbd">LMB</span> vertex · pin ends · <span class="kbd">Esc</span> cancel</span></div></div></div></div></div>
+      <p class="cell-cap"><b>E1 — Wire preview.</b> Dashed preview from a terminal; square = placed vertex; ring = snap target.</p>
+    </div>
+    <div>
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:240px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Isolated symbol move preview"><use href="#sch"/><use href="#c9"/>
+          <g opacity=".55" transform="translate(70 0)" stroke="var(--acc-h)" stroke-width="1.4" stroke-dasharray="5 4" fill="none"><path d="M50 238h22M50 246h22"/><path d="M61 238v-14M61 246v14"/></g>
+          <path d="M61 242H131" stroke="var(--acc)" stroke-width="1" stroke-dasharray="2 3"/><path d="M125 242h12M131 236v12" stroke="var(--acc)" stroke-width="1.2"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>move</b> C9 · origin, pins, bindings together · <span class="kbd">Esc</span> cancel</span></div></div></div></div></div>
+      <p class="cell-cap"><b>E2 — isolated Move preview.</b> Authored object stays in place until commit; ghost shows the proposed origin.</p>
+    </div>
+    <div>
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:240px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Move refused for a connected symbol"><use href="#sch"/>
+          <rect x="102" y="82" width="16" height="32" rx="2.5" fill="none" stroke="var(--acc)" stroke-width="2"/></svg>
+          <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Move refused — R1 has connected wires. Nothing changed.</span><span class="hb">▤ history</span></div></div></div></div></div>
+      <p class="cell-cap"><b>E3 — connected Move refused.</b> The refusal names the reason and states that source and journal are unchanged; no ghost is offered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== S-F -->
+<section class="fr" id="S-F">
+  <div class="sec-label"><span class="n">S-F</span><span>Readiness and authoring states — all seven conditions</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag own">◐ OWNER CHOICE · S05</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Presentation categories over existing native state — not a new enum. Each state carries a textual reason and an icon; none
+  depends on colour. <b>Where</b> readiness and refusal feedback sits across pane sizes is an owner choice; the placement drawn is a candidate
+  and the content is the contract. Tool prompts and refusals use the output-only Console; persistent degradation uses the banner / Notices
+  surface; ERC findings use the findings surface. “Native authoring ready” is frame S-A; “Preview” is S-D and S-E.</p>
+  <div class="grid2">
+    <div><div class="shell">
+      <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m mut">Edit</span><span class="m mut">View</span><span class="m mut">Place</span><span class="m">Help</span><span class="sp"></span><span class="pill">no project</span></div>
+      <div class="ws" style="height:230px">
+        <div class="nav" style="flex-basis:150px"><div class="phd0"><span>Project</span><span class="r">∅ none</span></div><div class="row" style="color:var(--tx3)">No project open</div></div>
+        <div class="panes"><div class="pane"><div class="empty"><span class="st na">∅ no project</span><b>No project is open.</b>
+          <span><span class="btn">New Project…</span> <span class="btn na" title="No GUI open / session model yet">Open Project… ∅ not available</span></span>
+          <span>No document, tool strip or authoring-ready indication is shown.</span></div></div></div>
+        <div class="insp" style="flex-basis:150px"><div class="phd0"><span>Inspector</span></div><div class="row" style="color:var(--tx3)">Nothing to inspect</div></div>
+      </div><div class="dock"><span class="dt on">bash</span><span class="h">Terminal available</span></div></div>
+      <p class="cell-cap"><b>F1 — no project.</b> Shell navigation appropriate to the state; editor menus muted; no fictitious document. Open Project is shown unavailable because no GUI open path exists today.</p></div>
+    <div><div class="shell">
+      <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m mut">Edit</span><span class="m">View</span><span class="m mut">Place</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-sensor-node · resolving</span></div>
+      <div class="ws" style="height:230px">
+        <div class="nav" style="flex-basis:150px"><div class="phd0"><span>Project</span><span class="r">⧗</span></div><div class="row">demo-sensor-node</div><div class="row l2" style="color:var(--tx3)">⧗ reading…</div></div>
+        <div class="panes"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="st info">⧗ loading</span><span class="fdot"><i></i>FOCUS</span></div>
+          <div class="empty"><span class="st info">⧗ loading</span><b>Resolving the design model…</b><span>The canvas stays empty until the resolved model arrives. Tools appear only then.</span></div></div></div>
+        <div class="insp" style="flex-basis:150px"><div class="phd0"><span>Inspector</span></div><div class="row" style="color:var(--tx3)">⧗ waiting for model</div></div>
+      </div><div class="dock"><span class="dt on">bash</span></div></div>
+      <p class="cell-cap"><b>F2 — loading.</b> A named pending state, not a blank canvas that could read as an empty design; no tool strip and no “ready” mark.</p></div>
+  </div>
+  <div class="grid4" style="margin-top:16px">
+    <div><div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="st info">▣ read-only</span>
+      <span class="tools"><span class="tl on">Sel</span><span class="tl na" title="Unavailable: rendered read-only">Sym ∅</span><span class="tl na" title="Unavailable: rendered read-only">Wire ∅</span></span></div>
+      <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/></svg>
+      <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">authoring unavailable — writer not current</span></div></div></div></div></div>
+      <p class="cell-cap"><b>F3 — rendered, read-only.</b> Inspect, navigate and view tools work; authoring tools are visibly unavailable with the actual reason.</p></div>
+    <div><div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="st info">⧗ commit pending</span></div>
+      <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/>
+        <g stroke="var(--info)" stroke-width="1.4" stroke-dasharray="2 3" fill="none"><path d="M50 238h22M50 246h22"/><path d="M61 238v-14M61 246v14"/></g></svg>
+      <div class="fstack"><div class="fstrip"><span class="gl">⧗</span><span class="tx">place symbol — awaiting engine result</span></div></div></div></div></div>
+      <p class="cell-cap"><b>F4 — commit pending.</b> The in-flight object is dotted, not solid; no “placed” echo before the engine result.</p></div>
+    <div><div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span></div>
+      <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/></svg>
+      <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Place refused — Part binding unresolved. Nothing written.</span></div></div></div></div></div>
+      <p class="cell-cap"><b>F5 — refused / unresolved.</b> Actual reason, sticky until the next relevant action; no partial write, substitute occurrence or default.</p></div>
+    <div><div class="shell"><div class="banner"><span class="bic">△</span>Model revision changed outside this view.<span class="act">Refresh</span></div>
+      <div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="st warn">△ stale</span></div>
+      <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="opacity:.6"><use href="#sch"/></svg>
+      <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Edit refused — stale revision. Refresh, then retry.</span></div></div></div></div></div>
+      <p class="cell-cap"><b>F6 — stale.</b> Persistent state is a banner with an applicable action; the attempted edit is refused, never silently retargeted.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div><div class="shell">
+      <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m open">Edit</span><span class="m">View</span><span class="sp"></span><span class="pill">demo-sensor-node · rev 9d04b3</span></div>
+      <div class="ws" style="height:300px"><div class="panes"><div class="pane focus">
+        <div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="st warn">● unsaved</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="C9 placed; history open"><use href="#sch"/><use href="#c9"/></svg>
+          <div class="hist" role="log" aria-label="Console history"><div class="hhd">session history<span class="flt"><span class="chip on">all</span><span class="chip">ops</span><span class="chip">errors</span></span></div>
+            <div class="hrow"><span class="g">·</span><span class="tx">tool symbol</span><span class="pv">gui</span></div>
+            <div class="hrow j"><span class="g">◆</span><span class="tx">place symbol C9 · Demo Capacitor</span><span class="pv">op·journal #12</span></div>
+            <div class="hrow j"><span class="g">◆</span><span class="tx">draw wire · 2 segments</span><span class="pv">op·journal #13</span></div>
+            <div class="hrow j"><span class="g">◆</span><span class="tx">undo · draw wire</span><span class="pv">op·journal #14</span></div></div>
+          <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">undo — draw wire</span><span class="hb">▤ history</span></div></div>
+          <div style="position:absolute;left:96px;top:0;width:230px;background:var(--s03);border:1px solid var(--bd-str);border-radius:0 0 6px 6px;font-size:12.5px;padding:4px">
+            <div class="row" style="color:var(--tx)">Undo place symbol C9<span class="meta">Ctrl+Z</span></div>
+            <div class="row kf" style="color:var(--tx)">Redo draw wire<span class="meta">Ctrl+Y</span></div>
+            <div class="row" style="color:var(--tx3)">Paste <span class="meta">∅ not built</span></div></div>
+        </div></div></div></div></div>
+      <p class="cell-cap"><b>F7 — completed, with history.</b> <span class="tag cur">● CURRENT · bounded — underlying behaviour only</span> <span class="tag tgt">○ TARGET · not delivered — everything drawn</span>
+      What is verified is the behaviour beneath this frame: for the reviewed Symbol / Wire / isolated Move paths, one gesture is one canonical journal entry and Undo (Ctrl+Z) / Redo (Ctrl+Y) act on canonical history. The Edit-menu projection with operation names, and this history panel as shown for schematic work, are proposed target visuals; drawing them does not claim that menu projection or that Console / history GUI is delivered. One gesture = one journal entry. Undo and Redo name the
+      operation they act on and come from canonical history — no schematic-only undo stack. Journal rows (◆, <code>op·journal #n</code>) project from the journal; consumer echoes (·) are not a second log. The history panel never takes focus.</p></div>
+    <div><div class="shell">
+      <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="sp"></span><span class="pill">demo-sensor-node · rev 9d04b3</span></div>
+      <div class="ws" style="height:300px"><div class="panes"><div class="pane focus">
+        <div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="st ok">✓ saved</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Reopened project shows C9 as persisted"><use href="#sch"/><use href="#c9"/></svg>
+          <div class="hist" role="log" aria-label="Console history after reopen"><div class="hhd">session history<span class="flt"><span class="chip on">all</span><span class="chip">ops</span><span class="chip">errors</span></span></div>
+            <div class="hrow"><span class="g">·</span><span class="tx">project reopened — session baseline at journal #14; earlier operations are in the journal, not listed here</span><span class="pv">gui</span></div></div>
+          <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">opened demo-sensor-node</span><span class="hb">▤ history</span></div></div>
+        </div></div></div>
+        <div class="insp" style="flex-basis:210px"><div class="phd0"><span>Inspector</span></div>
+          <div class="kv"><span class="k">Saved</span><span class="v"><span class="st ok">✓ project Save</span></span></div>
+          <div class="kv"><span class="k">Model</span><span class="v m">rev 9d04b3</span></div>
+          <div class="kv"><span class="k">Journal</span><span class="v m">through #14</span></div>
+          <div class="kv"><span class="k">Agreement</span><span class="v"><span class="st ok">✓ resolved = journal = source</span></span></div>
+          <div class="note">Save is project-scoped. There is no per-shard Save and no Save As here.</div></div>
+      </div></div>
+      <p class="cell-cap"><b>F8 — saved and reopened.</b> <span class="tag cur">● CURRENT · bounded — underlying behaviour only</span> <span class="tag tgt">○ TARGET · not delivered — everything drawn</span>
+      What is verified is project Save and reopen for the reviewed paths, with the reopened result agreeing with the journal. The Inspector “Agreement” row, the Saved / Model / Journal rows and the reopened-session history line are proposed target visuals, not delivered GUI. The reopened projection shows the authored result (C9 present, the undone wire absent) and states that the resolved
+      model, the journal and persisted native source agree. Save As, and reopen behaviour beyond the reviewed paths, are not claimed.</p></div>
+  </div>
+</section>
+
+<!-- ======================================================== S-H -->
+<section class="fr" id="S-H">
+  <div class="sec-label"><span class="n">S-H</span><span>Tool families — delivered versus unavailable</span><span class="rule"></span>
+    <span class="tag own">◐ OWNER CHOICE · S05</span><span class="tag tgt">○ TARGET · not delivered</span></div>
+  <p class="cap">Visible controls use their actual registry binding and expose unavailable actions honestly. The historical strip
+  (<code>schematic-editor.html</code> lines 179–194) drew Net label, Bus and Junction as ordinary tools; that implied delivery. Two candidate
+  presentations for the undelivered families are shown. Retained target families are not reduced by either; no CLI command is offered as a substitute.</p>
+  <div class="grid2">
+    <div><div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span>
+      <span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span>
+      <span class="tl na" title="Label — not available: no GUI binding yet">Lbl ∅</span><span class="tl na" title="Bus — not available: no GUI binding yet">Bus ∅</span>
+      <span class="tl na" title="Junction / No-connect — not available">Mrk ∅</span><span class="tl na" title="Port — not available">Port ∅</span><span class="tl na" title="Text / Drawing — not available">Txt ∅</span></span><span class="fdot"><i></i>FOCUS</span></div>
+      <div class="pbody" style="min-height:120px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#sch"/></svg>
+        <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">Label — not available: no GUI binding yet</span></div></div></div></div></div>
+      <p class="cell-cap"><b>H1 — visible and unavailable (candidate).</b> Every family shown; undelivered ones dashed and marked ∅; the reason appears on hover, on keyboard focus and as a Console echo.</p></div>
+    <div><div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span>
+      <span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span><span class="tl btn kf" title="More tools — 5 families not yet available">More ▾</span></span><span class="fdot"><i></i>FOCUS</span></div>
+      <div class="pbody" style="min-height:120px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#sch"/></svg>
+        <div style="position:absolute;left:150px;top:0;width:250px;background:var(--s03);border:1px solid var(--bd-str);border-radius:0 0 6px 6px;font-size:12px;padding:3px">
+          <div class="row" style="color:var(--tx3)">Label<span class="meta">∅ no GUI binding</span></div><div class="row" style="color:var(--tx3)">Junction / No-connect<span class="meta">∅ no GUI binding</span></div>
+          <div class="row" style="color:var(--tx3)">Port<span class="meta">∅ no GUI binding</span></div><div class="row" style="color:var(--tx3)">Bus / Bus entry<span class="meta">∅ no GUI binding</span></div></div></div></div></div>
+      <p class="cell-cap"><b>H2 — overflow list (candidate).</b> The strip shows what works; the full family list stays one named control away, each row disabled with its reason.</p></div>
+  </div>
+  <table class="t" style="margin-top:16px" aria-label="Schematic tool family dispositions">
+    <tr><th>Family</th><th>Disposition (per DATUM_GUI_MENU_BINDINGS.md)</th><th>Label in this study</th></tr>
+    <tr><td class="n">Symbol place</td><td>PARTIAL — named narrow picker, preview, cancel, place; full browser and approved seed open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
+    <tr><td class="n">Wire</td><td>PARTIAL — terminal-connected multisegment preview, cancel, finish, history; auto-junction and editing open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
+    <tr><td class="n">Move (isolated Symbol)</td><td>Reviewed isolated unique-occurrence scope only; connected, bulk, repeated, rotate, mirror open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
+    <tr><td class="n">Undo / Redo · Save</td><td>PARTIAL — canonical history and project Save for the reviewed paths; Save As and full menu projection open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
+    <tr><td class="n">Label · Junction · No-connect · Port · Bus · Bus entry · Text / Drawing</td><td>ENGINE-READY / GUI-BLOCKED — no ordinary GUI binding established</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
+    <tr><td class="n">Heterogeneous delete · Symbol fields · ERC waiver</td><td>Normalized surface and complete GUI pending; waiver stays proposal-gated</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
+  </table>
+</section>
+
+</div>
+</body>
+</html>

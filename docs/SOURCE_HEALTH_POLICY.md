@@ -31,7 +31,8 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 75 legacy source entries remain. UNIT-I03B moved
+Current debt inventory: 68 legacy source entries retain 69 recorded metric
+ceilings. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -506,5 +507,21 @@ from the protocol root into `workspace_tools.rs`, preserving reexports and all
 existing consumers. Its pre-test ceiling ratchets 3202 to 3140; inline-test debt
 is unchanged. Native authoring, native library drawing projection and the writer
 request owner are separate bounded modules. No new exception or raised ceiling.
-The debt inventory remains 69 entries; its parity digest records the actual
-existing ledger plus this downward ratchet, without closing historical debt.
+That integration recorded a 69-entry debt inventory and a downward parity
+ratchet without closing historical debt. Current counts are stated above.
+
+LIBRARY-VALIDATION-CONVERGENCE moves manual aperture/dimension validation,
+Footprint pad validation/payload construction and resolved pool reference checks
+into the shared engine definition owner. Complete direct Padstack, Padstack
+proposal and manual Footprint-pad command lifecycles move into real CLI children
+`commands/library/library/padstack.rs`, `proposals/padstack.rs` and
+`footprint/pad.rs`; these children own preparation through commit/proposal and
+reporting, rather than forwarding to oversized parents. The three parent
+pre-test ceilings ratchet exactly: library 2657→2596, proposals 1172→1110 and
+footprint 1056→992. The engine owner and its inline tests, CLI children and new
+manual refusal/history test module remain within normal budgets. Existing CLI
+validation, payloads and transaction behavior are preserved. No legacy entry
+is removed, no ceiling or exception is raised, and the current ledger records
+69 metrics across 68 entries. These inventories do not certify full drift or
+product qualification; the one-shot full drift result remains separately
+recorded as a Clippy failure in five unchanged engine sources.

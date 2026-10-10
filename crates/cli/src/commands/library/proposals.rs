@@ -1,3 +1,5 @@
+mod padstack;
+use self::padstack::propose_create_native_project_pool_padstack;
 mod command;
 use crate::*;
 use std::path::Path;
@@ -6,7 +8,7 @@ use anyhow::{Context, Result, bail};
 use eda_engine::api::native_write::WriteProvenance;
 use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
-    pool_entity_payload, pool_padstack_payload, pool_symbol_payload, pool_unit_payload,
+    pool_entity_payload, pool_symbol_payload, pool_unit_payload,
 };
 use eda_engine::api::native_write::library_pin_pad_map::{
     pin_pad_map_payload, set_part_default_pin_pad_map_spec,
@@ -171,62 +173,6 @@ pub(crate) fn propose_create_native_project_pool_entity(
         rationale,
         "create_pool_entity_proposal",
         "Create native pool entity",
-    )
-}
-
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn propose_create_native_project_pool_padstack(
-    root: &Path,
-    pool_path: &str,
-    padstack_id: Uuid,
-    name: String,
-    aperture: Option<String>,
-    diameter_nm: Option<i64>,
-    width_nm: Option<i64>,
-    height_nm: Option<i64>,
-    drill_nm: Option<i64>,
-    proposal_id: Option<Uuid>,
-    rationale: Option<&str>,
-) -> Result<NativeProjectProposalCreateView> {
-    validate_project_local_pool_path(pool_path)?;
-    if drill_nm.is_some_and(|value| value <= 0) {
-        bail!("padstack drill-nm must be positive");
-    }
-    let aperture_value = match aperture.as_deref() {
-        None => {
-            if diameter_nm.is_some() || width_nm.is_some() || height_nm.is_some() {
-                bail!("padstack aperture dimensions require --aperture circle or rect");
-            }
-            serde_json::Value::Null
-        }
-        Some("circle") => {
-            if width_nm.is_some() || height_nm.is_some() {
-                bail!("circle padstack aperture does not accept width-nm or height-nm");
-            }
-            let diameter = positive_required_dimension(diameter_nm, "diameter-nm")?;
-            serde_json::json!({"circle": {"diameter_nm": diameter}})
-        }
-        Some("rect") => {
-            if diameter_nm.is_some() {
-                bail!("rect padstack aperture does not accept diameter-nm");
-            }
-            let width = positive_required_dimension(width_nm, "width-nm")?;
-            let height = positive_required_dimension(height_nm, "height-nm")?;
-            serde_json::json!({"rect": {"width_nm": width, "height_nm": height}})
-        }
-        Some(kind) => bail!("unsupported padstack aperture {kind}; expected circle or rect"),
-    };
-    let object = pool_padstack_payload(padstack_id, &name, aperture_value, drill_nm);
-    propose_create_pool_library_object_value(
-        root,
-        pool_path,
-        "padstacks",
-        padstack_id,
-        object,
-        proposal_id,
-        rationale,
-        "create_pool_padstack_proposal",
-        "Create native pool padstack",
     )
 }
 
@@ -406,14 +352,6 @@ pub(crate) fn propose_set_native_project_pool_pin_pad_map(
         proposal,
         validation,
     })
-}
-
-fn positive_required_dimension(value: Option<i64>, name: &str) -> Result<i64> {
-    match value {
-        Some(value) if value > 0 => Ok(value),
-        Some(_) => bail!("padstack {name} must be positive"),
-        None => bail!("padstack {name} is required"),
-    }
 }
 
 #[allow(clippy::too_many_arguments)]
