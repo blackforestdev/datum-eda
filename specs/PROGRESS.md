@@ -1,20 +1,15 @@
 # Specification Progress Tracker
 
-> **Purpose**: Maps every requirement from the controlling specs to its
-> implementation status. Updated when code changes.
-> Keep checkpoint summaries here and detailed ledgers/history in linked `specs/progress/` shards; the generated Frontier alone selects work.
->
+> **Purpose**: Track requirement implementation status; update with code changes.
+> Keep checkpoint summaries here and detail/history in linked `specs/progress/` shards; only the generated Frontier selects work.
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
 ---
 
 ## Active Frontier — Next Development Steps (canonical)
 
-> **This is THE answer to "what is the next logical development step /
-> specification?"** (CLAUDE.md → Specification Governance → Roadmap Wayfinding).
-> Ordered, dependency-aware; every item links to its governing spec/decision.
-> Detail lives in the sections below — this list is the single entry point.
-> Update it in the SAME change as any spec creation or course-correction.
+> Canonical development order comes from the generated Frontier below; details remain linked under each checkpoint (CLAUDE.md → Roadmap Wayfinding).
+> Preserve dependency/governing links and update the projection with every specification or course correction.
 
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
@@ -270,11 +265,8 @@ Checkpoint evidence and retained boundaries remain in the linked detail; current
 
 ## Scope Integration / Substrate Readiness
 
-This is the active tracking surface for the new scope. Items here should move
-from target to current evidence only when there is an implementation anchor,
-test/gate, and CLI/MCP/API surface where applicable. Imported-board fidelity can
-continue only after the relevant substrate contracts are implemented or after an
-explicit governance decision records why a fidelity slice is exempt.
+Promote target to current evidence only with implementation, verification and applicable CLI/MCP/API anchors.
+Imported-board fidelity additionally requires its substrate contracts or an explicit governance exemption.
 
 ### Library Foundation Investigation — Repository-Owned Planning
 
@@ -428,13 +420,8 @@ locked via `specs/SPEC_PARITY.md` → `mcp_runtime_methods`.
 
 ### CLI Commands (specs/PROGRAM_SPEC.md — M2)
 
-> **Scope note.** The table below is the *M2 historical slice* — the eight
-> commands M2 froze. It is **not** the current CLI surface. The present
-> `tool project` surface is **256 commands**, locked via
-> `specs/SPEC_PARITY.md` → `cli_project_commands`. For the authoritative,
-> code-derived enumeration run
-> `python3 scripts/check_spec_parity.py --print` and read the
-> `[cli_project_commands]` block. Do not read this M2 table as today's reach.
+> This table records the historical M2 slice. The current project-command inventory is locked in `specs/SPEC_PARITY.md` → `cli_project_commands`.
+> Obtain the code-derived enumeration with `python3 scripts/check_spec_parity.py --print`, `[cli_project_commands]`; retain the historical eight-command evidence below.
 
 | Command | Status | Notes |
 |---------|--------|-------|
