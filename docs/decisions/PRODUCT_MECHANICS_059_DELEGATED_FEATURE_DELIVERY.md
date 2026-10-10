@@ -868,3 +868,37 @@ CAM, numerical, dependency, source-health or visual-lane requirement is waived.
 Continue implementation through focused ordinary proof, fixes and actual
 independent candidate review, then manager objective disposition. No further
 coverage-only S5A campaign is a prerequisite for this slice.
+
+
+<!-- EVIDENCE:USER-SCHEMATIC-SYMBOL-MOVE:SM-C01-DELIVERY -->
+### Bounded Move delivery and library-foundation priority — 2026-10-09
+
+Appointed manager `codex-project-manager-20261009` records objective bounded Move
+availability at `2ca54eaacee03158e9cc6a84778bbd98d8a3f6ba` after actual independent source/test review and ordinary
+X11 keyboard/pointer preview/cancel/commit, undo/redo, Save and fresh GUI reopen.
+Exact sources, binaries, journal, preserved inputs, focused engine guards and
+retained failed attempts are recorded in `native-schematic/symbol-move-delivery.json`
+and `symbol-move-delivery-review.json` under the existing review route. SM-C01
+closes and its implementation claim releases; full qualification remains separate.
+
+The input is the existing synthetic first-party `native_authored_baseline_v1`
+test fixture introduced in `2049f22c`, not an approved production library or
+manufacturer-qualified part. Git authorship and `reviewed_by: datum` are not actual
+content review or owner approval receipts. This disposition approves Move behavior
+only; library source/rights, content approval and production availability remain
+unresolved. The owner's explicit foundation concern is recorded verbatim in
+`symbol-move-authority.json` and intake `dat-native-library-source-authority-8xm7`.
+
+Under existing delegated successor selection, the manager explicitly selects
+`GUI-SURFACE-SPECS / SURFACE-S01` with retained planning authorization and a fresh
+synchronized claim. Reconcile the library-first product foundation and complete
+current schematic/library requirements inventory; do not invent a library adoption,
+Approved object, distribution decision or implementation grant. S5A stays resumable
+with C04/C05/C06, physical/HUMAN, CAM and broader qualification unpassed. No automatic
+successor, scope waiver, dependency, protected prototype or new product mechanism.
+
+The owner subsequently directs: `we should discuss library source.` Retain the
+selected task's existing planning grant and claim for coordination/read-only
+inventory. Hold scheduled specification drafting, library adoption/content creation,
+implementation and approval-state changes until that discussion provides direction.
+No component/source approval is inferred from this discussion request.
