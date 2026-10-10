@@ -167,3 +167,76 @@ Initial contract selected on 2026-03-30:
   - `compare_route_strategy_batch_result`
   - `gate_route_strategy_batch_result`
   - `summarize_route_strategy_batch_results`
+
+## Tracker Checkpoint History
+
+> Detailed evidence relocated from `specs/PROGRESS.md`. The tracker remains the implementation-status entry point; the generated Active Frontier alone selects work. Dated history below does not grant execution or establish a fresh PASS.
+
+## M6 Opening Charter
+
+Status: [~] Frozen pending evidence
+- Authority for the proposed opening charter and entry criteria:
+  `specs/progress/m6_opening.md`
+- Recommended M6 focus: read-only deterministic strategy reporting layered on
+  top of the completed M5 routing-kernel substrate.
+- Current M6 checkpoint chain:
+  - `project route-strategy-report <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--objective <objective>]`
+  - `project route-strategy-compare <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - `project route-strategy-delta <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - `project write-route-strategy-curated-fixture-suite --out-dir <path> [--manifest <path>]`
+  - `project capture-route-strategy-curated-baseline --out-dir <path> [--manifest <path>] [--result <path>]`
+  - `project route-strategy-batch-evaluate --requests <path>`
+  - `project inspect-route-strategy-batch-result <path>`
+  - `project validate-route-strategy-batch-result <path>`
+  - `project compare-route-strategy-batch-result <before> <after>`
+  - `project gate-route-strategy-batch-result <before> <after> [--policy <policy>]`
+  - `project summarize-route-strategy-batch-results [--dir <path> | --artifact <path> ...] [--baseline <path> --policy <policy>]`
+  - accepted objective set currently reuses the selector profile vocabulary:
+    - `default`
+    - `authored-copper-priority`
+  - the report maps the requested objective to one existing selector profile,
+    explains that mapping, and includes the current live selector outcome under
+    that profile without reopening M5 routing semantics
+  - the comparison report evaluates that same accepted objective/profile set,
+    reports the current live selector outcome for each entry, and recommends
+    one profile under a deterministic baseline-preserving comparison rule
+  - the decision-delta report reduces that same accepted objective/profile set
+    to one bounded explicit delta classification plus one short material
+    difference summary for the user
+  - the batch evaluation surface runs the existing report/compare/delta
+    surfaces over a versioned explicit request manifest and returns both
+    per-request evidence and aggregate summary counts
+  - one curated fixture-suite writer now materializes a deterministic native
+    fixture set plus a compatible batch-request manifest for repeated evidence
+    runs over real persisted projects
+  - one curated baseline-capture surface now materializes that fixture suite,
+    runs the existing batch evaluator, and saves one reusable versioned
+    batch-result artifact with deterministic default paths
+  - one checked-in repo baseline asset set now lives under
+    `crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1`
+    and the alignment CI lane regenerates and strict-gates a fresh run against
+    that baseline through `scripts/check_route_strategy_evidence.py`
+  - the current curated suite covers:
+    - same-outcome baseline route selection
+    - profile divergence between `default` and
+      `authored-copper-priority`
+    - no-proposal-under-any-profile
+    - one cross-layer routable same-outcome case
+  - the batch-evaluate JSON output is now also the explicit saved result
+    artifact format with `kind = native_route_strategy_batch_result_artifact`
+    and `version = 1`
+  - saved batch result artifacts can now be inspected and structurally
+    validated through read-only surfaces that report summary/distribution
+    details, per-request outcomes, malformed entries, version compatibility,
+    required-field coverage, and deterministic summary/result integrity checks
+  - saved batch result artifacts can now also be compared without live
+    re-evaluation by `request_id`, reporting aggregate count deltas,
+    added/removed/common request ids, common-request recommendation/delta/live
+    outcome changes, and one bounded summary classification
+  - saved batch result artifact comparisons can now also be evaluated as a
+    read-only CI/review gate under the explicit accepted policy set
+    `strict_identical|allow_aggregate_only|fail_on_recommendation_change`,
+    reporting pass/fail reasons and count facts while returning CLI exit code
+  - the current M6 implementation frontier is intentionally frozen pending
+    repeated evidence from the checked-in baseline gate and curated fixture
+    suite; new semantics are not the default next step
