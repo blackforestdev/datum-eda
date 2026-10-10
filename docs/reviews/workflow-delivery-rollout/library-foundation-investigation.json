@@ -22,7 +22,7 @@
     "kind": "Noncanonical coordination status; no implementation or adoption authority",
     "objective": "Establish one faithful provider-to-native component conversion with automated numerical checks before expanding a seed library",
     "manager": "/root",
-    "scheduled_authority": "GUI-SURFACE-SPECS / SURFACE-S01 planning; runtime implementation not granted",
+    "scheduled_authority": "GUI-SURFACE-SPECS / SURFACE-S02 planning; owning-route preflight before normative refinement; no runtime implementation grant",
     "approach": "Reuse Ultra Librarian engineering baseline; independently check preservation of source/export geometry, connectivity and effective process apertures",
     "workstreams": [
       {
@@ -383,5 +383,22 @@
       "limits": "Not all board/pane prototypes or complete route consumers reread; no new full-route cross-review/digest-ready PASS. Scoped manifest search found no direct consumer entry for GUI product spec or schematic authoring contract; reconcile owning evidence mapping before normative refinements, not an invented route."
     },
     "execution": "No files changed, builds, tests, new rules/thresholds/visual edits or acceptance by auditor."
+  },
+  "manager_inventory_disposition": {
+    "marker": "EVIDENCE:GUI-SURFACE-SPECS:SURFACE-S01-INVENTORY-DISPOSITION",
+    "manager_session": "codex-project-manager-20261009",
+    "authority": "Existing owner appointment and PM059 objective acceptance against unchanged SURFACE-S01 inventory criteria; planning grant retained",
+    "appointment_evidence": "docs/reviews/workflow-delivery-rollout/native-schematic/development-acceptance.json",
+    "candidate_commit": "31321db9f2dd62c9bb9a9561ddee9d1fe2b486ad",
+    "candidate_sha256": "023b5d9028b4be292239fc9c1c5992cbfe7a3027fe0f44d4fbf6f99ea848d9fd",
+    "actual_review": "docs/reviews/workflow-delivery-rollout/library-surface-inventory-review.json",
+    "review_sha256": "e37eee20c8223551ff94539fa20f2bbe9514602da664bf7194a01df8abbb918b",
+    "disposition": "Accept completed schematic and library inventory covering requirements, prototypes, research, code seams, object authority and unresolved questions. Complete SURFACE-S01 and explicitly select existing SURFACE-S02 within unchanged planning authority.",
+    "retained_obligations": [
+      "Owning-route mapping and complete source/consumer preflight before normative S02/S03 refinement",
+      "Source access and exact license/adoption remain unresolved",
+      "No product mechanism, scope waiver, runtime, HUMAN/UX or library qualification accepted",
+      "Entire GUI-SURFACE-SPECS task remains open; no implementation successor authorized"
+    ]
   }
 }
