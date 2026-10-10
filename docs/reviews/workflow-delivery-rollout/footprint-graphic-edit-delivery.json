@@ -1,0 +1,186 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "88d5e68cfc256ed5cd6909f01288f033cf10d6e8",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda --format json project create-pool-package /home/bfadmin/Documents/datum-eda/.datum/footprint-reference-audit/footprint-graphic-edit-audit/ordinary --package 2af1d519-4615-4284-90fc-0a3dd587e7a9 --name 'Fresh graphic body'",
+  "workflow_results": {
+    "Create a native Package, Footprint and Padstack and author the four existing graphics in silkscreen and fab through ordinary CLI actions": true,
+    "Correct, remove, reorder and clear each Footprint graphics collection through existing Set": true,
+    "Query exact ordered graphics and preserved sibling content, then reopen the native project": true,
+    "Undo and redo both collection edits with exact payloads and canonical journal history": true,
+    "Use existing Symbol sections, whole-object Set and Footprint append workflows with preserved behavior": true
+  },
+  "safety_results": {
+    "Preserve raw primitive metadata, ordering, repeated graphics and absent optional defaults": true,
+    "Preserve Footprint identity, Package, pads, courtyard, process and model data and the other graphics collection": true,
+    "Reject malformed primitive arrays, unsupported kind or section, missing Footprint and unauthorized writer without authored or journal changes": true,
+    "Use one fresh prepared model and canonical Set commit path with shared typed-array admission": true,
+    "Retain existing whole-object primitive schema admission and append checks without new geometry thresholds, text normalization or graphic identity rules": true
+  },
+  "binary_sha256": "4e92082431d5b7fac2e7e8b29cb9b9ceb5dd93f5bb52ea34c4d3255917500a30",
+  "source_pins": {
+    "crates/cli/src/args/project_library_object.rs": {
+      "sha256": "d7371c1a737add96ad2fdae61b7ed71b7019b47c0f1d460c0313dc96efad2751",
+      "lines": 56
+    },
+    "crates/cli/src/commands/library/library/object_edit.rs": {
+      "sha256": "5c3c816626cf7d62f651c86d96a4f0fe6c22df299a49be782957ddc99d898de1",
+      "lines": 155
+    },
+    "crates/engine/src/api/native_write/library_definition.rs": {
+      "sha256": "c048efa61b8e8256e6eae8d76c7706dfec383157bc461d3aa5e7ab9479abc819",
+      "lines": 661
+    },
+    "crates/engine/src/api/native_write/library_footprint.rs": {
+      "sha256": "b6c142ea0891f169b005e40a1e7939751f2bc1b257f50f67eede01db5070dfce",
+      "lines": 374
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_footprint_graphic_edit.rs": {
+      "sha256": "89191f7bca9c61a002287d9b4c4ce8111dd8f0870c6f966855776574602a10ff",
+      "lines": 405
+    },
+    "crates/cli/src/main_tests/mod.rs": {
+      "sha256": "69b29c7b4d16852827041b87846a46f6b41b7c791a460ff2052d7f6d1f56f81e",
+      "lines": 339
+    }
+  },
+  "evidence": {
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/source-freeze.json": "c2a514f3289b97e0cc223253bed138a3974b61265a6f496d7480a14a0801f2ad",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/before-results.json": "4bfae32a14377d5d3d6afc3d7c8ac184a309007eecc2fe5042c0a08ad7930619",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/before-execution-receipt.json": "08d1f23b6dc64bfc9fb535e1e1f1b7fafb1642d32b382b4ae191c8bf1f4cf194",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/regression.log": "a48a0ea3a166972e7118e93046612d1fd07cc8fc345da246879203bfb81c69ec",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/symbol-drawings-tests.log": "3b3eecb65e170de9321f62b04cc13af30e07a1f987545c0131b545c237171547",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/symbol-fields-tests.log": "14484ad8f9ed2fc1b65861681fdc2c3287923735df5ac964d1309694ed4e5f47",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/build-after.log": "27c595d8bc22c4e7e486bc9e3bc7fe682c67c3c2a635dca6b94b50109341e9d1",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/ordinary-results.json": "a23a47be7167431eb18a1df7cbb853701110f36aecd0890baa08810ca3cbd22a",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/other-collection-results.json": "af6f4c1558b564f7955311008cb07664bbe14fa7d1ee95805dc7e4edf74521fa",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/compatibility-results.json": "9f69f643fd8e4759b568d4441428143031468483eb07d34175cae06fa32a2f32",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/symbol-diagnostic-comparison.json": "4ceec80eb5a919994044a679ea4d248cb97657c28114904ca4dcda3baac1d481",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/execution-receipts.json": "d95ab2f2b468d7fbcad62264d85ed011c6e1dd0d9334e3c4a0aaf198f019f750",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/full-drift.log": "23c86766eaabb709b28a25609741d3d27e4f1d7ec979f6757794bbb9045999f2",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/symbol-compat/ordinary-results.json": "0c5a2bb2b36033f07308d1acc561501d003c262b7384f0cfb2acf2340bfb3578",
+    ".datum/footprint-reference-audit/footprint-graphic-edit-audit/fields-compat/ordinary-results.json": "1acce57d53cd6223e8d8f4ea9f3a776191f259bba5af0e5ed3f92cbd58dca8b9"
+  },
+  "observed_results": {
+    "final_unique_tests": 8,
+    "ordinary_commands": 159,
+    "positive_commands": 104,
+    "refused_commands": 55,
+    "existing_append_refusals": 8,
+    "new_section_refusals": 47,
+    "required_full_project_invariant_refusals": 45,
+    "extra_collision_refusals": 2,
+    "nonempty_sibling_supplement_commands": 23,
+    "exact_generic_legacy_outcomes": 21,
+    "symbol_compatibility_commands": 85,
+    "fields_compatibility_commands": 63,
+    "qualified_symbol_diagnostic_comparisons": 46,
+    "supported_section_choice_expansions": 2,
+    "drawing_edits_per_collection": [
+      "correct",
+      "remove",
+      "reorder",
+      "clear"
+    ],
+    "collections": [
+      "silkscreen",
+      "fab"
+    ],
+    "validation": true
+  },
+  "review_receipts": {
+    "source_and_behavior": "Actual independent final management review PASS received for frozen six-source candidate, completed ordinary and nonempty sibling supplement proofs, refusal invariance and Symbol/fields/generic compatibility.",
+    "documentation": "Actual independent engineering/API review and separately authored factual Tool1 review receipts received by appointed manager.",
+    "full_drift": "Actual completed execution8090 exit101 retains thirteen Clippy diagnostic texts/locations in five unchanged engine files; later gates unreached."
+  },
+  "manager_disposition": "Owner-appointed PM059 manager accepts bounded existing-contract delivery after actual source landing; qualification remains separate.",
+  "proof_limits": [
+    "Journal increments and unplaced exclusion are executed script assertions, not separately saved independent journal comparisons.",
+    "Two foreign metadata UUID collision controls preserve authored files and journal while retaining canonical staging scratch; no full-project invariance is claimed for those extra controls.",
+    "Forty-six Symbol/fields diagnostic comparisons explicitly rebase fixture paths/UUIDs; two comparison rows reflect the supported value list expanding from fields/drawings to fields/drawings/silkscreen/fab.",
+    "No failed proof attempts were reported for this delivery."
+  ],
+  "full_workspace_result": {
+    "status": "FAIL",
+    "exit_code": 101,
+    "diagnostics": 13,
+    "unchanged_files": 5,
+    "later_gates": "unreached"
+  },
+  "pending_qualification": [
+    "Q5/Q6 graph promotion and placed propagation remain owner-reserved",
+    "GUI S05, MCP and editor breadth remain separate",
+    "Seed/source/license rights, standards and manufacturing adoption remain separate",
+    "Unrelated full-workspace Clippy and GUI parity failures remain open"
+  ],
+  "payload_checks": [
+    {
+      "collection": "silkscreen",
+      "action": "correct",
+      "before_revision": 6,
+      "after_revision": 7,
+      "exact_expected_payload": true,
+      "payload_sha256": "63e722ea4db02a0046526742756657121befe5379f08f0b36983f5fca0a55eaf"
+    },
+    {
+      "collection": "silkscreen",
+      "action": "remove",
+      "before_revision": 9,
+      "after_revision": 10,
+      "exact_expected_payload": true,
+      "payload_sha256": "3c53527a37452205562194bda6f4fe3a78d67794db939d3f499c606a6b233697"
+    },
+    {
+      "collection": "silkscreen",
+      "action": "reorder",
+      "before_revision": 12,
+      "after_revision": 13,
+      "exact_expected_payload": true,
+      "payload_sha256": "86fde5e54533c55aa76c7d2af58fcb2cd498288f9f13503e03f52ea786291d1c"
+    },
+    {
+      "collection": "silkscreen",
+      "action": "clear",
+      "before_revision": 15,
+      "after_revision": 16,
+      "exact_expected_payload": true,
+      "payload_sha256": "b8c653f995373b2a8c0d56eacefd7fd0b79244863a5c0cb098a4f8ea8ede6333"
+    },
+    {
+      "collection": "fab",
+      "action": "correct",
+      "before_revision": 26,
+      "after_revision": 27,
+      "exact_expected_payload": true,
+      "payload_sha256": "24cffeff2a57d94561d3af6072d5af6175bb5afa625f7b14b4f624a380adaf46"
+    },
+    {
+      "collection": "fab",
+      "action": "remove",
+      "before_revision": 29,
+      "after_revision": 30,
+      "exact_expected_payload": true,
+      "payload_sha256": "c9c68118ee31f75733e3d70a1e38c101aaf9fddec9b93fcb4508af8c28ef76fb"
+    },
+    {
+      "collection": "fab",
+      "action": "reorder",
+      "before_revision": 32,
+      "after_revision": 33,
+      "exact_expected_payload": true,
+      "payload_sha256": "d18d522717a8b512fd4113c8c58dca331be081669f3a6e4ae1cf2025af62e980"
+    },
+    {
+      "collection": "fab",
+      "action": "clear",
+      "before_revision": 35,
+      "after_revision": 36,
+      "exact_expected_payload": true,
+      "payload_sha256": "b8c653f995373b2a8c0d56eacefd7fd0b79244863a5c0cb098a4f8ea8ede6333"
+    }
+  ],
+  "protected_files": {
+    "count": 13,
+    "unchanged": true,
+    "original_hash_map_sha256": "11a95a4f2c3496d70732661e5f2dc1ccce91b061f2c2b2e159b9af21ff8d06f8"
+  }
+}
