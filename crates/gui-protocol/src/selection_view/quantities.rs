@@ -138,19 +138,26 @@ pub(super) fn append(model: &eda_engine::substrate::DesignModel, scopes: &mut [S
                         reason: format!("Project quantity context unavailable: {reason}"),
                     })
                 }
-                (Ok(profile), "placement_rotation") => value.as_i64().and_then(|degrees| {
-                    use eda_engine::ir::units::{CanonicalAngleScale, format_decimal_degrees};
-                    let angle = format_decimal_degrees(
-                        degrees,
-                        CanonicalAngleScale::new(1)?,
-                        profile.angle_precision.places(),
-                    )
-                    .ok()?;
-                    Some(QuantityPresentation::Formatted {
-                        rendered: angle.rendered,
-                        rounded: angle.rounded,
+                (Err(reason), "placement_rotation" | "text_rotation") => {
+                    Some(QuantityPresentation::Unavailable {
+                        reason: format!("Project quantity context unavailable: {reason}"),
                     })
-                }),
+                }
+                (Ok(profile), "placement_rotation" | "text_rotation") => {
+                    value.as_i64().and_then(|degrees| {
+                        use eda_engine::ir::units::{CanonicalAngleScale, format_decimal_degrees};
+                        let angle = format_decimal_degrees(
+                            degrees,
+                            CanonicalAngleScale::new(1)?,
+                            profile.angle_precision.places(),
+                        )
+                        .ok()?;
+                        Some(QuantityPresentation::Formatted {
+                            rendered: angle.rendered,
+                            rounded: angle.rounded,
+                        })
+                    })
+                }
                 _ => None,
             };
             if let Some(display) = display {
