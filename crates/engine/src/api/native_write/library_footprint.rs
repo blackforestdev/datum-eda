@@ -121,6 +121,20 @@ fn graphic_field(target: FootprintGraphicTarget) -> &'static str {
         FootprintGraphicTarget::Fab => "fab",
     }
 }
+
+/// Replace one graphic collection using the existing Primitive schema and raw array.
+pub fn footprint_with_graphics(
+    object: serde_json::Value,
+    target: FootprintGraphicTarget,
+    graphics: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    super::library_definition::library_with_array::<crate::pool::Primitive>(
+        object,
+        "footprint",
+        graphic_field(target),
+        graphics,
+    )
+}
 fn graphic_error(message: String) -> EngineError {
     EngineError::Validation(message)
 }

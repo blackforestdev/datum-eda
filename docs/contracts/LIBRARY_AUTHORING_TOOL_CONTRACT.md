@@ -92,6 +92,15 @@ Set/history, preserving sibling content. Existing append checks and whole-object
 Set remain intact. This adds no geometry threshold, graphic identity policy,
 drawings-section MCP/proposal/GUI delivery or placed-Symbol propagation.
 
+Manual CLI Footprint graphic correction, removal, reordering and clearing use
+`set-pool-library-object --kind footprints --section silkscreen|fab --from-json <array>`.
+Existing Primitive schema admission preserves the raw ordered array; only the
+selected collection changes through canonical Set/history. Pads, courtyard,
+process/model data, unknown metadata and the other collection remain intact.
+Existing append checks and whole-object Set remain separate. This adds no numeric
+policy, graphic identity rule, section MCP/proposal/GUI delivery, placed
+propagation or manufacturing qualification.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

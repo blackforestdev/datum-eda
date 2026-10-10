@@ -10,6 +10,9 @@ use eda_engine::api::native_write::library_definition::{
     symbol_with_drawings, symbol_with_fields, validate_footprint_replacement_references,
     validate_part_replacement_references, validate_symbol_replacement_references,
 };
+use eda_engine::api::native_write::library_footprint::{
+    FootprintGraphicTarget, footprint_with_graphics,
+};
 use eda_engine::api::native_write::library_pin_pad_map::validate_pin_pad_map_replacement_references;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{CommitSource, ProjectResolver};
@@ -34,11 +37,15 @@ pub(crate) fn set_native_project_pool_library_object(
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
     let (mut model, object) = if let Some(section) = section {
-        if !matches!(section, "fields" | "drawings") {
-            bail!("unsupported pool library section {section}; expected fields or drawings");
-        }
-        if object_kind != "symbols" {
-            bail!("--section {section} requires --kind symbols");
+        let required_kind = match section {
+            "fields" | "drawings" => "symbols",
+            "silkscreen" | "fab" => "footprints",
+            _ => bail!(
+                "unsupported pool library section {section}; expected fields, drawings, silkscreen or fab"
+            ),
+        };
+        if object_kind != required_kind {
+            bail!("--section {section} requires --kind {required_kind}");
         }
         let model = ProjectResolver::new(root)
             .resolve()
@@ -61,7 +68,11 @@ pub(crate) fn set_native_project_pool_library_object(
             })?;
         let object = match section {
             "fields" => symbol_with_fields(object, array),
-            _ => symbol_with_drawings(object, array),
+            "drawings" => symbol_with_drawings(object, array),
+            "silkscreen" => {
+                footprint_with_graphics(object, FootprintGraphicTarget::Silkscreen, array)
+            }
+            _ => footprint_with_graphics(object, FootprintGraphicTarget::Fab, array),
         }
         .map_err(definition_validation_error)?;
         (model, object)
