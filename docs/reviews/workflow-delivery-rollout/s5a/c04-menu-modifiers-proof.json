@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "kind": "S5A-C04 bounded existing ordinary overlap menu and authored Wire modifier outcomes",
+  "source_commit": "964f23370567f99e4a3cc18e0cfc90d16ca81faa",
+  "gui_sha256": "12687ddda014ab2d62b639dc0cb8b86ee45e0f0334c0079a71d118e41792cf0a",
+  "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+  "configuration": "Existing X11 production input replay on KDE Wayland desktop; WGPU Vulkan Intel HDP630/Mesa25.0.7. Exact environments/preimage hashes in each raw result. No physical Wayland or HUMAN qualification.",
+  "fixture": "target/s5a-c03-u5-semantic-v1/variants/semantic-scope unchanged",
+  "N06": {
+    "question": "Does actual overlap menu expose source-qualified local candidates and preserve prior selection during keyboard row preview/dismissal, then publish exact local SelectAll?",
+    "source_oracle": "Label73000000-0000-4000-8000-00000000000a and Port73000000-0000-4000-8000-00000000000c from persisted Selection sheet; both empty instance paths. Nominal Wire endpoint co-location does not establish actual integer-screen hit eligibility.",
+    "actual_topology": "At744,376: Portc, Labela, GlobalNet, SelectAll; no Wire or Run. Pre-Enter screenshot inspected with actual SelectAll row highlighted.",
+    "result": "overlap-selection-menu-corrected-result.json",
+    "result_sha256": "04102e9573569ff8d1476c485e17cea206e353b8d99547c438efba17e6ce82b3",
+    "harness": "native_overlap_selection_menu_corrected.py",
+    "harness_sha256": "3bbe5ae09b0a661e3f380dbfd2b70789c240a772ef8859c081360ee8ca41b92d",
+    "producer_outcome": "PASS:6 native receipts. Port/Label row navigation and full Escape preserve prior complete WireRun5. SelectAll seq8 publishes exact two-member authored Compound/focusNone; outside dismissal seq11 retains it; subsequentWire8 seq13 works. Source+journal hashes match; normal owner-drop28/28.",
+    "independent_review": {
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "receipt_route": "Actual reserved bounded PASS reported by appointed admin manager01a122e5-f602-7f61-a144-0d1ce7116a77; raw source/oracle/receipts/captures/GUI/harness pins inspected; no reviewer build/input/rerun.",
+      "limits": "Actual annotation overlap at744,376 only. Menu row navigation established; unchanged Run highlight does not independently establish canvas preview appearance. No general eligibility/all seams/all classes/both surfaces/fullN06/N15/C04/C05/HUMAN/physical Wayland acceptance."
+    },
+    "failed_trial": "failed-anchor-oracle-* preserved: initial harness used source endpoint co-location to assume three candidates plus Run leaf. Actual two annotation hits/no Run made guessed offset activate InspectWires; expected Compound timeout is harness failure, not runtime defect. Corrected one diagnosed replay uses observed topology and source annotation IDs."
+  },
+  "N01": {
+    "question": "Does ordinary authored Wire Shift/Ctrl/empty-click grammar preserve exact membership and focus including idempotence and eligible outside removal no-op?",
+    "authority": "Existing preparation-plan N01/B1-3/I1 modifier/empty-click rules, PM026 class-typed Object and authored Compound with optional focus. Shared reducer preserves historical len1 plus surviving focus as Object; no new subject semantics ratified.",
+    "result": "wire-modifier-grammar-corrected-result.json",
+    "result_sha256": "6de3c59f2c6ce43a3e74baa52ef1f1e756420e8af6d0efa3ee904a3d49925209",
+    "harness": "native_wire_modifier_grammar_corrected.py",
+    "harness_sha256": "2dd72d4be4e5a1aea2f805f3a7bce748df4ab0ab8a8567a8b73d7df744490c53",
+    "producer_outcome": "PASS:8 native receipts. ObjectWire8 -> ShiftWire9 Compound{8,9}/focus9; repeatedShift9 exactly idempotent; Ctrl860,376 outside no-op; Ctrl8 retains exactly ObjectWire9; Shift8 restores Compound{8,9}/focus8; empty1000,600 preserves full view/focus. Plain860,376 acquires exact WireD proving earlier outside point eligible, not empty. Native modifier press/release and mouse releases logged; source+journal hashes match; normal owner-drop17/17.",
+    "independent_review": {
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "receipt_route": "Actual reserved bounded PASS reported by appointed admin manager01a122e5-f602-7f61-a144-0d1ce7116a77; exact result/harness/GUI/source pins, receipts, native phases, source+journal hashes and captures verified. No reviewer build/input/rerun.",
+      "limits": "Authored Wire modifier subset only. Ctrl-remove Inspector/status Object and selected Wire9 established; magenta box on hovered removed Wire8 remains hover-versus-stale-mask unresolved. No clean removed-member canvas-cue, full N01/N15, threshold, Shift+Ctrl, derived D4, all-class/all-surface, HUMAN or physical Wayland PASS. Historical singleton normalization is not new identity ratification."
+    },
+    "failed_trial": "failed-singleton-kind-* preserved: harness wrongly expected singleton Compound, but inherited shared reducer and delivered state retain surviving focused Wire9 as Object. Corrected oracle preserves existing behavior; no runtime repair or weakened predicate.",
+    "limits": "Schematic Wire subset at unchanged model revision/empty paths. No threshold/Shift+Ctrl/all class/all surface/derived modifier/completeN01/accessibility/HUMAN/visual qualification."
+  },
+  "observations": "Existing separate dat-deselection-visual-residual-gi4a and duplicate Schematic placeholder visual gaps retained; this packet asserts no full oncanvas appearance qualification.",
+  "nonmutation": "Exact source and journal preimages stored in successful raw results and checked after trial/packaging. Operational metadata exclusions follow existing recipe. Original KiCad files untouched.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-menu-modifiers-evidence.tar.xz",
+    "sha256": "4aa0be95b038741cd612c24c13f46316fafa3e29bc46a16ec0bbccdee9d4cc81",
+    "size_bytes": 1294384,
+    "files": {
+      "failed-anchor-oracle-overlap-selection-menu-local-select-all-command.png": "a202ade25a6f5a700edd3c18fdfb2ff91b9a464df652775f4b1266866896b1d8",
+      "failed-anchor-oracle-overlap-selection-menu-overlap-first-candidate.png": "7e077df11f901113f34852ee638b98c5abe86720c83d9e2388391f2587bc00a1",
+      "failed-anchor-oracle-overlap-selection-menu-overlap-second-candidate.png": "c95314c2ed58f10e81cbba860d6aabeb87b44f4a1648b9f963cfe9164544fa8d",
+      "failed-anchor-oracle-overlap-selection-menu-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "failed-anchor-oracle-overlap-selection-menu-stdout.log": "ccd8575bfcbb1e056c4d288c53b805b30e95baf5ecfa784a35f2e5dea1c0e372",
+      "failed-singleton-kind-wire-modifier-grammar-ctrl-outside-noop.png": "51afc8f5c49d9c3647adaa1b30b1a867b3573926aa83d08eac17800c072f0869",
+      "failed-singleton-kind-wire-modifier-grammar-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "failed-singleton-kind-wire-modifier-grammar-shift-add.png": "8a83c488132255d57403cee515b77b23699d7f50e3e36c9252ace12dbe66b936",
+      "failed-singleton-kind-wire-modifier-grammar-stdout.log": "7d7c73e1bb84346f6537792e796040a926aa34cb9c686158150709358a599574",
+      "native_overlap_selection_menu.py": "7f9d5dd3a8bf20b11bed37cc9cc8aee893bd448e75b5466d5317a4784a3c38ea",
+      "native_overlap_selection_menu_corrected.py": "3bbe5ae09b0a661e3f380dbfd2b70789c240a772ef8859c081360ee8ca41b92d",
+      "native_wire_modifier_grammar.py": "fbd94028a487c4b3d3bcaf62afee9dce0eaa30d0c9de3e0474f265b5574619aa",
+      "native_wire_modifier_grammar_corrected.py": "2dd72d4be4e5a1aea2f805f3a7bce748df4ab0ab8a8567a8b73d7df744490c53",
+      "overlap-selection-menu-corrected-idle-clear.png": "788ce72a3b82b75cecaa6d0b2bc56b045aa900200bedc10b758b6c25fb3fbd15",
+      "overlap-selection-menu-corrected-local-compound.png": "fc99adeba539414aafa8fc9a1e3aae3f76ed180983bf2c397fae4e338b159bf9",
+      "overlap-selection-menu-corrected-local-select-all-command.png": "9666030abc8d7e25398d2cd973eedb9503dc110048068c38a07e44ff32644850",
+      "overlap-selection-menu-corrected-outside-dismiss-preserves.png": "418b8c7fe0f2d6afcaa1e946fa9e03d62902e25ca25661bb9f81a8e27e24ce91",
+      "overlap-selection-menu-corrected-overlap-first-candidate.png": "7e077df11f901113f34852ee638b98c5abe86720c83d9e2388391f2587bc00a1",
+      "overlap-selection-menu-corrected-overlap-second-candidate.png": "c95314c2ed58f10e81cbba860d6aabeb87b44f4a1648b9f963cfe9164544fa8d",
+      "overlap-selection-menu-corrected-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "overlap-selection-menu-corrected-result.json": "04102e9573569ff8d1476c485e17cea206e353b8d99547c438efba17e6ce82b3",
+      "overlap-selection-menu-corrected-stdout.log": "3ddf6c887f79c8c9689b1642bdb9efbda39acefbf8e4bb0fd51773eb9bd84bf7",
+      "overlap-selection-menu-corrected-subsequent-wire.png": "2a85592c997900c3696cd195702a45faa1d3d9b8bdec49abbb0dbc46c767309b",
+      "wire-modifier-grammar-corrected-ctrl-outside-noop.png": "51afc8f5c49d9c3647adaa1b30b1a867b3573926aa83d08eac17800c072f0869",
+      "wire-modifier-grammar-corrected-ctrl-remove.png": "c1f0744b574d0683c1afd5f5f2fade8d18f97b77a9afd0bd2838a6b2995f2688",
+      "wire-modifier-grammar-corrected-empty-preserves.png": "853b8c04c11b7e2e8e26e44885908fc848b47e4c22503447b5c5cec87c442703",
+      "wire-modifier-grammar-corrected-outside-eligible-control.png": "e6d17f42edc3ef5d4397e8facf514f9234f52f966af2e6d69a26e98901e2c259",
+      "wire-modifier-grammar-corrected-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "wire-modifier-grammar-corrected-result.json": "6de3c59f2c6ce43a3e74baa52ef1f1e756420e8af6d0efa3ee904a3d49925209",
+      "wire-modifier-grammar-corrected-shift-add.png": "8a83c488132255d57403cee515b77b23699d7f50e3e36c9252ace12dbe66b936",
+      "wire-modifier-grammar-corrected-stdout.log": "c24e92473f6b63b3d61be8fc0bc1acc4959fce64919594f54210b147d02cf3c9"
+    }
+  },
+  "boundaries": "C04 remains in progress, all other required N01-N17 coverage unchanged. C05/C06 pending. No new runtime source change, fixture construction, dependency, representation, persistence, tolerance, budget, timeout, prototype edit, CAM/T04 waiver or successor authority."
+}
