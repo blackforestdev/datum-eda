@@ -219,7 +219,7 @@
    Bounded Symbol Move behavior landed and independently reviewed on disclosed synthetic test data; no approved production library inferred. Manager explicitly selects existing GUI-SURFACE-SPECS planning to reconcile owner-identified library foundation gap. Full qualification remains open. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 - **Compact progress tracker and preserve status evidence** (`PROGRESS-COMPACTION`; `dat-progress-compaction-7lmq`).
-   Owner-directed documentation correction, 2026-10-10: structurally extract detailed ledgers/history and preserve concise canonical status, evidence links and existing parser contracts. Root coordinates delegated implementation and independent review. GUI-SURFACE-SPECS/SURFACE-S05 remains selected and unanswered; this separate maintenance grant does not ratify product choices or authorize library runtime work. *state `in_progress`; authorization `execution`; parallel lane.*
+   Owner-directed compact-tracker correction landed: PROGRESS reduced from3521 to685lines, detailed status/history preserved in linked cohesive shards. Actual independent structural/content/link review PASS after performance-summary correction; coverage, ERC/connectivity, selector/projection, governance and whitespace checks PASS. Maintenance claim released and issue closed. GUI-SURFACE-SPECS/SURFACE-S05 remains selected/unanswered; no product/runtime/source/standards or successor authority changed. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/PROGRAM_SPEC.md`, `specs/PROGRESS.md`.
 <!-- ACTIVE FRONTIER:END -->
 
