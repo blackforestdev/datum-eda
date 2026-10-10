@@ -270,6 +270,17 @@
         "ExactAnchors",
         "SceneVersion2ExactPosition"
       ]
+    },
+    {
+      "id": "native_file_type_proposal",
+      "kind": "file_glob",
+      "glob": "docs/reviews/workflow-delivery-rollout/native-file-types-proposal.md",
+      "owner_spec": "docs/reviews/workflow-delivery-rollout/native-file-types-proposal.md",
+      "planned_shapes": [
+        "NativeDocumentTypeProposalRow",
+        "NativeSupportFileDispositionRow"
+      ],
+      "notes": "Pending proposal filename and shape registration only. This inventory does not certify complete file-class coverage, suffix ratification, decoding, associations or migration implementation."
     }
   ]
 }
