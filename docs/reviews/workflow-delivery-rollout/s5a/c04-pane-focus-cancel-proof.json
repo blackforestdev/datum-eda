@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "S5A-C04 active gesture pane-focus cancellation subset",
+  "source_commit": "5682828d85abfc0668a42eda4d63de3c5672b062",
+  "gui_sha256": "e7a7dfbb38a97c15cf000d206f3e11226eb2c0d3834f389ccc0889bc08baa6a0",
+  "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+  "configuration": "Existing X11 production input on KDE Wayland desktop, WGPU Vulkan Intel HDP630/Mesa25.0.7; raw environment retained. No physical Wayland/HUMAN.",
+  "fixture": "Existing semantic-scope source unchanged, no fixture construction.",
+  "question": "Does native Tab changing application focus to another pane cancel an activated Ctrl rectangle without changing complete selection or letting the later mouse release acquire?",
+  "result": "gesture-pane-focus-cancellation-result.json",
+  "result_sha256": "bbb1a6fc72b53c59b00b4eb31237076ee2018bef96c2271d977db683b76ceeb9",
+  "harness": "native_gesture_pane_focus_cancellation.py",
+  "harness_sha256": "667e9afba36bd9dcf2f57d951b05d47b28592af6a958829d47589febbe78fa97",
+  "outcome": "Fresh CONTROL acknowledged before press; dotted active rectangle captured. Native Tab changes application focus Schematic pane1 to Board pane0 seq5, removes boundary before mouse release and preserves exact CompoundWire8,9 with selection focusWire9/revision. Release retains same set. Subsequent ordinary WireDseq7 restores Schematic focus; idle Escapeseq8 clears. Copper visible, source/journal hashes match, owned input cleanup and normal owner_drop55/55.",
+  "review": {
+    "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+    "receipt_route": "Actual reserved bounded PASS reported by appointed manager01a122e5-f602-7f61-a144-0d1ce7116a77. Exact source/GUI/result/harness pins, native chronology, captures, complete subject/revision/source+journal and cleanup checked; no reviewer build/input/rerun.",
+    "limits": "Native intra-application Tab pane focus switch only. Selection focus preserved while application focus changes. No WindowEventFocusedfalse, OS focus/capture/window/content/pane-closure loss, async evaluation, subtraction result, full N13/C04/C05/HUMAN/physical Wayland or general visual qualification."
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-pane-focus-cancel-evidence.tar.xz",
+    "sha256": "5733fcc0d12c2284df135117f4613c271f0f5105d33de2cd0448a1e227715b02",
+    "size_bytes": 400732,
+    "raw_files": 10,
+    "files": {
+      "gesture-pane-focus-cancellation-fresh-idle-escape.png": "6add0b1155c13832b7925d1caa06ee241f9e9034426f1f74a66cae3d5934bc75",
+      "gesture-pane-focus-cancellation-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "gesture-pane-focus-cancellation-rectangle-cancelled-after-release.png": "e559824dc436f620d6d8f5770167d5d3e29cc41a46d179e18fa52614dcd8fc32",
+      "gesture-pane-focus-cancellation-rectangle-focus-cancelled-before-release.png": "e559824dc436f620d6d8f5770167d5d3e29cc41a46d179e18fa52614dcd8fc32",
+      "gesture-pane-focus-cancellation-rectangle-in-progress.png": "b71ed4b78f116f337b87f9916cdd0ce35589a970293826549d5c3d4f5d883974",
+      "gesture-pane-focus-cancellation-result.json": "bbb1a6fc72b53c59b00b4eb31237076ee2018bef96c2271d977db683b76ceeb9",
+      "gesture-pane-focus-cancellation-stdout.log": "daad44afc08bca3b9b16cd1a0fbfed0bc954caaed689cdea7c423e2ea00a2110",
+      "gesture-pane-focus-cancellation-subsequent-wire.png": "e6d17f42edc3ef5d4397e8facf514f9234f52f966af2e6d69a26e98901e2c259",
+      "gesture-pane-focus-cancellation.log": "a7a3edc5c50ba3af4147c5f26fd86e23b01a3ddc1667f8d6561e035e4a923198",
+      "native_gesture_pane_focus_cancellation.py": "667e9afba36bd9dcf2f57d951b05d47b28592af6a958829d47589febbe78fa97"
+    }
+  },
+  "boundaries": "C04 remains in progress; C05/C06/CAM/T04/other native and HUMAN obligations retained. No production source change, dependency, persistence, budget, timeout, tolerance, prototype or new product mechanism."
+}
