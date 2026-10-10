@@ -62,6 +62,11 @@ pub enum PlacementField {
 }
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
+    pub move_paths: std::collections::BTreeMap<Uuid, Vec<Uuid>>,
+    pub move_bases: std::collections::BTreeMap<
+        Uuid,
+        Result<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveBasis, String>,
+    >,
     pub source: Option<eda_engine::schematic::Schematic>,
     pub sheet: Option<Uuid>,
     pub choices: Vec<LibrarySymbolChoice>,
@@ -88,6 +93,34 @@ impl SchematicAuthoring {
         let mut state = Self::default();
         state.source = basis.schematic_source().cloned();
         if let Some(source) = basis.schematic_source() {
+            let authored = basis
+                .authored_sources()
+                .map_err(|e| anyhow::anyhow!("Schematic occurrences unavailable: {e:?}"))?;
+            for symbol in source
+                .sheets
+                .values()
+                .flat_map(|sheet| sheet.symbols.values())
+            {
+                let paths: Vec<_> = authored
+                    .iter()
+                    .filter(|s| {
+                        s.occurrence.class == "symbols" && s.occurrence.source_id == symbol.uuid
+                    })
+                    .map(|s| s.occurrence.instance_path.clone())
+                    .collect();
+                let qualified = if paths.len() == 1 {
+                    state.move_paths.insert(symbol.uuid, paths[0].clone());
+                    eda_engine::api::native_write::schematic_symbol_move::SymbolMoveBasis::capture(
+                        &basis,
+                        symbol.uuid,
+                        &paths[0],
+                    )
+                    .map_err(|e| e.to_string())
+                } else {
+                    Err("Move requires one unique resolved Symbol occurrence".into())
+                };
+                state.move_bases.insert(symbol.uuid, qualified);
+            }
             let instantiated: std::collections::BTreeSet<_> = source
                 .sheet_instances
                 .values()

@@ -173,7 +173,14 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
         .preview
         .as_ref()
         .expect("eligible footprint hit through copper");
-    assert_eq!(preview.component.component_uuid, component.component_uuid);
+    assert_eq!(
+        preview
+            .footprint()
+            .expect("Footprint preview")
+            .component
+            .component_uuid,
+        component.component_uuid
+    );
     let destination = PointNm {
         x: component.position.x + 1_000_000,
         y: component.position.y + 1_000_000,
@@ -213,8 +220,18 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
         datum_gui_protocol::checked_snap_authoring_point(world, runtime.workspace().authoring.snap)
             .unwrap();
     let expected = PointNm {
-        x: component.position.x + snapped.x - preview.cursor_anchor.x,
-        y: component.position.y + snapped.y - preview.cursor_anchor.y,
+        x: component.position.x + snapped.x
+            - preview
+                .footprint()
+                .expect("Footprint preview")
+                .cursor_anchor
+                .x,
+        y: component.position.y + snapped.y
+            - preview
+                .footprint()
+                .expect("Footprint preview")
+                .cursor_anchor
+                .y,
     };
     assert_eq!(
         preview
@@ -375,7 +392,7 @@ fn pending_move_worker_failure_restores_confirmed_scene() {
         y: component.position.y,
     };
     runtime.session.workspace_mut().scene = preview.scene_at(destination).unwrap();
-    runtime.native_edit.pending_move_base = Some(base.clone());
+    runtime.native_edit.pending_move_base = Some((false, base.clone()));
     // A disconnected result channel represents worker loss, with no forged
     // canonical result or write. The pending display must not claim success.
     let (sender, receiver) = mpsc::channel();

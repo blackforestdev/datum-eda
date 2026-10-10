@@ -9,6 +9,8 @@ pub use board_physical::{
     BoardRunMembership, CrossNetContact, PhysicalQueryFailure, ZoneClearReason,
     ZoneCopperProjection, ZoneRegionQualifier, ZoneRegionSuccessor,
 };
+mod symbol_move_contacts;
+pub(crate) use symbol_move_contacts::SymbolContactBasis;
 mod segment_geometry;
 use segment_geometry::point_on_wire_segment;
 mod label_semantics;
@@ -102,24 +104,7 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
     let mut uf = UnionFind::default();
 
     for sheet in schematic.sheets.values() {
-        let mut attachment_points = HashSet::new();
-        for junction in sheet.junctions.values() {
-            attachment_points.insert(junction.position);
-        }
-        for label in sheet.labels.values() {
-            if is_bus_container_label(label) {
-                continue;
-            }
-            attachment_points.insert(label.position);
-        }
-        for port in sheet.ports.values() {
-            attachment_points.insert(port.position);
-        }
-        for symbol in sheet.symbols.values() {
-            for pin in &symbol.pins {
-                attachment_points.insert(pin.position);
-            }
-        }
+        let attachment_points = symbol_move_contacts::schematic_attachment_points(sheet);
 
         for wire in sheet.wires.values() {
             let a = NodeKey {

@@ -3,6 +3,8 @@
 use crate::*;
 use eda_engine::board::nominal_geometry::Rational;
 
+pub mod native;
+
 pub struct FootprintMovePreview {
     pub base: BoardReviewSceneV1,
     pub component: ComponentBounds,

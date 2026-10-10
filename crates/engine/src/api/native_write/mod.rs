@@ -46,6 +46,7 @@ pub mod schematic_connectivity;
 pub mod schematic_edit;
 pub mod schematic_library;
 pub mod schematic_sheets;
+pub mod schematic_symbol_move;
 pub mod schematic_symbols;
 pub mod waivers;
 

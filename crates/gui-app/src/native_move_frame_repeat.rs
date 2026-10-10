@@ -22,17 +22,23 @@ impl Fixture {
                 }
                 let preview = runtime.native_edit.preview.as_ref().unwrap();
                 assert_eq!(
-                    Some(&preview.component.component_uuid),
+                    Some(
+                        &preview
+                            .footprint()
+                            .expect("Footprint preview")
+                            .component
+                            .component_uuid
+                    ),
                     self.post_move_component.as_ref()
                 );
                 let base_position = preview
-                    .base
+                    .base()
                     .components
                     .iter()
                     .find(|c| Some(&c.component_uuid) == self.post_move_component.as_ref())
                     .unwrap()
                     .position;
-                let rect=runtime.presented_hits.regions().iter().find(|r|matches!(&r.target,HitTarget::AuthoredObject(id) if id==&preview.component.object_id)).unwrap().rect;
+                let rect=runtime.presented_hits.regions().iter().find(|r|matches!(&r.target,HitTarget::AuthoredObject(id) if id==&preview.footprint().expect("Footprint preview").component.object_id)).unwrap().rect;
                 let (x, y) = (
                     (rect.x + rect.width * 0.5) as f64,
                     (rect.y + rect.height * 0.5) as f64,
@@ -108,6 +114,8 @@ impl Fixture {
                             .preview
                             .as_ref()
                             .unwrap()
+                            .footprint()
+                            .expect("Footprint preview")
                             .component
                             .component_uuid
                     ),

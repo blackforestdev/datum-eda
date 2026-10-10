@@ -1,0 +1,396 @@
+{
+  "kind": "Actual independent bounded source and ordinary application runtime review",
+  "task": "USER-SCHEMATIC-SYMBOL-MOVE / SM-C01 / dat-native-symbol-move-ydza",
+  "reviewer": "/root/s5a_code_audit",
+  "timestamp_utc": "2026-10-10T03:30:53.884197+00:00",
+  "authority_commit": "cb702050",
+  "disposition": "PASS for reviewed bounded production source and independent ordinary X11 Symbol Move workflow; full qualification remains open",
+  "mandatory_findings": [],
+  "production_source_pins": [
+    {
+      "path": "crates/engine/src/api/native_write/schematic_symbol_move.rs",
+      "git_blob": "86d9b6d3fdbc76e1e96f304392428765ac75ae0f",
+      "sha256": "9e69b278a240b65b9f59fa0665434e5804f6203afd2e2412229a6ecace2f6999"
+    },
+    {
+      "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+      "git_blob": "d9da55cf2e7f7603516d4aea971488ed5881ae9d",
+      "sha256": "9531e16eb14676632bbd5c0c47d5b6dbc15c9ef07746be4b1f020881aac6c9e5"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/mod.rs",
+      "git_blob": "5bb2cb326259b1043b988e9840a875e6348c2ea6",
+      "sha256": "d0ff89b8771dbda8628ec7c05e078ef1b638319cbc16a6473fa0f41609d69a06"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/registry.rs",
+      "git_blob": "336cd9e0bd09899aace2bec970532adad5200590",
+      "sha256": "e7335967920ac9b66e8c93bc866775c604d1d6682c3c2ed0eed4db874a2d02e4"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+      "git_blob": "6276ba82fc6a4b07a22def26bd7b6943bb998a55",
+      "sha256": "026fa9da4a0497d2f4f68170ee7dc49536b908c16034d78dec521a97280c0eff"
+    },
+    {
+      "path": "crates/engine/src/connectivity/mod.rs",
+      "git_blob": "1dd3592784399299d6bd75dfe0352d6618cb8bba",
+      "sha256": "64b5ad1e426faf50c734c64b738db3df8136c5ba146c9fd96b2d3ae93067dc86"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_native_edit.rs",
+      "git_blob": "bdf21af522f6a9658dc3138ef84886807320f192",
+      "sha256": "34ed35cf23b51eb91cbfbfe166fb8ee3589ec65cb36fea90538f973a037906d4"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_native_edit/move_acquisition.rs",
+      "git_blob": "d6ca59913ae1ea24ea982b47bd75ed82ed09ec19",
+      "sha256": "ecce336af2b18bcaa52fe62b6de1735e7cb9e1bfb3de84cc0794b470c69829a2"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_schematic.rs",
+      "git_blob": "fd6573b581b9e9410bab1009f985372bf98514a6",
+      "sha256": "aa2d3b4365308e3303e2dd9905c457508f894105e5f2dae316de71bc9ebcd182"
+    },
+    {
+      "path": "crates/gui-protocol/src/footprint_move_preview.rs",
+      "git_blob": "760cef264fa9b375510296717691e00952778ae1",
+      "sha256": "e9f939499a1a488abd6c27e80c7b1c75ffedc6cfd691108e0c3c1bff2aeb419d"
+    },
+    {
+      "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+      "git_blob": "b8b6caf01c86fc31a4cdb327f82fcf9d9cc8df5f",
+      "sha256": "99a91f2bfc44892028ed2c6e6f52a007ea37a8fcd7dcb22dd4fd5e3eb4fb7790"
+    },
+    {
+      "path": "crates/gui-protocol/src/native_edit_client.rs",
+      "git_blob": "1e46e35e5bebe360cd84a546fa7f8f0c5461729b",
+      "sha256": "98b227bcbed2d56e8cfe642e07c83a6d76b35369e7704a1f434ecedc5d18278d"
+    },
+    {
+      "path": "crates/gui-protocol/src/schematic_authoring.rs",
+      "git_blob": "88f317662dfa5bd43d2835d2f08284aa6252c56f",
+      "sha256": "77aff2291ff6c8f74558a02de8edbeb13979993c6acfe4c03235c058db82db8d"
+    },
+    {
+      "path": "crates/gui-protocol/src/schematic_authoring_preview.rs",
+      "git_blob": "bd230c63bef9269f08e17df2c249c26ddb807ca1",
+      "sha256": "5e841cadbde24ed89443cc1e013766659dd096e0f4d8b2df0f06d357fe269c12"
+    }
+  ],
+  "source_review_reused": [
+    "target/s5a-c04-resume-20261009/symbol-move-source-review.json",
+    "target/s5a-c04-resume-20261009/symbol-move-source-review-delta.json"
+  ],
+  "source_cohort_note": "All14 production files and final6test files are pinned; production source matches completed14+2delta review. Final test-only assertion/log assessment appended without rerunning Cargo/runtime. Root manages landing commit and objective/fixture governance; no subsequent source changes certified.",
+  "binary_sha256": {
+    "target/debug/datum-gui": "b9a105bd109715b4b105964b24cd133c3caff6b542937cb0f78afb70b25583dd",
+    "target/debug/datum-eda": "7017a4fbcab3f9452247a7a969e922b1f5bd8e1b59a56d100c24fe1f64fc69e4",
+    "target/debug/eda-engine-daemon": "72525ac6dfd42cbe46cbe03b7e7f67cc92b23a0487f3d93bb61ad5db8d262fde"
+  },
+  "runtime_route": {
+    "binary": "target/debug/datum-gui",
+    "project": "target/symbol-move-independent-project",
+    "input_backend": "Ordinary native X11 on existing KDE Xwayland DISPLAY=:1, exclusive input slot granted by root",
+    "renderer": "Ordinary default backend and AA; no renderer/AA/source override on credited workflow",
+    "runtime_directory": "/run/user/1000",
+    "input": "Existing xdotool native keyboard/pointer events directed only at acknowledged owned window; Spectacle screenshots, focus restored after capture",
+    "launch": "env -u WAYLAND_DISPLAY -u DATUM_GPU_DIAGNOSTIC_BACKEND DISPLAY=:1 XDG_RUNTIME_DIR=/run/user/1000 DATUM_ACTION_EVIDENCE=1 DATUM_GUI_VERBOSE_LOG=1 DATUM_GUI_LOG=<owned target log> EDA_CLI_BIN=<target/debug/datum-eda> target/debug/datum-gui --project-root <owned private Project> --focus-pane schematic",
+    "commands": [
+      "python3 target/symbol-move-independent/ordinary_input.py preview",
+      "python3 target/symbol-move-independent/ordinary_input.py commit",
+      "python3 target/symbol-move-independent/ordinary_input.py history",
+      "SYMBOL_PROOF_LOG=reopened-gui.log SYMBOL_PROOF_WINDOW=<owned reopened window> SYMBOL_PROOF_PID=<owned reopened PID> python3 target/symbol-move-independent/ordinary_input.py reopen"
+    ],
+    "input_acknowledgment": "PID, private Project command line and active input focus checked before and after each input batch. No unexpected focus/input contamination observed."
+  },
+  "fixture_setup": {
+    "seed": "target/nsd-native-proof-project",
+    "private_copy": "target/symbol-move-independent-project",
+    "setup": "Seed had three wires geometrically connecting U1 OUT/IN-. In private copy only, used existing datum-eda project delete-wire <copy> --wire <UUID> three times. CLI path invokes canonical typed/journal mutation; setup.log preserved. Post-setup baseline captured before Move. Setup journal changes are not credited as Move effects. Original seed unchanged.",
+    "canonical_source_route": "crates/cli/src/commands/schematic/connectivity_run_impls.rs:220 ProjectDeleteWireArgs.run -> connectivity_mutations.rs:146 delete_native_project_wire -> commit_schematic_write + build_delete_schematic_wire -> connectivity_mutations.rs:182 commit_prepared.",
+    "symbols": 1,
+    "pins": 5,
+    "move_baseline": "target/symbol-move-independent/move-baseline.json"
+  },
+  "observed_outcomes": [
+    "Ordinary pointer click selected current U1; M and pointer input visibly previewed whole Symbol body and five pins",
+    "Preview and Escape cancellation preserve every baseline authored file and journal hash; inspected preview and restored screenshots",
+    "Fresh M/pointer/click committed one source Symbol with exact delta +4600000nm,-3100000nm for origin and all5 stored absolute pins; all other Symbol fields including IDs/rotation/mirror/library and hidden-power metadata unchanged",
+    "Exactly one canonical set_schematic_symbol operation in normal Move transaction; exact inverse Symbol retained",
+    "Ctrl+Z restored exact original source JSON; Ctrl+Y restored exact moved source JSON through separate canonical undo/redo history entries",
+    "Ctrl+S acknowledged Project saved without additional journal transaction; fresh ordinary GUI reopen renders and selects moved U1 with Inspector position4.60mm,-3.10mm",
+    "Only owned sheet and journal files changed across Move/history; board/pool/library/Project/electrical identity files and original seed unchanged"
+  ],
+  "journal_tail": [
+    {
+      "transaction_id": "b713bc4d-afdd-5b7f-9f31-fd60571b3491",
+      "transaction_kind": "normal",
+      "before_model_revision": "2fe4aca1c4bb08e616f7a8d6ad0a0bea93add7fb6032e9180c522a04f4bd7f6a",
+      "after_model_revision": "c1266d9c6bb54a5517c879279e4a4ff8421cb7053b981fe33336e5fea82b32c6",
+      "operations": [
+        "set_schematic_symbol"
+      ]
+    },
+    {
+      "transaction_id": "b6988808-8c17-50f1-8507-835ed9ed0d14",
+      "transaction_kind": "undo",
+      "before_model_revision": "c1266d9c6bb54a5517c879279e4a4ff8421cb7053b981fe33336e5fea82b32c6",
+      "after_model_revision": "e4e8a429054a21665483f1a3be462a9b885551e4155c016c1bdc3c336a7b9ddb",
+      "operations": [
+        "set_schematic_symbol"
+      ]
+    },
+    {
+      "transaction_id": "f8dacb3d-87f8-5bf5-82b5-37ffa64e0556",
+      "transaction_kind": "redo",
+      "before_model_revision": "e4e8a429054a21665483f1a3be462a9b885551e4155c016c1bdc3c336a7b9ddb",
+      "after_model_revision": "54cf992dc90d1bb3379f23855f1037dbe538699ac44b04eefa46f106bf0b4c50",
+      "operations": [
+        "set_schematic_symbol"
+      ]
+    }
+  ],
+  "changed_files_relative_to_post_setup_baseline": [
+    ".datum/journal/cursor.json",
+    ".datum/journal/transactions.jsonl",
+    "schematic/sheets/7c0f83dd-c13d-4ffb-bab1-20bfb9dfcd37.json"
+  ],
+  "logical_identity_assessment": "Move changed no electrical identity file; supported source logical identity records and full Symbol metadata are preserved. SourceDefinedImplicit metadata preservation is not a claim that unsupported implicit-power-net production exists.",
+  "screenshots_inspected": [
+    "target/symbol-move-independent/ordinary-ready.png",
+    "target/symbol-move-independent/selected.png",
+    "target/symbol-move-independent/preview.png",
+    "target/symbol-move-independent/cancelled.png",
+    "target/symbol-move-independent/precommit.png",
+    "target/symbol-move-independent/committed.png",
+    "target/symbol-move-independent/undone.png",
+    "target/symbol-move-independent/redone.png",
+    "target/symbol-move-independent/saved.png",
+    "target/symbol-move-independent/reopened-selected.png"
+  ],
+  "artifacts": [
+    {
+      "path": "target/symbol-move-independent/ordinary-ready.png",
+      "sha256": "91638ab96f5c240feb1951d84ee99983da88c3d841c093e238e3fd81c21a390a"
+    },
+    {
+      "path": "target/symbol-move-independent/selected.png",
+      "sha256": "72834b732a85941bfef8a6e3af1a1b58845f4a4e21a60ad205e44bc1bff23de2"
+    },
+    {
+      "path": "target/symbol-move-independent/preview.png",
+      "sha256": "6eaea2e8ce71a685c5fcf43e028005b38e3ff1094431c1e73e7d531783fb5105"
+    },
+    {
+      "path": "target/symbol-move-independent/cancelled.png",
+      "sha256": "93f48f6a74c15e7c3b34b1cd02a3f25c32dff28e39ffc1b1ae3a42a1d6da0610"
+    },
+    {
+      "path": "target/symbol-move-independent/precommit.png",
+      "sha256": "8426df4d79d16b6d6a66da526de75e17063ad1fc9162a6c7d760eb84844190bf"
+    },
+    {
+      "path": "target/symbol-move-independent/committed.png",
+      "sha256": "b98380e4ae4024988e5252b81d44905e93eeb8b65ecf8f8b4eb6b4f31217bfdc"
+    },
+    {
+      "path": "target/symbol-move-independent/undone.png",
+      "sha256": "ff17d64fa250d1996b6e25e663fec91532eb698bcf55ba45b05571bd0723ec6e"
+    },
+    {
+      "path": "target/symbol-move-independent/redone.png",
+      "sha256": "e54a54df473fa4fcd8a1f19ce35363a141b2064fabc23d3958d4834a2eac0dae"
+    },
+    {
+      "path": "target/symbol-move-independent/saved.png",
+      "sha256": "e8a97ad04952cf3f7a8272de99f43c52ff4ff6aed01064e0c9fdd89fc9b98ce5"
+    },
+    {
+      "path": "target/symbol-move-independent/reopened-selected.png",
+      "sha256": "7ad9ec80500ceba1577baf93e0cb4b0b6cdc1634b24f3e1f1ca351f133f70ac2"
+    },
+    {
+      "path": "target/symbol-move-independent/ordinary_input.py",
+      "sha256": "83c39ba019cc4ff8bc9a88b62ff0ef65cd955fd36271e66e229ec3722a9dfe25"
+    },
+    {
+      "path": "target/symbol-move-independent/inputs.json",
+      "sha256": "c8b6366bf83e2e6513b29b144877abd9d2bc1cec3a2d4e6e291b37c115617bbc"
+    },
+    {
+      "path": "target/symbol-move-independent/move-baseline.json",
+      "sha256": "a483003fd45a43da7a179de425682c746cfd25f734f48a10f207207ed89ca23b"
+    },
+    {
+      "path": "target/symbol-move-independent/commit-source.json",
+      "sha256": "d92227c674593a55b33cc8adaf9cbd26cecbb31114c21c3a9b4400d3c10ba895"
+    },
+    {
+      "path": "target/symbol-move-independent/reopen-state.json",
+      "sha256": "1dbe85530339ba182c656259df079c22a1408dd6450527237e57cf5017625f5c"
+    },
+    {
+      "path": "target/symbol-move-independent/setup.log",
+      "sha256": "efae819a7970f065b90c00caf44e021923cba205f2ddefc11c3a575a55009d6d"
+    },
+    {
+      "path": "target/symbol-move-independent/ordinary-gui.log",
+      "sha256": "ea1c025e19dbd89e305d364d274b61f52dbe2e118699473ce13b8e2b68e3e102"
+    },
+    {
+      "path": "target/symbol-move-independent/ordinary-gui-diagnostic.log",
+      "sha256": "2ce19a5dbd73797019e508e760765451b185b214467e96222d96b7ad20b0e41a"
+    },
+    {
+      "path": "target/symbol-move-independent/reopened-gui.log",
+      "sha256": "3674842fc66221d344d5370ab0b1aeee2114445bc8c68880794a914cb205153b"
+    },
+    {
+      "path": "target/symbol-move-independent/reopened-diagnostic.log",
+      "sha256": "4be34bfebcb2d4fc97d7360836233ef4a126693be1f780581eb31b6c2ce7ff56"
+    },
+    {
+      "path": "target/symbol-move-independent/transport-and-baseline.json",
+      "sha256": "d29c500350cb5afbeb9825a2bc3f3946f1879c101cf6e74fc91dae1472b166fb"
+    },
+    {
+      "path": "target/symbol-move-independent/gui.log",
+      "sha256": "b4e82b9b384aff807de6ec389af6b187a2d954ee55b6e84648ab4609c46a2121"
+    },
+    {
+      "path": "target/symbol-move-independent/gui-gl.log",
+      "sha256": "22dbb0b48e190a90d41d90574cc3fe4801bca99220e0dd57329f8dcea87fa0a1"
+    },
+    {
+      "path": "target/symbol-move-independent/gui-vulkan.log",
+      "sha256": "1ff0a7ceca02241df1bb4c4173677826a180acd627d1e12b05057a5386a09ab0"
+    },
+    {
+      "path": "target/symbol-move-independent/weston.log",
+      "sha256": "572fa77eb014cf4c6277da8ad9ba498b0be9577c3584a57337d9569f0249329a"
+    },
+    {
+      "path": "target/symbol-move-independent/weston-gl.log",
+      "sha256": "608f0fa7281e5b34124606e4a80c0794afb55b6d6f5013b83cddb745a1ab76f8"
+    },
+    {
+      "path": "target/symbol-move-independent/final-transactions.jsonl",
+      "sha256": "ddff027010fac8080a1091ad61a4ed24318c587e2060060086f1a14b3fad62af"
+    },
+    {
+      "path": "target/symbol-move-independent/final-cursor.json",
+      "sha256": "93e085cdb328b2d0199d5da620ca07cdb7536ff281b431c4703956e95d7bb6e8"
+    }
+  ],
+  "excluded_failed_transport": "Private Weston pixman/Xwayland failed DRI3 and long IPC path; GL/short-runtime attempt still paused rendering; a finite explicit Vulkan diagnostic attempt also paused and is excluded. All logs retained; no interaction/source writes credited from them. Existing shared Xwayland ordinary route was coordinated before use.",
+  "validation_reuse": "Root reports guarded ordinary GUI/CLI build PASS and engine SymbolMove5/0 plus net_info5/0. Reviewer executed no Cargo; existing scoped safety negative proof reused, not independently replayed here.",
+  "retained_limits": [
+    "No physical native Wayland input, HUMAN visual authority, whole-workspace checks or full platform qualification PASS",
+    "Connected/repeated/ambiguous and positioned-owner transforms remain deferred; bounded guard tests reused at declared scope",
+    "No broad coverage matrix, full authoring acceptance or S5A C04/C05/C06 closure",
+    "Final test-file corrections and landing/safety gates remain root-managed; receipt covers exact production pins and credited binaries only"
+  ],
+  "cleanup": "Owned proof windows closed after Save/reopen; X11 destroy/AltF4 left GUI process alive after window closure, so idle owned processes were terminated explicitly. No pending mutation at cleanup. Private Weston compositor terminated; exclusive desktop-input slot released.",
+  "final_test_only_review": {
+    "timestamp_utc": "2026-10-10T03:33:54.916680+00:00",
+    "disposition": "PASS at bounded test-source/assertion and retained actual log scope; no new reviewer execution",
+    "mandatory_findings": [],
+    "source_pins": [
+      {
+        "path": "crates/gui-app/src/native_first_edit_tests.rs",
+        "git_blob": "d09f018894cb964502ebcffc2d1ceb33bdb8edab",
+        "sha256": "9c7879b4c9f39e96402d2a97ff5b13c2f447a6989e982550d0cdd7f051e0ea68"
+      },
+      {
+        "path": "crates/gui-app/src/native_move_frame_repeat.rs",
+        "git_blob": "f5b4952054173aa16b884221a4e473582bdeb1bc",
+        "sha256": "7b466f725518d1ca98996525b01f641407f79475ae366752b36e61bd09781100"
+      },
+      {
+        "path": "crates/gui-app/src/native_move_frame_steps.rs",
+        "git_blob": "37738143ddc5ef299c5d16cfb4a48aea202ef400",
+        "sha256": "123f75203969eed94b6bc7f2e3dac280ad78947551189293c7d92f5abe19794c"
+      },
+      {
+        "path": "crates/gui-app/src/native_schematic_frame_tests.rs",
+        "git_blob": "54ffb98ae398755ffbd50c8adabe7f4f2ab6c0a3",
+        "sha256": "32be04ce96997276cc31e80520cc305baf9e9f2cb7d390d75ce0edb00a6cb192"
+      },
+      {
+        "path": "crates/gui-app/src/native_schematic_frame_tests/symbol_move.rs",
+        "git_blob": "3c2d42803ed0ef340255233ba474eb75ccff11ab",
+        "sha256": "9da2efaee1b8fc5ff53a2447b1aefbfd0bca45715836ebd43a4cb1670c513d5f"
+      },
+      {
+        "path": "crates/engine/src/api/native_write/schematic_symbol_move_tests.rs",
+        "git_blob": "0f0b9ecd969e1a3333dcdd1cfd90e92060fcfa36",
+        "sha256": "f81b66c64fa6c03693a775ad3299611816b2acb3f398a2553166e6ced565b6ad"
+      }
+    ],
+    "handoff": {
+      "path": "target/symbol-move/gui-delivery-handoff.json",
+      "sha256": "2237241cdde853cb3a9ff56d38ba8762c9365b6efac0d86d28e06deea3302723"
+    },
+    "assessment": [
+      "Four existing test adapter/module files: Footprint-specific assertions use .footprint()/base() and pending restore tuple Board=false; assertions are retained. Existing schematic native test module registers new child; no production rules changed.",
+      "New Symbol workflow waits for real loaded schematic source and current sheet before capturing eligible basis, then presented-frame/worker readiness at each stage. It asserts actual selected Symbol identity, shared M dispatch, source+journal preview/cancel immutability, visible preview scene change, async click pending, full5-pin/metadata/source translation, exact undo/redo, Save and fresh resolver source reopen plus unchanged Board.",
+      "Keyboard shortcuts in App fixture invoke existing workspace_keyboard character_action/apply; pointer events dispatch ordinary App.window_event. This is programmatic native Wayland App proof, not physical keyboard/Wayland or HUMAN proof. Independent ordinary X11 key/pointer/reopen evidence remains separately credited.",
+      "Final engine regression tests exercise two differently offset stored pins including a hidden PowerIn display override; whole source and existing logical IDs preserved. All listed contact categories, preimage/destination, repeated/wrong occurrence, positioned owners, stale revision, checked extremes and incomplete bus/entry refusals reviewed. No new implicit-power semantics inferred."
+    ],
+    "actual_retained_logs": [
+      {
+        "path": "target/symbol-move/native-app-test.log",
+        "sha256": "2379e13c3c738587ae862150e47704fc285f19971dac9dfd4287287f9e7d51de"
+      },
+      {
+        "path": "target/symbol-move/native-app-test-repaired.log",
+        "sha256": "ffd2ad37eaf19a335b542fea503b9aca23ac441561296ef4994cd0abb096941c"
+      },
+      {
+        "path": "target/symbol-move/native-app-test-qualified.log",
+        "sha256": "d01b381e24f497c1c415be20131ed17e7db7ddf11816df49e30b8b2b8255cc86"
+      },
+      {
+        "path": "target/symbol-move/native-isolated-symbol-setup.log",
+        "sha256": "e0afb51b01d8fde150193817070dc0ae3b2ca78bb1315aa5adbfce6e4fa6545f"
+      },
+      {
+        "path": "target/symbol-move/native-isolated-baseline-correction.log",
+        "sha256": "017c8bf0b8d34893aadf0831a35a9edbef50c39009d3d4a1424f525b23724525"
+      }
+    ],
+    "attempt_dispositions": [
+      "native-app-test.log: six legacy preview-field access compile errors; corrected by reviewed test adapters; no PASS credited.",
+      "native-app-test-repaired.log: native workflow failed at initial eligible isolated Symbol baseline; canonical private fixture correction/setup logs retained, async source/sheet wait added; failure not erased or treated as product PASS.",
+      "native-app-test-qualified.log: actual test result 1 passed,0 failed,3.38s; complete source and +1000000nm,+1000000nm all5-pin outcome logged. Reviewer inspected log and final assertions without rerunning."
+    ],
+    "production_cohort": "All14 production pins unchanged against completed source/runtime receipt; unchanged evidence reused.",
+    "scope_boundary": "Test source review supplements bounded runtime/source PASS only; no whole-workspace/platform/HUMAN or approved product-library acceptance."
+  },
+  "fixture_provenance_and_limits": {
+    "tracked_source": "crates/test-harness/testdata/library/native_authored_baseline_v1",
+    "classification": "Known tracked first-party TEST FIXTURE; not manufacturer/product library acceptance",
+    "origin_commit": "2049f22c26a7c9c06c84b579978080c8650aa2ab",
+    "authorship_boundary": "Git authorship is repository provenance only; it does not identify the executing person/agent or constitute manufacturer/specification-data review.",
+    "runtime_claim": "Proof demonstrates supported Move behavior over the existing fixture-derived native private Project; preservation of library binding means identifiers/source bytes remained intact, not that their electrical/physical specification has been independently approved.",
+    "not_established": "No authoritative manufacturer data, datasheet/pin/footprint accuracy, library-governance acceptance or accepted production-use library asserted by this review.",
+    "objective_acceptance": "Reserved to root/owner within actual delegation and current bounded governance check; independent review PASS is not owner acceptance."
+  },
+  "incidental_close_observation": {
+    "status": "Separate incomplete diagnosis; not Symbol Move prerequisite",
+    "ordinary_first_window": {
+      "pid": 180771,
+      "window": 27262980,
+      "input": "xdotool windowclose27262980 after Save; actual PID remained after window disappeared",
+      "log": "target/symbol-move-independent/ordinary-gui-diagnostic.log"
+    },
+    "reopened_window": {
+      "pid": 181361,
+      "window": 33554436,
+      "input": "xdotool key alt+F4 after verified active focus/PID; PID remained after native window closure",
+      "log": "target/symbol-move-independent/reopened-diagnostic.log"
+    },
+    "evidence_limit": "PIDs/window checks observed directly in tool outputs, no standalone raw ps listing file retained. Unknown shutdown/terminal drain cause; no timing-threshold or automatic recovery conclusion asserted. Reviewer terminated owned idle processes after preserving source/history; not a recovery proof."
+  }
+}

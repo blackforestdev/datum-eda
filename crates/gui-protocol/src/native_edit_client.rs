@@ -19,6 +19,11 @@ pub enum NativeEditAction {
         x_nm: i64,
         y_nm: i64,
     },
+    MoveSymbol {
+        symbol: Uuid,
+        x_nm: i64,
+        y_nm: i64,
+    },
     Undo {
         expected_tip: Uuid,
     },
@@ -37,6 +42,7 @@ pub struct NativeEditIntent {
     pub action: NativeEditAction,
     pub request_id: Uuid,
     pub schematic: Option<crate::schematic_authoring::SchematicEditRequest>,
+    pub instance_path: Vec<Uuid>,
 }
 impl NativeEditIntent {
     pub fn new(
@@ -54,6 +60,7 @@ impl NativeEditIntent {
             action,
             request_id: Uuid::new_v4(),
             schematic: None,
+            instance_path: Vec::new(),
         }
     }
 }
@@ -270,6 +277,10 @@ impl NativeProjectClient {
                 .as_ref()
                 .context("Schematic edit payload missing")?
                 .verb_params(),
+            NativeEditAction::MoveSymbol { symbol, x_nm, y_nm } => (
+                "datum.schematic.move_symbol",
+                json!({"symbol":symbol,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
+            ),
             NativeEditAction::Save => unreachable!(),
         };
         let reason = format!("GUI {verb}; request {}", intent.request_id);

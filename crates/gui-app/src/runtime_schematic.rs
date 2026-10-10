@@ -160,6 +160,21 @@ impl Runtime {
         true
     }
     pub(super) fn native_schematic_pointer(&mut self, screen: (f32, f32)) -> bool {
+        if self
+            .native_edit
+            .preview
+            .as_ref()
+            .is_some_and(|p| p.is_schematic())
+        {
+            if let Some((world, SceneSurface::Schematic)) = self
+                .prepared_scene()
+                .and_then(|scene| scene.world_point_at_screen(screen.0, screen.1))
+            {
+                return self.native_move_pointer(world);
+            }
+            // Never feed Board coordinates into a Schematic Move.
+            return true;
+        }
         if !self.workspace().schematic_authoring.active() || self.native_edit.pending() {
             return false;
         }
@@ -256,6 +271,21 @@ impl Runtime {
         }
     }
     pub(super) fn native_schematic_click(&mut self, world: PointNm, screen: (f32, f32)) -> bool {
+        if self.native_edit.pending() && self.workspace().tool == WorkspaceTool::Move {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Wait for the current Move to finish",
+            );
+            return true;
+        }
+        if self
+            .native_edit
+            .preview
+            .as_ref()
+            .is_some_and(|p| p.is_schematic())
+        {
+            return self.native_move_click(world, None);
+        }
         if !self.workspace().schematic_authoring.active() {
             return false;
         }

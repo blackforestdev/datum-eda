@@ -88,6 +88,15 @@ impl SchematicAuthoring {
                 selected.wires.insert(wire.uuid, wire);
             }
         }
+        self.project_source(&source, sheet, base, root)
+    }
+    pub(crate) fn project_source(
+        &self,
+        source: &eda_engine::schematic::Schematic,
+        sheet: Uuid,
+        base: &BoardReviewSceneV1,
+        root: &std::path::Path,
+    ) -> anyhow::Result<BoardReviewSceneV1> {
         let mut scene = crate::schematic_scene_import::project_schematic_sheet_source(
             &source,
             &source.sheets[&sheet],

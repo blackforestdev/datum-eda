@@ -7,6 +7,7 @@ use std::{
     time::{Duration, Instant},
 };
 use winit::platform::wayland::EventLoopBuilderExtWayland;
+mod symbol_move;
 
 struct Fixture {
     app: App,

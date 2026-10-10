@@ -15,6 +15,10 @@ use uuid::Uuid;
 
 pub(crate) const VERBS: &[NativeWriteVerb] = &[
     NativeWriteVerb {
+        id: "datum.schematic.move_symbol",
+        build: super::schematic_symbol_move::move_symbol,
+    },
+    NativeWriteVerb {
         id: "datum.schematic.place_symbol",
         build: place_symbol,
     },

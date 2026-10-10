@@ -154,13 +154,25 @@ impl Fixture {
                     .scene
                     .components
                     .iter()
-                    .find(|c| c.component_uuid == preview.component.component_uuid)
+                    .find(|c| {
+                        c.component_uuid
+                            == preview
+                                .footprint()
+                                .expect("Footprint preview")
+                                .component
+                                .component_uuid
+                    })
                     .unwrap();
                 assert_ne!(
-                    component.position, preview.component.position,
+                    component.position,
+                    preview
+                        .footprint()
+                        .expect("Footprint preview")
+                        .component
+                        .position,
                     "pointer movement must translate the selected Footprint"
                 );
-                let label = runtime.presented_hits.regions().iter().find(|r| matches!(&r.target, HitTarget::AuthoredObject(id) if id == &preview.component.object_id)).expect("moved Footprint label must be presented");
+                let label = runtime.presented_hits.regions().iter().find(|r| matches!(&r.target, HitTarget::AuthoredObject(id) if id == &preview.footprint().expect("Footprint preview").component.object_id)).expect("moved Footprint label must be presented");
                 let original = self.original_label.unwrap();
                 eprintln!(
                     "move-frame presented label original={original:?} moved={:?} pending_frame={}",
@@ -235,6 +247,8 @@ impl Fixture {
                     .preview
                     .as_ref()
                     .unwrap()
+                    .footprint()
+                    .expect("Footprint preview")
                     .component
                     .object_id;
                 let region = runtime
@@ -427,6 +441,8 @@ impl Fixture {
                         .preview
                         .as_ref()
                         .unwrap()
+                        .footprint()
+                        .expect("Footprint preview")
                         .component
                         .component_uuid,
                     expected,
@@ -448,7 +464,13 @@ impl Fixture {
                 }
                 let preview = runtime.native_edit.preview.as_ref().unwrap();
                 assert_eq!(
-                    Some(&preview.component.component_uuid),
+                    Some(
+                        &preview
+                            .footprint()
+                            .expect("Footprint preview")
+                            .component
+                            .component_uuid
+                    ),
                     self.post_move_component.as_ref(),
                     "hovering another Footprint cannot replace acquired target"
                 );
@@ -463,7 +485,7 @@ impl Fixture {
                         .unwrap()
                         .position,
                     preview
-                        .base
+                        .base()
                         .components
                         .iter()
                         .find(|c| &c.component_uuid == first)

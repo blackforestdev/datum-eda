@@ -4,9 +4,11 @@ use super::*;
 use datum_gui_protocol::{
     EditorCommandStatus,
     footprint_move_preview::FootprintMovePreview,
+    footprint_move_preview::native::NativeMovePreview,
     native_edit_client::{NativeEditAction, NativeEditIntent, NativeProjectClient},
 };
 use std::sync::{Arc, Mutex, mpsc};
+mod move_acquisition;
 
 struct Answer {
     intent: NativeEditIntent,
@@ -15,11 +17,11 @@ struct Answer {
     selection: Option<native_edit_selection::Prepared>,
 }
 pub(super) struct EditWork {
-    pub preview: Option<FootprintMovePreview>,
+    pub preview: Option<NativeMovePreview>,
     preview_tip: Option<String>,
     pending_position: Option<PointNm>,
     preview_awaiting_presentation: bool,
-    pending_move_base: Option<datum_gui_protocol::BoardReviewSceneV1>,
+    pending_move_base: Option<(bool, datum_gui_protocol::BoardReviewSceneV1)>,
     pending: Option<mpsc::Receiver<Answer>>,
     client: Arc<Mutex<Option<NativeProjectClient>>>,
     wake: winit::event_loop::EventLoopProxy<()>,
@@ -207,7 +209,7 @@ impl Runtime {
         self.native_edit.preview_awaiting_presentation = false;
         if let Some(preview) = self.native_edit.preview.take() {
             self.native_edit.preview_tip = None;
-            self.session.workspace_mut().scene = preview.base;
+            self.set_move_scene(preview.is_schematic(), preview.base().clone());
             self.session.workspace_mut().cancel_authoring_gesture();
             self.invalidate_scene();
             return true;
@@ -215,130 +217,19 @@ impl Runtime {
         false
     }
     fn restore_pending_move_base(&mut self) {
-        if let Some(base) = self.native_edit.pending_move_base.take()
+        if let Some((schematic, base)) = self.native_edit.pending_move_base.take()
             && base.project_uuid == self.workspace().scene.project_uuid
         {
-            self.session.workspace_mut().scene = base;
+            self.set_move_scene(schematic, base);
             self.invalidate_scene();
         }
     }
-    // The bounded first-edit capability moves one complete Footprint. Never
-    // silently reduce a Run, compound selection or another object to a subset.
-    pub(super) fn begin_selected_native_move(&mut self) {
-        use datum_gui_protocol::{AuthoredSelectionClass, SelectionSubject, SelectionTarget};
-        let SelectionTarget::Native(selected) = &self.workspace().selection else {
-            return;
-        };
-        if selected.stale {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "Select a current Footprint before moving",
-            );
-            return;
+    fn set_move_scene(&mut self, schematic: bool, scene: datum_gui_protocol::BoardReviewSceneV1) {
+        if schematic {
+            self.session.workspace_mut().schematic_scene = Some(scene);
+        } else {
+            self.session.workspace_mut().scene = scene;
         }
-        let SelectionSubject::Object(id) = &selected.subject else {
-            return;
-        };
-        if id.class != AuthoredSelectionClass::Footprint {
-            return;
-        }
-        let Some(target) = self
-            .workspace()
-            .scene
-            .components
-            .iter()
-            .find(|c| c.component_uuid == id.id.to_string())
-            .map(|c| c.object_id.clone())
-        else {
-            return;
-        };
-        let Some((x, y)) = self.last_cursor_pos else {
-            return;
-        };
-        let Some((world, SceneSurface::Board)) = self
-            .prepared_scene()
-            .and_then(|s| s.world_point_at_screen(x, y))
-        else {
-            return;
-        };
-        self.native_move_click(world, Some(target));
-    }
-    pub(super) fn native_move_click(&mut self, world: PointNm, target: Option<String>) -> bool {
-        if self.native_edit.pending() || self.native_edit.blocked {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "Wait for the current edit or reopen the Project after an unconfirmed outcome",
-            );
-            return true;
-        }
-        if let Some(preview) = &self.native_edit.preview {
-            let destination = match preview.destination(world, self.workspace().authoring.snap) {
-                Ok(p) => p,
-                Err(error) => {
-                    self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
-                    return true;
-                }
-            };
-            let component = preview.component.component_uuid.parse();
-            let action = match component {
-                Ok(component) => NativeEditAction::Move {
-                    component,
-                    x_nm: destination.x,
-                    y_nm: destination.y,
-                },
-                Err(_) => return true,
-            };
-            return self.queue_native_edit(action);
-        }
-        let Some(target) = target else {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "Move requires clicking an existing Footprint",
-            );
-            return true;
-        };
-        let preview = match FootprintMovePreview::begin(
-            &self.workspace().scene,
-            &target,
-            world,
-            self.workspace().authoring.snap,
-        ) {
-            Ok(preview) => preview,
-            Err(error) => {
-                self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
-                return true;
-            }
-        };
-        // The selected source identity is the authoring target. Never move a
-        // hovered object while the Inspector still describes another subject.
-        let current = matches!(&self.workspace().selection,
-            datum_gui_protocol::SelectionTarget::Native(view)
-            if !view.stale && view.project.to_string() == preview.base.project_uuid
-                && view.revision.0 == preview.base.source_revision
-                && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Object(id)
-                    if id.class == datum_gui_protocol::AuthoredSelectionClass::Footprint
-                        && id.id.to_string() == preview.component.component_uuid));
-        if !current {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "Select a current Footprint before moving",
-            );
-            return true;
-        }
-        let target = preview.component.object_id.clone();
-        self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
-            world,
-            target_object_id: Some(target),
-        });
-        self.native_edit.preview_tip = self
-            .workspace()
-            .supervision
-            .journal
-            .accepted_transaction_tip
-            .clone();
-        self.native_edit.preview = Some(preview);
-        self.invalidate_frame();
-        true
     }
     pub(super) fn native_move_pointer(&mut self, world: PointNm) -> bool {
         let Some(preview) = &self.native_edit.preview else {
@@ -367,7 +258,7 @@ impl Runtime {
         };
         match preview.scene_at(position) {
             Ok(scene) => {
-                self.session.workspace_mut().scene = scene;
+                self.set_move_scene(preview.is_schematic(), scene);
                 self.native_edit.preview_awaiting_presentation = true;
                 self.invalidate_scene();
             }
@@ -414,7 +305,11 @@ impl Runtime {
             );
             return true;
         }
-        if !matches!(action, NativeEditAction::Move { .. }) && self.native_edit.preview.is_some() {
+        if !matches!(
+            action,
+            NativeEditAction::Move { .. } | NativeEditAction::MoveSymbol { .. }
+        ) && self.native_edit.preview.is_some()
+        {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
                 "Finish or cancel the Move preview first",
@@ -442,7 +337,7 @@ impl Runtime {
             .native_edit
             .preview
             .as_ref()
-            .map(|p| p.base.source_revision.clone())
+            .map(|p| p.base().source_revision.clone())
             .unwrap_or_else(|| self.workspace().scene.source_revision.clone());
         let expected_tip = if self.native_edit.preview.is_some() {
             self.native_edit.preview_tip.clone()
@@ -461,6 +356,9 @@ impl Runtime {
             expected_tip,
             action,
         );
+        if let Some(preview) = &self.native_edit.preview {
+            intent.instance_path = preview.instance_path();
+        }
         if matches!(action, NativeEditAction::Schematic) {
             intent.schematic = self
                 .session
@@ -473,27 +371,29 @@ impl Runtime {
         // Ending a gesture is not cancellation: keep this complete pending pose
         // visible until the qualified canonical response replaces it.
         let pending_move = match (action, self.native_edit.preview.as_ref()) {
-            (NativeEditAction::Move { x_nm, y_nm, .. }, Some(preview)) => {
-                match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
-                    Ok(scene) => Some((preview.base.clone(), scene)),
-                    Err(error) => {
-                        self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
-                        return true;
-                    }
+            (
+                NativeEditAction::Move { x_nm, y_nm, .. }
+                | NativeEditAction::MoveSymbol { x_nm, y_nm, .. },
+                Some(preview),
+            ) => match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
+                Ok(scene) => Some((preview.is_schematic(), preview.base().clone(), scene)),
+                Err(error) => {
+                    self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
+                    return true;
                 }
-            }
+            },
             _ => None,
         };
         let inputs = native_edit_selection::Inputs::capture(self);
         match self.native_edit.start(intent, backing.request, inputs) {
             Ok(()) => {
-                if let Some((base, scene)) = pending_move {
-                    self.native_edit.pending_move_base = Some(base);
+                if let Some((schematic, base, scene)) = pending_move {
+                    self.native_edit.pending_move_base = Some((schematic, base));
                     self.native_edit.preview = None;
                     self.native_edit.preview_tip = None;
                     self.native_edit.pending_position = None;
                     self.native_edit.preview_awaiting_presentation = false;
-                    self.session.workspace_mut().scene = scene;
+                    self.set_move_scene(schematic, scene);
                     self.session.workspace_mut().cancel_authoring_gesture();
                     self.invalidate_scene();
                 } else {
