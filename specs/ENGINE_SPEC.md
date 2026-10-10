@@ -2328,9 +2328,20 @@ admission and canonical Set/history. Duplicate field-key values, unknown row
 metadata, absent optional defaults and all sibling content remain intact. This
 adds no uniqueness, upsert, generic patch, placed-propagation or graph rule.
 
-The actual engine API inventory is 246 unique public function names, including
+Manual Symbol graphic correction and removal uses
+`library_definition::symbol_with_drawings`. It shares a private typed-array
+admission and raw replacement helper with `symbol_with_fields`; both retain
+original array order, repeated entries, extensions and absent optional defaults.
+The existing Set section lifecycle selects fields or drawings for Symbols and
+changes only that array against the same fresh model and canonical history.
+Drawing admission uses the existing six-variant Primitive schema, preserving
+whole-object JSON numeric and text semantics. Existing graphic append commands
+retain their local geometry/text checks; array replacement introduces no new
+positivity, trimming, graphic identity or normalization rule.
+
+The actual engine API inventory is 247 unique public function names, including
 the retained earlier inventory drift, definition admission helpers and native
 graphic builders. These APIs implement existing reference rules and manual
-fabrication and Symbol field authoring. GUI authoring, SMD/process/standards policy, native
+fabrication, Symbol field authoring and graphic editing. GUI authoring, SMD/process/standards policy, native
 file-type migration, library adoption and manufacturing qualification retain
 their separate authority and acceptance requirements.

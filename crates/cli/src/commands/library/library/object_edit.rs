@@ -7,7 +7,7 @@ use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
 use eda_engine::api::native_write::library_definition::{
-    symbol_with_fields, validate_footprint_replacement_references,
+    symbol_with_drawings, symbol_with_fields, validate_footprint_replacement_references,
     validate_part_replacement_references, validate_symbol_replacement_references,
 };
 use eda_engine::api::native_write::library_pin_pad_map::validate_pin_pad_map_replacement_references;
@@ -34,11 +34,11 @@ pub(crate) fn set_native_project_pool_library_object(
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
     let (mut model, object) = if let Some(section) = section {
-        if section != "fields" {
-            bail!("unsupported pool library section {section}; expected fields");
+        if !matches!(section, "fields" | "drawings") {
+            bail!("unsupported pool library section {section}; expected fields or drawings");
         }
         if object_kind != "symbols" {
-            bail!("--section fields requires --kind symbols");
+            bail!("--section {section} requires --kind symbols");
         }
         let model = ProjectResolver::new(root)
             .resolve()
@@ -49,12 +49,21 @@ pub(crate) fn set_native_project_pool_library_object(
             object_id,
         )
         .map_err(definition_validation_error)?;
-        let fields: serde_json::Value =
+        let array: serde_json::Value =
             serde_json::from_slice(&std::fs::read(source).with_context(|| {
-                format!("failed to read pool library fields {}", source.display())
+                format!("failed to read pool library {section} {}", source.display())
             })?)
-            .with_context(|| format!("failed to parse pool library fields {}", source.display()))?;
-        let object = symbol_with_fields(object, fields).map_err(definition_validation_error)?;
+            .with_context(|| {
+                format!(
+                    "failed to parse pool library {section} {}",
+                    source.display()
+                )
+            })?;
+        let object = match section {
+            "fields" => symbol_with_fields(object, array),
+            _ => symbol_with_drawings(object, array),
+        }
+        .map_err(definition_validation_error)?;
         (model, object)
     } else {
         // Preserve the whole-object mode's existing input and diagnostic order.

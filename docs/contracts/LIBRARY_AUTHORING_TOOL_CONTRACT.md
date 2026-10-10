@@ -84,6 +84,14 @@ workflows preserve sibling geometry, pin anchors and Unit links. Omitted section
 retains whole-object Set. This does not imply field-section MCP, proposal or GUI
 delivery, placed-Symbol propagation, or new field identity/uniqueness policy.
 
+Manual CLI Symbol graphic correction, removal, reordering and clearing use
+`set-pool-library-object --kind symbols --section drawings --from-json <array>`.
+The existing Primitive schema admits the original ordered array, including
+repeated entries and unknown metadata; only drawings change through canonical
+Set/history, preserving sibling content. Existing append checks and whole-object
+Set remain intact. This adds no geometry threshold, graphic identity policy,
+drawings-section MCP/proposal/GUI delivery or placed-Symbol propagation.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

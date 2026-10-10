@@ -256,15 +256,31 @@ fn validate_part_links(model: &DesignModel, part: &crate::pool::Part) -> Result<
 /// Replace only a Symbol's fields after admitting the existing field schema.
 /// Keep the raw array so order, duplicates, unknown metadata and absent defaults survive.
 pub fn symbol_with_fields(
-    mut object: serde_json::Value,
+    object: serde_json::Value,
     fields: serde_json::Value,
 ) -> Result<serde_json::Value, EngineError> {
-    serde_json::from_value::<Vec<crate::pool::LibrarySymbolField>>(fields.clone())
-        .map_err(|error| validation(format!("invalid symbol fields: {error}")))?;
+    symbol_with_array::<crate::pool::LibrarySymbolField>(object, "fields", fields)
+}
+
+/// Replace only drawings using the existing Primitive schema, preserving raw content.
+pub fn symbol_with_drawings(
+    object: serde_json::Value,
+    drawings: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    symbol_with_array::<crate::pool::Primitive>(object, "drawings", drawings)
+}
+
+fn symbol_with_array<T: serde::de::DeserializeOwned>(
+    mut object: serde_json::Value,
+    section: &str,
+    array: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    serde_json::from_value::<Vec<T>>(array.clone())
+        .map_err(|error| validation(format!("invalid symbol {section}: {error}")))?;
     object
         .as_object_mut()
         .ok_or_else(|| validation("symbol payload must be an object"))?
-        .insert("fields".to_string(), fields);
+        .insert(section.to_string(), array);
     Ok(object)
 }
 
