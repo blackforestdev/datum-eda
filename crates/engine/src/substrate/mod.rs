@@ -54,6 +54,7 @@ mod operation_application_object_revision;
 mod operation_application_objects;
 mod operation_application_package_materialization;
 mod operation_application_pool_objects;
+pub(crate) use operation_application_pool_objects::pool_creation_has_source_blocker;
 mod operation_application_production;
 mod operation_application_relationship;
 mod operation_application_schematic;

@@ -1,3 +1,5 @@
+mod object_create;
+use self::object_create::create_native_project_pool_library_object;
 mod object_edit;
 use self::object_edit::set_native_project_pool_library_object;
 mod padstack;
@@ -20,7 +22,7 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
-use super::payload::{read_pool_library_object_payload, read_project_pool_object_payload};
+use super::payload::read_project_pool_object_payload;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPoolLibraryObjectMutationView {
@@ -54,36 +56,6 @@ pub(crate) struct NativeProjectPoolModelGcEntryView {
     pub(crate) size_bytes: u64,
     pub(crate) deleted: bool,
     pub(crate) skipped_reason: Option<String>,
-}
-
-pub(crate) fn create_native_project_pool_library_object(
-    root: &Path,
-    pool_path: &str,
-    object_kind: &str,
-    object_id: Uuid,
-    source: &Path,
-) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    validate_project_local_pool_path(pool_path)?;
-    validate_pool_library_object_kind(object_kind)?;
-    let object = read_pool_library_object_payload(source, object_id)?;
-    let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    commit_pool_library_operations(
-        root,
-        format!("create native pool library object {object_id}"),
-        Some(pool_path),
-        vec![PoolLibraryOperationSpec::Create {
-            target: PoolLibraryObjectTarget::new(pool_path, object_kind, object_id),
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
-        "create",
-        pool_path,
-        object_kind,
-        object_id,
-        &relative_path,
-    )
 }
 
 pub(crate) fn create_native_project_pool_unit(

@@ -2262,7 +2262,16 @@ in `commands/library/library/object_edit.rs`. Automated provenance retains its
 proposal requirement; generic create/delete and broad graph admission remain
 separate. This repairs existing reference checks without introducing new rules.
 
-The actual engine API inventory is 235 unique public function names, including
+Manual generic Footprint JSON creation consumes
+`validate_footprint_creation_references`, which reuses the same link checks and
+the canonical source owner for path and recursively exposed UUID collision
+precedence, including retained extension records. Malformed schema/shape and
+source errors remain with canonical admission. `object_create.rs` owns the
+complete lifecycle, prepares pool registration and checks references against
+the same model before canonical commit. Automated proposal policy and existing
+create/inverse/history behavior are retained; no general graph policy is added.
+
+The actual engine API inventory is 236 unique public function names, including
 the retained earlier inventory drift and these definition helpers. This is
 engineering convergence, not new GUI authoring, SMD/process/standards policy,
 native file-type migration, library adoption or manufacturing qualification.

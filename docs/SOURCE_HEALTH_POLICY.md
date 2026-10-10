@@ -531,3 +531,9 @@ lifecycle into `commands/library/library/object_edit.rs`, with reference checks
 owned by the shared engine definition module. The library parent pre-test ceiling
 ratchets 2596→2565. The new owner remains within the normal budget; no ledger
 entry, exception or ceiling is added. Existing qualification limits remain open.
+
+FOOTPRINT-JSON-CREATE-REFERENCES extracts the complete generic creation lifecycle
+into `commands/library/library/object_create.rs`. The library parent pre-test
+ceiling ratchets 2565→2537; the canonical source owner, substrate root, engine
+helper and new CLI proof module remain within normal budgets. The existing UUID
+collector is reused; no exception, entry removal or collision policy is added.

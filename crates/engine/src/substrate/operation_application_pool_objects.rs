@@ -43,6 +43,25 @@ fn payload(
     root.kind = kind.into();
     Ok(objects)
 }
+/// Preserve canonical source admission before a caller's additional link checks.
+/// Unknown extension records use the same UUID collector as actual creation.
+pub(crate) fn pool_creation_has_source_blocker(
+    objects: &BTreeMap<ObjectId, DomainObject>,
+    id: Uuid,
+    path: &str,
+    value: &Value,
+    kind: &str,
+) -> bool {
+    if super::source_shard::validate_source_shard_ownership_path(&SourceShardKind::Pool, path)
+        .is_err()
+    {
+        return true;
+    }
+    payload(id, path, value, kind).map_or(true, |additions| {
+        additions.keys().any(|id| objects.contains_key(id))
+    })
+}
+
 pub(super) fn create(
     objects: &mut BTreeMap<ObjectId, DomainObject>,
     diff: Option<&mut CommitDiff>,

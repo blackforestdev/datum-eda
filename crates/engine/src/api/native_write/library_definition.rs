@@ -146,6 +146,37 @@ pub fn validate_footprint_replacement_references(
     Ok(())
 }
 
+/// Check existing Package/Padstack links of a manual generic Footprint create.
+/// Canonical shape, source-path and root/leaf UUID errors retain precedence.
+/// This only supplements admission; it neither creates objects nor changes
+/// the source owner's collision policy or the replacement helper's behavior.
+pub fn validate_footprint_creation_references(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+) -> Result<(), EngineError> {
+    if object
+        .get("schema_version")
+        .and_then(serde_json::Value::as_u64)
+        != Some(1)
+    {
+        return Ok(());
+    }
+    let Ok(footprint) = serde_json::from_value::<crate::pool::Footprint>(object.clone()) else {
+        return Ok(());
+    };
+    if crate::substrate::pool_creation_has_source_blocker(
+        &model.objects,
+        footprint.uuid,
+        relative_path,
+        object,
+        "footprints",
+    ) {
+        return Ok(());
+    }
+    validate_footprint_replacement_references(model, object)
+}
+
 /// Insert or replace a pad in an already materialized, UUID-checked footprint.
 /// The caller validates the padstack reference against its resolved model before
 /// materializing this payload. Unrelated and unknown payload fields are retained.
