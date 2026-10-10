@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 68 legacy source entries retain 69 recorded metric
+Current debt inventory: 67 legacy source entries retain 68 recorded metric
 ceilings. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
@@ -147,6 +147,15 @@ The legacy `main_tests_project_pool_library.rs` decreases from 931 to 724 lines
 with its exact ceiling ratcheted downward. The Symbol test owner is 497 lines,
 within the normal 700-line test budget and registered as a real child module
 by its legacy parent; remaining parent debt stays open.
+
+Footprint graphic authoring moves complete manual argument execution, source
+materialization, identity admission, prepared Set commit and result reporting
+into the real `commands/library/footprint/graphics.rs` child. Shared primitive
+construction and selected-array append ownership live in the engine's existing
+`native_write/library_footprint.rs`; proposal adapters retain silkscreen behavior.
+The former 992-line `commands/library/footprint.rs` is now 625 lines and leaves
+the legacy ledger. The command child is 346 lines and both production owners
+remain within normal limits. No ceiling, exclusion or exception is increased.
 
 ## What Counts as Structural Evidence
 

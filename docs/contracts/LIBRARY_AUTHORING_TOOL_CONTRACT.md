@@ -70,7 +70,11 @@ evidence includes:
   records tied to existing `Padstack`s, plus rectangular/polygon
   `Footprint.courtyard` geometry and first `Footprint.silkscreen`
   line/rectangle/circle/polygon primitives, through the same journaled
-  pool-object gate.
+  pool-object gate. The manual CLI also targets `Footprint.fab` with the same
+  four graphic actions using `--target fab`; `--target silkscreen` or an omitted
+  target retains silkscreen. Generic graphic aliases retain the legacy command
+  names. This CLI target parameter does not imply fabrication-target proposal,
+  MCP or GUI delivery.
 
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
@@ -581,9 +585,12 @@ engine diagnostics through `project validate`.
   a unique package-matching footprint before falling back to legacy
   `Package.pads`. Typed CLI/MCP authoring can now create first-class
   Footprints, set Footprint pads directly, and set rectangular/polygon
-  Footprint courtyards plus Footprint silkscreen lines/rectangles/circles/polygons directly. Importers and compatibility
-  materialization still preserve legacy package land-pattern fields in some
-  paths, and footprint fab/silkscreen primitives beyond lines/rectangles/circles/polygons, assembly/mechanical/model/
+  Footprint courtyards plus Footprint silkscreen lines/rectangles/circles/polygons
+  directly. Manual CLI graphics additionally target fabrication for those four
+  primitives through the same actions and canonical history. Importers and
+  compatibility materialization still preserve legacy package land-pattern
+  fields in some paths, and footprint fab/silkscreen primitives beyond
+  lines/rectangles/circles/polygons, assembly/mechanical/model/
   process-policy authoring remains pending. The target schema separates
   component body (`Package`) from board land pattern (`Footprint`) without
   relying on compatibility fallback.

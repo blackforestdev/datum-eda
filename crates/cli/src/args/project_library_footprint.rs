@@ -209,6 +209,9 @@ pub(crate) struct ProjectAddPoolFootprintSilkscreenLineArgs {
     /// Project-local pool path; defaults to pool
     #[arg(long, default_value = "pool")]
     pub(crate) pool: String,
+    /// Authored graphic collection
+    #[arg(long, default_value = "silkscreen", value_parser = ["silkscreen", "fab"])]
+    pub(crate) target: String,
     /// Footprint UUID
     #[arg(long = "footprint")]
     pub(crate) footprint_uuid: Uuid,
@@ -236,6 +239,9 @@ pub(crate) struct ProjectAddPoolFootprintSilkscreenRectArgs {
     /// Project-local pool path; defaults to pool
     #[arg(long, default_value = "pool")]
     pub(crate) pool: String,
+    /// Authored graphic collection
+    #[arg(long, default_value = "silkscreen", value_parser = ["silkscreen", "fab"])]
+    pub(crate) target: String,
     /// Footprint UUID
     #[arg(long = "footprint")]
     pub(crate) footprint_uuid: Uuid,
@@ -263,6 +269,9 @@ pub(crate) struct ProjectAddPoolFootprintSilkscreenCircleArgs {
     /// Project-local pool path; defaults to pool
     #[arg(long, default_value = "pool")]
     pub(crate) pool: String,
+    /// Authored graphic collection
+    #[arg(long, default_value = "silkscreen", value_parser = ["silkscreen", "fab"])]
+    pub(crate) target: String,
     /// Footprint UUID
     #[arg(long = "footprint")]
     pub(crate) footprint_uuid: Uuid,
@@ -287,6 +296,9 @@ pub(crate) struct ProjectAddPoolFootprintSilkscreenPolygonArgs {
     /// Project-local pool path; defaults to pool
     #[arg(long, default_value = "pool")]
     pub(crate) pool: String,
+    /// Authored graphic collection
+    #[arg(long, default_value = "silkscreen", value_parser = ["silkscreen", "fab"])]
+    pub(crate) target: String,
     /// Footprint UUID
     #[arg(long = "footprint")]
     pub(crate) footprint_uuid: Uuid,

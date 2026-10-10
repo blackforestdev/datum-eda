@@ -55,12 +55,16 @@ pub(crate) enum ProjectCommands {
     /// Set first-class typed native pool footprint polygon courtyard through the project journal
     SetPoolFootprintCourtyardPolygon(ProjectSetPoolFootprintCourtyardPolygonArgs),
     /// Append one first-class typed native pool footprint silkscreen line through the project journal
+    #[command(visible_alias = "add-pool-footprint-line")]
     AddPoolFootprintSilkscreenLine(ProjectAddPoolFootprintSilkscreenLineArgs),
     /// Append one first-class typed native pool footprint silkscreen rectangle through the project journal
+    #[command(visible_alias = "add-pool-footprint-rect")]
     AddPoolFootprintSilkscreenRect(ProjectAddPoolFootprintSilkscreenRectArgs),
     /// Append one first-class typed native pool footprint silkscreen circle through the project journal
+    #[command(visible_alias = "add-pool-footprint-circle")]
     AddPoolFootprintSilkscreenCircle(ProjectAddPoolFootprintSilkscreenCircleArgs),
     /// Append one first-class typed native pool footprint silkscreen polygon/polyline through the project journal
+    #[command(visible_alias = "add-pool-footprint-polygon")]
     AddPoolFootprintSilkscreenPolygon(ProjectAddPoolFootprintSilkscreenPolygonArgs),
     /// Create a typed native pool package through the project journal
     CreatePoolPackage(ProjectCreatePoolPackageArgs),

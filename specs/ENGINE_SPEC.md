@@ -2307,7 +2307,20 @@ fields are preserved. An unbound Symbol can retain its Unit or relink to another
 existing Unit through canonical edit/history. This adds no bound-gate
 compatibility, pin-anchor, completeness or broader graph rule.
 
-The actual engine API inventory is 243 unique public function names, including
-the retained earlier inventory drift and these definition helpers. This is
-engineering convergence, not new GUI authoring, SMD/process/standards policy,
-native file-type migration, library adoption or manufacturing qualification.
+Manual Footprint line, rectangle, circle and polygon graphics use the shared
+`library_footprint::footprint_graphic_primitive` builder and
+`footprint_with_graphic` selected-array append. `FootprintGraphicTarget` selects
+existing silkscreen or fabrication data; omitted CLI target retains silkscreen.
+The command lifecycle resolves and materializes one model, admits the Footprint
+identity, prepares a canonical Set and commits through the existing journal.
+Legacy proposal adapters retain their silkscreen profile. Integer geometry checks
+and diagnostics retain their existing order; sibling fields and extension JSON
+are not normalized. This adds no process geometry, standards derivation, graph
+promotion or placed-update policy.
+
+The actual engine API inventory is 245 unique public function names, including
+the retained earlier inventory drift, definition admission helpers and native
+graphic builders. These APIs implement existing reference rules and manual
+fabrication authoring. GUI authoring, SMD/process/standards policy, native
+file-type migration, library adoption and manufacturing qualification retain
+their separate authority and acceptance requirements.

@@ -78,6 +78,203 @@ fn pool_object_value_with_schema(
     Ok(object)
 }
 
+/// Authored graphic collection, independent of manufacturing or rendering policy.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FootprintGraphicTarget {
+    Silkscreen,
+    Fab,
+}
+
+/// The four existing manual graphic input families, in integer nanometers.
+#[derive(Debug, Clone, Copy)]
+pub enum FootprintGraphicInput<'a> {
+    Line {
+        from_x_nm: i64,
+        from_y_nm: i64,
+        to_x_nm: i64,
+        to_y_nm: i64,
+        width_nm: i64,
+    },
+    Rect {
+        min_x_nm: i64,
+        min_y_nm: i64,
+        max_x_nm: i64,
+        max_y_nm: i64,
+        width_nm: i64,
+    },
+    Circle {
+        center_x_nm: i64,
+        center_y_nm: i64,
+        radius_nm: i64,
+        width_nm: i64,
+    },
+    Polygon {
+        vertices: &'a str,
+        closed: bool,
+        width_nm: i64,
+    },
+}
+
+fn graphic_field(target: FootprintGraphicTarget) -> &'static str {
+    match target {
+        FootprintGraphicTarget::Silkscreen => "silkscreen",
+        FootprintGraphicTarget::Fab => "fab",
+    }
+}
+fn graphic_error(message: String) -> EngineError {
+    EngineError::Validation(message)
+}
+
+/// Build a primitive using the historical geometry checks and diagnostic order.
+/// Target selects the authored collection; it adds no process or standards rule.
+pub fn footprint_graphic_primitive(
+    target: FootprintGraphicTarget,
+    input: FootprintGraphicInput<'_>,
+) -> Result<serde_json::Value, EngineError> {
+    let field = graphic_field(target);
+    match input {
+        FootprintGraphicInput::Line {
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            width_nm,
+        } => {
+            if from_x_nm == to_x_nm && from_y_nm == to_y_nm {
+                return Err(graphic_error(format!(
+                    "footprint {field} line must have distinct endpoints"
+                )));
+            }
+            if width_nm <= 0 {
+                return Err(graphic_error(format!(
+                    "footprint {field} line width-nm must be positive"
+                )));
+            }
+            Ok(
+                serde_json::json!({"Line": {"from": {"x": from_x_nm, "y": from_y_nm}, "to": {"x": to_x_nm, "y": to_y_nm}, "width": width_nm}}),
+            )
+        }
+        FootprintGraphicInput::Rect {
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            width_nm,
+        } => {
+            if min_x_nm >= max_x_nm {
+                return Err(graphic_error(format!(
+                    "footprint {field} rect min-x-nm must be less than max-x-nm"
+                )));
+            }
+            if min_y_nm >= max_y_nm {
+                return Err(graphic_error(format!(
+                    "footprint {field} rect min-y-nm must be less than max-y-nm"
+                )));
+            }
+            if width_nm <= 0 {
+                return Err(graphic_error(format!(
+                    "footprint {field} rect width-nm must be positive"
+                )));
+            }
+            Ok(
+                serde_json::json!({"Rect": {"min": {"x": min_x_nm, "y": min_y_nm}, "max": {"x": max_x_nm, "y": max_y_nm}, "width": width_nm}}),
+            )
+        }
+        FootprintGraphicInput::Circle {
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            width_nm,
+        } => {
+            if radius_nm <= 0 {
+                return Err(graphic_error(format!(
+                    "footprint {field} circle radius-nm must be positive"
+                )));
+            }
+            if width_nm <= 0 {
+                return Err(graphic_error(format!(
+                    "footprint {field} circle width-nm must be positive"
+                )));
+            }
+            Ok(
+                serde_json::json!({"Circle": {"center": {"x": center_x_nm, "y": center_y_nm}, "radius": radius_nm, "width": width_nm}}),
+            )
+        }
+        FootprintGraphicInput::Polygon {
+            vertices,
+            closed,
+            width_nm,
+        } => {
+            let label = format!("footprint {field} polygon");
+            let vertices = graphic_vertices(vertices, &label)?;
+            if closed && vertices.len() < 3 {
+                return Err(graphic_error(format!(
+                    "footprint {field} closed polygon must have at least 3 vertices"
+                )));
+            }
+            if !closed && vertices.len() < 2 {
+                return Err(graphic_error(format!(
+                    "footprint {field} polyline must have at least 2 vertices"
+                )));
+            }
+            if width_nm <= 0 {
+                return Err(graphic_error(format!(
+                    "footprint {field} polygon width-nm must be positive"
+                )));
+            }
+            Ok(
+                serde_json::json!({"Polygon": {"polygon": {"vertices": vertices, "closed": closed}, "width": width_nm}}),
+            )
+        }
+    }
+}
+
+fn graphic_vertices(vertices: &str, label: &str) -> Result<Vec<serde_json::Value>, EngineError> {
+    let mut parsed = Vec::new();
+    for vertex in vertices.split(';') {
+        let vertex = vertex.trim();
+        if vertex.is_empty() {
+            continue;
+        }
+        let Some((x, y)) = vertex.split_once(',') else {
+            return Err(graphic_error(format!(
+                "{label} vertex '{vertex}' must be formatted as x,y"
+            )));
+        };
+        let x = x.trim().parse::<i64>().map_err(|error| {
+            graphic_error(format!(
+                "{label} vertex '{vertex}' has invalid x coordinate: {error}"
+            ))
+        })?;
+        let y = y.trim().parse::<i64>().map_err(|error| {
+            graphic_error(format!(
+                "{label} vertex '{vertex}' has invalid y coordinate: {error}"
+            ))
+        })?;
+        parsed.push(serde_json::json!({"x": x, "y": y}));
+    }
+    Ok(parsed)
+}
+
+/// Append without normalizing the payload or altering sibling geometry/metadata.
+/// Caller owns identity, source and prepared-model admission through the facade.
+pub fn footprint_with_graphic(
+    mut object: serde_json::Value,
+    target: FootprintGraphicTarget,
+    primitive: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    let field = graphic_field(target);
+    object
+        .as_object_mut()
+        .ok_or_else(|| graphic_error("pool footprint payload must be a JSON object".to_string()))?
+        .entry(field)
+        .or_insert_with(|| serde_json::json!([]))
+        .as_array_mut()
+        .ok_or_else(|| graphic_error(format!("pool footprint {field} field must be an array")))?
+        .push(primitive);
+    Ok(object)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
