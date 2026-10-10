@@ -204,5 +204,382 @@
     "dirty_work_at_release": [],
     "remaining": "C04 native/Wayland/HUMAN qualification and existing gaps; C05/C06 remain pending; bounded exact30 PASS retained. No scope transferred to USER-EDIT-DELIVERY.",
     "successor_claim": "USER-EDIT-DELIVERY / UED-C01 planning only"
+  },
+  "resumption_20261009": {
+    "compiled_cohort_source_commit": "94c95ae66270b703fdbe1d17e9e2811f1932133e",
+    "compiled_cohort_provenance": "docs/reviews/workflow-delivery-rollout/native-schematic/first-symbol-wire-delivery.json",
+    "gui_sha256": "bc27ee516dc83fd8d35e4e38afc6e0b896d28d4d897926a27c99470e0099ad2f",
+    "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+    "source_note": "This compiled cohort predates the current unbuilt text-angle correction. Governance HEAD is not a compiled source pin. Historical exact30 reserved PASS remains attached to its old reviewed cohort.",
+    "input_backend": "X11 on shared KDE Wayland desktop DISPLAY=:1; WAYLAND_DISPLAY removed by existing replay",
+    "runner": "Existing native_scope.py/native_exact30.py recipes adapted only for separate output, pre-input X11 focus checks and capture target activation/getactivewindow checks. No new input transport.",
+    "metric_imperial": "Actual Track Object 5080000nm renders5.080mm in first Project and200.000mil in second Project. Complete2-Track Run preserved with both members hidden, then restored visibility/Escape/subsequent disconnected Track acquisition succeeds. Required new state receipts observed for these transitions.",
+    "hidden_origin_boundary": "Commanded hidden-origin click leaves the previously observed sequence12 membership unchanged. No independent event-delivery acknowledgement; not a hidden-origin native input PASS.",
+    "exact30_parents": "Both faces rectangle/lasso4-of8 refusal and5-of8 complete Footprint acquisition have actual selected identity receipts. Subsequent front Footprint Object observed in raw state sequence15. No full N03/N15 or HUMAN claim.",
+    "capture_failure": {
+      "path": "target/s5a-c04-resume-20261009/native-parents-back-lasso-5.png",
+      "sha256": "8f1812082ae8a0bfb35895ecb919ecc0a96b0dde5c689ad33c38ea0a569f6e04",
+      "disposition": "Rejected: Spectacle captured admin terminal. Original raw capture preserved; initial script state PASS is not a visual PASS."
+    },
+    "corrected_capture": "One justified corrected parent replay activates and verifies the target at capture boundary. Inspected front rectangle4/5 and back lasso4/5 captures show matching selection/no-selection and full eight-Pad parent treatment. This is implementer inspection, not HUMAN acceptance.",
+    "nonmutation": "Existing fixture source-shard and journal hashes match before/after. Controlled close completed. Metadata exclusion follows preserved recipes. No geometry/settings/context authority changed.",
+    "raw_results": [
+      {
+        "raw_result": "target/s5a-c04-resume-20261009/scope-metric-result.json",
+        "sha256": "381ead949ac290b9e01616d1e490b2b952452a73baf1befc11a82645eb585484",
+        "actions": [
+          {
+            "action": "Track with Project-qualified unit quantity",
+            "sequence": 7
+          },
+          {
+            "action": "Run complete two members",
+            "sequence": 10
+          },
+          {
+            "action": "hide entire Run layer preserves complete membership",
+            "sequence": 12
+          },
+          {
+            "action": "hidden-origin click preserves Run",
+            "sequence": 12
+          },
+          {
+            "action": "subsequent disconnected Track selection",
+            "sequence": 16
+          }
+        ]
+      },
+      {
+        "raw_result": "target/s5a-c04-resume-20261009/scope-imperial-result.json",
+        "sha256": "f3603e62b943fb3dc2d126002133b26b50fe35c4f46e63c274e12e8933b0949e",
+        "actions": [
+          {
+            "action": "Track with Project-qualified unit quantity",
+            "sequence": 7
+          },
+          {
+            "action": "Run complete two members",
+            "sequence": 10
+          },
+          {
+            "action": "hide entire Run layer preserves complete membership",
+            "sequence": 12
+          },
+          {
+            "action": "hidden-origin click preserves Run",
+            "sequence": 12
+          },
+          {
+            "action": "subsequent disconnected Track selection",
+            "sequence": 16
+          }
+        ]
+      },
+      {
+        "raw_result": "target/s5a-c04-resume-20261009/native-parents-result.json",
+        "sha256": "fe4a40cebe70b8d75792e267f6fda38d10bf136f3771420a362e40878d413d3d",
+        "actions": [
+          {
+            "action": "front rectangle 4/8",
+            "sequence": 6
+          },
+          {
+            "action": "front rectangle 5/8",
+            "sequence": 7
+          },
+          {
+            "action": "front lasso 4/8",
+            "sequence": 8
+          },
+          {
+            "action": "front lasso 5/8",
+            "sequence": 9
+          },
+          {
+            "action": "back rectangle 4/8",
+            "sequence": 10
+          },
+          {
+            "action": "back rectangle 5/8",
+            "sequence": 11
+          },
+          {
+            "action": "back lasso 4/8",
+            "sequence": 12
+          },
+          {
+            "action": "back lasso 5/8",
+            "sequence": 13
+          },
+          {
+            "action": "subsequent Part",
+            "sequence": null
+          }
+        ]
+      },
+      {
+        "raw_result": "target/s5a-c04-resume-20261009/native-capture-qualified-parents-result.json",
+        "sha256": "e089551eec9d037e8be5d026cfdd79a1b3904e64ebd2c301b7059b7f0c5f6647",
+        "actions": [
+          {
+            "action": "front rectangle 4/8",
+            "sequence": 6
+          },
+          {
+            "action": "front rectangle 5/8",
+            "sequence": 7
+          },
+          {
+            "action": "front lasso 4/8",
+            "sequence": 8
+          },
+          {
+            "action": "front lasso 5/8",
+            "sequence": 9
+          },
+          {
+            "action": "back rectangle 4/8",
+            "sequence": 10
+          },
+          {
+            "action": "back rectangle 5/8",
+            "sequence": 11
+          },
+          {
+            "action": "back lasso 4/8",
+            "sequence": 12
+          },
+          {
+            "action": "back lasso 5/8",
+            "sequence": 13
+          },
+          {
+            "action": "subsequent Part",
+            "sequence": null
+          }
+        ]
+      }
+    ],
+    "runtime_correction": {
+      "paths": [
+        "crates/gui-protocol/src/selection_view/quantities.rs",
+        "crates/gui-protocol/tests/native_selection_angles.rs"
+      ],
+      "behavior": "Existing engine angle formatter handles text_rotation and discloses unavailable Project context for text/placement rotation. Focused canonical regression passed1/0; rebuilt ordinary X11 GUI displayed the missing-context correction. Positive45deg/45.000deg remains canonical integration evidence; historical native trials do not prove this change.",
+      "focused_regression": {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol --test native_selection_angles",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "log": "target/s5a-c04-resume-20261009/angle-test.log",
+        "source_sha256": {
+          "crates/gui-protocol/src/selection_view/quantities.rs": "8b2425a051343412f3a071fc7b96de97cc41ea9d778f5c27c01d82815b224af5",
+          "crates/gui-protocol/tests/native_selection_angles.rs": "1a08231f74de27b5204f0b15b0262b0b40d69f4bcd1bd88950406ea6d614072d"
+        },
+        "scope": "Canonical BoardText/SchematicText45 degree values, missing context refusal, Project precision0/3, Mixed exact compound; source shards and transaction-journal bytes preserved after inspection. Journal cursor excluded by existing Fixture::assert_bytes."
+      },
+      "ordinary_gui_build": {
+        "source_commit": "7a75eaf8",
+        "gui_sha256": "2fc806ded8b1b233402776a248f8ff5bde445837d8624f5e9d9a74777bad32bf",
+        "log": "target/s5a-c04-resume-20261009/gui-build.log",
+        "status": "PASS",
+        "source_note": "Build started before source commit with the exact reviewed6641b676/b02c293e source blobs; source unchanged through commit."
+      },
+      "rebuilt_native_display": {
+        "raw_result": "target/s5a-c04-resume-20261009/angle-keyboard-result.json",
+        "sha256": "237d29bf0447fb2cf1f527dc2c5805f88518a7e0f26bb469b073eab8c2f91bd5",
+        "scope": "Actual SchematicText rotation0 remains exact; missing Project context now emits text_rotation QuantityPresentation::Unavailable, shown as Rotation:Unavailable in inspected screenshot. Positive45deg/45.000deg with precision0/3 is focused canonical integration proof only."
+      }
+    },
+    "remaining": "All other N01-N17 obligations retained, including pre-hidden/pre-filtered member complete derivation, lifecycle/deletion/recreation, dense/cancel/context/channel/accessibility matrices, Wayland physical input and HUMAN. N17 Inspector keyboard entry review now confirms existing Shift+F10/ContextMenu guarded scope/inventory route; initial absence finding retracted, native proof pending underdat-s5a-inspector-keyboard-entry-l8nm. C05 reserved independent replay and C06 acceptance remain pending.",
+    "C04_complete": false,
+    "reserved_source_review": {
+      "raw_transport": "target/s5a-c04-resume-20261009/reserved-source-review.json",
+      "scope": "Actual reserved source/evidence review PASS at quantities6641b676/testb02c293e/proofb0d590b9 against60b0d0c2; no build/input performed by reviewer, not C04/C05/native/HUMAN acceptance."
+    },
+    "keyboard_inspector_subset": {
+      "raw_result": "target/s5a-c04-resume-20261009/angle-keyboard-result.json",
+      "subject": "authored Compound with one complete SchematicText ID50000000-0000-4000-8000-000000001000",
+      "entry": "Ctrl+A; Shift+F10/Down/End/Up/Enter using existing guarded InspectScope and InventoryToggle commands",
+      "scope_sequence": 5,
+      "inventory_sequence": 7,
+      "terminal_sequence": 9,
+      "outcome": "Inspector scope and expanded complete inventory change while subject/member/revision remain; Overlay restores Editor. Shift+F10 under Terminal is visibly delivered to the terminal, selection unchanged and no selection Overlay. Images inspected, not HUMAN acceptance.",
+      "nonmutation": "Source-shard and transaction-journal hashes unchanged. Cursor/terminal operational metadata excluded.",
+      "boundary": "Single-class singleton keyboard subset; no multi-class/dense/lifecycle/high-contrast or full N17 claim."
+    },
+    "keyboard_mixed_inspector_subset": {
+      "raw_result": "target/s5a-c04-resume-20261009/mixed-keyboard-result.json",
+      "sha256": "6856f380ce382a37e0cda259bf92d1f42f6329ee39a14c710433a0a020ba2563",
+      "gui_sha256": "2fc806ded8b1b233402776a248f8ff5bde445837d8624f5e9d9a74777bad32bf",
+      "scope": "Actual keyboard menu scope/inventory on existing compound-output fixture;4 Tracks plus BoardOutline retain complete5-member Compound and no focus substitution. Tracks scope reports4 with width Mixed, scoped inventory displays all4 Track rows. Images inspected. No full N11/N17 or HUMAN acceptance.",
+      "receipts": [
+        {
+          "action": "Ctrl+A exact complete mixed five-member authored Compound",
+          "sequence": 2
+        },
+        {
+          "action": "Shift+F10/Down/End/Up/Enter selects existing Tracks Inspector scope; whole mixed set retained and scoped width Mixed",
+          "sequence": 5
+        },
+        {
+          "action": "Existing inventory command keyboard activation; selected identities unchanged (appearance inspected separately)",
+          "sequence": 7
+        }
+      ],
+      "nonmutation": "Source-shard and transaction-journal bytes unchanged, including at packaging recheck; operational metadata exclusion follows the existing recipe."
+    },
+    "current_route_disposition": "Finite serialized ordinary X11 proof is executable with pre-input focus checks and target activation/identity checks at capture boundaries; contaminated image retained/rejected and one corrected replay succeeds. No isolated existing desktop, physical Wayland input or HUMAN route has been established.",
+    "checks": {
+      "source_health": "PASS3017 files",
+      "source_health_policy_regressions": "PASS13",
+      "cargo_resource_policy": "PASS",
+      "rustfmt": "Scoped formatter completed; nonmutating final check pending",
+      "full_drift": "Not newly claimed. Existing accepted-cohort Clippy/parity defects remain separately disclosed and unwaived."
+    },
+    "remaining_case_matrix": [
+      {
+        "case": "N01",
+        "historical_open_requirements": "Complete per-class native click/Shift/Ctrl/no-op/focus/threshold matrix; current native Ctrl+A and preserved ordinary Object evidence prove subsets only.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N02",
+        "historical_open_requirements": "This successor proves source-qualified native Ctrl-rightward rectangle, Ctrl-leftward closed lasso and Shift-rightward restoration for schematic text. Other classes, gesture threshold/locked shape, clipped dashed boundary, reduced motion, Space ordering, cancellation and all D4 extensions remain unpassed natively.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N03",
+        "historical_open_requirements": "Native class-majority/path/text/island/lasso oracles. Placed-Pad authoritative source/lifetimes now exist under PM057; mandatory 30-degree local Pad-centre transform remains refused and owner disposition pending, not waived.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N04",
+        "historical_open_requirements": "Native edge/corner auto-pan, equivalent world regions by distinct camera paths and across-frame dense evaluation under pressure. Existing exact bounded evaluator proof is reused; no new performance campaign.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N05",
+        "historical_open_requirements": "Native pre-hidden/pre-filtered member and ineligible origin oracles, hidden/locked global authored inventory. Existing source complete-member/D4 evidence remains adequate for unchanged reducer but not native acceptance.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N06",
+        "historical_open_requirements": "Native complete overlap menu order, preview, Select All, dismissal and all disabled seams on both surfaces; focused menu/keyboard proofs exist.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N07",
+        "historical_open_requirements": "Native revision delete/recreate/undo/no-resurrection and focus/context restore cases using the existing approved revision variants; engine/protocol lifecycle proof reused.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N08",
+        "historical_open_requirements": "Native close/swap/Project replacement/missing scene and duplicate-pane equal cues with independent cameras; current two-pane native focus is a subset.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N09",
+        "historical_open_requirements": "Native source/occurrence-qualified board Run2/Global Net3, Wire Run5/Global Net21 and Bus Run2/Bus6 delivered; native click D4 add/remove refusals preserve exact whole subject. Hidden/filter, revision, complete region/no-op announcement and explicit Pad action matrix remain unpassed. Historical copper Run52 interaction evidence remains X11-specific; Wayland pending.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N10",
+        "historical_open_requirements": "Native Proposal/Review/Diagnostic origin/lane/marker and lifecycle/collision matrix. Generic producer-qualified tuple is now implemented; old generic-authority blocker is superseded, not silently accepted absence.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N11",
+        "historical_open_requirements": "Native Tracks scope preserves all5 with scope4, width Mixed and missing-unit refusal. Real AT-SPI now exposes readable labels/properties with exact canonical attributes. Other singleton/homogeneous/mixed and inaccessible-property rows remain unpassed.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N12",
+        "historical_open_requirements": "Native authored Compound256 complete list/CLI roundtrip and historical native Compound257 omitted-list proof delivered. Complete derived256/257 origin/semantic/focus parity, hidden/filter/cross-pane extensions, terminal-AI consumption and platform accessibility remain unpassed natively.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N13",
+        "historical_open_requirements": "Native entry surfaces, inert authoring attempts, drag and gesture/evaluation cancellation across all loss/content/pane cases. Idle Escape and source/journal nonmutation are proven subsets only.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N14",
+        "historical_open_requirements": "Native two-Project quantity contexts/reopen/stale consumer restoration. Existing two-Project source/oracle proof reused; current missing-context inspection/terminal opening remains read-only.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N15",
+        "historical_open_requirements": "Full native ownership/glyph/point/hidden/lock precedence, all8 same/related channel mappings and HUMAN panels1-7/9. Static byte/upload/CAM and material proofs remain scoped evidence, not full human visual acceptance.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N16",
+        "historical_open_requirements": "Native100k authored population and separate primitive counts, exact65536/overflow whole-pane union, all channels/maximal collisions, warm/cancel/reopen. Existing dense renderer/resource evidence reused; prescribed C04 diagnostics remain outstanding without a new latency budget.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      },
+      {
+        "case": "N17",
+        "historical_open_requirements": "Real ordinary X11 AT-SPI complete5-member inventory,4-Track scope, canonical attributes and derived Global Net21/Bus6 inventories demonstrated. Full keyboard/terminal ownership, hidden/locked/dropped/stale platform matrix, grayscale/CVD/high-contrast/reduced-motion HUMAN proof remain unpassed.",
+        "native_route": "Existing finite X11 production-input route can extend applicable cases; supplemental App Wayland callbacks remain distinct from physical/HUMAN proof. Existing fixture families/oracles retained; no acceptance budget introduced."
+      }
+    ],
+    "remaining_case_matrix_note": "Historical list is requirement carry-forward, not present missing-feature authority: exact30 implementation is delivered and both-face X11 parent subset now observed; prior quantity/context subset and singleton/mixed keyboard subsets above reduce only their exact outstanding coverage. No base case or extension is removed. Future exact subset accounting must continue against preparation-plan.md N01-N17 plus IR01/D4.",
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-resume-20261009-evidence.tar.xz",
+      "sha256": "c80b920b91c6483a395741247caa7bbaacb82b48e79221aa4a77f865c435be92",
+      "size_bytes": 5292604
+    },
+    "final_reserved_review": {
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "outcome": "PASS: bounded source/evidence review, no mandatory runtime finding",
+      "source_commit": "7a75eaf8",
+      "reviewed_proof_blob": "a27f1bb6f9c48bad5c1c2973a4569feaf5178e3e",
+      "reviewed_archive_sha256": "c80b920b91c6483a395741247caa7bbaacb82b48e79221aa4a77f865c435be92",
+      "reviewed_source_blob": "6641b6767b2dbc00234daa5c86909ba93f73ff57",
+      "reviewed_test_blob": "b02c293ef3bec29d9235628db5923fbd2fbed386",
+      "review_execution": "Reviewer inspected source, producer guarded logs, raw receipts, screenshots and archive; independently checked GUI hash. No new tests/build/input or independent replay performed.",
+      "limits": "No full C04/C05/N11/N17/HUMAN/physical Wayland acceptance. Positive45 profile precision is canonical producer integration only. Hidden-origin seq12 unchanged is not acknowledged input delivery.",
+      "raw_receipt_messages": [
+        "Actual reserved bounded review: PASS, no mandatory runtime finding. Reviewer audit session 01a0e343-3d9c-70f1-899e-5bd239513383. Source7a75eaf8; quantities blob6641b6767b2dbc00234daa5c86909ba93f73ff57; test blobb02c293ef3bec29d9235628db5923fbd2fbed386. GUI2fc806ded8b1b233402776a248f8ff5bde445837d8624f5e9d9a74777bad32bf independently hash-checked. Current proof blob a27f1bb6f9c48bad5c1c2973a4569feaf5178e3e; archivec80b920b91c6483a395741247caa7bbaacb82b48e79221aa4a77f865c435be92. Reviewed source, guarded producer test1/0/build logs, raw receipts, angle/Terminal/mixed inventory screenshots and archive. No new test/build/input. Singleton Rotation:Unavailable displayed; scope/inventory retain subject+revision. Mixed five-member selection retains all five while Tracks scope shows4/Width:Mixed. Source shards+transaction journal hashes unchanged.",
+        "Receipt continuation: exact angle raw237d29bf and mixed6856f380 hashes match; positive45deg/45.000deg established by producer canonical test, not native screenshot. Terminal screenshot shows delivered escape sequence/no selection overlay; state unchanged. Packaging notes: runtime_correction.behavior still says proof pending though subfields now PASS; reconcile stale prose routinely. 82/84 archived files equal target; native-parents.log/stdout are byte-identical archived prefixes with later appended live output, not corrupted evidence. Record archive as immutable capture snapshot, not current full live logs. Preserve rejected terminal screenshot and hidden-click no delivery-ack caveat. This is bounded source/evidence PASS only, no full C04/C05/N11/N17/HUMAN/Wayland acceptance; historical trials retain old GUI cohort. Route routine disposition/continuation through your existing delegated grant; no renewed owner relay required for this receipt."
+      ]
+    },
+    "archive_snapshot_note": "Archive is immutable capture snapshot. Reviewer confirmed82/84 files equal current target; archived native-parents.log/stdout are byte-identical prefixes of later-appended live logs. Their snapshot hashes, not full current live logs, are the archival evidence. Rejected terminal capture remains preserved.",
+    "orphan_parent_cleanup": {
+      "pid": 112900,
+      "ownership": "stdout/stderr both target/s5a-c04-resume-20261009/native-parents-stdout.log identify our orphan resumed parent-trial GUI on private fixture. Running deleted executable hashbc27ee is old NSD cohort, not newly rebuilt2fc.",
+      "action": "Ordinary SIGTERM; process exited; fixture JSON/JSONL hashes checked before/after unchanged.",
+      "receipt": "target/s5a-c04-resume-20261009/orphan-parent-cleanup.json",
+      "qualification": "Operational cleanup only, no added input/design mutation/proof PASS."
+    },
+    "remaining_c04_handoff": {
+      "manager_session": "codex-project-manager-20261009",
+      "timestamp_utc": "2026-10-10T01:01:14Z",
+      "from_session": "codex-s5a-c04-delivery-20261009",
+      "from_agent": "/root/s5a_execution_readiness",
+      "to_thread": "01a112c8-3b03-7113-9e99-d3402c2371fa",
+      "to_session": "codex-s5a-c04-takeover-20261009",
+      "consent": "Outgoing implementer explicitly consents to remaining-C04 transfer and holds further input/source edits. Incoming S5A-AGENT-02 explicitly accepts unchanged C04 scope and awaits synchronized lease transfer.",
+      "dirty_paths_at_transfer": [
+        "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+        "docs/reviews/workflow-delivery-rollout/s5a/c04-resume-20261009-evidence.tar.xz"
+      ],
+      "landing_responsibility": "Manager lands these independently reviewed evidence paths in the same ownership transaction; no uncommitted runtime/test changes.",
+      "process_state": "No Cargo/rustc or owned native GUI active; orphan parent-trial GUI112900 identified and ordinarily closed with unchanged fixture hashes.",
+      "next_bounded_case": "Existing target/s5a-delivery-electrical-20261008/native_semantic.py / target/s5a-c03-u5-semantic-v1/variants/semantic-scope: verify presented eligible Wire, exclude Label acquisition via existing menu, acquire source-qualified Run5 retaining filtered Label and exact class/UUID/instance_path. Verify actual menu topology/receipt and current target, preserve failures, no optional Net21 without complete occurrence oracle.",
+      "retained_obligations": "All remaining N01-N17 cases remain open at their actual scopes; ordinary coverage is executable. Physical Wayland and HUMAN requirements remain separately unqualified. Reserved C05 independent replay/acceptance unchanged; no successor, scope waiver or new mechanism.",
+      "independent_governance_review": {
+        "reviewer": "/root/management_review",
+        "outcome": "PASS; no blocking findings",
+        "base_commit": "7a75eaf8457e3238b9440cf6068fc72ad627e2bb",
+        "reviewed_proof_blob": "c94729c4de234583c8de11761cc48d9d2da7ee94",
+        "reviewed_frontier_blob": "d8dadff399452af92a7709a96c7526ef80441b92",
+        "reviewed_archive_sha256": "c80b920b91c6483a395741247caa7bbaacb82b48e79221aa4a77f865c435be92",
+        "verification": "Actual five-path transfer/evidence diff, six raw-result hashes, rejected capture,82 equal archive files/two immutable log prefixes, cleanup hash receipt and absent112900, fresh selector and diff checks.",
+        "limits": "Governance/evidence preservation/ownership transfer only; no native replay, full C04/C05/HUMAN or wider qualification certification."
+      }
+    }
   }
 }
