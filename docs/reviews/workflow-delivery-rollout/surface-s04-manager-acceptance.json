@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "acceptance_id": "SURFACE-S04-MANAGER-ACCEPTED-20261010",
+  "recorded_at_utc": "2026-10-10T12:57:57.083991+00:00",
+  "task": "GUI-SURFACE-SPECS",
+  "issue_id": "dat-gui-surface-specs-usb",
+  "step": "SURFACE-S04",
+  "disposition": "ACCEPT",
+  "authority": "Owner-appointed manager PM059 acceptance against unchanged existing selected planning/governance criteria, explicitly delegated to support for durable synchronized recording. This is manager disposition, not support self-review or new owner product authority.",
+  "manager_disposition_source": {
+    "thread_id": "01a122e5-f602-7f61-a144-0d1ce7116a77",
+    "instruction": "PM059 manager disposition: ACCEPT existing S04 planning/governance criteria against actual bounded reviews, complete14 clause/frame registration and adequate samechangechecks; limits/conflicts/owner/native boundaries retained.",
+    "explicit_continuation": "Execute durable acceptance receipt and synchronized Frontier/br export: S04 complete; explicitly existing SURFACE-REVIEW in_progress canonical next under unchanged planning and retained owner/session claim."
+  },
+  "landed_candidate_commit": "40f9e1d67361753809bc75eb8417121776c837d2",
+  "actual_review": {
+    "path": "docs/reviews/workflow-delivery-rollout/surface-visual-review.json",
+    "sha256": "fbc16345571b990cfea38b9c9371562b10d45625ff77f4e920ab4ebd9ed463a8",
+    "review_id": "SURFACE-S04-VISUAL-CANDIDATES-20261010",
+    "outcome": "PASS",
+    "scope": "Independent source and rendered-study review only; not completion, objective acceptance or successor selection."
+  },
+  "bounded_reconciliation_review": {
+    "path": "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json",
+    "sha256": "3b60fe2f4d21df1df3d6a96ef4b51bd0fac922f5b1834a79e68790ea43ea9dff"
+  },
+  "final_reconciliation_addendum": {
+    "path": "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json",
+    "sha256": "a6755c8a3f297b909d45ea7112a0d692d98a32415cbbe872854cab41428e640c"
+  },
+  "final_sources": [
+    {
+      "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+      "sha256": "1598e0193e2735e01df882e61db40ef5683684e95822f5ff53bb9d3e281d2f0f"
+    },
+    {
+      "path": "docs/gui/prototypes/library-surfaces-study.html",
+      "sha256": "f18b7bd36b3e90679ee819ebb6fc60fbb67c4006e7748af5e9800998fd6d0cba"
+    }
+  ],
+  "accepted_outcomes": [
+    "Existing Product S02/S03 candidates reconciled with shared manual-first mutation/selection/inspection, pane/focus/Console/Terminal and accessibility inheritance.",
+    "Stale consumer facts corrected at exact bounded delivery scope; complete retained authoring/library families remain targets.",
+    "Fourteen unchanged canonical clauses mapped to actual final owned static study frames and source/capture/review pins; historical sources and immutable earlier receipts preserved.",
+    "Actual mandatory source/rendered normal/narrow presentation findings resolved with responsible lane corrections and independent bounded static readiness review.",
+    "Same-change governed receipt/source ownership, progress/Frontier registration and adequate affected checks landed through lawful owning lane at recorded commit."
+  ],
+  "resulting_state": {
+    "completed_step": "SURFACE-S04",
+    "canonical_next_step": "SURFACE-REVIEW",
+    "next_step_status": "in_progress",
+    "task_state": "in_progress",
+    "authorization": "planning",
+    "retained_session": "codex-library-foundation-20261009",
+    "successor_authorized": false
+  },
+  "retained_boundaries": [
+    "Static HTML candidates with illustrative synthetic first-party content; no approved library seed, manufacturer accuracy, lawful source adoption or production qualification claim.",
+    "No owner product/visual ratification, S05 decision, combined SURFACE-REVIEW, runtime/HUMAN/native golden/pixel parity/assistive-technology/keyboard-interaction PASS.",
+    "Native Circle/Rect versus Rendering Book rounded-pad direction and Library Authoring kind/map-direction conflicts remain explicitly disclosed for subsequent reconciliation; no policy resolved here.",
+    "Normal multi-pane frames compressed on narrow study page are not a ratified narrow layout; explicit I2/J2 candidates carry the bounded narrow study.",
+    "Tokens/font sizes/dimensions/keys drawn as candidates or placeholders do not establish new defaults; unshown retained target families remain open.",
+    "Failed historical Chromium/fragment captures are not proof for this verdict. No structural checker result is inferred from screenshot inspection.",
+    "Acceptance closes only existing S04 planning/governance criteria; the distinct complete combined specification review is now explicitly selected, not already passed.",
+    "S05 owner visual/product disposition remains pending. No runtime, implementation successor, new product/process/model/default/standards rules, source rights, approved seed or dependency ratification.",
+    "Unrelated parity drift is not silently reconciled or promoted; no waived requirement or altered target scope."
+  ],
+  "verification_basis": {
+    "actual_landing": "Normal owning-lane commit completed; final source/review/addendum exact hashes verified afterward.",
+    "reused_adequate_checks": [
+      "project_status check/check-render",
+      "check_spec_governance",
+      "check_evidence_traceability",
+      "check_progress_coverage",
+      "git diff --check"
+    ],
+    "transaction_checks": "Run affected status/governance checks after synchronized recording; no builds or new native/visual replay required for this metadata transition."
+  }
+}
