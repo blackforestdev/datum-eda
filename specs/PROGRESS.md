@@ -487,6 +487,8 @@ explicit governance decision records why a fidelity slice is exempt.
 
 ### Library Foundation Investigation — Repository-Owned Planning
 
+SURFACE-S03 library candidate now covers all eight Pool kinds, models, named browsing/inspection, typed relationships, pinned revisions and placed-update limits, process geometry, provenance/basis/approval separation, manual authoring, accessibility and ordinary proof dispositions. [Complete bounded preflight](../docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json) supports the shell and footprint routes. Actual candidate review remains pending; no approved seed, importer execution or new product policy.
+
 SURFACE-S02 now has a schematic planning candidate in the existing GUI Product spec, supported by the [complete shell-route preflight](../docs/reviews/workflow-delivery-rollout/surface-route-preflight.json). Existing shell and domain authorities are mapped as consumers; historical terminology and stale authoring summaries remain explicit reconciliation items. The [actual independent S02 readiness review](../docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json) passes the exact candidate including library-context inspection. The appointed manager accepts this planning step and explicitly selects existing SURFACE-S03 within retained planning authority; final combined review, implementation selection, approved seed and HUMAN disposition remain open.
 
 | Evidence | Current | Required outcome |

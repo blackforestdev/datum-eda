@@ -284,6 +284,173 @@ Target surfaces:
 First implementation can be read/preview-focused, but it must not require users
 to know object UUIDs or CLI incantations for basic library inspection.
 
+### Library Surface Contract — SURFACE-S03 Draft
+
+This candidate refines the existing library target across all eight implemented
+Pool kinds: Unit, Symbol, Entity, Part, Package, Footprint, Padstack and PinPadMap.
+Models, metadata, provenance, basis and findings are linked detail surfaces;
+this draft introduces no ninth Pool kind. Presentation awaits SURFACE-S04,
+combined independent review and SURFACE-S05 owner disposition. The full reading
+and exact reuse boundaries are recorded in
+`docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json`.
+No library source, shipped seed, importer or runtime successor is approved here.
+
+**Browser and composition.** The library projection uses the existing single
+window, document/view pane tree, focus-owned Inspector and shared viewport tools.
+Its candidate composition is pool/kind navigation, named search results, selected
+object detail and configured graphic preview. Search targets available names,
+manufacturer/MPN, tags and parametric fields. Typed relationship navigation opens
+the referenced object with its pool/revision context; matching names are not
+binding evidence. Basic inspection is possible by mouse and keyboard without
+UUID or terminal knowledge. Loading, empty pool, no match, missing reference,
+ambiguity, stale data and read-only states have distinct observable explanations.
+Default ranking, pool precedence, duplicate/shadow behavior and writable pool
+targets remain owner choices; a browser must not invent them.
+
+Library source files remain authored model partitions. Any search database or
+index is a derived lookup aid and must not become a second writer or relationship
+authority. A missing/stale index is a disclosed query condition, not evidence
+that source objects disappeared. File suffixes and migration remain the separate
+pending native-file catalog. The browser consumes resolved typed objects and
+ownership context; this draft does not authorize guessing type from a filename,
+changing storage layouts or adopting a misplaced file.
+
+**Per-kind inspection and editing target.** Each row requires both a useful
+detail view and a manual create/edit surface configured over shared tools and
+native authoring. Backend availability below is a reusable seam, not GUI delivery.
+Unavailable fields are shown honestly; absent metadata is never fabricated.
+
+| Kind | Detail / manual authoring content | Current reusable seam and remaining delivery |
+|---|---|---|
+| Unit | Logical pin identity, name, electrical direction, alternate names and swap groups | Pool schema, resolver and typed pin authoring exist; full browser/editor proof pending |
+| Symbol | Unit link, native graphics, pin anchors/stubs, fields, prefix, style assertions and basis | Named picker and native body/pin projection delivered at bounded scope; complete detail/graphics editor pending |
+| Entity | Named gates, their Unit/Symbol links, prefix and multiplicity | Schema, gate authoring and reference diagnostics exist; complete multi-gate GUI pending |
+| Part | Manufacturer/orderable identity, lifecycle, parametrics, datasheet/qualification metadata, Entity and physical/map/model options | Native metadata/binding builders exist; complete orderable-part browser/editor pending |
+| Package | Physical body and terminals, family/code, dimensions/tolerances, height, mounting and model references | Body schema/builders and compatibility geometry exist; complete physical-body GUI pending |
+| Footprint | Package link, positioned pads and Padstack links, origin, courtyard, silk/fab/assembly/mechanical and process geometry | Typed pad/courtyard/basic silk authoring and bounded chip/SOIC slices exist; complete editor and process consumption pending |
+| Padstack | Copper by layer, drill/plating/span, annular/thermal/anti-pad and separate mask/paste policy | Current library apertures are Circle/Rect with bounded process fields; broader geometry and systematic consumption pending |
+| PinPadMap | Physical pad to gate-qualified logical pin, referenced Part/Footprint and relevant Unit/Entity/Symbol/Package context | Typed gate-aware map authoring/diagnostics exist; complete map-table GUI and placed-update flow pending |
+
+Package body/terminals and Footprint lands remain separate objects. Logical Unit
+pins, graphic Symbol anchors, Entity gates and orderable Part identity must not
+be flattened into one anonymous symbol record. The canonical map is
+`pad -> {gate, pin}`; a name-matching suggestion is not an accepted relationship.
+Usable explicit Footprint/PinPadMap authority is not overwritten by legacy
+`Package.pads` or `Part.pad_map`; compatibility use remains visible at its actual
+scope. The GUI must disclose unsupported/degraded representation instead of
+silently converting a shape or replacing inherited process policy with zero.
+
+**Relationships and revisions.** Detail shows declared references and resolved
+targets separately, including source pool and stable identity/revision where
+available. Names and MPNs are searchable labels. Dependency/where-used inspection
+uses shared queries; incomplete or unavailable results cannot imply no users are
+affected. Placed binding inspection shows ComponentInstance, binding roles,
+pinned revisions and available overrides/provenance. A Symbol `bound_with_part`
+status does not establish the complete Part–Package–Footprint–Padstack–PinPadMap
+graph or production qualification.
+
+An update candidate shows retained old/new library graphs, semantic pin/map and
+geometry/process changes, complete affected occurrences and applicable check
+results. Missing historical data, an unresolved revision or incomplete impact
+query is explicit; latest data cannot stand in for the old graph. Opening a view
+never rebinds. Decline leaves source/bindings unchanged; accepted propagation
+uses the existing proposal/commit/journal path and refreshes all projections.
+General retained-graph update and the ordinary affected-placement GUI remain
+pending. Current frozen physical-pad history supports a narrower case and does
+not establish this complete workflow.
+
+**Source, basis, process and approval.** Detail distinguishes original source
+and import trace, actual conversion support/loss, native reference validity,
+standards basis/version/source/applicability, revision-qualified findings and
+deviations, available review/approval, Part lifecycle and production qualification.
+Approval metadata is not uniform across current kinds; absence is unavailable,
+not Approved. Lifecycle is not approval. Command readiness, a successful parse,
+an intact reference graph and numerical conversion fidelity are different facts
+from manufacturer accuracy or standards/production qualification.
+
+The owner's stated references are ANSI Y32.2-1975 (reaffirmed 1989), IPC-7351B
+and ISO 10303-21. Display a record's actual declared basis and supported coverage;
+these references do not certify content, silently restyle a symbol, establish
+all generator families or select new standards rules. Copper, mask and paste
+are separately inspectable by pad/layer, with their actual geometry, policy and
+derivation basis. Inherit, zero offset or similarity to neighboring pads does
+not establish correctness or a universal expansion/reduction repair. Unknown
+and import-preserved facts remain explicit. Synthetic behavior fixtures are not
+an approved seed or proof of provider conversion fidelity. Source access/rights
+and approved seed acquisition remain separate recorded work.
+
+**Models.** A Models detail lists available target, role, format/dialect, hash,
+source/content reference, transform and review state. Missing content, unavailable
+metadata and unsupported validation/execution are distinct. Attachment inspection
+does not execute a simulator or decrypt encrypted vendor content. Part behavioural
+attachment slices and path-only Package 3D references do not establish complete
+governed attachment behavior across every library target. Original model bytes
+and content provenance remain distinct from the native library object identity.
+
+**Authoring, readiness and checks.** Per-kind forms and graphical editors use
+existing `library.author` semantics and engine native builders, typed
+OperationBatch, commit/journal and resolver refresh. Clone creates a new identity;
+rename is not identity replacement. Preview/cancel causes no authored delta.
+Canonical history and project Save/reopen apply. Automated, placed-impact,
+standards-repair and library-update actions retain their existing proposal
+boundaries; the GUI gains no private shard writer. Approval remains a separate
+guarded status action with recorded actor; AI cannot approve its own content.
+Controls without an actual backed command remain visibly unavailable.
+
+Validation targets schema/reference/identity, pin/gate/map membership, geometry
+and process basis, model integrity and placed impact. Current path/UUID/shape
+checks plus CLI and graph diagnostics are not one complete final-graph validation
+contract. Findings identify the target, revision and applicable basis. Not run,
+unavailable and stale are different from clean. A pending commit awaits the
+engine result; stale revision, unknown writer/target or unresolved dependency
+explains its actual refusal without partial source/journal writes. Unsupported
+generation families remain unavailable. Parametric/DXF research proposals and
+estimated numbers do not become adopted schemas, profiles or capabilities.
+
+**Accessibility and visual frames.** All consequential controls have names,
+keyboard paths and visible focus. Map/relationship correspondence and status use
+text/icons as well as color. Shared scaling, contrast, selection, focused-pane
+Inspector, reduced motion and Console rules apply in normal, narrow, tiled,
+Zoom and Stage views, with the terminal available as its own surface.
+
+Claude's required candidate frames are browser loading/empty/no-match/search;
+each of eight selected-kind detail/editor views; multi-gate Part/map navigation;
+Package/Footprint/Padstack copper-mask-paste-drill inspection; models and missing
+metadata; provenance/basis/review states where represented; current/stale/
+unavailable findings; create/edit/clone preview/cancel/refusal; and placed-update
+old/new/impact/decline/accept plus missing-history states. Existing shell studies
+contain limited library examples, not this complete visual contract. Protected
+HTML remains unchanged; actual candidate frames and owner HUMAN disposition
+remain pending through the owning visual lane.
+
+**Ordinary workflow and proof disposition.** Full browser and eight-kind GUI
+authoring are targets. Reuse existing native/CLI and narrow-picker evidence only
+at its exact scope. Each future delivery must identify its actual machine check,
+integration workflow and visual/accessibility receipt; no prose row is a PASS.
+
+| Ordinary workflow | Assertion / negative control | Proof disposition |
+|---|---|---|
+| Browse pool/kind; search/filter; open each named kind; navigate dependencies | Typed target/context preserved; no UUID knowledge or authored delta; empty/missing/ambiguous/stale states truthful | Engine query seams exist; complete browser integration pending |
+| Inspect Unit/Symbol/Entity/Part and map across gates | Logical/graphic/orderable identities remain distinct; missing/duplicate/ambiguous pins/maps are explicit | Native producers/diagnostics and narrow picker reusable; complete GUI integration pending |
+| Inspect Package/Footprint/Padstack with copper/mask/paste/drill | Body/land/process separation; supported geometry faithful; unknown or unsupported basis/geometry not replaced with defaults | Bounded native schema/generator slices exist; systematic materialization and ordinary GUI proof pending |
+| Inspect provenance/basis/models/approval/lifecycle/findings | Missing metadata and stale/not-run checks explicit; no certification or approval inferred; no execution or authored delta | Stored metadata/model integrity seams exist; full context GUI proof pending |
+| Choose a named Part/variant/footprint/map for placement and inspect eligibility | Current binding and qualification status remain distinct; unresolved/ambiguous choices explain their actual disposition; no implicit repair or adoption | Existing narrow Symbol placement receipt only at its recorded scope; full Part browser/map placement integration pending |
+| Create/edit/clone every kind; preview/cancel; commit; undo/redo; Save/reopen | Correct identity/revision and native transaction; cancel/refusal no write; reopened result agrees | Engine authoring seams exist; ordinary eight-kind GUI proof pending |
+| Attempt stale/wrong-writer/invalid-reference or automated direct edit | Actual refusal, no partial source/journal delta; existing proposal boundary retained | Admission/validation seams reusable; complete ordinary refusal coverage pending |
+| Review placed update; inspect old/new, map/process diff, affected users/checks; decline/accept/history/reopen | No latest-wins; exact retained graph required; missing history/impact disclosed; accepted propagation canonical | General update workflow pending; frozen physical-pad history is narrower evidence |
+| Operate browser, map, forms, preview and findings by keyboard/assistive technology; compare pane sizes | Reachable names/focus, non-color feedback and inherited visuals | Shared checks plus complete ordinary-app/assistive and same-engine/HUMAN frames pending |
+
+**Owner decisions and implementation handoff.** SURFACE-S05 must disposition
+browser/detail/editor presentation and the warning/block behavior for nonapproved
+or UnknownBasis content, pool/writable-target and conflict behavior, and any
+initial implementation breadth without reducing retained targets. Generator
+family/basis/naming, placed-impact trigger changes, graph authority promotion,
+source access/license and supported conversion scope require their actual
+authority separately. No default is selected here. Existing engine
+`api/native_write/library*`, resolver/Pool/LibraryGraph, shared authoring/proposal
+and configured GUI services are the handoff seams; a new private writer or a
+second library database authority would violate the controlling model.
+
 ## Schematic GUI Target
 
 The schematic editor target is:

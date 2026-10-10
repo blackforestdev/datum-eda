@@ -1,0 +1,487 @@
+{
+  "schema_version": 1,
+  "status": "bounded_route_preflight_complete_candidate_proposal_ready",
+  "task": "GUI-SURFACE-SPECS",
+  "step": "SURFACE-S03",
+  "issue_id": "dat-gui-surface-specs-usb",
+  "source_head": "21e6f97f590c84dc9c4e974d04e8531443c77bd4",
+  "scope": "Library surface candidate in existing GUI Product only; no IPC/standards/authoring contract edits, new generation semantics, runtime or source adoption.",
+  "authority": "Manager selected S03 under retained planning grant; root owns spec, metadata, review and synchronized step transitions. This coverage receipt is not independent PASS or owner product/visual ratification.",
+  "manifest": {
+    "path": "specs/evidence_traceability_manifest.json",
+    "sha256": "e793070a908067cccb6e70073fe88d5a516c11a108d75e4266bf82e9904c1a59",
+    "routes": [
+      {
+        "id": "parametric-footprint-editor",
+        "sources": [
+          "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_DXF_STOWAWAY_ADDENDUM.md",
+          "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md"
+        ],
+        "consumers": [
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+          "docs/IPC_FOOTPRINT_SYSTEM.md"
+        ],
+        "reviewed_digest_observed": "28d8fc949982ef5baf45467e6f13d2d3e3efca7bff6711ab57bfab0ec711288b"
+      },
+      {
+        "id": "prototype-editor-shell-and-panes",
+        "sources": [
+          "docs/gui/prototypes/board-editor.html",
+          "docs/gui/prototypes/schematic-editor.html",
+          "docs/gui/prototypes/workspace-panes.html"
+        ],
+        "consumers": [
+          "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+          "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+          "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+          "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+          "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+          "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+          "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json"
+        ],
+        "reviewed_digest_observed": "34998c1f267d90375eb99ce52839e50366cd196b790b6aa33a540afd9e5192e0"
+      }
+    ]
+  },
+  "coverage": [
+    {
+      "path": "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_DXF_STOWAWAY_ADDENDUM.md",
+      "sha256": "e9ee3de1964e3a9b79165ac042a554e4c9ad5687fa10be805a44ff49a5200eff",
+      "line_count": 1826,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          400
+        ],
+        [
+          401,
+          800
+        ],
+        [
+          801,
+          1200
+        ],
+        [
+          1201,
+          1600
+        ],
+        [
+          1601,
+          1826
+        ]
+      ]
+    },
+    {
+      "path": "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md",
+      "sha256": "42cebac6a6d89ca8c53279458f30f602040db0fa254bfe6ab86c13ada5c1d61e",
+      "line_count": 1553,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          400
+        ],
+        [
+          401,
+          800
+        ],
+        [
+          801,
+          1200
+        ],
+        [
+          1201,
+          1553
+        ]
+      ]
+    },
+    {
+      "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+      "sha256": "b604bf9530b3377a669c789c5660cbf12aa15de565dbf8335b05333d1d9d70ca",
+      "line_count": 656,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          220
+        ],
+        [
+          221,
+          450
+        ],
+        [
+          451,
+          656
+        ]
+      ]
+    },
+    {
+      "path": "docs/IPC_FOOTPRINT_SYSTEM.md",
+      "sha256": "f89a1406e1069f93ca12c7a4c6348e6d6b19824b0cac419caa7f2645034fd1f4",
+      "line_count": 378,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          200
+        ],
+        [
+          201,
+          378
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/prototypes/board-editor.html",
+      "sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07",
+      "line_count": 333,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          333
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/prototypes/schematic-editor.html",
+      "sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0",
+      "line_count": 404,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          205
+        ],
+        [
+          206,
+          404
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/prototypes/workspace-panes.html",
+      "sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd",
+      "line_count": 230,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          230
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+      "sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+      "line_count": 615,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          210
+        ],
+        [
+          211,
+          415
+        ],
+        [
+          416,
+          615
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+      "sha256": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed",
+      "line_count": 591,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          200
+        ],
+        [
+          201,
+          400
+        ],
+        [
+          401,
+          591
+        ]
+      ]
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+      "sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c",
+      "line_count": 247,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          247
+        ]
+      ]
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+      "sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990",
+      "line_count": 187,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          187
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+      "sha256": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8",
+      "line_count": 184,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          184
+        ]
+      ]
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "sha256": "c0bffe28b367584f9fe53aa86245b09d766555ec0602a99514665cff44907448",
+      "line_count": 542,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          270
+        ],
+        [
+          271,
+          542
+        ]
+      ]
+    },
+    {
+      "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "sha256": "7259766f1f8c0cd377347612120c0df044ccb522a7166bdbe91346b462ad66bc",
+      "line_count": 685,
+      "matches_source_head_blob": true,
+      "coverage": "complete_unchanged_review_reused",
+      "receipt": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "receipt_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "read_ranges_inclusive": [
+        [
+          1,
+          180
+        ],
+        [
+          181,
+          365
+        ],
+        [
+          366,
+          550
+        ],
+        [
+          551,
+          685
+        ]
+      ]
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+      "sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+      "line_count": 336,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          336
+        ]
+      ]
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+      "sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f",
+      "line_count": 99,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          99
+        ]
+      ]
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md",
+      "sha256": "1d91885491017d4e8e14cd489e6997be40af48c7daeb79a5e95520eddfd16cc1",
+      "line_count": 505,
+      "matches_source_head_blob": true,
+      "coverage": "complete_fresh_untruncated_read",
+      "read_ranges_inclusive": [
+        [
+          1,
+          170
+        ],
+        [
+          171,
+          360
+        ],
+        [
+          361,
+          505
+        ]
+      ]
+    }
+  ],
+  "additional_focused_reads": [
+    {
+      "path": "docs/POOL_ARCHITECTURE.md",
+      "sha256": "6569d05a8611ca63c3acaf079fb8aa1d4526af5d72058986e7a859705c75732f",
+      "line_count": 553,
+      "ranges_inclusive": [
+        [
+          1,
+          145
+        ],
+        [
+          373,
+          418
+        ],
+        [
+          476,
+          553
+        ]
+      ],
+      "coverage": "focused_only_non_normative_rationale",
+      "authority_limit": "No pool layering, same-UUID shadowing, inheritance or default ranking rule promoted from this rationale."
+    }
+  ],
+  "coverage_accounting": {
+    "parametric_route_complete_files": 4,
+    "parametric_route_fresh_lines": 4413,
+    "shell_route_complete_files": 12,
+    "shell_unchanged_complete_files_reused": 9,
+    "shell_changed_or_added_files_fresh": 3,
+    "additional_PM008_complete": true,
+    "new_full_standards_corpus_review": false,
+    "prior_truncated_parametric_reads_reused_as_complete": false
+  },
+  "mapping_recommendations": [
+    {
+      "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+      "current_routes": [
+        "prototype-editor-shell-and-panes"
+      ],
+      "add_consumer_to": "parametric-footprint-editor",
+      "reason": "The S03 library surface realizes the Library Authoring and footprint inspection/basis targets consumed on this route. Keep the existing shell mapping because focus, pane/Inspector and visual inheritance still apply; multiple consumer routes do not duplicate source ownership. No research source is reassigned."
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+      "recommendation": "Root register as governed planning evidence consumer on parametric-footprint-editor and, if used as shell review evidence, prototype-editor-shell-and-panes. Root owns classification and same-change route digest reconciliation."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md",
+      "current_routes": [],
+      "recommendation": "Use as additional full-read domain authority for this candidate; this task does not edit it or invent a new owning route."
+    }
+  ],
+  "findings": [
+    {
+      "subject": "Eight Pool kinds versus domain attachments",
+      "finding": "The implementation has Unit, Symbol, Entity, Part, Package, Footprint, Padstack and PinPadMap. ModelAttachment is separately governed data associated with targets; do not lose Unit/Entity by copying the older seven-DomainObject list or invent ParametricPackage as a ninth adopted kind."
+    },
+    {
+      "subject": "Separate physical and electrical authority",
+      "finding": "Units define electrical pins; Symbols their graphic presentation; Entities their gates; Parts orderable identity/options; Packages bodies/terminals; Footprints land/process geometry; Padstacks layer/drill/aperture definitions; maps bind gate-qualified pins and physical pad references. Name matching and legacy Package.pads/Part.pad_map do not become target authority."
+    },
+    {
+      "subject": "Standards and process basis",
+      "finding": "Owner-directed standards references ANSI Y32.2-1975(reaffirmed1989), IPC-7351B and ISO10303-21 must appear with version/source/applicability and unknown coverage. Storing an assertion or model format is not standards certification. Copper, mask and paste require independently inspectable actual geometry and declared process basis; no universal expansion/reduction or peer-majority repair rule is selected."
+    },
+    {
+      "subject": "Source fidelity versus qualification",
+      "finding": "Original file provenance, import identity/trace, conversion support/loss, native binding validity, object review/approval, standards basis and production qualification are distinct dimensions. Existing synthetic/native fixture proof is behavior evidence, not approved manufacturer seed or provider conversion fidelity."
+    },
+    {
+      "subject": "Research not product authority",
+      "finding": "Parametric types, DXF profiles, round-trip promises, adoption timelines, license claims and estimated solver performance/effort in research remain proposals. They do not authorize dependencies, new pool schemas, production thresholds, publication or runtime successor."
+    },
+    {
+      "subject": "Known contract reconciliation",
+      "finding": "Library Authoring still proposes NEW library_author.rs/CLI JSON constructors while S01 identified existing engine api/native_write builders. Pool duplicate/shadow policy, validation tiers, retained graph update and model/process systematic consumption remain unresolved; no GUI-private writer or automatic update is justified."
+    },
+    {
+      "subject": "Auditor current-versus-target bounds",
+      "finding": "Manager-relayed audit: eight Pool kinds lack uniform approval/provenance fields; absent metadata must remain unavailable and Part lifecycle is separate from approval. Symbol bound_with_part does not prove complete physical mapping. Current write validation is shape/path/UUID plus separate CLI/graph checks, not universal final-graph or manufacturer qualification. Circle/Rect apertures and Inherit mask/paste have fidelity gaps. Frozen physical-pad journal history does not prove general retained old/new library graph or complete affected-placement update/approve/apply GUI."
+    }
+  ],
+  "blockers_and_limits": [
+    {
+      "scope": "standards-and-compliance-research",
+      "status": "not_complete_review",
+      "detail": "IPC Footprint System is shared with this 11-source/3-consumer route. Only that one consumer was fully read here; the 26k+line standards corpus was not reviewed and no exact adequate complete prior receipt was available. Manager explicitly bounds S03 to GUI Product with no IPC contract/standards/threshold/generation edits. Full review remains required before those affected normative edits."
+    },
+    {
+      "scope": "visual_authority",
+      "status": "candidate_frames_and_owner_disposition_pending",
+      "detail": "Existing shell references show limited library tree/editor-fill/footprint previews. They do not supply complete browser or per-kind editor frames. Claude owns HTML; final HUMAN and combined SURFACE-REVIEW/S05 remain required."
+    },
+    {
+      "scope": "source_access_and_rights",
+      "status": "separate_unresolved_acquisition",
+      "detail": "Authorized provider original export and applicable rights remain unresolved in library-foundation-investigation.json. No account/agreement acceptance/download/adoption here, and this is not an S03 planning prerequisite."
+    },
+    {
+      "scope": "runtime_and_seed",
+      "status": "unqualified",
+      "detail": "Full browser, ordinary eight-kind authoring, retained old/new graph update, systematic model/process consumption and approved seed remain unproved. No build/import/replay was performed."
+    }
+  ],
+  "validation": {
+    "all_complete_files_match_source_head": true,
+    "all_reused_files_match_prior_exact_sha256": true,
+    "source_or_consumer_mutations": false,
+    "HTML_edits": false,
+    "builds_or_runtime_proof": false,
+    "metadata_or_digest_mutations": false,
+    "independent_acceptance_claimed": false
+  },
+  "candidate_handoff": "Concrete library surface proposal sent to root after this preflight: eight-kind detail/authoring, typed relationships and pinned revisions, source/basis/approval separation, process/model inspection, accessibility, visual frames and ordinary workflow proof. Root integrates in existing GUI Product and coordinates actual review."
+}
