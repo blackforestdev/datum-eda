@@ -7,6 +7,7 @@ use eda_engine::api::native_write::library::{
 };
 use eda_engine::api::native_write::library_definition::{
     validate_footprint_replacement_references, validate_part_replacement_references,
+    validate_symbol_replacement_references,
 };
 use eda_engine::api::native_write::library_pin_pad_map::validate_pin_pad_map_replacement_references;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
@@ -48,6 +49,8 @@ pub(crate) fn set_native_project_pool_library_object(
                 validate_pin_pad_map_replacement_references(&model, &relative_path, &object)
                     .map_err(definition_validation_error)?
             }
+            "symbols" => validate_symbol_replacement_references(&model, &relative_path, &object)
+                .map_err(definition_validation_error)?,
             _ => {}
         }
     }

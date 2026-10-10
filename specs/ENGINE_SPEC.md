@@ -2297,7 +2297,17 @@ are unchanged. Typed/proposal callers retain their validation order and complete
 contextual error chains. This converges existing checks without adding mapping
 completeness, normalization, broader graph or compatibility policy.
 
-The actual engine API inventory is 241 unique public function names, including
+Manual generic Symbol JSON Create and Set consume
+`library_definition::validate_symbol_creation_references` and
+`validate_symbol_replacement_references`. They reuse the existing pool-domain,
+Unit-kind lookup and Symbol-qualified missing-Unit diagnostic against the same
+prepared model. Canonical schema/shape, source ownership and root/leaf UUID
+collision errors retain precedence; manual provenance, original JSON and unknown
+fields are preserved. An unbound Symbol can retain its Unit or relink to another
+existing Unit through canonical edit/history. This adds no bound-gate
+compatibility, pin-anchor, completeness or broader graph rule.
+
+The actual engine API inventory is 243 unique public function names, including
 the retained earlier inventory drift and these definition helpers. This is
 engineering convergence, not new GUI authoring, SMD/process/standards policy,
 native file-type migration, library adoption or manufacturing qualification.

@@ -293,13 +293,13 @@
     "crates/cli/src/main_tests/main_tests_project_pool_library.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 931
+        "file_lines": 724
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit. Symbol Unit admission repair moves the two complete generic Symbol lifecycle tests into main_tests_project_pool_symbol_definition_validation.rs with valid ordinary UnitCreate fixtures. Actual parent931to724, child497 within700; all prior names/assertions/history retained. Remaining debt stays open."
     },
     "crates/cli/src/main_tests/main_tests_project_pool_package_geometry.rs": {
       "kind": "rust-test",

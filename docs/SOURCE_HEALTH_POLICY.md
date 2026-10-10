@@ -139,6 +139,15 @@ board physical-component owner and native acquisition proof module remain within
 normal budgets. This preserves summary behavior and does not move geometry or
 selection authority into a scene consumer. Remaining legacy debt stays open.
 
+Symbol Unit reference admission moves the two complete generic Symbol lifecycle
+tests into `main_tests_project_pool_symbol_definition_validation.rs`, beside the
+new refusal and valid-relink workflows. Ordinary Unit creation replaces dangling
+Unit fixtures; existing test names, mutation/query and history assertions remain.
+The legacy `main_tests_project_pool_library.rs` decreases from 931 to 724 lines
+with its exact ceiling ratcheted downward. The Symbol test owner is 497 lines,
+within the normal 700-line test budget and registered as a real child module
+by its legacy parent; remaining parent debt stays open.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

@@ -253,6 +253,71 @@ fn validate_part_links(model: &DesignModel, part: &crate::pool::Part) -> Result<
     Ok(())
 }
 
+/// Check the existing Unit link of a manual generic Symbol Create.
+/// Canonical schema, source ownership and UUID collision errors retain priority.
+pub fn validate_symbol_creation_references(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+) -> Result<(), EngineError> {
+    validate_symbol_definition(model, relative_path, object, false)
+}
+
+/// Check the same Unit link of a manual generic Symbol Set.
+pub fn validate_symbol_replacement_references(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+) -> Result<(), EngineError> {
+    validate_symbol_definition(model, relative_path, object, true)
+}
+
+fn validate_symbol_definition(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+    replacement: bool,
+) -> Result<(), EngineError> {
+    if object
+        .get("schema_version")
+        .and_then(serde_json::Value::as_u64)
+        != Some(1)
+    {
+        return Ok(());
+    }
+    let Ok(symbol) = serde_json::from_value::<crate::pool::Symbol>(object.clone()) else {
+        return Ok(());
+    };
+    let blocked = if replacement {
+        crate::substrate::pool_replacement_has_source_blocker(
+            &model.objects,
+            symbol.uuid,
+            relative_path,
+            object,
+            "symbols",
+        )
+    } else {
+        crate::substrate::pool_creation_has_source_blocker(
+            &model.objects,
+            symbol.uuid,
+            relative_path,
+            object,
+            "symbols",
+        )
+    };
+    if blocked {
+        return Ok(());
+    }
+    validate_pool_definition_reference(model, symbol.unit, "units", "unit").map_err(|error| {
+        match error {
+            EngineError::Validation(message) => {
+                validation(format!("{message} for symbol {}", symbol.uuid))
+            }
+            other => other,
+        }
+    })
+}
+
 /// Insert or replace a pad in an already materialized, UUID-checked footprint.
 /// The caller validates the padstack reference against its resolved model before
 /// materializing this payload. Unrelated and unknown payload fields are retained.
