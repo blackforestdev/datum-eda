@@ -180,14 +180,16 @@ DomainObjects, each with `ObjectId`/`object_revision`.
    editing an object that has any `LibraryBinding` to a placed
    `ComponentInstance` is forced proposal-first (Decision 008
    lines 99-100, 431-434).
-2. Operation it emits: typed variants in a NEW
-   `crates/engine/src/api/write_ops/library_author.rs` —
-   `CreateLibraryObject{kind: Symbol|Footprint|Package|Padstack|Part|
-   PinPadMap|ModelAttachment, fields}` and
-   `EditLibraryObjectField{object_id, patch}`. Both route through the
-   single `commit()` primitive (shared surface; committed at HEAD
-   `5fe3016`), mint or bump `ObjectId` + `object_revision`, and append a journal
-   `TransactionRecord`. PinPadMap reference resolution, process-aperture
+2. Current engine mechanism: `api/native_write/library.rs` supplies
+   `PoolLibraryObjectTarget` and `PoolLibraryOperationSpec` create/set/delete
+   and Part-model attach/detach inputs through `BatchComposer`/`PreparedWrite`
+   and the canonical commit/journal path. Footprint and gate-aware map builders
+   use that same owner; no new writer module is required. The normalized
+   `CreateLibraryObject{kind, fields}` / `EditLibraryObjectField{object_id, patch}`
+   vocabulary below is the target authoring surface, not a claim those exact
+   API variants already exist. Current operations preserve UUID ownership,
+   bump applicable revisions and record canonical inverses/history. PinPadMap
+   reference resolution, process-aperture
    (mask/paste) policy, and model hash-on-create are kind-specific
    validation INSIDE these two ops — not separate verbs. Unplaced edit
    = direct commit; placed-binding edit = proposal-first via the shared

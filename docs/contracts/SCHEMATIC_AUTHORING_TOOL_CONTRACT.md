@@ -86,8 +86,9 @@ Confirmed IR facts the matrix relies on:
 - `BusEntry` carries `bus: Uuid` + optional `wire: Uuid` + position
   (`schematic/mod.rs:168`). It is bus-bound, not a free point marker.
 - `Schematic.sheet_instances: HashMap<Uuid, SheetInstance>` exists in the
-  IR (`schematic/mod.rs:13`) but has NO authoring op — only the
-  `ProjectNew` scaffold.
+  IR. Current native builders in `api/native_write/schematic_sheets.rs`
+  author definitions, instances and bindings through canonical journaled
+  operations. Complete ordinary GUI hierarchy authoring remains pending.
 - ERC runs over an in-memory `Schematic`
   (`crates/engine/src/erc/mod.rs:50`,
   `run_prechecks_with_config_and_waivers`): 7 rules + a
@@ -212,7 +213,10 @@ restated.
   the exact prior `PlacedSymbol` bytes, derived `net_info` recomputes
   identical net membership.
 - **(8) Not yet supported:** Three redundant CLI verbs today instead of
-  one parametric op; no undo; no operation emission.
+  one normalized parametric surface. Current compatibility transforms emit
+  journaled operations with history. Ordinary GUI Move is delivered only for
+  its independently reviewed isolated unique-occurrence scope; this does not
+  establish connected/bulk/repeated transforms or complete rotate/mirror GUI.
 
 ### 3. delete-object (any schematic object, by id list)
 
@@ -221,8 +225,8 @@ restated.
 - **(2) Operation:** `DeleteObjects{ids:[ObjectId]}` (one op,
   heterogeneous id list) → `OperationBatch`. Batch/cross-domain deletes
   (e.g. a symbol with a bound board `ComponentInstance`) escalate to a
-  Proposal. Today ~10 separate `delete_native_project_*` JSON writers,
-  no undo.
+  Proposal. Current type-specific native delete builders emit canonical
+  journaled operations; the normalized heterogeneous surface remains a target.
 - **(3) CLI:** `datum-eda project delete --root <dir> --id <uuid>
   [--id <uuid>...]` (collapses delete-symbol/-wire/-junction/-label/
   -port/-bus/-bus-entry/-noconnect/-text/-drawing).
@@ -240,8 +244,9 @@ restated.
   wire in one batch op; assert two deleted refs, undo restores both
   atomically; deleting a board-bound symbol instead returns a Proposal.
 - **(8) Not yet supported:** Ten type-specific delete verbs today instead
-  of one id-list op; no undo; no proposal escalation for board-bound
-  symbols.
+  of one normalized id-list surface; complete heterogeneous/bulk and
+  board-bound proposal escalation and ordinary GUI delivery remain pending.
+  This is not an absence of canonical history for current native deletes.
 
 ### 4. draw-wire
 
@@ -298,8 +303,9 @@ restated.
   assert that pin's net merges into VCC in derived `net_info`,
   `power_in_without_source` clears if a source is present, undo reverts
   net membership.
-- **(8) Not yet supported:** No operation/undo. A KiCad-style surface
-  would split this into 3–4 label tools; Datum keeps one parametric op.
+- **(8) Not yet supported:** Complete ordinary label GUI delivery and target
+  result/normalization coverage remain pending. Current native label commands
+  are journaled with history; label kind remains one parameterized capability.
 
 ### 6. place-marker (kind: junction | no-connect)
 
@@ -362,9 +368,10 @@ restated.
   port matching a parent hierarchical label; assert the
   hierarchical-connectivity-mismatch count drops, undo restores it; then
   re-issue with `--port` to rename and assert a single modified diff.
-- **(8) Not yet supported:** No operation/undo. No
-  sheet-symbol-with-pins authoring op (see the create-sheet gap).
-  edit-port collapses into this create-or-edit op.
+- **(8) Not yet supported:** Complete ordinary port/sheet-pin GUI delivery
+  and unified create-or-edit surface. Current native port and hierarchy-binding
+  operations are journaled; their presence does not establish complete
+  sheet-symbol-with-pins or net-rewiring GUI behavior.
 
 ### 8. create-bus (members + bus-entry as parameters)
 
@@ -404,8 +411,9 @@ restated.
 - **(2) Operation:** `SetSymbolField{symbol_id, field, value, clear?}` as
   ONE parametric op. The field enum covers
   `reference|value|lib_id|part|entity|unit|gate|display_mode|hidden_power|
-  custom:<name>`. Today ~16 distinct set_/clear_ JSON writers +
-  add/edit/delete field.
+  custom:<name>`. Current compatibility set/clear and add/edit/delete field
+  builders use canonical journaled symbol operations; the normalized field
+  surface remains a target.
 - **(3) CLI:** `datum-eda project set-symbol-field --root <dir> --symbol
   <uuid> --field <reference|value|lib-id|part|entity|unit|gate|
   display-mode|hidden-power|custom:NAME> --value <v> [--clear]`
@@ -423,8 +431,9 @@ restated.
   pool part; assert a single `OperationResult.modified`, undo restores
   both, `symbol_semantics` reflect the new pin types.
 - **(8) Not yet supported:** Sixteen redundant set/clear verbs collapse to
-  one op + field enum (+`clear` flag); no undo; part assignment does not
-  yet mint/bind a `ComponentInstance`.
+  one normalized surface + field enum (+`clear` flag); complete ordinary
+  field GUI and guaranteed `ComponentInstance` join remain pending. Current
+  compatibility field operations already use canonical history.
 
 ### 10. run-erc (read-only) + author-waiver
 
@@ -645,9 +654,10 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
    place/transform/label/marker/field-edit/port/bus; proposal-first =
    delete-of-a-board-bound-symbol, bulk delete, bulk reference reannotate,
    and any sheet-structure change that rewires existing nets.
-4. **Hierarchy deferral.** Confirm create-sheet / sheet-instance /
-   sheet-pin authoring is deferred to a later slice (only `ProjectNew`
-   scaffold + read queries exist today).
+4. **Hierarchy GUI breadth.** Current native definition/instance/binding
+   operations exist. Disposition complete GUI hierarchy/sheet-pin authoring
+   and proposal-first net-rewiring scope without treating backend availability
+   as ordinary designer delivery or creating a new deferral automatically.
 5. **Waiver home.** Should the proposal-gated `author-waiver` op land in
    THIS schematic contract, or move to the `009` rules/checks contract?
    (run-erc itself is already implemented and read-only.)

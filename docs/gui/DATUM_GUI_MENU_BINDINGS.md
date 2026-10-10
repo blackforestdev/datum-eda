@@ -25,6 +25,12 @@ Derived from a four-source internal inventory (2026-07-05): the verb registry
 + shared tool surface (`crates/engine-daemon/`,
 `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md`).
 
+The inventory counts and plumbing descriptions below are that historical
+baseline. The SURFACE-S04 amendment records independently reviewed native
+Symbol/Wire/history/Save paths at their exact scope. A delivered tool or shortcut
+does not establish that every menu entry is wired; unreviewed menu projections
+and broader editor families remain explicit targets.
+
 ## Capability inventory (what exists)
 
 - **Verb registry**: 338 public verbs across 17 families — the single-source
@@ -44,8 +50,11 @@ operations is.
 - **LIVE-READ** — verb exists and the GUI can already reach it today via
   `run_cli_json` (read-only data loading).
 - **ENGINE-READY / GUI-BLOCKED** — builder + verb + CLI exist and journal
-  correctly, but the GUI can only reach it via the forbidden terminal CLI-string
-  handoff. Needs the write-path plumbing (see "Prerequisite plumbing").
+  correctly, but an ordinary GUI binding is not established for that row.
+  Terminal CLI-string handoff is forbidden, not an available editor fallback.
+- **PARTIAL** — reviewed native application tool/shortcut route
+  exists at the stated scope; this does not qualify all menu projections,
+  source libraries, physical/HUMAN input or the complete editor.
 - **NOT-BUILT** — no backing mechanism yet; the menu item is a design decision or
   future work. Menu item present but disabled per product spec.
 
@@ -57,14 +66,14 @@ operations is.
 | New Project | `GlobalPreferencesProductService::create_project` / CLI `project new` | WIRED — native input-modal form; exact eight-key Units genesis |
 | Open Project | none — project root is an implicit arg to every command; `project inspect` is nearest | NOT-BUILT (needs GUI open + session model) |
 | Import | `build_kicad_board_import` / `build_kicad_schematic_import` / `build_kicad_footprint_import` / `build_eagle_library_import`; CLI `project import-kicad-*` / `import-eagle-library` | ENGINE-READY / GUI-BLOCKED |
-| Save / Save As | none — native projects auto-persist per journaled mutation; no native save/save-as verb | NOT-BUILT (needs product decision — see "File-menu semantics") |
+| Save / Save As | Typed native project Save through the existing GUI native-edit client; Save As is separate | PARTIAL for project Save/history/reopen receipts; Save As and complete menu projection remain unqualified |
 | Export | `datum.artifact.generate` / `export_manufacturing_set`; CLI `project export-*` (gerber/drill/bom/pnp/manufacturing-set) | ENGINE-READY / GUI-BLOCKED (generation), LIVE-READ (inspect) |
 | Close | none (stateless CLI) | NOT-BUILT (needs GUI session model) |
 
 ### Edit
 | Menu item | Backing mechanism | Status |
 |---|---|---|
-| Undo / Redo | `datum.journal.undo` / `redo` as typed GUI journal actions; no terminal CLI-string handoff | ENGINE-READY / GUI-BLOCKED |
+| Undo / Redo | `datum.journal.undo` / `redo` as typed GUI journal actions; no terminal CLI-string handoff | PARTIAL for reviewed Symbol/Wire/isolated Move history; complete menu projection remains unqualified |
 | Cut/Copy/Paste/Delete | per-object delete builders exist (`build_delete_*`); no clipboard model | PARTIAL: delete ENGINE-READY; clipboard NOT-BUILT |
 | Preferences > Global Preferences… | none — Product Mechanics 039 and the Global Preferences plan govern the future typed resolver/repository/wgpu route | NOT-BUILT |
 | Preferences > Project Preferences… | none — disabled without an open Project; future writes use canonical journaled Project mutations under `PROJECT_PREFERENCES_SPEC.md` | NOT-BUILT |
@@ -92,8 +101,8 @@ GUI-LOCAL.
 ### Place (schematic, active-editor-gated)
 | Item | Verb / builder | Status |
 |---|---|---|
-| Symbol | `datum.schematic.place_symbol` / `build_place_schematic_symbol` | ENGINE-READY / GUI-BLOCKED |
-| Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | ENGINE-READY / GUI-BLOCKED |
+| Symbol | `datum.schematic.place_symbol` / `build_place_schematic_symbol` | PARTIAL: named narrow picker/place/preview/cancel; full browser/approved seed and every menu projection remain open |
+| Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | PARTIAL: terminal-connected multisegment preview/cancel/finish/history; auto-junction/full editing and every menu projection remain open |
 | Label | `datum.schematic.place_label` / `build_create_schematic_label` | ENGINE-READY / GUI-BLOCKED |
 | Junction / No-connect / Port / Bus / Bus-entry | `datum.schematic.place_*` / connectivity builders | ENGINE-READY / GUI-BLOCKED |
 | Text / Drawing | `datum.schematic.place_text` / `place_drawing_*` | ENGINE-READY / GUI-BLOCKED |
@@ -145,10 +154,17 @@ GUI-LOCAL (except `datum.context.*` reads, LIVE-READ).
 
 ## Prerequisite plumbing (blocks correct authoring menus)
 
-Every ENGINE-READY / GUI-BLOCKED row above is blocked by the same missing write
-path. Before authoring menu items can be wired per decision 019 (gesture →
-`OperationBatch` → `commit()`/proposal, never a CLI string), four things must
-exist:
+This is the historical 2026-07-05 plumbing inventory, not a fresh assertion that
+the native GUI has no write client. Current native schematic requests and
+history/Save use the typed native-edit client. The reviewed evidence is
+`docs/reviews/workflow-delivery-rollout/native-schematic/first-symbol-wire-delivery.json`,
+its `independent-review.json`, and `symbol-move-delivery-review.json`. Reuse their
+exact bounds; no complete editor or manufacturer seed qualification is implied.
+For still-unconnected families, the remaining registry/transport/menu work must
+be checked against current owners rather than rebuilt from this old inventory.
+The retained target per decision 019 is gesture →
+`OperationBatch` → `commit()`/proposal, never a CLI string. Four things must
+be accounted for in the actual binding:
 
 1. **`NativeWrite` dispatch variant in the verb registry.** Today
    `crates/verb-registry/src/lib.rs` `Dispatch` has only `Cli { method, argv }`
@@ -175,10 +191,12 @@ inspection) is buildable now, while authoring menus wait on the plumbing.
 
 ## File-menu semantics (design decision, not a binding)
 
-Native projects auto-persist per journaled mutation, so there is no native
-Save / Save-As / Open / Close. The product spec must decide GUI semantics:
-- **Save** — likely a no-op indicator ("all changes journaled") or an explicit
-  checkpoint/commit-message affordance, not a write gate.
+Journaled mutation and the current typed project Save/history route are separate
+existing mechanisms. The earlier no-Save description is superseded by the
+bounded ordinary Save/reopen receipts; it cannot justify a second shard writer.
+Unqualified document/session semantics remain explicit:
+- **Save** — current native project Save route at its reviewed scope; no
+  arbitrary shard Save As or new persistence authority is inferred.
 - **Save As** — copy/branch the project tree (no verb today).
 - **Open** — needs a GUI project-session model (which root is active).
 - **Close** — GUI session teardown.
