@@ -581,5 +581,20 @@
         "limits": "Governance/evidence preservation/ownership transfer only; no native replay, full C04/C05/HUMAN or wider qualification certification."
       }
     }
+  },
+  "duplicate_schematic_integration_continuation": {
+    "manager": "codex-project-manager-20261009",
+    "decision": "Reconcile exact file ownership for a demonstrated integration defect within retained S5A-C04 U4/N08 authority; no new product scope or execution grant.",
+    "authority": "FOUNDATION_CONSUMER_COMPLETION_PLAN.md execution disposition at line218 approves pinned U1-U5/N01-N17 board/schematic; preparation-plan U4 shared immediate projection and N08 duplicate resolving-pane equal cues.",
+    "implementer": "01a112c8-3b03-7113-9e99-d3402c2371fa / codex-s5a-c04-takeover-20261009",
+    "paths": [
+      "crates/gui-render/src/render/pane_chrome.rs",
+      "crates/gui-render/src/render/coordinate_hit_duplicate_tests.rs"
+    ],
+    "diagnosis": "Existing coordinate_hit builds all resolved Schematic surface passes; pane_chrome retains first-Schematic-only has_scene guard and emits coming placeholder over actual subsequent-pane content. Existing integration traced to84221a2a, no replacement mechanism proposed.",
+    "bounded_change": "Remove first-pane claim guard for genuinely available Schematic source; preserve unavailable source branch. Extend existing duplicate-Schematic test and reuse missing-scene contract proof; guarded focused checks/build and one ordinary native duplicate-pane capture followed by actual independent review.",
+    "evidence_route": "Implementer reports unchanged29-route evidence gate PASS and adequate complete C01/D123/IR01 route review reused for gui-selection/prototype-selection/editor-shell-and-panes, with focused current DOM/CSS equal-strength/frame and live recursive document/view pane review plus PM021/UVT/contracts reread. No authority artifacts/digests/goldens/prototypes changed.",
+    "ownership": "Two exact additional files only; no whole renderer crate claim. Current files clean before lease synchronization; existing implementer and other scope retained.",
+    "boundaries": "No new visual semantics, geometry, source identity, dependencies, prototype writes, C04/C05/C06/HUMAN/physical Wayland/N15 qualification or successor authorization. Source and runtime candidate independent review required before delivery."
   }
 }
