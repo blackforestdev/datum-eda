@@ -76,6 +76,14 @@ evidence includes:
   names. This CLI target parameter does not imply fabrication-target proposal,
   MCP or GUI delivery.
 
+The manual CLI also edits an unplaced Symbol definition’s fields through
+`set-pool-library-object --kind symbols --section fields --from-json <array>`.
+It validates existing field shape, preserves the original ordered array and
+changes only fields through canonical Set/history. Add, change, remove and clear
+workflows preserve sibling geometry, pin anchors and Unit links. Omitted section
+retains whole-object Set. This does not imply field-section MCP, proposal or GUI
+delivery, placed-Symbol propagation, or new field identity/uniqueness policy.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

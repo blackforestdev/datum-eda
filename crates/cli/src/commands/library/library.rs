@@ -1,7 +1,6 @@
 mod object_create;
 use self::object_create::create_native_project_pool_library_object;
 mod object_edit;
-use self::object_edit::set_native_project_pool_library_object;
 mod padstack;
 use self::padstack::create_native_project_pool_padstack;
 use crate::*;
@@ -2504,31 +2503,6 @@ impl ProjectSetPoolPartPadMapEntryArgs {
                 format,
                 &set_native_project_pool_part_pad_map_entry(
                     &path, &pool, part_uuid, pad_uuid, gate_uuid, pin_uuid,
-                )?,
-            ),
-            0,
-        ))
-    }
-}
-
-impl ProjectSetPoolLibraryObjectArgs {
-    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
-        let Self {
-            path,
-            pool,
-            kind,
-            object_uuid,
-            from_json,
-        } = self;
-        Ok((
-            render_output(
-                format,
-                &set_native_project_pool_library_object(
-                    &path,
-                    &pool,
-                    &kind,
-                    object_uuid,
-                    &from_json,
                 )?,
             ),
             0,

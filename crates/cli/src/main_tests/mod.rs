@@ -241,6 +241,7 @@ mod main_tests_project_pool_part_reference_validation;
 mod main_tests_project_pool_pin_pad_map;
 mod main_tests_project_pool_pin_pad_map_definition_validation;
 mod main_tests_project_pool_resolver;
+mod main_tests_project_pool_symbol_fields;
 mod main_tests_project_pool_symbol_library;
 mod main_tests_project_pool_symbol_pin_anchor;
 mod main_tests_project_port;

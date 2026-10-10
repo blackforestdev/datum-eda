@@ -2318,9 +2318,19 @@ and diagnostics retain their existing order; sibling fields and extension JSON
 are not normalized. This adds no process geometry, standards derivation, graph
 promotion or placed-update policy.
 
-The actual engine API inventory is 245 unique public function names, including
+Manual Symbol definition-field replacement uses
+`library_definition::symbol_with_fields` to validate the existing field schema
+and insert the original ordered JSON array. The existing Set action accepts an
+optional fields section for Symbols; omitted section preserves whole-object
+admission and diagnostics. The section lifecycle materializes the raw Symbol
+from one fresh model, changes only fields and reuses existing reference/source
+admission and canonical Set/history. Duplicate field-key values, unknown row
+metadata, absent optional defaults and all sibling content remain intact. This
+adds no uniqueness, upsert, generic patch, placed-propagation or graph rule.
+
+The actual engine API inventory is 246 unique public function names, including
 the retained earlier inventory drift, definition admission helpers and native
 graphic builders. These APIs implement existing reference rules and manual
-fabrication authoring. GUI authoring, SMD/process/standards policy, native
+fabrication and Symbol field authoring. GUI authoring, SMD/process/standards policy, native
 file-type migration, library adoption and manufacturing qualification retain
 their separate authority and acceptance requirements.

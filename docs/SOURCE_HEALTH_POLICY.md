@@ -157,6 +157,16 @@ The former 992-line `commands/library/footprint.rs` is now 625 lines and leaves
 the legacy ledger. The command child is 346 lines and both production owners
 remain within normal limits. No ceiling, exclusion or exception is increased.
 
+Symbol definition field editing moves the complete generic Create, Delete and
+Set argument types into the real `args/project_library_object.rs` owner,
+registered by its legacy argument parent. Existing root reexports remain intact.
+The complete Set argument execution lifecycle moves from `library/library.rs`
+into its existing `library/object_edit.rs` owner, beside raw payload admission
+and canonical commit. The argument parent decreases from 976 to 932 lines and
+the command parent from 2,537 to 2,511, with exact downward ceilings; both
+retain legacy debt. The 56-line argument owner, 135-line edit owner and 224-line
+field workflow test owner remain within normal budgets. No limit is increased.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

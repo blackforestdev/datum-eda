@@ -1,55 +1,11 @@
 use crate::*;
 
-#[derive(clap::Args)]
-pub(crate) struct ProjectCreatePoolLibraryObjectArgs {
-    /// Project root directory
-    pub(crate) path: PathBuf,
-    /// Project-local pool path; defaults to pool
-    #[arg(long, default_value = "pool")]
-    pub(crate) pool: String,
-    /// Native pool object kind
-    #[arg(long)]
-    pub(crate) kind: String,
-    /// Object UUID
-    #[arg(long = "object")]
-    pub(crate) object_uuid: Uuid,
-    /// JSON file containing the object payload
-    #[arg(long = "from-json")]
-    pub(crate) from_json: PathBuf,
-}
-
-#[derive(clap::Args)]
-pub(crate) struct ProjectDeletePoolLibraryObjectArgs {
-    /// Project root directory
-    pub(crate) path: PathBuf,
-    /// Project-local pool path; defaults to pool
-    #[arg(long, default_value = "pool")]
-    pub(crate) pool: String,
-    /// Native pool object kind
-    #[arg(long)]
-    pub(crate) kind: String,
-    /// Object UUID
-    #[arg(long = "object")]
-    pub(crate) object_uuid: Uuid,
-}
-
-#[derive(clap::Args)]
-pub(crate) struct ProjectSetPoolLibraryObjectArgs {
-    /// Project root directory
-    pub(crate) path: PathBuf,
-    /// Project-local pool path; defaults to pool
-    #[arg(long, default_value = "pool")]
-    pub(crate) pool: String,
-    /// Native pool object kind
-    #[arg(long)]
-    pub(crate) kind: String,
-    /// Object UUID
-    #[arg(long = "object")]
-    pub(crate) object_uuid: Uuid,
-    /// JSON file containing the replacement object payload
-    #[arg(long = "from-json")]
-    pub(crate) from_json: PathBuf,
-}
+#[path = "project_library_object.rs"]
+mod project_library_object;
+pub(crate) use project_library_object::{
+    ProjectCreatePoolLibraryObjectArgs, ProjectDeletePoolLibraryObjectArgs,
+    ProjectSetPoolLibraryObjectArgs,
+};
 
 #[derive(clap::Args)]
 pub(crate) struct ProjectCreatePoolUnitArgs {

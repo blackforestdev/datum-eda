@@ -253,6 +253,21 @@ fn validate_part_links(model: &DesignModel, part: &crate::pool::Part) -> Result<
     Ok(())
 }
 
+/// Replace only a Symbol's fields after admitting the existing field schema.
+/// Keep the raw array so order, duplicates, unknown metadata and absent defaults survive.
+pub fn symbol_with_fields(
+    mut object: serde_json::Value,
+    fields: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    serde_json::from_value::<Vec<crate::pool::LibrarySymbolField>>(fields.clone())
+        .map_err(|error| validation(format!("invalid symbol fields: {error}")))?;
+    object
+        .as_object_mut()
+        .ok_or_else(|| validation("symbol payload must be an object"))?
+        .insert("fields".to_string(), fields);
+    Ok(object)
+}
+
 /// Check the existing Unit link of a manual generic Symbol Create.
 /// Canonical schema, source ownership and UUID collision errors retain priority.
 pub fn validate_symbol_creation_references(

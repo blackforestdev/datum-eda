@@ -1,13 +1,14 @@
 //! Generic object replacement owns payload admission and the canonical edit lifecycle.
 use std::path::Path;
 
-use anyhow::{Context, Result};
+use crate::{OutputFormat, ProjectSetPoolLibraryObjectArgs, render_output};
+use anyhow::{Context, Result, bail};
 use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
 use eda_engine::api::native_write::library_definition::{
-    validate_footprint_replacement_references, validate_part_replacement_references,
-    validate_symbol_replacement_references,
+    symbol_with_fields, validate_footprint_replacement_references,
+    validate_part_replacement_references, validate_symbol_replacement_references,
 };
 use eda_engine::api::native_write::library_pin_pad_map::validate_pin_pad_map_replacement_references;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
@@ -27,17 +28,43 @@ pub(crate) fn set_native_project_pool_library_object(
     object_kind: &str,
     object_id: Uuid,
     source: &Path,
+    section: Option<&str>,
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
     validate_project_local_pool_path(pool_path)?;
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    // Validate existence and payload uuid exactly as the pre-migration CLI
-    // did; the facade re-sources the previous payload from the same model view.
-    read_project_pool_object_payload(root, &relative_path, object_id)?;
-    let object = read_pool_library_object_payload(source, object_id)?;
-    let mut model = ProjectResolver::new(root)
-        .resolve()
-        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let (mut model, object) = if let Some(section) = section {
+        if section != "fields" {
+            bail!("unsupported pool library section {section}; expected fields");
+        }
+        if object_kind != "symbols" {
+            bail!("--section fields requires --kind symbols");
+        }
+        let model = ProjectResolver::new(root)
+            .resolve()
+            .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+        let object = eda_engine::api::native_write::library::pool_library_object_payload(
+            &model,
+            &relative_path,
+            object_id,
+        )
+        .map_err(definition_validation_error)?;
+        let fields: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(source).with_context(|| {
+                format!("failed to read pool library fields {}", source.display())
+            })?)
+            .with_context(|| format!("failed to parse pool library fields {}", source.display()))?;
+        let object = symbol_with_fields(object, fields).map_err(definition_validation_error)?;
+        (model, object)
+    } else {
+        // Preserve the whole-object mode's existing input and diagnostic order.
+        read_project_pool_object_payload(root, &relative_path, object_id)?;
+        let object = read_pool_library_object_payload(source, object_id)?;
+        let model = ProjectResolver::new(root)
+            .resolve()
+            .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+        (model, object)
+    };
     let source = crate::cli_commit_source()?;
     if source == CommitSource::Cli {
         match object_kind {
@@ -78,4 +105,31 @@ pub(crate) fn set_native_project_pool_library_object(
         object_id,
         &relative_path,
     )
+}
+
+impl ProjectSetPoolLibraryObjectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            kind,
+            object_uuid,
+            from_json,
+            section,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_library_object(
+                    &path,
+                    &pool,
+                    &kind,
+                    object_uuid,
+                    &from_json,
+                    section.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
 }
