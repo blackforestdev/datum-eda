@@ -1,0 +1,146 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "5e682e9362979cf6a51d651135bea0f747b82e1e",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda --format json project create-pool-unit /home/bfadmin/Documents/datum-eda/.datum/footprint-reference-audit/symbol-drawings-audit/ordinary --unit 71318890-86c9-495b-92b3-e94d244ede99 --name 'Fresh drawings Unit'",
+  "workflow_results": {
+    "Create a native Unit and unplaced Symbol and author the six existing graphics through ordinary CLI actions": true,
+    "Correct, remove, reorder and clear Symbol drawings through the existing Set action": true,
+    "Query exact ordered graphics and preserved sibling content, then reopen the native project": true,
+    "Undo and redo drawing edits with exact payloads and canonical journal history": true,
+    "Use existing fields, whole-object Set and graphics append workflows with preserved behavior": true
+  },
+  "safety_results": {
+    "Preserve raw primitive metadata, ordering, repeated graphics and absent optional defaults": true,
+    "Preserve Symbol identity, Unit, pins, anchors, fields and other sibling content": true,
+    "Reject malformed primitive arrays, unsupported kind or section, missing Symbol and unauthorized writer without authored or journal changes": true,
+    "Use one fresh prepared model and the canonical Set commit path": true,
+    "Retain existing whole-object primitive schema admission without adding geometry thresholds, text normalization or graphic identity rules": true
+  },
+  "binary_sha256": "c905f37040535fb99b68c067d270b7afcd08c8918ab9bbc4caf8999a058d9227",
+  "source_pins": {
+    "crates/cli/src/args/project_library_object.rs": {
+      "sha256": "03210da43ae0d557daf5519d587d5dc1ca78fb146b4f30fc4788cc0e14a056c1",
+      "lines": 56
+    },
+    "crates/cli/src/commands/library/library/object_edit.rs": {
+      "sha256": "c7d50a97f3d22662854591b7e8472b88e5fd9a249dab85b15f598c1ea2fc0e4b",
+      "lines": 144
+    },
+    "crates/engine/src/api/native_write/library_definition.rs": {
+      "sha256": "7c942cd3fc05740e9681057c44a69aaa3757474111b74ccea64d9cfe5e0a1573",
+      "lines": 660
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_symbol_drawings.rs": {
+      "sha256": "7875a7a266bddd5e3e8ba2bf93c234051da2ee92dbdc438211008a565ae2b5ea",
+      "lines": 368
+    },
+    "crates/cli/src/main_tests/mod.rs": {
+      "sha256": "0ced448b0b9520e2305409ffe978fa7d7e8dacb01936ff9696849de46225c4fc",
+      "lines": 338
+    }
+  },
+  "evidence": {
+    ".datum/footprint-reference-audit/symbol-drawings-audit/source-freeze.json": "71a76011d395fddec9fb4edb2c0daadda431d8bb4b8e85be55fabfae0d9270de",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/before-results.json": "8da435eac6c326e6956897a1e95c629bc5a770e2eeec9732f9ee62541d5c0ec2",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/before-harness-failed-execution.json": "399a0f545d577eeef599828e925491423d7ffc0d1ff8de6b87495d2df15bf34e",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/baseline-execution-receipts.json": "dbcca0908951d687437db89a9f2516abee7a1e84d2149d9f9328e5cf60150e3e",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/regression.log": "cab11b6efbe0b0300a340de3fb23191242ea26dd73d855be74fdc65c44760958",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/fields-compat-tests.log": "bbd47f898649e7ec3e45cbba33463eb8a90026c529ee6b5ea5e90947acb62fce",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/build-after.log": "cdaee39134e36675f9e3b7c1addca4adaf827471b839fa7549ead5507c04d21d",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/ordinary-results.json": "7f2d5128b1f003a6db6bc080342b46086cc2f55b311adc5a773fd7919eef4463",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/compatibility-results.json": "75459f700a07b6d78ab7b123ab83db91fde5d05dafe9e066a2f5b799152c933c",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/fields-diagnostic-comparison.json": "ec6dae23200a7b89da17161942da4d8941963c51744b2b2f0f2e117a7bc96837",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/execution-receipts.json": "6bd6f47d7964ff9a70f3d7f90245db0c3048eed75e7fea1a9bf8d478bfd11b4e",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/full-drift.log": "242cc4079deaea11e51c72c4d6930c5dcff8505589c47220a92c75320e87757c",
+    ".datum/footprint-reference-audit/symbol-drawings-audit/fields-compat/ordinary-results.json": "44a757aada7ed697e01e3d3bcb704398bc29fd72f2eb8cb853c6ed0e73058268"
+  },
+  "observed_results": {
+    "final_unique_tests": 5,
+    "ordinary_commands": 85,
+    "positive_commands": 56,
+    "refused_commands": 29,
+    "existing_append_refusals": 6,
+    "new_section_refusals": 23,
+    "required_full_project_invariant_refusals": 22,
+    "extra_collision_refusal": "Authored files and journal unchanged; one existing canonical staging scratch file retained.",
+    "exact_generic_legacy_outcomes": 21,
+    "fields_compatibility_commands": 63,
+    "fields_compatibility_positive_commands": 40,
+    "fields_compatibility_refusals": 23,
+    "drawing_edits": [
+      "correct",
+      "remove",
+      "reorder",
+      "clear"
+    ],
+    "primitive_families": [
+      "Line",
+      "Rect",
+      "Circle",
+      "Polygon",
+      "Arc",
+      "Text"
+    ],
+    "validation": true
+  },
+  "review_receipts": {
+    "source_and_behavior": "Actual independent management review PASS on frozen five-source candidate and completed proof receipts, all six primitives, raw array and sibling preservation, exact payload/revision/history checks, new refusal invariance, old append controls and generic/fields compatibility.",
+    "documentation": "Actual independent engineering/API and historical PROGRESS condensation reviews retained; separately authored factual Tool1 delta independently reviewed, with actual receipt received by appointed manager.",
+    "full_drift": "Actual completed execution92052 exit101; thirteen retained Clippy diagnostic texts/locations in five unchanged engine files; later gates unreached."
+  },
+  "manager_disposition": "Owner-appointed PM059 manager accepts bounded existing-contract delivery after actual source landing; qualification remains separate.",
+  "proof_limits": [
+    "One-journal increments and unplaced exclusion are assertions in completed scripts, not separately saved independent journal comparisons.",
+    "Foreign metadata UUID collision retains existing canonical staging scratch; no full-project invariance claim for that extra control.",
+    "Fields diagnostic comparison retains exact diagnostics after explicit fixture path/UUID rebasing; the supported-section choice expands from fields to fields or drawings.",
+    "Failed BEFORE Circle argument harness50370 retained; only the script argv was corrected, with no production or Cargo/test retry."
+  ],
+  "full_workspace_result": {
+    "status": "FAIL",
+    "exit_code": 101,
+    "diagnostics": 13,
+    "unchanged_files": 5,
+    "later_gates": "unreached"
+  },
+  "pending_qualification": [
+    "Q5/Q6 graph promotion and placed propagation remain owner-reserved",
+    "GUI S05, MCP and editor breadth remain separate",
+    "Seed/source/license rights, standards and manufacturing adoption remain separate",
+    "Unrelated full-workspace Clippy and GUI parity failures remain open"
+  ],
+  "payload_checks": [
+    {
+      "action": "correct",
+      "before_revision": 7,
+      "after_revision": 8,
+      "exact_expected_payload": true,
+      "payload_sha256": "4325f3303997964f3e4b09c1a02031d6be9008c090f70e4a57de679158435b44"
+    },
+    {
+      "action": "remove",
+      "before_revision": 10,
+      "after_revision": 11,
+      "exact_expected_payload": true,
+      "payload_sha256": "b175a5428e9120e31ac7eeca1f2a47d1ed6122d9f9975bc1859b60679fbb4eda"
+    },
+    {
+      "action": "reorder",
+      "before_revision": 13,
+      "after_revision": 14,
+      "exact_expected_payload": true,
+      "payload_sha256": "c51afed8294c629d4610ad950bde89e9265b63fe2db9a0a8f8228d1f59005a2d"
+    },
+    {
+      "action": "clear",
+      "before_revision": 16,
+      "after_revision": 17,
+      "exact_expected_payload": true,
+      "payload_sha256": "e46aa1bda223b311d612958bd4cbac616ae47bea63a11cc9fd6260a307a86fa9"
+    }
+  ],
+  "protected_files": {
+    "count": 13,
+    "unchanged": true,
+    "original_hash_map_sha256": "11a95a4f2c3496d70732661e5f2dc1ccce91b061f2c2b2e159b9af21ff8d06f8"
+  }
+}
