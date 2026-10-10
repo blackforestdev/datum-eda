@@ -2253,7 +2253,16 @@ diagnostics, proposal policy and canonical commit/history remain with their
 existing owners. Footprint proposals retain their distinct trimmed-name,
 layer-first validation and diagnostic profile; they are not unified here.
 
-The actual engine API inventory is 234 unique public function names, including
+Manual generic Footprint JSON replacement also consumes
+`validate_footprint_replacement_references` before canonical Set. It checks the
+existing Package and every pad Padstack against the resolved Project, preserves
+the imported payload and unknown fields, and defers malformed schema/shape
+diagnostics to their existing owner. The complete replacement lifecycle lives
+in `commands/library/library/object_edit.rs`. Automated provenance retains its
+proposal requirement; generic create/delete and broad graph admission remain
+separate. This repairs existing reference checks without introducing new rules.
+
+The actual engine API inventory is 235 unique public function names, including
 the retained earlier inventory drift and these definition helpers. This is
 engineering convergence, not new GUI authoring, SMD/process/standards policy,
 native file-type migration, library adoption or manufacturing qualification.

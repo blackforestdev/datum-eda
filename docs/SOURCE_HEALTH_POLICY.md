@@ -525,3 +525,9 @@ is removed, no ceiling or exception is raised, and the current ledger records
 69 metrics across 68 entries. These inventories do not certify full drift or
 product qualification; the one-shot full drift result remains separately
 recorded as a Clippy failure in five unchanged engine sources.
+
+FOOTPRINT-JSON-REFERENCE-VALIDATION moves the complete generic object replacement
+lifecycle into `commands/library/library/object_edit.rs`, with reference checks
+owned by the shared engine definition module. The library parent pre-test ceiling
+ratchets 2596→2565. The new owner remains within the normal budget; no ledger
+entry, exception or ceiling is added. Existing qualification limits remain open.

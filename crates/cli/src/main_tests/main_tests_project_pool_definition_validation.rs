@@ -5,6 +5,7 @@ use super::main_tests_project_pool_footprint::{
 };
 use super::main_tests_project_pool_library::{query_pool_object_payload, unique_project_root};
 use super::*;
+use eda_engine::substrate::{Operation, ProjectResolver};
 
 fn command(root: &Path, verb: &str, args: &[&str]) -> Result<String> {
     let mut argv = vec![
@@ -209,5 +210,219 @@ fn library_definition_manual_refusals_preserve_exact_errors_and_journal() {
         format!("missing pool package {footprint}")
     );
     assert_eq!(journal(&root), initial_journal);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+fn footprint_json_edit(root: &Path, payload: &serde_json::Value) -> Result<String> {
+    let source = root.join("footprint-replacement.json");
+    std::fs::write(&source, serde_json::to_vec(payload).unwrap()).unwrap();
+    command(
+        root,
+        "set-pool-library-object",
+        &[
+            "--kind",
+            "footprints",
+            "--object",
+            &FOOTPRINT_ID.to_string(),
+            "--from-json",
+            source.to_str().unwrap(),
+        ],
+    )
+}
+
+fn footprint_edit_project(label: &str) -> PathBuf {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../.datum/footprint-reference-audit")
+        .join(format!("{label}-{}", Uuid::new_v4()));
+    create_native_project(&root, Some(label.to_string())).unwrap();
+    create_footprint_fixture(&root);
+    command(
+        &root,
+        "set-pool-footprint-pad",
+        &[
+            "--footprint",
+            &FOOTPRINT_ID.to_string(),
+            "--pad",
+            &FOOTPRINT_PAD_ID.to_string(),
+            "--padstack",
+            &super::main_tests_project_pool_footprint::FOOTPRINT_PADSTACK_ID.to_string(),
+        ],
+    )
+    .unwrap();
+    root
+}
+
+#[test]
+fn library_definition_footprint_json_refusals_preserve_shape_errors_and_history() {
+    use super::main_tests_project_pool_footprint::FOOTPRINT_PADSTACK_ID;
+    let root = footprint_edit_project("json-reference-refusal");
+    let second_pad = Uuid::new_v4().to_string();
+    command(
+        &root,
+        "set-pool-footprint-pad",
+        &[
+            "--footprint",
+            &FOOTPRINT_ID.to_string(),
+            "--pad",
+            &second_pad,
+            "--padstack",
+            &FOOTPRINT_PADSTACK_ID.to_string(),
+        ],
+    )
+    .unwrap();
+    let original = query_pool_object_payload(&root, "footprints", FOOTPRINT_ID);
+    let path = root.join(format!("pool/footprints/{FOOTPRINT_ID}.json"));
+    let initial_bytes = std::fs::read(&path).unwrap();
+    let initial_journal = journal(&root);
+    let before = ProjectResolver::new(&root).resolve().unwrap();
+    let missing = Uuid::new_v4();
+    for (field, target, expected) in [
+        (
+            "package",
+            missing,
+            format!("missing pool package {missing}"),
+        ),
+        (
+            "package",
+            FOOTPRINT_PADSTACK_ID,
+            format!("missing pool package {FOOTPRINT_PADSTACK_ID}"),
+        ),
+        (
+            "padstack",
+            missing,
+            format!("missing pool padstack {missing}"),
+        ),
+        (
+            "padstack",
+            PACKAGE_ID,
+            format!("missing pool padstack {PACKAGE_ID}"),
+        ),
+    ] {
+        let mut payload = original.clone();
+        if field == "package" {
+            payload["package"] = serde_json::json!(target);
+        } else {
+            // The first pad remains valid: every pad's link must be checked.
+            payload["pads"][&second_pad]["padstack"] = serde_json::json!(target);
+        }
+        let error = footprint_json_edit(&root, &payload).unwrap_err();
+        assert_eq!(format!("{error:#}"), expected);
+        assert_eq!(std::fs::read(&path).unwrap(), initial_bytes);
+        assert_eq!(journal(&root), initial_journal);
+        let after = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(after.model_revision, before.model_revision);
+        for (id, object) in &before.objects {
+            assert_eq!(after.objects[id].object_revision, object.object_revision);
+        }
+        assert_eq!(
+            query_pool_object_payload(&root, "footprints", FOOTPRINT_ID),
+            original
+        );
+    }
+    // Old UUID/schema/shape refusals precede the newly checked broken link.
+    for (fault, expected) in [
+        ("uuid", "does not match --object"),
+        (
+            "schema_version",
+            "unsupported pool library object schema_version 2; expected 1",
+        ),
+        ("courtyard", "invalid pool library footprints object"),
+    ] {
+        let mut payload = original.clone();
+        payload["package"] = serde_json::json!(missing);
+        payload[fault] = match fault {
+            "uuid" => serde_json::json!(missing),
+            "schema_version" => serde_json::json!(2),
+            _ => serde_json::Value::Null,
+        };
+        let error = footprint_json_edit(&root, &payload).unwrap_err();
+        assert!(format!("{error:#}").contains(expected), "{error:#}");
+        assert_eq!(std::fs::read(&path).unwrap(), initial_bytes);
+        assert_eq!(journal(&root), initial_journal);
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn library_definition_footprint_json_valid_edits_relink_reopen_undo_redo() {
+    let root = footprint_edit_project("json-reference-history");
+    let package = Uuid::new_v4().to_string();
+    let padstack = Uuid::new_v4().to_string();
+    command(
+        &root,
+        "create-pool-package",
+        &["--package", &package, "--name", "Alternate body"],
+    )
+    .unwrap();
+    command(
+        &root,
+        "create-pool-padstack",
+        &["--padstack", &padstack, "--name", "Alternate copper"],
+    )
+    .unwrap();
+    let package_before = query_pool_object_payload(&root, "packages", PACKAGE_ID);
+    let mut payload = query_pool_object_payload(&root, "footprints", FOOTPRINT_ID);
+    payload["name"] = serde_json::json!("Renamed land pattern");
+    payload["extension"] = serde_json::json!({"retained": [1, 2]});
+    payload["pads"][FOOTPRINT_PAD_ID.to_string()]["extension"] = serde_json::json!("pad metadata");
+    footprint_json_edit(&root, &payload).unwrap();
+    assert_eq!(
+        query_pool_object_payload(&root, "footprints", FOOTPRINT_ID),
+        payload
+    );
+    // An unchanged-reference replacement still follows the existing Set lifecycle.
+    footprint_json_edit(&root, &payload).unwrap();
+    let before = ProjectResolver::new(&root).resolve().unwrap();
+    let prior_journal = journal(&root);
+    let previous = payload.clone();
+    payload["package"] = serde_json::json!(package);
+    payload["pads"][FOOTPRINT_PAD_ID.to_string()]["padstack"] = serde_json::json!(padstack);
+    footprint_json_edit(&root, &payload).unwrap();
+    let after = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(after.journal.len(), before.journal.len() + 1);
+    assert_eq!(
+        after.objects[&FOOTPRINT_ID].object_revision.0,
+        before.objects[&FOOTPRINT_ID].object_revision.0 + 1
+    );
+    assert_eq!(
+        after.objects[&FOOTPRINT_PAD_ID].object_revision.0,
+        before.objects[&FOOTPRINT_PAD_ID].object_revision.0 + 1
+    );
+    assert_eq!(
+        after.objects[&PACKAGE_ID].object_revision,
+        before.objects[&PACKAGE_ID].object_revision
+    );
+    assert_ne!(journal(&root), prior_journal);
+    assert_eq!(after.journal.last().unwrap().operations.len(), 1);
+    assert!(matches!(
+        after.journal.last().unwrap().operations[0],
+        Operation::SetPoolLibraryObject { .. }
+    ));
+    assert_eq!(
+        query_pool_object_payload(&root, "footprints", FOOTPRINT_ID),
+        payload
+    );
+    assert_eq!(
+        query_pool_object_payload(&root, "packages", PACKAGE_ID),
+        package_before
+    );
+    command(&root, "undo", &[]).unwrap();
+    assert_eq!(
+        query_pool_object_payload(&root, "footprints", FOOTPRINT_ID),
+        previous
+    );
+    let undone = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(undone.journal.len(), after.journal.len() + 1);
+    command(&root, "redo", &[]).unwrap();
+    assert_eq!(
+        query_pool_object_payload(&root, "footprints", FOOTPRINT_ID),
+        payload
+    );
+    let redone = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(redone.journal.len(), undone.journal.len() + 1);
+    assert_eq!(
+        query_pool_object_payload(&root, "packages", PACKAGE_ID),
+        package_before
+    );
     std::fs::remove_dir_all(root).unwrap();
 }

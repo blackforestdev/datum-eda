@@ -119,6 +119,33 @@ pub fn validate_pool_definition_reference(
     Ok(())
 }
 
+/// Check the existing Package/Padstack links of a manual generic Footprint edit.
+/// Schema and shape errors remain owned by canonical pool admission; an invalid
+/// shape is deferred there so its established diagnostic precedes link errors.
+/// This checks the resolved Project, without imposing destination-pool policy.
+pub fn validate_footprint_replacement_references(
+    model: &DesignModel,
+    object: &serde_json::Value,
+) -> Result<(), EngineError> {
+    if object
+        .get("schema_version")
+        .and_then(serde_json::Value::as_u64)
+        != Some(1)
+    {
+        return Ok(());
+    }
+    let Ok(footprint) = serde_json::from_value::<crate::pool::Footprint>(object.clone()) else {
+        return Ok(());
+    };
+    validate_pool_definition_reference(model, footprint.package, "packages", "package")?;
+    let mut pads: Vec<_> = footprint.pads.iter().collect();
+    pads.sort_by_key(|(id, _)| **id);
+    for (_, pad) in pads {
+        validate_pool_definition_reference(model, pad.padstack, "padstacks", "padstack")?;
+    }
+    Ok(())
+}
+
 /// Insert or replace a pad in an already materialized, UUID-checked footprint.
 /// The caller validates the padstack reference against its resolved model before
 /// materializing this payload. Unrelated and unknown payload fields are retained.

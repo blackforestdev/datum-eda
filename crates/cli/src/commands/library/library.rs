@@ -1,3 +1,5 @@
+mod object_edit;
+use self::object_edit::set_native_project_pool_library_object;
 mod padstack;
 use self::padstack::create_native_project_pool_padstack;
 use crate::*;
@@ -1329,39 +1331,6 @@ pub(crate) fn delete_native_project_pool_library_object(
     pool_library_mutation_view(
         root,
         "delete",
-        pool_path,
-        object_kind,
-        object_id,
-        &relative_path,
-    )
-}
-
-pub(crate) fn set_native_project_pool_library_object(
-    root: &Path,
-    pool_path: &str,
-    object_kind: &str,
-    object_id: Uuid,
-    source: &Path,
-) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    validate_project_local_pool_path(pool_path)?;
-    validate_pool_library_object_kind(object_kind)?;
-    let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    // Validate existence and payload uuid exactly as the pre-migration CLI
-    // did; the facade re-sources the previous payload from the same model view.
-    read_project_pool_object_payload(root, &relative_path, object_id)?;
-    let object = read_pool_library_object_payload(source, object_id)?;
-    commit_pool_library_operations(
-        root,
-        format!("set native pool library object {object_id}"),
-        None,
-        vec![PoolLibraryOperationSpec::Set {
-            target: PoolLibraryObjectTarget::new(pool_path, object_kind, object_id),
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
-        "set",
         pool_path,
         object_kind,
         object_id,
