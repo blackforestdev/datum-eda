@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "kind": "S5A-C04 bounded ordinary native outcome and menu Escape correction",
+  "source_commit": "964f23370567f99e4a3cc18e0cfc90d16ca81faa",
+  "source_blobs": {
+    "crates/gui-app/src/runtime_menu_actions.rs": "b9dca426236bfa0c7bc6d164ccc2a113986281ea",
+    "crates/gui-app/src/runtime_state.rs": "59a58db1171e7bf46e37840fb2669263ca21ab2f",
+    "crates/gui-app/src/runtime_init.rs": "24504404117dbb39b8403da898556176b0dcfd8e"
+  },
+  "gui_sha256": "12687ddda014ab2d62b639dc0cb8b86ee45e0f0334c0079a71d118e41792cf0a",
+  "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+  "configuration": {
+    "windowing": "X11 on shared KDE Wayland desktop, DISPLAY=:1; WAYLAND_DISPLAY removed by existing replay",
+    "graphics": "WGPU Vulkan Intel HD Graphics P630 (KBL GT2), Intel open-source Mesa driver25.0.7-2+deb13u1",
+    "environment": "Each result records exact launch environment. All inherited DATUM_*, WGPU_*, VK_* and EDA_CLI_BIN removed before explicit asynchronous evidence/log settings; no queue-completion fault injection.",
+    "native_route": "Existing target-only xdotool/KWin focus-checked production mouse and keyboard input; Spectacle capture target activation checked and focus restored. Not physical Wayland or HUMAN proof."
+  },
+  "project": "target/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+  "verification_question": "Does eligible Wire acquisition preserve complete membership despite a prior Label acquisition filter, does filtered Wire fail to originate new scope, and does menu-owned Escape preserve selection throughout its full key cycle?",
+  "prefiltered_member": {
+    "gui_sha256": "2fc806ded8b1b233402776a248f8ff5bde445837d8624f5e9d9a74777bad32bf",
+    "source_commit": "7a75eaf8457e3238b9440cf6068fc72ad627e2bb",
+    "result": "prefiltered-wire-run-result.json",
+    "result_sha256": "1b9d91f0c0d4ffad537abf9ec65f737d1df91a6d4046611cc90ffdda0bfeefaa",
+    "harness": "native_prefiltered_wire_run.py",
+    "harness_sha256": "d01e6525112a90483294d0d213a74cff5d09c09705de8b6128e527eb0741b0df",
+    "outcome": "PASS: actual Exclude Labels acquisition before Wire Run; exact5 typed members Wire8/Wire9/Labela/Junctionb/Portc, empty instance paths, hidden0. Inventory expansion/re-enable retains Run; Escape/subsequent Wire succeeds. Complete5 proven by raw source-qualified state; screenshot inventory shows only first rows.",
+    "review": {
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "outcome": "Actual reserved bounded PASS reported by appointed manager; read-only inspection, no reviewer replay/build",
+      "limits": "No pre-hidden member, filtered origin, nonempty hierarchical occurrence, full N05/N09/C04/C05/HUMAN/physical Wayland claim."
+    }
+  },
+  "escape_repair": {
+    "issue": "dat-selection-menu-escape-release-hjs6",
+    "cause": "Select menu consumes Escape press and dismisses; released Escape previously fell through idle ClearSelection. An intervening native pointer selection could also be erased.",
+    "change": "Runtime ownership latch records only actual menu press handlers, consumes pending repeats/release independently of menu lifetime, then resets. Generic marking selection=None keeps historical release dismissal. Fresh idle and terminal Escape routes preserved.",
+    "focused_test": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app menu_keyboard_tests -- --nocapture",
+      "log": "menu-escape-revised-test.log",
+      "passed": 5,
+      "failed": 0
+    },
+    "build": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --bin datum-gui",
+      "log": "menu-escape-gui-build.log",
+      "outcome": "PASS"
+    },
+    "result": "repaired-filtered-wire-origin-result.json",
+    "result_sha256": "1c695e0eb37d9e40d1172d53396435f11c0a7ff6b04a34056abc115e260f1c19",
+    "harness": "native_filtered_wire_origin_repaired.py",
+    "harness_sha256": "86554b20a10987ec227cc314c177f96e9deb0b6b93be9ae5fbbf9a1281f88241",
+    "native_outcome": "PASS at bounded scope: actual synthetic=false EscapePressed -> native pointer Wire9 -> EscapeReleased preserves new Object; excluded Wire3 delivered click releases preserve prior Object and menu has no local Object/Run/Net leaves; restore filter/Escape/subsequent Wire; Select and menubar dismissal preserves subject; Terminal Escape exits focus preserving Object. Source+journal hashes unchanged; normal close owner-drop58/58.",
+    "independent_review": {
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "outcome": "Actual reserved SOURCE and bounded RUNTIME PASS reported by manager, exact source/test/build/GUI/raw result/harness reviewed; no reviewer input/build/rerun",
+      "mandatory_findings": {
+        "ESC-IR-01": "Resolved by retained Escape-cycle ownership independent of overlay lifetime; interrupted/new selection/fresh cycle regression and ordinary pointer-between-phases replay.",
+        "ESC-IR-02": "Resolved by limiting latch to actual press handlers; generic selection=None state/classification regression. Generic native branch remains unqualified."
+      },
+      "limits": "No full C04/C05/C06/HUMAN/physical Wayland or complete oncanvas deselection visual PASS."
+    }
+  },
+  "pane_lifetime": {
+    "verification_question": "Does exact5-member Run/revision survive pane content swap, duplicated Schematic cameras and closing/restoring source panes?",
+    "result": "pane-selection-lifetime-corrected-result.json",
+    "result_sha256": "065352dd98887a7182cea3fa43c16f9b315d93294e0282fb89eb6724c2ca5b25",
+    "harness": "native_pane_selection_lifetime_corrected.py",
+    "harness_sha256": "60a0b159a5e6078cb7a518239c842ad06c686287ca11f17046bfb0f25575fe88",
+    "producer_outcome": "PASS:8 native receipts for source-qualified Run, Board swap/Schematic restore, existing complementary split->FocusNext->FillSchematic, independent two Schematic cameras, close one/last source pane, restore source. Exact subject/revision/member set preserved, source+journal hashes unchanged, owner-drop163/163. Wheel changes pane1 while pane2 remains focused; no focus-change claim.",
+    "independent_review": {
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "outcome": "Actual reserved bounded PASS reported by appointed manager; exact result065352dd and harness60a0b159 reviewed, no reviewer build/input/rerun.",
+      "scope": "All8 raw receipts preserve byte-identical complete Run and revision; seq86 zoom1.5735 in pane1 versus1.0 in pane2, source+journal match, GPU owner-drop163/163.",
+      "limits": "Empty-path Run5, no authored revision/hierarchy/deletion/Project switch/all classes/fullN08. Wheel changes pane1 while pane2 focused: camera independence, not focus change. Duplicate placeholder UI not N15/HUMAN accepted."
+    },
+    "limits": "No gesture/loss cancellation, Project replacement, alternate sheets/missing source scene, all channel parity, full N08/N15/HUMAN claim."
+  },
+  "preserved_failures": [
+    {
+      "prefix": "failed-oracle-key-prefiltered-wire-run",
+      "cause": "Harness asserted hidden_count rather than actual hidden_members. Source/result already showed complete Run; corrected oracle replay completed required continuation."
+    },
+    {
+      "prefix": "failed-escape-release-filtered-wire-origin",
+      "cause": "Demonstrated runtime menu Escape release erased selection; interrupted restore continuation timed out. Retained native logs/command/captures, not credited as complete PASS."
+    },
+    {
+      "prefix": "failed-complementary-split-pane-selection-lifetime",
+      "cause": "Harness assumed split duplicates content; existing protocol explicitly creates complementary Board. Corrected existing menu workflow, no source/fixture rewrite."
+    },
+    {
+      "log": "menu-escape-test.log",
+      "scope": "Superseded565d/source candidate4/0: missing generic branch found independently, not final acceptance."
+    }
+  ],
+  "visual_observations": [
+    {
+      "issue": "dat-deselection-visual-residual-gi4a",
+      "capture": "repaired-filtered-wire-origin-fresh-idle-escape-clears.png",
+      "observation": "Inspector NoSelection/status SelNone, but pane footer Object1 and magenta rectangle remain at prior Wire9. Cursor remains on Wire; capture does not distinguish stale selection mask from hover. Cause unasserted; no complete canvas-clear appearance PASS."
+    },
+    {
+      "capture": "pane-selection-lifetime-corrected-duplicate-schematic.png",
+      "observation": "Additional Schematic pane shows actual selected content plus Schematic(coming) placeholder; no full product-presentation qualification.",
+      "source_path": "crates/gui-render/src/render/pane_chrome.rs:143"
+    }
+  ],
+  "nonmutation": "Every successful raw result records exact Project source+journal preimage hashes; independently rechecked current files match. Operational metadata excluded by existing recipe; no writes to original KiCad files.",
+  "gates": {
+    "scoped_format": "PASS via format_rust.py on owned paths",
+    "staged_rustfmt": "PASS",
+    "staged_file_lane": "PASS; no protected prototype paths",
+    "source_health": "PASS3017 source files against HEAD before landing",
+    "cargo_resource_policy": "PASS; serial guarded tests/build",
+    "dependency_authority": "PASS"
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-prefilter-escape-evidence.tar.xz",
+    "sha256": "13b8bd59f34b922774c961778466d679410d5250ccba7cc2a68c5e4e2903fda0",
+    "size_bytes": 2349820,
+    "files": {
+      "failed-complementary-split-pane-selection-lifetime-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "failed-complementary-split-pane-selection-lifetime-restored-schematic.png": "1634840d49737d0c65eaae54424e9fdef0daf5d8eb98f413e4bf931c8f1e9585",
+      "failed-complementary-split-pane-selection-lifetime-stdout.log": "6e47bff8d8540d5147a24b5346e8b59c8d4ac88a04de04c743784e456d0fbfce",
+      "failed-complementary-split-pane-selection-lifetime-swapped-board.png": "ef4d6fa65e3964e6bf59da8bdbea22ef5d62f9a85d124baf50eb9145672d0719",
+      "failed-escape-release-filtered-wire-origin-enable-wire-command.png": "9e4ec7eb99db1428a092c1b85046f69ddba8b0355fb86516f08bfcdf90b7cdd5",
+      "failed-escape-release-filtered-wire-origin-exclude-wire-command.png": "953bf5f51127fd05dd30dcf2aeed8fc5250392c29bf0ff516eb4dc6d898f916c",
+      "failed-escape-release-filtered-wire-origin-filtered-origin-menu-home.png": "84136a3844605c1a8a487b8c7a878871a54bc442fbb1dee65e6d258bed138e1c",
+      "failed-escape-release-filtered-wire-origin-no-origin-acquisition.png": "2a85592c997900c3696cd195702a45faa1d3d9b8bdec49abbb0dbc46c767309b",
+      "failed-escape-release-filtered-wire-origin-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "failed-escape-release-filtered-wire-origin-stdout.log": "2b758ff3077cb2b79768f76e23fd81dd8bc22ced71925cf137acd8bb841e6420",
+      "failed-oracle-key-prefiltered-wire-run-exclude-label-command.png": "7b23597b4472adeec751a83508e36fcd9c154833ade6c9455a1f5e5e50c37535",
+      "failed-oracle-key-prefiltered-wire-run-stdout.log": "2f87d649506a786d3b108e7b50dc96a3924c20506269860e041da85e040ff947",
+      "failed-oracle-key-prefiltered-wire-run-wire-object.png": "2a85592c997900c3696cd195702a45faa1d3d9b8bdec49abbb0dbc46c767309b",
+      "menu-escape-gui-build.log": "a6096fc55e85f34343b107b29b7a29c8e490e91ffd2e55ac99af2ed293a40e2d",
+      "menu-escape-revised-test.log": "8861b8978a215e54d31538eac0d724651bd11a6e501a4cc9a03b0009c7f22a1e",
+      "menu-escape-test.log": "7ea8c9cd77f5604fd012b0da861f0df0fce3a308cf44c5ac6f5d643c9a119a39",
+      "native_filtered_wire_origin.py": "39e4cd176b83f0f156d8dfd2cba3af8c5d56cbd22bc5efbc89aafc5f3c40d93d",
+      "native_filtered_wire_origin_repaired.py": "86554b20a10987ec227cc314c177f96e9deb0b6b93be9ae5fbbf9a1281f88241",
+      "native_pane_selection_lifetime.py": "3daebc0b5056d501584fcd5e7043d3a9a7628ebddc950ada705a590590065cd1",
+      "native_pane_selection_lifetime_corrected.py": "60a0b159a5e6078cb7a518239c842ad06c686287ca11f17046bfb0f25575fe88",
+      "native_prefiltered_wire_run.py": "d01e6525112a90483294d0d213a74cff5d09c09705de8b6128e527eb0741b0df",
+      "pane-selection-lifetime-corrected-duplicate-schematic.png": "bd4aa0b8074e1d61385cb447549aacf4179a74622959355a65f9cc2dd9954da6",
+      "pane-selection-lifetime-corrected-independent-cameras.png": "e6a76c80856a6a2bba293f8bb01ed27b8b9e08caa2acc845f6f52eb3694bbb7a",
+      "pane-selection-lifetime-corrected-no-schematic-pane.png": "51af0fabe000067834991c7089e0a01d9b4742d3d8336debf17f4e7db905959b",
+      "pane-selection-lifetime-corrected-one-schematic-remains.png": "d551d2002bd8bdf65229ecf98fe6781a1edf2cd7d0f51ec4acf2ea18bc2baaaf",
+      "pane-selection-lifetime-corrected-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "pane-selection-lifetime-corrected-restored-schematic.png": "1634840d49737d0c65eaae54424e9fdef0daf5d8eb98f413e4bf931c8f1e9585",
+      "pane-selection-lifetime-corrected-result.json": "065352dd98887a7182cea3fa43c16f9b315d93294e0282fb89eb6724c2ca5b25",
+      "pane-selection-lifetime-corrected-source-pane-restored.png": "4f64602d0c13ddfbeea5a063b8406566b5a9473bdd71fd100570a0b075bc27b7",
+      "pane-selection-lifetime-corrected-stdout.log": "2ee8c60a3a8edec4f89c97e0034f135a7c8c3eb1857ee74adc5828ee07ad0415",
+      "pane-selection-lifetime-corrected-swapped-board.png": "ef4d6fa65e3964e6bf59da8bdbea22ef5d62f9a85d124baf50eb9145672d0719",
+      "prefiltered-wire-run-complete-inventory.png": "131c8971c69e04b483d4cc1db77f247ec316aab4ed9184a743e51145bb1e9550",
+      "prefiltered-wire-run-complete-run.png": "a273212f3744d898d6b1ae9dbab35f7032b4d2bb25fae16c0004921c1d701d89",
+      "prefiltered-wire-run-enable-label-command.png": "85c4e2b72e8cbffceca4c31eb50f55891a2ce107da5b3def20f1decaac1e0031",
+      "prefiltered-wire-run-exclude-label-command.png": "7b23597b4472adeec751a83508e36fcd9c154833ade6c9455a1f5e5e50c37535",
+      "prefiltered-wire-run-inventory-command.png": "869d1df54d68e8787180235034ce1aac797860432db0672dedee63c4ac26970f",
+      "prefiltered-wire-run-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "prefiltered-wire-run-result.json": "1b9d91f0c0d4ffad537abf9ec65f737d1df91a6d4046611cc90ffdda0bfeefaa",
+      "prefiltered-wire-run-stdout.log": "0ee7397d9a5181cb7f3cf11d9813eadc8308fe01e1b7456f540b21011298baad",
+      "prefiltered-wire-run-subsequent-wire.png": "9429e24639c21121b3342838532f7431db405b3428797be9014fa346a4016232",
+      "prefiltered-wire-run-wire-object.png": "2a85592c997900c3696cd195702a45faa1d3d9b8bdec49abbb0dbc46c767309b",
+      "repaired-filtered-wire-origin-enable-wire-command.png": "5977d3343e9119b46f168bf2c4de7a549f40a5aaa82ac00f1adb210f8230c2b8",
+      "repaired-filtered-wire-origin-exclude-wire-command.png": "953bf5f51127fd05dd30dcf2aeed8fc5250392c29bf0ff516eb4dc6d898f916c",
+      "repaired-filtered-wire-origin-filtered-origin-menu-home.png": "84136a3844605c1a8a487b8c7a878871a54bc442fbb1dee65e6d258bed138e1c",
+      "repaired-filtered-wire-origin-fresh-idle-escape-clears.png": "83ca5d4709144d9fddcc10a090bb9e5949b920017fb34bc950dd93cc5f82b137",
+      "repaired-filtered-wire-origin-idle-escape-clears.png": "5a0054bc5faa2211733e336a8550c83da5424a1bc3dc83c8447130ea099d268d",
+      "repaired-filtered-wire-origin-interrupted-release-preserves.png": "98dd86552b884a92a54ac937f33a3ce85229327500691b0c842a3c80f93bf345",
+      "repaired-filtered-wire-origin-no-origin-acquisition.png": "2a85592c997900c3696cd195702a45faa1d3d9b8bdec49abbb0dbc46c767309b",
+      "repaired-filtered-wire-origin-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "repaired-filtered-wire-origin-result.json": "1c695e0eb37d9e40d1172d53396435f11c0a7ff6b04a34056abc115e260f1c19",
+      "repaired-filtered-wire-origin-stdout.log": "82813952c94e073e8b4b9b92e4e9204b1fd51e6adbd247462757c053ec81a291",
+      "repaired-filtered-wire-origin-subsequent-wire.png": "2a85592c997900c3696cd195702a45faa1d3d9b8bdec49abbb0dbc46c767309b",
+      "repaired-filtered-wire-origin-terminal-escape-preserves.png": "cbc2561c4857590bcaeca653f5de375b3ea0d664c8a754f42e3a6ab1ad3da562",
+      "repaired-filtered-wire-origin-terminal-owned.png": "1a70f043cd9cfa4c35e5497f59c6ba0fb3e3ccd58fdbe4830c70d68f5cc0bb48",
+      "repaired-filtered-wire-origin-view-dismiss-preserves.png": "1fae6126f244ed72c9dea9c689dc57435f853639df32e35ff28ced32721a193d",
+      "repaired-filtered-wire-origin-view-menu-open.png": "90ac9248a9485e9f06c83b6f99fff9de7817e377468de2a4a6e04da12ac20147"
+    }
+  },
+  "boundaries": "C03 complete carried forward. C04/C05/C06 remain incomplete/unaccepted; other N01-N17 and physical Wayland/HUMAN proof retained. No new product mechanism, geometry, source identity, persistence, dependency, tolerance, budget, recovery timeout, prototype edit, CAM/T04 waiver or successor authority.",
+  "manager_receipt_route": "Actual reserved review receipts reported by owner-appointed admin-agent thread01a122e5-f602-7f61-a144-0d1ce7116a77. Implementer did not self-review; manager owns issue closure and synchronized Frontier/progress.",
+  "manager_disposition": {
+    "manager": "codex-project-manager-20261009",
+    "thread": "01a122e5-f602-7f61-a144-0d1ce7116a77",
+    "authority": "Owner appointment/delegation durably recorded in f7a4a465; existing S5A-C04 execution retained.",
+    "review_receipts": "Actual reserved reviewer thread01a0e343-3d9c-70f1-899e-5bd239513383 returned prefiltered Wire Run PASS, final source PASS, final focused5/0 log confirmation, repaired native runtime PASS and bounded N08 PASS directly to this manager. Exact pins, mandatory dispositions and limits are recorded above; no reviewer rerun or independent C05 replay asserted.",
+    "issue_disposition": "Close dat-selection-menu-escape-release-hjs6 with source964f23370567f99e4a3cc18e0cfc90d16ca81faa and actual bounded source/runtime PASS; retain visual issue dat-deselection-visual-residual-gi4a open.",
+    "continuation": "S5A-AGENT-02 continues bounded N06 overlap-menu case under same synchronized claim/scope; C04 stays in_progress and C05/C06 pending.",
+    "verification": "Manager verified archive SHA and every56 listed raw file digests against immutable archive and current raw files. Old archives unchanged.",
+    "qualification": "No complete C04/C05/C06, generic marking native replay, full N08/N15, physical Wayland or HUMAN acceptance."
+  }
+}
