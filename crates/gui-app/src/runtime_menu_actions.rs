@@ -5,6 +5,35 @@
 use super::*;
 use crate::runtime_view_actions::action_evidence::EntrySurface;
 
+#[derive(Default)]
+pub(super) struct MenuKeyOwnership {
+    escape_release_pending: bool,
+}
+impl MenuKeyOwnership {
+    fn consume_escape_release(
+        &mut self,
+        key: &Key,
+        state: ElementState,
+        menu_active: bool,
+    ) -> bool {
+        if !matches!(key, Key::Named(NamedKey::Escape)) {
+            return false;
+        }
+        match state {
+            ElementState::Pressed if self.escape_release_pending => true,
+            ElementState::Pressed => {
+                self.escape_release_pending = menu_active;
+                false
+            }
+            ElementState::Released => std::mem::take(&mut self.escape_release_pending),
+        }
+    }
+}
+
+fn menu_owns_escape_press(active_menu: Option<&str>, marking: Option<&MarkingMenuState>) -> bool {
+    active_menu.is_some() || marking.is_some_and(|menu| menu.selection.is_some())
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum MenuKeyIntent {
     Consume,
@@ -129,6 +158,15 @@ impl Runtime {
     }
 
     pub(super) fn handle_menu_key(&mut self, event: &KeyEvent) -> bool {
+        let ui = &self.workspace().ui;
+        let menu_active =
+            menu_owns_escape_press(ui.active_menu.as_deref(), ui.marking_menu.as_ref());
+        if self
+            .menu_keys
+            .consume_escape_release(&event.logical_key, event.state, menu_active)
+        {
+            return true;
+        }
         if self.handle_marking_selection_key(event) {
             return true;
         }
@@ -383,6 +421,55 @@ impl Runtime {
 #[cfg(test)]
 mod menu_keyboard_tests {
     use super::*;
+
+    #[test]
+    fn generic_marking_menu_retains_existing_escape_release_dismissal() {
+        let marking = MarkingMenuState {
+            menu_key: "pcb.canvas".into(),
+            target_object_id: None,
+            anchor_x_px: 0,
+            anchor_y_px: 0,
+            preview_slot: None,
+            gesture_dx_px: 0,
+            gesture_dy_px: 0,
+            selection: None,
+        };
+        let mut owner = MenuKeyOwnership::default();
+        let escape = Key::Named(NamedKey::Escape);
+        let consumes_press = menu_owns_escape_press(None, Some(&marking));
+        assert!(!consumes_press);
+        assert!(!owner.consume_escape_release(&escape, ElementState::Pressed, consumes_press));
+        assert!(!owner.consume_escape_release(&escape, ElementState::Released, consumes_press));
+        // A real menubar handles the press, even beside this generic overlay.
+        assert!(menu_owns_escape_press(Some("View"), Some(&marking)));
+    }
+
+    #[test]
+    fn escape_ownership_survives_menu_dismissal_and_new_selection_between_phases() {
+        let escape = Key::Named(NamedKey::Escape);
+        let mut owner = MenuKeyOwnership::default();
+        // Production routing records the menu-owned press before menu dispatch.
+        assert!(!owner.consume_escape_release(&escape, ElementState::Pressed, true));
+        // Pointer dismissal/activation can retire that menu and publish a new
+        // selection before key-up. The retired overlay cannot own this state.
+        assert!(owner.consume_escape_release(&escape, ElementState::Pressed, false));
+        assert!(owner.consume_escape_release(&escape, ElementState::Released, false));
+        // Subsequent fresh Escape with no menu must reach ordinary idle clearing.
+        assert!(!owner.consume_escape_release(&escape, ElementState::Pressed, false));
+        assert!(!owner.consume_escape_release(&escape, ElementState::Released, false));
+        // Uninterrupted menu cycles are equally consumed exactly once.
+        assert!(!owner.consume_escape_release(&escape, ElementState::Pressed, true));
+        assert!(owner.consume_escape_release(&escape, ElementState::Released, true));
+        assert!(!owner.consume_escape_release(&escape, ElementState::Released, false));
+        // Terminal/text keys without a menu retain their existing owner.
+        assert!(!owner.consume_escape_release(
+            &Key::Named(NamedKey::Enter),
+            ElementState::Pressed,
+            false
+        ));
+        assert!(!owner.consume_escape_release(&escape, ElementState::Pressed, false));
+        assert!(!owner.consume_escape_release(&escape, ElementState::Released, false));
+    }
 
     #[test]
     fn unavailable_pilot_rows_remain_keyboard_inspectable_and_dismissible() {

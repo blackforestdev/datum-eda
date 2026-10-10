@@ -124,6 +124,7 @@ impl Runtime {
             divider_drag: None,
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),
+            menu_keys: Default::default(),
             presented_hits: Default::default(),
             presented_console_layout: None,
             terminal_accessibility:
