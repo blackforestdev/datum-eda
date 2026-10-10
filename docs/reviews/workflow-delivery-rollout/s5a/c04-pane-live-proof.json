@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "S5A-C04 duplicate Schematic ordinary integration correction",
+  "source_commit": "5682828d85abfc0668a42eda4d63de3c5672b062",
+  "source_blobs": {
+    "crates/gui-render/src/render/pane_chrome.rs": "b56de7a35a54d27e6c3ed560fd091e8bd45c3997",
+    "crates/gui-render/src/render/coordinate_hit_duplicate_tests.rs": "3b9ab67b0b39811eecabfeda45cd436fbf9b3a9d"
+  },
+  "authority": "Existing approved U4/N08 board/schematic execution, synchronized exact two-file lease fa6f9808; no new product rule.",
+  "cause": "84221a2a added surface passes for every duplicate view, but chrome retained the earlier first-Schematic-only guard. Subsequent panes showed Schematic (coming) over already rendered source/selection.",
+  "repair": "Available source gives every Schematic pane the same existing substrate without missing-source caption. Missing-source fallback and Board logic preserved.",
+  "before": "Immutable c04-prefilter-escape evidence retains pane-selection-lifetime-corrected-duplicate-schematic.png showing second live Schematic with coming caption; old GUI12687 remains distinct.",
+  "after": "Inspected pane-live-schematic-correction duplicate and independent-cameras PNGs show both source/selection projections without coming caption; existing copper remains visible in Board pane.",
+  "gui_sha256": "e7a7dfbb38a97c15cf000d206f3e11226eb2c0d3834f389ccc0889bc08baa6a0",
+  "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+  "configuration": "Existing X11 production-input route on KDE Wayland desktop, WGPU Vulkan Intel HDP630/Mesa25.0.7; exact environment in result. Not physical Wayland/HUMAN.",
+  "result": "pane-live-schematic-correction-result.json",
+  "result_sha256": "61aecddb09cee415fd7cb86a58a2100880396ce5da6873ed1161448d3887170e",
+  "harness": "native_pane_live_schematic_correction.py",
+  "harness_sha256": "97f615e4b8754b237614f8c1a90daa1f2db226ed828983b2c32b33303cc77a3f",
+  "native_outcome": "Eight receipts preserve exact complete Run5/identity/focus/revision through source swaps, duplicate panes, independent camera zoom, one/last-pane closure and restoration. Source/journal hashes match after run and packaging. Normal owner_drop161/161; no recovery/panic.",
+  "focused_proof": [
+    "Existing duplicate_schematic_leaves_project_through_their_own_cameras plus caption regression:1 passed0failed. Log retains final result with excerpted initial compilation progress.",
+    "Existing conformance_pane_header_tools_and_binding_chips_render missing-source fixture:1 passed0failed, full log.",
+    "Guarded serial ordinary GUI build PASS, full log."
+  ],
+  "review": {
+    "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+    "route": "Actual reserved bounded SOURCE and RUNTIME PASS plus retained focused proof log verification, reported by appointed manager01a122e5-f602-7f61-a144-0d1ce7116a77. Exact source/GUI/result/harness verified; no reviewer build/input/rerun. No mandatory finding.",
+    "limits": "Caption defect resolved at demonstrated X11 cohort. Missing-source fallback source/focused-test only, no native missing-scene trial. No full N08/N15/C04/C05/HUMAN/physical Wayland/glyph/LOD/performance/general visual acceptance."
+  },
+  "gates": "Scoped format0 changes; sourcehealth3017; staged rustfmt/lane, dependency authority, Cargo resource policy and diff checks PASS. Exact two source files committed; no prototype/golden/digest or policy edits.",
+  "route_reuse": "Implementer reused documented complete C01/D123/IR01 owning-route source/consumer review with focused current DOM/CSS/contracts reread; current evidence traceability gate29routes125artifacts PASS. Historical attribution/research reuse is implementer evidence, not independent replay.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-pane-live-evidence.tar.xz",
+    "sha256": "0416310ca5074b353957577dca4dd310588a2cb020bfbf11608a772bccfcd8fb",
+    "size_bytes": 738376,
+    "raw_files": 15,
+    "files": {
+      "duplicate-schematic-correction-test.log": "79be05efd7f0ee176d185cfafa3bb6bed0d115a1d058bc1be2f2c290ad731896",
+      "missing-schematic-placeholder-test.log": "1a3e612cc1b7f93cffc40b457a2dcb91c08013dfa88ca708c58310a5a8c4b7ac",
+      "native_pane_live_schematic_correction.py": "97f615e4b8754b237614f8c1a90daa1f2db226ed828983b2c32b33303cc77a3f",
+      "pane-live-schematic-correction-duplicate-schematic.png": "98bee1988ed4dafe6f77fd0e2a76164edee1147d91e5f9dff4c10861296ccc2d",
+      "pane-live-schematic-correction-independent-cameras.png": "d2aef8f90e99e931526b6d00886182c2c51d645b0da53520954042f867a25911",
+      "pane-live-schematic-correction-no-schematic-pane.png": "51af0fabe000067834991c7089e0a01d9b4742d3d8336debf17f4e7db905959b",
+      "pane-live-schematic-correction-one-schematic-remains.png": "d551d2002bd8bdf65229ecf98fe6781a1edf2cd7d0f51ec4acf2ea18bc2baaaf",
+      "pane-live-schematic-correction-preimage.json": "44795e7aedcf73f5394d5dd932aa2e2b85423aa1b6d3c183f611aa37396ea106",
+      "pane-live-schematic-correction-restored-schematic.png": "1634840d49737d0c65eaae54424e9fdef0daf5d8eb98f413e4bf931c8f1e9585",
+      "pane-live-schematic-correction-result.json": "61aecddb09cee415fd7cb86a58a2100880396ce5da6873ed1161448d3887170e",
+      "pane-live-schematic-correction-source-pane-restored.png": "4f64602d0c13ddfbeea5a063b8406566b5a9473bdd71fd100570a0b075bc27b7",
+      "pane-live-schematic-correction-stdout.log": "2ee8c60a3a8edec4f89c97e0034f135a7c8c3eb1857ee74adc5828ee07ad0415",
+      "pane-live-schematic-correction-swapped-board.png": "ef4d6fa65e3964e6bf59da8bdbea22ef5d62f9a85d124baf50eb9145672d0719",
+      "pane-live-schematic-correction.log": "613dedbd99802bd1024d996b47d153101ea683a90a47d2ae3f52ab832c6b0592",
+      "pane-live-schematic-gui-build.log": "b233590e33be4ee8161e0f208572fdeb9bcb2ba4d3f0376df489a6182ea47d58"
+    }
+  },
+  "boundaries": "C04 remains in progress. Other N01-N17/native/HUMAN/Wayland, C05/C06 and CAM/T04 obligations retained; no new dependency, persistence, tolerance, budget, timeout, fixture or successor authority."
+}
