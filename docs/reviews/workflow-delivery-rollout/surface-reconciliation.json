@@ -1,0 +1,970 @@
+{
+  "schema_version": 1,
+  "task": "GUI-SURFACE-SPECS",
+  "step": "SURFACE-S04",
+  "status": "bounded_reconciliation_packet_prepared_visual_execution_pending",
+  "created_utc": "2026-10-10T08:53:31.521734+00:00",
+  "source_head": "586a93e7eb13b6d9812b3a4a6b04e7df6cc9202b",
+  "authority_boundary": "Manager-delegated selected S04 support under retained planning grant. Root owns spec/consumer edits, metadata, lease/tracker, review and transitions. This artifact is neither independent PASS nor S04 completion, combined review, owner/HUMAN ratification or implementation authorization.",
+  "clause_catalog": {
+    "path": "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json",
+    "sha256": "7618332dbc4fe998cfd89ea3729e598869a2defbe5e210b00723b4faede14c8c",
+    "observed_count": 14,
+    "count_confirmation": "Manager confirmed requested count of 15 was incorrect; actual canonical inventory is 14. All actual IDs/order/authority flags preserved."
+  },
+  "product_candidate": {
+    "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+    "sha256": "4ee81d6235144fee52c269265a127eff75a1a52aa31e272eeb8bc55955849eba"
+  },
+  "clauses": [
+    {
+      "id": "REQUIREMENTS-AUTHORITY",
+      "step_id": "SURFACE-S01",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S01"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "SURFACE-S01 inventories current schematic and library requirements, prototypes,"
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "bounded_inventory_reviewed",
+      "assessment": "S01 inventories authority; inventory acceptance does not ratify new product or visuals.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 66,
+          "marker": "## Schematic and Library Surface Specification Successor"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-inventory-review.json",
+          "sha256": "e37eee20c8223551ff94539fa20f2bbe9514602da664bf7194a01df8abbb918b"
+        }
+      ],
+      "remaining": [
+        "Combined contract review and owner disposition remain."
+      ]
+    },
+    {
+      "id": "RESEARCH-QUESTIONS",
+      "step_id": "SURFACE-S01",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S01"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "research, code seams, object authority, and unresolved product questions before"
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "research_inventory_reviewed_choices_open",
+      "assessment": "Existing research informs candidates; proposed DXF/types/thresholds are not adopted.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 42,
+          "marker": "## Reference Inputs"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 268,
+          "marker": "## Library GUI Target"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-inventory-review.json",
+          "sha256": "e37eee20c8223551ff94539fa20f2bbe9514602da664bf7194a01df8abbb918b"
+        }
+      ],
+      "remaining": [
+        "Product and source/basis unknowns remain explicit; no new source rights."
+      ]
+    },
+    {
+      "id": "SCHEMATIC-HIERARCHY",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "contract, including document/hierarchy behavior, viewport tooling inheritance,"
+        }
+      ],
+      "requires_owner_decision": true,
+      "disposition": "candidate_reviewed_owner_presentation_pending",
+      "assessment": "Continuous Design and source/occurrence context retain engine authority and shared recursive pane composition.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 499,
+          "marker": "**Document and pane composition.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 515,
+          "marker": "**Visual composition.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+          "sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f"
+        }
+      ],
+      "remaining": [
+        "Owner presentation choices, Claude frames and full ordinary hierarchy GUI remain pending."
+      ]
+    },
+    {
+      "id": "SCHEMATIC-AUTHORING",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "read-only versus authoring boundaries, accessibility, and honest conformance"
+        }
+      ],
+      "requires_owner_decision": true,
+      "disposition": "candidate_reviewed_full_delivery_pending",
+      "assessment": "Native/read-only/preview/pending/refusal states, manual gesture dispatch and canonical journal/proposals inherit shared services.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 549,
+          "marker": "**Readiness and authoring states.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 578,
+          "marker": "**Command and mutation boundary.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 603,
+          "marker": "**Accessibility.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+          "sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f"
+        }
+      ],
+      "remaining": [
+        "Complete authoring families, accessible visual frames and full ordinary workflow proof remain pending."
+      ]
+    },
+    {
+      "id": "SCHEMATIC-OBJECTS",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "- symbols, pins, wires, labels, ports, buses, bus entries, junctions,"
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "full_target_inventory_represented",
+      "assessment": "Full schematic object families and electrical context are retained beyond bounded Symbol/Wire/Move delivery.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 490,
+          "marker": "### Schematic Surface Contract"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 596,
+          "marker": "**Electrical context.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 611,
+          "marker": "**Delivery and conformance.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+          "sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f"
+        }
+      ],
+      "remaining": [
+        "Complete labels, ports, buses, entries, markers, text/drawings, hierarchy and ERC/waiver workflows remain targets."
+      ]
+    },
+    {
+      "id": "LIBRARY-OBJECTS",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "contract across symbols, units, parts, packages, footprints, padstacks,"
+        }
+      ],
+      "requires_owner_decision": true,
+      "disposition": "eight_kind_candidate_reviewed_owner_presentation_pending",
+      "assessment": "Unit, Symbol, Entity, Part, Package, Footprint, Padstack and PinPadMap remain distinct; models are governed attachments, not a ninth Pool kind.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 298,
+          "marker": "**Browser and composition.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 318,
+          "marker": "**Per-kind inspection and editing target.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 382,
+          "marker": "**Models.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+          "sha256": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74"
+        }
+      ],
+      "remaining": [
+        "Eight-kind frames, browser composition owner choices and complete editor GUI remain pending."
+      ]
+    },
+    {
+      "id": "LIBRARY-VALIDATION",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "pin-pad maps, models, metadata, and validation, with honest conformance"
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "targets_represented_gui_validation_pending",
+      "assessment": "Gate-qualified maps, revision drift, provenance/basis/process, lifecycle versus approval and check freshness remain distinct.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 343,
+          "marker": "**Relationships and revisions.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 362,
+          "marker": "**Source, basis, process and approval.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 396,
+          "marker": "**Authoring, readiness and checks.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+          "sha256": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74"
+        }
+      ],
+      "remaining": [
+        "Full graph validation, process fidelity and guarded status GUI proof remain pending; unknown metadata is not approval."
+      ]
+    },
+    {
+      "id": "LIBRARY-MANUAL-USE",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "to know object UUIDs or CLI incantations for basic library inspection."
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "manual_target_represented_full_gui_pending",
+      "assessment": "Search/navigation/inspection, manual model attach/edit/detach, supported generation proposals and human-accepted status workflows require no UUID or CLI knowledge.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 298,
+          "marker": "**Browser and composition.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 382,
+          "marker": "**Models.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 443,
+          "marker": "**Ordinary workflow and proof disposition.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+          "sha256": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74"
+        }
+      ],
+      "remaining": [
+        "Complete browser/editor/model/generation/status workflows and ordinary refusal/history/reopen proof remain pending."
+      ]
+    },
+    {
+      "id": "SHARED-MUTATION",
+      "step_id": "SURFACE-S04",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S04"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "selection/inspection tooling, manual-first workflow, engine authority, visual"
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "candidate_inheritance_reconciled_bounded_consumer_deltas",
+      "assessment": "Manual and optional AI share typed commit/journal/proposal primitives; shared selection, contextual inspection, focus, camera, grid/snap, history and accessibility are inherited.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 171,
+          "marker": "## Editor Authority"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 578,
+          "marker": "**Command and mutation boundary.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 427,
+          "marker": "**Accessibility and visual frames.**"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+          "sha256": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74"
+        }
+      ],
+      "remaining": [
+        "Bounded consumer amendment review remains separate; full visual/runtime qualification pending."
+      ]
+    },
+    {
+      "id": "GOVERNANCE-HANDOFF",
+      "step_id": "SURFACE-S04",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S04"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "prototype inventory, specification governance, and roadmap dependencies."
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "handoff_prepared_transport_proven_frames_and_review_pending",
+      "assessment": "Existing protected source regions and missing frames are mapped below; root owns classification, route/parity/digest and synchronized task state.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 635,
+          "marker": "**Owner disposition and visual reconciliation.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 463,
+          "marker": "**Owner decisions and implementation handoff.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 721,
+          "marker": "## Governance"
+        }
+      ],
+      "review_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+          "sha256": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74"
+        }
+      ],
+      "remaining": [
+        "Local Claude transport is proven; actual complete visual candidates/review remain pending; S04 stays open."
+      ]
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "SURFACE-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "SURFACE-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "A distinct reviewer checks both complete surface contracts after SURFACE-S04"
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "combined_review_pending",
+      "assessment": "Actual S01/S02/S03 bounded PASS receipts cannot substitute for distinct combined review after S04.",
+      "product_outputs": [],
+      "review_refs": [],
+      "remaining": [
+        "Distinct reviewer must inspect complete candidates, clause coverage, authority, visual truth and handoff before S05."
+      ]
+    },
+    {
+      "id": "FULL-SPECIFICATION-SCOPE",
+      "step_id": "SURFACE-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "SURFACE-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "option as completion of the full schematic/library specification."
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "full_targets_retained_complete_visuals_pending",
+      "assessment": "No Phase 1/read-preview/narrow runtime slice replaces complete library and schematic target scope.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 287,
+          "marker": "### Library Surface Contract"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 490,
+          "marker": "### Schematic Surface Contract"
+        }
+      ],
+      "review_refs": [],
+      "remaining": [
+        "Full visual candidates and combined review remain; no copied or self-issued PASS."
+      ]
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "SURFACE-S05",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S05"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "SURFACE-S05 records the owner's visual and product disposition, resolves or"
+        }
+      ],
+      "requires_owner_decision": true,
+      "disposition": "owner_disposition_pending",
+      "assessment": "S05 owner product/visual choices remain reserved; manager acceptance of unchanged planning steps is not HUMAN ratification.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 635,
+          "marker": "**Owner disposition and visual reconciliation.**"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 463,
+          "marker": "**Owner decisions and implementation handoff.**"
+        }
+      ],
+      "review_refs": [],
+      "remaining": [
+        "Record exact owner choices and retained unresolved/deferred scope through authorized S05 transaction."
+      ]
+    },
+    {
+      "id": "SEPARATE-EXECUTION",
+      "step_id": "SURFACE-S05",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S05"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "implementation successor without granting execution authority implicitly."
+        }
+      ],
+      "requires_owner_decision": false,
+      "disposition": "planning_only_no_successor_grant",
+      "assessment": "Planning/support receipt grants no runtime, import, source-adoption, dependency or implementation successor authority.",
+      "product_outputs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "line": 66,
+          "marker": "## Schematic and Library Surface Specification Successor"
+        }
+      ],
+      "review_refs": [],
+      "remaining": [
+        "Implementation needs separately authorized successor and complete ordinary workflow proof."
+      ]
+    }
+  ],
+  "prior_complete_route_coverage": [
+    {
+      "receipt": {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+        "sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653"
+      },
+      "reuse": "Complete original reads at exact pins; unchanged members reused. Changed Product is covered by actual corrected S03 review and fully read amendment; changed consumers by fully read current deltas. No new global full-read claim.",
+      "unchanged_members": [
+        {
+          "path": "docs/gui/prototypes/board-editor.html",
+          "previous_sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07",
+          "current_sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07"
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-editor.html",
+          "previous_sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0",
+          "current_sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0"
+        },
+        {
+          "path": "docs/gui/prototypes/workspace-panes.html",
+          "previous_sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd",
+          "current_sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+          "previous_sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+          "current_sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+          "previous_sha256": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed",
+          "current_sha256": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+          "previous_sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c",
+          "current_sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "previous_sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990",
+          "current_sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990"
+        },
+        {
+          "path": "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+          "previous_sha256": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8",
+          "current_sha256": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8"
+        }
+      ],
+      "changed_members": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "previous_sha256": "fa0334035a9cb42425ccb9bd87c6f50fe8dcb59c4bce05c47510d4cc5d2b11c7",
+          "current_sha256": "4ee81d6235144fee52c269265a127eff75a1a52aa31e272eeb8bc55955849eba"
+        },
+        {
+          "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+          "previous_sha256": "7259766f1f8c0cd377347612120c0df044ccb522a7166bdbe91346b462ad66bc",
+          "current_sha256": "43770d113ceda03e506521b97a9fc434be055b1b4998e246eb53586a0f6fce51"
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "path": "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+        "sha256": "043b81d2664d807c2b70c46b66c497bd8e35e8ec343e03c5413eb55f24f017d9"
+      },
+      "reuse": "Complete original reads at exact pins; unchanged members reused. Changed Product is covered by actual corrected S03 review and fully read amendment; changed consumers by fully read current deltas. No new global full-read claim.",
+      "unchanged_members": [
+        {
+          "path": "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_DXF_STOWAWAY_ADDENDUM.md",
+          "previous_sha256": "e9ee3de1964e3a9b79165ac042a554e4c9ad5687fa10be805a44ff49a5200eff",
+          "current_sha256": "e9ee3de1964e3a9b79165ac042a554e4c9ad5687fa10be805a44ff49a5200eff"
+        },
+        {
+          "path": "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md",
+          "previous_sha256": "42cebac6a6d89ca8c53279458f30f602040db0fa254bfe6ab86c13ada5c1d61e",
+          "current_sha256": "42cebac6a6d89ca8c53279458f30f602040db0fa254bfe6ab86c13ada5c1d61e"
+        },
+        {
+          "path": "docs/IPC_FOOTPRINT_SYSTEM.md",
+          "previous_sha256": "f89a1406e1069f93ca12c7a4c6348e6d6b19824b0cac419caa7f2645034fd1f4",
+          "current_sha256": "f89a1406e1069f93ca12c7a4c6348e6d6b19824b0cac419caa7f2645034fd1f4"
+        },
+        {
+          "path": "docs/gui/prototypes/board-editor.html",
+          "previous_sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07",
+          "current_sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07"
+        },
+        {
+          "path": "docs/gui/prototypes/schematic-editor.html",
+          "previous_sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0",
+          "current_sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0"
+        },
+        {
+          "path": "docs/gui/prototypes/workspace-panes.html",
+          "previous_sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd",
+          "current_sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+          "previous_sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+          "current_sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+          "previous_sha256": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed",
+          "current_sha256": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+          "previous_sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c",
+          "current_sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+          "previous_sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990",
+          "current_sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990"
+        },
+        {
+          "path": "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+          "previous_sha256": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8",
+          "current_sha256": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+          "previous_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+          "current_sha256": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+          "previous_sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f",
+          "current_sha256": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f"
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md",
+          "previous_sha256": "1d91885491017d4e8e14cd489e6997be40af48c7daeb79a5e95520eddfd16cc1",
+          "current_sha256": "1d91885491017d4e8e14cd489e6997be40af48c7daeb79a5e95520eddfd16cc1"
+        }
+      ],
+      "changed_members": [
+        {
+          "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+          "previous_sha256": "b604bf9530b3377a669c789c5660cbf12aa15de565dbf8335b05333d1d9d70ca",
+          "current_sha256": "7d708f0fc1f694743f3654f73d660a3a0e6d9b923cbb3ea47c8c8d4ab321e699"
+        },
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "previous_sha256": "c0bffe28b367584f9fe53aa86245b09d766555ec0602a99514665cff44907448",
+          "current_sha256": "4ee81d6235144fee52c269265a127eff75a1a52aa31e272eeb8bc55955849eba"
+        },
+        {
+          "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+          "previous_sha256": "7259766f1f8c0cd377347612120c0df044ccb522a7166bdbe91346b462ad66bc",
+          "current_sha256": "43770d113ceda03e506521b97a9fc434be055b1b4998e246eb53586a0f6fce51"
+        }
+      ]
+    }
+  ],
+  "route_observations": [
+    {
+      "consumers": [
+        "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+        "docs/IPC_FOOTPRINT_SYSTEM.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+        "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json"
+      ],
+      "id": "parametric-footprint-editor",
+      "review_note": "Parametric editor and DXF research feed the library-authoring and footprint-system contracts.",
+      "review_note_surface_s03": "Actual delegated full parametric four-file reading and full shell member review/reuse is pinned in library-surface-route-preflight.json (043b81d2) at21e6f97f. All seventeen complete hashes/ranges verified before Product edit; reused source scopes unchanged. GUI Product realizes library inspection/authoring targets while inheriting shell composition, so it consumes both routes without reassigning evidence sources. Root integrated concrete candidate and retained all eight Pool kinds, distinct models, revision/map/process/provenance and approval dimensions, pending GUI and visual/accessibility proof. No parametric/DXF proposal, standards rule/number, generator semantics, protected HTML or source adoption promoted. Shared standards corpus remains explicitly unreviewed; no IPC/standards consumer edited. Candidate review and S04/S05 remain pending. Independent candidate review corrections explicitly retain manual model attachment/edit/detach and human-accepted guarded status workflows with ordinary history/reopen/refusal proof; AI auto-approval is prohibited for all content. No new approval policy or implemented GUI claim. Lib-agent completeness check retains the existing manual supported-footprint synthesis/proposal workflow and its input/basis/cancel/history proof, with complete wizard GUI pending; no generator formula/default/family expansion. Actual independent corrected planning receipt e8f1c717 pins final4ee81d62. Appointed manager accepts S03 against unchanged planning criteria and explicitly selects existing S04 reconciliation within retained grant; no combined/product/visual or runtime acceptance.",
+      "review_note_surface_s04": "S04 bounded stale-fact reconciliation uses exact complete source review from S02/S03 preflights and actual reviews; unchanged research/HTML/IPC/product authorities preserved. Root read all205 baseline Menu Bindings lines and maps this PM019 Product companion as shell consumer. Actual changed Schematic/Library Authoring and Menu deltas reviewed fully: canonical current builders/history/hierarchy and bounded native GUI paths replace categorical historical absences; normalized/full-family/menu/seed/proposal gaps remain. Explicit lease ownership for these necessary selected-task consumer paths synchronized with tracker before edits; no new product/runtime scope or mechanism. Complete visual lane candidates remain unavailable; no final S04/combined/HUMAN acceptance.",
+      "reviewed_digest": "7eaf6e4d60ba2bc91afd8dde6f8c8e4bc65f4ccdff50660e7c4e4a84d8ba0083",
+      "sources": [
+        "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_DXF_STOWAWAY_ADDENDUM.md",
+        "research/parametric-footprint-editor/PARAMETRIC_FOOTPRINT_EDITOR_RESEARCH.md"
+      ],
+      "status": "active"
+    },
+    {
+      "consumers": [
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+        "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json",
+        "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json",
+        "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json",
+        "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md"
+      ],
+      "id": "prototype-editor-shell-and-panes",
+      "review_note": "Editor-shell and pane prototypes constrain the completed DOC-C04 Publish study alongside the shell, conformance, document/view, and pane-tiling authorities; the study extends rather than redesigns them.",
+      "review_note_addendum": " Status-marker normalization 2026-08-29 (164d39d): prototypes on this route received a uniform .statusmark banner with state approved/open/retired, replacing the overloaded .chip class that could not distinguish a status banner from an ordinary in-page label. No study content, candidate, or decision on this route was altered - the change is the status banner and its stylesheet only.",
+      "review_note_s5a_d123_20260930": "Explicit owner D1-D3 dispositions reconciled: PM051 S5A latency undecided and bounded diagnostic scope approval without numeric acceptance; PM026 numbered amendment limits this native acceptance to board/schematic and retains unverified/deferred native definition-editor rows with separate re-entry issues; conformance 42 assertions retained with R1-R4 assigned future S5B-or-later mutation proof. Complete prior selection/preparation/foundation review carried forward, with full editor-shell/pane source DOM/CSS and all listed consumers reviewed for the lower ledger edit. Preserve all shared ownership, granularity, eight identity mappings, D4, PM049/052 rendering/resize and separate performance S5. One pinned packet, C02 pending D5 reservation and exact review. No prototype/runtime/fixture/dependency/build/native evidence or execution grant.",
+      "review_note_surface_s02": "Actual delegated full reading of all three prototype sources, five prior consumers and two added domain/product consumers is pinned in surface-route-preflight.json at 5c30a700; ten hashes verified before editing. PM019 explicitly names GUI Product as its realization; authoring contract supplies schematic interaction boundaries without transferring electrical authority to HTML. Root reviewed candidate refinement and preserves numbered/shared tooling authority, historical terminology conflicts and stale contract reconciliation items. Product candidate remains pending SURFACE-S04/review/S05; no HTML, token, runtime, source adoption or HUMAN acceptance change. Preflight receipt is a governed planning consumer, not a new product rule or independent PASS. Lib-agent candidate inspection correction carries existing Library GUI Target provenance/basis/findings into schematic inspection; command readiness is explicitly separate from library approval and full binding graph. Integration proof remains pending; no warning/block policy or source qualification. Actual independent planning readiness receipt ef812d33 pins final c0bffe28 candidate; manager accepts S02 against existing planning criteria and explicitly selects existing S03 within retained planning authority. No final combined or owner visual acceptance. Receipt registration and step transition do not alter source/prototype authority.",
+      "review_note_surface_s03": "Actual delegated full parametric four-file reading and full shell member review/reuse is pinned in library-surface-route-preflight.json (043b81d2) at21e6f97f. All seventeen complete hashes/ranges verified before Product edit; reused source scopes unchanged. GUI Product realizes library inspection/authoring targets while inheriting shell composition, so it consumes both routes without reassigning evidence sources. Root integrated concrete candidate and retained all eight Pool kinds, distinct models, revision/map/process/provenance and approval dimensions, pending GUI and visual/accessibility proof. No parametric/DXF proposal, standards rule/number, generator semantics, protected HTML or source adoption promoted. Shared standards corpus remains explicitly unreviewed; no IPC/standards consumer edited. Candidate review and S04/S05 remain pending. Independent candidate review corrections explicitly retain manual model attachment/edit/detach and human-accepted guarded status workflows with ordinary history/reopen/refusal proof; AI auto-approval is prohibited for all content. No new approval policy or implemented GUI claim. Lib-agent completeness check retains the existing manual supported-footprint synthesis/proposal workflow and its input/basis/cancel/history proof, with complete wizard GUI pending; no generator formula/default/family expansion. Actual independent corrected planning receipt e8f1c717 pins final4ee81d62. Appointed manager accepts S03 against unchanged planning criteria and explicitly selects existing S04 reconciliation within retained grant; no combined/product/visual or runtime acceptance.",
+      "review_note_surface_s04": "S04 bounded stale-fact reconciliation uses exact complete source review from S02/S03 preflights and actual reviews; unchanged research/HTML/IPC/product authorities preserved. Root read all205 baseline Menu Bindings lines and maps this PM019 Product companion as shell consumer. Actual changed Schematic/Library Authoring and Menu deltas reviewed fully: canonical current builders/history/hierarchy and bounded native GUI paths replace categorical historical absences; normalized/full-family/menu/seed/proposal gaps remain. Explicit lease ownership for these necessary selected-task consumer paths synchronized with tracker before edits; no new product/runtime scope or mechanism. Complete visual lane candidates remain unavailable; no final S04/combined/HUMAN acceptance.",
+      "reviewed_digest": "7ce825bd1c1bb00a01012c23a4404a55b0977c571de5baef4895181cade6f61d",
+      "sources": [
+        "docs/gui/prototypes/board-editor.html",
+        "docs/gui/prototypes/schematic-editor.html",
+        "docs/gui/prototypes/workspace-panes.html"
+      ],
+      "status": "active"
+    }
+  ],
+  "additional_review_requirement": {
+    "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+    "sha256": "668374887357ea8c3e7b3d30a1207882051f5c4cfd9344bac03dc02235248b27",
+    "coverage": "Full file read; no claim full workflow-delivery route inventory review."
+  },
+  "standards_boundary": "IPC_FOOTPRINT_SYSTEM.md was fully reviewed in prior parametric preflight. Full shared standards-and-compliance corpus was not reviewed; this packet establishes no standards conformance, normative thresholds, generator formula/family/default, DXF adoption or source license rights.",
+  "shared_inheritance": {
+    "manual_and_ai": "Every target is manually usable; optional AI uses the same deterministic queries/typed operations/proposals/checks/history. AI auto-approval remains prohibited for all content.",
+    "mutation": "One canonical engine resolver and commit/journal with provenance/diff/undo; direct versus proposal behavior follows existing authority, not a new local writer.",
+    "selection_and_inspection": "One shared selection/identity/focus service and one contextual inspector. Library related objects are navigation links, not assumed identical selection. Stable gate/pin/pad IDs and source/occurrence context survive stale/pending/mismatch states.",
+    "viewport": "Shared grid/snap/camera/history/measure/tool services configured by editor persona; one window and recursive tiling inherit PM019/PM021.",
+    "accessibility": "Keyboard navigation/action/focus, readable labels and non-color states, narrow layouts and reduced-motion targets require actual frame/native evidence; no accessibility PASS from prose.",
+    "console_terminal": "PM033 pane-local output and Console/Terminal boundary retained; no output relocation or new global status policy."
+  },
+  "consumer_reconciliation": [
+    {
+      "path": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
+      "sha256": "43770d113ceda03e506521b97a9fc434be055b1b4998e246eb53586a0f6fce51",
+      "delta_read": "Complete current git diff read by support reviewer; root owns edits and bounded independent amendment review.",
+      "reconciliation": "Categorical no-operation/no-history/no-hierarchy and private-JSON-writer claims replaced with canonical native builders/history and existing definition/instance/binding operations.",
+      "retained_boundary": "Normalized heterogeneous/field surface, broad transforms, full hierarchy/sheet-pin/net-rewiring proposals and complete ordinary GUI remain targets."
+    },
+    {
+      "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+      "sha256": "7d708f0fc1f694743f3654f73d660a3a0e6d9b923cbb3ea47c8c8d4ab321e699",
+      "delta_read": "Complete current git diff read by support reviewer; root owns edits and bounded independent amendment review.",
+      "reconciliation": "Hypothetical NEW writer replaced with actual api/native_write/library.rs PoolLibraryObjectTarget/PoolLibraryOperationSpec owner through BatchComposer/PreparedWrite and commit/journal.",
+      "retained_boundary": "Normalized create/edit vocabulary, full kind-specific validation and guarded binding/proposal GUI remain targets."
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
+      "sha256": "28e1a6187c7915a6e47b60ef303eabc249a7d9221e445b4186f17d537fa41024",
+      "delta_read": "Complete current git diff read by support reviewer; root owns edits and bounded independent amendment review.",
+      "reconciliation": "Historical baseline explicitly dated; scoped PARTIAL Symbol/Wire/history/Save credit replaces categorical absence. Save As and unreviewed menu projections remain separate.",
+      "retained_boundary": "No claim every menu entry is wired; complete families, approved seeds, physical/HUMAN inputs, Save As/session semantics and menu projections remain unqualified."
+    }
+  ],
+  "retained_exact_concerns": [
+    {
+      "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+      "target": "Tool 1 logical-pin/footprint-pad table must retain canonical gate-qualified pad UUID to gate/pin UUID relationships; no name-only matching. Current reconciliation does not prove complete map GUI."
+    },
+    {
+      "path": "docs/IPC_FOOTPRINT_SYSTEM.md",
+      "target": "Illustrative peer mask/paste offsets are not universal process policy. Missing/Inherit/unsupported aperture fidelity must remain visible; no threshold or normative standards edit here."
+    }
+  ],
+  "claude_handoff": {
+    "owner": "Claude exclusively owns docs/gui/prototypes/*.html; support/root may inspect and provide bounded targets, never edit/regenerate or set/copy/forward lane marker.",
+    "delivery_state": "Prepared packet; root has proven installed local Claude CLI transport (DATUM_VISUAL_LANE_READY, exit 0, no tools/writes), session 4298249e-0543-4c39-9829-5a7cddccdc30. Root will transmit exact bounded handoff through genuine Claude lane with normal permissions/hooks after landing current consumer corrections. No actual visual edits, complete frames or visual acceptance claimed.",
+    "existing_regions": [
+      {
+        "source": {
+          "path": "docs/gui/prototypes/schematic-editor.html",
+          "sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0"
+        },
+        "regions": [
+          {
+            "lines_inclusive": [
+              155,
+              176
+            ],
+            "selector": ".col.left .tree-row .sheet-row",
+            "requested_reconciliation": "Historical Project/Sheets navigation becomes candidate continuous Design navigation with source/occurrence context; owner choice remains open."
+          },
+          {
+            "lines_inclusive": [
+              179,
+              194
+            ],
+            "selector": ".pane.schem .pane-hd .pane-tools",
+            "requested_reconciliation": "Focus/readiness states and shared tool dispatch; do not imply Label/Bus/full-family delivery."
+          },
+          {
+            "lines_inclusive": [
+              346,
+              371
+            ],
+            "selector": "#insp .insp-title .xprobe .sect .mem",
+            "requested_reconciliation": "Contextual library binding and electrical inspection; separate related-object navigation from same stable identity; PM053 pending/mismatch truth."
+          },
+          {
+            "lines_inclusive": [
+              375,
+              404
+            ],
+            "selector": ".dock .status script",
+            "requested_reconciliation": "Console/Terminal separation, pane-local focus/output; historical status bar is not a new authority."
+          }
+        ]
+      },
+      {
+        "source": {
+          "path": "docs/gui/prototypes/board-editor.html",
+          "sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07"
+        },
+        "regions": [
+          {
+            "lines_inclusive": [
+              138,
+              145
+            ],
+            "selector": ".tree-row",
+            "requested_reconciliation": "Shared library navigation; sample object counts are not requirements."
+          },
+          {
+            "lines_inclusive": [
+              201,
+              208
+            ],
+            "selector": ".pane-hd .pane-tools",
+            "requested_reconciliation": "Reconcile historical Sheet label with source/occurrence candidate without altering PCB authority."
+          },
+          {
+            "lines_inclusive": [
+              278,
+              303
+            ],
+            "selector": ".insp-title .xprobe .sect",
+            "requested_reconciliation": "Related library/component inspection versus same-identity selection; preserve focus/identity boundaries."
+          }
+        ]
+      },
+      {
+        "source": {
+          "path": "docs/gui/prototypes/workspace-panes.html",
+          "sha256": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd"
+        },
+        "regions": [
+          {
+            "lines_inclusive": [
+              108,
+              125
+            ],
+            "selector": ".dropdown .mi",
+            "requested_reconciliation": "Existing View/editor affordances; inherit recursive composition without inventing presets."
+          },
+          {
+            "lines_inclusive": [
+              132,
+              151
+            ],
+            "selector": ".tree .trow .workspace .pane.focus",
+            "requested_reconciliation": "Library navigation and focused schematic pane source/occurrence treatment."
+          },
+          {
+            "lines_inclusive": [
+              169,
+              219
+            ],
+            "selector": ".hsplit .pane .insp",
+            "requested_reconciliation": "Definition editor composition and single contextual inspector follows focus."
+          },
+          {
+            "lines_inclusive": [
+              224,
+              230
+            ],
+            "selector": ".status",
+            "requested_reconciliation": "Historical Sheet focus status remains an owner reconciliation target."
+          }
+        ]
+      }
+    ],
+    "needed_frames": [
+      "Eight distinct Unit/Symbol/Entity/Part/Package/Footprint/Padstack/PinPadMap detail/editor frames; models remain attachments.",
+      "Browser search/kind/loading/empty/no-match and typed relationship navigation; missing/ambiguous/stale references and gate-qualified multigate mapping.",
+      "Package versus Footprint versus Padstack; copper/mask/paste/drill and unknown/unsupported/Inherit process states.",
+      "Manual model attach/edit/detach, metadata/basis, supported preview and invalid/unsupported/cancel states.",
+      "Provenance/source/standards basis/checks/review/lifecycle/approval distinctions including absent metadata.",
+      "Existing supported-generation family/dimension/tolerance/density/basis/process inputs, proposal review/cancel/output; no generator expansion.",
+      "Part variant/footprint/map and named placement eligibility; narrow picker delivery versus complete browser/approved seed.",
+      "Retained old/new revisions, semantic/map/process differences, where-used accept/decline and missing history.",
+      "Continuous schematic Design/source/occurrence, selected/unselected library inspection, Symbol/Wire/isolated Move preview/cancel/refusal and pending/stale electrical/Net/Bus/ERC states.",
+      "Normal/narrow/single/tiled/Zoom Stage with Terminal coexistence, keyboard focus, non-color cues and reduced motion."
+    ],
+    "preserved_authority": [
+      "PM019/PM021 one-window recursive panes, Design versus Publish identity and existing tokens/Rendering Book; HTML pixel values remain placeholders where governed.",
+      "Existing shared services and PM053 identity/selection/pending/mismatch semantics; PM033 Console/Terminal boundary.",
+      "Eight Pool kinds plus governed model attachments; canonical mutation/proposals and no private save path.",
+      "Historical prototype markers, owner presentation choices, unknown basis/process/approval/source rights and runtime delivery limits remain explicit."
+    ],
+    "placement": "Claude/root select governed frame destinations and exactly one owning evidence route per new HTML source; Codex does not prescribe unauthorized new source ownership.",
+    "expected_proof": [
+      "Actual Claude source/consistency report with stable frame anchors and explicit source status.",
+      "Actual inspected screenshots for complete target states at useful normal/narrow/tiled/Zoom Stage/Terminal compositions.",
+      "Frame-to-clause/candidate mapping preserving pending owner choices and current-versus-target delivery.",
+      "Shared shell/token/selection/accessibility consistency review; no copied PASS, fabricated native parity/goldens or refreshed digest to bless unauthorized output.",
+      "Root same-change classification/status/parity/route digest reconciliation after lawful lane review; distinct combined review then S05 owner disposition.",
+      "Future separately granted implementation ordinary manual workflows, cancel/refusal/proposal/history/reopen/native visual evidence remain separate."
+    ],
+    "transport_evidence": {
+      "source": "Manager delegation to support thread",
+      "kind": "local installed Claude CLI",
+      "session_id": "4298249e-0543-4c39-9829-5a7cddccdc30",
+      "observed_response": "DATUM_VISUAL_LANE_READY",
+      "exit_code": 0,
+      "probe_scope": "No tools or writes; root-reported transport proof, not support-observed frame generation."
+    }
+  },
+  "blockers_and_remedies": [
+    {
+      "kind": "visual_execution_and_review_pending",
+      "blocker": "Local Claude transport proven; bounded handoff execution, complete visual candidates and actual visual review remain pending.",
+      "remedy": "Root land current consumer corrections, then transmit exact bounded handoff through proven genuine Claude session with normal permissions/hooks; receive lawful owned source/screenshots and actual review. Preserve selected S04 in progress until criteria met."
+    },
+    {
+      "kind": "source_rights_and_approved_seed_separate",
+      "blocker": "Provider/export rights and approved seed availability remain unresolved for affected runtime paths.",
+      "remedy": "Retain explicit source/seed boundaries; neither is a fabricated blocker to this bounded planning packet nor resolved by visual execution or transport proof."
+    }
+  ],
+  "validation_boundary": "JSON parse, complete canonical clause ID/order/flags and current file pins checked. No Cargo, runtime, visual/native acceptance, source import/adoption, combined standards review or self-PASS."
+}
