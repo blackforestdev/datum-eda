@@ -354,7 +354,7 @@ of readiness feedback require the owner disposition below.
 |---|---|---|
 | Native Design, unselected | Document and occurrence context, active tool, grid/camera context, dirty/check state | Existing schematic-editor study is historical; candidate reconciliation pending |
 | Selected object | Shared selection presentation and object-specific Inspector; merely related objects retain baseline appearance | Inherit existing shared selection contract; complete schematic coverage pending |
-| Symbol picker / authoring preview | Named native object, binding availability, placement preview and cancel affordance | Bounded ordinary-app evidence exists; full browser is SURFACE-S03 |
+| Symbol picker / authoring preview | Named native object and origin; pin/unit/gate details and current binding status reachable through shared inspection; placement preview and cancel affordance | Bounded ordinary-app evidence exists; complete context inspection pending; full browser is SURFACE-S03 |
 | Refused / pending / stale | Textual reason or pending result without a false success indication | Candidate frame reconciliation and ordinary-app proof pending |
 | Tiled, narrow, Zoom and Stage | Focus remains visible; consequential controls and context remain reachable | Shared pane authority inherited; schematic frame/HUMAN qualification pending |
 | Net / ERC navigation | Finding, affected qualified objects, currentness and lawful pending/mismatch | Full schematic visual and workflow proof pending |
@@ -363,6 +363,13 @@ of readiness feedback require the owner disposition below.
 existing native state, not a new persistence or protocol enum. Visible controls
 must use their actual registry binding and expose unavailable actions honestly.
 No CLI incantation is a substitute for a manual editor action.
+
+Authoring availability describes the supported command and current binding; it
+does not establish library approval, manufacturer-data accuracy, standards
+compliance or production-use qualification. Where available, provenance, standards
+basis, validation findings and approval status remain separately inspectable.
+Missing basis or status is disclosed as unavailable or unknown; this draft
+selects no warning/block policy.
 
 | Condition | Available behavior | Required observable result |
 |---|---|---|
@@ -373,6 +380,13 @@ No CLI incantation is a substitute for a manual editor action.
 | Commit pending | Present the in-flight result using the existing mutation admission rules | Do not report committed success before the engine result |
 | Refused / unresolved / stale | Explain the actual failure and offer applicable navigation or refresh | No partial write, substitute occurrence, invented default or private-writer fallback |
 | Completed / history / reopened | Refresh projections, canonical undo/redo and project Save/reopen | Resolved authored result agrees with the journal and persisted native source |
+
+For a selected or candidate Symbol, the manual inspection path identifies its
+library object and origin, available pin/unit/gate information, and resolved versus
+unresolved/ambiguous Part binding. A Symbol choice does not imply a complete
+Part–Package–Footprint–pin-pad mapping. Existing references and unavailable
+metadata are shown honestly; browsing or inspection does not repair, rebind,
+approve or adopt source. The full library browser remains SURFACE-S03.
 
 **Command and mutation boundary.** Menus, tool palettes, shortcuts and command
 palette use the existing application registry. The target families remain native
@@ -418,6 +432,7 @@ future execution must attach actual evidence rather than mark a prose target PAS
 |---|---|---|
 | Open native Design; navigate source and repeated occurrence; tile with Board; switch focus; Zoom/Stage | View actions have no authored delta; focus owns tools/Inspector; occurrence remains qualified | Shared pane/focus checks plus schematic integration and HUMAN frames, pending |
 | Pick named Symbol; preview/cancel/place; Wire from pin through vertices to pin; undo/redo; Save/reopen | Cancel writes nothing; one completed gesture uses normal canonical history; reopened result agrees | `native-schematic/first-symbol-wire-delivery.json` and `independent-review.json`, bounded existing evidence |
+| Inspect candidate and placed Symbol library context | Origin and available pins/units/gates are inspectable without UUID knowledge; missing metadata and unresolved/ambiguous bindings remain explicit; approval/basis/findings differ from command readiness; inspection has no authored delta | Narrow-picker evidence only at its recorded scope; shared Inspector/library-context integration and unavailable-state proof pending |
 | Select isolated Symbol; Move preview/cancel/commit; history; Save/reopen | Exact origin/pins/bindings move together; connected, repeated, ambiguous and positioned-owner cases retain current refusal | `native-schematic/symbol-move-delivery.json` and `symbol-move-delivery-review.json`, bounded existing evidence |
 | Attempt unsupported, unresolved-binding, stale-revision or wrong-writer edit | Actual reason is visible; source and journal remain unchanged; no false pending success | Native admission/protocol checks and ordinary GUI refusal integration, remaining coverage pending |
 | Inspect Net/Bus and navigate ERC finding | PM053 qualified identity; pending/mismatch honest; no fabricated Bus board identity; revision currentness visible | Identity/check producer tests plus schematic integration, pending |
