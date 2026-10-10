@@ -2271,7 +2271,20 @@ complete lifecycle, prepares pool registration and checks references against
 the same model before canonical commit. Automated proposal policy and existing
 create/inverse/history behavior are retained; no general graph policy is added.
 
-The actual engine API inventory is 236 unique public function names, including
+Manual generic Part JSON creation and replacement consume
+`validate_part_creation_references` and `validate_part_replacement_references`.
+Both check the existing Entity, Package and optional default Footprint/PinPadMap
+references against the resolved Project, using the same pool-domain/kind lookup
+and Part-qualified diagnostics as typed authoring. Null or omitted optional
+links remain accepted; unknown payload fields are retained. Schema and shape
+errors remain with canonical admission. Create preserves source-path and root/
+leaf collision precedence; Set reuses the canonical source owner's foreign UUID
+predicate and permits existing same-owner root/leaf IDs. Both CLI lifecycles
+check only manual provenance against the same model passed to canonical commit.
+This supplements existing reference integrity without adding map-content,
+compatibility, ancestry, placed-update or general graph rules.
+
+The actual engine API inventory is 238 unique public function names, including
 the retained earlier inventory drift and these definition helpers. This is
 engineering convergence, not new GUI authoring, SMD/process/standards policy,
 native file-type migration, library adoption or manufacturing qualification.

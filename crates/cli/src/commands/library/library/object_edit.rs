@@ -5,7 +5,9 @@ use anyhow::{Context, Result};
 use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
-use eda_engine::api::native_write::library_definition::validate_footprint_replacement_references;
+use eda_engine::api::native_write::library_definition::{
+    validate_footprint_replacement_references, validate_part_replacement_references,
+};
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{CommitSource, ProjectResolver};
 use uuid::Uuid;
@@ -35,9 +37,14 @@ pub(crate) fn set_native_project_pool_library_object(
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let source = crate::cli_commit_source()?;
-    if object_kind == "footprints" && source == CommitSource::Cli {
-        validate_footprint_replacement_references(&model, &object)
-            .map_err(definition_validation_error)?;
+    if source == CommitSource::Cli {
+        match object_kind {
+            "footprints" => validate_footprint_replacement_references(&model, &object)
+                .map_err(definition_validation_error)?,
+            "parts" => validate_part_replacement_references(&model, &relative_path, &object)
+                .map_err(definition_validation_error)?,
+            _ => {}
+        }
     }
     // Validate and prepare against the same resolved revision; the canonical
     // commit guard rejects an intervening edit rather than accepting stale links.

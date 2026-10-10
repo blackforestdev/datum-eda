@@ -236,6 +236,7 @@ mod main_tests_project_pool_package_geometry;
 mod main_tests_project_pool_package_proposals;
 mod main_tests_project_pool_part;
 mod main_tests_project_pool_part_pin_semantics;
+mod main_tests_project_pool_part_reference_validation;
 mod main_tests_project_pool_pin_pad_map;
 mod main_tests_project_pool_resolver;
 mod main_tests_project_pool_symbol_library;

@@ -80,6 +80,44 @@ pub(super) fn create(
     objects.extend(additions);
     Ok(())
 }
+fn has_foreign_replacement_ids(
+    objects: &BTreeMap<ObjectId, DomainObject>,
+    source: Uuid,
+    replacements: &BTreeMap<Uuid, DomainObject>,
+) -> bool {
+    replacements.keys().any(|id| {
+        objects
+            .get(id)
+            .is_some_and(|object| object.source_shard_id != source)
+    })
+}
+
+/// Preserve canonical Set ownership and foreign UUID errors before link checks.
+/// Existing same-owner IDs remain valid replacements, exactly as in Set.
+pub(crate) fn pool_replacement_has_source_blocker(
+    objects: &BTreeMap<ObjectId, DomainObject>,
+    id: Uuid,
+    path: &str,
+    value: &Value,
+    kind: &str,
+) -> bool {
+    if super::source_shard::validate_source_shard_ownership_path(&SourceShardKind::Pool, path)
+        .is_err()
+    {
+        return true;
+    }
+    let source = shard(path).shard_id;
+    if objects
+        .get(&id)
+        .is_none_or(|object| object.source_shard_id != source)
+    {
+        return true;
+    }
+    payload(id, path, value, kind).map_or(true, |replacements| {
+        has_foreign_replacement_ids(objects, source, &replacements)
+    })
+}
+
 pub(super) fn set(
     objects: &mut BTreeMap<ObjectId, DomainObject>,
     mut diff: Option<&mut CommitDiff>,
@@ -94,10 +132,7 @@ pub(super) fn set(
         return Err(invalid("missing/foreign pool root"));
     }
     let mut replacements = payload(id, path, value, kind)?;
-    if replacements
-        .keys()
-        .any(|id| objects.get(id).is_some_and(|o| o.source_shard_id != source))
-    {
+    if has_foreign_replacement_ids(objects, source, &replacements) {
         return Err(invalid("foreign source UUID collision"));
     }
     let removed: Vec<_> = objects

@@ -5,7 +5,9 @@ use anyhow::{Context, Result};
 use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
-use eda_engine::api::native_write::library_definition::validate_footprint_creation_references;
+use eda_engine::api::native_write::library_definition::{
+    validate_footprint_creation_references, validate_part_creation_references,
+};
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{CommitSource, ProjectResolver};
 use uuid::Uuid;
@@ -48,9 +50,14 @@ pub(crate) fn create_native_project_pool_library_object(
             object: object.clone(),
         }],
     )?;
-    if object_kind == "footprints" && source == CommitSource::Cli {
-        validate_footprint_creation_references(&model, &relative_path, &object)
-            .map_err(definition_validation_error)?;
+    if source == CommitSource::Cli {
+        match object_kind {
+            "footprints" => validate_footprint_creation_references(&model, &relative_path, &object)
+                .map_err(definition_validation_error)?,
+            "parts" => validate_part_creation_references(&model, &relative_path, &object)
+                .map_err(definition_validation_error)?,
+            _ => {}
+        }
     }
     commit_prepared(&mut model, root, prepared)?;
     pool_library_mutation_view(
