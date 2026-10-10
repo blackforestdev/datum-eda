@@ -1,0 +1,78 @@
+{
+  "kind": "S5A-C04 bounded Board modifier and acknowledged hidden-origin proof",
+  "source_commit": "5682828d85abfc0668a42eda4d63de3c5672b062",
+  "gui_sha256": "e7a7dfbb38a97c15cf000d206f3e11226eb2c0d3834f389ccc0889bc08baa6a0",
+  "cli_sha256": "6833fba2e588e3db1fe712a237bac42a6e80de27eb2bd28cb7b65272c0a9a56b",
+  "configuration": "X11 WGPU Vulkan on shared KDE Wayland desktop; not physical Wayland/HUMAN",
+  "cases": [
+    {
+      "case": "hidden-origin-acknowledged",
+      "outcome": "Bounded hidden-origin exclusion; exact Run2 survives acknowledged hidden origin; shown-origin positivecontrol",
+      "review": "Actual reserved bounded PASS reported by appointed manager; no reviewer rerun/build/input; receipt transport coordinated by manager",
+      "result_sha256": "1723e1a7c36e45ab398418ea249e92a322047d48fdd7781622edb8a50130674d",
+      "harness_sha256": "c5df4b2737a8849fff9020e286639735cdfb2f8ced365ebe26c0919a92d15de9",
+      "sequences": [
+        8,
+        10,
+        10,
+        14
+      ]
+    },
+    {
+      "case": "board-track-modifier-grammar",
+      "outcome": "Bounded Track Object/Shift/Ctrl/idempotent/empty/plain grammar; removed-member hover cue not visually qualified",
+      "review": "Actual reserved bounded PASS reported by appointed manager; no reviewer rerun/build/input; receipt transport coordinated by manager",
+      "result_sha256": "eb682d6fdfde5c656490b1ead61cce47261edac8bcd1fdab98dac2f13ed04662",
+      "harness_sha256": "2a2517afb13d807c86895aab4b4448e35c0aa56f0bf35466d3248e999da82fa1",
+      "sequences": [
+        7,
+        8,
+        8,
+        8,
+        9,
+        10,
+        10,
+        11
+      ]
+    }
+  ],
+  "files": {
+    "hidden-origin-acknowledged-hidden-origin-preserves.png": "0bf428f3f9d64ae02ede747da4e3386a06c0bc64deade95d4457727285c1e82f",
+    "hidden-origin-acknowledged-hidden-prior.png": "1ed10675b9d13726dcfd0c566d93ec23ac83658a3d5abcc8d413034fe38ee39a",
+    "hidden-origin-acknowledged-ready.png": "9c1247fc5efb429cc04f57f4287141815e09a6ed4a4cbae3a916599b2f0c2c06",
+    "hidden-origin-acknowledged-result.json": "1723e1a7c36e45ab398418ea249e92a322047d48fdd7781622edb8a50130674d",
+    "hidden-origin-acknowledged-same-origin-visible-control.png": "f89236ba2292c8d0cc4a4646015338f90e504b6f3cede26589ae36c537b60335",
+    "hidden-origin-acknowledged-stdout.log": "9440b3edf123842b42bb407d6e2ecd472894ae1bd24495d9467c49711f001d09",
+    "hidden-origin-acknowledged.js": "87ce6f16ba21a3adb63e7cb205f0b01377985ac06912b19d18470db76333436b",
+    "hidden-origin-acknowledged.log": "be2cd3c64f6380865772d95927694130d9080116d49b88b38f6eaabad9b307d3",
+    "native_hidden_origin_acknowledged.py": "c5df4b2737a8849fff9020e286639735cdfb2f8ced365ebe26c0919a92d15de9",
+    "board-track-modifier-grammar-ctrl-remove.png": "58250105088e02f60230c3b14cd053e484300d0d0e11f9e6fce9b1e5c660b446",
+    "board-track-modifier-grammar-empty-preserves.png": "8dfa6f147efa444deec867348ffb4b5f8259a343a2845fbb40acd77d5ea7a324",
+    "board-track-modifier-grammar-outside-eligible-control.png": "0b09119f245f90f2142f3e533f2ca4a2749dc707c0dd2361110af4a49fc032de",
+    "board-track-modifier-grammar-ready.png": "9c1247fc5efb429cc04f57f4287141815e09a6ed4a4cbae3a916599b2f0c2c06",
+    "board-track-modifier-grammar-result.json": "eb682d6fdfde5c656490b1ead61cce47261edac8bcd1fdab98dac2f13ed04662",
+    "board-track-modifier-grammar-shift-add.png": "670fa2953ec512349f86ece595692693581e85c1b61a42d4027560a9ab15e409",
+    "board-track-modifier-grammar-stdout.log": "b54e1fe51933ab23ed789335daf108f5416e02ce97c3a5c6f924c4d3dc6745f9",
+    "board-track-modifier-grammar.js": "a9f6796a1aaf57b36488f98f6721d2184b17ebe7605b6cda330798ea1718797e",
+    "board-track-modifier-grammar.log": "85a3fcb97d03ef18c919c6214a4e2bb760776dcdd69b995418c5d7fdec74773c",
+    "native_board_track_modifier_grammar.py": "2a2517afb13d807c86895aab4b4448e35c0aa56f0bf35466d3248e999da82fa1"
+  },
+  "limits": "No full N01/N05/C04/C05/C06, clean removed-member visual, new identity rule, physical Wayland/HUMAN or CAM/T04 qualification. Global inventory disclosure question excluded from PASS. Existing fixtures and source/journal invariance reused. No source changes.",
+  "archive": {
+    "candidate_path": "target/s5a-c04-resume-20261009/c04-board-modifiers-hidden-evidence.tar.xz",
+    "sha256": "f3b800a915a1d70c76d10013dcdb7442d344a5a671ea5cd03e1b243fd806e9c2",
+    "size_bytes": 671864,
+    "raw_files": 19,
+    "committed_path": "docs/reviews/workflow-delivery-rollout/s5a/c04-board-modifiers-hidden-evidence.tar.xz"
+  },
+  "schema_version": 1,
+  "manager_record": {
+    "manager": "codex-project-manager-20261009",
+    "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+    "actual_receipts": "Reserved bounded hidden-origin PASS and Board modifier PASS directly received by manager; exact successful raw hashes above. No reviewer launch/build/input.",
+    "hidden_scope": "Post-hide delivered release3->4 preserves entire previous Run2 view, L1 remains false; re-show/Escape/same-point release5->6 acquires Track001. No prehidden-member-positive/filter/hierarchy/menu/region/fullN05 claim.",
+    "board_scope": "Exact Object001, Shift002 Compound/focus002, repeatedShift/Ctrl eligible003 whole-view noops, Ctrl001 Object002, Shift001 Compound/focus001, empty preservation and plain003 positive control. No clean removed-member visual cue claim.",
+    "transport": "Producer prepared immutable target candidate; manager retrieved it from disk after failed peer HTTP sends and installs committed evidence. Operational transport failure does not alter scope, receipts or qualification.",
+    "verification": "Manager verified archive digest and all19raw digests against archive and current target; old archives untouched."
+  }
+}
