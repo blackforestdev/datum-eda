@@ -6,11 +6,15 @@ Planning lane: GUI-SURFACE-SPECS / SURFACE-S01, coordinated claim
 Owner request, relayed by the appointed manager:
 > can we establish all the file types and apends required then document this?
 
+Owner naming direction for this amendment, relayed verbatim by the manager:
+> your recomened examples are ok. they seem long to me. *.dat_proj for .datum-project or *.dat_brd for datum-board etc. others might look like *.dat_sch, *.dat_symb, *.dat_fprnt etc.
+
 The manager interprets this request as planning authorization for this proposal;
-implementation, adoption and the new naming/opening rules remain unratified.
-Recommend the dedicated **`.datum-<kind>`** family for user-facing native documents,
-with JSON contents. The owner's `.pcb.json`, `.sch.json` and `.fprnt.json` examples
-are illustrative, not ratified names. Internal support files retain their formats.
+implementation, adoption and the complete catalog/opening rules remain unratified.
+Recommend the dedicated **`.dat_<kind>`** family for user-facing native documents,
+with JSON contents. The owner's naming direction specifies `.dat_proj`, `.dat_brd`,
+`.dat_sch`, `.dat_symb` and `.dat_fprnt`; the remaining table entries consistently
+extend that direction as proposals. Internal support files retain their formats.
 
 ## User-facing native documents
 
@@ -21,22 +25,22 @@ per-Pad, per-Track, per-Net or per-SheetInstance file.
 
 | Document kind | Actual baseline | Proposed suffix and example |
 | --- | --- | --- |
-| Project manifest / opening entry | `project.json` | `.datum-project` — `amplifier.datum-project` |
-| Board root | `board/board.json` | `.datum-board` — `main.datum-board` |
-| Schematic root | `schematic/schematic.json` | `.datum-schematic` — `main.datum-schematic` |
-| Schematic sheet | Manifest-referenced path under `schematic/`, ending `.json`; schema example `schematic/sheets/<uuid>.json` | `.datum-sheet` — `<uuid>.datum-sheet` |
-| Reusable schematic definition | Manifest-referenced path under `schematic/`, ending `.json`; NativeFormat example `schematic/definitions/<uuid>.json` | `.datum-schematic-definition` — `<uuid>.datum-schematic-definition` |
-| Rules root | `rules/rules.json` | `.datum-rules` — `design.datum-rules` |
-| Project settings documents | NativeFormat describes optional `settings/checking.json`, `settings/output.json`; not a claim of complete implemented settings workflow | `.datum-settings` — `checking.datum-settings`, `output.datum-settings`; embedded role distinguishes checking/output |
-| Library Unit | `pool/units/<uuid>.json` | `.datum-unit` — `<uuid>.datum-unit` |
-| Library Symbol | `pool/symbols/<uuid>.json` | `.datum-symbol` — `<uuid>.datum-symbol` |
-| Library Entity | `pool/entities/<uuid>.json` | `.datum-entity` — `<uuid>.datum-entity` |
-| Library Part | `pool/parts/<uuid>.json` | `.datum-part` — `<uuid>.datum-part` |
-| Library Package | `pool/packages/<uuid>.json` | `.datum-package` — `<uuid>.datum-package` |
-| Library Footprint | `pool/footprints/<uuid>.json` | `.datum-footprint` — `<uuid>.datum-footprint` |
-| Library Padstack | `pool/padstacks/<uuid>.json` | `.datum-padstack` — `<uuid>.datum-padstack` |
-| Library PinPadMap | `pool/pin_pad_maps/<uuid>.json` | `.datum-pin-pad-map` — `<uuid>.datum-pin-pad-map` |
-| Pool opening entry, if established | Current project pool references name directories; no implemented pool-manifest UUID/schema is established here | Reserve `.datum-pool` — `standard.datum-pool`; conditional naming slot, not authorization to introduce a manifest |
+| Project manifest / opening entry | `project.json` | `.dat_proj` — `amplifier.dat_proj` |
+| Board root | `board/board.json` | `.dat_brd` — `main.dat_brd` |
+| Schematic root | `schematic/schematic.json` | `.dat_sch` — `main.dat_sch` |
+| Schematic sheet | Manifest-referenced path under `schematic/`, ending `.json`; schema example `schematic/sheets/<uuid>.json` | `.dat_sheet` — `<uuid>.dat_sheet` |
+| Reusable schematic definition | Manifest-referenced path under `schematic/`, ending `.json`; NativeFormat example `schematic/definitions/<uuid>.json` | `.dat_schdef` — `<uuid>.dat_schdef` |
+| Rules root | `rules/rules.json` | `.dat_rules` — `design.dat_rules` |
+| Project settings documents | NativeFormat describes optional `settings/checking.json`, `settings/output.json`; not a claim of complete implemented settings workflow | `.dat_settings` — `checking.dat_settings`, `output.dat_settings`; embedded role distinguishes checking/output |
+| Library Unit | `pool/units/<uuid>.json` | `.dat_unit` — `<uuid>.dat_unit` |
+| Library Symbol | `pool/symbols/<uuid>.json` | `.dat_symb` — `<uuid>.dat_symb` |
+| Library Entity | `pool/entities/<uuid>.json` | `.dat_entity` — `<uuid>.dat_entity` |
+| Library Part | `pool/parts/<uuid>.json` | `.dat_part` — `<uuid>.dat_part` |
+| Library Package | `pool/packages/<uuid>.json` | `.dat_pkg` — `<uuid>.dat_pkg` |
+| Library Footprint | `pool/footprints/<uuid>.json` | `.dat_fprnt` — `<uuid>.dat_fprnt` |
+| Library Padstack | `pool/padstacks/<uuid>.json` | `.dat_padstk` — `<uuid>.dat_padstk` |
+| Library PinPadMap | `pool/pin_pad_maps/<uuid>.json` | `.dat_pinmap` — `<uuid>.dat_pinmap` |
+| Pool opening entry, if established | Current project pool references name directories; no implemented pool-manifest UUID/schema is established here | Reserve `.dat_pool` — `standard.dat_pool`; conditional naming slot, not authorization to introduce a manifest |
 
 Package and Footprint remain distinct types under PM008. A Unit's pins, a Symbol's
 graphics, a Footprint's geometry and a Padstack's apertures remain nested records.
@@ -105,7 +109,7 @@ amendments; manufacturing capability/refusal and retained CAM/T04 obligations re
 | BOM, placement and reports | `.csv`, `.json`, `.txt`, `.html` as selected by the existing output/report contract |
 | Drawings / documents / previews | `.pdf`, `.svg`, `.png`; `.dxf` where supported |
 | Mechanical / 3D assets | `.step`/`.stp`, `.wrl` and original referenced asset formats |
-| Structured manufacturing exchange | IPC-2581 XML; ODB++ directory/archive conventions where supported; no invented `.datum-*` replacement |
+| Structured manufacturing exchange | IPC-2581 XML; ODB++ directory/archive conventions where supported; no invented `.dat_*` replacement |
 | Electrical/simulation models | IBIS `.ibs`; SPICE `.cir`/`.lib`/`.sub`/`.inc`; Touchstone `.sNp`; AMI parameter/binary bundle formats where supported |
 | Output bundles / archives | Existing `.zip`/archive and directory conventions; payload formats and provenance remain separate |
 
@@ -140,8 +144,10 @@ amendments; manufacturing capability/refusal and retained CAM/T04 obligations re
    migration. These are future delivery obligations, not tests run or PASS here.
 6. Register per-kind desktop associations and filters after ratification. A compound
    alternative such as `.board.datum` is technically possible using full filename
-   globs; the single `.datum-board` family is recommended for readable names and
-   direct last-extension discrimination. JSON serialization needs no `.json` suffix.
+   globs. The shortened `.dat_*` family follows the owner's naming direction,
+   keeps a Datum prefix and distinguishes types by their complete last extension.
+   The earlier `.datum-<kind>` recommendation is superseded by this naming revision.
+   JSON serialization needs no `.json` suffix.
    Full filename globs are supported by the
    [freedesktop shared MIME specification](https://specifications.freedesktop.org/shared-mime-info/latest-single/).
 
@@ -149,12 +155,16 @@ amendments; manufacturing capability/refusal and retained CAM/T04 obligations re
 
 Reviewed the complete `foundation-consumer-completion` route before drafting: its
 [source dossier](../../../research/process-quality/FOUNDATION_CONSUMER_COMPLETION_REPAIR.md)
-and all 16 listed consumers in the [traceability manifest](../../../specs/evidence_traceability_manifest.json),
+and all 16 original consumers in the [traceability manifest](../../../specs/evidence_traceability_manifest.json),
 including the foundation plan, gap amendment, derived-authority plan/research,
 PM054/056/057/058, manufacturing contract, source-health policy, NativeFormat,
 Import, Engine, C03 disposition, exact-30 proposal and delivery receipt. Also reviewed
 PM000D and PM008. Current resolver, source-shard, pool-write and genesis audits
 provide implementation evidence; no fresh runtime/build proof was requested or run.
+For this naming-only revision, carried forward that unchanged review and reviewed
+both newly listed consumers in full: this proposal and its [original independent receipt](native-file-types-review.json).
+That receipt remains pinned to the earlier proposal hash; its PASS does not review
+this amended table. An independent amendment review is required.
 The actual suffix/path constraints are in [source_shard.rs](../../../crates/engine/src/substrate/source_shard.rs),
 [project_resolver.rs](../../../crates/engine/src/substrate/project_resolver.rs) and
 [pool_journal_ops.rs](../../../crates/engine/src/substrate/pool_journal_ops.rs).
