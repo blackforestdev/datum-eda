@@ -44,6 +44,16 @@
         "deliverable": "docs/reviews/workflow-delivery-rollout/library-foundation-investigation.json#/independent_review",
         "status": "Read-only planning review complete; no runtime PASS",
         "scope": "Review finite conversion criteria and source/access/representation/authority boundaries; no actual-file or runtime PASS"
+      },
+      {
+        "owner": "lib-agent",
+        "deliverable": "docs/reviews/workflow-delivery-rollout/library-foundation-investigation.json#/library_surface_inventory",
+        "status": "Read-only library inventory received; formal S03 refinement remains pending"
+      },
+      {
+        "owner": "/root/s5a_code_audit",
+        "deliverable": "docs/reviews/workflow-delivery-rollout/library-foundation-investigation.json#/schematic_surface_inventory",
+        "status": "Read-only schematic inventory received; normative S02 refinement remains pending"
       }
     ],
     "proposed_delivery_sequence": [
@@ -139,5 +149,239 @@
       "content": "{\n  \"kind\": \"Noncanonical coordination status; no implementation or adoption authority\",\n  \"objective\": \"Establish one faithful provider-to-native component conversion with automated numerical checks before expanding a seed library\",\n  \"manager\": \"/root\",\n  \"scheduled_authority\": \"GUI-SURFACE-SPECS / SURFACE-S01 planning; runtime implementation not granted\",\n  \"approach\": \"Reuse Ultra Librarian engineering baseline; independently check preservation of source/export geometry, connectivity and effective process apertures\",\n  \"workstreams\": [\n    {\n      \"owner\": \"lib-agent\",\n      \"deliverable\": \"/tmp/datum-ultralibrarian-sample-access-result.txt\",\n      \"status\": \"Access-result report complete; export inspection blocked\",\n      \"finding\": \"LM321MF export form requires registration and agreement acceptance; no archive acquired or inspected\",\n      \"source\": \"https://vendor.ultralibrarian.com/TI/embedded/?gpn=LM321&package=DBV&pin=5\",\n      \"manager_action\": \"Resolve lawful sample access and applicable internal conversion rights; do not assign further hypothetical source research\"\n    },\n    {\n      \"owner\": \"/root/s5a_code_audit\",\n      \"deliverable\": \"/tmp/datum-library-conversion-field-coverage.json\",\n      \"status\": \"Assigned; result pending\",\n      \"scope\": \"Current native/parser coverage for geometry, holes, effective mask/paste, units, pins/gates and provenance; exact source references; no builds or edits\"\n    },\n    {\n      \"owner\": \"/root/management_review\",\n      \"deliverable\": \"Independent acceptance and blocker assessment\",\n      \"status\": \"Assigned; result pending\",\n      \"scope\": \"Review finite conversion criteria and source/access/representation/authority boundaries; no actual-file or runtime PASS\"\n    }\n  ],\n  \"proposed_delivery_sequence\": [\n    {\"stage\": 1, \"result\": \"One lawful original export, exact variant, source identity, digest and terms\", \"status\": \"Blocked on acquisition\"},\n    {\"stage\": 2, \"result\": \"Actual-file field inventory mapped to native support, including resolved mask/paste\", \"status\": \"Native coverage investigation active; actual-file inventory waits for stage 1\"},\n    {\"stage\": 3, \"result\": \"Authorized converter and independent source/native numerical comparison, explicit failures for losses\", \"status\": \"Proposed; requires reviewed scope and implementation authority\"},\n    {\"stage\": 4, \"result\": \"Independent review of one native component through browse/place/save/reopen and refusal paths\", \"status\": \"Proposed; depends on stage 3; not a compliance guarantee\"},\n    {\"stage\": 5, \"result\": \"Expand to a bounded seed using the same automation\", \"status\": \"Proposed; requires successful pilot and source distribution authority\"}\n  ],\n  \"acceptance_focus\": [\n    \"Compare independently decoded source/export values against saved and reloaded native values\",\n    \"Copper dimensions, shapes, holes, coordinates, transforms and units\",\n    \"Effective mask and paste geometry including overrides, inheritance and external inputs\",\n    \"Pin/pad identities, gates, mapping, polarity and orientation\",\n    \"Preserve source precision; report differences with a justified precision basis\",\n    \"Do not replace unsupported features or invent absent values\",\n    \"Retain provider engineering provenance; exception review for missing or conflicting facts\"\n  ],\n  \"completed_evidence\": [\n    \"/tmp/datum-starter-packet-01.txt\",\n    \"/tmp/datum-library-standards-reconciliation.txt\",\n    \"/tmp/datum-library-conversion-proposal.txt\",\n    \"/tmp/datum-library-provider-comparison.txt\"\n  ],\n  \"known_issue\": \"dat-aperture-process-basis-ttr9; intake only, no new dependency\",\n  \"verification_limits\": \"No provider archive inspected, conversion implemented, runtime proof or source adoption completed\"\n}\n",
       "status": "Archived exact investigation snapshot; embedded temporary paths are historical only"
     }
+  },
+  "library_surface_inventory": {
+    "status": "Read-only SURFACE-S01 library inventory; not a buildable S03 surface contract or complete-route review PASS",
+    "source": "Actual lib-agent reports, eight sections and completion message, 2026-10-10",
+    "requirements": [
+      {
+        "workflow": "browse_and_inspect",
+        "required": "Pool/kind discovery; names/MPN/tags/parametric search; typed dependency navigation; Units/pins, Symbols, Entities/gates, manufacturer Parts, distinct Package body and Footprint lands, Padstack layers/drill/mask/paste, gate-aware maps, models, revisions/provenance/basis/findings; keyboard focus and honest unavailable states",
+        "current": "Engine pool reads/index/resolver exist; complete GUI browser across kinds missing",
+        "refs": [
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:41-107",
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:162-209",
+          "docs/gui/DATUM_GUI_PRODUCT_SPEC.md:268-287"
+        ]
+      },
+      {
+        "workflow": "create_and_edit",
+        "required": "Manual per-kind library.author using shared tooling; new identity for create/clone; editable pins/graphics/metadata/process/maps; canonical local edits and proposals for automated/review-required/placed-impact edits",
+        "current": "Engine native library builders exist; complete forms/editors and ordinary authoring acceptance missing",
+        "refs": [
+          "crates/engine/src/api/native_write/library.rs:90-148",
+          "crates/engine/src/api/native_write/library.rs:380-488",
+          "crates/engine/src/api/native_write/library_footprint.rs:23",
+          "crates/engine/src/api/native_write/library_pin_pad_map.rs:34-74"
+        ]
+      },
+      {
+        "workflow": "validate_approve_and_attach_models",
+        "required": "Schema/reference/geometry/identity and basis-specific findings; revision-qualified results, unknown/deviation status, approval actor; model hash/role/format/provenance/review without executing attachments",
+        "current": "Typed journal validation, graph diagnostics and chip/SOIC recipe slices exist; full final-graph policy, systematic aperture/model consumption and GUI findings/state controls remain gaps",
+        "refs": [
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:259-325",
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:371-410",
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:573-631"
+        ]
+      },
+      {
+        "workflow": "place",
+        "required": "Native named Part/variant/map/footprint choices with honest eligibility and source/binding status",
+        "current": "Bounded native Symbol picker with four-choice paging, named pins, binding refusal and native body projection is delivered; not a complete Part browser or approved seed",
+        "refs": [
+          "crates/gui-protocol/src/schematic_authoring.rs:11-27",
+          "crates/gui-protocol/src/schematic_authoring.rs:99-179",
+          "crates/gui-render/src/schematic_picker.rs:12-100",
+          "crates/gui-app/src/runtime_schematic.rs",
+          "crates/gui-protocol/src/schematic_scene_import/native_library.rs:12-43"
+        ]
+      },
+      {
+        "workflow": "review_and_update_placed_parts",
+        "required": "Exact retained old/new graphs, semantic mapping/process diffs, complete affected occurrences and checks, explicit decline/accept, canonical atomic propagation with save/reopen/undo",
+        "current": "Bindings/journal/frozen pads are reusable seams; arbitrary retained library graph resolver, full where-used uptake and GUI review remain incomplete",
+        "refs": [
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:326-370",
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:552-571",
+          "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md:613-618",
+          "docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md:411-434"
+        ]
+      }
+    ],
+    "visual_inventory": {
+      "current": "No dedicated library-browser/symbol-editor/footprint-editor prototype file in inspected inventory. Existing tree/editor-fill/footprint-pane/focus Inspector evidence is shell-level; workspace-panes study is historical, with PM021 governing shell inheritance.",
+      "required_S03": "Claude-owned browse/detail/per-kind authoring/map/aperture/findings/status/update/refusal/accessibility frames; no HTML changed",
+      "refs": [
+        "docs/gui/prototypes/board-editor.html:143-145",
+        "docs/gui/prototypes/schematic-editor.html:164",
+        "docs/gui/prototypes/workspace-panes.html:98-99",
+        "docs/gui/prototypes/workspace-panes.html:112-120",
+        "docs/gui/prototypes/workspace-panes.html:173-192",
+        "docs/gui/prototypes/workspace-panes.html:207-218"
+      ]
+    },
+    "stale_consumer_prose": [
+      {
+        "ref": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+        "finding": "Proposed new library_author.rs and CLI constructors must be reconciled with existing api/native_write engine builders; no new private writer required."
+      },
+      {
+        "ref": "docs/gui/DATUM_GUI_MENU_BINDINGS.md:95-96",
+        "finding": "Symbol/Wire GUI-BLOCKED prose conflicts with bounded landed native behavior; preserve broader coverage gaps."
+      }
+    ],
+    "unresolved_product_choices": [
+      "Pool layering/types/writable targets",
+      "Nonapproved and UnknownBasis warning/block policy",
+      "Generator family/basis/naming",
+      "Placed-binding or field-specific impact triggers",
+      "Dependency graph promotion",
+      "Source/access/license and supported fidelity scope"
+    ],
+    "review_coverage": {
+      "fully_read_this_audit": [
+        "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "docs/gui/prototypes/workspace-panes.html"
+      ],
+      "routes_inspected": [
+        "parametric-footprint-editor",
+        "prototype-editor-shell-and-panes",
+        "foundation-consumer-completion"
+      ],
+      "limits": "Other long route materials focused/reused with some truncated output; no new complete-route or digest review PASS from lib-agent. Adequate prior complete review or omitted full reads required before normative S02/S03 changes."
+    },
+    "execution": "No repository edits, HTML changes, builds, parser execution, source adoption or runtime/conformance acceptance by lib-agent."
+  },
+  "review_scope_note": "Existing library-foundation-investigation-review.json pins the pre-inventory packet607d5348; it does not approve subsequent inventory amendments. Added inventory remains pending read-only findings.",
+  "schematic_surface_inventory": {
+    "status": "Read-only SURFACE-S01 schematic inventory; no full-route, S02 specification or runtime acceptance",
+    "source": "Actual s5a_code_audit requirement/visual/code/evidence inventory and final report, 2026-10-10",
+    "requirements": {
+      "target_objects": [
+        "Symbol",
+        "Pin",
+        "Wire",
+        "Label",
+        "Port",
+        "Bus",
+        "BusEntry",
+        "Junction",
+        "NoConnect",
+        "Hierarchy"
+      ],
+      "target_workflows": [
+        "Native sheet and hierarchy/occurrence navigation",
+        "Selection and Inspector",
+        "Place/move/delete/edit",
+        "Net highlight and ERC finding navigation",
+        "Canonical operations and journal"
+      ],
+      "shell": "Project/navigation, document/view/focus/tool/dirty/check context; focused pane owns tools and panels",
+      "refs": [
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md:73-99",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md:103-112",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md:143-169",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md:291-297"
+      ]
+    },
+    "visual_inventory": {
+      "source": "docs/gui/prototypes/schematic-editor.html",
+      "scope": "Composite P2.2 geometry, P2.3 cross-probe and P2.4 Net Inspector reference; not one execution slice",
+      "dom_css": [
+        "Token roles and left/right panes; Sheets/project navigation",
+        "Focused schematic and board split; Select/Wire/Symbol/Label/Bus/Junction tool rail",
+        "Grid/symbol bodies/pins/terminal dots/ref-value/power/passives/NC/local-global labels/bus entries/hierarchy/ERC warning",
+        "Net/Members/Checks Inspector, cross-probe indication, terminal/status and reduced-motion rules",
+        "Script only changes pane focus and section collapse"
+      ],
+      "limits": "Mockup measurements, filenames and names are illustrative; current Rendering Book selection/base-hue rules govern over historical all-pink illustration. No visual HTML edit or conformance PASS.",
+      "refs": [
+        "docs/gui/prototypes/schematic-editor.html:1-10",
+        "docs/gui/prototypes/schematic-editor.html:13-135",
+        "docs/gui/prototypes/schematic-editor.html:154-286",
+        "docs/gui/prototypes/schematic-editor.html:331-404",
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md:155-269",
+        "docs/gui/DATUM_RENDERING_BOOK.md:45-104",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md:93-109",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md:555-595"
+      ]
+    },
+    "authoring_families": {
+      "targets": [
+        "placeSymbol",
+        "transformSymbol",
+        "heterogeneousDelete",
+        "drawWire",
+        "label(kind)",
+        "marker(kind)",
+        "port(create/edit)",
+        "bus(members/entries)",
+        "symbolfield",
+        "ERC+waiver"
+      ],
+      "refs": [
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md:156-464",
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md:601-685"
+      ],
+      "authority": "Target normalization is not delivered GUI coverage. PM053 stable NetIds, occurrence paths, semantic Bus identity and truthful pending/mismatch cross-domain projection govern; no name-based identity or cache allocation."
+    },
+    "code_seams": [
+      "crates/gui-protocol/src/schematic_authoring.rs:25-54",
+      "crates/gui-protocol/src/schematic_authoring.rs:94-167",
+      "crates/gui-app/src/runtime_schematic.rs:6-33",
+      "crates/gui-app/src/runtime_schematic.rs:95-160",
+      "crates/gui-app/src/runtime_schematic.rs:196-358",
+      "crates/gui-app/src/runtime_native_edit.rs:212-229",
+      "crates/gui-app/src/runtime_native_edit.rs:310-379",
+      "crates/gui-app/src/runtime_native_edit/move_acquisition.rs:21-89",
+      "crates/gui-protocol/src/workspace_loading.rs:107-131",
+      "crates/gui-app/src/runtime_selection_menu.rs:235-249"
+    ],
+    "existing_delivery": {
+      "receipts": [
+        "docs/reviews/workflow-delivery-rollout/native-schematic/first-symbol-wire-delivery.json",
+        "docs/reviews/workflow-delivery-rollout/native-schematic/independent-review.json",
+        "docs/reviews/workflow-delivery-rollout/native-schematic/symbol-move-delivery-review.json"
+      ],
+      "credited": "Bounded named native Symbol picker/place/preview/cancel, terminal-connected multisegment Wire, canonical history/Save/reopen; isolated unique-occurrence Symbol Move with exact origin/pin translation and bindings preserved",
+      "limits": "Existing test fixture is not approved manufacturer/library seed. Programmatic ordinary Wayland callbacks do not establish physical HUMAN qualification; bounded X11 Move proof excludes connected/repeated/ambiguous/positioned-owner transforms. No new replay needed or performed."
+    },
+    "remaining_choices": [
+      "Buildable sheet/occurrence/hierarchy navigation and pane/panel follow-focus semantics",
+      "Authoring availability per object, distinct from read-only affordances",
+      "Narrow picker versus full library browser dependency",
+      "Pending/refusal/stale/dirty/check feedback",
+      "Field/delete/rotate/mirror/bulk/hierarchy proposal boundaries",
+      "Typed Net/member/ERC navigation with incomplete bindings",
+      "Keyboard/assistive labels/motion/high-contrast and honest machine/HUMAN dispositions"
+    ],
+    "stale_prose": [
+      {
+        "ref": "docs/gui/DATUM_GUI_MENU_BINDINGS.md:67,95-98",
+        "finding": "GUI-BLOCKED history/Symbol/Wire statuses conflict with bounded delivery; preserve wider gaps."
+      },
+      {
+        "ref": "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md:209-215,601-650",
+        "finding": "Old no-undo/no-op and hierarchy scaffold claims conflict with later canonical-operation summaries; reconcile precisely."
+      },
+      {
+        "ref": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md:299",
+        "finding": "Historical board-first sequencing is not a new prerequisite against controlling native-first priority."
+      }
+    ],
+    "review_coverage": {
+      "owning_routes_located": [
+        "prototype-editor-shell-and-panes",
+        "rendering-substrate",
+        "text-and-typography",
+        "prototype-rendering-and-publish",
+        "prototype-selection"
+      ],
+      "completed": "Schematic prototype DOM/CSS/script and focused current source/consumer requirements and evidence",
+      "limits": "Not all board/pane prototypes or complete route consumers reread; no new full-route cross-review/digest-ready PASS. Scoped manifest search found no direct consumer entry for GUI product spec or schematic authoring contract; reconcile owning evidence mapping before normative refinements, not an invented route."
+    },
+    "execution": "No files changed, builds, tests, new rules/thresholds/visual edits or acceptance by auditor."
   }
 }
