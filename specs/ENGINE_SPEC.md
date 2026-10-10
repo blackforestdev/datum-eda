@@ -2284,7 +2284,20 @@ check only manual provenance against the same model passed to canonical commit.
 This supplements existing reference integrity without adding map-content,
 compatibility, ancestry, placed-update or general graph rules.
 
-The actual engine API inventory is 238 unique public function names, including
+`api::native_write::library_pin_pad_map` owns the existing typed manual/proposal
+map validator. Manual generic PinPadMap JSON Create and Set consume its creation
+and replacement reference guards against the same prepared model used by commit.
+The existing nonempty mapping, Part/Entity/gate/Unit/pin and target-pad checks,
+duplicate pad and gate/pin diagnostics, and matching Footprint/Part Package rule
+are retained. An omitted or null Footprint uses Package pads. Generic admission
+defers schema/shape, source ownership and root/leaf collision errors to canonical
+admission. It reads original mapping keys after shape admission so alternate UUID
+spellings still reach duplicate-pad validation; stored JSON and extension fields
+are unchanged. Typed/proposal callers retain their validation order and complete
+contextual error chains. This converges existing checks without adding mapping
+completeness, normalization, broader graph or compatibility policy.
+
+The actual engine API inventory is 241 unique public function names, including
 the retained earlier inventory drift and these definition helpers. This is
 engineering convergence, not new GUI authoring, SMD/process/standards policy,
 native file-type migration, library adoption or manufacturing qualification.

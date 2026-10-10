@@ -92,6 +92,238 @@ pub fn set_part_default_pin_pad_map_spec(
     })
 }
 
+fn validation(message: String) -> EngineError {
+    EngineError::Validation(message)
+}
+
+// Preserve legacy CLI anyhow Context rendering, including every source cause.
+fn validation_context(context: String, error: &dyn std::error::Error) -> EngineError {
+    let mut message = format!("{context}: {error}");
+    let mut source = error.source();
+    while let Some(cause) = source {
+        message.push_str(&format!(": {cause}"));
+        source = cause.source();
+    }
+    validation(message)
+}
+
+/// Check existing typed PinPadMap rules for a manual generic Create.
+/// Canonical schema, source ownership and UUID collisions retain precedence.
+pub fn validate_pin_pad_map_creation_references(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+) -> Result<(), EngineError> {
+    validate_pin_pad_map_definition(model, relative_path, object, false)
+}
+
+/// Check existing typed PinPadMap rules for a manual generic Set.
+pub fn validate_pin_pad_map_replacement_references(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+) -> Result<(), EngineError> {
+    validate_pin_pad_map_definition(model, relative_path, object, true)
+}
+
+fn validate_pin_pad_map_definition(
+    model: &DesignModel,
+    relative_path: &str,
+    object: &serde_json::Value,
+    replacement: bool,
+) -> Result<(), EngineError> {
+    if object
+        .get("schema_version")
+        .and_then(serde_json::Value::as_u64)
+        != Some(1)
+    {
+        return Ok(());
+    }
+    let Ok(map) = serde_json::from_value::<crate::pool::PinPadMap>(object.clone()) else {
+        return Ok(());
+    };
+    let blocked = if replacement {
+        crate::substrate::pool_replacement_has_source_blocker(
+            &model.objects,
+            map.uuid,
+            relative_path,
+            object,
+            "pin_pad_maps",
+        )
+    } else {
+        crate::substrate::pool_creation_has_source_blocker(
+            &model.objects,
+            map.uuid,
+            relative_path,
+            object,
+            "pin_pad_maps",
+        )
+    };
+    if blocked {
+        return Ok(());
+    }
+    // Read original JSON keys: differently cased UUID spellings must reach
+    // the existing duplicate-pad check rather than coalescing in a HashMap.
+    // The typed decode above owns shape admission; the supplied payload stays intact.
+    let mappings = object
+        .get("mappings")
+        .and_then(serde_json::Value::as_object)
+        .into_iter()
+        .flatten()
+        .map(|(pad, entry)| {
+            let pad = Uuid::parse_str(pad).map_err(|error| validation(error.to_string()))?;
+            let entry: crate::pool::PadMapEntry = serde_json::from_value(entry.clone())?;
+            Ok(PinPadMapMapping {
+                pad,
+                gate: entry.gate,
+                pin: entry.pin,
+            })
+        })
+        .collect::<Result<Vec<_>, EngineError>>()?;
+    validate_pin_pad_map_payload(model, map.part, map.footprint, &mappings)
+}
+
+/// Existing typed manual/proposal map validation, shared with generic admission.
+pub fn validate_pin_pad_map_payload(
+    model: &DesignModel,
+    part_id: Uuid,
+    footprint_id: Option<Uuid>,
+    mappings: &[PinPadMapMapping],
+) -> Result<(), EngineError> {
+    if mappings.is_empty() {
+        return Err(validation(
+            "PinPadMap requires at least one mapping".to_string(),
+        ));
+    }
+    let part = materialized_pool_object(model, part_id, "parts")?;
+    let entity_id = uuid_field(&part, "entity", "part")?;
+    let package_id = uuid_field(&part, "package", "part")?;
+    let entity = materialized_pool_object(model, entity_id, "entities")?;
+    let valid_pads = if let Some(footprint_id) = footprint_id {
+        let footprint = materialized_pool_object(model, footprint_id, "footprints")?;
+        let footprint_package_id = uuid_field(&footprint, "package", "footprint")?;
+        if footprint_package_id != package_id {
+            return Err(validation(format!(
+                "pool footprint {footprint_id} belongs to package {footprint_package_id}, not part package {package_id}"
+            )));
+        }
+        object_keys(
+            &footprint,
+            "pads",
+            &format!("pool footprint {footprint_id}"),
+        )?
+    } else {
+        let package = materialized_pool_object(model, package_id, "packages")?;
+        object_keys(&package, "pads", &format!("pool package {package_id}"))?
+    };
+    let mut seen_pads = std::collections::HashSet::new();
+    let mut seen_gate_pins = std::collections::HashSet::new();
+    for entry in mappings {
+        if !seen_pads.insert(entry.pad) {
+            return Err(validation(format!(
+                "duplicate PinPadMap mapping for pad {}",
+                entry.pad
+            )));
+        }
+        if !seen_gate_pins.insert((entry.gate, entry.pin)) {
+            return Err(validation(format!(
+                "duplicate PinPadMap mapping for gate {} pin {}",
+                entry.gate, entry.pin
+            )));
+        }
+        validate_gate_pin(model, entity_id, &entity, entry.gate, entry.pin)?;
+        if !valid_pads.contains(&entry.pad) {
+            return Err(validation(format!(
+                "PinPadMap target has no pad {}",
+                entry.pad
+            )));
+        }
+    }
+    Ok(())
+}
+fn validate_gate_pin(
+    model: &DesignModel,
+    entity_id: Uuid,
+    entity: &serde_json::Value,
+    gate_id: Uuid,
+    pin_id: Uuid,
+) -> Result<(), EngineError> {
+    let gate = entity
+        .get("gates")
+        .and_then(serde_json::Value::as_object)
+        .and_then(|gates| gates.get(&gate_id.to_string()))
+        .ok_or_else(|| validation(format!("pool entity {entity_id} has no gate {gate_id}")))?;
+    let unit_id = uuid_field(gate, "unit", "entity gate")?;
+    let unit = materialized_pool_object(model, unit_id, "units")?;
+    let unit_pins = unit
+        .get("pins")
+        .and_then(serde_json::Value::as_object)
+        .ok_or_else(|| validation(format!("pool unit {unit_id} has no pins map")))?;
+    if !unit_pins.contains_key(&pin_id.to_string()) {
+        return Err(validation(format!(
+            "pool unit {unit_id} has no pin {pin_id}"
+        )));
+    }
+    Ok(())
+}
+
+fn object_keys(
+    value: &serde_json::Value,
+    field: &str,
+    label: &str,
+) -> Result<std::collections::HashSet<Uuid>, EngineError> {
+    let object = value
+        .get(field)
+        .and_then(serde_json::Value::as_object)
+        .ok_or_else(|| validation(format!("{label} has no {field} map")))?;
+    object
+        .keys()
+        .map(|key| {
+            Uuid::parse_str(key).map_err(|error| {
+                validation_context(format!("{label} {field} key {key} is not a UUID"), &error)
+            })
+        })
+        .collect()
+}
+fn materialized_pool_object(
+    model: &DesignModel,
+    object_id: Uuid,
+    object_kind: &str,
+) -> Result<serde_json::Value, EngineError> {
+    let object = model
+        .objects
+        .get(&object_id)
+        .filter(|object| object.domain == "pool" && object.kind == object_kind)
+        .ok_or_else(|| validation(format!("missing pool {object_kind} {object_id}")))?;
+    let shard = model
+        .source_shards
+        .iter()
+        .find(|shard| shard.shard_id == object.source_shard_id)
+        .ok_or_else(|| {
+            validation(format!(
+                "missing source shard for pool {object_kind} {object_id}"
+            ))
+        })?;
+    model
+        .materialized_source_shard_value_by_relative_path(&shard.relative_path)
+        .map_err(|error| {
+            validation_context(
+                format!("failed to materialize pool {object_kind} {object_id}"),
+                &error,
+            )
+        })
+}
+
+fn uuid_field(value: &serde_json::Value, field: &str, label: &str) -> Result<Uuid, EngineError> {
+    let raw = value
+        .get(field)
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| validation(format!("{label} missing {field}")))?;
+    Uuid::parse_str(raw).map_err(|error| {
+        validation_context(format!("{label} has invalid {field} uuid {raw}"), &error)
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;

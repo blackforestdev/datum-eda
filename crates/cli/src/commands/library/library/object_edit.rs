@@ -8,6 +8,7 @@ use eda_engine::api::native_write::library::{
 use eda_engine::api::native_write::library_definition::{
     validate_footprint_replacement_references, validate_part_replacement_references,
 };
+use eda_engine::api::native_write::library_pin_pad_map::validate_pin_pad_map_replacement_references;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{CommitSource, ProjectResolver};
 use uuid::Uuid;
@@ -43,6 +44,10 @@ pub(crate) fn set_native_project_pool_library_object(
                 .map_err(definition_validation_error)?,
             "parts" => validate_part_replacement_references(&model, &relative_path, &object)
                 .map_err(definition_validation_error)?,
+            "pin_pad_maps" => {
+                validate_pin_pad_map_replacement_references(&model, &relative_path, &object)
+                    .map_err(definition_validation_error)?
+            }
             _ => {}
         }
     }

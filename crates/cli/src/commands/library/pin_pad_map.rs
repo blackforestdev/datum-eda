@@ -134,49 +134,13 @@ pub(super) fn validate_pin_pad_map_payload(
     footprint_id: Option<Uuid>,
     mappings: &[PinPadMapEntryInput],
 ) -> Result<()> {
-    if mappings.is_empty() {
-        bail!("PinPadMap requires at least one mapping");
-    }
-    let part = materialized_pool_object(model, part_id, "parts")?;
-    let entity_id = uuid_field(&part, "entity", "part")?;
-    let package_id = uuid_field(&part, "package", "part")?;
-    let entity = materialized_pool_object(model, entity_id, "entities")?;
-    let valid_pads = if let Some(footprint_id) = footprint_id {
-        let footprint = materialized_pool_object(model, footprint_id, "footprints")?;
-        let footprint_package_id = uuid_field(&footprint, "package", "footprint")?;
-        if footprint_package_id != package_id {
-            bail!(
-                "pool footprint {footprint_id} belongs to package {footprint_package_id}, not part package {package_id}"
-            );
-        }
-        object_keys(
-            &footprint,
-            "pads",
-            &format!("pool footprint {footprint_id}"),
-        )?
-    } else {
-        let package = materialized_pool_object(model, package_id, "packages")?;
-        object_keys(&package, "pads", &format!("pool package {package_id}"))?
-    };
-    let mut seen_pads = std::collections::HashSet::new();
-    let mut seen_gate_pins = std::collections::HashSet::new();
-    for entry in mappings {
-        if !seen_pads.insert(entry.pad) {
-            bail!("duplicate PinPadMap mapping for pad {}", entry.pad);
-        }
-        if !seen_gate_pins.insert((entry.gate, entry.pin)) {
-            bail!(
-                "duplicate PinPadMap mapping for gate {} pin {}",
-                entry.gate,
-                entry.pin
-            );
-        }
-        validate_gate_pin(model, entity_id, &entity, entry.gate, entry.pin)?;
-        if !valid_pads.contains(&entry.pad) {
-            bail!("PinPadMap target has no pad {}", entry.pad);
-        }
-    }
-    Ok(())
+    eda_engine::api::native_write::library_pin_pad_map::validate_pin_pad_map_payload(
+        model,
+        part_id,
+        footprint_id,
+        mappings,
+    )
+    .map_err(super::library::definition_validation_error)
 }
 
 fn infer_gate_for_pin(
@@ -212,47 +176,6 @@ fn infer_gate_for_pin(
             "PinPadMap entry {pin_id} is ambiguous across multiple gates; use pad_uuid:gate_uuid:pin_uuid"
         ),
     }
-}
-
-fn validate_gate_pin(
-    model: &eda_engine::substrate::DesignModel,
-    entity_id: Uuid,
-    entity: &serde_json::Value,
-    gate_id: Uuid,
-    pin_id: Uuid,
-) -> Result<()> {
-    let gate = entity
-        .get("gates")
-        .and_then(serde_json::Value::as_object)
-        .and_then(|gates| gates.get(&gate_id.to_string()))
-        .ok_or_else(|| anyhow::anyhow!("pool entity {entity_id} has no gate {gate_id}"))?;
-    let unit_id = uuid_field(gate, "unit", "entity gate")?;
-    let unit = materialized_pool_object(model, unit_id, "units")?;
-    let unit_pins = unit
-        .get("pins")
-        .and_then(serde_json::Value::as_object)
-        .ok_or_else(|| anyhow::anyhow!("pool unit {unit_id} has no pins map"))?;
-    if !unit_pins.contains_key(&pin_id.to_string()) {
-        bail!("pool unit {unit_id} has no pin {pin_id}");
-    }
-    Ok(())
-}
-
-fn object_keys(
-    value: &serde_json::Value,
-    field: &str,
-    label: &str,
-) -> Result<std::collections::HashSet<Uuid>> {
-    let object = value
-        .get(field)
-        .and_then(serde_json::Value::as_object)
-        .ok_or_else(|| anyhow::anyhow!("{label} has no {field} map"))?;
-    object
-        .keys()
-        .map(|key| {
-            Uuid::parse_str(key).with_context(|| format!("{label} {field} key {key} is not a UUID"))
-        })
-        .collect()
 }
 
 pub(crate) use eda_engine::api::native_write::library_pin_pad_map::PinPadMapMapping as PinPadMapEntryInput;
