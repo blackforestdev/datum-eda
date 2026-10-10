@@ -1,0 +1,456 @@
+{
+  "schema_version": 1,
+  "review_id": "SURFACE-S04-VISUAL-CANDIDATES-20261010",
+  "outcome": "PASS",
+  "reviewer_session": "/root/management_review",
+  "reviewed_at_utc": "2026-10-10T12:51:36.937863Z",
+  "task": "GUI-SURFACE-SPECS / SURFACE-S04",
+  "verdict": "PASS — bounded static candidate readiness after mandatory presentation corrections",
+  "scope": "Independent source and rendered-study review only; not completion, objective acceptance or successor selection.",
+  "candidate_sources": [
+    {
+      "path": "docs/gui/prototypes/schematic-surfaces-study.html",
+      "sha256": "1598e0193e2735e01df882e61db40ef5683684e95822f5ff53bb9d3e281d2f0f"
+    },
+    {
+      "path": "docs/gui/prototypes/library-surfaces-study.html",
+      "sha256": "f18b7bd36b3e90679ee819ebb6fc60fbb67c4006e7748af5e9800998fd6d0cba"
+    }
+  ],
+  "authority_and_route_reuse": {
+    "references": [
+      "surface-reconciliation.json",
+      "surface-reconciliation-review.json",
+      "schematic-surface-contract-review.json",
+      "library-surface-contract-review.json",
+      "surface-route-preflight.json",
+      "library-surface-route-preflight.json"
+    ],
+    "method": "Reuse prior exact unchanged complete route preflights and bounded contract/reconciliation reviews. Personally read full earlier corrected HTML pair, then current changed CSS and L-J2a/b regions. No new whole-route or full standards-corpus review claimed."
+  },
+  "historical_revise": {
+    "sources": {
+      "schematic": "2418e110b325f84e35b1a5868e98c01f0431bfb632c612bcf4e3d89eaf52b91f",
+      "library": "6bd17abea259aef4fc752150b7d8838ecbccc65b7127386b066de67593a00253"
+    },
+    "captures": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-normal.png",
+        "sha256": "77d70a1a97ba5040ba2ab54b1c21c7766793a052c54d3cf34d38cbf515f43a0e",
+        "dimensions": [
+          1680,
+          13000
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow.png",
+        "sha256": "e713a651b498f92c57f2a1c5b5a22a794a9e90296f6fcc237db666ceba0c77d9",
+        "dimensions": [
+          760,
+          24000
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal.png",
+        "sha256": "d9610f090abdff42f43f0641a64aeaca4a94bd4fd1b6e1c19adbec9125667ea7",
+        "dimensions": [
+          1680,
+          20000
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow.png",
+        "sha256": "405cd57b63217a333c167ed498baf474ad009f3ffc9e2afe80a54eaa43212794",
+        "dimensions": [
+          760,
+          32000
+        ]
+      }
+    ],
+    "findings": [
+      "S-H narrow table hides disposition/delivery columns; library Padstack/process/retained-graph and diff tables clip important state and semantic-change text at narrow and some normal widths.",
+      "L-J2b fixed body collapses to pool plus Units while caption promises eight kinds and project tree.",
+      "L-J2a Console/body clipping hides Footprint and PinPadMap detail links."
+    ],
+    "disposition": "REVISE communicated to manager; no PASS attached to this earlier pair."
+  },
+  "render_review": {
+    "capture_producer": "Manager reports Firefox captures of stable sources; reviewer inspected produced pixels, did not run browser capture or native GUI.",
+    "initial_inspected_tiles": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-normal-1.png",
+        "sha256": "3107f07bffee36b86d7585f51874e7a4639ed84925c14ed4f3a8c7970c81fd60",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-normal-2.png",
+        "sha256": "f8cec1a661535ec317d90cda59e99cfea17261cd0d3f3cbfce8fe190b723b50c",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-normal-3.png",
+        "sha256": "33b1dc143193f5fa0b4088c0a6cfb2a111da0982ff7138d479338a7a1e5b4fd1",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-normal-4.png",
+        "sha256": "6d18cf5720cfe2ba904de5d29801f49cfd614f9998646295a4a252c4fcbbe8b2",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-1.png",
+        "sha256": "b5f7c1e4e2e960e3d89c68dc6d97bf1d15fb347a8deab484c985e4ab2970a4ae",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-2.png",
+        "sha256": "86d7e5c99bba40d651e632011aac0386acab918ea312366b4e19e56dcf853eeb",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-3.png",
+        "sha256": "2aa47ae6e78626f7c1d377755465ce5ecb8757d8e9f04926b9117e463cf877c6",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-4.png",
+        "sha256": "e4a900c6ac247abb3b293b5c253bf019b5d6d9f6a9f2184a3caae6bf0d8fb2ad",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-5.png",
+        "sha256": "71e00a6e15ed0fad817b52845275adb95b9686ca0343b1b5b8f751ccbd157e37",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-6.png",
+        "sha256": "c7fde08ad4a71e0202b529cf26afef799e09a9af3406fdaca83c080d422f7999",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-7.png",
+        "sha256": "766e2d7ab0012e1ee75bba24db20819d3a2a40ba784f90483265346bfec56533",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-final-narrow-8.png",
+        "sha256": "c91689d624a821dca8c2f1e89d21931cab84fb22e4aae002a86e7f4a043cf2ec",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal-1.png",
+        "sha256": "e96ac9ff0dcffafeeb5c2c1cca461cb3bcc4665f96a08f88ddc6ed79edb98557",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal-2.png",
+        "sha256": "2a5bec6e5717622b42ddc2feb5f50110eaa2869dc90dc9795509fa8c0badcd74",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal-3.png",
+        "sha256": "a0501471feacd48984d81e511ef431e49faabf7a3e4005d079b81281c9f75d2c",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal-4.png",
+        "sha256": "b907f175e812908b26d4d6c6045ac4631eed37e4e3f9acaae660c39195a4b1bb",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal-5.png",
+        "sha256": "b05c6040c60723409a7c42226766fa67f5f2c0ed586c173cd2313687ea0eb82d",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-normal-6.png",
+        "sha256": "0ebca19a5c6ab1178aceed3ae52b63544257567f3551d1ab96b8816bbf998b0a",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-1.png",
+        "sha256": "149953b74208f9befea764dd406ed38f3fde33e05c7b79fa847b20c268890507",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-2.png",
+        "sha256": "17d0d3af0fc8c8e133174efa55d69d2a249cf8f4f4c4373b36fccfbab8f178be",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-3.png",
+        "sha256": "92b2c18ac024de8a7555ebd516e69af0d81da8f4105885271f838c4d3bdd7dec",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-4.png",
+        "sha256": "142568257d593df603d9bcd84402bf24697a411180f6986b2af5ef096a1e2daf",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-5.png",
+        "sha256": "18f9bbb84a26ce3f3e251c433ab19f93dd05d33cb43bb4b1b27c3c070aa734f5",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-6.png",
+        "sha256": "9c538478f2c0bf6d345d57cd76ca28fc63017d42ba75e5025c1c8fc04fbe82f9",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-7.png",
+        "sha256": "fd98b442ea423ddcae2361bb131605c5295ecb4f2fb656535717fd1d340b2ceb",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-8.png",
+        "sha256": "73c8f0e41ee51989e63505f4234e13d74e0791d28e359b5efeb374001f5e23f3",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-9.png",
+        "sha256": "1cb9d61850e0d9b6051177c4c2d62bd9d0a8111f356ffcc167500d764630ed39",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-10.png",
+        "sha256": "0d26cb5fe33d9077f083880c90a17be27bf1de5ddb27ae6b346f894379ea037a",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-final-narrow-11.png",
+        "sha256": "8afa287a083ea6071568b3aba5e85ddccc55ee3f544dfea337fffa0b5fba861a",
+        "dimensions": [
+          760,
+          2200
+        ]
+      }
+    ],
+    "amended_capture_pins": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-responsive-normal.png",
+        "sha256": "8289f97bcabe74434e364944f3a7f8a354acd03c3201b7ded8b447f7c07b835d",
+        "dimensions": [
+          1680,
+          13000
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-responsive-narrow.png",
+        "sha256": "90b606f11593966bdf0c1854d4ecb9ecc5f16d9a106a3c4002cd6e645c9319e3",
+        "dimensions": [
+          760,
+          24000
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-normal.png",
+        "sha256": "e9b5ad76cc1da27c19e2e018606ffa555f4cc6e14ce1f7c24956c59cf29e94d3",
+        "dimensions": [
+          1680,
+          20000
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow.png",
+        "sha256": "76151d9bfc1e8630932361fa861bb5eab6bfae35faf28d35dfc210d6b7b896a6",
+        "dimensions": [
+          760,
+          32000
+        ]
+      }
+    ],
+    "amended_inspected_tiles": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-responsive-narrow-5.png",
+        "sha256": "2c2493d090a340d3b65c43b28e85c5ff3b2cb5d35738dee3459ab33d8a5b731a",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/schematic-responsive-narrow-6.png",
+        "sha256": "14b7d22eff43c304bced60eb8899406b78e76d1c6372da2fe255adf6ee259016",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-normal-4.png",
+        "sha256": "829325eeed1f30809f60a7702412367ff750c03191ee9f057c86b377d0ef204f",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-normal-5.png",
+        "sha256": "9557b468f2b2f83ca138a74811cbf39815da29ddb90827661816a323f0605550",
+        "dimensions": [
+          1680,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow-3.png",
+        "sha256": "a795918b76f1d93696c05d8dcd217f667b63baee8534f1c727293e1ced9656bb",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow-5.png",
+        "sha256": "cc6fa9970408e89bffe9445eb67a55f09701190fff2e1fcc0737a47c75b6ccb2",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow-8.png",
+        "sha256": "91b8b9d6a8b2844a730d7c7677dac3248c54e61f8f38d70eb408789aed853f13",
+        "dimensions": [
+          760,
+          2200
+        ]
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/surface-visuals/library-responsive-narrow-9.png",
+        "sha256": "32486ade5f87073ec4a6256936193fd7cf9d043c4530fbb46f051277afbe1b31",
+        "dimensions": [
+          760,
+          2200
+        ]
+      }
+    ],
+    "reuse": "Unaffected frame coverage reused from all four schematic normal/eight narrow and all six library normal/eleven narrow tiles. Amended inspection focused on affected tables and L-J2a/b. Full PNG pins identify captures; not every amended pixel was independently reread.",
+    "outcome": "Affected columns and status text wrap within the frame; physical-only map change and unresolved paste meanings remain visible. L-J2b visibly includes all eight kinds plus project rows; L-J2a Entity/Footprint/PinPadMap links are visible above reserved Console band."
+  },
+  "resolved_source_findings": {
+    "origin": "Original ten findings from independent s5a_code_audit session on schematic86ca417f/libraryb32f747d, followed by later correction-stage findings; independently checked corrected source and relevant rendered frames here. This does not copy that auditor verdict.",
+    "ten": [
+      "Substantive layout/drawer/Terminal/focus frames replace skeletons.",
+      "Picker candidate detail has named open route and Inspector; CURRENT limited to delivered narrow picker.",
+      "Actual no-project/loading/refusal/history/reopened frames replace text-only states.",
+      "All eight Pool kinds show manual editors, geometry/anchors where applicable, review/commit/cancel.",
+      "Model content/source/hash/transform detail and attach/edit/detach/supported/unsupported/refusal states shown as synthetic target.",
+      "Related map row keeps authored baseline; selected Footprint pad does not accent/count it.",
+      "Retained old/new graph contains role identity/revision and explicit unavailable PWR Symbol; map/process differences inspectable.",
+      "Discovery and opening alternatives remain separate owner choices.",
+      "Named SOIC-8 body/land/generation previews have eight terminals/lands.",
+      "Unresolved Inherit paste has no drawn aperture; native lands Circle/Rect, RoundRect unsupported/degraded explicitly."
+    ],
+    "later": [
+      "F7/F8 CURRENT credits only underlying bounded native history/Save/reopen; all drawn menu/history/Agreement projections TARGET.",
+      "Map proposal changes physical correspondence; logical Nets/topology unchanged, board reconciliation pending, ERC not run and check examples synthetic."
+    ],
+    "retracted_false_positive": "Auditor initially disputed Ctrl+Shift+Z, then directly confirmed Shift Undo routes to redo. It was supported and is not counted as a corrected defect."
+  },
+  "coverage_assessment": {
+    "schematic": "Document/source/occurrence separation; discovery/open alternatives; typed selection and contextual inspection; picker/preview/cancel; bounded Wire/Move; seven readiness conditions and history; Net/Bus/ERC currentness; tool-family dispositions; normal/narrow/tiled/Zoom/Stage/Terminal/keyboard/non-colour candidates and clause mapping.",
+    "library": "Eight Pool kinds, model attachments, manual browsing/editing, references/maps/revisions, package-land-process separation, synthesis inputs/proposal, approval/source/basis distinctions, placed update graphs/impact/cancel/refusal, normal/narrow/tiled/Zoom/Stage/Terminal/keyboard/non-colour candidates and clause mapping.",
+    "remaining_mandatory_findings": []
+  },
+  "checks_actually_performed": [
+    "Full earlier corrected source reads with truncation recovered through bounded ranges; amended CSS and L-J2a/b reads.",
+    "Independent pixel inspection of explicitly listed tiles.",
+    "SHA256 and image dimensions computed locally; current source hashes asserted equal to final manager pins.",
+    "Receipt JSON parsed locally; no builds or native application tests."
+  ],
+  "retained_limits": [
+    "Static HTML candidates with illustrative synthetic first-party content; no approved library seed, manufacturer accuracy, lawful source adoption or production qualification claim.",
+    "No owner product/visual ratification, S05 decision, combined SURFACE-REVIEW, runtime/HUMAN/native golden/pixel parity/assistive-technology/keyboard-interaction PASS.",
+    "Native Circle/Rect versus Rendering Book rounded-pad direction and Library Authoring kind/map-direction conflicts remain explicitly disclosed for subsequent reconciliation; no policy resolved here.",
+    "Normal multi-pane frames compressed on narrow study page are not a ratified narrow layout; explicit I2/J2 candidates carry the bounded narrow study.",
+    "Tokens/font sizes/dimensions/keys drawn as candidates or placeholders do not establish new defaults; unshown retained target families remain open.",
+    "Failed historical Chromium/fragment captures are not proof for this verdict. No structural checker result is inferred from screenshot inspection."
+  ],
+  "mutation_scope": "Only this review receipt written; no HTML/shared metadata edits, staging, commits, builds or acceptance."
+}
