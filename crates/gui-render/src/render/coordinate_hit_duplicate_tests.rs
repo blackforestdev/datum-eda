@@ -77,6 +77,13 @@ fn duplicate_schematic_leaves_project_through_their_own_cameras() {
     let mut state = duplicate_surface_state(datum_gui_protocol::PaneContent::Schematic);
     let retained = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.0);
     let mut prepared = prepared_for(&state, &retained);
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .all(|run| run.text != "Schematic (coming)"),
+        "resolved duplicate schematic panes must not carry a missing-source caption"
+    );
     let passes: Vec<_> = prepared
         .surface_passes()
         .iter()

@@ -53,11 +53,6 @@ fn render_viewport_panes_logical(
     // The leaf that hosts the live board scene (focus-independent). Its canvas gets
     // the substrate + world PCB; any other board leaf is an inactive placeholder.
     let scene_leaf_id = panes.scene_leaf_id();
-    // P2.2a: the FIRST Schematic leaf (walk order) hosts the live companion
-    // schematic scene — its viewport matches `schematic_scene_viewport`'s
-    // first-match `.find`. Claim it once so any additional Schematic leaf keeps
-    // the placeholder under the two-scene (board+schematic) bound of this slice.
-    let mut schematic_live_claimed = false;
     // Tool cluster of the layout pane (the active tool is the first entry). A
     // non-focused pane renders the same cluster dimmed to read as available-but-
     // -inactive rather than owned.
@@ -116,17 +111,9 @@ fn render_viewport_panes_logical(
             text_runs,
         );
         match leaf.content {
-            // Live companion schematic (P2.2a): the first Schematic leaf, when the
-            // workspace carries a projected schematic scene, gets its pane canvas
-            // painted with the substrate underlay (mirroring the board scene leaf's
-            // canvas fill) and NO placeholder caption — the world geometry is drawn
-            // by the additive second GPU pass from the schematic RetainedScene. Any
-            // further Schematic leaf, or an all-schematic workspace with no scene,
-            // falls through to the placeholder below.
-            datum_gui_protocol::PaneContent::Schematic
-                if has_schematic_scene && !schematic_live_claimed =>
-            {
-                schematic_live_claimed = true;
+            // Every resolved schematic pane has its own surface pass. Give each
+            // the substrate underlay; only missing source uses the placeholder.
+            datum_gui_protocol::PaneContent::Schematic if has_schematic_scene => {
                 let pane = &leaf.rect;
                 let canvas = RectPx {
                     x: pane.frame.x,
