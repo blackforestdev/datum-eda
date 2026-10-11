@@ -94,10 +94,13 @@ pub(super) fn render(
         } else {
             item.label.clone()
         };
-        draw_text(
-            &truncate_text(&label, 48),
+        let reason = focused.then_some(item.unavailable.as_ref()).flatten();
+        let columns = ((rect.width - 12.0).max(0.0)
+            / (design_tokens::typography::CAPTION_SIZE * 0.58)) as usize;
+        draw_text_clipped(
+            &truncate_text(&label, columns),
             rect.x + 6.0,
-            rect.y + 8.0,
+            rect.y + if reason.is_some() { 2.0 } else { 8.0 },
             design_tokens::typography::CAPTION_SIZE,
             if item.unavailable.is_some() {
                 TEXT_MUTED
@@ -105,8 +108,34 @@ pub(super) fn render(
                 TEXT_PRIMARY
             },
             TextFace::Ui,
+            rect,
             text,
         );
+        if let Some(reason) = reason {
+            // The captured cause also remains exact in the menu/accessibility
+            // model. Reuse the Inspector's readable preview, without resolving
+            // again or changing this disabled command's authority.
+            // SelectionResolutionError::Engine wraps the existing electrical
+            // cause in its Debug presentation; the shared preview labels that
+            // cause, while the captured reason itself remains untouched.
+            let cause = reason
+                .strip_prefix("Engine(")
+                .and_then(|cause| cause.strip_suffix(')'))
+                .unwrap_or(reason);
+            let reason =
+                datum_gui_protocol::selection_view::InspectionValue::Unavailable(cause.into())
+                    .display_preview(columns);
+            draw_text_clipped(
+                &reason,
+                rect.x + 6.0,
+                rect.y + 16.0,
+                design_tokens::typography::CAPTION_SIZE,
+                TEXT_MUTED,
+                TextFace::Ui,
+                rect,
+                text,
+            );
+        }
         hits.push(HitRegion {
             rect,
             target: HitTarget::MarkingMenuItem {
@@ -150,7 +179,7 @@ mod tests {
                     .map(|n| datum_gui_protocol::selection_menu::Item {
                         label: n.to_string(),
                         command: datum_gui_protocol::selection_menu::Command::All,
-                        unavailable: (n == 301).then(|| "Unavailable authority".into()),
+                        unavailable: (n == 301).then(|| "No source".into()),
                     })
                     .collect(),
                 open: true,
@@ -177,6 +206,89 @@ mod tests {
             );
         }
         assert!(t.iter().any(|run| run.text.contains("Unavailable")));
+        // Keyboard focus and pointer preview share this captured focus index.
+        // The exact disabled cause is visible before any activation, including
+        // when the list must reveal a late entry in a clipped viewport.
+        let before = state.clone();
+        state
+            .ui
+            .marking_menu
+            .as_mut()
+            .unwrap()
+            .selection
+            .as_mut()
+            .unwrap()
+            .focus = 301;
+        for width in [200.0, 360.0] {
+            layout.viewport.width = width;
+            let mut text = Vec::new();
+            let mut hits = Vec::new();
+            render_marking_menu(&state, &layout, &mut Vec::new(), &mut text, &mut hits);
+            let reason = text
+                .iter()
+                .find(|run| run.text == "Unavailable — No source")
+                .expect("focused disabled cause is presented before activation");
+            let hit = hits
+                .iter()
+                .find(|hit| {
+                    matches!(&hit.target,
+                HitTarget::MarkingMenuItem {slot,..} if slot == "SELECT:301")
+                })
+                .unwrap();
+            assert_eq!(reason.clip_bounds, Some(hit.rect));
+            assert!(reason.y >= hit.rect.y && reason.y < hit.rect.y + hit.rect.height);
+        }
+        assert_eq!(
+            state
+                .ui
+                .marking_menu
+                .as_ref()
+                .unwrap()
+                .selection
+                .as_ref()
+                .unwrap()
+                .items,
+            before
+                .ui
+                .marking_menu
+                .as_ref()
+                .unwrap()
+                .selection
+                .as_ref()
+                .unwrap()
+                .items
+        );
+        let captured = "Engine(UnavailableAssignment { origin: ElectricalOccurrence { class: \"wires\", source_id: 71000000-0000-4000-8000-000000000081, instance_path: [] } })";
+        state
+            .ui
+            .marking_menu
+            .as_mut()
+            .unwrap()
+            .selection
+            .as_mut()
+            .unwrap()
+            .items[301]
+            .unavailable = Some(captured.into());
+        let mut text = Vec::new();
+        render_marking_menu(&state, &layout, &mut Vec::new(), &mut text, &mut Vec::new());
+        assert!(
+            text.iter()
+                .any(|run| run.text == "Unavailable — Electrical assignment unavailable")
+        );
+        assert_eq!(
+            state
+                .ui
+                .marking_menu
+                .as_ref()
+                .unwrap()
+                .selection
+                .as_ref()
+                .unwrap()
+                .items[301]
+                .unavailable
+                .as_deref(),
+            Some(captured)
+        );
         for quad in q {
             assert!(
                 quad.points

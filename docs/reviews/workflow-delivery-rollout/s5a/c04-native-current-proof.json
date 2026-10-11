@@ -1703,5 +1703,176 @@
     ],
     "landing_commit": "2690b25e0bd7c13c1bda8db6857b9e5cddefeee1",
     "landing_verification": "Actual six landed Git blobs match final source checkpoint; independent bounded source/native/governance acceptance recorded. Retained C04 execution continues; no full qualification or successor selection."
+  },
+  "disabled_select_reason_correction_20261011": {
+    "scope": "Bounded retained S5A-C04 N06 designer correction: expose existing captured disabled Select cause for focused keyboard/hover entry before activation. No complete C04/N06/N17/HUMAN acceptance.",
+    "authority": {
+      "requirement": "preparation-plan.md N06: every seam disabled with reason; existing deterministic local Select and hover semantics retained",
+      "manager": "Actual unchanged-contract renderer-only correction approved by appointed manager before synchronized claim and production edits.",
+      "unchanged_route_reuse": {
+        "gui-selection": "d47bd726045e78a6c3a6fdd38b0d5b63ebe947b9c138b05a44032151e4882a7e",
+        "prototype-selection": "78dffa2dc2a85ef1e49e9d2e50720b7bd1b6e4c91c0f2f143175c78202a4ed93",
+        "scope": "Actual current full byte digests match recorded reviewed routes; adequate prior complete owning-route review reused with focused current N06/code/pixel review. No fabricated new full-corpus review."
+      }
+    },
+    "implementation": {
+      "base_commit": "d14dc5ea124e7e675f6747f46b7679e81f498c9d",
+      "files": {
+        "crates/gui-render/src/marking_menu/selection_list.rs": "e3b8bda5d9820f7417db2d08435950eb00221e87e45dc085ffff19ae1444ec3d"
+      },
+      "lines": 300,
+      "behavior": "Same focused row/hit/availability/order/commands and inherited30px geometry. Clipped label and captured cause share that row. Renderer unwraps only known SelectionResolutionError::Engine Debug envelope and reuses existing InspectionValue semantic preview; exact reason remains canonical/accessible/Console data."
+    },
+    "source_checkpoint": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/disabled-reason-source-checkpoint-3.json",
+      "sha256": "47898b8d6be4549cd50ecf86a8b3e964e6d554c81de10c373c2a77cd48efcc49"
+    },
+    "compiled_gui_sha256": "a8dafa0de51ab2cbc06955f1d7ee9f325bbc84636ca35f4b1cae5a8501105852",
+    "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+    "binary_binding": "Guarded final GUI build from exact reviewed one-owner checkpoint3 atop recorded base; no source amendments after that build. CLI engine unchanged; existing compiled CLI used only for lawful canonical fixture Undo.",
+    "fixture_provenance": {
+      "source": "Fresh copy of existing governed canonical Wire256-corrected fixture from prior paging proof; originals preserved.",
+      "canonical_setup": "Ordinary datum-eda project undo of final Net/SchematicOnly identity-establishment transaction, producing intentionally unresolved Run electrical assignment while native source Wire Object remains selectable. No authored-file writes/private producer.",
+      "setup_sha256": "c003b887a0f9a01365826021551de556f85ee379b4fd90493e53a8e7840daafb",
+      "before_revision": "d0bf913388e2abdfc3d17b657de8da505dbaf64907e1c59c56c82cc97281c8ca",
+      "after_revision": "659399369a65a1e7432c80cf07e280affa73864a0418977b0838b3efff55ef70",
+      "journal_len": 8
+    },
+    "ordinary_result": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-12.json",
+      "sha256": "48efbe7f6576739b5fdec9462d0e187c6636f1f1555a176f867cdbe81a3289b1",
+      "outcome": "PASS",
+      "retained_observations": 12,
+      "window_sizes": [
+        [
+          1333,
+          800
+        ],
+        [
+          1000,
+          600
+        ]
+      ],
+      "selected_identity": {
+        "class": "Wire",
+        "uuid": "71000000-0000-4000-8000-000000000081",
+        "instance_path": []
+      },
+      "captured_refusals": [
+        "Engine(UnavailableAssignment { origin: ElectricalOccurrence { class: \"wires\", source_id: 71000000-0000-4000-8000-000000000081, instance_path: [] } })",
+        "Engine(UnavailableAssignment { origin: ElectricalOccurrence { class: \"wires\", source_id: 71000000-0000-4000-8000-000000000081, instance_path: [] } })"
+      ]
+    },
+    "observed_behavior": "Actual normal/narrow keyboard frames show Electrical assignment unavailable before first refusal in each fresh Object view. Actual pointer frames show same focused disabled Run cause before current hover activation; earlier lawful refusal notice remains present in those pointer frames. Enter refuses without membership/scope/focus/revision/source writes; Escape restores Editor with prior selection. Exact full view preserved except deliberate existing notice change.",
+    "nonmutation": {
+      "canonical_files_compared": 38,
+      "post_open_before_equals_after": true,
+      "scope": "Authored files plus complete canonical .datum journal/cursor/integrity/revision files. Exact transient .datum/revision/writer.lock and individually manifested current terminal lifecycle paths excluded; pre-open startup deltas retained. No broad .datum exclusion."
+    },
+    "focused_test_result": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib focused_last_select_entry_is_visible_in_narrow_clipped_list",
+      "log": "target/s5a-c04-inventory-keyboard-20261011/disabled-reason-wrapper-focused.log",
+      "sha256": "ca8aec0a2ebe0e08a25b926aa80cd552e2c60f409d9986c60cd17710b2cb0a4e",
+      "passed": 1,
+      "failed": 0,
+      "scope": "Existing late303-entry normal/narrow clipping/focus test enhanced with visible short cause, exact items unchanged, actual wrapped engine cause readable and canonical raw preserved."
+    },
+    "evidence_files": {
+      "attempt-10-disabled-reason-256-focus.js": "2bc00d243b6dd3d1c5748f69430f050f8a69c7f090583956009c360270d0eb0a",
+      "attempt-10-disabled-reason-256-native.log": "b13f9eabebc54ffe6675ff46718eb766f7fb5e062e7c440dafc6221de94297ab",
+      "attempt-10-disabled-reason-256-normal-keyboard-reason.png": "c700790206abc5bc3680c3ac6a1264aeba67222c3ffc8450072a71d21f891254",
+      "attempt-10-disabled-reason-256-normal-refused.png": "4f63a02e2ec8689a5ced4b16cf05195de1e8b3daf45f11ff6544d1f11dd750f5",
+      "attempt-10-disabled-reason-256-stdout.log": "327c0469675f731e8e49fd1bb30c7ad7e4a52436ac09a8ce3c9b69190d3d5b69",
+      "attempt-11-disabled-reason-256-focus.js": "555a7ee08187381f8cf56973b97784a9086b63e62fd6a21335a89261c3ca709e",
+      "attempt-11-disabled-reason-256-narrow-keyboard-reason.png": "0ce1a844fd46597e221d77a66fd714ff4c8d581330cb9220ea4d8a2a475d689f",
+      "attempt-11-disabled-reason-256-native.log": "eb9540292149ded2c9afb0b5857a0db12bb3b2954b9b261fadf033d9e86f1d0d",
+      "attempt-11-disabled-reason-256-normal-keyboard-reason.png": "e0bfab79e3e1d75538315ce154b232d0b5f8a82363838e21b5c77c0529e55360",
+      "attempt-11-disabled-reason-256-normal-pointer-reason.png": "ecf28077efcdd2a91b40b6f54f294e3b0fbc337487efa5401bba1f8dee5dd20b",
+      "attempt-11-disabled-reason-256-normal-refused.png": "ecf28077efcdd2a91b40b6f54f294e3b0fbc337487efa5401bba1f8dee5dd20b",
+      "attempt-11-disabled-reason-256-stdout.log": "4cfcdc506021a558a3bd416f2055f3b9ea8747ec9e1aa890a0dc005f5049095f",
+      "attempt-12-disabled-reason-256-focus.js": "d17426a30040144dcd24675e684c8e55e7f0c30e83cf49950c06e2989d0efadf",
+      "attempt-12-disabled-reason-256-narrow-keyboard-reason.png": "08a5d4e808ff01923a164b74eebed9690824aafaf60b247fcb83af850bf59e31",
+      "attempt-12-disabled-reason-256-narrow-pointer-reason.png": "0ce1a844fd46597e221d77a66fd714ff4c8d581330cb9220ea4d8a2a475d689f",
+      "attempt-12-disabled-reason-256-narrow-refused.png": "0ce1a844fd46597e221d77a66fd714ff4c8d581330cb9220ea4d8a2a475d689f",
+      "attempt-12-disabled-reason-256-native.log": "01d87c2f0a2a714d7bfd3f64d0d47342fcd8d2f984cf1a15ca7fee4da7be7836",
+      "attempt-12-disabled-reason-256-normal-keyboard-reason.png": "e0bfab79e3e1d75538315ce154b232d0b5f8a82363838e21b5c77c0529e55360",
+      "attempt-12-disabled-reason-256-normal-pointer-reason.png": "ecf28077efcdd2a91b40b6f54f294e3b0fbc337487efa5401bba1f8dee5dd20b",
+      "attempt-12-disabled-reason-256-normal-refused.png": "ecf28077efcdd2a91b40b6f54f294e3b0fbc337487efa5401bba1f8dee5dd20b",
+      "attempt-12-disabled-reason-256-stdout.log": "6d92082f84154c5811336754dfc22faf1e1a3d5cd3550b191ef477599e6f7995",
+      "disabled-reason-evidence-gate.log": "5c1d4f8f7e97f034e1cded4c176b49d08cdb6535a7ad51e2388f7e2a68b3626a",
+      "disabled-reason-focused-corrected.log": "644849cc468d4fbc8ba15e1ce254d19d8cb320928970e14b5eb0db4c8c89d80e",
+      "disabled-reason-focused-final.log": "18382465f5db8a20333182e96262a8929bb778bc40511a197dad1504f6d9e53a",
+      "disabled-reason-focused.log": "df214e37429ad544c1d4fe128de6b66f950a7d38be11e3f1440efed1bf3cf706",
+      "disabled-reason-governance-gate.log": "d498c765a2bb085656947930ab61c45603c0d20c0fc32d65d28bf069e914ef7a",
+      "disabled-reason-gui-build.log": "e65f7c1bd9c5007ffbc9ee6d4074d02669c40650b251f82096f26e7ad29e6802",
+      "disabled-reason-native-attempt10.log": "20fbee4e1f542fe977b7b153350da613fe1c0b3b9a875410b322bd6fe58d99e5",
+      "disabled-reason-native-attempt11.log": "df6789f7963944c1ae565652c75c7b8f5704e82708110f12aec7e2bfae32f46d",
+      "disabled-reason-native-attempt12.log": "65614a27bb08f6fb26a52e595dd65525a151125f25099f2615442abc60e3b25b",
+      "disabled-reason-resource-gate.log": "4c220161f57cf8a40d09eacd28d391d8c0f6680d194660a78971adf755934119",
+      "disabled-reason-rustfmt-observation.json": "3e7f258bd714fd2e38e21d6d191667d93ea594f1023a976b6234191348a4eb42",
+      "disabled-reason-selection_list.rs": "e3b8bda5d9820f7417db2d08435950eb00221e87e45dc085ffff19ae1444ec3d",
+      "disabled-reason-selector.txt": "435995e676b3af2779156056647922208de262fa04682fa061e9b543cb36915f",
+      "disabled-reason-setup.json": "c003b887a0f9a01365826021551de556f85ee379b4fd90493e53a8e7840daafb",
+      "disabled-reason-source-checkpoint-1.json": "a289649a7719e25d41b145a95c7d22cdabef726fe557b98bbd68a679a7d628f3",
+      "disabled-reason-source-checkpoint-2.json": "61eb5ea71b9bd14b77b451e764aad0cf4ebb09904a611719a36c5632a211b216",
+      "disabled-reason-source-checkpoint-3.json": "47898b8d6be4549cd50ecf86a8b3e964e6d554c81de10c373c2a77cd48efcc49",
+      "disabled-reason-source-health.log": "ed21b0d9ffb580ccd7196973b36665fbba435fbd8e8347690c29c50059884cb1",
+      "disabled-reason-source.diff": "bc95c628083d5ea40c6f52fbad5a441d68ddcf97816844d3e76cb68c055b14fb",
+      "disabled-reason-wrapper-focused.log": "ca8aec0a2ebe0e08a25b926aa80cd552e2c60f409d9986c60cd17710b2cb0a4e",
+      "disabled-reason-wrapper-gui-build.log": "f708f3a9c28928ed00e0b8be009286823effad148eabe41a57c84baa6c748dbb",
+      "ordinary-result-attempt-10.json": "db01682434f62c1f5fe8ef0172add71114cf469e096e3859984471e7eda43817",
+      "ordinary-result-attempt-11.json": "e5f0870cbf201b72c015ada4c82889f10cea9e3cf99adb1ced3b52c14ba57c34",
+      "ordinary-result-attempt-12.json": "48efbe7f6576739b5fdec9462d0e187c6636f1f1555a176f867cdbe81a3289b1",
+      "ordinary_disabled_reason-corrected.py": "e3e048ab21ef5379fe376dbce6143a59451b63c73c43dc2fce79d350a5e2b7c9",
+      "ordinary_disabled_reason-final.py": "9c77d967c978f10b871e5b245f487c799153438a878317f8d1791a5e3ea5edd3",
+      "ordinary_disabled_reason.py": "a79c6da40f56caad38049bbaf1f9c0113d27fe029d114f8ab5e2e9238400027d"
+    },
+    "preserved_failures": [
+      {
+        "artifact": "disabled-reason-focused.log",
+        "cause": "Initial renderer compile error: existing InspectionValue requires public selection_view namespace; corrected without dependency."
+      },
+      {
+        "artifact": "disabled-reason-focused-corrected.log",
+        "cause": "Test expected full long reason inside200px despite intentional bounded preview; replaced with concise exact cause control and separate actual wrapper normal-width oracle."
+      },
+      {
+        "artifact": "ordinary-result-attempt-10.json",
+        "outcome": "FAIL",
+        "scope": "Actual keyboard frame exposed technical Engine wrapper; hover state wait also failed. Renderer-readable wrapper correction and actual clamped pointer target corrected; source canonical hashes retained."
+      },
+      {
+        "artifact": "ordinary-result-attempt-11.json",
+        "outcome": "FAIL",
+        "scope": "Normal keyboard/pointer and narrow keyboard pixels readable; repeated identical refusal waited for nonexistent changed-state observer event. Final producer clears/reacquires exact same Object before narrow refusal. No source change/build repeated for producer correction."
+      }
+    ],
+    "review_receipts": {
+      "source": "Actual independent s5a_code_audit checkpoint3 source clear, wrapped-cause focused test 1/0 verified and final native ACCEPT received; captured cause, commands, order, hits and authority unchanged.",
+      "manager_acceptance": "Owner-appointed manager accepts bounded existing-contract N06 disabled Select reason disclosure against actual independent source/native/governance receipts and authorizes landing within retained S5A-C04 grant. C04/C05/C06 and complete N06/N17/HUMAN qualification remain open; no new product rule, dependency, writer or successor authorization.",
+      "native": "Actual independent s5a_code_audit inspected all six final attempt12 normal/narrow keyboard/pointer/refusal frames, all 12 SelectionViews except deliberate notice change and all 38 unchanged canonical files. Final result 48efbe7f6576739b5fdec9462d0e187c6636f1f1555a176f867cdbe81a3289b1; GUI a8dafa0de51ab2cbc06955f1d7ee9f325bbc84636ca35f4b1cae5a8501105852. Appointed manager personally inspected final narrow keyboard and normal refusal frames; readable cause and clipping confirmed.",
+      "governance": "Actual independent management_review bounded governance/evidence PASS at pre-disposition proof 1917ff2e7b0449a68de54db899d64703ee027c9da10a9938e321bd6d9a1f9704 and archive 0f37dcf3eb1a474ccf6b83fd9f6d91ff3ec52c2f4676f1b99a62592fff2a1a3e: all 48 artifact hashes/archive bytes, current source, complete native observations, nonmutation, retained failures and qualification limits verified."
+    },
+    "gates": {
+      "source_health": "Actual PASS3086",
+      "evidence_traceability": "Actual PASS29routes131artifacts",
+      "spec_governance": "Actual PASS552",
+      "cargo_resource_policy": "Actual PASS",
+      "workspace_rustfmt": "Actual nonmutating PASS2ceiling-bound exemptions",
+      "project_status": "Actual PASS82; root final staged checks reserved."
+    },
+    "limits": [
+      "Existing X11 production native menu callbacks, focus-verified keyboard/pointer and active-window capture; no physical/HUMAN/Wayland/assistive qualification.",
+      "Hover has actual pixel highlight/reason and retained current selection/canonical file observation; no independent hover event acknowledgment invented.",
+      "Exact existing readable error mapping reused, no new error semantics. Finite-width preview can abbreviate arbitrary causes; full exact reason remains available via unchanged canonical/accessibility/Console paths.",
+      "This negative Run fixture intentionally lacks authoritative logical assignment; no unavailable-source fallback or empty Run claim. No historical attempt4 cause inferred.",
+      "Earlier paging/label behavior reused under unchanged owners; no repeated full dense campaign or full C04/C05/C06 acceptance."
+    ],
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/disabled-selection-reason-20261011.tar.xz",
+      "sha256": "0f37dcf3eb1a474ccf6b83fd9f6d91ff3ec52c2f4676f1b99a62592fff2a1a3e",
+      "files": 48,
+      "scope": "Actual source checkpoints/snapshot/diff, producer versions, canonical setup, focused/build/gate logs, retained failure/success results and captured pixels. Prior parent fixture/source proof remains in previously reviewed durable archive."
+    }
   }
 }
