@@ -3527,7 +3527,7 @@
         "pid": 767075,
         "gui_exit_code": 0
       },
-      "pending": "Staged format/whitespace and normal hooks",
+      "pending": "No pending gate for positive landing; full qualification separately open.",
       "staged": "Actual owned4 staged rustfmt/whitespace terminal0; exact raw receipt archived. Normal hooks/landing only pending independent final correspondence."
     },
     "archive": {
@@ -3552,6 +3552,125 @@
       "Positive eligibleWire prefilteredLabel case only; complementary ineligibleWire origin preserving priorP separately queued under same grant.",
       "No Net21/repeated-instance Run/fullN05/N09/IR01/C04/HUMAN/fullquantity or entireinventory visibility qualification.",
       "Inherited supervision parity FAIL remains unwaived; no source/dependency/build/policy changes."
-    ]
+    ],
+    "landing": {
+      "commit": "4f17484d2d94f03d5cebf5c7b8cbbfd903687789",
+      "normal_hooks": "Visual ownership/stagedrustfmt terminal0; exactowned4 landing/source5 unchanged; independently verified."
+    }
+  },
+  "ir01_ineligible_wire_origin_20261011": {
+    "state": "Appointed root manager accepts bounded negative behavior and final package; independent runtime/code and governance/package PASS. Normal hooks/landing only pending, raw CAPTURE_ONLY unchanged.",
+    "grant": "Appointed manager authorized complementary N05/N09 IR01 ineligibleWire origin under same retained UVT-S5A-BUILD/S5A-C04; no successor/newrule.",
+    "fixture_reuse": "Exact same complete61-path canonical original fixture and actual67a175 basis, source/currentGUI unchanged from positive59. Setup/history omissions and57/58 failures preserved in landed positive archive91fdb8fc.",
+    "ordinary_native60": {
+      "raw_result_sha256": "9ec43c5fb87698edf5e86aa42e889c02789bdf1168af2fb8232e2cde2238a5a4",
+      "raw_outcome": "CAPTURE_ONLY_IR01_INELIGIBLE_ORIGIN_REVIEW_PENDING",
+      "driver_sha256": "becdf8e5be4a2e2c5eecaf17da877d55dec50c70fd25941aa8e88aebbee6eb45",
+      "gui_sha256": "9a0bfcb802374fc48c090986651d22955ac60c7824868b65e8e69af209200b9b",
+      "pid": 769244,
+      "authoritative_exec": 19655,
+      "terminal_exit_code": 0,
+      "gui_exit_code": 0,
+      "failure": null,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 769244,
+        "device_epoch": 1
+      },
+      "priorP": {
+        "class": "Wire",
+        "id": "73000000-0000-4000-8000-000000000009",
+        "instance_path": [],
+        "probe_nm": [
+          15000000,
+          0
+        ]
+      },
+      "attempted_origin": {
+        "class": "Wire",
+        "id": "73000000-0000-4000-8000-000000000008",
+        "instance_path": [],
+        "probe_nm": [
+          5000000,
+          0
+        ]
+      },
+      "phases": [
+        "distinct-prior-P-root-Wire9",
+        "Wire-excluded-BEFORE-origin-input-preserves-P",
+        "ineligible-Wire-click-and-menu-preserve-P",
+        "dismiss-no-origin-menu-preserves-P",
+        "restore-Wire-eligibility-preserves-P"
+      ],
+      "invariance": "Wire9 distinctP/current67a175/stale:false retained full SelectionView across excludeWire, actual candidateWire8 press/release, noorigin menu, dismissal and restoration. EligibleReplace would changeP; no sameobject vacuity. All61prelaunch/startup/source_after/final maps equal/startup{}.",
+      "native_delivery": "Actual Main WindowId27262980 LeftPressed thenLeftReleased in retained postfilter native slice before menu; source-derived distinct nonoverlap interiors, no coordinatesearch.",
+      "pixel_observation": "Implementer viewed SelectAll first followed Inspector entries and EnableWires, with no Object/Run/GlobalNet leaves; Inspector focusidentityWire9/currentbasis retained, no source-authority fallback from priorP. Source capture qualifies absence of eligible origins; this does not qualify all hidden/menu/rectangle behaviors."
+    },
+    "independent_review": {
+      "code_audit": "Actual60 five fullP states/currentbasis/nativeMain press-release/nonoverlap source geometry/five required pixels/full61maps/blobs independently bounded accepted; finalpackage pending. Final137regular/all136hashes/noextras,5map recoverability/61final/current5sources and26liveorigins independently matched archive8c56f645/manifest673060ba.",
+      "management": "Actual final governance/package PASS at proofe1d51153/archive8c56f645/manifest673060ba:137safe unique/all136hashes/5current sourcepins/5canonical61maps equal/owned4stagedfmtwhitespace0, distinctP meaningful and limits honest. No mandatory finding.",
+      "root": "Root personally actualraw/fullP5 maps and nooriginmenu/Maininput pixels reviewed; accepts finite negative outcome pending final package and normal landing. Final immutable137safe entries/136hashes/full5maps/61final/source5 independently verified; normal owned4 landing authorized."
+    },
+    "required_gates": {
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "d67413",
+          "wall_time_seconds": 0.910218599,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "d7d1e9",
+          "wall_time_seconds": 1.7804e-05,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "bcefb9",
+          "wall_time_seconds": 0.118106992,
+          "exit_code": 0,
+          "original_token_count": 21,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Production/source/build/authority unchanged; adequate previous sourcehealth/dependency/specgovernance/Cargo resource PASS reused. Inherited supervision parity FAIL unwaived.",
+      "terminal": {
+        "session": 19655,
+        "exit_code": 0,
+        "pid": 769244,
+        "gui_exit_code": 0
+      },
+      "pending": "Normal hooks/landing only; actual stagedfmt/whitespace terminal0 already retained.",
+      "staged": "Actual owned4 stagedformat/whitespace0; rawreceipt included finalarchive. Normalhooks only pending."
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/ir01-ineligible-wire-origin-20261011.tar.xz",
+      "sha256": "8c56f64504ba412d3d2e24dcde317248cc7447e633972f069fb1f2ffbc3f8ae5",
+      "manifest_sha256": "673060ba810c4c0c06e438d1d8c166a3db1d45a84350282781e0842930ab0220",
+      "regular_files": 137,
+      "hashed_files": 136,
+      "raw": 21,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 5,
+      "source_pins": {
+        "crates/gui-app/src/runtime_selection_menu.rs": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+        "crates/gui-app/src/runtime_selection_inspector.rs": "095864d05ca10d6ae774dd5982df0c24b6fa4ed74fe722449267d7de432c351a",
+        "crates/gui-protocol/src/workspace_layout/selection_menu.rs": "515dd1c3356d8db06a2b2b1b8f7a910e407698e9afdbe737836e5c8c1f3e841c",
+        "crates/gui-protocol/src/selection_view/inspector_state.rs": "0c5cf1c181ad47545514b9948bd1231ff3ff0e35ebc3210b52577917633025a1",
+        "crates/gui-protocol/src/native_schematic_scene.rs": "f4136620ddeed85b06f55b41c3793449e7640719ca25f9cd3713a5394b69392d"
+      }
+    },
+    "limits": [
+      "Only distinct rootWire9P preserved across excluded rootWire8 origin/noRun entry/restore; no fullhidden/menu/rectangle/Net21/N05/N09/IR01/C04/HUMAN.",
+      "Existing Bounds/Start/End quantity unavailable and secondary text clipping remain unqualified.",
+      "No production edits/build/dependency/defaultfilter policy or private authority writes. Inherited supervision parity FAIL remains unwaived."
+    ],
+    "unexecuted_driver_corrections": "Initial sameWire8P assertion was vacuous and corrected to distinctWire9 before any input. Initial native event spelling corrected to actualmouse input LeftPressed/Released. Superseded heldpins unexecuted; finalbecdf8e5 actualcohort only."
   }
 }
