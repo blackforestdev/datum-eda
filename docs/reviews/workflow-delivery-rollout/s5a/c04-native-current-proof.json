@@ -4507,6 +4507,154 @@
       "No physical screenreader/AT interoperability/HUMAN/color/grayscale/highcontrast/reducedmotion/fullN17/C04 or repeatedinstance qualification.",
       "Run5 members have all selection-focus=false; derived origin does not invent memberfocus. ActionAdd is conveyed by ordinary Shift input/fullreason, not a separate typed refusal-action attribute.",
       "No canonical/design/source/journal writes or dependencies. Raw CAPTURE_ONLY unchanged; actual independent acceptance separate. Inherited supervision parity FAIL unwaived."
+    ],
+    "source_landing": {
+      "commit": "71218f6676b686eed7f8ccc50cebde83afb6f6ae",
+      "normal_hooks": 0,
+      "owned_paths": 4,
+      "archive_matches_reviewed": true,
+      "production_unchanged": true
+    }
+  },
+  "n17_accessible_257_20261011": {
+    "scope": "Finite retained C04 N12/N17 complete257 public accessibility member inventory via ordinary focusedSchematic CtrlA, actual indexedchild/sourceidentity/bulk/currentbasis and selection nonmutation; no full N17/C04/HUMAN.",
+    "authority": "Explicit appointed-manager retained grant/preparation299/304, native only after normal refusal-unit landing and two independent helddriver preflights.",
+    "source_commit_before_unit": "71218f6676b686eed7f8ccc50cebde83afb6f6ae",
+    "compiled_source_cohort": "GUI78627a1f/7590c663 unchanged production; no source/dependency/build edits.",
+    "fixture": "Fresh exact original29canonical texts257 whitelist, checked against ordinary-result-attempt-3 source map and source text UUIDkeys. Full independent0x1000..0x1100 schematic_text/root[] set, actual resolver basis8e8c7280, zero diagnostics. Operational trees excluded before reads.",
+    "setup_sha256": "4c2f7fc0a13469b584a99f2191db55bbdedf852724f4e040800448a13dcb9af5",
+    "scope_transaction": {
+      "actual_transaction": "2026-10-11T20:32:49Z",
+      "previous_heartbeat": "2026-10-11T20:25:57Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_exact_paths": [
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n17-accessible-257-20261011.tar.xz"
+      ],
+      "before_archive_write": true,
+      "grant": "Root-authorized finite retained C04 N12/N17 complete257 public accessibility evidence delivery"
+    },
+    "driver_sha256": "dc44a8a5c93b84cdb5977d1ff0eb428917743527366796656d8304e1cbd3914c",
+    "result_sha256": "c46406e7019a9ec9d05122f2ea11cf5152e9893159e82f39bd65b357cbce9b93",
+    "gui_sha256": "78627a1f44497650e3908958a4bf551cad4b46858c11c2ed3adecfb968fc5e22",
+    "raw_outcome": "CAPTURE_ONLY_N12_N17_COMPLETE257_REVIEW_PENDING",
+    "failure": null,
+    "terminal": {
+      "session": 44792,
+      "exit_code": 0,
+      "gui_pid": 787699,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 787699,
+        "device_epoch": 1
+      }
+    },
+    "observations": 2,
+    "accessible_identity": {
+      "address": "unix:path=/run/user/1000/at-spi/bus_1,guid=b27455dde6bbc75bbe3b795a6aa5b0cb",
+      "service": ":1.5367",
+      "pid": 787699,
+      "PID_lookup": "(uint32 787699,)\n"
+    },
+    "outcomes": [
+      "Actual ordinary CtrlA in focusedSchematic acquires exact257 nativeSchematicText/currentProject/revision/root[]; complete native membership stays unchanged during public queries.",
+      "PID-bound public MEMBERS ChildCount257, GetChildAtIndex0..256 allunique; every source-identity JSON matches exact independent UUID/class/rootpath and encodedpath payload, expected canonical order. Index256 literalUUID1100; index257 returns explicit InvalidArgs.",
+      "Actual bulkGetChildren succeeds with exact all257 paths/order identical to indexed result; 16MiB cap not exercised. No truncation, enlargement or fake capcoverage.",
+      "Rootpublic currentkindcompound/Project/revision/presentedLOD qualified before invariant snapshot; before/after attrs/count/GetState identical. Actual nativeCompoundfocusNone matches all257 selection-focus=false; selected=true attrs credited, not standard selected-state conformance.",
+      "AfterqueryPNG shows selectedCompound257, All257 and schematictext257 counts. Complete programmatic tree differs from only currently visible Inspector rows; no allrowpixel/HUMAN claim.",
+      "All29 prelaunch/start/source_after/final canonical maps equal/startup{}; supervised GUIexit0/samePID drained_device_live and diagnostic complete/errorNone/nooverflow."
+    ],
+    "focus_qualification": {
+      "native_compound_focus": null,
+      "accessible_focused_members": []
+    },
+    "bulk_reply": {
+      "exit_code": 0,
+      "complete": true,
+      "cap_exercised": false
+    },
+    "out_of_range": {
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: GDBus.Error:org.freedesktop.DBus.Error.InvalidArgs: invalid arguments\n"
+    },
+    "canonical_invariance": {
+      "paths": 29,
+      "all_maps_equal": true,
+      "startup_delta": {},
+      "phase_maps_archived": true
+    },
+    "superseded_unexecuted": "a3a98 driver amended only bounded actual public projection readiness/currentkind/basis/count/LOD, finaldc44 executed67.",
+    "independent_reviews": {
+      "code_audit": "Actual67 indexed257/typedpath/bulk/PID/currentbasis/native-P/canonical/pixel bounded ACCEPT and finalb3c07091/a9d43b3b correspondence ACCEPT received;83safe/82hashes/14currentpins/six29maps verified.",
+      "management_review": "Actual finalcea76c1d/b3c07091/a9d43b3b governance/package PASS; all29rawsourceorigins/index257/bulk257/owned4gates/qualificationlimits clear.",
+      "root": "Appointed manager personally verified actual67 nativechannel/PNG/currentcanonical and immutable83entry archive; bounded objective accepted, normal hooks/landing only pending. Full N12/N17/C04/HUMAN remains open."
+    },
+    "required_gates": {
+      "scope": "Finite N12/N17 complete257 public indexed inventory; no source/build edits.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "603d74",
+          "exit_code": 0,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "2edd8a",
+          "exit_code": 0,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "640fc6",
+          "exit_code": 0,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Unchanged production/sourceGUI from7590c663; adequate sourcehealth3108/dependency/resource PASS. Inherited gui_supervision_surface parity FAIL unwaived/dat-supervision-owner-parity-202s. No compilation justified.",
+      "terminal": {
+        "session": 44792,
+        "exit_code": 0,
+        "gui_pid": 787699,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "pending": "Normal hooks/landing only; actual owned4 stagedformat/whitespace0 archived"
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n17-accessible-257-20261011.tar.xz",
+      "sha256": "b3c0709172b34b3292bdb0d16fa7a8d8cf7a80723fbbe7b78a357eb2b9bd1fee",
+      "manifest_sha256": "a9d43b3b6ea284d26848bc697d57d46b30f806cd6ae4b5588870fe4b2766be2c",
+      "regular_files": 83,
+      "hashed_files": 82,
+      "raw": 15,
+      "canonical_final": 29,
+      "canonical_blobs": 24,
+      "canonical_maps": 6,
+      "source_pins": {
+        "crates/gui-app/src/selection_accessibility.rs": "d116b407efbe4a14641bd6de5076f8442ca4940f31ca9bdaad467f8499bd8544",
+        "crates/gui-app/src/terminal_accessibility_bridge.rs": "e512035cbf8cc2bf91cca16f8a5269a4533e46f981b5c02731bf745b9dc03003",
+        "crates/gui-app/src/terminal_accessibility_platform/worker.rs": "0133154936467ab04564e9a331b7856f243aa3d3cf5881ffe6ee4473ab91adb1",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection.rs": "6c8350d0bcb9f2a58b1d38177013f025f66c7b9ad1a6e9ce4682b46931fb7c5b",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/presentation.rs": "2cc85023e4ee8f576c8599a0e8b80f2ef05424a4d1cc6f8110ce46eef43cba26",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/events.rs": "599b876bef94327ff60a6e021b1fd40976f757914f7dcf89b29279be8c9012e8",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/children.rs": "c1ff69c2073bf26f34f7667e08d9e7520d7c319756916dc6dbb1f8ca13bc89e1",
+        "crates/gui-app/src/runtime_selection.rs": "ae9f47a70ec4adce9bf3c5ed6d2f235a8e1eac167ec8477a480309fd80b3d151",
+        "crates/gui-protocol/src/selection_view.rs": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+        "crates/gui-protocol/src/selection_subject.rs": "364772b28ba8d7ddc03fdad93ed90bf7f1447afaf81514f49f359b404e392b83",
+        "crates/gui-app/src/runtime_selection_menu.rs": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+        "crates/gui-app/src/runtime_selection/publication.rs": "ff3b599c10e1068ea0629e96e699489b84857e1cab923e9b56e2156c924f3ae9",
+        "crates/gui-app/src/console_accessibility.rs": "0e2e60dcf3696f425fac0c4f83dfe16b84be733a50896db90803e12619caa692",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/child_array.rs": "69f361481086de020e72a74f0156873aaeb749709d1d0f12ef10e2cfe2453c84"
+      }
+    },
+    "limits": [
+      "One currentroot[] schematic_text complete257 public tree transport/currentnative inventory slice only; no fullN12/N17/C04/HUMAN/physicalscreenreader/AT interoperability.",
+      "Generic GetState panelstate does not establish standardmemberSELECTED/FOCUSED; exact queried selected/focus attrs are credited. CompoundfocusNone does not invent active memberfocus.",
+      "Bulk257 fits existing framecap; explicit out-of-rangeIndex257 refusal only, no LimitsExceeded runtime coverage or expandedfixture.",
+      "No design/source/journal writes/newdependency/build. Raw CAPTURE_ONLY unchanged, independentboundedacceptance separate; inherited supervision parityFAIL unwaived."
     ]
   }
 }
