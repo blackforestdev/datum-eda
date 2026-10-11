@@ -1,0 +1,154 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "2c34dac0195688dc686f372dce5de29ed2971a67",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda --format json project create-pool-package /home/bfadmin/Documents/datum-eda/.datum/footprint-reference-audit/footprint-pads-audit/ordinary --package 9e8668ac-1a53-422d-b6b0-5f7cc0907ba7 --name 'Fresh pads body'",
+  "workflow_results": {
+    "Create a native unplaced Footprint with Package, Padstacks and two UUID-keyed pads through ordinary CLI actions": true,
+    "Add and edit pads, remove an obsolete pad and clear the collection through existing Set": true,
+    "Query exact raw pads and preserved nonempty sibling content, then reopen the native project": true,
+    "Undo and redo pads edits with exact payloads, retained pad identities and canonical journal history": true,
+    "Use existing single-pad Set, whole-object Set and Symbol, Footprint graphics and Padstack sections with preserved behavior": true
+  },
+  "safety_results": {
+    "Preserve original raw UUID-keyed pad map and leaf metadata, retained identities and absent optional defaults": true,
+    "Preserve Footprint identity, Package, graphics, courtyard, process, model and all other sibling content": true,
+    "Reject malformed maps, missing or wrong-kind references, unsupported kind or section and unauthorized writer without authored or journal changes": true,
+    "Use one fresh prepared model and canonical Set commit path with shared typed-value admission and existing reference and source guards": true,
+    "Retain existing whole-object pad schema admission and single-pad checks without new key identity, name, numeric, layer, process or propagation rules": true
+  },
+  "binary_sha256": "359bb9816cc3dae4c3849955cdc325e4ad677bb35612758491aa807f1ebf115f",
+  "source_pins": {
+    "crates/cli/src/args/project_library_object.rs": {
+      "sha256": "af7b58c19e113b9e5de7a93984f0087d4c87450b65ec474c434d66f408444b8c",
+      "lines": 56
+    },
+    "crates/cli/src/commands/library/library/object_edit.rs": {
+      "sha256": "18ca57124eb3fe277ff33705066e44ddb1bda9b875bc5df9456349a90e2a9d06",
+      "lines": 159
+    },
+    "crates/engine/src/api/native_write/library_definition.rs": {
+      "sha256": "c21980f835bae4a60aedd4fb620f791aac0f038ee9874346a067cd443b10c43d",
+      "lines": 693
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_footprint_pads.rs": {
+      "sha256": "886ab6ad8d3b74de4546ac4358f022c94b4085c3bd7c880bb52ee4b6e0bce8a6",
+      "lines": 406
+    },
+    "crates/cli/src/main_tests/mod.rs": {
+      "sha256": "f13eeac912ce50f4dfc856a64f9eba5ba2b6f94fc4ad3ece31d21afea26b3d6b",
+      "lines": 341
+    }
+  },
+  "evidence": {
+    ".datum/footprint-reference-audit/footprint-pads-audit/source-freeze.json": "213740e7fed08e4a4cf7c566ae5ccd0898e8dc04ac6a36d3cbaef60f864fbd7b",
+    ".datum/footprint-reference-audit/footprint-pads-audit/before-results.json": "b813bfb1126817beaea08709f5171f97f1d927695933b667881857fc89df723a",
+    ".datum/footprint-reference-audit/footprint-pads-audit/focused.log": "5c047e29e73be0c8d91a52c6d2b37e21ae62305ed15c10cc340b8bda88bdc38f",
+    ".datum/footprint-reference-audit/footprint-pads-audit/aperture-tests.log": "9ee39df99d1aa3db9c8869b70da3acdd65c53c75c91eebf58e383cb29aca8d7c",
+    ".datum/footprint-reference-audit/footprint-pads-audit/build-after.log": "0dc9fae478f4b6dfa003e6d6df0bdfc00d21cde740f951e187e41c89e56cc66d",
+    ".datum/footprint-reference-audit/footprint-pads-audit/ordinary-results.json": "1296b26a802055c020d235edd2ca486bc36de3c6a623f22ae7c2710148264144",
+    ".datum/footprint-reference-audit/footprint-pads-audit/compatibility-results.json": "dfbdb0dbac0d3f8af6950fab8d4fe72b35c85619bbfccc18ae078d4f65ac17a2",
+    ".datum/footprint-reference-audit/footprint-pads-audit/other-collection-results.json": "d6c28577573bb1b4245fff3158e42007e37e5d93605ae17a406fc5003b34f207",
+    ".datum/footprint-reference-audit/footprint-pads-audit/symbol-diagnostic-comparison.json": "20e592a19a25cf13311ee9022bef00729c41f2bc607653dab94f80597c1eba92",
+    ".datum/footprint-reference-audit/footprint-pads-audit/execution-receipts.json": "f847523b89b42909e4747ee74db213d1ca055c7398a3bc7c33362c8c19fbd5a5",
+    ".datum/footprint-reference-audit/footprint-pads-audit/full-drift.log": "23c86766eaabb709b28a25609741d3d27e4f1d7ec979f6757794bbb9045999f2",
+    ".datum/footprint-reference-audit/footprint-pads-audit/drift-comparison.json": "f51e6f31827aed61320278ba2f54440ca60d3955e3c0bdb6da33ae6ba34b76f4",
+    ".datum/footprint-reference-audit/footprint-pads-audit/fields-compat/ordinary-results.json": "6a75a2b9163c16f6038ed484cf8cb93db9b253accbbae208ed4cab240f252b94",
+    ".datum/footprint-reference-audit/footprint-pads-audit/symbol-compat/ordinary-results.json": "5933e4040c50f3858267c3423060bf75a26e2dc35e0e1560832443a9d863d9e8",
+    ".datum/footprint-reference-audit/footprint-pads-audit/aperture-compat/ordinary-results.json": "d60b8636a10e38afcf209388a1acaf3aec8061e001a2aa6b480640c8bc2b4109"
+  },
+  "observed_results": {
+    "final_unique_tests": 6,
+    "ordinary_commands": 109,
+    "positive_commands": 78,
+    "new_section_refusals": 26,
+    "required_full_project_invariant_refusals": 25,
+    "extra_collision_refusals": 1,
+    "existing_single_pad_controls": 5,
+    "byte_exact_single_pad_controls": 4,
+    "qualified_package_uuid_rebased_control": 1,
+    "compatibility_profiles_verified": 5,
+    "completed_execution_receipts": 11,
+    "successful_execution_receipts": 10,
+    "pads_edits": [
+      "add",
+      "edit",
+      "remove",
+      "clear",
+      "restore"
+    ],
+    "validation": true
+  },
+  "review_receipts": {
+    "source_and_behavior": "Actual independent management source/runtime review PASS received on five frozen source pins, completed ordinary proof and five compatibility profiles. Five persisted canonical journal pairs were personally compared by management with exact before/after payloads.",
+    "documentation": "Actual independent engineering/API review and code auditor Tool1 review PASS receipts received by appointed manager.",
+    "reused_package_validator_controls": "Existing Package-reference validator controls were reused at their unchanged implementation scope; this record does not claim a new independent Package-validator test run.",
+    "full_drift": "Actual completed execution25715 exit101 retains thirteen unchanged Clippy diagnostic texts/locations in five unchanged files; later gates unreached."
+  },
+  "manager_disposition": "Owner-appointed PM059 manager accepts bounded existing-contract delivery after actual source landing; qualification remains separate.",
+  "proof_limits": [
+    "Per-write journal increments and unplaced exclusion are executed script assertions; persisted journal entries are separately retained and were compared by management.",
+    "The extra foreign metadata UUID collision preserves authored files and journal while retaining canonical staging scratch; no full-project invariance is claimed for that control.",
+    "Four single-pad controls are byte-exact; the wrong-kind Padstack control explicitly rebases the fixture Package UUID in its otherwise exact diagnostic.",
+    "Symbol/fields comparisons explicitly qualify fixture UUID/path rebasing and supported section choice expansion; existing Package-validator evidence is reused without widening its scope."
+  ],
+  "full_workspace_result": {
+    "status": "FAIL",
+    "exit_code": 101,
+    "diagnostics": 13,
+    "unchanged_files": 5,
+    "later_gates": "unreached"
+  },
+  "pending_qualification": [
+    "Q5/Q6 graph promotion and placed propagation remain owner-reserved",
+    "GUI S05, MCP and editor breadth remain separate",
+    "Seed/source/license rights, standards and manufacturing adoption remain separate",
+    "Unrelated full-workspace Clippy and GUI parity failures remain open"
+  ],
+  "payload_checks": [
+    {
+      "action": "add",
+      "before_revision": 3,
+      "after_revision": 4,
+      "exact_expected_payload": true,
+      "payload_sha256": "c71de0b5bf3f2d29bf6f88413eabb951f2938f8c26dbeb9eb2e987793c3f47f5",
+      "persisted_journal_entry_sha256": "2ab0639350ad5a3a8ad17bea1247ee09299c4eef4120c59f8a3feebc5af17a63"
+    },
+    {
+      "action": "edit",
+      "before_revision": 6,
+      "after_revision": 7,
+      "exact_expected_payload": true,
+      "payload_sha256": "36da2433c8e6d4ef47ba35ec4b9a6460af460fc11c4f468ab1abab1cc1fd64ef",
+      "persisted_journal_entry_sha256": "eae127f10eb619a17f80f9a10ff207c506114df3d36ab1f0b874be789d114416"
+    },
+    {
+      "action": "remove",
+      "before_revision": 9,
+      "after_revision": 10,
+      "exact_expected_payload": true,
+      "payload_sha256": "ecc80719860bd77b9dd4a6d3d9ec3afeeb2a24d0186947fcaffa3037800c9c53",
+      "persisted_journal_entry_sha256": "2b1499a11b741577bdc79ac7d014592815ca7cdc9e9b9e7dc4b2028d89284fd5"
+    },
+    {
+      "action": "clear",
+      "before_revision": 12,
+      "after_revision": 13,
+      "exact_expected_payload": true,
+      "payload_sha256": "c0178173630c824e58e2c05c7fffed42691d468fcd5cce8e9aaea97be769acca",
+      "persisted_journal_entry_sha256": "a410f7cbf21291f397957c87dd85f788ff67310d8c3f552028e13185ee46caba"
+    },
+    {
+      "action": "restore",
+      "before_revision": 15,
+      "after_revision": 16,
+      "exact_expected_payload": true,
+      "payload_sha256": "452b596ea89c2acbc5fb924ff85295eebdb933a4e3b672d30e2f1df25a486d56",
+      "persisted_journal_entry_sha256": "61740931023733cc95eff5b4de5013c98a9b610e8e3d76013c9c8283ec838dfe"
+    }
+  ],
+  "protected_files": {
+    "count": 13,
+    "unchanged": true,
+    "original_hash_map_sha256": "11a95a4f2c3496d70732661e5f2dc1ccce91b061f2c2b2e159b9af21ff8d06f8"
+  }
+}
