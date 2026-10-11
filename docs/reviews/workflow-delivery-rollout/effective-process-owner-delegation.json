@@ -19,7 +19,7 @@
     "No fabricated standards numbers, compliance PASS or manufacturing tolerance",
     "No HUMAN assessment or GUI SURFACE-S05 visual ratification"
   ],
-  "state": "PROCESS-EXECUTE and PROCESS-REVIEW complete against bounded PM061 criteria; manager landing in progress, availability pending source commit.",
+  "state": "PM061 bounded supported-case development availability accepted and source landed; issue closure and explicit ownership release synchronized.",
   "recorded_at": "2026-10-11T03:10:52.444278Z",
   "manager_disposition": {
     "decision": "docs/decisions/PRODUCT_MECHANICS_061_EFFECTIVE_PADSTACK_PROCESS_GEOMETRY.md",
@@ -89,5 +89,51 @@
     },
     "inventory_sha256": "e094f7db34115a7c826a2400ed8219caa0dec3f3af29116860918f77e46f8e16",
     "ownership": "Staged set independently verified as 62 transferred source paths plus 14 manager-owned documentation/governance paths; no foreign/protected/dependency/import paths."
+  },
+  "kind": "ordinary_application",
+  "source_commit": "ef32fbe151246b8f7adde6ba84ebac926448c0d8",
+  "launch_command": "Repository-local ordinary-attempt-4.py followed by ordinary-resume-4.py; separate ordinary-preserved-compatibility-resume-2.py; final-current-consumers.py; guarded cargo test -p datum-gui-render --features visual --lib process_native_ordinary_workspace_capture --jobs 1 -- --ignored --nocapture",
+  "workflow_results": {
+    "Author native Padstack and Footprint process policies and inspect exact effective geometry, membership and basis": true,
+    "Materialize native placed pads with frozen process source, then move, rotate and flip through canonical operations": true,
+    "Render and export supported mask and paste geometry from the same engine result and compare parsed output": true,
+    "Edit library policy, inspect stale placements, review and apply an explicit update proposal": true,
+    "Undo, redo and reopen with exact frozen process data, source bindings and canonical history": true
+  },
+  "safety_results": {
+    "Never substitute copper or zero defaults for missing required resolution inputs; explicit Exposed/Aperture may use zero offset while standards basis remains unknown": true,
+    "Preserve old frozen payloads and history without read-time migration or silent propagation": true,
+    "Refuse overflow, collapsed or unsupported exact geometry without project or artifact replacement": true,
+    "Preserve explicit source identity, revision, basis, membership and correspondence through proposals": true,
+    "Use one engine resolver and canonical mutation path; distinguish geometry usability from standards qualification": true
+  },
+  "ordinary_evidence_basis": {
+    "workflow_1": "Native manual profile/basis authoring, explicit policies, effective query and NativeCheck exercised in ordinary attempt/resume. Unknown standards reported separately.",
+    "workflow_2": "Ordinary placements, move/quarter-turn/flip and reopened history verified with frozen identities and exact geometry.",
+    "workflow_3": "Actual two-workspace retained rendering passed; independent full tuples for all eight process layers equal exact CAM and canonical native query/authored preserved inputs.",
+    "workflow_4": "Ordinary profile edit retains frozen values, exposes stale/current diff; reject records metadata only; explicit complete proposal apply refreshes geometry.",
+    "workflow_5": "Ordinary undo/redo/reopen, complete retirement and restoration plus actual saved journals corroborate frozen payload and identity preservation.",
+    "safety": "Ordinary unresolved/current-basis refusals, stale/fractional consumer refusal and focused overflow/collapse/membership/correspondence/admission controls retain canonical mutation/history boundaries. Executed project/artifact invariance assertions are credited without invented archival hash pairs.",
+    "source_pin": "All 62 landed source hashes match the independently reviewed inventory, with three independently reviewed import/module ordering-only formatting amendments. Compiled binary evidence predates only these behavior-preserving amendments.",
+    "failed_attempts": "Original attempt-4 failed at command 150 on generic copper diagnostic; resume-4 passed 49 commands. Preserved attempts retained nominal oracle/profile-adoption prerequisite failures before successful seven-command resume. Two admission test oracle failures and two capture compile failures retained; corrected focused tests/capture passed."
+  },
+  "landing_disposition": {
+    "manager_session": "01a122e5-f602-7f61-a144-0d1ce7116a77",
+    "authority": "Owner appointment and exact delegation; PM059 objective acceptance against ratified PM061 P01-P06. No owner-only decision supplied.",
+    "source_commit": "ef32fbe151246b8f7adde6ba84ebac926448c0d8",
+    "result": "Accept bounded native process feature availability from actual source, ordinary workflow and distinct reviews",
+    "recorded_at": "2026-10-11T06:47:58.233997Z",
+    "ownership": "All transferred source and documentation work committed. Current task lease explicitly released; no remaining implementation ownership or automatic successor grant.",
+    "qualification_gaps": [
+      "Unknown standards basis is not compliance certification; seed/source rights remain separate.",
+      "Unsupported rational-centre/arbitrary-rotation CAM and full manufacturing qualification remain open.",
+      "Actual offscreen retained rendering does not certify interactive usability, HUMAN assessment or S05 visual ratification.",
+      "Unchanged full-workspace Clippy failures and GUI supervision parity 9 vs actual 2 remain disclosed; no waiver or authority refresh."
+    ]
+  },
+  "closure_review": {
+    "result": "Distinct management_review bounded closure PASS; no mandatory correction",
+    "reviewed_receipt_sha256": "bb740871aadd2761c1f89e4374d8b242e66272309ba11c00214fc0e1f8cc5346",
+    "scope": "Verified all 62 landed source pins, exact five workflow/five safety contract keys, recorded actual evidence and retained limits, complete steps, landed state/closed bead/absent claim and only four owned governance deltas. No source or successor change."
   }
 }
