@@ -7,7 +7,7 @@ use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
 use eda_engine::api::native_write::library_definition::{
-    padstack_with_aperture, symbol_with_drawings, symbol_with_fields,
+    footprint_with_pads, padstack_with_aperture, symbol_with_drawings, symbol_with_fields,
     validate_footprint_replacement_references, validate_part_replacement_references,
     validate_symbol_replacement_references,
 };
@@ -40,10 +40,10 @@ pub(crate) fn set_native_project_pool_library_object(
     let (mut model, object) = if let Some(section) = section {
         let required_kind = match section {
             "fields" | "drawings" => "symbols",
-            "silkscreen" | "fab" => "footprints",
+            "silkscreen" | "fab" | "pads" => "footprints",
             "aperture" => "padstacks",
             _ => bail!(
-                "unsupported pool library section {section}; expected fields, drawings, silkscreen, fab or aperture"
+                "unsupported pool library section {section}; expected fields, drawings, silkscreen, fab, aperture or pads"
             ),
         };
         if object_kind != required_kind {
@@ -75,7 +75,8 @@ pub(crate) fn set_native_project_pool_library_object(
                 footprint_with_graphics(object, FootprintGraphicTarget::Silkscreen, value)
             }
             "fab" => footprint_with_graphics(object, FootprintGraphicTarget::Fab, value),
-            _ => padstack_with_aperture(object, value),
+            "aperture" => padstack_with_aperture(object, value),
+            _ => footprint_with_pads(object, value),
         }
         .map_err(definition_validation_error)?;
         (model, object)

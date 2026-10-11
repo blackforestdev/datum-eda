@@ -2364,11 +2364,23 @@ defaults remain intact. Whole-object JSON numeric/null semantics and typed Creat
 checks remain separate; this adds no positivity, drill comparison, manufacturing
 threshold, normalization or placed-propagation rule.
 
-The actual engine API inventory is 249 unique public function names, including
+Manual Footprint pad-collection replacement uses
+`library_definition::footprint_with_pads` through the existing Set action's pads
+section for Footprints. Shared typed-value admission validates the existing
+`HashMap<Uuid, Pad>` schema and inserts the original raw map; an empty object
+clears the collection. Add, edit and removal preserve retained pad identities,
+leaf metadata, absent defaults and all non-pad sibling content. The lifecycle
+uses one fresh model, existing Package and Padstack reference/source admission
+and canonical Set/history. Whole-object map-key/leaf-identity, numeric, layer and
+name semantics remain intact; the existing single-pad command retains its
+separate checks. This adds no identity, uniqueness, positivity, normalization,
+PinPadMap or placed-propagation rule.
+
+The actual engine API inventory is 250 unique public function names, including
 the retained earlier inventory drift, definition admission helpers and native
 graphic builders. These APIs implement existing reference rules and manual
 fabrication, Symbol field authoring, shared graphic editing and Padstack copper
-aperture editing. GUI authoring,
+aperture and Footprint pad-collection editing. GUI authoring,
 SMD/process/standards policy, native
 file-type migration, library adoption and manufacturing qualification retain
 their separate authority and acceptance requirements.

@@ -110,6 +110,14 @@ Existing whole-object schema admission and typed Create checks remain separate.
 This adds no numeric/drill/process policy, normalization, placed propagation,
 section MCP/proposal/GUI delivery or manufacturing qualification.
 
+Manual CLI Footprint pad-collection editing uses
+`set-pool-library-object --kind footprints --section pads --from-json <map>`.
+Existing `HashMap<Uuid, Pad>` admission preserves the raw map for add, edit,
+removal and empty-object clearing through canonical Set/history. Retained pad
+IDs, leaf metadata and non-pad siblings remain intact; the single-pad command
+keeps its separate checks. This adds no identity, numeric, layer, name, PinPadMap,
+placed-propagation, source/standards or section MCP/proposal/GUI policy.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

@@ -289,6 +289,19 @@ pub fn padstack_with_aperture(
     )
 }
 
+/// Replace the pad collection using its existing UUID-keyed schema and raw map.
+pub fn footprint_with_pads(
+    object: serde_json::Value,
+    pads: serde_json::Value,
+) -> Result<serde_json::Value, EngineError> {
+    library_with_value::<std::collections::HashMap<Uuid, crate::pool::Pad>>(
+        object,
+        "footprint",
+        "pads",
+        pads,
+    )
+}
+
 fn library_with_value<T: serde::de::DeserializeOwned>(
     mut object: serde_json::Value,
     kind: &str,
