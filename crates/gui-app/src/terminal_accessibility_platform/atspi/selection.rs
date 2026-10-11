@@ -3,6 +3,9 @@ use super::*;
 use datum_gui_protocol::{AuthoredSelectionIdentity as Id, selection_view::InspectionValue};
 mod children;
 mod presentation;
+mod state;
+#[cfg(test)]
+mod state_tests;
 use presentation::{description, name};
 mod events;
 pub(in crate::terminal_accessibility_platform) use events::messages;
@@ -240,14 +243,7 @@ pub(super) fn dispatch(
         }
         "GetRole" => Ok(("u", u32_body(ROLE_PANEL))),
         "GetRoleName" | "GetLocalizedRoleName" => Ok(("s", string_body("panel"))),
-        "GetState" => Ok((
-            "au",
-            state_body(
-                false,
-                false,
-                Some((true, matches!(node, Node::Root) && snapshot.focused)),
-            ),
-        )),
+        "GetState" => Ok(("au", state::body(snapshot, node))),
         "GetApplication" => Ok(("(so)", object_reference_body(&state.bus_name, ROOT_PATH))),
         "GetInterfaces" => Ok(("as", string_array_body(&[ACCESSIBLE]))),
         "GetRelationSet" => Ok(("a(ua(so))", empty_array_body(8))),

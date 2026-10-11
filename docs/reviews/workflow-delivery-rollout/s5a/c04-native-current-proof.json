@@ -4981,6 +4981,229 @@
       "One root[] authoredWireObject ordinarycontextcancel/paneclose/rebind slice, no arbitraryallpanes/allsurfaces/dense/equalpath/HUMAN/fullN08/N13/C04 qualification.",
       "Legitimate projection changes are separate from canonicalmembership; no blanketwholeview equality guarantee or new pane lifecycle policy.",
       "No design/journal/source writes/dependency/build. RawCAPTURE_ONLY unchanged, independentboundedacceptance separate; inherited supervision parityFAIL unwaived."
-    ]
+    ],
+    "source_landing": {
+      "commit": "5cb9f1249d755a50d434bcf9f77ebd0a81ba06cf",
+      "normal_hooks_exit_code": 0,
+      "scope": "Owned4 ordinary evidence landing; committed archive bf6c0c84 and unchanged compiled/source13 pins independently verified by auditor. Current later N17 source change separately pinned."
+    }
+  },
+  "n17_standard_selected_20261011": {
+    "status": "PARTIAL \u2014 bounded N17 implementation/source/native/package objective accepted by appointed root manager; normal hooks/landing pending. Full C04/N17/AT/HUMAN qualification open.",
+    "authority": "Retained UVT-S5A-BUILD/S5A-C04 execution and PM059 root manager delegation; preparation304 accessible selectedstates. No new product rule/dependency/successor.",
+    "problem": "Current member GetAttributes selected=true disagreed with public GetState, which never set standard SELECTED. Existing read-only membership projection is the authority.",
+    "change": "Genuinely extracted one shared baseline state word/body encoder; inherited terminal/preference/default bytes unchanged. Selection sets SELECTED bit23 only after actual current Node::Member lookup. Root keyboard FOCUSED bit12 remains separate; optional selection-focus does not grant keyboardFOCUSED.",
+    "source_checkpoint": {
+      "crates/gui-app/src/terminal_accessibility_platform/atspi.rs": "15392a3b54c0ddb605a64c01d97c23650d0d52ea4981ff7638382c5668c3d792",
+      "crates/gui-app/src/terminal_accessibility_platform/atspi/state.rs": "3c283c7c976a14b2b452b0dcc63cb75fc7204de3eb45ece01123a558c9efe05e",
+      "crates/gui-app/src/terminal_accessibility_platform/atspi/selection.rs": "ca17e83b2c509dd4963a8df12351286babbdd54662e68769986b6a84c3ca8544",
+      "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/state.rs": "7389338ed629fe29ddc1ca4b846e29b8d02d36e125a88250ed675dc155e8addd",
+      "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/state_tests.rs": "11dc4106cac972b44d1ec09c044092763d928159091dfb17508a9a18912588d8"
+    },
+    "source_before_commit": "5cb9f1249d755a50d434bcf9f77ebd0a81ba06cf",
+    "route_review_reuse": {
+      "gui-selection": "d47bd726045e78a6c3a6fdd38b0d5b63ebe947b9c138b05a44032151e4882a7e",
+      "prototype-selection": "78dffa2dc2a85ef1e49e9d2e50720b7bd1b6e4c91c0f2f143175c78202a4ed93",
+      "classification": "Management independently recomputed unchanged complete route and reused adequate complete prior source/consumer review; focused existing preparation304/UVT195\u2013214 reread. No prototype/spec/digest policy change."
+    },
+    "native": {
+      "attempt": 71,
+      "raw_result": "raw/attempt-71-n17-selected-state-result.json",
+      "sha256": "04073632af240ad43119578b3b46e44e4dbe677138e913117237c82804d2c6aa",
+      "outcome": "CAPTURE_ONLY_N17_STANDARD_SELECTED_REVIEW_PENDING",
+      "driver_sha256": "e04435cd1abf8d3a8bf61e6d8d515011da23249c5a286181765009d345e88e73",
+      "gui_sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3",
+      "pid": 802254,
+      "service": ":1.5952",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "receipts": 3,
+      "workflow": "Ordinary eligibleWire8\u2192SelectRun5; public PID-bound queries; ordinary distinct externalWireD click replaces Run; qualified newObject public queries and all5formerpaths explicit UnknownObject. No private state mutation.",
+      "run_members": [
+        [
+          "Junction",
+          "73000000-0000-4000-8000-00000000000b",
+          []
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-00000000000a",
+          []
+        ],
+        [
+          "Port",
+          "73000000-0000-4000-8000-00000000000c",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000008",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000009",
+          []
+        ]
+      ],
+      "current_member_words": [
+        1132464384,
+        0
+      ],
+      "root_editor_focused_words": [
+        1124079872,
+        0
+      ],
+      "structural_and_field_words": [
+        1124075776,
+        0
+      ],
+      "focus_semantics": "Run5 alloptional memberfocus=false; replacement ObjectWireD attrselection-focus=true; both actual memberstates SELECTED23 without keyboardFOCUSED12. Root hasFOCUSED12 and noSELECTED.",
+      "former_member_refusals": {
+        "count": 5,
+        "error": "org.freedesktop.DBus.Error.UnknownObject",
+        "exit_code": 1
+      },
+      "read_only": "Full nativeP unchanged while querying; all61 prelaunch/startup/source_after/final canonical maps match and current bytes rehashed. Startup delta{}.",
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 802254,
+        "device_epoch": 1
+      },
+      "pixels": [
+        "raw/attempt-71-n17-selected-state-Run5-standard-selected-properties.png",
+        "raw/attempt-71-n17-selected-state-Object-selectionfocus-distinct-from-keyboardfocus.png"
+      ]
+    },
+    "focused_proof": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app terminal_accessibility_platform::atspi::selection::state_tests -- --nocapture",
+      "session": 17240,
+      "exit_code": 0,
+      "passed": 2,
+      "failed": 0,
+      "compile": "4m22s",
+      "test": ".03s",
+      "log": "n17-selected-state-focused-1.log",
+      "scope": "Two real dispatch controls only; filtered inherited terminal/preferences tests and visual_shell zero tests supply no new runtime credit."
+    },
+    "gui_build": {
+      "session": 87535,
+      "exit_code": 0,
+      "compile": "43.41s",
+      "sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3"
+    },
+    "independent_reviews": {
+      "code_audit": "Actual frozen5 source CLEAR and baseline encoder byte-equivalence; actual focused2 dispatcher controls and actual71 native public states/current61/personalbothpixels bounded ACCEPT. Final immutable ad2777ed/bbbf54c4 139safe/138hashes/current5+beforeHEAD2/five61maps/26origins correspondence ACCEPT received.",
+      "management_review": "Actual unchanged complete route reuse/current5/claims and actual71 channel/current61/focused2/build bounded clear; final immutable ad2777ed/bbbf54c4 governance/package PASS received: all139safe/138hashes/26origins/current5/beforeHEAD2/five61maps/final61/49blobs, actualgates/owned9 and truthful limits.",
+      "root_manager": "Root personally actual71 result04073632/publicbitmaps/fiveUnknownObject/current61/pixel and final immutable ad2777ed/bbbf54c4 hashes/maps/source cohort reviewed; finite N17 existing objective ACCEPT and normal owned landing authorized. Full C04/AT/HUMAN remains open."
+    },
+    "required_gates": {
+      "scope": "Existing C04 N17 implementation: shared state encoder extraction with unchanged inherited caller bodies; current Member-only SELECTED bit23, keyboardFOCUSED separate.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "43eee2",
+          "wall_time_seconds": 0.830114811,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "d1bf19",
+          "wall_time_seconds": 1.5799e-05,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "78a77e",
+          "exit_code": 0,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "pre_build_gates": [
+        {
+          "command": "python3 scripts/check_source_module_size.py",
+          "chunk_id": "5a7935",
+          "exit_code": 0,
+          "output": "Source module size check passed (3111 source files).",
+          "attribution": "Actual pre-build source-frozen check; unchanged production pins reused."
+        },
+        {
+          "command": "python3 scripts/check_dependency_authority.py",
+          "chunk_id": "7a5ae8",
+          "exit_code": 0,
+          "output": "PASS",
+          "attribution": "Actual retained pre-build receipt, no dependencies changed."
+        },
+        {
+          "command": "python3 scripts/check_cargo_resource_policy.py",
+          "chunk_id": "1d049a",
+          "exit_code": 0,
+          "output": "PASS",
+          "attribution": "Actual pre-build guarded-runner policy receipt."
+        }
+      ],
+      "harness_correction": {
+        "command": "python3 scripts/check_render_pipeline.py",
+        "chunk_id": "c03cb6",
+        "exit_code": 2,
+        "output": "No such file; incorrect gate command replaced with actual project_status.py check-render. No application defect."
+      },
+      "tests": {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app terminal_accessibility_platform::atspi::selection::state_tests -- --nocapture",
+        "session": 17240,
+        "exit_code": 0,
+        "passed": 2,
+        "failed": 0,
+        "compile": "4m22s",
+        "test": ".03s",
+        "log": "n17-selected-state-focused-1.log",
+        "scope": "Two real dispatch controls only; filtered inherited terminal/preferences tests and visual_shell zero tests supply no new runtime credit."
+      },
+      "gui_build": {
+        "session": 87535,
+        "exit_code": 0,
+        "compile": "43.41s",
+        "sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3"
+      },
+      "native": {
+        "session": 75571,
+        "exit_code": 0,
+        "gui_pid": 802254,
+        "gui_exit_code": 0,
+        "result_sha256": "04073632af240ad43119578b3b46e44e4dbe677138e913117237c82804d2c6aa",
+        "shutdown": "drained_device_live"
+      },
+      "retained": "Inherited gui_supervision_surface parity FAIL remains unwaived/dat-supervision-owner-parity-202s; no full C04/AT/HUMAN qualification. Shared inherited body source equivalence reviewed; prior adequate terminal evidence reused, no new runtime claim.",
+      "pending": "Normal commit hooks/landing only; actual owned9 stagedformat/whitespace terminal0 archived."
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n17-standard-selected-20261011.tar.xz",
+      "sha256": "ad2777ed15615a89e4e9b56f32e38f748c0ecf673918dc60e6c52de758dc331e",
+      "manifest_sha256": "bbbf54c4a6e8ef3742e76e78026f98d06d7df480c4edd644e735f377e1a2857a",
+      "regular_files": 139,
+      "hashed_files": 138,
+      "raw": 21,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 5,
+      "source_pins": {
+        "crates/gui-app/src/terminal_accessibility_platform/atspi.rs": "15392a3b54c0ddb605a64c01d97c23650d0d52ea4981ff7638382c5668c3d792",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/state.rs": "3c283c7c976a14b2b452b0dcc63cb75fc7204de3eb45ece01123a558c9efe05e",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection.rs": "ca17e83b2c509dd4963a8df12351286babbdd54662e68769986b6a84c3ca8544",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/state.rs": "7389338ed629fe29ddc1ca4b846e29b8d02d36e125a88250ed675dc155e8addd",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/state_tests.rs": "11dc4106cac972b44d1ec09c044092763d928159091dfb17508a9a18912588d8"
+      }
+    },
+    "limits": [
+      "No new runtime inherited terminal/preferences test credit: exact baseline shared encoder source equivalence plus adequate prior proof reused. Actual filtered testbatch ran onlytwo new dispatchercontrols.",
+      "Live Run/Object standardSELECTED only; isolated dispatcher controls additionally qualify Compound optionalfocus and relatedParent/former paths. No fullAT/screenreader/HUMAN/allroles/allstates/allselectionkinds/C04 qualification.",
+      "Publicquery channel is read-only; rawCAPTURE_ONLY unchanged and independentacceptance separate. Inherited supervision parityFAIL remains unwaived/dat-supervision-owner-parity-202s."
+    ],
+    "staged_checks": "raw/n17-selected-state-staged-checks.json \u2014 exact owned9 stagedfmt/whitespace0"
   }
 }

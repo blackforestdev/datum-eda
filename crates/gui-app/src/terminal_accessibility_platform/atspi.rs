@@ -14,7 +14,9 @@ mod dispatch_error;
 mod introspection;
 mod menus;
 mod selection;
+mod state;
 pub(super) use selection::messages as selection_messages;
+use state::state_body;
 mod properties;
 mod text_ranges;
 use dispatch_error::{error, invalid_args, unknown_object};
@@ -483,43 +485,6 @@ impl ServiceState {
 }
 
 type DispatchResult = Result<(&'static str, Vec<u8>), (&'static str, &'static str)>;
-
-fn state_body(terminal: bool, focused: bool, preference: Option<(bool, bool)>) -> Vec<u8> {
-    let mut words = [0_u32; 2];
-    let states = if terminal {
-        &[
-            STATE_EDITABLE,
-            STATE_ENABLED,
-            STATE_FOCUSABLE,
-            STATE_MULTI_LINE,
-            STATE_SENSITIVE,
-            STATE_SHOWING,
-            STATE_VISIBLE,
-            STATE_SELECTABLE_TEXT,
-        ][..]
-    } else if preference.is_some() {
-        &[STATE_FOCUSABLE, STATE_SHOWING, STATE_VISIBLE][..]
-    } else {
-        &[STATE_ENABLED, STATE_SENSITIVE, STATE_SHOWING, STATE_VISIBLE][..]
-    };
-    let available = preference.map(|(available, _)| available).unwrap_or(true);
-    let focused = focused || preference.map(|(_, focused)| focused).unwrap_or(false);
-    for state in states
-        .iter()
-        .copied()
-        .chain(available.then_some(STATE_ENABLED))
-        .chain(available.then_some(STATE_SENSITIVE))
-        .chain(focused.then_some(STATE_FOCUSED))
-    {
-        words[(state / 32) as usize] |= 1 << (state % 32);
-    }
-    let mut body = BodyWriter::new();
-    body.array(4, |body| {
-        body.u32(words[0]);
-        body.u32(words[1]);
-    });
-    body.finish()
-}
 
 fn locale() -> String {
     env::var("LC_ALL")
