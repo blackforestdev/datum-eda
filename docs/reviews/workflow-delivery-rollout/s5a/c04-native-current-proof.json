@@ -1876,5 +1876,137 @@
     },
     "landing_commit": "2f2967adb946bb48176d07c6bf85303c04bfec09",
     "landing_verification": "Actual landed renderer Git blob matches reviewed/compiled source checkpoint3; bounded independent receipts and manager acceptance recorded. Retained C04 execution continues."
+  },
+  "mixed_keyboard_scope_proof_20261011": {
+    "scope": "Finite remaining retained C04 N11/N17 ordinary keyboard Inspector scope/inventory case; existing behavior, no production change or whole requirement/phase acceptance.",
+    "authority": "Actual manager authorized retained-grant finite mixed scope proof after bounded reason correction landed. Existing ContextMenu/Shift+F10\u2192Select list\u2192Inspect scope and inventory commands; no new binding/product semantics.",
+    "source_commit": "2f2967adb946bb48176d07c6bf85303c04bfec09",
+    "landing_receipt_commit": "d551d83e2b9ab3fb5f9dff508a07a7894f297256",
+    "compiled_gui_sha256": "a8dafa0de51ab2cbc06955f1d7ee9f325bbc84636ca35f4b1cae5a8501105852",
+    "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+    "source_review_reuse": "Existing reviewed scope/menu/renderer and complete selection laws unchanged; same delivered GUI a8dafa0d from exact source and prior independently accepted source/native receipts. No new build or fabricated fresh whole-source review.",
+    "fixture_provenance": {
+      "source": "Fresh copy existing governed labels-status native fixture from prior independently reviewed compound/inventory proof, original preserved.",
+      "project_revision": "8e8c7280ed6778cc1667540f3688c5b554ac71a603700786154539e56daf213c",
+      "typed_members": [
+        "40000000-0000-4000-8000-000000000001",
+        "40000000-0000-4000-8000-000000000002",
+        "40000000-0000-4000-8000-000000000003",
+        "40000000-0000-4000-8000-000000000004",
+        "20000000-0000-4000-8000-000000000003"
+      ],
+      "classes": {
+        "Track": 4,
+        "BoardOutline": 1
+      },
+      "instance_paths": "All empty; no occurrence identity remapping or authored-source edits."
+    },
+    "ordinary_result": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-13.json",
+      "sha256": "d240c7cc39510b51367abd6ac1b3b8f22ac713fa94e45a78d7cd58cdddcac6bf",
+      "outcome": "PASS",
+      "retained_observations": 7,
+      "scope_oracles": [
+        {
+          "scope": "Some(Track)",
+          "count": 4,
+          "derived_up": 24,
+          "presented_scope": "Some(Track)"
+        },
+        {
+          "scope": "Some(BoardOutline)",
+          "count": 1,
+          "derived_up": 23,
+          "presented_scope": "Some(BoardOutline)"
+        },
+        {
+          "scope": "None",
+          "count": 5,
+          "derived_up": 25,
+          "presented_scope": "None"
+        }
+      ],
+      "canonical_widths_nm": {
+        "40000000-0000-4000-8000-000000000001": 5080000,
+        "40000000-0000-4000-8000-000000000002": 5080001,
+        "40000000-0000-4000-8000-000000000003": 5080000,
+        "40000000-0000-4000-8000-000000000004": 2
+      },
+      "focus": "Compound focus None remains None; no non-null focus qualification."
+    },
+    "observed_behavior": "Native board Ctrl+A acquires exact five-member Compound. Existing keyboard menu selects Tracks4, BoardOutline1 and restores All5; current Inspector presented basis_scope matches each scoped state after actual native surface presentation. Track width is exact Mixed for canonical5080000/5080001/5080000/2. Complete SelectionView compares byte-for-byte except only its first current scope field; all complete IDs/project/revision/origin/values/inspection/related/hidden/locked/dropped/notice/focus remain unchanged. Keyboard inventory expand/collapse toggles existing transient state; Escape abandons focused Tracks command without changing All scope.",
+    "menu_oracle": {
+      "producer_sha256": "6f5649c743a4ea09ab83eddb5ffc2f4f5ad0dc7daf7e5b63e2f283578ed78cde",
+      "navigation": "Derive inspection order from actual native ScopeInspection vector; existing source-owned tail is eighteen acquisition controls, inventory toggle and four page controls. Actual focused Inspect labels/order captured and independently checked, not blind index credit.",
+      "frames": {
+        "outline_before_enter": "attempt-13-mixed-scope-5-focused-Some-BoardOutline.png",
+        "all_before_enter": "attempt-13-mixed-scope-5-focused-None.png",
+        "tracks_final_before_escape": "attempt-13-mixed-scope-5-focused-Some-Track.png"
+      },
+      "tracks_capture_limit": "Producer reused Tracks focused filename at final same-All-scope Escape control, overwriting original Tracks-beforeEnter file. Retained frame is honestly final beforeEscape order oracle; typed transition and exact fullview state evidence remain valid. No false original preEnter retained-capture claim."
+    },
+    "nonmutation": {
+      "canonical_files": 29,
+      "post_open_before_equals_after": true,
+      "scope": "Complete authored files plus canonical journal/cursor/integrity/revision metadata; startup terminal lifecycle paths individually manifested, exact revision writer lock excluded. Pre-open deltas and actual exclusions preserved in raw result."
+    },
+    "supplement": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-14.json",
+      "sha256": "70a12908d2d41b5c84cb24b568f6880ba9036a097581d775f7edcecc6b748839",
+      "raw_outcome": "PASS",
+      "retained_observations": 3,
+      "canonical_files": 29,
+      "canonical_unchanged": true,
+      "scope": "Separate minimal two-command Tracks\u2192All supplement launched before manager no-rerun-needed disposition arrived; source/binary unchanged. Unique prefix preserves actual Tracks-beforeEnter artifact. Not added to authoritative main seven-observation count; no duplicate/full N11/N17 acceptance manufactured."
+    },
+    "evidence_files": {
+      "attempt-13-mixed-scope-5-focus.js": "6bf250d0ac98a78518460bbefd90c11aabf9cfece0b15bbf8184a574944a2333",
+      "attempt-13-mixed-scope-5-focused-None.png": "0588b02ae755b8d1a45b2aac13c55d66131819c5c74abe13bcbba708cb7e337a",
+      "attempt-13-mixed-scope-5-focused-Some-BoardOutline.png": "39e0de34adf09e77d6187458f33c1463602f067b4b8c30001f80fedf0384676a",
+      "attempt-13-mixed-scope-5-focused-Some-Track.png": "44cba5982f963716c9a9c2fe245b6fd75c7de9be4e50d2f672073e14f3201baa",
+      "attempt-13-mixed-scope-5-mixed-all-before.png": "6b6d7321a86e913fcfe9754f286d07ca1e6f8237e14dc1ceb17c9a2d260d2c5e",
+      "attempt-13-mixed-scope-5-native.log": "629d667370c33edb8eb9781f0ca5c68aff56cf69b36c30a538baec33a0598517",
+      "attempt-13-mixed-scope-5-scoped-None.png": "cf9cb921b729ac5db54784979e4d868143340696f642f15f3e8dbc421598199f",
+      "attempt-13-mixed-scope-5-scoped-Some-BoardOutline.png": "5722fc926f662972b11dd93a18fa2aa969d56715b7ce5ee4e46a64bd0aa3bf5d",
+      "attempt-13-mixed-scope-5-scoped-Some-Track.png": "2b4b441ce6c123b1738aa5c95b8fb9da46ed1e6a4769b1aa3738158af39f084d",
+      "attempt-13-mixed-scope-5-stdout.log": "7769803cded00d27e7a31cc389baf731593ef86867f4bd70a725aea67cebe33a",
+      "attempt-14-mixed-scope-supplement-5-focus.js": "d6ea2dc2614befb1ad7304167b348f0613aa2b157b09c0e48d4e1066839aa489",
+      "attempt-14-mixed-scope-supplement-5-focused-None.png": "c6b1f1cdebf7be440949f15cb2fd230a2cbef5a51d76f580f2aad495348616de",
+      "attempt-14-mixed-scope-supplement-5-focused-Some-Track.png": "b054f0ce8e440856dea21826cf68074351354b993a26d4fa3b2a1af64963dabf",
+      "attempt-14-mixed-scope-supplement-5-mixed-all-before.png": "6b6d7321a86e913fcfe9754f286d07ca1e6f8237e14dc1ceb17c9a2d260d2c5e",
+      "attempt-14-mixed-scope-supplement-5-native.log": "e4359c7c732722567cffa97531a3149c9bd4b8e6089d5d02dffe346db33b9ad9",
+      "attempt-14-mixed-scope-supplement-5-scoped-None.png": "6b6d7321a86e913fcfe9754f286d07ca1e6f8237e14dc1ceb17c9a2d260d2c5e",
+      "attempt-14-mixed-scope-supplement-5-scoped-Some-Track.png": "2b4b441ce6c123b1738aa5c95b8fb9da46ed1e6a4769b1aa3738158af39f084d",
+      "attempt-14-mixed-scope-supplement-5-stdout.log": "4246835449766a33bbac34822920deb081722793c67890d0e1292abe48aa8112",
+      "mixed-scope-native-attempt13.log": "be9910e079c40f230b7082c0fd21a9d7d01aa6ac2e49f5d4165cbaf19c597df6",
+      "mixed-scope-native-supplement14.log": "be9910e079c40f230b7082c0fd21a9d7d01aa6ac2e49f5d4165cbaf19c597df6",
+      "mixed-scope-selector.txt": "435995e676b3af2779156056647922208de262fa04682fa061e9b543cb36915f",
+      "ordinary-result-attempt-13.json": "d240c7cc39510b51367abd6ac1b3b8f22ac713fa94e45a78d7cd58cdddcac6bf",
+      "ordinary-result-attempt-14.json": "70a12908d2d41b5c84cb24b568f6880ba9036a097581d775f7edcecc6b748839",
+      "ordinary_mixed_keyboard_scope-supplement.py": "dc50d3e40a8d2bc396a6d48ba13e5db49e9ef190b33bcc459fb930faa18bf6f4",
+      "ordinary_mixed_keyboard_scope.py": "6f5649c743a4ea09ab83eddb5ffc2f4f5ad0dc7daf7e5b63e2f283578ed78cde",
+      "setup-mixed-scope-result.json": "591be47cf96dbd557a7c8779114ad8a730b4a09081d1c01e619815c16c808a3f",
+      "setup-mixed-scope-supplement.json": "883dfdb0aae85b04cde11c57352494529ab2a560fbdd41a344e45521648dc25c"
+    },
+    "review_receipts": {
+      "producer": "Distinct s5a_code_audit actually reviewed producer6f5649c7; source clear.",
+      "independent_native": "s5a_code_audit actually reviewed main13 resultd240c7cc, completed terminalbe9910e0, all seven exact member/fullview observations, authored widths,29canonical hashes and six focused/scoped pixels. Recommends bounded ACCEPT; retained Tracks frame is final beforeEscape. Independently verified all27 archived artifact hashes and separate supplement14 accounting; no fullN11/N17 qualification.",
+      "independent_governance": "management_review actual final PASS at pre-disposition prooffc36b48ee3d28cf116c1109e4d2692b8fd1f9fe285d97a348da340f250581bf3/archivef674188a9d7514354e85ba5eebda65b25f9b0dc6bdb3af550b89527f8c519fca; all27 hashes/archivebytes match, main7 and supplement3 separately accounted, exact5IDs/focusNone/scope-only comparisons/29canonical unchanged. Tracks overwrite and inventory state-only limits explicit.",
+      "manager_acceptance": "Owner-appointed root manager accepts only the bounded existing-contract mixed keyboard scope behavior against actual independent native/governance receipts. Five complete identities and null focus preserved across All5/Tracks4/BoardOutline1/All5; canonical source/journal/cursor unchanged. FullN11/N17/C04/C05/C06, HUMAN/assistive, non-null focus and isolated equal-rounded Mixed remain open. Continue retained C04 grant; no successor authorization."
+    },
+    "verification_reuse": "No source edits/Cargo. Retain adequate current one-owner source gates/build/focused proof and source-pinned native receipts; fresh selector succeeds on existing C04 at start. Root final evidence/project/projection gates retained.",
+    "limits": [
+      "Keyboard through existing focus-verified X11 production menu; no physical/HUMAN/native Wayland/AT-SPI/screen-reader/text-input/Terminal qualification.",
+      "All scopes preserve None focus; non-null focused Compound still requires its applicable acceptance evidence.",
+      "Exact canonical widths are Mixed; equal-rounded display-versus-exact distinction is not qualified here, and no missing Project Working Units fallback is invented.",
+      "Inventory expand/collapse is transient-state proof only; no new visibility/page/stale geometry qualification. Earlier independently reviewed dense paging/identity evidence remains separately pinned.",
+      "Before/after source and complete state invariance qualified for this lawful five-member fixture only; no complete N11/N17/C04/C05/C06 acceptance.",
+      "Main contains no runtime failure; preparatory ignored driver regex correction occurred before execution. Other retained delivery failures remain in their original proof sections."
+    ],
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/mixed-keyboard-scope-20261011.tar.xz",
+      "sha256": "f674188a9d7514354e85ba5eebda65b25f9b0dc6bdb3af550b89527f8c519fca",
+      "files": 27
+    }
   }
 }
