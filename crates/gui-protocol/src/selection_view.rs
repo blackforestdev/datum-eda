@@ -1,6 +1,7 @@
 //! Complete, revision-bound shared output. Never an authored group or writer.
 mod inspection;
 mod inspector_labels;
+mod inventory;
 pub use inspector_labels::field_label;
 pub mod inspector_state;
 mod net_coverage;
@@ -127,19 +128,6 @@ impl SelectionView {
             .find(|scope| scope.scope == self.scope)
             .into_iter()
             .flat_map(|scope| scope.fields.keys().map(String::as_str))
-            .collect()
-    }
-    /// Exact per-member blocker detail for complete inventory/accessibility.
-    pub fn unavailable_fields(&self, id: &Id) -> Vec<&'static str> {
-        properties::fields(id.class)
-            .iter()
-            .filter_map(|(field, _)| {
-                (!self
-                    .values
-                    .get(id)
-                    .is_some_and(|values| values.contains_key(*field)))
-                .then_some(*field)
-            })
             .collect()
     }
     pub fn summary(&self) -> String {

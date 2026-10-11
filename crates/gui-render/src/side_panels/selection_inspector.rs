@@ -9,6 +9,7 @@ use datum_gui_protocol::{
     selection_view::{SelectionView, inspector_state::SelectionInspectorState},
 };
 use std::collections::BTreeSet;
+mod inventory_label;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render(
@@ -62,7 +63,9 @@ pub(super) fn render(
         + fields.len()
         + 1
         + if navigation.inventory_expanded {
-            view.scoped_members().count()
+            view.scoped_members()
+                .map(|id| inventory_label::row_count(view, id))
+                .sum()
         } else {
             0
         }
@@ -213,53 +216,26 @@ pub(super) fn render(
     );
     if navigation.inventory_expanded {
         let inventory_start = row_index.get();
-        let count = view.scoped_members().count();
-        // Do not format or allocate labels for clipped inventory rows.
-        let skip = start.saturating_sub(inventory_start).min(count);
-        row_index.set(row_index.get() + skip);
-        let end = (start + visible).saturating_sub(inventory_start).min(count);
-        for (index, id) in view
+        let count: usize = view
             .scoped_members()
-            .skip(skip)
-            .take(end.saturating_sub(skip))
-            .enumerate()
-        {
+            .map(|id| inventory_label::row_count(view, id))
+            .sum();
+        // Do not format or allocate labels for clipped inventory rows.
+        for (index, id) in view.scoped_members().enumerate() {
+            let rows = inventory_label::row_count(view, id);
+            let next = row_index.get() + rows;
+            if next <= start {
+                row_index.set(next);
+                continue;
+            }
+            if row_index.get() >= start + visible {
+                break;
+            }
+            // Publish once even when only a status/occurrence subrow is visible.
             visible_members.push(id.clone());
-            let mut status = String::new();
-            if view.hidden.contains(id) {
-                status.push_str(" · hidden");
+            for label in inventory_label::rows(view, id, index + 1, columns) {
+                row(&label, None, false);
             }
-            if view.locked.contains(id) {
-                status.push_str(" · locked");
-            }
-            if view.unprojected.contains(id) {
-                status.push_str(" · unprojected");
-            }
-            let unavailable = view.unavailable_fields(id);
-            if !unavailable.is_empty() {
-                status.push_str(&format!(" · unavailable: {}", unavailable.join(", ")));
-            }
-            let occurrence = if id.instance_path.is_empty() {
-                String::new()
-            } else {
-                format!(
-                    " · sheet path {}",
-                    id.instance_path
-                        .iter()
-                        .map(ToString::to_string)
-                        .collect::<Vec<_>>()
-                        .join(" / ")
-                )
-            };
-            row(
-                &format!(
-                    "{} · {}{occurrence}{status}",
-                    view.member_display_label(id, skip + index + 1),
-                    id.id
-                ),
-                None,
-                false,
-            );
         }
         row_index.set(inventory_start + count);
     }

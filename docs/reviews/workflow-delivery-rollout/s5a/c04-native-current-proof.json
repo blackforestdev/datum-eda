@@ -1263,5 +1263,443 @@
       "ownership": "Implementation owner explicitly hands frozen nine source files and owned evidence/governance paths to root for landing only; existing C04 claim and execution continue.",
       "landing_commit": "2ee730c80575cb65ae129e4f64dc96291f0195ea"
     }
+  },
+  "inventory_identity_status_correction_20261011": {
+    "scope": "Retained C04 N11/N12/N17 bounded ordinary inventory identity, named state and human reason legibility; C04 remains unfinished.",
+    "implementation": "Renderer composes inherited clipped rows for identity, optional named hidden/locked/unprojected states, human-labelled Unavailable preview and explicit qualified-path preview. Renderer alone owns row totals, clipping and one emitted identity when any subrow is visible. Compact presentation basis includes scoped semantic row-presence counts; no new input action, writer, font, palette or product rule.",
+    "source_checkpoint": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-wrapped-source-checkpoint-4.json",
+      "sha256": "13d1b99e714074ffb3dfbb32d42ed07aea11a5b2cc1d0e80a2df6f0cdf70f8f3",
+      "head": "c94ddff19f5370c4036068b799333837ed038810",
+      "files": {
+        "crates/gui-protocol/src/selection_view.rs": {
+          "sha256": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+          "lines": 514
+        },
+        "crates/gui-protocol/src/selection_view/inventory.rs": {
+          "sha256": "14558c3291faecf119f7daa7d78bf7f83e74240b9b586be7894773d5c13b3664",
+          "lines": 27
+        },
+        "crates/gui-protocol/src/selection_view/inspector_state.rs": {
+          "sha256": "0c5cf1c181ad47545514b9948bd1231ff3ff0e35ebc3210b52577917633025a1",
+          "lines": 125
+        },
+        "crates/gui-render/src/side_panels/selection_inspector.rs": {
+          "sha256": "b0f46e585e59a8e585817a7ffc33c4a660583682160b2833a2e036d72c1f979a",
+          "lines": 299
+        },
+        "crates/gui-render/src/side_panels/selection_inspector/inventory_label.rs": {
+          "sha256": "999ad461c9548124cb284f9e772a1681a58871658cfb11d47910fadff711ee14",
+          "lines": 82
+        },
+        "crates/gui-render/src/side_panels/selection_inspector/tests.rs": {
+          "sha256": "aa7db349fc95effbb152eca874bc5777b173b78b160e7fc49f6504105ed33a64",
+          "lines": 489
+        }
+      },
+      "relation_to_executed_checkpoint_3": "Only tests.rs assertion indentation16\u219212spaces; exact reverse reconstruction matches92f35bda. Identical Rust tokens; all five production owner hashes unchanged."
+    },
+    "source_health": "Normal ownership extraction selection_view.rs526\u2192514 with inventory.rs27; no debt-ledger entry or ceiling exception. Actual source-health3086PASS.",
+    "compiled_gui_sha256": "b758c2a27e7aef8e67972d0dbea04ce6e699d52cf84280d5de3aeba94e8ad937",
+    "before_gui_sha256": "869ef608a42d46821df9d34c27f0aa58c88d5ae7ed86cebe6157bc5623c59721",
+    "binary_binding": "New GUI built against exact five production bytes shared by executed checkpoint3 and final checkpoint4 over c94ddff19f5370c4036068b799333837ed038810. Executed test92f35bda subsequently received one indentation-only correction to aa7db349, identical tokens verified by exact reverse-hash reconstruction; no assertion or production change. Base HEAD is provenance, not an uncommitted landing claim.",
+    "fixture_provenance": "Fresh copies of previously governed native projects. Last two256/257 text labels were Set through canonical CLI operations with exact source query basis and manual provenance. Status project is unchanged compound-output clone: four Tracks and authored BoardOutline, five complete selected members. No private source-file writer.",
+    "setup_receipts": [
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/setup-labels-256.json",
+        "sha256": "2af3858be65cdd3dd7c146d3ef40ce53153ae600c9dcb651dba676c9ada8ac26"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/setup-labels-257.json",
+        "sha256": "72fc00c8e431c1c7281de7f46ef090b5d14d952dfe0239cf02ef9aad47cb1613"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/setup-labels-commands.json",
+        "sha256": "0ac4d313d6b84478ed0329eb457ab75aa06adb22a92e8995309136eee331deda"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/setup-labels-result.json",
+        "sha256": "6bb1c4121479ccfaaa5d298aa2f0ab62defd57db6d452858e132f137ec13957b"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/setup-labels-status-corrected-result.json",
+        "sha256": "ca895081b30f8e78baf3518686c7b764ca29e8fb44d3cdcedf858ed5b4edcf2d"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/setup-labels-status-result.json",
+        "sha256": "a040b8dc2f8383f7c1da416e26df78e4ec081aa9ccd61bf82cc3b7eeb885e3d4"
+      }
+    ],
+    "ordinary_transport": "Existing serialized X11 App input, actual focused-window checks and target-qualified captures. No physical/HUMAN/Wayland claim.",
+    "cases": [
+      {
+        "cohort": "before",
+        "attempt": 6,
+        "kind": "texts",
+        "count": 256,
+        "outcome": "PASS",
+        "receipts": 18,
+        "result": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-6.json",
+          "sha256": "989e08c4e4be34b4d805b109c4d9513d3a48210f8dfb7cbc5bf825bb7632c977"
+        },
+        "presented_total": 276,
+        "presented_visible": 27,
+        "tail_offset": 249,
+        "complete_presented_ids": 256,
+        "canonical_file_count": 35,
+        "canonical_equal": true,
+        "frames": [
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-6-texts-256-selected.png",
+            "sha256": "a43c954340cdc26c083b1cbdffc653cc481fcc9cbd9393a5210a471048c75c81"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-6-texts-256-tail.png",
+            "sha256": "cdb4bdf4ad80ded2fdf9f43fc512955121df79c1efcb3cae403e3da9485de040"
+          }
+        ]
+      },
+      {
+        "cohort": "before",
+        "attempt": 6,
+        "kind": "texts",
+        "count": 257,
+        "outcome": "PASS",
+        "receipts": 17,
+        "result": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-6.json",
+          "sha256": "989e08c4e4be34b4d805b109c4d9513d3a48210f8dfb7cbc5bf825bb7632c977"
+        },
+        "presented_total": 277,
+        "presented_visible": 27,
+        "tail_offset": 250,
+        "complete_presented_ids": 257,
+        "canonical_file_count": 32,
+        "canonical_equal": true,
+        "frames": [
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-6-texts-257-selected.png",
+            "sha256": "5a1d659053f91786b58d6bc0460a8567c92a51c6f27123b10e64613f8354260e"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-6-texts-257-tail.png",
+            "sha256": "b5668a891313c806f75edf08639e8b615c0f05f1996531bc1f39a9e5017fc204"
+          }
+        ]
+      },
+      {
+        "cohort": "after",
+        "attempt": 7,
+        "kind": "texts",
+        "count": 256,
+        "outcome": "PASS",
+        "receipts": 27,
+        "result": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-7.json",
+          "sha256": "82e598556017a6f8ab7d98db8197b032eff59fdd5b7807be232cc6b1ade0c001"
+        },
+        "presented_total": 532,
+        "presented_visible": 27,
+        "tail_offset": 505,
+        "complete_presented_ids": 256,
+        "canonical_file_count": 35,
+        "canonical_equal": true,
+        "frames": [
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-7-texts-256-selected.png",
+            "sha256": "a43c954340cdc26c083b1cbdffc653cc481fcc9cbd9393a5210a471048c75c81"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-7-texts-256-tail.png",
+            "sha256": "ae17f8f6f852497cc501e5f8929374518ac764b3698197a12a56538bd8b4e22d"
+          }
+        ]
+      },
+      {
+        "cohort": "after",
+        "attempt": 7,
+        "kind": "texts",
+        "count": 257,
+        "outcome": "PASS",
+        "receipts": 26,
+        "result": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-7.json",
+          "sha256": "82e598556017a6f8ab7d98db8197b032eff59fdd5b7807be232cc6b1ade0c001"
+        },
+        "presented_total": 534,
+        "presented_visible": 27,
+        "tail_offset": 507,
+        "complete_presented_ids": 257,
+        "canonical_file_count": 32,
+        "canonical_equal": true,
+        "frames": [
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-7-texts-257-selected.png",
+            "sha256": "5a1d659053f91786b58d6bc0460a8567c92a51c6f27123b10e64613f8354260e"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-7-texts-257-tail.png",
+            "sha256": "95d264314e2786c82bb7f3c60bcaed8951f39ad0bc7ede2473352abfdcf082ac"
+          }
+        ]
+      },
+      {
+        "cohort": "after",
+        "attempt": 9,
+        "kind": "tracks",
+        "count": 5,
+        "outcome": "PASS",
+        "receipts": 9,
+        "result": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-9.json",
+          "sha256": "606e5339b838fabe320daac80bd31845b80d37db073ac2b61232aad05e87a65c"
+        },
+        "presented_total": 34,
+        "presented_visible": 27,
+        "tail_offset": 7,
+        "complete_presented_ids": 5,
+        "canonical_file_count": 29,
+        "canonical_equal": true,
+        "frames": [
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-9-tracks-5-first.png",
+            "sha256": "9502434d691c869227119203275be291cfa928ad872ecbd31d8cd055ac12b69b"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-9-tracks-5-narrow-tail.png",
+            "sha256": "c468bc7f8b523ca8bb6f70ceeee8b6f0e09e8d690e74aff6849584a6fa60a3e1"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-9-tracks-5-selected.png",
+            "sha256": "70884907dae6f477cc1616887b0502fb08fb643788283f3be4327f0fddb6b302"
+          },
+          {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-9-tracks-5-tail.png",
+            "sha256": "a5c1ec949c68d90b4a9228f4002bcfeeb1a43de55cb7895f8e2c5f3febdb6d2f"
+          }
+        ],
+        "narrow_window_size": [
+          1000,
+          600
+        ],
+        "narrow_presented": {
+          "basis_expanded": true,
+          "basis_offset": 16,
+          "basis_scope": "None",
+          "total": 34,
+          "visible": 18,
+          "visible_members": [
+            {
+              "class": "track",
+              "id": "40000000-0000-4000-8000-000000000001"
+            },
+            {
+              "class": "track",
+              "id": "40000000-0000-4000-8000-000000000002"
+            },
+            {
+              "class": "track",
+              "id": "40000000-0000-4000-8000-000000000003"
+            },
+            {
+              "class": "track",
+              "id": "40000000-0000-4000-8000-000000000004"
+            },
+            {
+              "class": "board_outline",
+              "id": "20000000-0000-4000-8000-000000000003"
+            }
+          ]
+        },
+        "hidden_expected_ids": [
+          "40000000-0000-4000-8000-000000000001",
+          "40000000-0000-4000-8000-000000000002",
+          "40000000-0000-4000-8000-000000000003",
+          "40000000-0000-4000-8000-000000000004"
+        ],
+        "unprojected_observed": []
+      }
+    ],
+    "focused_test_result": "Actual final guarded --lib inventory_4passed0failed: duplicate long-name/qualified occurrence preview; status-only clipped identity and same-revision basis changes; retained inventory/filter reachability with exact scoped identity plus visible UUID clue; existing overlap inventory budget control.",
+    "observed_visual_result": "Actual normal256/257 tail UUID suffixes survive identical long names; separate Unavailable: text height (+10) is visible. Actual normal/narrow mixed5 shows four named hidden rows and Unavailable: Midpoint with full membership retained; BoardOutline is fifth member. Unprojected set observed empty and locked ordinary state was not exercised.",
+    "nonmutation": "Every accepted native case preserves exact full SelectionView after acquisition and canonical post-open pre-input hash map including authored files, complete journal, cursor and revision/integrity metadata. Actual terminal lifecycle paths are separately manifested; exact .datum/revision/writer.lock is transient, not a broad .datum exemption.",
+    "logs": [
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-focused.log",
+        "sha256": "08ec4a67afe700114823cf249c38ec132f07661c0929344be98f0b7f8d648138"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-wrapped-focused.log",
+        "sha256": "7097adf0cc3c3ea04277ce8d7dfea1ce343a97246aacee808e59fc90663966ba"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-wrapped-focused-corrected.log",
+        "sha256": "85a1e0b282c64da6ab7b1f730247ab15fcf5eccdda95eb397480d35c8b7463f1"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-subrow-focused.log",
+        "sha256": "dda04fc930fb6bae9c4f74572c66c0da80a1e45363354e11725c6abbd0b77656"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-retained-scroll.log",
+        "sha256": "697dabb3e0b505eb8202b1e2cfa16265657511aa2d2859d2c49db80791c96f2d"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-final-inventory.log",
+        "sha256": "a96de958158ae927f840c27acc25b6f5bf1e21d380a627f61d8dafc0b8edc800"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-final-inventory-scoped.log",
+        "sha256": "8fbaff507fe13c327591e26179283ce198b116d4759f465f4d4bb7f7b6c092cb"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-final-inventory-identity-clue.log",
+        "sha256": "0a4397b4859affac042fbd3d8317c877e3285f535e33cdb77ff73b886d2ec944"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-ordinary-gui-build.log",
+        "sha256": "2d7cf07b7d14da058211e70a3622484da92cc102ef55bae9453b6b6cb0be0e54"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-ordinary-gui-build-corrected.log",
+        "sha256": "068c006ab59c637bf20590711320d6665027d54c6c0dcd7a4bf9f013789b5111"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-before-native.log",
+        "sha256": "40bb7d38881a914d273d5dcfc5e9539cff337e2147ff92be5e64794b68681919"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-after-native.log",
+        "sha256": "3330a0e120452e5eeffa8ada9963c837a4221e4b34034eef14507c913b86e7ee"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-status-native.log",
+        "sha256": "3aa8ab8965b4d3e55e243f023a21dbb4265394fa48a6e86b29b3ffaa9add93b5"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-status-native-corrected.log",
+        "sha256": "cad39046b21ac3e935653e2776f6f08f5316df73d3a2eea89443c2de56fede2c"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-source-health.log",
+        "sha256": "ed21b0d9ffb580ccd7196973b36665fbba435fbd8e8347690c29c50059884cb1"
+      }
+    ],
+    "preserved_failures": [
+      "Initial new test compilation failed on absent direct serde_json dependency; corrected using existing LibraryJsonValue without new dependency.",
+      "Wrapped test compilation failed on BTreeSet indexing; fixture fixed using remove/insert.",
+      "Retained inventory oracle failures preserved: retired plural-label prefix, then unscoped member, then UUID-head length incompatible with explicit bounded clue. Final oracle retains actual scoped identity, visible UUID suffix, complete clipping/filter/selection/source controls.",
+      "Initial GUI build used wrong package datum-gui and failed before compilation; corrected actual package datum-gui-app --bin datum-gui.",
+      "Status attempt8 acquisition oracle expected only four Tracks although lawful Ctrl+A also selected authored BoardOutline. Exact raw state/source matched five; corrected producer expectation only. No production defect or semantic change asserted.",
+      "Initial rustfmt help probe ran nonmutating workspace gate and found the test assertion indentation; exact scoped formatting correction preserved via reverse-hash relationship. Final workspace rustfmt gate passed."
+    ],
+    "failed_status_receipt": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-8.json",
+      "sha256": "3670bb01aa2a0ea29b0d9e7aa6eb7a96311374b1a331444c89a4d2fcbb1d61e3"
+    },
+    "raw_count_note": "Before attempt6 retained console print said four cases; actual result contains exactly two. Before producer is preserved. Future producer print reports actual length.",
+    "review_receipts": {
+      "source": "Actual independent s5a_code_audit final six-owner source disposition received; final test delta and actual4/0 reviewed.",
+      "visual": "Actual independent s5a_code_audit ACCEPT after personally inspecting old/new text256/257 tails and hidden Track normal/narrow frames, reviewing all 62 current selection snapshots and complete emitted identities, and verifying current canonical hashes. Appointed manager also inspected after256 and status normal/narrow; bounded identity/status correction only.",
+      "governance": "Actual independent management_review bounded governance/evidence PASS at pre-disposition proof 8eee7f65a30765d57165e3150330a51e98f5969b7cd95dcd0bca544fab115a19 and final archive 4701a7454ecde5695f4cfade51592bc3d512d75b5ed6c8729b91c9a8ec68745c: six current pins, 69 archive files, all five before/after cases, nonmutation, disclosed failures and exact test-only indentation amendment verified."
+    },
+    "limits": [
+      "No full C04/C05/C06/N17, stale-runtime/text-focus/Terminal or assistive/HUMAN acceptance.",
+      "Full canonical UUID/path/reasons and existing accessibility output remain unchanged; visual previews are bounded, no arbitrary extreme-width/full-hierarchy guarantee.",
+      "Qualified-path distinction and combined hidden/locked/unprojected states are focused renderer controls; current ordinary cases have empty instance paths and no locked state.",
+      "Retained earlier Wire256/257 proof is reused at its original compiled scope; current label run does not relabel it as current-binary Wire proof.",
+      "Existing unrelated quantity-label assertion failure remains separately tracked dat-inspector-quantity-label-bl6b."
+    ],
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/inventory-labels-20261011-final.tar.xz",
+      "sha256": "4701a7454ecde5695f4cfade51592bc3d512d75b5ed6c8729b91c9a8ec68745c",
+      "files": 69,
+      "manifest": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-artifact-manifest-final.json",
+        "sha256": "90b1816242bcc102e4ceb1f2bfb0963c9cd5d583a4ba88079eb742d4e46622be"
+      }
+    },
+    "manager_disposition": "Owner-appointed manager accepts the bounded existing-contract inventory identity/status correction against actual independent source, native/pixel and governance receipts. Production five source pins unchanged across compiled proof and final formatting; final test differs by verified indentation only. Landing authorized within retained C04 execution grant; C04/C05/C06 and full qualification remain open, with no successor authorization.",
+    "executed_source_checkpoint": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-wrapped-source-checkpoint-3.json",
+      "sha256": "0c49c0c535cd40b663c25b50bcb406eff0c94f1e8905d350c6fade018be3dcd2",
+      "head": "c94ddff19f5370c4036068b799333837ed038810",
+      "files": {
+        "crates/gui-protocol/src/selection_view.rs": {
+          "sha256": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+          "lines": 514
+        },
+        "crates/gui-protocol/src/selection_view/inventory.rs": {
+          "sha256": "14558c3291faecf119f7daa7d78bf7f83e74240b9b586be7894773d5c13b3664",
+          "lines": 27
+        },
+        "crates/gui-protocol/src/selection_view/inspector_state.rs": {
+          "sha256": "0c5cf1c181ad47545514b9948bd1231ff3ff0e35ebc3210b52577917633025a1",
+          "lines": 125
+        },
+        "crates/gui-render/src/side_panels/selection_inspector.rs": {
+          "sha256": "b0f46e585e59a8e585817a7ffc33c4a660583682160b2833a2e036d72c1f979a",
+          "lines": 299
+        },
+        "crates/gui-render/src/side_panels/selection_inspector/inventory_label.rs": {
+          "sha256": "999ad461c9548124cb284f9e772a1681a58871658cfb11d47910fadff711ee14",
+          "lines": 82
+        },
+        "crates/gui-render/src/side_panels/selection_inspector/tests.rs": {
+          "sha256": "92f35bda66ffce46a4538a6d377d7637540c081b7bf96c7af9149b6e5ef2fa4b",
+          "lines": 489
+        }
+      }
+    },
+    "format_relationship": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-test-format-delta.json",
+      "sha256": "3a34690527a3d627d2ad86ee39e2bcad417b18df88a200371205486a09263a3c"
+    },
+    "superseded_archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/inventory-labels-20261011.tar.xz",
+      "sha256": "8c6b1f00a6af5a94c9da1d20236a3e43e2f1b5ea3e23b11eb3aa3d247923d85d",
+      "manifest": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-artifact-manifest.json",
+        "sha256": "212a5753be777909050e7268b663783abc48869ff864f28104c44b910cad5e56"
+      }
+    },
+    "landing_gates": [
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-governance.log",
+        "sha256": "d498c765a2bb085656947930ab61c45603c0d20c0fc32d65d28bf069e914ef7a",
+        "outcome": "PASS"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-project.log",
+        "sha256": "262c9cbfc3edea55411cf6f3f6ff08fb525cfd4cf3009286dfb70b09540cc091",
+        "outcome": "PASS"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-projection.log",
+        "sha256": "80afdeb860c60dcf1a1cc417b9b8d7bd9a556ccc2f17d2bb4e865ffa6e72849e",
+        "outcome": "PASS"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-resource.log",
+        "sha256": "4c220161f57cf8a40d09eacd28d391d8c0f6680d194660a78971adf755934119",
+        "outcome": "PASS"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-rustfmt.log",
+        "sha256": "625f5d46cb869d587f4639b628978d8d115d7d1aa7adab29fc50be1c1725554e",
+        "outcome": "PASS"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-sourcehealth.log",
+        "sha256": "ed21b0d9ffb580ccd7196973b36665fbba435fbd8e8347690c29c50059884cb1",
+        "outcome": "PASS"
+      },
+      {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/inventory-label-gate-traceability.log",
+        "sha256": "5c1d4f8f7e97f034e1cded4c176b49d08cdb6535a7ad51e2388f7e2a68b3626a",
+        "outcome": "PASS"
+      }
+    ]
   }
 }

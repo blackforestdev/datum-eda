@@ -1,5 +1,118 @@
 use super::*;
 use crate::native_selection_overlay::tests::selected_state;
+#[test]
+fn inventory_identity_and_human_reason_survive_duplicate_long_names() {
+    let (fixture, state) = selected_state();
+    let source = fixture.source_bytes();
+    let SelectionTarget::Native(view) = &state.selection else {
+        panic!("native fixture")
+    };
+    let mut preview = view.as_ref().clone();
+    let mut first = preview.members.first().unwrap().clone();
+    first.class = Class::SchematicText;
+    first.id = "50000000-0000-4000-8000-0000000010ff".parse().unwrap();
+    let mut last = first.clone();
+    last.id = "50000000-0000-4000-8000-000000001100".parse().unwrap();
+    for id in [&first, &last] {
+        preview.values.insert(
+            id.clone(),
+            std::collections::BTreeMap::from([
+                (
+                    "text".into(),
+                    datum_gui_protocol::LibraryJsonValue::from(
+                        "Ω repeated very long identical member name",
+                    ),
+                ),
+                (
+                    "position_nm".into(),
+                    datum_gui_protocol::LibraryJsonValue::Object(
+                        [("x".into(), 0.into()), ("y".into(), 0.into())]
+                            .into_iter()
+                            .collect(),
+                    ),
+                ),
+                ("text_rotation".into(), 0.into()),
+            ]),
+        );
+    }
+    let before = preview.clone();
+    let a = inventory_label::rows(&preview, &first, 256, 43).join(" | ");
+    let b = inventory_label::rows(&preview, &last, 257, 43).join(" | ");
+    assert_ne!(a, b);
+    assert!(a.contains("10ff") && b.contains("1100"));
+    assert!(a.contains("Unavailable") && a.contains("height"), "{a}");
+    assert!(!a.contains("_nm") && !a.contains("_ppm"));
+    for width in [0, 1, 12, 43, 80] {
+        assert!(
+            inventory_label::rows(&preview, &last, 257, width)
+                .iter()
+                .all(|row| row.chars().count() <= width)
+        );
+    }
+    let mut occurrence = first.clone();
+    occurrence
+        .instance_path
+        .push("90000000-0000-4000-8000-000000000002".parse().unwrap());
+    let mut qualified = preview.clone();
+    qualified
+        .values
+        .insert(occurrence.clone(), preview.values[&first].clone());
+    let ordinary_rows = inventory_label::rows(&preview, &first, 1, 43);
+    let qualified_rows = inventory_label::rows(&qualified, &occurrence, 1, 43);
+    assert_eq!(
+        ordinary_rows[0], qualified_rows[0],
+        "occurrence must not displace original UUID clue"
+    );
+    assert!(
+        qualified_rows
+            .last()
+            .unwrap()
+            .starts_with("Sheet path … / ")
+    );
+    assert!(qualified_rows.last().unwrap().ends_with("000000000002"));
+    assert_eq!(qualified_rows.len(), ordinary_rows.len() + 1);
+    let mut other_occurrence = occurrence.clone();
+    occurrence
+        .instance_path
+        .insert(0, "90000000-0000-4000-8000-000000000003".parse().unwrap());
+    other_occurrence
+        .instance_path
+        .insert(0, "90000000-0000-4000-8000-000000000004".parse().unwrap());
+    qualified
+        .values
+        .insert(occurrence.clone(), preview.values[&first].clone());
+    qualified
+        .values
+        .insert(other_occurrence.clone(), preview.values[&first].clone());
+    let ancestor_rows = inventory_label::rows(&qualified, &occurrence, 1, 160);
+    let other_rows = inventory_label::rows(&qualified, &other_occurrence, 1, 160);
+    assert_eq!(ancestor_rows[0], other_rows[0]);
+    assert_ne!(
+        ancestor_rows.last(),
+        other_rows.last(),
+        "same-tail occurrences retain ancestor evidence at ample width"
+    );
+    assert!(ancestor_rows.last().unwrap().contains("000000000003"));
+    assert!(other_rows.last().unwrap().contains("000000000004"));
+    assert_eq!(preview, before);
+    preview.hidden.insert(last.clone());
+    preview.locked.insert(last.clone());
+    preview.unprojected.insert(last.clone());
+    let combined = preview.clone();
+    for width in [43, 80] {
+        let rows = inventory_label::rows(&preview, &last, 257, width);
+        assert_eq!(rows.len(), inventory_label::row_count(&preview, &last));
+        let text = rows.join(" | ");
+        for component in ["hidden", "locked", "unprojected", "Unavailable", "height"] {
+            assert!(text.contains(component), "{text}");
+        }
+        assert!(rows.iter().all(|row| row.chars().count() <= width));
+    }
+    assert_eq!(preview, combined);
+    for (path, bytes) in source {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}
 fn frame(state: &ReviewWorkspaceState, rect: RectPx) -> (Vec<Quad>, Vec<TextRun>, Vec<HitRegion>) {
     let mut quads = Vec::new();
     let mut text = Vec::new();
@@ -9,6 +122,108 @@ fn frame(state: &ReviewWorkspaceState, rect: RectPx) -> (Vec<Quad>, Vec<TextRun>
     )
     .unwrap();
     (quads, text, hits)
+}
+#[test]
+fn inventory_status_subrow_publishes_member_and_invalidates_old_capacity() {
+    use datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis;
+    let (fixture, mut state) = selected_state();
+    let source = fixture.source_bytes();
+    state.ui.selection_inspector.inventory_expanded = true;
+    let before = match &state.selection {
+        SelectionTarget::Native(view) => {
+            InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
+        }
+        _ => panic!("native fixture"),
+    };
+    let SelectionTarget::Native(view) = &mut state.selection else {
+        unreachable!()
+    };
+    let id = view.scoped_members().next().unwrap().clone();
+    view.hidden.insert(id.clone());
+    let after = InspectorPresentationBasis::capture(view, &state.ui.selection_inspector);
+    assert_ne!(
+        before, after,
+        "same-revision flag subrow changes presentation basis"
+    );
+    let mut complete = view.as_ref().clone();
+    let fields = complete.unavailable_fields(&id);
+    assert!(
+        !fields.is_empty(),
+        "fixture has unavailable canonical properties"
+    );
+    for field in &fields {
+        complete
+            .values
+            .entry(id.clone())
+            .or_default()
+            .insert((*field).into(), 0.into());
+    }
+    let complete_basis =
+        InspectorPresentationBasis::capture(&complete, &state.ui.selection_inspector);
+    complete.values.get_mut(&id).unwrap().remove(fields[0]);
+    assert_ne!(
+        complete_basis,
+        InspectorPresentationBasis::capture(&complete, &state.ui.selection_inspector),
+        "same-revision unavailable subrow changes presentation basis"
+    );
+    let mut qualified = complete.clone();
+    let mut occurrence = id.clone();
+    occurrence
+        .instance_path
+        .push("90000000-0000-4000-8000-000000000002".parse().unwrap());
+    assert!(qualified.members.remove(&id));
+    qualified.members.insert(occurrence);
+    assert_ne!(
+        InspectorPresentationBasis::capture(&complete, &state.ui.selection_inspector)
+            .qualified_members,
+        InspectorPresentationBasis::capture(&qualified, &state.ui.selection_inspector)
+            .qualified_members
+    );
+    let selection = state.selection.clone();
+    let rect = RectPx {
+        x: 400.,
+        y: 80.,
+        width: 300.,
+        height: 98.,
+    };
+    let (_, _, hits) = frame(&state, rect);
+    let total = hits
+        .iter()
+        .find_map(|h| match &h.target {
+            HitTarget::SelectionInspectorScroll { total, visible, .. } => {
+                assert_eq!(*visible, 1);
+                Some(*total)
+            }
+            _ => None,
+        })
+        .unwrap();
+    let mut status_reached = false;
+    for offset in 0..total {
+        state.ui.selection_inspector.scroll_offset = offset;
+        let (_, text, hits) = frame(&state, rect);
+        if text.iter().any(|run| run.text == "hidden") {
+            let members = hits
+                .iter()
+                .find_map(|h| match &h.target {
+                    HitTarget::SelectionInspectorScroll {
+                        visible_members, ..
+                    } => Some(visible_members),
+                    _ => None,
+                })
+                .unwrap();
+            assert_eq!(
+                members,
+                &vec![id.clone()],
+                "status-only page must publish its exact member once"
+            );
+            status_reached = true;
+        }
+        assert_eq!(state.selection, selection);
+    }
+    assert!(status_reached);
+    for (path, bytes) in source {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
 }
 #[test]
 fn inventory_and_filters_are_scrollable_with_complete_identity_and_no_reselection() {
@@ -46,13 +261,18 @@ fn inventory_and_filters_are_scrollable_with_complete_identity_and_no_reselectio
     let SelectionTarget::Native(view) = &state.selection else {
         panic!("native fixture");
     };
-    let member = view.members.first().unwrap().id.to_string();
+    let member = view.scoped_members().next().unwrap().clone();
     for offset in 0..total {
         state.ui.selection_inspector.scroll_offset = offset;
         let (quads, text, hits) = frame(&state, rect);
-        found_members |= text
+        found_members |= hits.iter().any(|hit| match &hit.target {
+            HitTarget::SelectionInspectorScroll {
+                visible_members, ..
+            } => visible_members.contains(&member),
+            _ => false,
+        }) && text
             .iter()
-            .any(|run| run.text.starts_with("Tracks ") && run.text.contains(&member[..8]));
+            .any(|run| run.text.contains(&member.id.to_string()[28..]));
         for hit in hits {
             assert_eq!(hit.rect.intersect(rect), Some(hit.rect));
             if let HitTarget::SelectionClassToggle(class) = hit.target {

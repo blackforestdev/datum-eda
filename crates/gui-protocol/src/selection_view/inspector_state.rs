@@ -85,6 +85,9 @@ pub struct InspectorPresentationBasis {
     pub related_count: usize,
     pub member_count: usize,
     pub field_count: usize,
+    pub flagged_members: usize,
+    pub unavailable_members: usize,
+    pub qualified_members: usize,
 }
 impl InspectorPresentationBasis {
     pub fn capture(view: &super::SelectionView, navigation: &SelectionInspectorState) -> Self {
@@ -105,6 +108,18 @@ impl InspectorPresentationBasis {
             related_count: view.related.len(),
             member_count: view.members.len(),
             field_count: view.fields().len(),
+            flagged_members: view
+                .scoped_members()
+                .filter(|id| view.has_inventory_states(id))
+                .count(),
+            unavailable_members: view
+                .scoped_members()
+                .filter(|id| view.has_unavailable_fields(id))
+                .count(),
+            qualified_members: view
+                .scoped_members()
+                .filter(|id| !id.instance_path.is_empty())
+                .count(),
         }
     }
 }
