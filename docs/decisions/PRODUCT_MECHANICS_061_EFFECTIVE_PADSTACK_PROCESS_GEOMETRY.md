@@ -198,3 +198,17 @@ BoardRoot capability adoption, component Pad materialization/persistence/project
 existing library/proposal CLI workflows, GUI protocol/render adapters and engine
 process export. The manager owns policy, task synchronization and actual independent
 receipt acceptance. One serial guarded proof batch owns each necessary build.
+
+## Execution contract markers
+
+<!-- REQ:EFFECTIVE-PADSTACK-PROCESS:PROCESS-POLICY -->
+Record the delegated disposition and independent policy review before execution.
+
+<!-- REQ:EFFECTIVE-PADSTACK-PROCESS:PROCESS-EXECUTE -->
+Implement the complete P01-P06 ordinary workflow and safety requirements.
+
+<!-- REQ:EFFECTIVE-PADSTACK-PROCESS:PROCESS-REVIEW -->
+Obtain distinct actual source and ordinary-behavior review of that full contract.
+
+<!-- REQ:EFFECTIVE-PADSTACK-PROCESS:PROCESS-LAND -->
+Record actual manager acceptance, source-pinned availability, landing and closure.

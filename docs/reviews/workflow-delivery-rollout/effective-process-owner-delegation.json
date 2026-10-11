@@ -27,8 +27,9 @@
     "reviewer": "distinct management_review session",
     "actual_review": "Policy completeness and delegation fidelity PASS after IPC zero-ratio and forward-only adoption clarifications",
     "reviewed_candidate_sha256": "fc62240cbe403c713f9ca88cbe20ca193bbe1b901a598791cdeb40383f7873fa",
-    "ratified_document_sha256": "de499184acaaf9c71a593845b6f341df345dc130ad1e1ebf9a1204d3ca8c0981",
+    "ratified_document_sha256": "f46a9a1129eefbfbc140fbe741f18d893412111ef381b1b784435d11eca8b4c1",
     "review_limits": "No runtime, standards, HUMAN, route-wide fresh corpus or manufacturing qualification PASS",
-    "authority": "Exact owner delegation, not PM059 general appointment alone"
+    "authority": "Exact owner delegation, not PM059 general appointment alone",
+    "execution_marker_reconciliation": "Add four completion markers matching the finite Frontier step IDs, without changing P01-P06 semantics."
   }
 }
