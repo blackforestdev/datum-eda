@@ -642,11 +642,11 @@
           "lines": 269
         }
       },
-      "landing_commit": null
+      "landing_commit": "2ee730c80575cb65ae129e4f64dc96291f0195ea"
     },
     "compiled_gui_sha256": "869ef608a42d46821df9d34c27f0aa58c88d5ae7ed86cebe6157bc5623c59721",
     "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
-    "source_pin_note": "GUI built against these final production source bytes. Base HEAD is not a feature source landing commit; pending manager landing. Test-only temporary quantity diagnostic was reverted to checkpoint4.",
+    "source_pin_note": "Ordinary GUI was built against the frozen production bytes now landed at 2ee730c80575cb65ae129e4f64dc96291f0195ea. The retained base HEAD is pre-change provenance. Test-only quantity diagnostic was reverted before landing.",
     "ordinary_transport": "Existing serialized X11 native key events with actual window focus checks and capture target activation. No new input transport; no physical/HUMAN or Wayland claim.",
     "cases": [
       {
@@ -1256,11 +1256,12 @@
       "scope": "Immutable raw scripts/setup JSON/results/logs/frames snapshot; project directory runtime credentials excluded. Canonical source and journal integrity are represented by complete hash maps in raw results."
     },
     "manager_disposition": {
-      "outcome": "accepted for bounded source landing",
+      "outcome": "bounded delivery landed",
       "authority": "Owner-appointed manager under PM059 retained S5A-C04 execution",
       "basis": "Actual independent source/runtime and durable governance reviews; four ordinary X11 256/257-member keyboard workflows, complete published identities and unchanged post-open canonical source/journal/cursor.",
       "retained_boundaries": "Overall C04/C05/C06, full N12/N17, stale-menu runtime, text-focus, assistive and HUMAN qualification remain open; unrelated quantity assertion failure retained.",
-      "ownership": "Implementation owner explicitly hands frozen nine source files and owned evidence/governance paths to root for landing only; existing C04 claim and execution continue."
+      "ownership": "Implementation owner explicitly hands frozen nine source files and owned evidence/governance paths to root for landing only; existing C04 claim and execution continue.",
+      "landing_commit": "2ee730c80575cb65ae129e4f64dc96291f0195ea"
     }
   }
 }
