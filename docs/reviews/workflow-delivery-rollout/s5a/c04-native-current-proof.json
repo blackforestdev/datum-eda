@@ -2848,12 +2848,10 @@
         "Frontier projection current",
         "nonmutating workspace rustfmt",
         "staged rustfmt: terminal0,2 existing ceiling-bound exemptions",
-        "git diff --cached --check: terminal0"
+        "git diff --cached --check: terminal0",
+        "normal substantive source commit:76bdd58c/tool90101 terminal0; landed51 source blobs exact"
       ],
-      "pending": [
-        "normal commit hooks",
-        "final source landing hash"
-      ],
+      "pending": [],
       "failure_is_not_waived": true,
       "retained_full_qualification_failure": {
         "command": "python3 scripts/check_spec_parity.py",
@@ -2862,6 +2860,140 @@
         "baseline_attribution": "Actual unchanged HEAD and current raw-lib collector each return only protocol:SourceShardStatusSummary, count1/hash a8a53ac vs documented9/bf469cb5; normal owner extraction predates this Open unit. No row refresh or collector repair in this grant.",
         "manager_disposition": "Actual root authorized incidental intake and continued bounded Open landing under normal hooks; no --no-verify, no full qualification PASS or new dependency."
       }
+    },
+    "actual_source_landing": {
+      "commit": "76bdd58ca994e109a0740c0eb764271ee386dddb",
+      "normal_commit_tool_session": 90101,
+      "terminal_exit_code": 0,
+      "actual_gates": [
+        "protected visual file-lane PASS",
+        "staged rustfmt PASS"
+      ],
+      "verified_landed_git_blobs": 51,
+      "source_checkpoint14_sha256": "dfe666ee218af2d27ba0ef605c014f4280f6bec63e317e58938cbdad971a3a50",
+      "mismatches": 0,
+      "scope": "Actual source51 equals reviewed final14; native44/45 remain compiled12/ae4db test-only reuse. Full C04 and inherited parity failure stay open."
     }
+  },
+  "diagnostic_artifact_lifetime_correction_20261011": {
+    "delivery_state": "Actual bounded source/native/package/governance and affected gates accepted; normal main commit hooks/source landing binding pending. Full C04/N10/HUMAN qualification remains open.",
+    "controlling_behavior": "Explicit Diagnostic fingerprint survives an equivalent producing CheckRun; disappearance empties selection and reports its cause; restoration does not resurrect selection; explicit reacquisition remains available.",
+    "actual_entry": "Existing keyboard selection menu Checks leaf, fingerprint sha256:260611ced8897cecba4f669ef163ded751b6644af9e32efa7c0a74294e60ab29; location null, no marker proof.",
+    "canonical_setup": "Fresh governed same-outcome-default copy. Actual CheckRun and SIG Track/Create/Delete use existing canonical CLI; delete exactly returned track_uuid. Setup/check writes are separate from selection-only hash invariance.",
+    "confirmed_corrections": [
+      "Actual context supplied Project UUID was discarded, preventing Checks menu acquisition; parser now preserves producer identity and foreign/missing guards.",
+      "Lexical history order hid current producer run. Context projection selects actual supplied revision; no eligible/unqualified revision yields empty unknown projection rather than stale findings.",
+      "Prepared canonical-edit reconciliation dissolved artifact without a specific report. Fresh None-subject view retains existing artifact explanation with zero authored members/keys/drop count.",
+      "Actual no-context prepare regression exposed history fallback choosing stale latest. Loader now selects matching supplied current Project/revision summary and verifies shown record identity/basis."
+    ],
+    "preserved_trials": {
+      "46": "FAIL: invalid Diagnostic Compound-focus oracle; actual typed initial acquisition reached.",
+      "47": "FAIL: actual context Project identity loss; menu only Select All despite current DRC findings.",
+      "48": "FAIL: menu End activated Fit, not Console History; Undo reversed CheckRun metadata, not Track; reached initial/equivalent/disappearance retained, no report absence/Undo credit.",
+      "49": "FAIL: current context run sorted behind stale run; no acquisition credit.",
+      "50": "Raw CAPTURE_ONLY_REPORT_REVIEW_PENDING, failure null, five states/11 CLI exit0/three nonmutating refreshes. Independent current-cycle pixels and prepare source confirmed specific report criterion failure; no broad whole-history absence claim."
+    },
+    "focused_receipts": {
+      "context_1": "Compile FAIL E0277, no test pass; fixture Default assumption corrected.",
+      "context_2": "Actual4PASS0FAIL",
+      "context_3": "Actual5PASS0FAIL",
+      "report_1": "Actual1PASS1FAIL: isolated Review producer-change passed; real Diagnostic disappearance caught stale no-context fallback. Assertions retained.",
+      "history_1": "Actual2PASS0FAIL/terminal0; initial malformed-basis projection subsequently tightened to entire unknown Default.",
+      "report_2": "Actual1PASS1FAIL/terminal101: disappearance assertion passed, test helper recaptured old source authority after canonical Track; valid stale-source rejection. Helper corrected to retain actual authority before write, as runtime.",
+      "history_2": "Actual3PASS0FAIL final malformed-basis entireDefault guard",
+      "report_3": "Actual2PASS0FAIL real CheckRun/typed Track/Delete/prepare lifecycle plus isolated Review producer-change control",
+      "authored_controls": "Actual2PASS0FAIL last-member Undo no-resurrection and focused Compound survivor no-promotion",
+      "GUI": "Actual guardedbuild65266 terminal0/dev16.41s final5e5e6774 binary"
+    },
+    "renewal": "Same session and grant renewed18:01:42Z to2026-10-12T02:01:42Z before expiry; loading/tests.rs claimed before edits.",
+    "retained_boundaries": [
+      "Full C04/N10/HUMAN/global qualification remain open.",
+      "No marker geometry, ordinary Review workflow, manufacturing rule or threshold claim.",
+      "Operational terminal context/credentials/runtime files excluded from archive; canonical source/journal/cursor paths remain individually classified.",
+      "CheckRun IDs may deterministically repeat; actual same-ID relation is recorded."
+    ],
+    "next_required": "Independent final runtime/package receipt, safe immutable evidence archive, required normal gates and substantive main landing.",
+    "source_checkpoints": [
+      "diagnostic-report-checkpoint1.json",
+      "diagnostic-report-checkpoint2.json",
+      "diagnostic-report-checkpoint3.json"
+    ],
+    "source_health": "Actual3104 source files passed; normal owners, no debt ceiling or policy change.",
+    "actual_final_native": {
+      "raw_outcome": "CAPTURE_ONLY_REPORT_REVIEW_PENDING",
+      "raw_failure": null,
+      "GUI_pid": 748569,
+      "GUI_exit": 0,
+      "producer_sha256": "913035dae9b743cdb27559fc81f3ba0181297246246013f058f94856877b1ac9",
+      "gui_sha256": "5e5e67740878ac6392083f6fb6fb0299deef548ce6f77bc90f547b26ea65ae0e",
+      "result_sha256": "774fc603b47ed5be57804e4d70454cbcc4b57e9587eaeb514e57af5e1e23447e",
+      "actual_exec_session": 6680,
+      "actual_exec_terminal": 0,
+      "state_receipts": 5,
+      "canonical_commands": 11,
+      "canonical_command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "selection_refreshes": 3,
+      "final_canonical_paths": 43,
+      "actual_check_run_identity_relation": {
+        "initial": "2f808923-15a2-5910-b40e-b79052754aff",
+        "equivalent": "2f808923-15a2-5910-b40e-b79052754aff",
+        "same": true
+      },
+      "notice": "Producing artifact invalidated its selected identity; selection cleared",
+      "pixels": "Specific producing-artifact cause and selection-cleared visible with inherited middle ellipsis; raw current Native view contains exact full explanation, subjectNone/members0/drop0/keys0/noSELECTED. Restoration ordinaryNone qualified by fresh header/source refresh contract, not direct observer full revision/tip when None. Explicit reacquisition restores same typed fingerprint with0authoredmembers.",
+      "terminal_provenance": "Actual exec6680 terminal0 separate from raw CAPTURE_ONLY result and drained_device_live shutdown receipt; empty exec log does not supply textual PASS."
+    },
+    "final_source_pins": {
+      "crates/gui-protocol/src/check_runs.rs": "5418d0a0314f32e28ef3e6725b368cdc1506d67b32918074e8e4b158eee2d922",
+      "crates/gui-protocol/src/check_runs/context_identity_tests.rs": "549e19e6e40476f7877b98613ff67828162e99d064edc207ae28fc7487fca25a",
+      "crates/gui-protocol/src/check_runs/loading.rs": "c19101d1efc9f38e3ad02a6b73bb591cd86303aa623fe566e58595cfbe50cd66",
+      "crates/gui-protocol/src/check_runs/loading/tests.rs": "ef7a21b91366ec20167683a87967a0e64c86ac23f73557e17a82e71d06d7fbce",
+      "crates/gui-app/src/native_edit_selection.rs": "a2413e39d357b176467ae57bc8e0c3b1f88fc8e1a425b71e103c5874ea23a9b1",
+      "crates/gui-app/src/native_edit_selection/artifact_lifetime_tests.rs": "834efd69a888c94ae2c646c9d904ef424faa4f3f952d9263c18061f8f0a5dcb7"
+    },
+    "appointed_manager_pixel_review": "Actual root personally reviewed full result and disappearance/restoration/reacquisition pixels; bounded acceptance pending final independent/package review.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/diagnostic-artifact-lifetime-20261011.tar.xz",
+      "sha256": "84471347018ca638aec0e086fcd3ed1bd39fb933a9af13fd8c4e79468dc9c6fe",
+      "entries": 226,
+      "raw": 117,
+      "canonical_counts": {
+        "48": 22,
+        "50": 34,
+        "51": 43
+      },
+      "source_snapshots": 9,
+      "manifest_sha256": "498b4245ff8aaf7a91fafc5157a97c93ec68dc130ab3e0d4a03241d23e694fdc"
+    },
+    "actual_independent_runtime_receipt": "Code auditor personally reviewed current6pins,5states/11CLI0/3exact fullmaps and8required PNGs; actual bounded source/native acceptance recommendation received. Specific visible cause+selectioncleared sufficient with disclosed middle ellipsis/rawfullnotice.",
+    "appointed_manager_disposition": "FINAL actual root accepts bounded Diagnostic lifecycle delivery based exact6source/context5PASS/history3PASS/prepare2PASS/authored2PASS/native51fivephases+visibleemptycause/noresurrection/11CLI0/3fullmap invariance; personally verified226regular/225hashes finalarchive84471347 and gate receipts. Independent final source/native/package/governance PASS received. InheritedparityFAIL unwaived; fullC04/N10/HUMAN pending. Exact10owned normal substantive main commit authorized; normalhooks/landing only pending.",
+    "final_required_gates": {
+      "sourcehealth": "PASS3104 normalowners/no ceilingchange",
+      "dependencies": "PASS",
+      "evidence_traceability": "PASS29routes131artifacts",
+      "spec_governance": "PASS552specs",
+      "resource_policy": "PASS",
+      "project_status": "InitialFAILmissing roadmap:intake label on previously captured incidental collector issue; corrected intake label only and actualrecheckPASS82items",
+      "frontier_render": "current",
+      "spec_parity": "FAIL inherited gui_supervision_surface owner collector (sameHEAD/current raw inventory1 vsdoc9); dat-supervision-owner-parity-202s retained, no collector/row change or waiver",
+      "stagedfmt_and_normal_hooks": "Actual stagedfmt and cached whitespace terminal0; exact10ownedpaths staged; normal commit hooks pending finalpackage/governance receipt."
+    },
+    "history_fallback_admission": "Valid check_run_list_v1 + actualProject UUID + nonempty actualcurrentrevision: select last existing matching Project/revision summary, verify shown exact envelope/nested identity/revision/runID. Fully valid basis with no eligible run yields qualifiedempty actualProject/revision unknown status; malformed contract or basis yields entireDefault unknown. No stale latest or generated CheckRun authority.",
+    "actual_governance_receipt": "Independent management personally checked224regular names/types and223manifesthashes: zero unsafe/link/unlisted entries; canonical48/50/51 22/34/43 match actualmaps, final6current/archivedpins exact. Actual bounded package/governance PASS received; pixel acceptance attributed only auditor/root. Gates amendment independently pending.",
+    "archive_supersession": "Initial66c02d9f224-entry archive independently passed; replaced by84471347 226entries solely adding actual finalgates JSON and projectcheck/stagedfmt/lane/whitespace terminal receipts to safe raw whitelist. Existing115raw/99canonical/9sources unchanged; no proof/build rerun.",
+    "actual_independent_package_receipt": "Auditor personally verified all initial224regular/223hashes/115originalraw/canonical22+34+43/final6pins/before-unit3HEAD parents. Actual bounded package acceptance received; final2raw gate receipt delta pending correspondence.",
+    "actual_final_package_receipts": "Actual independent code auditor and management both accepted final226safe regular entries/225manifesthashes, exact2newraw gates and stagedreceipts; removing2entries reproduces originalmanifest0afcc583, prior223payloads unchanged. Initial projectcheckFAIL\u2192later82PASS and inheritedparityFAIL/no waiver preserved. Final source/runtime acceptance unchanged; no reruns."
   }
 }

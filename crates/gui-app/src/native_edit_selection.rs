@@ -85,14 +85,19 @@ pub(super) fn prepare_from_model(
                     datum_gui_viewport::selection_lifetime::SelectionReconciliationState::Suspended { .. }
                 ) =>
             {
+                let mut explanation = reconcile.state.explanation();
+                if is_artifact(&prior.subject) && reconcile.dissolved {
+                    explanation = Some("Producing artifact invalidated its selected identity; selection cleared".into());
+                }
                 let mut view = build_workspace_selection_view(&model, &authority, reconcile.subject, next)
                     .map_err(|e| anyhow::anyhow!("Selection projection unavailable: {e:?}"))?;
                 if datum_gui_protocol::selection_artifacts::artifact_producer_changed(prior, &view) {
+                    explanation = Some("Selected action producer changed; selection cleared".into());
                     view = build_workspace_selection_view(&model, &authority, datum_gui_protocol::SelectionSubject::None, next)
                         .map_err(|e| anyhow::anyhow!("Selection projection unavailable: {e:?}"))?;
                 }
                 view.scope = prior.scope.filter(|class| view.members.iter().any(|id| id.class == *class));
-                target_after_reconciliation(view, reconcile.dropped, reconcile.state.explanation())
+                target_after_reconciliation(view, reconcile.dropped, explanation)
             }
             outcome => {
                 let mut view = prior.clone();
@@ -146,3 +151,7 @@ pub(super) fn target_after_reconciliation(
 #[cfg(test)]
 #[path = "native_edit_selection/lifetime_report_tests.rs"]
 mod lifetime_report_tests;
+
+#[cfg(test)]
+#[path = "native_edit_selection/artifact_lifetime_tests.rs"]
+mod artifact_lifetime_tests;

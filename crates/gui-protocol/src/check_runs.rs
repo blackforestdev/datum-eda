@@ -181,16 +181,33 @@ pub fn check_run_review_state_from_json(payload: &str) -> Result<CheckRunReviewS
 pub(crate) fn check_run_review_state_from_context_value(
     value: &Value,
 ) -> Option<CheckRunReviewState> {
+    // The context producer owns this identity. Never infer it from the current
+    // canvas or request; an absent identity uses the existing history fallback.
+    let project_id = value.get("project_id")?.as_str()?;
+    uuid::Uuid::parse_str(project_id).ok()?;
     let context = value.get("check_context")?;
     let context: CheckContextSummary = serde_json::from_value(context.clone()).ok()?;
     if context.contract.as_deref() != Some("datum_check_context_v1") {
         return None;
     }
-    context
-        .visible_check_runs
-        .into_iter()
-        .next()
-        .map(|run| run.into_state())
+    let revision = value
+        .get("model_revision")
+        .and_then(Value::as_str)
+        .filter(|revision| !revision.is_empty());
+    // History order is not currentness. Never give a historical finding the
+    // current context's acquisition authority when its run has another basis.
+    Some(
+        context
+            .visible_check_runs
+            .into_iter()
+            .find(|run| revision.is_some() && run.model_revision.as_deref() == revision)
+            .map(|run| run.into_state(project_id.to_owned()))
+            .unwrap_or_else(|| CheckRunReviewState {
+                project_id: Some(project_id.to_owned()),
+                model_revision: revision.map(str::to_owned),
+                ..Default::default()
+            }),
+    )
 }
 
 pub fn check_finding_scene_target_object_id(
@@ -361,7 +378,7 @@ struct CheckContextRunSummary {
 }
 
 impl CheckContextRunSummary {
-    fn into_state(self) -> CheckRunReviewState {
+    fn into_state(self, project_id: String) -> CheckRunReviewState {
         let finding_count = if self.finding_count == 0 {
             self.active_findings.len()
         } else {
@@ -369,7 +386,7 @@ impl CheckContextRunSummary {
         };
         CheckRunReviewState {
             check_run_id: self.check_run_id,
-            project_id: None,
+            project_id: Some(project_id),
             model_revision: self.model_revision,
             profile_id: self.profile_id,
             status: self.status,
@@ -451,6 +468,8 @@ mod tests {
     #[test]
     fn check_context_v1_maps_visible_run_to_review_state() {
         let context = serde_json::json!({
+            "project_id": "f5c84dbb-dafc-4caf-ba86-b3b6c894651b",
+            "model_revision": "revision-context",
             "check_context": {
                 "contract": "datum_check_context_v1",
                 "visible_check_runs": [{
@@ -499,6 +518,10 @@ mod tests {
             .expect("context should map to review state");
 
         assert_eq!(state.check_run_id.as_deref(), Some("run-context"));
+        assert_eq!(
+            state.project_id.as_deref(),
+            Some("f5c84dbb-dafc-4caf-ba86-b3b6c894651b")
+        );
         assert_eq!(state.model_revision.as_deref(), Some("revision-context"));
         assert_eq!(state.profile_id.as_deref(), Some("standards"));
         assert_eq!(state.status.as_deref(), Some("error"));
@@ -553,3 +576,6 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod context_identity_tests;
