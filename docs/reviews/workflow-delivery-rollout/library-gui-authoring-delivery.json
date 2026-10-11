@@ -25,6 +25,13 @@
       "sha256": "650f1cb6f80f5f0b9dc860c6e76ff1227a0919393f00b871903a6f0e9563fe7e"
     }
   },
+  "closure_documentation_review": {
+    "outcome": "PASS",
+    "reviewed_delivery_sha256": "b8083bb954a24bb536894be44201e1abffdd31e4992b15034631f3137054c678",
+    "reviewed_review_sha256": "a832dd9dafa371eb03cb5dd23b3a51c2bb1a619eb7abe8f0edbad2b565168688",
+    "reviewer": "management_review",
+    "scope": "Actual landed50 source blobs,56 evidence hashes, recovered original App launch, bounded availability and retained targets/qualification/baseline failures."
+  },
   "evidence": {
     ".datum/library-gui-delivery/build-daemon-guard-correction.log": "b0cb90226942c505c1bf2a39238ac275f41cc8d36ffc6fe23ea74c7efa802961",
     ".datum/library-gui-delivery/build-gui-ordinary-proof-5.log": "d439da8db5d820f53b746c7347088c6ab7111ebec1a42aefe8a8f8f50ed2d5b8",
@@ -295,7 +302,7 @@
   "issue_id": "dat-library-gui-authoring-1ix7",
   "kind": "ordinary_application",
   "launch_command": "DATUM_LIBRARY_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_library_browse_author_preview_cancel_history_save_reopen --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/library-gui-delivery/ordinary-app-attempt-3.log 2>&1",
-  "manager_disposition": "Owner-appointed PM059 manager accepts the frozen PM062 bounded candidate against all four ordinary workflows and five safety requirements after actual distinct source/runtime/rendered/documentation reviews. Source landing and source-commit availability registration remain pending; full qualification and unrelated baseline failures remain open.",
+  "manager_disposition": "Owner-appointed PM059 manager accepts actual distinct source/runtime/rendered/documentation receipts and source landing 61b5b409646701f03c019e88813921f0e3c696f0 for all four ordinary workflows and five safety requirements. Full qualification, retained broader targets and incidental baseline failures remain open; no successor authorization.",
   "observed_results": {
     "engine": {
       "failed": 0,
@@ -432,7 +439,7 @@
     "Preserve UUIDs, unrelated raw siblings/extensions and absent optional fields": true,
     "Stale revision, wrong writer/target and invalid or unsupported references/geometry refuse without partial writes": true
   },
-  "source_commit": null,
+  "source_commit": "61b5b409646701f03c019e88813921f0e3c696f0",
   "source_pins": {
     "crates/engine-daemon/src/dispatch.rs": "e76bca960fc3264ca13182f6da130450c498ef767cd078c4ad51ac3c7854454d",
     "crates/engine-daemon/src/native_write.rs": "2763c3148ccd7f3037c9327df1e915204cd01b3548d75a320fd37ea7f44ebd0e",
@@ -485,7 +492,7 @@
     "crates/gui-render/src/side_panels/inspector_dispatch.rs": "80e7de4a656a5963a0b0b35e1737c6286af693ef6b618066f3e5710551479633",
     "crates/gui-render/src/text_gpu/lifetime_state.rs": "8fcf7d3527eba44732547751e7cd3b821f1811c1367a87f15238be72ce748a9a"
   },
-  "status": "Bounded reviewed candidate accepted by appointed manager; source landing pending.",
+  "status": "Landed bounded PM062 delivery; source-pinned development availability recorded, full qualification remains open.",
   "task": "LIBRARY-GUI-AUTHORING",
   "workflow_results": {
     "Browse and search all eight native kinds by name; inspect typed relationships and source/target context": true,

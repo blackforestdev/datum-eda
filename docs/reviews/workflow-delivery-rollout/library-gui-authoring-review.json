@@ -24,9 +24,16 @@
     "pins": 50,
     "sha256": "f2fde38a7251354d8f2b07042636a5682a4742aec80cac5cd4c00564bc9ad171"
   },
-  "delivery_record_sha256": "b12129a32499a5859b124a555fcf08ea71e3cd9328faec6fec3f211ebe19990e",
-  "manager_disposition": "Owner-appointed PM059 manager accepts the frozen PM062 bounded candidate against all four ordinary workflows and five safety requirements after actual distinct source/runtime/rendered/documentation reviews. Source landing and source-commit availability registration remain pending; full qualification and unrelated baseline failures remain open.",
-  "outcome": "PASS for bounded PM062 candidate; manager accepts actual receipts, source landing pending",
+  "closure_documentation_review": {
+    "outcome": "PASS",
+    "reviewed_delivery_sha256": "b8083bb954a24bb536894be44201e1abffdd31e4992b15034631f3137054c678",
+    "reviewed_review_sha256": "a832dd9dafa371eb03cb5dd23b3a51c2bb1a619eb7abe8f0edbad2b565168688",
+    "reviewer": "management_review",
+    "scope": "Actual landed50 source blobs,56 evidence hashes, recovered original App launch, bounded availability and retained targets/qualification/baseline failures."
+  },
+  "delivery_record_sha256": "2d6b3ce68c52bcad64098c139d73d8fae16f8afb20604ca739553658830f7b90",
+  "manager_disposition": "Owner-appointed PM059 manager accepts actual distinct source/runtime/rendered/documentation receipts and source landing 61b5b409646701f03c019e88813921f0e3c696f0 for all four ordinary workflows and five safety requirements. Full qualification, retained broader targets and incidental baseline failures remain open; no successor authorization.",
+  "outcome": "PASS for bounded PM062 delivery; frozen50 source pins exactly match landed commit",
   "retained_limits": [
     "Wayland ignored requested 960x640 window size; all primary PNGs are 1344x806. Supplemental test uses real ordinary pane splits.",
     "Full physical input/HUMAN and full qualification remain open.",
@@ -37,5 +44,6 @@
   ],
   "review_id": "PM062-LIBGUI-BOUNDED-DELIVERY",
   "schema_version": 1,
-  "scope": "PM062 existing-contract named eight-kind browsing and manual Footprint/Padstack authoring; excludes retained broader targets and full qualification"
+  "scope": "PM062 existing-contract named eight-kind browsing and manual Footprint/Padstack authoring; excludes retained broader targets and full qualification",
+  "source_commit": "61b5b409646701f03c019e88813921f0e3c696f0"
 }

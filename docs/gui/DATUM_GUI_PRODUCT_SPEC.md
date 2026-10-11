@@ -442,11 +442,12 @@ contain limited library examples, not this complete visual contract. Protected
 HTML remains unchanged; actual candidate frames and owner HUMAN disposition
 remain pending through the owning visual lane.
 
-**Ordinary workflow and proof disposition.** The PM062 delivery candidate has
+**Ordinary workflow and proof disposition.** The PM062 delivery at `61b5b409` has
 actual ordinary App proof and distinct reviews for named eight-kind browsing,
 typed relationships and bounded Footprint/Padstack authoring, preview/cancel,
-canonical history, Save/reopen and normal/narrow controls. Management landing
-remains pending; full eight-kind authoring and the broader workflows below remain
+canonical history, Save/reopen and normal/narrow controls. Bounded source-pinned development availability is recorded in
+`docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json`;
+full eight-kind authoring and the broader workflows below remain
 targets. Reuse existing native/CLI and narrow-picker evidence only at its exact
 scope. Each delivery must identify its actual machine check,
 integration workflow and visual/accessibility receipt; no prose row is a PASS.

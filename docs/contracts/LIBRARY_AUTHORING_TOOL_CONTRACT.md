@@ -128,12 +128,13 @@ unresolved inputs. Existing `proposal create-board-component-replacements
 review/application. These CLI capabilities do not establish MCP or GUI authoring,
 standards certification or broader qualification.
 
-The PM062 GUI delivery candidate now exercises named browsing and typed
+The PM062 GUI delivery at `61b5b409` exercises named browsing and typed
 relationships for all eight kinds, plus manual Footprint/Padstack create/edit
 with named existing Package/Padstack references, supported Circle/Rect geometry,
 process inspection, preview/cancel, canonical Undo/Redo, Save and ordinary App
 reopen. Actual App, engine and daemon evidence and distinct reviews apply only
-at their recorded source pins and scopes. Management landing remains pending.
+at their recorded source pins and scopes; bounded source landing is recorded in
+`docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json`.
 Definition edits
 preserve existing placed users. Full eight-kind authoring, Package editing,
 models, approval, generation and general placed updates remain targets; seed,
