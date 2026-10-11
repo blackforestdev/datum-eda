@@ -5729,6 +5729,295 @@
       "Historical isolated proof logs are retained historical actual PASS, not new ignoredtest execution. CLI schematic nets is not full occurrence/board authority.",
       "Unrelated inherited GUI supervision parity FAIL remains unwaived; no Bus/crosspane interactive/allIR01/fullC04/HUMAN qualification."
     ],
-    "staged_checks": "raw/global-net-ladder-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0"
+    "staged_checks": "raw/global-net-ladder-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0",
+    "landing": {
+      "commit": "e33eafce27e36e08fd5646007d448a9b889a9e47",
+      "normal_hooks": 0,
+      "archive_sha256": "d9c81f825d7ca1461d583df734f88e1e1221fefd4e5bc670e6e2fab8e93db358",
+      "scope": "Owned4 normal evidence landing, source remains2ebe64c9/currentGUIad235e."
+    }
+  },
+  "foreign_bus_isolation_20261011": {
+    "status": "PARTIAL \u2014 finite ordinary same-name foreignBus identity/related isolation accepted by appointedroot manager with actual independent source/native/pixel/package/governance receipts. Normal hooks/landing pending; fullBus/IR01/C04/HUMAN open.",
+    "authority": "Appointedroot selected unchanged retained UVT-S5A-BUILD/S5A-C04 existing explicitBus entry/identity isolation. No newrule/dependency/writer/sourcefix.",
+    "setup": {
+      "raw": "raw/foreign-bus-isolation-setup.json",
+      "sha256": "3002085edd0e008063beedcf2de1eb9d4b3cf12139b7c672539b0ff9bd0b12ee",
+      "source_root": "target/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "canonical_files": 61,
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "foreign_bus_id": "73000000-0000-4000-8000-00000000002a",
+      "expected_owned_members": [
+        {
+          "class": "BusSection",
+          "id": "73000000-0000-4000-8000-000000000004",
+          "instance_path": []
+        },
+        {
+          "class": "BusSection",
+          "id": "73000000-0000-4000-8000-000000000068",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        }
+      ],
+      "expected_related_members": [
+        {
+          "class": "Junction",
+          "id": "73000000-0000-4000-8000-00000000000b",
+          "instance_path": []
+        },
+        {
+          "class": "Junction",
+          "id": "73000000-0000-4000-8000-00000000006f",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Junction",
+          "id": "73000000-0000-4000-8000-00000000006f",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        },
+        {
+          "class": "Label",
+          "id": "73000000-0000-4000-8000-00000000000a",
+          "instance_path": []
+        },
+        {
+          "class": "Label",
+          "id": "73000000-0000-4000-8000-00000000000e",
+          "instance_path": []
+        },
+        {
+          "class": "Label",
+          "id": "73000000-0000-4000-8000-00000000006e",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Label",
+          "id": "73000000-0000-4000-8000-00000000006e",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        },
+        {
+          "class": "Label",
+          "id": "73000000-0000-4000-8000-000000000072",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Label",
+          "id": "73000000-0000-4000-8000-000000000072",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        },
+        {
+          "class": "Port",
+          "id": "73000000-0000-4000-8000-00000000000c",
+          "instance_path": []
+        },
+        {
+          "class": "Port",
+          "id": "73000000-0000-4000-8000-000000000070",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Port",
+          "id": "73000000-0000-4000-8000-000000000070",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-000000000008",
+          "instance_path": []
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-000000000009",
+          "instance_path": []
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-00000000000d",
+          "instance_path": []
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-00000000006c",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-00000000006c",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-00000000006d",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-00000000006d",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-000000000071",
+          "instance_path": [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        },
+        {
+          "class": "Wire",
+          "id": "73000000-0000-4000-8000-000000000071",
+          "instance_path": [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        }
+      ],
+      "expected_related_subject_ids": [
+        "b151f91b-1da9-478b-8c71-6ff4ad03dd04"
+      ],
+      "same_name_records": "Currentactual029/02a/02b all same declarationname; foreign02a ownrootBus4+childBus68/path1f. No foreignBusInterface; scalarNetb151 related21. Name/physicalcontact does not conferownership.",
+      "adapter_boundary": "Engine bus_representations includes bus_owned_entries. Foreign no associatedentry=>engineowned2/GUIBusSection2. Primaryengine8 includesEntry5/69 but nativeidentities skipsbus_entries=>GUI6; related02bengine4=>GUI3. Excludeallprimary/related spines fromforeignowned; no recipe discrepancy.",
+      "source_basis": "Fresh61original/copy/current hashes exact/current resolver67a/zeroDiagnostics. Same recipe419b electricalbasis/fullrelated21 qualified against actual74/deliveredGlobalNet currentP. Engine owns sourceassociated BusEntry separately; nativeadapter skipsEntryidentity while retaining projection, notmembercountwaiver."
+    },
+    "native": {
+      "attempt": 75,
+      "raw_result": "raw/attempt-75-foreign-bus-isolation-result.json",
+      "result_sha256": "2301f8b938f054b9b2e542d87b9425c275503f214e9ef9176602ec79d45f9097",
+      "driver_sha256": "65d3144c259b3200694c235d205f6308051c97c34889d0afe2d1a96394b66aac",
+      "gui_sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3",
+      "gui_pid": 810913,
+      "outcome": "CAPTURE_ONLY_FOREIGN_BUS_ISOLATION_REVIEW_PENDING",
+      "receipts": 4,
+      "workflow": "ActualrootBus4 interior50m10m Object \u2192 ordinaryfocusedSelectBus menu \u2192 Bus02a exactowned2 versus Relatedscalar21/disjoint/currentbasis \u2192 Inventory collapsedfalse to acknowledgedexpandedtrue/fullP invariant \u2192 plainWireD replacement/Mainbound orderedpress17/release21.",
+      "projection": "Exactnonrootchild68/path1f unprojected1, hidden0/locked0; onlyrootBus4 selected. Scalar21 remainsRelated normalappearance; same-name primaryGUI6/relatedGUI3 absent fromowned by exactset. No BoardBus geometry/selection claim.",
+      "canonical": "All61prelaunch/startup/source_after/final maps equal/currentbytes rehashed, startupdelta{}, completecontentblobs recoverable. No intentional canonical design writes.",
+      "native_input_binding": {
+        "window": "27262980",
+        "pressed_index": 17,
+        "released_index": 21
+      },
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 810913,
+        "device_epoch": 1
+      },
+      "gui_exit_code": 0,
+      "pixels": [
+        "raw/attempt-75-foreign-bus-isolation-foreign-Bus-complete-inventory-focused-entry.png",
+        "raw/attempt-75-foreign-bus-isolation-foreign-Bus-inventory-owned-related-disclosure.png",
+        "raw/attempt-75-foreign-bus-isolation-foreign-Bus-owned2-related21-honest-unprojected1.png",
+        "raw/attempt-75-foreign-bus-isolation-ordinary-foreign-Bus-Select-Bus-focused-entry.png",
+        "raw/attempt-75-foreign-bus-isolation-plain-Object-replacement-clears-Bus-scope.png",
+        "raw/attempt-75-foreign-bus-isolation-presented-distinct-same-name-Bus4.png"
+      ]
+    },
+    "independent_reviews": {
+      "code_audit": "Actual75 independent bounded native/pixel ACCEPT: exactowned2/related21/current67a/nointerface/onechildunprojected/menu/inventorybothsource4/68path1f/plainMainObjectD/current61/GUI0drained. Final immutable8215a474/1d359d61 140safe139hash29origins/current11pins/sixequal61maps actual package ACCEPT received.",
+      "management_review": "Final actual governance/package bounded PASS at proofc8813315/archive8215a474/manifest1d359d61 received: personally140safe139hash29origins/current11pins/six61maps/finalexact, rawCaptureOnly/owned4gates/limits truthful.",
+      "root_manager": "Root personally actual75raw2301/fullowned2/related21disjoint/fullP inventory/Mainpress17<release21/current61/GUI0drain and root4pink same-nameprimarynormal/Related21unprojected1 pixels reviewed. Finalimmutable140safe139hash/six61maps verified; bothactualindependentreceipts received. Finiteobjective ACCEPT and normalownedlanding authorized; broaderC04/HUMAN open."
+    },
+    "required_gates": {
+      "scope": "Retained C04 finite same-name foreignBus identity isolation; unchanged source/newbuild not justified.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "status": "fulfilled",
+          "value": {
+            "chunk_id": "dcc0d9",
+            "wall_time_seconds": 0.892521767,
+            "exit_code": 0,
+            "original_token_count": 13,
+            "output": "Project status check passed (82 frontier items).\n"
+          }
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "status": "fulfilled",
+          "value": {
+            "chunk_id": "c33798",
+            "wall_time_seconds": 3.8699e-05,
+            "exit_code": 0,
+            "original_token_count": 10,
+            "output": "Active Frontier projection is current.\n"
+          }
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "status": "fulfilled",
+          "value": {
+            "chunk_id": "c89d44",
+            "wall_time_seconds": 0.00699979,
+            "exit_code": 0,
+            "original_token_count": 21,
+            "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+          }
+        }
+      ],
+      "reused": "Actual unchanged N17 sourcehealth3111/dependency/resource PASS and compiledGUIad235e/fiveN17sourcepins; inherited supervision parity FAIL unwaived/dat-supervision-owner-parity-202s. Existing GlobalNet full21/source-basis actual74 bound at normale33eafce, no newly executed ignoredtest.",
+      "terminal": {
+        "session": 79528,
+        "exit_code": 0,
+        "gui_pid": 810913,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "pending": "Normal commit hooks/landing only; actualowned4stagedfmt/whitespace0 archived."
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/foreign-bus-isolation-20261011.tar.xz",
+      "sha256": "8215a47409f9a721338530687e3873e55812c4cbb8d668bb200fc2ffdf24224a",
+      "manifest_sha256": "1d359d6123b09f4da105cb393e96e7644efa73a7aaa7541256a5fb3e774ba4e5",
+      "regular_files": 140,
+      "hashed_files": 139,
+      "raw": 18,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 6,
+      "source_pins": {
+        "crates/gui-protocol/src/selection_resolution/native.rs": "3c84eeed0ee150863bf7654ea372e0688e4e8f93c5b74c378bdf1d3b9c32e0eb",
+        "crates/engine/src/substrate/electrical_selection_query.rs": "1dd96b08d14837a5f082f4fb69658aa97d64ad18644134775d1652a5689f984f",
+        "crates/engine/src/substrate/electrical_selection_query/bus_run.rs": "529a3574e2b109831e94ab64a99cae4d6601a3d3b7912892d7dc54e612b8badd",
+        "crates/gui-app/src/runtime_selection_menu.rs": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+        "crates/gui-app/src/runtime_selection.rs": "ae9f47a70ec4adce9bf3c5ed6d2f235a8e1eac167ec8477a480309fd80b3d151",
+        "crates/gui-protocol/src/selection_view.rs": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+        "crates/gui-app/src/runtime_primary_pointer.rs": "19757c9b3c8a00f86dd386eea2b271b63aba7f91401fd6614ecde0b93ac185a0",
+        "crates/gui-app/src/runtime_primary_button.rs": "76cec57b9911bb0f343668aa64baea8be423a5895aba0c84e0065be24a422242",
+        "crates/gui-protocol/tests/native_semantic_recipe.rs": "47d2ea64ca9d500ccb670d7e46fb171543f839d9d1d263f46fd5a587461705cf",
+        "crates/test-harness/src/bin/s5a_fixture/semantic/checks.rs": "c7e02fd5523cdfcd023a49ef1aff02a8562a8a142fc441465c696d102e5c6081",
+        "crates/gui-app/src/runtime_view_actions/action_evidence.rs": "ac86b41c629c787ae9221aa6afb9bace4aa8293bde67ebfa99adadaec03db52d"
+      }
+    },
+    "limits": [
+      "Finite ordinary foreign Bus02a explicitentry owns rootBus4 +child68path1f only; equalnames do not merge primaryGUI6/relatedGUI3. ScalarNet21 is RELATED, notowned; no directforeignBusInterface.",
+      "Engine sourceassociatedBusEntries remain separate projection; foreign2 engine/GUI2. No BoardBus/allrelatedcanvas/HUMAN/fullBus/IR01/C04 claim.",
+      "Canonical61fullmaps read-only; existing GUI/source reused, no privatebinding/query writer/newCargo.",
+      "Complete membership comes from actualdeclarations/currentresolver/engine/native source, not same-name or count-only inference. PriorprimaryBus proof notrerun/newcredit.",
+      "Inherited GUI supervision parity FAIL retained/unwaived; no full qualification/HUMAN/AT/equalpath/BoardBus claim."
+    ],
+    "staged_checks": "raw/foreign-bus-isolation-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0"
   }
 }
