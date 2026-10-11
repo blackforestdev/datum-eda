@@ -4358,6 +4358,155 @@
       "Bounds/Start/End quantity context unavailable and secondary text clipping remain unqualified.",
       "No design/source/private writes, new dependency or defaultfilter policy. Raw CAPTURE_ONLY unchanged; independent bounded acceptance separate; inherited supervision parity FAIL remains unwaived.",
       "Late-held observation reuses sequence62; actual presented frames/pixels and native ordering establish the held gesture, not a newly emitted selection state."
+    ],
+    "source_landing": {
+      "commit": "0d2b145b6170eb7bb4de874e0eb64e8e7e724dda",
+      "normal_hooks": 0,
+      "owned_paths": 4,
+      "archive_matches_reviewed": true,
+      "production_pins_unchanged": true
+    }
+  },
+  "n17_accessible_refusal_20261011": {
+    "scope": "Finite retained C04 N17 ownGUI PID-bound public accessible Run5 identity/tree/count/focus and completed readable refusal event; no full N17/C04/HUMAN qualification.",
+    "authority": "Explicit appointed-manager unchanged C04 grant, preparation lines304/354.",
+    "source_commit_before_unit": "0d2b145b6170eb7bb4de874e0eb64e8e7e724dda",
+    "compiled_source_cohort": "GUI78627a1f from7590c663 unchanged production; no source/dependency/build change.",
+    "fixture": "Fresh exact original61 canonical-only semantic-scope copy/current67a175/51objects/zero diagnostics/root[] Run5 lawful electrical authority.",
+    "setup_sha256": "62f68956d51c7701c98f16c58d53a0d122f488a6b963942a83ca3f3381b2f9d5",
+    "scope_transaction": {
+      "actual_transaction": "2026-10-11T20:25:57Z",
+      "previous_heartbeat": "2026-10-11T20:15:29Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_exact_paths": [
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n17-accessible-refusal-20261011.tar.xz"
+      ],
+      "before_archive_write": true,
+      "grant": "Root-authorized finite retained C04 N17 live accessibility refusal evidence delivery"
+    },
+    "driver_sha256": "794819e9eaabd18c97695b53b69d95c327a693fee2d4b7632bc695aa5726490b",
+    "result_sha256": "07719429e10bd9e090bb3f2d576abc0cfa304f87ecc67b6d86b4d68b62b50c7d",
+    "gui_sha256": "78627a1f44497650e3908958a4bf551cad4b46858c11c2ed3adecfb968fc5e22",
+    "raw_outcome": "CAPTURE_ONLY_N17_ACCESSIBLE_REFUSAL_REVIEW_PENDING",
+    "failure": null,
+    "terminal": {
+      "session": 5988,
+      "exit_code": 0,
+      "gui_pid": 785869,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 785869,
+        "device_epoch": 1
+      }
+    },
+    "observations": 3,
+    "accessible_identity": {
+      "address": "unix:path=/run/user/1000/at-spi/bus_1,guid=b27455dde6bbc75bbe3b795a6aa5b0cb",
+      "service": ":1.5332",
+      "pid": 785869,
+      "PID_lookup": "(uint32 785869,)\n"
+    },
+    "outcomes": [
+      "Actual public complete five typed root[] Wire8/Wire9/Labela/Portc/Junctionb children and exact supplied currentProject/revision; before/after ChildCount5 and childreferences/memberattributes identical.",
+      "Meaningful ordinary ShiftAdd external disconnected WireD while Run5 selected; whole native SelectionView normalized onlynotice remains exact, accessible subjectkind/run, rootstates, all selected=true/memberfocus=false and count unchanged. Run has no member focus; editor-root focus is separate.",
+      "OwnPID-bound monitor started before action captures TWO PropertyChange accessible-description signals containing full Add/Run explanation, one awaiting redraw then one Exactmask. No SelectionChanged, matching unchanged subject/members/scope. Public Name/Description/description attribute retain exact fullcause.",
+      "Native Inspector pixel shows same Run5 and abbreviated cause. Exact raw/programmatic fullreason, not full pixelstring or screenreaderannouncement/HUMAN claim.",
+      "All61 canonical prelaunch/start/source_after/final maps identical/startup{}. GUI exit0 and samePID drained_device_live receipt; diagnostic coverage complete/errorNone/nooverflow."
+    ],
+    "exact_reason": "Cannot add members to a run selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection.",
+    "event_scope": "gdbus monitor on own unique service selection object; no standard Announcement event or physical screenreader comprehension claim.",
+    "failed_cohorts": [
+      {
+        "attempt": 65,
+        "raw": "FAIL KeyError(instance_path)",
+        "cause": "Producer decoding assumed debug-format identity. Public serde uses snake_case class and default omitted empty occurrence path; published full5member baseline reached, refusal not executed. GUIexit0/drained; application defect not inferred."
+      }
+    ],
+    "superseded_unexecuted": "d7ff initial memberfocus assumption corrected allfalse;82b9 executed65;794819 corrected exactfourclass serde/rootpath decoding executed66. No general snake_case adapter claim.",
+    "canonical_invariance": {
+      "paths": 61,
+      "all_maps_equal": true,
+      "startup_delta": {},
+      "phase_maps_archived": true
+    },
+    "independent_reviews": {
+      "code_audit": "Actual66 bounded native/query/event/pixel ACCEPT and finaled0b4e1b/78db9cae correspondence accepted:155safe/154hashes/13currentpins/five61maps; normal landing only pending.",
+      "management_review": "Actual finalbf9eef95/ed0b4e1b/78db9cae governance/package PASS received;44actualorigins/currentgates/owned4stage/65FAIL/twoevents/retainedqualification verified.",
+      "root": "Appointed manager accepts bounded actual66 channel behavior plus exact immutable archive independently verified; normal hooks/landing only pending. Full N17/C04/HUMAN remains open."
+    },
+    "required_gates": {
+      "scope": "Finite N17 actual ownPID public selection channel proof only; no source/build edits.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "f7cb65",
+          "exit_code": 0,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "e39f25",
+          "exit_code": 0,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "a65467",
+          "exit_code": 0,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Unchanged production/sourceGUI cohort from7590c663, prior adequate sourcehealth3108/dependency/resource PASS. Inherited gui_supervision_surface parity FAIL unwaived (dat-supervision-owner-parity-202s). No compilation justified.",
+      "terminal": {
+        "session": 5988,
+        "exit_code": 0,
+        "gui_pid": 785869,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "failed_attempt": {
+        "session": 87837,
+        "exit_code": 0,
+        "gui_pid": 785413,
+        "gui_exit_code": 0,
+        "raw": "FAIL KeyError(instance_path) in driver publishedidentity decoder; before meaningful refusal",
+        "application_defect": false
+      },
+      "pending": "Normal hooks/landing only; actual owned4 stagedformat/whitespace0 archived"
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n17-accessible-refusal-20261011.tar.xz",
+      "sha256": "ed0b4e1b9c947e2f59ccf6092d802b9c7dac8b1979d9c8bdadc28bfea3cfc308",
+      "manifest_sha256": "78db9cae70bd0448723b195e3ec43937eda4dbb385a803fa85d0df9e48a8247e",
+      "regular_files": 155,
+      "hashed_files": 154,
+      "raw": 31,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 5,
+      "source_pins": {
+        "crates/gui-app/src/selection_accessibility.rs": "d116b407efbe4a14641bd6de5076f8442ca4940f31ca9bdaad467f8499bd8544",
+        "crates/gui-app/src/terminal_accessibility_bridge.rs": "e512035cbf8cc2bf91cca16f8a5269a4533e46f981b5c02731bf745b9dc03003",
+        "crates/gui-app/src/terminal_accessibility_platform/worker.rs": "0133154936467ab04564e9a331b7856f243aa3d3cf5881ffe6ee4473ab91adb1",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection.rs": "6c8350d0bcb9f2a58b1d38177013f025f66c7b9ad1a6e9ce4682b46931fb7c5b",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/presentation.rs": "2cc85023e4ee8f576c8599a0e8b80f2ef05424a4d1cc6f8110ce46eef43cba26",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/events.rs": "599b876bef94327ff60a6e021b1fd40976f757914f7dcf89b29279be8c9012e8",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/children.rs": "c1ff69c2073bf26f34f7667e08d9e7520d7c319756916dc6dbb1f8ca13bc89e1",
+        "crates/gui-app/src/runtime_selection.rs": "ae9f47a70ec4adce9bf3c5ed6d2f235a8e1eac167ec8477a480309fd80b3d151",
+        "crates/gui-protocol/src/selection_view.rs": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+        "crates/gui-protocol/src/selection_subject.rs": "364772b28ba8d7ddc03fdad93ed90bf7f1447afaf81514f49f359b404e392b83",
+        "crates/gui-app/src/runtime_selection_menu.rs": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+        "crates/gui-app/src/runtime_selection/publication.rs": "ff3b599c10e1068ea0629e96e699489b84857e1cab923e9b56e2156c924f3ae9",
+        "crates/gui-app/src/console_accessibility.rs": "0e2e60dcf3696f425fac0c4f83dfe16b84be733a50896db90803e12619caa692"
+      }
+    },
+    "limits": [
+      "Read-only exact queried attrs/tree/count/currentbasis/reason and actual completed PropertyChange channel only. Standard memberGetState genericpanel does not prove SELECTED/FOCUSED conformance; attributes are the credited channel.",
+      "No physical screenreader/AT interoperability/HUMAN/color/grayscale/highcontrast/reducedmotion/fullN17/C04 or repeatedinstance qualification.",
+      "Run5 members have all selection-focus=false; derived origin does not invent memberfocus. ActionAdd is conveyed by ordinary Shift input/fullreason, not a separate typed refusal-action attribute.",
+      "No canonical/design/source/journal writes or dependencies. Raw CAPTURE_ONLY unchanged; actual independent acceptance separate. Inherited supervision parity FAIL unwaived."
     ]
   }
 }
