@@ -96,7 +96,9 @@ prototype inventory, specification governance, and roadmap dependencies.
 <!-- OWNER:GUI-SURFACE-SPECS:SURFACE-S05:SURFACE-S05 -->
 SURFACE-S05 records the owner's visual and product disposition, resolves or
 explicitly defers every remaining owner question, and selects a bounded
-implementation successor without granting execution authority implicitly.
+implementation successor without granting execution authority implicitly. PM062
+records the delegated S05 disposition and separate finite library GUI grant;
+its receipt preserves HUMAN, runtime and source/standards qualification boundaries.
 
 ## Shell Contract
 
@@ -284,13 +286,13 @@ Target surfaces:
 First implementation can be read/preview-focused, but it must not require users
 to know object UUIDs or CLI incantations for basic library inspection.
 
-### Library Surface Contract — SURFACE-S03 Draft
+### Library Surface Contract — SURFACE-S03
 
 This candidate refines the existing library target across all eight implemented
 Pool kinds: Unit, Symbol, Entity, Part, Package, Footprint, Padstack and PinPadMap.
 Models, metadata, provenance, basis and findings are linked detail surfaces;
-this draft introduces no ninth Pool kind. Presentation awaits SURFACE-S04,
-combined independent review and SURFACE-S05 owner disposition. The full reading
+this contract introduces no ninth Pool kind. PM062 ratifies the reviewed target
+presentation after S04/combined review and delegated S05 disposition. The full reading
 and exact reuse boundaries are recorded in
 `docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json`.
 No library source, shipped seed, importer or runtime successor is approved here.
@@ -304,8 +306,8 @@ the referenced object with its pool/revision context; matching names are not
 binding evidence. Basic inspection is possible by mouse and keyboard without
 UUID or terminal knowledge. Loading, empty pool, no match, missing reference,
 ambiguity, stale data and read-only states have distinct observable explanations.
-Default ranking, pool precedence, duplicate/shadow behavior and writable pool
-targets remain owner choices; a browser must not invent them.
+PM062 requires visible source/target and separate ambiguous candidates. Broader
+ranking, precedence, shadowing and writable-pool policies remain deferred.
 
 Library source files remain authored model partitions. Any search database or
 index is a derived lookup aid and must not become a second writer or relationship
@@ -466,7 +468,8 @@ or UnknownBasis content, pool/writable-target and conflict behavior, and any
 initial implementation breadth without reducing retained targets. Generator
 family/basis/naming, placed-impact trigger changes, graph authority promotion,
 source access/license and supported conversion scope require their actual
-authority separately. No default is selected here. Existing engine
+authority separately. PM062 settles presentation and the project-owned target; broader pool/placement
+policies and generator defaults remain explicitly deferred. Existing engine
 `api/native_write/library*`, resolver/Pool/LibraryGraph, shared authoring/proposal
 and configured GUI services are the handoff seams; a new private writer or a
 second library database authority would violate the controlling model.
@@ -487,12 +490,12 @@ The historical Phase 1 recovery slice below describes the earlier board-shell
 recovery scope. It does not add a board-fidelity prerequisite to the selected
 native library/schematic surface planning or change its Frontier authority.
 
-### Schematic Surface Contract — SURFACE-S02 Draft
+### Schematic Surface Contract — SURFACE-S02
 
 This is the buildable planning candidate for the existing schematic target.
-Inherited numbered decisions remain controlling; proposed presentation choices
-await SURFACE-S04 reconciliation, independent review and SURFACE-S05 owner
-disposition. This draft grants no implementation, source adoption or seed-library
+Inherited numbered decisions remain controlling; PM062 dispositions the reviewed
+presentation choices after S04 and independent review. This contract itself grants
+no implementation, source adoption or seed-library
 qualification. Source review is recorded in
 `docs/reviews/workflow-delivery-rollout/surface-route-preflight.json`.
 
