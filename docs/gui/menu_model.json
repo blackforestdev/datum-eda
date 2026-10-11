@@ -203,6 +203,12 @@
           "gui_local": "view.fill_schematic"
         },
         {
+          "label": "Library Browser",
+          "icon": "symbol",
+          "gui_local": "library.open",
+          "requires_project": true
+        },
+        {
           "label": "Layout: Single",
           "icon": "panel",
           "gui_local": "view.preset_single"
