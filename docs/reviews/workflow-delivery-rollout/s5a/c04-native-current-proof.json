@@ -2288,6 +2288,81 @@
       "superseded_reason": "Rejected before staging: initial full-root traversal included runtime operational payloads. Replaced in place with exact canonical hash-map whitelist; no raw test facts or successful results changed."
     },
     "independent_governance": "Actual management_review final PASS at pre-disposition proof85c3ba603a8a7305b181ed486d6efea8324889f1fd9e966d802dab56993976ea/archivec48afd246a570de558ec25b37e319bf7b9ed2bc721e62418422ecf1253427906. All230 entries verified:112raw exactoriginalbytes,5frozen current sources and113canonical snapshot paths matching exact36/40/37 source_after whitelists and hashes; no runtime or credential members. Initial unsafe archive rejected before staging and superseded. Actual39CLI successes/nine nonmutating refused refreshes and failure accounting verified; scope/authority and metadata continuation clear.",
-    "manager_acceptance": "Owner-appointed root manager accepts the bounded existing-contract lifetime-report correction after actual independent source/native/governance receipts and personal native before/after inspection. Both refresh paths preserve truthful fresh empty dropped reports; no selected badge, membership, focus or geometry remains for None. Demonstrated last-member Undo, surviving-compound no promotion/resurrection and replacement no substitution followed by explicit acquisition. Continue retained S5A-C04 with OS focus-loss gesture proof queued. WholeN07/C04/C05/C06, HUMAN/AX, hierarchy/stale-context/artifact-change runtime and direct GUI journal tip remain unqualified; no successor authorization."
+    "manager_acceptance": "Owner-appointed root manager accepts the bounded existing-contract lifetime-report correction after actual independent source/native/governance receipts and personal native before/after inspection. Both refresh paths preserve truthful fresh empty dropped reports; no selected badge, membership, focus or geometry remains for None. Demonstrated last-member Undo, surviving-compound no promotion/resurrection and replacement no substitution followed by explicit acquisition. Continue retained S5A-C04 with OS focus-loss gesture proof queued. WholeN07/C04/C05/C06, HUMAN/AX, hierarchy/stale-context/artifact-change runtime and direct GUI journal tip remain unqualified; no successor authorization.",
+    "landed_source_commit": "6ed6bf6ad31c5f79ae369a045482f476ac593d66"
+  },
+  "os_focus_loss_gesture_proof_20261011": {
+    "scope": "Retained C04 ordinary OS window focus-loss cancellation of active Ctrl marquee; no source change or new product rule.",
+    "authority": "Existing UVT cancellation contract and appointed manager unchanged-scope continuation; current synchronized C04 lease.",
+    "source_commit": "6ed6bf6ad31c5f79ae369a045482f476ac593d66",
+    "owning_route_reuse": {
+      "gui-selection": "d47bd726045e78a6c3a6fdd38b0d5b63ebe947b9c138b05a44032151e4882a7e",
+      "prototype-selection": "78dffa2dc2a85ef1e49e9d2e50720b7bd1b6e4c91c0f2f143175c78202a4ed93"
+    },
+    "compiled_gui_sha256": "c63ad66ec1f35da887810f8e185b983457357cddd73dc801a00287cf523d6255",
+    "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+    "fixture_provenance": {
+      "source": "/home/bfadmin/Documents/datum-eda/target/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "root": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/projects/os-focus-loss",
+      "reuse": "Existing governed semantic-scope fixture, fresh source/journal copy; runtime operational trees omitted. No authored mutation/setup write.",
+      "expected_members": [
+        "73000000-0000-4000-8000-000000000008",
+        "73000000-0000-4000-8000-000000000009"
+      ],
+      "expected_focus": "73000000-0000-4000-8000-000000000009"
+    },
+    "producer_sha256": "9c1ffb978c067832b738d36f2670bf7e901ef49cdc9bebc7e832073673b5ee18",
+    "result_sha256": "331084879d58250d1322ab0d677257b9bc7f9b7343b4dfb90fd440a9f6380d40",
+    "execution_terminals_sha256": "7bd0f0742ad85b9e0922930d277eb3633aceca478e785a3ab3ed9c07c6a3bebf",
+    "execution": {
+      "session_id": 50722,
+      "exit_code": 0,
+      "pid": 655135,
+      "window": "27262980",
+      "redirected_log_bytes": 0,
+      "terminal_provenance": "Actual exec/write_stdin receipt; empty redirected log is not textual PASS."
+    },
+    "observations": {
+      "native_records": 25,
+      "press_sequence": 15,
+      "focus_loss_sequence": 17,
+      "focus_gain_sequence": 18,
+      "trailing_release_sequence": 20,
+      "fresh_state_after_release": 6,
+      "fresh_WireD_sequence": 7,
+      "idle_Escape_sequence": 8,
+      "canonical_files": 61,
+      "current_receipts": 6
+    },
+    "causality": "Actual active-boundary PNG precedes focus_loss17, with only press15/pointer16 in intervening diagnostic records and no cursor_leave. Restored-cleared-before-release PNG shows canceled rectangle before any menu/Escape; gain18 precedes release20 with no intervening fresh press. Release is deliberately suppressed before verbose logging; existing input diagnostic observes it before dispatch.",
+    "nonmutation": "Exact complete prior SelectionView retained through cancellation and trailing release; post-open canonical source/journal/cursor map equals final map (61 files). Actual terminal-context/tool-session runtime paths classified separately and exact .datum/revision/writer.lock excluded as transient. No canonical setup or runtime writes.",
+    "diagnostic": {
+      "path": "attempt-27-os-focus-loss-input-diagnostic.json",
+      "sha256": "353c154c04afbdda13e5b39870f3f19c9b18ca4db5b3b377a7f9135084111fd2",
+      "coverage_complete": true,
+      "first_error": null,
+      "overflow": false,
+      "complete": false,
+      "complete_limit": "Existing output-diagnostic pre-drain snapshot, not full input/measurement qualification."
+    },
+    "independent_runtime_review": "Actual distinct s5a_code_audit bounded ACCEPT: all six PNGs viewed, diagnostic event order and no intervening press verified, exact fullview invariant/fresh sequence6 and final61 canonical hashes independently rehashed with zero mismatches. Latest sequence4 pre/post release is not a fresh-state acknowledgement.",
+    "manager_acceptance": "Owner-appointed root manager accepts this bounded ordinary OS focus-loss case after actual distinct runtime/package/governance receipts and personal active/cleared pixel inspection. Focus loss17 precedes any cursor_leave, regain18 precedes trailing release20 with no intervening fresh press, exact committed selection retained, subsequent WireD/idleEscape works and61 canonical files remain unchanged. Retained S5A-C04 continues; no full C04/N13/HUMAN or minimization qualification.",
+    "limits": [
+      "Actual X11 scripted ordinary input, not physical/HUMAN or exclusive desktop input.",
+      "OS focus loss only; no minimization, capture-loss, full N13/C04/C05/C06 or native accessibility qualification.",
+      "Boundary is actual pixels, not an emitted observer Boolean; latest pre/post-release sequence4 is unchanged, fresh sequence6 comes after release.",
+      "Source/binary reused unchanged; no new build or source repair."
+    ],
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/os-focus-loss-20261011.tar.xz",
+      "sha256": "c9ac27150d281f9e570e5d8175f15bb2deb8bfe0c2b5f366dafa543e1d547213",
+      "raw_files": 21,
+      "canonical_snapshot_files": 61,
+      "entries": 82,
+      "contents": "Exact attempt27 raw artifacts/held producer/setup/tool terminal/gates plus ONLY canonical source_after hash-map whitelist; runtime operational/credential payloads omitted."
+    },
+    "noncargo_gates": "Actual project_status, evidence traceability, spec governance, source-health --base-ref HEAD and Cargo resource policy exit0; logs archived. No source change or Cargo rerun.",
+    "independent_governance": "Actual management_review final bounded PASS received by appointed manager against proofaeddc95a/archivec9ac2715; exact82 entries comprise21 raw artifacts and61 canonical whitelist files, all hashes match accepted actual cohort. Retained claim/scope and operational exclusions truthful; no new product or full qualification grant.",
+    "independent_package_review": "Actual s5a_code_audit bounded package PASS at proofaeddc95a/archivec9ac2715: all21 raw artifacts byte-identical and61 canonical exact map/hash match; no operational payloads or discrepancy. Terminal receipt is actual50722exit0, not empty log textual PASS."
   }
 }
