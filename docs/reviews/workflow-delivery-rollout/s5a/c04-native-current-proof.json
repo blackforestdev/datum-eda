@@ -4850,6 +4850,137 @@
       "Actualnumericdisplayequal but truthfulroundedqualifier differs; no defect or identicalfulllabel claim. PairAll initially omitsclassfields by contract; ordinaryInspectTracks required.",
       "Read-only queriedattributes/publiclabels do not establish standardAT/screenreader/HUMAN compliance. Raw CAPTURE_ONLY and failed68 retained, independentboundedacceptance separate.",
       "Inherited gui_supervision_surface parityFAIL unwaived/dat-supervision-owner-parity-202s; fullN11/C04 qualification pending."
+    ],
+    "source_landing": {
+      "commit": "21b57d90c46dde286c70588cbbe538c11517a188",
+      "normal_hooks_exit_code": 0,
+      "owned_paths": 4,
+      "compiled_production_unchanged": true,
+      "bound_by_next_substantive_unit": "N08/N13 focuscancel close rebind ordinaryproof"
+    }
+  },
+  "n08_focus_cancel_pane_rebind_20261011": {
+    "scope": "Finite retained C04 N08/N13 ordinaryfocus cancellation of activeShiftRectangle followed separately by paneclose/survivingpanecontentrebind preserving committedWire9 selection.",
+    "authority": "Explicit appointedmanager retained C04 grant; existing ordinary ContextMenu and View menu commands, no invented shortcut/privatecommand/productrule.",
+    "source_commit_before_unit": "21b57d90c46dde286c70588cbbe538c11517a188",
+    "compiled_source_cohort": "Unchanged GUI78627a1f compiled7590c663, no source/dependency/build changes.",
+    "fixture": "Fresh exact original61canonical semantic-scope whitelist/current67a175/51objects/zeroDiagnostics. Root[] Wire9 prior versus regioncrossing additionalWire8 and othereligibleobjects; alloperational trees excluded before reads.",
+    "setup_sha256": "0bda40eef10790c2647abc4abbf067b1e46e4a576721c91e23ff3cd986ca686e",
+    "scope_transaction": {
+      "timestamp": "2026-10-11T20:52:52Z",
+      "previous_heartbeat": "2026-10-11T20:46:52Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_scope": [
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n08-focus-cancel-pane-rebind-20261011.tar.xz"
+      ],
+      "transaction": "Frontier + beads in_progress/codex + canonical export before scheduled proof/archive writes",
+      "grant": "Root explicit retained C04 N08/N13 ordinary focuscancel before paneclose/rebind; no source/new product rules"
+    },
+    "driver_sha256": "f1c2d11b35945c3f01efec063462c11bacd62677bcbce4b26f794c037be55bc1",
+    "result_sha256": "7847a18ab424df93813da5a34478feec3b193187fe4cdf8682d336c01925bfea",
+    "gui_sha256": "78627a1f44497650e3908958a4bf551cad4b46858c11c2ed3adecfb968fc5e22",
+    "raw_outcome": "CAPTURE_ONLY_N08_N13_FOCUSCANCEL_CLOSE_REBIND_REVIEW_PENDING",
+    "failure": null,
+    "terminal": {
+      "session": 55483,
+      "exit_code": 0,
+      "gui_pid": 794291,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 794291,
+        "device_epoch": 1
+      }
+    },
+    "observations": 5,
+    "causal_chain": [
+      "Actual existing priorWire9 selection on focusedSchematic; Shift primarypress/motion activates meaningfulRectangle crossing additionaleligibleWire8. Presented heldboundary/P invariant evidence captured.",
+      "Ordinary ShiftF10 moves to ContextMenu Overlay and cancels gesture BEFORE paneclose; fullSelectionView/canonical maps identical. Actual primaryrelease AFTER focuscancel thenShiftup/Escapedismiss does not publish regionmembers; boundarygone/P retained.",
+      "Ordinary ViewClosePane index10 focusedlabel\u2192closeSchematic; remainingfocusedBoardPane0/livecamera count1/deadPane1 absent. Stable authoritative subject/member/focus/basis/filter selection retained, no canonical writes.",
+      "Ordinary ViewFillPaneSchematic index15 focusedlabel\u2192same survivingPane0 nowSchematic; Fit presentation shows same selectedWire9 cue/currentInspector focus, no selectionresurrection or newacquisition."
+    ],
+    "projection_qualification": {
+      "compared_authority": "Exact debugprefix before inspection contains currentProject/revision/subject/focus/origin/members/related/scope/typedvalues/authoredanchors; filters same, noticeNone/drop0/stalefalse.",
+      "source_qualified_allowance": "Only pane-dependent inspection/projection masks/presentation/hidden/unprojected data may legitimately change; raw before/after captured rather than silently normalizing wholeview.",
+      "actual_records": 3,
+      "actual_fullview_equal_each": true,
+      "limit": "This particularsingleton retained fullview equality as well. No general assertion that arbitrary panechanges cannot alter presentation."
+    },
+    "canonical_invariance": {
+      "paths": 61,
+      "all_maps_equal": true,
+      "startup_delta": {},
+      "phase_maps_archived": true
+    },
+    "independent_reviews": {
+      "code_audit": "Actual70 independentall7frames/nativeordering/fullview/source13/canonical61/native0 bounded ACCEPT and exact143entry/142hash/32origins/six61maps finalbf6c0c84 correspondence ACCEPT received.",
+      "management_review": "Final governance/package PASS for immutable04740107/bf6c0c84/1300badb received by root and relayed; sameclaim/gates/qualificationlimits clear.",
+      "root": "Appointedmanager actual70 phase/current61map/cue/drain evidence and immutable143entry/142hash/six61map/13pin correspondence verified; bothindependentfinalreceipts in hand, boundedobjective accepted, normalhooks/landing pending. FullN08/N13/C04/HUMAN open."
+    },
+    "required_gates": {
+      "scope": "Finite N08/N13 ordinary focuscancel/paneclose/rebind read-only workflow; no source/build edits.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "cb3012",
+          "exit_code": 0,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "c49d93",
+          "exit_code": 0,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "617985",
+          "exit_code": 0,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Unchanged production/sourceGUI from7590c663; adequate sourcehealth3108/dependency/resource PASS. Inherited gui_supervision_surface parity FAIL unwaived/dat-supervision-owner-parity-202s. No compilation justified.",
+      "terminal": {
+        "session": 55483,
+        "exit_code": 0,
+        "gui_pid": 794291,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "pending": "Normal hooks/landing only; actual owned4 stagedformat/whitespace0 archived"
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n08-focus-cancel-pane-rebind-20261011.tar.xz",
+      "sha256": "bf6c0c84666d6c59a49826d3056e252dd188e50ca1c187b5f37fe2a9129ee367",
+      "manifest_sha256": "1300badb2643136ca15c8edcb70c1a557a2a6e7407ca262288431894ec6437ef",
+      "regular_files": 143,
+      "hashed_files": 142,
+      "raw": 19,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 6,
+      "source_pins": {
+        "crates/gui-app/src/runtime_camera_pane.rs": "77077fc54def9e44a96a47642b9d45fe29ecc3df5d7a4f70a2aadf3648b94d96",
+        "crates/gui-app/src/pane_cameras.rs": "4ffc98713d6fef2b255172c0d9b7c9d4687d40aa3a7389312f5e245ddbd2ce0d",
+        "crates/gui-app/src/keyboard_focus.rs": "223c4bea0988b0f4de1ac601217cbeeaa964dafb69b408ec9a27c7923db05960",
+        "crates/gui-app/src/app_native_events.rs": "ae07c79f82bcd37d0e4f44442a820e198eeb27360d552b9e02230331265ed50b",
+        "crates/gui-app/src/runtime_selection_region.rs": "204e6c0122b7a1cb62234b3de956313f5175c224e753077f2cfb4be8139d4131",
+        "crates/gui-app/src/runtime_selection.rs": "ae9f47a70ec4adce9bf3c5ed6d2f235a8e1eac167ec8477a480309fd80b3d151",
+        "crates/gui-app/src/runtime_view_actions.rs": "2e7be72eaef917010c743a9544f61f9db9f3bdf0cf72acb4f1d40e790c8ea20f",
+        "crates/gui-app/src/runtime_menu_actions.rs": "c025b3717866b8bf643395de8caeac8a2f0a48edd5c9ab4d016f978b567dce7a",
+        "crates/gui-protocol/src/workspace_layout.rs": "382dca33dcc0494450e31f4ab8045978b91deee51c71d0c321620ef3aeb13d71",
+        "crates/gui-protocol/src/selection_view.rs": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+        "crates/gui-render/src/menu_chrome.rs": "a28504a9652d17b266a960ea872f6b6053a6a7263ab93ec7b710fdb83580fc7e",
+        "crates/gui-render/src/render/types.rs": "79b5431120bc7dc926169190ae65a24789676e542c7fcf0f9768d2aff0766ed4",
+        "docs/gui/menu_model.json": "bb812757a27715b98df4f70f87fb7221f935149674bab6ed0cae8f1f7fa753ed"
+      }
+    },
+    "limits": [
+      "Focuscancellation precedes paneclose; no directclose-activegesture cancellation credit/newglobalshortcut/privatecommand.",
+      "One root[] authoredWireObject ordinarycontextcancel/paneclose/rebind slice, no arbitraryallpanes/allsurfaces/dense/equalpath/HUMAN/fullN08/N13/C04 qualification.",
+      "Legitimate projection changes are separate from canonicalmembership; no blanketwholeview equality guarantee or new pane lifecycle policy.",
+      "No design/journal/source writes/dependency/build. RawCAPTURE_ONLY unchanged, independentboundedacceptance separate; inherited supervision parityFAIL unwaived."
     ]
   }
 }
