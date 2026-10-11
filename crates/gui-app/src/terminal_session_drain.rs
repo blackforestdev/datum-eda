@@ -11,7 +11,7 @@ use crate::{
 use datum_gui_protocol::TerminalLaneState;
 use std::time::{Duration, Instant};
 
-const APPLY_BATCH_BYTES: usize = 4 * 1024;
+pub(super) const APPLY_BATCH_BYTES: usize = 4 * 1024;
 const DISPATCH_BUDGET: Duration = Duration::from_millis(1);
 
 #[path = "terminal_session_core_events.rs"]
@@ -136,6 +136,7 @@ impl TerminalSessionRegistry {
     ) -> TerminalDrainReport {
         let started = now();
         let mut report = TerminalDrainReport::default();
+        self.drain_rejected_project_terminal(&mut report, active_lane);
         if self.sessions.is_empty() {
             return report;
         }
@@ -350,7 +351,7 @@ impl TerminalSessionRegistry {
             report.tabs_changed = true;
             report.active_projection_changed = true;
         }
-        report.pending = self
+        report.pending |= self
             .sessions
             .iter()
             .any(|slot| !slot.pending_drain_output.is_empty() || slot.session.has_pending_event());

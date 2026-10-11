@@ -469,7 +469,7 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3093,
+        "pre_test_lines": 3078,
         "inline_test_lines": 1705
       },
       "owner": "project-owner",

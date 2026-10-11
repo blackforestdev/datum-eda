@@ -177,6 +177,7 @@ impl App {
             runtime.workspace().ui.global_preferences.open
                 || runtime.workspace().ui.project_preferences.open
                 || runtime.workspace().ui.new_project.open
+                || runtime.workspace().ui.project_open.open
         }) && !matches!(
             &event,
             WindowEvent::CloseRequested
@@ -237,7 +238,8 @@ impl App {
                     &mut self.frames,
                     self.project_preferences_window
                         .as_ref()
-                        .or(self.global_preferences_window.as_ref()),
+                        .or(self.global_preferences_window.as_ref())
+                        .or(self.new_project_window.as_ref()),
                 ) {
                     return;
                 }
@@ -519,7 +521,18 @@ impl ApplicationHandler for App {
                 self.project_preferences_window.as_deref(),
                 "Project Preferences — Datum",
             ),
-            (self.new_project_window.as_deref(), "New Project — Datum"),
+            (
+                self.new_project_window.as_deref(),
+                if self
+                    .runtime
+                    .as_ref()
+                    .is_some_and(|runtime| runtime.workspace().ui.project_open.open)
+                {
+                    "Open Project — Datum"
+                } else {
+                    "New Project — Datum"
+                },
+            ),
         ] {
             if let Some(window) = window
                 && let Some(failed) = self.frames.take_failure_title_change(window.id())

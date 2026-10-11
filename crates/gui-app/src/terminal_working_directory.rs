@@ -36,6 +36,33 @@ pub(super) fn context_for_new_terminal_from_state(
     context_for_new_terminal(&current, reported_working_directory)
 }
 
+impl crate::Runtime {
+    pub(super) fn context_for_active_terminal_launch(&self) -> TerminalLaunchContext {
+        let origin = self
+            .terminal_sessions
+            .active_origin_context()
+            .unwrap_or(&self.terminal_launch_context);
+        let cwd = self
+            .workspace()
+            .ui
+            .terminal
+            .current_working_directory
+            .as_deref();
+        if origin.project_root != self.terminal_launch_context.project_root {
+            // Preserved shells never combine their origin root with the new
+            // Project's selection, source revision or projection context.
+            context_for_new_terminal(origin, cwd)
+        } else {
+            context_for_new_terminal_from_state(
+                &self.terminal_launch_context,
+                self.workspace(),
+                self.last_cursor_pos,
+                cwd,
+            )
+        }
+    }
+}
+
 fn local_working_directory(value: &str) -> Option<PathBuf> {
     let encoded = if let Some(uri) = value.strip_prefix("file://") {
         if let Some(path) = uri.strip_prefix("localhost/") {

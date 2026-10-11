@@ -7,6 +7,8 @@ use crate::global_preferences_primitives::{
 };
 use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
 
+#[path = "project_open_dialog.rs"]
+mod project_open;
 #[path = "render/new_project_scene.rs"]
 mod scene;
 pub(super) use scene::render_new_project_dialog;

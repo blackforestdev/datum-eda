@@ -3,13 +3,14 @@ use super::{HitRegion, HitTarget, RectPx, TEXT_MUTED, TextFace, TextRun, draw_te
 fn lifecycle_actions(
     status: &str,
     application_shutdown_blocked: Option<&str>,
+    rejected_cleanup_failure: Option<&str>,
 ) -> Vec<(&'static str, HitTarget)> {
     let mut actions = Vec::new();
     if status.starts_with("close terminal?") {
         actions.push(("TERMINATE", HitTarget::TerminalSessionTerminateActive));
         actions.push(("CANCEL", HitTarget::TerminalShutdownCancel));
     }
-    if status.starts_with("termination failed") {
+    if status.starts_with("termination failed") || rejected_cleanup_failure.is_some() {
         actions.push(("RETRY", HitTarget::TerminalSessionRetryTermination));
     }
     if application_shutdown_blocked.is_some() {
@@ -33,11 +34,16 @@ fn lifecycle_actions(
 pub(crate) fn terminal_lifecycle_controls_width(
     status: &str,
     application_shutdown_blocked: Option<&str>,
+    rejected_cleanup_failure: Option<&str>,
 ) -> f32 {
-    lifecycle_actions(status, application_shutdown_blocked)
-        .iter()
-        .map(|(label, _)| label.len() as f32 * 7.0 + 16.0)
-        .sum()
+    lifecycle_actions(
+        status,
+        application_shutdown_blocked,
+        rejected_cleanup_failure,
+    )
+    .iter()
+    .map(|(label, _)| label.len() as f32 * 7.0 + 16.0)
+    .sum()
 }
 
 pub(crate) fn render_terminal_lifecycle_controls(
@@ -45,14 +51,23 @@ pub(crate) fn render_terminal_lifecycle_controls(
     y: f32,
     status: &str,
     application_shutdown_blocked: Option<&str>,
+    rejected_cleanup_failure: Option<&str>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> bool {
-    let actions = lifecycle_actions(status, application_shutdown_blocked);
+    let actions = lifecycle_actions(
+        status,
+        application_shutdown_blocked,
+        rejected_cleanup_failure,
+    );
     if actions.is_empty() {
         return false;
     }
-    let width = terminal_lifecycle_controls_width(status, application_shutdown_blocked);
+    let width = terminal_lifecycle_controls_width(
+        status,
+        application_shutdown_blocked,
+        rejected_cleanup_failure,
+    );
     let mut x = (rect.x + rect.width - width).max(rect.x);
     for (label, target) in actions {
         x = push_control(label, target, x, y, text_runs, hit_regions);
@@ -158,10 +173,34 @@ mod tests {
             10.0,
             status,
             status.starts_with("shutdown blocked").then_some(status),
+            None,
             &mut text,
             &mut hits,
         );
         hits.into_iter().map(|hit| hit.target).collect()
+    }
+
+    #[test]
+    fn rejected_cleanup_retry_never_targets_healthy_active_child_with_force_kill() {
+        let failure = Some("Open Project terminal cleanup failed: owned process remains");
+        let healthy = lifecycle_actions("running", None, failure);
+        assert_eq!(
+            healthy,
+            vec![("RETRY", HitTarget::TerminalSessionRetryTermination)]
+        );
+        let armed = lifecycle_actions(
+            "close terminal? Enter confirms; Escape cancels",
+            None,
+            failure,
+        );
+        assert_eq!(
+            armed,
+            vec![
+                ("TERMINATE", HitTarget::TerminalSessionTerminateActive),
+                ("CANCEL", HitTarget::TerminalShutdownCancel),
+                ("RETRY", HitTarget::TerminalSessionRetryTermination)
+            ]
+        );
     }
 
     #[test]

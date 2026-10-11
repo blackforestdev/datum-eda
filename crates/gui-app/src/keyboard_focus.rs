@@ -245,6 +245,17 @@ impl Runtime {
 /// Route one window keyboard event through the focus authority. Returns true
 /// when the event was consumed (a redraw may have been requested).
 pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
+    if app
+        .runtime
+        .as_mut()
+        .is_some_and(|runtime| runtime.handle_project_open_key(event))
+    {
+        app.request_dialog_key_redraw(
+            crate::global_preferences_window::DialogInputOutcome::Dependents,
+            crate::native_frame_adapters::OwnedHost::New,
+        );
+        return true;
+    }
     if let Some(outcome) = app
         .runtime
         .as_mut()

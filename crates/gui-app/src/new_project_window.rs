@@ -1,4 +1,4 @@
-//! Native owned-window host for the Project genesis form.
+//! Shared native owned-window host for mutually exclusive New/Open Project forms.
 
 use super::*;
 use crate::global_preferences_window::GlobalPreferencesWindowSurface;
@@ -50,10 +50,9 @@ impl App {
     }
 
     pub(super) fn sync_new_project_window(&mut self, event_loop: &ActiveEventLoop) -> Result<()> {
-        let open = self
-            .runtime
-            .as_ref()
-            .is_some_and(|runtime| runtime.workspace().ui.new_project.open);
+        let open = self.runtime.as_ref().is_some_and(|runtime| {
+            runtime.workspace().ui.new_project.open || runtime.workspace().ui.project_open.open
+        });
         if !open {
             let had_window = self.new_project_window.is_some();
             if let Some(window) = self.new_project_window.take() {
@@ -68,6 +67,19 @@ impl App {
             }
             return Ok(());
         }
+        if let Some(window) = &self.new_project_window {
+            window.set_title(
+                if self
+                    .runtime
+                    .as_ref()
+                    .is_some_and(|runtime| runtime.workspace().ui.project_open.open)
+                {
+                    "Open Project — Datum"
+                } else {
+                    "New Project — Datum"
+                },
+            );
+        }
         if self.new_project_window.is_none() && !self.native_device_available() {
             // Keep the requested logical window state until replacement finishes.
             // The close path above remains available on a failed device.
@@ -77,7 +89,17 @@ impl App {
             let window = std::sync::Arc::new(
                 event_loop.create_window(
                     WindowAttributes::default()
-                        .with_title("New Project — Datum")
+                        .with_title(
+                            if self
+                                .runtime
+                                .as_ref()
+                                .is_some_and(|runtime| runtime.workspace().ui.project_open.open)
+                            {
+                                "Open Project — Datum"
+                            } else {
+                                "New Project — Datum"
+                            },
+                        )
                         .with_inner_size(DEFAULT_NEW_PROJECT_SIZE)
                         .with_min_inner_size(MIN_NEW_PROJECT_SIZE)
                         .with_resizable(true)
@@ -123,7 +145,11 @@ impl App {
         match event {
             WindowEvent::CloseRequested | WindowEvent::Destroyed => {
                 if let Some(runtime) = &mut self.runtime {
-                    runtime.close_new_project();
+                    if runtime.workspace().ui.project_open.open {
+                        runtime.close_project_open();
+                    } else {
+                        runtime.close_new_project();
+                    }
                 }
                 if let Err(error) = self.sync_new_project_window(event_loop) {
                     fatal_gui_error(event_loop, "close New Project window", error);
@@ -158,7 +184,12 @@ impl App {
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 if let Some(runtime) = &mut self.runtime {
-                    let outcome = runtime.handle_new_project_key(&event);
+                    let outcome = if runtime.workspace().ui.project_open.open {
+                        runtime.handle_project_open_key(&event);
+                        crate::global_preferences_window::DialogInputOutcome::Dependents
+                    } else {
+                        runtime.handle_new_project_key(&event)
+                    };
                     self.request_dialog_key_redraw(outcome, native_frame_adapters::OwnedHost::New);
                 }
             }

@@ -14,7 +14,7 @@
         {
           "label": "Open Project",
           "icon": "folder-open",
-          "not_built": "GUI project-session model",
+          "gui_local": "project.open",
           "shortcut": "Ctrl+O"
         },
         {

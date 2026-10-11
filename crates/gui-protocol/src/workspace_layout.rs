@@ -8,7 +8,7 @@
 //! project over the resolved model; they never mutate it.
 
 use crate::revision_workspace::{RevisionPane, RevisionWorkspaceUiState};
-use crate::{ApplicationFocus, PaneContent, PaneId};
+use crate::{ApplicationFocus, PaneContent, PaneId, ProjectOpenDialogState};
 use crate::{
     ArtifactPreviewViewportState, ConsoleFeedbackDraft, ConsoleFeedbackState,
     ConsoleJournalHistoryState, CrosshairStyle, GlobalPreferencesDialogState, HoverTarget,
@@ -109,6 +109,8 @@ pub struct WorkspaceUiState {
     /// Native input-modal Project genesis form. It carries transient form and
     /// preview state only; the engine service owns all creation authority.
     pub new_project: NewProjectDialogState,
+    /// Transient input-modal Open Project request; never design authority.
+    pub project_open: ProjectOpenDialogState,
     /// Consumer-only projection of revision authority. This never owns or
     /// mutates revision records; the engine remains the sole truth source.
     pub revision: RevisionWorkspaceUiState,
@@ -145,6 +147,7 @@ impl WorkspaceUiState {
             global_preferences: GlobalPreferencesDialogState::default(),
             project_preferences: GlobalPreferencesDialogState::project_units_default(),
             new_project: NewProjectDialogState::default(),
+            project_open: ProjectOpenDialogState::default(),
             revision: RevisionWorkspaceUiState::default(),
             layout: WorkspaceLayout::default(),
         }

@@ -62,7 +62,8 @@ pub(super) fn render_terminal_tab_strip(
         .as_deref()
         .or_else(|| {
             (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
-        });
+        })
+        .or(state.ui.terminal.project_open_cleanup_failure.as_deref());
     let link_confirmation = lifecycle_label
         .is_none()
         .then_some(state.ui.terminal.link_confirmation.as_ref())
@@ -276,6 +277,7 @@ pub(super) fn render_terminal_tab_strip(
         let controls_width = terminal_lifecycle_controls_width(
             &state.ui.terminal.status,
             state.ui.terminal.application_shutdown_blocked.as_deref(),
+            state.ui.terminal.project_open_cleanup_failure.as_deref(),
         );
         let label_columns = (((chrome.width - controls_width - 20.0) / 7.0) as usize).max(1);
         let label = truncate_text(label, label_columns);
@@ -293,6 +295,7 @@ pub(super) fn render_terminal_tab_strip(
             centered_text_top(chrome, LIFECYCLE_CONTROL_SIZE_PX),
             &state.ui.terminal.status,
             state.ui.terminal.application_shutdown_blocked.as_deref(),
+            state.ui.terminal.project_open_cleanup_failure.as_deref(),
             text_runs,
             hit_regions,
         );
@@ -431,4 +434,76 @@ fn render_tab(
         TextFace::Ui,
         text_runs,
     );
+}
+
+#[cfg(test)]
+mod project_open_tests {
+    use super::*;
+
+    #[test]
+    fn rejected_cleanup_has_real_retry_hit_without_hiding_active_close_question() {
+        for close in [false, true] {
+            let mut state = datum_gui_protocol::load_fixture_workspace_state();
+            state.ui.terminal.project_open_cleanup_failure =
+                Some("Open Project terminal cleanup failed: owned child remains".into());
+            state.ui.terminal.status = if close {
+                "close terminal? Enter confirms; Escape cancels"
+            } else {
+                "running"
+            }
+            .into();
+            let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
+            render_terminal_tab_strip(
+                &state,
+                RectPx {
+                    x: 0.0,
+                    y: 0.0,
+                    width: 1400.0,
+                    height: 44.0,
+                },
+                1.0,
+                &mut quads,
+                &mut text,
+                &mut hits,
+            );
+            assert!(
+                hits.iter()
+                    .any(|hit| hit.target == HitTarget::TerminalSessionRetryTermination)
+            );
+            assert!(
+                !hits
+                    .iter()
+                    .any(|hit| hit.target == HitTarget::TerminalSessionForceKillActive)
+            );
+            if close {
+                assert!(
+                    text.iter()
+                        .any(|run| run.text.starts_with("close terminal?"))
+                );
+                assert!(
+                    hits.iter()
+                        .any(|hit| hit.target == HitTarget::TerminalSessionTerminateActive)
+                );
+                assert!(
+                    hits.iter()
+                        .any(|hit| hit.target == HitTarget::TerminalShutdownCancel)
+                );
+            } else {
+                assert!(
+                    text.iter()
+                        .any(|run| run.text.starts_with("Open Project terminal cleanup failed"))
+                );
+                assert!(
+                    !hits
+                        .iter()
+                        .any(|hit| hit.target == HitTarget::TerminalSessionTerminateActive)
+                );
+                assert!(
+                    !hits
+                        .iter()
+                        .any(|hit| hit.target == HitTarget::TerminalShutdownCancel)
+                );
+            }
+        }
+    }
 }

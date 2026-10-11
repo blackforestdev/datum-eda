@@ -195,8 +195,18 @@ impl TerminalSessionRegistry {
             let index = self
                 .sessions
                 .iter()
-                .position(|slot| slot.session.session_id() == session_id)
-                .expect("terminal split leaf must name an owned session");
+                .position(|slot| slot.session.session_id() == session_id);
+            let Some(index) = index else {
+                // A split reserves its leaf before its worker publishes the
+                // owned core. Keep rendering committed leaves during staging.
+                assert!(
+                    self.pending_spawns
+                        .iter()
+                        .any(|pending| pending.pending_id == session_id),
+                    "terminal split leaf must name an owned session"
+                );
+                continue;
+            };
             let (snapshot, damage) = match self.sessions[index].core.take_render_state() {
                 Ok(state) => state,
                 Err(error) => {
@@ -290,3 +300,7 @@ impl TerminalSessionRegistry {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_session_render/pending_split_tests.rs"]
+mod pending_split_tests;

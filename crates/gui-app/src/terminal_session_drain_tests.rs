@@ -142,6 +142,11 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
         next_drain_index: 0,
         next_apply_index: 0,
         projection_managed: true,
+        project_open_reservations: Arc::default(),
+        origin_contexts: Default::default(),
+        origin_workspaces: Default::default(),
+        rejected_project_terminals: Arc::default(),
+        next_rejected_drain_index: 0,
     }
 }
 

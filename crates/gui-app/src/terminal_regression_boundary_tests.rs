@@ -24,7 +24,11 @@ use winit::event::ElementState;
 /// focus only when the resulting behavior expects terminal typing).
 fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
-        HitTarget::Library(_) => false,
+        HitTarget::Library(_)
+        | HitTarget::ProjectOpenModal
+        | HitTarget::ProjectOpenDirectory
+        | HitTarget::ProjectOpenCancel
+        | HitTarget::ProjectOpenConfirm => false,
         HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
         | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicReference
         | HitTarget::SchematicValue | HitTarget::SchematicPlace

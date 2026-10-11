@@ -36,6 +36,8 @@ mod global_preferences;
 pub use global_preferences::*;
 mod new_project;
 pub use new_project::*;
+mod project_open;
+pub use project_open::*;
 mod kicad_board_materialization;
 pub use kicad_board_materialization::materialize_kicad_board_request;
 mod kicad_scene_import;
@@ -473,23 +475,6 @@ pub struct ReviewActionRow {
     pub action_id: String,
     pub title: String,
     pub subtitle: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LiveReviewRequest {
-    pub project_root: PathBuf,
-    pub board_file: Option<PathBuf>,
-    pub artifact_path: Option<PathBuf>,
-    pub net_uuid: Option<String>,
-    pub from_anchor_pad_uuid: Option<String>,
-    pub to_anchor_pad_uuid: Option<String>,
-    pub profile: Option<String>,
-    /// The original KiCad `.kicad_pcb` source this request was materialized
-    /// from, if any. Used solely to locate the companion `.kicad_sch` for
-    /// display in pane B when the board itself now loads from a native project
-    /// whose sibling directory holds no schematic. `None` for direct board-file
-    /// loads and for native projects with no KiCad origin.
-    pub kicad_board_source: Option<PathBuf>,
 }
 
 pub fn ensure_known_good_demo_request() -> Result<LiveReviewRequest> {

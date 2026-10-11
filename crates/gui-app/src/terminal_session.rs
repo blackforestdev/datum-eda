@@ -49,6 +49,11 @@ pub(super) struct TerminalSessionRegistry {
     next_drain_index: usize,
     next_apply_index: usize,
     projection_managed: bool,
+    project_open_reservations: Arc<std::sync::atomic::AtomicUsize>,
+    origin_contexts: std::collections::HashMap<String, TerminalLaunchContext>,
+    origin_workspaces: std::collections::HashMap<PathBuf, Arc<ReviewWorkspaceState>>,
+    rejected_project_terminals: Arc<Mutex<Vec<project_open::RejectedProjectTerminal>>>,
+    next_rejected_drain_index: usize,
 }
 
 struct PendingTerminalSpawn {
@@ -173,7 +178,7 @@ impl TerminalSessionRegistry {
                 seen_bell_count: 0,
             }],
             terminal_tabs: vec![datum_gui_protocol::TerminalTabLayout::single(
-                first_session_id,
+                first_session_id.clone(),
             )],
             pending_spawns: Vec::new(),
             active_pending_id: None,
@@ -183,6 +188,14 @@ impl TerminalSessionRegistry {
             next_drain_index: 0,
             next_apply_index: 0,
             projection_managed: false,
+            project_open_reservations: Arc::default(),
+            origin_contexts: std::collections::HashMap::from([(
+                first_session_id.clone(),
+                context.clone(),
+            )]),
+            origin_workspaces: Default::default(),
+            rejected_project_terminals: Arc::default(),
+            next_rejected_drain_index: 0,
         })
     }
 
@@ -297,16 +310,18 @@ impl TerminalSessionRegistry {
             .session
             .session_id()
             .to_string();
+        let restart_origin = self.restart_origin(&previous_id, context);
         Self::replace_slot_session(
             &mut self.sessions[self.active_index],
             state,
-            context,
+            &restart_origin,
             self.terminal_wake.clone(),
         )?;
         let replacement_id = self.sessions[self.active_index]
             .session
             .session_id()
             .to_string();
+        self.transfer_restart_origin(&previous_id, &replacement_id, restart_origin);
         self.replace_terminal_session_identity(&previous_id, &replacement_id);
         Ok(())
     }
@@ -360,11 +375,12 @@ impl TerminalSessionRegistry {
                 continue;
             }
             let previous_id = self.sessions[index].session.session_id().to_string();
+            let restart_origin = self.restart_origin(&previous_id, context);
             if index == self.active_index {
                 Self::replace_slot_session(
                     &mut self.sessions[index],
                     state,
-                    context,
+                    &restart_origin,
                     self.terminal_wake.clone(),
                 )?;
             } else {
@@ -372,12 +388,13 @@ impl TerminalSessionRegistry {
                 Self::replace_slot_session(
                     &mut self.sessions[index],
                     &mut lane,
-                    context,
+                    &restart_origin,
                     self.terminal_wake.clone(),
                 )?;
                 self.sessions[index].parked_lane = lane;
             }
             let replacement_id = self.sessions[index].session.session_id().to_string();
+            self.transfer_restart_origin(&previous_id, &replacement_id, restart_origin);
             self.replace_terminal_session_identity(&previous_id, &replacement_id);
             changed = true;
         }
@@ -398,6 +415,11 @@ impl TerminalSessionRegistry {
 
     pub(super) fn begin_output_poll(&self, shutting_down: bool) -> bool {
         let deferred_work = shutting_down
+            || !self
+                .rejected_project_terminals
+                .lock()
+                .unwrap_or_else(|p| p.into_inner())
+                .is_empty()
             || !self.pending_spawns.is_empty()
             || self.sessions.iter().any(|slot| {
                 slot.pending_restart
@@ -445,6 +467,10 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
     }
     Ok(())
 }
+
+#[path = "terminal_session/project_open.rs"]
+mod project_open;
+pub(super) use project_open::{PreparedProjectTerminal, ProjectTerminalReservation};
 
 #[path = "terminal_session_drain.rs"]
 mod drain;

@@ -20,6 +20,9 @@ pub enum DialogInput<'a> {
         dialog: &'a GlobalPreferencesDialogState,
         reveal_row: Option<usize>,
     },
+    OpenProject {
+        dialog: &'a datum_gui_protocol::ProjectOpenDialogState,
+    },
     NewProject {
         dialog: &'a NewProjectDialogState,
         reveal_focus: bool,
@@ -84,6 +87,10 @@ impl Renderer {
                     reveal_row,
                 )?,
                 Consumer::Project,
+            ),
+            DialogInput::OpenProject { dialog } => (
+                self.prepare_native_open_project(dialog, view.width, view.height, view.scale)?,
+                Consumer::New,
             ),
             DialogInput::NewProject {
                 dialog,

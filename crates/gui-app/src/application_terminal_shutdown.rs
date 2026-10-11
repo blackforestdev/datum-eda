@@ -8,6 +8,7 @@ impl Runtime {
             return;
         }
         self.cancel_native_move();
+        self.close_project_open();
         let started = Instant::now();
         let deadline = started + Duration::from_millis(GLOBAL_SHUTDOWN_MS);
         self.application_shutdown_started = Some(started);

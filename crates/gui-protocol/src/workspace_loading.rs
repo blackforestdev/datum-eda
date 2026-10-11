@@ -35,7 +35,7 @@ pub(super) fn load_workspace_state_impl(
     Ok(load_workspace(request, include_review, None)?.0)
 }
 
-fn load_workspace(
+pub(super) fn load_workspace(
     request: &LiveReviewRequest,
     include_review: bool,
     resolved: Option<Arc<DesignModel>>,

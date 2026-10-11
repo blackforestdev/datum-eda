@@ -105,6 +105,7 @@ mod terminal_output_damage;
 impl App {
     pub(super) fn poll_background_work(&mut self, event_loop: &ActiveEventLoop) {
         let mut changed = false;
+        let mut project_open_changed = false;
         let device_due = self.service_device_recovery();
         if let Some(runtime) = &mut self.runtime {
             let output_changed = runtime.poll_terminal_output();
@@ -119,6 +120,8 @@ impl App {
             changed |= runtime.poll_native_selection_tick();
             changed |= runtime.poll_native_run();
             changed |= runtime.poll_native_edit();
+            project_open_changed = runtime.poll_project_open();
+            changed |= project_open_changed;
             self.frames.wake_at(runtime.selection_tick);
             if runtime.application_terminal_shutdown_complete() {
                 event_loop.exit();
@@ -130,7 +133,15 @@ impl App {
             self.frames
                 .wake_at(runtime.next_application_terminal_shutdown_due());
         }
-        if changed {
+        if project_open_changed {
+            if let Err(error) = self.sync_owned_product_windows(event_loop) {
+                super::fatal_gui_error(event_loop, "synchronize Open Project window", error);
+            }
+            self.request_dialog_key_redraw(
+                crate::global_preferences_window::DialogInputOutcome::Workspace,
+                crate::native_frame_adapters::OwnedHost::New,
+            );
+        } else if changed {
             self.request_workspace_redraw();
         }
         let queue_due = self.service_native_queue_progress();
@@ -188,6 +199,13 @@ impl Runtime {
     }
 
     pub(super) fn mark_terminal_workspace_refresh_pending(&mut self) {
+        if self
+            .terminal_sessions
+            .active_origin_context()
+            .is_some_and(|origin| origin.project_root != self.terminal_launch_context.project_root)
+        {
+            return;
+        }
         self.terminal_workspace_refresh_pending = true;
         self.terminal_production_refresh_attempts = 0;
         self.terminal_production_refresh_due =
@@ -254,6 +272,7 @@ impl Runtime {
     }
 
     pub(super) fn poll_terminal_output(&mut self) -> bool {
+        self.terminal_sessions.prune_project_origins();
         if !self
             .terminal_sessions
             .begin_output_poll(self.application_shutdown_started.is_some())

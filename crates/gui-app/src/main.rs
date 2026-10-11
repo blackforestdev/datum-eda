@@ -63,6 +63,8 @@ mod pane_cameras;
 mod pane_grid_lod;
 mod pane_resize;
 mod production_status_refresh;
+mod project_open;
+mod project_open_window;
 mod project_preferences_runtime;
 mod project_preferences_window;
 mod resize_smoke;

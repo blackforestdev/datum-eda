@@ -327,7 +327,15 @@ impl GlobalPreferencesWindowSurface {
                 height: self.config.height,
                 scale: self.scale_factor,
             };
-            if new_project {
+            if new_project && runtime.workspace().ui.project_open.open {
+                self.renderer.prepare_session_dialog(
+                    datum_gui_render::DialogInput::OpenProject {
+                        dialog: &runtime.workspace().ui.project_open,
+                    },
+                    view,
+                    &mut self.scroll,
+                )?;
+            } else if new_project {
                 let dialog = &runtime.workspace().ui.new_project;
                 let focus = (dialog.focus, dialog.units_choice);
                 let reveal_focus = self.new_project_focus != Some(focus);

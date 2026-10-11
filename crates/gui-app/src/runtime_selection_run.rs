@@ -60,6 +60,10 @@ impl RunWork {
     }
     // Cancel publication, without joining or interrupting an exact geometry
     // query. There is at most one worker and one superseding request.
+    pub(super) fn invalidate_project(&mut self) {
+        self.cancel();
+        self.completed = None;
+    }
     pub(super) fn cancel(&mut self) {
         self.generation = self.generation.wrapping_add(1);
         self.queued = None;

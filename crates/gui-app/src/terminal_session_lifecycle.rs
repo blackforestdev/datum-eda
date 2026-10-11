@@ -119,13 +119,38 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn terminate_all_by(&mut self, deadline: Instant) {
+        for child in self
+            .rejected_project_terminals
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .iter()
+        {
+            let _ = child.session.terminate_by(deadline);
+        }
         for slot in &mut self.sessions {
+            // Global teardown retires all children; it must never spawn a replacement.
+            slot.pending_restart = false;
             slot.close_confirmation_armed = false;
             let _ = slot.session.terminate_by(deadline);
         }
     }
 
     pub(crate) fn retry_failed_terminations(&mut self) {
+        for child in self
+            .rejected_project_terminals
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .iter_mut()
+        {
+            if child
+                .session
+                .shutdown_snapshot()
+                .is_some_and(|s| s.phase == crate::terminal_transport::ShutdownPhase::Failed)
+            {
+                child.failure_reported = false;
+                let _ = child.session.terminate();
+            }
+        }
         for slot in &mut self.sessions {
             if slot.session.shutdown_snapshot().is_some_and(|snapshot| {
                 snapshot.phase == crate::terminal_transport::ShutdownPhase::Failed
@@ -137,6 +162,15 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn retry_nonclosed_terminations_by(&mut self, deadline: Instant) {
+        for child in self
+            .rejected_project_terminals
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .iter_mut()
+        {
+            child.failure_reported = false;
+            child.session.retry_termination_by(deadline);
+        }
         for slot in &mut self.sessions {
             if slot.session.shutdown_snapshot().is_some_and(|snapshot| {
                 snapshot.phase != crate::terminal_transport::ShutdownPhase::Closed
@@ -148,7 +182,15 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn all_sessions_closed(&self) -> bool {
-        self.pending_spawns.is_empty()
+        self.project_open_reservations
+            .load(std::sync::atomic::Ordering::Acquire)
+            == 0
+            && self
+                .rejected_project_terminals
+                .lock()
+                .unwrap_or_else(|p| p.into_inner())
+                .is_empty()
+            && self.pending_spawns.is_empty()
             && self.sessions.iter().all(|slot| {
                 slot.session.shutdown_snapshot().is_some_and(|snapshot| {
                     snapshot.phase == crate::terminal_transport::ShutdownPhase::Closed
@@ -159,7 +201,8 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn shutdown_failure_summary(&self) -> String {
-        self.sessions
+        let mut summaries = self
+            .sessions
             .iter()
             .filter_map(|slot| {
                 let snapshot = slot.session.shutdown_snapshot()?;
@@ -187,8 +230,24 @@ impl TerminalSessionRegistry {
                     )
                 })
             })
-            .collect::<Vec<_>>()
-            .join(" | ")
+            .collect::<Vec<_>>();
+        for child in self
+            .rejected_project_terminals
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .iter()
+        {
+            let snapshot = child.session.shutdown_snapshot();
+            summaries.push(format!(
+                "Open Project rejected terminal {}: {}",
+                child.session.session_id(),
+                snapshot
+                    .as_ref()
+                    .and_then(|s| s.failure.as_deref())
+                    .unwrap_or("teardown pending")
+            ));
+        }
+        summaries.join(" | ")
     }
 
     pub(crate) fn remove_presented_closed(&mut self, state: &mut TerminalLaneState) -> bool {
@@ -198,6 +257,7 @@ impl TerminalSessionRegistry {
             .enumerate()
             .filter(|(_, slot)| {
                 slot.remove_when_closed
+                    && !slot.pending_restart
                     && slot.pending_drain_output.is_empty()
                     && slot.session.presentation_complete()
             })
@@ -239,3 +299,7 @@ impl TerminalSessionRegistry {
         true
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_session_lifecycle/restart_tests.rs"]
+mod restart_tests;

@@ -8,6 +8,7 @@ pub(super) enum WorkspaceCharacterAction {
     SetTool(WorkspaceTool),
     SelectAll,
     Save,
+    OpenProject,
     Undo,
     Redo,
     FitCamera,
@@ -22,6 +23,9 @@ pub(super) enum WorkspaceCharacterAction {
 pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCharacterAction> {
     let action = match text {
         value if value.eq_ignore_ascii_case("s") && control => WorkspaceCharacterAction::Save,
+        value if value.eq_ignore_ascii_case("o") && control => {
+            WorkspaceCharacterAction::OpenProject
+        }
         value if value.eq_ignore_ascii_case("z") && control => WorkspaceCharacterAction::Undo,
         value if value.eq_ignore_ascii_case("y") && control => WorkspaceCharacterAction::Redo,
         value if value.eq_ignore_ascii_case("a") && control => WorkspaceCharacterAction::SelectAll,
@@ -59,6 +63,10 @@ pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> 
     match action {
         WorkspaceCharacterAction::Save => runtime
             .queue_native_edit(datum_gui_protocol::native_edit_client::NativeEditAction::Save),
+        WorkspaceCharacterAction::OpenProject => runtime.activate_gui_local_menu_action(
+            "project.open",
+            crate::runtime_view_actions::action_evidence::EntrySurface::Shortcut,
+        ),
         WorkspaceCharacterAction::Undo => {
             runtime.queue_native_history(runtime.modifiers.shift_key())
         }
@@ -135,5 +143,12 @@ mod tests {
             Some(WorkspaceCharacterAction::Consume)
         );
         assert_eq!(character_action("q", false), None);
+        assert_eq!(character_action("o", false), None);
+        for key in ["o", "O"] {
+            assert_eq!(
+                character_action(key, true),
+                Some(WorkspaceCharacterAction::OpenProject)
+            );
+        }
     }
 }

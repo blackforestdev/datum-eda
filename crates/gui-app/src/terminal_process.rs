@@ -4,8 +4,9 @@ use crate::{
     terminal_agent_credential::{agent_launch_id, credential_path},
     terminal_capability::{DATUM_TERM, DATUM_TERM_PROGRAM, install_session_terminfo},
     terminal_context::{
-        DATUM_CLI, DATUM_LEGACY_CLI, terminal_discovery_path, terminal_pinned_context_path,
-        tool_session_event_log_path, write_terminal_context, write_terminal_context_files,
+        DATUM_CLI, DATUM_LEGACY_CLI, TerminalContext, terminal_discovery_path,
+        terminal_pinned_context_path, tool_session_event_log_path, write_terminal_context,
+        write_terminal_context_files,
     },
     terminal_session::{TerminalLaunchContext, TerminalSession},
     terminal_transport::{TerminalTransportRequest, TerminalWakeGate, prepare_terminal_transport},
@@ -15,6 +16,40 @@ use anyhow::Result;
 pub(super) fn spawn_terminal_process(
     context: &TerminalLaunchContext,
     terminal_wake: TerminalWakeGate,
+) -> Result<TerminalSession> {
+    let (result, rejected) = prepare_terminal_process(context, terminal_wake);
+    if let Some(session) = rejected {
+        let _ = session.terminate();
+    }
+    result
+}
+
+/// Return ownership of any started child even when context persistence fails.
+/// Project staging retains it until the existing supervisor verifies shutdown.
+pub(super) fn prepare_terminal_process(
+    context: &TerminalLaunchContext,
+    terminal_wake: TerminalWakeGate,
+) -> (Result<TerminalSession>, Option<TerminalSession>) {
+    prepare_terminal_process_with_persistence(context, terminal_wake, write_terminal_context_files)
+}
+
+// The same adapter owns a real child even when its PID-bearing context cannot
+// be persisted. The callback keeps this failure path independently testable.
+pub(super) fn prepare_terminal_process_with_persistence(
+    context: &TerminalLaunchContext,
+    terminal_wake: TerminalWakeGate,
+    persist: impl FnOnce(&TerminalContext, &TerminalLaunchContext) -> Result<()>,
+) -> (Result<TerminalSession>, Option<TerminalSession>) {
+    let mut rejected = None;
+    let result = spawn_terminal_process_inner(context, terminal_wake, &mut rejected, persist);
+    (result, rejected)
+}
+
+fn spawn_terminal_process_inner(
+    context: &TerminalLaunchContext,
+    terminal_wake: TerminalWakeGate,
+    rejected: &mut Option<TerminalSession>,
+    persist: impl FnOnce(&TerminalContext, &TerminalLaunchContext) -> Result<()>,
 ) -> Result<TerminalSession> {
     let profile = context
         .terminal_profile
@@ -78,10 +113,17 @@ pub(super) fn spawn_terminal_process(
     // context files are durable.
     let prepared = prepare_terminal_transport(request)?;
     terminal_context.process_group_id = Some(prepared.process_group_id() as i32);
-    let transport = persist_context_before_start(
-        || write_terminal_context_files(&terminal_context, context),
-        || prepared.start(terminal_wake),
-    )?;
+    if let Err(error) = persist(&terminal_context, context) {
+        // Transfer the real child to its supervisor even on this failure path;
+        // a prepared Child alone has no wait/reap owner when dropped.
+        *rejected = Some(TerminalSession::from_transport(
+            prepared.start(terminal_wake),
+            terminal_context,
+            context.terminal_profile.clone(),
+        ));
+        return Err(error);
+    }
+    let transport = prepared.start(terminal_wake);
 
     Ok(TerminalSession::from_transport(
         transport,
@@ -113,6 +155,7 @@ fn apply_datum_terminal_identity(
         .env("TERM_PROGRAM_VERSION", env!("CARGO_PKG_VERSION"))
 }
 
+#[cfg(test)]
 fn persist_context_before_start<T>(
     persist: impl FnOnce() -> Result<()>,
     start: impl FnOnce() -> T,

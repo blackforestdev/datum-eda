@@ -2567,5 +2567,301 @@
     "next_retained_C04_work": "Manager approved existing OpenProject transaction approach in packet3f6e09c5; exact owning paths/scope synchronization and implementation preflight pending after this landing, no new successor grant inferred.",
     "independent_governance": "Actual management_review final bounded PASS received at proof53122762/archive1ef9ab95: all51 entries individually verified (47raw+4canonical exact whitelist), final5/current pins and sole unused-import reconstruction exact, actual30/clean binary distinct; no mandatory correction or broader grant.",
     "independent_package_review": "Actual s5a_code_audit final bounded correspondence PASS at proof53122762/archive1ef9ab95: all47 raw members byte-identical and4 canonical-final files exactly match source_after whitelist/hashmap, no extra operational/credential payloads or discrepancy. Final source/native/package ACCEPT recommendation received by appointed manager."
+  },
+  "live_project_open": {
+    "delivery_state": "Actual appointed manager accepts bounded source/runtime/package against existing preparation packet after independent receipts; required normal landing gates remain enforced. Full C04/N08/HUMAN/terminal qualification remains open; inherited supervision parity FAIL remains explicitly unwaived.",
+    "authority": "Retained S5A-C04 grant; appointed root manager approved existing-contract Open packet3f6e09c5 and bounded source corrections under PM059. No new product rules, dependencies, prototype changes or successor grant.",
+    "problem_and_behavior": "File/Open was advertised but lacked a live session replacement. The owned native Open form now prepares and validates an existing native Project off the input thread, stages destination terminal ownership, then atomically publishes an origin/session-qualified workspace while preserving old PTY origins. Cancel, invalid preparation, pending edit and staged-child failure preserve the current Project.",
+    "accepted_preparation_packet": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/live-project-open-implementation-packet.json",
+      "sha256": "3f6e09c5ff6901a4c3d1996cf25e8acff2e7033212676ee4cb3950fe7cb25d50"
+    },
+    "implementation": [
+      "Shared GUI-local project.open and CtrlO reach the existing owned New/Open native host; ordinary named-directory input, Tab/ShiftTab, Enter/Escape, pointer hits, readable refusal and modal Main suppression. Existing MenuKeyOwnership consumes the matching cancel release, preserving independent idle Escape.",
+      "Readonly complete-model preparation and final admission use the existing nonblocking ProjectWriteLease and full DesignModel equality including source shards/content hashes, manifest, journal and cursor; the final worker lease remains owned until publication/rejection. This excludes cooperating canonical writers, not arbitrary filesystem writes.",
+      "Request and publication qualify normalized origin root, session/request generation, current dialog and actual pending NativeEdit/terminal readiness. Fallible preparation completes before atomic runtime/terminal publication; no pending receiver is abandoned.",
+      "Destination receives fresh selection/cameras/Project preferences/library/source/render ownership. Global preferences and existing terminal sessions remain application-owned. Old tab context/output/new/split/restart stay bound to original root/workspace, with inherited current directory only from a valid local OSC7 report.",
+      "Staged reservations count against existing16-session capacity before child allocation. Failed/canceled staged children remain supervised until Closed/reaped/no survivors/presentation complete, share bounded fair drain service and actual Error/Exited reporting, and project-owned rejection failure offers existing Retry without targeting healthy active Force Kill.",
+      "Real pending Split leaves defer only registry-owned reserved IDs during rendering; unknown unowned IDs still assert. Restarting multiple-session slots remain owned until verified replacement; global shutdown cancels replacement intent without spawning a child."
+    ],
+    "source_cohorts": {
+      "native_compiled_checkpoint": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/open-project-source-checkpoint-12.json",
+        "sha256": "cdc8af3362bfb8b64752d9fd72565db29e96f71f3181c245b16369166821eeec",
+        "rust_paths": 50,
+        "files": {
+          "crates/gui-app/src/project_open.rs": "e8e2d1eab3843464559a43d20de4102e9238d9e054bd8e737e92f0340baa8592",
+          "crates/gui-app/src/project_open/prepare.rs": "b5cc17dc0b70eadb2240ff3cb55aaf66efaa0ccafde1ccdcec862dc16e771f75",
+          "crates/gui-app/src/project_open/publication.rs": "81b943045a832644c926dbe60a1f7855142e4cb78b44931ceb324930297ea733",
+          "crates/gui-app/src/project_open/tests.rs": "370fe5c2131b8a6bd4e2074db91d7190957a9eace1134f8b3677e5322c907217",
+          "crates/gui-app/src/project_open_window.rs": "287af2e210de3a2a2c3dc8fb92a1ef015925663f521d43a7d7029cca1bc5b4bb",
+          "crates/gui-app/src/terminal_session/project_open.rs": "59520fa154b5fc5974b846d575335bbb98b6de73a2d8b2c8d1f333c6d29e49da",
+          "crates/gui-app/src/terminal_session/project_open/tests.rs": "e9599b769065e4934eae096d2cb5f707bdb4362bcc49c25bc80f50a138be85df",
+          "crates/gui-protocol/src/project_open.rs": "95a7ed9367ad855035eb498633114741cee1aabdb96702d3449c0abe4adc5abc",
+          "crates/gui-protocol/src/project_open/tests.rs": "829baba0a76b4be7dd2beca81d009283f6986d1a3354fdf7a2aefb5bad679e78",
+          "crates/gui-render/src/project_open_dialog.rs": "cc098e2d8f03e4496711560a9389c1d569563db4b5a03e76df254b65ac80ed8f",
+          "crates/engine/src/substrate/project_resolver.rs": "e90f61c22aa27a415a0e513e91395f5976af0ec4e8ba4297b55a5c06095f8d8e",
+          "crates/gui-app/src/app_native_events.rs": "ae07c79f82bcd37d0e4f44442a820e198eeb27360d552b9e02230331265ed50b",
+          "crates/gui-app/src/application_terminal_shutdown.rs": "fb41397c548b80c645a07437ac9611b09d2641a99f188f6a92f4d380ec88c6b2",
+          "crates/gui-app/src/global_preferences_window.rs": "2eb25e2e1e1100df982f21084ea9de2988f9fec8b2fbc94bce35e4e447badf39",
+          "crates/gui-app/src/keyboard_focus.rs": "223c4bea0988b0f4de1ac601217cbeeaa964dafb69b408ec9a27c7923db05960",
+          "crates/gui-app/src/main.rs": "3f476db6d12f962d8972d3293fffc8371ee1db336e66a978ca686be5c6a20726",
+          "crates/gui-app/src/new_project_window.rs": "39704d8b3f2dd90d7dcbfb90dadee1e1dc76b7ca213e471bcc4d608c518c759c",
+          "crates/gui-app/src/owned_dialog_pointer.rs": "1563d524efe5189e0ca234d8bc7c65a7f87a71e44764ff7998a4f95d2d3b1940",
+          "crates/gui-app/src/production_status_refresh.rs": "6840427f5c14b6743b7eb226d6f6ca0a93fcf6094fda2993ab1447c5e9ea4c2c",
+          "crates/gui-app/src/runtime_hit_actions.rs": "212d8a1b83a51e4141c770714166699bf65ecccc413cc90bcba9dc8550bced6b",
+          "crates/gui-app/src/runtime_init.rs": "2b1e5936e9c3f66cd2660666823acc79239df801fac9667eb84ba10b235cf758",
+          "crates/gui-app/src/runtime_native_edit.rs": "ba39dd39d4847aa736050552045810a9c7c6ae9605ec33dbe75fa995f8e1919c",
+          "crates/gui-app/src/runtime_selection_run.rs": "b6c8354b37f41be2c6d4ba96f088a02446386065cc8ddf851b4c02069e00f508",
+          "crates/gui-app/src/runtime_state.rs": "b681dfbd7265edc090a9801230a39684bf37e409a64c12c34d4e9c466c635fab",
+          "crates/gui-app/src/runtime_terminal_context.rs": "5b8ab11a653cdb5c704de0de1740300efaea0ccdb49aaf98ac938932936f1c7c",
+          "crates/gui-app/src/runtime_view_actions.rs": "2e7be72eaef917010c743a9544f61f9db9f3bdf0cf72acb4f1d40e790c8ea20f",
+          "crates/gui-app/src/terminal_process.rs": "256738c0a1e6bf2e09076de15a3f3302f52a5a25144b4a32671cc13d3dcce655",
+          "crates/gui-app/src/terminal_regression_boundary_tests.rs": "cee7023c103baddbce39b06d5fc0167479cff89ebcff2a006f8dc9c1342860e1",
+          "crates/gui-app/src/terminal_session.rs": "0ebb423ae1cecd4a56d37eccffe2b8325ae8fd9d6e3a2e3395dcf42a69159f54",
+          "crates/gui-app/src/terminal_session_controls.rs": "5c99564b86079890fae9aca5aeb7c7862c0a951162746d9a9c992773a74bbdda",
+          "crates/gui-app/src/terminal_session_drain.rs": "3e166c156297b83a31b5d14d784bb6da0d88ebada723f1a853e2b43c97d686be",
+          "crates/gui-app/src/terminal_session_drain_tests.rs": "801c5ea2420593617157cd403d75e51bcba5206a9829bef184ce2786fe983ed9",
+          "crates/gui-app/src/terminal_session_lifecycle.rs": "749243c38a22a604dfd4a9721ce6988ef3aaa7ad0e2a288c09427d24a49cbac8",
+          "crates/gui-app/src/terminal_session_spawn.rs": "0e100de1709ee5266d42c13379e1f4f68ad3d905eae03bc98df9c0286c78480d",
+          "crates/gui-app/src/terminal_working_directory.rs": "e86a196e1edcca75e3ab5ae7ef1c4699fac8d6c1e9163393f7806617ce4b7942",
+          "crates/gui-protocol/src/lib.rs": "6013123b6ad0d5eb78ae0bfe3da67a56a8694e38f7736f0eb7758a358479da15",
+          "crates/gui-protocol/src/terminal_lane.rs": "91a5feac4c3871a77d776bffb6dcaa87ad1c96e5200c9790332ace4644df5250",
+          "crates/gui-protocol/src/workspace_layout.rs": "382dca33dcc0494450e31f4ab8045978b91deee51c71d0c321620ef3aeb13d71",
+          "crates/gui-protocol/src/workspace_loading.rs": "1a1608809d0508a8bc03f474a30bc7aae92dceeb03b36cac242c22c81e0984a7",
+          "crates/gui-render/src/hit_target.rs": "c8ee6ced64cb0f246f7971612f22db938db46a15956c38f5b18723425ee4562d",
+          "crates/gui-render/src/new_project_dialog.rs": "2cfc49ec7fdf1abc924947675f7b86e43bc528e922ec94d6488bf3295a5b44c7",
+          "crates/gui-render/src/render/layer_stages_tests.rs": "e1309b8ec2b9181380fc101e6cff6c50f0ecc2a013ad3b8fb54cc7b8254e8bc5",
+          "crates/gui-render/src/render/session_dialog.rs": "891c5671b6a287cdad9460d7c66ed4a15663f2998055fce582db52f29e3c3775",
+          "crates/gui-render/src/terminal_session_chrome.rs": "23243e510563b3b7ad1cd637a1d6b1a2190ed2e77b776839ac2c86083a799740",
+          "crates/gui-render/src/terminal_tab_strip.rs": "3ae2d71408097b262c002995d5a4d758f88858d2de6dab55835cc2ac2ad758a9",
+          "crates/gui-app/src/workspace_keyboard.rs": "e1aaf48acb1ae1b840440492c08a1649ace79c6656c86c701a479b953e7121e9",
+          "crates/gui-app/src/runtime_menu_actions.rs": "c025b3717866b8bf643395de8caeac8a2f0a48edd5c9ab4d016f978b567dce7a",
+          "crates/gui-app/src/terminal_session_render.rs": "793cba74cc9dcc4f72c3e6210be175eb3fbeb4bf6ec23b664f1e792ac38516fc",
+          "crates/gui-app/src/terminal_session_render/pending_split_tests.rs": "74ef3a1745fd24648544c1ff882f4a49c6a1c5a2de4180d143a38ff73b6f6a1a",
+          "crates/gui-app/src/terminal_session_lifecycle/restart_tests.rs": "5146f0106a6894646a32405a80e459bf68c8a24dbf5040436e50e732d68335a1"
+        },
+        "gui_sha256": "ae4dbf6b5ffe9f19be3c1d41142b9d7c66dcda06384a8a6cc178038717d88ca8"
+      },
+      "final_test_only_checkpoint": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/open-project-source-checkpoint-14.json",
+        "sha256": "dfe666ee218af2d27ba0ef605c014f4280f6bec63e317e58938cbdad971a3a50",
+        "rust_paths": 51,
+        "files": {
+          "crates/gui-app/src/project_open.rs": "e8e2d1eab3843464559a43d20de4102e9238d9e054bd8e737e92f0340baa8592",
+          "crates/gui-app/src/project_open/prepare.rs": "b5cc17dc0b70eadb2240ff3cb55aaf66efaa0ccafde1ccdcec862dc16e771f75",
+          "crates/gui-app/src/project_open/publication.rs": "81b943045a832644c926dbe60a1f7855142e4cb78b44931ceb324930297ea733",
+          "crates/gui-app/src/project_open/tests.rs": "370fe5c2131b8a6bd4e2074db91d7190957a9eace1134f8b3677e5322c907217",
+          "crates/gui-app/src/project_open_window.rs": "287af2e210de3a2a2c3dc8fb92a1ef015925663f521d43a7d7029cca1bc5b4bb",
+          "crates/gui-app/src/terminal_session/project_open.rs": "59520fa154b5fc5974b846d575335bbb98b6de73a2d8b2c8d1f333c6d29e49da",
+          "crates/gui-app/src/terminal_session/project_open/tests.rs": "e9599b769065e4934eae096d2cb5f707bdb4362bcc49c25bc80f50a138be85df",
+          "crates/gui-protocol/src/project_open.rs": "95a7ed9367ad855035eb498633114741cee1aabdb96702d3449c0abe4adc5abc",
+          "crates/gui-protocol/src/project_open/tests.rs": "829baba0a76b4be7dd2beca81d009283f6986d1a3354fdf7a2aefb5bad679e78",
+          "crates/gui-render/src/project_open_dialog.rs": "cc098e2d8f03e4496711560a9389c1d569563db4b5a03e76df254b65ac80ed8f",
+          "crates/engine/src/substrate/project_resolver.rs": "e90f61c22aa27a415a0e513e91395f5976af0ec4e8ba4297b55a5c06095f8d8e",
+          "crates/gui-app/src/app_native_events.rs": "ae07c79f82bcd37d0e4f44442a820e198eeb27360d552b9e02230331265ed50b",
+          "crates/gui-app/src/application_terminal_shutdown.rs": "fb41397c548b80c645a07437ac9611b09d2641a99f188f6a92f4d380ec88c6b2",
+          "crates/gui-app/src/global_preferences_window.rs": "2eb25e2e1e1100df982f21084ea9de2988f9fec8b2fbc94bce35e4e447badf39",
+          "crates/gui-app/src/keyboard_focus.rs": "223c4bea0988b0f4de1ac601217cbeeaa964dafb69b408ec9a27c7923db05960",
+          "crates/gui-app/src/main.rs": "3f476db6d12f962d8972d3293fffc8371ee1db336e66a978ca686be5c6a20726",
+          "crates/gui-app/src/new_project_window.rs": "39704d8b3f2dd90d7dcbfb90dadee1e1dc76b7ca213e471bcc4d608c518c759c",
+          "crates/gui-app/src/owned_dialog_pointer.rs": "1563d524efe5189e0ca234d8bc7c65a7f87a71e44764ff7998a4f95d2d3b1940",
+          "crates/gui-app/src/production_status_refresh.rs": "6840427f5c14b6743b7eb226d6f6ca0a93fcf6094fda2993ab1447c5e9ea4c2c",
+          "crates/gui-app/src/runtime_hit_actions.rs": "212d8a1b83a51e4141c770714166699bf65ecccc413cc90bcba9dc8550bced6b",
+          "crates/gui-app/src/runtime_init.rs": "2b1e5936e9c3f66cd2660666823acc79239df801fac9667eb84ba10b235cf758",
+          "crates/gui-app/src/runtime_native_edit.rs": "cf129b74b37df6a08dcaa03b855c00e67d3a35bbbfb0605f89fedb6169e126de",
+          "crates/gui-app/src/runtime_selection_run.rs": "b6c8354b37f41be2c6d4ba96f088a02446386065cc8ddf851b4c02069e00f508",
+          "crates/gui-app/src/runtime_state.rs": "b681dfbd7265edc090a9801230a39684bf37e409a64c12c34d4e9c466c635fab",
+          "crates/gui-app/src/runtime_terminal_context.rs": "5b8ab11a653cdb5c704de0de1740300efaea0ccdb49aaf98ac938932936f1c7c",
+          "crates/gui-app/src/runtime_view_actions.rs": "2e7be72eaef917010c743a9544f61f9db9f3bdf0cf72acb4f1d40e790c8ea20f",
+          "crates/gui-app/src/terminal_process.rs": "256738c0a1e6bf2e09076de15a3f3302f52a5a25144b4a32671cc13d3dcce655",
+          "crates/gui-app/src/terminal_regression_boundary_tests.rs": "cee7023c103baddbce39b06d5fc0167479cff89ebcff2a006f8dc9c1342860e1",
+          "crates/gui-app/src/terminal_session.rs": "0ebb423ae1cecd4a56d37eccffe2b8325ae8fd9d6e3a2e3395dcf42a69159f54",
+          "crates/gui-app/src/terminal_session_controls.rs": "5c99564b86079890fae9aca5aeb7c7862c0a951162746d9a9c992773a74bbdda",
+          "crates/gui-app/src/terminal_session_drain.rs": "3e166c156297b83a31b5d14d784bb6da0d88ebada723f1a853e2b43c97d686be",
+          "crates/gui-app/src/terminal_session_drain_tests.rs": "801c5ea2420593617157cd403d75e51bcba5206a9829bef184ce2786fe983ed9",
+          "crates/gui-app/src/terminal_session_lifecycle.rs": "749243c38a22a604dfd4a9721ce6988ef3aaa7ad0e2a288c09427d24a49cbac8",
+          "crates/gui-app/src/terminal_session_spawn.rs": "0e100de1709ee5266d42c13379e1f4f68ad3d905eae03bc98df9c0286c78480d",
+          "crates/gui-app/src/terminal_working_directory.rs": "e86a196e1edcca75e3ab5ae7ef1c4699fac8d6c1e9163393f7806617ce4b7942",
+          "crates/gui-protocol/src/lib.rs": "6013123b6ad0d5eb78ae0bfe3da67a56a8694e38f7736f0eb7758a358479da15",
+          "crates/gui-protocol/src/terminal_lane.rs": "91a5feac4c3871a77d776bffb6dcaa87ad1c96e5200c9790332ace4644df5250",
+          "crates/gui-protocol/src/workspace_layout.rs": "382dca33dcc0494450e31f4ab8045978b91deee51c71d0c321620ef3aeb13d71",
+          "crates/gui-protocol/src/workspace_loading.rs": "1a1608809d0508a8bc03f474a30bc7aae92dceeb03b36cac242c22c81e0984a7",
+          "crates/gui-render/src/hit_target.rs": "c8ee6ced64cb0f246f7971612f22db938db46a15956c38f5b18723425ee4562d",
+          "crates/gui-render/src/new_project_dialog.rs": "2cfc49ec7fdf1abc924947675f7b86e43bc528e922ec94d6488bf3295a5b44c7",
+          "crates/gui-render/src/render/layer_stages_tests.rs": "e1309b8ec2b9181380fc101e6cff6c50f0ecc2a013ad3b8fb54cc7b8254e8bc5",
+          "crates/gui-render/src/render/session_dialog.rs": "891c5671b6a287cdad9460d7c66ed4a15663f2998055fce582db52f29e3c3775",
+          "crates/gui-render/src/terminal_session_chrome.rs": "23243e510563b3b7ad1cd637a1d6b1a2190ed2e77b776839ac2c86083a799740",
+          "crates/gui-render/src/terminal_tab_strip.rs": "3ae2d71408097b262c002995d5a4d758f88858d2de6dab55835cc2ac2ad758a9",
+          "crates/gui-app/src/workspace_keyboard.rs": "e1aaf48acb1ae1b840440492c08a1649ace79c6656c86c701a479b953e7121e9",
+          "crates/gui-app/src/runtime_menu_actions.rs": "c025b3717866b8bf643395de8caeac8a2f0a48edd5c9ab4d016f978b567dce7a",
+          "crates/gui-app/src/terminal_session_render.rs": "793cba74cc9dcc4f72c3e6210be175eb3fbeb4bf6ec23b664f1e792ac38516fc",
+          "crates/gui-app/src/terminal_session_render/pending_split_tests.rs": "74ef3a1745fd24648544c1ff882f4a49c6a1c5a2de4180d143a38ff73b6f6a1a",
+          "crates/gui-app/src/terminal_session_lifecycle/restart_tests.rs": "5146f0106a6894646a32405a80e459bf68c8a24dbf5040436e50e732d68335a1",
+          "crates/gui-app/src/runtime_native_edit/project_open_busy_tests.rs": "a34e33d8ec26f80f945b2136798bb2c5904f793adb62baaa58637cf864fa5d97"
+        },
+        "relationship": "Only new actual-worker test child and cfg(test) registration differ from compiled12. Removing the exact registration reconstructs the prior parent hash; all other prior production bytes identical. Actual44/45 remain bound to12/ae4db, no native or GUI rerun claimed for this test-only amendment."
+      },
+      "native_cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+      "matching_integration_cli_sha256": "d5e97973b7a5320b3200969509e48296713f5eed4725046ce76cfc39d56510e9",
+      "daemon_sha256": "4bbc2de90f41dda0e0d69114479f8f1cf24dc66e9e9e9cf424eb2c3cd62b2122"
+    },
+    "ordinary_workflows": {
+      "full_same_gui_44": {
+        "result": "target/s5a-c04-inventory-keyboard-20261011/attempt-44-project-open-result.json",
+        "sha256": "cd0a42adf96d234c67c1314b4185ddd68af35cc2aab06e476b9a2557dc2c7ae0",
+        "producer_sha256": "e7df16bff211702ee56079319cbcb686a465972ff22e9aa95ef123702f455a4b",
+        "pid": 720952,
+        "tool_session": 22197,
+        "terminal_exit_code": 0,
+        "receipts": 10,
+        "scope": "Cancel and invalid path preserve original exact9/view/camera; copied sameUUID roots with spaces publish fresh destinationNone then explicit9 acquisition; original old shell and new/split/restarted children retain A root/board PWD/current session/context. Actual standalone output sentinel observed in PID-bound attached terminal text and pixels; destination full view unchanged. Parsed own-session OSC7 metadata precedes next child action. Independent idle Escape clears selection.",
+        "canonical_maps": "Both post-startup source/journal/cursor maps exact after; four canonical files per root. Operational terminal trees and exact writer.lock excluded before content reads."
+      },
+      "supplement_45": {
+        "result": "target/s5a-c04-inventory-keyboard-20261011/attempt-45-project-open-result.json",
+        "sha256": "c66df0827a149ef22c4d9b75613aef8b0d8589ec8326532f1bbdbb9fcc14bcee",
+        "producer_sha256": "5e07395e7bc2e63e14bd2d6e3711cb4da924514b828a35a2cbafadded884ddc7",
+        "pid": 721840,
+        "tool_session": 12254,
+        "terminal_exit_code": 0,
+        "receipts": 4,
+        "scope": "Actual Main WindowId27262980 F2 pressed/released syntheticfalse while Open active preserves full latest selection/camera/canonical maps; actual646x646 narrow form, invalid readable refusal and focused Cancel controls inspected.",
+        "save_classification": "Ordinary Save is separate canonical operation, qualified actual Project saved observed before new baseline; only cursor.json creation differs, final origin5/destination4 maps exact.",
+        "busy_native_limit": "One overlap missed actual pending busy state: PNG says Choose a native Project directory. No native busy PASS, timing sweep or weakened requirement."
+      }
+    },
+    "focused_proof": [
+      {
+        "log": "open-project-focused-app-2.log",
+        "actual": "7 passed /0 failed; copied-root generation/late-answer/busy predicate and staged capacity/failure/cancel/origin cleanup controls; boolean busy helper is not a real canonical-worker proof"
+      },
+      {
+        "log": "open-project-focused-protocol-1.log",
+        "actual": "4 passed /1 failed; invalid unchanged-revision test premise preserved"
+      },
+      {
+        "log": "open-project-focused-protocol-corrected.log",
+        "actual": "1 passed /0 failed; actual changed sourcehash/model and journal_after_revision_mismatch, disk journal/cursor exact, both revalidation/admission refuse; no equal-revision claim"
+      },
+      {
+        "log": "open-project-focused-renderer-corrected.log",
+        "actual": "2 passed /0 failed; rejected Retry and active close coexistence"
+      },
+      {
+        "log": "open-project-swap-projection.log",
+        "actual": "1 passed /0 failed; application-owned cleanup/shutdown projection survives PTY swaps"
+      },
+      {
+        "log": "open-project-pending-split-focused-2.log",
+        "actual": "1 passed /0 failed; real pending split/source render/completion and unknown-ID refusal, supervised teardown"
+      },
+      {
+        "log": "open-project-split-restart-focused-3.log",
+        "actual": "2 passed /0 failed; real two-session restart same split/tab/sibling/origin shell tuple and global shutdown no replacement, verified closure"
+      },
+      {
+        "log": "open-project-actual-worker-focused-1.log",
+        "actual": "Interrupted SIGTERM/terminal101, no assertions credited: nested CLI freshness guarded build waited on parent proof target lock. Serialized matching CLI preparation resolves harness prerequisite; raw process receipt retained."
+      },
+      {
+        "log": "open-project-actual-worker-focused-2.log",
+        "actual": "1 passed /0 failed,2.89s; actual original-root Save worker/receiver held by existing client mutex, exact9/state/history preserved through Open refusal, qualified Save completes original root and normal destination retry succeeds with exact history maps.",
+        "tool_session": 51878,
+        "terminal_exit_code": 0,
+        "sha256": "ba48b06f2297bf5866620a99914ce8589e7f2b1f8f49a4fa33840c654fde6d31",
+        "compile_duration": "20.90s"
+      },
+      {
+        "log": "open-project-shortcut-focused.log",
+        "actual": "1 passed /0 failed; shared typed CtrlO/O versus plainO dispatch",
+        "tool_session": 9647,
+        "sha256": "4e9b1218b4bbb3410011fad2adea9b9fae8c473110f99a4139922b7bb691c93c"
+      },
+      {
+        "log": "open-project-escape-focused.log",
+        "actual": "1 passed /0 failed; shared retiring Escape release cycle and next independent idle Escape",
+        "tool_session": 82531,
+        "sha256": "eb298f6afa7177f64d854e65f283ac8e8ff56fcf81a1f6f3f5cc13781f3c92a3"
+      }
+    ],
+    "failed_and_partial_cohorts": {
+      "31": "Startup timeout before availability; stale companion only source-backed possibility, not definitive cause. Wrong-PID diagnostic no credit.",
+      "32": "WM active-window proof setup failed; no Open action credit.",
+      "33": "Advertised CtrlO lacked dispatcher; source correction through shared typed dispatcher. Search without --all was also unsuitable; no dialog/cancel credit.",
+      "34": "Actual cancellation Escape release leaked into idle clear; shared MenuKeyOwnership fix, later full cycle plus fresh idle Escape proved.",
+      "35": "Owned Enter did not emit Main action state; impossible state oracle corrected to actual owned presentation/refusal pixels; no production observer added.",
+      "36": "F2 actually routed to owned form, so required Main-specific assertion failed; no synthetic or Main-key credit.",
+      "37": "Successful first finite publication/cancel/invalid/Main pointer-wheel/destination acquisition subset, remains raw PARTIAL.",
+      "38": "Old shell accepted ESC then complete printf but echoed rintf; existing raw Escape readline prefix, ordinary CtrlC clean-line setup fixes proof. No lost-PTY diagnosis.",
+      "39": "Public alias launch snapshot is not continuous current attached-core readiness; no actual session failure inferred.",
+      "40": "Unrelated vanished DBus peer NameHasNoOwner; only that exact enumeration race skipped with error recorded and currentGUI PID binding retained.",
+      "41": "Actual GUI101 pending split renderer owned-leaf assertion; source corrected only reserved pending IDs. Downstream DBus failure followed crash.",
+      "42": "Actual split committed/root correct; new shell had not emitted OSC7 so lawful root fallback defeated expectedboard setup. Ordinary own-shell OSC7 report added, no fallback policy change.",
+      "43": "Actual original/new/split tuples passed; restarting active closed slot was removed before replacement. Multiple-session removal admission corrected and global teardown cancels restart intent.",
+      "test_failures": "Initial App compile errors, inherited renderer28 import errors, faulty protocol revision premise, pending-split unknown fixture not selecting the tested active tab, restart lexical ../../ versus canonical shell PWD, and worker nested-guard interruption all preserved in raw logs/checkpoints; no waived negatives or false PASS."
+    },
+    "independent_reviews": {
+      "source": "Auditor personally reviewed source12 50/50 plus final test14 51/51 relationship, actual focused/control deltas and failed-cohort classifications.",
+      "native": "Auditor actual44/45 raw/pixels/canonical accepted bounded successful scopes; root personally inspected required earlier native frames. Native busy45 remains uncredited.",
+      "documentation": "Management complete MenuBindings owner and exact2line delta read, owning9source/25consumer unchanged-byte complete-review reuse recomputed; shell digest6b41b007 factual amendment accepted.",
+      "final_unit_and_package": "Actual auditor bounded source/runtime/package ACCEPT and management final governance/package PASS received; appointed root accepts this bounded Open unit against existing packet, normal hooks/source landing pending. Raw44/45 PARTIAL and inherited fullqualification parity FAIL remain unwaived.",
+      "archive_correspondence": "Actual s5a_code_audit bounded final package ACCEPT received at proof2032f587/archive40b7585a: all419 unique regular entries checked, all418 manifest hashes/original refs exact,17 canonical whitelist files match actual44/45 maps, source12/14 snapshots exact, no operational credential payloads. Subsequent proof-only amendment adds already archived CtrlO/Escape focused receipts and actual worker2 compile duration.",
+      "manager_disposition": "Actual root accepts bounded source/runtime/package against existing packet and actual independent receipts; authorizes explicit owned staging and normal commit gates. C04 remains pending, no successor grant. Inherited parity tooling failure recorded separately as dat-supervision-owner-parity-202s without waiver or prerequisite expansion.",
+      "final_governance": "Actual management_review final bounded governance/package amendment PASS at proof9cde114269b8e19c94819f94d8885cef0f9026f362f573ca1bd20de6281d6b46/archive40b7585a: retained parity FAIL/HEAD attribution unwaived, stagedfmt/whitespace actual0, staged60 within exact live claim and zero unowned; all419 prior hashes/whitelist,51sourcepins,docs,ledger and chronology reused unchanged. No mandatory correction; C04 pending/no successor/HUMAN/terminal-wide acceptance."
+    },
+    "ownership_chronology": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/open-project-scope-synchronization.json",
+      "sha256": "fa68a429157d1e912b9e194a4ac7939a8a10058502be9d46486caffb06546ec0",
+      "scope": "Initial scratch list preserved, later supplementary exact paths/heartbeats recorded with implementer observed attribution; no fabricated timestamp/automatic grant."
+    },
+    "incidental_issue": "dat-8iv8 retains ordinary nonstaged PID-context failure wrapper ownership limitation; no universal terminal lifecycle repair claimed.",
+    "limits": [
+      "Raw native44/45 outcomes remain PARTIAL. Actual canonical-worker integration supplies deterministic busy admission/completion/retry proof; native45 overlap timing miss is uncredited. Unit acceptance does not aggregate full C04 qualification.",
+      "No physical HUMAN/Wayland/full terminal/full C04/N08 qualification, source/manufacturing layer remap, new import/writer/SaveAs/Close semantics or new dependencies.",
+      "Output diagnostics deliberately captured complete:false predrain; coverage/error/overflow and PID attribution checked, actual shutdown drained_device_live receipt is separate.",
+      "Credential/operational trees never packaged; source/journal/cursor whitelist and safe filtered OSC7/lifecycle records only."
+    ],
+    "safe_archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/c04-live-project-open-20261011.tar.gz",
+      "sha256": "40b7585a50c317af03ab7e54e29458e089db7a5d5820b9ad60738e36df54ab9f",
+      "regular_files": 419,
+      "raw_files": 300,
+      "canonical_final_files": 17,
+      "owned_source_snapshots": 101,
+      "manifest_sha256": "52c1de1f1e0a624234ce30bc9d5cba66fb2662fc26d0c8cae288c3489b1099af",
+      "policy": "Exact canonical-after map paths only, known raw evidence, current owned source snapshots; no credentials/operational project trees. Native12 reconstructed parent hash exact, final14 test-only cohort separate."
+    },
+    "metadata": {
+      "protocol_legacy_ratchet": "Production3093\u21923078; inline1705 unchanged. Renderer root remains129physical/3455expanded. No new debt exception.",
+      "debt_parity": "Only debt inventory row66/hashdc01dde3 updated, independently verified by management.",
+      "bindings": "MenuBindings exact Open row/narrative factual PARTIAL change, SHA4aea9609; shell route digest6b41b007 carries adequate complete unchanged-member review."
+    },
+    "final_gate_status": {
+      "passed": [
+        "source health:3101 files",
+        "dependency authority",
+        "evidence traceability:29 routes/131 artifacts",
+        "spec governance:552 classified specs",
+        "Cargo resource policy",
+        "project state:82 frontier items",
+        "Frontier projection current",
+        "nonmutating workspace rustfmt",
+        "staged rustfmt: terminal0,2 existing ceiling-bound exemptions",
+        "git diff --cached --check: terminal0"
+      ],
+      "pending": [
+        "normal commit hooks",
+        "final source landing hash"
+      ],
+      "failure_is_not_waived": true,
+      "retained_full_qualification_failure": {
+        "command": "python3 scripts/check_spec_parity.py",
+        "actual_exit_code": 1,
+        "issue": "dat-supervision-owner-parity-202s",
+        "baseline_attribution": "Actual unchanged HEAD and current raw-lib collector each return only protocol:SourceShardStatusSummary, count1/hash a8a53ac vs documented9/bf469cb5; normal owner extraction predates this Open unit. No row refresh or collector repair in this grant.",
+        "manager_disposition": "Actual root authorized incidental intake and continued bounded Open landing under normal hooks; no --no-verify, no full qualification PASS or new dependency."
+      }
+    }
   }
 }

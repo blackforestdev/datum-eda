@@ -209,6 +209,8 @@ pub struct TerminalLaneState {
     /// Application-close authority, distinct from the active session's
     /// teardown status so per-session refreshes cannot erase Retry/Cancel.
     pub application_shutdown_blocked: Option<String>,
+    /// Registry-owned rejected Open staging failure, never swapped with a PTY.
+    pub project_open_cleanup_failure: Option<String>,
 }
 
 impl TerminalLaneState {
@@ -286,6 +288,7 @@ impl Default for TerminalLaneState {
             progress: TerminalProgressState::Clear,
             status: "running".to_string(),
             application_shutdown_blocked: None,
+            project_open_cleanup_failure: None,
         }
     }
 }
@@ -317,12 +320,14 @@ mod tests {
             theme: TerminalTheme::HighContrast,
             launch_profile_name: "agent".to_string(),
             application_shutdown_blocked: Some("shutdown blocked".to_string()),
+            project_open_cleanup_failure: Some("rejected child failed".to_string()),
             ..Default::default()
         };
         let chrome = (
             active.active_session_id.clone(),
             active.activity_summary.clone(),
             active.application_shutdown_blocked.clone(),
+            active.project_open_cleanup_failure.clone(),
             active.font_scale_millis,
             active.theme,
             active.launch_profile_name.clone(),
@@ -362,6 +367,7 @@ mod tests {
                 active.active_session_id,
                 active.activity_summary,
                 active.application_shutdown_blocked,
+                active.project_open_cleanup_failure,
                 active.font_scale_millis,
                 active.theme,
                 active.launch_profile_name,

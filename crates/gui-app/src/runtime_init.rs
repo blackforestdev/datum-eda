@@ -106,6 +106,7 @@ impl Runtime {
             selection_read_cache: Default::default(),
             selection_run: runtime_selection_run::RunWork::new(wake.clone()),
             native_edit,
+            project_open: project_open::OpenWork::new(wake.clone()),
             native_selection: None,
             selection_gesture: None,
             selection_evaluation: None,

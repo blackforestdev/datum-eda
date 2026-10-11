@@ -75,6 +75,15 @@ impl EditWork {
         }
     }
 
+    pub(super) fn reset_project(&mut self) {
+        debug_assert!(!self.pending());
+        self.preview = None;
+        self.preview_tip = None;
+        self.pending_position = None;
+        self.preview_awaiting_presentation = false;
+        self.pending_move_base = None;
+        self.blocked = false;
+    }
     pub fn pending(&self) -> bool {
         self.pending.is_some()
     }
@@ -537,3 +546,7 @@ impl Runtime {
 #[cfg(test)]
 #[path = "native_first_edit_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "runtime_native_edit/project_open_busy_tests.rs"]
+mod project_open_busy_tests;

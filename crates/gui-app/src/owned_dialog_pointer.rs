@@ -60,6 +60,17 @@ impl App {
             OwnedHost::Project => self.activate_preferences_target(target.as_ref(), true),
             OwnedHost::New => {
                 if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
+                    if runtime.workspace().ui.project_open.open {
+                        let handled = runtime.activate_project_open_hit(target);
+                        self.request_dialog_key_redraw(
+                            DialogInputOutcome::from_handled(
+                                handled,
+                                DialogInputOutcome::Dependents,
+                            ),
+                            OwnedHost::New,
+                        );
+                        return true;
+                    }
                     let changed = match target {
                         HitTarget::NewProjectCancel | HitTarget::NewProjectCreate => {
                             DialogInputOutcome::Dependents

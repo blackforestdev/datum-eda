@@ -64,7 +64,7 @@ operations is.
 | Menu item | Backing mechanism | Status |
 |---|---|---|
 | New Project | `GlobalPreferencesProductService::create_project` / CLI `project new` | WIRED — native input-modal form; exact eight-key Units genesis |
-| Open Project | none — project root is an implicit arg to every command; `project inspect` is nearest | NOT-BUILT (needs GUI open + session model) |
+| Open Project | GUI-local `project.open` / Ctrl+O; owned native form, read-only preparation and origin-qualified session publication | PARTIAL — ordinary cancellation/refusal, copied-root replacement and preserved terminal origins at the source/runtime pins in [C04 proof](../reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json); full C04 remains open |
 | Import | `build_kicad_board_import` / `build_kicad_schematic_import` / `build_kicad_footprint_import` / `build_eagle_library_import`; CLI `project import-kicad-*` / `import-eagle-library` | ENGINE-READY / GUI-BLOCKED |
 | Save / Save As | Typed native project Save through the existing GUI native-edit client; Save As is separate | PARTIAL for project Save/history/reopen receipts; Save As and complete menu projection remain unqualified |
 | Export | `datum.artifact.generate` / `export_manufacturing_set`; CLI `project export-*` (gerber/drill/bom/pnp/manufacturing-set) | ENGINE-READY / GUI-BLOCKED (generation), LIVE-READ (inspect) |
@@ -198,7 +198,7 @@ Unqualified document/session semantics remain explicit:
 - **Save** — current native project Save route at its reviewed scope; no
   arbitrary shard Save As or new persistence authority is inferred.
 - **Save As** — copy/branch the project tree (no verb today).
-- **Open** — needs a GUI project-session model (which root is active).
+- **Open** — current GUI-local native Project-session replacement at its reviewed scope; preparation preserves the current Project until qualified publication and retains existing terminal origins.
 - **Close** — GUI session teardown.
 These belong in the product spec's document/session model, resolved against
 decision 007 (Project Workspace Model).

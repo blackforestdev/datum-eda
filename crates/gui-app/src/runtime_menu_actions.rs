@@ -10,7 +10,7 @@ pub(super) struct MenuKeyOwnership {
     escape_release_pending: bool,
 }
 impl MenuKeyOwnership {
-    fn consume_escape_release(
+    pub(super) fn consume_escape_release(
         &mut self,
         key: &Key,
         state: ElementState,

@@ -4,6 +4,15 @@ impl Runtime {
     pub(super) fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
         if matches!(
             target,
+            HitTarget::ProjectOpenModal
+                | HitTarget::ProjectOpenDirectory
+                | HitTarget::ProjectOpenCancel
+                | HitTarget::ProjectOpenConfirm
+        ) {
+            return self.activate_project_open_hit(target);
+        }
+        if matches!(
+            target,
             HitTarget::NewProjectModal
                 | HitTarget::NewProjectName
                 | HitTarget::NewProjectDestination
@@ -25,6 +34,10 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::ProjectOpenModal
+            | HitTarget::ProjectOpenDirectory
+            | HitTarget::ProjectOpenCancel
+            | HitTarget::ProjectOpenConfirm => unreachable!("Open targets return above"),
             HitTarget::Library(control) => self.activate_library(control.clone()),
             HitTarget::SchematicPicker
             | HitTarget::SchematicLibraryPage(_)

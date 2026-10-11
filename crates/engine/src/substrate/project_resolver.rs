@@ -93,7 +93,7 @@ impl ProjectResolver {
         self.resolve_with_lease(lease)
     }
 
-    pub(crate) fn resolve_with_lease(
+    pub fn resolve_with_lease(
         &self,
         lease: &ProjectWriteLease,
     ) -> Result<DesignModel, EngineError> {

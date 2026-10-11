@@ -4,10 +4,18 @@ use std::{sync::mpsc, thread};
 impl TerminalSessionRegistry {
     #[allow(dead_code)]
     pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
-        ensure_session_capacity(self.sessions.len() + self.pending_spawns.len())?;
+        ensure_session_capacity(
+            self.sessions.len()
+                + self.pending_spawns.len()
+                + self
+                    .project_open_reservations
+                    .load(std::sync::atomic::Ordering::Acquire),
+        )?;
         let session = spawn_terminal_session_with_wake(context, self.terminal_wake.clone())?;
         let label = self.reserve_session_label();
         let session_id = session.session_id().to_string();
+        self.origin_contexts
+            .insert(session_id.clone(), context.clone());
         self.sessions.push(new_session_slot(session, label)?);
         self.add_standalone_terminal_tab(session_id);
         self.active_index = self.sessions.len() - 1;
@@ -84,7 +92,13 @@ impl TerminalSessionRegistry {
             + Send
             + 'static,
     {
-        ensure_session_capacity(self.sessions.len() + self.pending_spawns.len())?;
+        ensure_session_capacity(
+            self.sessions.len()
+                + self.pending_spawns.len()
+                + self
+                    .project_open_reservations
+                    .load(std::sync::atomic::Ordering::Acquire),
+        )?;
         if let PendingTerminalPlacement::Split {
             source_session_id, ..
         } = &placement
@@ -110,6 +124,8 @@ impl TerminalSessionRegistry {
                 completion_wake.request();
             })
             .map_err(|error| anyhow::anyhow!("start terminal session worker: {error}"))?;
+        self.origin_contexts
+            .insert(pending_id.clone(), context.clone());
         self.pending_spawns.push(PendingTerminalSpawn {
             pending_id: pending_id.clone(),
             label,
@@ -197,6 +213,9 @@ impl TerminalSessionRegistry {
                             continue;
                         }
                     };
+                    if let Some(context) = self.origin_contexts.remove(&pending.pending_id) {
+                        self.origin_contexts.insert(session_id.clone(), context);
+                    }
                     self.sessions.push(slot);
                     self.replace_pending_terminal_tab(&pending.pending_id, session_id.clone());
                     let split_completion = !pending.placement.is_new_tab();
@@ -230,14 +249,17 @@ impl TerminalSessionRegistry {
         notices
     }
 
-    fn reserve_session_label(&mut self) -> String {
+    pub(super) fn reserve_session_label(&mut self) -> String {
         let label = format!("shell {}", self.next_session_ordinal);
         self.next_session_ordinal += 1;
         label
     }
 }
 
-fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalSessionSlot> {
+pub(super) fn new_session_slot(
+    session: TerminalSession,
+    label: String,
+) -> Result<TerminalSessionSlot> {
     let core = TerminalCoreSessionAdapter::new_with_profile(
         session.session_id.clone(),
         session.context_id.clone(),
@@ -245,7 +267,15 @@ fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalS
         24,
         &session.terminal_profile,
     )?;
-    Ok(TerminalSessionSlot {
+    Ok(session_slot(session, label, core))
+}
+
+pub(super) fn session_slot(
+    session: TerminalSession,
+    label: String,
+    core: TerminalCoreSessionAdapter,
+) -> TerminalSessionSlot {
+    TerminalSessionSlot {
         session,
         core,
         label,
@@ -268,7 +298,7 @@ fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalS
         exact_exit_status: None,
         unread_output: false,
         seen_bell_count: 0,
-    })
+    }
 }
 
 #[cfg(test)]
