@@ -155,3 +155,7 @@ mod lifetime_report_tests;
 #[cfg(test)]
 #[path = "native_edit_selection/artifact_lifetime_tests.rs"]
 mod artifact_lifetime_tests;
+
+#[cfg(test)]
+#[path = "native_edit_selection/run_lifetime_tests.rs"]
+mod run_lifetime_tests;

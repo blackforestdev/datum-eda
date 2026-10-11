@@ -3671,6 +3671,205 @@
       "Existing Bounds/Start/End quantity unavailable and secondary text clipping remain unqualified.",
       "No production edits/build/dependency/defaultfilter policy or private authority writes. Inherited supervision parity FAIL remains unwaived."
     ],
-    "unexecuted_driver_corrections": "Initial sameWire8P assertion was vacuous and corrected to distinctWire9 before any input. Initial native event spelling corrected to actualmouse input LeftPressed/Released. Superseded heldpins unexecuted; finalbecdf8e5 actualcohort only."
+    "unexecuted_driver_corrections": "Initial sameWire8P assertion was vacuous and corrected to distinctWire9 before any input. Initial native event spelling corrected to actualmouse input LeftPressed/Released. Superseded heldpins unexecuted; finalbecdf8e5 actualcohort only.",
+    "source_landing": {
+      "commit": "3f8811da9c18a49d1856455d2634864138c50b75",
+      "normal_hooks": "terminal0; independent committed archive/source binding verified",
+      "source_unchanged": true
+    }
+  },
+  "ir01_derived_run_revision_20261011": {
+    "scope": "Retained C04 N02/N09 D4 revision AFTER meaningful explained derived membership-change refusal; root[] only.",
+    "authority": "Manager authorized same-contract shared repair after actual61 failure; no new product rule/threshold/dependency/successor.",
+    "before_edit_scope": {
+      "actual_transaction": "2026-10-11T19:42:45Z",
+      "previous_heartbeat": "2026-10-11T19:32:39Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_exact_paths": [
+        "crates/gui-viewport/src/selection_lifetime.rs",
+        "crates/gui-app/src/native_edit_selection/run_lifetime_tests.rs"
+      ],
+      "already_owned": [
+        "crates/gui-app/src/native_edit_selection.rs",
+        "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json"
+      ],
+      "before_production_edit": true,
+      "grant": "Root-approved actual61 shared Run origin dissolution report correction under retained C04"
+    },
+    "package_scope": {
+      "actual_transaction": "2026-10-11T19:54:04Z",
+      "previous_heartbeat": "2026-10-11T19:42:45Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_exact_paths": [
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/ir01-derived-run-revision-20261011.tar.xz"
+      ],
+      "before_archive_write": true,
+      "grant": "Root-authorized bounded D4 Run revision/cause repair delivery safe evidence packaging"
+    },
+    "source_checkpoint": {
+      "source_pins": {
+        "crates/gui-viewport/src/selection_lifetime.rs": "93c8f66b5b9042626a743eb7be033eac1c68126bf4e186081587c84db11b4cbe",
+        "crates/gui-app/src/native_edit_selection.rs": "829856186fe715a427d827a470973bd768dffd55d012231eb33c75da911be178",
+        "crates/gui-app/src/native_edit_selection/run_lifetime_tests.rs": "2e40143def0cdffe6afa39febcfddb1bc1faa5e69c2f04c1486d1d2e5406daed"
+      },
+      "source_frozen": "RunOriginCleared concrete shared state solely actual missing Run origin. Existing consumers explanation(), zero invented droppedmembers. Actual real canonical Track Run prepare-path deletion/Undo regression supplement; ordinaryWire61 failure retained and native retry stillrequired."
+    },
+    "change": "Actual matching-project Run whose origin no longer resolves gains shared RunOriginCleared state/explanation consumed by existing refresh owners. No fake dropped authored members or artifact/region semantics changes.",
+    "focused": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app actual_run_origin_deletion_reports_empty_and_undo_does_not_resurrect -- --nocapture",
+      "session": 49483,
+      "exit_code": 0,
+      "actual_pass": 1,
+      "actual_fail": 0,
+      "zero_visual_shell_tests_not_coverage": true,
+      "log_sha256": "098e42893d72f4ed40bd1121ae2e4a1261d4e00850136f2a63802b7bc73e33ab",
+      "source_checkpoint": "ir01-run-report-source-checkpoint-1.json",
+      "test_binary_sha256": "b25b7d1ae04133f91d3987362c3f34162a71bed7ab29b00a4dd11e661b51fb80"
+    },
+    "build": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --bin datum-gui",
+      "session_id": 21845,
+      "exit_code": 0,
+      "compile_seconds": 0.52,
+      "gui_sha256": "78627a1f44497650e3908958a4bf551cad4b46858c11c2ed3adecfb968fc5e22",
+      "log_sha256": "5184f394ab38e39e23ccfa9fd6f2da929dac8b1327c5919ee82c000166aae4e4",
+      "source_checkpoint": "ir01-run-report-source-checkpoint-1.json"
+    },
+    "prior_failure": {
+      "attempt": 61,
+      "result_sha256": "50c43cf6f6682e502478678f8993b658847c290d25ca11e616f4d16e12b3eeb9",
+      "raw": "FAIL missing fresh derived Run empty-report cause",
+      "adequate_subsets": "Meaningful external WireD ShiftAdd explained refusal preserves Run5 except notice; public Labela delete yields current Run4 with same Wire8 origin. Origin loss reaches ordinaryNone/generic history refusal.",
+      "undo_executed": false
+    },
+    "native": {
+      "attempt": 62,
+      "driver_sha256": "7c4999aff10b09e561c5c1dbc504ab41a28e98d6a6c20e3f9772a69b780e76a9",
+      "result_sha256": "35b615d03404f3f81efe2ab9a0afee81f2c2741f26602d2b28aca710731c761e",
+      "raw_outcome": "CAPTURE_ONLY_D4_RUN_REVISION_REVIEW_PENDING",
+      "failure": null,
+      "session": 45402,
+      "terminal_exit_code": 0,
+      "gui_pid": 777360,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 777360,
+        "device_epoch": 1
+      },
+      "observations": 10,
+      "cli_commands": 9,
+      "all_cli_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "refreshes": 3,
+      "all_refresh_full_maps_identical": true,
+      "final_canonical_paths": 73,
+      "startup_delta": {},
+      "outcomes": [
+        "Whole Run5 remains through meaningful ShiftAdd disconnectedWireD refusal (notice alone changes).",
+        "Canonical Labela deletion rederives exact Run4, same origin Wire8/root[] at actual current revision.",
+        "Canonical Wire8 origin deletion yields fresh NativeNone, zero complete authored projection and exact Selected Run origin no longer resolves; selection cleared. notice.",
+        "Canonical Undo exact undo_of restores Wire8; selection remains ordinaryNone until explicit same-origin Run4 reacquisition."
+      ],
+      "visible_report": "Personally inspected empty Inspector No selection/All0/members0/no SELECTED. Specific Run origin cause and selection cleared visible with middle ellipsis; exact full string raw. Generic history-refusal Console remains; no claim specific cause replaces that Console message."
+    },
+    "independent_reviews": {
+      "code_audit": "Full 3-source/focused1/0/native62 bounded runtime and final immutableffd829d0 archive correspondence PASS received.203safe entries/202hashes/24phase maps/73final/source3 exact; no additional proof requested.",
+      "management_review": "Final governance/package bounded PASS received at f5aa3bb1/ffd829d0/552c7634: scope chronology,203safe/202hashes/raworigins/source3/final73/refreshmaps/stagedowned7/gates and retained boundaries clear.",
+      "root": "Root appointed manager accepts bounded unchanged-contract repair against actualsource/focused/native62 and final safearchive/currentgates; normal owned7 landing authorized, full qualification retained."
+    },
+    "required_gates": {
+      "current_gates": [
+        {
+          "command": "python3 scripts/check_source_module_size.py",
+          "chunk_id": "23fa49",
+          "wall_time_seconds": 0.903731541,
+          "exit_code": 0,
+          "original_token_count": 16,
+          "output": "Source health governance passed (3108 source files checked).\n"
+        },
+        {
+          "command": "python3 scripts/check_dependency_authority.py",
+          "chunk_id": "e9df02",
+          "wall_time_seconds": 0.436078401,
+          "exit_code": 0,
+          "original_token_count": 7,
+          "output": "dependency authority: PASS\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "b9cf93",
+          "wall_time_seconds": 0.178990408,
+          "exit_code": 0,
+          "original_token_count": 21,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "15170b",
+          "wall_time_seconds": 1.010252747,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "c1ac78",
+          "wall_time_seconds": 1.8643e-05,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_cargo_resource_policy.py",
+          "exit_code": 0,
+          "output": "Cargo resource policy: PASS\n",
+          "chunk_id": "a50c5d"
+        }
+      ],
+      "terminal": {
+        "session": 45402,
+        "exit_code": 0,
+        "pid": 777360,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "reused": "Prior spec-governance/Cargo resource checks adequate; dependency/sourcehealth/evidence/status rerun above. Inherited gui_supervision_surface parity FAIL remains unwaived (dat-supervision-owner-parity-202s); no policy/collector repair or qualification PASS.",
+      "pending": "Normal commit hooks/landing only; owned7 stagedrustfmt/whitespace0 archived."
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/ir01-derived-run-revision-20261011.tar.xz",
+      "sha256": "ffd829d05b746fd0fd2ff607a6fee24cf558206dcfa756fd5186c216aec33ca4",
+      "manifest_sha256": "552c7634f1d61052cfc3bc1b2386ceebbf697019565fd135f62515ca5901d78b",
+      "regular_files": 203,
+      "hashed_files": 202,
+      "raw": 47,
+      "canonical_final": 73,
+      "canonical_blobs": 79,
+      "canonical_maps": 24,
+      "source_pins": {
+        "crates/gui-viewport/src/selection_lifetime.rs": "93c8f66b5b9042626a743eb7be033eac1c68126bf4e186081587c84db11b4cbe",
+        "crates/gui-app/src/native_edit_selection.rs": "829856186fe715a427d827a470973bd768dffd55d012231eb33c75da911be178",
+        "crates/gui-app/src/native_edit_selection/run_lifetime_tests.rs": "2e40143def0cdffe6afa39febcfddb1bc1faa5e69c2f04c1486d1d2e5406daed"
+      }
+    },
+    "limits": [
+      "Supplemental focused prepare regression is board Track Run; native62 proves actual schematic Wire root[] D4 case. No repeated-instance/other Run kinds/full revision-cancel/full N02/N09/IR01/C04/HUMAN qualification.",
+      "OrdinaryNone after Undo has no direct GUI revision/tip payload; fresh worker qualification and current header provide indirect basis, not direct tip proof.",
+      "Bounds/Start/End quantity context remains unavailable and secondary text clipping unqualified.",
+      "Only public journaled delete-label/delete-wire/Undo intentional canonical producer writes; refusal/refresh/reacquisition preserve post-producer full canonical maps. No private writes or authored fake dropped counts.",
+      "Raw CAPTURE_ONLY remains unchanged; bounded objective acceptance is separately attributed. Inherited supervision parity FAIL unwaived; full qualification remains open."
+    ]
   }
 }

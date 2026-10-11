@@ -10,6 +10,7 @@ use std::collections::BTreeSet;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SelectionReconciliationState {
     Current,
+    RunOriginCleared,
     RegionSplit {
         successors: Vec<ZoneRegionQualifier>,
     },
@@ -24,6 +25,9 @@ impl SelectionReconciliationState {
     pub fn explanation(&self) -> Option<String> {
         match self {
             Self::Current => None,
+            Self::RunOriginCleared => {
+                Some("Selected Run origin no longer resolves; selection cleared.".into())
+            }
             Self::RegionSplit { successors } => Some(format!(
                 "Selected copper region split into {} components; selection cleared.",
                 successors.len()
@@ -66,6 +70,7 @@ pub fn reconcile_selection(
         .validate()
         .map_err(SelectionResolutionError::InvalidSubject)?;
     let mut dropped = BTreeSet::new();
+    let mut state = SelectionReconciliationState::Current;
     let next = if selected_project != resolution.project() {
         SelectionSubject::None
     } else {
@@ -95,6 +100,7 @@ pub fn reconcile_selection(
                 }
             }
             SelectionSubject::Run(run) if !resolution.authored_contains(&run.origin) => {
+                state = SelectionReconciliationState::RunOriginCleared;
                 SelectionSubject::None
             }
             SelectionSubject::GlobalNet(_) | SelectionSubject::Bus(_)
@@ -121,7 +127,7 @@ pub fn reconcile_selection(
         subject: next,
         members,
         dropped,
-        state: SelectionReconciliationState::Current,
+        state,
     })
 }
 
