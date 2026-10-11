@@ -5405,6 +5405,330 @@
       "No-origin menuabsence and absent hiddenTrackcues credited only actual personalpixelreview; no filename/count-only assertion. EmptyownedOutline identity is distinct from renderable geometry.",
       "Inherited supervision parityFAIL remainsunwaived/dat-supervision-owner-parity-202s; no dependency or default/unit/product rule change."
     ],
-    "staged_checks": "raw/n05-hidden-layer-origin-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0"
+    "staged_checks": "raw/n05-hidden-layer-origin-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0",
+    "landing": {
+      "commit": "42c851c47b4677f730a44df7d1731b22a710ca5f",
+      "normal_hooks": 0,
+      "archive_sha256": "ec6a5bce150d7a3bbb1c33b30b51a00304ea62031b9bc04639846f4ab662e3df",
+      "scope": "Owned4 evidence landing; production source unchanged at2ebe64c9, independently accepted finite N05 only."
+    }
+  },
+  "global_net_ladder_20261011": {
+    "status": "PARTIAL \u2014 finite actual ordinary Run to GlobalNet behavior accepted by appointed root manager with actual independent runtime/pixel/package/governance receipts. Normal hooks/landing pending; full IR01/C04/HUMAN open.",
+    "authority": "Root selected retained UVT-S5A-BUILD/S5A-C04 existing ordinary semantic ladder and replacement, no successor/product rule/private query authority.",
+    "setup": {
+      "raw": "raw/global-net-ladder-setup.json",
+      "sha256": "007378d3f360374c5908225ba1c22ce31a169af75996812f8f35b9c39e437a6b",
+      "source_root": "target/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "canonical_files": 61,
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "logical_net": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+      "expected_global_members": [
+        [
+          "Junction",
+          "73000000-0000-4000-8000-00000000000b",
+          []
+        ],
+        [
+          "Junction",
+          "73000000-0000-4000-8000-00000000006f",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Junction",
+          "73000000-0000-4000-8000-00000000006f",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-00000000000a",
+          []
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-00000000000e",
+          []
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-00000000006e",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-00000000006e",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-000000000072",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-000000000072",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ],
+        [
+          "Port",
+          "73000000-0000-4000-8000-00000000000c",
+          []
+        ],
+        [
+          "Port",
+          "73000000-0000-4000-8000-000000000070",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Port",
+          "73000000-0000-4000-8000-000000000070",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000008",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000009",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000000d",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000006c",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000006c",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000006d",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000006d",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000071",
+          [
+            "73000000-0000-4000-8000-00000000001f"
+          ]
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000071",
+          [
+            "73000000-0000-4000-8000-000000000020"
+          ]
+        ]
+      ],
+      "expected_run_members": [
+        [
+          "Junction",
+          "73000000-0000-4000-8000-00000000000b",
+          []
+        ],
+        [
+          "Label",
+          "73000000-0000-4000-8000-00000000000a",
+          []
+        ],
+        [
+          "Port",
+          "73000000-0000-4000-8000-00000000000c",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000008",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000009",
+          []
+        ]
+      ],
+      "basis": "Exact complete61 canonical whitelist/current resolver Project2000/revision67a. Recipe419b structured7 root+7path1f+7path20 matches exact15 electrical captured shards; source hierarchy/sourceleaves verified. SchematicOnly relationship board_net=null makes board union empty.",
+      "historical_proof_reuse": {
+        "logs": [
+          {
+            "path": "target/s5a-c03-native-semantic-final-corrected.log",
+            "sha256": "e294ac23ff1ec75df78f687d50d3c5b8e07e5ce98246916be50955ebaa2d528a"
+          },
+          {
+            "path": "target/s5a-c03-u5-semantic-tests-final.log",
+            "sha256": "e31c06920fdd5dcb3414ab532adf14c4df5fa6aef724a7b9e01fe801fd86ec10"
+          }
+        ],
+        "classification": "Historical actual PASS logs reused with exact fresh source-basis/recipe qualification. Entire ignored test unchanged since66d9; only named function bodies global_net, widen_run, and semantic_subject_for_origin are byte-equivalent. Whole engine/native owners changed; changed board_net_members branch is unused for this SchematicOnly/nullBoardNet case. No new ignored-test execution."
+      },
+      "archived_wording_qualification": "Archived setup historical_proof_reuse classification uses broad source-owner-unchanged wording. Exact adequate reuse is only entire ignored test and the three named function bodies; whole engine/native owners are NOT claimed unchanged. This proof qualification controls attribution; raw archived setup remains unchanged."
+    },
+    "native": {
+      "attempt": 74,
+      "raw_result": "raw/attempt-74-global-net-ladder-result.json",
+      "result_sha256": "f791fbaf5d36faefa357451e3b8ccdd028fc5981856e6fee37401cbe94189abb",
+      "driver_sha256": "e9a46348d2b6d4c1b4a7e680a76406a3fe68764c42004abc764c029cd55a9ee5",
+      "outcome": "CAPTURE_ONLY_GLOBAL_NET_LADDER_REVIEW_PENDING",
+      "gui_sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3",
+      "gui_pid": 808422,
+      "receipts": 5,
+      "workflow": "Ordinary eligible rootWire8 Object \u2192 actual focused SelectRun menu Run5 exactorigin \u2192 actual focused GlobalNet menu full21 typed/path membership \u2192 Inventory collapsedfalse to acknowledged expandedtrue with exact fullP \u2192 plain disconnected rootWireD Object replacement.",
+      "projection": "Exactly14 nonroot occurrence-qualified unprojected identities, root7 represented, hidden0; honest9Wire/6Label/3Port/3Junction. Inventory shows first visible rows with paging; no all21 canvas/inventory visibility claim.",
+      "native_input_binding": {
+        "window": "27262980",
+        "pressed_index": 17,
+        "released_index": 21
+      },
+      "canonical": "All61 prelaunch/startup/source_after/final maps equal, currentbytes rehashed, startupdelta{}, canonical blobs recoverable. No intentional design writes.",
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 808422,
+        "device_epoch": 1
+      },
+      "gui_exit_code": 0,
+      "pixels": [
+        "raw/attempt-74-global-net-ladder-GlobalNet-complete-inventory-focused-entry.png",
+        "raw/attempt-74-global-net-ladder-GlobalNet-inventory-disclosure.png",
+        "raw/attempt-74-global-net-ladder-complete-GlobalNet21-honest-unprojected14.png",
+        "raw/attempt-74-global-net-ladder-current-Run5.png",
+        "raw/attempt-74-global-net-ladder-ordinary-Run-to-GlobalNet-focused-entry.png",
+        "raw/attempt-74-global-net-ladder-ordinary-Wire-Select-Run-focused-entry.png",
+        "raw/attempt-74-global-net-ladder-plain-Object-replacement-clears-derived-scope.png",
+        "raw/attempt-74-global-net-ladder-presented-eligible-Wire.png"
+      ],
+      "inventory_freshness_limit": "Seq14 expanded flagtrue/fullP unchanged retained earlier presented metadata basis_expandedfalse. Later actual screenshot shows expanded Members21/first3visible/page1\u201327/74; nextseq15 presented basis_expandedtrue. No same-sequence complete row rendering or all21on-screen claim."
+    },
+    "incidental_defect": {
+      "issue": "dat-cli-nets-semantic-schema-ugj0",
+      "classification": "Actual CLI project query nets parse failure retained in setup, not full nativeGlobalNet authority. Intake only, no repair/new prerequisite. Gate initial missing roadmap:intake label corrected and recheckPASS preserved."
+    },
+    "independent_reviews": {
+      "code_audit": "Actual complete current21typed/path+14unprojected source/native/Maininput/shutdown and personally focusedGlobalNet/inventory first3visible/page1\u201327/74/plainObjectD pixels bounded ACCEPT; final d9c81f82/f1865a72 143safe142hash32origins/current10pins/7equal61maps correspondence ACCEPT received. Exact historical function-body qualification accepted; no outstanding correction.",
+      "management_review": "Actual correctedproof695fb55a/d9c81f82/f1865a72 bounded governance/package PASS received: 143safe142hash32origins/current10pins/7equal61maps/final61+49blobs, historicalfunctionbody-only reuse and archivedoriginal qualifier truthful, scope/currentgates/owned4 truthful.",
+      "root_manager": "Root personally actual74f791/full21+exact14/current61/fullP inventoryexpanded/Mainpress17<release21/plainreplacement/GUI0drain and inventorypixels reviewed; exactimmutable143/142 package independently verified. Final distinct auditorACCEPT and managementPASS received; finite objective accepted/normalownedlanding authorized. FullC04/HUMAN remains open."
+    },
+    "required_gates": {
+      "scope": "Retained C04 finite ordinary Run to GlobalNet full occurrence membership and plain replacement; unchanged source and GUI ad235e.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "738852",
+          "exit_code": 1,
+          "output": "Project status check failed: non-closed tracker issue dat-cli-nets-semantic-schema-ugj0 missing roadmap label"
+        },
+        {
+          "command": "br update dat-cli-nets-semantic-schema-ugj0 --add-label roadmap:intake",
+          "chunk_id": "84bb3c",
+          "exit_code": 0
+        },
+        {
+          "command": "br sync --flush-only",
+          "chunk_id": "c74c91",
+          "exit_code": 0
+        },
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "87cb74",
+          "exit_code": 0,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "b30dd4",
+          "exit_code": 0,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "9d40d2",
+          "exit_code": 0,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Adequate unchanged N17 sourcehealth3111/dependency/resource PASS, source5 and compiled GUI ad235e at2ebe64c9. Historical isolated engine proof retained as historical, no new Cargo. Inherited supervision parity FAIL unwaived/dat-supervision-owner-parity-202s.",
+      "terminal": {
+        "session": 62162,
+        "exit_code": 0,
+        "gui_pid": 808422,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "incidental_defect": "dat-cli-nets-semantic-schema-ugj0 intake only, public CLI schematic nets parse failure retained; no repair/new prerequisite. Missing intake label corrected after initial status gate failure.",
+      "pending": "Normal commit hooks/landing only; owned4 stagedformat/whitespace terminal0 archived.",
+      "packaging_harness_correction": {
+        "chunk_id": "a2a995",
+        "exit_code": 1,
+        "classification": "Prewrite package source-path read caught wrong action_evidence owner path; corrected to actual runtime_view_actions/action_evidence.rs before archive creation. No source/raw/canonical bytes changed."
+      }
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/global-net-ladder-20261011.tar.xz",
+      "sha256": "d9c81f825d7ca1461d583df734f88e1e1221fefd4e5bc670e6e2fab8e93db358",
+      "manifest_sha256": "f1865a7241b88d7feb942d672c3565a47a4a42c145288a43a6bd974c56c3033f",
+      "regular_files": 143,
+      "hashed_files": 142,
+      "raw": 22,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 7,
+      "source_pins": {
+        "crates/gui-protocol/src/selection_resolution/native.rs": "3c84eeed0ee150863bf7654ea372e0688e4e8f93c5b74c378bdf1d3b9c32e0eb",
+        "crates/engine/src/substrate/electrical_selection_query.rs": "1dd96b08d14837a5f082f4fb69658aa97d64ad18644134775d1652a5689f984f",
+        "crates/gui-app/src/runtime_selection_menu.rs": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+        "crates/gui-app/src/runtime_selection.rs": "ae9f47a70ec4adce9bf3c5ed6d2f235a8e1eac167ec8477a480309fd80b3d151",
+        "crates/gui-protocol/src/selection_view.rs": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+        "crates/gui-app/src/runtime_primary_pointer.rs": "19757c9b3c8a00f86dd386eea2b271b63aba7f91401fd6614ecde0b93ac185a0",
+        "crates/gui-app/src/runtime_primary_button.rs": "76cec57b9911bb0f343668aa64baea8be423a5895aba0c84e0065be24a422242",
+        "crates/gui-protocol/tests/native_semantic_recipe.rs": "47d2ea64ca9d500ccb670d7e46fb171543f839d9d1d263f46fd5a587461705cf",
+        "crates/test-harness/src/bin/s5a_fixture/semantic/checks.rs": "c7e02fd5523cdfcd023a49ef1aff02a8562a8a142fc441465c696d102e5c6081",
+        "crates/gui-app/src/runtime_view_actions/action_evidence.rs": "ac86b41c629c787ae9221aa6afb9bace4aa8293bde67ebfa99adadaec03db52d"
+      }
+    },
+    "limits": [
+      "Finite current61source-qualified ordinaryWire8 Object\u2192Run5\u2192GlobalNetb151 full21 occurrencequalifiedmembers (root7+twoinstanced7)\u2192plainObjectWireD replacement.",
+      "QualifiedSchematicOnlyrelationship board_netNone, no Boardmembers assumed; honest14unprojected/root7 represented, no all21visible canvas/inventory/HUMAN/Bus/fullIR01/C04 claim.",
+      "Read-only source/journal/canonical61 with fullmaps; adequate unchangedhistoricalisolated engineoracle reused, no newbuild/privatequeryauthority.",
+      "Historical isolated proof logs are retained historical actual PASS, not new ignoredtest execution. CLI schematic nets is not full occurrence/board authority.",
+      "Unrelated inherited GUI supervision parity FAIL remains unwaived; no Bus/crosspane interactive/allIR01/fullC04/HUMAN qualification."
+    ],
+    "staged_checks": "raw/global-net-ladder-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0"
   }
 }
