@@ -197,27 +197,25 @@ impl Runtime {
                 if datum_gui_protocol::selection_artifacts::artifact_producer_changed(
                     previous, &view,
                 ) {
-                    view.subject = SelectionSubject::None;
+                    view = build_workspace_selection_view(
+                        &model,
+                        &authority,
+                        SelectionSubject::None,
+                        state,
+                    )
+                    .map_err(|e| anyhow::anyhow!("Selection projection unavailable: {e:?}"))?;
                     artifact_dissolved = true;
                 }
                 view.scope = previous
                     .scope
                     .filter(|class| view.members.iter().any(|id| id.class == *class));
             }
-            view.notice = reconcile.state.explanation();
-            view.dropped = reconcile.dropped;
-            if !view.dropped.is_empty() {
-                view.notice = Some(format!(
-                    "{} deleted or stale identities dropped; focus was not promoted",
-                    view.dropped.len()
-                ));
-            }
             self.session.workspace_mut().selection =
-                if matches!(view.subject, SelectionSubject::None) {
-                    SelectionTarget::None
-                } else {
-                    SelectionTarget::Native(Box::new(view))
-                };
+                native_edit_selection::target_after_reconciliation(
+                    view,
+                    reconcile.dropped,
+                    reconcile.state.explanation(),
+                );
             if artifact_dissolved {
                 self.log_console_echo(
                     ConsoleFeedbackSource::Selection,

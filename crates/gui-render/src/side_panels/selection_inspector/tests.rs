@@ -590,3 +590,58 @@ fn focused_duplicate_names_keep_authored_identity_and_qualified_path() {
     assert_ne!(path_labels[0], path_labels[1]);
     assert_eq!(fixture.source_bytes(), source);
 }
+
+#[test]
+fn empty_lifetime_report_shows_reason_without_selected_badge_or_focus() {
+    let (fixture, mut state) = selected_state();
+    let source = fixture.source_bytes();
+    let model = eda_engine::substrate::ProjectResolver::new(fixture.root())
+        .resolve()
+        .unwrap();
+    let authority =
+        datum_gui_protocol::selection_resolution::NativeSelectionResolution::capture(&model)
+            .unwrap();
+    let SelectionTarget::Native(previous) = &state.selection else {
+        panic!("native fixture")
+    };
+    let mut report = datum_gui_protocol::selection_view::build_selection_view(
+        &model,
+        &authority,
+        datum_gui_protocol::SelectionSubject::None,
+        &state.scene,
+        None,
+        |_| true,
+    )
+    .unwrap();
+    report.dropped = previous.members.clone();
+    report.notice = Some("1 deleted or stale identities dropped; focus was not promoted".into());
+    assert!(
+        report.members.is_empty()
+            && report.board_keys.is_empty()
+            && report.schematic_keys.is_empty()
+            && report.focus().is_none()
+    );
+    state.selection = SelectionTarget::Native(Box::new(report));
+    let selection = state.selection.clone();
+    let (_, text, _) = frame(
+        &state,
+        RectPx {
+            x: 400.,
+            y: 80.,
+            width: 600.,
+            height: 1000.,
+        },
+    );
+    assert!(text.iter().any(|run| run.text == "No selection"));
+    assert!(
+        text.iter()
+            .any(|run| run.text.contains("1 deleted or stale identities dropped"))
+    );
+    assert!(
+        !text
+            .iter()
+            .any(|run| run.text == "SELECTED" || run.text.starts_with("Focus: "))
+    );
+    assert_eq!(state.selection, selection);
+    assert_eq!(fixture.source_bytes(), source);
+}

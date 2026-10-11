@@ -179,7 +179,7 @@
     "Shared native desktop received physical C O P P E R keys outside the scope replay; later Escape was not delivered to the intended window.",
     "Controlled-close timeouts retained; dat-kiel remains separate, no shutdown qualification."
   ],
-  "remaining_executable_proof_blocker": "Current unattended route uses the shared active desktop. Observed focus loss and concurrent keyboard input make remaining scripted native trials unreliable and risk interfering with owner work. No existing Xvfb/Xephyr executable or isolated input route is available. No new input-injection infrastructure introduced.",
+  "remaining_executable_proof_blocker": "Historical desktop blocker: earlier shared-desktop focus/concurrent-input failures remain preserved. Later bounded ordinary native trials use serialized X11 input, verified target focus/capture identity and canonical nonmutation checks. This does not establish exclusive physical input or HUMAN/Wayland qualification; current independently executable cases proceed through that existing route.",
   "retained_evidence": [
     "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
@@ -2166,6 +2166,128 @@
     "independent_review": "Actual distinct s5a_code_audit source/native ACCEPT: verified3/3frozen sourcepins, meaningful focused1PASS and inventory4PASS, exact after18 four observations and all four normal/narrow pixels, complete256members/fullviewfocus-only differences and38canonical rehash0mismatch. Before17 capture-only collision and missedclick retained; qualified occurrence is renderer/test-only.",
     "limits": "No physical/HUMAN, arbitrary minwindow/fullhierarchy/collision-free finite preview, fullC04 or N11/N17 qualification. Qualified occurrence source/test supplementary only; native fixture paths empty.",
     "independent_governance": "Actual management_review final PASS at pre-disposition proof6b9fab3add566c78467a956384c24457e6aec13cbef203ce4579d62934d6abce/archivefa4682d704274e36150afecff0c5f73c050727f0e85282e9fe0b2604f70d054a: all53archive members byte-match target originals/exact3source snapshots,50declaredtargethashes and3frozenpins match; owningroutes unchanged; lease covers ownedsource. Verified exact256members/focus-only changes/38canonical invariance, retained failures and explicit nativequalified/HUMAN/fullqualification limits.",
-    "manager_acceptance": "Owner-appointed root manager accepts bounded existing-contract Focus identity presentation after actual independent source/native/governance reviews and personal before/after narrow pixel inspection. Duplicate names display distinct existing authored identity clues while canonical membership/focus remain authoritative. Continue retained S5A-C04 grant with N07 lifecycle next; no fullC04/N11/N17/HUMAN acceptance or successor authorization."
+    "manager_acceptance": "Owner-appointed root manager accepts bounded existing-contract Focus identity presentation after actual independent source/native/governance reviews and personal before/after narrow pixel inspection. Duplicate names display distinct existing authored identity clues while canonical membership/focus remain authoritative. Continue retained S5A-C04 grant with N07 lifecycle next; no fullC04/N11/N17/HUMAN acceptance or successor authorization.",
+    "landed_source_commit": "c2e1fc830305eac95521e8a651132df119120986"
+  },
+  "historical_desktop_blocker": "Current unattended route uses the shared active desktop. Observed focus loss and concurrent keyboard input make remaining scripted native trials unreliable and risk interfering with owner work. No existing Xvfb/Xephyr executable or isolated input route is available. No new input-injection infrastructure introduced.",
+  "identity_lifetime_report_correction_20261011": {
+    "scope": "Bounded retained C04/N07 same-ID edit, focused identity deletion, last-member Inspector report, Undo without selection resurrection, replacement new identity and surviving compound focus clearing; broader lifetime/context qualification remains open.",
+    "authority": "Appointed manager PM059 retained unchanged-scope execution disposition after actual BEFORE20 dropped-report loss; UVT2.2.18 deletion reported in Inspector and no identity substitution/resurrection or promoted compound focus.",
+    "owning_route_reuse": {
+      "gui-selection": "d47bd726045e78a6c3a6fdd38b0d5b63ebe947b9c138b05a44032151e4882a7e",
+      "prototype-selection": "78dffa2dc2a85ef1e49e9d2e50720b7bd1b6e4c91c0f2f143175c78202a4ed93"
+    },
+    "source_base_commit": "c2e1fc830305eac95521e8a651132df119120986",
+    "frozen_candidate": {
+      "files": {
+        "crates/gui-app/src/native_edit_selection.rs": {
+          "sha256": "c75e721e97e722ca6e3307a6a7a6bbcf7029e7d5a76a022a825d1d79147077d5",
+          "lines": 148
+        },
+        "crates/gui-app/src/runtime_selection.rs": {
+          "sha256": "ae9f47a70ec4adce9bf3c5ed6d2f235a8e1eac167ec8477a480309fd80b3d151",
+          "lines": 520
+        },
+        "crates/gui-app/src/native_edit_selection/lifetime_report_tests.rs": {
+          "sha256": "14b3e21cf81888c3e6cb83161245f42464dd24d81343bdb1c975215fadeb4814",
+          "lines": 144
+        },
+        "crates/gui-render/src/side_panels/selection_inspector.rs": {
+          "sha256": "e1d37b95c9e7b63cfe6232d4b476d0a2099961daf0ff121f3170292847e8b0c6",
+          "lines": 316
+        },
+        "crates/gui-render/src/side_panels/selection_inspector/tests.rs": {
+          "sha256": "230b3094cb83ef2f7779f64810a3733c69d8995474e9d37bcf9d397772105f17",
+          "lines": 647
+        }
+      }
+    },
+    "source_checkpoint_sha256": "cb1fcb2d7eef0ad96c21d03578e49c8757c957f4d48ab8e88aa81e07fc3589b6",
+    "compiled_gui_sha256": "c63ad66ec1f35da887810f8e185b983457357cddd73dc801a00287cf523d6255",
+    "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+    "implementation": "Both actual reconciliation paths use one target_after_reconciliation helper: retain only a fresh None-subject projection with actual dropped/explanation report; ordinary empty None stays None. Artifact-producer changes rebuild fresh empty projection, avoiding old members/keys/values. Inspector uses truthful No selection title without SELECTED badge. No new selection kind/action/TTL or persistent identity.",
+    "fixture_provenance": "Fresh copies of governed revision-lifetime baseline, excluding historical variants. Survivor established by recorded canonical place-text; each branch uses one live GUI PID/root and existing guarded CLI writer, never authored file replacement during runtime.",
+    "executed_cases": [
+      {
+        "case": "last-member-delete-and-Undo",
+        "attempt": 21,
+        "aggregate_attempt_outcome": "FAIL in separate replacement acquisition",
+        "case_outcome": "PASS",
+        "canonical_cli_commands": 13,
+        "refused_save_reconciliations": 3,
+        "canonical_file_count": 36
+      },
+      {
+        "case": "focused-compound-delete-and-Undo",
+        "attempt": 26,
+        "case_outcome": "PASS",
+        "canonical_cli_commands": 13,
+        "refused_save_reconciliations": 3,
+        "canonical_file_count": 40
+      },
+      {
+        "case": "delete-create-new-identity-and-positive-acquisition",
+        "attempt": 26,
+        "case_outcome": "PASS",
+        "canonical_cli_commands": 13,
+        "refused_save_reconciliations": 3,
+        "canonical_file_count": 37,
+        "new_uuid": "82e9828b-7c90-48bf-a44a-a000eda8473a"
+      }
+    ],
+    "observed_behavior": "Last-member deletion retains Native subjectNone/current full revision, exact OLD dropped, empty members/focus/keys/values/presentations; actual Inspector shows No selection/drop reason/Objects0 and no SELECTED badge. Undo restores OLD source with compensation history but does not select it. Compound2 focused OLD survives same-ID rotation; deleting OLD leaves exact survivor/focusNone, Undo restores OLD source but only survivor remains selected. Replacement UUID is unselected after Create, then actual source-qualified native click acquires NEW explicitly.",
+    "nonmutation": "All nine stale Ctrl+S reconciliations retain exact canonical files/journal/cursor before/after; they are refused Save plus qualified refresh, never successful Save or autonomous watch. Canonical edit/delete/Undo/Create/setup writes are separately recorded and intentionally change history. Exact runtime terminal-context/tool-session files classified separately; .datum/revision/writer.lock is precise transient lock exclusion.",
+    "ordinary_proof": {
+      "successful_cli_commands": 39,
+      "successful_refused_save_reconciliations": 9,
+      "results": {
+        "19": "391089b20d4d6aaaf7f9305123585db6b2ebaa228588ee67e88a6361dfdfc09d",
+        "20": "f6ff4d213e971df29379e7c190f479f9c0f3b61d053fe89b4720233384da6f03",
+        "21": "a58f367af77bab5e620e60cf2476f9425838d4ea38560644b726c6a1564c3bfb",
+        "22": "db297975f31f3e61e4d8736a7db800bb258ec4e4cd126d03e29f77568eb41000",
+        "23": "3ac4f0c787d9e14dfcd78945c6b3fa0588bb6e1cb5e980b25f8cd81c7bdde67e",
+        "24": "a3aa50ca09362c7ff12d2bceb8bfee4e2fb57c7ea170e3468bb5608228cc7119",
+        "25": "a0bd8d44eb3718b3595e5a3d5242348395ba136eacff3473e2f666704e27d6a4",
+        "26": "b3cf9a1ea9f853f9300a51caf2cd24a8342162248938041662e607752f3d0996"
+      },
+      "held_producer_sha256": "beaa0af9a924f70386acd694da656a5eca9b041731463f5bb0839b2aa43d3086",
+      "execution_terminals_sha256": "5b692bb43f2b73f006aa5383c89baee367937b1fdbe244af3cf0a3023f4f4c44",
+      "hit_derivation_sha256": "77211b3b3c0d072522f70455dfcb632b3675346422aec35676c3633b884a456e"
+    },
+    "focused_checks": {
+      "canonical_app_tests": "2 passed, 0 failed; actual guarded session40278 exit0",
+      "empty_report_renderer_test": "1 passed, 0 failed; actual guarded session62535 exit0",
+      "affected_gui_build": "actual guarded session78567 exit0"
+    },
+    "preserved_failures": {
+      "19": "Initial Object acquisition timeout, no canonical commands/refreshes; no runtime defect claim.",
+      "20": "DIAGNOSTIC_CAPTURE confirming old last-member Inspector report loss, stopped before Undo; not N07 acceptance.",
+      "21": "Undo case PASS; aggregate FAIL final separate replacement pointer acquisition.",
+      "22": "Survivor acquisition miss before canonical writes/refreshes; calculated fit coordinate was wrong.",
+      "23": "Replacement lifecycle reached NEW unselected; final positive pointer miss after producer accidentally toggled maximized pane off.",
+      "24": "Survivor acquisition miss before writes; decorated capture/client coordinate mismatch.",
+      "25": "Replacement lifecycle reached NEW unselected; final pointer missed actual source layout geometry; no production failure inferred."
+    },
+    "proof_limits": [
+      "Native same-root continuity is per case; branches are distinct fresh roots, not opened historical variants.",
+      "The qualified-answer trace precedes final qualification and is not sufficient alone. Full native selection revisions/source snapshots/refusal/header pixels and canonical guards jointly qualify transitions.",
+      "Ordinary None after Undo/Create does not directly emit full GUI revision/tip; canonical CLI records full revision/tip, actual current header/frame and reviewed worker qualification support bounded refresh. No GUI tip direct-readback claim.",
+      "No stale context restore, hierarchy/linked identity or artifact dissolution ordinary runtime acceptance; fresh artifact empty projection is source-reviewed and not separately native-executed.",
+      "No full N07/C04/C05/C06, physical/HUMAN, Wayland, full native accessibility/channel or numerical/standards qualification.",
+      "Screenshot/client coordinate misses and the accidental second zoom toggle are producer failures. Final hit inputs use independently verified authoritative source polygon interior and actual current camera/scale/layout, not guessed glyph pixels."
+    ],
+    "review_status": "Actual distinct s5a_code_audit final bounded source/runtime ACCEPT: checkpointcb1fcb2d verified5/5, GUIc63ad66e; actual app2PASS and renderer1PASS; Undo21 subset and two26 cases demonstrate drop report, no focus promotion/resurrection and newUUID positive acquisition. Independently verified every stored revision/journal pair and advancing tips, nine canonical-invariant refused refreshes, final36/40/37 canonical hashes and six key26 native pixels. Failed cohorts19/21/22/23/24/25 retain exact outcomes;20 remains diagnostic capture. Emptyaggregate26log is not textualterminalproof; actual developer session98680 exit0 receipt supplies terminal provenance.",
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/identity-lifetime-report-20261011.tar.xz",
+      "sha256": "c48afd246a570de558ec25b37e319bf7b9ed2bc721e62418422ecf1253427906",
+      "raw_top_level_files": 112,
+      "contents": "Raw failed and successful native cohorts19\u201326, focused tests/build/gates and five frozen source owners; final project snapshots contain ONLY exact canonical source_after hash-map paths. Runtime operational trees and credential payloads excluded.",
+      "canonical_snapshot_files": 113,
+      "entries": 230,
+      "superseded_unsafe_archive_sha256": "cb6b398cd22b972fbb6cb007a64d5b41e0e661cd1f79e3826490e9e1cfbc421c",
+      "superseded_reason": "Rejected before staging: initial full-root traversal included runtime operational payloads. Replaced in place with exact canonical hash-map whitelist; no raw test facts or successful results changed."
+    },
+    "independent_governance": "Actual management_review final PASS at pre-disposition proof85c3ba603a8a7305b181ed486d6efea8324889f1fd9e966d802dab56993976ea/archivec48afd246a570de558ec25b37e319bf7b9ed2bc721e62418422ecf1253427906. All230 entries verified:112raw exactoriginalbytes,5frozen current sources and113canonical snapshot paths matching exact36/40/37 source_after whitelists and hashes; no runtime or credential members. Initial unsafe archive rejected before staging and superseded. Actual39CLI successes/nine nonmutating refused refreshes and failure accounting verified; scope/authority and metadata continuation clear.",
+    "manager_acceptance": "Owner-appointed root manager accepts the bounded existing-contract lifetime-report correction after actual independent source/native/governance receipts and personal native before/after inspection. Both refresh paths preserve truthful fresh empty dropped reports; no selected badge, membership, focus or geometry remains for None. Demonstrated last-member Undo, surviving-compound no promotion/resurrection and replacement no substitution followed by explicit acquisition. Continue retained S5A-C04 with OS focus-loss gesture proof queued. WholeN07/C04/C05/C06, HUMAN/AX, hierarchy/stale-context/artifact-change runtime and direct GUI journal tip remain unqualified; no successor authorization."
   }
 }
