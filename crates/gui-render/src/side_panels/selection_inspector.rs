@@ -54,7 +54,9 @@ pub(super) fn render(
     let fields = view.fields();
     let total = 2
         + usize::from(view.stale)
-        + usize::from(view.focus().is_some())
+        + view
+            .focus()
+            .map_or(0, |id| 1 + usize::from(!id.instance_path.is_empty()))
         + usize::from(view.notice.is_some())
         + usize::from(!view.related.is_empty())
         + 1
@@ -146,20 +148,26 @@ pub(super) fn render(
         );
     }
     if let Some(focus) = view.focus() {
-        row(
-            &format!(
-                "Focus: {}",
-                view.member_display_label(
-                    focus,
-                    view.members
-                        .iter()
-                        .position(|id| id == focus)
-                        .map_or(0, |index| index + 1)
-                )
-            ),
-            None,
-            false,
+        let prefix = "Focus: ";
+        let ordinal = view
+            .members
+            .iter()
+            .position(|id| id == focus)
+            .map_or(0, |index| index + 1);
+        let label = inventory_label::identity_row(
+            view,
+            focus,
+            ordinal,
+            columns.saturating_sub(prefix.chars().count()),
         );
+        row(&format!("{prefix}{label}"), None, false);
+        if !focus.instance_path.is_empty() {
+            row(
+                &inventory_label::occurrence_row(focus, columns),
+                None,
+                false,
+            );
+        }
     }
     if let Some(notice) = &view.notice {
         row(notice, None, false);

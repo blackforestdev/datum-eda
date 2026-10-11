@@ -487,3 +487,106 @@ fn presented_inspector_basis_refuses_unpresented_expansion_scope_and_notice() {
         InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
     );
 }
+
+#[test]
+fn focused_duplicate_names_keep_authored_identity_and_qualified_path() {
+    use datum_gui_protocol::{AuthoredSelectionIdentity, CompoundSelection, SelectionSubject};
+    let (fixture, mut state) = selected_state();
+    let source = fixture.source_bytes();
+    let SelectionTarget::Native(original) = &state.selection else {
+        panic!("native fixture")
+    };
+    let mut view = original.as_ref().clone();
+    let a = AuthoredSelectionIdentity {
+        class: Class::SchematicText,
+        id: "50000000-0000-4000-8000-0000000010fe".parse().unwrap(),
+        instance_path: vec![],
+    };
+    let mut b = a.clone();
+    b.id = "50000000-0000-4000-8000-0000000010ff".parse().unwrap();
+    view.members = [a.clone(), b.clone()].into_iter().collect();
+    for id in [&a, &b] {
+        view.values.insert(
+            id.clone(),
+            [(
+                "text".into(),
+                "Repeated identical very long designer annotation".into(),
+            )]
+            .into_iter()
+            .collect(),
+        );
+    }
+    for width in [220., 300.] {
+        let mut labels = Vec::new();
+        for id in [&a, &b] {
+            view.subject = SelectionSubject::Compound(
+                CompoundSelection::new(view.members.clone(), Some(id.clone())).unwrap(),
+            );
+            state.selection = SelectionTarget::Native(Box::new(view.clone()));
+            let before = state.selection.clone();
+            let (_, text, _) = frame(
+                &state,
+                RectPx {
+                    x: 400.,
+                    y: 80.,
+                    width,
+                    height: 1200.,
+                },
+            );
+            let label = text
+                .iter()
+                .find(|run| run.text.starts_with("Focus: "))
+                .unwrap();
+            assert!(
+                label.text.contains(if id == &a { "10fe" } else { "10ff" }),
+                "{}",
+                label.text
+            );
+            labels.push(label.text.clone());
+            assert_eq!(state.selection, before);
+        }
+        assert_ne!(labels[0], labels[1]);
+    }
+    let tail = "90000000-0000-4000-8000-000000000002".parse().unwrap();
+    let mut path_labels = Vec::new();
+    for ancestor in [
+        "90000000-0000-4000-8000-000000000003",
+        "90000000-0000-4000-8000-000000000004",
+    ] {
+        let mut id = a.clone();
+        id.instance_path = vec![ancestor.parse().unwrap(), tail];
+        view.members = [id.clone(), b.clone()].into_iter().collect();
+        view.values.insert(id.clone(), view.values[&a].clone());
+        view.subject = SelectionSubject::Compound(
+            CompoundSelection::new(view.members.clone(), Some(id)).unwrap(),
+        );
+        state.selection = SelectionTarget::Native(Box::new(view.clone()));
+        let before = state.selection.clone();
+        let (_, text, _) = frame(
+            &state,
+            RectPx {
+                x: 400.,
+                y: 80.,
+                width: 600.,
+                height: 1200.,
+            },
+        );
+        assert!(
+            text.iter()
+                .find(|run| run.text.starts_with("Focus: "))
+                .unwrap()
+                .text
+                .contains("10fe")
+        );
+        path_labels.push(
+            text.iter()
+                .find(|run| run.text.starts_with("Sheet path … / "))
+                .unwrap()
+                .text
+                .clone(),
+        );
+        assert_eq!(state.selection, before);
+    }
+    assert_ne!(path_labels[0], path_labels[1]);
+    assert_eq!(fixture.source_bytes(), source);
+}

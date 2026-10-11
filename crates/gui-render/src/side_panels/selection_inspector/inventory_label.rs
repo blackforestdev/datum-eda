@@ -14,20 +14,7 @@ pub(super) fn rows(
     ordinal: usize,
     columns: usize,
 ) -> Vec<String> {
-    // Display order never becomes an authored identity or selection focus.
-    let identity = truncate_text(&format!("{ordinal}: {}", id.id), columns / 2);
-    let separator = " · ";
-    let name = truncate_text(
-        &view.member_display_label(id, ordinal),
-        columns.saturating_sub(identity.chars().count() + separator.chars().count()),
-    );
-    let mut result = vec![
-        [name, identity]
-            .into_iter()
-            .filter(|part| !part.is_empty())
-            .collect::<Vec<_>>()
-            .join(separator),
-    ];
+    let mut result = vec![identity_row(view, id, ordinal, columns)];
     if view.has_inventory_states(id) {
         let mut states = Vec::new();
         if view.hidden.contains(id) {
@@ -57,18 +44,42 @@ pub(super) fn rows(
         result.push(head_preview(&format!("{prefix}{reason}{more}"), columns));
     }
     if !id.instance_path.is_empty() {
-        // This is explicitly a shortened occurrence path, not the full path.
-        let prefix = "Sheet path … / ";
-        let path = id
-            .instance_path
-            .iter()
-            .map(ToString::to_string)
-            .collect::<Vec<_>>()
-            .join(" / ");
-        let clue = truncate_text(&path, columns.saturating_sub(prefix.chars().count()));
-        result.push(head_preview(&format!("{prefix}{clue}"), columns));
+        result.push(occurrence_row(id, columns));
     }
     result
+}
+
+pub(super) fn identity_row(
+    view: &SelectionView,
+    id: &AuthoredSelectionIdentity,
+    ordinal: usize,
+    columns: usize,
+) -> String {
+    // Display order never becomes an authored identity or selection focus.
+    let identity = truncate_text(&format!("{ordinal}: {}", id.id), columns / 2);
+    let separator = " · ";
+    let name = truncate_text(
+        &view.member_display_label(id, ordinal),
+        columns.saturating_sub(identity.chars().count() + separator.chars().count()),
+    );
+    [name, identity]
+        .into_iter()
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<_>>()
+        .join(separator)
+}
+
+pub(super) fn occurrence_row(id: &AuthoredSelectionIdentity, columns: usize) -> String {
+    // This is explicitly a shortened occurrence path, not the full path.
+    let prefix = "Sheet path … / ";
+    let path = id
+        .instance_path
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>()
+        .join(" / ");
+    let clue = truncate_text(&path, columns.saturating_sub(prefix.chars().count()));
+    head_preview(&format!("{prefix}{clue}"), columns)
 }
 
 fn head_preview(value: &str, columns: usize) -> String {
