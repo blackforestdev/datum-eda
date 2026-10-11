@@ -4655,6 +4655,201 @@
       "Generic GetState panelstate does not establish standardmemberSELECTED/FOCUSED; exact queried selected/focus attrs are credited. CompoundfocusNone does not invent active memberfocus.",
       "Bulk257 fits existing framecap; explicit out-of-rangeIndex257 refusal only, no LimitsExceeded runtime coverage or expandedfixture.",
       "No design/source/journal writes/newdependency/build. Raw CAPTURE_ONLY unchanged, independentboundedacceptance separate; inherited supervision parityFAIL unwaived."
+    ],
+    "source_landing": {
+      "commit": "73b978551b68479e91a09cf526b5e523ced7b3a7",
+      "normal_hooks_exit_code": 0,
+      "owned_paths": 4,
+      "compiled_production_unchanged": true,
+      "bound_by_next_substantive_unit": "N11 exact widths ordinary proof"
+    }
+  },
+  "n11_exact_width_20261011": {
+    "scope": "Finite retained C04 N11 two exact canonical widths whose numeric display rounds equal, ordinary Inspect Tracks/Common\u2192Mixed, public read-only properties/currentbasis/no-write proof.",
+    "authority": "Explicit appointed-manager retained C04 N11 grant; no new unit/default/width/product policy or source edits.",
+    "source_commit_before_unit": "73b978551b68479e91a09cf526b5e523ced7b3a7",
+    "compiled_source_cohort": "Unchanged GUI78627a1f compiled7590c663; no source/dependency/build changes.",
+    "fixture": "Fresh active metricProject-only exact35 canonical whitelist from governed scope-and-reopen/s5a-native-core-v1 source; variants/secondProject and all operational trees excluded before reads. Existing Tracks1/2 width5080000/5080001nm, explicitmetric/mm decimal3, actualresolve554096a8/zeroDiagnostics.",
+    "setup_sha256": "e689fe009199e8eb4ddcc2161ea6cc9306dbe7eb452385672898a00b8ba19ab3",
+    "scope_transaction": {
+      "timestamp": "2026-10-11T20:46:52Z",
+      "previous_heartbeat": "2026-10-11T20:32:49Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_scope": [
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n11-exact-width-20261011.tar.xz"
+      ],
+      "transaction": "Frontier + beads in_progress/codex + canonical export before scheduled proof/archive writes",
+      "grant": "Root explicit retained C04 N11 equal-rounded exact canonical Common/Mixed; no source/product/unit changes"
+    },
+    "driver_sha256": "0d59acdfc08276f298d8db8ec87f612021adbb3174288c9d875d46098c1fa309",
+    "result_sha256": "e12eac566e4b354c38250ae9b21774e7e5f8cfab614fb552a3e62983a299482c",
+    "gui_sha256": "78627a1f44497650e3908958a4bf551cad4b46858c11c2ed3adecfb968fc5e22",
+    "raw_outcome": "CAPTURE_ONLY_N11_EXACT_WIDTH_REVIEW_PENDING",
+    "failure": null,
+    "terminal": {
+      "session": 1169,
+      "exit_code": 0,
+      "gui_pid": 792564,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 792564,
+        "device_epoch": 1
+      }
+    },
+    "observations": 6,
+    "accessible_identity": {
+      "address": "unix:path=/run/user/1000/at-spi/bus_1,guid=b27455dde6bbc75bbe3b795a6aa5b0cb",
+      "service": ":1.5909",
+      "pid": 792564,
+      "PID_lookup": "(uint32 792564,)\n"
+    },
+    "singleton_widths": [
+      {
+        "canonical_value": "5080000",
+        "public_name": "(<'Width: 5.080mm'>,)",
+        "public_attributes": {
+          "read-only": "true",
+          "subject-kind": "object",
+          "project-id": "20000000-0000-4000-8000-000000000001",
+          "active-pane": "0",
+          "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+          "description": "5.080mm",
+          "value-state": "common",
+          "canonical-value": "5080000"
+        }
+      },
+      {
+        "canonical_value": "5080001",
+        "public_name": "(<'Width: 5.080mm (rounded)'>,)",
+        "public_attributes": {
+          "read-only": "true",
+          "subject-kind": "object",
+          "project-id": "20000000-0000-4000-8000-000000000001",
+          "active-pane": "0",
+          "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+          "description": "5.080mm (rounded)",
+          "value-state": "common",
+          "canonical-value": "5080001"
+        }
+      }
+    ],
+    "mixed_width": {
+      "public_name": "(<'Width: Mixed'>,)",
+      "public_attributes": {
+        "read-only": "true",
+        "subject-kind": "compound",
+        "project-id": "20000000-0000-4000-8000-000000000001",
+        "active-pane": "0",
+        "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+        "description": "Mixed",
+        "value-state": "mixed"
+      }
+    },
+    "outcomes": [
+      "Ordinary source-derived interior clicks acquire actual Track1/2/currentProject/revision; each uses focused Inspect Tracks\u2192SomeTrack scope-only transition preserving fullsubject/members/focus/basis and allcanonical bytes.",
+      "Native canonical copper_width_nm Common5080000 and Common5080001 remain distinct. Shared engine format_length joins numeric value and suffix withoutspace: both numeric rendered5.080mm, roundedfalse/true. PublicName/Inspector second truthfully appends(rounded); never require byte-identical full labels.",
+      "Ordinary ReplaceTrack1 then ShiftAddTrack2 yields exactCompound2 focusTrack2. Initial All scope has no classwidthfield; actual Inspect Tracks alone changes scope, then public widthvalue-state mixed/NameMixed/no canonical scalar, currentkindcompound/count2/fullIDs qualified first.",
+      "Public service bound by actual GUI PID; rootkind/basis/memberidentities/count/FieldsNameTracks before fieldquery. Only expected UnknownObject within bounded asyncreadiness is retryable and rawstderr retained; allothertransport failures fatal.",
+      "All35 prelaunch/start/source_after/final canonical maps equal/startup{}; publicqueries do not change final fullpairSelectionView. GUI0/samePIDdrained receipt/diagnosticcomplete/errorNone/nooverflow."
+    ],
+    "canonical_invariance": {
+      "paths": 35,
+      "all_maps_equal": true,
+      "startup_delta": {},
+      "phase_maps_archived": true
+    },
+    "failed_cohort": {
+      "attempt": 68,
+      "driver_sha256": "2c6a6ed919f352b6142cb9a51a25d9dfa79190ed496b5d198efb3378ad743ba2",
+      "result_sha256": "f216db891f08c47481a997e44b3d760d8a5c9dcb3d5a531860fe37e81047dab6",
+      "outcome": "FAIL",
+      "failure": "AssertionError()",
+      "terminal_session": 32817,
+      "terminal_exit_code": 0,
+      "gui_pid": 792292,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 792292,
+        "device_epoch": 1
+      },
+      "classification": "Driver expected5.080 mm but actualnativeformatter rendered5.080mm. CorrectTrack1/InspectTracks subset reached; no publicwidthquery/paircredit. Canonical35 unchanged. No productbug/sourcechange."
+    },
+    "independent_reviews": {
+      "code_audit": "Actual69 native/publicwidth/pixel bounded ACCEPT plus final50e06fd4/b9864fb5 all105safe/104hash/40origins/11currentpins/six35maps correspondence ACCEPT received.",
+      "management_review": "Final17d77018/50e06fd4/b9864fb5 bounded governance/package PASS received; failed68/actual69/scopes/roundedqualifier/gates/owned4 coherent.",
+      "root": "Appointedmanager actual69/publicMixed/scopedPNG acceptance and immutable105entry/six35map/11pin correspondence verified; bounded objective accepted, normal hooks/landing pending. FullN11/C04/HUMAN remains open."
+    },
+    "required_gates": {
+      "scope": "Finite N11 exact canonical widths/equal numeric rendering/Mixed ordinary read-only property proof; no source/build edits.",
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "2e0608",
+          "exit_code": 0,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "f727df",
+          "exit_code": 0,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "ac7782",
+          "exit_code": 0,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Unchanged production/sourceGUI from7590c663; adequate sourcehealth3108/dependency/resource PASS. Inherited gui_supervision_surface parity FAIL unwaived/dat-supervision-owner-parity-202s. No compilation justified.",
+      "terminal": {
+        "session": 1169,
+        "exit_code": 0,
+        "gui_pid": 792564,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "failed_terminal": {
+        "session": 32817,
+        "exit_code": 0,
+        "gui_pid": 792292,
+        "gui_exit_code": 0,
+        "cause": "Driver incorrect5.080 mm literal; native formatted5.080mm; no public field query reached"
+      },
+      "pending": "Normal hooks/landing only; actual owned4 stagedformat/whitespace0 archived"
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n11-exact-width-20261011.tar.xz",
+      "sha256": "50e06fd4c1570819c7191bba9502bc4537ec3df77bb624f59e41fa795d373477",
+      "manifest_sha256": "b9864fb5769fde211557c914be0d2ba6bed68d6ab16072a9e1ead486b3787710",
+      "regular_files": 105,
+      "hashed_files": 104,
+      "raw": 29,
+      "canonical_final": 35,
+      "canonical_blobs": 29,
+      "canonical_maps": 6,
+      "source_pins": {
+        "crates/engine/src/ir/units.rs": "8573fb3ce35e5546315533985a0ca0e2fbe88a41ebbeb7b43d4c7bc7d1861257",
+        "crates/gui-protocol/src/selection_view.rs": "19f6db63ec5c0d9a04b5c131eafd45f1e61843399f1d62905f4b374ee385ddd5",
+        "crates/gui-protocol/src/selection_view/quantities.rs": "8b2425a051343412f3a071fc7b96de97cc41ea9d778f5c27c01d82815b224af5",
+        "crates/gui-protocol/src/selection_view/properties.rs": "003386bee01c22fc65dcabb77e75e0e38a2934c2521096b7b5f0fbfdb0bb7ada",
+        "crates/gui-protocol/src/selection_view/inspection.rs": "091067c99b4b7b236ff273b3111915e3ea739d6b2b4bd6bfa6a0cd3abc4a1231",
+        "crates/gui-app/src/runtime_selection/publication.rs": "ff3b599c10e1068ea0629e96e699489b84857e1cab923e9b56e2156c924f3ae9",
+        "crates/gui-app/src/runtime_selection_menu.rs": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+        "crates/gui-protocol/src/workspace_layout/selection_menu.rs": "515dd1c3356d8db06a2b2b1b8f7a910e407698e9afdbe737836e5c8c1f3e841c",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection.rs": "6c8350d0bcb9f2a58b1d38177013f025f66c7b9ad1a6e9ce4682b46931fb7c5b",
+        "crates/gui-app/src/terminal_accessibility_platform/atspi/selection/presentation.rs": "2cc85023e4ee8f576c8599a0e8b80f2ef05424a4d1cc6f8110ce46eef43cba26",
+        "crates/gui-render/src/side_panels/selection_inspector.rs": "e1d37b95c9e7b63cfe6232d4b476d0a2099961daf0ff121f3170292847e8b0c6"
+      }
+    },
+    "limits": [
+      "Existing integerlength canonical equality/scalarnear-equal Trackwidth/mm decimal3 on oneProject; no allquantitytypes/exactrational/unitediting/sharedUUIDcrossProject qualification.",
+      "Actualnumericdisplayequal but truthfulroundedqualifier differs; no defect or identicalfulllabel claim. PairAll initially omitsclassfields by contract; ordinaryInspectTracks required.",
+      "Read-only queriedattributes/publiclabels do not establish standardAT/screenreader/HUMAN compliance. Raw CAPTURE_ONLY and failed68 retained, independentboundedacceptance separate.",
+      "Inherited gui_supervision_surface parityFAIL unwaived/dat-supervision-owner-parity-202s; fullN11/C04 qualification pending."
     ]
   }
 }
