@@ -2876,7 +2876,7 @@
     }
   },
   "diagnostic_artifact_lifetime_correction_20261011": {
-    "delivery_state": "Actual bounded source/native/package/governance and affected gates accepted; normal main commit hooks/source landing binding pending. Full C04/N10/HUMAN qualification remains open.",
+    "delivery_state": "Bounded Diagnostic correction landed674618fe with actualnormalhooks and6/6source binding. Broader qualification remains open.",
     "controlling_behavior": "Explicit Diagnostic fingerprint survives an equivalent producing CheckRun; disappearance empties selection and reports its cause; restoration does not resurrect selection; explicit reacquisition remains available.",
     "actual_entry": "Existing keyboard selection menu Checks leaf, fingerprint sha256:260611ced8897cecba4f669ef163ded751b6644af9e32efa7c0a74294e60ab29; location null, no marker proof.",
     "canonical_setup": "Fresh governed same-outcome-default copy. Actual CheckRun and SIG Track/Create/Delete use existing canonical CLI; delete exactly returned track_uuid. Setup/check writes are separate from selection-only hash invariance.",
@@ -2994,6 +2994,320 @@
     "actual_governance_receipt": "Independent management personally checked224regular names/types and223manifesthashes: zero unsafe/link/unlisted entries; canonical48/50/51 22/34/43 match actualmaps, final6current/archivedpins exact. Actual bounded package/governance PASS received; pixel acceptance attributed only auditor/root. Gates amendment independently pending.",
     "archive_supersession": "Initial66c02d9f224-entry archive independently passed; replaced by84471347 226entries solely adding actual finalgates JSON and projectcheck/stagedfmt/lane/whitespace terminal receipts to safe raw whitelist. Existing115raw/99canonical/9sources unchanged; no proof/build rerun.",
     "actual_independent_package_receipt": "Auditor personally verified all initial224regular/223hashes/115originalraw/canonical22+34+43/final6pins/before-unit3HEAD parents. Actual bounded package acceptance received; final2raw gate receipt delta pending correspondence.",
-    "actual_final_package_receipts": "Actual independent code auditor and management both accepted final226safe regular entries/225manifesthashes, exact2newraw gates and stagedreceipts; removing2entries reproduces originalmanifest0afcc583, prior223payloads unchanged. Initial projectcheckFAIL\u2192later82PASS and inheritedparityFAIL/no waiver preserved. Final source/runtime acceptance unchanged; no reruns."
+    "actual_final_package_receipts": "Actual independent code auditor and management both accepted final226safe regular entries/225manifesthashes, exact2newraw gates and stagedreceipts; removing2entries reproduces originalmanifest0afcc583, prior223payloads unchanged. Initial projectcheckFAIL\u2192later82PASS and inheritedparityFAIL/no waiver preserved. Final source/runtime acceptance unchanged; no reruns.",
+    "actual_source_landing": {
+      "commit": "674618fe6bebbf478cfe7603175aadb18fd9b3ac",
+      "normal_commit_terminal": 0,
+      "normal_hooks": "Actual visualtruth/stagedfmt passed without bypass",
+      "source_binding": "Actual gitshow6/6 hashes match finalreviewed/compiled/native51 cohort",
+      "qualification": "Bounded Diagnostic delivery accepted; broaderC04/N10/HUMAN remains open."
+    }
+  },
+  "proposal_review_artifact_continuation_20261011": {
+    "state": "Root PM059 manager accepts bounded source and ordinary Applied/Undo delivery; both independent final package reviews passed. Normal commit hooks and source landing pending.",
+    "producer": "Fresh governed same-outcome-default copy, existing export-route-proposal/review-route-proposal both0, actual accepted artifact/one actionID sha256:8e713a529175236c158351edbfd434b34a186cfd9803f22e120163cab84da2fc.",
+    "explicit_scope": "Distinct sameactionID Proposal/Review, wholeaction acquisition, actualproducer invalidation/report/no resurrection, authoredregion/CtrlA exclusion/no mixedcompound.",
+    "current_preflight": "Actual52 failed before acquisition because L1 hidden. Ordinary L1 enable53 acquired exact NativeProposal; unchanged producer Save failed projection MissingArtifactAuthority because native refresh omitted explicit review. Source corrected and compiled. Real Review row now composed beside contextual Inspector, independent of selected subject; no bracket wrapping/evidence-hit/palette policy.",
+    "limits": [
+      "Raw CAPTURE_ONLY results remain raw; actual independent source/runtime/package acceptance separately recorded.",
+      "Finite Applied/Undo behavior; discard unproved, fullN10/C04/HUMAN pending. No marker/evidence selection or keyboard wrapping.",
+      "Legacy startup ReviewAction is not explicit Native Review acquisition; only actual clicked row+typed fullview qualifies.",
+      "No private producer/model setters, Project original fixture untouched; canonical producer operations separated from per-refresh selection nonmutation baselines.",
+      "Inherited parity collector failure remains unwaived/intake dat-supervision-owner-parity-202s; no row/collector/policy repair."
+    ],
+    "source_checkpoint": {
+      "paths": {
+        "crates/gui-protocol/src/workspace_loading.rs": "7ffb6ce9aeac68f10c2dafffa01fbcdde7b0efb62d1b9b3fdd872688359842de",
+        "crates/gui-protocol/src/workspace_loading/review_refresh_tests.rs": "ef4688045186dddc0636d5565eb96866ef5a3d565a49b63f20df3083dc1c505f",
+        "crates/gui-render/src/side_panels.rs": "db1c85bc79dd5349d34365be3d99bed9cad763893a8c09c18a6a74c08cd481ab",
+        "crates/gui-render/src/side_panels/review_actions.rs": "ee7a4ba254286a242484b848818432f6feab731a3323033ed1349ab627b8e5c4",
+        "crates/gui-render/src/side_panels/review_actions/tests.rs": "f298e038ed157be4968f4bc31ba8e8607826253eab21c8ae058b02950a91d1e3"
+      },
+      "ordinary_before_source": "674618fe6bebbf478cfe7603175aadb18fd9b3ac",
+      "actual_probe": "attempt-53-proposal-survival-result.json",
+      "scope_receipts": [
+        "proposal-review-scope-synchronization.json",
+        "proposal-refresh-scope-synchronization.json"
+      ]
+    },
+    "governance": {
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "retained_grant": "UVT-S5A-BUILD / S5A-C04 N10",
+      "expiry": "2026-10-12T02:01:42Z",
+      "manager": "Owner-appointed /root under PM059; actual bounded restoration/refresh correction approved, no successor or new product policy.",
+      "before_edit_receipts": [
+        "proposal-review-scope-synchronization.json actual18:35:47Z",
+        "proposal-refresh-scope-synchronization.json actual18:36:50Z"
+      ]
+    },
+    "changes": [
+      "Both native workspace refresh APIs reload explicitly supplied artifact or complete route input producer; bare/incomplete native board requests avoid route query. Fresh supplied engine model and post-worker publication guards retained; no copied prior producer payload.",
+      "Normal review_actions child composes clipped whole parent-action row beside contextual Inspector with existing PREV/NEXT clamped behavior. Existing ReviewAction dispatch supplies typed subject; active actionID or legacy startup state alone is not acquisition proof."
+    ],
+    "tests": {
+      "protocol": {
+        "command": "cargo test -p datum-gui-protocol explicit_artifact_refresh_uses_fresh_model_and_canonical_producer_status -- --nocapture",
+        "guard": "proof",
+        "exec": 85695,
+        "terminal": 0,
+        "pass": 1,
+        "fail": 0,
+        "compile": "1m18s",
+        "test": "1.89s",
+        "scope": "Actual canonical export, fresh supplied model, same action distinct typed subjects/empty authored members; unchanged source/history/artifact; bare/incomplete review absence; canonical Applied invalidates both, actual Undo restores Accepted/explicit acquisition authority. No runtime no-resurrection inference."
+      },
+      "renderer": {
+        "command": "cargo test -p datum-gui-render parent_action_chrome_remains_reachable_and_clipped_beside_each_subject -- --nocapture",
+        "guard": "proof",
+        "exec": 82916,
+        "terminal": 0,
+        "pass": 1,
+        "fail": 0,
+        "scope": "Normal/narrow source geometry preserves Inspector and clipped action hit; None/legacy Review fixture only. Native typed subject/pixels remain ordinary proof."
+      }
+    },
+    "gui_build": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --bin datum-gui",
+      "exec_session": 60989,
+      "terminal_exit_code": 0,
+      "gui_sha256": "9a0bfcb802374fc48c090986651d22955ac60c7824868b65e8e69af209200b9b",
+      "source_checkpoint": "proposal-review-source-checkpoint-2.json",
+      "build_log_sha256": "2c90216d5bea782a8075434d1fc45d0d440743d40eff5a7a2e1cab0e37a8ad63"
+    },
+    "failed_cohorts": {
+      "52": "FAIL0 acquisition/Save, GUI753628 exit0/drained; canonical/artifact invariant; actual L1 hidden makes Proposal overlay unavailable. Not lifetime defect.",
+      "53": "FAIL after explicit Proposal acquisition; GUI754773 exit0/drained. Harmless Save canonical only cursor creation, artifact unchanged; actual fresh projection MissingArtifactAuthority/stale selected view and overlay omission, mandatory corrected worker seam.",
+      "54": "FAIL at region oracle, GUI758814 exit0/drained; typed Proposal+Review sameID and successful Save each, exact3 authored CtrlA accepted subsets. Plain drag reserved inert; start hit Proposal overlay, so no region/Apply/Undo/narrow credit. Input-only ShiftAdd correction55."
+    },
+    "current_native": {
+      "attempt": 55,
+      "exec": 8562,
+      "exec_terminal": 0,
+      "pid": 759862,
+      "gui_exit": 0,
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 759862,
+        "device_epoch": 1
+      },
+      "producer_sha256": "a82313c59f3a7835c231a0ee782d3d4b2b24345ef872f96c1005226c18e8bf17",
+      "result_sha256": "1b25d0ab2c206043537e0e4f307a49618e555fac7c6cebfbffe8e874495b00d3",
+      "raw_outcome": "CAPTURE_ONLY_LIFECYCLE_REVIEW_PENDING",
+      "failure": null,
+      "receipts": 16,
+      "canonical_cli_count": 10,
+      "canonical_cli_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "readonly_refreshes": [
+        {
+          "action": "harmless-Save-refresh",
+          "before_equals_after": true,
+          "path_count": 5,
+          "Save_refused": false
+        },
+        {
+          "action": "harmless-Review-Save",
+          "before_equals_after": true,
+          "path_count": 5,
+          "Save_refused": false
+        },
+        {
+          "action": "canonical-Apply-invalidates-Review",
+          "before_equals_after": true,
+          "path_count": 15,
+          "Save_refused": true
+        },
+        {
+          "action": "canonical-Undo-no-resurrection",
+          "before_equals_after": true,
+          "path_count": 18,
+          "Save_refused": true
+        }
+      ],
+      "startup_delta": {},
+      "final_canonical_count": 18,
+      "source_after_equals_final": true,
+      "artifact_before_equals_final": true,
+      "region_exact_members": {
+        "expected": [
+          [
+            "BoardOutline",
+            "00000000-0000-0000-0000-00000000c207"
+          ],
+          [
+            "Footprint",
+            "00000000-0000-0000-0000-00000000c203"
+          ],
+          [
+            "Footprint",
+            "00000000-0000-0000-0000-00000000c204"
+          ]
+        ],
+        "actual": [
+          [
+            "BoardOutline",
+            "00000000-0000-0000-0000-00000000c207"
+          ],
+          [
+            "Footprint",
+            "00000000-0000-0000-0000-00000000c203"
+          ],
+          [
+            "Footprint",
+            "00000000-0000-0000-0000-00000000c204"
+          ]
+        ],
+        "owners": [
+          "engine/substrate/electrical_selection_query/authored_sources.rs",
+          "gui-app/runtime_selection.rs"
+        ]
+      },
+      "region_observation": {
+        "prior_publish_count": 1,
+        "after_publish_count": 2,
+        "same_sequence_allowed": "Unchanged fullview may be deduplicated; actual native acquisition completion and boundary pixels qualify the postrelease state"
+      },
+      "normal_and_narrow": "Actual clicked parent Review lane, typed full subject exact same actionID as Proposal, zero authored IDs; normal1333x800 and narrow646x646 Inspector+lane+PREV/NEXT pixels, no stale ACTIVE-ID inference.",
+      "producer_lifecycle": "Actual returned trackID equals exported operation, same Apply batch creates Track+SetProposalMetadata Applied. Undo exact undo_of apply transaction restores Accepted and removes Track; external artifact remains byte-identical. Fresh current None report on Apply; restored ordinaryNone; explicit sameID Review reacquisition only.",
+      "report_pixels": "Producing artifact cause and selection-cleared consequence visible, middleellipsis for full notice; exact full cause raw Native notice. No authored dropped IDs/count fabricated.",
+      "observer_limits": [
+        "Unchanged Shift Add fullview may retain same action-evidence sequence; actual native selection accessibility ready acknowledgment and active/cleared boundary pixels prove region publication, exact prior3 afterward.",
+        "Native report explicitly emits Project/model revision; restored enumNone direct runtime revision/tip unavailable and qualified indirectly by current header+fresh worker/source guard, no directGUI-tip claim.",
+        "Input/output diagnostic pre-drain complete=false remains separate from actual drained_device_live shutdown receipt."
+      ]
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/proposal-review-artifact-lifetime-20261011.tar.xz",
+      "archive_sha256": "700d575cd13a02d12b69d5ed33e934e94cb59692475a87df145218a2d50d60fa",
+      "manifest_sha256": "5263c12b63e739c8c2dd9fd1282d16f9966edc38f25f82fd525a3bc406c13635",
+      "file_count": 141,
+      "hashed_files": 140,
+      "raw_count": 81,
+      "canonical_final_count": 32,
+      "canonical_blob_count": 20,
+      "source_count": 7,
+      "canonical_map_count": 37
+    },
+    "required_gates": {
+      "actual_transport": "functions.exec independent non-Cargo gates",
+      "gates": [
+        {
+          "command": "python3 scripts/check_source_health.py --base-ref HEAD",
+          "chunk_id": "bf299f",
+          "wall_time_seconds": 1.189198557,
+          "exit_code": 0,
+          "original_token_count": 16,
+          "output": "Source health governance passed (3107 source files checked).\n"
+        },
+        {
+          "command": "python3 scripts/check_dependency_authority.py",
+          "chunk_id": "16dbae",
+          "wall_time_seconds": 0.518100754,
+          "exit_code": 0,
+          "original_token_count": 7,
+          "output": "dependency authority: PASS\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "03cc18",
+          "wall_time_seconds": 0.261954637,
+          "exit_code": 0,
+          "original_token_count": 21,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        },
+        {
+          "command": "python3 scripts/check_spec_governance.py",
+          "chunk_id": "43d9ed",
+          "wall_time_seconds": 0.183741445,
+          "exit_code": 0,
+          "original_token_count": 27,
+          "output": "Spec governance gate passed (552 specs classified: 463 governed, 59 doctrine, 7 pending, 23 historical).\n"
+        },
+        {
+          "command": "python3 scripts/check_cargo_resource_policy.py",
+          "chunk_id": "822d7e",
+          "wall_time_seconds": 2.6333e-05,
+          "exit_code": 0,
+          "original_token_count": 7,
+          "output": "Cargo resource policy: PASS\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "fbcc38",
+          "wall_time_seconds": 1.2137353100000001,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "d8ad7c",
+          "wall_time_seconds": 0.013212567,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_spec_parity.py",
+          "chunk_id": "d2d023",
+          "wall_time_seconds": 0.152023713,
+          "exit_code": 1,
+          "original_token_count": 88,
+          "output": "Spec parity check failed:\n  - gui_supervision_surface: doc row ('specs/PROGRESS.md', 9, 'bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3') != code inventory ('specs/PROGRESS.md', 1, 'a8a53ac878e804eb2527bf575d807b426fc336772eacc04720b5912c88cb540c')\nRun `python3 scripts/check_spec_parity.py --update` after updating the owning spec.\n"
+        }
+      ],
+      "retained_parity_failure": "Unchanged inherited gui_supervision_surface collector failure, dat-supervision-owner-parity-202s; no waiver or row/collector repair."
+    },
+    "independent_review": {
+      "code_audit": "Actual frozen five sources, native55 sixteen observations/all required pixels and final archive700d575c (141 safe regular/140 hashes) independently accepted. Raw CAPTURE_ONLY remains unchanged; exact staged-check addition and original manifest44809ccd reconstruction preserve prior139 pins.",
+      "management": "Actual governance/package PASS at proof fdff7161/archive700d575c/manifest5263c12b: all140 hashes, exact five sources, owned9 staged scope and rustfmt/whitespace terminal0; no mandatory correction.",
+      "root": "Actual typed Proposal/Review sameID, Save survival, Apply clear/report, Undo no resurrection/reacquisition, authored exclusions and bounded narrow lane accepted. Discard/full N10/C04/HUMAN remain open; inherited parity FAIL unwaived."
+    },
+    "staged_checks": {
+      "owned_paths": [
+        "crates/gui-protocol/src/workspace_loading.rs",
+        "crates/gui-protocol/src/workspace_loading/review_refresh_tests.rs",
+        "crates/gui-render/src/side_panels.rs",
+        "crates/gui-render/src/side_panels/review_actions.rs",
+        "crates/gui-render/src/side_panels/review_actions/tests.rs",
+        ".beads/issues.jsonl",
+        "specs/active_frontier.json",
+        "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/proposal-review-artifact-lifetime-20261011.tar.xz"
+      ],
+      "receipts": [
+        {
+          "command": [
+            "python3",
+            "scripts/check_rustfmt.py",
+            "--staged"
+          ],
+          "exit_code": 0,
+          "stdout": "rustfmt gate passed for staged files (2 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--cached",
+            "--check"
+          ],
+          "exit_code": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      ]
+    }
   }
 }

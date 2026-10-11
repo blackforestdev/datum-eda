@@ -12,6 +12,7 @@ mod helpers;
 mod inspector_chrome;
 mod render_inspector;
 mod render_project_filters;
+mod review_actions;
 mod selection_inspector;
 use helpers::*;
 pub(super) fn render_side_panels(
@@ -98,7 +99,7 @@ fn render_side_panels_logical(
     let filters_rect = project_layout.filters_rect;
     let right_layout = solve_right_panel_layout_with_taffy(state, right)
         .unwrap_or_else(|| fallback_right_panel_layout(state, right));
-    let inspector_rect = right_layout.inspector_rect;
+    let (inspector_rect, review_rect) = review_actions::split(state, right_layout.inspector_rect);
     panel_chrome::render(
         project_rect,
         filters_rect,
@@ -124,6 +125,9 @@ fn render_side_panels_logical(
         text_runs,
         hit_regions,
     )?;
+    if let Some(rect) = review_rect {
+        review_actions::render(state, rect, panel_quads, text_runs, hit_regions);
+    }
 
     Ok(visual_row)
 }

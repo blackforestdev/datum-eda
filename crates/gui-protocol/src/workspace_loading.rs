@@ -11,7 +11,7 @@ pub fn load_board_editor_workspace_with_model(
         request.board_file.is_none(),
         "Native edit requires a native Project"
     );
-    let (state, model) = load_workspace(request, false, None)?;
+    let (state, model) = load_workspace(request, has_explicit_review(request), None)?;
     Ok((state, model.context("Native Project basis unavailable")?))
 }
 
@@ -25,7 +25,16 @@ pub fn project_board_editor_workspace(
         request.board_file.is_none(),
         "Native projection requires a native Project"
     );
-    Ok(load_workspace(request, false, Some(model))?.0)
+    Ok(load_workspace(request, has_explicit_review(request), Some(model))?.0)
+}
+
+// Native refresh preserves an explicitly opened producer, but bare editor
+// requests must not initiate a route-generation query without its inputs.
+fn has_explicit_review(request: &LiveReviewRequest) -> bool {
+    request.artifact_path.is_some()
+        || (request.net_uuid.is_some()
+            && request.from_anchor_pad_uuid.is_some()
+            && request.to_anchor_pad_uuid.is_some())
 }
 
 pub(super) fn load_workspace_state_impl(
@@ -415,3 +424,7 @@ pub(super) fn load_scene_from_engine(
 #[cfg(test)]
 #[path = "workspace_loading_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "workspace_loading/review_refresh_tests.rs"]
+mod review_refresh_tests;
