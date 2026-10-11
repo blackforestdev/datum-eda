@@ -3870,6 +3870,231 @@
       "Bounds/Start/End quantity context remains unavailable and secondary text clipping unqualified.",
       "Only public journaled delete-label/delete-wire/Undo intentional canonical producer writes; refusal/refresh/reacquisition preserve post-producer full canonical maps. No private writes or authored fake dropped counts.",
       "Raw CAPTURE_ONLY remains unchanged; bounded objective acceptance is separately attributed. Inherited supervision parity FAIL unwaived; full qualification remains open."
-    ]
+    ],
+    "source_landing": {
+      "commit": "7590c6633220ae4f347c0676d88cfda8a240b8ab",
+      "normal_hooks": "terminal0, visual truth/rustfmt passed",
+      "source_blobs": "Independent root/reviewers verified3/3 committed source hashes equal compiled/native62 cohort; clean tree."
+    }
+  },
+  "n04_edge_corner_region_20261011": {
+    "scope": "Finite retained C04 N04 one ordinary ShiftAdd rectangle: edge x-auto-pan, corner two-axis auto-pan, interior-stop, exact complete world Wire endpoint oracle on release.",
+    "authority": "Root authorized after Run repair delivery under unchanged C04 grant; no new semantics, source edits, build, thresholds or successor.",
+    "before_archive_scope": {
+      "actual_transaction": "2026-10-11T20:04:34Z",
+      "previous_heartbeat": "2026-10-11T19:54:04Z",
+      "session": "codex-s5a-c04-inventory-keyboard-20261011",
+      "expires_at": "2026-10-12T02:01:42Z",
+      "added_exact_paths": [
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n04-edge-corner-region-20261011.tar.xz"
+      ],
+      "before_archive_write": true,
+      "grant": "Root-authorized finite retained C04 N04 edge/corner/interiorstop exactworldregion evidence delivery"
+    },
+    "source_commit": "7590c6633220ae4f347c0676d88cfda8a240b8ab",
+    "fixture": "Fresh complete61 canonical-only copy of original semantic-scope, not mutated derived fixture; actual resolver Project2000...1/revision67a175/51objects/0diagnostics. Full exact3root[] Wire endpoints qualified independently.",
+    "setup_sha256": "3a8173924ffd2bd73f50a189da35e04999d076cb12296eab2bb33ac1a8c30bb0",
+    "driver_sha256": "f7510df1d7154dd44827656eb252f59b59e1d025289840bcbe099f3bf8114db6",
+    "result_sha256": "1c517e15d8ebb4970a6487c12b96eb7d7fbe61a39c4402a17751745fa3209cb7",
+    "raw_outcome": "CAPTURE_ONLY_N04_EDGE_CORNER_REVIEW_PENDING",
+    "failure": null,
+    "gui_sha256": "78627a1f44497650e3908958a4bf551cad4b46858c11c2ed3adecfb968fc5e22",
+    "terminal": {
+      "session": 99873,
+      "exit_code": 0,
+      "gui_pid": 779892,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 779892,
+        "device_epoch": 1
+      }
+    },
+    "observations": 6,
+    "outcomes": [
+      "Distinct Wire9 prior P; all17 nonWire eligibility filters preserve fullP and canonical bytes, exact17set leaves Wire eligible.",
+      "Held source-blank ShiftAdd press fixes world anchor once. Actual right scene-edge xpan leaves y fixed; bottom-right corner produces both axes.",
+      "All observed held actionstates preserve original P. Two later actualMain presentedframes after moving to interior have increasing presentation counts and identical camera.",
+      "After settled final camera, ordinary1px interior move and return refresh gesture endpoint against actualprepared projection before release. Dashed boundary clipped at viewport, original P stillselected untilrelease.",
+      "Complete independent Wire endpoint predicate (bothanchors inside closed finalworldrectangle) gives exactWire8/9/D; union priorWire9 has added distinctmembers. Release publishes freshCompound8/9/D/current67a/root[] with focusWire9."
+    ],
+    "release_world_oracle": {
+      "fixed_anchor": [
+        -936790,
+        -1042390
+      ],
+      "current_presented_camera": {
+        "center_x_nm": 74175840.0,
+        "center_y_nm": 21855966.0,
+        "zoom": 1.0
+      },
+      "endpoint": [
+        89187134,
+        21920868
+      ],
+      "closed_rectangle": [
+        [
+          -936790,
+          -1042390
+        ],
+        [
+          89187134,
+          21920868
+        ]
+      ],
+      "candidates": [
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000008",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000009",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000000d",
+          []
+        ]
+      ],
+      "expected_union_prior_Wire9": [
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000008",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-000000000009",
+          []
+        ],
+        [
+          "Wire",
+          "73000000-0000-4000-8000-00000000000d",
+          []
+        ]
+      ],
+      "interior_presentations": [
+        {
+          "attempts": 615,
+          "counts": {
+            "coalesced": 62,
+            "duplicate_tokens": 0,
+            "presentations": 227,
+            "received": 623,
+            "requested": 623,
+            "suppressed": 417
+          },
+          "damage": 691,
+          "device_generation": 1,
+          "host_generation": 1,
+          "pending": false,
+          "presented_damage": 691,
+          "ready": false,
+          "reason": "presented",
+          "rendering": null,
+          "window": "WindowId(27262980)"
+        },
+        {
+          "attempts": 659,
+          "counts": {
+            "coalesced": 63,
+            "duplicate_tokens": 0,
+            "presentations": 249,
+            "received": 667,
+            "requested": 667,
+            "suppressed": 446
+          },
+          "damage": 721,
+          "device_generation": 1,
+          "host_generation": 1,
+          "pending": false,
+          "presented_damage": 721,
+          "ready": false,
+          "reason": "presented",
+          "rendering": null,
+          "window": "WindowId(27262980)"
+        }
+      ]
+    },
+    "canonical_invariance": {
+      "all_final_equals_prelaunch": true,
+      "canonical_paths": 61,
+      "startup_delta": {},
+      "all_fullphase_maps_in_archive": true
+    },
+    "independent_reviews": {
+      "code_audit": "Full final f751driver/source and actual63 bounded runtime/pixel recommendation plus final287ab2bc safearchive correspondence PASS received:156regular/155hashes/source9/all6maps/current45raworigins exact. No additional proof requested.",
+      "management_review": "Final bounded governance/package PASS received at a310a6d4/287ab2bc/b4e4f1bd:156safe/all155hashes/raworiginal/source9/all6maps/owned4stage/currentgates and open qualification clear.",
+      "root": "Appointed manager personally reviewed actual63raw/camera/finalboundary/release and independently verified final156entryarchive/source9/maps; accepts finite objective and authorizes normal owned4 landing. Some selected geometry is clipped outside pane after auto-pan; no all3 visiblecanvascue claim."
+    },
+    "required_gates": {
+      "current_gates": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "d53761",
+          "wall_time_seconds": 0.872329628,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "dd1393",
+          "wall_time_seconds": 3.2476e-05,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "45d243",
+          "wall_time_seconds": 0.012811358,
+          "exit_code": 0,
+          "original_token_count": 21,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        }
+      ],
+      "reused": "Source/GUI unchanged from normal7590c663 and just-delivered Run sourcehealth3108/dependency/resource PASS. No additional compilation warranted; inherited gui_supervision_surface parity FAIL unwaived (dat-supervision-owner-parity-202s).",
+      "terminal": {
+        "session": 99873,
+        "exit_code": 0,
+        "pid": 779892,
+        "gui_exit_code": 0,
+        "shutdown": "drained_device_live"
+      },
+      "pending": "Normal hooks/landing only; actual owned4 stagedformat/whitespace0 archived."
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n04-edge-corner-region-20261011.tar.xz",
+      "sha256": "287ab2bc18ee8d982cc5d09d07a3323e4f581c978f63943330897fe4f9e57d2b",
+      "manifest_sha256": "b4e4f1bdf73fafe91cfbc3dcb5082280d46f80258c6e076e106a8cbd0b17c0c7",
+      "regular_files": 156,
+      "hashed_files": 155,
+      "raw": 36,
+      "canonical_final": 61,
+      "canonical_blobs": 49,
+      "canonical_maps": 6,
+      "source_pins": {
+        "crates/gui-viewport/src/selection_gesture.rs": "1347f11a459c65c0aec81f59eaa642a16ab7906d37603ce520a89816fa4ec44a",
+        "crates/gui-app/src/runtime_selection_region.rs": "204e6c0122b7a1cb62234b3de956313f5175c224e753077f2cfb4be8139d4131",
+        "crates/gui-app/src/runtime_camera_pane.rs": "77077fc54def9e44a96a47642b9d45fe29ecc3df5d7a4f70a2aadf3648b94d96",
+        "crates/gui-render/src/render/coordinate_hit.rs": "d90ab840efbb783b62aa04f0c59691a1746cc04f7029270b0f2aa6358390ab4e",
+        "crates/gui-render/src/render/types.rs": "79b5431120bc7dc926169190ae65a24789676e542c7fcf0f9768d2aff0766ed4",
+        "crates/gui-viewport/src/editor.rs": "06865365f38cf956e7cfad985844a2a355140fa09470cec2835fc240aae808ef",
+        "crates/gui-viewport/src/selection_region.rs": "2d776964f9c6dcb8c2f96fecbc4d44c01bcdb3cce8b15fa2975695d44bc2373e",
+        "crates/gui-app/src/runtime_view_actions/action_evidence.rs": "ac86b41c629c787ae9221aa6afb9bace4aa8293bde67ebfa99adadaec03db52d",
+        "crates/gui-protocol/src/selection_view/inspector_state.rs": "0c5cf1c181ad47545514b9948bd1231ff3ff0e35ebc3210b52577917633025a1"
+      }
+    },
+    "limits": [
+      "One finite camera path and world region only; no equivalent regions across alternate camera paths, dense evaluator pressure campaign, full N04/C04 or HUMAN/physical Wayland qualification.",
+      "Boundary pixels show actual clipped dashed feedback; exact world points are source/currentcamera-derived, not independent runtime boundary readback.",
+      "Bounds/Start/End quantity context remains unavailable and secondary text clipping unqualified.",
+      "Raw CAPTURE_ONLY unchanged; independent bounded acceptance separate. No design writes/private setter, dependency/defaultfilter changes. Inherited supervision parity FAIL remains unwaived."
+    ],
+    "unexecuted_driver_amendments": "093ba/3db202 superseded before inputs by source-backed finalendpoint motion and meaningfulfullP/filter/candidate controls; only finalf751 executed."
   }
 }
