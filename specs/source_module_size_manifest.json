@@ -84,29 +84,18 @@
     "crates/cli/src/commands/dispatch.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1789
+        "pre_test_lines": 1567
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Rust production module exceeds the normal authored production limit before inline tests. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending."
     },
     "crates/cli/src/commands/drill/drill.rs": {
       "kind": "rust-production",
       "limits": {
         "pre_test_lines": 728
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
-    "crates/cli/src/commands/gerber/plan.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 797
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -151,17 +140,6 @@
       "kind": "rust-production",
       "limits": {
         "pre_test_lines": 877
-      },
-      "owner": "project-owner",
-      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
-      "target_lines": 700,
-      "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
-    },
-    "crates/cli/src/commands/project/proposals.rs": {
-      "kind": "rust-production",
-      "limits": {
-        "pre_test_lines": 804
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -491,14 +469,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 3140,
+        "pre_test_lines": 3107,
         "inline_test_lines": 1705
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular."
+      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
@@ -525,13 +503,13 @@
     "crates/gui-render/src/render/pads_and_layers.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 120
+        "pre_test_lines": 82
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "PM058 final Pad centre painting and dimensions move into bounded pad_paint owner. Integer painter retained; exact downward ceiling."
+      "note": "PM058 final Pad centre painting and dimensions move into bounded pad_paint owner. Integer painter retained; exact downward ceiling. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending."
     },
     "crates/test-harness/src/bin/m3_sidecar_roundtrip_fidelity.rs": {
       "kind": "rust-production",

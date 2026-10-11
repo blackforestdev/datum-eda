@@ -64,6 +64,7 @@ mod operation_application_schematic_definition;
 mod operation_application_schematic_instance;
 mod operation_application_schematic_waiver;
 mod pool_journal_ops;
+pub mod process_operations;
 mod production_journal_ops;
 mod project_manifest_journal_ops;
 mod project_read_cache;
@@ -561,6 +562,14 @@ fn collect_uuid_objects_at(
             }
 
             for (key, nested) in map {
+                // Materialization bindings freeze borrowed source payloads. Only
+                // the outer placed Pad is an authored BoardRoot object producer.
+                if shard.kind == SourceShardKind::BoardRoot
+                    && key == "source_binding"
+                    && pointer.starts_with("$/component_pads/")
+                {
+                    continue;
+                }
                 collect_uuid_objects_at(
                     nested,
                     shard,
@@ -656,7 +665,7 @@ pub(super) fn source_shard_authority_for_kind(kind: &SourceShardKind) -> SourceS
     }
 }
 
-pub(super) fn sha256_hex(bytes: &[u8]) -> String {
+pub(crate) fn sha256_hex(bytes: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(bytes);
     sha256_digest_hex(hasher.finalize().as_slice())

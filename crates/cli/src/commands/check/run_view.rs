@@ -228,7 +228,12 @@ pub(crate) fn append_finding_values(
         let primary_target = check_primary_target(source, value);
         let standards_basis = check_finding_standards_basis(&code).map(str::to_string);
         let standards_basis_detail = check_finding_standards_basis_detail(&code);
-        let rule_revision = check_finding_rule_revision(&code).map(str::to_string);
+        let rule_revision = value
+            .get("rule_revision")
+            .and_then(serde_json::Value::as_str)
+            .filter(|revision| !revision.trim().is_empty())
+            .map(str::to_string)
+            .or_else(|| check_finding_rule_revision(&code).map(str::to_string));
         let import_key = check_finding_import_key(value);
         let related_targets = check_related_targets(&primary_target, value);
         let message = check_finding_message(&code, value);

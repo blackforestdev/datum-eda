@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use super::{
-    DomainObject, EngineError, ObjectId, SourceShardRef, collect_uuid_objects,
+    DomainObject, EngineError, ObjectId, SourceShardKind, SourceShardRef, collect_uuid_objects,
     domain_for_shard_kind, read_json_value,
 };
 
@@ -16,6 +16,11 @@ pub(super) fn refresh_materialized_shard_objects(
 ) -> Result<(), EngineError> {
     let mut import_map = BTreeMap::new();
     for shard in shards {
+        // Proposal payloads contain hypothetical source UUIDs. Their metadata is
+        // not an object producer; registering it changes the guarded design basis.
+        if shard.kind == SourceShardKind::ProposalMetadata {
+            continue;
+        }
         let path = if shard.path.is_absolute() {
             shard.path.clone()
         } else {

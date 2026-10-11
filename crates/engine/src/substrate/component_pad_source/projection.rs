@@ -7,6 +7,7 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 #[derive(Debug, Clone, Default)]
 pub struct ComponentPadProjection {
+    pub process_pads: BTreeMap<Uuid, super::process::PlacedProcessGeometry>,
     pub pads: BTreeMap<Uuid, PlacedPad>,
     pub query_pads: BTreeMap<Uuid, QueryPadGeometry>,
     pub statuses: BTreeMap<Uuid, ComponentPadMaterializationStatus>,
@@ -114,6 +115,14 @@ pub(crate) fn projection_with_operations(
             })();
             match projected {
                 Ok(mut physical) => {
+                    if let Some(snapshot) = &b.process_snapshot {
+                        let process = snapshot.project(&pad, &package)?;
+                        physical.terminal_mut().mask_layers =
+                            process.membership.mask_layers.clone();
+                        physical.terminal_mut().paste_layers =
+                            process.membership.paste_layers.clone();
+                        result.process_pads.insert(pad.uuid, process);
+                    }
                     if result.statuses[&pad.uuid] == ComponentPadMaterializationStatus::Current {
                         physical.terminal_mut().net =
                             authoritative_net(model, physical.terminal(), b);
@@ -133,7 +142,7 @@ pub(crate) fn projection_with_operations(
     }
     Ok(result)
 }
-fn project_pad(
+pub(super) fn project_pad(
     pad: &ComponentPadSource,
     package: &PlacedPackage,
     stackup: &Stackup,

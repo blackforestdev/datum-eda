@@ -5,6 +5,9 @@ use super::{ObjectId, ObjectRevision};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Operation {
+    Process {
+        operation: super::process_operations::ProcessOperation,
+    },
     CreateElectricalIdentity {
         record: super::ElectricalIdentityRecord,
     },

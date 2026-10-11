@@ -18,6 +18,7 @@ fn roundrect_ratio_changes_corner_radius() {
     };
     let projection = Projection::new(viewport, &bounds, CameraState::fit_to_bounds(&bounds));
     let small = datum_gui_protocol::PadPrimitive {
+        native_process: None,
         object_id: "pad:rr-small".to_string(),
         object_kind: "pad".to_string(),
         source_object_uuid: "rr-small".to_string(),
@@ -73,6 +74,7 @@ fn rotated_rect_pad_produces_non_axis_aligned_geometry() {
     };
     let projection = Projection::new(viewport, &bounds, CameraState::fit_to_bounds(&bounds));
     let pad = datum_gui_protocol::PadPrimitive {
+        native_process: None,
         object_id: "pad:rot".to_string(),
         object_kind: "pad".to_string(),
         source_object_uuid: "rot".to_string(),
@@ -112,6 +114,7 @@ fn rotated_rect_pad_produces_non_axis_aligned_geometry() {
 #[test]
 fn derived_mask_pad_expands_by_clearance() {
     let pad = datum_gui_protocol::PadPrimitive {
+        native_process: None,
         object_id: "pad:mask".to_string(),
         object_kind: "pad".to_string(),
         source_object_uuid: "mask".to_string(),
@@ -157,6 +160,7 @@ fn derived_mask_pad_expands_by_clearance() {
 #[test]
 fn derived_paste_pad_applies_ratio_and_clearance() {
     let pad = datum_gui_protocol::PadPrimitive {
+        native_process: None,
         object_id: "pad:paste".to_string(),
         object_kind: "pad".to_string(),
         source_object_uuid: "paste".to_string(),
@@ -202,6 +206,7 @@ fn derived_paste_pad_applies_ratio_and_clearance() {
 #[test]
 fn derived_process_pad_uses_pad_level_overrides_not_board_globals() {
     let pad = datum_gui_protocol::PadPrimitive {
+        native_process: None,
         object_id: "pad:override".to_string(),
         object_kind: "pad".to_string(),
         source_object_uuid: "override".to_string(),
@@ -412,6 +417,7 @@ fn debug_datum_test_q1_q2_component_geometry() {
 fn inferred_component_body_geometry_handles_quarter_turn_parts() {
     let pads = [
         datum_gui_protocol::PadPrimitive {
+            native_process: None,
             object_id: "pad:a".to_string(),
             object_kind: "pad".to_string(),
             source_object_uuid: "a".to_string(),
@@ -438,6 +444,7 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
             rotation_degrees: 90.0,
         },
         datum_gui_protocol::PadPrimitive {
+            native_process: None,
             object_id: "pad:b".to_string(),
             object_kind: "pad".to_string(),
             source_object_uuid: "b".to_string(),
@@ -464,6 +471,7 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
             rotation_degrees: 90.0,
         },
         datum_gui_protocol::PadPrimitive {
+            native_process: None,
             object_id: "pad:c".to_string(),
             object_kind: "pad".to_string(),
             source_object_uuid: "c".to_string(),

@@ -4,6 +4,9 @@ pub(super) fn apply_project_manifest_operation(
     manifest_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<Option<bool>, EngineError> {
+    if let Some(applied) = super::process_operations::apply_project(manifest_value, operation)? {
+        return Ok(Some(applied));
+    }
     match operation {
         Operation::SetProjectName { name, .. } => {
             set_project_manifest_field(
@@ -57,6 +60,9 @@ pub(super) fn inverse_project_manifest_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<bool, EngineError> {
+    if super::process_operations::inverse(manifest_value, operation, inverse_operations, false)? {
+        return Ok(true);
+    }
     match operation {
         Operation::SetProjectName { project_id, name } => {
             let previous = project_manifest_field(manifest_value, "name")?

@@ -11,6 +11,9 @@ pub(super) fn apply_operation_to_objects(
     diff: Option<&mut CommitDiff>,
 ) -> Result<(), EngineError> {
     match operation {
+        Operation::Process { operation } => {
+            super::process_operations::apply_objects(objects, diff, operation)
+        }
         Operation::CreateElectricalIdentity { .. }
         | Operation::SetElectricalIdentity { .. }
         | Operation::DeleteElectricalIdentity { .. } => {

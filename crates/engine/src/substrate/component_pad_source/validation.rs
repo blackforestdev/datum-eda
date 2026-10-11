@@ -24,6 +24,9 @@ pub(crate) fn validate_native(board: &Value) -> Result<(), EngineError> {
                 let pad: ComponentPadSource = serde_json::from_value(value.clone())?;
                 pad.validate_frozen()?;
                 let binding = pad.source_binding.as_ref().unwrap();
+                if let Some(snapshot) = &binding.process_snapshot {
+                    super::process::validate_dependency_layers(board, snapshot, &pad)?;
+                }
                 if binding.package_id.to_string() != *key
                     || board["uuid"] != serde_json::json!(binding.board_id)
                     || !ids.insert(pad.uuid)
@@ -287,13 +290,21 @@ fn validate_materialization(
     {
         return Err(invalid("unsupported materialization payload field"));
     }
-    let Some(array) = next.get("component_pads").and_then(Value::as_array) else {
-        return Ok(());
-    };
-    let pads: Vec<ComponentPadSource> = serde_json::from_value(Value::Array(array.clone()))?;
     let old: Vec<ComponentPadSource> = previous
         .and_then(|v| v.get("component_pads"))
         .map_or_else(|| Ok(vec![]), |v| serde_json::from_value(v.clone()))?;
+    let Some(array) = next.get("component_pads").and_then(Value::as_array) else {
+        if kind == TransactionKind::Normal
+            && (old.iter().any(|p| p.source_binding.is_some())
+                || next.get("pad_source_transition").is_some())
+        {
+            return Err(invalid(
+                "bound materialization requires an explicit component_pads array and complete transition accounting",
+            ));
+        }
+        return Ok(());
+    };
+    let pads: Vec<ComponentPadSource> = serde_json::from_value(Value::Array(array.clone()))?;
     if pads.iter().all(|p| p.source_binding.is_none())
         && old.iter().all(|p| p.source_binding.is_none())
         && next.get("pad_source_transition").is_none()
@@ -328,6 +339,14 @@ fn validate_materialization(
             return Err(invalid("foreign source binding in materialization"));
         }
         if kind == TransactionKind::Normal {
+            let placement: crate::board::PlacedPackage =
+                serde_json::from_value(board["packages"][package_id.to_string()].clone())?;
+            let expected_process = super::process::capture(model, board, pad, &placement)?;
+            if b.process_snapshot != expected_process {
+                return Err(invalid(
+                    "process snapshot differs from current pinned authoritative inputs",
+                ));
+            }
             for p in [
                 &b.part,
                 &b.package,

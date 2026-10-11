@@ -80,7 +80,7 @@ pub fn build_materialize_component_pad_sources(
             previous.insert(name.clone(), value.clone());
         }
     }
-    let guards: BTreeSet<_> = pads
+    let mut guards: BTreeSet<_> = pads
         .iter()
         .flat_map(|p| {
             let b = p.source_binding.as_ref().unwrap();
@@ -99,6 +99,22 @@ pub fn build_materialize_component_pad_sources(
                 .map(|p| p.owner_id)
         }))
         .collect();
+    guards.extend([
+        transition.target_part.owner_id,
+        transition.target_package.owner_id,
+        transition.target_land_pattern.owner_id,
+    ]);
+    guards.insert(serde_json::from_value(board["uuid"].clone())?);
+    guards.insert(model.project.project_id);
+    guards.extend(pads.iter().filter_map(|p| {
+        p.source_binding
+            .as_ref()?
+            .process_snapshot
+            .as_ref()?
+            .profile
+            .as_ref()
+            .map(|pin| pin.profile.uuid)
+    }));
     let mut next = previous.clone();
     next.insert("component_pads".into(), serde_json::to_value(pads)?);
     next.insert(
@@ -127,8 +143,7 @@ pub fn build_materialize_component_pad_sources(
         let object = model
             .objects
             .get(&id)
-            .filter(|o| o.domain == "pool")
-            .ok_or_else(|| invalid("missing library source-owner registration"))?;
+            .ok_or_else(|| invalid("missing materialization source-owner registration"))?;
         composer = composer.push_op(Operation::GuardObjectRevision {
             object_id: id,
             expected_object_revision: object.object_revision,
@@ -417,8 +432,12 @@ fn materialize(
                 component_instance: ci.clone(),
                 pin_pad_map: pin_pad_map.clone(),
                 frozen_geometry: geometry,
+                process_snapshot: None,
             }),
         });
+        let last = result.last_mut().expect("newly materialized Pad");
+        let snapshot = source::process::capture(model, board, last, placement)?;
+        last.source_binding.as_mut().unwrap().process_snapshot = snapshot;
     }
     if supplied.keys().any(|id| !library_ids.contains(id))
         || (request.adopt_existing && previous.len() != result.len())
@@ -461,3 +480,6 @@ mod tests;
 
 #[cfg(test)]
 mod exact30_tests;
+
+#[cfg(test)]
+mod proposal_tests;

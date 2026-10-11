@@ -9,6 +9,7 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 mod pins;
+pub mod process;
 mod projection;
 mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
@@ -55,6 +56,8 @@ pub struct ComponentPadSourceBinding {
     pub component_instance: Option<RevisionedRef>,
     pub pin_pad_map: Option<PinnedPadLibrarySource>,
     pub frozen_geometry: FrozenPadGeometry,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub process_snapshot: Option<process::FrozenProcessSnapshot>,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComponentPadSource {
@@ -93,6 +96,9 @@ impl ComponentPadSource {
             .as_ref()
             .ok_or_else(|| invalid("explicit journaled adoption required"))?;
         let g = &b.frozen_geometry;
+        if let Some(snapshot) = &b.process_snapshot {
+            snapshot.validate(self)?;
+        }
         if b.library_pad.owner_id != b.land_pattern.object_id
             || b.library_pad.relative_path != b.land_pattern.relative_path
             || b.library_pad.source_shard_id != b.land_pattern.source_shard_id
@@ -159,6 +165,9 @@ impl ComponentPadSource {
             ]
             .into_iter()
             .any(|p| check_pin(model, p).is_err())
+            || b.process_snapshot
+                .as_ref()
+                .is_some_and(|s| s.check_current(model).is_err())
         {
             ComponentPadMaterializationStatus::Stale
         } else {

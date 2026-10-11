@@ -1,6 +1,11 @@
 mod component_replacement;
 use crate::*;
-use component_replacement::append_board_component_replacement_edits;
+pub(crate) use component_replacement::{
+    BoardComponentReplacementPlanSelectionSpec, BoardComponentReplacementSpec,
+    propose_native_project_board_component_replacement,
+    propose_native_project_board_component_replacement_plan,
+    propose_native_project_board_component_replacements,
+};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
@@ -113,41 +118,6 @@ pub(crate) struct NativeProjectProposalValidationView {
     pub(crate) blockers: Vec<ProposalApplyBlocker>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub(crate) struct BoardComponentReplacementSpec {
-    #[serde(alias = "component_uuid")]
-    pub(crate) component: Uuid,
-    #[serde(default, alias = "package_uuid")]
-    pub(crate) package: Option<Uuid>,
-    #[serde(default, alias = "part_uuid")]
-    pub(crate) part: Option<Uuid>,
-    #[serde(default)]
-    pub(crate) value: Option<String>,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub(crate) struct BoardComponentReplacementPlanSelectionSpec {
-    #[serde(alias = "component", alias = "component_uuid")]
-    pub(crate) uuid: Uuid,
-    #[serde(default, alias = "package")]
-    pub(crate) package_uuid: Option<Uuid>,
-    #[serde(default, alias = "part")]
-    pub(crate) part_uuid: Option<Uuid>,
-    #[serde(default)]
-    pub(crate) value: Option<String>,
-}
-
-impl From<BoardComponentReplacementPlanSelectionSpec> for BoardComponentReplacementSpec {
-    fn from(selection: BoardComponentReplacementPlanSelectionSpec) -> Self {
-        Self {
-            component: selection.uuid,
-            package: selection.package_uuid,
-            part: selection.part_uuid,
-            value: selection.value,
-        }
-    }
-}
-
 pub(crate) fn query_native_project_proposals(root: &Path) -> Result<NativeProjectProposalsView> {
     let model = ProjectResolver::new(root).resolve()?;
     Ok(NativeProjectProposalsView {
@@ -202,145 +172,6 @@ pub(crate) fn create_native_project_proposal(
         proposal,
         validation,
     })
-}
-
-pub(crate) fn propose_native_project_board_component_replacement(
-    root: &Path,
-    component_uuid: Uuid,
-    package_uuid: Option<Uuid>,
-    part_uuid: Option<Uuid>,
-    value: Option<String>,
-    proposal_id: Option<Uuid>,
-    rationale: Option<&str>,
-) -> Result<NativeProjectProposalCreateView> {
-    propose_native_project_board_component_replacements(
-        root,
-        vec![BoardComponentReplacementSpec {
-            component: component_uuid,
-            package: package_uuid,
-            part: part_uuid,
-            value,
-        }],
-        proposal_id,
-        rationale,
-    )
-}
-
-pub(crate) fn propose_native_project_board_component_replacements(
-    root: &Path,
-    replacements: Vec<BoardComponentReplacementSpec>,
-    proposal_id: Option<Uuid>,
-    rationale: Option<&str>,
-) -> Result<NativeProjectProposalCreateView> {
-    if replacements.is_empty() {
-        bail!("board component replacement proposal requires at least one replacement");
-    }
-    let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
-    if let Some(id) = proposal_id
-        && model.proposals.contains_key(&id)
-    {
-        bail!("proposal {id} already exists");
-    }
-    let mut edits = Vec::new();
-    let mut seen_components = BTreeSet::new();
-    let mut component_ids = Vec::new();
-    for replacement in &replacements {
-        if !seen_components.insert(replacement.component) {
-            bail!(
-                "board component replacement proposal repeats component {}",
-                replacement.component
-            );
-        }
-        append_board_component_replacement_edits(
-            root,
-            &project.board,
-            replacement.clone(),
-            &mut edits,
-            &mut component_ids,
-        )?;
-    }
-
-    if edits.is_empty() {
-        bail!("board component replacement proposal is a no-op for all components");
-    }
-    let mut batch = build_board_component_replacement_proposal_batch(
-        &model,
-        WriteProvenance::new(
-            "datum-eda-cli",
-            cli_commit_source()?,
-            "propose board component replacement",
-        ),
-        edits,
-    )?;
-    let source_profile_adoption_transaction =
-        adopt_component_pad_profile_for_write(root, &mut model, &batch)?;
-    if source_profile_adoption_transaction.is_some() {
-        edits = Vec::new();
-        component_ids = Vec::new();
-        for replacement in replacements {
-            append_board_component_replacement_edits(
-                root,
-                &project.board,
-                replacement,
-                &mut edits,
-                &mut component_ids,
-            )?;
-        }
-        batch = build_board_component_replacement_proposal_batch(
-            &model,
-            WriteProvenance::new(
-                "datum-eda-cli",
-                cli_commit_source()?,
-                "propose board component replacement",
-            ),
-            edits,
-        )?;
-    }
-    let proposal = create_draft_proposal_from_batch(
-        &mut model,
-        root,
-        ProposalCreateRequest {
-            proposal_id,
-            batch,
-            rationale: rationale.map(str::to_string).unwrap_or_else(|| {
-                if component_ids.len() == 1 {
-                    format!("Review board component {} replacement", component_ids[0])
-                } else {
-                    format!(
-                        "Review {} board component replacements",
-                        component_ids.len()
-                    )
-                }
-            }),
-            source: ProposalSource::Cli,
-            checks_run: Vec::new(),
-            finding_fingerprints: Vec::new(),
-        },
-    )?;
-    let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
-    Ok(NativeProjectProposalCreateView {
-        contract: "proposal_create_v1",
-        action: "propose_board_component_replacement",
-        source_profile_adoption_transaction,
-        project_id: model.project.project_id.to_string(),
-        model_revision: model.model_revision.0,
-        proposal_id: proposal.proposal_id,
-        proposal,
-        validation,
-    })
-}
-
-pub(crate) fn propose_native_project_board_component_replacement_plan(
-    root: &Path,
-    selections: Vec<BoardComponentReplacementPlanSelectionSpec>,
-    proposal_id: Option<Uuid>,
-    rationale: Option<&str>,
-) -> Result<NativeProjectProposalCreateView> {
-    let replacements = selections
-        .into_iter()
-        .map(BoardComponentReplacementSpec::from)
-        .collect();
-    propose_native_project_board_component_replacements(root, replacements, proposal_id, rationale)
 }
 
 pub(crate) fn show_native_project_proposal(

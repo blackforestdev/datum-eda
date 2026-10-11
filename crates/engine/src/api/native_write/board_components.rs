@@ -19,6 +19,7 @@
 //! journal provenance are byte-for-byte the CLI's historical behavior.
 
 pub mod pad_materialization;
+pub mod process_update;
 mod verb_registry;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;

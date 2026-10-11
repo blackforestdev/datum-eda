@@ -553,3 +553,17 @@ using unrotated or rounded geometry. Focused positive copper correspondence and
 non-mutation proof do not certify absent mask/paste policy, arbitrary rotations,
 rational-centre CAM/T04 or full manufacturing acceptance. Those remain explicit
 obligations under their owning contracts and C04/C05/C06 boundaries.
+
+### PM061 effective mask/paste consumption
+
+Explicit capability selects typed physical-face associations; historical boards
+retain their existing nominal-aperture export behavior. Bound component Pads
+consume frozen process snapshots; source-preserved Pads consume explicit authored
+membership and used dimensions/margins/ratio. Integer-nanometre circles and
+quarter-turn rectangles use exact effective dimensions and centres.
+Unsupported/nonintegral results refuse with source identity before publication.
+Gerber-set process preflight resolves all planned mask/paste adapters before set
+artifact or journal mutation; this is not general I/O or concurrency atomicity.
+Unknown standards basis remains separately reported and supplies no fabricated
+standards values or certification. PM058 rational-centre CAM and broader
+manufacturing qualification remain open.

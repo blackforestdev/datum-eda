@@ -717,6 +717,25 @@ cannot qualify partial complete Run/Net membership. Exact integer quarter-turn
 geometry is supported; other local-point rotations currently disclose unavailable
 authority, with no rounding or acceptance waiver. C04/C05/C06 remain required.
 
+#### PM061 optional process authority in profile 4
+
+`process_source_capability` declares versioned front/back copper and optional
+mask/paste layer associations validated against physical stackup sequence and
+typed roles. Explicit adoption requires an independently adopted profile-4
+BoardRoot and actual byte preimage; historical absence remains absence.
+ProjectRoot optionally stores UUID-keyed `process_profiles`; Footprint
+`process_basis` selects inline, existing IPC basis or a project profile pinned
+by UUID, revision and value hash. The legacy `process_aperture_policy` string
+remains descriptive and unchanged.
+
+Optional binding `process_snapshot` preserves effective geometry, membership,
+raw policy presence, source/profile/stackup pins, resolver version and transform
+basis. Reads project frozen authority without rematerializing. Current inspection
+reports stale inputs, proposed current results and exact differences.
+Process-changing updates require reviewed proposals with complete
+correspondence/allocation/retirement accounting. History preserves recorded
+payloads and refuses incompatible dependencies.
+
 ### 6.6 `rules/rules.json`
 
 Purpose:

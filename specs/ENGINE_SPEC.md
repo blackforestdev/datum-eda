@@ -2384,3 +2384,19 @@ aperture and Footprint pad-collection editing. GUI authoring,
 SMD/process/standards policy, native
 file-type migration, library adoption and manufacturing qualification retain
 their separate authority and acceptance requirements.
+
+### PM061 effective process API ownership
+
+Current implementation: `api::native_write::process` owns profile listing and
+pinned selectors, canonical profile Set/Delete, separately guarded process
+capability adoption, physical-face association Set, Footprint basis selection
+and effective inspection. `board_components::process_update::build_process_update`
+constructs explicit reviewed replacement intent. `Operation::Process` carries
+these typed process operations through the existing commit/journal path.
+
+The engine resolver owns exact geometry and membership. Bound placements project
+frozen snapshots; current inspection reports stale inputs and differences.
+Native checks, retained workspace rendering and supported mask/paste CAM share
+that authority. Historical capability absence remains unchanged. PM061 and the
+native-format/library/manufacturing contracts retain unsupported geometry,
+standards and broader qualification boundaries.

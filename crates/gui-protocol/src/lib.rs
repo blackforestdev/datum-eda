@@ -2,7 +2,10 @@ pub mod workspace_loading;
 pub use workspace_loading::load_board_editor_workspace_with_model;
 use workspace_loading::load_workspace_state_impl;
 mod pad_center;
+mod pad_primitive;
 pub use pad_center::{ExactPointNm, PadCenter, Quadratic3};
+use pad_primitive::default_roundrect_rratio_ppm;
+pub use pad_primitive::{EffectiveProcessAperture, PadPrimitive, PlacedProcessGeometry};
 mod cli_bridge;
 pub mod native_edit_client;
 mod placed_pad_projection;
@@ -246,42 +249,6 @@ pub struct ComponentBounds {
     pub position: PointNm,
     pub rotation_degrees: f32,
     pub bounds: RectNm,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct PadPrimitive {
-    pub object_id: String,
-    pub object_kind: String,
-    pub source_object_uuid: String,
-    pub pad_uuid: String,
-    pub component_uuid: String,
-    pub net_uuid: Option<String>,
-    pub layer_id: String,
-    #[serde(default)]
-    pub copper_layer_ids: Vec<String>,
-    pub center: PadCenter,
-    pub bounds: RectNm,
-    pub shape_kind: String,
-    #[serde(default = "default_roundrect_rratio_ppm")]
-    pub roundrect_rratio_ppm: u32,
-    #[serde(default)]
-    pub mask_layer_ids: Vec<String>,
-    #[serde(default)]
-    pub paste_layer_ids: Vec<String>,
-    #[serde(default)]
-    pub solder_mask_margin_nm: i64,
-    #[serde(default)]
-    pub solder_paste_margin_nm: i64,
-    #[serde(default)]
-    pub solder_paste_margin_ratio_ppm: i32,
-    #[serde(default)]
-    pub drill_nm: Option<i64>,
-    #[serde(default)]
-    pub rotation_degrees: f32,
-}
-
-fn default_roundrect_rratio_ppm() -> u32 {
-    250_000
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

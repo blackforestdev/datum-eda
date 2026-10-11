@@ -18,6 +18,7 @@ fn roundrect_pad_uses_richer_geometry_than_rect_pad() {
     let mut rect_out = Vec::new();
     let mut roundrect_out = Vec::new();
     let rect_pad = datum_gui_protocol::PadPrimitive {
+        native_process: None,
         object_id: "pad:rect".to_string(),
         object_kind: "pad".to_string(),
         source_object_uuid: "rect".to_string(),

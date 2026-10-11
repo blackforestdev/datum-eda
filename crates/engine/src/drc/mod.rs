@@ -4,6 +4,7 @@ use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
 
 mod checks;
 mod fingerprint;
+mod native_process;
 mod nominal_connectivity;
 mod types;
 mod zone_fill_projection;
@@ -42,6 +43,24 @@ fn run_with_nominal_overrides(
     clearance: Option<Vec<DrcViolation>>,
     connectivity: Option<Vec<DrcViolation>>,
 ) -> DrcReport {
+    run_with_nominal_and_process_overrides(
+        board,
+        selected_rules,
+        waivers,
+        clearance,
+        connectivity,
+        None,
+    )
+}
+
+fn run_with_nominal_and_process_overrides(
+    board: &Board,
+    selected_rules: &[RuleType],
+    waivers: &[CheckWaiver],
+    clearance: Option<Vec<DrcViolation>>,
+    connectivity: Option<Vec<DrcViolation>>,
+    process: Option<Vec<DrcViolation>>,
+) -> DrcReport {
     let run_all = selected_rules.is_empty();
     let mut violations = Vec::new();
 
@@ -64,7 +83,7 @@ fn run_with_nominal_overrides(
         violations.extend(checks::run_silk_clearance_checks(board));
     }
     if run_all || selected_rules.contains(&RuleType::ProcessAperture) {
-        violations.extend(checks::run_process_aperture_checks(board));
+        violations.extend(process.unwrap_or_else(|| checks::run_process_aperture_checks(board)));
     }
 
     violations.sort_by(|a, b| {

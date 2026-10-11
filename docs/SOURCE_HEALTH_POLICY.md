@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 67 legacy source entries retain 68 recorded metric
+Current debt inventory: 65 legacy source entries retain 66 recorded metric
 ceilings. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
@@ -166,6 +166,22 @@ and canonical commit. The argument parent decreases from 976 to 932 lines and
 the command parent from 2,537 to 2,511, with exact downward ceilings; both
 retain legacy debt. The 56-line argument owner, 135-line edit owner and 224-line
 field workflow test owner remain within normal budgets. No limit is increased.
+
+PM061 process integration extracts the complete Gerber command reporting lifecycle
+from `commands/dispatch.rs` into `gerber/layer_commands.rs`, replacement proposal
+preparation into `proposals/component_replacement.rs`, the protocol Pad wire type
+into `pad_primitive.rs`, and process painting into `render/process_pad.rs`.
+The dispatcher decreases from 1,782 to 1,567 physical/pre-test lines; the protocol
+root decreases from 3,140 to 3,107 pre-test lines, retaining 1,705 inline-test lines.
+The renderer parent decreases from 952 to 904 physical lines; its checker metric
+is 82 pre-test lines because of an early conditional import, so its remaining
+legacy debt stays open. Exact recorded ceilings ratchet downward. The replacement
+parent returns from 804 to 635 lines and leaves the ledger. Complete Gerber-set
+publication moves from `gerber/plan.rs` into `gerber/set_export.rs`; the parent
+returns to 669 pre-test and 71 inline-test lines (742 physical) and leaves the
+ledger. Independent structural review and the source-health gate verify these
+bounded extractions. Process workflow and runtime delivery review remain pending;
+these measurements do not establish feature acceptance or full qualification.
 
 ## What Counts as Structural Evidence
 

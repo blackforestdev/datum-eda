@@ -2,6 +2,8 @@ use crate::*;
 
 #[derive(Subcommand)]
 pub(crate) enum ProjectCommands {
+    /// Author and inspect explicit native mask/paste process authority
+    Process(super::project_process::ProjectProcessArgs),
     /// Create a deterministic native project scaffold
     New(ProjectNewArgs),
     /// Inspect a native project scaffold and report resolved file layout

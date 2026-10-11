@@ -220,24 +220,38 @@ pub(super) fn push_retained_scene_geometry(
         graphic.render_role == "component_mechanical"
             && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
     });
-    let process = scene
-        .layers
-        .iter()
-        .enumerate()
-        .filter_map(|(index, layer)| {
-            let kind = match render_stage_for_layer(&layer.layer_id, sl) {
+    let process = scene.layers.iter().enumerate().flat_map(|(index, layer)| {
+        [
+            RenderStage::BottomPaste,
+            RenderStage::TopPaste,
+            RenderStage::BottomMask,
+            RenderStage::TopMask,
+        ]
+        .into_iter()
+        .filter_map(move |stage| {
+            let legacy = render_stage_for_layer(&layer.layer_id, sl) == stage;
+            let native = scene
+                .pads
+                .iter()
+                .filter_map(|pad| pad.native_process.as_ref())
+                .any(|process| process_pad::native_process_stage(process, layer) == Some(stage));
+            if !legacy && !native {
+                return None;
+            }
+            let kind = match stage {
                 RenderStage::BottomPaste | RenderStage::TopPaste => PadProcessLayerKind::Paste,
-                RenderStage::BottomMask | RenderStage::TopMask => PadProcessLayerKind::Mask,
-                _ => return None,
+                _ => PadProcessLayerKind::Mask,
             };
-            Some((index, layer.layer_id.as_str(), kind))
-        });
+            Some((index, layer, kind, stage))
+        })
+    });
     let Some(mut process_layers) = out.scratch(process.clone().count()) else {
         return;
     };
     process_layers.extend(process);
-    process_layers
-        .sort_unstable_by_key(|(index, layer, _)| (scene_layer_stack_priority(layer, sl), *index));
+    process_layers.sort_unstable_by_key(|(index, _, _, stage)| {
+        (layer_stages::render_stage_priority(*stage), *index)
+    });
     let silkscreen_graphics = scene.component_graphics.iter().filter(|graphic| {
         graphic.render_role == "component_silkscreen"
             && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
@@ -255,14 +269,28 @@ pub(super) fn push_retained_scene_geometry(
     for stage in POST_COPPER_STAGES {
         let process_before = out.len();
         let process_started = std::time::Instant::now();
-        for (_, layer_id, kind) in process_layers
+        for (_, layer, kind, _) in process_layers
             .iter()
-            .filter(|(_, layer_id, _)| render_stage_for_layer(layer_id, sl) == stage)
+            .filter(|(_, _, _, process_stage)| *process_stage == stage)
         {
+            let layer_id = layer.layer_id.as_str();
             if !authored_visible(state) || !layer_visible(state, layer_id) {
                 continue;
             }
+            let mut first_process_command = true;
             for pad in &scene.pads {
+                let pad_stage = pad
+                    .native_process
+                    .as_ref()
+                    .and_then(|process| process_pad::native_process_stage(process, layer))
+                    .or_else(|| {
+                        pad.native_process
+                            .is_none()
+                            .then(|| render_stage_for_layer(layer_id, sl))
+                    });
+                if pad_stage != Some(stage) {
+                    continue;
+                }
                 let active = matches!(state.selection, SelectionTarget::AuthoredObject(ref id) if id == &pad.object_id)
                     || component_is_selection_active(&pad.component_uuid, scene, state);
                 let related = pad_matches_active_action(pad, state)
@@ -281,29 +309,38 @@ pub(super) fn push_retained_scene_geometry(
                 if !membership.iter().any(|member| member == layer_id) {
                     continue;
                 }
-                let bounds = process_pad_bounds(pad, *kind);
                 out.source(Some(&pad.object_id), Role::Material);
                 let quad_start = out.len();
-                push_pad_primitive_world(
-                    out,
-                    pad,
-                    bounds,
-                    if active {
-                        selected_silk_color(mask_or_paste_layer_color(layer_id, sl))
-                    } else {
-                        dim_process_color(mask_or_paste_layer_color(layer_id, sl), dimmed)
-                    },
-                    None,
-                    false,
-                    reference_projection,
-                );
-                scene_retained_access::finish_retained_draw_commands(
+                let base_color = if pad.native_process.is_some() {
+                    process_pad::native_process_color(stage)
+                } else {
+                    mask_or_paste_layer_color(layer_id, sl)
+                };
+                let color = if active {
+                    selected_silk_color(base_color)
+                } else {
+                    dim_process_color(base_color, dimmed)
+                };
+                if let Some(process) = &pad.native_process {
+                    process_pad::paint_native_process(out, process, *kind, color);
+                } else {
+                    let bounds = process_pad_bounds(pad, *kind);
+                    push_pad_primitive_world(
+                        out,
+                        pad,
+                        bounds,
+                        color,
+                        None,
+                        false,
+                        reference_projection,
+                    );
+                }
+                scene_retained_access::finish_retained_process_group(
                     draw_commands,
-                    Some(layer_id),
+                    layer_id,
                     quad_start,
                     out.len(),
-                    strokes.len(),
-                    strokes.len(),
+                    &mut first_process_command,
                 );
             }
         }

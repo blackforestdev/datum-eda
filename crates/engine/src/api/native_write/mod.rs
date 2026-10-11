@@ -40,6 +40,7 @@ pub mod library_footprint;
 pub mod library_pin_pad_map;
 pub mod manufacturing;
 pub mod output_jobs;
+pub mod process;
 pub mod project;
 pub mod registry;
 pub mod revision;

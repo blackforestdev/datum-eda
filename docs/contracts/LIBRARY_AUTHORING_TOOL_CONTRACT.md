@@ -118,6 +118,16 @@ IDs, leaf metadata and non-pad siblings remain intact; the single-pad command
 keeps its separate checks. This adds no identity, numeric, layer, name, PinPadMap,
 placed-propagation, source/standards or section MCP/proposal/GUI policy.
 
+Manual `datum-eda project process <root>` provides `profiles`, `set-profile`,
+`delete-profile`, `select-basis`, `inspect`, `placements`, `pin-pad`, `adopt` and
+`set-associations` over canonical engine primitives. Profile/basis writes use
+journaled history; selecting `--profile` captures its current revision/hash.
+Inspection distinguishes absent policies, explicit zero, inherited basis and
+unresolved inputs. Existing `proposal create-board-component-replacements
+--replacement <json>` carries explicit `process_update` intent through normal
+review/application. These CLI capabilities do not establish MCP or GUI authoring,
+standards certification or broader qualification.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc
@@ -632,8 +642,8 @@ engine diagnostics through `project validate`.
   primitives through the same actions and canonical history. Importers and
   compatibility materialization still preserve legacy package land-pattern
   fields in some paths, and footprint fab/silkscreen primitives beyond
-  lines/rectangles/circles/polygons, assembly/mechanical/model/
-  process-policy authoring remains pending. The target schema separates
+  lines/rectangles/circles/polygons, assembly/mechanical/model
+  authoring remains pending. The target schema separates
   component body (`Package`) from board land pattern (`Footprint`) without
   relying on compatibility fallback.
 - Engine-owned `LibraryGraph` authority. The code has pool structs,
@@ -650,11 +660,11 @@ engine diagnostics through `project validate`.
   fallback when a first-class map is absent or unusable; it does not override
   usable `Footprint` / `PinPadMap` authority. The remaining target is to retire
   `Part.pad_map` to migrated import input behind explicit policy.
-- Padstack process-policy consumption. Current padstacks model layer spans,
-  aperture, drill, annular, plated/non-plated, thermal/anti-pad, and explicit
-  mask/paste policy; the remaining gap is systematic consumption by footprint
-  generation/materialization, checks, standards repairs, and fabrication
-  outputs, including unknown/import-preserved states.
+- Padstack process-policy consumption. PM061 supplies bounded native effective
+  process inspection, explicit placed materialization/update, checks, retained
+  workspace rendering and exact supported fabrication consumption. Broader
+  generation/repair coverage, unsupported output geometries and full
+  qualification remain open.
 - `ModelAttachment` as governed library data across targets. Existing package
   `ModelRef`, content-addressed model blobs, and part behavioural-model
   attachments are useful slices, but the target needs one hash/provenance/role/

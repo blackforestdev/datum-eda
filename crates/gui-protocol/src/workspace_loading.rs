@@ -304,6 +304,8 @@ fn project_scene(
 
     let exact_projection =
         eda_engine::substrate::component_pad_source::component_pad_projection(model, &board_value)?;
+    let native_processes =
+        placed_pad_projection::native_processes(&board_value, &exact_projection)?;
     board_value = placed_pad_projection::project(model, board_value)?;
     // --- Pads ---
     let pads = extract_pads(&board_value)?;
@@ -374,6 +376,7 @@ fn project_scene(
         edge_cuts_layer_key,
     );
     placed_pad_projection::append_exact(&mut scene, &exact_projection)?;
+    placed_pad_projection::attach_native_process(&mut scene, &native_processes)?;
     if let Some(layers) = scene_layers_from_native_stackup_value(&board_value) {
         scene.layers = layers;
     }

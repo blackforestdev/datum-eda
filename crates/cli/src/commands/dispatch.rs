@@ -3,6 +3,8 @@
 // commands/<family>/ files) or inline the short destructure-and-render body directly.
 
 use super::*;
+#[path = "gerber/layer_commands.rs"]
+mod layer_commands;
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
     parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
@@ -17,6 +19,7 @@ pub(crate) fn execute_project_command(
 ) -> Result<(String, i32)> {
     match command {
         ProjectCommands::New(args) => args.run(format),
+        ProjectCommands::Process(args) => args.run(format),
         ProjectCommands::Inspect(ProjectInspectArgs { path }) => {
             let report = inspect_native_project(&path)?;
             let output = match format {
@@ -44,242 +47,24 @@ pub(crate) fn execute_project_command(
         ProjectCommands::ReportDrillHoleClasses(args) => args.run(format),
         ProjectCommands::InspectExcellonDrill(args) => args.run(format),
         ProjectCommands::InspectGerber(args) => args.run(format),
-        ProjectCommands::ExportGerberOutline(ProjectExportGerberOutlineArgs { path, out }) => {
-            let report = export_native_project_gerber_outline(&path, &out)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_outline_export_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::ExportGerberCopperLayer(ProjectExportGerberCopperLayerArgs {
-            path,
-            layer,
-            out,
-        }) => {
-            let report = export_native_project_gerber_copper_layer(&path, layer, &out)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_copper_export_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::ExportGerberSoldermaskLayer(ProjectExportGerberSoldermaskLayerArgs {
-            path,
-            layer,
-            out,
-        }) => {
-            let report = export_native_project_gerber_soldermask_layer(&path, layer, &out)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_soldermask_export_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::ExportGerberSilkscreenLayer(ProjectExportGerberSilkscreenLayerArgs {
-            path,
-            layer,
-            out,
-        }) => {
-            let report = export_native_project_gerber_silkscreen_layer(&path, layer, &out)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_silkscreen_export_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::ExportGerberPasteLayer(ProjectExportGerberPasteLayerArgs {
-            path,
-            layer,
-            out,
-        }) => {
-            let report = export_native_project_gerber_paste_layer(&path, layer, &out)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_paste_export_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::ExportGerberMechanicalLayer(ProjectExportGerberMechanicalLayerArgs {
-            path,
-            layer,
-            out,
-        }) => {
-            let report = export_native_project_gerber_mechanical_layer(&path, layer, &out)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_mechanical_export_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::ValidateGerberOutline(ProjectValidateGerberOutlineArgs {
-            path,
-            gerber,
-        }) => {
-            let report = validate_native_project_gerber_outline(&path, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_outline_validation_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, if report.matches_expected { 0 } else { 1 }))
-        }
-        ProjectCommands::ValidateGerberCopperLayer(ProjectValidateGerberCopperLayerArgs {
-            path,
-            layer,
-            gerber,
-        }) => {
-            let report = validate_native_project_gerber_copper_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_copper_validation_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            let exit_code = if report.matches_expected { 0 } else { 1 };
-            Ok((output, exit_code))
-        }
-        ProjectCommands::ValidateGerberSoldermaskLayer(
-            ProjectValidateGerberSoldermaskLayerArgs {
-                path,
-                layer,
-                gerber,
-            },
-        ) => {
-            let report = validate_native_project_gerber_soldermask_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_gerber_soldermask_validation_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            let exit_code = if report.matches_expected { 0 } else { 1 };
-            Ok((output, exit_code))
-        }
-        ProjectCommands::ValidateGerberSilkscreenLayer(
-            ProjectValidateGerberSilkscreenLayerArgs {
-                path,
-                layer,
-                gerber,
-            },
-        ) => {
-            let report = validate_native_project_gerber_silkscreen_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_gerber_silkscreen_validation_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            let exit_code = if report.matches_expected { 0 } else { 1 };
-            Ok((output, exit_code))
-        }
-        ProjectCommands::ValidateGerberPasteLayer(ProjectValidateGerberPasteLayerArgs {
-            path,
-            layer,
-            gerber,
-        }) => {
-            let report = validate_native_project_gerber_paste_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_paste_validation_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            let exit_code = if report.matches_expected { 0 } else { 1 };
-            Ok((output, exit_code))
-        }
-        ProjectCommands::ValidateGerberMechanicalLayer(
-            ProjectValidateGerberMechanicalLayerArgs {
-                path,
-                layer,
-                gerber,
-            },
-        ) => {
-            let report = validate_native_project_gerber_mechanical_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_gerber_mechanical_validation_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            let exit_code = if report.matches_expected { 0 } else { 1 };
-            Ok((output, exit_code))
-        }
-        ProjectCommands::CompareGerberOutline(ProjectCompareGerberOutlineArgs { path, gerber }) => {
-            let report = compare_native_project_gerber_outline(&path, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_outline_comparison_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::CompareGerberCopperLayer(ProjectCompareGerberCopperLayerArgs {
-            path,
-            layer,
-            gerber,
-        }) => {
-            let report = compare_native_project_gerber_copper_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_copper_comparison_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::CompareGerberSoldermaskLayer(
-            ProjectCompareGerberSoldermaskLayerArgs {
-                path,
-                layer,
-                gerber,
-            },
-        ) => {
-            let report = compare_native_project_gerber_soldermask_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_gerber_soldermask_comparison_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::CompareGerberSilkscreenLayer(
-            ProjectCompareGerberSilkscreenLayerArgs {
-                path,
-                layer,
-                gerber,
-            },
-        ) => {
-            let report = compare_native_project_gerber_silkscreen_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_gerber_silkscreen_comparison_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::CompareGerberPasteLayer(ProjectCompareGerberPasteLayerArgs {
-            path,
-            layer,
-            gerber,
-        }) => {
-            let report = compare_native_project_gerber_paste_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_gerber_paste_comparison_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
-        ProjectCommands::CompareGerberMechanicalLayer(
-            ProjectCompareGerberMechanicalLayerArgs {
-                path,
-                layer,
-                gerber,
-            },
-        ) => {
-            let report = compare_native_project_gerber_mechanical_layer(&path, layer, &gerber)?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_gerber_mechanical_comparison_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        ProjectCommands::ExportGerberOutline(args) => args.run(format),
+        ProjectCommands::ExportGerberCopperLayer(args) => args.run(format),
+        ProjectCommands::ExportGerberSoldermaskLayer(args) => args.run(format),
+        ProjectCommands::ExportGerberSilkscreenLayer(args) => args.run(format),
+        ProjectCommands::ExportGerberPasteLayer(args) => args.run(format),
+        ProjectCommands::ExportGerberMechanicalLayer(args) => args.run(format),
+        ProjectCommands::ValidateGerberOutline(args) => args.run(format),
+        ProjectCommands::ValidateGerberCopperLayer(args) => args.run(format),
+        ProjectCommands::ValidateGerberSoldermaskLayer(args) => args.run(format),
+        ProjectCommands::ValidateGerberSilkscreenLayer(args) => args.run(format),
+        ProjectCommands::ValidateGerberPasteLayer(args) => args.run(format),
+        ProjectCommands::ValidateGerberMechanicalLayer(args) => args.run(format),
+        ProjectCommands::CompareGerberOutline(args) => args.run(format),
+        ProjectCommands::CompareGerberCopperLayer(args) => args.run(format),
+        ProjectCommands::CompareGerberSoldermaskLayer(args) => args.run(format),
+        ProjectCommands::CompareGerberSilkscreenLayer(args) => args.run(format),
+        ProjectCommands::CompareGerberPasteLayer(args) => args.run(format),
+        ProjectCommands::CompareGerberMechanicalLayer(args) => args.run(format),
         ProjectCommands::PlanGerberExport(args) => args.run(format),
         ProjectCommands::ExportGerberSet(args) => args.run(format),
         ProjectCommands::ValidateGerberSet(args) => args.run(format),

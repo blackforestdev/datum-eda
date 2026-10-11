@@ -13,6 +13,15 @@ pub(super) fn refuse_unjournaled(
     model: &DesignModel,
     batch: &OperationBatch,
 ) -> Result<(), EngineError> {
+    if batch
+        .operations
+        .iter()
+        .any(|op| matches!(op, Operation::Process { .. }))
+    {
+        return Err(refusal(
+            "process operations require the canonical journaled transaction",
+        ));
+    }
     if super::component_pad_source::touches_batch(model, batch)?
         || batch.operations.iter().any(|op| {
             matches!(op, Operation::AdoptBoardSourceProfile { .. })
@@ -138,6 +147,12 @@ pub(super) fn materialize(
 ) -> Result<serde_json::Value, EngineError> {
     if batch.operations.iter().any(|op| {
         matches!(op, Operation::AdoptBoardSourceProfile { .. })
+            || matches!(
+                op,
+                Operation::Process {
+                    operation: super::process_operations::ProcessOperation::AdoptCapability { .. }
+                }
+            )
             || super::board_graphic_source::identity(op).is_some()
     }) {
         super::journal::capture_shard_value(model, shard)
@@ -147,6 +162,7 @@ pub(super) fn materialize(
 }
 
 pub(super) fn validate_native(value: &serde_json::Value) -> Result<(), EngineError> {
+    super::process_operations::validate_native(value)?;
     super::board_graphic_source::validate_native(value)?;
     super::component_pad_source::validate_native(value)
 }

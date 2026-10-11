@@ -124,6 +124,7 @@ pub(super) fn append_exact(
             max_y: y.1,
         };
         scene.pads.push(PadPrimitive {
+            native_process: None,
             object_id: format!("pad:{}", pad.uuid),
             object_kind: "pad".into(),
             source_object_uuid: pad.uuid.to_string(),
@@ -184,6 +185,7 @@ pub(super) fn append_exact(
 pub(super) fn integer_primitive(pad: BoardPadPayload) -> PadPrimitive {
     let bounds = pad_bounds(&pad);
     PadPrimitive {
+        native_process: None,
         object_id: format!("pad:{}", pad.uuid),
         object_kind: "pad".to_string(),
         source_object_uuid: pad.uuid.clone(),
@@ -208,3 +210,84 @@ pub(super) fn integer_primitive(pad: BoardPadPayload) -> PadPrimitive {
 
 #[cfg(test)]
 mod exact30_tests;
+
+#[cfg(test)]
+mod process_tests;
+
+pub(super) fn attach_native_process(
+    scene: &mut BoardReviewSceneV1,
+    processes: &std::collections::BTreeMap<
+        uuid::Uuid,
+        eda_engine::substrate::component_pad_source::process::PlacedProcessGeometry,
+    >,
+) -> Result<()> {
+    for pad in &mut scene.pads {
+        let Ok(id) = uuid::Uuid::parse_str(&pad.pad_uuid) else {
+            continue;
+        };
+        if let Some(process) = processes.get(&id) {
+            pad.mask_layer_ids = process
+                .membership
+                .mask_layers
+                .iter()
+                .copied()
+                .map(layer_id)
+                .collect();
+            pad.paste_layer_ids = process
+                .membership
+                .paste_layers
+                .iter()
+                .copied()
+                .map(layer_id)
+                .collect();
+            pad.native_process = Some(process.clone());
+        }
+    }
+    Ok(())
+}
+
+/// Collect native authority before the scene's historical serde defaults are applied.
+pub(super) fn native_processes(
+    board: &Value,
+    projection: &eda_engine::substrate::component_pad_source::ComponentPadProjection,
+) -> Result<
+    std::collections::BTreeMap<
+        uuid::Uuid,
+        eda_engine::substrate::component_pad_source::process::PlacedProcessGeometry,
+    >,
+> {
+    use eda_engine::substrate::{
+        component_pad_source::process::preserved_placed_process,
+        process_operations::capability_from_board,
+    };
+    let Some(capability) = capability_from_board(board)? else {
+        return Ok(projection.process_pads.clone());
+    };
+    anyhow::ensure!(
+        projection.unavailable.is_empty() && projection.unadopted_packages.is_empty(),
+        "native process scene has unresolved placed sources: {:?}; legacy placements {:?}",
+        projection.unavailable,
+        projection.unadopted_packages
+    );
+    for id in projection.query_pads.keys() {
+        anyhow::ensure!(
+            projection.process_pads.contains_key(id),
+            "placed Pad {id} lacks frozen native process authority; explicit process materialization required"
+        );
+    }
+    let mut processes = projection.process_pads.clone();
+    for raw in board
+        .get("pads")
+        .and_then(Value::as_object)
+        .into_iter()
+        .flat_map(|p| p.values())
+    {
+        let mut process = preserved_placed_process(raw)?;
+        process.source_capability = Some(capability.clone());
+        anyhow::ensure!(
+            processes.insert(process.pad_id, process).is_none(),
+            "native process scene has duplicate placed Pad authority"
+        );
+    }
+    Ok(processes)
+}

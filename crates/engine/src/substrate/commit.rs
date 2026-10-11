@@ -310,6 +310,13 @@ impl DesignModel {
         let batch = super::electrical_transaction::compose(self, batch, transaction_kind)?;
         super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
         super::board_source_profile::validate_batch(self, project_root, &batch)?;
+        super::process_operations::validate_batch(self, project_root, &batch)?;
+        super::component_pad_source::process::validate_update_policy(
+            self,
+            &batch,
+            transaction_kind,
+            policy_context == CommitPolicyContext::AcceptedProposalApply,
+        )?;
         super::component_pad_source::validate_batch(self, project_root, &batch, transaction_kind)?;
 
         if revision_input.related_transaction.is_none() {

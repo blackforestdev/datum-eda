@@ -7,7 +7,7 @@ use crate::rules::ast::RuleType;
 use crate::schematic::CheckWaiver;
 use crate::substrate::{ZoneFill, zone_fill_copper_projection_zones};
 
-use super::{DrcReport, run_with_clearance_override, run_with_nominal_overrides};
+use super::{DrcReport, run_with_clearance_override};
 
 pub fn run_with_zone_fills(
     board: &Board,
@@ -105,7 +105,14 @@ pub fn run_with_current_zone_fills_and_waivers(
     let zones = projected.zones.values().cloned().collect::<Vec<_>>();
     let (zones, _) = zone_fill_copper_projection_zones(&zones, &model.zone_fills);
     projected.zones = zones.into_iter().map(|z| (z.uuid, z)).collect();
-    run_with_nominal_overrides(&projected, selected_rules, waivers, clearance, connectivity)
+    super::run_with_nominal_and_process_overrides(
+        &projected,
+        selected_rules,
+        waivers,
+        clearance,
+        connectivity,
+        super::native_process::checks(model, selected_rules),
+    )
 }
 fn same<T: PartialEq>(a: &BTreeMap<Uuid, T>, b: &std::collections::HashMap<Uuid, T>) -> bool {
     a.len() == b.len() && b.iter().all(|(id, value)| a.get(id) == Some(value))

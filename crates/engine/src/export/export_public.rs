@@ -18,4 +18,5 @@ pub use super::export_surface::{
 pub use super::gerber_mechanical::{MechanicalStroke, render_rs274x_mechanical_layer};
 pub use super::graphics::append_rs274x_board_graphics;
 pub use super::mask::{render_rs274x_paste_layer, render_rs274x_soldermask_layer};
+pub use super::process::process_pad_for_layer;
 pub use super::silkscreen::{SilkscreenStroke, render_silkscreen_text_strokes};

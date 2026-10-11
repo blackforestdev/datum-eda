@@ -16,6 +16,7 @@ mod package;
 mod padstack;
 mod pin;
 mod pin_pad_map;
+pub mod process;
 mod symbol;
 
 pub use footprint::Footprint;

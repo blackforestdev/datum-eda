@@ -45,6 +45,7 @@ mod project_library_part_bindings;
 mod project_library_pin_pad_map;
 mod project_library_symbol_pin;
 mod project_output_jobs;
+pub(crate) mod project_process;
 mod project_proposals;
 mod project_query_plan;
 mod project_waivers;

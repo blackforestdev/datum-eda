@@ -9,7 +9,8 @@ use sha2::{Digest, Sha256};
 pub(crate) fn is_standards_profile_finding(code: &str) -> bool {
     matches!(
         code,
-        "pad_process_aperture_inherited_from_copper"
+        "native_process_standards_unqualified"
+            | "pad_process_aperture_inherited_from_copper"
             | "pad_process_aperture_inconsistent_with_peer_footprint"
             | "pad_mask_expansion_missing"
             | "pad_mask_expansion_below_rule"

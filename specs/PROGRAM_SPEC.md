@@ -63,6 +63,14 @@ Status tracking rule:
   tracker; slice-by-slice ledgers and detailed adjacent-contract history belong
   in milestone shard docs such as `specs/progress/*.md`.
 
+## Current PM061 CLI inventory reconciliation
+
+The implemented `datum-eda project process <root>` command groups manual profile,
+basis and physical-face association authoring with effective-process inspection.
+The existing reviewed component-replacement proposal carries process-update intent.
+The library-authoring contract and PM061 govern semantics and qualification;
+this inventory note changes no historical milestone or successor authority.
+
 ## Scope Integrity Terms
 
 The following terms are normative for scope framing across this repository:

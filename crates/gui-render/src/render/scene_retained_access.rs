@@ -34,12 +34,23 @@ fn append_retained_draw_command(
     range: std::ops::Range<u32>,
     stroke: bool,
 ) {
+    append_retained_draw_command_with_merge(commands, layer, range, stroke, true);
+}
+
+fn append_retained_draw_command_with_merge(
+    commands: &mut impl Output<RetainedDrawCommand>,
+    layer: Option<&str>,
+    range: std::ops::Range<u32>,
+    stroke: bool,
+    merge: bool,
+) {
     let previous = match commands.last_mut() {
         Some(RetainedDrawCommand::Quads { layer_id, range }) if !stroke => Some((layer_id, range)),
         Some(RetainedDrawCommand::Strokes { layer_id, range }) if stroke => Some((layer_id, range)),
         _ => None,
     };
-    if let Some((previous_layer, previous_range)) = previous
+    if merge
+        && let Some((previous_layer, previous_range)) = previous
         && previous_layer.as_deref() == layer
         && previous_range.end == range.start
     {
@@ -62,6 +73,26 @@ fn append_retained_draw_command(
     });
 }
 
+/// Keep distinct process-stage groups even when their captured faces share a layer ID.
+pub(super) fn finish_retained_process_group(
+    commands: &mut impl Output<RetainedDrawCommand>,
+    layer: &str,
+    start: usize,
+    end: usize,
+    first: &mut bool,
+) {
+    if end > start {
+        append_retained_draw_command_with_merge(
+            commands,
+            Some(layer),
+            (start * 6) as u32..(end * 6) as u32,
+            false,
+            !*first,
+        );
+        *first = false;
+    }
+}
+
 /// Preserve painter order with one admitted key/index allocation. Computing layer
 /// keys once avoids repeated layer searches during comparison; the original index
 /// makes equal-priority ordering stable without sort-owned allocation.
@@ -70,11 +101,19 @@ pub(crate) fn sort_retained_draw_commands(
     layers: &[datum_gui_protocol::SceneLayer],
     admit: impl FnOnce(usize) -> anyhow::Result<()>,
 ) -> anyhow::Result<()> {
-    if commands
-        .iter()
-        .map(|command| draw_command_priority(command, layers))
-        .is_sorted()
-    {
+    sort_retained_commands_by(
+        commands,
+        |command| draw_command_priority(command, layers),
+        admit,
+    )
+}
+
+fn sort_retained_commands_by(
+    commands: &mut [RetainedDrawCommand],
+    priority: impl Fn(&RetainedDrawCommand) -> (u32, u32),
+    admit: impl FnOnce(usize) -> anyhow::Result<()>,
+) -> anyhow::Result<()> {
+    if commands.iter().map(&priority).is_sorted() {
         return Ok(());
     }
     let layout = std::alloc::Layout::array::<((u32, u32), usize)>(commands.len())?;
@@ -85,7 +124,7 @@ pub(crate) fn sort_retained_draw_commands(
         commands
             .iter()
             .enumerate()
-            .map(|(index, command)| (draw_command_priority(command, layers), index)),
+            .map(|(index, command)| (priority(command), index)),
     );
     order.sort_unstable();
     // order[destination] names the original source. Rotate each permutation
@@ -103,6 +142,42 @@ pub(crate) fn sort_retained_draw_commands(
         }
     }
     Ok(())
+}
+
+/// Native process commands use their real captured Pad source, not a layer label.
+pub(super) fn sort_native_board_commands(
+    commands: &mut [RetainedDrawCommand],
+    scene: &BoardReviewSceneV1,
+    spans: &[crate::presentation_ranges::Span],
+    admit: impl FnOnce(usize) -> anyhow::Result<()>,
+) -> anyhow::Result<()> {
+    sort_retained_commands_by(
+        commands,
+        |command| {
+            if let RetainedDrawCommand::Quads {
+                layer_id: Some(id),
+                range,
+            } = command
+                && let Some(layer) = scene.layers.iter().find(|layer| &layer.layer_id == id)
+            {
+                let start = range.start as usize / 6;
+                let end = range.end as usize / 6;
+                let first = spans.partition_point(|span| span.range.end <= start);
+                if let Some(stage) = spans[first..]
+                    .iter()
+                    .take_while(|span| span.range.start < end)
+                    .filter_map(|span| span.key.as_deref())
+                    .filter_map(|key| scene.pads.iter().find(|pad| pad.object_id == key))
+                    .filter_map(|pad| pad.native_process.as_ref())
+                    .find_map(|process| process_pad::native_process_stage(process, layer))
+                {
+                    return (layer_stages::render_stage_priority(stage), 0);
+                }
+            }
+            draw_command_priority(command, &scene.layers)
+        },
+        admit,
+    )
 }
 
 fn draw_command_priority(
@@ -299,19 +374,15 @@ impl RetainedScene {
                 },
             )?;
 
-            scene_retained_access::sort_retained_draw_commands(
-                &mut draw_commands,
-                &state.scene.layers,
-                |bytes| {
-                    retained_scene_owner::document_cpu::admit_constructor_allocation(
-                        &budget,
-                        &scope,
-                        bytes,
-                        limit,
-                        "draw command sorting",
-                    )
-                },
-            )?;
+            sort_native_board_commands(&mut draw_commands, &state.scene, &quad_sources, |bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "draw command sorting",
+                )
+            })?;
             trace_render_timing(|| {
                 format!(
                     "retained text+board_graphics batches={}ms/{}q",

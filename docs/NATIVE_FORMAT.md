@@ -758,13 +758,14 @@ Current live slice:
   package pads remain non-emitting in this slice, establishing the first real
   copper-layer writer without claiming broader pad geometry or full layer-set
   emission yet.
-- `eda project export-gerber-soldermask-layer <dir> --layer <id> --out
-  <path>` now writes a narrow RS-274X Gerber file for persisted native pad
-  openings on one selected soldermask layer through `eda_engine::export`,
-  deriving circular/rectangular flashed openings from authored board pads plus
-  persisted package `component_pads` with explicit apertures on the nearest
-  copper layer in stackup order without claiming mask expansion, via tenting,
-  or broader layer-set emission yet.
+- `datum-eda project export-gerber-soldermask-layer <dir> --layer <id> --out
+  <path>` writes circular/rectangular openings. Without explicit process
+  capability, the historical nominal-aperture path remains unchanged.
+  PM061-capable boards use declared physical-face associations and engine-owned
+  effective process geometry: frozen snapshots for bound component Pads and
+  explicit authored membership/policy for source-preserved board Pads. Exact
+  supported dimensions and centres are admitted before replacing the output;
+  unresolved or unsupported results refuse.
 - `eda project export-gerber-silkscreen-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for authored native board
   text plus persisted explicit component-silkscreen text, line, arc, circle,
@@ -777,13 +778,14 @@ Current live slice:
   component polygons, and deterministic stroked-chain emission for component
   polylines, without claiming broader package silkscreen shape export or
   broader text/font coverage yet.
-- `eda project export-gerber-paste-layer <dir> --layer <id> --out <path>` now
-  writes a narrow RS-274X Gerber file for persisted native pad openings on one
-  selected paste layer through `eda_engine::export`, deriving
-  circular/rectangular flashed openings from authored board pads plus
-  persisted package `component_pads` with explicit apertures on the nearest
-  copper layer in stackup order without claiming paste reduction, stencil
-  policy, or broader layer-set emission yet.
+- `datum-eda project export-gerber-paste-layer <dir> --layer <id> --out <path>`
+  writes circular/rectangular paste openings. Without explicit process
+  capability, the historical nominal-aperture path remains unchanged.
+  PM061-capable boards use declared physical-face associations and engine-owned
+  effective process geometry with signed offsets and authored ratios: frozen
+  snapshots for bound component Pads and explicit authored membership/policy
+  for source-preserved board Pads. Exact supported dimensions and centres are
+  admitted before replacing the output; unresolved or unsupported results refuse.
 - `eda project export-gerber-mechanical-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for persisted native board
   keepout polygons, board-dimension span lines, authored board text, plus

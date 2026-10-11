@@ -78,59 +78,11 @@ fn push_pad_primitive(
 mod pad_retained;
 use pad_retained::push_pad_primitive_world;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum PadProcessLayerKind {
-    Mask,
-    Paste,
-}
-
-fn process_pad_bounds(
-    pad: &datum_gui_protocol::PadPrimitive,
-    kind: PadProcessLayerKind,
-) -> datum_gui_protocol::RectNm {
-    let (width_nm, height_nm) = pad_dimensions_nm(pad);
-    let (expanded_width_nm, expanded_height_nm) = match kind {
-        PadProcessLayerKind::Mask => {
-            let clearance = pad.solder_mask_margin_nm as f32;
-            (
-                (width_nm + clearance * 2.0).max(1.0),
-                (height_nm + clearance * 2.0).max(1.0),
-            )
-        }
-        PadProcessLayerKind::Paste => {
-            let clearance = pad.solder_paste_margin_nm as f32;
-            let ratio = pad.solder_paste_margin_ratio_ppm as f32 / 1_000_000.0;
-            (
-                (width_nm + width_nm * ratio + clearance * 2.0).max(1.0),
-                (height_nm + height_nm * ratio + clearance * 2.0).max(1.0),
-            )
-        }
-    };
-    let half_w = expanded_width_nm * 0.5;
-    let half_h = expanded_height_nm * 0.5;
-    let (center_x, center_y) = paint_pad_center(pad.center);
-    datum_gui_protocol::RectNm {
-        min_x: (center_x - half_w).round() as i64,
-        min_y: (center_y - half_h).round() as i64,
-        max_x: (center_x + half_w).round() as i64,
-        max_y: (center_y + half_h).round() as i64,
-    }
-}
-
-// Retain the original owned adapter only for the existing aperture reference tests.
+#[path = "process_pad.rs"]
+mod process_pad;
 #[cfg(test)]
-fn derived_process_pad(
-    pad: &datum_gui_protocol::PadPrimitive,
-    process_layer_id: &str,
-    kind: PadProcessLayerKind,
-    _setup: &datum_gui_protocol::ScenePadExpansionSetup,
-) -> datum_gui_protocol::PadPrimitive {
-    let mut derived = pad.clone();
-    derived.layer_id = process_layer_id.to_string();
-    derived.bounds = process_pad_bounds(pad, kind);
-    derived.drill_nm = None;
-    derived
-}
+use process_pad::derived_process_pad;
+use process_pad::{PadProcessLayerKind, process_pad_bounds};
 
 fn pad_corner_radius_nm(
     pad: &datum_gui_protocol::PadPrimitive,

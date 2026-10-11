@@ -8,11 +8,16 @@ use eda_engine::substrate::zone_fill_copper_projection_zones;
 #[path = "copper_context.rs"]
 mod copper_context;
 use copper_context::{NativeCopperLayerContext, resolve_native_project_copper_layer_context};
+#[path = "process_context.rs"]
+mod process_context;
 
 fn resolve_native_project_paste_context(
     project: &LoadedNativeProject,
     layer: i32,
 ) -> Result<(StackupLayer, i32, Vec<PlacedPad>)> {
+    if let Some(context) = process_context::resolve(project, layer, true)? {
+        return Ok(context);
+    }
     let stackup = project
         .board
         .stackup
@@ -94,10 +99,8 @@ pub(crate) fn export_native_project_gerber_soldermask_layer(
     output_path: &Path,
 ) -> Result<NativeProjectGerberSoldermaskExportView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let (_mask_layer, source_copper_layer) =
-        resolve_native_project_soldermask_context(&project, layer)?;
-    let pads =
-        resolve_native_project_copper_layer_context(&project, None, source_copper_layer)?.pads;
+    let (_mask_layer, source_copper_layer, pads) =
+        resolve_native_project_mask_context(&project, layer)?;
     let gerber = render_rs274x_soldermask_layer(layer, &pads)
         .context("failed to render native board soldermask layer as RS-274X")?;
     std::fs::write(output_path, gerber)
@@ -245,10 +248,8 @@ pub(crate) fn validate_native_project_gerber_soldermask_layer(
     gerber_path: &Path,
 ) -> Result<NativeProjectGerberSoldermaskValidationView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let (_mask_layer, source_copper_layer) =
-        resolve_native_project_soldermask_context(&project, layer)?;
-    let pads =
-        resolve_native_project_copper_layer_context(&project, None, source_copper_layer)?.pads;
+    let (_mask_layer, source_copper_layer, pads) =
+        resolve_native_project_mask_context(&project, layer)?;
     let expected = render_rs274x_soldermask_layer(layer, &pads)
         .context("failed to render expected native board soldermask layer as RS-274X")?;
     let actual = std::fs::read_to_string(gerber_path)
@@ -468,10 +469,8 @@ pub(crate) fn compare_native_project_gerber_soldermask_layer(
     gerber_path: &Path,
 ) -> Result<NativeProjectGerberSoldermaskComparisonView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let (_mask_layer, source_copper_layer) =
-        resolve_native_project_soldermask_context(&project, layer)?;
-    let pads =
-        resolve_native_project_copper_layer_context(&project, None, source_copper_layer)?.pads;
+    let (_mask_layer, source_copper_layer, pads) =
+        resolve_native_project_mask_context(&project, layer)?;
     let actual_gerber = std::fs::read_to_string(gerber_path)
         .with_context(|| format!("failed to read {}", gerber_path.display()))?;
     let parsed = parse_rs274x_subset(&actual_gerber)
@@ -629,4 +628,36 @@ pub(crate) fn compare_native_project_gerber_paste_layer(
         missing,
         extra,
     })
+}
+
+fn resolve_native_project_mask_context(
+    project: &LoadedNativeProject,
+    layer: i32,
+) -> Result<(StackupLayer, i32, Vec<PlacedPad>)> {
+    if let Some(context) = process_context::resolve(project, layer, false)? {
+        return Ok(context);
+    }
+    let (mask, copper) = resolve_native_project_soldermask_context(project, layer)?;
+    let pads = resolve_native_project_copper_layer_context(project, None, copper)?.pads;
+    Ok((mask, copper, pads))
+}
+
+/// Resolve every planned process adapter before any set artifact or journal mutation.
+pub(super) fn preflight_process_set(
+    root: &Path,
+    plan: &crate::NativeProjectGerberPlanView,
+) -> Result<()> {
+    let project = load_native_project_with_resolved_board(root)?;
+    for artifact in &plan.artifacts {
+        match (artifact.kind.as_str(), artifact.layer_id) {
+            ("soldermask", Some(layer)) => {
+                resolve_native_project_mask_context(&project, layer)?;
+            }
+            ("paste", Some(layer)) => {
+                resolve_native_project_paste_context(&project, layer)?;
+            }
+            _ => {}
+        }
+    }
+    Ok(())
 }

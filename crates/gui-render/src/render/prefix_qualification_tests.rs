@@ -303,7 +303,7 @@ fn p630_exact8_rejects_stale_missing_copy_reduced_samples_and_premature_resolve(
         &pane.bounds,
         camera,
     );
-    let (x, y) = projection.project_point(state.scene.pads[0].center);
+    let (x, y) = crate::pad_paint::project_pad_center(state.scene.pads[0].center, &projection);
     state.ui.cursor_pos = Some(ScreenPointPx {
         x: x.floor() + 0.375,
         y: y.floor() + 0.625,

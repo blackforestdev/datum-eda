@@ -11,6 +11,7 @@ mod gerber_mechanical;
 mod graphics;
 mod mask;
 mod outline;
+mod process;
 mod silkscreen;
 
 pub use export_public::*;

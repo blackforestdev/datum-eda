@@ -4,6 +4,10 @@ pub(super) fn apply_board_root_operation(
     board_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<Option<bool>, EngineError> {
+    if let Some(applied) = super::process_operations::apply_board(board_value, operation)? {
+        super::board_source_profile::validate_native(board_value)?;
+        return Ok(Some(applied));
+    }
     if super::board_source_profile::apply(board_value, operation)? {
         return Ok(Some(true));
     }
@@ -30,6 +34,9 @@ pub(super) fn inverse_board_root_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<bool, EngineError> {
+    if super::process_operations::inverse(board_value, operation, inverse_operations, true)? {
+        return Ok(true);
+    }
     if super::board_graphic_source::inverse(board_value, operation, inverse_operations)? {
         return Ok(true);
     }

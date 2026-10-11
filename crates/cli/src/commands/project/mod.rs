@@ -19,6 +19,7 @@ use super::*;
 mod component_instances;
 mod genesis_product;
 mod journal_mutation;
+mod process;
 mod proposals;
 // Phase 5: `project query` (ProjectQueryArgs::run) — absorbed from the
 // dissolved command_exec_project_query* files. run() impls are inherent
