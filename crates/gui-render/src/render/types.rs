@@ -232,40 +232,7 @@ enum LayerFamily {
     Unknown,
 }
 
-/// Declared render-stack policy (`docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md`,
-/// 2026-04-16 rule): layer type group first, then back-to-front side, with
-/// scene `render_order` only as a stable in-stage tie-breaker. Declaration
-/// order IS the draw order; `render_stage_priority` derives from it. Do not
-/// reintroduce a second ordering encoding.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-enum RenderStage {
-    BottomCopper,
-    UnresolvedCopper,
-    InnerCopper,
-    TopCopper,
-    BottomMask,
-    TopMask,
-    BottomPaste,
-    TopPaste,
-    BottomSilk,
-    TopSilk,
-    Mechanical,
-    Edge,
-    Other,
-}
-
-/// The shared post-copper stage walk, in declared draw order. Both retained
-/// scene assembly and board-graphics emission iterate this one list.
-const POST_COPPER_STAGES: [RenderStage; 8] = [
-    RenderStage::BottomMask,
-    RenderStage::TopMask,
-    RenderStage::BottomPaste,
-    RenderStage::TopPaste,
-    RenderStage::BottomSilk,
-    RenderStage::TopSilk,
-    RenderStage::Mechanical,
-    RenderStage::Edge,
-];
+use layer_stages::{POST_COPPER_STAGES, RenderStage};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct LayerAppearance {

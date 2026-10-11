@@ -2363,6 +2363,209 @@
     },
     "noncargo_gates": "Actual project_status, evidence traceability, spec governance, source-health --base-ref HEAD and Cargo resource policy exit0; logs archived. No source change or Cargo rerun.",
     "independent_governance": "Actual management_review final bounded PASS received by appointed manager against proofaeddc95a/archivec9ac2715; exact82 entries comprise21 raw artifacts and61 canonical whitelist files, all hashes match accepted actual cohort. Retained claim/scope and operational exclusions truthful; no new product or full qualification grant.",
-    "independent_package_review": "Actual s5a_code_audit bounded package PASS at proofaeddc95a/archivec9ac2715: all21 raw artifacts byte-identical and61 canonical exact map/hash match; no operational payloads or discrepancy. Terminal receipt is actual50722exit0, not empty log textual PASS."
+    "independent_package_review": "Actual s5a_code_audit bounded package PASS at proofaeddc95a/archivec9ac2715: all21 raw artifacts byte-identical and61 canonical exact map/hash match; no operational payloads or discrepancy. Terminal receipt is actual50722exit0, not empty log textual PASS.",
+    "actual_landing_commit": "be8564c53e9e2204f20f39c1be7bc277745e6b01"
+  },
+  "other_stage_missing_schematic_correction_20261011": {
+    "scope": "Existing RenderStage::Other omission in shared post-copper painter walk; ordinary native missing-Schematic/Board-return continuity and subsequent idle Escape. Retained C04 remains unfinished.",
+    "authority": {
+      "existing": "M7 render-layer discipline requires unresolved layer identity fallback to stay visible; existing C04 N08 pane/selection continuity. No layer-role remap/new product rule.",
+      "memo": "docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md",
+      "memo_sha256": "1669dd20b5d9873eff6fa5f80905c206680861f7d072b5651d841429a79746ec",
+      "review_scope": "Full current memo and affected renderer owners read; adequate prior selection/prototype corpus review reused unchanged, no fresh whole substrate corpus review asserted.",
+      "gui_selection_route": "d47bd726045e78a6c3a6fdd38b0d5b63ebe947b9c138b05a44032151e4882a7e",
+      "prototype_selection_route": "78dffa2dc2a85ef1e49e9d2e50720b7bd1b6e4c91c0f2f143175c78202a4ed93"
+    },
+    "source_checkpoint": {
+      "path": "other-stage-source-checkpoint-5.json",
+      "sha256": "d2639c91fb0eae4b858b4da5b18d69ac7e7dc4f66e1c478e8b44f0aad56732cb",
+      "base_commit": "be8564c53e9e2204f20f39c1be7bc277745e6b01",
+      "files": {
+        "crates/gui-render/src/render/types.rs": {
+          "sha256": "79b5431120bc7dc926169190ae65a24789676e542c7fcf0f9768d2aff0766ed4",
+          "lines": 254
+        },
+        "crates/gui-render/src/render/layer_stages.rs": {
+          "sha256": "69612e3fa9e5b6e3e548cddaee97f057e9f2f2d58f201c24635d75ff6cbede4d",
+          "lines": 79
+        },
+        "crates/gui-render/src/render/render_stage.rs": {
+          "sha256": "c225e769eaf6fa2f9bdcf9cdb77fdf433c1fba6f939324c1aa580375a4c60acc",
+          "lines": 42
+        },
+        "crates/gui-render/src/render/layer_stages_tests.rs": {
+          "sha256": "2efba31896b353c19e4549769da00b5854c34804620f4d8c980b7dbaad14e41a",
+          "lines": 250
+        },
+        "specs/source_module_size_manifest.json": {
+          "sha256": "703d5d7d5687fc13e7ea3016ce4403a4f372ffc667d5dc2d7905152a07b209cc",
+          "lines": 739
+        }
+      },
+      "root_exact_HEAD": true,
+      "physical_lines": 129,
+      "expanded_before": 3488,
+      "expanded_after": 3455,
+      "source_commit": null
+    },
+    "implementation": "Real normal-child render_stage owner contains enum/shared walk/priority, registered under existing layer_stages; included types imports the owner. Other appended in existing final order. Colors/materials/IDs/visibility/selection/source semantics unchanged. Exact measured expanded ceiling ratcheted downward; no ceiling increase or forwarding include.",
+    "parity": {
+      "path": "specs/SPEC_PARITY.md",
+      "count": 66,
+      "inventory_sha256": "75067826aa8542d9541480be1dfdc9cd18263539a5134369d194842911956c48",
+      "sha256": "53c27481ae660748a375a5e03fc820409f972f5086b90b2cfd8c56303f9bba3d"
+    },
+    "compiled_native_cohort": {
+      "gui_sha256": "ca4de3e08730699ffbc1c625b623e5e45ed0219539131e6e6cf0bfedb972bbea",
+      "source_checkpoint_sha256": "b574ce3de33f10b05d2c881aba9234e1537388c8666542e1dd6d39cbe53d5a59",
+      "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+      "producer": "ordinary_missing_schematic_other.py",
+      "producer_sha256": "02eadcebcf6465411c5c5919da4343b38376ae6b060727e88342c6864b7ac235"
+    },
+    "final_clean_build": {
+      "gui_sha256": "072b5c9c8e406b152ad6c2e62981502fabdba1a5831f0011977f0846f5517cd8",
+      "session": 34966,
+      "exit_code": 0,
+      "elapsed": "20.42s",
+      "log_sha256": "4a1bb093fd242f2e94fe7498d6061456121346bbc4c3c9f01640b698f333d42a",
+      "relationship": "Only unused use super::* removed after completed native30. Independent reviewer reconstructed exact checkpoint4 bytes by reinsertion. Behavior/test/enum/walk/priority/ledger unchanged; manager explicitly approved adequate native30 reuse. Native30 is NOT attributed to this final binary."
+    },
+    "focused_regression": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render native_text_and_outline_unknown_layers_keep_existing_fallback_visible",
+      "session": 37122,
+      "exit_code": 0,
+      "passed": 1,
+      "failed": 0,
+      "log_sha256": "b0c92f176f5a08269eddaabf674e37b38f82a539587d865cb498f51064aa7ff9",
+      "scope": "Actual native eight texts/four outline segments emit visible painter commands/current material; declared custom Other fallback; hidden layers reject matching visible commands/range overlaps and authored-off visible sequence empty. Retained buffers may persist. Source bytes/nonmutation preserved. Integration targets with zero tests are not credited."
+    },
+    "fixture_provenance": {
+      "source": "/home/bfadmin/Documents/datum-eda/crates/engine/testdata/golden/text/native/text-transform-repro",
+      "root": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/projects/missing-schematic-other",
+      "expected_members": [
+        [
+          "BoardOutline",
+          "93000000-0000-0000-0000-000000000003",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000101",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000102",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000103",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000104",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000105",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000106",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000107",
+          ""
+        ],
+        [
+          "BoardText",
+          "93000000-0000-0000-0000-000000000108",
+          ""
+        ]
+      ],
+      "fixture_sha256": {
+        "project.json": "11861cc182e136abbe7b85becfa989593055140e07261e873d2a0706c0734c55",
+        "board/board.json": "6591f11794f943c9cd38358591069b8b08ef24f5f50741bf423155031d6b7952",
+        "schematic/schematic.json": "aada0b8432a8b274a6ef53d65256659dee1202b76f0ced9839e957607d2be5f5",
+        "rules/rules.json": "69028fe12f761561fbb6494ace5e73a0c8efd851040aff792d194d2a13ac0220"
+      },
+      "reuse": "Existing governed native text-transform fixture, fresh unmodified canonical copy; no source/setup writes."
+    },
+    "execution": {
+      "exec_session": 4618,
+      "exit_code": 0,
+      "gui_child_exit_code": 0,
+      "pid": 671679,
+      "window": "27262980",
+      "result_sha256": "63185e80df345f69c56c81b3c22488ed84973605c9ce38e6ae051f92145eb267",
+      "terminal_receipts_sha256": "504bf2cca361b3e46025ddb3c9cac284efeb9195a825df772615c93e0aabd0b3",
+      "terminal_provenance": "Actual exec/write_stdin terminal0; empty redirected missing-schematic-native30.log is not textual PASS."
+    },
+    "observations": {
+      "receipts": 4,
+      "sequences": [
+        4,
+        22,
+        39,
+        40
+      ],
+      "selected_members": 9,
+      "classes": {
+        "BoardText": 8,
+        "BoardOutline": 1
+      },
+      "focus": null,
+      "transition": "Actual focused Fill Pane:Schematic and Fill Pane:Board labels before Enter; exact full SelectionView retained across missing native source and Board return, then fresh idle Escape emits None. Six actual PNGs show selected fallback geometry, missing placeholder/no projected cues, restored selected Board geometry and normal unselected authored geometry after Escape. Native pixels do not establish every full text glyph is legible/unclipped."
+    },
+    "nonmutation": {
+      "canonical_files": 4,
+      "maps_equal": true,
+      "canonical_hashes": {
+        "project.json": "11861cc182e136abbe7b85becfa989593055140e07261e873d2a0706c0734c55",
+        "board/board.json": "6591f11794f943c9cd38358591069b8b08ef24f5f50741bf423155031d6b7952",
+        "schematic/schematic.json": "aada0b8432a8b274a6ef53d65256659dee1202b76f0ced9839e957607d2be5f5",
+        "rules/rules.json": "69028fe12f761561fbb6494ace5e73a0c8efd851040aff792d194d2a13ac0220"
+      },
+      "scope": "All four original canonical files unchanged and no new canonical journal/cursor/history files; actual startup operational paths explicitly classified and exact writer.lock transient excluded. No fixture mutation or source conformance repair."
+    },
+    "preserved_attempts": {
+      "28": "Actual state continuity/child0/canonical4 unchanged, but Board blank before/return: capture-limited, no restored-cue credit.",
+      "29": "Unexecuted flawed Fit zoom!=1 oracle; CameraEngine fit always sets1.0. Setup/producer retained, no runtime outcome fabricated.",
+      "80750": "Focused1 compile101 E0433 serde_json unavailable; replaced test-only use with existing Debug/sourcebytes, no dependency added.",
+      "36720": "Focused2 actual0PASS1FAIL: incorrectly demanded retained strokes empty.",
+      "27319": "Focused3 actual0PASS1FAIL: incorrectly demanded authored-ID retained incidences absent. Retained geometry is lawful; downstream visible-command admission is actual consumer.",
+      "source_health": "First physical-root growth failed; restored root byte-exact HEAD and real nested normal owner yields3455. Pre-ratchet expanded gate failure and final gates retained.",
+      "compiled_checkpoint4": "Warning-containing native30 ca4de3e0 cohort retained; final cleanup072b5c9c is separately pinned."
+    },
+    "incidental_issue": {
+      "id": "dat-text-transform-layer-conformance-in2y",
+      "scope": "Authored fixture layers37/outline44 vs declared stackup1/2/3/4/41. Fallback painting does not establish source/manufacturing conformance. Intake only, no prerequisite/remap."
+    },
+    "independent_source_native_review": "Actual distinct s5a_code_audit bounded ACCEPT received: final5 pins verified, import-only reconstruction exact, focused1/0 personally checked, all6 native30 PNGs/typed fullview/current canonical hashes independently reviewed. No mandatory remaining unit defect.",
+    "manager_acceptance": "Actual owner-appointed root bounded ACCEPT after actual independent review and personal returned Board/missing placeholder pixels: Other fallback emission, missing projection/return/idle Escape accepted; native30 reuse explicitly approved only for independently verified unused-import deletion plus clean build. No full C04/N08/HUMAN acceptance.",
+    "noncargo_gates": "Actual sourcehealth --base-ref HEAD PASS3088; evidence traceability, spec governance and Cargo resource policy exit0. Required debt inventory row reconciled; global spec parity retains only unrelated unchanged GUI supervision inventory mismatch, no refresh or waiver.",
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/other-stage-missing-schematic-20261011.tar.xz",
+      "sha256": "1ef9ab95b9cfae670209340ed30f5f4099e4bc6de5c5a03fbc24700f7ceab005",
+      "raw_files": 47,
+      "canonical_files": 4,
+      "entries": 51,
+      "whitelist": "Only explicit raw evidence plus source_after canonical hash-map paths; no operational/credential/runtime tree payloads."
+    },
+    "limits": [
+      "No live Project replacement, missing-scene click/refusal, active gesture cancellation, minimization, physical/HUMAN, native accessibility or full C04/C05/C06 qualification.",
+      "No layer37-to-silk/44-to-edge role mapping, source/standards/manufacturing conformance or new palette/material policy.",
+      "FocusNone is preserved honestly; this case does not prove non-null focus continuity.",
+      "Final clean binary availability is separate from actual native30 compiled cohort; only exact nonbehavior import delta is reused."
+    ],
+    "next_retained_C04_work": "Manager approved existing OpenProject transaction approach in packet3f6e09c5; exact owning paths/scope synchronization and implementation preflight pending after this landing, no new successor grant inferred.",
+    "independent_governance": "Actual management_review final bounded PASS received at proof53122762/archive1ef9ab95: all51 entries individually verified (47raw+4canonical exact whitelist), final5/current pins and sole unused-import reconstruction exact, actual30/clean binary distinct; no mandatory correction or broader grant.",
+    "independent_package_review": "Actual s5a_code_audit final bounded correspondence PASS at proof53122762/archive1ef9ab95: all47 raw members byte-identical and4 canonical-final files exactly match source_after whitelist/hashmap, no extra operational/credential payloads or discrepancy. Final source/native/package ACCEPT recommendation received by appointed manager."
   }
 }

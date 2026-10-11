@@ -1,6 +1,5 @@
 //! Existing layer-type rendering policy, with visible unresolved copper.
 //! UnresolvedCopper is a painter bucket, never a front/back source identity.
-use super::*;
 pub(super) fn scene_layer_name<'a>(
     layer_id: &str,
     scene_layers: &'a [datum_gui_protocol::SceneLayer],
@@ -42,11 +41,9 @@ pub(super) fn render_stage_for_layer(
     }
 }
 
-pub(super) fn render_stage_priority(stage: RenderStage) -> u32 {
-    // The enum declaration order is the single encoding of the declared
-    // render-stack policy; priority is its discriminant.
-    stage as u32
-}
+#[path = "render_stage.rs"]
+mod render_stage;
+pub(super) use render_stage::{POST_COPPER_STAGES, RenderStage, render_stage_priority};
 
 pub(super) fn scene_layer_stack_priority(
     layer_id: &str,
