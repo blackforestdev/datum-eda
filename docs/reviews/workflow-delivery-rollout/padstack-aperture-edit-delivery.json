@@ -1,0 +1,150 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "510fe31ef2316cd793af0e57f29a7959d3739362",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda --format json project create-pool-padstack /home/bfadmin/Documents/datum-eda/.datum/footprint-reference-audit/padstack-aperture-audit/ordinary --padstack 4af03ebc-4120-4135-9342-6d5d51c3ca84 --name 'Fresh edited copper' --aperture circle --diameter-nm 1000 --drill-nm 500",
+  "workflow_results": {
+    "Create a native unplaced Padstack through the ordinary CLI": true,
+    "Resize, change shape, clear and restore Padstack copper aperture through existing Set": true,
+    "Query exact raw aperture and preserved sibling content, then reopen the native project": true,
+    "Undo and redo aperture edits with exact payloads and canonical journal history": true,
+    "Create a native Footprint pad referencing the edited Padstack UUID after restoring its aperture": true,
+    "Use existing Padstack Create, whole-object Set and Symbol and Footprint section workflows with preserved behavior": true
+  },
+  "safety_results": {
+    "Preserve the original raw circle or rectangle aperture metadata and explicit null clearing representation": true,
+    "Preserve Padstack UUID, name, drill, plating, layer span, process, thermal and other sibling metadata and absent optional defaults": true,
+    "Reject malformed aperture values, unsupported kind or section, missing Padstack and unauthorized writer without authored or journal changes": true,
+    "Use one fresh prepared model and canonical Set commit path with shared typed-value admission and raw replacement": true,
+    "Retain existing whole-object aperture schema admission and typed Create checks without new numeric, drill, process, normalization or identity rules": true
+  },
+  "binary_sha256": "6b0003c660174695b55e2c823f72849ee736441bf8b192f0be0c6a6fa135c6f5",
+  "source_pins": {
+    "crates/cli/src/args/project_library_object.rs": {
+      "sha256": "55c563b2d035c38aa34a3d99a18683149c7882ee7dfccc0b1147343078aa9122",
+      "lines": 56
+    },
+    "crates/cli/src/commands/library/library/object_edit.rs": {
+      "sha256": "9156ce8d88b17db56741802d44ed8ae69251008e5522348d4f36e8ffac6a4f5e",
+      "lines": 158
+    },
+    "crates/engine/src/api/native_write/library_definition.rs": {
+      "sha256": "89cb7a45083ce32cb3e02021341dddddc28c9f82f84763a113fedc730e55564c",
+      "lines": 680
+    },
+    "crates/cli/src/main_tests/main_tests_project_pool_padstack_aperture.rs": {
+      "sha256": "fc416ef71c08b521925718e7527385e8373f8dc799293e111710c061243c89ab",
+      "lines": 294
+    },
+    "crates/cli/src/main_tests/mod.rs": {
+      "sha256": "5b688bd9d879bd29122215a657c3215f628565b90421b7e85179a8ef934e1984",
+      "lines": 340
+    }
+  },
+  "evidence": {
+    ".datum/footprint-reference-audit/padstack-aperture-audit/source-freeze.json": "11469ee5b7d2402b69c0a8ec041bb64d34b89a2cb3e9eeeacf53e08acef07979",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/source-freeze-before-test-inspection.json": "c31384b7bcecd18cfee5c8b672fb712317f7bed5dd3278b0897af2ea840c9443",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/focused-package-name-failed.log": "ab4e729c8490e0858c7e635b27d5ce36a733e8b4fea084fa1ae61067e2ba4c8d",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/before-results.json": "903a41fdf85f59cb1a0ff9fbb0561b22ab4693f4cb7f0bc2fa0a7fd7b80632b0",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/focused.log": "d87435d9b43e3a75752b113cc8d6960743d49664e3ecc97f4b0abcb2638cb9a2",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/symbol-fields-tests.log": "7e38d1dfc58650d02954264f8bd9c6d6849ca182bc98ef5f45c433c40b09ffdd",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/symbol-drawings-tests.log": "64ba8452af93a2a8736458aec86f4428464e57ed9b9a6b6c4d209dafccfcd9a6",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/build-after.log": "80d976edccd007e4fe0f61f4640c5d8ddd83b0363745a7574e2f443a669b96d3",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/ordinary-results.json": "e563a12ab24875fcfeb48f39a4ea64fc35094cdfbc6730745af7315c0b8779e8",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/compatibility-results.json": "6fec821090dd5eca5976ce432670dc71696b95308de25040b7e84bcc0bb9aa64",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/other-collection-results.json": "2cfa455702d31cff95883fb3a920e72f42bcb0d7254d35826c559830956de391",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/symbol-diagnostic-comparison.json": "c743e2f3a1be707539ac13828bbc4a9654cfbafde4e72100567bdc410f203840",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/fields-compat/ordinary-results.json": "68739888a064bdfda0ff0dfb6c597d0047db01cb9ef4996adb93204c9d137c58",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/symbol-compat/ordinary-results.json": "d6310e56843165b490e6a34de265769ffdba5e7ee881d4980bbb57df025741de",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/execution-receipts.json": "7eb2e50c9267a8c8e85a8eaeec5c6eb4925d3a6a8ab1a261e6f6e2a1d4f18e3f",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/full-drift.log": "23c86766eaabb709b28a25609741d3d27e4f1d7ec979f6757794bbb9045999f2",
+    ".datum/footprint-reference-audit/padstack-aperture-audit/drift-comparison.json": "f51e6f31827aed61320278ba2f54440ca60d3955e3c0bdb6da33ae6ba34b76f4"
+  },
+  "observed_results": {
+    "final_unique_tests": 8,
+    "ordinary_commands": 101,
+    "positive_commands": 65,
+    "new_section_refusals": 29,
+    "existing_typed_create_refusals": 7,
+    "required_full_project_invariant_refusals": 28,
+    "extra_collision_refusals": 1,
+    "exact_generic_legacy_outcomes": 21,
+    "symbol_compatibility_commands": 85,
+    "fields_compatibility_commands": 63,
+    "nonempty_footprint_sibling_supplement_commands": 23,
+    "qualified_symbol_diagnostic_comparisons": 46,
+    "aperture_edits": [
+      "resize",
+      "shape",
+      "clear",
+      "restore"
+    ],
+    "fresh_footprint_pad_uses_restored_padstack_uuid": true,
+    "validation": true,
+    "completed_execution_receipts": 12,
+    "successful_execution_receipts": 10
+  },
+  "review_receipts": {
+    "source_and_behavior": "Actual independent management source/runtime review PASS received on five frozen source pins and completed ordinary/compatibility proofs. Persisted journal entries in the raw ordinary results were personally compared by management with exact before/after payloads.",
+    "documentation": "Actual independent engineering/API review and code auditor Tool1 review PASS receipts received by appointed manager.",
+    "full_drift": "Actual completed execution43958 exit101; retained drift comparison confirms thirteen unchanged Clippy signatures/locations in five unchanged files, with later gates unreached."
+  },
+  "manager_disposition": "Owner-appointed PM059 manager accepts bounded existing-contract delivery after actual source landing; qualification remains separate.",
+  "proof_limits": [
+    "Per-write journal increments and unplaced exclusion are executed script assertions; persisted journal entries are separately retained and were compared by management.",
+    "The extra foreign metadata UUID collision preserves authored files and journal while retaining canonical staging scratch; no full-project invariance is claimed for that control.",
+    "Symbol/fields diagnostic comparisons explicitly qualify fixture UUID/path rebasing and supported section choice expansion.",
+    "The wrong Cargo package selection eda-cli attempt3276 exit101 is retained; the command was corrected to the existing package. Eight final unique tests receive PASS credit, with one subsequent CLI build."
+  ],
+  "full_workspace_result": {
+    "status": "FAIL",
+    "exit_code": 101,
+    "diagnostics": 13,
+    "unchanged_files": 5,
+    "later_gates": "unreached"
+  },
+  "pending_qualification": [
+    "Q5/Q6 graph promotion and placed propagation remain owner-reserved",
+    "GUI S05, MCP and editor breadth remain separate",
+    "Seed/source/license rights, standards and manufacturing adoption remain separate",
+    "Unrelated full-workspace Clippy and GUI parity failures remain open"
+  ],
+  "payload_checks": [
+    {
+      "action": "resize",
+      "before_revision": 1,
+      "after_revision": 2,
+      "exact_expected_payload": true,
+      "payload_sha256": "63d581964bf40bad00c3136b4895ddaa6cce9360dd75af309142b709412aeec6",
+      "persisted_journal_entry_sha256": "b22d76052f03bb41fc28d2bd2b531fe6428e0de1db5aabf1692919c61c3db266"
+    },
+    {
+      "action": "shape",
+      "before_revision": 4,
+      "after_revision": 5,
+      "exact_expected_payload": true,
+      "payload_sha256": "549013eee448ce2f16457bd097f8bdb139fefcb10cdc765c1e33a1210e30d0d1",
+      "persisted_journal_entry_sha256": "4a6ce85dc9b04caa12341de2f4ae87a8ddc70141aeed02f6f4f0240a4e05ce40"
+    },
+    {
+      "action": "clear",
+      "before_revision": 7,
+      "after_revision": 8,
+      "exact_expected_payload": true,
+      "payload_sha256": "4426fd9571ff467c29d337822b25990c4977bfe285d9681cd85923a9c3a1a076",
+      "persisted_journal_entry_sha256": "aea1359f24fe69552b62a704be0961e009c7551e81b8e69cd3b50fe31d66e842"
+    },
+    {
+      "action": "restore",
+      "before_revision": 10,
+      "after_revision": 11,
+      "exact_expected_payload": true,
+      "payload_sha256": "72179f2371370cec592d35c1c6f27be045571b89c3466c79cbe7f6acfc1801bd",
+      "persisted_journal_entry_sha256": "8d7c4851609f3e717c8b6caf6489b8a36a7636ea361cfa54169da32451cd4440"
+    }
+  ],
+  "protected_files": {
+    "count": 13,
+    "unchanged": true,
+    "original_hash_map_sha256": "11a95a4f2c3496d70732661e5f2dc1ccce91b061f2c2b2e159b9af21ff8d06f8"
+  }
+}
