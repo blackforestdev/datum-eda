@@ -51,6 +51,24 @@ pub(super) fn render_side_panels(
     scale.quads(&mut panel_quads[starts.0..]);
     scale.text_geometry(&mut text_runs[starts.1..]);
     scale.hits(&mut hit_regions[starts.2..]);
+    // Publish the physical outer layout used by this exact Inspector frame.
+    // Menu-only composition damage can reuse it; dock/size changes cannot.
+    let right = layout.right_sidebar;
+    let sidebar = [
+        right.x.to_bits(),
+        right.y.to_bits(),
+        right.width.to_bits(),
+        right.height.to_bits(),
+    ];
+    for hit in &mut hit_regions[starts.2..] {
+        if let HitTarget::SelectionInspectorScroll {
+            sidebar: published, ..
+        } = &mut hit.target
+        {
+            *published = sidebar;
+        }
+    }
+
     Ok(visual_row.map(|row| {
         (
             RectPx {

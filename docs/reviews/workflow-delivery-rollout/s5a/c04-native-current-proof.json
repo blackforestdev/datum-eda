@@ -596,5 +596,671 @@
     "evidence_route": "Implementer reports unchanged29-route evidence gate PASS and adequate complete C01/D123/IR01 route review reused for gui-selection/prototype-selection/editor-shell-and-panes, with focused current DOM/CSS equal-strength/frame and live recursive document/view pane review plus PM021/UVT/contracts reread. No authority artifacts/digests/goldens/prototypes changed.",
     "ownership": "Two exact additional files only; no whole renderer crate claim. Current files clean before lease synchronization; existing implementer and other scope retained.",
     "boundaries": "No new visual semantics, geometry, source identity, dependencies, prototype writes, C04/C05/C06/HUMAN/physical Wayland/N15 qualification or successor authorization. Source and runtime candidate independent review required before delivery."
+  },
+  "inventory_keyboard_correction_20261011": {
+    "scope": "Retained S5A-C04 N12/N17 bounded complete inventory keyboard correction; not full C04, C05, C06 or HUMAN acceptance.",
+    "implementation": "Existing guarded selection menu offers first/previous/next/last Inspector pages when inventory is expanded. Navigation consumes renderer-owned published capacity and compact projection/layout basis; menu-only composition damage preserves valid rapid key activation. No global binding, model writer, layout or numerical policy change.",
+    "source_checkpoint": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/source-checkpoint-4.json",
+      "sha256": "f604079e2d7c77e5e9e85ea8f9dc1479b564de69da403c5f6b351a9d7133b9be",
+      "base_head": "019da2a85b1c05a522e5629941f41901abcfd889",
+      "files": {
+        "crates/gui-app/src/runtime_selection_inspector.rs": {
+          "sha256": "095864d05ca10d6ae774dd5982df0c24b6fa4ed74fe722449267d7de432c351a",
+          "lines": 189
+        },
+        "crates/gui-app/src/runtime_selection_menu.rs": {
+          "sha256": "c43f9b3cd4017a0384bdc7cc0e8c0eaf2efb65f368d89ace7a850b8a7879c0af",
+          "lines": 511
+        },
+        "crates/gui-app/src/runtime_view_actions/action_evidence.rs": {
+          "sha256": "ac86b41c629c787ae9221aa6afb9bace4aa8293bde67ebfa99adadaec03db52d",
+          "lines": 246
+        },
+        "crates/gui-protocol/src/selection_view/inspector_state.rs": {
+          "sha256": "bd450369eafc5493c438f59b684539ce50f1019505cd5ab8c76b7b5d83e7a9a4",
+          "lines": 110
+        },
+        "crates/gui-protocol/src/workspace_layout/selection_menu.rs": {
+          "sha256": "515dd1c3356d8db06a2b2b1b8f7a910e407698e9afdbe737836e5c8c1f3e841c",
+          "lines": 258
+        },
+        "crates/gui-render/src/hit_target.rs": {
+          "sha256": "d4868581a705f4b7c11dc9059ee6d77b1167ab6382196a94f36edfc1ead00e1b",
+          "lines": 152
+        },
+        "crates/gui-render/src/side_panels.rs": {
+          "sha256": "bbe75ce5fba6725d700af875e5a00c2915aeab5d05b600061309b21d1dff660f",
+          "lines": 129
+        },
+        "crates/gui-render/src/side_panels/selection_inspector.rs": {
+          "sha256": "929fd9145cb44ce105a1523075e24b97a006e60b02c635e148219abcca269e33",
+          "lines": 323
+        },
+        "crates/gui-render/src/side_panels/selection_inspector/tests.rs": {
+          "sha256": "47acc6f4b13fa58f0a7774cdf93d89de6c9e4e33203879be0370c7dc193be859",
+          "lines": 269
+        }
+      },
+      "landing_commit": null
+    },
+    "compiled_gui_sha256": "869ef608a42d46821df9d34c27f0aa58c88d5ae7ed86cebe6157bc5623c59721",
+    "cli_sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510",
+    "source_pin_note": "GUI built against these final production source bytes. Base HEAD is not a feature source landing commit; pending manager landing. Test-only temporary quantity diagnostic was reverted to checkpoint4.",
+    "ordinary_transport": "Existing serialized X11 native key events with actual window focus checks and capture target activation. No new input transport; no physical/HUMAN or Wayland claim.",
+    "cases": [
+      {
+        "kind": "texts",
+        "count": 256,
+        "origin": "authored Compound",
+        "raw_result": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-2.json",
+        "sha256": "9041015d3abce64c0025135f95cd6e0fd18f12566e66444b23949bbca0fceb6e",
+        "receipts": 18,
+        "presented_total": 276,
+        "presented_visible": 27,
+        "tail_offset": 249,
+        "tail_visible_ids": [
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e6"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e7"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e8"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e9"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ea"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010eb"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ec"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ed"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ee"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ef"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f0"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f1"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f2"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f3"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f4"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f5"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f6"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f7"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f8"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f9"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fa"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fb"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fc"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fd"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fe"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ff"
+          }
+        ],
+        "complete_observed_id_count": 256,
+        "canonical_file_count": 33,
+        "canonical_hashes_unchanged": true,
+        "excluded_actual_runtime_paths": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/.terminal-604814-1791715152931922970.agent-credential.json",
+          ".datum/terminal-contexts/.terminal-605384-1791715379685101461.agent-credential.json",
+          ".datum/terminal-contexts/context-604814-1791715152931922970.pinned.json",
+          ".datum/terminal-contexts/context-605384-1791715379685101461.pinned.json",
+          ".datum/terminal-contexts/terminal-604814-1791715152931922970.agent-authority.json",
+          ".datum/terminal-contexts/terminal-604814-1791715152931922970.discovery.json",
+          ".datum/terminal-contexts/terminal-604814-1791715152931922970.json",
+          ".datum/terminal-contexts/terminal-605384-1791715379685101461.agent-authority.json",
+          ".datum/terminal-contexts/terminal-605384-1791715379685101461.discovery.json",
+          ".datum/terminal-contexts/terminal-605384-1791715379685101461.json",
+          ".datum/tool-sessions/terminal-604814-1791715152931922970.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-604814-1791715152931922970.json",
+          ".datum/tool-sessions/terminal-604814-1791715152931922970.terminal-runtime/terminfo/d/datum-256color",
+          ".datum/tool-sessions/terminal-605384-1791715379685101461.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-605384-1791715379685101461.json",
+          ".datum/tool-sessions/terminal-605384-1791715379685101461.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "kind": "texts",
+        "count": 257,
+        "origin": "authored Compound",
+        "raw_result": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-3.json",
+        "sha256": "ddb26b8ffb1fc988bdff057a78302103696573dcca4f6ae94103c9cfbc5bf41f",
+        "receipts": 17,
+        "presented_total": 277,
+        "presented_visible": 27,
+        "tail_offset": 250,
+        "tail_visible_ids": [
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e7"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e8"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010e9"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ea"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010eb"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ec"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ed"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ee"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ef"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f0"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f1"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f2"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f3"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f4"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f5"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f6"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f7"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f8"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010f9"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fa"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fb"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fc"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fd"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010fe"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-0000000010ff"
+          },
+          {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-000000001100"
+          }
+        ],
+        "complete_observed_id_count": 257,
+        "canonical_file_count": 29,
+        "canonical_hashes_unchanged": true,
+        "excluded_actual_runtime_paths": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/.terminal-605650-1791715389677028399.agent-credential.json",
+          ".datum/terminal-contexts/.terminal-606112-1791715621225506647.agent-credential.json",
+          ".datum/terminal-contexts/context-605650-1791715389677028399.pinned.json",
+          ".datum/terminal-contexts/context-606112-1791715621225506647.pinned.json",
+          ".datum/terminal-contexts/terminal-605650-1791715389677028399.agent-authority.json",
+          ".datum/terminal-contexts/terminal-605650-1791715389677028399.discovery.json",
+          ".datum/terminal-contexts/terminal-605650-1791715389677028399.json",
+          ".datum/terminal-contexts/terminal-606112-1791715621225506647.agent-authority.json",
+          ".datum/terminal-contexts/terminal-606112-1791715621225506647.discovery.json",
+          ".datum/terminal-contexts/terminal-606112-1791715621225506647.json",
+          ".datum/tool-sessions/terminal-605650-1791715389677028399.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-605650-1791715389677028399.json",
+          ".datum/tool-sessions/terminal-605650-1791715389677028399.terminal-runtime/terminfo/d/datum-256color",
+          ".datum/tool-sessions/terminal-606112-1791715621225506647.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-606112-1791715621225506647.json",
+          ".datum/tool-sessions/terminal-606112-1791715621225506647.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "kind": "wires",
+        "count": 256,
+        "origin": "source-qualified schematic Run",
+        "raw_result": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-5.json",
+        "sha256": "ac994803802baf30d71740d09910835d4a563569499689e5a804782a682d4f42",
+        "receipts": 17,
+        "presented_total": 278,
+        "presented_visible": 27,
+        "tail_offset": 251,
+        "tail_visible_ids": [
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000e7"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000e8"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000e9"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ea"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000eb"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ec"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ed"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ee"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ef"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f0"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f1"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f2"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f3"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f4"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f5"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f6"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f7"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f8"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f9"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fa"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fb"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fc"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fd"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fe"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ff"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-000000000100"
+          }
+        ],
+        "complete_observed_id_count": 256,
+        "canonical_file_count": 38,
+        "canonical_hashes_unchanged": true,
+        "excluded_actual_runtime_paths": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/.terminal-606545-1791715709727317944.agent-credential.json",
+          ".datum/terminal-contexts/.terminal-606867-1791715797396557568.agent-credential.json",
+          ".datum/terminal-contexts/context-606545-1791715709727317944.pinned.json",
+          ".datum/terminal-contexts/context-606867-1791715797396557568.pinned.json",
+          ".datum/terminal-contexts/terminal-606545-1791715709727317944.agent-authority.json",
+          ".datum/terminal-contexts/terminal-606545-1791715709727317944.discovery.json",
+          ".datum/terminal-contexts/terminal-606545-1791715709727317944.json",
+          ".datum/terminal-contexts/terminal-606867-1791715797396557568.agent-authority.json",
+          ".datum/terminal-contexts/terminal-606867-1791715797396557568.discovery.json",
+          ".datum/terminal-contexts/terminal-606867-1791715797396557568.json",
+          ".datum/tool-sessions/terminal-606545-1791715709727317944.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-606545-1791715709727317944.json",
+          ".datum/tool-sessions/terminal-606545-1791715709727317944.terminal-runtime/terminfo/d/datum-256color",
+          ".datum/tool-sessions/terminal-606867-1791715797396557568.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-606867-1791715797396557568.json",
+          ".datum/tool-sessions/terminal-606867-1791715797396557568.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "kind": "wires",
+        "count": 257,
+        "origin": "source-qualified schematic Run",
+        "raw_result": "target/s5a-c04-inventory-keyboard-20261011/ordinary-result-attempt-5.json",
+        "sha256": "ac994803802baf30d71740d09910835d4a563569499689e5a804782a682d4f42",
+        "receipts": 17,
+        "presented_total": 279,
+        "presented_visible": 27,
+        "tail_offset": 252,
+        "tail_visible_ids": [
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000e8"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000e9"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ea"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000eb"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ec"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ed"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ee"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ef"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f0"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f1"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f2"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f3"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f4"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f5"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f6"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f7"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f8"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000f9"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fa"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fb"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fc"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fd"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000fe"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-0000000000ff"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-000000000100"
+          },
+          {
+            "class": "wire",
+            "id": "71000000-0000-4000-8000-000000000101"
+          }
+        ],
+        "complete_observed_id_count": 257,
+        "canonical_file_count": 38,
+        "canonical_hashes_unchanged": true,
+        "excluded_actual_runtime_paths": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/.terminal-607123-1791715807875929642.agent-credential.json",
+          ".datum/terminal-contexts/context-607123-1791715807875929642.pinned.json",
+          ".datum/terminal-contexts/terminal-607123-1791715807875929642.agent-authority.json",
+          ".datum/terminal-contexts/terminal-607123-1791715807875929642.discovery.json",
+          ".datum/terminal-contexts/terminal-607123-1791715807875929642.json",
+          ".datum/tool-sessions/terminal-607123-1791715807875929642.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-607123-1791715807875929642.json",
+          ".datum/tool-sessions/terminal-607123-1791715807875929642.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      }
+    ],
+    "behavior_observed": "All four exact 256/257 authored/derived sets are reachable through ordinary keyboard menu expansion, first/next/previous/last pages and Escape dismissal. Exact current tail published offset and final ID checked, complete observed ID union equals independent canonical fixture oracle. Full SelectionView remains identical during paging, retaining subject/members/scope/focus/revision.",
+    "collapsed_negative": "Actual texts256 disabled last-page action refuses before expansion, offset0 and expansion false, complete membership and canonical bytes preserved; selection then reacquired for positive paging.",
+    "nonmutation": "Post-open canonical baseline includes every authored and .datum journal/cursor/revision/integrity/electrical identity file. Exact observed terminal runtime paths are separately manifested; exact .datum/revision/writer.lock is transient coordination, per engine revision/writer.rs34/79. Raw startup deltas retained. No broad .datum exclusion.",
+    "checks": [
+      {
+        "log": "target/s5a-c04-inventory-keyboard-20261011/final-pages.log",
+        "sha256": "15dfaceac6491aa486c2c34b9c3fb0a4e1142562bd649a67e7cfa7843cee1095",
+        "outcome": "PASS1/0",
+        "scope": "Final production paging helper256/257 boundaries"
+      },
+      {
+        "log": "target/s5a-c04-inventory-keyboard-20261011/final-basis-corrected.log",
+        "sha256": "b8f947157134103b66f64cba260a8652add014101cec99eb107d126195886191",
+        "outcome": "PASS1/0",
+        "scope": "Renderer projection-basis notice/expansion/scope distinctions; does not invoke native stale menu action"
+      },
+      {
+        "log": "target/s5a-c04-inventory-keyboard-20261011/ordinary-gui-build.log",
+        "sha256": "6c4b4c28f5ea1e3874e7b570b47d52ae9292c61e5bbc8efff5e4759f46eac17a",
+        "outcome": "exit0",
+        "scope": "Affected ordinary GUI binary build"
+      },
+      {
+        "log": "target/s5a-c04-inventory-keyboard-20261011/retained-quantity-final.log",
+        "sha256": "5f02fc48b7d6a2cb1da0c48186dec10c6723470a1a7112252aa3d5991a5265c1",
+        "outcome": "FAIL0/1",
+        "scope": "Unchanged retained scoped quantity assertion expects stale label; separately tracked dat-inspector-quantity-label-bl6b"
+      },
+      {
+        "log": "target/s5a-c04-inventory-keyboard-20261011/retained-quantity-corrected.log",
+        "sha256": "9799185823e6773cdd36efebab4b1f49a93bfc7637529947a8a4784d85eeb88f",
+        "outcome": "diagnostic PASS, reverted",
+        "scope": "Temporary label oracle investigation only; not current delivery qualification"
+      }
+    ],
+    "fixture_provenance": "Copies of existing target/s5a-c03-u5-v1/compound-output. Text256 canonical deletion. Wire corrected copies use canonical DeleteText/CreateWire and explicit CreateElectricalIdentity Net + SchematicOnly relationship. Failed colliding-ID and unassigned-Run fixtures preserved; no private source-file writer.",
+    "failed_attempts": [
+      "Attempt1 rejects startup operational file addition; no canonical mutation.",
+      "Attempt2 texts256 passes; texts257 startup rejects exact transient writer.lock.",
+      "Attempt3 texts257 passes; first wire fixture cannot open due UUID collision with inherited electrical identities.",
+      "Attempt4 corrected Wire IDs open; actual menu displays Select Run unavailable and acquisition times out without a Run receipt. Precise runtime refusal cause was not emitted/proven. Subsequent canonical Net and SchematicOnly setup is separately retained.",
+      "Intermediate compile missing initializer, guarded resource refusal, new basis assertion failure and retained stale quantity assertion logs preserved."
+    ],
+    "prior_evidence_reuse": "Existing resumption_20261009 keyboard singleton Terminal and mixed scoped inventory receipts remain credited only at historical GUI2fc806/source7a75eaf8 scopes. Keyboard focus/menu ownership sources unchanged. No new current text-focus/Terminal or stale source/subject/scope runtime PASS asserted.",
+    "source_review": "Actual independent s5a_code_audit checkpoint4 nine-owner source and held producer fc9df105 review received, no mandatory source findings; later fixture/oracle adaptations preserved for distinct runtime review.",
+    "final_runtime_review": "Actual independent s5a_code_audit bounded runtime review received: four cases2/3/5, exact full views/IDs and canonical files33/29/38/38 including journal/cursor independently rehashed unchanged; four tails and both Run menus inspected; current nine source pins and GUI869ef608 match. No mandatory bounded runtime finding. Manager disposition and separate governance receipt pending.",
+    "proof_limits": [
+      "Dense text field labels truncate visible UUID labels; exact renderer-emitted IDs establish identity coverage, not HUMAN readability qualification.",
+      "Source freshness and layout/subject guards reviewed statically; focused basis assertions supplement, no actual stale-menu runtime control claim.",
+      "Full N01-N17 and N12 Console/AI/context cap variants, accessibility/platform/physical/HUMAN, N16 measurement and C05/C06 remain open."
+    ],
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/inventory-keyboard-20261011.tar.xz",
+      "sha256": "03ad799356e45d9fefa84535cb54e5dc239923b29904ec11f4a299cafd5340c6",
+      "files": 76,
+      "scope": "Immutable raw scripts/setup JSON/results/logs/frames snapshot; project directory runtime credentials excluded. Canonical source and journal integrity are represented by complete hash maps in raw results."
+    },
+    "manager_disposition": {
+      "outcome": "accepted for bounded source landing",
+      "authority": "Owner-appointed manager under PM059 retained S5A-C04 execution",
+      "basis": "Actual independent source/runtime and durable governance reviews; four ordinary X11 256/257-member keyboard workflows, complete published identities and unchanged post-open canonical source/journal/cursor.",
+      "retained_boundaries": "Overall C04/C05/C06, full N12/N17, stale-menu runtime, text-focus, assistive and HUMAN qualification remain open; unrelated quantity assertion failure retained.",
+      "ownership": "Implementation owner explicitly hands frozen nine source files and owned evidence/governance paths to root for landing only; existing C04 claim and execution continue."
+    }
   }
 }

@@ -73,9 +73,14 @@ pub(super) fn render(
             0
         };
     let start = navigation.scroll_offset.min(total.saturating_sub(visible));
+    let scroll_hit = hits.len();
+    let mut visible_members = Vec::new();
     hits.push(HitRegion {
         rect: body,
-        target: HitTarget::SelectionInspectorScroll { total, visible },
+        target: HitTarget::SelectionInspectorScroll {
+            total, visible, sidebar: [0;4], visible_members: Vec::new(),
+            basis: datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation),
+        },
     });
     let columns = ((rect.width - 24.0).max(0.0) / (11.0 * 0.58)).floor() as usize;
     let row_index = std::cell::Cell::new(0usize);
@@ -219,6 +224,7 @@ pub(super) fn render(
             .take(end.saturating_sub(skip))
             .enumerate()
         {
+            visible_members.push(id.clone());
             let mut status = String::new();
             if view.hidden.contains(id) {
                 status.push_str(" · hidden");
@@ -290,6 +296,13 @@ pub(super) fn render(
                 false,
             );
         }
+    }
+    if let HitTarget::SelectionInspectorScroll {
+        visible_members: published,
+        ..
+    } = &mut hits[scroll_hit].target
+    {
+        *published = visible_members;
     }
     if total > visible {
         draw_text(

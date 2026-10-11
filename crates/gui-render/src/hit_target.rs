@@ -45,6 +45,10 @@ pub enum HitTarget {
     SelectionInspectorScroll {
         total: usize,
         visible: usize,
+        basis: datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis,
+        /// Renderer-published enclosing sidebar in physical coordinates (float bits).
+        sidebar: [u32; 4],
+        visible_members: Vec<datum_gui_protocol::AuthoredSelectionIdentity>,
     },
     FitBoard,
     FitReviewTarget,

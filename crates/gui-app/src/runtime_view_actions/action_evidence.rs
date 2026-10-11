@@ -167,6 +167,16 @@ impl Runtime {
                 "focused_content": format!("{:?}", state.ui.layout.content_for(state.ui.layout.focused)),
                 "focus": format!("{:?}", state.ui.focus),
                 "selection": format!("{:?}", state.selection),
+                "selection_inspector": {
+                    "expanded": state.ui.selection_inspector.inventory_expanded,
+                    "filters_expanded": state.ui.selection_inspector.filters_expanded,
+                    "scroll_offset": state.ui.selection_inspector.scroll_offset,
+                    "presented": self.presented_hits.regions().iter().find_map(|region| {
+                        if let datum_gui_render::HitTarget::SelectionInspectorScroll {total,visible,basis,visible_members,..} = &region.target {
+                            Some(json!({"total":total,"visible":visible,"basis_scope":format!("{:?}",basis.scope),"basis_expanded":basis.navigation.inventory_expanded,"basis_offset":basis.navigation.scroll_offset,"visible_members":visible_members}))
+                        } else { None }
+                    })
+                },
                 "layout": format!("{:?}", state.ui.layout), "pane_cameras": cameras,
                 "scene_bounds": state.scene.bounds,
                 "layer_filters": format!("{:?}", state.ui.filters),

@@ -25,7 +25,7 @@ fn inventory_and_filters_are_scrollable_with_complete_identity_and_no_reselectio
     let (total, visible) = hits
         .iter()
         .find_map(|r| match r.target {
-            HitTarget::SelectionInspectorScroll { total, visible } => Some((total, visible)),
+            HitTarget::SelectionInspectorScroll { total, visible, .. } => Some((total, visible)),
             _ => None,
         })
         .unwrap();
@@ -206,4 +206,64 @@ fn inspector_quantity_rows_use_project_units_without_changing_exact_values() {
     );
     assert_eq!(state.selection, selection);
     assert_eq!(f.source_bytes(), bytes);
+}
+
+#[test]
+fn presented_inspector_basis_refuses_unpresented_expansion_scope_and_notice() {
+    use datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis;
+    let (_fixture, mut state) = selected_state();
+    let rect = RectPx {
+        x: 400.,
+        y: 80.,
+        width: 300.,
+        height: 300.,
+    };
+    let (_, _, hits) = frame(&state, rect);
+    let before = hits
+        .iter()
+        .find_map(|hit| match &hit.target {
+            HitTarget::SelectionInspectorScroll { basis, .. } => Some(basis.clone()),
+            _ => None,
+        })
+        .unwrap();
+    let SelectionTarget::Native(view) = &state.selection else {
+        panic!("native selection")
+    };
+    assert_eq!(
+        before,
+        InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
+    );
+    // Menu-only composition is deliberately absent from this Inspector basis.
+    state.ui.active_menu = Some("View".into());
+    assert_eq!(
+        before,
+        InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
+    );
+    state.ui.selection_inspector.toggle_inventory();
+    assert_ne!(
+        before,
+        InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
+    );
+    let (_, _, hits) = frame(&state, rect);
+    let expanded = hits
+        .iter()
+        .find_map(|hit| match &hit.target {
+            HitTarget::SelectionInspectorScroll { basis, .. } => Some(basis.clone()),
+            _ => None,
+        })
+        .unwrap();
+    let SelectionTarget::Native(view) = &mut state.selection else {
+        unreachable!()
+    };
+    view.notice = Some("basis changed".into());
+    assert_ne!(
+        expanded,
+        InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
+    );
+    view.notice = None;
+    view.scope = None;
+    assert_ne!(
+        expanded,
+        InspectorPresentationBasis::capture(view, &state.ui.selection_inspector)
+    );
 }

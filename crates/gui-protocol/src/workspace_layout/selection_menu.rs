@@ -7,11 +7,18 @@ use crate::{AuthoredSelectionIdentity as Id, PointNm, SelectionSubject};
 pub enum Command {
     Object(Id),
     Diagnostic(String),
-    Run { origin: Id, point: PointNm },
+    Run {
+        origin: Id,
+        point: PointNm,
+    },
     Semantic(Id),
     All,
     InspectScope(Option<crate::AuthoredSelectionClass>),
     InventoryToggle,
+    InspectorPage {
+        page: crate::selection_view::inspector_state::InspectorPage,
+        scope: Option<crate::AuthoredSelectionClass>,
+    },
     FilterToggle(crate::AuthoredSelectionClass),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -44,6 +51,7 @@ pub fn resolve(
         Command::All
         | Command::InspectScope(_)
         | Command::InventoryToggle
+        | Command::InspectorPage { .. }
         | Command::FilterToggle(_) => return Ok(None),
         Command::Diagnostic(_) => {
             return Err(
@@ -221,6 +229,29 @@ impl SelectionMenu {
                 unavailable: (finding.fingerprint.is_empty()
                     || counts.get(&finding.fingerprint) != Some(&1))
                 .then(|| "Finding fingerprint is unavailable or ambiguous".into()),
+            });
+        }
+    }
+}
+
+impl SelectionMenu {
+    /// Existing guarded Inspector controls; collapsed inventory has no page authority.
+    pub fn append_inspector_pages(
+        &mut self,
+        expanded: bool,
+        scope: Option<crate::AuthoredSelectionClass>,
+    ) {
+        use crate::selection_view::inspector_state::InspectorPage;
+        for (label, page) in [
+            ("Inspector first page", InspectorPage::First),
+            ("Inspector previous page", InspectorPage::Previous),
+            ("Inspector next page", InspectorPage::Next),
+            ("Inspector last page", InspectorPage::Last),
+        ] {
+            self.items.push(Item {
+                label: label.into(),
+                command: Command::InspectorPage { page, scope },
+                unavailable: (!expanded).then(|| "Expand complete inventory first".into()),
             });
         }
     }

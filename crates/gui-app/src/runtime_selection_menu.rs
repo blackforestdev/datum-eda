@@ -95,6 +95,10 @@ impl Runtime {
             menu.append_checks(&self.workspace().checks);
             if let SelectionTarget::Native(view) = &self.workspace().selection {
                 menu.append_inspection(view);
+                menu.append_inspector_pages(
+                    self.workspace().ui.selection_inspector.inventory_expanded,
+                    view.scope,
+                );
             }
             menu
         });
@@ -232,13 +236,28 @@ impl Runtime {
         }
         if matches!(
             item.command,
-            Command::InspectScope(_) | Command::InventoryToggle | Command::FilterToggle(_)
+            Command::InspectScope(_)
+                | Command::InventoryToggle
+                | Command::InspectorPage { .. }
+                | Command::FilterToggle(_)
         ) {
             if !matches!(&self.workspace().selection,SelectionTarget::Native(v) if Some(&v.subject)==inspection_subject.as_ref())
             {
                 self.dismiss_marking_menu();
                 self.selection_notice("Inspector selection changed; reopen the menu".into());
                 return true;
+            }
+            // Read the presented Inspector before menu dismissal invalidates composition.
+            if let Command::InspectorPage { page, scope } = item.command {
+                if !matches!(&self.workspace().selection, SelectionTarget::Native(view) if view.scope == scope)
+                {
+                    self.dismiss_marking_menu();
+                    self.selection_notice("Inspector scope changed; reopen the menu".into());
+                    return true;
+                }
+                let changed = self.navigate_selection_inspector(page);
+                self.dismiss_marking_menu();
+                return changed;
             }
             self.dismiss_marking_menu();
             return match item.command {
