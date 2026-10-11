@@ -3004,7 +3004,7 @@
     }
   },
   "proposal_review_artifact_continuation_20261011": {
-    "state": "Root PM059 manager accepts bounded source and ordinary Applied/Undo delivery; both independent final package reviews passed. Normal commit hooks and source landing pending.",
+    "state": "Bounded source/native/package delivery accepted by root and independent reviews, landed normally at a0055d9f.",
     "producer": "Fresh governed same-outcome-default copy, existing export-route-proposal/review-route-proposal both0, actual accepted artifact/one actionID sha256:8e713a529175236c158351edbfd434b34a186cfd9803f22e120163cab84da2fc.",
     "explicit_scope": "Distinct sameactionID Proposal/Review, wholeaction acquisition, actualproducer invalidation/report/no resurrection, authoredregion/CtrlA exclusion/no mixedcompound.",
     "current_preflight": "Actual52 failed before acquisition because L1 hidden. Ordinary L1 enable53 acquired exact NativeProposal; unchanged producer Save failed projection MissingArtifactAuthority because native refresh omitted explicit review. Source corrected and compiled. Real Review row now composed beside contextual Inspector, independent of selected subject; no bracket wrapping/evidence-hit/palette policy.",
@@ -3308,6 +3308,111 @@
           "stderr": ""
         }
       ]
+    },
+    "source_landing": {
+      "commit": "a0055d9fb5902a6104e6d429607f5567f538bf45",
+      "normal_hooks": "visual-truth lane and staged rustfmt passed; commit terminal0",
+      "landed_source_pins": "All5 committed blobs independently match frozen checkpoint2/currentGUI/native55 exact cohort.",
+      "retained_boundaries": "Task remains in_progress/C04 pending; no successor/fullN10/HUMAN closure."
+    }
+  },
+  "production_proposal_rejected_continuation_20261011": {
+    "state": "Root PM059 manager accepts bounded canonical production Draft rejection/restoration delivery; independent actual runtime/package/governance reviews passed. Normal commit hooks and evidence landing pending.",
+    "grant": "Retained UVT-S5A-BUILD/S5A-C04/N10; manager authorized public original batch creation and canonical Reject. No successor/new policy/source edits.",
+    "source_reuse": {
+      "commit": "a0055d9fb5902a6104e6d429607f5567f538bf45",
+      "checkpoint": "proposal-review-source-checkpoint-2.json exact5 source pins unchanged",
+      "gui_sha256": "9a0bfcb802374fc48c090986651d22955ac60c7824868b65e8e69af209200b9b",
+      "extra_build_test": "None; existing compiled/source reviewed cohort unchanged."
+    },
+    "producer": {
+      "governed_source": "/home/bfadmin/Documents/datum-eda/crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/same-outcome-default",
+      "fresh_root": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/projects/production-draft-rejected",
+      "project_id": "f5c84dbb-dafc-4caf-ba86-b3b6c894651b",
+      "identity": {
+        "project_id": "f5c84dbb-dafc-4caf-ba86-b3b6c894651b",
+        "proposal_id": "bd422c9a-7da0-43ed-8454-0c9c212e9d25",
+        "batch_id": "d32c9bd0-04c2-5e5d-b0fc-6448202da5fd",
+        "prepared_against": "682aaa9b99c87077f85c00f31db98508b9c8c21cac41150719664db0585e31c2"
+      },
+      "artifact_sha256": "34723aeb9dec442815ebc50a60087e5302507e827961c26493171883320127cb",
+      "batch_input": "production-draft-original-batch.json exact exported artifact.proposal.batch; no status downgrade/private writer",
+      "setup_cli_terminal": "Five actual public CLI commands exit0; canonical four shards exact governed originals before/after Draft metadata creation.",
+      "initial_copy_failure": "Initial copy assumed flat board/schematic/rules paths; assertion stopped before CLI or producer mutation. Existing project.json copy was exact; corrected canonical relative paths below.",
+      "draft_validation": "Actual only missing_acceptance blocker; real preview single track_path/object57db. Draft can be selected without applying."
+    },
+    "ordinary_native56": {
+      "raw_result_sha256": "521d632b26936c4aa019317515a3fce30e09fd71ba68bef2890201ec84fa52cc",
+      "raw_outcome": "CAPTURE_ONLY_REJECTED_LIFECYCLE_REVIEW_PENDING",
+      "failure": null,
+      "exec_terminal": {
+        "session": 95473,
+        "exit_code": 0
+      },
+      "pid": 762779,
+      "gui_exit_code": 0,
+      "shutdown": {
+        "phase": "drained_device_live",
+        "pid": 762779,
+        "device_epoch": 1
+      },
+      "driver_sha256": "c1d837212db83420634d8ec56aa717d8fee80e937215299f5b893421391d9feb",
+      "observations": 9,
+      "canonical_cli_exit0": 8,
+      "refresh_complete_map_invariants": 3,
+      "startup_delta": {},
+      "final_canonical_count": 16,
+      "final_equals_after_last_selection": true,
+      "phases": [
+        "Explicit whole production Proposal exactProject/proposal/batch/prepared tuple, stale:false and seven authored fields empty",
+        "Harmless Save preserves exact full selection and unchanged full canonical map",
+        "Public Reject persists same Draft as Rejected; actualjournal c90d metadata, no authoredTrack created; refresh clears membership and shows fresh None-subject cause/drop0",
+        "Public Undo targets actualReject; metadata restoredDraft/Track absent; refresh ordinaryNone/no automatic resurrection",
+        "Explicit same whole tuple reacquired at currentProject/revision, stale:false; selection-only canonical invariance"
+      ],
+      "pixel_qualification": "Four key frames personally viewed by implementer and independent auditor: Draft0 objects/SELECTED, Reject NoSelection0/noSELECTED/cause+selectioncleared, Undo plainNone, reacquireDraft0/SELECTED. Cause middle-ellipsized; full exact notice available only raw. Rejected preview remains rendered; no geometry absence claim.",
+      "observer_limits": "Restored enumNone does not emit direct modelrevision/tip; actualheader682a plus fresh worker/source guard supplies indirect basis. Pre-drain diagnostic complete:false remains distinct from actual drained_device_live shutdown.",
+      "command_shell_stderr": "XGetWindowProperty active-window message was nonfatal; actual result failure/shutdown_failure null and GUI exit0. No suppression of required guards."
+    },
+    "independent_review": {
+      "code_audit": "Actual native56 four key pixels and full9 observations/8CLI0/3wholemaps independently accepted; final70 safe regular/all69 hashes/all18map phases and exact sources/raw correspond, no extras. Raw CAPTURE_ONLY remains unchanged.",
+      "management": "Actual final governance/package PASS at proof0c608920/archive0644612a/manifest27cf513f:70 safe unique regular/all69 hashes,9 current source pins/16 final canonical raw map/no operational payload and owned4 stagedfmt/whitespace0. No mandatory finding.",
+      "root": "Root personally verified raw9 observations/8CLI0/3maps/fresh tuple and Reject/reacquire pixels; accepts canonical Draft rejection/restoration only under retained PM059. Accepted route Review withdrawal/fullN10/HUMAN remain unclaimed."
+    },
+    "limits": [
+      "Canonical production Proposal Draft\u2192Rejected proved; no Accepted route Review withdrawal or same action Review discard equivalence.",
+      "No fullN10/C04/HUMAN/blanket visibility or narrow-surface qualification.",
+      "No source/dependency/policy/threshold changes, private producer setter, manufactured UUID/status or review evidence child selection.",
+      "Inherited supervision parity FAIL remains unwaived; no row/collector repair."
+    ],
+    "required_gates": {
+      "actual_current": "Project status82/check-render/evidence29routes PASS; exact receipts preserved archive.",
+      "reused": "Unchanged source5/current a0055d9f dependency/sourcehealth/specgovernance/Cargo resource PASS reused from existing actual proposal-review-final-gates.json; no new source or runner.",
+      "retained_fail": "Inherited supervision parity FAIL unwaived/dat-supervision-owner-parity-202s, same doc9/code1 collector mismatch; no row repair/fullqualification.",
+      "staged": "Actual stagedfmt and whitespace terminal0, exact owned4 paths, receipt preserved archive.",
+      "pending": "Normal commit hooks/source landing only after root bounded acceptance and independent final package correspondence."
+    },
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/production-proposal-rejected-lifetime-20261011.tar.xz",
+      "sha256": "0644612afa8dc92f370e730594411362ff8fae75dad63b52cef608077667f8d7",
+      "manifest_sha256": "27cf513f3e78f4b8e681e9685aac563e1590647634e9d995478f2f67093ea6fd",
+      "regular_files": 70,
+      "hashed_files": 69,
+      "raw": 24,
+      "canonical_final": 16,
+      "canonical_blobs": 20,
+      "canonical_maps": 18,
+      "source_pins": {
+        "crates/gui-protocol/src/workspace_loading.rs": "7ffb6ce9aeac68f10c2dafffa01fbcdde7b0efb62d1b9b3fdd872688359842de",
+        "crates/gui-protocol/src/workspace_loading/review_refresh_tests.rs": "ef4688045186dddc0636d5565eb96866ef5a3d565a49b63f20df3083dc1c505f",
+        "crates/gui-render/src/side_panels.rs": "db1c85bc79dd5349d34365be3d99bed9cad763893a8c09c18a6a74c08cd481ab",
+        "crates/gui-render/src/side_panels/review_actions.rs": "ee7a4ba254286a242484b848818432f6feab731a3323033ed1349ab627b8e5c4",
+        "crates/gui-render/src/side_panels/review_actions/tests.rs": "f298e038ed157be4968f4bc31ba8e8607826253eab21c8ae058b02950a91d1e3",
+        "crates/gui-protocol/src/production_proposals.rs": "1cab510cb6655e33711e38e51850a85de12f415ef6cf7ad6f6957fc6380e494b",
+        "crates/gui-protocol/src/selection_artifacts/production.rs": "5e24baee068abfe1dca45ae8858bd6c87630bfbb431f323f6c911bcda712fc19",
+        "crates/gui-render/src/render/overlay/composition.rs": "d4a40e6faa28b6ca05e9a88aebd0620cf24f82bf214f88daa0f46f146f918d14",
+        "crates/gui-app/src/native_edit_selection.rs": "a2413e39d357b176467ae57bc8e0c3b1f88fc8e1a425b71e103c5874ea23a9b1"
+      }
     }
   }
 }
