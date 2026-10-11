@@ -1,5 +1,5 @@
 mod hit_target;
-pub use hit_target::HitTarget;
+pub use hit_target::{CameraState, HitRegion, HitTarget, SceneSurface};
 mod geometry_output;
 #[path = "render/glyph_mesh_lookup.rs"]
 mod glyph_mesh_lookup;
@@ -9,7 +9,6 @@ mod presentation_ranges;
 mod source_types;
 #[path = "render/world_polygon.rs"]
 mod world_polygon;
-pub use datum_gui_viewport::CameraState;
 use geometry_output::Output;
 use source_types::*;
 #[path = "render/world_primitives.rs"]

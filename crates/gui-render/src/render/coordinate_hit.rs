@@ -64,7 +64,8 @@ pub(crate) fn build_surface_passes(
                     state.schematic_scene.as_ref()?.bounds.clone(),
                     schematic_camera,
                 ),
-                datum_gui_protocol::PaneContent::Revision(_) => return None,
+                datum_gui_protocol::PaneContent::Library
+                | datum_gui_protocol::PaneContent::Revision(_) => return None,
             };
             Some(PreparedSurfacePass {
                 pane_id: pane.id,

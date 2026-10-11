@@ -397,6 +397,39 @@ impl PreparedScene {
                 before_console_text,
                 text_runs.len(),
             );
+            for pane in layout.viewport_panes(&state.ui.layout).panes {
+                let mut library_rect = pane.rect.scene;
+                if let Some(console) = console_overlay_layout.filter(|c| c.pane_id == pane.id) {
+                    let top = console
+                        .history_panel
+                        .map_or(console.strip.y, |r| r.y.min(console.strip.y));
+                    library_rect.height = library_rect.height.min((top - library_rect.y).max(0.));
+                }
+                if pane.content == datum_gui_protocol::PaneContent::Library {
+                    let before_overlay = viewport_overlay_quads.len();
+                    let before_text = text_runs.len();
+                    crate::side_panels::library_surface::render(
+                        state,
+                        library_rect,
+                        &mut viewport_overlay_quads,
+                        &mut text_runs,
+                        &mut hit_regions,
+                    );
+                    TextRun::annotate(&mut text_runs[before_text..], TextOrigin::Viewport(pane.id));
+                    consumers.note(
+                        Stream::ViewportOverlay,
+                        Consumer::Library,
+                        before_overlay,
+                        viewport_overlay_quads.len(),
+                    );
+                    consumers.note(
+                        Stream::Text,
+                        Consumer::Library,
+                        before_text,
+                        text_runs.len(),
+                    );
+                }
+            }
             let before_panel_quads = panel_quads.len();
             let before_text_runs = text_runs.len();
             // Menus paint above ordinary workspace/Console content. Their hit

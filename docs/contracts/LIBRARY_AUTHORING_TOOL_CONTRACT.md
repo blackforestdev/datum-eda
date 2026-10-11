@@ -128,6 +128,18 @@ unresolved inputs. Existing `proposal create-board-component-replacements
 review/application. These CLI capabilities do not establish MCP or GUI authoring,
 standards certification or broader qualification.
 
+The PM062 GUI delivery candidate now exercises named browsing and typed
+relationships for all eight kinds, plus manual Footprint/Padstack create/edit
+with named existing Package/Padstack references, supported Circle/Rect geometry,
+process inspection, preview/cancel, canonical Undo/Redo, Save and ordinary App
+reopen. Actual App, engine and daemon evidence and distinct reviews apply only
+at their recorded source pins and scopes. Management landing remains pending.
+Definition edits
+preserve existing placed users. Full eight-kind authoring, Package editing,
+models, approval, generation and general placed updates remain targets; seed,
+source rights, standards/manufacturing and HUMAN/assistive qualification remain
+separate. PM062 does not establish those capabilities through this candidate.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

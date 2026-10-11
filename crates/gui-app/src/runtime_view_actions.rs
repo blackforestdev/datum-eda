@@ -33,6 +33,10 @@ impl Runtime {
         use datum_gui_protocol::gui_menu_model::action_registry::{self, ActionHandler};
         if action_registry::consumer(action).is_some() {
             match action_registry::admit(action, self.workspace()) {
+                Ok(ActionHandler::OpenLibrary) => {
+                    self.open_library();
+                    self.trace_action_attempt(action, surface, true);
+                }
                 Ok(ActionHandler::FitCamera) => {
                     self.fit_camera();
                     self.trace_action_attempt(action, surface, true);

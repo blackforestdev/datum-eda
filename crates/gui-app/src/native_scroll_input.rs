@@ -68,6 +68,9 @@ impl crate::Runtime {
         if let Some(changed) = self.handle_selection_inspector_scroll(lines) {
             return changed;
         }
+        if let Some(changed) = self.handle_library_scroll(wheel) {
+            return changed;
+        }
         if let Some(changed) = self.handle_layer_scroll(lines) {
             return changed;
         }

@@ -385,7 +385,7 @@ fn dispatch_request_inner(
             ),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
-        "native.write" => match serde_json::from_value::<NativeWriteParams>(request.params) {
+        "native.write" => match super::native_write::parse_params(request.params) {
             Ok(params) => super::native_write::native_write_response(engine, request.id, params),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },

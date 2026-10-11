@@ -278,6 +278,14 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         return true;
     }
 
+    if app
+        .runtime
+        .as_mut()
+        .is_some_and(|runtime| runtime.handle_library_key(event))
+    {
+        app.request_workspace_redraw();
+        return true;
+    }
     let Some(focus) = app
         .runtime
         .as_ref()

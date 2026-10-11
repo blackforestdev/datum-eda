@@ -13,7 +13,7 @@ impl SelectionView {
         let owner = match surface {
             crate::PaneContent::Board => self.board_presentations.get(key),
             crate::PaneContent::Schematic => self.schematic_presentations.get(key),
-            crate::PaneContent::Revision(_) => None,
+            crate::PaneContent::Library | crate::PaneContent::Revision(_) => None,
         }?;
         self.members.contains(owner).then_some(owner)
     }

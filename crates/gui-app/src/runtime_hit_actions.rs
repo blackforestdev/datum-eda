@@ -25,6 +25,7 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::Library(control) => self.activate_library(control.clone()),
             HitTarget::SchematicPicker
             | HitTarget::SchematicLibraryPage(_)
             | HitTarget::SchematicLibraryChoice(_)

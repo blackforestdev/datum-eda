@@ -1,3 +1,7 @@
+#[path = "library_preview.rs"]
+pub(crate) mod library_preview;
+#[path = "library_surface.rs"]
+pub(crate) mod library_surface;
 use super::*;
 
 mod inspector_dispatch;

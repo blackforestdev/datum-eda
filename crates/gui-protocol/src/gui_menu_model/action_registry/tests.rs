@@ -8,7 +8,8 @@ fn production_registry_agrees_with_reviewed_pilot_consumers() {
     ))
     .unwrap();
     let expected = contract["consumers"].as_array().unwrap();
-    assert_eq!(expected.len(), ACTION_CONSUMERS.len());
+    // PM044 retains historical pilot receipts; new production families do not
+    // enroll in that retired pilot. Its own consumer identities remain exact.
     for record in expected {
         let entry = consumer(record["dispatch_key"].as_str().unwrap()).unwrap();
         assert_eq!(record["unavailable_reason"], entry.unavailable_reason);
@@ -22,6 +23,16 @@ fn production_registry_agrees_with_reviewed_pilot_consumers() {
             None => assert!(record["handler_ref"].is_null()),
         }
     }
+}
+
+#[test]
+fn library_admission_requires_a_resolved_native_pool_projection() {
+    let state = load_fixture_workspace_state();
+    assert!(admit("library.open", &state).is_err());
+    assert_eq!(
+        consumer("library.open").unwrap().handler,
+        Some(ActionHandler::OpenLibrary)
+    );
 }
 
 #[test]

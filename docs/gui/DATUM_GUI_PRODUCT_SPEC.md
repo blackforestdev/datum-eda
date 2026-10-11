@@ -442,9 +442,13 @@ contain limited library examples, not this complete visual contract. Protected
 HTML remains unchanged; actual candidate frames and owner HUMAN disposition
 remain pending through the owning visual lane.
 
-**Ordinary workflow and proof disposition.** Full browser and eight-kind GUI
-authoring are targets. Reuse existing native/CLI and narrow-picker evidence only
-at its exact scope. Each future delivery must identify its actual machine check,
+**Ordinary workflow and proof disposition.** The PM062 delivery candidate has
+actual ordinary App proof and distinct reviews for named eight-kind browsing,
+typed relationships and bounded Footprint/Padstack authoring, preview/cancel,
+canonical history, Save/reopen and normal/narrow controls. Management landing
+remains pending; full eight-kind authoring and the broader workflows below remain
+targets. Reuse existing native/CLI and narrow-picker evidence only at its exact
+scope. Each delivery must identify its actual machine check,
 integration workflow and visual/accessibility receipt; no prose row is a PASS.
 
 | Ordinary workflow | Assertion / negative control | Proof disposition |

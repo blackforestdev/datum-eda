@@ -1,0 +1,41 @@
+{
+  "actual_review_receipts": [
+    {
+      "evidence": "Actual distinct agent reviews received by appointed manager; final identity log7bd24f6c PRE/POST50/50 exit0. Historical binary hashes are actual review-time observations.",
+      "outcome": "PASS",
+      "reviewer": "s5a_code_audit",
+      "scope": "Source through checkpoint18, canonical ordinary App3 payload/journal/reopen, five engine tests, final guarded transport/reference identity run"
+    },
+    {
+      "evidence": "Supplement log9d0fdb35 exit0; visible Inspector reason, actual165.11252->65.23123 width and649.94995->294 height. Console equality and cancel invariance are executed assertions.",
+      "outcome": "PASS after refusal repair",
+      "reviewer": "s5a_execution_readiness",
+      "scope": "Actual App3 rendered frames and five supplemental actual narrow/refusal/preview frames"
+    },
+    {
+      "evidence": "Final delivery bda65efd/review f6dcafc6; original item_completed events personally checked at rollout lines15510/15691/15884/15969. Source commit and landing remain pending; no full qualification.",
+      "outcome": "PASS",
+      "reviewer": "management_review",
+      "scope": "Final durable Tool/Product, delivery/review records and actual recovered four terminal command receipts"
+    }
+  ],
+  "candidate_checkpoint": {
+    "path": ".datum/library-gui-delivery/gui-checkpoint-18.json",
+    "pins": 50,
+    "sha256": "f2fde38a7251354d8f2b07042636a5682a4742aec80cac5cd4c00564bc9ad171"
+  },
+  "delivery_record_sha256": "b12129a32499a5859b124a555fcf08ea71e3cd9328faec6fec3f211ebe19990e",
+  "manager_disposition": "Owner-appointed PM059 manager accepts the frozen PM062 bounded candidate against all four ordinary workflows and five safety requirements after actual distinct source/runtime/rendered/documentation reviews. Source landing and source-commit availability registration remain pending; full qualification and unrelated baseline failures remain open.",
+  "outcome": "PASS for bounded PM062 candidate; manager accepts actual receipts, source landing pending",
+  "retained_limits": [
+    "Wayland ignored requested 960x640 window size; all primary PNGs are 1344x806. Supplemental test uses real ordinary pane splits.",
+    "Full physical input/HUMAN and full qualification remain open.",
+    "Whole-parity unrelated GUI supervision row mismatch retained; not normalized.",
+    "At the extreme 65 px pane width, wrapped action labels remain a usability limit; no minimum-width, assistive, or HUMAN qualification claimed.",
+    "Programmatic pointer callbacks use production App hit targets; keyboard uses shared logical input consumption, not physical input.",
+    "Supplement Console-message equality and source/journal invariance are executed assertions, not an expanded Console screenshot or independently archived before/after comparisons."
+  ],
+  "review_id": "PM062-LIBGUI-BOUNDED-DELIVERY",
+  "schema_version": 1,
+  "scope": "PM062 existing-contract named eight-kind browsing and manual Footprint/Padstack authoring; excludes retained broader targets and full qualification"
+}

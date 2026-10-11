@@ -126,6 +126,10 @@ fn load_workspace(
     } else {
         load_production_status(&cli, request)?
     };
+    state.library = model
+        .as_ref()
+        .map(|model| crate::library_browser::LibraryBrowser::capture(model.clone()))
+        .unwrap_or_default();
     state.schematic_authoring = model
         .as_deref()
         .map(crate::schematic_authoring::SchematicAuthoring::from_model)

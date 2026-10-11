@@ -6,6 +6,7 @@ use crate::{ReviewWorkspaceState, camera_scene_for_pane};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ActionHandler {
     FitCamera,
+    OpenLibrary,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -17,6 +18,12 @@ pub struct ActionConsumer {
 }
 
 pub const ACTION_CONSUMERS: &[ActionConsumer] = &[
+    ActionConsumer {
+        key: "library.open",
+        handler: Some(ActionHandler::OpenLibrary),
+        entry_surfaces: &["library-menu-keyboard", "library-menu-pointer"],
+        unavailable_reason: "Library Browser requires an open native Datum Project.",
+    },
     ActionConsumer {
         key: "view.fit",
         handler: Some(ActionHandler::FitCamera),
@@ -57,6 +64,9 @@ pub fn consumer(key: &str) -> Option<&'static ActionConsumer> {
 impl ActionConsumer {
     pub fn admit(&self, state: &ReviewWorkspaceState) -> Result<ActionHandler, &'static str> {
         match self.handler {
+            Some(ActionHandler::OpenLibrary) if state.library.basis.is_some() => {
+                Ok(ActionHandler::OpenLibrary)
+            }
             Some(ActionHandler::FitCamera)
                 if camera_scene_for_pane(state, state.ui.layout.focused).is_some() =>
             {
@@ -70,6 +80,10 @@ impl ActionConsumer {
     /// of purported handlers. Native proof must still establish its actual effect.
     pub fn handler_ref(&self) -> Option<(&'static str, &'static str)> {
         match self.handler? {
+            ActionHandler::OpenLibrary => Some((
+                "crates/gui-app/src/runtime_library.rs",
+                "datum_gui::Runtime::open_library",
+            )),
             ActionHandler::FitCamera => Some((
                 "crates/gui-app/src/runtime_camera_pane.rs",
                 "datum_gui::Runtime::fit_camera",

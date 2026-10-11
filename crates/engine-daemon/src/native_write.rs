@@ -6,6 +6,19 @@ use eda_engine::api::native_write::{
     registry::{NativeWriteContext, find_native_write_verb},
 };
 use eda_engine::substrate::CommitSource;
+/// Preserve the distinction between an omitted guard and an explicit empty
+/// journal tip before the ordinary optional UUID decoder consumes JSON null.
+pub(super) fn parse_params(value: Value) -> Result<NativeWriteParams, String> {
+    if matches!(
+        value.get("verb").and_then(Value::as_str),
+        Some("datum.library.create" | "datum.library.edit")
+    ) && value.get("expected_transaction_tip").is_none()
+    {
+        return Err("library editing requires explicit expected_transaction_tip (null for an empty journal)".into());
+    }
+    serde_json::from_value(value).map_err(|error| error.to_string())
+}
+
 /// `native.write`: verb-addressed native mutation through the engine's
 /// native-write verb registry. Resolves the project per request, enforces the
 /// optional `expected_model_revision` stale guard, builds via the registered
@@ -63,14 +76,20 @@ pub(super) fn native_write_response(
             ),
         );
     }
-    if matches!(
+    let library_edit = matches!(
         params.verb.as_str(),
-        "datum.pcb.move_component"
-            | "datum.journal.undo"
-            | "datum.journal.redo"
-            | "datum.schematic.place_symbol"
-            | "datum.schematic.draw_wire"
-    ) && params.expected_model_revision.is_none()
+        "datum.library.create" | "datum.library.edit"
+    );
+    if (library_edit
+        || matches!(
+            params.verb.as_str(),
+            "datum.pcb.move_component"
+                | "datum.journal.undo"
+                | "datum.journal.redo"
+                | "datum.schematic.place_symbol"
+                | "datum.schematic.draw_wire"
+        ))
+        && params.expected_model_revision.is_none()
     {
         return error_response(
             request_id,
@@ -78,14 +97,16 @@ pub(super) fn native_write_response(
             "native board editing requires expected_model_revision",
         );
     }
-    if matches!(
-        params.verb.as_str(),
-        "datum.pcb.move_component"
-            | "datum.journal.undo"
-            | "datum.journal.redo"
-            | "datum.schematic.place_symbol"
-            | "datum.schematic.draw_wire"
-    ) && eda_engine::revision::transaction_tip(&model.journal) != params.expected_transaction_tip
+    if (library_edit
+        || matches!(
+            params.verb.as_str(),
+            "datum.pcb.move_component"
+                | "datum.journal.undo"
+                | "datum.journal.redo"
+                | "datum.schematic.place_symbol"
+                | "datum.schematic.draw_wire"
+        ))
+        && eda_engine::revision::transaction_tip(&model.journal) != params.expected_transaction_tip
     {
         return error_response(
             request_id,

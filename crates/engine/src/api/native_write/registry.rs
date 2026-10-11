@@ -53,6 +53,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::board_components::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
         verbs.extend_from_slice(super::schematic_edit::VERBS);
+        verbs.extend_from_slice(super::library_gui::VERBS);
         verbs.sort_by(|a, b| a.id.cmp(b.id));
         for pair in verbs.windows(2) {
             assert_ne!(
@@ -135,6 +136,8 @@ mod tests {
             vec![
                 "datum.check.accept_deviation",
                 "datum.check.waive",
+                "datum.library.create",
+                "datum.library.edit",
                 "datum.pcb.move_component",
                 "datum.project.create_rule",
                 "datum.project.delete_rule",

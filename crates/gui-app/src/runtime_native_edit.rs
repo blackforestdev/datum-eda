@@ -326,6 +326,14 @@ impl Runtime {
             );
             return true;
         }
+        if !matches!(action, NativeEditAction::Library) && self.workspace().library.draft.is_some()
+        {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Finish or cancel the library preview first",
+            );
+            return true;
+        }
         let Some(backing) = self.workspace().backing.clone() else {
             return false;
         };
@@ -356,6 +364,20 @@ impl Runtime {
             expected_tip,
             action,
         );
+        if matches!(action, NativeEditAction::Library) {
+            let Some(draft) = &self.workspace().library.draft else {
+                return false;
+            };
+            match draft.request() {
+                Ok(request) => intent.library = Some((draft.create, request)),
+                Err(e) => {
+                    self.log_console_refusal(ConsoleFeedbackSource::Tool, e);
+                    return true;
+                }
+            }
+            intent.expected_revision = draft.revision.clone();
+            intent.expected_tip = draft.tip;
+        }
         if let Some(preview) = &self.native_edit.preview {
             intent.instance_path = preview.instance_path();
         }
@@ -449,6 +471,20 @@ impl Runtime {
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
             let workspace = self.session.workspace_mut();
+            let library_selection = workspace
+                .library
+                .selected(&workspace.selection)
+                .map(|e| e.key());
+            let created = workspace
+                .library
+                .draft
+                .as_ref()
+                .map(|d| format!("library:pool/{}/{}.json", d.kind, d.id));
+            let mut library = next.library;
+            library.kind = workspace.library.kind;
+            library.search = workspace.library.search.clone();
+            library.result_offset = workspace.library.result_offset;
+            workspace.library = library;
             workspace.scene = next.scene;
             workspace.schematic_scene = next.schematic_scene;
             workspace.schematic_authoring = next.schematic_authoring;
@@ -463,6 +499,11 @@ impl Runtime {
             workspace.supervision = next.supervision;
             workspace.backing = next.backing;
             workspace.selection = prepared.selected;
+            if let Some(key) = created.or(library_selection)
+                && workspace.library.entries.iter().any(|e| e.key() == key)
+            {
+                workspace.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(key);
+            }
             self.selection_run.cancel();
             self.native_selection = Some(prepared.session);
             self.selection_read_cache = prepared.cache;

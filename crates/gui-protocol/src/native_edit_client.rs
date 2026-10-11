@@ -32,6 +32,7 @@ pub enum NativeEditAction {
     },
     Save,
     Schematic,
+    Library,
 }
 #[derive(Clone, Debug)]
 pub struct NativeEditIntent {
@@ -42,6 +43,10 @@ pub struct NativeEditIntent {
     pub action: NativeEditAction,
     pub request_id: Uuid,
     pub schematic: Option<crate::schematic_authoring::SchematicEditRequest>,
+    pub library: Option<(
+        bool,
+        eda_engine::api::native_write::library_gui::LibraryDefinitionRequest,
+    )>,
     pub instance_path: Vec<Uuid>,
 }
 impl NativeEditIntent {
@@ -60,6 +65,7 @@ impl NativeEditIntent {
             action,
             request_id: Uuid::new_v4(),
             schematic: None,
+            library: None,
             instance_path: Vec::new(),
         }
     }
@@ -277,6 +283,20 @@ impl NativeProjectClient {
                 .as_ref()
                 .context("Schematic edit payload missing")?
                 .verb_params(),
+            NativeEditAction::Library => {
+                let (create, request) = intent
+                    .library
+                    .as_ref()
+                    .context("Library edit payload missing")?;
+                (
+                    if *create {
+                        "datum.library.create"
+                    } else {
+                        "datum.library.edit"
+                    },
+                    serde_json::to_value(request)?,
+                )
+            }
             NativeEditAction::MoveSymbol { symbol, x_nm, y_nm } => (
                 "datum.schematic.move_symbol",
                 json!({"symbol":symbol,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),

@@ -64,7 +64,8 @@ impl Request {
         let related = match surface {
             datum_gui_protocol::PaneContent::Board => &view.related_board_keys,
             datum_gui_protocol::PaneContent::Schematic => &view.related_schematic_keys,
-            datum_gui_protocol::PaneContent::Revision(_) => unreachable!(),
+            datum_gui_protocol::PaneContent::Library
+            | datum_gui_protocol::PaneContent::Revision(_) => unreachable!(),
         };
         let count = keys.union(related).count();
         let compound = matches!(

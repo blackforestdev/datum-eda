@@ -64,11 +64,13 @@ fn render_viewport_panes_logical(
         consumers.insert(match leaf.content {
             datum_gui_protocol::PaneContent::Board => Consumer::Board,
             datum_gui_protocol::PaneContent::Schematic => Consumer::Schematic,
+            datum_gui_protocol::PaneContent::Library => Consumer::Library,
             datum_gui_protocol::PaneContent::Revision(_) => Consumer::Revision,
         });
         let focused = leaf.id == panes.focused;
         let is_scene_leaf = Some(leaf.id) == scene_leaf_id;
         let title = match leaf.content {
+            datum_gui_protocol::PaneContent::Library => "Library Browser",
             datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
             datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
             datum_gui_protocol::PaneContent::Revision(
@@ -144,7 +146,8 @@ fn render_viewport_panes_logical(
             // Board scene leaf canvas is painted above (before the header/frame);
             // the world PCB renders into it.
             datum_gui_protocol::PaneContent::Board => {}
-            datum_gui_protocol::PaneContent::Revision(_) => {}
+            datum_gui_protocol::PaneContent::Library
+            | datum_gui_protocol::PaneContent::Revision(_) => {}
         }
         TextRun::annotate(
             &mut text_runs[text_start..],

@@ -45,7 +45,7 @@ impl Runtime {
                 .as_ref()
                 .map(|scene| CameraState::fit_to_bounds(&scene.bounds))
                 .unwrap_or(camera),
-            PaneContent::Revision(_) => camera,
+            PaneContent::Library | PaneContent::Revision(_) => camera,
         };
         let native_edit = runtime_native_edit::EditWork::new(wake.clone());
         let native_preparation =

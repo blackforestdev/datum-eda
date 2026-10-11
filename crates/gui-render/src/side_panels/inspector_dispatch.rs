@@ -9,23 +9,27 @@ pub(super) fn render_active_inspector(
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<Option<RectPx>> {
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    let visual_row =
-        if revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
-            None
-        } else if let SelectionTarget::Native(view) = &state.selection {
-            super::selection_inspector::render(
-                view,
-                &state.ui.selection_inspector,
-                &state.ui.filters.excluded_selection_classes,
-                rect,
-                panel_quads,
-                text_runs,
-                hit_regions,
-            )?
-        } else {
-            render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions)?;
-            None
-        };
+    let visual_row = if state.ui.layout.focused_content()
+        == datum_gui_protocol::PaneContent::Library
+    {
+        crate::side_panels::library_surface::inspector(state, rect, panel_quads, text_runs);
+        None
+    } else if revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
+        None
+    } else if let SelectionTarget::Native(view) = &state.selection {
+        super::selection_inspector::render(
+            view,
+            &state.ui.selection_inspector,
+            &state.ui.filters.excluded_selection_classes,
+            rect,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        )?
+    } else {
+        render_inspector_panel(state, rect, panel_quads, text_runs, hit_regions)?;
+        None
+    };
     crate::hit_clipping::clip_content(
         panel_quads,
         text_runs,

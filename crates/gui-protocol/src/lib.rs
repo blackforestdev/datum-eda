@@ -102,6 +102,8 @@ mod terminal_split;
 pub use console_feedback::*;
 mod supervision;
 pub use supervision::*;
+mod workspace_pane_content;
+pub use workspace_pane_content::{ApplicationFocus, PaneContent, PaneId};
 mod workspace_layout;
 pub use workspace_layout::*;
 mod workspace_interaction;
@@ -455,28 +457,11 @@ fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &
     !retained_base_uses_layer
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct ReviewWorkspaceState {
-    pub schematic_authoring: schematic_authoring::SchematicAuthoring,
-    pub scene: BoardReviewSceneV1,
-    /// Optional companion schematic scene, projected from the board project's
-    /// sibling `.kicad_sch` alongside (not replacing) `scene`. Carried in
-    /// workspace state so pane B can render real schematic geometry; `None`
-    /// when no schematic is found. Consumer/scene state, not a journaled op.
-    pub schematic_scene: Option<BoardReviewSceneV1>,
-    pub review: RouteProposalReviewPayload,
-    pub production: ProductionStatus,
-    pub source_shards: SourceShardStatusSummary,
-    pub checks: CheckRunReviewState,
-    pub supervision: GuiSupervisionSnapshot,
-    pub selection: SelectionTarget,
-    pub active_review_target_id: String,
-    pub tool: WorkspaceTool,
-    pub authoring: AuthoringToolState,
-    pub backing: Option<WorkspaceBacking>,
-    pub last_command_status: Option<EditorCommandStatus>,
-    pub ui: WorkspaceUiState,
-}
+mod workspace_state;
+pub use workspace_state::ReviewWorkspaceState;
+pub mod library_authoring;
+pub use serde_json::Value as LibraryJsonValue;
+pub mod library_browser;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LiveDesignSession {
@@ -884,6 +869,7 @@ impl ReviewWorkspaceState {
             scene,
             schematic_scene: None,
             schematic_authoring: Default::default(),
+            library: Default::default(),
             review,
             production: ProductionStatus::default(),
             source_shards: SourceShardStatusSummary::default(),

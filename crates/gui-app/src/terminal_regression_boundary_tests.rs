@@ -24,6 +24,7 @@ use winit::event::ElementState;
 /// focus only when the resulting behavior expects terminal typing).
 fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
+        HitTarget::Library(_) => false,
         HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
         | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicReference
         | HitTarget::SchematicValue | HitTarget::SchematicPlace
@@ -145,6 +146,7 @@ fn sample_handoff() -> datum_gui_protocol::TerminalCommandHandoff {
 fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
     let id = || "t0c04".to_string();
     let samples = vec![
+        HitTarget::Library(datum_gui_protocol::library_browser::LibraryControl::Search),
         HitTarget::CloseRevisionSurface,
         HitTarget::ToggleRevisionIssuanceArm,
         HitTarget::OpenRevisionWitness(id()),

@@ -191,7 +191,7 @@ impl SelectionView {
         match surface {
             crate::PaneContent::Board => Some(&self.board_keys),
             crate::PaneContent::Schematic => Some(&self.schematic_keys),
-            crate::PaneContent::Revision(_) => None,
+            crate::PaneContent::Library | crate::PaneContent::Revision(_) => None,
         }
     }
     pub fn selected_key(

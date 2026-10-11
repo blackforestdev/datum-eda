@@ -37,6 +37,7 @@ pub mod imports;
 pub mod library;
 pub mod library_definition;
 pub mod library_footprint;
+pub mod library_gui;
 pub mod library_pin_pad_map;
 pub mod manufacturing;
 pub mod output_jobs;

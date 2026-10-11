@@ -32,8 +32,8 @@ pub struct ReleasedAllocations {
 pub(super) struct Metadata {
     pub consumers: AtomicU16,
     pub retiring_consumers: AtomicU16,
-    prepared_consumers: [AtomicU64; 14],
-    submitted_consumers: [AtomicU64; 14],
+    prepared_consumers: [AtomicU64; crate::resource_consumers::Consumer::ALL.len()],
+    submitted_consumers: [AtomicU64; crate::resource_consumers::Consumer::ALL.len()],
     pub payload: AtomicU64,
     pub released: AtomicBool,
     reason: AtomicU8,
@@ -92,7 +92,10 @@ pub(super) fn released_snapshot(
 }
 
 impl Metadata {
-    fn incidence(&self, kind: ReferenceKind) -> &[AtomicU64; 14] {
+    fn incidence(
+        &self,
+        kind: ReferenceKind,
+    ) -> &[AtomicU64; crate::resource_consumers::Consumer::ALL.len()] {
         match kind {
             ReferenceKind::Prepared => &self.prepared_consumers,
             ReferenceKind::Submission => &self.submitted_consumers,

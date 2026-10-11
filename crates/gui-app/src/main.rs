@@ -1,5 +1,6 @@
 mod native_device_recovery;
 mod native_edit_selection;
+mod runtime_library;
 mod runtime_native_edit;
 mod runtime_schematic;
 mod runtime_state;
@@ -683,5 +684,7 @@ mod tests;
 #[cfg(test)]
 mod native_move_frame_tests;
 
+#[cfg(all(test, feature = "visual"))]
+mod native_library_frame_tests;
 #[cfg(test)]
 mod native_schematic_frame_tests;

@@ -19,6 +19,7 @@ pub(crate) fn application_focus_label(state: &ReviewWorkspaceState) -> &'static 
         {
             datum_gui_protocol::PaneContent::Board => "Board",
             datum_gui_protocol::PaneContent::Schematic => "Schematic",
+            datum_gui_protocol::PaneContent::Library => "Library",
             datum_gui_protocol::PaneContent::Revision(_) => "Revision",
         },
     }

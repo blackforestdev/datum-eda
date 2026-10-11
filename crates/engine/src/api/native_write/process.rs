@@ -247,6 +247,20 @@ pub fn inspect_effective_process(
     };
     let footprint = read(footprint_id, "footprints")?;
     let padstack = read(padstack_id, "padstacks")?;
+    inspect_materialized_process(model, &footprint, &padstack).map_err(|e| {
+        refusal(&format!(
+            "Footprint {footprint_id} Padstack {padstack_id}: {e}"
+        ))
+    })
+}
+
+/// Resolve a disposable preview with the same canonical profile-pin evidence.
+/// Neither materialized inputs nor this inspection can mutate the model.
+pub fn inspect_materialized_process(
+    model: &DesignModel,
+    footprint: &Value,
+    padstack: &Value,
+) -> Result<crate::pool::process::EffectivePadstackProcess, EngineError> {
     let selector: Option<ProcessBasisSelector> = footprint
         .get("process_basis")
         .map(|v| serde_json::from_value(v.clone()))
@@ -276,8 +290,8 @@ pub fn inspect_effective_process(
         _ => None,
     };
     crate::pool::process::resolve_padstack_process(
-        &padstack,
-        &footprint,
+        padstack,
+        footprint,
         pin.as_ref().map(
             |(profile, revision, hash)| crate::pool::process::PinnedProcessProfile {
                 profile,
@@ -286,9 +300,4 @@ pub fn inspect_effective_process(
             },
         ),
     )
-    .map_err(|e| {
-        refusal(&format!(
-            "Footprint {footprint_id} Padstack {padstack_id}: {e}"
-        ))
-    })
 }

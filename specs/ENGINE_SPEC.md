@@ -2376,7 +2376,7 @@ name semantics remain intact; the existing single-pad command retains its
 separate checks. This adds no identity, uniqueness, positivity, normalization,
 PinPadMap or placed-propagation rule.
 
-The actual engine API inventory is 250 unique public function names, including
+At the footprint replacement checkpoint, the engine API inventory was 250 unique public function names, including
 the retained earlier inventory drift, definition admission helpers and native
 graphic builders. These APIs implement existing reference rules and manual
 fabrication, Symbol field authoring, shared graphic editing and Padstack copper
@@ -2400,3 +2400,14 @@ Native checks, retained workspace rendering and supported mask/paste CAM share
 that authority. Historical capability absence remains unchanged. PM061 and the
 native-format/library/manufacturing contracts retain unsupported geometry,
 standards and broader qualification boundaries.
+
+Current implementation: `api::native_write::library_gui::build_definition`
+prepares finite Footprint and Padstack Create/Set requests for the canonical
+project-owned pool. Requests contain explicitly edited fields; edits preserve
+untouched raw payload content and merge supported nested Pad/aperture fields
+before existing reference/source admission and guarded canonical write
+preparation. `process::inspect_materialized_process` resolves disposable
+Footprint/Padstack previews through the shared PM061 resolver using authoritative
+Project profile revision/hash evidence. Inspection does not mutate the model.
+These APIs do not establish ordinary GUI availability or qualification. The
+current engine API inventory is 261 unique public function names.

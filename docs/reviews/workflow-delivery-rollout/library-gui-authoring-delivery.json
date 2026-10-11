@@ -1,0 +1,496 @@
+{
+  "authority": "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md",
+  "binary_receipts": {
+    "current": {
+      "target/debug/datum-eda": {
+        "provenance": "Captured after final identity test, current-only; not a historical hash for older runs.",
+        "sha256": "466d5e8c2e33f4353427bb60f3b62ea69e589e9a0bf60c1136de876eeb135510"
+      },
+      "target/debug/deps/datum_gui-d7b5b7c9184b1498": {
+        "provenance": "Captured after final identity test, current-only; not a historical hash for older runs.",
+        "sha256": "3c4cefcf7b7137ae31ba1b061d3d1fa21cd8fe243eb470042a92cbb10a703fc6"
+      },
+      "target/debug/deps/eda_engine-1c80eccbe86d4536": {
+        "provenance": "Captured after final identity test, current-only; not a historical hash for older runs.",
+        "sha256": "96d102d37487b80d854d65d2a7ea79d9c06b738057cc5695b6318ef14162e885"
+      },
+      "target/debug/eda-engine-daemon": {
+        "provenance": "Captured after final identity test, current-only; not a historical hash for older runs.",
+        "sha256": "5649d3b1106ae3e2dda779ae15e9b32891bf905192007094097a806b6c6724fd"
+      }
+    },
+    "primary_app": {
+      "path": "target/debug/deps/datum_gui-d7b5b7c9184b1498",
+      "provenance": "Independent s5a_code_audit actual App3 review-time tool observation; original binary subsequently overwritten, not an archived copy.",
+      "sha256": "650f1cb6f80f5f0b9dc860c6e76ff1227a0919393f00b871903a6f0e9563fe7e"
+    }
+  },
+  "evidence": {
+    ".datum/library-gui-delivery/build-daemon-guard-correction.log": "b0cb90226942c505c1bf2a39238ac275f41cc8d36ffc6fe23ea74c7efa802961",
+    ".datum/library-gui-delivery/build-gui-ordinary-proof-5.log": "d439da8db5d820f53b746c7347088c6ab7111ebec1a42aefe8a8f8f50ed2d5b8",
+    ".datum/library-gui-delivery/build-gui-ordinary-proof-6.log": "e9b7c6b62795858cdd2d37c5e6ec177e8f4dbe25c938551b6c5b6ede2e3576be",
+    ".datum/library-gui-delivery/build-native-companions.log": "562c60ea0bdfc66ce1e180375cc08a98067aabf21a294acc75e4fd70da512b18",
+    ".datum/library-gui-delivery/delivery-handoff.json": "978734a14aa53b4f4351be8fa66d38a7d8e050d5cafd36132b756c74e8bc8f68",
+    ".datum/library-gui-delivery/gate-cargo-resource-final.log": "4c220161f57cf8a40d09eacd28d391d8c0f6680d194660a78971adf755934119",
+    ".datum/library-gui-delivery/gate-daemon-parity-final.log": "a9089d01073e20502ea4cbdf21057d79b6b76e845008790e2d815fd08ad27b8c",
+    ".datum/library-gui-delivery/gate-dependency-authority-final.log": "3ab8cf4207b6ef2e266d07d0d9ad4f9d9d94a1f5676f6c1378acb9b52c128139",
+    ".datum/library-gui-delivery/gate-diff-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".datum/library-gui-delivery/gate-private-writer-final.log": "a0317c19eff36cac387f4160918f9541c429009af95e77df10b692bef2106ee4",
+    ".datum/library-gui-delivery/gate-rustfmt-final.log": "625f5d46cb869d587f4639b628978d8d115d7d1aa7adab29fc50be1c1725554e",
+    ".datum/library-gui-delivery/gate-source-health-final.log": "50264c41023ecbfbe2553f9e7f5098da3582d42f1904b31dc4f5279ca03b6d65",
+    ".datum/library-gui-delivery/gui-checkpoint-14.json": "66c1c189d10176a118f9bf813053f7627097c08603c51822189a8b2ea5dbcd3f",
+    ".datum/library-gui-delivery/gui-checkpoint-18.json": "f2fde38a7251354d8f2b07042636a5682a4742aec80cac5cd4c00564bc9ad171",
+    ".datum/library-gui-delivery/ordinary-app-attempt-1.log": "e36b4fc8160d6df135039f4917aeab79eaf47238311baa525977c03966249afe",
+    ".datum/library-gui-delivery/ordinary-app-attempt-2.log": "029f5e696b72ca2a6cba631392d6bf1ebcb00ed060e6f611e57ff5ccb602c833",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/cancel-preview.png": "c59a9b371bbe9ae8b4cb6b1a9011aa5661708ebcb55c195ceea8dacbe33d1ea1",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/entity.png": "182daf2640681ce33fc0acdf6ac1c33425f0d4b72e926b7bdd0974bfc92366ca",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/existing-source-preview.png": "d020c9770957ccea957db1abd60457c5b42e6fb0ede970d1b4e63997d6be39e3",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/footprint-edit-preview.png": "5f70490e71c01ec283b878c131c57aa16700fe43d3a8448dcf370d4071fa3f95",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/footprint-preview.png": "e53c40f4aab141bf80d4300ef137534e524533e280d81cdac99878621288bb4e",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/footprint.png": "f298c982e6f53f6becd7ad160f57ef23442e0b28fd6829dc134e0c3e9b16651b",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/missing-geometry-console-reason.png": "dcd480d6a999b1f6f671b5c28f062d779e783c13aef2ce42f69b5d654a4b103d",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/missing-geometry-reason.png": "1decc4a5241f2012accd1d661ba6ba4dc5c933b6947d2315265f118589d5dac4",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/narrow-edit-preview.png": "071dd69d6fe86124cdc4e8d276b0c552a22b9391dc65c42dbdfdabfec42972bd",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/narrow-library.png": "376ed407ac530e7df9e5fbe27fe9a747dc450f24f0057230c0bbad411f57b992",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/narrow-refusal.png": "2e979237d569cfed610c39876d67772af888fb0951ea86d607dc4d359fb52797",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/ordinary-gui-reopen.png": "c59262ad17b99fff4daa4ee7e8e151b1c50dd4e478d7196797a6bb3a2cf32ca6",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/package.png": "271a7b87abbe16ae66f8ee820510c3a8b93e933b13fdcc20fb6fdef986a283d2",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/padstack-preview.png": "ac6c025ed1612d6bdbcc43646c324b4307a8efdc810d36006cf09fce987b70cc",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/padstack.png": "59d3fdc53fec47f4d4ec6b280dba70960a222c7b2c5b9cfaedca065d5c101ae2",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/part.png": "7c10237bc55ce2a1fe2b69ea3bd28f59022a42c2483c544d8bda85d6c4041023",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/pin-pad-map.png": "759d48c0161de650c2eba94e4149511aaa0be670d9950663a2fd56091c396ae9",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/process-pad-one.png": "9df3f78f09ec0561ee75f4dc70a1e5fc723fd282e0c9007ff92a9a84b12c95ec",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/process-pad-zero.png": "026adec9fa5483bafa74c152c164994bbccba8752964600720e3fdf31150d12b",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/remove-pad-preview.png": "6f92fdd38ec38f2a26e4b38b8499c15a668220de7e6d41c29c7536551aa2928b",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/short-tiled-draft.png": "781303d3cccf6cda291e25f01c3a049d80ae6a89660f23dddfa78067a70852fb",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/short-tiled-library.png": "02d793e72192a19bf192614e0be0e65d8c500695f067ccebab2005f0f7c5c638",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/symbol.png": "a202e253817500a30866e53afc734fd19ef23c958ee5c9c9b968df30784cbcba",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3-frames/unit.png": "95566af708ad8bddc21ba219f22d8566bdee0acb3f024cce46a37d4b827249a9",
+    ".datum/library-gui-delivery/ordinary-app-attempt-3.log": "cc889af9701960b47a587ad4c422a2415c1228eb95696c70032d815e1e702258",
+    ".datum/library-gui-delivery/ordinary-narrow-supplement-frames/actual-narrow-library.png": "56def8170bd46a2e987a3fdcd7beb2a0378088cbca1ba4b9c21b83a7f1fed1ad",
+    ".datum/library-gui-delivery/ordinary-narrow-supplement-frames/actual-narrow-preview.png": "9e5282bf60fdb87a5bba4ec6cda48aaef16c0ee3734fe47baec90ee93e233693",
+    ".datum/library-gui-delivery/ordinary-narrow-supplement-frames/actual-narrow-refusal.png": "cda01ac2dba3a1a568dfc037cdc4163246f7d1fca5bf26cadd4dd9857dd14daf",
+    ".datum/library-gui-delivery/ordinary-narrow-supplement-frames/actual-narrow-short-library.png": "b5a07a1170a6a31a8473bec3c9772e723338a3172771c896ee7a96c4429257ca",
+    ".datum/library-gui-delivery/ordinary-narrow-supplement-frames/actual-narrow-short-preview.png": "62f4330d373a08103297d87de7b4c818bbec612f7763ec1b21a5addb07aa8662",
+    ".datum/library-gui-delivery/ordinary-narrow-supplement.log": "9d0fdb3524f61c3273880ac52f7a05282574501f859d62282559939a9271b960",
+    ".datum/library-gui-delivery/original-execution-receipts.json": "395f129a54e12f75d8790ed47477882ffe4ae53b60bfc2178690705dea4edf10",
+    ".datum/library-gui-delivery/test-daemon-library-final-corrected.log": "ef63dcea4db185053e7e42f88d4c66dfb3139232ba4e4de10c8a24af996150ef",
+    ".datum/library-gui-delivery/test-daemon-library-final-isolated-guards.log": "d4fa104e4f6ba4d156de37c3449b9a3e8d8ae22315c5990cc11ba3b6dc739751",
+    ".datum/library-gui-delivery/test-daemon-library-final.log": "08e9e7b51acc4d5a49295b2c03a47ef7db3973d3123f772844b562a0dce431c6",
+    ".datum/library-gui-delivery/test-daemon-library-reference-controls-final.log": "2725f476d9965ef45712d696b7f05c09109198a242134ff2afcf627ae91111c5",
+    ".datum/library-gui-delivery/test-daemon-library-reference-controls-identity.log": "7bd24f6c10b70e83be226f144de10b3ddbf1dda6ea6d91e71e0f5809285c221c",
+    ".datum/library-gui-delivery/test-daemon-library-reference-controls.log": "866aa366072da44312324d5a0bf0dfc97adae013357897f4ff55091e50e27046",
+    ".datum/library-gui-delivery/test-engine-library-final-corrected.log": "66ced44b936416233e0ff9a1192869114e20ccdeca988a582563ccf36dcefcde",
+    ".datum/library-gui-delivery/test-engine-library-final.log": "8e864b9d925f3cfbd8f3fb946b0d0c1b21318803541c30a9d78971cbfdf20a18"
+  },
+  "execution_receipts": {
+    "daemon_snapshot_controls": {
+      "exact_argv_provenance": "Recovered actual original terminal execution receipt embedded under original_execution_receipts.",
+      "executed_binary_path": "target/debug/deps/eda_engine_daemon-0e117e3566331237",
+      "exit_code": 0,
+      "failed": 0,
+      "historical_binary_hash_provenance": "Actual independent receipt forwarded by appointed manager thread 01a122e5-f602-7f61-a144-0d1ce7116a77: actual isolated guard review; recorded historical receipt, not hash inferred from current file. Manager confirming retained receipt with reviewer.",
+      "historical_binary_sha256": "6014262b32ac1f5997f3054766043993567dd82c3cd6a7df3ed4a1b37d4a0705",
+      "log": "test-daemon-library-final-isolated-guards.log",
+      "passed": 1,
+      "sha256": "d4fa104e4f6ba4d156de37c3449b9a3e8d8ae22315c5990cc11ba3b6dc739751",
+      "terminal_execution_identity": {
+        "exec_session_id": 6476,
+        "terminal_exit_code": 0
+      }
+    },
+    "engine_controls": {
+      "exact_argv_provenance": "Recovered actual original terminal execution receipt embedded under original_execution_receipts.",
+      "executed_binary_path": "target/debug/deps/eda_engine-1c80eccbe86d4536",
+      "exit_code": 0,
+      "failed": 0,
+      "historical_binary_hash_provenance": "Actual independent receipt forwarded by appointed manager thread 01a122e5-f602-7f61-a144-0d1ce7116a77: actual engine5 review; recorded historical receipt, not hash inferred from current file. Manager confirming retained receipt with reviewer.",
+      "historical_binary_sha256": "96d102d37487b80d854d65d2a7ea79d9c06b738057cc5695b6318ef14162e885",
+      "log": "test-engine-library-final-corrected.log",
+      "passed": 5,
+      "sha256": "66ced44b936416233e0ff9a1192869114e20ccdeca988a582563ccf36dcefcde",
+      "terminal_execution_identity": {
+        "exec_session_id": 52582,
+        "terminal_exit_code": 0
+      }
+    },
+    "primary_app": {
+      "canonical_transactions_added": 7,
+      "changed_project_sources": "four pool files only; whole board, schematic, project and profiles unchanged",
+      "duration_seconds": 384.09,
+      "exact_argv_provenance": "Original invocation receipt is in prior execution history; raw log records binary/filter and outcome. Complete original flags are not reconstructed here.",
+      "exact_baseline_journal_prefix_transactions": 127,
+      "executed_binary_path": "target/debug/deps/datum_gui-d7b5b7c9184b1498",
+      "exit_code": 0,
+      "failed": 0,
+      "historical_binary_hash_provenance": "Actual independent receipt forwarded by appointed manager thread 01a122e5-f602-7f61-a144-0d1ce7116a77: actual App3 source/runtime review; recorded historical receipt, not hash inferred from current file. Manager confirming retained receipt with reviewer.",
+      "historical_binary_sha256": "650f1cb6f80f5f0b9dc860c6e76ff1227a0919393f00b871903a6f0e9563fe7e",
+      "keyboard_input": "production shared logical-input consumer; not physical keyboard events",
+      "log": "ordinary-app-attempt-3.log",
+      "log_sha256": "cc889af9701960b47a587ad4c422a2415c1228eb95696c70032d815e1e702258",
+      "passed": 1,
+      "physical_wayland_human_qualification": false,
+      "pointer_input": "programmatic WindowEvent callbacks through App and presented hit targets",
+      "source_checkpoint": "gui-checkpoint-14.json",
+      "steps": 155,
+      "terminal_execution_identity": {
+        "exec_session_id": 96330,
+        "terminal_exit_code": 0
+      }
+    },
+    "reference_controls": {
+      "binary": {
+        "path": "target/debug/deps/eda_engine_daemon-0e117e3566331237",
+        "sha256": "376b46e21e11fa45109a407922897d8d48bbcdef77d5a8eccde163e2e264d0d2"
+      },
+      "duration_seconds": 0.03,
+      "failed": 0,
+      "guarded_argv": [
+        "python3",
+        "scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "-p",
+        "eda-engine-daemon",
+        "native_library_authoring_requires_snapshot_guards_and_never_partially_writes",
+        "--jobs",
+        "1",
+        "--",
+        "--nocapture"
+      ],
+      "log": "test-daemon-library-reference-controls-identity.log",
+      "passed": 1,
+      "post_pins": {
+        "checked": 50,
+        "matches": 50
+      },
+      "pre_pins": {
+        "checked": 50,
+        "matches": 50
+      },
+      "scope": "All eight absent/wrong-kind Package/Padstack references through Footprint create/edit require error -32060 and specific missing-pool diagnostic, source/journal invariance; isolated snapshot guards and positive creation also execute.",
+      "sha256": "7bd24f6c10b70e83be226f144de10b3ddbf1dda6ea6d91e71e0f5809285c221c",
+      "terminal_execution_identity": {
+        "exec_session_id": 51082,
+        "terminal_exit_code": 0
+      }
+    },
+    "source_freeze": {
+      "checkpoint": "gui-checkpoint-18.json",
+      "checkpoint_sha256": "f2fde38a7251354d8f2b07042636a5682a4742aec80cac5cd4c00564bc9ad171",
+      "handoff_to": "owner-appointed manager thread 01a122e5-f602-7f61-a144-0d1ce7116a77",
+      "ownership": "Manager receives source for review/staging/landing; lib-agent will not mutate source unless manager requests a bounded correction.",
+      "pins": 50,
+      "source_edits_after_checkpoint": false
+    },
+    "static_gates": {
+      "gate-cargo-resource-final.log": {
+        "exit_code": 0,
+        "sha256": "4c220161f57cf8a40d09eacd28d391d8c0f6680d194660a78971adf755934119"
+      },
+      "gate-daemon-parity-final.log": {
+        "exit_code": 0,
+        "sha256": "a9089d01073e20502ea4cbdf21057d79b6b76e845008790e2d815fd08ad27b8c"
+      },
+      "gate-dependency-authority-final.log": {
+        "exit_code": 0,
+        "sha256": "3ab8cf4207b6ef2e266d07d0d9ad4f9d9d94a1f5676f6c1378acb9b52c128139"
+      },
+      "gate-diff-final.log": {
+        "exit_code": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "gate-private-writer-final.log": {
+        "exit_code": 1,
+        "sha256": "a0317c19eff36cac387f4160918f9541c429009af95e77df10b692bef2106ee4"
+      },
+      "gate-rustfmt-final.log": {
+        "exit_code": 0,
+        "sha256": "625f5d46cb869d587f4639b628978d8d115d7d1aa7adab29fc50be1c1725554e"
+      },
+      "gate-source-health-final.log": {
+        "exit_code": 0,
+        "sha256": "50264c41023ecbfbe2553f9e7f5098da3582d42f1904b31dc4f5279ca03b6d65"
+      }
+    },
+    "supplement": {
+      "actual_geometry": {
+        "before_width": 165.11252,
+        "narrow_height": 649.94995,
+        "narrow_width": 65.23123,
+        "short_tiled_height": 294
+      },
+      "duration_seconds": 38.18,
+      "exact_argv_provenance": "Original invocation receipt is in prior execution history; raw log records binary/filter and outcome. Complete original flags are not reconstructed here.",
+      "executed_binary_path": "target/debug/deps/datum_gui-d7b5b7c9184b1498",
+      "exit_code": 0,
+      "failed": 0,
+      "frames": {
+        "actual-narrow-library.png": {
+          "sha256": "56def8170bd46a2e987a3fdcd7beb2a0378088cbca1ba4b9c21b83a7f1fed1ad",
+          "size_px": [
+            1344,
+            806
+          ]
+        },
+        "actual-narrow-preview.png": {
+          "sha256": "9e5282bf60fdb87a5bba4ec6cda48aaef16c0ee3734fe47baec90ee93e233693",
+          "size_px": [
+            1344,
+            806
+          ]
+        },
+        "actual-narrow-refusal.png": {
+          "sha256": "cda01ac2dba3a1a568dfc037cdc4163246f7d1fca5bf26cadd4dd9857dd14daf",
+          "size_px": [
+            1344,
+            806
+          ]
+        },
+        "actual-narrow-short-library.png": {
+          "sha256": "b5a07a1170a6a31a8473bec3c9772e723338a3172771c896ee7a96c4429257ca",
+          "size_px": [
+            1344,
+            806
+          ]
+        },
+        "actual-narrow-short-preview.png": {
+          "sha256": "62f4330d373a08103297d87de7b4c818bbec612f7763ec1b21a5addb07aa8662",
+          "size_px": [
+            1344,
+            806
+          ]
+        }
+      },
+      "historical_binary_hash_provenance": "Historical hash not present in surviving raw proof log or compacted implementer context; current hashes below are current-only, not retroactive run attribution. Manager may reconcile actual retained original receipts.",
+      "input": "programmatic App pointer callbacks and shared production logical-input consumer",
+      "log": "ordinary-narrow-supplement.log",
+      "passed": 1,
+      "project": "ordinary-app-attempt-3",
+      "proof_scope": "Current refusal visible in Inspector; exact Console reason equality and source/journal invariance are executed assertions. No expanded Console screenshot or physical input qualification.",
+      "sha256": "9d0fdb3524f61c3273880ac52f7a05282574501f859d62282559939a9271b960",
+      "terminal_execution_identity": {
+        "exec_session_id": 15022,
+        "terminal_exit_code": 0
+      },
+      "test": "ordinary_library_actual_narrow_pane_preview_refusal_cancel"
+    }
+  },
+  "full_workspace_result": {
+    "global_clippy": "13 diagnostics in five unchanged engine files; no new whole-workspace PASS",
+    "gui_supervision_parity": "existing mismatch retained, not normalized",
+    "private_writer_guard": {
+      "failures": 6,
+      "guard_and_journal_unchanged_from_HEAD": "06549804",
+      "guard_sha256": "a1bf0f4848b787aa5b2745cea16f3f52a86b7c63270447d8cbdbf06b2858cf8d",
+      "issue_id": "dat-journal-writer-guard-drift-e9it",
+      "journal_sha256": "20f920ccaf6cc2161ba6492889bf8b8c04cf409e90bf8fc729c29269e092bfd0",
+      "status": "FAIL"
+    },
+    "status": "FAIL retained separately"
+  },
+  "issue_id": "dat-library-gui-authoring-1ix7",
+  "kind": "ordinary_application",
+  "launch_command": "DATUM_LIBRARY_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_library_browse_author_preview_cancel_history_save_reopen --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/library-gui-delivery/ordinary-app-attempt-3.log 2>&1",
+  "manager_disposition": "Owner-appointed PM059 manager accepts the frozen PM062 bounded candidate against all four ordinary workflows and five safety requirements after actual distinct source/runtime/rendered/documentation reviews. Source landing and source-commit availability registration remain pending; full qualification and unrelated baseline failures remain open.",
+  "observed_results": {
+    "engine": {
+      "failed": 0,
+      "passed": 5
+    },
+    "isolated_daemon_guards": {
+      "failed": 0,
+      "passed": 1
+    },
+    "primary_app": {
+      "failed": 0,
+      "passed": 1,
+      "seconds": 384.09,
+      "source_checkpoint": "gui-checkpoint-14.json",
+      "source_checkpoint_sha256": "66c1c189d10176a118f9bf813053f7627097c08603c51822189a8b2ea5dbcd3f",
+      "steps": 155
+    },
+    "reference_controls": {
+      "exact_compiler_source_attribution": "checkpoint18 actual PRE/POST checks in terminal identity log",
+      "failed": 0,
+      "passed": 1,
+      "post_pins": 50,
+      "pre_pins": 50,
+      "seconds": 0.03
+    },
+    "supplement": {
+      "failed": 0,
+      "pane_height_after": 294,
+      "pane_height_before": 649.94995,
+      "pane_width_after": 65.23123,
+      "pane_width_before": 165.11252,
+      "passed": 1,
+      "seconds": 38.18
+    }
+  },
+  "ordinary_launch_argv_provenance": "Recovered actual original terminal CommandExecution receipt from lib-agent rollout, not reconstructed; all four original commands and completed exit0 receipts embedded.",
+  "original_execution_receipts": {
+    "ordinary-app-attempt-3.log": {
+      "command": [
+        "/bin/bash",
+        "-lc",
+        "DATUM_LIBRARY_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_library_browse_author_preview_cancel_history_save_reopen --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/library-gui-delivery/ordinary-app-attempt-3.log 2>&1"
+      ],
+      "cwd": "file:///home/bfadmin/Documents/datum-eda",
+      "execution_id": "exec-4811d7d2-5924-4449-a2ea-ece3527dae52",
+      "exit_code": 0,
+      "process_id": "96330",
+      "source": "actual original lib-agent rollout CommandExecution receipt",
+      "status": "completed",
+      "timestamp": "2026-10-11T09:05:11.030Z"
+    },
+    "ordinary-narrow-supplement.log": {
+      "command": [
+        "/bin/bash",
+        "-lc",
+        "DATUM_LIBRARY_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-narrow-supplement-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_library_actual_narrow_pane_preview_refusal_cancel --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/library-gui-delivery/ordinary-narrow-supplement.log 2>&1"
+      ],
+      "cwd": "file:///home/bfadmin/Documents/datum-eda",
+      "execution_id": "exec-7ea0e9f8-7888-4efc-882f-93101660c909",
+      "exit_code": 0,
+      "process_id": "15022",
+      "source": "actual original lib-agent rollout CommandExecution receipt",
+      "status": "completed",
+      "timestamp": "2026-10-11T09:34:51.318Z"
+    },
+    "test-daemon-library-final-isolated-guards.log": {
+      "command": [
+        "/bin/bash",
+        "-lc",
+        "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine-daemon native_library_authoring_requires_snapshot_guards_and_never_partially_writes --jobs 1 -- --nocapture > .datum/library-gui-delivery/test-daemon-library-final-isolated-guards.log 2>&1"
+      ],
+      "cwd": "file:///home/bfadmin/Documents/datum-eda",
+      "execution_id": "exec-50bb1e50-e308-4059-ad58-47bb2a975cfa",
+      "exit_code": 0,
+      "process_id": "6476",
+      "source": "actual original lib-agent rollout CommandExecution receipt",
+      "status": "completed",
+      "timestamp": "2026-10-11T09:26:53.454Z"
+    },
+    "test-engine-library-final-corrected.log": {
+      "command": [
+        "/bin/bash",
+        "-lc",
+        "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine library_gui::tests --jobs 1 -- --nocapture > .datum/library-gui-delivery/test-engine-library-final-corrected.log 2>&1"
+      ],
+      "cwd": "file:///home/bfadmin/Documents/datum-eda",
+      "execution_id": "exec-8d09692b-26ec-48d2-8b2c-7dd758919697",
+      "exit_code": 0,
+      "process_id": "52582",
+      "source": "actual original lib-agent rollout CommandExecution receipt",
+      "status": "completed",
+      "timestamp": "2026-10-11T09:15:31.063Z"
+    }
+  },
+  "payload_checks": {
+    "authored_pool_files_changed": 4,
+    "baseline_journal_records_unchanged": 127,
+    "board_schematic_project_profiles_unchanged": true,
+    "canonical_transactions_added": 7,
+    "frozen_board_sha256": "c008158a91fda8b05cfcb6b00bcaa4b9876c56ffe2cbf3e24be3bc09dd0e267a",
+    "journal_sha256": "4da1bbc35d3448b542982218ff123aae59eac3402e0149cbe7ab1ad981297849"
+  },
+  "pending_qualification": [
+    "Full eight-kind authoring/models/approval/generation/general placed update remain retained targets",
+    "HUMAN/assistive/physical input, approved seed/source rights and standards manufacturing qualification remain separate",
+    "Existing global Clippy and GUI supervision parity failures remain separately retained"
+  ],
+  "proof_limits": [
+    "Wayland ignored requested 960x640 window size; all primary PNGs are 1344x806. Supplemental test uses real ordinary pane splits.",
+    "Full physical input/HUMAN and full qualification remain open.",
+    "Whole-parity unrelated GUI supervision row mismatch retained; not normalized.",
+    "At the extreme 65 px pane width, wrapped action labels remain a usability limit; no minimum-width, assistive, or HUMAN qualification claimed.",
+    "Programmatic pointer callbacks use production App hit targets; keyboard uses shared logical input consumption, not physical input.",
+    "Supplement Console-message equality and source/journal invariance are executed assertions, not an expanded Console screenshot or independently archived before/after comparisons."
+  ],
+  "retained_attempts": {
+    "app1": "SIGABRT after opening Library; hardcoded lifetime consumer table primary panic; corrected using Consumer::ALL.len()",
+    "app2": "failed after stage43; Console overlay covered Preview/Cancel; corrected using actual shared ConsoleOverlayLayout bounds",
+    "build5": "E0425 after early placement before Console layout definition; corrected placement and build6 passed",
+    "daemon_initial": "0 passed/1 failed: omitted tip collapsed to explicit null on empty journal; parser key-presence correction and isolated guard proof passed.",
+    "engine_initial_filter": "Successful compilation followed by 0 tests; unmatched library_gui_tests filter. Correct library_gui::tests subsequently passed all five."
+  },
+  "review_receipts": {
+    "documentation": "Actual independent management_review final provenance reconciliation PASS at delivery bda65efd/review f6dcafc6. All four recovered terminal receipts personally matched original rollout events; prior56evidence/50source and Tool/Product review scopes reused.",
+    "ordinary_app": "Actual independent App3 source/journal/payload/reopen review PASS: 127 baseline journal records unchanged plus seven intended transactions, four pool sources changed only.",
+    "reference_transport": "Actual independent final identity review PASS: PRE/POST50 matching pins, exact guarded argv, eight role-specific canonical reference errors and complete source/journal invariance. First reference run retained at narrower broad refusal/invariance scope.",
+    "source_and_engine": "Actual s5a_code_audit aggregate source/runtime review PASS through frozen checkpoint18; five engine tests and final strengthened reference identity run independently reviewed. No mandatory finding remains in assigned source/runtime scope.",
+    "visual": "Actual s5a_execution_readiness App3 visual review required current refusal repair; supplemental five-frame review PASS resolves it. Inspector reason is visibly shown; Console equality and cancel invariance are executed assertions."
+  },
+  "safety_results": {
+    "Actual missing basis/approval/check states remain truthful; no certification, private writer or silent propagation": true,
+    "Definition edits leave existing placed users frozen, observed in ordinary GUI proof": true,
+    "Inspection/preview/cancel preserve authored source and journal": true,
+    "Preserve UUIDs, unrelated raw siblings/extensions and absent optional fields": true,
+    "Stale revision, wrong writer/target and invalid or unsupported references/geometry refuse without partial writes": true
+  },
+  "source_commit": null,
+  "source_pins": {
+    "crates/engine-daemon/src/dispatch.rs": "e76bca960fc3264ca13182f6da130450c498ef767cd078c4ad51ac3c7854454d",
+    "crates/engine-daemon/src/native_write.rs": "2763c3148ccd7f3037c9327df1e915204cd01b3548d75a320fd37ea7f44ebd0e",
+    "crates/engine-daemon/src/tests/main_tests_native_write.rs": "7b01c6d47b53f3ca74a2ce1c306e4c10b161e4b260cd96686d2b0393a5559c9a",
+    "crates/engine-daemon/src/tests/main_tests_native_write/library_reference_controls.rs": "e2609aaf742890d41a70a5129e93b21581d26860a2c8b0377e17a0d4fa8622c9",
+    "crates/engine/src/api/native_write/library_gui.rs": "57840d3fb66e224204b247339b32245d4b76a738165ed8bcd42a95fcd1333f1f",
+    "crates/engine/src/api/native_write/library_gui_tests.rs": "7ece3828f4cfce58b16225d7cfb97f6630c85723e537799f68be8b7894dceb67",
+    "crates/engine/src/api/native_write/mod.rs": "3c0e409309afb714bb305c8b93efe9079b622f0fd4dde90c56f63532961063b0",
+    "crates/engine/src/api/native_write/process.rs": "f1b0d62ecccb829278b8a1a97d605c77d6df56e91c9b8e98d6c24691b5dadd50",
+    "crates/engine/src/api/native_write/registry.rs": "9213540ad4c6c5475d98c5cf1714d59130824c4f7442e2efb6a2e44d4dc0188c",
+    "crates/gui-app/src/keyboard_focus.rs": "230199ab865efe074100f796916264e5f12c3db8f125814cfdab2a7a90b7fc0c",
+    "crates/gui-app/src/main.rs": "86f979a56d39736379a8b2785989ea749b2b505b45a543939b5256901f1a3fd2",
+    "crates/gui-app/src/native_library_frame_tests.rs": "a031b05466339b5d003f4793ed4558bde5282259cbd68e7c69728fa5ac5cdb07",
+    "crates/gui-app/src/native_library_frame_tests/proof_assertions.rs": "2d9398e63c81ef3a0aefc8cdfcf44796f6e236ee1567851e023b6e9cad00d3aa",
+    "crates/gui-app/src/native_library_frame_tests/scenario.rs": "f9d0b73259ed38f961f1fde5938769c1ecfb09982209132b26bdc4cf8c3bb1f1",
+    "crates/gui-app/src/native_scroll_input.rs": "3be0e6c8f55ade67442842b8d5687448a886c33f09851317c8ae5168c53db054",
+    "crates/gui-app/src/runtime_camera_pane.rs": "77077fc54def9e44a96a47642b9d45fe29ecc3df5d7a4f70a2aadf3648b94d96",
+    "crates/gui-app/src/runtime_hit_actions.rs": "b5a36aa0c4718b5b67f1a72898faf2130199fee7bac23d7e2c0fbf1cadd02e08",
+    "crates/gui-app/src/runtime_init.rs": "3a800b771347452aa195eb341c3ce119e3e5823d1ede0f0cbe0037937c3e6f02",
+    "crates/gui-app/src/runtime_library.rs": "1067bb21424e0af898a0ec920c46ff7b202cf4bed949b70c6bb34518a7ae0f0b",
+    "crates/gui-app/src/runtime_native_edit.rs": "ea365268cd12d60e12f120cff3ae810b493b7b1517900ce35ba75848990825d4",
+    "crates/gui-app/src/runtime_view_actions.rs": "69335960d3f2203e379467f851de7a4f8ddbb57a9dd3327f606ffc39c4ee3021",
+    "crates/gui-app/src/terminal_regression_boundary_tests.rs": "302aeec8c1797a71bd46d877bed2e932bb82dd46de432acaa3954aa9dd90020f",
+    "crates/gui-protocol/src/gui_menu_model/action_registry.rs": "e24d774b0544bb68ef535a1367864b17056efe93b964f77570dd967a52e79199",
+    "crates/gui-protocol/src/gui_menu_model/action_registry/tests.rs": "dcf3e405fd2277e9dcc4ad8e4916a6a33478be50aa530af04582cb4ea38b8f50",
+    "crates/gui-protocol/src/lib.rs": "bafb8ea082d959ce014a8aa07382ca1cdff8877f107d971eb20a8fb29e041d96",
+    "crates/gui-protocol/src/library_authoring.rs": "75738b021a6a7355b741681b3fb5c06f1121e72a63aeebbd985a1e5bf6534600",
+    "crates/gui-protocol/src/library_browser.rs": "59af014eaa0325c1ac8e55387f4e0b575506e78ff65e730077b02b8925f079c9",
+    "crates/gui-protocol/src/native_edit_client.rs": "d351fdb0ece16357e6e9592bc7bdb81582074d0750adfb8a7559809beb93c02e",
+    "crates/gui-protocol/src/selection_view.rs": "b318a0566d2fde7b15e084db2c619c4fd5af490f4726491316200a286b87c20f",
+    "crates/gui-protocol/src/selection_view/presentation.rs": "05f9009686195c8c67331d9af1c8f4acde3912b31c73e30b940ee63a91d30f46",
+    "crates/gui-protocol/src/workspace_interaction/camera.rs": "a6827b633c80e3f3eef74a9548c16f5f29ce50eb15c3f258cdef04a2ac93c44e",
+    "crates/gui-protocol/src/workspace_layout.rs": "b34311c541cbfaf75a2291b57114fbf0376a187e308627f7ea583f2fffc85326",
+    "crates/gui-protocol/src/workspace_loading.rs": "877cc02d90007265584e0de77fb3e3c2c36c36d5f151fbcdfbc3e0d1ce1df7e5",
+    "crates/gui-protocol/src/workspace_pane_content.rs": "ae043de0f97afb1388309b3175b74d0328f507c62e2938b282ae70f6c8650a70",
+    "crates/gui-protocol/src/workspace_state.rs": "faf85fa1e53baad664f0e9112b8a1f25c5a20d065900b664ebbcbeeed3127521",
+    "crates/gui-render/src/hit_target.rs": "f1d16879f69a1eb664fa8894676e79f64c0d4c8d2e1b15f4f6621e88fa2ab544",
+    "crates/gui-render/src/lib.rs": "30a0bb47444cbd0fa3635ea2969c85bd0b16418ed4757adb14733d5f60d8e9cd",
+    "crates/gui-render/src/library_preview.rs": "6300a5fb4d9a389dcc21cd02ed758d7ef19915eb83706e670662fd6f66fba78a",
+    "crates/gui-render/src/library_surface.rs": "099334c052d403cf9c1155b4e8fdb302df1d0fe150a3c6c33971984f3f9d6fb5",
+    "crates/gui-render/src/render/coordinate_hit.rs": "d90ab840efbb783b62aa04f0c59691a1746cc04f7029270b0f2aa6358390ab4e",
+    "crates/gui-render/src/render/frame_preparation.rs": "96e5bc94490f8981593f8545a6e9e5ea93ceb14ab8e3c43155163433fc2c0c5f",
+    "crates/gui-render/src/render/native_selection_overlay/mask.rs": "1c709b2aeb4b50c5b9ff66dc827fecdc60895708c3e72fd36c6216cbdaef602a",
+    "crates/gui-render/src/render/pane_chrome.rs": "84304fed5ef3db2136d1d88f996626a2cb79a58f48cd32d3689815d22c9ffac0",
+    "crates/gui-render/src/render/resource_consumers.rs": "2e416547a1775f3c93f8f3015fc891e572a92711afeff0079132e690d81aded4",
+    "crates/gui-render/src/render/status_bar.rs": "fee06e0169410d70781e6910f4711a97dd8468d4de89841faa399eb3b266c0fa",
+    "crates/gui-render/src/render/types.rs": "b202a2767d960b8e6a1135abf94c230de06ddb8b579f1b388c0b3f33342c53f9",
+    "crates/gui-render/src/render_contract_tests.rs": "929febbf5ad624b7f795384894350019fe688a1cf5c09b1b43b578dae782035e",
+    "crates/gui-render/src/side_panels.rs": "46f609891a295d8a13daa2b91cf6450e42adf494599c0a8eccabea14e65bd9e4",
+    "crates/gui-render/src/side_panels/inspector_dispatch.rs": "80e7de4a656a5963a0b0b35e1737c6286af693ef6b618066f3e5710551479633",
+    "crates/gui-render/src/text_gpu/lifetime_state.rs": "8fcf7d3527eba44732547751e7cd3b821f1811c1367a87f15238be72ce748a9a"
+  },
+  "status": "Bounded reviewed candidate accepted by appointed manager; source landing pending.",
+  "task": "LIBRARY-GUI-AUTHORING",
+  "workflow_results": {
+    "Browse and search all eight native kinds by name; inspect typed relationships and source/target context": true,
+    "Create/edit Padstack and Footprint with named existing Package and supported geometry/process inspection": true,
+    "Operate consequential controls by keyboard in normal and narrow panes": true,
+    "Preview/cancel; commit; Undo/Redo; Save and reopen through ordinary GUI": true
+  }
+}

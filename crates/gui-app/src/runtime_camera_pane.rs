@@ -258,7 +258,8 @@ impl Runtime {
                         .as_ref()
                         .map(CameraState::fit_to_bounds)
                         .unwrap_or(inherited),
-                    datum_gui_protocol::PaneContent::Revision(_) => inherited,
+                    datum_gui_protocol::PaneContent::Library
+                    | datum_gui_protocol::PaneContent::Revision(_) => inherited,
                 };
                 self.pane_cameras.inherit(id, content, initial);
             }

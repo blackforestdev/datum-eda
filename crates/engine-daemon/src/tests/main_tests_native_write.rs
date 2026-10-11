@@ -4,6 +4,9 @@
 
 use super::*;
 
+#[path = "main_tests_native_write/library_reference_controls.rs"]
+mod library_reference_controls;
+
 use eda_engine::api::native_write::genesis::{GenesisSpec, bootstrap_native_project};
 
 fn temp_native_project(label: &str) -> PathBuf {
@@ -61,6 +64,99 @@ fn native_describe_reports_revision_name_and_journal_len() {
     assert_eq!(result["journal_len"], 0);
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn native_library_authoring_requires_snapshot_guards_and_never_partially_writes() {
+    let mut engine = Engine::new().unwrap();
+    let root = temp_native_project("library_guards");
+    let before = describe(&mut engine, 1, &root);
+    let id = uuid::Uuid::new_v4();
+    let base = json!({"project_root":root,"verb":"datum.library.create","params":{"kind":"padstacks","object_id":id,"pool_path":"pool","fields":{"name":"Named copper","aperture":{"circle":{"diameter_nm":1000000}}}},"actor":"datum-gui","source":"manual","reason":"Library guard proof"});
+    for revision in [false, true] {
+        let mut params = base.clone();
+        if revision {
+            params["expected_model_revision"] = before["model_revision"].clone();
+        }
+        let response = dispatch_request(&mut engine, native_request(2, "native.write", params));
+        assert!(
+            response.error.is_some(),
+            "both snapshot guards are mandatory"
+        );
+        assert_eq!(describe(&mut engine, 3, &root)["journal_len"], 0);
+        assert!(!root.join(format!("pool/padstacks/{id}.json")).exists());
+    }
+    let mut missing_revision = base.clone();
+    missing_revision["expected_transaction_tip"] = before["transaction_tip"].clone();
+    assert!(
+        dispatch_request(
+            &mut engine,
+            native_request(3, "native.write", missing_revision)
+        )
+        .error
+        .is_some(),
+        "an explicit empty tip cannot replace the mandatory revision guard"
+    );
+    assert_eq!(describe(&mut engine, 3, &root)["journal_len"], 0);
+    assert!(!root.join(format!("pool/padstacks/{id}.json")).exists());
+    let mut guarded = base.clone();
+    guarded["expected_model_revision"] = before["model_revision"].clone();
+    guarded["expected_transaction_tip"] = before["transaction_tip"].clone();
+    let mut wrong = guarded.clone();
+    wrong["params"]["pool_path"] = json!("other");
+    assert!(
+        dispatch_request(&mut engine, native_request(4, "native.write", wrong))
+            .error
+            .is_some()
+    );
+    assert_eq!(describe(&mut engine, 5, &root)["journal_len"], 0);
+    let created = dispatch_request(
+        &mut engine,
+        native_request(6, "native.write", guarded.clone()),
+    );
+    assert!(created.error.is_none(), "{created:?}");
+    let after = describe(&mut engine, 7, &root);
+    assert_eq!(after["journal_len"], 1);
+    let path = root.join(format!("pool/padstacks/{id}.json"));
+    let raw = std::fs::read(&path).unwrap();
+    let journal_path = eda_engine::substrate::transaction_journal_path(&root);
+    let journal = std::fs::read(&journal_path).unwrap();
+    guarded["verb"] = json!("datum.library.edit");
+    guarded["params"]["fields"] = json!({"name":"Stale edit"});
+    assert!(
+        dispatch_request(
+            &mut engine,
+            native_request(8, "native.write", guarded.clone())
+        )
+        .error
+        .is_some()
+    );
+    guarded["expected_model_revision"] = after["model_revision"].clone();
+    // Isolate the tip guard after advancing the model guard to the current revision.
+    assert!(
+        dispatch_request(
+            &mut engine,
+            native_request(8, "native.write", guarded.clone())
+        )
+        .error
+        .is_some()
+    );
+    assert_eq!(std::fs::read(&path).unwrap(), raw);
+    assert_eq!(std::fs::read(&journal_path).unwrap(), journal);
+    guarded["expected_transaction_tip"] = after["transaction_tip"].clone();
+    guarded["params"]["fields"] = json!({"aperture":{"rect":{"width_nm":0,"height_nm":500000}}});
+    assert!(
+        dispatch_request(&mut engine, native_request(9, "native.write", guarded))
+            .error
+            .is_some()
+    );
+    assert_eq!(std::fs::read(&path).unwrap(), raw);
+    assert_eq!(std::fs::read(&journal_path).unwrap(), journal);
+    let reopened = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    assert_eq!(reopened.journal.len(), 1);
+    library_reference_controls::verify(&mut engine, &root, id);
 }
 
 #[test]

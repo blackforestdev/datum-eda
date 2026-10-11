@@ -581,3 +581,11 @@ into `commands/library/library/object_create.rs`. The library parent pre-test
 ceiling ratchets 2565→2537; the canonical source owner, substrate root, engine
 helper and new CLI proof module remain within normal budgets. The existing UUID
 collector is reused; no exception, entry removal or collision policy is added.
+
+LIBRARY-GUI-AUTHORING extracts complete shared workspace state and pane/content/
+focus types into normal protocol owners, and shared hit-region/surface types into
+`hit_target.rs`. Protocol production3107→3093 and physical4814→4800 shrink;
+inline-test ceiling1705 remains. Renderer root physical130→129 and measured
+HEAD expansion3505→3488 shrink; its prior recorded ceiling3560 ratchets to3488.
+Both debt entries remain, with no new exception or child registration. This
+structural evidence does not establish ordinary GUI delivery or full qualification.

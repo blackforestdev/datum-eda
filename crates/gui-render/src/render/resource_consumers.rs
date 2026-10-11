@@ -16,10 +16,11 @@ pub enum Consumer {
     Console,
     Terminal,
     TerminalOverlay,
+    Library,
 }
 
 impl Consumer {
-    pub const ALL: [Self; 14] = [
+    pub const ALL: [Self; 15] = [
         Self::Main,
         Self::Board,
         Self::Schematic,
@@ -34,10 +35,12 @@ impl Consumer {
         Self::Console,
         Self::Terminal,
         Self::TerminalOverlay,
+        Self::Library,
     ];
 
     pub fn adoption_id(self) -> &'static str {
         match self {
+            Self::Library => "LIBRARY",
             Self::Main => "MAIN",
             Self::Board => "BOARD",
             Self::Schematic => "SCHEMATIC",

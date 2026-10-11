@@ -1,7 +1,10 @@
 //! Shared typed pointer targets; source acquisition stays with the consumer.
+use crate::RectPx;
 use datum_gui_protocol::WorkspaceTool;
+pub use datum_gui_viewport::CameraState;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    Library(datum_gui_protocol::library_browser::LibraryControl),
     SchematicPicker,
     SchematicLibraryPage(bool),
     SchematicLibraryChoice(usize),
@@ -125,4 +128,21 @@ pub enum HitTarget {
         label: String,
     },
     DockResizeHandle,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct HitRegion {
+    pub target: HitTarget,
+    pub rect: RectPx,
+}
+/// Which pane's scene a resolved screen point / world hit belongs to (UVT-004,
+/// the CoordinateHit keystone). `world_point_at_screen` resolves the FOCUSED-vs-
+/// containing pane and reports the surface so callers route the follow-up world
+/// hit-test to the matching retained scene (the board `RetainedScene` vs the
+/// companion schematic one) in that surface's own camera/space. Board is the
+/// only interactive surface pre-S3; Schematic is the new one this slice unblocks.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SceneSurface {
+    Board,
+    Schematic,
 }
