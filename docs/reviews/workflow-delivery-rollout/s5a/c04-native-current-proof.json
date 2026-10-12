@@ -8326,5 +8326,68 @@
     "C04_complete": false,
     "C05_completed": false,
     "C06_accepted": false
+  },
+  "selection_notice_publication_20261012": {
+    "classification": "Finite retained C04 selection_notice refresh correction; full C04/C05/C06 qualification remains open.",
+    "problem": "selection_notice refreshes accessibility and publishes refusal Console feedback, which already invalidates; its final invalidate duplicated full-state capture.",
+    "change": "Remove only the final selection_notice invalidation. Refusal Console retains its existing announcement and frame publication; extra invalidations in other callers remain outside this unit.",
+    "references": {
+      "notice-publication-writer-checkpoint.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-writer-checkpoint.json",
+        "sha256": "c2cf6592d68afefbc47c13aa8ee08ad95dd51e4f645161a3a26e8c69881fa46d"
+      },
+      "notice-publication-source-cohort-1.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-source-cohort-1.json",
+        "sha256": "f505e5f23a6460fd7b4bda01af764d49353a22c581c1c4aa7e576da005404364"
+      },
+      "notice-publication-focused-1-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-focused-1-terminal.json",
+        "sha256": "5301a349c31deedaa11d30a32d3b4486045b0971ca9ae46b8fc1b5ba42f3d2e1"
+      },
+      "notice-publication-package-receipt.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-package-receipt.json",
+        "sha256": "58618b268bc07ee171ed1db8a4b11e9e0724caba993f4223c4c866f280d0c0f6"
+      }
+    },
+    "actual_proof": {
+      "original_handle": 12819,
+      "terminal_chunk": "3776bb",
+      "exit_code": 0,
+      "passed": 1,
+      "failed": 0,
+      "compile_seconds": 16.48,
+      "test_seconds": 0.72,
+      "environment": "Explicit repository TMPDIR/TMP/TEMP, pinned CLI, serial ignored X11/Vulkan Runtime control.",
+      "behavior": "Ordinary closed-inventory navigation produces notices for None and complete canonical9, each repeated. Exact complete view except notice, current accessibility/read-only/focus, refusal Console and Medium announcement once per invocation, prepared frame cleared/pending frame, existing composition revision exactly+1, and canonical source/journal/head nonmutation verified.",
+      "reuse": "Existing global and region control bodies unchanged; adequate evidence reused without rerun. No broader all-refusal single capture or dense native qualification claimed."
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/notice-publication-20261012.tar.xz",
+      "archive_sha256": "41c7b852967b1fbd058b91a9ef06b279565eb0e721f50f7120aecc39b8392eaa",
+      "manifest_sha256": "db7128c1b23f7e5b1b8587d2fb98cbfc12587354380f29724a1d6d5cace2834c",
+      "regular_files": 165,
+      "hashed_files": 164,
+      "source_pins": 77,
+      "assembler_sha256": "e09d4ff09da12b869de3b7544ddb528d60a321dd312a59b2b8943e2a79e4a950"
+    },
+    "independent_review": {
+      "status": "Actual source/control/proof/all165archiveentry/currentrecord/index/governance CLEAR; normal owned landing authorized subject to manager disposition",
+      "receipt_path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-final-independent-review.json",
+      "receipt_sha256": "ac851511aea99f0ec7d672eeeac817913f1acb5e026cb1dd6a29164c6f1a2ab3"
+    },
+    "checks": {
+      "status": "Seven metadata/source gates all0; sourcehealth3137; stagedrustfmt/cachediff0; normalhooks atcommit",
+      "metadata_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-final-gates.json",
+        "sha256": "b6261edb2c5cee967a9cfbdcc9df4a3c8d60f57e6e7a0e40cdd5eebbd119ddbd"
+      },
+      "staged_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/notice-publication-staged-gates.json",
+        "sha256": "2e7a9f6e0e61013c6d3adc990558275dfee611b288a83574f54ebcb9ccdf5dd6"
+      }
+    },
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false
   }
 }

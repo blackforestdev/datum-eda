@@ -241,7 +241,6 @@ impl Runtime {
         }
         self.refresh_selection_accessibility();
         self.log_console_refusal(ConsoleFeedbackSource::Selection, message);
-        self.invalidate_frame();
     }
     pub(super) fn acquire_native_key(
         &mut self,

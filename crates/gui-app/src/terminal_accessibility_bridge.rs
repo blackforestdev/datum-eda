@@ -288,6 +288,10 @@ impl Runtime {
 mod region_tests;
 
 #[cfg(test)]
+#[path = "terminal_accessibility_bridge/notice_tests.rs"]
+mod notice_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
