@@ -8673,5 +8673,73 @@
       "staged_gates_receipt_sha256": "759c28e9002e563c46e2ab78d556aa1ce97a5964ab7e8a10431cb20aca5dfb38",
       "reviewed_initial_owned_index_receipt_sha256": "7bee12549559aaf4a97d0c1d190067146fef6c167db96f67e059000b8c12c661"
     }
+  },
+  "n01_focused_removal_and_quiet_noop_20261012": {
+    "classification": "Finite N01 ordinary focused removal/no auto-promotion/quiet nonmember no-op/explicit refocus accepted by appointed manager after actual independent review",
+    "behavior": "Unique source-qualified TrackT1 plain click→ShiftT2 Compound{T1,T2}/focusT2→CtrlT2 Compound{T1}/focusNone/scopeNone/per-Track Common5080000→CtrlT3 exact whole selection/camera/notice/ConsoleLatest unchanged with complete unannounced publication→plainT1 Object with implicit focus/scopeSomeTrack. No arbitrary singleton promotion.",
+    "actual_case2": {
+      "original_handle": 92815,
+      "terminal": "3a39c0",
+      "exit_code": 0,
+      "raw_outcome": "CAPTURE_ONLY",
+      "pid": 1076707,
+      "typed_receipts": 7,
+      "current_Main_barriers": 6,
+      "actual_unique_clicks": 5,
+      "owned_Datum_PNGs": 5,
+      "full69_and_GlobalVALUES_maps": 9,
+      "native_input": "Actual own-window plain/Shift-only/Ctrl-only press/release/modifierACK/Space-up ledger and final5matchingprimaryspans; current inverse-f32-capsule source identity and >24px interior. Quiet phase compares latest full state without demanding a deduplicated new sequence.",
+      "public_inspection": "Object scopeSomeTrack publiccanonical5080000/5.080mm. Compound scopeNone publicgenericmember_count2/1+member_typesTrack2/1/currentProject-revision-readOnly-activepane0 and exact classwidthUnknownObjectwithdrawal; complete typed perTrackMixed/Common5080000 remains exact. No scope mutation/field invention/criterion waiver.",
+      "natural_GUI_exit": 0,
+      "forced_cleanup": false,
+      "literal_shutdown": "SamePID1076707/device_epoch1/drained_device_live/rawdecodedparity/persistedbeforeACK",
+      "resource_end": "Complete24frames/23submitted/7snapshots/no invalid/rendererrors/unreleased0/alllastowner4budgets0"
+    },
+    "retained_case1": {
+      "original_handle": 56867,
+      "terminal": "c439a9",
+      "exit_code": 1,
+      "raw_outcome": "FAIL",
+      "pid": 1075533,
+      "GUI_exit": -15,
+      "forced_cleanup": true,
+      "failure": "Observer requested classwidth field from unscoped Compound All; existing All scope publishes only class-independent aggregate nodes. Failure before Ctrl phase.",
+      "no_removal_noop_refocus_or_drain_credit": true
+    },
+    "source_and_proof_reuse": "No source changes; current81cohort55528/existingGUI97cbc/buildbf626. Reuse unchanged acquisition6PASS/sourcefocus-removal/noop grammar and accepted N11 pair evidence. No new Cargo/test/native replay after successful case2.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n01-focused-removal-20261012.tar.xz",
+      "archive_sha256": "aed5bfb8b7f20fa9ab987dad868e62e798e794b8c1b8199097f1cd9dd0291d09",
+      "manifest_sha256": "fd85d9f2cd3174e07434a9b0e67c787565a984bc884f75e2cd8ec0f0ad546681",
+      "regular_files": 288,
+      "hashed_files": 287,
+      "source_pins": 81,
+      "assembler_sha256": "97c7b4c6f463bddae1c18d765ecaf82ca24e79eb909bba11a5e73554ea1c0e8f"
+    },
+    "evidence_sha256": {
+      "n01-focused-removal-1-terminal.json": "678aa787e28e277d735cb0ed8dc7dd2fb118128a71d98386e3caa6f9aa67a6cd",
+      "n01-focused-removal-2-terminal.json": "8cc1c48dd637a1af45cf8281b849e0362e76e1d10b7677e632d2881e2aec8c50",
+      "n01-focused-removal-2-manager-disposition.json": "907d27efaa94eb15bca7c2f1d1665461b57a8778458555e0ebe52cae20fb62c3",
+      "n01-focused-removal-manager-disposition.json": "0d515def18e9e04a7ebe3a2d1513f4a41b332e0bb28fb2cea1f6fe9c0cdc73d5",
+      "n01-focused-removal-package-receipt.json": "f544a278399b6d9c146d617bfbb4084123fd57a99202d805d7b4561f4139f233"
+    },
+    "independent_review": "Actual finite case2 raw/typedfocus/P/scope/quiet/input/AT/5DatumPNG/current69+Global/source81/literaldrain/resources CLEAR096978/baf14b. Initial assembler preflight CLEAR; distinct archive/record/index/governance review will be recorded separately.",
+    "retained_limits": [
+      "No fullN01/C04/C05/C06/HUMAN/Wayland/latency or successor qualification",
+      "RawFAIL1/forced cleanup and rawCAPTURE_ONLY2 remain unchanged; no fabricated aggregatePASS",
+      "No source/fixture/productrule/dependency/budget changes; Global installation/user VALUES only, no operational opaque data"
+    ],
+    "C04_complete": false,
+    "C05_complete": false,
+    "C06_accepted": false,
+    "final_independent_review": "Actual distinct archive/C04/index/governance CLEAR73d9bb/c29ee8: all288safeuniqueentries/287hash+sizes,current81/beforeeabe/no sourcechanges,69canonical/6admittedDatumPNG/rawFAIL1+CAPTURE_ONLY2/proofhelpers,priorrecordsemantics and exact4ownedindex/governance verified.",
+    "required_checks": {
+      "all_seven_exit_zero": true,
+      "source_health_files": 3138,
+      "required_gates_receipt_sha256": "94fe5f7dae0e99a45d94478065c6f1f0ae3f3cfc197f1b6730b37a78fe7273cc",
+      "staged_format_and_whitespace_exit_zero": true,
+      "staged_gates_receipt_sha256": "2a3ffa7536b01ced187f7c678f99d539babac60341aae0a63100b235b69d09f6",
+      "reviewed_initial_owned_index_receipt_sha256": "863c67753908dae9361a2dea0366a4a567fd97f9dcfecec2199053e70588610c"
+    }
   }
 }
