@@ -7228,6 +7228,556 @@
         "exit_code": 0
       },
       "normal_hooks": "Pending normalmainlanding; no bypass authorized."
+    },
+    "source_landing": {
+      "commit": "e6161e7e332a0b514a81bcc123776a78c2964212",
+      "owned_paths": 4,
+      "normal_hooks": "Actual visual-truth/stagedfmt passed without bypass; maincommit terminal0",
+      "binding": "Committeddd5e7172 archive/currentsource/clean tree independently verified byroot/bothreviewers; finitefreshpair accepted/fullN04open."
+    }
+  },
+  "review_diagnostic_channel_proof_20261011": {
+    "classification": "Finite N15/N16 current ordinary typed Review and actual anchored Diagnostic selected-channel rendering; no source/build/lifecycle mutation or fullN16/C04/HUMAN/overcap/collision qualification.",
+    "source_commit": "e6161e7e332a0b514a81bcc123776a78c2964212",
+    "readiness_and_reuse": "Actual55/51 lifetime proofs reused separately. Actual56 already covers DraftRejected. Current public review_proposal_status requires currentDraft, so AcceptedReview\u2192Rejected/Discard is not invented; missingartifact NotFound is not a publicdiscard route and may be preceded by loader refusal. AcceptedReview withdrawal remains unscheduled/unqualified.",
+    "fixture": {
+      "setup_path": "target/s5a-c04-inventory-keyboard-20261011/review-diagnostic-channels-setup.json",
+      "setup_sha256": "da80bbddba893008ac2ea987f992e8d5c11327b4585dc5075911951617808e47",
+      "source_root": "target/s5a-c03-u5-artifacts-v4",
+      "declared_family_files": 68,
+      "active_canonical_files": 38,
+      "separate_no_checks_variant_files": 28,
+      "artifact_and_recipe_metadata_files": 2,
+      "artifact_sha256": "c0ec82e4a50562c02b3c381fdab1f6824c457d2012e45b269ee087b9e13e7648",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+      "review_action_id": "sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55",
+      "producer_proposal": {
+        "proposal_id": "4086dc81-d94d-56d6-afe7-602033069b40",
+        "status": "accepted",
+        "batch_id": "f6ee1d83-c5d8-556a-a6f3-fc3702b27e29",
+        "prepared_against": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9"
+      },
+      "check_run_id": "82b88a4a-5868-5a8c-8489-718146685e40",
+      "diagnostic_fingerprint": "sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8",
+      "diagnostic_location": {
+        "layer": 1,
+        "x_nm": 5000000,
+        "y_nm": 0
+      },
+      "diagnostic_severity": "error",
+      "marker_authority": "Exact actual producing DRC payload.location5m0 precedes uniqueTrack fallback; no syntheticlocation/Netc200 marker."
+    },
+    "native88": {
+      "result_path": "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-result.json",
+      "result_sha256": "8bffa8cd8aa076fb9a5fe13f3926aedae00f391d8c91ff40445030259157656f",
+      "raw_outcome": "CAPTURE_ONLY_REVIEW_DIAGNOSTIC_CHANNEL_REVIEW_PENDING",
+      "producer_sha256": "88035b7a39573cc9cb0762f5c7bb41f774c8a5459d8f147f1b6ec02b3d2f1b8a",
+      "terminal": {
+        "authoritative_session": 40885,
+        "launch_chunk": "121657",
+        "terminal_chunk": "aaf926",
+        "tool_exit_code": 0,
+        "raw_outcome": "CAPTURE_ONLY_REVIEW_DIAGNOSTIC_CHANNEL_REVIEW_PENDING",
+        "result_sha256": "8bffa8cd8aa076fb9a5fe13f3926aedae00f391d8c91ff40445030259157656f",
+        "producer_sha256": "88035b7a39573cc9cb0762f5c7bb41f774c8a5459d8f147f1b6ec02b3d2f1b8a",
+        "shutdown_receipt": {
+          "phase": "drained_device_live",
+          "pid": 896736,
+          "device_epoch": 1
+        },
+        "gui_exit_code": 0
+      },
+      "gui_sha256": "a7f01f97501b7522018f77255736df60f852947e68e9aeb44968d9c2af5ce419",
+      "pid": 896736,
+      "actions": 15,
+      "current_frame_barriers": [
+        {
+          "label": "startup-current-frame",
+          "cursor_line": "[SystemTime { tv_sec: 1791778829, tv_nsec: 836526927 }] window event WindowId(27262980) cursor moved 501.00,300.00",
+          "cursor_index": 84,
+          "presentation": {
+            "attempts": 5,
+            "counts": {
+              "coalesced": 0,
+              "duplicate_tokens": 0,
+              "presentations": 2,
+              "received": 5,
+              "requested": 5,
+              "suppressed": 2
+            },
+            "damage": 5,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 5,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 1
+        },
+        {
+          "label": "unselected-Review-evidence-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778830, tv_nsec: 94024007 }] window event WindowId(27262980) cursor moved 630.00,401.00",
+          "cursor_index": 241,
+          "presentation": {
+            "attempts": 14,
+            "counts": {
+              "coalesced": 0,
+              "duplicate_tokens": 0,
+              "presentations": 7,
+              "received": 14,
+              "requested": 14,
+              "suppressed": 7
+            },
+            "damage": 12,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 12,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 6
+        },
+        {
+          "label": "selected-Review-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778831, tv_nsec: 29756875 }] window event WindowId(27262980) cursor moved 631.00,401.00",
+          "cursor_index": 300,
+          "presentation": {
+            "attempts": 17,
+            "counts": {
+              "coalesced": 0,
+              "duplicate_tokens": 0,
+              "presentations": 9,
+              "received": 17,
+              "requested": 17,
+              "suppressed": 9
+            },
+            "damage": 15,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 15,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 8
+        },
+        {
+          "label": "Review-proposedOFF-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778832, tv_nsec: 121469777 }] window event WindowId(27262980) cursor moved 632.00,401.00",
+          "cursor_index": 389,
+          "presentation": {
+            "attempts": 22,
+            "counts": {
+              "coalesced": 0,
+              "duplicate_tokens": 0,
+              "presentations": 12,
+              "received": 22,
+              "requested": 22,
+              "suppressed": 12
+            },
+            "damage": 18,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 18,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 10
+        },
+        {
+          "label": "Review-authoredOFF-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778833, tv_nsec: 83809077 }] window event WindowId(27262980) cursor moved 633.00,401.00",
+          "cursor_index": 461,
+          "presentation": {
+            "attempts": 26,
+            "counts": {
+              "coalesced": 0,
+              "duplicate_tokens": 0,
+              "presentations": 15,
+              "received": 26,
+              "requested": 26,
+              "suppressed": 15
+            },
+            "damage": 21,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 21,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 12
+        },
+        {
+          "label": "Review-camera-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778834, tv_nsec: 37707732 }] window event WindowId(27262980) cursor moved 634.00,401.00",
+          "cursor_index": 531,
+          "presentation": {
+            "attempts": 30,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 18,
+              "received": 30,
+              "requested": 30,
+              "suppressed": 18
+            },
+            "damage": 25,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 25,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 14
+        },
+        {
+          "label": "unselected-Diagnostic-severity-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778835, tv_nsec: 187444109 }] window event WindowId(27262980) cursor moved 423.00,327.00",
+          "cursor_index": 679,
+          "presentation": {
+            "attempts": 38,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 23,
+              "received": 38,
+              "requested": 38,
+              "suppressed": 23
+            },
+            "damage": 30,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 30,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 21
+        },
+        {
+          "label": "selected-Diagnostic-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778836, tv_nsec: 106781669 }] window event WindowId(27262980) cursor moved 424.00,327.00",
+          "cursor_index": 755,
+          "presentation": {
+            "attempts": 41,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 26,
+              "received": 41,
+              "requested": 41,
+              "suppressed": 26
+            },
+            "damage": 33,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 33,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 22
+        },
+        {
+          "label": "Diagnostic-proposedOFF-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778837, tv_nsec: 129470432 }] window event WindowId(27262980) cursor moved 425.00,327.00",
+          "cursor_index": 834,
+          "presentation": {
+            "attempts": 45,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 29,
+              "received": 45,
+              "requested": 45,
+              "suppressed": 29
+            },
+            "damage": 36,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 36,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 24
+        },
+        {
+          "label": "Diagnostic-authoredOFF-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778838, tv_nsec: 91352959 }] window event WindowId(27262980) cursor moved 426.00,327.00",
+          "cursor_index": 901,
+          "presentation": {
+            "attempts": 48,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 32,
+              "received": 48,
+              "requested": 48,
+              "suppressed": 32
+            },
+            "damage": 39,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 39,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 26
+        },
+        {
+          "label": "Diagnostic-camera-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791778839, tv_nsec: 91903396 }] window event WindowId(27262980) cursor moved 427.00,327.00",
+          "cursor_index": 971,
+          "presentation": {
+            "attempts": 52,
+            "counts": {
+              "coalesced": 2,
+              "duplicate_tokens": 0,
+              "presentations": 35,
+              "received": 52,
+              "requested": 52,
+              "suppressed": 35
+            },
+            "damage": 43,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 43,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 28
+        }
+      ],
+      "atspi_identity": {
+        "pid": 896736,
+        "address": "unix:path=/run/user/1000/at-spi/bus_1,guid=b27455dde6bbc75bbe3b795a6aa5b0cb",
+        "service": ":1.8833",
+        "PID_lookup": "(uint32 896736,)\n"
+      },
+      "public_lod_observations": [
+        {
+          "kind": "Review",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "review",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Review",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "review",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Review",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "review",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Review",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "review",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Diagnostic",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "diagnostic",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Diagnostic",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "diagnostic",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Diagnostic",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "diagnostic",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "kind": "Diagnostic",
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "diagnostic",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
+            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        }
+      ],
+      "fullP": "Actual current typedReview655715 orDiagnostic74f43, emptyauthoredmembers/anchors/projectionkeys; complete per-kindSelectionView unchanged through proposedOFF/authoredOFF/cameraredraw. BaselineNativeTrack3 avoids legacyACTIVE-ID-only Reviewstyling.",
+      "visible_channel_law": "SelectedReview governedTEXT_PRIMARY white dashed evidence/endpoints survive while amberProposalghost/authoredcopper follow their channels. Diagnostic redseveritytriangle/exclamation remains inside magenta selectedborder, not overwritten.",
+      "canonical_maps": 7,
+      "canonical_members": 38,
+      "canonical_equality": "All sevencomplete38maps/currentactualbytes match active-root baseline, externalactualartifactc0ec82 unchanged; operationalcontexts excluded before reads.",
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 896736,
+        "device_epoch": 1
+      },
+      "gui_exit_code": 0,
+      "diagnostic_qualification": "PID-bound input snapshot coverage_complete/no first_error/no overflow is predrain, distinct from actual received drained_device_live socket and childreturn0."
+    },
+    "pixels": {
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-Diagnostic-authoredOFF-preserved-severity.png": "c65813fefd640b76fa48772b70b4a438031e8d04f77044ff0363d3130f12c6aa",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-Diagnostic-camera-preserved-severity.png": "2a8eab36296544504378bdccdb30ecf3bb9d367ff3a3df690ce659fa4025d60f",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-Diagnostic-proposedOFF-preserved-severity.png": "41e238be33cc980193484f3efa834f07a1279e399d40b0d7c30ccc99caca85dd",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-Review-authoredOFF-preserved-evidence.png": "8c1c37dc32c2c6a469339bd5175506c32870a951c36a00f9ec389b10f19bbcb9",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-Review-camera-preserved-evidence.png": "03bc9954c0d315f91dbb6980b3a839f355acd8a3d5929ca1b013c670ad0ce0b0",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-Review-proposedOFF-preserved-evidence.png": "66a7812aa1b09d31b196e70305ecafcf502c7279c3cfd3eae70802dde5577900",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-selected-Diagnostic-Detailed.png": "4676983c011ebf153fb73c3aa932bdba39a269592dd2dd985c4351372df1a96c",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-selected-Review-Detailed.png": "70daf34814bd725f0e22b1fab7114a4769eb31d272a01124a5cc016e41cc0c22",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-unselected-Diagnostic-severity.png": "a1831e8c4f4607611910707f49009c8f73a9e5f6a984c69dc61cc3ecf3cc32a5",
+      "target/s5a-c04-inventory-keyboard-20261011/attempt-88-review-diagnostic-channels-unselected-Review-evidence.png": "5574fca555175d3c44cb0150a63e142e893bdaa9739e614ee931d34967aac889"
+    },
+    "independent_reviews": {
+      "source_preflight": "Both actual fullheld88035b7a/setupda80/consumer preflightsCLEAR before input; adequate landedcurrent32/GUIa7f/build reused without new compilation.",
+      "runtime_pixels": "Actual independent auditor finite source/native/all10pixels and final immutable correspondence CLEAR received: all163safe/all162hashes/allorigins/52current=Git-e616 before/7\u00d738maps/all32blobs/raw8bffa+artifactc0ec exact, fulltypedP/location/currentLOD/barriers/drain0 accepted for root disposition. RawCaptureOnly remains unchanged.",
+      "governance": "Separate management reviewer actual final bounded governance record PASS received atfa616a54 and immutable7d2b19c0/248eb770 allentryPASS: source/38vs68/producer/location/readiness/currentP/11barriers/8LODs/all10PNGhashes/samePIDdrain+GUI0 and retainedlimits truthful. Current affectedgates separately embedded below.",
+      "manager": "Actual appointed root PM059 finite ACCEPT: currenttypedReview655715/Diagnostic74f43 at85f3/emptyprojections/per-kindfullP overchannelsOFF+camera; actual5m0L1 redseveritycore withmagentaDiagnosticborder andwhiteReviewevidence/dashedendpoints; Mainacquisitions/11laterframes/8ownPIDDetailed/all7\u00d738maps+artifactc0ec/samePID896736drainedepoch1GUI0; both actual independent runtime/pixel/source/163entry7d2/248correspondence received and root personally source/maps/result/representativepixels verified. No fullN15/N16/C04/HUMAN/overcap/collision/lifecycle replay or successor authority."
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/review-diagnostic-channel-20261011.tar.xz",
+      "archive_sha256": "7d2b19c0167074203cf28bcda69fda8ef22e8f8e92ae89961cc7d528be77745e",
+      "manifest_sha256": "248eb770da4731d99f9b24ed246833d28ad57a893e95f46002b82bbf8ade04f3",
+      "regular_files": 163,
+      "hashed_files": 162,
+      "source_pins": 52,
+      "canonical_maps": 7,
+      "canonical_members": 38,
+      "raw_files": 26
+    },
+    "limits": [
+      "Small actualReview andselectedDiagnostic currentDetailed are not numericthreshold/overflow proof; existing actual88k sharedcueGPU evidence remains supplemental.",
+      "No newsyntheticcheck/canonicalproducer generation/Apply/Reject/Undo/Discard/privateartifactdeletion/sourcepolicy/dependency/latency rule.",
+      "FullN15/N16/C04/HUMAN/Wayland/collision/exhaustiveclipping and AcceptedReviewwithdrawal remainopen; inherited supervisionparityFAIL unwaived."
+    ],
+    "affected_final_gates": {
+      "classification": "Affected metadata/evidence final gates; unchanged accepted production source/dependency/resource/source-health evidence reused.",
+      "results": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "c3c9e6",
+          "wall_time_seconds": 0.938195468,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "b35e39",
+          "wall_time_seconds": 1.2533e-05,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "50b442",
+          "wall_time_seconds": 0.023173935,
+          "exit_code": 0,
+          "original_token_count": 21,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        },
+        {
+          "command": "git diff --check",
+          "chunk_id": "3058d8",
+          "wall_time_seconds": 1.3049e-05,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      ]
+    },
+    "staged_checks": {
+      "owned_paths": 4,
+      "rustfmt": {
+        "chunk_id": "cc98cd",
+        "exit_code": 0
+      },
+      "whitespace": {
+        "chunk_id": "c9d7cc",
+        "exit_code": 0
+      },
+      "normal_hooks": "Pending normal maincommit; no bypass."
     }
   }
 }
