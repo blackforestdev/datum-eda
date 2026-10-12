@@ -394,6 +394,10 @@ pub(crate) fn selected_wire_state() -> (Fixture, ReviewWorkspaceState) {
 #[path = "dense_native_tests.rs"]
 mod dense_native_tests;
 
+#[cfg(feature = "visual")]
+#[path = "dense_preparation_diagnostics.rs"]
+mod dense_preparation_diagnostics;
+
 #[path = "related_fixture.rs"]
 mod related_fixture;
 pub(crate) use related_fixture::selected_related_state;

@@ -198,6 +198,9 @@ impl crate::Renderer {
         self.surface_grid_gpu.set_consumers(frame.get(Stream::Grid));
         self.selection_stroke_gpu
             .set_consumers(frame.get(Stream::Selection));
+        self.selection_stroke_clips
+            .gpu
+            .set_consumers(frame.get(Stream::Selection));
         self.world_glyph_points_gpu
             .set_consumers(frame.get(Stream::BoardWorld));
         self.world_glyph_materials_gpu

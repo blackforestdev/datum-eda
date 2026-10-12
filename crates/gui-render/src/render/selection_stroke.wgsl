@@ -1,9 +1,10 @@
 struct Screen { resolution: vec2<f32>, pad: vec2<f32> };
 @group(0) @binding(0) var<uniform> screen: Screen;
+@group(2) @binding(0) var<storage, read> clips: array<vec4<f32>>;
 struct In {
  @builtin(vertex_index) vertex: u32,
  @location(0) a: vec2<f32>, @location(1) b: vec2<f32>,
- @location(2) material_width: vec4<f32>, @location(3) clip: vec4<f32>, @location(4) contrast: vec4<f32>,
+ @location(2) material_width: vec4<f32>, @location(3) clip: u32, @location(4) flags: u32,
 };
 struct Out {
  @builtin(position) position: vec4<f32>,
@@ -20,7 +21,7 @@ struct Out {
  let corners=array<vec2<f32>,6>(vec2<f32>(-extent,-extent),vec2<f32>(length+extent,-extent),vec2<f32>(length+extent,extent),vec2<f32>(-extent,-extent),vec2<f32>(length+extent,extent),vec2<f32>(-extent,extent));
  let local=corners[v.vertex]; let p=v.a+u*local.x+n*local.y;
  var o:Out; o.position=vec4<f32>(p.x/screen.resolution.x*2.0-1.0,1.0-p.y/screen.resolution.y*2.0,0.0,1.0);
- o.local=local;o.length_radius=vec2<f32>(length,radius);o.material=v.material_width.xyz;o.clip=v.clip;o.contrast=v.contrast.xy;return o;
+ o.local=local;o.length_radius=vec2<f32>(length,radius);o.material=v.material_width.xyz;o.clip=clips[v.clip];o.contrast=vec2<f32>(f32(v.flags&1u),f32(v.flags>>1u));return o;
 }
 fn linear(c:vec3<f32>)->vec3<f32> {
  return select(pow((c+vec3<f32>(0.055))/1.055,vec3<f32>(2.4)),c/12.92,c<=vec3<f32>(0.04045));

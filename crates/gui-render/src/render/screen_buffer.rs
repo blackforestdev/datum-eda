@@ -8,6 +8,18 @@ use super::vertex_allocation::VertexAllocation;
 // obsolete storage instead of retaining each stream's historical peak. Their
 // actual capacities and headers also share host/process staging admission.
 
+pub(crate) enum OwnedPreparation {
+    Clear,
+    Submitted,
+    Prepared,
+    Changed {
+        allocation: Option<VertexAllocation>,
+        bytes: crate::text_gpu::staging_vec::StagingVec<u8>,
+        ranges: crate::text_gpu::staging_vec::StagingVec<std::ops::Range<usize>>,
+        uploaded: usize,
+    },
+}
+
 pub(crate) struct ScreenBuffer {
     snapshot: crate::text_gpu::staging_vec::StagingVec<u8>,
     allocation: VertexAllocation,
@@ -124,22 +136,27 @@ impl ScreenBuffer {
         }
     }
 
+    pub(crate) fn append_sources<'a>(
+        &'a self,
+        out: &mut impl Extend<crate::text_gpu::upload::plan::Source<'a>>,
+    ) {
+        if !self.pending.is_empty() {
+            out.extend(std::iter::once(crate::text_gpu::upload::plan::Source {
+                target: self.allocation.upload_target(),
+                buffer: self.allocation.buffer().unwrap(),
+                bytes: &self.prepared,
+                ranges: crate::text_gpu::upload::plan::Ranges::Prepared(&self.pending),
+            }));
+        }
+    }
+    #[cfg(all(test, feature = "visual"))]
     pub(crate) fn append_uploads<'a>(
         &'a self,
         out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
-        let bytes = &self.prepared;
-        for range in self.pending.iter() {
-            let end = range.end.min(bytes.len());
-            if range.start < end {
-                out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
-                    target: self.allocation.upload_target(),
-                    buffer: self.allocation.buffer().unwrap(),
-                    offset: range.start as u64,
-                    bytes: &bytes[range.start..end],
-                }));
-            }
-        }
+        let mut sources = Vec::new();
+        self.append_sources(&mut sources);
+        out.extend(crate::text_gpu::upload::plan::Uploads::sources(&sources));
     }
 
     pub(crate) fn finish_uploads(&mut self) {
@@ -167,25 +184,119 @@ impl ScreenBuffer {
         label: &str,
         vertices: &[T],
     ) -> anyhow::Result<usize> {
+        self.sync_payload(
+            device,
+            label,
+            bytemuck::cast_slice(vertices),
+            std::mem::size_of::<T>(),
+        )
+    }
+
+    /// Adopt already-admitted encoded bytes as the prepared snapshot. There is
+    /// no second full-sized encoding allocation or uncharged scratch payload.
+    pub(crate) fn prepare_owned(
+        &self,
+        device: &wgpu::Device,
+        label: &str,
+        bytes: crate::text_gpu::staging_vec::StagingVec<u8>,
+        stride: usize,
+    ) -> anyhow::Result<OwnedPreparation> {
+        if let Some(unchanged) = self.unchanged(&bytes) {
+            return Ok(unchanged);
+        }
+        let allocation = if self.allocation.fits(bytes.len() as u64) {
+            None
+        } else {
+            let mut replacement = self.allocation.staged_replacement();
+            replacement.replace_if_needed(device, label, &bytes)?;
+            Some(replacement)
+        };
+        let old = if allocation.is_some() {
+            &[][..]
+        } else {
+            self.snapshot.as_ref()
+        };
+        let count = crate::text_gpu::upload::plan::Dirty::new(old, &bytes, stride).count();
+        let mut ranges =
+            crate::text_gpu::staging_vec::StagingVec::new(count, &self.staging_budget)?;
+        let uploaded = dirty_ranges(old, &bytes, stride, |offset, payload| {
+            ranges.push(offset as usize..offset as usize + payload.len())
+        });
+        Ok(OwnedPreparation::Changed {
+            allocation,
+            bytes,
+            ranges,
+            uploaded,
+        })
+    }
+
+    pub(crate) fn commit_owned(&mut self, preparation: OwnedPreparation) -> usize {
         #[cfg(test)]
         {
             self.last_upload_bytes = 0;
         }
-        let bytes: &[u8] = bytemuck::cast_slice(vertices);
+        match preparation {
+            OwnedPreparation::Clear => {
+                self.allocation.clear();
+                self.snapshot = Default::default();
+                self.pending = Default::default();
+                self.prepared = Default::default();
+                self.has_prepared = false;
+                0
+            }
+            OwnedPreparation::Submitted => {
+                self.cancel_uploads();
+                0
+            }
+            OwnedPreparation::Prepared => 0,
+            OwnedPreparation::Changed {
+                allocation,
+                bytes,
+                ranges,
+                uploaded,
+            } => {
+                if let Some(allocation) = allocation {
+                    self.allocation.install(allocation);
+                    self.snapshot = Default::default();
+                }
+                self.allocation.set_requested_bytes(bytes.len() as u64);
+                self.prepared = bytes;
+                self.pending = ranges;
+                self.has_prepared = true;
+                #[cfg(test)]
+                {
+                    self.last_upload_bytes = uploaded;
+                }
+                uploaded
+            }
+        }
+    }
+
+    fn unchanged(&self, bytes: &[u8]) -> Option<OwnedPreparation> {
         if bytes.is_empty() {
-            self.allocation.clear();
-            self.snapshot = Default::default();
-            self.pending = Default::default();
-            self.prepared = Default::default();
-            self.has_prepared = false;
-            return Ok(0);
+            Some(OwnedPreparation::Clear)
+        } else if self.allocation.buffer().is_some() && self.snapshot.as_ref() == bytes {
+            Some(OwnedPreparation::Submitted)
+        } else if self.has_prepared && self.prepared.as_ref() == bytes {
+            Some(OwnedPreparation::Prepared)
+        } else {
+            None
         }
-        if self.allocation.buffer().is_some() && self.snapshot.as_ref() == bytes {
-            self.cancel_uploads();
-            return Ok(0);
+    }
+
+    fn sync_payload(
+        &mut self,
+        device: &wgpu::Device,
+        label: &str,
+        bytes: &[u8],
+        stride: usize,
+    ) -> anyhow::Result<usize> {
+        #[cfg(test)]
+        {
+            self.last_upload_bytes = 0;
         }
-        if self.has_prepared && self.prepared.as_ref() == bytes {
-            return Ok(0);
+        if let Some(unchanged) = self.unchanged(bytes) {
+            return Ok(self.commit_owned(unchanged));
         }
         if self.allocation.replace_if_needed(device, label, bytes)? {
             // A fresh allocation has no submitted content, even if the prior
@@ -194,9 +305,7 @@ impl ScreenBuffer {
             self.cancel_uploads();
         }
         let mut ranges = 0;
-        dirty_ranges(&self.snapshot, bytes, std::mem::size_of::<T>(), |_, _| {
-            ranges += 1
-        });
+        dirty_ranges(&self.snapshot, bytes, stride, |_, _| ranges += 1);
         self.pending.ensure_capacity(ranges, &self.staging_budget)?;
         // Keep the previous plan and its bytes intact until replacement storage
         // is admitted. Both old/new capacities count during allocation.
@@ -209,15 +318,10 @@ impl ScreenBuffer {
             None
         };
         self.pending.clear();
-        let uploaded = dirty_ranges(
-            &self.snapshot,
-            bytes,
-            std::mem::size_of::<T>(),
-            |offset, bytes| {
-                self.pending
-                    .push(offset as usize..offset as usize + bytes.len())
-            },
-        );
+        let uploaded = dirty_ranges(&self.snapshot, bytes, stride, |offset, bytes| {
+            self.pending
+                .push(offset as usize..offset as usize + bytes.len())
+        });
         if let Some(prepared) = prepared {
             self.prepared = prepared;
         } else {
@@ -241,24 +345,10 @@ pub(crate) fn dirty_ranges<'a>(
     stride: usize,
     mut write: impl FnMut(u64, &'a [u8]),
 ) -> usize {
-    let word = wgpu::COPY_BUFFER_ALIGNMENT as usize;
-    assert!(stride > 0);
-    assert_eq!(stride % word, 0);
-    assert_eq!(new.len() % stride, 0);
-    let mut start = None;
     let mut uploaded = 0;
-    for offset in (0..new.len()).step_by(word) {
-        let end = offset + word;
-        if old.get(offset..end) != Some(&new[offset..end]) {
-            start.get_or_insert(offset);
-        } else if let Some(begin) = start.take() {
-            write(begin as u64, &new[begin..offset]);
-            uploaded += offset - begin;
-        }
-    }
-    if let Some(begin) = start {
-        write(begin as u64, &new[begin..]);
-        uploaded += new.len() - begin;
+    for (offset, bytes) in crate::text_gpu::upload::plan::Dirty::new(old, new, stride) {
+        write(offset, bytes);
+        uploaded += bytes.len();
     }
     uploaded
 }

@@ -28,6 +28,8 @@ macro_rules! screen_streams {
         $action;
         let $stream = & $($mutability)? $this.selection_mask.table_gpu;
         $action;
+        let $stream = & $($mutability)? $this.selection_stroke_clips.gpu;
+        $action;
         let $stream = & $($mutability)? $this.selection_stroke_gpu;
         $action;
         let $stream = & $($mutability)? $this.surface_grid_gpu;

@@ -156,27 +156,29 @@ impl Atlas {
     }
 
     /// Copy capacity and both planning/retirement vectors overlap during encoding.
-    pub(crate) fn required_staging_bytes(
+    pub(crate) fn required_staging_bytes<'s, 'a: 's>(
         &self,
-        buffers: &[super::upload::BufferUpload<'_>],
+        buffers: impl Into<super::upload::plan::Uploads<'s, 'a>>,
     ) -> anyhow::Result<u64> {
+        let buffers = buffers.into();
         if self.pending_uploads.is_empty() && buffers.is_empty() {
             return Ok(0);
         }
         Ok(self.pending_staging_bytes()
-            + super::upload::required_bytes(&[], buffers)
+            + super::upload::required_bytes(&[], buffers.clone())
             + super::staging_vec::StagingVec::<super::upload::TextureUpload<'_>>::capacity_bytes(
                 self.pending_uploads.len(),
             )?
-            + super::upload::retention_metadata_bytes(buffers, true)?
+            + super::upload::retention_metadata_bytes(buffers.clone(), true)?
             + super::upload::destination_metadata_bytes(self.pending_uploads.len())?)
     }
 
-    pub fn flush_uploads(
+    pub fn flush_uploads<'s, 'a: 's>(
         &mut self,
         device: &wgpu::Device,
-        buffers: &[super::upload::BufferUpload<'_>],
+        buffers: impl Into<super::upload::plan::Uploads<'s, 'a>>,
     ) -> anyhow::Result<Option<super::upload::Batch>> {
+        let buffers = buffers.into();
         let mut uploads =
             super::staging_vec::StagingVec::new(self.pending_uploads.len(), &self.staging_budget)?;
         for upload in self.pending_uploads.iter() {

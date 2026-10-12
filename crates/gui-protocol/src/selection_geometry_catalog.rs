@@ -7,6 +7,7 @@ use crate::{
 use eda_engine::substrate::{DesignModel, SourceShardKind};
 use serde_json::Value;
 use std::collections::BTreeMap;
+mod text_layout_index;
 pub type LayoutPoint = [R; 2];
 #[derive(Debug, Clone)]
 pub enum QualificationGeometry {
@@ -98,6 +99,8 @@ pub fn qualification_catalog(
             .and_then(|uuid| s.sheets.get(&uuid))
     });
     let mut result = BTreeMap::new();
+    let text_layouts =
+        text_layout_index::TextLayoutIndex::new(&scene.board_texts, &scene.board_text_geometries);
     let bindings = crate::selection_scene::SceneSelectionBindings::capture(scene, authority);
     for (_, binding) in bindings.iter() {
         let id = binding.acquired.clone();
@@ -268,16 +271,8 @@ pub fn qualification_catalog(
                     }]))
                 }
                 Class::BoardText | Class::SchematicText | Class::Label | Class::Port => {
-                    let text = scene.board_texts.iter().find(|text| {
-                        text.text_uuid == id.id.to_string()
-                            || text.source_object_uuid.as_deref() == Some(&id.id.to_string())
-                    })?;
-                    let geometry = scene
-                        .board_text_geometries
-                        .iter()
-                        .find(|g| g.object_id == text.object_id)?;
                     Some(QualificationGeometry::Layout(
-                        layout_polygon(geometry)?.to_vec(),
+                        text_layouts.layout(&id.id.to_string())?.to_vec(),
                     ))
                 }
                 Class::SchematicGraphic => {

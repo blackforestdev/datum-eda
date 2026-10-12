@@ -357,12 +357,12 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             .sum()
     }
 
-    pub(super) fn append_vertex_uploads<'a>(
+    pub(super) fn append_vertex_sources<'a>(
         &'a self,
-        out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
+        out: &mut impl Extend<crate::text_gpu::upload::plan::Source<'a>>,
     ) {
         for draw in &self.draws {
-            draw.vertices.append_uploads(out);
+            draw.vertices.append_sources(out);
         }
     }
 

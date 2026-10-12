@@ -33,6 +33,7 @@ impl Runtime {
         } else {
             Vec::new()
         };
+        let preparation_started = std::time::Instant::now();
         let preparation = self.renderer.prepare_session_workspace(
             self.session.workspace(),
             datum_gui_render::WorkspaceView {
@@ -48,6 +49,14 @@ impl Runtime {
             },
             &terminal_panes,
         );
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native preparation phase window={:?} stage=prepare_session_workspace elapsed_ms={} success={}",
+                self.window.id(),
+                preparation_started.elapsed().as_millis(),
+                preparation.is_ok()
+            )
+        });
         if let Err(error) = preparation {
             drop(terminal_panes);
             let damage = self.renderer.render_session_mut().restore_terminal_damage();
@@ -55,7 +64,15 @@ impl Runtime {
             return Err(error);
         }
         drop(terminal_panes);
+        let accessibility_started = std::time::Instant::now();
         self.refresh_prepared_selection_accessibility();
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native preparation phase window={:?} stage=refresh_prepared_selection_accessibility elapsed_ms={}",
+                self.window.id(),
+                accessibility_started.elapsed().as_millis()
+            )
+        });
         append_gui_verbose_diagnostic_line(|| {
             format!(
                 "native control_meshes window={:?} builds={}",

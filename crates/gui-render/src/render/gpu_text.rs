@@ -31,16 +31,16 @@ impl PreparedScene {
 
 macro_rules! visit_frame_uploads {
     ($this:ident, $buffers:ident) => {{
-        gpu_vertex_upload::screen_streams!($this, stream, stream.append_uploads(&mut $buffers));
-        $this.terminal_graphics.append_vertex_uploads(&mut $buffers);
-        $this.uniform_buffer.append_uploads(&mut $buffers);
+        gpu_vertex_upload::screen_streams!($this, stream, stream.append_sources(&mut $buffers));
+        $this.terminal_graphics.append_vertex_sources(&mut $buffers);
+        $this.uniform_buffer.append_sources(&mut $buffers);
         for binding in &$this.surface_scene_uniforms {
-            binding.buffer.append_uploads(&mut $buffers);
+            binding.buffer.append_sources(&mut $buffers);
         }
-        let text_bytes = $this.text_renderer.append_uploads(&mut $buffers);
+        let text_bytes = $this.text_renderer.append_sources(&mut $buffers);
         let overlay_bytes = $this
             .menu_overlay_text_renderer
-            .append_uploads(&mut $buffers);
+            .append_sources(&mut $buffers);
         (text_bytes, overlay_bytes)
     }};
 }
@@ -48,16 +48,14 @@ pub(super) use visit_frame_uploads;
 
 macro_rules! frame_buffers {
     ($this:ident) => {{
-        let mut count = crate::text_gpu::upload::UploadCount::default();
+        let mut count = crate::text_gpu::upload::plan::SourceCount::default();
         visit_frame_uploads!($this, count);
         let metadata = crate::text_gpu::staging_vec::StagingVec::<
-            crate::text_gpu::upload::BufferUpload<'_>,
-        >::capacity_bytes(count.entries)?;
+            crate::text_gpu::upload::plan::Source<'_>,
+        >::capacity_bytes(count.0)?;
         $this.release_text_scratch_for(metadata);
-        let mut buffers = crate::text_gpu::staging_vec::StagingVec::new(
-            count.entries,
-            &$this.atlas.staging_budget,
-        )?;
+        let mut buffers =
+            crate::text_gpu::staging_vec::StagingVec::new(count.0, &$this.atlas.staging_budget)?;
         let (text_bytes, overlay_bytes) = visit_frame_uploads!($this, buffers);
         (buffers, text_bytes, overlay_bytes)
     }};
@@ -70,11 +68,12 @@ impl Renderer {
         _queue: &wgpu::Queue,
     ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
         self.publish_resource_consumers();
-        let (buffers, text_bytes, overlay_bytes) = frame_buffers!(self);
+        let (sources, text_bytes, overlay_bytes) = frame_buffers!(self);
+        let buffers = crate::text_gpu::upload::plan::Uploads::sources(&sources);
         // Admit and encode the complete mixed batch before consuming any producer.
         // Failure retains every pending update for cancellation/retry.
         // Reuse private layout scratch unless it competes with the real copy plan.
-        let staging = self.atlas.required_staging_bytes(&buffers)?;
+        let staging = self.atlas.required_staging_bytes(buffers.clone())?;
         preparation::release_scratch(
             &mut self.text_buffers,
             &mut self.swash_cache,
@@ -84,8 +83,8 @@ impl Renderer {
             staging,
         );
 
-        let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
-        drop(buffers);
+        let atlas_upload = self.atlas.flush_uploads(device, buffers)?;
+        drop(sources);
         self.uniform_buffer.finish_uploads();
         for binding in &mut self.surface_scene_uniforms {
             binding.buffer.finish_uploads();

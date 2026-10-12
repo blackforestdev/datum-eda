@@ -5,48 +5,53 @@ use std::sync::OnceLock;
 #[derive(Default)]
 pub(crate) struct Scatter(OnceLock<wgpu::ComputePipeline>);
 
-pub(super) struct Group<'a> {
-    pub uploads: &'a [BufferUpload<'a>],
+pub(super) struct Group<'s, 'a> {
+    pub uploads: std::iter::Take<super::upload::plan::Uploads<'s, 'a>>,
+    pub first: BufferUpload<'a>,
     pub sparse: bool,
 }
 
-pub(super) fn groups<'a>(
-    uploads: &'a [BufferUpload<'a>],
-) -> impl Iterator<Item = Group<'a>> + Clone {
-    let mut start = 0;
+pub(super) fn groups<'s, 'a: 's>(
+    uploads: impl Into<super::upload::plan::Uploads<'s, 'a>>,
+) -> impl Iterator<Item = Group<'s, 'a>> + Clone {
+    let mut cursor = uploads.into();
     std::iter::from_fn(move || {
-        if start == uploads.len() {
-            return None;
+        let start = cursor.clone();
+        let first = cursor.next()?;
+        let mut count = 1;
+        let mut ordered = true;
+        let mut previous_end = first.offset.checked_add(first.bytes.len() as u64);
+        loop {
+            let mut next = cursor.clone();
+            let Some(upload) = next.next() else {
+                break;
+            };
+            if upload.buffer != first.buffer {
+                break;
+            }
+            ordered &= previous_end.is_some_and(|end| end <= upload.offset);
+            previous_end = upload.offset.checked_add(upload.bytes.len() as u64);
+            cursor = next;
+            count += 1;
         }
-        let mut end = start + 1;
-        while end < uploads.len() && uploads[end].buffer == uploads[start].buffer {
-            end += 1;
-        }
-        let group = &uploads[start..end];
-        let sparse = group.len() >= 64
-            && group[0]
-                .buffer
-                .usage()
-                .contains(wgpu::BufferUsages::STORAGE)
-            && group
-                .windows(2)
-                .all(|pair| pair[0].offset + pair[0].bytes.len() as u64 <= pair[1].offset);
-        start = end;
+        let sparse =
+            count >= 64 && first.buffer.usage().contains(wgpu::BufferUsages::STORAGE) && ordered;
         Some(Group {
-            uploads: group,
+            uploads: start.take(count),
+            first,
             sparse,
         })
     })
 }
 
-impl Group<'_> {
+impl Group<'_, '_> {
     pub fn packet_bytes(&self) -> u64 {
-        self.uploads.iter().map(|u| u.bytes.len() as u64 * 2).sum()
+        self.uploads.clone().map(|u| u.bytes.len() as u64 * 2).sum()
     }
 
     pub fn fill(&self, packet: &mut [u8]) {
         let mut cursor = 0;
-        for upload in self.uploads {
+        for upload in self.uploads.clone() {
             for (index, word) in upload.bytes.as_chunks::<4>().0.iter().enumerate() {
                 let destination = (upload.offset / 4 + index as u64) as u32;
                 packet[cursor..cursor + 4].copy_from_slice(&destination.to_le_bytes());

@@ -85,6 +85,9 @@ impl Renderer {
             .selection_mask
             .preserve_allowances(&self.selection_mask);
         replacement.selection_stroke_gpu = self.selection_stroke_gpu.replacement();
+        replacement
+            .selection_stroke_clips
+            .preserve_allowances(&self.selection_stroke_clips);
         replacement.board_interaction_gpu = self.board_interaction_gpu.replacement();
         replacement.console_gpu.vertices = self.console_gpu.vertices.replacement();
         replacement.menu_overlay_gpu = self.menu_overlay_gpu.replacement();
@@ -247,8 +250,22 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             multiview_mask: None,
             cache: None,
         });
+        let selection_stroke_clips = selection_stroke::gpu::Owner::new(
+            device,
+            screen_budget.clone(),
+            staging_budget.clone(),
+        );
+        let selection_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("datum-selection-stroke-pipeline-layout"),
+            bind_group_layouts: &[
+                &uniform_bind_group_layout,
+                &damage_masks.layout,
+                &selection_stroke_clips.layout,
+            ],
+            immediate_size: 0,
+        });
         let selection_stroke_pipelines =
-            selection_stroke::pipelines(device, &pipeline_layout, format, msaa_samples);
+            selection_stroke::pipelines(device, &selection_layout, format, msaa_samples);
         let terminal_graphics = match previous {
             Some(old) => old.terminal_graphics.replacement(
                 device,
@@ -302,6 +319,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 uniform_bind_group_layout.clone(),
             ),
             selection_stroke_pipelines,
+            selection_stroke_clips,
             selection_stroke_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
             )

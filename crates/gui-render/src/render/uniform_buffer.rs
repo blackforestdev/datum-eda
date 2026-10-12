@@ -96,24 +96,30 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
         self.pending = None;
     }
 
+    pub(crate) fn append_sources<'a>(
+        &'a self,
+        out: &mut impl Extend<crate::text_gpu::upload::plan::Source<'a>>,
+    ) {
+        if let Some(value) = &self.pending {
+            out.extend(std::iter::once(crate::text_gpu::upload::plan::Source {
+                target: Some(self.buffer.upload_target()),
+                buffer: &self.buffer,
+                bytes: bytemuck::bytes_of(value),
+                ranges: crate::text_gpu::upload::plan::Ranges::Dirty {
+                    old: self.value.as_ref().map(bytemuck::bytes_of).unwrap_or(&[]),
+                    stride: std::mem::size_of::<T>(),
+                },
+            }));
+        }
+    }
+    #[cfg(all(test, feature = "visual"))]
     pub(crate) fn append_uploads<'a>(
         &'a self,
         out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
-        if let Some(value) = &self.pending {
-            write_changed_ranges(
-                self.value.as_ref().map(bytemuck::bytes_of),
-                bytemuck::bytes_of(value),
-                |offset, bytes| {
-                    out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
-                        target: Some(self.buffer.upload_target()),
-                        buffer: &self.buffer,
-                        offset: offset as u64,
-                        bytes,
-                    }))
-                },
-            );
-        }
+        let mut sources = Vec::new();
+        self.append_sources(&mut sources);
+        out.extend(crate::text_gpu::upload::plan::Uploads::sources(&sources));
     }
 
     pub(crate) fn finish_uploads(&mut self) {
@@ -228,22 +234,10 @@ fn write_changed_ranges<'a>(
         return new.len();
     };
     assert_eq!(old.len(), new.len());
-    if old == new {
-        return 0;
-    }
     let mut uploaded = 0;
-    let mut start = None;
-    for offset in (0..new.len()).step_by(word) {
-        if old[offset..offset + word] != new[offset..offset + word] {
-            start.get_or_insert(offset);
-        } else if let Some(begin) = start.take() {
-            write(begin, &new[begin..offset]);
-            uploaded += offset - begin;
-        }
-    }
-    if let Some(begin) = start {
-        write(begin, &new[begin..]);
-        uploaded += new.len() - begin;
+    for (offset, bytes) in crate::text_gpu::upload::plan::Dirty::new(old, new, word) {
+        write(offset as usize, bytes);
+        uploaded += bytes.len();
     }
     uploaded
 }

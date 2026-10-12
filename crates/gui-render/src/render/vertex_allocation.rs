@@ -23,6 +23,22 @@ impl VertexAllocation {
         }
     }
 
+    /// Same-device staged growth retains producer identity and generation.
+    /// The current buffer remains untouched until the coupled plans commit.
+    pub(crate) fn staged_replacement(&self) -> Self {
+        Self {
+            owner: self.owner.clone(),
+            generation: self.generation,
+            ..self.replacement()
+        }
+    }
+
+    pub(crate) fn set_requested_bytes(&self, live: u64) {
+        if let Some(buffer) = &self.buffer {
+            buffer.set_requested_bytes(live);
+        }
+    }
+
     pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self::with_budgets(vec![budget])
     }
@@ -92,6 +108,20 @@ impl VertexAllocation {
         self.buffer.as_ref().map(Tracked::submission_ref)
     }
 
+    pub(crate) fn fits(&self, live: u64) -> bool {
+        self.buffer
+            .as_ref()
+            .is_some_and(|buffer| buffer.size() >= live && buffer.size() <= live.saturating_mul(4))
+    }
+
+    /// Install only after the coupled frame sources have all been admitted.
+    pub(crate) fn install(&mut self, replacement: Self) {
+        if let Some(buffer) = &self.buffer {
+            buffer.retire(RetirementReason::Replaced);
+        }
+        *self = replacement;
+    }
+
     /// A replacement requires a complete upload at the submission boundary. Keep nearby capacity to avoid churn,
     /// but release historical peaks above four times the latest live payload.
     /// Device/renderer teardown drops this owner and its handle.
@@ -106,12 +136,8 @@ impl VertexAllocation {
             "empty streams drop their allocation owner"
         );
         let live = bytes.len() as u64;
-        if self
-            .buffer
-            .as_ref()
-            .is_some_and(|buffer| buffer.size() >= live && buffer.size() <= live.saturating_mul(4))
-        {
-            self.buffer.as_ref().unwrap().set_requested_bytes(live);
+        if self.fits(live) {
+            self.set_requested_bytes(live);
             return Ok(false);
         }
         let mut usage =

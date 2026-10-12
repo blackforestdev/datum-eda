@@ -133,6 +133,14 @@ impl Renderer {
         pass.set_bind_group(1, damage, &[]);
         if !prepared.selection_strokes.is_empty() && clip.set(pass, [0, 0, width, height]) {
             pass.set_pipeline(&self.selection_stroke_pipelines.lift);
+            pass.set_bind_group(
+                2,
+                self.selection_stroke_clips
+                    .binding
+                    .as_ref()
+                    .expect("selection exact clips"),
+                &[],
+            );
             pass.set_vertex_buffer(
                 0,
                 self.selection_stroke_gpu
@@ -169,6 +177,14 @@ impl Renderer {
         // serves board and schematic, independently of the board's viewport.
         if !prepared.selection_strokes.is_empty() && clip.set(pass, [0, 0, width, height]) {
             pass.set_pipeline(&self.selection_stroke_pipelines.cue);
+            pass.set_bind_group(
+                2,
+                self.selection_stroke_clips
+                    .binding
+                    .as_ref()
+                    .expect("selection exact clips"),
+                &[],
+            );
             pass.set_vertex_buffer(
                 0,
                 self.selection_stroke_gpu

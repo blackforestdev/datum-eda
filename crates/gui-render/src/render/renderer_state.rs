@@ -65,6 +65,7 @@ pub struct Renderer {
     pub(super) selection_mask: selection_stroke::mask::Owner,
     pub(super) selection_stroke_pipelines: selection_stroke::Pipelines,
     pub(super) selection_stroke_gpu: gpu_data::screen_buffer::ScreenBuffer,
+    pub(super) selection_stroke_clips: selection_stroke::gpu::Owner,
     pub(super) world_pipelines: std::sync::OnceLock<world_pipelines::WorldPipelines>,
     pub(super) terminal_graphics: terminal_graphics::TerminalGraphicsRenderer,
     pub(super) uniform_bind_group: wgpu::BindGroup,

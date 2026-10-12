@@ -154,10 +154,9 @@ impl Renderer {
             schematic_pass,
             schematic_overlay_vertices,
         )?;
-        self.selection_stroke_gpu.sync(
+        self.selection_stroke_clips.prepare(
+            &mut self.selection_stroke_gpu,
             device,
-            queue,
-            "datum-selection-stroke-instances",
             &prepared.selection_strokes,
         )?;
         self.surface_grid_gpu.sync(

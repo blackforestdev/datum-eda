@@ -318,26 +318,40 @@ impl Draw {
         self.batches.clear();
     }
 
+    pub fn append_sources<'a>(
+        &'a self,
+        out: &mut impl Extend<super::upload::plan::Source<'a>>,
+    ) -> u64 {
+        match (&self.pending_instances, &self.instances) {
+            (Some(instances), Some(buffer)) => {
+                let bytes = bytemuck::cast_slice(instances);
+                let old = bytemuck::cast_slice(&self.snapshot);
+                let stride = std::mem::size_of::<Instance>();
+                let uploaded = super::upload::plan::Dirty::new(old, bytes, stride)
+                    .map(|(_, b)| b.len() as u64)
+                    .sum();
+                if uploaded != 0 {
+                    out.extend(std::iter::once(super::upload::plan::Source {
+                        target: Some(buffer.upload_target()),
+                        buffer,
+                        bytes,
+                        ranges: super::upload::plan::Ranges::Dirty { old, stride },
+                    }));
+                }
+                uploaded
+            }
+            _ => 0,
+        }
+    }
+    #[cfg(all(test, feature = "visual"))]
     pub fn append_uploads<'a>(
         &'a self,
         out: &mut impl Extend<super::upload::BufferUpload<'a>>,
     ) -> u64 {
-        match (&self.pending_instances, &self.instances) {
-            (Some(instances), Some(buffer)) => crate::gpu_data::screen_buffer::dirty_ranges(
-                bytemuck::cast_slice(&self.snapshot),
-                bytemuck::cast_slice(instances),
-                std::mem::size_of::<Instance>(),
-                |offset, bytes| {
-                    out.extend(std::iter::once(super::upload::BufferUpload {
-                        target: Some(buffer.upload_target()),
-                        buffer,
-                        offset,
-                        bytes,
-                    }))
-                },
-            ) as u64,
-            _ => 0,
-        }
+        let mut sources = Vec::new();
+        let bytes = self.append_sources(&mut sources);
+        out.extend(super::upload::plan::Uploads::sources(&sources));
+        bytes
     }
 
     pub fn finish_uploads(&mut self, bytes: u64) {

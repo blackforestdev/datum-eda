@@ -1,6 +1,8 @@
 //! Post-world selection of the existing authored capsule presentation.
 //! Screen positions are disposable projections, never acquisition or identities.
 use super::*;
+#[path = "selection_stroke/gpu.rs"]
+pub(super) mod gpu;
 #[path = "selection_mask.rs"]
 pub(crate) mod mask;
 #[repr(C)]
@@ -27,15 +29,6 @@ impl Stroke {
                 viewport.y + viewport.height,
             ],
             high_contrast: [1.0, mode, 0.0, 0.0],
-        }
-    }
-
-    pub(super) fn layout() -> wgpu::VertexBufferLayout<'static> {
-        const ATTRS: [wgpu::VertexAttribute; 5] = wgpu::vertex_attr_array![0=>Float32x2,1=>Float32x2,2=>Float32x4,3=>Float32x4,4=>Float32x4];
-        wgpu::VertexBufferLayout {
-            array_stride: std::mem::size_of::<Self>() as u64,
-            step_mode: wgpu::VertexStepMode::Instance,
-            attributes: &ATTRS,
         }
     }
 }
@@ -99,7 +92,7 @@ pub(super) fn pipelines(
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: Some("vs_main"),
-                buffers: &[Stroke::layout()],
+                buffers: &[gpu::Instance::layout()],
                 compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {

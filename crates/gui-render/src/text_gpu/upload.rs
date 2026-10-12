@@ -4,6 +4,9 @@ use super::lifetime::{Kind, Owner, Tracked};
 use super::staging_vec::StagingVec;
 use std::sync::Arc;
 
+#[path = "upload_plan.rs"]
+pub(crate) mod plan;
+
 pub(crate) struct TextureUpload<'a> {
     pub target: Option<super::lifetime::UploadTarget<'a>>,
     pub texture: &'a wgpu::Texture,
@@ -13,6 +16,7 @@ pub(crate) struct TextureUpload<'a> {
     pub pixels: &'a [u8],
 }
 
+#[derive(Clone, Copy)]
 pub(crate) struct BufferUpload<'a> {
     pub target: Option<super::lifetime::UploadTarget<'a>>,
     pub buffer: &'a wgpu::Buffer,
@@ -31,6 +35,14 @@ impl<'a> Extend<BufferUpload<'a>> for UploadCount {
         for upload in uploads {
             self.entries += 1;
             self.bytes += upload.bytes.len() as u64;
+        }
+    }
+}
+
+impl<'a> Extend<plan::Source<'a>> for UploadCount {
+    fn extend<I: IntoIterator<Item = plan::Source<'a>>>(&mut self, sources: I) {
+        for source in sources {
+            self.extend(plan::Uploads::sources(&[source]));
         }
     }
 }
@@ -78,14 +90,15 @@ impl Batch {
     }
 }
 
-pub(crate) fn batch(
+pub(crate) fn batch<'s, 'a: 's>(
     device: &wgpu::Device,
     owner: &Owner,
     generation: u64,
     host_budget: &Arc<Budget>,
     uploads: &[TextureUpload<'_>],
-    buffers: &[BufferUpload<'_>],
+    buffers: impl Into<plan::Uploads<'s, 'a>>,
 ) -> anyhow::Result<Option<Batch>> {
+    let buffers = buffers.into();
     batch_with_scatter(
         device,
         owner,
@@ -98,13 +111,16 @@ pub(crate) fn batch(
 }
 
 /// CPU owners retained by a nonempty batch, separately from GPU copy capacity.
-pub(crate) fn retention_metadata_bytes(
-    buffers: &[BufferUpload<'_>],
+pub(crate) fn retention_metadata_bytes<'s, 'a: 's>(
+    buffers: impl Into<plan::Uploads<'s, 'a>>,
     scatter: bool,
 ) -> anyhow::Result<u64> {
+    let buffers = buffers.into();
     Ok(
-        StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(allocation_count(buffers, scatter))?
-            + destination_metadata_bytes(super::sparse_upload::groups(buffers).count())?,
+        StagingVec::<Tracked<wgpu::Buffer>>::capacity_bytes(allocation_count(
+            buffers.clone(),
+            scatter,
+        ))? + destination_metadata_bytes(super::sparse_upload::groups(buffers.clone()).count())?,
     )
 }
 
@@ -112,34 +128,39 @@ pub(crate) fn destination_metadata_bytes(count: usize) -> anyhow::Result<u64> {
     StagingVec::<super::lifetime::SubmittedUpload>::capacity_bytes(count)
 }
 
-fn allocation_count(buffers: &[BufferUpload<'_>], scatter: bool) -> usize {
+fn allocation_count(buffers: plan::Uploads<'_, '_>, scatter: bool) -> usize {
     1 + super::sparse_upload::groups(buffers)
         .filter(|g| scatter && g.sparse)
         .count()
 }
 
-pub(crate) fn required_bytes(uploads: &[TextureUpload<'_>], buffers: &[BufferUpload<'_>]) -> u64 {
+pub(crate) fn required_bytes<'s, 'a: 's>(
+    uploads: &[TextureUpload<'_>],
+    buffers: impl Into<plan::Uploads<'s, 'a>>,
+) -> u64 {
+    let buffers = buffers.into();
     uploads.iter().map(padded_bytes).sum::<u64>()
-        + super::sparse_upload::groups(buffers)
+        + super::sparse_upload::groups(buffers.clone())
             .map(|group| {
                 if group.sparse {
                     group.packet_bytes() * 2
                 } else {
-                    group.uploads.iter().map(|u| u.bytes.len() as u64).sum()
+                    group.uploads.clone().map(|u| u.bytes.len() as u64).sum()
                 }
             })
             .sum::<u64>()
 }
 
-pub(crate) fn batch_with_scatter(
+pub(crate) fn batch_with_scatter<'s, 'a: 's>(
     device: &wgpu::Device,
     owner: &Owner,
     generation: u64,
     host_budget: &Arc<Budget>,
     uploads: &[TextureUpload<'_>],
-    buffers: &[BufferUpload<'_>],
+    buffers: impl Into<plan::Uploads<'s, 'a>>,
     scatter: Option<&super::sparse_upload::Scatter>,
 ) -> anyhow::Result<Option<Batch>> {
+    let buffers = buffers.into();
     if uploads.is_empty() && buffers.is_empty() {
         return Ok(None);
     }
@@ -161,7 +182,7 @@ pub(crate) fn batch_with_scatter(
             .checked_add(padded_bytes(upload))
             .ok_or_else(|| anyhow::anyhow!("texture staging size overflow"))?;
     }
-    for upload in buffers {
+    for upload in buffers.clone() {
         let bytes = upload.bytes.len() as u64;
         anyhow::ensure!(
             bytes > 0
@@ -177,7 +198,7 @@ pub(crate) fn batch_with_scatter(
             .checked_add(bytes)
             .ok_or_else(|| anyhow::anyhow!("buffer staging size overflow"))?;
     }
-    let groups = super::sparse_upload::groups(buffers);
+    let groups = super::sparse_upload::groups(buffers.clone());
     let sparse_bytes: u64 = groups
         .clone()
         .filter(|g| g.sparse && scatter.is_some())
@@ -189,7 +210,7 @@ pub(crate) fn batch_with_scatter(
     for group in groups.clone().filter(|g| g.sparse && scatter.is_some()) {
         anyhow::ensure!(
             group.packet_bytes() <= u64::from(device.limits().max_storage_buffer_binding_size)
-                && group.uploads[0].buffer.size()
+                && group.first.buffer.size()
                     <= u64::from(device.limits().max_storage_buffer_binding_size),
             "fragmented upload exceeds storage binding limit"
         );
@@ -199,7 +220,7 @@ pub(crate) fn batch_with_scatter(
     let mut reservation = super::budget::GpuReservation::new(capacity, vec![host, process])?;
     let direct_bytes = capacity - sparse_bytes * 2;
     let mut destinations = StagingVec::new(
-        uploads.len() + super::sparse_upload::groups(buffers).count(),
+        uploads.len() + super::sparse_upload::groups(buffers.clone()).count(),
         host_budget,
     )?;
     for upload in uploads {
@@ -207,11 +228,11 @@ pub(crate) fn batch_with_scatter(
             destinations.push(target.receipt(upload.pixels.len() as u64, padded_bytes(upload)));
         }
     }
-    for group in super::sparse_upload::groups(buffers) {
-        if let Some(target) = group.uploads[0].target {
+    for group in super::sparse_upload::groups(buffers.clone()) {
+        if let Some(target) = group.first.target {
             let source = group
                 .uploads
-                .iter()
+                .clone()
                 .map(|upload| upload.bytes.len() as u64)
                 .sum();
             let transfer = if group.sparse && scatter.is_some() {
@@ -222,8 +243,10 @@ pub(crate) fn batch_with_scatter(
             destinations.push(target.receipt(source, transfer));
         }
     }
-    let mut allocations =
-        StagingVec::new(allocation_count(buffers, scatter.is_some()), host_budget)?;
+    let mut allocations = StagingVec::new(
+        allocation_count(buffers.clone(), scatter.is_some()),
+        host_budget,
+    )?;
     let mapped_reservation = reservation.split(direct_bytes + sparse_bytes)?;
     let buffer = owner.track_reserved(
         device.create_buffer(&wgpu::BufferDescriptor {
@@ -252,7 +275,7 @@ pub(crate) fn batch_with_scatter(
             if group.sparse && scatter.is_some() {
                 continue;
             }
-            for upload in group.uploads {
+            for upload in group.uploads.clone() {
                 mapped[offset..offset + upload.bytes.len()].copy_from_slice(upload.bytes);
                 offset += upload.bytes.len();
             }
@@ -308,7 +331,7 @@ pub(crate) fn batch_with_scatter(
         if group.sparse && scatter.is_some() {
             continue;
         }
-        for upload in group.uploads {
+        for upload in group.uploads.clone() {
             encoder.copy_buffer_to_buffer(
                 &buffer,
                 offset,
@@ -338,7 +361,7 @@ pub(crate) fn batch_with_scatter(
                 packet_reservation,
             );
             encoder.copy_buffer_to_buffer(&buffer, offset, &packet, 0, bytes);
-            scatter.encode(device, &mut encoder, &packet, group.uploads[0].buffer);
+            scatter.encode(device, &mut encoder, &packet, group.first.buffer);
             totals.buffer_payload_bytes += bytes / 2;
             totals.scatter_index_bytes += bytes / 2;
             totals.buffer_copy_bytes += bytes;
