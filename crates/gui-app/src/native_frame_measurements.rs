@@ -85,8 +85,9 @@ impl Writer {
         }).collect();
         let submitted_screen = if frame.submitted_frame == Some(true) {
             Some(frame.renderer.encoded_screen_geometry().context("screen draw observation unavailable")?.into_iter().flatten().map(|d| {
-                json!({"group":d.group,"range":[0,d.vertices],"submitted_commands":1,
-                    "submitted_vertices":d.vertices,"submitted_triangles":d.vertices/3,"scissor":d.scissor})
+                json!({"group":d.group,"submitted_commands":d.commands,"single_source_range":d.range,
+                    "submitted_vertices":d.vertices,"submitted_triangles":d.vertices/3,"common_scissor":d.scissor,
+                    "scissor_summary":if d.scissor.is_some() {"all commands share exact scissor"} else {"multiple scissors; no coverage rectangle asserted"}})
             }).collect::<Vec<_>>())
         } else {
             None

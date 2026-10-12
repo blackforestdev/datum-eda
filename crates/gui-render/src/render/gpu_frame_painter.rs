@@ -6,6 +6,7 @@ impl Renderer {
         pass: &mut wgpu::RenderPass<'a>,
         prepared: &PreparedScene,
         range: std::ops::Range<u32>,
+        scissor: [u32; 4],
     ) {
         pass.set_pipeline(&self.viewport_overlay_pipeline);
         gpu_vertex_upload::screen_quads::bind(
@@ -30,12 +31,22 @@ impl Renderer {
                 }
                 if cursor < start {
                     pass.draw(0..6, cursor / 6..start / 6);
+                    self.observe_screen_range(
+                        immediate_admission::screen_admission::ScreenGroup::Overlay,
+                        cursor..start,
+                        scissor,
+                    );
                 }
                 cursor = cursor.max(end);
             }
         }
         if cursor < range.end {
             pass.draw(0..6, cursor / 6..range.end / 6);
+            self.observe_screen_range(
+                immediate_admission::screen_admission::ScreenGroup::Overlay,
+                cursor..range.end,
+                scissor,
+            );
         }
         pass.set_pipeline(&self.pipeline);
     }
@@ -188,6 +199,12 @@ impl Renderer {
                     .slice(..),
             );
             pass.draw(0..6, 0..prepared.selection_strokes.len() as u32);
+            self.observe_screen_draw(
+                immediate_admission::screen_admission::ScreenGroup::Selection,
+                prepared.selection_strokes.len() as u32 * 6,
+                clip.intersect([0, 0, width, height])
+                    .expect("nonempty selection clip"),
+            );
             pass.set_pipeline(&self.pipeline);
         }
         let split = prepared
@@ -206,7 +223,15 @@ impl Renderer {
                     .expect("viewport overlay buffer")
                     .slice(..),
             );
-            self.draw_admitted_overlay(pass, prepared, 0..split as u32);
+            self.draw_admitted_overlay(
+                pass,
+                prepared,
+                0..split as u32,
+                clip.intersect(immediate_admission::screen_admission::scissor(
+                    prepared.scene_viewport,
+                ))
+                .expect("nonempty overlay clip"),
+            );
         }
         self.draw_selection_mask_cue(pass, prepared, damage, clip);
         pass.set_pipeline(&self.pipeline);
@@ -234,7 +259,7 @@ impl Renderer {
             pass.draw(0..6, 0..prepared.selection_strokes.len() as u32);
             self.observe_screen_draw(
                 immediate_admission::screen_admission::ScreenGroup::Selection,
-                prepared.selection_strokes.len() as u32 * 12,
+                prepared.selection_strokes.len() as u32 * 6,
                 clip.intersect([0, 0, width, height])
                     .expect("nonempty selection clip"),
             );
@@ -252,15 +277,8 @@ impl Renderer {
                 pass,
                 prepared,
                 split as u32..viewport_overlay_vertices.len() as u32,
-            );
-        }
-        if !viewport_overlay_vertices.is_empty() {
-            // One logical stream can have prefix and pane-clipped native suffix
-            // draws; observation counts their complete payload once.
-            self.observe_screen_draw(
-                immediate_admission::screen_admission::ScreenGroup::Overlay,
-                viewport_overlay_vertices.len() as u32,
-                [0, 0, width, height],
+                clip.intersect([0, 0, width, height])
+                    .expect("nonempty overlay clip"),
             );
         }
         if !board_interaction_vertices.is_empty()

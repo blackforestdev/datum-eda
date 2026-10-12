@@ -7779,5 +7779,275 @@
       },
       "normal_hooks": "Pending normal maincommit; no bypass."
     }
+  },
+  "dense_warm_reopen_20261011": {
+    "classification": "Finite retained C04 N16 current ordinary authored100k repeated warm clear/reacquire and distinct-PID fresh reopen; bounded actual observer correction only, no fullN16/C04/HUMAN/nativecap/maxcollision/latency qualification.",
+    "source_before_commit": "2e5efd766bb1ac19e876bae7b827906d83281d31",
+    "fixture": {
+      "setup": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-reopen-setup.json",
+        "sha256": "f3b72f99467de9152c0074d19e7063891fdd12bbf9bebc69e89375ee517c0fad"
+      },
+      "scope": "Exact28canonical whitelist/setup/immutablemanifest; original29th recipe metadata separate. All14 maps equal/currentfiles. No operational credentials read/copied.",
+      "source_sheet": "20000000-0000-4000-8000-000000000005",
+      "complete100k_source_tuple_sha256": "00d0b6394b978ac38e92c0147df1ee224a640ab38f7bd199812c544bc2425bd0",
+      "model_revision": "450cd5dea4b53a0ef7527f68eae54e3156a3c9b49aefd749f34577213fc28d96",
+      "resolver_reuse": "Actual80/82 read-only resolver result reused on independently byte-equivalent original/fresh28 files; no fresh resolver invocation on dense-warm-reopen claimed."
+    },
+    "observer_repair": {
+      "problem": "Opt-in resource observer invalidated legitimate repeated screen-group draws in selected mask bands, causing native90 rendering pause afterfirst100k publication.",
+      "change": "Fixed8 checked cumulative actual draw commands/virtual vertices. Preserve source range only single actual draw and common exact painter/source clip only if allcommands match; distinguish multiple scissors without fake coverage. Actual Selectionlift/cue sites observed separately; actual admitted Quad44 Overlay fragments counted and suppresseddetail excluded. No geometry/palette/order/resource/copy/threshold changes.",
+      "clip_scope": "Recorded common_scissor is painter/source coordinates; band/resampling transforms can differ from device raster scissor. No rastercoverage/API-live claim.",
+      "source_checkpoint": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-observer-source-checkpoint-3.json",
+        "sha256": "1344b57b654be81ba2dfa3e3344c2b02b1bb5d79ef74bc38e911c98dc9e6d486"
+      },
+      "current_source_count": 35,
+      "source_basis": "Dedup historicalcp14+observercp3 superseding painter; full current/distinct Git-before bytes in archive."
+    },
+    "focused_gpu": {
+      "receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-observer-focused-3-terminal.json",
+        "sha256": "b1675351f0a941d0077bf183e8273d75a0106550011e6df751c5f4cc9ac65603"
+      },
+      "terminal": "71123/2ff3e4/0;2PASS0FAIL, extra filtered0tests uncredited",
+      "scope": "2 actual GPU PASS; existing reusedobserver failure/overflow controls and SAME full65537fixture warm observer/noobserver pixel equality/validrepeat summary plus additional cold exactband prefix/suffix suppressed counts and bothSelectionpasses, both localownersretire0. Warm actual counts are observed summaries, not exacttheoretical tilecoverage; isolated65537 isaccounting control, notnativecap qualification. Filtered extra0tests uncredited."
+    },
+    "gui_build": {
+      "receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-observer-gui-build-terminal.json",
+        "sha256": "dfee85863a0b1b407696ce77c25b2583cbc52b591368ccaa1cbc8e712563a0e4"
+      },
+      "terminal": "57390/8fac31/0",
+      "gui_sha256": "8db9def67e62a57597a816a27a696170f5cb2bdc7de3069b2db54590e346b243",
+      "warning": "Known unrelated PanePlan::overflow deadcode unchanged; no warning-only rebuild."
+    },
+    "native92": {
+      "receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-reopen-92-terminal.json",
+        "sha256": "fc47f90f9038559e976e071cd04e31c0938af484999e46a656a3bea4dacb3efe"
+      },
+      "raw_result": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-result.json",
+        "sha256": "ef56aa160b1e996b2c51910a2de6adcf932e009cfd18edba8c1a7cf59f161c9f"
+      },
+      "executed_producer": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-producer.py",
+        "sha256": "d31422a016e9a01bbb711477f6ba88deb679a169632967a227adc55f8a17a393"
+      },
+      "raw_outcome": "CAPTURE_ONLY_WARM_REOPEN_REVIEW_PENDING",
+      "identity_oracle": "Eachacquisition exactly100000 SchematicText/root[]/current450cd5/focusNone; completeSelectionView byteequal acrossbothPIDs; actualfreshNone before lawfulCtrlA, no persistedselection assumption.",
+      "full_SelectionView_sha256": "11f3482a161b78844bd3432a7e9b444187d2e8f533be005ed673c6fa46a9d479",
+      "sessions": [
+        {
+          "name": "warm",
+          "pid": 912768,
+          "window": "27262980",
+          "actions": [
+            "fresh-process-ordinary-None",
+            "0-exact100k",
+            "1-clear-None",
+            "2-exact100k",
+            "3-clear-None",
+            "4-exact100k"
+          ],
+          "Main_barriers": 6,
+          "gui_exit_code": 0,
+          "received_shutdown": {
+            "phase": "drained_device_live",
+            "pid": 912768,
+            "device_epoch": 1
+          },
+          "close_mode": "Natural close; no Retry input",
+          "trace": {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-resources.jsonl",
+            "sha256": "9e9167d65050a79ea8ffef3025e8ee5cde670b50a28136fa7ffa932480ce52c6"
+          },
+          "attempts": 24,
+          "submitted_attempts": 17,
+          "complete_end": true,
+          "unreleased_hosts": 0,
+          "last_Main_all_four_zero": true,
+          "cumulative_peaks_and_limits": {
+            "screen": [
+              5685192,
+              16777216
+            ],
+            "control_mesh": [
+              15360,
+              4194304
+            ],
+            "atlas": [
+              1048576,
+              33554432
+            ],
+            "staging": [
+              13133848,
+              16777216
+            ]
+          }
+        },
+        {
+          "name": "reopened",
+          "pid": 913701,
+          "window": "27262980",
+          "actions": [
+            "fresh-process-ordinary-None",
+            "0-exact100k"
+          ],
+          "Main_barriers": 2,
+          "gui_exit_code": 0,
+          "received_shutdown": {
+            "phase": "drained_device_live",
+            "pid": 913701,
+            "device_epoch": 1
+          },
+          "close_mode": "Actual reviewed ordinaryRetry",
+          "trace": {
+            "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-reopened-resources.jsonl",
+            "sha256": "115eac5ab51c843e301e4ab9dd9ebec15ca996a6f6b9c9ce4746ee595258ea4e"
+          },
+          "attempts": 16,
+          "submitted_attempts": 9,
+          "complete_end": true,
+          "unreleased_hosts": 0,
+          "last_Main_all_four_zero": true,
+          "cumulative_peaks_and_limits": {
+            "screen": [
+              5684592,
+              16777216
+            ],
+            "control_mesh": [
+              15360,
+              4194304
+            ],
+            "atlas": [
+              1048576,
+              33554432
+            ],
+            "staging": [
+              13130592,
+              16777216
+            ]
+          }
+        }
+      ],
+      "maps": "14 complete28 maps invariant/current28 files exactly match whitelist; full maps/content preserved in raw/archive. Final metadata-only enumeration found exactly28/no extras/missing, skippedoperational directories beforedescent.",
+      "pixels": {
+        "warm/initial-None": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-initial-None.png",
+          "sha256": "cfbb81e800fec5eab4a5ca6460c36f66342553d6f21797e2491f3134002fc148"
+        },
+        "warm/0-exact100k": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-0-exact100k.png",
+          "sha256": "0c7272d605c6c24701cb809eced9dbaae8daad6a2b676f172a7c6506f6054f30"
+        },
+        "warm/1-clear-None": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-1-clear-None.png",
+          "sha256": "480e5aab6365f61d890a3cb0563f28af8076b5ebe61ea2f3e1f88e6707ecd77c"
+        },
+        "warm/2-exact100k": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-2-exact100k.png",
+          "sha256": "a85a25702fb9f8a73fbfcc28c1e2744a4f4dadd442bcbad07be80f16521cdd99"
+        },
+        "warm/3-clear-None": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-3-clear-None.png",
+          "sha256": "33ed05e829dc4e994722251b2d2d5dc4c49a7082d606db072b64149705ee9388"
+        },
+        "warm/4-exact100k": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-4-exact100k.png",
+          "sha256": "019b8892c5594eb746ff596d6bc6f3af2d2afbc85c79784b7a496260cae3ebaa"
+        },
+        "warm/actual-close-status-for-review": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-warm-actual-close-status-for-review.png",
+          "sha256": "027c3ed6d1aaf22584c4dc4c612259e8d9ee473e989e84478a938d17e8840233"
+        },
+        "reopened/initial-None": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-reopened-initial-None.png",
+          "sha256": "cfbb81e800fec5eab4a5ca6460c36f66342553d6f21797e2491f3134002fc148"
+        },
+        "reopened/0-exact100k": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-reopened-0-exact100k.png",
+          "sha256": "0c7272d605c6c24701cb809eced9dbaae8daad6a2b676f172a7c6506f6054f30"
+        },
+        "reopened/actual-close-status-for-review": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/attempt-92-dense-warm-reopen-reopened-actual-close-status-for-review.png",
+          "sha256": "0c8fd16283777b9baf3331cc06e1898990f4413b0b05338ab9092a8a4045c961"
+        }
+      },
+      "close_qualification": "awaiting_reviewed_retry flag is historical statuscapture; actualwarm naturaldrain/noRetry. Reopened independent root-authorized technicalmarker b849577c binds blockedPNG0c8fd162/currentPID/controls/1746,1014 beforeordinaryRetry; input-readiness only, not objective acceptance."
+    },
+    "resource_scope": "Existing opt-in observer overhead separately qualified; hostscreen/control/atlas/staging sampled and cumulative reservation peaks within existing limits and lastperrenderer allzero/endcomplete for EACH PID. Budget/cache/scopedheap/RSS views overlap; no sum, exactAPI-live/allprocesspeak or reuse assertion solelyfromsamePID/cachedcommands. Submittedattempts distinguish actualcurrentGPUwork from retainedcachedcommands.",
+    "adequate_reuse": "Actual80 region/pending/cancel and82 selectedclose/Retry reused as separately source-bound historical93d3 evidence; current88k/axis/pixel/retirement isolated controls reused; no cancellation/autopan/lifecyclecase repeat.",
+    "failures_retained": {
+      "fixture_helpers": "Both preparationfailures in setup/no nativecredit.",
+      "89": {
+        "receipt": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-reopen-89-terminal.json",
+          "sha256": "ce7c93381dd73fbfe0f428ee76e46f5eb2019a9d0c6cdea51db356a593083ce7"
+        },
+        "scope": "BeforeGUI AF_UNIX FAIL/noPID/zero receipts, terminal0 notassertionPASS"
+      },
+      "90": {
+        "receipt": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-reopen-90-terminal.json",
+          "sha256": "0ce2b059c7175105bbb68089e4926a41807f48c31539279516363c2dcb4b8757"
+        },
+        "scope": "ObserverFAIL/publication only/forcedcleanup-15/no visualwarmdrain"
+      },
+      "91": {
+        "receipt": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-reopen-91-terminal.json",
+          "sha256": "32feddb26a5cae3b5e98b81bd3127f9d99e61e9a5471d7d3615fbd21e2cd03fe"
+        },
+        "scope": "FocusguardFAIL/ownerconfirmed accidentalexternalinput notstoprequest; publicationonly/forcedcleanup-15/no visualwarmdrain"
+      },
+      "focused1": {
+        "receipt": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-observer-focused-1-terminal.json",
+          "sha256": "30d04f02f43808a42bb875c677b4185f461a3d86530c6073f8cc9bfe190ad86e"
+        },
+        "scope": "Compile-only101/missingimports/noassertions"
+      },
+      "focused2": {
+        "receipt": {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-observer-focused-2-terminal.json",
+          "sha256": "1e865934f4605652c7317654580104aed11d1974e119fddd0c6b4205aa60d5aa"
+        },
+        "scope": "1PASS1FAIL101/bad logicalpayload multiplier testoracle, preservednotrewritten"
+      }
+    },
+    "independent_reviews": {
+      "runtime_pixels_resources": "RECEIVED auditor actual10pixels/fulltyped100k/byteequalP/current35/8frames/two perPID traces/actual samePIDdrains recommendation CLEAR.",
+      "governance_record": "RECEIVED management condensed251line/24pathhashref/rawcorrespondence/priorsections equalHEAD PASS.",
+      "immutable_correspondence": "RECEIVED appointedroot andmanagement streamed179safeunique/178hash+sizes+allorigins/42current+Gitbefore/14complete28maps PASS. Independent codeauditor runtime/source/graph proof CLEAR; finalarchive corroboration requested, no blanket pending reviewclaim."
+    },
+    "manager_disposition": "Appointedroot PM059 finite ACCEPT: actual92 repeated current100k warm clears/reacquisitions/freshNone+reopen, corrected observer source/tests and healthy current pixels, bothactualPIDdrains/GUI0/resource retirement; immutable55d1/f292 reviewed. Normal ownedmain landing authorized once requiredgatespass. No fullN16/C04/HUMAN/collision/latency closure or successor authority.",
+    "package": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/dense-warm-reopen-20261011.tar.xz",
+      "archive_sha256": "55d1abd0ddc96285f173e978f7770eddeeb20821c74030ffb1ca879c3b3825d7",
+      "manifest_sha256": "f292b77a9e07bd73fcd080737304e2ed971ea55e2108ee57c244a38acda3fada",
+      "regular_files": 179,
+      "hashed_files": 178,
+      "source_pins": 42,
+      "canonical_maps": 14,
+      "canonical_members": 28,
+      "raw_files": 70,
+      "assembler_sha256": "6f58a0deda50c6e7ae96b7c564bc0876c23da9c4a6ca0afbc550084f7114a0e5",
+      "terminal": "25228/7996c3/0",
+      "classification": "Frozen immutable full raw/safe source-before/current/recipe/canonical content packet; generated utilityredirects excluded before reads."
+    },
+    "affected_final_gates": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/dense-warm-reopen-final-gates.json",
+      "sha256": "fdb173e98c09261c6b3261ccc908b0a0cd0777589b1afca661e4dad140a77dbe",
+      "all_seven_exit_codes": 0,
+      "classification": "Actual82 status/render/29-131trace/source3125/dependency/resource/whitespace PASS. Required stagedformat/normalhooks remain."
+    },
+    "landing": "Appointedroot authorizes normal owned substantive main commit after required stagedformat/hooks; actual commit binding recorded by landing receipt, no fullC04 closure.",
+    "retained_boundaries": [
+      "FullN16/C04 and HUMAN/maxcollision/native detailedcap qualification remain open. No newrule/waiver/successorauthority.",
+      "Existing inherited owner-supervision parity failure remains unwaived and unrelated to this selectedfinite delivery.",
+      "Current35pins dedup historicalcp14 plus observercp3 superseding painter; do not claim allcp14 untouched/currentGUIa7 after observerrepair."
+    ]
   }
 }
