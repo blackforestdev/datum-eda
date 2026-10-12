@@ -6889,6 +6889,345 @@
         "chunk_id": "52b4c2",
         "exit_code": 0
       }
+    },
+    "source_landing": {
+      "commit": "2fd85074a44ac6880e2b06ea9ccd1941f1752ace",
+      "owned_paths": 38,
+      "normal_hooks": "Actual visual-truth lane/stagedfmt passed without bypass; main commit terminal0",
+      "source_binding": "All32 committed Git blobs match cp14 reviewed/tested/current-binary/native86 cohort; root and both independent reviewers verified clean landing.",
+      "retained_boundaries": "Finite sharedcue/resource unit accepted, C04/fullqualification stillopen/no successor authority."
+    }
+  },
+  "n04_equal_world_region_20261011": {
+    "classification": "Finite N04 fresh exact equal-world-region peer pair under genuinely different ordinary camera projections; no historical63 rectangle replication or fullN04/C04/HUMAN qualification. No production source/build mutation.",
+    "source_commit": "2fd85074a44ac6880e2b06ea9ccd1941f1752ace",
+    "reused_evidence": "Actual63 edge/corner auto-pan/interiorstop and closed Wire endpoint law retained separately; oldrectangle representability issue is method finding, not product defect. Adequate source-bound GUIa7f01f97 build/current32pins reused without rerun.",
+    "method_disposition": "Appointed manager authorized fresh exact peer-pair after actual old63 static integer-coordinate lattice mismatch. Root selected ordinary1250x800 and Space pre-gesture135px pan; no tolerance/nearest endpoint or Fit-normalization shortcut.",
+    "executed_producer": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-producer.py",
+      "sha256": "4f964192deffd09a4e58efeb01abec5634099e6d9fa2b75d814a202961e0d1eb",
+      "review": "Independent fullbody9df2c76c preflight CLEAR; executed4f964192 supersedes solely truthful header and completed-record health scan; conditional release satisfied. Earlier94b2610d Fit draft reconstructed byteexact, explicitly unexecuted/no credit."
+    },
+    "native_result": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-result.json",
+      "raw_outcome": "CAPTURE_ONLY_N04_EQUIVALENT_WORLD_REGION_REVIEW_PENDING",
+      "pid": 891165,
+      "gui_sha256": "a7f01f97501b7522018f77255736df60f852947e68e9aeb44968d9c2af5ce419",
+      "expected_revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "oracle": {
+        "classification": "Fresh exact peer-pair; not historical63 rectangle replication",
+        "start_client": [
+          280,
+          339
+        ],
+        "end_client": [
+          705,
+          450
+        ],
+        "fit_camera": {
+          "center_x_nm": 45000000.0,
+          "center_y_nm": 7290000.0,
+          "zoom": 1.0
+        },
+        "anchor_nm": [
+          -1946565,
+          -2102492
+        ],
+        "endpoint_nm": [
+          62938933,
+          14844073
+        ],
+        "closed_rectangle": [
+          [
+            -1946565,
+            -2102492
+          ],
+          [
+            62938933,
+            14844073
+          ]
+        ],
+        "full_candidates": [
+          [
+            "Wire",
+            "73000000-0000-4000-8000-000000000008",
+            []
+          ],
+          [
+            "Wire",
+            "73000000-0000-4000-8000-000000000009",
+            []
+          ],
+          [
+            "Wire",
+            "73000000-0000-4000-8000-00000000000d",
+            []
+          ]
+        ]
+      },
+      "paths": [
+        {
+          "path": "direct-fit",
+          "camera": {
+            "center_x_nm": 45000000.0,
+            "center_y_nm": 7290000.0,
+            "zoom": 1.0
+          },
+          "press_client": [
+            280,
+            339
+          ],
+          "release_client": [
+            705,
+            450
+          ],
+          "world_anchor": [
+            -1946565,
+            -2102492
+          ],
+          "world_endpoint": [
+            62938933,
+            14844073
+          ]
+        },
+        {
+          "path": "ordinary-Space-pan",
+          "camera": {
+            "center_x_nm": 25000000.0,
+            "center_y_nm": 7290000.0,
+            "zoom": 1.0
+          },
+          "press_client": [
+            411,
+            339
+          ],
+          "release_client": [
+            836,
+            450
+          ],
+          "world_anchor": [
+            -1946565,
+            -2102492
+          ],
+          "world_endpoint": [
+            62938933,
+            14844073
+          ]
+        }
+      ],
+      "full_selection_equality": "Both final fullSelectionView byte-equal: exactWire8/9/d root[], focus9, no hidden/unprojected/locked. All emitted held states retain complete prior Wire9 P; actual Main left press/release ordering and four cursor-to-later-presentation barriers retained.",
+      "frame_barriers": [
+        {
+          "label": "direct-fit-held-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791777356, tv_nsec: 437751675 }] window event WindowId(27262980) cursor moved 705.00,450.00",
+          "presentation": {
+            "attempts": 462,
+            "counts": {
+              "coalesced": 125,
+              "duplicate_tokens": 0,
+              "presentations": 155,
+              "received": 462,
+              "requested": 461,
+              "suppressed": 330
+            },
+            "damage": 641,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 641,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          }
+        },
+        {
+          "label": "direct-fit-released-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791777357, tv_nsec: 466995834 }] window event WindowId(27262980) cursor moved 705.00,450.00",
+          "presentation": {
+            "attempts": 503,
+            "counts": {
+              "coalesced": 127,
+              "duplicate_tokens": 0,
+              "presentations": 175,
+              "received": 505,
+              "requested": 504,
+              "suppressed": 354
+            },
+            "damage": 670,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 670,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          }
+        },
+        {
+          "label": "ordinary-Space-pan-held-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791777358, tv_nsec: 741778046 }] window event WindowId(27262980) cursor moved 836.00,450.00",
+          "presentation": {
+            "attempts": 514,
+            "counts": {
+              "coalesced": 131,
+              "duplicate_tokens": 0,
+              "presentations": 181,
+              "received": 516,
+              "requested": 515,
+              "suppressed": 360
+            },
+            "damage": 680,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 680,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          }
+        },
+        {
+          "label": "ordinary-Space-pan-released-current",
+          "cursor_line": "[SystemTime { tv_sec: 1791777359, tv_nsec: 730379643 }] window event WindowId(27262980) cursor moved 836.00,450.00",
+          "presentation": {
+            "attempts": 552,
+            "counts": {
+              "coalesced": 133,
+              "duplicate_tokens": 0,
+              "presentations": 200,
+              "received": 557,
+              "requested": 556,
+              "suppressed": 385
+            },
+            "damage": 710,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 710,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          }
+        }
+      ],
+      "canonical": "All six complete61 maps, original whitelist and current freshcopy61 exact; no native canonical writes.",
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 891165,
+        "device_epoch": 1
+      },
+      "gui_exit_code": 0,
+      "terminal": {
+        "authoritative_session": 78138,
+        "launch_chunk": "f0b345",
+        "terminal_chunk": "3ee8a0",
+        "tool_exit_code": 0,
+        "raw_outcome": "CAPTURE_ONLY_N04_EQUIVALENT_WORLD_REGION_REVIEW_PENDING",
+        "result_sha256": "a44e0150fc1c2cdb51426482ae079847e74692c99f378308d81d78b4ba3feb1b",
+        "producer_sha256": "4f964192deffd09a4e58efeb01abec5634099e6d9fa2b75d814a202961e0d1eb",
+        "gui_exit_code": 0,
+        "shutdown_receipt": {
+          "phase": "drained_device_live",
+          "pid": 891165,
+          "device_epoch": 1
+        }
+      },
+      "sha256": "a44e0150fc1c2cdb51426482ae079847e74692c99f378308d81d78b4ba3feb1b"
+    },
+    "pixels": {
+      "paths": [
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-ordinary-Space-pan-released-current.png",
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-direct-fit-released-current.png",
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-ordinary-Space-pan-held-no-partial.png",
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-direct-fit-held-no-partial.png"
+      ],
+      "personal_review": "Both held frames show dashed same-world boundary and only prior Wire9 pink/Inspector1; released currentframes show exactthree selected Wire sections/Inspector3, focus9 and healthy title. B projection shifted131devicepixels with camera25m versusA45m.",
+      "hashes": {
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-ordinary-Space-pan-released-current.png": "37b8e0919b8658295e6f312b9b3d29559aec328cd0727f2694336be67f28b114",
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-direct-fit-released-current.png": "fab8d3cee4c2d31a121c90ae2ea774bad01200ad0e8a3e01a6ba57e68123278f",
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-ordinary-Space-pan-held-no-partial.png": "1bb5b32d375ebdc7487fbc907aad78d3835f58bfdef7a1ba1a02c6112f0cb5d0",
+        "target/s5a-c04-inventory-keyboard-20261011/attempt-87-n04-equivalent-world-region-direct-fit-held-no-partial.png": "b7477f718f21640a48629682fcaf28551a2411b7162d798f6724e51dd1704d21"
+      }
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n04-equivalent-world-region-20261011.tar.xz",
+      "archive_sha256": "dd5e7172ff653f118b81ed2c43d092ebcbaab3e0a0799070b950a35a928e6c5c",
+      "manifest_sha256": "c05c8394aea133605d062b7b921662120b3df0c73f0ca5075634b3fd7b430c27",
+      "regular_files": 180,
+      "hashed_files": 179,
+      "source_pins": 43,
+      "canonical_maps": 6,
+      "canonical_members": 61,
+      "raw_files": 44,
+      "raw_qualification": "Raw driver log is an exact empty utility stdout redirect; native ActionEvidence/native logs, actual result and authoritative terminal are separately preserved. No textual PASS inferred from an empty redirect."
+    },
+    "independent_reviews": {
+      "auditor": "Final independent finite source/runtime/pixel/all-entry correspondence CLEAR received at dd5e7172/c05c8394: all180 safeunique/all179hashes/origins/43current and43Git-before/6complete61maps/all49blobs exact. Allfour pixels personally viewed; actual pan prepared/presented frame precedes B LeftPressed, exact world/fullP/focus and samePIDdrain0 verified. No further source/build/native proof requested.",
+      "governance": "Separate management reviewer final bounded governance/package PASS received at proof80566348/archive dd5e7172/manifest c05c8394: all180 safeunique/all179hashes/origins/43current and43Git2fd-before/6complete61maps+recoverableblobs verified; rawproducer4f964/currentresult/pixels/terminal and method/failure limits truthful. Final factualreceipt/gates amendments retain payload and scope.",
+      "manager": "Actual appointed root PM059 finite ACCEPT received: exactsameworldrectangle under45m/25m, actualpan\u2192prepared\u2192presented beforeBpress, identicalfull3Wire/root[]focus9/heldP/fourpixels, all6\u00d761maps/currentfiles/samePID891165drainGUI0; immutabledd5e7172/c05c8394 all180safe179hash/43current=Git-before/49blobs verified by root and both independent reviewers. Freshpairedcase only, no63replica/fullN04/C04/HUMAN/waiver/successor."
+    },
+    "preserved_method_and_utility_failures": [
+      "Original63 quantization finding34abe is read-only/unexecuted, no product defect or acceptance. DiscardedFit-normalization draft94b2610d unexecuted and separately retained.",
+      "Initial archive utility failed beforewritingarchive because guessed nonexistent source path was rejected by regular-file assertion; failure/script retained, corrected actualowner list only. No native failure or credit."
+    ],
+    "remaining_limits": "FullN04/N01-N17/C04/HUMAN/Wayland/collision/exhaustivequalification remain open; no newproductrule, cap, latency acceptance, dependency or successor authority.",
+    "affected_final_gates": {
+      "classification": "Affected metadata/evidence final gates; unchanged production source/dependency/resource/source-health gates reused from accepted shared-cue cohort.",
+      "results": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "d15fa8",
+          "wall_time_seconds": 0.927259915,
+          "exit_code": 0,
+          "original_token_count": 13,
+          "output": "Project status check passed (82 frontier items).\n"
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "319723",
+          "wall_time_seconds": 1.4949e-05,
+          "exit_code": 0,
+          "original_token_count": 10,
+          "output": "Active Frontier projection is current.\n"
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "4db118",
+          "wall_time_seconds": 0.023138455,
+          "exit_code": 0,
+          "original_token_count": 21,
+          "output": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n"
+        },
+        {
+          "command": "git diff --check",
+          "chunk_id": "b59479",
+          "wall_time_seconds": 1.7754e-05,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      ]
+    },
+    "staged_checks": {
+      "owned_paths": [
+        ".beads/issues.jsonl",
+        "specs/active_frontier.json",
+        "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+        "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n04-equivalent-world-region-20261011.tar.xz"
+      ],
+      "rustfmt": {
+        "chunk_id": "0c44c0",
+        "exit_code": 0
+      },
+      "whitespace": {
+        "chunk_id": "16742a",
+        "exit_code": 0
+      },
+      "normal_hooks": "Pending normalmainlanding; no bypass authorized."
     }
   }
 }
