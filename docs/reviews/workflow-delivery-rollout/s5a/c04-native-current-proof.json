@@ -8477,5 +8477,58 @@
     "C04_complete": false,
     "C05_completed": false,
     "C06_accepted": false
+  },
+  "n13_plain_drag_inertness_20261012": {
+    "classification": "Bounded ordinary N13 unmodified drag inertness, actual independent review and appointed manager acceptance; original aggregate FAIL retained",
+    "behavior": "Fresh Track1 Object focus/Common5080000nm/5.080mm, ordinary unmodified press at Track1 then motion beyond existing4px to independently eligible Track2 and release. Whole selection/camera/focus and public current AT unchanged; ordered input acknowledgments and release-origin presented Main, no public Evaluating selection or visible region feedback.",
+    "input_witness": "Own-window ModifiersState(0x0), Space false, unique primary_press14/pointer15/primary_release16; no competing input; harmless render callbacks retained.",
+    "original_execution": {
+      "handle": 19598,
+      "terminal": "2f35cb",
+      "exit_code": 1,
+      "raw_outcome": "FAIL",
+      "gpu_drained": null,
+      "failure": "Final harness assertion incorrectly required output-diagnostic gpu_drained truthiness; schema explicitly emits null. Raw producer/result unchanged."
+    },
+    "distinct_drain": "Actual independently reviewed standalone decoded/raw packet phase drained_device_live, PID1046586/device_epoch1 persisted before ACK, natural samePID GUI0/no forced cleanup/resourceEnd complete/all final owner budgets zero. This is separate from diagnostic gpu_drained null.",
+    "invariance": "All69 governed A/B canonical files/history plus safe Global preference VALUES unchanged including post-drain; distinct reviewer actual6570d0 fresh full69/current69/GlobalVALUES3ece audit supplements qualifier phase predicate.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n13-plain-drag-20261012.tar.xz",
+      "archive_sha256": "52ec3c4f0b79f6eccafe50a08755ad6312e0330a024194cc24ba6197077b72d4",
+      "manifest_sha256": "4bb805efa9f447c0b741e246442c82c01c33e55c6f84496fa803f7d989297603",
+      "regular_files": 264,
+      "hashed_files": 263,
+      "source_pins": 77,
+      "assembler_sha256": "58f640f7954259fe9803c05f0bde4931105587681256cb7e73de3fcae9c09660"
+    },
+    "evidence_sha256": {
+      "n13-plain-drag-1-terminal.json": "563097ff8066612c55822c10211e399acb27f0c38cd692854b6ee740b149d925",
+      "n13-plain-drag-bounded-acceptance.json": "f26d8fa03ce924ed17c4ebf0b352e12c6d0b2ad9a9cfb6efbd0621177c3cd0e9",
+      "n13-plain-drag-qualified-result.json": "937aceed896d3e25665195b519147a534bea64b87b47a6e43c7767ab06c41926",
+      "n13-plain-drag-qualification-terminal.json": "727a5e0e20aeddeffea39526cc4f5cb7465eeae16183bb5a1a4f4f4f5988cb59",
+      "n13-plain-drag-package-receipt.json": "289226f8c25f5c3ed4d1048af4edc7b53b817735cd22abd742ab3f3699072c17"
+    },
+    "independent_review": "collision_review actual immutable case/current PNG/input/state/drain/resource correspondence; qualifier04410 and assembler58f640 preflight clear. Archive/staged review pending.",
+    "source_changes": [],
+    "retained_limits": [
+      "Public/source-qualified no-region absence, no internal region variable readback",
+      "No aggregate PASS relabel, new native replay or GPU input-latency/raster/HUMAN claim",
+      "Finite case does not qualify full N13 matrix or close C04/C05/C06; no successor/dependency changes"
+    ],
+    "full_N13_qualified": false,
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "final_independent_review": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/n13-plain-drag-final-independent-review.json",
+      "sha256": "8c9a077bd726b1a1060a2bc14c0fb9276f6ea08ec822f75c66b16e2af03fac57",
+      "status": "Actual archive/record/index/governance review CLEAR; all264 entries verified"
+    },
+    "required_checks": {
+      "gate_receipt_sha256": "325eed01626d31a9ccdb046c92046052ad30e30825e07f986aa39d1954d3d64b",
+      "seven_metadata_gates": "all0",
+      "source_health_files": 3137,
+      "staged_rustfmt_and_cached_diff": "actual0"
+    }
   }
 }
