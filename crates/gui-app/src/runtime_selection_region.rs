@@ -288,7 +288,7 @@ impl Runtime {
                 match self.ensure_selection_authority() {
                     Ok(true) if self.native_selection.as_ref().unwrap().model.model_revision.0==evaluation.revision=> {
                         self.native_selection.as_mut().unwrap().reset_click_depth();
-                        self.publish_native_acquisition(candidates,evaluation.mode,AcquisitionEntry::Region,None);
+                        return self.publish_native_acquisition(candidates,evaluation.mode,AcquisitionEntry::Region,None);
                     }
                     Ok(_)=>self.selection_notice("Region cancelled: resolved revision changed; no partial selection published".into()),
                     Err(error)=>self.selection_notice(error.to_string()),

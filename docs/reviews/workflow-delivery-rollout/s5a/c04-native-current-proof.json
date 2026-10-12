@@ -8242,5 +8242,89 @@
       "sha256": "81786661b0a3ae7df07e77d5773653e32ad8afc96e7d620936dcca209e24ca7f",
       "classification": "Developer-authored transcription of actual independent review messages; exact archive/current-before source/raw/staged/gov correspondence CLEAR; manager normal landing authorized."
     }
+  },
+  "region_completion_publication_20261012": {
+    "classification": "Finite retainedC04 completed rectangle/lasso publication correction; manager accepted meaningful source-bound realRuntime evidence after actual independent review. C04/C05/C06 remain open.",
+    "problem": "Completed/freshregion acquisition already publishes full selection/accessibility/currentframe, then the evaluator repeated refresh/invalidate and rebuilt full diagnostic payload.",
+    "change": "Return the existing publish_native_acquisition result only for completed candidates with matching current canonical revision. In-progress, source/filter/revision cancellation, evaluation errors and separate selection_notice path remain unchanged.",
+    "candidate": "Source3 frozen checkpoint2 on main baseline10812fef; Runtime test executable compiled combined76 exactpins. Production2 unchanged between focused1 and corrected3; only test oracle changed.",
+    "references": {
+      "region-publication-writer-checkpoint-2.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-writer-checkpoint-2.json",
+        "sha256": "4dfd18343aafbbd6f621abe6bab6417de1e233e59254cef91618ba066237ad3f"
+      },
+      "region-publication-source-cohort-2.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-source-cohort-2.json",
+        "sha256": "a220ad0eb8ad652d7653989531032941b71f38a3f77e9755ffe6db5fac9f66a3"
+      },
+      "region-publication-focused-3-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-focused-3-terminal.json",
+        "sha256": "42c53f3b9d1f94f963eff49a3f244c713d8f31a8f8f79f3f92e2b25a6e407237"
+      },
+      "region-publication-focused-1-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-focused-1-terminal.json",
+        "sha256": "2a158ceaf9b498124bc39ed9a7add84df73c319986117c76223fda1b4fd5d4e6"
+      },
+      "region-publication-focused-2-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-focused-2-terminal.json",
+        "sha256": "260ed20d6cbc342ec65c6157eff4967743650fa574094f21862e832ac4cbd9df"
+      },
+      "region-publication-archive-backed-retirement-receipt.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-archive-backed-retirement-receipt.json",
+        "sha256": "fec8e02eaf096405d623f866f1468e6160bf2fe702f4bb7c9c1f3ceb565f123c"
+      },
+      "region-publication-package-receipt.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-package-receipt.json",
+        "sha256": "9d4c34cba9f119526324e8815ad42cc68242979396b021fd59c62ce49284c113"
+      }
+    },
+    "actual_proof": {
+      "original_handle": 50082,
+      "terminal_chunk": "27b36a",
+      "exit_code": 0,
+      "passed": 1,
+      "failed": 0,
+      "compile_seconds": 19.84,
+      "test_seconds": 0.75,
+      "environment": "Explicit repository-backed TMPDIR/TMP/TEMP and pinnedCLI; ignored serial X11/Vulkan realRuntime control.",
+      "source_fixture": "Actual canonical8 BoardTexts plus closed4vertex BoardOutline930…003 =9; complete source-derived expectedidentities. Initial8/emptyoutline assumption disproved by actual canonical source; original test failure retained.",
+      "behavior": "Completed announced rectangle and repeated/unannounced lasso Add retain complete9 identities/subject/focus/currentread-only accessibility. Console/announcement updates on changed acquisition, no repeatannouncement on unchanged. Preparedframe clears and pendingframe remains; existing compositionrevision exactly+1 on each completion detects removedduplication.",
+      "cancellation": "Staged Remove evaluation cancelled BEFORE its first poll preserves previous complete selection, clears feedback/tick, suppressesrelease and leaves source/journal/head bytes unchanged. This is not an actual OkNone-progress Runtime proof.",
+      "unchanged_cooperative_scope": "Existing selection_region_evaluation/tests.rs controls103/137/160 for cooperative/geometry/refusal retained at their prior adequate scope; no fresh pass or broadernative campaign claimed."
+    },
+    "retained_failures": {
+      "focused1": "Original22084/4dc61f/101,0PASS1FAIL2.18s: wrong expected8 oracle; canonical outline qualifies9.",
+      "focused2": "Terminal128ffc/75 beforeCargo/test: target42.2GiB exceeds hard40. No tests executed; guard/limits preserved.",
+      "focused3": "Executed after correctedoracle/independentrelease and safe storage retirement; actualPASS above."
+    },
+    "storage": "Manager/reviewer approved retirement of ONLY exact108/109 duplicate stdout copies after archivefc01/manifestd890/currentSHA+size/origin and Cargoidle verification. Fullfailedbytes recoverable from committedarchive via receipt mappings; current110/106/107/unarchived/source/sharedcaches preserved. No budgetraise.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/region-publication-20261012.tar.xz",
+      "archive_sha256": "2d751eda98b9a974d27e6efd849a2ed34e18747afbad49ba312c3c407b4d77c1",
+      "manifest_sha256": "432bcd7ed481a13a63ca143c7f74b455c047334162476e3c2adfd4b016b791e0",
+      "regular_files": 181,
+      "hashed_files": 180,
+      "source_pins": 76,
+      "assembler_sha256": "d9c43324e32668564a58914e18efe764c35ea08534f1021e1b5ed8fb9deedb54"
+    },
+    "independent_review": {
+      "status": "Actual source/control/proof/all181archiveentry/currentrecord/index/governance CLEAR; normalownedmainlanding authorized with normal hooks",
+      "receipt_path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-final-independent-review.json",
+      "receipt_sha256": "cc9077719e469fb25fe6afc403e455fcc07a226619ecbed4601d6d6f043cd606"
+    },
+    "checks": {
+      "status": "Seven affected metadata/source gates and stagedrustfmt/cachediff PASS; normalhooks runatcommit",
+      "metadata_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-final-gates.json",
+        "sha256": "d8bc4db88b5e5049c8de875889847475be2177180700e509235d6f211f49da97"
+      },
+      "staged_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/region-publication-staged-gates.json",
+        "sha256": "326350afbec786a37c54e32c3abdc97ff04c0f66f3db3c70acae050a7e9ae760"
+      }
+    },
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false
   }
 }

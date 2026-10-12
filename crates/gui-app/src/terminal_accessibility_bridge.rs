@@ -284,6 +284,10 @@ impl Runtime {
 }
 
 #[cfg(test)]
+#[path = "terminal_accessibility_bridge/region_tests.rs"]
+mod region_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
