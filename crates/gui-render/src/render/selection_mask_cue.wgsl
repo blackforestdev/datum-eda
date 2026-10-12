@@ -30,7 +30,7 @@ fn selected(label:u32)->bool {return label!=0u && label!=0xffffffffu;}
    if (selected(neighbor) && neighbor!=center) {outside=true;}
    if (selected(center) && neighbor!=center) {edge_distance=min(edge_distance,distance);}
  }}
- let accent=vec3<f32>(206.0,90.0,146.0)/255.0;
+ let accent=bitcast<vec4<f32>>(ranges[3]).xyz;
  let c=select(pow((accent+vec3<f32>(0.055))/1.055,vec3<f32>(2.4)),accent/12.92,accent<=vec3<f32>(0.04045));
  if (outside) {return vec4<f32>(c,1.0);}
  if (!selected(center) || (ranges[0].w&1u)!=0u || edge_distance>2.0) {discard;}

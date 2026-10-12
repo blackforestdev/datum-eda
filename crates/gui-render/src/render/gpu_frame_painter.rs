@@ -1,6 +1,45 @@
 //! One ordered painter implementation for full and retained-prefix graphs.
 use super::*;
 impl Renderer {
+    fn draw_admitted_overlay<'a>(
+        &'a self,
+        pass: &mut wgpu::RenderPass<'a>,
+        prepared: &PreparedScene,
+        range: std::ops::Range<u32>,
+    ) {
+        pass.set_pipeline(&self.viewport_overlay_pipeline);
+        gpu_vertex_upload::screen_quads::bind(
+            pass,
+            self.viewport_overlay_gpu
+                .buffer()
+                .expect("viewport quad buffer"),
+            prepared.viewport_overlay_vertices().len() / 6,
+        );
+        let mut cursor = range.start;
+        // Plans follow append order; their detail ranges reference the same
+        // immutable global vertex stream consumed by this frame.
+        for (pane, plan) in &prepared.pane_cues {
+            if !self.selection_mask.detailed_overflow(*pane) {
+                continue;
+            }
+            for detail in plan.detail.iter() {
+                let start = detail.start.max(range.start);
+                let end = detail.end.min(range.end);
+                if start >= end {
+                    continue;
+                }
+                if cursor < start {
+                    pass.draw(0..6, cursor / 6..start / 6);
+                }
+                cursor = cursor.max(end);
+            }
+        }
+        if cursor < range.end {
+            pass.draw(0..6, cursor / 6..range.end / 6);
+        }
+        pass.set_pipeline(&self.pipeline);
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub(super) fn draw_frame_prefix<'a>(
         &'a self,
@@ -167,7 +206,7 @@ impl Renderer {
                     .expect("viewport overlay buffer")
                     .slice(..),
             );
-            pass.draw(0..split as u32, 0..1);
+            self.draw_admitted_overlay(pass, prepared, 0..split as u32);
         }
         self.draw_selection_mask_cue(pass, prepared, damage, clip);
         pass.set_pipeline(&self.pipeline);
@@ -209,7 +248,11 @@ impl Renderer {
                     .expect("viewport overlay buffer")
                     .slice(..),
             );
-            pass.draw(split as u32..viewport_overlay_vertices.len() as u32, 0..1);
+            self.draw_admitted_overlay(
+                pass,
+                prepared,
+                split as u32..viewport_overlay_vertices.len() as u32,
+            );
         }
         if !viewport_overlay_vertices.is_empty() {
             // One logical stream can have prefix and pane-clipped native suffix
@@ -263,7 +306,9 @@ impl Renderer {
         if prepared.has_workspace_text() {
             clip.set(pass, [0, 0, width, height]);
             self.text_renderer
-                .render_layer(&self.atlas, pass, Some(TextLayer::Workspace), damage)
+                .render_workspace(&self.atlas, pass, damage, |pane| {
+                    self.selection_mask.detailed_overflow(pane)
+                })
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
         let mut text_encode_elapsed = text_encode_started.elapsed();

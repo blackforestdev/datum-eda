@@ -36,6 +36,10 @@ pub struct PreparedScene {
         native_selection_overlay::mask::Request,
     )>,
     pub(super) selection_strokes: Vec<selection_stroke::Stroke>,
+    pub(super) pane_cues: Vec<(
+        datum_gui_protocol::PaneId,
+        std::sync::Arc<native_selection_overlay::cue_plan::PanePlan>,
+    )>,
     pub(super) board_interaction_vertices: Vec<Vertex>,
     pub(super) console_overlay_vertices: Vec<Vertex>,
     pub(super) console_overlay_layout: Option<ConsoleOverlayLayout>,

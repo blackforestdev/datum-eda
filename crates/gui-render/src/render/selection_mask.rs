@@ -8,7 +8,7 @@ use std::sync::Arc;
 mod painter;
 pub(crate) const BAND: u32 = 96;
 pub(crate) const GUARD: u32 = 2;
-const HEADER_ROWS: usize = 3;
+const HEADER_ROWS: usize = 5;
 #[path = "selection_mask_pipelines.rs"]
 mod pipelines;
 pub(crate) struct Owner {
@@ -26,6 +26,8 @@ pub(crate) struct Owner {
 pub(super) struct Binding {
     pub table: wgpu::BindGroup,
     pub images: StagingVec<wgpu::BindGroup>,
+    pub pane: datum_gui_protocol::PaneId,
+    pub overflow: bool,
 }
 impl Owner {
     pub(crate) fn new(
@@ -66,6 +68,12 @@ impl Owner {
         assert!(index < self.bands);
         self.active_band.set(index);
     }
+    pub(crate) fn detailed_overflow(&self, pane: datum_gui_protocol::PaneId) -> bool {
+        self.bindings
+            .iter()
+            .filter_map(Option::as_ref)
+            .any(|binding| binding.pane == pane && binding.overflow)
+    }
     pub(crate) fn active(&self) -> bool {
         self.bindings.iter().any(Option::is_some)
     }
@@ -83,7 +91,17 @@ impl Owner {
         schematic: Option<&RetainedScene>,
         extent: [u32; 2],
         _raster: [u32; 2],
+        glyphs: &crate::text_gpu::Draw,
     ) -> anyhow::Result<()> {
+        // Draw may retain an older allocation when this frame has no text.
+        // Only the current prepared frame may authorize selected glyph replay.
+        let selected_glyphs = |pane| {
+            if prepared.has_workspace_text() {
+                glyphs.selected_instances(pane)
+            } else {
+                0
+            }
+        };
         self.bands = extent[1].div_ceil(BAND) as usize;
         self.bindings.clear();
         self.table.clear();
@@ -95,6 +113,9 @@ impl Owner {
                 .selection_masks
                 .iter()
                 .find(|(pane, surface, _)| *pane == pass.pane_id && *surface == pass.surface)
+                .filter(|(_, _, request)| {
+                    request.authored() || request.detailed_overflow(selected_glyphs(pass.pane_id))
+                })
             {
                 let retained = match pass.surface {
                     SceneSurface::Board => Some(board),
@@ -111,7 +132,12 @@ impl Owner {
                                 + 15
                                 + retained.presentation.quads.len()
                                 + retained.presentation.strokes.len()
-                                + retained.presentation.glyphs.len(),
+                                + retained.presentation.glyphs.len()
+                                + if request.detailed_overflow(selected_glyphs(pass.pane_id)) {
+                                    request.screen_count()
+                                } else {
+                                    0
+                                },
                         )
                         .ok_or_else(|| anyhow::anyhow!("mask table overflow"))?;
                 }
@@ -149,6 +175,9 @@ impl Owner {
                 .selection_masks
                 .iter()
                 .find(|(pane, surface, _)| *pane == pass.pane_id && *surface == pass.surface)
+                .filter(|(_, _, request)| {
+                    request.authored() || request.detailed_overflow(selected_glyphs(pass.pane_id))
+                })
                 .map(|(_, _, request)| request);
             if let (Some(retained), Some(request)) = (retained, request) {
                 while !self.table.len().is_multiple_of(16) {
@@ -159,7 +188,7 @@ impl Owner {
                 self.table.push([
                     u32::try_from(presentation.quads.len())?,
                     u32::try_from(presentation.strokes.len())?,
-                    u32::try_from(presentation.quads.len() + 3)?,
+                    u32::try_from(presentation.quads.len() + HEADER_ROWS)?,
                     u32::from(request.high_contrast()) | (u32::from(request.dim_unrelated()) << 1),
                 ]);
                 self.table.push([
@@ -176,9 +205,44 @@ impl Owner {
                         presentation.quads.len() + presentation.strokes.len() + HEADER_ROWS,
                     )?,
                 ]);
-                append_spans(&mut self.table, &presentation.quads, request)?;
-                append_spans(&mut self.table, &presentation.strokes, request)?;
-                append_spans(&mut self.table, &presentation.glyphs, request)?;
+                let overflow = request.detailed_overflow(selected_glyphs(pass.pane_id));
+                let palette = request.palette();
+                self.table.push([
+                    palette[0].to_bits(),
+                    palette[1].to_bits(),
+                    palette[2].to_bits(),
+                    u32::try_from(
+                        HEADER_ROWS
+                            + presentation.quads.len()
+                            + presentation.strokes.len()
+                            + presentation.glyphs.len(),
+                    )?,
+                ]);
+                self.table.push([
+                    u32::try_from(if overflow { request.screen_count() } else { 0 })?,
+                    0,
+                    0,
+                    0,
+                ]);
+                append_spans(&mut self.table, &presentation.quads, request, overflow)?;
+                append_spans(&mut self.table, &presentation.strokes, request, overflow)?;
+                append_spans(&mut self.table, &presentation.glyphs, request, overflow)?;
+                if overflow {
+                    for span in request.screen() {
+                        self.table.push([
+                            span.range.start,
+                            span.range.end,
+                            if span.void {
+                                u32::MAX
+                            } else if span.selected {
+                                1
+                            } else {
+                                0
+                            },
+                            3,
+                        ]);
+                    }
+                }
                 // Temporary offsets occupy admitted binding slots until the GPU
                 // buffer is ready. No partial binding is published on refusal.
                 self.bindings.push(None);
@@ -235,17 +299,22 @@ impl Owner {
                 SceneSurface::Board => Some(board),
                 SceneSurface::Schematic => schematic,
             };
-            if let Some(retained) = retained.filter(|_| {
-                prepared
-                    .selection_masks
-                    .iter()
-                    .any(|(pane, surface, _)| *pane == pass.pane_id && *surface == pass.surface)
-            }) {
+            let request = prepared
+                .selection_masks
+                .iter()
+                .find(|(pane, surface, _)| *pane == pass.pane_id && *surface == pass.surface)
+                .map(|(_, _, request)| request)
+                .filter(|request| {
+                    request.authored() || request.detailed_overflow(selected_glyphs(pass.pane_id))
+                });
+            if let (Some(retained), Some(request)) = (retained, request) {
+                let overflow = request.detailed_overflow(selected_glyphs(pass.pane_id));
                 begin = begin.div_ceil(16) * 16;
                 let entries = HEADER_ROWS
                     + retained.presentation.quads.len()
                     + retained.presentation.strokes.len()
-                    + retained.presentation.glyphs.len();
+                    + retained.presentation.glyphs.len()
+                    + if overflow { request.screen_count() } else { 0 };
                 let resource = || {
                     wgpu::BindingResource::Buffer(wgpu::BufferBinding {
                         buffer,
@@ -291,7 +360,12 @@ impl Owner {
                     });
                     images.push(image);
                 }
-                self.bindings[index] = Some(Binding { table, images });
+                self.bindings[index] = Some(Binding {
+                    table,
+                    images,
+                    pane: pass.pane_id,
+                    overflow,
+                });
                 begin += entries;
             }
         }
@@ -308,12 +382,14 @@ fn append_spans(
     table: &mut StagingVec<[u32; 4]>,
     spans: &[crate::presentation_ranges::Span],
     request: &crate::native_selection_overlay::mask::Request,
+    union: bool,
 ) -> anyhow::Result<()> {
     for span in spans {
         let label = if span.role == Role::Void {
             u32::MAX
         } else {
-            request.label(span)
+            let label = request.label(span);
+            if union && label != 0 { 1 } else { label }
         };
         table.push([
             u32::try_from(span.range.start)?,

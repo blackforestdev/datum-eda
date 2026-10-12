@@ -16,6 +16,8 @@ pub(crate) enum TextLayer {
     #[default]
     Workspace,
     Foreground,
+    /// Actual selected fallback glyphs; pane-wide admission uses emitted instances.
+    Selection(datum_gui_protocol::PaneId),
 }
 
 #[derive(Debug, Clone, PartialEq)]

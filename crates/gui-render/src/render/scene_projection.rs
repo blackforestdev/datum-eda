@@ -10,7 +10,9 @@ pub(super) fn render_scene(
     viewport_overlay_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<native_selection_overlay::cue_plan::PanePlan> {
+    let mut plan =
+        native_selection_overlay::cue_plan::PanePlan::new(state, scene_viewport, camera)?;
     let scene_hit_start = hit_regions.len();
     push_scene_overlay_and_hits(
         viewport_overlay_quads,
@@ -20,6 +22,7 @@ pub(super) fn render_scene(
         state,
         text_runs,
         hit_regions,
+        &mut plan,
     );
     hit_clipping::clip_new_hit_regions(hit_regions, scene_hit_start, scene_viewport);
     // The pane header and Project panel already name the document.
@@ -33,4 +36,5 @@ pub(super) fn render_scene(
     // overlay that painted a PANEL_BG band across the bottom of the canvas.
     // These readouts belong in the global status bar (see M7), not floating on
     // the board field — the canvas stays a clean board surface.)
+    plan.freeze()
 }

@@ -181,6 +181,7 @@ impl PreparedScene {
             selection_visual_lod: None,
             selection_strokes: Vec::new(),
             selection_masks: Vec::new(),
+            pane_cues: Vec::new(),
             board_interaction_vertices: Vec::new(),
             console_overlay_vertices: Vec::new(),
             console_overlay_layout: None,

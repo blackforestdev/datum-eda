@@ -10,7 +10,7 @@ struct Out {
  @location(5) @interpolate(flat) material_role:u32,
 };
 fn group(index:u32, kind:u32)->vec2<u32> {
- let first=select(select(3u,ranges[0].z,kind==1u),ranges[2].w,kind==2u); let count=select(select(ranges[0].x,ranges[0].y,kind==1u),ranges[2].z,kind==2u);
+ let first=select(select(select(5u,ranges[0].z,kind==1u),ranges[2].w,kind==2u),ranges[3].w,kind==3u); let count=select(select(select(ranges[0].x,ranges[0].y,kind==1u),ranges[2].z,kind==2u),ranges[4].x,kind==3u);
  var lo=first; var hi=first+count;
  loop { if (lo>=hi) {break;} let mid=lo+(hi-lo)/2u;
   if (ranges[mid].y<=index) {lo=mid+1u;} else {hi=mid;}
@@ -26,6 +26,17 @@ fn project(p:vec2<f32>)->vec2<f32> {
 @vertex fn vs_quad(i:QuadIn)->Out {
  var o:Out; o.logical=project(i.point); o.position=position(o.logical); o.material=i.color;
  o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); let role=group(i.vertex,0u); o.label=role.x; o.material_role=role.y; return o;
+}
+struct ScreenQuadIn {
+ @builtin(vertex_index) vertex:u32, @builtin(instance_index) instance:u32,
+ @location(0) x:vec4<f32>, @location(1) y:vec4<f32>, @location(4) color:vec3<f32>
+};
+@vertex fn vs_screen_quad(i:ScreenQuadIn)->Out {
+ let a=vec2<f32>(i.x.x,i.y.x); let b=vec2<f32>(i.x.y,i.y.y);
+ let c=vec2<f32>(i.x.z,i.y.z); let d=vec2<f32>(i.x.w,i.y.w);
+ let points=array<vec2<f32>,6>(a,b,c,a,c,d);
+ var o:Out; o.logical=points[i.vertex]; o.position=position(o.logical); o.material=i.color;
+ o.local=vec2<f32>(0.0); o.capsule=vec2<f32>(0.0,-1.0); let role=group(i.instance*6u+i.vertex,3u); o.label=role.x; o.material_role=role.y; return o;
 }
 @vertex fn vs_glyph(i:QuadIn)->Out {
  var o:Out; o.logical=project(i.point); o.position=position(o.logical); o.material=i.color;

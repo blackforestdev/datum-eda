@@ -117,7 +117,9 @@ impl Renderer {
             label: Some("datum-gui-render-shader"),
             source: wgpu::ShaderSource::Wgsl(
                 renderer_state::damage::shader(
-                    r#"
+                    &format!(
+                        "{}{}",
+                        r#"
 struct ScreenUniform {
     resolution: vec2<f32>,
     _pad: vec2<f32>,
@@ -162,6 +164,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
     return vec4<f32>(srgb_to_linear(in.color), 1.0);
 }
 "#,
+                        gpu_vertex_upload::screen_quads::VERTEX_SHADER
+                    ),
                     1,
                 )
                 .into(),
@@ -221,35 +225,22 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             bind_group_layouts: &[&uniform_bind_group_layout, &damage_masks.layout],
             immediate_size: 0,
         });
-        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("datum-gui-render-pipeline"),
-            layout: Some(&pipeline_layout),
-            vertex: wgpu::VertexState {
-                module: &shader,
-                entry_point: Some("vs_main"),
-                buffers: &[Vertex::layout()],
-                compilation_options: Default::default(),
-            },
-            fragment: Some(wgpu::FragmentState {
-                module: &shader,
-                entry_point: Some("fs_main"),
-                targets: &[Some(wgpu::ColorTargetState {
-                    format,
-                    blend: Some(wgpu::BlendState::REPLACE),
-                    write_mask: wgpu::ColorWrites::ALL,
-                })],
-                compilation_options: Default::default(),
-            }),
-            primitive: wgpu::PrimitiveState::default(),
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState {
-                count: msaa_samples,
-                mask: !0,
-                alpha_to_coverage_enabled: false,
-            },
-            multiview_mask: None,
-            cache: None,
-        });
+        let pipeline = gpu_vertex_upload::screen_quads::pipeline(
+            device,
+            &pipeline_layout,
+            &shader,
+            format,
+            msaa_samples,
+            false,
+        );
+        let viewport_overlay_pipeline = gpu_vertex_upload::screen_quads::pipeline(
+            device,
+            &pipeline_layout,
+            &shader,
+            format,
+            msaa_samples,
+            true,
+        );
         let selection_stroke_clips = selection_stroke::gpu::Owner::new(
             device,
             screen_budget.clone(),
@@ -313,6 +304,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             pending_measurement: None,
             measurements: None,
             pipeline,
+            viewport_overlay_pipeline,
             selection_mask: selection_stroke::mask::Owner::new(
                 screen_budget.clone(),
                 staging_budget.clone(),

@@ -124,6 +124,8 @@ fn zone_qualifier_and_void_construction_never_invent_membership() {
             minimum: false,
             islands: vec![1],
         }],
+        screen: Vec::new(),
+        screen_permit: None,
         _permit: Some(budget.reserve(1).unwrap()),
     }));
     let label = |key: &str, role| {

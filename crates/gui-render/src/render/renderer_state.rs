@@ -62,6 +62,7 @@ pub struct Renderer {
         gpu_data::retained_buffer::RetainedBuffer<retained_glyph::Material>,
     pub(super) world_vertices_gpu: gpu_data::retained_buffer::RetainedBuffer<Vertex>,
     pub(super) pipeline: wgpu::RenderPipeline,
+    pub(super) viewport_overlay_pipeline: wgpu::RenderPipeline,
     pub(super) selection_mask: selection_stroke::mask::Owner,
     pub(super) selection_stroke_pipelines: selection_stroke::Pipelines,
     pub(super) selection_stroke_gpu: gpu_data::screen_buffer::ScreenBuffer,

@@ -8,6 +8,7 @@ pub(super) fn push_scene_overlay_and_hits(
     state: &ReviewWorkspaceState,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
+    plan: &mut native_selection_overlay::cue_plan::PanePlan,
 ) {
     let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let projection = Projection::new(board_field, &scene.bounds, camera);
@@ -234,13 +235,11 @@ pub(super) fn push_scene_overlay_and_hits(
             }
             let selected = proposal_selected(state, &overlay.proposal_action_id);
             let color = match overlay.render_role.as_str() {
-                "proposed_focus" if selected => PROPOSAL_FOCUS,
-                "proposed_overlay" if selected => PROPOSAL_FOCUS,
                 "proposed_overlay" => PROPOSAL_BASE,
                 "authored_related" => AUTHOR_RELATED,
                 _ => PROPOSAL_BASE,
             };
-            let rects = push_overlay(out, overlay, &projection, color, selected, false);
+            let rects = push_overlay_channels(out, plan, overlay, &projection, color, selected);
             for rect in rects {
                 hit_regions.push(HitRegion {
                     target: HitTarget::ProposalAction(overlay.proposal_action_id.clone()),
@@ -257,7 +256,8 @@ pub(super) fn push_scene_overlay_and_hits(
                 continue;
             }
             let selected = proposal_selected(state, &overlay.proposal_action_id);
-            let rects = push_overlay(out, &overlay, &projection, PROPOSAL_BASE, selected, false);
+            let rects =
+                push_overlay_channels(out, plan, &overlay, &projection, PROPOSAL_BASE, selected);
             for rect in rects {
                 hit_regions.push(HitRegion {
                     target: HitTarget::ProposalAction(overlay.proposal_action_id.clone()),
@@ -278,44 +278,7 @@ pub(super) fn push_scene_overlay_and_hits(
                 }
                 _ => true,
             };
-        push_dashed_polyline_segments(
-            out,
-            &review.path,
-            &projection,
-            DIAGNOSTIC_UNDERLAY,
-            if active { 2.1 } else { 1.6 },
-            10.0,
-            6.0,
-        );
-        push_dashed_polyline_segments(
-            out,
-            &review.path,
-            &projection,
-            if active {
-                DIAGNOSTIC_FOCUS
-            } else {
-                DIAGNOSTIC_BASE
-            },
-            if active { 1.2 } else { 0.9 },
-            10.0,
-            6.0,
-        );
-        // Diagnostic emphasis marks where the evidence span starts and ends.
-        // Interior vertices stay unmarked: per-vertex dots read as generic
-        // path-editing handles, which M7-REN-003 forbids over proposed copper.
-        if let (Some(first), Some(last)) = (review.path.first(), review.path.last()) {
-            push_points(
-                out,
-                &[*first, *last],
-                &projection,
-                if active {
-                    DIAGNOSTIC_FOCUS
-                } else {
-                    DIAGNOSTIC_BASE
-                },
-                if active { 4.0 } else { 3.0 },
-            );
-        }
+        push_review_channels(out, plan, review, &projection, active);
     }
 }
 

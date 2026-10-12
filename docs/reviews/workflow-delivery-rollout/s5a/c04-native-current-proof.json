@@ -6147,6 +6147,748 @@
       "executed_assembler_sha256": "aeeaaca3fabf78bf7b1f3a3c3e8846938adc40308157a676dc8d3760437c541a",
       "future_assembler_delta": "Only exclude utility redirect from future raw selection; executed assembler reconstructed snapshot retained separately. No actual native/test/build logs or outcomes edited."
     },
-    "management_acceptance": "Root PM059 accepts bounded current-source index/upload/GPU40 ownership repair plus ordinary80 functional dense/pending/cancel/visiblefull100k and newPID82 retained-selection blockedRetry/samePIDdrain+GUI0. Preserve raw80/81 aggregateFAIL and all recorded limits; C04 and inheritedparity failure remain open."
+    "management_acceptance": "Root PM059 accepts bounded current-source index/upload/GPU40 ownership repair plus ordinary80 functional dense/pending/cancel/visiblefull100k and newPID82 retained-selection blockedRetry/samePIDdrain+GUI0. Preserve raw80/81 aggregateFAIL and all recorded limits; C04 and inheritedparity failure remain open.",
+    "landing_binding": {
+      "commit": "67065225747b87a4735c1d952a3d328cf97bbbe6",
+      "classification": "Actual prior32-path normal main landing, clean tree and28 Git source blobs equal reviewed frozen cohort independently verified before this distinct shared-cue continuation."
+    }
+  },
+  "shared_cue_budget_correction_20261011": {
+    "classification": "Bounded existing-contract C04 implementation and ordinary native qualification; fullC04 and remaining matrices remain open.",
+    "before_unit_source_commit": "67065225747b87a4735c1d952a3d328cf97bbbe6",
+    "governing_route": "Retained GUI-selection sources/consumers and prototype ownership route previously fully reviewed; UVT810\u2013820, RenderingBook2.8 and selection visual guidance unchanged. No prototype edits/new product rule/dependency/cap.",
+    "change": [
+      "One pane-wide actual visible direct-detail admission joins authored/native, typed Proposal/Review/Diagnostic and actual clipped selected fallback glyph output. Minimum owner cues and region feedback remain outside detailed count; existing retained-world mask carrier ranges are not per-source direct cue emissions.",
+      "Overflow atomically retains exact selected silhouette union and baseline Proposal ghost/Review evidence/Diagnostic severity/hit ownership; preserves original selected hit footprints/palette and below-cap emitter geometry/order. Current typed subject/producer/basis and fresh PreparedScene generation qualify source and projection; artifact-only requests use empty authored keys honestly.",
+      "Selected detail is compacted before upload on overflow, remapping exact screen spans/split offsets/consumers without shared Arc mutation or partial publication. Glyph replay uses current text authority, existing band viewport/scissor and zero-contribution no-op; no stale no-text replay.",
+      "Lossless GPU-only viewport quad44 uses X16N/Y16N/RGB12N planes in ONE existing ScreenBuffer, with current-count slices and original virtual six-vertex topology. CPU Vertex20 authority/color/order/hits are unchanged. Exact dirty words/sparse64/complete-batch admission/pending/refusal/retry/submission/retirement and all budgets remain unchanged."
+    ],
+    "current_source_checkpoint": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-source-checkpoint-14.json",
+      "sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
+      "source_hashes": {
+        "crates/gui-render/src/render/draw_primitives.rs": "25a9c58e8c8540aa956a58c2a8f465620b742cc63ddc30c1c549e9ecece4fa0b",
+        "crates/gui-render/src/render/frame_preparation.rs": "097b195aef736cc5cc880a02665d4bd28f9e7afe220d7747ead9dd8816db5cfe",
+        "crates/gui-render/src/render/gpu_frame.rs": "685fd3b1544c5bfdac2c723f7c3795c7e952d095807f63e3e37d08a0bbe37a03",
+        "crates/gui-render/src/render/gpu_frame_painter.rs": "0223f3c8362d5d0405eedbffa62b089f0a5c5a489fbefcac10352b6b0e3b9716",
+        "crates/gui-render/src/render/gpu_init.rs": "7a769eb48502bd1460e40be22f83b3f6f7a99f080f475331f52ae9521c025b1a",
+        "crates/gui-render/src/render/gpu_vertex_upload.rs": "d1d182a31f86174266f0a73cc567cb57c3e751554034b98add36236ae46728a1",
+        "crates/gui-render/src/render/native_selection_overlay.rs": "711fb36753192a4d094d93ff97af84ca027d40b57699d3a4d4a6846e61c66f67",
+        "crates/gui-render/src/render/native_selection_overlay/cue_plan.rs": "ac592c203b976bdc8876f63a23ae7f90795d54e75fb87248a74ee9d544903f9f",
+        "crates/gui-render/src/render/native_selection_overlay/cue_plan/tests.rs": "57d3720e5227a2091fb639c70c1095c3c3eafc3a46ed641bdb51445e7af611e4",
+        "crates/gui-render/src/render/native_selection_overlay/diagnostics.rs": "b8527f46baf1fd4ebd47d8917c8bd5935606cedfa576ed4a9fde434e8b0c26aa",
+        "crates/gui-render/src/render/native_selection_overlay/diagnostics/tests.rs": "9525705c43cf6939d09649208f9d04e7531032baffbed05b2ee37edecacebc10",
+        "crates/gui-render/src/render/native_selection_overlay/mask.rs": "b3a5a812ae638f2491795f2b7197e1faea0c18f1d88042e3c18f2e68b28f155c",
+        "crates/gui-render/src/render/native_selection_overlay/mask_tests.rs": "710623555f32e7b52a07af5b44c25600d8b6eea4dd69c153ea488478a0622f29",
+        "crates/gui-render/src/render/native_selection_overlay/visual_lod.rs": "e4f3f2a3dc7ad5e35d2993e890a8ab673f336bd20e138abc7fd728f13bfb0833",
+        "crates/gui-render/src/render/overlay/composition.rs": "02913474046d111cbbab00f5fa809195cdcd0f66c6d1c17ecb2ab687fad44848",
+        "crates/gui-render/src/render/overlay_channels.rs": "ac89fda88a658923ea8929d1eb2eaf6d8976b0f4b838c7889ab8f9bf82615725",
+        "crates/gui-render/src/render/preferences_scene.rs": "aaae16c27c5286488f7b08669cdf8a82a961cfbd58509ca2d6dd304ba6cb5971",
+        "crates/gui-render/src/render/prepared_scene_access.rs": "2909be023e9a1b5d3f95080254f3e2ac11ca9677a4166bdcca58fcea9a64f4cf",
+        "crates/gui-render/src/render/renderer_state.rs": "29864ba0c9c60f2d54747d86a3383d4f4fc2ce4fd9d0f75bb332cad4e6b4655d",
+        "crates/gui-render/src/render/scene_projection.rs": "a7d1b082374fa8dac60eba8d2e5d162411100ad28d1e1ed1a841c15f9b405609",
+        "crates/gui-render/src/render/screen_quad_gpu.rs": "b5269c392b4887e7f3d37198e949ea9bd69bcbed0090d638227a6b368bd9a3f9",
+        "crates/gui-render/src/render/screen_quad_gpu/tests.rs": "780b98deadc635371f188a27fb7e4da15ce518c22ed62dd8c232155ef8f44a5a",
+        "crates/gui-render/src/render/selection_mask.rs": "8b6f07edc19c5682142f7bd3a197d4e19b92d754c1390160d95f7489c0b0eeda",
+        "crates/gui-render/src/render/selection_mask.wgsl": "ce9b8dabd3a7be082cacce8800f1af2e6fbac2aa44897c77034e980cb68128c1",
+        "crates/gui-render/src/render/selection_mask_cue.wgsl": "f0e5e4fc6dbd549edd5f3b6ff342698810cdf0ff0de9e21fd1016dff2154ca79",
+        "crates/gui-render/src/render/selection_mask_gpu_tests.rs": "3dc85fbc09f6a1f45b28d4d9279b371ad5d73fe06d261ac37c53fc23b3168f12",
+        "crates/gui-render/src/render/selection_mask_painter.rs": "efc7b348e682428a57f6f9cf782ceaa53f96b800c45f6cd19677ac7ea8189609",
+        "crates/gui-render/src/render/selection_mask_pipelines.rs": "8d74913ad3c3b382bec61ca92627c01e31a5dd0892ef23067eb3e8ee33a15cf0",
+        "crates/gui-render/src/render/text_run.rs": "73f6e0a4525dbdcff886482b2c13ed2919bc9d68184a5f111d69b5a7faf8f4f7",
+        "crates/gui-render/src/text_gpu/draw.rs": "90806909e7df78629ded51134cbca8afd4fc9af5f5c0c86b56fbd51de8617ff6",
+        "crates/gui-render/src/text_gpu/draw/selection_mask.rs": "fc343ab3e8ef483813670b478ffd332f19d536eb67a6aa5c602a0fa09043b428",
+        "crates/gui-render/src/render/selection_mask_gpu_tests/artifact.rs": "f0b2ac46036fd9363bb83ab2c83e7c1b3ebcf03fd8f9e511fffb8fb613b826fe"
+      }
+    },
+    "executed_receipts": {
+      "shared-cue-axis-gui-build-terminal.json": {
+        "sha256": "3901254534c324f94545b2bc047ed34c445b18d7a77fbd32fcab216f6c70676d",
+        "record": {
+          "timestamp": "2026-10-12T03:17:20.898563+00:00",
+          "session_id": 96478,
+          "terminal_chunk": "2e8e3b",
+          "exit_code": 0,
+          "gui_sha256": "a7f01f97501b7522018f77255736df60f852947e68e9aeb44968d9c2af5ce419",
+          "log_sha256": "cc8402b5a7a51387e0361a921cdf611b528e40e76e1c3c66ea753e23aa2c78ef",
+          "source_checkpoint": "shared-cue-source-checkpoint-14.json",
+          "source_checkpoint_sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
+          "classification": "Affected serial guarded GUI build after lossless viewport44 axis planes; terminal0. Known test-only PanePlan::overflow dead-code warning retained; no warning-only source churn or rebuild."
+        }
+      },
+      "shared-cue-axis-soa-cpu-1-terminal.json": {
+        "sha256": "5b2fa9ac71ca5745c9e642b410714af9836c51bb3c56346aaa016eb6adf743cb",
+        "record": {
+          "timestamp": "2026-10-12T03:04:59.264738+00:00",
+          "session_id": 88907,
+          "terminal_chunk": "18429e",
+          "exit_code": 0,
+          "tests_passed": 2,
+          "tests_failed": 0,
+          "log_sha256": "ffbc3d439ef121f229e86cdbb84a370e979e9e62044f5adf63da5a63fb9dc744",
+          "source_checkpoint": "shared-cue-source-checkpoint-14.json",
+          "source_checkpoint_sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
+          "classification": "Actual two CPU exact topology/axis-plane dirty-word controls PASS; no GPU/native credit."
+        }
+      },
+      "shared-cue-axis-soa-genuine-gpu-1-terminal.json": {
+        "sha256": "b591d7192492ff0108f6db38f8b0f3ca7e330597dab97fd94c21ae0182a93a8f",
+        "record": {
+          "timestamp": "2026-10-12T03:11:45.550882+00:00",
+          "session_id": 33555,
+          "terminal_chunk": "bdef89",
+          "exit_code": 0,
+          "tests_passed": 2,
+          "tests_failed": 0,
+          "log_sha256": "877d6a4a6211689aaf6ff899e19f3e5476a0eee4fc75b4fdb0ca4538d692c366",
+          "source_checkpoint": "shared-cue-source-checkpoint-14.json",
+          "source_checkpoint_sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
+          "classification": "Actual genuine empty-authored-key typed Proposal88000 detail cold/warm/later-band glyph/no-text controls PASS. Native-fidelity8x split\u2192zoom and immediate horizontalpan both renderOk under unchanged16MiB, stagingpeak12117888 and all actual owner reservations retire0. Headless surfaceNone remains qualified, ordinary native delivery separate."
+        }
+      },
+      "shared-cue-axis-soa-quad-gpu-1-terminal.json": {
+        "sha256": "bad9d1a2c7504fcdb6bda7ff681ee7bd3697f78203d910de5c2398b71b01d60d",
+        "record": {
+          "timestamp": "2026-10-12T03:10:18.341376+00:00",
+          "session_id": 12752,
+          "terminal_chunk": "dffe3b",
+          "exit_code": 0,
+          "tests_passed": 1,
+          "tests_failed": 0,
+          "log_sha256": "8d44fd7b59fa81ef3b89d9d773142098067e71f7fc394bd5aadf2da11b2f3f3e",
+          "source_checkpoint": "shared-cue-source-checkpoint-14.json",
+          "source_checkpoint_sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
+          "classification": "Actual old20/new44 full-image parity, warm1\u21923\u21922 current-count binding, postencode GPU-refusal/pending/retry/finish/reuse/retirement PASS. Complete genuine transition/native remains separate."
+        }
+      },
+      "shared-cue-focused-1-terminal.json": {
+        "sha256": "09bc900ce7b2f3bfa7ba06136d6445681a1eaf87336bbb4f57961e45ffd8b64c",
+        "record": {
+          "authoritative_handle": 1292,
+          "exit_code": 101,
+          "chunk_id": "9e4a36",
+          "log": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-focused-1.log",
+          "log_sha256": "e00e26dad2d9ed9b21849b0dbdd5ad51671caed0b51428b088839d2d45ce2cfc",
+          "source_checkpoint": "shared-cue-source-checkpoint-1.json",
+          "classification": "Compile failed before assertions; no tests PASS"
+        }
+      },
+      "shared-cue-focused-2-terminal.json": {
+        "sha256": "c9c52fd6a03bdf0c3fc6334f2045a7367a558edd49dee7847f82a0584597b9ea",
+        "record": {
+          "session_id": 43291,
+          "chunk_id": "16fcb8",
+          "exit_code": 101,
+          "log_sha256": "0d697d4d8fe6dd18b380299555be1fece027973435281419a55528388c7eec47",
+          "classification": "Compile-only failure; no tests executed. Eight private ScreenOutput visibility errors."
+        }
+      },
+      "shared-cue-focused-3-terminal.json": {
+        "sha256": "83356b261498bd982f2e44e3a0cc5e63d4826fe56d8509377c9d5ccb3128c75c",
+        "record": {
+          "session_id": 92828,
+          "chunk_id": "1b13d4",
+          "exit_code": 101,
+          "log_sha256": "a9153f004cf83f11d3d2aea59e216be0735fbda2da50f4033fc369590831f292",
+          "passed": 2,
+          "failed": 1,
+          "classification": "Compile succeeds; camera negative test uses unrepresentable f32 1nm delta at 100m."
+        }
+      },
+      "shared-cue-focused-4-terminal.json": {
+        "sha256": "e05f1b3a3a9d1541a148b07f6a2ddb1bdcedfb0a8a634286b8bcb60d6a5f0e11",
+        "record": {
+          "session_id": 6789,
+          "chunk_id": "8503f2",
+          "exit_code": 0,
+          "passed": 4,
+          "failed": 0,
+          "log_sha256": "4b1cba06e07cd3de51c75465f13be03795ec630b88e70cb006ef3341ff66d039"
+        }
+      },
+      "shared-cue-genuine-gpu-1-terminal.json": {
+        "sha256": "73da33af29dbdbae1e3619d200436be1cc08d9a680e7b7ace10327185f034e9f",
+        "record": {
+          "session_id": 4704,
+          "chunk_id": "6b85c9",
+          "exit_code": 101,
+          "log_sha256": "f9973e890ce9139c968e3afcc4a46acea2f8a688933545a91de0953a43b3d173"
+        }
+      },
+      "shared-cue-genuine-gpu-2-terminal.json": {
+        "sha256": "3e08c2eb41de6760f6ab849f086050b266072ed86a7fbde929842f8e0d545aa5",
+        "record": {
+          "session_id": 88933,
+          "chunk_id": "a6e985",
+          "exit_code": 101,
+          "log_sha256": "57f80bd1b2b72f60c729efefdde0982492f874f82d3b7ad58b056a2c3783570e"
+        }
+      },
+      "shared-cue-genuine-gpu-3-terminal.json": {
+        "sha256": "565dd54a306c7cc9a221bc6444d91132d598390735f6ca7afe12ad6b5e935226",
+        "record": {
+          "session_id": 88643,
+          "chunk_id": "7cccc7",
+          "exit_code": 101,
+          "log_sha256": "ece6fe74fe5272b3e8493c47d43baa602bfd4edb551ed0846b8f89ab6c069bed"
+        }
+      },
+      "shared-cue-genuine-gpu-4-terminal.json": {
+        "sha256": "311f87e1bc4b220f19d010f008a522bcec21dc30cc840ab0da5951d14172ee4c",
+        "record": {
+          "session_id": 47892,
+          "chunk_id": "a49ade",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "log_sha256": "de8b1b7a589c324012d8ec613d5faaa51eae02e3b799ad74b1f6f5024e87c1fb"
+        }
+      },
+      "shared-cue-gpu-1-terminal.json": {
+        "sha256": "d0a00f2f242bc77d5ed9ff14e38c80155f753be4c58c5b4b62b8a8342fca1d35",
+        "record": {
+          "session_id": 87257,
+          "chunk_id": "5a00f9",
+          "exit_code": 0,
+          "log_sha256": "1bf2db8b479fac5bc986d25c4e7f97e1537a704bc546a2c340c58fc392da3645"
+        }
+      },
+      "shared-cue-gui-build-terminal.json": {
+        "sha256": "ba3a293d5b0968ad399ab2c14213ce373c1a5de59f985cd4dd8abfb38fbbec85",
+        "record": {
+          "timestamp": "2026-10-12T02:28:33.585868+00:00",
+          "session_id": 6638,
+          "chunk_id": "22ee3d",
+          "exit_code": 0,
+          "gui_sha256": "b4f97316bb58da95c013ec05982a83ce88a95f59c1759da047ccf8f83879b813",
+          "log_sha256": "cbb328ec5c0a0fe96b889e2aeb79b741f57e92511d442873074b2d39019d29fe",
+          "source_checkpoint": "shared-cue-source-checkpoint-9.json",
+          "source_checkpoint_sha256": "19ae80eb620b76afff177bce66d32edbfb5a65057d7f3db7a8f4e262dfc29ab1",
+          "classification": "Sole affected serial guarded GUI build; terminal0. Dead-code test-helper overflow warning retained, no warning-only rebuild."
+        }
+      },
+      "shared-cue-native-83-terminal.json": {
+        "sha256": "eda5acffc364de2d0c847d85a51a14101dc194980adcec32eddd30d2e07490b4",
+        "record": {
+          "session_id": 9938,
+          "chunk_id": "12155a",
+          "tool_exit_code": 0,
+          "raw_outcome": "FAIL",
+          "classification": "Producer startup missing diagnostic log race, zero state/input receipts, forced cleanup recorded; no GUI0/drain/native behavior credit. All39 canonical paths unchanged."
+        }
+      },
+      "shared-cue-native-84-terminal.json": {
+        "sha256": "cf0a3ed36ff7ee4c2c01b9336dbabc1487f49d3d2ec3071677b4a58a0324a01e",
+        "record": {
+          "session_id": 52853,
+          "chunk_id": "e665af",
+          "tool_exit_code": 0,
+          "result_sha256": "3d0f5e27a8fcef0f71688709a9a6fd247da3e1183e557a59ddb1f036564fed30",
+          "raw_outcome": "FAIL",
+          "classification": "Actual startup split frame rendered; ordinary KeyZ zoomed Board transition then resource refusal9257528/16777216 before fit/acquisition receipt. RawFAIL remains; samePID872247 received drain epoch1/GUI0,39canonical maps invariant; no artifact native success."
+        }
+      },
+      "shared-cue-native-85-terminal.json": {
+        "sha256": "1820a0b7e1cea959a95feb34e015c70a8001f4c61b6b1f4993c633cb552c6e25",
+        "record": {
+          "session_id": 25437,
+          "terminal_chunk": "fee0a3",
+          "exit_code": 0,
+          "raw_outcome": "FAIL",
+          "result_sha256": "1e4c4b277dd660ca9d3a74230bd247b48f316f5eda117f44afc65c0249d6a6e8",
+          "classification": "Ordinary zoom/fit/typed Proposal acquisition reached; producer read a non-newline-terminated in-flight ActionEvidence JSON record. All final complete records parse valid. Aggregate85FAIL retained; samePID884949 drain+GUI0/final39 exact, no renderer error; no completed ExactMask/camera/proposed-only pixel credit."
+        }
+      },
+      "shared-cue-native-86-terminal.json": {
+        "sha256": "4cd93ead908fd1d3959e31d67b0af4ef7edf60a7639a1b87c8f5a15cf40404c9",
+        "record": {
+          "timestamp": "2026-10-12T03:25:27.369094+00:00",
+          "session_id": 66703,
+          "terminal_chunk": "dd13ee",
+          "exit_code": 0,
+          "raw_outcome": "CAPTURE_ONLY_SHARED_CUE_REVIEW_PENDING",
+          "result_sha256": "368effdb4fff8598bbfe8cf47729d944ffe286eacaa677e98c3fafc504a93e3b",
+          "producer_sha256": "a7d7e96e8ca43d90f31178e390e81835c16b255828bd5af03daf17712fa0fa92",
+          "classification": "Sole ordinary newGUI/current32 actual engine Draft Proposal acquisition/currentFrame ExactMask/proposed-only/camera redraw captured. Raw remains CaptureOnly pending independent actual pixels/runtime correspondence; samePID885780 drained_device_live/GUI0/full39 equality, no forced cleanup. Not native emitted88k enumeration or full cap/HUMAN/latency qualification."
+        }
+      },
+      "shared-cue-quad-focused-1-terminal.json": {
+        "sha256": "a2f24832b28c74024c093b1fae1baf6afe561426a91e097db1e61e5c13c97cd3",
+        "record": {
+          "session_id": 55817,
+          "chunk_id": "a491c8",
+          "exit_code": 0,
+          "log_sha256": "ebc9b3b433c1a766289dac27779a887a4f9ea3bb02cefb3504e0c2b76fabd8f7",
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "shared-cue-quad-gpu-1-terminal.json": {
+        "sha256": "a309fc0dcaf4345ee32cf85dcbb3c652a4bf34b16f021cbf7aecf2afee77aef2",
+        "record": {
+          "session_id": 61636,
+          "chunk_id": "d04f96",
+          "exit_code": 0,
+          "log_sha256": "2d7ef88adab1b7d0d35c7316d5c7ce6b710a34b2a2201fef9e248375657978ac",
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "shared-cue-quad-gpu-2-terminal.json": {
+        "sha256": "60e84a219f682a3e985d73e76c06420300b400d3abd62f14439abbe7cb26829d",
+        "record": {
+          "session_id": 40419,
+          "chunk_id": "f51869",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "log_sha256": "197dc15926863258e8f09a05f8d894c42221f66b435a46e9de907ecbf1565574"
+        }
+      },
+      "shared-cue-soa-cpu-1-terminal.json": {
+        "sha256": "2377b7f493f93c71c7e4ef8fbb3ecf4bba456018816bf5a88b396518093005ce",
+        "record": {
+          "session_id": 15531,
+          "terminal_chunk": "f24b04",
+          "exit_code": 0,
+          "classification": "Zero tests selected; no assertion credit.",
+          "log": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-soa-cpu-1.log",
+          "log_sha256": "f46eeb9d995fb1d54a48faf7c20a86fd8cbaa7d1936feb8dbf9a673a8ca2d48e",
+          "source_checkpoint": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-source-checkpoint-13.json"
+        }
+      },
+      "shared-cue-soa-cpu-2-terminal.json": {
+        "sha256": "e80eaea37f0d0d9bef18cad1062c8adf908f6be458356a83c79ef80bdfe89357",
+        "record": {
+          "session_id": null,
+          "terminal_chunk": "fe9084",
+          "exit_code": 0,
+          "classification": "Two CPU controls PASS.",
+          "log": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-soa-cpu-2.log",
+          "log_sha256": "7de909dfd151d09f294c231842165aa6697523097689e81be1b1ddb962723f73",
+          "source_checkpoint": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-source-checkpoint-13.json"
+        }
+      },
+      "shared-cue-soa-genuine-gpu-1-terminal.json": {
+        "sha256": "92154b69adba987bacc8f98ac687844e916a69864d961939830cf685d68495f5",
+        "record": {
+          "session_id": 59517,
+          "terminal_chunk": "8c0445",
+          "exit_code": 101,
+          "classification": "One genuine typed/glyph control PASS; transition split-to-zoom renders Ok, subsequent horizontal pan upload refuses. Overall one PASS one FAIL, no native delivery.",
+          "log": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-soa-genuine-gpu-1.log",
+          "log_sha256": "e6e4fa206e647b66d4dec25b64a2c88fd4cc803a5aad1835a72c04a5d359946d",
+          "source_checkpoint": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-source-checkpoint-13.json"
+        }
+      },
+      "shared-cue-soa-quad-gpu-1-terminal.json": {
+        "sha256": "ed1d4d74ca5aa806ac41fc28ef2f72173a198be83e7f914365efa95941043910",
+        "record": {
+          "session_id": 45082,
+          "terminal_chunk": "37f9b2",
+          "exit_code": 0,
+          "classification": "One GPU old20 parity/count/refusal/retry/retirement control PASS.",
+          "log": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-soa-quad-gpu-1.log",
+          "log_sha256": "8f304ab5d5c9ec86a54d2475d50117b065c1d5ee7acbb5c7a86782876e77b779",
+          "source_checkpoint": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-source-checkpoint-13.json"
+        }
+      },
+      "shared-cue-transition-diagnostic-1-terminal.json": {
+        "sha256": "70db5856e8162794e1e070022c103318bdddb0b3dbabb557e775f54cf62aa239",
+        "record": {
+          "session_id": 69290,
+          "chunk_id": "09fcb6",
+          "exit_code": 101,
+          "classification": "Compile-only failure E0599 diagnostic observer; no assertions or localization executed."
+        }
+      },
+      "shared-cue-transition-diagnostic-2-terminal.json": {
+        "sha256": "6735924f3513890b6eed167d07b298b1a00cab66a431c6129f751e466db8f963",
+        "record": {
+          "session_id": 6638,
+          "launch_chunk_id": "79bebc",
+          "terminal_chunk_id": "41397f",
+          "exit_code": 0,
+          "log_sha256": "b55d35e66e0d2398adacaea870698168591454587fc190ee16e8736b2b811b08",
+          "source_checkpoint_sha256": "5b6e719182fd86481df71bb212145677f7d51e44a9194bc5f59c3e72ad0699ca",
+          "classification": "Diagnostic execution1PASS/0FAIL only; actual warm split-to-zoom complete batch refusal9264488 at upload.rs218 and 72000viewportfragments/2304000payload/retirement0 retained, not admission/native success."
+        }
+      }
+    },
+    "ordinary_native86": {
+      "result_path": "target/s5a-c04-inventory-keyboard-20261011/attempt-86-shared-cue-proposal-result.json",
+      "result_sha256": "368effdb4fff8598bbfe8cf47729d944ffe286eacaa677e98c3fafc504a93e3b",
+      "producer_path": "target/s5a-c04-inventory-keyboard-20261011/attempt-86-shared-cue-proposal-producer.py",
+      "producer_sha256": "a7d7e96e8ca43d90f31178e390e81835c16b255828bd5af03daf17712fa0fa92",
+      "raw_outcome": "CAPTURE_ONLY_SHARED_CUE_REVIEW_PENDING",
+      "gui_sha256": "a7f01f97501b7522018f77255736df60f852947e68e9aeb44968d9c2af5ce419",
+      "pid": 885780,
+      "identity": {
+        "project_id": "20000000-0000-4000-8000-000000000001",
+        "proposal_id": "83000000-0000-4000-8000-000000000001",
+        "batch_id": "82000000-0000-4000-8000-000000000001",
+        "prepared_against": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f"
+      },
+      "ordinary_actions": [
+        "ordinary-zoom-board",
+        "ordinary-fit-board",
+        "ordinary-actual-draft-Proposal",
+        "ordinary-proposed-only-channel",
+        "ordinary-camera-redraw"
+      ],
+      "current_main_frame_barriers": [
+        {
+          "label": "startup-split-current-frame",
+          "cursor_line": "[SystemTime { tv_sec: 1791775490, tv_nsec: 269100259 }] window event WindowId(27262980) cursor moved 501.00,300.00",
+          "cursor_index": 82,
+          "presentation": {
+            "attempts": 4,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 2,
+              "received": 4,
+              "requested": 4,
+              "suppressed": 2
+            },
+            "damage": 4,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 4,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 1
+        },
+        {
+          "label": "unselected-current-frame",
+          "cursor_line": "[SystemTime { tv_sec: 1791775491, tv_nsec: 201899843 }] window event WindowId(27262980) cursor moved 409.00,358.00",
+          "cursor_index": 164,
+          "presentation": {
+            "attempts": 9,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 5,
+              "received": 9,
+              "requested": 9,
+              "suppressed": 5
+            },
+            "damage": 7,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 7,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 4
+        },
+        {
+          "label": "selected-current-frame",
+          "cursor_line": "[SystemTime { tv_sec: 1791775496, tv_nsec: 681949334 }] window event WindowId(27262980) cursor moved 409.00,357.00",
+          "cursor_index": 238,
+          "presentation": {
+            "attempts": 13,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 8,
+              "received": 13,
+              "requested": 13,
+              "suppressed": 8
+            },
+            "damage": 10,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 10,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 5
+        },
+        {
+          "label": "proposed-only-current-frame",
+          "cursor_line": "[SystemTime { tv_sec: 1791775499, tv_nsec: 422222794 }] window event WindowId(27262980) cursor moved 410.00,357.00",
+          "cursor_index": 315,
+          "presentation": {
+            "attempts": 18,
+            "counts": {
+              "coalesced": 1,
+              "duplicate_tokens": 0,
+              "presentations": 11,
+              "received": 18,
+              "requested": 18,
+              "suppressed": 11
+            },
+            "damage": 13,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 13,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 7
+        },
+        {
+          "label": "camera-current-frame",
+          "cursor_line": "[SystemTime { tv_sec: 1791775502, tv_nsec: 226864217 }] window event WindowId(27262980) cursor moved 411.00,357.00",
+          "cursor_index": 390,
+          "presentation": {
+            "attempts": 23,
+            "counts": {
+              "coalesced": 2,
+              "duplicate_tokens": 0,
+              "presentations": 14,
+              "received": 23,
+              "requested": 23,
+              "suppressed": 14
+            },
+            "damage": 17,
+            "device_generation": 1,
+            "host_generation": 1,
+            "pending": false,
+            "presented_damage": 17,
+            "ready": false,
+            "reason": "presented",
+            "rendering": null,
+            "window": "WindowId(27262980)"
+          },
+          "sequence": 9
+        }
+      ],
+      "public_mask_observations": [
+        {
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "proposal",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+            "description": "Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "proposal",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+            "description": "Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        },
+        {
+          "attributes": {
+            "read-only": "true",
+            "subject-kind": "proposal",
+            "project-id": "20000000-0000-4000-8000-000000000001",
+            "active-pane": "0",
+            "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+            "description": "Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes."
+          },
+          "description": "(<'Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.'>,)"
+        }
+      ],
+      "canonical_map_count": 5,
+      "canonical_members": 39,
+      "canonical_equality": "All five prelaunch/startup/selected/postcamera/final39 maps and current39 actual bytes equal after-public-Draft baseline. Original35 and intentional public Draft journal/proposal changes are separately retained. No native canonical mutation/apply/private writer.",
+      "shutdown_receipt": {
+        "phase": "drained_device_live",
+        "pid": 885780,
+        "device_epoch": 1
+      },
+      "gui_exit_code": 0,
+      "input_diagnostic": "PID-bound coverage_complete/no first_error/no overflow predrain snapshot; actual socket drained_device_live and return0 are separate lifecycle receipt.",
+      "pixels": [
+        {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-86-shared-cue-proposal-camera-ExactMask.png",
+          "sha256": "df6ad571d8c08c12ade8301888406d944a7aead69a77b962299f3e9a39fdf78b"
+        },
+        {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-86-shared-cue-proposal-proposed-only-ExactMask.png",
+          "sha256": "df24cb6ac34b35c1563cf391c3026457abad0a0d014b6b6c5c7e7fba0b8b5f23"
+        },
+        {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-86-shared-cue-proposal-selected-ExactMask.png",
+          "sha256": "34f05cbc312201e291703386693945439c7261c9c3d36d1bdbfc17578c0f306f"
+        },
+        {
+          "path": "target/s5a-c04-inventory-keyboard-20261011/attempt-86-shared-cue-proposal-unselected-base.png",
+          "sha256": "0fd709b1f48748b4c22499990e2f040bacac13cb6bdc54b1f8564dfbed216683"
+        }
+      ],
+      "actual_pixel_review": "Independent auditor personally reviewed all four: baseline amber ghost, selected horizontal magenta silhouette edge with preserved base/copper; authoredOFF removes authored geometry while selected Draft survives; camera later frame updates edge with readable Proposal0/SELECTED/Exact mask0minimum1pane. Runtime/typed/current frame/PID/public channel/maps/drain correspondence bounded ACCEPT received; final all-entry package correspondence ACCEPT also received.",
+      "limits": "Native current ExactMask disclosure and actual typed source qualify ordinary path; actual88000 visible detail is measured in source-qualified isolated producer test, not independently enumerated from native pixel/label. No native all8000 operation row rendering claim."
+    },
+    "source_health": {
+      "include_root_expanded": 3177,
+      "previous_ceiling": 3455,
+      "downward_ratchet": 3177,
+      "debt_surface_entries": 66,
+      "debt_surface_sha256": "ffd453fc527a41aa76ac0097116afa3a9348d9c0c28099b29d97a3a3816ef1d4",
+      "provenance": "Appointed manager authorized genuine geometry owner extraction/downward ratchet; implementing session wrote required ledger/parity metadata. Normal source/test owners retain existing limits; helper cfg(test) classifier can undercount later production bodies, actual complete physical/body review remains disclosed."
+    },
+    "preserved_failures": [
+      "Focused1/2 compile failures, focused3 representability oracle failure; original logs/receipts preserved without assertion credit for compilation failures.",
+      "Original genuine GPU1 harness-root failure,2 base-sequence oracle correction,3 real fullframe resource refusal before initial GPU44 correction; original results retained.",
+      "Transition diagnostic1 compile-only unavailable observer failure;2 actual upload admission refusal with 72000 fragments/2304000 payload, headless requested9264488 vs native84 9257528 (6960 difference). Diagnostic testPASS localized refusal and was not rendering success.",
+      "SoA CPU1 filename filter selected0 tests (no assertion credit); CPU2/old20GPU positive cohort separate; initial SoA combined1PASS1FAIL splitzoomOk but immediatepan uploadRefusal4610884. Final axis-plane cohort proves actual splitzoom+immediatepanOk under unchanged16MiB with stagingpeak12117888 and all4 ownersretire0.",
+      "Native83 early missing-log startup harnessFAIL/forcedcleanup/no drain;84 actual ordinary zoom transition rendererFAIL but samePIDdrainGUI0/maps;85 live partial stdout JSON harnessFAIL with zoom/fit/typed acquisition/currentselectedframe subsets and samePIDdrainGUI0/maps. Fresh86 exact physical-newline parser preserves malformed-completeJSON/UTF8 fatal behavior and defers only unfinished tail. All raw outcomes untouched.",
+      "Package utility first attempt failed parsing two preserved empty failed CLI .json redirects; original assembler/output retained. Corrected assembler archives those exact empty bytes with explicit non-JSON/no-result/no-credit qualification, strict parsing for all other JSON; utility output/receipt excluded before read."
+    ],
+    "independent_reviews": {
+      "code_source_tests": "Actual checkpoint14 all32 pins and meaningful CPU/GPU assertion/consumer reviews CLEAR; actual axis CPU2/old20GPU1/genuineGPU2 pass and controlled wholefit/retirement independently reviewed.",
+      "runtime_pixels": "Actual86 finite typed Proposal sharedcue/resource recommendation ACCEPT received from independent auditor; final all-entry archive/source/runtime correspondence ACCEPT received at archive64646634/manifestc8c70896/proof0f8d5416.",
+      "governance": "Separate management reviewer actual claim/pins/normalmetrics/native86/immutable253-entry all252hash correspondence PASS received; proof0f8d5416 limits and all27 embedded receipts validated. Writer provenance remains implementing session under appointed manager authorization."
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/shared-cue-budget-20261011.tar.xz",
+      "archive_sha256": "6464663437f0d6ac3f4eb4a19f346e0db0777283a82b02ae1ee24958c898a7e5",
+      "manifest_sha256": "c8c70896e48aabe3a021fee0f77c439bae05d51460a7d306a1bafb383ac26084",
+      "regular_files": 253,
+      "hashed_files": 252,
+      "source_pins": {
+        "crates/gui-render/src/render/draw_primitives.rs": "25a9c58e8c8540aa956a58c2a8f465620b742cc63ddc30c1c549e9ecece4fa0b",
+        "crates/gui-render/src/render/frame_preparation.rs": "097b195aef736cc5cc880a02665d4bd28f9e7afe220d7747ead9dd8816db5cfe",
+        "crates/gui-render/src/render/gpu_frame.rs": "685fd3b1544c5bfdac2c723f7c3795c7e952d095807f63e3e37d08a0bbe37a03",
+        "crates/gui-render/src/render/gpu_frame_painter.rs": "0223f3c8362d5d0405eedbffa62b089f0a5c5a489fbefcac10352b6b0e3b9716",
+        "crates/gui-render/src/render/gpu_init.rs": "7a769eb48502bd1460e40be22f83b3f6f7a99f080f475331f52ae9521c025b1a",
+        "crates/gui-render/src/render/gpu_vertex_upload.rs": "d1d182a31f86174266f0a73cc567cb57c3e751554034b98add36236ae46728a1",
+        "crates/gui-render/src/render/native_selection_overlay.rs": "711fb36753192a4d094d93ff97af84ca027d40b57699d3a4d4a6846e61c66f67",
+        "crates/gui-render/src/render/native_selection_overlay/cue_plan.rs": "ac592c203b976bdc8876f63a23ae7f90795d54e75fb87248a74ee9d544903f9f",
+        "crates/gui-render/src/render/native_selection_overlay/cue_plan/tests.rs": "57d3720e5227a2091fb639c70c1095c3c3eafc3a46ed641bdb51445e7af611e4",
+        "crates/gui-render/src/render/native_selection_overlay/diagnostics.rs": "b8527f46baf1fd4ebd47d8917c8bd5935606cedfa576ed4a9fde434e8b0c26aa",
+        "crates/gui-render/src/render/native_selection_overlay/diagnostics/tests.rs": "9525705c43cf6939d09649208f9d04e7531032baffbed05b2ee37edecacebc10",
+        "crates/gui-render/src/render/native_selection_overlay/mask.rs": "b3a5a812ae638f2491795f2b7197e1faea0c18f1d88042e3c18f2e68b28f155c",
+        "crates/gui-render/src/render/native_selection_overlay/mask_tests.rs": "710623555f32e7b52a07af5b44c25600d8b6eea4dd69c153ea488478a0622f29",
+        "crates/gui-render/src/render/native_selection_overlay/visual_lod.rs": "e4f3f2a3dc7ad5e35d2993e890a8ab673f336bd20e138abc7fd728f13bfb0833",
+        "crates/gui-render/src/render/overlay/composition.rs": "02913474046d111cbbab00f5fa809195cdcd0f66c6d1c17ecb2ab687fad44848",
+        "crates/gui-render/src/render/overlay_channels.rs": "ac89fda88a658923ea8929d1eb2eaf6d8976b0f4b838c7889ab8f9bf82615725",
+        "crates/gui-render/src/render/preferences_scene.rs": "aaae16c27c5286488f7b08669cdf8a82a961cfbd58509ca2d6dd304ba6cb5971",
+        "crates/gui-render/src/render/prepared_scene_access.rs": "2909be023e9a1b5d3f95080254f3e2ac11ca9677a4166bdcca58fcea9a64f4cf",
+        "crates/gui-render/src/render/renderer_state.rs": "29864ba0c9c60f2d54747d86a3383d4f4fc2ce4fd9d0f75bb332cad4e6b4655d",
+        "crates/gui-render/src/render/scene_projection.rs": "a7d1b082374fa8dac60eba8d2e5d162411100ad28d1e1ed1a841c15f9b405609",
+        "crates/gui-render/src/render/screen_quad_gpu.rs": "b5269c392b4887e7f3d37198e949ea9bd69bcbed0090d638227a6b368bd9a3f9",
+        "crates/gui-render/src/render/screen_quad_gpu/tests.rs": "780b98deadc635371f188a27fb7e4da15ce518c22ed62dd8c232155ef8f44a5a",
+        "crates/gui-render/src/render/selection_mask.rs": "8b6f07edc19c5682142f7bd3a197d4e19b92d754c1390160d95f7489c0b0eeda",
+        "crates/gui-render/src/render/selection_mask.wgsl": "ce9b8dabd3a7be082cacce8800f1af2e6fbac2aa44897c77034e980cb68128c1",
+        "crates/gui-render/src/render/selection_mask_cue.wgsl": "f0e5e4fc6dbd549edd5f3b6ff342698810cdf0ff0de9e21fd1016dff2154ca79",
+        "crates/gui-render/src/render/selection_mask_gpu_tests.rs": "3dc85fbc09f6a1f45b28d4d9279b371ad5d73fe06d261ac37c53fc23b3168f12",
+        "crates/gui-render/src/render/selection_mask_painter.rs": "efc7b348e682428a57f6f9cf782ceaa53f96b800c45f6cd19677ac7ea8189609",
+        "crates/gui-render/src/render/selection_mask_pipelines.rs": "8d74913ad3c3b382bec61ca92627c01e31a5dd0892ef23067eb3e8ee33a15cf0",
+        "crates/gui-render/src/render/text_run.rs": "73f6e0a4525dbdcff886482b2c13ed2919bc9d68184a5f111d69b5a7faf8f4f7",
+        "crates/gui-render/src/text_gpu/draw.rs": "90806909e7df78629ded51134cbca8afd4fc9af5f5c0c86b56fbd51de8617ff6",
+        "crates/gui-render/src/text_gpu/draw/selection_mask.rs": "fc343ab3e8ef483813670b478ffd332f19d536eb67a6aa5c602a0fa09043b428",
+        "crates/gui-render/src/render/selection_mask_gpu_tests/artifact.rs": "f0b2ac46036fd9363bb83ab2c83e7c1b3ebcf03fd8f9e511fffb8fb613b826fe"
+      },
+      "canonical_maps": 16,
+      "canonical_final": 39,
+      "classification": "Immutable253 safe unique regular entries/all252 hashes,32 current source pins/25 actual before-unit Git blobs/16 complete35-or39 canonical maps/39 final members. Two exact empty failed CLI redirects qualified non-JSON/no-result, no self-output capture or measurement exception. Root and both independent reviewers actually verified all entries; final auditor correspondence ACCEPT received."
+    },
+    "remaining_limits": [
+      "FullC04/collision/equalpaths/HUMAN/UX/exhaustive clipping and whole N16 qualification remain open.",
+      "No latency/usability acceptance, dependency grant, cap increase, copy widening, pane/target reduction or source result truncation.",
+      "Inherited dat-supervision-owner-parity-202s failure remains disclosed and unwaived; this unit only ratchets source-health debt parity."
+    ],
+    "manager_acceptance": {
+      "authority": "Appointed root manager under PM059; retained UVT-S5A-BUILD/C04 grant",
+      "disposition": "Finite ACCEPT",
+      "basis": "Actual checkpoint14/32sourcepins, axisCPU2+old20GPU1+genuineGPU2 controlled splitzoom and immediatepan Ok/retire0, GUIa7f01f97, ordinary86 typed Proposal/proposed-only/camera pixels/current barriers/exact39 maps/samePID885780 drained_device_live and GUI0; immutable64646634/manifestc8c70896 fully verified by root and both independent reviewers.",
+      "limits": "Raw83\u201385 failures and earlier failed cohorts retained. No fullC04/HUMAN/collision/latency qualification or successor authority."
+    },
+    "final_affected_gates": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-final-gates.json",
+      "results": {
+        "timestamp": "2026-10-12T03:32:42.588425+00:00",
+        "scope": "Current32 source/new86 immutable253 packet and bounded proof delivery metadata; inherited parity failure unwaived.",
+        "gates": [
+          {
+            "argv": [
+              "python3",
+              "scripts/check_source_module_size.py"
+            ],
+            "exit_code": 0,
+            "stdout": "Source health governance passed (3125 source files checked).\n",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "python3",
+              "scripts/check_dependency_authority.py"
+            ],
+            "exit_code": 0,
+            "stdout": "dependency authority: PASS\n",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "python3",
+              "scripts/check_cargo_resource_policy.py"
+            ],
+            "exit_code": 0,
+            "stdout": "Cargo resource policy: PASS\n",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "python3",
+              "scripts/project_status.py",
+              "check"
+            ],
+            "exit_code": 0,
+            "stdout": "Project status check passed (82 frontier items).\n",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "python3",
+              "scripts/project_status.py",
+              "check-render"
+            ],
+            "exit_code": 0,
+            "stdout": "Active Frontier projection is current.\n",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "python3",
+              "scripts/check_evidence_traceability.py"
+            ],
+            "exit_code": 0,
+            "stdout": "Evidence traceability gate passed (29 routes, 131 research/prototype artifacts).\n",
+            "stderr": ""
+          },
+          {
+            "argv": [
+              "git",
+              "diff",
+              "--check"
+            ],
+            "exit_code": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        ]
+      },
+      "authoritative_terminal": {
+        "session_id": 96616,
+        "chunk_id": "52b4c2",
+        "exit_code": 0
+      }
+    }
   }
 }

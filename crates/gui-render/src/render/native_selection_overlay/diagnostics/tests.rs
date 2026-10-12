@@ -28,6 +28,7 @@ fn marker_severity_and_source_identity_survive_selection_and_pane_clipping() {
         viewport,
         camera,
         datum_gui_protocol::PaneContent::Board,
+        &mut super::super::cue_plan::PanePlan::new(&state, viewport, camera).unwrap(),
     );
     assert_eq!(hits.len(), 1);
     assert_eq!(
@@ -47,6 +48,7 @@ fn marker_severity_and_source_identity_survive_selection_and_pane_clipping() {
         viewport,
         camera,
         datum_gui_protocol::PaneContent::Board,
+        &mut super::super::cue_plan::PanePlan::new(&state, viewport, camera).unwrap(),
     );
     assert_eq!(selected_hits, hits);
     assert_eq!(&selected[3..], core.as_slice()); // semantic core bytes never recolored
@@ -69,6 +71,7 @@ fn marker_severity_and_source_identity_survive_selection_and_pane_clipping() {
         viewport,
         camera,
         datum_gui_protocol::PaneContent::Board,
+        &mut super::super::cue_plan::PanePlan::new(&state, viewport, camera).unwrap(),
     );
     assert_eq!(stale, core);
     for (path, bytes) in source_bytes {

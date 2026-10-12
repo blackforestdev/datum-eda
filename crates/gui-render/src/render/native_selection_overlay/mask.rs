@@ -16,6 +16,8 @@ struct Inner {
     high_contrast: bool,
     dim_unrelated: bool,
     choices: Vec<Choice>,
+    screen: Vec<Arc<super::cue_plan::PanePlan>>,
+    screen_permit: Option<crate::text_gpu::budget::Permit>,
     _permit: Option<crate::text_gpu::budget::Permit>,
 }
 #[derive(Clone)]
@@ -32,6 +34,7 @@ impl PartialEq for Request {
     fn eq(&self, other: &Self) -> bool {
         self.0.source == other.0.source
             && self.0.choices == other.0.choices
+            && self.0.screen == other.0.screen
             && self.0.high_contrast == other.0.high_contrast
             && self.0.dim_unrelated == other.0.dim_unrelated
     }
@@ -192,8 +195,92 @@ impl Request {
             high_contrast: false,
             dim_unrelated: false,
             choices,
+            screen: Vec::new(),
+            screen_permit: None,
             _permit: Some(permit),
         }))))
+    }
+    /// Typed artifact intent may have no authored projection keys. Its source
+    /// and producing selection remain explicit; no synthetic authored key exists.
+    pub(crate) fn capture_screen(
+        view: &datum_gui_protocol::selection_view::SelectionView,
+        scene: &BoardReviewSceneV1,
+        high_contrast: bool,
+    ) -> anyhow::Result<Option<Self>> {
+        if view.stale || !datum_gui_protocol::selection_artifacts::is_artifact(&view.subject) {
+            return Ok(None);
+        }
+        if !matches!(
+            view.field_ref("artifact_payload"),
+            Some(datum_gui_protocol::selection_view::InspectionValue::Common(
+                _
+            ))
+        ) {
+            return Ok(None);
+        }
+        let budget = crate::text_gpu::budget::staging_process();
+        let bytes = container_bytes()
+            .checked_add(
+                [&scene.project_uuid, &scene.source_revision, &scene.scene_id]
+                    .into_iter()
+                    .map(|value| crate::cpu_alloc::heap::capacity_bytes::<u8>(value.len()))
+                    .sum::<usize>(),
+            )
+            .ok_or_else(|| anyhow::anyhow!("mask source overflow"))?;
+        let permit = budget.reserve(u64::try_from(bytes)?)?;
+        let source = Source::capture(scene, |_| Ok(()))?;
+        Ok(Some(Self(Arc::new(Inner {
+            source,
+            high_contrast,
+            dim_unrelated: false,
+            choices: Vec::new(),
+            screen: Vec::new(),
+            screen_permit: None,
+            _permit: Some(permit),
+        }))))
+    }
+    pub(crate) fn set_screen(
+        &mut self,
+        plans: impl Iterator<Item = Arc<super::cue_plan::PanePlan>> + Clone,
+    ) -> anyhow::Result<()> {
+        let inner = Arc::get_mut(&mut self.0).expect("qualify newly captured mask before sharing");
+        let count = plans.clone().count();
+        let bytes = crate::cpu_alloc::heap::capacity_bytes::<Arc<super::cue_plan::PanePlan>>(count);
+        let permit = crate::text_gpu::budget::staging_process().reserve(u64::try_from(bytes)?)?;
+        inner.screen.try_reserve_exact(count)?;
+        inner.screen.extend(plans);
+        inner.screen_permit = Some(permit);
+        Ok(())
+    }
+    pub(crate) fn screen(&self) -> impl Iterator<Item = &super::cue_plan::ScreenSpan> {
+        self.0.screen.iter().flat_map(|plan| plan.screen.iter())
+    }
+    pub(crate) fn screen_count(&self) -> usize {
+        self.0.screen.iter().map(|plan| plan.screen.len()).sum()
+    }
+    pub(crate) fn detailed_overflow(&self, emitted_glyphs: usize) -> bool {
+        self.0
+            .screen
+            .iter()
+            .map(|plan| plan.detail_primitives)
+            .fold(emitted_glyphs, usize::saturating_add)
+            > super::cue_plan::DETAILED_PRIMITIVES
+    }
+    pub(crate) fn authored(&self) -> bool {
+        !self.0.choices.is_empty()
+    }
+    pub(crate) fn palette(&self) -> [f32; 3] {
+        self.0
+            .screen
+            .iter()
+            .find(|plan| {
+                plan.subject
+                    .as_ref()
+                    .is_some_and(datum_gui_protocol::selection_artifacts::is_artifact)
+            })
+            .map_or([206.0 / 255.0, 90.0 / 255.0, 146.0 / 255.0], |plan| {
+                plan.palette
+            })
     }
     pub(crate) fn high_contrast(&self) -> bool {
         self.0.high_contrast
@@ -283,6 +370,8 @@ fn container_bytes() -> usize {
             high_contrast: false,
             dim_unrelated: false,
             choices: Vec::new(),
+            screen: Vec::new(),
+            screen_permit: None,
             _permit: None,
         })
     })

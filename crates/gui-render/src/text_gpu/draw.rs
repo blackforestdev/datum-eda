@@ -1,4 +1,6 @@
 //! Original instance-based glyph drawing over Datum's texture-page owner.
+#[path = "draw/selection_mask.rs"]
+mod selection_mask;
 use super::staging_vec::StagingVec;
 use std::ops::Range;
 
@@ -45,6 +47,7 @@ pub(crate) struct Draw {
     screen_budget: std::sync::Arc<super::budget::Budget>,
     generation_budget: std::sync::Arc<super::budget::Budget>,
     pipeline: wgpu::RenderPipeline,
+    mask_pipeline: std::sync::OnceLock<wgpu::RenderPipeline>,
     instances: Option<Tracked<wgpu::Buffer>>,
     batches: StagingVec<(usize, crate::TextLayer, Range<u32>)>,
     snapshot: StagingVec<Instance>,
@@ -132,6 +135,7 @@ impl Draw {
             screen_budget,
             generation_budget,
             pipeline,
+            mask_pipeline: Default::default(),
             instances: None,
             batches: Default::default(),
             snapshot: Default::default(),
@@ -399,12 +403,32 @@ impl Draw {
         self.render_layer(atlas, pass, None, damage)
     }
 
+    pub(crate) fn selected_instances(&self, pane: datum_gui_protocol::PaneId) -> usize {
+        self.batches
+            .iter()
+            .filter(|(_, layer, _)| *layer == crate::TextLayer::Selection(pane))
+            .map(|(_, _, range)| (range.end - range.start) as usize)
+            .sum()
+    }
+
     pub fn render_layer(
         &self,
         atlas: &Atlas,
         pass: &mut wgpu::RenderPass<'_>,
         layer: Option<crate::TextLayer>,
         damage: &wgpu::BindGroup,
+    ) -> anyhow::Result<()> {
+        self.render_filtered(atlas, pass, damage, |batch_layer| {
+            layer.is_none_or(|layer| layer == batch_layer)
+        })
+    }
+
+    fn render_filtered(
+        &self,
+        atlas: &Atlas,
+        pass: &mut wgpu::RenderPass<'_>,
+        damage: &wgpu::BindGroup,
+        visible: impl Fn(crate::TextLayer) -> bool,
     ) -> anyhow::Result<()> {
         anyhow::ensure!(
             self.generation == Some(atlas.generation),
@@ -415,7 +439,7 @@ impl Draw {
             pass.set_bind_group(1, damage, &[]);
             pass.set_vertex_buffer(0, instances.slice(..));
             for (page, batch_layer, range) in self.batches.iter() {
-                if layer.is_some_and(|layer| layer != *batch_layer) {
+                if !visible(*batch_layer) {
                     continue;
                 }
                 pass.set_bind_group(0, &atlas.pages[*page].bind_group, &[]);

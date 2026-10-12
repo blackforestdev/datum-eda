@@ -232,6 +232,12 @@ impl Renderer {
         let msaa_view = self
             .ensure_msaa(device, raster_width, raster_height)?
             .clone();
+        self.text_renderer.prepare_selection_mask(
+            device,
+            &self.atlas,
+            self.msaa_format,
+            self.msaa_samples,
+        );
         self.selection_mask.prepare(
             device,
             queue,
@@ -244,6 +250,7 @@ impl Renderer {
             schematic_retained,
             [width, height],
             [raster_width, raster_height],
+            &self.text_renderer,
         )?;
         self.publish_resource_consumers();
         self.prepare_surface_world_bundles(device, prepared, schematic_retained);

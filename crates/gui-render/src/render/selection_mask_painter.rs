@@ -127,6 +127,33 @@ impl Renderer {
                     }
                 }
             }
+            if binding.overflow {
+                if let Some(request) = prepared
+                    .selection_masks
+                    .iter()
+                    .find_map(|(pane, _, request)| (*pane == surface.pane_id).then_some(request))
+                    && let Some(buffer) = self.viewport_overlay_gpu.buffer()
+                {
+                    pass.set_pipeline(&pipelines.mask_screen_quad);
+                    gpu_vertex_upload::screen_quads::bind(
+                        &mut pass,
+                        buffer,
+                        prepared.viewport_overlay_vertices().len() / 6,
+                    );
+                    for span in request.screen() {
+                        pass.draw(0..6, span.range.start / 6..span.range.end / 6);
+                    }
+                }
+                // Preserve the current band's viewport and pane scissor. Glyphs
+                // use the same full-window coordinates as retained screen quads.
+                if prepared.has_workspace_text() {
+                    self.text_renderer.render_selection_mask(
+                        &self.atlas,
+                        &mut pass,
+                        surface.pane_id,
+                    )?;
+                }
+            }
         }
         Ok(())
     }

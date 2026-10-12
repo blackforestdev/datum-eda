@@ -56,6 +56,7 @@ impl PreparedScene {
             let mut menu_overlay_text_runs = Vec::new();
             let mut viewport_underlay_quads = Vec::new();
             let mut viewport_overlay_quads = Vec::new();
+            let mut pane_cues = Vec::new();
             let mut board_interaction_quads = Vec::new();
             let mut text_runs = Vec::new();
             let mut terminal_graphics = Vec::new();
@@ -305,14 +306,15 @@ impl PreparedScene {
             if board_scene_active {
                 let before_overlay = viewport_overlay_quads.len();
                 let before_text = text_runs.len();
-                render_scene(
+                let plan = render_scene(
                     state,
                     scene_viewport,
                     camera,
                     &mut viewport_overlay_quads,
                     &mut text_runs,
                     &mut hit_regions,
-                );
+                )?;
+                pane_cues.push((board_pane_id, std::sync::Arc::new(plan)));
                 consumers.note(
                     Stream::ViewportOverlay,
                     Consumer::Board,
@@ -575,6 +577,7 @@ impl PreparedScene {
                 selection_visual_lod: None,
                 selection_strokes: Vec::new(),
                 selection_masks: Vec::new(),
+                pane_cues,
                 board_interaction_vertices,
                 console_overlay_vertices,
                 console_overlay_layout,

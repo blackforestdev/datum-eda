@@ -10,6 +10,7 @@ pub(super) fn push(
     viewport: RectPx,
     camera: CameraState,
     surface: datum_gui_protocol::PaneContent,
+    plan: &mut super::cue_plan::PanePlan,
 ) {
     let projection = Projection::new(
         inset_rect(viewport, 10.0, 10.0, 10.0, 10.0),
@@ -39,6 +40,7 @@ pub(super) fn push(
         // Exact Selection Study section 4 triangle/exclamation construction.
         // The selection border surrounds, never overwrites, the severity core.
         if selected {
+            let detail_start = out.len();
             let vertices = [
                 (x, y - 13.0),
                 (x + 13.0, y + 10.0),
@@ -48,13 +50,15 @@ pub(super) fn push(
             for pair in vertices.windows(2) {
                 push_screen_line(out, pair[0], pair[1], TEXT_ACCENT, 2.0);
             }
+            plan.finish_detail(out, detail_start);
         }
         let severity = match finding.severity.as_str() {
             "error" | "fatal" => crate::design_tokens::chrome::STATUS_ERROR,
             "warning" | "warn" => [216.0 / 255.0, 160.0 / 255.0, 62.0 / 255.0],
             _ => crate::design_tokens::chrome::STATUS_INFO,
         };
-        out.push(Quad {
+        let mut base = plan.base_output(out, selected);
+        base.push(Quad {
             points: [
                 (x, y - 11.0),
                 (x + 11.0, y + 8.0),
@@ -63,6 +67,7 @@ pub(super) fn push(
             ],
             color: severity,
         });
+        drop(base);
         out.push(Quad::from_rect(
             RectPx {
                 x: x - 1.2,

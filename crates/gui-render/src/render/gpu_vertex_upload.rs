@@ -7,6 +7,8 @@
 use super::*;
 #[path = "cold_world_upload.rs"]
 mod cold_world;
+#[path = "screen_quad_gpu.rs"]
+pub(super) mod screen_quads;
 pub(super) use cold_world::ColdWorldUploads;
 
 // Shared inventories for plan collection, cancellation, consumption and retirement.
@@ -129,12 +131,14 @@ impl Renderer {
             "datum-gui-render-viewport-underlay-vertex-buffer",
             viewport_underlay,
         )?;
-        self.viewport_overlay_gpu.sync(
+        let bytes = screen_quads::encode(viewport_overlay, &self.atlas.staging_budget)?;
+        let prepared = self.viewport_overlay_gpu.prepare_owned(
             device,
-            queue,
-            "datum-gui-render-viewport-overlay-vertex-buffer",
-            viewport_overlay,
+            "datum-gui-render-viewport-overlay-quad-buffer",
+            bytes,
+            44,
         )?;
+        self.viewport_overlay_gpu.commit_owned(prepared);
         self.board_interaction_gpu.sync(
             device,
             queue,
