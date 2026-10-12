@@ -8389,5 +8389,93 @@
     "C04_complete": false,
     "C05_completed": false,
     "C06_accepted": false
+  },
+  "n14_two_project_units_isolation_20261012": {
+    "classification": "Manager accepted finite N14 ordinary existing preconfigured two Project quantity/selection isolation case after actual independent review. Full N14 staleconsumer matrix and C04/C05/C06/HUMAN remain open.",
+    "ordinary_workflow": "Project A metric ObjectT1 → ordinary File/Open B explicitmil and old selection/AT withdrawal → fresh B ObjectT1 → ordinary File/Open A and withdrawal → fresh A ObjectT1. Same authored Track UUID, independently current Project/revision each time.",
+    "units": "Canonical Common width5080000nm remains exact and unrounded; display5.080mm →200.000mil →5.080mm, verified in full typed nativeinspection, currentPID read-only AT field and readable current screenshots.",
+    "scope": "A Ctrl+A fullP5=4Tracks+authoredemptyBoardOutline/focusNone; ordinary InspectTracks gives scoped4/Mixed while all21other SelectionView field spans byteexact; All restores scopeNone/fullP5/focusNone. This is not selectionclear or a new pairMixed campaign.",
+    "currentness": "Ordered File/Open selectionNone and old AT rootUnknownObject each before fresh acquisition. None carries no direct ProjectID: association is explicitly source-qualified from exact owned root submission/dialoggone/currentMain plus immediately following samePID typed current Project/revision.",
+    "actual_case2": {
+      "original_handle": 65369,
+      "terminal_chunk": "b5b7c2",
+      "exit_code": 0,
+      "raw_outcome": "CAPTURE_ONLY",
+      "receipts": 14,
+      "current_Main_barriers": 10,
+      "full_canonical_invariance_maps": 16,
+      "canonical_files": 69,
+      "Global_invariance": "Known application PreferenceRepository installation/user StoredPreferenceValue.value projection only, unchanged3ececa1a; no opaque credentials/filetree or recents/session/navigation invariance claim.",
+      "drain": "Literal validated/rawJSON samePID1041302 drained_device_live epoch1 standalone packet persisted beforeACK; naturalGUI0/no forcedcleanup. ResourceEnd complete/eventloopOK/46frames43submitted/noerrors/unreleased0, all3lastowners fourreservations0.",
+      "strict_transport": "Existing strict completeLFJSON incrementalreader/EOF refusal remains; no salvage."
+    },
+    "retained_case1": {
+      "raw_outcome": "FAIL",
+      "original_handle": 99514,
+      "terminal_chunk": "1669f6",
+      "exit_code": 1,
+      "reason": "Close-status screenshot/refocus raced actual natural window disappearance;14priorreceipts/10Main captured but directshutdownpacket was notpersisted. Preserved withoutwholeunitacceptance.",
+      "observer_correction": "Standalone literalpacket saved beforeACK without competing reportwriter, and benign actualclosingwindow disappearance handling only. Same ordinary case/source/fixtures/criteria; one justified corrected run.",
+      "excluded_unrelated_image": "Unreported closing screenshot after Datum disappeared showed unrelated operational terminal. Preserved localignored only; no bytes read/copied intoarchive/commit or nativeclosingcredit. Only five report-bound Datumimages percase admitted."
+    },
+    "reuse": "Current77 unchanged e34d43c4 source; matchingGUI build10.77s original46439/284dd8/0, CLI/daemon unchanged. Existing scopedpureproof current4a3a log versus historical58de pin distinguished, prior1nm pairMixed scope reused. No new source/unit initializer/privatewriter/fixture/settings/dependency/cap/clock changes or broad proofreplay.",
+    "references": {
+      "n14-two-project-setup.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-setup.json",
+        "sha256": "784b724650b158c1de19426b209bcac0b5a653fbaf8217567f174e283f6c56f6"
+      },
+      "n14-two-project-source-cohort.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-source-cohort.json",
+        "sha256": "f799e5a718c2bddef8be9fe82ea59fb6a343a63af6c8ed5977df74864e1c2195"
+      },
+      "n14-two-project-gui-build-1-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-gui-build-1-terminal.json",
+        "sha256": "705e73571fac0f82d8b46c7c26fe77539753d3a3b036bcb2f2805ad3c7d2d22e"
+      },
+      "n14-two-project-1-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-1-terminal.json",
+        "sha256": "448b9cea8fd1a97e404c2ead4ae236bc3a58ca486c63f6e2ef7ea45714fb88e9"
+      },
+      "n14-two-project-2-terminal.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-2-terminal.json",
+        "sha256": "c3474559bae2796b1ab3fd529e7f3a76be66d385895848a8eb01467add5bf2f3"
+      },
+      "n14-two-project-bounded-acceptance.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-bounded-acceptance.json",
+        "sha256": "17fa61cf6fe15a7c228cf9039e3446ead410af4f6c5a3c05337760c908ab057d"
+      },
+      "n14-two-project-package-receipt.json": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-package-receipt.json",
+        "sha256": "db7fd0d9ae7b92193dd4ec847dfab94a335b2a2698c5535a75230a6930738f13"
+      }
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n14-two-project-20261012.tar.xz",
+      "archive_sha256": "cc895aab8f34d82b471326f3f5038246fa327b902387bc7af36ae20dd4461726",
+      "manifest_sha256": "424b96b3798fca6c65f2c44f1d46806f9d512ffc7ee6f1485e2041cdb07fa59e",
+      "regular_files": 280,
+      "hashed_files": 279,
+      "source_pins": 77,
+      "assembler_sha256": "ba3b1a97244c39ea66bae8ec241bf474b6b50364f157c4191da2b8e1a01c8934"
+    },
+    "independent_review": {
+      "status": "Actual finitecase/raw/pixels/drain/all280archiveentry/currentrecord/index/governance CLEAR; manager conditional normalownedlanding conditions satisfied",
+      "receipt_path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-final-independent-review.json",
+      "receipt_sha256": "ad73d2cb7630b6a4209c30ca7faee5a62429177515ca41c1f747742413642a6c"
+    },
+    "checks": {
+      "status": "Seven affected metadata/source gates all0/sourcehealth3137 and stagedrustfmt/cachediff0; normalhooks atcommit",
+      "metadata_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-final-gates.json",
+        "sha256": "9aa6007034f127cf31db0e77c15d0fad43955cc66e21e92d7190b75569123869"
+      },
+      "staged_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-staged-gates.json",
+        "sha256": "4f7b633f84b51abdceb316350738c2bf113903d70502a148861b800d1137a7bd"
+      }
+    },
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false
   }
 }
