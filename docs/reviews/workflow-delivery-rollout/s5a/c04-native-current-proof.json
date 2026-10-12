@@ -8508,7 +8508,7 @@
       "n13-plain-drag-qualification-terminal.json": "727a5e0e20aeddeffea39526cc4f5cb7465eeae16183bb5a1a4f4f4f5988cb59",
       "n13-plain-drag-package-receipt.json": "289226f8c25f5c3ed4d1048af4edc7b53b817735cd22abd742ab3f3699072c17"
     },
-    "independent_review": "collision_review actual immutable case/current PNG/input/state/drain/resource correspondence; qualifier04410 and assembler58f640 preflight clear. Archive/staged review pending.",
+    "independent_review": "Initial preflight: collision_review actual immutable case/current PNG/input/state/drain/resource correspondence; qualifier04410 and assembler58f640 clear. Subsequent actual final archive/staged CLEAR is recorded in final_independent_review.",
     "source_changes": [],
     "retained_limits": [
       "Public/source-qualified no-region absence, no internal region variable readback",
@@ -8526,6 +8526,74 @@
     },
     "required_checks": {
       "gate_receipt_sha256": "325eed01626d31a9ccdb046c92046052ad30e30825e07f986aa39d1954d3d64b",
+      "seven_metadata_gates": "all0",
+      "source_health_files": 3137,
+      "staged_rustfmt_and_cached_diff": "actual0"
+    }
+  },
+  "n06_local_overlap_pointer_20261012": {
+    "classification": "Finite N06 ordinary right-button local overlap chooser accepted by appointed manager after actual independent raw/source/pixel review",
+    "behavior": "Prior Track3 selected; source-qualified actual rounded pointer overlaps exactly Track2 then Track1 in deterministic menu order. Three ordinary right-button press/drag-to-Select/release/pointer-open sequences; hover each candidate preserves whole prior subject. Escape restores prior Track3. Explicit pointer Track2 acquires exact singleton/Common5080001; local Select All acquires exact Track1+Track2/focusNone/Mixed, not globalP5 or union with prior Track3.",
+    "focus_contract": "During live chooser hover actual ApplicationFocus::Overlay/focused owned candidate/current Main/current typed Project+revision/readOnly AT/empty active-pane/Editor inactive required. Dismissal and acquisitions require Editor(Pane0)/active-pane0. This reflects existing TF-01 ownership, not relaxed identity/currentness.",
+    "actual_case2": {
+      "original_handle": 49029,
+      "terminal": "d33f28",
+      "exit_code": 0,
+      "raw_outcome": "CAPTURE_ONLY",
+      "pid": 1052244,
+      "typed_receipts": 6,
+      "complete_LF_states": 14,
+      "current_Main_barriers": 18,
+      "owned_Datum_PNGs": 8,
+      "full69_and_GlobalVALUES_maps": 13,
+      "natural_GUI_exit": 0,
+      "forced_cleanup": false,
+      "literal_shutdown": "drained_device_live/samePID1052244/device_epoch1/rawdecoded parity/persistedbeforeACK",
+      "resource_end": "Complete31frames/30submitted/noinvalid/rendererrors/unreleased0/allfinalownerbudgets0"
+    },
+    "retained_case1": {
+      "original_handle": 49081,
+      "terminal": "7b82c6",
+      "exit_code": 1,
+      "raw_outcome": "FAIL",
+      "failure": "Observer erroneously required active editor pane during menu-owned Overlay hover",
+      "forced_cleanup": true,
+      "GUI_exit": -15,
+      "no_preview_or_drain_credit": true
+    },
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n06-local-overlap-20261012.tar.xz",
+      "archive_sha256": "c499703b52fa7ecbbec5fb735d65628ee1d4d59fb6bcdb7b5e2db7cdcd8535d6",
+      "manifest_sha256": "d9d7ce0fa72f46e9837e70c30c886048d36137a7a2a970277561e882816705e9",
+      "regular_files": 286,
+      "hashed_files": 285,
+      "source_pins": 77,
+      "assembler_sha256": "7b3aa7346b630959b00f9bd9e723678de79c5148be1f03b72ae05171b4028288"
+    },
+    "evidence_sha256": {
+      "n06-local-overlap-1-terminal.json": "a4536de5f3c8ba2d383ca42066e510595994844046e6665094f0fa8130d37488",
+      "n06-local-overlap-2-terminal.json": "15f2dd602e3538794f2f2736725281d62b0a866b9a3dd7a3a9ad7c6173ba7bdb",
+      "n06-local-overlap-bounded-acceptance.json": "338f0065e73020568cc7412cb29205dbd0c935ae5167b2f9376dc0f9d110acf3",
+      "n06-local-overlap-package-receipt.json": "065c165da7a89c8efbb858f5637f87bbdae4dca5d496ee753efdbbafba310c3b"
+    },
+    "independent_review": "Initial actual case2 behavior and assembler preflight review CLEAR; final archive/record/index/governance receipt is recorded below.",
+    "source_changes": [],
+    "retained_limits": [
+      "Finite Board pointer case, no allN06/outside-dismiss/Wayland/latency/raster/HUMAN qualification",
+      "RawFAIL1/forced cleanup and rawCAPTURE_ONLY2 retained; no aggregate PASS fabrication",
+      "C04/C05/C06 remain open, no successor or dependency change"
+    ],
+    "full_N06_qualified": false,
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "final_independent_review": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/n06-local-overlap-final-independent-review.json",
+      "sha256": "8552dd4143df987c1c35e8fb2675b1ac1061057e85a9187461341972bfe7b9c3",
+      "status": "Actual all-entry and final staged review CLEAR"
+    },
+    "required_checks": {
+      "gate_receipt_sha256": "d86a5c1e4e4dfdde68fadb8bc1e223564ec479d37b47c5c2efd07a4f7648811d",
       "seven_metadata_gates": "all0",
       "source_health_files": 3137,
       "staged_rustfmt_and_cached_diff": "actual0"
