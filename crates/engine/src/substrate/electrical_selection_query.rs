@@ -16,6 +16,7 @@ use crate::substrate::{
 pub use authored_sources::{AuthoredSelectionSource, SelectionSourceDomain};
 pub use bus_run::{BusRunMembership, CrossBusContact};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ElectricalQueryFailure {
@@ -64,7 +65,7 @@ pub struct ElectricalMembership {
 /// A captured immutable model and source values: subsequent disk writes cannot
 /// mix geometry/bindings in an existing query result. Capture itself writes nothing.
 pub struct ElectricalSelectionSnapshot {
-    model: DesignModel,
+    model: Arc<DesignModel>,
     basis: super::super::electrical_basis::ElectricalBasis,
     logical: BTreeMap<Uuid, BTreeSet<ElectricalOccurrence>>,
     physical: Vec<BTreeSet<ElectricalOccurrence>>,
@@ -76,6 +77,12 @@ pub struct ElectricalSelectionSnapshot {
 
 impl ElectricalSelectionSnapshot {
     pub fn capture(model: &DesignModel) -> Result<Self, ElectricalQueryFailure> {
+        Self::capture_shared(Arc::new(model.clone()))
+    }
+
+    /// Share immutable model authority while freshly validating and capturing
+    /// every source. This never reuses source values from an earlier capture.
+    pub fn capture_shared(model: Arc<DesignModel>) -> Result<Self, ElectricalQueryFailure> {
         let mut values = BTreeMap::new();
         let mut source_basis = vec![];
         for shard in &model.source_shards {
@@ -92,7 +99,7 @@ impl ElectricalSelectionSnapshot {
             ) {
                 continue;
             }
-            let value = super::super::journal::capture_shard_value(model, shard).map_err(|e| {
+            let value = super::super::journal::capture_shard_value(&model, shard).map_err(|e| {
                 ElectricalQueryFailure::UnavailableBasis {
                     sources: vec![shard.shard_id],
                     reason: e.to_string(),
@@ -115,18 +122,19 @@ impl ElectricalSelectionSnapshot {
             sources: source_basis.iter().map(|s| s.shard_id).collect(),
             reason: e.to_string(),
         };
-        let basis = super::super::electrical_basis::ElectricalBasis::with_reader(model, &[], &read)
-            .map_err(failure)?;
+        let basis =
+            super::super::electrical_basis::ElectricalBasis::with_reader(&model, &[], &read)
+                .map_err(failure)?;
         let (logical, physical, representations, schematic) = if model
             .source_shards
             .iter()
             .any(|s| s.kind == SourceShardKind::SchematicRoot)
         {
             let schematic =
-                super::super::electrical_topology_source::schematic_with_reader(model, &[], &read)
+                super::super::electrical_topology_source::schematic_with_reader(&model, &[], &read)
                     .map_err(failure)?;
             let groups = crate::connectivity::partitions(&schematic).map_err(failure)?;
-            let logical = super::super::electrical_transaction::previous(model, &groups)
+            let logical = super::super::electrical_transaction::previous(&model, &groups)
                 .map_err(failure)?
                 .into_iter()
                 .map(|g| (g.net_id, g.members))
@@ -145,12 +153,12 @@ impl ElectricalSelectionSnapshot {
             .iter()
             .filter(|s| s.kind == SourceShardKind::BoardRoot)
         {
-            if let Some(value) = basis.shard_value(shard.shard_id) {
-                values.insert(shard.shard_id, value.clone());
-            }
+            // The basis owns the final projection after assignment qualification.
+            // Source queries borrow that same tree rather than retaining a copy.
+            values.remove(&shard.shard_id);
         }
         Ok(Self {
-            model: model.clone(),
+            model,
             basis,
             logical,
             physical,
@@ -172,6 +180,7 @@ impl ElectricalSelectionSnapshot {
         self.require_revision(expected)?;
         self.values
             .get(&shard)
+            .or_else(|| self.basis.shard_value(shard))
             .ok_or_else(|| ElectricalQueryFailure::UnavailableBasis {
                 sources: vec![shard],
                 reason: "source is absent from captured selection basis".into(),
@@ -229,7 +238,8 @@ impl ElectricalSelectionSnapshot {
                 reason: "board root is not unique".into(),
             });
         }
-        if let Some(missing) = self.values[&roots[0].shard_id]
+        let value = self.source_shard_value(self.revision(), roots[0].shard_id)?;
+        if let Some(missing) = value
             .get("component_pad_unavailable")
             .and_then(serde_json::Value::as_object)
             .filter(|m| !m.is_empty())
@@ -242,7 +252,7 @@ impl ElectricalSelectionSnapshot {
             });
         }
         let mut source: crate::connectivity::BoardCopperSource =
-            serde_json::from_value(self.values[&roots[0].shard_id].clone()).map_err(|e| {
+            serde_json::from_value(value.clone()).map_err(|e| {
                 ElectricalQueryFailure::UnavailableBasis {
                     sources: vec![roots[0].shard_id],
                     reason: e.to_string(),
@@ -403,7 +413,7 @@ impl ElectricalSelectionSnapshot {
                 reason: "board root is not unique".into(),
             });
         }
-        let value = &self.values[&boards[0].shard_id];
+        let value = self.source_shard_value(self.revision(), boards[0].shard_id)?;
         if value
             .get("nets")
             .and_then(|v| v.get(net.to_string()))

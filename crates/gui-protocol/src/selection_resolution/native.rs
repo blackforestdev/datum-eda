@@ -31,6 +31,7 @@ pub struct NativeSelectionProjection {
 pub struct NativeSelectionResolution {
     snapshot: ElectricalSelectionSnapshot,
     authored: BTreeSet<AuthoredSelectionIdentity>,
+    standalone_pads: BTreeSet<AuthoredSelectionIdentity>,
     // One successful physical query per immutable basis, shared by acquisition
     // and inspection. No cross-capture reuse, hit inference or partial result.
     run_query: std::sync::Mutex<Option<(RunSelectionIdentity, BoardRunMembership)>>,
@@ -39,6 +40,15 @@ impl NativeSelectionResolution {
     pub fn capture(model: &DesignModel) -> Result<Self, SelectionResolutionError> {
         Self::from_snapshot(
             ElectricalSelectionSnapshot::capture(model)
+                .map_err(SelectionResolutionError::Engine)?,
+        )
+    }
+    /// Share the caller's immutable model; source validation remains per capture.
+    pub fn capture_shared(
+        model: std::sync::Arc<DesignModel>,
+    ) -> Result<Self, SelectionResolutionError> {
+        Self::from_snapshot(
+            ElectricalSelectionSnapshot::capture_shared(model)
                 .map_err(SelectionResolutionError::Engine)?,
         )
     }
@@ -55,14 +65,33 @@ impl NativeSelectionResolution {
             }
             authored.insert(source_identity(&source)?);
         }
+        let pads = authored
+            .iter()
+            .filter(|id| id.class == Class::Pad)
+            .map(occurrence)
+            .collect();
+        let standalone = snapshot
+            .standalone_pads(snapshot.revision(), &pads)
+            .map_err(SelectionResolutionError::Engine)?;
+        let standalone_pads = authored
+            .iter()
+            .filter(|id| id.class == Class::Pad && standalone.contains(&occurrence(id)))
+            .cloned()
+            .collect();
         Ok(Self {
             snapshot,
             authored,
+            standalone_pads,
             run_query: std::sync::Mutex::new(None),
         })
     }
     pub fn authored_identities(&self) -> &BTreeSet<AuthoredSelectionIdentity> {
         &self.authored
+    }
+
+    /// This classification belongs to this immutable captured source basis.
+    pub fn is_standalone_pad(&self, id: &AuthoredSelectionIdentity) -> bool {
+        self.standalone_pads.contains(id)
     }
 
     pub fn snapshot(&self) -> &ElectricalSelectionSnapshot {

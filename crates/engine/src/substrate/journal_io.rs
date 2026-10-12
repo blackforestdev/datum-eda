@@ -112,8 +112,10 @@ pub(crate) fn read_transaction_journal(
         }
     };
 
-    let mut seen = BTreeMap::<Uuid, String>::new();
-    let mut transactions = Vec::new();
+    // Accepted records own the payload; retain only their index for duplicate
+    // lookup rather than a second full canonical serialization of each record.
+    let mut seen = BTreeMap::<Uuid, usize>::new();
+    let mut transactions = Vec::<TransactionRecord>::new();
     let mut diagnostics = Vec::new();
     for (line_index, line) in content.lines().enumerate() {
         if line.trim().is_empty() {
@@ -141,8 +143,19 @@ pub(crate) fn read_transaction_journal(
                 break;
             }
         };
-        if let Some(existing) = seen.get(&transaction.transaction_id) {
-            let code = if existing == &canonical {
+        if let Some(&index) = seen.get(&transaction.transaction_id) {
+            let existing = match to_json_deterministic(&transactions[index]) {
+                Ok(existing) => existing,
+                Err(error) => {
+                    diagnostics.push(ResolveDiagnostic {
+                        code: "journal_canonicalization_error".to_string(),
+                        message: format!("line {}: {error}", line_index + 1),
+                        path: Some(path.clone()),
+                    });
+                    break;
+                }
+            };
+            let code = if existing == canonical {
                 "journal_duplicate_transaction_skipped"
             } else {
                 "journal_transaction_id_conflict"
@@ -156,11 +169,11 @@ pub(crate) fn read_transaction_journal(
                 ),
                 path: Some(path.clone()),
             });
-            if existing != &canonical {
+            if existing != canonical {
                 break;
             }
         } else {
-            seen.insert(transaction.transaction_id, canonical);
+            seen.insert(transaction.transaction_id, transactions.len());
             transactions.push(transaction);
         }
     }

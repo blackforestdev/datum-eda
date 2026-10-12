@@ -372,10 +372,9 @@ pub fn component_pad_projection(
     Ok(projection)
 }
 pub(crate) fn project_value(
-    board: &Value,
+    mut value: Value,
     projection: &ComponentPadProjection,
 ) -> Result<Value, EngineError> {
-    let mut value = board.clone();
     if projection.pads.is_empty() && projection.unavailable.is_empty() {
         return Ok(value);
     }

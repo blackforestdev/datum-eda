@@ -154,6 +154,7 @@ pub(crate) fn validate_batch(
         return Err(invalid("current canonical profile-4 preimage required"));
     }
     let mut current = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    let mut pass = crate::substrate::board_list_journal_ops::BoardPass::new(&mut current);
     for operation in &batch.operations {
         match operation {
             Operation::CreateBoardPackage {
@@ -170,7 +171,7 @@ pub(crate) fn validate_batch(
                         "deleted/re-placed Package cannot recycle historical identity",
                     ));
                 }
-                let mut prospective = current.clone();
+                let mut prospective = pass.board().clone();
                 prospective["packages"][package_id.to_string()] = package.clone();
                 validate_materialization(
                     model,
@@ -187,7 +188,7 @@ pub(crate) fn validate_batch(
                 previous_materialized,
                 materialized,
             } => {
-                let mut prospective = current.clone();
+                let mut prospective = pass.board().clone();
                 prospective["packages"][package_id.to_string()]["package"] =
                     serde_json::json!(package_ref_id);
                 validate_materialization(
@@ -204,15 +205,15 @@ pub(crate) fn validate_batch(
                 package,
                 materialized,
             } => {
-                validate_preimage(&current, *package_id, materialized)?;
-                if current["packages"][package_id.to_string()] != *package {
+                validate_preimage(pass.board(), *package_id, materialized)?;
+                if pass.board()["packages"][package_id.to_string()] != *package {
                     return Err(invalid("stale deletion placement preimage"));
                 }
             }
             _ => {}
         }
-        crate::substrate::board_journal_ops::apply_board_operation(&mut current, operation)?;
-        validate_native(&current)?;
+        pass.apply(operation)?;
+        validate_native(pass.board())?;
     }
     Ok(())
 }

@@ -5,8 +5,15 @@ pub(in crate::substrate) fn materialized_shard_value(
     model: &DesignModel,
     shard: &SourceShardRef,
 ) -> Result<serde_json::Value, EngineError> {
-    let mut value = match read_json_value(&shard.path) {
-        Ok(value) => value,
+    // Keep the same UTF-8/JSON error conversion as read_json_value, but retain
+    // the original hash from that single read instead of reopening the source.
+    let observed = (|| -> Result<_, EngineError> {
+        let text = std::fs::read_to_string(&shard.path)?;
+        let value: serde_json::Value = serde_json::from_str(&text)?;
+        Ok((value, sha256_hex(text.as_bytes()) == shard.content_hash))
+    })();
+    let (mut value, raw_matches) = match observed {
+        Ok(observed) => observed,
         Err(_)
             if matches!(
                 shard.kind,
@@ -17,7 +24,7 @@ pub(in crate::substrate) fn materialized_shard_value(
                     | SourceShardKind::ProposalMetadata
             ) =>
         {
-            match shard.kind {
+            let reconstructed = match shard.kind {
                 SourceShardKind::Pool => {
                     reconstruct_pool_shard_value(&shard.relative_path, &model.journal)?
                 }
@@ -31,13 +38,12 @@ pub(in crate::substrate) fn materialized_shard_value(
                     reconstruct_proposal_metadata_value(&shard.relative_path, &model.journal)?
                 }
                 _ => reconstruct_schematic_object_value(&shard.relative_path, &model.journal)?,
-            }
+            };
+            (reconstructed, false)
         }
         Err(error) => return Err(error),
     };
-    if canonical_json_hash(&value)? == shard.content_hash
-        || std::fs::read(&shard.path).is_ok_and(|bytes| sha256_hex(&bytes) == shard.content_hash)
-    {
+    if raw_matches || canonical_json_hash(&value)? == shard.content_hash {
         return Ok(value);
     }
     replay_journal_shard_value(&shard.kind, &mut value, &model.journal)?;

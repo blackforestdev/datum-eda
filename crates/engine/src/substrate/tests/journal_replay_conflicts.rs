@@ -4,6 +4,87 @@ use super::*;
 use crate::ir::serialization::to_json_deterministic;
 
 #[test]
+fn journal_reader_compares_nonadjacent_duplicates_canonically_and_keeps_ordered_prefix() {
+    let root = temp_project_root("journal_reader_canonical_duplicates");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    write_minimal_project(&root, project_id, board_id);
+    let mut model = ProjectResolver::new(&root).resolve().unwrap();
+    let mut records = Vec::new();
+    for ordinal in 0..2 {
+        let report = model
+            .commit_journaled(
+                &root,
+                OperationBatch {
+                    batch_id: Uuid::new_v5(&project_id, format!("reader-{ordinal}").as_bytes()),
+                    expected_model_revision: Some(model.model_revision.clone()),
+                    provenance: CommitProvenance {
+                        actor: "unit-test".into(),
+                        source: CommitSource::Test,
+                        reason: "canonical duplicate reader control".into(),
+                    },
+                    operations: vec![Operation::BumpObjectRevision {
+                        object_id: board_id,
+                    }],
+                },
+            )
+            .unwrap();
+        records.push(report.transaction);
+    }
+    let first = to_json_deterministic(&records[0]).unwrap();
+    let second = to_json_deterministic(&records[1]).unwrap();
+    let mut equivalent = serde_json::to_value(&records[0]).unwrap();
+    equivalent
+        .as_object_mut()
+        .unwrap()
+        .remove("transaction_kind");
+    equivalent["undo_of"] = serde_json::Value::Null;
+    let original_diff = serde_json::to_string(&equivalent["diff"]).unwrap();
+    let reordered_diff = format!(
+        "{{ \"modified\":{}, \"deleted\":{}, \"created\":{} }}",
+        equivalent["diff"]["modified"],
+        equivalent["diff"]["deleted"],
+        equivalent["diff"]["created"]
+    );
+    let equivalent = serde_json::to_string(&equivalent)
+        .unwrap()
+        .replace(&original_diff, &reordered_diff);
+    assert_ne!(first, equivalent);
+    let mut conflict = records[0].clone();
+    conflict.operations = vec![Operation::BumpObjectRevision {
+        object_id: project_id,
+    }];
+    let mut sentinel = records[1].clone();
+    sentinel.transaction_id = Uuid::new_v4();
+    let content = format!(
+        "\n{first}\n{second}\n  \n{equivalent}\n{}\n{}\n",
+        to_json_deterministic(&conflict).unwrap(),
+        to_json_deterministic(&sentinel).unwrap()
+    );
+    let path = transaction_journal_path(&root);
+    std::fs::write(&path, &content).unwrap();
+    let (accepted, diagnostics) = super::super::journal_io::read_transaction_journal(&root);
+    assert_eq!(accepted, records);
+    assert_eq!(diagnostics.len(), 2);
+    for (diagnostic, line, code) in [
+        (&diagnostics[0], 5, "journal_duplicate_transaction_skipped"),
+        (&diagnostics[1], 6, "journal_transaction_id_conflict"),
+    ] {
+        assert_eq!(diagnostic.code, code);
+        assert_eq!(
+            diagnostic.message,
+            format!(
+                "line {line}: duplicate transaction {}",
+                records[0].transaction_id
+            )
+        );
+        assert_eq!(diagnostic.path.as_ref(), Some(&path));
+    }
+    assert_eq!(std::fs::read(&path).unwrap(), content.as_bytes());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn resolver_reports_journal_transaction_id_conflict_and_keeps_valid_prefix() {
     let root = temp_project_root("commit_duplicate_conflict");
     let project_id = Uuid::new_v4();

@@ -16,8 +16,11 @@ pub(crate) fn project_board_basis(
     if !source.operations.is_empty() {
         let mut board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
         let mut touched = false;
-        for op in &source.operations {
-            touched |= super::board_journal_ops::apply_board_operation(&mut board, op)?;
+        {
+            let mut pass = super::board_list_journal_ops::BoardPass::new(&mut board);
+            for op in &source.operations {
+                touched |= pass.apply(op)?;
+            }
         }
         candidate.commit_without_direct_policy(source)?;
         if touched {

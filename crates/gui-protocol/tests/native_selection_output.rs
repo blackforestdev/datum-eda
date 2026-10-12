@@ -529,3 +529,94 @@ fn inspection_borrows_captured_sources_without_reopening_board_or_journal() {
     std::fs::write(board, board_bytes).unwrap();
     std::fs::write(journal, journal_bytes).unwrap();
 }
+
+#[test]
+fn standalone_pad_binding_preserves_selected_representation_and_ignores_scene_parent_hint() {
+    use datum_gui_protocol::selection_scene::{SceneSelectionBindings, authored_candidate};
+    let (mut f, mut scene, _) = setup();
+    let pad: eda_engine::board::PlacedPad = serde_json::from_value(serde_json::json!({
+        "uuid":id(20),"package":fixture::Id::nil(),"name":"P","net":f.net,
+        "position":{"x":1000000,"y":2000000},"layer":1,"shape":"rect","width":2000000,"height":2000000
+    })).unwrap();
+    f.commit([Operation::CreateBoardPad {
+        pad_id: pad.uuid,
+        pad: serde_json::to_value(&pad).unwrap(),
+    }]);
+    let mut projected = datum_gui_protocol::load_fixture_workspace_state()
+        .scene
+        .pads[0]
+        .clone();
+    projected.object_id = "standalone-selected-pad".into();
+    projected.object_kind = "pad".into();
+    projected.pad_uuid = pad.uuid.to_string();
+    projected.source_object_uuid = pad.uuid.to_string();
+    projected.component_uuid = fixture::Id::nil().to_string();
+    projected.layer_id = "L1".into();
+    projected.copper_layer_ids = vec!["L1".into()];
+    projected.center = datum_gui_protocol::PointNm {
+        x: pad.position.x,
+        y: pad.position.y,
+    }
+    .into();
+    projected.bounds = datum_gui_protocol::RectNm {
+        min_x: 0,
+        min_y: 1000000,
+        max_x: 2000000,
+        max_y: 3000000,
+    };
+    projected.native_process = None;
+    projected.shape_kind = "rect".into();
+    projected.drill_nm = None;
+    projected.rotation_degrees = 0.0;
+    scene.pads = vec![projected];
+    scene.source_revision = f.model.model_revision.0.clone();
+    let bytes = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let identity = Id {
+        class: Class::Pad,
+        id: pad.uuid,
+        instance_path: vec![],
+    };
+    assert!(authority.is_standalone_pad(&identity));
+    let bindings = SceneSelectionBindings::capture(&scene, &authority);
+    let binding = bindings.get("standalone-selected-pad").unwrap();
+    assert_eq!(binding.projected, identity);
+    assert_eq!(binding.acquired, identity);
+    let subject =
+        SelectionSubject::Compound(CompoundSelection::new([identity.clone()], None).unwrap());
+    let view = build_selection_view(&f.model, &authority, subject.clone(), &scene, None, |_| {
+        true
+    })
+    .unwrap();
+    assert_eq!(
+        view.members,
+        std::collections::BTreeSet::from([identity.clone()])
+    );
+    assert!(view.unprojected.is_empty());
+    assert_eq!(
+        view.board_keys,
+        std::collections::BTreeSet::from(["standalone-selected-pad".to_owned()])
+    );
+    assert_eq!(
+        authored_candidate(&scene, "standalone-selected-pad", &authority),
+        Some(identity.clone())
+    );
+    scene.pads[0].component_uuid = id(999).to_string();
+    assert_eq!(
+        SceneSelectionBindings::capture(&scene, &authority)
+            .get("standalone-selected-pad")
+            .unwrap()
+            .acquired,
+        identity
+    );
+    let reopened_model = f.reopen();
+    let reopened = NativeSelectionResolution::capture(&reopened_model).unwrap();
+    assert!(reopened.is_standalone_pad(&identity));
+    assert!(
+        build_selection_view(&reopened_model, &reopened, subject, &scene, None, |_| true)
+            .unwrap()
+            .unprojected
+            .is_empty()
+    );
+    Fixture::assert_bytes(&bytes);
+}

@@ -79,7 +79,7 @@ impl ElectricalSelectionSnapshot {
             .iter()
             .filter(|s| s.kind == SourceShardKind::BoardRoot)
         {
-            let value = &self.values[&shard.shard_id];
+            let value = self.source_shard_value(self.revision(), shard.shard_id)?;
             // Every authored graphic must be registered; never advertise a
             // complete inventory by silently omitting a broken source binding.
             if let Some(graphics) = value.get("graphics").and_then(serde_json::Value::as_object) {

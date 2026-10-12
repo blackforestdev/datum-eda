@@ -13,6 +13,7 @@ use datum_gui_viewport::selection_acquisition::{
 use eda_engine::substrate::{DesignModel, ProjectReadCache};
 use std::collections::BTreeSet;
 use std::sync::Arc;
+mod global;
 mod publication;
 
 // The session owns its required model. Optional reuse holds only a Weak model
@@ -123,7 +124,7 @@ impl Runtime {
         } else {
             model
         };
-        let authority = NativeSelectionResolution::capture(&model)
+        let authority = NativeSelectionResolution::capture_shared(model.clone())
             .map_err(|e| anyhow::anyhow!("Selection source unavailable: {e:?}"))?;
         let reconcile = if let (Some(previous), SelectionTarget::Native(view)) =
             (&self.native_selection, &self.workspace().selection)
@@ -354,58 +355,17 @@ impl Runtime {
         }
         let state = self.workspace();
         let authority = &self.native_selection.as_ref().unwrap().authority;
-        let root_sheet = state.schematic_scene.as_ref().and_then(|s| {
-            s.board_uuid
-                .parse::<datum_gui_protocol::SelectionProjectId>()
-                .ok()
-        });
-        let source = authority.snapshot().schematic_source();
-        let candidates = authority
-            .authored_identities()
-            .iter()
-            .filter(|id| {
-                use datum_gui_protocol::AuthoredSelectionClass as C;
-                if matches!(id.class, C::Pad | C::Pin) {
-                    return false;
-                }
-                let is_schematic = matches!(
-                    id.class,
-                    C::Symbol
-                        | C::Wire
-                        | C::BusSection
-                        | C::Label
-                        | C::Port
-                        | C::Junction
-                        | C::NoConnect
-                        | C::SchematicText
-                        | C::SchematicGraphic
-                );
-                if schematic != is_schematic {
-                    return false;
-                }
-                if !schematic {
-                    return true;
-                }
-                if !id.instance_path.is_empty() {
-                    return false;
-                }
-                source
-                    .and_then(|s| root_sheet.and_then(|sheet| s.sheets.get(&sheet)))
-                    .is_some_and(|sheet| match id.class {
-                        C::Symbol => sheet.symbols.contains_key(&id.id),
-                        C::Wire => sheet.wires.contains_key(&id.id),
-                        C::BusSection => sheet.buses.contains_key(&id.id),
-                        C::Label => sheet.labels.contains_key(&id.id),
-                        C::Port => sheet.ports.contains_key(&id.id),
-                        C::Junction => sheet.junctions.contains_key(&id.id),
-                        C::NoConnect => sheet.noconnects.contains_key(&id.id),
-                        C::SchematicText => sheet.texts.contains_key(&id.id),
-                        C::SchematicGraphic => sheet.drawings.contains_key(&id.id),
-                        _ => false,
-                    })
-            })
-            .cloned()
-            .collect();
+        let root_sheet = state
+            .schematic_scene
+            .as_ref()
+            .and_then(|s| s.board_uuid.parse().ok());
+        let candidates = match global::candidates(authority, schematic, root_sheet) {
+            Ok(candidates) => candidates,
+            Err(error) => {
+                self.selection_notice(format!("Global selection source unavailable: {error}"));
+                return true;
+            }
+        };
         self.native_selection.as_mut().unwrap().last_click = None;
         self.publish_native_acquisition(
             candidates,

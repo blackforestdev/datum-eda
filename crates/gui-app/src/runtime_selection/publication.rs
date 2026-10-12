@@ -37,6 +37,9 @@ impl Runtime {
         let announce = outcome.refusal.is_some()
             || outcome.changed
             || semantic.as_ref().is_some_and(|s| *s != prior);
+        // Projection resolves the complete subject through the current authority.
+        // The acquisition's separate member set is no longer consumed here.
+        drop(outcome.members);
         let subject = semantic.unwrap_or(outcome.subject);
         let state = self.workspace();
         let projection = match prepared {
@@ -81,9 +84,16 @@ impl Runtime {
         self.refresh_selection_accessibility();
         crate::append_gui_verbose_diagnostic_line(|| "selection accessibility ready");
         if announce {
+            crate::append_gui_verbose_diagnostic_line(|| "selection console begin");
             self.log_console_echo(ConsoleFeedbackSource::Selection, summary);
+            crate::append_gui_verbose_diagnostic_line(|| "selection console end");
+        } else {
+            // Console publication already invalidates announced acquisitions.
+            // Unannounced refreshes still need their own current frame.
+            crate::append_gui_verbose_diagnostic_line(|| "selection final invalidate begin");
+            self.invalidate_frame();
+            crate::append_gui_verbose_diagnostic_line(|| "selection final invalidate end");
         }
-        self.invalidate_frame();
         true
     }
 }

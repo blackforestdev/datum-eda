@@ -2,7 +2,7 @@
 //! are resolver index hints, not source class or hierarchy authority.
 use super::{DesignModel, ElectricalOccurrence, EngineError, Operation, SourceShardKind};
 use serde_json::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 mod class_index;
 use uuid::Uuid;
 
@@ -87,36 +87,41 @@ impl ElectricalBasis {
                 Some(value) => value,
                 None => read(shard)?,
             };
-            for operation in operations {
-                match shard.kind {
-                    SourceShardKind::SchematicRoot => {
-                        super::schematic_root_journal_ops::apply_schematic_root_operation(
-                            &mut value, operation,
-                        )?;
+            {
+                let mut board_pass = super::board_list_journal_ops::BoardPass::new(&mut value);
+                for operation in operations {
+                    match shard.kind {
+                        SourceShardKind::SchematicRoot => {
+                            super::schematic_root_journal_ops::apply_schematic_root_operation(
+                                board_pass.board_mut(),
+                                operation,
+                            )?;
+                        }
+                        SourceShardKind::SchematicSheet => {
+                            super::schematic_sheet_journal_ops::apply_schematic_sheet_operation(
+                                board_pass.board_mut(),
+                                operation,
+                            )?;
+                        }
+                        SourceShardKind::BoardRoot => {
+                            board_pass.apply(operation)?;
+                        }
+                        SourceShardKind::Pool => {
+                            super::pool_journal_ops::apply_pool_shard_operation(
+                                &shard.kind,
+                                board_pass.board_mut(),
+                                operation,
+                            )?;
+                        }
+                        _ => {}
                     }
-                    SourceShardKind::SchematicSheet => {
-                        super::schematic_sheet_journal_ops::apply_schematic_sheet_operation(
-                            &mut value, operation,
-                        )?;
-                    }
-                    SourceShardKind::BoardRoot => {
-                        super::board_journal_ops::apply_board_operation(&mut value, operation)?;
-                    }
-                    SourceShardKind::Pool => {
-                        super::pool_journal_ops::apply_pool_shard_operation(
-                            &shard.kind,
-                            &mut value,
-                            operation,
-                        )?;
-                    }
-                    _ => {}
                 }
             }
             if shard.kind == SourceShardKind::BoardRoot {
                 let projection = super::component_pad_source::projection_with_operations(
                     model, &value, operations,
                 )?;
-                value = super::component_pad_source::project_value(&value, &projection)?;
+                value = super::component_pad_source::project_value(value, &projection)?;
                 query_pads.insert(shard.shard_id, projection.query_pads);
             }
             values.insert(shard.shard_id, value);
@@ -208,6 +213,114 @@ impl ElectricalBasis {
             return Some(pad.terminal().clone());
         }
         serde_json::from_value(self.object(model, id, "pads")?.clone()).ok()
+    }
+    /// Captured ownership is independent of physical geometry availability.
+    /// Component bindings supersede a plain adopted-pad payload; conflicting
+    /// source-bound parents remain unavailable rather than becoming standalone.
+    pub(super) fn pad_owners(
+        &self,
+        model: &DesignModel,
+        ids: &BTreeSet<Uuid>,
+    ) -> BTreeMap<Uuid, Uuid> {
+        let shards: BTreeSet<_> = ids
+            .iter()
+            .filter_map(|id| model.objects.get(id))
+            .map(|object| object.source_shard_id)
+            .collect();
+        let mut result = BTreeMap::new();
+        for shard in shards {
+            let Some(board) = self.values.get(&shard) else {
+                continue;
+            };
+            let requested = |id: &Uuid| {
+                ids.contains(id)
+                    && model
+                        .objects
+                        .get(id)
+                        .is_some_and(|object| object.source_shard_id == shard)
+            };
+            let plain = board.get("pads");
+            let entries = plain
+                .and_then(Value::as_object)
+                .into_iter()
+                .flat_map(|values| values.values())
+                .chain(
+                    plain
+                        .and_then(Value::as_array)
+                        .into_iter()
+                        .flat_map(|values| values.iter()),
+                );
+            for raw in entries {
+                let id = raw
+                    .get("uuid")
+                    .and_then(Value::as_str)
+                    .and_then(|id| Uuid::parse_str(id).ok());
+                let parent = raw
+                    .get("package")
+                    .and_then(Value::as_str)
+                    .and_then(|id| Uuid::parse_str(id).ok());
+                if let (Some(id), Some(parent)) = (id, parent) {
+                    if requested(&id) {
+                        result.entry(id).or_insert(parent);
+                    }
+                }
+            }
+            let mut bound = BTreeMap::new();
+            let mut ambiguous = BTreeSet::new();
+            if let Some(packages) = board.get("component_pads").and_then(Value::as_object) {
+                for (package, pads) in packages {
+                    let Some(parent) = Uuid::parse_str(package).ok() else {
+                        continue;
+                    };
+                    for raw in pads.as_array().into_iter().flatten() {
+                        let Some(id) = raw
+                            .get("uuid")
+                            .and_then(Value::as_str)
+                            .and_then(|id| Uuid::parse_str(id).ok())
+                        else {
+                            continue;
+                        };
+                        if !requested(&id) || raw.get("source_binding").is_none_or(Value::is_null) {
+                            continue;
+                        }
+                        let Ok(source) = serde_json::from_value::<
+                            super::component_pad_source::ComponentPadSource,
+                        >(raw.clone()) else {
+                            ambiguous.insert(id);
+                            continue;
+                        };
+                        if parent.is_nil()
+                            || source
+                                .source_binding
+                                .as_ref()
+                                .is_none_or(|binding| binding.package_id != parent)
+                            || source.uuid != id
+                        {
+                            ambiguous.insert(id);
+                            continue;
+                        }
+                        if bound
+                            .insert(id, parent)
+                            .is_some_and(|prior| prior != parent)
+                        {
+                            ambiguous.insert(id);
+                        }
+                    }
+                }
+            }
+            result.extend(bound);
+            if let Some(pads) = self.query_pads.get(&shard) {
+                for (id, pad) in pads {
+                    if requested(id) {
+                        result.insert(*id, pad.terminal().package);
+                    }
+                }
+            }
+            for id in ambiguous {
+                result.remove(&id);
+            }
+        }
+        result
     }
     pub(super) fn component_pad_status(
         &self,

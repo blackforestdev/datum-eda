@@ -57,11 +57,15 @@ impl Renderer {
         view: WorkspaceView<'_>,
         panes: &[TerminalPaneRenderState<'_>],
     ) -> anyhow::Result<()> {
+        use crate::frame_preparation::preparation_diagnostics::phase;
         // Lease consumed producer damage before source validation/admission can fail.
+        phase("begin_sources begin");
         let retained = self
             .render_session
             .begin_workspace_preparation(state, &view, panes)?;
+        phase("begin_sources end");
         let _host = self.resource_host.enter();
+        phase("from_workspace begin");
         let prepared = crate::text_metrics::measurement_owner::with_owner(
             &mut self.measurement_fonts,
             || {
@@ -80,6 +84,7 @@ impl Renderer {
                 )
             },
         )?;
+        phase("from_workspace end");
         let mut prepared = prepared;
         if let Some(camera) = view.schematic_camera {
             prepared.set_schematic_camera(camera);
@@ -87,14 +92,18 @@ impl Renderer {
         for &(pane, camera) in view.pane_cameras {
             prepared.set_surface_camera(pane, camera);
         }
+        phase("append_selection begin");
         prepared.append_native_selection(state)?;
+        phase("append_selection end");
         self.render_session
             .grid_lod
             .apply_to_prepared(&mut prepared);
+        phase("install begin");
         self.render_session.install_prepared(
             prepared,
             Preparation::workspace(state, &retained, [view.width, view.height]),
         );
+        phase("install end");
         Ok(())
     }
 }

@@ -131,6 +131,61 @@ fn prove(rotated: bool) {
         .unwrap();
     let projection = component_pad_projection(&f.model, &source).unwrap();
     let net = projection.query_pads[&pad.uuid].terminal().net.unwrap();
+    let board_shard = f
+        .model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == SourceShardKind::BoardRoot)
+        .unwrap()
+        .shard_id;
+    let before_controls = std::fs::read(f.root.join("board/board.json")).unwrap();
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+    let qualified = snapshot
+        .source_shard_value(snapshot.revision(), board_shard)
+        .unwrap();
+    assert_eq!(qualified["uuid"], source["uuid"]);
+    if !rotated {
+        assert_eq!(qualified["pads"][pad.uuid.to_string()]["net"], json!(net));
+    }
+    let mut unbound = f.model.clone();
+    unbound.electrical_identities.remove(&f.relationship.id);
+    let unbound = crate::substrate::ElectricalSelectionSnapshot::capture(&unbound).unwrap();
+    let refused = unbound
+        .source_shard_value(unbound.revision(), board_shard)
+        .unwrap();
+    if !rotated {
+        assert_eq!(refused["pads"][pad.uuid.to_string()]["net"], json!(null));
+    }
+    assert_eq!(
+        unbound.board_source().unwrap().query_pads[&pad.uuid]
+            .terminal()
+            .net,
+        None
+    );
+    let mut unavailable = f.model.clone();
+    unavailable.objects.remove(&pad.uuid);
+    let unavailable = crate::substrate::ElectricalSelectionSnapshot::capture(&unavailable).unwrap();
+    assert!(
+        unavailable
+            .source_shard_value(unavailable.revision(), board_shard)
+            .unwrap()["component_pad_unavailable"]
+            .get(pad.uuid.to_string())
+            .is_some()
+    );
+    assert!(matches!(
+        unavailable.board_source(),
+        Err(crate::substrate::ElectricalQueryFailure::UnavailableBasis { .. })
+    ));
+    assert_eq!(
+        snapshot.board_source().unwrap().query_pads[&pad.uuid]
+            .terminal()
+            .net,
+        Some(net)
+    );
+    assert_eq!(
+        std::fs::read(f.root.join("board/board.json")).unwrap(),
+        before_controls
+    );
     let mut expected = std::collections::BTreeSet::from([crate::substrate::ElectricalOccurrence {
         class: "pads".into(),
         source_id: pad.uuid,

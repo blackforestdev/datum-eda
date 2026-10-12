@@ -131,7 +131,17 @@ impl SceneSelectionBindings {
                 &v.object_id,
                 Class::Pad,
                 &v.pad_uuid,
-                Some((Class::Footprint, v.component_uuid.clone())),
+                if v.pad_uuid.parse().ok().is_some_and(|id| {
+                    authority.is_standalone_pad(&Id {
+                        class: Class::Pad,
+                        id,
+                        instance_path: vec![],
+                    })
+                }) {
+                    None
+                } else {
+                    Some((Class::Footprint, v.component_uuid.clone()))
+                },
                 layers,
             );
         }

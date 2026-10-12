@@ -7,6 +7,8 @@ mod annotations;
 mod artifacts;
 #[path = "s5a_fixture/classes.rs"]
 mod classes;
+#[path = "s5a_fixture/collision.rs"]
+mod collision;
 #[path = "s5a_fixture/library.rs"]
 mod library;
 #[path = "s5a_fixture/lifecycle.rs"]
@@ -25,13 +27,17 @@ mod semantic;
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority> <fresh-root>",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision> <root>",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
     let root = PathBuf::from(args.next().context("fresh output root required")?);
     if matches!(
         family,
-        "library-parents" | "annotation-scope" | "non-authored-channels" | "symbol-majority"
+        "library-parents"
+            | "annotation-scope"
+            | "non-authored-channels"
+            | "symbol-majority"
+            | "maximal-channel-collision"
     ) {
         let cli = PathBuf::from(
             args.next()
@@ -40,7 +46,9 @@ fn main() -> Result<()> {
         if args.next().is_some() {
             bail!("unexpected argument");
         }
-        return if family == "symbol-majority" {
+        return if family == "maximal-channel-collision" {
+            collision::build(&root, &cli)
+        } else if family == "symbol-majority" {
             majority::build(&root, &cli)
         } else if family == "non-authored-channels" {
             artifacts::build(&root, &cli)

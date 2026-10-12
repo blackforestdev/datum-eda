@@ -21,6 +21,7 @@ mod generated_evidence_scope_project;
 mod import_map_replay;
 mod import_map_schema;
 mod journal_hardening;
+mod journal_materialization;
 mod journal_replay_conflicts;
 mod journal_replay_diagnostics;
 mod journal_revision_guards;

@@ -4,7 +4,7 @@ pub(super) use journal_materialization::{capture_shard_value, materialized_shard
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
-use super::board_journal_ops::{apply_board_operation, inverse_board_operation};
+use super::board_list_journal_ops::BoardPass;
 use super::forward_annotation_review_journal_ops::reconstruct_forward_annotation_review_value;
 use super::journal_io::sync_directory;
 pub(super) use super::journal_io::{
@@ -32,7 +32,7 @@ use super::source_shard::{
 use super::source_shard_ref_builders::source_shard_ref_for_staged_write;
 use super::{
     DesignModel, EngineError, Operation, OperationBatch, SourceShardKind, SourceShardRef,
-    TransactionRecord, read_json_value, sha256_hex,
+    TransactionRecord, sha256_hex,
 };
 use crate::ir::serialization::to_json_deterministic;
 
@@ -110,9 +110,10 @@ pub(super) fn stage_operation_shard_writes(
     {
         let mut board_value = super::board_source_profile::materialize(model, board_shard, batch)?;
         let mut touched_board = false;
-        for operation in &batch.operations {
-            if apply_board_operation(&mut board_value, operation)? {
-                touched_board = true;
+        {
+            let mut pass = BoardPass::new(&mut board_value);
+            for operation in &batch.operations {
+                touched_board |= pass.apply(operation)?;
             }
         }
         if touched_board {
@@ -386,8 +387,9 @@ pub(super) fn inverse_operations_for_batch(
         .find(|shard| shard.kind == SourceShardKind::BoardRoot)
     {
         let mut board_value = super::board_source_profile::materialize(model, board_shard, batch)?;
+        let mut pass = BoardPass::new(&mut board_value);
         for operation in &batch.operations {
-            inverse_board_operation(&mut board_value, operation, &mut inverse_operations)?;
+            pass.inverse(operation, &mut inverse_operations)?;
         }
     }
     if let Some(schematic_shard) = model
@@ -431,14 +433,20 @@ pub(super) fn replay_journal_shard_value(
     journal: &[TransactionRecord],
 ) -> Result<bool, EngineError> {
     let mut changed = false;
+    if shard_kind == &SourceShardKind::BoardRoot {
+        let mut pass = BoardPass::new(value);
+        for transaction in journal {
+            for operation in &transaction.operations {
+                changed |= pass.apply(operation)?;
+                changed |= pass.replay_noncore(operation)?;
+            }
+        }
+        return Ok(changed);
+    }
     for transaction in journal {
         for operation in &transaction.operations {
             if shard_kind == &SourceShardKind::ProjectManifest
                 && apply_project_manifest_operation(value, operation)?.unwrap_or(false)
-            {
-                changed = true;
-            }
-            if shard_kind == &SourceShardKind::BoardRoot && apply_board_operation(value, operation)?
             {
                 changed = true;
             }

@@ -175,7 +175,7 @@ pub fn authored_candidate(
 ) -> Option<Id> {
     let mut id = projection_candidate(scene, key, authority)?;
     match id.class {
-        Class::Pad => {
+        Class::Pad if !authority.is_standalone_pad(&id) => {
             let pad = scene.pads.iter().find(|p| p.object_id == key)?;
             id = Id {
                 class: Class::Footprint,

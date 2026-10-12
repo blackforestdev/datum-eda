@@ -338,6 +338,9 @@ impl ProjectResolver {
             &journal_records,
             &mut diagnostics,
         )?;
+        // Replay returned its own accepted journal. Release the parsed preimage
+        // before component joins and derived validation materialize more sources.
+        drop(journal_records);
         match integrity {
             RevisionStoreState::Empty if !journal.is_empty() => {
                 diagnostics.push(ResolveDiagnostic {

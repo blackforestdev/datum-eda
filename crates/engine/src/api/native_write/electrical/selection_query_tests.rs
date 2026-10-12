@@ -37,6 +37,73 @@ fn schematic_only(model: &mut DesignModel, root: &std::path::Path, logical: Uuid
 }
 
 #[test]
+fn shared_snapshot_retains_immutable_model_and_revalidates_each_capture() {
+    use std::sync::Arc;
+
+    let (root, mut model, _, sheet) = fixture("selection_shared_capture");
+    let wire = super::topology_tests::wire(&mut model, &root, sheet, 0, 10);
+    let origin = member("wires", wire.uuid, &[]);
+    let logical = Uuid::new_v4();
+    create(&mut model, &root, net(logical, origin.clone()));
+    schematic_only(&mut model, &root, logical);
+    let borrowed = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    let mut model = Arc::new(model);
+    let original = Arc::downgrade(&model);
+    let shared = ElectricalSelectionSnapshot::capture_shared(model.clone()).unwrap();
+    assert_eq!(Arc::strong_count(&model), 2);
+    let revision = shared.revision().clone();
+    let path = model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == crate::substrate::SourceShardKind::SchematicSheet)
+        .unwrap()
+        .path
+        .clone();
+    let bytes = std::fs::read(&path).unwrap();
+    let mut value: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    value["name"] = serde_json::json!("external source mutation");
+    let changed = serde_json::to_vec(&value).unwrap();
+    std::fs::write(&path, &changed).unwrap();
+    assert!(matches!(
+        ElectricalSelectionSnapshot::capture_shared(model.clone()),
+        Err(ElectricalQueryFailure::UnavailableBasis { .. })
+    ));
+    assert_eq!(std::fs::read(&path).unwrap(), changed);
+    let changed_revision = crate::substrate::ModelRevision("changed caller".into());
+    let caller = Arc::make_mut(&mut model);
+    caller.model_revision = changed_revision.clone();
+    caller.objects.remove(&wire.uuid);
+    drop(model);
+    assert!(original.upgrade().is_some());
+    let expected = BTreeSet::from([origin.clone()]);
+    for snapshot in [&shared, &borrowed] {
+        assert_eq!(snapshot.revision(), &revision);
+        assert_eq!(
+            snapshot.global_net(&revision, logical).unwrap().owned,
+            expected
+        );
+        assert_eq!(
+            snapshot.net_for_origin(&changed_revision, &origin),
+            Err(ElectricalQueryFailure::StaleRevision)
+        );
+        let mut forged = origin.clone();
+        forged.instance_path.push(Uuid::new_v4());
+        assert!(matches!(
+            snapshot.net_for_origin(&revision, &forged),
+            Err(ElectricalQueryFailure::InvalidOccurrence { .. })
+        ));
+    }
+    drop(shared);
+    assert!(original.upgrade().is_none());
+    assert_eq!(
+        borrowed.global_net(&revision, logical).unwrap().owned,
+        expected
+    );
+    std::fs::write(path, bytes).unwrap();
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn complete_257_branch_net_is_not_a_context_envelope_and_runs_are_physical() {
     let (root, mut model, _, sheet) = fixture("selection_uncapped");
     let mut expected = BTreeSet::new();
@@ -429,6 +496,23 @@ fn related_parent_queries_use_captured_pin_and_pad_ownership_without_selecting_p
         member("packages", pad.package, &[]),
     ]);
     let snapshot = ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+    let pads = BTreeSet::from([
+        member("pads", pad.uuid, &[]),
+        member("pads", standalone.uuid, &[]),
+    ]);
+    let standalone_expected = BTreeSet::from([member("pads", standalone.uuid, &[])]);
+    assert_eq!(
+        snapshot
+            .standalone_pads(snapshot.revision(), &pads)
+            .unwrap(),
+        standalone_expected
+    );
+    assert!(
+        snapshot
+            .standalone_pads(snapshot.revision(), &BTreeSet::new())
+            .unwrap()
+            .is_empty()
+    );
     assert_eq!(
         snapshot
             .related_parents(snapshot.revision(), &children)
@@ -444,6 +528,25 @@ fn related_parent_queries_use_captured_pin_and_pad_ownership_without_selecting_p
             .is_empty()
     );
     let stale = crate::substrate::ModelRevision("foreign".into());
+    assert_eq!(
+        snapshot.standalone_pads(&stale, &pads),
+        Err(ElectricalQueryFailure::StaleRevision)
+    );
+    assert!(matches!(
+        snapshot.standalone_pads(
+            snapshot.revision(),
+            &BTreeSet::from([member("pads", Uuid::new_v4(), &[])])
+        ),
+        Err(ElectricalQueryFailure::InvalidOccurrence { .. })
+    ));
+    assert!(matches!(
+        snapshot.standalone_pads(
+            snapshot.revision(),
+            &BTreeSet::from([member("pins", pin, &[])])
+        ),
+        Err(ElectricalQueryFailure::InvalidOccurrence { .. })
+    ));
+
     assert_eq!(
         snapshot.related_parents(&stale, &children),
         Err(ElectricalQueryFailure::StaleRevision)
@@ -464,6 +567,11 @@ fn related_parent_queries_use_captured_pin_and_pad_ownership_without_selecting_p
     );
     let reopened = ProjectResolver::new(&f.root).resolve().unwrap();
     let replay = ElectricalSelectionSnapshot::capture(&reopened).unwrap();
+    assert_eq!(
+        replay.standalone_pads(replay.revision(), &pads).unwrap(),
+        standalone_expected
+    );
+
     assert_eq!(
         replay
             .related_parents(replay.revision(), &children)

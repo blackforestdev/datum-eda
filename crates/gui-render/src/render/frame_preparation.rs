@@ -1,6 +1,8 @@
 //! CPU frame composition with explicit renderer-owned control preparation.
 use super::*;
 use crate::resource_consumers::{Consumer, FrameConsumers, Stream};
+#[path = "preparation_diagnostics.rs"]
+pub(crate) mod preparation_diagnostics;
 
 impl PreparedScene {
     #[allow(clippy::too_many_arguments)]
@@ -201,6 +203,7 @@ impl PreparedScene {
             );
             let before_panel_quads = panel_quads.len();
             let before_text_runs = text_runs.len();
+            preparation_diagnostics::phase("inspector begin");
             let selection_lod_row = side_panels::render_side_panels(
                 state,
                 &layout,
@@ -208,6 +211,7 @@ impl PreparedScene {
                 &mut text_runs,
                 &mut hit_regions,
             )?;
+            preparation_diagnostics::phase("inspector end");
             consumers.note(
                 Stream::Panel,
                 Consumer::Navigator,
@@ -306,6 +310,7 @@ impl PreparedScene {
             if board_scene_active {
                 let before_overlay = viewport_overlay_quads.len();
                 let before_text = text_runs.len();
+                preparation_diagnostics::phase("render_scene begin");
                 let plan = render_scene(
                     state,
                     scene_viewport,
@@ -314,6 +319,7 @@ impl PreparedScene {
                     &mut text_runs,
                     &mut hit_regions,
                 )?;
+                preparation_diagnostics::phase("render_scene end");
                 pane_cues.push((board_pane_id, std::sync::Arc::new(plan)));
                 consumers.note(
                     Stream::ViewportOverlay,
@@ -497,6 +503,7 @@ impl PreparedScene {
                 scale_text_run_sizes(&mut text_runs, scale);
                 scale_text_run_sizes(&mut menu_overlay_text_runs, scale);
             }
+            preparation_diagnostics::phase("vertices begin");
             let panel_vertices = quads_to_vertices(&panel_quads);
             let menu_overlay_vertices = quads_to_vertices(&menu_overlay_quads);
             let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
@@ -507,6 +514,7 @@ impl PreparedScene {
             } else {
                 Vec::new()
             };
+            preparation_diagnostics::phase("vertices end");
 
             let schematic_overlay_vertices =
                 interaction_overlay::build_schematic_interaction_vertices(

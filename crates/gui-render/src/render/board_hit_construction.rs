@@ -1,19 +1,35 @@
 //! Board visibility and ordered hit-shape emission over borrowed source data.
 use super::hit_construction::{Region, Shape};
 use super::*;
+#[path = "board_hit_construction/text_layouts.rs"]
+mod text_layouts;
 
 pub(super) fn build(
     scene: &BoardReviewSceneV1,
     state: &ReviewWorkspaceState,
-    admit: impl FnOnce(usize) -> anyhow::Result<()>,
+    mut admit: impl FnMut(usize) -> anyhow::Result<()>,
 ) -> anyhow::Result<Vec<WorldHitRegion>> {
-    hit_construction::build(|emit| visit(emit, scene, state), admit)
+    let needed = authored_visible(state)
+        && scene
+            .board_texts
+            .iter()
+            .any(|text| layer_visible(state, &text.layer_id));
+    let layouts = text_layouts::Lookup::new(
+        if needed {
+            &scene.board_text_geometries
+        } else {
+            &[]
+        },
+        &mut admit,
+    )?;
+    hit_construction::build(|emit| visit(emit, scene, state, &layouts), admit)
 }
 
 fn visit<'a>(
     emit: &mut dyn FnMut(Region<'a>) -> anyhow::Result<()>,
     scene: &'a BoardReviewSceneV1,
     state: &ReviewWorkspaceState,
+    layouts: &text_layouts::Lookup<'a>,
 ) -> anyhow::Result<()> {
     if !authored_visible(state) {
         return Ok(());
@@ -184,10 +200,8 @@ fn visit<'a>(
         emit(Region {
             target: &text.object_id,
             layer_id: Some(&text.layer_id),
-            shape: scene
-                .board_text_geometries
-                .iter()
-                .find(|g| g.object_id == text.object_id)
+            shape: layouts
+                .get(&text.object_id)
                 .filter(|g| {
                     datum_gui_protocol::selection_geometry_catalog::layout_polygon(g).is_some()
                 })
@@ -345,20 +359,34 @@ mod tests {
     fn real_board_hit_preflight_matches_owned_bytes_and_hidden_scene_allocates_nothing() {
         let mut state = crate::gpu_surface_pass::board_fixture_state();
         let scope = crate::cpu_alloc::Scope::new("board-hit-construction-proof");
+        assert!(!state.scene.board_text_geometries.is_empty());
+        let index_payload = state.scene.board_text_geometries.len() * std::mem::size_of::<usize>();
+        let index_bytes = crate::cpu_alloc::heap::allocation_bytes(
+            std::alloc::Layout::array::<usize>(state.scene.board_text_geometries.len()).unwrap(),
+        );
         let mut required = 0;
+        let mut calls = 0;
         let regions = scope
             .with(|| {
                 build(&state.scene, &state, |bytes| {
-                    required = bytes;
-                    assert_eq!(
-                        scope.usage().peak_payload_bytes,
-                        0,
-                        "preflight is allocation-free"
-                    );
+                    calls += 1;
+                    let usage = scope.usage();
+                    if calls == 1 {
+                        assert_eq!(bytes, index_bytes);
+                        assert_eq!(usage.peak_payload_bytes, 0);
+                    } else {
+                        assert_eq!(usage.peak_payload_bytes, index_payload as u64);
+                        assert_eq!(
+                            usage.payload_bytes + usage.tracking_bytes,
+                            index_bytes as u64
+                        );
+                        required = bytes;
+                    }
                     Ok(())
                 })
             })
             .unwrap();
+        assert_eq!(calls, 2);
         assert!(!regions.is_empty());
         assert_eq!(regions.len(), regions.capacity());
         let usage = scope.usage();
@@ -382,11 +410,17 @@ mod tests {
         }
         drop(regions);
         assert_eq!(scope.usage().allocations, 0);
-        let refusal = build(&state.scene, &state, |bytes| {
-            assert_eq!(bytes, required);
-            anyhow::bail!("test admission refusal")
-        });
-        assert!(refusal.is_err());
+        for refused_stage in [1, 2] {
+            let mut calls = 0;
+            let refusal = build(&state.scene, &state, |bytes| {
+                calls += 1;
+                assert_eq!(bytes, if calls == 1 { index_bytes } else { required });
+                anyhow::ensure!(calls != refused_stage, "test admission refusal");
+                Ok(())
+            });
+            assert!(refusal.is_err());
+            assert_eq!(calls, refused_stage);
+        }
         state.ui.filters.show_authored = false;
         let hidden = crate::cpu_alloc::Scope::new("hidden-board-hit-proof");
         let regions = hidden
