@@ -2,6 +2,32 @@ use super::*;
 use crate::terminal_session::refresh_terminal_session_context_from_state;
 
 impl Runtime {
+    /// Publish changed emitted context for an existing current-Project consumer.
+    /// Capped transport equality does not assert full GUI selection identity.
+    pub(super) fn refresh_terminal_selection_context_if_changed(&mut self) {
+        if !self.terminal_sessions.active_attached() {
+            return;
+        }
+        let Some(origin) = self.terminal_sessions.active_origin_context() else {
+            return;
+        };
+        if origin.project_root != self.terminal_launch_context.project_root {
+            return;
+        }
+        let state = self.workspace();
+        let selection = datum_gui_protocol::DatumSelectionContext::from_selection(&state.selection);
+        if origin.selection_context == selection
+            && origin.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
+            && origin.source_revision.as_deref() == Some(state.scene.source_revision.as_str())
+            && origin.accepted_transaction_tip == state.supervision.journal.accepted_transaction_tip
+        {
+            return;
+        }
+        // The existing publisher advances the baseline only after success;
+        // later semantic refresh or session activation retries a failed write.
+        self.refresh_terminal_context_snapshot();
+    }
+
     pub(super) fn refresh_terminal_context_snapshot(&mut self) {
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "terminal context refresh begin");

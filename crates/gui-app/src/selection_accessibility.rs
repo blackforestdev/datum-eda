@@ -13,6 +13,7 @@ impl crate::Runtime {
     pub(super) fn refresh_selection_accessibility(&mut self) {
         self.selection_run.cancel();
         self.refresh_selection_accessibility_lod(None);
+        self.refresh_terminal_selection_context_if_changed();
     }
     pub(super) fn refresh_prepared_selection_accessibility(&mut self) {
         let lod = self

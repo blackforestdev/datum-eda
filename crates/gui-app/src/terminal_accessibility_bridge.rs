@@ -292,6 +292,10 @@ mod region_tests;
 mod notice_tests;
 
 #[cfg(test)]
+#[path = "terminal_accessibility_bridge/context_tests.rs"]
+mod context_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

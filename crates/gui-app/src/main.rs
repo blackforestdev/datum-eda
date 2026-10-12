@@ -345,6 +345,7 @@ impl Runtime {
             self.log_terminal_event(format!("terminal session activate failed: {err}"));
             return true;
         }
+        self.refresh_terminal_selection_context_if_changed();
         self.set_active_dock(DockTab::Terminal);
         self.refresh_terminal_activity_summary();
         self.sync_terminal_tabs();
