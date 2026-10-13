@@ -9036,5 +9036,73 @@
       "owned_stage_sha256": "4bd69521a052f9b8b0aba8ae24b05a8f68937b70898c94aba2d0ab1b4aec9a71",
       "limits": "Factualactualreview/check append only; rawoutcomes and fullqualification limits unchanged; defectclose follows actualnormalmainlanding."
     }
+  },
+  "ir01_prefiltered_wire_global_net_20261013": {
+    "classification": "Bounded ordinary prefiltered Wire acquisition explicit GlobalNet21; actual independent review and appointed PM059 manager acceptance. Full IR01 and C04-C06/HUMAN remain open.",
+    "behavior": "Eligible root LabelE Object -> Exclude Wires acquisition BEFORE explicit derived acquisition -> source-qualified Semantic(LabelE) Select Global Net -> exact complete21-member Net incl filtered Wires -> Enable Wires acquisition preserving complete whole SelectionView bytes.",
+    "identity": {
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "origin": "Label73000000-0000-4000-8000-00000000000e/root",
+      "logical_net": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+      "membership": {
+        "wire": 9,
+        "label": 6,
+        "port": 3,
+        "junction": 3,
+        "total": 21,
+        "hidden": 0,
+        "unprojected": 14
+      }
+    },
+    "native": {
+      "original_handle": 39399,
+      "terminal": "ca5cf5",
+      "exit_code": 0,
+      "raw_outcome": "CAPTURE_ONLY",
+      "pid": 1165993,
+      "window": "27262980",
+      "configuration": "X11 input on existing KDE Wayland desktop; WGPU Vulkan; Intel HD Graphics P630 (KBL GT2), IntegratedGpu; Mesa25.0.7-2+deb13u1. No physicalWayland/HUMAN qualification.",
+      "current_evidence": "PID-bound typed complete Object/GlobalNet accessibility, actually focused source-qualified menu items and acknowledged current Main frames; ordered actual input receipts. Six report-admitted Datum images only; filtered/restored fullNet images byteidentical.",
+      "shutdown": "Standalone rawJSON equals decoded drained_device_live/PID1165993/device_epoch1, persisted before ACK; samePID naturalGUI0/strictEOF/resourcesEnd complete/no unreleased hosts/all four reservationszero."
+    },
+    "nonmutation": "All61 explicitly mapped canonical source/history files and Global installation/user StoredPreferenceValue.value maps unchanged across every recorded phase, including after natural drain. No opaque operational/context/session files archived.",
+    "provenance": "Actual coherent owned guarded build2744/ac57aa exit0; report/method/setup/source91/build/proof f81e9f1 transitive checks; additional eight declared consumers byteidentical to actual Git baseline100ab3a3. No source/build/test/native rerun for packaging.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/ir01-prefiltered-wire-global-net-20261013.tar.xz",
+      "archive_sha256": "1402fc72d3b469e50f60059d8cd691dd5149ed0e46c70da59c7904371e6140d9",
+      "manifest_sha256": "3a0080e5bf16b790c5661aa79a638163382a9afd7dc743e9d8bb7c51a23721ac",
+      "regular_files": 210,
+      "hashed_files": 209,
+      "source_pins": 91,
+      "admitted_images": 6,
+      "assembler_sha256": "4686db713bd56865ff6fc175136ebfbdf66d52fe50b3b5bf67cdeed90b999b1a"
+    },
+    "evidence_sha256": {
+      "ir01-prefiltered-wire-global-net-bounded-acceptance.json": "e7f9fbfde1f40fe89280690e1afb428651323073772a0b22a37c6137f598bbf3",
+      "ir01-prefiltered-wire-global-net-2-result.json": "b65d11442343a552afc961bf98c0dff7dea8dc902c0cd9ae852517dfabde2184",
+      "ir01-prefiltered-wire-global-net-2-terminal.json": "e5a8bab456855e753a3016fbb97df4734e61f2afc364092bd642a2cce9acab66",
+      "ir01-prefiltered-wire-global-net-package-terminal.json": "fcbb1a84c72c4113de006a2c3400a69d4dfc130d9f58694e7af6e8a5da105381"
+    },
+    "independent_review": "Actual native/image/input/drain/source reviews3cc516/4b91ac/451605/6df643; corrected assembler substantive8fb2e5/10e746 and exact safe-path guard verified/released by appointed manager. Final archive/index landing review remains distinct.",
+    "retained_failure": "Attempt1 owned15156/b67c2c exit1 AF_UNIX108-byte shutdown socket bind before GUI/PID/input; rawFAIL retained without nativefailure/drain credit. Corrected76-byte owned socket separately scoped and independently reviewed.",
+    "source_changes": [],
+    "retained_limits": [
+      "Finite eligibleLabelE filteredWire GlobalNet case only; other IR01 class/origin/scoped variants remain unqualified",
+      "No full C04/C05/C06, physicalWayland/HUMAN, latency/raster-budget or CAM/T04 acceptance",
+      "No new rules, dependencies, writer, geometry, tolerance, fixture or successor authorization"
+    ],
+    "full_IR01_qualified": false,
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "HUMAN_accepted": false,
+    "required_checks": {
+      "gate_receipt_sha256": "c1f00259635d8b87d5095be392d227e5f504a834e764899fd96306227e508313",
+      "seven_metadata_gates": "all0",
+      "source_health_files": 3141,
+      "staged_checks": "actual file-lane/rustfmt/cached diff all0",
+      "staged_gate_receipt_sha256": "94b59e4a6909c9c6a74424a0e2eed16d5e1627540205ef85c8dbc944eb59ded5"
+    }
   }
 }
