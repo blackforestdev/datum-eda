@@ -497,3 +497,7 @@ mod tests {
         assert_eq!(bridge.preferences, nodes);
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_accessibility_bridge/marking_release_tests.rs"]
+mod marking_release_tests;

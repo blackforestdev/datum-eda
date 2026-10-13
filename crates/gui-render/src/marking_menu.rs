@@ -75,7 +75,7 @@ fn render_preview(
     let icon_set = marking_icon_set().ok();
     let anchor = clamp_anchor(preview, layout.viewport);
     draw_marking_trail(preview, anchor, panel_quads);
-    draw_marking_center(preview, anchor, panel_quads, text_runs);
+    draw_marking_center(preview, anchor, panel_quads, text_runs, hit_regions);
     render_slots(
         preview,
         menu,
@@ -197,6 +197,7 @@ fn draw_marking_center(
     anchor: (f32, f32),
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
 ) {
     let rect = RectPx {
         x: anchor.0 - MARKING_CENTER_SIZE * 0.5,
@@ -204,6 +205,16 @@ fn draw_marking_center(
         width: MARKING_CENTER_SIZE,
         height: MARKING_CENTER_SIZE,
     };
+    if preview.selection.is_some() {
+        hit_regions.push(HitRegion {
+            rect,
+            target: HitTarget::MarkingMenuSurface {
+                menu_key: preview.menu_key.clone(),
+                anchor_x_px: preview.anchor_x_px,
+                anchor_y_px: preview.anchor_y_px,
+            },
+        });
+    }
     panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
     push_rect_border(panel_quads, rect, TEXT_ACCENT, 1.0);
     draw_text(

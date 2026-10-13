@@ -8838,5 +8838,98 @@
       "staged_gates_receipt_sha256": "d56b45c9cc256460adfd0103ea3da6d4b1fc33477cd43c164e51290be85b13c3",
       "reviewed_initial_owned_index_receipt_sha256": "79bdb194ade6685e8a0cf1d7059021266018d97b558a96b4ae4e5716e7930992"
     }
+  },
+  "n06_outside_right_release_20261013": {
+    "designer_behavior": "Releasing a native marking menu outside its presented surfaces dismisses the menu and restores Editor focus while preserving the complete prior selection. Stationary right-click and release inside menu surfaces continue to retain the menu. This implements the existing UVT section2.2.6/preparation N06 outside-dismiss requirement.",
+    "manager_disposition": "PM059 appointed manager accepted bounded objective after actual independent e17cd7/81766a/663228 and root raw/fullP/map/fourDatumPNG review. No owner product rule, dependency, reduced scope, or full qualification acceptance.",
+    "source_fix": "Renderer emits nonactivating passive surfaces from the exact existing painted center and open Select-panel rectangles before actionable items. Runtime Right release uses the current successfully presented live menu key/original anchor marker plus actual cursor and existing18px stationary deadzone; a matching inside surface/item retains the menu, otherwise existing dismissal restores Editor. Passive targets remain nonactivating/nonterminal. No pixel/style/prototype/geometry-math duplication or new threshold.",
+    "owned_source_paths": [
+      "crates/gui-app/src/pan_gesture.rs",
+      "crates/gui-render/src/hit_target.rs",
+      "crates/gui-render/src/marking_menu.rs",
+      "crates/gui-render/src/marking_menu/selection_list.rs",
+      "crates/gui-app/src/runtime_hit_actions.rs",
+      "crates/gui-app/src/terminal_regression_boundary_tests.rs",
+      "crates/gui-app/src/terminal_accessibility_bridge.rs",
+      "crates/gui-app/src/terminal_accessibility_bridge/marking_release_tests.rs"
+    ],
+    "source_count": 89,
+    "runtime_proof": {
+      "original_handle": 76594,
+      "terminal": "d10f39/0",
+      "actual_result": "1 PASS / 0 FAIL in4.54s,483filtered; compile4m02",
+      "scope": "Real hiddenX11 Runtime renders and successfully presents actual center/card/open-list/header/gutter geometry, reverse item precedence and passive nonactivation. Separately injected missing/foreign-key/stale-anchor negatives are labeled as controls. Actual uniqueT3 outside all presented menu rects dismisses with full priorT1/scene/camera/currentEditorAT/canonical history unchanged.",
+      "host_correction": "First executed control failed its single-shot rendertrue assertion. Existing bounded present_main devicePoll/10ms diagnostic pump now waits for actual rendertrue with failed-health checks; no false/prepared-cache acceptance, product recovery clock change or timing waiver."
+    },
+    "ordinary_native": {
+      "original_handle": 45930,
+      "terminal": "1cb281/0",
+      "raw_outcome": "CAPTURE_ONLY unchanged",
+      "gui_pid": 1118733,
+      "window": "27262980",
+      "scope": "Ordinary physical T1 acquisition followed by three balanced right-button sequences: stationary release retains native menu then Escape; inside Select-card geometry release retains menu then Escape; held motion to source-qualified uniqueT3 outside conservative radial surface superset then release dismisses to Editor/current AT without acquiringT3. Conditional qualified waypoint solves same-position no-motion observer admission before press; every required motion receives a fresh own-window ACK.",
+      "inside_image_limit": "Inside release proves Select-card geometry/menu retention, not Select hover highlight; the image shows Delete directional highlight.",
+      "receipts": 6,
+      "successful_present_Main_barriers": 12,
+      "reported_Datum_images": 4,
+      "canonical69_and_Global_VALUE_invariance_phases": 8,
+      "direct_drain": "Literal saved raw==decoded drained_device_live packet samePID1118733 epoch1 was persisted beforeACK; naturalGUI0/noForce/noRetry. ResourceEnd complete25frames/6snapshots/0unreleased and allfour final owner reservations zero.",
+      "private_geometry_limit": "Actual native private presented hit regions are not exported; source-qualified ordinary input/frame/AT/pixels evidence is separate from direct Runtime presented-geometry assertions."
+    },
+    "preserved_outcomes": [
+      {
+        "attempt": "unexecuted checkpoint1",
+        "scope": "Clamped-center test input corrected to actual prepared scene_viewport before first execution; no failed Runtime invented."
+      },
+      {
+        "attempt": "focused1",
+        "original_handle": 85265,
+        "terminal": "cac734/101",
+        "result": "0 PASS / 1 FAIL; single-shot rendertrue assertion, no completed matrix credit."
+      },
+      {
+        "attempt": "native1",
+        "original_handle": 43750,
+        "terminal": "31c95b/1",
+        "result": "RawFAIL/forcedGUI-15. Stationary/Escape prefix only; repeated same-position cursor ACK failed before insidepress. No inside/outside/drain credit."
+      }
+    ],
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n06-outside-release-20261013.tar.xz",
+      "archive_sha256": "986a8189399699f4a41103538eb83d780980e41b7ffa2b99d47140c2692b957d",
+      "manifest_sha256": "18730889020d89f3494f8301d951a2e29c8454c583e5934254795bb7abbebce3",
+      "regular_files": 332,
+      "hashed_files": 331,
+      "source_pins": 89,
+      "assembler_sha256": "f0e33e440f066c8e640d79ee7258e367072cdb4a8982560d6dd49be5e9a42432"
+    },
+    "evidence_sha256": {
+      "n06-outside-release-focused-1-terminal.json": "47d9ab65ee09a0c84ed4436d0fc6f8fad194304291cbd9b69f59f5ee45fb200a",
+      "n06-outside-release-focused-2-terminal.json": "bc645dd0b7c9b1a1a32fb5423c82d30a4aa05e95da7149cec44211a1f08f27b8",
+      "n06-outside-release-build-1-terminal.json": "b1a42b5c90ce45f6b69d33a22f77dcdf9b87965ae27a2c468e8e21ae6d287c1f",
+      "n06-outside-release-1-terminal.json": "cffdc0a733e7f7cb3531124303858cb11f88f4a041e3dcfa05924379b7e701e4",
+      "n06-outside-release-2-terminal.json": "ddd7dfdc7a8ccdfe0274b04633f6fc2f809411e3f0ee1486809b34c4c590c079",
+      "n06-outside-release-manager-disposition.json": "8cce750c8a4c84e6cfbbe8df85d2d95ad8637d40dca726068bce33471548596f",
+      "n06-outside-release-package-receipt.json": "53eaad5e48816485fa1f3426013b219d6d96da6b984495cd101385d08e5747ae"
+    },
+    "initial_independent_review": "Actual native2 fullpacket/current89/canonical69/threeRightspans/12Main/currentAT/literaldrain/resources/fourpersonallyviewedDatumPNG CLEAR e17cd7/81766a/663228. Runtime actual proof/source/env CLEAR5d3b35. Distinct assembler preflight534bea/ab2553; actual all-entry/currentrecord/index/gate review recorded separately when received.",
+    "retained_limits": [
+      "Rawnative1FAIL/forced-15 and focused1FAIL preserved; rawnative2CAPTURE_ONLY unchanged, no fabricated aggregatePASS",
+      "No fullN06/C04/C05/C06/HUMAN/latency/API-livepeak/nativeprivatehitAPI or full stale-command-generation qualification",
+      "Inside Select-card geometry/menu retention does not claim Select hover highlight",
+      "Global installation/user StoredPreferenceValue.value projection only; navigation/recents/opaque context/session/credential bytes and unreported closing images excluded"
+    ],
+    "C04_complete": false,
+    "C05_complete": false,
+    "C06_accepted": false,
+    "final_independent_review": "Distinct all332 archive entries/331 hash+sizes/origins/current89/Gitdb5/eightchanges/canonical69/sixDatumPNG/helpers/snapshots/currentC04 prior70values+textprefix exact CLEAR eae266/7de79f. Exact12 owned index/tested8Rust/gov-only selected timestamp+claimscopeheartbeat and required7+staged2 all0 CLEAR9442c6/aa83d5/dfd7f0.",
+    "required_checks": {
+      "all_seven_exit_zero": true,
+      "source_health_files": 3140,
+      "required_gates_receipt_sha256": "d7e49159c52bc5933f97a5ec6aaf778bd85670f7d5518962388b69473d147f6f",
+      "staged_format_and_whitespace_exit_zero": true,
+      "staged_gates_receipt_sha256": "f67f8488cad0196c9894af6e82dbc51a58757525d3d3d4131c0c28fabc0762ac",
+      "reviewed_initial_owned_index_receipt_sha256": "5f245e8a9dd64c70ac1ab08f4e68b5f6c840dd7e6bf54eecb5f9b58e12c3f6d0"
+    }
   }
 }

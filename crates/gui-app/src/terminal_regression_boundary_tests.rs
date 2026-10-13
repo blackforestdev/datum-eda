@@ -132,6 +132,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::GlobalPreferencesChoice { .. }
         | HitTarget::GlobalPreferencesReset(_)
         | HitTarget::GlobalPreferencesExplanationClose
+        | HitTarget::MarkingMenuSurface { .. }
         | HitTarget::MarkingMenuItem { .. }
         | HitTarget::DockResizeHandle
         | HitTarget::TerminalSplitDivider(_) => false,

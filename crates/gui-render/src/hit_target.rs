@@ -130,6 +130,12 @@ pub enum HitTarget {
         menu: String,
         label: String,
     },
+    /// Nonactivating painted menu geometry, owned by one presented menu anchor.
+    MarkingMenuSurface {
+        menu_key: String,
+        anchor_x_px: i32,
+        anchor_y_px: i32,
+    },
     MarkingMenuItem {
         menu_key: String,
         slot: String,

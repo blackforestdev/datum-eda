@@ -491,7 +491,8 @@ impl Runtime {
                 unreachable!("application overlay targets return above")
             }
             // Divider gestures are handled directly by mouse press/release.
-            HitTarget::DockResizeHandle
+            HitTarget::MarkingMenuSurface { .. }
+            | HitTarget::DockResizeHandle
             | HitTarget::TerminalSplitDivider(_)
             | HitTarget::LayerScrollRegion => false,
         }

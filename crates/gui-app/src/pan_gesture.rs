@@ -89,15 +89,41 @@ impl Runtime {
                 self.open_marking_menu_at_cursor()
             }
             ElementState::Released => {
-                // A native read-only menu remains available for ordinary pointer
-                // and keyboard use after a click. No right-button pan fallback.
-                if self
-                    .workspace()
-                    .ui
-                    .marking_menu
-                    .as_ref()
-                    .is_some_and(|m| m.selection.is_some())
-                {
+                let inside =
+                    self.workspace()
+                        .ui
+                        .marking_menu
+                        .as_ref()
+                        .is_some_and(|menu| {
+                            menu.selection.is_some() && self.last_cursor_pos.is_some_and(|(x, y)| {
+                            let dx = (x - menu.anchor_x_px as f32).round() as i32;
+                            let dy = (y - menu.anchor_y_px as f32).round() as i32;
+                            if marking_slot_for_delta(dx, dy).is_none() {
+                                return true;
+                            }
+                            // Passive surfaces identify geometry from the same live menu's
+                            // last presented frame, including otherwise inert painted areas.
+                            let belongs = |target: &HitTarget| {
+                                let HitTarget::MarkingMenuSurface {
+                                    menu_key, anchor_x_px, anchor_y_px,
+                                } = target else { return false; };
+                                menu_key == &menu.menu_key
+                                    && *anchor_x_px == menu.anchor_x_px
+                                    && *anchor_y_px == menu.anchor_y_px
+                            };
+                            let current = self
+                                .presented_hits
+                                .regions()
+                                .iter()
+                                .any(|r| belongs(&r.target));
+                            current && self.presented_hits.hit_test(x, y).is_some_and(|target| {
+                                belongs(target)
+                                    || matches!(target, HitTarget::MarkingMenuItem { menu_key, .. }
+                                if menu_key == &menu.menu_key)
+                            })
+                        })
+                        });
+                if inside {
                     true
                 } else {
                     self.dismiss_marking_menu()

@@ -59,6 +59,15 @@ pub(super) fn render(
         width,
         height,
     };
+    // Before individual rows: their actionable targets retain hit precedence.
+    hits.push(HitRegion {
+        rect: panel,
+        target: HitTarget::MarkingMenuSurface {
+            menu_key: preview.menu_key.clone(),
+            anchor_x_px: preview.anchor_x_px,
+            anchor_y_px: preview.anchor_y_px,
+        },
+    });
     quads.push(Quad::from_rect(panel, PANEL_BG));
     push_rect_border(quads, panel, PANEL_CARD_BORDER, 1.0);
     draw_text(
