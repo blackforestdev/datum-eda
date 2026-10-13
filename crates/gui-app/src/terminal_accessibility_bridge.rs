@@ -296,6 +296,10 @@ mod notice_tests;
 mod context_tests;
 
 #[cfg(test)]
+#[path = "terminal_accessibility_bridge/compound_move_tests.rs"]
+mod compound_move_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
