@@ -185,7 +185,7 @@
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Corrected-binary exact30 both-face replay/appearance not qualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
+  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette is accepted; authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
   "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
   "C03_complete": true,
   "C04_complete": false,
@@ -9103,6 +9103,80 @@
       "source_health_files": 3141,
       "staged_checks": "actual file-lane/rustfmt/cached diff all0",
       "staged_gate_receipt_sha256": "94b59e4a6909c9c6a74424a0e2eed16d5e1627540205ef85c8dbc944eb59ded5"
+    }
+  },
+  "exact30_current_eight_pad_silhouettes_20261013": {
+    "classification": "Bounded current both-face whole-owned eight-Pad silhouette accepted by appointed PM059 manager after actual independent review; authored bodyoutline absent from fixture and full qualification open.",
+    "behavior": "Current ordinary frontlasso5-of8 and backrectangle5-of8 acquire exact source Footprint parent and all8ownedPads receive full selected treatment. Each meaningfulEscape clears, subsequent frontObject works. Historical complete8 majority actions reused, not replayed.",
+    "current_source_commit": "552fd73305827181dca39c41c34a9828f9a06047",
+    "identity": {
+      "project": "ba255a82-07f9-4ea2-af6d-e73714e223ac",
+      "revision": "886f7f93ff1396498b0284dac895491dff10de5dd8afc76589e3998ca370f75c",
+      "front_footprint": "ccb03330-e729-46de-abd4-58dcf5924bf0",
+      "back_footprint": "5271c934-bcb2-4040-b349-e24ec15b8106",
+      "source_Pads_each": 8,
+      "placement_degrees": 30,
+      "source_aperture_nm": [
+        400000,
+        600000
+      ],
+      "source_geometry_not_dimensional_metrology": true
+    },
+    "native": {
+      "original_handle": 50060,
+      "terminal": "94ca57",
+      "exit_code": 0,
+      "pid": 1232143,
+      "window": "27262980",
+      "raw_outcome": "CAPTURE_ONLY",
+      "configuration": "Existing X11 input on KDE Wayland desktop with WGPU Vulkan; physicalWayland/HUMAN not qualified.",
+      "current_evidence": "Complete exact singleton Compound parent, current typedAT/ownMain frames and source IDs bound through fullquery_pads required gate; source oldscene count alone not authority. Exact Shift-only/Space-up, unique two inputspans/all declaredmotions, no competing heldinput, stablecamera/scale/window/interior24. Three independently reviewed Datum images.",
+      "shutdown": "Literal samePID1232143 raw==decoded drained_device_live/device_epoch1 persisted beforeACK; naturalGUI0/strictEOF/resourceEnd complete/unreleased0/all four reservationszero."
+    },
+    "nonmutation": "All26 explicitly allowlisted canonical/historical source/cache/journal/revision files and Global installation/user preference VALUES unchanged through everyphase and postdrain. No intentional source/history operation or fixture/profile alteration.",
+    "historical_evidence_reuse": "Reserved70f8 exact30 fixPASS and Oct9 eight both-face rectangle/lasso4/8 refusal/5/8 acquisition results remain adequate at their scopes (a76433/cbe0b7/876931). Current trial covers omitted frontlasso/backrectangle painted appearance through materially changed mask consumers; no new matrix replay.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/exact30-current-eight-pad-silhouettes-20261013.tar.xz",
+      "archive_sha256": "c87ef0c9f771906138bcd766d1f9320c859c82897582359bb5ad27f427d2809b",
+      "manifest_sha256": "d2a1501132f1541d0bbaf7c95c9aa2686fd5093172aefbc110c2bf616319c06f",
+      "regular_files": 197,
+      "hashed_files": 196,
+      "source_pins": 101,
+      "admitted_images": 3,
+      "assembler_sha256": "c2e91d764f3c78cd7dcf9c3f4dabbe4a13deace6ed54f9fff4b2b9e91b147e51"
+    },
+    "evidence_sha256": {
+      "exact30-current-mask-bounded-acceptance.json": "9949d74c1054d12b3cc5180558002389cd809cb39735848cb6d9bb55b676ad0d",
+      "exact30-current-mask-3-result.json": "90afb83dee424a95be72aa167af290aeb79cabd4db98bb213cc1151124c91f08",
+      "exact30-current-mask-3-terminal.json": "dff0c2ae1c433a727ca3077a83f8ed28fdfc8b122349b92528782e44fea2fed0",
+      "exact30-current-mask-package-terminal.json": "3ae6582895c88a3c15638f3e36cc5264ac7a5e2a4a7ca1772906884370954977"
+    },
+    "independent_review": "Actual result/pixel/source/input/drain c96509/e13ed6/cd4ab6 CLEAR plus appointed manager personally reviewed images and rawreceipts. Assemblerd43446/f99850 substantive CLEAR with sole locator corrected and manager verified actualc2e91 vs3ece delta. Final archive/index landing review remains distinct.",
+    "retained_failures": [
+      "Family1 viewportguard before regionpress; original8279/e5b58c exit1 and GUI1227867 forced-15, no acquisition/draincredit",
+      "Family2 wrongly required post-idleNone-Escape frame; original45055/6cf159 exit1 and GUI1230293 forced-15, no appearance/draincredit. Camera admitted/current GPU8/8; idleNoOp does not require redraw.",
+      "Initial native.describe wrapper rejected legitimate error:null; failedobserver exit1 retained, no rawPacket/observerPASS. Correctedreader aa93a8 exit0 rawresponse/revision/canonical26 verified.",
+      "CLI project inspect historicalempty keepouts:{} versus typedVec rejects; wrong observerroute, not new GUI/ProjectResolver regression. No fixture conversion or unsupported compatibility guarantee."
+    ],
+    "retained_limits": [
+      "Available both-face whole-owned8Pad silhouette only; fixture has no authoredbodyoutline, so no bodyoutline appearance claim",
+      "No dimensionalmetrology/directmaskcounter/fullN03/N15/IR01/C04-C06/HUMAN/physicalWayland acceptance",
+      "No performancebudget/tolerance/dependency/CAM_T04/successor change; no production/source/build/test/fixture repair needed"
+    ],
+    "authored_bodyoutline_observed": false,
+    "dimensional_metrology_passed": false,
+    "direct_mask_counters_passed": false,
+    "full_N03_N15_qualified": false,
+    "source_changes": [],
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "required_checks": {
+      "gate_receipt_sha256": "20bcd063d44b441b5339c1869315be7ce8b01115ff99a67c8b8ce94d82fef194",
+      "seven_metadata_gates": "all0",
+      "source_health_files": 3141,
+      "staged_gate_receipt_sha256": "be41227b289bfc4ac8deb416fd7ef070eb36d84e1daeea057675ffd4556289ad",
+      "staged_checks": "actual file-lane/rustfmt/cached diff all0"
     }
   }
 }
