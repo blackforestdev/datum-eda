@@ -180,7 +180,12 @@ pub fn layout_text_mesh(
             text_uuid: text.uuid,
             layer: text.layer,
             world_transform: text_world_transform(&attrs),
-            block_bbox_em_nm: block_bbox,
+            block_bbox_em_nm: MeshRectEm {
+                min_x_em_nm: block_bbox.min_x_em_nm + anchor_shift_x_em_nm,
+                min_y_em_nm: block_bbox.min_y_em_nm + anchor_shift_y_em_nm,
+                max_x_em_nm: block_bbox.max_x_em_nm + anchor_shift_x_em_nm,
+                max_y_em_nm: block_bbox.max_y_em_nm + anchor_shift_y_em_nm,
+            },
             glyphs,
         },
         glyph_mesh_assets: asset_by_handle.into_values().collect(),
@@ -685,3 +690,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "mesh/alignment_tests.rs"]
+mod alignment_tests;

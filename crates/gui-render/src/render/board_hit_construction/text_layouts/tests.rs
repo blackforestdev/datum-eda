@@ -204,3 +204,128 @@ fn index_and_hit_output_admission_refuse_before_publication_and_release_overlap(
     drop(hits);
     assert_eq!(scope.usage().allocations, 0);
 }
+
+#[test]
+fn aligned_engine_text_basis_preserves_visual_pick_region_and_hover() {
+    use datum_gui_protocol::PointNm;
+    use datum_gui_viewport::selection_region::SelectionRegion;
+    use eda_engine::text::{
+        TextFamilyId, TextFamilySource, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign,
+    };
+    let source = eda_engine::board::BoardText {
+        uuid: "50000000-0000-4000-8000-000000001080".parse().unwrap(),
+        text: "I".into(),
+        position: eda_engine::ir::geometry::Point { x: 256000000, y: 0 },
+        rotation: 0,
+        layer: 214,
+        render_intent: TextRenderIntent::Annotation,
+        family: TextFamilyId("ibm_plex_sans_condensed".into()),
+        family_source: TextFamilySource::Explicit,
+        style: TextStyleId::default(),
+        height_nm: 640000,
+        stroke_width_nm: 120000,
+        h_align: TextHAlign::Left,
+        v_align: TextVAlign::Center,
+        mirrored: false,
+        keep_upright: false,
+        line_spacing_ratio_ppm: 1000000,
+        italic: false,
+        bold: false,
+        style_class: None,
+    };
+    let mesh = eda_engine::text::layout_text_mesh_from_board_text(&source).unwrap();
+    let b = mesh.batch.block_bbox_em_nm;
+    let t = mesh.batch.world_transform;
+    let mut layout = geometry("aligned-text", 0);
+    layout.world_transform_nm = Some(Affine2DFixedPrimitive {
+        m11_ppm: t.m11_ppm,
+        m12_ppm: t.m12_ppm,
+        m21_ppm: t.m21_ppm,
+        m22_ppm: t.m22_ppm,
+        tx_nm: t.tx_nm,
+        ty_nm: t.ty_nm,
+    });
+    layout.block_bbox_em_nm = Some(MeshRectEmPrimitive {
+        min_x_em_nm: b.min_x_em_nm,
+        min_y_em_nm: b.min_y_em_nm,
+        max_x_em_nm: b.max_x_em_nm,
+        max_y_em_nm: b.max_y_em_nm,
+    });
+    let mut state = crate::gpu_surface_pass::board_fixture_state();
+    state.ui.filters.layer_visibility.insert("L1".into(), true);
+    state.scene.board_texts = vec![text("aligned-text")];
+    state.scene.board_text_geometries = vec![layout.clone()];
+    let hits = super::super::build(&state.scene, &state, |_| Ok(())).unwrap();
+    let hit = hits
+        .iter()
+        .find(|hit| hit.target == "aligned-text")
+        .unwrap();
+    // Original visible target and actual failed integer-pixel inverse (rounded
+    // here to nm) both sit in the aligned layout, above the former raw box.
+    for point in [
+        PointNm { x: 256081920, y: 0 },
+        PointNm {
+            x: 256120981,
+            y: 40711,
+        },
+    ] {
+        assert!(hit.shape.contains(point));
+    }
+    let raw_only = PointNm {
+        x: 256180000,
+        y: -400000,
+    };
+    assert!(!hit.shape.contains(raw_only));
+    let expected = datum_gui_protocol::RectNm {
+        min_x: 256000000,
+        max_x: 256163840,
+        min_y: -223360,
+        max_y: 223360,
+    };
+    assert_eq!(hit.shape.bounds(), Some(expected));
+    assert_eq!(
+        crate::interaction_overlay::schematic_hover_bounds(&state.scene, "aligned-text"),
+        Some(expected)
+    );
+    let corners = datum_gui_protocol::selection_geometry_catalog::layout_polygon(&layout).unwrap();
+    let aligned_region = SelectionRegion::new(&[
+        PointNm {
+            x: 255999999,
+            y: -223361,
+        },
+        PointNm {
+            x: 256163841,
+            y: -223361,
+        },
+        PointNm {
+            x: 256163841,
+            y: 223361,
+        },
+        PointNm {
+            x: 255999999,
+            y: 223361,
+        },
+    ])
+    .unwrap();
+    assert!(aligned_region.encloses(&corners).unwrap());
+    let former_only_region = SelectionRegion::new(&[
+        PointNm {
+            x: 256164000,
+            y: -446720,
+        },
+        PointNm {
+            x: 256197760,
+            y: -446720,
+        },
+        PointNm {
+            x: 256197760,
+            y: -223361,
+        },
+        PointNm {
+            x: 256164000,
+            y: -223361,
+        },
+    ])
+    .unwrap();
+    assert!(!former_only_region.majority_layout(&corners).unwrap());
+}

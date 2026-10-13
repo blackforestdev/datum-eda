@@ -8931,5 +8931,110 @@
       "staged_gates_receipt_sha256": "f67f8488cad0196c9894af6e82dbc51a58757525d3d3d4131c0c28fabc0762ac",
       "reviewed_initial_owned_index_receipt_sha256": "5f245e8a9dd64c70ac1ab08f4e68b5f6c840dd7e6bf54eecb5f9b58e12c3f6d0"
     }
+  },
+  "n12_enumerated_context_text_alignment_20261013": {
+    "designer_behavior": "Aligned standalone text now exposes the same positioned layout bounds to picking, hover and region qualification as its painted glyphs. The original visible I text point in the governed Schematic fixture removes exactly Text1080 from Compound257. The same existing terminal session then returns the current enumerated Compound256 through read-only public ContextGet.",
+    "manager_disposition": "PM059 appointed manager accepted this bounded existing-contract repair and enumerated transport case after actual independent fe722d/e27408/37e1aa and root source/proof/build/projected-cap/PNG/drain checks. No new product rule, dependency, scope reduction or full qualification acceptance.",
+    "source_fix": "Shared engine TextGeometryBatch output block_bbox_em_nm adds the same existing normalized anchor_shift_x/y already used for glyph origins. Glyph origins, mesh assets/handles and world_transform remain unchanged, preserving painting and manufacturing geometry. Protocol/import/render/selection consumers inherit the aligned basis without a local workaround.",
+    "owned_source_paths": [
+      "crates/engine/src/text/mesh.rs",
+      "crates/engine/src/text/mesh/alignment_tests.rs",
+      "crates/gui-render/src/render/board_hit_construction/text_layouts/tests.rs"
+    ],
+    "source_count": 91,
+    "related_defect": "dat-text-alignment-bounds-7spi; close only with actual landing evidence",
+    "focused_proof": {
+      "engine": "Original46615/e18574/0: two named alignment tests PASS, compile3m25/runtime0.00s; unchanged engine production/control reused across corrected renderer source. Independent actual asset+glyph-origin envelope covers 3x3 alignment, single/multiline and rotation/mirror/upright; known paint inputs/identity preserved.",
+      "renderer": "Actual singletool012dc3/0: one named renderer test PASS, compile0.18s/runtime0.01s/522filtered. Actual engine batch\u2192LayoutBasis retains the original visible point and actual failed inverse, rejects former raw-only ghost, and agrees for hit/hover/region. Other filtered targets executed zero tests.",
+      "cohort_distinction": "Engine executed source91cd89; final renderer/current matching source91 uses443f with only renderer test-only direct typed construction correction. No engine replay or fabricated aggregate PASS."
+    },
+    "matching_build": "Original70606/723e86/0 dev4m03 guarded cohesive GUI+CLI+daemon build; actual binaries11d566d6/f8571652/5a791062. Fixture-only oldCLI7528 used for renderer host proof is distinct from these freshly built production companions.",
+    "ordinary_native": {
+      "original_handle": 21657,
+      "terminal": "a64522/0",
+      "raw_outcome": "CAPTURE_ONLY unchanged",
+      "gui_pid": 1145084,
+      "window": "27262980",
+      "workflow": "Ordinary Schematic CtrlA257\u2192owned existingPTY publicGet257\u2192Editor\u2192Ctrl-only click at original visible aligned Text1080 point\u2192exactCompound256/focusNone/scopeNone\u2192samePTY publicGet256. Current openDock publicComponent bounds and same AccessibleId establish ordinary re-entry; no new tab/session/close or private selection injection.",
+      "transport": "Same terminal/context suffix1145084-1791864146593586849; Project2000/rev8e8c7280 exact. At257 members=null/truncated=true with10 retained active-All fields and exact3 omissions layer_coverage/non_electrical_members/projected_layer_coverage. At256 all256 exact class/UUID/root[] members and all13 active-All fields, no omissions. Full retained typed values/reasons validated against current GUI before safe projection output; raw query output not stored. DerivedRun15/four omission evidence remains separate.",
+      "receipts": 4,
+      "successful_present_Main_barriers": 18,
+      "reported_Datum_images": 5,
+      "canonical29_and_Global_VALUE_invariance_phases": 6,
+      "drain": "Literal raw==decoded drained_device_live packet samePID1145084 epoch1 was exclusively saved/fsynced beforeACK. NaturalGUI0/noForce; resourceEnd complete49frames47submitted18snapshots/0unreleased and allfour final owner reservations zero. No API-live peak or latency acceptance."
+    },
+    "preserved_outcomes": [
+      {
+        "attempt": "native1",
+        "terminal": "21222/e8808d/1",
+        "result": "RawFAIL/forcedGUI-15. SafeGet257 only; visible aligned pixel was outside stale unaligned hit bounds. No256/Get256/drain credit."
+      },
+      {
+        "attempt": "renderer compile1",
+        "terminal": "87115/3e9472/101",
+        "result": "E0433 unlinked serde_json in new control; zero renderer execution. Direct existing typed BoardText corrected it without a dependency."
+      },
+      {
+        "attempt": "renderer host2",
+        "terminal": "46600/ab7e6e/101",
+        "result": "Missing EDA_CLI_BIN triggered nested guard waiting on its own outer Cargo. Manager-authorized TERM only owned waiting guard1138647 produced natural fixture failure; no assertion completion. Unchanged renderer proof3 pins existingCLI only for read-only fixture host."
+      },
+      {
+        "attempt": "native2",
+        "terminal": "57088/756788/1",
+        "result": "RawFAIL/forcedGUI-15 after valid original-point Compound256 acquisition. Repeated closed-dock footer point missed the open terminal; noGet256/drain credit."
+      }
+    ],
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n12-enumerated-context-text-alignment-20261013.tar.xz",
+      "archive_sha256": "3026e3c9ae2e4b5a35d43fc429847b260ed0ceb71adf0d9c58d8d689239c0327",
+      "manifest_sha256": "af748fdfc0c0fbecd87c81660ce494b886c93187ef8ffa8f55d0a10aae6ec808",
+      "regular_files": 344,
+      "hashed_files": 343,
+      "source_pins": 91,
+      "assembler_sha256": "6be55aebfe90f5f62de3cfeee6d5109f3eba87b1dedf3fdad857dd3f904727e8"
+    },
+    "unchanged_source_license_supplement": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n12-enumerated-context-text-alignment-source-supplement-20261013.tar.xz",
+      "archive_sha256": "27c6a098510802ec0db3c83032b79242dccc4fee62150079f3049bee0165462a",
+      "manifest_sha256": "705650c10b049ca1f361895d486869cee5029eef2da0c83139a6983f9d7ab499",
+      "regular_files": 9,
+      "hashed_files": 8,
+      "core_archive_sha256": "3026e3c9ae2e4b5a35d43fc429847b260ed0ceb71adf0d9c58d8d689239c0327",
+      "assembler_sha256": "db92ec8f7f65d5a0d1e7f511ac9d4ad383043dbd07c805191053f8e5a07b65a9"
+    },
+    "archive_review": "Core ALL344/343 hashes+sizes/origins independently clear740b3a. Exact ten report-admitted Datum images independently classified0aa4f0/ba903f/d40123; unreported closing files excluded before bytes. Additive six callback sources plus existing font provenance/OFL preserve core3026 unchanged; Final supplement/current-record review22740c/303c51 and exact8index/governance/gates626061/84cf49 are CLEAR.",
+    "evidence_sha256": {
+      "n12-enumerated-context-text-alignment-manager-disposition.json": "a1a3c94efc5aadf7b0a6f7f583985557fa91362a5a557135d525d900f07539d1",
+      "n12-text-alignment-source-cohort-2.json": "443f83ff79761a833bfc3d2fa8d888d6ffa781891db033f46cd7bf484291019d",
+      "n12-text-alignment-focused-1-terminal.json": "e5c062cc37fbba331d28f11512cfa440c8d9f5f0484ba5ebd90a6de3bb491d55",
+      "n12-text-alignment-focused-2-terminal.json": "0bd000d26efa04ab8a85db921fe5b633dfa6163834f37beaeea83811928acdda",
+      "n12-text-alignment-focused-3-terminal.json": "f81e9f1fe6eb7256c1d689542db8462695cb7a34458c2289cbcfe7bf6726ddd5",
+      "n12-text-alignment-build-1-terminal.json": "2b8954d8a77ce9324bc2ebdbfc84b9eefd5dcb74a45d146160f89bb064b20761",
+      "n12-enumerated-context-1-terminal.json": "68724e485562d0e789aef33f2304902830441682408022ca347ce379c6689205",
+      "n12-enumerated-context-2-terminal.json": "432bdec6784a5167b331740e0b8a340170551010fd4ce47274fccbde68c2651c",
+      "n12-enumerated-context-3-terminal.json": "7e7a49b1d3468ba1c4be8adf317c6b5fa2f86de5a8bf3f2c54e264c440cce007",
+      "n12-enumerated-context-text-alignment-package-receipt.json": "840f873205bc5199b6be5092b614026c12d7550d50c7a67b689462eb82386ffb",
+      "n12-enumerated-context-text-alignment-supplement-receipt.json": "6b6021e31b3162898535e855d0b9009718ee2281a73fb0a6ce572ad58debe7dc"
+    },
+    "limits": {
+      "full_N12_qualified": false,
+      "C04_complete": false,
+      "C05_complete": false,
+      "C06_accepted": false,
+      "HUMAN_accepted": false,
+      "omitted_reason_parity_claimed": false,
+      "API_peak_latency_accepted": false,
+      "font_prototype_dependency_changes": false
+    },
+    "final_independent_review": {
+      "core_all344": "740b3a",
+      "supplement_all9_and_current_record": "22740c/303c51",
+      "exact8index_governance_gates": "626061/84cf49",
+      "actual_checks": "Seven affected finalgates0/sourcehealth3141 and two stagedchecks0; original missingintakelabel failure and successfulintake-only correction retained.",
+      "gates_sha256": "5d3c7b56af48aecadf03535c8f93f994fa29bb3dfab35b22592c7f81ec27a637",
+      "owned_stage_sha256": "4bd69521a052f9b8b0aba8ae24b05a8f68937b70898c94aba2d0ab1b4aec9a71",
+      "limits": "Factualactualreview/check append only; rawoutcomes and fullqualification limits unchanged; defectclose follows actualnormalmainlanding."
+    }
   }
 }
