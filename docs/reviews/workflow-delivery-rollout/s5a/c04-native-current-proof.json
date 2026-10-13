@@ -185,7 +185,7 @@
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette is accepted; authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
+  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Native exactly-half delivered region, authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
   "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
   "C03_complete": true,
   "C04_complete": false,
@@ -9177,6 +9177,171 @@
       "source_health_files": 3141,
       "staged_gate_receipt_sha256": "be41227b289bfc4ac8deb416fd7ef070eb36d84e1daeea057675ffd4556289ad",
       "staged_checks": "actual file-lane/rustfmt/cached diff all0"
+    }
+  },
+  "n03_rotated_text_below_above_20261013": {
+    "classification": "Actual manager-accepted finite N03 native below/above rotated BoardText under Parts/Pad acquisition exclusion, restored afterward; no fullN03/C04 or nativeexacthalf/body/HUMAN claim",
+    "behavior": "Ordinary current BoardText Object bootstrap, typed Parts/Pad acquisition exclusions, actual below-half refusal/above-half complete BoardText Compound singleton, real Escape/subsequent Object, filter restoration preserves identity and nonmutation; only three admitted current images.",
+    "current_runtime_source_commit": "e3b68e2b428a2956170d769ae49a130a272affdf",
+    "identity": {
+      "class": "BoardText",
+      "id": "f044663d-9336-4218-bcad-c483dadf6a1b",
+      "instance_path": []
+    },
+    "current_model_revision": "c393300053ab23475289f09ea19c07f9df63b3a96c82d111347f3bbd0b007349",
+    "native": {
+      "windowing": "X11 replay over wgpu; not Wayland qualification",
+      "GUI_sha256": "11d566d69656140a79766dd0e0b1dc61f0d54c0847be8e91cee5b35291410394",
+      "CLI_sha256": "f85716521d6b9ba4e8d5068f3dacd114a13c0c68fac9df16acb79dd3dc7ade2e",
+      "daemon_sha256": "5a791062bc47dbd59c4d7380f40c7eab00805c61094fd56a5fe59ca186ff4ec3",
+      "pid": 1267523,
+      "natural_GUI_exit": 0,
+      "actual_input_source": "Native press/release/motion/Shift/focus/AT/Main receipts; inverse EditorViewport integer-nm endpoints; exact Fraction clipping current captured affine/aligned block; independent post-drain input-span recomputation.",
+      "actual_region_oracles": {
+        "below": {
+          "actual_world_vertices_nm": [
+            [
+              28993205,
+              8026662
+            ],
+            [
+              31999745,
+              14993035
+            ]
+          ],
+          "intersection_area_nm2": {
+            "numerator": "6055250165106454",
+            "denominator": "3849"
+          },
+          "total_area_nm2": {
+            "numerator": "267035013242257",
+            "denominator": "50"
+          },
+          "fraction": {
+            "numerator": "4026100",
+            "denominator": "13667799"
+          },
+          "expected": "refuse",
+          "strict_comparison": "< half",
+          "source": "Current scene aligned affine/em block, actual EditorViewport inverse integer-nm rectangle, exact rational clip; no intended-region oracle or geometry rounding"
+        },
+        "above": {
+          "actual_world_vertices_nm": [
+            [
+              28993205,
+              8026662
+            ],
+            [
+              34492973,
+              14993035
+            ]
+          ],
+          "intersection_area_nm2": {
+            "numerator": "215822495459036674",
+            "denominator": "57735"
+          },
+          "total_area_nm2": {
+            "numerator": "267035013242257",
+            "denominator": "50"
+          },
+          "fraction": {
+            "numerator": "28699820",
+            "denominator": "41003397"
+          },
+          "expected": "acquire",
+          "strict_comparison": "> half",
+          "source": "Current scene aligned affine/em block, actual EditorViewport inverse integer-nm rectangle, exact rational clip; no intended-region oracle or geometry rounding"
+        }
+      },
+      "source_context": "Historical annotations-v2 has unadopted Part/Pad geometry; only those acquisition classes excluded by ordinary typed menu and restored; BoardText remained eligible."
+    },
+    "nonmutation": "All 72 governed safe canonical/pool/component/electrical/journal/revision/recipe files + Global VALUES identical across 11 phases; check_runs/stage/opaque operational excluded before IO.",
+    "historical_evidence_reuse": "Current owning manifest/safe72 map and current annotation_recipe/selection_region sources pinned unchanged from actual Git e3; existing historical annotation and rational strict-half logs pinned separately at their historical scopes. No current-source historical execution inferred; no native exact-half substitution.",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n03-rotated-text-below-above-20261013.tar.xz",
+      "archive_sha256": "0fa0fad03571a96d4875c2840b7b0f3dcab20ed4a5504a2dd3ebc1a59d2d7109",
+      "manifest_sha256": "f32e1c8c6616daf4f271a44de8b16006748ecbf043b94c4387e528e8d489b0ed",
+      "regular_files": 306,
+      "hashed_files": 305,
+      "source_pins": 119,
+      "new_helper_source_count": 1,
+      "canonical_files": 72,
+      "admitted_images": 3,
+      "assembler_sha256": "e781b82b006edcb6136eae68ba205935570e38af5f178ec0864a8a311c4ddcc0"
+    },
+    "evidence_sha256": {
+      "result": "884c0ccaee2f082862122340945069713a8c86207776c6cc821b57e7ce772154",
+      "original_terminal": "cd4774ad898a99e7e8c7c292784395e3933bd8125eb7508b5a8fb02e6af55756",
+      "literal_drain": "80737e92dfc8d12f1cfb1d67c546a23aa5bd4b30c8aad1b0de9940e7e33562b0",
+      "bounded_acceptance": "e9f42480b2d1bd92f0fbf762a6d3c01b0c5d54082319c16e89a177bbc49f0041",
+      "reader_basis": "b1cda0b0a9b739668a1ebd4cc29daf15d6b8a12655015c6100db19fa8118108c",
+      "reader_receipt": "dca145831bdab2a6e7c081a75301278b68bcd66d5e9d2bfd1843f2d9e7793d7b",
+      "reader_guarded_build": "3ed2d11f3c17f62d7b606cf17af8a776034f2a680fb9612147253ab086b07612",
+      "archive_assembly_terminal": "76aadd1b2d21302d1dbebcc71be9bbe0eca148949c8342f3c1a2f2cc7e033c0c",
+      "landing_gate_receipt": "7bf145e5a541ad07537e72aaf5340f4424dce72edd6cefeefbd3705964bb643b"
+    },
+    "independent_review": "Actual outcome1ecad0/d27c1d/88b2da CLEAR + appointed manager personally inspected3images/boundedaccepted; assembler245d37/47b5e7 CLEAR; actual archive33577b/0 CLEAR and manager exactarchive acceptance. Prelanding review/normalhooks pending. Preliminary prelanding2c7a20/c2613e CLEAR conditional original gate receipts and exactfiveblobs; originals now hash-bound.",
+    "retained_failures": [
+      "Family1FAIL",
+      "Family2FAIL",
+      "Family3FAIL",
+      "Family4FAIL",
+      "Family5FAIL",
+      "preflight-wrapperFAIL repository-only prefs root"
+    ],
+    "retained_limits": [
+      "Native exact-half actual input equality remains mandatory/unqualified; source strict-boundary proof only at its scope.",
+      "Authored Part/Symbol body-outline proof remains distinct and unqualified; no fixture rebuild/adoption authority inferred.",
+      "Full N03/N01-N17/C04-C06/nativeWayland/HUMAN/performance/CAM not passed.",
+      "Existing budget and manufacturing/deferred editor/prototype boundaries unchanged."
+    ],
+    "source_changes": [
+      {
+        "path": "crates/gui-protocol/examples/s5a_rotated_text_basis.rs",
+        "sha256": "ffd63e8189d1fb4007b1b4169d8878385c532bd72858bf8cb9d90de5d62ac525",
+        "git_blob": "5a44fa46a9193f998703750d0271e852fa29c4eb",
+        "purpose": "Read-only proof example over existing public workspace loader/layout_polygon, no production behavior/dependency/manifest/persistence/geometry changes; actual reviewed guarded example build and read-only extraction passed."
+      }
+    ],
+    "native_exact_half_qualified": false,
+    "authored_body_qualified": false,
+    "full_N03_qualified": false,
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "required_checks": {
+      "archive_all_entry_verification": "Actual PASS 306safe regular entries/305hashes+sizes+origins;119current sourcepins+1newhelper,72canonical,3onlyadmittedimages; noopaque/executable/font binaries/unreported/admin images.",
+      "metadata_and_staged_gates": "Actual original sevenmetadata and threestaged outputs recorded in scoped hash-bound gate receipt; current finalblob review and normalhooks pending.",
+      "metadata_gates": {
+        "project_status_check": 0,
+        "project_status_check_render": 0,
+        "evidence_traceability": 0,
+        "source_health": {
+          "exit_code": 0,
+          "files_checked": 3142,
+          "failures": []
+        },
+        "dependency_authority": 0,
+        "cargo_resource_policy": 0,
+        "git_diff_check": 0
+      },
+      "original_gate_receipt": {
+        "path": "target/s5a-c04-inventory-keyboard-20261011/n03-rotated-text-landing-gate-receipt.json",
+        "sha256": "7bf145e5a541ad07537e72aaf5340f4424dce72edd6cefeefbd3705964bb643b",
+        "actual_commands": 10,
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
     }
   }
 }
