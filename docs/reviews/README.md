@@ -1,5 +1,85 @@
 # Review records and temporary proof output
 
+## Bounded specification and workspace cleanup
+
+The owner selected these five improvements on 2026-10-14. Current product
+requirements and recorded approvals remain controlling; S5A stays paused.
+Changes require independent review and truthful fixture/qualification boundaries.
+
+<!-- REQ:SPEC-WORKSPACE-CLEANUP:SPEC-01 -->
+1. Clarify the existing specification entry point and subject ownership/status.
+<!-- REQ:SPEC-WORKSPACE-CLEANUP:SPEC-02 -->
+2. Separate current completion requirements from chronological execution records, preserving references and approvals.
+<!-- REQ:SPEC-WORKSPACE-CLEANUP:SPEC-03 -->
+3. Reconcile inherited precedence descriptions and repeated rules without changing product scope.
+<!-- REQ:SPEC-WORKSPACE-CLEANUP:SPEC-04 -->
+4. Audit preserved fixture directories and execute justified retirement dispositions preserving native user data and current evidence.
+<!-- REQ:SPEC-WORKSPACE-CLEANUP:SPEC-05 -->
+5. Standardize temporary project generators and user examples outside the source checkout with ownership and cleanup rules.
+
+<!-- EVIDENCE:SPEC-WORKSPACE-CLEANUP:SPEC-01 -->
+The existing PROGRAM_SPEC entry now maps nine governed formal domain owners,
+links controlling product/tool authority, and distinguishes requirements status
+from delivered behavior, qualification and execution permission. README links
+that entry rather than introducing another master specification. Integration
+promotion, completion requirements and structured/current status each retain
+one named existing owner. No product requirement or grant changes.
+
+<!-- EVIDENCE:SPEC-WORKSPACE-CLEANUP:SPEC-02 -->
+Moved 213 lines of already-historical program v1, milestone criteria and user
+stories into classified review history. Every moved section is byte-identical;
+all original gate names, thresholds, standards boundaries and record context
+remain. Existing root headings now link to those records, preserving inbound
+anchors. Current ownership/scope/standards requirements remain in PROGRAM_SPEC.
+The frozen coverage reader follows the historical tables without introducing
+new current acceptance or changing recorded status. Coverage, two reader
+regressions, governance and traceability pass. Current foundation/S5A approval
+records remain pinned and unchanged; this bounded move does not rewrite them.
+
+<!-- EVIDENCE:SPEC-WORKSPACE-CLEANUP:SPEC-03 -->
+PROGRAM_SPEC and INTEGRATED_PROGRAM_SPEC now follow the existing controlling
+operational/doctrine/tool-contract authority; directory placement confers no
+precedence. The original authoring sequence is explicitly historical and
+PLAN.md cannot select work. Repeated status/selector descriptions point to
+one named section. Existing integration, defer/freeze and acceptance clauses
+remain; executable identities are unchanged and current commands use the
+existing guarded runner/companion prebuild. Classification distinguishes
+governed clauses from unfinished full-spec promotion. Coverage, parity,
+governance, traceability and Frontier validation pass without a Cargo rerun.
+No product rule, acceptance threshold or original S5A grant changes.
+
+<!-- EVIDENCE:SPEC-WORKSPACE-CLEANUP:SPEC-04 -->
+Audited sixty target fixture collections plus 6 .datum native/reference-audit
+collections against all tracked file bytes for
+relative paths, absolute paths and collection names. Retain thirty-seven
+referenced collections, including the 793 MiB/81-project current S5A inventory,
+and both unreferenced user-edit collections. Twenty-one unreferenced generated
+collections (230 project markers, 190.6 MiB) are preserved outside the checkout
+at /home/bfadmin/Documents/datum-eda-workspaces/retired-fixtures-20261014.
+
+Under the Cargo lock and host active-output checks, atomic same-filesystem
+renames preserved every file hash, size and mode. No native project, journal,
+revision blob or user data was deleted. External manifests and relocation
+records plus ignored .datum/history-cleanup/fixture-retirement-map.json retain
+recovery/dispositions. Progress receipts are persisted per collection. Existing
+referenced paths stay valid; no replay, qualification or S5A resumption is
+claimed. Independent pre-mutation review passed the exact preservation plan.
+
+<!-- EVIDENCE:SPEC-WORKSPACE-CLEANUP:SPEC-05 -->
+The S5A fixture generator now defaults to an external managed workspace with
+task/session provenance, a stable owner/family path and an exclusive ownership
+receipt. It refuses repeated reservations, checkout paths, unsafe labels and
+symlink paths resolving into the checkout. Explicit roots remain available for
+pinned historical replay. README examples create user projects outside source
+and explain release, reference checks and preservation before retirement.
+
+All nine fixture-generator tests pass, including actual native construction.
+The three workspace tests passed again after the non-UTF8 path correction.
+Actual command-line checks passed for omitted-root managed placement, repeated
+reservation refusal with unchanged file hashes, and explicit-path compatibility.
+Independent source and preservation review passed. These checks qualify this
+bounded generator change, not S5A native acceptance or full-workspace health.
+
 ## Additional owner-directed cleanup
 
 The owner explicitly selected these five improvements on 2026-10-14.

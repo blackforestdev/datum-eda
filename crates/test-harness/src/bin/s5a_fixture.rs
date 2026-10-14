@@ -23,14 +23,22 @@ mod recipe;
 mod scope;
 #[path = "s5a_fixture/semantic.rs"]
 mod semantic;
+#[path = "s5a_fixture/workspace.rs"]
+mod workspace;
 
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision> <root>",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision> [<fresh-root>|--managed] [existing CLI binary]",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
-    let root = PathBuf::from(args.next().context("fresh output root required")?);
+    // Existing explicit roots remain valid for pinned replay. New/default
+    // workspaces use external, owner-labelled placement with repeat refusal.
+    let root = match args.next() {
+        None => workspace::managed_root(family)?,
+        Some(value) if value == "--managed" => workspace::managed_root(family)?,
+        Some(value) => PathBuf::from(value),
+    };
     if matches!(
         family,
         "library-parents"

@@ -1,6 +1,7 @@
 # INTEGRATED_PROGRAM_SPEC.md
 
-Status: Draft scaffold for full integrated program specification write.
+Status: governed integration clauses; promotion to a full integrated program
+specification remains unfinished. This cleanup supplies no freeze or acceptance.
 
 ## 1. Purpose
 
@@ -25,51 +26,36 @@ It does not own live implementation status claims.
 
 ## 3. Source-of-Truth Precedence
 
-When documents conflict, precedence is:
-
-1. `specs/INTEGRATED_PROGRAM_SPEC.md` (integration contracts only)
-2. Domain specs:
-   - `specs/PROGRAM_SPEC.md`
-   - `specs/ENGINE_SPEC.md`
-   - `specs/MCP_API_SPEC.md`
-   - `specs/IMPORT_SPEC.md`
-   - `specs/STANDARDS_COMPLIANCE_SPEC.md`
-   - `specs/ERC_SPEC.md`
-   - `specs/CHECKING_ARCHITECTURE_SPEC.md`
-   - `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`
-   - `specs/SCHEMATIC_EDITOR_SPEC.md`
-   - `specs/NATIVE_FORMAT_SPEC.md`
-3. Progress tracking authority: `specs/PROGRESS.md`
-4. Rationale documents in `docs/` (non-controlling unless promoted to `specs/`)
+The inherited authority is CLAUDE.md for operational instructions, product
+mechanics and ratified decisions for doctrine, then domain tool contracts.
+This integration specification and the formal domain owners listed in
+[PROGRAM_SPEC.md](PROGRAM_SPEC.md) apply within that authority. Being under
+specs/ does not override controlling documents under docs/. On conflict,
+reconcile the lower document rather than inventing another precedence order.
 
 Status authority rule:
 - `specs/PROGRESS.md` is the only source of truth for implementation status.
+- The structured active_frontier.json selects current tasks/grants; PROGRESS.md
+  contains its generated human view. PLAN.md is historical context.
 - This file may define acceptance evidence and defer contracts, but must not
   introduce independent milestone completion state.
 
 ## 4. Integrated Contract Baseline
 
 This section defines contract wiring only:
-- milestone gate definitions are controlled by `specs/PROGRAM_SPEC.md`
+- original milestone gate definitions are preserved through the historical
+  links in `specs/PROGRAM_SPEC.md`; current doctrine/contracts remain controlling
 - integrated acceptance mapping is controlled by Sections 12-13 in this file
-- implementation status for those gates is controlled by `specs/PROGRESS.md`
+- status and current scheduling follow Section 3; this baseline adds no selector
 
 ## 5. Cross-Spec Contracts (Must Stay Aligned)
 
 ### 5.1 Milestone Contracts
 
-- Milestone gate definitions: `specs/PROGRAM_SPEC.md`
-- Concrete implementation status: `specs/PROGRESS.md`
-- Plan sequencing: `PLAN.md`
-
-Contract:
-- Milestone completion state must be recorded in `specs/PROGRESS.md` only.
-- Supporting docs may summarize status but may not introduce independent
-  completion claims.
-- Fresh execution or takeover must anchor first to `specs/PROGRESS.md` and the
-  active milestone shard docs in `specs/progress/`. `PLAN.md` is sequencing
-  guidance only, and uncommitted worktree state must not override the recorded
-  milestone frontier when they conflict.
+Use the original milestone records linked by PROGRAM_SPEC.md and the acceptance
+mapping in Sections 12-13 for that recorded scope. Status, scheduling and grants
+follow Section 3. PLAN.md retains historical launch context only. Supporting
+records and dirty worktree momentum never select or authorize another task.
 
 ### 5.2 Engine/API/MCP Contract Split
 
@@ -202,11 +188,14 @@ Promote this scaffold to the full integrated program spec when:
 - all domain specs include explicit “current vs target” contract language where
   needed
 - cross-spec contract checklist in Section 5 has no unresolved conflicts
-- `PLAN.md` remains execution-only and free of independent status claims
+- `PLAN.md` remains historical and free of independent current status claims
 - open deferrals for the next milestone phase are explicit and mutually
   referenced
 
 ## 7. Next Write Order (Full Spec Authoring)
+
+Historical scaffold authoring sequence, retained for provenance. It does not
+select the next task; use the structured Frontier and its selected step.
 
 1. Lock `M2` baseline snapshot (done)
 2. Write integrated contracts for `M3` operation model boundary
@@ -221,13 +210,13 @@ This matrix is the minimum verification layer for integrated-spec freeze.
 | Contract Area | Verification Method | Command / Evidence | Owner | Frequency |
 |---------------|---------------------|--------------------|-------|-----------|
 | Naming policy (`Datum EDA` / `datum-eda`) | Automated scan | `rg -n "horizon-ai|Horizon-ai|horizon ai|Horizon AI|horizon_ai" -g '!target/**' -g '!.git/**' /home/bfadmin/Documents/datum-eda` must return no matches | release owner | pre-merge for spec-affecting changes |
-| Workspace health | Automated test run | `cargo test -q` | platform owner | pre-freeze and CI |
-| M2 quality gates | Automated harness | `cargo run -p eda-test-harness --bin m2_quality -- --json` with `"pass": true` | checking owner | pre-freeze and CI |
-| M2 performance baseline | Automated harness | `cargo run -p eda-test-harness --bin m2_perf -- --iterations 3 --compare-baseline crates/test-harness/testdata/perf/m2_doa2526_baseline.json` | checking owner | pre-freeze |
+| Workspace health | Automated test run | `python3 scripts/check_alignment.py --run-health` | platform owner | pre-freeze and CI |
+| M2 quality gates | Automated harness | `python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m2_quality -- --json` with `"pass": true` | checking owner | pre-freeze and CI |
+| M2 performance baseline | Automated harness | `python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m2_perf -- --iterations 3 --compare-baseline crates/test-harness/testdata/perf/m2_doa2526_baseline.json` | checking owner | pre-freeze |
 | MCP server registration health | Config + self-test | `python3 mcp-server/server.py --self-test` and active MCP host config contains `mcpServers["datum-eda"]` | tooling owner | after MCP changes |
 | Engine/API/MCP surface parity | Manual cross-check + tests | `specs/PROGRAM_SPEC.md`, `specs/ENGINE_SPEC.md`, `specs/MCP_API_SPEC.md` reviewed together; parity tests in engine-daemon + mcp-server pass | platform owner | per milestone gate |
 | Standards coverage disposition | Manual audit | `specs/STANDARDS_COMPLIANCE_SPEC.md`, `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`, and affected domain specs reviewed together; no researched standard touched by the change remains implicit | architecture owner | per standards-facing change and pre-freeze |
-| Daemon/MCP transport smoke | Automated transport smoke in unrestricted environment | `cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored` | platform owner | unrestricted CI and release candidates |
+| Daemon/MCP transport smoke | Automated transport smoke in unrestricted environment | `python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored` | platform owner | unrestricted CI and release candidates |
 | Checking report/waiver consistency | Manual contract audit + targeted tests | `specs/ERC_SPEC.md` + `specs/CHECKING_ARCHITECTURE_SPEC.md` + `specs/MCP_API_SPEC.md` reviewed; ERC/DRC explanation/report tests pass | checking owner | per milestone gate |
 | Schematic/board parity | Manual contract audit | parity section in `specs/PROGRAM_SPEC.md` and `specs/INTEGRATED_PROGRAM_SPEC.md` updated in same change as any scope shift | architecture owner | per milestone planning pass |
 
@@ -378,37 +367,37 @@ Documentation-parity note:
 - It does not reopen `M3` implementation scope or alter `M3 overall` status in
   `specs/PROGRESS.md`.
 Primary executable hook:
-`cargo run -p eda-test-harness --bin m3_acceptance_gate -- --json`  
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_acceptance_gate -- --json`
 Current behavior: returns structured `passed` status only when the current
 base determinism, replacement determinism, undo/redo, replacement undo/redo,
 board round-trip fidelity, sidecar-backed round-trip fidelity, and
 engine/daemon/MCP/CLI write-surface parity hooks all pass together.
 Companion hook for save determinism:
-`cargo run -p eda-test-harness --bin m3_op_determinism -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_op_determinism -- --json`
 Current behavior: returns structured `passed` status for the current save-backed
 `move_component`/`delete_track`/`delete_via`/`delete_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_net_class` KiCad-board slices and should fail if save determinism regresses.
 Companion hook for replacement-family save determinism:
-`cargo run -p eda-test-harness --bin m3_replacement_op_determinism -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_replacement_op_determinism -- --json`
 Current behavior: returns structured `passed` status for the current
 `set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan` save-backed replacement slice and should fail if replacement save determinism regresses.
 Companion hook for stack behavior:
-`cargo run -p eda-test-harness --bin m3_undo_redo_roundtrip -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_undo_redo_roundtrip -- --json`
 Current behavior: returns structured `passed` status for the current
 `delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_net_class` undo/redo slice and should fail if round-trip stack behavior regresses.
 Companion hook for replacement-family stack behavior:
-`cargo run -p eda-test-harness --bin m3_replacement_undo_redo_roundtrip -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_replacement_undo_redo_roundtrip -- --json`
 Current behavior: returns structured `passed` status for the current
 `set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan` undo/redo slice and should fail if replacement transaction round-trip behavior regresses.
 Companion hook for pure board-write artifact fidelity:
-`cargo run -p eda-test-harness --bin m3_board_roundtrip_fidelity -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_board_roundtrip_fidelity -- --json`
 Current behavior: returns structured `passed` status for unmodified KiCad-board identity plus current
 `delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference` save→reimport→save artifact stability and should fail if pure board-write round-trip fidelity regresses.
 Companion hook for sidecar-backed save fidelity:
-`cargo run -p eda-test-harness --bin m3_sidecar_roundtrip_fidelity -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_sidecar_roundtrip_fidelity -- --json`
 Current behavior: returns structured `passed` status for the current
 `set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class` save→reimport→save slice and should fail if sidecar-only rule/net-class byte stability, package/part semantic sidecar replay, or reimported board state regresses.
 Companion hook for CLI/MCP/daemon write-surface readiness:
-`cargo run -p eda-test-harness --bin m3_write_surface_parity -- --json`
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m3_write_surface_parity -- --json`
 Current behavior: returns structured `passed` status for the current
 engine/daemon/MCP/CLI `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class`/`delete_component`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save`
 slice and should fail if current write-surface parity regresses.

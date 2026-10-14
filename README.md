@@ -87,7 +87,7 @@ hooks enabled, every commit retains only the five newest local tracker backups.
 
 ```bash
 # Open a native project
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --project-root ./demo
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --project-root "$HOME/Documents/datum-projects/demo"
 
 # Open an existing KiCad board as a Datum workspace
 python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --board path/to/board.kicad_pcb
@@ -96,8 +96,9 @@ python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datu
 ### Command line
 
 ```bash
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project new ./demo --name "Demo"
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project query ./demo summary
+mkdir -p "$HOME/Documents/datum-projects"
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project new "$HOME/Documents/datum-projects/demo" --name "Demo"
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project query "$HOME/Documents/datum-projects/demo" summary
 
 python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- import library.lbr
 python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- pool search "100nF 0402" --library library.lbr
@@ -180,6 +181,24 @@ modules and starts the application; existing Rust module identities remain stabl
 
 ## Documentation
 
+User designs belong in a user-chosen project directory. New generated native
+fixtures use an external, owner-labelled workspace rather than the checkout:
+
+```bash
+DATUM_FIXTURE_OWNER="authorized-task-label" python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin s5a_fixture -- electrical-scope --managed
+```
+
+The default base is `$XDG_STATE_HOME/datum-eda/fixtures`, or
+`$HOME/.local/state/datum-eda/fixtures`. `DATUM_FIXTURE_WORKSPACE_ROOT` can select
+another absolute external base. One owner/family reserves one fresh root;
+repeated generation refuses existing data/reservations. The `.owner.json`
+sidecar records provenance, never a grant, lease or acceptance. Failed output
+is retained for its owner. After owner release, audit references and preserve
+native projects/journals outside the checkout before retiring their original
+locations; never sweep user designs or referenced proof inputs. Existing explicit
+root arguments remain available for source-pinned replay. Cargo build output
+continues to use the separate guarded, disk-backed target policy.
+
 | Document | Contents |
 |---|---|
 | [`CLAUDE.md`](CLAUDE.md) · [`AGENTS.md`](AGENTS.md) | Contributor entry and workspace/verification rules |
@@ -187,6 +206,7 @@ modules and starts the application; existing Rust module identities remain stabl
 | [`docs/DATUM_PRODUCT_MECHANICS.md`](docs/DATUM_PRODUCT_MECHANICS.md) | Controlling product doctrine |
 | [`docs/decisions/`](docs/decisions/) | Ratified decision records |
 | [`docs/contracts/`](docs/contracts/) | Domain tool contracts: schematic, PCB, library, rules, manufacturing, AI/CLI/MCP surface, UI layout |
+| [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) | Formal specification entry: subject owners, governed requirements status and historical program context |
 | [`specs/STANDARDS_COMPLIANCE_SPEC.md`](specs/STANDARDS_COMPLIANCE_SPEC.md) | Standards registry, support dispositions, waiver and deviation obligations |
 | [`docs/CANONICAL_IR.md`](docs/CANONICAL_IR.md) · [`docs/ENGINE_DESIGN.md`](docs/ENGINE_DESIGN.md) | Data model, invariants, operation model |
 | [`docs/DATUM_SHARED_TOOLING_TAXONOMY.md`](docs/DATUM_SHARED_TOOLING_TAXONOMY.md) | Shared editor-tooling backbone |
