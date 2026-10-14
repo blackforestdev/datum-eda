@@ -80,6 +80,17 @@ reservation refusal with unchanged file hashes, and explicit-path compatibility.
 Independent source and preservation review passed. These checks qualify this
 bounded generator change, not S5A native acceptance or full-workspace health.
 
+Implementation landed in `2bff5ff1`. Independent review passed the specification,
+preservation, generator and fulfilled proof conditions. Final released-build
+pruning removed eleven entries, retaining 568 native project roots and runtime
+binaries; all .datum output and recovery metadata remain. Checkout allocation
+is approximately 3.2 GiB. All five bounded maintenance requirements are complete.
+Original S5A-C04 selection and its entire retained task/grant record are restored
+without a claim; both working sessions remain paused. Foundation/S5A approvals
+and protected prototypes are unchanged. No product, dependency, successor or
+qualification grant is added. Existing dat-srf4, dat-wq2s, dat-afp9 and dat-lk0l
+qualification failures remain open; no full-workspace PASS is claimed.
+
 ## Additional owner-directed cleanup
 
 The owner explicitly selected these five improvements on 2026-10-14.
