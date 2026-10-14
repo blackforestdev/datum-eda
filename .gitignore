@@ -1,6 +1,40 @@
 # Rust build artifacts
 /target
 
+# Temporary verification output: never publish raw capture bundles.
+# See docs/reviews/README.md. Golden test inputs and design references are
+# retained separately; proof screenshots belong in ignored local output.
+*.gz
+*.xz
+*.zip
+*.tar
+*.tgz
+*.7z
+*.bz2
+*.zst
+*.zstd
+*.rar
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.mp4
+*.webm
+*.avif
+*.bmp
+*.tif
+*.tiff
+*.apng
+*.heic
+*.mov
+*.mkv
+*.avi
+!/crates/gui-render/testdata/golden/**/*.golden.png
+!/docs/gui/reference/board-editor.png
+!/docs/gui/reference/selection-study.png
+!/crates/**/assets/**
+
 # Python cache
 __pycache__/
 *.py[cod]
