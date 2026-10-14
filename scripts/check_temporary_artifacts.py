@@ -21,14 +21,14 @@ DESIGN_REFERENCES = {
 RAW_PROOF = (".log", ".stdout", ".stderr", ".jsonl")
 
 
-def contains_raw_samples(value: object) -> bool:
-    """DRM process/fd observations are temporary capture payloads."""
+def contains_raw_samples(value: object, keys: tuple[str, ...] = ("drm_samples",)) -> bool:
+    """Raw observer arrays are temporary capture payloads."""
     if isinstance(value, dict):
-        if isinstance(value.get("drm_samples"), list) and value["drm_samples"]:
+        if any(isinstance(value.get(key), list) and value[key] for key in keys):
             return True
-        return any(contains_raw_samples(child) for child in value.values())
+        return any(contains_raw_samples(child, keys) for child in value.values())
     if isinstance(value, list):
-        return any(contains_raw_samples(child) for child in value)
+        return any(contains_raw_samples(child, keys) for child in value)
     return False
 
 
@@ -86,6 +86,17 @@ def main() -> int:
             continue
         if contains_raw_samples(value):
             forbidden.append(path)
+        elif contains_raw_samples(value, ("raw_counters",)):
+            # Preserve unchanged source-pinned historical receipts. New or
+            # changed records must retain summaries rather than raw captures.
+            original = subprocess.run(["git", "show", f"HEAD:{path}"],
+                                      capture_output=True, check=False)
+            try:
+                unchanged = original.returncode == 0 and json.loads(original.stdout) == value
+            except (ValueError, UnicodeDecodeError):
+                unchanged = False
+            if not unchanged:
+                forbidden.append(path)
     if forbidden:
         print("temporary-artifact gate refused tracked proof output:")
         for path in forbidden:

@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import json
 import unittest
 
 
@@ -13,6 +14,27 @@ ROOT = GATE.parent.parent
 
 
 class TemporaryArtifactTests(unittest.TestCase):
+    def test_new_raw_counters_refused_and_historical_receipts_remain_pinned(self) -> None:
+        path = "docs/reviews/trial/counters.json"
+        self.stage(path)
+        target = self.root / path
+        value = {"samples": [{"raw_counters": [{"seconds": 0, "cpu_ticks": 10}]}]}
+        target.write_text(json.dumps(value))
+        self.git("add", "-f", "--", path)
+        self.assertEqual(self.run_gate("--staged").returncode, 1)
+        self.assertEqual(self.run_gate().returncode, 1)
+        self.git("commit", "-qm", "historical fixture")
+        self.assertEqual(self.run_gate().returncode, 0)
+        value["new_finding"] = "changed record"
+        target.write_text(json.dumps(value))
+        self.git("add", "--", path)
+        before = self.git("write-tree")
+        self.assertEqual(self.run_gate("--staged").returncode, 1)
+        self.assertEqual(before, self.git("write-tree"))
+        target.write_text('{"raw_sample_retirement":{"raw_samples_available":false}}')
+        self.git("add", "--", path)
+        self.assertEqual(self.run_gate("--staged").returncode, 0)
+
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

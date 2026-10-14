@@ -58,6 +58,8 @@ def removable_entries(base: Path, preserve: list[Path]) -> list[Path]:
     if not base.is_dir() or base.is_symlink():
         raise guard.ResourcePolicyError(f"unsafe development root: {base}")
     protected = set(preserve)
+    if base in protected:
+        return []
     ancestors = {parent for kept in preserve for parent in kept.parents}
 
     def collect(directory: Path) -> list[Path]:
@@ -161,10 +163,20 @@ def deletion_plan(roots: list[Path], preserve: list[Path]) -> list[Path]:
     return sorted(entries)
 
 
+def retained_dependency_records(runtime: Path, destinations: list[Path]) -> list[Path]:
+    # Alternate runtime copies invalidate destination metadata. Let its removal
+    # force a fresh companion build rather than pairing new binaries with old .d.
+    return [path.with_suffix(".d") for path in destinations
+            if runtime / path.name == path
+            and path.with_suffix(".d").is_file()
+            and not path.with_suffix(".d").is_symlink()]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--released", action="store_true", help="confirm task ownership of pruned output is released")
+    parser.add_argument("--build-only", action="store_true", help="retain all .datum task output; prune only released target output")
     parser.add_argument("--runtime-from", default="target/debug", metavar="PATH")
     args = parser.parse_args()
     if args.apply and not args.released:
@@ -181,17 +193,23 @@ def main() -> int:
                 if stream.read(4) != b"\x7fELF":
                     raise guard.ResourcePolicyError(f"not a built runtime binary: {path}")
         preserved = project_roots(ROOT)
+        if args.build_only:
+            preserved.append(ROOT / ".datum")
         history_backup = ROOT / ".datum/history-cleanup"
         if history_backup.exists():
             preserved.append(history_backup)
         destinations = [ROOT / "target/debug" / name for name in BINS]
         validate_destinations(destinations)
+        # Companion freshness uses Cargo's dependency record. Keeping it avoids
+        # rebuilding unchanged companions merely because cleanup removed .d.
+        dependencies = retained_dependency_records(runtime, destinations)
         roots = [ROOT / "target", ROOT / ".datum", ROOT / ".git/datum-wdq"]
-        plan = deletion_plan(roots, preserved + destinations)
+        plan = deletion_plan(roots, preserved + destinations + dependencies)
         for path in plan:
             print(f"REMOVE {path.relative_to(ROOT)}")
         print(f"Preserve {len(preserved)} native project roots and one runtime binary set.")
-        print("Remove other released target/.datum output and retired WDQ cache.")
+        print("Retain .datum output." if args.build_only else "Remove other released .datum output.")
+        print("Remove released build output and retired WDQ cache; retain companion dependency records.")
         print("Tracker backups are pruned separately with br history prune.")
         if not args.apply:
             print("Preview only; use --apply --released after reviewing contents and ownership.")
@@ -209,7 +227,7 @@ def main() -> int:
                     copy_runtime(source, destination)
             deleted = 0
             for base in roots[:2]:
-                for path in removable_entries(base, preserved + destinations):
+                for path in removable_entries(base, preserved + destinations + dependencies):
                     if path.is_symlink() or not path.is_dir():
                         path.unlink()
                     else:

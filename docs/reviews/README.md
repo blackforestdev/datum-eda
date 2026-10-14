@@ -1,5 +1,70 @@
 # Review records and temporary proof output
 
+## Additional owner-directed cleanup
+
+The owner explicitly selected these five improvements on 2026-10-14.
+S5A sessions remain paused; product, dependency and protected prototype
+authority remain controlling. Independent review is required before closure.
+
+<!-- REQ:ADDITIONAL-CLEANUP:CLEAN-01 -->
+1. Prune released build output preserving native projects and runtime binaries.
+<!-- REQ:ADDITIONAL-CLEANUP:CLEAN-02 -->
+2. Move history rollback backup outside the working directory preserving recovery.
+<!-- REQ:ADDITIONAL-CLEANUP:CLEAN-03 -->
+3. Enforce retention for temporary output and tracker backups.
+<!-- REQ:ADDITIONAL-CLEANUP:CLEAN-04 -->
+4. Compact redundant large evidence JSON preserving findings and source references.
+<!-- REQ:ADDITIONAL-CLEANUP:CLEAN-05 -->
+5. Extract cohesive registered source debt and verify behavior.
+
+<!-- EVIDENCE:ADDITIONAL-CLEANUP:CLEAN-01 -->
+Released-output preview and host process inspection found no active build/app.
+The existing guarded pruner removed nineteen released output entries, reducing
+target from 14 GiB to 3.0 GiB. It retained 796 native project roots, runtime
+binaries and all rollback metadata. No tracked files were removed. Any caches
+regenerated for the final source proof will be pruned again after that build.
+
+<!-- EVIDENCE:ADDITIONAL-CLEANUP:CLEAN-02 -->
+Moved the original history rollback mirror by atomic same-filesystem rename to
+/home/bfadmin/Documents/datum-eda-backups/original-history-20261014.git. All
+5,015 file hashes, sizes and modes match before/after; full Git fsck passes on
+both locations. The preserved mirror contains 1,249,157,198 file bytes. Ignored
+.datum/history-cleanup/rollback-location.json records its path and manifest hash.
+No rollback data was deleted and no published history changed. The repository
+working directory no longer carries that 1.2 GiB backup.
+
+<!-- EVIDENCE:ADDITIONAL-CLEANUP:CLEAN-03 -->
+The enabled repository post-commit hook prunes tracker recovery to the five
+newest backups using br's own history command. Pruning eleven released backups
+reduced history from 13 MiB to 5 MiB; canonical issues remain unchanged. The
+existing development pruner now offers build-only retention of all .datum task
+output and keeps runtime companion .d records to avoid unnecessary rebuilds.
+Eight safety regressions pass, including protected output-root preservation
+and removal of stale dependency records for alternate runtime copies.
+An actual hook smoke test retains exactly five backups without changing
+canonical issue bytes.
+README gives preview/apply and task-release cleanup commands. Temporary output
+is retired only after release; native projects and rollback metadata remain
+protected. Artifact gates continue to forbid temporary captures in commits.
+
+<!-- EVIDENCE:ADDITIONAL-CLEANUP:CLEAN-04 -->
+Compacted six historical resize reports referenced only by the frozen capture
+SHA256SUMS inventory: baseline-traced, baseline-plain, candidate-reuse-plain,
+baseline-plain-v2, reuse-only-pilot and candidate-plain-idle. None is an owning
+traceability consumer or current acceptance reference. Retired 4,852 raw
+CPU/RSS/DRM counter samples, saving 5.52 MiB. Every preexisting non-raw parsed
+field is identical; peak CPU values calculated by the original summarizer's
+formula are retained with sample counts, array hashes and observed intervals.
+Original commit/file hashes match the preserved historical SHA256SUMS pins.
+Each report states raw data is unavailable and supplies no new qualification.
+Original producers/summarizer continue to operate on temporary raw output.
+
+The index artifact gate rejects raw counter arrays in new or changed reports;
+unchanged source-pinned historical receipts remain intact. Six artifact tests
+pass, including forced-add rejection, historical preservation, changed-record
+refusal and nonmutation. Source health and traceability pass. Referenced final,
+comparison and terminal records are unchanged.
+
 ## Owner-directed organization cleanup
 
 The owner authorized these five improvements on 2026-10-14. Product contracts,

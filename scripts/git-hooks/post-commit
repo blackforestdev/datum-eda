@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Keep local tracker recovery bounded; this does not modify canonical issues.
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+br history prune --keep 5

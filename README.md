@@ -74,6 +74,15 @@ python3 scripts/check_alignment.py --run-health # prebuild companions, then work
 bash scripts/run_drift_gates.sh --full # full qualification and repository gates (CI default)
 ```
 
+Local development output has a separate lifecycle. After releasing ownership,
+preview `python3 scripts/prune_development_output.py --build-only`; apply with
+`--apply --released` to clear build output while preserving native projects,
+runtime binaries, companion dependency records and all `.datum` task output.
+At task completion, the same command without `--build-only` also retires released
+temporary proof output while preserving native projects and rollback metadata.
+Never prune while Cargo or the application is active. With the repository Git
+hooks enabled, every commit retains only the five newest local tracker backups.
+
 ### Desktop application
 
 ```bash

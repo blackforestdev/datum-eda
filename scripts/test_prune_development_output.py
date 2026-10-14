@@ -9,6 +9,27 @@ import run_cargo_guarded as guard
 
 
 class DevelopmentPruneTests(unittest.TestCase):
+    def test_alternate_runtime_cannot_keep_stale_destination_dependencies(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            debug = root / "debug"
+            debug.mkdir()
+            binary = debug / "datum-eda"
+            binary.write_text("runtime")
+            dependencies = binary.with_suffix(".d")
+            dependencies.write_text("old source basis")
+            self.assertEqual(prune.retained_dependency_records(debug, [binary]), [dependencies])
+            self.assertEqual(prune.retained_dependency_records(root / "alternate", [binary]), [])
+            self.assertIn(dependencies, prune.removable_entries(debug, [binary]))
+
+    def test_preserving_output_root_protects_all_active_task_content(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / ".datum"
+            root.mkdir()
+            (root / "active.log").write_text("unreleased proof")
+            self.assertEqual(prune.removable_entries(root, [root]), [])
+            self.assertTrue((root / "active.log").exists())
+
     def test_nondumpable_user_supervisor_does_not_exempt_workspace_programs(self):
         self.assertTrue(prune.is_user_service_manager([b"/usr/lib/systemd/systemd", b"--user", b"--deserialize=33"]))
         for command in ([b"target/systemd", b"--user"],
