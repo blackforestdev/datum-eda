@@ -86,6 +86,25 @@ recorded as dat-lk0l. Warning policy and all downstream qualification gates stay
 intact; no full-workspace PASS is claimed. Exact source-health parity reflects
 the ORG-03 downward ratchet. Independent source review passes.
 
+<!-- EVIDENCE:REPOSITORY-ORGANIZATION:ORG-05 -->
+Eleven board-scene geometry/display payload types and their existing outline
+layer default now belong to the normal scene_primitives module (149 lines).
+All declaration/default bodies are byte-identical; explicit root public exports
+retain consumer API and Serde schema/defaults. Root production lines decrease
+from 3,078 to 2,940, exactly ratcheted in the debt ledger and parity inventory.
+The 1,705 existing inline test lines and remaining legacy decomposition debt
+stay open; no exception, ceiling increase or invented qualification is added.
+
+Source health, thirteen policy-integrity regressions, parity, dependency
+authority and evidence traceability pass. Existing fixture round-trip, absent
+field/default, materialization, geometry and authoring tests are reused.
+Full drift's unchanged engine Clippy failures remain recorded as dat-lk0l;
+repeating that unchanged failed build provides no additional decision evidence.
+All 150 protocol behavior tests pass with three explicit qualification skips;
+GUI consumer compilation passes. Independent source review passes the unchanged
+types, exports/defaults and exact ratchet. These results complete ORG-05 without
+claiming the separately blocked full-workspace qualification.
+
 ## Owner-directed maintenance completion
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
