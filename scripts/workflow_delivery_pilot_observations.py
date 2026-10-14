@@ -17,8 +17,17 @@ def read(path):
 
 
 def state(root, capture):
-    return [row["value"] for row in read(root / (capture + "-state.json"))
+    return [row["value"] for row in legacy_records(read(root / (capture + "-state.json")))
             if row["event"] == "state"][-1]
+
+
+def legacy_records(rows):
+    for row in rows:
+        if row.get("event") == "diagnostics_incomplete":
+            raise ValueError("diagnostics incomplete; this stream cannot establish pilot proof")
+        if row.get("kind") == "datum.action-evidence/v2":
+            raise ValueError("v2 contains bounded diagnostic summaries, not legacy complete-selection proof")
+    return rows
 
 
 def records(root):
@@ -26,7 +35,7 @@ def records(root):
     for log in sorted(root.glob("gui-*.log")):
         result.extend(json.loads(line.removeprefix(PREFIX))
                       for line in log.read_text().splitlines() if line.startswith(PREFIX))
-    return result
+    return legacy_records(result)
 
 
 def menu_node(root, capture, identity):

@@ -10,7 +10,7 @@ from unittest.mock import patch
 from workflow_delivery_pilot_capture import Capture, OBJECT, files
 from workflow_delivery_pilot_scenarios import actions
 from workflow_delivery_pilot_build import build_command, snapshot_inputs
-from workflow_delivery_pilot_observations import flag, records, native_menu_events_present
+from workflow_delivery_pilot_observations import flag, records, state, native_menu_events_present
 
 
 class CaptureTests(unittest.TestCase):
@@ -41,6 +41,20 @@ class CaptureTests(unittest.TestCase):
             event = {"event": "dispatch", "value": {"enabled": True, "invoked": False}}
             (root / "gui-1.log").write_text("other log\nDATUM_ACTION_EVIDENCE " + json.dumps(event) + "\n")
             self.assertEqual(records(root), [event])
+
+    def test_bounded_diagnostics_are_not_accepted_as_complete_legacy_proof(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for event in [
+                {"event":"state", "kind":"datum.action-evidence/v2", "value":{"selection":{"member_count":100007}}},
+                {"event":"diagnostics_incomplete", "value":{"complete":False}},
+            ]:
+                (root / "gui-1.log").write_text("DATUM_ACTION_EVIDENCE " + json.dumps(event) + "\n")
+                (root / "selected-state.json").write_text(json.dumps([event]))
+                with self.assertRaises(ValueError):
+                    records(root)
+                with self.assertRaises(ValueError):
+                    state(root, "selected")
 
     def test_target_is_owned_by_guard_not_a_later_cargo_override(self):
         command = build_command(Path("/owned/source"), Path("/owned/target"))

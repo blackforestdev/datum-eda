@@ -64,6 +64,38 @@ also distinct from temporary work proof. Do not relocate screenshots into these
 input directories to bypass the policy. Other raster images and recordings are
 ignored and rejected by the gate even in newly named proof directories.
 
+## Bounded GUI diagnostics
+
+`DATUM_ACTION_EVIDENCE=1` now emits `datum.action-evidence/v2`. Selection records
+contain kind, revision, scope, focus, counts, exact sorted membership SHA-256
+digests and at most eight identity samples. They omit complete property and
+projection maps and explicitly set `complete_inspection=false`. Normal launches
+leave this diagnostic stream disabled. There is no full-Debug-dump override.
+
+The stream limits a record to 64 KiB and a session to 8 MiB, reserving space for
+an explicit `diagnostics_incomplete` event before stopping output. These are
+diagnostic storage limits, not selection limits or product performance budgets.
+They provide ample room for the ordinary registry and compact state, while
+preventing a few interactions from generating gigabytes. Stream exhaustion is
+never a successful or complete proof receipt. Other timing/verbose output is
+separate and should be enabled only for the specific diagnostic question.
+The byte bounds do not qualify diagnostic memory use or input latency: exact
+identity hashing still scales with membership and uses temporary serialized
+buffers, and the existing asynchronous queue is not a bounded-memory queue.
+
+Legacy pilot observations reject v2 and incomplete records because the summaries
+do not satisfy their old complete-selection assertions. Historical, hash-pinned
+scratch readers need deliberate migration before use with current binaries; do
+not silently substitute summaries for those assertions. Exact field/membership
+checks should query ordinary typed context/accessibility/engine interfaces at the
+required checkpoints rather than repeatedly serialize internal state to stderr.
+
+The owner-directed 2026-10-14 cleanup purged 31 obsolete S5A stdout logs and
+duplicate full-state excerpts, reclaiming 8.09 GiB after confirming no application,
+build or open log reader/writer was active. Their old paths and hashes describe
+historical observations, not currently available replay input. Existing derived
+findings remain at their recorded scope; this cleanup does not claim S5A passes.
+
 ## Historical records
 
 This cleanup removes accumulated proof images and compressed bundles from the

@@ -7,6 +7,7 @@ use datum_gui_protocol::{ReviewWorkspaceState, camera_scene_for_pane};
 use serde_json::{Value, json};
 use std::sync::{Arc, Mutex, OnceLock};
 mod output;
+mod selection_summary;
 
 #[derive(Clone, Copy)]
 pub(crate) enum EntrySurface {
@@ -148,7 +149,7 @@ fn capture_state_value(
     window_size: [u32; 2],
     scale_factor: f32,
 ) -> Value {
-    let mut value = json!({
+    let value = json!({
         "context": context(state), "registry": registry(state),
         "focused_pane": state.ui.layout.focused.0,
         "focused_content": format!("{:?}", state.ui.layout.content_for(state.ui.layout.focused)),
@@ -170,19 +171,8 @@ fn capture_state_value(
         "preferences_open": state.ui.global_preferences.open,
         "dock": format!("{:?}", state.ui.active_dock_tab),
         "window_size": window_size, "scale": scale_factor
+        ,"selection": selection_summary::capture(&state.selection)
     });
-    crate::append_gui_verbose_diagnostic_line(|| "action evidence selection format begin");
-    let selection = format!("{:?}", state.selection);
-    crate::append_gui_verbose_diagnostic_line(|| {
-        format!(
-            "action evidence selection format end bytes={}",
-            selection.len()
-        )
-    });
-    // json! serializes expressions by reference. Move this complete String
-    // directly into the value so the large Debug payload is never cloned here.
-    value["selection"] = Value::String(selection);
-    crate::append_gui_verbose_diagnostic_line(|| "action evidence state value ready");
     value
 }
 
@@ -241,7 +231,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn complete_compound_state_wire_matches_prior_capture_with_unicode_and_escapes() {
+    fn compact_compound_state_preserves_identity_and_leaves_workspace_unchanged() {
         use crate::terminal_accessibility_platform::selection_fixture as fixture;
         use datum_gui_protocol::{
             AuthoredSelectionClass, CompoundSelection, SelectionSubject, SelectionTarget,
@@ -296,34 +286,58 @@ mod tests {
         };
         let cameras = vec![json!({"pane": 0, "content": "Board", "camera": null})];
         let presented = Some(json!({"total": 2, "visible": 2, "visible_members": members}));
-        // Prior complete state schema and json!(format!) encoding are the wire oracle.
-        let prior = json!({
-            "context": context(&state), "registry": registry(&state),
-            "focused_pane": state.ui.layout.focused.0,
-            "focused_content": format!("{:?}", state.ui.layout.content_for(state.ui.layout.focused)),
-            "focus": format!("{:?}", state.ui.focus), "selection": format!("{:?}", state.selection),
-            "selection_inspector": {"expanded": state.ui.selection_inspector.inventory_expanded,
-                "filters_expanded": state.ui.selection_inspector.filters_expanded,
-                "scroll_offset": state.ui.selection_inspector.scroll_offset, "presented": presented},
-            "layout": format!("{:?}", state.ui.layout), "pane_cameras": cameras,
-            "scene_bounds": state.scene.bounds, "layer_filters": format!("{:?}", state.ui.filters),
-            "console_latest": state.ui.console.records().next_back().map(|record| &record.message),
-            "active_review_target_id": state.active_review_target_id,
-            "menu": state.ui.active_menu, "submenu": state.ui.active_submenu,
-            "menu_focus_index": state.ui.menu_focus_index,
-            "board_camera": {"center_x_nm": camera.center_x_nm, "center_y_nm": camera.center_y_nm, "zoom": camera.zoom},
-            "preferences_open": state.ui.global_preferences.open, "dock": format!("{:?}", state.ui.active_dock_tab),
-            "window_size": [1920, 1051], "scale": 1.25_f32
-        });
         let actual = capture_state_value(&state, camera, cameras, presented, [1920, 1051], 1.25);
+        assert_eq!(actual["selection"]["kind"], "compound");
+        assert_eq!(actual["selection"]["member_count"], 2);
         assert_eq!(
-            serde_json::to_vec(&actual).unwrap(),
-            serde_json::to_vec(&prior).unwrap()
+            actual["selection"]["notice"]["preview"],
+            "λ雪\n\t\"quoted\"\\path\u{0000}"
         );
-        assert!(actual["selection"].as_str().unwrap().contains("Compound"));
-        assert!(actual["selection"].as_str().unwrap().contains("λ雪"));
+        assert_eq!(actual["selection"]["complete_inspection"], false);
+        assert!(actual["selection"].get("values").is_none());
+        assert_eq!(actual["window_size"], json!([1920, 1051]));
         assert_eq!(state, before);
         fixture::Fixture::assert_bytes(&files);
+
+        // The former Debug capture scaled with every property/projection map.
+        // Exercise the same 100,007-member size that produced 188 MiB records.
+        let SelectionTarget::Native(view) = &mut state.selection else {
+            unreachable!()
+        };
+        view.members = (1..=100_007)
+            .map(|n| datum_gui_protocol::AuthoredSelectionIdentity {
+                class: AuthoredSelectionClass::BoardText,
+                id: uuid::Uuid::from_u128(n),
+                instance_path: Vec::new(),
+            })
+            .collect();
+        view.subject =
+            SelectionSubject::Compound(CompoundSelection::new(view.members.clone(), None).unwrap());
+        view.values.values_mut().next().unwrap().insert(
+            "large_private_property".into(),
+            json!("DO_NOT_DUMP".repeat(100_000)),
+        );
+        let dense = capture_state_value(&state, camera, vec![], None, [1920, 1051], 1.25);
+        assert_eq!(dense["selection"]["member_count"], 100_007);
+        assert_eq!(dense["selection"]["omitted_members"], 99_999);
+        let encoded = serde_json::to_vec(&dense).unwrap();
+        assert!(encoded.len() < output::MAX_RECORD_BYTES);
+        assert!(!String::from_utf8(encoded).unwrap().contains("DO_NOT_DUMP"));
+        let SelectionTarget::Native(view) = &mut state.selection else {
+            unreachable!()
+        };
+        let removed = view.members.pop_first().unwrap();
+        view.members
+            .insert(datum_gui_protocol::AuthoredSelectionIdentity {
+                id: uuid::Uuid::from_u128(200_000),
+                ..removed
+            });
+        let changed = selection_summary::capture(&state.selection);
+        assert_eq!(changed["member_count"], dense["selection"]["member_count"]);
+        assert_ne!(
+            changed["members_sha256"],
+            dense["selection"]["members_sha256"]
+        );
     }
 
     #[test]
