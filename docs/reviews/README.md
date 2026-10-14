@@ -80,6 +80,20 @@ focused six-case guarded suite must finish before closure. Prior full drift's
 sixteen unchanged engine Clippy failures (dat-lk0l) and other qualification
 issues remain separate; no full-workspace PASS or weakened gate is claimed.
 
+All five additional improvements are delivered in independently reviewed
+commits 1fe0c31a and 78f23571. After the six-case source proof, the build-only
+pruner removed nine regenerated output entries and returned target to 3.0 GiB;
+.datum is 191 MiB, current Git storage 56 MiB and tracker backups 5 MiB. All
+795 native project roots and runtime binaries remain; the earlier pruner
+summary included one rollback directory in its 796-root count, now corrected.
+The external 1.2 GiB rollback mirror remains intact and outside ordinary pruning.
+
+The complete original UVT-S5A-BUILD task/grant is restored with no claim and
+both S5A sessions remain paused. No product change, qualification PASS,
+resumption or successor authorization is inferred. The four prior qualification
+issues remain separately open. Released proof output stays local; tracker
+recovery is automatically bounded at commits and cleanup is ownership-aware.
+
 ## Owner-directed organization cleanup
 
 The owner authorized these five improvements on 2026-10-14. Product contracts,
