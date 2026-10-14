@@ -193,6 +193,7 @@ def main() -> int:
                 if stream.read(4) != b"\x7fELF":
                     raise guard.ResourcePolicyError(f"not a built runtime binary: {path}")
         preserved = project_roots(ROOT)
+        native_project_count = len(preserved)
         if args.build_only:
             preserved.append(ROOT / ".datum")
         history_backup = ROOT / ".datum/history-cleanup"
@@ -207,7 +208,7 @@ def main() -> int:
         plan = deletion_plan(roots, preserved + destinations + dependencies)
         for path in plan:
             print(f"REMOVE {path.relative_to(ROOT)}")
-        print(f"Preserve {len(preserved)} native project roots and one runtime binary set.")
+        print(f"Preserve {native_project_count} native project roots and one runtime binary set.")
         print("Retain .datum output." if args.build_only else "Remove other released .datum output.")
         print("Remove released build output and retired WDQ cache; retain companion dependency records.")
         print("Tracker backups are pruned separately with br history prune.")

@@ -337,13 +337,13 @@
     "crates/cli/src/main_tests/main_tests_project_route_proposal_artifact.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 5434
+        "file_lines": 4804
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+      "note": "Dedicated Rust test module exceeds the normal authored test-file limit. CLEAN-05 extracts the six native orthogonal graph reused-via artifact export/apply tests into a cohesive 636-line normal child module; all test bodies remain byte-identical and shared fixture owners stay unchanged. Exact file ceiling ratchets 5434 to 4804; remaining debt stays open."
     },
     "crates/cli/src/main_tests/main_tests_project_schematic_proposals.rs": {
       "kind": "rust-test",

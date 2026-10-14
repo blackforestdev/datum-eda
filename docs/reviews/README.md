@@ -20,7 +20,7 @@ authority remain controlling. Independent review is required before closure.
 <!-- EVIDENCE:ADDITIONAL-CLEANUP:CLEAN-01 -->
 Released-output preview and host process inspection found no active build/app.
 The existing guarded pruner removed nineteen released output entries, reducing
-target from 14 GiB to 3.0 GiB. It retained 796 native project roots, runtime
+target from 14 GiB to 3.0 GiB. It retained 795 native project roots, runtime
 binaries and all rollback metadata. No tracked files were removed. Any caches
 regenerated for the final source proof will be pruned again after that build.
 
@@ -64,6 +64,21 @@ unchanged source-pinned historical receipts remain intact. Six artifact tests
 pass, including forced-add rejection, historical preservation, changed-record
 refusal and nonmutation. Source health and traceability pass. Referenced final,
 comparison and terminal records are unchanged.
+
+<!-- EVIDENCE:ADDITIONAL-CLEANUP:CLEAN-05 -->
+Moved six complete native orthogonal-graph reused-via artifact export/apply
+cases into their cohesive 636-line child test module. Test bodies are
+byte-identical, shared fixture owners and production commands are unchanged,
+and the parent module/filter identity is retained. The largest registered test
+file drops from 5,434 to 4,804 lines, with its exact ledger and parity ceiling
+ratcheted downward. Remaining legacy debt stays open; no new oversized child,
+exclusion or exception is introduced.
+
+Source health, thirteen policy-integrity regressions, focused repository gates,
+Cargo resource/dependency authority and independent source review pass. The
+focused six-case guarded suite must finish before closure. Prior full drift's
+sixteen unchanged engine Clippy failures (dat-lk0l) and other qualification
+issues remain separate; no full-workspace PASS or weakened gate is claimed.
 
 ## Owner-directed organization cleanup
 
