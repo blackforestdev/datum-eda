@@ -1,9 +1,13 @@
-# Development Plan
+# Historical Development Plan
+
+Status: historical launch and milestone context.
 
 ## Document Role
 
-This file is the execution plan and sequencing guide.
-It is not a live status ledger.
+This file preserves the original launch and milestone execution plan. Its
+mission layers and milestone ordering are historical context. Current product
+requirements follow CLAUDE.md, numbered decisions and domain contracts; current
+scheduling follows the structured Frontier.
 
 Status source of truth:
 - `specs/active_frontier.json` is the canonical scheduled roadmap and next-task

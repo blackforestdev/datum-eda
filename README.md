@@ -48,51 +48,52 @@ contracts in [`docs/contracts/`](docs/contracts/).
 | **PCB** | Components, pads, tracks, vias, zones, nets and net classes, outline, stackup, keepouts, dimensions, and text; bounded native zone fill; deterministic routing kernel with route proposals that can be exported, inspected, revalidated, and applied. |
 | **Checks & standards** | ERC and DRC held at 0% false-positive/negative quality gates on real reference designs; check profiles (`erc`, `drc`, `standards`, `manufacturing`, `release`); fingerprint-scoped waivers and accepted deviations; standards-repair proposals generated from a check run. |
 | **Manufacturing** | Gerber RS-274X (copper, mask, paste, silkscreen, outline, mechanical), Excellon drill, BOM, and pick-and-place, produced from journaled manufacturing plans and output jobs. |
-| **Automation & AI** | A single verb registry generates the complete public tool surface (338 `datum.*` tools across 17 families) for the CLI and the MCP server; proposals carry the full create / review / preview / validate / apply lifecycle so agents propose and humans commit. |
-| **Desktop application** | wgpu-based shell with menu bar, tiled board and schematic panes, shared camera/grid/hit-test backbone, engine-resolved scenes, artifact preview, inspector and review panels, a drift-gated design-token system, an embedded Datum-owned terminal with session tabs and agent launch context, and a visual-regression harness. |
+| **Automation & AI** | A single verb registry generates the complete public tool surface (registry-generated `datum.*` tools across 17 families) for the CLI and the MCP server; proposals carry the full create / review / preview / validate / apply lifecycle so agents propose and humans commit. |
+| **Desktop application** | wgpu-based shell with menu bar, tiled board and schematic panes, shared camera/grid/hit-test backbone, engine-resolved scenes, artifact preview, inspector and review panels, a drift-gated design-token system, an embedded Datum-owned terminal with session tabs and agent launch context, and a visual-regression harness. Bounded native library browsing and manual Footprint/Padstack authoring support preview, commit, undo/redo, save and reopen. |
 | **Interoperability** | Deterministic import of KiCad boards, schematics, projects, and footprints and of Eagle libraries into the native model, with query and checks over the converted design. |
 
-**In development.** The desktop application is a review and supervision
-surface today; interactive authoring through a direct GUI→engine commit path
-is a scheduled phase, and the embedded terminal is being completed into a
-full daily-driver terminal over a Datum-owned core. Library depth (further
-package families, native symbol import), general copper pour, and additional
-exchange formats (ODB++, IPC-2581, STEP) are specified and not yet built.
-Status is tracked in [`specs/PROGRESS.md`](specs/PROGRESS.md).
+**Development availability.** The library GUI delivery covers browsing all eight
+native kinds and the supported Footprint/Padstack authoring workflow. Its
+[ordinary application record](docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json)
+and current Frontier record preserve the delivered scope and separate full
+qualification. Other editor capabilities, selection qualification and terminal
+work remain subject to their own completion contracts. Consult
+[`specs/PROGRESS.md`](specs/PROGRESS.md) for current availability and open work.
 
 ## Getting started
 
-Requires Rust stable and a C linker; the desktop application additionally
+Requires the Rust toolchain pinned in [`rust-toolchain.toml`](rust-toolchain.toml)
+and a C linker; the desktop application additionally
 requires a Vulkan-capable environment (software Vulkan such as lavapipe is
 sufficient).
 
 ```bash
-cargo build
-cargo test
-scripts/run_drift_gates.sh      # pre-merge gate: clippy, spec/parity/governance gates, proof gates
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo build
+python3 scripts/run_cargo_guarded.py --workload proof -- cargo test
+bash scripts/run_drift_gates.sh # full qualification and repository gates
 ```
 
 ### Desktop application
 
 ```bash
 # Open a native project
-cargo run -p datum-gui-app --bin datum-gui -- --project-root ./demo
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --project-root ./demo
 
 # Open an existing KiCad board as a Datum workspace
-cargo run -p datum-gui-app --bin datum-gui -- --board path/to/board.kicad_pcb
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --board path/to/board.kicad_pcb
 ```
 
 ### Command line
 
 ```bash
-cargo run -p datum-eda-cli -- project new ./demo --name "Demo"
-cargo run -p datum-eda-cli -- project query ./demo summary
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project new ./demo --name "Demo"
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project query ./demo summary
 
-cargo run -p datum-eda-cli -- import library.lbr
-cargo run -p datum-eda-cli -- pool search "100nF 0402" --library library.lbr
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- import library.lbr
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- pool search "100nF 0402" --library library.lbr
 
-cargo run -p datum-eda-cli -- erc design.kicad_sch
-cargo run -p datum-eda-cli -- drc design.kicad_pcb
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- erc design.kicad_sch
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- drc design.kicad_pcb
 ```
 
 Command families: `project`, `check`, `proposal`, `journal`, `artifact`,
@@ -102,7 +103,7 @@ Exit codes: `0` pass, `1` violations found, `2` execution error.
 ### MCP server
 
 ```bash
-cargo run -p eda-engine-daemon -- --socket /tmp/datum-eda-engine.sock
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p eda-engine-daemon -- --socket /tmp/datum-eda-engine.sock
 python3 mcp-server/server.py
 ```
 
@@ -144,7 +145,7 @@ is the contract.
 The engine is a Rust library with no GUI or rendering dependency. The daemon
 exposes it over Unix-socket JSON-RPC; the MCP server is a thin translation
 layer over the daemon and CLI; the desktop application consumes engine state
-through the `gui-protocol` scene contract, currently via the CLI. Every surface
+through the `gui-protocol` scene contract, through the shared session/native-edit client and supervision adapters. Every surface
 operates on one resolved design model through the same operation/commit model.
 
 | Crate | Package | Role |
@@ -157,13 +158,15 @@ operates on one resolved design model through the same operation/commit model.
 | `crates/gui-viewport` | `datum-gui-viewport` | Shared camera, grid, hit-test, and interaction backbone |
 | `crates/gui-render` | `datum-gui-render` | wgpu renderer, design tokens, visual-regression harness |
 | `crates/gui-app` | `datum-gui-app` → `datum-gui` | Desktop application shell and embedded terminal |
-| `crates/terminal-core` | `datum-terminal-core` | Datum-owned terminal emulation core (in development) |
+| `crates/terminal-core` | `datum-terminal-core` | Datum-owned terminal emulation core; qualification tracked separately |
 | `crates/test-harness` | `eda-test-harness` | Performance, quality, and proof-gate harnesses |
 
 ## Documentation
 
 | Document | Contents |
 |---|---|
+| [`CLAUDE.md`](CLAUDE.md) · [`AGENTS.md`](AGENTS.md) | Contributor entry and workspace/verification rules |
+| [`docs/AGENT_OPERATIONAL_PROCEDURES.md`](docs/AGENT_OPERATIONAL_PROCEDURES.md) | Action-specific procedures; read applicable sections |
 | [`docs/DATUM_PRODUCT_MECHANICS.md`](docs/DATUM_PRODUCT_MECHANICS.md) | Controlling product doctrine |
 | [`docs/decisions/`](docs/decisions/) | Ratified decision records |
 | [`docs/contracts/`](docs/contracts/) | Domain tool contracts: schematic, PCB, library, rules, manufacturing, AI/CLI/MCP surface, UI layout |
@@ -172,6 +175,15 @@ operates on one resolved design model through the same operation/commit model.
 | [`docs/DATUM_SHARED_TOOLING_TAXONOMY.md`](docs/DATUM_SHARED_TOOLING_TAXONOMY.md) | Shared editor-tooling backbone |
 | [`docs/gui/`](docs/gui/) | Desktop application product model, conformance, visual language, terminal specifications |
 | [`specs/PROGRESS.md`](specs/PROGRESS.md) · [`specs/SPEC_PARITY.md`](specs/SPEC_PARITY.md) | Implementation status and machine-checked inventory |
+
+[`PLAN.md`](PLAN.md) and
+[`docs/PROJECT_ARCHITECTURE_REFERENCE.md`](docs/PROJECT_ARCHITECTURE_REFERENCE.md)
+retain historical launch/milestone context. Current product requirements live in
+the doctrine and domain contracts above; current scheduled work comes from the
+Frontier. `docs/reviews/` holds compact findings and acceptance records;
+`research/` records the rationale feeding governed contracts. Temporary captures
+belong in ignored, task-owned output as described in
+[`docs/reviews/README.md`](docs/reviews/README.md).
 
 ## Roadmap
 

@@ -1,5 +1,36 @@
 # Review records and temporary proof output
 
+## Owner-directed organization cleanup
+
+The owner authorized these five improvements on 2026-10-14. Product contracts,
+required acceptance evidence and dependency authority remain controlling; the
+S5A implementation sessions stay paused. Changes land in independently reviewed
+units with concrete before/after evidence and bounded verification.
+
+<!-- REQ:REPOSITORY-ORGANIZATION:ORG-01 -->
+1. Reconcile README capabilities and guarded development commands; make current
+   authority and historical plan roles clear through the existing entry points.
+<!-- REQ:REPOSITORY-ORGANIZATION:ORG-02 -->
+2. Compact unnecessary raw review JSON after reviewing consumers; preserve
+   findings, method/source pins, acceptance records and truthful raw availability.
+<!-- REQ:REPOSITORY-ORGANIZATION:ORG-03 -->
+3. Group GUI application source and associated tests by cohesive responsibility,
+   update active consumers and verify behavior without changing product semantics.
+<!-- REQ:REPOSITORY-ORGANIZATION:ORG-04 -->
+4. Remove actual repeated verification and provide clearly scoped focused/full
+   commands while preserving required qualification and guarded Cargo execution.
+<!-- REQ:REPOSITORY-ORGANIZATION:ORG-05 -->
+5. Extract cohesive ownership from registered GUI protocol source debt, ratchet
+   exact ceilings downward and verify retained behavior and existing source policy.
+
+<!-- EVIDENCE:REPOSITORY-ORGANIZATION:ORG-01 -->
+README now describes the delivered bounded library GUI workflow and separate
+qualification, uses the pinned Rust toolchain and guarded Cargo examples, and
+identifies current authority, review records and historical context. PLAN.md is
+explicitly historical and classified accordingly. Existing product contracts
+and acceptance records remain unchanged. Parity, coverage, governance and
+traceability checks pass; these documentation changes require no Cargo rerun.
+
 ## Owner-directed maintenance completion
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
