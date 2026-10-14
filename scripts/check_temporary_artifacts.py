@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 
@@ -18,6 +19,17 @@ DESIGN_REFERENCES = {
     "docs/gui/reference/selection-study.png",
 }
 RAW_PROOF = (".log", ".stdout", ".stderr", ".jsonl")
+
+
+def contains_raw_samples(value: object) -> bool:
+    """DRM process/fd observations are temporary capture payloads."""
+    if isinstance(value, dict):
+        if isinstance(value.get("drm_samples"), list) and value["drm_samples"]:
+            return True
+        return any(contains_raw_samples(child) for child in value.values())
+    if isinstance(value, list):
+        return any(contains_raw_samples(child) for child in value)
+    return False
 
 
 def is_temporary_artifact(path: str) -> bool:
@@ -59,6 +71,21 @@ def main() -> int:
         return 2
     paths = [os.fsdecode(path) for path in result.stdout.split(b"\0") if path]
     forbidden = sorted(path for path in paths if is_temporary_artifact(path))
+    for path in paths:
+        if not path.lower().startswith("docs/reviews/") or not path.lower().endswith(".json"):
+            continue
+        payload = subprocess.run(["git", "show", f":{path}"], capture_output=True, check=False)
+        if payload.returncode:
+            print(f"temporary-artifact gate failed: cannot read indexed record {path!r}")
+            return 2
+        try:
+            value = json.loads(payload.stdout)
+        except (ValueError, UnicodeDecodeError):
+            # This gate checks capture storage; schema validity belongs to the
+            # owning record reader. Non-JSON fixtures remain outside this rule.
+            continue
+        if contains_raw_samples(value):
+            forbidden.append(path)
     if forbidden:
         print("temporary-artifact gate refused tracked proof output:")
         for path in forbidden:

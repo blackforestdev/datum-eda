@@ -101,6 +101,20 @@ class TemporaryArtifactTests(unittest.TestCase):
         self.git("mv", "--", source, path)
         self.assertEqual(self.run_gate("--staged").returncode, 1)
 
+    def test_raw_samples_cannot_hide_in_a_review_json_record(self) -> None:
+        path = "docs/reviews/trial/result.JSON"
+        self.stage(path)
+        target = self.root / path
+        target.write_text('{"nested":{"drm_samples":[{"descriptors":["raw fd data"]}]}}')
+        self.git("add", "-f", "--", path)
+        before = self.git("write-tree")
+        self.assertEqual(self.run_gate("--staged").returncode, 1)
+        self.assertEqual(self.run_gate().returncode, 1)
+        self.assertEqual(before, self.git("write-tree"))
+        target.write_text('{"raw_sample_retirement":{"raw_samples_available":false,"sample_count":1}}')
+        self.git("add", "--", path)
+        self.assertEqual(self.run_gate("--staged").returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -31,6 +31,17 @@ explicitly historical and classified accordingly. Existing product contracts
 and acceptance records remain unchanged. Parity, coverage, governance and
 traceability checks pass; these documentation changes require no Cargo rerun.
 
+<!-- EVIDENCE:REPOSITORY-ORGANIZATION:ORG-02 -->
+Compacted five unreferenced historical failed/partial GPU observer reports,
+retiring 2,485 raw per-process/fd samples and saving 15.39 MiB. Every other parsed
+field remains identical, including outcomes/errors, CPU and DRM aggregates,
+method/source/binary pins and qualification limits. Each record names its
+original commit/hash and explicitly states raw samples are unavailable; no new
+qualification or acceptance is claimed. Producers retain their original methods
+and write raw data to temporary output. Current acceptance maps/records remain
+unchanged. The existing artifact gate rejects raw DRM arrays hidden inside
+review JSON; five forced-index/retirement tests and source-health checks pass.
+
 ## Owner-directed maintenance completion
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
@@ -171,7 +182,9 @@ history tags; collaborators must fetch those tags with the replacement.
 
 The owner's 2026-10-13 direction is controlling: screenshots used to demonstrate
 work are temporary. Do not commit or push them, recordings, raw capture archives,
-or compressed diagnostic bundles. The pre-commit temporary-artifact gate enforces
+or compressed diagnostic bundles. Raw per-process DRM samples also belong in
+temporary output; retained JSON findings use explicit summaries and availability.
+The pre-commit temporary-artifact gate enforces
 this rule, including forced additions. It also rejects compressed archives
 anywhere in the repository so moving a bundle into testdata cannot evade the rule.
 
