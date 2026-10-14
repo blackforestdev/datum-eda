@@ -105,6 +105,19 @@ GUI consumer compilation passes. Independent source review passes the unchanged
 types, exports/defaults and exact ratchet. These results complete ORG-05 without
 claiming the separately blocked full-workspace qualification.
 
+All five organization improvements are delivered in independently reviewed
+commits 8636b8c3, fe1777d5, cb80fd51, 91fe7bc5 and 601fd644. Temporary raw output
+stays ignored; screenshots and archives remain blocked from ordinary commits.
+The existing guarded/cache-maintenance mechanism controls regenerated local
+build output. No product contract, dependency or protected prototype changed.
+
+The pre-maintenance UVT-S5A-BUILD/S5A-C04 pointer is restored with its entire
+original task/grant byte-equivalent at the parsed-record level and no claim.
+Both implementation sessions remain paused. No S5A acceptance, resumption or
+successor authorization is inferred. Full qualification remains open separately
+for dat-srf4, dat-wq2s, dat-afp9 and dat-lk0l; focused cleanup proof is recorded
+above and never presented as full-workspace PASS.
+
 ## Owner-directed maintenance completion
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
