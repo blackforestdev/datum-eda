@@ -185,7 +185,7 @@
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Native exactly-half delivered region, authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
+  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
   "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
   "C03_complete": true,
   "C04_complete": false,
@@ -9343,5 +9343,86 @@
         ]
       }
     }
+  },
+  "n03_rotated_text_exact_half_20261013": {
+    "classification": "Actual independently reviewed and manager accepted bounded native X11/wgpu N03 exact-half subset",
+    "behavior": "Ordinary leftward Shift lasso at exactly half of current rotated BoardText oriented layout refuses; complete current None/selectedAT absent; subsequent direct Object, restored Parts/Pad filters, real Escape and protected natural drain.",
+    "identity": {
+      "class": "BoardText",
+      "id": "f044663d-9336-4218-bcad-c483dadf6a1b",
+      "project": "72000000-0000-4000-8000-000000000001",
+      "revision": "c393300053ab23475289f09ea19c07f9df63b3a96c82d111347f3bbd0b007349"
+    },
+    "source_runtime_baseline": "e3b68e2b428a2956170d769ae49a130a272affdf",
+    "matching_build": "Existing GUI11d566d6/CLIf8571652/daemon5a791062 and qualified helper/reader reused; no runtime source or build change",
+    "actual_area_oracle": {
+      "actual_world_vertices_nm": [
+        [
+          35603399,
+          5209490
+        ],
+        [
+          30983594,
+          17528970
+        ],
+        [
+          29443659,
+          17528970
+        ],
+        [
+          29443659,
+          5209490
+        ]
+      ],
+      "intersection_area_nm2": {
+        "numerator": "267035013242257",
+        "denominator": "100"
+      },
+      "total_area_nm2": {
+        "numerator": "267035013242257",
+        "denominator": "50"
+      },
+      "fraction": {
+        "numerator": "1",
+        "denominator": "2"
+      },
+      "expected": "refuse",
+      "strict_comparison": "exactly half fails greater-than-half predicate",
+      "source": "Actual integer native vertices; exact rational convex clip of current oriented layout"
+    },
+    "camera_basis": "Full-pane camera pan scale; inset-render inverse scale. One acknowledged delta(-260,60), complete actual vertices and held motion sequence qualify exacthalf; superseded inset-camera predictive model earned no native credit.",
+    "result_sha256": "1b9f5072aac3c093ca2a85498a73ecd9b800984037328a1dc4c808dc927c9243",
+    "terminal_sha256": "efa4f9de2983c27e801cbe6d4ded4b41bdb8b31e4e5ef939980a6932aa567efb",
+    "raw_outcome": "CAPTURE_ONLY unchanged",
+    "independent_review": "c9a389/d6817a/e3c5e1 CLEAR; manager bounded acceptance aa92618ed8298c4d490d8d753c94705cef9e2972dace341c77120d67e3c911d6",
+    "nonmutation": "All72canonical source/history files and Global values unchanged through10phases",
+    "drain": "SamePID1283815 epoch1 literal drained_device_live persisted beforeACK; naturalGUI0",
+    "prior_evidence": "Existing below/above archive0fa0fad03571a96d4875c2840b7b0f3dcab20ed4a5504a2dd3ebc1a59d2d7109 reused at accepted scope; prior fiveFAILs preserved there",
+    "retained_drafts": "Exact-half drafts1\u20133 unexecuted, actual HOLD corrections and finalreview/inputrelease retained",
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n03-rotated-text-exact-half-20261013.tar.xz",
+      "sha256": "e78f8ff4fb095e715d2831ff391650f4e2c83d1b9a7ce665b8248bd7b7c3680a",
+      "manifest_sha256": "da21110cd187f651730cb7c48df2d01bd0f0102876bd4265c63bdab995238152",
+      "regular_files": 236,
+      "hashed_files": 235,
+      "canonical_files": 72,
+      "images": 2,
+      "assembler_sha256": "8983d228510dc529a2e2d3b91109531ac4d91ad3ac2fdfb18471463e6d59dc68",
+      "local_all_entry_verification_sha256": "caa4f346e41d6a40aa4cad9b0cd4da4bbb3b24f43d1bf554f417a03a915d116a",
+      "actual_assembler_review": "84c7b1/e92586 CLEAR",
+      "actual_archive_outcome_review": "61effe/770e59 CLEAR; manager bounded archive acceptance; root c1d33b independently verified236regular/235SHA and only2images"
+    },
+    "native_exact_half_qualified": true,
+    "authored_body_qualified": false,
+    "full_N03_qualified": false,
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "retained_limits": [
+      "X11/wgpu only, not nativeWayland/HUMAN",
+      "Explicit acquisition exclusions restored afterward; no unfiltered sourceavailability equivalence",
+      "authored body-outline appearance, dimensional metrology and direct mask counters unqualified",
+      "FullN03/N15/C04-C06/CAM/T04/performance boundaries unchanged"
+    ]
   }
 }
