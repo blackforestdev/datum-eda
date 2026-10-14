@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 import fcntl
+import json
 import os
 from pathlib import Path
 import tempfile
+import subprocess
+import sys
 import unittest
 from dataclasses import replace
 
@@ -14,6 +17,26 @@ import run_cargo_guarded as guard
 
 
 class CargoResourceGuardTests(unittest.TestCase):
+    def test_nested_child_refuses_before_waiting_on_parent_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            lock_path = Path(directory) / "parent.lock"
+            policy_path = Path(directory) / "policy.json"
+            policy = json.loads(guard.DEFAULT_POLICY.read_text())
+            policy["lock_path"] = str(lock_path)
+            policy_path.write_text(json.dumps(policy))
+            environment = guard.command_environment(
+                dict(os.environ), "proof", guard.ROOT / "target", guard.load_policy()
+            )
+            with guard.acquire_lock(lock_path, 1):
+                result = subprocess.run(
+                    [sys.executable, str(guard.ROOT / "scripts/run_cargo_guarded.py"),
+                     "--workload", "proof", "--policy", str(policy_path), "--check-only"],
+                    env=environment, capture_output=True, text=True, timeout=3,
+                )
+        self.assertEqual(result.returncode, 75)
+        self.assertIn("nested Cargo", result.stderr)
+        self.assertNotIn("preflight", result.stderr)
+
     def policy(self, lock_path: Path) -> guard.ResourcePolicy:
         return guard.ResourcePolicy(
             lock_path=lock_path,

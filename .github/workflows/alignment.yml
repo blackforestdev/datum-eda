@@ -67,4 +67,4 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Daemon socket transport smoke
-        run: cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored
+        run: python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored

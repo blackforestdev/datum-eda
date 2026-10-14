@@ -5,6 +5,32 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cargo_guard=(python3 "$repo_root/scripts/run_cargo_guarded.py" --workload proof --)
 cd "$repo_root"
 
+case "${1:---full}" in
+  --focused)
+    if [[ $# -gt 1 ]]; then echo "usage: $0 [--focused|--full]" >&2; exit 2; fi
+    # Structural checks only. Full qualification remains the default/CI mode.
+    for gate in check_cargo_resource_policy check_progress_coverage \
+        check_spec_parity check_spec_governance check_evidence_traceability \
+        check_dependency_authority check_global_preferences_boundary \
+        check_terminal_split_boundary check_terminal_transport_boundary \
+        check_terminal_core_adapter_boundary check_terminal_core_renderer_boundary \
+        check_terminal_native_interaction check_gui_design_tokens; do
+      python3 "scripts/$gate.py"
+    done
+    python3 scripts/project_status.py check
+    if [[ -n "${SOURCE_HEALTH_BASE_REF:-}" ]]; then
+      python3 scripts/check_source_health.py --base-ref "$SOURCE_HEALTH_BASE_REF"
+    else
+      python3 scripts/check_source_health.py
+    fi
+    exit 0
+    ;;
+  --full)
+    if [[ $# -gt 1 ]]; then echo "usage: $0 [--focused|--full]" >&2; exit 2; fi
+    ;;
+  *) echo "usage: $0 [--focused|--full]" >&2; exit 2 ;;
+esac
+
 python3 scripts/test_cargo_resource_policy.py
 python3 scripts/check_cargo_resource_policy.py
 
@@ -95,4 +121,4 @@ python3 scripts/check_agent_workflow_parity.py
 "${cargo_guard[@]}" cargo run -q -p datum-verb-registry --bin datum-verb-catalog -- --check
 bash scripts/run_migration_proof_gates.sh
 python3 scripts/check_cli_module_coverage.py
-python3 mcp-server/server.py --self-test
+# MCP self-test already runs in check_alignment.py --run-gates above.

@@ -20,6 +20,7 @@ from typing import Iterator, Sequence
 GIB = 1024**3
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_POLICY = Path(__file__).with_name("cargo_resource_policy.json")
+ACTIVE_GUARD = "DATUM_CARGO_GUARD_ACTIVE"
 
 
 class ResourcePolicyError(RuntimeError):
@@ -191,6 +192,7 @@ def command_environment(
     base: dict[str, str], workload: str, target_dir: Path, policy: ResourcePolicy
 ) -> dict[str, str]:
     environment = dict(base)
+    environment[ACTIVE_GUARD] = str(os.getpid())
     environment["CARGO_TARGET_DIR"] = str(target_dir)
     if workload == "proof":
         environment["CARGO_INCREMENTAL"] = "1" if policy.proof_incremental else "0"
@@ -245,6 +247,11 @@ def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parse_args(sys.argv[1:] if argv is None else argv)
     try:
+        if os.environ.get(ACTIVE_GUARD):
+            raise ResourcePolicyError(
+                "nested Cargo would wait on its parent guard; build matching "
+                "CLI/daemon companions before starting the test run"
+            )
         policy = load_policy(args.policy)
         target_dir = _target_from_arguments(args.target_dir).resolve()
         with acquire_lock(policy.lock_path, policy.lock_timeout_seconds):

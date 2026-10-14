@@ -129,6 +129,14 @@ def main() -> int:
 
     if args.run_health:
         run_exec_check(
+            "workspace_health_companions",
+            ["cargo", "build", "-q", "-p", "datum-eda-cli", "-p", "eda-engine-daemon"],
+            failures,
+        )
+        if failures:
+            print("Alignment audit failed:\n" + "\n".join(failures), file=sys.stderr)
+            return 1
+        run_exec_check(
             "workspace_health",
             ["cargo", "test", "-q"],
             failures,

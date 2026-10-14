@@ -68,6 +68,24 @@ source health, dependency authority, Cargo policy and traceability pass. These
 results do not supply broader S5A/native qualification. ORG-04 addresses the
 runner's companion ordering and nested-lock failure mode.
 
+<!-- EVIDENCE:REPOSITORY-ORGANIZATION:ORG-04 -->
+The default/explicit full drift command retains its original qualification
+schedule, removing only the repeated MCP self-test already owned by alignment.
+The explicit focused mode runs structural gates without Cargo and cannot claim
+full qualification. Workspace health builds matching CLI/daemon companions
+before tests and stops on setup failure. Nested Cargo guards refuse immediately
+before locking, preserving serialization and ending the observed 30-minute
+self-wait. CI socket smoke now uses the same guard. README names these scopes.
+
+Eleven resource-guard tests and four orchestration regressions pass, including a
+real nested child against a held temporary lock, default/full schedule equality,
+retained native/migration gates and companion-failure short-circuit. Actual
+focused gates and thirteen source-health regressions pass. Full drift was run;
+Clippy fails on sixteen unchanged engine lints under the pinned toolchain,
+recorded as dat-lk0l. Warning policy and all downstream qualification gates stay
+intact; no full-workspace PASS is claimed. Exact source-health parity reflects
+the ORG-03 downward ratchet. Independent source review passes.
+
 ## Owner-directed maintenance completion
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
