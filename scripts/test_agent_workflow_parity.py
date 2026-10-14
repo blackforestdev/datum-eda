@@ -20,7 +20,7 @@ FILES = (
     "crates/cli/src/agent_adapters.rs",
     "mcp-server/workflow_catalog.json",
     "mcp-server/workflow_projections.json",
-    "crates/gui-app/src/terminal_agent_launch_tests.rs",
+    "crates/gui-app/src/terminal/terminal_agent_launch_tests.rs",
     "scripts/agent_mcp_adapter_probe.py",
     "scripts/run_agent_launch_pty_proof.sh",
 )
@@ -69,7 +69,7 @@ class TestAgentWorkflowParity(unittest.TestCase):
 
     def test_production_pty_proof_removal_fails(self) -> None:
         root = self.fixture()
-        path = root / "crates/gui-app/src/terminal_agent_launch_tests.rs"
+        path = root / "crates/gui-app/src/terminal/terminal_agent_launch_tests.rs"
         path.write_text(
             path.read_text().replace(
                 "governed_agents_complete_production_workflow_through_owned_pty",

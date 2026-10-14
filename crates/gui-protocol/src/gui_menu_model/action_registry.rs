@@ -81,11 +81,11 @@ impl ActionConsumer {
     pub fn handler_ref(&self) -> Option<(&'static str, &'static str)> {
         match self.handler? {
             ActionHandler::OpenLibrary => Some((
-                "crates/gui-app/src/runtime_library.rs",
+                "crates/gui-app/src/editor/runtime_library.rs",
                 "datum_gui::Runtime::open_library",
             )),
             ActionHandler::FitCamera => Some((
-                "crates/gui-app/src/runtime_camera_pane.rs",
+                "crates/gui-app/src/viewport/runtime_camera_pane.rs",
                 "datum_gui::Runtime::fit_camera",
             )),
         }

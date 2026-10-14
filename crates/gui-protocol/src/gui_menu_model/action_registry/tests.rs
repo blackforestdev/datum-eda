@@ -17,7 +17,25 @@ fn production_registry_agrees_with_reviewed_pilot_consumers() {
         assert_eq!(record["entry_surfaces"], serde_json::json!(surfaces));
         match entry.handler_ref() {
             Some((path, symbol)) => {
-                assert_eq!(record["handler_ref"]["path"], path);
+                // The retired pilot pins its original source layout. Preserve
+                // that receipt while checking the exact relocated live owner.
+                let historical_path = record["handler_ref"]["path"].as_str().unwrap();
+                let current_path = match historical_path {
+                    "crates/gui-app/src/runtime_camera_pane.rs" => {
+                        "crates/gui-app/src/viewport/runtime_camera_pane.rs"
+                    }
+                    "crates/gui-app/src/runtime_library.rs" => {
+                        "crates/gui-app/src/editor/runtime_library.rs"
+                    }
+                    other => other,
+                };
+                assert_eq!(current_path, path);
+                assert!(
+                    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                        .join("../..")
+                        .join(path)
+                        .is_file()
+                );
                 assert_eq!(record["handler_ref"]["symbol"], symbol);
             }
             None => assert!(record["handler_ref"].is_null()),

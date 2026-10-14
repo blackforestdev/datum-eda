@@ -161,6 +161,13 @@ operates on one resolved design model through the same operation/commit model.
 | `crates/terminal-core` | `datum-terminal-core` | Datum-owned terminal emulation core; qualification tracked separately |
 | `crates/test-harness` | `eda-test-harness` | Performance, quality, and proof-gate harnesses |
 
+GUI application owners live under `crates/gui-app/src/`: `application/` for
+startup and orchestration, `windows/` for owned dialogs and project opening,
+`terminal/` for terminal integration, `editor/` for tool/selection actions,
+`viewport/` for camera and pane interaction, and `rendering/` for frame/GPU
+coordination. Associated tests stay beside their owners. `main.rs` registers the
+modules and starts the application; existing Rust module identities remain stable.
+
 ## Documentation
 
 | Document | Contents |

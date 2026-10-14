@@ -27,8 +27,8 @@ ALLOWED_PRODUCT_SERVICE_FILES = {
     Path("crates/cli/src/commands/preferences.rs"),
     Path("crates/cli/src/commands/project/genesis_product.rs"),
     Path("crates/engine-daemon/src/preferences_state.rs"),
-    Path("crates/gui-app/src/global_preferences_runtime.rs"),
-    Path("crates/gui-app/src/global_preferences_runtime/new_project.rs"),
+    Path("crates/gui-app/src/windows/global_preferences_runtime.rs"),
+    Path("crates/gui-app/src/windows/global_preferences_runtime/new_project.rs"),
 }
 
 PREFERENCE_WRITE_FILES = {

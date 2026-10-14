@@ -98,22 +98,22 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         }
         for relative, text in files.items():
             (transport / relative).write_text(text, encoding="utf-8")
-        (root / guard.APP_SRC / "terminal_session_drain.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_drain.rs").write_text(
             "fn drain_all(){next_drain_index;try_recv_control_event();try_recv_output();}\n",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_drain_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_drain_tests.rs").write_text(
             "fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal(){}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_isolation_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_isolation_tests.rs").write_text(
             "const SESSION_COUNT: usize = 8;\n"
             "fn eight_real_sessions_isolate_io_resize_exit_termination_and_restart(){\n"
             "let _ = \"DTC06B-peer-survived\"; presentation_complete();\n"
             "all_sessions_closed(); let _ = \"P06 must not recreate a detached PTY state\";\n}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_stress_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_stress_tests.rs").write_text(
             "const P06_LIFECYCLE_CYCLES: usize = 100;\n"
             "fn p06_resource_helper(){\n"
             "proc_entry_count(\"/proc/self/fd\"); proc_entry_count(\"/proc/self/task\");\n"
@@ -121,7 +121,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "snapshot.surviving_processes.is_empty();\n}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_io_event_log.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_io_event_log.rs").write_text(
             "pub(crate) const IO_SEGMENT_BYTES: u64 = 16 * 1024 * 1024;\n"
             "pub(crate) const IO_SEGMENT_COUNT: usize = 4;\n"
             "fn rotate_segments(){}\n"
@@ -129,11 +129,11 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "fn four_segments_rotate_oldest_first_and_metadata_records_the_fact(){}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_activity_snapshot_rotation_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_activity_snapshot_rotation_tests.rs").write_text(
             "fn rotated_io_family_is_folded_chronologically_without_replay(){}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_measurement_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_measurement_tests.rs").write_text(
             "const SESSION_COUNT: usize = 8;\n"
             "fn p06_release_measurement_emits_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_measurement_v1\" };\n"
@@ -141,14 +141,14 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "proc_count(\"/proc/self/fd\"); proc_count(\"/proc/self/task\");}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_gui_measurement_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_gui_measurement_tests.rs").write_text(
             "const OUTPUT_BYTES_PER_SESSION: usize = 1024 * 1024;\n"
             "fn p06_production_core_gui_path_emits_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_gui_measurement_v1\" };\n"
             "registry.drain_all(); drain_work: distribution(); presentation_complete();}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_lifecycle_measurement_tests.rs").write_text(
             "const P06_LIFECYCLE_CYCLES: usize = 1_000;\n"
             "fn p06_one_thousand_spawn_exit_restart_cycles_emit_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_lifecycle_v1\" };\n"
@@ -156,7 +156,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "proc_count(\"/proc/self/fd\"); proc_count(\"/proc/self/task\");}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_soak_tests.rs").write_text(
             "fn p06_bounded_ci_budgets_are_literal(){}\n"
             "fn p06_bounded_ci_emits_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_soak_v1\" };\n"
@@ -168,7 +168,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             "proc_count(\"/proc/self/task\");}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_session_p06_throughput_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_session_p06_throughput_tests.rs").write_text(
             "fn p06_sustained_throughput_budgets_are_literal(){Duration::from_secs(60);}\n"
             "fn p06_sustained_throughput_and_backlog_emit_reproducible_json(){\n"
             "let _ = Evidence { contract: \"datum_terminal_p06_sustained_v1\",\n"
@@ -212,13 +212,13 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             + "\nfn input_admission_is_atomic_at_request_and_byte_limits(){}",
             encoding="utf-8",
         )
-        drain_tests = root / guard.APP_SRC / "terminal_session_drain_tests.rs"
+        drain_tests = root / guard.APP_SRC / "terminal/terminal_session_drain_tests.rs"
         drain_tests.write_text(
             drain_tests.read_text(encoding="utf-8")
             + "\nfn seventeenth_session_is_refused_by_preallocation_guard(){}",
             encoding="utf-8",
         )
-        (root / guard.APP_SRC / "terminal_job_control_tests.rs").write_text(
+        (root / guard.APP_SRC / "terminal/terminal_job_control_tests.rs").write_text(
             "fn termination_cancels_backpressured_input_and_closes_every_master(){}",
             encoding="utf-8",
         )
@@ -236,7 +236,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_missing_eight_session_isolation_proof_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        proof = root / guard.APP_SRC / "terminal_session_p06_isolation_tests.rs"
+        proof = root / guard.APP_SRC / "terminal/terminal_session_p06_isolation_tests.rs"
         proof.write_text(
             proof.read_text(encoding="utf-8").replace(
                 "eight_real_sessions_isolate_io_resize_exit_termination_and_restart",
@@ -251,7 +251,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_missing_p06c_resource_and_saturation_proofs_fail(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        stress = root / guard.APP_SRC / "terminal_session_p06_stress_tests.rs"
+        stress = root / guard.APP_SRC / "terminal/terminal_session_p06_stress_tests.rs"
         stress.write_text(
             stress.read_text(encoding="utf-8").replace(
                 "const P06_LIFECYCLE_CYCLES: usize = 100;",
@@ -269,14 +269,14 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_terminal_io_log_budget_or_rotation_proof_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        io_log = root / guard.APP_SRC / "terminal_io_event_log.rs"
+        io_log = root / guard.APP_SRC / "terminal/terminal_io_event_log.rs"
         io_log.write_text(
             io_log.read_text(encoding="utf-8")
             .replace("16 * 1024 * 1024", "32 * 1024 * 1024")
             .replace("fn rotate_segments", "fn discard_without_rotation"),
             encoding="utf-8",
         )
-        rotation_test = root / guard.APP_SRC / "terminal_activity_snapshot_rotation_tests.rs"
+        rotation_test = root / guard.APP_SRC / "terminal/terminal_activity_snapshot_rotation_tests.rs"
         rotation_test.write_text("fn weakened_rotation_smoke(){}", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("IO_SEGMENT_BYTES" in failure for failure in failures))
@@ -286,7 +286,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_release_measurement_or_wayland_runner_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        measurement = root / guard.APP_SRC / "terminal_session_p06_measurement_tests.rs"
+        measurement = root / guard.APP_SRC / "terminal/terminal_session_p06_measurement_tests.rs"
         measurement.write_text("fn weakened_debug_benchmark(){}", encoding="utf-8")
         runner = root / "scripts/run_terminal_transport_proof_gates.sh"
         runner.write_text("cargo test --release\nx11-only\n", encoding="utf-8")
@@ -311,7 +311,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_bounded_ci_or_tier_runner_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        soak = root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs"
+        soak = root / guard.APP_SRC / "terminal/terminal_session_p06_soak_tests.rs"
         soak.write_text("fn weakened_short_soak(){}", encoding="utf-8")
         runner = root / "scripts/run_terminal_transport_proof_gates.sh"
         runner.write_text(
@@ -328,7 +328,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_owner_removed_long_duration_tier_cannot_return(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        soak = root / guard.APP_SRC / "terminal_session_p06_soak_tests.rs"
+        soak = root / guard.APP_SRC / "terminal/terminal_session_p06_soak_tests.rs"
         soak.write_text(
             soak.read_text(encoding="utf-8")
             + '\nfn legacy_soak(){ let _ = "single-24h"; }\n',
@@ -346,7 +346,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_production_core_gui_measurement_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        measurement = root / guard.APP_SRC / "terminal_session_p06_gui_measurement_tests.rs"
+        measurement = root / guard.APP_SRC / "terminal/terminal_session_p06_gui_measurement_tests.rs"
         measurement.write_text("fn bypassed_registry_smoke(){}", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("production-core GUI measurement proof missing" in failure for failure in failures))
@@ -354,7 +354,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_sustained_throughput_or_real_backend_canary_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        sustained = root / guard.APP_SRC / "terminal_session_p06_throughput_tests.rs"
+        sustained = root / guard.APP_SRC / "terminal/terminal_session_p06_throughput_tests.rs"
         sustained.write_text("fn instantaneous_smoke_only(){}", encoding="utf-8")
         runner = root / "scripts/run_terminal_transport_proof_gates.sh"
         runner.write_text(
@@ -371,7 +371,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
     def test_lifecycle_measurement_drift_fails(self) -> None:
         temporary, root = self.fixture()
         self.addCleanup(temporary.cleanup)
-        measurement = root / guard.APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs"
+        measurement = root / guard.APP_SRC / "terminal/terminal_session_p06_lifecycle_measurement_tests.rs"
         measurement.write_text("const P06_LIFECYCLE_CYCLES: usize = 10;", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("lifecycle measurement proof missing" in failure for failure in failures))
@@ -551,7 +551,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         reader = root / guard.TRANSPORT / "reader.rs"
         reader.write_text("fn spawn_reader(){reader.read_bytes();}", encoding="utf-8")
-        drain_tests = root / guard.APP_SRC / "terminal_session_drain_tests.rs"
+        drain_tests = root / guard.APP_SRC / "terminal/terminal_session_drain_tests.rs"
         drain_tests.write_text("fn weakened_fairness_smoke(){}", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("reserve" in failure for failure in failures))
@@ -571,7 +571,7 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
             control.read_text(encoding="utf-8").replace("writer_finished", "writer_missing"),
             encoding="utf-8",
         )
-        proof = root / guard.APP_SRC / "terminal_job_control_tests.rs"
+        proof = root / guard.APP_SRC / "terminal/terminal_job_control_tests.rs"
         proof.write_text("", encoding="utf-8")
         failures = guard.check(root)
         self.assertTrue(any("atomic Kill transition" in failure for failure in failures))

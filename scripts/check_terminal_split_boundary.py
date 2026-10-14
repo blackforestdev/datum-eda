@@ -8,20 +8,21 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 PATHS = {
-    "main": "crates/gui-app/src/main.rs",
-    "native_events": "crates/gui-app/src/app_native_events.rs",
-    "primary_button": "crates/gui-app/src/runtime_primary_button.rs",
-    "input": "crates/gui-app/src/terminal_input.rs",
-    "controls": "crates/gui-app/src/terminal_session_controls.rs",
-    "spawn": "crates/gui-app/src/terminal_session_spawn.rs",
-    "state": "crates/gui-app/src/terminal_split_state.rs",
-    "drag": "crates/gui-app/src/terminal_split_drag.rs",
-    "runtime": "crates/gui-app/src/runtime_terminal_dock.rs",
-    "runtime_tests": "crates/gui-app/src/runtime_terminal_dock_tests.rs",
-    "focus_tests": "crates/gui-app/src/terminal_regression_boundary_tests.rs",
+    "main": "crates/gui-app/src/terminal/runtime_terminal_control.rs",
+    "tool_actions": "crates/gui-app/src/editor/runtime_hit_actions.rs",
+    "native_events": "crates/gui-app/src/application/app_native_events.rs",
+    "primary_button": "crates/gui-app/src/editor/runtime_primary_button.rs",
+    "input": "crates/gui-app/src/terminal/terminal_input.rs",
+    "controls": "crates/gui-app/src/terminal/terminal_session_controls.rs",
+    "spawn": "crates/gui-app/src/terminal/terminal_session_spawn.rs",
+    "state": "crates/gui-app/src/terminal/terminal_split_state.rs",
+    "drag": "crates/gui-app/src/terminal/terminal_split_drag.rs",
+    "runtime": "crates/gui-app/src/terminal/runtime_terminal_dock.rs",
+    "runtime_tests": "crates/gui-app/src/terminal/runtime_terminal_dock_tests.rs",
+    "focus_tests": "crates/gui-app/src/terminal/terminal_regression_boundary_tests.rs",
     "protocol": "crates/gui-protocol/src/terminal_split.rs",
     "viewport": "crates/gui-viewport/src/terminal_grid_geometry.rs",
-    "render_types": "crates/gui-render/src/render/types.rs",
+    "render_types": "crates/gui-render/src/hit_target.rs",
     "renderer": "crates/gui-render/src/bottom_dock.rs",
     "render_tests": "crates/gui-render/src/terminal_core_render_tests.rs",
 }
@@ -51,8 +52,8 @@ def check_sources(sources: dict[str, str]) -> list[str]:
         "main": (
             "TerminalKeyAction::SplitRight =>",
             "TerminalKeyAction::SplitDown =>",
-            "HitTarget::TerminalPaneScreen(session_id)",
         ),
+        "tool_actions": ("HitTarget::TerminalPaneScreen(session_id)",),
         "native_events": (
             "handle_primary_button_press()",
             "advance_terminal_split_drag(next_pos)",

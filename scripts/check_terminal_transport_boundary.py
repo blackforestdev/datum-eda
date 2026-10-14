@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 APP_SRC = Path("crates/gui-app/src")
-TRANSPORT = APP_SRC / "terminal_transport"
+TRANSPORT = APP_SRC / "terminal/terminal_transport"
 
 OWNERS = {
     'c"/dev/ptmx"': TRANSPORT / "linux/pty.rs",
@@ -256,7 +256,7 @@ def check(root: Path) -> list[str]:
         if marker not in text:
             failures.append(f"terminal transport lacks {description}: {marker}")
     proof_markers = {
-        APP_SRC / "terminal_job_control_tests.rs":
+        APP_SRC / "terminal/terminal_job_control_tests.rs":
             "termination_cancels_backpressured_input_and_closes_every_master",
         TRANSPORT / "process_supervisor_tests.rs":
             "redundant_force_during_kill_cannot_queue_an_unauthorized_retry",
@@ -293,8 +293,8 @@ def check(root: Path) -> list[str]:
     for name, value in expected_deadlines.items():
         if not re.search(rf"const\s+{name}:\s*u64\s*=\s*{re.escape(value)}\s*;", limits):
             failures.append(f"owner-ratified terminal deadline changed or missing: {name}")
-    drain = source_text.get(APP_SRC / "terminal_session_drain.rs", "")
-    drain_tests_path = root / APP_SRC / "terminal_session_drain_tests.rs"
+    drain = source_text.get(APP_SRC / "terminal/terminal_session_drain.rs", "")
+    drain_tests_path = root / APP_SRC / "terminal/terminal_session_drain_tests.rs"
     drain_tests = (
         drain_tests_path.read_text(encoding="utf-8")
         if drain_tests_path.is_file()
@@ -305,7 +305,7 @@ def check(root: Path) -> list[str]:
             failures.append(f"all-session terminal drain lacks fairness marker: {marker}")
     if "control_priority_round_robin_cursor_and_exact_global_caps_are_literal" not in drain_tests:
         failures.append("all-session terminal drain lacks literal L3 proof")
-    isolation_path = root / APP_SRC / "terminal_session_p06_isolation_tests.rs"
+    isolation_path = root / APP_SRC / "terminal/terminal_session_p06_isolation_tests.rs"
     isolation = (
         isolation_path.read_text(encoding="utf-8") if isolation_path.is_file() else ""
     )
@@ -327,11 +327,11 @@ def check(root: Path) -> list[str]:
         TRANSPORT / "input.rs": (
             "input_admission_is_atomic_at_request_and_byte_limits",
         ),
-        APP_SRC / "terminal_session_drain_tests.rs": (
+        APP_SRC / "terminal/terminal_session_drain_tests.rs": (
             "control_priority_round_robin_cursor_and_exact_global_caps_are_literal",
             "seventeenth_session_is_refused_by_preallocation_guard",
         ),
-        APP_SRC / "terminal_session_p06_stress_tests.rs": (
+        APP_SRC / "terminal/terminal_session_p06_stress_tests.rs": (
             "const P06_LIFECYCLE_CYCLES: usize = 100;",
             "fn p06_resource_helper",
             'proc_entry_count("/proc/self/fd")',
@@ -347,7 +347,7 @@ def check(root: Path) -> list[str]:
         for marker in markers:
             if marker not in proof:
                 failures.append(f"DTC-P06C bounded resource proof missing: {marker}")
-    io_log_path = root / APP_SRC / "terminal_io_event_log.rs"
+    io_log_path = root / APP_SRC / "terminal/terminal_io_event_log.rs"
     io_log = io_log_path.read_text(encoding="utf-8") if io_log_path.is_file() else ""
     p06d_storage_markers = (
         "pub(crate) const IO_SEGMENT_BYTES: u64 = 16 * 1024 * 1024;",
@@ -359,7 +359,7 @@ def check(root: Path) -> list[str]:
     for marker in p06d_storage_markers:
         if marker not in io_log:
             failures.append(f"DTC-P06D bounded terminal I/O log proof missing: {marker}")
-    rotation_test_path = root / APP_SRC / "terminal_activity_snapshot_rotation_tests.rs"
+    rotation_test_path = root / APP_SRC / "terminal/terminal_activity_snapshot_rotation_tests.rs"
     rotation_test = (
         rotation_test_path.read_text(encoding="utf-8")
         if rotation_test_path.is_file()
@@ -367,7 +367,7 @@ def check(root: Path) -> list[str]:
     )
     if "rotated_io_family_is_folded_chronologically_without_replay" not in rotation_test:
         failures.append("DTC-P06D rotation-safe activity cache proof missing")
-    measurement_path = root / APP_SRC / "terminal_session_p06_measurement_tests.rs"
+    measurement_path = root / APP_SRC / "terminal/terminal_session_p06_measurement_tests.rs"
     measurement = (
         measurement_path.read_text(encoding="utf-8")
         if measurement_path.is_file()
@@ -385,7 +385,7 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in measurement:
             failures.append(f"DTC-P06D release measurement proof missing: {marker}")
-    gui_measurement_path = root / APP_SRC / "terminal_session_p06_gui_measurement_tests.rs"
+    gui_measurement_path = root / APP_SRC / "terminal/terminal_session_p06_gui_measurement_tests.rs"
     gui_measurement = (
         gui_measurement_path.read_text(encoding="utf-8")
         if gui_measurement_path.is_file()
@@ -401,7 +401,7 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in gui_measurement:
             failures.append(f"DTC-P06D production-core GUI measurement proof missing: {marker}")
-    lifecycle_path = root / APP_SRC / "terminal_session_p06_lifecycle_measurement_tests.rs"
+    lifecycle_path = root / APP_SRC / "terminal/terminal_session_p06_lifecycle_measurement_tests.rs"
     lifecycle = lifecycle_path.read_text(encoding="utf-8") if lifecycle_path.is_file() else ""
     for marker in (
         "const P06_LIFECYCLE_CYCLES: usize = 1_000;",
@@ -415,7 +415,7 @@ def check(root: Path) -> list[str]:
     ):
         if marker not in lifecycle:
             failures.append(f"DTC-P06D lifecycle measurement proof missing: {marker}")
-    soak_path = root / APP_SRC / "terminal_session_p06_soak_tests.rs"
+    soak_path = root / APP_SRC / "terminal/terminal_session_p06_soak_tests.rs"
     soak = soak_path.read_text(encoding="utf-8") if soak_path.is_file() else ""
     for marker in (
         "p06_bounded_ci_budgets_are_literal",
@@ -442,7 +442,7 @@ def check(root: Path) -> list[str]:
             failures.append(
                 f"DTC-P06D owner-removed long-duration tier returned: {removed_tier}"
             )
-    sustained_path = root / APP_SRC / "terminal_session_p06_throughput_tests.rs"
+    sustained_path = root / APP_SRC / "terminal/terminal_session_p06_throughput_tests.rs"
     sustained = sustained_path.read_text(encoding="utf-8") if sustained_path.is_file() else ""
     for marker in (
         "p06_sustained_throughput_budgets_are_literal",

@@ -6,9 +6,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 LANE = ROOT / "crates/gui-protocol/src/terminal_lane.rs"
-REDUCER = ROOT / "crates/gui-app/src/terminal_session_core_events.rs"
-EVENTS = ROOT / "crates/gui-app/src/terminal_session_events.rs"
-TESTS = ROOT / "crates/gui-app/src/terminal_session_drain_tests.rs"
+REDUCER = ROOT / "crates/gui-app/src/terminal/terminal_session_core_events.rs"
+EVENTS = ROOT / "crates/gui-app/src/terminal/terminal_session_events.rs"
+TESTS = ROOT / "crates/gui-app/src/terminal/terminal_session_drain_tests.rs"
 
 
 def check_sources(

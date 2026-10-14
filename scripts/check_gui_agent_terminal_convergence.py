@@ -7,28 +7,28 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MAIN = ROOT / "crates" / "gui-app" / "src" / "main.rs"
-KEYBOARD_FOCUS = ROOT / "crates" / "gui-app" / "src" / "keyboard_focus.rs"
+KEYBOARD_FOCUS = ROOT / "crates" / "gui-app" / "src" / "terminal/keyboard_focus.rs"
 BOTTOM_DOCK = ROOT / "crates" / "gui-render" / "src" / "bottom_dock.rs"
 LAUNCHER = ROOT / "crates" / "gui-app" / "src" / "terminal_agent_launcher.rs"
-TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_controls.rs"
-TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_spawn.rs"
-TERMINAL_SESSION_RENDER = ROOT / "crates" / "gui-app" / "src" / "terminal_session_render.rs"
-RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_context.rs"
-RUNTIME_PRIMARY_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_primary_pointer.rs"
-RUNTIME_PRIMARY_BUTTON = ROOT / "crates" / "gui-app" / "src" / "runtime_primary_button.rs"
-PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "production_status_refresh.rs"
-RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_dock.rs"
-RUNTIME_TERMINAL_POINTER = ROOT / "crates" / "gui-app" / "src" / "runtime_terminal_pointer.rs"
-TERMINAL_DRAIN = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain.rs"
-TERMINAL_DRAIN_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_drain_tests.rs"
-TERMINAL_CLOSE_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_close_tests.rs"
+TERMINAL_CONTROLS = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_controls.rs"
+TERMINAL_SESSION_SPAWN = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_spawn.rs"
+TERMINAL_SESSION_RENDER = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_render.rs"
+RUNTIME_TERMINAL_CONTEXT = ROOT / "crates" / "gui-app" / "src" / "terminal/runtime_terminal_context.rs"
+RUNTIME_PRIMARY_POINTER = ROOT / "crates" / "gui-app" / "src" / "editor/runtime_primary_pointer.rs"
+RUNTIME_PRIMARY_BUTTON = ROOT / "crates" / "gui-app" / "src" / "editor/runtime_primary_button.rs"
+PRODUCTION_REFRESH = ROOT / "crates" / "gui-app" / "src" / "application/production_status_refresh.rs"
+RUNTIME_TERMINAL_DOCK = ROOT / "crates" / "gui-app" / "src" / "terminal/runtime_terminal_dock.rs"
+RUNTIME_TERMINAL_POINTER = ROOT / "crates" / "gui-app" / "src" / "terminal/runtime_terminal_pointer.rs"
+TERMINAL_DRAIN = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_drain.rs"
+TERMINAL_DRAIN_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_drain_tests.rs"
+TERMINAL_CLOSE_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_close_tests.rs"
 GUI_PROTOCOL = ROOT / "crates" / "gui-protocol" / "src" / "lib.rs"
 TERMINAL_LANE = ROOT / "crates" / "gui-protocol" / "src" / "terminal_lane.rs"
 WORKSPACE_LAYOUT = ROOT / "crates" / "gui-protocol" / "src" / "workspace_layout.rs"
 RENDER_LAYOUT = ROOT / "crates" / "gui-render" / "src" / "render" / "layout.rs"
 RENDER_SCENE = ROOT / "crates" / "gui-render" / "src" / "render" / "scene_projection.rs"
 HIT_CLIPPING = ROOT / "crates" / "gui-render" / "src" / "render" / "hit_clipping.rs"
-TERMINAL_FOCUS_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_focus_convergence_tests.rs"
+TERMINAL_FOCUS_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_focus_convergence_tests.rs"
 TERMINAL_HIT_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_hit_ownership_tests.rs"
 RENDER_GEOMETRY = ROOT / "crates" / "gui-render" / "src" / "render" / "geometry.rs"
 TEXT_BUFFER_CACHE = ROOT / "crates" / "gui-render" / "src" / "render" / "text_buffer_cache.rs"
@@ -39,11 +39,11 @@ TERMINAL_CORE_RENDER_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_
 TERMINAL_TAB_STRIP = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip.rs"
 TERMINAL_TAB_STRIP_TESTS = ROOT / "crates" / "gui-render" / "src" / "terminal_tab_strip_tests.rs"
 TERMINAL_GRID_GEOMETRY = ROOT / "crates" / "gui-viewport" / "src" / "terminal_grid_geometry.rs"
-TERMINAL_INPUT = ROOT / "crates" / "gui-app" / "src" / "terminal_input.rs"
-TERMINAL_SESSION = ROOT / "crates" / "gui-app" / "src" / "terminal_session.rs"
-TERMINAL_CORE_ADAPTER = Path("crates/gui-app/src/terminal_core_adapter.rs")
-TERMINAL_SESSION_NAMING_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal_session_naming_tests.rs"
-TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal_transport"
+TERMINAL_INPUT = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_input.rs"
+TERMINAL_SESSION = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session.rs"
+TERMINAL_CORE_ADAPTER = Path("crates/gui-app/src/terminal/terminal_core_adapter.rs")
+TERMINAL_SESSION_NAMING_TESTS = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_session_naming_tests.rs"
+TERMINAL_TRANSPORT = ROOT / "crates" / "gui-app" / "src" / "terminal/terminal_transport"
 RETIRED_BRIDGE_FILES = [
     ROOT / "crates" / "gui-app" / "src" / "assistant_bridge.rs",
     ROOT / "scripts" / "datum_assistant_bridge.py",
@@ -479,7 +479,7 @@ def main() -> int:
     check_terminal_grid_writers(failures)
     # Native dispatch is extracted from ApplicationHandler without changing its
     # input/focus authority. Inspect both parts of that production entry point.
-    main = MAIN.read_text() + "\n" + (MAIN.parent / "app_native_events.rs").read_text()
+    main = "\n".join((MAIN.parent / name).read_text() for name in ("main.rs", "application/app_native_events.rs", "terminal/runtime_terminal_control.rs", "editor/runtime_tool_actions.rs"))
     keyboard_focus = KEYBOARD_FOCUS.read_text()
     focus_mutation_sources = "\n".join(
         path.read_text(encoding="utf-8")
@@ -530,7 +530,7 @@ def main() -> int:
     terminal_dock_sources = bottom_dock + "\n" + terminal_tab_strip
     gui_protocol = GUI_PROTOCOL.read_text()
     terminal_lane = TERMINAL_LANE.read_text()
-    workspace_layout = WORKSPACE_LAYOUT.read_text()
+    workspace_layout = WORKSPACE_LAYOUT.read_text() + (WORKSPACE_LAYOUT.parent / "workspace_pane_content.rs").read_text()
     render_layout = RENDER_LAYOUT.read_text()
     render_scene = RENDER_SCENE.read_text()
     hit_clipping = HIT_CLIPPING.read_text()

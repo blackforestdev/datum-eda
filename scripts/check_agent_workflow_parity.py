@@ -13,7 +13,7 @@ from typing import Any
 MARKER = "<!-- DATUM-WORKFLOW-CATALOG:datum://workflows -->"
 EXPECTED_ADAPTERS = ("codex", "claude-code", "cursor-cli", "local-generic")
 PROOF_MARKERS = {
-    "crates/gui-app/src/terminal_agent_launch_tests.rs": (
+    "crates/gui-app/src/terminal/terminal_agent_launch_tests.rs": (
         "governed_agents_complete_production_workflow_through_owned_pty",
         '"propose"',
         '"resume"',

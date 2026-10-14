@@ -17,7 +17,7 @@ REVISION_RECOVERY_DECISION = (
 )
 REVISION_RENDERER = ROOT / "crates/gui-render/src/revision_workspace.rs"
 REVISION_SIDE_PANELS = ROOT / "crates/gui-render/src/side_panels.rs"
-REVISION_BOOTSTRAP = ROOT / "crates/gui-app/src/app_bootstrap.rs"
+REVISION_BOOTSTRAP = ROOT / "crates/gui-app/src/application/app_bootstrap.rs"
 REVISION_NAVIGATOR_MODULE = ROOT / "crates/gui-render/src/revision_workspace/navigator.rs"
 
 REQUIRED_DOC_TOKENS = {

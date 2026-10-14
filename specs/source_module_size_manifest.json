@@ -712,13 +712,13 @@
     "scripts/check_schematic_private_writers.py": {
       "kind": "python-production",
       "limits": {
-        "file_lines": 987
+        "file_lines": 968
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Authored Python module exceeds the normal source-file limit."
+      "note": "Authored Python module exceeds the normal source-file limit. GUI organization follows the actual tool/control owners and extracts shared source-pattern scanning into its own module; exact file ceiling ratcheted downward."
     }
   },
   "exclusions": {

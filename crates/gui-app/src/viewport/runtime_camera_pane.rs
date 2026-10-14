@@ -1,0 +1,627 @@
+//! Runtime view operations (decomposition of the gui-app monolith, decision
+//! 021 / source-size governance): camera fit/pan/zoom, workspace-pane focus/
+//! split/close/zoom/preset, divider-drag resize, and layout/hit-test helpers.
+//! Split out of `main.rs`'s `impl Runtime`; behavior unchanged. The dock
+//! resize drag and terminal screen-cell geometry live in
+//! `runtime_terminal_dock.rs` (T0-C02). A child module of the crate root, so
+//! it sees `Runtime`'s private fields/methods via `use super::*` exactly as
+//! the inline impl did.
+
+use super::*;
+use datum_gui_render::RectPx;
+use datum_gui_viewport::{CameraConfig, CameraEngine};
+
+#[path = "runtime_camera_pane/zoom.rs"]
+mod zoom;
+
+#[derive(Clone)]
+struct CameraViewport {
+    pane: datum_gui_protocol::PaneId,
+    content: datum_gui_protocol::PaneContent,
+    bounds: SceneBounds,
+    viewport: RectPx,
+    active_board: bool,
+    camera: CameraConfig,
+}
+
+impl Runtime {
+    /// Resolve a selected pane against the caller's layout — one path for board,
+    /// schematic, and future panes. An unresolved scene refuses camera input.
+    fn camera_viewport_for_pane(
+        &self,
+        panes: &datum_gui_render::ViewportPanes,
+        pane: datum_gui_protocol::PaneId,
+    ) -> Option<CameraViewport> {
+        let leaf = panes.panes.iter().find(|leaf| leaf.id == pane)?;
+        let bounds = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?
+            .bounds
+            .clone();
+        Some(CameraViewport {
+            pane,
+            content: leaf.content,
+            bounds,
+            viewport: leaf.rect.scene,
+            active_board: leaf.content == datum_gui_protocol::PaneContent::Board
+                && panes.scene_leaf_id() == Some(pane),
+            camera: datum_gui_viewport::ViewportProfile::default().camera,
+        })
+    }
+
+    fn focused_viewport(&self) -> Option<CameraViewport> {
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        self.camera_viewport_for_pane(&panes, self.workspace().ui.layout.focused)
+    }
+
+    fn pointer_viewport(&self, pos: (f32, f32)) -> Option<CameraViewport> {
+        // Locate and resolve against one layout: rebuilding it here duplicates
+        // pane/divider allocations on every pointer event, even clamped zoom.
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        self.camera_viewport_for_pane(&panes, panes.leaf_at(pos.0, pos.1)?)
+    }
+
+    /// A mutable handle to the camera behind `slot` — the active board camera
+    /// (`None`) or a warm per-leaf camera created via `init` on first touch.
+    fn camera_slot_mut(
+        &mut self,
+        route: &CameraViewport,
+        init: impl FnOnce() -> CameraState,
+    ) -> &mut CameraState {
+        if route.active_board {
+            &mut self.camera
+        } else {
+            self.pane_cameras
+                .entry_or_insert_with(route.pane, route.content, init)
+        }
+    }
+
+    pub(super) fn fit_camera(&mut self) {
+        // Fit only the focused resolved pane. An unavailable pane never falls
+        // back to a different Board and must not be narrated as a successful Fit.
+        let Some(route) = self.focused_viewport() else {
+            return;
+        };
+        let fit = CameraState::fit_to_bounds(&route.bounds);
+        *self.camera_slot_mut(&route, || fit) = fit;
+        self.invalidate_frame();
+    }
+
+    pub(super) fn handle_pan_drag(
+        &mut self,
+        previous: (f32, f32),
+        next_cursor_pos: (f32, f32),
+    ) -> bool {
+        let dx = next_cursor_pos.0 - previous.0;
+        let dy = next_cursor_pos.1 - previous.1;
+        let Some(route) = self.pointer_viewport(next_cursor_pos) else {
+            return false;
+        };
+        // Crossing a pane boundary during a drag starts a fresh segment instead
+        // of applying pixels measured in one pane to another pane's camera.
+        if self.pointer_viewport(previous).map(|prior| prior.pane) != Some(route.pane) {
+            return false;
+        }
+        // Deliberate board-specific branch: the artifact-preview drag is a
+        // board-scene overlay affordance; if it consumes the drag, pan is skipped.
+        if route.content == datum_gui_protocol::PaneContent::Board
+            && self.handle_artifact_preview_pan_drag(previous, next_cursor_pos)
+        {
+            return true;
+        }
+        let fit = CameraState::fit_to_bounds(&route.bounds);
+        CameraEngine::pan_pixels(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            dx,
+            dy,
+        );
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn handle_zoom(&mut self, delta: f32) -> bool {
+        let Some((x, y)) = self.last_cursor_pos else {
+            return false;
+        };
+        // Pointer gestures follow the containing pane; focus is intentionally not
+        // consulted here. Menu/keyboard actions use `zoom_focused_view` below.
+        let Some(route) = self.pointer_viewport((x, y)) else {
+            return false;
+        };
+        if !route.viewport.contains(x, y) {
+            return false;
+        }
+        let fit = CameraState::fit_to_bounds(&route.bounds);
+        if !zoom::apply(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            x,
+            y,
+            delta,
+        ) {
+            return false;
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn zoom_focused_view(&mut self, delta: f32) -> bool {
+        let Some(route) = self.focused_viewport() else {
+            return false;
+        };
+        let x = route.viewport.x + route.viewport.width * 0.5;
+        let y = route.viewport.y + route.viewport.height * 0.5;
+        let fit = CameraState::fit_to_bounds(&route.bounds);
+        if !zoom::apply(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            x,
+            y,
+            delta,
+        ) {
+            return false;
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    // ---------------------------------------------------------------------
+    // Workspace pane ops (decision 021, P2.1b). Every one is a PURE view-state
+    // mutation of the pane tree: it swaps the active camera to the target leaf's
+    // warm camera (never a refit) and calls `invalidate_frame`, which rebuilds
+    // only the cheap prepared chrome/scene and KEEPS the resolved world scene —
+    // so a pane op costs zero world-scene re-resolve (the "no noticeable lag"
+    // gate). Only the focused leaf renders live (single-live-scene); non-focused
+    // Board leaves render as today (idle real-content snapshot lands with P2.2
+    // multi-scene). These are never journaled — they are workspace state.
+    // ---------------------------------------------------------------------
+
+    /// Shared focus-change core: mutate focus via `f`, then keep the active camera
+    /// bound to the leaf that renders the live BOARD scene. The active camera
+    /// belongs to the SCENE leaf, not whichever pane is focused: moving focus
+    /// between the board and a schematic pane keeps the same scene leaf, so the
+    /// board's framing (zoom/pan) PERSISTS instead of snapping to the schematic's
+    /// fit camera (the "PCB zooms to fit / can be zoomed while another pane is
+    /// selected" bug). The camera is only swapped when the scene leaf actually
+    /// changes — e.g. focus moving to a *different* board pane in a multi-board
+    /// split — at which point the outgoing board's framing is stashed warm and the
+    /// incoming board's warm camera (fit only if never seen) is activated.
+    pub(super) fn swap_pane_focus(
+        &mut self,
+        f: impl FnOnce(&mut datum_gui_protocol::WorkspaceLayout),
+    ) {
+        let outgoing_scene = self.scene_leaf_id();
+        let focused_pane = {
+            let ui = &mut self.session.workspace_mut().ui;
+            f(&mut ui.layout);
+            ui.layout.focused
+        };
+        self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(focused_pane));
+        let incoming_scene = self.scene_leaf_id();
+        if let (Some(outgoing), Some(incoming)) = (outgoing_scene, incoming_scene)
+            && outgoing != incoming
+        {
+            let bounds = self.workspace().scene.bounds.clone();
+            self.camera = self.pane_cameras.focus_to(
+                outgoing,
+                datum_gui_protocol::PaneContent::Board,
+                self.camera,
+                incoming,
+                datum_gui_protocol::PaneContent::Board,
+                || CameraState::fit_to_bounds(&bounds),
+            );
+        }
+        self.invalidate_frame();
+    }
+
+    pub(super) fn pane_focus_next(&mut self) {
+        self.swap_pane_focus(|layout| layout.focus_next());
+    }
+
+    pub(super) fn pane_focus_prev(&mut self) {
+        self.swap_pane_focus(|layout| layout.focus_prev());
+    }
+
+    pub(super) fn pane_split_focused(&mut self, orientation: datum_gui_protocol::SplitOrientation) {
+        // Focus is unchanged by a split; the fresh child inherits the focused
+        // sibling's warm framing so it opens looking like the pane it split from.
+        let before: std::collections::BTreeSet<_> =
+            self.workspace().ui.layout.leaves().into_iter().collect();
+        self.session
+            .workspace_mut()
+            .ui
+            .layout
+            .split_focused(orientation);
+        let inherited = self.camera;
+        for id in self.workspace().ui.layout.leaves() {
+            if !before.contains(&id) {
+                let content = self
+                    .current_layout()
+                    .viewport_panes(&self.workspace().ui.layout)
+                    .panes
+                    .iter()
+                    .find(|pane| pane.id == id)
+                    .map(|pane| pane.content)
+                    .unwrap_or(datum_gui_protocol::PaneContent::Board);
+                let initial = match content {
+                    datum_gui_protocol::PaneContent::Board => inherited,
+                    datum_gui_protocol::PaneContent::Schematic => self
+                        .schematic_bounds()
+                        .as_ref()
+                        .map(CameraState::fit_to_bounds)
+                        .unwrap_or(inherited),
+                    datum_gui_protocol::PaneContent::Library
+                    | datum_gui_protocol::PaneContent::Revision(_) => inherited,
+                };
+                self.pane_cameras.inherit(id, content, initial);
+            }
+        }
+        self.invalidate_frame();
+    }
+
+    pub(super) fn pane_close_focused(&mut self) {
+        self.cancel_native_selection_gesture();
+        self.swap_pane_focus(|layout| layout.close_focused());
+        let live = self.workspace().ui.layout.leaves();
+        // Prune after the focus transition, which stashes the outgoing camera.
+        // Otherwise closing the active Board would reinsert its dead pane id.
+        self.pane_cameras.retain_live(&live);
+        self.renderer
+            .render_session_mut()
+            .retain_pane_projections(&live);
+    }
+
+    pub(super) fn pane_toggle_zoom(&mut self) {
+        // Transient maximize of the focused leaf; focus and cameras are untouched.
+        self.session.workspace_mut().ui.layout.toggle_zoom();
+        self.invalidate_frame();
+    }
+
+    pub(super) fn pane_apply_preset(&mut self, preset: datum_gui_protocol::WorkspacePreset) {
+        self.session.workspace_mut().ui.layout.apply_preset(preset);
+        // A preset rebuilds the tree with fresh ids; reset the warm store to the
+        // new focused leaf and fit it (a preset is a deliberate layout reset).
+        let focused = self.workspace().ui.layout.focused;
+        let bounds = self.workspace().scene.bounds.clone();
+        self.camera = CameraState::fit_to_bounds(&bounds);
+        let content = self.workspace().ui.layout.focused_content();
+        self.pane_cameras.reset(focused, content, self.camera);
+        self.renderer.render_session_mut().reset_pane_projections();
+        self.invalidate_frame();
+    }
+
+    pub(super) fn pane_set_focused_content(&mut self, content: datum_gui_protocol::PaneContent) {
+        self.cancel_native_selection_gesture();
+        let retargeted_pane = self.workspace().ui.layout.focused;
+        let outgoing_board = self.scene_leaf_id();
+        let outgoing_camera = self.camera;
+        self.session
+            .workspace_mut()
+            .ui
+            .layout
+            .set_focused_content(content);
+        self.renderer
+            .render_session_mut()
+            .retire_pane_projection(retargeted_pane, content);
+        let incoming_board = self.scene_leaf_id();
+        if outgoing_board != incoming_board {
+            let bounds = self.workspace().scene.bounds.clone();
+            match (outgoing_board, incoming_board) {
+                (Some(outgoing), Some(incoming)) => {
+                    self.camera = self.pane_cameras.focus_to(
+                        outgoing,
+                        datum_gui_protocol::PaneContent::Board,
+                        outgoing_camera,
+                        incoming,
+                        datum_gui_protocol::PaneContent::Board,
+                        || CameraState::fit_to_bounds(&bounds),
+                    );
+                }
+                (Some(outgoing), None) => {
+                    self.pane_cameras.inherit(
+                        outgoing,
+                        datum_gui_protocol::PaneContent::Board,
+                        outgoing_camera,
+                    );
+                }
+                (None, Some(incoming)) => {
+                    self.camera = *self.pane_cameras.entry_or_insert_with(
+                        incoming,
+                        datum_gui_protocol::PaneContent::Board,
+                        || CameraState::fit_to_bounds(&bounds),
+                    );
+                }
+                (None, None) => {}
+            }
+        }
+        // Retire the old binding after stashing the outgoing active camera,
+        // independently of whether the new content has a resolved viewport.
+        self.pane_cameras.retarget(retargeted_pane, content);
+        if let Some(route) = self.focused_viewport() {
+            let fit = CameraState::fit_to_bounds(&route.bounds);
+            if !route.active_board {
+                let _ = self.camera_slot_mut(&route, || fit);
+            }
+        }
+        self.invalidate_frame();
+    }
+
+    /// The resize-cursor orientation for screen point `(x, y)`: during an active
+    /// divider drag it is the dragged split's orientation; otherwise the
+    /// orientation of the divider gutter under the cursor, if any. `None` means the
+    /// default cursor. Backs the hover affordance that signals a gutter is
+    /// draggable (a vertical split reads east-west, a horizontal split north-south).
+    pub(super) fn divider_resize_cursor(
+        &self,
+        x: f32,
+        y: f32,
+    ) -> Option<datum_gui_protocol::SplitOrientation> {
+        if let Some(drag) = &self.divider_drag {
+            return Some(drag.orientation);
+        }
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .divider_at(x, y)
+            .map(|d| d.orientation)
+    }
+
+    /// Divider-drag resize (decision 021): if screen point `(x, y)` grabs a split
+    /// divider gutter, begin a drag on that split and return `true` (so the press
+    /// is consumed instead of focusing a pane / running board interaction).
+    pub(super) fn begin_divider_drag(&mut self, x: f32, y: f32) -> bool {
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        if let Some(divider) = panes.divider_at(x, y) {
+            self.divider_drag = Some(DividerDrag {
+                path: divider.path.clone(),
+                split_frame: divider.split_frame,
+                orientation: divider.orientation,
+            });
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Apply a divider-drag move: translate the cursor into a new ratio for the
+    /// dragged split and write it (the model clamps so panes never collapse).
+    pub(super) fn handle_divider_drag(&mut self, pos: (f32, f32)) -> bool {
+        let Some(drag) = &self.divider_drag else {
+            return false;
+        };
+        let ratio = drag.ratio_at(pos.0, pos.1);
+        let path = drag.path.clone();
+        self.session
+            .workspace_mut()
+            .ui
+            .layout
+            .set_ratio_at_path(&path, ratio);
+        self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn current_layout(&self) -> ShellLayout {
+        self.shell_layout_for_dock(if self.workspace().ui.active_dock_tab.is_some() {
+            Some(self.workspace().ui.effective_dock_height_px())
+        } else {
+            None
+        })
+    }
+
+    pub(super) fn shell_layout_for_dock(&self, dock_height: Option<u32>) -> ShellLayout {
+        ShellLayout::for_surface(
+            self.config.width,
+            self.config.height,
+            self.scale_factor,
+            dock_height,
+        )
+    }
+
+    /// The leaf that renders the live board scene (the pane the active camera
+    /// belongs to). Bound to the BOARD pane, not focus — so the board's framing
+    /// persists while another pane is focused.
+    pub(super) fn scene_leaf_id(&self) -> Option<datum_gui_protocol::PaneId> {
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .scene_leaf_id()
+    }
+
+    /// The companion schematic leaf's `PaneId`, if the layout has a Schematic pane.
+    /// P2.2d keys the schematic's warm interactive camera by this id.
+    pub(super) fn schematic_leaf_id(&self) -> Option<datum_gui_protocol::PaneId> {
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .schematic_leaf_id()
+    }
+
+    /// The companion schematic scene's world bounds, if a schematic scene exists —
+    /// the reference the schematic camera fits to and pans/zooms within (P2.2d).
+    pub(super) fn schematic_bounds(&self) -> Option<SceneBounds> {
+        self.workspace()
+            .schematic_scene
+            .as_ref()
+            .map(|scene| scene.bounds.clone())
+    }
+
+    /// The camera the companion schematic pass renders with (P2.2d). Once the owner
+    /// has interacted with the focused schematic pane its WARM camera persists here;
+    /// until then (store cold) the INITIAL fit-to-schematic-bounds — byte-identical
+    /// to the pre-P2.2d static fit, so the default board-focused capture is
+    /// unchanged. `None` when there is no companion schematic scene / Schematic pane.
+    pub(super) fn schematic_camera_for_render(&self) -> Option<CameraState> {
+        let leaf = self.schematic_leaf_id()?;
+        let bounds = self.schematic_bounds()?;
+        Some(
+            self.pane_cameras
+                .camera(leaf, datum_gui_protocol::PaneContent::Schematic)
+                .unwrap_or_else(|| CameraState::fit_to_bounds(&bounds)),
+        )
+    }
+
+    /// The workspace leaf pane whose frame contains screen point `(x, y)`, tiling
+    /// the current shell exactly as the renderer does. Backs click-to-focus
+    /// (decision 021): a press outside every pane (sidebars/dock/menu) returns
+    /// `None` and the click falls through to normal board behavior.
+    pub(super) fn pane_at_screen(&self, x: f32, y: f32) -> Option<datum_gui_protocol::PaneId> {
+        self.current_layout()
+            .viewport_panes(&self.workspace().ui.layout)
+            .leaf_at(x, y)
+    }
+
+    /// Whether the current pointer is inside an editor pane's drawable scene,
+    /// excluding pane chrome, split gutters, side panels, and the dock.
+    pub(super) fn cursor_in_editor_scene(&self) -> bool {
+        let Some(pos) = self.last_cursor_pos else {
+            return false;
+        };
+        self.pointer_viewport(pos)
+            .is_some_and(|route| route.viewport.contains(pos.0, pos.1))
+    }
+
+    /// S3/UVT-004: resolve a primary click that `world_point_at_screen` reported on
+    /// the SCHEMATIC surface. It hit-tests the schematic symbol regions in the
+    /// schematic camera's space and acquires its source-qualified identity through
+    /// the shared selection owner.
+    pub(super) fn resolve_schematic_primary_click(
+        &mut self,
+        screen: (f32, f32),
+        world_point: PointNm,
+    ) -> bool {
+        let qualified = match self.selection_world_hit(world_point, SceneSurface::Schematic) {
+            Ok(hit) => hit,
+            Err(()) => return true,
+        };
+        let hit = qualified.target;
+        self.trace_click(format!(
+            "primary click ({:.1}, {:.1}) schematic world ({}, {}) hit {hit:?} (native selection acquisition)",
+            screen.0, screen.1, world_point.x, world_point.y
+        ));
+        if let Some(HitTarget::AuthoredObject(id)) = hit
+            && let Some(basis) = qualified.basis.as_deref()
+        {
+            return self
+                .acquire_native_key_from_basis(&id, Some(world_point), basis)
+                .unwrap_or(false);
+        }
+        false
+    }
+
+    /// S4 / UVT-004 per-surface hover: resolve hover in whichever pane the cursor
+    /// is over, in that pane's OWN camera/space (via the S3 `world_point_at_screen`
+    /// keystone + the matching per-pane world hit-test), and store the hovered
+    /// target together with its surface plus the live cursor. Board hover is
+    /// unchanged; a schematic-pane cursor over a symbol now resolves that symbol's
+    /// identity (impossible pre-S3, when this wrote a single board-only global) and
+    /// the renderer projects the hover pre-highlight with the matching camera.
+    pub(super) fn update_hover(&mut self, pos: (f32, f32)) -> bool {
+        // Sidebars, pane headers, gutters, and dock chrome have no authored
+        // world hover. Reject them through the cheap solved-layout path before
+        // touching PreparedScene/retained geometry; Navigator pointer latency
+        // must not inherit a cold world-scene build.
+        if !self
+            .pointer_viewport(pos)
+            .is_some_and(|route| route.viewport.contains(pos.0, pos.1))
+        {
+            return self.clear_interaction_overlay();
+        }
+        // Shared preparation validates both retained sources before projection.
+        if self.prepared_scene().is_none() || !self.ensure_retained_scene() {
+            return self.clear_interaction_overlay();
+        }
+        let resolved = {
+            let prepared = self
+                .renderer
+                .render_session()
+                .prepared()
+                .expect("prepared scene built above");
+            let board_retained = self
+                .renderer
+                .render_session()
+                .board()
+                .expect("board retained scene built with prepared");
+            datum_gui_render::resolve_pane_hover(
+                prepared,
+                board_retained,
+                self.renderer.render_session().schematic(),
+                self.session.workspace(),
+                pos.0,
+                pos.1,
+            )
+        };
+        // Preserve the resolver's typed pane ownership beside the opaque object id;
+        // rendering must never infer a surface from identifier spelling. S4 cursor
+        // crosshair (decision 023 UVT-005): record the live cursor in
+        // device-pixel SCREEN space so the renderer can draw the crosshair through
+        // it. These are transient overlay changes: authored board and schematic
+        // retained geometry must remain warm while the pointer moves.
+        let new_cursor = resolved.cursor;
+        let new_hover = resolved.hover;
+        let cursor_moved = self.session.workspace().ui.cursor_pos != new_cursor;
+        let hover_changed = self.session.workspace().ui.hovered_object != new_hover;
+        if cursor_moved {
+            self.session.workspace_mut().ui.cursor_pos = new_cursor;
+        }
+        if hover_changed {
+            self.session.workspace_mut().ui.hovered_object = new_hover;
+        }
+        let crosshair_live =
+            self.session.workspace().ui.crosshair_style != datum_gui_protocol::CrosshairStyle::None;
+        if hover_changed || (cursor_moved && crosshair_live) {
+            self.refresh_interaction_overlay();
+            return true;
+        }
+        false
+    }
+
+    /// Clear pointer-driven chrome when the cursor leaves an authoring surface or
+    /// a modal/terminal interaction captures it. Keeping stale hover/crosshair
+    /// state visible is misleading; clearing it still preserves retained geometry.
+    pub(super) fn clear_interaction_overlay(&mut self) -> bool {
+        let ui = &mut self.session.workspace_mut().ui;
+        // Do not combine these `take`s with short-circuiting `||`: both fields must
+        // be cleared even when the cursor field was populated.
+        let had_cursor = ui.cursor_pos.take().is_some();
+        let had_hover = ui.hovered_object.take().is_some();
+        let changed = had_cursor || had_hover;
+        if changed {
+            self.refresh_interaction_overlay();
+        }
+        changed
+    }
+}
+
+impl Runtime {
+    pub(super) fn pan_selection_pane(
+        &mut self,
+        pane: datum_gui_protocol::PaneId,
+        delta: (f32, f32),
+    ) -> bool {
+        let panes = self
+            .current_layout()
+            .viewport_panes(&self.workspace().ui.layout);
+        let Some(route) = self.camera_viewport_for_pane(&panes, pane) else {
+            return false;
+        };
+        let fit = CameraState::fit_to_bounds(&route.bounds);
+        CameraEngine::pan_pixels(
+            self.camera_slot_mut(&route, || fit),
+            route.camera,
+            route.viewport.into(),
+            &route.bounds,
+            delta.0,
+            delta.1,
+        );
+        self.invalidate_frame();
+        true
+    }
+}

@@ -137,7 +137,7 @@ def assert_renderer_is_consumer_only() -> None:
 
 
 def assert_producer_routes_remain_separated() -> None:
-    app_sources = list(APP_ROOT.glob("*.rs"))
+    app_sources = list(APP_ROOT.rglob("*.rs"))
     for path in app_sources:
         code = code_without_comments_or_strings(path.read_text())
         if re.search(r"\blog_review_event\b", code):
@@ -149,9 +149,9 @@ def assert_producer_routes_remain_separated() -> None:
             )
 
     terminal_owned = [
-        *APP_ROOT.glob("runtime_terminal_*.rs"),
-        *APP_ROOT.glob("terminal_*.rs"),
-        APP_ROOT / "application_terminal_shutdown.rs",
+        *APP_ROOT.rglob("runtime_terminal_*.rs"),
+        *APP_ROOT.rglob("terminal_*.rs"),
+        APP_ROOT / "terminal/application_terminal_shutdown.rs",
     ]
     for path in terminal_owned:
         if path.exists() and re.search(
@@ -159,14 +159,14 @@ def assert_producer_routes_remain_separated() -> None:
         ):
             fail(f"terminal-owned producer routes into Console in {path.relative_to(ROOT)}")
 
-    production_refresh = APP_ROOT / "production_status_refresh.rs"
+    production_refresh = APP_ROOT / "application/production_status_refresh.rs"
     if re.search(
         r"\blog_console_\w*\b",
         code_without_comments_or_strings(production_refresh.read_text()),
     ):
         fail("background production refresh routes into Console")
 
-    runtime = (APP_ROOT / "main.rs").read_text()
+    runtime = (APP_ROOT / "editor/runtime_hit_actions.rs").read_text()
     marker = "HitTarget::CheckFinding(fingerprint) =>"
     if marker not in runtime:
         fail("check-finding routing branch was not found")
@@ -177,7 +177,7 @@ def assert_producer_routes_remain_separated() -> None:
 
 def assert_internal_ids_stay_typed() -> None:
     """Reject internal identity interpolation through untyped prose helpers."""
-    for path in APP_ROOT.glob("*.rs"):
+    for path in APP_ROOT.rglob("*.rs"):
         source = path.read_text()
         for call in UNTYPED_CONSOLE_CALL.finditer(source):
             names = {
@@ -191,7 +191,7 @@ def assert_internal_ids_stay_typed() -> None:
                     f"{path.relative_to(ROOT)}; use a typed action_id/target_id helper"
                 )
 
-    boundary = (APP_ROOT / "console_feedback.rs").read_text()
+    boundary = (APP_ROOT / "terminal/console_feedback.rs").read_text()
     for helper, typed_builder in [
         ("log_console_echo_for_action", ".with_action_id("),
         ("log_console_echo_for_target", ".with_target_id("),
@@ -202,7 +202,7 @@ def assert_internal_ids_stay_typed() -> None:
             fail(f"typed Console publication helper is incomplete: {helper}")
 
     critical_helper = "log_console_critical_refusal_for_action"
-    producer_uses = sum(path.read_text().count(critical_helper) for path in APP_ROOT.glob("*.rs"))
+    producer_uses = sum(path.read_text().count(critical_helper) for path in APP_ROOT.rglob("*.rs"))
     if critical_helper not in boundary or producer_uses < 4:
         fail("critical Console announcement has no production command-admission path")
 

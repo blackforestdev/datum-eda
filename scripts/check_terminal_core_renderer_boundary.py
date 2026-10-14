@@ -61,10 +61,10 @@ def check(root: Path) -> list[str]:
     visual = read(root, VISUAL)
     pane_render = read(root, PANE_RENDER)
     main = read(root, APP / "main.rs")
-    runtime_render = read(root, APP / "runtime_terminal_render.rs")
-    adapter = read(root, APP / "terminal_core_adapter.rs")
-    session = read(root, APP / "terminal_session.rs")
-    session_render = read(root, APP / "terminal_session_render.rs")
+    runtime_render = read(root, APP / "terminal/runtime_terminal_render.rs")
+    adapter = read(root, APP / "terminal/terminal_core_adapter.rs")
+    session = read(root, APP / "terminal/terminal_session.rs")
+    session_render = read(root, APP / "terminal/terminal_session_render.rs")
 
     if 'datum-terminal-core = { path = "../terminal-core" }' not in manifest:
         failures.append("gui-render must consume the first-party TerminalCore path crate")
@@ -181,7 +181,7 @@ def check(root: Path) -> list[str]:
     if "geometry.screen.width.round() as u32" not in session_render:
         failures.append("each split PTY/core resize does not receive its rendered pixel width")
 
-    proof_corpus = tests + visual + read(root, APP / "terminal_core_adapter_tests.rs")
+    proof_corpus = tests + visual + read(root, APP / "terminal/terminal_core_adapter_tests.rs")
     for proof in REQUIRED_PROOFS:
         if proof not in proof_corpus:
             failures.append(f"DTC-P23 lacks governed proof: {proof}")

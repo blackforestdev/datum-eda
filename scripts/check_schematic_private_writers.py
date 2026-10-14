@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import source_pattern_scan
 import private_writer_bootstrap_policy
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -294,6 +295,8 @@ GENERATED_EXPORT_FILES = {
 
 GUI_APP_BOARD_TEXT_FILES = [
     Path("crates/gui-app/src/main.rs"),
+    Path("crates/gui-app/src/editor/runtime_tool_actions.rs"),
+    Path("crates/gui-app/src/terminal/runtime_terminal_control.rs"),
 ]
 
 RETIRED_GUI_BOARD_TEXT_FILES = [
@@ -519,28 +522,6 @@ FORBIDDEN_GUI_BOARD_TEXT_PATTERNS = [
 ]
 
 
-def matching_lines(path: Path, patterns: list[str]) -> list[tuple[int, str, str]]:
-    matches: list[tuple[int, str, str]] = []
-    for index, line in enumerate(path.read_text().splitlines(), start=1):
-        stripped = line.strip()
-        for pattern in patterns:
-            if pattern in stripped:
-                matches.append((index, pattern, stripped))
-    return matches
-
-
-def count_pattern(path: Path, pattern: str) -> int:
-    return path.read_text().count(pattern)
-
-
-def require_patterns(
-    failures: list[str], relative: Path, text: str, patterns: list[str], label: str
-) -> None:
-    for pattern in patterns:
-        if pattern not in text:
-            failures.append(f"{relative}: missing expected {label} pattern `{pattern}`")
-
-
 def main() -> int:
     failures: list[str] = []
 
@@ -549,7 +530,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing schematic authoring file: {relative}")
             continue
-        for line, pattern, text in matching_lines(path, FORBIDDEN_AUTHORING_PATTERNS):
+        for line, pattern, text in source_pattern_scan.matching_lines(path, FORBIDDEN_AUTHORING_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden private schematic writer `{pattern}`: {text}"
             )
@@ -559,7 +540,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing production authoring file: {relative}")
             continue
-        for line, pattern, text in matching_lines(path, FORBIDDEN_AUTHORING_PATTERNS):
+        for line, pattern, text in source_pattern_scan.matching_lines(path, FORBIDDEN_AUTHORING_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden private production writer `{pattern}`: {text}"
             )
@@ -577,19 +558,19 @@ def main() -> int:
             failures.append(f"missing route-strategy fixture file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             REQUIRED_ROUTE_STRATEGY_FIXTURE_PATTERNS,
             "route-strategy fixture/artifact",
         )
-        write_count = count_pattern(path, "write_canonical_json(")
+        write_count = source_pattern_scan.count_pattern(path, "write_canonical_json(")
         if write_count != 3:
             failures.append(
                 f"{relative}: expected exactly 3 route-strategy artifact write_canonical_json calls (fixture boards are facade-committed), found {write_count}"
             )
-        for line, pattern, text_line in matching_lines(path, ["std::fs::write("]):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, ["std::fs::write("]):
             failures.append(
                 f"{relative}:{line}: forbidden route-strategy fixture writer `{pattern}`: {text_line}"
             )
@@ -600,26 +581,26 @@ def main() -> int:
             failures.append(f"missing legacy KiCad modify file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "legacy KiCad modify retirement guard",
         )
-        save_count = count_pattern(path, ".save(")
+        save_count = source_pattern_scan.count_pattern(path, ".save(")
         expected_save_count = int(config["save_calls"])
         if save_count != expected_save_count:
             failures.append(
                 f"{relative}: expected exactly {expected_save_count} legacy KiCad save call, found {save_count}"
             )
-        save_original_count = count_pattern(path, ".save_to_original(")
+        save_original_count = source_pattern_scan.count_pattern(path, ".save_to_original(")
         expected_save_original_count = int(config["save_original_calls"])
         if save_original_count != expected_save_original_count:
             failures.append(
                 f"{relative}: expected exactly {expected_save_original_count} legacy KiCad save-original call, found {save_original_count}"
             )
-        for line, pattern, text_line in matching_lines(
+        for line, pattern, text_line in source_pattern_scan.matching_lines(
             path, ["write_canonical_json(", "std::fs::write("]
         ):
             failures.append(
@@ -631,7 +612,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing forward-annotation review file: {relative}")
             continue
-        for line, pattern, text in matching_lines(path, FORBIDDEN_AUTHORING_PATTERNS):
+        for line, pattern, text in source_pattern_scan.matching_lines(path, FORBIDDEN_AUTHORING_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden private forward-annotation review writer `{pattern}`: {text}"
             )
@@ -642,14 +623,14 @@ def main() -> int:
             failures.append(f"missing proposal apply file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             REQUIRED_PROPOSAL_APPLY_PATTERNS,
             "journaled proposal apply",
         )
-        for line, pattern, text_line in matching_lines(path, FORBIDDEN_PROPOSAL_APPLY_PATTERNS):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, FORBIDDEN_PROPOSAL_APPLY_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden direct proposal sidecar/apply writer `{pattern}`: {text_line}"
             )
@@ -660,20 +641,20 @@ def main() -> int:
             failures.append(f"missing legacy proposal sidecar file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "legacy proposal sidecar boundary",
         )
-        write_count = count_pattern(path, "std::fs::write(")
+        write_count = source_pattern_scan.count_pattern(path, "std::fs::write(")
         expected_writes = int(config["writes"])
         if write_count != expected_writes:
             failures.append(
                 f"{relative}: expected exactly {expected_writes} legacy proposal sidecar std::fs::write call, found {write_count}"
             )
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, list(config["forbidden"])):
             failures.append(
                 f"{relative}:{line}: forbidden legacy proposal sidecar API `{pattern}`: {text_line}"
             )
@@ -683,7 +664,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing substrate public export file: {relative}")
             continue
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, list(config["forbidden"])):
             failures.append(
                 f"{relative}:{line}: forbidden public substrate legacy export `{pattern}`: {text_line}"
             )
@@ -694,14 +675,14 @@ def main() -> int:
             failures.append(f"missing forward-annotation review-state file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             REQUIRED_FORWARD_ANNOTATION_STATE_PATTERNS,
             "forward-annotation review-state",
         )
-        for line, pattern, text_line in matching_lines(
+        for line, pattern, text_line in source_pattern_scan.matching_lines(
             path, FORBIDDEN_FORWARD_ANNOTATION_STATE_PATTERNS
         ):
             failures.append(
@@ -713,7 +694,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing schematic helper file: {relative}")
             continue
-        for line, pattern, text in matching_lines(path, FORBIDDEN_HELPER_PATTERNS):
+        for line, pattern, text in source_pattern_scan.matching_lines(path, FORBIDDEN_HELPER_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden schematic writer helper `{pattern}`: {text}"
             )
@@ -724,14 +705,14 @@ def main() -> int:
             failures.append(f"missing generated-evidence file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             required_patterns,
             "generated-evidence substrate helper",
         )
-        for line, pattern, text in matching_lines(path, FORBIDDEN_GENERATED_EVIDENCE_PATTERNS):
+        for line, pattern, text in source_pattern_scan.matching_lines(path, FORBIDDEN_GENERATED_EVIDENCE_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden generated-evidence writer `{pattern}`: {text}"
             )
@@ -742,7 +723,7 @@ def main() -> int:
         failures.append(f"missing production ZoneFill command file: {zone_fill_command}")
     else:
         text = zone_fill_command_path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             zone_fill_command,
             text,
@@ -754,7 +735,7 @@ def main() -> int:
     # file moves can never silently shrink the forbidden-writer scan scope.
     for path in sorted((ROOT / "crates/cli/src").rglob("*.rs")):
         relative = path.relative_to(ROOT)
-        for line, pattern, text_line in matching_lines(
+        for line, pattern, text_line in source_pattern_scan.matching_lines(
             path, FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS
         ):
             failures.append(
@@ -767,14 +748,14 @@ def main() -> int:
             failures.append(f"missing artifact-only evidence command file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "journaled artifact-only generated evidence command",
         )
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, list(config["forbidden"])):
             failures.append(
                 f"{relative}:{line}: forbidden direct artifact-only evidence writer `{pattern}`: {text_line}"
             )
@@ -785,14 +766,14 @@ def main() -> int:
             failures.append(f"missing output-job-run evidence command file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "journaled output-job-run generated evidence command",
         )
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, list(config["forbidden"])):
             failures.append(
                 f"{relative}:{line}: forbidden direct output-job-run evidence writer `{pattern}`: {text_line}"
             )
@@ -803,14 +784,14 @@ def main() -> int:
             failures.append(f"missing Gerber evidence command file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "journaled Gerber generated evidence command",
         )
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, list(config["forbidden"])):
             failures.append(
                 f"{relative}:{line}: forbidden direct Gerber evidence writer `{pattern}`: {text_line}"
             )
@@ -821,14 +802,14 @@ def main() -> int:
             failures.append(f"missing manufacturing evidence command file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "journaled manufacturing generated evidence command",
         )
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, list(config["forbidden"])):
             failures.append(
                 f"{relative}:{line}: forbidden direct manufacturing evidence writer `{pattern}`: {text_line}"
             )
@@ -839,20 +820,20 @@ def main() -> int:
             failures.append(f"missing engine generated-evidence helper file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "engine generated-evidence helper",
         )
-        write_count = count_pattern(path, "std::fs::write(")
+        write_count = source_pattern_scan.count_pattern(path, "std::fs::write(")
         expected_writes = int(config["writes"])
         if write_count != expected_writes:
             failures.append(
                 f"{relative}: expected exactly {expected_writes} engine generated-evidence std::fs::write calls, found {write_count}"
             )
-        for line, pattern, text_line in matching_lines(path, ["write_canonical_json("]):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, ["write_canonical_json("]):
             failures.append(
                 f"{relative}:{line}: forbidden engine generated-evidence canonical JSON writer `{pattern}`: {text_line}"
             )
@@ -863,20 +844,20 @@ def main() -> int:
             failures.append(f"missing engine source-stage file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "engine source-stage helper",
         )
-        write_count = count_pattern(path, "std::fs::write(")
+        write_count = source_pattern_scan.count_pattern(path, "std::fs::write(")
         expected_writes = int(config["writes"])
         if write_count != expected_writes:
             failures.append(
                 f"{relative}: expected exactly {expected_writes} engine source-stage std::fs::write calls, found {write_count}"
             )
-        for line, pattern, text_line in matching_lines(path, ["write_canonical_json("]):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, ["write_canonical_json("]):
             failures.append(
                 f"{relative}:{line}: forbidden engine source-stage canonical JSON writer `{pattern}`: {text_line}"
             )
@@ -887,14 +868,14 @@ def main() -> int:
             failures.append(f"missing engine journal persistence file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "engine journal persistence owner",
         )
-        write_count = count_pattern(path, "std::fs::write(")
+        write_count = source_pattern_scan.count_pattern(path, "std::fs::write(")
         expected_writes = int(config["writes"])
         if write_count != expected_writes:
             failures.append(
@@ -907,20 +888,20 @@ def main() -> int:
             failures.append(f"missing generated-export file: {relative}")
             continue
         text = path.read_text()
-        require_patterns(
+        source_pattern_scan.require_patterns(
             failures,
             relative,
             text,
             list(config["required"]),
             "generated-export",
         )
-        write_count = count_pattern(path, "std::fs::write(")
+        write_count = source_pattern_scan.count_pattern(path, "std::fs::write(")
         expected_writes = int(config["writes"])
         if write_count != expected_writes:
             failures.append(
                 f"{relative}: expected exactly {expected_writes} generated-export std::fs::write calls, found {write_count}"
             )
-        for line, pattern, text_line in matching_lines(path, ["write_canonical_json("]):
+        for line, pattern, text_line in source_pattern_scan.matching_lines(path, ["write_canonical_json("]):
             failures.append(
                 f"{relative}:{line}: forbidden generated-export canonical JSON writer `{pattern}`: {text_line}"
             )
@@ -930,7 +911,7 @@ def main() -> int:
         if not path.exists():
             failures.append(f"missing GUI board-text file: {relative}")
             continue
-        for line, pattern, text in matching_lines(path, FORBIDDEN_GUI_BOARD_TEXT_PATTERNS):
+        for line, pattern, text in source_pattern_scan.matching_lines(path, FORBIDDEN_GUI_BOARD_TEXT_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden GUI board-text private writer `{pattern}`: {text}"
             )

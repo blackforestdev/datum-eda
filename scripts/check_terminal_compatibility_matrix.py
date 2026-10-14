@@ -11,7 +11,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "specs/terminal_compatibility_matrix.json"
-TEST = ROOT / "crates/gui-app/src/terminal_compatibility_tests.rs"
+TEST = ROOT / "crates/gui-app/src/terminal/terminal_compatibility_tests.rs"
 REQUIRED_WITNESSES = {
     "bash", "zsh", "fish", "ssh", "tmux", "less", "vim", "neovim",
     "htop", "btop", "python", "git", "cargo",

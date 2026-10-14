@@ -1,8 +1,14 @@
+#[path = "rendering/native_device_recovery.rs"]
 mod native_device_recovery;
+#[path = "editor/native_edit_selection.rs"]
 mod native_edit_selection;
+#[path = "editor/runtime_library.rs"]
 mod runtime_library;
+#[path = "editor/runtime_native_edit.rs"]
 mod runtime_native_edit;
+#[path = "editor/runtime_schematic.rs"]
 mod runtime_schematic;
+#[path = "application/runtime_state.rs"]
 mod runtime_state;
 use anyhow::{Context, Result};
 use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
@@ -36,101 +42,200 @@ use winit::{
     keyboard::{Key, KeyCode, ModifiersState, NamedKey, PhysicalKey},
     window::{Window, WindowAttributes, WindowId},
 };
+#[path = "application/app_bootstrap.rs"]
 mod app_bootstrap;
+#[path = "application/app_frame.rs"]
 mod app_frame;
+#[path = "application/app_native_events.rs"]
 mod app_native_events;
+#[path = "application/app_shell.rs"]
 mod app_shell;
+#[path = "terminal/application_terminal_shutdown.rs"]
 mod application_terminal_shutdown;
+#[path = "editor/artifact_preview_controls.rs"]
 mod artifact_preview_controls;
+#[path = "editor/board_text_terminal_commands.rs"]
 mod board_text_terminal_commands;
+#[path = "terminal/console_accessibility.rs"]
 mod console_accessibility;
+#[path = "terminal/console_feedback.rs"]
 mod console_feedback;
+#[path = "windows/global_preferences_projection.rs"]
 mod global_preferences_projection;
+#[path = "windows/global_preferences_runtime.rs"]
 mod global_preferences_runtime;
+#[path = "windows/global_preferences_window.rs"]
 mod global_preferences_window;
+#[path = "rendering/gui_runtime_support.rs"]
 mod gui_runtime_support;
+#[path = "viewport/interaction_refresh.rs"]
 mod interaction_refresh;
+#[path = "terminal/keyboard_focus.rs"]
 mod keyboard_focus;
+#[path = "rendering/native_frame_adapters.rs"]
 mod native_frame_adapters;
+#[path = "rendering/native_frame_coordinator.rs"]
 mod native_frame_coordinator;
+#[path = "rendering/native_gpu.rs"]
 mod native_gpu;
+#[path = "rendering/native_gpu_measurements.rs"]
 mod native_gpu_measurements;
+#[path = "rendering/native_resize_repro.rs"]
 mod native_resize_repro;
+#[path = "windows/new_project_window.rs"]
 mod new_project_window;
+#[path = "application/owned_window_policy.rs"]
 mod owned_window_policy;
+#[path = "viewport/pan_gesture.rs"]
 mod pan_gesture;
+#[path = "viewport/pane_cameras.rs"]
 mod pane_cameras;
+#[path = "viewport/pane_grid_lod.rs"]
 mod pane_grid_lod;
+#[path = "viewport/pane_resize.rs"]
 mod pane_resize;
+#[path = "application/production_status_refresh.rs"]
 mod production_status_refresh;
+#[path = "windows/project_open.rs"]
 mod project_open;
+#[path = "windows/project_open_window.rs"]
 mod project_open_window;
+#[path = "windows/project_preferences_runtime.rs"]
 mod project_preferences_runtime;
+#[path = "windows/project_preferences_window.rs"]
 mod project_preferences_window;
+#[path = "rendering/resize_smoke.rs"]
 mod resize_smoke;
+#[path = "rendering/retained_scene_lifecycle.rs"]
 mod retained_scene_lifecycle;
+#[path = "rendering/runtime_capture.rs"]
 mod runtime_capture;
 use runtime_capture::run_offscreen_visual_test;
+#[path = "editor/runtime_board_text_edit.rs"]
 mod runtime_board_text_edit;
+#[path = "viewport/runtime_camera_fit_targets.rs"]
 mod runtime_camera_fit_targets;
+#[path = "viewport/runtime_camera_pane.rs"]
 mod runtime_camera_pane;
+#[path = "viewport/runtime_geometry_helpers.rs"]
 mod runtime_geometry_helpers;
+#[path = "editor/runtime_hit_actions.rs"]
 mod runtime_hit_actions;
+#[path = "application/runtime_init.rs"]
 mod runtime_init;
+#[path = "application/runtime_menu_actions.rs"]
 mod runtime_menu_actions;
+#[path = "rendering/runtime_present.rs"]
 mod runtime_present;
+#[path = "editor/runtime_primary_button.rs"]
 mod runtime_primary_button;
+#[path = "editor/runtime_primary_pointer.rs"]
 mod runtime_primary_pointer;
+#[path = "editor/runtime_revision_workspace.rs"]
 mod runtime_revision_workspace;
+#[path = "editor/runtime_selection.rs"]
 mod runtime_selection;
+#[path = "editor/runtime_selection_artifacts.rs"]
 mod runtime_selection_artifacts;
+#[path = "editor/runtime_selection_hit.rs"]
 mod runtime_selection_hit;
+#[path = "editor/runtime_selection_inspector.rs"]
 mod runtime_selection_inspector;
+#[path = "editor/runtime_selection_menu.rs"]
 mod runtime_selection_menu;
+#[path = "editor/runtime_selection_region.rs"]
 mod runtime_selection_region;
+#[path = "editor/runtime_selection_run.rs"]
 mod runtime_selection_run;
+#[path = "rendering/runtime_surface.rs"]
 mod runtime_surface;
+#[path = "terminal/runtime_terminal_clipboard.rs"]
 mod runtime_terminal_clipboard;
+#[path = "terminal/runtime_terminal_context.rs"]
 mod runtime_terminal_context;
+#[path = "terminal/runtime_terminal_control.rs"]
+mod runtime_terminal_control;
+#[path = "terminal/runtime_terminal_dock.rs"]
 mod runtime_terminal_dock;
+#[path = "terminal/runtime_terminal_font.rs"]
 mod runtime_terminal_font;
+#[path = "terminal/runtime_terminal_geometry.rs"]
 mod runtime_terminal_geometry;
+#[path = "terminal/runtime_terminal_input.rs"]
 mod runtime_terminal_input;
+#[path = "terminal/runtime_terminal_links.rs"]
 mod runtime_terminal_links;
+#[path = "terminal/runtime_terminal_notifications.rs"]
 mod runtime_terminal_notifications;
+#[path = "terminal/runtime_terminal_pointer.rs"]
 mod runtime_terminal_pointer;
+#[path = "terminal/runtime_terminal_profile.rs"]
 mod runtime_terminal_profile;
+#[path = "terminal/runtime_terminal_render.rs"]
 mod runtime_terminal_render;
+#[path = "terminal/runtime_terminal_search.rs"]
 mod runtime_terminal_search;
+#[path = "terminal/runtime_terminal_theme.rs"]
 mod runtime_terminal_theme;
+#[path = "editor/runtime_tool_actions.rs"]
+mod runtime_tool_actions;
+#[path = "editor/runtime_view_actions.rs"]
 mod runtime_view_actions;
+#[path = "editor/selection_accessibility.rs"]
 mod selection_accessibility;
+#[path = "editor/selection_region_evaluation.rs"]
 mod selection_region_evaluation;
+#[path = "terminal/terminal_accessibility.rs"]
 mod terminal_accessibility;
+#[path = "terminal/terminal_accessibility_bridge.rs"]
 mod terminal_accessibility_bridge;
+#[path = "terminal/terminal_accessibility_platform/mod.rs"]
 mod terminal_accessibility_platform;
+#[path = "terminal/terminal_active_context.rs"]
 mod terminal_active_context;
+#[path = "terminal/terminal_activity_snapshot.rs"]
 mod terminal_activity_snapshot;
+#[path = "terminal/terminal_agent_authority.rs"]
 mod terminal_agent_authority;
+#[path = "terminal/terminal_agent_credential.rs"]
 mod terminal_agent_credential;
+#[path = "terminal/terminal_capability.rs"]
 mod terminal_capability;
+#[path = "terminal/terminal_check_context.rs"]
 mod terminal_check_context;
+#[path = "terminal/terminal_context.rs"]
 mod terminal_context;
+#[path = "terminal/terminal_context_contract.rs"]
 mod terminal_context_contract;
+#[path = "terminal/terminal_context_io.rs"]
 mod terminal_context_io;
+#[path = "terminal/terminal_core_adapter.rs"]
 mod terminal_core_adapter;
+#[path = "terminal/terminal_input.rs"]
 mod terminal_input;
+#[path = "terminal/terminal_process.rs"]
 mod terminal_process;
+#[path = "terminal/terminal_profile.rs"]
 mod terminal_profile;
+#[path = "terminal/terminal_proposal_context.rs"]
 mod terminal_proposal_context;
+#[path = "terminal/terminal_session.rs"]
 mod terminal_session;
+#[path = "terminal/terminal_session_context.rs"]
 mod terminal_session_context;
+#[path = "terminal/terminal_session_controls.rs"]
 mod terminal_session_controls;
+#[path = "terminal/terminal_session_events.rs"]
 mod terminal_session_events;
+#[path = "terminal/terminal_split_drag.rs"]
 mod terminal_split_drag;
+#[path = "terminal/terminal_tab_drag.rs"]
 mod terminal_tab_drag;
+#[path = "terminal/terminal_transport/mod.rs"]
 mod terminal_transport;
+#[path = "terminal/terminal_working_directory.rs"]
 mod terminal_working_directory;
+#[path = "application/workspace_keyboard.rs"]
 mod workspace_keyboard;
 use app_bootstrap::{GuiArgs, LaunchState};
 use app_shell::{App, fatal_gui_error, terminal_scrollback_page_step};
@@ -174,498 +279,12 @@ fn main() -> Result<()> {
     let event_loop = EventLoop::new().context("failed to create event loop")?;
     App::new(args, event_loop.create_proxy()).run(event_loop)
 }
-impl Runtime {
-    // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001: there is
-    // deliberately NO `push_terminal_line` here. Terminal cells are mutated
-    // only by PTY bytes interpreted by the terminal core. Terminal lifecycle
-    // and diagnostic messages stay in terminal chrome, never the Datum Console
-    // or the terminal grid.
-
-    fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
-        if self.handle_terminal_clipboard_confirmation_key(event) {
-            return true;
-        }
-        if self.handle_terminal_link_confirmation_key(event) {
-            return true;
-        }
-        if self.handle_terminal_search_key(event) {
-            return true;
-        }
-        let application_cursor_keys = self.workspace().ui.terminal.application_cursor_keys;
-        let application_keypad = self.workspace().ui.terminal.application_keypad;
-        let action = terminal_key_action(
-            event,
-            self.modifiers,
-            application_cursor_keys,
-            application_keypad,
-        );
-        if let Some(handled) = self.handle_close_confirmation_action(&action) {
-            return handled;
-        }
-        match action {
-            TerminalKeyAction::CoreKey(input) => {
-                match self.terminal_sessions.encode_active_key(&input) {
-                    Ok(Some(bytes)) => self.write_foreign_shell_bytes(&bytes),
-                    Ok(None) => true,
-                    Err(err) => {
-                        self.log_terminal_event(format!("terminal key encoding failed: {err}"));
-                        true
-                    }
-                }
-            }
-            TerminalKeyAction::NewSession => self.spawn_terminal_session_tab(),
-            TerminalKeyAction::SplitRight => {
-                self.spawn_terminal_split(datum_gui_protocol::TerminalSplitDirection::SideBySide)
-            }
-            TerminalKeyAction::SplitDown => {
-                self.spawn_terminal_split(datum_gui_protocol::TerminalSplitDirection::Stacked)
-            }
-            TerminalKeyAction::TerminateSession => {
-                self.terminate_terminal_session();
-                true
-            }
-            TerminalKeyAction::CloseSession => self.close_active_terminal_session(),
-            TerminalKeyAction::RestartSession => {
-                self.restart_terminal_session();
-                true
-            }
-            TerminalKeyAction::ScrollbackPageUp => {
-                self.scroll_terminal_scrollback(terminal_scrollback_page_step(self.workspace()));
-                true
-            }
-            TerminalKeyAction::ScrollbackPageDown => {
-                self.scroll_terminal_scrollback_down(terminal_scrollback_page_step(
-                    self.workspace(),
-                ));
-                true
-            }
-            TerminalKeyAction::ScrollbackTop => {
-                self.scroll_terminal_scrollback_to_top();
-                true
-            }
-            TerminalKeyAction::ScrollbackBottom => {
-                self.scroll_terminal_scrollback_to_bottom();
-                true
-            }
-            TerminalKeyAction::CopyClipboard => self.copy_terminal_scrollback(),
-            TerminalKeyAction::PasteClipboard => self.paste_terminal_input(),
-            TerminalKeyAction::Search => {
-                self.begin_terminal_search();
-                true
-            }
-            TerminalKeyAction::FontZoomIn => self.adjust_terminal_font_zoom(1),
-            TerminalKeyAction::FontZoomOut => self.adjust_terminal_font_zoom(-1),
-            TerminalKeyAction::FontZoomReset => self.reset_terminal_font_zoom(),
-            TerminalKeyAction::Ignore => false,
-        }
-    }
-
-    fn scroll_terminal_scrollback(&mut self, delta: usize) {
-        let max = self.terminal_sessions.active_render_row_count();
-        let terminal = &mut self.session.workspace_mut().ui.terminal;
-        terminal.scroll_offset = (terminal.scroll_offset + delta).min(max);
-        self.invalidate_frame();
-    }
-
-    fn scroll_terminal_scrollback_down(&mut self, delta: usize) {
-        let terminal = &mut self.session.workspace_mut().ui.terminal;
-        terminal.scroll_offset = terminal.scroll_offset.saturating_sub(delta);
-        self.invalidate_frame();
-    }
-
-    fn scroll_terminal_scrollback_to_top(&mut self) {
-        self.session.workspace_mut().ui.terminal.scroll_offset =
-            self.terminal_sessions.active_render_row_count();
-        self.invalidate_frame();
-    }
-
-    fn scroll_terminal_scrollback_to_bottom(&mut self) {
-        self.session.workspace_mut().ui.terminal.scroll_offset = 0;
-        self.invalidate_frame();
-    }
-
-    fn report_terminal_focus_event(&mut self, focused: bool) {
-        if !self.terminal_sessions.active_attached() {
-            return;
-        }
-        let input = if focused {
-            datum_terminal_core::FocusInput::Gained
-        } else {
-            datum_terminal_core::FocusInput::Lost
-        };
-        match self.terminal_sessions.encode_active_focus(input) {
-            Ok(Some(bytes)) => {
-                if let Err(err) = self.terminal_sessions.active().write_bytes(&bytes) {
-                    self.log_terminal_event(format!("terminal focus report failed: {err}"));
-                }
-            }
-            Ok(None) => {}
-            Err(err) => self.log_terminal_event(format!("terminal focus encoding failed: {err}")),
-        }
-    }
-
-    fn terminate_terminal_session(&mut self) {
-        match self
-            .terminal_sessions
-            .terminate_active(&mut self.session.workspace_mut().ui.terminal)
-        {
-            Ok(()) => {}
-            Err(err) => self.log_terminal_event(format!("terminal terminate failed: {err}")),
-        }
-        self.sync_terminal_tabs();
-        self.invalidate_frame();
-    }
-
-    fn restart_terminal_session(&mut self) {
-        match self.terminal_sessions.restart_active(
-            &mut self.session.workspace_mut().ui.terminal,
-            &self.terminal_launch_context,
-        ) {
-            Ok(()) => {
-                self.log_terminal_event(
-                    "terminal restart requested; waiting for verified teardown",
-                );
-                self.resize_terminal_to_dock();
-            }
-            Err(err) => self.log_terminal_event(format!("terminal restart failed: {err}")),
-        }
-        self.terminal_production_refresh_pending = false;
-        self.terminal_workspace_refresh_pending = false;
-        self.terminal_production_refresh_due = None;
-        self.terminal_production_refresh_attempts = 0;
-        self.sync_terminal_tabs();
-        self.invalidate_frame();
-    }
-
-    fn activate_terminal_session(&mut self, session_id: &str) -> bool {
-        if let Err(err) = self
-            .terminal_sessions
-            .activate_with_lane(session_id, &mut self.session.workspace_mut().ui.terminal)
-        {
-            self.log_terminal_event(format!("terminal session activate failed: {err}"));
-            return true;
-        }
-        self.refresh_terminal_selection_context_if_changed();
-        self.set_active_dock(DockTab::Terminal);
-        self.refresh_terminal_activity_summary();
-        self.sync_terminal_tabs();
-        self.resize_terminal_to_dock();
-        self.invalidate_frame();
-        true
-    }
-
-    fn copy_terminal_scrollback(&mut self) -> bool {
-        if !matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
-            return false;
-        }
-        let text = match self.terminal_sessions.copy_active_selection() {
-            Ok(text) => text,
-            Err(_) => return false,
-        };
-        if self.write_clipboard_text(&text).is_err() {
-            self.log_terminal_event("clipboard copy failed".to_string());
-            return true;
-        }
-        self.log_terminal_event("terminal text copied".to_string());
-        true
-    }
-
-    fn paste_terminal_input(&mut self) -> bool {
-        let Ok(text) = self.read_clipboard_text() else {
-            self.log_terminal_event("clipboard paste failed".to_string());
-            return false;
-        };
-        if text.is_empty() {
-            return false;
-        }
-        match self.terminal_input_owner() {
-            keyboard_focus::TerminalInputOwner::AttachedPty => {
-                match self.terminal_sessions.encode_active_paste(&text) {
-                    Ok(Some(bytes)) => self.write_foreign_shell_bytes(&bytes),
-                    Ok(None) => false,
-                    Err(err) => {
-                        self.log_terminal_event(format!("terminal paste encoding failed: {err}"));
-                        true
-                    }
-                }
-            }
-            keyboard_focus::TerminalInputOwner::Unowned => false,
-        }
-    }
-
-    fn read_clipboard_text(&mut self) -> Result<String> {
-        if let Some(clipboard) = &mut self.clipboard
-            && let Ok(text) = clipboard
-                .get()
-                .clipboard(LinuxClipboardKind::Clipboard)
-                .text()
-            && !text.is_empty()
-        {
-            return Ok(text);
-        }
-        self.read_clipboard_text_fallback()
-    }
-
-    fn write_clipboard_text(&mut self, text: &str) -> Result<()> {
-        self.write_terminal_clipboard_text(
-            datum_gui_protocol::TerminalClipboardSelection::Clipboard,
-            text,
-        )
-    }
-
-    fn write_terminal_clipboard_text(
-        &mut self,
-        selection: datum_gui_protocol::TerminalClipboardSelection,
-        text: &str,
-    ) -> Result<()> {
-        let kind = match selection {
-            datum_gui_protocol::TerminalClipboardSelection::Clipboard => {
-                LinuxClipboardKind::Clipboard
-            }
-            datum_gui_protocol::TerminalClipboardSelection::Primary => LinuxClipboardKind::Primary,
-        };
-        if let Some(clipboard) = &mut self.clipboard
-            && clipboard
-                .set()
-                .clipboard(kind)
-                .text(text.to_string())
-                .is_ok()
-        {
-            return Ok(());
-        }
-        self.write_clipboard_text_fallback(selection, text)
-    }
-
-    fn read_clipboard_text_fallback(&self) -> Result<String> {
-        let output = Command::new("/usr/bin/xclip")
-            .args(["-selection", "clipboard", "-o"])
-            .output()
-            .context("read clipboard with xclip")?;
-        if !output.status.success() {
-            anyhow::bail!("xclip clipboard read failed");
-        }
-        Ok(String::from_utf8_lossy(&output.stdout).to_string())
-    }
-
-    fn write_clipboard_text_fallback(
-        &self,
-        selection: datum_gui_protocol::TerminalClipboardSelection,
-        text: &str,
-    ) -> Result<()> {
-        let selection = match selection {
-            datum_gui_protocol::TerminalClipboardSelection::Clipboard => "clipboard",
-            datum_gui_protocol::TerminalClipboardSelection::Primary => "primary",
-        };
-        let mut child = Command::new("/usr/bin/xclip")
-            .args(["-selection", selection])
-            .stdin(Stdio::piped())
-            .spawn()
-            .context("spawn xclip for clipboard write")?;
-        let mut stdin = child.stdin.take().context("take xclip stdin")?;
-        stdin
-            .write_all(text.as_bytes())
-            .context("write clipboard text to xclip")?;
-        drop(stdin);
-        let status = child.wait().context("wait for xclip clipboard write")?;
-        if !status.success() {
-            anyhow::bail!("xclip clipboard write failed");
-        }
-        Ok(())
-    }
-
-    fn log_terminal_event(&mut self, message: impl Into<String>) {
-        self.session.workspace_mut().ui.terminal.status = message.into();
-        self.invalidate_frame();
-    }
-
-    fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
-        if !matches!(tool, WorkspaceTool::Select)
-            && !(tool == WorkspaceTool::Move && self.native_edit_available())
-        {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                format!("{} is unavailable in this build", tool.label()),
-            );
-            self.invalidate_frame();
-            return true;
-        }
-        self.cancel_native_move();
-        self.cancel_native_schematic();
-        if self.workspace().tool != tool {
-            self.cancel_native_selection_gesture();
-        }
-        let handled = self.dispatch_session_command(SessionCommand::SetTool(tool));
-        if handled {
-            self.log_console_echo(
-                ConsoleFeedbackSource::Tool,
-                format!("{} tool active", tool.label()),
-            );
-        }
-        if tool == WorkspaceTool::Move {
-            self.begin_selected_native_move();
-        }
-        handled || self.native_edit.preview.is_some()
-    }
-
-    fn active_tool_is_authoring(&self) -> bool {
-        self.workspace().tool == WorkspaceTool::Move && self.native_edit_available()
-    }
-
-    fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {
-        if self.native_schematic_pointer(screen_pos) {
-            return true;
-        }
-        if !self.active_tool_is_authoring() || !self.workspace().authoring.gesture.is_active() {
-            return false;
-        }
-        let Some(prepared) = self.prepared_scene() else {
-            return false;
-        };
-        // Authoring is a board-scene gesture; only the board surface drives it.
-        let Some((world, SceneSurface::Board)) =
-            prepared.world_point_at_screen(screen_pos.0, screen_pos.1)
-        else {
-            return false;
-        };
-        if self.workspace().tool == WorkspaceTool::Move {
-            return self.native_move_pointer(world);
-        }
-        let target_object_id = self.authoring_target_object_id(world);
-        self.dispatch_session_command(SessionCommand::PreviewAuthoringGesture {
-            world,
-            target_object_id,
-        })
-    }
-
-    fn handle_authoring_canvas_click(
-        &mut self,
-        world: PointNm,
-        target_object_id: Option<String>,
-    ) -> bool {
-        if !self.active_tool_is_authoring() {
-            return false;
-        }
-        if self.workspace().tool == WorkspaceTool::Move {
-            return self.native_move_click(world, target_object_id);
-        }
-        match self.workspace().tool {
-            WorkspaceTool::DrawBoardTrack
-                if self.workspace().authoring.gesture.anchor.is_some() =>
-            {
-                let Some(handoff) = self
-                    .session
-                    .workspace_mut()
-                    .finish_draw_board_track_handoff(world)
-                else {
-                    self.invalidate_frame();
-                    return true;
-                };
-                self.queue_authoring_terminal_handoff(handoff, "draw-board-track");
-                self.invalidate_scene();
-                return true;
-            }
-            WorkspaceTool::PlaceBoardVia => {
-                let Some(handoff) = self
-                    .session
-                    .workspace_mut()
-                    .finish_place_board_via_handoff(world)
-                else {
-                    self.log_console_refusal(
-                        ConsoleFeedbackSource::Tool,
-                        "place via requires a board net context".to_string(),
-                    );
-                    self.invalidate_frame();
-                    return true;
-                };
-                self.queue_authoring_terminal_handoff(handoff, "place-board-via");
-                self.invalidate_scene();
-                return true;
-            }
-            WorkspaceTool::PlaceBoardText => {
-                let Some(handoff) = self
-                    .session
-                    .workspace_mut()
-                    .finish_place_board_text_handoff(world)
-                else {
-                    self.log_console_refusal(
-                        ConsoleFeedbackSource::Tool,
-                        "place text requires project backing".to_string(),
-                    );
-                    self.invalidate_frame();
-                    return true;
-                };
-                self.queue_authoring_terminal_handoff(handoff, "place-board-text");
-                self.invalidate_scene();
-                return true;
-            }
-            WorkspaceTool::Delete => {
-                let Some(target) = target_object_id else {
-                    self.log_console_refusal(
-                        ConsoleFeedbackSource::Tool,
-                        "delete requires an authored object target".to_string(),
-                    );
-                    return true;
-                };
-                let Some(handoff) = self.workspace().delete_authored_object_handoff(&target) else {
-                    self.log_console_refusal_for_target(
-                        ConsoleFeedbackSource::Tool,
-                        target,
-                        "Delete is unavailable for this object type",
-                    );
-                    return true;
-                };
-                self.queue_authoring_terminal_handoff(handoff, "delete-authored-object");
-                self.invalidate_scene();
-                return true;
-            }
-            WorkspaceTool::Select | WorkspaceTool::DrawBoardTrack | WorkspaceTool::Move => {}
-        }
-        self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
-            world,
-            target_object_id,
-        })
-    }
-
-    fn authoring_target_object_id(&mut self, world: PointNm) -> Option<String> {
-        let target = {
-            if !self.ensure_retained_scene() {
-                return None;
-            }
-            let retained = self
-                .renderer
-                .render_session()
-                .board()
-                .expect("retained scene initialized");
-            retained.hit_test_authored_world(world, self.session.workspace())
-        };
-        match target {
-            Some(HitTarget::AuthoredObject(id)) => Some(id),
-            Some(HitTarget::ReviewAction(id)) => Some(id),
-            _ => None,
-        }
-    }
-
-    fn select_hit_target(&mut self, target: &HitTarget) -> bool {
-        let started = std::time::Instant::now();
-        let handled = self.select_hit_target_inner(target);
-        let next_focus =
-            keyboard_focus::focus_after_hit_target(self.application_focus(), handled, target);
-        if next_focus != self.application_focus() {
-            self.set_application_focus(next_focus);
-        }
-        self.trace_timing(|| {
-            format!(
-                "select target {target:?} handled={handled} {}ms",
-                started.elapsed().as_millis()
-            )
-        });
-        handled
-    }
-}
 
 #[cfg(test)]
+#[path = "terminal/terminal_control_input.rs"]
 mod terminal_control_input;
 #[cfg(test)]
+#[path = "terminal/terminal_new_session_cwd_tests.rs"]
 mod terminal_new_session_cwd_tests;
 
 #[cfg(test)]
@@ -681,13 +300,16 @@ fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {
 }
 
 #[cfg(test)]
-#[path = "main_tests.rs"]
+#[path = "application/main_tests.rs"]
 mod tests;
 
 #[cfg(test)]
+#[path = "editor/native_move_frame_tests.rs"]
 mod native_move_frame_tests;
 
 #[cfg(all(test, feature = "visual"))]
+#[path = "editor/native_library_frame_tests.rs"]
 mod native_library_frame_tests;
 #[cfg(test)]
+#[path = "editor/native_schematic_frame_tests.rs"]
 mod native_schematic_frame_tests;

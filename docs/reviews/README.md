@@ -42,6 +42,32 @@ and write raw data to temporary output. Current acceptance maps/records remain
 unchanged. The existing artifact gate rejects raw DRM arrays hidden inside
 review JSON; five forced-index/retirement tests and source-health checks pass.
 
+<!-- EVIDENCE:REPOSITORY-ORGANIZATION:ORG-03 -->
+Rehomed 274 GUI source/support files into six responsibility directories; the
+source root now contains only main.rs. Existing Rust module identities are
+preserved with explicit path registrations. Main shrank from 693 to 315 lines;
+terminal control/session/clipboard and shared tool actions are cohesive owners
+of 308 and 188 lines. Associated tests remain beside their owners. Active source
+consumers follow the new paths and continue recursive enforcement. Shared source
+pattern matching moved into its own implementation; its legacy caller ratchets
+from 987 to 968 lines. No production source ceiling or exclusion increased.
+
+The broad guarded GUI run passed 447 tests with 33 explicit native/qualification
+skips; four companion freshness tests timed out because nested builds waited
+on the outer Cargo lock. Prebuilding matching companions removes that cycle;
+five focused lifetime tests then pass in under one second. The remaining native
+project-open case passes with host access (sandbox device/socket limitations).
+Protocol tests passed 149 with three explicit skips; the one stale historical
+pilot path comparison is reconciled through exact relocations without modifying
+the retired receipt, and its focused registry tests pass. One unchanged
+accessibility description assertion remains captured as dat-srf4. Existing
+focus-initializer and stale journal-owner gates are captured as dat-wq2s and
+dat-afp9; exact old/new source comparisons establish those inputs are unchanged.
+Interaction, split, convergence, transport and workflow guard regressions pass;
+source health, dependency authority, Cargo policy and traceability pass. These
+results do not supply broader S5A/native qualification. ORG-04 addresses the
+runner's companion ordering and nested-lock failure mode.
+
 ## Owner-directed maintenance completion
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
