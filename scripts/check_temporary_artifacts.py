@@ -17,11 +17,19 @@ DESIGN_REFERENCES = {
     "docs/gui/reference/board-editor.png",
     "docs/gui/reference/selection-study.png",
 }
+RAW_PROOF = (".log", ".stdout", ".stderr", ".jsonl")
 
 
 def is_temporary_artifact(path: str) -> bool:
     lower = path.lower()
     if lower.endswith(ARCHIVES):
+        return True
+    if lower.startswith("docs/reviews/") and lower.endswith(RAW_PROOF):
+        return True
+    if lower.startswith("docs/reviews/") and (
+        lower.endswith(("-atspi.json", "-windows.json"))
+        or (lower.startswith("docs/reviews/workflow-delivery-pilot/") and lower.endswith("-state.json"))
+    ):
         return True
     if not lower.endswith(CAPTURES):
         return False

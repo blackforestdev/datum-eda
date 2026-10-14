@@ -1,5 +1,67 @@
 # Review records and temporary proof output
 
+## Owner-directed maintenance completion
+
+The owner selected this bounded five-priority maintenance goal on 2026-10-14.
+It preserves product requirements and leaves the other implementation sessions
+paused. Published history replacement requires final approval of the prepared
+result; preparation does not authorize a force-push.
+
+<!-- REQ:REPOSITORY-MAINTENANCE:MAINT-01 -->
+1. Repair legacy pilot tests using temporary self-contained fixtures.
+<!-- REQ:REPOSITORY-MAINTENANCE:MAINT-02 -->
+2. Reconcile specification parity and historical progress checks without
+   weakening their requirements or changing product status.
+<!-- REQ:REPOSITORY-MAINTENANCE:MAINT-03 -->
+3. Retire redundant tracked raw proof while preserving useful text findings.
+<!-- REQ:REPOSITORY-MAINTENANCE:MAINT-04 -->
+4. Prune released local output and retired backups after ownership/use checks.
+<!-- REQ:REPOSITORY-MAINTENANCE:MAINT-05 -->
+5. Prepare and verify a compact history replacement, commit map, rollback backup
+   and collaborator instructions.
+<!-- REQ:REPOSITORY-MAINTENANCE:MAINT-06 -->
+<!-- OWNER:REPOSITORY-MAINTENANCE:MAINT-06:HISTORY-REWRITE -->
+6. Obtain approval for the exact prepared published-history replacement, apply
+   it with an expected-old-head check, and verify remote/local consistency.
+
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-01 -->
+Pilot capture unit tests now generate temporary extraction/accounting fixtures;
+all eleven tests pass without the retired archive. This is transport unit proof,
+not native pilot qualification or reinstatement.
+
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-02 -->
+The supervision inventory follows five production owners and excludes test
+decoys; its fifteen current markers are individually source-reviewed. Historical
+M3 coverage checks preserve its 28 retained criteria and frozen execution boundary.
+Two positive/negative reader regression tests, specification parity and progress
+coverage checks pass. Product requirements/status are unchanged.
+
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-03 -->
+Retired 783 raw logs/stdout/stderr/JSONL files and 912 raw accessibility/window/
+legacy state checkpoints (24.45 MiB). Existing JSON/Markdown findings, reviewed
+method sources and required state/qualification records remain. None of the
+removed paths is a governing/traceability/current completion reference. Ignore
+rules and the forced-add gate reject these raw output formats. Historical raw
+references no longer promise current replay availability.
+
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-04 -->
+Removed 7,603 released local output entries while preserving 773 native project
+roots, including projects inside old source snapshots, and one hash-verified
+current runtime binary set. Target allocation fell from about 32 GiB to 3.0 GiB;
+.datum from 1.3 GiB to 188 MiB. Retired WDQ storage (512 MiB) was removed;
+tracker backup retention was reduced from 98 MiB to 5 MiB (five backups).
+The known clean detached historical worktree was separately removed.
+
+The prune tool previews every deletion, holds the Cargo lock, refuses tracked
+output and active builds/apps, preserves project trees, and validates runtime
+copy paths before any mutation. Process inspection has a stated limitation:
+four nondumpable installed desktop/security services (SSH agent, KWin, KDE
+polkit agent and power manager) prevent full open-file inspection and are
+reported as limited visibility. Inspectable processes and children are checked.
+Four orphaned engine daemons had no connected clients and were stopped first.
+Six cleanup safety regression tests pass. Independent source review passed the
+first four priorities; it does not cover history replacement or S5A acceptance.
+
 The owner's 2026-10-13 direction is controlling: screenshots used to demonstrate
 work are temporary. Do not commit or push them, recordings, raw capture archives,
 or compressed diagnostic bundles. The pre-commit temporary-artifact gate enforces

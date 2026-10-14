@@ -1,8 +1,10 @@
 """Bounded capture tooling tests; these do not establish native pilot acceptance."""
 
 import json
+import io
 from pathlib import Path
 import tempfile
+import tarfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -14,6 +16,23 @@ from workflow_delivery_pilot_observations import flag, records, state, native_me
 
 
 class CaptureTests(unittest.TestCase):
+    def setUp(self):
+        # These tests exercise extraction and file accounting, not native EDA
+        # qualification. Generate their tiny transport fixture in temporary
+        # storage instead of depending on a historical proof bundle in Git.
+        fixture = tempfile.TemporaryDirectory()
+        self.addCleanup(fixture.cleanup)
+        archive_path = Path(fixture.name) / "fixture.tar"
+        with tarfile.open(archive_path, "w") as archive:
+            for name, data in [("project.json", b'{"unit_test_fixture":true}\n'),
+                               (".datum/journal/transactions.jsonl", b"")]:
+                entry = tarfile.TarInfo(name)
+                entry.size = len(data)
+                archive.addfile(entry, io.BytesIO(data))
+        fixture_patch = patch("workflow_delivery_pilot_capture.FIXTURE", archive_path)
+        fixture_patch.start()
+        self.addCleanup(fixture_patch.stop)
+
     def test_monitor_error_or_startup_alone_is_not_native_menu_event_evidence(self):
         for raw in ["Error: Destination is not specified", "member=NameAcquired",
                     "interface=org.a11y.atspi.Event.Object; member=ChildrenChanged"]:

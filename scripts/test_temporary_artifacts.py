@@ -55,6 +55,10 @@ class TemporaryArtifactTests(unittest.TestCase):
             "elsewhere/raw.bz2",
             "elsewhere/raw.zst",
             "elsewhere/raw.rar",
+            "docs/reviews/new-trial/stdout.log",
+            "docs/reviews/new-trial/frames.jsonl",
+            "docs/reviews/new-trial/capture-atspi.json",
+            "docs/reviews/workflow-delivery-pilot/trial/selected-state.json",
         )
         for path in paths:
             self.stage(path)
@@ -72,6 +76,7 @@ class TemporaryArtifactTests(unittest.TestCase):
             "crates/gui-render/testdata/golden/shell/datum-shell.golden.png",
             "docs/gui/reference/board-editor.png",
             "crates/gui-render/assets/logo.png",
+            "crates/test-harness/testdata/terminal/transcript.log",
         ):
             self.stage(path)
         self.assertEqual(self.run_gate("--staged").returncode, 0)

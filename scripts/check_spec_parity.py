@@ -402,7 +402,13 @@ def zone_fill_surface() -> list[str]:
 def gui_supervision_surface() -> list[str]:
     """Current read-only GUI diagnostics/status reflection surface."""
     items: set[str] = set()
-    protocol = read_text(ROOT / "crates/gui-protocol/src/lib.rs")
+    # The live protocol was decomposed; declarations and resolver loading now
+    # have separate owners. Do not sweep tests, where marker strings could
+    # falsely satisfy an inventory for missing production declarations.
+    protocol = "\n".join(read_text(ROOT / "crates/gui-protocol/src" / name) for name in (
+        "lib.rs", "supervision.rs", "workspace_state.rs", "workspace_loading.rs",
+        "source_shard_status.rs",
+    ))
 
     for marker in (
         'GUI_SUPERVISION_SNAPSHOT_CONTRACT: &str = "datum_gui_supervision_snapshot_v1"',

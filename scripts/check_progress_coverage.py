@@ -73,12 +73,13 @@ def markdown_row_status(text: str, label: str) -> tuple[str, str] | None:
 
 def markdown_overall_status(text: str, label: str) -> tuple[str, str] | None:
     pattern = re.compile(
-        rf"^\*\*{re.escape(label)}\*\*:\s*(\[[x~ —]\])\s*(.*?)$",
+        rf"\*\*{re.escape(label)}\*\*:\s*(\[[x~ —]\])\s*(.*?)$",
         flags=re.M,
     )
-    match = pattern.search(text)
-    if not match:
+    matches = list(pattern.finditer(text))
+    if len(matches) != 1:
         return None
+    match = matches[0]
     return match.group(1), match.group(2)
 
 
@@ -426,6 +427,27 @@ def check_milestone_progress_compaction(progress_text: str, failures: list[str])
         section_heading = f"PROGRAM_SPEC.md — M{milestone} Exit Criteria"
         rows = parse_markdown_table_rows(progress_text, section_heading)
         if not rows:
+            section = section_slice_by_h2(progress_text, section_heading) or ""
+            # M3 is a terminally frozen imported-board slice, summarized after
+            # status compaction. Validate its retained evidence rather than
+            # restoring an active-looking checklist for historical execution.
+            if milestone == 3 and "Recorded coverage:" in section:
+                shard_rel = "specs/progress/m3_details.md"
+                shard = ROOT / shard_rel
+                count = re.search(r"Recorded coverage:\s*(\d+) completed criteria", section)
+                normalized = " ".join(section.split())
+                valid = (
+                    count is not None and shard.is_file()
+                    and "(progress/m3_details.md)" in section
+                    and "historical record grants no current import execution or broader qualification" in normalized
+                    and markdown_overall_status(section, "M3 overall") is not None
+                )
+                if valid:
+                    headings = re.findall(r"^## .+$", shard.read_text(encoding="utf-8"), flags=re.M)
+                    valid = int(count.group(1)) == len(headings) > 0
+                if not valid:
+                    failures.append("specs/PROGRESS.md: invalid historical M3 coverage/count/evidence boundary")
+                continue
             failures.append(
                 f"specs/PROGRESS.md: unable to parse compact M{milestone} table rows"
             )

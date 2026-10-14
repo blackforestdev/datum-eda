@@ -34,6 +34,13 @@
 !/docs/gui/reference/board-editor.png
 !/docs/gui/reference/selection-study.png
 !/crates/**/assets/**
+/docs/reviews/**/*.log
+/docs/reviews/**/*.stdout
+/docs/reviews/**/*.stderr
+/docs/reviews/**/*.jsonl
+/docs/reviews/**/*-atspi.json
+/docs/reviews/**/*-windows.json
+/docs/reviews/workflow-delivery-pilot/**/*-state.json
 
 # Python cache
 __pycache__/
