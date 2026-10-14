@@ -185,7 +185,7 @@
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed.",
+  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed. Bounded current Track straight1/2-refusal/2/2-acquisition, curve1/3-refusal/2/3-acquisition and CurrentZone missing-island refusal/all-island acquisition rectangles are accepted in their explicit restored classfilter X11/wgpu scope. Zero-area/even-odd and authored-body/remaining N03 obligations stay open.",
   "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
   "C03_complete": true,
   "C04_complete": false,
@@ -9424,5 +9424,169 @@
       "authored body-outline appearance, dimensional metrology and direct mask counters unqualified",
       "FullN03/N15/C04-C06/CAM/T04/performance boundaries unchanged"
     ]
+  },
+  "n03_path_curve_islands_20261014": {
+    "classification": "Bounded independently reviewed and manager accepted native six-case N03 subset",
+    "behavior": [
+      "StraightTrack one endpoint inside refuses; both endpoints acquire exactcomplete singleton",
+      "CurvedTrack one of three authoredanchors refuses; two acquire exactcomplete singleton",
+      "Zone one entireisland but missingsecond refuses; alltwo currentoccupiedislands acquire exactcomplete singleton",
+      "OrdinaryInspector all18acquisitionclasscontrols preservefullP; explicitTrackonly/Zoneonly restoredcontext, subsequentObject and realEscape complete"
+    ],
+    "native_project_root": "target/s5a-c03-u5-v2/class-qualification/variants/class-geometry",
+    "project_id": "20000000-0000-4000-8000-000000000001",
+    "model_revision": "c9d9868ddbb9f6ef3d543b0b5eee855e6a8c629c7b238a51249aa8d9f4496dba",
+    "source_ids": {
+      "straightTrack": "40000000-0000-4000-8000-000000000001",
+      "curvedTrack": "71000000-0000-4000-8000-000000000004",
+      "Zone": "71000000-0000-4000-8000-000000000003"
+    },
+    "source_runtime_baseline": "e3b68e2b428a2956170d769ae49a130a272affdf",
+    "evidence_landing_parent": "60d6fc65933e46ed0b9bdaa90572320e507017c4",
+    "producer_sha256": "41fd81f11e0132c47aeac3fcbd4ce23855a74b6cc50b2afa9d0447a427e053a4",
+    "method_sha256": "5026739ba886a1666225a82e95b39cae20de229773bee75c269dcece8abc0197",
+    "result_sha256": "68bd2af6737d16b4a5d12b642555080f062b33a257630d6533c10fc5fa0fdbcd",
+    "terminal_sha256": "10df9acdf64322393949ee9940783e0811c430933da55df4284422c5b4728e41",
+    "input_sha256": "0c45c6f0a51971711229f6f14722262470272d09acd0a6f0085629b49296aed4",
+    "shutdown_sha256": "94f8f841d8196ad55a0d83894c3b9e4d6c836b09508a052a1530d66f64eb9e8d",
+    "raw_outcome_unchanged": "CAPTURE_ONLY",
+    "native_current_zone": "Existing actualZoneObject inspectionCurrent occupiedcopper +exactzoneRegions2x4 implycurrent_zone_fill/sourceobjectrevision0/everypolygoncertification atC9 beforeZoneinput; no storedfilledstate substitution",
+    "oracles": [
+      {
+        "case": "straight-one",
+        "actual_world_vertices_nm": [
+          [
+            -1082623,
+            -1148475
+          ],
+          [
+            5134366,
+            1027470
+          ]
+        ],
+        "complete_candidates": []
+      },
+      {
+        "case": "straight-both",
+        "actual_world_vertices_nm": [
+          [
+            -1082623,
+            -1148475
+          ],
+          [
+            11040505,
+            1027470
+          ]
+        ],
+        "complete_candidates": [
+          [
+            "Track",
+            "40000000-0000-4000-8000-000000000001",
+            []
+          ]
+        ]
+      },
+      {
+        "case": "curve-one",
+        "actual_world_vertices_nm": [
+          [
+            79116528,
+            -1148475
+          ],
+          [
+            80981625,
+            1027470
+          ]
+        ],
+        "complete_candidates": []
+      },
+      {
+        "case": "curve-two",
+        "actual_world_vertices_nm": [
+          [
+            79116528,
+            -1148475
+          ],
+          [
+            85955215,
+            6001061
+          ]
+        ],
+        "complete_candidates": [
+          [
+            "Track",
+            "71000000-0000-4000-8000-000000000004",
+            []
+          ]
+        ]
+      },
+      {
+        "case": "zone-one-island",
+        "actual_world_vertices_nm": [
+          [
+            139110466,
+            -1148475
+          ],
+          [
+            141908111,
+            5068513
+          ]
+        ],
+        "complete_candidates": []
+      },
+      {
+        "case": "zone-all-islands",
+        "actual_world_vertices_nm": [
+          [
+            139110466,
+            -1148475
+          ],
+          [
+            145016605,
+            5068513
+          ]
+        ],
+        "complete_candidates": [
+          [
+            "Zone",
+            "71000000-0000-4000-8000-000000000003",
+            []
+          ]
+        ]
+      }
+    ],
+    "nonmutation": "All47unique containingfixturefiles (18variant incljournal/revision/currentfill) and Globalvalues match21phases; source137 andbinary3 unchanged",
+    "drain": "LiteralPID1318207 epoch1 rawpacket==decoded persistedBEFOREACK, naturalGUI0, releasedretainedreservations; noforcedcleanup",
+    "native_configuration": "X11/wgpu only; samepinnedGUI/CLI/daemon reused withoutbuild. Inheriteddiagnosticfaultsettings scrubbed; configuration isnotWaylandqualification",
+    "independent_outcome_review": "b81e08/e01368/0 finalCLEAR terminalcondition; fullb6aad1/e642d6/781487 reused; manager+reviewer inspectedall7PNG",
+    "bounded_manager_acceptance_sha256": "ca3b9c2860014c6e579afd5cbfbefac8a242ee16b3edb5c6dbf56a17b8a66c68",
+    "archive": {
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n03-path-island-current-20261014.tar.xz",
+      "sha256": "644462aefd533788cf906b535b4af87181e1ad6efc9c7cf32dec6012cdbb53a0",
+      "manifest_sha256": "386156a5774c4954fed82c1fd13ea991065f71c4ebc830000c5c447b191968df",
+      "regular_files": 300,
+      "hashed_files": 299,
+      "canonical_unique_files": 47,
+      "variant_files_within47": 18,
+      "images": 7,
+      "localallentry_sha256": "72ec2253bb23083d3562afbb6336f05dd0f6a362d965ca2e142d87fe62a5c3d0",
+      "assemblyterminal_sha256": "a9f93df512c2dfa1e147cec334e3e75d6857d56e54c83e7dc8258372b43b688e",
+      "actual_allentry_review": "74d6d1/0 +terminalbab32e/0 CLEAR; manager accepts exact644462ae/386156a5 archive300regular299hash/47canonical18variant/7PNG"
+    },
+    "retained_provenance": "Executed5/7/8rev2 originalFAIL/-15/zeroregion-drain preserved; OTHERdraftsUNEXECUTED incl9rev1\u20134; accepted9rev5 CAPTURE_ONLY/natural0. Unknownkeyboardrepeat/missingdelivery causesnotasserted; existingordinaryInspector route, noOSsettingschange/repeatwaiver",
+    "preflight_limits": "Originalseparatepreflight allpathguardsnotclaimed; producer beforelaunch/allinvariance safeGlobalpath/generation guards admittedcoreproof. Actualrecords preserved, no retroactiveguarantee",
+    "native_six_cases_qualified": true,
+    "full_N03_qualified": false,
+    "authored_body_qualified": false,
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "retained_gaps": [
+      "Zeroarea/evenodd lassos, bodyappearance and remainingN03variants open",
+      "FullN15 dimensionalmetrology/directmask/performance unanswered",
+      "NativeWayland/HUMAN andC04-C06 acceptance open",
+      "CAM/T04/no newmechanism/dependency/tolerance/scope waiver"
+    ],
+    "source_changes": "No runtime source, binary, fixture, geometry or acceptancebudget change"
   }
 }
