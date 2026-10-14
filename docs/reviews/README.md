@@ -62,6 +62,36 @@ Four orphaned engine daemons had no connected clients and were stopped first.
 Six cleanup safety regression tests pass. Independent source review passed the
 first four priorities; it does not cover history replacement or S5A acceptance.
 
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-05 -->
+Initial preparation from source `6bb0fa7e` verified all 2,743 commits: retained
+file bytes/modes, author/committer, message and mapped parent order are unchanged.
+The finalized candidate adds only the historical locator map to the current
+source tree. Forty source-history tags keep every mapped commit reachable,
+including all five required non-main source pins. The clean pack is 49.18 MiB;
+the untouched original mirror is about 1.2 GiB and stays local for rollback.
+Independent preparation review passed without publication authorization.
+
+A fresh transport clone has no old changed HEAD object; Frontier, parity,
+progress coverage, governance, traceability, artifact and source-health checks
+pass, along with 57 locator/delivery/Frontier tests. No Cargo rerun was needed:
+retained Rust and protected prototype bytes are unchanged. Final preparation
+must include this governance handoff and repeat transport/metadata verification
+before the exact approval packet is presented.
+
+The sealed exact packet is `.datum/history-cleanup/approval-packet.json`;
+`source-history-tags.json` lists every proposed new published tag and target.
+Publishing replaces only main and creates those tags atomically, with an exact
+expected-old-main lease and refusal of tag collisions. Local installation then
+removes retired old custom refs/reflogs and repacks; the original mirror remains
+untouched for rollback. This is pending explicit owner approval.
+
+Collaborators should use a fresh clone after publication, fetch
+`refs/tags/datum-source-history/*`, and preserve any local edits separately before
+moving them to the new clone. Merging or pushing old history would restore the
+removed archives. The paused implementation sessions receive no new execution
+grant from this maintenance. Rollback uses the untouched original mirror and
+an exact expected-new-main lease; published tags must be reconciled explicitly.
+
 History preparation keeps the original repository and refs in ignored
 `.datum/history-cleanup/` storage, separate from the proposed replacement.
 Historical evidence IDs stay unchanged. The optional `specs/history_commit_map.json`
