@@ -4,8 +4,8 @@
 
 The owner selected this bounded five-priority maintenance goal on 2026-10-14.
 It preserves product requirements and leaves the other implementation sessions
-paused. Published history replacement requires final approval of the prepared
-result; preparation does not authorize a force-push.
+paused. The owner explicitly approved the prepared history replacement; its application
+and final consistency checks are recorded below.
 
 <!-- REQ:REPOSITORY-MAINTENANCE:MAINT-01 -->
 1. Repair legacy pilot tests using temporary self-contained fixtures.
@@ -23,6 +23,42 @@ result; preparation does not authorize a force-push.
 <!-- OWNER:REPOSITORY-MAINTENANCE:MAINT-06:HISTORY-REWRITE -->
 6. Obtain approval for the exact prepared published-history replacement, apply
    it with an expected-old-head check, and verify remote/local consistency.
+
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-06-APPROVAL -->
+The owner explicitly replied `approve prepared history rewrite` on 2026-10-14.
+This approves the sealed replacement of main
+`9adf84b3da33a8927bd218f41e4ab581f5526c85` with
+`aefd8f2a30fead730dde4730527531d7e782a6d5`, its forty listed source-history tags,
+and the listed retired local ref/reflog cleanup and repack. The original mirror
+remains local for rollback. The approval packet and exact response are retained
+in ignored `.datum/history-cleanup/` storage. MAINT-06 now executes that approved
+transport and consistency check; no successor or S5A execution is authorized.
+
+<!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-06 -->
+Applied the approved main replacement atomically with the exact expected-old-head
+lease and created all forty source-history tags. GitHub refs exactly matched the
+sealed packet before local installation. Retired the 247 listed local refs and
+old reflogs, repacked and passed Git integrity checks. Local object storage is
+48.95 MiB. All 2,744 mapped source targets remain reachable; all 51 protected
+prototype hashes and the four owned governance drafts were preserved.
+
+A fresh full clone from GitHub received the replacement and all forty tags, with
+all mapped targets reachable and Frontier/traceability checks passing. Its
+transfer pack is 57.02 MiB (pack compression differs from the local repack).
+All 9,269 reachable historical changed paths satisfy the artifact policy. The
+old rewritten HEAD is absent locally and retained in the untouched original
+1.2 GiB rollback mirror. No Cargo archive directories remain, including the
+previous 66 GiB archive. Repository parity, coverage, governance, traceability,
+Frontier and temporary-artifact gates pass without another Cargo proof build.
+Independent source review passed the exact local installation procedure;
+independent application and closure review also passed the actual local/remote
+refs, fresh clone, historical targets, preserved backup and paused S5A boundary.
+
+All five maintenance priorities are delivered. The pre-maintenance roadmap pointer UVT-S5A-BUILD/S5A-C04 is restored because
+the selector requires exactly one canonical task. Its original state and grant
+are unchanged, it has no claim, and both implementation sessions remain paused.
+No S5A acceptance, resumption, new successor grant or broader qualification is inferred. Other sessions
+must use the new history before committing; never merge/push the old history.
 
 <!-- EVIDENCE:REPOSITORY-MAINTENANCE:MAINT-01 -->
 Pilot capture unit tests now generate temporary extraction/accounting fixtures;
@@ -83,7 +119,7 @@ The sealed exact packet is `.datum/history-cleanup/approval-packet.json`;
 Publishing replaces only main and creates those tags atomically, with an exact
 expected-old-main lease and refusal of tag collisions. Local installation then
 removes retired old custom refs/reflogs and repacks; the original mirror remains
-untouched for rollback. This is pending explicit owner approval.
+untouched for rollback. The exact replacement was explicitly owner-approved and applied as recorded below.
 
 Collaborators should use a fresh clone after publication, fetch
 `refs/tags/datum-source-history/*`, and preserve any local edits separately before
