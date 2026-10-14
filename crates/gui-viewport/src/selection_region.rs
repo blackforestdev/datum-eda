@@ -19,9 +19,15 @@ fn side(a: Point, b: Point, p: Point) -> Result<R> {
     cross(sub(b, a)?, sub(p, a)?)
 }
 fn area(poly: &[Point]) -> Result<R> {
+    area_from(poly, [R::integer(0); 2])
+}
+fn area_from(poly: &[Point], origin: Point) -> Result<R> {
     let mut sum = R::integer(0);
     for i in 0..poly.len() {
-        sum = sum.checked_add(cross(poly[i], poly[(i + 1) % poly.len()])?)?;
+        sum = sum.checked_add(cross(
+            sub(poly[i], origin)?,
+            sub(poly[(i + 1) % poly.len()], origin)?,
+        )?)?;
     }
     if sum.numerator < 0 {
         sum = sum.checked_neg()?;
@@ -317,16 +323,30 @@ impl SelectionRegion {
         Ok(inside > anchors.len() / 2)
     }
     pub fn covered_area(&self, polygon: &[Point]) -> Result<R> {
-        let subjects = triangulate(polygon.to_vec())?;
+        // Exact translation preserves area while avoiding large absolute world
+        // products. Use an original source anchor, not a new clipping fraction.
+        let origin = polygon.first().copied().unwrap_or([R::integer(0); 2]);
+        // Certify the subject too: an artificial layout diagonal can inflate
+        // clipping fractions even when the region's parity triangles are exact.
+        // Use the normalized boundary; concave/invalid subjects keep the existing
+        // triangulation and refusal rules.
+        let subjects = match convex_boundary(polygon.to_vec())? {
+            Some(boundary) => vec![boundary],
+            None => triangulate(polygon.to_vec())?
+                .into_iter()
+                .map(Vec::from)
+                .collect(),
+        };
         let mut covered = R::integer(0);
         for subject in subjects {
             if let Some(boundary) = &self.convex {
                 // Artificial triangulation diagonals can magnify exact fractions
                 // beyond i128 even when the actual clipped area is small.
-                covered = covered.checked_add(area(&clip(subject.to_vec(), boundary)?)?)?;
+                covered = covered.checked_add(area_from(&clip(subject, boundary)?, origin)?)?;
             } else {
                 for triangle in &self.triangles {
-                    covered = covered.checked_add(area(&clip(subject.to_vec(), triangle)?)?)?;
+                    covered = covered
+                        .checked_add(area_from(&clip(subject.clone(), triangle)?, origin)?)?;
                 }
             }
         }

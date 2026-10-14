@@ -185,7 +185,7 @@
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed. Bounded current Track straight1/2-refusal/2/2-acquisition, curve1/3-refusal/2/3-acquisition and CurrentZone missing-island refusal/all-island acquisition rectangles are accepted in their explicit restored classfilter X11/wgpu scope. Zero-area/even-odd and authored-body/remaining N03 obligations stay open.",
+  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed. Bounded current Track straight1/2-refusal/2/2-acquisition, curve1/3-refusal/2/3-acquisition and CurrentZone missing-island refusal/all-island acquisition rectangles are accepted in their explicit restored classfilter X11/wgpu scope. Bounded zero-area and proper-crossing even-odd refusal/acquisition now accepted with the repaired ec07/new92-source GUI under restored Parts/Pad exclusion in X11/wgpu. Authored-body and remaining N03 obligations stay open.",
   "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
   "C03_complete": true,
   "C04_complete": false,
@@ -9588,5 +9588,222 @@
       "CAM/T04/no newmechanism/dependency/tolerance/scope waiver"
     ],
     "source_changes": "No runtime source, binary, fixture, geometry or acceptancebudget change"
+  },
+  "n03_zero_area_even_odd_20261014": {
+    "classification": "Bounded independently reviewed and manager-accepted native zeroarea and proper-crossing evenodd subset plus exact arithmetic repair",
+    "archive": {
+      "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n03-zero-evenodd-20261014.tar.xz",
+      "archive_sha256": "eb3ac14ce80484c60c96d703dcd2d3a4ed91d533e5d2a4b8355f545d5f026350",
+      "manifest_sha256": "615902a8b1dc3c5ba8fdf021fd8652bd9683508fc741d0459b0d0716a7bc6e7b",
+      "regular_files": 269,
+      "hashed_files": 268,
+      "canonical_unique_files": 72,
+      "admitted_images": 4,
+      "source_pins": 123,
+      "production_cohort_sources": 92,
+      "test_pin_separate": true,
+      "assembler_sha256": "e6d627b2a144d9fbdfb652492a25a59de1e65ff069758976a6ac18993f4d9a8d",
+      "assembly_terminal_sha256": "a1f75a6f96e16617ba62cef88f23864bdeff3df4fb69d8736b2fa15cbe20a2aa",
+      "all_entry_local_sha256": "0c830e22cef3677110b00ee6aac2439838f092160d33cf3b844bed1139cbb9c0"
+    },
+    "runtime_repair": {
+      "issue": "dat-s5a-evenodd-range-2vn9",
+      "source": "crates/gui-viewport/src/selection_region.rs",
+      "source_sha256": "ec07d5f4fbadb0a07b49457be47face922c399ace06af53cfbd9c002d6eae379",
+      "regression_test": "crates/gui-viewport/tests/selection_region_native_evenodd.rs",
+      "test_sha256": "e38f10661970aa31b54ef24a427c7346e350ac77b815bf6cd4e2f7c1ce40a668",
+      "cause": "Exact absolute clipped-area checked product overflows before origin-term cancellation, compounded by artificial convex-subject diagonal. Retain checked arithmetic and signed sums, certify normalized convex subject, translate exactly to original rational subject anchor.",
+      "ordinary_before": "Original11d GUI reports Region refused atomically: ArithmeticRange for delivered bowtie; GPU54/54 completed.",
+      "ordinary_after": "Repairedae501 GUI completes valid refusal and exact singleton Compound/focusNone acquisition, with Escape/subsequent currentObject/restoredfilters/naturaldrain."
+    },
+    "matching_build": {
+      "path": "target/s5a-c04-inventory-keyboard-20261011/evenodd-range-repair/matching-build-1-terminal.json",
+      "sha256": "620ff7d6c132f2b6ba5151162fba6e1b0a5a0c4a3de1eae6bf7d0b827442b8e5",
+      "actual_original_exec": "573447",
+      "actual_original_completion": "b0bf17",
+      "exit_code": 0,
+      "binaries": {
+        "target/s5a-c04-evenodd-cargo-20261014/debug/datum-gui": "ae501e606534d02642e83588fbebde22a46381acc7eab0eabf1a3d9fac463f58",
+        "target/s5a-c04-evenodd-cargo-20261014/debug/datum-eda": "f85716521d6b9ba4e8d5068f3dacd114a13c0c68fac9df16acb79dd3dc7ade2e",
+        "target/s5a-c04-evenodd-cargo-20261014/debug/eda-engine-daemon": "5a791062bc47dbd59c4d7380f40c7eab00805c61094fd56a5fe59ca186ff4ec3"
+      },
+      "source_cohort_sha256": "115d551edaa72c7041984aa838ba379ff11ea208d6cba8407cb61f5ca9bba50e",
+      "prior_binaries_unchanged": true
+    },
+    "native_case_outcomes": [
+      {
+        "face": "zero-area",
+        "expected": "refuse",
+        "exact_fraction": {
+          "numerator": "0",
+          "denominator": "1"
+        },
+        "actual_inverse_nm": [
+          [
+            35603399,
+            5209490
+          ],
+          [
+            33110171,
+            5209490
+          ],
+          [
+            30983594,
+            5209490
+          ]
+        ]
+      },
+      {
+        "face": "even-odd-refusal",
+        "expected": "refuse",
+        "exact_fraction": {
+          "numerator": "7599651582872486777628388",
+          "denominator": "61246749608036295178943239"
+        },
+        "actual_inverse_nm": [
+          [
+            38243288,
+            2936253
+          ],
+          [
+            28710357,
+            19068905
+          ],
+          [
+            38243288,
+            19068905
+          ],
+          [
+            28710357,
+            2936253
+          ]
+        ]
+      },
+      {
+        "face": "even-odd-acquisition",
+        "expected": "acquire",
+        "exact_fraction": {
+          "numerator": "92899919097045",
+          "denominator": "104014659046637"
+        },
+        "actual_inverse_nm": [
+          [
+            40443195,
+            5136160
+          ],
+          [
+            32743520,
+            17602300
+          ],
+          [
+            34210125,
+            17602300
+          ],
+          [
+            26510450,
+            5136160
+          ]
+        ]
+      }
+    ],
+    "raw_capture_outcome": "CAPTURE_ONLY immutable",
+    "original_native_controller": {
+      "exec": "23d25f",
+      "completion": "d252f0",
+      "exit_code": 0,
+      "gui_pid": 1347941,
+      "gui_exit_code": 0,
+      "forced_cleanup": false
+    },
+    "evidence_pins": {
+      "manager": "codex-project-manager-20261009",
+      "accepted": true,
+      "actual_independent_outcome": [
+        "672589 CLEAR",
+        "4ab898 CLEAR",
+        "96b9e7 CLEAR"
+      ],
+      "actual_source_proof_review": [
+        "7f105d/0 CLEAR",
+        "c82ad0/0 CLEAR"
+      ],
+      "scope": "Exactly three declared native zeroarea/refusal/acquisition cases, exactSingletonBoardTextCompound focusNone, currentP/AT/Main, restoredfilters/subsequentObject/finalNone, current92+separatetest/new3pins, unchanged72files andGlobal, literalPID1347941epoch1naturaldrain; bounded ec07 arithmeticrepair",
+      "source_sha256": "ec07d5f4fbadb0a07b49457be47face922c399ace06af53cfbd9c002d6eae379",
+      "test_sha256": "e38f10661970aa31b54ef24a427c7346e350ac77b815bf6cd4e2f7c1ce40a668",
+      "producer_sha256": "74af6e4e4db969f16e2824c6f1ffb8d22fe6b1f0a570c713f531ad32f92ef4ec",
+      "method_sha256": "6234306bdcd2cc7cfd5b347809b4b6ff4d1ef939c834bce1ae14e0995d88d84a",
+      "result_sha256": "da56c8295c2f1e61afa4c1551192c1cbf135256bba818f5b32eb75f957160957",
+      "terminal_sha256": "47a88def62433982e5e5b62dced9f7361d6ca6963d0d3c4cb84751f2e91f8ea9",
+      "input_sha256": "603b20dfc6903f9f8d58e25201238d1a79d14765b3693e6797c973ecc03ce8ce",
+      "shutdown_sha256": "5891fbf957b65140dae14030239b971cda0185b5bf23be7ead2ea201259aeded",
+      "captures": {
+        "baseline.png": "a1f436587160f042dbd849b251d64dfb3a2d834244f75290cf65f7af861a3656",
+        "zero-area-refused.png": "f2a91dde118ecdc04a93d094e5a5d56adfae5d49454024494ea33e5a6c76db12",
+        "even-odd-refusal-refused.png": "0466255241302fbf0ae0f87de7c7c0aa25a409f86d68500cf6f0b88bd4fa1425",
+        "even-odd-acquisition-selected.png": "089cc01e91ed5f569c4d9aa1b4020bf10d6ab815e372d89b15f3b7b60ab6ab2b"
+      },
+      "raw_outcome": "CAPTURE_ONLY immutable",
+      "old_attempts": "5FAIL/baseline101/partialrepair101/diagnostic101 immutable; drafts1-4+6 unexecuted",
+      "assembly_release_required": true,
+      "qualification": "No fullN03/body/metrology/N15/C04/C05/C06/nativeWayland/HUMAN/CAM/performance acceptance"
+    },
+    "source_scope": {
+      "production_cohort": 92,
+      "provenance_union": 123,
+      "regression_test_separate": true,
+      "canonical_unchanged": 72,
+      "invariance_phases": 16,
+      "Global_values_unchanged": true,
+      "current_Main_frames": 96,
+      "native_input_records": 47,
+      "literal_drain_persisted_before_ACK": true
+    },
+    "capture_allowlist": {
+      "baseline": {
+        "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/n03-lasso-7-captures/baseline.png",
+        "sha256": "a1f436587160f042dbd849b251d64dfb3a2d834244f75290cf65f7af861a3656"
+      },
+      "zero-area-refused": {
+        "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/n03-lasso-7-captures/zero-area-refused.png",
+        "sha256": "f2a91dde118ecdc04a93d094e5a5d56adfae5d49454024494ea33e5a6c76db12"
+      },
+      "even-odd-refusal-refused": {
+        "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/n03-lasso-7-captures/even-odd-refusal-refused.png",
+        "sha256": "0466255241302fbf0ae0f87de7c7c0aa25a409f86d68500cf6f0b88bd4fa1425"
+      },
+      "even-odd-acquisition-selected": {
+        "path": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-inventory-keyboard-20261011/n03-lasso-7-captures/even-odd-acquisition-selected.png",
+        "sha256": "089cc01e91ed5f569c4d9aa1b4020bf10d6ab815e372d89b15f3b7b60ab6ab2b"
+      }
+    },
+    "archive_independent_review": {
+      "manager": "codex-project-manager-20261009",
+      "actual_reserved_archive_review": [
+        "27725b/0 CLEAR allentry",
+        "2bc06a/0 CLEAR originalterminal"
+      ],
+      "accepted": true,
+      "archive_sha256": "eb3ac14ce80484c60c96d703dcd2d3a4ed91d533e5d2a4b8355f545d5f026350",
+      "manifest_sha256": "615902a8b1dc3c5ba8fdf021fd8652bd9683508fc741d0459b0d0716a7bc6e7b",
+      "original_assembly": "72f577/session86623 ->867a7e/0",
+      "assembly_terminal_sha256": "a1f75a6f96e16617ba62cef88f23864bdeff3df4fb69d8736b2fa15cbe20a2aa",
+      "regular_files": 269,
+      "hashed_files": 268,
+      "canonical_files": 72,
+      "admitted_images": 4,
+      "scope": "Exact bounded repair and three nativecases only; fullN03/body/metrology/C04-C06/WaylandHUMAN/CAM/budgets unchanged"
+    },
+    "full_N03_qualified": false,
+    "C04_complete": false,
+    "C05_passed": false,
+    "C06_accepted": false,
+    "Wayland_qualified": false,
+    "HUMAN_accepted": false,
+    "retained_gaps": [
+      "Authoredbody/metrology/N15 andremainingN03 variants open",
+      "FullC04/nativeWayland/HUMAN/C05/C06/CAM/T04 andbudgets open",
+      "Historic baseline source/log and diagnostic source snapshots not saved; receipts/actual diagnostic log retained, no reconstruction",
+      "Only explicit restored Parts/Pad filtered X11/wgpu annotation context; no parent/sourceadoption or fixture change"
+    ]
   }
 }
