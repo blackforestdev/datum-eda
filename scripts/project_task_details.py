@@ -8,6 +8,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from history_commit_locator import commit_exists
+
 
 COMPLETION_KEYS = {
     "outcome", "execution_policy", "presentation_policy", "steps",
@@ -431,12 +433,7 @@ def claim_instruction(item: dict[str, Any], issue: dict[str, Any]) -> str:
 
 
 def _commit_exists(root: Path, revision: str) -> bool:
-    import subprocess
-
-    return subprocess.run(
-        ["git", "cat-file", "-e", f"{revision}^{{commit}}"], cwd=root,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
-    ).returncode == 0
+    return commit_exists(root, revision)
 
 
 def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:

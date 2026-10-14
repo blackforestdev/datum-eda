@@ -7,9 +7,10 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 from pathlib import Path
 from typing import Any
+
+from history_commit_locator import commit_exists
 
 FIELDS = {
     "ordinary_workflow", "safety_requirements", "qualification_followups",
@@ -40,10 +41,7 @@ def _ordinary_record(root: Path, path: str, contract: dict) -> list[str]:
         return [f"ordinary evidence must describe an ordinary application run: {path}"]
     failures = []
     source = record.get("source_commit", "")
-    if not re.fullmatch(r"[0-9a-f]{40}", str(source)) or subprocess.run(
-        ["git", "cat-file", "-e", str(source) + "^{commit}"], cwd=root,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
-    ).returncode:
+    if not re.fullmatch(r"[0-9a-f]{40}", str(source)) or not commit_exists(root, str(source)):
         failures.append(f"ordinary evidence needs an exact source commit: {path}")
     if not isinstance(record.get("launch_command"), str) or not record["launch_command"].strip():
         failures.append(f"ordinary evidence needs its launch command: {path}")

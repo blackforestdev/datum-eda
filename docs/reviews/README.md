@@ -62,6 +62,16 @@ Four orphaned engine daemons had no connected clients and were stopped first.
 Six cleanup safety regression tests pass. Independent source review passed the
 first four priorities; it does not cover history replacement or S5A acceptance.
 
+History preparation keeps the original repository and refs in ignored
+`.datum/history-cleanup/` storage, separate from the proposed replacement.
+Historical evidence IDs stay unchanged. The optional `specs/history_commit_map.json`
+locates retained source under its new ID only when the mapping is unique and the
+target commit exists. It does not establish acceptance or restore removed raw
+proof. Candidate validation must prove unchanged retained file bytes/modes,
+author/committer/message and mapped parents before publishing this map. Required
+historical source outside main must remain reachable through explicit source
+history tags; collaborators must fetch those tags with the replacement.
+
 The owner's 2026-10-13 direction is controlling: screenshots used to demonstrate
 work are temporary. Do not commit or push them, recordings, raw capture archives,
 or compressed diagnostic bundles. The pre-commit temporary-artifact gate enforces

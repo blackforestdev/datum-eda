@@ -30,6 +30,7 @@ from project_task_details import (
     selected_completion_step, validate_completion,
 )
 from project_feature_delivery import delivery_lines, validate_feature_delivery
+from history_commit_locator import commit_exists
 
 
 START_MARKER = "<!-- ACTIVE FRONTIER:START -->"
@@ -177,11 +178,7 @@ def validate_claim(
 
 
 def git_commit_exists(root: Path, revision: str) -> bool:
-    result = subprocess.run(
-        ["git", "cat-file", "-e", f"{revision}^{{commit}}"], cwd=root,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
-    )
-    return result.returncode == 0
+    return commit_exists(root, revision)
 
 
 def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool = False) -> tuple[list[str], dict[str, Any]]:
