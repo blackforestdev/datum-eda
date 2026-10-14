@@ -12,6 +12,44 @@ review, then remove it. Before removing local output, check ownership and active
 processes; never delete another session's live work or clean active Cargo targets.
 Do not preserve duplicate build trees indefinitely as proof archives.
 
+## Cargo cache maintenance
+
+Run `python3 scripts/manage_cargo_cache.py` for a read-only usage report.
+It separately lists large direct proof logs; these are temporary verification
+output rather than Cargo caches and need task-owner cleanup after review. Do not
+run unbounded diagnostic tracing or preserve multi-gigabyte stdout indefinitely.
+Use the shared `target/` for ordinary builds. A separate task-owned build tree
+must be released and removed when its build/review use ends; do not move it into
+`.datum/` to retain it indefinitely. Preserve needed findings as text instead.
+
+For a reported disposable Cargo target, first preview the exact path:
+
+```sh
+python3 scripts/manage_cargo_cache.py --remove target/completed-proof
+```
+
+After confirming the task has released it, append `--apply` to remove it. Multiple
+explicit `--remove` paths are supported. This is a local command, not a scheduled
+automatic eviction. It holds the existing Cargo resource lock and refuses while
+Cargo, rustc, the GUI or engine daemon is active. It protects shared `target/`,
+`debug/`, `release/`, tracked files, unmarked fixture/evidence directories, unknown
+directories and symlinks. A separate target with extra non-Cargo root entries
+also refuses cleanup. Selecting an eligible cache removes its entire tree,
+including any output or fixture placed inside its build subdirectories; inspect
+the contents and release ownership before applying cleanup. A running executable
+inside any selected cache refuses cleanup even if its process name is unfamiliar.
+Only separate Cargo trees with Cargo markers, named historical
+`.datum/agent-cargo-archive-*` directories, and explicitly selected shared
+`target/debug/incremental` or `target/release/incremental` caches are eligible.
+Clearing an incremental cache preserves binaries but makes the next incremental
+build redo that cached work.
+
+The Cargo guard now applies its existing soft/hard storage limits to the combined
+`target/`, named historical Cargo archives, and any external selected target,
+without counting a nested target twice. Choosing another small target no longer
+bypasses the retained-cache limit. Limits are unchanged; cleanup is explicit and
+never initiated by a build or by an elapsed-time guess about another task.
+
 Commit concise text findings, relevant source revisions, reproducible commands,
 review disposition and limitations. Hashes can identify artifacts that existed
 during review; they do not promise permanent artifact availability. Screenshots

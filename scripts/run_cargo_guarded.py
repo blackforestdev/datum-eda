@@ -44,6 +44,7 @@ class ResourceSnapshot:
     target_bytes: int
     target_filesystem_free_bytes: int
     tmp_free_bytes: int
+    retained_cache_bytes: int = 0
 
 
 def _gib(value: object, field: str) -> int:
@@ -107,7 +108,23 @@ def snapshot_resources(target_dir: Path) -> ResourceSnapshot:
         target_bytes=_tree_size(target_dir),
         target_filesystem_free_bytes=shutil.disk_usage(target_probe).free,
         tmp_free_bytes=shutil.disk_usage("/tmp").free,
+        retained_cache_bytes=retained_cache_size(ROOT, target_dir),
     )
+
+
+def retained_cache_paths(root: Path, target_dir: Path) -> list[Path]:
+    """Count shared, alternate and archived build trees without double-counting."""
+    candidates = [root / "target", target_dir]
+    candidates.extend((root / ".datum").glob("agent-cargo-archive-*"))
+    paths: list[Path] = []
+    for path in sorted({p.resolve() for p in candidates}, key=lambda p: len(p.parts)):
+        if not any(path == parent or parent in path.parents for parent in paths):
+            paths.append(path)
+    return paths
+
+
+def retained_cache_size(root: Path, target_dir: Path) -> int:
+    return sum(_tree_size(path) for path in retained_cache_paths(root, target_dir))
 
 
 def _is_within(path: Path, parent: Path) -> bool:
@@ -142,11 +159,12 @@ def evaluate_resources(
             f"{format_gib(snapshot.target_filesystem_free_bytes)} free; "
             f"requires {format_gib(policy.minimum_target_filesystem_free_bytes)}"
         )
-    if snapshot.target_bytes > policy.target_hard_limit_bytes:
+    if max(snapshot.target_bytes, snapshot.retained_cache_bytes) > policy.target_hard_limit_bytes:
         errors.append(
-            "Cargo target exceeds hard limit: "
-            f"{format_gib(snapshot.target_bytes)} used; "
-            f"limit {format_gib(policy.target_hard_limit_bytes)}"
+            "retained Cargo cache total exceeds hard limit: "
+            f"{format_gib(max(snapshot.target_bytes, snapshot.retained_cache_bytes))} used; "
+            f"limit {format_gib(policy.target_hard_limit_bytes)}; "
+            "run python3 scripts/manage_cargo_cache.py to inspect disposable caches"
         )
     return errors
 
@@ -154,12 +172,14 @@ def evaluate_resources(
 def resource_warnings(
     policy: ResourcePolicy, snapshot: ResourceSnapshot
 ) -> list[str]:
-    if snapshot.target_bytes <= policy.target_soft_limit_bytes:
+    cache_bytes = max(snapshot.target_bytes, snapshot.retained_cache_bytes)
+    if cache_bytes <= policy.target_soft_limit_bytes:
         return []
     return [
-        "Cargo target exceeds soft limit: "
-        f"{format_gib(snapshot.target_bytes)} used; "
-        f"soft limit {format_gib(policy.target_soft_limit_bytes)}"
+        "retained Cargo caches exceed soft limit: "
+        f"{format_gib(cache_bytes)} used; "
+        f"soft limit {format_gib(policy.target_soft_limit_bytes)}; "
+        "inspect with python3 scripts/manage_cargo_cache.py"
     ]
 
 
@@ -232,6 +252,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(
                 "Cargo resource preflight: "
                 f"target={target_dir} size={format_gib(snapshot.target_bytes)} "
+                f"retained_caches={format_gib(snapshot.retained_cache_bytes)} "
                 f"target_free={format_gib(snapshot.target_filesystem_free_bytes)} "
                 f"tmp_free={format_gib(snapshot.tmp_free_bytes)}",
                 file=sys.stderr,

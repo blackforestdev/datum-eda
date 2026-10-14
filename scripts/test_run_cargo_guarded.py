@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+from dataclasses import replace
 
 import run_cargo_guarded as guard
 
@@ -111,6 +112,25 @@ class CargoResourceGuardTests(unittest.TestCase):
         policy = guard.load_policy()
         self.assertFalse(policy.proof_incremental)
         self.assertGreater(policy.target_hard_limit_bytes, policy.target_soft_limit_bytes)
+
+    def test_small_selected_target_cannot_bypass_retained_cache_limit(self) -> None:
+        policy = self.policy(Path("/tmp/lock"))
+        snapshot = replace(
+            self.snapshot(Path("/workspace/target/small"), target_gib=1),
+            retained_cache_bytes=41 * guard.GIB,
+        )
+        self.assertTrue(any("exceeds hard limit" in error for error in guard.evaluate_resources(policy, snapshot, "proof")))
+        self.assertEqual(len(guard.resource_warnings(policy, snapshot)), 1)
+
+    def test_retained_cache_paths_include_archives_without_duplicate_targets(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive = root / ".datum/agent-cargo-archive-old"
+            archive.mkdir(parents=True)
+            paths = guard.retained_cache_paths(root, root / "target/proof")
+            self.assertEqual(set(paths), {root / "target", archive})
+            external = root / "elsewhere"
+            self.assertEqual(set(guard.retained_cache_paths(root, external)), {root / "target", archive, external})
 
 
 if __name__ == "__main__":
