@@ -1,5 +1,169 @@
 # Review records and temporary proof output
 
+## Organization and evidence cleanup
+
+Owner selected the measured cleanup on 2026-10-14. Native data, current
+product authority, source pins and approvals remain protected; S5A stays paused.
+
+<!-- REQ:ORGANIZATION-EVIDENCE-CLEANUP:ORG-01 -->
+- ORG-01: Reduce redundant tracked raw proof while retaining exact historical recovery, conclusions, approvals and source pins.
+<!-- REQ:ORGANIZATION-EVIDENCE-CLEANUP:ORG-02 -->
+- ORG-02: Classify local .datum attempts and preserve or retire them only with ownership, references and recovery verified.
+<!-- REQ:ORGANIZATION-EVIDENCE-CLEANUP:ORG-03 -->
+- ORG-03: Consolidate obsolete historical planning into existing documentation owners without changing current requirements.
+<!-- REQ:ORGANIZATION-EVIDENCE-CLEANUP:ORG-04 -->
+- ORG-04: Prune released Python caches and excess tracker backups; assess retained executables without rebuilding.
+<!-- REQ:ORGANIZATION-EVIDENCE-CLEANUP:ORG-05 -->
+- ORG-05: Verify, independently review and publish the organization and evidence cleanup; restore original paused S5A state.
+
+<!-- EVIDENCE:ORGANIZATION-EVIDENCE-CLEANUP:ORG-01 -->
+The combined infrastructure independent observation file duplicated all 1,123
+objects in the six retained `infrastructure/independent/infra-s01-observations.json`
+through `infra-s06-observations.json`. A complete canonical-object multiset
+comparison, including duplicate multiplicity, matched exactly. Those scenario
+records remain the owning scenario copies. The retired aggregate reported
+`complete_matrix: true`, `acceptance_asserted: false`, reviewer
+`wdq-independent-review-20260906`, source
+`9cab72daab46122da6d2c45ab7f972814f702880`; these remain historical statements,
+not a new review or product acceptance.
+
+Also retired the raw `infrastructure/independent/archive-members.json` capture
+name list: 12,788 capture names and 59 exact fixture roots. Its scope was fresh
+raw observations, original recipe attempts and failed clone setup; exact
+post-setup Git objects were fixture inputs. It asserted neither native EDA
+qualification nor exhaustive descendant-runtime closure. No project or input
+was deleted. Unique inventory details remain recoverable byte-for-byte below.
+Recovering the inventory does not restore raw captures or establish qualification.
+Both retired files had no current tracked full-path consumers; the historical
+replay entrypoint and source-pinned records remain unchanged.
+
+All paths in this recovery table are relative to
+`docs/reviews/workflow-delivery-rollout/infrastructure/independent/`.
+Retrieve with `git show 97749064:<full-original-path>`; verify the SHA-256.
+The commit remains in main history; this is current-tree consolidation, not a
+history rewrite or removal of old Git objects.
+
+| Retired file | Bytes | SHA-256 |
+| --- | ---: | --- |
+| complete-observations.json | 1,878,669 | `0b7181a00829adb62a0d2fac80359c0d13fe198177548bd4d38906bfd36b1278` |
+| archive-members.json | 1,372,656 | `cdbad5335adab72644a20a6a63008c56dc18ace1b9b7bb6516b2aebda443c5a9` |
+
+Review-storage disposition: owner/reviewer receipts, source pins, contracts,
+per-scenario observations and hashed input inventories remain tracked. Source-
+pinned measurement/replay records are retained unchanged. Large file size or
+missing references alone do not authorize deleting them. Future capture-member
+lists, like raw counters, must stay external; the staged-artifact gate refuses
+new or changed payloads while preserving unchanged historical receipts. Seven
+isolated-index gate checks pass, including refusal without index mutation and
+acceptance of concise summaries.
+
+<!-- EVIDENCE:ORGANIZATION-EVIDENCE-CLEANUP:ORG-02 -->
+Classified all remaining .datum collections. Preserved and atomically relocated
+`effective-process-delivery` (seven project markers) and `library-gui-delivery`
+(three markers), totaling 87,305,264 file bytes, to
+`$HOME/Documents/datum-eda-workspaces/retained-datum-delivery-20261014/`.
+Complete before/after manifests matched every file hash, mode and empty directory.
+A host process check and the Cargo lock preceded movement; no native data was
+deleted. Independent plan review passed. No live producer/consumer uses either
+old collection; the isolated resolver safety test uses its own temporary root.
+
+Historical delivery receipts and source pins remain unchanged. Resolve their
+old `.datum/<collection>/<suffix>` paths with
+`python3 scripts/development_workspace.py resolve <old-path>`. This uses a
+separate `.datum/history-cleanup/development-relocation-map.json` (or explicit
+`DATUM_DEVELOPMENT_RELOCATION_MAP` override), mirrored beside the preserved
+collections with a sealed full-manifest plan. Only these two .datum families
+are allowed; traversal, incomplete states and suffix aliases into checkout
+refuse. Existing target recovery maps and native input bytes are unchanged.
+
+`footprint-reference-audit` remains protected locally: 62 native project markers
+and eleven current CLI test producers still write there. Its retained
+accepted-delivery references are not deletion authority. The two library-link
+admission audits, symbol-unit audit and proof-source archive also remain
+preserved. `.datum/history-cleanup` stays in place as recovery control data.
+Nine workspace safety tests pass, including separate-map lookup and refusal of
+unapproved families and child symlink aliases. Relocation changes storage only;
+it asserts no native qualification, acceptance or new execution authority.
+
+<!-- EVIDENCE:ORGANIZATION-EVIDENCE-CLEANUP:ORG-03 -->
+Consolidated three historical structural records into
+[STABILIZATION_PLAN.md](../STABILIZATION_PLAN.md), retaining dated findings,
+reported outcomes, the still-unfinished later phase and exact recovery. Removed
+the decomposition plan/backlog from the current tree; their retired script,
+PR-lane, numeric-budget and automatic-fallback instructions no longer appear
+as executable guidance. Current PM022 and roadmap/grant authority are unchanged.
+
+Retired `docs/IMPLEMENTATION_PLAN.md`: its M0-M2/import-first sequence, no-GUI-yet
+instruction, old milestone next tasks and crate-ownership snapshot describe an
+obsolete development stage. Engine/CLI/daemon/harness/MCP boundaries remain
+owned by current engine/interface specifications and controlling doctrine;
+no new implementation order or product requirement replaces this snapshot.
+Retired `docs/PRODUCTION_CLEANUP_MANIFEST.md`: it classified the June 19 dirty
+worktree, reported source/import/text cleanup and then-passing workspace,
+drift and visual checks, and called for staging/review. Those are dated claims,
+not current production sign-off. Source assets, visual goldens, legal material,
+protected prototypes and approval records were not removed with that manifest.
+Its pending governance entry is removed; the consolidated summary is historical.
+
+Retrieve each complete original with `git show 97749064:<original-path>`:
+
+| Original path | Bytes | SHA-256 |
+| --- | ---: | --- |
+| docs/DECOMPOSITION_PLAN.md | 5,591 | `3dfdf0ea753ae2112c6fdd967e8a6be79978e2051d2cb694ddd3df862ff1dc25` |
+| docs/DECOMPOSITION_BACKLOG.md | 8,479 | `42a05ed2016df0a1c79846b79206dd079a9938338be7125981b984ee301168bb` |
+| docs/STABILIZATION_PLAN.md | 13,354 | `f12334027c1ed0a1346060cd2a6e45c6ba4fe33b24080669694b302919df8c0b` |
+| docs/IMPLEMENTATION_PLAN.md | 9,680 | `069fb86fec86d8aedb143d5e7f90c99c6952ce53e5deabbab365df771a616674` |
+| docs/PRODUCTION_CLEANUP_MANIFEST.md | 7,336 | `d7332bcd82b42fb0d7b390dd5066f2cbc8b0974ad3673281d50918c32947b9ab` |
+
+All five records have no owning evidence route; they are not sources of current
+product semantics. Live executable readers do not reference these filenames.
+References in PLAN's dated stabilization paragraph still resolve to the retained
+summary. The explicitly historical architecture tree remains an original
+snapshot, as with previously retired checklists/guardrails; it is not a current
+file inventory. Broader requirement duplication and protected evidence routes
+remain outside this bounded consolidation; no complete semantic-cleanup PASS.
+
+<!-- EVIDENCE:ORGANIZATION-EVIDENCE-CLEANUP:ORG-04 -->
+Removed eight verified ignored Python bytecode cache directories (258 .pyc
+files, 3,242,460 file bytes) under scripts, MCP and old review tools. Each
+contained only untracked regular .pyc files; source, owner scripts, native data
+and mixed directories were excluded. Subsequent verification uses
+`PYTHONDONTWRITEBYTECODE=1` so this cleanup does not immediately regrow them.
+The existing post-commit `br history prune --keep 5` policy already bounds
+tracker backups; ran that supported command and removed one excess backup.
+The canonical issues export and local tracker database are retained. Python
+caches can regenerate normally; no new expiry service or cleanup framework.
+
+Assessed the retained executables with ELF section inspection: CLI 418,791,840,
+GUI 741,866,136 and daemon 268,799,880 file bytes; combined debug sections are
+1,204,763,587 bytes. They account for most remaining checkout storage. Retained
+them unchanged so existing ordinary application/replay binaries and their
+pins remain usable. Stripping changes binary hashes; deleting requires later
+rebuilds. Neither is needed for this documentation/cache cleanup. No Cargo,
+GUI measurement, full-workspace suite or historical proof campaign was run.
+
+<!-- EVIDENCE:ORGANIZATION-EVIDENCE-CLEANUP:ORG-05 -->
+Bounded implementation verification passed: seven isolated-index artifact gate
+checks and nine workspace safety tests. These cover real Git-index refusal and
+nonmutation, unchanged historical receipts, concise summaries, separate recovery
+maps, traversal/partial-state/symlink refusals and preserved migration behavior.
+Source health checked 3,166 files; Cargo resource policy, specification governance
+(552 classified), parity (30 inventories), evidence traceability (29 routes,
+131 research/prototype artifacts), progress coverage, generated projection and
+Frontier (89 items) pass. No Rust source, dependency, product or prototype changes;
+no Rust compilation or repeated historical proof campaign was needed.
+
+Independent reviews passed for exact duplicate retirement, native preservation,
+the scoped resolver/gate and historical documentation consolidation. Before
+landing, current tracked regular files total 109,590,404 bytes (104.51 MiB),
+including 57,241,687 bytes under reviews. There are 507 tracked text documents.
+Checkout allocation is 1,747,828,736 bytes (1.63 GiB), down from the preceding
+1.73 GiB snapshot; preserved native data still occupies external disk storage.
+Target still has zero project markers and its unchanged development binaries.
+No Python bytecode cache directories remain in the inspected source/review roots.
+These are allocation snapshots, not clone size or global disk-space savings.
+Final landing/closure publication is recorded below once committed.
+
 ## Cargo output and native workspace separation
 
 Owner selected all four tasks on 2026-10-14. Preserve native inputs, historical

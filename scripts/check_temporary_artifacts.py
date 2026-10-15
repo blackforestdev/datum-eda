@@ -86,7 +86,7 @@ def main() -> int:
             continue
         if contains_raw_samples(value):
             forbidden.append(path)
-        elif contains_raw_samples(value, ("raw_counters",)):
+        elif contains_raw_samples(value, ("raw_counters", "capture_files")):
             # Preserve unchanged source-pinned historical receipts. New or
             # changed records must retain summaries rather than raw captures.
             original = subprocess.run(["git", "show", f"HEAD:{path}"],

@@ -54,6 +54,28 @@ class WorkspaceSafetyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             workspace.relocated('target/replay', checkout=self.checkout, record=record)
 
+    def test_delivery_recovery_is_scoped_and_uses_a_separate_map(self):
+        control = self.checkout / '.datum/history-cleanup'
+        control.mkdir(parents=True)
+        record = {'schema_version': 1, 'collections': [
+            {'source_relative': '.datum/library-gui-delivery',
+             'destination': str(self.base / 'external/library'), 'state': 'preserved'}]}
+        (control / 'development-relocation-map.json').write_text(json.dumps(record))
+        self.assertEqual(workspace.relocated('.datum/library-gui-delivery/project/file', checkout=self.checkout),
+                         self.base / 'external/library/project/file')
+        self.assertFalse((control / 'target-relocation-map.json').exists())
+        for source in ['.datum/history-cleanup', '.datum/footprint-reference-audit',
+                       '.datum/library-gui-delivery/../escape']:
+            record['collections'][0]['source_relative'] = source
+            with self.assertRaises(ValueError):
+                workspace.relocated('.datum/library-gui-delivery/file', checkout=self.checkout, record=record)
+        record['collections'][0]['source_relative'] = '.datum/library-gui-delivery'
+        alias = self.base / 'external/library/project'
+        alias.parent.mkdir(parents=True)
+        alias.symlink_to(self.checkout, target_is_directory=True)
+        with self.assertRaises(ValueError):
+            workspace.relocated('.datum/library-gui-delivery/project/file', checkout=self.checkout, record=record)
+
     def test_cargo_preflight_refuses_native_data_but_accepts_build_output(self):
         target = self.checkout / 'target'
         (target / 'debug').mkdir(parents=True)

@@ -35,6 +35,21 @@ class TemporaryArtifactTests(unittest.TestCase):
         self.git("add", "--", path)
         self.assertEqual(self.run_gate("--staged").returncode, 0)
 
+    def test_capture_member_inventory_is_temporary_but_summary_is_allowed(self) -> None:
+        path = "docs/reviews/trial/archive-members.json"
+        self.stage(path)
+        target = self.root / path
+        target.write_text('{"capture_files":["trial/env.json","trial/stdout.txt"]}')
+        self.git("add", "--", path)
+        before = self.git("write-tree")
+        self.assertEqual(self.run_gate("--staged").returncode, 1)
+        self.assertEqual(before, self.git("write-tree"))
+        self.git("commit", "-qm", "historical fixture")
+        self.assertEqual(self.run_gate().returncode, 0)
+        target.write_text('{"capture_file_count":2,"raw_source_commit":"historical"}')
+        self.git("add", "--", path)
+        self.assertEqual(self.run_gate("--staged").returncode, 0)
+
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+DATUM_COLLECTIONS = {"effective-process-delivery", "library-gui-delivery"}
 
 
 def external(path: Path, checkout: Path = ROOT) -> Path:
@@ -38,13 +39,18 @@ def relocated(path: str | Path, *, checkout: Path = ROOT, record: dict | None = 
         raise ValueError('parent traversal in legacy fixture path')
     relative = (path if path.is_absolute() else checkout / path).relative_to(checkout)
     if record is None:
-        source = Path(os.environ.get('DATUM_FIXTURE_RELOCATION_MAP', checkout / '.datum/history-cleanup/target-relocation-map.json'))
+        is_datum = relative.parts[:1] == ('.datum',)
+        variable = 'DATUM_DEVELOPMENT_RELOCATION_MAP' if is_datum else 'DATUM_FIXTURE_RELOCATION_MAP'
+        filename = 'development-relocation-map.json' if is_datum else 'target-relocation-map.json'
+        source = Path(os.environ.get(variable, checkout / '.datum/history-cleanup' / filename))
         record = json.loads(source.read_text())
     if record.get('schema_version') != 1:
         raise ValueError('unsupported relocation map')
     for row in record['collections']:
         source = Path(row['source_relative'])
-        if len(source.parts) != 2 or source.parts[0] != 'target' or '..' in source.parts:
+        if (len(source.parts) != 2 or '..' in source.parts
+                or not (source.parts[0] == 'target'
+                        or (source.parts[0] == '.datum' and source.parts[1] in DATUM_COLLECTIONS))):
             raise ValueError('invalid relocation source collection')
         if relative.is_relative_to(source):
             if row.get('disposition') == 'retired-released-test-output':
