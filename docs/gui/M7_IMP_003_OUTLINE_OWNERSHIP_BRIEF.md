@@ -7,7 +7,7 @@
 > **Product Decision**: Option A chosen
 >
 > Authority for the decision:
-> [docs/gui/M7_IMP_003_OUTLINE_OWNERSHIP_DECISION.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_IMP_003_OUTLINE_OWNERSHIP_DECISION.md)
+> [docs/gui/M7_IMP_003_OUTLINE_OWNERSHIP_DECISION.md](M7_IMP_003_OUTLINE_OWNERSHIP_DECISION.md)
 
 ## Purpose
 
@@ -27,8 +27,8 @@ The current importer derives board outline only from top-level `gr_line` and
 `gr_arc` blocks whose `(layer ...)` is `Edge.Cuts`.
 
 Current evidence:
-- [parser_helpers.rs](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/parser_helpers.rs:466)
-- [skeleton.rs](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/skeleton.rs:618)
+- [parser_helpers.rs](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/parser_helpers.rs#L466)
+- [skeleton.rs](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/skeleton.rs#L618)
 
 Observed behavior:
 - `outline_from_edge_cuts()` iterates only top-level `gr_line` and `gr_arc`
@@ -142,7 +142,7 @@ After this ticket lands:
 ## Fixture Proof
 
 Implementation proof must use the frozen Stage 0 fixture authority:
-- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
+- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
 
 Minimum proof obligations:
 - canonical `m7-datum-test-half-routed` imports with its authored outline

@@ -27,8 +27,8 @@ inner-copper names — it returns `None`. The call site then silently falls back
 to the footprint's placement layer.
 
 Current evidence:
-- [skeleton.rs parse_pad_copper_layer_anywhere](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/skeleton.rs:835)
-- [skeleton.rs pad construction call site](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/skeleton.rs:673)
+- [skeleton.rs parse_pad_copper_layer_anywhere](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/skeleton.rs#L835)
+- [skeleton.rs pad construction call site](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/skeleton.rs#L673)
 
 Observed behavior on canonical `datum-test`:
 - through-hole Mill-Max pins use `(layers "*.Cu" ...)`
@@ -134,7 +134,7 @@ After this ticket lands:
 ## Fixture Proof
 
 Implementation proof must use the frozen Stage 0 fixture authority:
-- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
+- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
 
 Minimum proof obligations:
 - canonical `m7-datum-test-half-routed` through-hole Mill-Max pads (using

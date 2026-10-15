@@ -39,7 +39,7 @@ Concrete evidence in the current code:
 
 1. `LayerAppearance` is still object-class shaped.
    File:
-   - [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:361)
+   - [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L361)
    Current fields include:
    - `authored_track`
    - `pad_copper`
@@ -51,7 +51,7 @@ Concrete evidence in the current code:
 
 2. The main geometry pass is still partly hand-authored by primitive class.
    File:
-   - [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1575)
+   - [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1575)
    Current ordering is effectively:
    - zones
    - tracks
@@ -68,7 +68,7 @@ Concrete evidence in the current code:
 
 3. Through-hole pads are still a special-case render path.
    File:
-   - [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1773)
+   - [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1773)
    Even after the recent visibility fixes, through-hole pads are rendered in a
    dedicated post-layer pass using separate visibility logic and a multi-layer
    display rule. That may be a justified exception, but it is still an
@@ -77,15 +77,15 @@ Concrete evidence in the current code:
 4. Vias now inherit copper material directly, but still remain a distinct
    geometry family.
    File:
-   - [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1860)
+   - [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1860)
    The old dedicated `via_outer` / `via_inner` appearance slots have been
    removed; the live via path now uses the visible copper layer's material
    color directly. This is an improvement, but vias are still drawn through a
    dedicated primitive path rather than a unified copper geometry pipeline.
 5. Outline and `board_graphics` remain coordinated special cases.
    Files:
-   - [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1935)
-   - [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1954)
+   - [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1935)
+   - [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1954)
    This is probably the right product choice for now, but it means the
    renderer still contains multiple authored-geometry families with different
    draw roles.

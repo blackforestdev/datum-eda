@@ -1,6 +1,23 @@
-# Risk Register
+# Historical risk analysis
 
-Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
+Status: historical planning hypotheses. The R1–R9 analysis below preserves its
+original rationale and mitigation ideas; its "not started", "accepted for v1"
+and "resolved" labels are not current implementation state, owner acceptance
+or a qualification waiver. Current work and recorded defects come from the
+[Frontier](../specs/active_frontier.json), [progress](../specs/PROGRESS.md) and
+canonical tracker export, with their actual evidence and claims.
+
+| Original assumption | Current authority to consult |
+| --- | --- |
+| Import-first MVP; delay GUI/routing; M0–M8 timing | [Product mechanics](DATUM_PRODUCT_MECHANICS.md) and selected completion contract; original milestone limits are historical. |
+| R3 resolved because AI replaces manual routing | Manual-first, optional-AI product doctrine. The old rationale establishes no product exclusion or dependency decision. |
+| Use geometry crates or isolate a GPL component | [PM029](decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md); references and mitigation suggestions do not authorize additions or accepted obligations. |
+| "Not started" source/corpus/manufacturing work | Current progress and task evidence; old labels are not an audit of today's code. |
+| Numerical corpus/performance targets | Existing governed acceptance criteria; original planning numbers below are not new blocking thresholds. |
+
+[PROGRAM_SPEC](../specs/PROGRAM_SPEC.md#scope-integrity-terms) owns scope terms.
+All original analysis follows unchanged. Do not infer closure or current risk
+acceptance from preservation of these notes.
 
 ## R1: Import Fidelity
 **Risk**: Imported KiCad/Eagle designs don't round-trip correctly.

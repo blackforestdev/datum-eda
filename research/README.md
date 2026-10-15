@@ -1,8 +1,11 @@
 # `/research/` — Datum EDA Research Index
 
-Governing index for all research artifacts that inform Datum EDA design
-decisions. Add a row to the relevant table whenever a new artifact lands;
-do not let folders accumulate without an index entry.
+Human navigation for research artifacts that inform Datum EDA design decisions.
+The [evidence manifest](../specs/evidence_traceability_manifest.json) is the
+machine-checked complete source/consumer inventory. Topic rows below summarize
+research provenance and integration; they are not current roadmap selection,
+implementation status or execution authority. Use the
+[structured Frontier](../specs/active_frontier.json) and selector for that state.
 
 ## Purpose
 
@@ -32,7 +35,7 @@ Research artifacts feed **derived guidance documents** which live in
   Example pairing:
   `research/airwire-rendering/AIRWIRE_RENDERING_RESEARCH.md` →
   `docs/gui/M7_AIRWIRE_RENDERING_GUIDANCE.md`.
-- **Spec integration**: research → guidance doc → spec edit (PR).
+- **Spec integration**: research → guidance doc → reviewed spec change.
   Do not edit `/specs/` directly from a research finding without a
   guidance-doc intermediary.
 - **Machine-checked evidence route**: every research Markdown file must appear
@@ -40,8 +43,8 @@ Research artifacts feed **derived guidance documents** which live in
   route names its governed consumers and hashes both sides, so editing either
   research or its consuming specification requires an explicit cross-review
   and `python3 scripts/check_evidence_traceability.py` must pass.
-- **No attribution** in any research artifact, per
-  `/CLAUDE.md § Attribution Policy`.
+- **No attribution** in any research artifact, per the
+  [controlling contributor instructions](../CLAUDE.md).
 
 ## Standards & Compliance Audit (8 domains)
 
@@ -66,11 +69,11 @@ inventory has been triaged.
 
 **Status legend**: `pending` (not started) → `in-progress` (agent
 running) → `delivered` (report landed) → `triaged` (gaps lifted into
-spec edits) → `integrated` (spec PRs merged).
+spec edits) → `integrated` (reviewed spec integration landed).
 
-The `standards-audit/` folder is missing from disk until the first
-audit pass runs; create it on demand at that point so the empty
-directory does not sit in git unloved.
+The audit directory and [STANDARDS_AUDIT.md](standards-audit/STANDARDS_AUDIT.md)
+already exist. Their delivery does not imply every researched standard is
+implemented; disposition and prerequisites remain in the governing contracts.
 
 ## Existing Topic Research
 
@@ -91,10 +94,9 @@ directory does not sit in git unloved.
 
 ## Future Research (Backlog)
 
-Topics parked here are deliberate next-after-current-work items. Add a
-row when an idea surfaces that warrants research but is not yet
-sequenced; promote to `Existing Topic Research` when the deep-dive
-agent dispatches.
+Topics parked here are research candidates. A row does not select or authorize
+work. Capture and sequence actual work through the existing tracker/Frontier
+workflow; move a topic into the inventory when its authorized research lands.
 
 | Topic                                  | Folder (planned)                  | Trigger                                                                         |
 |----------------------------------------|-----------------------------------|---------------------------------------------------------------------------------|
@@ -133,7 +135,9 @@ read-only from this repo's perspective.
 3. Add a row to the appropriate table in this index.
 4. When a derived guidance doc lands, fill in the `Derived guidance`
    column.
-5. When spec edits land, update `Status` and reference the spec PR
-   in `/docs/RESEARCH_TRACEABILITY.md`.
+5. When spec edits land, update research-integration `Status` and record the
+   exact landed commit/evidence in the existing traceability record. Follow
+   [contributor procedures](../docs/AGENT_OPERATIONAL_PROCEDURES.md); this
+   repository uses direct-to-main commits, not a separate spec-PR workflow.
 6. Add the artifact to exactly one evidence route and review every consumer
    listed by that route before recording its new digest.

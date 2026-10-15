@@ -20,7 +20,7 @@ This brief exists so the coding pass does not:
 Unknown KiCad layer names currently collapse silently to layer `0` / `F.Cu`.
 
 Current evidence:
-- [parser_helpers.rs](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/parser_helpers.rs:687)
+- [parser_helpers.rs](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/parser_helpers.rs#L687)
 
 Current behavior:
 - `kicad_layer_name_to_id()` hard-falls through to `_ => 0`
@@ -92,7 +92,7 @@ the importer should stop with an explicit, actionable error.
 ## Fixture Proof
 
 Implementation proof must use the frozen Stage 0 fixture authority:
-- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
+- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
 
 Minimum proof obligations:
 - canonical `m7-datum-test-half-routed` board still imports under the accepted

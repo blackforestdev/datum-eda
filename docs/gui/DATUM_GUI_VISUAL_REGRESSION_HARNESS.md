@@ -4,7 +4,7 @@
 > diff utilities, and offscreen capture are implemented behind the
 > `datum-gui-render/visual` feature.
 > **Research source**:
-> [GUI_VISUAL_REGRESSION_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/gui-visual-regression/GUI_VISUAL_REGRESSION_RESEARCH.md)
+> [GUI_VISUAL_REGRESSION_RESEARCH.md](../../research/gui-visual-regression/GUI_VISUAL_REGRESSION_RESEARCH.md)
 
 Datum needs visual regression coverage that protects board rendering, text
 fidelity, layer/UI behavior, and full application layout without becoming

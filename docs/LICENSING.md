@@ -1,4 +1,58 @@
-# Licensing Strategy
+# Licensing authority and historical strategy
+
+The repository's [LICENSE](../LICENSE) supplies the project notice and terms.
+The old license-candidate/TBD discussion below is historical; this document does
+not replace that instrument or make a new licensing decision.
+
+## Current authority and adopted exceptions
+
+Product Mechanics 029 is controlling: the existing dependency set is a frozen
+inherited baseline, not authorization for additions. No new third-party code
+dependency may be introduced without an explicit numbered owner decision naming
+the component and accepted obligations. The terminal implementation has no
+third-party exception; its PTY/session and terminal-emulation code are
+Datum-owned.
+
+Product Mechanics 031 authorizes one already-vendored non-code asset for the
+native terminal cell plane: JetBrains Mono Regular 2.305 under SIL OFL 1.1.
+Its exact copyright/license notice ships beside the font and its SHA-256 is
+pinned in `crates/engine/assets/fonts/FONT_PROVENANCE.md`. This narrow font
+asset authorization does not relax decision 029 or authorize third-party
+terminal source, packages, build tools, or runtime fallback.
+
+Product Mechanics 030 separately classifies the checked-in Unicode 17.0.0 and
+Emoji 17.0 property/test files as governed normative standards data rather than
+a code dependency. Their exact Unicode Consortium URLs and SHA-256 checksums
+are pinned in `crates/terminal-core/unicode/`; the applicable Unicode License
+v3 (`Unicode-3.0`) is retained there. A Datum-owned offline generator produces
+reviewed Rust tables. Neither builds nor runtime download data or execute
+third-party Unicode implementation code.
+
+Datum does not accept Apache-2.0-only code dependencies. The owner rejected
+`accesskit_winit` after its authoritative package metadata established that the
+adapter is Apache-2.0-only, because those obligations are incompatible with
+Datum's intended commercial licensing structure. A dependency offering a
+separate compatible license may be used only under that compatible option and
+still requires the explicit authority in Product Mechanics 029. An agent must
+not infer acceptance from Apache's general reputation as a permissive license.
+
+## Distribution notice planning
+
+Commercial distribution requirement:
+- maintain a generated or curated third-party notice bundle before any public
+  binary distribution
+- include MIT/Apache/BSD copyright and license text for shipped dependencies
+- keep solver/framework dependencies out of engine/protocol contracts unless
+  explicitly ratified
+
+## Historical proposals and comparisons
+
+The remaining text preserves the original licensing/router strategy. Its
+AI-exclusive routing premise and milestone schedule do not override Datum's
+manual-first, optional-AI product mechanics. "Resolved", "not needed", "TBD",
+license candidates, and blanket risk verdicts below are original proposal
+language, not current product limits, risk acceptance, license reassessment or
+authority to adopt a dependency. PM029 remains controlling for every addition.
 
 ## The Router Question (Resolved)
 
@@ -66,37 +120,11 @@ License choice should be made at M0, before any code is written and before
 any contributors are involved. It should be a deliberate choice, not an
 inheritance.
 
-## Third-Party Dependencies
+### Historical dependency comparison
 
-Product Mechanics 029 is controlling: the existing dependency set is a frozen
-inherited baseline, not authorization for additions. No new third-party code
-dependency may be introduced without an explicit numbered owner decision naming
-the component and accepted obligations. The terminal implementation has no
-third-party exception; its PTY/session and terminal-emulation code are
-Datum-owned.
-
-Product Mechanics 031 authorizes one already-vendored non-code asset for the
-native terminal cell plane: JetBrains Mono Regular 2.305 under SIL OFL 1.1.
-Its exact copyright/license notice ships beside the font and its SHA-256 is
-pinned in `crates/engine/assets/fonts/FONT_PROVENANCE.md`. This narrow font
-asset authorization does not relax decision 029 or authorize third-party
-terminal source, packages, build tools, or runtime fallback.
-
-Product Mechanics 030 separately classifies the checked-in Unicode 17.0.0 and
-Emoji 17.0 property/test files as governed normative standards data rather than
-a code dependency. Their exact Unicode Consortium URLs and SHA-256 checksums
-are pinned in `crates/terminal-core/unicode/`; the applicable Unicode License
-v3 (`Unicode-3.0`) is retained there. A Datum-owned offline generator produces
-reviewed Rust tables. Neither builds nor runtime download data or execute
-third-party Unicode implementation code.
-
-Datum does not accept Apache-2.0-only code dependencies. The owner rejected
-`accesskit_winit` after its authoritative package metadata established that the
-adapter is Apache-2.0-only, because those obligations are incompatible with
-Datum's intended commercial licensing structure. A dependency offering a
-separate compatible license may be used only under that compatible option and
-still requires the explicit authority in Product Mechanics 029. An agent must
-not infer acceptance from Apache's general reputation as a permissive license.
+This table mixes candidates and then-considered components. It is not the
+current approved inventory; "None"/"Low" and linking/isolation statements are
+historical claims, not accepted obligations or a current legal assessment.
 
 | Dependency | License | Risk |
 |-----------|---------|------|
@@ -112,10 +140,3 @@ not infer acceptance from Apache's general reputation as a permissive license.
 
 The Rust ecosystem is overwhelmingly MIT/Apache 2.0 dual-licensed.
 No significant license risk from Rust dependencies.
-
-Commercial distribution requirement:
-- maintain a generated or curated third-party notice bundle before any public
-  binary distribution
-- include MIT/Apache/BSD copyright and license text for shipped dependencies
-- keep solver/framework dependencies out of engine/protocol contracts unless
-  explicitly ratified

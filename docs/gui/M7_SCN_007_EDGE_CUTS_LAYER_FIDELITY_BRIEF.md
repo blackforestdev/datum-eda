@@ -7,7 +7,7 @@
 > **Product Decision**: Option B chosen (two coordinated views of the same truth)
 >
 > Authority for the decision:
-> [docs/gui/M7_SCN_007_EDGE_CUTS_LAYER_FIDELITY_DECISION.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_SCN_007_EDGE_CUTS_LAYER_FIDELITY_DECISION.md)
+> [docs/gui/M7_SCN_007_EDGE_CUTS_LAYER_FIDELITY_DECISION.md](M7_SCN_007_EDGE_CUTS_LAYER_FIDELITY_DECISION.md)
 
 ## Purpose
 
@@ -208,7 +208,7 @@ After this ticket lands:
 ## Fixture Proof
 
 Implementation proof uses the frozen Stage 0 fixture authority:
-- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
+- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
 
 Minimum proof obligations:
 - canonical `m7-datum-test-half-routed`:

@@ -214,7 +214,7 @@ ad hoc renderer helper.
 ## Minimum Proof
 
 Implementation proof must use the frozen Stage 0 fixture authority:
-- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
+- [docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md](M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md)
 
 At minimum:
 - one cache-present board (`DOA2526`)

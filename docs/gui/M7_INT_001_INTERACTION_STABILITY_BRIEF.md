@@ -65,26 +65,26 @@ to evaluate honestly.
 
 Relevant code surfaces:
 
-- [crates/gui-protocol/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/lib.rs:1832)
+- [crates/gui-protocol/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-protocol/src/lib.rs#L1832)
   `ReviewWorkspaceState` owns `selection`, `active_review_target_id`,
   `hovered_object_id`, and `dim_unrelated`
-- [crates/gui-app/src/main.rs](/home/bfadmin/Documents/datum-eda/crates/gui-app/src/main.rs:1769)
+- [crates/gui-app/src/main.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-app/src/main.rs#L1769)
   click dispatch and authored-object selection path
-- [crates/gui-app/src/main.rs](/home/bfadmin/Documents/datum-eda/crates/gui-app/src/main.rs:2009)
+- [crates/gui-app/src/main.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-app/src/main.rs#L2009)
   hover ownership update path
-- [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1589)
+- [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1589)
   dimming activation and hover/selection helpers
-- [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1638)
+- [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L1638)
   selection-relatedness helpers
-- [crates/gui-render/src/lib.rs](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:6880)
+- [crates/gui-render/src/lib.rs](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/gui-render/src/lib.rs#L6880)
   existing renderer tests for component-selection ownership, including ignored
   tests that show this area has already been a real problem
 
 Supporting product rules:
 
-- [docs/gui/M7_DELIVERY_GATES.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_DELIVERY_GATES.md)
-- [docs/gui/INTERACTION_MODEL.md](/home/bfadmin/Documents/datum-eda/docs/gui/INTERACTION_MODEL.md)
-- [docs/gui/M7_BOARD_REVIEW_FIDELITY_GAP.md](/home/bfadmin/Documents/datum-eda/docs/gui/M7_BOARD_REVIEW_FIDELITY_GAP.md)
+- [docs/gui/M7_DELIVERY_GATES.md](M7_DELIVERY_GATES.md)
+- [docs/gui/INTERACTION_MODEL.md](INTERACTION_MODEL.md)
+- [docs/gui/M7_BOARD_REVIEW_FIDELITY_GAP.md](M7_BOARD_REVIEW_FIDELITY_GAP.md)
 
 ## Scope
 

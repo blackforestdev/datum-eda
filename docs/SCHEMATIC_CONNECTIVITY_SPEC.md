@@ -24,6 +24,13 @@ graph on every run.
 
 ## 1. Authored Objects That Shape Connectivity
 
+The [formal resolution rules](../specs/SCHEMATIC_CONNECTIVITY_SPEC.md#4-resolution-rules)
+own source-format exceptions, supported label/bus syntax, hierarchy and
+no-connect behavior. The vocabulary below explains the original algorithm;
+its broader examples do not enlarge the implemented subset or override those
+rules. In particular, imported crossing/hidden-power behavior follows explicit
+source authority, and explicit-member bus syntax is not an implementation claim.
+
 ### Wires
 - A SchematicWire connects two points on a sheet.
 - Two wires that share an endpoint are electrically connected at that point.
@@ -214,53 +221,28 @@ For each Bus on each sheet:
 
 ### Phase 5: Output
 
-The final connectivity graph:
-
-```
-SchematicConnectivity {
-    nets: HashMap<Uuid, ResolvedNet>,
-}
-
-ResolvedNet {
-    uuid: Uuid,
-    name: String,
-    class: Option<Uuid>,           // net class, if assigned
-    is_power: bool,
-    pins: Vec<(Uuid, Uuid)>,       // (PlacedSymbol UUID, Pin UUID)
-    labels: Vec<(Uuid, LabelKind)>, // labels contributing to this net
-    sheets: Vec<Uuid>,             // sheets this net appears on
-    segments: Vec<NetSegment>,     // per-sheet wire segments
-}
-
-NetSegment {
-    sheet: Uuid,
-    wires: Vec<Uuid>,
-    junctions: Vec<Uuid>,
-    labels: Vec<Uuid>,
-}
-```
-
-This graph is the input to ERC (§see ERC_SPEC.md) and to schematic query
-tools (get_schematic_net_info, get_connectivity_diagnostics, etc.).
+The [formal output graph](../specs/SCHEMATIC_CONNECTIVITY_SPEC.md#3-output-graph)
+owns the target schema and names the shipped query/read shapes. This companion
+no longer repeats a separate `SchematicConnectivity`/`ResolvedNet` schema.
+The phase algorithm still groups per-sheet wire, junction and label membership
+as intermediate `NetSegment` data; those work records are derived implementation
+reasoning, not another persisted or public graph contract. ERC consumes the
+resolved electrical meaning through its [formal input contract](../specs/ERC_SPEC.md#2-inputs).
 
 ---
 
 ## 3. Connectivity Diagnostics
 
-The connectivity resolver produces diagnostics for ambiguous or problematic
-situations. These are NOT ERC violations — they are connectivity-layer
-issues that must be resolved before ERC can run meaningfully.
+The [formal diagnostic inventory](../specs/SCHEMATIC_CONNECTIVITY_SPEC.md#6-connectivity-diagnostics)
+owns emitted kinds and separates current diagnostics from future expansion.
+The old diagnostic/severity matrix is retired from this companion. Connectivity
+problems and ERC policy findings remain distinct layers.
 
-| Diagnostic | Severity | Description |
-|-----------|----------|-------------|
-| `ambiguous_net_name` | Error | A wire segment has multiple labels with different names |
-| `unlabeled_bus_entry` | Warning | A BusEntry has no labeled wire connected |
-| `bus_member_mismatch` | Error | A BusEntry label doesn't match any bus member |
-| `floating_port` | Warning | A SheetInstance port on the parent has no wire |
-| `unused_port` | Warning | A HierarchicalPort on a child sheet has no matching label |
-| `orphan_wire` | Info | A wire segment connects to no pins and has no label |
-| `pin_overlap_no_junction` | Warning | Two different-net wires cross at a point with no Junction |
-| `duplicate_label` | Warning | Same label name appears multiple times on one segment (redundant) |
+The algorithm motivates examining conflicting segment labels, unlabeled or
+mismatched bus entries, unmatched/floating hierarchy ports, orphan wire segments,
+wire crossings, and redundant labels. These are design-analysis cases, not
+additional shipped diagnostic names or severity requirements. The phase details
+above preserve the reasoning and candidate checks.
 
 ---
 
@@ -319,6 +301,10 @@ and the ECO (engineering change order).
 ---
 
 ## Milestone Position
+
+Historical sequencing from the original algorithm proposal; this list is not
+implementation status or an execution grant. The formal output/diagnostic
+sections and selected completion contract own current qualifications.
 - Net resolution algorithm implemented in M1
 - Full hierarchy support in M1
 - Bus expansion in M1

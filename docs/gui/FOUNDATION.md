@@ -16,8 +16,8 @@ This document exists to prevent three failure modes:
 - letting terminal or AI surfaces become parallel design authorities
 
 This foundation follows:
-- [REFERENCE_STUDY.md](/home/bfadmin/Documents/datum-eda/docs/gui/REFERENCE_STUDY.md)
-- [FRONTEND_DECISION_CRITERIA.md](/home/bfadmin/Documents/datum-eda/docs/gui/FRONTEND_DECISION_CRITERIA.md)
+- [REFERENCE_STUDY.md](REFERENCE_STUDY.md)
+- [FRONTEND_DECISION_CRITERIA.md](FRONTEND_DECISION_CRITERIA.md)
 
 ## What Datum's GUI Is Trying To Be
 
@@ -128,11 +128,11 @@ them.
 ## Governing Relationships
 
 This document sets the top-level direction for:
-- [WORKSPACE_MODEL.md](/home/bfadmin/Documents/datum-eda/docs/gui/WORKSPACE_MODEL.md)
-- [INTERACTION_MODEL.md](/home/bfadmin/Documents/datum-eda/docs/gui/INTERACTION_MODEL.md)
-- [CANVAS_REVIEW_MODEL.md](/home/bfadmin/Documents/datum-eda/docs/gui/CANVAS_REVIEW_MODEL.md)
-- [VISUAL_LANGUAGE.md](/home/bfadmin/Documents/datum-eda/docs/gui/VISUAL_LANGUAGE.md)
-- [TECHNICAL_PRINCIPLES.md](/home/bfadmin/Documents/datum-eda/docs/gui/TECHNICAL_PRINCIPLES.md)
+- [WORKSPACE_MODEL.md](WORKSPACE_MODEL.md)
+- [INTERACTION_MODEL.md](INTERACTION_MODEL.md)
+- [CANVAS_REVIEW_MODEL.md](CANVAS_REVIEW_MODEL.md)
+- [VISUAL_LANGUAGE.md](VISUAL_LANGUAGE.md)
+- [TECHNICAL_PRINCIPLES.md](TECHNICAL_PRINCIPLES.md)
 
 Future `M7` specs should follow this document rather than redefining frontend
 purpose from scratch.

@@ -120,7 +120,7 @@ Examples:
   the source design carries explicit manufacturability intent
 
 For current `M7` work, the default reference for these cases is:
-- [IPC_COMPLIANCE_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
+- [IPC_COMPLIANCE_RESEARCH.md](../../research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
 
 This gate exists because "the host EDA package derives it this way by default"
 is not an acceptable reason for Datum to ignore explicit manufacturability data

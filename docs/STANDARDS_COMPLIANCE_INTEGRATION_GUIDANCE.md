@@ -4,9 +4,9 @@
 > controlling spec changes.
 >
 > Research basis:
-> [STANDARDS_AUDIT.md](/home/bfadmin/Documents/datum-eda/research/standards-audit/STANDARDS_AUDIT.md)
+> [STANDARDS_AUDIT.md](../research/standards-audit/STANDARDS_AUDIT.md)
 > and
-> [IPC_COMPLIANCE_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md).
+> [IPC_COMPLIANCE_RESEARCH.md](../research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md).
 
 ## Purpose
 

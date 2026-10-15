@@ -21,9 +21,9 @@ relates to that representation.
 
 But the scene contract still represents that recovered geometry as a
 dedicated board-frame primitive family:
-- [`OutlinePolyline`](/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/lib.rs:80)
+- [`OutlinePolyline`](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/gui-protocol/src/lib.rs#L80)
   consumed exclusively through `scene.outline`
-- [gui-render outline draw path](/home/bfadmin/Documents/datum-eda/crates/gui-render/src/lib.rs:1873)
+- [gui-render outline draw path](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/gui-render/src/lib.rs#L1873)
   renders via `push_world_polyline_segments_capped` with
   `BoardSurfaceRole::Edge` styling — a board-frame role, not a layer role
 

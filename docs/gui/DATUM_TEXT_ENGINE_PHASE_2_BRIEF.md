@@ -266,7 +266,7 @@ Phase 2 must not ship outline text without this gate.
 
 The native text-engine visual fixture manifest lives in:
 
-- [DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md)
+- [DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md](DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md)
 
 Stable project fixtures live under:
 

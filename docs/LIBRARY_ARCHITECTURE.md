@@ -2,7 +2,7 @@
 
 > **Status**: Governing architecture direction for Datum library development.
 > This document sets product and system direction for library handling.
-> Detailed pool storage mechanics remain in [POOL_ARCHITECTURE.md](/home/bfadmin/Documents/datum-eda/docs/POOL_ARCHITECTURE.md).
+> Detailed pool storage mechanics remain in [POOL_ARCHITECTURE.md](POOL_ARCHITECTURE.md).
 
 ## Purpose
 
@@ -23,13 +23,13 @@ library subsystem, every downstream surface becomes partially ad hoc:
 
 This direction now also includes an explicit IPC-aware footprint system for
 generation, validation, deviation tracking, and imported-board audit:
-- [IPC_FOOTPRINT_SYSTEM.md](/home/bfadmin/Documents/datum-eda/docs/IPC_FOOTPRINT_SYSTEM.md)
+- [IPC_FOOTPRINT_SYSTEM.md](IPC_FOOTPRINT_SYSTEM.md)
 
 ## Research-Driven Conclusions
 
 ### 1. Horizon's library architecture is useful prior art, not the target ceiling
 
-[HORIZON_ANALYSIS.md](/home/bfadmin/Documents/datum-eda/docs/HORIZON_ANALYSIS.md)
+[HORIZON_ANALYSIS.md](HORIZON_ANALYSIS.md)
 shows why explicit library identity and separation matter:
 
 - `Unit`: electrical identity
@@ -76,9 +76,9 @@ architecture as the product model.
 
 Eagle's `deviceset -> device -> connect` chain maps well onto Datum's desired
 canonical model. The repo already recognizes this in
-[POOL_ARCHITECTURE.md](/home/bfadmin/Documents/datum-eda/docs/POOL_ARCHITECTURE.md),
-[EAGLE_BLUEPRINT.md](/home/bfadmin/Documents/datum-eda/docs/EAGLE_BLUEPRINT.md),
-and [INTEROP_SCOPE.md](/home/bfadmin/Documents/datum-eda/docs/INTEROP_SCOPE.md).
+[POOL_ARCHITECTURE.md](POOL_ARCHITECTURE.md),
+[EAGLE_BLUEPRINT.md](EAGLE_BLUEPRINT.md),
+and [INTEROP_SCOPE.md](INTEROP_SCOPE.md).
 
 That means Eagle libraries are not just migration baggage; they are a useful
 source corpus for validating Datum's canonical library semantics.
@@ -117,7 +117,7 @@ That means Datum should eventually be able to:
   observable
 
 The concrete product and architecture direction for that system is in:
-- [IPC_FOOTPRINT_SYSTEM.md](/home/bfadmin/Documents/datum-eda/docs/IPC_FOOTPRINT_SYSTEM.md)
+- [IPC_FOOTPRINT_SYSTEM.md](IPC_FOOTPRINT_SYSTEM.md)
 
 ## Product Goals
 
@@ -381,9 +381,9 @@ Datum should keep the current pool direction:
 
 This already aligns with:
 
-- [POOL_ARCHITECTURE.md](/home/bfadmin/Documents/datum-eda/docs/POOL_ARCHITECTURE.md)
-- [CANONICAL_IR.md](/home/bfadmin/Documents/datum-eda/docs/CANONICAL_IR.md)
-- [NATIVE_FORMAT_SPEC.md](/home/bfadmin/Documents/datum-eda/specs/NATIVE_FORMAT_SPEC.md)
+- [POOL_ARCHITECTURE.md](POOL_ARCHITECTURE.md)
+- [CANONICAL_IR.md](CANONICAL_IR.md)
+- [NATIVE_FORMAT_SPEC.md](../specs/NATIVE_FORMAT_SPEC.md)
 
 The important clarification is product intent:
 
@@ -501,11 +501,11 @@ through canonical objects with explicit review.
 This document does not replace existing pool documentation. It clarifies
 product intent and priorities.
 
-- [POOL_ARCHITECTURE.md](/home/bfadmin/Documents/datum-eda/docs/POOL_ARCHITECTURE.md)
+- [POOL_ARCHITECTURE.md](POOL_ARCHITECTURE.md)
   remains the detailed storage/query rationale.
-- [HORIZON_ANALYSIS.md](/home/bfadmin/Documents/datum-eda/docs/HORIZON_ANALYSIS.md)
+- [HORIZON_ANALYSIS.md](HORIZON_ANALYSIS.md)
   provides the strongest reference for the native model.
-- [INTEROP_SCOPE.md](/home/bfadmin/Documents/datum-eda/docs/INTEROP_SCOPE.md)
+- [INTEROP_SCOPE.md](INTEROP_SCOPE.md)
   remains the source-format staging guide.
 
 ## Acceptance Criteria For Calling The Library Direction Viable

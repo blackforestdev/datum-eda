@@ -5,7 +5,7 @@
 > Datum.
 >
 > Research basis:
-> [IPC_COMPLIANCE_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
+> [IPC_COMPLIANCE_RESEARCH.md](../research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
 
 Current implementation slice: IPC-7351B two-terminal chip and SOIC generators
 exist in the engine, write through journaled CLI commands, have proposal twins,
@@ -373,6 +373,6 @@ Datum should adopt this rule across library and import work:
 
 ## References
 
-- [IPC Standards for PCB Layout and Library Compliance — Industry Survey](/home/bfadmin/Documents/datum-eda/research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
-- [Library Architecture](/home/bfadmin/Documents/datum-eda/docs/LIBRARY_ARCHITECTURE.md)
-- [M7 Delivery Gates](/home/bfadmin/Documents/datum-eda/docs/gui/M7_DELIVERY_GATES.md)
+- [IPC Standards for PCB Layout and Library Compliance — Industry Survey](../research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md)
+- [Library Architecture](LIBRARY_ARCHITECTURE.md)
+- [M7 Delivery Gates](gui/M7_DELIVERY_GATES.md)

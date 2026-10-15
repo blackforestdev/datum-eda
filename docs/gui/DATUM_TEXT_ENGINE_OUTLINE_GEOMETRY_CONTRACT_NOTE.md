@@ -21,7 +21,7 @@ Current outline geometry is modeled as:
 - zero or more `holes`
 
 That contract is represented today by:
-- [TextPolygon](/home/bfadmin/Documents/datum-eda/crates/engine/src/text/geometry.rs:73)
+- [TextPolygon](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/engine/src/text/geometry.rs#L73)
 
 That structure assumes:
 - one dominant exterior

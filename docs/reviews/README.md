@@ -1,5 +1,99 @@
 # Review records and temporary proof output
 
+## Checking, proposal status and portable documentation
+
+Owner selected the four organization items on 2026-10-15. Preserve approved
+requirements, unique rationale, legal notices, evidence and paused S5A.
+
+<!-- REQ:CHECKING-TOOLING-DOCUMENTATION:DOC-01 -->
+- DOC-01: Reconcile ERC and schematic-connectivity companions with formal owners while preserving unique algorithms and rationale.
+<!-- REQ:CHECKING-TOOLING-DOCUMENTATION:DOC-02 -->
+- DOC-02: Clarify adopted requirements versus historical proposals in FFI_BOUNDARY, LICENSING and RISK_REGISTER without altering legal notices or dependency authority.
+<!-- REQ:CHECKING-TOOLING-DOCUMENTATION:DOC-03 -->
+- DOC-03: Make routine checks, maintenance commands and manual diagnostics discoverable through existing documentation navigation.
+<!-- REQ:CHECKING-TOOLING-DOCUMENTATION:DOC-04 -->
+- DOC-04: Repair stale research-index instructions and machine-specific documentation links; verify, independently review and publish all four items.
+
+<!-- EVIDENCE:CHECKING-TOOLING-DOCUMENTATION:DOC-01 -->
+ERC companion delegates the canonical pin taxonomy, ten-code finding inventory,
+compatibility classification and severity/waiver model to existing formal owners.
+Retired its competing full compatibility matrix and corrected old rationale
+headings to the owned code names, explicitly marking passive_only_net as target.
+Kept electrical meanings, driver analysis and selected check/waiver motivations.
+Connectivity companion delegates public graph/read shapes and emitted diagnostic
+inventory to the formal spec. Its Phase 1–4 algorithm, determinism, incremental
+recomputation, board relationship rationale and complete PM053 reconciliation
+remain byte-identical to 7055cd6f. Source-format and target/current limits are
+explicit, including historical bus examples and milestone hypotheses. No formal
+contract, product decision, finding implementation or qualification changed.
+Both companions have no owning evidence route; their roles are classified.
+
+<!-- EVIDENCE:CHECKING-TOOLING-DOCUMENTATION:DOC-02 -->
+FFI_BOUNDARY is classified historical: original comparisons, feature flags,
+crate/workspace proposals and milestone recommendations remain intact, explicitly
+subordinate to exact PM029 dependency authority. RISK_REGISTER retains every
+R1–R9 analysis byte but marks old labels/numbers as historical hypotheses, with
+current owner links for manual-first scope, dependencies, state and acceptance.
+LICENSING points to the unchanged root LICENSE, keeps its existing adopted
+PM029/030/031 and distribution paragraphs, and separates old AI-exclusive router,
+license-TBD/candidate and "None/Low" comparison claims as historical proposals.
+No license instrument/notice, manifest, lockfile, decision, approval, dependency
+inventory or runtime changed; no fresh external license assessment was performed.
+The three records have no owning evidence route. They provide status/navigation,
+not new legal terms, dependency adoption or owner risk acceptance.
+
+<!-- EVIDENCE:CHECKING-TOOLING-DOCUMENTATION:DOC-03 -->
+Extended the existing documentation map with task/steps, focused versus full
+checks, guarded Cargo, selected formatting, documentation gates, cache inventory,
+cleanup preview, workspace resolution, tracker and manual-diagnostic entry points.
+Verified flags and behavior against existing parsers/runners. In particular,
+check_alignment without a mode is a no-op; focused drift does not compile while
+full qualification does. Distinguished read-only queries/previews from writes,
+retained explicit prerequisites and PM044's historical WDQ boundary. No new tool,
+script move, import change, wrapper, side-effect contract or build was introduced.
+
+<!-- EVIDENCE:CHECKING-TOOLING-DOCUMENTATION:DOC-04 -->
+Repaired all 107 machine-specific Markdown links found in tracked text documents
+across 24 files. Seventy-eight now use relative links to the same existing
+repository targets. Twenty-nine source-line citations use reachable commit-pinned
+permalinks, preserving historical offsets rather than pointing into refactored
+current files; twelve old offsets exceeded current file lengths. Each pin uses
+the newest retained document revision with those source offsets present. Every
+source object/line bound was verified locally; this is no claim about current
+source behavior. All labels and non-link bytes in those 24 documents reverse-
+compare exactly to 7055cd6f. No prototypes, code or acceptance records changed.
+
+Research README now describes its tables as human research-integration history,
+links complete machine evidence coverage and current selection to existing
+owners, corrects the already-present standards-audit directory and replaces
+stale spec-PR/attribution instructions with contributor/landed-commit references.
+Topic data, research findings, sandbox symlinks, the historical README audit and
+RESEARCH_TRACEABILITY's bytes are unchanged. Its complete three-file owning
+route was reviewed; the 80-file workspace/prototype route is unchanged.
+
+Independent review passed for bounded reconciliation of four route digests.
+For the three larger routes, reused recorded adequate baseline reviews after
+verifying every listed member identity/digest against 7055cd6f; independently
+reviewed the three affected consumers and their seven equivalent href changes.
+This is explicit baseline reuse plus delta review, not a fresh semantic reread
+of their 36-file corpus. The research-index route received complete three-file
+review. Existing route notes/scopes remain intact with a bounded new review note.
+
+Verification: 107 repaired targets (including 29 reachable historical line
+citations) and 66 companion/navigation links resolve. FFI original proposal,
+R1–R9 analysis, adopted licensing restrictions/distribution paragraphs, formal
+ERC/connectivity/checking contracts, license instrument, Cargo files, historical
+audit and consuming traceability text are preserved. ERC/connectivity parity
+passes (10 pin types, 10 finding codes, six diagnostics). Governance passes with 562 classified documents; the focused structural drift
+battery passes, including source health (3,166), resource/dependency authority,
+parity (30 inventories), traceability (29 routes/131 artifacts), boundary/token,
+progress and Frontier (91 items) checks. No remaining machine-specific Markdown
+links were found in tracked text. Only the four reviewed route digest/note
+records changed; all other route metadata is identical. Independent final
+implementation review passed for all 37 owned paths; landing closure and
+publication follow separately.
+No Rust compilation or historical proof campaign is required for these docs.
+
 ## Documentation ownership and external audit output
 
 Owner selected the three organization improvements on 2026-10-14. Preserve

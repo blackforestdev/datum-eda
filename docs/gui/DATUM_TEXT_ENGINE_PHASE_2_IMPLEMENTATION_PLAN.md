@@ -320,9 +320,9 @@ Required outcome:
 - imported board text goldens
 - branding / annotation / manufacturing intent comparisons
 - the native visual fixture manifest is
-  [DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md](/home/bfadmin/Documents/datum-eda/docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md)
+  [DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md](DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md)
 - the GUI visual regression harness design is
-  [DATUM_GUI_VISUAL_REGRESSION_HARNESS.md](/home/bfadmin/Documents/datum-eda/docs/gui/DATUM_GUI_VISUAL_REGRESSION_HARNESS.md)
+  [DATUM_GUI_VISUAL_REGRESSION_HARNESS.md](DATUM_GUI_VISUAL_REGRESSION_HARNESS.md)
 - the stable native projects live under
   `crates/engine/testdata/golden/text/native/`
 - screenshot-golden automation must use those fixtures before Phase 2 text

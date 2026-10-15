@@ -55,7 +55,7 @@ ID:
 - `airwire-demo-board`
 
 Source:
-- [crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb)
+- [crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb)
 
 Role:
 - repo-native unrouted / airwire baseline
@@ -71,7 +71,7 @@ ID:
 - `partial-route-demo-board`
 
 Source:
-- [crates/engine/testdata/import/kicad/partial-route-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/partial-route-demo.kicad_pcb)
+- [crates/engine/testdata/import/kicad/partial-route-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/partial-route-demo.kicad_pcb)
 
 Role:
 - repo-native partially routed board for imported board-review checks
@@ -88,7 +88,7 @@ ID:
 - `drc-coverage-demo-board`
 
 Source:
-- [crates/engine/testdata/import/kicad/drc-coverage-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/drc-coverage-demo.kicad_pcb)
+- [crates/engine/testdata/import/kicad/drc-coverage-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/drc-coverage-demo.kicad_pcb)
 
 Role:
 - broader board-feature fixture
@@ -100,7 +100,7 @@ ID:
 - `simple-demo-board`
 
 Source:
-- [crates/engine/testdata/import/kicad/simple-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/simple-demo.kicad_pcb)
+- [crates/engine/testdata/import/kicad/simple-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/simple-demo.kicad_pcb)
 
 Role:
 - control fixture

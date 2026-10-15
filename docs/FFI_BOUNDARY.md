@@ -1,10 +1,28 @@
-# C++ / FFI Boundary Strategy
+# FFI evaluation notes and historical proposals
 
-> **Status**: Non-normative design rationale.
-> No formal FFI spec exists in `specs/`. This document captures research
-> and design reasoning about when and how C++ libraries should enter the
-> build. Decisions here are proposals until ratified through implementation
-> milestones.
+Status: historical architecture proposal. The library comparisons, recommended
+crates, feature flags and milestone timeline below preserve original evaluation
+ideas. They are not adopted dependencies, current build instructions or an
+implementation grant. Their license/maturity/numerical claims are historical
+observations, not a current component review.
+
+[PM029](decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md) owns dependency
+authority: an exact component and accepted obligations require a numbered owner
+decision before introduction. A milestone, execution grant, permissive license
+claim, pure-Rust alternative or fallback recommendation here supplies no approval.
+The terminal retains PM029's Datum-owned implementation boundary.
+
+The [dependency policy](../specs/third_party_dependency_policy.json) and existing
+Cargo manifests describe the frozen/explicitly ratified set. This document does
+not promote proposed crates, optional Python bindings, C++ wrappers or future
+workspace directories into that set. Product behavior follows manual-first,
+optional-AI [product mechanics](DATUM_PRODUCT_MECHANICS.md).
+
+## Original proposal
+
+The original text is retained below for technical rationale and alternatives.
+All "recommendation", "enters at", "rules" and "definitive" language is scoped
+to this historical proposal, subordinate to the authority above.
 
 ## Purpose
 Identifies where the project should use existing C++ libraries via FFI

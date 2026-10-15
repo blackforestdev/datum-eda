@@ -80,10 +80,10 @@ Purpose:
 | Fixture ID | Source artifact | Datum launch artifact | KiCad reference screenshot | Datum baseline screenshot | Notes |
 |-----------|------------------|-----------------------|----------------------------|---------------------------|-------|
 | `m7-datum-test-half-routed` | local external KiCad board (`datum-test`) | stable `--board` launch path on the local board | required | required | required |
-| `airwire-demo-board` | [airwire-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb) | stable imported-board launch path | optional | required once Stage 3 starts | required |
-| `partial-route-demo-board` | [partial-route-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/partial-route-demo.kicad_pcb) | stable imported-board launch path | optional | required once Stage 3 starts | required |
-| `drc-coverage-demo-board` | [drc-coverage-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/drc-coverage-demo.kicad_pcb) | stable imported-board launch path | optional | optional until directly used as proof | required |
-| `simple-demo-board` | [simple-demo.kicad_pcb](/home/bfadmin/Documents/datum-eda/crates/engine/testdata/import/kicad/simple-demo.kicad_pcb) | stable imported-board launch path | optional | optional until directly used as proof | required |
+| `airwire-demo-board` | [airwire-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb) | stable imported-board launch path | optional | required once Stage 3 starts | required |
+| `partial-route-demo-board` | [partial-route-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/partial-route-demo.kicad_pcb) | stable imported-board launch path | optional | required once Stage 3 starts | required |
+| `drc-coverage-demo-board` | [drc-coverage-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/drc-coverage-demo.kicad_pcb) | stable imported-board launch path | optional | optional until directly used as proof | required |
+| `simple-demo-board` | [simple-demo.kicad_pcb](../../crates/engine/testdata/import/kicad/simple-demo.kicad_pcb) | stable imported-board launch path | optional | optional until directly used as proof | required |
 
 ## Notes By Fixture
 

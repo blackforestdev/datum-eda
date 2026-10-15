@@ -19,8 +19,8 @@ The current imported-board path only derives board outline from top-level
 `Edge.Cuts` graphics.
 
 Current evidence:
-- [parser_helpers.rs](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/parser_helpers.rs:466)
-- [skeleton.rs](/home/bfadmin/Documents/datum-eda/crates/engine/src/import/kicad/skeleton.rs:618)
+- [parser_helpers.rs](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/parser_helpers.rs#L466)
+- [skeleton.rs](https://github.com/blackforestdev/datum-eda/blob/9c6b0414b366aa1e542c34170901ddefc8dec00c/crates/engine/src/import/kicad/skeleton.rs#L618)
 
 Observed behavior:
 - if no supported top-level outline is found, the board skeleton falls back to

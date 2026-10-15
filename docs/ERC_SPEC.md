@@ -16,8 +16,9 @@ says what it says.
 
 ## 1. Pin Electrical Types
 
-Every pin in the pool has a PinElectricalType (defined canonically in
-`specs/ERC_SPEC.md` §3.1). The types and their domain meanings:
+The canonical taxonomy and wire spellings belong to
+[ERC_SPEC §3.1](../specs/ERC_SPEC.md#31-pin-electrical-types). The table below
+explains electrical meanings; it is not a separate type or encoding contract:
 
 | Type | Symbol | Meaning |
 |------|--------|---------|
@@ -40,6 +41,11 @@ These types come from:
 ---
 
 ## 2. Net Driving Analysis — Design Rationale
+
+These conceptual drive states explain the original domain analysis. The
+[formal compatibility model](../specs/ERC_SPEC.md#5-compatibility-model) owns
+current driver classification; this table is not an emitted-finding inventory
+or a second profile/severity contract.
 
 Every resolved net is analyzed for its driving state. A net's driver is
 determined by the pin types connected to it.
@@ -78,30 +84,18 @@ After examining all pins on a net:
 
 ## 3. Pin-to-Pin Compatibility — Reference Matrix
 
-This matrix documents the domain reasoning behind the compatibility
-model defined in `specs/ERC_SPEC.md` §5.
+The [formal compatibility model](../specs/ERC_SPEC.md#5-compatibility-model)
+owns classification and default results. The former full matrix here is retired
+so this companion cannot define a second severity/compatibility contract.
 
-Legend: ✓ = OK, W = Warning, E = Error, blank = symmetric
-
-|              | Input | Output | Bidir | Passive | PowerIn | PowerOut | OpenCol | OpenEm | TriState | NoConn |
-|-------------|-------|--------|-------|---------|---------|----------|---------|--------|----------|--------|
-| **Input**   | W     | ✓      | ✓     | ✓       | W       | ✓        | ✓       | ✓      | ✓        | E      |
-| **Output**  |       | E      | ✓     | ✓       | ✓       | E        | W       | W      | W        | E      |
-| **Bidir**   |       |        | ✓     | ✓       | ✓       | ✓        | ✓       | ✓      | ✓        | E      |
-| **Passive** |       |        |       | ✓       | ✓       | ✓        | ✓       | ✓      | ✓        | E      |
-| **PowerIn** |       |        |       |         | ✓       | ✓        | W       | W      | W        | E      |
-| **PowerOut**|       |        |       |         |         | E        | W       | W      | W        | E      |
-| **OpenCol** |       |        |       |         |         |          | ✓       | E      | ✓        | E      |
-| **OpenEm**  |       |        |       |         |         |          |         | ✓      | ✓        | E      |
-| **TriState**|       |        |       |         |         |          |         |        | ✓        | E      |
-| **NoConn**  |       |        |       |         |         |          |         |        |          | E      |
+The following are original design considerations. Apply the formal model and
+active check profile; these explanations are not additional implemented rules.
 
 Key reasoning for non-obvious combinations:
 - **Output↔Output** (E): Two drivers fighting. Always an error.
-- **PowerOut↔PowerOut** (E): Two power sources on the same net. Always error.
-  Exception: if both PowerOut pins belong to the same component (e.g.,
-  multiple VCC pins on one IC), this is OK — resolved by checking whether
-  both pins belong to the same component.
+- **PowerOut↔PowerOut**: The original analysis considered multiple supply
+  pins on one component. That discussion does not establish a same-component
+  exception; classification is owned by the formal model above.
 - **Input↔Input** (W): Multiple inputs with no driver. Warning, not error,
   because the driver may be off-sheet or via a global label.
 - **OpenCollector↔OpenCollector** (✓): Wired-OR/wired-AND topology. Valid.
@@ -110,20 +104,21 @@ Key reasoning for non-obvious combinations:
 
 ## 4. M2 Check Design Rationale
 
-The seven checks required for M2 (enumerated in `specs/ERC_SPEC.md` §4)
-were chosen because they catch the most common and dangerous schematic
-errors:
+The [formal rule set](../specs/ERC_SPEC.md#4-m2-erc-rule-set) owns the ten
+listed finding codes and their implementation limits. The cases below explain
+selected motivations, not another complete inventory or delivery claim.
 
 ### output_to_output_conflict
 Two strong drivers on one net is always a hardware error. In real circuits
 this causes contention current, potential damage, and undefined logic
 levels. No legitimate design has this.
 
-### undriven_input
+### undriven_input_pin and input_without_explicit_driver
 An input with no driver is either a missing connection or a schematic
-that was left incomplete. This is the single most common schematic error.
+that was left incomplete. The formal model distinguishes an undriven input from passive/biasing context
+reported through `input_without_explicit_driver`.
 
-### power_without_source
+### power_in_without_source
 A power net (PowerIn pins) with no PowerOut source means an IC will not
 receive power. This catches missing power symbol connections.
 
@@ -132,14 +127,16 @@ A no-connect marker is an explicit assertion. If the pin IS connected,
 the assertion is wrong. This catches stale no-connect markers after
 design changes.
 
-### unconnected_required_pin
+### unconnected_component_pin
 A pin that should be connected but isn't. Warning level because some
 unused pins are legitimately left floating (e.g., unused op-amp outputs).
 
-### passive_only_net
+### passive_only_net — target rationale
 A net where nothing drives and nothing receives. This usually indicates
 an incomplete schematic (components placed but not yet wired into the
-circuit).
+circuit). The formal spec explicitly says this is not a distinct implemented
+finding code; passive/biasing context currently feeds
+`input_without_explicit_driver` severity decisions.
 
 ### hierarchical_connectivity_mismatch
 A port that doesn't connect through hierarchy means the sub-sheet is
@@ -149,14 +146,14 @@ electrically disconnected from the parent. This breaks the design intent.
 
 ## 5. Severity Configuration Rationale
 
-The formal checking architecture (`specs/CHECKING_ARCHITECTURE_SPEC.md`)
-defines three severity levels. The rationale for making severity
+The [shared severity contract](../specs/CHECKING_ARCHITECTURE_SPEC.md#7-severity-status-and-summary)
+owns the three levels and profile-dependent reporting. The rationale for making severity
 configurable per check is that different projects have different
 engineering contexts:
 
 - An audio amplifier project may promote `passive_only_net` to error
   (passive-only nets are always wrong in analog circuits)
-- A digital project may demote `unconnected_required_pin` to info
+- A digital project may demote `unconnected_component_pin` to info
   (many digital ICs have pins that are legitimately unused)
 
 Severity configuration is authored data (part of project settings).
@@ -165,7 +162,8 @@ Severity configuration is authored data (part of project settings).
 
 ## 6. Waiver Design Rationale
 
-Waivers are documented in `specs/CHECKING_ARCHITECTURE_SPEC.md` §4.
+Waivers and deviations belong to
+[CHECKING_ARCHITECTURE_SPEC §8](../specs/CHECKING_ARCHITECTURE_SPEC.md#8-waivers-and-deviations).
 The design rationale:
 
 - Waivers target specific objects, not blanket check suppressions, because
@@ -182,8 +180,9 @@ The design rationale:
 
 ## 7. Future ERC Checks (beyond M2)
 
-These are documented for planning purposes. They do not appear in the
-M2 exit criteria in `specs/PROGRAM_SPEC.md`.
+The table preserves the original milestone planning hypotheses, not current
+scheduling or completion status. Use the formal rule set and selected Frontier
+contract for current requirements and work; these rows authorize none.
 
 | Check | Milestone | Description |
 |-------|-----------|-------------|

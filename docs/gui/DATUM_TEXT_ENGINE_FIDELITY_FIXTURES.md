@@ -183,7 +183,7 @@ Layer A visual goldens are now the primary protection for this fixture set.
 
 The adopted harness design is:
 
-- [DATUM_GUI_VISUAL_REGRESSION_HARNESS.md](/home/bfadmin/Documents/datum-eda/docs/gui/DATUM_GUI_VISUAL_REGRESSION_HARNESS.md)
+- [DATUM_GUI_VISUAL_REGRESSION_HARNESS.md](DATUM_GUI_VISUAL_REGRESSION_HARNESS.md)
 
 The active harness command is:
 

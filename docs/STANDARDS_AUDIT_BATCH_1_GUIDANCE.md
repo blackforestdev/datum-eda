@@ -5,13 +5,13 @@
 > & interop) and Domain 2 (Component modelling).
 >
 > **Research basis:**
-> - [STANDARDS_AUDIT.md](/home/bfadmin/Documents/datum-eda/research/standards-audit/STANDARDS_AUDIT.md) — Phase 1 landscape inventory
-> - [DATA_EXCHANGE_INTEROP_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/data-exchange-interop/DATA_EXCHANGE_INTEROP_RESEARCH.md) — Domain 1 deep-dive
-> - [COMPONENT_MODELING_RESEARCH.md](/home/bfadmin/Documents/datum-eda/research/component-modeling/COMPONENT_MODELING_RESEARCH.md) — Domain 2 deep-dive
+> - [STANDARDS_AUDIT.md](../research/standards-audit/STANDARDS_AUDIT.md) — Phase 1 landscape inventory
+> - [DATA_EXCHANGE_INTEROP_RESEARCH.md](../research/data-exchange-interop/DATA_EXCHANGE_INTEROP_RESEARCH.md) — Domain 1 deep-dive
+> - [COMPONENT_MODELING_RESEARCH.md](../research/component-modeling/COMPONENT_MODELING_RESEARCH.md) — Domain 2 deep-dive
 >
 > **Sibling guidance:**
-> - [STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md](/home/bfadmin/Documents/datum-eda/docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md) — meta-rules for research → spec integration
-> - [IPC_FOOTPRINT_SYSTEM.md](/home/bfadmin/Documents/datum-eda/docs/IPC_FOOTPRINT_SYSTEM.md) — IPC-derived guidance
+> - [STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md](STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md) — meta-rules for research → spec integration
+> - [IPC_FOOTPRINT_SYSTEM.md](IPC_FOOTPRINT_SYSTEM.md) — IPC-derived guidance
 
 ## Purpose
 

@@ -44,3 +44,52 @@ projects and captures use the external workspace conventions in the
 `target/` is disposable Cargo output. `.datum/history-cleanup/` is protected local
 recovery metadata; a native project's own `.datum/` journal remains part of that
 project and must be preserved with it.
+
+## Development tools
+
+Run repository commands from the checkout root. This table navigates existing
+entry points; contributor procedures and the selected task still own when a
+mutation or verification is appropriate.
+
+| Need | Existing entry point | Work performed |
+| --- | --- | --- |
+| Current task and ordered completion steps | `python3 scripts/project_status.py next` / `details` | Read-only joined roadmap/tracker/claim queries. |
+| Structural checks for a focused change | `bash scripts/run_drift_gates.sh --focused` | Resource, source, authority, parity, traceability and boundary checks; no Cargo compilation. |
+| Deliberate full qualification | `bash scripts/run_drift_gates.sh --full` | Compiles and runs workspace, proof and GUI checks; produces output. It is also the default mode. |
+| Guarded Rust work | [run_cargo_guarded.py](../scripts/run_cargo_guarded.py) | Serializes Cargo and checks disk/target policy; select `--workload interactive` or `proof` as required by contributor rules. |
+| Staged formatting check | `python3 scripts/check_rustfmt.py --staged` | Nonmutating check of staged Rust files. |
+| Format selected Rust files | [format_rust.py](../scripts/format_rust.py) | Writes only explicitly named paths; inspect shared-tree status before and after. |
+| Documentation and ownership checks | [check_spec_governance.py](../scripts/check_spec_governance.py), [check_spec_parity.py](../scripts/check_spec_parity.py), [check_evidence_traceability.py](../scripts/check_evidence_traceability.py) | Checks classification, inventory parity and evidence freshness; printing a digest does not accept it. |
+| Inspect cache use | `python3 scripts/manage_cargo_cache.py` | Reports cache inventory; deletion requires explicit selected paths and `--apply`. |
+| Preview released build-output cleanup | `python3 scripts/prune_development_output.py --build-only` | Preview only; native inputs/runtime retention and apply/release rules are described in the [review index](reviews/README.md). |
+| Locate scratch or recovered fixture paths | [development_workspace.py](../scripts/development_workspace.py) | `scratch <family>` and `resolve <old-path>` print external paths; they do not create fixtures or authorize replay. |
+| Tracker operations | [Operational tracker procedures](AGENT_OPERATIONAL_PROCEDURES.md#issue-tracker-beads-br) | Use `br`; claims, exports and closures mutate tracker state and must stay synchronized with the Frontier. |
+| Manual diagnostics and older proof recipes | [scripts](../scripts/) and [review records](reviews/) | Inspect each tool's source/help and recorded prerequisites. A filename prefix or preserved recipe is not an instruction to execute it. |
+
+`check_*.py` files are individual gate entry points; `test_*.py` files exercise
+tooling and boundaries; `run_*` files orchestrate work; generators/formatters
+may write files. These names aid discovery, not side-effect guarantees.
+`check_alignment.py` does nothing without an explicit mode; `--run-health`
+prebuilds matching companions and runs workspace tests, while `--run-gates`
+runs executable milestone gates. Use the focused runner for the documented
+structural-only batch instead of discovering this distinction by trial.
+
+Historical WDQ tooling remains manual diagnostics/history under PM044. Normal
+contribution uses the existing Git hooks and current gates; preserved enrollment
+or promotion scripts do not reinstate retired blocking enforcement. No tools
+are moved or renamed by this navigation, so imports and existing callers remain
+stable.
+
+## Portable references
+
+Use relative links for files in this checkout. Historical source-line citations
+use a commit-pinned repository permalink; the cited offsets belong to that
+revision, not the refactored current file. Do not infer current implementation
+or qualification from a historical code citation. The repaired older citations
+use the newest retained document revision where the referenced source offsets
+exist, preserving a retrievable source basis without inventing new line numbers.
+
+The [research index](../research/README.md) distinguishes topic/integration
+history from the complete evidence-route inventory and current scheduled work.
+Its existing source-analysis symlinks are research references; this pass neither
+creates sandboxes nor imports their code.

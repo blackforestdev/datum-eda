@@ -66,7 +66,7 @@ Required result:
 ### 2. A canonical geometry contract stronger than `outer + holes`
 
 Current contract:
-- [TextPolygon](/home/bfadmin/Documents/datum-eda/crates/engine/src/text/geometry.rs:73)
+- [TextPolygon](https://github.com/blackforestdev/datum-eda/blob/22aeebefdb1da9701bf9a52666053242f6409e9b/crates/engine/src/text/geometry.rs#L73)
   stores only:
   - one `outer`
   - zero or more `holes`
