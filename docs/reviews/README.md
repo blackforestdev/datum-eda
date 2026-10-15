@@ -72,8 +72,11 @@ Removed that empty exclusive verification workspace after active-user checks.
 The guarded build-only prune removed nine released compiler entries, preserving
 all native inputs/recovery controls and the three current executables.
 
-Independent final implementation review passed for all 21 owned paths; landing
-closure and publication follow separately.
+Independent final implementation review passed for all 21 owned paths, landed
+in `73b4be15`. All three selected improvements are delivered. Maintenance
+ownership/authorization is released; every pre-maintenance Frontier record,
+including the original S5A grant/pointer, is restored exactly without claim or
+resumption. The original working sessions remain paused.
 The eleven producers now use external scratch. Older cleanup records below
 state the paths/producers observed at their dated revisions; this section owns
 the current producer placement. Broad semantic-documentation reconciliation
