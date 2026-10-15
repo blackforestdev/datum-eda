@@ -118,3 +118,10 @@ HEAD also PASS. Receipt reverse-equivalence and all original task-record semanti
 invariants PASS. No Rust build, native measurement or old proof campaign repeated.
 Broader semantic-reconciliation intake stays open and unselected; no blanket
 claim that every project document is reconciled.
+
+Landed implementation: `d767a08c5d41212dadcfaed9d82357818acb5f09`. All five bounded items complete.
+Synchronized closure restores the exact original UVT-S5A-BUILD record and its
+existing grant/selection without claiming or resuming either paused session.
+All other original records preserve state, order, dependencies, authorization,
+ownership and completion meaning; only verified maintenance-reference paths move.
+Three pending owner packets and broader semantic intake remain open.
