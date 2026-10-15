@@ -1,7 +1,8 @@
 # Native project doorway — managed delivery
 
-Status: NPD-C01..05 complete under NPD-MANAGED-01, including actual distinct
-native replay. NPD-C06 objective acceptance and final landing closure remain open.
+Status: NPD-C01..06 complete. Bounded native doorway delivery accepted under
+NPD-MANAGED-01 and landed in `45f77006c661019e02928b90dba2a9f1b177bc4d`.
+Broader qualification remains separate; S5A remains explicitly paused.
 
 ## Actual owner clarification and manager scope
 
@@ -478,7 +479,7 @@ no finding in the injected test delta; it is source review only. Source is now
 frozen; no build or GUI process survives the handoff. The appointed manager
 received the actual results, reserved desktop ownership to the distinct reviewer
 and directed C04 completion/C05 activation. This marker does not supply the still
-required C05 native replay or C06 objective disposition.
+then-required C05 native replay or C06 objective disposition.
 
 ## Actual C05 independent source and native replay
 
@@ -515,3 +516,50 @@ The appointed manager directed a normal local implementation commit with C05
 complete and C06 pending/selected, followed by the fresh exact C06 packet and
 actual objective disposition. This receipt supplies C05 only; no C06 acceptance,
 issue closure, successor execution or remote publication is inferred.
+
+## Actual C06 objective acceptance and landing
+
+<!-- EVIDENCE:NATIVE-PROJECT-DOORWAY:NPD-C06 -->
+Appointed manager `codex-reorganization-manager-20261014` recorded actual
+objective acceptance under the owner appointment/clarification and PM059:
+
+> NATIVE-PROJECT-DOORWAY: approve DOORWAY-ACCEPTANCE — implementation 45f77006c661019e02928b90dba2a9f1b177bc4d; exact C04 native matrix and actual distinct C05 bounded PASS, under retained NPD-MANAGED-01 scope.
+
+The durable external `manager-c06-acceptance.json` SHA-256 is
+`6bddeb00e9bf193b3152b141c86560b09a5f1a1db7be40b2fdfe7faad6664895`.
+It verifies the exact fresh C06 packet, C04 map, actual C05 receipt, all38 Rust
+pins and clean48-path implementation commit. This is actual delegated manager
+input, not an invented owner reply, HUMAN judgment or full-qualification PASS.
+
+Implementation `45f77006c661019e02928b90dba2a9f1b177bc4d` passed normal
+file-lane, temporary-artifact and staged-rustfmt hooks. The earlier C06 metadata
+transition initially retained an execution claim; render refused it. It was
+corrected to specified/owner_decision, open/unassigned and no claim before the
+implementation commit, without relaxing the validator. C06 acceptance followed
+that commit and exact packet; closure does not infer approval from implementation.
+
+C01–06 are complete, the issue closes against that implementation, and bounded
+development availability reflects the ordinary native workflow above. All actual
+Clippy/concurrent-genesis/cache warnings, rapid synthetic input observations and
+physical/HUMAN/assistive-user/platform/authoring qualification limits remain.
+No additional compilation or native replay is justified by metadata-only landing.
+
+The manager's separate explicit selection disposition, external
+`manager-closure-selection.json` SHA-256
+`35637b4fd9d264a01ec205e97d25ba34da6c37065c22189a8edb77be0d721222`,
+restores only pre-NPD `UVT-S5A-BUILD` selection while landing/unselecting NPD.
+S5A retains its exact prior state, grant, dependencies, unfinished C04 contract,
+evidence, tracker/assignee and unclaimed state. Its owner pause remains in force;
+no S5A session/work resumes and no successor execution is authorized. No source
+change, new dependency, waiver, protected prototype edit or remote publication.
+
+The existing development-availability validator requires a portable typed
+ordinary-application record; a Markdown evidence path was rejected during
+closure. The manager explicitly authorized the compact
+[availability record](native-project-doorway.json) in this existing evidence
+family. It maps the actually approved workflow/safety outcomes to the exact
+implementation, C04/C05/C06 receipts and retained limits; no raw captures/logs
+or new proof schema/framework. Closure validation also required the completed
+step pointer to be null and removal of the now-closed NPD issue from the
+foundation's derived pending-unblocks list. The actual dependency edge remains;
+these rejected intermediate states were corrected without validator changes.

@@ -249,3 +249,14 @@ Semantic/source intake remain open. Proposed NPD planning/UX/execution and exact
 source-consumer decisions remain subsequent packets; none is selected or
 implemented here. Full product/qualification requirements remain. No remote
 publication is performed; only assigned local landing and closure commits.
+
+## Managed native doorway follow-through — completed
+
+NPD-MANAGED-01 delivered the existing ordinary native New/Open doorway in
+`45f77006c661019e02928b90dba2a9f1b177bc4d`, with actual C04 T01–T09
+correlation, distinct C05 native replay PASS and actual appointed-manager C06
+objective acceptance. The [owning task record](../workflow-delivery-rollout/native-project-doorway.md#actual-c06-objective-acceptance-and-landing)
+retains exact receipts, source/binary identity, failures and qualification limits.
+The manager explicitly restores only the previous S5A selection during closure;
+its owner pause, unclaimed state, retained grant and unfinished contract persist.
+No paused work is resumed or successor execution inferred.

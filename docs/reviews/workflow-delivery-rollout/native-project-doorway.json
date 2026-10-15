@@ -1,0 +1,69 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "45f77006c661019e02928b90dba2a9f1b177bc4d",
+  "launch_command": "target/debug/datum-gui",
+  "workflow_results": {
+    "Launch Datum without project/import/demo arguments and enter the reviewed native New/Open doorway.": true,
+    "Create a native Project through existing engine genesis with an explicit valid Working Units source; complete the reviewed creation-to-open flow.": true,
+    "Open a supported native Project through ordinary GUI controls without terminal provisioning; preserve the existing native editor owners.": true,
+    "Cancel New/Open and exercise invalid, busy, corrupt, unsupported and recovery cases with truthful visible outcomes.": true,
+    "Save, close and reopen the native Project with stable identity, source/history and existing bounded edit behavior preserved.": true,
+    "Complete the approved doorway keyboard, focus and accessibility workflows in the ordinary application.": true
+  },
+  "safety_results": {
+    "Cancel and refused operations preserve authored source and journal without partial project/session publication.": true,
+    "Use existing engine genesis, resolver and writer admission; reject stale, invalid or conflicting source/recovery states without private writes.": true,
+    "Preserve current Global/Project Preferences ownership and explicit Units seed provenance; no implicit preference adoption.": true,
+    "Opening or creating does not invent library content, approve unknown data, rename native file profiles or modify original external source inputs.": true,
+    "Keep full authoring and S5A read-only boundaries distinct; no broader mutation or manufacturing qualification is inferred.": true
+  },
+  "workflow_observations": [
+    "T01: no-argument Main has absent Project; ordinary File New/Open and Ctrl+N, without sample/genesis or reserved Start page.",
+    "T02–T04: actual GUI Global A and explicit Factory B; final same-repository stale refusal/draft/focus/absent destination, explicit refresh generation2 then GUI D create/Open with immutable receipt.",
+    "T03/T05: single existing guarded Open worker; Save/close/reopen and distinct fresh-process A reopen preserve UUID, authored files and history.",
+    "T04/T06/T07: cancellation, collision, missing/corrupt/unsupported/busy sources and corrupt integrity refused with preservation; eligible committed canonical recovery restores exact head without journal append; created C survives later terminal-Open refusal and ordinary retry succeeds.",
+    "T08: actual software-native Tab/Shift-Tab/Enter/Escape, focus, control roles/states/full refusal values and controlled close; distinct ordinary/narrow Main replay.",
+    "T09: Global Imperial generation2 leaves original A Metric in ordinary Project Preferences; A/B/D source/history hashes unchanged."
+  ],
+  "evidence_mode": "Production App/Winit X11 and WGPU Vulkan on Intel HD Graphics P630/Mesa25.0.7; native software input and PID-qualified GI AT-SPI inspection. Actual captures/logs/fixtures remain external; no physical/HUMAN or assistive-user acceptance.",
+  "task_evidence": "docs/reviews/workflow-delivery-rollout/native-project-doorway.md",
+  "source_cohort": "Implementation commit is byte-identical to the independently verified frozen38 Rust pins. Final native GUI d277ae53 is the R4 source cohort. Prior native02/03/partial/unreadable/migration evidence is reused only at explicitly unchanged seams; not relabelled as whole final-cohort qualification.",
+  "source_manifest_sha256": "646555f0803a2ec89f9e4c040bb7be69ceb1280dfb646dc49919569ddf20b259",
+  "native_proof_map_sha256": "e805c61d98497f83baaf8d46cc7bc673b09d8386c696d8df04bcb86f42e15b48",
+  "independent_review": {
+    "step": "NPD-C05",
+    "result": "actual bounded PASS",
+    "receipt_sha256": "0dadb2e990ecac79aa4414063e7834877f767a9c26513ef229c4f25c9f09c804",
+    "scope": "Distinct native startup/NewCancel/GlobalA/FactoryB/Save/reopen/OpenCancel/collision/required-shard/focus/accessibility/narrow/fresh-process replay; remaining matrix independently assessed at exact declared worker source cohorts."
+  },
+  "objective_acceptance": {
+    "step": "NPD-C06",
+    "manager": "codex-reorganization-manager-20261014",
+    "assignment": "NPD-MANAGED-01",
+    "receipt_sha256": "6bddeb00e9bf193b3152b141c86560b09a5f1a1db7be40b2fdfe7faad6664895",
+    "scope": "Actual delegated acceptance of bounded ordinary native doorway; no HUMAN, product expansion, full qualification or successor execution."
+  },
+  "binary_cohort": {
+    "target/debug/datum-gui": "d277ae53c8104a0dcf331ac9f59c1c01dd3d32d77195b35ee9f3cf5799bbd41b",
+    "target/debug/datum-eda": "eda63e762eb42076200a2de74306acb295339e7df39617241ebad09193b4c9a9",
+    "target/debug/eda-engine-daemon": "6440a2ce888640f762925a34b67532e4f265b0542b394dc14a47858759bc0b41"
+  },
+  "retained_failures": [
+    "Affected genesis9PASS/1FAIL: preexisting concurrent Factory writer-lock defect dat-genesis-concurrent-replay-lock-sg3e; unavailable-reader1PASS and injected defensive unresolved-value1PASS are separate controls, not a green suite.",
+    "Full drift exit101 at16 preexisting Clippy errors; later full gates unreached.",
+    "Interrupted compile, failed pre-fix clipping/roles/shard/stale attempts and rapid synthetic Tab/unsuccessful Alt+F4 observations remain retained. Confirmed isolated key focus/activation and WM_DELETE_WINDOW passed.",
+    "AT-SPI cache GetItems warning dat-atspi-cache-introspection-4v0p remains; dynamic native property inspection succeeded."
+  ],
+  "pending_qualification": [
+    "Full native library/schematic/PCB/manufacturing and standards/content qualification remain on their existing owners.",
+    "Actual NPD-C04 native T01–T09 and C05 distinct replay are complete; bounded ordinary doorway development availability has actual manager C06 acceptance. Full platform, visual, accessibility and endurance qualification remains separate.",
+    "Existing performance budgets and broader host/hardware qualification retain their actual authority; no unsupported new startup threshold.",
+    "Existing global Clippy/GUI parity and other disclosed qualification gaps remain separately open.",
+    "Any genuinely applicable conformance HUMAN/physical/assistive judgment stays explicitly unclaimed when absent; trace an exact governing row and affected claim before treating it as a development prerequisite. Owner use is voluntary feedback, not a required manual test script."
+  ],
+  "scope_limits": [
+    "No full physical/HUMAN/assistive-user/host/platform/endurance or library/schematic/PCB/manufacturing qualification inferred.",
+    "Injected Ready missing descriptor-default covers a defensive unresolved-value branch; shipped eight valid literal defaults cannot normally produce it. Unavailable provider and actual unreadable/migration native cases are distinguished.",
+    "S5A retains explicit owner pause and exact unfinished contract; pointer restoration authorizes no execution."
+  ]
+}
