@@ -98,6 +98,15 @@ contracts/decisions/owner receipts remain; no automatic intake successor or
 S5A resumption is implied. Structural inventory does not establish that every
 fragment has been consumed or safely removed.
 
+First consolidation landed in `bb9d15f7`: four files retired, 515 tracked text
+documents reduced to 511, and duplicate capability prose replaced with existing
+ownership links. Independent review passed after preserving historical M0
+closure facts. Source health (3,161 sources), governance, evidence traceability,
+parity, progress coverage and Frontier checks pass. No Cargo proof rerun was
+needed or performed. Bounded DOC-A01–03 are complete; remaining semantic
+reconciliation stays open and is not automatically scheduled. Original paused
+S5A task/grant is restored exactly without ownership or execution resumption.
+
 ## Bounded specification and workspace cleanup
 
 The owner selected these five improvements on 2026-10-14. Current product
