@@ -1,5 +1,103 @@
 # Review records and temporary proof output
 
+## Documentation fragmentation audit and first consolidation
+
+Owner-directed 2026-10-14 audit and justified consolidation/removal. This
+landing covers structural inventory and the first verified retirements; it
+is not a claim that all semantic documentation duplication has been resolved.
+S5A remains paused, with product requirements and approval records unchanged.
+
+<!-- REQ:DOCUMENTATION-CONSOLIDATION:DOC-A01 -->
+- DOC-A01: Inventory all tracked text documents and identify reference/duplicate candidates.
+<!-- REQ:DOCUMENTATION-CONSOLIDATION:DOC-A02 -->
+- DOC-A02: Integrate the redundant M4 shard and retire three obsolete M0/M1 execution documents preserving historical retrieval.
+<!-- REQ:DOCUMENTATION-CONSOLIDATION:DOC-A03 -->
+- DOC-A03: Explain documentation directory roles and target contents; record unresolved semantic candidates separately.
+
+<!-- EVIDENCE:DOCUMENTATION-CONSOLIDATION:DOC-A01 -->
+At source 8d0e8ca4, inventoried all 515 tracked .md/.rst/.txt documents and
+scanned references in all 5,921 readable tracked UTF-8 files (43 binary or
+unreadable files excluded from text scanning). The disposable per-file CSV and
+JSON audit are /tmp/datum-documentation-audit-20261014.{csv,json}; no raw audit
+bundle is added to Git. Found 33 pairs sharing at least three substantive
+paragraphs and 110 documents without detected narrative inbound references.
+These are structural review candidates, not proof of semantic redundancy.
+There are no byte-identical Markdown documents; eight identical text-capture
+groups are historical evidence. Required license copies are retained.
+Of the 515 documents, 215 have no direct governance entry; this includes
+research, reviews, licenses and companion notes outside mandatory globs and
+must not be interpreted as 215 governance failures or deletion approvals.
+
+<!-- EVIDENCE:DOCUMENTATION-CONSOLIDATION:DOC-A02 -->
+Removed docs/workflows/m4_live_slice.md: every capability/limitation already
+exists in specs/progress/m4_details.md, including the direct pool-ref query,
+replacement artifacts and schema-only component_silkscreen_texts. The scenario
+document now links to that sole detail owner and its duplicated live-status
+block is removed. Original launch exclusions and placeholder commands are
+explicitly historical; unique scenario rationale is retained/classified.
+The empty docs/workflows directory is removed.
+
+Removed three explicitly historical execution documents from the current tree:
+docs/M0_TASK_CHECKLIST.md, docs/M1_TASK_CHECKLIST.md and
+docs/IMPLEMENTATION_GUARDRAILS.md. Their completed/obsolete milestone sequencing
+and placeholder restrictions are not current requirements. Each complete source
+remains retrievable with `git show 8d0e8ca4:<original-path>`. The retired M0
+checklist also contained a historical closure assessment: it reported pool
+types/serialization, rule validation, SQLite indexing, import identity and
+Eagle library import implemented; original M0 exit criteria satisfied with 22
+.lbr fixtures; further golden expansion belonged to M1 rather than blocking
+M0 closure. Those dated assertions are preserved here and in the pinned source;
+they are not rerun, newly accepted or promoted to current qualification.
+No unique live product rule, current acceptance receipt or owning
+evidence-route artifact is removed.
+References among these three disappear together; the old repository-tree list
+in the explicitly historical architecture snapshot is preserved as history,
+not refreshed as current layout or used to authorize obsolete work.
+
+<!-- EVIDENCE:DOCUMENTATION-CONSOLIDATION:DOC-A03 -->
+The directory roles below distinguish current authority from rationale,
+execution history and generated output. Directory placement alone does not
+make documents redundant or confer product authority.
+
+| Location | Purpose and disposition |
+| --- | --- |
+| docs/contracts/ | Seven domain/shared interaction contracts: retain current behavior requirements. |
+| docs/decisions/ | Sixty-nine numbered decisions/amendments: preserve ratified choices and explicit supersession history. |
+| specs/ | Detailed schemas/contracts and the canonical structured Frontier/current status; not a second source of product doctrine. |
+| specs/progress/ | Detailed implementation notes linked from PROGRESS, rather than duplicated capability ledgers in scenario docs. |
+| docs/gui/ | GUI requirements/guidance and protected visual sources; retain owning authority and review before consolidation. |
+| research/ | Decision inputs with checked owning routes; unique rationale is not automatically redundant after spec integration. |
+| docs/audits/ and docs/reviews/ | Dated findings, owner/reviewer receipts and evidence. Preserve acceptance/provenance records; retire disposable capture detail only after reference review. |
+| docs/ root | Product/operational entry points plus legacy architecture/planning material; duplicate status and obsolete execution controls are consolidation candidates. |
+| target/ | Ignored local Rust output, currently also holding historical native fixtures. Not tracked source or part of pushes. |
+
+At the audit boundary docs/reviews had 2,589 tracked files, 57.7 MiB of file
+content (155 text documents plus structured reports/records). File count,
+required decision records, rationale and current requirements are separate
+questions; merging all of them would erase useful roles without resolving
+contradictions. Identical license texts remain distributed where required.
+
+Target occupies 2.78 GiB allocated: debug holds 1.33 GiB in the retained CLI,
+GUI and engine-daemon binaries (unstripped ELF files with debug information),
+with approximately 1.45 GiB in fixture/proof
+collections. It has zero tracked files. Its 568 native project roots include
+referenced/current S5A and user-edit inputs, not just rebuildable cache. The
+793 MiB S5A inventory alone contains 81 projects. Do not use `cargo clean` or
+blanket target removal while these inputs are mixed with build output. The
+existing guarded build-only pruner retains them; newly managed S5A fixtures
+already default outside the checkout. Migration of referenced inputs must
+preserve hashes, location/recovery records and replay references first.
+No target data was deleted or moved in this documentation pass.
+
+Remaining semantic reconciliation is explicitly tracked as dat-documentation-semantic-reconciliation-olnn.
+It covers repeated IR/selection and performance clauses, rationale/spec pairs,
+retired execution plans and June audits, stale dependency/launch assumptions,
+review capture duplication and nonportable Markdown links. Complete owning
+routes and exact consumers must be reviewed before each such edit. Current
+contracts/decisions/owner receipts remain; no automatic intake successor or
+S5A resumption is implied. Structural inventory does not establish that every
+fragment has been consumed or safely removed.
+
 ## Bounded specification and workspace cleanup
 
 The owner selected these five improvements on 2026-10-14. Current product

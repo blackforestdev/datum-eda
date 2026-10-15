@@ -1,7 +1,8 @@
 # M4 Detailed Progress Notes
 
 This file holds detailed M4 implementation notes referenced by
-`specs/PROGRESS.md`.
+`specs/PROGRESS.md`. The historical scenarios in `docs/USER_WORKFLOWS.md`
+link here for coverage rather than maintaining a separate command summary.
 
 ## Native format
 

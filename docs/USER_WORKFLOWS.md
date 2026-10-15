@@ -1,6 +1,9 @@
 # User Workflows
 
-> **Status**: Non-normative design rationale.
+> **Status**: Historical milestone scenarios and non-normative design rationale.
+> Original v1 target-user exclusions and placeholder commands below describe
+> the original launch plan, not current product scope or executable CLI help.
+> Current product authority is CLAUDE.md, ratified decisions and domain contracts.
 > The controlling CLI surface is `specs/PROGRAM_SPEC.md`.
 > The controlling MCP surface is `specs/MCP_API_SPEC.md`.
 > Command names and MCP tool names used in this document are illustrative
@@ -155,37 +158,10 @@ The M4 workflow enables creating a project, placing symbols, wiring,
 annotating, forward-annotating to board, and exporting manufacturing
 files — all via CLI or MCP, no GUI required.
 
-Current live slice:
-- Native scaffold + inspect/query surfaces for schematic/board/rules/check are
-  implemented.
-- Forward-annotation audit/proposal/review/apply and artifact workflows are
-  implemented in the current slice.
-- Native board authoring covers components, pads, tracks, vias, zones, texts,
-  keepouts, dimensions, outline, stackup, nets, and net classes.
-- Manufacturing outputs cover BOM/PnP, drill/Excellon, and the current Gerber
-  outline/copper/soldermask/silkscreen/paste/mechanical subsets with
-  export/inspect/validate/compare flows.
-- Manufacturing-set workflow now also includes a directory inspection step
-  against the deterministic expected artifact list, separate from validate and
-  compare.
-- Package-linked persisted subset is currently limited to silkscreen non-text
-  primitives, courtyard on fixed mechanical layer `41`, resolved package pads
-  in `component_pads`, and `models_3d`. Package pads only carry circle/rect
-  aperture geometry in this slice when the source padstack explicitly defines
-  it; otherwise they remain aperture-less rather than inventing shape. They
-  may also carry optional source-backed `drill_nm` when the resolved padstack
-  defines it. The current Excellon drill and drill-hole-class slices consume
-  that drill-bearing subset as through holes on the outer copper pair, while
-  standalone CSV drill export/inspect/validate/compare remains via-only. The
-  current copper/soldermask/paste Gerber slices consume only the
-  explicit-aperture subset of those persisted package pads; aperture-less
-  package pads remain out of manufacturing claims. Detailed current M4 command
-  coverage, including manufacturing-set workflow and direct per-component
-  package-linked query surfaces, is tracked in
-  `docs/workflows/m4_live_slice.md`.
-- Detailed current command ledger is maintained in
-  `docs/workflows/m4_live_slice.md`.
-- Status authority for this slice remains `specs/progress/m4_details.md`.
+Implementation coverage and its recorded limits belong in
+[the existing M4 progress notes](../specs/progress/m4_details.md), including
+native queries, authoring, forward annotation, replacement artifacts and
+manufacturing. These scenarios do not maintain a second capability ledger.
 
 MCP tools for this flow are defined in `specs/MCP_API_SPEC.md` §M4:
 `place_symbol`, `draw_wire`, `place_label`, `annotate`,
