@@ -390,3 +390,115 @@ project-state 95 and current projection; progress coverage; 569 classifications
 previous accepted structural/resource/source-health results for unchanged code
 and tooling; no compiling/native/proof campaign is justified by these four prose
 replacements. Normal local commit hooks remain required.
+
+### Actual residual batch-A acceptance and batch-B continuation
+
+<!-- EVIDENCE:SPECIFICATION-RESIDUAL-CLEANUP:RRC-01 -->
+Appointed manager `codex-reorganization-manager-20261014` recorded actual
+**ACCEPTED_BATCH_A** against local landing
+`be576a8bb1dbe3077bce2572d4145b7825c9f6c6` and actual distinct review
+`8ef473c5aa657a781d5f0bb1dba17cd7428f94df08dda65ba13a558ab1b51989`.
+The manager verified the clean commit/parent and seven paths, all nine final
+hashes, seven unchanged frozen candidate pins and two reconstructed faithful
+review/digest metadata deltas. Both reviewed digests, memberships and other
+27 routes match the actual review. Final focused checks/hooks are reused at
+their actual scope. This is real PM059 objective batch acceptance under the
+recorded owner assignment, not independent self-review or a fabricated owner reply.
+
+Actual acceptance receipt SHA-256:
+`672a2b9ecefbea5ad546e41a7b4b84a6335e19b5482409e5a8166195c8bc1024`.
+RRC-01 completes and RRC-02 becomes the one active step in the synchronized
+Frontier/tracker/projection transaction. The same live claim and exact nine-path
+grant continue. RRC-03 and final selection restoration remain pending. The two
+accepted batch-A content files stay exact; no source, qualification, optional
+cleanup or successor authority follows.
+
+Batch-B authority preflight reads PM000 Object Identity, ENGINE §0.4/§0.7,
+NATIVE_FORMAT §6.9/§9 and PM011's frozen one-time conversion/native-authority
+boundary. PM000 retains existing imported v5 values as initial persisted seeds;
+ENGINE resolves the persisted mapping through `import_key`, while `source_hash`
+is evidence. No new or different UUID is required by that distinction. Native
+persistence preserves source-origin metadata; it does not make sidecar refresh
+the native identity law. The old seed/sidecar descriptions do not establish
+active runtime behavior or qualify an importer. No remapping/allocation rule,
+schema, converter change or reopening of PM011 is authorized here.
+
+The accepted batch-A source-pinned foundation review and actual independent
+receipt deliberately carry forward: all 24 current foundation member bytes and
+metadata match accepted batch-A landing before this change. Only the exact
+IMPORT_SPEC seed/sidecar consumer delta requires new candidate review;
+CANONICAL_IR has no direct route but remains subordinate to ratified authority.
+No new sources, consumers, product rules or whole-file legacy classification.
+
+The manager separately clarified a wording typo in its continuation: batch B
+authorizes two content paths plus five existing support paths (this task record,
+traceability, Frontier, PROGRESS and beads), seven potentially changed paths
+within the same nine-path assignment. The original acceptance receipt remains
+unchanged; the explicit path list controls. Neither accepted A content file
+changes in B.
+
+Batch B qualifies only CANONICAL_IR's leading imported-seed/sidecar descriptions
+and IMPORT_SPEC §§1–2. Existing v5 values remain initial persisted seeds;
+`import_key` resolves the stored mapping and `source_hash` is evidence. The
+clarification requires no newly generated or different UUID, runtime remapping
+or deletion/recreation on native display rename. Original deterministic seed
+algorithms, namespace constants, object paths, schema examples, sidecar precedence
+and historical rename rationale remain intact under explicit compatibility scope.
+No legacy runtime behavior is newly claimed active or tested. Other import
+contracts and every CANONICAL_IR section from References onward remain exact.
+PM011's freeze and native-authority boundary remain, with no new converter,
+source-format write-back or qualification. The unchanged accepted-A foundation
+review deliberately carries forward to actual distinct B candidate review; only
+the affected IMPORT_SPEC delta changes this existing route. No B review PASS,
+landing or objective acceptance is asserted before actual receipt/disposition.
+
+### Actual residual batch-B independent review and reconciliation
+
+Distinct reviewer `/root/reorganization_review` returned actual
+**BOUNDED_SOURCE_REVIEW_PASS**, with no mandatory findings, for RC-03.
+Actual receipt SHA-256:
+`435858135d934b7aa6cb1e7133374ec08b32663b0309ca82930f7682d0a68dc7`.
+Frozen packet SHA-256:
+`9f8bd80c97b01417f3472fbd1178402a9a6e832e48c769ee70aaeb7f22452bac`;
+patch SHA-256:
+`073a76516a9b39c5fdcf77f9eff508649fc05a8d375d1f145feef0d783d7ae92`.
+All nine current pins and the exact six-path patch matched before faithful
+review/digest metadata updates. Review transport remains external scratch,
+without a permanent raw-availability promise.
+
+The actual reviewer checked all seven changed content spans against PM000,
+ENGINE, native persistence and PM011. Existing v5 values remain initial
+persisted seeds; `import_key` resolves the stored mapping and `source_hash`
+is evidence. No new/different UUID, allocation/remapping policy, active legacy
+runtime, importer qualification or whole-file historical label is implied.
+Inverse reconstruction preserves original algorithms, constants, paths, schema
+examples, sidecar precedence/location and historical rename rationale exactly.
+All original code fences and markers remain exact; CANONICAL_IR from Derived
+objects onward and IMPORT_SPEC from §3 onward remain byte-identical.
+
+The reviewer verified accepted A content and unchanged generated projection,
+all 94 original task records/root settings apart from the authorized S5A flag,
+all 330 original tracker rows, and the single cleanup-step/notes transition.
+The seven introduced Markdown targets and heading fragments resolve. Actual
+accepted-A complete foundation review is deliberately reused at all 24 verified
+member identities; only the IMPORT_SPEC delta changed and was freshly reviewed.
+The other 23 members and other 28 route records remain exact. No fresh full-route
+reread, runtime proof or product qualification is asserted.
+
+The manager read that actual receipt and verified all nine current pins and the
+frozen patch, then directed only faithful review metadata, one digest update,
+focused checks and normal local landing. After actual independent review, the
+sole affected `foundation-consumer-completion` digest is reconciled to
+`abc25ee99c1600c281c3267f16b47c69d07320232b785b230942635f8b351395`.
+RRC-02 remains active until actual local landing and manager objective acceptance;
+RRC-03/final closure remain pending. Accepted A content stays exact. No product,
+source, schema, tooling, prototype, waiver, build, replay or push follows.
+
+Final batch-B affected checks after actual review/digest reconciliation PASS:
+project-state 95, current generated projection, progress coverage, 569 classified
+documents (478 governed / 59 doctrine / 3 pending / 29 historical), 30 parity
+inventories, 29 evidence routes / 131 artifacts and whitespace. Exact content
+inverse/code-fence/suffix preservation and actual reviewer link/fragment checks
+remain valid on unchanged content. Unchanged broader structural results are
+reused; no product build or native proof is justified by this scope clarification.
+Normal local commit hooks remain required; objective B acceptance follows landing.

@@ -18,20 +18,35 @@ undo/redo, and cross-reference.
 **Native objects** (created in this tool): UUID v4, randomly generated
 at creation time.
 
-**Imported objects** (from KiCad, Eagle, etc.): UUID v5 (deterministic,
-namespace-based). The UUID is derived from:
+**Imported identity authority.** [PM000 Object Identity](decisions/PRODUCT_MECHANICS_000_UNIFIED_DESIGN_MODEL.md#object-identity)
+owns the persisted-surrogate rule. Existing imported v5 values are retained as
+initial persisted import seeds; this does not require a new or different UUID.
+[ENGINE_SPEC §0.7](../specs/ENGINE_SPEC.md#07-import-map-and-provenance) owns
+resolution through the persisted Import Map keyed by `import_key`, with
+`source_hash` as evidence rather than identity. The stored mapping governs
+subsequent native identity; source names, paths and hashes do not replace it.
+[NATIVE_FORMAT_SPEC §6.9/§9](../specs/NATIVE_FORMAT_SPEC.md#9-imported-project-persistence)
+owns source-origin metadata and native persistence. This is an authority/scope
+clarification, not a new allocation, remapping or runtime qualification rule.
+
+**Deterministic import seeds (compatibility algorithm)** from KiCad, Eagle,
+etc. use UUID v5 (namespace-based). The seed value is derived from:
 - Namespace: import format identifier (e.g., `kicad`, `eagle`)
 - Name: the stable object identifier from the source format
   - KiCad: uses the file's internal UUID (KiCad assigns UUIDs to objects)
   - Eagle: uses element name + type path (e.g., `element:R1`, `signal:VCC`)
 
-This guarantees: **the same file imported twice produces identical UUIDs.**
-Deterministic import identity is required for:
+For this seed algorithm, **the same file and import code produce identical
+UUID seed values**. The recorded compatibility rationale for deterministic
+import identity was:
 - Operation replay across sessions on imported projects
 - MCP/CLI workflows that address objects by UUID
 - Deterministic diffs between import runs
 
-**Sidecar persistence**: Before native format exists (M0-M3), imported
+**Sidecar persistence (legacy compatibility description).** The following
+M0–M3 description records the earlier sidecar contract; it does not establish
+that this legacy runtime path remains active or govern native Import Map identity.
+Before native format exists (M0-M3), imported
 designs persist their UUID mapping in a sidecar file (`<filename>.ids.json`)
 alongside the source file. This file maps source object identifiers to
 assigned UUIDs. If the sidecar exists on re-import, UUIDs are restored

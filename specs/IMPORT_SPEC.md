@@ -2,6 +2,16 @@
 
 ## 1. Deterministic UUID v5 Algorithm
 
+This section records deterministic import-seed derivation and compatibility
+examples, not the native identity authority or current runtime coverage.
+[PM000 Object Identity](../docs/decisions/PRODUCT_MECHANICS_000_UNIFIED_DESIGN_MODEL.md#object-identity)
+retains existing imported v5 values as initial persisted seeds; no new or
+different UUID is required by this distinction.
+[ENGINE_SPEC §0.7](ENGINE_SPEC.md#07-import-map-and-provenance) owns subsequent
+identity resolution through the persisted Import Map keyed by `import_key`.
+`source_hash` remains evidence, not its identity key. Preserve that mapping;
+this documentation clarification introduces no allocation or remapping policy.
+
 ### Namespace UUIDs (fixed, hardcoded)
 ```
 NAMESPACE_KICAD = UUID v5(DNS, "import.kicad.eda-tool")
@@ -50,12 +60,27 @@ fn import_uuid(namespace: Uuid, object_path: &str) -> Uuid {
 ```
 
 ### Guarantee
-Same file, same import code → identical UUIDs. This is tested by
-importing the same file twice and asserting byte-identical output.
+The recorded compatibility guarantee is: same file, same import code → identical
+UUID seed values. Its original test description imports the same file twice and
+asserts byte-identical output; no current execution or qualification result is
+asserted here. Native identity continuity follows the persisted mapping above.
 
 ---
 
 ## 2. Sidecar .ids.json
+
+The schema, precedence, source-path rename rationale and file location below are
+retained legacy compatibility descriptions. They do not establish that this
+sidecar runtime remains active, nor define native identity resolution.
+[NATIVE_FORMAT_SPEC §6.9/§9](NATIVE_FORMAT_SPEC.md#9-imported-project-persistence)
+owns preservation of source-origin identity metadata and native persistence.
+The target Import Map follows PM000/ENGINE §0.7 above: `import_key` resolves the
+stored mapping; a source-hash refresh does not become the native identity law.
+[PM011](../docs/decisions/PRODUCT_MECHANICS_011_IMPORT_INTEROP_ROLE.md#decision)
+retains native authority after conversion and the import freeze. Nothing here
+changes a schema, implements conversion or authorizes source-format write-back.
+These compatibility labels apply only to the seed/sidecar material in §§1–2;
+other import contracts retain their existing scope and authority.
 
 ### Purpose
 Persist UUID assignments alongside source files for cross-session
@@ -90,6 +115,10 @@ are positional (Eagle wire indices) and may shift on re-save.
    → write .ids.json
 
 ### Rename behavior
+The original compatibility rationale below describes source-path seed changes.
+It is not a native identity rule or an instruction to delete/recreate a native
+object on display rename; the persisted Import Map remains authoritative.
+
 If an Eagle element is renamed (e.g., R1 → R101), its object path
 changes, producing a new UUID. The old UUID is lost. This is correct
 behavior — the import treats it as a delete + create, which matches
