@@ -1,5 +1,85 @@
 # Review records and temporary proof output
 
+## Documentation ownership and external audit output
+
+Owner selected the three organization improvements on 2026-10-14. Preserve
+current requirements, unique rationale, retained inputs and paused S5A.
+
+<!-- REQ:DOCUMENTATION-OWNERSHIP-ORGANIZATION:MAP-01 -->
+- MAP-01: Clarify authoritative documentation ownership and navigation without adding rival product rules.
+<!-- REQ:DOCUMENTATION-OWNERSHIP-ORGANIZATION:MAP-02 -->
+- MAP-02: Consolidate verified overlapping requirements into their existing authoritative homes while retaining unique rationale and historical recovery.
+<!-- REQ:DOCUMENTATION-OWNERSHIP-ORGANIZATION:MAP-03 -->
+- MAP-03: Move remaining checkout-level .datum test producers to external workspaces, verify, independently review and publish all three improvements.
+
+<!-- EVIDENCE:DOCUMENTATION-OWNERSHIP-ORGANIZATION:MAP-01 -->
+Added the [documentation map](../README.md), linked from root README. It routes
+questions to existing doctrine, domain contracts, formal subject owners,
+canonical IR, selected status/grant, review evidence, research and source/test
+owners. It explicitly preserves CANONICAL_IR's governed ownership and separates
+ENGINE_DESIGN's rationale. Current/target/compatibility/historical labels and
+requirement versus delivery versus qualification remain distinct. It introduces
+no product rule or competing roadmap. The map is classified and this selected
+maintenance task supplies its roadmap placement; no new inventory shapes.
+
+<!-- EVIDENCE:DOCUMENTATION-OWNERSHIP-ORGANIZATION:MAP-02 -->
+Consolidated the verified engine/IR overlap into existing owner links.
+ENGINE_DESIGN no longer carries parallel Pool/Board/Schematic field diagrams,
+dynamic Operation trait or Engine/execute_batch method declarations. It links
+exact engine type/status, operation/batch/commit, API and native persistence
+owners while retaining headless rationale, pool inspiration/index rationale,
+workflow-family illustration and rule examples with explicit nonnormative scope.
+The unrestricted "read any version >=1" claim in CANONICAL_IR now delegates to
+NATIVE_FORMAT_SPEC §8's supported-version/future-refusal/current-target contract.
+No formal engine/native contract or product decision changed.
+
+CANONICAL_IR retains governed ownership. Its complete PM053/PM054 reconciliation
+suffix is byte-identical to 62819c9b, as are its recursive RuleScope/JSON,
+coordinate conventions, index rationale, integer precision and invalidation
+motivation. Both edited documents have no owning evidence route; existing route
+sources/consumers/digests are unchanged. Governance classification and this
+Frontier entry identify their roles without promoting nonnormative examples.
+All replaced wording remains retrievable with `git show 62819c9b:<original-path>`.
+Independent assessment identified these boundaries before editing; independent
+final implementation review passed. This resolves these concrete overlapping definitions, not every
+remaining semantic duplication candidate in the broader intake.
+
+<!-- EVIDENCE:DOCUMENTATION-OWNERSHIP-ORGANIZATION:MAP-03 -->
+Eleven existing CLI audit fixture producers now call the shared development
+workspace owner, registered once in the CLI test parent. New roots go to
+`$HOME/Documents/datum-eda-workspaces/scratch/footprint-reference-audit/`
+or the explicit external `DATUM_DEVELOPMENT_WORKSPACE` base, keeping each
+existing UUID-qualified fixture name. Fixture payloads, authored operations,
+refusal assertions and history/reopen tests are unchanged. A project's own
+`.datum/journal` remains inside that project; only checkout-level placement
+changed. Existing local audit inputs and recovery controls are preserved.
+
+Verification uses the existing 32 affected tests only, in one guarded CLI test
+run with a task-owned external base and disk-backed temporary directory. This
+requires a cold test-binary compilation after prior cache pruning. Source-health
+policy regressions pass (13 tests), and the focused drift battery passes:
+resource, dependency, preferences, terminal boundaries, design tokens, governance,
+parity, traceability, progress and Frontier checks. All 63 relative links/anchors in the four edited navigation/architecture
+documents resolve. All 32 affected CLI tests passed in one run (28.75 seconds of test execution,
+908 unrelated cases filtered). The external audit family was created and empty
+afterward because the tests already remove their own projects. All 18,769
+retained local audit metadata records (paths, modes, sizes and modification
+times) match their pre-test snapshot. No retained fixture was moved or deleted.
+The first release check incorrectly expected surviving project markers; it
+refused without deleting output. Corrected it to require the empty external
+family and unchanged retained inputs; no compilation or test rerun followed.
+Removed that empty exclusive verification workspace after active-user checks.
+The guarded build-only prune removed nine released compiler entries, preserving
+all native inputs/recovery controls and the three current executables.
+
+Independent final implementation review passed for all 21 owned paths; landing
+closure and publication follow separately.
+The eleven producers now use external scratch. Older cleanup records below
+state the paths/producers observed at their dated revisions; this section owns
+the current producer placement. Broad semantic-documentation reconciliation
+remains open as unselected intake, without an automatic successor.
+No GUI/performance campaign or full qualification is inferred.
+
 ## Organization and evidence cleanup
 
 Owner selected the measured cleanup on 2026-10-14. Native data, current

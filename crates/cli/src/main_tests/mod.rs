@@ -1,5 +1,8 @@
 use super::*;
 
+#[path = "../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
+
 fn eagle_fixture_path(name: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/eagle")

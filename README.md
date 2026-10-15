@@ -181,6 +181,9 @@ modules and starts the application; existing Rust module identities remain stabl
 
 ## Documentation
 
+Start with the [documentation map](docs/README.md) to find requirement owners,
+implementation and test entry points, status, reviews and historical context.
+
 User designs belong in a user-chosen project directory. New generated native
 fixtures use an external, owner-labelled workspace rather than the checkout:
 
@@ -199,28 +202,13 @@ locations; never sweep user designs or referenced proof inputs. Existing explici
 root arguments remain available for source-pinned replay. Cargo build output
 continues to use the separate guarded, disk-backed target policy.
 
-| Document | Contents |
-|---|---|
-| [`CLAUDE.md`](CLAUDE.md) · [`AGENTS.md`](AGENTS.md) | Contributor entry and workspace/verification rules |
-| [`docs/AGENT_OPERATIONAL_PROCEDURES.md`](docs/AGENT_OPERATIONAL_PROCEDURES.md) | Action-specific procedures; read applicable sections |
-| [`docs/DATUM_PRODUCT_MECHANICS.md`](docs/DATUM_PRODUCT_MECHANICS.md) | Controlling product doctrine |
-| [`docs/decisions/`](docs/decisions/) | Ratified decision records |
-| [`docs/contracts/`](docs/contracts/) | Domain tool contracts: schematic, PCB, library, rules, manufacturing, AI/CLI/MCP surface, UI layout |
-| [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) | Formal specification entry: subject owners, governed requirements status and historical program context |
-| [`specs/STANDARDS_COMPLIANCE_SPEC.md`](specs/STANDARDS_COMPLIANCE_SPEC.md) | Standards registry, support dispositions, waiver and deviation obligations |
-| [`docs/CANONICAL_IR.md`](docs/CANONICAL_IR.md) · [`docs/ENGINE_DESIGN.md`](docs/ENGINE_DESIGN.md) | Data model, invariants, operation model |
-| [`docs/DATUM_SHARED_TOOLING_TAXONOMY.md`](docs/DATUM_SHARED_TOOLING_TAXONOMY.md) | Shared editor-tooling backbone |
-| [`docs/gui/`](docs/gui/) | Desktop application product model, conformance, visual language, terminal specifications |
-| [`specs/PROGRESS.md`](specs/PROGRESS.md) · [`specs/SPEC_PARITY.md`](specs/SPEC_PARITY.md) | Implementation status and machine-checked inventory |
-
-[`PLAN.md`](PLAN.md) and
-[`docs/PROJECT_ARCHITECTURE_REFERENCE.md`](docs/PROJECT_ARCHITECTURE_REFERENCE.md)
-retain historical launch/milestone context. Current product requirements live in
-the doctrine and domain contracts above; current scheduled work comes from the
-Frontier. `docs/reviews/` holds compact findings and acceptance records;
-`research/` records the rationale feeding governed contracts. Temporary captures
-belong in ignored, task-owned output as described in
-[`docs/reviews/README.md`](docs/reviews/README.md).
+The [documentation map](docs/README.md) names the existing product, domain,
+IR/interface, evidence and historical owners, with source and test entry points.
+Its subject-spec links delegate to the existing
+[formal ownership map](specs/PROGRAM_SPEC.md#ownership-and-precedence).
+Current product requirements and scheduled work retain their existing authority;
+old launch and milestone records remain historical. For temporary captures and
+preserved native inputs, use the [review index](docs/reviews/README.md).
 
 ## Roadmap
 

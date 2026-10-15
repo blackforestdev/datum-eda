@@ -231,8 +231,7 @@ fn footprint_json_edit(root: &Path, payload: &serde_json::Value) -> Result<Strin
 }
 
 fn footprint_edit_project(label: &str) -> PathBuf {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../.datum/footprint-reference-audit")
+    let root = crate::main_tests::development_workspace::path("footprint-reference-audit")
         .join(format!("{label}-{}", Uuid::new_v4()));
     create_native_project(&root, Some(label.to_string())).unwrap();
     create_footprint_fixture(&root);

@@ -3,13 +3,16 @@
 > **Status**: Non-normative architecture rationale.
 > The controlling API and type contracts are `specs/ENGINE_SPEC.md`,
 > `specs/PROGRAM_SPEC.md`, and `specs/MCP_API_SPEC.md`.
-> If this document conflicts with `specs/`, `specs/` win.
+> The [ownership map](../specs/PROGRAM_SPEC.md#ownership-and-precedence)
+> identifies inherited precedence; [CANONICAL_IR](CANONICAL_IR.md) retains its
+> governed ownership. This rationale does not promote examples to requirements.
 
 ## Principle: Headless-First
 
-The engine is a Rust library with no GUI dependencies. It compiles and runs
-as a library, a CLI tool, an MCP server backend, and a Python module —
-all without linking any windowing or rendering code.
+The engine is a Rust library with no GUI dependencies. Headless consumers
+use it without linking windowing or rendering code. The original architecture
+sketch also included optional Python embedding; the sketch does not claim
+implemented bindings or authorize a new dependency.
 
 The GUI is a separate crate that consumes the engine API, just like the
 CLI and MCP server do. Every committed design change flows through the
@@ -24,6 +27,8 @@ parallel design truth or unofficial write semantics.
 The locked `M7` shell and lane decisions do not change that authority
 boundary; they only constrain how the frontend presents deterministic review
 state.
+
+Illustrative original consumer topology:
 
 ```
 engine (lib crate)
@@ -41,139 +46,60 @@ engine (lib crate)
 
 ## Data Model
 
-See docs/CANONICAL_IR.md for identity strategy, precision model,
-authored/derived boundary, transaction semantics, and serialization rules.
+[Canonical IR](CANONICAL_IR.md) owns identity, precision, authored/derived
+boundaries, transaction invariants and rule representation until formally
+promoted or subsumed. This rationale does not duplicate its definitions.
+
+| Contract | Existing owner |
+| --- | --- |
+| Resolved model and source-shard authority | [ENGINE_SPEC §0.2](../specs/ENGINE_SPEC.md#02-target-authority-model) and [§0.3](../specs/ENGINE_SPEC.md#03-source-shards-as-persistence-partitions) |
+| Pool field/type contracts | [ENGINE_SPEC §1.2](../specs/ENGINE_SPEC.md#12-pool-types) |
+| Board field/type contracts | [ENGINE_SPEC §1.3](../specs/ENGINE_SPEC.md#13-board-types) |
+| Schematic field/type contracts | [ENGINE_SPEC §1.4](../specs/ENGINE_SPEC.md#14-schematic-types) |
+| Native file layouts and schemas | [NATIVE_FORMAT_SPEC](../specs/NATIVE_FORMAT_SPEC.md) |
+
+Read the engine specification's [status labels](../specs/ENGINE_SPEC.md#01-status-labels)
+and owning reconciliation sections: target, current implementation and
+compatibility shapes have different scopes. The old field diagrams in this
+rationale are replaced by those links; they are not another schema authority.
 
 ### Pool (Component Library)
 
-Derived from Horizon's pool concept, redesigned for AI queryability.
-
-```
-Unit (electrical identity)
-  ├── uuid: UUID
-  ├── name: String
-  ├── manufacturer: String
-  ├── pins: Map<UUID, Pin>
-  │   └── Pin { name, direction, swap_group, alternates[] }
-  └── tags: Set<String>
-
-Symbol (schematic representation of a Unit)
-  ├── uuid: UUID
-  ├── unit: UUID → Unit
-  ├── name: String
-  └── graphics: Vec<Primitive> (lines, arcs, circles, text, pins)
-
-Entity (multi-gate logical component)
-  ├── uuid: UUID
-  ├── name: String
-  ├── prefix: String (R, C, U, etc.)
-  ├── manufacturer: String
-  └── gates: Map<UUID, Gate>
-      └── Gate { name, unit: UUID → Unit, symbol: UUID → Symbol }
-
-Package (physical component body / terminal family)
-  ├── uuid: UUID
-  ├── name: String
-  ├── body dimensions / tolerances / mounting style
-  ├── terminals: Map<UUID, Terminal>
-  └── models: Vec<Model3D> (package-level STEP file references)
-
-Footprint (PCB land pattern)
-  ├── uuid: UUID
-  ├── package: UUID → Package
-  ├── pads: Map<UUID, Pad>
-  │   └── Pad { name, position, terminal: UUID, padstack: UUID, layer }
-  ├── courtyard: Polygon
-  ├── silkscreen/fab/assembly/mechanical: Vec<Primitive>
-  └── process aperture policy (mask/paste/standards basis)
-
-Part (the purchasable thing — key abstraction)
-  ├── uuid: UUID
-  ├── entity: UUID → Entity
-  ├── package: UUID → Package
-  ├── footprint: UUID → Footprint
-  ├── pin_pad_map: UUID → PinPadMap
-  ├── attributes: { MPN, value, manufacturer, datasheet, description }
-  ├── parametric: Map<String, String> (resistance, capacitance, etc.)
-  ├── orderable_mpns: Vec<String>
-  ├── supply_chain: Vec<SupplierInfo>
-  ├── lifecycle: Lifecycle (active, nrnd, eol, obsolete)
-  ├── tags: Set<String>
-  └── base: Option<UUID → Part> (inheritance)
-```
-
-Storage: Individual JSON files in a directory tree, indexed by SQLite.
-Same structural principle as Horizon, but schema designed from scratch.
+The architectural inspiration is Horizon's pool concept, redesigned for AI
+queryability. Individual JSON objects support human inspection and source
+control; a rebuildable SQLite index supports fast lookup. This is a structural
+principle, not adoption of Horizon's schema. The Part connects electrical and
+physical library references with purchasable-component metadata. Exact fields,
+relationships, storage and supported authoring are owned by the contracts above.
 
 ### Board
 
-```
-Board
-  ├── uuid: UUID
-  ├── name: String
-  ├── stackup: Stackup
-  │   └── layers: Vec<Layer>
-  │       └── Layer { type (copper/dielectric), thickness, material, Dk, Df }
-  ├── outline: Polygon
-  ├── packages: Map<UUID, PlacedPackage>
-  │   └── PlacedPackage { part: UUID, position, rotation, layer, locked }
-  ├── tracks: Map<UUID, Track>
-  │   └── Track { net: UUID, from, to, width, layer }
-  ├── vias: Map<UUID, Via>
-  │   └── Via { net: UUID, position, drill, diameter, layers }
-  ├── zones: Map<UUID, Zone>
-  │   └── Zone { net: UUID, polygon, layer, priority, thermal_relief }
-  ├── nets: Map<UUID, Net>
-  │   └── Net { name, class: UUID }
-  ├── net_classes: Map<UUID, NetClass>
-  │   └── NetClass { name, clearance, track_width, via_drill, via_dia, diffpair_width, diffpair_gap }
-  ├── rules: RuleSet (with query language)
-  ├── keepouts: Vec<Keepout>
-  └── dimensions: Vec<Dimension>
-```
-
-Storage: Single JSON file per board.
+The board is a physical projection/partition of the resolved model. Its native
+file representation is a persistence choice, not a second project authority.
+Use the linked board type and persistence owners for exact fields and layouts.
 
 ### Schematic
 
-```
-Schematic
-  ├── uuid: UUID
-  ├── sheets: Map<UUID, Sheet>
-  │   └── Sheet { name, instances[], net_segments[], buses[], labels[] }
-  ├── blocks: Map<UUID, Block> (hierarchical)
-  │   └── Block { components, nets, net_ties, power_symbols }
-  └── variants: Map<UUID, Variant>
-```
-
-Storage: JSON files — one per sheet, one for block hierarchy.
+Sheets and hierarchy partition electrical presentation and intent. Their files
+remain inputs to the engine-owned resolver, not independent design truth.
+Exact source types and storage belong to the linked owners.
 
 ## Operation System
 
-Every design modification goes through the Operation API:
+The typed operation/batch, proposal, commit and compensating undo contracts live
+in [ENGINE_SPEC §0.8](../specs/ENGINE_SPEC.md#08-operations-proposals-transactions-and-commit).
+The [IR transaction rationale](CANONICAL_IR.md#4-transaction-model) explains why
+validation, serializable intent, identity diffs and affected-data invalidation
+belong together. Compound actions share the atomic batch/journal path.
 
-See docs/CANONICAL_IR.md §4 for the canonical Operation trait definition
-(validate, execute, inverse, describe, serialize).
-
-```rust
-// Summary — see CANONICAL_IR.md for full definition
-pub trait Operation: Send + Sync {
-    fn validate(&self, design: &Design) -> Result<(), OpError>;
-    fn execute(&self, design: &mut Design) -> Result<OpDiff, OpError>;
-    fn inverse(&self, diff: &OpDiff) -> Option<Box<dyn Operation>>;
-    fn describe(&self) -> String;
-    fn serialize(&self) -> serde_json::Value;
-}
-```
-
-Operations are:
-- **Atomic**: Each operation is a single undoable action
-- **Validated**: Pre-flight check before execution
-- **Diffable**: Returns what changed (for undo, sync, and AI reasoning)
-- **Serializable**: Can be sent over IPC, logged, replayed
-- **Composable**: Compound operations are sequences of atomic operations
+The former dynamic `Operation` trait example is retired from this rationale;
+it must not be read as an alternative mutation gateway. The exact owner links
+preserve the distinction between target substrate and compatibility APIs.
 
 ### Operation Categories
+
+Illustrative workflow families from the original architecture sketch, not an
+implemented command/variant inventory or a qualification claim:
 
 ```
 Pool Operations:
@@ -204,10 +130,12 @@ Export:
 
 ## Rule Engine
 
-Expression-based rule scoping from M0 (see docs/CANONICAL_IR.md §6 for
-the canonical RuleScope enum). The expression tree is the data model from
-day one. The evaluator starts with leaf nodes (All, Net, NetClass, Layer)
-in M2 and expands to full combinators in M6+.
+The canonical expression representation belongs to
+[CANONICAL_IR §6](CANONICAL_IR.md#6-rule-representation). Evaluator support and
+explicit unsupported-node errors belong to the
+[ENGINE_SPEC support matrix](../specs/ENGINE_SPEC.md#16-rulescope-support-matrix).
+The examples below illustrate the design motivation, not current parser syntax
+or a replacement support inventory.
 
 Examples (informed by Altium's query language):
 
@@ -233,63 +161,21 @@ clearance {
 }
 ```
 
-Query functions: InNet, InNetClass, OnLayer, InComponent, HasPackage,
-IsVia, IsPad, IsSMD, InArea, IsDiffpair, NetName matches regex.
-
-Priority: higher number wins. First matching rule at each priority level.
+The canonical representation and support matrix above own node names, priority
+and evaluation semantics; this rationale adds no separate rule contract.
 
 ## API Surface
 
-Current implementation note (2026-03-25):
-- The live engine API is a strict subset defined in
-  `specs/ENGINE_SPEC.md` §5.1 (`Current Implemented Engine API`).
-- The block below is the architectural target-state API shape (`Target M2+`
-  and beyond), not a claim that every method is currently implemented.
+Use [ENGINE_SPEC §5 API Contract Mode](../specs/ENGINE_SPEC.md#api-contract-mode)
+to distinguish the target substrate, current implementation, compatibility API
+and legacy Target M2+ surface. The
+[current API inventory](../specs/ENGINE_SPEC.md#51-current-implemented-engine-api)
+identifies its implementation owners. New design follows the substrate contract
+in [§0](../specs/ENGINE_SPEC.md#0-product-mechanics-integration-and-migration-target),
+including the single commit gateway linked above.
 
-```rust
-// The engine API — consumed by GUI, CLI, MCP, Python
-pub struct Engine {
-    pub fn new() -> Self;
-    pub fn open_project(path: &Path) -> Result<Project>;
-    pub fn create_project(path: &Path, config: ProjectConfig) -> Result<Project>;
-
-    // Pool
-    pub fn search_pool(query: &str, filters: PoolFilters) -> Vec<PartSummary>;
-    pub fn get_part(uuid: &Uuid) -> Result<Part>;
-    pub fn import_eagle_library(path: &Path) -> Result<ImportReport>;
-    pub fn import_kicad_library(path: &Path) -> Result<ImportReport>;
-
-    // Design queries (read-only, no operation needed)
-    pub fn get_netlist() -> Netlist;
-    pub fn get_board_summary() -> BoardSummary;
-    pub fn get_net_info(net: &Uuid) -> NetInfo;
-    pub fn get_unrouted() -> Vec<Airwire>;
-    pub fn get_drc_results() -> Vec<DrcViolation>;
-
-    // Operations (the write path — every modification goes through here)
-    pub fn execute(&mut self, op: impl Operation) -> Result<OperationDiff>;
-    pub fn undo(&mut self) -> Result<OperationDiff>;
-    pub fn redo(&mut self) -> Result<OperationDiff>;
-
-    // Batch
-    pub fn execute_batch(&mut self, ops: Vec<Box<dyn Operation>>) -> Result<Vec<OperationDiff>>;
-
-    // Export
-    pub fn export_gerber(settings: GerberSettings) -> Result<()>;
-    pub fn export_drill(settings: DrillSettings) -> Result<()>;
-    pub fn export_bom(settings: BomSettings) -> Result<Vec<BomLine>>;
-    pub fn export_step(settings: StepSettings) -> Result<()>;
-
-    // Routing (AI-proposes, engine-validates)
-    pub fn propose_route(&self, net: &Uuid, settings: RouteSettings) -> Result<RouteProposal>;
-    pub fn propose_route_diffpair(&self, pair: &DiffpairId, settings: RouteSettings) -> Result<RouteProposal>;
-    pub fn accept_route(&mut self, proposal: RouteProposal) -> Result<OperationDiff>;
-    pub fn add_track_manual(&mut self, points: &[Point], net: &Uuid, width: i64, layer: LayerId) -> Result<OperationDiff>;
-}
-```
-
-Target-state parity note:
-- At milestone closure for each phase, implemented methods should have
-  corresponding consumer surfaces as required by `specs/PROGRAM_SPEC.md`.
-- Current implementation intentionally exposes only a subset while `M1/M2`
-  foundation work continues.
+The former duplicate `Engine` method sketch and `execute_batch` example are
+retired. Their original bytes remain in `62819c9b:docs/ENGINE_DESIGN.md`; they
+do not establish implemented support, public tool names or an alternative write
+path. Cross-consumer requirements remain in the existing formal subject owners
+and domain contracts, not this architectural sketch.

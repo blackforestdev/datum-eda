@@ -18,8 +18,7 @@ fn command(root: &Path, verb: &str, args: &[&str]) -> Result<String> {
     execute(Cli::try_parse_from(argv).unwrap())
 }
 fn project(label: &str) -> PathBuf {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../.datum/footprint-reference-audit")
+    let root = crate::main_tests::development_workspace::path("footprint-reference-audit")
         .join(format!("{label}-{}", Uuid::new_v4()));
     create_native_project(&root, Some(label.to_string())).unwrap();
     root

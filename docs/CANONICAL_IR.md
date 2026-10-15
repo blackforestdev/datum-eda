@@ -210,9 +210,11 @@ Design files are JSON. Chosen for:
 - Adequate performance for PCB-scale data (not IC-scale)
 
 ### Schema versioning
-Every JSON file includes a schema version number. The engine can read
-any version >= 1 and always writes the current version. Migration logic
-is explicit per-version, not implicit.
+Native schema compatibility and migration are owned by
+[NATIVE_FORMAT_SPEC §8](../specs/NATIVE_FORMAT_SPEC.md#8-versioning-and-migration).
+Use its supported-version rules, unknown-future-version refusal and explicit
+current-versus-target migration status; this IR rationale does not define a
+second version-support policy.
 
 ---
 

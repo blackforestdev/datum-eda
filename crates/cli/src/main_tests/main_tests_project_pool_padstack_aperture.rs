@@ -47,8 +47,7 @@ struct Fixture {
 }
 impl Fixture {
     fn new(label: &str) -> Self {
-        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../.datum/footprint-reference-audit")
+        let root = crate::main_tests::development_workspace::path("footprint-reference-audit")
             .join(format!("{label}-{}", Uuid::new_v4()));
         create_native_project(&root, Some(label.to_string())).unwrap();
         let stack = Uuid::new_v4();
