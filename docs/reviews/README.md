@@ -90,8 +90,12 @@ parity (30 inventories), traceability (29 routes/131 artifacts), boundary/token,
 progress and Frontier (91 items) checks. No remaining machine-specific Markdown
 links were found in tracked text. Only the four reviewed route digest/note
 records changed; all other route metadata is identical. Independent final
-implementation review passed for all 37 owned paths; landing closure and
-publication follow separately.
+implementation review passed for all 37 owned paths, landed in `5fe2c4ba`.
+All four organization items are delivered and maintenance ownership/grant is
+released. Every pre-maintenance Frontier record, including original S5A
+selection/grant, is restored exactly without claim or resumption. Working
+sessions remain paused. Broader semantic documentation reconciliation remains
+open and unselected; this closes only the four reviewed organization items.
 No Rust compilation or historical proof campaign is required for these docs.
 
 ## Documentation ownership and external audit output
