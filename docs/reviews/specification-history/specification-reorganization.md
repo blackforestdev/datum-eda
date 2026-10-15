@@ -140,7 +140,7 @@ task chronology are separated with reversible text relocation, unique markers,
 eligible path-only structured references and explicit paired governing owners.
 Operative exceptions, approvals, reservations and discussion hold remain intact.
 
-RSP-04 remains in progress through focused checks, actual distinct candidate
+At the frozen candidate RSP-04 remained in progress through focused checks, actual distinct candidate
 review, mandatory corrections and manager acceptance/local landing and closure.
 At the frozen candidate no independent PASS, objective acceptance or completion
 was asserted. The actual review and final reconciliation follow below.
@@ -206,5 +206,50 @@ boundaries; source health 3,171 files with downward-policy comparison against
 with no compilation, native replay or new performance campaign. Existing broader
 Clippy, GUI-parity, concurrent-genesis and qualification failures remain disclosed
 in their owning records and are neither rerun nor waived by this cleanup.
-RSP-04 remains active for actual local landing, manager objective acceptance and
-synchronized closure.
+At implementation landing RSP-04 remained active for manager objective acceptance
+and synchronized closure.
+
+## Actual manager acceptance and synchronized closure
+
+<!-- EVIDENCE:SPECIFICATION-REORGANIZATION:RSP-04 -->
+Appointed manager `codex-reorganization-manager-20261014`, thread
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`, recorded actual objective acceptance
+of all four bounded outcomes against local implementation landing
+`f35cdee047b02f762cd3318575370289069ef192` and the actual distinct review above.
+The manager verified the exact fifteen-path commit and parent, all landed hashes,
+13 unchanged candidate pins and the two faithful receipt/digest deltas. It reused
+the actual final structural checks and normal commit-hook results at their scopes.
+No further product build, native replay or qualification campaign was needed.
+
+Actual manager acceptance receipt SHA-256:
+`d3a603d4b1a5eb1b98e58a1bab4d851485ddb50694535a98c17b3bffddbf8ba5`.
+This is a real delegated objective cleanup disposition under the recorded owner
+appointment and PM059, not a fabricated owner reply or independent self-review.
+It accepts only the finite RSP-01..04 artifacts; broader corpus reconciliation
+and product qualification are not claimed.
+
+Under that exact disposition, RSP-04 completes with actual landing evidence,
+only `dat-specification-reorganization-vqot` closes, its claim releases and the
+cleanup record lands/unselects. The entire original UVT-S5A-BUILD record is
+restored from immutable baseline `d980dd849280dc92498d2f2c74097f29441ef024`,
+including its selection flag, ready/execution state, absent claim, owner pause,
+retained grant and unfinished C04/C05/C06. Equality is checked on the whole
+record; restoration supplies no session resumption or successor execution.
+The four reviewed completed-task owner/reference relocations remain; other
+original task records and both reviewed route digests remain unchanged.
+
+Broader semantic intake `dat-documentation-semantic-reconciliation-olnn` stays
+open/unselected for its explicit unreviewed remainders. Source/admission, bootstrap,
+file-type and other pending owner decisions remain pending. Existing Clippy, GUI
+parity, concurrent-genesis and full qualification findings remain in their owning
+records without fixes, reruns or waivers. No product grant, dependency, prototype,
+schema, tooling or remote-publication change follows this local cleanup closure.
+
+Closure verification PASS: whole original S5A record equals immutable baseline;
+every other task record except the assigned cleanup is unchanged from the
+implementation landing; all other tracker records are identical. Only the four
+manager-authorized metadata paths change. Project-state 94, current generated
+projection, progress coverage, 569 classifications, 30 parity inventories,
+29 evidence routes / 131 artifacts and whitespace pass. The bounded issue is
+closed/unassigned; broader semantic intake remains open. Normal local closure
+hooks remain required; no additional product validation is claimed.

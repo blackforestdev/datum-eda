@@ -105,8 +105,9 @@
 </details>
 
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   C03 complete; S5A-C04 remains selected and unfinished. Owner paused both working sessions, directed removal of temporary remote proof artifacts and bounded diagnostic logging correction. Current v2 diagnostic selection summaries omit internal property/projection dumps, preserve exact identity digests and mark inspection incomplete; 64KiB record/8MiB session bounds emit explicit incomplete receipts. Guarded9 focused Rust tests,2 Python reader checks, matching GUI build and independent source review passed; no native or aggregate S5A acceptance inferred. Purged31 obsolete local stdout/state-excerpt logs (8.09GiB). Historical text findings and exact qualification limits remain in existing C04 records; removed raw paths no longer promise replay availability. Temporary correction ownership explicitly released; original sessions remain paused. Retained execution grant and C04 selection unchanged; future resumption requires synchronized claim and deliberate migration of old full-Debug readers. C05/C06, remaining native cases, HUMAN/Wayland/performance/CAM and cross-probe handoff remain open; no successor or waiver. *state `ready`; authorization `execution`.*
+   C03 complete; S5A-C04 remains selected and unfinished. Owner paused both working sessions, directed removal of temporary remote proof artifacts and bounded diagnostic logging correction. Current v2 diagnostic selection summaries omit internal property/projection dumps, preserve exact identity digests and mark inspection incomplete; 64KiB record/8MiB session bounds emit explicit incomplete receipts. Guarded9 focused Rust tests,2 Python reader checks, matching GUI build and independent source review passed; no native or aggregate S5A acceptance inferred. Purged31 obsolete local stdout/state-excerpt logs (8.09GiB). Historical text findings and exact qualification limits remain in existing C04 records; removed raw paths no longer promise replay availability. Temporary correction ownership explicitly released; original sessions remain paused. Retained execution grant and C04 selection unchanged; future resumption requires synchronized claim and deliberate migration of old full-Debug readers. C05/C06, remaining native cases, HUMAN/Wayland/performance/CAM and cross-probe handoff remain open; no successor or waiver. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md`, `docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md`, `docs/reviews/workflow-delivery-rollout/s5a/thirty-degree-proposal.md`, `docs/decisions/PRODUCT_MECHANICS_058_EXACT_ROTATED_PAD_QUERIES.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
    Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
@@ -249,7 +250,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (31 landed records)</summary>
+<summary>Completed history (32 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -344,13 +345,12 @@
 - **Align native product delivery through the bounded initial reorganization** (`REORGANIZATION-INITIAL-CHECKPOINT`; `dat-native-delivery-alignment-1vy6`).
    Owner-appointed reorganization manager selects initial RGO-01..05 planning checkpoint. Correct named stale baselines, map twenty unfinished tasks, prepare honest first-workflow contract and owner decisions. Preserve paused S5A; no runtime, product/rights/dependency/waiver grant. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/native-delivery-reorganization.md`.
+- **Reconcile bounded specification ownership, delivery history and direction maps** (`SPECIFICATION-REORGANIZATION`; `dat-specification-reorganization-vqot`).
+   Owner-selected RSP-01..04 bounded specification cleanup accepted by the appointed manager after actual distinct source-review PASS and focused checks at f35cdee0. Exact history/authority and current direction maps reconciled; broader intake remains open. Original paused/unclaimed S5A record restored exactly; no product or successor execution. *state `landed`; authorization `none`.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`.
 
 </details>
 
-- **Reconcile bounded specification ownership, delivery history and direction maps** (`SPECIFICATION-REORGANIZATION`; `dat-specification-reorganization-vqot`).
-   Actual owner-authorized RSP-01..04 cleanup under appointed manager. Exact fifteen-file documentation scope; no product code, tooling changes, builds, native proof, S5A resumption or automatic successor. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
