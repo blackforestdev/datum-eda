@@ -253,3 +253,140 @@ projection, progress coverage, 569 classifications, 30 parity inventories,
 29 evidence routes / 131 artifacts and whitespace pass. The bounded issue is
 closed/unassigned; broader semantic intake remains open. Normal local closure
 hooks remain required; no additional product validation is claimed.
+
+## Owner-selected residual corrections — REORG-RESIDUAL-01
+
+The owner explicitly directed the appointed auditor manager to correct cleanup
+items 1–3, with items 1+2 together and all participating agents completing
+their work to the manager's quality standards. Manager
+`codex-reorganization-manager-20261014`, thread
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`, assigned the separate reorganization
+implementer this exact nine-path documentation correction on 2026-10-15.
+This is actual owner authority and an appointed PM059 manager, not an inferred
+successor or product grant. Prior RSP acceptance and all earlier history remain.
+
+Batch A corrects only three live WDQ references in the foundation completion
+plan and the performance evidence-path paragraph. Batch B then clarifies only
+the leading imported-v5/sidecar scope in CANONICAL_IR and IMPORT_SPEC, preserving
+existing seed values/algorithms and all other current import contracts. It begins
+only after actual independent review, local landing and manager acceptance of A.
+Each batch needs actual distinct candidate review and manager acceptance against
+its landing. RRC-03 closes only after both. The manager coordinates review,
+unchanged-scope corrections and objective acceptance under the actual owner grant.
+No self-review, product acceptance, source/rights/HUMAN decision or waiver follows.
+
+Excluded: RC04–07 optional items, all product code, dependencies, schemas,
+tooling, protected prototypes, immutable receipt/decision-body changes, builds,
+native replay, performance campaigns, artifact deletion, push and S5A resumption.
+The baseline is `cd89ffb77816c09389f8eb8dc9146620427cfe40`, with 94 existing
+Frontier records. Only original S5A's canonical flag is suspended; every other
+original field/record/root setting remains exact. Restore the entire paused,
+unclaimed S5A record at accepted final closure, without resuming it. Broader
+semantic intake remains open/unselected; this contract creates no optional work.
+
+### Residual correction completion contract
+
+<!-- REQ:SPECIFICATION-RESIDUAL-CLEANUP:RRC-01 -->
+- RRC-01: Correct RC-01 and RC-02 live retirement/storage references; preserve required evidence, obtain actual distinct review, local landing and manager objective batch acceptance.
+
+<!-- REQ:SPECIFICATION-RESIDUAL-CLEANUP:RRC-02 -->
+- RRC-02: After accepted batch A, clarify RC-03 imported seed/sidecar versus persisted identity scope under existing PM000/ENGINE/NATIVE authority; preserve algorithms, obtain actual distinct review, local landing and manager objective batch acceptance.
+
+<!-- REQ:SPECIFICATION-RESIDUAL-CLEANUP:RRC-03 -->
+- RRC-03: After both accepted batches, complete finite correction dispositions, close only this cleanup issue, release its claim and restore the entire original paused S5A record with no resumption; verify and land synchronized closure.
+
+### Residual pre-edit route coverage and preservation
+
+Actual source-pinned foundation coverage reuses the 24-member PM061 baseline
+`ef32fbe151246b8f7adde6ba84ebac926448c0d8`, reachable through the approved history
+map as `ee3e94cea4dcbcc7f08c1429e99e7d0d537fd1a9`. The retained actual distinct
+readiness-reviewer documentation PASS and complete-route reuse are in
+`docs/reviews/workflow-delivery-rollout/effective-process-owner-delegation.json`,
+SHA-256 `03e198f103df2d0b28ea508b2077bfdab9508fd6cc16fb256340ee81db718df8`.
+Its API follow-up pins ENGINE to
+`6d9b3e68fce19792d7d5596db7ebfaa3dc12fac6e162ed0edd61a8d27fb19ecb`,
+which exactly matches that reachable baseline. Source/consumer lists retain all
+24 members. Twenty-two member bytes remain exact; the complete later ENGINE and
+SOURCE_HEALTH_POLICY deltas were freshly read. Those factual deltas and existing
+review notes preserve their scope; no product qualification is inferred.
+This is actual reviewed-baseline reuse plus complete delta review, not merely
+advisory hash continuity and not a fresh 24-member semantic reread.
+
+Both current `workflow-incremental-delivery` route members were freshly read
+completely: the original obstruction findings and full PM044, including the
+retirement amendment and dated installation/bypass records. The retirement
+controls; original historical instructions do not revive enrollment or bypasses.
+The performance route reuses actual RSP distinct review receipt
+`d16fc1c243527c00c038d057b0471d2127f7a19eb77d1c088e9a3d2d350f2378`
+and its adequate GOV baseline review at the recorded limits. All 234 member
+bytes, lists and metadata equal accepted `f35cdee0`; the complete current review
+storage owner and exact evidence-path clause were reread. No 234-member fresh
+reread or new performance/native result is claimed.
+
+Fresh direct-route lookup finds foundation completion and IMPORT_SPEC in
+`foundation-consumer-completion`, performance implementation in
+`gui-performance-recovery`, and no direct owning route for CANONICAL_IR or this
+derivative task record. Lack of direct membership does not remove higher
+PM000/ENGINE/NATIVE/PM011 authority. Batch B receives its own exact authority
+preflight only after accepted A, deliberately reusing adequate unchanged coverage.
+Only the two affected existing digests may be reconciled after actual candidate
+review; PM044/research and all other route members stay untouched.
+
+Batch A changes exactly three live foundation references and the one performance
+evidence paragraph. Product requirements, stable requirement/owner/evidence
+markers, actual grants, native proof, independent review and acceptance duties
+remain. Raw samples/captures still must be acquired and available for required
+actual review; durable records retain exact provenance and truthful subsequent
+availability. Storage correction grants no deletion, replay or evidence waiver.
+No actual independent batch-A PASS, local landing or objective acceptance is
+asserted before its receipt and corresponding disposition.
+
+### Actual residual batch-A independent review and reconciliation
+
+Distinct reviewer `/root/reorganization_review` returned actual
+**BOUNDED_SOURCE_REVIEW_PASS** with no mandatory findings for batch A
+(RC-01 + RC-02). Actual receipt SHA-256:
+`8ef473c5aa657a781d5f0bb1dba17cd7428f94df08dda65ba13a558ab1b51989`.
+Frozen packet SHA-256:
+`fe1535629104525154fc770c2b6c775ee9752e73d75770b130b4adc93c78cf92`;
+patch SHA-256:
+`169cff80e98d84862d24af755602df4f3d71f270440407f20ff85cfdbe596840`.
+All nine file pins matched before faithful review/digest metadata updates; only
+seven authorized batch-A paths changed. Batch-B content remains byte-identical
+to the assignment baseline. Raw review transport is external scratch; identities
+do not promise permanent raw-output availability.
+
+The reviewer independently confirmed exactly three foundation spans and one
+performance span, byte-exact inverse reconstruction, all 68 foundation and
+56 performance markers in original order, all 94 prior task records/root
+settings except the authorized S5A canonical flag, and all 330 original tracker
+rows/order. No grant, dependency, native/independent-review/proof duty, historical
+receipt, schema or product rule changed. Raw inputs remain required and available
+for actual review; external storage is no evidence waiver or deletion authority.
+
+Actual complete foundation coverage reuses the source-pinned PM061 receipt
+and its verified 22 unchanged members plus complete two-consumer delta review.
+Actual RSP/GOV performance coverage reuses all 234 verified baseline members,
+with the exact storage clause and current storage owner reviewed. PM044's full
+retirement route was read; no fresh large-corpus reread or product/native result
+is claimed. The manager read the actual receipt, verified all nine current pins
+and exact patch, and directed unchanged-scope final reconciliation and landing.
+RRC-01 remains active until actual local landing and manager objective acceptance.
+Batch B has not begun; final cleanup closure and S5A restoration remain later.
+
+After that actual review, only the two reviewed route digests are reconciled:
+
+- `foundation-consumer-completion`: `90aa6060a606c4c0bf88b882ee68152ed18ee4aa7d8d0db8ba635a2449beef85`.
+- `gui-performance-recovery`: `2b3282b688f91347a3cc35739dfcd80915ff5aebaaead0f48b248ce9d5da520d`.
+
+All other route records and all memberships remain unchanged. This source-review
+PASS is not manager objective batch acceptance, runtime qualification or task
+closure. Existing product/qualification defects remain in their original owners.
+
+Final batch-A affected checks after actual receipt/digest reconciliation PASS:
+project-state 95 and current projection; progress coverage; 569 classifications
+(478 governed / 59 doctrine / 3 pending / 29 historical); 30 parity inventories;
+29 evidence routes / 131 research/prototype artifacts; whitespace. Reuse the
+previous accepted structural/resource/source-health results for unchanged code
+and tooling; no compiling/native/proof campaign is justified by these four prose
+replacements. Normal local commit hooks remain required.

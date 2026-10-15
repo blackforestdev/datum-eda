@@ -18,10 +18,13 @@ execution step does not authorize it. No consumer is claimed by this repair.
 
 PM001/002/019/023/026, the Universal Viewport Tooling specification, GUI
 Write-Path Plan, and schematic/PCB authoring contracts remain product authority.
-PM025 and the project-state policy govern transitions; PM041 governs delivery
-evidence, enrollment and owner-selected trust. Nothing here adds a product
-mechanism, dependency, prototype change or enforcement enrollment. Current
-enforcement of the pilot alone must not be described as coverage of these lanes.
+PM025 and the project-state policy govern transitions, as amended by PM059's
+bounded manager routing. [PM044's owner-directed retirement](../docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md#owner-directed-retirement--2026-09-17)
+supersedes WDQ enrollment, source-promotion and installed-runner trust prerequisites.
+Normal state/claim validation and product evidence, independent review and
+acceptance requirements remain. Historical pilot evidence does not establish
+coverage of these lanes. Nothing here adds a product mechanism, dependency,
+prototype change or enforcement enrollment.
 
 Before execution, each preflight must reconcile its complete evidence routes,
 map requirements to observable behavior and failure cases, identify file owners,
@@ -63,10 +66,10 @@ honestly; do not waive it because the current renderer cannot demonstrate it.
 <!-- OWNER:UVT-S5A-BUILD:S5A-C02:AUTHORIZE -->
 ### S5A-C02 — owner authorization of the exact execution packet
 
-Present the reconciled scope, scenarios, file ownership, independent reviewer,
-unresolved decisions and any proposed delivery enrollment/trust change. Obtain
-explicit bounded execution authorization before implementing. Approval of
-selection visuals or this completion plan is not execution authorization.
+Present the reconciled scope, scenarios, file ownership, independent reviewer
+and unresolved decisions. Obtain explicit bounded execution authorization before
+implementing. Approval of selection visuals or this completion plan is not
+execution authorization.
 
 S5A-C01 reconciliation is recorded in
 `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md` under
@@ -510,7 +513,8 @@ cancel, proposal, durable undo and reopen evidence without private writers.
 Present the reviewed remaining work, resolved write authority, fixture,
 failure-injection/native proof and independent reviewer. Existing hard blockers
 must be resolved before execution; changing them requires explicit owner
-disposition. Obtain bounded execution and any separate enrollment/trust approval.
+disposition. Obtain bounded execution authorization; PM044 requires no separate
+WDQ enrollment/trust approval.
 
 <!-- REQ:GUI-WRITE-PATH:GWP-C03 -->
 ### GWP-C03 — prove P0 and finish the ordered dispatch path

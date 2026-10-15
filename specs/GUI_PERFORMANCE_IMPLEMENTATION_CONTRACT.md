@@ -39,13 +39,20 @@ host/consumer IDs and before/after state alongside counters. Deterministic backe
 fault injection substitutes only the backend result, not the scheduler, input
 handler or resource owner being tested. Native trials remain separate.
 
-Evidence under `docs/reviews/gui-performance/implementation/<slice>/<requirement>/`
-must contain candidate and baseline commit/source/binary hashes, fixture and
-environment manifest, exact command, raw counter/event/state data, static native
-captures, statistical result and positive/negative result. This is a future path
-contract, not fabricated files. Temporal evidence is additional when applicable;
-static captures cannot pass a deferred temporal requirement. File presence and
-inventory validation alone do not establish semantic coverage or acceptance.
+Durable findings under `docs/reviews/gui-performance/implementation/<slice>/<requirement>/`
+must record candidate and baseline commit/source/binary hashes, fixture and
+environment manifest, exact command, statistical result and positive/negative
+result. Raw counter/event/state samples and static native captures must still be
+acquired and available for actual required review. Store them in an external,
+task-owned development workspace under the [review storage policy](../docs/reviews/README.md#cargo-output-and-native-workspace-separation),
+not in the tracked findings path; do not commit or push temporary captures or
+raw samples. Retained findings identify the reviewed raw inputs, their locations,
+hashes, review scope and actual availability. Hashes do not promise later raw
+availability; disclose unavailable historical input and never claim it was replayed.
+This is a future path contract, not fabricated files. Temporal evidence is
+additional when applicable; static captures cannot pass a deferred temporal
+requirement. File presence and inventory validation alone do not establish
+semantic coverage or acceptance.
 
 For every negative control use the historical first parent recorded in
 `c01-historical-hunk-review.json` if it runs the same recipe and fails for the
