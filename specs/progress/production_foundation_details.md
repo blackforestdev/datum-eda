@@ -641,3 +641,56 @@ if those production authoring aliases regress to direct CRUD dispatch or lose
 their proposal-write classification.
 
 MCP PCB taxonomy note: canonical `datum.pcb.place_component`, `move_component`, `rotate_component`, `flip_component`, `align_components`, `delete_component`, `set_component_reference`, `set_component_value`, `set_component_part`, `set_component_package`, `lock_component`, `unlock_component`, `draw_track`, `edit_track`, `delete_track`, `place_via`, `edit_via`, `delete_via`, `place_zone`, `edit_zone`, `delete_zone`, `place_pad`, `edit_pad`, `delete_pad`, `set_pad_net`, `clear_pad_net`, `place_net`, `edit_net`, `delete_net`, `place_net_class`, `edit_net_class`, `delete_net_class`, `set_board_name`, `set_outline`, `set_stackup`, `add_default_top_stackup`, `place_keepout`, `edit_keepout`, `delete_keepout`, `place_dimension`, `edit_dimension`, `delete_dimension`, `place_text`, `edit_text`, and `delete_text` are now native-project scoped, require explicit `path` plus operation-specific arguments, and bridge to the matching `datum-eda project ...board-component...`, `...board-track`, `...board-via`, `...board-zone`, `...board-pad`, `...board-net...` / `...board-net-class`, board setup, `...board-keepout`, `...board-dimension`, and `...board-text` commands over journaled native project substrates. `align_components` is the one mode-parameterized align/distribute batch surface and is locked by `check_pcb_layout_tool_matrix`. Flat daemon-session writes `move_component`, `rotate_component`, `flip_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`, and `set_net_class` remain hidden compatibility only; they are fenced by `NON_JOURNALED_DAEMON_WRITE_METHODS` and are not public `datum.*` tools.
+
+## Native product outcomes — initial reorganization
+
+This is a navigation view of the twenty unfinished records at `2bf2b058`, not a
+new task ordering or grant. Use the structured Frontier for current state and
+`project_status.py details <key>` for every complete ordered contract. The
+initial reorganization adds one temporary planning record; S5A remains paused.
+A representative design is an early workflow checkpoint, not a reduction of the
+professional product or any retained full-authoring/qualification requirement.
+
+| Designer outcome | Existing bounded delivery to reuse | Missing connection and owning contract |
+| --- | --- | --- |
+| Start a native design with usable library data | PM062 [named browsing and Footprint/Padstack editing](../../docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json), source `61b5b409`. | No-project startup integration and complete native doorway proof: NATIVE-PROJECT-DOORWAY. Actual component-use admission remains on source issue8xm7 under PM008/062; editor availability is not a production component library. |
+| Complete and revise its schematic | [Symbol/wire delivery](../../docs/reviews/workflow-delivery-rollout/native-schematic/development-acceptance.json), source `94c95ae6`; bounded symbol movement `2ca54eaa`. | Full schematic authoring/ERC/reopen coverage: NATIVE-AUTHORING and its schematic contract; connectivity/gesture reconciliation, shared selection and related-context/Inspector obligations remain. Synthetic fixture proof does not establish production content. |
+| Implement that schematic as a PCB | [Accepted board movement](../../docs/reviews/workflow-delivery-rollout/user-edit/first-edit-delivery.json), accepted source `a365ae5ee4813c0280ccad1e770c45c7c9802d92` (Frontier landing `a6f082b7`); [PM061 process delivery](../../docs/reviews/workflow-delivery-rollout/effective-process-owner-delegation.json), source `ef32fbe1`. | Reviewed electrical-to-physical changes, complete placement/manual routing/DRC: NATIVE-AUTHORING and PCB contract, with shared write/identity safety. Bounded move/process proof is not full board authoring. |
+| Produce, inspect and revise manufacturing output | Existing manufacturing contract and supported engine/CAM paths retain their exact coverage. | No dedicated active manufacturing-delivery item exists among these twenty records. Existing intake `dat-rational-center-cam-ir1t` and `dat-component-pad-cam-transform-ab4v` name concrete open CAM gaps; determine applicability to the selected output/design before proposing any hard edge or promotion. No T04/full-manufacturing PASS. |
+
+### All twenty unfinished records
+
+Prerequisites below are retained edges or actual contract gates. Reasons explain
+their workflow relationship; they do not waive, remove or add an edge. Proposed
+changes need exact authority. Planning/review/owner gates are not execution grants.
+
+| Existing key | Outcome / missing connection | Current prerequisite and reason / retained disposition |
+| --- | --- | --- |
+| UVT-S5A-BUILD | Shared read-only acquisition/identity/inspection; S5A-C04..06 proof/review/acceptance remain. | Selection and derived-authority prerequisites are landed. Pause/execution grant stays intact; source membership and nonmutation must be proven before dependent relation navigation. PM026 does not permit editing here. |
+| GUI-P2-CROSSPROBE | Schematic/PCB same-identity versus related-context navigation, XP-C01..06. | S5A remains an open edge: stable shared subjects/projections protect meaningful cross-probe. |
+| GUI-P2-INSPECTOR | Full read-only component/net/Sheets/status inspection, INSP-C01..06. | Cross-probe remains an open edge for authoritative related context; exact broader necessity is for its planning reconciliation, not assumed removed. |
+| GUI-MARKING-MENU | Inert shared shell/interaction, MM-C01..06. | No issue dependency; its visual/behavior planning and explicit grant gates remain. It is not newly made a prerequisite to startup. |
+| GUI-WRITE-PATH | General authoring transport/registry integration, GWP-C01..06. | Marking-menu, writer-ownership and landed manual-foundation edges remain. GWP-C01 must justify each against actual consumers and reuse delivered typed paths. |
+| NATIVE-AUTHORING | Complete schematic/PCB authoring, NA-C01..06. | Cross-probe, surface specs, write-path and foundation edges remain; surface/foundation are landed. NA-C01 maps full coverage and concrete safety/consumer reasons before its existing execution decision. |
+| NATIVE-PROJECT-DOORWAY | Ordinary no-argument New/Open/Cancel/reopen, NPD-C01..06. | Foundation contract is landed and supplies F1/F8 startup/recovery obligations. Existing New/Open owners are credited; no dependency on all authoring or provider/cloud sourcing is added. [First contract and decisions](../../docs/reviews/specification-history/native-delivery-reorganization.md#first-workflow-contract-and-startup-recheck). |
+| PROJECT-WRITER-OWNERSHIP | Shared mutation/recovery safety, PWO-C01, PWO-C02, PWO-REVIEW, PWO-C03. | No issue dependency; consume landed PM060/first-edit writer evidence before deciding what remains. Protect concurrent/stale writes without blindly proposing a second lock. |
+| NATIVE-CONNECTIVITY-CONTRACT | Native electrical formation/grid/gesture consistency, NCC-C01, NCC-C02, NCC-REVIEW, NCC-C03. | No issue dependency; consume PM053 and landed schematic paths, retain unresolved gesture/authority choices and Claude lane. |
+| GLOBAL-PREFERENCES-COMPLETION | Supporting configuration production acceptance, GP-CM05E/GP-CM05A. | Engine/shared-units prerequisites are landed; exact ordinary production contract and independent review remain. No global new startup/content prerequisite. |
+| PROJECT-PREFERENCES-SPEC | Governed Project settings, PPS-C01..03, PPS-REVIEW, PPS-C04. | Global Preferences completion remains an edge for machine-seed versus Project authority; preserve until exact disposition. |
+| PROJECT-PREFERENCES-BUILD | Bounded Project settings vertical delivery, PP-I00..03. | Project Preferences spec remains an edge to define that authority. PP-I00 is the existing explicit gate before one PP-I01 unit, not a full-build grant. |
+| GUI-PERFORMANCE-IMPLEMENTATION | Separate qualification/investigation. | Specification prerequisite landed; bounded S4 complete. GPI-CPU-RESIZE-SCOPE and S5 disposition/qualification remain. PM051 leaves functionality globally unblocked. |
+| GUI-PERFORMANCE-BASELINE | Nonblocking measurement/budget planning, GBB-P05. | Specification prerequisite landed. Seven unmeasured families and method/hardware/resource gaps remain; no new run or number is authorized. |
+| NATIVE-WORKFLOW-BUDGETS | Fixture/budget planning, NWB-C01, NWB-C02, NWB-REVIEW, NWB-C03. | No issue dependency; PM051 requires evidence-derived numbers and exact scope. It is not newly made a blanket functionality gate. |
+| ADOPTED-DRAFTING-STANDARD-SPEC | Standards planning, ADS-C01..05. | Existing drafting-standard-authority prerequisite landed. Retain exact remaining standard policy/review/ratification, not a new global blocker. |
+| DISTRIBUTED-COLLAB-SPEC | Later/offline collaboration planning, DC-C01..05. | Documentation-system spec prerequisite landed; not a new first single-user-design dependency. |
+| WORKFLOW-OWNER-REVISION | Retained workflow repair, OR-C01..05. | No issue dependency. Legacy OR-C01 in_progress substep remains on specified/unclaimed record; its owner must reconcile actual retained scope against PM044/059. Retired WDQ enforcement is not reinstated. |
+| PRODUCT-REVISION-ENGINE | Explicitly deferred broader revision product. | Existing revision/preferences edges and none authorization retained. Historical completed substeps do not resume Publish/Revision execution. |
+| MCAD-INTEROP-PLACEHOLDER | Later unselected placeholder. | No issue dependency, no completion contract or execution authorization; no work or design prerequisite invented. |
+
+The proposed early return to product delivery needs only the named stale-claim
+corrections, this compact map, and the honest first-increment contract/decision
+packet—not twenty new detailed contracts or another master specification.
+Current remaining task states, all existing edges and qualifications stay intact.
+The semantic-documentation intake `dat-documentation-semantic-reconciliation-olnn`
+retains its broader backlog; history relocation, evidence-route subdivision and
+distant implementation contracts may wait under their separate authority.

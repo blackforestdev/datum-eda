@@ -1,7 +1,7 @@
 # Datum Product Mechanics
 
 Status: controlling product doctrine (ratified).
-Last reconciled: 2026-07-02
+Last reconciled: 2026-10-15 (terminal mechanism only; PM029/030 already ratified)
 
 Companion review agenda:
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_REVIEW_AGENDA.md` breaks unresolved mechanics
@@ -330,11 +330,15 @@ Minimum project competency:
 
 Datum's terminal must be a real embedded terminal, not a fake command lane.
 
-Product Mechanics 027–028, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, and
-`docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md` are the controlling
-implementation contract. They resolve the quality and discovery questions below:
-the product target is a fully fledged daily-driver embedded terminal over a
-pinned mature emulation core, not a bespoke terminal-lite widget. A focus fix,
+Product Mechanics 027–028 retain the full quality/discovery target;
+[PM029](decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md) and
+[PM030](decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md)
+supersede the earlier external-core/PTY mechanism. Together with
+`docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md` and
+`docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md`, they require a fully fledged
+daily-driver embedded terminal with Datum-owned semantics and Linux PTY/session
+ownership. Other terminals are behavioral references, never implementation
+inputs or hidden fallbacks. A focus fix,
 PTY transport, parser, cell grid, or command-console surface is only a bounded
 implementation slice and cannot satisfy this section by itself.
 
@@ -513,10 +517,11 @@ Any code agent working on Datum should apply these rules before choosing work:
 5. Do not create a new editing path that bypasses the canonical transaction
    model.
 6. Do not treat a viewer or review surface as equivalent to an editor.
-7. Implement the terminal through the decision-027/028 T0–T4e sequence. Only PTY
+7. Implement the full decision-027/028 target through the PM029/030 Datum-owned
+   architecture and governed delivery sequence. Only PTY
    output may mutate terminal cells; Datum notices use non-terminal surfaces.
-   Do not substitute fake command text, an activity feed, or a private bespoke
-   emulator core for the governed full-terminal product.
+   Do not substitute fake command text, an activity feed, a terminal-lite
+   widget or an unauthorized external core for the governed full-terminal product.
    Do not claim agent integration until the T4a–T4d discovery, standard MCP,
    pinned-context/authority, and portable-workflow slices pass.
 8. Do not treat a built-in assistant tab as the primary AI architecture. The

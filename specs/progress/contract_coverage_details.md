@@ -333,6 +333,8 @@ Status: [x] Closed for scoped M4 slice
 ## NATIVE_FORMAT_SPEC.md
 
 Status: [x] Closed for scoped M4 slice
+- PM061 bounded optional process implementation landed in `ef32fbe1`, with
+  [source-pinned delivery/availability](../../docs/reviews/workflow-delivery-rollout/effective-process-owner-delegation.json). Standards, unsupported CAM, seed rights, HUMAN and full qualification remain open.
 - PM053 / DA-A2-E1 adds optional schema-1 electrical identity partitions and
   optional placed-pin library references. Canonical source/history proof is
   bounded; adoption and complete derived authority remain unfinished.

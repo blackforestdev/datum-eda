@@ -105,9 +105,8 @@
 </details>
 
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
-   C03 complete; S5A-C04 remains selected and unfinished. Owner paused both working sessions, directed removal of temporary remote proof artifacts and bounded diagnostic logging correction. Current v2 diagnostic selection summaries omit internal property/projection dumps, preserve exact identity digests and mark inspection incomplete; 64KiB record/8MiB session bounds emit explicit incomplete receipts. Guarded9 focused Rust tests,2 Python reader checks, matching GUI build and independent source review passed; no native or aggregate S5A acceptance inferred. Purged31 obsolete local stdout/state-excerpt logs (8.09GiB). Historical text findings and exact qualification limits remain in existing C04 records; removed raw paths no longer promise replay availability. Temporary correction ownership explicitly released; original sessions remain paused. Retained execution grant and C04 selection unchanged; future resumption requires synchronized claim and deliberate migration of old full-Debug readers. C05/C06, remaining native cases, HUMAN/Wayland/performance/CAM and cross-probe handoff remain open; no successor or waiver. *state `ready`; authorization `execution`; **CANONICAL NEXT**.*
+   C03 complete; S5A-C04 remains selected and unfinished. Owner paused both working sessions, directed removal of temporary remote proof artifacts and bounded diagnostic logging correction. Current v2 diagnostic selection summaries omit internal property/projection dumps, preserve exact identity digests and mark inspection incomplete; 64KiB record/8MiB session bounds emit explicit incomplete receipts. Guarded9 focused Rust tests,2 Python reader checks, matching GUI build and independent source review passed; no native or aggregate S5A acceptance inferred. Purged31 obsolete local stdout/state-excerpt logs (8.09GiB). Historical text findings and exact qualification limits remain in existing C04 records; removed raw paths no longer promise replay availability. Temporary correction ownership explicitly released; original sessions remain paused. Retained execution grant and C04 selection unchanged; future resumption requires synchronized claim and deliberate migration of old full-Debug readers. C05/C06, remaining native cases, HUMAN/Wayland/performance/CAM and cross-probe handoff remain open; no successor or waiver. *state `ready`; authorization `execution`.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`, `dat-s5a-derived-authority-hhsw`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/reviews/workflow-delivery-rollout/s5a/foundation-gap-amendment.md`, `docs/decisions/PRODUCT_MECHANICS_056_IMPORTED_ZONE_FILL_ADOPTION.md`, `docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md`, `docs/reviews/workflow-delivery-rollout/s5a/thirty-degree-proposal.md`, `docs/decisions/PRODUCT_MECHANICS_058_EXACT_ROTATED_PAD_QUERIES.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
    Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
@@ -339,11 +338,19 @@
 
 </details>
 
+- **Align native product delivery through the bounded initial reorganization** (`REORGANIZATION-INITIAL-CHECKPOINT`; `dat-native-delivery-alignment-1vy6`).
+   Owner-appointed reorganization manager selects initial RGO-01..05 planning checkpoint. Correct named stale baselines, map twenty unfinished tasks, prepare honest first-workflow contract and owner decisions. Preserve paused S5A; no runtime, product/rights/dependency/waiver grant. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/native-delivery-reorganization.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
 
 Admission and repair evidence are historical; current selection and authorization come from the Active Frontier. [Detailed evidence](progress/workflow_governance_details.md#workflow-repair-admission-transaction).
+
+## Native product outcomes
+
+[Delivered foundations and twenty-task outcome map](progress/production_foundation_details.md#native-product-outcomes--initial-reorganization) connects library → schematic → PCB → manufacturing to existing owners and actual gaps. It is navigation, not selection, execution authority or full qualification.
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 
@@ -703,13 +710,13 @@ Status: [x] Closed for scoped M4 slice [Detailed evidence](progress/contract_cov
 
 ## NATIVE_FORMAT_SPEC.md
 
-Status: [x] Closed for scoped M4 slice [Detailed evidence](progress/contract_coverage_details.md#native_format_specmd). PM061 optional process authority is documented; reviewed implementation awaits landing. Standards and broader qualification remain open.
+Status: [x] Closed for scoped M4 slice [Detailed evidence](progress/contract_coverage_details.md#native_format_specmd). PM061 bounded process implementation landed in `ef32fbe1`; [source-pinned disposition](../docs/reviews/workflow-delivery-rollout/effective-process-owner-delegation.json) retains its exact delivery and availability limits. Standards and broader qualification remain open.
 
 ## Infrastructure
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Rust workspace (8 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app, verb-registry (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |
+| Rust workspace (10 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app, gui-viewport, terminal-core, verb-registry (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |
 | Engine compiles without GUI deps | [x] | |
 | Test harness (golden file utilities) | [x] | test-harness crate |
 | Test corpus (real designs) | [ ] | tests/corpus/ empty |

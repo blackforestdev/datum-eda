@@ -13,12 +13,30 @@
 
 ## Context
 
-The 2026-07-05 capability inventory (`DATUM_GUI_MENU_BINDINGS.md`) established
-that the engine already has the capability behind nearly every menu item (338
-verbs, native-write builders, full CLI), but the GUI has **no clean path to reach
-a journaled operation**. Reads work via `run_cli_json`; every authoring action
-falls back to the terminal CLI-string handoff. Four converging causes block the
-correct path. This plan bounds the work to remove them.
+The 2026-07-05 capability inventory was the historical baseline for this plan:
+GUI edits then used a terminal CLI-string handoff and the registry had seven
+verbs. Those statements no longer describe every production path. Bounded board,
+schematic and library GUI edits now use the typed native client and journaled
+engine path. The remaining generic integration and authoring breadth are still
+owned by GUI-WRITE-PATH/GWP-C01; landed increments do not close that whole task.
+
+## Current disposition — reconciled at `2bf2b058`
+
+| Workstream | Delivered/current evidence | Remaining obligation |
+| --- | --- | --- |
+| P0 thin vertical path | [Accepted board edit delivery](../reviews/workflow-delivery-rollout/user-edit/first-edit-delivery.json), [schematic delivery](../reviews/workflow-delivery-rollout/native-schematic/development-acceptance.json) and [library delivery](../reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json) establish bounded GUI-to-journal behavior. | Reuse their actual scopes; this does not claim the historical project-rename proof itself ran or every W case passed. |
+| W1 family registration | [Registry](../../crates/engine/src/api/native_write/registry.rs) aggregates project, board_components, waivers, schematic_edit and library_gui. | Routing/manufacturing/general family breadth and dry-run/applied conformance remain due; registration alone is not behavior proof. |
+| W2 registry-driven dispatch | [Dispatch](../../crates/verb-registry/src/lib.rs) still has Cli and DaemonRpc; no NativeWrite variant. | The proposed third variant/catalog migration below remains pending and needs its existing decision/authorization reconciliation. |
+| W3 discovery/schema exposure | [native.describe](../../crates/engine-daemon/src/dispatch.rs) returns current identity/revision/history/durability and optional model. | No general verb/schema enumeration is established by that response; retain the proposed discovery contract below. |
+| W4 GUI client/action path | [NativeProjectClient](../../crates/gui-protocol/src/native_edit_client.rs) uses native.describe/native.write; the [GUI worker](../../crates/gui-app/src/editor/runtime_native_edit.rs) handles bounded native edits. | General menu/registry-driven coverage and all retained refusals remain; accepted board/schematic/library delivery is not full authoring or qualification. |
+
+The accepted board delivery pins source `a365ae5ee4813c0280ccad1e770c45c7c9802d92`;
+`a6f082b7` is its recorded Frontier landing, not that accepted source pin.
+[Historical board QA](../reviews/workflow-delivery-rollout/user-edit/first-edit-runtime-qa.json)
+retains dated failure/withdrawn-availability observations and is diagnostic support,
+not the current acceptance receipt. These code references identify current seams;
+the linked accepted receipts own proof scope. Source pins/history and existing qualification gaps remain intact.
+No runtime proof or requirement is replaced by this documentation reconciliation.
 
 This is a **planning artifact**: it specifies what execution must demonstrate.
 Each workstream below is feature execution and requires explicit authorization
@@ -34,7 +52,7 @@ required mutation path, made reachable.
 ## Workstreams
 
 ### W1 — Register the remaining native-write families with `native.write`
-- **Now**: `crates/engine/src/api/native_write/registry.rs` aggregates only
+- **Historical baseline (2026-07-05)**: `crates/engine/src/api/native_write/registry.rs` aggregates only
   `project::VERBS` + `waivers::VERBS` = 7 verbs. The board / schematic / library /
   routing / manufacturing builders exist but have no `VERBS` table, so
   `native.write` cannot reach them.
@@ -50,7 +68,7 @@ required mutation path, made reachable.
   job) in dry-run and applied modes; per-family round-trip tests.
 
 ### W2 — Add a `NativeWrite` dispatch variant to the verb registry
-- **Now**: `crates/verb-registry/src/lib.rs` `Dispatch` has only
+- **Historical baseline (2026-07-05)**: `crates/verb-registry/src/lib.rs` `Dispatch` has only
   `Cli { method, argv }` and `DaemonRpc { method }`. Every write verb resolves to
   a CLI argv template; no verb targets `native.write`.
 - **Change**: add `Dispatch::NativeWrite { verb }` (journaled-commit path) and
@@ -63,7 +81,7 @@ required mutation path, made reachable.
   (`datum-verb-catalog --check`) passes; write verbs report `NativeWrite`.
 
 ### W3 — Expose verb / param-schema enumeration on the daemon
-- **Now**: `native.describe` returns only `{ project_root, project_id,
+- **Historical baseline (2026-07-05)**: `native.describe` returns only `{ project_root, project_id,
   project_name, model_revision, journal_len }` — no verb list, no schemas. The
   engine has `native_write_verbs()` but it is not exposed.
 - **Change**: extend `native.describe` (or add `native.list_verbs` /
@@ -77,7 +95,7 @@ required mutation path, made reachable.
   param schema over the socket; covered by a daemon test.
 
 ### W4 — Give `gui-app` a daemon client + GUI action model
-- **Now**: `gui-app` does not link the engine (dev-dep only) and has no
+- **Historical baseline (2026-07-05)**: `gui-app` does not link the engine (dev-dep only) and has no
   Unix-socket/JSON-RPC client; authoring goes through the terminal string handoff.
 - **Change**: add a JSON-RPC-over-Unix-socket client to `gui-app`; a GUI action
   model that, for a user gesture, assembles `{ verb, params, reason, source }`
@@ -90,10 +108,10 @@ required mutation path, made reachable.
 - **Acceptance**: one menu action commits end-to-end through the daemon with a
   journal entry and no CLI string, proven by a behavioral test + screenshot.
 
-## Sequencing (front-load the risk-reducing proof)
+## Original sequencing (read with current dispositions above)
 
 1. **P0 — thin vertical proof.** Build the W4 client core and call `native.write`
-   for a verb already wired today (`datum.project.set_name`, one of the 7). Prove
+   for a verb wired at the original baseline (`datum.project.set_name`, one of the 7). Prove
    a single journaled GUI edit (rename project) end-to-end: gesture → daemon →
    `commit()` → journal → GUI refresh, **no CLI string.** This de-risks the whole
    pipe before widening it.
