@@ -162,7 +162,13 @@ Checkout allocation is 1,747,828,736 bytes (1.63 GiB), down from the preceding
 Target still has zero project markers and its unchanged development binaries.
 No Python bytecode cache directories remain in the inspected source/review roots.
 These are allocation snapshots, not clone size or global disk-space savings.
-Final landing/closure publication is recorded below once committed.
+Implementation landed in `6a973551` after independent final review PASS for
+all sixteen owned paths. All five organization/evidence steps are delivered;
+the maintenance claim is released. Every pre-maintenance Frontier record is
+restored exactly, including the original S5A grant/pointer without a claim or
+resumption. Broader semantic consolidation stays open as unselected intake
+`dat-documentation-semantic-reconciliation-olnn`; this closes only the bounded
+cleanup reviewed above.
 
 ## Cargo output and native workspace separation
 
