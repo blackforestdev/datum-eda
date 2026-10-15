@@ -502,3 +502,69 @@ inverse/code-fence/suffix preservation and actual reviewer link/fragment checks
 remain valid on unchanged content. Unchanged broader structural results are
 reused; no product build or native proof is justified by this scope clarification.
 Normal local commit hooks remain required; objective B acceptance follows landing.
+
+### Actual residual batch-B and combined objective acceptance
+
+<!-- EVIDENCE:SPECIFICATION-RESIDUAL-CLEANUP:RRC-02 -->
+Appointed manager `codex-reorganization-manager-20261014`, thread
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`, recorded actual
+**ACCEPTED_BATCH_B_AND_ALL_THREE_BOUNDED_CLEANUP_OUTCOMES** against B landing
+`6e26fe8bed07ed1cc3605b4f96e3843eebe3d594` and its actual distinct review
+`435858135d934b7aa6cb1e7133374ec08b32663b0309ca82930f7682d0a68dc7`.
+A acceptance remains pinned to `be576a8bb1dbe3077bce2572d4145b7825c9f6c6`
+and actual review `8ef473c5aa657a781d5f0bb1dba17cd7428f94df08dda65ba13a558ab1b51989`.
+The manager verified both exact commit/parent chains, owned paths, all nine
+landed hashes per batch, seven unchanged candidate pins per batch and complete
+two-file faithful receipt/digest deltas. Required preservation and actual final
+checks/hooks were inspected or reused at their actual scope.
+
+Actual combined acceptance receipt SHA-256:
+`8a63918897f15377eafd4e30a5450012881d353f3e7e6d582d7e980fb4cd6fcb`.
+This is a real PM059 objective disposition under the actual owner-selected
+three-item assignment; it is not independent self-review, a fabricated owner
+reply, product acceptance or a blanket corpus reconciliation. RRC-02 completes
+with the actual B landing and acceptance; the final closure step follows it.
+
+### Finite residual dispositions and final synchronized closure
+
+<!-- EVIDENCE:SPECIFICATION-RESIDUAL-CLEANUP:RRC-03 -->
+RC-01's three obsolete live enrollment/trust references now follow PM044 without
+changing actual execution, safety/native proof, independent review or acceptance.
+RC-02's tracked findings and external raw review inputs have explicit storage
+ownership; raw acquisition and availability during actual review remain required,
+and later unavailable evidence is disclosed. Both landed in accepted A.
+RC-03's imported-seed/sidecar scope now follows PM000/ENGINE/native/PM011
+authority: retain existing v5 seed values and stored `import_key` mapping, treat
+`source_hash` as evidence, preserve original algorithms/examples/schema/precedence
+and later contracts. It requires no different UUID, remapping policy, active
+legacy runtime claim or converter work. It landed in accepted B.
+
+Under the actual final manager disposition, only
+`dat-specification-residual-cleanup-vjub` closes with both actual landing
+references; its claim releases, assignee clears and record lands/unselects
+with no execution authorization. RRC-01..03 are complete. The entire original
+UVT-S5A-BUILD row is restored from immutable assignment baseline
+`cd89ffb77816c09389f8eb8dc9146620427cfe40`, including canonical selection,
+owner pause, retained grant, absent claim, dependencies and unfinished steps.
+This restores selection only; S5A and successor execution do not resume.
+All 94 original task rows and manifest root settings must equal that baseline;
+all four content files and reviewed routes remain exact to accepted B landing.
+
+Broad semantic intake `dat-documentation-semantic-reconciliation-olnn` receives
+only appended finite RC-01..03 dispositions and landing references, retaining
+its original description/notes and open/unselected state. Other tracker records
+remain unchanged. RC-04..07 optional items, route subdivision, full integrated
+promotion and pending product/source/rights/HUMAN/qualification choices are
+not promoted or resolved. No code, schema, tooling, prototype, dependency,
+artifact deletion, build, native replay, waiver or push follows this closure.
+
+Final residual-closure verification PASS: all 94 original Frontier rows and
+root settings equal immutable assignment baseline, including whole restored
+paused/unclaimed S5A. All four accepted content files and reviewed route bytes
+equal accepted B. Other tracker rows remain byte-exact; broad intake has only
+appended finite notes/timestamp, stays open and retains its original description.
+The cleanup issue is closed/unassigned, its claim is null, all three steps are
+complete, and only four authorized metadata paths change. Focused closure checks
+pass: state 95/current projection, progress coverage, 569 classifications,
+30 parity inventories, 29 routes / 131 artifacts and whitespace. Normal local
+closure hooks remain required. No additional code/runtime validation is claimed.
