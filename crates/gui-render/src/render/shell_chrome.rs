@@ -47,13 +47,17 @@ pub(super) fn render_phase1_shell_chrome(
     }
     shell_identity::render_shell_identity(state, layout, panel_quads, text_runs)?;
 
-    let panes = render_viewport_panes(
-        layout,
-        &state.ui.layout,
-        state.schematic_scene.is_some(),
-        panel_quads,
-        text_runs,
-    );
+    let panes = if state.project_unopened {
+        Default::default()
+    } else {
+        render_viewport_panes(
+            layout,
+            &state.ui.layout,
+            state.schematic_scene.is_some(),
+            panel_quads,
+            text_runs,
+        )
+    };
     status_bar::render_status_bar(state, layout, panel_quads, text_runs);
     Ok(panes)
 }

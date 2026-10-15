@@ -242,7 +242,9 @@ impl Runtime {
     }
 
     pub(super) fn refresh_global_preferences_accessibility(&mut self) {
-        let nodes = if self.workspace().ui.new_project.open {
+        let nodes = if self.workspace().ui.project_open.open {
+            self.workspace().ui.project_open.accessibility_nodes()
+        } else if self.workspace().ui.new_project.open {
             self.workspace().ui.new_project.accessibility_nodes()
         } else if self.workspace().ui.project_preferences.open {
             self.workspace()

@@ -291,3 +291,158 @@ fn global_seed_is_pinned_once_and_never_follows_later_edits() {
     );
     assert_eq!(project_tree(&request.destination), before);
 }
+
+#[test]
+fn long_lived_global_reader_refuses_stale_and_absent_head_until_explicit_refresh() {
+    let fixture = Fixture::new("stale-selected-global");
+    let actor = fixture.actor();
+    let mut reader =
+        GlobalPreferencesProductService::open(&fixture.provider(), "selected-reader").unwrap();
+    let mut writer =
+        GlobalPreferencesProductService::open(&fixture.provider(), "concurrent-writer").unwrap();
+    let mut request = fixture.request("Stale Global Project");
+    request.units_source = ProjectUnitsSourceV1::Global {
+        expected_generation: None,
+    };
+    let first = writer
+        .mutate(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.units.system".into(),
+                value: json!("imperial"),
+                expected: HeadExpectationV1::Missing,
+                request_id: uuid::Uuid::new_v4(),
+                reason: "create Global head after defaults preview".into(),
+            },
+            &actor,
+        )
+        .unwrap()
+        .generation
+        .unwrap();
+    let error = reader.create_project(request.clone(), &actor).unwrap_err();
+    assert_eq!(error.code, PreferenceErrorCodeV1::StaleGeneration);
+    assert_eq!(error.current_context.generation.as_ref(), Some(&first));
+    assert!(!request.destination.exists());
+    reader.refresh_global_project_units_source();
+    request.units_source = ProjectUnitsSourceV1::Global {
+        expected_generation: Some(first.clone()),
+    };
+    let second = writer
+        .mutate(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.units.system".into(),
+                value: json!("metric"),
+                expected: HeadExpectationV1::Generation(first),
+                request_id: uuid::Uuid::new_v4(),
+                reason: "advance the independently held Global reader".into(),
+            },
+            &actor,
+        )
+        .unwrap()
+        .generation
+        .unwrap();
+    let error = reader.create_project(request.clone(), &actor).unwrap_err();
+    assert_eq!(error.code, PreferenceErrorCodeV1::StaleGeneration);
+    assert_eq!(error.current_context.generation.as_ref(), Some(&second));
+    assert!(!request.destination.exists());
+    reader.refresh_global_project_units_source();
+    request.units_source = ProjectUnitsSourceV1::Global {
+        expected_generation: Some(second.clone()),
+    };
+    let result = reader.create_project(request.clone(), &actor).unwrap();
+    assert!(
+        matches!(&result.units_receipt.source, ProjectUnitsReceiptSourceV2::Global { generation: Some(generation), .. } if generation == &second)
+    );
+    // Replaying the already-published identity still uses its immutable receipt.
+    let replay = reader.create_project(request, &actor).unwrap();
+    assert_eq!(replay, result);
+}
+
+#[test]
+fn unreadable_live_global_source_refuses_without_creation_and_factory_stays_isolated() {
+    let fixture = Fixture::new("unreadable-live-global");
+    let actor = fixture.actor();
+    let repository = fixture.provider().0.repository_root;
+    std::fs::create_dir_all(&repository).unwrap();
+    std::fs::write(repository.join("head.json"), b"{").unwrap();
+    let before = project_tree(&repository);
+    let mut request = fixture.request("Unavailable Global Project");
+    request.units_source = ProjectUnitsSourceV1::Global {
+        expected_generation: None,
+    };
+    let error = fixture
+        .service
+        .create_project(request.clone(), &actor)
+        .unwrap_err();
+    assert_eq!(error.code, PreferenceErrorCodeV1::SeedSourceUnavailable);
+    assert_eq!(
+        error.current_context.repository_status,
+        PreferenceRepositoryStatusV1::PreservedUnreadable
+    );
+    assert!(!request.destination.exists());
+    assert_eq!(project_tree(&repository), before);
+    let factory = fixture.request("Explicit Factory Project");
+    fixture.service.create_project(factory, &actor).unwrap();
+    assert_eq!(project_tree(&repository), before);
+}
+
+#[test]
+fn injected_missing_units_default_in_ready_snapshot_refuses_genesis_without_writes() {
+    let mut fixture = Fixture::new("injected-unresolved-units");
+    let actor = fixture.actor();
+    let generation = fixture
+        .service
+        .mutate(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".into(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: uuid::Uuid::new_v4(),
+                reason: "establish a real ready snapshot without overriding Units".into(),
+            },
+            &actor,
+        )
+        .unwrap()
+        .generation
+        .unwrap();
+    let repository = fixture.provider().0.repository_root;
+    let before = project_tree(&repository);
+    // Shipped Units descriptors all have valid literal defaults. This injected
+    // descriptor fault exercises the defensive unresolved-value guard; it is
+    // not a normally reachable Global repository or native workflow fixture.
+    let mut registry = DescriptorRegistry::default();
+    for key in fixture.service.registry().keys() {
+        let mut descriptor = fixture.service.registry().get(key).unwrap().clone();
+        if key.as_str() == "datum.units.board_length" {
+            descriptor.default_value = DescriptorDefault::Absent;
+        }
+        registry.register(descriptor).unwrap();
+    }
+    fixture.service.service.registry = registry;
+    assert!(matches!(
+        fixture.service.status(),
+        PreferenceServiceStatus::Ready { .. }
+    ));
+    let unresolved = fixture
+        .service
+        .rows()
+        .into_iter()
+        .find(|row| row.key.as_str() == "datum.units.board_length")
+        .unwrap();
+    assert_eq!(unresolved.effective_value, None);
+    let mut request = fixture.request("Unresolved Units Project");
+    request.units_source = ProjectUnitsSourceV1::Global {
+        expected_generation: Some(generation),
+    };
+    let error = fixture
+        .service
+        .create_project(request.clone(), &actor)
+        .unwrap_err();
+    assert_eq!(error.code, PreferenceErrorCodeV1::SeedSourceUnavailable);
+    assert_eq!(
+        error.current_context.repository_status,
+        PreferenceRepositoryStatusV1::Ready
+    );
+    assert!(error.message.contains("has no effective value"));
+    assert!(!request.destination.exists());
+    assert_eq!(project_tree(&repository), before);
+}

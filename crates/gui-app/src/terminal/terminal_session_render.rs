@@ -42,11 +42,19 @@ pub(super) fn terminal_tab_label(
 
 impl TerminalSessionRegistry {
     pub(crate) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
+        if self.sessions.is_empty() && self.pending_spawns.is_empty() {
+            state.active_session_id = None;
+            state.tabs.clear();
+            state.tab_layouts.clear();
+            return;
+        }
         self.sync_terminal_tab_layouts(state);
         let active_index = self.active_index;
         state.active_session_id = self.active_pending_id.clone().or_else(|| {
-            (!self.sessions[self.active_index].hidden_after_close)
-                .then(|| self.active().session_id().to_string())
+            self.sessions
+                .get(self.active_index)
+                .filter(|slot| !slot.hidden_after_close)
+                .map(|slot| slot.session.session_id().to_string())
         });
         let tabs = self
             .terminal_tabs
@@ -125,8 +133,9 @@ impl TerminalSessionRegistry {
         if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
             state.activity_summary = active_tab.activity_summary.clone();
         }
-        if self.active_pending_id.is_none() {
-            let active_slot = &self.sessions[self.active_index];
+        if self.active_pending_id.is_none()
+            && let Some(active_slot) = self.sessions.get(self.active_index)
+        {
             state.columns = active_slot.columns;
             state.rows = active_slot.rows;
         }
@@ -134,7 +143,7 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn active_render_row_count(&self) -> usize {
-        if self.active_pending_id.is_some() {
+        if self.sessions.is_empty() || self.active_pending_id.is_some() {
             return 0;
         }
         self.sessions[self.active_index]
@@ -165,7 +174,7 @@ impl TerminalSessionRegistry {
         Vec<datum_gui_render::TerminalPaneRenderState<'a>>,
         crate::terminal_core_adapter::TerminalCoreAdapterError,
     > {
-        if self.active_pending_id.is_some() {
+        if self.sessions.is_empty() || self.active_pending_id.is_some() {
             return Ok(Vec::new());
         }
         let active_session_id = self.active().session_id().to_string();
@@ -252,7 +261,7 @@ impl TerminalSessionRegistry {
         pixel_width: u32,
         pixel_height: u32,
     ) -> Result<()> {
-        if self.active_pending_id.is_some() {
+        if self.sessions.is_empty() || self.active_pending_id.is_some() {
             return Ok(());
         }
         let slot = &mut self.sessions[self.active_index];
@@ -271,7 +280,7 @@ impl TerminalSessionRegistry {
         &mut self,
         panes: &[datum_gui_viewport::TerminalPaneGeometry],
     ) -> Result<()> {
-        if self.active_pending_id.is_some() {
+        if self.sessions.is_empty() || self.active_pending_id.is_some() {
             return Ok(());
         }
         for pane in panes {

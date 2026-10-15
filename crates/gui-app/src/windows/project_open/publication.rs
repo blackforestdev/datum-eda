@@ -21,6 +21,8 @@ impl Runtime {
                 .map_err(|e| format!("{e:#}"))
         });
         if let Err(reason) = result {
+            let reason = self.project_open.refusal(reason);
+            self.log_console_echo(ConsoleFeedbackSource::Viewport, reason.clone());
             self.session.workspace_mut().ui.project_open.refusal = Some(reason);
         }
         self.invalidate_frame();
@@ -28,27 +30,45 @@ impl Runtime {
     }
 
     fn publish_project_open(&mut self, answer: Answer) -> Result<()> {
-        let root = &self
-            .workspace()
-            .backing
-            .as_ref()
-            .context("Current Project backing unavailable")?
-            .request
-            .project_root;
-        validate_publication_origin(
-            &answer.origin,
-            root,
-            self.project_open.session_generation,
-            answer.ticket,
-            self.project_open.generation,
-            self.workspace().ui.project_open.open,
-            self.native_edit.pending(),
-        )?;
+        if self.workspace().project_unopened {
+            anyhow::ensure!(
+                self.workspace().ui.project_open.open
+                    && answer.ticket == self.project_open.generation
+                    && answer
+                        .origin
+                        .matches_unopened(self.project_open.session_generation),
+                "Open Project origin changed; retry Open"
+            );
+            anyhow::ensure!(
+                !self.native_edit.pending(),
+                "Current Project edit became busy; retry Open"
+            );
+        } else {
+            let root = &self
+                .workspace()
+                .backing
+                .as_ref()
+                .context("Current Project backing unavailable")?
+                .request
+                .project_root;
+            validate_publication_origin(
+                &answer.origin,
+                root,
+                self.project_open.session_generation,
+                answer.ticket,
+                self.project_open.generation,
+                self.workspace().ui.project_open.open,
+                self.native_edit.pending(),
+            )?;
+        }
         self.terminal_sessions.project_terminal_ready_to_publish()?;
-        let root = root.clone();
-        let origin_workspace = self.workspace().clone();
-        self.terminal_sessions
-            .remember_project_workspace(&root, &origin_workspace);
+        if let Some(backing) = &self.workspace().backing {
+            let root = backing.request.project_root.clone();
+            let origin_workspace = self.workspace().clone();
+            self.terminal_sessions
+                .remember_project_workspace(&root, &origin_workspace);
+        }
+        let opened_root = answer.prepared.root.clone();
         let mut workspace = answer.prepared.workspace;
         // Global preferences are application-owned; all Project consumers and
         // project preferences come from the newly prepared source.
@@ -95,11 +115,23 @@ impl Runtime {
         );
         workspace.ui.focus = ApplicationFocus::Editor(workspace.ui.layout.focused);
         self.session = LiveDesignSession::new(workspace);
-        self.terminal_launch_context = answer.context;
+        self.terminal_launch_context = Some(answer.context);
+        self.project_open.created_root = None;
         self.project_open.session_generation = self.project_open.session_generation.wrapping_add(1);
         self.render_sources = Default::default();
         self.sync_terminal_tabs();
         self.resize_terminal_to_dock();
+        let message = format!(
+            "Opened Project {} at {}",
+            self.workspace().scene.project_name,
+            opened_root.display()
+        );
+        append_gui_diagnostic_line(format!(
+            "{message}; project_id={}; session_generation={}",
+            self.workspace().scene.project_uuid,
+            self.project_open.session_generation
+        ));
+        self.log_console_echo(ConsoleFeedbackSource::Viewport, message);
         Ok(())
     }
 }

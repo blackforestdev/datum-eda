@@ -202,7 +202,12 @@ impl Runtime {
         if self
             .terminal_sessions
             .active_origin_context()
-            .is_some_and(|origin| origin.project_root != self.terminal_launch_context.project_root)
+            .is_some_and(|origin| {
+                !self
+                    .terminal_launch_context
+                    .as_ref()
+                    .is_some_and(|current| origin.project_root == current.project_root)
+            })
         {
             return;
         }
@@ -295,16 +300,16 @@ impl Runtime {
         let report = self
             .terminal_sessions
             .drain_all(&mut self.session.workspace_mut().ui.terminal);
-        let restarted = self
-            .terminal_sessions
-            .complete_pending_restarts(
-                &mut self.session.workspace_mut().ui.terminal,
-                &self.terminal_launch_context,
-            )
-            .unwrap_or_else(|error| {
-                self.log_terminal_event(format!("terminal restart completion failed: {error}"));
-                false
-            });
+        let restarted = if let Some(context) = &self.terminal_launch_context {
+            self.terminal_sessions
+                .complete_pending_restarts(&mut self.session.workspace_mut().ui.terminal, context)
+                .unwrap_or_else(|error| {
+                    self.log_terminal_event(format!("terminal restart completion failed: {error}"));
+                    false
+                })
+        } else {
+            false
+        };
         if report.events == 0
             && !restarted
             && !spawned

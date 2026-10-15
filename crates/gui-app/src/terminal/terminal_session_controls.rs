@@ -60,7 +60,14 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {
-        let context = self.context_for_active_terminal_launch();
+        let context = match self.context_for_active_terminal_launch() {
+            Ok(context) => context,
+            Err(error) => {
+                self.log_terminal_event(format!("Terminal unavailable: {error}"));
+                self.invalidate_frame();
+                return true;
+            }
+        };
         match self
             .terminal_sessions
             .begin_spawn_and_activate(&context, &mut self.session.workspace_mut().ui.terminal)
@@ -82,7 +89,14 @@ impl Runtime {
     }
 
     pub(super) fn spawn_terminal_split(&mut self, direction: TerminalSplitDirection) -> bool {
-        let context = self.context_for_active_terminal_launch();
+        let context = match self.context_for_active_terminal_launch() {
+            Ok(context) => context,
+            Err(error) => {
+                self.log_terminal_event(format!("Terminal unavailable: {error}"));
+                self.invalidate_frame();
+                return true;
+            }
+        };
         match self.terminal_sessions.begin_split_and_activate(
             &context,
             &mut self.session.workspace_mut().ui.terminal,

@@ -8,6 +8,9 @@ pub fn camera_scene_for_pane(
     state: &ReviewWorkspaceState,
     pane: PaneId,
 ) -> Option<&BoardReviewSceneV1> {
+    if state.project_unopened {
+        return None;
+    }
     if state.ui.layout.zoomed.is_some_and(|zoomed| zoomed != pane) {
         return None;
     }

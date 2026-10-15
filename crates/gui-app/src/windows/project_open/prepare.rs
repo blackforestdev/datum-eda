@@ -15,27 +15,33 @@ impl Runtime {
                 self.workspace().ui.project_open.open_enabled(),
                 "Choose a native Project directory"
             );
-            let root = &self
-                .workspace()
-                .backing
-                .as_ref()
-                .context("Current Project backing unavailable")?
-                .request
-                .project_root;
-            let origin = ProjectOpenOrigin::capture(root, self.project_open.session_generation)?;
+            let origin = if self.workspace().project_unopened {
+                ProjectOpenOrigin::capture_unopened(self.project_open.session_generation)
+            } else {
+                let root = &self
+                    .workspace()
+                    .backing
+                    .as_ref()
+                    .context("Current Project backing unavailable")?
+                    .request
+                    .project_root;
+                ProjectOpenOrigin::capture(root, self.project_open.session_generation)?
+            };
             Ok((origin, self.terminal_sessions.reserve_project_terminal()?))
         })();
         let (origin, reservation) = match request {
             Ok(request) => request,
             Err(error) => {
-                self.session.workspace_mut().ui.project_open.refusal = Some(format!("{error:#}"));
+                let reason = self.project_open.refusal(format!("{error:#}"));
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, reason.clone());
+                self.session.workspace_mut().ui.project_open.refusal = Some(reason);
                 self.invalidate_frame();
                 return true;
             }
         };
         let directory = std::path::PathBuf::from(self.workspace().ui.project_open.directory.trim());
         let include_review = self.workspace_include_review;
-        let profile = self.terminal_launch_context.terminal_profile.clone();
+        let profile = self.terminal_profiles.selected().clone();
         self.project_open.generation = self.project_open.generation.wrapping_add(1);
         let ticket = self.project_open.generation;
         let wake = self.project_open.wake.clone();
@@ -77,8 +83,11 @@ impl Runtime {
                 dialog.refusal = None;
             }
             Err(error) => {
-                self.session.workspace_mut().ui.project_open.refusal =
-                    Some(format!("Open Project worker unavailable: {error}"));
+                let reason = self
+                    .project_open
+                    .refusal(format!("Open Project worker unavailable: {error}"));
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, reason.clone());
+                self.session.workspace_mut().ui.project_open.refusal = Some(reason);
             }
         }
         self.invalidate_frame();

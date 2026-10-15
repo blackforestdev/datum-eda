@@ -120,6 +120,12 @@ it or edit the foundation contract's unresolved wording by implication.
 
 ### Exact subsequent disposition packet
 
+> Historical initial recommendation. Routine NPD owner routing in this packet
+> is superseded by the actual subsequent owner clarification and appointed
+> manager scope in [NPD-MANAGED-01](../workflow-delivery-rollout/native-project-doorway.md#actual-owner-clarification-and-manager-scope).
+> Preserve the original review/closure observations; do not treat these earlier
+> proposed owner relays as current prerequisites.
+
 | ID / consumer | Recommendation and missing evidence | Requested disposition / authority |
 | --- | --- | --- |
 | NPD-PLAN / first usable doorway | Credit existing controllers/genesis/opening; complete NPD-C01 around the demonstrated no-project startup connection and missing full native evidence. | Manager may explicitly select existing authorized NPD planning only within PM059; this checkpoint restores paused S5A unless an actual separately recorded disposition selects otherwise. No automatic successor. |

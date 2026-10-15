@@ -133,6 +133,27 @@ pub(super) struct TerminalLaunchContext {
 }
 
 impl TerminalSessionRegistry {
+    /// No PTY or filesystem context exists until a real Project is published.
+    pub(super) fn empty(proxy: Option<EventLoopProxy<()>>) -> Self {
+        Self {
+            sessions: vec![],
+            terminal_tabs: vec![],
+            pending_spawns: vec![],
+            active_pending_id: None,
+            active_index: 0,
+            next_session_ordinal: 1,
+            terminal_wake: TerminalWakeGate::new(proxy),
+            next_drain_index: 0,
+            next_apply_index: 0,
+            projection_managed: false,
+            project_open_reservations: Arc::default(),
+            origin_contexts: Default::default(),
+            origin_workspaces: Default::default(),
+            rejected_project_terminals: Arc::default(),
+            next_rejected_drain_index: 0,
+        }
+    }
+
     #[cfg_attr(not(test), allow(dead_code))]
     pub(super) fn spawn(context: &TerminalLaunchContext) -> Result<Self> {
         Self::spawn_with_proxy(context, None)
@@ -277,7 +298,11 @@ impl TerminalSessionRegistry {
     }
 
     pub(super) fn active_attached(&self) -> bool {
-        self.active_pending_id.is_none() && self.sessions[self.active_index].attached
+        self.active_pending_id.is_none()
+            && self
+                .sessions
+                .get(self.active_index)
+                .is_some_and(|slot| slot.attached)
     }
 
     #[cfg_attr(not(test), allow(dead_code))]
@@ -437,6 +462,9 @@ impl TerminalSessionRegistry {
         &mut self,
         max_spans: usize,
     ) -> Result<Vec<String>> {
+        if self.sessions.is_empty() {
+            return Ok(vec![]);
+        }
         if self.active_pending_id.is_some() {
             return Ok(vec!["starting terminal session".to_string()]);
         }

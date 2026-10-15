@@ -84,7 +84,9 @@ pub(super) fn render_shell_identity_logical(
     };
     // Project identity is already present in the sidebar; the decorative pill
     // yields when the menu titles need the available strip width.
-    if pill_x >= menu_chrome::menu_titles_end_x(layout)? + design_tokens::spacing::SP_03 {
+    if !state.project_unopened
+        && pill_x >= menu_chrome::menu_titles_end_x(layout)? + design_tokens::spacing::SP_03
+    {
         panel_quads.push(Quad::from_rect(pill_rect, PANEL_BG));
         push_rect_border(panel_quads, pill_rect, PANEL_CARD_BORDER, 1.0);
         draw_text(
@@ -117,18 +119,20 @@ mod shell_identity_tests {
     fn brand_and_long_revision_stay_inside_the_menu_strip() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.scene.project_name = "A deliberately long project name spanning a narrow menu".into();
-        for width in [1, 25, 100, 1280] {
-            let layout = ShellLayout::for_surface(width, 800, 1.0, None);
-            let mut quads = Vec::new();
-            let mut text = Vec::new();
-            render_shell_identity(&state, &layout, &mut quads, &mut text).unwrap();
-            let bounds = layout.top_menu_bar;
-            for quad in &quads {
-                assert!(quad.points.iter().all(|&(x, y)| bounds.contains(x, y)));
-            }
-            assert!(!text.is_empty());
-            for run in &text {
-                assert_eq!(run.clip_bounds, Some(bounds));
+        for state in [state, datum_gui_protocol::ReviewWorkspaceState::unopened()] {
+            for width in [1, 25, 100, 1280] {
+                let layout = ShellLayout::for_surface(width, 800, 1.0, None);
+                let mut quads = Vec::new();
+                let mut text = Vec::new();
+                render_shell_identity(&state, &layout, &mut quads, &mut text).unwrap();
+                let bounds = layout.top_menu_bar;
+                for quad in &quads {
+                    assert!(quad.points.iter().all(|&(x, y)| bounds.contains(x, y)));
+                }
+                assert!(!text.is_empty());
+                for run in &text {
+                    assert_eq!(run.clip_bounds, Some(bounds));
+                }
             }
         }
     }

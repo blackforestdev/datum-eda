@@ -24,25 +24,40 @@ pub(super) struct OpenWork {
     pub(super) session_generation: u64,
     pending: Option<mpsc::Receiver<Result<Answer, String>>>,
     wake: winit::event_loop::EventLoopProxy<()>,
+    created_root: Option<std::path::PathBuf>,
 }
 
 impl OpenWork {
     pub(super) fn new(wake: winit::event_loop::EventLoopProxy<()>) -> Self {
         Self {
+            created_root: None,
             generation: 0,
             session_generation: 0,
             pending: None,
             wake,
         }
     }
-    fn cancel(&mut self) {
+    fn refusal(&self, reason: String) -> String {
+        if let Some(root) = &self.created_root {
+            format!(
+                "Project created and preserved. Open failed: {reason}. Created at {}. Correct the problem and retry Open.",
+                root.display()
+            )
+        } else {
+            reason
+        }
+    }
+
+    pub(super) fn cancel(&mut self) {
         self.generation = self.generation.wrapping_add(1);
         self.pending = None;
+        self.created_root = None;
     }
 }
 
 impl Runtime {
     pub(super) fn open_project(&mut self) -> bool {
+        self.project_open.cancel();
         if self.workspace().ui.global_preferences.open {
             self.close_global_preferences();
         }
@@ -65,6 +80,13 @@ impl Runtime {
         ui.focus = ApplicationFocus::Overlay;
         self.invalidate_frame();
         true
+    }
+
+    pub(super) fn open_created_project(&mut self, root: std::path::PathBuf) {
+        self.open_project();
+        self.session.workspace_mut().ui.project_open.directory = root.display().to_string();
+        self.project_open.created_root = Some(root);
+        self.begin_project_open();
     }
 
     pub(super) fn close_project_open(&mut self) -> bool {

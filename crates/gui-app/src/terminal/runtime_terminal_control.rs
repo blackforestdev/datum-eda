@@ -144,10 +144,13 @@ impl Runtime {
     }
 
     pub(crate) fn restart_terminal_session(&mut self) {
-        match self.terminal_sessions.restart_active(
-            &mut self.session.workspace_mut().ui.terminal,
-            &self.terminal_launch_context,
-        ) {
+        let Some(context) = self.terminal_launch_context.as_ref() else {
+            return;
+        };
+        match self
+            .terminal_sessions
+            .restart_active(&mut self.session.workspace_mut().ui.terminal, context)
+        {
             Ok(()) => {
                 self.log_terminal_event(
                     "terminal restart requested; waiting for verified teardown",

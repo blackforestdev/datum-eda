@@ -30,6 +30,9 @@ impl GlobalPreferencesCoordinator {
     }
 
     pub(super) fn refresh_new_project_preview(&mut self, ui: &mut WorkspaceUiState) {
+        if ui.new_project.units_choice == NewProjectUnitsChoice::Global {
+            self.service.refresh_global_project_units_source();
+        }
         let source = match ui.new_project.units_choice {
             NewProjectUnitsChoice::Global => ProjectUnitsSourceV1::Global {
                 expected_generation: self.service.status().generation().cloned(),
@@ -159,7 +162,7 @@ impl GlobalPreferencesCoordinator {
     pub(super) fn create_new_project(
         &mut self,
         ui: &mut WorkspaceUiState,
-    ) -> Result<String, PreferenceErrorV1> {
+    ) -> Result<eda_engine::preferences::ProjectGenesisResultV1, PreferenceErrorV1> {
         let Some(source) = self.new_project_source.clone() else {
             self.refresh_new_project_preview(ui);
             return Err(PreferenceErrorV1 {
@@ -179,10 +182,7 @@ impl GlobalPreferencesCoordinator {
             units_source: source,
         };
         match self.service.create_project(request, &human_gui_actor()) {
-            Ok(result) => Ok(format!(
-                "Project created with eight Working Units and immutable receipt: {}",
-                result.project_root_identity
-            )),
+            Ok(result) => Ok(result),
             Err(error) => {
                 self.new_project_source = None;
                 ui.new_project.units_summary.clear();
@@ -195,6 +195,9 @@ impl GlobalPreferencesCoordinator {
 
 impl Runtime {
     pub(crate) fn open_new_project(&mut self) -> bool {
+        if self.workspace().ui.project_open.open {
+            self.close_project_open();
+        }
         if self.workspace().ui.global_preferences.open {
             self.close_global_preferences();
         }
@@ -261,9 +264,12 @@ impl Runtime {
             .global_preferences
             .create_new_project(&mut self.session.workspace_mut().ui)
         {
-            Ok(message) => {
-                self.log_console_echo(ConsoleFeedbackSource::Viewport, message);
+            Ok(created) => {
+                self.log_console_echo(ConsoleFeedbackSource::Viewport, format!(
+                    "Project created with eight Working Units and immutable receipt: {}. Opening Project.",
+                    created.project_root_identity));
                 self.close_new_project();
+                self.open_created_project(std::path::PathBuf::from(created.project_root_identity));
             }
             Err(_) => self.invalidate_frame(),
         }
@@ -492,6 +498,41 @@ mod tests {
             Some(8)
         );
         assert!(!project.to_string().contains("revision"));
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn unresolved_global_reader_preserves_draft_without_genesis_or_implicit_factory() {
+        let (root, mut coordinator, mut ui) = fixture();
+        coordinator.service =
+            GlobalPreferencesProductService::factory_only("unresolved-global-test").unwrap();
+        coordinator.open_new_project(&mut ui, ApplicationFocus::default());
+        ui.new_project.project_name = "Preserved name".into();
+        let destination = root.join("must-stay-absent");
+        ui.new_project.destination = destination.display().to_string();
+        ui.new_project.focus = NewProjectFocus::Destination;
+        let error = coordinator.create_new_project(&mut ui).unwrap_err();
+        assert_eq!(
+            error.code,
+            eda_engine::preferences::PreferenceErrorCodeV1::SeedSourceUnavailable
+        );
+        assert_eq!(ui.new_project.project_name, "Preserved name");
+        assert_eq!(
+            ui.new_project.destination,
+            destination.display().to_string()
+        );
+        assert_eq!(ui.new_project.focus, NewProjectFocus::Destination);
+        assert_eq!(ui.new_project.units_choice, NewProjectUnitsChoice::Global);
+        assert!(ui.new_project.refusal.is_some());
+        assert!(!ui.new_project.create_enabled());
+        assert!(!destination.exists());
+        assert!(!root.join("preferences").exists());
+        ui.new_project.units_choice = NewProjectUnitsChoice::Factory;
+        coordinator.refresh_new_project_preview(&mut ui);
+        assert_eq!(ui.new_project.units_summary.len(), 8);
+        assert!(ui.new_project.create_enabled());
+        assert!(!destination.exists());
+        assert!(!root.join("preferences").exists());
         let _ = std::fs::remove_dir_all(root);
     }
 }

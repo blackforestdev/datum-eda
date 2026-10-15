@@ -273,3 +273,42 @@ fn two_strings(first: &str, second: &str) -> Vec<u8> {
     body.string(second);
     body.finish()
 }
+
+#[test]
+fn new_open_semantic_roles_match_native_atspi_enumeration() {
+    // Literal values independently checked against installed Atspi.Role via GI.
+    // Exercise the public GetRole wire response, not internal constants.
+    let cases = [
+        (GlobalPreferencesAccessibleRole::Navigation, 39),
+        (GlobalPreferencesAccessibleRole::RadioGroup, 39),
+        (GlobalPreferencesAccessibleRole::RadioButton, 44),
+        (GlobalPreferencesAccessibleRole::Status, 54),
+    ];
+    let nodes = cases
+        .iter()
+        .enumerate()
+        .map(|(i, (role, _))| GlobalPreferencesAccessibleNode {
+            id: format!("native-role-{i}"),
+            name: format!("Native role {i}"),
+            role: *role,
+            value: None,
+            description: String::new(),
+            available: true,
+            focused: false,
+        })
+        .collect();
+    let mut service = ServiceState::new(snapshot(), false, nodes);
+    for (i, (_, expected)) in cases.iter().enumerate() {
+        let response = service.dispatch(
+            i as u32 + 1,
+            &call_at(
+                &format!("{PREFERENCES_PATH}/{i}"),
+                ACCESSIBLE,
+                "GetRole",
+                "",
+                Vec::new(),
+            ),
+        );
+        assert_eq!(response.body_reader().u32().unwrap(), *expected);
+    }
+}

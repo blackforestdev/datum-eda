@@ -469,14 +469,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2940,
+        "pre_test_lines": 2887,
         "inline_test_lines": 1705
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending. ORG-05 moves eleven board-scene geometry/display payload types and their unchanged outline-layer default into scene_primitives, a normal typed implementation owner; root public exports retain API and serialization. Production ceiling ratchets from 3078 to 2940; inline tests 1705 remain unchanged."
+      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending. ORG-05 moves eleven board-scene geometry/display payload types and their unchanged outline-layer default into scene_primitives, a normal typed implementation owner; root public exports retain API and serialization. Production ceiling ratchets from 3078 to 2940; inline tests 1705 remain unchanged. NPD-C03 moves the complete workspace constructor to workspace_state, its existing typed state owner; production ceiling 2940 to 2887, inline tests unchanged."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

@@ -14,6 +14,7 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn terminate_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        anyhow::ensure!(!self.sessions.is_empty(), "No terminal session is open");
         self.sessions[self.active_index].close_confirmation_armed = false;
         terminate_terminal_session(self.active(), state)?;
         self.sessions[self.active_index].status = state.status.clone();
@@ -22,6 +23,7 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn close_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        anyhow::ensure!(!self.sessions.is_empty(), "No terminal session is open");
         if let Some(pending_id) = self.active_pending_id.take() {
             if let Some(pending) = self
                 .pending_spawns
@@ -80,7 +82,10 @@ impl TerminalSessionRegistry {
 
     pub(crate) fn active_close_confirmation_armed(&self) -> bool {
         self.active_pending_id.is_none()
-            && self.sessions[self.active_index].close_confirmation_armed
+            && self
+                .sessions
+                .get(self.active_index)
+                .is_some_and(|slot| slot.close_confirmation_armed)
     }
 
     pub(crate) fn handle_close_confirmation_input(
@@ -88,6 +93,9 @@ impl TerminalSessionRegistry {
         bytes: &[u8],
         state: &mut TerminalLaneState,
     ) {
+        if self.sessions.is_empty() {
+            return;
+        }
         match bytes {
             b"\x1b" => {
                 let slot = &mut self.sessions[self.active_index];
@@ -108,12 +116,13 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn confirm_close_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        anyhow::ensure!(!self.sessions.is_empty(), "No terminal session is open");
         self.sessions[self.active_index].remove_when_closed = true;
         self.terminate_active(state)
     }
 
     pub(crate) fn force_kill_active(&self) {
-        if self.active_pending_id.is_none() {
+        if !self.sessions.is_empty() && self.active_pending_id.is_none() {
             self.active().force_kill();
         }
     }

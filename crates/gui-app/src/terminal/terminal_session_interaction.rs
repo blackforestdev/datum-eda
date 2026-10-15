@@ -157,6 +157,7 @@ impl TerminalSessionRegistry {
     }
 
     fn ensure_active_ready(&self) -> Result<()> {
+        anyhow::ensure!(!self.sessions.is_empty(), "No terminal session is open");
         if self.active_pending_id.is_some() {
             anyhow::bail!("terminal session is still starting");
         }

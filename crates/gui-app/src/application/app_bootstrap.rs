@@ -128,10 +128,10 @@ pub(super) struct GuiArgs {
 }
 pub(super) struct LaunchState {
     pub(super) reuse_resize_buffers: bool,
-    pub(super) request: LiveReviewRequest,
+    pub(super) request: Option<LiveReviewRequest>,
     pub(super) state: datum_gui_protocol::ReviewWorkspaceState,
     pub(super) camera: CameraState,
-    pub(super) terminal_launch_context: TerminalLaunchContext,
+    pub(super) terminal_launch_context: Option<TerminalLaunchContext>,
     pub(super) terminal_profiles: crate::terminal_profile::TerminalProfileCatalog,
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) workspace_include_review: bool,
@@ -327,6 +327,9 @@ impl GuiArgs {
         &self,
         terminal_event_proxy: Option<winit::event_loop::EventLoopProxy<()>>,
     ) -> Result<LaunchState> {
+        if self.has_no_project_source() {
+            return self.unopened_launch_state(terminal_event_proxy);
+        }
         let request_started = std::time::Instant::now();
         append_gui_diagnostic_line("request resolve begin");
         let request = self
@@ -428,10 +431,10 @@ impl GuiArgs {
                 self.reuse_resize_buffers,
                 std::env::var_os("DATUM_DIAGNOSTIC_RESIZE_ALLOCATION").is_some(),
             ),
-            request,
+            request: Some(request),
             state,
             camera,
-            terminal_launch_context,
+            terminal_launch_context: Some(terminal_launch_context),
             terminal_profiles,
             terminal_sessions,
             workspace_include_review,
@@ -587,7 +590,7 @@ mod initial_layout_tests {
     }
 }
 
-fn ordinary_resize_reuse(explicit: bool, diagnostic_override: bool) -> bool {
+pub(super) fn ordinary_resize_reuse(explicit: bool, diagnostic_override: bool) -> bool {
     explicit || !diagnostic_override
 }
 

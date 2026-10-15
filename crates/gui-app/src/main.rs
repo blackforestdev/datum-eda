@@ -313,3 +313,6 @@ mod native_library_frame_tests;
 #[cfg(test)]
 #[path = "editor/native_schematic_frame_tests.rs"]
 mod native_schematic_frame_tests;
+
+#[path = "application/native_project_startup.rs"]
+mod native_project_startup;

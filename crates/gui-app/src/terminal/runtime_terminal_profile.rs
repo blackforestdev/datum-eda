@@ -5,7 +5,9 @@ use super::*;
 impl Runtime {
     pub(super) fn cycle_terminal_profile(&mut self) -> bool {
         let profile = self.terminal_profiles.select_next().clone();
-        self.terminal_launch_context.terminal_profile = profile.clone();
+        if let Some(context) = &mut self.terminal_launch_context {
+            context.terminal_profile = profile.clone();
+        }
         let terminal = &mut self.session.workspace_mut().ui.terminal;
         terminal.launch_profile_name = profile.name().to_string();
         terminal.theme = profile.theme();

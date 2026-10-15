@@ -194,3 +194,91 @@ fn journal_bearing_destination_rejects_changed_source_without_history_file_chang
     assert!(prepared.revalidate().is_err());
     assert!(prepared.admit().is_err());
 }
+
+#[test]
+fn open_accessibility_preserves_attempted_path_refusal_and_cancel_during_preparation() {
+    let mut dialog = ProjectOpenDialogState {
+        open: true,
+        directory: "/owned/attempted-project".into(),
+        ..Default::default()
+    };
+    dialog.focus = ProjectOpenFocus::Directory;
+    let nodes = dialog.accessibility_nodes();
+    let path = nodes
+        .iter()
+        .find(|n| n.id == "open-project-directory")
+        .unwrap();
+    assert_eq!(path.value.as_deref(), Some("/owned/attempted-project"));
+    assert!(path.focused && path.available);
+    dialog.busy = true;
+    let nodes = dialog.accessibility_nodes();
+    assert!(
+        nodes
+            .iter()
+            .any(|n| n.id == "open-project-cancel" && n.available)
+    );
+    assert!(
+        nodes
+            .iter()
+            .any(|n| n.id == "open-project-submit" && !n.available)
+    );
+    assert!(nodes.iter().any(|n| n.id == "open-project-busy"));
+    dialog.busy = false;
+    dialog.refusal = Some("Owned writer is busy; source unchanged".into());
+    let nodes = dialog.accessibility_nodes();
+    assert_eq!(
+        nodes
+            .iter()
+            .find(|n| n.id == "open-project-refusal")
+            .unwrap()
+            .value
+            .as_deref(),
+        dialog.refusal.as_deref()
+    );
+    assert_eq!(
+        nodes
+            .iter()
+            .find(|n| n.id == "open-project-directory")
+            .unwrap()
+            .value
+            .as_deref(),
+        Some("/owned/attempted-project")
+    );
+    dialog.open = false;
+    assert!(dialog.accessibility_nodes().is_empty());
+}
+
+#[test]
+fn missing_or_corrupt_declared_rules_refuses_open_without_repair_or_publication() {
+    let root = copied_fixture("missing-required-rules");
+    let rules = std::fs::read(root.join("rules/rules.json")).unwrap();
+    let retained: Vec<_> = [
+        "project.json",
+        "board/board.json",
+        "schematic/schematic.json",
+    ]
+    .iter()
+    .map(|path| (*path, std::fs::read(root.join(path)).unwrap()))
+    .collect();
+    std::fs::remove_file(root.join("rules/rules.json")).unwrap();
+    for corrupt in [false, true] {
+        if corrupt {
+            std::fs::write(root.join("rules/rules.json"), b"{").unwrap();
+        }
+        let error = PreparedProjectOpen::prepare(&root, false)
+            .err()
+            .expect("incomplete declared root must refuse");
+        assert!(format!("{error:#}").contains("missing_required_shard"));
+        for (path, bytes) in &retained {
+            assert_eq!(std::fs::read(root.join(path)).unwrap(), *bytes);
+        }
+        if corrupt {
+            assert_eq!(std::fs::read(root.join("rules/rules.json")).unwrap(), b"{");
+        } else {
+            assert!(!root.join("rules/rules.json").exists());
+        }
+    }
+    // Explicit fixture repair restores valid Open; the application never repairs it.
+    std::fs::write(root.join("rules/rules.json"), rules).unwrap();
+    PreparedProjectOpen::prepare(&root, false).unwrap();
+}

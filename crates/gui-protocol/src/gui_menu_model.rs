@@ -98,6 +98,9 @@ impl GuiMenuItem {
     /// Contextual production state used by paint and invocation. The legacy
     /// project-only query cannot establish focused-camera eligibility.
     pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
+        if state.project_unopened && self.requires_project {
+            return Some("This action requires an open Project.");
+        }
         if let GuiMenuBinding::GuiLocal(key) = self.binding()
             && let Some(consumer) = action_registry::consumer(key)
         {

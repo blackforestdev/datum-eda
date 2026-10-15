@@ -66,10 +66,11 @@ impl PreparedScene {
             let scene_viewport = layout.scene_viewport(&state.ui.layout);
             let (board_pane_id, schematic_pane_id) =
                 coordinate_hit::surface_pane_ids(&layout, &state.ui.layout);
-            let board_scene_active = layout
-                .viewport_panes(&state.ui.layout)
-                .scene_leaf()
-                .is_some();
+            let board_scene_active = !state.project_unopened
+                && layout
+                    .viewport_panes(&state.ui.layout)
+                    .scene_leaf()
+                    .is_some();
 
             let (schematic_scene_viewport, schematic_bounds, schematic_camera) =
                 match state.schematic_scene.as_ref() {
@@ -91,8 +92,11 @@ impl PreparedScene {
                         (None, inert, camera)
                     }
                 };
-            let surface_passes =
-                coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera);
+            let surface_passes = if state.project_unopened {
+                vec![]
+            } else {
+                coordinate_hit::build_surface_passes(&layout, state, camera, schematic_camera)
+            };
 
             let board_hover_bounds = state.ui.hovered_object.as_ref().and_then(|hover| {
                 (hover.surface == datum_gui_protocol::PaneContent::Board
@@ -204,13 +208,17 @@ impl PreparedScene {
             let before_panel_quads = panel_quads.len();
             let before_text_runs = text_runs.len();
             preparation_diagnostics::phase("inspector begin");
-            let selection_lod_row = side_panels::render_side_panels(
-                state,
-                &layout,
-                &mut panel_quads,
-                &mut text_runs,
-                &mut hit_regions,
-            )?;
+            let selection_lod_row = if state.project_unopened {
+                None
+            } else {
+                side_panels::render_side_panels(
+                    state,
+                    &layout,
+                    &mut panel_quads,
+                    &mut text_runs,
+                    &mut hit_regions,
+                )?
+            };
             preparation_diagnostics::phase("inspector end");
             consumers.note(
                 Stream::Panel,

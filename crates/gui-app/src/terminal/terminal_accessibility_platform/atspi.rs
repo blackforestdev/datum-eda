@@ -54,9 +54,10 @@ const ROLE_APPLICATION: u32 = 75;
 const ROLE_LINK: u32 = 88;
 const ROLE_DIALOG: u32 = 16;
 const ROLE_COMBO_BOX: u32 = 11;
-const ROLE_PANEL: u32 = 38;
+const ROLE_PANEL: u32 = 39;
 const ROLE_PUSH_BUTTON: u32 = 43;
-const ROLE_STATUS_BAR: u32 = 53;
+const ROLE_STATUS_BAR: u32 = 54;
+const ROLE_RADIO_BUTTON: u32 = 44;
 const ROLE_TOGGLE_BUTTON: u32 = 62;
 const ROLE_TEXT: u32 = 79;
 const STATE_EDITABLE: u32 = 7;
@@ -533,7 +534,7 @@ fn preference_role(role: GlobalPreferencesAccessibleRole) -> u32 {
         GlobalPreferencesAccessibleRole::Switch => ROLE_TOGGLE_BUTTON,
         GlobalPreferencesAccessibleRole::ComboBox => ROLE_COMBO_BOX,
         GlobalPreferencesAccessibleRole::RadioGroup => ROLE_PANEL,
-        GlobalPreferencesAccessibleRole::RadioButton => ROLE_TOGGLE_BUTTON,
+        GlobalPreferencesAccessibleRole::RadioButton => ROLE_RADIO_BUTTON,
         GlobalPreferencesAccessibleRole::SpinButton | GlobalPreferencesAccessibleRole::TextBox => {
             ROLE_TEXT
         }

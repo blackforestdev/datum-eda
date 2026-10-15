@@ -321,6 +321,7 @@ fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &
     !retained_base_uses_layer
 }
 
+mod workspace_startup;
 mod workspace_state;
 pub use workspace_state::ReviewWorkspaceState;
 pub mod library_authoring;
@@ -694,60 +695,6 @@ fn overlay_path_for_action(
 }
 
 impl ReviewWorkspaceState {
-    pub fn new(scene: BoardReviewSceneV1, review: RouteProposalReviewPayload) -> Self {
-        let layer_visibility = scene
-            .layers
-            .iter()
-            .map(|layer| (layer.layer_id.clone(), layer.visible_by_default))
-            .collect();
-        let active_layer_id = scene
-            .layers
-            .iter()
-            .find(|layer| layer.visible_by_default)
-            .or_else(|| scene.layers.first())
-            .map(|layer| layer.layer_id.clone());
-        let has_review_actions = !review.proposal_actions.is_empty();
-        let active_review_target_id = review
-            .proposal_actions
-            .first()
-            .map(|action| action.action_id.clone())
-            .unwrap_or_else(|| "no-proposal-action".to_string());
-        Self {
-            scene,
-            schematic_scene: None,
-            schematic_authoring: Default::default(),
-            library: Default::default(),
-            review,
-            production: ProductionStatus::default(),
-            source_shards: SourceShardStatusSummary::default(),
-            checks: CheckRunReviewState::default(),
-            selection: if has_review_actions {
-                SelectionTarget::ReviewAction(active_review_target_id.clone())
-            } else {
-                SelectionTarget::None
-            },
-            active_review_target_id,
-            tool: WorkspaceTool::Select,
-            authoring: AuthoringToolState {
-                snap: AuthoringSnapState::default(),
-                gesture: AuthoringGestureState::idle(WorkspaceTool::Select),
-            },
-            backing: None,
-            last_command_status: None,
-            supervision: GuiSupervisionSnapshot::default(),
-            ui: WorkspaceUiState::new(WorkspaceFilterState {
-                show_authored: true,
-                excluded_selection_classes: Default::default(),
-                show_proposed: true,
-                show_unrouted: true,
-                dim_unrelated: has_review_actions,
-                active_layer_id,
-                layer_visibility,
-                layer_scroll_offset: 0,
-            }),
-        }
-    }
-
     pub fn review_rows(&self) -> Vec<ReviewActionRow> {
         self.review
             .proposal_actions

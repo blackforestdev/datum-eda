@@ -63,6 +63,46 @@ pub(super) enum GenesisCheckpoint {
 }
 
 impl GlobalPreferencesProductService {
+    /// Explicit Global New/Retry refresh; creation itself never silently repins.
+    /// Factory-only consumers must not inspect a Global repository.
+    pub fn refresh_global_project_units_source(&mut self) {
+        if !self.factory_only {
+            self.service.refresh();
+        }
+    }
+
+    fn validate_selected_global_snapshot(&self) -> Result<(), PreferenceErrorV1> {
+        if self.factory_only {
+            // The ordinary seed query returns its typed unavailable-source error.
+            return Ok(());
+        }
+        let mut reader = self.service.clone();
+        reader.refresh();
+        let current = Self {
+            service: reader,
+            active_catalog_digest: self.active_catalog_digest.clone(),
+            factory_only: false,
+        };
+        if !current.service.status().writable() {
+            return Err(current.genesis_error(
+                PreferenceErrorCodeV1::SeedSourceUnavailable,
+                "Global Units defaults are unreadable or require migration; re-read the source or explicitly choose Factory",
+                BTreeMap::from([("repository_status".to_owned(), json!(current.context().repository_status))]),
+            ));
+        }
+        // None is the selected defaults-only snapshot, so absent-to-present
+        // changes are stale too. Keep the selected immutable values after this
+        // admission; later writers cannot change them or cause a late refusal.
+        if current.service.status().generation() != self.service.status().generation() {
+            return Err(current.genesis_error(
+                PreferenceErrorCodeV1::StaleGeneration,
+                "Global Units source changed since preview; re-read Global defaults before creating",
+                BTreeMap::from([("selected_generation".to_owned(), json!(self.service.status().generation()))]),
+            ));
+        }
+        Ok(())
+    }
+
     pub fn execute_project_genesis(
         &self,
         request: ProjectGenesisRequestV1,
@@ -120,6 +160,9 @@ impl GlobalPreferencesProductService {
             return self.replay_or_refuse_existing(&destination, &request);
         }
 
+        if matches!(&request.units_source, ProjectUnitsSourceV1::Global { .. }) {
+            self.validate_selected_global_snapshot()?;
+        }
         let preview = self.query(super::PreferenceQueryV1::PreviewProjectUnitsSeed {
             source: request.units_source.clone(),
         })?;

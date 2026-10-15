@@ -9,6 +9,7 @@ pub(super) enum WorkspaceCharacterAction {
     SelectAll,
     Save,
     OpenProject,
+    NewProject,
     Undo,
     Redo,
     FitCamera,
@@ -23,6 +24,7 @@ pub(super) enum WorkspaceCharacterAction {
 pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCharacterAction> {
     let action = match text {
         value if value.eq_ignore_ascii_case("s") && control => WorkspaceCharacterAction::Save,
+        value if value.eq_ignore_ascii_case("n") && control => WorkspaceCharacterAction::NewProject,
         value if value.eq_ignore_ascii_case("o") && control => {
             WorkspaceCharacterAction::OpenProject
         }
@@ -63,6 +65,10 @@ pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> 
     match action {
         WorkspaceCharacterAction::Save => runtime
             .queue_native_edit(datum_gui_protocol::native_edit_client::NativeEditAction::Save),
+        WorkspaceCharacterAction::NewProject => runtime.activate_gui_local_menu_action(
+            "project.new.open",
+            crate::runtime_view_actions::action_evidence::EntrySurface::Shortcut,
+        ),
         WorkspaceCharacterAction::OpenProject => runtime.activate_gui_local_menu_action(
             "project.open",
             crate::runtime_view_actions::action_evidence::EntrySurface::Shortcut,
@@ -144,6 +150,13 @@ mod tests {
         );
         assert_eq!(character_action("q", false), None);
         assert_eq!(character_action("o", false), None);
+        assert_eq!(character_action("n", false), None);
+        for key in ["n", "N"] {
+            assert_eq!(
+                character_action(key, true),
+                Some(WorkspaceCharacterAction::NewProject)
+            );
+        }
         for key in ["o", "O"] {
             assert_eq!(
                 character_action(key, true),

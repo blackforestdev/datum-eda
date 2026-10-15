@@ -127,6 +127,15 @@ successor separately; no product topology rewrite is authorized by this plan.
 
 ## Ordinary native project doorway
 
+Current routing: the owner explicitly delegated ordinary startup decisions and
+removal of routine owner approval relays to the appointed manager in
+[NPD-MANAGED-01](../docs/reviews/workflow-delivery-rollout/native-project-doorway.md#actual-owner-clarification-and-manager-scope).
+Use manager `codex-reorganization-manager-20261014` for the scoped startup
+presentation/post-create decision, exact NPD-C02 implementation disposition and
+NPD-C06 objective acceptance. Retain step IDs, exact scope/evidence and distinct
+review. No HUMAN result is fabricated or waived. PM044 retires WDQ enrollment/
+trust ceremonies below; required native proof and acceptance remain.
+
 <!-- REQ:NATIVE-PROJECT-DOORWAY:NPD-C01 -->
 ### NPD-C01 — prepare the native startup delivery contract
 
@@ -144,9 +153,11 @@ create/recovery without inventing a hard dependency on all native authoring.
 ### NPD-C02 — authorize bounded implementation
 
 Present the reconciled visual/behavior contract, production consumers, exact
-fixture and refusal scenarios, dependency findings and delivery-gate enrollment
-proposal. Obtain owner implementation authorization; PM041 promotion and final
-acceptance remain separate. Do not substitute this scheduling approval.
+fixture and refusal scenarios and concrete dependency findings to the appointed
+manager. Obtain its actual exact scoped implementation disposition under the
+owner clarification and PM059. Preparation/selection is not that grant; final
+acceptance and genuine required observations remain separate. PM044 retirement
+means no WDQ enrollment/promotion ceremony is reintroduced.
 
 <!-- REQ:NATIVE-PROJECT-DOORWAY:NPD-C03 -->
 ### NPD-C03 — implement the ordinary native doorway
@@ -179,9 +190,13 @@ step. Missing reviewer availability leaves it incomplete.
 ### NPD-C06 — accept actual doorway delivery
 
 Present exact verified and independently reviewed evidence plus every defect
-disposition for accept/revise/defer. Record owner acceptance through the enrolled
-delivery contract and owner-controlled trust requirements applicable at that
-time. Close the existing define-and-deliver issue only after actual delivery;
+disposition for accept/revise/defer to the appointed manager. Record actual
+objective acceptance under the owner clarification/PM059 against the complete
+approved doorway scope; no substituted HUMAN assessment or fake owner reply.
+Retain any separately applicable qualification without inventing a blanket HUMAN
+prerequisite or requiring the owner to run a manual script. PM044 retired
+enrollment/trust activation is not a prerequisite. Close the existing
+define-and-deliver issue only after actual delivery and required distinct proof;
 specification authorship alone never closes it.
 
 ## Native fixture and performance budgets

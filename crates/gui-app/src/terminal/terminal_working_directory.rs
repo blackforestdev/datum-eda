@@ -37,29 +37,34 @@ pub(super) fn context_for_new_terminal_from_state(
 }
 
 impl crate::Runtime {
-    pub(super) fn context_for_active_terminal_launch(&self) -> TerminalLaunchContext {
+    pub(super) fn context_for_active_terminal_launch(
+        &self,
+    ) -> anyhow::Result<TerminalLaunchContext> {
+        let current = self.terminal_launch_context.as_ref().ok_or_else(|| {
+            anyhow::anyhow!("Open a Project before starting its terminal session")
+        })?;
         let origin = self
             .terminal_sessions
             .active_origin_context()
-            .unwrap_or(&self.terminal_launch_context);
+            .unwrap_or(current);
         let cwd = self
             .workspace()
             .ui
             .terminal
             .current_working_directory
             .as_deref();
-        if origin.project_root != self.terminal_launch_context.project_root {
+        Ok(if origin.project_root != current.project_root {
             // Preserved shells never combine their origin root with the new
             // Project's selection, source revision or projection context.
             context_for_new_terminal(origin, cwd)
         } else {
             context_for_new_terminal_from_state(
-                &self.terminal_launch_context,
+                current,
                 self.workspace(),
                 self.last_cursor_pos,
                 cwd,
             )
-        }
+        })
     }
 }
 

@@ -222,7 +222,9 @@ impl TerminalSessionRegistry {
         let mut slot = prepared.slot.take().expect("prepared terminal slot");
         slot.label = self.reserve_session_label();
         let id = slot.session.session_id().to_owned();
-        lane.swap_session_projection(&mut self.sessions[self.active_index].parked_lane);
+        if let Some(current) = self.sessions.get_mut(self.active_index) {
+            lane.swap_session_projection(&mut current.parked_lane);
+        }
         lane.swap_session_projection(&mut slot.parked_lane);
         self.origin_contexts
             .insert(id.clone(), prepared.context.clone());
@@ -291,7 +293,8 @@ impl TerminalSessionRegistry {
     }
 
     pub(crate) fn active_origin_context(&self) -> Option<&TerminalLaunchContext> {
-        self.origin_contexts.get(self.active().session_id())
+        let slot = self.sessions.get(self.active_index)?;
+        self.origin_contexts.get(slot.session.session_id())
     }
 
     pub(crate) fn origin_workspace(&self, root: &Path) -> Option<&ReviewWorkspaceState> {

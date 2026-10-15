@@ -51,7 +51,7 @@ pub(super) struct Runtime {
     pub(super) terminal_accessibility:
         terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,
     pub(super) terminal_sessions: TerminalSessionRegistry,
-    pub(super) terminal_launch_context: TerminalLaunchContext,
+    pub(super) terminal_launch_context: Option<TerminalLaunchContext>,
     pub(super) terminal_profiles: terminal_profile::TerminalProfileCatalog,
     pub(super) workspace_include_review: bool,
     pub(super) terminal_production_refresh_pending: bool,
