@@ -1,4 +1,6 @@
 //! Eligible members cannot turn a read-only Compound into a partial Move preview.
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use clap::Parser;
 use datum_gui_protocol::{
@@ -23,15 +25,16 @@ fn eligible_compound_move_does_not_preview_a_member_or_write_history() {
         .unwrap()
         .to_path_buf();
     safe_directory(&repo);
-    let setup_path =
-        repo.join("target/s5a-c04-inventory-keyboard-20261011/n13-compound-move-setup.json");
+    let setup_path = development_workspace::path(
+        "target/s5a-c04-inventory-keyboard-20261011/n13-compound-move-setup.json",
+    );
     safe_file(&setup_path);
     let setup: serde_json::Value =
         serde_json::from_slice(&std::fs::read(&setup_path).unwrap()).unwrap();
-    let root = PathBuf::from(setup["root"].as_str().unwrap());
+    let root = development_workspace::path(setup["root"].as_str().unwrap());
     assert_eq!(
         root,
-        repo.join("target/user-edit-selection/journal-read-project")
+        development_workspace::path("target/user-edit-selection/journal-read-project")
     );
     safe_directory(&root);
     for name in setup["absent_source_roles"].as_array().unwrap() {

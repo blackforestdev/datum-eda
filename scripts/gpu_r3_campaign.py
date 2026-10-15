@@ -7,9 +7,10 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import development_workspace as workspace
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORY = ROOT / 'target/gpu-regional-r4-native-correction'
+DIRECTORY = workspace.scratch('gpu-regional-r4-native-correction')
 STATE = DIRECTORY / 'campaign-state.json'
 ORDER = [('candidate','gpu',1),('baseline','gpu',1),('baseline','quiet',1),('candidate','quiet',1),
          ('baseline','gpu',2),('candidate','gpu',2),('candidate','quiet',2),('baseline','quiet',2),

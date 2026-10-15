@@ -1,3 +1,5 @@
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use datum_gui_protocol::selection_resolution::SelectionAuthority;
 use datum_gui_protocol::{
@@ -11,8 +13,7 @@ use std::{
 fn root() -> PathBuf {
     let base = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let source = base.join("crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/same-outcome-default");
-    let root = base
-        .join("target/run-prepared-selection-tests")
+    let root = development_workspace::path("run-prepared-selection-tests")
         .join(uuid::Uuid::new_v4().to_string());
     for rel in [
         "project.json",

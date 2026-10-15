@@ -1,12 +1,13 @@
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 
 #[test]
 fn late_answers_cannot_cross_copied_root_generation_cancel_or_busy_write() {
     let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/golden/text/native/text-transform-repro");
-    let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-app-tests")
-        .join(std::process::id().to_string());
+    let base =
+        development_workspace::path("open-project-app-tests").join(std::process::id().to_string());
     let roots = [
         base.join("origin"),
         base.join("identical copied destination"),

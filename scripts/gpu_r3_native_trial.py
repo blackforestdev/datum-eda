@@ -5,14 +5,15 @@ ROOT = Path('/home/bfadmin/Documents/datum-eda')
 sys.path.insert(0,str(ROOT/'docs/reviews/gui-performance/gpu-redraw-proposal/stopped-experiment-r2'))
 sys.path.insert(0, str(ROOT / "scripts"))
 from gpu_crosshair_diagnostic import analyze, ensure_alive, wait_until as diagnostic_wait
+import development_workspace as workspace
 from gpu_r3_trial_outcome import record_failure, finish_result
 from gpu_r3_receipts import validate as validate_gpu, validate_demands
 from gpu_r2_wm_close import close_window
 
 declaration = json.loads(Path(sys.argv[1]).read_text())
 index = int(sys.argv[2]); spec = declaration['runs'][index]
-assert Path(sys.argv[1]).resolve() == ROOT/'target/gpu-regional-r4-native-correction/declaration.json'
-campaign=json.loads((ROOT/'target/gpu-regional-r4-native-correction/campaign-state.json').read_text())
+assert Path(sys.argv[1]).resolve() == workspace.scratch('gpu-regional-r4-native-correction')/'declaration.json'
+campaign=json.loads((workspace.scratch('gpu-regional-r4-native-correction')/'campaign-state.json').read_text())
 assert campaign['status']=='running' and campaign['reserved_index']==index
 assert campaign['declaration_sha256']==hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest()
 

@@ -30,7 +30,7 @@ done
 
 python3 scripts/check_terminal_compatibility_matrix.py
 revision="$(git rev-parse HEAD)"
-evidence_dir="${DATUM_P28_EVIDENCE_DIR:-target/p28-evidence}"
+evidence_dir="${DATUM_P28_EVIDENCE_DIR:-$(python3 scripts/development_workspace.py scratch p28-evidence)}"
 if [[ "$evidence_dir" != /* ]]; then
   evidence_dir="$repo_root/$evidence_dir"
 fi

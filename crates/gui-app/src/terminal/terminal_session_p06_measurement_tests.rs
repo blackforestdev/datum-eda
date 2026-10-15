@@ -1,3 +1,5 @@
+#[path = "../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use crate::terminal_transport::{
     ShutdownPhase, TerminalExitStatus, TerminalTransportEvent, TerminalTransportRequest,
     TerminalTransportSession, TerminalWakeGate, prepare_terminal_transport,
@@ -5,7 +7,7 @@ use crate::terminal_transport::{
 use serde::Serialize;
 use std::{
     fs,
-    path::{Path, PathBuf},
+    path::PathBuf,
     process::Command,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -438,7 +440,7 @@ fn host_evidence() -> HostEvidence {
 fn evidence_path(tier: &str) -> PathBuf {
     std::env::var_os("DATUM_P06_EVIDENCE")
         .map(PathBuf::from)
-        .unwrap_or_else(|| Path::new("target/p06-evidence").join(format!("{tier}.json")))
+        .unwrap_or_else(|| development_workspace::path("p06-evidence").join(format!("{tier}.json")))
 }
 
 #[test]

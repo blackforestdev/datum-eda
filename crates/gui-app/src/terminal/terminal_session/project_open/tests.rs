@@ -1,3 +1,5 @@
+#[path = "../../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use std::sync::atomic::AtomicU64;
 use std::time::{Duration, Instant};
@@ -5,13 +7,11 @@ use std::time::{Duration, Instant};
 static NEXT_ROOT: AtomicU64 = AtomicU64::new(1);
 
 fn registry() -> (TerminalSessionRegistry, TerminalLaunchContext) {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-terminal-tests")
-        .join(format!(
-            "{}-{}",
-            std::process::id(),
-            NEXT_ROOT.fetch_add(1, Ordering::Relaxed)
-        ));
+    let root = development_workspace::path("open-project-terminal-tests").join(format!(
+        "{}-{}",
+        std::process::id(),
+        NEXT_ROOT.fetch_add(1, Ordering::Relaxed)
+    ));
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);
     (TerminalSessionRegistry::spawn(&context).unwrap(), context)

@@ -1,3 +1,5 @@
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use clap::Parser;
 use std::{
@@ -72,8 +74,7 @@ fn camera_projection(runtime: &Runtime) -> Vec<String> {
 fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destination() {
     let fixture = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/golden/text/native/text-transform-repro");
-    let base = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-actual-worker-tests")
+    let base = development_workspace::path("open-project-actual-worker-tests")
         .join(std::process::id().to_string());
     let roots = [base.join("origin"), base.join("copied destination")];
     for root in &roots {

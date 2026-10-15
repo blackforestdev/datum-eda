@@ -32,13 +32,14 @@ fn main() -> Result<()> {
         "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision> [<fresh-root>|--managed] [existing CLI binary]",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
-    // Existing explicit roots remain valid for pinned replay. New/default
+    // External explicit roots remain valid for pinned replay. New/default
     // workspaces use external, owner-labelled placement with repeat refusal.
     let root = match args.next() {
         None => workspace::managed_root(family)?,
         Some(value) if value == "--managed" => workspace::managed_root(family)?,
         Some(value) => PathBuf::from(value),
     };
+    workspace::validate_output(&root)?;
     if matches!(
         family,
         "library-parents"

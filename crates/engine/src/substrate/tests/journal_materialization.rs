@@ -1,9 +1,10 @@
 //! Source-byte admission, canonical replay and reconstruction share one materializer.
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 fn disk_project() -> (PathBuf, DesignModel) {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/s5a-c04-inventory-keyboard-20261011/materialization-tests")
-        .join(Uuid::new_v4().to_string());
+    let root =
+        development_workspace::path("materialization-tests").join(Uuid::new_v4().to_string());
     write_minimal_project(&root, Uuid::new_v4(), Uuid::new_v4());
     let model = ProjectResolver::new(&root).resolve().unwrap();
     (root, model)

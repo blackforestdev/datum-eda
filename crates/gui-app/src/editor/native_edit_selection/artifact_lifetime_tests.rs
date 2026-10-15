@@ -1,3 +1,5 @@
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use datum_gui_protocol::{LiveReviewRequest, SelectionSubject};
 use std::{path::PathBuf, process::Command};
@@ -7,8 +9,7 @@ const FINGERPRINT: &str = "sha256:260611ced8897cecba4f669ef163ded751b6644af9e32e
 fn root() -> PathBuf {
     let base = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let source = base.join("crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/same-outcome-default");
-    let root = base
-        .join("target/diagnostic-prepared-selection-tests")
+    let root = development_workspace::path("diagnostic-prepared-selection-tests")
         .join(uuid::Uuid::new_v4().to_string());
     for rel in [
         "project.json",

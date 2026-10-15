@@ -1,4 +1,6 @@
 //! Native release uses the presented menu surface, never underlying acquisition.
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use clap::Parser;
 use datum_gui_protocol::{PointNm, SelectionSubject, SelectionTarget};
@@ -14,12 +16,9 @@ fn native_outside_right_release_dismisses_without_acquisition_and_preserves_insi
         std::env::var_os("EDA_CLI_BIN").is_some(),
         "pinned CLI required"
     );
-    let repo = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .ancestors()
-        .nth(2)
-        .unwrap();
-    let setup_path =
-        repo.join("target/s5a-c04-inventory-keyboard-20261011/n14-two-project-setup.json");
+    let setup_path = development_workspace::path(
+        "target/s5a-c04-inventory-keyboard-20261011/n14-two-project-setup.json",
+    );
     safe_file(&setup_path);
     digest(
         &setup_path,
@@ -27,11 +26,11 @@ fn native_outside_right_release_dismisses_without_acquisition_and_preserves_insi
     );
     let setup: serde_json::Value =
         serde_json::from_slice(&std::fs::read(setup_path).unwrap()).unwrap();
-    let root = repo.join("target/s5a-c03-u5-scope-v2");
+    let root = development_workspace::path("target/s5a-c03-u5-scope-v2");
     safe_dir(&root);
     let mut canonical = Vec::new();
     for key in ["A", "B"] {
-        let path = repo.join(setup["projects"][key]["path"].as_str().unwrap());
+        let path = development_workspace::path(setup["projects"][key]["path"].as_str().unwrap());
         assert_eq!(
             path,
             if key == "A" {

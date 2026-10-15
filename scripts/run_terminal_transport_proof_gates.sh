@@ -40,7 +40,7 @@ if [[ ! "$run_ordinal" =~ ^[123]$ ]]; then
   exit 2
 fi
 revision="$(git rev-parse HEAD)"
-evidence_dir="${DATUM_P06_EVIDENCE_DIR:-target/p06-evidence}"
+evidence_dir="${DATUM_P06_EVIDENCE_DIR:-$(python3 scripts/development_workspace.py scratch p06-evidence)}"
 if [[ "$evidence_dir" != /* ]]; then
   evidence_dir="$repo_root/$evidence_dir"
 fi

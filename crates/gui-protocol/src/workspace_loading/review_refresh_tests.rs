@@ -1,3 +1,5 @@
+#[path = "../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use crate::{
     SelectionSubject, selection_artifacts::build_workspace_selection_view,
@@ -36,8 +38,7 @@ fn history(root: &std::path::Path) -> Vec<Option<Vec<u8>>> {
 fn explicit_artifact_refresh_uses_fresh_model_and_canonical_producer_status() {
     let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let source = base.join("crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/same-outcome-default");
-    let root = base
-        .join("target/proposal-refresh-tests")
+    let root = development_workspace::path("proposal-refresh-tests")
         .join(uuid::Uuid::new_v4().to_string());
     for rel in [
         "project.json",

@@ -114,3 +114,9 @@ mod tests {
         assert!(path.ends_with("testdata/golden/example.json"));
     }
 }
+
+/// Shared development-only workspace placement used by repository proof tooling.
+pub mod development_workspace;
+
+#[cfg(test)]
+mod development_workspace_tests;

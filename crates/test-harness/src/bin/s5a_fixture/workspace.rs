@@ -20,6 +20,19 @@ pub(super) fn managed_root(family: &str) -> Result<PathBuf> {
     allocate(&base, family, &owner, &checkout)
 }
 
+pub(super) fn validate_output(root: &Path) -> Result<()> {
+    let checkout = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()?;
+    let absolute = if root.is_absolute() {
+        root.to_path_buf()
+    } else {
+        std::env::current_dir()?.join(root)
+    };
+    external_path(&absolute, &checkout.join("target"))
+        .context("Cargo target is disposable; fixture output must be elsewhere")
+}
+
 fn label(value: &str) -> Result<()> {
     ensure!(
         !value.is_empty()
@@ -113,6 +126,19 @@ mod tests {
             std::env::temp_dir().join(format!("datum-fixture-placement-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir(&path).unwrap();
         path
+    }
+
+    #[test]
+    fn explicit_output_cannot_repopulate_disposable_cargo_target() {
+        let checkout = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .canonicalize()
+            .unwrap();
+        assert!(validate_output(&checkout.join("target/new-native-fixture")).is_err());
+        let tmp = temporary();
+        assert!(validate_output(&tmp.join("fresh-explicit-project")).is_ok());
+        assert!(!tmp.join("fresh-explicit-project").exists());
+        std::fs::remove_dir_all(tmp).unwrap();
     }
 
     #[test]

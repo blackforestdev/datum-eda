@@ -9,19 +9,21 @@
 //! distinctive usage-error output; runtime "project not found" failures are
 //! expected and fine.
 
-use std::path::{Path, PathBuf};
+#[path = "../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
+use std::path::PathBuf;
 use std::process::Command;
 
 use datum_verb_registry::{ArgvToken, Dispatch, ParamSpec, ParamType, verbs};
 
-/// Scratch working directory under the cargo target tmpdir. Some verbs treat their
+/// Scratch working directory outside Cargo output. Some verbs treat their
 /// path / project-root parameter as a location to CREATE (e.g. route-strategy
 /// batch, project scaffold), so running the real binary with a relative dummy path
 /// writes files relative to the process CWD. We point the CWD here so those side
-/// effects land under `target/` (gitignored) instead of littering the source tree,
+/// effects land in the external development scratch workspace,
 /// and remove it at the end of the test.
 fn scratch_dir() -> PathBuf {
-    Path::new(env!("CARGO_TARGET_TMPDIR")).join("verb-registry-roundtrip")
+    development_workspace::path("verb-registry-roundtrip").join(std::process::id().to_string())
 }
 
 /// Substrings clap 4 emits on argv parse/validation failures and never on
@@ -193,6 +195,6 @@ fn every_cli_verb_argv_parses_against_the_real_clap_surface() {
     }
     assert!(checked > 0, "registry contained no Dispatch::Cli verbs");
     // Remove any scratch the round-tripped verbs materialized under the CWD we
-    // pointed at target/.
+    // pointed at external scratch output.
     std::fs::remove_dir_all(scratch_dir()).ok();
 }

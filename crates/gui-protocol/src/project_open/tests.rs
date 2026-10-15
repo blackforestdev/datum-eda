@@ -1,3 +1,5 @@
+#[path = "../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 
 fn fixture() -> PathBuf {
@@ -83,14 +85,12 @@ fn invalid_open_preserves_dialog_input_for_correction() {
 
 fn copied_fixture(label: &str) -> PathBuf {
     static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-protocol-tests")
-        .join(format!(
-            "{}-{}-{}",
-            std::process::id(),
-            label,
-            NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
-        ));
+    let root = development_workspace::path("open-project-protocol-tests").join(format!(
+        "{}-{}-{}",
+        std::process::id(),
+        label,
+        NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+    ));
     for relative in [
         "project.json",
         "board/board.json",

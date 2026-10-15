@@ -1,11 +1,12 @@
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use datum_gui_protocol::{TerminalSplitDirection, TerminalSplitNode};
 use std::time::{Duration, Instant};
 
 #[test]
 fn pending_split_preserves_source_render_then_publishes_owned_leaf() {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-pending-split-tests")
+    let root = development_workspace::path("open-project-pending-split-tests")
         .join(std::process::id().to_string());
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);

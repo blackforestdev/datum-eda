@@ -1,3 +1,5 @@
+#[path = "../../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use crate::terminal_session::TerminalLaunchContext;
 use datum_gui_protocol::TerminalSplitDirection;
@@ -5,8 +7,7 @@ use std::{fs, time::Duration};
 
 #[test]
 fn restarting_split_retains_owned_slot_until_verified_replacement() {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-split-restart-tests")
+    let root = development_workspace::path("open-project-split-restart-tests")
         .join(std::process::id().to_string());
     let origin = root.join("origin");
     let cwd = origin.join("board");
@@ -112,8 +113,7 @@ fn restarting_split_retains_owned_slot_until_verified_replacement() {
 
 #[test]
 fn global_teardown_cancels_pending_split_restart_without_new_children() {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/open-project-restart-shutdown-tests")
+    let root = development_workspace::path("open-project-restart-shutdown-tests")
         .join(std::process::id().to_string());
     fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);

@@ -174,12 +174,13 @@ def collect_projects(binary, base, environment, capture, count, timeout, trial):
 
 
 def main(argv=None):
+    import development_workspace as workspace
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--binary', type=Path, default=ROOT / 'target/release/datum-eda')
     parser.add_argument('--samples', type=int, default=100)
     parser.add_argument('--timeout', type=float, default=15)
     parser.add_argument('--output', type=Path, required=True, help='new directory retaining every raw command and failure')
-    parser.add_argument('--fixture-root', type=Path, default=ROOT / 'target/preferences-measurement-fixtures')
+    parser.add_argument('--fixture-root', type=Path, default=workspace.scratch('preferences-measurement-fixtures'))
     args = parser.parse_args(argv)
     if args.samples < 1 or args.timeout <= 0:
         parser.error('sample count and timeout must be positive')
@@ -187,8 +188,8 @@ def main(argv=None):
     try:
         require(binary.is_file() and os.access(binary, os.X_OK), 'release binary must be executable')
         root = args.fixture_root.resolve()
-        require(root.is_relative_to(ROOT) and not root.is_relative_to(Path('/tmp')),
-                'durable fixtures belong on project-backed storage, not /tmp')
+        require(not root.is_relative_to(ROOT) and not root.is_relative_to(Path('/tmp')),
+                'durable fixtures belong on external disk-backed storage, outside the checkout and /tmp')
         root.mkdir(parents=True, exist_ok=True)
         args.output.mkdir(parents=True, exist_ok=False)
         capture = Capture(args.output)

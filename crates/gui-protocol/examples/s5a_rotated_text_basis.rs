@@ -1,12 +1,12 @@
 //! Bounded read-only C04 basis extraction; no native input qualification.
+#[path = "../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use anyhow::{Context, Result, ensure};
 use datum_gui_protocol::{LiveReviewRequest, load_board_editor_workspace_with_model};
 use serde_json::json;
 
 fn main() -> Result<()> {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../target/s5a-c03-u5-annotations-v2")
-        .canonicalize()?;
+    let root = development_workspace::path("target/s5a-c03-u5-annotations-v2").canonicalize()?;
     ensure!(
         std::env::args_os().len() == 1,
         "No alternate fixture arguments"

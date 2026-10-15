@@ -1,5 +1,122 @@
 # Review records and temporary proof output
 
+## Cargo output and native workspace separation
+
+Owner selected all four tasks on 2026-10-14. Preserve native inputs, historical
+approval pins and paused S5A; provenance does not create execution authority.
+
+<!-- REQ:TARGET-WORKSPACE-SEPARATION:TARGET-01 -->
+- TARGET-01: Reserve target for disposable Cargo output and prevent fixture producers from repopulating it.
+<!-- REQ:TARGET-WORKSPACE-SEPARATION:TARGET-02 -->
+- TARGET-02: Preserve and relocate retained fixture collections with hashes, recovery records and updated live readers.
+<!-- REQ:TARGET-WORKSPACE-SEPARATION:TARGET-03 -->
+- TARGET-03: Separate user-owned or unclassified project data from generated fixtures without guessing ownership from directory names.
+<!-- REQ:TARGET-WORKSPACE-SEPARATION:TARGET-04 -->
+- TARGET-04: Remove released temporary collections after reference, process and ownership review; verify, review and land all four tasks.
+
+<!-- EVIDENCE:TARGET-WORKSPACE-SEPARATION:TARGET-01 -->
+Cargo output now contains only the three retained development executables and
+companion dependency records. Zero project.json markers remain under target.
+Current default Rust fixture/capture producers, terminal proof defaults and measurement
+scripts use external workspaces. Shared path helpers check final output paths,
+including child symlink aliases; fixture generation rejects explicit Cargo
+output roots. The guard rejects native project markers before building in the
+shared or any selected target. Cargo binary paths stay unchanged.
+
+<!-- EVIDENCE:TARGET-WORKSPACE-SEPARATION:TARGET-02 -->
+The independently reviewed 39-collection plan preserved 31 fixture collections
+(464 project.json markers) under $HOME/Documents/datum-eda-workspaces/retained.
+All files, directory modes and empty directories matched complete manifests
+across atomic same-filesystem moves. Live Rust readers resolve old paths and
+setup-record fields through the verified local map; historical JSON/native
+bytes, source pins and approval records are unchanged. Prepared intent and
+manifest records were saved before each move. Final recovery has mirrored maps
+and a sealed full-manifest plan outside the checkout, verified SHA256
+'ebd9467df9e72e056af20c5325f794981ada0d45feef39cf450c7861b3cf44e6'.
+Five representative existing CLI validation reports match completely modulo
+relocated paths and retain exit 1/invalid-design issues; this is relocation
+equivalence, not native qualification or S5A acceptance. The first sandboxed
+external read could not acquire a normal lock; the authorized host comparison
+established the unchanged results without repairing project data.
+
+<!-- EVIDENCE:TARGET-WORKSPACE-SEPARATION:TARGET-03 -->
+Two collections (four project.json markers), user-edit-placement and
+user-edit-qa-live, had no tracked references and insufficient ownership evidence.
+They are preserved separately under $HOME/Documents/datum-projects/
+recovered-development-20261014 with the same complete manifest verification.
+Their names do not establish human or test ownership. They remain protected
+pending owner disposition. Other user-edit-named collections have proof/test
+provenance and remain retained inputs; none was discarded based on its name.
+
+<!-- EVIDENCE:TARGET-WORKSPACE-SEPARATION:TARGET-04 -->
+Retired six explicitly released generated test collections after verifying
+producer provenance, no remaining tracked references, no active users and exact
+fresh manifests: `diagnostic-prepared-selection-tests`,
+`open-project-actual-worker-tests`, `open-project-app-tests`,
+`open-project-protocol-tests`, `proposal-refresh-tests` and
+`run-prepared-selection-tests`. These contained forty temporary project.json
+markers and 1,252,538 file bytes. All 33 retained/unclassified collections remain
+present; all six retired collections and their old target paths are absent.
+Four additional task-owned verification outputs (the exclusive temporary tree
+and three PID-qualified copies from the blocked attempt) were released after
+successful checks. The protected release record names their ownership/basis.
+The guarded build-only prune removed ten released Cargo output entries while
+retaining all .datum inputs/recovery metadata and runtime executables.
+
+Verification: eight current Python workspace safety checks pass; nineteen
+unchanged guard/pruner results are reused. Seven current Rust workspace tests
+pass. Five distinct project-opening cases pass: two passed initially, and the
+three missing-companion cases passed after the required matching prebuild;
+failed attempts are not added to success counts. All changed engine, GUI and
+CLI test consumers type-check. The final GUI/CLI check includes the feature
+scope and PID-owned scratch correction, with only the preexisting unused
+PanePlan::overflow warning in unchanged gui-render source. No GUI/performance
+campaign or full-workspace qualification is inferred. Source health (3,166),
+resource/dependency authority, specification governance, parity, traceability,
+progress coverage and Frontier checks pass. Independent relocation and path-
+safety reviews passed; final landing review remains required.
+
+After released-output cleanup, checkout allocation is 1,862,578,176 bytes
+(1.73 GiB), target is 1,428,381,696 bytes (1.33 GiB), .datum is 222,769,152
+bytes and Git metadata is 61,022,208 bytes. These are local allocation snapshots,
+not clone size. Preserved project data still occupies external disk storage.
+Older cleanup records below describe their own boundaries and locations;
+this section and the verified relocation map own the current storage layout.
+
+External development layout after the owner-directed separation:
+
+- `$HOME/Documents/datum-eda-workspaces/retained/`: preserved generated fixture
+  and replay collections. These are inputs, never Cargo caches or automatic
+  deletion candidates.
+- `$HOME/Documents/datum-projects/recovered-development-20261014/`: two
+  collections whose ownership is unclassified. Their directory names do not
+  prove user or test ownership; preserve them until the owner decides.
+- `$HOME/Documents/datum-eda-workspaces/scratch/`: new test/capture output,
+  separated by producer family. Retire only an explicitly released family or
+  task after checking current references and active processes. Failure output
+  is not automatically released and no age-based eviction is enabled.
+- `target/`: Cargo output and retained development executables only. The Cargo
+  guard refuses native project markers in shared or selected build targets.
+
+`DATUM_DEVELOPMENT_WORKSPACE` selects an absolute external development base.
+`python3 scripts/development_workspace.py scratch <family>` prints its scratch
+location; `resolve target/<old-collection>/<path>` translates a preserved
+historical path. Rust proof consumers share the same checked path policy.
+The local relocation map is `.datum/history-cleanup/target-relocation-map.json`,
+with a mirror and sealed full-manifest plan outside the checkout, plus file/directory manifests
+in the protected history-cleanup control directory. An interrupted migration
+must be inspected from its persisted prepared/preserved states, never blindly
+rerun. Old evidence JSON, approval pins and native input bytes are not rewritten.
+A missing/retired/incomplete map entry refuses rather than inventing a fixture.
+The map provides path recovery, not a new proof or execution grant. Regeneration
+or replay still needs its existing authorization and current prerequisites.
+
+The S5A fixture generator retains owner-labelled external managed placement;
+explicit fixture roots now also refuse Cargo target paths, including aliases.
+External explicit replay paths remain supported. Cargo binary/dependency paths
+are unchanged; golden test inputs, protected prototypes and product semantics
+are untouched.
+
 ## Documentation fragmentation audit and first consolidation
 
 Owner-directed 2026-10-14 audit and justified consolidation/removal. This
@@ -77,7 +194,8 @@ required decision records, rationale and current requirements are separate
 questions; merging all of them would erase useful roles without resolving
 contradictions. Identical license texts remain distributed where required.
 
-Target occupies 2.78 GiB allocated: debug holds 1.33 GiB in the retained CLI,
+At the 8d0e8ca4 assessment boundary, target occupied 2.78 GiB allocated:
+debug held 1.33 GiB in the retained CLI,
 GUI and engine-daemon binaries (unstripped ELF files with debug information),
 with approximately 1.45 GiB in fixture/proof
 collections. It has zero tracked files. Its 568 native project roots include
@@ -556,8 +674,8 @@ The pre-commit temporary-artifact gate enforces
 this rule, including forced additions. It also rejects compressed archives
 anywhere in the repository so moving a bundle into testdata cannot evade the rule.
 
-Write temporary proof to an ignored, task-owned directory under `target/` or to
-an external temporary directory. Keep it only while needed for debugging or
+Write temporary proof to an external, task-owned development workspace. Reserve
+`target/` for disposable Cargo output. Keep proof only while needed for debugging or
 review, then remove it. Before removing local output, check ownership and active
 processes; never delete another session's live work or clean active Cargo targets.
 Do not preserve duplicate build trees indefinitely as proof archives.

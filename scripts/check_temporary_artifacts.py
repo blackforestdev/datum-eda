@@ -101,7 +101,7 @@ def main() -> int:
         print("temporary-artifact gate refused tracked proof output:")
         for path in forbidden:
             print(f"  {path!r}")
-        print("Keep captures in ignored target/ output; retain concise text findings in Git.")
+        print("Keep captures in external development workspaces; retain concise text findings in Git.")
         print("See docs/reviews/README.md. Forced adds do not override this policy.")
         return 1
     print("temporary-artifact gate passed")

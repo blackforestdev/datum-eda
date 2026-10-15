@@ -244,6 +244,17 @@ def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
     return args
 
 
+def refuse_native_projects(target: Path) -> None:
+    """Cargo cleanup must never own persistent native fixture/user inputs."""
+    if target.exists():
+        marker = next(target.rglob("project.json"), None)
+        if marker is not None:
+            raise ResourcePolicyError(
+                f"native project found in disposable Cargo output: {marker}; "
+                "preserve/migrate it with scripts/relocate_target_workspaces.py first"
+            )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parse_args(sys.argv[1:] if argv is None else argv)
     try:
@@ -255,6 +266,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         policy = load_policy(args.policy)
         target_dir = _target_from_arguments(args.target_dir).resolve()
         with acquire_lock(policy.lock_path, policy.lock_timeout_seconds):
+            refuse_native_projects(ROOT / "target")
+            if target_dir != ROOT / "target":
+                refuse_native_projects(target_dir)
             snapshot = snapshot_resources(target_dir)
             print(
                 "Cargo resource preflight: "

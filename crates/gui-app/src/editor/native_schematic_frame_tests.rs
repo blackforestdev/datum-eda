@@ -1,5 +1,8 @@
 //! Finite schematic delivery through ordinary Wayland App input/frame dispatch.
 //! Programmatic events are not physical Wayland/HUMAN qualification.
+#[cfg(feature = "visual")]
+#[path = "../../../test-harness/src/development_workspace.rs"]
+mod development_workspace;
 use super::*;
 use crate::runtime_view_actions::action_evidence::EntrySurface;
 use std::{
@@ -459,8 +462,8 @@ impl Fixture {
                     .as_mut()
                     .unwrap()
                     .write_visual_screenshot(
-                        &std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                            .join("../../target/nsd-native-connected.png"),
+                        &development_workspace::path("native-schematic-frame")
+                            .join("nsd-native-connected.png"),
                     )
                     .unwrap();
                 self.next();
