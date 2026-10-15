@@ -3,6 +3,15 @@
 Status: draft implementation-spec 2026-06-19; derived from ratified
 PRODUCT_MECHANICS 000-012
 
+> Current selection and delivery boundary: [PM026](../decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md)
+> owns typed selection identity, same-identity/related projections and S5A
+> read-only acquisition/inspection. The authoring tools and later batch mutation
+> obligations below do not authorize S5A editing. Exact engine transaction types
+> belong to [ENGINE_SPEC §0.8](../../specs/ENGINE_SPEC.md#08-operations-proposals-transactions-and-commit);
+> persistence belongs to [NATIVE_FORMAT_SPEC](../../specs/NATIVE_FORMAT_SPEC.md#5-file-ownership).
+> Dated code counts and open questions below are their recorded audit context;
+> current implementation coverage is tracked separately in PROGRESS.
+
 ## Driven by
 
 - `docs/decisions/PRODUCT_MECHANICS_000..012` (ratified product mechanics)

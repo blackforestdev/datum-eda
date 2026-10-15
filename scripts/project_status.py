@@ -410,7 +410,20 @@ def render_block(manifest: dict[str, Any]) -> str:
         "> Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.",
         "",
     ]
-    for item in records:
+    history_open = False
+    for index, item in enumerate(records):
+        landed = item["state"] == "landed"
+        if landed and not history_open:
+            count = 0
+            for following in records[index:]:
+                if following["state"] != "landed":
+                    break
+                count += 1
+            lines.extend(["<details>", f"<summary>Completed history ({count} landed records)</summary>", ""])
+            history_open = True
+        elif not landed and history_open:
+            lines.extend(["", "</details>", ""])
+            history_open = False
         flags = [f"state `{item['state']}`", f"authorization `{item['authorization']}`"]
         if item["canonical_next"]:
             flags.append("**CANONICAL NEXT**")
@@ -424,6 +437,8 @@ def render_block(manifest: dict[str, Any]) -> str:
         lines.append(f"   *Dependencies:* {dependencies}. *Unblocks:* {unblocks}. *Governing:* {docs}.")
         if item["canonical_next"]:
             lines.append("   *Completion plan:* `python3 scripts/project_status.py details`.")
+    if history_open:
+        lines.extend(["", "</details>", ""])
     lines.extend([END_MARKER, ""])
     return "\n".join(lines)
 

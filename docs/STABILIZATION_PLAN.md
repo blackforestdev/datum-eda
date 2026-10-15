@@ -36,6 +36,6 @@ commit `97749064`. Retrieve with `git show 97749064:<original-path>`:
 - `docs/DECOMPOSITION_PLAN.md` (removed from the current tree).
 - `docs/DECOMPOSITION_BACKLOG.md` (removed from the current tree).
 
-[The review index](reviews/README.md#organization-and-evidence-cleanup) records
+[The review index](reviews/specification-history/maintenance-records.md#organization-and-evidence-cleanup) records
 verified hashes and the other historical-plan dispositions. Old directory trees
 in explicitly historical architecture records describe their original snapshot.

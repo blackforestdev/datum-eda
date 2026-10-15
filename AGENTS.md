@@ -55,7 +55,7 @@ the ordered decision packet/response format unchanged. Route it to the owner or
 the appointed manager only within PM059 delegation. Do not claim or advance until
 the authorized disposition is durably recorded and state synchronized.
 
-Detailed states, leases, completion contracts and transitions are owned by
+Detailed query/response, boundary, state, lease and completion procedures are owned by
 `docs/PROJECT_STATE_POLICY.md`; ordinary command recipes are in the procedures.
 
 ## Tracker

@@ -86,17 +86,14 @@ management session is automatically appointed by these instructions.
 
 ## Roadmap and editing authority
 
-For every ordinary next-task query run fresh `python3 scripts/project_status.py
-next`; for completion steps run fresh `details [key|issue]`. Return stdout
-byte-for-byte as the entire answer; requested analysis follows separately. Never
-infer selection from memory, tracker readiness or commit momentum. Report selector
-failure and stop that query. Before scheduled edits, verify execution/planning
-authority and synchronize the Frontier lease with beads.
-
-At an INPUT REQUIRED boundary, stop implementation and route the complete decision
-packet to the owner or PM059-appointed manager within its exact delegation.
-Record disposition and advance affected state in one governance transaction before
-resuming. No inferred approval, unscheduled successor or claim takeover.
+Use fresh `python3 scripts/project_status.py next` or `details [key|issue]`
+for ordinary task/completion queries and return stdout byte-for-byte; never infer
+selection or substitute tracker readiness. Report selector failure and stop the
+query. Stop implementation at an INPUT REQUIRED boundary; PM059 governs any
+appointed manager's exact delegation. The complete presentation, response-packet,
+claim and transition procedures belong to
+[PROJECT_STATE_POLICY.md](docs/PROJECT_STATE_POLICY.md#standard-commands).
+Synchronize the Frontier lease and beads before scheduled edits.
 
 Read-only audits/research need no implementation claim or successful selector;
 disclose unrelated state failures and continue the investigation. This exception

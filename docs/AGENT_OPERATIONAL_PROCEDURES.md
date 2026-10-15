@@ -15,6 +15,22 @@ This consolidation preserves procedures without creating a competing authority.
 - Rust proof/formatting: corresponding sections below.
 - Performance requirements: Numerical provenance below; no invented budget.
 
+## Procedure ownership
+
+| Concern | Existing detailed owner | Controlling authority |
+| --- | --- | --- |
+| Task/completion queries and exact presentation | [Project-state Standard Commands](PROJECT_STATE_POLICY.md#standard-commands) | PM025, amended by PM059 |
+| Claims, transitions and synchronized closure | [Project-state workflow/claim contract](PROJECT_STATE_POLICY.md#work-item-workflow) | PM025 |
+| Owner boundaries and delegated review/continuation | [Project-state delegated routing](PROJECT_STATE_POLICY.md#delegated-decision-routing-and-delivery-rhythm) | PM059 within its exact appointment/scope |
+| Beads commands and safe commits | Tracker/commit sections below | CLAUDE.md and the shared-worktree rules |
+| Verification cost and grant persistence | CLAUDE.md verification/delivery rules; selected completion contract | PM059 and required acceptance |
+| Cargo resources and selected formatting | Rust sections below | Existing guarded-build and formatting policy |
+| Specification/route integration and numeric provenance | Specification section below | Ratified product/decision authority, including PM051 |
+
+Startup files retain essential prohibitions and entry commands. Detailed recipes
+link to the owners above. This table changes no grant, decision boundary, gate,
+review independence or product requirement.
+
 ## Issue tracker: beads (`br`)
 
 Datum tracks bugs, feature ideas, and technical debt with
@@ -73,67 +89,19 @@ br sync --flush-only                         # export DB -> issues.jsonl (before
 3. **Finish:** `br close <id> --reason "..."`, citing the commit where it landed.
 4. **Before committing:** `br sync --flush-only` so `issues.jsonl` reflects your changes.
 
-### The tracker is intake, not the roadmap
+### Project-state procedure owner
 
-`br` is the backlog/pool. The single canonical answer to "what is the next
-development task" is returned by the decision-025 project-state selector:
+[PROJECT_STATE_POLICY.md](PROJECT_STATE_POLICY.md) owns task/completion query
+presentation, fresh invocation and failure handling, completion-step selection,
+owner-boundary routing, lifecycle/authorization and synchronized claim transitions.
+Use its [Standard Commands](PROJECT_STATE_POLICY.md#standard-commands),
+[delegated routing](PROJECT_STATE_POLICY.md#delegated-decision-routing-and-delivery-rhythm)
+and [Claim Contract](PROJECT_STATE_POLICY.md#claim-contract). PM025 and PM059
+remain controlling; this command recipe does not restate a competing procedure.
 
-```bash
-python3 scripts/project_status.py next
-```
-
-For an ordinary next-task query, return this command's stdout byte-for-byte as
-the entire answer. Its `Next completion step` is authoritative; never append or
-substitute a substep inferred from ordering or dependency readiness.
-
-**Fresh-invocation rule:** run the applicable selector from this repository in
-every user turn asking what is next or how to complete a task, including repeated
-questions in the same session. Do not answer from memory, cached output,
-conversation summaries, prior tool calls, manual manifest inspection, tracker
-readiness (`br ready`), or commit history. If the selector fails or cannot be
-run, report the failure and stop without guessing or reconstructing project
-state.
-
-**Owner-boundary rule:** if selector stdout says `Owner boundary: INPUT
-REQUIRED`, alert the owner that the boundary has been reached and name the
-selected decision step, present the selector's ordered decision packet and
-response format byte-for-byte, then stop. Never claim or edit the task, decide on the
-owner's behalf, or advance to another step. Work resumes only after explicit
-owner input is recorded and the Frontier authorization/substep is advanced in
-the same governance transaction.
-
-For every “how/steps to finish or complete the current task?” query, use:
-
-```bash
-python3 scripts/project_status.py details [<Frontier-key|issue-id>]
-```
-
-Omit the target for the current task or pass a stable Frontier key/issue ID for
-a named scheduled task. For an ordinary steps query, return command stdout
-byte-for-byte as the entire answer, with no preface, regrouping, renumbering,
-inferred concurrency, supplementation, or postscript. Explicitly requested
-analysis follows only after the unchanged stdout in a separate labeled section.
-The printed `Next completion step` is the sole selected subtask. Other
-dependency-ready steps are not alternate “next” work and must not be offered as
-parallel candidates.
-
-The selector validates `specs/active_frontier.json` against the generated
-Active Frontier in `specs/PROGRESS.md`, `.beads/issues.jsonl`, governing docs,
-hard blockers, authorization, and claim freshness. `br ready` reports tracker
-availability only; it never determines roadmap order. When a tracked item
-graduates into committed work — especially anything that ratifies mechanism or
-touches a spec — it still gets its Frontier placement and the full spec
-governance (`specs/PROGRESS.md` row, manifest classification, decision record if
-it ratifies mechanism). Link the issue to the spec/decision it feeds.
-
-Claim scheduled work by updating both the Frontier claim lease and the beads
-status/assignee in one transaction, then export with `br sync --flush-only`.
-An assignee without a valid unexpired Frontier claim is not live ownership. See
-`docs/PROJECT_STATE_POLICY.md`.
-
-Treat the selector's task, lifecycle, authorization, tracker status, assignee,
-and live-claim fields as one complete answer. Do not supplement or contradict
-them with conversational memory, earlier `br` output, or commit momentum.
+The tracker commands above are the beads half of those transactions, never a
+replacement roadmap or claim. Export with `br sync --flush-only` before landing
+tracker changes. Implementation and review evidence remain separate from intake.
 
 ---
 
@@ -234,7 +202,7 @@ terminal work.
 ## Verification discipline
 
 **Make every proposed test justify the decision it will enable.** Follow
-[CLAUDE.md — Verification must earn its cost](CLAUDE.md#verification-must-earn-its-cost).
+[CLAUDE.md — Verification must earn its cost](../CLAUDE.md#verification-must-earn-its-cost).
 State a brief rationale per cohesive batch, reuse adequate evidence across
 handoffs, and keep raw output out of working context. No new approval workflow
 or test ledger is required. Required acceptance and commit checks remain in force.
@@ -320,65 +288,13 @@ ratified decision or controlling visual source. If sources conflict, preserve
 the higher authority, record the conflict, and reconcile it through the normal
 owner/decision transaction rather than inventing a replacement from memory.
 
-**Roadmap wayfinding (the bullseye rule).** Decision 025 makes
-`specs/active_frontier.json` the canonical structured roadmap. The Active
-Frontier at the top of `specs/PROGRESS.md` is its generated human projection.
-The single canonical answer to "what is the next logical development task?" is:
-
-```bash
-python3 scripts/project_status.py next
-```
-
-For an ordinary next-task query, return this command's stdout byte-for-byte as
-the entire answer. It includes the sole selected completion substep; do not
-append an inferred alternative from step order, dependency readiness, or prior
-conversation.
-
-**Fresh-invocation rule:** execute the applicable `project_status.py` command
-from the current repository during every user turn that asks what is next or how
-to complete a task—even when the same question was answered earlier in the
-session. Memory, cached stdout, conversation summaries, prior tool results,
-manual manifest inspection, `br ready`, and recent commits are never substitutes
-for a fresh successful invocation. If the command cannot run or validation
-fails, report that failure and stop; do not guess, reconstruct, or fall back to
-remembered project state.
-
-**Owner-boundary rule:** when `next` or `details` reports `Owner boundary:
-INPUT REQUIRED`, immediately alert the project owner that autonomous work has
-stopped and present the selector's complete ordered decision packet and response
-format byte-for-byte. Do not claim the bead, edit
-files, choose a candidate disposition, skip ahead, or silently treat owner
-approval as implied. Resume only after the owner supplies the required choice;
-the same governance transaction records its durable review evidence, completes
-the decision step, selects the successor substep, and changes authorization to
-match it.
-
-For “how/steps to finish or complete the current task?” run:
-
-```bash
-python3 scripts/project_status.py details [<Frontier-key|issue-id>]
-```
-
-Omit the target for the current canonical task; pass a stable Frontier key or
-issue ID when the user names a scheduled task. For an ordinary request for the
-steps, return the command's stdout byte-for-byte as the entire answer: no
-preface, summary, regrouping, renumbering, relabeling, inferred concurrency, or
-postscript. If the user explicitly asks for analysis too, reproduce stdout
-unchanged first and put analysis in a separate labeled section. If the plan
-appears incomplete, repair the structured contract; never invent a rival plan.
-The printed `Next completion step` is the sole subtask-selection authority;
-dependency-ready alternatives are not additional next steps and must not be
-offered as parallel or interchangeable choices.
-
-Run it before proposing or claiming work; it validates the roadmap against
-beads, governing documents, dependencies, authorization, and claim freshness.
-Never infer the answer from `br ready`, recent commits, issue priority, or prose
-outside the generated Frontier. Update the manifest and regenerate the projection
-in the same change as any roadmap change. Other docs, including this file's
-"Current Status" and PROGRESS's lower sections, must not restate rival ordering.
-The selector's lifecycle, authorization, tracker status, assignee, and live-claim
-fields are the complete operational answer; never append contrary state from
-conversation history or an earlier tracker read.
+**Roadmap wayfinding:** use the single
+[project-state procedure owner](PROJECT_STATE_POLICY.md#standard-commands).
+That policy defines `next`/`details`, exact stdout presentation, fresh queries,
+selector failure, owner/PM059-delegated boundaries and step selection. The
+structured Frontier, generated projection and beads export must stay synchronized;
+see its [same-change checklist](PROJECT_STATE_POLICY.md#same-change-checklist).
+These specification recipes do not create another current/next ordering.
 
 Behavioral invariants are enforced by the PG-* proof gates
 (`run_migration_proof_gates.sh`) and the write-fence gates
@@ -433,5 +349,5 @@ Record corrections in the controlling decision/specifications, roadmap and
 active-agent handoff together. A historical numeric failure stays in the record,
 but its interpretation must follow corrected authority; do not claim a withdrawn
 threshold was met. See the
-[GUI budget provenance incident](docs/reviews/gui-performance/baseline-budget/budget-provenance-incident.md)
+[GUI budget provenance incident](reviews/gui-performance/baseline-budget/budget-provenance-incident.md)
 for the motivating evidence, owner-reported impact and correction handoff.

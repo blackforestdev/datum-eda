@@ -1,6 +1,8 @@
 # Standards Audit Batch 1 Integration Guidance
 
-> **Status**: Active guidance for the first batch of spec edits derived
+> Historical batch record. Spec/doc stubs landed at db98eff; mixed runtime coverage and deferred edits are tracked in [contract coverage](../specs/progress/contract_coverage_details.md#standards-audit-batch-1--spec-stubs-awaiting-implementation). Branch/PR instructions and state vocabulary below describe that batch. Current standards vocabulary belongs to [STANDARDS_COMPLIANCE_SPEC §3](../specs/STANDARDS_COMPLIANCE_SPEC.md#3-support-disposition-model); current scheduling belongs to the structured Frontier.
+
+> **Status**: Historical guidance for the landed first batch of spec edits derived
 > from the Phase 2 standards-audit deep-dives on Domain 1 (Data exchange
 > & interop) and Domain 2 (Component modelling).
 >

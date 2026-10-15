@@ -2,35 +2,22 @@
 
 ## Current owner amendment — PM051
 
-[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
-blocking acceptance criteria because their derivation was never validated.
-Historical measurements and their original scopes remain intact; exceedance alone
-is no longer a product defect. Replacement budgets are **undecided**. The distinct
-CPU 4/8 ms limits, GPU-duty and resource caps are unchanged pending their explicit
-provenance audit and owner disposition. All correctness, exact 8× rendering,
-painter order, invalidation/recovery and live/retiring resource obligations remain.
+[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md#decision-and-precedence)
+owns the GPU threshold withdrawal, evidence-derived replacement process and
+removal of blanket functionality dependencies. Replacement GPU budgets remain
+undecided; separate CPU/duty/resource limits and correctness obligations retain
+their existing authority. The [baseline/budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md)
+tracks remaining assessment. Historical clauses and results below keep their
+recorded scope and yield to these explicit amendments; no runtime pass follows.
 
-The [baseline-and-budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md) schedules a pinned, representative,
-verified-input/output baseline with complete timing boundaries, instrumentation
-effects, per-trial distributions, counts and variability. Reuse adequate evidence;
-collect only missing evidence under its finite protocol. Observed performance does
-not define acceptability. Replacement binding budgets require an evidence-derived
-responsiveness/hardware/headroom rationale and explicit owner approval; unsupported
-numbers remain undecided. Future binding numerical performance requirements must
-cite derivation, supporting evidence, applicable configurations and review conditions.
-
-This amendment takes precedence over historical unchanged-budget and blanket
-performance-first sequencing clauses below. Functionality follows its own approval
-and correctness gates while baseline/budget and residual S4/S5 qualification remain
-explicitly scheduled; neither performance issue nor qualification is declared complete.
-
-Status: PM045 specification as amended by PM051. R4/A1 evidence remains at its
-recorded scope; GPI-S4-RECONCILE is selected for residual planning and S4/S5
-remain pending. Historical grants below are bounded completed packets, not a new
-runtime campaign. Baseline/budget work is separately scheduled; functionality
-follows its own Frontier approval gates. Runtime acceptance remains separate. Parent:
-`GUI_PERFORMANCE_RECOVERY_PLAN.md`; engineering: `GUI_SHARED_ENGINEERING_CONTRACT.md`;
-budgets and methods: `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`.
+Status: specification ratified under PM045 and amended by PM051. The
+[ratified S4 closure](#ratified-s4-closure-and-qualification-handoff) completes
+bounded S4 implementation/correctness, with remaining S5 qualification and
+baseline/budget gaps open. The [CPU resize reset](#owner-reset-current-host-horizontal-and-vertical-resize-cpu)
+records the subsequent planning boundary; fresh Frontier queries select current
+work. Historical grants below authorize no new runtime campaign or optimization.
+Parent: `GUI_PERFORMANCE_RECOVERY_PLAN.md`; engineering:
+`GUI_SHARED_ENGINEERING_CONTRACT.md`; methods: `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`.
 
 <!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C04-ADOPTION -->
 
@@ -208,26 +195,12 @@ Qualification must demonstrate that private text construction actually stays wit
 
 ## Owner amendment: resize investigation is nonblocking
 
-The subsequent owner instruction in
-`docs/reviews/gui-performance/resize-deferral-owner-direction.json` pins
-`dat-gui-vertical-resize-cpu-toj` as unresolved investigation and removes resize
-resolution, kernel/driver attribution and completed temporal calibration as
-development gates for S0–S5. This amendment supersedes earlier E10 pre-change
-calibration requirements and GPS-C01R blocking sequence. It does not mark resize
-budgets, flicker or displayed-frame criteria passed or change their numerical
-limits. The Linux-kernel/Intel-driver/hardware explanation is an unconfirmed
-owner hypothesis, not an established root cause.
-
-Shared application lifecycle and reuse fixes may proceed under the separate
-execution grant, with bounded relevant production regressions, available
-before/after resource observations and final-state/extent/hit/focus/PTY/static
-correctness checks. Missing temporal proof is reported as unqualified. It cannot
-be used to claim resize closure, but it does not stop other development.
-All non-resize performance/correctness, adoption, independent replay and
-endurance requirements remain. S5 can conclude only its explicitly limited
-non-resize qualification; full resize resource/temporal closure stays on the
-pinned issue. No new kernel investigation or renderer execution is authorized
-by this amendment.
+The [complete nonblocking-resize amendment](GUI_PERFORMANCE_RECOVERY_PLAN.md#owner-amendment-resize-investigation-is-nonblocking)
+and [exact owner direction](../docs/reviews/gui-performance/resize-deferral-owner-direction.json)
+control this contract. Resize investigation stays pinned, development is not
+blocked on its closure, and missing temporal proof remains unqualified. Existing
+non-resize proof, independent review and limited S5 obligations remain; this
+link grants no new execution or threshold change.
 
 ## Owner amendment: component-scoped measurement delivery
 

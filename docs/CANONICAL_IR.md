@@ -123,61 +123,37 @@ expensive) but the cache is always invalidated when authored data changes.
 ## 4. Transaction Model
 
 ### Operations
-Every modification to authored data is a typed `Operation` — a serde-tagged
-enum (not a `dyn` trait), committed in batches through one `commit()` path. The
-variant set lives in `crates/engine/src/substrate/operation.rs`.
 
-```rust
-// serde-tagged; one variant per authored mutation kind (many variants)
-pub enum Operation {
-    SetBoardPackageValue { /* ... */ },
-    CreatePoolLibraryObject { /* ... */ },
-    SetBoardText { /* ... */ },
-    // ...
-}
-
-pub struct OperationBatch {
-    pub batch_id: Uuid,
-    pub operations: Vec<Operation>,
-    pub provenance: CommitProvenance,
-}
-```
-
-A batch is applied by a centralized `apply_operation` (validate + mutate the
-resolved `DesignModel`) and reversed by `inverse_operations_for_batch`; undo is
-a compensating batch, not a stored old-value blob.
+The exact operation, batch, proposal, transaction and commit contract is owned by
+[ENGINE_SPEC §0.8](../specs/ENGINE_SPEC.md#08-operations-proposals-transactions-and-commit).
+Every authored mutation uses that shared typed-operation path, including revision
+preflight and the policy distinction between direct commits and proposals. This
+companion does not maintain a second variant set or `OperationBatch` schema.
 
 ### CommitDiff
-Committing a batch returns a diff of affected object identities (not old-value
-payloads):
 
-```rust
-pub struct CommitDiff {
-    pub created: Vec<ObjectId>,
-    pub modified: Vec<ObjectId>,
-    pub deleted: Vec<ObjectId>,
-}
-```
-
-The diff drives derived-data invalidation, change reporting to GUI/MCP/CLI, and
-revision bumps. Undo is achieved by applying the inverse batch, so the diff need
-not carry old values.
+Change reporting and affected identities follow the engine-owned transaction
+contract above. The former local `CommitDiff` sketch and `batch_id` example are
+retired; neither defines a competing return type or persistence schema. Diffs
+support invalidation and consumer reporting; undo uses compensating batches.
 
 ### Commit, journal, and revisions
-A single user action may produce several operations (e.g., deleting a component
-also removes its tracks and vias), grouped into one `OperationBatch` and
-committed atomically through `commit()` / `commit_journaled()`:
 
-1. apply in memory to the resolved `DesignModel`
-2. stage shard bytes + fsync
-3. append a `TransactionRecord` to the journal + fsync — the commit point
-4. atomic rename + directory fsync
+The engine contract owns validation, journal commit point, recovery and
+compensating undo/redo. Transactions alone produce object/model revisions;
+no wall-clock or `Instant` field is stored in source state because it would
+violate serialization determinism. [NATIVE_FORMAT_SPEC](../specs/NATIVE_FORMAT_SPEC.md#5-file-ownership)
+owns persisted authored/derived boundaries, with explicit ZoneFill generated
+evidence and revision/source qualification. Generated evidence stored on disk
+does not become authored geometry. This document retains determinism and
+incremental-recomputation rationale; PM053/054 reconciliations below remain.
 
-The journal is the persisted, replayable history; durable undo/redo are cursors
-into it. Transactions are the sole producers of revisions: `object_revision`
-(monotonic per object) and `model_revision` (sha256 over canonical sorted object
-revisions + the accepted-transaction tip). No wall-clock/`Instant` field is
-stored in source state — that would violate the §5 determinism invariant.
+Selection is a consumer subject, governed by
+[PM026](decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md#decision): an
+Object/Compound resolves authored identity; Run/Global Net/Bus derive membership
+under their revision law. Those subjects do not introduce authored source shards.
+Their S5A read-only boundary and later atomic mutation guard remain distinct
+from source persistence and engine transactions.
 
 ### Derived data invalidation
 After a transaction commits, the engine recomputes affected derived data:

@@ -2,27 +2,13 @@
 
 ## Current owner amendment — PM051
 
-[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
-blocking acceptance criteria because their derivation was never validated.
-Historical measurements and their original scopes remain intact; exceedance alone
-is no longer a product defect. Replacement budgets are **undecided**. The distinct
-CPU 4/8 ms limits, GPU-duty and resource caps are unchanged pending their explicit
-provenance audit and owner disposition. All correctness, exact 8× rendering,
-painter order, invalidation/recovery and live/retiring resource obligations remain.
-
-The [baseline-and-budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md) schedules a pinned, representative,
-verified-input/output baseline with complete timing boundaries, instrumentation
-effects, per-trial distributions, counts and variability. Reuse adequate evidence;
-collect only missing evidence under its finite protocol. Observed performance does
-not define acceptability. Replacement binding budgets require an evidence-derived
-responsiveness/hardware/headroom rationale and explicit owner approval; unsupported
-numbers remain undecided. Future binding numerical performance requirements must
-cite derivation, supporting evidence, applicable configurations and review conditions.
-
-This amendment takes precedence over historical unchanged-budget and blanket
-performance-first sequencing clauses below. Functionality follows its own approval
-and correctness gates while baseline/budget and residual S4/S5 qualification remain
-explicitly scheduled; neither performance issue nor qualification is declared complete.
+[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md#decision-and-precedence)
+owns the GPU threshold withdrawal, evidence-derived replacement process and
+removal of blanket functionality dependencies. Replacement GPU budgets remain
+undecided; separate CPU/duty/resource limits and correctness obligations retain
+their existing authority. The [baseline/budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md)
+tracks remaining assessment. Historical clauses and results below keep their
+recorded scope and yield to these explicit amendments; no runtime pass follows.
 
 Status: specification development GPS-C01–GPS-C06 complete and owner-ratified
 under Product Mechanics 045. The subsequent owner amendment below removes
@@ -402,14 +388,13 @@ or `GUI-PERFORMANCE-SPEC: revise — <specific correction>`.
 
 ## Downstream integration and task boundaries
 
-The structured Frontier and tracker add the implementation prerequisite to
-existing S5A build, cross-probe, Inspector, marking-menu, GUI write-path, and
-Project Preferences build work. Their existing blockers remain. Shared-surface
-specification may still be refined under its own planning authorization; it
-must consume the approved foundation before dependent production expansion.
-No additional dependency is imposed on unrelated engine work or the current
-bounded Preferences QA correction. Ordering/selection changes do not transfer
-the other session's ownership or certify its acceptance.
+[PM051 GP-051-06](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md#decision-and-precedence)
+withdraws the former blanket performance implementation prerequisite for S5A,
+cross-probe, Inspector, marking-menu, GUI write-path and Project Preferences.
+Their other dependencies, correctness and approval boundaries remain. A concrete
+feature-affecting correctness/safety defect needs an explicit prerequisite;
+nonblocking performance work neither accepts those features nor transfers claims.
+The structured Frontier alone records current selection and dependency state.
 
 ## Amendment completion and evidence honesty
 

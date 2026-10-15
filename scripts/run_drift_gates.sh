@@ -43,6 +43,7 @@ echo "== clippy: workspace lint gate (-D warnings) =="
 
 python3 scripts/check_progress_coverage.py
 python3 scripts/test_project_status.py
+python3 scripts/test_project_status_history.py
 python3 scripts/test_project_status_claim.py
 python3 scripts/test_project_status_without_wdq.py
 python3 scripts/project_status.py check

@@ -1,5 +1,7 @@
 # Standards Compliance Integration Guidance
 
+> Governed integration rationale. [STANDARDS_COMPLIANCE_SPEC](../specs/STANDARDS_COMPLIANCE_SPEC.md) sections 2/3/9 own precedence, current support dispositions and cross-spec updates. State labels and target-state language below retain their research context; they do not override the formal contract or establish implementation.
+
 > **Status**: Active guidance bridging the standards audit and IPC research into
 > controlling spec changes.
 >

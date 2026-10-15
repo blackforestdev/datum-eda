@@ -9,27 +9,13 @@ nonblocking for functionality. No additional measurement or renderer optimizatio
 is authorized by that disposition. See
 `docs/reviews/gui-performance/baseline-budget/pointer-owner-disposition.json`.
 
-[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md) withdraws GPU execution 4 ms p95 / 8 ms p99 as
-blocking acceptance criteria because their derivation was never validated.
-Historical measurements and their original scopes remain intact; exceedance alone
-is no longer a product defect. Replacement budgets are **undecided**. The distinct
-CPU 4/8 ms limits, GPU-duty and resource caps are unchanged pending their explicit
-provenance audit and owner disposition. All correctness, exact 8× rendering,
-painter order, invalidation/recovery and live/retiring resource obligations remain.
-
-The [baseline-and-budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md) schedules a pinned, representative,
-verified-input/output baseline with complete timing boundaries, instrumentation
-effects, per-trial distributions, counts and variability. Reuse adequate evidence;
-collect only missing evidence under its finite protocol. Observed performance does
-not define acceptability. Replacement binding budgets require an evidence-derived
-responsiveness/hardware/headroom rationale and explicit owner approval; unsupported
-numbers remain undecided. Future binding numerical performance requirements must
-cite derivation, supporting evidence, applicable configurations and review conditions.
-
-This amendment takes precedence over historical unchanged-budget and blanket
-performance-first sequencing clauses below. Functionality follows its own approval
-and correctness gates while baseline/budget and residual S4/S5 qualification remain
-explicitly scheduled; neither performance issue nor qualification is declared complete.
+[PM051](../docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md#decision-and-precedence)
+owns the GPU threshold withdrawal, evidence-derived replacement process and
+removal of blanket functionality dependencies. Replacement GPU budgets remain
+undecided; separate CPU/duty/resource limits and correctness obligations retain
+their existing authority. The [baseline/budget plan](GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md)
+tracks remaining assessment. Historical clauses and results below keep their
+recorded scope and yield to these explicit amendments; no runtime pass follows.
 
 Status: specification ratified under PM045 and amended by PM051. Historical
 review milestones below do not establish runtime qualification.
@@ -356,6 +342,13 @@ or an assumed waiver of R14/R41. Full product proof remains with implementation.
 
 ## Specification-level method validation and implementation conformance
 
+Current timing precedence: [PM050 measurement/proof](../docs/decisions/PRODUCT_MECHANICS_050_DAMAGED_SAMPLE_RESTORATION.md#measurement-and-proof)
+adds continuation, final mixed-upload and copy boundaries. The historical
+pass-boundary method below does not qualify complete frame time by pass sums.
+MET-04 complete-span obligations remain; actual S4 delivery and remaining S5
+method/resource gaps belong to the implementation contract and its closure.
+
+
 <!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C03-METHODS -->
 
 **ADM-01.** `docs/reviews/gui-performance/measurements/c03-methods/baseline-counts.json`
@@ -400,10 +393,12 @@ short. References are the installed crate's `api/render_pass.rs`,
 `api/command_encoder.rs`, `api/queue.rs`, and
 https://docs.rs/wgpu/28.0.0/wgpu/struct.Queue.html#method.get_timestamp_period.
 No new dependency or arbitrary inside-pass/inside-encoder timestamp feature is
-needed for pass-boundary timing. Production passes currently use None; results
-are therefore absent today, not zero GPU time.
+needed for pass-boundary timing. At the historical C03 method-planning baseline,
+production passes used None and results were absent. This dated observation does
+not describe current instrumentation or establish zero GPU time; bounded S4
+implementation is recorded in the implementation contract.
 
-**GPU-02.** The future opt-in measurement adapter checks adapter support, explicitly
+**GPU-02.** The opt-in measurement adapter contract checks adapter support, explicitly
 requests TIMESTAMP_QUERY at diagnostic-device creation, verifies enabled device
 features and a finite positive period, and records adapter/backend/device epoch.
 Allocate at most three query/readback slots per host, each holding 32 u64 values
@@ -522,23 +517,9 @@ future runtime evidence.
 
 ## Owner amendment: resize investigation is nonblocking
 
-The subsequent owner instruction in
-`docs/reviews/gui-performance/resize-deferral-owner-direction.json` pins
-`dat-gui-vertical-resize-cpu-toj` as unresolved investigation and removes resize
-resolution, kernel/driver attribution and completed temporal calibration as
-development gates for S0–S5. This amendment supersedes earlier E10 pre-change
-calibration requirements and GPS-C01R blocking sequence. It does not mark resize
-budgets, flicker or displayed-frame criteria passed or change their numerical
-limits. The Linux-kernel/Intel-driver/hardware explanation is an unconfirmed
-owner hypothesis, not an established root cause.
-
-Shared application lifecycle and reuse fixes may proceed under the separate
-execution grant, with bounded relevant production regressions, available
-before/after resource observations and final-state/extent/hit/focus/PTY/static
-correctness checks. Missing temporal proof is reported as unqualified. It cannot
-be used to claim resize closure, but it does not stop other development.
-All non-resize performance/correctness, adoption, independent replay and
-endurance requirements remain. S5 can conclude only its explicitly limited
-non-resize qualification; full resize resource/temporal closure stays on the
-pinned issue. No new kernel investigation or renderer execution is authorized
-by this amendment.
+The [complete nonblocking-resize amendment](GUI_PERFORMANCE_RECOVERY_PLAN.md#owner-amendment-resize-investigation-is-nonblocking)
+and [exact owner direction](../docs/reviews/gui-performance/resize-deferral-owner-direction.json)
+control this contract. Resize investigation stays pinned, development is not
+blocked on its closure, and missing temporal proof remains unqualified. Existing
+non-resize proof, independent review and limited S5 obligations remain; this
+link grants no new execution or threshold change.

@@ -1,5 +1,7 @@
 # Product Mechanics: Open-Question Research Resolutions
 
+> Historical research recommendations, preserved without ratifying unresolved proposals. The numbered decision records own accepted resolutions; labels such as research-conclusive below are research judgments, not owner approval. Current task authority remains the structured Frontier.
+
 Status: research-funded resolutions 2026-06-19; recommendations for owner
 ratification, not yet folded into the source decision docs.
 
