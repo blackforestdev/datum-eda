@@ -12,10 +12,11 @@ Companion research synthesis:
   product-mechanics research into tracked conclusions that drive decision
   records.
 
-Companion documentation goals:
-- `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_DOCUMENTATION_GOALS.md` defines the staged
-  documentation work needed before new roadmap or feature implementation work
-  resumes.
+Historical companion documentation goals:
+- The [June scope-integration documentation agenda](audits/scope-integration/DATUM_PRODUCT_MECHANICS_DOCUMENTATION_GOALS.md)
+  records staged documentation work for that historical scope-correction pass.
+  Its [archive boundary](audits/scope-integration/README.md) preserves that context;
+  the old agenda is not a current blanket prerequisite to authorized work.
 
 Controlling North Star:
 - `docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md` ratifies the
@@ -25,8 +26,12 @@ Controlling North Star:
 
 ## Purpose
 
-This document defines how Datum should function as an application before
-roadmap or milestone work continues.
+This document defines how Datum should function as an application. The original
+framing before roadmap or milestone work continued belongs to the June scope
+correction, not a new blanket documentation prerequisite. Existing
+[delivery authority](decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md#delivery-unit-and-rhythm)
+and [owner-scoped work rules](../CLAUDE.md#delivery-and-management) govern current
+work.
 
 It is not an implementation spec and not a new milestone. It is the missing
 product-mechanics layer between the product north star and the codebase.

@@ -131,6 +131,16 @@ One shared mechanism each; the per-surface variation is only the `…Config`.
 
 ### 2.2 S5 selection and marquee contract (owner-ratified, design in progress)
 
+> **Historical pre-closure status.** The heading and opening paragraph below
+> record the section-by-section review phase. The [final S5 owner review](#2222-s5-c11-final-owner-review-record)
+> records its later closure, and [PM026](../decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md#decision)
+> ratifies the complete contract. [PM058](../decisions/PRODUCT_MECHANICS_058_EXACT_ROTATED_PAD_QUERIES.md)
+> is a later bounded rotated-Pad query disposition, not a grant for all S5A.
+> Current task grants, ownership, pauses and unfinished proof follow the
+> [structured Frontier](../../specs/active_frontier.json) through the existing
+> [project-state procedure](../PROJECT_STATE_POLICY.md#standard-commands).
+> This annotation changes no requirement or grant and does not resume paused work.
+
 This subsection is the durable working authority for S5. It records only
 owner-ratified behavior while the section-by-section design review is in
 progress; unresolved behavior remains explicitly open until the final review.

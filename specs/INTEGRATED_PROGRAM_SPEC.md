@@ -209,7 +209,7 @@ This matrix is the minimum verification layer for integrated-spec freeze.
 
 | Contract Area | Verification Method | Command / Evidence | Owner | Frequency |
 |---------------|---------------------|--------------------|-------|-----------|
-| Naming policy (`Datum EDA` / `datum-eda`) | Automated scan | `rg -n "horizon-ai|Horizon-ai|horizon ai|Horizon AI|horizon_ai" -g '!target/**' -g '!.git/**' /home/bfadmin/Documents/datum-eda` must return no matches | release owner | pre-merge for spec-affecting changes |
+| Naming policy (`Datum EDA` / `datum-eda`) | Automated scan | From the repository root, `rg -n "horizon-ai|Horizon-ai|horizon ai|Horizon AI|horizon_ai" -g '!target/**' -g '!.git/**' .` must return no matches | release owner | per reviewed spec-affecting local landing to main |
 | Workspace health | Automated test run | `python3 scripts/check_alignment.py --run-health` | platform owner | pre-freeze and CI |
 | M2 quality gates | Automated harness | `python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m2_quality -- --json` with `"pass": true` | checking owner | pre-freeze and CI |
 | M2 performance baseline | Automated harness | `python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin m2_perf -- --iterations 3 --compare-baseline crates/test-harness/testdata/perf/m2_doa2526_baseline.json` | checking owner | pre-freeze |

@@ -135,6 +135,16 @@ or ambiguous declaration/source authority is explicitly unavailable.
 
 ## What This Decision Does NOT Do
 
+> **Original ratification boundary.** The paragraph below describes what this
+> decision itself authorized at ratification, with its original exclusions intact.
+> It is not a statement of current task execution status. The later
+> [PM058 rotated-Pad query disposition](PRODUCT_MECHANICS_058_EXACT_ROTATED_PAD_QUERIES.md)
+> has its own bounded scope; it does not itself grant all S5A. Current task grants,
+> ownership, pauses and proof follow the [structured Frontier](../../specs/active_frontier.json)
+> and [project-state procedure](../PROJECT_STATE_POLICY.md#standard-commands).
+> This pointer changes neither the original decision nor later grants and does
+> not resume S5A or pass any native/HUMAN/qualification obligation.
+
 **It authorizes no implementation.** S5A execution remains separately
 unauthorized; this decision changes the authority level of the reviewed
 specification, not the build schedule. Two classes are **deliberate

@@ -174,6 +174,14 @@ by this amendment.
 
 ## Owner amendment: reopen S4 for GPU redraw architecture
 
+> **Historical reopening disposition.** The dated instruction below retains its
+> original grant and conditions. Later bounded closure is recorded by
+> [PM050's owner-ratified S4 closure](PRODUCT_MECHANICS_050_DAMAGED_SAMPLE_RESTORATION.md#owner-ratified-s4-closure-boundary)
+> and the [implementation contract's closure and qualification handoff](../../specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#ratified-s4-closure-and-qualification-handoff).
+> Those owners distinguish that later closure from unfinished S5, resize and
+> resource qualification. This navigation changes no rendering law, number,
+> proof requirement or execution authority and authorizes no new campaign.
+
 The 2026-09-27 direction recorded in
 `docs/reviews/gui-performance/gpu-redraw-s4-owner-direction.json` makes correction
 of the pointer GPU redraw architecture an S4 exit prerequisite. The earlier

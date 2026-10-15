@@ -568,3 +568,178 @@ complete, and only four authorized metadata paths change. Focused closure checks
 pass: state 95/current projection, progress coverage, 569 classifications,
 30 parity inventories, 29 routes / 131 artifacts and whitespace. Normal local
 closure hooks remain required. No additional code/runtime validation is claimed.
+
+## Owner-selected navigation corrections — REORG-NAVIGATION-01
+
+The owner explicitly directed the appointed manager to have the reorganization
+implementer complete items 1–4: RC-04 selection-history status, RC-05 later S4
+closure navigation, RC-07 the archived June documentation agenda, and RC-06 the
+portable naming-verification row. Manager `codex-reorganization-manager-20261014`,
+thread `01a13df1-7a0d-72c1-bbdd-f0d96d481598`, assigned one exact ten-path
+documentation batch on 2026-10-15 under that actual owner direction and PM059.
+Earlier RSP/RRC acceptance and all original history remain intact.
+
+Only narrowly placed historical qualifiers/pointers in UVT §2.2, PM026, PM045
+and the two doctrine lead-ins, plus the single integrated-spec naming row, are
+in scope. Original product conditions, numbered-decision meaning, stable markers,
+algorithms, examples, receipt/source pins and qualification duties remain. PM058
+is a narrower rotated-Pad grant, not a standalone grant for all S5A. Durable
+current-authority pointers preserve the actual owner pause and pending proof.
+No prototype, schema, tooling, dependency, product, rights/HUMAN, numerical or
+waiver decision is delegated here. No builds, native replay, matrix execution,
+artifact deletion, route splitting, integrated promotion or push is authorized.
+
+The baseline is `72e3b6f50b2add8cdc1bd8c52ae32fa1f7c898c2`, containing
+95 original Frontier records. Only original S5A's canonical flag is temporarily
+suspended; all other fields/records/root settings remain exact. The whole paused
+unclaimed S5A record is restored at accepted final closure without resuming it.
+One content step remains active through actual distinct review, local landing
+and manager objective acceptance; final synchronized closure follows that actual
+acceptance. No automatic cleanup or product successor. Broad intake stays open.
+
+### Navigation correction completion contract
+
+<!-- REQ:SPECIFICATION-NAVIGATION-CLEANUP:RNC-01 -->
+- RNC-01: Correct RC-04/05/07/06 at the six exact content spans in five documents, preserve original authority and requirements, obtain actual distinct review, local landing and manager objective acceptance of all four navigation corrections.
+
+<!-- REQ:SPECIFICATION-NAVIGATION-CLEANUP:RNC-02 -->
+- RNC-02: After actual accepted content landing, record finite dispositions, close only this cleanup issue, release its claim and restore all original task records including the entire paused unclaimed S5A row; verify and land synchronized closure without successor work.
+
+### Navigation pre-edit route coverage and bounded content
+
+Fresh route discovery identifies both `gui-selection` and `prototype-selection`
+for UVT, `gui-performance-recovery` for PM045, and `product-mechanics-research`
+for doctrine. PM026 and INTEGRATED_PROGRAM_SPEC have no direct route membership
+but retain all higher-authority obligations. No route sources/consumers are
+added or removed. Protected selection-study HTML is inspected/reused read-only.
+
+Actual complete selection baseline reads are documented in
+`docs/reviews/workflow-foundation/authority-review.md`: all five original
+selection members at `89a6da107d28e8e457fdfc50c3b914d5fcb7f713` (reachable
+`aa860d36fdfb7750598b83dacfc1a276a1a32410`), and all protected study HTML/CSS/SVG
+and Rendering Book at `8a743d8fd88780df967844ebb10618c442678146` (reachable
+`be27f48d4e202ab6ff4f3bd80ae79b703a6d830f`). Member identities were compared
+through the approved history map. Both original research sources, protected
+study and Rendering Book remain byte-identical. Complete later deltas in both
+guidance consumers and UVT were freshly read, and the added PM055 member was
+read completely. The two baseline UVT blobs are equal, so the same complete
+delta covers both route uses. This establishes actual full-baseline review plus
+all missing delta/member coverage, not advisory hash continuity alone or a
+fresh whole UVT/prototype corpus reread. No visual choice or HTML edit follows.
+
+Performance reuses the actual distinct accepted residual-A receipt
+`8ef473c5aa657a781d5f0bb1dba17cd7428f94df08dda65ba13a558ab1b51989`
+and its retained RSP/GOV complete baseline coverage at the recorded scope.
+All 234 current member bytes/lists/full metadata match accepted `be576a8b`;
+the exact PM045 annotation and controlling later PM050/implementation closure
+are reviewed without fresh native measurement or numerical acceptance.
+Doctrine reuses actual RGO distinct review of both complete route members,
+packet `0deb52f8bf8c1052ee2dd614669c246e0261f198d10e81594afeb9fb87cd935c`,
+patch `26474cc3f7608b68aaef8b81a13d42fa231d6e6c847e4dceeedb8eeb534938de`,
+accepted at `af8660e8c4a354c90e79da0ec2fd617affac5afe`. Both member bytes
+and full metadata remain exact to that actual reviewed baseline; the two changed
+lead-ins are reconciled against archive, PM059 and CLAUDE authority. No new
+full-route semantic reread, runtime result or full-corpus claim is made.
+
+The six exact content spans are three adjacent historical-status annotations,
+two doctrine lead-in qualifications and one naming-row portability/procedure
+correction. Original selection and S4 paragraphs, requirements, markers,
+examples, algorithms, receipt/source pins and all unrelated doctrine remain
+exact. PM058 is explicitly narrow; no S5A resumption or native/HUMAN proof
+follows. The naming command retains its pattern/options and check semantics
+when invoked from the repository root. Neither that matrix nor a freeze or
+promotion is executed/claimed. All four affected digests remain deliberately
+stale until actual independent candidate review and manager continuation.
+
+Actual independent selection-readiness provenance additionally pins source
+`0ef0efc745c8296b12e5027d7039303018d345a8`, mapped to
+`5820cce265979f6f7b36c254cfe19ed58a482848`, and preparation packet blob
+`a5d31274d41fec30458d8d51af825815124eb0d6`. The owner-returned reserved
+independent **PASS for specification readiness** is retained under
+`S5A-C02-AUTHORIZED` in FOUNDATION_CONSUMER_COMPLETION_PLAN. The exact packet
+explicitly records complete selection/prototype source/consumer and Selection
+Study DOM/CSS/SVG review. Since that actual reviewed source, both research files,
+protected HTML and Rendering Book remain byte-identical; complete UVT +82/-5
+and two two-line guidance deltas were freshly read, plus all added PM055.
+This actual readiness receipt strengthens the complete-read evidence above;
+it is reused only at source/readiness scope, not as current candidate PASS,
+implementation acceptance, broader S5A grant or native/HUMAN qualification.
+
+Navigation candidate v1 substantive review returned no authority or requirement
+finding. Before final PASS, the reviewer required two metadata corrections:
+R1 fixes the span count to six exact spans in five documents in the task
+requirement/action/acceptance criteria; R2 makes only the new summary, closure
+effect, issue description and four preparatory review notes readable sentences.
+Those corrections leave all five content-file hashes, historical notes, original
+markers and source bodies unchanged. Candidate v2 receives a bounded independent
+metadata recheck; no final PASS or digest reconciliation is inferred here.
+
+### Actual navigation candidate-v2 independent review and continuation
+
+Distinct reviewer `/root/reorganization_review` returned actual
+**BOUNDED_SOURCE_REVIEW_PASS** for candidate v2 with no mandatory findings.
+Actual final receipt SHA-256:
+`48af9a90d65b051b684ced68cc6270a408d7e3a0a7eb5c531bb87ac708841d43`.
+The earlier substantive v1 review required only metadata correction; its actual
+receipt remains pinned at
+`70ba9197b3ed65814d6c3f593d3a997d4a8a84ada00b21526c3e01a69b222037`.
+RNC-R1 (six exact content spans in five documents) and RNC-R2 (readable new
+metadata) are both resolved. The reviewer reused unchanged v1 content only
+after checking all five content pins and independently inspected every v2
+metadata field and complete per-file correction delta.
+
+Reviewed v2 packet SHA-256:
+`e4d66f192fc65e1de0842d2b1ded6028c0d47e2e1f5d155dc1f5a8cbbad8e808`;
+patch SHA-256:
+`98ec3ecbaaaff7711760d8e1408903be14781d0032eaa375f45d05a99bae7b53`;
+v1-to-v2 delta SHA-256:
+`a70e649e64d4a8e254fa3a1f4e862f45dca78d2adb72445fd6143519cf03f5a1`.
+All ten current pins and exact patch matched before faithful review/digest
+transcription. Raw review transport remains external scratch; hashes identify
+actual review snapshots without promising permanent raw availability.
+
+Independent inverse comparisons verified all six content spans, 43 stable
+markers/order and fenced examples. All 14 new destinations/fragments resolve.
+Original numbered-decision text, ratified doctrine, historical grants/conditions,
+proof and numerical limits remain intact. PM058 remains explicitly narrow;
+there is no all-S5A grant, resumption, native/HUMAN PASS or new documentation
+prerequisite. The naming row retains the same pattern/options/check semantics;
+no integrated matrix, freeze or promotion was run or accepted. All 95 original
+task records/root fields except the authorized S5A flag and all 331 original
+tracker rows remain exact. Protected prototypes and immutable receipts remain
+unchanged. Other 25 routes remain current; no source memberships change.
+
+The actual review deliberately reuses source-pinned selection readiness coverage
+plus complete later deltas/new PM055; actual RGO two-member and residual-A/RSP/GOV
+performance coverage retain their exact scope. This is actual baseline review
+plus current delta review, not hash-only certification or a fresh full-corpus
+reread. The manager read the actual receipt and verified all ten pins, exact
+patch, original state/tracker invariants and complete corrected metadata.
+Manager continuation SHA-256:
+`b10744df44db766f49ea7c9dc3bdcdfaf00aa17881d55c8e5ad7458cefa50e16`.
+It authorizes faithful review metadata, four reviewed digests, affected checks
+and normal local content landing only. RNC-01 stays active and RNC-02 pending
+until actual landing and manager objective acceptance.
+
+After that actual independent review, only these four digests are reconciled:
+
+- `gui-selection`: `b2a4a37c9bbdf924fe65aad98bb224a4ce59db38f5d1501e27726e78b8109259`.
+- `prototype-selection`: `b8bb6d336005059ef281709175088ff15bad5880d472195880883222a7903dd1`.
+- `product-mechanics-research`: `478dfd83e25f63b871bcb63700f4768e35733a73658e7c0630b6059449217ca7`.
+- `gui-performance-recovery`: `9d5e2fb3596991a35456e044b838cd463748ae36a290923836da393699816bbf`.
+
+Only this task evidence and the traceability manifest receive faithful
+post-review changes. The other eight reviewed file pins, including all five
+content files and task/claim/tracker/projection state, remain exact. No objective
+acceptance, final closure, product work or successor execution is inferred.
+
+Final affected navigation checks after actual v2 review/digest transcription PASS:
+state 96 and current generated projection, progress coverage, 569 classifications
+(478 governed / 59 doctrine / 3 pending / 29 historical), 30 parity inventories,
+29 routes / 131 artifacts and whitespace. The actual 14-link/fragment and exact
+content preservation results remain applicable because all content pins are
+unchanged. Reuse adequate earlier structural/resource/source-health evidence for
+unchanged code/tooling. No Cargo build, native proof, performance campaign or
+full integrated matrix is justified or claimed by these navigation annotations.
+Normal local commit hooks remain required; manager objective acceptance follows
+actual landing.
