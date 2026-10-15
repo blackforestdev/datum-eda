@@ -743,3 +743,67 @@ unchanged code/tooling. No Cargo build, native proof, performance campaign or
 full integrated matrix is justified or claimed by these navigation annotations.
 Normal local commit hooks remain required; manager objective acceptance follows
 actual landing.
+
+### Actual navigation objective acceptance
+
+<!-- EVIDENCE:SPECIFICATION-NAVIGATION-CLEANUP:RNC-01 -->
+Appointed manager `codex-reorganization-manager-20261014`, thread
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`, recorded actual
+**ACCEPTED_ALL_FOUR_BOUNDED_NAVIGATION_CORRECTIONS** against local landing
+`8b740e0057baa7a162ed767de0e6434a7a78d56e` and actual distinct v2 review
+`48af9a90d65b051b684ced68cc6270a408d7e3a0a7eb5c531bb87ac708841d43`.
+RNC-R1 and RNC-R2 are resolved; no mandatory findings remain.
+
+Actual manager acceptance receipt SHA-256:
+`abb69b599b70d7f355b5ac501558992ec71b9d67c35ca39ee589e7d8ad4c77a6`.
+The manager verified the exact commit/parent and ten paths, all ten final hashes,
+five unchanged content pins and three unchanged state/tracker/projection pins,
+and complete two-file faithful review/digest transcription. Original historical
+notes, source memberships and other route fields remain exact. Actual independent
+43-marker/fence, inverse and 14-link results and final affected checks/hooks are
+reused at their actual scope. This is real delegated objective acceptance under
+the owner-selected four-item assignment and PM059, not a fabricated owner reply,
+independent self-review, product qualification or a full-corpus claim.
+
+### Finite navigation dispositions and final synchronized closure
+
+<!-- EVIDENCE:SPECIFICATION-NAVIGATION-CLEANUP:RNC-02 -->
+RC-04 now distinguishes the original selection review/ratification boundary from
+existing later closure and task authority, with PM058 explicitly narrow and no
+S5A resumption. RC-05 links preserved dated S4 reopening to actual later bounded
+closure while retaining unfinished qualification, numerical and execution limits.
+RC-07 qualifies only the two June documentation lead-ins without changing other
+doctrine/research or creating a blanket prerequisite. RC-06 changes only the
+naming row to a repository-root relative command and reviewed local-main wording,
+preserving pattern/options/check semantics and unfinished integrated promotion.
+These six spans in five documents are accepted at the actual landing above.
+
+Under the actual manager closure disposition, RNC-01 and RNC-02 complete, only
+`dat-specification-navigation-cleanup-aiud` closes/unassigns, and the cleanup claim
+releases with the record landed/unselected and authorization none. The entire
+original UVT-S5A-BUILD row is restored from immutable assignment baseline
+`72e3b6f50b2add8cdc1bd8c52ae32fa1f7c898c2`, including canonical selection,
+owner pause, absent claim, retained grant, dependencies and unfinished proof.
+All 95 original task rows/order and root settings equal that baseline. This
+restores selection only; no paused session or successor work resumes.
+
+All five accepted content files and the entire evidence-traceability manifest
+remain byte-identical to accepted `8b740e00`. Only four authorized metadata paths
+change. Broad semantic intake receives only appended finite RC-04/05/07/06
+dispositions and actual landing evidence; its original description and notes
+prefix remain, and it stays open/unselected. Every other old tracker row/order
+remains exact. No further cleanup selection, route subdivision, full promotion,
+product/source/rights/HUMAN decision, waiver, build, native replay, artifact
+deletion, push or bypass follows this closure.
+
+Final navigation-closure preservation PASS: all 95 original task rows/order and
+root fields equal the immutable baseline, including whole paused, unclaimed
+S5A. Both cleanup steps are complete, the claim is null and the issue is
+closed/unassigned. All five content files and the entire traceability manifest
+equal the accepted content landing byte-for-byte. Other tracker rows/order
+remain exact; broad intake has only appended finite notes/timestamp and stays
+open with original description and notes prefix preserved. Only four authorized
+metadata paths change. State 96/current projection, progress coverage,
+569 classifications, 30 parity inventories, 29 routes / 131 artifacts and
+whitespace checks pass. Normal local closure hooks remain required; no new
+product/runtime proof is claimed.
