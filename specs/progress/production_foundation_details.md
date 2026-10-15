@@ -644,21 +644,23 @@ MCP PCB taxonomy note: canonical `datum.pcb.place_component`, `move_component`, 
 
 ## Native product outcomes — initial reorganization
 
-This is a navigation view of the twenty unfinished records at `2bf2b058`, not a
-new task ordering or grant. Use the structured Frontier for current state and
-`project_status.py details <key>` for every complete ordered contract. The
-initial reorganization adds one temporary planning record; S5A remains paused.
+This navigation view retains the twenty unfinished records at `2bf2b058` as its
+initial snapshot. Native doorway delivery subsequently completed at `45f77006`;
+nineteen original records remain unfinished. The table is updated only with
+source-qualified dispositions and supplies no task ordering or grant. Use the
+structured Frontier for current state and `project_status.py details <key>` for
+every complete ordered contract. Cleanup selection is temporary; S5A remains paused.
 A representative design is an early workflow checkpoint, not a reduction of the
 professional product or any retained full-authoring/qualification requirement.
 
 | Designer outcome | Existing bounded delivery to reuse | Missing connection and owning contract |
 | --- | --- | --- |
-| Start a native design with usable library data | PM062 [named browsing and Footprint/Padstack editing](../../docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json), source `61b5b409`. | No-project startup integration and complete native doorway proof: NATIVE-PROJECT-DOORWAY. Actual component-use admission remains on source issue8xm7 under PM008/062; editor availability is not a production component library. |
+| Start a native design with usable library data | [Native New/Open doorway](../../docs/reviews/workflow-delivery-rollout/native-project-doorway.md#actual-c06-objective-acceptance-and-landing), source `45f77006`, actual C04 ordinary proof, distinct C05 replay and manager C06 acceptance. PM062 [named browsing and Footprint/Padstack editing](../../docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json), source `61b5b409`. | NATIVE-PROJECT-DOORWAY is delivered at its bounded scope; full authoring, HUMAN/accessibility/platform and wider qualification remain as recorded in its acceptance. Actual component-use admission remains on source issue8xm7 under PM008/062; editor availability is not a production component library. |
 | Complete and revise its schematic | [Symbol/wire delivery](../../docs/reviews/workflow-delivery-rollout/native-schematic/development-acceptance.json), source `94c95ae6`; bounded symbol movement `2ca54eaa`. | Full schematic authoring/ERC/reopen coverage: NATIVE-AUTHORING and its schematic contract; connectivity/gesture reconciliation, shared selection and related-context/Inspector obligations remain. Synthetic fixture proof does not establish production content. |
 | Implement that schematic as a PCB | [Accepted board movement](../../docs/reviews/workflow-delivery-rollout/user-edit/first-edit-delivery.json), accepted source `a365ae5ee4813c0280ccad1e770c45c7c9802d92` (Frontier landing `a6f082b7`); [PM061 process delivery](../../docs/reviews/workflow-delivery-rollout/effective-process-owner-delegation.json), source `ef32fbe1`. | Reviewed electrical-to-physical changes, complete placement/manual routing/DRC: NATIVE-AUTHORING and PCB contract, with shared write/identity safety. Bounded move/process proof is not full board authoring. |
 | Produce, inspect and revise manufacturing output | Existing manufacturing contract and supported engine/CAM paths retain their exact coverage. | No dedicated active manufacturing-delivery item exists among these twenty records. Existing intake `dat-rational-center-cam-ir1t` and `dat-component-pad-cam-transform-ab4v` name concrete open CAM gaps; determine applicability to the selected output/design before proposing any hard edge or promotion. No T04/full-manufacturing PASS. |
 
-### All twenty unfinished records
+### Original twenty records and subsequent dispositions
 
 Prerequisites below are retained edges or actual contract gates. Reasons explain
 their workflow relationship; they do not waive, remove or add an edge. Proposed
@@ -672,7 +674,7 @@ changes need exact authority. Planning/review/owner gates are not execution gran
 | GUI-MARKING-MENU | Inert shared shell/interaction, MM-C01..06. | No issue dependency; its visual/behavior planning and explicit grant gates remain. It is not newly made a prerequisite to startup. |
 | GUI-WRITE-PATH | General authoring transport/registry integration, GWP-C01..06. | Marking-menu, writer-ownership and landed manual-foundation edges remain. GWP-C01 must justify each against actual consumers and reuse delivered typed paths. |
 | NATIVE-AUTHORING | Complete schematic/PCB authoring, NA-C01..06. | Cross-probe, surface specs, write-path and foundation edges remain; surface/foundation are landed. NA-C01 maps full coverage and concrete safety/consumer reasons before its existing execution decision. |
-| NATIVE-PROJECT-DOORWAY | Ordinary no-argument New/Open/Cancel/reopen, NPD-C01..06. | Foundation contract is landed and supplies F1/F8 startup/recovery obligations. Existing New/Open owners are credited; no dependency on all authoring or provider/cloud sourcing is added. [First contract and decisions](../../docs/reviews/specification-history/native-delivery-reorganization.md#first-workflow-contract-and-startup-recheck). |
+| NATIVE-PROJECT-DOORWAY | Delivered: ordinary no-argument New/Open/Cancel and native create/open/reopen; NPD-C01..06 complete at `45f77006`. | [Actual reviewed delivery and acceptance](../../docs/reviews/workflow-delivery-rollout/native-project-doorway.md#actual-c06-objective-acceptance-and-landing) supersede the [initial planning snapshot](../../docs/reviews/specification-history/native-delivery-reorganization.md#first-workflow-contract-and-startup-recheck). Foundation F1/F8 and all retained qualification remain. No authoring/provider/cloud prerequisite is added; no further execution is selected. |
 | PROJECT-WRITER-OWNERSHIP | Shared mutation/recovery safety, PWO-C01, PWO-C02, PWO-REVIEW, PWO-C03. | No issue dependency; consume landed PM060/first-edit writer evidence before deciding what remains. Protect concurrent/stale writes without blindly proposing a second lock. |
 | NATIVE-CONNECTIVITY-CONTRACT | Native electrical formation/grid/gesture consistency, NCC-C01, NCC-C02, NCC-REVIEW, NCC-C03. | No issue dependency; consume PM053 and landed schematic paths, retain unresolved gesture/authority choices and Claude lane. |
 | GLOBAL-PREFERENCES-COMPLETION | Supporting configuration production acceptance, GP-CM05E/GP-CM05A. | Engine/shared-units prerequisites are landed; exact ordinary production contract and independent review remain. No global new startup/content prerequisite. |
@@ -687,10 +689,19 @@ changes need exact authority. Planning/review/owner gates are not execution gran
 | PRODUCT-REVISION-ENGINE | Explicitly deferred broader revision product. | Existing revision/preferences edges and none authorization retained. Historical completed substeps do not resume Publish/Revision execution. |
 | MCAD-INTEROP-PLACEHOLDER | Later unselected placeholder. | No issue dependency, no completion contract or execution authorization; no work or design prerequisite invented. |
 
-The proposed early return to product delivery needs only the named stale-claim
-corrections, this compact map, and the honest first-increment contract/decision
-packet—not twenty new detailed contracts or another master specification.
-Current remaining task states, all existing edges and qualifications stay intact.
+Delivered behavior, further development, pending product choices and qualification
+remain distinct. The doorway completion above does not complete native authoring
+or production library admission. [Library bootstrap](../../docs/LIBRARY_BOOTSTRAP_STRATEGY.md),
+[exact source/admission input](../../docs/reviews/specification-history/native-delivery-reorganization.md#content-consumers-and-maintenance-that-can-wait)
+and the [native-file proposal](../../docs/reviews/workflow-delivery-rollout/native-file-types-proposal.md)
+retain their actual pending dispositions; cleanup cannot ratify them. Existing
+performance/HUMAN/CAM and other full-qualification owners remain open at their
+recorded scope. The selector alone provides current work; this map proposes no
+successor, dependency or execution grant.
+
 The semantic-documentation intake `dat-documentation-semantic-reconciliation-olnn`
-retains its broader backlog; history relocation, evidence-route subdivision and
-distant implementation contracts may wait under their separate authority.
+retains only its explicitly unreviewed remainders after the
+[bounded cleanup dispositions](../../docs/reviews/specification-history/specification-reorganization.md#remaining-backlog-dispositions).
+PM059 task history is now relocated; optional performance-route subdivision,
+integrated-spec promotion and distant implementation contracts remain separate
+maintenance/planning candidates, never new product prerequisites.

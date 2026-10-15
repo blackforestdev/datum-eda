@@ -84,6 +84,12 @@ owner-reserved. PM059 amends owner-boundary routing only; it does not bypass
 selector validation, claims, missing evidence or successor authorization. No
 management session is automatically appointed by these instructions.
 
+Owner-authorized cleanup, refocus and reorganization remain separate from product
+development. Product-delivery defaults apply within product execution grants;
+a bounded maintenance assignment completes its own accepted artifacts and does
+not authorize product implementation or successor work. Cleanup findings and
+readiness records supply no product grant.
+
 ## Roadmap and editing authority
 
 Use fresh `python3 scripts/project_status.py next` or `details [key|issue]`

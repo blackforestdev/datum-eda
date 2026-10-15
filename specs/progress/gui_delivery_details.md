@@ -125,7 +125,10 @@ policy reconcile the decision-routing exception: appointed management handles
 routine review receipts, continuation and objective acceptance under existing
 criteria; new product choices and nondelegated HUMAN decisions remain owner-only.
 No manager appointment, S5A closure, changed claim, acceptance waiver or successor
-authorization is inferred. The current S5A execution grant and PM058 work continue.
+authorization is inferred. At that dated amendment S5A retained its execution grant and PM058 scope. Later
+owner pauses and exact task dispositions control current execution; this history
+does not resume S5A. The [governed task records](../../docs/reviews/specification-history/feature-delivery-records.md)
+retain subsequent grants, bounded exceptions and actual delivery receipts.
 This global operational amendment applies to existing scheduled work; it introduces
 no competing task or ordering and therefore changes no Active Frontier item.
 Decision: `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
@@ -147,4 +150,12 @@ selection, claims or authorization. Current S5A/PM058 implementation is untouche
 
 ## USER-EDIT-DELIVERY bounded writer prerequisite
 
-PM060 Project writer ownership: current existing PID/nonce lease and pre-lock snapshot checks; target fresh authoritative validation and guarded recovery for every cooperating candidate writer. Numbered proposal prepared under UED-C03; UED-C04 reserved independent specification review pending. No ratification, runtime delivery or full qualification is claimed.
+PM060 retains the broader Project writer-ownership contract. Its bounded first-edit
+protocol received actual UED-C04 specification PASS and delegated UED-C05
+ratification, followed by writer implementation `3efebe9d` and accepted first-edit
+source `a365ae5e`. Exact exception, receipts and failure corrections are preserved
+in the [governed task authority](../../docs/reviews/specification-history/feature-delivery-records.md#appointed-first-footprint-delivery-manager--2026-10-08)
+and [accepted delivery](../../docs/reviews/workflow-delivery-rollout/user-edit/first-edit-delivery.json).
+This credits that bounded delivery; full PROJECT-WRITER-OWNERSHIP/PWO-REVIEW and
+all wider qualification remain at their existing gates. No new review or runtime
+proof is claimed.

@@ -18,6 +18,16 @@ Current implementation authority lives in:
 - `specs/STANDARDS_COMPLIANCE_SPEC.md`
 - `specs/PROGRESS.md`
 
+Every archived verdict, implementation observation, mechanism summary and proposed
+sequence is dated evidence. This includes the older AI-first framing: current
+manual-first doctrine and optional AI are controlled by [CLAUDE.md](../../../CLAUDE.md)
+and ratified product mechanics. The archive does not override a numbered decision
+or formal/domain contract, select work or supply an implementation grant. Preserve
+unique research rationale and citations; do not treat an old vocabulary list as a
+second current contract. The retained [June conductor report](../../SPEC_INTEGRATION_CONDUCTOR_REPORT.md)
+has the same historical boundary. Current ownership is indexed in the
+[documentation map](../../README.md).
+
 Archived evidence:
 
 - `NORTH_STAR_PROJECT_AUDIT.md`

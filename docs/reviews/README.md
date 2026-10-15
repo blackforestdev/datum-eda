@@ -3,6 +3,8 @@
 This index owns temporary-evidence storage guidance. Product authority lives in
 numbered decisions and domain contracts; the structured Frontier selects work.
 
+- [Specification reorganization](specification-history/specification-reorganization.md): bounded backlog/authority/history/navigation cleanup, separate from product development.
+- [Feature delivery task authority and history](specification-history/feature-delivery-records.md): exact FDE/UED/NSD/SM grants, exceptions, requirements and receipts; standing rules remain in PM059.
 - [Specification/governance reconciliation](specification-history/governance-reconciliation.md): five-item maintenance scope, dispositions and review.
 - [Completed repository maintenance](specification-history/maintenance-records.md): cleanup requirements, completion receipts, exact history-rewrite approval and recovery.
 - [GUI performance](gui-performance/): bounded measurements, source pins, owner dispositions and qualification limits.

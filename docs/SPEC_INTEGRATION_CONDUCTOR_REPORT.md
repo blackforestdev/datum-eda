@@ -1,6 +1,14 @@
 # Spec Integration Conductor Report
 
-Status: final conductor audit after controlling-spec integration
+Status: historical final conductor audit after controlling-spec integration.
+
+This report's verdicts, current-code observations, proposed decisions and required
+next slices describe 2026-06-19. They are retained evidence, not present readiness,
+new requirements or current scheduling authority. Use the [documentation owner
+map](README.md), numbered decisions and formal/domain contracts for current
+authority, and the [structured Frontier](../specs/active_frontier.json) through
+the selector for authorized work. The complete original audit below is preserved;
+its PASS labels are dated specification findings, not fresh product proof.
 Date: 2026-06-19
 Owned file: `docs/SPEC_INTEGRATION_CONDUCTOR_REPORT.md`
 
