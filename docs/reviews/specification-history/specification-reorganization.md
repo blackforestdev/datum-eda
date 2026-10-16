@@ -1150,3 +1150,75 @@ The affected project regression batch now passes 102 tests; the dated v1
 review/digest and 13 unchanged source-health/policy-integrity regression results
 are reused at their exact unchanged scopes. Actual independent v2 delta review
 and manager objective acceptance remain pending before landing or closure.
+
+### Actual production-process v2 review, acceptance and explicit idle
+
+<!-- EVIDENCE:PRODUCTION-PROCESS-CORRECTION:PPC-01 -->
+Actual independent reviewer `/root/closeout_review` returned
+`BOUNDED_SOURCE_REVIEW_PASS` for frozen v2, with no mandatory findings.
+Receipt: `/home/bfadmin/Documents/datum-eda-workspaces/scratch/production-process-corrections/independent-candidate-v2-review.json`,
+SHA-256 `3fd9e37760d6b27782066c8fb1b359bdbaf5008fdcd8508866c53f03ff28bf2c`.
+Actual v1 `REVISE_REQUIRED` and its reproductions remain intact. Independent v2
+delta review and replay resolve PPC-R1–R3: all ten actual null CLI failures now
+refuse without traceback, reserved/default/delegated routing remains correct,
+remaining performance work is qualification, and S5A resumption puts the claim
+before reader edits. Actual 102 focused regressions pass; unchanged primary-route
+and 13 policy-integrity proof are reused at their declared scope.
+
+The appointed manager authorized exact v2 content landing in
+`manager-v2-content-landing.json` in that scratch directory, SHA-256
+`8170b1ebbbe47aedd45797fadcba6b394ceeab88ee2ba49f7225c05e44b7921e`.
+Actual local main content commit is
+`11afd4b5f6c640cf56aa068706f3377323db87d4`, parent
+`c9adf4f0183bd8108d9371ab9d0e29884cd84066`. All 19 landed files exactly equal
+the independently reviewed v2 hashes, with no post-review metadata delta.
+Normal file-lane, temporary-artifact and staged-rustfmt hooks passed; local tree
+was clean. Actual `content-landing.json` SHA-256 is
+`db8afee25d4bd38277338ee897f932193e3965bf8f876399a932369538cc0888`.
+
+After verifying that actual landing, appointed manager
+`codex-reorganization-manager-20261014` accepted all five bounded corrections
+and authorized closure under the existing assignment and PM059. Actual
+`manager-objective-acceptance.json` SHA-256 is
+`b4b110330e328360b75768293dd6fa78ef7b58d6941853003c8144b04ed692a8`.
+This is delegated objective process acceptance, not a fabricated human reply,
+self-review, general product appointment or full qualification PASS.
+
+<!-- EVIDENCE:PRODUCTION-PROCESS-CORRECTION:PPC-02 -->
+Under that actual disposition, PPC-01 and PPC-02 complete. Only
+`dat-production-process-correction-enxp` closes/unassigns; the bounded task is
+landed at the actual content commit, unselected, authorization none and claim
+null. The explicit idle disposition selects no canonical task: this accepted
+process assignment ends without authorizing product work or a successor. Idle
+is deliberate and sourced here; missing state or tracker readiness does not
+infer it. Original 97 task records/order retain their reviewed purpose additions
+and S5A hold/canonical deselection; all other original fields, grants,
+dependencies, summaries, completion actions/status/evidence and claims remain
+exact. All 333 original raw tracker rows/order remain exact, including the open,
+unselected broad semantic intake.
+
+S5A remains held, execution grant retained, internal S5A-C04 selected and
+C04/C05/C06 pending with all native/HUMAN/performance/CAM qualification open.
+Actual owner resumption and ownership reconciliation must precede a fresh
+synchronized claim; reader migration then occurs before affected proof. No
+reader edit, paused-session resumption or new product prerequisite follows.
+Only task evidence, Frontier, generated projection and the bounded tracker issue
+change in this closure. All 15 other content paths, including the full evidence
+manifest and route memberships/digests, remain byte-identical to the accepted
+content landing. Historical original bodies and all actual v1/v2 receipts remain.
+Affected closure behavior and preservation must pass, followed by manager final
+pre-commit audit and normal local hooks; final landing is not inferred from this
+prepared state. No push or successor work is authorized.
+
+Actual prepared-closure verification passes state 98/current projection, progress
+coverage, governance 569, parity 30, traceability 29 routes/131 artifacts and
+whitespace. Ten actual human/JSON query cases pass: default next/details expose
+explicit idle; named S5A remains held with its grant/internal C04; named bounded
+task is complete; named Global Preferences is unselected and never invites a
+claim. All 97 reviewed original records are exact to the accepted content,
+all 333 original raw tracker rows/order are exact to baseline, and all 15 other
+content paths (including the entire route manifest) are byte-identical.
+Distinct `closure-preservation.json` and `closure-cli-behavior.json` in the
+assignment scratch retain actual final-state evidence; pinned v1/v2 migration
+receipts remain unchanged. Only manager pre-commit audit and normal local closure
+landing remain; no new product or qualification proof is claimed.

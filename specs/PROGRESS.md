@@ -14,6 +14,8 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
+**Explicit idle:** Owner-authorized five-finding process repair is independently reviewed, locally landed and objectively accepted; bounded closure selects no product successor. S5A remains owner-held with its grant and unfinished qualification.
+
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -249,7 +251,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (35 landed records)</summary>
+<summary>Completed history (36 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -356,13 +358,12 @@
 - **Consolidate accepted cleanup and precisely close the assessed reorganization phase** (`SPECIFICATION-CLEANUP-CLOSEOUT`; `dat-specification-cleanup-closeout-oisy`).
    All four closeout deliverables and bounded phase exit accepted after actual independent review and verified content landing 0810f0c3. Current summary records exact retained limits and existing product owners. All 96 prior task records and paused S5A restored exactly; only bounded issue closes. Broad intake remains open/unselected. No product or successor work authorized. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`.
+- **Repair five production-process authority and state defects** (`PRODUCTION-PROCESS-CORRECTION`; `dat-production-process-correction-enxp`).
+   Five owner-authorized process corrections accepted after actual independent v2 PASS and exact local content landing 11afd4b5. PPC-R1–R3 resolved. Hold, purpose, explicit idle, scoped decision routing and normalized claim overlap are enforced. Bounded issue closes and claim releases; all original product grants and qualification remain. S5A held/internal C04 retained. Explicit idle selects no successor or product work. *state `landed`; authorization `none`.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`.
 
 </details>
 
-- **Repair five production-process authority and state defects** (`PRODUCTION-PROCESS-CORRECTION`; `dat-production-process-correction-enxp`).
-   Owner-authorized five-finding governance/Python correction under appointed reorganization manager. Holds, work purpose, explicit idle, delegated routing and normalized overlap only; preserve product grants, S5A pause and qualification. Actual review and manager acceptance before closure. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
