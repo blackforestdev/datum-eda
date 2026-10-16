@@ -712,13 +712,13 @@
     "scripts/check_schematic_private_writers.py": {
       "kind": "python-production",
       "limits": {
-        "file_lines": 968
+        "file_lines": 934
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Authored Python module exceeds the normal source-file limit. GUI organization follows the actual tool/control owners and extracts shared source-pattern scanning into its own module; exact file ceiling ratcheted downward."
+      "note": "Authored Python module exceeds the normal source-file limit. GUI organization follows the actual tool/control owners and extracts shared source-pattern scanning into its own module; exact file ceiling ratcheted downward. AUDIT-02 extracts canonical journal staging/I/O owner policy and validation into private_writer_journal_policy; exact file ceiling ratchets 968 to 934 with both actual owners and per-owner counts enforced; remaining source debt stays open."
     }
   },
   "exclusions": {

@@ -1222,3 +1222,182 @@ Distinct `closure-preservation.json` and `closure-cli-behavior.json` in the
 assignment scratch retain actual final-state evidence; pinned v1/v2 migration
 receipts remain unchanged. Only manager pre-commit audit and normal local closure
 landing remain; no new product or qualification proof is claimed.
+
+## Owner-authorized audit corrections and Symbol Move verification
+
+The owner directs on 2026-10-16: “please proceed to completing the next three corrections per the audit findings. I also need you to verify the unverified Symbol Move operation. use the reorg-agent as necessary.” The appointed manager `codex-reorganization-manager-20261014`, thread `01a13df1-7a0d-72c1-bbdd-f0d96d481598`, assigns AUDIT-01 PWO credit/gap reconciliation, AUDIT-02 journal guard repair, AUDIT-03 duplicate intake consolidation, and QUESTION-01 finite direct-daemon contract/refusal verification. Actual review/continuation/objective acceptance are manager-routed under PM059. This is a maintenance execution grant, not new product work, whole PWO/GWP acceptance or automatic Symbol Move runtime repair. Baseline is `87cc3a3e56fdece656e926203af5e0dcb7e82f45`.
+
+Reuse the accepted bounded code-roadmap audit and existing evidence record. No new assignment/audit/review/report JSON or Markdown is authorized, nor artifact deletion, archive migration, retention-policy changes or a new evidence framework. One raw log per necessary run in the existing external scratch is sufficient. The existing earliest `dat-private-writer-journal-gate-0u2x` is the canonical repair and synchronized claim; no new intake issue is created. Original discovery text and all related evidence remain. Product dependencies, S5A hold/grant/internal C04–C06, broader qualification and source rights are unchanged; accepted closure returns to explicit idle.
+
+<!-- REQ:CORRECT-AUDIT-FINDINGS:AF-01 -->
+- AF-01: Reconcile exact bounded PM060 credit and genuine PWO gaps, repair and negatively test journal-owner guard coverage, preserve duplicate discovery evidence and verify Symbol Move transport contract/refusal behavior; obtain actual independent review and manager acceptance before landing.
+
+<!-- REQ:CORRECT-AUDIT-FINDINGS:AF-02 -->
+- AF-02: After actual reviewed content landing and manager acceptance, consolidate and close only the two duplicate guard intakes with their evidence and related LIBGUI edge preserved, close the canonical repair, release its claim and return to sourced explicit idle without changing product grants, S5A hold or qualifications.
+
+<!-- APPOINTMENT:CORRECT-AUDIT-FINDINGS:MANAGER -->
+{"decision_kinds": ["review_provisioning", "review_receipt", "continuation", "objective_acceptance"], "owner_appointed": true, "session": "codex-reorganization-manager-20261014", "task_keys": ["CORRECT-AUDIT-FINDINGS"]}
+
+### Audit-correction implementation and focused verification
+
+AUDIT-01 now credits PM060's actual bounded decision/review/ratification and
+implemented kernel lease/fresh revision-tip validation. The PWO issue's original
+no-lock description is retained verbatim in its notes; current issue/plan/packet
+distinguish the credited scope from complete writer/consumer/platform/concurrency/
+recovery reconciliation and any genuinely broader owner ratification. All four
+PWO steps remain pending, with original grants/status/evidence and both hard
+dependents retained. Governing-doc navigation now includes PM060. No whole
+PWO/GWP acceptance or source-rights/qualification change is supplied.
+
+AUDIT-02 extracts actual journal-persistence policy/check ownership from the
+legacy guard into `scripts/private_writer_journal_policy.py`: exactly two staging
+writes in `journal.rs`, one cursor write and three existing OpenOptions surfaces
+in `journal_io.rs`, with actual delegation/append/durability seams required.
+Per-owner allowances cannot migrate to another file or become an aggregate
+permission. Six test methods (one positive and five negative) cover missing owner, extra writes in
+either owner, redistributed counts, missing cursor/append/promotion functions,
+changed append surface and missing durability. The real guard passes.
+PM022's exact debt ceiling ratchets 968→934 with real extraction; no new debt or
+exception is added. Its 66-entry parity row alone changes digest as required.
+Normal full drift now runs both existing bootstrap and new journal-owner tests.
+
+Actual independent in-progress review identified mandatory AF-R1: rewriting PWO
+prose left all ten existing clause authority refs stale. The claim was explicitly
+extended to the existing inventory before correction. All ten refs now resolve
+once to supported current PWO clauses; clause IDs/order, requirement refs,
+step mapping and owner-decision flags remain exact. Every affected consumer and
+remaining implementation/conformance obligation remains required. This updates
+retained reference integrity, without reactivating retired WDQ or weakening it.
+The owning rollout route alone is reconciled against actual unchanged complete
+review plus both fresh affected consumers; source/consumer membership is unchanged.
+
+AUDIT-03 preparation keeps `dat-private-writer-journal-gate-0u2x` canonical.
+`dat-journal-writer-guard-drift-e9it` and `dat-afp9` remain open pending actual
+accepted repair/closure. Their original distinct discovery rows and the existing
+e9it→LIBGUI related edge remain exact. The canonical repair now relates to both
+duplicates, LIBGUI and PWO, without adding hard blockers. Closure will preserve
+all discovery bodies/relations and cite the actual repair landing; no earlier
+failure is relabeled as passed.
+
+### Actual Symbol Move direct-daemon verification
+
+One finite guarded run used current production `native.describe`/`native.write`
+JSON-RPC dispatch/deserialization with the existing synthetic native library
+fixture copied privately outside the repository. It placed one native Symbol
+through the ordinary typed writer to establish a nonempty canonical journal.
+Each tip control supplied the CURRENT model revision; older-tip control used
+the actual placement transaction tip after subsequent moves. This is not GUI,
+stdio-framing, physical-input, race or manufacturer/content qualification.
+
+| Request variant | Actual response | Journal delta / preservation |
+| --- | --- | --- |
+| Missing model revision, current tip | Accepted | Exactly one canonical transaction |
+| Supplied stale model revision, current tip | Refused, -32061 | Zero transactions; complete private source/history preimage exact |
+| Missing tip, current revision/nonempty journal | Accepted | Exactly one canonical transaction |
+| Explicit null tip, current revision/nonempty journal | Accepted | Exactly one canonical transaction |
+| Older actual tip, current revision/nonempty journal | Accepted | Exactly one canonical transaction |
+| Both guards current | Accepted | Exactly one canonical transaction; persisted model reopens |
+
+The probe's known stale-revision refusal and valid commit assertions pass;
+optional-guard acceptance is an OBSERVATION, not a passing safety requirement.
+The test never requires missing/stale guard acceptance, so a future correction
+is not prevented. Generic direct-daemon `NativeWriteParams` exposes optional
+revision/tip; `native_write.rs` omits Symbol Move from its mandatory-revision
+and caller-tip comparison lists while checking a supplied stale revision. The
+GUI client separately pre-describes/checks/sends both, and the engine builder
+still creates a guarded Set from its current resolved model; canonical commit
+retains kernel lease/fresh revision and tip protection. No private-writer or
+public MCP bypass, lost update or GUI regression was reproduced.
+
+This substantiates the exact direct-daemon guard asymmetry. PM060 W2/approved
+Symbol Move fresh-intent requirements and generic optional transport need a
+scoped conformance disposition; no new product rule or runtime repair is made
+here. The verification outcome is separate from accepting all optional cases
+as safe. Management recorded separate related-only intake `dat-symbol-move-daemon-tip-616t`;
+this substantiated finding completes the verification outcome without authorizing
+runtime repair. Broader PWO/qualification remains open.
+
+For replay, create a fresh task-owned disk-backed scratch directory and point
+`TMPDIR` there. The original recorded directory below is historical and may be
+removed after review; its preservation is not a prerequisite to reproducing this
+test from retained source.
+
+Actual original reproduction command, with a private fixture on disk:
+`TMPDIR=/home/bfadmin/Documents/datum-eda-workspaces/scratch/code-roadmap-audit-20261016 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine-daemon symbol_move_transport_contract_probe -- --ignored --nocapture --test-threads=1`.
+The command compiled the two affected crate targets once and ran one probe with
+six requests (1.18 s test execution, 2m41s guarded build). Source baseline is
+`87cc3a3e56fdece656e926203af5e0dcb7e82f45`; production Symbol Move/daemon/client
+sources are unchanged. Probe source SHA-256 `bedc729d40f5be68cd65796e89e83c94b85a8b107c7b2eb5990a4d55e30827fe`; journal policy source
+SHA-256 `1aff74cc69d9a2865836633b0474f13d564171090e12320405d4f5cfdd611ab2`. One temporary raw log `symbol-move-transport.log`
+identified by SHA-256 `930d32c0eb5777663121e9a51c21f06967ff38ab91dc0870ccec7db764c1351a` was available for current review.
+Per `docs/reviews/README.md`, this self-contained finding/command/source/limits
+record is retained; its hash does not promise permanent raw-log availability.
+The manager handles only released task-owned temporary proof after review.
+No new report/archive, retention policy, unrelated cleanup or reader edit occurs.
+
+Management received the six actual observations and directed separate bug intake
+`dat-symbol-move-daemon-tip-616t`, related only to existing Symbol Move delivery
+`dat-native-symbol-move-ydza`. It captures the demonstrably ignored supplied stale
+tip plus exact optional-guard observations/contract limits and reproducer. This
+completes QUESTION-01 verification as a substantiated finding; the issue stays
+open/unselected with no hard dependency, priority promotion or runtime repair.
+No missing guard is accepted as a new product rule. The existing maintenance
+assignment and broad PWO/qualification boundaries remain unchanged.
+
+### Audit-correction candidate checks and retained boundaries
+
+The bounded Python batch passes six journal-owner methods (one positive and five
+negative), five
+existing bootstrap delegation tests and 13 source-health/policy-integrity cases.
+The actual corrected private-writer guard passes both owners with exact counts.
+Source health passes 3,178 discovered sources against baseline 87cc3a3e, with
+only the required guard ceiling ratchet. State 99/current projection, progress,
+governance 569, parity 30, traceability 29 routes/131 artifacts, Cargo resource
+policy and whitespace pass. Initial parity refused only the coupled source-health
+debt digest; only that 66-entry row was reconciled to the exact downward ratchet,
+with every other parity row unchanged. The single actual Rust transport probe
+and its six observations above are reused; no native/GUI or broad Cargo campaign.
+
+All 97 unrelated original Frontier records remain exact to 87cc3a3e, including
+the complete S5A hold/grant/internal C04 and qualification. PWO retains its
+original state/authorization, step IDs/statuses/evidence, requirement IDs and
+hard dependents while its current credit/gap navigation and packet are reconciled.
+All 334 original issue identities/order remain, with only canonical repair and
+PWO fields changed before closure; both duplicate discovery rows remain exact.
+One separately authorized related-only bug intake is appended, unselected.
+The old no-lock description remains verbatim, old notes prefixes remain, prior
+task-history bytes are an exact prefix, and no product source/fixture/prototype
+is changed. Only the owning rollout route metadata and required source-health
+parity inventory reflect actual authorized changes.
+
+Actual independent candidate review and appointed-manager acceptance remain
+required before local content landing. AF-01 remains active and AF-02 pending.
+Only after accepted repair will duplicate rows close with exact consolidation
+reasons, the earliest canonical repair close and release its claim, and sourced
+explicit idle return. Both distinct historical discoveries and the original
+e9it→LIBGUI related edge remain durable in Beads/history; no hard dependency is
+removed or added. Separate Symbol Move intake stays open with no automatic fix.
+No S5A resumption, reader work, whole PWO/GWP acceptance, source/rights decision,
+new product rule, priority promotion, full qualification or successor follows.
+Unrelated preexisting full Clippy/GUI parity/HUMAN/platform/CAM limits remain
+unpassed and unwaived; the repaired private-writer structural result does not
+retroactively change any earlier failed observation.
+
+Actual independent `/root/closeout_review` returned `BOUNDED_SOURCE_REVIEW_PASS`
+for AF-CANDIDATE-1 with no mandatory findings. All 15 file identities matched;
+AF-R1 is resolved with ten refs/IDs/mappings/flags preserved. Reviewer read the
+complete 28-member rollout and four-member foundation routes, reviewed both
+changed consumers and the exact owner/count/ratchet/preservation changes, and
+independently ran all six journal test methods (one positive, five negative) plus
+the actual private-writer gate successfully. Other scoped gates and the single
+transport run were reused at their actual identities; no Cargo replay or broader
+acceptance was inferred. Frozen file-manifest SHA-256 was
+`fb7d36521bfeb7ba35a83291800c6e40df08719236b7ddb945db536078929166`;
+complete candidate diff SHA-256 was
+`a76a5691575ff9d1828e740325fb5d933c3ba478a46ea4352a4d1b6c3c97f83f`.
+Appointed manager `codex-reorganization-manager-20261014` received that actual
+receipt, accepted the bounded AF-01 candidate against existing criteria and
+authorized faithful receipt/count transcription and normal local content landing.
+Only this evidence text changes after reviewed source. AF-02 remains pending
+for manager verification of the actual landing and released temporary proof
+before synchronized duplicate/canonical closure and explicit idle.

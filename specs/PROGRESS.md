@@ -14,8 +14,6 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** Owner-authorized five-finding process repair is independently reviewed, locally landed and objectively accepted; bounded closure selects no product successor. S5A remains owner-held with its grant and unfinished qualification.
-
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -221,8 +219,8 @@
 </details>
 
 - **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
-   A ratified numbered writer-ownership decision resolves serialization, durability and recovery for all project writers; implementation obligations remain explicitly scheduled, not falsely delivered. *state `planned`; authorization `planning`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+   Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `planned`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`.
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
    Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
@@ -364,6 +362,10 @@
 
 </details>
 
+- **Correct the three audit findings and verify Symbol Move transport behavior** (`CORRECT-AUDIT-FINDINGS`; `dat-private-writer-journal-gate-0u2x`).
+   Owner-authorized AUDIT-01/02/03 corrections and QUESTION-01 direct-daemon verification under appointed manager. Credit existing bounded PM060, retain broader PWO/GWP obligations, repair journal-owner enforcement without weakening, and consolidate existing duplicate intake only after accepted repair. S5A held; no product successor. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`, `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

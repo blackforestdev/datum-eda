@@ -38,47 +38,61 @@ remain unchanged, and no output or approval evidence is invented.
 
 ## Project writer ownership
 
+Current credit: [PM060](../docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md)
+already records actual independent specification review and delegated ratification
+for the bounded UED-FIRST-MOVE-01 prerequisite. Its engine-owned kernel lease,
+fresh persisted revision/tip validation and canonical journal implementation are
+landed; the earlier no-lock problem statement is historical. That does not accept
+the whole PWO/GWP contract. The pending steps below reconcile that credited scope
+against full writer/consumer/platform/concurrency/recovery obligations, using
+adequate existing proof rather than restarting the settled bounded lock choice.
+All four steps remain pending; neither hard dependent is unblocked by this credit.
+
 <!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-C01 -->
 ### PWO-C01 — establish the actual writer boundary
 
-Review journal/staging/recovery authority and current writer entry points,
-including GUI, headless commands and concurrent processes. Reproduce or bound
-the historical read-tip/write TOCTOU observation; do not repeat it as a fresh
-test result. Produce a source/consumer matrix and a failure timeline covering
-simultaneous writers, stale intent, process exit and crash recovery. Use the
-foundation research's OS references as evidence, not dependency approval.
+Reconcile current journal/staging/recovery entry points against PM060's actual
+bounded decision, implemented guard and reviewed proof. Cover GUI, headless,
+in-process and concurrent writers; distinguish credited consumers from unproved
+full-scope obligations. Reuse or bound the historical TOCTOU evidence without
+claiming it is a current no-lock reproduction. Complete the source/consumer and
+failure matrix for simultaneous writers, stale intent, process exit and recovery;
+identify exact remaining gaps. OS references are evidence, not dependency approval.
 
 <!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-C02 -->
 ### PWO-C02 — draft a complete numbered decision proposal
 
-Compare daemon-only and engine-owned per-project serialization without silently
-choosing either. Specify lock identity and scope, all writer acquisition paths,
-conflict behavior, file/directory durability, recovery ownership, platform limits
-and refusal diagnostics. State how the existing journal-tip check remains
-necessary. Supply conformance scenarios for two processes, stale intent and
-crash boundaries; identify every affected consumer and planned implementation
-successor. No dependency, locking library or production protocol is ratified.
+Use PM060 as the existing numbered proposal/decision, crediting its engine-owned
+choice and bounded ratification. Reconcile complete lock identity/acquisition,
+conflict behavior, durability, recovery, platform and refusal requirements with
+actual consumers and conformance evidence. Explain any genuinely unresolved
+extension or alternative; do not reselect the settled bounded mechanism or silently
+extend its authority. Preserve the journal-tip requirement and full two-process,
+stale-intent/crash scenarios. Identify every affected consumer and schedule exact
+remaining implementation/conformance obligations.
+No new dependency, protocol or broader ratification is supplied by this step.
 
 <!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-REVIEW -->
 ### PWO-REVIEW — independent specification review
 
-A distinct reviewer checks every writer entry point, the failure timeline,
-proposed protocol and alternatives, durability/recovery/platform cases,
-conformance obligations, complete clause/disposition matrix and consumer
-reconciliation. Account for every finding before the exact owner packet is
-presented. No self-review, copied result or passing structural test substitutes
-for this review; it cannot ratify a locking mechanism or authorize its build.
+A distinct reviewer checks the complete remaining clause/consumer matrix and
+failure timeline, crediting the actual bounded PM060 independent review only at
+its exact scope. Review changed or uncovered protocol/alternative, durability,
+recovery/platform and conformance obligations; retain every actual finding and
+unperformed proof before the owner packet. No self-review, copied result or
+structural PASS substitutes for independent review or broader ratification.
 
 <!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-C03 -->
 <!-- OWNER:PROJECT-WRITER-OWNERSHIP:PWO-C03:WRITER-RATIFICATION -->
 ### PWO-C03 — owner ratification
 
-Present the numbered decision proposal, alternatives, unresolved platform cases
-and exact consumer reconciliation. Record approve/revise/defer before ratifying
-the mechanism. Closure means the specification decision is ratified, not that a
-lock has been implemented. Explicitly schedule any implementation prerequisite
-needed before GUI write-path execution; do not close that obligation by closing
-this specification task. Existing dependent issues remain independently gated.
+Present PM060's credited bounded authority and the independently reviewed full
+reconciliation, unresolved cases and any actual broader decision requested.
+Record approve/revise/defer for that exact remaining scope, without implying a
+second bounded ratification or automatic broader acceptance. PWO closure requires
+the complete specification decision and explicit scheduling of remaining
+implementation/conformance obligations; an already implemented lock is not full
+qualification. Existing dependent issues remain independently gated.
 
 ## Native connectivity and gesture contract
 

@@ -13,7 +13,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "Review journal/staging/recovery authority and current writer entry points,"
+          "marker": "Reconcile current journal/staging/recovery entry points against PM060"
         }
       ],
       "requires_owner_decision": false
@@ -28,7 +28,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "simultaneous writers, stale intent, process exit and crash recovery."
+          "marker": "failure matrix for simultaneous writers, stale intent, process exit and recovery;"
         }
       ],
       "requires_owner_decision": false
@@ -43,7 +43,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "Compare daemon-only and engine-owned per-project serialization without silently"
+          "marker": "Use PM060 as the existing numbered proposal/decision, crediting its engine-owned"
         }
       ],
       "requires_owner_decision": true
@@ -58,7 +58,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "Specify lock identity and scope, all writer acquisition paths,"
+          "marker": "choice and bounded ratification. Reconcile complete lock identity/acquisition,"
         }
       ],
       "requires_owner_decision": true
@@ -73,7 +73,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "conflict behavior, file/directory durability, recovery ownership, platform limits"
+          "marker": "conflict behavior, durability, recovery, platform and refusal requirements with"
         }
       ],
       "requires_owner_decision": true
@@ -88,7 +88,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "State how the existing journal-tip check remains"
+          "marker": "extend its authority. Preserve the journal-tip requirement and full two-process,"
         }
       ],
       "requires_owner_decision": false
@@ -103,7 +103,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "crash boundaries; identify every affected consumer and planned implementation"
+          "marker": "stale-intent/crash scenarios. Identify every affected consumer and schedule exact"
         }
       ],
       "requires_owner_decision": false
@@ -118,7 +118,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "A distinct reviewer checks every writer entry point, the failure timeline,"
+          "marker": "A distinct reviewer checks the complete remaining clause/consumer matrix and"
         }
       ],
       "requires_owner_decision": false
@@ -133,7 +133,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "Present the numbered decision proposal, alternatives, unresolved platform cases"
+          "marker": "Present PM060"
         }
       ],
       "requires_owner_decision": true
@@ -148,7 +148,7 @@
       "authority_refs": [
         {
           "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "marker": "Explicitly schedule any implementation prerequisite"
+          "marker": "the complete specification decision and explicit scheduling of remaining"
         }
       ],
       "requires_owner_decision": false

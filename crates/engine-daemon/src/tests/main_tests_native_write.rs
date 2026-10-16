@@ -6,6 +6,8 @@ use super::*;
 
 #[path = "main_tests_native_write/library_reference_controls.rs"]
 mod library_reference_controls;
+#[path = "main_tests_native_write/symbol_move_controls.rs"]
+mod symbol_move_controls;
 
 use eda_engine::api::native_write::genesis::{GenesisSpec, bootstrap_native_project};
 

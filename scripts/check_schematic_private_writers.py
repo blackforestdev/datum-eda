@@ -6,6 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 import source_pattern_scan
 import private_writer_bootstrap_policy
+import private_writer_journal_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -235,23 +236,6 @@ ENGINE_SOURCE_STAGE_FILES = {
     },
 }
 
-ENGINE_JOURNAL_PERSISTENCE_FILES = {
-    Path("crates/engine/src/substrate/journal.rs"): {
-        "writes": 3,
-        "required": [
-            "fn stage_shard_write(",
-            "pub(super) fn stage_new_shard_write(",
-            'join(".datum/stage")',
-            "pub(super) fn promote_staged_shard_writes(",
-            "std::fs::rename(staged, &write.destination)?;",
-            "pub(super) fn write_journal_cursor(",
-            "journal_cursor_path(project_root)",
-            "pub(super) fn append_transaction_journal(",
-            "transaction_journal_path(project_root)",
-            "std::fs::OpenOptions::new()",
-        ],
-    },
-}
 
 GENERATED_EXPORT_FILES = {
     Path("crates/cli/src/commands/gerber/layers.rs"): {
@@ -862,25 +846,7 @@ def main() -> int:
                 f"{relative}:{line}: forbidden engine source-stage canonical JSON writer `{pattern}`: {text_line}"
             )
 
-    for relative, config in ENGINE_JOURNAL_PERSISTENCE_FILES.items():
-        path = ROOT / relative
-        if not path.exists():
-            failures.append(f"missing engine journal persistence file: {relative}")
-            continue
-        text = path.read_text()
-        source_pattern_scan.require_patterns(
-            failures,
-            relative,
-            text,
-            list(config["required"]),
-            "engine journal persistence owner",
-        )
-        write_count = source_pattern_scan.count_pattern(path, "std::fs::write(")
-        expected_writes = int(config["writes"])
-        if write_count != expected_writes:
-            failures.append(
-                f"{relative}: expected exactly {expected_writes} engine journal-persistence std::fs::write calls, found {write_count}"
-            )
+    failures.extend(private_writer_journal_policy.check_journal_persistence(ROOT))
 
     for relative, config in GENERATED_EXPORT_FILES.items():
         path = ROOT / relative
@@ -955,7 +921,7 @@ def main() -> int:
         f"{len(MANUFACTURING_EVIDENCE_COMMAND_FILES)} manufacturing evidence command files, "
         f"{len(ENGINE_GENERATED_EVIDENCE_FILES)} engine generated-evidence files, "
         f"{len(ENGINE_SOURCE_STAGE_FILES)} engine source-stage files, "
-        f"{len(ENGINE_JOURNAL_PERSISTENCE_FILES)} engine journal-persistence files, "
+        f"{len(private_writer_journal_policy.JOURNAL_OWNERS)} engine journal-persistence files, "
         f"{len(GENERATED_EXPORT_FILES)} generated-export files, "
         f"{len(GUI_APP_BOARD_TEXT_FILES)} GUI board-text files, "
         f"{len(FORWARD_ANNOTATION_REVIEW_STATE_FILES)} retired forward-annotation review-state paths, "

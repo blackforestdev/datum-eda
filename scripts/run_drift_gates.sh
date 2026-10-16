@@ -113,6 +113,8 @@ python3 scripts/check_menu_model.py
 python3 scripts/menu_model_csv.py check
 python3 scripts/check_erc_connectivity_parity.py
 python3 scripts/check_pcb_layout_tool_matrix.py
+python3 scripts/test_private_writer_bootstrap_policy.py
+python3 scripts/test_private_writer_journal_policy.py
 python3 scripts/check_schematic_private_writers.py
 python3 scripts/check_daemon_write_parity.py
 python3 scripts/check_mcp_public_taxonomy.py
