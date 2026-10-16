@@ -1027,3 +1027,310 @@ historical source outside main must remain reachable through explicit source
 history tags; collaborators must fetch those tags with the replacement.
 
 <!-- End retained maintenance receipts. -->
+
+
+## Reproducible replay inputs — 2026-10-16
+
+The owner requested standalone replacements for required external inputs and explicit
+retirement of obsolete collections. The appointed manager authorized this bounded
+maintenance and synchronized claim; all existing 99 tasks/335 issues and the S5A
+hold remain unchanged. The union of 10 required input collections and all 54 collection dispositions
+are covered. Native originals stay intact until exact replacement proof and
+independent review; original-history backup and unclassified datum-projects remain.
+No product semantics, dependencies, historical pin refresh or retrospective PASS.
+
+<!-- APPOINTMENT:REPRODUCIBLE-REPLAY-INPUTS:MANAGER -->
+{"decision_kinds": ["review_provisioning", "review_receipt", "continuation", "objective_acceptance"], "owner_appointed": true, "session": "codex-reorganization-manager-20261014", "task_keys": ["REPRODUCIBLE-REPLAY-INPUTS"]}
+
+<!-- REQ:REPRODUCIBLE-REPLAY-INPUTS:RI-01 -->
+- RI-01: Implement standalone minimal native/history closure and exact dense recipe for all required replay inputs, preserve historical identities/maps/pins, and verify clean-checkout provisioning and existing consumers; obtain independent review and manager acceptance.
+
+<!-- EVIDENCE:REPRODUCIBLE-REPLAY-INPUTS:RI-01 -->
+Actual independent BOUNDED_SOURCE_REVIEW_PASS and appointed-manager RI-01
+acceptance received for tree `2b4ac6e5fe97a83bd01e0f5335775124990b73ac`;
+exact reviewed implementation is ready to land. No qualification PASS is implied.
+
+<!-- REQ:REPRODUCIBLE-REPLAY-INPUTS:RI-02 -->
+- RI-02: After verified replacements and actual independent review of exact retirement set, retire authorized obsolete and replaced collections, record retained boundaries and close to explicit idle without successor authority.
+
+<!-- EVIDENCE:REPRODUCIBLE-REPLAY-INPUTS:RI-02 -->
+Implementation/proof/review pending; no completion claimed.
+
+Acceptance: isolated clean checkout without old collections, ignored maps, backup,
+undocumented binary prerequisites or unrecorded fetch; all eleven frozen fixture families including
+exact dense expansion and parents restoration; recovered N13/N14 setup/maps and
+full required source/journal/revision closure; source-matched guarded CLI build,
+CLI scaffold inspect/validate/reinspect and unchanged catalogued bytes; native
+load/reopen/nonmutation limited to existing bounded consumers, run serially; safe
+provisioning refusal for repeats/collisions/traversal/symlinks/checkout/target.
+Independent review precedes landing and exact reviewed collection retirement.
+
+### Final input closure and bounded proof
+
+The standalone catalogue provisions 757 files across the union of 10 required
+collections: 755 tracked seed/index/recipe files, 8,116,228 tracked bytes and
+146,512,045 expanded bytes. All original file hashes in eleven frozen manifest
+families remain unchanged, including exact four-file dense expansion. The dense
+recipe preserves opaque transaction metadata, complete forward/inverse operations
+and fixed 100,000-text identities/grid. No archives, captures, sessions or cached
+executables are packaged. Original raw observation locators remain historical.
+
+N13/N14 setup bytes were recovered once in memory from source `b5f9f210`, under
+`docs/reviews/workflow-delivery-rollout/s5a/native-evidence/`, archives
+`n13-compound-move-20261012.tar.xz` (SHA-256
+`ef651d874956dc045cae209d3853b8879e2b40698ca56b9ee607a90df0ec51f1`)
+and `n14-two-project-20261012.tar.xz` (SHA-256
+`cc895aab8f34d82b471326f3f5038246fa327b902387bc7af36ae20dd4461726`).
+Recovered setup hashes remain `508ed99ba365278b4ce26614df71e83aa8c590177f1049a23e8ff588c208bcbd`
+and `784b724650b158c1de19426b209bcac0b5a653fbaf8217567f174e283f6c56f6`.
+N13's 26-file invariance map (1,467,150 bytes), absence roles and identities are
+unchanged; its original backing store adds 123 exact files (4,285,454 bytes).
+N14 preserves 69 files (98,312 bytes), distinct projects and quantity contexts.
+Provisioning requires no archive, original backup, old workspace or ignored map.
+
+The retained parents-v3 cursor, journal and head had diverged. Replacement seeds
+recover the exact 58,488-byte journal prefix, matching cursor from parents-v2 and
+original head from generation `cd0d187c24076592fe50d0d59fee18aaedc9727c041dc2f364f306ed193a0f11`;
+head hash remains `72322014e91141dbec42a726cbbdf3855f127cb10ade0c3813b9722a7e6db11a`.
+Original files and all frozen pins remain unchanged.
+
+The initial 634-file map-fidelity check omitted N13 backing history; manager
+review required the 123-file correction. A stricter journal check exposed six
+historical clones with five inherited journal transactions but a new generation
+root at transaction six. Proposed supplementation with 104 base history files
+was rejected in independent review: `find_last_complete` and backup inventory
+would expose different recovery candidates. Those proposed files were removed.
+No original collection was changed. The final catalogue preserves exact original
+variant stores and pins six explicit inherited-prefix boundaries instead:
+
+- Semantic-scope: 18 journal transactions / 13 stored generations, prefix SHA-256
+  `fc7ce74c693cf9991f93ade92021d7af12294fcaaa97dd35bd0f3211f852a152`.
+- Class-geometry: 7 / 2, prefix SHA-256
+  `70376ccd15eb03df12941769760deaca5eea585e356d09604cf331c5cac97182`.
+- Lifetime deleted and same-identity: 6 / 1 each; replacement and undo: 7 / 2 each;
+  shared prefix SHA-256 `a421be0bae5caa3f70ae018dc109afe9f25493abc27caafd6b0f4ac14bf65c03`.
+
+Each prefix is exactly 8,983 bytes with five ordered IDs. Its original journal,
+cursor, head, first stored generation/root, tx5 predecessor, null parent root,
+model-revision boundary and complete store inventory are pinned. The absent-
+generation set must equal exactly those five IDs; all later transactions bind
+normally. This records original fixture provenance, without a generic exception,
+new writer rule or fabricated ancestry. All 19 heads, 143 actual generations,
+material digests, parent/transaction bindings, content-addressed blobs and complete
+journals/cursors verify. Every cursor is at its journal tip; no redo tail is
+omitted. Negative tests reject missing generation/blob, changed project binding,
+wrong prefix hash/IDs, unregistered prefix and extra store record.
+
+Eleven focused provisioning tests, nine existing workspace tests and five Rust
+workspace tests pass. Initial clean Git exports established standalone seed
+availability; final exported-index proof is recorded below. Required prerequisites
+are Python standard library and documented guarded source-matched Rust builds;
+no undocumented binary, network fetch or home/workspace/map data is required.
+Source health (3,180 files), traceability (29 routes), parity (30 inventories),
+governance (569 classified specs), dependency/resource authority and staged Rust
+formatting pass. All 99 existing Frontier rows and 335 existing issue records
+compare exactly with baseline `d74abc6255433b0f8e30d45496969432658d155c`.
+
+The guarded source-matched CLI build completed in 3m13s; binary SHA-256
+`6e85b50b96673c47ea6bf6bc07b43f737e4b9b056fc836a92fd732e35a0412bf`.
+CLI scaffold inspect/validate/reinspect completed for all 19; both inspections
+passed and complete catalogue file hashes were unchanged. Validation reports
+18 preexisting invalid fixtures and one
+valid symbol-majority fixture, separate from input reproduction. Unchanged sample
+diagnostics include nil net-class dangling references, generated sheet missing
+schema_version and repeated component-Pad UUIDs already bounded by historical
+S5A fixture qualification. No fixture or product repair is authorized.
+
+Existing guarded serial native controls pass with the exact original native
+inputs: N13 eligible compound Move refusal retains two fixed component identities,
+81 pads, 18 zones, source/history nonmutation and positive preview/cancel; N14
+outside-release dismissal retains its exact setup hash, 69-file maps and two
+quantity contexts. The rotated-text example resolves fixed Text
+`f044663d-9336-4218-bcad-c483dadf6a1b` and its exact 30-degree layout basis.
+The existing unused `overflow` warning remains. This adequate behavior evidence
+is reused after removing the rejected supplements: actual native inputs and
+reader behavior are unchanged; final catalogue acceptance/negative paths are
+checked separately. Actual native/DesignModel loading is limited to those three existing consumers.
+No full C04–C06 matrix replay, native qualification or old receipt replay is claimed.
+
+Task-owned temporary exports/private inputs are under
+`/home/bfadmin/Documents/datum-eda-workspaces/scratch/reproducible-replay-inputs-20261016`.
+They remain retained through review and require explicit release afterward.
+Manager independently confirmed all 54 originals unchanged against its pre-edit
+snapshot: 30,019 files, 1,648,570,424 bytes, matching modes/inodes/UID/sizes/
+mtime/ctime digests. A final active-use check is still required before retirement.
+
+Final source candidate tree `2d4d81c23ed23469feb1bb00b81d8114ddc29741` was
+exported from the actual staged Git tree, including all 755 input files and no
+ignored maps. Catalogue SHA-256 is
+`bcce46b87fc3265f19e244a60af0249388316866d557439a786765bcbccd472c`.
+With HOME preserved and `DATUM_DEVELOPMENT_WORKSPACE`,
+`DATUM_FIXTURE_RELOCATION_MAP` and `DATUM_DEVELOPMENT_RELOCATION_MAP` pointing to
+nonexistent paths, its eleven tests pass and its provisioner verifies/materializes
+all 757 files. Final Rust path tests also pass (5). Native input path/hash rows
+compare exactly with consumer-proof tree `ffeed3603c55f22165a7c57042904681feed2a20`;
+reusing the three actual native/model consumer controls and the 19 CLI scaffold
+inspect/validate/reinspect outcomes is therefore adequate. The final metadata/
+prefix acceptance paths and negative controls were rerun. Actual independent
+content/retirement review and manager RI-01 acceptance are recorded below.
+
+### Exact proposed retirement set
+
+Read-only inventory classified every collection by current machine consumers,
+governed frozen input manifests, dynamic replay instructions and historical
+receipts. Selection manifest eleven families remain required paused inputs;
+candidate/delivery packets and other dated C04 raw-result/setup/capture locators are historical
+observations, not permission or a requirement to preserve incidental runtime
+sessions. The existing recipes and exact native inputs replace those collection
+roots without supplying new S5A qualification. Resolver allowlists alone do not
+make the two old delivery collections live data consumers.
+
+The following 23 receipt-only directories under `retained/`, except the final two
+under `retained-datum-delivery-20261014/`, are proposed retirement candidates:
+
+- `e1-independent-c7f60839`
+- `gpu-r2-proof`
+- `gpu-r3-lineage-proof`
+- `gpu-r3-proof`
+- `gpu-regional-r4-proof`
+- `gpu-timed-recovery-proof`
+- `nsd-connected-native-project`
+- `nsd-native-proof-project`
+- `pm045-evidence-work`
+- `s5a-c03-u5-parents-v2`
+- `s5a-c04-available-source-20261008`
+- `s5a-exact30-failure-evidence`
+- `s5a-exact30-native`
+- `s5a-foundation-independent-e298e2df`
+- `s5a-ordinary-qa`
+- `s5a-owned-test-tmp`
+- `symbol-move-independent-project`
+- `user-edit-confirmation`
+- `user-edit-qa-fixture`
+- `user-edit-review`
+- `user-edit-tmp`
+- `effective-process-delivery`
+- `library-gui-delivery`
+
+The following 21 unreferenced directories under `retired-fixtures-20261014/`
+are proposed retirement candidates; their quarantine names never supplied prior
+deletion authority:
+
+- `nsd-final-native-project`
+- `nsd-preserved-owned-temp-projects`
+- `s5a-a3-corner-owned-fixtures`
+- `s5a-c03-dense-index-electrical-fixtures`
+- `s5a-c03-dense-native-initial-fixture`
+- `s5a-c03-u5-annotations-v1`
+- `s5a-c03-u5-artifacts-v1`
+- `s5a-c03-u5-artifacts-v2`
+- `s5a-c03-u5-artifacts-v3`
+- `s5a-c03-u5-library-initial`
+- `s5a-c03-u5-library-v1`
+- `s5a-c03-u5-library-v2`
+- `s5a-c03-u5-parents-v1`
+- `s5a-c03-u5-scope-v1`
+- `s5a-import-fill-doa-fresh`
+- `s5a-import-fill-doa-migration`
+- `s5a-import-fill-temp`
+- `s5a-lock-cue-parents`
+- `s5a-semantic-test-preserved-34eb88fc`
+- `symbol-move-native-project`
+- `symbol-move-ordinary-project`
+
+The following 10 directories under `retained/` are proposed for retirement only
+after exact standalone replacement proof, reviewed RI-01 content landing and
+manager acceptance:
+
+- `s5a-c03-u5-annotations-v2`
+- `s5a-c03-u5-artifacts-v4`
+- `s5a-c03-u5-majority-v1`
+- `s5a-c03-u5-parents-v3`
+- `s5a-c03-u5-scope-v2`
+- `s5a-c03-u5-semantic-v1`
+- `s5a-c03-u5-v1`
+- `s5a-c03-u5-v2`
+- `s5a-c04-inventory-keyboard-20261011`
+- `user-edit-selection`
+
+All paths above are relative to `/home/bfadmin/Documents/datum-eda-workspaces`.
+No collection is deleted at this stage. Exact retirement review, process/open-file
+ownership checks and RI-02 disposition remain pending. Original-history backup,
+unclassified `datum-projects`, local historical relocation manifests/maps and
+unrelated `.datum` governed inputs remain outside this deletion set. All 99 prior
+Frontier rows, 335 prior issue records, S5A hold/grant/checkpoint and qualifications
+must remain unchanged. No new product work or successor is selected.
+
+### Additional proposed metadata and task-output retirement
+
+After reviewed replacements and RI-01 landing, the following exact 26 external
+metadata files (9,784,913 bytes) are also proposed for removal, relative to the
+same external workspace root. Four are byte-identical local duplicates:
+`target-relocation-map.json` matches protected `.datum/history-cleanup/target-relocation-map.json`;
+`target-relocation-plan.json` matches protected `.datum/history-cleanup/datum-target-relocation-reviewed-plan.json`;
+`retained-datum-delivery-20261014/development-relocation-map.json` matches protected
+`.datum/history-cleanup/development-relocation-map.json`; and
+`retired-fixtures-20261014/relocation-record.json` matches protected
+`.datum/history-cleanup/fixture-retirement-map.json`. The 21 quarantined fixture
+manifests and delivery relocation plan have no exact local duplicate: they are
+historical per-file recovery metadata for collections being explicitly retired,
+with no current input consumer. Their existing protected map/hash receipts remain
+historical locators; retiring them makes no availability or replay promise.
+
+- `retained-datum-delivery-20261014/development-relocation-map.json`
+- `retained-datum-delivery-20261014/relocation-plan.json`
+- `retired-fixtures-20261014/nsd-final-native-project.manifest.json`
+- `retired-fixtures-20261014/nsd-preserved-owned-temp-projects.manifest.json`
+- `retired-fixtures-20261014/relocation-record.json`
+- `retired-fixtures-20261014/s5a-a3-corner-owned-fixtures.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-dense-index-electrical-fixtures.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-dense-native-initial-fixture.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-annotations-v1.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-artifacts-v1.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-artifacts-v2.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-artifacts-v3.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-library-initial.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-library-v1.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-library-v2.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-parents-v1.manifest.json`
+- `retired-fixtures-20261014/s5a-c03-u5-scope-v1.manifest.json`
+- `retired-fixtures-20261014/s5a-import-fill-doa-fresh.manifest.json`
+- `retired-fixtures-20261014/s5a-import-fill-doa-migration.manifest.json`
+- `retired-fixtures-20261014/s5a-import-fill-temp.manifest.json`
+- `retired-fixtures-20261014/s5a-lock-cue-parents.manifest.json`
+- `retired-fixtures-20261014/s5a-semantic-test-preserved-34eb88fc.manifest.json`
+- `retired-fixtures-20261014/symbol-move-native-project.manifest.json`
+- `retired-fixtures-20261014/symbol-move-ordinary-project.manifest.json`
+- `target-relocation-map.json`
+- `target-relocation-plan.json`
+
+The sole task-owned scratch retirement candidate is
+`scratch/reproducible-replay-inputs-20261016/`, containing exports and private
+provisioned copies for this task only. No unrelated scratch or workspace path is
+authorized. After reviewed collection/metadata retirement and explicit scratch
+release, remove their empty parent directories using empty-directory removal;
+remove the external workspace root only if empty. Unknown or newly owned entries
+must be retained. No local `.datum/history-cleanup` recovery record, original-
+history backup or unclassified `datum-projects` path is selected for removal.
+
+### Actual independent review and RI-01 acceptance
+
+The independent reviewer returned `BOUNDED_SOURCE_REVIEW_PASS` for staged tree
+`2b4ac6e5fe97a83bd01e0f5335775124990b73ac`, with no mandatory findings. The
+reviewer independently ran all eleven exported-input tests (8.012s), checked
+6,736 exported source blobs, 748 directly retained original seed bytes, exact six
+variant store inventories, archive/setup/parents recovery and all 757 native-row
+objects reused from the actual bounded consumer proof. All 99 prior task rows and
+335 prior issue records remain unchanged. This is bounded source/input review,
+not complete S5A/native qualification or a retrospective historical PASS.
+
+The owner-appointed manager accepted RI-01 at that exact bounded scope and
+authorized direct-main landing through normal gates. RI-01 is complete; RI-02 is
+current with the synchronized claim and tracker retained. The independent reviewer
+also passed the exact 54 collection, 26 metadata-file (9,784,913 bytes) and sole
+own-task scratch retirement set and released its scratch/export use. Original
+removal remains gated on actual replacement landing, manager verification and
+fresh ownership/symlink/mount/process/open-file checks. No deletion has occurred.
+All prior grants, S5A hold/checkpoint and original-history/datum-projects boundaries
+remain. Legacy local-map destinations for retired collections become historical
+and unavailable; a legacy path printer does not restore their input data.

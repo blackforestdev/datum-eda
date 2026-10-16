@@ -1,0 +1,489 @@
+{
+  "population_transaction": 3,
+  "provenance": "Fixed identities/grid from s5a_fixture/recipe.rs; opaque frozen transaction metadata retained exactly. No native observation or qualification.",
+  "schema_version": 1,
+  "sheet": {
+    "bus_entries": {},
+    "buses": {},
+    "drawings": {},
+    "frame": null,
+    "junctions": {},
+    "labels": {},
+    "name": "Selection",
+    "noconnects": {},
+    "ports": {},
+    "symbols": {},
+    "texts": {},
+    "uuid": "20000000-0000-4000-8000-000000000005",
+    "wires": {}
+  },
+  "text_count": 100000,
+  "transactions": [
+    {
+      "after_model_revision": "71daf98004667bcd3860973c4360ff5c3029c70fcb06797ec1b12e6a7416ed21",
+      "batch_id": "885434d8-3180-48d1-8755-98adbc954eb1",
+      "before_model_revision": "4de88e004b50ab7d82f6c50236bbe52956fa49b4173f381fcef01ed2b135d290",
+      "diff": {
+        "created": [],
+        "deleted": [],
+        "modified": [
+          "20000000-0000-4000-8000-000000000003"
+        ]
+      },
+      "inverse_operations": [
+        {
+          "board_id": "20000000-0000-4000-8000-000000000003",
+          "kind": "set_board_stackup",
+          "stackup": {
+            "layers": [
+              {
+                "id": 1,
+                "layer_type": "Copper",
+                "name": "Top Copper",
+                "thickness_nm": 35000
+              },
+              {
+                "id": 2,
+                "layer_type": "SolderMask",
+                "name": "Top Mask",
+                "thickness_nm": 10000
+              },
+              {
+                "id": 3,
+                "layer_type": "Silkscreen",
+                "name": "Top Silk",
+                "thickness_nm": 10000
+              },
+              {
+                "id": 4,
+                "layer_type": "Paste",
+                "name": "Top Paste",
+                "thickness_nm": 10000
+              },
+              {
+                "id": 41,
+                "layer_type": "Mechanical",
+                "name": "Mechanical 41",
+                "thickness_nm": 0
+              }
+            ]
+          }
+        }
+      ],
+      "operations": [
+        {
+          "board_id": "20000000-0000-4000-8000-000000000003",
+          "kind": "set_board_stackup",
+          "stackup": {
+            "layers": [
+              {
+                "id": 1,
+                "layer_type": "Copper",
+                "name": "F.Cu",
+                "thickness_nm": 35000
+              }
+            ]
+          }
+        }
+      ],
+      "provenance": {
+        "actor": "s5a-fixture",
+        "reason": "finite native S5A fixture recipe",
+        "source": "test"
+      },
+      "transaction_id": "d2cd623f-310f-57fc-aeb4-ef39bce936e1",
+      "transaction_kind": "normal"
+    },
+    {
+      "after_model_revision": "0a5c86983be0194065b1ccd414d422522d81f8faf87b7b03fadb8de4c1728464",
+      "batch_id": "f31af629-d5a5-49d2-b8bc-5427879bc3b1",
+      "before_model_revision": "71daf98004667bcd3860973c4360ff5c3029c70fcb06797ec1b12e6a7416ed21",
+      "diff": {
+        "created": [
+          "20000000-0000-4000-8000-000000000005"
+        ],
+        "deleted": [],
+        "modified": [
+          "20000000-0000-4000-8000-000000000002"
+        ]
+      },
+      "inverse_operations": [
+        {
+          "kind": "delete_schematic_sheet",
+          "relative_path": "selection.json",
+          "schematic_id": "20000000-0000-4000-8000-000000000002",
+          "sheet": {
+            "bus_entries": {},
+            "buses": {},
+            "drawings": {},
+            "frame": null,
+            "junctions": {},
+            "labels": {},
+            "name": "Selection",
+            "noconnects": {},
+            "ports": {},
+            "symbols": {},
+            "texts": {},
+            "uuid": "20000000-0000-4000-8000-000000000005",
+            "wires": {}
+          },
+          "sheet_id": "20000000-0000-4000-8000-000000000005"
+        }
+      ],
+      "operations": [
+        {
+          "kind": "create_schematic_sheet",
+          "relative_path": "selection.json",
+          "schematic_id": "20000000-0000-4000-8000-000000000002",
+          "sheet": {
+            "bus_entries": {},
+            "buses": {},
+            "drawings": {},
+            "frame": null,
+            "junctions": {},
+            "labels": {},
+            "name": "Selection",
+            "noconnects": {},
+            "ports": {},
+            "symbols": {},
+            "texts": {},
+            "uuid": "20000000-0000-4000-8000-000000000005",
+            "wires": {}
+          },
+          "sheet_id": "20000000-0000-4000-8000-000000000005"
+        }
+      ],
+      "provenance": {
+        "actor": "s5a-fixture",
+        "reason": "finite native S5A fixture recipe",
+        "source": "test"
+      },
+      "transaction_id": "d1b976b8-0a4c-51ca-a671-2d5589302e3a",
+      "transaction_kind": "normal"
+    },
+    {
+      "after_model_revision": "60d940bfd515337f388271cbd1c48db5639df1c62b090efe91ad5f1404720c5e",
+      "batch_id": "2f4f340d-122f-44a7-bb2d-a85de2e2c824",
+      "before_model_revision": "0a5c86983be0194065b1ccd414d422522d81f8faf87b7b03fadb8de4c1728464",
+      "diff": {
+        "created": [
+          "30000000-0000-4000-8000-000000000001",
+          "30000000-0000-4000-8000-000000000002"
+        ],
+        "deleted": [],
+        "modified": []
+      },
+      "inverse_operations": [
+        {
+          "kind": "delete_board_net",
+          "net": {
+            "class": "00000000-0000-0000-0000-000000000000",
+            "name": "same label",
+            "uuid": "30000000-0000-4000-8000-000000000002"
+          },
+          "net_id": "30000000-0000-4000-8000-000000000002"
+        },
+        {
+          "kind": "delete_board_net",
+          "net": {
+            "class": "00000000-0000-0000-0000-000000000000",
+            "name": "same label",
+            "uuid": "30000000-0000-4000-8000-000000000001"
+          },
+          "net_id": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "operations": [
+        {
+          "kind": "create_board_net",
+          "net": {
+            "class": "00000000-0000-0000-0000-000000000000",
+            "name": "same label",
+            "uuid": "30000000-0000-4000-8000-000000000001"
+          },
+          "net_id": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "kind": "create_board_net",
+          "net": {
+            "class": "00000000-0000-0000-0000-000000000000",
+            "name": "same label",
+            "uuid": "30000000-0000-4000-8000-000000000002"
+          },
+          "net_id": "30000000-0000-4000-8000-000000000002"
+        }
+      ],
+      "provenance": {
+        "actor": "s5a-fixture",
+        "reason": "finite native S5A fixture recipe",
+        "source": "test"
+      },
+      "transaction_id": "4d96b66d-3b72-527b-bc29-392453c19fed",
+      "transaction_kind": "normal"
+    },
+    {
+      "after_model_revision": "a9e0c9e682c2197e3f18e80400a02dbc0fe7643b896c21fcd561fc612c8747ca",
+      "batch_id": "0b7a3f91-7eb6-4f84-874d-b31920d09d44",
+      "before_model_revision": "60d940bfd515337f388271cbd1c48db5639df1c62b090efe91ad5f1404720c5e",
+      "diff": {
+        "created": [
+          "40000000-0000-4000-8000-000000000001",
+          "40000000-0000-4000-8000-000000000002",
+          "40000000-0000-4000-8000-000000000003",
+          "40000000-0000-4000-8000-000000000004"
+        ],
+        "deleted": [],
+        "modified": []
+      },
+      "inverse_operations": [
+        {
+          "kind": "delete_board_track",
+          "track": {
+            "from": {
+              "x": 10000000,
+              "y": -10000000
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000002",
+            "to": {
+              "x": 10000000,
+              "y": 10000000
+            },
+            "uuid": "40000000-0000-4000-8000-000000000004",
+            "width": 2
+          },
+          "track_id": "40000000-0000-4000-8000-000000000004"
+        },
+        {
+          "kind": "delete_board_track",
+          "track": {
+            "from": {
+              "x": 40000000,
+              "y": 0
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000001",
+            "to": {
+              "x": 50000000,
+              "y": 0
+            },
+            "uuid": "40000000-0000-4000-8000-000000000003",
+            "width": 5080000
+          },
+          "track_id": "40000000-0000-4000-8000-000000000003"
+        },
+        {
+          "kind": "delete_board_track",
+          "track": {
+            "from": {
+              "x": 10000000,
+              "y": 0
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000001",
+            "to": {
+              "x": 20000000,
+              "y": 0
+            },
+            "uuid": "40000000-0000-4000-8000-000000000002",
+            "width": 5080001
+          },
+          "track_id": "40000000-0000-4000-8000-000000000002"
+        },
+        {
+          "kind": "delete_board_track",
+          "track": {
+            "from": {
+              "x": 0,
+              "y": 0
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000001",
+            "to": {
+              "x": 10000000,
+              "y": 0
+            },
+            "uuid": "40000000-0000-4000-8000-000000000001",
+            "width": 5080000
+          },
+          "track_id": "40000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "operations": [
+        {
+          "kind": "create_board_track",
+          "track": {
+            "from": {
+              "x": 0,
+              "y": 0
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000001",
+            "to": {
+              "x": 10000000,
+              "y": 0
+            },
+            "uuid": "40000000-0000-4000-8000-000000000001",
+            "width": 5080000
+          },
+          "track_id": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "kind": "create_board_track",
+          "track": {
+            "from": {
+              "x": 10000000,
+              "y": 0
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000001",
+            "to": {
+              "x": 20000000,
+              "y": 0
+            },
+            "uuid": "40000000-0000-4000-8000-000000000002",
+            "width": 5080001
+          },
+          "track_id": "40000000-0000-4000-8000-000000000002"
+        },
+        {
+          "kind": "create_board_track",
+          "track": {
+            "from": {
+              "x": 40000000,
+              "y": 0
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000001",
+            "to": {
+              "x": 50000000,
+              "y": 0
+            },
+            "uuid": "40000000-0000-4000-8000-000000000003",
+            "width": 5080000
+          },
+          "track_id": "40000000-0000-4000-8000-000000000003"
+        },
+        {
+          "kind": "create_board_track",
+          "track": {
+            "from": {
+              "x": 10000000,
+              "y": -10000000
+            },
+            "layer": 1,
+            "net": "30000000-0000-4000-8000-000000000002",
+            "to": {
+              "x": 10000000,
+              "y": 10000000
+            },
+            "uuid": "40000000-0000-4000-8000-000000000004",
+            "width": 2
+          },
+          "track_id": "40000000-0000-4000-8000-000000000004"
+        }
+      ],
+      "provenance": {
+        "actor": "s5a-fixture",
+        "reason": "finite native S5A fixture recipe",
+        "source": "test"
+      },
+      "transaction_id": "2a0c7c89-04c9-514f-a0e7-aa3b8c573aba",
+      "transaction_kind": "normal"
+    },
+    {
+      "after_model_revision": "450cd5dea4b53a0ef7527f68eae54e3156a3c9b49aefd749f34577213fc28d96",
+      "batch_id": "f95f3592-f3c9-4ca5-80f9-2fbde01dc54e",
+      "before_model_revision": "a9e0c9e682c2197e3f18e80400a02dbc0fe7643b896c21fcd561fc612c8747ca",
+      "diff": {
+        "created": [
+          "60000000-0000-4000-8000-000000000001",
+          "60000000-0000-4000-8000-000000000002"
+        ],
+        "deleted": [],
+        "modified": []
+      },
+      "inverse_operations": [
+        {
+          "kind": "delete_electrical_identity",
+          "record": {
+            "id": "60000000-0000-4000-8000-000000000002",
+            "identity": {
+              "board_net": {
+                "object_id": "30000000-0000-4000-8000-000000000001",
+                "object_revision": 0
+              },
+              "evidence": [],
+              "intent": "board_only",
+              "kind": "net_relationship",
+              "logical_net": "60000000-0000-4000-8000-000000000001"
+            },
+            "object_revision": 0
+          }
+        },
+        {
+          "kind": "delete_electrical_identity",
+          "record": {
+            "id": "60000000-0000-4000-8000-000000000001",
+            "identity": {
+              "anchor": {
+                "class": "tracks",
+                "instance_path": [],
+                "source_id": "40000000-0000-4000-8000-000000000001"
+              },
+              "anchor_reason": "authored",
+              "kind": "net",
+              "predecessors": [],
+              "retired": false
+            },
+            "object_revision": 0
+          }
+        }
+      ],
+      "operations": [
+        {
+          "kind": "create_electrical_identity",
+          "record": {
+            "id": "60000000-0000-4000-8000-000000000001",
+            "identity": {
+              "anchor": {
+                "class": "tracks",
+                "instance_path": [],
+                "source_id": "40000000-0000-4000-8000-000000000001"
+              },
+              "anchor_reason": "authored",
+              "kind": "net",
+              "predecessors": [],
+              "retired": false
+            },
+            "object_revision": 0
+          }
+        },
+        {
+          "kind": "create_electrical_identity",
+          "record": {
+            "id": "60000000-0000-4000-8000-000000000002",
+            "identity": {
+              "board_net": {
+                "object_id": "30000000-0000-4000-8000-000000000001",
+                "object_revision": 0
+              },
+              "evidence": [],
+              "intent": "board_only",
+              "kind": "net_relationship",
+              "logical_net": "60000000-0000-4000-8000-000000000001"
+            },
+            "object_revision": 0
+          }
+        }
+      ],
+      "provenance": {
+        "actor": "s5a-fixture",
+        "reason": "finite native S5A fixture recipe",
+        "source": "test"
+      },
+      "transaction_id": "54614110-dedd-5983-bfc3-44273fa1da3b",
+      "transaction_kind": "normal"
+    }
+  ]
+}

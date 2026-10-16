@@ -1,8 +1,8 @@
-//! Shared development-only paths. Cargo output never owns native fixture data.
+//! Shared development paths. Replay inputs use explicitly provisioned private copies.
 use std::path::{Component, Path, PathBuf};
 
-/// A family label selects new external scratch output; an absolute or target/
-/// path selects a preserved legacy input through its verified relocation map.
+/// A family label selects new external scratch output. Registered legacy paths
+/// require a provisioned private replay copy; other paths use local recovery maps.
 pub fn path(value: impl AsRef<Path>) -> PathBuf {
     let value = value.as_ref();
     if value.is_absolute() || value.starts_with("target") {
@@ -76,13 +76,16 @@ pub(crate) fn scratch_at(base: &Path, family: &str, checkout: &Path) -> Result<P
     Ok(resolved)
 }
 
-/// Resolve an old checkout path through the local, verified relocation map.
-/// The original JSON/setup bytes and historical source pins remain unchanged.
+/// Resolve registered aliases through a provisioned copy, with local recovery
+/// maps retained for other historical paths. Original setup/source pins stay exact.
 fn relocated(path: impl AsRef<Path>) -> PathBuf {
     let checkout = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .canonicalize()
         .unwrap();
+    if let Some(replay) = replay_path(path.as_ref(), &checkout) {
+        return replay.unwrap_or_else(|e| panic!("{e}"));
+    }
     let map = std::env::var_os("DATUM_FIXTURE_RELOCATION_MAP")
         .map(PathBuf::from)
         .unwrap_or_else(|| checkout.join(".datum/history-cleanup/target-relocation-map.json"));
@@ -91,6 +94,82 @@ fn relocated(path: impl AsRef<Path>) -> PathBuf {
     let value: serde_json::Value =
         serde_json::from_slice(&bytes).expect("valid fixture relocation map");
     resolve(path.as_ref(), &checkout, &value).unwrap_or_else(|e| panic!("{e}"))
+}
+
+const REPLAY_INDEX: &[u8] = include_bytes!("../testdata/selection/s5a_v1/replay-inputs/index.json");
+
+pub(crate) fn replay_relative(path: &Path, checkout: &Path) -> Result<Option<PathBuf>, String> {
+    if path.components().any(|c| matches!(c, Component::ParentDir)) {
+        return Err("parent traversal in replay input".into());
+    }
+    let index: serde_json::Value = serde_json::from_slice(REPLAY_INDEX).unwrap();
+    let historical = Path::new(index["legacy_checkout"].as_str().unwrap());
+    let relative = if path.is_absolute() {
+        path.strip_prefix(checkout)
+            .or_else(|_| path.strip_prefix(historical))
+            .ok()
+    } else {
+        Some(path)
+    };
+    let Some(relative) = relative.and_then(|p| p.strip_prefix("target").ok()) else {
+        return Ok(None);
+    };
+    let Some(family) = relative.components().next() else {
+        return Ok(None);
+    };
+    if index["aliases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|a| a.as_str().map(Path::new) == Some(Path::new(family.as_os_str())))
+    {
+        Ok(Some(relative.to_path_buf()))
+    } else {
+        Ok(None)
+    }
+}
+
+pub(crate) fn replay_at(root: &Path, relative: &Path, checkout: &Path) -> Result<PathBuf, String> {
+    let resolved = checked_external(root, checkout)?;
+    if resolved != root {
+        return Err("replay input symlink alias refused".into());
+    }
+    let result = root.join(relative);
+    for part in result.ancestors() {
+        if part.is_symlink() {
+            return Err("replay input symlink ancestor refused".into());
+        }
+    }
+    if relative.is_absolute()
+        || relative
+            .components()
+            .any(|c| matches!(c, Component::ParentDir))
+    {
+        return Err("invalid replay relative path".into());
+    }
+    if root.join("index.json").is_symlink() {
+        return Err("replay catalogue symlink refused".into());
+    }
+    let index = std::fs::read(root.join("index.json")).map_err(|e| e.to_string())?;
+    if index != REPLAY_INDEX {
+        return Err("private replay catalogue differs from tracked inputs".into());
+    }
+    if !result.exists() {
+        return Err(format!("unprovisioned replay path {}", result.display()));
+    }
+    Ok(result)
+}
+
+fn replay_path(path: &Path, checkout: &Path) -> Option<Result<PathBuf, String>> {
+    let relative = match replay_relative(path, checkout) {
+        Ok(Some(relative)) => relative,
+        Ok(None) => return None,
+        Err(error) => return Some(Err(error)),
+    };
+    Some(match std::env::var_os("DATUM_REPLAY_INPUTS") {
+        Some(root) => replay_at(Path::new(&root), &relative, checkout),
+        None => Err("Provision a fresh private copy with scripts/provision_s5a_replay_inputs.py --output <absolute-external-root> and set DATUM_REPLAY_INPUTS".into()),
+    })
 }
 
 pub(crate) fn resolve(

@@ -2,6 +2,52 @@ use crate::development_workspace::{checked_external, resolve, scratch_at};
 use std::path::Path;
 
 #[test]
+fn standalone_replay_aliases_bind_historical_paths_without_local_maps() {
+    use crate::development_workspace::replay_relative;
+    let checkout = Path::new("/clean/export");
+    for path in [
+        "target/user-edit-selection/journal-read-project",
+        "/home/bfadmin/Documents/datum-eda/target/user-edit-selection/journal-read-project",
+        "/clean/export/target/user-edit-selection/journal-read-project",
+    ] {
+        assert_eq!(
+            replay_relative(Path::new(path), checkout).unwrap().unwrap(),
+            Path::new("user-edit-selection/journal-read-project")
+        );
+    }
+    assert!(
+        replay_relative(Path::new("target/user-edit-selection-other"), checkout)
+            .unwrap()
+            .is_none()
+    );
+    assert!(replay_relative(Path::new("target/user-edit-selection/../escape"), checkout).is_err());
+}
+
+#[test]
+fn replay_completion_and_symlink_controls_protect_inputs() {
+    use crate::development_workspace::replay_at;
+    let tmp = std::env::temp_dir().join(format!("datum-replay-paths-{}", uuid::Uuid::new_v4()));
+    let root = tmp.join("private");
+    let checkout = tmp.join("checkout");
+    std::fs::create_dir_all(&checkout).unwrap();
+    std::fs::create_dir_all(&root).unwrap();
+    std::fs::write(root.join("index.json"), b"{}").unwrap();
+    assert!(replay_at(&root, Path::new("fixture"), &checkout).is_err());
+    std::fs::write(
+        root.join("index.json"),
+        include_bytes!("../testdata/selection/s5a_v1/replay-inputs/index.json"),
+    )
+    .unwrap();
+    std::fs::create_dir(root.join("fixture")).unwrap();
+    assert!(replay_at(&root, Path::new("fixture"), &checkout).is_ok());
+    assert!(replay_at(&root, Path::new("../checkout"), &checkout).is_err());
+    assert!(replay_at(&checkout, Path::new("fixture"), &checkout).is_err());
+    std::os::unix::fs::symlink(root.join("fixture"), root.join("alias")).unwrap();
+    assert!(replay_at(&root, Path::new("alias"), &checkout).is_err());
+    std::fs::remove_dir_all(tmp).unwrap();
+}
+
+#[test]
 fn relocated_pinned_paths_preserve_suffix_and_reject_retired_or_partial_inputs() {
     let checkout = Path::new("/original/checkout");
     let mut map = serde_json::json!({"schema_version":1,"collections":[{

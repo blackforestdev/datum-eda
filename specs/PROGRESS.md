@@ -14,8 +14,6 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** Owner-authorized audit corrections and Symbol Move verification are accepted at actual content landing8948efe9 with released temporary proof removed. This bounded maintenance closes without product or successor authorization; S5A remains held and bug616t remains intake only.
-
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -367,6 +365,10 @@
 
 </details>
 
+- **Replace required external replay inputs and retire obsolete collections** (`REPRODUCIBLE-REPLAY-INPUTS`; `dat-reproducible-replay-inputs-g2mc`).
+   RI-01 standalone replay inputs independently reviewed and manager accepted at bounded source scope; landing and exact reviewed retirement proceed under RI-02, with originals preserved until landed replacement is verified. No S5A or product successor authority. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/maintenance-records.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

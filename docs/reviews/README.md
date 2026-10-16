@@ -84,6 +84,39 @@ also distinct from temporary work proof. Do not relocate screenshots into these
 input directories to bypass the policy. Other raster images and recordings are
 ignored and rejected by the gate even in newly named proof directories.
 
+## Standalone S5A replay inputs
+
+The tracked `crates/test-harness/testdata/selection/s5a_v1/replay-inputs/`
+catalogue contains minimal native source, journal and revision inputs for all
+eleven frozen fixture families and the N13/N14 readers. Its dense recipe expands
+the fixed 100,000-text population to the original hashes. Exact setup bytes and
+historical manifest pins remain unchanged. Sessions, captures and binaries are
+excluded; original history and archived proof bundles are not prerequisites.
+
+```bash
+python3 scripts/provision_s5a_replay_inputs.py
+python3 scripts/provision_s5a_replay_inputs.py --output /absolute/external/fresh-private-root
+export DATUM_REPLAY_INPUTS=/absolute/external/fresh-private-root
+```
+
+The first command verifies every seed and expanded file. The second refuses an
+existing root, symlink ancestors, checkout paths and the selected Cargo target.
+Give each replay its own fresh copy: native consumers may create local runtime
+state. Never run consumers against tracked seeds or another session's copy.
+Historical `target/<family>` aliases, including the original absolute N13 path,
+resolve to that explicit copy without an ignored relocation map. A complete,
+matching catalogue is required; unprovisioned paths fail closed.
+
+For existing native readers, set `EDA_CLI_BIN` to a source-matched CLI built with
+`python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-eda-cli --bin datum-eda`.
+Build/run the existing Rust test or example through the same guard. Documented
+source-matched binary reuse is permitted by verification policy; no undocumented
+cached executable is required. Native GUI readers retain their serial X11/Vulkan
+prerequisites. Input preparation supplies no C04/C05/C06 replay or acceptance.
+Release task-owned copies explicitly after proof/review; no automatic deletion
+or age-based release applies. Legacy relocation maps remain local historical
+recovery metadata, not the provisioning mechanism for these inputs.
+
 ## Bounded GUI diagnostics
 
 `DATUM_ACTION_EVIDENCE=1` now emits `datum.action-evidence/v2`. Selection records

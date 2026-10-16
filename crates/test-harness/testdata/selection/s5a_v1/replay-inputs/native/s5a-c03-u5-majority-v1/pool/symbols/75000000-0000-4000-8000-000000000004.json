@@ -1,0 +1,1 @@
+{"default_refdes_prefix":"U","drawings":[{"Line":{"from":{"x":-500000,"y":-500000},"to":{"x":500000,"y":500000},"width":100000}}],"name":"S5A 0 pin symbol","pin_anchors":[],"schema_version":1,"tags":["s5a-native-fixture"],"unit":"75000000-0000-4000-8000-000000000003","uuid":"75000000-0000-4000-8000-000000000004"}

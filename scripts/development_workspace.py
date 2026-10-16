@@ -37,6 +37,10 @@ def relocated(path: str | Path, *, checkout: Path = ROOT, record: dict | None = 
     path = Path(path)
     if '..' in path.parts:
         raise ValueError('parent traversal in legacy fixture path')
+    if record is None:
+        replay = replay_input(path, checkout)
+        if replay is not None:
+            return replay
     relative = (path if path.is_absolute() else checkout / path).relative_to(checkout)
     if record is None:
         is_datum = relative.parts[:1] == ('.datum',)
@@ -59,6 +63,34 @@ def relocated(path: str | Path, *, checkout: Path = ROOT, record: dict | None = 
                 raise ValueError('fixture relocation is incomplete')
             return external(Path(row['destination']) / relative.relative_to(source), checkout)
     raise ValueError(f'no preserved relocation for {path}')
+
+
+def replay_input(path: Path, checkout: Path = ROOT) -> Path | None:
+    """Resolve approved frozen aliases only to an explicitly provisioned copy."""
+    from provision_s5a_replay_inputs import INPUTS, catalogue, real_path
+    index = catalogue()
+    if path.is_absolute():
+        relative = None
+        for base in [checkout, Path(index['legacy_checkout'])]:
+            if path.is_relative_to(base):
+                relative = path.relative_to(base)
+                break
+    else:
+        relative = path
+    if (relative is None or len(relative.parts) < 2 or relative.parts[0] != 'target'
+            or relative.parts[1] not in index['aliases']):
+        return None
+    if 'DATUM_REPLAY_INPUTS' not in os.environ:
+        raise ValueError('provision a fresh private replay root and set DATUM_REPLAY_INPUTS')
+    root = real_path(Path(os.environ['DATUM_REPLAY_INPUTS']))
+    external(root, checkout)
+    marker = real_path(root / 'index.json')
+    if marker.read_bytes() != (INPUTS / 'index.json').read_bytes():
+        raise ValueError('private replay catalogue differs from tracked inputs')
+    result = real_path(root / Path(*relative.parts[1:]))
+    if not result.exists():
+        raise ValueError('replay path not provisioned')
+    return result
 
 
 def main() -> None:
