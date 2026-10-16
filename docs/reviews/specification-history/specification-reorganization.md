@@ -68,10 +68,12 @@ scope and original approvals; they are not competing current work lists.
 The retained assessment and accepted corrections support **no further confirmed
 organizational defect in this finite candidate set**. This does not say every
 project document or product requirement has been exhaustively reviewed or met.
-The recommendation is to finish this bounded reorganization phase after this
-closeout's actual independent review, local content landing and manager exit
-acceptance. Those closeout gates are still pending; this recommendation supplies
-no PASS, acceptance, broad-intake closure or successor assignment.
+The appointed manager has **accepted all four closeout deliverables and the
+bounded phase exit** after [actual independent review](#actual-closeout-independent-review-and-landing-continuation)
+and local content landing `0810f0c3`. The [actual exit acceptance and synchronized
+closure](#actual-closeout-exit-acceptance-and-synchronized-closure) records the
+receipt and final state. Broad semantic intake remains open/unselected; no
+successor or product work is authorized.
 
 The accepted correction landings are `be576a8b` (RC-01/02), `6e26fe8b` (RC-03)
 and `8b740e00` (RC-04/05/07/06), with synchronized closures `72e3b6f5` and
@@ -103,15 +105,17 @@ or selection; use the existing selector for actual current task state.
 
 ### Bounded exit recommendation and gate
 
-Recommend closing the assessed reorganization phase once this closeout is
-independently reviewed, locally landed and objectively accepted by the appointed
-manager. No exact new organizational correction is assigned. Broad semantic
-intake remains open/unselected for the explicit limits above; optional ideas
-and product/owner decisions retain their own authorities. This recommendation
-does not finish or waive the existing integrated-promotion obligation. Final closure must
-release only this cleanup claim and restore the complete original paused S5A
-record and all 96 prior task records/root settings. Actual review and exit
-acceptance are recorded later in this task's evidence, never inferred here.
+The bounded exit recommendation is accepted at the [actual manager disposition](#actual-closeout-exit-acceptance-and-synchronized-closure),
+following independent review and verified local content landing `0810f0c3`.
+This assessed reorganization phase ends with synchronized closure. No exact
+new organizational correction is assigned. Broad semantic intake remains
+open/unselected for the explicit limits above; optional ideas and product/owner
+decisions retain their own authorities. The existing integrated-promotion
+obligation remains unfinished and is neither waived nor made optional.
+Closure releases only this cleanup claim and restores the complete original
+paused S5A record and all 96 prior task records/root settings. Restored selection
+does not resume work or authorize a successor. Dated candidate and review-time
+pending wording remains historical and recoverable at `0810f0c3`.
 
 ## Ownership and authority reconciliation
 
@@ -951,3 +955,59 @@ checks and normal local four-path content landing. RCO-01 remains active and
 RCO-02 pending. Objective exit acceptance awaits actual landing verification;
 this receipt neither closes the phase nor releases its claim, restores S5A,
 selects a successor or authorizes product work.
+
+### Actual closeout exit acceptance and synchronized closure
+
+<!-- EVIDENCE:SPECIFICATION-CLEANUP-CLOSEOUT:RCO-01 -->
+The appointed manager actually accepted all four REORG-CLOSEOUT-01 deliverables
+and the bounded phase exit on 2026-10-16 after verifying local content landing
+`0810f0c3266f1d318d6c2536759cde2e9956df6d`, all four landed hashes, the exact
+frozen candidate plus faithful review-receipt append, and clean local main.
+Actual disposition:
+`/home/bfadmin/Documents/datum-eda-workspaces/scratch/reorg-closeout/manager-objective-exit-acceptance.json`,
+SHA-256 `c028703161e33e5164973f1f5a5a57282c19f812900259f19318d8061a97e4e0`.
+The actual landing packet is `content-landing.json` in the same scratch directory,
+SHA-256 `882e3c55e0c3b119f087458cef17ca27e6a4fbcfecf52ddbc551552b9f83e8c1`.
+The actual independent bounded source PASS, no mandatory findings and corrected
+37/31/27 link counts retain the receipt and limits recorded above.
+
+The eight-group summary, precise retained assessment limits, existing product
+and decision destinations, and bounded phase exit are accepted. No further
+confirmed organizational correction is supported by the finite assessed set.
+This acceptance supplies no exhaustive corpus reconciliation, product proof,
+qualification PASS, waiver or successor grant. Integrated promotion, source
+rights, owner-reserved choices and product qualification remain unfinished
+under their existing authority.
+
+<!-- EVIDENCE:SPECIFICATION-CLEANUP-CLOSEOUT:RCO-02 -->
+Under that actual disposition, RCO-01 and RCO-02 complete; only
+`dat-specification-cleanup-closeout-oisy` closes and unassigns. The task is
+landed/unselected with authorization none and claim null. All 96 original
+Frontier records/order and root settings are restored exactly from immutable
+`f30c290cfaf0c482396cc6cb64f3c3e16cc72eca`, including the entire paused,
+unclaimed S5A row, retained grant and unfinished work. Restoring selection does
+not resume the paused session or authorize further work.
+
+Only the four assigned metadata paths change. Broad intake stays open and
+unselected with the original description verbatim in its labeled snapshot and
+all prior notes preserved as an exact prefix; its current description and
+appended finite disposition now record actual acceptance. Every other original
+tracker row/order remains exact. Original task history outside the expressly
+refreshed current area and appended evidence remains exact, including original
+contracts, approval markers and dated receipts. The entire evidence-traceability
+manifest is unchanged. Final closure verification and normal local commit hooks
+remain required before reporting the final landing; no push or successor follows.
+
+Final closure preservation checks pass: all 96 original task records/order and
+root settings exactly restored, including whole paused S5A; all 332 original
+tracker rows/order preserved except the authorized broad fields, with original
+notes and content-landing notes as exact prefixes and original description
+verbatim in its snapshot. Both steps complete, claim null, only the bounded
+issue closed/unassigned, and broad intake open/unselected. Complete original
+history reconstructs exactly after removing the authorized current area, banner
+and appended evidence (including its separator). The route manifest is byte
+identical. State 97/current projection, progress coverage, 569 classifications,
+30 parity inventories, affected current link destinations and whitespace pass.
+Earlier 29-route/131-artifact evidence is reused at unchanged scope; no new
+corpus audit, build or runtime qualification is claimed. Normal local hooks
+apply to the final closure landing.
