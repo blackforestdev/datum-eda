@@ -1401,3 +1401,41 @@ authorized faithful receipt/count transcription and normal local content landing
 Only this evidence text changes after reviewed source. AF-02 remains pending
 for manager verification of the actual landing and released temporary proof
 before synchronized duplicate/canonical closure and explicit idle.
+
+### Actual audit-correction landing, cleanup and closure
+
+<!-- EVIDENCE:CORRECT-AUDIT-FINDINGS:AF-01 -->
+The appointed manager verified actual local content landing
+`8948efe9932e42d1543ae01fefddac2a2fde937f`: exactly 15 reviewed paths,
+14 frozen identities unchanged and only faithful review/count transcription
+in this record. Normal hooks passed and local main was clean. Actual independent
+`/root/closeout_review` PASS and manager acceptance above complete AF-01;
+transport intake `dat-symbol-move-daemon-tip-616t` remains open/unselected.
+
+<!-- EVIDENCE:CORRECT-AUDIT-FINDINGS:AF-02 -->
+After both worker and reviewer released temporary proof, the appointed manager
+verified exact ownership/type/size inventory, no active cwd/fd references and
+the durable landing, then actually removed 18 owned regular files / 281,222 bytes.
+The completed `code-roadmap-audit-20261016` scratch directory is absent; no other
+directory or tracked artifact was touched. This applies the existing review
+README retention rule, not an archive migration or new retention policy. The
+retained source/reproducer/findings/limits above suffice without temporary logs.
+
+The manager accepted the actual landing/cleanup and authorized AF-02. Only
+canonical `dat-private-writer-journal-gate-0u2x` and duplicate intakes
+`dat-journal-writer-guard-drift-e9it` / `dat-afp9` close with the actual repair
+landing and exact consolidation reason. All original discovery bodies, notes
+and relationships (including e9it→LIBGUI) remain. Both AF steps complete; the
+bounded task lands at that content commit, unselected with authorization none
+and claim null. Sourced explicit idle selects no successor. PWO's four pending
+steps, both hard dependents, S5A's entire hold/grant/internal C04 and qualification,
+all unrelated tasks and separate open intake remain exact. Only synchronized
+closure metadata changes; no further product, reader, runtime or proof work.
+
+Actual closure checks pass state 99/current projection, progress, governance 569,
+parity 30, traceability 29 routes/131 artifacts and whitespace. All 98 accepted
+prior task rows are exact; only the new task and root selection close. Only the
+three authorized issue lifecycle fields change, preserving all discovery/notes/
+edges; the other 332 raw rows, including PWO and intake616t, are exact. Actual
+next/default-details idle and named S5A held/completed guidance pass. Source and
+runtime proof are reused unchanged. No scratch was accessed or recreated.

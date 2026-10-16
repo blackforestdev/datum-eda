@@ -14,6 +14,8 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
+**Explicit idle:** Owner-authorized audit corrections and Symbol Move verification are accepted at actual content landing8948efe9 with released temporary proof removed. This bounded maintenance closes without product or successor authorization; S5A remains held and bug616t remains intake only.
+
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -249,7 +251,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (36 landed records)</summary>
+<summary>Completed history (37 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -359,13 +361,12 @@
 - **Repair five production-process authority and state defects** (`PRODUCTION-PROCESS-CORRECTION`; `dat-production-process-correction-enxp`).
    Five owner-authorized process corrections accepted after actual independent v2 PASS and exact local content landing 11afd4b5. PPC-R1–R3 resolved. Hold, purpose, explicit idle, scoped decision routing and normalized claim overlap are enforced. Bounded issue closes and claim releases; all original product grants and qualification remain. S5A held/internal C04 retained. Explicit idle selects no successor or product work. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`.
+- **Correct the three audit findings and verify Symbol Move transport behavior** (`CORRECT-AUDIT-FINDINGS`; `dat-private-writer-journal-gate-0u2x`).
+   AUDIT-01/02/03 corrected and QUESTION-01 verified at independently reviewed content8948efe9 with actual manager landing/cleanup acceptance. PWO bounded credit reconciled without closing broader obligations; journal guard repaired with negative controls; duplicate discovery intake consolidated. Verified Symbol Move gap616t stays open/unselected. Claim released and explicit idle restored; S5A hold and all product/qualification boundaries remain. *state `landed`; authorization `none`.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`, `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
 
 </details>
 
-- **Correct the three audit findings and verify Symbol Move transport behavior** (`CORRECT-AUDIT-FINDINGS`; `dat-private-writer-journal-gate-0u2x`).
-   Owner-authorized AUDIT-01/02/03 corrections and QUESTION-01 direct-daemon verification under appointed manager. Credit existing bounded PM060, retain broader PWO/GWP obligations, repair journal-owner enforcement without weakening, and consolidate existing duplicate intake only after accepted repair. S5A held; no product successor. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`, `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
