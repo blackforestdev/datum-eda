@@ -38,3 +38,21 @@ PM059 now distinguishes incremental development availability from complete
 qualification and schedules USER-EDIT-DELIVERY for the first actual board edit.
 The existing S5A implementation, active ownership and unperformed acceptance
 remain preserved; no fixture, review receipt or priority change proves editing.
+
+## Owner-directed enforcement repair — 2026-10-16
+
+After the bounded read-only production-process audit, the owner said: “we need
+to make these corrections from our findings. use the reorg-agent as yur employee
+to preserve your context.” The appointed reorganization manager assigned five
+repairs: structured enforced S5A hold and honest named work-start guidance;
+purpose-based delivery independent of tracker type; accepted closure with durable
+explicit idle; verifiable scoped management routing with owner-reserved fallback;
+and normalized path/worktree containment checks for claims.
+
+This is bounded governance/Python execution authority, recorded in the existing
+reorganization task evidence. It authorizes the coherent PM025/PM059/schema
+amendment and focused behavioral regressions, actual independent review and local
+landing/closure. It supplies no product execution, blanket manager appointment,
+source/rights decision, qualification PASS, dependency, route subdivision campaign
+or successor grant. Historical receipts retain their original effects; the
+S5A hold preserves C04/C05/C06 and the grant, and final explicit idle resumes none.

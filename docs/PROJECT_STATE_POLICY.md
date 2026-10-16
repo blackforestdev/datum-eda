@@ -142,7 +142,7 @@ automatic consequence of unblocking.
 ## Delegated decision routing and delivery rhythm
 
 PM059 is the owner-ratified amendment to PM025's decision routing. The roadmap
-continues to select one canonical step with the existing schema, claim and
+explicitly selects one canonical step or durable idle with the validated claim and
 presentation rules. An implementer never advances an owner boundary on its own.
 
 An owner-appointed management session may resolve only delegated decisions:
@@ -172,7 +172,10 @@ recommendations; the owner is not the routine message courier.
 PM059's `feature_delivery` field on the existing Frontier item records the
 ordinary user workflow, required safety behavior, separate qualification work,
 concrete prerequisite reasons and development availability. The selector requires
-it for the selected feature and validates every supplied contract. Hard issue
+it for selected or active product-delivery purpose, independently of Beads
+type, and validates every supplied contract. Maintenance, pure qualification and
+planning are distinct reviewable purposes. Unselected product work needs its
+contract before selection/start; migration does not schedule new prerequisite work. Hard issue
 dependencies and selected non-implementation steps need explicit blocker reasons.
 Development availability requires source-pinned ordinary-application evidence for
 every workflow and safety requirement; fixture-only records cannot satisfy it.
@@ -247,6 +250,49 @@ Authorization is independent:
 - `execution`: implementation may proceed when otherwise ready.
 - `owner_decision`: an explicit owner decision is required.
 - `none`: the work needs no separate execution grant.
+
+## Enforced hold, idle and decision-routing operations
+
+The owner-authorized 2026-10-16 PM025 PS-010–013 amendment is controlling over
+earlier generic claim/single-next wording. Current schema 7 adds the following
+to the existing Frontier; no parallel selector or proof ledger is introduced.
+
+- `work_purpose` (`kind`, concrete `rationale`) is required for every unfinished
+  task. Product-delivery contracts apply before selection/start regardless of
+  tracker type. Existing landed history needs no retrospective invented evidence.
+- `hold` (`reason`, governed `source_ref`, `resume_requires`, `completion_checkpoint`) retains the grant
+  and freezes the internal selected step/status map, prohibiting a claim, active
+  step, completion advancement or landed state.
+  Record actual resumption authority before removing it. Held next/details stop.
+- Root `selection` explicitly says selected or idle. Idle requires a nonempty
+  reason and resolving governed disposition reference, zero canonical tasks and
+  no unreconciled claims. `next` and untargeted `details` return `next:null` or
+  `details:null` plus idle disposition/STOP in JSON, and explicit idle in text.
+  Named details still work. Missing data is never idle and ready intake is not
+  auto-selected. Closure never requires successor authorization.
+- Root `management_appointments` and independently witnessed step
+  `decision_authority` use the exact governed JSON witnesses defined by PS-012.
+  Item `decision_routing` is only a request; it cannot override step reservation.
+  Both next/details expose `decision_input_required`, `owner_input_required`,
+  `decision_maker`, appointment scope/provenance and the original packet. Exact
+  scoped delegation routes to the named manager; absent/unverified/reserved scope
+  routes to the owner. No route authorizes implementer advancement or self-review.
+
+For claim scope, use actual worktree-relative file/directory paths; paths are
+normalized with symlinks/parent segments and checked for containment collisions.
+A worktree may be absolute or relative to the queried repository. Escaping scopes
+are refused. Explicit `subsystem:<name>` reservations are global exact names and
+must accompany actual edited paths; they are not a path hierarchy or alias for
+missing file ownership. Expiry never releases or transfers ownership silently.
+
+Named details derive stop guidance from hold, completed/blocked/deferred state,
+selection and active ownership as well as authorization. A ready task with
+`authorization:none` still needs the synchronized claim when otherwise selected
+and executable. Planned ungranted placeholders remain stopped. Text/JSON expose
+summary, hold, purpose, delivery contract and applicable responsible decision-maker;
+querying a task does not select it. Historical successor waits in dated UED/NSD
+receipts remain evidence of the prior checker, not a requirement to keep accepted
+work open or to resume paused S5A.
 
 ## Same-Change Checklist
 

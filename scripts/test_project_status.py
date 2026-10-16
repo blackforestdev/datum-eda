@@ -84,6 +84,7 @@ class ProjectStatusTest(unittest.TestCase):
             "canonical_next": True,
             "parallel": False,
             "summary": "Make every agent return the same next task.",
+            "work_purpose": {"kind": "maintenance", "rationale": "Hermetic process correction."},
             "dependencies": [],
             "unblocks": [],
             "completion": {

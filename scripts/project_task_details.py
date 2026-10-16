@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any
 
 from history_commit_locator import commit_exists
+from project_feature_delivery import delivery_lines
+from project_work_authority import decision_view, work_start, authority_lines
 
 
 COMPLETION_KEYS = {
@@ -24,9 +26,9 @@ PRESENTATION_POLICY_KEYS = {
 }
 STEP_KEYS = {
     "id", "kind", "status", "action", "depends_on", "requirement_refs",
-    "completion_evidence", "owner_input",
+    "completion_evidence", "owner_input", "decision_authority",
 }
-STEP_REQUIRED_KEYS = STEP_KEYS - {"owner_input"}
+STEP_REQUIRED_KEYS = STEP_KEYS - {"owner_input", "decision_authority"}
 OWNER_INPUT_KEYS = {"response_format", "requests"}
 OWNER_REQUEST_KEYS = {"id", "question", "recommended_response", "source_ref"}
 EVIDENCE_KEYS = {"path", "marker"}
@@ -414,32 +416,24 @@ def _validate_owner_input(
 
 def claim_instruction(item: dict[str, Any], issue: dict[str, Any]) -> str:
     """Return claim-safe work-start guidance from validated operational state."""
-    selected = selected_completion_step(item)
-    if selected and selected.get("kind") == "owner_decision":
-        return (
-            "OWNER BOUNDARY REACHED: project-owner input is required. Code agents "
-            "must not claim, edit, choose dispositions, or advance to another step."
-        )
-    if item.get("state") == "in_progress":
-        claim = item.get("claim", {})
-        return (
-            f"Active claim: {claim.get('agent')} owns the declared scope; other agents "
-            "must stand down or coordinate an explicit handoff."
-        )
-    return (
-        "Before editing, atomically claim this task by adding the Frontier lease and "
-        "setting beads in_progress/assignee in the same synchronized change."
-    )
+    return work_start(item, issue, decision_view(item, {}), resolve_claim_state(item)[0])
 
 
 def _commit_exists(root: Path, revision: str) -> bool:
     return commit_exists(root, revision)
 
 
-def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
+def completion_view(item: dict[str, Any], issue: dict[str, Any], appointments: dict | None = None) -> dict[str, Any]:
     """Build the stable JSON view used by both text and JSON presentations."""
     selected = selected_completion_step(item)
+    decision = decision_view(item, appointments or {})
     return {
+        **decision,
+        "summary": item["summary"],
+        "canonical_next": item["canonical_next"],
+        "hold": item.get("hold"),
+        "work_purpose": item.get("work_purpose"),
+        "feature_delivery": item.get("feature_delivery"),
         "key": item["key"],
         "title": item["title"],
         "issue_id": item["issue_id"],
@@ -450,10 +444,9 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, An
         "live_claim": resolve_claim_state(item)[0] == "active",
         "claim_state": resolve_claim_state(item)[0],
         "claim_detail": resolve_claim_state(item)[1],
-        "work_start": claim_instruction(item, issue),
+        "work_start": work_start(item, issue, decision, resolve_claim_state(item)[0]),
         "outcome": item["completion"]["outcome"],
         "canonical_next_step_id": item["completion"]["canonical_next_step_id"],
-        "owner_input_required": bool(selected and selected.get("kind") == "owner_decision"),
         "owner_input": selected.get("owner_input") if selected else None,
         "execution_policy": item["completion"]["execution_policy"],
         "presentation_policy": item["completion"]["presentation_policy"],
@@ -540,11 +533,10 @@ def render_completion(view: dict[str, Any]) -> str:
     else:
         selected = next(step for step in view["steps"] if step["id"] == canonical_step)
         lines.append(f"Next completion step: [{canonical_step}] {selected['action']}")
-    if view["owner_input_required"]:
-        lines.append(
-            "Owner boundary: INPUT REQUIRED; code agents must stop and request the "
-            "project owner's decisions before any claim or edit."
-        )
+    lines.append(view["summary"])
+    lines.extend(authority_lines(view))
+    lines.extend(delivery_lines(view))
+    if view["decision_input_required"]:
         owner_input = view["owner_input"]
         lines.append(f"Owner response format: {owner_input['response_format']}")
         lines.append("Owner decisions requested:")

@@ -19,6 +19,7 @@ class FeatureDeliveryTests(unittest.TestCase):
         self.item = self.fixture.manifest["frontier"][0]
         self.issue = self.fixture.issues[0]
         self.issue["issue_type"] = "feature"
+        self.item["work_purpose"] = {"kind": "product_delivery", "rationale": "Deliver footprint editing."}
         self.contract = {
             "ordinary_workflow": ["Move footprint", "Undo and reopen"],
             "safety_requirements": ["Original import unchanged", "Cancel writes nothing"],
@@ -51,10 +52,31 @@ class FeatureDeliveryTests(unittest.TestCase):
         del self.item["feature_delivery"]
         self.assertIn("requires an ordinary-workflow contract", " ".join(self.failures()))
 
-    def test_nonfeature_legacy_task_is_unaffected(self):
+    def test_explicit_maintenance_is_distinct_from_product_delivery(self):
         del self.item["feature_delivery"]
         self.issue["issue_type"] = "task"
+        self.item["work_purpose"]["kind"] = "maintenance"
         self.assertEqual(self.failures(), [])
+
+    def test_tracker_type_cannot_evade_product_delivery(self):
+        del self.item["feature_delivery"]
+        for kind in ["task", "epic", "chore", "feature"]:
+            with self.subTest(kind=kind):
+                self.issue["issue_type"] = kind
+                self.assertIn("requires an ordinary-workflow contract", " ".join(self.failures()))
+
+    def test_unselected_product_contract_is_due_before_selection_not_new_work(self):
+        del self.item["feature_delivery"]
+        self.item["canonical_next"] = False
+        self.assertEqual(self.failures(), [])
+        self.item["state"] = "in_progress"
+        self.assertIn("requires an ordinary-workflow contract", " ".join(self.failures()))
+
+    def test_qualification_does_not_fabricate_product_availability(self):
+        del self.item["feature_delivery"]
+        self.item["work_purpose"]["kind"] = "qualification"
+        self.assertEqual(self.failures(), [])
+        self.assertEqual(delivery.delivery_lines(self.item), [])
 
     def test_empty_workflow_and_safety_are_rejected(self):
         self.contract["ordinary_workflow"] = []
@@ -111,6 +133,18 @@ class FeatureDeliveryTests(unittest.TestCase):
         self.fixture.write_fixture()
         errors, _ = status.validate(self.root)
         self.assertIn("ordinary-workflow contract", " ".join(errors))
+
+    def test_details_show_same_delivery_contract_and_stop_unselected_guidance(self):
+        self.fixture.write_fixture()
+        next_view = status.next_view(self.item, self.issue)
+        details = status.completion_view(self.item, self.issue)
+        self.assertEqual(next_view["feature_delivery"], details["feature_delivery"])
+        rendered = status.render_completion(details)
+        self.assertIn("Move footprint -> Undo and reopen", rendered)
+        self.item["canonical_next"] = False
+        rendered = status.render_completion(status.completion_view(self.item, self.issue))
+        self.assertIn("STOP: unselected", rendered)
+        self.assertNotIn("Delivery rule: continue", rendered)
 
     def test_owner_boundary_never_prints_continue_instruction(self):
         view = {"feature_delivery": self.contract, "owner_input_required": True}

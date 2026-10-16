@@ -19,12 +19,17 @@ Target roughly 80% of development effort toward
 implementing usable behavior; this is a prioritization target, not a measured
 commit percentage or permission to skip safety. Commit labels cannot prove effort.
 
-A selected feature must carry `feature_delivery` in the structured Frontier:
+Selected or active `work_purpose.kind=product_delivery` must carry
+`feature_delivery` in the structured Frontier, regardless of Beads issue type:
 `ordinary_workflow`, `safety_requirements`, `qualification_followups`,
 `prerequisite_reasons`, `development_ready` and `ordinary_evidence`. The selector
 rejects missing/empty workflow or safety criteria, unexplained hard prerequisites,
 and planning/decision substeps without a concrete `step:<ID>` blocker reason.
 Changing scope or selecting a successor still requires its existing authority.
+Maintenance, pure qualification and planning remain explicit purposes; tracker
+relabeling cannot remove product obligations. Unselected product lanes require
+a concrete contract before selection/start, not a new contract-writing task now.
+Both next and details expose the applicable contract and development status.
 
 `development_ready` may become true only with repository-local ordinary-application
 evidence identifying source commit, launch command and passing results for every
@@ -154,6 +159,29 @@ Preserve PM058 implementation, the existing claim and its exact scope, required
 C04/C05/C06 evidence, open CAM/T04, unamended positives, performance provenance and
 prototype ownership. This amendment neither closes S5A nor passes missing proof.
 No runtime, selector schema, dependency or product geometry change is introduced.
+
+## Production-process enforcement amendment — 2026-10-16
+
+Under the owner's explicit five-finding correction and bounded reorganization
+appointment in the [existing task record](../reviews/specification-history/specification-reorganization.md#owner-authorized-production-process-corrections--ppc01),
+PM025 schema 7 now enforces holds, purpose, explicit idle, scoped routing and
+actual claim overlap. This prospectively supersedes earlier statements that
+this process amendment changes no selector schema; historical dated receipts
+and their original effect remain intact. In particular the old UED/NSD closure
+wait for successor selection describes the old checker, not a continuing rule.
+
+A held retained grant is not executable. Explicit idle permits accepted work to
+close without authorizing a successor. Ordinary task queries expose responsible
+owner/manager, actual appointment scope/provenance and exact decision packet.
+An appointment request alone cannot reclassify an owner-reserved decision:
+separately governed step classification must match its requested routing kind.
+Use actual sequence-scoped appointments for their exact named decisions without
+repetitive approval relays. Unsupported, absent, out-of-scope or reserved cases
+remain owner boundaries. Witnesses validate provenance consistency, not owner
+authenticity or independent PASS. Actual independent review and durable bounded
+dispositions remain mandatory; no implementer self-appointment or acceptance.
+No product semantics, source rights, qualification, dependencies or paused
+S5A resumption are authorized by this correction.
 
 ## Retained numbered decision receipts
 

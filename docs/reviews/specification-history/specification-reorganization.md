@@ -1011,3 +1011,142 @@ identical. State 97/current projection, progress coverage, 569 classifications,
 Earlier 29-route/131-artifact evidence is reused at unchanged scope; no new
 corpus audit, build or runtime qualification is claimed. Normal local hooks
 apply to the final closure landing.
+
+## Owner-authorized production-process corrections — PPC01
+
+On 2026-10-16 the owner instructed: “we need to make these corrections from our findings. use the reorg-agent as yur employee to preserve your context.” This authorizes the five bounded governance/Python corrections: enforce held work, classify delivery by purpose, allow deliberate idle, route actual delegated decisions, and reject normalized claim overlap. Appointed manager `codex-reorganization-manager-20261014`, thread `01a13df1-7a0d-72c1-bbdd-f0d96d481598`, manages this exact assignment and actual independent review/continuation/objective acceptance under PM059. No general production remit, product changes, qualification waiver or successor is granted.
+
+Assignment: `/home/bfadmin/Documents/datum-eda-workspaces/scratch/production-process-corrections/manager-assignment.md`, SHA-256 `c4f3ada47e7606117ab2af0a07487b157307bd31144cac066b9ce9b879a44f11`. Baseline `c9adf4f0183bd8108d9371ab9d0e29884cd84066`. Original product grants, dependencies, completed receipts and S5A unfinished C04/C05/C06 remain. Final closure uses explicit idle rather than an executable paused placeholder.
+
+<!-- REQ:PRODUCTION-PROCESS-CORRECTION:PPC-01 -->
+- PPC-01: Implement and verify the five owner-authorized process corrections, preserve original product state and history, obtain actual independent review and manager objective acceptance, and land the bounded candidate.
+
+<!-- REQ:PRODUCTION-PROCESS-CORRECTION:PPC-02 -->
+- PPC-02: After actual acceptance and content landing, close only this bounded issue, release its claim, select durable explicit idle and retain S5A hold, grant and unfinished qualification; verify and land synchronized closure without successor work.
+
+### Production-process provenance and migration boundaries
+
+<!-- HOLD:UVT-S5A-BUILD:OWNER-PAUSE -->
+The immutable c9adf4f0 S5A summary records: “Owner paused both working sessions”
+and “original sessions remain paused.” It retains execution authority and internal
+S5A-C04, with C05/C06 and native/HUMAN/Wayland/performance/CAM unfinished.
+The new structured hold represents that existing boundary, without closing or
+passing anything. Resumption needs a durable explicit owner disposition and ownership
+reconciliation, then a fresh synchronized claim before edits, then required
+old-reader migration before affected proof. This process assignment
+is no resumption authority.
+
+The following machine-readable witness transcribes only the actual bounded
+owner appointment above. It supports reuse across the exact named sequence,
+not general product management. The selector compares its entire scope/session
+with the structured appointment; independent review still establishes actual
+authority, which a JSON boolean cannot authenticate.
+
+<!-- APPOINTMENT:PRODUCTION-PROCESS-CORRECTION:MANAGER -->
+{"decision_kinds": ["review_provisioning", "review_receipt", "continuation", "objective_acceptance"], "owner_appointed": true, "session": "codex-reorganization-manager-20261014", "task_keys": ["PRODUCTION-PROCESS-CORRECTION"]}
+
+Schema 7 adds purpose only to unfinished records. Product-delivery contracts
+are required before actual selection/start regardless of Beads type; this does
+not impose contract-writing or product work on unselected planning now. S5A
+is qualification because its remaining C04–C06 are proof/acceptance, not new
+behavior. The Global Preferences, cross-probe, Inspector, marking menu, GUI
+write, native authoring and Project Preferences build lanes retain product-delivery
+purpose. GUI-PERFORMANCE-IMPLEMENTATION is qualification: S4 is complete; remaining
+finite observation/conditional diagnosis and scope/finding dispositions do not
+authorize optimization or automatic repair, and S5 qualification remains. Other exact purposes are reviewable in
+the manifest; grants, dependencies, completion steps/evidence and historical
+landed rows remain unchanged. Final closure selects explicit idle with this
+assignment’s actual accepted disposition rather than resuming S5A.
+
+### Production-process implementation and verification candidate v1
+
+The candidate implements all five repairs in the existing selector and completion
+modules, with cohesive `project_work_authority` and `project_claim_scope` owners.
+S5A's sourced hold retains a completion checkpoint so neither claiming nor
+claim-free step advancement can resume paused proof. Purpose applies independently
+of tracker type; details and next show workflow, safety, qualification, prerequisite
+reasons and actual evidence when supplied. Pure qualification/maintenance stays
+explicit. No unselected product contract or missing availability is fabricated.
+Explicit idle has durable provenance, rejects ambiguous/missing selection and
+unreconciled claims, and handles next/details text/JSON without null crashes.
+
+Manager routing requires an exact source-witnessed owner appointment and separately
+witnessed step classification. Retagging the requested route cannot override a
+reserved/default decision. Missing/out-of-scope/unsupported requests retain owner
+boundaries; malformed provenance fails checks. Actual sequence appointments are
+reused only within named tasks/kinds. Structure cannot authenticate a human or
+replace independent review. Normalized worktree/path containment catches parent,
+child, identical and aliased reservations while preserving disjoint paths and the
+explicit global exact-name subsystem contract. Ready/none authorization now also
+has a valid in-progress claim path without inventing an execution grant.
+
+Actual focused verification: `python3 -m unittest discover -s scripts -p
+ 'test_project*.py'` passes 100 cases, covering selector, feature policy, holds,
+idle, named guidance, scoped routing, claims, history and retired-WDQ independence.
+Normal full drift now explicitly runs feature-delivery and both new regression
+owners; no retired hook is reactivated. `test_source_health_governance.py` passes
+13 policy-integrity cases. State 98/current projection, progress coverage,
+governance 569, parity 30, traceability 29 routes/131 artifacts, source health
+against c9adf4f0 and whitespace pass at their declared changed scope. Raw logs,
+per-original-record comparison, route review and frozen candidate belong to
+`/home/bfadmin/Documents/datum-eda-workspaces/scratch/production-process-corrections`.
+
+Preservation compares all 97 original task rows and 333 original tracker rows:
+19 unfinished tasks gain purpose; only S5A additionally gains the real hold and
+temporary canonical deselection. All original grants, dependencies, completion
+steps/status/evidence, summaries, lifecycle and claims remain exact. All 78 landed
+rows, old tracker rows/order, feature-delivery task history and numbered decision
+receipts remain exact. Existing route membership is unchanged; worker actual
+source/consumer review reconciles only the owning route digest/note. Actual
+distinct candidate review and manager objective acceptance remain pending.
+
+No Cargo/native/full-drift campaign was run for this Python/governance change.
+Existing unrelated full-qualification failures (engine Clippy issue
+`dat-preexisting-engine-clippy-k2kn`, GUI parity issue
+`dat-first-edit-parity-drift-dlkt`, private-writer gate issue
+`dat-private-writer-journal-gate-0u2x`, physical/HUMAN and other recorded limits)
+remain open at their original scope; none is passed, waived or made a new
+prerequisite here. Final accepted closure is proposed to record explicit idle,
+close only this bounded issue and release this claim, retaining purposes, S5A
+hold/grant/C04–C06 and all product work. No successor or product work follows.
+
+### Actual production-process v1 review and bounded v2 corrections
+
+Actual independent reviewer `/root/closeout_review` returned `REVISE_REQUIRED`
+for frozen v1, with exactly mandatory findings PPC-R1–R3. Receipt:
+`/home/bfadmin/Documents/datum-eda-workspaces/scratch/production-process-corrections/independent-candidate-v1-review.json`,
+SHA-256 `dfd6c3fd05493ee415c7edb04e8376915cd7051804424cc0c05a96d493235a76`.
+The actual manager received the findings and released the v1 review freeze for
+these unchanged-scope corrections. Frozen v1 pins, complete patch, actual
+review/reproduction artifacts and its six worker evidence receipts remain intact.
+This is not a PASS, objective acceptance, local landing or closure.
+
+PPC-R1: absent decision classification remains owner-reserved; explicitly present
+null/non-object classification is rejected. Presentation also avoids dereferencing
+a non-object classification. Render checking validates state before projection,
+and optional selection rendering is shape-safe. Actual new CLI regressions cover
+controlled human/JSON next/details refusal for null classification and
+human/JSON next/details/check-render refusal for null selection, without traceback
+or implicit idle. Existing genuine reserved/default manager-appointment negatives
+remain passing.
+
+PPC-R2: GUI-PERFORMANCE-IMPLEMENTATION now explicitly has qualification purpose
+and a remaining-scope rationale. S4 is complete; finite resize observation,
+conditional existing-probe diagnosis, method/scope/finding disposition and S5
+qualification do not deliver new application behavior or authorize optimization
+or automatic repair. Matching current migration prose is corrected. All original
+steps, statuses, evidence, dependencies, grant and limits remain exact; no
+performance consumer or route is changed.
+
+PPC-R3: the new S5A resumption instruction now orders durable actual owner
+resumption and ownership reconciliation, then fresh synchronized Frontier/beads
+claim before edits, then required old-reader migration before affected proof.
+The reader obligation and all paused qualification remain. No reader implementation
+is part of this assignment.
+
+The affected project regression batch now passes 102 tests; the dated v1
+100-test and independent failure receipts retain their original scope. Original
+97-record/333-tracker-row preservation still passes. Existing complete owning-route
+review/digest and 13 unchanged source-health/policy-integrity regression results
+are reused at their exact unchanged scopes. Actual independent v2 delta review
+and manager objective acceptance remain pending before landing or closure.

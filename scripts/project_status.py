@@ -27,10 +27,15 @@ del _source_namespace, _source_bootstrap
 
 from project_task_details import (
     completion_view, render_completion, resolve_claim_state,
-    selected_completion_step, validate_completion,
+    validate_completion,
 )
 from project_feature_delivery import delivery_lines, validate_feature_delivery
 from history_commit_locator import commit_exists
+from project_claim_scope import claim_scope_failures
+from project_work_authority import (
+    validate_item_authority, validate_selection, validate_appointments,
+    decision_view, work_start, authority_lines, idle_view, render_idle,
+)
 
 
 START_MARKER = "<!-- ACTIVE FRONTIER:START -->"
@@ -43,16 +48,17 @@ STATE_AUTHORIZATIONS = {
     "planned": {"planning", "execution", "owner_decision", "none"},
     "specified": {"planning", "owner_decision"},
     "ready": {"execution", "none"},
-    "in_progress": {"execution", "planning", "owner_decision"},
+    "in_progress": {"execution", "planning", "owner_decision", "none"},
     "blocked": {"execution", "planning", "owner_decision", "none"},
     "deferred": {"none"},
     "landed": {"none"},
 }
-ROOT_KEYS = {"schema_version", "policy_decision", "claim_ttl_hours", "frontier"}
+ROOT_KEYS = {"schema_version", "policy_decision", "claim_ttl_hours", "frontier", "selection", "management_appointments"}
+REQUIRED_ROOT_KEYS = ROOT_KEYS - {"selection", "management_appointments"}
 ITEM_KEYS = {
     "key", "order", "title", "issue_id", "related_issue_ids", "governing_docs",
     "state", "authorization", "canonical_next", "parallel", "summary",
-    "dependencies", "unblocks", "landing_commit", "claim", "completion", "feature_delivery",
+    "dependencies", "unblocks", "landing_commit", "claim", "completion", "feature_delivery", "work_purpose", "hold", "decision_routing",
 }
 REQUIRED_ITEM_KEYS = {
     "key", "order", "title", "issue_id", "governing_docs", "state",
@@ -196,13 +202,13 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
     if not isinstance(manifest, dict):
         return ["active frontier root must be an object"], {}
     unknown_root = set(manifest) - ROOT_KEYS
-    missing_root = ROOT_KEYS - set(manifest)
+    missing_root = REQUIRED_ROOT_KEYS - set(manifest)
     if unknown_root:
         failures.append(f"unknown active-frontier keys: {', '.join(sorted(unknown_root))}")
     if missing_root:
         failures.append(f"missing active-frontier keys: {', '.join(sorted(missing_root))}")
-    if type(manifest.get("schema_version")) is not int or manifest.get("schema_version") not in (5, 6):
-        failures.append("schema_version must be 5 or 6")
+    if type(manifest.get("schema_version")) is not int or manifest.get("schema_version") not in (5, 6, 7):
+        failures.append("schema_version must be 5, 6 or 7")
     if not nonempty(manifest.get("policy_decision")):
         failures.append("policy_decision must be non-empty")
     ttl = manifest.get("claim_ttl_hours")
@@ -355,6 +361,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
         elif landing is not None:
             failures.append(f"{label}: landing_commit is only allowed for landed state")
         validate_claim(item, issue, ttl, moment, failures)
+        failures.extend(validate_item_authority(root, item, governed, manifest.get("schema_version")))
         failures.extend(validate_feature_delivery(root, item, issue))
         if "completion" in item:
             failures.extend(validate_completion(root, item, issues, governed))
@@ -367,19 +374,11 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
     if delivery_checks:
         from workflow_delivery_selector import selector_failures
         failures.extend(selector_failures(root, manifest))
-    if len(next_items) != 1:
-        failures.append(f"exactly one canonical_next is required, found {len(next_items)}")
+    failures.extend(validate_selection(root, manifest, next_items, governed))
+    failures.extend(validate_appointments(root, manifest, governed))
     if orders and orders != set(range(len(orders))):
         failures.append("frontier order values must be contiguous from 0")
-    for index, (left_key, left) in enumerate(active_claims):
-        left_scope = set(left.get("scope", [])) if isinstance(left.get("scope"), list) else set()
-        for right_key, right in active_claims[index + 1:]:
-            right_scope = set(right.get("scope", [])) if isinstance(right.get("scope"), list) else set()
-            overlap = sorted(left_scope & right_scope)
-            if left.get("worktree") == right.get("worktree") and overlap:
-                failures.append(
-                    f"overlapping active claims: {left_key} and {right_key} share {overlap}"
-                )
+    failures.extend(claim_scope_failures(root, active_claims))
     for issue_id, issue in issues.items():
         labels = set(issue.get("labels", [])) if isinstance(issue.get("labels", []), list) else set()
         controlled = labels & ROADMAP_LABELS
@@ -410,6 +409,9 @@ def render_block(manifest: dict[str, Any]) -> str:
         "> Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.",
         "",
     ]
+    selection = manifest.get("selection")
+    if isinstance(selection, dict) and selection.get("mode") == "idle":
+        lines.extend(["**Explicit idle:** " + manifest["selection"]["reason"], ""])
     history_open = False
     for index, item in enumerate(records):
         landed = item["state"] == "landed"
@@ -427,6 +429,8 @@ def render_block(manifest: dict[str, Any]) -> str:
         flags = [f"state `{item['state']}`", f"authorization `{item['authorization']}`"]
         if item["canonical_next"]:
             flags.append("**CANONICAL NEXT**")
+        if item.get("hold"):
+            flags.append("**HELD — no work start**")
         if item["parallel"]:
             flags.append("parallel lane")
         lines.append(f"- **{item['title']}** (`{item['key']}`; `{item['issue_id']}`).")
@@ -471,7 +475,7 @@ def emit(payload: dict[str, Any], as_json: bool, human: str, error: bool = False
         print(human, file=sys.stderr if error else sys.stdout)
 
 
-def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
+def next_view(item: dict[str, Any], issue: dict[str, Any], appointments: dict | None = None) -> dict[str, Any]:
     """Join roadmap selection with the operational facts agents must report."""
     view = dict(item)
     view["tracker_status"] = issue.get("status")
@@ -480,10 +484,8 @@ def next_view(item: dict[str, Any], issue: dict[str, Any]) -> dict[str, Any]:
     view["live_claim"] = claim_state == "active"
     view["claim_state"] = claim_state
     view["claim_detail"] = claim_detail
-    selected = selected_completion_step(item)
-    view["owner_input_required"] = bool(
-        selected and selected.get("kind") == "owner_decision"
-    )
+    view.update(decision_view(item, appointments or {}))
+    view["work_start"] = work_start(item, issue, view, claim_state)
     return view
 
 
@@ -503,11 +505,9 @@ def render_next(view: dict[str, Any]) -> str:
         f"live claim: {live_claim}",
         f"Next completion step: [{step_id}] {selected['action']}",
     ]
-    if view["owner_input_required"]:
-        lines.append(
-            "Owner boundary: INPUT REQUIRED; code agents must stop and request the "
-            "project owner's decisions before any claim or edit."
-        )
+    lines.append("Work start: " + view["work_start"])
+    lines.extend(authority_lines(view))
+    if view["decision_input_required"]:
         owner_input = selected["owner_input"]
         lines.append(f"Owner response format: {owner_input['response_format']}")
         lines.append("Owner decisions requested:")
@@ -550,7 +550,11 @@ def main(argv: list[str] | None = None) -> int:
                  as_json, f"Project status check passed ({len(state['manifest']['frontier'])} frontier items).")
         elif args.command == "next":
             item = state["next"]
-            view = next_view(item, state["issues"][item["issue_id"]])
+            if item is None:
+                view = idle_view(state["manifest"])
+                emit({"ok": True, "next": None, **view}, as_json, render_idle(view))
+                return 0
+            view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
             emit({"ok": True, "next": view}, as_json, render_next(view))
         else:
             item = state["next"]
@@ -566,16 +570,28 @@ def main(argv: list[str] | None = None) -> int:
                     )
                     return 1
                 item = matches[0]
+            if item is None:
+                view = idle_view(state["manifest"])
+                emit({"ok": True, "details": None, **view}, as_json, render_idle(view))
+                return 0
             if "completion" not in item:
-                emit(
-                    {"ok": False, "failures": [f"{item['key']}: no completion plan"]},
-                    as_json, f"Project task details failed: {item['key']} has no completion plan", True,
-                )
-                return 1
-            view = completion_view(item, state["issues"][item["issue_id"]])
+                view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
+                view["completion"] = None
+                human = "\n".join([
+                    "Presentation contract: return this stdout byte-for-byte; do not supplement it.",
+                    f"Task details: {view['title']} ({view['issue_id']})",
+                    f"State: {view['state']}; authorization: {view['authorization']}",
+                    f"Tracker: {view['tracker_status']}; assignee: {view['assignee'] or 'unassigned'}; live claim: {view['claim_detail']}",
+                    "Work start: " + view["work_start"], view["summary"],
+                    *authority_lines(view), *delivery_lines(view),
+                    "Completion plan: none recorded; this query does not authorize work.",
+                ])
+                emit({"ok": True, "details": view}, as_json, human)
+                return 0
+            view = completion_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
             emit({"ok": True, "details": view}, as_json, render_completion(view))
         return 0
-    if args.command == "render":
+    if args.command in {"render", "check-render"}:
         failures, _ = validate(root)
         if failures:
             emit({"ok": False, "failures": failures}, as_json,

@@ -57,7 +57,10 @@ def _ordinary_record(root: Path, path: str, contract: dict) -> list[str]:
 
 def validate_feature_delivery(root: Path, item: dict, issue: dict) -> list[str]:
     contract = item.get("feature_delivery")
-    required = item.get("canonical_next") and issue.get("issue_type") == "feature"
+    purpose_record = item.get("work_purpose")
+    purpose = purpose_record.get("kind") if isinstance(purpose_record, dict) else None
+    required = ((item.get("canonical_next") or item.get("state") == "in_progress")
+                and (purpose == "product_delivery" or purpose is None and issue.get("issue_type") == "feature"))
     label = str(item.get("key", "?")) + ": feature delivery"
     if contract is None:
         return [f"{label} requires an ordinary-workflow contract"] if required else []
@@ -107,11 +110,20 @@ def validate_feature_delivery(root: Path, item: dict, issue: dict) -> list[str]:
 def delivery_lines(view: dict) -> list[str]:
     contract = view.get("feature_delivery")
     if not isinstance(contract, dict):
+        if (view.get("work_purpose") or {}).get("kind") == "product_delivery":
+            return ["Delivery contract: required before selection or work start; none recorded. No availability claimed."]
         return []
     lines = ["Ordinary user workflow: " + " -> ".join(contract["ordinary_workflow"])]
     status = "available; full qualification remains separate" if contract["development_ready"] else "not available"
     lines.append("Development build: " + status)
-    if not view.get("owner_input_required"):
+    lines.append("Safety requirements: " + "; ".join(contract["safety_requirements"]))
+    lines.append("Qualification followups: " + ("; ".join(contract["qualification_followups"]) or "none recorded"))
+    lines.append("Prerequisite reasons: " + ("; ".join(f"{key} — {value}" for key, value in contract["prerequisite_reasons"].items()) or "none"))
+    lines.append("Ordinary application evidence: " + (", ".join(contract["ordinary_evidence"]) or "none recorded"))
+    if (not view.get("decision_input_required", view.get("owner_input_required"))
+            and not view.get("hold")
+            and ("canonical_next" not in view or view["canonical_next"])
+            and ("state" not in view or view["state"] not in {"blocked", "deferred", "landed"})):
         lines.append(
             "Delivery rule: continue within the recorded grant through implementation, focused safety checks, "
             "repairs and required review; stop only for delivery or a concrete authority, safety, review/transport "

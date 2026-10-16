@@ -81,14 +81,16 @@ normative.
 
 ### PS-001: One roadmap authority
 
-`specs/active_frontier.json` MUST use schema version 5 and contain every
+`specs/active_frontier.json` MUST use schema version 7 for current state (versions 5/6 remain readable for
+compatible historical data) and contain every
 scheduled roadmap item with a stable unique key, contiguous order, lifecycle
 state, authorization state, governing-document links, exact beads issue ID,
 hard dependencies, unblocks, summary, and explicit canonical-next/parallel
 flags. A ready beads issue absent from this file is intake only.
 
-The manifest MUST identify exactly one deterministic next task when executable
-work exists. Parallel work MAY be represented, but concurrency MUST NOT make the
+The manifest MUST explicitly select exactly one deterministic next task or
+record a deliberate idle disposition with reason and governed evidence. Idle
+may retain ready work without authorizing it; closure never requires a successor. Parallel work MAY be represented, but concurrency MUST NOT make the
 answer to `project_status.py next` ambiguous.
 
 ### PS-002: Generated human projection
@@ -107,8 +109,8 @@ Every scheduled item MUST separately state:
   `deferred`, or `landed`; and
 - authorization: `planning`, `execution`, `owner_decision`, or `none`.
 
-An item is executable only when its lifecycle, authorization, dependencies, and
-claim state jointly permit execution. “Specified,” “ready,” “NEXT,” and
+An item is executable only when its lifecycle, authorization, dependencies,
+explicit selection, absence of a hold and claim state jointly permit execution. “Specified,” “ready,” “NEXT,” and
 “in_progress” are not synonyms. `specified` + `planning` MAY be selected when
 the next task is specification work; it never authorizes feature execution.
 
@@ -170,7 +172,8 @@ every namespaced requirement marker in its governing documents MUST be covered.
 `details` human and JSON output MUST preserve the same order and content.
 
 Work-start guidance is derived from validated claim state: open/unassigned work
-requires the synchronized Frontier-plus-beads claim transaction; a live claim
+requires the synchronized Frontier-plus-beads claim transaction only when
+selected, unheld and otherwise authorized; a live claim
 requires other agents to stand down or coordinate an explicit handoff. Closing
 or unblocking work MUST NOT silently authorize or select its successor.
 
@@ -183,6 +186,81 @@ parallel work. The ordinary human
 answer is `details` stdout byte-for-byte: manifest order and numbering are
 preserved, and regrouping, supplementation, and inferred concurrency are
 forbidden. JSON MUST expose the same policies.
+
+## Owner-authorized production-process correction — 2026-10-16
+
+The owner expressly directs correction of the five audited process defects under
+PRODUCTION-PROCESS-CORRECTION, with the bounded appointment and exact receipt in
+[existing task evidence](../reviews/specification-history/specification-reorganization.md#owner-authorized-production-process-corrections--ppc01).
+This amends standing rules below; historical receipts retain their original
+scope and effects. No product grant, qualification or successor is supplied.
+
+### PS-010: Enforced holds and truthful work start
+
+A `hold` has exactly `reason`, governed `source_ref` (repository-relative path
+and unique literal marker), `resume_requires`, and `completion_checkpoint`
+(the exact internal `canonical_next_step_id` and `step_statuses` map). It preserves underlying
+lifecycle/grant and internal completion selection. Held work MUST NOT carry an
+agent claim, active completion step or landed lifecycle, or advance beyond its
+held completion checkpoint. Both human/JSON next
+and details expose hold provenance and resumption boundary with STOP guidance.
+Clearing a hold requires the actual authorized resumption disposition; a checker
+cannot authenticate human intent. A named query never selects or authorizes work.
+Blocked, deferred, landed, unselected and actively owned tasks MUST receive
+state-specific guidance rather than a generic invitation to claim.
+
+### PS-011: Explicit idle independent of closure
+
+Schema 7 root `selection` is either `{"mode":"selected"}` with exactly one
+canonical task, or `{"mode":"idle","reason":...,"source_ref":...}` with none.
+Idle requires a durable governed disposition and no active/unreconciled claims.
+Absent/malformed selection, multiple selections, or simultaneous idle/selection
+MUST fail. `next` and untargeted `details` return explicit idle in text/JSON;
+named details still expose the unchanged task. Ready tasks and tracker intake
+are never auto-picked. Completion can select idle without granting a successor.
+
+### PS-012: Work purpose and scoped decision authority
+
+Every unfinished record carries `work_purpose` with exactly `kind` and a concrete
+`rationale`. Kinds are `product_delivery`, `qualification`, `maintenance` and
+`planning`. Classification is reviewable authority metadata, independent of
+tracker type, priority or commit labels. Selected/active product delivery needs
+the PM059 contract; unselected planning creates no immediate implementation
+prerequisite. Historical landed records need no fabricated retrospective purpose
+or delivery evidence. Purpose changes require honest same-change review.
+
+Root `management_appointments` maps stable IDs to `session`, exact `task_keys`,
+allowed `decision_kinds` and governed `source_ref`. Immediately after that unique
+literal marker, a JSON witness must exactly match `owner_appointed:true`, session,
+task keys and decision kinds. This is an independently reviewed transcription of
+actual owner appointment; structure alone cannot establish authenticity.
+
+An owner-decision step defaults to owner-reserved. Only an explicit
+`decision_authority` (`kind`, `source_ref`) with a separately resolving JSON
+witness `{task_key,step_id,decision_kind}` can classify it as delegated. Item
+`decision_routing` maps step IDs to requested `appointment` and `decision_kind`.
+A route delegates only when its kind matches that independently witnessed step
+classification and the verified appointment includes both task and kind. Missing,
+unsupported, out-of-scope and owner-reserved routes remain owner boundaries.
+Malformed appointment/classification provenance fails validation. Human/JSON
+output identifies responsible decision-maker and appointment scope/provenance,
+retaining the exact ordered packet and stop-before-advance rule. One actual
+sequence-scoped appointment may cover its named decisions without repetitive
+owner relays; no broader production appointment is inferred.
+
+### PS-013: Actual claim identities
+
+A claim's worktree is an absolute path or a path relative to the queried repository
+root, normalized through filesystem symlinks and parent segments. Bare scope
+strings are paths relative to that normalized worktree; absolute scopes, escapes
+and ambiguous colon forms fail. Existing aliases resolve to actual paths; future
+paths remain valid. Identical/ancestor/descendant path reservations collide,
+including equivalent worktree aliases; mere textual prefixes do not. Disjoint
+actual worktrees/paths do not collide merely because relative spelling matches.
+`subsystem:<name>` is an explicit case-sensitive global exact-name reservation
+(name contains alphanumeric, dot, underscore or hyphen, starting alphanumeric).
+It neither claims path containment nor replaces declaring paths actually edited.
+Expiry and explicit ownership-transfer protections remain unchanged.
 
 ## Consequences
 

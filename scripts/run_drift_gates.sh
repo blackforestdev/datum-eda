@@ -45,6 +45,9 @@ python3 scripts/check_progress_coverage.py
 python3 scripts/test_project_status.py
 python3 scripts/test_project_status_history.py
 python3 scripts/test_project_status_claim.py
+python3 scripts/test_project_feature_delivery.py
+python3 scripts/test_project_work_authority.py
+python3 scripts/test_project_claim_scope.py
 python3 scripts/test_project_status_without_wdq.py
 python3 scripts/project_status.py check
 python3 scripts/check_spec_parity.py
