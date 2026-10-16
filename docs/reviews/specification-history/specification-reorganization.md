@@ -1,5 +1,9 @@
 # Bounded specification reorganization
 
+Current consolidation is in [Current assessed cleanup status](#current-assessed-cleanup-status)
+and the [eight-group dispositions](#remaining-backlog-dispositions). The original
+appointments, contracts and delivery sections retain their dated scope.
+
 ## Appointment and scope
 
 The owner explicitly appointed manager `codex-reorganization-manager-20261014`
@@ -39,21 +43,75 @@ execution is authorized. The broader semantic intake remains open/unselected.
 
 ## Remaining backlog dispositions
 
-The eight numbered groups in `dat-documentation-semantic-reconciliation-olnn`
-are an original intake snapshot, not eight newly authorized cleanup projects.
-The following finite reconciliation credits actual landings. Broader unreviewed
-remainders stay open/unselected; this does not claim corpus-wide reconciliation.
+This is the current consolidation of the eight original intake groups. All seven
+RC corrections are independently reviewed, landed and manager-accepted
+at the scopes linked below. It credits earlier accepted work without repeating
+its proof. The original REORG-SPEC-01 table and caveats remain verbatim in this
+same section at immutable baseline `f30c290c`; retrieve them with
+`git show f30c290cfaf0c482396cc6cb64f3c3e16cc72eca:docs/reviews/specification-history/specification-reorganization.md`.
+Earlier appointment, contract and delivery sections below retain their dated
+scope and original approvals; they are not competing current work lists.
 
-| Original group | Landed work and authoritative destination | Retained disposition |
+| Original group | Accepted work and existing evidence | Current disposition |
 | --- | --- | --- |
-| 1: IR/engine/native/selection overlap | Ownership `73b4be15` and [GOV05](governance-reconciliation.md#contract-reconciliation) `d767a08c`: ENGINE_SPEC §0.8 transactions, NATIVE_FORMAT_SPEC §5 persistence, PM026 consumer selection. CANONICAL_IR/RuleScope/PM053/054 retain unique rules. | The identified bounded type/selection conflicts are settled. Unreviewed clauses are intake, not a reason to repeat the full contracts. |
-| 2: performance repetition | GOV05 `d767a08c`: PM051 owns budget provenance; RECOVERY_PLAN owns the unchanged resize amendment; PM050 qualifies earlier pass-boundary wording. | Those exact summaries/status conflicts are settled. Optional route subdivision and unreviewed performance clauses remain separate intake; no fresh measurement or budget change. |
-| 3: structural/conductor/scope history | Organization `6a973551` and [stabilization history](../../STABILIZATION_PLAN.md) retain exact retrieval of decomposition, implementation and June cleanup plans. Current pass labels the retained conductor's dated verdict and links archive vocabulary to current formal/numbered owners. | Full original conductor and scope-audit rationale remain in place, with historical boundary. No blanket audit/code parity or integrated-spec promotion claim. |
-| 4: ERC/connectivity rationale/spec pairs | Checking organization `5fe2c4ba`; [maintenance receipt](maintenance-records.md#checking-proposal-status-and-portable-documentation). Formal checking/schematic owners control exact contracts; companions retain unique phase algorithms and PM053 rationale. | Identified pairs settled; no new rewrite. Other unreviewed pairs remain intake. |
-| 5: FFI/licensing/risk | `5fe2c4ba` distinguishes historical proposals from adopted authority; PM029 and actual legal instruments control. | Settled classification/reference subset. No license copy change, dependency/source adoption or legal determination. |
-| 6: review/history | `6a973551` retired redundant combined observations; GOV04 moved 81 maintenance markers intact. This pass separates standing PM059 from exact governed FDE/UED/NSD/SM task authority in [delivery records](feature-delivery-records.md). | Exact requirements, operative exceptions, approvals, holds, source pins and unique failure narratives remain. Other unreviewed capture/replay consumers stay intake; no deletion/replay performed. |
-| 7: machine-specific links/index instructions | `5fe2c4ba` repaired all 107 identified Markdown links and stale research-index procedures. Existing navigation names tools/subject owners. | Original identified set settled; no unbounded new portability audit. |
-| 8: target fixture migration | TARGET `b3920995`, [exact preservation/release receipt](maintenance-records.md#cargo-output-and-native-workspace-separation). Thirty-three collections preserved externally; six released test collections retired under reviewed manifests. | Settled. No further fixture/cache relocation, deletion, construction or cleanup authority. |
+| 1: IR/engine/native/selection overlap | Ownership `73b4be15` and [GOV contract reconciliation](governance-reconciliation.md#contract-reconciliation) `d767a08c` settled the identified type, transaction, version and selection/source overlaps. RC-03 clarified seed/sidecar versus persisted identity at `6e26fe8b`; RC-04 clarified selection-history authority at `8b740e00`. See [residual acceptance](#actual-residual-batch-b-and-combined-objective-acceptance) and [navigation acceptance](#actual-navigation-objective-acceptance). | Identified corrections complete. Unique RuleScope, PM053/054 and algorithm rationale remain; no general API/schema/geometry or full authoring acceptance. |
+| 2: performance repetition | GOV settled the identified PM051 provenance, resize and status summaries. Accepted RC-02 storage ownership at `be576a8b` and RC-05 later S4-closure navigation at `8b740e00` are recorded in [residual](#actual-residual-batch-b-and-combined-objective-acceptance) and [navigation](#actual-navigation-objective-acceptance) acceptance. | Identified corrections complete. Full method/resource/runtime qualification remains with existing performance owners; route subdivision is optional, not a new prerequisite. |
+| 3: structural/conductor/scope history | Organization `6a973551` and [stabilization history](../../STABILIZATION_PLAN.md) preserve earlier plan retrieval. [RSP acceptance](#actual-manager-acceptance-and-synchronized-closure) at `f35cdee0` labeled conductor/archive boundaries. Accepted RC-07 at `8b740e00` qualifies the two historical documentation lead-ins. | Named historical ambiguities resolved. Original conductor/audit rationale and receipts remain; no current-code parity or full integrated promotion is claimed. |
+| 4: ERC/connectivity rationale/spec pairs | Checking organization `5fe2c4ba`, [DOC-01 evidence](maintenance-records.md#checking-proposal-status-and-portable-documentation), and earlier [engine ownership](maintenance-records.md#documentation-ownership-and-external-audit-output) distinguish the exact named companions from formal requirements. | Named ERC, connectivity and engine-rationale pairs are settled. No additional exact pair was supported by the retained candidate set; unnamed pairs were not exhaustively audited. |
+| 5: FFI/licensing/risk | `5fe2c4ba` and [proposal-status evidence](maintenance-records.md#checking-proposal-status-and-portable-documentation) separate historical proposals from adopted authority, preserving PM029 and legal instruments. | Identified classification/reference corrections complete. No new dependency, source/rights adoption or legal assessment. |
+| 6: review/history/process/capture consumers | Organization retired redundant observations, GOV moved maintenance receipts, and [RSP acceptance](#actual-manager-acceptance-and-synchronized-closure) separated exact PM059 task authority/history. Accepted RC-01 and RC-02 at `be576a8b` correct retired WDQ references and raw-review storage while preserving actual proof duties. | Named contradictions resolved. Historical pins remain; required raw inputs must be available during actual review, with honest later availability. No artifact deletion, replay or exhaustive capture-reader audit. |
+| 7: machine-specific links/index instructions | `5fe2c4ba` repaired the identified 107 Markdown links and stale research-index procedures. Accepted RC-06 at `8b740e00` makes the one integrated naming row repository-relative and follows reviewed local-main procedure. | Identified link/index/row corrections complete. No full verification-matrix execution, repository-wide command portability certificate or new tool. |
+| 8: target fixture migration | TARGET `b3920995` and [preservation/release evidence](maintenance-records.md#cargo-output-and-native-workspace-separation) preserve 33 collections externally and retire six released collections under their reviewed manifests. | Complete at its original bounded scope. No further fixture/cache relocation, deletion, construction or cleanup authority. |
+
+## Current assessed cleanup status
+
+The retained assessment and accepted corrections support **no further confirmed
+organizational defect in this finite candidate set**. This does not say every
+project document or product requirement has been exhaustively reviewed or met.
+The recommendation is to finish this bounded reorganization phase after this
+closeout's actual independent review, local content landing and manager exit
+acceptance. Those closeout gates are still pending; this recommendation supplies
+no PASS, acceptance, broad-intake closure or successor assignment.
+
+The accepted correction landings are `be576a8b` (RC-01/02), `6e26fe8b` (RC-03)
+and `8b740e00` (RC-04/05/07/06), with synchronized closures `72e3b6f5` and
+`f30c290c`. [Residual](#actual-residual-batch-b-and-combined-objective-acceptance)
+and [navigation](#actual-navigation-objective-acceptance) evidence retains the
+actual independent receipts, manager dispositions, failures and exact limits.
+
+### Retained scope and assessment limits
+
+| Kind | Exact retained boundary and existing destination |
+| --- | --- |
+| Outside the finite core-overlap assessment | No exhaustive API/geometry/schema evaluation of [ENGINE_SPEC §§1–5](../../../specs/ENGINE_SPEC.md#1-core-types), [NATIVE_FORMAT_SPEC §§6–8](../../../specs/NATIVE_FORMAT_SPEC.md#6-schemas), the [PCB tool inventory](../../contracts/PCB_LAYOUT_TOOL_CONTRACT.md#tool-inventory), or UVT's full [class matrix](../../gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md#2216-s5-c01-selection-identityclass-matrix-reconciled) and [snap/LOD/editor sections](../../gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md#3-snap--quantize), beyond the exact consulted overlap clauses. Existing formal/tool authorities remain; no defect or new issue is inferred from this limit. |
+| Outside the finite performance-overlap assessment | No new semantic/runtime qualification of all 225 [implementation-map rows](../gui-performance/implementation-map.json), [E01–E12 engineering families](../../../specs/GUI_SHARED_ENGINEERING_CONTRACT.md), [HP01–HP25](../../../specs/GUI_PERFORMANCE_RECOVERY_PLAN.md#historical-corrective-patch-prevention-contract), or complete [measurement/resource/temporal methods](../../../specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md). The exact settled prose and actual baseline/delta reviews retain their scopes; numbers, feasibility, native output and qualification were not revalidated here. |
+| Unnamed pairs and readers | No new all-repository pair search, full event-JSON re-evaluation or exhaustive capture-reader execution. The named retired pilot capture/package availability is already bounded by the [review storage/history owner](../README.md#historical-records); immutable paths/hashes are not a current replay promise. Unnamed material is not falsely closed or promoted into speculative cleanup. |
+| Optional idea and retained promotion obligation | Performance-route subdivision is an optional, unselected organizational idea; no missing ownership/digest defect was demonstrated in the assessed set. Full integrated promotion is a separate unfinished existing obligation under [PROGRAM_SPEC ownership](../../../specs/PROGRAM_SPEC.md#ownership-and-precedence) and [INTEGRATED_PROGRAM_SPEC §6](../../../specs/INTEGRATED_PROGRAM_SPEC.md#6-promotion-criteria-to-full-integrated-spec). It is neither completed, waived nor reclassified as optional. This closeout creates no new cleanup or product prerequisite. |
+
+### Existing product and decision owners
+
+These destinations retain their existing task contracts, grants, dependencies,
+pauses and acceptance gates. They are navigation, not a product recommendation
+or selection; use the existing selector for actual current task state.
+
+| Retained work or decision | Existing authority and task owner |
+| --- | --- |
+| Paused S5A and later shared authoring | UVT-S5A-BUILD and its [foundation completion contract](../../../specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md#uvt-s5a-build--selection-and-read-only-compound-inspection) retain the owner pause, grant, absent claim and unfinished C04–C06. GUI-WRITE-PATH, NATIVE-AUTHORING and PROJECT-WRITER-OWNERSHIP retain their own contracts and safety/review gates in the [structured Frontier](../../../specs/active_frontier.json). No work resumes. |
+| Performance, budgets and qualification | GUI-PERFORMANCE-IMPLEMENTATION, GUI-PERFORMANCE-BASELINE and NATIVE-WORKFLOW-BUDGETS retain their exact scope/decision steps. [PM051](../../decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md), the [implementation contract](../../../specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md) and its existing evidence own S4/S5, resize, methods and budget limits. Native/HUMAN/CAM obligations stay with their existing product contracts; no number or proof is passed here. |
+| Production library input and source rights | PM008/PM062 and the library contract own provenance/admission; source issue `dat-native-library-source-authority-8xm7` and the [existing exact input packet](native-delivery-reorganization.md#content-consumers-and-maintenance-that-can-wait) remain. Editor availability and synthetic content do not approve a production library. No legal/source adoption or provider access is decided. |
+| Bootstrap and native-file proposal | [Library bootstrap](../../LIBRARY_BOOTSTRAP_STRATEGY.md), the [pending library investigation](../workflow-delivery-rollout/library-foundation-investigation.json) and [native-file proposal](../workflow-delivery-rollout/native-file-types-proposal.md) keep the [existing owner packets](governance-reconciliation.md#pending-document-dispositions). Offline/online, content/distribution/starter scope, suffix/schema/migration questions remain pending. Formal native persistence remains owned by NATIVE_FORMAT_SPEC; PM011's import freeze is unchanged. |
+
+### Bounded exit recommendation and gate
+
+Recommend closing the assessed reorganization phase once this closeout is
+independently reviewed, locally landed and objectively accepted by the appointed
+manager. No exact new organizational correction is assigned. Broad semantic
+intake remains open/unselected for the explicit limits above; optional ideas
+and product/owner decisions retain their own authorities. This recommendation
+does not finish or waive the existing integrated-promotion obligation. Final closure must
+release only this cleanup claim and restore the complete original paused S5A
+record and all 96 prior task records/root settings. Actual review and exit
+acceptance are recorded later in this task's evidence, never inferred here.
 
 ## Ownership and authority reconciliation
 
@@ -807,3 +865,89 @@ metadata paths change. State 96/current projection, progress coverage,
 569 classifications, 30 parity inventories, 29 routes / 131 artifacts and
 whitespace checks pass. Normal local closure hooks remain required; no new
 product/runtime proof is claimed.
+
+## Owner-selected assessed-phase closeout — REORG-CLOSEOUT-01
+
+The owner explicitly selected deliverables 1–4: refresh the current eight-group
+summary; distinguish exact cleanup, optional ideas and assessed limits; route
+product/qualification/pending decisions to existing owners; and recommend an
+evidence-based bounded phase exit or a supported exact remainder. Appointed
+manager `codex-reorganization-manager-20261014`, thread
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`, assigned this exact four-path closeout
+on 2026-10-16 under the retained owner appointment and PM059. All earlier task
+contracts, actual reviews/acceptances and historical bodies retain their scopes.
+
+This assignment consolidates accepted evidence; it conducts no exhaustive
+corpus review or product qualification. Only the existing disposition/wayfinding
+area, appended closeout evidence and synchronized state/tracker projection may
+change. The original broad-intake description is preserved verbatim in a labeled
+baseline snapshot appended after its unchanged existing notes, before replacing
+that description with current scope. Broad intake stays open and unselected.
+
+Baseline `f30c290cfaf0c482396cc6cb64f3c3e16cc72eca` contains 96 original
+Frontier records. Only S5A's canonical flag is temporarily suspended; all other
+original fields/order/root settings remain exact. Final accepted closure restores
+the entire paused, unclaimed S5A row without resuming work. Fresh route lookup
+confirms none of these four files has direct source/consumer membership; no
+evidence manifest, source membership or digest change is authorized.
+
+Actual scoped TARGET, organization, ownership, checking, GOV, RGO, RSP, residual
+and navigation evidence is reused with verified reachable landings and later
+accepted closure. The retained category assessment supplies explicit limits,
+not a full-corpus certificate or new grant. Actual current task owners and the
+three pending governance classifications were inspected for accurate routing.
+Independent review must assess all four deliverables and preservation before
+manager-directed local content landing. Objective exit acceptance follows that
+actual landing; the recommendation alone does not close this task or the phase.
+
+### Assessed-phase closeout completion contract
+
+<!-- REQ:SPECIFICATION-CLEANUP-CLOSEOUT:RCO-01 -->
+- RCO-01: Consolidate all four closeout deliverables covering current eight-group dispositions, precise retained scope, existing product-owner routing and bounded exit recommendation; preserve history, obtain actual distinct review, local content landing and manager objective exit acceptance.
+
+<!-- REQ:SPECIFICATION-CLEANUP-CLOSEOUT:RCO-02 -->
+- RCO-02: After actual exit acceptance, close only this bounded issue, release and unassign its claim, export tracker and projection, and restore all 96 original task rows and root settings including exact paused S5A; verify and land synchronized closure without successor work.
+
+Pre-review manager clarification keeps the assessment's original distinction:
+RC-01..03 were concrete conflicts and RC-04..07 were optional improvements later
+expressly selected and accepted. The current view therefore says all seven RC
+corrections without retroactively classifying the optional items as defects.
+Performance-route subdivision remains optional; integrated promotion remains an
+unfinished existing obligation, not a newly optional requirement. At actual
+final exit acceptance, the current closeout status/gate will record the accepted
+review, landing and exit outcome with links, replacing pending wording only in
+that current area. Candidate versions and dated historical records remain
+recoverable; nothing is accepted or closed prematurely.
+
+### Actual closeout independent review and landing continuation
+
+Actual independent reviewer `/root/closeout_review` returned
+`BOUNDED_SOURCE_REVIEW_PASS` with no mandatory findings on 2026-10-16.
+The frozen v2 candidate is
+`50872f3ba10ec17bb14993ec02a9dfecacb71683397886485b67be3ef443243f`,
+with complete patch
+`4cd6c8e67c69c162b460361a961512f809b06dc1c8b640318e869fbfaa4662a8`.
+The actual receipt is
+`/home/bfadmin/Documents/datum-eda-workspaces/scratch/reorg-closeout/independent-candidate-v2-review.json`,
+SHA-256 `e35f7087ac885196ac84907af5906713ae89faf033b696f7902f015e2ceeb9ad`.
+It independently verified the four deliverables, complete history inverse,
+18 original markers, all 96 prior task records at the permitted temporary
+selection, original tracker rows and verbatim description snapshot, unchanged
+route manifest, and current state/projection. This bounded source review does
+not certify unreviewed corpus or product/runtime qualification.
+
+Informational observation RCO-I1 corrects the draft scratch count of 32 new or
+changed Markdown targets/fragments: independent extraction found **37 added
+link occurrences, 31 distinct resolving destinations/fragments, and 27 newly
+introduced destinations**. The original candidate count remains recoverable;
+no broken link or repository source defect was found.
+
+The appointed manager received this actual review and issued unchanged-scope
+local content landing continuation in
+`/home/bfadmin/Documents/datum-eda-workspaces/scratch/reorg-closeout/manager-continuation.json`,
+SHA-256 `ef936680131e9b818f8856cc7896c8e2642dbbf05a52a1f01f048106f35dea5b`.
+That disposition authorizes faithful evidence transcription, required affected
+checks and normal local four-path content landing. RCO-01 remains active and
+RCO-02 pending. Objective exit acceptance awaits actual landing verification;
+this receipt neither closes the phase nor releases its claim, restores S5A,
+selects a successor or authorizes product work.
