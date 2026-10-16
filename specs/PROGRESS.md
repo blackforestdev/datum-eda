@@ -14,6 +14,8 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
+**Explicit idle:** Owner-authorized reproducible replay-input maintenance is accepted: replacements landed at2b7fe4ef, reviewed external collections/metadata and released task scratch retired, protected data unchanged and standalone provisioning verified after removal. No product or successor authority; S5A remains held.
+
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -249,7 +251,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (37 landed records)</summary>
+<summary>Completed history (38 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -362,13 +364,12 @@
 - **Correct the three audit findings and verify Symbol Move transport behavior** (`CORRECT-AUDIT-FINDINGS`; `dat-private-writer-journal-gate-0u2x`).
    AUDIT-01/02/03 corrected and QUESTION-01 verified at independently reviewed content8948efe9 with actual manager landing/cleanup acceptance. PWO bounded credit reconciled without closing broader obligations; journal guard repaired with negative controls; duplicate discovery intake consolidated. Verified Symbol Move gap616t stays open/unselected. Claim released and explicit idle restored; S5A hold and all product/qualification boundaries remain. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/specification-reorganization.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`, `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+- **Replace required external replay inputs and retire obsolete collections** (`REPRODUCIBLE-REPLAY-INPUTS`; `dat-reproducible-replay-inputs-g2mc`).
+   Standalone exact replay inputs landed at2b7fe4ef with independent bounded source review and manager acceptance; all54 retired collections,26external metadata files and released task scratch removed after reviewed safe checks. Manager verified protected data and757-file provisioning after removal. Explicit idle; no product/S5A qualification or successor. *state `landed`; authorization `none`.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/maintenance-records.md`.
 
 </details>
 
-- **Replace required external replay inputs and retire obsolete collections** (`REPRODUCIBLE-REPLAY-INPUTS`; `dat-reproducible-replay-inputs-g2mc`).
-   RI-01 standalone replay inputs independently reviewed and manager accepted at bounded source scope; landing and exact reviewed retirement proceed under RI-02, with originals preserved until landed replacement is verified. No S5A or product successor authority. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/maintenance-records.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

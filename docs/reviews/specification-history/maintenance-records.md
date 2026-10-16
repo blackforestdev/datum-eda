@@ -1054,7 +1054,11 @@ exact reviewed implementation is ready to land. No qualification PASS is implied
 - RI-02: After verified replacements and actual independent review of exact retirement set, retire authorized obsolete and replaced collections, record retained boundaries and close to explicit idle without successor authority.
 
 <!-- EVIDENCE:REPRODUCIBLE-REPLAY-INPUTS:RI-02 -->
-Implementation/proof/review pending; no completion claimed.
+Reviewed replacements landed in `2b7fe4efe3c6e8278709a10d368bc3ecfc601bfb`;
+the manager verified that commit and authorized exact reviewed retirement. All
+54 collections, 26 external metadata files and released own-task scratch were
+removed after fresh checks. The manager independently verified the outcome and
+accepted RI-02; the task is complete, claim released and explicit idle restored.
 
 Acceptance: isolated clean checkout without old collections, ignored maps, backup,
 undocumented binary prerequisites or unrecorded fetch; all eleven frozen fixture families including
@@ -1313,6 +1317,40 @@ remove the external workspace root only if empty. Unknown or newly owned entries
 must be retained. No local `.datum/history-cleanup` recovery record, original-
 history backup or unclassified `datum-projects` path is selected for removal.
 
+### Actual RI-02 retirement
+
+The manager verified reviewed content landing
+`2b7fe4efe3c6e8278709a10d368bc3ecfc601bfb` on clean main and authorized the
+previously reviewed exact set under the owner's existing goal. The reviewer,
+manager and implementing worker explicitly released all task scratch/export use.
+Fresh checks matched all 54 original inventories (30,019 files, 1,648,570,424
+bytes), all 26 external metadata hashes (9,784,913 bytes), UID 1000 ownership and
+no symlinks, special files or nested mounts. `/proc` cwd/exe/fd/maps scanning of
+318 processes found no visible selected-path reference; `lsof +D` also found none.
+Visibility is limited: 201 foreign/system processes and six known protected
+session services could not be fully inspected. Their current identities/visible
+arguments were reconfirmed as systemd, sd-pam, ssh-agent, kwin_wayland,
+polkit-kde-auth and org_kde_powerde. No newly unclassified same-user task process
+was accepted; no privilege escalation or complete-process claim is made.
+
+An in-memory exact entry inventory was rechecked before removal. Only recorded
+files were unlinked and known empty directories removed; unknown/new entries
+would be preserved by nonempty-directory refusal. Actual removal: 54 collections,
+26 metadata files and the sole released scratch tree (28,892 files). Total:
+58,937 files, 2,559,027,885 file bytes and 30,436 directories. There were no
+retained new/nonempty entries; empty parents and the workspace root were removed.
+`/home/bfadmin/Documents/datum-eda-workspaces` is absent and must not be recreated
+for old proof. Future authorized private provisioning may choose a new root.
+
+Before/after stat inventories of all repo-local `.datum/history-cleanup`, the
+original-history mirror and all `datum-projects` compare unchanged. All tracked
+replacement inputs remain landed. Protected local maps keep their original
+historical bytes; destinations/old sealed-plan paths for retired collections are
+now historical and unavailable. Printing a legacy path cannot restore its data.
+No raw corpus, archive or report was created to replace the retired storage.
+S5A remains held with its original grant/checkpoint and unfinished qualification;
+no product implementation, historical PASS or successor was authorized.
+
 ### Actual independent review and RI-01 acceptance
 
 The independent reviewer returned `BOUNDED_SOURCE_REVIEW_PASS` for staged tree
@@ -1334,3 +1372,20 @@ fresh ownership/symlink/mount/process/open-file checks. No deletion has occurred
 All prior grants, S5A hold/checkpoint and original-history/datum-projects boundaries
 remain. Legacy local-map destinations for retired collections become historical
 and unavailable; a legacy path printer does not restore their input data.
+
+### Manager objective acceptance and closure
+
+The manager independently verified the workspace root absent, original-history
+backup and unclassified-project stat inventories identical to its saved baseline,
+four protected local maps at exact hashes, and all 99 prior task rows / 335 prior
+issue records unchanged. After actual removal it separately ran
+`PYTHONDONTWRITEBYTECODE=1 python3 scripts/provision_s5a_replay_inputs.py`:
+exit 0, verified 757 exact files across 10 legacy collections, with no output copy
+or new artifact. The worker's post-removal verification independently agrees.
+
+The appointed manager accepted RI-02 and authorized synchronized closure under
+the existing owner grant. Both steps/task are complete, the new maintenance issue
+closes with actual replacement landing `2b7fe4efe3c6e8278709a10d368bc3ecfc601bfb`
+and retirement evidence, claim released and sourced explicit idle restored.
+S5A remains held with its original grant/checkpoint; native qualification and
+all other product obligations remain unchanged. No successor is selected.
