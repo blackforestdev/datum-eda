@@ -10,6 +10,10 @@ fn source_free_launch_has_no_project_root_or_terminal_process() {
     assert!(launch.terminal_launch_context.is_none());
     assert_eq!(launch.terminal_sessions.len(), 0);
     assert!(!launch.terminal_sessions.active_attached());
+    assert_eq!(
+        launch.state.ui.terminal.status,
+        "No Project open · no terminal session"
+    );
 }
 
 #[test]

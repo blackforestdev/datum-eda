@@ -103,9 +103,15 @@ impl GlobalPreferencesCoordinator {
         self.new_project_source = None;
         ui.new_project.units_summary.clear();
         ui.new_project.source_summary = "Source · unavailable".to_owned();
-        ui.new_project.source_detail =
-            "Choose Datum factory Units explicitly, or resolve the Global source and retry."
-                .to_owned();
+        ui.new_project.source_detail = match ui.new_project.units_choice {
+            NewProjectUnitsChoice::Global => {
+                "Choose Datum factory Units explicitly, or resolve the Global source and retry."
+            }
+            NewProjectUnitsChoice::Factory => {
+                "The selected factory Units profile could not be resolved."
+            }
+        }
+        .to_owned();
         ui.new_project.refusal = Some(message);
     }
 
@@ -174,9 +180,27 @@ impl GlobalPreferencesCoordinator {
                 preserved_proposal: None,
             });
         };
+        let destination = destination_from_input(
+            &ui.new_project.destination,
+            std::env::var_os("HOME").as_deref(),
+        )
+        .map_err(|message| {
+            ui.new_project.refusal = Some(format!("Location could not be resolved. {message}"));
+            PreferenceErrorV1 {
+                code: eda_engine::preferences::PreferenceErrorCodeV1::InvalidRequest,
+                message,
+                details: Box::new(BTreeMap::from([(
+                    "field".into(),
+                    Value::String("destination".into()),
+                )])),
+                current_context: Box::new(self.service.context()),
+                preserved_draft: None,
+                preserved_proposal: None,
+            }
+        })?;
         let request = ProjectGenesisRequestV1 {
             request_id: new_product_id(),
-            destination: std::path::PathBuf::from(ui.new_project.destination.trim()),
+            destination: destination.clone(),
             project_name: ui.new_project.project_name.trim().to_owned(),
             project_id: None,
             units_source: source,
@@ -184,9 +208,21 @@ impl GlobalPreferencesCoordinator {
         match self.service.create_project(request, &human_gui_actor()) {
             Ok(result) => Ok(result),
             Err(error) => {
-                self.new_project_source = None;
-                ui.new_project.units_summary.clear();
-                ui.new_project.refusal = Some(refusal_message(&error));
+                if units_source_failure(&error.code) {
+                    self.refuse_preview(ui, refusal_message(&error));
+                } else {
+                    let message = refusal_message(&error);
+                    ui.new_project.refusal = Some(
+                        if error.code
+                            == eda_engine::preferences::PreferenceErrorCodeV1::RepositoryIo
+                            && destination.exists()
+                        {
+                            format!("Location exists. Use a new folder. {message}")
+                        } else {
+                            message
+                        },
+                    );
+                }
                 Err(error)
             }
         }
@@ -316,6 +352,7 @@ impl Runtime {
                     if removed.is_none() {
                         return Outcome::Consumed;
                     }
+                    dialog.clear_creation_refusal();
                     self.refresh_dialog_state();
                     return Outcome::Dialog;
                 }
@@ -329,6 +366,7 @@ impl Runtime {
                         } else {
                             dialog.destination.push_str(value);
                         }
+                        dialog.clear_creation_refusal();
                         self.refresh_dialog_state();
                         return Outcome::Dialog;
                     }
@@ -396,143 +434,47 @@ fn refusal_message(error: &PreferenceErrorV1) -> String {
             "Your Global Units could not be resolved. Nothing was created. {}",
             error.message
         ),
-        _ => format!("Nothing was created. {}", error.message),
+        _ => match error.details.get("reason").and_then(Value::as_str) {
+            Some(reason) => format!("Nothing was created. {}: {reason}", error.message),
+            None => format!("Nothing was created. {}", error.message),
+        },
     }
+}
+
+fn units_source_failure(code: &eda_engine::preferences::PreferenceErrorCodeV1) -> bool {
+    use eda_engine::preferences::PreferenceErrorCodeV1::*;
+    matches!(
+        code,
+        StaleGeneration
+            | SeedSourceUnavailable
+            | SeedIncomplete
+            | RepositoryUnreadable
+            | MigrationRequired
+    )
+}
+
+/// Interpret human home shorthand only; the engine retains full destination authority.
+fn destination_from_input(
+    input: &str,
+    home: Option<&std::ffi::OsStr>,
+) -> Result<std::path::PathBuf, String> {
+    let input = input.trim();
+    let suffix = if input == "~" {
+        Some("")
+    } else {
+        input.strip_prefix("~/")
+    };
+    if let Some(suffix) = suffix {
+        let home = home
+            .filter(|home| std::path::Path::new(home).is_absolute())
+            .ok_or(
+                "Home directory is unavailable or not absolute; enter a full destination path",
+            )?;
+        return Ok(std::path::Path::new(home).join(suffix.trim_start_matches('/')));
+    }
+    Ok(std::path::PathBuf::from(input))
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use eda_engine::preferences::{FixedPreferenceLocationProvider, PreferenceLocations};
-
-    fn fixture() -> (
-        std::path::PathBuf,
-        GlobalPreferencesCoordinator,
-        WorkspaceUiState,
-    ) {
-        let root = std::env::temp_dir().join(format!(
-            "datum-new-project-gui-{}-{}",
-            std::process::id(),
-            new_product_id()
-        ));
-        std::fs::create_dir_all(&root).unwrap();
-        let service = GlobalPreferencesProductService::open(
-            &FixedPreferenceLocationProvider(PreferenceLocations {
-                configuration_base: root.clone(),
-                repository_root: root.join("preferences"),
-                legacy_console_path: root.join("legacy.json"),
-            }),
-            "new-project-gui-test",
-        )
-        .unwrap();
-        let coordinator = GlobalPreferencesCoordinator {
-            service,
-            return_focus: ApplicationFocus::default(),
-            new_project_source: None,
-            terminal_theme_before_high_contrast: None,
-        };
-        let filters = datum_gui_protocol::WorkspaceFilterState {
-            show_authored: true,
-            excluded_selection_classes: Default::default(),
-            show_proposed: true,
-            show_unrouted: true,
-            dim_unrelated: false,
-            active_layer_id: None,
-            layer_visibility: Default::default(),
-            layer_scroll_offset: 0,
-        };
-        (root, coordinator, WorkspaceUiState::new(filters))
-    }
-
-    #[test]
-    fn opening_defaults_to_global_and_projects_exactly_eight_resolved_values() {
-        let (root, mut coordinator, mut ui) = fixture();
-        coordinator.open_new_project(&mut ui, ApplicationFocus::default());
-        assert_eq!(ui.new_project.units_choice, NewProjectUnitsChoice::Global);
-        assert_eq!(ui.new_project.units_summary.len(), 8);
-        assert_eq!(
-            ui.new_project
-                .units_summary
-                .iter()
-                .map(|row| row.key.as_str())
-                .collect::<Vec<_>>(),
-            ACTIVE_UNITS_KEYS
-        );
-        assert_eq!(
-            ui.new_project.source_detail,
-            "factory defaults; no preference file yet"
-        );
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn factory_requires_explicit_choice_and_never_creates_a_preference_repository() {
-        let (root, mut coordinator, mut ui) = fixture();
-        coordinator.open_new_project(&mut ui, ApplicationFocus::default());
-        ui.new_project.units_choice = NewProjectUnitsChoice::Factory;
-        coordinator.refresh_new_project_preview(&mut ui);
-        assert!(
-            ui.new_project
-                .source_detail
-                .contains("datum.units.factory.v1")
-        );
-        assert!(!root.join("preferences").exists());
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn create_publishes_one_real_project_with_embedded_eight_item_receipt() {
-        let (root, mut coordinator, mut ui) = fixture();
-        coordinator.open_new_project(&mut ui, ApplicationFocus::default());
-        let destination = root.join("created-project");
-        ui.new_project.project_name = "created-project".to_owned();
-        ui.new_project.destination = destination.to_string_lossy().into_owned();
-        coordinator.create_new_project(&mut ui).unwrap();
-        let project: Value =
-            serde_json::from_slice(&std::fs::read(destination.join("project.json")).unwrap())
-                .unwrap();
-        assert_eq!(
-            project["project_units_seed_receipt"]["items"]
-                .as_array()
-                .map(Vec::len),
-            Some(8)
-        );
-        assert!(!project.to_string().contains("revision"));
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn unresolved_global_reader_preserves_draft_without_genesis_or_implicit_factory() {
-        let (root, mut coordinator, mut ui) = fixture();
-        coordinator.service =
-            GlobalPreferencesProductService::factory_only("unresolved-global-test").unwrap();
-        coordinator.open_new_project(&mut ui, ApplicationFocus::default());
-        ui.new_project.project_name = "Preserved name".into();
-        let destination = root.join("must-stay-absent");
-        ui.new_project.destination = destination.display().to_string();
-        ui.new_project.focus = NewProjectFocus::Destination;
-        let error = coordinator.create_new_project(&mut ui).unwrap_err();
-        assert_eq!(
-            error.code,
-            eda_engine::preferences::PreferenceErrorCodeV1::SeedSourceUnavailable
-        );
-        assert_eq!(ui.new_project.project_name, "Preserved name");
-        assert_eq!(
-            ui.new_project.destination,
-            destination.display().to_string()
-        );
-        assert_eq!(ui.new_project.focus, NewProjectFocus::Destination);
-        assert_eq!(ui.new_project.units_choice, NewProjectUnitsChoice::Global);
-        assert!(ui.new_project.refusal.is_some());
-        assert!(!ui.new_project.create_enabled());
-        assert!(!destination.exists());
-        assert!(!root.join("preferences").exists());
-        ui.new_project.units_choice = NewProjectUnitsChoice::Factory;
-        coordinator.refresh_new_project_preview(&mut ui);
-        assert_eq!(ui.new_project.units_summary.len(), 8);
-        assert!(ui.new_project.create_enabled());
-        assert!(!destination.exists());
-        assert!(!root.join("preferences").exists());
-        let _ = std::fs::remove_dir_all(root);
-    }
-}
+#[path = "new_project/tests.rs"]
+mod tests;

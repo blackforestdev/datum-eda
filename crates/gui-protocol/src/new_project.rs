@@ -54,11 +54,27 @@ impl Default for NewProjectDialogState {
 }
 
 impl NewProjectDialogState {
+    pub fn units_ready(&self) -> bool {
+        self.units_summary.len() == 8
+    }
+
+    pub fn retry_global_available(&self) -> bool {
+        !self.units_ready()
+            && self.refusal.is_some()
+            && self.units_choice == NewProjectUnitsChoice::Global
+    }
+
+    /// Editing a destination/name can resolve creation errors, never a Units error.
+    pub fn clear_creation_refusal(&mut self) {
+        if self.units_ready() {
+            self.refusal = None;
+        }
+    }
+
     pub fn create_enabled(&self) -> bool {
         !self.project_name.trim().is_empty()
             && !self.destination.trim().is_empty()
-            && self.refusal.is_none()
-            && self.units_summary.len() == 8
+            && self.units_ready()
     }
 
     pub fn reset_for_open(&mut self) {
@@ -73,7 +89,7 @@ impl NewProjectDialogState {
             NewProjectFocus::UnitsChoice,
             NewProjectFocus::UnitsSummary,
         ];
-        if self.refusal.is_some() && self.units_choice == NewProjectUnitsChoice::Global {
+        if self.retry_global_available() {
             order.push(NewProjectFocus::RetryGlobal);
         }
         order.push(NewProjectFocus::Cancel);
@@ -111,7 +127,7 @@ impl NewProjectDialogState {
         let mut nodes = vec![
             Node { id: "new-project-dialog".to_owned(), name: "New Project".to_owned(), role: Role::Dialog, value: None, description: "Creates one Project through the engine-owned atomic genesis service.".to_owned(), available: true, focused: false },
             Node { id: "new-project-name".to_owned(), name: "Project name".to_owned(), role: Role::TextBox, value: Some(self.project_name.clone()), description: "Name preserved when creation is refused.".to_owned(), available: true, focused: self.focus == NewProjectFocus::ProjectName },
-            Node { id: "new-project-destination".to_owned(), name: "Location".to_owned(), role: Role::TextBox, value: Some(self.destination.clone()), description: "Full destination path preserved when creation is refused.".to_owned(), available: true, focused: self.focus == NewProjectFocus::Destination },
+            Node { id: "new-project-destination".to_owned(), name: "Location".to_owned(), role: Role::TextBox, value: Some(self.destination.clone()), description: "Complete new Project folder, not a parent folder plus Project name. Leading ~/ uses your home directory. Input is preserved when creation is refused.".to_owned(), available: true, focused: self.focus == NewProjectFocus::Destination },
             Node { id: "new-project-units".to_owned(), name: "Working units for this new Project".to_owned(), role: Role::RadioGroup, value: Some(selected.to_owned()), description: "Two choices. Arrow keys change the explicit selection; Datum never selects factory as a fallback.".to_owned(), available: true, focused: self.focus == NewProjectFocus::UnitsChoice },
         ];
         for (choice, label) in [
@@ -150,7 +166,7 @@ impl NewProjectDialogState {
             role: Role::Navigation,
             value: Some(values),
             description: format!("{}. {}", self.source_summary, self.source_detail),
-            available: self.refusal.is_none(),
+            available: self.units_ready(),
             focused: self.focus == NewProjectFocus::UnitsSummary,
         });
         if let Some(refusal) = &self.refusal {
@@ -164,7 +180,7 @@ impl NewProjectDialogState {
                 available: true,
                 focused: false,
             });
-            if self.units_choice == NewProjectUnitsChoice::Global {
+            if self.retry_global_available() {
                 nodes.push(Node {
                     id: "new-project-retry".to_owned(),
                     name: "Re-read Global defaults".to_owned(),
@@ -220,6 +236,31 @@ mod tests {
         };
         assert!(state.create_enabled());
         state.refusal = Some("refused".to_owned());
+        assert!(
+            state.create_enabled(),
+            "a creation error does not invalidate the Units snapshot"
+        );
+        assert!(!state.retry_global_available());
+        state.open = true;
+        let nodes = state.accessibility_nodes();
+        assert!(
+            nodes
+                .iter()
+                .find(|n| n.id == "new-project-units-summary")
+                .unwrap()
+                .available
+        );
+        assert!(
+            nodes
+                .iter()
+                .find(|n| n.id == "new-project-create")
+                .unwrap()
+                .available
+        );
+        assert!(!nodes.iter().any(|n| n.id == "new-project-retry"));
+        state.clear_creation_refusal();
+        assert!(state.refusal.is_none());
+        state.units_summary.clear();
         assert!(!state.create_enabled());
     }
 
@@ -231,5 +272,11 @@ mod tests {
         };
         assert!(state.focus_order().contains(&NewProjectFocus::RetryGlobal));
         assert!(!state.focus_order().contains(&NewProjectFocus::Create));
+        let mut state = state;
+        state.clear_creation_refusal();
+        assert!(
+            state.refusal.is_some(),
+            "editing text cannot resolve missing Units"
+        );
     }
 }

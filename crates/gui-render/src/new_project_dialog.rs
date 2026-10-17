@@ -117,7 +117,7 @@ fn render_new_project_dialog_scrolled(
     y = draw_text_field(
         "Location",
         &dialog.destination,
-        "Enter the full destination path",
+        "Full new folder path; ~/ uses your home directory",
         dialog.focus == NewProjectFocus::Destination,
         y + 8.0,
         field_width,
@@ -230,7 +230,7 @@ fn render_new_project_dialog_scrolled(
     let mut row_y = summary.y + 34.0;
     if dialog.units_summary.is_empty() {
         draw_text(
-            "Not resolved — Global units could not be read",
+            "Selected Working Units source is not resolved",
             summary.x + 12.0,
             row_y + 4.0,
             design_tokens::typography::CAPTION_SIZE,
@@ -301,7 +301,7 @@ fn render_new_project_dialog_scrolled(
     );
     y = summary.y + summary.height + 12.0;
 
-    if dialog.refusal.is_some() && dialog.units_choice == NewProjectUnitsChoice::Global {
+    if dialog.retry_global_available() {
         let retry = RectPx {
             x: inset,
             y,

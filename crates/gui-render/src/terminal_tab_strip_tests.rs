@@ -1,6 +1,32 @@
 use super::*;
 
 #[test]
+fn unopened_chrome_reports_no_session_without_a_live_prompt() {
+    let state = datum_gui_protocol::ReviewWorkspaceState::unopened();
+    let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
+    crate::terminal_tab_strip::render_terminal_tab_strip(
+        &state,
+        RectPx {
+            x: 0.,
+            y: 0.,
+            width: 1280.,
+            height: 100.,
+        },
+        1.,
+        &mut quads,
+        &mut text,
+        &mut hits,
+    );
+    assert!(
+        text.iter()
+            .any(|run| run.text == "No Project open · no terminal session")
+    );
+    assert!(!text.iter().any(|run| run.text == "running"));
+    assert!(state.ui.terminal.tabs.is_empty());
+    assert!(state.ui.terminal.active_session_id.is_none());
+}
+
+#[test]
 fn terminal_tab_chrome_cannot_paint_or_hit_outside_its_header_row() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);

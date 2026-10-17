@@ -10,10 +10,10 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 ADAPTER_ROOTS = (
-    ROOT / "crates/cli/src",
-    ROOT / "crates/engine-daemon/src",
-    ROOT / "crates/gui-app/src",
-    ROOT / "mcp-server",
+    Path("crates/cli/src"),
+    Path("crates/engine-daemon/src"),
+    Path("crates/gui-app/src"),
+    Path("mcp-server"),
 )
 BANNED_ADAPTER_AUTHORITY = (
     "PreferenceRepository",
@@ -28,7 +28,6 @@ ALLOWED_PRODUCT_SERVICE_FILES = {
     Path("crates/cli/src/commands/project/genesis_product.rs"),
     Path("crates/engine-daemon/src/preferences_state.rs"),
     Path("crates/gui-app/src/windows/global_preferences_runtime.rs"),
-    Path("crates/gui-app/src/windows/global_preferences_runtime/new_project.rs"),
 }
 
 PREFERENCE_WRITE_FILES = {
@@ -39,7 +38,8 @@ PREFERENCE_WRITE_FILES = {
 
 def production_files(root: Path) -> list[Path]:
     files: list[Path] = []
-    for base in ADAPTER_ROOTS:
+    for adapter_root in ADAPTER_ROOTS:
+        base = root / adapter_root
         for suffix in ("*.rs", "*.py"):
             for path in base.rglob(suffix):
                 relative = path.relative_to(root)
@@ -47,6 +47,7 @@ def production_files(root: Path) -> list[Path]:
                     "tests" in relative.parts
                     or "main_tests" in relative.parts
                     or path.name.endswith("_tests.rs")
+                    or path.name == "tests.rs"
                     or path.name.startswith("test_")
                 ):
                     continue
@@ -54,18 +55,23 @@ def production_files(root: Path) -> list[Path]:
     return sorted(set(files))
 
 
-def check() -> int:
+def adapter_authority(root: Path) -> tuple[set[Path], list[str]]:
+    """Inspect adapter files conservatively, without skipping later production."""
     failures: list[str] = []
     product_users: set[Path] = set()
-
-    for path in production_files(ROOT):
-        relative = path.relative_to(ROOT)
+    for path in production_files(root):
+        relative = path.relative_to(root)
         text = path.read_text(encoding="utf-8")
         for marker in BANNED_ADAPTER_AUTHORITY:
             if marker in text:
                 failures.append(f"{relative}: private preference authority `{marker}`")
         if "GlobalPreferencesProductService" in text:
             product_users.add(relative)
+    return product_users, failures
+
+
+def check() -> int:
+    product_users, failures = adapter_authority(ROOT)
 
     if product_users != ALLOWED_PRODUCT_SERVICE_FILES:
         failures.append(
