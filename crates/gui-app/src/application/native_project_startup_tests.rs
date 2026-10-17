@@ -1,19 +1,35 @@
 use super::*;
 
 #[test]
-fn source_free_launch_has_no_project_root_or_terminal_process() {
+fn source_free_launch_has_a_real_unbound_terminal_without_project_authority() {
     let args = GuiArgs::parse_from(["datum-gui"]);
-    let launch = args.unopened_launch_state(None).unwrap();
+    let mut launch = args.unopened_launch_state(None).unwrap();
     assert!(launch.request.is_none());
     assert!(launch.state.project_unopened);
     assert!(launch.state.backing.is_none());
-    assert!(launch.terminal_launch_context.is_none());
-    assert_eq!(launch.terminal_sessions.len(), 0);
-    assert!(!launch.terminal_sessions.active_attached());
-    assert_eq!(
-        launch.state.ui.terminal.status,
-        "No Project open · no terminal session"
+    assert!(
+        launch
+            .terminal_launch_context
+            .as_ref()
+            .unwrap()
+            .project_root
+            .is_none()
     );
+    assert_eq!(launch.terminal_sessions.len(), 1);
+    assert!(launch.terminal_sessions.active_attached());
+    assert_eq!(
+        launch.state.ui.active_dock_tab,
+        Some(datum_gui_protocol::DockTab::Terminal)
+    );
+    let until = std::time::Instant::now() + std::time::Duration::from_secs(7);
+    launch.terminal_sessions.terminate_all_by(until);
+    while !launch.terminal_sessions.all_sessions_closed() && std::time::Instant::now() < until {
+        launch
+            .terminal_sessions
+            .drain_all(&mut launch.state.ui.terminal);
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    assert!(launch.terminal_sessions.all_sessions_closed());
 }
 
 #[test]

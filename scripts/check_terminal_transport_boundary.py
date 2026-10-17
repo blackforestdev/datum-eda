@@ -190,7 +190,7 @@ def check(root: Path) -> list[str]:
         "try_recv_control_event", "try_recv_output", "has_pending_event",
         "write_bytes", "terminate", "force_kill", "shutdown_snapshot", "resize",
         "terminate_by", "presentation_complete",
-        "retry_termination_by",
+        "retry_termination_by", "retain_until_closed",
     }
     public_functions = list(re.finditer(
         r"(?P<visibility>pub(?:\([^)]*\))?)\s+fn\s+(?P<name>\w+)\s*\(", handle_production
@@ -209,6 +209,11 @@ def check(root: Path) -> list[str]:
             failures.append(f"terminal transport exposes unapproved handle API: {visibility} fn {name}")
         signature_end = handle_production.find("{", match.end())
         signature = handle_production[match.start():signature_end if signature_end >= 0 else match.end()]
+        if name == "retain_until_closed" and not re.fullmatch(
+            r"pub\(crate\)\s+fn\s+retain_until_closed\s*\(\s*&self,\s*resource:\s*impl\s+Send\s*\+\s*'static\s*\)\s*",
+            signature,
+        ):
+            failures.append("terminal lifetime retention must accept only an opaque Send resource and return no ownership")
         if any(token in signature for token in ("File", "RawFd", "OwnedFd", "Receiver", "Arc<Mutex<File>>")):
             failures.append(f"terminal transport handle API exposes raw ownership: {name}")
 

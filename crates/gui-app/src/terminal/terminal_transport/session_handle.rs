@@ -84,6 +84,12 @@ pub(crate) struct TerminalTransportSession {
 }
 
 impl TerminalTransportSession {
+    pub(crate) fn retain_until_closed(&self, resource: impl Send + 'static) {
+        if let Some(supervisor) = &self.supervisor {
+            supervisor.retain_until_closed(Box::new(resource));
+        }
+    }
+
     pub(super) fn new(
         input: Arc<InputQueue>,
         output: Arc<OutputBacklog>,

@@ -252,7 +252,7 @@ impl TerminalSessionRegistry {
         self.origin_workspaces.retain(|root, _| {
             self.origin_contexts
                 .values()
-                .any(|context| context.project_root == *root)
+                .any(|context| context.project_root.as_ref() == Some(root))
         });
     }
 

@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 import re
 import signal
+import shlex
+import shutil
 import subprocess
 import tempfile
 import time
@@ -39,6 +41,8 @@ class StartupQA:
         self.app_log = None
         self.actions = []
         self.observations = {}
+        self.capture_counts = {}
+        self.terminal_dock_open = True
         self.previous_focus = self.command("xdotool", "getwindowfocus").strip()
         self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir="/tmp")
         self.compositor = None
@@ -53,6 +57,13 @@ class StartupQA:
             "DATUM_GUI_PREFERENCES_PATH": str(root / "config/gui-preferences.json"),
             "HISTFILE": str(root / "terminal-history"),
             "DATUM_GUI_VERBOSE_LOG": "1",
+            "DATUM_PROJECT_ROOT": "/c08-stale-parent-project",
+            "DATUM_DISCOVERY": "/c08-stale-parent-discovery",
+            "DATUM_AGENT_CREDENTIAL_FILE": "/c08-stale-parent-credential",
+            "EDA_ENGINE_SOCKET": "/c08-stale-parent-socket",
+            "DATUM_ENGINE_SOCKET": "/c08-stale-parent-engine",
+            "DATUM_MCP_ENDPOINT": "/c08-stale-parent-mcp",
+            "DATUM_AGENT_PROVENANCE": "c08-stale-parent-provenance",
         })
         for key in ["DISPLAY", "WAYLAND_SOCKET", "WINIT_UNIX_BACKEND", "DATUM_GPU_DIAGNOSTIC_BACKEND"]:
             self.env.pop(key, None)
@@ -169,6 +180,10 @@ class StartupQA:
         return self.attributes(node) if node else {}
 
     def capture(self, label, window):
+        count = self.capture_counts.get(label, 0) + 1
+        self.capture_counts[label] = count
+        if count > 1:
+            label = f"{label}-{count}"
         self.focus(window)
         # Capture the private Wayland compositor's presented output, never its
         # potentially stale X11 host backing pixmap. Each output directory is
@@ -197,7 +212,7 @@ class StartupQA:
         self.env["DATUM_GUI_LOG"] = str(self.root / f"{label}-diagnostic.log")
         args = [str(REPO / "target/debug/datum-gui")]
         self.actions.append({"launch_argv": args, "isolated_xdg": str(self.root)})
-        self.process = subprocess.Popen(args, cwd=REPO, env=self.env,
+        self.process = subprocess.Popen(args, cwd=self.root, env=self.env,
                                         stdout=self.app_log, stderr=subprocess.STDOUT,
                                         start_new_session=True)
         log = Path(self.env["DATUM_GUI_LOG"])
@@ -237,42 +252,33 @@ class StartupQA:
                 return Atspi.Text.get_text(node.get_text_iface(), 0, -1)
         return ""
 
-    def observe_unopened(self, label):
-        pending, seen, children = [self.process.pid], set(), []
-        while pending:
-            pid = pending.pop()
-            if pid in seen:
-                continue
-            seen.add(pid)
-            for path in Path(f"/proc/{pid}/task").glob("*/children"):
-                try:
-                    for child in path.read_text().split():
-                        child = int(child)
-                        if child not in seen:
-                            executable = Path(f"/proc/{child}/exe").readlink().name
-                            children.append({"pid": child, "executable": executable})
-                            pending.append(child)
-                except (FileNotFoundError, ProcessLookupError):
-                    pass
-        ptys = []
+    def terminal_ptys_closed(self):
         for fd in Path(f"/proc/{self.process.pid}/fd").iterdir():
             try:
-                target = str(fd.readlink())
-                if target in ["/dev/ptmx", "/dev/pts/ptmx"]:
-                    ptys.append(target)
+                if str(fd.readlink()) in {"/dev/ptmx", "/dev/pts/ptmx"}:
+                    return False
             except FileNotFoundError:
                 pass
-        assert not any(c["executable"] in {"bash", "sh", "dash", "zsh", "fish"} for c in children)
-        assert not ptys, "unopened Main must not allocate terminal PTYs"
-        assert not self.terminal_text().strip()
-        self.observations[label] = {"owned_descendants": children, "terminal_ptys": ptys}
+        return True
 
-    def terminal_command(self, main, command):
+    def select_terminal_tab(self, main, tab=0):
         geometry = self.command("xdotool", "getwindowgeometry", "--shell", main)
         height = int(dict(line.split("=", 1) for line in geometry.splitlines())["HEIGHT"])
+        node = self.wait("terminal text interface", lambda: next(
+            (n for n in self.nodes() if n.get_role_name() == "terminal"), None))
+        bounds = Atspi.Component.get_extents(node.get_component_iface(), Atspi.CoordType.WINDOW)
+        header_y = bounds.y - 22 if self.terminal_dock_open and bounds.height > 0 else height - 42
+        self.actions.append({"terminal_bounds": [bounds.x, bounds.y, bounds.width, bounds.height],
+                             "selected_tab_index": tab})
         self.focus(main)
-        self.command("xdotool", "mousemove", "--window", main, "45", str(height - 42), "click", "1")
-        self.wait("terminal text interface", lambda: any(n.get_role_name() == "terminal" for n in self.nodes()))
+        self.command("xdotool", "mousemove", "--window", main, str(45 + tab * 156), str(header_y), "click", "1")
+        self.terminal_dock_open = True
+        self.wait("terminal explicitly owns input", lambda: any(
+            n.get_role_name() == "terminal" and n.get_state_set().contains(Atspi.StateType.FOCUSED)
+            for n in self.nodes()))
+
+    def terminal_command(self, main, command, tab=0):
+        self.select_terminal_tab(main, tab)
         self.text(main, command)
         self.key(main, "Return")
 
@@ -282,14 +288,16 @@ class StartupQA:
         self.focus(main)
         x = {"File": 118, "View": 195}[title]
         self.command("xdotool", "mousemove", "--window", main, str(x), "17", "click", "1")
-        self.wait(f"{title} menu entry {label}", lambda: self.find(label))
-        assert self.attributes(self.find(label))["available"] == "true"
+        def entry():
+            return next((n for n in self.nodes() if n.get_name() == label and n.get_role_name() == "menu item"), None)
+        self.wait(f"{title} menu entry {label}", entry)
+        assert self.attributes(entry())["available"] == "true"
         for _ in range(30):
-            node = self.find(label)
+            node = entry()
             if node.get_state_set().contains(Atspi.StateType.FOCUSED):
                 self.capture(f"{title.lower()}-{label.lower().replace(' ', '-')}-reachable", main)
                 self.key(main, "Return")
-                self.wait(f"{title} menu closed after {label}", lambda: self.find(label) is None)
+                self.wait(f"{title} menu closed after {label}", lambda: entry() is None)
                 return
             self.key(main, "Down")
         raise RuntimeError(f"{label} was not keyboard reachable in {title}")
@@ -323,108 +331,146 @@ class StartupQA:
         before = self.source_files(target)
         self.start_envelope()
         main = self.launch("package-main")
-        self.key(main, "ctrl+o")
+        self.menu_item(main, "File", "Open Project")
         self.wait("ordinary Open dialog", lambda: self.window("Open Project — Datum"))
         self.capture("open-owned-gui-created-project", main)
         self.text(main, str(target))
         self.key(main, "Tab", repeat=2)
         self.key(main, "Return")
         self.wait("ordinary Open completed", lambda: self.window("Open Project — Datum") is None)
-        self.terminal_command(main, 'printf "NPD_PACKAGE_ROOT:%s\\n" "$DATUM_PROJECT_ROOT"')
+        self.terminal_dock_open = False
+        self.terminal_command(main, 'printf "NPD_PACKAGE_ROOT:%s\\n" "$DATUM_PROJECT_ROOT"', tab=1)
         self.wait("actual Project-bound terminal", lambda: "NPD_PACKAGE_ROOT:" + str(target) in self.terminal_text())
         self.package_reachability(main, target)
         assert self.source_files(target) == before
         self.observations["existing_gui_created_project"] = str(target)
+        self.terminal_command(main, "exit", tab=1)
         self.terminal_command(main, "exit")
+        self.wait("all owned terminal PTYs closed", self.terminal_ptys_closed)
 
     def execute(self):
         self.start_envelope()
-        main = self.launch("first-main")
-        self.capture("unopened-main", main)
-        self.observe_unopened("unopened-no-shell")
-        self.key(main, "ctrl+n")
-        dialog = self.wait("actual New dialog", lambda: self.window("New Project — Datum"))
-        self.wait("eight-value Units preview", lambda: self.summary().get("available") == "true")
-        initial = self.summary()
-        assert len(initial["value"].split("; ")) == 8
-        self.capture("new-before-cancel", dialog)
-        self.key(dialog, "Escape")
+        main = self.launch("unbound-main")
+        self.terminal_command(main, 'C08_SENTINEL=preserved; sleep 300 & C08_CHILD=$!; '
+            'printf "C08_KEEP:%s:%s:%s\\n" "$$" "$C08_CHILD" "$C08_SENTINEL"; '
+            'printf "C08_UNBOUND:%s:%s\\n" "${DATUM_PROJECT_ROOT-unset}" "$PWD"; '
+            'printf "C08_CLEAR:%s:%s:%s:%s:%s:%s\\n" "${DATUM_DISCOVERY-unset}" "${DATUM_AGENT_CREDENTIAL_FILE-unset}" '
+            '"${EDA_ENGINE_SOCKET-unset}" "${DATUM_ENGINE_SOCKET-unset}" "${DATUM_MCP_ENDPOINT-unset}" "${DATUM_AGENT_PROVENANCE-unset}"; '
+            'printf "C08_RUNTIME:%s\\n" "$TERMINFO"')
+        self.wait("real rootless shell with no stale authority", lambda:
+            "C08_UNBOUND:unset:" + str(self.root) in self.terminal_text()
+            and "C08_CLEAR:unset:unset:unset:unset:unset:unset" in self.terminal_text())
+        initial = self.terminal_text()
+        match = re.search(r"C08_KEEP:(\d+):(\d+):preserved", initial)
+        assert match, "actual shell/child identities must come from expanded output"
+        shell_pid, child_pid = map(int, match.groups())
+        runtime_match = re.search(r"C08_RUNTIME:(/[^\r\n]+)", initial)
+        assert runtime_match and "/datum-terminal-" in runtime_match.group(1)
+        runtime = Path(runtime_match.group(1)).parents[1]
+        self.observations["initial_unbound_terminal"] = initial
+        self.observations["preserved_processes"] = {"shell": shell_pid, "child": child_pid}
+        assert not self.root.joinpath(".datum").exists()
+        self.capture("real-unbound-shell-before-project", main)
+        self.terminal_command(main, 'printf "C08_CLI_PATH:%s\\n" "$(command -v datum-eda)"')
+        self.wait("matching CLI is callable in ordinary shell", lambda:
+            "C08_CLI_PATH:" + str(REPO / "target/debug/datum-eda") in self.terminal_text())
+        self.observations["ordinary_cli_resolution"] = self.terminal_text()
+        self.capture("matching-cli-in-unbound-shell", main)
+        self.terminal_command(main,
+            'if command -v codex >/dev/null; then printf "C08_AGENT_KIND:%s\\n" codex; codex --version; '
+            'elif command -v claude >/dev/null; then printf "C08_AGENT_KIND:%s\\n" claude; claude --version; '
+            'else printf "C08_%s_AGENT\\n" NO_INSTALLED; fi; printf "C08_PROBE_DONE:%s\\n" "$?"')
+        self.wait("actual CLI and installed-agent probe completed", lambda:
+            "C08_PROBE_DONE:0" in self.terminal_text())
+        probe = self.terminal_text()
+        assert "C08_NO_INSTALLED_AGENT" not in probe, "direct-agent proof needs an installed executable"
+        self.observations["direct_cli_agent_probe"] = probe
+        self.capture("real-unbound-shell-cli-agent", main)
+
+        self.menu_item(main, "File", "New Project")
+        self.wait("ordinary New", lambda: self.window("New Project — Datum"))
+        self.wait("eight existing Units values", lambda: self.summary().get("available") == "true")
+        assert len(self.summary()["value"].split("; ")) == 8
+        self.capture("new-with-existing-unbound-session", main)
+        self.key(main, "Escape")
         self.wait("New cancelled", lambda: self.window("New Project — Datum") is None)
-        self.observe_unopened("cancel-no-shell")
-        self.capture("cancelled-unopened-main", main)
-
-        collision = self.root / "occupied"
-        collision.mkdir()
-        (collision / "sentinel").write_bytes(b"preserve existing destination\n")
-        before_collision = self.source_files(collision)
-        target = self.root / "created-project"
-        home = Path.home()
-        collision_input = "~/" + str(collision.relative_to(home))
-        target_input = "~/" + str(target.relative_to(home))
-        self.key(main, "ctrl+n")
-        dialog = self.wait("New reopened", lambda: self.window("New Project — Datum"))
-        self.wait("Units ready", lambda: self.summary().get("available") == "true")
-        original = self.summary()
-        self.text(dialog, "Startup QA display name")
-        self.key(dialog, "Tab")
-        self.text(dialog, collision_input)
-        self.key(dialog, "Tab", repeat=4)
-        self.key(dialog, "Return")
-        self.wait("actual occupied-destination refusal", lambda: self.find("Project not created"))
-        assert self.source_files(collision) == before_collision
-        assert not (collision / "Startup QA display name").exists()
-        assert self.summary() == original, "path refusal preserves values and source context"
-        assert self.attributes(self.find("Create"))["available"] == "true"
-        assert self.find("Re-read Global defaults") is None
-        self.capture("occupied-refusal-eight-units", dialog)
-
-        # Create focus -> name -> Location. No controller calls or preference reread.
-        self.key(dialog, "Tab", repeat=2)
-        self.key(dialog, "BackSpace", repeat=len(collision_input))
-        self.text(dialog, target_input)
-        self.wait("correctable refusal cleared", lambda: self.find("Project not created") is None)
-        assert self.summary() == original
-        self.capture("corrected-ready-without-global-reread", dialog)
-        self.key(dialog, "Tab", repeat=4)
-        self.key(dialog, "Return")
-        self.wait("GUI-created canonical Project", lambda: target.joinpath("project.json").exists())
-        self.wait("automatic Open completed", lambda: self.window("New Project — Datum") is None)
+        self.capture("cancel-preserves-unbound-session", main)
+        self.menu_item(main, "File", "Open Project")
+        self.wait("ordinary Open", lambda: self.window("Open Project — Datum"))
+        self.capture("open-before-invalid-path", main)
+        self.text(main, str(self.root / "missing-project"))
+        self.key(main, "Tab", repeat=2)
+        self.key(main, "Return")
+        self.wait("invalid Open refused", lambda: self.find("Project not opened"))
+        assert not self.root.joinpath("missing-project").exists()
+        self.capture("invalid-open-preserves-session", main)
+        self.key(main, "Escape")
+        self.wait("Open cancelled", lambda: self.window("Open Project — Datum") is None)
+        target = self.root / "cli-created-project"
+        command = "datum-eda project new " + shlex.quote(str(target)) + " --name 'Terminal bootstrap QA' --units-source factory --json"
+        self.terminal_command(main, command + '; printf "C08_PROJECT_READY:%s\\n" "$?"')
+        self.wait("canonical CLI completion", lambda: "C08_PROJECT_READY:0" in self.terminal_text())
+        self.wait("canonical CLI-created Project", lambda: target.joinpath("project.json").exists())
         project = json.loads(target.joinpath("project.json").read_text())
-        receipt = project["project_units_seed_receipt"]
-        assert len(receipt["items"]) == 8
-        assert project["name"] == "Startup QA display name"
-        main = self.wait("loaded Main", self.window)
-        self.terminal_command(main, 'printf "NPD_QA_READY:%s\\n" "$DATUM_PROJECT_ROOT"')
-        self.wait("live Project-bound terminal output", lambda: "NPD_QA_READY:" + str(target) in self.terminal_text())
-        self.observations["live_terminal"] = self.terminal_text()[-4000:]
-        self.capture("created-open-live-terminal", main)
-        self.menu_item(main, "File", "Save")
-        time.sleep(0.5)
+        assert len(project["project_units_seed_receipt"]["items"]) == 8
+        self.capture("canonical-cli-project-created", main)
+        self.terminal_command(main, 'printf "C08_HISTORY:%s\\n" before-open; '
+            'for i in 1 2 3 4 5 6 7 8 9 10 11 12; do printf "C08_FOLLOW:%s\\n" "$i"; done')
+        self.wait("history tail completed", lambda: "C08_FOLLOW:12" in self.terminal_text())
+        self.key(main, "shift+Prior")
+        self.observations["scrollback_before_open_atspi"] = self.terminal_text()
+        self.observations["scrollback_render_review_required"] = (
+            "Inspect actual native before/after frames for C08_HISTORY:before-open. "
+            "AT-SPI did not refresh on scroll-only input in the retained diagnostic; its viewport text is not acceptance evidence.")
+        self.capture("unbound-scrollback-before-open", main)
+        self.menu_item(main, "File", "Open Project")
+        self.wait("Open CLI-created Project", lambda: self.window("Open Project — Datum"))
+        self.capture("open-cli-created-project", main)
+        self.text(main, str(target))
+        self.key(main, "Tab", repeat=2)
+        self.key(main, "Return")
+        self.wait("guarded Open published", lambda: self.window("Open Project — Datum") is None)
+        self.terminal_dock_open = False  # ordinary loaded Project starts with closed dock
+        self.terminal_command(main, 'printf "C08_BOUND:%s\\n" "$DATUM_PROJECT_ROOT"; '
+            'printf "C08_BOUND_CLEAR:%s:%s:%s:%s\\n" "${DATUM_ENGINE_SOCKET-unset}" "${EDA_ENGINE_SOCKET-unset}" "${DATUM_MCP_ENDPOINT-unset}" "${DATUM_AGENT_PROVENANCE-unset}"; '
+            'printf "C08_BOUND_SESSION:%s\\n" "$DATUM_SESSION_ID"; '
+            'test "$DATUM_DISCOVERY" = "$DATUM_PROJECT_ROOT/.datum/terminal-contexts/$DATUM_SESSION_ID.discovery.json"; '
+            'printf "C08_FRESH_DISCOVERY_PATH:%s\\n" "$?"', tab=1)
+        self.wait("new bound terminal", lambda: "C08_BOUND:" + str(target) in self.terminal_text()
+            and "C08_BOUND_CLEAR:unset:unset:unset:unset" in self.terminal_text()
+            and "C08_FRESH_DISCOVERY_PATH:0" in self.terminal_text())
+        bound_text = self.terminal_text()
+        bound_session = re.search(r"C08_BOUND_SESSION:(terminal-[A-Za-z0-9-]+)", bound_text).group(1)
+        discovery_path = target / ".datum/terminal-contexts" / f"{bound_session}.discovery.json"
+        discovery = json.loads(discovery_path.read_text())
+        assert discovery["project_root"] == str(target) and discovery["terminal_session_id"] == bound_session
+        self.observations["new_bound_terminal"] = bound_text
+        self.observations["fresh_project_discovery"] = {"path": str(discovery_path),
+            "sha256": digest(discovery_path), "project_root": discovery["project_root"],
+            "terminal_session_id": bound_session}
+        self.capture("new-project-bound-session", main)
         before = self.source_files(target)
-
-        self.package_reachability(main, target)
-        self.terminal_command(main, "exit")
-        self.stop()
-
-        # Fresh no-argument process, ordinary Open dialog; no --project-root bypass.
-        main = self.launch("fresh-main")
-        self.key(main, "ctrl+o")
-        dialog = self.wait("actual Open dialog", lambda: self.window("Open Project — Datum"))
-        self.text(dialog, str(target))
-        self.key(dialog, "Tab", repeat=2)
-        self.key(dialog, "Return")
-        self.wait("fresh Open completed", lambda: self.window("Open Project — Datum") is None)
-        main = self.wait("fresh loaded Main", self.window)
-        self.terminal_command(main, 'printf "NPD_QA_REOPEN:%s\\n" "$DATUM_PROJECT_ROOT"')
-        self.wait("reopened Project-bound terminal", lambda: "NPD_QA_REOPEN:" + str(target) in self.terminal_text())
+        self.select_terminal_tab(main)
+        self.observations["scrollback_after_open_atspi"] = self.terminal_text()
+        self.capture("original-scrollback-survives-open", main)
+        self.terminal_command(main, 'printf "C08_SURVIVED:%s:%s:%s:%s\\n" "$$" "$C08_CHILD" "$C08_SENTINEL" "${DATUM_PROJECT_ROOT-unset}"')
+        expected = f"C08_SURVIVED:{shell_pid}:{child_pid}:preserved:unset"
+        self.wait("original shell and environment preserved", lambda: expected in self.terminal_text())
+        assert Path(f"/proc/{child_pid}").exists(), "original child must survive Project Open"
+        self.observations["preserved_unbound_terminal"] = self.terminal_text()
+        self.capture("original-unbound-shell-survives-open", main)
         assert self.source_files(target) == before
-        assert json.loads(target.joinpath("project.json").read_text())["project_units_seed_receipt"] == receipt
-        self.capture("fresh-open-receipt-and-source-preserved", main)
+        assert not self.root.joinpath(".datum").exists()
         self.terminal_command(main, "exit")
-        self.observations["project"] = str(target)
+        self.wait("original shell reaped", lambda: not Path(f"/proc/{shell_pid}").exists())
+        self.wait("original child reaped", lambda: not Path(f"/proc/{child_pid}").exists())
+        self.wait("unbound runtime cleaned after closure", lambda: not runtime.exists())
+        self.terminal_command(main, "exit")
+        self.wait("all owned terminal PTYs closed", self.terminal_ptys_closed)
         self.observations["canonical_source_hashes"] = before
-        self.observations["collision_preserved"] = before_collision
-        self.observations["units_receipt"] = receipt
+        self.observations["cli_created_project"] = str(target)
+        self.observations["unbound_runtime_cleaned"] = str(runtime)
+        self.observations["limits"] = "Native nested-Wayland input/capture; shell lifecycle shutdown, GUI process termination; installed-agent version is execution evidence, not MCP or model round-trip qualification"
 
 
 def native_launch_smoke(root):
@@ -441,6 +487,7 @@ def native_launch_smoke(root):
               "desktop": env.get("XDG_CURRENT_DESKTOP"), "display_removed": True,
               "binary_sha256": digest(Path(args[0])), "status": "FAIL",
               "scope": "Native desktop launch only; no input/workflow/Close qualification"}
+    runtimes, shell_pids = [], []
     with (root / "process.log").open("w") as log:
         app = subprocess.Popen(args, cwd=REPO, env=env, stdout=log, stderr=subprocess.STDOUT)
         try:
@@ -453,7 +500,35 @@ def native_launch_smoke(root):
                 if "window visible" in text and identities:
                     assert all("window_backend=wayland" in line and "gpu_backend=Vulkan" in line
                                for line in identities)
-                    result.update(surface_identities=identities, status="PASS bounded normal launch")
+                    result["surface_identities"] = identities
+                    # End only this GUI's initial shell through OS job control,
+                    # keeping Datum alive to supervise/reap and clean runtime.
+                    runtimes = list(Path(env["XDG_RUNTIME_DIR"]).glob(f"datum-terminal-{app.pid}-*"))
+                    assert runtimes, "bare launch must own an unbound terminal runtime"
+                    for runtime in runtimes:
+                        session = json.loads(runtime.joinpath("session.json").read_text())
+                        child = session["process_group_id"]
+                        assert isinstance(child, int) and child > 1
+                        stat = Path(f"/proc/{child}/stat").read_text().rsplit(")", 1)[1].split()
+                        assert int(stat[1]) == app.pid and os.getpgid(child) == child
+                        shell_pids.append(child)
+                        os.killpg(child, signal.SIGHUP)
+                    def owned_transport_closed():
+                        if any(Path(f"/proc/{pid}").exists() for pid in shell_pids):
+                            return False
+                        for fd in Path(f"/proc/{app.pid}/fd").iterdir():
+                            try:
+                                if str(fd.readlink()) in {"/dev/ptmx", "/dev/pts/ptmx"}:
+                                    return False
+                            except FileNotFoundError:
+                                pass
+                        return True
+                    until_cleanup = time.monotonic() + 7
+                    while not owned_transport_closed() and time.monotonic() < until_cleanup:
+                        time.sleep(0.05)
+                    assert owned_transport_closed(), "owned shells, descendants and PTY teardown must complete before ending GUI"
+                    result["terminal_cleanup"] = "SIGHUP to verified owned shell group; Datum supervised closure; no ordinary GUI Close claim"
+                    result["status"] = "PASS bounded normal launch"
                     break
                 time.sleep(0.1)
             else:
@@ -463,6 +538,15 @@ def native_launch_smoke(root):
                 app.terminate()
                 app.wait(timeout=10)
             result["owned_process_exit"] = app.returncode
+            # Forced process termination skips Rust destructors. Remove only the
+            # recorded private runtime after its shell and GUI have both gone;
+            # this is harness housekeeping, not application cleanup evidence.
+            if not any(Path(f"/proc/{pid}").exists() for pid in shell_pids):
+                for runtime in runtimes:
+                    if runtime.exists():
+                        assert runtime.name.startswith(f"datum-terminal-{app.pid}-") and runtime.stat().st_uid == os.getuid()
+                        shutil.rmtree(runtime)
+                result["runtime_housekeeping"] = "Recorded owned runtime removed after forced GUI end; not product cleanup evidence"
             (root / "result.json").write_text(json.dumps(result, indent=2) + "\n")
 
 
@@ -487,18 +571,24 @@ def main():
     qa = StartupQA(root)
     result = {"mode": "bare native Wayland/WGPU/Vulkan Datum; real X11 input through owned Weston; PID-qualified GI inspection",
               "binary_hashes": qa.binary_hashes, "status": "FAIL",
-              "persistence_limit": "Fresh process after owned SIGTERM; ordinary window Close is not exercised by this runner"}
+              "persistence_limit": "Single-process C08 session preservation and shell exit; final GUI SIGTERM is not ordinary window Close"}
     try:
         if args.package_project:
             result["scenario"] = "Targeted Package reachability on existing GUI-created Project"
             qa.execute_package_only(args.package_project)
         else:
-            result["scenario"] = "New Project startup correction and persistence"
+            result["scenario"] = "C08 real unbound shell, canonical CLI creation and ordinary GUI adoption"
             qa.execute()
         result["status"] = "PASS for executed startup repair observations"
     except Exception as error:
         result["error"] = str(error)
         (root / "failure.txt").write_text(traceback.format_exc())
+        if qa.process and qa.process.poll() is None:
+            try:
+                qa.observations["failure_terminal_text"] = qa.terminal_text()
+                qa.capture("failure-visible-state", qa.host_window)
+            except Exception as capture_error:
+                result["failure_capture_error"] = str(capture_error)
         raise
     finally:
         qa.stop()

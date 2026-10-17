@@ -578,6 +578,22 @@ class TerminalTransportBoundaryTest(unittest.TestCase):
         self.assertTrue(any("writer completion" in failure for failure in failures))
         self.assertTrue(any("closes_every_master" in failure for failure in failures))
 
+    def test_opaque_lifetime_retention_is_bounded(self) -> None:
+        temporary, root = self.fixture()
+        self.addCleanup(temporary.cleanup)
+        handle = root / guard.TRANSPORT / "session_handle.rs"
+        original = handle.read_text()
+        handle.write_text(original + "\nimpl TerminalTransportSession { pub(crate) fn retain_until_closed(&self, resource: impl Send + 'static) {} }")
+        self.assertEqual(guard.check(root), [])
+        for signature in [
+            "pub(crate) fn retain_until_closed(&self, resource: File)",
+            "pub(crate) fn retain_until_closed(&self, resource: impl Send + 'static) -> RawFd",
+            "pub(crate) fn retain_until_closed(&self, resource: impl Send + 'static) -> usize",
+        ]:
+            handle.write_text(original + "\nimpl TerminalTransportSession { " + signature + " {} }")
+            self.assertTrue(any("lifetime retention" in f for f in guard.check(root)))
+
+
 
 if __name__ == "__main__":
     unittest.main()

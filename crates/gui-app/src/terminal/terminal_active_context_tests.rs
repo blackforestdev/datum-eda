@@ -110,7 +110,7 @@ fn commit_review_sidecar(root: &Path) -> String {
 
 fn context_for_root(root: &std::path::Path) -> TerminalLaunchContext {
     TerminalLaunchContext {
-        project_root: root.to_path_buf(),
+        project_root: Some(root.to_path_buf()),
         launch_working_directory: root.to_path_buf(),
         terminal_profile: crate::terminal_profile::TerminalLaunchProfile::default(),
         project_id: None,

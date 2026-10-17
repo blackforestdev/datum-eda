@@ -184,6 +184,17 @@ impl TerminalLaunchProfile {
         )
     }
 
+    pub(super) fn resolve_unbound(&self, cwd: &Path) -> Result<ResolvedTerminalLaunchProfile> {
+        anyhow::ensure!(
+            !matches!(&self.cwd, TerminalCwdTemplate::Project)
+                && !matches!(&self.cwd, TerminalCwdTemplate::Path(p) if !p.is_absolute()),
+            "Terminal profile requires a Project directory; choose an active-cwd or absolute-cwd profile"
+        );
+        // Project-dependent templates have been refused. Active/absolute cwd
+        // resolution uses the real launch directory, never a Project identity.
+        Ok(self.resolve(cwd, cwd))
+    }
+
     fn resolve_with_shell(
         &self,
         project_root: &Path,

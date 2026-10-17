@@ -24,6 +24,8 @@ pub(super) const DATUM_CLI: &str = "datum-eda";
 pub(super) const DATUM_LEGACY_CLI: &str = "eda";
 
 pub(super) struct TerminalContext {
+    pub(super) unbound_runtime:
+        Option<std::sync::Arc<crate::terminal_process::unbound::UnboundRuntime>>,
     pub(super) context_path: PathBuf,
     pub(super) latest_context_path: PathBuf,
     pub(super) session_path: PathBuf,
@@ -52,7 +54,11 @@ fn terminal_live_context_id(context: &TerminalContext) -> String {
 }
 
 pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<TerminalContext> {
-    let datum_dir = context.project_root.join(".datum");
+    let project_root = context
+        .project_root
+        .as_deref()
+        .context("Terminal has no bound Project")?;
+    let datum_dir = project_root.join(".datum");
     fs::create_dir_all(&datum_dir)
         .with_context(|| format!("create terminal context dir {}", datum_dir.display()))?;
     let terminal_context_dir = datum_dir.join("terminal-contexts");
@@ -83,6 +89,7 @@ pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<
     let latest_context_path = datum_dir.join("gui-terminal-context.json");
     let session_path = tool_session_dir.join(format!("{session_id}.json"));
     let terminal_context = TerminalContext {
+        unbound_runtime: None,
         context_path,
         latest_context_path,
         session_path,
@@ -96,7 +103,7 @@ pub(super) fn write_terminal_context(context: &TerminalLaunchContext) -> Result<
     create_session_authority(
         &terminal_context.context_path,
         &terminal_context.session_id,
-        &context.project_root,
+        project_root,
         terminal_context.created_unix_ms,
     )?;
     if let Err(error) = write_terminal_context_files_scoped(&terminal_context, context, false) {
@@ -122,6 +129,10 @@ fn write_terminal_context_files_scoped(
     context: &TerminalLaunchContext,
     publish_aliases: bool,
 ) -> Result<()> {
+    let project_root = context
+        .project_root
+        .as_deref()
+        .context("Terminal has no bound Project")?;
     let updated_unix_ms = unix_time_ms()?;
     let production_visibility = production_visibility_context(&context.production_status);
     let selected_finding_fingerprint = (context.selection_context.kind == "check_finding")
@@ -131,7 +142,7 @@ fn write_terminal_context_files_scoped(
         latest_proposal_id(&context.production_status, &context.selection_context);
     let accepted_transaction_tip = context.accepted_transaction_tip.clone();
     let active_context_commands = TerminalActiveContextCommands::from_focus(
-        &context.project_root,
+        project_root,
         production_visibility
             .focused_artifact_id
             .as_deref()
@@ -181,7 +192,7 @@ fn write_terminal_context_files_scoped(
     };
     let envelope = TerminalContextEnvelope {
         contract: "datum_terminal_context_v1",
-        project_root: context.project_root.display().to_string(),
+        project_root: project_root.display().to_string(),
         project_id: context.project_id.clone(),
         project_name: context.project_name.clone(),
         board_id: context.board_id.clone(),
@@ -372,7 +383,7 @@ fn write_terminal_context_files_scoped(
         );
         let discovery = TerminalAgentDiscovery {
             schema: "datum_agent_discovery_v1",
-            project_root: context.project_root.display().to_string(),
+            project_root: project_root.display().to_string(),
             project_id: context.project_id.clone(),
             terminal_session_id: terminal_context.session_id.clone(),
             agent_launch_id: agent_launch_id(&terminal_context.context_id),

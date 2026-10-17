@@ -30,6 +30,7 @@ pub(crate) struct ShutdownProcessIdentity {
 }
 
 struct SupervisorState {
+    retained_resources: Vec<Box<dyn Send>>,
     phase: ShutdownPhase,
     request: Option<ShutdownRequest>,
     surviving_processes: Vec<process_session::ProcessIdentity>,
@@ -57,6 +58,7 @@ impl ProcessSupervisor {
             session_id,
             shared: Arc::new((
                 Mutex::new(SupervisorState {
+                    retained_resources: Vec::new(),
                     phase: ShutdownPhase::Running,
                     request: None,
                     surviving_processes: Vec::new(),
@@ -115,6 +117,15 @@ impl ProcessSupervisor {
         }
         changed.notify_all();
         self.wake.request();
+    }
+
+    /// Application-owned opaque resources may outlive a dropped transport.
+    /// Release them only after owned-process verification and leader reaping.
+    pub(super) fn retain_until_closed(&self, resource: Box<dyn Send>) {
+        let mut state = self.shared.0.lock().unwrap_or_else(|p| p.into_inner());
+        if state.phase != ShutdownPhase::Closed {
+            state.retained_resources.push(resource);
+        }
     }
 
     pub(super) fn snapshot(&self) -> ShutdownSnapshot {
@@ -483,6 +494,9 @@ impl ProcessSupervisor {
         }
         state.phase = ShutdownPhase::Closed;
         state.surviving_processes.clear();
+        let resources = std::mem::take(&mut state.retained_resources);
+        drop(state);
+        drop(resources);
         changed.notify_all();
         self.wake.request();
         true

@@ -5,6 +5,7 @@ fn supervisor() -> ProcessSupervisor {
         session_id: 42,
         shared: Arc::new((
             Mutex::new(SupervisorState {
+                retained_resources: Vec::new(),
                 phase: ShutdownPhase::Running,
                 request: None,
                 surviving_processes: Vec::new(),

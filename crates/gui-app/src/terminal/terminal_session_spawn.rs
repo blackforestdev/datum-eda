@@ -4,6 +4,8 @@ use std::{sync::mpsc, thread};
 impl TerminalSessionRegistry {
     #[allow(dead_code)]
     pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
+        let prepared_context = context.for_spawn()?;
+        let context = &prepared_context;
         ensure_session_capacity(
             self.sessions.len()
                 + self.pending_spawns.len()
@@ -109,6 +111,7 @@ impl TerminalSessionRegistry {
         {
             anyhow::bail!("terminal split source not found: {source_session_id}");
         }
+        let context = context.for_spawn()?;
         let label = self.reserve_session_label();
         let pending_id = format!("pending-{}", label.replace(' ', "-"));
         let (sender, result) = mpsc::channel();
@@ -275,12 +278,17 @@ pub(super) fn session_slot(
     label: String,
     core: TerminalCoreSessionAdapter,
 ) -> TerminalSessionSlot {
+    let status = session.running_status();
+    let parked_lane = TerminalLaneState {
+        status: status.clone(),
+        ..Default::default()
+    };
     TerminalSessionSlot {
         session,
         core,
         label,
         label_is_explicit: false,
-        status: "running".to_string(),
+        status,
         attached: true,
         previous_session_id: None,
         restart_count: 0,
@@ -288,7 +296,7 @@ pub(super) fn session_slot(
         rows: 24,
         activity: TerminalActivitySummaryCache::default(),
         pending_drain_output: Vec::new(),
-        parked_lane: TerminalLaneState::default(),
+        parked_lane,
         disconnected_reported: false,
         termination_failure_reported: false,
         close_confirmation_armed: false,

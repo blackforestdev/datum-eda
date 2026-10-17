@@ -17,10 +17,7 @@ fn unopened_chrome_reports_no_session_without_a_live_prompt() {
         &mut text,
         &mut hits,
     );
-    assert!(
-        text.iter()
-            .any(|run| run.text == "No Project open · no terminal session")
-    );
+    assert!(text.iter().any(|run| run.text == "No Project open"));
     assert!(!text.iter().any(|run| run.text == "running"));
     assert!(state.ui.terminal.tabs.is_empty());
     assert!(state.ui.terminal.active_session_id.is_none());

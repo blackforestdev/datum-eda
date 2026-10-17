@@ -145,7 +145,11 @@ fn pending_tab_and_split_refuse_publication_without_double_parking_old_lane() {
 fn publication_preserves_old_session_origin_and_workspace_owned_chrome() {
     let (mut registry, old_context) = registry();
     let old = registry.active().session_id().to_owned();
-    let destination = old_context.project_root.join("destination with space");
+    let destination = old_context
+        .project_root
+        .as_ref()
+        .unwrap()
+        .join("destination with space");
     std::fs::create_dir_all(&destination).unwrap();
     let mut new_context = TerminalLaunchContext::for_project_root(&destination);
     new_context.project_id = old_context.project_id.clone();
@@ -181,7 +185,7 @@ fn publication_preserves_old_session_origin_and_workspace_owned_chrome() {
     );
     assert_eq!(
         registry.active_origin_context().unwrap().project_root,
-        destination
+        Some(destination)
     );
     assert_eq!(
         registry.restart_origin(&old, &new_context).project_root,

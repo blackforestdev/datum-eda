@@ -72,7 +72,7 @@ fn restarting_split_retains_owned_slot_until_verified_replacement() {
         sibling_context
     );
     let bound = registry.active_origin_context().unwrap();
-    assert_eq!(bound.project_root, origin);
+    assert_eq!(bound.project_root, Some(origin.clone()));
     assert_eq!(bound.launch_working_directory, cwd);
     assert_eq!(lane.status, "running");
     assert!(registry.active_attached());

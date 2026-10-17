@@ -26,6 +26,13 @@ impl GuiArgs {
         state.ui.terminal.theme = profiles.selected().theme();
         state.ui.terminal.font_scale_millis = profiles.selected().font_scale_millis();
         state.ui.terminal.launch_profile_name = profiles.selected().name().to_string();
+        let context = TerminalLaunchContext::unbound(
+            crate::terminal_process::unbound::launch_directory()?,
+            profiles.selected().clone(),
+        );
+        let terminal_sessions = TerminalSessionRegistry::spawn_with_proxy(&context, proxy)?;
+        state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+        state.ui.terminal.status = terminal_sessions.active().running_status();
         let camera = CameraState::fit_to_bounds(&state.scene.bounds);
         Ok(LaunchState {
             reuse_resize_buffers: app_bootstrap::ordinary_resize_reuse(
@@ -35,9 +42,9 @@ impl GuiArgs {
             request: None,
             state,
             camera,
-            terminal_launch_context: None,
+            terminal_launch_context: Some(context),
             terminal_profiles: profiles,
-            terminal_sessions: TerminalSessionRegistry::empty(proxy),
+            terminal_sessions,
             workspace_include_review: false,
             open_global_preferences: self.open_global_preferences,
             open_new_project: self.open_new_project,

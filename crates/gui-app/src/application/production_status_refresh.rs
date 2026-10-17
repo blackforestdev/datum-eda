@@ -199,6 +199,14 @@ impl Runtime {
     }
 
     pub(super) fn mark_terminal_workspace_refresh_pending(&mut self) {
+        if self.workspace().project_unopened
+            || self
+                .terminal_sessions
+                .active_origin_context()
+                .is_some_and(|origin| origin.project_root.is_none())
+        {
+            return;
+        }
         if self
             .terminal_sessions
             .active_origin_context()

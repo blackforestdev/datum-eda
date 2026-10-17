@@ -16,7 +16,11 @@ pub(super) fn context_for_new_terminal(
     context.launch_working_directory = reported_working_directory
         .and_then(local_working_directory)
         .filter(|path| path.is_dir())
-        .unwrap_or_else(|| base.project_root.clone());
+        .unwrap_or_else(|| {
+            base.project_root
+                .clone()
+                .unwrap_or_else(|| base.launch_working_directory.clone())
+        });
     context
 }
 
@@ -27,10 +31,11 @@ pub(super) fn context_for_new_terminal_from_state(
     cursor: Option<(f32, f32)>,
     reported_working_directory: Option<&str>,
 ) -> TerminalLaunchContext {
+    let Some(root) = base.project_root.as_deref() else {
+        return context_for_new_terminal(base, reported_working_directory);
+    };
     let mut current = crate::terminal_session::terminal_launch_context_from_state_with_cursor(
-        &base.project_root,
-        state,
-        cursor,
+        root, state, cursor,
     );
     current.terminal_profile = base.terminal_profile.clone();
     context_for_new_terminal(&current, reported_working_directory)
@@ -146,7 +151,7 @@ mod tests {
         assert_ne!(current.selection_context, base.selection_context);
         assert_eq!(current.terminal_profile, base.terminal_profile);
         assert_eq!(current.project_root, base.project_root);
-        assert_eq!(current.launch_working_directory, base.project_root);
+        assert_eq!(Some(current.launch_working_directory), base.project_root);
         assert_eq!(current.cursor_context.screen_px, Some([12, 34]));
     }
 
@@ -163,7 +168,7 @@ mod tests {
 
         let context = context_for_new_terminal(&base, Some(&report));
 
-        assert_eq!(context.project_root, project);
+        assert_eq!(context.project_root, Some(project));
         assert_eq!(context.launch_working_directory, child);
         let _ = fs::remove_dir_all(root);
     }

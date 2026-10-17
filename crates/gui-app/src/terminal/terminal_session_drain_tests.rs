@@ -88,6 +88,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
             TerminalSessionSlot {
                 session: TerminalSession {
                     transport: TerminalTransportSession::synthetic(wake.clone()),
+                    unbound_runtime: None,
                     context_path: root.join(format!("{id}-context.json")),
                     latest_context_path: root.join("latest.json"),
                     session_path: root.join(format!("{id}-session.json")),

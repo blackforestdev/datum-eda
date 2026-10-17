@@ -30,6 +30,8 @@ pub(super) struct TerminalSession {
     pub(super) session_id: String,
     pub(super) context_id: String,
     pub(super) terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
+    pub(super) unbound_runtime:
+        Option<std::sync::Arc<crate::terminal_process::unbound::UnboundRuntime>>,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
     /// Byte offset of the next unscanned event-log line for the
     /// command-finished check (terminal performance slice): the log is
@@ -110,7 +112,8 @@ struct TerminalSessionSlot {
 
 #[derive(Debug, Clone)]
 pub(super) struct TerminalLaunchContext {
-    pub(super) project_root: PathBuf,
+    /// Absence is an unbound session; cwd never substitutes for Project identity.
+    pub(super) project_root: Option<PathBuf>,
     /// Directory inherited by the launched shell. This is intentionally
     /// separate from `project_root`, which remains Datum's stable project and
     /// context identity when a new tab follows the active shell's OSC 7 CWD.
@@ -133,27 +136,6 @@ pub(super) struct TerminalLaunchContext {
 }
 
 impl TerminalSessionRegistry {
-    /// No PTY or filesystem context exists until a real Project is published.
-    pub(super) fn empty(proxy: Option<EventLoopProxy<()>>) -> Self {
-        Self {
-            sessions: vec![],
-            terminal_tabs: vec![],
-            pending_spawns: vec![],
-            active_pending_id: None,
-            active_index: 0,
-            next_session_ordinal: 1,
-            terminal_wake: TerminalWakeGate::new(proxy),
-            next_drain_index: 0,
-            next_apply_index: 0,
-            projection_managed: false,
-            project_open_reservations: Arc::default(),
-            origin_contexts: Default::default(),
-            origin_workspaces: Default::default(),
-            rejected_project_terminals: Arc::default(),
-            next_rejected_drain_index: 0,
-        }
-    }
-
     #[cfg_attr(not(test), allow(dead_code))]
     pub(super) fn spawn(context: &TerminalLaunchContext) -> Result<Self> {
         Self::spawn_with_proxy(context, None)
@@ -163,6 +145,8 @@ impl TerminalSessionRegistry {
         context: &TerminalLaunchContext,
         terminal_event_proxy: Option<EventLoopProxy<()>>,
     ) -> Result<Self> {
+        let prepared_context = context.for_spawn()?;
+        let context = &prepared_context;
         let terminal_wake = TerminalWakeGate::new(terminal_event_proxy);
         let session = spawn_terminal_session_with_wake(context, terminal_wake.clone())?;
         let core = TerminalCoreSessionAdapter::new_with_profile(
@@ -173,13 +157,14 @@ impl TerminalSessionRegistry {
             &session.terminal_profile,
         )?;
         let first_session_id = session.session_id().to_string();
+        let status = session.running_status();
         Ok(Self {
             sessions: vec![TerminalSessionSlot {
                 session,
                 core,
                 label: "shell 1".to_string(),
                 label_is_explicit: false,
-                status: "running".to_string(),
+                status,
                 attached: true,
                 previous_session_id: None,
                 restart_count: 0,
@@ -517,7 +502,7 @@ pub(super) fn terminal_launch_context_from_state(
     state: &ReviewWorkspaceState,
 ) -> TerminalLaunchContext {
     TerminalLaunchContext {
-        project_root: project_root.to_path_buf(),
+        project_root: Some(project_root.to_path_buf()),
         launch_working_directory: project_root.to_path_buf(),
         terminal_profile: crate::terminal_profile::TerminalLaunchProfile::default(),
         project_id: Some(state.scene.project_uuid.clone()),
@@ -590,6 +575,7 @@ pub(super) fn refresh_terminal_session_context(
     context: &TerminalLaunchContext,
 ) -> Result<()> {
     let terminal_context = TerminalContext {
+        unbound_runtime: session.unbound_runtime.clone(),
         context_path: session.context_path.clone(),
         latest_context_path: session.latest_context_path.clone(),
         session_path: session.session_path.clone(),
@@ -601,6 +587,9 @@ pub(super) fn refresh_terminal_session_context(
             .unwrap_or_else(|| unix_time_ms().unwrap_or(0)),
         process_group_id: Some(session.process_group_id()),
     };
+    if context.project_root.is_none() {
+        return crate::terminal_process::unbound::refresh(&terminal_context, context);
+    }
     write_terminal_context_files(&terminal_context, context)
 }
 
@@ -610,8 +599,14 @@ pub(super) fn refresh_terminal_session_context_from_state(
     state: &ReviewWorkspaceState,
     cursor: Option<(f32, f32)>,
 ) -> Result<TerminalLaunchContext> {
-    let mut context =
-        terminal_launch_context_from_state_with_cursor(&base_context.project_root, state, cursor);
+    let mut context = terminal_launch_context_from_state_with_cursor(
+        base_context
+            .project_root
+            .as_deref()
+            .ok_or_else(|| anyhow::anyhow!("No Project bound to this terminal"))?,
+        state,
+        cursor,
+    );
     context.terminal_profile = base_context.terminal_profile.clone();
     refresh_terminal_session_context(session, &context)?;
     Ok(context)
@@ -638,7 +633,7 @@ pub(super) fn restart_terminal_session(
     mark_terminal_session_lifecycle(session, DatumToolSessionLifecycle::Restarted, None)?;
     record_terminal_lifecycle_event(session, DatumToolSessionLifecycle::Restarted, None)?;
     *session = replacement;
-    state.status = "running".to_string();
+    state.status = session.running_status();
     // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not
     // write a notice row into the terminal grid — the grid holds only PTY
     // output. Session status is visible through chrome (`state.status`); the
@@ -649,11 +644,32 @@ pub(super) fn restart_terminal_session(
 
 #[cfg(test)]
 impl TerminalSessionRegistry {
+    /// Empty registry retained for unavailable-session lifecycle regressions.
+    pub(super) fn empty(proxy: Option<EventLoopProxy<()>>) -> Self {
+        Self {
+            sessions: vec![],
+            terminal_tabs: vec![],
+            pending_spawns: vec![],
+            active_pending_id: None,
+            active_index: 0,
+            next_session_ordinal: 1,
+            terminal_wake: TerminalWakeGate::new(proxy),
+            next_drain_index: 0,
+            next_apply_index: 0,
+            projection_managed: false,
+            project_open_reservations: Arc::default(),
+            origin_contexts: Default::default(),
+            origin_workspaces: Default::default(),
+            rejected_project_terminals: Arc::default(),
+            next_rejected_drain_index: 0,
+        }
+    }
+
     fn test_session_text(&self, index: usize) -> String {
         self.sessions[index].core.test_plain_text()
     }
 
-    fn test_active_text(&self) -> String {
+    pub(crate) fn test_active_text(&self) -> String {
         self.test_session_text(self.active_index)
     }
 }

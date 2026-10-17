@@ -46,6 +46,9 @@ impl Runtime {
             .active_origin_context()
             .unwrap_or(current)
             .clone();
+        if origin.project_root.is_none() {
+            return;
+        }
         let current_project = origin.project_root == current.project_root;
         let result = if current_project {
             refresh_terminal_session_context_from_state(
@@ -56,7 +59,7 @@ impl Runtime {
             )
         } else if let Some(state) = self
             .terminal_sessions
-            .origin_workspace(&origin.project_root)
+            .origin_workspace(origin.project_root.as_deref().expect("bound origin"))
         {
             let mut state = state.clone();
             state.ui.terminal = self.workspace().ui.terminal.clone();

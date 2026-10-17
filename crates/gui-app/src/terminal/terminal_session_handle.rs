@@ -17,8 +17,12 @@ impl TerminalSession {
         context: TerminalContext,
         terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
     ) -> Self {
+        if let Some(runtime) = &context.unbound_runtime {
+            transport.retain_until_closed(runtime.clone());
+        }
         Self {
             transport,
+            unbound_runtime: context.unbound_runtime,
             context_path: context.context_path,
             latest_context_path: context.latest_context_path,
             session_path: context.session_path,
@@ -28,6 +32,18 @@ impl TerminalSession {
             active_execution_id: Arc::new(Mutex::new(None)),
             finished_scan_offset: std::cell::Cell::new(0),
         }
+    }
+
+    pub(crate) fn running_status(&self) -> String {
+        let mut status = if self.unbound_runtime.is_some() {
+            "running · no Project bound".to_owned()
+        } else {
+            "running".to_owned()
+        };
+        if crate::terminal_process::unbound::cli_companion().is_err() {
+            status.push_str(" · CLI unavailable; build/install matching companions");
+        }
+        status
     }
 
     pub(crate) fn write_bytes(&self, bytes: &[u8]) -> Result<()> {

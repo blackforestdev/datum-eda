@@ -8,10 +8,7 @@ fn unopened_state_has_no_source_authority_and_shared_commands_refuse_project_act
     assert!(state.scene.scene_id.is_empty());
     assert!(state.review.project_root.is_none());
     assert!(state.library.basis.is_none());
-    assert_eq!(
-        state.ui.terminal.status,
-        "No Project open · no terminal session"
-    );
+    assert_eq!(state.ui.terminal.status, "No Project open");
     assert!(state.ui.terminal.active_session_id.is_none());
     assert!(camera_scene_for_pane(&state, state.ui.layout.focused).is_none());
     assert!(gui_menu_model::action_registry::admit("view.fit", &state).is_err());

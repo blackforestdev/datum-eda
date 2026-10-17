@@ -11,7 +11,10 @@ use crate::{
     terminal_session::{TerminalLaunchContext, TerminalSession},
     terminal_transport::{TerminalTransportRequest, TerminalWakeGate, prepare_terminal_transport},
 };
-use anyhow::Result;
+use anyhow::{Context, Result};
+
+#[path = "terminal_unbound.rs"]
+pub(super) mod unbound;
 
 pub(super) fn spawn_terminal_process(
     context: &TerminalLaunchContext,
@@ -51,24 +54,32 @@ fn spawn_terminal_process_inner(
     rejected: &mut Option<TerminalSession>,
     persist: impl FnOnce(&TerminalContext, &TerminalLaunchContext) -> Result<()>,
 ) -> Result<TerminalSession> {
+    if context.project_root.is_none() {
+        return unbound::spawn(context, terminal_wake, rejected);
+    }
+    let project_root = context
+        .project_root
+        .as_deref()
+        .context("No Project bound")?;
     let profile = context
         .terminal_profile
-        .resolve(&context.project_root, &context.launch_working_directory);
+        .resolve(project_root, &context.launch_working_directory);
     let mut terminal_context = write_terminal_context(context)?;
     let discovery_path = terminal_discovery_path(&terminal_context);
     let pinned_context_path = terminal_pinned_context_path(&terminal_context);
     let terminfo_root = install_session_terminfo(&terminal_context.session_path)?;
-    let mut request =
-        TerminalTransportRequest::new(&profile.executable, profile.cwd).args(profile.args);
-    for (key, value) in profile.environment {
+    let mut request = TerminalTransportRequest::new(&profile.executable, profile.cwd.clone())
+        .args(profile.args.clone());
+    for (key, value) in &profile.environment {
         request = match value {
             Some(value) => request.env(key, value),
             None => request.env_remove(key),
         };
     }
+    let request = unbound::environment(request, &profile)?;
     let mut request = apply_datum_terminal_identity(request, &terminfo_root)
         .env("DATUM_TERMINAL_PROFILE", &profile.name)
-        .env("DATUM_PROJECT_ROOT", context.project_root.as_os_str())
+        .env("DATUM_PROJECT_ROOT", project_root.as_os_str())
         .env("DATUM_CLI", DATUM_CLI)
         .env("DATUM_LEGACY_CLI", DATUM_LEGACY_CLI)
         .env("DATUM_CONTEXT_ID", &terminal_context.context_id)

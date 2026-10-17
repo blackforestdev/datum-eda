@@ -179,7 +179,7 @@ fn existing_terminal_public_get_tracks_selection_scope_clear_and_activation() {
     let foreign = root.join("foreign-origin");
     std::fs::create_dir_all(&foreign).unwrap();
     let mut foreign_launch = runtime.terminal_launch_context.clone().unwrap();
-    foreign_launch.project_root = foreign.clone();
+    foreign_launch.project_root = Some(foreign.clone());
     foreign_launch.launch_working_directory = foreign;
     runtime
         .terminal_sessions

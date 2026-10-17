@@ -71,7 +71,7 @@ impl ReviewWorkspaceState {
         };
         let mut state = Self::new(scene, review);
         state.project_unopened = true;
-        state.ui.terminal.status = "No Project open · no terminal session".to_owned();
+        state.ui.terminal.status = "No Project open".to_owned();
         state.active_review_target_id.clear();
         state.ui.layout = WorkspaceLayout::single();
         state
