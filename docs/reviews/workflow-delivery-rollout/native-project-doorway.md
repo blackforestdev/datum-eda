@@ -1,8 +1,9 @@
 # Native project doorway — managed delivery
 
-Status: NPD-C01..06 complete. Bounded native doorway delivery accepted under
-NPD-MANAGED-01 and landed in `45f77006c661019e02928b90dba2a9f1b177bc4d`.
-Broader qualification remains separate; S5A remains explicitly paused.
+Status: historical NPD-C01..06 delivery landed at `45f77006c661019e02928b90dba2a9f1b177bc4d`.
+Owner QA reopened the doorway for NPD-C07 below: home-path handling, creation
+refusal/retry and truthful unopened terminal state. Current development
+availability is withheld pending the correction and review. S5A remains paused.
 
 ## Actual owner clarification and manager scope
 
@@ -563,3 +564,104 @@ or new proof schema/framework. Closure validation also required the completed
 step pointer to be null and removal of the now-closed NPD issue from the
 foundation's derived pending-unblocks list. The actual dependency edge remains;
 these rejected intermediate states were corrected without validator changes.
+
+
+<!-- REQ:NATIVE-PROJECT-DOORWAY:NPD-C07 -->
+## NPD-C07 — owner-reported startup QA repair
+
+The owner reported failed ordinary New Project creation with a `~/` Location,
+misleading Global Units failure text and a blank terminal after cancelling New.
+The owner then explicitly instructed the appointed manager: “this should have
+been sent to you. I need you to correct these issues for me to QA test this project”,
+and “talk to the peer agents.” These are actual messages in manager thread
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`. The session is now in Default mode.
+This is an authorized correction to the existing doorway, not successor feature
+selection. Historical C01–06 evidence stays at its original source and scope;
+the owner-observed failure overrides an unqualified current-readiness claim.
+
+<!-- APPOINTMENT:NATIVE-PROJECT-DOORWAY:QA-REPAIR -->
+{"owner_appointed":true,"session":"codex-production-manager-20261016","task_keys":["NATIVE-PROJECT-DOORWAY"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance"]}
+
+Existing full-destination semantics remain: Location is the new Project's entire
+path, separate from its display name. The governed New form shows leading `~/`;
+resolve that shorthand at the GUI boundary without shell evaluation, general
+variable/other-user expansion, implicit parent creation or engine publication
+changes. Never append the display name or overwrite an existing destination.
+
+Keep a valid pinned Units source and eight-row summary after destination or
+publication errors; show the actual reason. Editing the relevant input must
+permit correction and retry without unrelated Global rereads. Genuine stale,
+unreadable or incomplete seed failures still invalidate readiness and require
+explicit source resolution; never select Factory implicitly. The unopened
+terminal has no shell or Project context and must say so through existing
+status/chrome, without a fabricated session, new welcome surface or terminal
+implementation change.
+
+Dev-agent session `01a14799-fef3-7e01-b079-2fcae52aa45d` owns the source/test paths
+below. Manager `codex-production-manager-20261016` owns state, factual records
+and acceptance. The single synchronized lease records both disjoint assignments.
+Independent reviewer `/root/closeout_review` remains read-only and may not accept
+its own implementation. Manager pulls peer results directly; the owner is not
+a message relay. Source release follows actual route readiness, not this entry.
+
+Implementer paths:
+- `crates/gui-app/src/windows/global_preferences_runtime/new_project.rs`
+- `crates/gui-app/src/windows/global_preferences_runtime/new_project/tests.rs`
+- `crates/gui-protocol/src/new_project.rs`
+- `crates/gui-render/src/new_project_dialog.rs`
+- `crates/gui-protocol/src/workspace_startup.rs`
+- `crates/gui-protocol/src/workspace_startup_tests.rs`
+- `crates/gui-app/src/application/native_project_startup_tests.rs`
+- `crates/gui-render/src/terminal_tab_strip_tests.rs`
+- `scripts/prove_native_project_startup_gui.py`
+- `.datum/native-project-startup-repair`
+
+Manager paths:
+- `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`
+- `docs/reviews/workflow-delivery-rollout/native-project-doorway.json`
+- `specs/active_frontier.json`
+- `specs/PROGRESS.md`
+- `.beads/issues.jsonl`
+- `specs/spec_governance_manifest.json`
+- `specs/evidence_traceability_manifest.json`
+- `specs/source_module_size_manifest.json`
+- `docs/SOURCE_HEALTH_POLICY.md`
+- `specs/spec_parity_manifest.json`
+
+Acceptance requires focused path/refusal/retry/source-readiness regressions and
+an ordinary no-argument GUI run using real App/window event dispatch or desktop
+input, not direct coordinator/genesis or input-handler calls. In owned scratch,
+exercise cancelled New and truthful no-session terminal; an occupied/missing-
+parent destination with byte-preserving refusal; keyboard correction to a fresh
+`~/.../<project>` without a Global reread; successful Create/Open with eight-item
+immutable Units receipt, a live Project terminal, Save and fresh reopen.
+Reach Library Browser and Package creation on that GUI-created Project, rather
+than bootstrapping the starting Project in a helper. Inspect actual refusal,
+recovery and terminal frames and focus/readiness/accessibility state. Preserve
+absolute/relative destination behavior, stale/unreadable source protection,
+explicit Factory isolation and created-but-unopened recovery.
+
+Use only `.datum/native-project-startup-repair` for local disposable inputs,
+logs and captures; no external workspace collection or owner Project mutation.
+Reuse adequate unaffected proof with exact limits, retain failed attempts and
+source/binary bindings, run required source-health/dependency/drift gates, obtain
+actual independent source/runtime/rendered and factual-documentation review,
+land the corrected source and source-pinned availability, then close this repair.
+No physical/HUMAN or full-qualification result is inferred. S5A stays held.
+
+Activation: source-health baseline passes for 3,188 files at `746af44812275bb2cb809cdd1f4241a66e321be4`.
+Current result: implementation, runtime review and objective acceptance pending.
+
+
+C07 source release: actual independent `/root/closeout_review` readiness PASS,
+no mandatory findings, at amended-record SHA-256
+`0d689512e1632b8c9d14ada59f787ed2ff7a9d6c6cfc7142bfe1bd0c2ffaa2d2`.
+Its review accounts for 150 unique members across rollout (28),
+Workspace/Preferences (80), manual foundation (4), terminal research (4),
+terminal prototype (2) and editor shell/panes (35), using adequate complete
+accepted-corpus reuse, exact comparisons and changed-consumer assessment.
+No fresh whole-corpus or runtime PASS is claimed. Assignment/claim parity,
+historical C01–06, withheld current readiness and S5A preservation were verified.
+The appointed manager accepts this actual receipt and releases the documented
+source work under the owner-authorized C07 repair; implementation, ordinary GUI
+proof, independent source/runtime/rendered review and final acceptance remain.
