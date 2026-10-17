@@ -1,0 +1,115 @@
+{
+  "kind": "production_delivery_record",
+  "task": "LIBRARY-PACKAGE-GUI-CREATE",
+  "status": "authorized; implementation and review pending",
+  "owner_authorization": {
+    "verbatim": "Authorize the proposed GUI Package-creation increment. Appoint review-agent as its PM059 manager and dev-agent as implementer. Include required state synchronization, implementation, testing, documentation, independent review and landing. Keep S5A paused.",
+    "thread_id": "01a14799-fef3-7e01-b079-2fcae52aa45d",
+    "turn_id": "01a147a8-a2ab-7a03-979f-da696fad868c",
+    "message_id": "01a147a8-a2ca-7c23-a987-46b38aa93ad9",
+    "verified_by": "review-agent using read_thread; actual user message, not implementer assertion"
+  },
+  "owner_operating_direction": {
+    "verbatim": "I sent the authorizaton to the dev-agent. this is frustrating issue with the current state of this development. all these authorizations require me (the project owner) to aprove and be on the loop. these is an issue of I want to be out of the loop for atunomous agentic development.",
+    "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "application": "Continuing named-manager coordination of routine production task selection within ratified existing scope, assignments, independent review, corrections and objective acceptance. Record exact selected task and applicable authority before each unit; no repeated owner permission for routine continuation. This does not invent execution grants, resolve new product semantics, waive evidence, revive held S5A or automatically authorize successors."
+  },
+  "manager_appointment": {
+    "owner_appointed": true,
+    "session": "codex-production-manager-20261016",
+    "task_keys": [
+      "LIBRARY-PACKAGE-GUI-CREATE"
+    ],
+    "decision_kinds": [
+      "review_provisioning",
+      "review_receipt",
+      "continuation",
+      "objective_acceptance"
+    ]
+  },
+  "assignments": {
+    "coordination": "One synchronized task lease names dev-agent; review-agent is explicitly delegated the disjoint governance/documentation paths below within the same owner-granted unit. Source writes wait for manager confirmation of completed route preflight.",
+    "implementer_session": "01a14799-fef3-7e01-b079-2fcae52aa45d",
+    "implementer_paths": [
+      "crates/engine/src/api/native_write/library_gui.rs",
+      "crates/engine/src/api/native_write/library_gui_package.rs",
+      "crates/engine/src/api/native_write/library_gui_package_tests.rs",
+      "crates/gui-protocol/src/library_authoring.rs",
+      "crates/gui-protocol/src/library_authoring",
+      "crates/gui-protocol/src/library_browser.rs",
+      "crates/gui-app/src/editor/runtime_library.rs",
+      "crates/gui-app/src/editor/native_library_frame_tests.rs",
+      "crates/gui-app/src/editor/native_library_frame_tests",
+      "crates/gui-render/src/library_surface.rs",
+      "crates/gui-render/src/library_preview.rs",
+      "crates/gui-render/src/library_package_preview.rs",
+      "crates/engine-daemon/src/tests/main_tests_native_write.rs",
+      "crates/engine-daemon/src/tests/main_tests_native_write",
+      ".datum/package-gui-creation"
+    ],
+    "manager_session": "codex-production-manager-20261016",
+    "manager_paths": [
+      "docs/reviews/workflow-delivery-rollout/package-gui-creation.json",
+      "specs/active_frontier.json",
+      "specs/PROGRESS.md",
+      ".beads/issues.jsonl",
+      "specs/spec_governance_manifest.json",
+      "specs/evidence_traceability_manifest.json",
+      "specs/spec_parity_manifest.json",
+      "specs/source_module_size_manifest.json",
+      "docs/SOURCE_HEALTH_POLICY.md",
+      "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+      "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
+    ],
+    "independent_reviewer": "/root/closeout_review; read-only source/authority/runtime review; no material implementation/design"
+  },
+  "requirement_marker": "<!-- REQ:LIBRARY-PACKAGE-GUI-CREATE:PKGGUI-C01 -->",
+  "authorized_increment": "Creation only: expose existing name, family/code/mounting strings, optional nominal body dimensions/heights, and terminal identity/name/role through the existing library composition. Reuse canonical mutation and history. Package creation becomes an ordinary prerequisite available to the named Footprint picker; do not reopen accepted LIBRARY-GUI-AUTHORING.",
+  "workflow_requirements": [
+    "Create a named Package in an ordinary fresh native Project using supported body metadata and terminal identity/name/role fields without CLI or UUID provisioning",
+    "Preview and cancel Package creation; commit through the canonical writer; Undo/Redo; Save and fresh reopen",
+    "Create a Footprint by selecting the newly created named Package in the ordinary GUI",
+    "Operate the Package creation controls by keyboard in normal and narrow panes"
+  ],
+  "safety_requirements": [
+    "Inspection, preview and cancellation preserve authored files and journal",
+    "Malformed or unsupported input, stale revision and wrong writer or target refuse without partial authored writes",
+    "Preserve existing UUIDs, unrelated raw payloads and absent optional fields through creation and history",
+    "Package physical-body and terminal metadata remain separate from Footprint lands; saved-Package editing and placed propagation remain unavailable in this increment",
+    "Unsupported tolerance, terminal-position, model, approval and standards capabilities remain truthful without invented defaults or certification"
+  ],
+  "qualification_followups": [
+    "Full Package editing, tolerance/terminal-position/model capabilities and general placed updates remain later work",
+    "Physical-input/HUMAN and assistive-technology, broader platform and complete qualification remain separately open",
+    "S5A remains owner-paused; unrelated existing Clippy or parity failures are disclosed without new qualification claims"
+  ],
+  "completion_requirement": "Implement, run focused ordinary-application and refusal proof, correct findings, document actual behavior, obtain distinct source/runtime/rendered review, land reviewed source, record source-pinned development availability and actual manager objective acceptance; close only after those obligations. Source/route review remains mandatory before specification-derived implementation.",
+  "governing_authority": [
+    "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+    "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md",
+    "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+    "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
+  ],
+  "route_preflight": {
+    "status": "independent bounded preflight PASS; manager accepts source release",
+    "reviewer": "/root/closeout_review",
+    "coverage": "39 unique members across 18-member parametric and 34-member shell routes; exact unchanged complete-review reuse plus all changed consumer diffs. Protected original-history mirror used only for historical comparison, not product or proof inputs.",
+    "baseline_digests": {
+      "parametric-footprint-editor": "b728a7a4f029a0ec28a161d0994311628ea9e07a3613de1871194b22d469a626",
+      "prototype-editor-shell-and-panes": "6b41b007121865fb6fbd04c44660cf9c52bfc2341a6b1298d17ce8da20f97f7b"
+    },
+    "limits": "No mandatory product or visual conflict; L-B5 supports creation. Illustrative pitches, tolerances, terminal geometry and mockup defaults confer no new data semantics. No fresh entire-corpus reread, rendered/runtime/HUMAN or standards PASS claimed.",
+    "finding_disposition": "Corrected the two daemon test-owner paths in both assignment and synchronized claim before source release.",
+    "reviewed_task_record_sha256": "983adbac71702f9cb880a4aae2bc731650071b59e049e8dd93a035e171ca31f5",
+    "review_receipt": "Actual /root/closeout_review final: 39 unique route members accounted for, all consumer deltas and task record reviewed, daemon path correction verified, no remaining mandatory findings. Scope/authority readiness only; runtime/rendered delivery and final acceptance remain pending."
+  },
+  "implementation_results": null,
+  "independent_review": null,
+  "manager_disposition": null,
+  "source_commit": null,
+  "launch_command": null,
+  "workflow_results": {},
+  "safety_results": {},
+  "closure_disposition": null,
+  "issue_id": "dat-library-package-gui-create-2pdx"
+}

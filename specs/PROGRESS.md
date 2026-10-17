@@ -14,8 +14,6 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** Owner-authorized reproducible replay-input maintenance is accepted: replacements landed at2b7fe4ef, reviewed external collections/metadata and released task scratch retired, protected data unchanged and standalone provisioning verified after removal. No product or successor authority; S5A remains held.
-
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -370,6 +368,10 @@
 
 </details>
 
+- **Create Packages through the native library GUI** (`LIBRARY-PACKAGE-GUI-CREATE`; `dat-library-package-gui-create-2pdx`).
+   Owner authorizes bounded ordinary GUI Package creation and appoints review-agent manager/dev-agent implementer. Reuse existing Package fields, library composition and canonical history; independent route/source/runtime/visual review required. Saved-Package editing, new semantics, broader qualification and paused S5A remain outside this unit. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md`, `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
