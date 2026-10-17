@@ -1,7 +1,7 @@
 {
-  "kind": "production_delivery_record",
+  "kind": "ordinary_application",
   "task": "LIBRARY-PACKAGE-GUI-CREATE",
-  "status": "focused evidence reviewed; App test compilation correction and external session execution approval pending",
+  "status": "Landed creation-only Package GUI; reviewed source-pinned development availability accepted by appointed PM059 manager; full qualification remains open",
   "owner_authorization": {
     "verbatim": "Authorize the proposed GUI Package-creation increment. Appoint review-agent as its PM059 manager and dev-agent as implementer. Include required state synchronization, implementation, testing, documentation, independent review and landing. Keep S5A paused.",
     "thread_id": "01a14799-fef3-7e01-b079-2fcae52aa45d",
@@ -28,7 +28,7 @@
     ]
   },
   "assignments": {
-    "coordination": "One synchronized task lease names dev-agent; review-agent is explicitly delegated the disjoint governance/documentation paths below within the same owner-granted unit. Source writes wait for manager confirmation of completed route preflight.",
+    "coordination": "Historical disjoint source and governance/documentation assignments within one synchronized owner-granted task lease. Implementer landed exactly the 17 reviewed source files and explicitly released source ownership; manager completes factual documentation and synchronized closure.",
     "implementer_session": "01a14799-fef3-7e01-b079-2fcae52aa45d",
     "implementer_paths": [
       "crates/engine/src/api/native_write/library_gui.rs",
@@ -110,7 +110,7 @@
       "crates/engine/src/api/native_write/library_gui.rs": "2eaa1b6e40fad0b3a42cc98acd902469b73c780f673672838b493ae61e28002d",
       "crates/engine/src/api/native_write/library_gui_package.rs": "acac0d805c5872c50bae59b5bb30bde56a50614eabdc3445e972c02b2ad5117a",
       "crates/engine/src/api/native_write/library_gui_package_tests.rs": "c50dbab3167dab787a445a93ea234867a8da8567cd94d5b9482fb8f5ab7da82f",
-      "crates/gui-app/src/editor/native_library_frame_tests.rs": "f2d4dc542efde85c541354b4e6ce9339a5f14eaaa764fd235fcd1e94f4564503",
+      "crates/gui-app/src/editor/native_library_frame_tests.rs": "c8dcf5cf9735335ee10ea942976713aa67254ce543b75981d08bdc8e0ac0d748",
       "crates/gui-app/src/editor/native_library_frame_tests/input.rs": "274305757c56ae5b5253051efe2b7cafacfed4442854b8b2f33dea9050f81aa2",
       "crates/gui-app/src/editor/native_library_frame_tests/package.rs": "bda50c6a0d204b657f502b29a01984b1a4acde8ee621f85a69ea1ec82ca257ef",
       "crates/gui-app/src/editor/native_library_frame_tests/scenario.rs": "ab51bd8097dffce6aba8d3fb49aa2980bc2ce8f41261a270a0090a0c1bda6b6b",
@@ -185,7 +185,60 @@
       "python3 scripts/check_spec_parity.py": "PASS; 30 inventories",
       "python3 scripts/check_gui_design_tokens.py": "PASS; 35 colors, 7 types, 16 spacing/radius, 29 prototype variables and 12 contrast checks"
     },
-    "ordinary_application": null,
+    "ordinary_application": {
+      "command": "DATUM_PACKAGE_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/package-gui-creation/ordinary-project-attempt-2 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/package-gui-creation/ordinary-app-attempt-2-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_package_creation_to_named_footprint_history_and_reopen --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/package-gui-creation/ordinary-app-attempt-2.log 2>&1",
+      "command_provenance": {
+        "thread_id": "01a14799-fef3-7e01-b079-2fcae52aa45d",
+        "turn_id": "01a14807-6b79-7890-bb85-097cd85f9dc3",
+        "message_id": "msg_09598c9fce49d359016ad2f3923a0c819699ecf0ef8e0997e9",
+        "verification": "Exact successful command confirmed by producer; actual log, executables, source and all frames independently inspected"
+      },
+      "exit_code": 0,
+      "test_result": "1 passed; 493 filtered; 109 contiguous stages (0 through 108); 14.72 seconds",
+      "log": {
+        "path": ".datum/package-gui-creation/ordinary-app-attempt-2.log",
+        "sha256": "9875f700a96347e5cc318a77b2cb11e63e5df70d585ce4804ee7aac77c7fa4a2"
+      },
+      "source_catalogue": {
+        "path": ".datum/package-gui-creation/source-pins.txt",
+        "sha256": "4a060bab034b2507968a87eb14ce32943cdffea412567604dfed9430ebb0512b"
+      },
+      "binary_catalogue": {
+        "path": ".datum/package-gui-creation/binaries.sha256",
+        "sha256": "1de308c32107788368e9e38c5472e0dd6f8dc829bb3760b772dd5bf74d288706"
+      },
+      "screenshots": {
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-body-preview.png": "2d0c060572b1219a145e3eb39d27facd9dc2fb5a0b37f2e659a77d6505254c21",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-cancel-preview.png": "fa9f1b2244a2c8f8aea98cb02b525a93fc20ab65d206d4539df43dd3bb7e2966",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-footprint-reopened.png": "d0d333aac15605713fa9b3bbea935c1fd867fe65aa3f5854a3d69c0c14bfc349",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-linked-footprint-preview.png": "3715d08f7d804f66ac46dd4ef347e9eb8814397cda2d5bfe180c2389e329dc56",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-malformed-refusal.png": "cdf22ceebb2e4f6c53e2ea42c98b29e6179cb09cfea557e3b5139ba657f4e0d4",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-narrow-preview.png": "b0a9158687deb439294521375d2e582829ad1fdd343edf5b383284ede8f13d21",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-narrow-refusal.png": "485807bb4d9e06e1939df40608c1b192ad2b510b4ae0f693968919ae809e3dbc",
+        ".datum/package-gui-creation/ordinary-app-attempt-2-frames/package-reopened.png": "5146b892a71e9efc5413b1f9692188311c956fe4a95ae7af02d044ca9e4d3317"
+      },
+      "screenshot_catalogue": {
+        "path": ".datum/package-gui-creation/screenshots.sha256",
+        "sha256": "219f018c040a0b04730ceb5a29ea9fa9c658accb93bb90e471afd86285823570"
+      },
+      "setup": "Fresh absent owned Project path, provisioned by existing production bootstrap_native_project before opening ordinary App. Initial library is asserted empty; Package, Padstack and Footprint are authored by App controls, with no CLI or UUID provisioning of library content. This does not requalify the GUI New Project doorway.",
+      "assertions": "Preview/cancel/refusal preserve authored source and journal; canonical Package create, Undo/Redo, Save and fresh App reopen preserve exact payload and terminal IDs/absence. New named Package is selected by GUI Footprint authoring; final Project contains only intended Package/Padstack/Footprint. Saved-Package editing stays unavailable and unsupported approval/standards claims remain absent.",
+      "interaction_limits": "Programmatic App controls and eight captured real-window frames. Measured normal/narrow pane widths approximately 165/65 px with heavy narrow wrapping; keyboard reachability and visible Inspector refusal reviewed. No physical-input/HUMAN, assistive-technology, cross-platform or general readability qualification.",
+      "failed_runtime_attempt": {
+        "attempt": 1,
+        "exit_code": 101,
+        "log": {
+          "path": ".datum/package-gui-creation/ordinary-app-attempt-1.log",
+          "sha256": "a64bb5807949ee859b79b0735e7c5f6c12632485ba7250c5f9fe6573eb089fdf"
+        },
+        "reason": "Matching CLI companion omitted; resource guard refused a nested build at startup before workflow. Built matching existing companions, then used a fresh Project for attempt 2. Failed attempts retained; no retry-until-green claim."
+      },
+      "failed_compile_attempt_log": {
+        "path": ".datum/package-gui-creation/ordinary-app-attempt-1-compile-failed.log",
+        "sha256": "5181a9d3859dc5901d03aec9b9fad9a47fb4e2860e6647284cc02aae77bb5956"
+      },
+      "reproduction": "Build the matching workspace companions, then run the committed ignored ordinary App test with a fresh absent owned DATUM_PACKAGE_PROJECT path and separate DATUM_LIBRARY_OUTPUT path on native Wayland. No retained scratch Project, external collection or manually provisioned library input is required. Logs and frames remain ignored task scratch; this record retains outcomes and hashes."
+    },
     "full_drift": {
       "command": "bash scripts/run_drift_gates.sh --full",
       "executor": "review-agent; guarded Cargo invoked by script; session6201",
@@ -216,15 +269,43 @@
         "target/debug/eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
       },
       "warning": "Unchanged crates/gui-render/src/render/native_selection_overlay/cue_plan.rs:197 unused overflow method; retained without unrelated repair",
-      "limit": "Application build success only; ordinary App test has not executed"
+      "limit": "Historical GUI/daemon build success; matching CLI companion and actual ordinary App execution are recorded separately below"
     },
     "ordinary_test_compilation": {
       "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_package_creation_to_named_footprint_history_and_reopen --no-run --jobs 1",
       "executor": "review-agent; session6166",
       "exit_code": 101,
       "finding": "R3: included native_library_frame_tests.rs resolves mod input and mod package against editor; explicit native_library_frame_tests path attributes are missing.2 E0583 errors cause19 downstream E0599 errors.",
-      "disposition": "Exact two-module path correction sent to dev-agent within current grant; source ownership retained; correction and compiled/runtime proof pending",
-      "retained_output": "Manager execution session6166; chunks9d8a2b and73eed1"
+      "disposition": "R3 corrected with exactly two explicit module-path attributes; subsequent compile-only verification succeeded and ordinary App attempt 2 passed",
+      "retained_output": "Manager execution session6166; chunks9d8a2b and73eed1",
+      "corrected_compile_log": {
+        "path": ".datum/package-gui-creation/app-compile-after-module-path-fix.log",
+        "sha256": "09eb0ffe7804ac8e25b04d193c7bc75a5b193ed4f9f9767df05087202dee335c"
+      }
+    },
+    "matching_companions_build": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-eda-cli -p eda-engine-daemon -p datum-gui-app --features datum-gui-app/visual --jobs 1 > .datum/package-gui-creation/build-matching-companions.log 2>&1",
+      "exit_code": 0,
+      "duration_seconds": 54.4,
+      "log": {
+        "path": ".datum/package-gui-creation/build-matching-companions.log",
+        "sha256": "2503a7c7a902a7160cff4166825fa8d952eae40331066b659871806890260d11"
+      },
+      "binaries": {
+        "target/debug/datum-gui": "44d2ce8414dbbb27240c273ada76daaba113329c96ca18f766249c2979896cee",
+        "target/debug/datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "target/debug/eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f",
+        "target/debug/deps/datum_gui-d7b5b7c9184b1498": "2be9d00b36a46eba0a8f4df5f37d240e527617be8ab1856045a2239e3fe56346"
+      },
+      "failed_command_name_attempt": {
+        "reported_cargo_args": "cargo build -p eda-cli --jobs 1",
+        "exit_code": 101,
+        "reason": "Package name eda-cli does not exist; corrected to existing datum-eda-cli without source changes",
+        "log": {
+          "path": ".datum/package-gui-creation/build-cli-wrong-package.log",
+          "sha256": "422d4b5e3c302c879eb8f323eca16969c03388e5d4e67540826f64559c17d372"
+        }
+      }
     }
   },
   "independent_review": {
@@ -232,28 +313,89 @@
     "independence": "Read-only reviewer; no implementation/design, file writes or proof builds",
     "source_receipt": "Actual initial source review required R1 raw UUID-alias validation before typed terminal-map admission and R2 truthful unspecified-height labels. Corrected source re-review found both resolved and no new mandatory findings; malformed-body terminal-navigation extraction and regression reviewed.",
     "corrected_focused_receipt": "Actual reviewer verified protocol2/2 and daemon1/1 results, both executable hashes and all17 source pins. Daemon source establishes9 refusal variants, valid creation and stale preservation. No additional engine rerun required; historical7/7 remains explicitly pre-correction. Full actual protocol/daemon commands verified against producer commandExecution records.",
-    "reviewed_source_catalogue_sha256": "2ca1c4a0be1797b4cbfa1d58b0f720ae722097acfd2fb1137a87e09fdb4e83e0",
-    "ordinary_rendered_review": null,
-    "documentation_review": null,
-    "result": "Source and focused runtime review retained; manager subsequently found R3 App test-module compilation defect; final delivery acceptance pending",
+    "reviewed_source_catalogue_sha256": "4a060bab034b2507968a87eb14ce32943cdffea412567604dfed9430ebb0512b",
+    "ordinary_rendered_review": {
+      "result": "BOUNDED SOURCE / RUNTIME / RENDERED PASS; no remaining mandatory findings",
+      "reviewer": "/root/closeout_review",
+      "actual_receipt": "Verified all 17 source pins and four executable hashes; R3 is solely two explicit path attributes, all other source unchanged from corrected review. Read actual 109 contiguous stages and passing test result; reviewed assertions and final Project linkage/terminal identities. Inspected all eight PNGs and verified their hashes. Body and land geometry are distinct; envelope and unsupported-position limits truthful. Narrow labels wrap heavily but controls remain keyboard reachable and full refusal appears in Inspector. Reuses corrected protocol/daemon review and exact unchanged route corpus; no new builds or reviewer file writes.",
+      "source_catalogue_sha256": "4a060bab034b2507968a87eb14ce32943cdffea412567604dfed9430ebb0512b",
+      "binary_catalogue_sha256": "1de308c32107788368e9e38c5472e0dd6f8dc829bb3760b772dd5bf74d288706",
+      "ordinary_log_sha256": "9875f700a96347e5cc318a77b2cb11e63e5df70d585ce4804ee7aac77c7fa4a2",
+      "screenshots_catalogue_sha256": "219f018c040a0b04730ceb5a29ea9fa9c658accb93bb90e471afd86285823570",
+      "route_reuse": "Both owning-route digests matched at source review; all 39 original route members byte-identical to activation. Reuse adequate complete prior review; final factual document/record deltas require distinct review.",
+      "limits": "Programmatic production controls and captured states only; fresh production bootstrap does not requalify GUI New Project. Physical-input/HUMAN, assistive-technology, cross-platform and general readability remain open. Full drift still fails on 16 unchanged Clippy errors across eight files (dat-lk0l); S5A remains paused."
+    },
+    "documentation_review": {
+      "result": "Factual documentation and evidence-record PASS; no mandatory findings",
+      "reviewer": "/root/closeout_review",
+      "reviewed_sha256": {
+        "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md": "00c15bce32408d38d233b45303128a3bd57d00d49ce4be3bb82f29c357a8ee61",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md": "9acc80fb925b4c19758d262e8f251be71ee3a5a78f13dcca3090a704bdf38e16",
+        "docs/reviews/workflow-delivery-rollout/package-gui-creation.json": "440c68b5e164a91efb1ee1c0f5cbb1ce4afa6b676074499ffceee0f756b6694e"
+      },
+      "actual_receipt": "Reviewed all three changed owning-route consumers; other 37 unique route members unchanged. Creation-only scope, Package/Footprint separation, bootstrap/programmatic/captured-frame limits, failed attempts, existing 16-error/eight-file Clippy baseline and paused S5A are accurate. Verified nine evidence artifacts and exact 17-file source landing. Manager-pull communication recovery does not claim permissions repair. No reviewer mutations or builds."
+    },
+    "result": "Actual bounded source/runtime/rendered and factual-documentation PASS; no mandatory findings. Full qualification and declared limits remain open.",
     "checkpoint_review": {
       "reviewed_record_sha256": "ce72be3024fd11781983bf72564cab9e35a9910e95d11d45c8bf6a6eb1324e37",
       "actual_receipt": "Independent factual checkpoint review PASS; build log/binaries,17 source pins,8 unchanged Clippy files and existing dat-lk0l verified. Scope, appointment, Frontier and tracker unchanged; availability, ordinary results and acceptance remain unset. R3 and actual GUI/rendered proof remain pending.",
       "route_disposition": "Only this task record changed within either owning route; complete prior route preflight retained and current factual delta reviewed. Checkpoint recording only; no source landing or delivery acceptance."
     }
   },
-  "manager_disposition": null,
-  "source_commit": null,
-  "launch_command": null,
-  "workflow_results": {},
-  "safety_results": {},
-  "closure_disposition": null,
+  "manager_disposition": {
+    "session": "codex-production-manager-20261016",
+    "task": "LIBRARY-PACKAGE-GUI-CREATE",
+    "step": "PKGGUI-C01",
+    "decision_kind": "objective_acceptance",
+    "authority": "Recorded owner appointment and PM059 delegated objective acceptance under existing creation-only PM062/library contract; not a human reply or new product decision",
+    "accepted_at": "2026-10-17T04:11:19+00:00",
+    "source_commit": "1459e21f3a5fa5077ebb2d1278e043f7d86f3a60",
+    "evidence": "Actual distinct source/runtime/rendered and factual-documentation receipts above; all 17 committed source hashes match the reviewed candidate. Ordinary App 109 stages passed, corrected protocol 2/2 and daemon 1/1 refusal checks passed; earlier engine 7/7 remains pre-correction evidence only. All four declared workflows and five safety requirements are satisfied at this bounded scope.",
+    "outcome": "Accept creation-only Package GUI development availability, factual documentation, delivery completion and lease release",
+    "retained_limits": "No full-drift PASS: 16 Clippy errors in eight unchanged engine files, dat-lk0l; later full-battery gates unreached. No full Package editing, new product semantics, physical/HUMAN/AT/platform/readability qualification, S5A resumption or successor authorization."
+  },
+  "source_commit": "1459e21f3a5fa5077ebb2d1278e043f7d86f3a60",
+  "launch_command": "DATUM_PACKAGE_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/package-gui-creation/ordinary-project-attempt-2 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/package-gui-creation/ordinary-app-attempt-2-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_package_creation_to_named_footprint_history_and_reopen --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/package-gui-creation/ordinary-app-attempt-2.log 2>&1",
+  "workflow_results": {
+    "Create a named Package in an ordinary fresh native Project using supported body metadata and terminal identity/name/role fields without CLI or UUID provisioning": true,
+    "Preview and cancel Package creation; commit through the canonical writer; Undo/Redo; Save and fresh reopen": true,
+    "Create a Footprint by selecting the newly created named Package in the ordinary GUI": true,
+    "Operate the Package creation controls by keyboard in normal and narrow panes": true
+  },
+  "safety_results": {
+    "Inspection, preview and cancellation preserve authored files and journal": true,
+    "Malformed or unsupported input, stale revision and wrong writer or target refuse without partial authored writes": true,
+    "Preserve existing UUIDs, unrelated raw payloads and absent optional fields through creation and history": true,
+    "Package physical-body and terminal metadata remain separate from Footprint lands; saved-Package editing and placed propagation remain unavailable in this increment": true,
+    "Unsupported tolerance, terminal-position, model, approval and standards capabilities remain truthful without invented defaults or certification": true
+  },
+  "closure_disposition": {
+    "status": "accepted delivery complete; return to explicit idle without successor selection",
+    "source_commit": "1459e21f3a5fa5077ebb2d1278e043f7d86f3a60",
+    "implementer_release": {
+      "thread_id": "01a14799-fef3-7e01-b079-2fcae52aa45d",
+      "message_id": "msg_09598c9fce49d359016ad2f51f06b08196a2c03fd6f6d4f70c",
+      "actual_receipt": "Source ownership is released. All 17 reviewed files landed; no uncommitted source work remains. Manager retains documentation, acceptance and state closure."
+    },
+    "state_transaction": "Complete PKGGUI-C01; mark Frontier landed/development-ready at exact source; close delivery bead, clear assignee and release claim; regenerate Active Frontier. Retain owner-held S5A and all other tasks unchanged.",
+    "selection": "This finite owner-granted increment is complete. No successor selected or automatically authorized; explicit idle is completion of this unit, not an outstanding owner acceptance request."
+  },
   "issue_id": "dat-library-package-gui-create-2pdx",
   "execution_blocker": {
-    "observed": "dev-agent thread01a14799-fef3-7e01-b079-2fcae52aa45d reports active waitingOnApproval before ordinary App run; no rejection reason or pending argv exposed by available transport",
-    "local_default": "/home/bfadmin/.codex/config.toml has approvals_reviewer=user; this is a local default, not a claim about every effective per-thread override",
-    "project_authority": "Existing owner grant and manager delegation cover the test and routine R3 correction; no renewed project authorization required",
-    "boundary": "Project-manager appointment does not resolve client execution approvals. No permission configuration, runtime boundary or pending approval was bypassed.",
-    "continuation": "Resolve the pending dev-agent client request through its permissions UI; agent then applies R3, compiles and runs the ordinary App proof, sends artifacts for independent review, and continues delivery under the same grant."
-  }
+    "status": "Delivery communication recovered through manager pull; no active execution or review blocker",
+    "observed": "After successful ordinary App proof, dev-agent reported its send_message_to_thread attempt failed: MCP tool call requires approval, but approval policy is never. Manager retrieved actual handoff using read_thread and continued existing grant.",
+    "failed_tool_item": "exec-58704e57-5e50-4457-9085-8e51e566dcd5",
+    "evidence_limit": "Transport exposes failed tool status and producer report, not the low-level approval payload. Earlier checkpoint inference from local approvals_reviewer=user was too broad and is superseded; no effective per-thread setting is inferred from that default.",
+    "project_authority": "Existing owner grant and PM059 manager appointment cover routine proof, corrections, independent review and landing; no renewed owner permission or owner relay needed.",
+    "boundary": "MCP messaging approval is distinct from filesystem access. No permission setting was changed or approval bypassed. The underlying MCP sender configuration is not claimed repaired.",
+    "continuation": "Manager reads the implementer thread directly and sends bounded assignments through the functioning authorized manager channel."
+  },
+  "development_use": {
+    "launch_command": "./target/debug/datum-gui",
+    "binary_sha256": "44d2ce8414dbbb27240c273ada76daaba113329c96ca18f766249c2979896cee",
+    "workflow": "Open or create a native Project, open Library Browser, select Package and Create Package; preview and commit supported body/terminal fields. The new named Package is available in Footprint creation.",
+    "limit": "Optional use of this development build is not required owner acceptance or a qualification test.",
+    "source_commit": "1459e21f3a5fa5077ebb2d1278e043f7d86f3a60"
+  },
+  "closure_marker": "<!-- EVIDENCE:LIBRARY-PACKAGE-GUI-CREATE:PKGGUI-C01 -->"
 }

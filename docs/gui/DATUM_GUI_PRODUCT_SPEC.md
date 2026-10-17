@@ -328,7 +328,7 @@ Unavailable fields are shown honestly; absent metadata is never fabricated.
 | Symbol | Unit link, native graphics, pin anchors/stubs, fields, prefix, style assertions and basis | Named picker and native body/pin projection delivered at bounded scope; complete detail/graphics editor pending |
 | Entity | Named gates, their Unit/Symbol links, prefix and multiplicity | Schema, gate authoring and reference diagnostics exist; complete multi-gate GUI pending |
 | Part | Manufacturer/orderable identity, lifecycle, parametrics, datasheet/qualification metadata, Entity and physical/map/model options | Native metadata/binding builders exist; complete orderable-part browser/editor pending |
-| Package | Physical body and terminals, family/code, dimensions/tolerances, height, mounting and model references | Body schema/builders and compatibility geometry exist; complete physical-body GUI pending |
+| Package | Physical body and terminals, family/code, dimensions/tolerances, height, mounting and model references | Creation GUI supports existing metadata, optional nominal dimensions/heights and terminal identity/name/role with envelope preview; saved-Package editing, tolerances, terminal positions and models remain pending |
 | Footprint | Package link, positioned pads and Padstack links, origin, courtyard, silk/fab/assembly/mechanical and process geometry | Typed pad/courtyard/basic silk authoring and bounded chip/SOIC slices exist; complete editor and process consumption pending |
 | Padstack | Copper by layer, drill/plating/span, annular/thermal/anti-pad and separate mask/paste policy | Current library apertures are Circle/Rect with bounded process fields; broader geometry and systematic consumption pending |
 | PinPadMap | Physical pad to gate-qualified logical pin, referenced Part/Footprint and relevant Unit/Entity/Symbol/Package context | Typed gate-aware map authoring/diagnostics exist; complete map-table GUI and placed-update flow pending |
@@ -451,6 +451,17 @@ full eight-kind authoring and the broader workflows below remain
 targets. Reuse existing native/CLI and narrow-picker evidence only at its exact
 scope. Each delivery must identify its actual machine check,
 integration workflow and visual/accessibility receipt; no prose row is a PASS.
+
+The creation-only Package increment also has ordinary App proof for an initially
+empty native Project, canonical create/Undo/Redo/Save/reopen, named selection by
+a new Footprint, malformed-input refusal and normal/narrow keyboard controls.
+`docs/reviews/workflow-delivery-rollout/package-gui-creation.json` records the
+source pins, distinct review and remaining qualification. The test provisions
+the fresh Project through existing production bootstrap before opening the App;
+it does not requalify the GUI New Project doorway. Programmatic App input and
+eight rendered frames establish the captured behavior, with heavy wrapping in
+the narrow pane. Physical-input/HUMAN, assistive-technology and general readability
+qualification remain open.
 
 | Ordinary workflow | Assertion / negative control | Proof disposition |
 |---|---|---|

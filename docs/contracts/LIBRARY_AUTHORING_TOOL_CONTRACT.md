@@ -141,6 +141,18 @@ models, approval, generation and general placed updates remain targets; seed,
 source rights, standards/manufacturing and HUMAN/assistive qualification remain
 separate. PM062 does not establish those capabilities through this candidate.
 
+The creation-only Package GUI increment adds named Package creation using
+existing family/code/mounting metadata, optional nominal body dimensions/heights
+and terminal identity/name/role. The shared library form uses the canonical writer
+and history; the new Package is available to the named Footprint picker. Actual
+ordinary App proof covers an initially empty native Project, preview/cancel,
+malformed-input refusal, Undo/Redo, Save/reopen and normal/narrow keyboard controls.
+Source pins, execution and distinct review receipts are recorded in
+`docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
+The preview is a dimensional envelope; terminal positions and exact outline are
+unavailable. Saved-Package editing, tolerance/model authoring, placed updates and
+broader qualification remain open.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

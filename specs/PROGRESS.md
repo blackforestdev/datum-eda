@@ -14,6 +14,8 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
+**Explicit idle:** Creation-only Package GUI delivery is accepted at1459e21f with source-pinned ordinary App proof and independent review. Current grant is complete and ownership released; no successor selected. S5A remains owner-held.
+
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -249,7 +251,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (38 landed records)</summary>
+<summary>Completed history (39 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -365,13 +367,12 @@
 - **Replace required external replay inputs and retire obsolete collections** (`REPRODUCIBLE-REPLAY-INPUTS`; `dat-reproducible-replay-inputs-g2mc`).
    Standalone exact replay inputs landed at2b7fe4ef with independent bounded source review and manager acceptance; all54 retired collections,26external metadata files and released task scratch removed after reviewed safe checks. Manager verified protected data and757-file provisioning after removal. Explicit idle; no product/S5A qualification or successor. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/maintenance-records.md`.
+- **Create Packages through the native library GUI** (`LIBRARY-PACKAGE-GUI-CREATE`; `dat-library-package-gui-create-2pdx`).
+   Creation-only Package GUI landed1459e21f. Distinct source/runtime/rendered/documentation review and actual PM059 manager acceptance establish bounded development availability: fresh empty native Project, canonical history/reopen and named Footprint use. PKGGUI-C01 complete; issue closed and source ownership released. Full qualification and existing dat-lk0l Clippy baseline remain open; S5A held, no successor authorization. *state `landed`; authorization `none`.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md`, `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
 
 </details>
 
-- **Create Packages through the native library GUI** (`LIBRARY-PACKAGE-GUI-CREATE`; `dat-library-package-gui-create-2pdx`).
-   Owner authorizes bounded ordinary GUI Package creation and appoints review-agent manager/dev-agent implementer. Reuse existing Package fields, library composition and canonical history; independent route/source/runtime/visual review required. Saved-Package editing, new semantics, broader qualification and paused S5A remain outside this unit. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md`, `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
