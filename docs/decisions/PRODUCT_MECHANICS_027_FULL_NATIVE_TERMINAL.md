@@ -95,11 +95,14 @@ views, and performance are in scope.
   arbitration.
 - **FT-009 — agent and tooling pipeline.** Code agents run as ordinary native PTY
   processes with their full-screen UI, colors, mouse, clipboard, signals, and
-  authentication environment intact. Each session receives namespaced Datum
-  bootstrap context: project root/id, model revision, session/context IDs,
-  discovery path, canonical CLI, and an authenticated MCP endpoint or connection
-  descriptor when available. Context can be refreshed without restarting the
-  shell. The terminal grants no private mutation power: `datum-eda`, MCP, and
+  authentication environment intact. Real terminal sessions are available before
+  a Project is open, with truthful cwd/session identity and canonical CLI access.
+  A Project-bound session additionally receives namespaced Datum context: Project
+  root/id, model revision, context ID, discovery path and an authenticated MCP
+  connection descriptor when available. An unbound session receives no fabricated
+  or inherited stale Project context or capabilities. Project Open preserves
+  existing processes without silently retargeting them. Bound context can be
+  refreshed without restarting the shell. The terminal grants no private mutation power: `datum-eda`, MCP, and
   typed engine operations remain the only design-authority paths.
   Product Mechanics 028 controls discovery and interoperability: a bootstrap
   environment variable or suggested launch prompt is not sufficient. Supported

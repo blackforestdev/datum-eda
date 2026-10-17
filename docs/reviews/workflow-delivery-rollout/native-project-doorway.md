@@ -1,9 +1,11 @@
 # Native project doorway — managed delivery
 
-Status: historical NPD-C01..06 delivery landed at `45f77006c661019e02928b90dba2a9f1b177bc4d`.
-Owner QA reopened the doorway for NPD-C07 below: home-path handling, creation
-refusal/retry and truthful unopened terminal state. Current development
-availability is withheld pending the correction and review. S5A remains paused.
+Status: NPD-C01..06 remains accepted at `45f77006c661019e02928b90dba2a9f1b177bc4d`;
+C07 repair is accepted at `0a8e8b5db1547f4c8d62983f397db99cc4b76fbc`.
+The owner now requests a usable terminal before Project Open. NPD-C08 below
+selects that bounded implementation; its development availability awaits proof
+and independent review. The accepted Project/Package behavior remains available
+at its recorded source. S5A remains paused.
 
 ## Actual owner clarification and manager scope
 
@@ -592,10 +594,11 @@ Keep a valid pinned Units source and eight-row summary after destination or
 publication errors; show the actual reason. Editing the relevant input must
 permit correction and retry without unrelated Global rereads. Genuine stale,
 unreadable or incomplete seed failures still invalidate readiness and require
-explicit source resolution; never select Factory implicitly. The unopened
-terminal has no shell or Project context and must say so through existing
+explicit source resolution; never select Factory implicitly. In the historical
+C07 scope, the unopened terminal had no shell or Project context and had to say so through existing
 status/chrome, without a fabricated session, new welcome surface or terminal
-implementation change.
+implementation change. NPD-C08 supersedes that no-shell restriction under the
+owner's subsequent direction while retaining truthful absent Project authority.
 
 Dev-agent session `01a14799-fef3-7e01-b079-2fcae52aa45d` owns the source/test paths
 below. Manager `codex-production-manager-20261016` owns state, factual records
@@ -769,3 +772,69 @@ complete new folder, for example `~/Documents/datum_projects/qa-project-01`.
 `README.md` is the interactive build/launch entry. The tracked proof runner can
 recreate its own disposable inputs inside `.datum/native-project-startup-repair`;
 retired external collections and untracked helper scripts are not required.
+
+
+<!-- REQ:NATIVE-PROJECT-DOORWAY:NPD-C08 -->
+## C08 — terminal availability before Project Open
+
+The owner reported that withholding the terminal prevents CLI Project creation
+and starting an AI agent to help create or load Projects. This direction in
+manager thread `01a13df1-7a0d-72c1-bbdd-f0d96d481598` authorizes a real terminal
+before Project Open. It amends C07's no-shell behavior, preserving C01–07 as
+historical delivery at their original sources. PM005/027 and native terminal
+section 4.1 now distinguish a real session from optional Project authority.
+PM028 still requires a real scoped Project for Project-integrated MCP claims.
+
+The existing owner-appointed `codex-production-manager-20261016` coordinates
+C08 under the retained task appointment and PM059: source assignment, actual
+independent review, unchanged-scope correction and objective acceptance. The
+owner is not a routine approval or peer-message relay. The synchronized lease
+records root-owned authority/state paths and dev-agent-owned implementation.
+
+Dev-agent `01a14799-fef3-7e01-b079-2fcae52aa45d` owns the bounded terminal session,
+process, context, spawn, lifecycle, control, profile and cwd changes under
+`crates/gui-app/src/terminal/`, their tests, the existing native startup owner
+and tests, `application/production_status_refresh.rs`, protocol workspace
+startup/status and tests, terminal tab-strip tests and the existing
+`scripts/prove_native_project_startup_gui.py` ordinary proof runner. This is
+permission for the necessary unbound-session capability, not unrelated terminal
+work. Extract cohesive responsibilities under PM022; no source-size exceptions
+or third-party terminal dependency. Root owns this record, PM005/027, native
+terminal spec, evidence manifests, Frontier, generated Progress and beads.
+Independent `/root/closeout_review` remains read-only.
+
+Acceptance:
+
+- No-argument native Wayland/WGPU Main exposes a working real shell before any
+  Project. Normal shell commands, the canonical CLI and installed agent
+  executables work; focus remains governed by the existing explicit input owner.
+- Session identity and actual cwd remain truthful. Strip stale inherited Datum
+  Project/context/discovery/credential values without removing ordinary agent
+  authentication. Do not synthesize a Project root or write Project sidecars
+  into the launch directory. Unbound runtime resources have owned cleanup.
+- Create an owned Project through canonical CLI/engine operations, then open it
+  through ordinary GUI controls. Preserve the original PTY, child process,
+  environment, cwd, shell state and scrollback. Reuse existing appended Project
+  terminal publication; never silently bind the original session or its agents.
+- Exercise Cancel, refused/superseded Open, tabs/splits, restart, exit and guarded
+  shutdown. Preserve process and credential ownership, truthful error/status
+  feedback, Project-bound behavior and the accepted Units/refusal protections.
+- Obtain focused behavioral regressions, actual rendered/input Wayland proof,
+  source/binary binding and independent review before objective acceptance and
+  delivery of a new pinned QA target. Direct agent launch does not establish
+  full MCP interoperability; historical qualification remains scoped as recorded.
+
+Use existing `.datum/native-project-startup-repair` ignored scratch for disposable
+inputs, logs and captures; builds remain disk-backed guarded targets. Never use
+or modify the owner's `~/Documents/datum_projects` or retired external scratch.
+No new GUI command bridge, terminal-output mutation route, dependency, prototype
+change, global agent configuration, unrelated feature or S5A work is authorized.
+
+Actual authority preflight: `/root/closeout_review` found no unresolved owner
+choice and confirmed PM005 session persistence, PM024/027 real-shell behavior,
+PM028 direct-agent permission and genuinely bound Project credentials. It reused
+the accepted 150-member six-route assessment with exact corpus comparisons,
+reviewed the full terminal-focus incident route and PM005/024/027/028 plus the
+agent interoperability spec. Current route changes require changed-consumer
+review and deliberate digest reconciliation before source release. No new
+implementation, runtime or full-qualification PASS follows from this preflight.

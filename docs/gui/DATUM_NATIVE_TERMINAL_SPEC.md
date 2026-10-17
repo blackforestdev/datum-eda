@@ -181,7 +181,22 @@ them to a special command vocabulary. Full-screen agent interfaces must receive
 the same PTY, mode, Unicode, color, mouse, clipboard, resize, and signal behavior
 as any other TUI.
 
-Each session receives at minimum:
+Bare Main startup provides a real terminal without requiring a Project. It has
+truthful cwd and session identity, canonical CLI access and the user's ordinary
+shell/agent environment. Project-specific Datum context, discovery and credentials
+are absent, including stale inherited values. Session-only runtime resources must
+not manufacture a Project or write `.datum` metadata into the launch directory.
+Normal tabs, splits, restart and shutdown apply to these unbound sessions.
+
+Users and installed agents can create a Project through the canonical CLI and
+adopt it through ordinary GUI Open. Opening, cancelling or refusing a Project
+does not retarget or discard the existing shell, child processes, cwd, shell
+state or scrollback. Project-bound terminals follow the existing publication
+path; this does not add a terminal-output or CLI-to-current-window GUI bridge.
+Direct agent execution is available before binding; it is not a claim of
+Project-integrated MCP interoperability without a real scoped Project.
+
+Each Project-bound session receives at minimum:
 
 - `DATUM_PROJECT_ROOT`, `DATUM_PROJECT_ID`, and `DATUM_MODEL_REVISION`;
 - `DATUM_SESSION_ID`, `DATUM_CONTEXT_ID`, and `DATUM_DISCOVERY`;

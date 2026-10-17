@@ -137,7 +137,17 @@ The shell receives the user's inherited environment plus Datum-specific
 variables. Datum variables must not override user variables except by explicit
 namespaced keys.
 
-Required first-slice variables:
+Every real terminal has session identity and the canonical CLI available even
+before a Project is open. In that unbound state its cwd is an actual filesystem
+directory, not a synthetic Project root. Clear inherited Datum Project,
+context, discovery and credential variables; do not create Project sidecars or
+issue Project capabilities. Ordinary shell commands and installed agents remain
+usable. Opening a Project preserves existing shells and children without silently
+rebinding their context; a newly bound session may use that Project's context.
+This owner-directed clarification is delivered through NPD-C08 in the existing
+native Project doorway record; it supersedes C07's no-session startup behavior.
+
+Required variables for a Project-bound session:
 - `DATUM_PROJECT_ROOT`
 - `DATUM_PROJECT_ID`
 - `DATUM_MODEL_REVISION`
@@ -168,7 +178,7 @@ Datum injects context through two stable mechanisms:
 - `datum-eda context session-activity --session $DATUM_SESSION_ID` for the
   compact aggregate view agents use to orient within recent terminal activity
 
-For GUI-launched terminals, `DATUM_DISCOVERY` points to the authoritative
+For GUI-launched Project-bound terminals, `DATUM_DISCOVERY` points to the authoritative
 per-session discovery file at `.datum/terminal-contexts/<session>.json`.
 `.datum/gui-terminal-context.json` remains a latest-session compatibility alias
 for older tools and manual inspection, but long-running shells must keep using
