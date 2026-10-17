@@ -1,7 +1,7 @@
 {
   "kind": "production_delivery_record",
   "task": "LIBRARY-PACKAGE-GUI-CREATE",
-  "status": "authorized; implementation and review pending",
+  "status": "focused evidence reviewed; App test compilation correction and external session execution approval pending",
   "owner_authorization": {
     "verbatim": "Authorize the proposed GUI Package-creation increment. Appoint review-agent as its PM059 manager and dev-agent as implementer. Include required state synchronization, implementation, testing, documentation, independent review and landing. Keep S5A paused.",
     "thread_id": "01a14799-fef3-7e01-b079-2fcae52aa45d",
@@ -103,13 +103,157 @@
     "reviewed_task_record_sha256": "983adbac71702f9cb880a4aae2bc731650071b59e049e8dd93a035e171ca31f5",
     "review_receipt": "Actual /root/closeout_review final: 39 unique route members accounted for, all consumer deltas and task record reviewed, daemon path correction verified, no remaining mandatory findings. Scope/authority readiness only; runtime/rendered delivery and final acceptance remain pending."
   },
-  "implementation_results": null,
-  "independent_review": null,
+  "implementation_results": {
+    "candidate_source_sha256": {
+      "crates/engine-daemon/src/tests/main_tests_native_write.rs": "c6f7ab75df439bca6e03ca8f075bd85335c20b6236d5c42ae878dfe28ccf0a6c",
+      "crates/engine-daemon/src/tests/main_tests_native_write/package_creation_controls.rs": "be7f78c1879634334eae5d262a55d82fb88b2887b630334bdaac0a396b688547",
+      "crates/engine/src/api/native_write/library_gui.rs": "2eaa1b6e40fad0b3a42cc98acd902469b73c780f673672838b493ae61e28002d",
+      "crates/engine/src/api/native_write/library_gui_package.rs": "acac0d805c5872c50bae59b5bb30bde56a50614eabdc3445e972c02b2ad5117a",
+      "crates/engine/src/api/native_write/library_gui_package_tests.rs": "c50dbab3167dab787a445a93ea234867a8da8567cd94d5b9482fb8f5ab7da82f",
+      "crates/gui-app/src/editor/native_library_frame_tests.rs": "f2d4dc542efde85c541354b4e6ce9339a5f14eaaa764fd235fcd1e94f4564503",
+      "crates/gui-app/src/editor/native_library_frame_tests/input.rs": "274305757c56ae5b5253051efe2b7cafacfed4442854b8b2f33dea9050f81aa2",
+      "crates/gui-app/src/editor/native_library_frame_tests/package.rs": "bda50c6a0d204b657f502b29a01984b1a4acde8ee621f85a69ea1ec82ca257ef",
+      "crates/gui-app/src/editor/native_library_frame_tests/scenario.rs": "ab51bd8097dffce6aba8d3fb49aa2980bc2ce8f41261a270a0090a0c1bda6b6b",
+      "crates/gui-app/src/editor/runtime_library.rs": "35105b146f2834223a4eb2d9129864a6fa63ce47eb0385d4336bab8b44c4be7d",
+      "crates/gui-protocol/src/library_authoring.rs": "2b88d2a26bcfde1322ae4e8be0efa40d5e6d18c8b0369e861db316a3cf108ab2",
+      "crates/gui-protocol/src/library_authoring/package.rs": "51be60f11690209efe87b280828d926f3c31001d4c271349a1c3b59d42518959",
+      "crates/gui-protocol/src/library_authoring/package/tests.rs": "200566fd392bd49b25b061de638f6c63f312d27e9b51948ff3e66365d0f2804a",
+      "crates/gui-protocol/src/library_browser.rs": "0de45c4a3f82730cd83bd86ed655f42574058b61fd01f61320ebba6c9955266c",
+      "crates/gui-render/src/library_package_preview.rs": "e3b425a0f0c11db45459c13ac962fe080416b7cce0dc2b6f97045d15b5a69a61",
+      "crates/gui-render/src/library_preview.rs": "82b5e12af8bb6a527d03273549227426496238698a557ea54effa0cc63f21067",
+      "crates/gui-render/src/library_surface.rs": "0f8298f190c8eede6fb29b7a62d8ae2bbdbb9ca7ab07e4cf213794e972e8d156"
+    },
+    "focused_checks": [
+      {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine library_gui:: --jobs 1",
+        "result": "7 passed; pre-review candidate only; does not prove corrected UUID-alias guards",
+        "log": ".datum/package-gui-creation/engine-tests-pre-review.log",
+        "log_sha256": "628911df1cd1b7c2c8c66265672f748cc1692f6403d500be47ba732636ee2c3a",
+        "binary": {
+          "path": "target/debug/deps/eda_engine-1c80eccbe86d4536",
+          "sha256": "050f47658ccadb9c5063b6c02797ace47fb38d7183c6067ca8e11f51859b0f99"
+        },
+        "source_sha256": {
+          "crates/engine-daemon/src/tests/main_tests_native_write.rs": "c6f7ab75df439bca6e03ca8f075bd85335c20b6236d5c42ae878dfe28ccf0a6c",
+          "crates/engine-daemon/src/tests/main_tests_native_write/package_creation_controls.rs": "bf3ec8b3827379da453d93c072cd6272e5cddd3dcde1d4b42f61ed9520cac127",
+          "crates/engine/src/api/native_write/library_gui.rs": "2eaa1b6e40fad0b3a42cc98acd902469b73c780f673672838b493ae61e28002d",
+          "crates/engine/src/api/native_write/library_gui_package.rs": "7dcd7f823101db405310807897827fa3b4396ae153d6b834f5aebadc6a86a1c8",
+          "crates/engine/src/api/native_write/library_gui_package_tests.rs": "23ea2fee3bafa9cd2c12610ec04df7874b2f7f35fb66e31561ea2bcc8382ae8e",
+          "crates/gui-app/src/editor/native_library_frame_tests.rs": "f2d4dc542efde85c541354b4e6ce9339a5f14eaaa764fd235fcd1e94f4564503",
+          "crates/gui-app/src/editor/native_library_frame_tests/input.rs": "274305757c56ae5b5253051efe2b7cafacfed4442854b8b2f33dea9050f81aa2",
+          "crates/gui-app/src/editor/native_library_frame_tests/package.rs": "bda50c6a0d204b657f502b29a01984b1a4acde8ee621f85a69ea1ec82ca257ef",
+          "crates/gui-app/src/editor/native_library_frame_tests/scenario.rs": "ab51bd8097dffce6aba8d3fb49aa2980bc2ce8f41261a270a0090a0c1bda6b6b",
+          "crates/gui-app/src/editor/runtime_library.rs": "35105b146f2834223a4eb2d9129864a6fa63ce47eb0385d4336bab8b44c4be7d",
+          "crates/gui-protocol/src/library_authoring.rs": "2b88d2a26bcfde1322ae4e8be0efa40d5e6d18c8b0369e861db316a3cf108ab2",
+          "crates/gui-protocol/src/library_authoring/package.rs": "ff035cb5cc3672afeaf7d050d160fc3db130eda841220a90c6e39aaae7cae4e8",
+          "crates/gui-protocol/src/library_authoring/package/tests.rs": "e654750dbe35e363d23befe07a9d82a8036c2b49043bb0086d45100e50d6270a",
+          "crates/gui-protocol/src/library_browser.rs": "0de45c4a3f82730cd83bd86ed655f42574058b61fd01f61320ebba6c9955266c",
+          "crates/gui-render/src/library_package_preview.rs": "e3b425a0f0c11db45459c13ac962fe080416b7cce0dc2b6f97045d15b5a69a61",
+          "crates/gui-render/src/library_preview.rs": "82b5e12af8bb6a527d03273549227426496238698a557ea54effa0cc63f21067",
+          "crates/gui-render/src/library_surface.rs": "0f8298f190c8eede6fb29b7a62d8ae2bbdbb9ca7ab07e4cf213794e972e8d156"
+        },
+        "command_provenance": "Exact original launch command confirmed by producer; pre-correction result only."
+      },
+      {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol library_authoring::package::tests --jobs 1 > .datum/package-gui-creation/protocol-tests.log 2>&1",
+        "result": "2 Package tests passed, including terminal navigation with invalid body input",
+        "log": ".datum/package-gui-creation/protocol-tests.log",
+        "log_sha256": "93bfe6382f02cba2d2c740c947366e05a55fbaf1beb5edc44daaaefad1706b10",
+        "binary": {
+          "path": "target/debug/deps/datum_gui_protocol-4c70d5311f13a5fc",
+          "sha256": "6d5acf2e920dd4f58739cc281a1ac46073e1918881fc2eb4610b842077441ce6"
+        }
+      },
+      {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine-daemon native_package_creation_guards_refuse_without_partial_writes --jobs 1 > .datum/package-gui-creation/daemon-tests.log 2>&1",
+        "result": "1 test passed: 9 refusal variants, valid creation and stale guard with source/journal preservation",
+        "log": ".datum/package-gui-creation/daemon-tests.log",
+        "log_sha256": "432d9ffc73c7dbc810fbc4709eeeafdf6c93b8b1b8cd7dc2b01e4e973d91fc6f",
+        "binary": {
+          "path": "target/debug/deps/eda_engine_daemon-0e117e3566331237",
+          "sha256": "da7e65d36a581da5bc380a2e41167354af81afa35448098843995217de034fbc"
+        }
+      }
+    ],
+    "manager_static_checks": {
+      "python3 scripts/check_source_module_size.py --base-ref HEAD": "PASS; 3188 source files; base HEAD9136b0e2344a4a09e4841e701f2fc957369a8f18; no legacy ledger changes needed",
+      "python3 scripts/test_source_health_governance.py": "PASS; 13 tests",
+      "python3 scripts/check_daemon_write_parity.py": "PASS; 4 fenced arms",
+      "python3 scripts/check_schematic_private_writers.py": "PASS",
+      "python3 scripts/check_dependency_authority.py": "PASS",
+      "python3 scripts/check_cargo_resource_policy.py": "PASS",
+      "python3 scripts/check_spec_parity.py": "PASS; 30 inventories",
+      "python3 scripts/check_gui_design_tokens.py": "PASS; 35 colors, 7 types, 16 spacing/radius, 29 prototype variables and 12 contrast checks"
+    },
+    "ordinary_application": null,
+    "full_drift": {
+      "command": "bash scripts/run_drift_gates.sh --full",
+      "executor": "review-agent; guarded Cargo invoked by script; session6201",
+      "exit_code": 101,
+      "passed_before_failure": "Cargo resource policy3 tests/check; rustfmt8 tests/workspace check",
+      "failure": "Workspace Clippy -D warnings:16 errors across8 unchanged engine files; later full-battery gates not reached",
+      "diagnostic_counts_by_path": {
+        "crates/engine/src/api/native_write/durability.rs": 5,
+        "crates/engine/src/board/occupied_copper/source_relative/arrangement.rs": 1,
+        "crates/engine/src/board/quadratic3.rs": 5,
+        "crates/engine/src/board/query_pad.rs": 1,
+        "crates/engine/src/connectivity/board_physical.rs": 1,
+        "crates/engine/src/substrate/component_pad_source/process.rs": 1,
+        "crates/engine/src/substrate/electrical_basis.rs": 1,
+        "crates/engine/src/substrate/process_operations.rs": 1
+      },
+      "unchanged_against_commit": "9136b0e2344a4a09e4841e701f2fc957369a8f18",
+      "existing_issue": "dat-lk0l; exact16-error baseline already recorded2026-10-14; no new dependency or duplicate issue",
+      "retained_output": "Manager execution session6201; final chunk e77f09; no full qualification PASS"
+    },
+    "application_build": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p eda-engine-daemon -p datum-gui-app --features datum-gui-app/visual --jobs 1 > .datum/package-gui-creation/build.log 2>&1",
+      "exit_code": 0,
+      "log": ".datum/package-gui-creation/build.log",
+      "log_sha256": "5526d3f4d3418c802a7073fa1631c07b29c349af92a2714b29e9c72b1c1354a0",
+      "binaries": {
+        "target/debug/datum-gui": "44d2ce8414dbbb27240c273ada76daaba113329c96ca18f766249c2979896cee",
+        "target/debug/eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "warning": "Unchanged crates/gui-render/src/render/native_selection_overlay/cue_plan.rs:197 unused overflow method; retained without unrelated repair",
+      "limit": "Application build success only; ordinary App test has not executed"
+    },
+    "ordinary_test_compilation": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_package_creation_to_named_footprint_history_and_reopen --no-run --jobs 1",
+      "executor": "review-agent; session6166",
+      "exit_code": 101,
+      "finding": "R3: included native_library_frame_tests.rs resolves mod input and mod package against editor; explicit native_library_frame_tests path attributes are missing.2 E0583 errors cause19 downstream E0599 errors.",
+      "disposition": "Exact two-module path correction sent to dev-agent within current grant; source ownership retained; correction and compiled/runtime proof pending",
+      "retained_output": "Manager execution session6166; chunks9d8a2b and73eed1"
+    }
+  },
+  "independent_review": {
+    "reviewer": "/root/closeout_review",
+    "independence": "Read-only reviewer; no implementation/design, file writes or proof builds",
+    "source_receipt": "Actual initial source review required R1 raw UUID-alias validation before typed terminal-map admission and R2 truthful unspecified-height labels. Corrected source re-review found both resolved and no new mandatory findings; malformed-body terminal-navigation extraction and regression reviewed.",
+    "corrected_focused_receipt": "Actual reviewer verified protocol2/2 and daemon1/1 results, both executable hashes and all17 source pins. Daemon source establishes9 refusal variants, valid creation and stale preservation. No additional engine rerun required; historical7/7 remains explicitly pre-correction. Full actual protocol/daemon commands verified against producer commandExecution records.",
+    "reviewed_source_catalogue_sha256": "2ca1c4a0be1797b4cbfa1d58b0f720ae722097acfd2fb1137a87e09fdb4e83e0",
+    "ordinary_rendered_review": null,
+    "documentation_review": null,
+    "result": "Source and focused runtime review retained; manager subsequently found R3 App test-module compilation defect; final delivery acceptance pending",
+    "checkpoint_review": {
+      "reviewed_record_sha256": "ce72be3024fd11781983bf72564cab9e35a9910e95d11d45c8bf6a6eb1324e37",
+      "actual_receipt": "Independent factual checkpoint review PASS; build log/binaries,17 source pins,8 unchanged Clippy files and existing dat-lk0l verified. Scope, appointment, Frontier and tracker unchanged; availability, ordinary results and acceptance remain unset. R3 and actual GUI/rendered proof remain pending.",
+      "route_disposition": "Only this task record changed within either owning route; complete prior route preflight retained and current factual delta reviewed. Checkpoint recording only; no source landing or delivery acceptance."
+    }
+  },
   "manager_disposition": null,
   "source_commit": null,
   "launch_command": null,
   "workflow_results": {},
   "safety_results": {},
   "closure_disposition": null,
-  "issue_id": "dat-library-package-gui-create-2pdx"
+  "issue_id": "dat-library-package-gui-create-2pdx",
+  "execution_blocker": {
+    "observed": "dev-agent thread01a14799-fef3-7e01-b079-2fcae52aa45d reports active waitingOnApproval before ordinary App run; no rejection reason or pending argv exposed by available transport",
+    "local_default": "/home/bfadmin/.codex/config.toml has approvals_reviewer=user; this is a local default, not a claim about every effective per-thread override",
+    "project_authority": "Existing owner grant and manager delegation cover the test and routine R3 correction; no renewed project authorization required",
+    "boundary": "Project-manager appointment does not resolve client execution approvals. No permission configuration, runtime boundary or pending approval was bypassed.",
+    "continuation": "Resolve the pending dev-agent client request through its permissions UI; agent then applies R3, compiles and runs the ordinary App proof, sends artifacts for independent review, and continues delivery under the same grant."
+  }
 }
