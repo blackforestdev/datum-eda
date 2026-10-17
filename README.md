@@ -85,20 +85,42 @@ hooks enabled, every commit retains only the five newest local tracker backups.
 
 ### Desktop application
 
+The production and primary QA target is **native Wayland with WGPU rendering**.
+From a Wayland desktop, build the GUI and its matching CLI/daemon companions,
+then launch the ordinary application without Project or test arguments:
+
+```bash
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo build --target-dir target -p datum-gui-app -p datum-eda-cli -p eda-engine-daemon --features datum-gui-app/visual --bins
+env -u DISPLAY ./target/debug/datum-gui
+```
+
+Keeping `WAYLAND_DISPLAY` and removing `DISPLAY` prevents an X11 fallback during
+this QA launch. Use **File → New Project** or **File → Open Project**. New Project's
+Location is the complete new folder, for example
+`~/Documents/datum_projects/my-new-project`; its parent must exist and the new
+folder must not. The Project name is a separate display name.
+
+`run_agent_launch_pty_proof.sh` runs automated terminal/agent tests; it does not
+launch this interactive QA application. Automated evidence must identify the
+actual window backend, WGPU backend and compositor. X11 or nested-compositor
+results do not establish an ordinary KWin Wayland workflow.
+
+Explicit existing-file entry points remain available:
+
 ```bash
 # Open a native project
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --project-root "$HOME/Documents/datum-projects/demo"
+env -u DISPLAY ./target/debug/datum-gui --project-root /path/to/existing/project
 
 # Open an existing KiCad board as a Datum workspace
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-gui-app --bin datum-gui -- --board path/to/board.kicad_pcb
+env -u DISPLAY ./target/debug/datum-gui --board path/to/board.kicad_pcb
 ```
 
 ### Command line
 
 ```bash
-mkdir -p "$HOME/Documents/datum-projects"
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project new "$HOME/Documents/datum-projects/demo" --name "Demo"
-python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project query "$HOME/Documents/datum-projects/demo" summary
+mkdir -p "$HOME/Documents/datum_projects"
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project new "$HOME/Documents/datum_projects/demo" --name "Demo"
+python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- project query "$HOME/Documents/datum_projects/demo" summary
 
 python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- import library.lbr
 python3 scripts/run_cargo_guarded.py --workload interactive -- cargo run -p datum-eda-cli -- pool search "100nF 0402" --library library.lbr

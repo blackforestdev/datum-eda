@@ -614,9 +614,12 @@ Implementer paths:
 - `crates/gui-app/src/application/native_project_startup_tests.rs`
 - `crates/gui-render/src/terminal_tab_strip_tests.rs`
 - `scripts/prove_native_project_startup_gui.py`
+- `scripts/check_global_preferences_boundary.py`
+- `scripts/test_global_preferences_boundary.py`
 - `.datum/native-project-startup-repair`
 
 Manager paths:
+- `README.md`
 - `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`
 - `docs/reviews/workflow-delivery-rollout/native-project-doorway.json`
 - `specs/active_frontier.json`
@@ -650,7 +653,7 @@ land the corrected source and source-pinned availability, then close this repair
 No physical/HUMAN or full-qualification result is inferred. S5A stays held.
 
 Activation: source-health baseline passes for 3,188 files at `746af44812275bb2cb809cdd1f4241a66e321be4`.
-Current result: implementation, runtime review and objective acceptance pending.
+Current result: C07 accepted at `0a8e8b5db1547f4c8d62983f397db99cc4b76fbc`; see the current result and retained qualification limits below.
 
 
 C07 source release: actual independent `/root/closeout_review` readiness PASS,
@@ -665,3 +668,104 @@ historical C01–06, withheld current readiness and S5A preservation were verifi
 The appointed manager accepts this actual receipt and releases the documented
 source work under the owner-authorized C07 repair; implementation, ordinary GUI
 proof, independent source/runtime/rendered review and final acceptance remain.
+
+C07 unchanged-scope correction: the extracted New Project tests exposed an
+existing lexical boundary-checker defect: `tests.rs` was scanned as production,
+and the old production inventory included a type name used only in inline
+tests. The manager authorizes the checker and its focused regression within
+this repair to classify tests consistently and retain the exact real production
+service-owner inventory. This does not grant a new Preferences adapter, private
+writer, dependency or product mechanism. The synchronized lease includes these
+two bounded paths; implementation remains with dev-agent.
+
+C07 QA-platform clarification from the owner: a forced-X11 run is not the
+primary proof for the owner's normal Wayland application. The observed ordinary
+launch reports `window_backend=wayland`, `gpu_backend=Vulkan`, Intel HD Graphics
+P630 and Mesa 25.0.7. WGPU is the renderer; Wayland/X11 identify window and input
+transport. Use the same `target/debug/datum-gui` build and ordinary no-argument
+launch with the default terminal profile. Record the actual window, GPU and
+compositor identities. Any X11 compatibility or nested-compositor evidence must
+be named separately and must not claim native KWin input qualification. No
+private UI actions, Project bootstrap, dependency installation or permission
+bypass may replace the ordinary New/correction/Create/Open workflow.
+
+The owner explicitly clarified: “datum was designed for wayland/wgpu not x11”.
+Native Wayland plus WGPU is therefore the required product and primary QA target
+for C07. X11 results cannot establish that readiness. A nested-compositor run
+must keep Datum itself on Wayland/WGPU and identify its compositor limits; it
+does not become an ordinary KWin workflow by relabelling.
+
+The manager also owns a bounded README launch correction: identify the native
+Wayland/WGPU QA entry, build GUI/CLI/daemon companions together and distinguish
+the interactive launch from automated proof scripts. This addresses the owner's
+reported launch ambiguity without creating another launcher or test framework.
+
+
+<!-- EVIDENCE:NATIVE-PROJECT-DOORWAY:NPD-C07 -->
+## C07 delivered result and manager acceptance
+
+Source landed at `0a8e8b5db1547f4c8d62983f397db99cc4b76fbc`, exactly the
+11 independently reviewed source hashes. Dev-agent explicitly released source
+ownership. Leading home shorthand resolves at the GUI boundary. Destination
+errors retain the pinned eight Units and allow correction/retry; actual seed
+failures remain blocked. Existing terminal chrome truthfully identifies the
+unopened state. Engine publication and full-destination semantics are unchanged.
+
+Actual `/root/closeout_review` bounded source/runtime/rendered **PASS** has no
+remaining mandatory findings. The reviewer verified source catalogue
+`3c67390522115862432165e12fe92dcb26962e97164f73b606f7118eb523663d`,
+evidence catalogue
+`7eebcb986750a33ae58f7bc543c4ba933f4fa2a7619fdc4f3426339e0db492e5`,
+all 11 source pins, 26 evidence hashes and matching executable identities.
+The GUI SHA-256 is
+`158b89b3151eb275d507177502275ab5cbe08ffcfbd0ca18bb4a01d98933068a`.
+The existing companion JSON records exact bindings, outcomes and reproduction.
+
+Ordinary bare Wayland/WGPU/Vulkan startup, cancelled New/no shell, occupied
+home-path refusal with preservation, keyboard correction without Global reread,
+Create/Open with the eight-item receipt, live Project terminal, Save and fresh
+Open are observed. The reviewer inspected the actual rendered states. A targeted
+ordinary Open of that same GUI-created Project then reached the actual Create
+Package draft. Its terminal and metadata fields are visibly present; draft and
+Cancel preserve the original canonical source/journal/revision six-file map.
+
+The same binary launches normally on KWin Wayland. Full workflow input used an
+owned nested Weston compositor: xdotool drove its outer X11 window while Datum
+itself remained a native Wayland/Vulkan client. Initial X11 backing-pixmap
+captures were stale; direct `weston-screenshooter` capture on the disposable
+compositor supplied the actual final Package frame. Rejected early frames remain
+failed evidence, even where a script's executed-state checks said PASS. No owner
+desktop permission or configuration was changed.
+
+Twenty-one focused Rust tests pass; two existing GPU tests remain ignored.
+Four boundary-checker regressions and 13 source-health policy tests pass.
+Matching GUI/CLI/daemon build, source-health (3,191 files), dependency authority,
+formatting and the focused structural gates pass. Full drift still stops at the
+same 16 Clippy errors in eight unchanged engine files (`dat-lk0l`); subsequent
+full gates were not reached. This is not a full-workspace qualification PASS.
+
+Current teardown is SIGTERM followed by ordinary fresh-process Open. Historical
+controlled Close evidence at `45f77006` remains reusable only because independent
+review traced and byte-compared the unchanged close/drain/receipt owners and
+close-after-submit test. Historical invalid/busy/corrupt/recovery and complete
+keyboard/accessibility evidence likewise keeps its original source and scope;
+current affected behavior is supported by the new focused and ordinary tests.
+No new KWin input/Close, physical/HUMAN, assistive-user or full-platform acceptance
+is claimed. Existing Package creation/history/Footprint evidence stays scoped to
+`1459e21f`; this repair proves current startup-to-Package-draft reachability.
+
+Appointed manager `codex-production-manager-20261016` accepts the actual review
+receipt and objectively accepts NPD-C07 under the recorded owner appointment and
+PM059. Restore bounded Native Project and Package development availability, close
+`dat-native-project-startup-vrf` with the source landing, release the lease and
+retain all historical receipts and qualification limits. S5A stays held. This
+is delegated acceptance, not a fabricated owner/HUMAN disposition.
+
+<!-- SELECTION:NATIVE-PROJECT-DOORWAY:NPD-C07-DELIVERED -->
+The manager explicitly selects idle after delivery of this repair. No successor
+or S5A execution is selected or authorized. The owner can start a fresh QA
+instance with `env -u DISPLAY ./target/debug/datum-gui`; Location must name a
+complete new folder, for example `~/Documents/datum_projects/qa-project-01`.
+`README.md` is the interactive build/launch entry. The tracked proof runner can
+recreate its own disposable inputs inside `.datum/native-project-startup-repair`;
+retired external collections and untracked helper scripts are not required.

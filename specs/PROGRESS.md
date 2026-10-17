@@ -14,6 +14,8 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
+**Explicit idle:** NPD-C07 startup QA repair is accepted at0a8e8b5d with independently reviewed native Wayland creation/retry, truthful terminal status and Package reachability. Bounded development availability restored; no successor selected or authorized, S5A held.
+
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -208,7 +210,7 @@
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
    Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `landed`; authorization `none`; parallel lane.*
-   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-gui-write-path-qiu, dat-native-authoring-depth-sf9, dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`, `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`, `docs/reviews/workflow-foundation/handoff.md`.
+   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-gui-write-path-qiu, dat-native-authoring-depth-sf9. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`, `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`, `docs/reviews/workflow-foundation/handoff.md`.
 - **Implement and validate the bounded workflow delivery gate pilot** (`WORKFLOW-DELIVERY-GATE-PILOT`; `dat-workflow-gate-pilot-b3s`).
    Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`, `docs/reviews/workflow-delivery-pilot/handoff.md`.
@@ -224,10 +226,15 @@
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
    Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+<details>
+<summary>Completed history (1 landed records)</summary>
+
 - **Define and deliver the ordinary native GUI project startup doorway** (`NATIVE-PROJECT-DOORWAY`; `dat-native-project-startup-vrf`).
-   Owner QA reopened the existing doorway after literal home-path failure, misleading Units errors/retry lockout and blank unopened terminal feedback. NPD-C07 is the bounded authorized correction with dev-agent implementation and appointed-manager review/acceptance. Historical C01–06 receipts retained; current availability withheld, S5A held. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   C07 owner QA repair accepted at0a8e8b5d: home paths, truthful destination refusal/correction/retry, retained Units and unopened terminal status; actual Wayland GUI Create/Open/Save/fresh reopen and Package draft reachability independently reviewed. Bounded development availability restored; full qualification remains separate and S5A held. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
+
+</details>
+
 - **Define native workflow fixtures and ratify performance measurement budgets** (`NATIVE-WORKFLOW-BUDGETS`; `dat-native-workflow-budgets-0h4`).
    Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
@@ -361,7 +368,7 @@
    Standalone exact replay inputs landed at2b7fe4ef with independent bounded source review and manager acceptance; all54 retired collections,26external metadata files and released task scratch removed after reviewed safe checks. Manager verified protected data and757-file provisioning after removal. Explicit idle; no product/S5A qualification or successor. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/reviews/specification-history/maintenance-records.md`.
 - **Create Packages through the native library GUI** (`LIBRARY-PACKAGE-GUI-CREATE`; `dat-library-package-gui-create-2pdx`).
-   Creation-only Package source remains landed at1459e21f with its recorded bounded automated review. Owner manual QA could not reach it because New Project failed; current end-to-end development availability is withheld pending NATIVE-PROJECT-DOORWAY/NPD-C07 correction and actual GUI-created Project reachability. Historical Package evidence remains scoped; S5A held. *state `landed`; authorization `none`.*
+   Creation-only Package source remains landed at1459e21f with its bounded creation/history/Footprint review. NPD-C07 startup repair at0a8e8b5d now verifies ordinary GUI-created Project-to-Package-draft reachability on native Wayland and restores bounded development availability. No new full Package, platform or HUMAN qualification; S5A held. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md`, `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
 
 </details>
