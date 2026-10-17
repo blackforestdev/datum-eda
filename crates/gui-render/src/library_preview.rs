@@ -3,6 +3,9 @@ use crate::*;
 use datum_gui_protocol::LibraryJsonValue as Value;
 use datum_gui_protocol::{ReviewWorkspaceState, SceneBounds};
 
+#[path = "library_package_preview.rs"]
+mod package;
+
 pub(crate) fn render(
     state: &ReviewWorkspaceState,
     kind: &str,
@@ -12,6 +15,10 @@ pub(crate) fn render(
     text: &mut Vec<TextRun>,
 ) {
     if rect.height < 25. || rect.width < 10. {
+        return;
+    }
+    if kind == "packages" {
+        package::render(raw, rect, quads, text);
         return;
     }
     if !matches!(kind, "footprints" | "padstacks" | "packages") {

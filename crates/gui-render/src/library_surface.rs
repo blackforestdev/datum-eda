@@ -104,28 +104,33 @@ pub(crate) fn render(
         p.line(&format!(
             "{} {} · canonical target: pool",
             if d.create { "Create" } else { "Edit" },
-            if d.kind == "footprints" {
-                "Footprint"
-            } else {
-                "Padstack"
-            }
+            KINDS
+                .iter()
+                .find(|k| k.0 == d.kind)
+                .map_or("Unavailable", |k| k.1)
         ));
         if rect.height > 420. {
             p.line("Tab: field / action · arrows: choices · Esc: cancel");
         }
-        if d.kind == "footprints" {
+        if d.kind == "packages" {
+            p.line("Physical body / terminals · no Footprint lands");
+            p.line("Tolerances, terminal positions and governed models unavailable");
+        }
+        if matches!(d.kind.as_str(), "footprints" | "packages") {
+            let package = d.kind == "packages";
+            let records = if package { &d.terminals } else { &d.pads };
             let focused = match state.library.focus {
-                Some(C::Pad(i)) => i,
+                Some(C::Pad(i) | C::Terminal(i)) => i,
                 _ => 0,
             };
-            let count = d.pads.len().min(4).max(1);
+            let count = records.len().min(4).max(1);
             let toolbar = RectPx {
                 width: rect.width / count as f32,
                 ..rect
             };
             let row = p.y;
             let mut bottom = row;
-            for (i, pad) in d.pads.values().enumerate().skip(focused / 4 * 4).take(4) {
+            for (i, pad) in records.values().enumerate().skip(focused / 4 * 4).take(4) {
                 p.rect = RectPx {
                     x: rect.x + (i % 4) as f32 * toolbar.width,
                     ..toolbar
@@ -133,12 +138,13 @@ pub(crate) fn render(
                 p.y = row;
                 p.button(
                     &format!(
-                        "Pad {}",
+                        "{} {}",
+                        if package { "Terminal" } else { "Pad" },
                         pad.get("name")
                             .and_then(Value::as_str)
                             .unwrap_or("Unavailable")
                     ),
-                    C::Pad(i),
+                    if package { C::Terminal(i) } else { C::Pad(i) },
                 );
                 bottom = bottom.max(p.y);
             }
@@ -147,11 +153,25 @@ pub(crate) fn render(
                 ..rect
             };
             p.y = bottom;
-            p.button("Add pad", C::AddPad);
+            p.button(
+                if package { "Add terminal" } else { "Add pad" },
+                if package { C::AddTerminal } else { C::AddPad },
+            );
             let add_bottom = p.y;
             p.rect.x += rect.width / 2.;
             p.y = bottom;
-            p.button("Remove pad", C::RemovePad);
+            p.button(
+                if package {
+                    "Remove draft terminal"
+                } else {
+                    "Remove pad"
+                },
+                if package {
+                    C::RemoveTerminal
+                } else {
+                    C::RemovePad
+                },
+            );
             p.y = p.y.max(add_bottom);
             p.rect = rect;
         }
@@ -200,7 +220,11 @@ pub(crate) fn render(
             }
         }
         p.button(
-            "Inspect complete refusal / process reason in Console",
+            if d.kind == "packages" {
+                "Inspect complete refusal in Console"
+            } else {
+                "Inspect complete refusal / process reason in Console"
+            },
             C::Notice,
         );
         p.y = (rect.y + rect.height - footer).max(p.y);
@@ -330,7 +354,10 @@ pub(crate) fn render(
             p.button("Previous results", C::ResultsPage(false));
             p.button("Next results", C::ResultsPage(true));
         }
-        if matches!(KINDS[state.library.kind].0, "footprints" | "padstacks") {
+        if matches!(
+            KINDS[state.library.kind].0,
+            "footprints" | "padstacks" | "packages"
+        ) {
             p.button(
                 &format!("Create {} · target pool", KINDS[state.library.kind].1),
                 C::New,
@@ -534,6 +561,9 @@ pub(crate) fn inspector(
                         }
                     ));
                 }
+            } else if d.kind == "packages" {
+                p.line("Physical body · terminals have names / roles, no stored positions");
+                p.line("Footprint lands are authored separately");
             } else {
                 p.line(&format!(
                     "Drill: {}",

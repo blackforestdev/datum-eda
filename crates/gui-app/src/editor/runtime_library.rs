@@ -55,11 +55,13 @@ impl Runtime {
                     .and_then(|d| d.refusal.clone())
                     .or_else(|| s.library.refusal.clone())
                     .or_else(|| {
-                        source.and_then(|(kind, raw)| {
-                            s.library
-                                .process_inspection(kind, raw, s.library.preview_pad)
-                                .err()
-                        })
+                        source
+                            .filter(|(kind, _)| matches!(*kind, "footprints" | "padstacks"))
+                            .and_then(|(kind, raw)| {
+                                s.library
+                                    .process_inspection(kind, raw, s.library.preview_pad)
+                                    .err()
+                            })
                     });
                 if let Some(reason) = reason {
                     self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
@@ -198,6 +200,18 @@ impl Runtime {
                     }
                 }
             }
+            C::Terminal(_) | C::AddTerminal | C::RemoveTerminal => {
+                let index = if let C::Terminal(i) = control {
+                    Some(i)
+                } else {
+                    None
+                };
+                if let Some(d) = &mut self.session.workspace_mut().library.draft {
+                    if let Err(e) = d.switch_terminal(index, control == C::RemoveTerminal) {
+                        d.refusal = Some(e);
+                    }
+                }
+            }
         }
         self.invalidate_frame();
         true
@@ -232,6 +246,10 @@ impl Runtime {
                         controls.extend((0..d.pads.len()).map(C::Pad));
                         controls.extend([C::AddPad, C::RemovePad]);
                     }
+                    if d.kind == "packages" {
+                        controls.extend((0..d.terminals.len()).map(C::Terminal));
+                        controls.extend([C::AddTerminal, C::RemoveTerminal]);
+                    }
                     controls.extend((0..d.fields.len()).map(C::Field));
                     if let Some(raw) = &d.preview {
                         controls.extend(
@@ -247,7 +265,10 @@ impl Runtime {
                     controls.extend((0..8).map(C::Kind));
                     controls.push(C::Search);
                     controls.extend(s.library.results().into_iter().map(C::Result));
-                    if matches!(KINDS[s.library.kind].0, "footprints" | "padstacks") {
+                    if matches!(
+                        KINDS[s.library.kind].0,
+                        "footprints" | "padstacks" | "packages"
+                    ) {
                         controls.push(C::New);
                     }
                     if s.library

@@ -11,6 +11,9 @@ use super::{
 };
 use crate::{error::EngineError, substrate::SourceShardKind};
 
+#[path = "library_gui_package.rs"]
+mod package;
+
 /// GUI intent contains only explicitly edited fields, never a normalized object.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -72,6 +75,9 @@ pub fn build_definition(
             "Library authoring requires the canonical project-owned pool target",
         ));
     }
+    if request.kind == "packages" {
+        return package::build(context, provenance, request, create);
+    }
     let allowed: &[&str] = match request.kind.as_str() {
         "padstacks" => &[
             "name",
@@ -93,7 +99,7 @@ pub fn build_definition(
         ],
         _ => {
             return Err(refusal(
-                "This library kind is available for inspection; authoring supports Footprint and Padstack",
+                "This library kind is available for inspection; authoring supports Footprint, Padstack and Package creation",
             ));
         }
     };
@@ -337,3 +343,7 @@ fn validate_padstack(raw: &Value) -> Result<(), EngineError> {
 #[cfg(test)]
 #[path = "library_gui_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "library_gui_package_tests.rs"]
+mod package_tests;

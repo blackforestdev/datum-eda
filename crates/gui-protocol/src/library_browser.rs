@@ -39,6 +39,9 @@ pub enum LibraryControl {
     Pad(usize),
     AddPad,
     RemovePad,
+    Terminal(usize),
+    AddTerminal,
+    RemoveTerminal,
 }
 
 #[derive(Debug, Clone, PartialEq)]

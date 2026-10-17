@@ -208,7 +208,7 @@ fn ordinary_library_browse_author_preview_cancel_history_save_reopen() {
     run(root, output, steps, expected_package);
 }
 
-fn run(root: PathBuf, output: PathBuf, steps: Vec<Step>, expected_package: uuid::Uuid) {
+pub(super) fn run(root: PathBuf, output: PathBuf, steps: Vec<Step>, expected_package: uuid::Uuid) {
     let args = <GuiArgs as clap::Parser>::try_parse_from([
         "datum-gui",
         "--project-root",
@@ -234,6 +234,7 @@ fn run(root: PathBuf, output: PathBuf, steps: Vec<Step>, expected_package: uuid:
         edited_footprint: None,
         original_revision: None,
         expected_package,
+        expected_terminals: None,
         placed_source: None,
         normal_pane_width: None,
         steps,

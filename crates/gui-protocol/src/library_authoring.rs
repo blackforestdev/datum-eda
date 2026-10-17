@@ -13,6 +13,8 @@ use serde_json::{Map, Value, json};
 use std::{collections::BTreeSet, path::Path};
 use uuid::Uuid;
 
+mod package;
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibraryField {
     pub key: &'static str,
@@ -36,6 +38,8 @@ pub struct LibraryDraft {
     pub pads: Map<String, Value>,
     pub removed: BTreeSet<String>,
     pub original_pads: BTreeSet<String>,
+    pub terminal_id: Option<Uuid>,
+    pub terminals: Map<String, Value>,
     pub preview: Option<Value>,
     pub refusal: Option<String>,
 }
@@ -47,8 +51,13 @@ impl LibraryDraft {
         revision: String,
         tip: Option<Uuid>,
     ) -> Result<Self, String> {
-        if !matches!(kind, "footprints" | "padstacks") {
-            return Err("Authoring is available for Footprint and Padstack".into());
+        if !matches!(kind, "footprints" | "padstacks" | "packages") {
+            return Err(
+                "Authoring is available for Footprint, Padstack and Package creation".into(),
+            );
+        }
+        if kind == "packages" && entry.is_some() {
+            return Err("Saved Package editing is unavailable in this increment".into());
         }
         if kind == "footprints" && entry.is_none() && browser.choices("packages").is_empty() {
             return Err(
@@ -73,12 +82,16 @@ impl LibraryDraft {
             pads: Map::new(),
             removed: BTreeSet::new(),
             original_pads: BTreeSet::new(),
+            terminal_id: None,
+            terminals: Map::new(),
             preview: None,
             refusal: None,
         };
         let raw = entry.map(|e| &e.raw).unwrap_or(&Value::Null);
         draft.field("name", "Name", raw.get("name"), vec![]);
-        if kind == "padstacks" {
+        if kind == "packages" {
+            draft.package_fields();
+        } else if kind == "padstacks" {
             let aperture = raw.get("aperture").unwrap_or(&Value::Null);
             let shape = if aperture.get("circle").is_some() {
                 "circle"
@@ -245,6 +258,12 @@ impl LibraryDraft {
             .map_or("", |f| f.text.as_str())
     }
     pub fn change(&mut self, text: String) {
+        if self.fields[self.focused].key == "terminal_name"
+            && self.terminal_id.is_none()
+            && !text.trim().is_empty()
+        {
+            self.terminal_id = Some(Uuid::new_v4());
+        }
         if self.fields[self.focused].key == "pad_name"
             && self.pad_id.is_none()
             && !text.trim().is_empty()
@@ -279,7 +298,9 @@ impl LibraryDraft {
         if changed(&["name"]) {
             fields.insert("name".into(), json!(self.value("name")));
         }
-        if self.kind == "padstacks" {
+        if self.kind == "packages" {
+            self.package_request(&mut fields)?;
+        } else if self.kind == "padstacks" {
             if changed(&["shape", "width", "height"]) {
                 let aperture = match self.value("shape") {
                     "circle" => json!({"circle":{"diameter_nm":self.length("width")?}}),
