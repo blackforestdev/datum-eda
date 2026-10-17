@@ -14,6 +14,8 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
+**Explicit idle:** NPD-C08 pre-Project terminal delivery is independently reviewed and manager-accepted at db81f734 with ordinary Wayland CLI creation/GUI Open, preserved sessions and pinned QA binaries. Bounded development availability restored; no successor selected or authorized, S5A held.
+
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -208,7 +210,7 @@
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
    Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `landed`; authorization `none`; parallel lane.*
-   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-gui-write-path-qiu, dat-native-authoring-depth-sf9, dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`, `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`, `docs/reviews/workflow-foundation/handoff.md`.
+   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-gui-write-path-qiu, dat-native-authoring-depth-sf9. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`, `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`, `docs/reviews/workflow-foundation/handoff.md`.
 - **Implement and validate the bounded workflow delivery gate pilot** (`WORKFLOW-DELIVERY-GATE-PILOT`; `dat-workflow-gate-pilot-b3s`).
    Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`, `docs/reviews/workflow-delivery-pilot/handoff.md`.
@@ -224,10 +226,15 @@
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
    Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+<details>
+<summary>Completed history (1 landed records)</summary>
+
 - **Define and deliver the ordinary native GUI project startup doorway** (`NATIVE-PROJECT-DOORWAY`; `dat-native-project-startup-vrf`).
-   Owner-directed NPD-C08: provide a real shell before Project Open, ordinary CLI/agent launch and persistent unbound sessions across native Project adoption; keep Project context genuine and scoped. C01-C07 remain historical accepted delivery; C08 proof and review pending, S5A held. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   NPD-C08 accepted at db81f734: real pre-Project shell, canonical CLI creation and ordinary GUI adoption with preserved original processes, truthful scoped authority and pinned Wayland QA cohort. Historical C01-C07 and full qualification limits retained; S5A held. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`, `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
+
+</details>
+
 - **Define native workflow fixtures and ratify performance measurement budgets** (`NATIVE-WORKFLOW-BUDGETS`; `dat-native-workflow-budgets-0h4`).
    Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.

@@ -2,10 +2,10 @@
 
 Status: NPD-C01..06 remains accepted at `45f77006c661019e02928b90dba2a9f1b177bc4d`;
 C07 repair is accepted at `0a8e8b5db1547f4c8d62983f397db99cc4b76fbc`.
-The owner now requests a usable terminal before Project Open. NPD-C08 below
-selects that bounded implementation; its development availability awaits proof
-and independent review. The accepted Project/Package behavior remains available
-at its recorded source. S5A remains paused.
+NPD-C08 is accepted at `db81f73442dc5f33c1d125a4e40de5b7485fca60`: real terminal before
+Project Open, canonical CLI creation and preserved sessions across GUI adoption.
+The pinned QA cohort is available; complete qualification remains separate.
+Historical Project/Package evidence keeps its original source. S5A remains paused.
 
 ## Actual owner clarification and manager scope
 
@@ -838,3 +838,89 @@ reviewed the full terminal-focus incident route and PM005/024/027/028 plus the
 agent interoperability spec. Current route changes require changed-consumer
 review and deliberate digest reconciliation before source release. No new
 implementation, runtime or full-qualification PASS follows from this preflight.
+
+
+<!-- EVIDENCE:NATIVE-PROJECT-DOORWAY:NPD-C08 -->
+## C08 delivered result and manager acceptance
+
+Source landed at `db81f73442dc5f33c1d125a4e40de5b7485fca60`, exactly the
+30 reviewed source pins. Dev-agent released source ownership. Bare Main starts
+a real shell in the actual launch cwd, with Home/root fallback only if that cwd
+is unavailable. Session identity and private runtime are independent of Project
+authority. Stale inherited Project, discovery, credentials, sockets, MCP and
+agent provenance are cleared; ordinary authentication and adapter settings remain.
+Missing CLI companion reports its limitation without withholding the shell.
+
+Ordinary CLI creation followed by GUI Open appends a genuinely bound Project
+terminal and preserves the original shell, child, cwd, environment, state and
+scrollback. Tabs, splits and restart retain their origin. Owned runtime survives
+asynchronous session removal until the supervisor verifies process closure.
+No new command bridge, private writer, dependency or prototype change is added.
+
+Actual `/root/closeout_review` **bounded source/runtime/rendered PASS** has no
+remaining mandatory findings. It independently verified source catalogue
+`8c3ff2f98ffcc08062e3d6d971f0b0889f3efe6608073f7a481eee7dab011612`,
+evidence catalogue
+`0dbf7271a3165e69c01296ac9bbbc3a856ee722acacd94087137dba57bedb069`,
+all 30 landed sources, 71 evidence hashes and all 16 direct Wayland frames.
+The companion JSON retains exact source/binary bindings and reproduction.
+
+Accepted ordinary evidence covers working pre-Project shell, matching CLI,
+installed Codex executable/version, New/Cancel, invalid Open, canonical
+human_cli/Factory creation with eight Units, GUI Open and fresh bound discovery.
+The same original shell and child survive, and ordinary shell exits verify
+owned child/PTY/runtime cleanup. Five canonical source/revision hashes remain
+unchanged; no Project sidecars appear in the launch cwd. The same GUI runs on
+KWin Wayland/Vulkan. The automated workflow uses owned nested Weston with outer
+X11 input; Datum itself is a native Wayland/WGPU/Vulkan client throughout.
+
+Accepted focused cohorts contain 99 passing executions covering 97 distinct
+binary/test names, zero failures and five existing ignored tests. Final real-shell
+and governed-agent PTY tests cover the last provenance correction; earlier
+adequate session/context/cwd/unopened checks are explicitly reused. Matching
+build, dependency/resource/transport, 25 boundary regressions, scoped formatting
+and source health (3,193 files) pass. Actual full drift stops at the same 16
+preexisting engine Clippy errors (`dat-lk0l`); later full gates remain unreached.
+
+The scrolled after-Open frame proves preserved body/position only: its tab/focus
+chrome and accessibility text are stale. The later actual shell-input frame
+shows both tabs, Terminal focus and correct original process/environment.
+No cause or complete visual/accessibility qualification is inferred. The
+preexisting scroll-only accessibility refresh omission is separate intake
+`dat-terminal-scrollback-a11y-hnti`. Failed compile/probe/focus attempts remain
+failed evidence; the final runner records the precise observation limits.
+
+Installed-agent version execution and generic-child preservation are not a
+model task or full MCP qualification. KWin supplies launch smoke only. Current
+ordinary terminal exits are not a new ordinary GUI Close run; historical Close
+supports unchanged dispatch/coordination paths, combined with current affected
+cleanup tests. Changed supervisor/status owners are not declared byte-identical.
+C01-C07 refusal, Units, Create/Save/reopen and Package evidence remains historical
+at its exact source, with no relabelled full current matrix or HUMAN result.
+
+Appointed manager `codex-production-manager-20261016` accepts the actual review
+receipt and objectively accepts NPD-C08 under PM059 and the recorded owner
+direction. Close `dat-native-project-startup-vrf` at the source landing, release
+the lease and restore bounded Native Project development availability. All
+retained qualification and S5A boundaries remain; no successor is authorized.
+
+The new QA copy is `target/qa/terminal-db81f734/debug/datum-gui`, with matching
+CLI/daemon, actual dependency records and `../build-info.json`. These are
+independent copies of the reviewed binaries, with original timestamps preserved.
+The older owner's QA instance remains intact. To start the unbound shell in Home:
+
+```bash
+cd ~
+env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/terminal-db81f734/debug/datum-gui
+```
+
+The owner's optional post-create terminal handoff/Home-default idea is retained
+as intake `dat-terminal-project-handoff-emzi`. Distinguish no session, idle shell
+and a running agent/job; changing cwd alone cannot rebind credentials or a live
+process. No prompt, automatic migration or new default cwd is ratified here.
+
+<!-- SELECTION:NATIVE-PROJECT-DOORWAY:NPD-C08-DELIVERED -->
+The manager explicitly selects idle after this delivered repair. No successor
+or S5A execution is selected or authorized. Raw logs, inputs and captures remain
+ignored task scratch; the existing receipt and reproducible runner carry the
+necessary provenance without new tracked audit dossiers or external collections.
