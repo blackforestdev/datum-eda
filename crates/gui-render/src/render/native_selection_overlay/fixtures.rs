@@ -7,7 +7,7 @@ pub(crate) struct Fixture {
     pub(super) schematic: uuid::Uuid,
 }
 impl Fixture {
-    #[cfg(feature = "visual")]
+    #[cfg(any(test, feature = "visual"))]
     pub(crate) fn select(&self, state: &mut ReviewWorkspaceState, subject: SelectionSubject) {
         let authority = NativeSelectionResolution::capture(&self.model).unwrap();
         let view =

@@ -371,7 +371,7 @@ fn visual_lod_is_read_only_current_presentation_and_coalesces_without_reselectio
         .body_reader()
         .variant_string()
         .unwrap();
-    assert!(pending.contains("awaiting current preparation"));
+    assert!(pending.contains("Selection appearance awaiting redraw"));
     state.selection.as_mut().unwrap().visual_lod =
         Some(datum_gui_render::SelectionVisualLod::ExactMask {
             panes: 2,

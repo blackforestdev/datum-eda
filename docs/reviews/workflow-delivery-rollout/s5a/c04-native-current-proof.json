@@ -34,7 +34,8 @@
     },
     "ordinary_binary": "target/debug/datum-gui",
     "launch": "target/debug/datum-gui --project-root target/s5a-c03-u5-majority-v1",
-    "scope": "Opt-in asynchronous diagnostic observation, production input dispatch; no fault injection or availability override"
+    "scope": "Opt-in asynchronous diagnostic observation, production input dispatch; no fault injection or availability override",
+    "record_status": "Historical initial native-majority X11 configuration, preserved verbatim above. Later accepted entries bind their own actual backend, source and binary pins; current readiness is assessed in current_readiness_reconciliation_20261019."
   },
   "completed_native_behavior": [
     {
@@ -179,14 +180,14 @@
     "Shared native desktop received physical C O P P E R keys outside the scope replay; later Escape was not delivered to the intended window.",
     "Controlled-close timeouts retained; dat-kiel remains separate, no shutdown qualification."
   ],
-  "remaining_executable_proof_blocker": "Historical desktop blocker: earlier shared-desktop focus/concurrent-input failures remain preserved. Later bounded ordinary native trials use serialized X11 input, verified target focus/capture identity and canonical nonmutation checks. This does not establish exclusive physical input or HUMAN/Wayland qualification; current independently executable cases proceed through that existing route.",
+  "remaining_executable_proof_blocker": "Historical shared-desktop blocker is preserved in historical_top_level_summary_before_reconciliation_20261019. Subsequent accepted native_wayland_* receipts establish their own bounded Wayland/wgpu execution, not blanket platform or HUMAN acceptance. See current_readiness_reconciliation_20261019.",
   "retained_evidence": [
     "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed. Bounded current Track straight1/2-refusal/2/2-acquisition, curve1/3-refusal/2/3-acquisition and CurrentZone missing-island refusal/all-island acquisition rectangles are accepted in their explicit restored classfilter X11/wgpu scope. Bounded zero-area and proper-crossing even-odd refusal/acquisition now accepted with the repaired ec07/new92-source GUI under restored Parts/Pad exclusion in X11/wgpu. Authored-body and remaining N03 obligations stay open.",
-  "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete.",
+  "remaining_acceptance_gaps": "Current unresolved predicates/evidence bindings are listed only in current_readiness_reconciliation_20261019. Earlier remaining strings and generic not-full-N-row limits retain historical scope; they are not an automatic rerun queue or evidence of a current runtime failure.",
+  "candidate_review_readiness": "Bounded units have actual separately attributed independent reviews. Overall software-ready/full C04 acceptance is not established; see current_readiness_reconciliation_20261019. C05 reserved replay and C06 owner acceptance remain separate.",
   "C03_complete": true,
   "C04_complete": false,
   "C05_completed": false,
@@ -12027,5 +12028,277 @@
       "gates": "Exact pinned py_compile/sourcehealth3258 and default/oldfocused AST proofs reused; unchanged12readercontrols reused. Changed-metadata projectstate101/currentFrontierprojection and diffwhitespace passed; required staged hooks retained.",
       "retained": "Source geometry available despite no resolving open Board pane; no invented unavailable5 or wholeview/camera equality. Display clipping/UUID abbreviation retained. No active-gesture-close/fullN08/N13/C04/C05/C06/HUMAN/P2.4/ordinarywindowClose/successor acceptance."
     }
+  },
+  "historical_top_level_summary_before_reconciliation_20261019": {
+    "native_configuration": {
+      "input_backend": "X11 on KDE Wayland desktop, DISPLAY=:1; WAYLAND_DISPLAY removed",
+      "adapter": "Intel HD Graphics P630 (KBL GT2), Vulkan/Mesa; detailed initialization preserved in archive",
+      "settings": {
+        "XDG_SESSION_TYPE": "wayland",
+        "DISPLAY": ":1",
+        "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/target/s5a-c04-native-current/native-majority.log",
+        "DATUM_GUI_VERBOSE_LOG": "1",
+        "DATUM_ACTION_EVIDENCE": "1",
+        "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/debug/datum-eda"
+      },
+      "ordinary_binary": "target/debug/datum-gui",
+      "launch": "target/debug/datum-gui --project-root target/s5a-c03-u5-majority-v1",
+      "scope": "Opt-in asynchronous diagnostic observation, production input dispatch; no fault injection or availability override"
+    },
+    "remaining_executable_proof_blocker": "Historical desktop blocker: earlier shared-desktop focus/concurrent-input failures remain preserved. Later bounded ordinary native trials use serialized X11 input, verified target focus/capture identity and canonical nonmutation checks. This does not establish exclusive physical input or HUMAN/Wayland qualification; current independently executable cases proceed through that existing route.",
+    "remaining_acceptance_gaps": "Existing N01-N17 outstanding cases/extensions remain, reduced only by the specific native behaviors above. Bounded current both-face whole-owned eight-Pad silhouette and N03 rotated BoardText below/above-half under explicit restored Parts/Pad acquisition exclusion are accepted. Bounded native exact-half rotated BoardText refusal under the same explicit restored Parts/Pad exclusions is accepted. Authored body-outline appearance, dimensional metrology, direct mask counters and full N03/N15 remain unqualified. Native Wayland, HUMAN visual/keyboard/accessibility/channel, full dense/lifecycle/cancellation and remaining class/scope/context variants remain explicitly unpassed. Bounded current Track straight1/2-refusal/2/2-acquisition, curve1/3-refusal/2/3-acquisition and CurrentZone missing-island refusal/all-island acquisition rectangles are accepted in their explicit restored classfilter X11/wgpu scope. Bounded zero-area and proper-crossing even-odd refusal/acquisition now accepted with the repaired ec07/new92-source GUI under restored Parts/Pad exclusion in X11/wgpu. Authored-body and remaining N03 obligations stay open.",
+    "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
+  },
+  "current_readiness_reconciliation_20261019": {
+    "status": "Finite record reconciliation and focused unit-test correction under appointed manager SAME-C04 direction. New unit-test results are separate from reused native GUI proof. No software-ready/full C04 disposition, HUMAN acceptance or successor authorization.",
+    "authority": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
+      "contract": [
+        "docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md:269-367",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md:513-591",
+        "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md:S5A-C04"
+      ],
+      "method": "Aggregate accepted source/native/package scopes; no requirement that each individual receipt pass an entire N row. Historical intake status or a generic not-full limit alone establishes neither a missing predicate nor a current failure."
+    },
+    "credited_coverage": [
+      {
+        "predicates": "N03 exact30 eight-Pad and rotated text/path/curve/islands/even-odd qualification",
+        "receipts": [
+          "reserved_exact30_review",
+          "exact30_current_eight_pad_silhouettes_20261013",
+          "n03_rotated_text_below_above_20261013",
+          "n03_rotated_text_exact_half_20261013",
+          "n03_path_curve_islands_20261014",
+          "n03_zero_area_even_odd_20261014"
+        ],
+        "limit": "Per stated classes/oracles; no wholesale per-class/native appearance credit. C03 PM057/PM058 implementation authority is retained."
+      },
+      {
+        "predicates": "N04 edge/corner/interior stop, equal final world regions by distinct camera paths, dense evaluation",
+        "receipts": [
+          "n04_edge_corner_region_20261011",
+          "n04_equal_world_region_20261011",
+          "dense_evaluation_resource_correction_20261011",
+          "region_completion_publication_20261012"
+        ],
+        "limit": "No new path permutation, platform rerun or latency budget inferred."
+      },
+      {
+        "predicates": "N15/N16 dense warm reopen, shared cue resources and maximal channel collision",
+        "receipts": [
+          "shared_cue_budget_correction_20261011",
+          "dense_warm_reopen_20261011",
+          "maximal_channel_collision_20261012"
+        ],
+        "limit": "100k Schematic warm evidence and one full100007 Board collision capture aggregate only at their accepted scopes. No native emitted primitive counter, sustained repeated Board campaign or latency target invented."
+      },
+      {
+        "predicates": "N11 singleton/class defaults, focused Compound scopes, N08 committed pane close/content rebind",
+        "receipts": [
+          "native_wayland_singleton_inspector_correction_20261019",
+          "native_wayland_focused_compound_inspector_scopes_20261019",
+          "native_wayland_focused_compound_pane_lifecycle_20261019"
+        ],
+        "published_scope_pins": [
+          "9e170f1bf0c910894e1e01ff4501484da6d44194",
+          "b01ef44c978483e45a8acf0cf371586c972ab090",
+          "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9"
+        ],
+        "limit": "Latest pane candidate2ad1cefef03b583394ab71422cdbca27848c26d958c226096b7d703234dcc2d2 retains full5/focusTrack3/All and current owner0->1->1. No active-gesture-close or full N08/N13 credit."
+      },
+      {
+        "predicates": "N12 native derived Run256/257 ordinary existing terminal ContextGet cap-boundary and full current GUI inspection",
+        "receipts": [
+          "n12_existing_terminal_live_context_20261012.actual_family4",
+          "n12_existing_terminal_live_context_20261012.independent_review",
+          "n12_existing_terminal_live_context_20261012.final_independent_review"
+        ],
+        "accepted_scope": "Actual full GUI Run256/257/all15 active inspection values. Context256 exact full IDs/truncatedfalse/full15 fields;257 membersnull/truncatedtrue/11 retained fields and exact source-defined omissions layer_coverage,net_coverage,projected_layer_coverage,resolved_net_coverage. Run origin/semantic/current Project/revision/focus/totals retained; complete canonical/Global invariance and literal shutdown/resource receipts.",
+        "archive_sha256": "4df71b16de2e40fff0b0675b90e3124cd9cd1a3328652105d0142cfb03d4fc44",
+        "limit": "Accepted native derived boundary is already present; no duplicate boundary proof. Explicit omitted-reason parity and IR01/D4 large-set combinations are not established by this receipt alone. No fullN12/AI/HUMAN/C04 acceptance."
+      }
+    ],
+    "unresolved_evidence_questions": [
+      {
+        "id": "hidden-intermediate",
+        "required": "N05/N09 IR01 eligible visible A acquires complete A-B-C derived Run across already-hidden intermediate B; hidden cue absent and full inventory/count disclosed.",
+        "best_receipts": [
+          "n05_hidden_layer_origin_20261011",
+          "native_wayland_prehidden_authored_20261018",
+          "ir01_prefiltered_label_run_20261011",
+          "ir01_prefiltered_wire_global_net_20261013"
+        ],
+        "unresolved": "Hidden-origin refusal/global authored inclusion and positive class-filtered derived membership do not themselves bind the hidden-intermediate positive predicate.",
+        "smallest_next_lookup_or_work": "Locate accepted pre-acquisition eligible-A/hidden-B complete-set receipt and frozen resolver oracle within existing evidence. If none exists, bound this exact ordinary-workflow proof from available governed inputs before scheduling execution.",
+        "closure": "Actual accepted membership, origin eligibility, hidden projection/summary and zero-write receipt bound to this predicate."
+      },
+      {
+        "id": "large-derived-ir01-d4-extensions",
+        "required": "N12 and IR01/D4 require complete derived256/257+ with typed origin/semantic identity, omission only above256, consumer/reason parity and unchanged whole-result refusal/no-op despite hidden/filter/cross-pane projection.",
+        "best_receipts": [
+          "n12_enumerated_context_text_alignment_20261013",
+          "n17_accessible_257_20261011",
+          "n12_existing_terminal_live_context_20261012",
+          "global_net_ladder_20261011",
+          "foreign_bus_isolation_20261011",
+          "ir01_derived_run_revision_20261011"
+        ],
+        "unresolved": "Native derived Run256/257 basic cap-boundary is accepted in n12_existing_terminal_live_context_20261012.actual_family4 and must not be rerun. Exact still-unbound questions are required IR01 pre-hidden/filter/cross-pane extensions, D4 whole-result refusal/no-op and omitted-reason parity at large derived sets; an entire-boundary absence is not claimed.",
+        "smallest_next_lookup_or_work": "Reuse accepted Run256/257 terminal/GUI cap-boundary receipt and frozen oracle. Locate existing large-derived IR01/D4 and omitted-reason evidence; if absent, scope only those exact extensions through existing ordinary workflows, with no duplicate basic-boundary run or invented fixture authority.",
+        "closure": "Already-accepted derived256/257 cap/origin/semantic round-trip stays credited; remaining applicable IR01/D4 hidden/filter/cross-pane/refusal/no-op and consumer reason predicates receive exact accepted evidence/disposition."
+      },
+      {
+        "id": "stale-consumer-restore",
+        "required": "N07/N14 and L8 stale restored/context identities drop and report, never fuzzy match or resurrect; restore does not write source/history.",
+        "best_receipts": [
+          "identity_lifetime_report_correction_20261011",
+          "n14_two_project_units_isolation_20261012"
+        ],
+        "unresolved": "Delete/recreate/Undo and two-Project reopen are accepted adjacent predicates; an actual stale consumer/context restoration receipt is not identified here.",
+        "smallest_next_lookup_or_work": "Bind existing restoration/source tests and any accepted ordinary restore receipt to exact L8/N07/N14 predicate; ask whether native restoration remains unproved before authorizing a run.",
+        "closure": "Exact stale identity drop/report and source/history preservation evidence independently accepted at the required scope."
+      },
+      {
+        "id": "artifact-discard",
+        "required": "N10 commit/discard/check producer invalidation dissolves/reports selected artifact; same-action Proposal/Review remain distinct and no resurrection.",
+        "best_receipts": [
+          "proposal_review_artifact_continuation_20261011",
+          "production_proposal_rejected_continuation_20261011",
+          "diagnostic_artifact_lifetime_correction_20261011",
+          "review_diagnostic_channel_proof_20261011"
+        ],
+        "unresolved": "Applied/Undo, rejected Proposal and Diagnostic check lifecycle are accepted; Proposal discard and AcceptedReview withdrawal are explicitly unproved. No missing route is inferred or fabricated.",
+        "smallest_next_lookup_or_work": "Locate actual existing producer discard/withdrawal route and receipt; determine whether accepted invalidation source controls plus existing native routes satisfy the predicate. An unavailable product route requires exact authority disposition, not synthetic state.",
+        "closure": "Accepted applicable actual discard lifecycle evidence or authorized exact predicate disposition; no waiver assumed."
+      }
+    ],
+    "remaining_receipt_bindings": [
+      {
+        "predicates": "N01/N03 per-class acquisition/qualification and below/at4-device-px/Shift+Ctrl grammar",
+        "best_receipts": [
+          "native_majority_result",
+          "n01_focused_removal_and_quiet_noop_20261012",
+          "native_wayland_parent_body_correction_20261018",
+          "native_wayland_pin_parent_20261018",
+          "exact30_current_eight_pad_silhouettes_20261013",
+          "n03_path_curve_islands_20261014"
+        ],
+        "next": "Map stated covered classes and threshold/source controls against exact non-deferred rows. Name only concrete unbound class/threshold predicates; no Cartesian modifier campaign.",
+        "closure": "Every required class/threshold predicate has an accepted source/native receipt at its required scope or an explicit remaining obligation."
+      },
+      {
+        "predicates": "N08 duplicate same-identity panes, independent cameras and full cues only where resolvable",
+        "best_receipts": [
+          "duplicate_schematic_integration_continuation",
+          "other_stage_missing_schematic_correction_20261011",
+          "n08_focus_cancel_pane_rebind_20261011",
+          "native_wayland_focused_compound_pane_lifecycle_20261019"
+        ],
+        "next": "Resolve existing duplicate-pane camera/projection receipts before calling anything missing; latest committed pane loss/rebind is already credited.",
+        "closure": "Exact duplicate-pane predicate is bound to adequate accepted receipts; do not infer active-gesture-close from focus cancellation before close."
+      },
+      {
+        "predicates": "38 machine assertions A/L/O/B/V/I/D; especially D1 exact65536/overflow primitive union and warm diagnostics, V5 2physical-px zoom invariance",
+        "best_receipts": [
+          "gpu_result",
+          "shared_cue_budget_correction_20261011",
+          "dense_warm_reopen_20261011",
+          "maximal_channel_collision_20261012"
+        ],
+        "next": "Bind existing accepted source/CPU/GPU/native controls by assertion and required diagnostic scope, retaining separate authored-object/primitive counts and raw failures. No blanket retest or native counter requirement inferred.",
+        "closure": "All38 required assertions have honest adequate accepted evidence/disposition; unresolved exact controls remain named. R1-R4 are future S5B, not part of38."
+      }
+    ],
+    "human_c04_gate": {
+      "required": "Build own-golden nine-panel re-review remains explicitly C04: construction, compound, locked/padlock, maximal collision, pane parity, GlobalNet/Bus, text/points, dense fallback, accessibility/zoom.",
+      "source": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md:585-591; preparation-plan N15/N16/N17; FOUNDATION S5A-C04",
+      "status": "Required owner HUMAN review not accepted here. Approved specification reference is not build-golden acceptance. No wholesale transfer to C06."
+    },
+    "smallest_completion_path": "Resolve the4 exact evidence questions and3 receipt bindings using existing accepted evidence first; authorize only concrete necessary consolidated ordinary-workflow work. Reconcile assertion/predicate coverage in this existing record, obtain actual independent software assessment, and obtain required C04 owner HUMAN disposition. Only then assess C04 completion against its contract; no automatic C05/C06 or successor.",
+    "separate_boundaries": [
+      "Reserved C05 independent replay and C06 owner acceptance",
+      "P2.4 fuller Inspector grouping",
+      "Future S5B mutation R1-R4",
+      "Standalone performance-S5/latency target campaign; D1 existing diagnostic collection remains required at its stated scope",
+      "Definition-editor native obligations remain outside this board/schematic delivery"
+    ],
+    "test_expectation_correction": {
+      "scope": [
+        "crates/gui-render/src/side_panels/selection_inspector/tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/tests.rs",
+        "crates/gui-render/src/render/native_selection_overlay/fixtures.rs"
+      ],
+      "change": "Two stale expectation strings: copper width -> Width, awaiting current preparation -> Selection appearance awaiting redraw. Existing Fixture::select cfg broadened from feature visual to any(test, feature visual) for its legitimate default-feature singleton test consumer. Helper body and canonical quantity/read-only/current-presentation/coalescing assertions unchanged.",
+      "verification": "Actual serial guarded exact tests: visual renderer quantity1PASS/0FAIL before helper correction; repaired default renderer quantity1PASS/0FAIL; default singleton Inspector parity1PASS/0FAIL; AT-SPI visualLOD current-presentation/coalescing1PASS/0FAIL. Initial default compileFAIL E0599/exit101 remains raw with no test credit. No broad suite, ordinary GUI executable rebuild or new native GUI run; previous GUI/native receipts are reused at their original pins/scopes.",
+      "prerequisite_failure": {
+        "issue": "dat-renderer-singleton-visual-helper-1xg7",
+        "initial_outcome": "Actual default renderer lib-test compile FAIL E0599, exit101, no tests executed; unconditional singleton test calls existing visual-only helper. Not an assertion failure.",
+        "locations": [
+          "crates/gui-render/src/side_panels/selection_inspector/tests/singleton_inspector.rs:12",
+          "crates/gui-render/src/side_panels/selection_inspector/tests/singleton_inspector.rs:16",
+          "crates/gui-render/src/render/native_selection_overlay/fixtures.rs:10"
+        ],
+        "history": "09e9129ff7b89c0d473c5b52a4f64c962eaf79e2 scoped helper to then-visual consumers; 9e170f1bf0c910894e1e01ff4501484da6d44194 added default-feature singleton consumer.",
+        "manager_release": "Only cfg broadening after active visual Cargo exited and exact path/Frontier/Beads synchronization at2026-10-19T21:05:21Z; no fixture API/body/framework or assertion change.",
+        "raw_log": ".datum/scratch/s5a-c04-managed-20261018/stale-inspector-expectation-test.log",
+        "disposition": "Related intake remains open pending actual reviewed landing evidence; no C04 dependency or acceptance invented."
+      },
+      "raw_receipts": [
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-inspector-expectation-test.log",
+          "sha256": "5e05d8721c2fc0a9c33e725e2d7fb474c33d30fc46c1aa6ba63ce92e31ebc364",
+          "outcome": "CompileFAIL101/no executed tests"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-inspector-expectation-visual-test.log",
+          "sha256": "80e12e608ea0b1ac59aadff8a713244e84140860b113fd8ee6814b84ded2dc00",
+          "outcome": "PASS1/0, exact nonzero test"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-inspector-expectation-default-repaired-test.log",
+          "sha256": "a9fe22d821ef1a29930017d67ef23af9e454ba047b2ddb13554cfa064067a78a",
+          "outcome": "PASS1/0, exact nonzero test"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/singleton-inspector-default-helper-test.log",
+          "sha256": "fe1b0e71d5c94e004f091a38fd38dd2b375328d645d0ea35112e877b60685439",
+          "outcome": "PASS1/0, exact nonzero test"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-atspi-pending-expectation-test.log",
+          "sha256": "165cff9a66a7264368fbdc6a4fe70a05bef6cb246c1448944eca4fce26d9b292",
+          "outcome": "PASS1/0, exact nonzero test"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-expectations-source-health.log",
+          "sha256": "cfe4a750e76dedfce80a56153282ec021b9863ba058ac5867061ec14949407e0",
+          "outcome": "PASS"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-expectations-project-state.log",
+          "sha256": "89b50fd321166b7525f73f501e9dc2769ac80ae3532554a30fbf8ac4a89efc64",
+          "outcome": "PASS"
+        },
+        {
+          "path": ".datum/scratch/s5a-c04-managed-20261018/stale-expectations-frontier-projection.log",
+          "sha256": "80afdeb860c60dcf1a1cc417b9b8d7bd9a556ccc2f17d2bb4e865ffa6e72849e",
+          "outcome": "PASS"
+        }
+      ],
+      "warnings": "Guard retained-cache soft warning retained in every raw test log; no active-cache cleanup. AT-SPI test build retained existing renderer PanePlan::overflow dead_code warning. No warning waiver or new runtime behavior claimed."
+    },
+    "review": {
+      "reviewer_task": "/root/closeout_review",
+      "outcome": "Actual final combined PASS; no mandatory findings.",
+      "candidate_sha256": "e7d9799ba6f38c7ff8d5fb1d9c40b60fab3da82d5148880e065d30343cf4b9ab",
+      "verified": "All6source/8rawreceipt/3ordinary-binary bindings; four passing executions across3distinct tests (quantity under visual/default, default singleton parity, AT-SPI current-presentation/coalescing); preserved initial E0599 compile failure; exact3one-line source changes and all historical receipts; corrected existing native Run256/257 credit.",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_disposition": "Actual appointed manager accepts finite test-support/readiness unit; exact6path substantive main normal-hook commit released, followed by only related helper intake closure using actual landing evidence. No new test/native/build reruns.",
+      "archive_boundary": "Run256/257 is historical accepted receipt credit; no fresh archive verification claimed.",
+      "retained": "C04 in_progress; no software-ready/fullC04/HUMAN/C05/C06/successor acceptance. No production behavior/dependency/spec change or new native GUI proof.",
+      "normal_hook_formatting": "First normal-hook commit attempt: file-lane and temporary-artifact PASS, staged rustfmt rejected the shorter Width assertion layout. Prescribed scripts/format_rust.py ran on only the owned renderer Inspector tests.rs, collapsing text.iter().any formatting without changing tokens/meaning. Exact scoped formatter delta shown to manager; original tested/reviewed logical changes retained, no test rerun or hook bypass."
+    },
+    "required_checks": "Sourcehealth3258; projectstate101 and currentFrontierprojection PASS. Exact three one-line source diffs only; prior4 summaries preserved verbatim and every other prior proof entry unchanged. Normal staged hooks still required."
   }
 }

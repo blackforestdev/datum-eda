@@ -422,8 +422,7 @@ fn inspector_quantity_rows_use_project_units_without_changing_exact_values() {
         },
     );
     assert!(
-        text.iter()
-            .any(|t| t.text.contains("copper width: 0.200mm")),
+        text.iter().any(|t| t.text.contains("Width: 0.200mm")),
         "native Inspector consumes shared formatted quantity"
     );
     assert_eq!(state.selection, selection);
