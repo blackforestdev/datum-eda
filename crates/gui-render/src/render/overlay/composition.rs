@@ -288,7 +288,8 @@ fn proposal_selected(state: &ReviewWorkspaceState, action_id: &str) -> bool {
             !view.stale
                 && matches!(&view.subject, datum_gui_protocol::SelectionSubject::Proposal(id) if id == action_id)
         }
-        _ => state.active_review_target_id == action_id,
+        SelectionTarget::ReviewAction(id) => id == action_id,
+        _ => false,
     }
 }
 

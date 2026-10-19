@@ -14,8 +14,8 @@ def source_files(project: Path) -> dict[str, str]:
                 {(".datum", "journal"), (".datum", "revision")} )}
 
 
-def validate_frozen_sources(project: Path, expected: dict[str, str]) -> dict:
-    """Bind the selected canonical files to independently tracked hashes.
+def canonical_source_snapshot(project: Path) -> dict:
+    """Hash canonical files without reading operational context or credentials.
 
     Writer admission can leave an advisory lock even without a transaction.
     Account for that exact operational path separately, never as source data.
@@ -41,7 +41,13 @@ def validate_frozen_sources(project: Path, expected: dict[str, str]) -> dict:
             raise ValueError('symlink canonical source refused')
         if path.is_file():
             actual[relative.as_posix()] = digest(path)
-    if actual != expected:
-        raise ValueError('canonical source/journal inventory differs from frozen catalogue')
     return {'canonical_files': actual, 'operational_writer_lock_present': lock_present,
             'operational_role_counts': operational}
+
+
+def validate_frozen_sources(project: Path, expected: dict[str, str]) -> dict:
+    """Bind the complete canonical inventory to independently frozen hashes."""
+    snapshot = canonical_source_snapshot(project)
+    if snapshot['canonical_files'] != expected:
+        raise ValueError('canonical source/journal inventory differs from frozen catalogue')
+    return snapshot

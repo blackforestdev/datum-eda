@@ -559,7 +559,7 @@ def finish_case(qa, main, state, project, frozen_files, result, before):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', required=True, type=Path)
-    parser.add_argument('--replay-root', required=True, type=Path)
+    parser.add_argument('--replay-root', type=Path)
     parser.add_argument('--surface', choices=['schematic', 'board'], default='schematic')
     parser.add_argument('--prehidden-l1', action='store_true')
     parser.add_argument('--parents-point', action='store_true')
@@ -571,7 +571,16 @@ def main():
     parser.add_argument('--focused-inspector', action='store_true')
     parser.add_argument('--focused-pane-lifecycle', action='store_true')
     parser.add_argument('--hidden-junction-run', action='store_true')
+    parser.add_argument('--proposal-creation-undo', action='store_true')
     args = parser.parse_args()
+    if args.proposal_creation_undo:
+        if args.surface != 'board' or any(v for k, v in vars(args).items()
+                if isinstance(v, bool) and k != 'proposal_creation_undo'):
+            parser.error('Proposal creation Undo is exclusive to the governed Board case')
+        from s5a_native_artifact_cases import run_proposal_creation_undo
+        return run_proposal_creation_undo(args.run_dir, close_failed_transport, close_owned_companions)
+    if args.replay_root is None:
+        parser.error('--replay-root is required for frozen selection cases')
     if args.hidden_junction_run and (args.surface != 'schematic' or any([
             v for k, v in vars(args).items() if isinstance(v, bool) and k != 'hidden_junction_run'])):
         parser.error('hidden Junction Run is exclusive to the frozen Schematic semantic-scope case')
