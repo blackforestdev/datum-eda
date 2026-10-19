@@ -1439,3 +1439,102 @@ three authorized issue lifecycle fields change, preserving all discovery/notes/
 edges; the other 332 raw rows, including PWO and intake616t, are exact. Actual
 next/default-details idle and named S5A held/completed guidance pass. Source and
 runtime proof are reused unchanged. No scratch was accessed or recreated.
+
+
+## Owner-directed S5A-C04 resumption and managed worker assignment
+
+<!-- RESUME:UVT-S5A-BUILD:C04-MANAGED-20261018 -->
+
+On 2026-10-18, after discussing S5A-C04 as the next bounded assignment and
+clarifying its substantial accepted work and still-open overall completion,
+the owner instructed:
+
+> using the mcp peer comunication send the peer agent "dev-agent-02" the prompt to engage development on the next logical development step set clear goals for the agent and make the agent keep you "the managment agent" informed about progress. set goals and compleation criteria.
+
+This directs resumption of the retained S5A-C04 execution grant. The earlier
+owner-pause record above remains historical; its active hold is removed for
+this assignment. C03 remains complete. Accepted C04 cases keep their exact
+source and qualification scopes. C04 overall completion, C05 reserved replay
+and C06 owner acceptance are not asserted by resumption. The work remains
+qualification and necessary corrections of existing selection/inspection
+behavior, without adding new product features or changing acceptance rules.
+
+The appointed management session is `codex-reorganization-manager-20261014`,
+MCP thread `01a13df1-7a0d-72c1-bbdd-f0d96d481598`. It coordinates this C04
+assignment, independent review, unchanged-scope continuation and objective
+C04 acceptance under PM059. It does not replace the reserved C05 reviewer or
+C06 owner decision. The requested implementer is `dev-agent-02`; confirm its
+MCP thread identity before sending the execution instruction or transferring
+the claim. The manager initially owns only the resumption/handoff metadata.
+Existing paused sessions receive no implicit source ownership.
+
+<!-- APPOINTMENT:UVT-S5A-BUILD:C04-MANAGEMENT-20261018 -->
+{"decision_kinds": ["review_provisioning", "review_receipt", "continuation", "objective_acceptance"], "owner_appointed": true, "session": "codex-reorganization-manager-20261014", "task_keys": ["UVT-S5A-BUILD"]}
+
+### Worker goals and execution order
+
+1. Reconcile the existing N01-N17 requirements against actual accepted C04
+   results and current source. Report a concise remaining-work list, identifying
+   reusable evidence, necessary current replay, demonstrated defects and any
+   genuinely reserved decision. This is execution preflight; continue routine
+   work within the retained grant rather than stopping after the inventory.
+   Use existing C04 records; do not create another standalone audit report.
+2. Use reproducible tracked inputs. Before affected proof, migrate old
+   full-Debug readers to the supported current diagnostic/typed interfaces.
+   Compact or incomplete summaries never prove complete inspection/membership.
+   Do not restore retired external scratch or invent fixture identities.
+3. Execute only the genuinely outstanding ordinary native Board/Schematic
+   scenarios, including required negative and non-mutation controls. Datum must
+   run on Wayland/wgpu with actual backend/binary identification. Retain prior
+   X11 results at their original scope; distinguish any outer input transport
+   from Datum's actual backend. Reuse the established QA launch/build convention.
+4. Correct demonstrated defects in the existing shared selection, inspection,
+   lifecycle and rendering owners, with exact path ownership synchronized before
+   edits. Preserve typed engine authority, source/journal invariance, compound
+   membership and existing visual/product rules. Follow guarded Cargo, serial
+   proof builds, source-health, dependency and protected-HTML rules. Report
+   unrelated defects as intake without silently expanding the assignment.
+5. Produce a reproducible current QA build and exact launch command, meaningful
+   test/native evidence, actual rendered inspection and required independent
+   review. Deliver the C04 completion candidate and precise C05 handoff to the
+   manager. Routine fixes and verification do not require repeated owner approval.
+
+### Completion criteria
+
+- Every required C04 row has traceable accepted evidence at an honest source,
+  runtime and platform scope. Qualified reuse is explicit. No required failure
+  or missing result is relabeled, silently deferred or waived.
+- Any corrected behavior works through ordinary application input on the
+  current Wayland/wgpu candidate. Required identity, membership, cancellation,
+  accessibility, non-mutation and visual/performance checks retain their actual
+  governing scope and approved budgets; no new threshold is invented.
+- Matching source/binary identities, launch instructions, failed attempts,
+  relevant passing checks and remaining separate qualification are recorded in
+  existing task evidence. Raw output stays in ignored task-owned workspace
+  storage, with one retained copy per necessary run; no tracked raw artifacts
+  or new directories outside the project root.
+- Required independent review has no unresolved mandatory finding at the
+  delivered scope, and the manager records actual objective C04 acceptance.
+  Only then can C04 be completed. C05 and C06 keep their existing distinct
+  review/owner requirements; cross-probe and other successors remain unselected.
+
+### Progress and ownership protocol
+
+Acknowledge the assignment and exact MCP identity to the management thread.
+Before source/proof edits, the manager and worker explicitly transfer the
+Frontier claim and synchronize Beads status/assignee/export. The worker reports
+its initial remaining-work list and proposed exact paths, then expands the
+owned scope only for work inside this retained grant. Renew the lease while
+active; expiry never transfers ownership. Keep shared-tree commits scoped and
+use normal hooks. The manager coordinates integration and publication.
+
+Send compact MCP updates to management at each meaningful milestone, failed
+verification, review handoff or blocker, and at least every 15 minutes during
+long active work. Include completed work, current source/build identity when
+relevant, actual check outcomes, next action and any decision required. Report
+transport errors explicitly rather than claiming a message was delivered.
+Continue independent authorized work while awaiting routine review; never start
+a competing proof build or advance a gated completion step. Return the final
+completion candidate to management; do not self-review or declare overall S5A
+accepted. Escalate a genuine reserved boundary with the concrete evidence and
+smallest decision needed, preserving all completed work.
