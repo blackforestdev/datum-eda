@@ -11746,7 +11746,7 @@
     }
   },
   "native_wayland_singleton_inspector_correction_20261019": {
-    "status": "Actual independent bounded combined PASS and appointed PM059 manager acceptance for vs05 title/fresh class-scope correction only. Reviewed landing and issue closure pending; C04 remains in progress.",
+    "status": "Actual independent bounded combined PASS and appointed PM059 manager acceptance; reviewed vs05 correction landed and only vs05 closed. C04 remains in progress.",
     "issue": "dat-unfocused-singleton-inspector-vs05",
     "base_head": "911b93758f3cc0798602189a1bbf07acadb740f5",
     "retained_step": "UVT-S5A-BUILD / S5A-C04 remains in progress",
@@ -11769,7 +11769,7 @@
       },
       "regressions": "Corrected protocol02:2PASS/10filtered; renderer02:1PASS/674filtered; app01:2PASS/547filtered. Actual lifecycle refresh+revision-shrink and AT-SPI field parity. Matching guarded GUI build exit0/11.84s.",
       "failed_attempts": "Protocol01:1PASS/1FAIL from invalid board-local Net905 as GlobalNet; test oracle corrected, original log retained. Renderer01:E0583 before tests from relative module lookup; explicit path fixed, original log retained. No credit to failed attempts; no product/assertion weakening.",
-      "source_review": "Actual /root/closeout_review SOURCE-ONLY PASS b44025d8, then actual incremental PASS ee8df65d (childd9cb0a0e,other9unchanged). Manager verified final c71af77b mechanical renderer hook72d1aca6; final independent combined review pending. Six singleton semantic/artifact controls are presentation-only; actual resolution control Run-only. No mandatory logical-Net fixture; no singleton-Net resolver claim.",
+      "source_review": "Actual /root/closeout_review SOURCE-ONLY PASS b44025d8, then actual incremental PASS ee8df65d (childd9cb0a0e,other9unchanged). Manager verified final c71af77b mechanical renderer hook72d1aca6; actual independent bounded combined PASS is recorded in final_review below. Six singleton semantic/artifact controls are presentation-only; actual resolution control Run-only. No mandatory logical-Net fixture; no singleton-Net resolver claim.",
       "native_outcome": {
         "path": ".datum/scratch/s5a-c04-managed-20261018/singleton-inspector-native-outcome.json",
         "sha256": "98ee68c90b88f84e81fecb5c0257e3d1dce757997ec4b664d217ff5140dbb947"
@@ -11804,7 +11804,7 @@
       "warnings": "Existing dbind GetItems unsupported-interface and unused renderer overflow warnings retained. Cache37.6->30.8GiB size change observed unattributed; no worker cache cleanup.",
       "structural_checks": "Final noncompiling gates PASS: sourcehealth3257files, projectstate101/currentprojection, dependencyauthority, specparity30, specgovernance571, stagedrustfmt and staged diff whitespace. No new source budget/dependency exception."
     },
-    "retained_boundaries": "Object/Compound presentation only. Fresh construction/acquisition defaults class. Existing revision/refresh restores deliberate All/per-type. Semantic/artifact singleton controls are presentation-only, actual resolution control is Run-only; GlobalNet/Bus/artifact singleton controls are presentation-only. No grouping/runtime changes or full C04/C05/C06/HUMAN acceptance. Ordinary native run proves fresh U0 acquisition only; revision-shrink scope preservation is actual application unit-path evidence, not native revision-edit qualification. Existing Working Units Unavailable displays retained; no grouping/full N11/HUMAN/C04/C05/C06/window-Close/successor acceptance. vs05 stays OPEN until reviewed landing. No other issue closure, new dependency or successor selection.",
+    "retained_boundaries": "Object/Compound presentation only. Fresh construction/acquisition defaults class. Existing revision/refresh restores deliberate All/per-type. Semantic/artifact singleton controls are presentation-only, actual resolution control is Run-only; GlobalNet/Bus/artifact singleton controls are presentation-only. No grouping/runtime changes or full C04/C05/C06/HUMAN acceptance. Ordinary native run proves fresh U0 acquisition only; revision-shrink scope preservation is actual application unit-path evidence, not native revision-edit qualification. Existing Working Units Unavailable displays retained; no grouping/full N11/HUMAN/C04/C05/C06/window-Close/successor acceptance. vs05 closed only with the reviewed landing above. No other issue closure, new dependency or successor selection.",
     "final_review": {
       "reviewer_task": "/root/closeout_review",
       "outcome": "Actual bounded combined PASS; no mandatory findings",
@@ -11812,6 +11812,11 @@
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "manager_disposition": "ACCEPT bounded vs05 title/freshclass-scope correction at exact15source/26artifact/3binary pins. Independently verified5tests/matchingbuild, actual Symbol:U0 screenshot/4sourcefields, rawCompound/noFocus,all7maps51files,ownedcleanup. Exact13owned-path normal-hook landing followed by minimal actual-hash vs05 closure/retained-C04 metadata authorized. No other closure/successor.",
       "retained": "Both failed attempts, Working Units Unavailable, fresh native versus revision unit-path distinction, semantic presentation-only/actualRun distinction, no full Inspector grouping/HUMAN/C04/C05/C06/window-Close/successor acceptance remain explicit."
+    },
+    "landing": {
+      "repair_commit": "9e170f1bf0c910894e1e01ff4501484da6d44194",
+      "issue": "dat-unfocused-singleton-inspector-vs05",
+      "disposition": "Closed only vs05 with actual reviewed landing. Earlier generic-header N13 entry/captures and all existing cases remain historical unchanged. Full grouping/native revision-edit/semantic singleton resolver/HUMAN/C04/C05/C06/Close/successor acceptance remain open."
     }
   }
 }
