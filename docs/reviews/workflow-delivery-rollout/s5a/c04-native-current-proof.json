@@ -10118,5 +10118,143 @@
       "disposition": "Accept bounded reader/current Wayland selection subset after actual independent PASS; commit owned reviewed candidate and synchronized existing evidence/metadata, then continue Board baseline and separate N05 hidden-authored Ctrl+A.",
       "retained_boundaries": "Attempt04 aggregateFAIL and unknown launch-time script hashes remain; teardown is separate. C04 overall, reserved C05/C06, HUMAN and other qualification remain open. No new product rule, dependency, budget, fixture or successor authority."
     }
+  },
+  "native_wayland_board_baseline_20261018": {
+    "status": "Actual focused independent bounded PASS and manager acceptance for inventory correction/Board baseline only; C04 remains in progress.",
+    "source_baseline": "f49ce3e3; application binaries and Rust source-qualified reuse unchanged.",
+    "binary_sha256": {
+      "datum-gui": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "ac852635753c4996a6a55cfe748f08a1acf5253cff2267e7d6971b62f0a557a0",
+      "s5a_native_selection_observation.py": "58e598c43bcbb4fd116f77d00e5ba2b48f4dfff60746f5e9adf8ddaf11950001",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "post_launch_test_source_sha256": "043cc11d023ef7ed40216017087e8f5fb2f0ff8119476ca63ceb6fb2a6097963",
+    "actual_backend": "Native Datum Wayland/wgpu/Vulkan Intel HD Graphics P630; ordinary X11 input only to owned Weston. Not physical/KWin/HUMAN qualification.",
+    "gui_pid": 648990,
+    "compositor_pid": 648975,
+    "oracle": {
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+      "kind": "compound",
+      "members": [
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000002"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000003"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000004"
+        },
+        {
+          "class": "board_outline",
+          "id": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "oracle": "frozen scope-v2 board source and current project revision; accepted N14 four-Track/empty-outline oracle",
+      "fixture_sha256": "0ffdb14d8987f4f952721035e16a7013be27983da01f58ddc37525233788879a",
+      "pid": 648990
+    },
+    "checkpoints": {
+      "selected_sequence": 2,
+      "escape_sequence": 3,
+      "subsequent_selection_sequence": 4,
+      "typed_members": [
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000002"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000003"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000004"
+        },
+        {
+          "class": "board_outline",
+          "id": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "scope": "Global authored Board Ctrl+A against frozen board Track keys and board-owned outline UUID, with current revision from frozen scope_variant.projects[0] and independently accepted N14 five-member oracle. Complete public members/standardSELECTED/PID/revision match; compact digest is correlation only."
+    },
+    "empty_outline": "Authored empty BoardOutline is an inventory member under the existing accepted oracle; absence of outline vertices is not visible geometry or a hidden member. Its projection remains separate.",
+    "nonmutation": {
+      "frozen_catalogue_files": 69,
+      "nested_second_project_files": 34,
+      "electrical_identity_files": 4,
+      "prelaunch_and_selection_and_teardown_maps": "All exact69 tracked hashes match at all checkpoints, including both Projects, electrical identity authority and nested journal/revision history."
+    },
+    "inventory_correction": {
+      "initial_read_only_preflight": "Prior broad source_files returned38 of69 catalogue files and validator refused mismatch before this correction. No failed native result was fabricated from this preflight. Majority51-file evidence remains unchanged.",
+      "change": "Only validate_frozen_sources now traverses every canonical file, including .datum electrical identities and nested Project histories; source_files compatibility body is unchanged. Unknown canonical extras and symlinks refuse.",
+      "operational_roles": "Only exact revision/writer.lock, gui-terminal-context.json, tool-sessions/ and terminal-contexts/ roles are excluded and counted separately. Context/credential payload bytes are not read. A catalogue-listed entry cannot disappear through an exclusion; mismatch refuses.",
+      "focused_tests": "10/10 pass, including nested-history and electrical-ID completeness/mutation, unknown extra and similar-name refusal, matching-byte symlink refusal, operational non-read spy and catalogue-listed operational-entry refusal."
+    },
+    "review_timing": "Baseline launch started under the retained continuation before the focused-review hold arrived. Manager explicitly allowed preserving/finishing that owned run. No further native trial runs until focused disposition; no retrospective test/source pin attribution.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 649016,
+          "socket": "/run/user/1000/npd-wl-ruo4jdh0/datum-native-edit-fe6a5c59-0dab-4a1d-9efe-86ec4c1b05fe/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-ruo4jdh0",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM/verified companion shutdown are housekeeping, not ordinary GUI Close/GPU destructor or drain proof."
+    },
+    "evidence": {
+      "pins": ".datum/scratch/s5a-c04-managed-20261018/board-inventory-baseline-candidate-pins.json",
+      "pins_sha256": "490598bca1b586133f0fbaf7caf6f35569159850198eca07b18de88305bfcfb3",
+      "raw_result": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-board-baseline-01/result.json",
+      "captures": [
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-board-baseline-01/selected-complete-board.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-board-baseline-01/escape-cleared-board.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-board-baseline-01/subsequent-keyboard-selection.png"
+      ],
+      "availability": "Temporary owned workspace output, uncommitted; hashes identify current review artifacts only."
+    },
+    "limits": [
+      "Board baseline only; no hidden/filter/derived IR01 or per-class/threshold/region qualification.",
+      "Separate pre-hidden-L1 authored Ctrl+A case remains unrun; it requires acknowledged visibility transition, full5 IDs, four hidden Track statuses/no cues and identity-preserving restore.",
+      "No full N01-N17/C04/C05/C06/HUMAN/physical/ordinary GUI Close/GPU drain acceptance; prior failed attempts and accepted scopes remain unchanged.",
+      "No new product rule, dependency, budget, fixture family/generation, prototype change or successor authority."
+    ],
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "independent_review": {
+      "manager_thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "outcome": "Actual focused bounded PASS, no mandatory correction. Verified3 changed sources,9 artifacts,4 actual launch pins,10 tests and all3captures; all69 catalogue files match at every checkpoint and current, prior Schematic evidence unchanged. Sequences2/3/4 establish five-member select/clear/reselect and ordinary shell exit/owned cleanup.",
+      "candidate_pins_sha256": "490598bca1b586133f0fbaf7caf6f35569159850198eca07b18de88305bfcfb3"
+    },
+    "visual_limit": "Escape Inspector/status show None, but one thin pink Track cue remains unclassified. No blanket canvas-cue-clearance claim or defect/cause inferred. Empty outline has no vertices; its reported hidden/unprojected flags are both false, distinct from visible geometry.",
+    "manager_acceptance": "Appointed manager objectively accepts bounded inventory/Board baseline after actual focused PASS; directs normal scoped landing/publication, then separate pre-hidden-L1 authored Ctrl+A continuation. C04/C05/C06/HUMAN and other qualification remain open.",
+    "owning_route_review": "prototype-selection route inspected: protected Selection Study DOM/CSS and both listed consumers (UVT and Rendering Book) reviewed before rendered inspection. No source/prototype/specification edit, authority digest refresh or HUMAN approval."
   }
 }

@@ -20,8 +20,28 @@ def validate_frozen_sources(project: Path, expected: dict[str, str]) -> dict:
     Writer admission can leave an advisory lock even without a transaction.
     Account for that exact operational path separately, never as source data.
     """
-    actual = source_files(project)
-    lock_present = actual.pop('.datum/revision/writer.lock', None) is not None
+    actual, operational = {}, {}
+    lock_present = False
+    for path in project.rglob('*'):
+        relative = path.relative_to(project)
+        parts = relative.parts
+        suffix = parts[parts.index('.datum') + 1:] if '.datum' in parts else ()
+        role = None
+        if suffix == ('revision', 'writer.lock'):
+            role = 'revision/writer.lock'
+            lock_present |= relative.as_posix() == '.datum/revision/writer.lock'
+        elif suffix == ('gui-terminal-context.json',):
+            role = 'gui-terminal-context.json'
+        elif suffix[:1] in [('tool-sessions',), ('terminal-contexts',)]:
+            role = suffix[0]
+        if role:
+            operational[role] = operational.get(role, 0) + 1
+            continue  # Operational context/credential bytes are never read.
+        if path.is_symlink():
+            raise ValueError('symlink canonical source refused')
+        if path.is_file():
+            actual[relative.as_posix()] = digest(path)
     if actual != expected:
         raise ValueError('canonical source/journal inventory differs from frozen catalogue')
-    return {'canonical_files': actual, 'operational_writer_lock_present': lock_present}
+    return {'canonical_files': actual, 'operational_writer_lock_present': lock_present,
+            'operational_role_counts': operational}

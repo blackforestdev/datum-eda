@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from s5a_native_selection_observation import KIND, PREFIX, latest_state, qualify
 from native_project_source_inventory import digest, validate_frozen_sources
@@ -106,6 +107,55 @@ class SelectionObservationTests(unittest.TestCase):
                 validate_frozen_sources(root, expected)
             source.write_bytes(b'original frozen bytes')
             (root / 'unexpected-source.json').write_bytes(b'extra')
+            with self.assertRaises(ValueError):
+                validate_frozen_sources(root, expected)
+
+    def test_catalogue_keeps_electrical_ids_and_nested_project_history(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = ['project.json', '.datum/electrical_identities/net.json',
+                     'variants/second/.datum/journal/cursor.json']
+            for name in paths:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b'fixed source bytes')
+            expected = {name: digest(root / name) for name in paths}
+            self.assertEqual(validate_frozen_sources(root, expected)['canonical_files'], expected)
+            runtime = root / '.datum/tool-sessions/session/context.json'
+            runtime.parent.mkdir(parents=True)
+            runtime.write_bytes(b'operational bytes outside canonical inventory')
+            def canonical_only(path):
+                if path == runtime:
+                    raise AssertionError('operational payload must not be read')
+                return digest(path)
+            with patch('native_project_source_inventory.digest', side_effect=canonical_only):
+                self.assertEqual(validate_frozen_sources(root, expected)['canonical_files'], expected)
+                with self.assertRaises(ValueError):
+                    validate_frozen_sources(root, {**expected, runtime.relative_to(root).as_posix(): 'unread'})
+            (root / paths[-1]).write_bytes(b'changed nested history')
+            with self.assertRaises(ValueError):
+                validate_frozen_sources(root, expected)
+            (root / paths[-1]).write_bytes(b'fixed source bytes')
+            extra = root / '.datum/electrical_identities/untracked.json'
+            extra.write_bytes(b'extra canonical identity')
+            with self.assertRaises(ValueError):
+                validate_frozen_sources(root, expected)
+
+    def test_matching_bytes_do_not_bless_canonical_symlinks_or_similar_operational_names(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / 'target.bin'
+            target.write_bytes(b'frozen bytes')
+            link = root / 'source.json'
+            link.symlink_to(target)
+            expected = {'target.bin': digest(target), 'source.json': digest(target)}
+            with self.assertRaises(ValueError):
+                validate_frozen_sources(root, expected)
+            link.unlink()
+            expected.pop('source.json')
+            extra = root / '.datum/tool-sessions-unapproved/payload.json'
+            extra.parent.mkdir(parents=True)
+            extra.write_bytes(b'not an established operational role')
             with self.assertRaises(ValueError):
                 validate_frozen_sources(root, expected)
 

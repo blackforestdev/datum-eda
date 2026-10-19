@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One ordinary native Wayland selection case over the frozen majority fixture.
+"""Finite ordinary native Wayland selection over existing frozen fixtures.
 
 Use /usr/bin/python3 for the installed GI binding. No Cargo or product input
 injection is performed. X11 drives only the owned Weston input envelope.
@@ -100,26 +100,40 @@ def selection_snapshot(qa):
             'count': count, 'members': members}
 
 
-def execute(qa, project, result, frozen_files):
+def execute(qa, project, result, frozen_files, surface):
     contract = json.loads((project / 's5a-fixture.json').read_text())
-    expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
-                'kind': 'compound', 'members': [{'class': 'symbol', 'id': s['source_id']}
-                                               for s in contract['subjects']],
-                'oracle': 'frozen s5a-c03-u5-majority-v1/s5a-fixture.json subjects/model_revision',
-                'fixture_sha256': digest(project / 's5a-fixture.json')}
+    if surface == 'schematic':
+        expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
+                    'kind': 'compound', 'members': [{'class': 'symbol', 'id': s['source_id']}
+                                                   for s in contract['subjects']],
+                    'oracle': 'frozen majority fixture subjects/model_revision'}
+        content, label, noun = 'Some(Schematic)', 'selection-majority', 'symbols'
+    else:
+        board = json.loads((project / 'board/board.json').read_text())
+        basis = contract['scope_variant']['projects'][0]
+        # Existing N14 accepted oracle: four Tracks plus the authored empty
+        # BoardOutline. No visible primitive or acquisition result supplies IDs.
+        assert len(board['tracks']) == 4 and not board['outline']['vertices']
+        expected = {'project': basis['project_id'], 'revision': basis['revision'],
+                    'kind': 'compound',
+                    'members': [{'class': 'track', 'id': uid} for uid in board['tracks']]
+                               + [{'class': 'board_outline', 'id': board['uuid']}],
+                    'oracle': 'frozen scope-v2 board source and current project revision; accepted N14 four-Track/empty-outline oracle'}
+        content, label, noun = 'Some(Board)', 'selection-board', 'board'
+    expected['fixture_sha256'] = digest(project / 's5a-fixture.json')
     result['frozen_before'] = validate_frozen_sources(project, frozen_files)
     before = result['frozen_before']['canonical_files']
     result['canonical_before'] = before
     qa.start_envelope()
-    main = qa.launch('selection-majority', project_root=project)
+    main = qa.launch(label, project_root=project)
     expected['pid'] = qa.process.pid
     result['oracle'] = expected
-    state = lambda: latest_state((qa.root / 'selection-majority.log').read_text())
+    state = lambda: latest_state((qa.root / f'{label}.log').read_text())
     qa.wait('current diagnostic state', state)
-    if state()['value']['focused_content'] != 'Some(Schematic)':
+    if state()['value']['focused_content'] != content:
         qa.key(main, 'Tab')
-    qa.wait('ordinary Schematic pane focus',
-            lambda: state()['value']['focused_content'] == 'Some(Schematic)')
+    qa.wait('ordinary target pane focus',
+            lambda: state()['value']['focused_content'] == content)
     prior = state()['sequence']
     qa.key(main, 'ctrl+a')
 
@@ -139,15 +153,15 @@ def execute(qa, project, result, frozen_files):
                 result['last_unqualified_public_snapshot'] = snapshot
             return False  # Public worker publication can follow native dispatch.
 
-    result['selected'] = qa.wait('exact two-Symbol public selection against frozen oracle', complete)
-    qa.capture('selected-complete-symbols', main)
+    result['selected'] = qa.wait('exact complete public selection against frozen oracle', complete)
+    qa.capture(f'selected-complete-{noun}', main)
     prior = state()['sequence']
     qa.key(main, 'Escape')
     result['cleared'] = qa.wait('idle Escape clears selection', lambda:
         state() if state()['sequence'] > prior and state()['value']['selection']['kind'] == 'none' else False)
     qa.wait('public selection root removed', lambda: not any(
         n.get_accessible_id() == '/org/a11y/atspi/accessible/selection' for n in qa.nodes()))
-    qa.capture('escape-cleared-symbols', main)
+    qa.capture(f'escape-cleared-{noun}', main)
     prior = state()['sequence']
     qa.key(main, 'ctrl+a')
     result['subsequent_selection'] = qa.wait('subsequent keyboard selection', complete)
@@ -168,6 +182,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', required=True, type=Path)
     parser.add_argument('--replay-root', required=True, type=Path)
+    parser.add_argument('--surface', choices=['schematic', 'board'], default='schematic')
     args = parser.parse_args()
     run = args.run_dir.absolute()
     if run.resolve() != run or not run.is_relative_to(OWNED) or run == OWNED or run.exists():
@@ -175,11 +190,12 @@ def main():
     replay = replay_location(args.replay_root.absolute())
     if (replay / 'index.json').read_bytes() != (INPUTS / 'index.json').read_bytes():
         parser.error('replay root must have the exact tracked catalogue marker')
-    project = replay / 's5a-c03-u5-majority-v1'
+    alias = 's5a-c03-u5-majority-v1' if args.surface == 'schematic' else 's5a-c03-u5-scope-v2'
+    project = replay / alias
     catalogue = json.loads((INPUTS / 'index.json').read_text())
-    frozen_files = {row['path'].removeprefix('s5a-c03-u5-majority-v1/'): row['sha256']
+    frozen_files = {row['path'].removeprefix(alias + '/'): row['sha256']
                     for row in catalogue['files']
-                    if row['path'].startswith('s5a-c03-u5-majority-v1/')}
+                    if row['path'].startswith(alias + '/')}
     if not frozen_files:
         parser.error('selected fixture has no tracked frozen source inventory')
     run.mkdir(parents=True)
@@ -195,7 +211,7 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    result = {'status': 'FAIL', 'binary_sha256': qa.binary_hashes, 'project': str(project),
+    result = {'status': 'FAIL', 'surface': args.surface, 'binary_sha256': qa.binary_hashes, 'project': str(project),
               'limits': 'Finite keyboard/complete public membership/nonmutation case only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
                              'mode': oct(Path(qa.runtime.name).stat().st_mode & 0o777),
@@ -205,7 +221,7 @@ def main():
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py']}
     try:
-        execute(qa, project, result, frozen_files)
+        execute(qa, project, result, frozen_files, args.surface)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)
