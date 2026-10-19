@@ -11485,5 +11485,87 @@
       "reviewer_task": "/root/closeout_review",
       "receipt_route": "Actual final combined finite PASS delivered to appointed manager session01a13df1-7a0d-72c1-bbdd-f0d96d481598."
     }
+  },
+  "native_wayland_available_inspection_labels_20261019": {
+    "status": "Actual independent combined finite PASS and appointed manager acceptance for Available bounds/Available layers correction only. C04 remains in progress.",
+    "issue": "dat-inspector-visible-hidden-summary-lrgi",
+    "scope": "Replace misleading Visible bounds/Visible layers labels by Available bounds/Available layers in the one shared helper. Preserve canonical Bounds/Layers, field keys, values, membership, visibility and calculations.",
+    "authority": "Appointed PM059 manager released this ordinary retained C04 inspection correction after actual independent gui-selection/prototype-selection authority review. UVT2.2.19 requires full member-projection aggregates and exact hidden disclosure; visibility pruning would change semantics. No new product rule/UX mechanism/prototype/spec edit or prerequisite.",
+    "reuse": "Accepted native_wayland_prehidden_authored_20261018 exact5-ID Ctrl+A/hidden4/restore/nonmutation setup and source oracle retained. Only previously excluded lower Inspector summaries are qualified here; no general baseline campaign.",
+    "production_source_sha256": {
+      "crates/gui-protocol/src/selection_view/inspector_labels.rs": "af08067519df52714ac3a98ad1c97fbc93a23555a65615b7857bcf26f33da099"
+    },
+    "source_delta": "Exactly two string literals; all three existing rendered Inspector/inventory-preview/AT-SPI consumers already share field_label. No consumer-specific computation, test/runner edit or new fixture source.",
+    "build_receipt": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/available-label-build-receipt.json",
+      "sha256": "787c1ac9ec245e97af36335cb30767c550e537e13143a6092a5305855de83012",
+      "aggregate_test": "Existing complete_hidden_projection_bounds_are_exact_and_not_qualification_anchors:1passed/0failed, with complete hidden bounds/layers, unchanged scopes and source bytes. Existing temporary unit fixture used owned scratch TMPDIR, Drop removed all children and empty TMPDIR removed.",
+      "gui_build": "Matching guarded build exit0/49.81s; guard35.6GiB admitted; existing unused gui-render overflow warning only."
+    },
+    "candidate_manifest": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/available-inspection-candidate-pins.json",
+      "sha256": "ce3ab066292d1b0085c17b6130e395e730372bc1e5e9043916637dd63dce8b1d"
+    },
+    "binary_sha256": {
+      "datum-gui": "b47ae66e62e3f5774a1b2a500f342d8f10d116659f8aa8a47f88fa0f51862c24",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "native_run": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-available-inspection-01",
+    "ordinary_route": "Unchanged --surface board --prehidden-l1 runner: hideL1 before Ctrl+A, observe full5-member compound/4hidden, restoreL1 and observe same set/0hidden. Existing Escape/subsequent selection and normal shell/owned teardown continue unchanged. One native attempt, no retry.",
+    "public_comparison": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-available-inspection-01/available-row-comparison.json",
+      "sha256": "d65f9e36df7d648be911fa12917c4a516337f5c7a6903a99300338724bc41fbb",
+      "comparator_sha256": "b06863ce55d2136f128f36520cc3c656dbeb481744c10517a1e88867b9aae4ea",
+      "prior_accepted_raw_result_sha256": "06da38f22960f105ad3a0f205846a12307f15436ea8c3efe400cb87ac77d8eed",
+      "current_raw_result_sha256": "84ddc6b406223f6a45499225790dd22936b53eb10b13dda0b82001b298309462",
+      "checkpoints": [
+        "selected-complete-board",
+        "l1-restored-same-membership"
+      ],
+      "observed": "Both new Available labels present; old Visible variants absent. Complete field attributes and displayed value tails exactly equal accepted prior raw fields. Canonical Bounds/Layers and exact Unavailable reason unchanged. Same5sourceIDs/no member focus/standardSELECTED true, hidden4->0; current strict runner checks ownPID/project/revision/fullpublic membership against frozen source."
+    },
+    "rendered_observation": {
+      "personally_viewed": [
+        "selected-complete-board.png",
+        "l1-restored-same-membership.png"
+      ],
+      "result": "Both Available labels readable in current presented Inspector frames. Hidden stage shows4hidden and no selected Track geometry; restored stage0hidden and normal selected Track cues. Canonical Bounds remains existing Unavailable row; no full clipping/metrology/HUMAN/N15 claim."
+    },
+    "nonmutation": "All69 frozen source/history hashes equal accepted before-map and four current stages: before, after selection/restore, after ordinary shell exit, final owned teardown. Exact permitted operational roles excluded/unread.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 709401,
+          "socket": "/run/user/1000/npd-wl-4e8dvb6b/datum-native-edit-42a1fb08-370e-49a2-97b6-dd19b0e1fc0f/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-4e8dvb6b",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "GUI SIGTERM/own daemon housekeeping is not ordinary windowClose or GPU-drain qualification."
+    },
+    "retained_boundaries": "Only lrgi correction after reviewed landing; C04 in_progress/C05/C06 pending. No new dependency, visibility rule, field availability/quantity change, fullN05/N11/N15/N17/HUMAN/windowClose or successor acceptance. Prior accepted entries/failures and their boundaries remain unchanged.",
+    "independent_receipt": {
+      "reviewer_task": "/root/closeout_review",
+      "receipt_route": "Actual combined finite PASS delivered through appointed manager MCP session01a13df1-7a0d-72c1-bbdd-f0d96d481598.",
+      "result": "PASS; no mandatory findings",
+      "candidate_manifest_sha256": "ce3ab066292d1b0085c17b6130e395e730372bc1e5e9043916637dd63dce8b1d",
+      "verified": "7source/16artifact pins; test1/1; matching GUI/build; both rendered and AT-SPI Available labels; exact prior attributes/values/reasons; five IDs/no focus; hidden4->0;69files4stages/current; owned cleanup.",
+      "manager_disposition": "ACCEPT only lrgi correction; normal-hook exact4owned-path landing, then bug closure citing actual landing and retained-C04 metadata followup authorized. Manager independently verified all pins/current binaries, source-only two-string delta, prior-entry preservation and both rendered frames.",
+      "retained": "C04 in_progress; C05/C06/HUMAN/successors and all other recorded boundaries remain unaccepted."
+    },
+    "gui_pid": 709370,
+    "compositor_pid": 709360,
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792395438, tv_nsec: 848212961 }] surface identity window=WindowId(93962224117712) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ]
   }
 }
