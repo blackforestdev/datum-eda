@@ -12050,7 +12050,7 @@
     "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
   },
   "current_readiness_reconciliation_20261019": {
-    "status": "Finite current-evidence reconciliation under appointed SAME-C04 manager. Canonical Proposal renderer fix/tests/native03 and exact final combined proof have actual independent PASS and bounded manager acceptance; normal-hook landing/related-intake closure authorized. Historical L8/N08/N01/N03 evidence is reused only at accepted scope. No software-ready/fullC04/HUMAN/successor disposition.",
+    "status": "Finite current-evidence reconciliation under appointed SAME-C04 manager. Canonical Proposal renderer fix/tests/native03 and exact final combined proof have actual independent PASS and bounded manager acceptance; source landed66c6a974 and only relatedt8w9 closes using actual landing evidence. Historical L8/N08/N01/N03 evidence is reused only at accepted scope. No software-ready/fullC04/HUMAN/successor disposition.",
     "authority": {
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
@@ -12242,7 +12242,7 @@
       "source": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md:585-591; preparation-plan N15/N16/N17; FOUNDATION S5A-C04",
       "status": "Required owner HUMAN review not accepted here. Approved specification reference is not build-golden acceptance. No wholesale transfer to C06."
     },
-    "smallest_completion_path": "Reuse accepted current/historical bindings, including bounded supported-consumer L8, historical duplicate-pane N08 and finite N01/N03 map. Land only the accepted bounded native03 repair/related intake through normal hooks and actual landing evidence, then resolve still-named evidence questions/assertion or class/threshold bindings only under existing authorization. Preserve owner HUMAN/fullC04 and separate C05/C06 gates; no generic replay campaign or automatic successor.",
+    "smallest_completion_path": "Reuse landed accepted current/historical bindings, including bounded supported-consumer L8, historical duplicate-pane N08, finite N01/N03 map and the canonical native03 producer repair. Resolve still-named evidence questions/assertion or class/threshold bindings only under existing authorization. Preserve owner HUMAN/fullC04 and separate C05/C06 gates; no generic replay campaign or automatic successor.",
     "separate_boundaries": [
       "Reserved C05 independent replay and C06 owner acceptance",
       "P2.4 fuller Inspector grouping",
@@ -12328,9 +12328,9 @@
       "landing_commit": "0ae0636c68a0494da3d6b7e7a32d03a1d811e485",
       "landing_outcome": "Exact6owned paths landed on main through normal file-lane/temporary-artifact/rustfmt hooks; no hook bypass. Three logical test-support corrections and exact formatter-only normalization retained. No further test/native/build rerun."
     },
-    "required_checks": "Scoped formatting/whitespace/sourcehealth3259/dependency authority/projectstate101/currentFrontierprojection PASS;3 focused renderer tests and matching guardedGUI build PASS. Prior zero-test batch remains uncredited. Native03 runtime/pixel and final39source/3binary combined review PASS with bounded manager acceptance; staged rustfmt/whitespace PASS. Normal landing hooks remain mandatory; prior readiness review below is historical scope.",
+    "required_checks": "Scoped formatting/whitespace/sourcehealth3259/dependency authority/projectstate101/currentFrontierprojection PASS;3 focused renderer tests and matching guardedGUI build PASS. Prior zero-test batch remains uncredited. Native03 runtime/pixel and final39source/3binary combined review PASS with bounded manager acceptance. Source commit66c6a974 passed normal file-lane/temporary-artifact/staged-rustfmt hooks; bounded proof/Beads closure uses the same required normal hooks. Prior readiness review below remains historical scope.",
     "subsequent_bindings_20261019": {
-      "source_native_producer": "native_wayland_proposal_creation_undo_20261019; actual independent source/runtime-pixel/finalcombined PASS and appointed-manager bounded acceptance; normal-hook landing authorized. Prior02 actual VISUALFAIL retained.",
+      "source_native_producer": "native_wayland_proposal_creation_undo_20261019; actual independent source/runtime-pixel/finalcombined PASS and appointed-manager bounded acceptance, landed66c6a974 through normal hooks; only relatedt8w9 closed. Prior02 actual VISUALFAIL retained.",
       "l8_supported_consumers": {
         "disposition": "Actual independent and appointed-manager bounded binding: supported retained-consumer stale drop/report law covered; external workspace/context restore remains unexercised.",
         "receipt": "identity_lifetime_report_correction_20261011",
@@ -12538,7 +12538,7 @@
     }
   },
   "native_wayland_proposal_creation_undo_20261019": {
-    "state": "Actual independent source/native03 runtime-pixel/final-combined PASS and appointed-manager bounded acceptance. Exact8-path normal-hook main source landing authorized; actual landing/related-intake closure evidence follows separately. FullC04 remains open.",
+    "state": "Bounded renderer repair and canonical Proposal creation-Undo/Redo proof accepted by actual independent source/runtime-pixel/final-combined reviews and appointed manager; exact8-path source landed on main through normal hooks. Only the related defect intake is closed; fullC04 remains open.",
     "authority": "Retained UVT-S5A-BUILD/S5A-C04 under appointed PM059 manager01a13df1-7a0d-72c1-bbdd-f0d96d481598. Exact public producer disappearance by creation Undo, not literal discard or Accepted route Review withdrawal.",
     "implementation": {
       "issue": "dat-proposal-cue-resurrection-t8w9",
@@ -12663,14 +12663,16 @@
       "outcome_sha256": "4986a0ab9edd9635e62e667906346ece4d0122cf2d0a207b7763319f97afb85a",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "manager_disposition": "Actual appointed PM059 manager accepts bounded renderer repair/canonical creation-Undo case plus finite historical bindings after actual final combined PASS; releases exact8owned-path normal-hook main source commit and only relatedt8w9 proof/tracker closure using actual landing evidence. No fullC04/N10/discard/AcceptedReview/HUMAN/successor acceptance.",
-      "landing": "Normal-hook source landing and second bounded existing-proof/Beads closure authorized; actual commit hashes and hook outcomes pending execution.",
+      "landing": "Source landing is 66c6a974a90f28b8c3d6d34d013347dcd25ec331. The separate bounded closure commit changes only this existing proof and Beads. Actual closure Git identity and manager independent landing/push verification are carried separately; no fullC04/successor advancement.",
       "final_combined": {
         "reviewer_task": "/root/reorganization_review",
         "outcome": "Actual final combined PASS; no mandatory findings.",
         "candidate_sha256": "fccdcee8f6588b698f63b90e47c67531bbef60a3c90a2203d764d58e530c58dd",
         "proof_sha256_at_review": "9c9178da040cac9c2c3d4d89b6f7e4313727d562a748f51856668c7d4b269386",
         "verified": "All39source/3binary/7prior/18native artifact pins and exact8owned paths; corrected focus=None/scope=None and exact30 JSON citations. No repeated source/runtime campaign."
-      }
+      },
+      "landing_commit": "66c6a974a90f28b8c3d6d34d013347dcd25ec331",
+      "landing_outcome": "Exact8owned paths landed on main through normal visual-truth file-lane(no protected staged paths), temporary-artifact and staged-rustfmt hooks; no hook bypass or further test/build/native run. Actual final-review receipt reconciliation was the only post-review proof delta. Related dat-proposal-cue-resurrection-t8w9 closes using this source commit; C04 remains in_progress."
     },
     "limits": [
       "Only canonical Proposal producer disappearance by exact creation Undo/restoration by Redo. Literal discard and Accepted route Review withdrawal remain unexercised; no equivalence or waiver.",
