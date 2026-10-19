@@ -35,7 +35,9 @@ pub(super) fn solve_filters_panel_layout_with_taffy(
     state: &ReviewWorkspaceState,
     filters_rect: RectPx,
 ) -> Option<Arc<FiltersPanelLayout>> {
-    let key = LayoutKey::new(filters_rect, state.scene.layers.len());
+    let total = datum_gui_protocol::camera_scene_for_pane(state, state.ui.layout.focused)
+        .map_or(0, |scene| scene.layers.len());
+    let key = LayoutKey::new(filters_rect, total);
     CACHE.with(|cache| {
         cache
             .borrow_mut()
@@ -150,6 +152,54 @@ fn record_solve() {
 mod tests {
     use super::*;
     thread_local! { pub(super) static SOLVES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) }; }
+
+    #[test]
+    fn focused_layers_cache_capacity_tracks_resolved_document() {
+        use datum_gui_protocol::PaneContent;
+        let (fixture, mut state) =
+            crate::native_selection_overlay::tests::selected_schematic_text_state();
+        let source = fixture.source_bytes();
+        let selection = state.selection.clone();
+        let rect = RectPx {
+            x: 0.0,
+            y: 350.0,
+            width: 224.0,
+            height: 380.0,
+        };
+        let board_count = state.scene.layers.len();
+        let schematic_count = state.schematic_scene.as_ref().unwrap().layers.len();
+        state.ui.layout.set_focused_content(PaneContent::Board);
+        let board = solve_filters_panel_layout_with_taffy(&state, rect).unwrap();
+        assert_eq!(board.layer_rows.len(), board_count);
+        state.ui.layout.set_focused_content(PaneContent::Schematic);
+        let schematic = solve_filters_panel_layout_with_taffy(&state, rect).unwrap();
+        assert!(
+            schematic.layer_rows.len() > board_count
+                && schematic.layer_rows.len() < schematic_count
+        );
+        let warm = solve_filters_panel_layout_with_taffy(&state, rect).unwrap();
+        assert!(
+            Arc::ptr_eq(&schematic, &warm),
+            "warm focused geometry must be reused"
+        );
+        state.schematic_scene = None;
+        assert!(
+            solve_filters_panel_layout_with_taffy(&state, rect)
+                .unwrap()
+                .layer_rows
+                .is_empty()
+        );
+        state.ui.layout.set_focused_content(PaneContent::Board);
+        assert_eq!(
+            solve_filters_panel_layout_with_taffy(&state, rect)
+                .unwrap()
+                .layer_rows
+                .len(),
+            board_count
+        );
+        assert_eq!(state.selection, selection);
+        assert_eq!(fixture.source_bytes(), source);
+    }
 
     #[test]
     fn cached_geometry_matches_fresh_and_reuses_row_storage() {

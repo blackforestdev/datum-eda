@@ -3,9 +3,192 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
+import subprocess
 
 from prove_native_project_startup_gui import Atspi, digest
 from s5a_native_selection_observation import qualify, selection_snapshot
+from native_project_source_inventory import validate_frozen_sources
+
+
+def hidden_junction_oracle(project):
+    """Independent endpoint/source oracle for the frozen semantic-scope Run."""
+    sheet = json.loads((project / 'schematic/selection.json').read_text())
+    project_id = json.loads((project / 'project.json').read_text())['uuid']
+    head = json.loads((project / '.datum/revision/v1/head.json').read_text())
+    generation = json.loads((project / '.datum/revision/v1/generations' /
+                             (head['integrity_root'].removeprefix('sha256:') + '.json')).read_text())
+    start, middle, end = ({'x': x, 'y': 0} for x in [0, 10000000, 20000000])
+    def unique(collection, predicate):
+        matches = [v for v in sheet[collection].values() if predicate(v)]
+        assert len(matches) == 1, (collection, matches)
+        return matches[0]
+    a = unique('wires', lambda w: w['from'] == start and w['to'] == middle)
+    b = unique('junctions', lambda j: j['position'] == middle)
+    c = unique('wires', lambda w: w['from'] == middle and w['to'] == end)
+    label = unique('labels', lambda v: v['position'] == end)
+    port = unique('ports', lambda v: v['position'] == end)
+    assert all(w['from'] != middle and w['to'] != middle
+               for w in sheet['wires'].values() if w['uuid'] not in [a['uuid'], c['uuid']])
+    members = [{'class': cls, 'id': v['uuid']} for cls, v in
+               [('wire', a), ('wire', c), ('junction', b), ('label', label), ('port', port)]]
+    origin = {'class': 'wire', 'id': a['uuid']}
+    assert len({m['id'] for m in members}) == 5 and project_id == head['project_id']
+    return {'project': project_id, 'revision': generation['after_model_revision'],
+            'kind': 'run', 'focus': None, 'scope': None, 'members': members,
+            'origin': origin, 'subject': {'kind': 'run', 'identity': {'origin': origin}},
+            'hidden_junction': b['uuid'], 'sheet_sha256': digest(project / 'schematic/selection.json'),
+            'oracle': 'Frozen root[] Wire A endpoint -> Junction B -> Wire C, with Label/Port at C; exact source identities, not labels or acquisition output'}
+
+
+def hidden_junction_run(qa, main, state, project, result, frozen_files):
+    wanted = {**hidden_junction_oracle(project), 'pid': qa.process.pid}
+    result['hidden_junction_oracle'] = wanted
+    def checkpoint(label):
+        result.setdefault('hidden_junction_source_checkpoints', {})[label] = validate_frozen_sources(project, frozen_files)
+    def camera():
+        value = state()['value']
+        return {k: value[k] for k in ['focused_pane', 'focused_content', 'window_size',
+                                      'scale', 'layout', 'pane_cameras']}
+    qa.key(main, 'Escape')
+    qa.wait('initial committed selection empty', lambda: state()['value']['selection']['kind'] == 'none')
+    qa.key(main, 'f')
+    qa.wait_presented()
+    basis = camera()
+    result['hidden_junction_fit_state'] = state()
+    qa.capture('hidden-junction-fit-before-acquisition', main)
+    path = qa.root / 'current-frame-hidden-junction-plan.json'
+    plan = qa.wait('source/current-frame layer and wire point plan', lambda:
+                   json.loads(path.read_text()) if path.exists() else False, timeout=300)
+    assert plan['capture_sha256'] == digest(qa.root / 'hidden-junction-fit-before-acquisition.png')
+    assert plan['sheet_sha256'] == wanted['sheet_sha256'] and plan['camera_basis'] == basis
+    assert plan['origin'] == wanted['origin'] and plan['wire_world_nm'] == [5000000, 0]
+    assert plan['layer'] == 'L202'
+    assert plan['transform'] and plan['layer_row_derivation']
+    result['hidden_junction_input_plan'] = plan
+    diagnostic = Path(qa.env['DATUM_GUI_LOG'])
+    def point(point):
+        qa.focus(main)
+        offset = len(diagnostic.read_text())
+        x, y = point
+        qa.command('xdotool', 'mousemove', '--window', main, str(x), str(y))
+        qa.wait('native pointer delivery before input', lambda:
+                f'cursor moved {x:.2f},{y:.2f}' in diagnostic.read_text()[offset:])
+    def layer(visible):
+        before = state()['sequence']
+        x, y = plan['layer_screen_px']
+        point([x + int(visible), y])
+        qa.command('xdotool', 'click', '1')
+        def observed():
+            record = state()
+            flag = re.search(r'"L202": (true|false)', record['value']['layer_filters'])
+            return record if record['sequence'] > before and flag and (flag[1] == 'true') == visible else False
+        return qa.wait('ordinary L202 visibility ' + str(visible), observed)
+    result['junction_hidden_before_acquisition'] = layer(False)
+    assert state()['value']['selection']['kind'] == 'none' and camera() == basis
+    checkpoint('prehidden-before-origin')
+    qa.capture('junction-hidden-no-selection', main)
+    point(plan['wire_screen_px'])
+    qa.key(main, 'shift+F10')
+    prefix = 'menu:native-select:' + wanted['project']
+    def rows():
+        return [n for n in qa.nodes() if n.get_accessible_id().startswith(prefix + '/')]
+    qa.wait('ordinary marking-menu Select entry', rows)
+    assert state()['value']['selection']['kind'] == 'none'
+    qa.key(main, 'Down')
+    entry = qa.wait('source-origin Select Run row', lambda: next(
+        (n for n in rows() if n.get_name() == 'Select Run'), None))
+    assert wanted['origin']['id'] in entry.get_accessible_id()
+    assert qa.attributes(entry).get('available') == 'true'
+    for _ in range(len(rows()) + 1):
+        entry = next(n for n in rows() if n.get_name() == 'Select Run')
+        if entry.get_state_set().contains(Atspi.StateType.FOCUSED):
+            break
+        qa.key(main, 'Down')
+    else:
+        raise RuntimeError('Select Run not reachable by native menu keys')
+    result['hidden_junction_menu_entry'] = {'id': entry.get_accessible_id(),
+        'name': entry.get_name(), 'attributes': qa.attributes(entry), 'standard_focused': True}
+    assert state()['value']['selection']['kind'] == 'none'
+    qa.key(main, 'Return')
+
+    def complete(hidden):
+        try:
+            record = state()
+            snapshot = selection_snapshot(qa, Atspi.StateType.SELECTED)
+            observation = qualify(record, snapshot, wanted)
+            attrs = [m['attributes'] for m in snapshot['members']]
+            if any(a.get('hidden') not in ['true', 'false'] for a in attrs):
+                raise ValueError('missing public hidden status')
+            ids = {json.loads(a['source-identity'])['id'] for a in attrs if a['hidden'] == 'true'}
+            expected_hidden = {wanted['hidden_junction']} if hidden else set()
+            if ids != expected_hidden or record['value']['selection']['hidden_count'] != int(hidden):
+                raise ValueError('hidden Junction/public total not yet current')
+            fields = {}
+            fields_prefix = '/org/a11y/atspi/accessible/selection/fields/n'
+            for node in qa.nodes():
+                if node.get_accessible_id().startswith(fields_prefix):
+                    key = bytes.fromhex(node.get_accessible_id()[len(fields_prefix):]).decode()
+                    fields[key] = qa.attributes(node)
+            types = {'wire': 2, 'junction': 1, 'label': 1, 'port': 1}
+            for key, value in [('member_count', 5), ('member_types', types)]:
+                field = fields[key]
+                if (field.get('project-id') != wanted['project'] or field.get('model-revision') != wanted['revision']
+                        or field.get('subject-kind') != 'run' or field.get('value-state') != 'common'
+                        or json.loads(field['canonical-value']) != value):
+                    raise ValueError('Inspector field disagrees: ' + key)
+            if state()['sequence'] != record['sequence']:
+                return False
+            return {'selection': observation, 'fields': fields, 'hidden_ids': sorted(ids)}
+        except (ValueError, KeyError, StopIteration) as error:
+            result['hidden_junction_pending_read'] = str(error)
+            return False
+    def context(label, hidden):
+        destination = qa.root / ('run-context-' + label + '.json')
+        before = complete(hidden)
+        assert before, 'current complete GUI before public ContextGet'
+        argv = [str(qa.binary_dir / 'datum-eda'), '--format', 'json', 'context', 'get',
+                '--project-root', str(project)]
+        env = dict(qa.env)
+        for key in ['DATUM_DISCOVERY', 'DATUM_TERMINAL_CONTEXT']:
+            env.pop(key, None)  # These override explicit --project-root.
+        query = subprocess.run(argv, cwd=qa.root, env=env, text=True,
+                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=15)
+        metadata = {'argv': argv, 'exit_code': query.returncode,
+                    'discarded': 'Transient raw envelope stdout and stderr; no opaque context/runtime file reads.'}
+        result.setdefault('hidden_junction_context_get', {})[label] = metadata
+        assert query.returncode == 0, 'public ContextGet failed'
+        selected = json.loads(query.stdout)['selection_context']
+        assert isinstance(selected, dict)
+        destination.write_text(json.dumps(selected, indent=2) + '\n')
+        details = selected['details']
+        assert selected['kind'] == 'run'
+        for key in ['project', 'revision', 'subject', 'focus', 'scope']:
+            assert details[key] == wanted[key], (key, details[key])
+        assert details['total'] == 5 and details['hidden'] == int(hidden)
+        assert details['per_type'] == {'wire': 2, 'junction': 1, 'label': 1, 'port': 1}
+        for key in ['member_count', 'member_types']:
+            assert details['inspection'][key] == {
+                'state': 'common', 'value': json.loads(before['fields'][key]['canonical-value'])}
+        assert details['truncated'] is False and details.get('omitted_inspection_fields', []) == []
+        assert details['stale'] is False
+        assert sorted(details['members'], key=lambda x: x['id']) == sorted(wanted['members'], key=lambda x: x['id'])
+        after = complete(hidden)
+        assert after and before['fields'] == after['fields']
+        assert before['selection']['public_snapshot'] == after['selection']['public_snapshot']
+        assert camera() == basis, 'public Get must not change focused pane/layout/camera'
+        metadata.update(selection_context=selected, before=before, after=after,
+                        persisted_scope='Allowlisted selection_context only; public emitted-context parity, not samePTY/AI acceptance.')
+        checkpoint('public-context-' + label)
+    result['hidden_junction_selected'] = qa.wait('complete derived Run across hidden Junction', lambda: complete(True))
+    checkpoint('selected-hidden-junction')
+    qa.capture('run-five-junction-hidden-wire9-selected', main)
+    context('hidden', True)
+    result['junction_layer_restored'] = layer(True)
+    result['hidden_junction_restored'] = qa.wait('same complete Run after visibility restore', lambda: complete(False))
+    checkpoint('same-run-junction-restored')
+    qa.capture('run-five-junction-restored', main)
+    context('restored', False)
 
 
 def establish_focused_board_group(qa, main, state, project, result, baseline):

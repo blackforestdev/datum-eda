@@ -92,7 +92,11 @@ impl Runtime {
             .iter()
             .filter(|region| matches!(region.target, HitTarget::ToggleLayer(_)))
             .count();
-        let total = self.workspace().scene.layers.len();
+        let total = datum_gui_protocol::camera_scene_for_pane(
+            self.workspace(),
+            self.workspace().ui.layout.focused,
+        )
+        .map_or(0, |scene| scene.layers.len());
         let offset = &mut self.session.workspace_mut().ui.filters.layer_scroll_offset;
         let before = *offset;
         let next =

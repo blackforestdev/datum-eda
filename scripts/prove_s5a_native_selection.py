@@ -18,7 +18,7 @@ import traceback
 from prove_native_project_startup_gui import Atspi, StartupQA, digest
 from native_project_source_inventory import validate_frozen_sources
 from s5a_native_escape_cases import owned_open_text_keys, region_escape_cancel
-from s5a_native_inspector_cases import focused_compound_scopes, focused_compound_pane_lifecycle
+from s5a_native_inspector_cases import focused_compound_scopes, focused_compound_pane_lifecycle, hidden_junction_run
 from provision_s5a_replay_inputs import INPUTS, replay_location
 from s5a_native_selection_observation import latest_state, qualify, selection_snapshot
 
@@ -404,9 +404,10 @@ def overlap_menu(qa, main, state, project, contract, result):
 
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False, owned_open=False, region_escape=False, focused_inspector=False, focused_pane_lifecycle=False):
-    contract = json.loads((project / 's5a-fixture.json').read_text())
-    if parents_case or pin_case or terminal_keys or overlap_case or owned_open or region_escape:
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False, owned_open=False, region_escape=False, focused_inspector=False, focused_pane_lifecycle=False, hidden_junction=False):
+    contract_path = project / ('project.json' if hidden_junction else 's5a-fixture.json')
+    contract = json.loads(contract_path.read_text())
+    if parents_case or pin_case or terminal_keys or overlap_case or owned_open or region_escape or hidden_junction:
         content = 'Some(Schematic)'
         label = 'selection-terminal' if terminal_keys else ('selection-pin' if pin_case else 'selection-parents')
         if overlap_case:
@@ -415,7 +416,9 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
             label = 'selection-owned-open'
         if region_escape:
             label = 'selection-region-escape'
-        expected = {'fixture_sha256': digest(project / 's5a-fixture.json')}
+        if hidden_junction:
+            label = 'selection-hidden-junction'
+        expected = {'fixture_sha256': digest(contract_path)}
     elif surface == 'schematic':
         expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
                     'kind': 'compound', 'members': [{'class': 'symbol', 'id': s['source_id']}
@@ -434,7 +437,7 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
                                + [{'class': 'board_outline', 'id': board['uuid']}],
                     'oracle': 'frozen scope-v2 board source and current project revision; accepted N14 four-Track/empty-outline oracle'}
         content, label, noun = 'Some(Board)', 'selection-board', 'board'
-    expected['fixture_sha256'] = digest(project / 's5a-fixture.json')
+    expected['fixture_sha256'] = digest(contract_path)
     result['frozen_before'] = validate_frozen_sources(project, frozen_files)
     before = result['frozen_before']['canonical_files']
     result['canonical_before'] = before
@@ -449,8 +452,10 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         qa.key(main, 'Tab')
     qa.wait('ordinary target pane focus',
             lambda: state()['value']['focused_content'] == content)
-    if parents_case or pin_case or terminal_keys or overlap_case or owned_open or region_escape:
-        if region_escape:
+    if parents_case or pin_case or terminal_keys or overlap_case or owned_open or region_escape or hidden_junction:
+        if hidden_junction:
+            hidden_junction_run(qa, main, state, project, result, frozen_files)
+        elif region_escape:
             pin_points(qa, main, state, project, contract, result, setup_only=True)
             region_escape_cancel(qa, main, state, project, result)
         elif owned_open:
@@ -565,7 +570,11 @@ def main():
     parser.add_argument('--region-escape', action='store_true')
     parser.add_argument('--focused-inspector', action='store_true')
     parser.add_argument('--focused-pane-lifecycle', action='store_true')
+    parser.add_argument('--hidden-junction-run', action='store_true')
     args = parser.parse_args()
+    if args.hidden_junction_run and (args.surface != 'schematic' or any([
+            v for k, v in vars(args).items() if isinstance(v, bool) and k != 'hidden_junction_run'])):
+        parser.error('hidden Junction Run is exclusive to the frozen Schematic semantic-scope case')
     if args.focused_pane_lifecycle and (args.surface != 'board' or any([
             args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys,
             args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector])):
@@ -597,6 +606,8 @@ def main():
     alias = 's5a-c03-u5-majority-v1' if args.surface == 'schematic' else 's5a-c03-u5-scope-v2'
     if args.parents_point or args.overlap_menu:
         alias = 's5a-c03-u5-parents-v3'
+    if args.hidden_junction_run:
+        alias = 's5a-c03-u5-semantic-v1/variants/semantic-scope'
     project = replay / alias
     catalogue = json.loads((INPUTS / 'index.json').read_text())
     frozen_files = {row['path'].removeprefix(alias + '/'): row['sha256']
@@ -617,7 +628,7 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu or args.owned_open_text or args.region_escape or args.focused_inspector or args.focused_pane_lifecycle:
+    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu or args.owned_open_text or args.region_escape or args.focused_inspector or args.focused_pane_lifecycle or args.hidden_junction_run:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
     result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
               'parents_point': args.parents_point,
@@ -638,7 +649,7 @@ def main():
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py',
                      's5a_native_escape_cases.py', 's5a_native_inspector_cases.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector, args.focused_pane_lifecycle)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector, args.focused_pane_lifecycle, args.hidden_junction_run)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)

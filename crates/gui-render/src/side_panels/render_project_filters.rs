@@ -146,12 +146,15 @@ pub(super) fn render_project_and_filters_panel(
         filters_rect.width,
         PANEL_CARD_BORDER,
     );
-    // Show all layers — copper first, then non-copper
-    let mut display_layers: Vec<&_> = state.scene.layers.iter().collect();
+    // Layers follow the focused document, using the shared resolved pane source.
+    let layers = datum_gui_protocol::camera_scene_for_pane(state, state.ui.layout.focused)
+        .map(|scene| scene.layers.as_slice())
+        .unwrap_or_default();
+    let mut display_layers: Vec<&_> = layers.iter().collect();
     display_layers.sort_by_key(|l| {
         (
             !l.visible_by_default,
-            scene_layer_stack_priority(&l.layer_id, &state.scene.layers),
+            scene_layer_stack_priority(&l.layer_id, layers),
             l.render_order,
         )
     });
@@ -184,7 +187,7 @@ pub(super) fn render_project_and_filters_panel(
             .active_layer_id
             .as_deref()
             .is_some_and(|active| active == layer.layer_id);
-        render_layer_row(state, row, layer, visible, active, panel_quads, text_runs);
+        render_layer_row(layers, row, layer, visible, active, panel_quads, text_runs);
         hit_regions.push(HitRegion {
             target: HitTarget::ToggleLayer(layer.layer_id.clone()),
             rect: filter_hit_rect(*row),
@@ -212,7 +215,7 @@ pub(super) fn render_project_and_filters_panel(
 }
 
 fn render_layer_row(
-    state: &ReviewWorkspaceState,
+    scene_layers: &[datum_gui_protocol::SceneLayer],
     row: &RectPx,
     layer: &datum_gui_protocol::SceneLayer,
     visible: bool,
@@ -238,7 +241,8 @@ fn render_layer_row(
             TEXT_ACCENT,
         ));
     }
-    let swatch_color = layer_swatch_color_with_scene(Some(&layer.layer_id), &state.scene.layers);
+    let swatch_color = schematic_layer_world_color(&layer.name)
+        .unwrap_or_else(|| layer_swatch_color_with_scene(Some(&layer.layer_id), scene_layers));
     // Off rows dim the ENTIRE row (swatch + name) uniformly toward the panel
     // surface, matching the prototype's .layer-row.off{opacity:.4}. There is no
     // ON/OFF/ACTIVE text badge — visibility reads through the dim alone.
@@ -277,6 +281,159 @@ fn render_layer_row(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn focused_layers_swatches_use_canvas_roles_and_preserve_board() {
+        let (fixture, state) =
+            crate::native_selection_overlay::tests::selected_schematic_text_state();
+        let source = fixture.source_bytes();
+        let schematic = state.schematic_scene.as_ref().unwrap();
+        let row = RectPx {
+            x: 12.0,
+            y: 500.0,
+            width: 190.0,
+            height: 25.0,
+        };
+        let check = |layers: &[datum_gui_protocol::SceneLayer],
+                     layer: &datum_gui_protocol::SceneLayer,
+                     color| {
+            for visible in [true, false] {
+                let mut quads = Vec::new();
+                let mut text = Vec::new();
+                render_layer_row(layers, &row, layer, visible, false, &mut quads, &mut text);
+                let swatch = &quads[0];
+                assert_eq!(
+                    swatch.points,
+                    Quad::from_rect(
+                        RectPx {
+                            x: row.x,
+                            y: row.y + 3.0,
+                            width: 13.0,
+                            height: 13.0,
+                        },
+                        color
+                    )
+                    .points
+                );
+                let expected = if visible {
+                    color
+                } else {
+                    mix_color(color, PANEL_CARD_BG, 0.6)
+                };
+                assert_eq!(swatch.color, expected, "actual {} row swatch", layer.name);
+            }
+        };
+        for (name, color) in [
+            ("Schematic.Wire", design_tokens::schematic::WIRE),
+            ("Schematic.Junction", design_tokens::schematic::WIRE),
+            ("Schematic.Bus", design_tokens::schematic::BUS),
+        ] {
+            let layer = schematic
+                .layers
+                .iter()
+                .find(|layer| layer.name == name)
+                .unwrap();
+            check(&schematic.layers, layer, color);
+        }
+        let copper = state
+            .scene
+            .layers
+            .iter()
+            .find(|layer| layer.name == "F.Cu")
+            .unwrap();
+        check(
+            &state.scene.layers,
+            copper,
+            design_tokens::content::COPPER_FRONT,
+        );
+        assert_eq!(fixture.source_bytes(), source);
+    }
+
+    #[test]
+    fn focused_layers_rows_and_clipped_scroll_follow_document() {
+        use datum_gui_protocol::PaneContent;
+        let (fixture, mut state) =
+            crate::native_selection_overlay::tests::selected_schematic_text_state();
+        let source = fixture.source_bytes();
+        let selection = state.selection.clone();
+        let board: Vec<_> = state
+            .scene
+            .layers
+            .iter()
+            .map(|l| l.layer_id.clone())
+            .collect();
+        let schematic: Vec<_> = state
+            .schematic_scene
+            .as_ref()
+            .unwrap()
+            .layers
+            .iter()
+            .map(|l| l.layer_id.clone())
+            .collect();
+        assert!(schematic.len() > board.len() && schematic.contains(&"L202".to_owned()));
+        let paint = |state: &ReviewWorkspaceState| {
+            let sidebar = RectPx {
+                x: 0.0,
+                y: 30.0,
+                width: 224.0,
+                height: 700.0,
+            };
+            let layout = solve_project_panel_layout_with_taffy(state, sidebar).unwrap();
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            let mut hits = Vec::new();
+            render_project_and_filters_panel(
+                state,
+                &layout,
+                layout.project_rect,
+                layout.filters_rect,
+                &mut quads,
+                &mut text,
+                &mut hits,
+            );
+            hits.into_iter()
+                .filter_map(|hit| match hit.target {
+                    HitTarget::ToggleLayer(id) => Some(id),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        for content in [
+            PaneContent::Board,
+            PaneContent::Schematic,
+            PaneContent::Board,
+            PaneContent::Library,
+        ] {
+            state.ui.layout.set_focused_content(content);
+            state.ui.filters.layer_scroll_offset = 0;
+            let first = paint(&state);
+            match content {
+                PaneContent::Board => assert_eq!(first, board),
+                PaneContent::Schematic => {
+                    assert!(first.len() > board.len() && first.len() < schematic.len());
+                    assert!(first.iter().all(|id| schematic.contains(id)));
+                    state.ui.filters.layer_scroll_offset = usize::MAX;
+                    let last = paint(&state);
+                    assert_eq!(first.len(), last.len());
+                    assert_ne!(
+                        first, last,
+                        "clipped Layers must reach later schematic roles"
+                    );
+                    assert!(last.contains(schematic.last().unwrap()));
+                    assert!(last.iter().all(|id| schematic.contains(id)));
+                }
+                _ => assert!(first.is_empty(), "non-editor must not borrow Board layers"),
+            }
+        }
+        state.ui.layout.set_focused_content(PaneContent::Schematic);
+        state.schematic_scene = None;
+        assert!(
+            paint(&state).is_empty(),
+            "unresolved Schematic must not borrow Board layers"
+        );
+        assert_eq!(state.selection, selection);
+        assert_eq!(fixture.source_bytes(), source);
+    }
 
     #[test]
     fn project_and_discrete_layers_inherit_separate_panel_bounds() {

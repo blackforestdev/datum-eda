@@ -92,7 +92,9 @@ pub(crate) fn render_status_bar_logical(
         | SelectionTarget::CheckFinding(id) => truncate_text(suffix_id(id), 8),
     };
     let tool = workspace_tool_label(state.tool);
-    let layers = state.scene.layers.len().to_string();
+    let layers = datum_gui_protocol::camera_scene_for_pane(state, state.ui.layout.focused)
+        .map_or(0, |scene| scene.layers.len())
+        .to_string();
     // Reflect the actually-focused document, not a hardcoded value — focusing the
     // Schematic pane must read "Schematic" here (context-follows-focus).
     let focus_label = application_focus_label(state);
@@ -214,6 +216,39 @@ pub(crate) fn render_status_bar_logical(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn focused_layers_status_count_matches_resolving_document() {
+        use datum_gui_protocol::PaneContent;
+        let (fixture, mut state) =
+            crate::native_selection_overlay::tests::selected_schematic_text_state();
+        let source = fixture.source_bytes();
+        let selection = state.selection.clone();
+        let board_count = state.scene.layers.len();
+        let schematic_count = state.schematic_scene.as_ref().unwrap().layers.len();
+        let layout = ShellLayout::for_surface(1344, 806, 1.0, None);
+        let count = |state: &ReviewWorkspaceState| {
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            render_status_bar(state, &layout, &mut quads, &mut text);
+            let label = text.iter().position(|run| run.text == "Layers").unwrap();
+            text[label + 1].text.parse::<usize>().unwrap()
+        };
+        for (content, expected) in [
+            (PaneContent::Board, board_count),
+            (PaneContent::Schematic, schematic_count),
+            (PaneContent::Board, board_count),
+            (PaneContent::Library, 0),
+        ] {
+            state.ui.layout.set_focused_content(content);
+            assert_eq!(count(&state), expected);
+        }
+        state.ui.layout.set_focused_content(PaneContent::Schematic);
+        state.schematic_scene = None;
+        assert_eq!(count(&state), 0);
+        assert_eq!(state.selection, selection);
+        assert_eq!(fixture.source_bytes(), source);
+    }
 
     #[test]
     fn actual_status_segments_share_strip_bounds_at_constrained_extents() {
