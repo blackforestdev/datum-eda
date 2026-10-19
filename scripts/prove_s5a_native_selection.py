@@ -124,7 +124,7 @@ def toggle_l1(qa, main, state, result, visible):
         'actual L1 visibility transition', acknowledged)
 
 
-def parent_points(qa, main, state, project, contract, result):
+def parent_points(qa, main, state, project, contract, result, setup_only=False):
     """One current-frame body acquisition sequence, never a point sweep."""
     symbols = json.loads((project / 'schematic/main.json').read_text())['symbols']
     by_ref = {s['reference']: s for s in symbols.values()}
@@ -172,10 +172,11 @@ def parent_points(qa, main, state, project, contract, result):
             result['pending_public_read_failure'] = str(error)
             return False
 
-    for label, point, modifier, kind, refs, focus in [
+    actions = [
             ('body-u1-object', 'body_u1', None, 'object', ['U1'], 'U1'),
             ('shift-body-u2-compound', 'body_u2', 'Shift_L', 'compound', ['U1', 'U2'], 'U2'),
-            ('ctrl-body-u1-remove', 'body_u1', 'Control_L', 'object', ['U2'], 'U2')]:
+            ('ctrl-body-u1-remove', 'body_u1', 'Control_L', 'object', ['U2'], 'U2')]
+    for label, point, modifier, kind, refs, focus in (actions[:1] if setup_only else actions):
         prior = state()['sequence']
         qa.wait_presented()
         qa.focus(main)
@@ -196,6 +197,8 @@ def parent_points(qa, main, state, project, contract, result):
         result[label] = qa.wait(label, lambda: observe(kind, refs, focus, prior))
         result[label]['body_dispatch'] = body_dispatch(dispatch_offset, 'U1' if point == 'body_u1' else 'U2')
         qa.capture(label, main)
+    if setup_only:
+        return
     prior = state()['sequence']
     qa.key(main, 'Escape')
     result['cleared'] = qa.wait('parent Escape clear', lambda: state() if
@@ -349,11 +352,83 @@ def terminal_key_ownership(qa, main, state, result):
     qa.capture('editor-second-escape-clear', main)
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False):
+def overlap_menu(qa, main, state, project, contract, result):
+    symbols = json.loads((project / 'schematic/main.json').read_text())['symbols']
+    ids = {s['reference']: s['uuid'] for s in symbols.values()}
+    assert set(ids) == {'U1', 'U2'}
+    pins = [next(p for p in s['pins'] if p['name'] == 'OUT') for s in symbols.values()]
+    assert all(p['position'] == {'x': 1_500_000, 'y': 0} for p in pins)
+    prior_id = {'class': 'symbol', 'id': ids['U1']}
+    expected = {'pid': qa.process.pid, 'project': contract['project_id'],
+                'revision': contract['model_revision'], 'kind': 'object', 'scope': 'symbol',
+                'members': [prior_id], 'focus': prior_id, 'oracle': 'Frozen parents-v3 U1 prior selection; both coincident OUT pin owners deduplicated to U1/U2'}
+    result['overlap_source_oracle'] = {'parents': ids, 'pins': pins, 'prior': expected}
+    prefix = 'menu:native-select:' + expected['project']
+    def menu():
+        root = next((n for n in qa.nodes() if n.get_accessible_id() == prefix), None)
+        if root is None:
+            return False
+        assert root.get_process_id() == qa.process.pid and root.get_child_count() <= 1000
+        rows = []
+        for i in range(root.get_child_count()):
+            n = root.get_child_at_index(i)
+            if n is None:
+                return False
+            assert n.get_process_id() == qa.process.pid
+            rows.append({'index': i, 'id': n.get_accessible_id(), 'name': n.get_name(),
+                         'attributes': qa.attributes(n),
+                         'focused': n.get_state_set().contains(Atspi.StateType.FOCUSED)})
+        return {'pid': root.get_process_id(), 'root': prefix, 'rows': rows}
+    def complete_menu():
+        snap = menu()
+        if not snap:
+            return False
+        candidates = [r for r in snap['rows'] if r['id'].startswith(prefix + '/Object(')]
+        if not candidates:
+            return False
+        assert len(candidates) == 2 and all('class: Symbol' in r['id'] and 'instance_path: []' in r['id'] for r in candidates)
+        assert {uid for uid in ids.values() if any(uid in r['id'] for r in candidates)} == set(ids.values())
+        assert all(r['attributes'].get('available') == 'true' for r in candidates)
+        return snap
+    retain = lambda: qualify(state(), selection_snapshot(qa), expected)
+    x, y = result['point_plan']['shared_pin_screen_px']
+    diagnostic = Path(qa.env['DATUM_GUI_LOG']); offset = len(diagnostic.read_text())
+    qa.command('xdotool', 'mousemove', '--window', main, str(x), str(y))
+    qa.wait('native cursor at shared source pin', lambda: f'cursor moved {x:.2f},{y:.2f}' in diagnostic.read_text()[offset:])
+    qa.key(main, 'shift+F10')
+    result['menu_root'] = qa.wait('Overlay owns native Select root', lambda: menu() if state()['value']['focus'] == 'Overlay' else False)
+    result['prior_after_open'] = retain()
+    qa.key(main, 'Down')
+    result['complete_candidates'] = qa.wait('exact two deduplicated public parent candidates', complete_menu)
+    for ref in ['U1', 'U2']:
+        snap = complete_menu()
+        index = next(r['index'] for r in snap['rows'] if r['id'].startswith(prefix + '/Object(') and ids[ref] in r['id'])
+        qa.key(main, 'Home')
+        qa.key(main, 'Down', repeat=max(1, index))
+        if index == 0:
+            qa.key(main, 'Up')
+        result['menu_focus_' + ref] = qa.wait('public menu row focus ' + ref, lambda:
+            menu() if any(r['focused'] and ids[ref] in r['id'] for r in menu()['rows']) else False)
+        result['committed_while_menu_focus_' + ref] = retain()
+        qa.capture('overlap-menu-' + ref.lower() + '-focus', main)
+    result['canvas_preview_qualified'] = False  # Only actual capture review can qualify visible preview.
+    qa.key(main, 'Escape')
+    qa.wait('whole native menu dismissed and Editor restored', lambda: not menu() and state()['value']['focus'] == 'Editor(PaneId(1))')
+    result['dismissed_prior_preserved'] = retain()
+    qa.capture('overlap-dismiss-preserved-u1', main)
+    prior = state()['sequence']; qa.key(main, 'Escape')
+    result['idle_escape_clear'] = qa.wait('distinct idle Escape clears', lambda: state() if state()['sequence'] > prior and state()['value']['selection']['kind'] == 'none' else False)
+    qa.wait('public prior selection removed', lambda: not any(n.get_accessible_id() == '/org/a11y/atspi/accessible/selection' for n in qa.nodes()))
+    qa.capture('overlap-idle-escape-clear', main)
+
+
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False):
     contract = json.loads((project / 's5a-fixture.json').read_text())
-    if parents_case or pin_case or terminal_keys:
+    if parents_case or pin_case or terminal_keys or overlap_case:
         content = 'Some(Schematic)'
         label = 'selection-terminal' if terminal_keys else ('selection-pin' if pin_case else 'selection-parents')
+        if overlap_case:
+            label = 'selection-overlap'
         expected = {'fixture_sha256': digest(project / 's5a-fixture.json')}
     elif surface == 'schematic':
         expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
@@ -388,8 +463,11 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         qa.key(main, 'Tab')
     qa.wait('ordinary target pane focus',
             lambda: state()['value']['focused_content'] == content)
-    if parents_case or pin_case or terminal_keys:
-        if terminal_keys:
+    if parents_case or pin_case or terminal_keys or overlap_case:
+        if overlap_case:
+            parent_points(qa, main, state, project, contract, result, setup_only=True)
+            overlap_menu(qa, main, state, project, contract, result)
+        elif terminal_keys:
             pin_points(qa, main, state, project, contract, result, setup_only=True)
             terminal_key_ownership(qa, main, state, result)
         else:
@@ -483,6 +561,7 @@ def main():
     parser.add_argument('--parents-point', action='store_true')
     parser.add_argument('--pin-point', action='store_true')
     parser.add_argument('--terminal-keys', action='store_true')
+    parser.add_argument('--overlap-menu', action='store_true')
     args = parser.parse_args()
     if args.prehidden_l1 and args.surface != 'board':
         parser.error('pre-hidden L1 control is only defined for this frozen Board case')
@@ -492,6 +571,8 @@ def main():
         parser.error('pin point is defined only for the frozen Schematic majority case')
     if args.terminal_keys and (args.surface != 'schematic' or args.prehidden_l1 or args.parents_point or args.pin_point):
         parser.error('terminal key ownership is only defined over majority P13 setup')
+    if args.overlap_menu and (args.surface != 'schematic' or args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys):
+        parser.error('overlap menu is defined only over frozen parents setup')
     run = args.run_dir.absolute()
     if run.resolve() != run or not run.is_relative_to(OWNED) or run == OWNED or run.exists():
         parser.error('run-dir must be a fresh unaliased child of the owned task scratch')
@@ -499,7 +580,7 @@ def main():
     if (replay / 'index.json').read_bytes() != (INPUTS / 'index.json').read_bytes():
         parser.error('replay root must have the exact tracked catalogue marker')
     alias = 's5a-c03-u5-majority-v1' if args.surface == 'schematic' else 's5a-c03-u5-scope-v2'
-    if args.parents_point:
+    if args.parents_point or args.overlap_menu:
         alias = 's5a-c03-u5-parents-v3'
     project = replay / alias
     catalogue = json.loads((INPUTS / 'index.json').read_text())
@@ -521,12 +602,13 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys:
+    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
     result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
               'parents_point': args.parents_point,
               'pin_point': args.pin_point,
               'terminal_keys': args.terminal_keys,
+              'overlap_menu': args.overlap_menu,
               'binary_sha256': qa.binary_hashes, 'project': str(project),
               'limits': 'Finite ordinary selection/complete public membership/nonmutation cases only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
@@ -537,7 +619,7 @@ def main():
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)

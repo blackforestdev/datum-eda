@@ -11067,5 +11067,256 @@
       "manager_disposition": "ACCEPT finite N17 key-ownership case and authorize scoped four-path landing; pins/screenshots/prior evidence/lease/tracker verified.",
       "boundaries": "FullN17/HUMAN/C04/C05/C06/windowClose remain open. No source/build/native change or new input authority."
     }
+  },
+  "native_wayland_overlap_dismissal_20261018": {
+    "status": "Actual independent bounded PASS/no mandatory findings and appointed manager acceptance for finite N06/N17 overlap candidates/focus/dismissal and transient U2 rectangle presence/correlation only. C04 remains in progress.",
+    "scope": "Single N06/N17 keyboard local-overlap case; accepted U1 body acquisition is setup P only. No repeated body or invalid pin-placement qualification.",
+    "authority": "UVT2.2.6 local Select exposes conflicting candidates, candidate preview is transient, Escape dismisses without selection change; UVT2.2.1 temporary owner Escape preserves prior selection then idle Escape clears. Existing selection-menu capture deduplicates complete acquired identities, arrows assign menu focus/preview without activation; Close calls whole dismiss_marking_menu and restores Editor. No inferred one-layer dismissal rule.",
+    "baseline": "Publisheda50bc3b2 and matching GUIaf3a8ddc; existing proof runner adaptation only. No product/Rust/reader/fixture/dependency/build change.",
+    "source_oracle": {
+      "parents": {
+        "U1": "b2b25adc-20e8-4942-b377-bc8d82d91690",
+        "U2": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+      },
+      "pins": [
+        {
+          "electrical_type": "Output",
+          "library_pin": "20000000-0000-4000-8000-000000000101",
+          "name": "OUT",
+          "number": "OUT",
+          "position": {
+            "x": 1500000,
+            "y": 0
+          },
+          "uuid": "09a05333-7d9c-4ccb-ab1e-e4398c917a75"
+        },
+        {
+          "electrical_type": "Output",
+          "library_pin": "20000000-0000-4000-8000-000000000101",
+          "name": "OUT",
+          "number": "OUT",
+          "position": {
+            "x": 1500000,
+            "y": 0
+          },
+          "uuid": "bc2a5f91-7037-47f6-8511-68b9e4d22c69"
+        }
+      ],
+      "prior": {
+        "pid": 682774,
+        "project": "72000000-0000-4000-8000-000000000001",
+        "revision": "70f2407113b85974d2f17f45c57f04c14b853439045047b7205d6f8bd684f9f3",
+        "kind": "object",
+        "scope": "symbol",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "focus": {
+          "class": "symbol",
+          "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+        },
+        "oracle": "Frozen parents-v3 U1 prior selection; both coincident OUT pin owners deduplicated to U1/U2"
+      }
+    },
+    "point_plan": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-overlap-dismiss-01/current-frame-point-plan.json",
+      "sha256": "5e4ac62901b707b6383fbc445bd8a94b1611e20e348e0d2e593d1d1f1d41e4ab",
+      "description": "Personally checked initial current frame, retained fitted source/camera transform. U1 body703,410 is prior-P setup; both persisted OUT pins share1.5mm,0, projecting719.426,403.5 ->719,404. Current native cursor acknowledgement required before ShiftF10. No position correction, coordinate sweep, getter or fixture rewrite."
+    },
+    "binary_sha256": {
+      "datum-gui": "af3a8ddcdeb271be4ac15c372589cb24f97fcd46cec98a5808fea8596f300c18",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "ac3430d645cebbbbba0ba2b3e6c62c000d2745d1872cd9d396f3a846f54b854d",
+      "s5a_native_selection_observation.py": "009a606614439c51cfc5e65369586bdb041f65d5805da6417a6178778ed5dc88",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792390316, tv_nsec: 694772637 }] surface identity window=WindowId(94094342916672) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ],
+    "gui_pid": 682774,
+    "compositor_pid": 682757,
+    "ordinary_route": "Move to shared source pin; ShiftF10 opens native Select root as Overlay; Down opens full Select list. Home/arrows focus U1 then U2 without Enter/activation. First Escape removes whole menu; after confirmed Editor with prior U1 unchanged, second distinct Escape clears. No primary click/reset/reacquisition between dismissal and clear.",
+    "public_candidates": [
+      {
+        "index": 0,
+        "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: d73a14b1-02bf-4dd7-be50-b54a7de08e95, instance_path: [] })",
+        "name": "Select Symbols \u00b7 U2 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 7de08e95",
+        "attributes": {
+          "dispatch-key": "Arrow keys, Enter",
+          "available": "true",
+          "description": "Read-only selection; complete source membership"
+        },
+        "focused": true
+      },
+      {
+        "index": 1,
+        "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: b2b25adc-20e8-4942-b377-bc8d82d91690, instance_path: [] })",
+        "name": "Select Symbols \u00b7 U1 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 82d91690",
+        "attributes": {
+          "dispatch-key": "Arrow keys, Enter",
+          "available": "true",
+          "description": "Read-only selection; complete source membership"
+        },
+        "focused": false
+      }
+    ],
+    "menu_focus": {
+      "menu_focus_U1": [
+        {
+          "index": 0,
+          "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: d73a14b1-02bf-4dd7-be50-b54a7de08e95, instance_path: [] })",
+          "name": "Select Symbols \u00b7 U2 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 7de08e95",
+          "attributes": {
+            "dispatch-key": "Arrow keys, Enter",
+            "available": "true",
+            "description": "Read-only selection; complete source membership"
+          },
+          "focused": false
+        },
+        {
+          "index": 1,
+          "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: b2b25adc-20e8-4942-b377-bc8d82d91690, instance_path: [] })",
+          "name": "Select Symbols \u00b7 U1 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 82d91690",
+          "attributes": {
+            "dispatch-key": "Arrow keys, Enter",
+            "available": "true",
+            "description": "Read-only selection; complete source membership"
+          },
+          "focused": true
+        }
+      ],
+      "menu_focus_U2": [
+        {
+          "index": 0,
+          "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: d73a14b1-02bf-4dd7-be50-b54a7de08e95, instance_path: [] })",
+          "name": "Select Symbols \u00b7 U2 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 7de08e95",
+          "attributes": {
+            "dispatch-key": "Arrow keys, Enter",
+            "available": "true",
+            "description": "Read-only selection; complete source membership"
+          },
+          "focused": true
+        },
+        {
+          "index": 1,
+          "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: b2b25adc-20e8-4942-b377-bc8d82d91690, instance_path: [] })",
+          "name": "Select Symbols \u00b7 U1 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 82d91690",
+          "attributes": {
+            "dispatch-key": "Arrow keys, Enter",
+            "available": "true",
+            "description": "Read-only selection; complete source membership"
+          },
+          "focused": false
+        }
+      ]
+    },
+    "committed_selection_checkpoints": {
+      "prior_after_open": {
+        "sequence": 4,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "committed_while_menu_focus_U1": {
+        "sequence": 4,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "committed_while_menu_focus_U2": {
+        "sequence": 4,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "dismissed_prior_preserved": {
+        "sequence": 5,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      }
+    },
+    "public_qualification": "Exactly two available complete Command::Object IDs in process-bound native menu: U2 first and U1 second, Symbol/root instance paths. Menu standardFOCUSED moves independently of complete committed U1 member/focus/scope/nonstale selection. Menu IDs expose project/commands; no separate public preview field or direct menu-revision property is claimed. Current model basis is tied by unchanged source/frozen inventory, current full selected project/revision, and existing source-qualified menu owner.",
+    "dismissal": {
+      "preserved_sequence": 5,
+      "preserved_members": [
+        {
+          "class": "symbol",
+          "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+        }
+      ],
+      "native_menu_root_removed": true,
+      "keyboard_owner": "Editor(PaneId(1))",
+      "idle_clear_sequence": 6,
+      "idle_kind": "none",
+      "selection_root_removed": true
+    },
+    "rendered_observation": "All6 captures personally inspected. U1 stays selected and Inspector/member-focus U1 unchanged while menu keyboard row focus moves. U2-focused frame visibly adds a larger rectangular candidate cue spanning its displaced body and coincident pin presentation; absent in U1-focused frame, gone after dismissal. The cue crosses the popup region and is not merely the row border. This is bounded candidate-cue presence/correlation, not exact silhouette, strength, clipping, menu occlusion/z-order or full hover correctness. Dismissal leaves prior U1; idle Escape shows None. Pointer-dependent thin cue remains unclassified; no blanket canvas-clearance.",
+    "raw_preview_flag": {
+      "canvas_preview_qualified": false,
+      "meaning": "Intentionally false/ungraded by automated runner; only actual capture inspection and independent rendered review can qualify visible preview. Original raw result is preserved, not rewritten after visual inspection. Current qualitative cue observation is separately recorded and pending review."
+    },
+    "nonmutation": "All63 tracked canonical hashes equal before launch, after full menu/dismissal sequence, after normal shell exit and after owned teardown. Full pin/source/library/stored history preserved; exact operational role payloads excluded/unread.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 682800,
+          "socket": "/run/user/1000/npd-wl-ox89dyph/datum-native-edit-53ab659d-3aba-4d9b-8fc0-b14994684510/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-ox89dyph",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM/own daemon housekeeping is not ordinary windowClose/GPU drain qualification."
+    },
+    "verification_reuse": "Matching accepted GUI and unchanged4 Rust/12 reader tests reused. Runner py_compile/source-health3253/diff preflight passed; first native execution verifies this branch. No Cargo or baseline retry.",
+    "retained_boundaries": "No right-button drag, SelectAll/individual activation, full deterministic-order/disabled-seam matrix, direct public preview flag, fullN06/N17/N15/HUD/hover/HUMAN/C04/C05/C06/windowClose or successor acceptance. Parents-v3 pin convention stays open/untouched; this is a collision oracle only.",
+    "independent_receipt": {
+      "reviewer": "closeout_review provisioned by appointed manager",
+      "result": "Actual bounded PASS, no mandatory findings",
+      "candidate": "d33acd351334df67c2d38ab5a9d021ff42908d3308c52433cbd659e4fd943969",
+      "verified": "One source/10 artifacts,6 frames, exact2 parent Object IDs, menu focus independent of nonstale committedU1, whole-menu Escape seq5preservesU1 then seq6clear,63files4stages/current, launch/build/cleanup.",
+      "rendered_disposition": "Actual rendered review qualifies only transient U2 rectangle presence/correlation. Raw preview=false stays unchanged; no silhouette/clipping/z-order/fullpreview acceptance.",
+      "manager_disposition": "ACCEPT finite N06/N17 case, verify source/frames/prior evidence/lease/tracker and authorize four-path landing.",
+      "retained": "Pin convention/fullN06/N17/N15/HUMAN/C04/C05/C06/windowClose remain open. No source/build/native change."
+    }
   }
 }
