@@ -572,3 +572,122 @@ fn viewport_quad_encoding_matches_original_vertex_pipeline_and_refuses_atomicall
     assert_eq!(staging.used(), 0);
     assert_eq!(screen.used(), 0);
 }
+
+#[test]
+#[ignore = "requires hardware GPU: source-bound zoom sweep and physical cue measurement"]
+fn selection_cue_pixels_stay_two_physical_pixels_through_camera_zoom() {
+    let (fixture, mut state) = selected_track_state(10_000_000);
+    let source = fixture.source_bytes();
+    let head_path = fixture.root().join(".datum/revision/v1/head.json");
+    let head = std::fs::read(&head_path).unwrap();
+    state.scene.proposal_overlay_primitives.clear();
+    state.scene.review_primitives.clear();
+    state.ui.global_preferences.high_contrast_noncolor = false;
+    let mut unselected = state.clone();
+    unselected.selection = SelectionTarget::None;
+    let mut contrast = state.clone();
+    contrast.ui.global_preferences.high_contrast_noncolor = true;
+    let evidence = std::env::var_os("DATUM_V5_EVIDENCE_DIR").map(std::path::PathBuf::from);
+    if let Some(path) = &evidence {
+        let owned = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../.datum/scratch")
+            .canonicalize()
+            .unwrap();
+        assert!(
+            path.is_absolute() && path.is_dir() && path.canonicalize().unwrap().starts_with(owned)
+        );
+    }
+    for scale in [1.0_f32, 2.0] {
+        // Target dimensions and readback rows are physical pixels; UI scaling
+        // changes layout, not the governed two-pixel channel.
+        let (width, height) = ((960.0 * scale) as u32, (720.0 * scale) as u32);
+        let mut host = hardware_renderer(width, height);
+        let retained = RetainedScene::from_workspace_for_surface(&unselected, width, height, scale);
+        let prepare = |state: &ReviewWorkspaceState, camera| {
+            let mut frame = PreparedScene::from_workspace_for_surface(
+                state, width, height, scale, camera, &retained,
+            )
+            .unwrap();
+            frame.append_native_selection(state).unwrap();
+            frame
+        };
+        let mut camera = crate::CameraState {
+            center_x_nm: 5_000_000.0,
+            center_y_nm: 0.0,
+            zoom: 1.0,
+        };
+        let initial = prepare(&unselected, camera);
+        let field = crate::inset_rect(initial.scene_viewport, 10.0, 10.0, 10.0, 10.0);
+        let base_scale = crate::Projection::new(field, &state.scene.bounds, camera).scale;
+        // Four factor-two camera zooms calibrate the existing canonical .2mm
+        // Track to integer widths. MSAA samples stay off analytic boundaries;
+        // exact readback rows require no invented antialias tolerance.
+        for material_width in [8_u32, 16, 32, 64] {
+            camera.zoom = material_width as f32 / (200_000.0 * base_scale);
+            let projection = crate::Projection::new(field, &state.scene.bounds, camera);
+            let midpoint = PointNm { x: 5_000_000, y: 0 };
+            let center = projection.project_point(midpoint);
+            camera.center_y_nm += (center.1 - center.1.round()) / projection.scale;
+            let projection = crate::Projection::new(field, &state.scene.bounds, camera);
+            let selected = prepare(&state, camera);
+            assert!(
+                selected.selection_strokes.is_empty(),
+                "detailed Track is mask-owned"
+            );
+            assert_eq!(selected.selection_masks.len(), 1);
+            let center = projection.project_point(midpoint);
+            let (x, y) = (center.0.round() as u32, center.1.round() as u32);
+            let radius = material_width / 2;
+            let bare = capture_retained(&mut host, &prepare(&unselected, camera), &retained);
+            let ordinary = capture_retained(&mut host, &selected, &retained);
+            let crisp = capture_retained(&mut host, &prepare(&contrast, camera), &retained);
+            if let Some(path) = &evidence {
+                for (label, image) in [
+                    ("bare", &bare),
+                    ("selected", &ordinary),
+                    ("contrast", &crisp),
+                ] {
+                    image
+                        .save(path.join(format!("scale{scale}-width{material_width}-{label}.png")))
+                        .unwrap();
+                }
+            }
+            let pixel = |image: &RgbaImage, row| image.get_pixel(x, row).0;
+            let pink_rows: Vec<_> = (y - radius - 4..y + radius + 4)
+                .filter(|row| pixel(&ordinary, *row)[..3] == [206, 90, 146])
+                .collect();
+            eprintln!(
+                "V5 scale={scale} zoom={} material_px={} center={x},{y} accent_rows={pink_rows:?} core={:?}",
+                camera.zoom,
+                200_000.0 * projection.scale,
+                pixel(&ordinary, y)
+            );
+            assert_eq!(
+                pink_rows,
+                [y - radius - 2, y - radius - 1, y + radius, y + radius + 1]
+            );
+            for outside in [y - radius - 3, y + radius + 2] {
+                assert_eq!(pixel(&ordinary, outside), pixel(&bare, outside));
+            }
+            let lift: Vec<_> = pixel(&bare, y)[..3]
+                .iter()
+                .map(|c| (f32::from(*c) * 1.08).min(255.0).round() as u8)
+                .collect();
+            assert_eq!(pixel(&ordinary, y)[..3], lift);
+            assert_eq!(pixel(&crisp, y), pixel(&ordinary, y));
+            // Both interior samples move out with radius beyond the 2px glow;
+            // fixed central lift fails, as does paint outside owned material.
+            for row in [y - radius + 3, y + radius - 3] {
+                assert_eq!(pixel(&crisp, row)[..3], lift);
+                assert_ne!(pixel(&crisp, row), pixel(&bare, row));
+            }
+            assert_ne!(pixel(&crisp, y - radius), pixel(&ordinary, y - radius));
+            assert_eq!(
+                pixel(&crisp, y - radius - 2),
+                pixel(&ordinary, y - radius - 2)
+            );
+        }
+    }
+    assert_eq!(fixture.source_bytes(), source);
+    assert_eq!(std::fs::read(head_path).unwrap(), head);
+}

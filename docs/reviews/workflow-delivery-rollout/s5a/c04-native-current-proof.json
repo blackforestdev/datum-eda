@@ -12050,7 +12050,7 @@
     "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
   },
   "current_readiness_reconciliation_20261019": {
-    "status": "Finite current-evidence reconciliation under appointed SAME-C04 manager. Canonical Proposal renderer fix/tests/native03 and exact final combined proof have actual independent PASS and bounded manager acceptance; source landed66c6a974 and only relatedt8w9 closes using actual landing evidence. Historical L8/N08/N01/N03 evidence is reused only at accepted scope. No software-ready/fullC04/HUMAN/successor disposition.",
+    "status": "Finite current-evidence reconciliation under appointed SAME-C04 manager. Published canonical Proposal repair remains accepted; horizontal-Track V5 hardware zoom case has actual independent source/pixel/finalcombined PASS and bounded manager acceptance for normal-hook landing. Historical L8/N08/N01/N03 and large-derived audits retain exact scopes. No software-ready/fullV5/fullC04/HUMAN/successor disposition.",
     "authority": {
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
@@ -12157,7 +12157,15 @@
         ],
         "unresolved": "Native derived Run256/257 basic cap-boundary is accepted in n12_existing_terminal_live_context_20261012.actual_family4 and must not be rerun. Exact still-unbound questions are required IR01 pre-hidden/filter/cross-pane extensions, D4 whole-result refusal/no-op and omitted-reason parity at large derived sets; an entire-boundary absence is not claimed.",
         "smallest_next_lookup_or_work": "Reuse accepted Run256/257 terminal/GUI cap-boundary receipt and frozen oracle. Locate existing large-derived IR01/D4 and omitted-reason evidence; if absent, scope only those exact extensions through existing ordinary workflows, with no duplicate basic-boundary run or invented fixture authority.",
-        "closure": "Already-accepted derived256/257 cap/origin/semantic round-trip stays credited; remaining applicable IR01/D4 hidden/filter/cross-pane/refusal/no-op and consumer reason predicates receive exact accepted evidence/disposition."
+        "closure": "Already-accepted derived256/257 cap/origin/semantic round-trip stays credited; remaining applicable IR01/D4 hidden/filter/cross-pane/refusal/no-op and consumer reason predicates receive exact accepted evidence/disposition.",
+        "readonly_lookup_20261019": {
+          "reuse": "N12 actual_family4 already proves true derivedRun256/257 identity/origin/focus/GUI15/current context cap and four omission names. Small accepted filteredLabelRun5/hiddenJunctionRun5, prefilteredWireGlobalNet21(unprojected14), foreignBus2/Related21 and D4Run5 meaningful outsideWireD refusal/revision/origin-loss/Undo remain separately credited.",
+          "unbound_intersection": "No accepted receipt was identified combining large-derived256/257 with pre-hidden/pre-filtered B, duplicate/mixed panes+keyboard semantic invocation, or complete whole-result refusal/no-op. preparation-plan.md pre-acquisition N05/N09+N12/N17 and D4 completeness rows require those combinations; small-case plus cap evidence does not silently supply them.",
+          "reason_scope": "N12 explicitly excludes omitted-reason parity. Enumerated-text receipt compares retained reasons and separately excludes derived omitted-reason parity. context_envelope/selection_inspection preserves/omits per-member Common and Unavailable(reason) fields above256; isolated expanded-view cap tests are transport source controls, not authoritative native IR01 proof.",
+          "owners": "Existing U1 resolver, U2 origin eligibility/shared reducer, U3 Inspector/context/AX and U4 projection. PM059 manager scopes proof/input availability under retained authority; no new product-rule or fixture authorization is inferred.",
+          "smallest_candidate_only": "Reuse governed family4 input+full oracle if available: preconfigure hidden/filtered B, keyboard-acquire complete derived set in resolving/mixed panes, then one meaningful membership-changing candidate and one no-op; compare unchanged whole subject/outputs/omission names+reasons and canonical maps. This is a read-only proposal, not a new execution grant, baseline rerun or fixture-generation request.",
+          "boundary": "No new run, source edit, fixture or standalone tracked report came from this audit; do not duplicate basic Run256/257 or the separate38-assertion audit."
+        }
       },
       {
         "id": "stale-consumer-restore",
@@ -12226,15 +12234,22 @@
         ]
       },
       {
-        "predicates": "38 machine assertions A/L/O/B/V/I/D; especially D1 exact65536/overflow primitive union and warm diagnostics, V5 2physical-px zoom invariance",
+        "predicates": "38 machine assertions A/L/O/B/V/I/D: exact accepted bindings and remaining A3/V3/V5 scope, without a blanket full38 disposition.",
         "best_receipts": [
           "gpu_result",
           "shared_cue_budget_correction_20261011",
           "dense_warm_reopen_20261011",
-          "maximal_channel_collision_20261012"
+          "maximal_channel_collision_20261012",
+          "hardware_gpu_v5_track_zoom_20261019"
         ],
-        "next": "Bind existing accepted source/CPU/GPU/native controls by assertion and required diagnostic scope, retaining separate authored-object/primitive counts and raw failures. No blanket retest or native counter requirement inferred.",
-        "closure": "All38 required assertions have honest adequate accepted evidence/disposition; unresolved exact controls remain named. R1-R4 are future S5B, not part of38."
+        "next": "Reuse the separate accepted assertion audit and current bounded V5 case; retain A3/V3 exact unresolved receipt predicates. Bind only required scope with actual evidence/disposition; no blanket retest, native-counter requirement, Board timing threshold or duplicate38-assertion audit.",
+        "closure": "All38 required assertions have honest adequate accepted evidence/disposition; unresolved exact controls remain named. R1-R4 are future S5B, not part of38.",
+        "separate_actual_audit": "Appointed manager relayed independent closeout_review audit: D1 exact65536/65537 whole-pane union/warm capacity and D2 actual100007 Board collision already bind through accepted shared_cue_budget_correction_20261011/dense_warm_reopen_20261011/maximal_channel_collision_20261012 scopes. No new counter/latency campaign is inferred; Board timing needs existing-receipt lookup, not invented thresholds.",
+        "concrete_remaining_bindings": [
+          "A3:100k per-class rectangle+lasso oracle.",
+          "V3:actual successful export byte comparison.",
+          "V5:current measured hardware horizontal-Track case has actual source/pixel CLEAR; broader fullV5/native/HUMAN qualification is not claimed or automatically made a Cartesian class/angle replay queue."
+        ]
       }
     ],
     "human_c04_gate": {
@@ -12328,7 +12343,7 @@
       "landing_commit": "0ae0636c68a0494da3d6b7e7a32d03a1d811e485",
       "landing_outcome": "Exact6owned paths landed on main through normal file-lane/temporary-artifact/rustfmt hooks; no hook bypass. Three logical test-support corrections and exact formatter-only normalization retained. No further test/native/build rerun."
     },
-    "required_checks": "Scoped formatting/whitespace/sourcehealth3259/dependency authority/projectstate101/currentFrontierprojection PASS;3 focused renderer tests and matching guardedGUI build PASS. Prior zero-test batch remains uncredited. Native03 runtime/pixel and final39source/3binary combined review PASS with bounded manager acceptance. Source commit66c6a974 passed normal file-lane/temporary-artifact/staged-rustfmt hooks; bounded proof/Beads closure uses the same required normal hooks. Prior readiness review below remains historical scope.",
+    "required_checks": "Published producer-unit checks/normal landing retain recorded scopes. V5 scopedformat/whitespace/sourcehealth3259/projectstate101/currentFrontierprojection PASS, one corrected hardware test PASS across8zoom/scale setups, actual source/pixel/pin/final18source/28artifact combined review CLEAR with bounded manager acceptance. Run01 setup failure remains uncredited. Normal hooks are mandatory; no further source/test/native rerun or metadata-only transport commit is required.",
     "subsequent_bindings_20261019": {
       "source_native_producer": "native_wayland_proposal_creation_undo_20261019; actual independent source/runtime-pixel/finalcombined PASS and appointed-manager bounded acceptance, landed66c6a974 through normal hooks; only relatedt8w9 closed. Prior02 actual VISUALFAIL retained.",
       "l8_supported_consumers": {
@@ -12338,7 +12353,8 @@
         "current_source": "Object/Compound unknown-ID drop arms, target-after-reconciliation report helper, original lifetime tests and empty-report presentation retained. Later RunOriginCleared/capture_shared/extractions do not change these arms; relevant source/test portions compared exactly.",
         "ingress_audit": "No public stale GUI/context restore decoder found. ContextGet is read-only output; terminal origin_workspaces are foreign-origin publication snapshots, not GUI restore. ProjectOpen resets native selection. No duplicate delete/Undo/reopen run or universal future-ingress credit.",
         "route_binding": "Current gui-selection/prototype-selection routes accepted at b2a4a37c9bbdf924fe65aad98bb224a4ce59db38f5d1501e27726e78b8109259/b8bb6d336005059ef281709175088ff15bad5880d472195880883222a7903dd1 with qualified later delta review; not unchanged-since-historical claim or digest refresh."
-      }
+      },
+      "v5_measured_case": "hardware_gpu_v5_track_zoom_20261019; actual independent source/pixel/finalcombined PASS and manager bounded acceptance for exact4path normal landing. No wholeV5/ordinary-native/HUMAN upgrade."
     }
   },
   "native_wayland_hidden_junction_run_20261019": {
@@ -12679,6 +12695,222 @@
       "No fullN10/C04, HUMAN, C05/C06 or successor acceptance. Other required predicates remain at exact accepted or unresolved scopes.",
       "Restored ordinaryNone has no direct GUI full revision/tip; actual CLI/canonical guards and qualified worker refresh supply indirect basis. Save/refusal replies remain literal actual outcomes.",
       "Ordinary terminal exit plus owned process cleanup is not ordinary window-Close acceptance. Nonfatal AT-SPI unsupported-interface GetItems warning retained; required supported selection output qualified."
+    ]
+  },
+  "hardware_gpu_v5_track_zoom_20261019": {
+    "state": "Actual independent source/pixel/final-combined CLEAR and appointed-manager bounded acceptance for the horizontal authored Track case. Normal-hook main landing is authorized at the exact four-path scope; no fullV5/C04/HUMAN acceptance.",
+    "authority": "Retained UVT-S5A-BUILD/S5A-C04 under appointed PM059 manager01a13df1-7a0d-72c1-bbdd-f0d96d481598; Rendering Book2.1 and GUI Conformance V5 require the existing2physical-pixel cue. No new tolerance, budget, product rule or dependency.",
+    "implementation": "Test-only addition in existing crates/gui-render/src/render/selection_mask_gpu_tests.rs,693lines. Existing fixed-projection Stroke controls remain byte-identical b05ff220/HEAD88313df7; prior Mask controls unchanged. No production violation demonstrated or production source changed, so no matchingGUI build/native run is claimed or needed for this test-only unit.",
+    "source": {
+      "executed_mask_test_sha256": "af03b8bf6817075e87f3e14cac8db4e4d4ba44271856a3e052e6fc6087701713",
+      "fixture": "Existing source-bound selected_track_state(10000000), canonical straight10mm/.2mm Track; no new fixture definition. Full production PreparedScene + append_native_selection uses real detailed Track mask ownership, not a synthetic screen-space Stroke.",
+      "projection": "Independent world Projection calibrates four actual CameraState.zoom values at each UI scale to projected material widths8/16/32/64physicalpx. Small deterministic vertical subpixel alignment positions analytic boundaries between MSAA samples; zoom itself doubles each step, not a pan-only surrogate."
+    },
+    "execution": {
+      "candidate_sha256": "fada503c9c27eed853e548b014d7f58f35816db20dc6db06388099a283a443e8",
+      "raw_root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/v5-zoom-gpu-02",
+      "log_sha256": "28ab3343a9012b8effee27ffe4d044b608869580a83ce399781bb01cc4a149d5",
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --lib selection_cue_pixels_stay_two_physical_pixels_through_camera_zoom -- --ignored --nocapture --test-threads=1",
+      "actual_result": "1 passed/0failed/0ignored/679filtered; compile24.48s/runtime20.30s. Hardware Intel HD Graphics P630(KBL GT2), IntegratedGpu/Vulkan; helper rejects CPU fallback.",
+      "physical_targets": "960x720 at UIscale1;1920x1440 at UIscale2. Production hardware renderer4xMSAA and actual GPU texture readback; output dimensions/rows are physical pixels, not UI-scaled logical pixels.",
+      "measurements": [
+        {
+          "ui_scale": 1.0,
+          "camera_zoom": 40.0,
+          "material_physical_px": 8.0,
+          "center_px": [
+            334,
+            361
+          ],
+          "accent_rows": [
+            355,
+            356,
+            365,
+            366
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 1.0,
+          "camera_zoom": 80.0,
+          "material_physical_px": 16.0,
+          "center_px": [
+            334,
+            362
+          ],
+          "accent_rows": [
+            352,
+            353,
+            370,
+            371
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 1.0,
+          "camera_zoom": 160.0,
+          "material_physical_px": 32.0,
+          "center_px": [
+            334,
+            364
+          ],
+          "accent_rows": [
+            346,
+            347,
+            380,
+            381
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 1.0,
+          "camera_zoom": 320.0,
+          "material_physical_px": 64.0,
+          "center_px": [
+            334,
+            368
+          ],
+          "accent_rows": [
+            334,
+            335,
+            400,
+            401
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 2.0,
+          "camera_zoom": 22.535212,
+          "material_physical_px": 8.0,
+          "center_px": [
+            668,
+            721
+          ],
+          "accent_rows": [
+            715,
+            716,
+            725,
+            726
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 2.0,
+          "camera_zoom": 45.070423,
+          "material_physical_px": 16.0,
+          "center_px": [
+            668,
+            721
+          ],
+          "accent_rows": [
+            711,
+            712,
+            729,
+            730
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 2.0,
+          "camera_zoom": 90.14085,
+          "material_physical_px": 32.0,
+          "center_px": [
+            668,
+            721
+          ],
+          "accent_rows": [
+            703,
+            704,
+            737,
+            738
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        },
+        {
+          "ui_scale": 2.0,
+          "camera_zoom": 180.2817,
+          "material_physical_px": 64.0,
+          "center_px": [
+            668,
+            721
+          ],
+          "accent_rows": [
+            687,
+            688,
+            753,
+            754
+          ],
+          "core_rgba": [
+            216,
+            63,
+            56,
+            255
+          ]
+        }
+      ],
+      "readbacks": "24fullPNG readbacks: bare/ordinary-selected/high-contrast for8setups, saved before assertions. Implementer personally viewed thin/thick/scale2contrast representatives; independent reviewer remeasured every image.",
+      "pixel_oracles": "Exact#CE5A92 has two full physical accent rows per side at every zoom/scale, with no arbitrary AA tolerance. Outside-radius+3 pixels equal bare. Existing bareRGB200/58/52 -> lifted216/63/56 at center and both interior samples moving with radius beyond2pxglow, so fixed central lift fails. Ordinary edge glow214/71/90 differs from high-contrast216/63/56, while core and crisp external cue remain equal.",
+      "invariance": "Fixture.source_bytes checks all materialized model source-shard bytes plus journal before/after; revision/v1/head bytes also unchanged. This does not claim a complete revision-store inventory or a native selection/terminal workflow."
+    },
+    "preserved_failure": {
+      "run01": "Actual1hardware test FAIL before pixel capture: initial prototype omitted append_native_selection and assumed detailedTrack used selection_strokes. The real detailed Track is mask-owned. Earlier LOD inference is explicitly superseded, not an observed product defect or cue-width failure.",
+      "log_sha256": "459f8b4c0ff50c756071239ef730a0ef88d56eeab3176621d13c65083910ab7a",
+      "executed_source_snapshot_sha256": "3685bbca40d47d0ac12b9e934eb89a2ada8ec0c3f474487109f9645d84e155a0",
+      "repair": "Obsolete appended Stroke prototype removed; original Stroke file restored exactly. Lease/Beads/export synchronized for existing Mask test owner before correction. Corrected test includes both moving interior lift controls and repository .datum/scratch evidence-root containment. No parameter search/production adaptation."
+    },
+    "independent_review": {
+      "reviewer_task": "/root/closeout_review",
+      "source": "Actual source CLEAR af03b8bf; real append/mask path, independent Projection and moving bilateral lift controls accepted; no mandatory finding.",
+      "pixels_and_pins": "Actual run02 SOURCE+PIXEL CLEAR; reviewer viewed4representatives and independently remeasured all24 images across8setups, exact2rows/lift/glow/outside/dimensions. All17source/28artifact/unchangedGUI pins verified; executed snapshot exactaf03 and oldStroke exactHEAD.",
+      "manager_disposition": "Appointed PM059 manager accepts bounded horizontalTrack/offscreen verification after actual source/pixel/finalcombined PASS and authorizes exact4owned-path normal-hook main commit. No issue closure, extra runtime/build or fullV5/C04/HUMAN/successor acceptance. Actual Git landing and independent manager transport verification carry the commit identity; no extra record commit is required for transport.",
+      "final_combined": {
+        "reviewer_task": "/root/closeout_review",
+        "outcome": "Actual final combined PASS; no mandatory findings.",
+        "candidate_sha256": "5a10f301c602c6cf43e304036f3f670ad2ff0b6e6c0661d81de52a4141dcd603",
+        "proof_sha256_at_review": "dc676b579ca7dddc88e8d28c944aa756055d8380991ac105acdff9ab1c4e511b",
+        "verified": "All18source/28artifact/unchangedordinaryGUI pins, exact4owned paths, bounded state/measurement/source-invariance wording and preserved run01 setup failure."
+      }
+    },
+    "checks": "Scopedformat/whitespace/sourcehealth3259/projectstate101 PASS. Cargo serial guarded; visual dependencies were existing locked dependencies, no addition. Raw33.6GiB soft-cache warning retained; no manual cache cleanup. Existing ordinary GUI f991d8b7 remains unchanged.",
+    "limits": [
+      "Only horizontal source-bound authored Track cross-section, four actual zooms x two UI scales, hardware offscreen GPU readback. Not ordinary native input/HUMAN, every class/angle or fullV5/C04.",
+      "No timing/latency/counter thresholds, new dependency, complete archive qualification or successor authorization. The test has integer-aligned boundary samples; it does not claim arbitrary subpixel/diagonal AA metrology.",
+      "No production source changes, new fixture definitions or tracked audit report; evidence stays in ignored owned scratch and this existing proof record."
     ]
   }
 }
