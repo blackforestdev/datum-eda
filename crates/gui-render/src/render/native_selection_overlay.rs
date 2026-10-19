@@ -442,6 +442,16 @@ pub(super) fn push_region(
         feedback.phase as f32
     };
     let dash = if feedback.subtractive { 3.0 } else { 6.0 }; // Both shape and cadence distinguish subtraction without color.
+    // Paint every dark segment first so retraced paths cannot erase a light
+    // dash. Both passes use the same one-pixel boundary, without a fill/halo.
+    for i in 0..feedback.path.len() {
+        let a = projection.project_point(feedback.path[i]);
+        let b = projection.project_point(feedback.path[(i + 1) % feedback.path.len()]);
+        if a != b {
+            push_screen_line(out, a, b, [0.0, 0.0, 0.0], 1.0);
+        }
+    }
+    let mut distance = 0.0;
     for i in 0..feedback.path.len() {
         let a = projection.project_point(feedback.path[i]);
         let b = projection.project_point(feedback.path[(i + 1) % feedback.path.len()]);
@@ -451,27 +461,20 @@ pub(super) fn push_region(
         if length == 0.0 {
             continue;
         }
-        let mut at = -phase;
+        // Continue cadence around corners instead of synchronizing every short
+        // edge to a phase that could leave the entire rectangle dark.
+        let mut at = -(phase + distance).rem_euclid(dash * 2.0);
         while at < length {
             let lo = at.max(0.0);
             let hi = (at + dash).min(length);
             if hi > lo {
                 let p = (a.0 + dx * lo / length, a.1 + dy * lo / length);
                 let q = (a.0 + dx * hi / length, a.1 + dy * hi / length);
-                push_screen_line(
-                    out,
-                    p,
-                    q,
-                    if ((at + phase) / (dash * 2.0)) as i64 % 2 == 0 {
-                        TEXT_PRIMARY
-                    } else {
-                        [0.0, 0.0, 0.0]
-                    },
-                    1.0,
-                );
+                push_screen_line(out, p, q, TEXT_PRIMARY, 1.0);
             }
             at += dash * 2.0;
         }
+        distance = (distance + length).rem_euclid(dash * 2.0);
     }
     crate::hit_clipping::clip_content(
         out,

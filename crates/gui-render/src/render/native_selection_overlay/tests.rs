@@ -404,3 +404,236 @@ pub(crate) use related_fixture::selected_related_state;
 
 #[path = "owned_graphic_tests.rs"]
 mod owned_graphic_tests;
+
+// Observe final opaque mesh coverage in painter order, independently of the
+// dash construction. Palette equality avoids inventing a luminance threshold.
+fn region_sample(quads: &[Quad], p: (f32, f32), background: [f32; 3]) -> [f32; 3] {
+    let mut color = background;
+    for q in quads {
+        let area: f32 = (0..4)
+            .map(|i| {
+                let a = q.points[i];
+                let b = q.points[(i + 1) % 4];
+                a.0 * b.1 - b.0 * a.1
+            })
+            .sum();
+        if area == 0.0 {
+            continue;
+        }
+        let mut positive = false;
+        let mut negative = false;
+        for i in 0..4 {
+            let a = q.points[i];
+            let b = q.points[(i + 1) % 4];
+            let cross = (b.0 - a.0) * (p.1 - a.1) - (b.1 - a.1) * (p.0 - a.0);
+            positive |= cross > 0.0;
+            negative |= cross < 0.0;
+        }
+        if !(positive && negative) {
+            color = q.color;
+        }
+    }
+    color
+}
+
+fn region_distance(path: &[(i64, i64)], p: (f32, f32)) -> f32 {
+    (0..path.len())
+        .map(|i| {
+            let a = (path[i].0 as f32, path[i].1 as f32);
+            let b = path[(i + 1) % path.len()];
+            let d = (b.0 as f32 - a.0, b.1 as f32 - a.1);
+            let length2 = d.0 * d.0 + d.1 * d.1;
+            let t = if length2 == 0.0 {
+                0.0
+            } else {
+                (((p.0 - a.0) * d.0 + (p.1 - a.1) * d.1) / length2).clamp(0.0, 1.0)
+            };
+            (p.0 - a.0 - t * d.0).hypot(p.1 - a.1 - t * d.1)
+        })
+        .fold(f32::INFINITY, f32::min)
+}
+
+#[test]
+fn region_short_boundaries_retain_light_dashes_at_every_phase_without_fill_or_halo() {
+    let (fixture, mut state) = selected_state();
+    let before = fixture.source_bytes();
+    // Inset 1000px over 1000nm with this camera gives an independent 1:1
+    // placement: feedback point (x-10,y-10) must paint at screen (x,y).
+    state.scene.bounds = datum_gui_protocol::SceneBounds {
+        min_x: 0,
+        min_y: 0,
+        max_x: 1000,
+        max_y: 1000,
+    };
+    let viewport = RectPx {
+        x: 0.0,
+        y: 0.0,
+        width: 1020.0,
+        height: 1020.0,
+    };
+    let camera = CameraState {
+        center_x_nm: 500.0,
+        center_y_nm: 500.0,
+        zoom: 1.0,
+    };
+    let pane = state.ui.layout.focused;
+    let shapes: &[(&str, &[(i64, i64)], bool)] = &[
+        (
+            "observed14x13",
+            &[(100, 100), (114, 100), (114, 113), (100, 113)],
+            true,
+        ),
+        (
+            "threshold4x4",
+            &[(100, 100), (104, 100), (104, 104), (100, 104)],
+            true,
+        ),
+        (
+            "narrow4x1",
+            &[(100, 100), (104, 100), (104, 101), (100, 101)],
+            true,
+        ),
+        (
+            "degenerate",
+            &[(100, 100), (104, 100), (104, 100), (100, 100)],
+            false,
+        ),
+        (
+            "retraced",
+            &[(100, 100), (114, 100), (100, 100), (100, 113)],
+            false,
+        ),
+        (
+            "larger",
+            &[(100, 100), (228, 100), (228, 196), (100, 196)],
+            true,
+        ),
+        (
+            "lasso",
+            &[(100, 100), (106, 98), (115, 105), (112, 114), (98, 111)],
+            true,
+        ),
+    ];
+    for &(name, path, has_interior) in shapes {
+        for subtractive in [false, true] {
+            let mut phase_zero = Vec::new();
+            let mut phase_one = Vec::new();
+            for phase in 0..12 {
+                state.ui.global_preferences.reduced_motion = false;
+                state.ui.selection_region = Some(datum_gui_protocol::SelectionRegionFeedback {
+                    pane,
+                    path: path
+                        .iter()
+                        .map(|&(x, y)| PointNm {
+                            x: x - 10,
+                            y: y - 10,
+                        })
+                        .collect(),
+                    subtractive,
+                    phase,
+                    evaluating: None,
+                });
+                let render = |state: &ReviewWorkspaceState| {
+                    let mut quads = Vec::new();
+                    let mut text = Vec::new();
+                    push_region(
+                        &mut quads,
+                        &mut text,
+                        state,
+                        pane,
+                        &state.scene,
+                        viewport,
+                        camera,
+                    );
+                    assert!(text.is_empty());
+                    assert!(
+                        quads
+                            .iter()
+                            .flat_map(|q| q.points)
+                            .all(|(x, y)| viewport.contains(x, y))
+                    );
+                    quads
+                };
+                let quads = render(&state);
+                assert!(!quads.is_empty(), "nonvacuous {name}");
+                let mut light = 0;
+                let mut dark = 0;
+                for y in path.iter().map(|p| p.1).min().unwrap() - 1
+                    ..=path.iter().map(|p| p.1).max().unwrap() + 1
+                {
+                    for x in path.iter().map(|p| p.0).min().unwrap() - 1
+                        ..=path.iter().map(|p| p.0).max().unwrap() + 1
+                    {
+                        let point = (x as f32 + 0.25, y as f32 + 0.25);
+                        let on_dark = region_sample(&quads, point, [0.0; 3]);
+                        let on_light = region_sample(&quads, point, TEXT_PRIMARY);
+                        light += usize::from(on_dark == TEXT_PRIMARY);
+                        dark += usize::from(on_light == [0.0; 3]);
+                        if on_dark != [0.0; 3] || on_light != TEXT_PRIMARY {
+                            assert!(
+                                region_distance(path, point) <= 0.5,
+                                "fill/halo {name} {phase} {point:?}"
+                            );
+                        }
+                    }
+                }
+                assert!(
+                    light > 0,
+                    "dark-only boundary {name} subtractive={subtractive} phase={phase}"
+                );
+                if has_interior {
+                    assert!(
+                        dark > 0,
+                        "missing dark contrast {name} subtractive={subtractive} phase={phase}"
+                    );
+                }
+                if phase == 0 {
+                    phase_zero = quads.clone();
+                }
+                if phase == 1 {
+                    phase_one = quads;
+                }
+                state.ui.global_preferences.reduced_motion = true;
+                assert_eq!(render(&state), phase_zero, "reduced motion {name} {phase}");
+            }
+            assert_ne!(
+                phase_zero, phase_one,
+                "animation remains enabled for {name}"
+            );
+        }
+    }
+    for (path, bytes) in before {
+        assert_eq!(std::fs::read(path).unwrap(), bytes);
+    }
+}
+
+#[test]
+fn region_empty_or_single_point_feedback_cannot_paint_a_fill() {
+    let (_fixture, mut state) = selected_state();
+    let pane = state.ui.layout.focused;
+    for path in [vec![], vec![PointNm { x: 0, y: 0 }]] {
+        state.ui.selection_region = Some(datum_gui_protocol::SelectionRegionFeedback {
+            pane,
+            path,
+            subtractive: false,
+            phase: 6,
+            evaluating: None,
+        });
+        let mut quads = Vec::new();
+        push_region(
+            &mut quads,
+            &mut Vec::new(),
+            &state,
+            pane,
+            &state.scene,
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 100.0,
+            },
+            CameraState::fit_to_bounds(&state.scene.bounds),
+        );
+        assert!(quads.is_empty());
+    }
+}

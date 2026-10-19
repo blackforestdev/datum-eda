@@ -11667,5 +11667,77 @@
       "manager_disposition": "ACCEPT finite nonempty-P cancellation only; exact6owned-path normal-hook proof landing authorized. No closure followup: C04 remains in_progress and both related defects remain OPEN. Manager independently verified source/artifact/binary pins, raw/public phase observations, pixel-presence evidence, prior entries and exact scope.",
       "retained": "No contrast/width/animation/Inspector-header/fullN13/C04/C05/C06/HUMAN/windowClose or successor acceptance. No renderer or other product edit in this increment."
     }
+  },
+  "native_wayland_small_marquee_contrast_correction_20261019": {
+    "status": "Actual independent combined bounded PASS and appointed manager acceptance for20bq shared small-marquee correction only. C04 remains in progress.",
+    "issue": "dat-small-marquee-contrast-20bq",
+    "authority": "Appointed PM059 manager released shared correction after actual UVT2.2.3/prototype/guide authority review. Existing one-pixel/no-fill/highcontrast dancing-ants behavior; no new colors/halo/luminance or performance thresholds, timing, preferences or selection rules.",
+    "root_cause": "Per-edge phase reset and alternating white/black drawn chunks can synchronize every short edge dark. For validphase6/adddash6/edge13or14px, initialwhite[-6,0] clips away, black[6,12] remains, nextwhite[18,24] is outside. Original current frame has48changed dark pixels with components<=26; preserved unmodified, never relabelled as new contrast PASS.",
+    "correction": "Paint existing black one-pixel base across all edges before any light dash, then existing TEXT_PRIMARY dashes with screen-space phase carried across corners. Preserve add6/subtract3 cadence, phase0 reducedmotion, clipping and runtime tick/selection. No black retrace can erase an earlier light dash; no fill or widened boundary.",
+    "source_sha256": {
+      "crates/gui-render/src/render/native_selection_overlay.rs": "827518733dba84963416037df8fa1be075d42dd2c851bfe1efac98950c3befa5",
+      "crates/gui-render/src/render/native_selection_overlay/tests.rs": "74450e0af7a814a3894ba505297c9ea21016431afabebfcbc04abbf3acdebc0d"
+    },
+    "source_review": "Actual /root/closeout_review SOURCE-ONLY PASS at82751873/74450e0a via manager; no mandatory core finding.",
+    "test_build_receipt": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/marquee-contrast-build-receipt.json",
+      "sha256": "d4f833c42983d3a2d746be0fb483f7b53fcf6f417fa32c47686fcdd86bfab6cb",
+      "actual_tests": "Correct guarded native_selection_overlay::tests::region_ filter:3passed/0failed/671filtered;7.22sruntime. Includes existing clipping/source and empty/single negatives.",
+      "scope": "All7shapes/12existingphases/bothmodes: light-on-dark presence and sampled nofill/nohalo. Nondegenerate14x13/4x4/4x1/larger/lasso also black-on-light. Degenerate/retraced are light-only scope, not both-background contrast. Phase mesh difference is not visible animation/timing proof; reducedmotion exactphase0 mesh equality. No added RGB threshold.",
+      "retained_setup_failure": "Attempt01 render::-prefixed filter compiled but ran ZERO tests/674filtered. Exact log/command retained, no regressionPASS credit. Source unchanged for corrected02.",
+      "build": "Matching guardedGUI exit0/23.53s,37.6GiB guard admitted; existing unused overflow warning only; owned unit TMPDIR empty and removed."
+    },
+    "candidate_manifest": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/marquee-contrast-candidate-pins.json",
+      "sha256": "c8a8d4144c61232d83f9b74920a87697b31042d3cfd3ccab548896c00ab51035"
+    },
+    "binary_sha256": {
+      "datum-gui": "f66ad103ad7627c63acf725f9813ee23ef46946cd06bf6504a3be7f65a222174",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "native_run": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-marquee-contrast-01",
+    "gui_pid": 724245,
+    "compositor_pid": 724234,
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792398909, tv_nsec: 556796078 }] surface identity window=WindowId(94475064739392) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ],
+    "reuse": "Exactly one unchanged accepted N13 case/harness/source oracle and same world29,-1..31,+1mm/screen970,397..984,410 rectangle. Current initial/prior-P PNGs exactly match originala9eb0c57/9111d8a7 and fitted camera/layout/scale before input. No coordinate or native-phase sweep.",
+    "native_comparison": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-marquee-contrast-01/marquee-contrast-comparison.json",
+      "sha256": "2a1c39498b0125d4519a4aed7aeef27e9535017efdb6c4493fb0e8669b5c6140",
+      "observed": "Current active/cancel frames differ104pixels exclusively at original bbox969,396..984,410:48brightened and56darkened samples, maximum activeRGB174. Both stroke tones now present versus same underlay; originaldark-only48/max26 frame retained. Numbers describe observations, not a new threshold. Outside boundary unchanged.",
+      "semantics": "Same exact U14/focus throughactive/Escape/trailing release, idleNone, freshsingletonU0 Compound/noFocus; sourcequalified fullpublic checks and ordered native held-input phases pass. OriginalQA/readers unchanged; no product input injection."
+    },
+    "rendered_observation": "Personally inspected current initial/P/active/cancel/fresh frames. Light/black dashes readable at unchanged small rectangle, disappear before primary release while U14 remains; freshU0 cues and known generic singleton header remain. No full-width/animation/HUMAN or Inspector-header qualification.",
+    "nonmutation": "All51 frozen source/history hashes equal original accepted map and four current stages. Exact operational roles excluded/unread. No membership/focus/camera/layout/quantity changes.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 724275,
+          "socket": "/run/user/1000/npd-wl-5goy7ppx/datum-native-edit-7a4b2d83-c01b-4e16-a130-ee83cf255b41/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-5goy7ppx",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "GUI SIGTERM/own daemon housekeeping is not ordinary windowClose/GPU-drain qualification."
+    },
+    "retained_boundaries": "20bq closes only after reviewed landing. dat-unfocused-singleton-inspector-vs05 remains OPEN, no new focus/normalization/header acceptance. Original dark N13 frame, warning and previous entries/failures preserved. FullN02/N15/animation/timing/HUMAN/C04/C05/C06/Close/successors remain unaccepted.",
+    "independent_receipt": {
+      "reviewer_task": "/root/closeout_review",
+      "receipt_route": "Actual combined bounded PASS/no mandatory correction delivered through appointed manager MCP session01a13df1-7a0d-72c1-bbdd-f0d96d481598.",
+      "candidate_manifest_sha256": "c8a8d4144c61232d83f9b74920a87697b31042d3cfd3ccab548896c00ab51035",
+      "verified": "7source/25artifact/3binary pins, exact82751873/74450e0a source, actual3tests/matchingbuild, current small-box light/dark native frame, cancellation/fullmembership/focus/51files/cleanup; original dark and zero-test setup retained.",
+      "manager_disposition": "ACCEPT20bq correction at exact source pins; exact5owned-path normal-hook landing then minimal actual-hash20bq closure/retained-C04 metadata followup authorized. Manager independently verified all pins/maps/focus and reproduced original48dark versus current104(48light/56dark) raster samples in same box.",
+      "retained": "All stated unit/native scope limits preserved; no both-background degenerate/retrace or visible-animation/timing/fullN02/N15/physical-width/HUMAN/C04/C05/C06/Close/successor acceptance. vs05 remains OPEN; no other closure."
+    }
   }
 }
