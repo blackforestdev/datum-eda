@@ -219,10 +219,72 @@ def parent_points(qa, main, state, project, contract, result):
     qa.capture('fresh-body-u2-object', main)
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False):
+def pin_points(qa, main, state, project, contract, result):
+    symbols = json.loads((project / 'schematic/main.json').read_text())['symbols']
+    parent = next(s for s in symbols.values() if s['reference'] == 'U14')
+    index, pin = next((i, p) for i, p in enumerate(parent['pins']) if p['name'] == 'P13')
+    assert pin['position'] == {'x': 13_000_000, 'y': 0}
+    assert sum(p['position'] == pin['position'] for s in symbols.values() for p in s['pins']) == 1
+    identity = {'class': 'symbol', 'id': parent['uuid']}
+    expected = {'pid': qa.process.pid, 'project': contract['project_id'],
+                'revision': contract['model_revision'], 'kind': 'object',
+                'scope': identity['class'], 'members': [identity], 'focus': identity,
+                'oracle': 'Frozen majority-v1 unique P13 absolute terminal and owning U14; no acquired child supplies the parent identity'}
+    result['pin_source_oracle'] = {'parent': parent, 'pin': pin, 'index': index, 'expected': expected}
+    qa.key(main, 'Escape')
+    qa.wait('initial pin selection empty', lambda: state()['value']['selection']['kind'] == 'none')
+    result['initial_presented_frame'] = qa.capture('pin-initial-current-frame', main)
+    result['initial_state'] = state()
+    path = qa.root / 'current-frame-point-plan.json'
+    plan = qa.wait('source-bound pin point plan', lambda:
+                   json.loads(path.read_text()) if path.exists() else False, timeout=300)
+    assert plan['capture_sha256'] == digest(qa.root / 'pin-initial-current-frame.png')
+    assert plan['pin_uuid'] == pin['uuid'] and plan['transform']
+    result['point_plan'] = plan
+    diagnostic, dispatch = Path(qa.env['DATUM_GUI_LOG']), qa.root / f'{qa.phase}.log'
+    for label in ['pin-acquired-parent', 'pin-reacquired-parent']:
+        prior = state()['sequence']
+        qa.wait_presented()
+        qa.focus(main)
+        x, y = plan['screen_px']
+        offset = len(diagnostic.read_text())
+        qa.command('xdotool', 'mousemove', '--window', main, str(x), str(y))
+        qa.wait('native pointer at unique source pin', lambda:
+                f'cursor moved {x:.2f},{y:.2f}' in diagnostic.read_text()[offset:])
+        offset = len(dispatch.read_text())
+        qa.command('xdotool', 'click', '1')
+        def observe():
+            record = state()
+            if record['sequence'] <= prior or record['value']['selection'].get('kind') != 'object':
+                return False
+            try:
+                observation = qualify(record, selection_snapshot(qa), expected)
+                assert all(m['attributes']['hidden'] == 'false' for m in observation['public_snapshot']['members'])
+                return observation if state()['sequence'] == record['sequence'] else False
+            except ValueError as error:
+                result['pending_public_read_failure'] = str(error)
+                return False
+        result[label] = qa.wait('complete public exact pin parent/focus/scope', observe)
+        lines = [line for line in dispatch.read_text()[offset:].splitlines() if line.startswith('[datum-click]')]
+        assert any(f'schematic-symbol-pin-terminal:{parent["uuid"]}:{index}' in line for line in lines), lines
+        result[label]['pin_dispatch'] = lines
+        qa.command('xdotool', 'mousemove', '--window', main, '100', '100')
+        qa.wait_presented()
+        qa.capture(label, main)
+        if label == 'pin-acquired-parent':
+            prior = state()['sequence']
+            qa.key(main, 'Escape')
+            result['cleared'] = qa.wait('pin parent Escape clears', lambda: state() if
+                state()['sequence'] > prior and state()['value']['selection']['kind'] == 'none' else False)
+            qa.wait('public pin selection root removed', lambda: not any(
+                n.get_accessible_id() == '/org/a11y/atspi/accessible/selection' for n in qa.nodes()))
+            qa.capture('pin-escape-clear', main)
+
+
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False):
     contract = json.loads((project / 's5a-fixture.json').read_text())
-    if parents_case:
-        content, label = 'Some(Schematic)', 'selection-parents'
+    if parents_case or pin_case:
+        content, label = 'Some(Schematic)', 'selection-pin' if pin_case else 'selection-parents'
         expected = {'fixture_sha256': digest(project / 's5a-fixture.json')}
     elif surface == 'schematic':
         expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
@@ -257,8 +319,8 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         qa.key(main, 'Tab')
     qa.wait('ordinary target pane focus',
             lambda: state()['value']['focused_content'] == content)
-    if parents_case:
-        parent_points(qa, main, state, project, contract, result)
+    if parents_case or pin_case:
+        (pin_points if pin_case else parent_points)(qa, main, state, project, contract, result)
         finish_case(qa, main, state, project, frozen_files, result, before)
         return
     if prehidden_l1:
@@ -346,11 +408,14 @@ def main():
     parser.add_argument('--surface', choices=['schematic', 'board'], default='schematic')
     parser.add_argument('--prehidden-l1', action='store_true')
     parser.add_argument('--parents-point', action='store_true')
+    parser.add_argument('--pin-point', action='store_true')
     args = parser.parse_args()
     if args.prehidden_l1 and args.surface != 'board':
         parser.error('pre-hidden L1 control is only defined for this frozen Board case')
     if args.parents_point and (args.surface != 'schematic' or args.prehidden_l1):
         parser.error('parent body points are defined only for the frozen Schematic parents case')
+    if args.pin_point and (args.surface != 'schematic' or args.prehidden_l1 or args.parents_point):
+        parser.error('pin point is defined only for the frozen Schematic majority case')
     run = args.run_dir.absolute()
     if run.resolve() != run or not run.is_relative_to(OWNED) or run == OWNED or run.exists():
         parser.error('run-dir must be a fresh unaliased child of the owned task scratch')
@@ -380,10 +445,11 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1 or args.parents_point:
+    if args.prehidden_l1 or args.parents_point or args.pin_point:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
     result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
               'parents_point': args.parents_point,
+              'pin_point': args.pin_point,
               'binary_sha256': qa.binary_hashes, 'project': str(project),
               'limits': 'Finite ordinary selection/complete public membership/nonmutation cases only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
@@ -394,7 +460,7 @@ def main():
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)

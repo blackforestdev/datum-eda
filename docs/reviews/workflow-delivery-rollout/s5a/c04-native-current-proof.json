@@ -10734,5 +10734,125 @@
       "manager_disposition": "ACCEPT bounded body projection repair and finite body04 parent-point/focus behavior; explicitly authorized scoped eight-path landing.",
       "boundaries": "Keep C04 and relatedg04b open. Preserve originalFAIL01-03; no pin/fullN15/HUD/hover/HUMAN/C05/C06 or successor acceptance."
     }
+  },
+  "native_wayland_pin_parent_20261018": {
+    "status": "Actual independent bounded PASS/no mandatory findings and appointed manager acceptance for this finite majority-v1 pin-parent case only. C04 remains in progress.",
+    "baseline": "Published e11eb033; existing runner profile extension only, no product/Rust/reader changes or new build.",
+    "case": "N01 ordinary schematic pin acquisition collapses to parent Symbol; bounded N15 owned-pin presentation only. Click P13 terminal, pointer off canvas, Escape, fresh same-pin click, pointer off canvas.",
+    "independent_source_oracle": {
+      "fixture": "s5a-c03-u5-majority-v1",
+      "canonical_files": 51,
+      "project": "72000000-0000-4000-8000-000000000001",
+      "revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b",
+      "parent": {
+        "class": "symbol",
+        "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+      },
+      "pin": {
+        "electrical_type": "Passive",
+        "library_pin": "75000000-0000-4000-8000-000000000071",
+        "name": "P13",
+        "number": "P13",
+        "position": {
+          "x": 13000000,
+          "y": 0
+        },
+        "uuid": "2f4bdbc2-5740-425e-8811-76750b7ba8e9"
+      },
+      "pin_index": 13,
+      "uniqueness": "Only U14 owns any pins; U0 is pinless, all14 absolute U14 positions are distinct, and Wire/Bus/label collections are empty. Pin P13 at13mm,0 is beyond P12 at12mm and the library Line near origin. No pose/local-anchor convention is inferred or changed.",
+      "library_body": "Existing reusable symbol has one diagonal Line; this is not the parents-v3 triangular or complete-body qualification."
+    },
+    "binary_sha256": {
+      "datum-gui": "af3a8ddcdeb271be4ac15c372589cb24f97fcd46cec98a5808fea8596f300c18",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "8d3fc09c180c69d10a4410c4faa995a44cf4108d801564a9b3cb40957b319514",
+      "s5a_native_selection_observation.py": "009a606614439c51cfc5e65369586bdb041f65d5805da6417a6178778ed5dc88",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792388589, tv_nsec: 642140144 }] surface identity window=WindowId(94639027348320) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ],
+    "gui_pid": 673144,
+    "compositor_pid": 673129,
+    "current_frame_binding": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-pin-parent-01/current-frame-point-plan.json",
+      "sha256": "fd972abd3f57580d517003d4748e5e50cb9c08f6747d8d0453676c1decc2f20d",
+      "capture_sha256": "a9eb0c5790d8302fab03167368cdbe3d698c6a580cc486639bbb5d47fa7ce0e6",
+      "description": "Initial settled native frame personally inspected before plan publication. Source absolute P13anchor and unchanged fitted camera/layout yield860.703422,403.5 physicalpx, rounded861,404. Plan records source owners/hashes, retained bounds/fit center/field/transform. Both actual native traces independently hit U14 terminal index13 at world13043394,73159; no coordinate sweep/private setter."
+    },
+    "acquisition": {
+      "pin-acquired-parent": {
+        "sequence": 3,
+        "kind": "object",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "focus": "{\"class\":\"symbol\",\"id\":\"d5032e68-e22b-47af-a043-9dfa3a8b9906\"}",
+        "scope": "symbol",
+        "pin_dispatch": [
+          "[datum-click] primary click (861.0, 404.0) schematic world (13043394, 73159) hit Some(AuthoredObject(\"schematic-symbol-pin-terminal:d5032e68-e22b-47af-a043-9dfa3a8b9906:13\")) (native selection acquisition)"
+        ]
+      },
+      "pin-reacquired-parent": {
+        "sequence": 5,
+        "kind": "object",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "focus": "{\"class\":\"symbol\",\"id\":\"d5032e68-e22b-47af-a043-9dfa3a8b9906\"}",
+        "scope": "symbol",
+        "pin_dispatch": [
+          "[datum-click] primary click (861.0, 404.0) schematic world (13043394, 73159) hit Some(AuthoredObject(\"schematic-symbol-pin-terminal:d5032e68-e22b-47af-a043-9dfa3a8b9906:13\")) (native selection acquisition)"
+        ]
+      }
+    },
+    "escape": {
+      "sequence": 4,
+      "kind": "none",
+      "public_selection_root_removed": true
+    },
+    "complete_public_read": "Exact process/project/revision-bound single SymbolU14; full typed source identity, standard SELECTED, selected=true, selection-focus=true and hidden=false. Object scopeSymbol, explicit stale=False and compact digest correlation checked by unchanged accepted reader. No Pin/primitive child leaks as independent selection.",
+    "rendered_observation": "All4 captures personally inspected: initial pin row/U0 at rest; after both terminal acquisitions with pointer outside canvas, U14 pin terminals/strokes and owned annotation cues visibly accent while U0 remains at rest; Escape shows InspectorNone and resting pin row. No whole-owned/all-pose/metrology/HUMAN claim; historical PM033 Console echo after Escape is not live selection status.",
+    "nonmutation": "All51 tracked canonical hashes identical before launch, after selected/cleared/reselected sequence, after ordinary terminal exit and after owned teardown; exact source/pins/library and full stored journal/history unchanged. Exact operational-role payloads excluded and unread.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 673170,
+          "socket": "/run/user/1000/npd-wl-4het6hln/datum-native-edit-1addbc57-db8a-4b2b-9910-ce269112fb27/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-4het6hln",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM/own daemon housekeeping are not ordinary windowClose/GPU drain qualification."
+    },
+    "verification_reuse": "Existing accepted4 Rust/12 reader tests and matching GUI build from e11eb033 reused unchanged. Current runner py_compile/source-health3253/diff preflight passed; actual native run verifies new finite branch. No Cargo/extra fixtures or repeated body/baseline case.",
+    "retained_boundaries": "Parents-v3 duplicated pin positions remain unqualified and untouched under g04b. This valid U14 pin case does not repair/rewrite them or qualify rotated-pin ownership. No fullN01/N15/HUD/hover/HUMAN/C04/C05/C06/successor, source geometry/budget/identity/dependency/prototype change.",
+    "independent_receipt": {
+      "reviewer": "closeout_review provisioned by appointed manager",
+      "result": "Actual bounded PASS, no mandatory findings",
+      "candidate": "b97d756d442f2c19c71bc882ab31de2fa84abb0c32ad545e07d21845c413e4c8",
+      "scope": "One changed source/eight artifact pins; exact P13 ownership and both terminal dispatches; seq3/5 complete parent/focus/scope/nonstale, seq4 clear; all4 frames, all51 files at4stages/current, matching binaries/launch sources and cleanup.",
+      "manager_disposition": "ACCEPT finite majority-v1 pin-parent case only, authorize scoped four-path landing. Prior evidence/claim/tracker checked independently.",
+      "retained": "Parents-v3 ambiguity and fullN01/N15/HUMAN/C04/C05/C06 remain open; no source/build/native rerun."
+    }
   }
 }
