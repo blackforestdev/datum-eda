@@ -1581,3 +1581,34 @@ integration before writing overlapping paths. Reader/runtime/build scope must
 be expanded explicitly and synchronized before use, within the retained C04
 grant; this is not a new owner approval requirement for routine work.
 No C04 result, C05 replay or C06 acceptance is asserted by this handoff.
+
+At 2026-10-19T04:17:14Z, after the independently accepted storage correction landed
+as `81f79513`, the worker expands this same C04 claim to the agreed native
+reader/helper paths before edits:
+
+- `scripts/prove_native_project_startup_gui.py`
+- `scripts/prove_s5a_native_selection.py`
+- `scripts/s5a_native_selection_observation.py`
+- `scripts/test_s5a_native_selection_observation.py`
+
+This implements current compact-diagnostic correlation and complete public
+selection observation against independent frozen fixture/query oracles. The
+existing native Wayland QA helper retains its defaults; task-local runtime
+storage and normal Project launch arguments are bounded extensions. Current
+reviewed binaries are reused only after source and byte identity checks. This
+changes no product/visual rule, fixture-generator grant, budget or C05/C06
+reservation. Routine tracker and Frontier synchronization accompanies the scope.
+
+The same native-proof scope also owns `scripts/native_project_source_inventory.py`
+for the existing shared digest/canonical source-inventory responsibility. This
+cohesive extraction keeps the QA helper within its normal source-health budget;
+its source/journal inclusion and operational-metadata exclusions stay unchanged.
+
+The appointed manager narrows its runtime-storage instruction for this C04
+execution: replay inputs, logs, captures and lasting evidence stay in the owned
+repository scratch. Disposable IPC sockets and their private process runtime may
+use a short, task-owned 0700 child of the existing user `XDG_RUNTIME_DIR`, with
+actual path/PID ownership recorded and cleanup after the owned processes stop.
+This addresses observed Unix-socket path limits; no required replay data moves
+there, no general fixture/storage rule changes, and no acceptance is waived.
+Both failed setup attempts remain evidence, without selection behavior credit.

@@ -7,7 +7,6 @@ private UI actions, owner Projects or HOME substitution participate.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -24,18 +23,17 @@ import gi
 
 gi.require_version("Atspi", "2.0")
 from gi.repository import Atspi, GLib  # noqa: E402
+from native_project_source_inventory import digest, source_files
 
 
 REPO = Path(__file__).resolve().parents[1]
 OWNED = REPO / ".datum/native-project-startup-repair"
 
 
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 class StartupQA:
-    def __init__(self, root: Path):
+    source_files = staticmethod(source_files)
+
+    def __init__(self, root: Path, *, runtime_parent: Path | None = None):
         self.root = root
         self.process = None
         self.app_log = None
@@ -44,7 +42,7 @@ class StartupQA:
         self.capture_counts = {}
         self.terminal_dock_open = True
         self.previous_focus = self.command("xdotool", "getwindowfocus").strip()
-        self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir="/tmp")
+        self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir=runtime_parent or "/tmp")
         self.compositor = None
         self.file_actions = False
         self.clipboard_writer = None
@@ -263,11 +261,13 @@ class StartupQA:
         ]
         return receipt
 
-    def launch(self, label):
+    def launch(self, label, *, project_root: Path | None = None):
         self.app_log = (self.root / f"{label}.log").open("w")
         self.phase = label
         self.env["DATUM_GUI_LOG"] = str(self.root / f"{label}-diagnostic.log")
         args = [str(self.binary_dir / "datum-gui")]
+        if project_root is not None:
+            args.extend(["--project-root", str(project_root)])
         self.actions.append({"launch_argv": args, "isolated_xdg": str(self.root)})
         self.process = subprocess.Popen(args, cwd=Path.home() if os.environ.get("DATUM_QA_TERMINAL_HANDOFF") == "1" else self.root, env=self.env,
                                         stdout=self.app_log, stderr=subprocess.STDOUT,
@@ -359,13 +359,6 @@ class StartupQA:
                 raise RuntimeError(f"{wanted} was not keyboard reachable in {title}")
             if key == "Return":
                 self.wait(f"{title} menu closed after {wanted}", lambda: entry() is None)
-
-    @staticmethod
-    def source_files(project):
-        return {str(p.relative_to(project)): digest(p) for p in project.rglob("*")
-                if p.is_file() and (".datum" not in p.relative_to(project).parts
-                    or p.relative_to(project).parts[:2] in
-                    {(".datum", "journal"), (".datum", "revision")} )}
 
     def package_reachability(self, main, target):
         before = self.source_files(target)

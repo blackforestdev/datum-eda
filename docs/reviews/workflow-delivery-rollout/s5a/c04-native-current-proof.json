@@ -9974,5 +9974,149 @@
     "C04_complete": false,
     "C05_completed": false,
     "C06_accepted": false
+  },
+  "native_wayland_keyboard_subset_20261018": {
+    "status": "Actual independent bounded PASS and manager objective acceptance for this reader/native selection subset only; C04 remains in progress.",
+    "source_baseline": "81f79513; application Rust sources remain byte-equivalent to reviewed35d5e014 build. The five current Python proof/helper paths are separately pinned.",
+    "current_proof_sources_sha256": {
+      "scripts/prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "scripts/native_project_source_inventory.py": "e6dfd8e85065edd0ee3d589f5a655d5d770bae8c33f5ce1dcb7c16ee8630b9fd",
+      "scripts/prove_s5a_native_selection.py": "c40c6d871c3b3f6458e5e493fa08762c3407d2caac32b12aad15ceb1722b591b",
+      "scripts/s5a_native_selection_observation.py": "58e598c43bcbb4fd116f77d00e5ba2b48f4dfff60746f5e9adf8ddaf11950001",
+      "scripts/test_s5a_native_selection_observation.py": "5ffcfe1aa427d145cf7c1682ee79cbf208fbf074d9571ac6e98f515aea5d6182"
+    },
+    "binary_sha256": {
+      "datum-gui": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "actual_backend": "Datum window_backend=wayland, gpu_backend=Vulkan, Intel HD Graphics P630/Mesa25.0.7-2+deb13u1. X11 drives only the owned Weston compositor, not an X11 Datum window.",
+    "fixture": {
+      "alias": "s5a-c03-u5-majority-v1",
+      "project_id": "72000000-0000-4000-8000-000000000001",
+      "model_revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b",
+      "tracked_contract_sha256": "69c950acc30ae95acf0e6fb9ed404eeeb88bcdb3324c8d6b7e786d369c46a247",
+      "prelaunch_catalogue_files": 51,
+      "rule": "Exact selected canonical files/contract checked against tracked catalogue before attempt04 launch. A copied index marker and unchanged pre/post maps alone are insufficient. The exact operational .datum/revision/writer.lock is recorded separately; every other extra/change refuses."
+    },
+    "ordinary_selection_subset": {
+      "attempt": "native-wayland-majority-04",
+      "gui_pid": 643422,
+      "compositor_pid": 643402,
+      "raw_status_unchanged": "FAIL",
+      "raw_error_unchanged": "timed out: terminal explicitly owns input; last=None",
+      "observations": [
+        {
+          "checkpoint": "selected",
+          "sequence": 3,
+          "members": [
+            {
+              "class": "symbol",
+              "id": "1e6478fa-6d06-4141-b87b-2cb407f54404"
+            },
+            {
+              "class": "symbol",
+              "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+            }
+          ],
+          "source_revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b"
+        },
+        {
+          "checkpoint": "subsequent_selection",
+          "sequence": 5,
+          "members": [
+            {
+              "class": "symbol",
+              "id": "1e6478fa-6d06-4141-b87b-2cb407f54404"
+            },
+            {
+              "class": "symbol",
+              "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+            }
+          ],
+          "source_revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b"
+        }
+      ],
+      "idle_escape_sequence": 4,
+      "complete_inventory": "Actual process-bound public AT-SPI full typed identities/revision/standard SELECTED compared to tracked frozen subject IDs. Compact v2 counts/digest are correlation only.",
+      "subsequent_selection": true,
+      "canonical_files_unchanged_during_selection": 51
+    },
+    "proof_identity_limit": "Attempt04 did not capture launch-time script hashes. Current harness includes later teardown fixes; no historical harness hash is invented. Future launches capture exact proof/helper hashes.",
+    "failed_attempts": [
+      {
+        "attempt": "native-wayland-majority-01",
+        "outcome": "FAIL before Datum launch; private nested Weston socket exceeded108-byte Unix-socket limit. No native selection credit."
+      },
+      {
+        "attempt": "native-wayland-majority-02",
+        "outcome": "FAIL; actual Datum Wayland/Vulkan launch, wrong pane-token oracle and native companion path-length refusal. Its stored pre-run51-file map was checked against tracked catalogue after this failed run; no retrospective launch-time validation claim. No selection credit."
+      },
+      {
+        "attempt": "native-wayland-majority-03",
+        "outcome": "FAIL; selected current two-Symbol summary observed, complete reader refused because it incorrectly expected a bare digest instead of the production sha256: namespace. No complete case credit."
+      },
+      {
+        "attempt": "native-wayland-majority-04",
+        "outcome": "FAIL aggregate retained: complete selection/Escape/reselection and51-file invariance precede terminal-focus teardown timeout. Qualified subset and later separate teardown control are distinguished."
+      }
+    ],
+    "reader_regressions": "8/8 pass: explicit non-stale boolean False, with true/missing/null/numeric/string/collection refusals; complete fixture positive; missing/duplicate members; independent qualified-occurrence oracle mismatch; wrong process/project/revision or selected state; changed read/digest; actual production digest with wrong/missing namespace refusal; incomplete/old/nonmonotonic diagnostics; changed source/extra files despite marker and exact operational lock handling.",
+    "shared_inventory_extraction": "First source-health check refused701-line startup helper before provisioning. Complete digest/source_files function bodies moved to native_project_source_inventory.py and baseline AST equality checked; helper defaults and existing StartupQA.source_files compatibility retained. No ceiling change or forwarding-only extraction.",
+    "teardown_control": {
+      "scope": "Ordinary collapsed-dock reveal/focus/shell exit only; no repeated selection or ordinary GUI Close credit.",
+      "original_status": "PASS bounded ordinary Terminal reveal/focus/shell exit",
+      "gui_pid": 643931,
+      "compositor_pid": 643916,
+      "dock_before": "None",
+      "correction": "Runner derives terminal_dock_open from actual current diagnostic dock state before the unchanged ordinary Terminal tab/focus/shell-exit route. No product dock default changes.",
+      "canonical_files_unchanged_after_teardown": 51,
+      "runtime_removed": true,
+      "owned_companion_housekeeping": [
+        {
+          "pid": 643957,
+          "socket": "/run/user/1000/npd-wl-r7q1n8w0/datum-native-edit-964d3326-c108-4c1f-b185-4f647e87bc9c/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ]
+    },
+    "ipc_storage_exception": "Appointed manager narrowed its own instruction: only disposable private0700 task-owned IPC runtime may use existing user XDG_RUNTIME_DIR. Exact paths/PIDs and removal are in raw results. Frozen replay inputs, logs, captures and lasting proof remain inside owned repository scratch. No top-level runtime/ignore rule, symlink or new fixture generation.",
+    "cleanup": "Attempt03/04 orphan companions were matched by exact executable, recorded private runtime/socket prefix and stable pidfd, signalled SIGTERM and observed gone. Shell HUP/final GUI SIGTERM are owned housekeeping, not ordinary window Close or product destructor/drain proof. Final canonical51 hashes still match tracked catalogue.",
+    "evidence": {
+      "pins": ".datum/scratch/s5a-c04-managed-20261018/native-reader-r1-candidate-pins.json",
+      "pins_sha256": "24f0e0e56cf91b70302c02e6ef058fe53d26d3f097d76a8c05bd10c33632f2a6",
+      "stored_subset_recheck": ".datum/scratch/s5a-c04-managed-20261018/stored-subset-r1-reader-recheck.json",
+      "captures": [
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-majority-04/selected-complete-symbols.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-majority-04/escape-cleared-symbols.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-majority-04/subsequent-keyboard-selection.png"
+      ],
+      "raw_artifacts_available": "Temporary task-owned files, uncommitted. Hashes identify this review candidate, not permanent availability."
+    },
+    "limits": [
+      "Finite two-Symbol keyboard/complete public membership/nonmutation native Wayland subset only; no per-class/threshold/region/dense/collision/full N01-N17 claim.",
+      "Actual aggregate FAIL and all original failed attempts retained; successful subset is not relabeled into an aggregate PASS.",
+      "No HUMAN/N15 visual approval, physical/KWin/full accessibility, ordinary window Close/GPU teardown, C04 completion, C05 replay or C06 acceptance.",
+      "No new product semantics, dependency, budget, prototype edit, fixture-generator grant or automatic successor."
+    ],
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "independent_review": {
+      "manager_thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "actual_disposition": "REVISE for READER-R1 only. Manager reports independent five-source/15-artifact pins, all3captures, exact51-file catalogue preservation, complete Symbol/PID/revision correlation, extraction compatibility and unchanged boundaries clear.",
+      "mandatory_finding": "qualify accepted otherwise valid observations with stale=True or missing/malformed stale values.",
+      "correction": "Require selection.get(stale) is False; actual8-test targeted suite passes. Saved seq3/5 both explicitly stale=False and requalify against tracked oracle, without native rerun or N07 credit.",
+      "targeted_re_review": "Actual independent bounded PASS reported by manager from /root/closeout_review. READER-R1 resolved; no remaining findings. Five source and17 artifact hashes verified; all15 prior artifacts unchanged; actual8/8 suite and nine independent stale/missing/malformed refusals checked; stored seq3/5 qualify. Prior three-frame/51-file review carries forward.",
+      "accepted_candidate_pins_sha256": "24f0e0e56cf91b70302c02e6ef058fe53d26d3f097d76a8c05bd10c33632f2a6",
+      "reviewed_evidence_sha256": "7f5af97341ea5a9bc0f6b3429d42c6cba1e4dc4bcc56f743cd5ba1dfe59f4250"
+    },
+    "manager_acceptance": {
+      "manager_thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "authority": "Existing owner appointment and RESUME/HANDOFF C04 grant under PM059.",
+      "disposition": "Accept bounded reader/current Wayland selection subset after actual independent PASS; commit owned reviewed candidate and synchronized existing evidence/metadata, then continue Board baseline and separate N05 hidden-authored Ctrl+A.",
+      "retained_boundaries": "Attempt04 aggregateFAIL and unknown launch-time script hashes remain; teardown is separate. C04 overall, reserved C05/C06, HUMAN and other qualification remain open. No new product rule, dependency, budget, fixture or successor authority."
+    }
   }
 }
