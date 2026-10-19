@@ -11818,5 +11818,102 @@
       "issue": "dat-unfocused-singleton-inspector-vs05",
       "disposition": "Closed only vs05 with actual reviewed landing. Earlier generic-header N13 entry/captures and all existing cases remain historical unchanged. Full grouping/native revision-edit/semantic singleton resolver/HUMAN/C04/C05/C06/Close/successor acceptance remain open."
     }
+  },
+  "native_wayland_focused_compound_inspector_scopes_20261019": {
+    "status": "Actual independent bounded combined PASS and appointed manager acceptance for focused heterogeneous Compound Inspector navigation only. C04 remains in progress.",
+    "retained_step": "UVT-S5A-BUILD / S5A-C04",
+    "manager_release": {
+      "session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+      "scope": "Existing runner Board-only exclusive flag plus cohesive Inspector case module, existing3metadata/owned scratch; no Rust/Cargo/fixture/getter/framework. Same frozen scope-v2/GUI reuse."
+    },
+    "authority": "UVT2.2.10 explicit Shift-click focus and view-only scope;2.2.19(3) compound output; retained N11/N17 matrix. Existing noFocus keyboard scopes/focus-legibility/native baseline proof reused; no repeated cases for a new session.",
+    "candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/focused-inspector-candidate-pins.json",
+      "sha256": "e58d268487c45338bcde550e931a68906b5efb1a8bbd05ba22f873bab2274820",
+      "source_pins": 7,
+      "artifact_pins": 20,
+      "binary_pins": 3
+    },
+    "source_preflight": "Runner662/newcase205lines; current py_compile/sourcehealth3258PASS. Exact AST inverse restores prior runner/default noFocus checks/cases/cleanup. Previously accepted12 reader controls unchanged/reused. Actual /root/closeout_review SOURCE-ONLY PASS source03 SHA925b54ae/case0e5ac10c before one native run; manager independently agreed.",
+    "ordinary_native": {
+      "raw_result": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-focused-inspector-01/result.json",
+      "sha256": "14acc86e4e02f818b28b0a4631f0a41d0c1984629ead855f1055af415e421fac",
+      "attempts": 1,
+      "outcome": ".datum/scratch/s5a-c04-managed-20261018/focused-inspector-native-outcome.json",
+      "outcome_sha256": "670f42d19b910f410cedfccd83bceb235354029f297c45b53622e095fcbb52b4",
+      "gui_reuse_sha256": "0fc829015d22c00f2604b667755be44a5d42a3ecbc72c1d78b5dcfc27451ab0d",
+      "input": "Existing CtrlA5/noFocus setup, ordinary f/current-frame source-derived574,404 Shift-click on already-selected isolated Track3 at45mm,0. Native own-window Shift/primary cycle acknowledged; full5 preserved, focusTrack3 established. No source/coordinate/frame sweep.",
+      "scope_route": "ShiftF10/Select with existing public exact InspectScope(Some(Track))/Some(BoardOutline)/None command IDs and available labels; public child order supplies Home/Down count, standardFOCUSED exact identity verified before Enter. No private action/getter.",
+      "focus": {
+        "class": "track",
+        "id": "40000000-0000-4000-8000-000000000003"
+      },
+      "steps": [
+        {
+          "scope": "track",
+          "command": "menu:native-select:20000000-0000-4000-8000-000000000001/InspectScope(Some(Track))",
+          "sequence": 9,
+          "full_count": 5,
+          "field_oracle": {
+            "member_count": 4,
+            "member_types": {
+              "track": 4
+            },
+            "board_layer": 1
+          },
+          "width": "Mixed",
+          "net": "Mixed",
+          "menu_open_and_pre_enter_full5_focus3": true
+        },
+        {
+          "scope": "board_outline",
+          "command": "menu:native-select:20000000-0000-4000-8000-000000000001/InspectScope(Some(BoardOutline))",
+          "sequence": 12,
+          "full_count": 5,
+          "field_oracle": {
+            "member_count": 1,
+            "member_types": {
+              "board_outline": 1
+            }
+          },
+          "width": "ABSENT",
+          "net": "ABSENT",
+          "menu_open_and_pre_enter_full5_focus3": true
+        },
+        {
+          "scope": null,
+          "command": "menu:native-select:20000000-0000-4000-8000-000000000001/InspectScope(None)",
+          "sequence": 16,
+          "full_count": 5,
+          "field_oracle": {
+            "member_count": 5,
+            "member_types": {
+              "track": 4,
+              "board_outline": 1
+            }
+          },
+          "width": "ABSENT",
+          "net": "ABSENT",
+          "menu_open_and_pre_enter_full5_focus3": true
+        }
+      ],
+      "overlay": "All5 complete public standardSELECTED members/current project/revision/rawCompound/focusTrack3 also retained while full menu opens and while target command is focused before each Enter; previous scope retained until action.",
+      "visual": "Personally viewed fit and all4focused frames. Compound5 header and Track3 focus UUIDsuffix000003 remain through Tracks4/Outline1/All5. Outline1 never becomes a singleton subject; focus remains outside its scope. Tracks shows LayerF.Cu/NetMixed/WidthMixed; class-only width absent in Outline and All.",
+      "display_limits": "Existing title tail clips at objects; Focus caption abbreviates UUID but suffix000003 remains legible and complete public identity is exact. Long bounds/other field/seam labels remain clipped; no full legibility/grouping/quantity/physical-width or N15 approval.",
+      "preservation": "All7 complete canonical/frozen maps equal69files:35root+34nested secondProject, including electrical/journal/revision history; no authored selection journal entry. Owned shell exit/PTY closure, GUI/compositor/daemon termination and private0700IPC removal verified. SIGTERM is not ordinary window Close.",
+      "warning": "Existing dbind GetItems unsupported-interface warning retained; no full accessibility claim. No native failure or rerun; pre-run source audit revisions preserved."
+    },
+    "boundaries": "Only flat frozen scope-v2 focused heterogeneous Compound navigation, public/renderer current basis,69-file preservation. Old noFocus/focus-legibility/quantity/other cases reused at their own scopes. No fullN11/N17/C04/C05/C06/HUMAN/physical screenreader/grouping/window-Close/successor acceptance. No issue closure or successor selection; C04/C05/C06 false remain unchanged.",
+    "final_review": {
+      "reviewer_task": "/root/closeout_review",
+      "outcome": "Actual bounded combined PASS, no mandatory findings",
+      "candidate_sha256": "e58d268487c45338bcde550e931a68906b5efb1a8bbd05ba22f873bab2274820",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "verified": "7source/20artifact/3currentbinary pins; ten full5/focus3 public reads including six Overlay/menu-focus receipts; exact standardFOCUSED command identities; scoped4/1/5 Common/Mixed/absent fields; sixframes with4focused frames personally inspected;7x69maps/currentfiles and ownedcleanup.",
+      "manager_disposition": "ACCEPT this finite proof only; exact5owned-path normal-hook landing authorized, no issue closure or second closure-only commit. All prior entries/raw receipts and clipping/abbreviation limits retained.",
+      "gates": "Current py_compile/sourcehealth3258 and exact default-path AST inverse PASS; accepted12unchanged reader controls reused. Projectstate101/currentprojection and stagedrustfmt passed; required normal hooks retained.",
+      "retained": "FullN11/N17/C04/C05/C06/HUMAN/physical/screenreader/fullgrouping/windowClose and successor acceptance remainopen; no production/fixture/getter/dependency changes."
+    }
   }
 }
