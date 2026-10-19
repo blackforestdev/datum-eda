@@ -280,6 +280,8 @@ fn new_open_semantic_roles_match_native_atspi_enumeration() {
     // Exercise the public GetRole wire response, not internal constants.
     let cases = [
         (GlobalPreferencesAccessibleRole::Navigation, 39),
+        (GlobalPreferencesAccessibleRole::List, 31),
+        (GlobalPreferencesAccessibleRole::ListItem, 32),
         (GlobalPreferencesAccessibleRole::RadioGroup, 39),
         (GlobalPreferencesAccessibleRole::RadioButton, 44),
         (GlobalPreferencesAccessibleRole::Status, 54),
@@ -310,5 +312,64 @@ fn new_open_semantic_roles_match_native_atspi_enumeration() {
             ),
         );
         assert_eq!(response.body_reader().u32().unwrap(), *expected);
+    }
+}
+
+#[test]
+fn folder_browser_inline_use_project_name_exposes_checked_state() {
+    for checked in [true, false] {
+        let node = GlobalPreferencesAccessibleNode {
+            id: "use-project-name".into(),
+            name: "Use project name".into(),
+            role: GlobalPreferencesAccessibleRole::CheckBox,
+            value: Some(checked.to_string()),
+            description: String::new(),
+            available: true,
+            focused: true,
+        };
+        let mut service = ServiceState::new(snapshot(), false, vec![node]);
+        let reply = service.dispatch(
+            1,
+            &call_at(
+                &format!("{PREFERENCES_PATH}/0"),
+                ACCESSIBLE,
+                "GetState",
+                "",
+                Vec::new(),
+            ),
+        );
+        let words = reply.body_reader().u32_array().unwrap();
+        assert_eq!(words[0] & (1 << 4) != 0, checked);
+        assert_ne!(words[0] & (1 << 12), 0);
+    }
+}
+
+#[test]
+fn folder_browser_browse_exposes_expandable_and_current_expansion_state() {
+    for expanded in [false, true] {
+        let node = GlobalPreferencesAccessibleNode {
+            id: "folder-navigation-browse".into(),
+            name: "Browse for Location".into(),
+            role: GlobalPreferencesAccessibleRole::Button,
+            value: Some(if expanded { "expanded" } else { "collapsed" }.into()),
+            description: String::new(),
+            available: true,
+            focused: true,
+        };
+        let mut service = ServiceState::new(snapshot(), false, vec![node]);
+        let reply = service.dispatch(
+            1,
+            &call_at(
+                &format!("{PREFERENCES_PATH}/0"),
+                ACCESSIBLE,
+                "GetState",
+                "",
+                Vec::new(),
+            ),
+        );
+        let words = reply.body_reader().u32_array().unwrap();
+        assert_ne!(words[0] & (1 << 9), 0);
+        assert_eq!(words[0] & (1 << 10) != 0, expanded);
+        assert_eq!(words[0] & (1 << 5) != 0, !expanded);
     }
 }

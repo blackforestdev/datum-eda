@@ -217,3 +217,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "../terminal_font_tests.rs"]
+mod terminal_font_tests;

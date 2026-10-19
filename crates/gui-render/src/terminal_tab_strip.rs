@@ -11,6 +11,9 @@ use crate::terminal_session_chrome::{
     terminal_lifecycle_controls_width, terminal_link_controls_width,
 };
 
+#[path = "terminal_context_chrome.rs"]
+mod context;
+
 pub(super) const TAB_GAP_PX: f32 = 8.0;
 const CLOSE_WIDTH_PX: f32 = 28.0;
 const PLUS_WIDTH_PX: f32 = 20.0;
@@ -61,9 +64,20 @@ pub(super) fn render_terminal_tab_strip(
         .application_shutdown_blocked
         .as_deref()
         .or_else(|| {
-            (state.ui.terminal.status != "running").then_some(state.ui.terminal.status.as_str())
+            (!matches!(
+                state.ui.terminal.status.as_str(),
+                "running" | "running · no Project bound"
+            ))
+            .then_some(state.ui.terminal.status.as_str())
         })
-        .or(state.ui.terminal.project_open_cleanup_failure.as_deref());
+        .or(state.ui.terminal.project_open_cleanup_failure.as_deref())
+        .map(|label| {
+            if state.ui.terminal.session_context.is_some() && label.starts_with("close terminal?") {
+                "close terminal?"
+            } else {
+                label
+            }
+        });
     let link_confirmation = lifecycle_label
         .is_none()
         .then_some(state.ui.terminal.link_confirmation.as_ref())
@@ -76,15 +90,29 @@ pub(super) fn render_terminal_tab_strip(
         && lifecycle_label.is_none()
         && clipboard_confirmation.is_none()
         && link_confirmation.is_none();
-    let trailing_width = if lifecycle_label.is_some()
+    let selected_context = state.ui.terminal.session_context.as_ref();
+    let mut trailing_width = if lifecycle_label.is_some()
         || clipboard_confirmation.is_some()
         || link_confirmation.is_some()
         || search_active
     {
         (strip.width * 0.46).clamp(320.0, 620.0)
+    } else if selected_context.is_some() {
+        0.0
     } else {
         estimated_text_run_width_px(routine_hint, 11.5, TextFace::Mono) - 16.0
     };
+    if selected_context.is_some()
+        && let Some(label) = lifecycle_label
+    {
+        let controls = terminal_lifecycle_controls_width(
+            &state.ui.terminal.status,
+            state.ui.terminal.application_shutdown_blocked.as_deref(),
+            state.ui.terminal.project_open_cleanup_failure.as_deref(),
+        );
+        trailing_width = (context::width(label) + controls + 24.0)
+            .clamp(controls + 40.0, (strip.width * 0.6).max(controls + 40.0));
+    }
     let trailing_x = strip.x + strip.width - 12.0 - trailing_width;
     let tab_y = strip.y + 6.0;
     let tab_height = (viewport.height - 6.0).max(0.0);
@@ -116,8 +144,11 @@ pub(super) fn render_terminal_tab_strip(
         x += width + TAB_GAP_PX;
     } else {
         let available = (trailing_x - x - PLUS_WIDTH_PX - TAB_GAP_PX).max(MIN_TAB_WIDTH_PX);
-        let tab_width =
-            (available / tabs.len() as f32 - TAB_GAP_PX).clamp(MIN_TAB_WIDTH_PX, MAX_TAB_WIDTH_PX);
+        let tab_width = if selected_context.is_some() {
+            context::tab_width(strip, tabs.len(), trailing_width)
+        } else {
+            (available / tabs.len() as f32 - TAB_GAP_PX).clamp(MIN_TAB_WIDTH_PX, MAX_TAB_WIDTH_PX)
+        };
         let tab_origin_x = x;
         for tab in tabs {
             let rect = RectPx {
@@ -126,7 +157,11 @@ pub(super) fn render_terminal_tab_strip(
                 width: tab_width,
                 height: tab_height,
             };
-            let label = top_tab_label(tab, tab_width);
+            let label = if selected_context.is_some() {
+                context::tab_label(tab, tab_width)
+            } else {
+                top_tab_label(tab, tab_width)
+            };
             let is_drag_source = state
                 .ui
                 .terminal_tab_drag
@@ -141,6 +176,13 @@ pub(super) fn render_terminal_tab_strip(
                 panel_quads,
                 text_runs,
             );
+            if tab.active
+                && !is_drag_source
+                && state.ui.active_dock_tab.is_none()
+                && let Some(run) = text_runs.last_mut()
+            {
+                run.color = TEXT_PRIMARY;
+            }
             if is_drag_source {
                 push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
             }
@@ -269,6 +311,20 @@ pub(super) fn render_terminal_tab_strip(
             ..viewport
         },
     );
+    if let Some(context) = selected_context {
+        context::render(
+            context,
+            viewport,
+            plus.x + plus.width + TAB_GAP_PX,
+            trailing_x
+                - if trailing_width > 0.0 {
+                    TAB_GAP_PX
+                } else {
+                    0.0
+                },
+            text_runs,
+        );
+    }
     let chrome_starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     if let Some(label) = lifecycle_label {
         let chrome = lifecycle_chrome_rect(strip, trailing_x, trailing_width);
@@ -280,7 +336,11 @@ pub(super) fn render_terminal_tab_strip(
             state.ui.terminal.project_open_cleanup_failure.as_deref(),
         );
         let label_columns = (((chrome.width - controls_width - 20.0) / 7.0) as usize).max(1);
-        let label = truncate_text(label, label_columns);
+        let label = if selected_context.is_some() {
+            context::end_ellipsis(label, chrome.width - controls_width - 20.0)
+        } else {
+            truncate_text(label, label_columns)
+        };
         draw_text(
             &label,
             chrome.x + 8.0,
@@ -371,7 +431,7 @@ pub(super) fn render_terminal_tab_strip(
             TextFace::Mono,
             text_runs,
         );
-    } else {
+    } else if selected_context.is_none() {
         draw_text(
             routine_hint,
             trailing_x,
@@ -507,3 +567,7 @@ mod project_open_tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_tab_strip_tests.rs"]
+mod terminal_tab_strip_tests;

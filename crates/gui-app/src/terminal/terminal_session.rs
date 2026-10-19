@@ -30,6 +30,7 @@ pub(super) struct TerminalSession {
     pub(super) session_id: String,
     pub(super) context_id: String,
     pub(super) terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
+    pub(super) launch_directory: PathBuf,
     pub(super) unbound_runtime:
         Option<std::sync::Arc<crate::terminal_process::unbound::UnboundRuntime>>,
     pub(super) active_execution_id: Arc<Mutex<Option<String>>>,
@@ -481,6 +482,8 @@ fn ensure_session_capacity(live_sessions: usize) -> Result<()> {
     Ok(())
 }
 
+#[path = "terminal_session/host_protection.rs"]
+mod host_protection;
 #[path = "terminal_session/project_open.rs"]
 mod project_open;
 pub(super) use project_open::{PreparedProjectTerminal, ProjectTerminalReservation};
@@ -634,6 +637,9 @@ pub(super) fn restart_terminal_session(
     record_terminal_lifecycle_event(session, DatumToolSessionLifecycle::Restarted, None)?;
     *session = replacement;
     state.status = session.running_status();
+    // A replaced shell has not yet reported its own current directory.
+    state.current_working_directory = None;
+    state.session_context = None;
     // T0-C01 / decision 027 FT-001: restart is a lifecycle event. It must not
     // write a notice row into the terminal grid — the grid holds only PTY
     // output. Session status is visible through chrome (`state.status`); the

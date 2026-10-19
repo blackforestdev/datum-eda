@@ -25,6 +25,11 @@ impl Runtime {
             self.log_console_echo(ConsoleFeedbackSource::Viewport, reason.clone());
             self.session.workspace_mut().ui.project_open.refusal = Some(reason);
         }
+        if self.workspace().ui.project_open.open {
+            self.refresh_folder_browser();
+        } else {
+            self.folder_browser.cancel();
+        }
         self.invalidate_frame();
         true
     }
@@ -73,6 +78,11 @@ impl Runtime {
         // Global preferences are application-owned; all Project consumers and
         // project preferences come from the newly prepared source.
         workspace.ui.global_preferences = self.workspace().ui.global_preferences.clone();
+        // Dock presentation belongs to the running application, not the
+        // destination Project's prepared/default workspace.
+        workspace.ui.active_dock_tab = self.workspace().ui.active_dock_tab;
+        workspace.ui.dock_height_px = self.workspace().ui.dock_height_px;
+        workspace.ui.terminal_maximized = self.workspace().ui.terminal_maximized;
         self.terminal_sessions.publish_project_terminal(
             answer.terminal,
             &mut self.session.workspace_mut().ui.terminal,
@@ -162,3 +172,7 @@ fn validate_publication_origin(
 #[cfg(test)]
 #[path = "tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "handoff_tests.rs"]
+mod handoff_tests;

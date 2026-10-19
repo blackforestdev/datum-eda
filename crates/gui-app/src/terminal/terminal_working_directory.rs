@@ -6,7 +6,8 @@
 //! or does not name a directory.
 
 use crate::terminal_session::TerminalLaunchContext;
-use std::{ffi::OsString, os::unix::ffi::OsStringExt, path::PathBuf};
+#[cfg(test)]
+use std::path::PathBuf;
 
 pub(super) fn context_for_new_terminal(
     base: &TerminalLaunchContext,
@@ -73,62 +74,7 @@ impl crate::Runtime {
     }
 }
 
-fn local_working_directory(value: &str) -> Option<PathBuf> {
-    let encoded = if let Some(uri) = value.strip_prefix("file://") {
-        if let Some(path) = uri.strip_prefix("localhost/") {
-            format!("/{path}")
-        } else if uri.starts_with('/') {
-            uri.to_owned()
-        } else {
-            return None;
-        }
-    } else if value.starts_with('/') {
-        value.to_owned()
-    } else {
-        return None;
-    };
-    if encoded.contains(['?', '#']) {
-        return None;
-    }
-    let bytes = percent_decode_path(encoded.as_bytes())?;
-    let path = PathBuf::from(OsString::from_vec(bytes));
-    path.is_absolute().then_some(path)
-}
-
-fn percent_decode_path(encoded: &[u8]) -> Option<Vec<u8>> {
-    let mut decoded = Vec::with_capacity(encoded.len());
-    let mut index = 0;
-    while index < encoded.len() {
-        if encoded[index] != b'%' {
-            if encoded[index] == 0 {
-                return None;
-            }
-            decoded.push(encoded[index]);
-            index += 1;
-            continue;
-        }
-        let high = *encoded.get(index + 1)?;
-        let low = *encoded.get(index + 2)?;
-        let byte = hex_value(high)?
-            .checked_mul(16)?
-            .checked_add(hex_value(low)?)?;
-        if byte == 0 {
-            return None;
-        }
-        decoded.push(byte);
-        index += 3;
-    }
-    Some(decoded)
-}
-
-fn hex_value(byte: u8) -> Option<u8> {
-    match byte {
-        b'0'..=b'9' => Some(byte - b'0'),
-        b'a'..=b'f' => Some(byte - b'a' + 10),
-        b'A'..=b'F' => Some(byte - b'A' + 10),
-        _ => None,
-    }
-}
+use crate::local_path::decode_local_path as local_working_directory;
 
 #[cfg(test)]
 mod tests {

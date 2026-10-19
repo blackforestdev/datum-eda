@@ -46,6 +46,8 @@ class StartupQA:
         self.previous_focus = self.command("xdotool", "getwindowfocus").strip()
         self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir="/tmp")
         self.compositor = None
+        self.file_actions = False
+        self.clipboard_writer = None
         self.host_window = None
         self.env = dict(os.environ)
         self.env.update({
@@ -67,8 +69,9 @@ class StartupQA:
         })
         for key in ["DISPLAY", "WAYLAND_SOCKET", "WINIT_UNIX_BACKEND", "DATUM_GPU_DIAGNOSTIC_BACKEND"]:
             self.env.pop(key, None)
+        self.binary_dir = Path(os.environ.get("DATUM_QA_BINARY_DIR", REPO / "target/debug")).resolve()
         self.binary_hashes = {
-            name: digest(REPO / "target/debug" / name)
+            name: digest(self.binary_dir / name)
             for name in ["datum-gui", "datum-eda", "eda-engine-daemon"]
         }
 
@@ -109,12 +112,19 @@ class StartupQA:
         assert self.compositor.poll() is None and window == self.host_window
         self.command("xdotool", "windowactivate", "--sync", window)
 
-    def start_envelope(self):
+    def start_envelope(self, desktop=False):
         env = dict(os.environ, XDG_RUNTIME_DIR=self.runtime.name)
         self.compositor_log = (self.root / "weston-process.log").open("w")
-        args = ["weston", "--backend=x11", "--renderer=gl", "--shell=kiosk-shell.so",
-                "--no-config", "--debug", "--width=1344", "--height=806", "--scale=1",
+        config = "--no-config"
+        if desktop:
+            settings = self.root / "weston.ini"
+            settings.write_text("[shell]\nbinding-modifier=ctrl\npanel-position=none\n")
+            config = "--config=" + str(settings)
+        args = ["weston", "--backend=x11", "--renderer=gl",
+                "--shell=" + ("desktop-shell.so" if desktop else "kiosk-shell.so"), config, "--debug", "--width=1344", "--height=806", "--scale=1",
                 "--idle-time=0", "--socket=datum-startup-qa", "--log=" + str(self.root / "weston.log")]
+        if self.file_actions:
+            args.append("--xwayland")
         self.compositor = subprocess.Popen(args, env=env, stdout=self.compositor_log,
                                            stderr=subprocess.STDOUT)
         self.actions.append({"owned_compositor_pid": self.compositor.pid, "argv": args})
@@ -123,6 +133,15 @@ class StartupQA:
         match = re.search(r"x11 output .*window id (\d+)", text)
         assert match, "host XID must come from this owned live compositor's log"
         self.host_window = match.group(1)
+        if self.file_actions:
+            display = self.wait("same owned compositor XWayland display", lambda:
+                re.search(r"xserver listening on display (:\d+)", (self.root / "weston.log").read_text()))
+            self.env["DISPLAY"] = display.group(1)
+            assert self.env["DISPLAY"] != os.environ.get("DISPLAY"), "never use outer clipboard"
+            self.observations["clipboard_provider"] = {
+                "kind": "same-compositor XWayland clipboard bridge; not native Wayland selection",
+                "owned_display": self.env["DISPLAY"], "wayland_display": self.env["WAYLAND_DISPLAY"],
+                "outer_input_display": os.environ.get("DISPLAY")}
         metadata = self.command("xprop", "-id", self.host_window, "WM_CLASS", "_NET_WM_PID")
         assert "Weston Compositor" in metadata
         self.observations["input_envelope"] = {"pid": self.compositor.pid,
@@ -130,6 +149,9 @@ class StartupQA:
             "limit": "X11 input to owned Weston; Datum itself native Wayland/Vulkan, not KWin workflow qualification"}
 
     def close_envelope(self):
+        if self.clipboard_writer and self.clipboard_writer.poll() is None:
+            self.clipboard_writer.terminate()
+            self.clipboard_writer.wait(timeout=5)
         if self.compositor:
             if self.compositor.poll() is None:
                 self.compositor.terminate()
@@ -143,9 +165,9 @@ class StartupQA:
                      "--repeat-delay", "20", keys)
         time.sleep(0.12)
 
-    def text(self, window, value):
+    def text(self, window, value, delay="4"):
         self.focus(window)
-        self.command("xdotool", "type", "--clearmodifiers", "--delay", "4", "--", value)
+        self.command("xdotool", "type", "--clearmodifiers", "--delay", delay, "--", value)
         time.sleep(0.15)
 
     def nodes(self):
@@ -175,11 +197,45 @@ class StartupQA:
     def find(self, name):
         return next((node for node in self.nodes() if node.get_name() == name), None)
 
-    def summary(self):
-        node = self.find("Working units this Project will be created with")
-        return self.attributes(node) if node else {}
+    def assert_new_has_no_units(self):
+        retired = {"Working units for this new Project", "Working units this Project will be created with",
+                   "Use my Global Units defaults", "Use Datum factory Units"}
+        assert not any(n.get_name() in retired or n.get_role_name() in {"radio button", "radio group"}
+                       for n in self.nodes()), "New exposes no Units configuration/review controls"
+
+    def wait_presented(self, after_damage=None):
+        # Read-only presentation evidence: no private App action or bootstrap.
+        log = Path(self.env["DATUM_GUI_LOG"])
+        settled = None
+        def current_frame():
+            nonlocal settled
+            text = log.read_text()
+            identities = re.findall(r"surface identity window=(WindowId\([0-9]+\))", text)
+            owned = any(n.get_role_name() == "dialog" for n in self.nodes())
+            host = identities[-1] if owned else identities[0]
+            native_focus = re.findall(r"window event (WindowId\([0-9]+\)) focused (true|false)", text)
+            if not native_focus or native_focus[-1] != (host, "true"):
+                settled = None
+                return False
+            records = [json.loads(line.split("native redraw ledger ", 1)[1])
+                       for line in text.splitlines() if "native redraw ledger " in line]
+            latest = next((r for r in reversed(records) if r["window"] == host), None)
+            if not latest or latest["damage"] != latest["presented_damage"] or latest["pending"] or latest["rendering"] is not None:
+                settled = None
+                return False
+            if after_damage is not None and latest["presented_damage"] <= after_damage:
+                settled = None
+                return False
+            identity = (host, latest["presented_damage"])
+            ready = settled == identity
+            settled = identity
+            return latest if ready else False
+        receipt = self.wait("current dialog/Main frame presented before native capture", current_frame)
+        self.actions.append({"capture_presentation_barrier": receipt})
+        return receipt
 
     def capture(self, label, window):
+        receipt = self.wait_presented()
         count = self.capture_counts.get(label, 0) + 1
         self.capture_counts[label] = count
         if count > 1:
@@ -205,14 +261,15 @@ class StartupQA:
             {"name": node.get_name(), "attributes": self.attributes(node)}
             for node in self.nodes() if node.get_role_name() != "terminal"
         ]
+        return receipt
 
     def launch(self, label):
         self.app_log = (self.root / f"{label}.log").open("w")
         self.phase = label
         self.env["DATUM_GUI_LOG"] = str(self.root / f"{label}-diagnostic.log")
-        args = [str(REPO / "target/debug/datum-gui")]
+        args = [str(self.binary_dir / "datum-gui")]
         self.actions.append({"launch_argv": args, "isolated_xdg": str(self.root)})
-        self.process = subprocess.Popen(args, cwd=self.root, env=self.env,
+        self.process = subprocess.Popen(args, cwd=Path.home() if os.environ.get("DATUM_QA_TERMINAL_HANDOFF") == "1" else self.root, env=self.env,
                                         stdout=self.app_log, stderr=subprocess.STDOUT,
                                         start_new_session=True)
         log = Path(self.env["DATUM_GUI_LOG"])
@@ -279,28 +336,29 @@ class StartupQA:
 
     def terminal_command(self, main, command, tab=0):
         self.select_terminal_tab(main, tab)
-        self.text(main, command)
+        self.text(main, command, delay="15")
         self.key(main, "Return")
 
-    def menu_item(self, main, title, label):
-        # Stock 1x chrome coordinates, verified in the captured native Main.
-        # Availability/focus is read from this PID's actual menu projection.
+    def menu_item(self, main, title, label, child=None):
+        self.wait_presented()
         self.focus(main)
-        x = {"File": 118, "View": 195}[title]
+        x = {"File": 118, "Edit": 147, "View": 195}[title]
         self.command("xdotool", "mousemove", "--window", main, str(x), "17", "click", "1")
-        def entry():
-            return next((n for n in self.nodes() if n.get_name() == label and n.get_role_name() == "menu item"), None)
-        self.wait(f"{title} menu entry {label}", entry)
-        assert self.attributes(entry())["available"] == "true"
-        for _ in range(30):
-            node = entry()
-            if node.get_state_set().contains(Atspi.StateType.FOCUSED):
-                self.capture(f"{title.lower()}-{label.lower().replace(' ', '-')}-reachable", main)
-                self.key(main, "Return")
-                self.wait(f"{title} menu closed after {label}", lambda: entry() is None)
-                return
-            self.key(main, "Down")
-        raise RuntimeError(f"{label} was not keyboard reachable in {title}")
+        for wanted, key in [(label, "Right" if child else "Return")] + ([(child, "Return")] if child else []):
+            def entry():
+                return next((n for n in self.nodes() if n.get_name() == wanted and n.get_role_name() == "menu item"), None)
+            self.wait(f"{title} menu entry {wanted}", entry)
+            assert self.attributes(entry())["available"] == "true"
+            for _ in range(30):
+                if entry().get_state_set().contains(Atspi.StateType.FOCUSED):
+                    self.capture(f"{title.lower()}-{wanted.lower().replace(' ', '-')}-reachable", main)
+                    self.key(main, key)
+                    break
+                self.key(main, "Down")
+            else:
+                raise RuntimeError(f"{wanted} was not keyboard reachable in {title}")
+            if key == "Return":
+                self.wait(f"{title} menu closed after {wanted}", lambda: entry() is None)
 
     @staticmethod
     def source_files(project):
@@ -335,7 +393,7 @@ class StartupQA:
         self.wait("ordinary Open dialog", lambda: self.window("Open Project — Datum"))
         self.capture("open-owned-gui-created-project", main)
         self.text(main, str(target))
-        self.key(main, "Tab", repeat=2)
+        self.key(main, "Tab", repeat=3)
         self.key(main, "Return")
         self.wait("ordinary Open completed", lambda: self.window("Open Project — Datum") is None)
         self.terminal_dock_open = False
@@ -347,6 +405,27 @@ class StartupQA:
         self.terminal_command(main, "exit", tab=1)
         self.terminal_command(main, "exit")
         self.wait("all owned terminal PTYs closed", self.terminal_ptys_closed)
+
+    def focus_control(self, main, name):
+        for _ in range(24):
+            node = self.find(name)
+            if node and node.get_state_set().contains(Atspi.StateType.FOCUSED):
+                self.wait_presented()
+                return node
+            self.key(main, "Tab")
+            self.wait_presented()
+        raise RuntimeError(f"Control not keyboard reachable: {name}")
+
+    def fill_control(self, main, name, value):
+        self.focus_control(main, name)
+        self.key(main, "ctrl+a")
+        if value:
+            self.text(main, value)
+        else:
+            self.key(main, "BackSpace")
+        self.wait_presented()
+        self.wait("exact field replacement", lambda:
+                  self.attributes(self.find(name)).get("value", "") == value)
 
     def execute(self):
         self.start_envelope()
@@ -373,7 +452,7 @@ class StartupQA:
         self.capture("real-unbound-shell-before-project", main)
         self.terminal_command(main, 'printf "C08_CLI_PATH:%s\\n" "$(command -v datum-eda)"')
         self.wait("matching CLI is callable in ordinary shell", lambda:
-            "C08_CLI_PATH:" + str(REPO / "target/debug/datum-eda") in self.terminal_text())
+            "C08_CLI_PATH:" + str(self.binary_dir / "datum-eda") in self.terminal_text())
         self.observations["ordinary_cli_resolution"] = self.terminal_text()
         self.capture("matching-cli-in-unbound-shell", main)
         self.terminal_command(main,
@@ -389,8 +468,7 @@ class StartupQA:
 
         self.menu_item(main, "File", "New Project")
         self.wait("ordinary New", lambda: self.window("New Project — Datum"))
-        self.wait("eight existing Units values", lambda: self.summary().get("available") == "true")
-        assert len(self.summary()["value"].split("; ")) == 8
+        self.assert_new_has_no_units()
         self.capture("new-with-existing-unbound-session", main)
         self.key(main, "Escape")
         self.wait("New cancelled", lambda: self.window("New Project — Datum") is None)
@@ -399,7 +477,7 @@ class StartupQA:
         self.wait("ordinary Open", lambda: self.window("Open Project — Datum"))
         self.capture("open-before-invalid-path", main)
         self.text(main, str(self.root / "missing-project"))
-        self.key(main, "Tab", repeat=2)
+        self.key(main, "Tab", repeat=3)
         self.key(main, "Return")
         self.wait("invalid Open refused", lambda: self.find("Project not opened"))
         assert not self.root.joinpath("missing-project").exists()
@@ -427,7 +505,7 @@ class StartupQA:
         self.wait("Open CLI-created Project", lambda: self.window("Open Project — Datum"))
         self.capture("open-cli-created-project", main)
         self.text(main, str(target))
-        self.key(main, "Tab", repeat=2)
+        self.key(main, "Tab", repeat=3)
         self.key(main, "Return")
         self.wait("guarded Open published", lambda: self.window("Open Project — Datum") is None)
         self.terminal_dock_open = False  # ordinary loaded Project starts with closed dock
@@ -555,6 +633,10 @@ def main():
     parser.add_argument("--run-dir", required=True, type=Path)
     parser.add_argument("--native-launch-smoke", action="store_true")
     parser.add_argument("--package-project", type=Path)
+    parser.add_argument("--browse", action="store_true")
+    parser.add_argument("--file-actions", action="store_true")
+    parser.add_argument("--minimum-dialogs", action="store_true")
+    parser.add_argument("--new-global", action="store_true")
     args = parser.parse_args()
     root = args.run_dir.resolve()
     if not root.is_relative_to(OWNED.resolve()) or root == OWNED.resolve() or root.exists():
@@ -569,11 +651,24 @@ def main():
         native_launch_smoke(root)
         return
     qa = StartupQA(root)
+    qa.file_actions = args.file_actions
     result = {"mode": "bare native Wayland/WGPU/Vulkan Datum; real X11 input through owned Weston; PID-qualified GI inspection",
               "binary_hashes": qa.binary_hashes, "status": "FAIL",
-              "persistence_limit": "Single-process C08 session preservation and shell exit; final GUI SIGTERM is not ordinary window Close"}
+              "persistence_limit": ("Minimum forms cancelled then GUI SIGTERM; no terminal-exit claim" if args.minimum_dialogs else "Single-process terminal preservation and shell exit; final GUI SIGTERM is not ordinary window Close")}
     try:
-        if args.package_project:
+        if args.minimum_dialogs:
+            result["scenario"] = ("C09 minimum native New form, fixed refusal and explicit Global reader retry" if args.new_global else "C09 minimum native New/Open forms, fixed refusal and explicit Global reader retry")
+            from native_project_browse_workflow import execute_minimum_forms
+            execute_minimum_forms(qa, new_only=args.new_global)
+        elif args.new_global:
+            result["scenario"] = "C09 automatic Global inheritance in minimal native New; existing Project Preferences doorway"
+            from native_project_browse_workflow import execute_browse
+            execute_browse(qa, new_only=True)
+        elif args.browse or args.file_actions:
+            result["scenario"] = ("C09 compact close prompt on existing GUI Project" if os.environ.get("DATUM_QA_HANDOFF_REFIT_ONLY")=="1" else "C09 ordinary terminal handoff New/Open") if os.environ.get("DATUM_QA_TERMINAL_HANDOFF")=="1" else ("C09 shared single-line Location Home/End/selection in New/Open" if os.environ.get("DATUM_QA_EDITOR_REVEAL_ONLY")=="1" else "C09 single native New/Open dialogs, Create and Open with original terminal")
+            from native_project_browse_workflow import execute_browse
+            execute_browse(qa)
+        elif args.package_project:
             result["scenario"] = "Targeted Package reachability on existing GUI-created Project"
             qa.execute_package_only(args.package_project)
         else:

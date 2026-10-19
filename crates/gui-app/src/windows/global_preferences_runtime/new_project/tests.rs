@@ -26,13 +26,13 @@ fn destination_failure_keeps_units_and_correction_retries_without_rereading_glob
     let (root, mut coordinator, mut ui) = fixture();
     coordinator.open_new_project(&mut ui, ApplicationFocus::default());
     ui.new_project.project_name = "Display name".into();
-    let rows = ui.new_project.units_summary.clone();
+    let ready = ui.new_project.global_units_ready;
     let source = coordinator.new_project_source.clone();
-    let source_detail = ui.new_project.source_detail.clone();
     let collision = root.join("occupied");
     std::fs::create_dir(&collision).unwrap();
     std::fs::write(collision.join("preserved"), b"owner bytes").unwrap();
     ui.new_project.destination = collision.display().to_string();
+    ui.new_project.location_ready = true;
     let error = coordinator.create_new_project(&mut ui).unwrap_err();
     assert_eq!(
         error.code,
@@ -57,13 +57,13 @@ fn destination_failure_keeps_units_and_correction_retries_without_rereading_glob
         !collision.join("Display name").exists(),
         "destination is not a parent plus name"
     );
-    assert_eq!(ui.new_project.units_summary, rows);
+    assert_eq!(ui.new_project.global_units_ready, ready);
     assert_eq!(coordinator.new_project_source, source);
-    assert_eq!(ui.new_project.source_detail, source_detail);
     assert!(ui.new_project.create_enabled());
     assert!(!ui.new_project.retry_global_available());
     let destination = root.join("corrected-project");
     ui.new_project.destination = destination.display().to_string();
+    ui.new_project.location_ready = true;
     ui.new_project.clear_creation_refusal();
     assert!(ui.new_project.refusal.is_none());
     coordinator.create_new_project(&mut ui).unwrap();
@@ -86,6 +86,7 @@ fn missing_destination_parent_keeps_units_and_exposes_io_reason() {
     coordinator.open_new_project(&mut ui, ApplicationFocus::default());
     ui.new_project.project_name = "IO refusal".into();
     ui.new_project.destination = root.join("missing-parent/project").display().to_string();
+    ui.new_project.location_ready = true;
     let error = coordinator.create_new_project(&mut ui).unwrap_err();
     assert_eq!(
         error.code,
@@ -93,7 +94,7 @@ fn missing_destination_parent_keeps_units_and_exposes_io_reason() {
     );
     let reason = error.details["reason"].as_str().unwrap();
     assert!(ui.new_project.refusal.as_ref().unwrap().contains(reason));
-    assert_eq!(ui.new_project.units_summary.len(), 8);
+    assert!(ui.new_project.global_units_ready);
     assert!(coordinator.new_project_source.is_some());
     assert!(ui.new_project.create_enabled());
     assert!(!root.join("missing-parent").exists());
@@ -127,20 +128,46 @@ fn stale_global_snapshot_still_invalidates_units_and_requires_explicit_reread() 
         .unwrap();
     ui.new_project.project_name = "Stale seed".into();
     ui.new_project.destination = root.join("must-not-exist").display().to_string();
+    ui.new_project.location_ready = true;
     let error = coordinator.create_new_project(&mut ui).unwrap_err();
     assert_eq!(
         error.code,
         eda_engine::preferences::PreferenceErrorCodeV1::StaleGeneration
     );
-    assert!(ui.new_project.units_summary.is_empty());
+    assert!(!ui.new_project.global_units_ready);
     assert!(coordinator.new_project_source.is_none());
     ui.new_project.clear_creation_refusal();
     assert!(ui.new_project.refusal.is_some());
     assert!(!ui.new_project.create_enabled());
     assert!(ui.new_project.retry_global_available());
     assert!(!root.join("must-not-exist").exists());
+    ui.new_project.focus = NewProjectFocus::RetryGlobal;
     coordinator.refresh_new_project_preview(&mut ui);
     assert!(ui.new_project.create_enabled());
+    assert_eq!(ui.new_project.focus, NewProjectFocus::Create);
+    assert!(
+        !root.join("must-not-exist").exists(),
+        "reread never creates automatically"
+    );
+    coordinator.create_new_project(&mut ui).unwrap();
+    let project: Value =
+        serde_json::from_slice(&std::fs::read(root.join("must-not-exist/project.json")).unwrap())
+            .unwrap();
+    assert_eq!(
+        project["project_units_seed_receipt"]["source"]["kind"],
+        "global"
+    );
+    let items = project["project_units_seed_receipt"]["items"]
+        .as_array()
+        .unwrap();
+    assert_eq!(items.len(), 8);
+    assert_eq!(
+        items
+            .iter()
+            .find(|i| i["key"] == "datum.units.board_length")
+            .unwrap()["copied_value"],
+        "mil"
+    );
     std::fs::remove_dir_all(root).unwrap();
 }
 
@@ -184,38 +211,23 @@ fn fixture() -> (
 }
 
 #[test]
-fn opening_defaults_to_global_and_projects_exactly_eight_resolved_values() {
+fn opening_automatically_pins_global_without_units_controls_or_repository_creation() {
     let (root, mut coordinator, mut ui) = fixture();
     coordinator.open_new_project(&mut ui, ApplicationFocus::default());
-    assert_eq!(ui.new_project.units_choice, NewProjectUnitsChoice::Global);
-    assert_eq!(ui.new_project.units_summary.len(), 8);
-    assert_eq!(
-        ui.new_project
-            .units_summary
-            .iter()
-            .map(|row| row.key.as_str())
-            .collect::<Vec<_>>(),
-        ACTIVE_UNITS_KEYS
-    );
-    assert_eq!(
-        ui.new_project.source_detail,
-        "factory defaults; no preference file yet"
-    );
-    let _ = std::fs::remove_dir_all(root);
-}
-
-#[test]
-fn factory_requires_explicit_choice_and_never_creates_a_preference_repository() {
-    let (root, mut coordinator, mut ui) = fixture();
-    coordinator.open_new_project(&mut ui, ApplicationFocus::default());
-    ui.new_project.units_choice = NewProjectUnitsChoice::Factory;
-    coordinator.refresh_new_project_preview(&mut ui);
-    assert!(
-        ui.new_project
-            .source_detail
-            .contains("datum.units.factory.v1")
-    );
+    assert!(ui.new_project.global_units_ready);
+    assert!(matches!(
+        coordinator.new_project_source,
+        Some(ProjectUnitsSourceV1::Global {
+            expected_generation: None
+        })
+    ));
     assert!(!root.join("preferences").exists());
+    let nodes = ui.new_project.accessibility_nodes();
+    assert!(
+        !nodes
+            .iter()
+            .any(|n| n.id.contains("units") || n.name.contains("Factory"))
+    );
     let _ = std::fs::remove_dir_all(root);
 }
 
@@ -226,6 +238,7 @@ fn create_publishes_one_real_project_with_embedded_eight_item_receipt() {
     let destination = root.join("created-project");
     ui.new_project.project_name = "created-project".to_owned();
     ui.new_project.destination = destination.to_string_lossy().into_owned();
+    ui.new_project.location_ready = true;
     coordinator.create_new_project(&mut ui).unwrap();
     let project: Value =
         serde_json::from_slice(&std::fs::read(destination.join("project.json")).unwrap()).unwrap();
@@ -248,7 +261,9 @@ fn unresolved_global_reader_preserves_draft_without_genesis_or_implicit_factory(
     ui.new_project.project_name = "Preserved name".into();
     let destination = root.join("must-stay-absent");
     ui.new_project.destination = destination.display().to_string();
-    ui.new_project.focus = NewProjectFocus::Destination;
+    ui.new_project.location_ready = true;
+    ui.new_project.focus =
+        NewProjectFocus::Navigation(datum_gui_protocol::FolderBrowserFocus::Path);
     let error = coordinator.create_new_project(&mut ui).unwrap_err();
     assert_eq!(
         error.code,
@@ -259,17 +274,150 @@ fn unresolved_global_reader_preserves_draft_without_genesis_or_implicit_factory(
         ui.new_project.destination,
         destination.display().to_string()
     );
-    assert_eq!(ui.new_project.focus, NewProjectFocus::Destination);
-    assert_eq!(ui.new_project.units_choice, NewProjectUnitsChoice::Global);
+    assert_eq!(
+        ui.new_project.focus,
+        NewProjectFocus::Navigation(datum_gui_protocol::FolderBrowserFocus::Path)
+    );
     assert!(ui.new_project.refusal.is_some());
     assert!(!ui.new_project.create_enabled());
     assert!(!destination.exists());
     assert!(!root.join("preferences").exists());
-    ui.new_project.units_choice = NewProjectUnitsChoice::Factory;
     coordinator.refresh_new_project_preview(&mut ui);
-    assert_eq!(ui.new_project.units_summary.len(), 8);
-    assert!(ui.new_project.create_enabled());
+    assert!(!ui.new_project.global_units_ready);
+    assert!(!ui.new_project.create_enabled());
+    assert!(coordinator.new_project_source.is_none());
     assert!(!destination.exists());
     assert!(!root.join("preferences").exists());
     let _ = std::fs::remove_dir_all(root);
+}
+
+#[test]
+fn folder_browser_adapters_create_and_open_exact_spaced_unicode_paths() {
+    let (root, mut coordinator, mut ui) = fixture();
+    let paths = [
+        root.join(" project λ"),
+        root.join("project λ"),
+        root.join("project λ "),
+    ];
+    let mut identities = vec![];
+    for (index, path) in paths.iter().enumerate() {
+        coordinator.open_new_project(&mut ui, ApplicationFocus::default());
+        ui.new_project.project_name = format!("Distinct Project {index}");
+        ui.new_project.destination = path.to_str().unwrap().into();
+        ui.new_project.location_ready = true;
+        let created = coordinator.create_new_project(&mut ui).unwrap();
+        assert_eq!(
+            std::path::Path::new(&created.project_root_identity),
+            path.canonicalize().unwrap()
+        );
+        identities.push(std::fs::read(path.join("project.json")).unwrap());
+        let prepared =
+            crate::project_open::prepare_project_directory(&ui.new_project.destination, false)
+                .unwrap();
+        assert_eq!(prepared.root, path.canonicalize().unwrap());
+        assert_eq!(
+            std::fs::read(prepared.root.join("project.json")).unwrap(),
+            identities[index]
+        );
+    }
+    assert_ne!(identities[0], identities[1]);
+    assert_ne!(identities[1], identities[2]);
+    ui.new_project.destination = paths[2].to_str().unwrap().into();
+    ui.new_project.location_ready = true;
+    assert!(coordinator.create_new_project(&mut ui).is_err());
+    for (path, before) in paths.iter().zip(&identities) {
+        assert_eq!(&std::fs::read(path.join("project.json")).unwrap(), before);
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn folder_browser_inline_name_and_override_compose_once_for_real_genesis() {
+    use datum_gui_protocol::{FolderBrowserMode, FolderBrowserState};
+    let (root, mut coordinator, mut ui) = fixture();
+    coordinator.open_new_project(&mut ui, ApplicationFocus::default());
+    let source = coordinator.new_project_source.clone();
+    let mut nav = FolderBrowserState::new(FolderBrowserMode::New, root.to_str().unwrap().into());
+    nav.directory = nav.path_input.clone();
+    nav.loading = false;
+    nav.entries = vec!["highlight is not parent".into()];
+    nav.selected = Some(0);
+    ui.new_project.project_name = " default λ ".into();
+    let mut sources = vec![];
+    for (index, leaf) in [" default λ ", " override λ ", "renamed"]
+        .into_iter()
+        .enumerate()
+    {
+        if index == 1 {
+            ui.new_project.set_use_project_name(false);
+            ui.new_project.folder_name = leaf.into();
+            ui.new_project.project_name = "renamed".into();
+        }
+        if index == 2 {
+            ui.new_project.set_use_project_name(true);
+        }
+        crate::folder_browser::sync_location(&mut ui, &nav);
+        let expected = root.join(leaf);
+        assert_eq!(ui.new_project.destination, expected.to_str().unwrap());
+        assert!(ui.new_project.create_enabled());
+        let created = coordinator.create_new_project(&mut ui).unwrap();
+        assert_eq!(
+            std::path::Path::new(&created.project_root_identity),
+            expected.canonicalize().unwrap()
+        );
+        sources.push((
+            expected.clone(),
+            std::fs::read(expected.join("project.json")).unwrap(),
+        ));
+        assert_eq!(coordinator.new_project_source, source);
+        assert!(ui.new_project.global_units_ready);
+    }
+    nav.occupied.insert("renamed".into());
+    crate::folder_browser::sync_location(&mut ui, &nav);
+    assert!(!ui.new_project.create_enabled());
+    for (path, before) in sources {
+        assert_eq!(std::fs::read(path.join("project.json")).unwrap(), before);
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn corrupt_global_source_blocks_creation_until_explicit_repair_and_reread() {
+    let (root, mut coordinator, mut ui) = fixture();
+    std::fs::write(
+        root.join("preferences"),
+        b"owned non-directory repository fault",
+    )
+    .unwrap();
+    coordinator.open_new_project(&mut ui, ApplicationFocus::default());
+    ui.new_project.project_name = "preserved".into();
+    ui.new_project.destination = root.join("must-stay-absent").to_str().unwrap().into();
+    ui.new_project.location_ready = true;
+    ui.new_project.focus =
+        NewProjectFocus::Navigation(datum_gui_protocol::FolderBrowserFocus::Path);
+    assert!(!ui.new_project.create_enabled());
+    assert!(ui.new_project.retry_global_available());
+    assert!(coordinator.new_project_source.is_none());
+    assert!(
+        !ui.new_project
+            .refusal
+            .as_ref()
+            .unwrap()
+            .contains("choose Factory")
+    );
+    ui.new_project.clear_creation_refusal();
+    assert!(ui.new_project.refusal.is_some());
+    std::fs::remove_file(root.join("preferences")).unwrap();
+    assert!(
+        !ui.new_project.create_enabled(),
+        "repair alone never repins the open form"
+    );
+    ui.new_project.focus = NewProjectFocus::RetryGlobal;
+    coordinator.refresh_new_project_preview(&mut ui);
+    assert!(ui.new_project.create_enabled());
+    assert_eq!(ui.new_project.focus, NewProjectFocus::Create);
+    assert_eq!(ui.new_project.project_name, "preserved");
+    assert!(!root.join("must-stay-absent").exists());
+    assert!(!root.join("preferences").exists());
+    std::fs::remove_dir_all(root).unwrap();
 }

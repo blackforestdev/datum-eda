@@ -259,11 +259,11 @@ impl ServiceState {
             )),
             "GetState" => Ok((
                 "au",
-                state_body(
-                    terminal,
-                    terminal && self.snapshot.focused,
-                    preference.map(|node| (node.available, node.focused)),
-                ),
+                if let Some(node) = preference {
+                    state::preference_state_body(node)
+                } else {
+                    state_body(terminal, terminal && self.snapshot.focused, None)
+                },
             )),
             "GetApplication" => Ok(("(so)", object_reference_body(&self.bus_name, ROOT_PATH))),
             "GetAttributes" if preference.is_some() => {
@@ -529,9 +529,12 @@ fn preference_role(role: GlobalPreferencesAccessibleRole) -> u32 {
     match role {
         GlobalPreferencesAccessibleRole::Dialog => ROLE_DIALOG,
         GlobalPreferencesAccessibleRole::Navigation => ROLE_PANEL,
+        GlobalPreferencesAccessibleRole::List => 31,
+        GlobalPreferencesAccessibleRole::ListItem => 32,
         GlobalPreferencesAccessibleRole::SearchBox => ROLE_TEXT,
         GlobalPreferencesAccessibleRole::Button => ROLE_PUSH_BUTTON,
         GlobalPreferencesAccessibleRole::Switch => ROLE_TOGGLE_BUTTON,
+        GlobalPreferencesAccessibleRole::CheckBox => 7,
         GlobalPreferencesAccessibleRole::ComboBox => ROLE_COMBO_BOX,
         GlobalPreferencesAccessibleRole::RadioGroup => ROLE_PANEL,
         GlobalPreferencesAccessibleRole::RadioButton => ROLE_RADIO_BUTTON,
@@ -539,21 +542,30 @@ fn preference_role(role: GlobalPreferencesAccessibleRole) -> u32 {
             ROLE_TEXT
         }
         GlobalPreferencesAccessibleRole::Status => ROLE_STATUS_BAR,
+        GlobalPreferencesAccessibleRole::Group => 99,
+        GlobalPreferencesAccessibleRole::Menu => 33,
+        GlobalPreferencesAccessibleRole::MenuItem => 35,
     }
 }
 fn preference_role_name(role: GlobalPreferencesAccessibleRole) -> &'static str {
     match role {
         GlobalPreferencesAccessibleRole::Dialog => "dialog",
         GlobalPreferencesAccessibleRole::Navigation => "panel",
+        GlobalPreferencesAccessibleRole::List => "list",
+        GlobalPreferencesAccessibleRole::ListItem => "list item",
         GlobalPreferencesAccessibleRole::SearchBox => "text",
         GlobalPreferencesAccessibleRole::Button => "push button",
         GlobalPreferencesAccessibleRole::Switch => "toggle button",
+        GlobalPreferencesAccessibleRole::CheckBox => "check box",
         GlobalPreferencesAccessibleRole::ComboBox => "combo box",
         GlobalPreferencesAccessibleRole::RadioGroup => "radio group",
         GlobalPreferencesAccessibleRole::RadioButton => "radio button",
         GlobalPreferencesAccessibleRole::SpinButton => "spin button",
         GlobalPreferencesAccessibleRole::TextBox => "text box",
         GlobalPreferencesAccessibleRole::Status => "status bar",
+        GlobalPreferencesAccessibleRole::Group => "grouping",
+        GlobalPreferencesAccessibleRole::Menu => "menu",
+        GlobalPreferencesAccessibleRole::MenuItem => "menu item",
     }
 }
 fn clamp_i32(value: usize) -> i32 {

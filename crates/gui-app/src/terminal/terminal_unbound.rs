@@ -288,6 +288,7 @@ pub(super) fn spawn(
             prepared.start(wake),
             session,
             context.terminal_profile.clone(),
+            profile.cwd.clone(),
         ));
         return Err(error);
     }
@@ -295,6 +296,7 @@ pub(super) fn spawn(
         prepared.start(wake),
         session,
         context.terminal_profile.clone(),
+        profile.cwd,
     ))
 }
 

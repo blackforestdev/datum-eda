@@ -131,6 +131,7 @@ fn spawn_terminal_process_inner(
             prepared.start(terminal_wake),
             terminal_context,
             context.terminal_profile.clone(),
+            profile.cwd.clone(),
         ));
         return Err(error);
     }
@@ -140,6 +141,7 @@ fn spawn_terminal_process_inner(
         transport,
         terminal_context,
         context.terminal_profile.clone(),
+        profile.cwd,
     ))
 }
 

@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 
 #[test]
 fn unopened_chrome_reports_no_session_without_a_live_prompt() {

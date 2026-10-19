@@ -32,7 +32,19 @@ fn default_session_labels_never_reuse_a_removed_ordinal() {
         .iter()
         .map(|tab| tab.label.as_str())
         .collect::<Vec<_>>();
-    assert_eq!(labels, ["shell 2", "shell 3"]);
+    assert_eq!(
+        registry
+            .sessions
+            .iter()
+            .map(|s| s.label.as_str())
+            .collect::<Vec<_>>(),
+        ["shell 2", "shell 3"]
+    );
+    assert!(
+        labels
+            .iter()
+            .all(|label| *label == root.file_name().unwrap().to_str().unwrap())
+    );
     let _ = fs::remove_dir_all(root);
 }
 
@@ -108,11 +120,17 @@ fn progress_and_latest_notification_are_visible_in_their_session_tab() {
     };
 
     registry.sync_lane_tabs(&mut lane);
-    assert_eq!(lane.tabs[0].label, "shell 1 · 42%");
+    assert_eq!(
+        lane.tabs[0].label,
+        format!("{} · 42%", root.file_name().unwrap().to_string_lossy())
+    );
     lane.progress = datum_gui_protocol::TerminalProgressState::Clear;
     lane.latest_notification = Some("build complete".to_string());
     registry.sync_lane_tabs(&mut lane);
-    assert_eq!(lane.tabs[0].label, "shell 1 · !");
+    assert_eq!(
+        lane.tabs[0].label,
+        format!("{} · !", root.file_name().unwrap().to_string_lossy())
+    );
     let _ = fs::remove_dir_all(root);
 }
 

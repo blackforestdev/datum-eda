@@ -1,5 +1,5 @@
-use super::*;
 use crate::text_buffer_cache::text_buffer_key;
+use crate::*;
 use glyphon::Color;
 use glyphon::{Buffer, Metrics, Shaping};
 

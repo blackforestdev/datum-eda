@@ -2,7 +2,13 @@ use super::*;
 
 impl Runtime {
     pub(crate) fn begin_project_open(&mut self) -> bool {
+        // Bind this action to the current Location/candidate, never an older scan.
+        self.refresh_folder_browser();
         let request = (|| -> Result<(ProjectOpenOrigin, ProjectTerminalReservation)> {
+            anyhow::ensure!(
+                !self.folder_host_actions_pending(),
+                "Wait for the submitted folder action to finish before opening a Project"
+            );
             anyhow::ensure!(
                 !self.native_edit.pending(),
                 "Wait for the current Project edit before opening another Project"
@@ -39,7 +45,7 @@ impl Runtime {
                 return true;
             }
         };
-        let directory = std::path::PathBuf::from(self.workspace().ui.project_open.directory.trim());
+        let directory = self.workspace().ui.project_open.directory.clone();
         let include_review = self.workspace_include_review;
         let profile = self.terminal_profiles.selected().clone();
         self.project_open.generation = self.project_open.generation.wrapping_add(1);
@@ -50,7 +56,7 @@ impl Runtime {
             .name("datum-project-open".into())
             .spawn(move || {
                 let result = (|| -> Result<Answer> {
-                    let prepared = PreparedProjectOpen::prepare(&directory, include_review)?;
+                    let prepared = super::prepare_project_directory(&directory, include_review)?;
                     let mut context =
                         crate::terminal_session::terminal_launch_context_from_state_with_cursor(
                             &prepared.root,

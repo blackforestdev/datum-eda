@@ -388,3 +388,7 @@ mod tests;
 #[cfg(test)]
 #[path = "text_cache_retention_tests.rs"]
 mod retention_tests;
+
+#[cfg(test)]
+#[path = "single_line_control_cache_tests.rs"]
+mod single_line_tests;

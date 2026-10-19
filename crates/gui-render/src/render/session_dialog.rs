@@ -22,9 +22,16 @@ pub enum DialogInput<'a> {
     },
     OpenProject {
         dialog: &'a datum_gui_protocol::ProjectOpenDialogState,
+        navigation: Option<&'a datum_gui_protocol::FolderBrowserState>,
+        list_scroll: &'a mut ScrollViewport,
+        preview_scroll: &'a mut ScrollViewport,
+        reveal_focus: bool,
     },
     NewProject {
         dialog: &'a NewProjectDialogState,
+        navigation: Option<&'a datum_gui_protocol::FolderBrowserState>,
+        list_scroll: &'a mut ScrollViewport,
+        preview_scroll: &'a mut ScrollViewport,
         reveal_focus: bool,
     },
 }
@@ -88,20 +95,38 @@ impl Renderer {
                 )?,
                 Consumer::Project,
             ),
-            DialogInput::OpenProject { dialog } => (
-                self.prepare_native_open_project(dialog, view.width, view.height, view.scale)?,
+            DialogInput::OpenProject {
+                dialog,
+                navigation,
+                list_scroll,
+                preview_scroll,
+                reveal_focus,
+            } => (
+                self.prepare_native_project_form(
+                    crate::new_project_dialog::FormData::Open(dialog),
+                    navigation,
+                    view,
+                    scroll,
+                    list_scroll,
+                    preview_scroll,
+                    reveal_focus,
+                )?,
                 Consumer::New,
             ),
             DialogInput::NewProject {
                 dialog,
+                navigation,
+                list_scroll,
+                preview_scroll,
                 reveal_focus,
             } => (
-                self.prepare_native_new_project_scrolled(
-                    dialog,
-                    view.width,
-                    view.height,
-                    view.scale,
+                self.prepare_native_project_form(
+                    crate::new_project_dialog::FormData::New(dialog),
+                    navigation,
+                    view,
                     scroll,
+                    list_scroll,
+                    preview_scroll,
                     reveal_focus,
                 )?,
                 Consumer::New,

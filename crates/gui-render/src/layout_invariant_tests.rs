@@ -12,7 +12,7 @@
 //! - right-panel inspector/review cards stay inside the sidebar and do not
 //!   overlap.
 
-use super::*;
+use crate::*;
 
 const SCALES: [f32; 4] = [1.0, 1.25, 1.5, 2.0];
 const EPS: f32 = 0.5;

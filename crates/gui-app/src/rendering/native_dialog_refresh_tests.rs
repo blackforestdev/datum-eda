@@ -1,7 +1,7 @@
 //! Actual Runtime cache ownership across local native-dialog actions.
 use crate::{GuiArgs, HitTarget, Runtime};
 use clap::Parser;
-use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
+use datum_gui_protocol::NewProjectFocus;
 use std::{sync::Arc, time::Duration};
 use winit::platform::x11::EventLoopBuilderExtX11;
 
@@ -34,10 +34,14 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
     let clean_revision = runtime.renderer.render_session().content_revision();
     assert!(runtime.renderer.render_session().prepared().is_some());
 
-    assert!(runtime.activate_new_project_hit(&HitTarget::NewProjectDestination));
+    assert!(
+        runtime.activate_folder_browser_hit(&HitTarget::FolderBrowser(
+            datum_gui_protocol::FolderBrowserFocus::Path
+        ))
+    );
     assert_eq!(
         runtime.workspace().ui.new_project.focus,
-        NewProjectFocus::Destination
+        NewProjectFocus::Navigation(datum_gui_protocol::FolderBrowserFocus::Path)
     );
     assert!(
         runtime.renderer.render_session().prepared().is_some(),
@@ -47,22 +51,12 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
         runtime.renderer.render_session().content_revision() == clean_revision,
         "local focus must not dirty Main"
     );
-    assert!(
-        runtime.activate_new_project_hit(&HitTarget::NewProjectUnitsChoice(
-            NewProjectUnitsChoice::Factory
-        ))
-    );
+    assert!(runtime.activate_new_project_hit(&HitTarget::NewProjectUseName));
+    assert!(!runtime.workspace().ui.new_project.use_project_name);
+    assert!(runtime.renderer.render_session().prepared().is_some());
     assert_eq!(
-        runtime.workspace().ui.new_project.units_choice,
-        NewProjectUnitsChoice::Factory
-    );
-    assert!(
-        runtime.renderer.render_session().prepared().is_some(),
-        "preview choice must retain Main's preparation"
-    );
-    assert!(
-        runtime.renderer.render_session().content_revision() == clean_revision,
-        "preview choice must not dirty Main"
+        runtime.renderer.render_session().content_revision(),
+        clean_revision
     );
     assert!(runtime.close_new_project());
     assert!(!runtime.workspace().ui.new_project.open);

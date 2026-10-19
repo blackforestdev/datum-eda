@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 
 #[path = "terminal_hit_ownership_tests.rs"]
 mod terminal_hit_ownership_tests;

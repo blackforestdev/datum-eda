@@ -13,12 +13,10 @@ use anyhow::Result;
 use datum_gui_protocol::{
     ApplicationFocus, ConsoleFeedbackSource, GlobalPreferenceControlUi, GlobalPreferenceRowUi,
     GlobalPreferencesDialogState, GlobalPreferencesDismissal, GlobalPreferencesFocus,
-    GlobalPreferencesNoticeUi, NewProjectDialogState, NewProjectFocus, NewProjectUnitsChoice,
-    NewProjectUnitsSummaryRow, WorkspaceUiState,
+    GlobalPreferencesNoticeUi, NewProjectDialogState, NewProjectFocus, WorkspaceUiState,
 };
 use eda_engine::ir::units::{
-    ACTIVE_UNITS_KEYS, profile_from_descriptor_values, profile_to_descriptor_values,
-    project_profile_from_value,
+    ACTIVE_UNITS_KEYS, profile_from_descriptor_values, project_profile_from_value,
 };
 use eda_engine::preferences::{
     GlobalPreferencesProductService, InstalledPreferenceLocationProvider, PreferenceErrorV1,
@@ -30,8 +28,8 @@ use serde_json::Value;
 use crate::Runtime;
 use crate::console_accessibility::{AccessibilityAnnouncement, AnnouncementPriority};
 use crate::global_preferences_projection::{
-    apply_live_consumers, bool_consumer_value, control_projection, control_value_projection,
-    explanation_lines, provenance_label, repository_notice,
+    apply_live_consumers, bool_consumer_value, control_projection, explanation_lines,
+    provenance_label, repository_notice,
 };
 use product_adapter::{head_expectation, human_gui_actor};
 use winit::event::{ElementState, KeyEvent};

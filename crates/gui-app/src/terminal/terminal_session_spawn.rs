@@ -310,6 +310,10 @@ pub(super) fn session_slot(
 }
 
 #[cfg(test)]
+#[path = "terminal_session_spawn/pending_accessibility_tests.rs"]
+mod pending_accessibility_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::{fs, sync::mpsc, time::Duration};

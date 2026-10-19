@@ -18,6 +18,7 @@ pub(super) struct Runtime {
     pub(super) selection_read_cache: runtime_selection::SelectionReadCache,
     pub(super) selection_run: runtime_selection_run::RunWork,
     pub(super) native_edit: runtime_native_edit::EditWork,
+    pub(super) folder_browser: folder_browser::FolderBrowser,
     pub(super) project_open: project_open::OpenWork,
     pub(super) native_selection: Option<runtime_selection::NativeSelectionSession>,
     pub(super) selection_gesture: Option<datum_gui_viewport::selection_gesture::SelectionGesture>,

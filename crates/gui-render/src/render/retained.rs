@@ -664,3 +664,7 @@ pub(super) fn push_retained_scene_geometry(
 
 #[cfg(test)]
 pub(super) use retained_board_graphics::push_retained_board_text_geometry_batches;
+
+#[cfg(test)]
+#[path = "../retained_draw_order_tests.rs"]
+mod retained_draw_order_tests;

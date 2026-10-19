@@ -16,6 +16,7 @@ impl TerminalSession {
         transport: TerminalTransportSession,
         context: TerminalContext,
         terminal_profile: crate::terminal_profile::TerminalLaunchProfile,
+        launch_directory: PathBuf,
     ) -> Self {
         if let Some(runtime) = &context.unbound_runtime {
             transport.retain_until_closed(runtime.clone());
@@ -29,6 +30,7 @@ impl TerminalSession {
             session_id: context.session_id,
             context_id: context.context_id,
             terminal_profile,
+            launch_directory,
             active_execution_id: Arc::new(Mutex::new(None)),
             finished_scan_offset: std::cell::Cell::new(0),
         }

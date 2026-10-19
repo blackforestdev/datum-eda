@@ -106,6 +106,7 @@ impl App {
     pub(super) fn poll_background_work(&mut self, event_loop: &ActiveEventLoop) {
         let mut changed = false;
         let mut project_open_changed = false;
+        let mut browser_changed = false;
         let device_due = self.service_device_recovery();
         if let Some(runtime) = &mut self.runtime {
             let output_changed = runtime.poll_terminal_output();
@@ -120,6 +121,7 @@ impl App {
             changed |= runtime.poll_native_selection_tick();
             changed |= runtime.poll_native_run();
             changed |= runtime.poll_native_edit();
+            browser_changed = runtime.poll_folder_browser();
             project_open_changed = runtime.poll_project_open();
             changed |= project_open_changed;
             self.frames.wake_at(runtime.selection_tick);
@@ -139,6 +141,11 @@ impl App {
             }
             self.request_dialog_key_redraw(
                 crate::global_preferences_window::DialogInputOutcome::Workspace,
+                crate::native_frame_adapters::OwnedHost::New,
+            );
+        } else if browser_changed {
+            self.request_dialog_key_redraw(
+                browser_completion_outcome(changed),
                 crate::native_frame_adapters::OwnedHost::New,
             );
         } else if changed {
@@ -369,5 +376,35 @@ impl Runtime {
                 &self.workspace().ui.terminal,
             )
         })
+    }
+}
+
+// A scan wake may also drain the terminal's final output batch. Workspace means
+// both Main and this dialog; Dialog alone must be reserved for scan-only work.
+fn browser_completion_outcome(
+    workspace_changed: bool,
+) -> crate::global_preferences_window::DialogInputOutcome {
+    use crate::global_preferences_window::DialogInputOutcome;
+    if workspace_changed {
+        DialogInputOutcome::Workspace
+    } else {
+        DialogInputOutcome::Dialog
+    }
+}
+
+#[cfg(test)]
+mod browser_damage_tests {
+    use super::*;
+    #[test]
+    fn folder_browser_completion_retains_simultaneous_terminal_damage() {
+        use crate::global_preferences_window::DialogInputOutcome;
+        assert_eq!(
+            browser_completion_outcome(true),
+            DialogInputOutcome::Workspace
+        );
+        assert_eq!(
+            browser_completion_outcome(false),
+            DialogInputOutcome::Dialog
+        );
     }
 }

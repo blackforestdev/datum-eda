@@ -30,16 +30,9 @@ impl GlobalPreferencesCoordinator {
     }
 
     pub(super) fn refresh_new_project_preview(&mut self, ui: &mut WorkspaceUiState) {
-        if ui.new_project.units_choice == NewProjectUnitsChoice::Global {
-            self.service.refresh_global_project_units_source();
-        }
-        let source = match ui.new_project.units_choice {
-            NewProjectUnitsChoice::Global => ProjectUnitsSourceV1::Global {
-                expected_generation: self.service.status().generation().cloned(),
-            },
-            NewProjectUnitsChoice::Factory => ProjectUnitsSourceV1::Factory {
-                profile_id: "datum.units.factory.v1".to_owned(),
-            },
+        self.service.refresh_global_project_units_source();
+        let source = ProjectUnitsSourceV1::Global {
+            expected_generation: self.service.status().generation().cloned(),
         };
         let result = self
             .service
@@ -61,108 +54,32 @@ impl GlobalPreferencesCoordinator {
                 return;
             }
         };
-        let rows = match self.project_units_summary(&preview.profile) {
-            Ok(rows) => rows,
-            Err(message) => {
-                self.refuse_preview(ui, message);
-                return;
-            }
-        };
-        ui.new_project.units_summary = rows;
-        ui.new_project.refusal = None;
-        match &source {
-            ProjectUnitsSourceV1::Global { .. } => {
-                ui.new_project.source_summary = "Source · your Global Units defaults".to_owned();
-                ui.new_project.source_detail = preview
-                    .pinned_generation
-                    .as_ref()
-                    .map(|generation| {
-                        format!(
-                            "preferences · generation {} · manifest {}",
-                            generation.generation,
-                            abbreviate_digest(&generation.canonical_manifest_digest)
-                        )
-                    })
-                    .unwrap_or_else(|| "factory defaults; no preference file yet".to_owned());
-            }
-            ProjectUnitsSourceV1::Factory { profile_id } => {
-                ui.new_project.source_summary = "Source · Datum factory Units".to_owned();
-                ui.new_project.source_detail =
-                    format!("{profile_id} · version 1 · no Global repository read");
-            }
+        if project_profile_from_value(&preview.profile)
+            .ok()
+            .and_then(|profile| profile.resolve().ok())
+            .is_none()
+        {
+            self.refuse_preview(ui, "Global Units defaults did not resolve to a complete typed profile. Nothing was created. Resolve the reported Global Preferences problem, then re-read the defaults.".into());
+            return;
         }
-        self.new_project_source = Some(match source {
-            ProjectUnitsSourceV1::Global { .. } => ProjectUnitsSourceV1::Global {
-                expected_generation: preview.pinned_generation,
-            },
-            factory => factory,
+        ui.new_project.global_units_ready = true;
+        ui.new_project.refusal = None;
+        self.new_project_source = Some(ProjectUnitsSourceV1::Global {
+            expected_generation: preview.pinned_generation,
         });
+        if ui.new_project.focus == NewProjectFocus::RetryGlobal {
+            ui.new_project.focus = if ui.new_project.create_enabled() {
+                NewProjectFocus::Create
+            } else {
+                NewProjectFocus::ProjectName
+            };
+        }
     }
 
     fn refuse_preview(&mut self, ui: &mut WorkspaceUiState, message: String) {
         self.new_project_source = None;
-        ui.new_project.units_summary.clear();
-        ui.new_project.source_summary = "Source · unavailable".to_owned();
-        ui.new_project.source_detail = match ui.new_project.units_choice {
-            NewProjectUnitsChoice::Global => {
-                "Choose Datum factory Units explicitly, or resolve the Global source and retry."
-            }
-            NewProjectUnitsChoice::Factory => {
-                "The selected factory Units profile could not be resolved."
-            }
-        }
-        .to_owned();
+        ui.new_project.global_units_ready = false;
         ui.new_project.refusal = Some(message);
-    }
-
-    fn project_units_summary(
-        &self,
-        profile: &Value,
-    ) -> Result<Vec<NewProjectUnitsSummaryRow>, String> {
-        let typed = project_profile_from_value(profile)
-            .map_err(|_| "The Units preview was not a valid typed profile.".to_owned())?;
-        let values = profile_to_descriptor_values(typed);
-        let resolved = typed
-            .resolve()
-            .map_err(|_| "The Units preview could not be resolved.".to_owned())?;
-        ACTIVE_UNITS_KEYS
-            .iter()
-            .map(|key| {
-                let entry = self
-                    .service
-                    .surface()
-                    .entries()
-                    .iter()
-                    .find(|entry| entry.key.as_str() == *key)
-                    .ok_or_else(|| "An active Units control is missing.".to_owned())?;
-                let descriptor = self
-                    .service
-                    .registry()
-                    .get(&entry.key)
-                    .ok_or_else(|| "An active Units descriptor is missing.".to_owned())?;
-                let value = values
-                    .get(*key)
-                    .ok_or_else(|| "An active Units value is missing.".to_owned())?;
-                let visible_value = match control_value_projection(
-                    &entry.control,
-                    Some(value),
-                    key,
-                    Some(&resolved),
-                ) {
-                    GlobalPreferenceControlUi::SingleChoice { value, choices } => choices
-                        .into_iter()
-                        .find(|(candidate, _)| candidate == &value)
-                        .map(|(_, label)| label)
-                        .unwrap_or(value),
-                    _ => value.to_string(),
-                };
-                Ok(NewProjectUnitsSummaryRow {
-                    key: (*key).to_owned(),
-                    label: descriptor.presentation.label.clone(),
-                    value: visible_value,
-                })
-            })
-            .collect()
     }
 
     pub(super) fn create_new_project(
@@ -231,6 +148,7 @@ impl GlobalPreferencesCoordinator {
 
 impl Runtime {
     pub(crate) fn open_new_project(&mut self) -> bool {
+        self.folder_browser.cancel();
         if self.workspace().ui.project_open.open {
             self.close_project_open();
         }
@@ -244,11 +162,13 @@ impl Runtime {
         self.global_preferences
             .open_new_project(&mut self.session.workspace_mut().ui, invoker);
         self.set_application_focus(ApplicationFocus::Overlay);
+        self.init_project_navigation(datum_gui_protocol::FolderBrowserMode::New, "");
         self.invalidate_frame();
         true
     }
 
     pub(crate) fn close_new_project(&mut self) -> bool {
+        self.folder_browser.cancel();
         let Some(return_focus) = self
             .global_preferences
             .close_new_project(&mut self.session.workspace_mut().ui)
@@ -265,18 +185,14 @@ impl Runtime {
             HitTarget::NewProjectName => {
                 self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::ProjectName
             }
-            HitTarget::NewProjectDestination => {
-                self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::Destination
-            }
-            HitTarget::NewProjectUnitsChoice(choice) => {
+            HitTarget::NewProjectFolderName => {
                 let dialog = &mut self.session.workspace_mut().ui.new_project;
-                dialog.units_choice = *choice;
-                dialog.focus = NewProjectFocus::UnitsChoice;
-                self.global_preferences
-                    .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
+                dialog.focus = NewProjectFocus::FolderName;
             }
-            HitTarget::NewProjectUnitsSummary => {
-                self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::UnitsSummary
+            HitTarget::NewProjectUseName => {
+                let dialog = &mut self.session.workspace_mut().ui.new_project;
+                dialog.focus = NewProjectFocus::UseProjectName;
+                dialog.set_use_project_name(!dialog.use_project_name);
             }
             HitTarget::NewProjectRetryGlobal => {
                 self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::RetryGlobal;
@@ -288,11 +204,27 @@ impl Runtime {
             HitTarget::NewProjectModal => return true,
             _ => return false,
         }
-        self.refresh_dialog_state();
+        self.refresh_folder_browser();
         true
     }
 
     fn submit_new_project(&mut self) -> bool {
+        self.refresh_folder_browser();
+        if self.folder_host_actions_pending() {
+            self.session.workspace_mut().ui.new_project.refusal = Some(
+                "Wait for the submitted folder action to finish before creating a Project".into(),
+            );
+            self.refresh_folder_browser();
+            return true;
+        }
+        if self
+            .folder_browser
+            .state
+            .as_ref()
+            .is_none_or(|s| s.mode != datum_gui_protocol::FolderBrowserMode::New)
+        {
+            return true;
+        }
         if !self.workspace().ui.new_project.create_enabled() {
             return true;
         }
@@ -301,9 +233,13 @@ impl Runtime {
             .create_new_project(&mut self.session.workspace_mut().ui)
         {
             Ok(created) => {
-                self.log_console_echo(ConsoleFeedbackSource::Viewport, format!(
-                    "Project created with eight Working Units and immutable receipt: {}. Opening Project.",
-                    created.project_root_identity));
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Viewport,
+                    format!(
+                        "Project created: {}. Opening Project.",
+                        created.project_root_identity
+                    ),
+                );
                 self.close_new_project();
                 self.open_created_project(std::path::PathBuf::from(created.project_root_identity));
             }
@@ -323,77 +259,34 @@ impl Runtime {
         if event.state != ElementState::Pressed {
             return Outcome::Consumed;
         }
+        if self.handle_folder_actions_key(event)
+            || self.handle_shared_editor_key(event)
+            || self.handle_folder_browser_key(event)
+        {
+            return Outcome::Dialog;
+        }
         if matches!(event.logical_key, Key::Named(NamedKey::Escape)) {
             self.close_new_project();
             return Outcome::Dependents;
         }
         if matches!(event.logical_key, Key::Named(NamedKey::Tab)) {
+            let expanded = self
+                .folder_browser
+                .state
+                .as_ref()
+                .is_some_and(|s| s.expanded);
             self.session
                 .workspace_mut()
                 .ui
                 .new_project
-                .move_focus(self.modifiers.shift_key());
-            self.refresh_dialog_state();
+                .move_focus(self.modifiers.shift_key(), expanded);
+            self.refresh_folder_browser();
             return Outcome::Dialog;
         }
         let focus = self.workspace().ui.new_project.focus;
-        if matches!(
-            focus,
-            NewProjectFocus::ProjectName | NewProjectFocus::Destination
-        ) {
-            match &event.logical_key {
-                Key::Named(NamedKey::Backspace) => {
-                    let dialog = &mut self.session.workspace_mut().ui.new_project;
-                    let removed = if focus == NewProjectFocus::ProjectName {
-                        dialog.project_name.pop()
-                    } else {
-                        dialog.destination.pop()
-                    };
-                    if removed.is_none() {
-                        return Outcome::Consumed;
-                    }
-                    dialog.clear_creation_refusal();
-                    self.refresh_dialog_state();
-                    return Outcome::Dialog;
-                }
-                key => {
-                    if let Some(value) =
-                        crate::global_preferences_window::dialog_text_input(key, self.modifiers)
-                    {
-                        let dialog = &mut self.session.workspace_mut().ui.new_project;
-                        if focus == NewProjectFocus::ProjectName {
-                            dialog.project_name.push_str(value);
-                        } else {
-                            dialog.destination.push_str(value);
-                        }
-                        dialog.clear_creation_refusal();
-                        self.refresh_dialog_state();
-                        return Outcome::Dialog;
-                    }
-                }
-            }
-        }
-        if focus == NewProjectFocus::UnitsChoice
-            && matches!(
-                event.logical_key,
-                Key::Named(
-                    NamedKey::ArrowUp
-                        | NamedKey::ArrowDown
-                        | NamedKey::ArrowLeft
-                        | NamedKey::ArrowRight
-                        | NamedKey::Space
-                )
-            )
+        if focus == NewProjectFocus::FolderName && self.workspace().ui.new_project.use_project_name
         {
-            let dialog = &mut self.session.workspace_mut().ui.new_project;
-            dialog.units_choice = match dialog.units_choice {
-                NewProjectUnitsChoice::Global => NewProjectUnitsChoice::Factory,
-                NewProjectUnitsChoice::Factory => NewProjectUnitsChoice::Global,
-            };
-            self.global_preferences
-                .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
-            self.refresh_dialog_state();
-            return Outcome::Dialog;
+            return Outcome::Consumed;
         }
         if matches!(
             event.logical_key,
@@ -403,7 +296,13 @@ impl Runtime {
                 NewProjectFocus::RetryGlobal => {
                     self.global_preferences
                         .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
-                    self.refresh_dialog_state();
+                    self.refresh_folder_browser();
+                    Outcome::Dialog
+                }
+                NewProjectFocus::UseProjectName => {
+                    let dialog = &mut self.session.workspace_mut().ui.new_project;
+                    dialog.set_use_project_name(!dialog.use_project_name);
+                    self.refresh_folder_browser();
                     Outcome::Dialog
                 }
                 NewProjectFocus::Cancel => {
@@ -419,10 +318,6 @@ impl Runtime {
     }
 }
 
-fn abbreviate_digest(value: &str) -> String {
-    value.chars().take(12).collect::<String>() + "…"
-}
-
 fn refusal_message(error: &PreferenceErrorV1) -> String {
     use eda_engine::preferences::PreferenceErrorCodeV1;
     match error.code {
@@ -432,7 +327,10 @@ fn refusal_message(error: &PreferenceErrorV1) -> String {
         ),
         PreferenceErrorCodeV1::SeedSourceUnavailable => format!(
             "Your Global Units could not be resolved. Nothing was created. {}",
-            error.message
+            error.message.replace(
+                "re-read the source or explicitly choose Factory",
+                "resolve the reported Global Preferences problem, then re-read the defaults"
+            )
         ),
         _ => match error.details.get("reason").and_then(Value::as_str) {
             Some(reason) => format!("Nothing was created. {}: {reason}", error.message),
@@ -458,7 +356,6 @@ fn destination_from_input(
     input: &str,
     home: Option<&std::ffi::OsStr>,
 ) -> Result<std::path::PathBuf, String> {
-    let input = input.trim();
     let suffix = if input == "~" {
         Some("")
     } else {

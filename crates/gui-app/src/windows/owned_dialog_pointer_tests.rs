@@ -6,6 +6,8 @@ use std::{
     time::{Duration, Instant},
 };
 use winit::platform::pump_events::EventLoopExtPumpEvents;
+#[path = "owned_browser_pointer_tests.rs"]
+mod browser;
 
 fn host(index: usize) -> OwnedHost {
     match index {
@@ -352,7 +354,9 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
                 _ => {
                     runtime.close_new_project();
                     runtime.open_new_project();
-                    runtime.activate_new_project_hit(&HitTarget::NewProjectDestination);
+                    runtime.activate_folder_browser_hit(&HitTarget::FolderBrowser(
+                        datum_gui_protocol::FolderBrowserFocus::Path,
+                    ));
                     HitTarget::NewProjectName
                 }
             };

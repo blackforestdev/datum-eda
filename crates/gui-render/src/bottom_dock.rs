@@ -295,3 +295,7 @@ mod tests {
         assert_eq!(hits[0].rect.height, root.screen.height);
     }
 }
+
+#[cfg(test)]
+#[path = "terminal_dock_contract_tests.rs"]
+mod terminal_dock_contract_tests;

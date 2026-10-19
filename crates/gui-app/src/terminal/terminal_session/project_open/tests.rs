@@ -45,6 +45,10 @@ fn staged_cancel_retains_child_and_capacity_until_verified_reaping() {
         registry.project_open_reservations.load(Ordering::Acquire),
         1
     );
+    assert!(
+        registry.project_preparation_pending(),
+        "host naming is blocked during actual terminal preparation"
+    );
     drop(prepared);
     assert_eq!(registry.active().session_id(), old);
     assert_eq!(registry.terminal_tabs, tabs);
@@ -54,8 +58,16 @@ fn staged_cancel_retains_child_and_capacity_until_verified_reaping() {
         registry.project_open_reservations.load(Ordering::Acquire),
         1
     );
+    assert!(
+        registry.project_preparation_pending(),
+        "cancelled prepared child still owns host-action protection before verified reaping"
+    );
     let mut lane = TerminalLaneState::default();
     finish(&mut registry, &mut lane);
+    assert!(
+        !registry.project_preparation_pending(),
+        "host-action protection releases only after actual child cleanup"
+    );
     assert!(
         registry
             .rejected_project_terminals

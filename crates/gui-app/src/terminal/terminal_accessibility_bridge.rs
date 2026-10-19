@@ -14,6 +14,9 @@ use datum_gui_protocol::gui_menu_model::accessibility::{
 };
 use std::{collections::VecDeque, sync::Arc};
 
+#[path = "terminal_accessibility_bridge/projection.rs"]
+mod projection;
+
 const ANNOUNCEMENT_LOG_CAPACITY: usize = 64;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -242,7 +245,7 @@ impl Runtime {
     }
 
     pub(super) fn refresh_global_preferences_accessibility(&mut self) {
-        let nodes = if self.workspace().ui.project_open.open {
+        let mut nodes = if self.workspace().ui.project_open.open {
             self.workspace().ui.project_open.accessibility_nodes()
         } else if self.workspace().ui.new_project.open {
             self.workspace().ui.new_project.accessibility_nodes()
@@ -254,35 +257,40 @@ impl Runtime {
         } else {
             self.workspace().ui.global_preferences.accessibility_nodes()
         };
+        if let Some(browser) = &self.folder_browser.state {
+            nodes.extend(project_navigation_accessibility(
+                &self.workspace().ui,
+                browser,
+                self.folder_navigation_focus(),
+            ));
+        }
         self.terminal_accessibility.update_preferences(nodes);
     }
+}
 
-    pub(super) fn refresh_terminal_accessibility(&mut self) {
-        if !self.terminal_sessions.active_attached() {
-            return;
-        }
-        let geometry = self.terminal_screen_geometry();
-        let scroll_offset = self.workspace().ui.terminal.scroll_offset;
-        let focused = self.application_focus() == ApplicationFocus::Terminal;
-        match self.terminal_sessions.active_accessibility_snapshot(
-            usize::from(geometry.rows),
-            scroll_offset,
-            focused,
-        ) {
-            Ok(mut snapshot) => {
-                snapshot.bounds = TerminalAccessibilityBounds {
-                    x: geometry.screen.x.round() as i32,
-                    y: geometry.screen.y.round() as i32,
-                    width: geometry.screen.width.round() as i32,
-                    height: geometry.screen.height.round() as i32,
-                };
-                self.terminal_accessibility.update(snapshot);
-            }
-            Err(error) => {
-                self.log_terminal_event(format!("terminal accessibility refresh failed: {error}"));
-            }
+fn project_navigation_accessibility(
+    ui: &datum_gui_protocol::WorkspaceUiState,
+    browser: &datum_gui_protocol::FolderBrowserState,
+    focus: Option<datum_gui_protocol::FolderBrowserFocus>,
+) -> Vec<GlobalPreferencesAccessibleNode> {
+    let is_new = browser.mode == datum_gui_protocol::FolderBrowserMode::New;
+    let leaf = is_new.then(|| ui.new_project.effective_folder_name());
+    let refusal = if is_new {
+        ui.new_project.refusal.as_deref()
+    } else {
+        ui.project_open.refusal.as_deref()
+    };
+    let mut nodes = browser.accessibility_nodes(focus, leaf, !ui.project_open.busy);
+    if let Some(reason) = browser.refusal_details(leaf, refusal) {
+        if let Some(preview) = nodes
+            .iter_mut()
+            .find(|n| n.id == "folder-navigation-preview")
+        {
+            preview.description.push_str("\n\nFull refusal details\n");
+            preview.description.push_str(&reason);
         }
     }
+    nodes
 }
 
 #[cfg(test)]
@@ -302,7 +310,16 @@ mod context_tests;
 mod compound_move_tests;
 
 #[cfg(test)]
+#[path = "terminal_accessibility_bridge/folder_navigation_tests.rs"]
+mod folder_navigation_tests;
+
+#[cfg(test)]
 mod tests {
+    impl super::LinuxTerminalAccessibilityBridge {
+        pub(crate) fn last_announcement(&self) -> Option<&super::AccessibilityAnnouncement> {
+            self.announcement_log.back()
+        }
+    }
     use super::*;
 
     #[test]

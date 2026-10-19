@@ -57,6 +57,12 @@ impl Runtime {
     pub(super) fn sync_terminal_tabs(&mut self) {
         self.terminal_sessions
             .sync_lane_tabs(&mut self.session.workspace_mut().ui.terminal);
+        if !self.terminal_accessibility.session_projection_matches(
+            &self.workspace().ui.terminal,
+            self.terminal_sessions.active_attached(),
+        ) {
+            self.refresh_terminal_accessibility();
+        }
     }
 
     pub(super) fn spawn_terminal_session_tab(&mut self) -> bool {

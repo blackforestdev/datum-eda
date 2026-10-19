@@ -93,15 +93,21 @@ pub struct GlobalPreferencesDialogState {
 pub enum GlobalPreferencesAccessibleRole {
     Dialog,
     Navigation,
+    List,
+    ListItem,
     SearchBox,
     Button,
     Switch,
+    CheckBox,
     ComboBox,
     SpinButton,
     TextBox,
     RadioGroup,
     RadioButton,
     Status,
+    Group,
+    Menu,
+    MenuItem,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

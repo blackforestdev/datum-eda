@@ -1,319 +1,242 @@
-//! Native New Project form for the eight-key Project Working Units genesis path.
-
+//! Complete New/Open forms over shared inline navigation.
 use super::*;
-use crate::global_preferences_primitives::{
-    ControlMeshCache, ControlPainter, button, push_dashed_rect_border,
-    push_rounded_rect_with_border,
+use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter, button};
+use datum_gui_protocol::{
+    FolderBrowserFocus, FolderBrowserMode, FolderBrowserState, NewProjectFocus, ProjectOpenFocus,
 };
-use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
-
+use datum_gui_viewport::scroll::ScrollViewport;
+#[path = "project_dialog_layout.rs"]
+mod form_layout;
+#[path = "folder_browser_dialog.rs"]
+mod navigation;
 #[path = "project_open_dialog.rs"]
-mod project_open;
+mod open;
 #[path = "render/new_project_scene.rs"]
 mod scene;
 pub(super) use scene::render_new_project_dialog;
 
+#[derive(Clone, Copy)]
+pub(crate) enum FormData<'a> {
+    New(&'a datum_gui_protocol::NewProjectDialogState),
+    Open(&'a datum_gui_protocol::ProjectOpenDialogState),
+}
+impl<'a> FormData<'a> {
+    fn is_new(self) -> bool {
+        matches!(self, Self::New(_))
+    }
+    fn mode(self) -> FolderBrowserMode {
+        if self.is_new() {
+            FolderBrowserMode::New
+        } else {
+            FolderBrowserMode::Open
+        }
+    }
+    fn open(self) -> bool {
+        match self {
+            Self::New(s) => s.open,
+            Self::Open(s) => s.open,
+        }
+    }
+    fn enabled(self) -> bool {
+        match self {
+            Self::New(s) => s.create_enabled(),
+            Self::Open(s) => s.open_enabled(),
+        }
+    }
+    fn busy(self) -> bool {
+        matches!(self,Self::Open(s) if s.busy)
+    }
+    fn host_action_pending(self) -> bool {
+        match self {
+            Self::New(s) => s.host_action_pending,
+            Self::Open(s) => s.host_action_pending,
+        }
+    }
+    fn refusal(self) -> Option<&'a str> {
+        match self {
+            Self::New(s) => s.refusal.as_deref(),
+            Self::Open(s) => s.refusal.as_deref(),
+        }
+    }
+    fn retry(self) -> bool {
+        matches!(self,Self::New(s) if s.retry_global_available())
+    }
+    fn leaf(self) -> Option<&'a str> {
+        match self {
+            Self::New(s) => Some(s.effective_folder_name()),
+            Self::Open(_) => None,
+        }
+    }
+    fn nav_focus(self) -> Option<FolderBrowserFocus> {
+        match self {
+            Self::New(s) => {
+                if let NewProjectFocus::Navigation(f) = s.focus {
+                    Some(f)
+                } else {
+                    None
+                }
+            }
+            Self::Open(s) => {
+                if let ProjectOpenFocus::Navigation(f) = s.focus {
+                    Some(f)
+                } else {
+                    None
+                }
+            }
+        }
+    }
+    fn focus_target(self) -> Option<HitTarget> {
+        if let Some(focus) = self.nav_focus() {
+            return Some(HitTarget::FolderBrowser(focus));
+        }
+        Some(match self {
+            Self::New(s) => match s.focus {
+                NewProjectFocus::ProjectName => HitTarget::NewProjectName,
+                NewProjectFocus::FolderName => HitTarget::NewProjectFolderName,
+                NewProjectFocus::UseProjectName => HitTarget::NewProjectUseName,
+                NewProjectFocus::RetryGlobal => HitTarget::NewProjectRetryGlobal,
+                NewProjectFocus::Cancel => HitTarget::NewProjectCancel,
+                NewProjectFocus::Create => HitTarget::NewProjectCreate,
+                NewProjectFocus::Navigation(_) => return None,
+            },
+            Self::Open(s) => match s.focus {
+                ProjectOpenFocus::Cancel => HitTarget::ProjectOpenCancel,
+                ProjectOpenFocus::Open => HitTarget::ProjectOpenConfirm,
+                ProjectOpenFocus::Navigation(_) => return None,
+            },
+        })
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
-fn render_new_project_dialog_scrolled(
-    dialog: &datum_gui_protocol::NewProjectDialogState,
+fn paint_form(
+    form: FormData<'_>,
+    nav: Option<&FolderBrowserState>,
     layout: &ShellLayout,
-    native_window: bool,
     controls: &mut ControlMeshCache,
     scale: f32,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
-    scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
-    reveal_focus: bool,
+    body_scroll: &mut ScrollViewport,
+    list_scroll: &mut ScrollViewport,
+    preview_scroll: &mut ScrollViewport,
+    reveal: bool,
 ) -> anyhow::Result<()> {
-    if !dialog.open || !native_window {
+    if !form.open() {
         return Ok(());
     }
-    let layout = layout.clone().scale_by(1.0 / scale);
-    let starts = (quads.len(), text.len(), hits.len());
-    let mut painter = ControlPainter::new(quads, controls, scale);
-    let quads = &mut painter;
+    let nav = nav.filter(|n| n.mode == form.mode());
+    let logical = layout.clone().scale_by(1.0 / scale);
     let window = RectPx {
         x: 0.0,
         y: 0.0,
-        width: layout.top_menu_bar.width,
-        height: layout.status_bar.y + layout.status_bar.height,
+        width: logical.top_menu_bar.width,
+        height: logical.status_bar.y + logical.status_bar.height,
     };
-    quads.push(Quad::from_rect(window, design_tokens::chrome::BG_BASE));
+    let plan = form_layout::FormPlan::new(form, nav, window)?;
+    plan.reveal(form, body_scroll, reveal);
+    let dy = -body_scroll.offset();
+    let shift = |rect| form_layout::shifted(rect, dy);
+    let title = if form.is_new() {
+        "New Project"
+    } else {
+        "Open Project"
+    };
+    let mut painter = ControlPainter::new(quads, controls, scale);
+    painter.push(Quad::from_rect(window, design_tokens::chrome::BG_BASE));
     hits.push(HitRegion {
-        target: HitTarget::NewProjectModal,
+        target: if form.is_new() {
+            HitTarget::NewProjectModal
+        } else {
+            HitTarget::ProjectOpenModal
+        },
         rect: window,
     });
-    push_rect_border(quads, window, design_tokens::chrome::BORDER_STRONG, 1.0);
-    let header = RectPx {
-        x: 0.0,
-        y: 0.0,
-        width: window.width,
-        height: 42.0,
-    };
-    quads.push(Quad::from_rect(header, design_tokens::chrome::SURFACE_01));
-    push_rect_border(quads, header, design_tokens::chrome::BORDER_SUBTLE, 1.0);
+    painter.push(Quad::from_rect(
+        RectPx {
+            height: 42.0,
+            ..window
+        },
+        design_tokens::chrome::SURFACE_01,
+    ));
     draw_text(
-        "New Project",
+        title,
+        18.0,
+        14.0,
+        design_tokens::typography::BODY_SIZE,
+        TEXT_PRIMARY,
+        TextFace::UiStrong,
+        text,
+    );
+    let route = format!("File > {title}");
+    let route_w = measured_text_run_width_px(
+        &route,
+        design_tokens::typography::MICRO_SIZE,
+        TextFace::Mono,
+    )?;
+    draw_text(
+        &route,
+        window.width - route_w - 18.0,
         16.0,
-        13.0,
-        design_tokens::typography::BODY_SIZE,
-        TEXT_PRIMARY,
-        TextFace::UiStrong,
-        text,
-    );
-    let doorway = "File > New Project";
-    let doorway_width = measured_text_run_width_px(
-        doorway,
-        design_tokens::typography::MICRO_SIZE,
-        TextFace::Mono,
-    )?;
-    draw_text(
-        doorway,
-        window.width - doorway_width - 16.0,
-        15.0,
         design_tokens::typography::MICRO_SIZE,
         TEXT_MUTED,
         TextFace::Mono,
         text,
     );
-
-    let body_starts = (quads.len(), text.len(), hits.len());
-    let inset = 18.0;
-    let field_width = window.width - inset * 2.0;
-    let mut y = header.height + 14.0;
-    if let Some(refusal) = &dialog.refusal {
-        let alert = RectPx {
-            x: inset,
-            y,
-            width: field_width,
-            height: 54.0,
+    if !plan.error.is_empty() {
+        let band = RectPx {
+            x: 18.0,
+            y: 46.0,
+            width: window.width - 36.0,
+            height: plan.body.y - 50.0,
         };
-        quads.push(Quad::from_rect(alert, design_tokens::chrome::SURFACE_02));
-        push_dashed_rect_border(quads, alert, design_tokens::chrome::STATUS_ERROR);
-        draw_text(
-            &format!("⊘ {}", truncate_text(refusal, 100)),
-            alert.x + 12.0,
-            alert.y + 18.0,
-            design_tokens::typography::CAPTION_SIZE,
-            design_tokens::chrome::STATUS_ERROR,
-            TextFace::UiStrong,
-            text,
-        );
-        y += alert.height + 10.0;
-    }
-    y = draw_text_field(
-        "Project name",
-        &dialog.project_name,
-        "Enter a Project name",
-        dialog.focus == NewProjectFocus::ProjectName,
-        y,
-        field_width,
-        quads,
-        text,
-        hits,
-        HitTarget::NewProjectName,
-    )?;
-    y = draw_text_field(
-        "Location",
-        &dialog.destination,
-        "Full new folder path; ~/ uses your home directory",
-        dialog.focus == NewProjectFocus::Destination,
-        y + 8.0,
-        field_width,
-        quads,
-        text,
-        hits,
-        HitTarget::NewProjectDestination,
-    )?;
-    draw_text(
-        "Working units for this new Project",
-        inset,
-        y + 13.0,
-        design_tokens::typography::BODY_SIZE,
-        TEXT_PRIMARY,
-        TextFace::UiStrong,
-        text,
-    );
-    y += 36.0;
-    let choice_focus = dialog.focus == NewProjectFocus::UnitsChoice;
-    for (choice, label) in [
-        (
-            NewProjectUnitsChoice::Global,
-            "Use my Global Units defaults",
-        ),
-        (NewProjectUnitsChoice::Factory, "Use Datum factory Units"),
-    ] {
-        let rect = RectPx {
-            x: inset,
-            y,
-            width: field_width,
-            height: 30.0,
-        };
-        if choice_focus {
-            push_rect_border(quads, rect, design_tokens::chrome::STATUS_INFO, 1.0);
+        painter.push(Quad::from_rect(band, design_tokens::chrome::SURFACE_02));
+        for (i, line) in plan
+            .error
+            .iter()
+            .take(if plan.full_refusal.is_some() { 2 } else { 3 })
+            .enumerate()
+        {
+            draw_text(
+                line,
+                24.0,
+                plan.error_y + i as f32 * 18.0,
+                design_tokens::typography::CAPTION_SIZE,
+                design_tokens::chrome::STATUS_ERROR,
+                TextFace::UiStrong,
+                text,
+            );
         }
-        quads.ellipse_fill(
-            RectPx {
-                x: rect.x + 8.0,
-                y: rect.y + 8.0,
-                width: 14.0,
-                height: 14.0,
-            },
-            if dialog.units_choice == choice {
-                TEXT_PRIMARY
-            } else {
-                design_tokens::chrome::BORDER_STRONG
-            },
-            16,
-        );
-        if dialog.units_choice != choice {
-            quads.ellipse_fill(
-                RectPx {
-                    x: rect.x + 11.0,
-                    y: rect.y + 11.0,
-                    width: 8.0,
-                    height: 8.0,
+        if plan.full_refusal.is_some() {
+            draw_text(
+                if form.is_new() {
+                    "Full refusal details continue in the New Project folder preview."
+                } else {
+                    "Full reason in Project directory preview below."
                 },
-                design_tokens::chrome::BG_BASE,
-                16,
-            );
-        }
-        draw_text(
-            label,
-            rect.x + 32.0,
-            rect.y + 8.0,
-            design_tokens::typography::CAPTION_SIZE,
-            TEXT_PRIMARY,
-            TextFace::Ui,
-            text,
-        );
-        hits.push(HitRegion {
-            target: HitTarget::NewProjectUnitsChoice(choice),
-            rect,
-        });
-        y += 30.0;
-    }
-
-    let summary_starts = (quads.len(), text.len(), hits.len());
-    let summary_height = 34.0 + dialog.units_summary.len().max(1) as f32 * 23.0 + 48.0;
-    let summary = RectPx {
-        x: inset,
-        y: y + 6.0,
-        width: field_width,
-        height: summary_height,
-    };
-    quads.push(Quad::from_rect(summary, design_tokens::chrome::SURFACE_01));
-    push_rect_border(
-        quads,
-        summary,
-        if dialog.focus == NewProjectFocus::UnitsSummary {
-            design_tokens::chrome::STATUS_INFO
-        } else {
-            design_tokens::chrome::BORDER_STRONG
-        },
-        if dialog.focus == NewProjectFocus::UnitsSummary {
-            2.0
-        } else {
-            1.0
-        },
-    );
-    draw_text(
-        "Working units this Project will be created with",
-        summary.x + 12.0,
-        summary.y + 10.0,
-        design_tokens::typography::CAPTION_SIZE,
-        TEXT_PRIMARY,
-        TextFace::UiStrong,
-        text,
-    );
-    let mut row_y = summary.y + 34.0;
-    if dialog.units_summary.is_empty() {
-        draw_text(
-            "Selected Working Units source is not resolved",
-            summary.x + 12.0,
-            row_y + 4.0,
-            design_tokens::typography::CAPTION_SIZE,
-            TEXT_MUTED,
-            TextFace::Ui,
-            text,
-        );
-        row_y += 23.0;
-    } else {
-        for row in &dialog.units_summary {
-            draw_text(
-                &row.label,
-                summary.x + 12.0,
-                row_y + 4.0,
+                24.0,
+                plan.error_y + 36.0,
                 design_tokens::typography::CAPTION_SIZE,
-                TEXT_SECONDARY,
-                TextFace::Ui,
+                design_tokens::chrome::STATUS_ERROR,
+                TextFace::UiStrong,
                 text,
             );
-            let value_width = measured_text_run_width_px(
-                &row.value,
-                design_tokens::typography::CAPTION_SIZE,
-                TextFace::Mono,
-            )?;
-            draw_text(
-                &row.value,
-                (summary.x + summary.width - value_width - 12.0)
-                    .max(summary.x + summary.width * 0.5),
-                row_y + 4.0,
-                design_tokens::typography::CAPTION_SIZE,
-                TEXT_PRIMARY,
-                TextFace::Mono,
-                text,
-            );
-            row_y += 23.0;
         }
     }
-    draw_text(
-        &dialog.source_summary,
-        summary.x + 12.0,
-        row_y + 5.0,
-        design_tokens::typography::MICRO_SIZE,
-        TEXT_SECONDARY,
-        TextFace::UiStrong,
-        text,
-    );
-    draw_text(
-        &truncate_text(&dialog.source_detail, 96),
-        summary.x + 12.0,
-        row_y + 24.0,
-        design_tokens::typography::MICRO_SIZE,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text,
-    );
-    hits.push(HitRegion {
-        target: HitTarget::NewProjectUnitsSummary,
-        rect: summary,
-    });
-    crate::hit_clipping::clip_content(
-        quads,
-        text,
-        hits,
-        summary_starts.0,
-        summary_starts.1,
-        summary_starts.2,
-        summary,
-    );
-    y = summary.y + summary.height + 12.0;
-
-    if dialog.retry_global_available() {
+    if form.retry() {
         let retry = RectPx {
-            x: inset,
-            y,
-            width: 164.0,
+            x: 24.0,
+            y: plan.error_y + plan.error.len().min(3) as f32 * 18.0 + 8.0,
+            width: 174.0,
             height: 32.0,
         };
         button(
             "Re-read Global defaults",
             retry,
-            dialog.focus == NewProjectFocus::RetryGlobal,
+            form.focus_target() == Some(HitTarget::NewProjectRetryGlobal),
             true,
-            quads,
+            &mut painter,
             text,
         );
         hits.push(HitRegion {
@@ -321,260 +244,273 @@ fn render_new_project_dialog_scrolled(
             rect: retry,
         });
     }
-    let create = RectPx {
-        x: window.width - inset - 88.0,
-        y,
+    let body_start = (painter.len(), text.len(), hits.len());
+    if let FormData::New(dialog) = form {
+        for (label, rect, value, editor, editable, focus, target) in [
+            (
+                "Project name",
+                shift(plan.name),
+                dialog.project_name.as_str(),
+                dialog.project_name_editor,
+                true,
+                NewProjectFocus::ProjectName,
+                HitTarget::NewProjectName,
+            ),
+            (
+                "Folder name",
+                shift(plan.folder),
+                dialog.effective_folder_name(),
+                dialog.folder_name_editor,
+                !dialog.use_project_name,
+                NewProjectFocus::FolderName,
+                HitTarget::NewProjectFolderName,
+            ),
+        ] {
+            draw_text(
+                label,
+                18.0,
+                rect.y + 10.0,
+                design_tokens::typography::CAPTION_SIZE,
+                TEXT_SECONDARY,
+                TextFace::UiStrong,
+                text,
+            );
+            crate::single_line_control::paint(
+                value,
+                "Enter a name",
+                editor,
+                dialog.focus == focus,
+                editable,
+                rect,
+                &mut painter,
+                text,
+                hits,
+                target,
+            )?;
+        }
+        let check = shift(plan.checkbox);
+        let box_rect = RectPx {
+            x: check.x,
+            y: check.y + 9.0,
+            width: 14.0,
+            height: 14.0,
+        };
+        push_rect_border(&mut painter, box_rect, TEXT_SECONDARY, 1.0);
+        if dialog.use_project_name {
+            painter.push(Quad::from_rect(
+                RectPx {
+                    x: box_rect.x + 3.0,
+                    y: box_rect.y + 3.0,
+                    width: 8.0,
+                    height: 8.0,
+                },
+                TEXT_PRIMARY,
+            ));
+        }
+        draw_text(
+            "Use project name",
+            check.x + 22.0,
+            check.y + 10.0,
+            design_tokens::typography::CAPTION_SIZE,
+            TEXT_PRIMARY,
+            TextFace::Ui,
+            text,
+        );
+        if dialog.focus == NewProjectFocus::UseProjectName {
+            push_rect_border(&mut painter, check, design_tokens::chrome::STATUS_INFO, 1.0);
+        }
+        hits.push(HitRegion {
+            target: HitTarget::NewProjectUseName,
+            rect: check,
+        });
+    } else {
+        draw_text(
+            "Choose a native Project directory",
+            18.0,
+            plan.name.y + dy,
+            design_tokens::typography::CAPTION_SIZE,
+            TEXT_SECONDARY,
+            TextFace::Ui,
+            text,
+        );
+    }
+    drop(painter);
+    navigation::paint_location(
+        nav,
+        form.nav_focus(),
+        shift(plan.location),
+        !form.busy(),
+        controls,
+        scale,
+        quads,
+        text,
+        hits,
+    )?;
+    navigation::paint_navigation(
+        nav,
+        form.mode(),
+        form.nav_focus(),
+        shift(plan.nav),
+        plan.list_height,
+        list_scroll,
+        reveal,
+        !form.busy(),
+        controls,
+        scale,
+        quads,
+        text,
+        hits,
+    )?;
+    if let (Some(draft), Some(bar)) = (nav.and_then(|n| n.naming.as_ref()), plan.naming.as_ref()) {
+        crate::naming_bar::paint(
+            draft,
+            bar,
+            dy,
+            form.nav_focus(),
+            controls,
+            scale,
+            quads,
+            text,
+            hits,
+        )?;
+    }
+    let painter = ControlPainter::new(quads, controls, scale);
+    let hint_y = plan.nav.y + dy + plan.nav.height + 10.0;
+    for (i, line) in plan.hint.iter().enumerate() {
+        draw_text(
+            line,
+            plan.nav.x,
+            hint_y + i as f32 * 17.0,
+            design_tokens::typography::CAPTION_SIZE,
+            TEXT_MUTED,
+            TextFace::Ui,
+            text,
+        );
+    }
+    draw_text(
+        if form.is_new() {
+            "New Project folder"
+        } else {
+            "Project directory"
+        },
+        plan.preview.x,
+        plan.preview.y + dy - 20.0,
+        design_tokens::typography::CAPTION_SIZE,
+        TEXT_PRIMARY,
+        TextFace::UiStrong,
+        text,
+    );
+    drop(painter);
+    navigation::paint_preview(
+        nav,
+        form.mode(),
+        form.leaf(),
+        plan.full_refusal.as_deref(),
+        form.nav_focus(),
+        shift(plan.preview),
+        preview_scroll,
+        controls,
+        scale,
+        quads,
+        text,
+        hits,
+    )?;
+    crate::hit_clipping::clip_content(
+        quads,
+        text,
+        hits,
+        body_start.0,
+        body_start.1,
+        body_start.2,
+        RectPx {
+            width: (plan.body.width - 11.0).max(1.0),
+            ..plan.body
+        },
+    );
+    crate::global_preferences_primitives::paint_scrollbar(body_scroll, quads);
+    let mut painter = ControlPainter::new(quads, controls, scale);
+    let footer = RectPx {
+        x: 0.0,
+        y: window.height - 56.0,
+        width: window.width,
+        height: 56.0,
+    };
+    painter.push(Quad::from_rect(footer, design_tokens::chrome::BG_BASE));
+    let cancel = RectPx {
+        x: if form.is_new() {
+            window.width - 204.0
+        } else {
+            18.0
+        },
+        y: footer.y + 12.0,
         width: 88.0,
         height: 32.0,
     };
-    let cancel = RectPx {
-        x: create.x - 98.0,
-        y,
-        width: 88.0,
-        height: 32.0,
+    let action = RectPx {
+        x: cancel.x + 98.0,
+        ..cancel
+    };
+    if form.host_action_pending() {
+        let (x, width) = if form.is_new() {
+            (18.0, (cancel.x - 30.0).max(1.0))
+        } else {
+            (
+                action.x + action.width + 12.0,
+                (window.width - action.x - action.width - 30.0).max(1.0),
+            )
+        };
+        let lines = crate::control_text::wrap_text(form.mode().host_action_wait_reason(), width)?;
+        for (i, line) in lines.iter().enumerate() {
+            draw_text(
+                line,
+                x,
+                footer.y + 14.0 + i as f32 * 14.0,
+                11.0,
+                TEXT_SECONDARY,
+                TextFace::Ui,
+                text,
+            );
+        }
+    }
+    let (cancel_target, action_target) = if form.is_new() {
+        (HitTarget::NewProjectCancel, HitTarget::NewProjectCreate)
+    } else {
+        (HitTarget::ProjectOpenCancel, HitTarget::ProjectOpenConfirm)
     };
     button(
         "Cancel",
         cancel,
-        dialog.focus == NewProjectFocus::Cancel,
+        form.focus_target() == Some(cancel_target.clone()),
         true,
-        quads,
+        &mut painter,
         text,
     );
     button(
-        "Create",
-        create,
-        dialog.focus == NewProjectFocus::Create,
-        dialog.create_enabled(),
-        quads,
+        if form.is_new() {
+            "Create"
+        } else if form.busy() {
+            "Opening…"
+        } else {
+            "Open"
+        },
+        action,
+        form.focus_target() == Some(action_target.clone()),
+        form.enabled(),
+        &mut painter,
         text,
     );
     hits.push(HitRegion {
-        target: HitTarget::NewProjectCancel,
+        target: cancel_target,
         rect: cancel,
     });
     hits.push(HitRegion {
-        target: HitTarget::NewProjectCreate,
-        rect: create,
+        target: action_target,
+        rect: action,
     });
-    scene::finish_body(
-        dialog,
-        window,
-        header.height,
-        y + 32.0 + inset,
-        quads,
-        text,
-        hits,
-        body_starts,
-        scroll,
-        reveal_focus,
-    );
-    crate::global_preferences_dialog::dialog_coordinates::scale_output(
-        quads, text, hits, starts, scale,
-    );
-
+    drop(painter);
     Ok(())
 }
 
-#[allow(clippy::too_many_arguments)]
-fn draw_text_field(
-    label: &str,
-    value: &str,
-    placeholder: &str,
-    focused: bool,
-    y: f32,
-    width: f32,
-    quads: &mut ControlPainter<'_>,
-    text: &mut Vec<TextRun>,
-    hits: &mut Vec<HitRegion>,
-    target: HitTarget,
-) -> anyhow::Result<f32> {
-    Ok({
-        let x = 18.0;
-        draw_text(
-            label,
-            x,
-            y + 10.0,
-            design_tokens::typography::CAPTION_SIZE,
-            TEXT_SECONDARY,
-            TextFace::UiStrong,
-            text,
-        );
-        let field = RectPx {
-            x: x + 150.0,
-            y,
-            width: width - 150.0,
-            height: 34.0,
-        };
-        push_rounded_rect_with_border(
-            quads,
-            field,
-            design_tokens::chrome::SURFACE_02,
-            if focused {
-                design_tokens::chrome::STATUS_INFO
-            } else {
-                design_tokens::chrome::BORDER_STRONG
-            },
-            if focused { 2.0 } else { 1.0 },
-            design_tokens::radius::MD,
-        );
-        let shown = if value.is_empty() { placeholder } else { value };
-        crate::global_preferences_primitives::paint_input_text(
-            value,
-            &truncate_text(shown, 92),
-            focused,
-            crate::global_preferences_primitives::InputTextLayout {
-                bounds: field,
-                left: 10.0,
-                right: 10.0,
-                placeholder_gap: 0.0,
-                caret_top: 7.0,
-                caret_height: 20.0,
-                caret_trailing: 0.0,
-            },
-            quads,
-            text,
-        )?;
-        hits.push(HitRegion {
-            target,
-            rect: field,
-        });
-        y + 34.0
-    })
-}
-
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use datum_gui_protocol::{NewProjectDialogState, NewProjectUnitsSummaryRow};
-
-    fn prepared(complete: bool) -> PreparedScene {
-        let mut state = datum_gui_protocol::load_fixture_workspace_state();
-        state.ui.new_project = NewProjectDialogState::default();
-        state.ui.new_project.open = true;
-        state.ui.new_project.project_name = "sensor-node".to_owned();
-        state.ui.new_project.destination = "/tmp/sensor-node".to_owned();
-        if complete {
-            state.ui.new_project.units_summary = (0..8)
-                .map(|index| NewProjectUnitsSummaryRow {
-                    key: format!("datum.units.key_{index}"),
-                    label: format!("Units setting {index}"),
-                    value: format!("Value {index}"),
-                })
-                .collect();
-        } else {
-            state.ui.new_project.refusal =
-                Some("Your preference file could not be read. Nothing was created.".to_owned());
-        }
-        let retained = RetainedScene::from_workspace(&state, 760, 720);
-        PreparedScene::from_workspace_with_terminal_renderer(
-            &state,
-            760,
-            720,
-            1.0,
-            CameraState::fit_to_bounds(&state.scene.bounds),
-            &retained,
-            &[],
-            None,
-            true,
-        )
-        .unwrap()
-    }
-
-    #[test]
-    fn long_summary_text_uses_the_summary_group_ancestor() {
-        let dialog = NewProjectDialogState {
-            open: true,
-            source_summary: "Source ".repeat(60),
-            source_detail: "generation ".repeat(60),
-            units_summary: vec![NewProjectUnitsSummaryRow {
-                key: "datum.units.system".into(),
-                label: "Measurement system".into(),
-                value: "An intentionally long displayed value ".repeat(10),
-            }],
-            ..Default::default()
-        };
-        for width in [240, 760] {
-            let layout = ShellLayout::for_surface(width, 720, 1.0, None);
-            let mut quads = Vec::new();
-            let mut text = Vec::new();
-            let mut hits = Vec::new();
-            render_new_project_dialog(
-                &dialog,
-                &layout,
-                true,
-                &mut ControlMeshCache::default(),
-                1.0,
-                &mut quads,
-                &mut text,
-                &mut hits,
-            )
-            .unwrap();
-            let summary = hits
-                .iter()
-                .find(|hit| hit.target == HitTarget::NewProjectUnitsSummary)
-                .expect("summary remains one target")
-                .rect;
-            for run in text.iter().filter(|run| {
-                run.text == dialog.source_summary
-                    || run.text == dialog.units_summary[0].value
-                    || run.text == dialog.units_summary[0].label
-            }) {
-                assert_eq!(run.clip_bounds, Some(summary));
-            }
-            assert!(text.iter().any(|run| run.text == dialog.source_summary));
-            assert_eq!(
-                hits.iter()
-                    .filter(|hit| hit.target == HitTarget::NewProjectCreate)
-                    .count(),
-                1
-            );
-        }
-    }
-
-    #[test]
-    fn complete_form_has_exact_two_sources_and_one_create_action() {
-        let scene = prepared(true);
-        let targets: Vec<_> = scene
-            .hit_regions
-            .iter()
-            .map(|region| &region.target)
-            .collect();
-        assert_eq!(
-            targets
-                .iter()
-                .filter(|target| matches!(target, HitTarget::NewProjectUnitsChoice(_)))
-                .count(),
-            2
-        );
-        assert_eq!(
-            targets
-                .iter()
-                .filter(|target| matches!(target, HitTarget::NewProjectCreate))
-                .count(),
-            1
-        );
-        let labels: Vec<_> = scene
-            .menu_overlay_text_runs
-            .iter()
-            .map(|run| run.text.as_str())
-            .collect();
-        assert!(labels.contains(&"Working units for this new Project"));
-        assert!(labels.contains(&"Use my Global Units defaults"));
-        assert!(labels.contains(&"Use Datum factory Units"));
-    }
-
-    #[test]
-    fn refusal_keeps_factory_available_and_exposes_retry() {
-        let scene = prepared(false);
-        assert!(scene.hit_regions.iter().any(|region| {
-            region.target == HitTarget::NewProjectUnitsChoice(NewProjectUnitsChoice::Factory)
-        }));
-        assert!(
-            scene
-                .hit_regions
-                .iter()
-                .any(|region| region.target == HitTarget::NewProjectRetryGlobal)
-        );
-    }
-}
+#[path = "project_dialog_tests.rs"]
+mod tests;

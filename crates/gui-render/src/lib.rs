@@ -17,6 +17,7 @@ use taffy::prelude::*;
 mod bottom_dock;
 #[cfg(feature = "visual")]
 pub mod capture_resource;
+mod control_text;
 mod datum_console;
 mod design_tokens;
 mod global_preferences_dialog;
@@ -24,7 +25,11 @@ mod global_preferences_primitives;
 mod inspector_check_finding;
 mod marking_menu;
 mod menu_chrome;
+mod naming_bar;
 mod new_project_dialog;
+mod popup_control;
+mod single_line_control;
+pub use single_line_control::single_line_caret_at;
 #[path = "render/resource_observation.rs"]
 pub mod resource_observation;
 mod revision_workspace;
@@ -40,20 +45,17 @@ mod text_layout;
 pub use terminal_render_cache::TerminalRenderCache;
 mod terminal_pane_render;
 pub use terminal_pane_render::TerminalPaneRenderState;
-#[cfg(test)]
-#[path = "terminal_font_tests.rs"]
-mod terminal_font_tests;
 mod terminal_scene;
 mod terminal_session_chrome;
 mod terminal_tab_strip;
-#[cfg(test)]
-mod terminal_tab_strip_tests;
 #[cfg(feature = "visual")]
 mod visual;
 #[cfg(feature = "visual")]
 pub use visual::{design_artboards, visual_capture, visual_diff, visual_manifest, visual_runner};
 
-include!("render/layout.rs");
+#[path = "render/layout.rs"]
+mod layout;
+pub use layout::*;
 include!("render/types.rs");
 #[path = "render/draw_command.rs"]
 mod draw_command;
@@ -106,15 +108,12 @@ pub(crate) use render_helpers::{
     draw_rich_text, draw_text, draw_text_clipped, key_value_row_height, suffix_id,
     text_row_height_for_size, trace_graphic_timing, trace_render_timing,
 };
-include!("render/test_support.rs");
+#[path = "render/test_support.rs"]
+mod test_support;
+#[cfg(test)]
+use test_support::*;
 #[cfg(test)]
 mod global_preferences_dialog_tests;
-#[cfg(test)]
-mod layout_invariant_tests;
-#[cfg(test)]
-mod retained_draw_order_tests;
-#[cfg(test)]
-mod terminal_dock_contract_tests;
 
 #[cfg(test)]
 #[path = "render/board_text_mesh_tests.rs"]

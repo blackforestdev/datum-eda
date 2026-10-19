@@ -9,6 +9,28 @@ pub(super) fn state_body(
     words_body(state_words(terminal, focused, preference))
 }
 
+/// Toggle state is semantic, independent of its current keyboard focus.
+pub(super) fn preference_state_body(node: &GlobalPreferencesAccessibleNode) -> Vec<u8> {
+    let mut words = state_words(false, false, Some((node.available, node.focused)));
+    if node.role == GlobalPreferencesAccessibleRole::CheckBox
+        && node.value.as_deref() == Some("true")
+    {
+        // ATSPI_STATE_CHECKED from the platform's atspi-constants.h enumeration.
+        words[0] |= 1 << 4;
+    }
+    if node.id == "folder-navigation-browse" {
+        // ATSPI_STATE_EXPANDABLE (9), EXPANDED (10), COLLAPSED (5).
+        words[0] |= 1 << 9;
+        words[0] |= 1
+            << if node.value.as_deref() == Some("expanded") {
+                10
+            } else {
+                5
+            };
+    }
+    words_body(words)
+}
+
 pub(super) fn state_words(
     terminal: bool,
     focused: bool,

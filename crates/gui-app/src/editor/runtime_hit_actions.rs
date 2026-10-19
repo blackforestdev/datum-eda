@@ -2,10 +2,12 @@
 use super::*;
 impl Runtime {
     pub(super) fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
+        if self.activate_folder_browser_hit(target) {
+            return true;
+        }
         if matches!(
             target,
             HitTarget::ProjectOpenModal
-                | HitTarget::ProjectOpenDirectory
                 | HitTarget::ProjectOpenCancel
                 | HitTarget::ProjectOpenConfirm
         ) {
@@ -14,10 +16,9 @@ impl Runtime {
         if matches!(
             target,
             HitTarget::NewProjectModal
+                | HitTarget::NewProjectFolderName
+                | HitTarget::NewProjectUseName
                 | HitTarget::NewProjectName
-                | HitTarget::NewProjectDestination
-                | HitTarget::NewProjectUnitsChoice(_)
-                | HitTarget::NewProjectUnitsSummary
                 | HitTarget::NewProjectRetryGlobal
                 | HitTarget::NewProjectCancel
                 | HitTarget::NewProjectCreate
@@ -35,7 +36,6 @@ impl Runtime {
         }
         match target {
             HitTarget::ProjectOpenModal
-            | HitTarget::ProjectOpenDirectory
             | HitTarget::ProjectOpenCancel
             | HitTarget::ProjectOpenConfirm => unreachable!("Open targets return above"),
             HitTarget::Library(control) => self.activate_library(control.clone()),
@@ -48,10 +48,9 @@ impl Runtime {
             | HitTarget::SchematicCancel
             | HitTarget::SchematicFinishWire => self.handle_schematic_chrome(target),
             HitTarget::NewProjectModal
+            | HitTarget::NewProjectFolderName
+            | HitTarget::NewProjectUseName
             | HitTarget::NewProjectName
-            | HitTarget::NewProjectDestination
-            | HitTarget::NewProjectUnitsChoice(_)
-            | HitTarget::NewProjectUnitsSummary
             | HitTarget::NewProjectRetryGlobal
             | HitTarget::NewProjectCancel
             | HitTarget::NewProjectCreate => unreachable!("New Project targets return above"),
@@ -477,7 +476,10 @@ impl Runtime {
                 self.invalidate_frame();
                 true
             }
-            HitTarget::MenuTitle(_)
+            HitTarget::FolderBrowser(_)
+            | HitTarget::FolderBrowserMenuItem(_)
+            | HitTarget::FolderBrowserRow(_)
+            | HitTarget::MenuTitle(_)
             | HitTarget::MenuItem { .. }
             | HitTarget::GlobalPreferencesModal
             | HitTarget::GlobalPreferencesSection(_)

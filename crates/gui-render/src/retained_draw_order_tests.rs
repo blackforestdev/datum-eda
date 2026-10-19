@@ -1,4 +1,4 @@
-use super::*;
+use crate::*;
 use datum_gui_protocol::PointNm;
 
 #[test]

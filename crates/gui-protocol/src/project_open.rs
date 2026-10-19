@@ -1,7 +1,10 @@
 //! Read-only native Project preparation and transient Open dialog state.
+#[path = "folder_browser.rs"]
+mod folder_browser;
 use crate::{ReviewWorkspaceState, SelectionTarget};
 use anyhow::{Context, Result, ensure};
 use eda_engine::substrate::{DesignModel, ProjectResolver};
+pub use folder_browser::*;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
@@ -151,25 +154,27 @@ fn ensure_open_integrity(model: &DesignModel) -> Result<()> {
     Ok(())
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ProjectOpenFocus {
-    #[default]
-    Directory,
+    Navigation(FolderBrowserFocus),
     Cancel,
     Open,
 }
-
+impl Default for ProjectOpenFocus {
+    fn default() -> Self {
+        Self::Navigation(FolderBrowserFocus::Path)
+    }
+}
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct ProjectOpenDialogState {
     pub open: bool,
     pub directory: String,
     pub busy: bool,
+    pub host_action_pending: bool,
     pub refusal: Option<String>,
     pub focus: ProjectOpenFocus,
 }
-
 impl ProjectOpenDialogState {
-    /// Shared native provider projection; values never create Project authority.
     pub fn accessibility_nodes(&self) -> Vec<crate::GlobalPreferencesAccessibleNode> {
         use crate::{
             GlobalPreferencesAccessibleNode as Node, GlobalPreferencesAccessibleRole as Role,
@@ -177,50 +182,10 @@ impl ProjectOpenDialogState {
         if !self.open {
             return vec![];
         }
-        let mut nodes = vec![
-            Node {
-                id: "open-project-dialog".into(),
-                name: "Open Project".into(),
-                role: Role::Dialog,
-                value: None,
-                description:
-                    "Open a native Project directory; cancellation preserves the current Project."
-                        .into(),
-                available: true,
-                focused: false,
-            },
-            Node {
-                id: "open-project-directory".into(),
-                name: "Project directory".into(),
-                role: Role::TextBox,
-                value: Some(self.directory.clone()),
-                description: if self.busy {
-                    "Preparing this directory; editing is unavailable until preparation finishes."
-                } else {
-                    "Full native Project directory; preserved when Open is refused."
-                }
-                .into(),
-                available: !self.busy,
-                focused: self.focus == ProjectOpenFocus::Directory,
-            },
-            Node {
-                id: "open-project-cancel".into(),
-                name: "Cancel".into(),
-                role: Role::Button,
-                value: None,
-                description: "Cancel preparation without replacing the current Project.".into(),
-                available: true,
-                focused: self.focus == ProjectOpenFocus::Cancel,
-            },
-            Node {
-                id: "open-project-submit".into(),
-                name: "Open".into(),
-                role: Role::Button,
-                value: None,
-                description: "Validate source and history before publishing this Project.".into(),
-                available: self.open_enabled(),
-                focused: self.focus == ProjectOpenFocus::Open,
-            },
+        let mut nodes=vec![
+            Node{id:"open-project-dialog".into(),name:"Open Project".into(),role:Role::Dialog,value:None,description:"Location is the Project directory as typed. Browse reveals navigation in this same dialog; Open validates the current candidate.".into(),available:true,focused:false},
+            Node{id:"open-project-cancel".into(),name:"Cancel".into(),role:Role::Button,value:None,description:"Cancel without replacing the current Project.".into(),available:true,focused:self.focus==ProjectOpenFocus::Cancel},
+            Node{id:"open-project-submit".into(),name:"Open".into(),role:Role::Button,value:None,description:if self.host_action_pending {crate::FolderBrowserMode::Open.host_action_wait_reason()}else{"Validate source/history and publish this Project."}.into(),available:self.open_enabled(),focused:self.focus==ProjectOpenFocus::Open},
         ];
         if self.busy {
             nodes.push(Node {
@@ -239,34 +204,34 @@ impl ProjectOpenDialogState {
                 name: "Project not opened".into(),
                 role: Role::Status,
                 value: Some(refusal.clone()),
-                description:
-                    "Correct the directory or retry Open; the prior application state is preserved."
-                        .into(),
+                description: "Correct the folder or retry Open; the prior Project is preserved."
+                    .into(),
                 available: true,
                 focused: false,
             });
         }
+        if self.host_action_pending {
+            nodes.push(crate::FolderBrowserMode::Open.host_action_wait_node());
+        }
         nodes
     }
-
     pub fn open_enabled(&self) -> bool {
-        !self.busy && !self.directory.trim().is_empty()
+        !self.busy && !self.host_action_pending && !self.directory.is_empty()
     }
-
-    pub fn move_focus(&mut self, reverse: bool) {
-        let order = if self.open_enabled() {
-            &[
-                ProjectOpenFocus::Directory,
-                ProjectOpenFocus::Cancel,
-                ProjectOpenFocus::Open,
-            ][..]
+    pub fn move_focus(&mut self, reverse: bool, expanded: bool) {
+        let mut order = if self.busy {
+            vec![]
         } else {
-            &[ProjectOpenFocus::Directory, ProjectOpenFocus::Cancel][..]
+            crate::folder_navigation_focus_order(expanded)
+                .into_iter()
+                .map(ProjectOpenFocus::Navigation)
+                .collect()
         };
-        let index = order
-            .iter()
-            .position(|focus| *focus == self.focus)
-            .unwrap_or(0);
+        order.push(ProjectOpenFocus::Cancel);
+        if self.open_enabled() {
+            order.push(ProjectOpenFocus::Open);
+        }
+        let index = order.iter().position(|v| *v == self.focus).unwrap_or(0);
         self.focus = order[(index + if reverse { order.len() - 1 } else { 1 }) % order.len()];
     }
 }

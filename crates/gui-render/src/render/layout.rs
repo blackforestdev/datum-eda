@@ -1,26 +1,32 @@
+//! Shared shell rectangles, pane geometry and recursive split placement.
+use super::*;
+
 #[path = "shell_layout.rs"]
-mod shell_layout;
+pub(crate) mod shell_layout;
 
 // Panels are flush stacked bodies that span the sidebar edge-to-edge (Design
 // Book panel language), not inset floating cards — so the shared column margin
 // is zero and separation reads through surface + a single hairline divider.
-const UI_CARD_MARGIN: f32 = 0.0;
-const UI_CARD_PADDING_X: f32 = design_tokens::spacing::SP_04;
-const UI_CARD_TITLE_Y: f32 = design_tokens::spacing::SP_04;
-const UI_CARD_DIVIDER_Y: f32 = design_tokens::spacing::SP_07 - design_tokens::spacing::SP_02;
-const UI_CARD_CONTENT_TOP: f32 = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
-const UI_CARD_CONTENT_BOTTOM: f32 = design_tokens::typography::BODY_LINE;
-const UI_ROW_PROJECT_TITLE: f32 = design_tokens::typography::BODY_LINE;
-const UI_ROW_BOARD_SUBTITLE: f32 = design_tokens::typography::HEADER_LINE;
-const UI_ROW_NET: f32 = design_tokens::typography::BODY_LINE;
-const UI_ROW_SOURCE_LABEL: f32 = design_tokens::typography::CAPTION_LINE;
-const UI_ROW_SOURCE_ATTENTION: f32 = design_tokens::typography::CAPTION_LINE;
-const UI_ROW_BUTTON: f32 = design_tokens::spacing::SP_06 - design_tokens::spacing::SP_02;
-const UI_ROW_TOOL_LABEL: f32 = design_tokens::typography::CAPTION_LINE;
-const UI_ROW_TOOL_GRID: f32 = design_tokens::spacing::SP_08 + design_tokens::spacing::SP_02;
-const UI_ROW_NOTICE: f32 = design_tokens::typography::CAPTION_LINE;
-const UI_STACK_GAP_SMALL: f32 = design_tokens::spacing::SP_03;
-const UI_STACK_GAP_MEDIUM: f32 = design_tokens::spacing::SP_04;
+pub(super) const UI_CARD_MARGIN: f32 = 0.0;
+pub(super) const UI_CARD_PADDING_X: f32 = design_tokens::spacing::SP_04;
+pub(super) const UI_CARD_TITLE_Y: f32 = design_tokens::spacing::SP_04;
+pub(super) const UI_CARD_DIVIDER_Y: f32 =
+    design_tokens::spacing::SP_07 - design_tokens::spacing::SP_02;
+pub(super) const UI_CARD_CONTENT_TOP: f32 =
+    design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
+pub(super) const UI_CARD_CONTENT_BOTTOM: f32 = design_tokens::typography::BODY_LINE;
+pub(super) const UI_ROW_PROJECT_TITLE: f32 = design_tokens::typography::BODY_LINE;
+pub(super) const UI_ROW_BOARD_SUBTITLE: f32 = design_tokens::typography::HEADER_LINE;
+pub(super) const UI_ROW_NET: f32 = design_tokens::typography::BODY_LINE;
+pub(super) const UI_ROW_SOURCE_LABEL: f32 = design_tokens::typography::CAPTION_LINE;
+pub(super) const UI_ROW_SOURCE_ATTENTION: f32 = design_tokens::typography::CAPTION_LINE;
+pub(super) const UI_ROW_BUTTON: f32 = design_tokens::spacing::SP_06 - design_tokens::spacing::SP_02;
+pub(super) const UI_ROW_TOOL_LABEL: f32 = design_tokens::typography::CAPTION_LINE;
+pub(super) const UI_ROW_TOOL_GRID: f32 =
+    design_tokens::spacing::SP_08 + design_tokens::spacing::SP_02;
+pub(super) const UI_ROW_NOTICE: f32 = design_tokens::typography::CAPTION_LINE;
+pub(super) const UI_STACK_GAP_SMALL: f32 = design_tokens::spacing::SP_03;
+pub(super) const UI_STACK_GAP_MEDIUM: f32 = design_tokens::spacing::SP_04;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RectPx {
@@ -51,7 +57,7 @@ impl RectPx {
         })
     }
 
-    fn scale_by(self, scale: f32) -> Self {
+    pub(super) fn scale_by(self, scale: f32) -> Self {
         Self {
             x: self.x * scale,
             y: self.y * scale,
@@ -407,3 +413,7 @@ fn leaf_pane_content(
 
 #[path = "pane_layout.rs"]
 mod pane_layout;
+
+#[cfg(test)]
+#[path = "../layout_invariant_tests.rs"]
+mod layout_invariant_tests;

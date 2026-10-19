@@ -104,10 +104,6 @@ REQUIRED = {
     "terminal/terminal_session_drain_tests.rs": (
         "osc52_becomes_a_typed_session_scoped_request_without_changing_cells",
     ),
-    "terminal/terminal_working_directory.rs": (
-        "context_for_new_terminal",
-        "current_working_directory",
-    ),
     "terminal/terminal_session.rs": (
         "label_is_explicit",
     ),
@@ -132,10 +128,16 @@ REQUIRED = {
     ),
     "terminal/terminal_working_directory.rs": (
         "context_for_new_terminal",
-        "local_working_directory",
-        "percent_decode_path",
+        "current_working_directory",
+        "use crate::local_path::decode_local_path as local_working_directory;",
         "new_terminal_inherits_local_osc7_directory_without_changing_project_identity",
         "remote_malformed_and_stale_reports_fall_back_to_project_root",
+    ),
+    "application/local_path.rs": (
+        "pub(crate) fn decode_local_path",
+        "percent_decode_path(encoded.as_bytes())?",
+        "fn percent_decode_path",
+        "shared_local_path_preserves_plain_percent_and_decodes_only_local_uri",
     ),
     "terminal/terminal_accessibility_bridge.rs": (
         "TerminalAccessibilityEvent",
@@ -143,7 +145,12 @@ REQUIRED = {
         "CaretMoved",
         "SelectionChanged",
         "FocusChanged",
-        "refresh_terminal_accessibility",
+        '#[path = "terminal_accessibility_bridge/projection.rs"]',
+        "mod projection;",
+    ),
+    "terminal/terminal_accessibility_bridge/projection.rs": (
+        "pub(crate) fn refresh_terminal_accessibility",
+        "self.terminal_sessions.active_accessibility_snapshot(",
     ),
     "terminal/terminal_accessibility_platform/mod.rs": (
         "pub(crate) use worker::PlatformBridge",

@@ -55,8 +55,17 @@ impl OpenWork {
     }
 }
 
+/// Preserve the exact displayed/chosen filesystem path through source admission.
+pub(crate) fn prepare_project_directory(
+    input: &str,
+    include_review: bool,
+) -> Result<PreparedProjectOpen> {
+    PreparedProjectOpen::prepare(std::path::Path::new(input), include_review)
+}
+
 impl Runtime {
     pub(super) fn open_project(&mut self) -> bool {
+        self.folder_browser.cancel();
         self.project_open.cancel();
         if self.workspace().ui.global_preferences.open {
             self.close_global_preferences();
@@ -78,18 +87,24 @@ impl Runtime {
         ui.project_open = Default::default();
         ui.project_open.open = true;
         ui.focus = ApplicationFocus::Overlay;
+        self.init_project_navigation(datum_gui_protocol::FolderBrowserMode::Open, "");
         self.invalidate_frame();
         true
     }
 
     pub(super) fn open_created_project(&mut self, root: std::path::PathBuf) {
         self.open_project();
+        self.init_project_navigation(
+            datum_gui_protocol::FolderBrowserMode::Open,
+            root.to_str().unwrap_or(""),
+        );
         self.session.workspace_mut().ui.project_open.directory = root.display().to_string();
         self.project_open.created_root = Some(root);
         self.begin_project_open();
     }
 
     pub(super) fn close_project_open(&mut self) -> bool {
+        self.folder_browser.cancel();
         self.project_open.cancel();
         let ui = &mut self.session.workspace_mut().ui;
         ui.project_open.open = false;
@@ -107,6 +122,12 @@ impl Runtime {
         if event.state != winit::event::ElementState::Pressed {
             return true;
         }
+        if self.handle_folder_actions_key(event)
+            || self.handle_shared_editor_key(event)
+            || self.handle_folder_browser_key(event)
+        {
+            return true;
+        }
         match &event.logical_key {
             Key::Named(NamedKey::Escape) => {
                 // The owned host can retire before key-up reaches Main. Keep
@@ -117,37 +138,26 @@ impl Runtime {
             }
             Key::Named(NamedKey::Tab) => {
                 let reverse = self.modifiers.shift_key();
+                let expanded = self
+                    .folder_browser
+                    .state
+                    .as_ref()
+                    .is_some_and(|s| s.expanded);
                 self.session
                     .workspace_mut()
                     .ui
                     .project_open
-                    .move_focus(reverse);
+                    .move_focus(reverse, expanded);
             }
-            Key::Named(NamedKey::Enter) => {
-                if self.workspace().ui.project_open.focus == ProjectOpenFocus::Cancel {
-                    self.close_project_open();
-                } else {
-                    self.begin_project_open();
-                }
-            }
-            Key::Named(NamedKey::Backspace)
-                if !self.workspace().ui.project_open.busy
-                    && self.workspace().ui.project_open.focus == ProjectOpenFocus::Directory =>
-            {
-                self.session.workspace_mut().ui.project_open.directory.pop();
-            }
-            key if !self.workspace().ui.project_open.busy
-                && self.workspace().ui.project_open.focus == ProjectOpenFocus::Directory =>
-            {
-                if let Some(value) =
-                    crate::global_preferences_window::dialog_text_input(key, self.modifiers)
-                {
-                    self.session
-                        .workspace_mut()
-                        .ui
-                        .project_open
-                        .directory
-                        .push_str(value);
+            Key::Named(NamedKey::Enter | NamedKey::Space) => {
+                match self.workspace().ui.project_open.focus {
+                    ProjectOpenFocus::Cancel => {
+                        self.close_project_open();
+                    }
+                    ProjectOpenFocus::Open => {
+                        self.begin_project_open();
+                    }
+                    _ => {}
                 }
             }
             _ => {}

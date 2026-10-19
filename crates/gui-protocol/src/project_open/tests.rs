@@ -79,7 +79,7 @@ fn invalid_open_preserves_dialog_input_for_correction() {
     assert!(dialog.open_enabled());
     dialog.busy = true;
     assert!(!dialog.open_enabled());
-    dialog.move_focus(false);
+    dialog.move_focus(false, false);
     assert_eq!(dialog.focus, ProjectOpenFocus::Cancel);
 }
 
@@ -202,16 +202,36 @@ fn open_accessibility_preserves_attempted_path_refusal_and_cancel_during_prepara
         directory: "/owned/attempted-project".into(),
         ..Default::default()
     };
-    dialog.focus = ProjectOpenFocus::Directory;
-    let nodes = dialog.accessibility_nodes();
+    dialog.focus = ProjectOpenFocus::Navigation(FolderBrowserFocus::Path);
+    let mut navigation = FolderBrowserState::new(FolderBrowserMode::Open, dialog.directory.clone());
+    navigation.directory = dialog.directory.clone();
+    navigation.loading = false;
+    let combined = |dialog: &ProjectOpenDialogState| {
+        let mut nodes = dialog.accessibility_nodes();
+        let focus = if let ProjectOpenFocus::Navigation(focus) = dialog.focus {
+            Some(focus)
+        } else {
+            None
+        };
+        nodes.extend(navigation.accessibility_nodes(focus, None, !dialog.busy));
+        nodes
+    };
+    let nodes = combined(&dialog);
+    assert_eq!(
+        nodes
+            .iter()
+            .filter(|n| n.role == crate::GlobalPreferencesAccessibleRole::Dialog)
+            .count(),
+        1
+    );
     let path = nodes
         .iter()
-        .find(|n| n.id == "open-project-directory")
+        .find(|n| n.id == "folder-navigation-path")
         .unwrap();
     assert_eq!(path.value.as_deref(), Some("/owned/attempted-project"));
     assert!(path.focused && path.available);
     dialog.busy = true;
-    let nodes = dialog.accessibility_nodes();
+    let nodes = combined(&dialog);
     assert!(
         nodes
             .iter()
@@ -225,7 +245,7 @@ fn open_accessibility_preserves_attempted_path_refusal_and_cancel_during_prepara
     assert!(nodes.iter().any(|n| n.id == "open-project-busy"));
     dialog.busy = false;
     dialog.refusal = Some("Owned writer is busy; source unchanged".into());
-    let nodes = dialog.accessibility_nodes();
+    let nodes = combined(&dialog);
     assert_eq!(
         nodes
             .iter()
@@ -238,7 +258,7 @@ fn open_accessibility_preserves_attempted_path_refusal_and_cancel_during_prepara
     assert_eq!(
         nodes
             .iter()
-            .find(|n| n.id == "open-project-directory")
+            .find(|n| n.id == "folder-navigation-path")
             .unwrap()
             .value
             .as_deref(),

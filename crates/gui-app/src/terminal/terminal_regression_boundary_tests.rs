@@ -24,9 +24,11 @@ use winit::event::ElementState;
 /// focus only when the resulting behavior expects terminal typing).
 fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
-        HitTarget::Library(_)
+        HitTarget::FolderBrowser(_)
+        | HitTarget::FolderBrowserMenuItem(_)
+            | HitTarget::FolderBrowserRow(_)
+        | HitTarget::Library(_)
         | HitTarget::ProjectOpenModal
-        | HitTarget::ProjectOpenDirectory
         | HitTarget::ProjectOpenCancel
         | HitTarget::ProjectOpenConfirm => false,
         HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
@@ -117,10 +119,9 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::MenuTitle(_)
         | HitTarget::MenuItem { .. }
         | HitTarget::NewProjectModal
+        | HitTarget::NewProjectFolderName
+        | HitTarget::NewProjectUseName
         | HitTarget::NewProjectName
-        | HitTarget::NewProjectDestination
-        | HitTarget::NewProjectUnitsChoice(_)
-        | HitTarget::NewProjectUnitsSummary
         | HitTarget::NewProjectRetryGlobal
         | HitTarget::NewProjectCancel
         | HitTarget::NewProjectCreate

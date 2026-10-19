@@ -143,7 +143,10 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
     assert!(runtime.native_edit.pending());
     let receiver = runtime.native_edit.pending.as_ref().unwrap() as *const _;
     runtime.open_project();
-    runtime.session.workspace_mut().ui.project_open.directory = roots[1].display().to_string();
+    // Fill the displayed Location, not its derived form cache. Submit must bind
+    // this candidate even while the old projection still names the origin.
+    runtime.folder_browser.state.as_mut().unwrap().path_input = roots[1].display().to_string();
+    runtime.session.workspace_mut().ui.project_open.directory = roots[0].display().to_string();
     runtime.begin_project_open();
     assert!(
         runtime
@@ -171,7 +174,10 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
     runtime.close_project_open();
     assert_eq!(runtime.workspace().ui.focus, original_focus);
     runtime.open_project();
-    runtime.session.workspace_mut().ui.project_open.directory = roots[1].display().to_string();
+    // Fill the displayed Location, not its derived form cache. Submit must bind
+    // this candidate even while the old projection still names the origin.
+    runtime.folder_browser.state.as_mut().unwrap().path_input = roots[1].display().to_string();
+    runtime.session.workspace_mut().ui.project_open.directory = roots[0].display().to_string();
     assert_eq!(canonical_history(&roots[0]), origin_history_before);
     assert_eq!(canonical_history(&roots[1]), destination_history_before);
 

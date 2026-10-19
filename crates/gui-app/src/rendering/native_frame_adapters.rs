@@ -103,7 +103,8 @@ impl App {
                 true,
             ),
         };
-        let (Some(window), Some(surface), Some(runtime)) = (window, surface, &self.runtime) else {
+        let (Some(window), Some(surface), Some(runtime)) = (window, surface, &mut self.runtime)
+        else {
             return;
         };
         let Some(receipt) = self.frames.begin_frame(window.id()) else {
@@ -118,5 +119,12 @@ impl App {
             }
         };
         self.frames.frame_finished(window, receipt, presented);
+        if presented
+            && new
+            && let Some(browser) = &mut runtime.folder_browser.state
+        {
+            browser.visible_rows = surface.presented_browser_rows();
+            runtime.refresh_global_preferences_accessibility();
+        }
     }
 }

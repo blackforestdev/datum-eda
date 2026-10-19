@@ -2,6 +2,54 @@ pub use crate::terminal_split::{
     TerminalSplitChild, TerminalSplitDirection, TerminalSplitNode, TerminalTabLayout,
 };
 
+/// Immutable session origin, independent of child titles and shell cwd.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TerminalSessionBinding {
+    Independent,
+    Project { name: String, root: String },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TerminalSessionContext {
+    pub binding: TerminalSessionBinding,
+    pub default_tab_label: String,
+    pub directory: String,
+    /// The shell reported a valid local path; otherwise this is its launch cwd.
+    pub directory_reported: bool,
+}
+
+impl TerminalSessionContext {
+    pub fn binding_label(&self) -> String {
+        match &self.binding {
+            TerminalSessionBinding::Independent => "Independent shell".into(),
+            TerminalSessionBinding::Project { name, .. } => format!("Project: {name}"),
+        }
+    }
+
+    pub fn directory_label(&self) -> &'static str {
+        if self.directory_reported {
+            "Cwd"
+        } else {
+            "Started in"
+        }
+    }
+
+    /// Full, unclipped context for accessibility and other semantic consumers.
+    pub fn description(&self) -> String {
+        let root = match &self.binding {
+            TerminalSessionBinding::Project { root, .. } => format!("; Project root: {root}"),
+            TerminalSessionBinding::Independent => String::new(),
+        };
+        format!(
+            "{}; {}: {}{}",
+            self.binding_label(),
+            self.directory_label(),
+            self.directory,
+            root
+        )
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalTabState {
     pub session_id: String,
@@ -175,6 +223,7 @@ pub struct TerminalLaneState {
     pub active_session_id: Option<String>,
     pub title: Option<String>,
     pub current_working_directory: Option<String>,
+    pub session_context: Option<TerminalSessionContext>,
     pub shell_metadata: TerminalShellMetadata,
     pub bell_count: usize,
     pub columns: u16,
@@ -224,6 +273,7 @@ impl TerminalLaneState {
         swap_fields!(
             title,
             current_working_directory,
+            session_context,
             shell_metadata,
             bell_count,
             columns,
@@ -264,6 +314,7 @@ impl Default for TerminalLaneState {
             active_session_id: None,
             title: None,
             current_working_directory: None,
+            session_context: None,
             shell_metadata: TerminalShellMetadata::default(),
             bell_count: 0,
             columns: 80,

@@ -2,6 +2,9 @@
 
 use super::*;
 
+#[path = "terminal_session_render/context.rs"]
+mod context;
+
 pub(super) fn terminal_tab_label(
     fallback: &str,
     explicit: bool,
@@ -42,6 +45,7 @@ pub(super) fn terminal_tab_label(
 
 impl TerminalSessionRegistry {
     pub(crate) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
+        self.sync_session_contexts(state);
         if self.sessions.is_empty() && self.pending_spawns.is_empty() {
             state.active_session_id = None;
             state.tabs.clear();
@@ -100,9 +104,10 @@ impl TerminalSessionRegistry {
                 Some(datum_gui_protocol::TerminalTabState {
                     session_id: slot.session.session_id().to_string(),
                     previous_session_id: slot.previous_session_id.clone(),
-                    label: terminal_tab_label(
+                    label: context::session_tab_label(
                         &slot.label,
                         slot.label_is_explicit,
+                        projected_lane.session_context.as_ref(),
                         projected_lane.title.as_deref(),
                         projected_lane.progress,
                         projected_lane.latest_notification.is_some(),

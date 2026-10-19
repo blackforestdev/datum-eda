@@ -183,6 +183,46 @@ impl App {
                 }
             }
             WindowEvent::KeyboardInput { event, .. } => {
+                let preview_focused = self.runtime.as_ref().is_some_and(|r| {
+                    r.folder_navigation_focus()
+                        == Some(datum_gui_protocol::FolderBrowserFocus::Preview)
+                });
+                let alt = self.runtime.as_ref().is_some_and(|r| r.modifiers.alt_key());
+                if preview_focused
+                    && !alt
+                    && self
+                        .new_project_surface
+                        .as_mut()
+                        .is_some_and(|s| s.scroll_browser_preview_key(&event))
+                {
+                    self.request_dialog_key_redraw(
+                        crate::global_preferences_window::DialogInputOutcome::Dialog,
+                        native_frame_adapters::OwnedHost::New,
+                    );
+                    return;
+                }
+                let inner = self
+                    .runtime
+                    .as_ref()
+                    .and_then(|r| r.folder_navigation_focus());
+                if !matches!(
+                    inner,
+                    Some(
+                        datum_gui_protocol::FolderBrowserFocus::Folders
+                            | datum_gui_protocol::FolderBrowserFocus::Preview
+                    )
+                ) && !alt
+                    && self
+                        .new_project_surface
+                        .as_mut()
+                        .is_some_and(|s| s.scroll_project_body_key(&event))
+                {
+                    self.request_dialog_key_redraw(
+                        crate::global_preferences_window::DialogInputOutcome::Dialog,
+                        native_frame_adapters::OwnedHost::New,
+                    );
+                    return;
+                }
                 if let Some(runtime) = &mut self.runtime {
                     let outcome = if runtime.workspace().ui.project_open.open {
                         runtime.handle_project_open_key(&event);

@@ -63,6 +63,7 @@ impl TerminalLaunchContext {
 #[test]
 fn terminal_session_registry_tracks_active_session_contexts() {
     let root = std::env::temp_dir().join(format!("datum-terminal-registry-{}", std::process::id()));
+    let project_label = root.file_name().unwrap().to_str().unwrap();
     let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(&root).expect("terminal registry test root should create");
     let context = TerminalLaunchContext::for_project_root(&root);
@@ -98,10 +99,10 @@ fn terminal_session_registry_tracks_active_session_contexts() {
     );
     assert_eq!((terminal_state.columns, terminal_state.rows), (112, 31));
     assert_eq!(terminal_state.tabs.len(), 2);
-    assert_eq!(terminal_state.tabs[0].label, "shell 1");
+    assert_eq!(terminal_state.tabs[0].label, project_label);
     assert!(!terminal_state.tabs[0].active);
     assert!(terminal_state.tabs[0].attached);
-    assert_eq!(terminal_state.tabs[1].label, "shell 2");
+    assert_eq!(terminal_state.tabs[1].label, project_label);
     assert!(terminal_state.tabs[1].active);
     assert!(terminal_state.tabs[1].attached);
     assert_eq!(

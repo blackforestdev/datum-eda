@@ -99,6 +99,25 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         guard.check(sources, valid_render(), failures)
         self.assertTrue(any("mod tests;" in failure for failure in failures))
 
+    def test_accessibility_projection_requires_wired_core_snapshot_owner(self) -> None:
+        owner = "terminal/terminal_accessibility_bridge/projection.rs"
+        for target, marker in (
+            ("terminal/terminal_accessibility_bridge.rs", "mod projection;"),
+            (owner, "pub(crate) fn refresh_terminal_accessibility"),
+            (owner, "self.terminal_sessions.active_accessibility_snapshot("),
+        ):
+            with self.subTest(target=target, marker=marker):
+                sources = valid_sources()
+                sources[target] = sources[target].replace(marker, "removed")
+                failures: list[str] = []
+                guard.check(sources, valid_render(), failures)
+                self.assertTrue(any(marker in failure for failure in failures))
+        sources = valid_sources()
+        del sources[owner]
+        failures = []
+        guard.check(sources, valid_render(), failures)
+        self.assertTrue(any(owner in failure for failure in failures))
+
     def test_search_wrap_stability_or_all_match_rendering_removal_fails(self) -> None:
         sources = valid_sources()
         sources["terminal/runtime_terminal_search.rs"] = sources[
@@ -137,8 +156,8 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         sources["terminal/terminal_working_directory.rs"] = sources[
             "terminal/terminal_working_directory.rs"
         ].replace("context_for_new_terminal", "clone_project_context")
-        sources["terminal/terminal_working_directory.rs"] = sources[
-            "terminal/terminal_working_directory.rs"
+        sources["application/local_path.rs"] = sources[
+            "application/local_path.rs"
         ].replace("percent_decode_path", "use_uri_as_path")
         failures: list[str] = []
         guard.check(
@@ -148,6 +167,29 @@ class TerminalNativeInteractionGuardTest(unittest.TestCase):
         )
         self.assertTrue(any("context_for_new_terminal" in failure for failure in failures))
         self.assertTrue(any("percent_decode_path" in failure for failure in failures))
+
+    def test_terminal_cwd_must_delegate_to_shared_decoder(self) -> None:
+        sources = valid_sources()
+        sources["terminal/terminal_working_directory.rs"] = sources[
+            "terminal/terminal_working_directory.rs"
+        ].replace(
+            "use crate::local_path::decode_local_path as local_working_directory;",
+            "fn local_working_directory() {}",
+        )
+        failures: list[str] = []
+        guard.check(sources, valid_render(), failures)
+        self.assertTrue(any("use crate::local_path" in failure for failure in failures))
+
+    def test_shared_decoder_and_its_regression_owner_cannot_disappear(self) -> None:
+        for marker in guard.REQUIRED["application/local_path.rs"]:
+            with self.subTest(marker=marker):
+                sources = valid_sources()
+                sources["application/local_path.rs"] = sources[
+                    "application/local_path.rs"
+                ].replace(marker, "removed")
+                failures: list[str] = []
+                guard.check(sources, valid_render(), failures)
+                self.assertTrue(any(marker in failure for failure in failures))
 
     def test_terminal_maximize_cannot_fall_back_to_the_editor_pane(self) -> None:
         sources = valid_sources()

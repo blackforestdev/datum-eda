@@ -60,6 +60,8 @@ mod board_text_terminal_commands;
 mod console_accessibility;
 #[path = "terminal/console_feedback.rs"]
 mod console_feedback;
+#[path = "windows/folder_browser.rs"]
+mod folder_browser;
 #[path = "windows/global_preferences_projection.rs"]
 mod global_preferences_projection;
 #[path = "windows/global_preferences_runtime.rs"]
@@ -68,10 +70,14 @@ mod global_preferences_runtime;
 mod global_preferences_window;
 #[path = "rendering/gui_runtime_support.rs"]
 mod gui_runtime_support;
+#[path = "application/host_filesystem.rs"]
+mod host_filesystem;
 #[path = "viewport/interaction_refresh.rs"]
 mod interaction_refresh;
 #[path = "terminal/keyboard_focus.rs"]
 mod keyboard_focus;
+#[path = "application/local_path.rs"]
+mod local_path;
 #[path = "rendering/native_frame_adapters.rs"]
 mod native_frame_adapters;
 #[path = "rendering/native_frame_coordinator.rs"]
@@ -110,6 +116,8 @@ mod resize_smoke;
 mod retained_scene_lifecycle;
 #[path = "rendering/runtime_capture.rs"]
 mod runtime_capture;
+#[path = "application/runtime_clipboard.rs"]
+mod runtime_clipboard;
 use runtime_capture::run_offscreen_visual_test;
 #[path = "editor/runtime_board_text_edit.rs"]
 mod runtime_board_text_edit;

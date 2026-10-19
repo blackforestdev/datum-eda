@@ -107,6 +107,7 @@ impl Runtime {
             selection_run: runtime_selection_run::RunWork::new(wake.clone()),
             native_edit,
             project_open: project_open::OpenWork::new(wake.clone()),
+            folder_browser: folder_browser::FolderBrowser::new(wake.clone()),
             native_selection: None,
             selection_gesture: None,
             selection_evaluation: None,

@@ -160,6 +160,10 @@ mod tests {
                     _ => renderer.prepare_session_dialog(
                         crate::DialogInput::NewProject {
                             dialog: &state.ui.new_project,
+                            navigation: None,
+                            list_scroll: &mut datum_gui_viewport::scroll::ScrollViewport::default(),
+                            preview_scroll:
+                                &mut datum_gui_viewport::scroll::ScrollViewport::default(),
                             reveal_focus: true,
                         },
                         view,

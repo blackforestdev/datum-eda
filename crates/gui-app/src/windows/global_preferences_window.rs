@@ -80,13 +80,18 @@ pub(super) struct GlobalPreferencesWindowSurface {
     // Dialog hosts never contain world geometry; retain this immutable envelope.
     // Input keeps targeting the last presented geometry while damage coalesces.
     presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
+    prepared_browser: Option<crate::folder_browser::BrowserPresentation>,
+    presented_browser: Option<crate::folder_browser::BrowserPresentation>,
+    browser_pointer_press: Option<(HitTarget, crate::folder_browser::BrowserPresentation)>,
     cursor_position: Option<(f32, f32)>,
     scroll: datum_gui_viewport::scroll::ScrollViewport,
-    new_project_focus: Option<(
-        datum_gui_protocol::NewProjectFocus,
-        datum_gui_protocol::NewProjectUnitsChoice,
-    )>,
+    new_project_focus: Option<datum_gui_protocol::NewProjectFocus>,
     scroll_identity: Option<(String, String, usize)>,
+    browser_preview: datum_gui_viewport::scroll::ScrollViewport,
+    navigation_scroll: datum_gui_viewport::scroll::ScrollViewport,
+    project_open_focus: Option<datum_gui_protocol::ProjectOpenFocus>,
+    browser_preview_identity: Option<(Option<String>, Option<String>)>,
+    browser_view: Option<(datum_gui_protocol::FolderBrowserMode, String, Option<usize>)>,
     scrollbar_pressed: bool,
     scroll_focus: Option<datum_gui_protocol::GlobalPreferencesFocus>,
     scroll_expanded: (Option<String>, Option<String>),
@@ -153,10 +158,18 @@ impl GlobalPreferencesWindowSurface {
             renderer,
             measurements,
             presented_hits,
+            prepared_browser: None,
+            presented_browser: None,
+            browser_pointer_press: None,
             cursor_position: None,
             scroll: Default::default(),
             new_project_focus: None,
             scroll_identity: None,
+            browser_view: None,
+            browser_preview: Default::default(),
+            navigation_scroll: Default::default(),
+            project_open_focus: None,
+            browser_preview_identity: None,
             scrollbar_pressed: false,
             scroll_focus: None,
             scroll_expanded: (None, None),
@@ -180,6 +193,13 @@ impl GlobalPreferencesWindowSurface {
         replacement.scroll.release();
         replacement.new_project_focus = self.new_project_focus;
         replacement.scroll_identity = self.scroll_identity.clone();
+        replacement.browser_view = self.browser_view.clone();
+        replacement.navigation_scroll = self.navigation_scroll.clone();
+        replacement.navigation_scroll.release();
+        replacement.project_open_focus = self.project_open_focus;
+        replacement.browser_preview = self.browser_preview.clone();
+        replacement.browser_preview.release();
+        replacement.browser_preview_identity = self.browser_preview_identity.clone();
         replacement.scroll_focus = self.scroll_focus.clone();
         replacement.scroll_expanded = self.scroll_expanded.clone();
         Ok(replacement)
@@ -187,6 +207,8 @@ impl GlobalPreferencesWindowSurface {
 
     pub(super) fn cancel_capture(&mut self) {
         self.scroll.release();
+        self.browser_preview.release();
+        self.navigation_scroll.release();
         self.scrollbar_pressed = false;
         self.window.set_cursor(winit::window::CursorIcon::Default);
     }
@@ -201,6 +223,8 @@ impl GlobalPreferencesWindowSurface {
             // Keep scrollbar_pressed until release to consume the old gesture,
             // but stop applying its grab before the new layout is presented.
             self.scroll.release();
+            self.browser_preview.release();
+            self.navigation_scroll.release();
         }
         if width == 0 || height == 0 {
             return;
@@ -223,6 +247,8 @@ impl GlobalPreferencesWindowSurface {
         if (self.scale_factor - next).abs() > f32::EPSILON {
             self.scale_factor = next;
             self.scroll.release();
+            self.browser_preview.release();
+            self.navigation_scroll.release();
             self.scroll_focus = None;
             self.presented_hits.clear();
             self.invalidate();
@@ -236,7 +262,9 @@ impl GlobalPreferencesWindowSurface {
     ) {
         self.cursor_position = position;
         if let Some((_, y)) = position
-            && self.scroll.drag(y / self.scale_factor)
+            && (self.browser_preview.drag(y / self.scale_factor)
+                || self.navigation_scroll.drag(y / self.scale_factor)
+                || self.scroll.drag(y / self.scale_factor))
         {
             self.invalidate();
             frames.invalidate(&self.window);
@@ -249,12 +277,40 @@ impl GlobalPreferencesWindowSurface {
         frames: &mut native_frame_coordinator::NativeFrameCoordinator,
     ) {
         let before = self.scroll.offset();
-        let changed = scroll_wheel(
-            &mut self.scroll,
-            self.cursor_position,
-            self.scale_factor,
-            delta,
+        let target = self.hit_target();
+        let preview = matches!(
+            target,
+            Some(HitTarget::FolderBrowser(
+                datum_gui_protocol::FolderBrowserFocus::Preview
+            ))
         );
+        let list = matches!(
+            target,
+            Some(
+                HitTarget::FolderBrowser(datum_gui_protocol::FolderBrowserFocus::Folders)
+                    | HitTarget::FolderBrowserRow(_)
+            )
+        );
+        let changed = (preview
+            && scroll_wheel(
+                &mut self.browser_preview,
+                self.cursor_position,
+                self.scale_factor,
+                delta,
+            ))
+            || (list
+                && scroll_wheel(
+                    &mut self.navigation_scroll,
+                    self.cursor_position,
+                    self.scale_factor,
+                    delta,
+                ))
+            || scroll_wheel(
+                &mut self.scroll,
+                self.cursor_position,
+                self.scale_factor,
+                delta,
+            );
         append_gui_verbose_diagnostic_line(|| {
             format!(
                 "native scroll window={:?} delta={delta:?} scale={} before={before:?} after={:?} maximum={:?} changed={changed}",
@@ -277,14 +333,47 @@ impl GlobalPreferencesWindowSurface {
     ) -> bool {
         if state == ElementState::Released {
             self.scroll.release();
+            self.browser_preview.release();
+            self.navigation_scroll.release();
             return std::mem::take(&mut self.scrollbar_pressed);
         }
         let Some((x, y)) = self.cursor_position else {
             return false;
         };
-        let outcome = self
-            .scroll
-            .press(x / self.scale_factor, y / self.scale_factor);
+        let target = self.hit_target();
+        let preview = matches!(
+            target,
+            Some(HitTarget::FolderBrowser(
+                datum_gui_protocol::FolderBrowserFocus::Preview
+            ))
+        );
+        let list = matches!(
+            target,
+            Some(
+                HitTarget::FolderBrowser(datum_gui_protocol::FolderBrowserFocus::Folders)
+                    | HitTarget::FolderBrowserRow(_)
+            )
+        );
+        let preview = if preview {
+            self.browser_preview
+                .press(x / self.scale_factor, y / self.scale_factor)
+        } else {
+            Default::default()
+        };
+        let list = if !preview.consumed && list {
+            self.navigation_scroll
+                .press(x / self.scale_factor, y / self.scale_factor)
+        } else {
+            Default::default()
+        };
+        let outcome = if preview.consumed {
+            preview
+        } else if list.consumed {
+            list
+        } else {
+            self.scroll
+                .press(x / self.scale_factor, y / self.scale_factor)
+        };
         self.scrollbar_pressed = outcome.consumed;
         if outcome.changed {
             self.invalidate();
@@ -298,163 +387,14 @@ impl GlobalPreferencesWindowSurface {
         self.presented_hits.hit_test(x, y).cloned()
     }
 
-    pub(super) fn render(
-        &mut self,
-        runtime: &Runtime,
-        project_preferences: bool,
-        new_project: bool,
-    ) -> Result<bool> {
-        if runtime.device_health.failed() {
-            return Ok(false);
-        }
-        if !self.surface_transaction.begin_frame(
-            &self.surface,
-            &runtime.device,
-            &self.config,
-            &runtime.device_health,
-        )? {
-            return Ok(false);
-        }
-        self.renderer.prepare_surface_attachment(
-            &runtime.device,
-            self.config.width,
-            self.config.height,
-            || !runtime.device_health.failed(),
-        )?;
-        if self.renderer.render_session().prepared().is_none() {
-            let view = datum_gui_render::DialogView {
-                width: self.config.width,
-                height: self.config.height,
-                scale: self.scale_factor,
-            };
-            if new_project && runtime.workspace().ui.project_open.open {
-                self.renderer.prepare_session_dialog(
-                    datum_gui_render::DialogInput::OpenProject {
-                        dialog: &runtime.workspace().ui.project_open,
-                    },
-                    view,
-                    &mut self.scroll,
-                )?;
-            } else if new_project {
-                let dialog = &runtime.workspace().ui.new_project;
-                let focus = (dialog.focus, dialog.units_choice);
-                let reveal_focus = self.new_project_focus != Some(focus);
-                self.renderer.prepare_session_dialog(
-                    datum_gui_render::DialogInput::NewProject {
-                        dialog,
-                        reveal_focus,
-                    },
-                    view,
-                    &mut self.scroll,
-                )?;
-                self.new_project_focus = Some(focus);
-            } else {
-                let dialog = if project_preferences {
-                    &runtime.workspace().ui.project_preferences
-                } else {
-                    &runtime.workspace().ui.global_preferences
-                };
-                let identity_changed =
-                    self.scroll_identity
-                        .as_ref()
-                        .is_none_or(|(section, query, row)| {
-                            section != &dialog.section_id
-                                || query != &dialog.search_query
-                                || *row != dialog.scroll_row
-                        });
-                let expanded_changed = self.scroll_expanded.0 != dialog.open_choice_key
-                    || self.scroll_expanded.1 != dialog.explanation_key;
-                let focus_changed = self.scroll_focus.as_ref() != Some(&dialog.focus);
-                let mut reveal_row = identity_changed.then_some(dialog.scroll_row);
-                if focus_changed || expanded_changed {
-                    use datum_gui_protocol::GlobalPreferencesFocus;
-                    let key = match &dialog.focus {
-                        GlobalPreferencesFocus::SettingName(key)
-                        | GlobalPreferencesFocus::Control(key)
-                        | GlobalPreferencesFocus::Reset(key) => Some(key.as_str()),
-                        GlobalPreferencesFocus::ExplanationClose => {
-                            dialog.explanation_key.as_deref()
-                        }
-                        _ => None,
-                    };
-                    if let Some(key) = key {
-                        reveal_row = dialog.visible_rows().position(|row| row.key == key);
-                    }
-                }
-                if identity_changed || expanded_changed {
-                    self.scroll.release();
-                }
-                let input = if project_preferences {
-                    datum_gui_render::DialogInput::ProjectPreferences { dialog, reveal_row }
-                } else {
-                    datum_gui_render::DialogInput::GlobalPreferences { dialog, reveal_row }
-                };
-                self.renderer
-                    .prepare_session_dialog(input, view, &mut self.scroll)?;
-                // Scrolling rebuilds geometry, but unchanged reveal keys stay owned here.
-                if focus_changed {
-                    self.scroll_focus = Some(dialog.focus.clone());
-                }
-                if expanded_changed {
-                    self.scroll_expanded.0.clone_from(&dialog.open_choice_key);
-                    self.scroll_expanded.1.clone_from(&dialog.explanation_key);
-                }
-                if identity_changed {
-                    self.scroll_identity = Some((
-                        dialog.section_id.clone(),
-                        dialog.search_query.clone(),
-                        dialog.scroll_row,
-                    ));
-                }
-            }
-            append_gui_verbose_diagnostic_line(|| {
-                format!(
-                    "native control_meshes window={:?} builds={}",
-                    self.window.id(),
-                    self.renderer.control_mesh_build_count()
-                )
-            });
-        }
-        use gui_runtime_support::native_surface_transaction::NativeRenderTarget;
-        let plan = self.surface_transaction.prepare_render_plan(
-            &mut self.renderer,
-            self.config.width,
-            self.config.height,
-        )?;
-        let mut target = NativeRenderTarget::new(
-            &mut self.surface_transaction,
-            &self.surface,
-            &runtime.device,
-            &runtime.queue,
-            &self.config,
-            &runtime.device_health,
-        );
-        let rendered = self.renderer.encode_frame(
-            plan,
-            &runtime.device,
-            &runtime.queue,
-            &mut target,
-            &mut NativeRenderTarget::acquire,
-            &mut NativeRenderTarget::submitted,
-        );
-        let (frame, _) = target.finish(&self.renderer);
-        let Some(submitted) = rendered? else {
-            return Ok(false);
-        };
-        let frame = frame.context("rendered owned frame must own an acquisition")?;
-        if runtime.device_health.failed() {
-            return Ok(false);
-        }
-        self.surface_transaction.present_rendered(
-            frame,
-            &self.window,
-            &mut self.renderer,
-            submitted,
-        )?;
-        if let Some((hits, _)) = self.renderer.render_session_mut().take_published_frame() {
-            self.presented_hits.replace(hits);
-        }
-        Ok(true)
+    pub(super) fn pointer_region(&self) -> Option<(datum_gui_render::HitRegion, (f32, f32), f32)> {
+        let point = self.cursor_position?;
+        self.presented_hits
+            .regions()
+            .iter()
+            .rev()
+            .find(|r| r.rect.contains(point.0, point.1))
+            .map(|r| (r.clone(), point, self.scale_factor))
     }
 }
 
@@ -788,3 +728,6 @@ mod tests {
         assert_eq!(MIN_PREFERENCES_SIZE, LogicalSize::new(700.0, 540.0));
     }
 }
+
+#[path = "owned_dialog_render.rs"]
+mod owned_dialog_render;

@@ -1,5 +1,7 @@
+//! Artifact-preview test fixture construction and observation helpers.
+use super::*;
 #[allow(dead_code)]
-fn sample_artifact_preview_primitives()
+pub(super) fn sample_artifact_preview_primitives()
 -> Vec<datum_gui_protocol::ProductionArtifactPreviewPrimitive> {
     use datum_gui_protocol::{
         ProductionArtifactPreviewPoint as P, ProductionArtifactPreviewPrimitive as Prim,
@@ -37,7 +39,7 @@ fn sample_artifact_preview_primitives()
     ]
 }
 #[allow(dead_code)]
-fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> usize {
+pub(super) fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> usize {
     if let Some(artifact) = state.production.focused_artifact.as_mut()
         && let Some(preview) = artifact.focused_preview.as_mut()
     {
@@ -55,14 +57,14 @@ fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> u
     .len()
 }
 #[allow(dead_code)]
-fn artifact_preview_adds_panel_vertices(
+pub(super) fn artifact_preview_adds_panel_vertices(
     prepared: &PreparedScene,
     state: ReviewWorkspaceState,
 ) -> bool {
     prepared.panel_vertices().len() > panel_vertices_without_artifact_preview(state)
 }
 #[allow(dead_code)]
-fn prepared_has_artifact_preview_controls(prepared: &PreparedScene) -> bool {
+pub(super) fn prepared_has_artifact_preview_controls(prepared: &PreparedScene) -> bool {
     let has_zoom = prepared
         .hit_regions
         .iter()
@@ -78,7 +80,7 @@ fn prepared_has_artifact_preview_controls(prepared: &PreparedScene) -> bool {
     has_zoom && has_geometry && has_viewport
 }
 #[allow(dead_code)]
-fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bool {
+pub(super) fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bool {
     if let Some(artifact) = state.production.focused_artifact.as_mut()
         && let Some(preview) = artifact.focused_preview.as_mut()
     {
