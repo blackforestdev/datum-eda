@@ -10256,5 +10256,163 @@
     "visual_limit": "Escape Inspector/status show None, but one thin pink Track cue remains unclassified. No blanket canvas-cue-clearance claim or defect/cause inferred. Empty outline has no vertices; its reported hidden/unprojected flags are both false, distinct from visible geometry.",
     "manager_acceptance": "Appointed manager objectively accepts bounded inventory/Board baseline after actual focused PASS; directs normal scoped landing/publication, then separate pre-hidden-L1 authored Ctrl+A continuation. C04/C05/C06/HUMAN and other qualification remain open.",
     "owning_route_review": "prototype-selection route inspected: protected Selection Study DOM/CSS and both listed consumers (UVT and Rendering Book) reviewed before rendered inspection. No source/prototype/specification edit, authority digest refresh or HUMAN approval."
+  },
+  "native_wayland_prehidden_authored_20261018": {
+    "status": "Actual independent bounded PASS and appointed manager acceptance for finite authored pre-hidden Ctrl+A/restore only; C04 remains in progress.",
+    "source_baseline": "ff4174af; only the existing proof runner changes. Application binaries and compiled Rust remain qualified unchanged35d5e014 reuse.",
+    "binary_sha256": {
+      "datum-gui": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "ae826f7a32ee6005300a6100b58a0e617cee546b9a0dba1b641f75873c1e9034",
+      "s5a_native_selection_observation.py": "58e598c43bcbb4fd116f77d00e5ba2b48f4dfff60746f5e9adf8ddaf11950001",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "actual_backend": "Native Datum Wayland/wgpu/Vulkan Intel HD Graphics P630; outer X11 input to owned Weston only. Not physical/KWin/HUMAN qualification.",
+    "gui_pid": 651602,
+    "compositor_pid": 651583,
+    "independent_oracle": {
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+      "kind": "compound",
+      "members": [
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000002"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000003"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000004"
+        },
+        {
+          "class": "board_outline",
+          "id": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "oracle": "frozen scope-v2 board source and current project revision; accepted N14 four-Track/empty-outline oracle",
+      "fixture_sha256": "0ffdb14d8987f4f952721035e16a7013be27983da01f58ddc37525233788879a",
+      "pid": 651602
+    },
+    "initial_state": "Current native record1: Board focused, None selection and L1=true. Initial rendered layer state retained; no hidden acquisition inferred from a click request alone.",
+    "ordinary_actions": {
+      "visibility_hide": "Settled presented Main, fresh actual native cursor18,507 acknowledgement, separate primary click, actual passive trace presented target ToggleLayer(L1), published seq3 L1=false/None before Ctrl+A.",
+      "acquisition": "Focused Board Ctrl+A seq4 acquires authored Compound5 from the frozen source oracle: four Track IDs400...001-004 plus BoardOutline200...003.",
+      "visibility_restore": "Fresh cursor19,507 acknowledgement, separate primary click and second actual ToggleLayer(L1) trace; seq6 L1=true retains exact same5 typed members/focusNone; four Track hidden flags return false.",
+      "clear_and_continue": "Idle Escape seq7 clears; subsequent Ctrl+A seq8 reacquires same5 with hidden0 and focusNone."
+    },
+    "complete_membership": {
+      "selected": [
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000002"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000003"
+        },
+        {
+          "class": "track",
+          "id": "40000000-0000-4000-8000-000000000004"
+        },
+        {
+          "class": "board_outline",
+          "id": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "hidden_track_ids": [
+        "40000000-0000-4000-8000-000000000001",
+        "40000000-0000-4000-8000-000000000002",
+        "40000000-0000-4000-8000-000000000003",
+        "40000000-0000-4000-8000-000000000004"
+      ],
+      "public_observation": "Complete process-bound AT-SPI identities/revision/standard SELECTED plus individual hidden and focus attributes; exact independent fixture set required. Compact v2 remains correlation only.",
+      "empty_outline": "Authored empty outline remains the fifth member; it has hidden=false and unprojected=false but no source vertices. It is not counted as a hidden Track or claimed visible outline geometry."
+    },
+    "visual_observation": "All6 current captures personally inspected: pre-acquisition hidden layer is acknowledged by state and dim row; selected hidden Track geometry/cues absent while Inspector reports5 objects/4 hidden; restore shows normal full Track cues with same membership. Escape with pointer outside canvas shows None and no selected Track cue in this bounded frame. Prior baseline thin pink cue stays unclassified; no general cue-clearance/HUMAN/N15 PASS.",
+    "preserved_failure": {
+      "attempt": "native-wayland-hidden-l1-01",
+      "raw_status": "FAIL",
+      "scope": "No acknowledged visibility transition, seq1/L1true remained; no Ctrl+A or hidden-membership credit. All69 canonical hashes preserved after owned cleanup.",
+      "correction": "One bounded delivery diagnostic: require settled frame and fresh native cursor acknowledgement before separate button click; enable existing passive DATUM_TRACE_CLICKS observation. Same row, one-pixel restore motion; no coordinate sweep, product workaround, private product action/state injection or cause/defect inferred from the failed request."
+    },
+    "nonmutation": "All69 tracked catalogue hashes equal before launch, after selection and after owned teardown, including34 nested second-Project files and4 electrical-identity files. Exact operational roles remain separate; no context/credential payload read.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 651628,
+          "socket": "/run/user/1000/npd-wl-h6co8b7s/datum-native-edit-d36b8b74-3833-4798-8a02-6707cc81296e/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-h6co8b7s",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM/verified companion shutdown are owned housekeeping, not ordinary GUI Close/GPU destructor/drain proof."
+    },
+    "verification_reuse": "Existing accepted ten reader/inventory tests cover unchanged helper/reader; no duplicate suite/build or baseline native rerun. Current source-health3252 passes. App source/binary and launch-time script hashes match; raw trial outcomes remain unchanged.",
+    "evidence": {
+      "pins": ".datum/scratch/s5a-c04-managed-20261018/hidden-l1-candidate-pins.json",
+      "pins_sha256": "4079e18d644be877a305e44bf2139a909d977f6fb5117e1c65c9d4e4ead5c3f9",
+      "raw_result": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/result.json",
+      "captures": [
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/initial-layer-state.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/l1-hidden-before-acquisition.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/selected-complete-board.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/l1-restored-same-membership.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/escape-cleared-board.png",
+        ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-l1-02/subsequent-keyboard-selection.png"
+      ],
+      "availability": "Temporary task-owned uncommitted artifacts, one retained copy per actual attempt."
+    },
+    "limits": [
+      "Explicit global authored Ctrl+A only: no ordinary hidden canvas/menu origin, hidden derived member/intermediate, class-filter or derived IR01 completeness claim.",
+      "Finite5-member case only; no256/257, full N05/N09/N17, all-class, full C04/C05/C06/HUMAN/physical/KWin or performance qualification.",
+      "Prior accepted scopes and raw failures retained; no product rule, dependency, budget, fixture, prototype or successor authority change."
+    ],
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false,
+    "independent_review": {
+      "manager_thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "actual_outcome": "Bounded PASS: pins/chronology, hide-before-acquisition, exact5 complete public members/four hidden Tracks, same membership/focus on restore, clear/reselect,69-file invariance and cleanup; all6captures viewed. Prior default observations satisfy the new runner checks; original attempt01FAIL retained.",
+      "candidate_pins_sha256": "4079e18d644be877a305e44bf2139a909d977f6fb5117e1c65c9d4e4ead5c3f9"
+    },
+    "related_intake": {
+      "issue": "dat-inspector-visible-hidden-summary-lrgi",
+      "relationship": "Related to dat-uvt-s5a-build-1wv; intake only, not a new prerequisite/selection.",
+      "observed_inconsistency": "Visible bounds/layers labels map projected aggregate fields that include hidden bindings; hidden frame lists F.Cu4/bounds.",
+      "source_paths": [
+        "crates/gui-protocol/src/selection_view/inspector_labels.rs",
+        "crates/gui-protocol/src/selection_view/projection_inspection.rs"
+      ],
+      "excluded_from_this_qualification": [
+        "Visible bounds",
+        "Visible layers"
+      ],
+      "policy": "No aggregation or naming policy chosen; no source fix in this bounded unit."
+    },
+    "manager_acceptance": "Appointed manager objectively accepts only finite authored pre-hidden Ctrl+A/restore, excluding the two inconsistent Visible summaries. Directs related intake and scoped landing before further case preparation; full N05/IR01/C04/C05/C06/HUMAN remains open.",
+    "landing_tracker_check": "Initial state check refused the new issue generic intake label; corrected to required roadmap:intake and re-exported, then project state/projection checks passed. No selection/priority/grant change."
   }
 }

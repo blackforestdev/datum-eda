@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import time
 import traceback
@@ -100,7 +101,30 @@ def selection_snapshot(qa):
             'count': count, 'members': members}
 
 
-def execute(qa, project, result, frozen_files, surface):
+def toggle_l1(qa, main, state, result, visible):
+    before = state()['sequence']
+    qa.wait_presented()
+    qa.focus(main)
+    # Same row in the pinned 1344x806 capture; move one pixel on restore so
+    # native delivery, rather than an unchanged coordinate, acknowledges motion.
+    x, y = (19 if visible else 18), 507
+    diagnostic = Path(qa.env['DATUM_GUI_LOG'])
+    offset = len(diagnostic.read_text())
+    qa.command('xdotool', 'mousemove', '--window', main, str(x), str(y))
+    qa.wait('native pointer acknowledges L1 row before press', lambda:
+            f'cursor moved {x:.2f},{y:.2f}' in diagnostic.read_text()[offset:])
+    qa.command('xdotool', 'click', '1')
+    def acknowledged():
+        record = state()
+        flag = re.search(r'"L1": (true|false)', record['value']['layer_filters'])
+        if record['sequence'] > before and flag and (flag[1] == 'true') == visible:
+            return record
+        return False
+    result['layer_restore' if visible else 'pre_acquisition_layer_hide'] = qa.wait(
+        'actual L1 visibility transition', acknowledged)
+
+
+def execute(qa, project, result, frozen_files, surface, prehidden_l1):
     contract = json.loads((project / 's5a-fixture.json').read_text())
     if surface == 'schematic':
         expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
@@ -134,8 +158,13 @@ def execute(qa, project, result, frozen_files, surface):
         qa.key(main, 'Tab')
     qa.wait('ordinary target pane focus',
             lambda: state()['value']['focused_content'] == content)
+    if prehidden_l1:
+        qa.capture('initial-layer-state', main)
+        toggle_l1(qa, main, state, result, False)
+        qa.capture('l1-hidden-before-acquisition', main)
     prior = state()['sequence']
     qa.key(main, 'ctrl+a')
+    expected_hidden_ids = set(board['tracks']) if prehidden_l1 else set()
 
     def complete():
         record = state()
@@ -144,6 +173,15 @@ def execute(qa, project, result, frozen_files, surface):
         try:
             snapshot = selection_snapshot(qa)
             observation = qualify(record, snapshot, expected)
+            attrs = [m['attributes'] for m in snapshot['members']]
+            if any(a.get('hidden') not in ['true', 'false'] for a in attrs):
+                raise ValueError('complete public hidden statuses unavailable')
+            hidden = {json.loads(a['source-identity'])['id'] for a in attrs if a['hidden'] == 'true'}
+            if hidden != expected_hidden_ids or record['value']['selection']['hidden_count'] != len(hidden):
+                raise ValueError('expected hidden projection not yet published consistently')
+            if record['value']['selection']['focus'] is not None or any(
+                    a.get('selection-focus') != 'false' for a in attrs):
+                raise ValueError('global authored acquisition must retain no member focus')
             if state()['sequence'] != record['sequence']:
                 return False
             return observation
@@ -154,7 +192,23 @@ def execute(qa, project, result, frozen_files, surface):
             return False  # Public worker publication can follow native dispatch.
 
     result['selected'] = qa.wait('exact complete public selection against frozen oracle', complete)
+    if prehidden_l1:
+        members = result['selected']['public_snapshot']['members']
+        hidden_ids = {json.loads(m['attributes']['source-identity'])['id'] for m in members
+                      if m['attributes']['hidden'] == 'true'}
+        assert hidden_ids == set(board['tracks']), 'all four L1 Tracks must be hidden members'
+        assert len(hidden_ids) == 4 and state()['value']['selection']['hidden_count'] == 4
+        result['hidden_track_ids'] = sorted(hidden_ids)
     qa.capture(f'selected-complete-{noun}', main)
+    if prehidden_l1:
+        prior = state()['sequence']
+        expected_hidden_ids = set()
+        toggle_l1(qa, main, state, result, True)
+        result['restored_selection'] = qa.wait('same complete subject after layer restore', complete)
+        assert all(m['attributes']['hidden'] == 'false'
+                   for m in result['restored_selection']['public_snapshot']['members'])
+        assert state()['value']['selection']['focus'] is None
+        qa.capture('l1-restored-same-membership', main)
     prior = state()['sequence']
     qa.key(main, 'Escape')
     result['cleared'] = qa.wait('idle Escape clears selection', lambda:
@@ -183,7 +237,10 @@ def main():
     parser.add_argument('--run-dir', required=True, type=Path)
     parser.add_argument('--replay-root', required=True, type=Path)
     parser.add_argument('--surface', choices=['schematic', 'board'], default='schematic')
+    parser.add_argument('--prehidden-l1', action='store_true')
     args = parser.parse_args()
+    if args.prehidden_l1 and args.surface != 'board':
+        parser.error('pre-hidden L1 control is only defined for this frozen Board case')
     run = args.run_dir.absolute()
     if run.resolve() != run or not run.is_relative_to(OWNED) or run == OWNED or run.exists():
         parser.error('run-dir must be a fresh unaliased child of the owned task scratch')
@@ -211,7 +268,10 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    result = {'status': 'FAIL', 'surface': args.surface, 'binary_sha256': qa.binary_hashes, 'project': str(project),
+    if args.prehidden_l1:
+        qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
+    result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
+              'binary_sha256': qa.binary_hashes, 'project': str(project),
               'limits': 'Finite keyboard/complete public membership/nonmutation case only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
                              'mode': oct(Path(qa.runtime.name).stat().st_mode & 0o777),
@@ -221,7 +281,7 @@ def main():
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)
