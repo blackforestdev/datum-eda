@@ -219,7 +219,7 @@ def parent_points(qa, main, state, project, contract, result):
     qa.capture('fresh-body-u2-object', main)
 
 
-def pin_points(qa, main, state, project, contract, result):
+def pin_points(qa, main, state, project, contract, result, setup_only=False):
     symbols = json.loads((project / 'schematic/main.json').read_text())['symbols']
     parent = next(s for s in symbols.values() if s['reference'] == 'U14')
     index, pin = next((i, p) for i, p in enumerate(parent['pins']) if p['name'] == 'P13')
@@ -242,7 +242,7 @@ def pin_points(qa, main, state, project, contract, result):
     assert plan['pin_uuid'] == pin['uuid'] and plan['transform']
     result['point_plan'] = plan
     diagnostic, dispatch = Path(qa.env['DATUM_GUI_LOG']), qa.root / f'{qa.phase}.log'
-    for label in ['pin-acquired-parent', 'pin-reacquired-parent']:
+    for label in (['pin-setup-parent'] if setup_only else ['pin-acquired-parent', 'pin-reacquired-parent']):
         prior = state()['sequence']
         qa.wait_presented()
         qa.focus(main)
@@ -281,10 +281,79 @@ def pin_points(qa, main, state, project, contract, result):
             qa.capture('pin-escape-clear', main)
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False):
+def terminal_key_ownership(qa, main, state, result):
+    expected = result['pin_source_oracle']['expected']
+
+    def retain():
+        return qualify(state(), selection_snapshot(qa), expected)
+
+    def terminal_focus():
+        return next((n for n in qa.nodes() if n.get_role_name() == 'terminal'
+                     and n.get_process_id() == qa.process.pid
+                     and n.get_state_set().contains(Atspi.StateType.FOCUSED)), None)
+
+    def focus_receipt():
+        node = qa.wait('owned Terminal standard FOCUSED and matching focus authority', lambda:
+                       terminal_focus() if state()['value']['focus'] == 'Terminal' else False)
+        return {'pid': node.get_process_id(), 'accessible_id': node.get_accessible_id(),
+                'standard_focused': True, 'diagnostic_focus': state()['value']['focus']}
+
+    def lines():
+        return [line.rstrip() for line in qa.terminal_text().splitlines()]
+
+    qa.terminal_dock_open = state()['value']['dock'] != 'None'
+    # Shell-local deterministic readline binding; no profile/config writes.
+    qa.terminal_command(main, "set -o emacs && printf 'N17_EDIT_READY\\n'")
+    qa.wait('executed shell editing-ready output', lambda: 'N17_EDIT_READY' in lines())
+    result['terminal_focus_before_ctrl_a'] = focus_receipt()
+    result['selection_before_terminal_keys'] = retain()
+    qa.capture('terminal-focused-before-keys', main)
+    qa.text(main, "printf 'N17_TAIL\\n'")
+    qa.key(main, 'ctrl+a')
+    result['terminal_focus_after_ctrl_a'] = focus_receipt()
+    result['selection_after_ctrl_a'] = retain()
+    qa.text(main, "printf 'N17_HEAD\\n'; ")
+    qa.key(main, 'Return')
+    def ordered_output():
+        rows = lines()
+        return any(rows[i:i + 2] == ['N17_HEAD', 'N17_TAIL'] for i in range(len(rows) - 1))
+    qa.wait('executed HEAD then TAIL, not echoed command text', ordered_output)
+    result['executed_ctrl_a_output'] = ['N17_HEAD', 'N17_TAIL']
+    result['selection_after_shell_output'] = retain()
+    qa.capture('terminal-ctrl-a-executed', main)
+    # Bash read -n1 consumes the actual key, independently proving PTY delivery.
+    qa.terminal_command(main,
+        "printf 'N17_ESC_READY\\n'; IFS= read -rsn1 N17_KEY; "
+        "printf 'N17_ESC:%d\\n' \"'$N17_KEY\"")
+    qa.wait('executed Escape reader ready', lambda: 'N17_ESC_READY' in lines())
+    result['terminal_focus_before_escape'] = focus_receipt()
+    result['selection_before_escape'] = retain()
+    prior = state()['sequence']
+    qa.key(main, 'Escape')  # Ordinary press AND release; release returns Editor.
+    qa.wait('actual shell Escape byte27', lambda: 'N17_ESC:27' in lines())
+    qa.wait('Escape release returns editor ownership', lambda:
+            state()['sequence'] > prior and state()['value']['focus'] == 'Editor(PaneId(1))'
+            and terminal_focus() is None)
+    result['executed_escape_output'] = 'N17_ESC:27'
+    result['focus_after_escape_release'] = state()
+    result['selection_after_terminal_escape'] = retain()
+    qa.capture('terminal-escape-release-editor', main)
+    # No click, reset or reacquisition between focus release and this control.
+    prior = state()['sequence']
+    qa.key(main, 'Escape')
+    result['editor_escape_clear'] = qa.wait('second distinct editor Escape clears', lambda:
+        state() if state()['sequence'] > prior
+        and state()['value']['selection']['kind'] == 'none' else False)
+    qa.wait('public selection root removed after editor Escape', lambda: not any(
+        n.get_accessible_id() == '/org/a11y/atspi/accessible/selection' for n in qa.nodes()))
+    qa.capture('editor-second-escape-clear', main)
+
+
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False):
     contract = json.loads((project / 's5a-fixture.json').read_text())
-    if parents_case or pin_case:
-        content, label = 'Some(Schematic)', 'selection-pin' if pin_case else 'selection-parents'
+    if parents_case or pin_case or terminal_keys:
+        content = 'Some(Schematic)'
+        label = 'selection-terminal' if terminal_keys else ('selection-pin' if pin_case else 'selection-parents')
         expected = {'fixture_sha256': digest(project / 's5a-fixture.json')}
     elif surface == 'schematic':
         expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
@@ -319,8 +388,12 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         qa.key(main, 'Tab')
     qa.wait('ordinary target pane focus',
             lambda: state()['value']['focused_content'] == content)
-    if parents_case or pin_case:
-        (pin_points if pin_case else parent_points)(qa, main, state, project, contract, result)
+    if parents_case or pin_case or terminal_keys:
+        if terminal_keys:
+            pin_points(qa, main, state, project, contract, result, setup_only=True)
+            terminal_key_ownership(qa, main, state, result)
+        else:
+            (pin_points if pin_case else parent_points)(qa, main, state, project, contract, result)
         finish_case(qa, main, state, project, frozen_files, result, before)
         return
     if prehidden_l1:
@@ -409,6 +482,7 @@ def main():
     parser.add_argument('--prehidden-l1', action='store_true')
     parser.add_argument('--parents-point', action='store_true')
     parser.add_argument('--pin-point', action='store_true')
+    parser.add_argument('--terminal-keys', action='store_true')
     args = parser.parse_args()
     if args.prehidden_l1 and args.surface != 'board':
         parser.error('pre-hidden L1 control is only defined for this frozen Board case')
@@ -416,6 +490,8 @@ def main():
         parser.error('parent body points are defined only for the frozen Schematic parents case')
     if args.pin_point and (args.surface != 'schematic' or args.prehidden_l1 or args.parents_point):
         parser.error('pin point is defined only for the frozen Schematic majority case')
+    if args.terminal_keys and (args.surface != 'schematic' or args.prehidden_l1 or args.parents_point or args.pin_point):
+        parser.error('terminal key ownership is only defined over majority P13 setup')
     run = args.run_dir.absolute()
     if run.resolve() != run or not run.is_relative_to(OWNED) or run == OWNED or run.exists():
         parser.error('run-dir must be a fresh unaliased child of the owned task scratch')
@@ -445,11 +521,12 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1 or args.parents_point or args.pin_point:
+    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
     result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
               'parents_point': args.parents_point,
               'pin_point': args.pin_point,
+              'terminal_keys': args.terminal_keys,
               'binary_sha256': qa.binary_hashes, 'project': str(project),
               'limits': 'Finite ordinary selection/complete public membership/nonmutation cases only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
@@ -460,7 +537,7 @@ def main():
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)

@@ -10854,5 +10854,218 @@
       "manager_disposition": "ACCEPT finite majority-v1 pin-parent case only, authorize scoped four-path landing. Prior evidence/claim/tracker checked independently.",
       "retained": "Parents-v3 ambiguity and fullN01/N15/HUMAN/C04/C05/C06 remain open; no source/build/native rerun."
     }
+  },
+  "native_wayland_terminal_key_ownership_20261018": {
+    "status": "Actual independent bounded PASS/no mandatory findings and appointed manager acceptance for finite N17 Terminal Ctrl+A/Escape ownership only. C04 remains in progress.",
+    "scope": "N17 actual Terminal Ctrl+A/Escape ownership while exact canvas ObjectU14 remains selected; accepted majority P13 used only as setup. No repeated pin/body baseline credit.",
+    "authority": "DATUM_NATIVE_TERMINAL_SPEC.md section5 lines232-233: Escape exits transient terminal modes first, otherwise returns editor focus without closing Terminal. PM024 TE005/PM027 FT008 own exclusive keyboard focus. No local search/selection/link-confirmation mode was active. Appointed manager refined finite release to no click/header/reset/reacquisition between first Escape focus release and second Editor Escape; existing source keyboard_focus.rs corroborates press-toPTY then release-toEditor.",
+    "baseline": "Published1abe94a8 and matching GUIaf3a8ddc from accepted body build. Existing proof runner/helpers only; production/Rust/reader/dependencies/fixtures unchanged, no build.",
+    "oracle": {
+      "pid": 677792,
+      "project": "72000000-0000-4000-8000-000000000001",
+      "revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b",
+      "kind": "object",
+      "scope": "symbol",
+      "members": [
+        {
+          "class": "symbol",
+          "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+        }
+      ],
+      "focus": {
+        "class": "symbol",
+        "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+      },
+      "oracle": "Frozen majority-v1 unique P13 absolute terminal and owning U14; no acquired child supplies the parent identity"
+    },
+    "setup_point": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-terminal-keys-01/current-frame-point-plan.json",
+      "sha256": "bfbbea4909d121be1ab6d5e1bcc12d88444f40b06ccaad5e47908a2223946d18",
+      "description": "Current initial settled PNG personally checked and accepted unique P13 terminal861,404 rebound to this run only as setup; no source/coordinate/fixture change."
+    },
+    "binary_sha256": {
+      "datum-gui": "af3a8ddcdeb271be4ac15c372589cb24f97fcd46cec98a5808fea8596f300c18",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "41699b91196ed71d0b068ce32401666ab91a6ba83e4420afd9fa9f273ebd3f09",
+      "s5a_native_selection_observation.py": "009a606614439c51cfc5e65369586bdb041f65d5805da6417a6178778ed5dc88",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792389332, tv_nsec: 390305130 }] surface identity window=WindowId(94687120072144) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ],
+    "gui_pid": 677792,
+    "compositor_pid": 677777,
+    "focus_receipts": {
+      "terminal_focus_before_ctrl_a": {
+        "pid": 677792,
+        "accessible_id": "terminal-677792-1792389332219412162",
+        "standard_focused": true,
+        "diagnostic_focus": "Terminal"
+      },
+      "terminal_focus_after_ctrl_a": {
+        "pid": 677792,
+        "accessible_id": "terminal-677792-1792389332219412162",
+        "standard_focused": true,
+        "diagnostic_focus": "Terminal"
+      },
+      "terminal_focus_before_escape": {
+        "pid": 677792,
+        "accessible_id": "terminal-677792-1792389332219412162",
+        "standard_focused": true,
+        "diagnostic_focus": "Terminal"
+      }
+    },
+    "ctrl_a": {
+      "shell_setup": "Disposable session-local set -o emacs, executed N17_EDIT_READY; no shell profile/config writes.",
+      "input": "Type printf TAIL without executing; Ctrl+A; type printf HEAD plus semicolon prefix; Return. Actual ordered standalone output HEAD thenTAIL proves readline beginning-of-line effect, not merely echoed command text.",
+      "executed_output": [
+        "N17_HEAD",
+        "N17_TAIL"
+      ],
+      "selection": "Complete current U14 Object/focus true/scopeSymbol remains; a leaked global Ctrl+A would produce Compound2 and fail this independent oracle.",
+      "action_index": 37
+    },
+    "escape": {
+      "shell_probe": "printf READY; Bash builtin read -rsn1 consumes one actual input byte; printf numeric apostrophe character value. Executed standalone N17_ESC_READY/N17_ESC:27 are distinct from quoted/wrapped echoed command. No extra process or dependency.",
+      "executed_output": "N17_ESC:27",
+      "first_action_index": 54,
+      "after_release_sequence": 6,
+      "after_release_focus": "Editor(PaneId(1))",
+      "selection_after_release": [
+        {
+          "class": "symbol",
+          "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+        }
+      ],
+      "second_action_index": 59,
+      "second_clear_sequence": 7,
+      "second_clear_kind": "none",
+      "public_root_removed": true,
+      "transition": "Terminal standardFOCUSED + diagnosticTerminal before input. Actual Escape press delivered byte27; release returns Editor(PaneId1), Terminal no longer standardFOCUSED, exact U14 selection/focus persists. With no intervening click/reset/reacquisition, second distinct Escape clears selection."
+    },
+    "actual_escape_press_release_events": [
+      {
+        "line": 169,
+        "event": "[SystemTime { tv_sec: 1792389333, tv_nsec: 651900391 }] window event WindowId(94687120072144) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+      },
+      {
+        "line": 171,
+        "event": "[SystemTime { tv_sec: 1792389333, tv_nsec: 658721067 }] window event WindowId(94687120072144) keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+      },
+      {
+        "line": 2768,
+        "event": "[SystemTime { tv_sec: 1792389364, tv_nsec: 488004310 }] window event WindowId(94687120072144) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+      },
+      {
+        "line": 2810,
+        "event": "[SystemTime { tv_sec: 1792389364, tv_nsec: 523150824 }] window event WindowId(94687120072144) keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+      },
+      {
+        "line": 2857,
+        "event": "[SystemTime { tv_sec: 1792389365, tv_nsec: 144716054 }] window event WindowId(94687120072144) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+      },
+      {
+        "line": 2859,
+        "event": "[SystemTime { tv_sec: 1792389365, tv_nsec: 151626672 }] window event WindowId(94687120072144) keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+      }
+    ],
+    "complete_selection_checkpoints": {
+      "selection_before_terminal_keys": {
+        "sequence": 5,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "selection_after_ctrl_a": {
+        "sequence": 5,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "selection_after_shell_output": {
+        "sequence": 5,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "selection_before_escape": {
+        "sequence": 5,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      },
+      "selection_after_terminal_escape": {
+        "sequence": 6,
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+          }
+        ],
+        "subject": "object",
+        "selection_focus": "true",
+        "standard_selected": true
+      }
+    },
+    "public_qualification": "Process/project/revision, complete single typed Symbol identity, selection-focus=true versus keyboard focus, scopeSymbol, standardSELECTED, explicit stale=False and compact hash correlation required. Shell output is independent PTY receipt; full public membership independently prevents Canvas Ctrl+A/Escape leakage.",
+    "rendered_observation": "All6 captures personally inspected. U14 selected cues and InspectorObject1 persist with Terminal visible/focused, through executed HEAD/TAIL and byte27 output; focus status returns Schematic after first Escape while U14 stays selected; second Escape shows InspectorNone/resting U14. Actual output rows are distinguishable from echoed command text. Historical Console echo is not current SelectionStatus. No broad HUD/hover/HUMAN acceptance.",
+    "nonmutation": "All51 tracked canonical hashes identical before launch, after full key/focus sequence, after normal shell exit and after owned teardown, including exact pin/source/library/stored history. Operational role payloads excluded/unread.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 677818,
+          "socket": "/run/user/1000/npd-wl-dnkcwbm5/datum-native-edit-fb0fabcd-c58c-4b12-b8e7-6068c99627fb/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-dnkcwbm5",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM/own daemon housekeeping are not ordinary windowClose/GPU drain acceptance."
+    },
+    "verification_reuse": "Matching accepted GUI and unchanged4 Rust/12 reader tests reused. Runner py_compile/source-health3253/dependency preflight passed; actual first native run exercises new branch. No Cargo/new fixtures or extra baseline runs.",
+    "retained_boundaries": "Finite Ctrl+A/Escape fence only. FullN17 text/IME/menu/accessibility/platform matrix, HUMAN, C04/C05/C06, fullN01/N15 and prior parents-v3 ambiguity stay open. No TerminalCore/product/writer/dependency/fixture/prototype changes, new key binding or successor.",
+    "independent_receipt": {
+      "reviewer": "closeout_review provisioned by appointed manager",
+      "result": "Actual bounded PASS, no mandatory findings",
+      "candidate": "ca0f756d9c78d1e74e8ccd0e3ea1b90bbaaad701b6a543c297b304f13d32e490",
+      "verified": "One source/10 artifacts, all6 frames, Terminal standardFOCUSED/executed Ctrl+A output/byte27, seq6 preserved U14 and Editor ownership then seq7clear with no intervening reset/click/reacquisition,51 files at4stages/current, matching launch cohort and cleanup. Three Terminal evidence routes retained review members unchanged; authority agrees with TerminalSpec5/PM024 TE005/PM027 FT008/N17.",
+      "manager_disposition": "ACCEPT finite N17 key-ownership case and authorize scoped four-path landing; pins/screenshots/prior evidence/lease/tracker verified.",
+      "boundaries": "FullN17/HUMAN/C04/C05/C06/windowClose remain open. No source/build/native change or new input authority."
+    }
   }
 }
