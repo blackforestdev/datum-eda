@@ -9805,5 +9805,174 @@
       "Historic baseline source/log and diagnostic source snapshots not saved; receipts/actual diagnostic log retained, no reconstruction",
       "Only explicit restored Parts/Pad filtered X11/wgpu annotation context; no parent/sourceadoption or fixture change"
     ]
+  },
+  "managed_resumption_preflight_20261018": {
+    "assignment": "docs/reviews/specification-history/specification-reorganization.md#RESUME:UVT-S5A-BUILD:C04-MANAGED-20261018",
+    "handoff_commit": "e422f8ec8ed318a326d72644bc7ad18a3f49102b",
+    "worker_thread": "01a15249-fb58-7023-9a10-1828067d8850",
+    "accounting": "All earlier evidence retains its exact source/runtime/platform scope. The rows below name remaining obligations, not a blanket rerun or a new acceptance contract. No full N-row or C04 completion is asserted.",
+    "current_qa_reuse": {
+      "source_commit": "35d5e014af701ea505dd0772156618cbb78d5627",
+      "source_equivalence": "git diff 35d5e014 HEAD -- crates Cargo.toml Cargo.lock is empty at the handoff. The storage-only Python correction does not change compiled code.",
+      "datum-gui_sha256": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+      "datum-eda_sha256": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon_sha256": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f",
+      "receipt": "docs/reviews/workflow-delivery-rollout/native-project-doorway.json:c09_assignment.landing_verification",
+      "limit": "Build identity reuse only; prior doorway native results do not qualify current S5A behavior."
+    },
+    "remaining_cases": [
+      {
+        "rows": [
+          "N01"
+        ],
+        "reuse": "Board/Schematic modifier, focused-removal and quiet-no-op bounded receipts.",
+        "remaining": "Per-class acquisition/focus/threshold breadth and current Wayland ordinary input."
+      },
+      {
+        "rows": [
+          "N02"
+        ],
+        "reuse": "Rectangle/lasso cancellation and Space-before/after active rectangle receipts.",
+        "remaining": "Locked-shape/threshold, reduced-motion and remaining loss/evaluation variants at their required scopes."
+      },
+      {
+        "rows": [
+          "N03"
+        ],
+        "reuse": "Symbol majority/pinless, exact30 pads, rotated text strict half, straight/curve/islands and zero-area/even-odd bounded receipts.",
+        "remaining": "Uncovered class/gesture variants and authored-body appearance; existing fixtures must supply any claimed body oracle."
+      },
+      {
+        "rows": [
+          "N04"
+        ],
+        "reuse": "Edge/corner auto-pan, interior stop, equal-world camera paths and dense evaluation bounded receipts.",
+        "remaining": "Outstanding across-frame/camera/cancellation combinations and current platform scope; no new latency campaign or threshold."
+      },
+      {
+        "rows": [
+          "N05",
+          "N09"
+        ],
+        "reuse": "Prefiltered Wire Run/Global Net, hidden origin, Global Net hierarchy and foreign Bus isolation bounded receipts.",
+        "remaining": "Complete IR01 pre-hidden intermediate/member and 256/257 hidden/filter/cross-pane extensions, plus uncovered ladder/D4/revision variants."
+      },
+      {
+        "rows": [
+          "N06"
+        ],
+        "reuse": "Keyboard/pointer overlap, disabled reason and outside right-release bounded receipts.",
+        "remaining": "Both-surface class/order/preview/Select All and dismissal breadth at the remaining contexts."
+      },
+      {
+        "rows": [
+          "N07"
+        ],
+        "reuse": "Actual delete/recreate/undo, dropped report and no-resurrection bounded receipts.",
+        "remaining": "Stale consumer/context restoration and uncovered qualified-occurrence/lifetime cases."
+      },
+      {
+        "rows": [
+          "N08"
+        ],
+        "reuse": "Pane swap/duplicate cameras/closure, missing Schematic and live Project opening bounded receipts.",
+        "remaining": "Remaining sheet/Project/missing-scene and gesture/evaluation lifecycle combinations; equal cues only where resolvable."
+      },
+      {
+        "rows": [
+          "N10"
+        ],
+        "reuse": "Distinct same-action Proposal/Review, Diagnostic lifetime and producing-lifecycle bounded receipts.",
+        "remaining": "Uncovered lane/collision/withdrawal cases through actual existing producer routes; never invent an Accepted Review discard route."
+      },
+      {
+        "rows": [
+          "N11"
+        ],
+        "reuse": "Homogeneous/mixed scopes, unavailable fields and exact near-equal width Mixed bounded receipts.",
+        "remaining": "Uncovered singleton/class/scope/property contexts; preserve exact canonical quantity semantics."
+      },
+      {
+        "rows": [
+          "N12"
+        ],
+        "reuse": "Enumerated 256/257 inventory, existing Terminal ContextGet and context text alignment bounded receipts.",
+        "remaining": "Complete derived cap-boundary/hidden/filter/cross-pane/consumer parity extensions against independent fixture/query oracles."
+      },
+      {
+        "rows": [
+          "N13"
+        ],
+        "reuse": "Plain-drag inertness, eligible Compound Move guard and actual cancellation bounded receipts.",
+        "remaining": "Uncovered read-only entry surfaces and capture/window/content/pane/evaluation loss controls. Later authorized authoring behavior must retain its governing scope."
+      },
+      {
+        "rows": [
+          "N14"
+        ],
+        "reuse": "Two preconfigured Project quantity/selection isolation bounded receipt.",
+        "remaining": "Stale consumer restore and uncovered reopen/context isolation combinations."
+      },
+      {
+        "rows": [
+          "N15"
+        ],
+        "reuse": "Whole-owned eight-Pad and selected Review/Diagnostic/channel bounded receipts.",
+        "remaining": "Full ownership/glyph/point/lock/hidden/hover/eight-mapping and pane/channel breadth, plus actual HUMAN panels1-7/9."
+      },
+      {
+        "rows": [
+          "N16"
+        ],
+        "reuse": "Dense warm/reopen and maximal collision/shared-cue-budget bounded receipts.",
+        "remaining": "Uncovered exact detail-cap/overflow/union/cancel/reopen combinations and actual HUMAN panels8/9; retain existing budgets."
+      },
+      {
+        "rows": [
+          "N17"
+        ],
+        "reuse": "Inspector keyboard, complete257 public inventory, refusal events and standard SELECTED bounded receipts.",
+        "remaining": "Uncovered key/text/Terminal ownership and platform states, full grayscale/CVD/high-contrast/reduced-motion and HUMAN review."
+      }
+    ],
+    "reader_preflight": {
+      "inputs": "757 catalogue-backed frozen files; no Python readers are in the catalogue. Retired raw harnesses are not restored.",
+      "diagnostics": "datum.action-evidence/v2 selection summaries sample at most8 and explicitly state complete_inspection=false; never use these alone as full inspection.",
+      "complete_observation": "Existing PID-qualified AT-SPI complete selection/members, source-identity/instance-path and model-revision attributes; public typed ContextGet where applicable.",
+      "independent_oracle": "Compare complete observed typed identities to the frozen fixture contract or an independently established authoritative query. Reject duplicate/missing/wrong-PID/project/revision/incomplete evidence.",
+      "native_transport": "Reuse the existing owned Weston convention: outer X11 input transport, Datum actual Wayland/wgpu/Vulkan identity. No physical/HUMAN/KWin equivalence."
+    },
+    "storage_correction": {
+      "paths": [
+        "scripts/provision_s5a_replay_inputs.py",
+        "scripts/development_workspace.py",
+        "scripts/test_provision_s5a_replay_inputs.py",
+        "scripts/test_development_workspace.py"
+      ],
+      "behavior": "Catalogue-backed frozen copies may use an exact labelled .datum/scratch/<owner>/s5a-replay-inputs root; generic external/scratch/generation rules stay intact, target remains Cargo-only.",
+      "workspace": ".datum/scratch/s5a-c04-managed-20261018/",
+      "first_checks": "Provision12/12 passed; initial workspace8 passed/3 synthetic-checkout errors. Corrected test context passed11/11. Original logs retained separately.",
+      "independent_review": "Manager reported REVISE/STORAGE-R1: double-leading-slash anchors bypassed containment. Corrected by normalizing symlink/traversal-checked path and checkout before containment.",
+      "corrected_checks": "Provision12/12 and workspace12/12 passed, including double-slash checkout/default/custom Cargo refusals and valid exact-scratch behavior. Source health3248 and diff whitespace checks passed.",
+      "raw_logs": [
+        ".datum/scratch/s5a-c04-managed-20261018/provision-tests.log",
+        ".datum/scratch/s5a-c04-managed-20261018/workspace-tests.log",
+        ".datum/scratch/s5a-c04-managed-20261018/workspace-tests-corrected.log",
+        ".datum/scratch/s5a-c04-managed-20261018/provision-tests-r1.log",
+        ".datum/scratch/s5a-c04-managed-20261018/workspace-tests-r1.log"
+      ],
+      "review_status": "Manager thread01a13df1-7a0d-72c1-bbdd-f0d96d481598 reported actual independent re-review PASS, STORAGE-R1 resolved, no mandatory findings. Reviewer independently observed12 required refusals and4 valid canonicalized paths without writes; manager accepted this bounded storage correction under PM059. C04 qualification remains in progress.",
+      "reviewed_sha256": {
+        "scripts/provision_s5a_replay_inputs.py": "649c1a300723849490a3c08680e80b838083326b2f294d36887b8424890fa447",
+        "scripts/development_workspace.py": "f50e8d21a070ad6f4c38288626442aa118b989e2789e439a8834e3266829e8eb",
+        "scripts/test_provision_s5a_replay_inputs.py": "c60a57e9318e25ef404463a797c507972a9304bcbb9d0b6e8a07ead1a79a60dd",
+        "scripts/test_development_workspace.py": "c37b1577f4cbe9fb2439d4d8fba8c237cc36fd9993cd6a63a9ce4d5b9ae6edaf"
+      }
+    },
+    "next_batch": "After storage review disposition, ordinary current Wayland keyboard acquisition/complete fixture identity and AT-SPI checks, Escape and canonical source/journal preservation. Extend only genuine missing scenarios, with exact path ownership before edits.",
+    "reserved_review": "Current manager confirmed reserved audit thread01a0e343-3d9c-70f1-899e-5bd239513383 available for later exact C05 candidate, without starting C05. No actual HUMAN N15-N17 build acceptance receipt is known; reference approval and bounded inspection are not substitutes.",
+    "C04_complete": false,
+    "C05_completed": false,
+    "C06_accepted": false
   }
 }

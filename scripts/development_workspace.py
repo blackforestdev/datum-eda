@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Locate external development data; never treat a receipt as execution authority."""
+"""Locate task-owned development data; never treat a receipt as execution authority."""
 from __future__ import annotations
 import argparse
 import json
@@ -67,7 +67,7 @@ def relocated(path: str | Path, *, checkout: Path = ROOT, record: dict | None = 
 
 def replay_input(path: Path, checkout: Path = ROOT) -> Path | None:
     """Resolve approved frozen aliases only to an explicitly provisioned copy."""
-    from provision_s5a_replay_inputs import INPUTS, catalogue, real_path
+    from provision_s5a_replay_inputs import INPUTS, catalogue, real_path, replay_location
     index = catalogue()
     if path.is_absolute():
         relative = None
@@ -82,8 +82,7 @@ def replay_input(path: Path, checkout: Path = ROOT) -> Path | None:
         return None
     if 'DATUM_REPLAY_INPUTS' not in os.environ:
         raise ValueError('provision a fresh private replay root and set DATUM_REPLAY_INPUTS')
-    root = real_path(Path(os.environ['DATUM_REPLAY_INPUTS']))
-    external(root, checkout)
+    root = replay_location(Path(os.environ['DATUM_REPLAY_INPUTS']), checkout)
     marker = real_path(root / 'index.json')
     if marker.read_bytes() != (INPUTS / 'index.json').read_bytes():
         raise ValueError('private replay catalogue differs from tracked inputs')

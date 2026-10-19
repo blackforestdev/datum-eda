@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 import development_workspace as workspace
+import provision_s5a_replay_inputs as replay
 import relocate_target_workspaces as relocate
 import run_cargo_guarded as guard
 
@@ -38,6 +39,53 @@ class WorkspaceSafetyTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 workspace.scratch('family')
         self.assertFalse((self.checkout / 'family').exists())
+
+    def test_frozen_replay_exception_does_not_admit_other_checkout_paths(self):
+        valid = self.checkout / '.datum/scratch/c04-owner/s5a-replay-inputs'
+        self.assertEqual(replay.replay_location(valid, self.checkout), valid)
+        for relative in ['target/s5a-replay-inputs', '.datum/scratch/c04-owner',
+                         '.datum/scratch/c04-owner/other', 'other/s5a-replay-inputs',
+                         '.datum/scratch/c04.owner/s5a-replay-inputs',
+                         '.datum/scratch/c04-owner/s5a-replay-inputs/child']:
+            with self.subTest(relative=relative), self.assertRaises(ValueError):
+                replay.replay_location(self.checkout / relative, self.checkout)
+        self.assertFalse((self.checkout / '.datum').exists())
+
+    def test_frozen_replay_exception_refuses_symlinks_and_cargo_overlap(self):
+        scratch = self.checkout / '.datum/scratch'
+        scratch.mkdir(parents=True)
+        owner = scratch / 'c04-owner'
+        owner.symlink_to(self.base / 'missing', target_is_directory=True)
+        with self.assertRaises(ValueError):
+            replay.replay_location(owner / 's5a-replay-inputs', self.checkout)
+        owner.unlink()
+        output = owner / 's5a-replay-inputs'
+        for cargo in [scratch, output, output / 'build']:
+            with patch.dict('os.environ', {'CARGO_TARGET_DIR': str(cargo)}):
+                with self.assertRaises(ValueError):
+                    replay.replay_location(output, self.checkout)
+        self.assertFalse(owner.exists())
+
+    def test_double_leading_slashes_cannot_bypass_replay_boundaries(self):
+        def doubled(path):
+            return Path('//' + str(path).lstrip('/'))
+
+        valid = self.checkout / '.datum/scratch/c04-owner/s5a-replay-inputs'
+        for checkout in [self.checkout, doubled(self.checkout)]:
+            self.assertEqual(replay.replay_location(doubled(valid), checkout), valid)
+            for relative in ['target/reviewer-probe', '.datum/unapproved-replay-root']:
+                path = self.checkout / relative
+                for candidate in [path, doubled(path)]:
+                    with self.subTest(path=candidate, checkout=checkout):
+                        with self.assertRaises(ValueError):
+                            replay.replay_location(candidate, checkout)
+        cargo = self.base / 'external-cargo'
+        for target in [cargo, doubled(cargo)]:
+            with patch.dict('os.environ', {'CARGO_TARGET_DIR': str(target)}):
+                with self.assertRaises(ValueError):
+                    replay.replay_location(doubled(cargo / 'native-copy'), self.checkout)
+        self.assertFalse(cargo.exists())
+        self.assertFalse((self.checkout / '.datum').exists())
 
     def test_legacy_suffix_resolution_and_incomplete_or_retired_refusal(self):
         row = {'source_relative': 'target/replay', 'destination': str(self.base / 'external'), 'state': 'preserved'}
@@ -97,11 +145,13 @@ class WorkspaceSafetyTests(unittest.TestCase):
     @contextlib.contextmanager
     def relocation_context(self):
         control = self.checkout / '.datum/history-cleanup'
+        external = workspace.external
         with contextlib.ExitStack() as stack:
             for owner, name, value in [
                 (relocate, 'ROOT', self.checkout), (relocate, 'CONTROL', control),
                 (relocate, 'MAP', control / 'target-relocation-map.json'),
                 (workspace, 'root', lambda: self.base / 'external'),
+                (workspace, 'external', lambda path, checkout=self.checkout: external(path, checkout)),
                 (relocate, 'references', lambda name: []),
                 (relocate.prune, 'refuse_open_output', lambda paths: None),
                 (guard, 'acquire_lock', lambda *args: contextlib.nullcontext()),

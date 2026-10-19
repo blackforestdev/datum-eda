@@ -17,11 +17,16 @@ class ReplayInputs(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory(prefix="datum-replay-inputs-")
         cls.base = Path(cls.temp.name)
+        cls.checkout = cls.base / "checkout"
+        cls.checkout.mkdir()
+        cls.root_patch = patch.object(replay, "ROOT", cls.checkout)
+        cls.root_patch.start()
         cls.output = cls.base / "private"
         cls.index = replay.provision(cls.output)
 
     @classmethod
     def tearDownClass(cls):
+        cls.root_patch.stop()
         cls.temp.cleanup()
 
     def test_all_frozen_family_files_match_independent_original_manifest(self):
@@ -118,6 +123,20 @@ class ReplayInputs(unittest.TestCase):
         with self.assertRaises(ValueError):
             replay.provision(partial)
         self.assertEqual((partial / 'owned').read_bytes(), b'preserve')
+
+    def test_labelled_frozen_copy_resolves_without_relaxing_checkout_protection(self):
+        output = self.checkout / '.datum/scratch/c04-owner/s5a-replay-inputs'
+        replay.provision(output)
+        with patch.dict(os.environ, {'DATUM_REPLAY_INPUTS': str(output)}):
+            resolved = workspace.relocated('target/user-edit-selection/journal-read-project',
+                                           checkout=self.checkout)
+            self.assertEqual(resolved, output / 'user-edit-selection/journal-read-project')
+        self.assertEqual((output / 'index.json').read_bytes(),
+                         (replay.INPUTS / 'index.json').read_bytes())
+        with self.assertRaises(ValueError):
+            workspace.external(output, self.checkout)
+        with self.assertRaises(ValueError):
+            replay.provision(output)
 
     def test_symlink_output_and_ancestor_refuse_before_mutation(self):
         alias = self.base / 'output-alias'
