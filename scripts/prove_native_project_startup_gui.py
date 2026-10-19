@@ -201,7 +201,7 @@ class StartupQA:
         assert not any(n.get_name() in retired or n.get_role_name() in {"radio button", "radio group"}
                        for n in self.nodes()), "New exposes no Units configuration/review controls"
 
-    def wait_presented(self, after_damage=None):
+    def wait_presented(self, after_damage=None, *, require_stable=True):
         # Read-only presentation evidence: no private App action or bootstrap.
         log = Path(self.env["DATUM_GUI_LOG"])
         settled = None
@@ -225,15 +225,15 @@ class StartupQA:
                 settled = None
                 return False
             identity = (host, latest["presented_damage"])
-            ready = settled == identity
+            ready = not require_stable or settled == identity
             settled = identity
             return latest if ready else False
         receipt = self.wait("current dialog/Main frame presented before native capture", current_frame)
-        self.actions.append({"capture_presentation_barrier": receipt})
+        self.actions.append({"capture_presentation_barrier": receipt, "require_stable": require_stable})
         return receipt
 
-    def capture(self, label, window):
-        receipt = self.wait_presented()
+    def capture(self, label, window, *, require_stable=True):
+        receipt = self.wait_presented(require_stable=require_stable)
         count = self.capture_counts.get(label, 0) + 1
         self.capture_counts[label] = count
         if count > 1:

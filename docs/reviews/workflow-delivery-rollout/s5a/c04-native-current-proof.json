@@ -11572,5 +11572,100 @@
       "issue": "dat-inspector-visible-hidden-summary-lrgi",
       "issue_disposition": "Closed with actual reviewed landing evidence only; retained C04 remains in_progress, C05/C06/HUMAN/successors unaccepted."
     }
+  },
+  "native_wayland_nonempty_region_escape_20261019": {
+    "status": "Actual independent final combined finite PASS and appointed manager acceptance for nonempty-P region Escape cancellation only. C04 remains in progress.",
+    "scope": "N13 active Shift-rectangle Escape preserves nonempty priorU14/focus; trailing primary release preserves P, distinct idleEscape clears, freshsame region selects pinlessU0 without focus. One native attempt, no product edit or Cargo.",
+    "authority": "Appointed PM059 manager released one retained C04 case after read-only source/contract/fixture/observation review. UVT2.2.1-.3 cancellation and2.2.10 focus rules govern. Earlier Escape-cancel proof started fromNone; accepted focus-loss/nonempty and pinless/majority cases retain their scopes.",
+    "harness": "Existing owned-Open function moved unchanged into cohesive s5a_native_escape_cases.py beside region-Escape; exact AST and other untouched runner functions verified. StartupQA stable=True defaults and focused current WindowId/damage/pending/rendering checks retained; opt-inFalse only reads fully presented animated active frames. No private gesture getter, new framework, product state injection or fixture generation.",
+    "harness_preflight": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/region-escape-harness-preflight.json",
+      "sha256": "eae280b9b8588ccd87eb0b5c29010644e2ff99429b9a7a30e8a35e24812970b4",
+      "verification": "Exact ownedOpen AST/body preservation; exact inverse helper extension restores accepted source; py_compile3/source-health3255/diff passed. Existing12 strict-reader controls reused because qualifier is unchanged."
+    },
+    "binary_reuse": {
+      "binary_sha256": {
+        "datum-gui": "b47ae66e62e3f5774a1b2a500f342d8f10d116659f8aa8a47f88fa0f51862c24",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "prior_matching_build_receipt_sha256": "787c1ac9ec245e97af36335cb30767c550e537e13143a6092a5305855de83012",
+      "basis": "Production crates/Cargo.toml/Cargo.lock unchanged from published7a00d0d8, matching accepted GUIb47/CLIbe312f69/daemone58d388d pins verified. No new Cargo run justified."
+    },
+    "candidate_manifest": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/region-escape-candidate-pins.json",
+      "sha256": "dec5044ca67b4a229b355477331541da75e69c37d545d290de24185976e28fd9"
+    },
+    "native_run": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-region-escape-01",
+    "gui_pid": 716197,
+    "compositor_pid": 716182,
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792396942, tv_nsec: 951710685 }] surface identity window=WindowId(94561423634336) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ],
+    "source_oracles": "Reuse accepted majority-v1 P13 terminal->U14 prior. Frozen main.json SHA5c029caf27784309d81797db3ffe9589b2d6f67a5e71c8a842dbc873290280e4 defines pinlessU0 1e6478fa-6d06-4141-b87b-2cb407f54404 at30mm,0; fresh region fromNone is singleton Compound/no focus, never an invented Object focus.",
+    "frame_plan": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-region-escape-01/current-frame-region-plan.json",
+      "sha256": "324561455641f1b5e1e921bc00852fefda913295de99df804de711ada5f8a196",
+      "basis": "Personally inspected fresh initial and prior-P frames; same1344x806/scale1/pane1 split/fitted camera. Reuse accepted source/capture/projection provenance. World29,-1..31,+1mm ->970.057,396.665..983.726,410.335 ->970,397..984,410. Actual inverse strictly contains U0 placement, excludesU14 anchors0..13mm, crosses4px and stays outside24px autopan band. No geometry inferred from success or coordinate sweep."
+    },
+    "phase_evidence": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-region-escape-01/native-phase-comparison.json",
+      "sha256": "55e6b3bc48809bb8054771d7d752bf10fd834acdf80c8f4563a91643e49c3ac5",
+      "ordering": "Own native Shift/primary press/end motion precede Escape press/release with both held; activePNG completed before Escape. CancelPNG after Escape release and before trailing primary release. No focus loss, camera/layout/pane/scale/resize/occlusion/close, intervening motion/Shiftup/primaryrelease alternative cancellation. Then primaryrelease/Shiftup, distinct idleEscape, ordinary freshsame region. No clearmodifiers while held.",
+      "selection_sequences": {
+        "region_prior": 3,
+        "region_active_selection": 4,
+        "region_after_escape": 4,
+        "region_after_trailing_release": 4,
+        "region_idle_clear": 5,
+        "region_fresh_acquisition": 7
+      },
+      "public_results": "Five strict complete ownPID/project/revision/nonstale snapshots: exactU14 with focus retained before/active/afterEscape/aftertrailingrelease; idleNone removes publicroot; fresh singletonU0 Compound with no focus and standardSELECTED. Compact diagnostics correlate only; full membership comes from public inventory."
+    },
+    "rendered_observation": {
+      "frames": [
+        "region-active-shift-rectangle.png",
+        "region-cancel-before-primary-release.png",
+        "region-idle-escape-clear.png",
+        "region-fresh-u0-acquired.png"
+      ],
+      "result": "Personally viewed current captures. Active/cancel images differ only48pixels at bbox969,396..984,410, proving dashed boundary presence then disappearance while U14 cues/Inspector unchanged. Idle frame shows No selection/SelNone; fresh frame cues U0. This is presence/cancellation evidence, not contrast/header approval.",
+      "pixel_witness_sha256": "180215fc40ddc86e73be19dd10de3203cd19a45ef96ca86986e2862ddf89c7d2"
+    },
+    "open_related_gaps": {
+      "dat-small-marquee-contrast-20bq": "OPEN related intake, no new dependency. Captured active changed RGB components<=26: short boundary has dark-only dash phase and lacks bright contrast. Actual source/pixel evidence retained; highcontrast/width/animation/N02/N15/HUMAN unqualified. No renderer edit or phase sweep.",
+      "dat-unfocused-singleton-inspector-vs05": "OPEN related intake, no new dependency. Fresh unfocused singleton Compound is valid, but generic CompoundSelection1 Inspector header conflicts with2.2.19 single-object presentation. No focus normalization, header/N11 approval or source edit."
+    },
+    "transport_warning": "Original console retains dbind GetItems unsupported-interface warning. All required complete-member/project/revision/standardSelected/focus/nonstale reads passed. No full accessibility qualification or warning suppression.",
+    "nonmutation": "All51 frozen majority-v1 canonical/source/history hashes equal before, after selection sequence, after ordinary shell exit and final owned teardown. Only exact operational roles excluded/unread. Camera/layout/focus basis unchanged through sequences3-7.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 716223,
+          "socket": "/run/user/1000/npd-wl-ttjlcdli/datum-native-edit-7f48fdb2-5a63-45a3-aaf6-49c4d4cf3425/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-ttjlcdli",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "GUI SIGTERM/owned daemon housekeeping is not ordinary windowClose or GPU-drain qualification."
+    },
+    "retained_boundaries": "No fullN02/N03/N11/N13/N15/N17/HUMAN/C04/C05/C06/windowClose or successor acceptance. Both intake defects remain open, unrelated to the finite cancellation qualification. Prior accepted entries/failures remain unchanged.",
+    "independent_receipt": {
+      "reviewer_task": "/root/closeout_review",
+      "receipt_route": "Actual final combined finite PASS delivered through appointed manager MCP session01a13df1-7a0d-72c1-bbdd-f0d96d481598.",
+      "result": "PASS; no mandatory finite-case correction",
+      "candidate_manifest_sha256": "dec5044ca67b4a229b355477331541da75e69c37d545d290de24185976e28fd9",
+      "verified": "5source/21artifact/3binary pins; exact held-input Escape/U14 focus/trailing release/idle clear/freshU0; all51 canonical files and cleanup; prior entries unchanged; both OPEN20bq/vs05 and actual GetItems warning retained.",
+      "manager_disposition": "ACCEPT finite nonempty-P cancellation only; exact6owned-path normal-hook proof landing authorized. No closure followup: C04 remains in_progress and both related defects remain OPEN. Manager independently verified source/artifact/binary pins, raw/public phase observations, pixel-presence evidence, prior entries and exact scope.",
+      "retained": "No contrast/width/animation/Inspector-header/fullN13/C04/C05/C06/HUMAN/windowClose or successor acceptance. No renderer or other product edit in this increment."
+    }
   }
 }
