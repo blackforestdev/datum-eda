@@ -111,3 +111,25 @@ def qualify(record, snapshot, expected):
     return {"sequence": record["sequence"], "pid": expected["pid"], **basis,
             "members": members, "compact_correlated": True,
             "oracle": expected["oracle"], "public_snapshot": snapshot}
+
+
+def selection_snapshot(qa, selected_state):
+    nodes = qa.nodes()
+    root = next((n for n in nodes if n.get_accessible_id() ==
+                 '/org/a11y/atspi/accessible/selection'), None)
+    if root is None:
+        raise ValueError('complete public selection root unavailable')
+    before = qa.attributes(root)
+    inventory = root.get_child_at_index(0)
+    count = inventory.get_child_count()
+    if count > 1000:
+        raise ValueError('this finite fixture case does not traverse a dense selection')
+    members = []
+    for i in range(count):
+        node = inventory.get_child_at_index(i)
+        if node is None or node.get_process_id() != qa.process.pid:
+            raise ValueError('missing or foreign public member')
+        members.append({'attributes': qa.attributes(node),
+                        'standard_selected': node.get_state_set().contains(selected_state)})
+    return {'pid': root.get_process_id(), 'before': before, 'after': qa.attributes(root),
+            'count': count, 'members': members}

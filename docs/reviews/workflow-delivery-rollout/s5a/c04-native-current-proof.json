@@ -11318,5 +11318,171 @@
       "manager_disposition": "ACCEPT finite N06/N17 case, verify source/frames/prior evidence/lease/tracker and authorize four-path landing.",
       "retained": "Pin convention/fullN06/N17/N15/HUMAN/C04/C05/C06/windowClose remain open. No source/build/native change."
     }
+  },
+  "native_wayland_owned_open_escape_correction_20261019": {
+    "status": "Actual independent final combined finite PASS and appointed manager acceptance for owned-Open text ownership/retiring Escape repair. C04 remains in progress.",
+    "scope": "N17 existing owned-Open text Ctrl+A ownership and retiring Escape cycle with prior exact U14, then next distinct Main Escape clear. P13 is setup only.",
+    "authority": "Appointed PM059 manager01a13df1 released finite existing C04 case, then narrow product repair and cohesive native dispatch regression; Frontier/Beads scope synchronized before source edits. No new product rules, dependencies or fixture-generator grant.",
+    "issue": "dat-owned-open-escape-release-lgfj",
+    "baseline": "35d5e014 owned-Open caller differs from older accepted Main-overlay/Cancel/F2 project-open cases; accepted native majority P13 parent acquisition reused as setup.",
+    "failure": {
+      "native_run01_manifest": ".datum/scratch/s5a-c04-managed-20261018/owned-open-failure-candidate-pins.json",
+      "sha256": "2ee918761e67306534d9b9de2a028fb6f655ee7af6bf71c62b849235b96f7eb3",
+      "outcome": "Original FAIL: Location replacement and cancel preserve U14, but next Main Escape does not clear. Release on retired owned WindowId was filtered before shared pending ownership, so next press/release only drained the stale cycle. All51canonical preserved; no ordinaryClose credit."
+    },
+    "correction": "Production native dispatcher acknowledges only a pending Escape RELEASE before renderer/owned/non-Main filters, using unchanged runtime-global MenuKeyOwnership. No full menu dispatch for unknown hosts, focus reset, selection mutation, or origin tracker. Existing press/repeat protection and normal nonpending routes retained.",
+    "source_sha256": {
+      "crates/gui-app/src/application/app_native_events.rs": "a6b34fac2cd5b4133be7984708d55e6c36dabfc4c408415f552928bb5d8d40b5",
+      "crates/gui-app/src/application/native_owned_escape_tests.rs": "825020cbbdb8065325ba55fa3984a35e8b868059b5b10345f60c2f9d31024097",
+      "scripts/prove_s5a_native_selection.py": "35965603f514e10d265f8f60e7b2c4978e4d82414a15340da65e53c338bb85d9",
+      "scripts/s5a_native_selection_observation.py": "a2f4105508c021395d01d9f6f6d036f3028e22044174b3bbe2a32f0673ccb77f",
+      "scripts/prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "scripts/native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "reader_extraction": "One selection_snapshot implementation moved cohesively to existing observation module, selected-state enum supplied by caller; exact inverse extraction and unchanged qualifier AST verified. Existing12 reader controls pass; compact diagnostic is correlation only and stale must be exactlyFalse.",
+    "native_dispatch_regression": {
+      "run": ".datum/scratch/s5a-c04-managed-20261018/owned-escape-dispatch-test-03",
+      "status": "1 passed;0 failed",
+      "details": "Real private Wayland/Vulkan Runtime/Main and ActiveEventLoop; actual MainFocused(true)/F6 event captured, then public key fields cloned for supplied phases through production native entry. Active/retired/Main/failed-renderer release variants preserve prior through original release and fresh Pressed, clear on next Released with no intervening phase. Non-Escape/unrelated/nonpending/repeat controls retained. Not OS-delivery evidence for supplied phases.",
+      "canonical": "All69 scope-v2 canonical hashes equal before/after-test/final teardown. Explicit application-terminal shutdown runs after success or caught assertion failure; no ordinaryClose credit.",
+      "retained_setup_failures": [
+        "dispatch-test-01-failure-pins.json: wrong --board/nativeJSON setup, exact failed-import skeleton inventoried and leaf removed after manager release",
+        "dispatch-test-02-failure-pins.json: F24 template timeout; native Main presented but no supplied phase ran. Corrected to mapped F6 after actual Main focus acknowledgement; no key/delay sweep."
+      ]
+    },
+    "build_receipt": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/owned-escape-build-receipt.json",
+      "sha256": "46630b1d53a81805787d572b7b10c3475169fa1438b1b4e478682325c46e8ef5",
+      "guarded_test_and_gui_build_exit": 0,
+      "warning": "Existing unused gui-render overflow method only",
+      "resource": "40.8GiB refusal retained; external unattributed cache change to30.8GiB, no worker/manager/reviewer cleanup; actual final guards34.4GiB admitted. No target/policy bypass."
+    },
+    "candidate_manifest": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/owned-open-success-candidate-pins.json",
+      "sha256": "68fb19af6eb4cda9c8f1da620f3c500b3cbc6acb88d8c8dcebdaed5ef1424ade"
+    },
+    "binary_sha256": {
+      "datum-gui": "f9ca753a4115a71f9c0e9f8dbe6b873526a215d596b13cd778b05cfeb2c4bb38",
+      "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "35965603f514e10d265f8f60e7b2c4978e4d82414a15340da65e53c338bb85d9",
+      "s5a_native_selection_observation.py": "a2f4105508c021395d01d9f6f6d036f3028e22044174b3bbe2a32f0673ccb77f",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "source_oracle": {
+      "reuse": "Accepted native_wayland_pin_parent_20261018 source-owned majority-v1 P13 -> U14 oracle; existing frozen input, no new geometry qualification.",
+      "project": "72000000-0000-4000-8000-000000000001",
+      "revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b",
+      "parent": {
+        "class": "symbol",
+        "id": "d5032e68-e22b-47af-a043-9dfa3a8b9906"
+      },
+      "pin_uuid": "2f4bdbc2-5740-425e-8811-76750b7ba8e9",
+      "pinned_raw": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-owned-open-text-02/result.json#/pin_source_oracle"
+    },
+    "point_plan": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-owned-open-text-02/current-frame-point-plan.json",
+      "sha256": "1bd3fc4db21b8718c965b6c6313f0e53fb7f0d16bbefb78051d7343829c2c7f2",
+      "description": "Personally checked current run02 frame; reuse unchanged source/camera derivation. Unique P13 source anchor13mm,0 ->861,404 acquires parentU14; no sweep, new fixture or geometry qualification."
+    },
+    "backend_identity": [
+      "[SystemTime { tv_sec: 1792393955, tv_nsec: 126514015 }] surface identity window=WindowId(93878327503632) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+      "[SystemTime { tv_sec: 1792393979, tv_nsec: 212807073 }] surface identity window=WindowId(93878344449440) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+    ],
+    "gui_pid": 699980,
+    "compositor_pid": 699965,
+    "ordinary_route": "Schematic P13 acquires U14; ordinary File > Open Project presents distinct owned form. Focused Location N17_ORIGINAL; Ctrl+A then type N17_REPLACED. Escape dismisses form; original Main/Editor and exact U14 retained. Next distinct Escape clears. No header click, reset, reacquisition or extra Escape between cancellation and decisive Main cycle.",
+    "text_checkpoints": {
+      "pid": 699980,
+      "accessible_id": "folder-navigation-path",
+      "role": "entry",
+      "standard_focused": true,
+      "original_value": "N17_ORIGINAL",
+      "after_CtrlA_replace_value": "N17_REPLACED",
+      "pinned_raw": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-owned-open-text-02/result.json",
+      "keys": [
+        "location_original",
+        "location_replaced"
+      ]
+    },
+    "selection_checkpoints": {
+      "pinned_raw": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-owned-open-text-02/result.json",
+      "keys": [
+        "selected_before_text_ctrl_a",
+        "selected_after_text_ctrl_a",
+        "selected_after_text_replace",
+        "selected_after_owned_cancel"
+      ],
+      "sequences": {
+        "selected_before_text_ctrl_a": 6,
+        "selected_after_text_ctrl_a": 6,
+        "selected_after_text_replace": 6,
+        "selected_after_owned_cancel": 7
+      },
+      "expected": "Complete Object/symbol U14 membership and focus exactly match frozen source, own PID699980 and revision3ac065a1. Diagnostic stale is exactlyFalse; public before/after root attributes stable, fullcount1, standardSELECTED=true, selection-focus=true. Compact summary supplies correlation only."
+    },
+    "window_presentation": {
+      "main_window": "WindowId(93878327503632)",
+      "owned_open_window": "WindowId(93878344449440)",
+      "original_main_restored": "WindowId(93878327503632)",
+      "pinned_raw": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-owned-open-text-02/result.json",
+      "keys": [
+        "main_before_owned_open",
+        "owned_open_presented",
+        "main_after_owned_cancel"
+      ],
+      "qualification": "Each original owned/Main host has a settled current presented-damage barrier; Open uses distinct WindowId/host_generation2; original Main generation1 is restored before fresh Escape."
+    },
+    "escape_phase_evidence": {
+      "dialog_pressed": "[SystemTime { tv_sec: 1792393982, tv_nsec: 21366979 }] window event WindowId(93878344449440) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false",
+      "owned_host_closed_before_release": "[SystemTime { tv_sec: 1792393982, tv_nsec: 22181156 }] native redraw ledger {\"attempts\":35,\"counts\":{\"coalesced\":93,\"duplicate_tokens\":0,\"presentations\":10,\"received\":229,\"requested\":12,\"suppressed\":10},\"damage\":105,\"device_generation\":1,\"host_generation\":2,\"pending\":true,\"presented_damage\":104,\"ready\":true,\"reason\":\"closed\",\"rendering\":null,\"window\":\"WindowId(93878344449440)\"}",
+      "dialog_released_to_retired_host": "[SystemTime { tv_sec: 1792393982, tv_nsec: 74661179 }] window event WindowId(93878344449440) keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some(\"\\u{1b}\") synthetic=false",
+      "next_main_pressed": "[SystemTime { tv_sec: 1792393982, tv_nsec: 826301712 }] window event WindowId(93878327503632) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false",
+      "next_main_released": "[SystemTime { tv_sec: 1792393982, tv_nsec: 832783017 }] window event WindowId(93878327503632) keyboard physical=Code(Escape) logical=Named(Escape) state=Released repeat=false text=Some(\"\\u{1b}\") synthetic=false",
+      "after_cancel_sequence": 7,
+      "cleared_sequence": 8,
+      "cleared_selection": {
+        "kind": "none",
+        "member_count": 0
+      },
+      "focus": "Editor(PaneId(1))",
+      "public_root_removed": true
+    },
+    "rendered_observation": "Personally viewed initial/LocationOriginal/LocationReplaced/cancel-preserved/Main-clear frames. Exact Location strings rendered; U14 highlight and Inspector retained behind form and after cancel; decisive Main cycle removes highlight, Inspector says No selection and footerSelNone. Historical Console ActionEcho retained without selection-status inference. No full form/clipping/HUD/UX acceptance.",
+    "nonmutation": "All51 frozen canonical hashes equal before launch, after text/cancel/clear, after ordinary shell exit, and after owned final teardown. Full source/history/revision included; only exact permitted operational roles excluded/unread.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 700006,
+          "socket": "/run/user/1000/npd-wl-_yf9x56j/datum-native-edit-25421fdf-6d8a-4553-b43f-fa923a765498/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-_yf9x56j",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM and exact owned daemon housekeeping are not ordinary windowClose/GPU-drain qualification."
+    },
+    "retained_boundaries": "No fullN17/owned-form matrix/HUMAN/KWin/windowClose/C04/C05/C06/successor acceptance; prior pin convention, inspector summary and other accepted-case limits remain.",
+    "independent_receipt": {
+      "reviewer": "closeout_review, provisioned by appointed manager",
+      "reviewer_thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+      "result": "Actual final combined finite PASS; no mandatory findings",
+      "candidate_manifest_sha256": "68fb19af6eb4cda9c8f1da620f3c500b3cbc6acb88d8c8dcebdaed5ef1424ade",
+      "build_receipt_sha256": "46630b1d53a81805787d572b7b10c3475169fa1438b1b4e478682325c46e8ef5",
+      "verified": "6source/27artifact pins, source/build binding, supplied dispatch variants/phase controls, native Location Original/Replaced, retained exact U14 through retired-host dismissal then distinct Main clear,51/69 full canonical maps, rendered frames and cleanup; all failed attempts retained.",
+      "manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_disposition": "ACCEPT finite owned-Open Ctrl+A/dismissal/fresh-Escape repair; exact7owned-path landing authorized after final gates. Manager independently checked captures, phases, full51/69 maps and source/build binding.",
+      "retained": "No fullN17/owned-form matrix/HUMAN/KWin/windowClose/C04/C05/C06/successor acceptance; other recorded limits remain."
+    }
   }
 }

@@ -101,6 +101,20 @@ impl App {
         {
             return;
         }
+        // A dismissing press can retire its owned host before key-up arrives.
+        // Acknowledge that release before renderer/host filtering, without
+        // routing a retired host's input into Main or activating any command.
+        if let WindowEvent::KeyboardInput { event, .. } = &event
+            && event.state == ElementState::Released
+            && event.logical_key == Key::Named(NamedKey::Escape)
+            && self.runtime.as_mut().is_some_and(|runtime| {
+                runtime
+                    .menu_keys
+                    .consume_escape_release(&event.logical_key, event.state, false)
+            })
+        {
+            return;
+        }
         if matches!(
             event,
             WindowEvent::Focused(_)
@@ -561,3 +575,7 @@ impl ApplicationHandler for App {
         event_loop.set_control_flow(self.frames.take_control_flow());
     }
 }
+
+#[cfg(test)]
+#[path = "native_owned_escape_tests.rs"]
+mod native_owned_escape_tests;
