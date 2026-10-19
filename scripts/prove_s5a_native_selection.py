@@ -18,7 +18,7 @@ import traceback
 from prove_native_project_startup_gui import Atspi, StartupQA, digest
 from native_project_source_inventory import validate_frozen_sources
 from s5a_native_escape_cases import owned_open_text_keys, region_escape_cancel
-from s5a_native_inspector_cases import focused_compound_scopes
+from s5a_native_inspector_cases import focused_compound_scopes, focused_compound_pane_lifecycle
 from provision_s5a_replay_inputs import INPUTS, replay_location
 from s5a_native_selection_observation import latest_state, qualify, selection_snapshot
 
@@ -404,7 +404,7 @@ def overlap_menu(qa, main, state, project, contract, result):
 
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False, owned_open=False, region_escape=False, focused_inspector=False):
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False, owned_open=False, region_escape=False, focused_inspector=False, focused_pane_lifecycle=False):
     contract = json.loads((project / 's5a-fixture.json').read_text())
     if parents_case or pin_case or terminal_keys or overlap_case or owned_open or region_escape:
         content = 'Some(Schematic)'
@@ -508,8 +508,11 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         assert len(hidden_ids) == 4 and state()['value']['selection']['hidden_count'] == 4
         result['hidden_track_ids'] = sorted(hidden_ids)
     qa.capture(f'selected-complete-{noun}', main)
-    if focused_inspector:
-        focused_compound_scopes(qa, main, state, project, result, expected)
+    if focused_inspector or focused_pane_lifecycle:
+        if focused_pane_lifecycle:
+            focused_compound_pane_lifecycle(qa, main, state, project, result, expected)
+        else:
+            focused_compound_scopes(qa, main, state, project, result, expected)
         finish_case(qa, main, state, project, frozen_files, result, before)
         return
     if prehidden_l1:
@@ -561,7 +564,12 @@ def main():
     parser.add_argument('--owned-open-text', action='store_true')
     parser.add_argument('--region-escape', action='store_true')
     parser.add_argument('--focused-inspector', action='store_true')
+    parser.add_argument('--focused-pane-lifecycle', action='store_true')
     args = parser.parse_args()
+    if args.focused_pane_lifecycle and (args.surface != 'board' or any([
+            args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys,
+            args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector])):
+        parser.error('focused pane lifecycle is exclusive to the frozen visible Board case')
     if args.focused_inspector and (args.surface != 'board' or any([
             args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys,
             args.overlap_menu, args.owned_open_text, args.region_escape])):
@@ -609,7 +617,7 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu or args.owned_open_text or args.region_escape or args.focused_inspector:
+    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu or args.owned_open_text or args.region_escape or args.focused_inspector or args.focused_pane_lifecycle:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
     result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
               'parents_point': args.parents_point,
@@ -618,6 +626,7 @@ def main():
               'overlap_menu': args.overlap_menu,
               'owned_open_text': args.owned_open_text, 'region_escape': args.region_escape,
               'focused_inspector': args.focused_inspector,
+              'focused_pane_lifecycle': args.focused_pane_lifecycle,
               'binary_sha256': qa.binary_hashes, 'project': str(project),
               'limits': 'Finite ordinary selection/complete public membership/nonmutation cases only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
@@ -629,7 +638,7 @@ def main():
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py',
                      's5a_native_escape_cases.py', 's5a_native_inspector_cases.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector, args.focused_pane_lifecycle)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)

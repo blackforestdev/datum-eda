@@ -11915,5 +11915,117 @@
       "gates": "Current py_compile/sourcehealth3258 and exact default-path AST inverse PASS; accepted12unchanged reader controls reused. Projectstate101/currentprojection and stagedrustfmt passed; required normal hooks retained.",
       "retained": "FullN11/N17/C04/C05/C06/HUMAN/physical/screenreader/fullgrouping/windowClose and successor acceptance remainopen; no production/fixture/getter/dependency changes."
     }
+  },
+  "native_wayland_focused_compound_pane_lifecycle_20261019": {
+    "status": "Actual independent bounded combined PASS and appointed manager acceptance for focused heterogeneous Compound pane lifecycle only. C04 remains in progress.",
+    "retained_step": "UVT-S5A-BUILD / S5A-C04",
+    "manager_release": {
+      "session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+      "scope": "Exact2QAfiles plus existing3metadata/scratch. Cohesive focus setup extraction and one exclusive Board-only pane lifecycle flag; no Rust/Cargo/getter/fixture/dependency/framework.",
+      "resume": "Manager explicitly resumed stalled handoff after actual source-only PASS. SAME ownership/scope explicitly renewed after18:06:44Z expiry, heartbeat2026-10-19T20:37:46Z/expires2026-10-20T04:37:46Z; Frontier/Beads/export synchronized before native run. No silent release/transfer/new owner input."
+    },
+    "authority": "UVT2.2.18(4-5)/L7-L9 and2.2.11 shared selection; matrixN08 line295. Reuse prior singleWireObject pane-close/rebind and focusNone missing-Schematic cases at their own scopes. New finite integration is heterogeneous Compound5 with explicit focus surviving loss of last resolving open pane.",
+    "candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/focused-pane-lifecycle-candidate-pins.json",
+      "sha256": "2ad1cefef03b583394ab71422cdbca27848c26d958c226096b7d703234dcc2d2",
+      "source_pins": 7,
+      "artifact_pins": 15,
+      "binary_pins": 3
+    },
+    "source_preflight": "Actual closeout_review SOURCE-ONLY PASS7c552249, manager independently reverified7sources/preflight/3bins/baseHEAD before resumed run. py_compile/sourcehealth3258PASS (runner671/module336). Exact runner AST inverse and common-setup inline reconstruction retain whole old focused-scope case; tuple bindings/args checked. Adequate unchanged12 reader controls reused; no old-case rerun.",
+    "native": {
+      "raw_result": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-focused-pane-lifecycle-01/result.json",
+      "sha256": "4fceb5c34e51342a109b55ca78c3ebae08f83dafb13ce332ff4bf1e852ec9ff4",
+      "outcome": ".datum/scratch/s5a-c04-managed-20261018/focused-pane-lifecycle-native-outcome.json",
+      "outcome_sha256": "694ec1edaca083943039e69185f2926d4d2012a04fd6e57aa5b67e6f567af967",
+      "attempts": 1,
+      "gui_reuse_sha256": "0fc829015d22c00f2604b667755be44a5d42a3ecbc72c1d78b5dcfc27451ab0d",
+      "current_frame_plan": "Personally inspected fitted current Board PNG byteidentical to accepted setup; actual camera/bounds/layout and all source projection pins match. Reused sourcef32 midpoint45mm,0->574,404 before Shift input, then acknowledged own-window Shift/primary cycle. No coordinate/frame sweep.",
+      "checkpoints": [
+        {
+          "checkpoint": "focused_pane_before_close",
+          "sequence": 6,
+          "live_panes": [
+            [
+              0,
+              "Board"
+            ],
+            [
+              1,
+              "Schematic"
+            ]
+          ],
+          "owner": "0",
+          "full_count": 5,
+          "focus": {
+            "class": "track",
+            "id": "40000000-0000-4000-8000-000000000003"
+          },
+          "global_count": 5,
+          "global_unprojected": 0,
+          "presented_basis": "None"
+        },
+        {
+          "checkpoint": "focused_pane_without_board",
+          "sequence": 19,
+          "live_panes": [
+            [
+              1,
+              "Schematic"
+            ]
+          ],
+          "owner": "1",
+          "full_count": 5,
+          "focus": {
+            "class": "track",
+            "id": "40000000-0000-4000-8000-000000000003"
+          },
+          "global_count": 5,
+          "global_unprojected": 0,
+          "presented_basis": "None"
+        },
+        {
+          "checkpoint": "focused_pane_board_rebound",
+          "sequence": 36,
+          "live_panes": [
+            [
+              1,
+              "Board"
+            ]
+          ],
+          "owner": "1",
+          "full_count": 5,
+          "focus": {
+            "class": "track",
+            "id": "40000000-0000-4000-8000-000000000003"
+          },
+          "global_count": 5,
+          "global_unprojected": 0,
+          "presented_basis": "None"
+        }
+      ],
+      "actions": [
+        "menu:View/view.close_pane",
+        "menu:View/view.fill_board"
+      ],
+      "menu": "Both exact ownPID View ID/label/dispatch-key/available verified, observed finite public-row keyboard traversal and standardFOCUSED before Enter. All4 Overlay open/preEnter reads retain full5/focus3/All and globalCommonCount/typeMap, with active-pane empty during Overlay.",
+      "observed": "Personally inspected beforeclose, noBoard and rebound frames. Compound5/Focus Track3 UUIDsuffix000003/All5 persist. Sole Schematic1 contains normal unselected I and no Board geometry; VisualLOD unavailable projection is distinct from globalunprojected0. Fill Board into survivingPane1 returns selected4Trackgeometry; emptyOutline remains counted without invented geometry.",
+      "public": "Complete5 standardSELECTED members/current project/revision/rawCompound/focusTrack3 and globalCount5/typeMap retained. Actual current owner0->1->1; current pane list/layout independently establishes Board0+Schematic1 -> Schematic1 only -> Board1 only. No inference from retained board_camera/scene_bounds or fabricated unavailable5.",
+      "nonmutation": "All7 canonical/frozen maps equal69files (35root+34nested secondProject), including source/journal/revision/electrical data; all69current files rehashed equal. Owned shell exit/PTY closure, GUI/compositor/companion termination and0700privateIPC removal verified. SIGTERM is not ordinary window Close.",
+      "limits": "Existing title tail at objects/long labels clipped; Focus UUID abbreviated but exact uncapped public identity retained. Returned wider pane/camera/projection differ legitimately; no whole-view/camera equality, pixel coverage/metrology, allsilhouette/N15 or HUMAN approval.",
+      "warnings": "Existing dbind GetItems unsupported-interface warning retained; no runtime failure, rerun, coordinate/frame sweep, Cargo or production edit."
+    },
+    "retained_boundaries": "One flat focused heterogeneous Compound pane close/content-rebind slice only. Geometry/source remain available despite no resolving open Board pane; do not invent unavailable5. No active-gesture-close, fullN08/N13/C04/C05/C06/HUMAN/P2.4/ordinary windowClose/successor acceptance. No issue closure/new dependency/successor selection; previous entries and C04/C05/C06 false remain unchanged.",
+    "final_review": {
+      "reviewer_task": "/root/closeout_review",
+      "outcome": "Actual bounded combined PASS; no mandatory findings",
+      "candidate_sha256": "2ad1cefef03b583394ab71422cdbca27848c26d958c226096b7d703234dcc2d2",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "verified": "7source/15artifact/3currentbinary pins; all7 full5/focusTrack3/All public reads including4Overlay correlations; current owners0->1->1 and globalCommon5/types; exact public View action/label/available/standardFOCUSED beforeEnter; current source/frame pointplan;3milestone frames;7x69maps/currentfiles and ownedprocess/IPC cleanup.",
+      "manager_disposition": "ACCEPT finite proof only; exact5owned-path normal-hook landing authorized. No issue closure or second closure-only commit. All old entries and immutable raw/source receipts retained.",
+      "gates": "Exact pinned py_compile/sourcehealth3258 and default/oldfocused AST proofs reused; unchanged12readercontrols reused. Changed-metadata projectstate101/currentFrontierprojection and diffwhitespace passed; required staged hooks retained.",
+      "retained": "Source geometry available despite no resolving open Board pane; no invented unavailable5 or wholeview/camera equality. Display clipping/UUID abbreviation retained. No active-gesture-close/fullN08/N13/C04/C05/C06/HUMAN/P2.4/ordinarywindowClose/successor acceptance."
+    }
   }
 }

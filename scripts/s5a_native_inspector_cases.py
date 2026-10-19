@@ -1,4 +1,4 @@
-"""Finite ordinary Inspector navigation over complete frozen native selection."""
+"""Finite focused selection and Inspector cases over frozen native sources."""
 from __future__ import annotations
 
 import json
@@ -8,7 +8,7 @@ from prove_native_project_startup_gui import Atspi, digest
 from s5a_native_selection_observation import qualify, selection_snapshot
 
 
-def focused_compound_scopes(qa, main, state, project, result, baseline):
+def establish_focused_board_group(qa, main, state, project, result, baseline):
     board_path = project / 'board/board.json'
     board = json.loads(board_path.read_text())
     uid = '40000000-0000-4000-8000-000000000003'
@@ -81,6 +81,12 @@ def focused_compound_scopes(qa, main, state, project, result, baseline):
     indices = [next(i for i, line in enumerate(events) if marker in line) for marker in markers]
     assert indices == sorted(indices) and not any('focused false' in line for line in events)
     result['focused_inspector_focus_click_events'] = events
+    return wanted, basis, camera, focus
+
+
+def focused_compound_scopes(qa, main, state, project, result, baseline):
+    wanted, basis, camera, focus = establish_focused_board_group(
+        qa, main, state, project, result, baseline)
 
     prefix = '/org/a11y/atspi/accessible/selection/fields'
     scopes = [(None, 'All', 5, {'track': 4, 'board_outline': 1}),
@@ -203,3 +209,128 @@ def focused_compound_scopes(qa, main, state, project, result, baseline):
             'selection_while_menu_open': opened, 'selection_before_enter': before_enter,
             'observation': observation, 'presented': receipt})
         previous_scope = scope
+
+
+def focused_compound_pane_lifecycle(qa, main, state, project, result, baseline):
+    wanted, _basis, _camera, focus = establish_focused_board_group(
+        qa, main, state, project, result, baseline)
+    menu_prefix = 'menu:View'
+
+    def retain(pane, leaves=None):
+        try:
+            record = state()
+            value = record['value']
+            expected_focus = 'Overlay' if pane is None else f'Editor(PaneId({pane}))'
+            if value['focus'] != expected_focus:
+                return False
+            snapshot = selection_snapshot(qa, Atspi.StateType.SELECTED)
+            selection = qualify(record, snapshot, wanted)
+            if snapshot['before'].get('active-pane') != ('' if pane is None else str(pane)):
+                raise ValueError('public selection owner not yet current')
+            actual_leaves = [(p['pane'], p['content']) for p in value['pane_cameras']]
+            if leaves is not None:
+                if actual_leaves != leaves or value['focused_pane'] != pane:
+                    raise ValueError('current live pane topology not yet acknowledged')
+                if value['focused_content'] != f'Some({dict(leaves)[pane]})':
+                    raise ValueError('current pane content not yet acknowledged')
+                if len(leaves) == 1 and (
+                        f'root: Leaf {{ id: PaneId({pane}), content: {leaves[0][1]} }}'
+                        not in value['layout']):
+                    raise ValueError('single-leaf current layout not yet acknowledged')
+                if f'Editor pane {pane}' not in snapshot['before'].get('description', ''):
+                    raise ValueError('public current Editor description not yet published')
+                presented = value['selection_inspector']['presented']
+                if not presented or presented['basis_scope'] != 'None':
+                    raise ValueError('current All Inspector basis not presented')
+            fields = {}
+            for field, expected in {'member_count': 5,
+                                   'member_types': {'track': 4, 'board_outline': 1}}.items():
+                path = '/org/a11y/atspi/accessible/selection/fields/n' + field.encode().hex()
+                node = next(n for n in qa.nodes() if n.get_accessible_id() == path)
+                attrs = qa.attributes(node)
+                if (node.get_process_id() != qa.process.pid
+                        or any(attrs.get(k) != wanted[v] for k, v in [
+                            ('project-id', 'project'), ('model-revision', 'revision'),
+                            ('subject-kind', 'kind')])
+                        or attrs.get('active-pane') != ('' if pane is None else str(pane))
+                        or attrs.get('value-state') != 'common'
+                        or json.loads(attrs['canonical-value']) != expected):
+                    raise ValueError('global Inspector aggregate not yet current: ' + field)
+                fields[field] = {'attributes': attrs, 'name': node.get_name()}
+            if state()['sequence'] != record['sequence']:
+                return False
+            return {'selection': selection, 'state': record, 'global_fields': fields,
+                    'live_panes': actual_leaves,
+                    'expected_rendered_header': 'Compound Selection — 5 objects',
+                    'expected_rendered_focus': focus}
+        except (ValueError, KeyError, StopIteration) as error:
+            result['focused_pane_pending_read'] = str(error)
+            return False
+
+    def menu():
+        root = next((n for n in qa.nodes() if n.get_accessible_id() == menu_prefix), None)
+        if root is None:
+            return False
+        assert root.get_process_id() == qa.process.pid
+        rows = []
+        for i in range(root.get_child_count()):
+            node = root.get_child_at_index(i)
+            if node is None:
+                return False
+            assert node.get_process_id() == qa.process.pid
+            rows.append({'id': node.get_accessible_id(), 'name': node.get_name(),
+                         'attributes': qa.attributes(node),
+                         'focused': node.get_state_set().contains(Atspi.StateType.FOCUSED)})
+        return rows
+
+    def view_action(action, label):
+        qa.wait_presented()
+        qa.focus(main)
+        # Existing StartupQA.menu_item View menubar coordinate, same native size.
+        assert state()['value']['window_size'] == [1344, 806] and state()['value']['scale'] == 1
+        qa.command('xdotool', 'mousemove', '--window', main, '195', '17', 'click', '1')
+        rows = qa.wait('own public View menu in Overlay', lambda:
+                       menu() if state()['value']['focus'] == 'Overlay' else False)
+        target = menu_prefix + '/' + action
+        chosen = next(row for row in rows if row['id'] == target)
+        assert chosen['name'] == label and chosen['attributes'].get('dispatch-key') == action
+        assert chosen['attributes'].get('available') == 'true'
+        opened = qa.wait('complete focused Compound while View menu open', lambda: retain(None))
+        # Traverse only the finite current public rows, observing standard focus
+        # at each step. General menubar navigation has no assumed Home binding.
+        for _ in rows:
+            current = menu()
+            if current and any(row['id'] == target and row['focused'] for row in current):
+                break
+            qa.key(main, 'Down')
+        else:
+            raise RuntimeError('exact public View action did not receive focus: ' + target)
+        focused = qa.wait('exact View action standardFOCUSED before Enter', lambda:
+                         menu() if menu() and any(row['id'] == target and row['focused']
+                                                 for row in menu()) else False)
+        before_enter = qa.wait('complete focused Compound on View action', lambda: retain(None))
+        qa.key(main, 'Return')
+        qa.wait('View menu dismissed after action', lambda: not menu())
+        return {'action': target, 'label': label, 'public_rows': rows,
+                'public_focused_before_enter': focused,
+                'selection_while_menu_open': opened, 'selection_before_enter': before_enter}
+
+    result['focused_pane_before_close'] = qa.wait('focused five before closing resolving pane',
+        lambda: retain(0, [(0, 'Board'), (1, 'Schematic')]))
+    result['focused_pane_before_close_presented'] = qa.capture('focused-pane-before-close', main)
+    result['focused_pane_close_action'] = view_action('view.close_pane', 'Close Pane')
+    qa.wait_presented()
+    result['focused_pane_without_board'] = qa.wait('same focused five with sole Schematic pane',
+        lambda: retain(1, [(1, 'Schematic')]))
+    result['focused_pane_without_board_presented'] = qa.capture('focused-pane-no-board', main)
+    result['focused_pane_fill_action'] = view_action('view.fill_board', 'Fill Pane: Board')
+    qa.wait_presented()
+    result['focused_pane_board_rebound'] = qa.wait('same focused five rebound to surviving Board pane',
+        lambda: retain(1, [(1, 'Board')]))
+    result['focused_pane_board_rebound_presented'] = qa.capture('focused-pane-board-rebound', main)
+    result['focused_pane_projection_limit'] = (
+        'Live-pane absence is established by current pane/layout records and actual frames, '
+        'not retained board_camera/scene_bounds or a fabricated unavailable count. '
+        'Model source remains available; global unprojected can remain zero. '
+        'New pane1 projection/camera/LOD/capacity may differ legitimately. '
+        'No active-gesture-close, whole-view/camera equality or ordinary window-Close claim.')
