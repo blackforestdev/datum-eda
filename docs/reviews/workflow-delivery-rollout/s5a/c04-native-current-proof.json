@@ -12423,7 +12423,8 @@
         "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
         "manager_disposition": "Actual appointed manager independently matches pins and releases one corrected native02 with unchanged QAcase/currentGUI. Current frame/source/camera/layer plan derivation authorized; no guessed coordinates, loaded source edits or retry.",
         "retained": "No native/fullC04/HUMAN/fullIR01/samePTY/AI/cap/Board/Bus/successor credit inferred."
-      }
+      },
+      "issue_disposition": "Only dat-schematic-layers-board-only-agve closed using actual reviewed landing13ab39eb2c274a4aedcad1fd023ecdee0654d41e. Related dat-layers-range-marker-overlap-e756 stays open; main C04 staysin_progress. No fullIR01/HUMAN/C05/C06/successor acceptance."
     },
     "native_attempt_02": {
       "run_directory": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-hidden-junction-run-02",
@@ -12494,7 +12495,9 @@
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "manager_disposition": "Actual appointed manager independently agrees and ACCEPTS only this bounded Schematic hidden-Junction/Layers unit. Exact9owned-path substantive normal-hook main landing released, followed by only agve closure with actual landed commit and minimal normal-hook metadata correspondence. Manager handles publication after landing-delta review.",
       "gates": "Current sourcehealth3258, dependency authority, projectstate101/currentFrontierprojection, scopedformatter/diff PASS; normal staged hooks required. No additional build/native/test rerun.",
-      "retained": "Only frozen Schematic Wire-Junction-Wire positive predicate; independent wire-segment/Board/Bus/filter/cap/crosspane/fullIR01/C04/HUMAN/C05/C06/P2.4/samePTY/AI/successor boundaries retained. No isolated Junction pixel identity/wholeframe equality/metrology claim. Incidental e756 stays open and related only."
+      "retained": "Only frozen Schematic Wire-Junction-Wire positive predicate; independent wire-segment/Board/Bus/filter/cap/crosspane/fullIR01/C04/HUMAN/C05/C06/P2.4/samePTY/AI/successor boundaries retained. No isolated Junction pixel identity/wholeframe equality/metrology claim. Incidental e756 stays open and related only.",
+      "landing_commit": "13ab39eb2c274a4aedcad1fd023ecdee0654d41e",
+      "landing_outcome": "Exact9owned paths landed on main with normal lane/temporary-artifact/staged-rustfmt PASS, no bypass. QA/Rust/authority/currentbinary source pins match reviewed51ab candidate; only actual review/readiness correspondence appended. No further test/build/native run."
     }
   }
 }
