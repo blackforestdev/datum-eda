@@ -35,11 +35,7 @@ pub(crate) fn project_bodies(
         let symbol: Symbol = serde_json::from_value(
             model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?,
         )?;
-        // Older native placements already use the compatibility projection
-        // for unsupported poses; this first-placement slice does not reinterpret them.
-        if placed.rotation.rem_euclid(90) == 0 {
-            replace_body(scene, placed, &symbol)?;
-        }
+        replace_body(scene, placed, &symbol)?;
     }
     Ok(())
 }
@@ -50,8 +46,7 @@ pub(crate) fn replace_body(
 ) -> Result<()> {
     let base_id = format!("schematic-symbol:{}", placed.uuid);
     scene.board_graphics.retain(|g| g.object_id != base_id);
-    let transform =
-        |p| place_local_point(p, placed.position, placed.rotation, placed.mirrored).map(point_nm);
+    let transform = |p| display_point(p, placed.position, placed.rotation, placed.mirrored);
     let mut text = SchematicTextSink::default();
     let mut text_points = Vec::new();
     for (index, drawing) in symbol.drawings.iter().enumerate() {
@@ -158,3 +153,47 @@ pub(crate) fn replace_body(
     }
     Ok(())
 }
+
+/// Display projection only. Electrical pin anchors and exact placement
+/// acceptance continue to use the engine's cardinal transform unchanged.
+fn display_point(point: Point, origin: Point, rotation: i32, mirrored: bool) -> Result<PointNm> {
+    if rotation.rem_euclid(90) == 0 {
+        return Ok(point_nm(place_local_point(
+            point, origin, rotation, mirrored,
+        )?));
+    }
+    let x = if mirrored {
+        point
+            .x
+            .checked_neg()
+            .context("Symbol display reflection exceeds integer coordinates")?
+    } else {
+        point.x
+    } as f64;
+    let y = point.y as f64;
+    let (sin, cos) = f64::from(rotation.rem_euclid(360)).to_radians().sin_cos();
+    let rounded = |value: f64| -> Result<i64> {
+        let value = value.round();
+        // i64::MAX as f64 rounds UP to 2^63. Use an exclusive upper
+        // bound so a saturating float cast cannot conceal overflow.
+        anyhow::ensure!(
+            value.is_finite() && value >= i64::MIN as f64 && value < -(i64::MIN as f64),
+            "Symbol display rotation exceeds integer coordinates"
+        );
+        Ok(value as i64)
+    };
+    Ok(PointNm {
+        x: origin
+            .x
+            .checked_add(rounded(x * cos - y * sin)?)
+            .context("Symbol display translation exceeds integer coordinates")?,
+        y: origin
+            .y
+            .checked_add(rounded(x * sin + y * cos)?)
+            .context("Symbol display translation exceeds integer coordinates")?,
+    })
+}
+
+#[cfg(test)]
+#[path = "native_library_tests.rs"]
+mod tests;

@@ -124,9 +124,107 @@ def toggle_l1(qa, main, state, result, visible):
         'actual L1 visibility transition', acknowledged)
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1):
+def parent_points(qa, main, state, project, contract, result):
+    """One current-frame body acquisition sequence, never a point sweep."""
+    symbols = json.loads((project / 'schematic/main.json').read_text())['symbols']
+    by_ref = {s['reference']: s for s in symbols.values()}
+    assert set(by_ref) == {'U1', 'U2'} and len(symbols) == 2
+    parents = {ref: {'class': 'symbol', 'id': s['uuid']} for ref, s in by_ref.items()}
+    result['owned_source_map'] = by_ref
+    result['owned_library_source'] = json.loads((project / 'pool/symbols' /
+                                               (by_ref['U1']['lib_id'] + '.json')).read_text())
+    qa.key(main, 'Escape')  # Remove any launch-focus point acquisition.
+    qa.wait('initial parent selection empty', lambda: state()['value']['selection']['kind'] == 'none')
+    result['initial_presented_frame'] = qa.capture('parents-initial-current-frame', main)
+    result['initial_state'] = state()
+    # Bind a finite point plan to THIS presented capture after source/visual
+    # inspection. The plan contains ordinary mouse coordinates, no App setters.
+    plan_path = qa.root / 'current-frame-point-plan.json'
+    plan = qa.wait('source-bound point plan for current presented frame', lambda:
+                   json.loads(plan_path.read_text()) if plan_path.exists() else False, timeout=300)
+    assert plan['capture_sha256'] == digest(qa.root / 'parents-initial-current-frame.png')
+    assert set(plan['points']) == {'body_u1', 'body_u2'} and plan['basis'] and plan['transform']
+    result['point_plan'] = plan
+    expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
+                'pid': qa.process.pid, 'oracle': 'Frozen parents-v3 schematic parent IDs and source-owned primitives; independent checkpoint focus'}
+    dispatch_log = qa.root / f'{qa.phase}.log'
+
+    def body_dispatch(offset, ref):
+        lines = [line for line in dispatch_log.read_text()[offset:].splitlines()
+                 if line.startswith('[datum-click]') and 'primary click' in line]
+        assert any(f'schematic-symbol:{parents[ref]["id"]}:library:' in line for line in lines), (
+            'actual button dispatch must hit the source-owned library body, not a pin/text fallback', lines)
+        return lines
+
+    def observe(kind, refs, focus, prior):
+        record = state()
+        if record['sequence'] <= prior or record['value']['selection'].get('kind') != kind:
+            return False
+        try:
+            snapshot = selection_snapshot(qa)
+            observation = qualify(record, snapshot, {**expected, 'kind': kind,
+                'scope': 'symbol' if kind == 'object' else None,
+                'members': [parents[r] for r in refs], 'focus': parents[focus]})
+            if any(m['attributes'].get('hidden') != 'false' for m in snapshot['members']):
+                raise ValueError('parent unexpectedly hidden')
+            return observation if state()['sequence'] == record['sequence'] else False
+        except ValueError as error:
+            result['pending_public_read_failure'] = str(error)
+            return False
+
+    for label, point, modifier, kind, refs, focus in [
+            ('body-u1-object', 'body_u1', None, 'object', ['U1'], 'U1'),
+            ('shift-body-u2-compound', 'body_u2', 'Shift_L', 'compound', ['U1', 'U2'], 'U2'),
+            ('ctrl-body-u1-remove', 'body_u1', 'Control_L', 'object', ['U2'], 'U2')]:
+        prior = state()['sequence']
+        qa.wait_presented()
+        qa.focus(main)
+        x, y = plan['points'][point]['screen_px']
+        diagnostic = Path(qa.env['DATUM_GUI_LOG'])
+        offset = len(diagnostic.read_text())
+        qa.command('xdotool', 'mousemove', '--window', main, str(x), str(y))
+        qa.wait('native pointer at source-bound target', lambda:
+                f'cursor moved {x:.2f},{y:.2f}' in diagnostic.read_text()[offset:])
+        if modifier:
+            qa.command('xdotool', 'keydown', modifier)
+        dispatch_offset = len(dispatch_log.read_text())
+        try:
+            qa.command('xdotool', 'click', '1')
+        finally:
+            if modifier:
+                qa.command('xdotool', 'keyup', modifier)
+        result[label] = qa.wait(label, lambda: observe(kind, refs, focus, prior))
+        result[label]['body_dispatch'] = body_dispatch(dispatch_offset, 'U1' if point == 'body_u1' else 'U2')
+        qa.capture(label, main)
+    prior = state()['sequence']
+    qa.key(main, 'Escape')
+    result['cleared'] = qa.wait('parent Escape clear', lambda: state() if
+        state()['sequence'] > prior and state()['value']['selection']['kind'] == 'none' else False)
+    qa.wait('public selection root removed', lambda: not any(
+        n.get_accessible_id() == '/org/a11y/atspi/accessible/selection' for n in qa.nodes()))
+    qa.capture('parents-escape-clear', main)
+    prior = state()['sequence']
+    x, y = plan['points']['body_u2']['screen_px']
+    diagnostic = Path(qa.env['DATUM_GUI_LOG'])
+    offset = len(diagnostic.read_text())
+    qa.command('xdotool', 'mousemove', '--window', main, str(x), str(y))
+    qa.wait('fresh body native pointer acknowledgement', lambda:
+            f'cursor moved {x:.2f},{y:.2f}' in diagnostic.read_text()[offset:])
+    qa.wait_presented()
+    dispatch_offset = len(dispatch_log.read_text())
+    qa.command('xdotool', 'click', '1')
+    result['fresh-body-u2-object'] = qa.wait('fresh point acquisition after Escape', lambda:
+        observe('object', ['U2'], 'U2', prior))
+    result['fresh-body-u2-object']['body_dispatch'] = body_dispatch(dispatch_offset, 'U2')
+    qa.capture('fresh-body-u2-object', main)
+
+
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False):
     contract = json.loads((project / 's5a-fixture.json').read_text())
-    if surface == 'schematic':
+    if parents_case:
+        content, label = 'Some(Schematic)', 'selection-parents'
+        expected = {'fixture_sha256': digest(project / 's5a-fixture.json')}
+    elif surface == 'schematic':
         expected = {'project': contract['project_id'], 'revision': contract['model_revision'],
                     'kind': 'compound', 'members': [{'class': 'symbol', 'id': s['source_id']}
                                                    for s in contract['subjects']],
@@ -154,10 +252,15 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1):
     result['oracle'] = expected
     state = lambda: latest_state((qa.root / f'{label}.log').read_text())
     qa.wait('current diagnostic state', state)
+    qa.wait_presented()
     if state()['value']['focused_content'] != content:
         qa.key(main, 'Tab')
     qa.wait('ordinary target pane focus',
             lambda: state()['value']['focused_content'] == content)
+    if parents_case:
+        parent_points(qa, main, state, project, contract, result)
+        finish_case(qa, main, state, project, frozen_files, result, before)
+        return
     if prehidden_l1:
         qa.capture('initial-layer-state', main)
         toggle_l1(qa, main, state, result, False)
@@ -220,6 +323,10 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1):
     qa.key(main, 'ctrl+a')
     result['subsequent_selection'] = qa.wait('subsequent keyboard selection', complete)
     qa.capture('subsequent-keyboard-selection', main)
+    finish_case(qa, main, state, project, frozen_files, result, before)
+
+
+def finish_case(qa, main, state, project, frozen_files, result, before):
     result['frozen_after_selection'] = validate_frozen_sources(project, frozen_files)
     result['canonical_after_selection'] = result['frozen_after_selection']['canonical_files']
     assert before == result['canonical_after_selection'], 'source/journal changed during selection'
@@ -238,9 +345,12 @@ def main():
     parser.add_argument('--replay-root', required=True, type=Path)
     parser.add_argument('--surface', choices=['schematic', 'board'], default='schematic')
     parser.add_argument('--prehidden-l1', action='store_true')
+    parser.add_argument('--parents-point', action='store_true')
     args = parser.parse_args()
     if args.prehidden_l1 and args.surface != 'board':
         parser.error('pre-hidden L1 control is only defined for this frozen Board case')
+    if args.parents_point and (args.surface != 'schematic' or args.prehidden_l1):
+        parser.error('parent body points are defined only for the frozen Schematic parents case')
     run = args.run_dir.absolute()
     if run.resolve() != run or not run.is_relative_to(OWNED) or run == OWNED or run.exists():
         parser.error('run-dir must be a fresh unaliased child of the owned task scratch')
@@ -248,6 +358,8 @@ def main():
     if (replay / 'index.json').read_bytes() != (INPUTS / 'index.json').read_bytes():
         parser.error('replay root must have the exact tracked catalogue marker')
     alias = 's5a-c03-u5-majority-v1' if args.surface == 'schematic' else 's5a-c03-u5-scope-v2'
+    if args.parents_point:
+        alias = 's5a-c03-u5-parents-v3'
     project = replay / alias
     catalogue = json.loads((INPUTS / 'index.json').read_text())
     frozen_files = {row['path'].removeprefix(alias + '/'): row['sha256']
@@ -268,11 +380,12 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1:
+    if args.prehidden_l1 or args.parents_point:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
     result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
+              'parents_point': args.parents_point,
               'binary_sha256': qa.binary_hashes, 'project': str(project),
-              'limits': 'Finite keyboard/complete public membership/nonmutation case only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
+              'limits': 'Finite ordinary selection/complete public membership/nonmutation cases only. Native Datum Wayland/wgpu, outer X11 Weston input. No HUMAN, KWin, C04/C05/C06 or ordinary window-Close acceptance.'}
     result['ipc_runtime'] = {'path': qa.runtime.name, 'uid': os.getuid(),
                              'mode': oct(Path(qa.runtime.name).stat().st_mode & 0o777),
                              'scope': 'Disposable private process runtime only; no frozen replay data.'}
@@ -281,7 +394,7 @@ def main():
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)

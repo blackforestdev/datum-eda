@@ -85,6 +85,29 @@ def qualify(record, snapshot, expected):
                                        ensure_ascii=False).encode()).hexdigest()
     if 'sha256:' + digest != selection.get("members_sha256"):
         raise ValueError("diagnostic correlation differs from complete public membership")
+    if 'focus' in expected:
+        focus = expected['focus']
+        observed = selection.get('focus')
+        if focus is None:
+            if observed is not None:
+                raise ValueError('unexpected focused member')
+        else:
+            # This finite parent case has no hierarchical instance path. Refuse
+            # truncated or foreign diagnostic focus rather than guessing it.
+            if (identity(focus)[2] or not isinstance(observed, dict)
+                    or observed.get('class') != focus['class']
+                    or observed.get('id') != focus['id']
+                    or type(observed.get('instance_path_count')) is not int
+                    or observed.get('instance_path_count') != 0
+                    or observed.get('instance_path_sample') != []
+                    or observed.get('instance_path_sha256') != 'sha256:' + hashlib.sha256(b'[]').hexdigest()):
+                raise ValueError('wrong or incomplete diagnostic focus')
+            if identity(focus) not in signatures:
+                raise ValueError('focus is not a selected member')
+        for member, signature in zip(snapshot['members'], signatures):
+            wanted_focus = focus is not None and signature == identity(focus)
+            if member['attributes'].get('selection-focus') != str(wanted_focus).lower():
+                raise ValueError('wrong public focused member')
     return {"sequence": record["sequence"], "pid": expected["pid"], **basis,
             "members": members, "compact_correlated": True,
             "oracle": expected["oracle"], "public_snapshot": snapshot}

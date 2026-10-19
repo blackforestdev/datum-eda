@@ -1,5 +1,6 @@
 """Refuse misleading native proof, including agreement without an exact oracle."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -35,6 +36,61 @@ class SelectionObservationTests(unittest.TestCase):
     def test_full_public_read_qualifies_against_frozen_fixture(self):
         result = qualify(self.record, self.snapshot, self.expected)
         self.assertEqual(result['members'], self.expected['members'])
+
+    def test_parent_checkpoint_focus_is_independent_and_complete(self):
+        expected, record, snapshot = map(copy.deepcopy, (self.expected, self.record, self.snapshot))
+        focus = expected['members'][1]
+        expected['focus'] = focus
+        record['value']['selection']['focus'] = {
+            **focus, 'instance_path_count': 0, 'instance_path_sample': [],
+            'instance_path_sha256': 'sha256:' + hashlib.sha256(b'[]').hexdigest()}
+        for i, member in enumerate(snapshot['members']):
+            member['attributes']['selection-focus'] = str(i == 1).lower()
+        qualify(record, snapshot, expected)
+        for damage in ['missing', 'other-parent', 'truncated-path', 'boolean-count', 'path-hash', 'public-focus']:
+            r, s = copy.deepcopy(record), copy.deepcopy(snapshot)
+            if damage == 'missing':
+                del r['value']['selection']['focus']
+            elif damage == 'other-parent':
+                r['value']['selection']['focus']['id'] = expected['members'][0]['id']
+            elif damage == 'truncated-path':
+                r['value']['selection']['focus']['instance_path_count'] = 1
+            elif damage == 'boolean-count':
+                r['value']['selection']['focus']['instance_path_count'] = False
+            elif damage == 'path-hash':
+                r['value']['selection']['focus']['instance_path_sha256'] = 'sha256:wrong'
+            else:
+                s['members'][0]['attributes']['selection-focus'] = 'true'
+            with self.subTest(damage=damage), self.assertRaises(ValueError):
+                qualify(r, s, expected)
+        expected['focus'] = None
+        with self.assertRaises(ValueError):
+            qualify(record, snapshot, expected)
+        record['value']['selection']['focus'] = None
+        for member in snapshot['members']:
+            member['attributes']['selection-focus'] = 'false'
+        qualify(record, snapshot, expected)
+
+    def test_single_parent_object_focus_qualifies_without_a_child_member(self):
+        expected, record, snapshot = map(copy.deepcopy, (self.expected, self.record, self.snapshot))
+        focus = expected['members'][0]
+        expected.update(kind='object', members=[focus], focus=focus, scope='symbol')
+        snapshot['members'] = snapshot['members'][:1]
+        snapshot['count'] = 1
+        for attrs in [snapshot['before'], snapshot['after'], snapshot['members'][0]['attributes']]:
+            attrs['subject-kind'] = 'object'
+        snapshot['members'][0]['attributes']['selection-focus'] = 'true'
+        record['value']['selection'].update(kind='object', member_count=1, scope='symbol',
+            members_sha256='sha256:' + hashlib.sha256(json.dumps([focus], separators=(',', ':')).encode()).hexdigest(),
+            focus={**focus, 'instance_path_count': 0, 'instance_path_sample': [],
+                   'instance_path_sha256': 'sha256:' + hashlib.sha256(b'[]').hexdigest()})
+        qualify(record, snapshot, expected)
+        wrong_scope = {**expected, 'scope': None}
+        with self.assertRaisesRegex(ValueError, 'inspection scope'):
+            qualify(record, snapshot, wrong_scope)
+        expected['members'] = [{'class': 'pin', 'id': focus['id']}]
+        with self.assertRaises(ValueError):
+            qualify(record, snapshot, expected)
 
     def test_compact_counts_do_not_replace_missing_or_duplicate_members(self):
         for members in [[], self.snapshot['members'][:1], self.snapshot['members'][:1] * 2]:

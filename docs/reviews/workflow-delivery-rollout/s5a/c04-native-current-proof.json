@@ -10414,5 +10414,325 @@
     },
     "manager_acceptance": "Appointed manager objectively accepts only finite authored pre-hidden Ctrl+A/restore, excluding the two inconsistent Visible summaries. Directs related intake and scoped landing before further case preparation; full N05/IR01/C04/C05/C06/HUMAN remains open.",
     "landing_tracker_check": "Initial state check refused the new issue generic intake label; corrected to required roadmap:intake and re-exported, then project state/projection checks passed. No selection/priority/grant change."
+  },
+  "native_wayland_parents_source_gap_20261018": {
+    "status": "FAIL attempts retained; actual source/presentation gap reported to appointed manager before point acquisition. No N01/N15 or broader qualification acceptance.",
+    "source_baseline": "569e0ca6; unchanged compiled Rust/binaries reused from35d5e014. Only existing proof runner/reader/focused test modified; pending independent review, no runtime credit for new focus assertions.",
+    "approved_single_case": "Frozen parents-v3 ordinary bodyU1/ObjectfocusU1; Shift pinU2/CompoundfocusU2; Ctrl bodyU1/ObjectU2focus retained; Escape/fresh point. N01 parent point and N15 owned Symbol presentation only.",
+    "project": "72000000-0000-4000-8000-000000000001",
+    "revision": "70f2407113b85974d2f17f45c57f04c14b853439045047b7205d6f8bd684f9f3",
+    "source_oracle": "Frozen schematic/main.json exact U1b2b25adc at0,0/0deg and U2d73a14b1 at20mm,0/30deg; both refer to library300...001 with three authored Line triangle strokes and five placed pins. IDs/owned sources captured before selection; no acquired membership used as oracle.",
+    "actual_observation": "Personally inspected run02 current settled native initial PNG: U1 small triangle, U2 large axis-aligned compatibility rectangle; pin strokes/labels cluster near U1. Native library composition intentionally replaces body only for rotation%90==0. Generic symbols projection documents absolute pin positions and uses pin.position directly; frozen placements contain identical pin position values. Responsibility/conversion requires disposition; no local-to-world rule or product fix invented.",
+    "related_issue": "dat-native-symbol-owned-projection-g04b; roadmap:intake and related only, no new canonical dependency or priority.",
+    "attempts": [
+      {
+        "run": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-parents-point-01",
+        "status": "FAIL",
+        "error": "timed out: ordinary target pane focus; last=None",
+        "gui_pid": 657420,
+        "compositor_pid": 657404,
+        "binary_sha256": {
+          "datum-gui": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+          "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+          "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+        },
+        "launch_time_source_sha256": {
+          "prove_s5a_native_selection.py": "2b08c7bea14d87bb05713408bca6f645e5dfed2fd841909d4203af0936367d24",
+          "s5a_native_selection_observation.py": "ca33810b5b28a7da4f772aea27415b532082f9bb02b8e8d4c28aeafa80b357fa",
+          "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+          "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+        },
+        "canonical_files": 63,
+        "before_after_teardown_equal": true,
+        "ipc_runtime": {
+          "path": "/run/user/1000/npd-wl-izd4w93c",
+          "uid": 1000,
+          "mode": "0o700",
+          "scope": "Disposable private process runtime only; no frozen replay data.",
+          "removed_after_process_stop": true
+        },
+        "owned_companion_housekeeping": [
+          {
+            "pid": 657446,
+            "socket": "/run/user/1000/npd-wl-izd4w93c/datum-native-edit-726647fd-a51f-4ef1-ad46-b7c820a10120/engine.sock",
+            "signal": "SIGTERM",
+            "gone": true
+          }
+        ],
+        "failure_transport_cleanup": {
+          "verified_shell_groups_signalled_HUP": [
+            657424
+          ],
+          "limit": "Owned process cleanup, not ordinary shell/window-Close proof."
+        }
+      },
+      {
+        "run": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-parents-point-02",
+        "status": "FAIL",
+        "error": "",
+        "gui_pid": 657587,
+        "compositor_pid": 657572,
+        "binary_sha256": {
+          "datum-gui": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+          "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+          "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+        },
+        "launch_time_source_sha256": {
+          "prove_s5a_native_selection.py": "5a26e53d52cc243789c321e5f542a374fcaf7ae88715d9e95cbf856f71f1c5c0",
+          "s5a_native_selection_observation.py": "ca33810b5b28a7da4f772aea27415b532082f9bb02b8e8d4c28aeafa80b357fa",
+          "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+          "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+        },
+        "canonical_files": 63,
+        "before_after_teardown_equal": true,
+        "ipc_runtime": {
+          "path": "/run/user/1000/npd-wl-rec3tb8_",
+          "uid": 1000,
+          "mode": "0o700",
+          "scope": "Disposable private process runtime only; no frozen replay data.",
+          "removed_after_process_stop": true
+        },
+        "owned_companion_housekeeping": [
+          {
+            "pid": 657613,
+            "socket": "/run/user/1000/npd-wl-rec3tb8_/datum-native-edit-a8aeb36e-af07-49af-88d0-c3358f312248/engine.sock",
+            "signal": "SIGTERM",
+            "gone": true
+          }
+        ],
+        "failure_transport_cleanup": {
+          "verified_shell_groups_signalled_HUP": [
+            657591
+          ],
+          "limit": "Owned process cleanup, not ordinary shell/window-Close proof."
+        }
+      }
+    ],
+    "failure_chronology": {
+      "01": "Tab request before settled presentation yielded no native focus transition, only diagnosticseq1 Board/None. Timed out before selection; no inferred product cause. Added presentation barrier before target-pane input.",
+      "02": "Settled frame, actual ordinaryTab schematic focus and Escape/None recorded. Before finite point input, actual source/presentation discrepancy stopped qualification. Explicit refused point-plan deliberately fails PNG-hash assertion; original result error is empty AssertionError, failure.txt preserves traceback. No body/pin points, modifier acquisition, or coordinate sweep executed."
+    },
+    "teardown_limit": "Failure HUP to verified owned terminal process groups, GUI SIGTERM and exact owned companion shutdown are housekeeping, not ordinary shell/windowClose qualification. Both63-file inventories identical through teardown and private runtimes removed.",
+    "verification": "Focused reader11/11 tests pass including expected focus/public disagreement/truncated instance path/wrong hash controls; explicit stale refusal and existing global CtrlA no-focus assertions retained. Source health3252 and py_compile pass before run; no Cargo required for unchanged Rust. Added parent input path remains unexecuted beyond current-frame preparation.",
+    "retained_boundaries": "C04 remains in progress; no N03 area, Board, rotated-body PASS, full N15, HUMAN, C05/C06, successor, new scope, fixture rewrite or dependency promotion."
+  },
+  "native_wayland_parent_body_correction_20261018": {
+    "status": "Actual independent bounded source/runtime/rendered PASS and appointed manager acceptance for body projection repair plus finite body04 parent-point/focus behavior. C04 remains in progress.",
+    "correction": "Shared native library display body projection now replaces the compatibility rectangle for noncardinal poses. Exact cardinal engine transform is retained; noncardinal body-only mirror-before-positive rotation has finite/exclusive upper-bound rounding and checked reflection/translation. Both native-load and existing authoring-preview consumers use it.",
+    "owned_rust_source_sha256": {
+      "crates/gui-protocol/src/schematic_scene_import/native_library.rs": "0f325d0ce543443f8f2f5106957f0ccf4cc7cd68fe629cec122c66026848a196",
+      "crates/gui-protocol/src/schematic_scene_import/native_library_tests.rs": "00bd9201262224b5d97375ae346feb1a5c81231e730f9bc37bf7e7a51992f73e"
+    },
+    "source_only_independent_review": "Appointed manager reported actual independent SOURCE-ONLY PASS/no mandatory findings at be17254b; exact0f325d0c/00bd9201 sources. Does not substitute for runtime acceptance.",
+    "build": {
+      "head": "569e0ca67a1d35703d9bbe91c3887168fcf50a9d",
+      "rust_source_sha256": {
+        "crates/gui-protocol/src/schematic_scene_import/native_library.rs": "0f325d0ce543443f8f2f5106957f0ccf4cc7cd68fe629cec122c66026848a196",
+        "crates/gui-protocol/src/schematic_scene_import/native_library_tests.rs": "00bd9201262224b5d97375ae346feb1a5c81231e730f9bc37bf7e7a51992f73e"
+      },
+      "binary_sha256": {
+        "datum-gui": "af3a8ddcdeb271be4ac15c372589cb24f97fcd46cec98a5808fea8596f300c18",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "guarded_commands": {
+        "protocol_tests": {
+          "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol schematic_scene_import::native_library -- --nocapture",
+          "exit": 0,
+          "sha256": "c996f2f6818b590b8e6bc90a0f5c7d4367c32793d91f671a0a3ccd88b532b315",
+          "result": "4 passed; 0 failed"
+        },
+        "gui_build": {
+          "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --features visual --bin datum-gui",
+          "exit": 0,
+          "sha256": "c46e9168028c6af4c60b2ae43a730809281ea5767b9d5e4b59dff93001ca99f8",
+          "result": "Finished dev profile; existing unused overflow method warning in unchanged gui-render source"
+        }
+      }
+    },
+    "actual_backend": "Native Datum Wayland/wgpu/Vulkan Intel HD Graphics P630, Mesa25.0.7-2+deb13u1; only outer input envelope is X11 Weston. No KWin/physical/HUMAN equivalence.",
+    "gui_pid": 667640,
+    "compositor_pid": 667632,
+    "launch_time_proof_source_sha256": {
+      "prove_s5a_native_selection.py": "12e14c36354ca1482764321230dc10f4041cca8b0006fd8aedc8e7a607884fff",
+      "s5a_native_selection_observation.py": "009a606614439c51cfc5e65369586bdb041f65d5805da6417a6178778ed5dc88",
+      "prove_native_project_startup_gui.py": "24f11337449ccaca46fe8a5e902b7026577c4864fa78e3ad4259e5212e9f6a59",
+      "native_project_source_inventory.py": "c38741cf852c9d9645670a1309e458530ca9c6b42c51e13737bc211fc9fdffc8"
+    },
+    "test_source_sha256": "fb8caa969c950959352534052d77050cc062f0b3088ed59828ae94a2a419eb7e",
+    "point_plan": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-parents-body-04/current-frame-point-plan.json",
+      "sha256": "503dbcb53b08c2d2cc4f3b000e4aca578f37b693edcee65a2b4c27b7c2a3cb76",
+      "capture_sha256": "1a53724bfcf0600ed33eb3fa35d5228073d7e2cc7d779b7c4492765c525be342",
+      "basis": "Source library Line1 at local(-0.8mm,+0.9mm) U1 and Line0 midpoint(0,-0.5mm) U2, typed parent pose + unchanged source compatibility bounds/current1344x806 fitted schematic pass. Exact source owners, transform and projected points recorded. Personally verified current frame before plan publication; actual button traces independently name those library bodies. Same703,410/851,400 points in03/04; no coordinate sweep or private setter."
+    },
+    "independent_oracle": "Frozen parents-v3 project72000000-0000-4000-8000-000000000001/revision70f2407113b85974d2f17f45c57f04c14b853439045047b7205d6f8bd684f9f3, exact parent Symbol UUIDs from schematic/main.json. Expected focus per ordinary modifier contract. Object class-scope Symbol independently follows selection_view.rs205; Compound scopeNone. No observed membership supplies wanted IDs.",
+    "checkpoints": {
+      "body-u1-object": {
+        "sequence": 3,
+        "kind": "object",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "focus_ids": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          }
+        ],
+        "scope": "symbol",
+        "body_dispatch": [
+          "[datum-click] primary click (703.0, 410.0) schematic world (-834381, 923741) hit Some(AuthoredObject(\"schematic-symbol:b2b25adc-20e8-4942-b377-bc8d82d91690:library:1\")) (native selection acquisition)"
+        ]
+      },
+      "shift-body-u2-compound": {
+        "sequence": 4,
+        "kind": "compound",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "b2b25adc-20e8-4942-b377-bc8d82d91690"
+          },
+          {
+            "class": "symbol",
+            "id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "focus_ids": [
+          {
+            "class": "symbol",
+            "id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "scope": null,
+        "body_dispatch": [
+          "[datum-click] primary click (851.0, 400.0) schematic world (20198497, -497400) hit Some(AuthoredObject(\"schematic-symbol:d73a14b1-02bf-4dd7-be50-b54a7de08e95:library:0\")) (native selection acquisition)"
+        ]
+      },
+      "ctrl-body-u1-remove": {
+        "sequence": 5,
+        "kind": "object",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "focus_ids": [
+          {
+            "class": "symbol",
+            "id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "scope": "symbol",
+        "body_dispatch": [
+          "[datum-click] primary click (703.0, 410.0) schematic world (-834381, 923741) hit Some(AuthoredObject(\"schematic-symbol:b2b25adc-20e8-4942-b377-bc8d82d91690:library:1\")) (native selection acquisition)"
+        ]
+      },
+      "fresh-body-u2-object": {
+        "sequence": 7,
+        "kind": "object",
+        "members": [
+          {
+            "class": "symbol",
+            "id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "focus_ids": [
+          {
+            "class": "symbol",
+            "id": "d73a14b1-02bf-4dd7-be50-b54a7de08e95"
+          }
+        ],
+        "scope": "symbol",
+        "body_dispatch": [
+          "[datum-click] primary click (851.0, 400.0) schematic world (20198497, -497400) hit Some(AuthoredObject(\"schematic-symbol:d73a14b1-02bf-4dd7-be50-b54a7de08e95:library:0\")) (native selection acquisition)"
+        ]
+      }
+    },
+    "escape": {
+      "sequence": 6,
+      "diagnostic_kind": "none",
+      "public_selection_root_removed": true
+    },
+    "complete_public_read": "Process/project/revision-bound complete AT-SPI typed IDs, standard SELECTED and each selection-focus flag; exact parent set and focus, explicit stale=False and compact digest correlation required. No independently selectable primitive leakage.",
+    "visual_observations": "All6 body04 frames inspected. Initial0deg/30deg source triangles present; bodyU1 accent, Compoundboth bodies accent, removeU1 leaves U2body accent, Escape shows InspectorNone, subsequent U2body accent. Pin/text positions intentionally remain as frozen source/projection convention; no whole-owned-symbol or pin-placement PASS. Actual bottom Sel pixels match current Inspector at all captured checkpoints: object1/compound2/object1/none/object1. Thin pink box at pointerU1 afterEscape stays unclassified; no blanket cue-clearance or full HUD/hover matrix acceptance.",
+    "console_disposition": "Lower-left Console Object1/Compound2 strings are historical PM033 ActionEcho via visible_latest(), not SelectionStatus; prior dat-deselection-visual-residual-gi4a explicitly withdrew stale-footer interpretation. Do not revive it or infer expiry/cache defect from current historical echo.",
+    "preserved_run03": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/native-wayland-parents-body-03",
+      "status": "FAIL",
+      "error": "timed out: body-u1-object; last=None",
+      "pending_public_read_failure": "wrong inspection scope",
+      "observation": "Actual first bodypress hits U1:library:1 and compact seq3/4 Object1/focusU1/nonstale, but no qualifying public credit: harness expected scopeNone instead of Object classScopeSymbol. Original aggregateFAIL/logs/plan preserved. Corrected only expected scope and focused negative control; no product/binary/coordinates change or rebuild.",
+      "canonical63_preserved_through_teardown": true
+    },
+    "prior_failures": "Parents-point01 startup focus request and02 intentional pre-input refusal/source gap remain preserved in native_wayland_parents_source_gap_20261018. No retrospective PASS.",
+    "nonmutation": "All63 tracked catalogue hashes identical before launch, after complete sequence, after ordinary terminal exit, and after owned teardown. Includes exact persisted pin anchors, library sources and complete stored history. Unknown canonical extras refused; exact operational role payloads excluded and unread.",
+    "teardown": {
+      "terminal": "Ordinary shell exit and observed PTY closure before final GUI SIGTERM.",
+      "companions": [
+        {
+          "pid": 667673,
+          "socket": "/run/user/1000/npd-wl-s7bvugq0/datum-native-edit-5390bc56-35e4-46a3-a0c4-5dbb3928cab7/engine.sock",
+          "signal": "SIGTERM",
+          "gone": true
+        }
+      ],
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-s7bvugq0",
+        "uid": 1000,
+        "mode": "0o700",
+        "scope": "Disposable private process runtime only; no frozen replay data.",
+        "removed_after_process_stop": true
+      },
+      "limit": "Final GUI SIGTERM/verified own daemon shutdown are housekeeping, not ordinary GUI Close/GPU destructor/drain qualification."
+    },
+    "focused_proof": "Guarded Rust4/4 actual regressions cover both consumers, independent30deg endpoint constants/mirror/cardinal/overflow/unchanged pin graphics+text+bounds and all63 canonical bytes. Reader12/12 controls include Object-focus/typed parent vs child, missing/truncated/boolean focus, explicit stale refusal, and Object scopeNone mismatch. Test-only negative control added after native launch, separately pinned; native reader/runner unchanged since actual body04 launch.",
+    "related_issue": "dat-native-symbol-owned-projection-g04b remains open; body correction candidate addresses noncardinal stand-in only. Duplicated persisted pin semantics are not a renderer terminal-position defect or rewritten fixture; original U2pin-point obligation remains unproven.",
+    "retained_boundaries": "No engine writer/placement authority, pin/terminal position, fixture/history, caller policy, bounds/fit improvement, prototype, dependency, numerical budget, area/N03/Board/fullN15/HUD/hover/HUMAN/C04/C05/C06/successor acceptance.",
+    "unqualified_status_frame_observations": [
+      {
+        "frame": "body-u1-object.png",
+        "sequence": 3,
+        "Inspector": "Symbol U1",
+        "bottom_Sel": "object 1"
+      },
+      {
+        "frame": "shift-body-u2-compound.png",
+        "sequence": 4,
+        "Inspector": "Compound Selection 2 objects",
+        "bottom_Sel": "compound 2"
+      },
+      {
+        "frame": "ctrl-body-u1-remove.png",
+        "sequence": 5,
+        "Inspector": "Symbol U2",
+        "bottom_Sel": "object 1"
+      },
+      {
+        "frame": "parents-escape-clear.png",
+        "sequence": 6,
+        "Inspector": "No selection",
+        "bottom_Sel": "none"
+      },
+      {
+        "frame": "fresh-body-u2-object.png",
+        "sequence": 7,
+        "Inspector": "Symbol U2",
+        "bottom_Sel": "object 1"
+      }
+    ],
+    "status_frame_note_correction": "Appointed manager and independent closeout reviewer examined the same hash-matched body04 PNGs and corrected the implementer's one-step-old transcription of bottom Sel pixels. Current table reflects actual captured labels matching Inspectors. No separate earlier image supports the withdrawn mismatch interpretation. Historical PM033 ActionEcho remains distinct; no stale-status defect inferred. Evidence-only reconciliation, no source/build/native change.",
+    "final_independent_receipt": {
+      "reviewer": "closeout_review, provisioned by appointed manager",
+      "reported_result": "Actual bounded source/runtime/rendered PASS, sole condition corrected footer transcription; no further mandatory findings.",
+      "reviewed": "All5 changed source/31 artifact hashes,4 Rust/12 reader tests, matching build/body04 identity,7 images including original source-gap frame, complete public parent/focus chronology and all63-file invariance.",
+      "sole_condition_resolution": "Corrected body-only entry visual prose and bottom Sel table plus Beads553 superseding551; manager verified evidencee724a19aad300e86b48368d645d60ced76b81d8830c16a9a6ea7f7527093a8bb/manifest9ff61558ed8119c7f3cf37225c652a4ec668b3794d4185b72b79c34039bcd7d2 and actual matching pixels.",
+      "manager_disposition": "ACCEPT bounded body projection repair and finite body04 parent-point/focus behavior; explicitly authorized scoped eight-path landing.",
+      "boundaries": "Keep C04 and relatedg04b open. Preserve originalFAIL01-03; no pin/fullN15/HUD/hover/HUMAN/C05/C06 or successor acceptance."
+    }
   }
 }
