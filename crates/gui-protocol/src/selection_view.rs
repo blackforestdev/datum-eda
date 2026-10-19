@@ -202,18 +202,13 @@ pub fn build_selection_view(
     visible: impl Fn(&str) -> bool,
 ) -> Result<SelectionView, crate::selection_resolution::SelectionResolutionError> {
     let projection = authority.resolve(&subject)?;
-    let scope = if let SelectionSubject::Object(id) = &subject {
-        Some(id.class)
-    } else {
-        None
-    };
     let mut result = SelectionView {
         project: authority.project(),
         revision: authority.revision().clone(),
         subject,
         members: projection.members,
         related: projection.related,
-        scope,
+        scope: None,
         values: BTreeMap::new(),
         authored_anchors: BTreeMap::new(),
         inspection: Vec::new(),
@@ -231,6 +226,9 @@ pub fn build_selection_view(
         dropped: BTreeSet::new(),
         stale: false,
     };
+    // Construction chooses the initial inspection scope. Publication and
+    // reconciliation restore deliberate All/per-type navigation separately.
+    result.scope = result.authored_singleton().map(|id| id.class);
     let zone_fills: BTreeMap<_, _> = result
         .members
         .iter()

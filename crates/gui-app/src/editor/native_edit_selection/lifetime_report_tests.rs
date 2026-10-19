@@ -4,6 +4,95 @@ use datum_gui_protocol::{AuthoredSelectionClass, CompoundSelection, SelectionSub
 use datum_gui_viewport::selection_lifetime::reconcile_native_selection;
 use eda_engine::{ir::geometry::Point, substrate::Operation};
 
+#[test]
+fn singleton_inspector_preserves_explicit_scope_through_refresh_and_revision_shrink() {
+    let mut f = fixture::Fixture::new("singleton-scope-lifetime");
+    let a = f.line(fixture::id(1), Point::new(0, 0), Point::new(1000, 0));
+    f.line(fixture::id(2), Point::new(2000, 0), Point::new(3000, 0));
+    let previous = Arc::new(NativeSelectionResolution::capture(&f.model).unwrap());
+    let members: Vec<_> = previous
+        .authored_identities()
+        .iter()
+        .filter(|id| id.class == AuthoredSelectionClass::Track)
+        .cloned()
+        .collect();
+    let subject = SelectionSubject::Compound(CompoundSelection::new(members, None).unwrap());
+    let workspace = |model: &eda_engine::substrate::DesignModel| {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.project_uuid = model.project.project_id.to_string();
+        state.scene.source_revision = model.model_revision.0.clone();
+        state.supervision.journal.accepted_transaction_tip =
+            eda_engine::revision::transaction_tip(&model.journal).map(|id| id.to_string());
+        state
+    };
+    let state = workspace(&f.model);
+    let initial = build_workspace_selection_view(&f.model, &previous, subject, &state).unwrap();
+    let mut priors = Vec::new();
+    let before = f.source_bytes();
+    for scope in [None, Some(AuthoredSelectionClass::Track)] {
+        let mut prior = initial.clone();
+        prior.scope = scope;
+        let mut next = state.clone();
+        let filters = next.ui.filters.clone();
+        let prepared = prepare_from_model(
+            &mut next,
+            Inputs {
+                selected: SelectionTarget::Native(Box::new(prior.clone())),
+                filters,
+                prior: Some(previous.clone()),
+            },
+            Arc::new(f.model.clone()),
+            Default::default(),
+        )
+        .unwrap();
+        let SelectionTarget::Native(refreshed) = prepared.selected else {
+            panic!("native refresh")
+        };
+        assert_eq!(refreshed.scope, scope);
+        assert_eq!(refreshed.subject, prior.subject);
+        assert_eq!(refreshed.members, prior.members);
+        assert_eq!(refreshed.focus(), None);
+        priors.push(prior);
+    }
+    fixture::Fixture::assert_bytes(&before);
+    f.commit([Operation::DeleteBoardTrack {
+        track_id: a.uuid,
+        track: serde_json::to_value(a).unwrap(),
+    }]);
+    let before = f.source_bytes();
+    for prior in priors {
+        let mut next = workspace(&f.model);
+        let filters = next.ui.filters.clone();
+        let prepared = prepare_from_model(
+            &mut next,
+            Inputs {
+                selected: SelectionTarget::Native(Box::new(prior.clone())),
+                filters,
+                prior: Some(previous.clone()),
+            },
+            Arc::new(f.model.clone()),
+            Default::default(),
+        )
+        .unwrap();
+        let SelectionTarget::Native(view) = prepared.selected else {
+            panic!("native survivor")
+        };
+        assert_eq!(view.scope, prior.scope);
+        assert!(matches!(view.subject, SelectionSubject::Compound(_)));
+        assert_eq!(view.members.len(), 1);
+        assert_eq!(view.focus(), None);
+        assert_eq!(
+            view.fields().contains("copper_width_nm"),
+            prior.scope.is_some()
+        );
+        assert_eq!(
+            view.inspector_title(),
+            view.member_display_label(view.members.first().unwrap(), 1)
+        );
+    }
+    fixture::Fixture::assert_bytes(&before);
+}
+
 fn report(
     f: &fixture::Fixture,
     previous: &NativeSelectionResolution,

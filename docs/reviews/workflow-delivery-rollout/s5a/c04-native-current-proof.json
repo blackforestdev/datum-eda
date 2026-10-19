@@ -11744,5 +11744,74 @@
       "issue": "dat-small-marquee-contrast-20bq",
       "disposition": "Closed only20bq with actual reviewed landing; original dark-only N13 entry/evidence remains historical unchanged. vs05 and broader qualification remainopen."
     }
+  },
+  "native_wayland_singleton_inspector_correction_20261019": {
+    "status": "Actual independent bounded combined PASS and appointed PM059 manager acceptance for vs05 title/fresh class-scope correction only. Reviewed landing and issue closure pending; C04 remains in progress.",
+    "issue": "dat-unfocused-singleton-inspector-vs05",
+    "base_head": "911b93758f3cc0798602189a1bbf07acadb740f5",
+    "retained_step": "UVT-S5A-BUILD / S5A-C04 remains in progress",
+    "manager_release": {
+      "session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+      "authority": "Retained PM059 C04 ordinary native qualification and necessary existing-contract correction; exact3production files/tests/existing Escape case/metadata. No runtime/fixture/dependency/grouping change."
+    },
+    "candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/singleton-inspector-candidate-pins.json",
+      "sha256": "22e7dfe13a986772d2becf2788bffab20529d7f8179b4c559cd95ddc6f3b95c8",
+      "source_pins": 15,
+      "artifact_pins": 26
+    },
+    "change": "Shared authored-singleton presentation restricted to Object/Compound. Fresh construction defaults its existing class scope; renderer consumes shared identity title. No membership/focus/kind normalization. Existing same-subject publication and refresh/reconciliation retain explicit All/per-type, including revision shrink. Human semantic summaries/Console and semantic/artifact subjects unchanged.",
+    "proof": {
+      "build_receipt": {
+        "path": ".datum/scratch/s5a-c04-managed-20261018/singleton-inspector-build-receipt.json",
+        "sha256": "07b80efce95453eaba3f043b632d58fc2da8a15736b956b9c446da676c1b07be"
+      },
+      "regressions": "Corrected protocol02:2PASS/10filtered; renderer02:1PASS/674filtered; app01:2PASS/547filtered. Actual lifecycle refresh+revision-shrink and AT-SPI field parity. Matching guarded GUI build exit0/11.84s.",
+      "failed_attempts": "Protocol01:1PASS/1FAIL from invalid board-local Net905 as GlobalNet; test oracle corrected, original log retained. Renderer01:E0583 before tests from relative module lookup; explicit path fixed, original log retained. No credit to failed attempts; no product/assertion weakening.",
+      "source_review": "Actual /root/closeout_review SOURCE-ONLY PASS b44025d8, then actual incremental PASS ee8df65d (childd9cb0a0e,other9unchanged). Manager verified final c71af77b mechanical renderer hook72d1aca6; final independent combined review pending. Six singleton semantic/artifact controls are presentation-only; actual resolution control Run-only. No mandatory logical-Net fixture; no singleton-Net resolver claim.",
+      "native_outcome": {
+        "path": ".datum/scratch/s5a-c04-managed-20261018/singleton-inspector-native-outcome.json",
+        "sha256": "98ee68c90b88f84e81fecb5c0257e3d1dce757997ec4b664d217ff5140dbb947"
+      },
+      "native_command": "/usr/bin/python3 scripts/prove_s5a_native_selection.py --run-dir <owned>/native-wayland-singleton-inspector-01 --replay-root <owned>/s5a-replay-inputs --surface schematic --region-escape",
+      "native_result": "One fixed frozen majority-v1 N13 case passed on matching native Wayland/wgpu Vulkan GUI. Personally inspected actual initial/prior/active/cancel/fresh frames; source projection pins/camera unchanged. Actual fresh header Symbol: U0 and class rows visible; prior U14/focus retained through held-input Escape and trailing release; next idle Escape clears.",
+      "canonical_selection": {
+        "kind": "compound",
+        "scope": "symbol",
+        "focus": null,
+        "member_count": 1,
+        "project": "72000000-0000-4000-8000-000000000001",
+        "revision": "3ac065a1457f9e2277be5c04a4234b0a4a36e9b8effcf57ee519c21d411f1a0b"
+      },
+      "exact_member": [
+        {
+          "class": "symbol",
+          "id": "1e6478fa-6d06-4141-b87b-2cb407f54404"
+        }
+      ],
+      "canonical_class_fields": {
+        "reference": "U0",
+        "value": "majority fixture",
+        "placement_position_nm": {
+          "x": 30000000,
+          "y": 0
+        },
+        "placement_rotation": 0
+      },
+      "display_limit": "Position/rotation retain existing Unavailable previews: Project Working Units are not initialized. Their Common canonical source values remain exact; no unit default/formatting or full class-section claim.",
+      "nonmutation": "All7 complete canonical/frozen maps identical,51 files including journal/revision/history/pool source. Standard public membership/focus correlated with current compact diagnostics; owned shell exit/PTY closure, GUI/compositor/companion termination and private0700 IPC cleanup verified. SIGTERM is not ordinary window Close.",
+      "warnings": "Existing dbind GetItems unsupported-interface and unused renderer overflow warnings retained. Cache37.6->30.8GiB size change observed unattributed; no worker cache cleanup.",
+      "structural_checks": "Final noncompiling gates PASS: sourcehealth3257files, projectstate101/currentprojection, dependencyauthority, specparity30, specgovernance571, stagedrustfmt and staged diff whitespace. No new source budget/dependency exception."
+    },
+    "retained_boundaries": "Object/Compound presentation only. Fresh construction/acquisition defaults class. Existing revision/refresh restores deliberate All/per-type. Semantic/artifact singleton controls are presentation-only, actual resolution control is Run-only; GlobalNet/Bus/artifact singleton controls are presentation-only. No grouping/runtime changes or full C04/C05/C06/HUMAN acceptance. Ordinary native run proves fresh U0 acquisition only; revision-shrink scope preservation is actual application unit-path evidence, not native revision-edit qualification. Existing Working Units Unavailable displays retained; no grouping/full N11/HUMAN/C04/C05/C06/window-Close/successor acceptance. vs05 stays OPEN until reviewed landing. No other issue closure, new dependency or successor selection.",
+    "final_review": {
+      "reviewer_task": "/root/closeout_review",
+      "outcome": "Actual bounded combined PASS; no mandatory findings",
+      "candidate_sha256": "22e7dfe13a986772d2becf2788bffab20529d7f8179b4c559cd95ddc6f3b95c8",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_disposition": "ACCEPT bounded vs05 title/freshclass-scope correction at exact15source/26artifact/3binary pins. Independently verified5tests/matchingbuild, actual Symbol:U0 screenshot/4sourcefields, rawCompound/noFocus,all7maps51files,ownedcleanup. Exact13owned-path normal-hook landing followed by minimal actual-hash vs05 closure/retained-C04 metadata authorized. No other closure/successor.",
+      "retained": "Both failed attempts, Working Units Unavailable, fresh native versus revision unit-path distinction, semantic presentation-only/actualRun distinction, no full Inspector grouping/HUMAN/C04/C05/C06/window-Close/successor acceptance remain explicit."
+    }
   }
 }

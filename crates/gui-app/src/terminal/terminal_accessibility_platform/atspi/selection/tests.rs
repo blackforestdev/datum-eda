@@ -7,6 +7,65 @@ use datum_gui_protocol::{
 };
 use eda_engine::{board::Track, ir::geometry::Point, substrate::Operation};
 use std::sync::Arc;
+
+#[test]
+fn singleton_inspector_public_fields_match_shared_class_inspection_without_focus() {
+    let mut f = fixture::Fixture::new("accessible-singleton");
+    let track = f.line(fixture::id(1), Point::new(0, 0), Point::new(10_000_000, 0));
+    let before = f.source_bytes();
+    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
+    let id = authority
+        .authored_identities()
+        .iter()
+        .find(|id| id.id == track.uuid)
+        .unwrap()
+        .clone();
+    let scene = datum_gui_protocol::load_fixture_workspace_state().scene;
+    let group = SelectionSubject::Compound(CompoundSelection::new([id.clone()], None).unwrap());
+    let view =
+        build_selection_view(&f.model, &authority, group.clone(), &scene, None, |_| true).unwrap();
+    assert_eq!(view.scope, Some(Class::Track));
+    let mut state = ServiceState::new(
+        crate::terminal_accessibility_platform::worker::empty_snapshot(),
+        true,
+        Vec::new(),
+    );
+    state.selection = Some(SelectionAccessibilitySnapshot {
+        visual_lod: None,
+        view: Arc::new(view.clone()),
+        focused: true,
+        evaluating: None,
+        pane: Some(datum_gui_protocol::PaneId(0)),
+    });
+    assert_eq!(count(&view, Node::Fields), view.fields().len());
+    for field in view.fields() {
+        let path = field_path(field);
+        assert!(matches!(node(&view, &path), Some(Node::Field(_))));
+        let reply = state.dispatch(1, &description_call(&path));
+        assert_eq!(
+            reply.body_reader().variant_string().unwrap(),
+            view.field_display_preview(field, usize::MAX)
+        );
+        assert_eq!(attributes(&mut state, &path)["subject-kind"], "compound");
+    }
+    assert_eq!(attributes(&mut state, PATH)["subject-kind"], "compound");
+    assert_eq!(
+        attributes(&mut state, &member_path(view.project, &id))["selection-focus"],
+        "false"
+    );
+    Arc::make_mut(&mut state.selection.as_mut().unwrap().view).scope = None;
+    let reply = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
+    assert_eq!(
+        reply.kind,
+        MessageType::Error,
+        "explicit All retains aggregate inspection"
+    );
+    let retained = &state.selection.as_ref().unwrap().view;
+    assert_eq!(retained.subject, group);
+    assert_eq!(retained.members, view.members);
+    assert!(retained.focus().is_none());
+    fixture::Fixture::assert_bytes(&before);
+}
 fn setup() -> (fixture::Fixture, ServiceState) {
     let mut f = fixture::Fixture::new("accessible-selection");
     let tracks: Vec<_> = (1..=257)

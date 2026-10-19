@@ -8,6 +8,8 @@ use datum_gui_protocol::{
 };
 use eda_engine::{ir::geometry::Point, substrate::Operation};
 use fixture::{Fixture, id};
+#[path = "native_selection_output/singleton_inspector.rs"]
+mod singleton_inspector;
 fn setup() -> (Fixture, datum_gui_protocol::BoardReviewSceneV1, Vec<Id>) {
     let mut f = Fixture::new("complete-output");
     let mut tracks = vec![

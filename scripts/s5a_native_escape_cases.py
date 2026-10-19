@@ -66,7 +66,7 @@ def region_escape_cancel(qa, main, state, project, result):
     assert len(pinless) == 1
     uid, symbol = pinless[0]
     assert symbol['pins'] == [] and symbol['position'] == {'x': 30000000, 'y': 0}
-    fresh_expected = {**expected, 'kind': 'compound', 'scope': None,
+    fresh_expected = {**expected, 'kind': 'compound', 'scope': 'symbol',
                       'members': [{'class': 'symbol', 'id': uid}], 'focus': None,
                       'oracle': 'Frozen majority-v1 pinless U0 placement anchor; region begun without prior selection has no focus'}
 
@@ -197,6 +197,35 @@ def region_escape_cancel(qa, main, state, project, result):
         result['region_fresh_acquisition'] = qa.wait('fresh U0 region complete public membership', fresh_complete)
         result['region_fresh_events'] = events(fresh)
         result['region_fresh_source_oracle'] = fresh_expected
+        # Complete public fields use the same compiled class inspection as the
+        # renderer. Values come from the frozen authored source, not diagnostics.
+        field_oracle = {semantic: symbol[source] for semantic, source in [
+            ('reference', 'reference'), ('value', 'value'),
+            ('placement_position_nm', 'position'), ('placement_rotation', 'rotation')]}
+        fields_path = '/org/a11y/atspi/accessible/selection/fields'
+        record = state()
+        fields = {}
+        for node in qa.nodes():
+            path = node.get_accessible_id()
+            if path.startswith(fields_path + '/n'):
+                key = bytes.fromhex(path[len(fields_path + '/n'):]).decode()
+                attrs = qa.attributes(node)
+                assert node.get_process_id() == qa.process.pid
+                assert all(attrs.get(k) == fresh_expected[v] for k, v in [
+                    ('project-id', 'project'), ('model-revision', 'revision'),
+                    ('subject-kind', 'kind')])
+                assert key not in fields
+                fields[key] = {'attributes': attrs, 'name': node.get_name(),
+                               'description': node.get_description()}
+        for key, value in field_oracle.items():
+            attrs = fields[key]['attributes']
+            assert attrs['value-state'] == 'common'
+            assert json.loads(attrs['canonical-value']) == value
+        assert state()['sequence'] == record['sequence'] and camera() == basis
+        result['region_fresh_inspector'] = {
+            'source_sha256': digest(sheet), 'source_oracle': field_oracle,
+            'fields': fields, 'expected_rendered_header': 'Symbol: U0',
+            'membership': observe(fresh_expected)}
         qa.capture('region-fresh-u0-acquired', main)
     finally:
         if any(pressed.values()):

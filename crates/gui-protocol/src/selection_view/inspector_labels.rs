@@ -38,6 +38,38 @@ pub fn field_label(field: &str) -> String {
     label.into()
 }
 impl SelectionView {
+    /// Inspector identity only: a singleton group remains a group without focus.
+    /// Semantic and artifact subjects retain their own inspection identity.
+    pub fn authored_singleton(&self) -> Option<&Id> {
+        if matches!(
+            self.subject,
+            SelectionSubject::Object(_) | SelectionSubject::Compound(_)
+        ) && self.members.len() == 1
+        {
+            self.members.first()
+        } else {
+            None
+        }
+    }
+
+    pub fn inspector_title(&self) -> String {
+        if let Some(id) = self.authored_singleton() {
+            return self.member_display_label(id, 1);
+        }
+        match self.subject {
+            SelectionSubject::None => "No selection".into(),
+            SelectionSubject::Object(_) => "Selection".into(),
+            SelectionSubject::Compound(_) => {
+                format!("Compound Selection — {} objects", self.members.len())
+            }
+            _ => format!(
+                "{} — {} objects",
+                self.subject.display_name(),
+                self.members.len()
+            ),
+        }
+    }
+
     pub fn member_display_label(&self, id: &Id, display_ordinal: usize) -> String {
         let class = match id.class {
             Class::Footprint => "Part",

@@ -21,23 +21,7 @@ pub(super) fn render(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) -> anyhow::Result<Option<RectPx>> {
-    let title = if view.subject.kind() == "none" {
-        "No selection".into()
-    } else if view.subject.kind() == "object" {
-        view.members
-            .iter()
-            .next()
-            .map(|id| view.member_display_label(id, 1))
-            .unwrap_or_else(|| "Selection".into())
-    } else if view.subject.kind() == "compound" {
-        format!("Compound Selection — {} objects", view.members.len())
-    } else {
-        format!(
-            "{} — {} objects",
-            view.subject.display_name(),
-            view.members.len()
-        )
-    };
+    let title = view.inspector_title();
     push_inspector_title_band(
         rect,
         &title,

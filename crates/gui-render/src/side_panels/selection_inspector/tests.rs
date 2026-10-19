@@ -1,5 +1,7 @@
 use super::*;
 use crate::native_selection_overlay::tests::selected_state;
+#[path = "tests/singleton_inspector.rs"]
+mod singleton_inspector;
 #[test]
 fn inventory_identity_and_human_reason_survive_duplicate_long_names() {
     let (fixture, state) = selected_state();
