@@ -1463,10 +1463,10 @@ The appointed management session is `codex-reorganization-manager-20261014`,
 MCP thread `01a13df1-7a0d-72c1-bbdd-f0d96d481598`. It coordinates this C04
 assignment, independent review, unchanged-scope continuation and objective
 C04 acceptance under PM059. It does not replace the reserved C05 reviewer or
-C06 owner decision. The requested implementer is `dev-agent-02`; confirm its
-MCP thread identity before sending the execution instruction or transferring
-the claim. The manager initially owns only the resumption/handoff metadata.
-Existing paused sessions receive no implicit source ownership.
+C06 owner decision. The implementer is `dev-agent-02`, confirmed through MCP
+as thread `01a15249-fb58-7023-9a10-1828067d8850`. The manager initially owned
+only resumption/handoff metadata; the explicit transfer below replaces that
+initial claim. Existing paused sessions receive no implicit source ownership.
 
 <!-- APPOINTMENT:UVT-S5A-BUILD:C04-MANAGEMENT-20261018 -->
 {"decision_kinds": ["review_provisioning", "review_receipt", "continuation", "objective_acceptance"], "owner_appointed": true, "session": "codex-reorganization-manager-20261014", "task_keys": ["UVT-S5A-BUILD"]}
@@ -1538,3 +1538,46 @@ a competing proof build or advance a gated completion step. Return the final
 completion candidate to management; do not self-review or declare overall S5A
 accepted. Escalate a genuine reserved boundary with the concrete evidence and
 smallest decision needed, preserving all completed work.
+
+### Confirmed worker handoff
+
+<!-- HANDOFF:UVT-S5A-BUILD:C04-DEV02-20261018 -->
+
+At 2026-10-19T04:07:35Z, the manager received the named worker's MCP acknowledgment
+and explicit request for the initial claim. The worker confirmed
+`/home/bfadmin/Documents/datum-eda`, with no edits, builds or proof started.
+The shared tree was clean at `65e498cf467ba636c064c8d8ae73f364e5a4c764`.
+The manager releases its metadata-only claim to
+`dev-agent-02` / `01a15249-fb58-7023-9a10-1828067d8850`, synchronizing the
+Frontier lease and Beads status/assignee/export in this change. No uncommitted
+source work or old paused-session ownership is inherited.
+
+Initial worker ownership is limited to:
+
+- `.beads/issues.jsonl`
+- `specs/active_frontier.json`
+- `specs/PROGRESS.md`
+- `docs/reviews/specification-history/specification-reorganization.md`
+- `scripts/provision_s5a_replay_inputs.py`
+- `scripts/test_provision_s5a_replay_inputs.py`
+- `scripts/development_workspace.py`
+- `scripts/test_development_workspace.py`
+- `docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json`
+- `.datum/scratch/s5a-c04-managed-20261018/`
+
+The first bounded correction reconciles the existing frozen replay provisioner
+and alias resolver with this assignment's private workspace-local storage.
+A fresh task-owned copy and temporary proof may use the ignored
+`.datum/scratch/s5a-c04-managed-20261018/` family. This is a narrow exception
+for these reproducible S5A copies and proof, not a general change to external
+workspace policy or new-fixture generation. Preserve exact seed/history
+validation, occupied-path and symlink refusals, and general checkout/Cargo
+isolation. `target/` remains disposable Cargo output only. Do not weaken the
+general `external()` boundary or restore retired external collections.
+
+The worker owns subsequent routine lease/tracker updates after the transfer
+release. Management reviews read-only and coordinates any later metadata
+integration before writing overlapping paths. Reader/runtime/build scope must
+be expanded explicitly and synchronized before use, within the retained C04
+grant; this is not a new owner approval requirement for routine work.
+No C04 result, C05 replay or C06 acceptance is asserted by this handoff.
