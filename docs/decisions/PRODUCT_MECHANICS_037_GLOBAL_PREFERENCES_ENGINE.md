@@ -4,7 +4,8 @@ Status: ratified doctrine; Revision visibility/default clauses superseded in
 part by Product Mechanics 038; delivery sequence amended by Product Mechanics
 039 and Units authority amended by Product Mechanics 040; descriptor activation
 amended by the owner GP-CM01 correction and product-surface boundary amended by
-the owner GP-CM02R direction of 2026-09-05
+the owner GP-CM02R direction of 2026-09-05 and the NPD-C09 New Project
+simplification of 2026-10-17
 
 ## Context
 
@@ -97,8 +98,12 @@ human CLI's direct-write authority.
 
 Project genesis may copy only the eight production-active Units descriptors.
 The other six seed-class identities, including the reserved Units aggregate,
-are inactive. GUI and CLI default visibly to the Global snapshot; MCP must state
-Global or factory explicitly. Unreadable or migration-required Global state
+are inactive. GUI New Project automatically inherits the Global snapshot without
+a Units choice or review panel; Units configuration remains in Global or Project
+Preferences. CLI defaults visibly to Global; MCP must state Global or factory
+explicitly. This GUI presentation amendment follows the owner's 2026-10-17
+NPD-C09 QA direction recorded in the native doorway evidence. Unreadable or
+migration-required Global state
 refuses rather than silently falling back. Genesis pins one snapshot, stages
 and resolver-validates one complete Project, publishes it atomically, and owns
 an immutable non-self-referential receipt. Concurrent writers, crashes, retry,

@@ -268,6 +268,40 @@ rectangle. T0-C02 owns only truthful cell geometry; detached lifecycle belongs
 to the input/session slices, clipboard behavior to interaction/notification
 integration, and PTY failure handling to transport/session lifecycle.
 
+### 5.2 Project transition and session context
+
+Owner-approved NPD-C09 correction (2026-10-18), under the matching amendment
+to decision 005:
+
+- Successful ordinary New/Open selects its prepared Project-root terminal with
+  that Project's context. Preserve panel visibility, its chosen height and
+  maximized/restored state across the workspace replacement. A closed panel
+  remains closed; reopening exposes the selected Project session. Project
+  publication leaves keyboard focus with the editor.
+- Existing Home, independent and other-Project shells continue with their own
+  cwd, environment, children, scrollback and session identity. No automatic
+  `cd`, process restart, rebinding or migration prompt is part of this handoff.
+- Cancellation, refusal and stale preparation preserve panel state and current
+  selection; only successful publication exposes the prepared Project session.
+- Default tab labels distinguish Home/independent sessions and the Project
+  name. Preserve explicit renames and useful child-program titles. Selected
+  session chrome separately identifies `Independent shell` or `Project: <name>`
+  so a custom title cannot imply different Project authority.
+- Show a valid reported working directory for the selected session. Otherwise
+  identify the known path as `Started in`, not a verified current directory.
+  The directory and Project binding are separate facts. Retain complete context
+  in accessibility text when the visual chrome must clip a long name/path.
+- Lifecycle/error feedback remains visible and session-scoped. Context chrome
+  uses existing terminal chrome and consumes no PTY cells. Tab changes, pending
+  launches, splits and restarts must not mix another session's context or cwd.
+
+The current bounded visual addendum belongs to `start-page-study.html` and
+the doorway delivery record; `terminal-study.html` remains a historical study.
+Verification covers normal New/Open with preserved expanded/closed/maximized
+panel state, Project-root shell/context, return to the original live session,
+and truthful labels/cwd at ordinary and constrained window sizes. Broader
+terminal, platform and agent interoperability qualification remains separate.
+
 ## 6. Security contract
 
 Terminal output is hostile input. The adapter/core boundary must prevent escape

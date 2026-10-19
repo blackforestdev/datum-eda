@@ -204,8 +204,10 @@ state uses descriptor defaults plus independently valid sources and discloses
 the preserved unreadable digest; migration-required state exposes only values
 the registered reader can interpret and marks every unresolved retained value.
 They never claim those values were stored. Mutation refuses with the matching
-repository code. Global seed preview/genesis also refuses; only an explicitly
-new factory-mode request can proceed independently.
+repository code. Global seed preview/genesis also refuses. An explicit new
+factory-mode CLI/MCP request can proceed independently. GUI New preserves its
+draft and offers an error-only Global reread after repair; it has no Factory
+choice or automatic fallback.
 
 `PreferenceExplanationV1` is a versioned serialization of the engine resolver's
 one explanation result. It includes the effective value and reason, every
@@ -487,12 +489,13 @@ Adapters may default name from the destination basename and may generate
 and submit this complete request. Explicit identities are available for
 reproducible automation and tests.
 
-GUI New Project defaults visibly to `global`. CLI `datum-eda project new`
+GUI New Project automatically selects `global` internally. CLI `datum-eda project new`
 defaults to `--units-source global` and reports that normalized choice. Canonical
 MCP `datum.project.new` requires `units_source`; omission is invalid. Its two
 accepted values are `global {expected_generation?}` and
-`factory {profile_id:"datum.units.factory.v1"}`—the same typed variants the GUI
-and CLI submit after their defaults are made explicit. All three call the same
+`factory {profile_id:"datum.units.factory.v1"}`. GUI submits the Global variant
+with its automatically pinned snapshot; CLI/MCP retain both explicit typed
+variants. All three call the same
 engine genesis service and return `ProjectGenesisResultV1 {project_id,
 request_id, genesis_request_digest, project_root_identity, units_receipt,
 published_manifest_digests}`. Tests and reproducible automation may request
@@ -506,18 +509,78 @@ is `datum.project.new` with the fields of `ProjectGenesisRequestV1`. The expecte
 preference generation is valid only with Global mode. Factory mode always names
 the fixed V1 profile and refuses a Global expectation.
 
-The GUI form labels this choice **Working units for this new Project** with two
-radio choices: **Use my Global Units defaults** (default) and **Use Datum factory
-Units**. Global mode shows the eight resolved values and the pinned generation
-or “factory defaults; no preference file yet.” Factory mode shows the same eight
-resolved values and the factory profile version. The summary is keyboard
-reachable and announced as one labelled group with choice, source, and all
-resolved values. A stale, unreadable, or migration-required Global source keeps
-the entered Project name/location and focus, explains the refusal, and offers
-the factory radio choice; it never selects it automatically. The ordinary
-Create action remains the sole publication trigger. This bounded form contract
-must be reconciled into the Claude-owned New Project visual truth before the GUI
-portion of GP-CM03 can be accepted; GP-CM02R itself edits no prototype.
+The owner-approved 2026-10-17 NPD-C09 simplification removes Units configuration
+from GUI New Project. The form contains naming, folder navigation, the complete
+destination preview and Cancel/Create; it has no Global/Factory radios, Units
+summary, source/generation metadata or corresponding keyboard/accessibility
+stops. Opening the form resolves and pins one validated Global snapshot
+automatically. The eight copied values and source provenance remain in the
+engine-owned genesis receipt. Units can be configured through
+**Edit > Preferences > Global Preferences > Units** for future Projects or
+**Edit > Preferences > Project Preferences > Units** for the current Project.
+
+A stale, unreadable, incomplete or migration-required Global source preserves
+the entered name/location and focus, explains the actual refusal and blocks
+Create. The error-only **Re-read Global defaults** action retries resolution;
+successful resolution restores readiness without creating a Project. The user
+can Cancel and resolve the reported source problem through the existing governed
+recovery mechanism before reopening New. This does not imply a shipped GUI
+store-repair or migration action. GUI New
+does not offer or silently select Factory mode. An absent repository remains
+the existing valid defaults-only Global resolution. Destination failures preserve
+the valid pinned snapshot. Create remains the sole publication trigger. This
+supersedes the former radios/eight-row review contract and must be reflected in
+the Claude-owned visual truth; it changes no genesis or Preferences authority.
+
+The owner-approved NPD-C09 refinement keeps the complete New workflow in one
+native dialog. The owner's subsequent QA requires **Location** with a visible
+**Browse…** button: Location names the existing parent directory. The existing
+inline navigation is visible from opening and asynchronously reads that exact
+starting directory, normally Home, without waiting for a click or typing. Keep
+Project name focused in New; loading or unreadable initial directories are
+reported in the same navigation. Browse focuses that list. Passive browsing is
+read-only; explicit host New Folder/Rename follows PM063 below. There
+is no separate picker page or Select/return step. The owner-requested PM063 path
+assistance also reveals this same list for partial Location queries. An edited
+unslashed final component stays a parent query even when an exact folder exists;
+explicit acceptance, navigation or a trailing separator enters the folder,
+allowing successive completion without hiding matching siblings. It shows
+matching folders and neutral no-match feedback while preserving the exact typed
+candidate. Explicit completion uses exact names; a selected suggestion wins,
+otherwise a nonempty prefix-match group takes precedence over substring-only
+matches for Tab completion. Displayed substring matches remain selectable, and
+no-prefix completion keeps its existing fallback. Exact shared-prefix, Tab/focus
+and stale-query rules are shared with Open under PM063. Suggestions do not create or provide a fallback parent.
+Whenever navigation is hidden it contributes no focus, pointer or accessibility targets. A typed Location must be validated
+for Create without requiring an extra Enter; stale pending reads cannot submit
+changed input. The displayed current folder is the parent. A highlighted folder row is
+navigation selection only; Enter or double-click enters it. **Folder name**
+visibly follows Project name while **Use project name** is checked. Unchecking
+allows an explicit folder-name override in the same dialog; checking again
+restores the derived value. Invalid folder components require correction or an
+override, without silent trimming or sanitization. The complete resulting
+destination remains inspectable before Create. Units initialize automatically
+without a configuration or review step in this dialog.
+The GUI composes that displayed destination before submitting the unchanged
+engine genesis request; CLI/MCP path semantics remain unchanged.
+
+There is no separate Browse page, Select/return step or additional confirmation.
+Passive browsing and selection create no directory or Project; Create retains the same
+atomic genesis and occupied-destination refusal. Navigation preserves the draft,
+folder override and pinned Units. Cancel closes New without publication or
+changes to the current Project or terminal sessions. Correcting the parent or
+folder name has the same retry effect as editing the former destination field:
+destination refusals may clear, but stale, unreadable or incomplete Units sources
+still require explicit resolution. The shared New/Open navigator does not resolve
+or change Preferences. Owner-directed
+[PM063](../docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md)
+adds shared context-menu/naming controls and explicit host New Folder/Rename,
+separate from Project creation. Completed host actions persist after New/Open
+Cancel; cancelled naming drafts write nothing. The service protects Project,
+library and session backing paths and refuses overwrite or relocation. Its visual and
+accessibility states belong to the C09 amendment of the existing Claude-owned
+`start-page-study.html`; actual delivery is recorded in the
+[native doorway evidence](../docs/reviews/workflow-delivery-rollout/native-project-doorway.md#npd-c09--browse-for-new-and-open-project).
 
 `global` resolves exactly the eight active `datum.units.*` keys from one
 validated repository snapshot. The six other reserved `ProjectPolicySeed`
@@ -528,8 +591,9 @@ identities are `datum.publish.title_block_template_seed`,
 particular the aggregate `datum.projects.unit_policy_seed` are absent. If the repository is
 defaults-only, the service pins the named factory contribution as the Global
 resolution and records `factory-defaults` in the source. If it is unreadable or
-migration-required, Global mode refuses. The user may retry with explicit
-factory mode; Datum never silently changes modes.
+migration-required, Global mode refuses. Explicit factory mode remains available
+through the existing CLI/MCP contracts; GUI New retains Global with explicit
+reread after source repair. Datum never silently changes modes.
 
 Factory mode reads no preference repository, creates no preference repository,
 and performs no preference migration or recovery acknowledgment. It resolves
@@ -635,7 +699,7 @@ The nine readiness findings close at these normative anchors:
 | Set and Reset | descriptor validation and remove-not-default | immediate save/Reset | expected-generation tests | direct MCP mutation absent | Project bytes and journal unchanged |
 | proposals/security | prepare/validate/apply state tests | explicit accept focus/action | human accept-apply | no token mint; mismatch/consume tests | stale proposal never writes |
 | process/concurrency | writer lease and full-ref CAS | daemon-owned run | daemon routing/no fallback | two-client race | exactly one resulting generation |
-| eight-key seed scope | exact ordered-key/digest tests | Global default selection stated | global/factory modes | required MCP mode | other six plus aggregate absent |
+| eight-key seed scope | exact ordered-key/digest tests | automatic Global initialization; no Units setup UI | global/factory modes | required MCP mode | other six plus aggregate absent |
 | atomic genesis/receipt | staged-publish fault injection at every step | GUI new Project | CLI new Project | daemon/MCP create | destination absent-or-complete; V1 migration deterministic |
 | no live following | seed snapshot pin test | open Project unchanged | mutate Global then inspect Project | same through daemon | three fixed-identity Projects from one canonical request are byte-identical in separate roots; later Global edits change none |
 | errors/idempotency | every code constructed and round-tripped | draft preserved | code/exit mapping | code/envelope mapping | retry, crash, stale, unreadable, migration corpus |

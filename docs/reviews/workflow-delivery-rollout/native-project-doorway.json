@@ -1,15 +1,20 @@
 {
   "kind": "ordinary_application",
-  "source_commit": "db81f73442dc5f33c1d125a4e40de5b7485fca60",
-  "launch_command": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/terminal-db81f734/debug/datum-gui",
+  "source_commit": "35d5e014af701ea505dd0772156618cbb78d5627",
+  "launch_command": "target/debug/datum-gui",
   "workflow_results": {
     "Launch Datum without project/import/demo arguments and enter the reviewed native New/Open doorway.": true,
-    "Create a native Project through existing engine genesis with an explicit valid Working Units source; complete the reviewed creation-to-open flow.": true,
+    "Create a native Project through existing engine genesis with automatically inherited validated Global Units; complete creation-to-open without a Units configuration step.": true,
     "Open a supported native Project through ordinary GUI controls without terminal provisioning; preserve the existing native editor owners.": true,
     "Cancel New/Open and exercise invalid, busy, corrupt, unsupported and recovery cases with truthful visible outcomes.": true,
     "Save, close and reopen the native Project with stable identity, source/history and existing bounded edit behavior preserved.": true,
     "Complete the approved doorway keyboard, focus and accessibility workflows in the ordinary application.": true,
-    "Use a real terminal before a Project is open, launch ordinary installed agents or the canonical CLI, create a Project and adopt it through GUI Open while preserving the original shell and child processes.": true
+    "Use a real terminal before a Project is open, launch ordinary installed agents or the canonical CLI, create a Project and adopt it through GUI Open while preserving the original shell and child processes.": true,
+    "Complete New or Open in one dialog: navigate folders inline; for New enter one name, inspect the optional folder override and full destination, then Create with Units inherited automatically; for Open select an existing Project and Open directly.": true,
+    "Use the shared browser context menu and inline naming editor to create an ordinary child folder or rename an eligible host file/folder; preserve Project/storage/session anchors, exact text and completed-action receipts.": true,
+    "New/Open preserves the chosen terminal dock visibility, height and maximize state, selects the prepared Project-root session with editor focus, and retains existing independent/other-Project processes with truthful per-session context and directory chrome.": true,
+    "In Open, double-click or list Enter on exact regular project.json opens its containing Project through existing validation; passive selection and ordinary folder navigation retain their behavior, and refusal preserves current Project and terminals.": true,
+    "Type a partial Location in New/Open, inspect local matching folders, use Tab or arrows/Enter to accept exact folder names, then Create/Open through existing validation without a false missing-folder failure during typing.": true
   },
   "safety_results": {
     "Cancel and refused operations preserve authored source and journal without partial project/session publication.": true,
@@ -17,132 +22,216 @@
     "Preserve current Global/Project Preferences ownership and explicit Units seed provenance; no implicit preference adoption.": true,
     "Opening or creating does not invent library content, approve unknown data, rename native file profiles or modify original external source inputs.": true,
     "Keep full authoring and S5A read-only boundaries distinct; no broader mutation or manufacturing qualification is inferred.": true,
-    "An unbound terminal preserves real cwd/session identity without fabricated or inherited stale Project context, credentials or discovery; Project Open never silently rebinds its processes or writes Project sidecars into the launch directory.": true
+    "An unbound terminal preserves real cwd/session identity without fabricated or inherited stale Project context, credentials or discovery; Project Open never silently rebinds its processes or writes Project sidecars into the launch directory.": true,
+    "Inline browsing is read-only and shared by New/Open; the explicitly visible resulting path is submitted by Create/Open, including the documented Open-only project.json activation shortcut to the same command. New defaults the folder from Project name with an optional visible override; cancellation/stale results and refusals preserve draft, pinned Units and existing sessions.": true,
+    "Explicit host New Folder/Rename uses one asynchronous no-replace service under PM063. Completed host actions persist after outer Cancel; cancelled drafts write nothing. Create/Open waits for pending host work/receipts, and host actions retain protection through actual Project Open preparation retirement.": true,
+    "Path suggestions are read-only and bound to the full current draft and scan generation. A partial query never supplies an implicit parent, host-action authority or manifest activation; Create/Open validates the exact typed candidate unless the user explicitly accepts completion. Preserve names, Units and existing Project/terminal sessions.": true
   },
-  "workflow_observations": [
-    "C08 bare Main starts a real shell in the actual application launch cwd with truthful no-Project chrome. Stale inherited Project, discovery, credential, engine socket, MCP and agent provenance values are absent. The matching CLI resolves through the child PATH; installed Codex 0.162.1 executes its version command.",
-    "Ordinary New displays all eight Units and Cancel preserves the shell; missing-directory Open refuses without creating a destination. Canonical datum-eda project new creates an owned Project with a human_cli/Factory eight-item receipt; ordinary GUI Open publishes a fresh genuinely Project-bound session.",
-    "Original shell 238218 and child 238265 survive Open with the same shell variable, cwd and unbound origin. Independent inspection verifies identical scrolled body content and position. Fresh bound discovery matches its actual Project and session; inherited socket/MCP/provenance values remain absent.",
-    "Original shell exit reaps its child and releases its owned runtime. The remaining bound shell exits and all owned PTYs close. Five recorded canonical source/revision files remain byte-identical, with no Project sidecars in the unbound launch cwd.",
-    "C07 GUI home-path correction, valid Units retention, retry, Create/Save/reopen and Package-draft reachability retain their original accepted source and scope. Their unchanged owners and earlier C01-C06 refusal/recovery/accessibility evidence are reused explicitly; this C08 workflow is not a fresh complete doorway or Package matrix."
-  ],
-  "evidence_mode": "Datum is a native Wayland/WGPU/Vulkan client on Intel HD Graphics P630/Mesa 25.0.7. Workflow input targets an owned Weston outer X11 window; direct compositor PNGs show Datum native Wayland output. The same binary passes KWin Wayland launch smoke only. No KWin workflow-input qualification is inferred.",
+  "workflow_result_evidence": {
+    "Launch Datum without project/import/demo arguments and enter the reviewed native New/Open doorway.": "C01-C08 accepted startup and current final native initial-prefix Main/New/Open observations; final landing review 09781022.",
+    "Create a native Project through existing engine genesis with automatically inherited validated Global Units; complete creation-to-open without a Units configuration step.": "Accepted automatic-Units and visible-Browse cohorts preserve the eight-item Global human_gui receipt; file-actions and later initial-prefix Create use the same canonical genesis route. See historical_automatic_units_qa_candidate, historical_browse_affordance_qa_candidate and qa_candidate.",
+    "Open a supported native Project through ordinary GUI controls without terminal provisioning; preserve the existing native editor owners.": "Accepted C01-C08 canonical Open/refusal owners plus C09 manifest/path/current native Open; no terminal provisioning substituted for GUI Open.",
+    "Cancel New/Open and exercise invalid, busy, corrupt, unsupported and recovery cases with truthful visible outcomes.": "C01-C07 accepted cancellation, invalid/busy/corrupt/unsupported/recovery cases retain exact original scopes; C09 reviewed host-action and path-input refusal/preservation controls cover changed boundaries. Not a fresh full refusal matrix.",
+    "Save, close and reopen the native Project with stable identity, source/history and existing bounded edit behavior preserved.": "Historical Save/Close/reopen and identity/source/history evidence is at historical_acceptance source45f77006 and C05 receipt0dadb2e9. historical_c08_acceptance.historical_close_reuse qualifies only retained coordination policy; not all Close owners are unchanged. File-actions f133 actual cancelled staged-child/reaping evidence and terminal-handoff ec2 current termination/pending/cancel controls cover changed terminal lifetime boundaries. Current canonical hash checks supplement that reuse. No fresh ordinary window-Close or nonempty-history qualification.",
+    "Complete the approved doorway keyboard, focus and accessibility workflows in the ordinary application.": "Accepted C09 controller and ordinary native keyboard/focus/AT-SPI control-state evidence across visible-Browse, host actions, handoff, manifest and path assistance; no full assistive-user acceptance.",
+    "Use a real terminal before a Project is open, launch ordinary installed agents or the canonical CLI, create a Project and adopt it through GUI Open while preserving the original shell and child processes.": "C08 accepted real unbound terminal, canonical CLI and installed-agent probe retain original scope; C09 handoff and final native workflow preserve the original session and select the prepared Project session. No new full agent/MCP claim.",
+    "Complete New or Open in one dialog: navigate folders inline; for New enter one name, inspect the optional folder override and full destination, then Create with Units inherited automatically; for Open select an existing Project and Open directly.": "Accepted integrated/automatic-Units/visible-Browse workflows, retained optional-folder controls and final initial-prefix native New/Open. Same shared dialog owners; final source health extraction changes no behavior.",
+    "Use the shared browser context menu and inline naming editor to create an ordinary child folder or rename an eligible host file/folder; preserve Project/storage/session anchors, exact text and completed-action receipts.": "Accepted file-actions-f1336e25 native New Folder/Rename, exact text, receipt and protection evidence plus focused no-replace/retirement controls; later unchanged-source reuse is independently qualified.",
+    "New/Open preserves the chosen terminal dock visibility, height and maximize state, selects the prepared Project-root session with editor focus, and retains existing independent/other-Project processes with truthful per-session context and directory chrome.": "Accepted terminal-handoff-ec2cd61b ordinary native New/Open proves resized-dock preservation, selected Project-root session, editor focus and preserved old processes. Focused Runtime controls separately cover closed/maximized/stale/cancel publication states. Final native initial-prefix corroborates session handoff. Existing dat-terminal-maximize-menu-focus-5iu3 and dat-terminal-retired-exit-status-00ah remain limits; no blanket idle-lifecycle or maximized-menu PASS.",
+    "In Open, double-click or list Enter on exact regular project.json opens its containing Project through existing validation; passive selection and ordinary folder navigation retain their behavior, and refusal preserves current Project and terminals.": "Accepted manifest-open-94d59290 ordinary native double-click/list Enter and invalid-Open preservation through existing canonical command; later source-qualified reuse retained.",
+    "Type a partial Location in New/Open, inspect local matching folders, use Tab or arrows/Enter to accept exact folder names, then Create/Open through existing validation without a false missing-folder failure during typing.": "Accepted path-assistance-e12d125d, successive-dee25e1e and initial-prefix-050cdf8c native workflows and focused controls; final 35d5e014 native initial-prefix run independently reviewed at 09781022."
+  },
+  "safety_result_evidence": {
+    "Cancel and refused operations preserve authored source and journal without partial project/session publication.": "Accepted C01-C08 canonical refusal/cancel preservation and C09 host-draft/path-generation/manifest refusal controls. Explicit completed host actions remain distinct from cancelled Project publication.",
+    "Use existing engine genesis, resolver and writer admission; reject stale, invalid or conflicting source/recovery states without private writes.": "Existing engine genesis/resolver/admission unchanged; accepted C01-C08 stale/source/recovery controls and C09 GUI refusal/guard source review retain canonical mutation authority.",
+    "Preserve current Global/Project Preferences ownership and explicit Units seed provenance; no implicit preference adoption.": "Accepted automatic-Units and visible-Browse human_gui eight-item Global receipt, error-only explicit reread and unchanged Preferences ownership; no implicit Factory fallback.",
+    "Opening or creating does not invent library content, approve unknown data, rename native file profiles or modify original external source inputs.": "Accepted C01-C08 preservation plus C09 protected host-action target/context and canonical hash checks; only explicitly authorized ordinary host New Folder/Rename mutates its own target.",
+    "Keep full authoring and S5A read-only boundaries distinct; no broader mutation or manufacturing qualification is inferred.": "Reviewed delivery remains the native doorway; no broader authoring, manufacturing qualification or S5A execution is claimed.",
+    "An unbound terminal preserves real cwd/session identity without fabricated or inherited stale Project context, credentials or discovery; Project Open never silently rebinds its processes or writes Project sidecars into the launch directory.": "Accepted C08 real unbound cwd/environment/provenance controls and C09 actual retained session/child/context evidence; no automatic shell command or silent process rebinding.",
+    "Inline browsing is read-only and shared by New/Open; the explicitly visible resulting path is submitted by Create/Open, including the documented Open-only project.json activation shortcut to the same command. New defaults the folder from Project name with an optional visible override; cancellation/stale results and refusals preserve draft, pinned Units and existing sessions.": "Accepted visible-Browse and manifest activation controls keep navigation and publication distinct; default/override/Units/cancel/stale controls retain their exact reviewed cohorts.",
+    "Explicit host New Folder/Rename uses one asynchronous no-replace service under PM063. Completed host actions persist after outer Cancel; cancelled drafts write nothing. Create/Open waits for pending host work/receipts, and host actions retain protection through actual Project Open preparation retirement.": "PM063 file-actions source/native review covers single asynchronous no-replace host service, completed receipts after outer Cancel, draft cancellation and pending host/Open preparation-retirement exclusion.",
+    "Path suggestions are read-only and bound to the full current draft and scan generation. A partial query never supplies an implicit parent, host-action authority or manifest activation; Create/Open validates the exact typed candidate unless the user explicitly accepts completion. Preserve names, Units and existing Project/terminal sessions.": "Accepted path-assistance/successive/initial-prefix source/controller/native reviews bind suggestions to current draft/generation, exact candidate and explicit completion, preserving names, Units, Project and terminal sessions."
+  },
+  "evidence_scope": "Cumulative accepted C01-C09 ordinary-application evidence with explicit qualified reuse. True results express actual accepted requirements at the stated scope; they do not describe a fresh complete-route replay, a passing full suite or full qualification. Original C08 root fields are preserved losslessly in historical_c08_acceptance; earlier C01-C07 records retain their original sources. C09 exact cohort receipts remain in c09_assignment.",
   "task_evidence": "docs/reviews/workflow-delivery-rollout/native-project-doorway.md",
-  "source_cohort": "All 30 reviewed source files match the landed commit and final source catalogue. Final provenance removal is covered by actual final real-shell and governed-agent tests; adequate earlier session/context/cwd/unopened tests are reused at unchanged seams. Runner-only observation corrections do not alter the compiled Rust cohort.",
-  "source_manifest_sha256": "8c3ff2f98ffcc08062e3d6d971f0b0889f3efe6608073f7a481eee7dab011612",
-  "runner_sha256": "42cf817d91945c288c772958778c379e071793df17fce05c3ae65d304a448fe0",
-  "evidence_binding_sha256": "0dbf7271a3165e69c01296ac9bbbc3a856ee722acacd94087137dba57bedb069",
-  "binary_cohort": {
-    "target/debug/datum-gui": "388b555b6c8f1d1db85a12487a1eebc9daffd550141ebee05061815bc8a0586f",
-    "target/debug/datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
-    "target/debug/eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
-  },
+  "evidence_mode": "Final Datum workflow is native Wayland/wgpu/Vulkan on Intel HD Graphics P630 under owned nested Weston. Its outer X11 input/clipboard bridge is transport only. No fresh KWin workflow, full assistive-user, nonempty-history or ordinary window-Close qualification.",
+  "source_cohort": "Final 121 source/checker blobs match reviewed pins at 35d5e014. The matching final GUI and 14 native initial-prefix frames have independent landing review 09781022. Prior accepted cohorts and frozen QA copies retain their source-qualified reuse; they are not relabeled as the final binary.",
   "current_evidence": {
-    "local_disposable_root": ".datum/native-project-startup-repair",
-    "workflow_result_sha256": "31a0b8f35bc8dd00ac064a194bc0f6301b88f54ee118cb17a949e9acefbf3b41",
-    "workflow_commands_sha256": "8da529168ba2fbf2e507c7672fe910352a3d399c4fb7ddc659e80a1247f6509c",
-    "kwin_launch_result_sha256": "038dead51e6f902386f448a3715a2bdf57d1df55b740874c66450ee756e0abe5",
-    "handoff_summary_sha256": "25eedcd79d745552884ece114366bd08a38945d9e600534af0dcf20f1b9ec780",
-    "scope": "Actual independent review verified all 71 evidence hashes and inspected all 16 native workflow PNGs. Attempts 1-3 remain failed. The scrolled frame proves body/position only; the later shell-input frame proves two-tab chrome, Terminal focus and process/environment survival."
-  },
-  "verification": {
-    "focused_rust": "99 passing test executions, 97 distinct binary/test names, zero failures in the accepted cohorts, five existing ignored tests. Final post-provenance cohort is nine App unit tests plus one App integration test; bound governed-agent PTY regression is one pass. Other accepted cohorts are reused at the explicitly unchanged seams.",
-    "test_cohorts": [
-      {
-        "log": "c08-final-provenance-unbound-tests.log",
-        "passed": 10,
-        "failed": 0,
-        "ignored": 0
-      },
-      {
-        "log": "c08-final-session-tests.log",
-        "passed": 73,
-        "failed": 0,
-        "ignored": 5
-      },
-      {
-        "log": "c08-final-context-tests.log",
-        "passed": 8,
-        "failed": 0,
-        "ignored": 0
-      },
-      {
-        "log": "c08-final-working-directory-tests.log",
-        "passed": 4,
-        "failed": 0,
-        "ignored": 0
-      },
-      {
-        "log": "c08-final-unopened-tests.log",
-        "passed": 3,
-        "failed": 0,
-        "ignored": 0
-      },
-      {
-        "log": "c08-bound-agent-pty-test.log",
-        "passed": 1,
-        "failed": 0,
-        "ignored": 0
-      }
-    ],
-    "boundary_regressions": "25 passed; terminal transport boundary, dependency authority and Cargo resource policy passed.",
-    "build": "Guarded matching GUI/CLI/daemon build passed; source and binary hashes independently verified.",
-    "structural": "Source health passed for 3193 files; staged rustfmt and diff checks passed. Final factual state/route reconciliation is checked with its landing.",
-    "full_drift": "Actual C08 full drift stopped at the same 16 preexisting Clippy errors across eight unchanged engine files (dat-lk0l); later full gates were not reached."
-  },
-  "reproduction": {
-    "build": "python3 scripts/run_cargo_guarded.py --workload interactive -- cargo build --target-dir target -p datum-gui-app -p datum-eda-cli -p eda-engine-daemon --features datum-gui-app/visual --bins",
-    "ordinary_qa": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/terminal-db81f734/debug/datum-gui",
-    "automated_workflow": "/usr/bin/python3 scripts/prove_native_project_startup_gui.py --run-dir .datum/native-project-startup-repair/<new-run-name>",
-    "native_desktop_launch": "/usr/bin/python3 scripts/prove_native_project_startup_gui.py --run-dir .datum/native-project-startup-repair/<new-smoke-name> --native-launch-smoke",
-    "inputs": "Tracked runner creates disposable inputs through the real terminal/canonical CLI and adopts the Project through ordinary GUI Open. Existing installed Weston, xdotool, GI AT-SPI and weston-screenshooter provide transport/capture; no retired external collection, private writer or owner Project is required. Direct installed-agent probe requires an installed codex or claude executable. Prior C07 GUI-creation workflow remains reproducible from its recorded source commit."
-  },
-  "qa_snapshot": {
-    "path": "target/qa/terminal-db81f734/debug",
-    "build_info": "target/qa/terminal-db81f734/build-info.json",
-    "scope": "Independent copies of all three run binaries and actual dependency records, original timestamps preserved, no hard links/symlinks. Launch from Home starts the shell there; application default remains actual launch cwd, with Home/root fallback only when unavailable."
+    "landing_verification": "c09_assignment.landing_verification",
+    "owner_tested_qa": "c09_assignment.qa_candidate",
+    "visual_commit": "93e94e0c4ce04bde7db381d8f1a994a7b15ff28f",
+    "scope": "Matching GUI build and final native initial-prefix regression pass; source/rendered/package and unaffected ordinary workflow evidence retain their explicit individual limits."
   },
   "independent_review": {
-    "step": "NPD-C08",
+    "step": "NPD-C09",
     "reviewer": "/root/closeout_review",
-    "result": "actual bounded source/runtime/rendered PASS; no remaining mandatory findings",
-    "receipt": "Actual final peer receipt verifies all 30 landed source pins, all 71 evidence hashes, all 16 native frames, exact test counts, canonical source preservation and owned cleanup. The QA copies match the three run binaries and actual dependency records. Preserve the explicit chrome/accessibility, agent, compositor and Close limits."
+    "result": "Actual bounded delivery review PASS; final source/native/rendered landing review has no mandatory findings. Current row mappings retain accepted cohort limits.",
+    "receipt": "c09_assignment.landing_verification.independent_review"
   },
   "objective_acceptance": {
-    "step": "NPD-C08",
-    "manager": "codex-production-manager-20261016",
-    "result": "accepted",
-    "authority": "Recorded owner startup-repair appointment, owner-directed pre-Project terminal availability and PM059 objective acceptance",
-    "scope": "Accept real unbound startup shell, canonical CLI/ordinary GUI adoption, preserved sessions, scoped authority and pinned QA delivery against the actual independent receipt. Restore bounded Native Project development availability. No successor or S5A execution is selected."
+    "manager": "codex-reorganization-manager-20261014",
+    "session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "disposition": "accept",
+    "marker": "<!-- EVIDENCE:NATIVE-PROJECT-DOORWAY:NPD-C09-LANDING-ACCEPTANCE -->",
+    "path": "docs/reviews/workflow-delivery-rollout/native-project-doorway.md",
+    "scope": "Complete owner-approved C09 designer behavior at the actual reviewed native/package/source scope. Retain all failed attempts, frozen QA cohorts and qualification limits. Close the doorway task; no S5A or successor authorization.",
+    "remote_publication": "Owner-authorized normal push is handled after the final local governance commit; this acceptance does not claim a completed push."
   },
-  "historical_close_reuse": {
-    "source_commit": "45f77006c661019e02928b90dba2a9f1b177bc4d",
-    "scope": "Historical ordinary-Close observations support unchanged dispatch/coordination/device-receipt paths only. Current production_status_refresh and supervisor are changed, so blanket owner byte identity is not claimed. Independent review traced unchanged termination/completion policy plus new opaque-resource release after verified closure; current real-process teardown and resistant-child tests, startup guarded shutdown and ordinary shell exits cover the affected lifetime contract. No fresh Wayland/KWin window-Close run."
-  },
-  "retained_failures": [
-    "Affected genesis9PASS/1FAIL: preexisting concurrent Factory writer-lock defect dat-genesis-concurrent-replay-lock-sg3e; unavailable-reader1PASS and injected defensive unresolved-value1PASS are separate controls, not a green suite.",
-    "Full drift exit101 at16 preexisting Clippy errors; later full gates unreached.",
-    "Interrupted compile, failed pre-fix clipping/roles/shard/stale attempts and rapid synthetic Tab/unsuccessful Alt+F4 observations remain retained. Confirmed isolated key focus/activation and WM_DELETE_WINDOW passed.",
-    "AT-SPI cache GetItems warning dat-atspi-cache-introspection-4v0p remains; dynamic native property inspection succeeded.",
-    "C07 initial collision regression expected the wrong engine classification; corrected to actual RepositoryIo, preserving engine semantics. Initial wrong-filter zero-test run and interrupted redundant compile are not passes.",
-    "C07 workflow attempt 1 failed on an AT-SPI Python call after creation. Attempts 2/3 did not visually prove Package draft; attempt 4 returned stale host X11 pixmaps. Native compositor capture resolved this observation gap; earlier script PASS labels do not grant rendered acceptance.",
-    "Initial Weston screenshot invocation returned zero but capture was unauthorized and no image existed. The final runner uses the documented screenshot interface only on its own disposable private-socket compositor and requires an actual image.",
-    "Early terminal_unbound filename filter matched zero and supplies compile-only evidence. Actual 8/9 CWD test failure was display wrapping; widened fixture retains real cwd and three metadata checks. Attempt1 combined probe used unsupported CLI version flag and a visible-row coexistence oracle; direct diagnostic resolved matching CLI and installed Codex. Attempt2 native scrollback worked while AT-SPI stayed at tail. Attempt3 used stale accessibility geometry after Open and typed into editor; bounded public-tab/focus diagnostic resolved it. Failed attempts are never whole-workflow PASS.",
-    "Final scrolled frame contains old one-tab/Board-focus chrome and stale AT-SPI text; only its body/position is accepted as scrollback evidence. Later actual shell-input frame establishes correct two-tab/Terminal-focus state. Root cause and complete visual qualification remain unclaimed.",
-    "Pinned-copy smoke initially expected every executable to accept --help. GUI and CLI exit 0; existing daemon parser returns usage/exit 1 because it requires --socket. The all-zero test assumption was invalid; no daemon runtime failure or fresh daemon lifecycle claim follows."
-  ],
   "pending_qualification": [
-    "Datum native Wayland/Vulkan; nested Weston outer X11 input is supplementary compositor-qualified workflow evidence, not KWin input qualification.",
-    "Normal KWin test is same-binary launch only; HUP to verified owned shell group then forced GUI termination; runtime housekeeping is not product cleanup evidence.",
-    "Actual ordinary shell exit reaps original child and releases original unbound runtime after session removal; no fresh ordinary GUI Close claim.",
-    "Direct installed agent executable/version plus preserved generic child is not a model task or full MCP round trip.",
-    "Scrollback body/position preserved; scrolled capture chrome/focus ordering remains a narrow visual limitation. Later shell-input frame establishes two tabs, Terminal focus and origin preservation.",
-    "AT-SPI scroll-only viewport refresh omission tracked dat-terminal-scrollback-a11y-hnti; future handoff/Home UX tracked dat-terminal-project-handoff-emzi. No fixes/waivers claimed.",
-    "Full drift actually stops at existing 16 Clippy errors across eight unchanged engine files (dat-lk0l); later full gates unreached.",
-    "S5A remains held; no successor or broader qualification authority.",
-    "Full platform, physical/HUMAN, assistive-user, endurance and complete native library/schematic/PCB/manufacturing qualification remain separately open.",
-    "C07 current Package observation remains draft reachability; Package creation/history/Footprint evidence stays at 1459e21f."
+    "Full native library/schematic/PCB/manufacturing and standards/content qualification remain on their existing owners.",
+    "NPD-C08 real unbound startup terminal and preserved sessions are independently reviewed and manager-accepted at db81f734. Nested Weston native Wayland workflow and same-binary KWin launch-only evidence retain exact limits; stale scroll/accessibility chrome, full agent/MCP and ordinary window-Close qualification remain separate. C01-C07 history retains its original scope.",
+    "Existing performance budgets and broader host/hardware qualification retain their actual authority; no unsupported new startup threshold.",
+    "Existing global Clippy/GUI parity and other disclosed qualification gaps remain separately open.",
+    "Any genuinely applicable conformance HUMAN/physical/assistive judgment stays explicitly unclaimed when absent; trace an exact governing row and affected claim before treating it as a development prerequisite. Owner use is voluntary feedback, not a required manual test script.",
+    "C09 owner QA and independent source/native/rendered/package acceptance cover the approved New/Open refinements at implementation 35d5e014 and visual93e94e0c. Final native regression uses Wayland/wgpu/Vulkan under nested Weston; full KWin/AT/nonempty-history/window-Close qualification remains open. The inherited renderer assertion is intake dat-terminal-hit-sidebar-assertion-agz0; existing engine Clippy failures remain dat-lk0l. No full-suite PASS or new dependency is inferred.",
+    "C09 ordinary native handoff proves resized-dock New/Open; focused Runtime controls separately cover closed/maximized/stale/cancel publication. Existing dat-terminal-maximize-menu-focus-5iu3 and dat-terminal-retired-exit-status-00ah remain separately open. Historical Save/Close/reopen reuse is qualified by historical_c08_acceptance.historical_close_reuse and current termination/pending/cancel controls; no fresh ordinary window-Close or nonempty-history PASS."
   ],
+  "historical_c08_acceptance": {
+    "kind": "ordinary_application",
+    "source_commit": "db81f73442dc5f33c1d125a4e40de5b7485fca60",
+    "launch_command": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/terminal-db81f734/debug/datum-gui",
+    "workflow_results": {
+      "Launch Datum without project/import/demo arguments and enter the reviewed native New/Open doorway.": true,
+      "Create a native Project through existing engine genesis with an explicit valid Working Units source; complete the reviewed creation-to-open flow.": true,
+      "Open a supported native Project through ordinary GUI controls without terminal provisioning; preserve the existing native editor owners.": true,
+      "Cancel New/Open and exercise invalid, busy, corrupt, unsupported and recovery cases with truthful visible outcomes.": true,
+      "Save, close and reopen the native Project with stable identity, source/history and existing bounded edit behavior preserved.": true,
+      "Complete the approved doorway keyboard, focus and accessibility workflows in the ordinary application.": true,
+      "Use a real terminal before a Project is open, launch ordinary installed agents or the canonical CLI, create a Project and adopt it through GUI Open while preserving the original shell and child processes.": true
+    },
+    "safety_results": {
+      "Cancel and refused operations preserve authored source and journal without partial project/session publication.": true,
+      "Use existing engine genesis, resolver and writer admission; reject stale, invalid or conflicting source/recovery states without private writes.": true,
+      "Preserve current Global/Project Preferences ownership and explicit Units seed provenance; no implicit preference adoption.": true,
+      "Opening or creating does not invent library content, approve unknown data, rename native file profiles or modify original external source inputs.": true,
+      "Keep full authoring and S5A read-only boundaries distinct; no broader mutation or manufacturing qualification is inferred.": true,
+      "An unbound terminal preserves real cwd/session identity without fabricated or inherited stale Project context, credentials or discovery; Project Open never silently rebinds its processes or writes Project sidecars into the launch directory.": true
+    },
+    "workflow_observations": [
+      "C08 bare Main starts a real shell in the actual application launch cwd with truthful no-Project chrome. Stale inherited Project, discovery, credential, engine socket, MCP and agent provenance values are absent. The matching CLI resolves through the child PATH; installed Codex 0.162.1 executes its version command.",
+      "Ordinary New displays all eight Units and Cancel preserves the shell; missing-directory Open refuses without creating a destination. Canonical datum-eda project new creates an owned Project with a human_cli/Factory eight-item receipt; ordinary GUI Open publishes a fresh genuinely Project-bound session.",
+      "Original shell 238218 and child 238265 survive Open with the same shell variable, cwd and unbound origin. Independent inspection verifies identical scrolled body content and position. Fresh bound discovery matches its actual Project and session; inherited socket/MCP/provenance values remain absent.",
+      "Original shell exit reaps its child and releases its owned runtime. The remaining bound shell exits and all owned PTYs close. Five recorded canonical source/revision files remain byte-identical, with no Project sidecars in the unbound launch cwd.",
+      "C07 GUI home-path correction, valid Units retention, retry, Create/Save/reopen and Package-draft reachability retain their original accepted source and scope. Their unchanged owners and earlier C01-C06 refusal/recovery/accessibility evidence are reused explicitly; this C08 workflow is not a fresh complete doorway or Package matrix."
+    ],
+    "evidence_mode": "Datum is a native Wayland/WGPU/Vulkan client on Intel HD Graphics P630/Mesa 25.0.7. Workflow input targets an owned Weston outer X11 window; direct compositor PNGs show Datum native Wayland output. The same binary passes KWin Wayland launch smoke only. No KWin workflow-input qualification is inferred.",
+    "task_evidence": "docs/reviews/workflow-delivery-rollout/native-project-doorway.md",
+    "source_cohort": "All 30 reviewed source files match the landed commit and final source catalogue. Final provenance removal is covered by actual final real-shell and governed-agent tests; adequate earlier session/context/cwd/unopened tests are reused at unchanged seams. Runner-only observation corrections do not alter the compiled Rust cohort.",
+    "source_manifest_sha256": "8c3ff2f98ffcc08062e3d6d971f0b0889f3efe6608073f7a481eee7dab011612",
+    "runner_sha256": "42cf817d91945c288c772958778c379e071793df17fce05c3ae65d304a448fe0",
+    "evidence_binding_sha256": "0dbf7271a3165e69c01296ac9bbbc3a856ee722acacd94087137dba57bedb069",
+    "binary_cohort": {
+      "target/debug/datum-gui": "388b555b6c8f1d1db85a12487a1eebc9daffd550141ebee05061815bc8a0586f",
+      "target/debug/datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "target/debug/eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "current_evidence": {
+      "local_disposable_root": ".datum/native-project-startup-repair",
+      "workflow_result_sha256": "31a0b8f35bc8dd00ac064a194bc0f6301b88f54ee118cb17a949e9acefbf3b41",
+      "workflow_commands_sha256": "8da529168ba2fbf2e507c7672fe910352a3d399c4fb7ddc659e80a1247f6509c",
+      "kwin_launch_result_sha256": "038dead51e6f902386f448a3715a2bdf57d1df55b740874c66450ee756e0abe5",
+      "handoff_summary_sha256": "25eedcd79d745552884ece114366bd08a38945d9e600534af0dcf20f1b9ec780",
+      "scope": "Actual independent review verified all 71 evidence hashes and inspected all 16 native workflow PNGs. Attempts 1-3 remain failed. The scrolled frame proves body/position only; the later shell-input frame proves two-tab chrome, Terminal focus and process/environment survival."
+    },
+    "verification": {
+      "focused_rust": "99 passing test executions, 97 distinct binary/test names, zero failures in the accepted cohorts, five existing ignored tests. Final post-provenance cohort is nine App unit tests plus one App integration test; bound governed-agent PTY regression is one pass. Other accepted cohorts are reused at the explicitly unchanged seams.",
+      "test_cohorts": [
+        {
+          "log": "c08-final-provenance-unbound-tests.log",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "log": "c08-final-session-tests.log",
+          "passed": 73,
+          "failed": 0,
+          "ignored": 5
+        },
+        {
+          "log": "c08-final-context-tests.log",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "log": "c08-final-working-directory-tests.log",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "log": "c08-final-unopened-tests.log",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "log": "c08-bound-agent-pty-test.log",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "boundary_regressions": "25 passed; terminal transport boundary, dependency authority and Cargo resource policy passed.",
+      "build": "Guarded matching GUI/CLI/daemon build passed; source and binary hashes independently verified.",
+      "structural": "Source health passed for 3193 files; staged rustfmt and diff checks passed. Final factual state/route reconciliation is checked with its landing.",
+      "full_drift": "Actual C08 full drift stopped at the same 16 preexisting Clippy errors across eight unchanged engine files (dat-lk0l); later full gates were not reached."
+    },
+    "reproduction": {
+      "build": "python3 scripts/run_cargo_guarded.py --workload interactive -- cargo build --target-dir target -p datum-gui-app -p datum-eda-cli -p eda-engine-daemon --features datum-gui-app/visual --bins",
+      "ordinary_qa": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/terminal-db81f734/debug/datum-gui",
+      "automated_workflow": "/usr/bin/python3 scripts/prove_native_project_startup_gui.py --run-dir .datum/native-project-startup-repair/<new-run-name>",
+      "native_desktop_launch": "/usr/bin/python3 scripts/prove_native_project_startup_gui.py --run-dir .datum/native-project-startup-repair/<new-smoke-name> --native-launch-smoke",
+      "inputs": "Tracked runner creates disposable inputs through the real terminal/canonical CLI and adopts the Project through ordinary GUI Open. Existing installed Weston, xdotool, GI AT-SPI and weston-screenshooter provide transport/capture; no retired external collection, private writer or owner Project is required. Direct installed-agent probe requires an installed codex or claude executable. Prior C07 GUI-creation workflow remains reproducible from its recorded source commit."
+    },
+    "qa_snapshot": {
+      "path": "target/qa/terminal-db81f734/debug",
+      "build_info": "target/qa/terminal-db81f734/build-info.json",
+      "scope": "Independent copies of all three run binaries and actual dependency records, original timestamps preserved, no hard links/symlinks. Launch from Home starts the shell there; application default remains actual launch cwd, with Home/root fallback only when unavailable."
+    },
+    "independent_review": {
+      "step": "NPD-C08",
+      "reviewer": "/root/closeout_review",
+      "result": "actual bounded source/runtime/rendered PASS; no remaining mandatory findings",
+      "receipt": "Actual final peer receipt verifies all 30 landed source pins, all 71 evidence hashes, all 16 native frames, exact test counts, canonical source preservation and owned cleanup. The QA copies match the three run binaries and actual dependency records. Preserve the explicit chrome/accessibility, agent, compositor and Close limits."
+    },
+    "objective_acceptance": {
+      "step": "NPD-C08",
+      "manager": "codex-production-manager-20261016",
+      "result": "accepted",
+      "authority": "Recorded owner startup-repair appointment, owner-directed pre-Project terminal availability and PM059 objective acceptance",
+      "scope": "Accept real unbound startup shell, canonical CLI/ordinary GUI adoption, preserved sessions, scoped authority and pinned QA delivery against the actual independent receipt. Restore bounded Native Project development availability. No successor or S5A execution is selected."
+    },
+    "historical_close_reuse": {
+      "source_commit": "45f77006c661019e02928b90dba2a9f1b177bc4d",
+      "scope": "Historical ordinary-Close observations support unchanged dispatch/coordination/device-receipt paths only. Current production_status_refresh and supervisor are changed, so blanket owner byte identity is not claimed. Independent review traced unchanged termination/completion policy plus new opaque-resource release after verified closure; current real-process teardown and resistant-child tests, startup guarded shutdown and ordinary shell exits cover the affected lifetime contract. No fresh Wayland/KWin window-Close run."
+    },
+    "retained_failures": [
+      "Affected genesis9PASS/1FAIL: preexisting concurrent Factory writer-lock defect dat-genesis-concurrent-replay-lock-sg3e; unavailable-reader1PASS and injected defensive unresolved-value1PASS are separate controls, not a green suite.",
+      "Full drift exit101 at16 preexisting Clippy errors; later full gates unreached.",
+      "Interrupted compile, failed pre-fix clipping/roles/shard/stale attempts and rapid synthetic Tab/unsuccessful Alt+F4 observations remain retained. Confirmed isolated key focus/activation and WM_DELETE_WINDOW passed.",
+      "AT-SPI cache GetItems warning dat-atspi-cache-introspection-4v0p remains; dynamic native property inspection succeeded.",
+      "C07 initial collision regression expected the wrong engine classification; corrected to actual RepositoryIo, preserving engine semantics. Initial wrong-filter zero-test run and interrupted redundant compile are not passes.",
+      "C07 workflow attempt 1 failed on an AT-SPI Python call after creation. Attempts 2/3 did not visually prove Package draft; attempt 4 returned stale host X11 pixmaps. Native compositor capture resolved this observation gap; earlier script PASS labels do not grant rendered acceptance.",
+      "Initial Weston screenshot invocation returned zero but capture was unauthorized and no image existed. The final runner uses the documented screenshot interface only on its own disposable private-socket compositor and requires an actual image.",
+      "Early terminal_unbound filename filter matched zero and supplies compile-only evidence. Actual 8/9 CWD test failure was display wrapping; widened fixture retains real cwd and three metadata checks. Attempt1 combined probe used unsupported CLI version flag and a visible-row coexistence oracle; direct diagnostic resolved matching CLI and installed Codex. Attempt2 native scrollback worked while AT-SPI stayed at tail. Attempt3 used stale accessibility geometry after Open and typed into editor; bounded public-tab/focus diagnostic resolved it. Failed attempts are never whole-workflow PASS.",
+      "Final scrolled frame contains old one-tab/Board-focus chrome and stale AT-SPI text; only its body/position is accepted as scrollback evidence. Later actual shell-input frame establishes correct two-tab/Terminal-focus state. Root cause and complete visual qualification remain unclaimed.",
+      "Pinned-copy smoke initially expected every executable to accept --help. GUI and CLI exit 0; existing daemon parser returns usage/exit 1 because it requires --socket. The all-zero test assumption was invalid; no daemon runtime failure or fresh daemon lifecycle claim follows."
+    ],
+    "pending_qualification": [
+      "Datum native Wayland/Vulkan; nested Weston outer X11 input is supplementary compositor-qualified workflow evidence, not KWin input qualification.",
+      "Normal KWin test is same-binary launch only; HUP to verified owned shell group then forced GUI termination; runtime housekeeping is not product cleanup evidence.",
+      "Actual ordinary shell exit reaps original child and releases original unbound runtime after session removal; no fresh ordinary GUI Close claim.",
+      "Direct installed agent executable/version plus preserved generic child is not a model task or full MCP round trip.",
+      "Scrollback body/position preserved; scrolled capture chrome/focus ordering remains a narrow visual limitation. Later shell-input frame establishes two tabs, Terminal focus and origin preservation.",
+      "AT-SPI scroll-only viewport refresh omission tracked dat-terminal-scrollback-a11y-hnti; future handoff/Home UX tracked dat-terminal-project-handoff-emzi. No fixes/waivers claimed.",
+      "Full drift actually stops at existing 16 Clippy errors across eight unchanged engine files (dat-lk0l); later full gates unreached.",
+      "S5A remains held; no successor or broader qualification authority.",
+      "Full platform, physical/HUMAN, assistive-user, endurance and complete native library/schematic/PCB/manufacturing qualification remain separately open.",
+      "C07 current Package observation remains draft reachability; Package creation/history/Footprint evidence stays at 1459e21f."
+    ]
+  },
   "historical_c07_acceptance": {
     "source_commit": "0a8e8b5db1547f4c8d62983f397db99cc4b76fbc",
     "record_commit": "4b3e52531153e007e9789a4d64ce6589fa00efa6",
@@ -217,5 +306,1511 @@
       "Injected Ready missing descriptor-default covers a defensive unresolved-value branch; shipped eight valid literal defaults cannot normally produce it. Unavailable provider and actual unreadable/migration native cases are distinguished.",
       "S5A retains explicit owner pause and exact unfinished contract; pointer restoration authorizes no execution."
     ]
+  },
+  "c09_assignment": {
+    "status": "accepted_landed",
+    "owner_direction": "Owner QA first requested Browse on 2026-10-17, then explicitly approved a single complete dialog per action with inline navigation, visible name-derived folder default and optional same-dialog override. Owner subsequently confirmed removal of Units configuration from New; automatic Global defaults and later Global/Project Preferences Units configuration.",
+    "source_baseline": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+    "acceptance": "Appointed-manager objective acceptance under the existing owner direction and PM059: actual independent bounded source/native/rendered/package reviews and owner QA support the approved C09 behavior. Implementation 35d5e014 and authorized protected visual-owner commit 93e94e0c are verified at their reviewed bytes. Complete six-route review supports factual governance closure. Existing renderer assertion and engine Clippy defects, broader qualification and S5A hold remain separate; no automatic successor.",
+    "task_marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09",
+    "claude_visual_source": "docs/gui/prototypes/start-page-study.html",
+    "landing_blocker": {
+      "kind": "protected_visual_owner_commit_gate",
+      "actual_receipt_sha256": "313bd12a9d967928af66b82106a8c4c301ffce1dbd0d7e627658a573edd07067",
+      "status": "resolved_by_authorized_visual_owner_commit",
+      "remedy": "Completed: actual authorized visual owner committed only the reviewed prototype through normal hooks; manager and independent reviewer verified its parent, sole-path scope and exact bytes before route reconciliation.",
+      "bypass": false,
+      "closure_accepted": true,
+      "latest_session_attempt": {
+        "receipt": ".datum/native-project-startup-repair/c09-owner-landing-claude-result.json",
+        "sha256": "2168dd845596384ef77bf00fb74448140739622d4b96f0bcd24267b37a8584b0",
+        "outcome": "Automatic approval refused Git index inspection because the actual visual-owner session required approval without an available approval interface. No staging, commit or prototype mutation occurred.",
+        "remedy": "Existing authorized Claude visual-owner session lands only the reviewed prototype through normal hooks; manager verifies its returned commit before route reconciliation.",
+        "owner_handoff": "Requested after the reviewed exact prototype was ready; no new product authorization is required."
+      },
+      "head_at_original_gate_refusal": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_landing_commit": "35d5e014af701ea505dd0772156618cbb78d5627",
+      "resolution": {
+        "commit": "93e94e0c4ce04bde7db381d8f1a994a7b15ff28f",
+        "parent": "35d5e014af701ea505dd0772156618cbb78d5627",
+        "path": "docs/gui/prototypes/start-page-study.html",
+        "sha256": "cf6dc2b09a89f3cbdc1282f330ef533c26262aaf4d1c94b2c1eae34cfa4beef7",
+        "review": "Manager and independent closeout reviewer verified committed/live bytes against the accepted visual target. Earlier gate and approval failures remain historical; no bypass."
+      }
+    },
+    "integrated_dialog_refinement": {
+      "status": "historical_bounded_qa_accepted_superseded_for_units_presentation",
+      "owner_authority": "Explicit please proceed after proposal for one complete New/Open dialog, inline navigation and visible name-derived folder default with optional same-dialog override.",
+      "new": "Create in names the current existing parent. Folder-row highlight is navigation selection; Enter/double-click enters. Use project name defaults checked; unchecked enables explicit folder override; rechecking restores derivation. Exact full destination and all eight Units/source are inspectable before sole Create.",
+      "open": "Highlighted directory, or current directory with no selection, is the visible full candidate; sole Open directly invokes existing prepare/admit.",
+      "preservation": "Navigation preserves drafts, explicit override and valid pinned Units; cancellation publishes nothing and preserves Project/terminal sessions. No implicit sanitization, path trimming or Units fallback.",
+      "implementation": "Shared existing native host/scanner/scrolling, off-event-thread bounded reads, stale-answer rejection; no new dependencies, preferences, engine schema or private writers.",
+      "source_baseline_archive": ".datum/native-project-startup-repair/c09-baseline-source-e2d46056",
+      "baseline_files_verified": 37,
+      "delivery_pending": [
+        "Authorized visual-owner landing and reviewed route reconciliation",
+        "Landing of frozen implementation and factual task closure after required gates"
+      ],
+      "error_presentation": "Header, refusal band with any retry action, and footer remain fixed while the body scrolls. Long reasons name the existing preview, which retains exact destination first and separately labelled full refusal details; details never become path authority.",
+      "scope": "Historical a42d6eb5 integrated presentation; Units review superseded by automatic_units_refinement. Exact original QA receipts and other retained behavior preserved."
+    },
+    "historical_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "b00a2fbdb32ff228fb6f118df5f094f349e2a35ee0527ac3cc37baccb58ce1f2",
+      "owning_lane_session": "2aaa642b-8e49-46cf-b7bf-b2f682810d2f",
+      "independent_disposition": "BOUNDED_PROTOTYPE_AND_ROUTE_PASS",
+      "capture_receipt_sha256": "03287d36d6fcb95b971fbe092cf2ea80b59ef34a6700ffce062dc418ac81ef83",
+      "manager_disposition": "Adopt exact visual/interaction target for C09 native translation only; native/runtime/production/HUMAN acceptance remains unclaimed.",
+      "scope": "Historical nested Browse target only; superseded for current implementation by owner-approved integrated-dialog refinement, whose target review is pending."
+    },
+    "historical_browse_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "e2d4605652c2602c1b0dc279f53e259a5ec1d53f2bc2fa059179d18d801dd97c",
+      "binary_hashes": {
+        "datum-gui": "7e82372482a4a51ad8a92d8cb005bff6e6c7800597f7c1b565519d48c94c1f8a",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "snapshot": "target/qa/browse-e2d46056",
+      "launch_command": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/browse-e2d46056/debug/datum-gui",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_QA_PASS",
+        "source_manifest_sha256": "e2d4605652c2602c1b0dc279f53e259a5ec1d53f2bc2fa059179d18d801dd97c",
+        "scope": "Final 37-file source snapshot, actual guarded test/build sequence, ordinary native Browse/Create/Open and 17 inspected rendered frames. No remaining blocking Browse-specific implementation finding. Landing and full qualification are separate."
+      },
+      "native": {
+        "result_sha256": "420eb3b8951bc58aad352704d10096099aec8429c90fca5e3cadfb7fa603e7d9",
+        "commands_sha256": "033e50603e1fda91d890726ea387267bc1e4ab713fa9f3d147f79bd815be52b4",
+        "frame_catalogue_sha256": "733921fc98eaf6c7ca44b61cd2e701b3f4dace9fa0f9b62e790e1a00da760458",
+        "frames": 17,
+        "complete_preview_characters": 1258,
+        "project_preservation": "Five actual catalogued Project files; this fresh Project has no journal-bearing history."
+      },
+      "focused_test_result": {
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0
+      },
+      "retained_cohorts": {
+        "passing_executions": 87,
+        "distinct_passing_test_pairs": 81,
+        "distinct_ignored_tests": 3,
+        "unrelated_failures": 1,
+        "source_reuse": "Only unchanged tested owners retain earlier evidence; changed final browser protocol/renderer tests are superseded by the final 13-test run."
+      },
+      "actual_invocations_sha256": "89db93b869e44bc6870f7968a4c338c895f2ed22d23563bf54b58d7e655936bf",
+      "handoff_summary_sha256": "29f2b50eb68597477e71763f9ad9e97c2d05d0ca1cf83d9938be08c96201e628",
+      "evidence_catalogue_sha256": "106a60eb3cdd97f17cddb3cc659e3276ca113bff6f20b9d4fddc1ade070638f6",
+      "retained_limits": [
+        "Nested Weston native Wayland proof, not KWin input/HUMAN/full-platform/latency qualification.",
+        "Final SIGTERM is not ordinary window Close.",
+        "Final Main right-edge chrome partly outside capture; no whole-Main visual PASS.",
+        "Fresh Project evidence does not qualify existing journal history.",
+        "Full drift retains16 baseline-identical engine Clippy errors; later full gates unreached.",
+        "Selection accessibility wording failure and rapid terminal typing refusal remain separate intake; no full-suite or typing-throughput PASS."
+      ],
+      "incidental_issues": {
+        "selection-a11y-pending-copy": "dat-selection-a11y-pending-copy-ak7m",
+        "terminal-input-busy-loss": "dat-terminal-input-busy-loss-2oin"
+      },
+      "scope": "Historical e2d46056 Browse/Select/return source and binaries, preserved unchanged; not proof of the integrated-dialog refinement."
+    },
+    "historical_integrated_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "a42d6eb513188f82a862cc184fc7f903b2b644852687e620fa3a703ad26ba708",
+      "source_files": 47,
+      "snapshot": "target/qa/inline-a42d6eb5",
+      "binary_hashes": {
+        "datum-gui": "fc55494b593f681810b245c4178c9d38146e95d377b31801603f183355e1ea57",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "launch_command": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/inline-a42d6eb5/debug/datum-gui",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_QA_PASS",
+        "scope": "45 Rust owners, two proof helpers, actual five test logs, matching build/copies, all 27 default and 18 minimum native frames; no remaining mandatory finding. Early loading diagnostic excluded from refusal proof."
+      },
+      "manager_receipt": {
+        "path": "target/qa/inline-a42d6eb5/manager-review.json",
+        "sha256": "64e4b0b772ab3b646b237760723fafaab766082228b6651065ec33c7b88fe5ec",
+        "disposition": "Accept the bounded one-dialog QA candidate under the existing NPD-C09 grant. Landing, closure and full qualification remain open."
+      },
+      "native": {
+        "c09-inline-wayland-attempt-2": {
+          "result_sha256": "0daf0b3bccc06e4afa142f14a40dd3a343b45648905328bb57d12b01ac07b158",
+          "commands_sha256": "92dbfbb0837d6b917e992b70a5229cfb328820645ea03cea2234fc45eb71c008",
+          "inspected_frames": 27
+        },
+        "c09-inline-minimum-wayland-attempt-3": {
+          "result_sha256": "a46e3badc1fa4822f5256ba62e6de9c4ace5d975024b82df1e640d227fedcf8f",
+          "commands_sha256": "abd9b7d14c26914391212158a90ea9124a3c291b6f2c633f003114d499784afd",
+          "inspected_frames": 18
+        }
+      },
+      "tests": {
+        "passing_executions": 63,
+        "distinct_named_passing_cases": 50,
+        "ignored_cases": 2,
+        "full_suite_pass": false
+      },
+      "source_health": {
+        "result": "PASS; 3207 source files checked",
+        "tool_call": "call_f135b757c7bb43a289fe7462d1129340",
+        "timestamp": "2026-10-17T19:18:18.739Z",
+        "reviewed_by_manager": true
+      },
+      "reused_gates": {
+        "dependency_authority": {
+          "result": "dependency authority: PASS",
+          "raw_log": ".datum/native-project-startup-repair/c09-dependency-authority.log",
+          "raw_log_sha256": "3ab8cf4207b6ef2e266d07d0d9ad4f9d9d94a1f5676f6c1378acb9b52c128139",
+          "source_qualified_reuse": "No Cargo manifest, lockfile, dependency, resource checker or resource-policy changes from baseline. The two QA helpers never compile Cargo; all actual Cargo proof/build invocations used the guarded runner serially. No shared-cache cleanup."
+        },
+        "cargo_resource_policy": {
+          "result": "Cargo resource policy: PASS",
+          "raw_log": ".datum/native-project-startup-repair/c09-cargo-resource-policy.log",
+          "raw_log_sha256": "4c220161f57cf8a40d09eacd28d391d8c0f6680d194660a78971adf755934119",
+          "source_qualified_reuse": "No Cargo manifest, lockfile, dependency, resource checker or resource-policy changes from baseline. The two QA helpers never compile Cargo; all actual Cargo proof/build invocations used the guarded runner serially. No shared-cache cleanup."
+        }
+      },
+      "frozen_handoff_sha256": "25d81d978c4dfafacb8acf7a65949f6f8d48bcdb8d3cd002d3808c7e28647243",
+      "evidence_catalogue_sha256": "0a18ac5f9f0b6c996b5866427969864606734d842adea73a6598c1dc77ee153b",
+      "retained_limits": [
+        "Native Wayland/WGPU/Vulkan in owned nested Weston; no new KWin input, HUMAN, full AT, latency or full-platform qualification.",
+        "Default run preserves five fresh-Project files, eight-item Global human_gui receipt and original shell/child/environment; fresh Project has no authored journal.",
+        "Default run exits owned PTYs before GUI SIGTERM. Minimum run cancels forms then SIGTERM. Neither proves ordinary final window Close.",
+        "Early loading frame is excluded from refusal proof. Earlier /h replacement failure has no proven product cause; no input-throughput claim.",
+        "Existing Clippy and unrelated accessibility/terminal intake remain open. Conventional text selection/replacement intake dat-project-dialog-text-editing-y9ja remains separate.",
+        "Protected visual-owner commit gate unresolved; no source commit, task closure, production acceptance or S5A/successor authorization."
+      ],
+      "incidental_text_editing_issue": "dat-project-dialog-text-editing-y9ja",
+      "landing_checks": {
+        "project_state": "PASS; 101 Frontier items; projection current",
+        "spec_governance": "PASS; 570 classified specifications",
+        "spec_parity": "PASS; 30 inventories",
+        "evidence_traceability": {
+          "status": "FAIL; three affected routes remain stale",
+          "routes": [
+            "workflow-delivery-rollout",
+            "workspace-documentation-and-revision",
+            "prototype-editor-shell-and-panes"
+          ],
+          "disposition": "The evidence manifest remains unchanged at HEAD while protected visual-owner landing is unresolved. Reconcile reviewed routes only through the authorized owning-lane resolution; no digest refresh to bypass the gate."
+        }
+      }
+    },
+    "automatic_units_refinement": {
+      "status": "historical_bounded_qa_accepted_presentation_superseded_for_browse",
+      "owner_authority": "Owner confirmed the proposed removal of both Units radios and the eight-value panel: this is exactly what im saying; clarified configuration through Edit > Preferences > Global/Project > Units.",
+      "task_marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-AUTO-UNITS",
+      "behavior": "New contains naming, inline navigation, exact destination and Cancel/Create. Global snapshot resolves automatically on open. No Units panel, radios, source/generation UI or keyboard/accessibility stops.",
+      "preservation": "Existing expected-generation validation and immutable eight-item receipt; Global defaults-only remains valid; stale/unreadable/incomplete defaults refuse with error-only explicit reread, no implicit Factory fallback. Successful reread never creates. Destination failures preserve valid snapshot.",
+      "preferences": "Existing Global Units configures future Projects; Project Units configures the current Project without rescaling geometry.",
+      "frozen_baseline": "target/qa/inline-a42d6eb5",
+      "delivery_pending": [
+        "Authorized visual-owner landing and required reviewed route reconciliation",
+        "Landing of frozen implementation and factual task closure after required gates"
+      ]
+    },
+    "historical_integrated_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "8cbe1de0aec971d07298151e2fa12e369ccd83f24c62a6789873b31c08fbe23d",
+      "owning_lane_session": "2aaa642b-8e49-46cf-b7bf-b2f682810d2f",
+      "actual_correction_receipt_sha256": "eacddc68c404db7ceb6e05b4aca60286033b47f1cb4ea62f72d3599daffb7029",
+      "independent_disposition": "BOUNDED_PROTOTYPE_AND_AUTHORITY_PASS",
+      "capture_receipt_sha256": "9d87c8de5f2084882217572fd23d9c05bf863dbf74904d9aeff296d8d5bcd0dd",
+      "review_scope": "Prior 27 initial and 6 corrected captures and governing-route review retained; exact long-refusal delta and all 6 new minimum-size captures independently inspected. Earlier 17 state frames unchanged.",
+      "manager_disposition": "Adopt exact integrated one-dialog target and long-refusal completion for native translation. No native/source/runtime/HUMAN/full-AT/landing acceptance.",
+      "prior_integrated_target": {
+        "sha256": "3ca09f65443b58aa4965057b05755bdd6ab1212ffefe3680b272d94e7d180fe3",
+        "actual_correction_receipt_sha256": "0bb903f76d1dd10495a9b1347f77360afb503b9cfe15b1a2cec841f26aa3c584",
+        "capture_receipt_sha256": "fb54651ac12a49677222f21e5b4162f3b0907c6e0ecc3fb3d8349e4db8921302",
+        "independent_disposition": "BOUNDED_PROTOTYPE_AND_AUTHORITY_PASS"
+      },
+      "scope": "Historical integrated target at 8cbe1de0; Units presentation superseded by pending automatic-Units target. Original owning-lane/review receipts unchanged."
+    },
+    "historical_automatic_units_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "6183c81e505987692c6a7527c150e1501363757460494f087c8b3af94e7d5e1e",
+      "source_files": 47,
+      "snapshot": "target/qa/auto-global-6183c81e",
+      "binary_hashes": {
+        "datum-gui": "7d797fa38806ad1e364a2c8b330a9615fcc078584eb49aee006925fee64e4db2",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "launch_command": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/auto-global-6183c81e/debug/datum-gui",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_QA_PASS",
+        "scope": "All 47 current and archived source files, all 97 catalogue bindings, independent matching executable/dependency-record copies, actual guarded build/tests and all 38 successful native frames (24 default, 14 minimum). No mandatory finding. The final source changes only unused minimum helper code relative to the default run; all 45 Rust files and binaries remain unchanged."
+      },
+      "manager_receipt": "target/qa/auto-global-6183c81e/manager-review.json",
+      "manager_receipt_sha256": "7efcbc6c7d4e9532882139796027d051fb1018178b4b2d143e439b318ea8257e",
+      "manager_disposition": "Accept the bounded automatic-Units New Project QA candidate under the existing owner-directed NPD-C09 grant. Landing, task closure and production/full qualification remain open.",
+      "handoff_summary_sha256": "952bf92e43613020521a667b2a404dd0f4d7ff2130d4182f4a101e815cc1997a",
+      "evidence_catalogue_sha256": "5f47a3f4dc439f619841ae58b4db4a4fc5c8c4868e44904187957316734ae62e",
+      "evidence_entries": 97,
+      "build_info_sha256": "23b82ed64d805b2d1a29120ed3319d780ce673e413bd13fa838f6e4643259cbb",
+      "native": {
+        "c09-auto-global-wayland-attempt-1": {
+          "result": ".datum/native-project-startup-repair/c09-auto-global-wayland-attempt-1/result.json",
+          "result_sha256": "08221f6acc1155094d0d44c50ea2c40d95bc594a0378078ae02a7b5dd2fa492f",
+          "commands": ".datum/native-project-startup-repair/c09-auto-global-wayland-attempt-1/commands.json",
+          "commands_sha256": "c17a3cb6b1a758340040ee5c13a31bb9eb83d575fce01bd1e76b7654cc14a7d1",
+          "actual_invocation": ".datum/native-project-startup-repair/c09-auto-global-wayland-attempt-1-command.json",
+          "actual_invocation_sha256": "adc9f552017e6a965ee568d23938202456d9402978eb11c3f39cebe5d62789b7",
+          "source_manifest": ".datum/native-project-startup-repair/c09-auto-global-source-pins-1.json",
+          "source_manifest_sha256": "5abd25005fae99644db3d541f181d5d1e947a8f8f4a149a4a35a02e810e36dfb",
+          "captures": 24,
+          "raw_status": "PASS for executed startup repair observations"
+        },
+        "c09-auto-global-minimum-wayland-attempt-2": {
+          "result": ".datum/native-project-startup-repair/c09-auto-global-minimum-wayland-attempt-2/result.json",
+          "result_sha256": "79ae6a6d9d5f13d3feda9f1604ffd61f423deddf3472bd827b868b98d3d69b50",
+          "commands": ".datum/native-project-startup-repair/c09-auto-global-minimum-wayland-attempt-2/commands.json",
+          "commands_sha256": "f52d560d45323629f60c825f565ea34720a51a75bc7a48ce5a8b39b15d31fc56",
+          "actual_invocation": ".datum/native-project-startup-repair/c09-auto-global-minimum-wayland-attempt-2-command.json",
+          "actual_invocation_sha256": "ca0f2d8a0edeae7830b12ed77144361c5e9e488f68364ec8ae85aac6b0d95aae",
+          "source_manifest": ".datum/native-project-startup-repair/c09-auto-global-source-pins-3.json",
+          "source_manifest_sha256": "6183c81e505987692c6a7527c150e1501363757460494f087c8b3af94e7d5e1e",
+          "captures": 14,
+          "raw_status": "PASS for executed startup repair observations"
+        }
+      },
+      "test_counts": {
+        "passed_executions": 40,
+        "distinct_named_passing_cases": 33,
+        "existing_ignored_executions": 2,
+        "full_suite_pass": false
+      },
+      "source_health": {
+        "result": "Source health governance passed (3206 source files checked).",
+        "actual_invocation": ".datum/native-project-startup-repair/c09-auto-global-final-source-health-command.json",
+        "actual_invocation_sha256": "75031af44360fe9d33e89e8a7ca712ea4fa33a5a1d55f970b8586dc120fe7de2",
+        "log": ".datum/native-project-startup-repair/c09-auto-global-final-source-health.log",
+        "log_sha256": "cd669c58e8beba464949d215c0afcfe3aa7d32a191f935a4c41c49ad5e4fcbdd",
+        "scope": "Final6183 source after minimum-only helper correction; manager independently repeated the same checker with actualexec86cda5. No further rerun needed."
+      },
+      "qualified_default_helper_reuse": {
+        "actual_default_helper_archive": ".datum/native-project-startup-repair/c09-auto-global-default-helper-snapshot",
+        "actual_default_source_manifest_sha256": "5abd25005fae99644db3d541f181d5d1e947a8f8f4a149a4a35a02e810e36dfb",
+        "label_delta": ".datum/native-project-startup-repair/c09-auto-global-helper-label-delta.json",
+        "minimum_barrier_delta": ".datum/native-project-startup-repair/c09-auto-global-helper-minimum-barrier-delta.json",
+        "basis": "Only unused minimum branch scenario label and minimum-function wait/receipt metadata/assertions changed after default success. Ten default-called class/function/nonminimum branch AST bindings are equal. No default, Rust test or build rerun."
+      },
+      "failed_minimum": {
+        "run": ".datum/native-project-startup-repair/c09-auto-global-minimum-wayland-attempt-1",
+        "source_manifest_sha256": "4201a00f8c10757b6fe1f4065d06f34b0172ac7e52b8439325e85a731b9719cc",
+        "actual_executed_helpers": ".datum/native-project-startup-repair/c09-auto-global-minimum-failed-helper-snapshot",
+        "diagnosis": ".datum/native-project-startup-repair/c09-auto-global-minimum-wayland-attempt-1/diagnosed-presentation-fence.json",
+        "reason": "Strict future-frame predicate required damage>1386 although both captured images already showed correct refusal at same settled current1386, ownedfocus true, no pending/rendering damage; no later frame owed. Full failed attempt preserved. Only min-function fence/receipt metadata corrected; ordinary current barriers and error/focus assertions retained. Product source/binaries unchanged."
+      },
+      "retained_limits": [
+        "Actual Datum native Wayland/WGPU/Vulkan in owned nested Weston; X11 transports input to Weston only. No new KWin, HUMAN, full assistive-technology, latency or full-platform qualification.",
+        "Default run proves automatic Global eight-item human_gui genesis receipt, preserved fresh-Project files and original shell/child/environment. Project Preferences exposes eight Units controls; no fresh Preferences setter/migration, authored-history or installed-agent qualification.",
+        "Default run closes owned PTYs before GUI SIGTERM. Minimum run cancels forms then SIGTERM; no minimum terminal-exit or ordinary final window Close claim.",
+        "Open source/behavior and earlier accepted evidence are unchanged; no fresh Open runtime proof claimed.",
+        "Failed minimum attempt 1 remains FAIL/incomplete; corrected minimum attempt 2 passes after a verified helper-only presentation-wait correction.",
+        "Existing unrelated Clippy/accessibility/terminal/text-editing intake remains open. Prior a42d6eb5 candidate remains frozen.",
+        "Protected visual-owner commit gate unresolved; no source commit, task closure, production acceptance, S5A release or successor authorization."
+      ]
+    },
+    "historical_automatic_units_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "f3adca6ba5c2d366e02d43cd3f1c9dc49b7f38b2b648047b5c9e1984946d95b2",
+      "owning_lane_session": "2aaa642b-8e49-46cf-b7bf-b2f682810d2f",
+      "actual_correction_receipt_sha256": "272f8e9bdf9cc664fcf5b61fa04e57b009eeeac57f8e7563cf4da02dd5fa493a",
+      "independent_disposition": "BOUNDED_PROTOTYPE_AND_AUTHORITY_PASS",
+      "reviewer": "/root/closeout_review",
+      "capture_receipt_sha256": "0068bb163b6e9ecf79b430642341d089b1b5ff46abb5dfe008759de9487cf90e",
+      "prior_capture_receipt_sha256": "3462b5ad11ad96025f0a137685b650f346665aa5cd886a5cde0e69e3298251c9",
+      "review_scope": "Actual DOM/CSS, all22 initial frames across13 New states, all4 corrected G-E/G-F frames; copy delta exactly G-E/G-F/G-G among retained target lines, CSS unchanged, five Open frame/law lines unchanged against prior8c target. Complete retained145-member route corpus reused by identity;7 changed members actually reviewed.",
+      "manager_disposition": "Adopt this exact automatic-Units target for native translation under actual owner direction. No native/source/runtime/HUMAN/full-AT/landing/production acceptance."
+    },
+    "browse_affordance_correction": {
+      "status": "bounded_qa_accepted_landed",
+      "task_marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-BROWSE-AFFORDANCE",
+      "owner_authority": "Owner QA reports missing Browse button and requires an easy conventional human workflow.",
+      "behavior": "Visible Location plus Browse in New/Open; Browse reveals and focuses shared read-only navigation inside the same dialog, no separate picker/Select step. Hidden controls have no hits, keyboard or accessibility stops. Typed path reaches Create/Open validation without extra mandatory Enter.",
+      "preservation": "Existing window sizing, folder-name derivation/explicit override, full destination, engine admission, asynchronous/stale safeguards, automatic Global Units and error-only reread, cancellation and original terminal sessions.",
+      "frozen_baseline": "target/qa/auto-global-6183c81e",
+      "delivery_pending": []
+    },
+    "historical_browse_affordance_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "b01589871fd2153fff54eeedc79e5bef8803a1ea3f610fbb4fcac206b9989f80",
+      "source_files": 48,
+      "snapshot": "target/qa/browse-affordance-b0158987",
+      "binary_hashes": {
+        "datum-gui": "a83d500e53109afe8ccd899c899e45141216868e167e625039d6ac49ea2661a9",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "launch_command": "cd ~ && env -u DISPLAY -u WINIT_UNIX_BACKEND /home/bfadmin/Documents/datum-eda/target/qa/browse-affordance-b0158987/debug/datum-gui",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_QA_PASS",
+        "scope": "All48 current/archive source files, all104 catalogue bindings, six independent executable/dependency-record copies, actual guarded build/tests and source-health/resource-policy checks. All38 corrected default and24 qualified minimum frames personally reviewed by /root/closeout_review. BR1-BR3 resolved; no mandatory findings."
+      },
+      "manager_receipt": "target/qa/browse-affordance-b0158987/manager-review.json",
+      "manager_receipt_sha256": "f98397e96be5d6c3383f43854e0377e302637dad42badcb49da1b59bf23d38d8",
+      "manager_disposition": "Accept the bounded visible-Browse and direct-Location New/Open QA candidate under the existing owner-directed NPD-C09 grant. Landing, task closure and production/full qualification remain open.",
+      "handoff_summary_sha256": "a65b1915a2d2cdb62c7a734ca032fc6c491eb5fa22afa767e775f95e54967ab1",
+      "evidence_catalogue_sha256": "0b58513d541df84a1e92b437e069236612bf4e43805fb1cdfb77b9b1c79c62a0",
+      "evidence_entries": 104,
+      "build_info_sha256": "17fe99d6af8c192b6275e3aa22f1dbe20397a1331912b5d020b8bf5f43582252",
+      "native": {
+        "c09-browse-affordance-wayland-br3-attempt-2": {
+          "source_manifest": ".datum/native-project-startup-repair/c09-browse-affordance-br3-final-source-pins.json",
+          "source_manifest_sha256": "b01589871fd2153fff54eeedc79e5bef8803a1ea3f610fbb4fcac206b9989f80",
+          "binary_sha256": {
+            "datum-gui": "a83d500e53109afe8ccd899c899e45141216868e167e625039d6ac49ea2661a9",
+            "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+            "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+          },
+          "actual_invocation": ".datum/native-project-startup-repair/c09-browse-affordance-wayland-br3-attempt-2-command.json",
+          "result_sha256": "720900f698f632d7b471d20306c63e4d9b2348a2312719d882d4dd0ddb30a78d",
+          "commands_sha256": "6ddede61e2e45fe8094003390486748037d980721eb6d5cbbfffd821605cfd47",
+          "captures": 38,
+          "qualified_reuse": false
+        },
+        "c09-browse-affordance-minimum-wayland-attempt-1": {
+          "source_manifest": ".datum/native-project-startup-repair/c09-browse-affordance-final-source-pins.json",
+          "source_manifest_sha256": "547d406ff974cff600393a3549522bb20d1fc6b5f2d4ef3e9451b7c3e269e7de",
+          "binary_sha256": {
+            "datum-gui": "ef3c53968f42916f3bdcfdd94a88dcba70f7621f9883171a26bca121f740768b",
+            "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+            "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+          },
+          "actual_invocation": ".datum/native-project-startup-repair/c09-browse-affordance-minimum-wayland-attempt-1-command.json",
+          "result_sha256": "0e94df85ad6358141acf4612af3c666db864a69f980aa86627c7ad44b8a21ac8",
+          "commands_sha256": "263b7b6d816ab4e856ee9c93d5774423cd8c737e63ccba47fc39ed16b53c6978",
+          "captures": 24,
+          "qualified_reuse": true
+        }
+      },
+      "test_counts": {
+        "passed_executions": 69,
+        "distinct_named_passing_cases": 55,
+        "existing_ignored_executions": 2,
+        "full_suite_pass": false
+      },
+      "source_health": {
+        "result": "Source health governance passed (3206 source files checked).",
+        "actual_invocation": ".datum/native-project-startup-repair/c09-browse-affordance-final-source-health-command.json",
+        "log": ".datum/native-project-startup-repair/c09-browse-affordance-final-source-health.log"
+      },
+      "qualified_reuse": {
+        "record": ".datum/native-project-startup-repair/c09-browse-affordance-final-qualified-reuse.json",
+        "sha256": "d3be95f8b369c9670c0a4013b1a6a25e41892eaac45ac70196b2f59b719e6c13",
+        "scope": "Minimum24 frames and unaffected19 New/22 Open test executions retain their actual pre-BR3 source/build. Exact delta and unchanged minimum helper AST/renderers/protocol establish qualified reuse; fresh corrected default and28 navigation executions use final Rust."
+      },
+      "resolved_failed_attempts": {
+        "navigation-1": "14 pass/1 stale compact suffix expectation; test corrected for compact+expanded, final navigation passed.",
+        "open-2": "7 pass/1 old test setup directly wrote derived cache; test now fills displayed Location and poisons cache;22 Open cases pass.",
+        "wayland-br3-attempt-1": "Helper wrongly based relative Location on repository instead of GUI process cwd. Product correctly refused nonexistent doubled path. Executed helper archived at7b source; final helper uses actual/proc cwd, records raw /./ spelling and only semantically compares test expectation. Current attempt2 passed."
+      },
+      "retained_limits": [
+        "Actual Datum native Wayland/WGPU/Vulkan under owned nested Weston; X11 transports input to Weston only. No new KWin, HUMAN, full assistive-technology, latency or full-platform qualification.",
+        "Fresh no-journal Project with automatic eight-item Global human_gui receipt and canonical source bytes preserved. No fresh Preferences setter, authored-history or installed-agent qualification.",
+        "Default verifies original shell/child/environment and closes all owned PTYs before GUI SIGTERM. Minimum cancels forms then SIGTERM; no minimum PTY exit or ordinary final window Close claim.",
+        "Minimum24 frames and unaffected19 New/22 Open test executions retain their actual pre-BR3 source/build. Exact delta and unchanged minimum helper AST/renderers/protocol establish qualified reuse; fresh corrected default and28 navigation executions use final Rust.",
+        "Failed helper-cwd run remains FAIL/incomplete; final helper derives actual owned GUI cwd, records exact entered spelling, and fresh attempt2 passes. Earlier failed test expectations and source archives remain preserved.",
+        "Existing Clippy/accessibility/terminal/text-editing intake remains open, including Ctrl+A/clipboard limitations. Previous QA snapshots stay frozen.",
+        "Protected visual-owner commit gate unresolved; no source commit, task closure, production acceptance, S5A release or successor authorization."
+      ]
+    },
+    "historical_browse_affordance_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "9cc844bf9e21d0bd651e731e6bc58526a7abfbb14c6c3798623593525d960030",
+      "owning_lane_session": "2aaa642b-8e49-46cf-b7bf-b2f682810d2f",
+      "reviewer": "/root/closeout_review",
+      "independent_disposition": "BOUNDED_PROTOTYPE_AND_AUTHORITY_PASS",
+      "actual_final_correction_receipt_sha256": "1ce7753d63e37404d2a6bae8b3347c2f2e1cd636b361b429902d501b7322aecf",
+      "capture_source_sha256": "8b0b717e86e010b7cf39e77ff6a63a1aa4d98d4d24c3d284e62bf031e0fe5fa0",
+      "capture_receipt_sha256": "042f61998747ca855e2e562abbc3be29955c70eaa1a9003afdf4d6bf144862e5",
+      "capture_reuse": "Final target differs only in outside-frame law line213; all19 frame lines, CSS and other notes identical. Actual22 final frames across19states reviewed:16 newly viewed,6 byte-identical frames reused after all24 initial captures were viewed.",
+      "manager_disposition": "Adopt exact corrected visual target. Bounded native source/runtime QA is separately accepted in qa_candidate; protected visual-owner landing remains pending.",
+      "retained_permission_limit": "Actual final owning-lane result succeeded with one denied read-only Bash inspection; manager and reviewer performed exact source comparison. No file action blocked and no bypass."
+    },
+    "file_actions_refinement": {
+      "status": "bounded_qa_accepted_landed",
+      "task_marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-FILE-ACTIONS",
+      "decision": "docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md",
+      "owner_authority": "Owner requested right-click New Folder/Rename, explicitly required reusable menu objects for future dialogs, and said please continue.",
+      "shared_owners": [
+        "browser entry/controller",
+        "context-menu control",
+        "single-line naming editor",
+        "typed asynchronous host-filesystem service"
+      ],
+      "consumers": [
+        "New Project",
+        "Open Project"
+      ],
+      "boundary": "Explicit host child-directory creation and same-parent no-replace file/directory rename; read-only Project/session protection. No Project relocation, overwrite, deletion, new dependency or unrelated menu migration. Completed actions persist after parent Cancel; cancelled drafts write nothing.",
+      "implementation": "Both New/Open consume shared popup, single-line editor, browser controller and typed asynchronous host-filesystem service. Independent bounded source/runtime/rendered and final package/launcher reviews pass; the manager accepts the QA package. Protected source landing remains blocked.",
+      "frozen_baseline": "target/qa/browse-affordance-b0158987",
+      "authority_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_AUTHORITY_AMENDMENT_PASS",
+        "decision_sha256": "a94ac965d7c9ae41fe69352b6ba799eab56bc58d4ef37ea76ed429d38c7bf806",
+        "route_members": 146,
+        "unexpected_changes": 0
+      },
+      "coordination": "Project Create/Open refuses while a host action or receipt is pending; reverse host admission retains protection through actual Open-worker retirement, including Cancel/reopen. Navigation, editing and outer Cancel remain usable; no automatic deferred publication.",
+      "integration_checkpoint_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "TWO_MANDATORY_CORRECTIONS_REQUIRED",
+        "source_map_sha256": "9fc1ae5757f27c9239b4c3e9e6976d70df78e2a672fe3fbe4591882141d5d623",
+        "verified_archived_source_files": 74,
+        "passing_host_service_tests": 11,
+        "source_findings": [
+          "FA-INT1: render and expose the retained host-action waiting reason for both outer actions, including reopened dialogs.",
+          "FA-INT2: bind pointer actions to the presented browser parent/list/entry; reject stale row indices after an unpresented scan."
+        ],
+        "verified_scope": "Shared ownership, both admission guards and corrected FA-NV1 source plus actual host-service execution.",
+        "excluded_evidence": "native-controller-1 forced X11; retained as historical diagnostic, excluded from required Wayland delivery proof.",
+        "boundary": "Corrections, meaningful Wayland controller controls, ordinary native workflows, rendered proof and final delta review remain pending. No delivery or landing PASS."
+      },
+      "nonvisual_checkpoint_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "MANDATORY_CORRECTION_REQUIRED",
+        "checkpoint_sha256": "d17fa6bd56d6a6b6df9a7ab54eef3fd78b5b0280c1ca727ae47f1c9857b78c2d",
+        "source_map_sha256": "f0315264577fa087712318a649ac2426a33ef5ffb37bb2a6bab7e73b32c694fc",
+        "verified_archived_source_files": 14,
+        "passing_test_executions": 23,
+        "retained_failed_attempts": 4,
+        "source_health_files": 3217,
+        "mandatory_finding": "FA-NV1: protect declared settings.checking/settings.output and native .ids backing paths, with refusal/no-write regressions and ordinary-host eligibility preserved.",
+        "boundary": "Archive-qualified review only; subsequent integration changes excluded. No controller concurrency, native workflow, clipboard, landing or full-qualification PASS.",
+        "correction_source_review": {
+          "disposition": "FA-NV1_SOURCE_PASS_EXECUTION_PENDING",
+          "reviewer": "/root/closeout_review",
+          "safety_sha256": "c8137b70f81bcc53d544ffa86b669009754b990df007dd608bb7c8d5a0d2f4be",
+          "tests_sha256": "ae49230242507f0274df1b3d5af401b598eeb6211803630414dfa4706c6459fd",
+          "boundary": "Original checkpoint unchanged. Correction execution and controller/native integration remain pending."
+        }
+      },
+      "final_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_QA_PASS",
+        "source_manifest_sha256": "f1336e25d96bd7bbedc62437d2b5a05d3040e23604c062c664ceb6a94fead734",
+        "source_files": 80,
+        "rust_source_files": 78,
+        "source_checkpoint": "c09-file-actions-source-checkpoint-7",
+        "rust_source_map_sha256": "9400a35a39df6b056d8e03f090ed42cecede66ab1cccaf1099c7b4773dbb7543",
+        "resolved_findings": {
+          "FA-NV1": "Declared checking/output and native .ids backing paths protected.",
+          "FA-INT1": "Visible/accessibility waiting reason persists while host action or receipt is pending.",
+          "FA-INT2": "Pointer actions bind to the actually presented parent/list/entry.",
+          "FA-INT3": "Dismissal and captured-release ownership retire before fresh-target admission; release-dependent positive control passes.",
+          "FA-INT4": "Shared editor projects the visible UTF-8 slice through existing surface-bounded cache; full value/caret/selection/pointer mapping retained."
+        },
+        "fresh_rendered_review": {
+          "targeted_editor_reveal_frames": 20,
+          "relevant_corrected_minimum_frames_reviewed": 26,
+          "corrected_minimum_total_captures": 40
+        },
+        "qualified_reuse": "Earlier source/control reviews and exact unchanged product owners qualify the 33462ad6 default ordinary New/Open host-actions, Project, Units, clipboard and terminal observations. Its long-Location rendering is superseded; no blanket visual PASS is assigned to that cohort.",
+        "boundary": "No remaining mandatory finding in the reviewed source/runtime/rendered scope. Separate actual delivered-launcher/package review passes; protected source landing, task closure, full qualification, HUMAN and S5A remain unclaimed."
+      },
+      "package_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_QA_PACKAGE_AND_DELIVERED_LAUNCHER_PASS",
+        "mandatory_findings": [],
+        "independently_checked_package_runtime_bindings": 76,
+        "archived_source_map_entries": 80,
+        "actual_launcher_screenshot_and_diagnostic_reviewed": true,
+        "scope": "Actual delivered launcher, Home cwd, running unbound shell, native Wayland/Vulkan, owned Weston with isolated XDG and DISPLAY preserved. Earlier bounded source/runtime/rendered PASS stands.",
+        "boundary": "No source landing, ordinary Close, full qualification, S5A or successor release."
+      },
+      "manager_acceptance": {
+        "disposition": "ACCEPT_BOUNDED_FILE_ACTIONS_QA_PACKAGE_LANDING_BLOCKED",
+        "receipt": "target/qa/file-actions-f1336e25/manager-review.json",
+        "sha256": "8da9166f269036020c81f264c3a8dfc4df4e1ca2c2edc401ba55010c52831065"
+      }
+    },
+    "visual_target": {
+      "sha256": "cf6dc2b09a89f3cbdc1282f330ef533c26262aaf4d1c94b2c1eae34cfa4beef7",
+      "captured_source_sha256": "5a72e0248414e69b545999b58a61aa5d25d1837e552cca164a4e724a45969e71",
+      "capture_receipt": ".datum/native-project-startup-repair/c09-initial-prefix-prototype/attempt-2/result.json",
+      "capture_receipt_sha256": "8ef9a68e3ce49e7c8544272311a8c6dd8fc3f4d9f4c379dc3cb44ffd08302cae",
+      "copy_receipt": ".datum/native-project-startup-repair/c09-initial-prefix-claude-copy-result.json",
+      "copy_receipt_sha256": "14498dc3ec1a8d3a1754b403201d8fdbe44e42354a6e780456002dd78693a884",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-initial-prefix-independent-final-review.json",
+        "sha256": "55ba7cbe57139cff28f5f52f5afeffe2d430982f63a3907862bc25e4153a0021",
+        "mandatory_findings": []
+      },
+      "reuse": "All 41 frame spans and 3 style blocks are byte-identical between captured source and final target; final change corrects only P-B/P-K explanatory sentences about plugdata disappearing on the new datum query. G-A example name does not authorize a runtime default name. Complete owning-route and 30 unchanged-frame reuse retained.",
+      "qualification": "First capture attempt exited 1 from a helper null lookup on an existing wrapper; retained as failed and excluded. Corrected read-only helper attempt 2 exited 0 with 21 images and no overflow. At the earlier target review this cleared target translation only. Subsequent independent review and manager acceptance in qa_candidate now cover the bounded native behavior and package; the exact reviewed target is now committed by its authorized owner at 93e94e0c.",
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "review_status": "Actual independent bounded authority/target/source/runtime/rendered/package PASS. Twenty-one prototype captures and final copy-only reuse, fourteen native frames and actual launcher reviewed. Authorized protected landing verified at 93e94e0c; no target-byte change.",
+      "landing_commit": "93e94e0c4ce04bde7db381d8f1a994a7b15ff28f"
+    },
+    "qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "050cdf8c19c9cebbd3dae47d40fe5b97e289d51e13341cff8e36b536ca0ecd50",
+      "source_files": 109,
+      "rust_source_files": 104,
+      "binary_hashes": {
+        "datum-gui": "fdd12b9c324adc2d8d15706008e3d1f4cb8d8bf287c11ca305b6c5a41f0d9200",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "snapshot": "target/qa/initial-prefix-050cdf8c",
+      "build_info_sha256": "e016ac09c1c6507deb43412f24fcc99cb66ded4882a5fd869f26d81d7cccf3ce",
+      "launch_command": "/home/bfadmin/Documents/datum-eda/target/qa/initial-prefix-050cdf8c/launch.sh",
+      "launcher_sha256": "79b379f7611b6a6e18d7a038a5cf026ddf2f65c955c67aba96777dce8cc5df96",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-initial-prefix-independent-final-review.json",
+        "sha256": "55ba7cbe57139cff28f5f52f5afeffe2d430982f63a3907862bc25e4153a0021",
+        "mandatory_findings": []
+      },
+      "manager_review": {
+        "path": "target/qa/initial-prefix-050cdf8c/manager-review.json",
+        "sha256": "edf1e9428bf58edbd173989bf50ba3256c5ff09d6fc24c2f5b74af5ed99c11ec",
+        "disposition": "ACCEPT_BOUNDED_INITIAL_LISTING_PREFIX_QA_PACKAGE_LANDING_BLOCKED"
+      },
+      "implementer_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-initial-prefix-final-handoff.json",
+        "sha256": "ed4219cf1bc89acceb0c2c5b3061ba2aca3d0ae9675e5e84e77e0967a8b87b1e"
+      },
+      "native_evidence": {
+        "c09-initial-prefix-wayland-attempt-1": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-initial-prefix-wayland-attempt-1/result.json",
+            "sha256": "1b68278e994287bdb6613179f6124d242557ae51612cd330666ffff223bfa800"
+          },
+          "commands_sha256": "52e74167db9781ea8f41b93dce3967962391204e96176f52ec8b388cae818bca",
+          "qualification": "Fourteen reviewed native frames: initial New/Open Home and field focus, appended dat five matches to datum four with focus retained, explicit selection/further-child/Create/Open, five fresh Project hashes, original PID/S_KEEP and all three PTY exits."
+        },
+        "c09-initial-prefix-ordinary-launch-verification": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-initial-prefix-ordinary-launch-verification/result.json",
+            "sha256": "92abf35572a0912fc3bc7d2d679d79e0c357bd0c64ffc6e510fc46f3df4c713b"
+          },
+          "commands_sha256": "6b6f7eda706d5d93b6958ef56e42123e6ab13ea09e3fcd5553a6912ecaf57bc3",
+          "qualification": "One reviewed frame from the actual delivered launcher; exact packaged GUI, Home cwd, retained DISPLAY and native Wayland/Vulkan. Shell exit/PTY closure then final GUI SIGTERM; no ordinary window Close claim."
+        }
+      },
+      "focused_tests": {
+        "passed_executions": 6,
+        "distinct_named_cases": 6,
+        "qualification": "Four model cases at checkpoint1 with model/test files identical to final3; scanner and actual Runtime cases at checkpoint2 with all104 Rust files identical to final3. Filtered cases excluded."
+      },
+      "qualified_reuse": {
+        "accepted_prior": "target/qa/successive-dee25e1e/manager-review.json",
+        "prior_handoff": ".datum/native-project-startup-repair/c09-successive-final-handoff.json",
+        "scope": "104 current source files unchanged. Retain bounded unchanged editor/selection/explicit navigation/refusal/host receipts/manifest,620 wrapping/scroll, terminal lifecycle/dock/context, engine admission and prior failure history. Collapsed initial presentation and all-match Tab grouping are superseded, not claimed current. All affected model/Runtime and ordinary New/Open cases have fresh proof",
+        "visual": "Actual cf6d target manager released after21 attempt2 captures; root verified41 frame spans/3styles same as captured5a72 after prosefix. Existing expanded frames and current native initial/prefix states reviewed; renderer source/geometry unchanged."
+      },
+      "retained_limits": [
+        "Bounded QA acceptance only. S5A held; no source commit, task closure, successor authorization or production/full qualification. Normal protected visual-owner landing remains unresolved; no digest/hook/marker bypass.",
+        "Three inherited HEAD source-health failures remain distinct from current ordinary health PASS; no full Clippy/whole-product PASS or waiver.",
+        "Owned nested Wayland/Vulkan workflow with external X11 compositor input and existing clipboard bridge; no Datum-as-X11, full KWin, native clipboard transport or ordinary window Close qualification.",
+        "Initial Home names/types are authorized read-only discovery. Host mutations and Project proof concern task-owned fixtures; no owner Project content/process mutation by this review.",
+        "Prior unchanged minimum/editor/host/manifest/terminal/engine evidence is qualified reuse. Current native run is default-size; new minimum prototype captures are not a fresh minimum native campaign.",
+        "Existing path-based admission, glyph coverage and terminal lifecycle intake limits remain; exact Unicode handling does not establish font coverage.",
+        "Prototype capture attempt 1 wrapper failure and initial explanatory correction remain recorded; current source/test/native proof is not a full historical failure replay.",
+        "ordinary-launch.log remains mutable telemetry, excluded from frozen bindings. Accepted earlier packages and owner processes/data remain untouched; initial Home metadata discovery is read-only."
+      ],
+      "ordinary_launcher_log": "ordinary-launch.log is mutable telemetry and excluded from immutable package hashes."
+    },
+    "terminal_handoff_refinement": {
+      "status": "bounded_qa_accepted_landed",
+      "marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-TERMINAL-HANDOFF",
+      "owner_reply": "I approve/agree please proceed",
+      "owner_report": "Project creation succeeds, but terminal panel collapses and a Home shell shows no Project bound, making the handoff unclear.",
+      "accepted_behavior": [
+        "Preserve terminal panel visibility, chosen height and maximize state through New/Open.",
+        "Select the prepared Project-root terminal with correct context after successful publication; keyboard focus remains predictable.",
+        "Keep existing Home/independent/other-Project shells, child processes, cwd, environment and scrollback intact.",
+        "Use clear default session labels and selected-session Project/independent identity plus truthful current or launch-directory chrome.",
+        "No automatic cd/rebinding, migration prompt, process restart or unrelated terminal rewrite."
+      ],
+      "authority": [
+        "docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md",
+        "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md"
+      ],
+      "visual_owner": "Claude; bounded new addendum to docs/gui/prototypes/start-page-study.html. Historical terminal-study remains unchanged.",
+      "frozen_previous_qa": "target/qa/file-actions-f1336e25",
+      "acceptance": "Actual independent source/runtime/rendered/package review and manager acceptance completed for the bounded approved handoff. Ordinary native New/Open and preserved live sessions are demonstrated at the recorded source-qualified scope; final local rendering and the delivered launcher have final-binary native evidence.",
+      "boundary": "No new dependency, owner data mutation, full qualification, protected-lane bypass, S5A or successor release.",
+      "visual_target": {
+        "source": "docs/gui/prototypes/start-page-study.html",
+        "sha256": "6780aaa270dd1666a5682da4b834cbed088e311bc68c8ac8ea87808a44429bab",
+        "capture_directory": ".datum/native-project-startup-repair/c09-terminal-handoff-prototype/final-b405d4",
+        "capture_source_sha256": "b405d481b6a8b7423c1d5e81d496691d6138aa16043daac8367b86427ff75b80",
+        "capture_result_sha256": "9a67b9126a63fc9e6a61783e23bff4128aefcdc04b8dd3698740b1ca3a65bfbd",
+        "frames": 7,
+        "copy_only_reuse": "Final6780 changes exactly one prose sentence about existing Ctrl+Shift+R; CSS and all seven frame bytes identical to b405d4. No native proof implied.",
+        "independent_review": {
+          "reviewer": "/root/closeout_review",
+          "disposition": "BOUNDED_VISUAL_TARGET_PASS",
+          "receipt": ".datum/native-project-startup-repair/c09-terminal-handoff-prototype/final-copy/independent-review.json",
+          "sha256": "afb697acab71b653efce0c3b02c7d7dc38fadaf11223407ba71cb644cdc8b5b7"
+        },
+        "manager_disposition": "Final bounded target accepted; native translation released. Closed strip stays visible; compact close confirmation retains binding and directory stubs with existing TERMINATE/CANCEL. No new Restart control or hidden-context rule.",
+        "prior_file_action_source_unchanged": true,
+        "limits": [
+          "At620 launch directory can visibly read Started...; full semantic text is retained.",
+          "Ordinary native rendered/runtime/package acceptance remains separate."
+        ],
+        "status": "bounded_visual_target_accepted"
+      },
+      "lifecycle_presentation_disposition": "Retain visible selected-session binding and directory stubs at620; compact visible close terminal? label with unchanged full underlying status, accessible keyboard hints and existing TERMINATE/CANCEL targets. No new lifecycle action or hidden-context rule.",
+      "historical_visual_target": {
+        "source": "docs/gui/prototypes/start-page-study.html",
+        "sha256": "43a2a07d1bf02d27b0731ebf3b166c182b33c8135acf17eba745bdb03d49a67c",
+        "capture_directory": ".datum/native-project-startup-repair/c09-terminal-handoff-prototype/corrected-43a2a0",
+        "capture_result_sha256": "d6853c4bee8bd069d15d68000026e78b71b6423d197bbbfefef0fe7094145dcc",
+        "frames": 6,
+        "independent_review": {
+          "reviewer": "/root/closeout_review",
+          "disposition": "BOUNDED_VISUAL_TARGET_PASS",
+          "receipt": ".datum/native-project-startup-repair/c09-terminal-handoff-prototype/corrected-43a2a0/independent-review.json",
+          "sha256": "5fa5d5ac02b4fb5b7a82fcec694a8a4d85beb46f7f880a8684dd9f1a29862334"
+        },
+        "manager_disposition": "A/B/C/E native translation released. TH-D invented Restart control is withdrawn; actual Claude correction reconciles existing TERMINATE/CANCEL only. Final corrected target and native evidence remain pending.",
+        "prior_file_action_source_unchanged": true,
+        "limits": [
+          "At620 launch directory can visibly read Started...; full semantic text is retained.",
+          "Maximized behavior is specified here; actual runtime proof remains separate."
+        ],
+        "status": "A_B_C_E_accepted_D_lifecycle_correction_pending"
+      },
+      "source_review_findings": {
+        "TH-S1": "Actual per-session launch directory retained across origin refresh/restart; real absolute/relative profile cwd regression.",
+        "TH-S2": "Final hidden session no longer repopulates visible session context.",
+        "TH-A11Y1": "Full lifecycle/close keyboard hint accompanies selected context in semantic title; actual Runtime and ordinary close/Cancel evidence.",
+        "TH-A11Y2": "Pending selection publishes unavailable metadata through normal Runtime tab synchronization. Held worker test starts already open/focused, removes old Project identity, and restores cancel/attach identity without test-only refresh.",
+        "TH-R1": "Local rounded measured allocations retain short reported Home glyph; actual old-control negative, corrected real-cache positive, and native visible tilde.",
+        "TH-R2": "Selected-context lifecycle label uses measured fitting; strengthened exact prompt assertion and final native620 image show complete close terminal? with unchanged actions."
+      },
+      "current_qa_snapshot": "target/qa/terminal-handoff-ec2cd61b",
+      "manager_review": {
+        "path": "target/qa/terminal-handoff-ec2cd61b/manager-review.json",
+        "sha256": "0cc0bc42d35ea2abd1ac5c0e581a3400629d6df1256a23835624d552d6d2cef3",
+        "disposition": "ACCEPT_BOUNDED_TERMINAL_HANDOFF_QA_PACKAGE_LANDING_BLOCKED"
+      },
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-terminal-handoff-independent-final-review.json",
+        "sha256": "1cc744b00773d17623e25cb0a1d07cb01aaea35f13c710afba2a642b9c01c140",
+        "mandatory_findings": []
+      },
+      "remaining": "No remaining C09 delivery work. Broader qualification retains its recorded limits; source and visual landing are recorded in landing_verification."
+    },
+    "historical_file_actions_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "snapshot": "target/qa/file-actions-f1336e25",
+      "source_manifest_sha256": "f1336e25d96bd7bbedc62437d2b5a05d3040e23604c062c664ceb6a94fead734",
+      "source_files": 80,
+      "binary_hashes": {
+        "datum-gui": "ba7159dbf9f0286b9fbef972b12feb8757ef7a17976b597eb2a41ce56dcfea8f",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "build_info_sha256": "9b1e3ae378c2999cac52797eee51f32733ff94888d72264bd5c550e7d8c78bdd",
+      "launch_command": "/home/bfadmin/Documents/datum-eda/target/qa/file-actions-f1336e25/launch.sh",
+      "launcher_sha256": "79b379f7611b6a6e18d7a038a5cf026ddf2f65c955c67aba96777dce8cc5df96",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_QA_PASS",
+        "source_manifest_sha256": "f1336e25d96bd7bbedc62437d2b5a05d3040e23604c062c664ceb6a94fead734",
+        "source_files": 80,
+        "rust_source_files": 78,
+        "source_checkpoint": "c09-file-actions-source-checkpoint-7",
+        "rust_source_map_sha256": "9400a35a39df6b056d8e03f090ed42cecede66ab1cccaf1099c7b4773dbb7543",
+        "resolved_findings": {
+          "FA-NV1": "Declared checking/output and native .ids backing paths protected.",
+          "FA-INT1": "Visible/accessibility waiting reason persists while host action or receipt is pending.",
+          "FA-INT2": "Pointer actions bind to the actually presented parent/list/entry.",
+          "FA-INT3": "Dismissal and captured-release ownership retire before fresh-target admission; release-dependent positive control passes.",
+          "FA-INT4": "Shared editor projects the visible UTF-8 slice through existing surface-bounded cache; full value/caret/selection/pointer mapping retained."
+        },
+        "fresh_rendered_review": {
+          "targeted_editor_reveal_frames": 20,
+          "relevant_corrected_minimum_frames_reviewed": 26,
+          "corrected_minimum_total_captures": 40
+        },
+        "qualified_reuse": "Earlier source/control reviews and exact unchanged product owners qualify the 33462ad6 default ordinary New/Open host-actions, Project, Units, clipboard and terminal observations. Its long-Location rendering is superseded; no blanket visual PASS is assigned to that cohort.",
+        "boundary": "No remaining mandatory finding in the reviewed source/runtime/rendered scope. Separate actual delivered-launcher/package review passes; protected source landing, task closure, full qualification, HUMAN and S5A remain unclaimed."
+      },
+      "native": {
+        "qualified_default": {
+          "run": "c09-file-actions-wayland-attempt-2",
+          "captures": 64,
+          "source_manifest_sha256": "33462ad6f2881a4e5056bbd0849d3b0c21ca6a6683517f296483bb472122d089",
+          "result_sha256": "f188209a103c99f040f25eed927ff3b5c33bcf608ac76f0fff0d61568543e3f9",
+          "scope": "Ordinary file actions, collisions, clipboard/failure, eligible-parent Project protection, GUI Create/Open, eight Units and original shell/child/environment; unchanged owners qualified by final delta."
+        },
+        "targeted_editor_reveal": {
+          "run": "c09-file-actions-editor-reveal-wayland-attempt-1",
+          "captures": 20,
+          "result_sha256": "82f2c0a5309d4f89c66a4b44203abe2d767f738b1a539894f54e69d8de2cdea4",
+          "scope": "Final GUI, both forms at default/620: exact long Location, Home/End/full selection; no new host mutation or ordinary Close claim."
+        },
+        "corrected_minimum": {
+          "run": "c09-file-actions-minimum-wayland-attempt-2",
+          "captures": 40,
+          "result_sha256": "fade7860ebf14e1e5e5d32c9afd4d072d63e34200929312658c2564173416e00",
+          "scope": "Final GUI actual620: both forms, popup reason, naming/collision, draft cancellation, rename selection, preview/refusal/reread and fixed controls."
+        },
+        "ordinary_launcher": {
+          "run": "c09-file-actions-ordinary-launch-verification",
+          "captures": 1,
+          "result_sha256": "7099b0e531f1b4ec4b3e1a288aa016eba0d110c6c04532d0306de5debc16a471",
+          "scope": "Actual delivered launcher, Home cwd, running unbound shell, native Wayland/Vulkan, owned Weston with isolated XDG and DISPLAY preserved. Earlier bounded source/runtime/rendered PASS stands."
+        }
+      },
+      "fixture_preservation": {
+        "receipt": ".datum/native-project-startup-repair/c09-file-actions-fixture-preservation.json",
+        "sha256": "0e493a432dbac80eace6e3b1e8b7d8afd3030768975aad9cf31c1128c0dd2437",
+        "verified_entries": 8,
+        "scope": "Only owned Project byte-copy moved from Cargo output into ignored task scratch, preserving all bytes/modes. Historical paths retained; no other QA target, external store or owner data changed."
+      },
+      "retained_limits": [
+        "GUI is native Wayland/WGPU/Vulkan under owned nested Weston; clipboard uses existing XWayland provider. No native Wayland-selection, new KWin workflow, HUMAN, full AT or full-platform claim.",
+        "Final SIGTERM is not ordinary window Close. Original failed/refused attempts and source-qualified reuse remain explicit.",
+        "Inherited missing UI filename glyph recorded as dat-ui-filename-glyph-coverage-o53p; exact Unicode bytes/caret/clipboard do not establish glyph coverage.",
+        "Existing convergence predicates remain failed (dat-wq2s); relevant assignments/checker are unchanged from HEAD. Other disclosed full-qualification failures retain their scope.",
+        "Protected visual-owner landing is unresolved. No source commit, task closure, full production acceptance, S5A or successor authorization."
+      ],
+      "status": "bounded_qa_accepted_landing_blocked",
+      "package_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_QA_PACKAGE_AND_DELIVERED_LAUNCHER_PASS",
+        "mandatory_findings": [],
+        "independently_checked_package_runtime_bindings": 76,
+        "archived_source_map_entries": 80,
+        "actual_launcher_screenshot_and_diagnostic_reviewed": true,
+        "scope": "Actual delivered launcher, Home cwd, running unbound shell, native Wayland/Vulkan, owned Weston with isolated XDG and DISPLAY preserved. Earlier bounded source/runtime/rendered PASS stands.",
+        "boundary": "No source landing, ordinary Close, full qualification, S5A or successor release."
+      },
+      "manager_review": {
+        "disposition": "ACCEPT_BOUNDED_FILE_ACTIONS_QA_PACKAGE_LANDING_BLOCKED",
+        "receipt": "target/qa/file-actions-f1336e25/manager-review.json",
+        "sha256": "8da9166f269036020c81f264c3a8dfc4df4e1ca2c2edc401ba55010c52831065"
+      },
+      "final_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-file-actions-final-handoff-summary.json",
+        "sha256": "52e02f5fb65324170f10f46dd1e36724420175b0e5878a68e7df8da736fd2a23"
+      },
+      "evidence_catalogue": {
+        "path": ".datum/native-project-startup-repair/c09-file-actions-final-evidence-sha256.json",
+        "sha256": "dace555bc6dd9391271119cf743f9a2c36a0e38952dbe8838be093807c9116c4",
+        "verified_entries": 1080
+      },
+      "qualified_reuse": {
+        "path": ".datum/native-project-startup-repair/c09-file-actions-final-qualified-reuse.json",
+        "sha256": "8932540286ac7aff53ce25e3f6694d9d7095b99b7c8afac59ba935f40dd20e40",
+        "scope": "The actual 33462ad6 ordinary functional workflow is source-qualified; its long-Location paint is superseded by final reveal/minimum evidence. Historical paths retain the exact fixture-preservation mapping."
+      },
+      "test_counts": {
+        "passed_executions": 63,
+        "distinct_named_passing_cases": 59,
+        "ignored_executions_in_broad_filter": 2,
+        "native_ignored_cases_also_executed": "Both separately executed on owned Wayland/Vulkan; controller3 and pointer4 included above.",
+        "full_suite_pass": false
+      }
+    },
+    "historical_file_actions_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "a190a241194e401a7882ba3b29fa6b9f047996dfa38d6df4f9ded343016ee08a",
+      "owning_lane_session": "2aaa642b-8e49-46cf-b7bf-b2f682810d2f",
+      "independent_disposition": "BOUNDED_PROTOTYPE_AND_AUTHORITY_PASS",
+      "reviewer": "/root/closeout_review",
+      "capture_receipt_sha256": "7c38aadd5b884926f89315fa1b9303add0b5aa7907f1ecb8ef17880b3e054f0a",
+      "coverage": "Five fresh busy/table captures personally reviewed plus18 byte-qualified unchanged dialog images. All CSS and26 other dialog fragments unchanged.",
+      "manager_disposition": "Adopt exact shared-actions target for bounded native implementation. No source/runtime/HUMAN/production/landing acceptance.",
+      "prior_target": {
+        "sha256": "e3545dd8552a451cc189760c5824ee633684b02624eccf01c36ac77c66760b88",
+        "capture_receipt_sha256": "81f628424bc6da619ab889b173e186ad870c139d8169a0a9891d4191556d8e7d",
+        "scope": "Historical pre-busy-primary target; exact original receipt retained."
+      },
+      "decision_sha256": "7770e85d80969868296bfd3812b2da5761648790813984675e34633bdc8e6fd8"
+    },
+    "manifest_activation_refinement": {
+      "status": "bounded_qa_accepted_landed",
+      "marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-MANIFEST-ACTIVATION",
+      "owner_report": "QA testing finds terminal stays open after New/Open; double-clicking existing project.json did not open the Project.",
+      "behavior": "Open-only exact regular project.json row double-click or Enter invokes the existing containing-directory Open command and validation. Ordinary folders navigate; passive selection, New and arbitrary/link files do not open.",
+      "guards": "Ready current listing, reset cross-navigation/rescan double-click, existing busy/host/native-edit/source and session admission, visible refusal without queued retry.",
+      "authority": "docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md",
+      "frozen_previous_qa": "target/qa/terminal-handoff-ec2cd61b",
+      "acceptance": "Focused model/controller checks, ordinary native Wayland double-click/Enter and invalid-Open preservation, actual delivered launcher and distinct review passed. Manager accepts the pinned QA package; source and visual landing are now verified; broader qualification remains open.",
+      "boundary": "Original refinement boundary (final authorized landing and closure are recorded in landing_verification): No new dependency, file association, separate file opener, owner-data mutation, broad terminal repair, protected-lane bypass, closure, S5A or successor release.",
+      "visual_target": {
+        "source": "docs/gui/prototypes/start-page-study.html",
+        "sha256": "22e1edc62c33437ea94073f4459cb60ebf95075456956af819b9962b38ce3e59",
+        "capture_result": ".datum/native-project-startup-repair/c09-manifest-activation-prototype/result.json",
+        "capture_result_sha256": "fbb860870286fe82883b9521de9b9787b96d0970df3bab1f8ecaae2ccc66a295",
+        "frames": 10,
+        "independent_reviewer": "/root/closeout_review",
+        "manager_disposition": "Actual bounded authority/source/ten-frame review accepted. CSS and New/terminal frames unchanged; relevant Open copy reconciled across shared examples. Subsequent native/runtime/package acceptance is recorded in qa_candidate.",
+        "independent_review": {
+          "receipt": ".datum/native-project-startup-repair/c09-manifest-activation-prototype/independent-review.json",
+          "sha256": "f6e403f9009d83d7964d052487e974625abb2db197683408a09d25dc5298cc40",
+          "disposition": "BOUNDED_AUTHORITY_AND_VISUAL_TARGET_PASS"
+        },
+        "status": "bounded_visual_target_accepted"
+      },
+      "admission_limit": "Same path-based Open semantics: existing preparation/admission checks resolved source/history. Discovery does not pin Project UUID or inode before preparation, and this correction adds no external-namespace guarantee.",
+      "source_review_findings": {
+        "MA-R1": "Resolved: intervening key, focus, non-row, popup/naming and rescan operations invalidate the click pair; guarded activation preserves its new refusal. Real pointer-key-pointer interruption remains passive.",
+        "MA-R2": "Resolved: only manifest Open dispatch preserves the newly issued refusal; ordinary folder navigation again clears obsolete Open refusal."
+      },
+      "source_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-manifest-independent-final-review.json",
+        "sha256": "40daca8d2260b0aa5077a36ab0f23526c1a2c37ba18d69ddd4ee9af9f5acd5fc",
+        "mandatory_findings": [],
+        "source_manifest_sha256": "94d5929016fa415ec3564ffa60818b568877717613c6f79bee594e011cc0c735",
+        "files": 101
+      },
+      "compiled_source_review": {
+        "reviewer": "/root/closeout_review",
+        "source_manifest": ".datum/native-project-startup-repair/c09-manifest-source-checkpoint-3/source-pins.json",
+        "source_manifest_sha256": "ea04ce383178f78b0a0fee522938a11328983ccff593103c40364e328534fdc6",
+        "disposition": "bounded static clearance; no remaining source finding",
+        "files": 101
+      },
+      "qa_snapshot": "target/qa/manifest-open-94d59290",
+      "manager_review": {
+        "path": "target/qa/manifest-open-94d59290/manager-review.json",
+        "sha256": "fe605554300cd1b75d5e7d74eec245ac4abb496329a0813bef894aaccb73652f",
+        "disposition": "ACCEPT_BOUNDED_MANIFEST_ACTIVATION_QA_PACKAGE_LANDING_BLOCKED"
+      }
+    },
+    "historical_terminal_handoff_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "ec2cd61b8e2e9e5d5b123d9f3a8e910d68baedf684eca6bd77cf01500f14fbdd",
+      "source_files": 99,
+      "rust_source_files": 96,
+      "binary_hashes": {
+        "datum-gui": "0a0bbb435d07ce2a36492bd2a1613eb99aeadfe49de50c375b7ba9af27263a46",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "snapshot": "target/qa/terminal-handoff-ec2cd61b",
+      "build_info_sha256": "a616689ee1275a02893acdfa8b1126ed9afa861f7f354879669493b57707df1e",
+      "launch_command": "/home/bfadmin/Documents/datum-eda/target/qa/terminal-handoff-ec2cd61b/launch.sh",
+      "launcher_sha256": "79b379f7611b6a6e18d7a038a5cf026ddf2f65c955c67aba96777dce8cc5df96",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-terminal-handoff-independent-final-review.json",
+        "sha256": "1cc744b00773d17623e25cb0a1d07cb01aaea35f13c710afba2a642b9c01c140",
+        "mandatory_findings": []
+      },
+      "manager_review": {
+        "path": "target/qa/terminal-handoff-ec2cd61b/manager-review.json",
+        "sha256": "0cc0bc42d35ea2abd1ac5c0e581a3400629d6df1256a23835624d552d6d2cef3",
+        "disposition": "ACCEPT_BOUNDED_TERMINAL_HANDOFF_QA_PACKAGE_LANDING_BLOCKED"
+      },
+      "implementer_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-terminal-handoff-final-handoff.json",
+        "sha256": "9ff7aaada7d7965d57e2a9be2a48ff80fc2f50ba2b42142c8c3ee4e7c0a18c38"
+      },
+      "native_evidence": {
+        "c09-terminal-handoff-lifecycle-refit-wayland-attempt-1": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-terminal-handoff-lifecycle-refit-wayland-attempt-1/result.json",
+            "sha256": "325d68ed505e2b1615aad96d25ff3e2eda3a65d37af131a3b9ed7480374fc540"
+          },
+          "qualification": "Final0a0b GUI actual Open on existing owned GUI-createdProject, canonical bytes unchanged; exact620 client from owned output resize, full compact prompt/actions/context, full semantic hint, Cancel keepsPID, bothPTYs exit."
+        },
+        "c09-terminal-handoff-ordinary-launch-verification": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-terminal-handoff-ordinary-launch-verification/result.json",
+            "sha256": "6261b355b581ae480a383b71d4de5ecbe59922d0f90c8f6c34b5910ef70daa35"
+          },
+          "qualification": "Actual final delivered launch.sh: /proc/exe finalQA, real Home cwd, DISPLAY retained, nativeWayland/Vulkan, screenshot, ordinary shell exit/PTY closure; final GUI SIGTERM, no ordinary Close claim."
+        },
+        "c09-terminal-handoff-wayland-attempt-4": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-terminal-handoff-wayland-attempt-4/result.json",
+            "sha256": "3962495ea4bf423ed666f9ad726f5d8a1133d713ef11209af9ab89387ffeb11e"
+          },
+          "qualification": "Qualified current behavior on ff3b: ordinary New/Open pre-click dock/editorfocus, actual Project processes/cwd/context, original live shell/child/variable/unbound authority and retained text, user-entered cd/childtitle independent binding, actual620 close/full semantic hint/cancel/exit. Old compact visible prompt was unnecessarily truncated; replaced only by final refit."
+        }
+      },
+      "focused_tests": {
+        "passed_executions": 28,
+        "distinct_passing_cases": 27,
+        "selected_batches": 9,
+        "scope": "Actual successful command/log batches, qualified by tested source. Failed preliminary attempts and the deliberate short-Home negative control remain retained; no complete suite PASS."
+      },
+      "qualified_reuse": {
+        "closed_maximized_cancel_stale": "Actual Wayland Runtime publication3 exercises3 geometries before any repair click, actual stale Answer refusal and cancel plus original session restore; production publication copying unchanged afterward. Controller scope, not ordinary window/panel-toggle evidence.",
+        "companions": "CLI/daemon copied unchanged with paired .d fromf133, exact hashes above; no rebuild justified.",
+        "final_rust_delta_from_ff3b": "Only terminal_context_chrome.rs visibility, selected-context lifecycle label measured fitting in terminal_tab_strip.rs, and corresponding renderer assertion differ. No publication/controller/host/terminal transport/context changes; source13 delta + previous snapshots preserve exact lineage. Proof helpers reflect bounded scenario only.",
+        "model_and_initial_render": "Initial model/naming/registry/renderer receipts retained at qualified scopes; actual profile launch/restart/final-close tests pass. Final local width rounding proven by executed expected-failing negative, positive real shaped-cache and ordinary native Home glyph. Final close-prompt fitting proven by focused strengthened regression and final native refit.",
+        "prior_file_actions": "Accepted f133 shared host/browser/editor/native receipts unchanged at host/controller scopes; no rerun/requalification of full file-actions or terminal suite. Existing old f133 qualified-reuse receipt remains authoritative for its exact paths/limits.",
+        "prototype": "6780 final approved source changes only prose fromb405; qualified seven-frame b405 visual capture reuse is recorded by actual target review."
+      },
+      "retained_limits": [
+        "Native Wayland/WGPU Vulkan on an owned Weston input envelope; no KWin end-to-end, full platform, HUMAN or AT-SPI qualification. Actual620 is a compositor output constraint, not general desktop resize qualification.",
+        "Closed/maximized/cancel/stale publication behavior is covered by actual focused Runtime proof; ordinary View Maximize remains dat-terminal-maximize-menu-focus-5iu3.",
+        "dat-terminal-retired-exit-status-00ah: inherited global retirement notice can label a surviving live shell exited. Drain/lifecycle owners match HEAD, notice/control owners match f133. No idle lifecycle truthfulness PASS.",
+        "dat-terminal-profile-launch-protection-sgh9 remains a separate inherited host-protection intake; no new qualification or repair here.",
+        "C09_KEEP is a shell variable, not exported environment. Environment evidence is limited to tested authority/context keys. History marker retention is not a scrolled-viewport guarantee. Injected codex child title is not an interactive agent run.",
+        "DISPLAY serves the existing XWayland clipboard bridge; no native Wayland selection/clipboard qualification.",
+        "Explicit owned shell/PTY exits are verified. Final GUI SIGTERM is not ordinary window Close.",
+        "Failed compile/native attempts and the expected short-Home negative remain retained. Prior f133 convergence/Clippy, glyph and baseline source-health limits remain open without waiver.",
+        "Source remains uncommitted with the protected visual-owner landing gate unresolved. No task closure, production landing, successor authorization or S5A release is granted by this receipt."
+      ],
+      "ordinary_launcher_log": "ordinary-launch.log is mutable telemetry and excluded from immutable package hashes."
+    },
+    "historical_terminal_handoff_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "6780aaa270dd1666a5682da4b834cbed088e311bc68c8ac8ea87808a44429bab",
+      "capture_directory": ".datum/native-project-startup-repair/c09-terminal-handoff-prototype/final-b405d4",
+      "capture_source_sha256": "b405d481b6a8b7423c1d5e81d496691d6138aa16043daac8367b86427ff75b80",
+      "capture_result_sha256": "9a67b9126a63fc9e6a61783e23bff4128aefcdc04b8dd3698740b1ca3a65bfbd",
+      "frames": 7,
+      "copy_only_reuse": "Final6780 changes exactly one prose sentence about existing Ctrl+Shift+R; CSS and all seven frame bytes identical to b405d4. No native proof implied.",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_VISUAL_TARGET_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-terminal-handoff-prototype/final-copy/independent-review.json",
+        "sha256": "afb697acab71b653efce0c3b02c7d7dc38fadaf11223407ba71cb644cdc8b5b7"
+      },
+      "manager_disposition": "Final bounded target accepted; native translation released. Closed strip stays visible; compact close confirmation retains binding and directory stubs with existing TERMINATE/CANCEL. No new Restart control or hidden-context rule.",
+      "prior_file_action_source_unchanged": true,
+      "limits": [
+        "At620 launch directory can visibly read Started...; full semantic text is retained.",
+        "Ordinary native rendered/runtime/package acceptance remains separate."
+      ],
+      "status": "bounded_visual_target_accepted"
+    },
+    "path_assistance_refinement": {
+      "status": "bounded_qa_accepted_landed",
+      "marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-PATH-ASSISTANCE",
+      "owner_report": "QA confirms manifest activation; partial /home/bfadmin/Doc errors while typing. Requests adaptive filtering/find/Tab completion for easier New/Open.",
+      "authority": "docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md",
+      "behavior": "Shared read-only local matching-folder suggestions, literal case-insensitive substring/prefix ranking and exact spelling. Arrows select without changing Location; Tab or selection followed by Enter/double-click accepts explicitly. Exact UTF-8 common prefix spans all matches and never silently chooses an exact listed folder. Ordinary Tab/ShiftTab focus traversal remains. Partial/no-match input is neutral; explicit failed actions report truthfully.",
+      "safety": "Exact typed final candidate; no parent fallback, Project publication, host action or manifest activation from query state. Full-query/generation invalidation; unfiltered collision names; existing Units/host/admission/session guards.",
+      "frozen_previous_qa": "target/qa/manifest-open-94d59290",
+      "acceptance": "Accepted actual independent review10dac659 and manager receipt at target/qa/path-assistance-e12d125d/manager-review.json: four distinct focused passing cases,15 ordinary native New/Open frames and actual delivered launcher. PA-R1/PA-R2 resolved. Exact current source/package bindings and qualified limits are recorded in historical_path_assistance_qa_candidate; the correction below supersedes its exact-name completion boundary.",
+      "boundary": "Original refinement boundary (final authorized landing and closure are recorded in landing_verification): No recursive search/index/new dependencies/engine semantics/owner-data writes, protected landing bypass, task closure, S5A or successor release.",
+      "visual_target": {
+        "source": "docs/gui/prototypes/start-page-study.html",
+        "sha256": "85b2265862e6f8eb271c3508e01a55ac555855aa6f7aec2fc61aea5717295c31",
+        "capture_source_sha256": "4500e79e20b2462552fb2bb8b37e620c6ea359b2ea7cbffe9a68430b670202bd",
+        "capture_result": ".datum/native-project-startup-repair/c09-path-assistance-prototype/result.json",
+        "capture_result_sha256": "289757c87d9daa346b96d516f97fb35944735ad04aeb34e49e335874a5833ab4",
+        "frames": 10,
+        "copy_only_reuse": "All five captured frame HTML spans and all CSS identical in final85b2; explanatory keyboard/refusal text corrected. Prior terminal and28existing frames unchanged.",
+        "independent_review": {
+          "reviewer": "/root/closeout_review",
+          "receipt": ".datum/native-project-startup-repair/c09-path-assistance-prototype/independent-review.json",
+          "sha256": "f2edec1d433f6d1824ab2444d83f6530e2ea89aa5608a8ca4bf48ec99cade0f1",
+          "disposition": "BOUNDED_AUTHORITY_AND_VISUAL_TARGET_PASS"
+        },
+        "manager_disposition": "Accept actual bounded authority/visual review and release native implementation under current NPD-C09 grant; no native/runtime/new-package acceptance."
+      },
+      "resolved_findings": {
+        "PA-R1": "Existing announcement channel now deduplicates query plus selected exact folder/ordinal; Runtime reads the actual queue for Down/Down/Up and accepted-Location feedback. Test accessor relocation is test-only.",
+        "PA-R2": "Selected/unique full-folder accepts perform explicit scans; only nonterminal LCP extension remains assisted. Actual Runtime covers a disappeared New suggestion and file-replaced Open suggestion, preserving exact accepted Location and existing draft/Units/session state."
+      },
+      "successive_completion_correction": {
+        "status": "bounded_qa_accepted_landed",
+        "marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-SUCCESSIVE-COMPLETION",
+        "owner_report": "Documents completion works; next datum-ed completion is ineffective. Screenshot shows exact datum-eda without separator and its children.",
+        "diagnosis": "Existing exact directory immediately ends query mode; common-prefix extension is also prohibited if it equals an existing listed folder. With datum-eda,datum-eda-backups,datum-eda-workspaces, datum-ed cannot extend and exact datum-eda hides siblings.",
+        "manager_disposition": "Continue existing NPD-C09 grant: edited unslashed leaf remains a parent query regardless of exact existence, while explicit navigation/acceptance/separator enters the directory. LCP may extend to an existing exact name while remaining a query. Exact-ready unslashed Tab appends only separator. Preserve anchors/candidate/guards.",
+        "visual_scope": "Reuse existing query/accepted layouts; actual Claude owns explanatory copy reconciliation only. No new controls/styles.",
+        "acceptance": "Actual independent receipt c1d1f79db7fe74bc0b8756240e3780e0c8cb4468c9d5323e65d910dcdcdc56ce and appointed-manager receipt f6744f7a8c97bd4d13092c585ea77e3fcecf4ab54d3603215795966ff64f3709 accept successive-dee25e1e at the exact scope in qa_candidate: five focused passing cases, twelve ordinary native New/Open captures and actual delivered launcher. No mandatory findings; unaffected e12d evidence reused at its original scope.",
+        "frozen_previous_qa": "target/qa/path-assistance-e12d125d",
+        "boundary": "Original refinement boundary (final authorized landing and closure are recorded in landing_verification): Owner PID569410 untouched; owned scratch only. No new dependencies, engine change, protected gate bypass, task closure, S5A or successor release.",
+        "visual_target": {
+          "source": "docs/gui/prototypes/start-page-study.html",
+          "sha256": "b7193cd7c9ac270e3208f627a0e573642ff9acf4e1ee8f0d564464338510a11a",
+          "actual_claude_result": ".datum/native-project-startup-repair/c09-successive-completion-claude-copy-result.json",
+          "actual_claude_result_sha256": "db9b9f70d3bd768e8f371ab3e3f31f0f87030a498e9f6d577bea5fda7bb3f813",
+          "qualified_capture_reuse": "Manager verified34 .win spans and3style blocks against accepted4500 capture-source; independent review verified41 frame spans and3style blocks. Existing ten path-assistance captures retain their actual scope. Changed explanatory copy agrees with PM063; no new layout or capture claim.",
+          "review_status": "Actual independent bounded authority/copy and final source/runtime/rendered/package review PASS; explanatory-copy-only target b719 accepted with qualified capture reuse. Source landing remains blocked.",
+          "independent_review": {
+            "reviewer": "/root/closeout_review",
+            "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+            "receipt": ".datum/native-project-startup-repair/c09-successive-independent-final-review.json",
+            "sha256": "c1d1f79db7fe74bc0b8756240e3780e0c8cb4468c9d5323e65d910dcdcdc56ce",
+            "mandatory_findings": []
+          }
+        }
+      },
+      "initial_listing_and_prefix_correction": {
+        "status": "bounded_qa_accepted_landed",
+        "marker": "AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-INITIAL-PREFIX",
+        "owner_report": "Initial Home has no visible contents; dat Tab traverses Browse with four datum* prefixes plus plugdata substring.",
+        "diagnosis": "Shared init constructs collapsed state without starting a read; Tab computes across every substring match rather than using prefix priority.",
+        "manager_disposition": "Continue C09: visible initial exact directory read with initial focus preserved; selected suggestion wins, otherwise nonempty case-insensitive prefix group takes precedence for exact unique/common-prefix completion. Retain all rows and no-prefix fallback. Four owner prefix names share datum, not datum-.",
+        "acceptance": "Actual independent receipt 55ba7cbe57139cff28f5f52f5afeffe2d430982f63a3907862bc25e4153a0021 and appointed-manager receipt edf1e9428bf58edbd173989bf50ba3256c5ff09d6fc24c2f5b74af5ed99c11ec accept the exact package and scope recorded in qa_candidate. No mandatory findings; prior unaffected proof remains qualified reuse.",
+        "frozen_previous_qa": "target/qa/successive-dee25e1e",
+        "boundary": "Original refinement boundary (final authorized landing and closure are recorded in landing_verification): No owner data/process writes, new dependencies, engine semantics, protected gate bypass, closure, S5A or successor release.",
+        "implementation_release": "Released strict initial-directory Runtime translation is implemented, tested, independently reviewed and accepted for bounded QA at initial-prefix-050cdf8c. No source-landing or task-closure acceptance.",
+        "visual_target": {
+          "sha256": "cf6dc2b09a89f3cbdc1282f330ef533c26262aaf4d1c94b2c1eae34cfa4beef7",
+          "captured_source_sha256": "5a72e0248414e69b545999b58a61aa5d25d1837e552cca164a4e724a45969e71",
+          "capture_receipt": ".datum/native-project-startup-repair/c09-initial-prefix-prototype/attempt-2/result.json",
+          "capture_receipt_sha256": "8ef9a68e3ce49e7c8544272311a8c6dd8fc3f4d9f4c379dc3cb44ffd08302cae",
+          "copy_receipt": ".datum/native-project-startup-repair/c09-initial-prefix-claude-copy-result.json",
+          "copy_receipt_sha256": "14498dc3ec1a8d3a1754b403201d8fdbe44e42354a6e780456002dd78693a884",
+          "independent_review": {
+            "reviewer": "/root/closeout_review",
+            "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+            "receipt": ".datum/native-project-startup-repair/c09-initial-prefix-independent-final-review.json",
+            "sha256": "55ba7cbe57139cff28f5f52f5afeffe2d430982f63a3907862bc25e4153a0021",
+            "mandatory_findings": []
+          },
+          "reuse": "All 41 frame spans and 3 style blocks are byte-identical between captured source and final target; final change corrects only P-B/P-K explanatory sentences about plugdata disappearing on the new datum query. G-A example name does not authorize a runtime default name. Complete owning-route and 30 unchanged-frame reuse retained.",
+          "qualification": "First capture attempt exited 1 from a helper null lookup on an existing wrapper; retained as failed and excluded. Corrected read-only helper attempt 2 exited 0 with 21 images and no overflow. At the earlier target review this cleared target translation only. Subsequent independent review and manager acceptance in qa_candidate now cover the bounded native behavior and package; protected landing remains open.",
+          "source": "docs/gui/prototypes/start-page-study.html",
+          "review_status": "Actual independent bounded authority/target/source/runtime/rendered/package PASS. Twenty-one prototype captures and final copy-only reuse, fourteen native frames and actual launcher reviewed. Normal protected landing remains open."
+        },
+        "manager_review": {
+          "path": "target/qa/initial-prefix-050cdf8c/manager-review.json",
+          "sha256": "edf1e9428bf58edbd173989bf50ba3256c5ff09d6fc24c2f5b74af5ed99c11ec",
+          "disposition": "ACCEPT_BOUNDED_INITIAL_LISTING_PREFIX_QA_PACKAGE_LANDING_BLOCKED"
+        },
+        "owner_qa_confirmation": {
+          "recorded_at_utc": "2026-10-19T01:00:10.107214+00:00",
+          "source": "Owner conversation feedback following delivery of initial-prefix-050cdf8c",
+          "verbatim": "QA testing finds that the issues have been resolved and the open/new project is making more sense now.",
+          "delivered_package": "target/qa/initial-prefix-050cdf8c",
+          "outcome": "Owner reports the initial-directory display and Tab-completion issues resolved and the New/Open workflow clearer.",
+          "scope": "Hands-on owner feedback for these reported corrections. Existing independent review, immutable package receipts, landing status and broader qualification retain their recorded scopes."
+        }
+      }
+    },
+    "historical_manifest_activation_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "94d5929016fa415ec3564ffa60818b568877717613c6f79bee594e011cc0c735",
+      "source_files": 101,
+      "rust_source_files": 97,
+      "binary_hashes": {
+        "datum-gui": "8a1f61a7650c41b310300a469f27e0c1ea80e1e03f56157fbf295bd094dfc913",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "snapshot": "target/qa/manifest-open-94d59290",
+      "build_info_sha256": "e10fce4214a16a19a3c6afe59a89fc1c0ec5f0214616e43a360b2f920744961e",
+      "launch_command": "/home/bfadmin/Documents/datum-eda/target/qa/manifest-open-94d59290/launch.sh",
+      "launcher_sha256": "79b379f7611b6a6e18d7a038a5cf026ddf2f65c955c67aba96777dce8cc5df96",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-manifest-independent-final-review.json",
+        "sha256": "40daca8d2260b0aa5077a36ab0f23526c1a2c37ba18d69ddd4ee9af9f5acd5fc",
+        "mandatory_findings": []
+      },
+      "manager_review": {
+        "path": "target/qa/manifest-open-94d59290/manager-review.json",
+        "sha256": "fe605554300cd1b75d5e7d74eec245ac4abb496329a0813bef894aaccb73652f",
+        "disposition": "ACCEPT_BOUNDED_MANIFEST_ACTIVATION_QA_PACKAGE_LANDING_BLOCKED"
+      },
+      "implementer_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-manifest-final-handoff.json",
+        "sha256": "e9727667693786c3154d8d070739f11947ac791764e85600e65fa036191d29cd"
+      },
+      "native_evidence": {
+        "c09-manifest-wayland-attempt-2": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-manifest-wayland-attempt-2/result.json",
+            "sha256": "01c2f819347faccad1ddd098d2c404b4b5bb89d6087f1b260c15ee5d2bbb1418"
+          },
+          "commands_sha256": "29a2a9fd866d4805283588afc452fe2ee6711221a932e9222becb65af0f1ed74",
+          "qualification": "Actual pointer double-click, list Enter, interrupted click, malformed refusal and existing session preservation; 10 inspected frames. Open-only default-size workflow on owned GUI-created Project."
+        },
+        "c09-manifest-ordinary-launch-verification": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-manifest-ordinary-launch-verification/result.json",
+            "sha256": "becda9d98d0e736400f772ecbd925e10bb4c262623708ea9763f6911d36b5783"
+          },
+          "commands_sha256": "f3fc1c1b0beca534b1647125d0dc1779402efb201b9370e266c4c45b286c540f",
+          "qualification": "Actual delivered launcher from Home with native Wayland/Vulkan; visible Home shell, shell exit and PTY closure; final GUI SIGTERM."
+        }
+      },
+      "focused_tests": {
+        "passed_executions": 3,
+        "distinct_named_cases": 2,
+        "qualification": "Model 1 at unchanged checkpoint-1 model source; controller 1 at checkpoint 2 retained as earlier evidence; controller 2 at final checkpoint-3 Rust. Zero-test filtered binaries excluded."
+      },
+      "qualified_reuse": {
+        "compiled_source_manifest": ".datum/native-project-startup-repair/c09-manifest-source-checkpoint-3/source-pins.json",
+        "compiled_source_manifest_sha256": "ea04ce383178f78b0a0fee522938a11328983ccff593103c40364e328534fdc6",
+        "final_helper_change": "Only native QA helper row-ordinal lookup changed since compiled checkpoint3; all97 Rust source hashes identical, no rebuild justified.",
+        "prior_bounded_acceptance": {
+          "prior": "target/qa/terminal-handoff-ec2cd61b/manager-review.json",
+          "reason": "89/101 current sources identical to accepted ec2; unchanged terminal handoff/context/lifecycle, Open preparation/admission/publication/native-edit/session guards and companions reuse existing bounded proof",
+          "prior_handoff": ".datum/native-project-startup-repair/c09-terminal-handoff-final-handoff.json"
+        },
+        "prior_package_preservation": "Independent reviewer verified accepted ec2 source/archive/build/binaries/launcher unchanged; earlier f133 package remains frozen."
+      },
+      "retained_limits": [
+        "Uncommitted QA candidate only: protected visual-owner landing remains blocked; no production acceptance, task closure, S5A resumption or successor authorization.",
+        "Owned Weston input envelope, actual Datum Wayland/Vulkan; no KWin end-to-end, HUMAN, full accessibility/platform or native clipboard qualification.",
+        "This native workflow is default size and Open-only. Generic raw New/Open scenario label does not establish new Create proof; minimum prototype/prior controls evidence retains its own scope.",
+        "Existing path-based Open admission is unchanged: no discovery-time inode/UUID pin or guarantee against valid external replacement before preparation.",
+        "M_KEEP is a shell variable, not an exported environment claim; no fresh full agent, child-process or scrollback qualification.",
+        "Actual PTY exits are proved; final GUI SIGTERM is not ordinary native window Close evidence.",
+        "Prior ec2 Maximize, retired-exit status, custom-profile protection, glyph and inherited gate limitations remain; unrelated intake does not expand this repair.",
+        "Handoff controller wording now correctly identifies the four golden-fixture files. No stronger worker-completion timing claim is made from the retained-receipt control.",
+        "HEAD-relative source-health retains exactly the prior three failures: protocol pre_test_lines 2842 versus proposed 2887; render expanded_lines 3075 versus proposed 3177; render lib.rs 137 versus base 129. No new drift or waiver.",
+        "Project preservation is the executed source_files() hash set outside .datum plus .datum/journal and .datum/revision if present; no broader history qualification."
+      ],
+      "ordinary_launcher_log": "ordinary-launch.log is mutable telemetry and excluded from immutable package hashes."
+    },
+    "historical_manifest_activation_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "22e1edc62c33437ea94073f4459cb60ebf95075456956af819b9962b38ce3e59",
+      "capture_result": ".datum/native-project-startup-repair/c09-manifest-activation-prototype/result.json",
+      "capture_result_sha256": "fbb860870286fe82883b9521de9b9787b96d0970df3bab1f8ecaae2ccc66a295",
+      "frames": 10,
+      "independent_reviewer": "/root/closeout_review",
+      "manager_disposition": "Actual bounded authority/source/ten-frame review accepted. CSS and New/terminal frames unchanged; relevant Open copy reconciled across shared examples. Subsequent native/runtime/package acceptance is recorded in qa_candidate.",
+      "independent_review": {
+        "receipt": ".datum/native-project-startup-repair/c09-manifest-activation-prototype/independent-review.json",
+        "sha256": "f6e403f9009d83d7964d052487e974625abb2db197683408a09d25dc5298cc40",
+        "disposition": "BOUNDED_AUTHORITY_AND_VISUAL_TARGET_PASS"
+      },
+      "status": "bounded_visual_target_accepted"
+    },
+    "historical_path_assistance_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "e12d125d1112edab4e470bc0cb8b7835d9f232be5daa10225053d4f50d82b2b8",
+      "source_files": 109,
+      "rust_source_files": 104,
+      "binary_hashes": {
+        "datum-gui": "8f9aec9a34208ceeaad295d800ae89c1cfd15ef2d90cc65f16c58cb43fee6005",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "snapshot": "target/qa/path-assistance-e12d125d",
+      "build_info_sha256": "ef4d743463e7a2abf9afeb0f98c752498f5611d279812c4cfd37f438d4363bce",
+      "launch_command": "/home/bfadmin/Documents/datum-eda/target/qa/path-assistance-e12d125d/launch.sh",
+      "launcher_sha256": "79b379f7611b6a6e18d7a038a5cf026ddf2f65c955c67aba96777dce8cc5df96",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-path-assistance-independent-final-review.json",
+        "sha256": "10dac659904008e1e20540ab36e2ef70939499d666774588a836fa399a317036",
+        "mandatory_findings": []
+      },
+      "manager_review": {
+        "path": "target/qa/path-assistance-e12d125d/manager-review.json",
+        "sha256": "f1b8e8d3dabd2bd64b8e76b56033844f57db377fea8a1a3709ae4e732417284a",
+        "disposition": "ACCEPT_BOUNDED_PATH_ASSISTANCE_QA_PACKAGE_LANDING_BLOCKED"
+      },
+      "implementer_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-path-assistance-final-handoff.json",
+        "sha256": "ee898e6deec0748bddf5306e556b3e21104c6202989abf0716e16fb58d8c535e"
+      },
+      "native_evidence": {
+        "c09-path-assistance-wayland-attempt-2": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-path-assistance-wayland-attempt-2/result.json",
+            "sha256": "34939deb179a26679f2b0dcb91aba6993e5b46455496e0d56771f30519c35083"
+          },
+          "commands_sha256": "54de25b474945356c6038fc0b3fb57c1bd540980eb1f5524962149578fe3abd0",
+          "qualification": "Ordinary New/Open path assistance, explicit refusal, Create/Open, terminal preservation;15 inspected native frames. Actual620x620 New query capture only, not a full minimum-size workflow."
+        },
+        "c09-path-assistance-ordinary-launch-verification": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-path-assistance-ordinary-launch-verification/result.json",
+            "sha256": "e088ea20f88c55bf1094f2d0cb34e94e2b523b4e62c2cec5539d8ea5f04cc8dd"
+          },
+          "commands_sha256": "72382d3c4187bbbec3db029c0a5ec8aabeb31f992ab94377e9eb74c0e17588fd",
+          "qualification": "Actual pinned launcher from Home on native Wayland/Vulkan; visible Home shell, ordinary shell exit and PTY closure; final GUI SIGTERM."
+        }
+      },
+      "focused_tests": {
+        "passed_executions": 4,
+        "distinct_named_cases": 4,
+        "qualification": "Two model cases at unchanged checkpoint1 owners; one scanner case in otherwise failed batch2 at unchanged checkpoint4 owners; one corrected shared Runtime case at checkpoint5. Filtered zero-test binaries and failed attempts excluded."
+      },
+      "qualified_reuse": {
+        "compiled_source_manifest": ".datum/native-project-startup-repair/c09-path-assistance-source-checkpoint-5/source-pins.json",
+        "compiled_source_manifest_sha256": "02090163748482f2b1c90eb6d385cee8b07590a61e8acf49cb4059a6cc6ccf46",
+        "final_helper_change": "Only native QA helper dialog-resize ownership changed since checkpoint5 compilation; all104 Rust hashes identical. Unaccepted candidate renamed/reconciled after owned processes exited; no rebuild or duplicate binary cohort.",
+        "prior_bounded_acceptance": {
+          "accepted_prior": "target/qa/manifest-open-94d59290/manager-review.json",
+          "reason": "89 source files unchanged; existing terminal handoff/context/lifecycle, native edit, Open preparation/admission/publication, retained host receipt guards and companions reuse prior bounded accepted proof. New model/scanner/controller/native proof covers affected shared browser paths",
+          "prior_handoff": ".datum/native-project-startup-repair/c09-manifest-final-handoff.json"
+        },
+        "prior_package_preservation": "Independent reviewer reverified accepted94d manifest/build-info and three binaries unchanged; ec2/f133 retained frozen."
+      },
+      "retained_limits": [
+        "Bounded QA approval only. Source remains uncommitted; protected visual-owner landing, task closure, S5A/successor release and full qualification are not approved by this receipt.",
+        "Exact lambda/space path bytes and AT values pass; lambda renders the existing missing-glyph box in unchanged faces (dat-ui-filename-glyph-coverage-o53p). No blanket Unicode glyph PASS.",
+        "Owned nested Weston input envelope with Datum native Wayland/WGPU/Vulkan and existing XWayland clipboard bridge; not KWin end-to-end, native selection-transport or broad accessibility qualification.",
+        "Final GUI SIGTERM after ordinary shell exits is not ordinary native window Close. No agent, model, full history or broad compatibility qualification inferred.",
+        "Existing path-based Project admission retains namespace replacement limits; no discovery-time inode/UUID pinning was added.",
+        "Exactly three inherited HEAD source-health failures remain: protocol pre_test2842→2887, render expanded3075→3177, render lines137vs129. No ratchet waiver, protected-lane bypass or route-digest laundering.",
+        "Inherited terminal Maximize focus, retired-exit status and custom-profile protection intake retain their existing scope.",
+        "Project preservation is the executed five-file hash set for a fresh GUI-created Project; no nonempty journal/history qualification.",
+        "ordinary-launch.log is mutable telemetry and excluded from frozen receipts."
+      ],
+      "ordinary_launcher_log": "ordinary-launch.log is mutable telemetry and excluded from immutable package hashes."
+    },
+    "historical_path_assistance_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "85b2265862e6f8eb271c3508e01a55ac555855aa6f7aec2fc61aea5717295c31",
+      "capture_source_sha256": "4500e79e20b2462552fb2bb8b37e620c6ea359b2ea7cbffe9a68430b670202bd",
+      "capture_result": ".datum/native-project-startup-repair/c09-path-assistance-prototype/result.json",
+      "capture_result_sha256": "289757c87d9daa346b96d516f97fb35944735ad04aeb34e49e335874a5833ab4",
+      "frames": 10,
+      "copy_only_reuse": "All five captured frame HTML spans and all CSS identical in final85b2; explanatory keyboard/refusal text corrected. Prior terminal and28existing frames unchanged.",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "receipt": ".datum/native-project-startup-repair/c09-path-assistance-prototype/independent-review.json",
+        "sha256": "f2edec1d433f6d1824ab2444d83f6530e2ea89aa5608a8ca4bf48ec99cade0f1",
+        "disposition": "BOUNDED_AUTHORITY_AND_VISUAL_TARGET_PASS"
+      },
+      "manager_disposition": "Accept actual bounded authority/visual review and release native implementation under current NPD-C09 grant; no native/runtime/new-package acceptance.",
+      "status": "bounded_visual_target_accepted"
+    },
+    "historical_successive_completion_qa_candidate": {
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "source_commit": null,
+      "source_manifest_sha256": "dee25e1eb3d6eeef0dd78391234aa93d8ea6aee980512ca0d30c0d796bb04b21",
+      "source_files": 109,
+      "rust_source_files": 104,
+      "binary_hashes": {
+        "datum-gui": "cf7587434c4a65110610cc4ea24fa043e5b31a578c6a510bfb55d93673ef53fd",
+        "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+        "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+      },
+      "snapshot": "target/qa/successive-dee25e1e",
+      "build_info_sha256": "09260550d4fda17937caf828ebf78e98ea93e4224081a99029306009208b0495",
+      "launch_command": "/home/bfadmin/Documents/datum-eda/target/qa/successive-dee25e1e/launch.sh",
+      "launcher_sha256": "79b379f7611b6a6e18d7a038a5cf026ddf2f65c955c67aba96777dce8cc5df96",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-successive-independent-final-review.json",
+        "sha256": "c1d1f79db7fe74bc0b8756240e3780e0c8cb4468c9d5323e65d910dcdcdc56ce",
+        "mandatory_findings": []
+      },
+      "manager_review": {
+        "path": "target/qa/successive-dee25e1e/manager-review.json",
+        "sha256": "f6744f7a8c97bd4d13092c585ea77e3fcecf4ab54d3603215795966ff64f3709",
+        "disposition": "ACCEPT_BOUNDED_SUCCESSIVE_COMPLETION_QA_PACKAGE_LANDING_BLOCKED"
+      },
+      "implementer_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-successive-final-handoff.json",
+        "sha256": "2ebe5a9e9dbc577aa01f667a4d814b508e08969a42f01977ad216e871dc0a4f0"
+      },
+      "native_evidence": {
+        "c09-successive-wayland-attempt-1": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-successive-wayland-attempt-1/result.json",
+            "sha256": "d0da24cfc6ddb7f585996cf5f9b36578702f87f82ed1d0e1db1945b50a239910"
+          },
+          "commands_sha256": "2d7b9cca85976c426a830614a0178ed58278a6644d61ce5ab905fb47d892acc4",
+          "qualification": "Twelve inspected ordinary native frames. Both New/Open complete Documents then append datum-ed at the existing caret, retain three siblings after common-prefix extension to datum-eda, accept explicitly then append/complete a further child. Exact-ready unslashed Tab adds only the separator. Canonical Create/Open, five fresh Project hashes and original shell PID/S_KEEP preservation verified; all three owned PTYs exit."
+        },
+        "c09-successive-ordinary-launch-verification": {
+          "result": {
+            "path": ".datum/native-project-startup-repair/c09-successive-ordinary-launch-verification/result.json",
+            "sha256": "f37b752c0dc95df013273459b779362684abbadad9e1eb0395a836e835919ac2"
+          },
+          "commands_sha256": "59cac37c4a3733a3d1c605d1180d77c1d3029b34a11c62d37f9b3c104ecfae76",
+          "qualification": "One inspected actual delivered launcher frame; exact packaged executable, Home cwd and retained DISPLAY, native Wayland/Vulkan. Shell exit/PTY closure precedes final GUI SIGTERM."
+        }
+      },
+      "focused_tests": {
+        "passed_executions": 5,
+        "distinct_named_cases": 5,
+        "qualification": "Three model cases at checkpoint1 with all 104 Rust pins identical to final2; scanner and shared New/Open actual Runtime cases at checkpoint2. All five named cases pass; zero-test filtered binaries excluded."
+      },
+      "qualified_reuse": {
+        "prior_accepted": "target/qa/path-assistance-e12d125d/manager-review.json",
+        "prior_handoff": ".datum/native-project-startup-repair/c09-path-assistance-final-handoff.json",
+        "scope": "Unchanged matching/ranking, Unicode filename functional/glyph-limited scope, announcements, explicit refusal modes, 620 parent header/layout/scrolls, terminal lifecycle/dock/context and engine admission/source guards reused at prior actual scope. Old no-LCP-to-existing-folder expectations and existence-triggered query/listing boundary are superseded, not claimed current. Affected model/scanner/Runtime cases updated and rerun.",
+        "visual": "Finalb719 explanation-only prototype amendment; root verified34frame strings/3style blocks identical to accepted4500 capture source through85b2 reuse. No new layout/control or render campaign."
+      },
+      "retained_limits": [
+        "Bounded QA acceptance only: no source commit, production landing, task closure, successor authorization or S5A release. Protected visual-owner landing and three inherited HEAD source-health failures remain; no digest/marker/hook bypass.",
+        "Native Datum Wayland/WGPU Vulkan through an owned Weston compositor with X11 input/clipboard bridge; no full KWin desktop, native clipboard, full accessibility, agent, Unicode glyph or platform qualification.",
+        "Final GUI SIGTERM after shell exits is not ordinary window Close. Existing path-based admission and namespace-race limits remain; no discovery-time inode/byte pinning.",
+        "Known glyph-coverage intake dat-ui-filename-glyph-coverage-o53p remains; current successive fixture names are ASCII.",
+        "No reviewer commands targeted owner PID569410, owner data or shared build/process state. Accepted prior packages and existing dirty work were preserved.",
+        "Project preservation covers only the executed five-file fresh Project hash set; no journal or nonempty history qualification.",
+        "The three inherited HEAD source-health failures remain protocol pre_test 2842 versus 2887, render expanded 3075 versus 3177 and render root touched lines 137 versus 129. Ordinary source-health passes; no ratchet waiver.",
+        "Inherited terminal Maximize focus, retired-exit status and custom-profile protection intake retain their existing scope.",
+        "ordinary-launch.log is mutable telemetry and excluded from frozen receipts."
+      ],
+      "ordinary_launcher_log": "ordinary-launch.log is mutable telemetry and excluded from immutable package hashes."
+    },
+    "historical_successive_completion_visual_target": {
+      "source": "docs/gui/prototypes/start-page-study.html",
+      "sha256": "b7193cd7c9ac270e3208f627a0e573642ff9acf4e1ee8f0d564464338510a11a",
+      "actual_claude_result": ".datum/native-project-startup-repair/c09-successive-completion-claude-copy-result.json",
+      "actual_claude_result_sha256": "db9b9f70d3bd768e8f371ab3e3f31f0f87030a498e9f6d577bea5fda7bb3f813",
+      "qualified_capture_reuse": "Manager verified34 .win spans and3style blocks against accepted4500 capture-source; independent review verified41 frame spans and3style blocks. Existing ten path-assistance captures retain their actual scope. Changed explanatory copy agrees with PM063; no new layout or capture claim.",
+      "review_status": "Actual independent bounded authority/copy and final source/runtime/rendered/package review PASS; explanatory-copy-only target b719 accepted with qualified capture reuse. Source landing remains blocked.",
+      "independent_review": {
+        "reviewer": "/root/closeout_review",
+        "disposition": "BOUNDED_SOURCE_RUNTIME_RENDERED_PACKAGE_QA_PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-successive-independent-final-review.json",
+        "sha256": "c1d1f79db7fe74bc0b8756240e3780e0c8cb4468c9d5323e65d910dcdcdc56ce",
+        "mandatory_findings": []
+      }
+    },
+    "landing_authorization": {
+      "recorded_at_utc": "2026-10-19T01:06:25.943632+00:00",
+      "source": "Owner conversation after successful QA",
+      "verbatim": "we can now make changes/updates permanate to the code base and make the commit. the working tree is dirity and project needs to be pushed. after the push we can move on to the next logical development for the project",
+      "scope": "Land the reviewed C09 changes with required structural corrections and ordinary gates, reconcile task evidence, commit and push. Then consult the canonical roadmap for the next logical development. No bypass or full-qualification claim."
+    },
+    "landing_verification": {
+      "status": "bounded_delivery_accepted_source_and_visual_landed",
+      "base_commit": "9857969199fc16545d843ecb516bd6ad5a15fe2f",
+      "frozen_source_map": ".datum/native-project-startup-repair/c09-landing-health-source-checkpoint-2/source-pins.json",
+      "frozen_source_map_sha256": "4dc3c76c06cda6fbf74b3ba4ac788ea336014f1e6edcfe2aa22933e0dc714e65",
+      "frozen_source_files": 119,
+      "structural_change": "Shared shell/pane geometry now has a real normal layout owner with preserved public exports; five unchanged renderer test modules follow their implementation owners. Existing editor_commands extraction supplies the protocol ownership reduction.",
+      "before_after": {
+        "renderer_root_physical": [
+          129,
+          128
+        ],
+        "renderer_expanded": [
+          3177,
+          2657
+        ],
+        "protocol_production": [
+          2887,
+          2842
+        ],
+        "protocol_inline_tests": [
+          1705,
+          1705
+        ]
+      },
+      "policy": "Exact downward ledger ratchets only; source-health policy, normal budgets, exclusions and original comparison base are unchanged.",
+      "source_health": {
+        "checked_files": 3248,
+        "outcome": "PASS",
+        "path": ".datum/native-project-startup-repair/c09-landing-health-after-fix.json",
+        "sha256": "aa51497bbb93bb24a49adef70504fa8bd3bf5288f498d6385034375dfa68b4c9"
+      },
+      "policy_regressions": {
+        "passed": 13,
+        "log": ".datum/native-project-startup-repair/c09-landing-health-policy.log"
+      },
+      "terminal_boundary_correction": {
+        "reason": "The checker still expected accessibility refresh in its former parent after the reviewed projection extraction. It now requires parent module wiring and the child refresh/core-snapshot call.",
+        "regressions_passed": 16,
+        "current_boundary": "PASS",
+        "receipt": ".datum/native-project-startup-repair/c09-landing-terminal-gate-commands.json",
+        "retained_initial_failure": ".datum/native-project-startup-repair/c09-landing-boundaries-before.json"
+      },
+      "dependency_authority": "PASS; no new dependencies",
+      "independent_source_review": "Actual closeout_review inspected the frozen extraction and both final Python guard files without a mandatory finding. Completed matching build/native/rendered review is bound in independent_review.",
+      "runtime": "Matching GUI build and native Wayland/wgpu/Vulkan workflow pass. This is bounded regression evidence, not a full-suite, KWin, full AT, nonempty-history or ordinary window-Close qualification.",
+      "renderer_attempts": [
+        {
+          "outcome": "Compile failed before tests; private shell_layout hid existing internal cache users.",
+          "path": ".datum/native-project-startup-repair/c09-landing-health-render-tests-1.log",
+          "sha256": "215b02b4bc9b0009d1f4963844d7a1fd75eccedb2e8608ecb4a4112398b45c91"
+        },
+        {
+          "outcome": "34 passed, 1 failed. Independently dispositioned inherited sidebar ReviewAction assertion-scope defect; later terminal-screen assertions in that case were not reached.",
+          "intake": "dat-terminal-hit-sidebar-assertion-agz0",
+          "path": ".datum/native-project-startup-repair/c09-landing-health-render-tests-2.log",
+          "sha256": "af7d4a372eb2ae4988e45f0735447cb84e23038cf86f38fd01da5789ebf3ca7b"
+        }
+      ],
+      "visibility_correction": "Only shell_layout internal visibility changed from private to pub(crate), preserving existing crate::shell_layout cache paths. No public API or behavior change; failed checkpoint/compile retained.",
+      "gui_build": {
+        "outcome": "PASS",
+        "binary_sha256": "96535097bfc7ebf76323bc1a8b7dbe394b96c76c6f3964dbc70a29752bfa2b92",
+        "path": ".datum/native-project-startup-repair/c09-landing-health-gui-build-1.log",
+        "sha256": "fa04522378f6d8e24b00a3de1dad9a6174aab7aa359999189bc33fae469f1403"
+      },
+      "native": {
+        "outcome": "PASS for executed initial-prefix New/Open workflow",
+        "captures": 14,
+        "path": ".datum/native-project-startup-repair/c09-landing-health-native-attempt-1/result.json",
+        "sha256": "8b98d7c801d4304b3d07193f0f897bc2e6662bc68dc3e9fd6ba55ba0098d98e0"
+      },
+      "full_drift": {
+        "outcome": "FAIL",
+        "exit_code": 101,
+        "phase": "Workspace Clippy; 16 existing errors in eight engine files byte-identical to original base",
+        "intake": "dat-lk0l",
+        "unreached": "Later full-battery gates were not reached.",
+        "path": ".datum/native-project-startup-repair/c09-landing-health-full-drift-1.log",
+        "sha256": "ece5fd7876575e422e805fd7957d4498bcbd44bfc339381e90b05769940179b9"
+      },
+      "command_receipt": {
+        "path": ".datum/native-project-startup-repair/c09-landing-health-verification-commands.json",
+        "sha256": "38262a3996a6dbef50c6de04556e37f4803766765137c5cb2a770ca8e316804c"
+      },
+      "implementer_handoff": {
+        "path": ".datum/native-project-startup-repair/c09-landing-health-final-handoff.json",
+        "sha256": "ce7a8726672e181de1c3ff4467e8d89c1080aafd48697197561369d27c00c48b"
+      },
+      "manager_evidence_check": "Verified all 27 handoff artifact hashes, matching GUI, four representative native captures, and all 121 committed source blobs against independently reviewed pins. Independent reviewer inspected all 14 frames. Normal source commit hooks passed; index empty after commit.",
+      "source_commit": "35d5e014af701ea505dd0772156618cbb78d5627",
+      "independent_review": {
+        "path": ".datum/native-project-startup-repair/c09-landing-health-independent-final-review.json",
+        "sha256": "097810226e0e3847458adef3911769fa5d74f099bb6b1a34ad95f91237b092e5",
+        "disposition": "BOUNDED_SOURCE_NATIVE_RENDERED_LANDING_REVIEW_PASS",
+        "mandatory_findings": []
+      },
+      "manager_disposition": "ACCEPT_NPD_C09_BOUNDED_DELIVERY_AND_OBJECTIVE_CLOSURE",
+      "parity_reconciliation": "Only source_health_debt_surface inventory row updated: 66 metrics retained; digest now b85cb5acab8a814753d5567a0b3f0cc046d9c60d9b5f1b954fa7ef8b862aa483 for the two reviewed downward ceilings. No source-health policy prose or visual digest changed.",
+      "visual_commit": "93e94e0c4ce04bde7db381d8f1a994a7b15ff28f",
+      "route_review": {
+        "reviewer": "/root/closeout_review",
+        "basis": "Retained complete-route member pins in c09-terminal-handoff-authority-review.json, later actual initial-prefix authority/target reviews, current factual landing-record review and independent verification of authorized visual commit 93e94e0c. Every listed source and consumer is covered; no source build or runtime replay was needed for factual closure.",
+        "routes": [
+          "workflow-delivery-rollout",
+          "terminal-focus-incident",
+          "workspace-documentation-and-revision",
+          "terminal-redesign-research",
+          "prototype-editor-shell-and-panes",
+          "prototype-terminal"
+        ],
+        "mandatory_findings": [],
+        "classification_changes": false
+      },
+      "objective_acceptance": {
+        "manager": "codex-reorganization-manager-20261014",
+        "session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "disposition": "accept",
+        "marker": "<!-- EVIDENCE:NATIVE-PROJECT-DOORWAY:NPD-C09-LANDING-ACCEPTANCE -->",
+        "path": "docs/reviews/workflow-delivery-rollout/native-project-doorway.md",
+        "scope": "Complete owner-approved C09 designer behavior at the actual reviewed native/package/source scope. Retain all failed attempts, frozen QA cohorts and qualification limits. Close the doorway task; no S5A or successor authorization.",
+        "remote_publication": "Owner-authorized normal push is handled after the final local governance commit; this acceptance does not claim a completed push."
+      }
+    },
+    "implementation_landing_commit": "35d5e014af701ea505dd0772156618cbb78d5627",
+    "visual_landing_commit": "93e94e0c4ce04bde7db381d8f1a994a7b15ff28f"
   }
 }

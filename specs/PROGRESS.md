@@ -14,7 +14,7 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** NPD-C08 pre-Project terminal delivery is independently reviewed and manager-accepted at db81f734 with ordinary Wayland CLI creation/GUI Open, preserved sessions and pinned QA binaries. Bounded development availability restored; no successor selected or authorized, S5A held.
+**Explicit idle:** Native Project doorway C01-C09 is accepted and landed. No successor is selected or automatically authorized; S5A remains held.
 
 <details>
 <summary>Completed history (21 landed records)</summary>
@@ -230,8 +230,8 @@
 <summary>Completed history (1 landed records)</summary>
 
 - **Define and deliver the ordinary native GUI project startup doorway** (`NATIVE-PROJECT-DOORWAY`; `dat-native-project-startup-vrf`).
-   NPD-C08 accepted at db81f734: real pre-Project shell, canonical CLI creation and ordinary GUI adoption with preserved original processes, truthful scoped authority and pinned Wayland QA cohort. Historical C01-C07 and full qualification limits retained; S5A held. *state `landed`; authorization `none`.*
-   *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`, `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`.
+   Accepted C01-C09 native startup delivery: shared New/Open browsing, automatic Units, protected New Folder/Rename, preserved terminal panel and selected Project-root session, manifest activation and successive path completion. C09 implementation 35d5e014 and authorized visual commit 93e94e0c have actual independent review, owner QA and manager objective acceptance. Existing qualification defects and S5A hold remain separate; no successor selected. *state `landed`; authorization `none`.*
+   *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`, `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md`.
 
 </details>
 

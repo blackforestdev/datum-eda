@@ -70,6 +70,59 @@ operations is.
 | Export | `datum.artifact.generate` / `export_manufacturing_set`; CLI `project export-*` (gerber/drill/bom/pnp/manufacturing-set) | ENGINE-READY / GUI-BLOCKED (generation), LIVE-READ (inspect) |
 | Close | none (stateless CLI) | NOT-BUILT (needs GUI session model) |
 
+**NPD-C09 integrated dialog refinement (in progress):** Each New/Open action
+contains its complete form in one native dialog. The owner's subsequent QA
+requires a visible **Browse…** button beside **Location**. New/Open initially
+show and asynchronously read the resolved starting directory in the existing
+inline navigation, normally Home, while retaining their initial text-field
+focus. Browse focuses that same list; there is no separate picker page or
+Select/return step. A partial Location query
+also reveals the same inline list for the owner-requested PM063 path assistance.
+Whenever navigation is hidden it has no pointer, keyboard or accessibility targets. Typing Location
+must not require an extra Enter before Create/Open can validate it.
+New Location names the existing parent and visibly defaults **Folder name**
+from Project name with **Use project name** checked, permits an explicit override
+in the same dialog and previews the full destination. The owner's 2026-10-17
+QA correction removes Units radios and the eight-row review panel: New inherits
+Global defaults automatically, with later Units configuration in the existing
+Global/Project Preferences pages. The immutable eight-item genesis receipt and
+truthful source-error refusal/reread remain; no implicit Factory fallback.
+Folder-row selection is navigation only in New; entering it changes the parent.
+For ordinary directory listings, Open shows the selected directory, or the current
+directory when no folder is selected, and retains ordinary preparation, validation
+and publication. Suggestion highlights never replace the typed candidate. The
+owner's 2026-10-18 QA correction adds double-click or Enter on the exact regular
+`project.json` row in Open as a shortcut for that same Open command on the shown
+containing directory. Selection stays passive; folders navigate and arbitrary
+files/New Project do not activate Open. Popup and naming-editor Enter retain
+their existing actions. There is no separate Browse/Select/return step. Create
+and Open remain the sole Project publication commands; navigation preserves
+drafts, Units and sessions, and Cancel
+closes the action without Project publication. Owner-directed
+[PM063](../decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md) adds
+shared context-menu and naming controls plus a typed host New Folder/Rename
+service in both dialogs. Right-click/Menu/Shift+F10, F2 and Ctrl+Shift+N use the
+same controls. Completed host actions persist after Cancel; cancelled naming
+drafts write nothing. Protected Project/library/session paths are not relocated.
+Keyboard, accessibility, loading/error
+and ordinary Wayland behavior must be demonstrated
+before acceptance in the existing [native doorway record](../reviews/workflow-delivery-rollout/native-project-doorway.md#npd-c09--browse-for-new-and-open-project).
+The owner's subsequent 2026-10-18 QA requests shared local folder filtering/find
+and Tab completion. Edited unslashed final components retain matching siblings
+even when an exact directory exists; explicit acceptance, navigation or a trailing
+separator enters that directory. A shared-prefix extension remains a query until
+accepted. Partial Location queries show matching folders and neutral
+no-match feedback; the exact typed path remains the Create/Open candidate until
+completion is explicitly accepted. PM063 defines case-insensitive substring
+matching with prefix ranking, exact name preservation and prefix-priority Tab
+completion. An explicitly selected suggestion wins; otherwise a nonempty prefix
+group determines unique/common-prefix completion without substring-only blockers.
+Keep all displayed matches selectable and preserve the no-prefix fallback,
+ordinary focus traversal, arrow/Enter selection and stale-query rejection. Suggestions
+never supply host-action authority or invoke manifest Open. Existing normal
+folder navigation, explicit failure details and Project admission remain.
+These additions preserve both Project operations' engine authority.
+
 ### Edit
 | Menu item | Backing mechanism | Status |
 |---|---|---|

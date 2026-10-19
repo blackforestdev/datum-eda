@@ -147,6 +147,33 @@ rebinding their context; a newly bound session may use that Project's context.
 This owner-directed clarification is delivered through NPD-C08 in the existing
 native Project doorway record; it supersedes C07's no-session startup behavior.
 
+#### Project transition presentation — owner-approved 2026-10-18
+
+The owner approved the NPD-C09 QA correction after observing that Project
+creation collapsed the terminal panel and left its session context unclear.
+Successful ordinary New/Open selects the prepared Project terminal, launched
+in that Project's root with its own Project context. The panel retains its
+existing visibility, height and maximized/restored state; selecting a session
+does not transfer keyboard focus from the editor. A deliberately closed panel
+stays closed and shows the selected Project session when reopened.
+
+Existing independent or other-Project sessions retain their processes, cwd,
+environment, scrollback and identity. The transition sends no shell commands,
+restarts no existing session and asks no migration question. Cancellation,
+refusal and stale preparation preserve the prior session selection and panel.
+
+Default terminal labels identify Home/independent origin or the Project name.
+The selected session's chrome distinguishes `Independent shell` from its actual
+Project identity and presents its working directory. User-assigned tab names,
+child-program titles and lifecycle feedback remain usable without obscuring
+the session's binding. A reported cwd is distinct from Project identity; absent
+a valid current-directory report, label the known path as a launch directory.
+Changing directories never silently binds a session to a different Project.
+
+The native terminal specification and NPD-C09 doorway record own the matching
+interaction, visual and ordinary Wayland verification details. This amendment
+does not reopen terminal-emulation or agent interoperability qualification.
+
 Required variables for a Project-bound session:
 - `DATUM_PROJECT_ROOT`
 - `DATUM_PROJECT_ID`
