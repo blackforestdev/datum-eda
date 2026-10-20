@@ -10,6 +10,8 @@ from types import MethodType, SimpleNamespace as NS
 import unittest
 from PIL import Image
 from native_capture_pixels import require_native_capture_pixels
+from native_capture_presentation import PresentationReadiness
+from test_native_capture_readiness import REQUIREMENT, content, present, record, ledger
 
 SOURCE = Path(__file__).with_name('prove_native_project_startup_gui.py')
 
@@ -48,6 +50,7 @@ class CapturePresentationTests(unittest.TestCase):
         methods = [n for n in nodes.body if isinstance(n, ast.FunctionDef)
                    and n.name in {'focus', 'wait_presented', 'capture'}]
         namespace = {'Path': Path, 'json': json, 're': re, 'os': os,
+                     'PresentationReadiness': PresentationReadiness,
                      'subprocess': NS(run=run),
                      'focus_arguments': lambda window, env: ('focus', window),
                      'require_native_capture_pixels': require_native_capture_pixels}
@@ -86,6 +89,29 @@ class CapturePresentationTests(unittest.TestCase):
         self.assertEqual((receipt['damage'], receipt['presented_damage']), (1, 1))
         self.assertEqual([name for name, _ in self.calls], ['focus', 'screenshooter'])
         self.assertEqual(len(self.frames), 1)
+
+    def test_selected_capture_waits_for_same_frame_present_without_extra_wait(self):
+        self.focus_damage = False
+        self.log.write_text('surface identity window=WindowId(1)\n'
+                            'window event WindowId(1) focused true\n'
+                            + record('native redraw ledger ', ledger(18))
+                            + 'window event WindowId(1) mouse input Left Released\n'
+                            + record('native submitted content ', content()))
+        wait_calls = []
+        def wait(label, predicate):
+            wait_calls.append(label)
+            self.assertFalse(predicate())  # Older settled damage18 is insufficient.
+            self.assertFalse(any(name == 'screenshooter' for name, _ in self.calls))
+            with self.log.open('a') as out:
+                out.write(record('native_surface_lifecycle ', present()))
+                out.write(record('native redraw ledger ', ledger(20)))
+            self.assertFalse(predicate())  # Existing two-read stability remains.
+            return predicate()
+        self.qa.wait = wait
+        receipt = self.qa.capture('selected', 'owned-host', frame_requirement=REQUIREMENT)
+        self.assertEqual(receipt['content_presentation']['native_identity']['submission_receipt'], 18)
+        self.assertEqual(len(wait_calls), 1)
+        self.assertEqual([name for name, _ in self.calls], ['focus', 'screenshooter'])
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

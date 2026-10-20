@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from run_native_qa_isolated_input import focus_arguments, validate_input_display
 from native_capture_pixels import require_native_capture_pixels
+from native_capture_presentation import PresentationReadiness
 
 import argparse
 import json
@@ -208,40 +209,20 @@ class StartupQA:
         assert not any(n.get_name() in retired or n.get_role_name() in {"radio button", "radio group"}
                        for n in self.nodes()), "New exposes no Units configuration/review controls"
 
-    def wait_presented(self, after_damage=None, *, require_stable=True):
-        # Read-only presentation evidence: no private App action or bootstrap.
+    def wait_presented(self, after_damage=None, *, require_stable=True, frame_requirement=None):
+        readiness = PresentationReadiness(after_damage, require_stable=require_stable,
+                                          frame_requirement=frame_requirement)
         log = Path(self.env["DATUM_GUI_LOG"])
-        settled = None
         def current_frame():
-            nonlocal settled
-            text = log.read_text()
-            identities = re.findall(r"surface identity window=(WindowId\([0-9]+\))", text)
-            owned = any(n.get_role_name() == "dialog" for n in self.nodes())
-            host = identities[-1] if owned else identities[0]
-            native_focus = re.findall(r"window event (WindowId\([0-9]+\)) focused (true|false)", text)
-            if not native_focus or native_focus[-1] != (host, "true"):
-                settled = None
-                return False
-            records = [json.loads(line.split("native redraw ledger ", 1)[1])
-                       for line in text.splitlines() if "native redraw ledger " in line]
-            latest = next((r for r in reversed(records) if r["window"] == host), None)
-            if not latest or latest["damage"] != latest["presented_damage"] or latest["pending"] or latest["rendering"] is not None:
-                settled = None
-                return False
-            if after_damage is not None and latest["presented_damage"] <= after_damage:
-                settled = None
-                return False
-            identity = (host, latest["presented_damage"])
-            ready = not require_stable or settled == identity
-            settled = identity
-            return latest if ready else False
+            return readiness(log.read_text(), owned_dialog=any(
+                n.get_role_name() == "dialog" for n in self.nodes()))
         receipt = self.wait("current dialog/Main frame presented before native capture", current_frame)
         self.actions.append({"capture_presentation_barrier": receipt, "require_stable": require_stable})
         return receipt
 
-    def capture(self, label, window, *, require_stable=True):
+    def capture(self, label, window, *, require_stable=True, frame_requirement=None):
         self.focus(window)
-        receipt = self.wait_presented(require_stable=require_stable)
+        receipt = self.wait_presented(require_stable=require_stable, frame_requirement=frame_requirement)
         count = self.capture_counts.get(label, 0) + 1
         self.capture_counts[label] = count
         if count > 1:
