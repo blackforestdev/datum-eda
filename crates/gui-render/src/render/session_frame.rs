@@ -19,6 +19,19 @@ pub struct FramePlan {
 /// Only a successful full-frame encoder produces this presentation capability.
 pub struct SubmittedFrame(FramePlan);
 
+#[cfg(feature = "visual")]
+impl SubmittedFrame {
+    /// CPU text owned by the exact successfully encoded snapshot, not a newer
+    /// prepared scene or a projection recomputed from current model selection.
+    pub fn native_content_text(&self) -> Vec<crate::prepared_scene_access::NativeContentText> {
+        self.0.scene.native_content_text()
+    }
+
+    pub fn content_revision(&self) -> u64 {
+        self.0.receipt.revision()
+    }
+}
+
 impl RenderSession {
     #[allow(clippy::too_many_arguments)]
     pub fn prepare_frame(

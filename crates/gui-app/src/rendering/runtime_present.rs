@@ -185,6 +185,29 @@ impl Runtime {
         let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "frame present begin");
+        #[cfg(feature = "visual")]
+        append_gui_verbose_diagnostic_line(|| {
+            let text: Vec<_> = submitted
+                .native_content_text()
+                .iter()
+                .map(|r| {
+                    serde_json::json!({
+                "region":r.region,"text":r.text,
+                "spans":r.spans.iter().map(|s|serde_json::json!({"text":s.text,"color":s.color,
+                    "bold":s.bold,"italic":s.italic})).collect::<Vec<_>>(),
+                "position":r.position,"size":r.size,"face":r.face,"color":r.color,
+                "clip":r.clip,"layout_size":r.layout_size})
+                })
+                .collect();
+            format!(
+                "native submitted content {}",
+                serde_json::json!({
+                "native_identity":self.surface_transaction.frame_diagnostic_identity(&frame),
+                "content_revision":submitted.content_revision(),
+                "current_selection":self.native_content_subject(),"cpu_host_text":text,
+                "limits":"CPU text from the exact encoded SubmittedFrame; current_selection is separately observed model state. Submission is not GPU completion, compositor sampling, or visible-output acceptance."})
+            )
+        });
         let first_device_frame = !self.surface_transaction.has_presented();
         self.surface_transaction.present_rendered(
             frame,

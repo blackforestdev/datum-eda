@@ -13551,7 +13551,7 @@
       "recorded_at": "2026-10-20T20:56:59.562550+00:00",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "authority": "HISTORICAL initial SOURCE-preparation grant (2026-10-20, before source02/live02): Bounded ordinary Via center-in SOURCE preparation under retainedC04. Existing nativeWayland/Vulkan QA/presentation/capture owners, realfixedinput+typedidentity+appearance+AX/invariance and recorded-owner/shellcleanup; no customsampler, newproductsemantics, build/dependency/fixture or live release.",
-      "state": "RUNTIME02_FAILURE_RECORD_AND_RECOVERY_ACCEPTED_VISUAL_AND_WRAPPER_PREDICATES_FAILED",
+      "state": "RUNTIME03_FAILURE_RECORD_CPU_ASSOCIATION_AND_RECORDED_OWNER_CLEANUP_ACCEPTED_VISUAL_PREDICATE_FAILED",
       "candidate": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-01.json",
         "sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
@@ -13675,7 +13675,7 @@
           "provider_binary_pins": "PASS unchanged installednamedtool/Python/nativebinary hashes, nofetch/install/build"
         }
       },
-      "review_state": "CURRENT: source02/command02 independently accepted before the separately released exact-once execution. Runtime02 is independently accepted ONLY as faithful failure recording and qualified recorded-owner cleanup/separate recovery. Visual predicate FAIL and wrapper receipt FAIL remain; active continuation is read-only existing-log/source diagnosis. Helper ordering correction is not Via cause/all-asynchronous-race proof. No new live release, runtime success, renderedVia/fullC04/ordinaryClose/all-descendant/physicaldesktop/platform/HUMAN/C05/C06/successor acceptance.",
+      "review_state": "CURRENT: Both actual runtime03 independent reviews and appointed PM059 manager ACCEPT faithful VISUALFAIL recording, scoped immutable CPU-submission/application-present association and qualified recorded-owner cleanup only. Original selectedVia appearance remains FAIL and C04 remains open; cause unresolved. Exact03b command consumed ONCE, no retry/new live release. Source-only timing diagnosis establishes existing app-present barrier lacks compositor acknowledgement, and an older wl_surface.frame pacing callback cannot certify the selected commit/content. No API or positive control invented; no GPU/compositor/displayed-output/product/ordinaryClose/all-descendant/HUMAN/platform/C05/C06/successor acceptance.",
       "source01_disposition": {
         "candidate_sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
         "disposition": "REJECTED_UNEXECUTED OVC-R1; originalcloseoutPASS superseded by BLOCKED pending correction.",
@@ -13853,6 +13853,772 @@
           "turn_id": "01a15b19-8191-73f2-9b69-e3091a8f20e6",
           "recorded_at": "2026-10-20T21:15:35Z",
           "result": "Appointed PM059 manager accepts runtime4400aa59 ONLY as faithful FAILURE recording and qualified recorded-owner cleanup/recovery based on both actual reviewer receipts. Visual and wrapper receipt remain FAIL. Current wording correction/claim/export/focused metadata gates authorized; no frozen packet/raw-output/source/product/capture mutation or new live release. Root owns final review/commit/push; retained C04 read-only diagnosis continues."
+        }
+      },
+      "source03_diagnostic_correlation": {
+        "recorded_at": "2026-10-20T21:28:26Z",
+        "state": "SOURCE03B_ACCEPTED_COMMAND_CONSUMED_ONCE_RUNTIME03_SCOPED_FAILURE_RECORD_ACCEPTED_VISUALFAIL",
+        "authority": {
+          "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "turn_id": "01a15b2f-37b8-7f80-b271-60e3e0b01ad8",
+          "scope": "Appointed PM059 unchanged-scope retainedC04 continuation: minimal existing opt-in preparation/presentation-owner correlation, actual immutable SubmittedFrame CPU Inspector/footer text tied to retained Main acquisition/submission/present receipt; explicitly separate current model identity; runner receipt contract correction + meaningful actual consumer control; focused guarded serial test/build and reviewable fresh exact command. No live input/capture until actual independent final review and separate exact root release."
+        },
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-03b.json",
+          "sha256": "b71cf61e6414fd0a2dc942fccb498cbf6b06cbad95665b50f38805d3c7052320",
+          "bytes": 28452
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-03b.json",
+          "sha256": "ea3dc0bda7b13b22943167ef501810d25aa4c6693b414a5892fe87a5cf3c6ffd",
+          "bytes": 24357
+        },
+        "changed_sources": [
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/src/rendering/runtime_present.rs",
+            "sha256": "04bfc0241468e2dcd7f832874688eb1a4436d602c3b61b07df540cc167aebb83",
+            "bytes": 9784
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-app/src/rendering/native_render_target.rs",
+            "sha256": "dd2ebdb4fa4313a3049054d2d40b9096a0a7fa733e07071c67395958f1c6304e",
+            "bytes": 7563
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-render/src/render/session_frame.rs",
+            "sha256": "0fecfc6acd6a34d8abf9cd2fa66422b98ce3daedf086eca20a84186401cb5008",
+            "bytes": 9402
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-render/src/render/session_frame_tests.rs",
+            "sha256": "463f9ef1fc26bb00278ecf0a7b8983a0b71ba777c68a657133b44a9bed82ecea",
+            "bytes": 9285
+          }
+        ],
+        "built_binary": {
+          "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+          "sha256": "e8fbf217c8d7eca34859f3970a3ba39b8a9651c5d74d8f632087d256393618f9",
+          "bytes": 820199752
+        },
+        "native_binaries": {
+          "datum-gui": "e8fbf217c8d7eca34859f3970a3ba39b8a9651c5d74d8f632087d256393618f9",
+          "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+          "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+        },
+        "diagnostic_ownership": "SubmittedFrame owns the exact encoded FramePlan.scene; native_content_text reads its Host Inspector/footer text and content_revision reads its own receipt. It never reads newer renderer.prepared() or recomputes model labels. current_selection is explicitly separate current runtime state at pre-present diagnostic boundary. NativeSurfaceFrame retained lease supplies configuration/acquisition/submission receipt plus actual SurfaceTransaction host/window/queue epoch. Only matching existing native_surface_lifecycle reason=present establishes application presentation; no pixels or timing equivalence.",
+        "disabled_path": "New extraction, model serialization, string allocation and diagnostic I/O remain inside existing lazy DATUM_GUI_VERBOSE_LOG closure and visual cfg; no new runtime fields, callbacks, readbacks, timers, sleeps, frame requests, input or processes. One CPU record per existing submitted Main frame in finite owned run; no outcome search/retry.",
+        "receipt_correction": "Only runner02 daemon receipt key changes to wrapper-required daemons in runner03. Actual finally output passes actual wrapper consumer control; failed/missing/unverified owner cases refuse. Frozen02 unchanged.",
+        "controls": {
+          "receipt_green": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_via_ordinary_receipt_controls_03.py",
+            "sha256": "ea5790cdf4c789a333b41b29c17ceb8cb2db45c19b427e4a56c571f1831fbb91",
+            "bytes": 2823
+          },
+          "receipt_red": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_via_ordinary_receipt_controls_03_red.py",
+            "sha256": "4eb95201ad76906086f9b92216205ef0bcbe708c9ab9e5a2647bd4334ba93acf",
+            "bytes": 2823
+          },
+          "receipt_results": "Actual runner-finally+actual unchanged adapter/custody emits receipt consumed by real wrapper. RED4f7b1f frozen02 1failure/2pass; GREEN072738 source03 all3PASS. Missing/false/nonboolean required owners, outer owner false, IPCfalse refuse; actual daemon wait verification failure preserves FAIL/noIPCremoval and wrapper refuses. Only external process/IO fakes; no real native owners/resources.",
+          "rust_result": "Guarded serial77621 exit0/54e4bd: one meaningful submitted_content_observes_its_owned_scene_while_newer_preparation_differs PASS; app/test/integration targets compile with filters, not full-suite acceptance. Newer text/revision deliberately differ while retained old SubmittedFrame preserves exact Inspector/footer text and revision and completion leaves newer work pending. No GPU/native window/capture.",
+          "reused": "Prior unchanged shared capture ordering controls3, selected-boundary/budget/custody controls6 and actual cleanup-finally controls2 retained at their recorded scope; not rerun because runner03 changes only the receipt dictionary key."
+        },
+        "control_dependency_pins": [
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_contract_01.py",
+            "sha256": "4c8d9a66d74686e86604fcf8527b1ab2ccd45f623d68cb721a30d75fb47ddcd6",
+            "bytes": 4984
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_controller_04.py",
+            "sha256": "b7792eab803323732891c423a7330373e9adc6d42f9bd3d597b21c97c29d3f1c",
+            "bytes": 13131
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_failure_02.py",
+            "sha256": "2d08447ee1f573c78b3bf92d5eaa2b6e9d08bd2d94525e420adc5d0e4b58a1bd",
+            "bytes": 3312
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_qa_04.py",
+            "sha256": "c1a8b9b8e7a13028452e0fc9a37ec7a59a4cc9d84f52eee5b98c606ff347c48f",
+            "bytes": 11684
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_shell_04.py",
+            "sha256": "11d520c6785447fc48a37f251c99d10dee02a1332e406631f2c078738abadd17",
+            "bytes": 9640
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_shell_05.py",
+            "sha256": "2f4724fbc4d803cd69b2fb2d1bc3cb02a0d8c7338986fc571acf621da0182c16",
+            "bytes": 11497
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_shell_controls_04.py",
+            "sha256": "2181f7cc64d87dfecd35dc3303b3dd2b1b13e03c8fbaca32b6d9dbaa62b7e185",
+            "bytes": 13876
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_channel_03.py",
+            "sha256": "41d478ad812a23123b1beff77e9ad1962e6b12809e63b814bcbe93da11b7c3a3",
+            "bytes": 3751
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_contract_01.py",
+            "sha256": "84d5f112ea1874a2efec845dbab781453399c61fd8d53967b04a24762f2c6f88",
+            "bytes": 9516
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_controller_02.py",
+            "sha256": "acea9761b6f03f1f1cfddd28aebc5bfb960bf1ea7a0a0c8125272b769787fc6f",
+            "bytes": 25688
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_guardian_03.py",
+            "sha256": "e61d8b8bc2b46fac984db52ef5df67838762c9edbaff66aea669028fbbae322b",
+            "bytes": 8559
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_owners_02.py",
+            "sha256": "26b01b31021670a017050e6cbc0b117c3106da30aee0abd77868b57450b85cbf",
+            "bytes": 4230
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_via_ordinary_finally_controls_02.py",
+            "sha256": "93d0f527c19b8dabde906cbe5b82f71bd8b27af4693e6b886432336973cc026e",
+            "bytes": 6037
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_via_ordinary_qa_01.py",
+            "sha256": "f75086309a99d9ab3de52c0404104e605780f9b5539acbad339c2a579a8a4f81",
+            "bytes": 5328
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_via_ordinary_receipt_controls_03.py",
+            "sha256": "ea5790cdf4c789a333b41b29c17ceb8cb2db45c19b427e4a56c571f1831fbb91",
+            "bytes": 2823
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_via_ordinary_receipt_controls_03_red.py",
+            "sha256": "4eb95201ad76906086f9b92216205ef0bcbe708c9ab9e5a2647bd4334ba93acf",
+            "bytes": 2823
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_wsi_contract_02.py",
+            "sha256": "02d4c70f87ef5a46adb335b9ec5ba0b17838dfc4f510d741cea62bf7fadcc1ab",
+            "bytes": 11603
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_wsi_contract_04.py",
+            "sha256": "390d9680d2f6e5b81737b6503d7770bb7a9854bb7f64b229cd628dd5cdf68694",
+            "bytes": 17303
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_wsi_process_03.py",
+            "sha256": "a812bd6a445d1eebc99279b73e18bfc22cbe7ef25f522ad849d358f61d0a8643",
+            "bytes": 14192
+          }
+        ],
+        "control_dependency_limits": "Static local Python import closure for actual receipt controls; stdlib and actual scripts/run_native_qa_isolated_input.py consumer are existing owners (wrapper pinned in runtime manifest). Imported historical committed sampler/controller definitions are not activated or invoked by these controls; only actual finally, ordinary adapter/custody and resource-free external process/IO fakes are exercised. Existing frozen historical source bytes unchanged.",
+        "actual_checks": {
+          "initial_compile_failure": {
+            "session_id": 30935,
+            "exit_code": 101,
+            "chunks": [
+              "711dfc",
+              "da7bde",
+              "fee080",
+              "e7fd24"
+            ],
+            "cause": "Initial accessor incorrectly named NativeContentText at crate root; fixed to existing public prepared_scene_access type path before all frozen4source hashes. Actual failure retained, not a control RED."
+          },
+          "corrected_rust_test": {
+            "session_id": 77621,
+            "exit_code": 0,
+            "chunks": [
+              "af4ce6",
+              "54e4bd"
+            ]
+          },
+          "exact_build": {
+            "exit_code": 0,
+            "chunk": "9cc509"
+          },
+          "source_health": {
+            "exit_code": 0,
+            "chunk": "72b5d0",
+            "source_files": 3273
+          },
+          "exact_rustfmt": {
+            "exit_code": 0,
+            "chunk": "cb8125",
+            "files": 4
+          },
+          "cargo_resource_policy": {
+            "exit_code": 0,
+            "chunk": "ee3ba2"
+          },
+          "dependency_authority": {
+            "exit_code": 0,
+            "chunk": "b9decb"
+          },
+          "known_limits": "Guard reported retained target cache soft-limit warning; disk preflight admitted with146.6GiB free for exact build. No parallel proof builds or cache cleanup. Existing unrelated unused PanePlan::overflow warning retained; not fixed."
+        },
+        "actual_tool_receipts": [
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32744,
+            "timestamp": "2026-10-20T21:19:52.647Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b2f-5b47-7722-afe8-20283d4647a3",
+            "call_id": "call_c1b71f99e1fc4fa8a5cd47b0350b8d82",
+            "chunk_id": "6cbd16"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32792,
+            "timestamp": "2026-10-20T21:21:09.550Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b30-87ae-7a00-94d6-b3aa9a304685",
+            "call_id": "call_6089445ad9fd49f09257abbd2971e0b1",
+            "chunk_id": "4f7b1f"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32800,
+            "timestamp": "2026-10-20T21:21:13.419Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b30-96cb-7b91-8ff5-d69fe640cc3b",
+            "call_id": "call_085611ef13fe4b54b5cc6a9fed0032ee",
+            "chunk_id": "072738"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32806,
+            "timestamp": "2026-10-20T21:21:18.230Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b30-a996-76f1-8608-f07d0ce4d18a",
+            "call_id": "call_5f6a8c5f2ee941bda3f74e4514ae3f79",
+            "chunk_id": "711dfc"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32814,
+            "timestamp": "2026-10-20T21:21:24.589Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b30-c26d-7f00-b9e1-971d6d5f79ae",
+            "call_id": "call_37b84cd310da4377a095f55aad5a3771",
+            "chunk_id": "ee3ba2"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32864,
+            "timestamp": "2026-10-20T21:22:54.195Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b32-2073-7a81-b6af-8aecdef00019",
+            "call_id": "call_dc92b52393cc4339aa8fbfa4ca320a21",
+            "chunk_id": "d2f88b"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32873,
+            "timestamp": "2026-10-20T21:23:14.826Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b32-710a-74c3-87cb-f4b858bd117a",
+            "call_id": "call_d73e8ac84521499b90d7e3255662ecbe",
+            "chunk_id": "da7bde"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32880,
+            "timestamp": "2026-10-20T21:23:24.286Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b32-95fe-71a3-97b5-020fec3ac9ba",
+            "call_id": "call_b0da67305fef4173aee1adabe4b80bf5",
+            "chunk_id": "fee080"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32889,
+            "timestamp": "2026-10-20T21:23:29.539Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b32-aa83-7d53-a9c6-ebbf46fd21a0",
+            "call_id": "call_878bf883a8c7444f901e440270d92442",
+            "chunk_id": "cb8125"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32909,
+            "timestamp": "2026-10-20T21:24:08.507Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b33-42bb-7231-90b2-338f924efd7a",
+            "call_id": "call_03db09a70ed147539ce1795cf16aab46",
+            "chunk_id": "b9decb"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32930,
+            "timestamp": "2026-10-20T21:25:07.468Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b34-290c-7292-9d65-83aec59144b2",
+            "call_id": "call_99e099576b994e14a4aafb0e69ad2061",
+            "chunk_id": "e7fd24"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32934,
+            "timestamp": "2026-10-20T21:25:11.381Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b34-3855-77c2-a5ff-5b04049c87f3",
+            "call_id": "call_b0f4270635a64ef1ab85cbaa6e852302",
+            "chunk_id": "af4ce6"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32961,
+            "timestamp": "2026-10-20T21:26:07.498Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b35-138a-77e3-a9a4-46437a3d0195",
+            "call_id": "call_6b4c36ac48ce4b0a8f37bf0421ad9fd7",
+            "chunk_id": "54e4bd"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32961,
+            "timestamp": "2026-10-20T21:26:07.498Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b35-138a-77e3-a9a4-46437a3d0195",
+            "call_id": "call_6b4c36ac48ce4b0a8f37bf0421ad9fd7",
+            "chunk_id": "72b5d0"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 32966,
+            "timestamp": "2026-10-20T21:26:10.481Z",
+            "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+            "item_id": "ctco_01a15b35-1f31-7ba0-8dcd-f6d24532b152",
+            "call_id": "call_e6ede8e82798486081e5c69b75d68f1f",
+            "chunk_id": "9cc509"
+          }
+        ],
+        "actual_static_reviews": [
+          {
+            "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b33-ba84-7600-b05c-09d9894c6a87",
+            "result": "STATIC SOURCE-only PASS at four code hashes; no mandatory finding; runtime/test/build/finalpacket acceptance pending at that receipt."
+          },
+          {
+            "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b34-3482-70a1-9671-a01411b6a481",
+            "result": "Bounded STATIC runner/receipt-contract PASS, no static finding. Actual execution receipt verification/finalsource-binary-command/live acceptance pending at that receipt."
+          }
+        ],
+        "fresh_routes": [
+          "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-03",
+          "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-via-ordinary-03"
+        ],
+        "limits": "SOURCE/CONTROL/build evidence only; no run03 input/capture/live release. CPU content/submission correlation cannot manufacture visual PASS or establish GPU/compositor sampling/timing equivalence. Historical ordinary02 remains visualFAIL/wrapperreceiptFAIL, accepted faithful failure recording/qualified recovery only. Prior storage05 bounded selected-buffer proof remains instrumentation-limited. No new acceptance premise for exact GPU sampling causality; C04 remains open, no ordinaryClose/all-descendant/HUMAN/platform/C05/C06/successor credit.",
+        "review_state": "Actual final03b SOURCE/CONTROL/BUILD/BINARY/COMMAND acceptance and separate exact-once release remain recorded. Runtime03 then independently accepted ONLY as faithful VISUALFAIL recording/scoped CPU association/qualified recorded-owner cleanup; no renderedVia or feature/C04 acceptance. No new live/source change authorized by record acceptance.",
+        "superseded_metadata_candidate03": {
+          "candidate": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-03.json",
+            "sha256": "af7bbfeb81e12678f05d8bfde505585d696584502956e1520916a2783f9e0444",
+            "bytes": 20302
+          },
+          "manifest": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-03.json",
+            "sha256": "8a80902146629be3a1564ab1fe2ad9fe5b59dc6ee1cff9e5d76d7877bf53d127",
+            "bytes": 22315
+          },
+          "command": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-command-03.json",
+            "sha256": "18d6d32faf0f84dd0ca326f5516e5814272bc5dcb8da1f496bb182fa11f7f013",
+            "bytes": 5046
+          },
+          "actual_failed_audit_chunk": "9b7ae5",
+          "finding": "Copied source2 manifest row retained bytes23012 while source3 actually23013. Hash/path were correct; actual frozen files unchanged. Corrected only bytes and binding metadata in03a; no runtime/source/control/build change."
+        },
+        "actual_metadata_checks": {
+          "status": "PASS1b6963",
+          "render": "PASS1f3d07",
+          "traceability": "PASS04fb0a",
+          "diff": "PASS2eeb2e",
+          "failed_initial_bundle_audit": "FAIL9b7ae5 stale bytecount; preserved in superseded03",
+          "corrected_bundle_audit": "PASSd4858e63referencedrecords/23runtimepins/3binaries/3freshroutesabsent; source/binary/test unchanged",
+          "receipts": [
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33018,
+              "timestamp": "2026-10-20T21:28:44.915Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b37-7a73-76e2-a57a-c1ec85be22c9",
+              "call_id": "call_f01fff144c6e4c15b590dbc71a00442c",
+              "chunk_id": "1b6963"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33018,
+              "timestamp": "2026-10-20T21:28:44.915Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b37-7a73-76e2-a57a-c1ec85be22c9",
+              "call_id": "call_f01fff144c6e4c15b590dbc71a00442c",
+              "chunk_id": "1f3d07"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33018,
+              "timestamp": "2026-10-20T21:28:44.915Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b37-7a73-76e2-a57a-c1ec85be22c9",
+              "call_id": "call_f01fff144c6e4c15b590dbc71a00442c",
+              "chunk_id": "04fb0a"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33018,
+              "timestamp": "2026-10-20T21:28:44.915Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b37-7a73-76e2-a57a-c1ec85be22c9",
+              "call_id": "call_f01fff144c6e4c15b590dbc71a00442c",
+              "chunk_id": "2eeb2e"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33018,
+              "timestamp": "2026-10-20T21:28:44.915Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b37-7a73-76e2-a57a-c1ec85be22c9",
+              "call_id": "call_f01fff144c6e4c15b590dbc71a00442c",
+              "chunk_id": "9b7ae5"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33041,
+              "timestamp": "2026-10-20T21:29:39.445Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b38-4f75-7bb3-9368-7888f0d6e152",
+              "call_id": "call_79e38e33e5294144aadae25470fe65ae",
+              "chunk_id": "d4858e"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33074,
+              "timestamp": "2026-10-20T21:31:05.341Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b39-9efd-73b2-9383-06c0a6da5c41",
+              "call_id": "call_4ddc7b57882245799c3573b330e35e6b",
+              "chunk_id": "141569"
+            }
+          ],
+          "reuse": "Metadata03a/03b correct runner byte count, actual disabled-bytecode cache-prefix description, source01 superseded review chronology and bound artifact/current-proof references. Source/claim/Frontier/status/route authority unchanged since focused gates passed; reuse adequate gates and controls/build, with finalJSON/diff check. No live.",
+          "final03b_bundle_audit": "PASS14156966references/23runtimepins/3binaries/exactcommand binding; fresh03 run+transport absent. Actualconfigured02cache prefix absent at preparation and bytecode writes disabled. No claimed fresh03cache. Source01 initial closeoutPASS explicitly supersededOVC-R1BLOCKED. All03/03a frozen artifacts and failed9b7ae5 preserved; code/binary/test unchanged."
+        },
+        "python_cache_behavior": {
+          "source": "ordinary-via-source3.py:4-5",
+          "dont_write_bytecode": true,
+          "configured_prefix": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-python-cache-02",
+          "prefix_exists_at_preparation": false,
+          "writes": "Runner disables Python bytecode writes before importing local owners; configured02 prefix is inherited unchanged, not a fresh03 cache or output route. No cache contents changed or inspected. Fresh03 constraints apply to run and transport only."
+        },
+        "source01_current_disposition": "HISTORICAL initial closeout SOURCE/COMMAND PASS was explicitly superseded by actual closeout OVC-R1 BLOCKED; reorganization independently REVISE solely OVC-R1. Source01/command01 rejected and never executed/reopened. Original focused controls missed post-safe-exit preparation exception; source02 corrected actual finally through existing error collector and received both later actual source reviews before separately released failedruntime02. Prior initial PASS remains historical, not current source01 acceptance.",
+        "superseded_metadata_candidate03a": {
+          "candidate": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-03a.json",
+            "sha256": "20ff9300aa186697f4bb11038bfd07ffedb72ad9ee3b58995f0e90ed2396f37b",
+            "bytes": 26207
+          },
+          "manifest": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-03a.json",
+            "sha256": "8804e1aa58aa31410562e5613219cd65c948be7f0875fc98416b0bedd6b7f63b",
+            "bytes": 23086
+          },
+          "command": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-command-03a.json",
+            "sha256": "3ed62fe69fac899563e0ee48cb9d4c574f6c8d0e253af4c932d6730d8581c3cf",
+            "bytes": 5318
+          },
+          "actual_pin_audit": "PASSd4858e63references at structural hash/size scope only; did not compare configured Python cache behavior or source01 review chronology",
+          "finding": "Root found inherited hardcoded actual02 Python cache prefix differs from03metadata; bytecode writes disabled. Correct current prefix/no-write/fresh-route claims and source01 superseded review chronology; no source/binary/test/route/input/capture/cleanup changes."
+        },
+        "actual_final_reviews": [
+          {
+            "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b38-0f21-7643-b411-961a8e5eeb28",
+            "result": "SOURCE/CONTROL/BUILD/BINARY/COMMAND PASS final03b; actual independent receipt personally read. No mandatory findings, readiness only; live release/rendered acceptance separate."
+          },
+          {
+            "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b39-f242-7972-9b7b-a37e68ffd4b3",
+            "result": "Bounded SOURCE/COMMAND/evidence PASS final03b; actual independent receipt personally read. Pins/receipts/corrected metadata/finitebudget consistent; no mandatory findings. Runtime/pixel acceptance separate."
+          }
+        ],
+        "manager_acceptance_and_live_release": {
+          "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "recorded_at": "2026-10-20T21:34:15Z",
+          "candidate_sha256": "b71cf61e6414fd0a2dc942fccb498cbf6b06cbad95665b50f38805d3c7052320",
+          "exact_command_sha256": "4d7ec3a809c5253050a1699841186d1140c6191327841d9130e940fc6379067b",
+          "disposition": "Appointed PM059 manager accepts final03b SOURCE/CONTROL/BUILD/BINARY/COMMAND only based on both actual final reviewer PASS receipts; separately releases EXACT03b command ONCE under retainedC04 after recording/synchronized claim/export and fresh pin/input checks. Same6wheels/2fresh originalbaselineimages, then actual root personal baseline ADMIT before ONE fixed center-in gesture and sole releasedPNG. Existing cleanup/custody, no retry/retarget/newinput/capture/featureacceptance. Root owns personal image review/native admission; owner involvement not required."
+        },
+        "exact_command_consumed_once": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-command-03b.json",
+          "sha256": "4d7ec3a809c5253050a1699841186d1140c6191327841d9130e940fc6379067b",
+          "bytes": 6137
+        },
+        "runtime_candidate03": {
+          "packet": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-runtime-candidate-03.json",
+            "sha256": "01367b5f7261df82a9287f0a04bf208a8584ad11aad70db22ec9b937a152575d",
+            "bytes": 42248
+          },
+          "execution": {
+            "exec_session_id": 77515,
+            "launch_chunk": "dcd4d8",
+            "final_chunk": "9fdb7d",
+            "wrapper_exit_code": 0,
+            "child_exit_code": 0,
+            "raw_child_status": "CAPTURE_ONLY ordinary Via identity/AX/native composed PNG; actual independent pixel/behavior acceptance required, no fullC04/HUMAN",
+            "raw_transport_status": "CAPTURE_ONLY; child and owned transport stopped, independent review pending",
+            "counts": {
+              "wheel_events": 6,
+              "original_inner_compositor_PNGs": 3,
+              "fixed_center_in_gestures": 1,
+              "before_after_context_reads": 2,
+              "sampler_debugger_guardian_reader_processes": 0
+            }
+          },
+          "root_baseline_admission": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-03/baseline-admission.json",
+            "sha256": "cac1385572de7a23c2db80680042f0e0bca0c2dac6c9b432c8dab459649be770",
+            "bytes": 1170
+          },
+          "root_checkpoint": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-03/baseline-checkpoint.json",
+            "sha256": "145af5ecc41837e5844e22b7516c470c5b90b1cddbc85880a8a320aeac4aed40",
+            "bytes": 11081
+          },
+          "original_released": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-03/released.png",
+            "sha256": "f5c7ecfbb5111309457847fb2270667c14ae8f36a9fccfe98d5e42887e6a7629",
+            "bytes": 60380
+          },
+          "machine_scope": {
+            "typed_public_context": "Before/after exact typed1Via/scopevia/focusNone, full public standardSELECTED/activepane0/visibleunlocked1 and allowlisted ContextGet/configuration match through actual selected_boundary/qualify. Both compact diagnostic snapshots sequence8; complete_inspectionfalse is bounded log projection, not failed complete inspection. Raw receipt includes exactfull before/after public/context; no visual success follows.",
+            "before_after_selection_equal": true,
+            "before_after_context_equal": true,
+            "before_after_configuration_equal": true,
+            "released_frame": {
+              "attempts": 21,
+              "counts": {
+                "coalesced": 1,
+                "duplicate_tokens": 0,
+                "presentations": 20,
+                "received": 21,
+                "requested": 21,
+                "suppressed": 20
+              },
+              "damage": 22,
+              "device_generation": 1,
+              "host_generation": 1,
+              "pending": false,
+              "presented_damage": 22,
+              "ready": false,
+              "reason": "presented",
+              "rendering": null,
+              "window": "WindowId(94321702016960)"
+            }
+          },
+          "cpu_association": {
+            "raw_log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-03/via-diagnostic.log",
+              "sha256": "f681297b529c684e0bc07b04f755f6fb1336b7253a4361abcbc5bfa7a452e0f8",
+              "bytes": 348544
+            },
+            "submitted_content_line": 753,
+            "content_revision": 66,
+            "native_identity": {
+              "acquisition": 20,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 21,
+              "window": "WindowId(94321702016960)"
+            },
+            "matching_present_line": 754,
+            "matching_redraw_line": 756,
+            "released_ledger_damage": 22,
+            "association": "Actual immutable SubmittedFrame CPU Inspector Via: object 1/SELECTED/All1/Vias1, footercompound1, contentrevision66. Exact retained Mainhost1/queueepoch1/config1/acquisition20/submissionreceipt21 matches subsequent native_surface_lifecycle presentreceipt21, then ledgerdamage22/present22 equals released_capture barrier. current_selection is independently labeled model state, not the frame selection authority.",
+            "limits": "CPU scene text of the encoded frame plus application present receipt only, no GPU pixels/readback, compositor sampling/display identity, timing equivalence or causal/component fault attribution. Diagnostic output can affect scheduling. Existing capture barrier certifies application ledger state; missing output correspondence remains unresolved."
+          },
+          "rendered_failure": {
+            "result": "VISUALFAIL",
+            "worker_personally_viewed_original": true,
+            "root_personally_viewed_original_reported": true,
+            "root_observation_tool": "94429a",
+            "appearance": "Coherent upright original released image shows InspectorNoSelection/footerSelnone despite matching Via model/public/context and correctly selected submitted CPU content. Sameoriginalbytesf5c7ecfb as failed02; freshly captured03 originals, not artifact reuse.",
+            "no_credit": "No selectedVia appearance repair or C04/product/GPU/compositor/cause/ordinaryClose/physicaldesktop/HUMAN/platform acceptance."
+          },
+          "cleanup_receipts": {
+            "result": "ACCEPTED qualified recorded-owner cleanup receipt scope ONLY after both actual runtime reviews and appointed PM059 manager disposition; no all-descendant or ordinarywindowClose claim.",
+            "child_verified_owner_stops": {
+              "gui": true,
+              "daemons": true,
+              "shell_leader": true,
+              "Weston": true,
+              "clipboard": true
+            },
+            "child_cleanup_errors": [],
+            "wrapper_child_owner_stops_verified": true,
+            "wrapper_runtime_removed_after_owners_stop": true,
+            "wrapper_all_three_outer_roles_stopped": true,
+            "wrapper_cleanup_errors": [],
+            "root_manual_recovery_needed": false,
+            "ordinary_ui_shell_exit_PTY_closure": "Existing ordinary UI shell exit and observed PTY closure before owned GUI disposal.",
+            "shell_lifecycle_exit": {
+              "verified": true,
+              "identity": {
+                "pid": 1091120,
+                "uid": 1000,
+                "starttime": "46142080",
+                "ppid": 1091116,
+                "state": "S",
+                "exe": "/usr/bin/bash",
+                "sha256": "223fe8564b60636bc738b6178d3ba9a50ef7d791266b0efae6363bb716e4c47f"
+              },
+              "state": {
+                "pid": 1091120,
+                "original_starttime": "46142080",
+                "exited": true,
+                "absent": true,
+                "verified": true,
+                "error": null
+              },
+              "limits": "Authenticated recorded PTY session leader only; its exit does not prove every process in its group/session or every descendant exited. No ordinary shell/Close or historical HUP inference.",
+              "group_descendants_exit_verified": false,
+              "cleanup_blocker_reported": false,
+              "binding_error": null,
+              "gate_errors": [],
+              "first_verified_exit_at": 461481.119567258,
+              "original_cleanup_deadline": 461488.068937141,
+              "late_exit_verification": false,
+              "cleanup_failed": false
+            },
+            "limits": "Authenticated recorded owners only; shell leader exit does not establish every group/session member or descendant exited. No ordinary window Close claim."
+          },
+          "postrun": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-postrun-03.json",
+            "sha256": "8a35cba377ea78ab2c5c8b23f420d6de3c8a00239ae024097c23ccd5427f7df3",
+            "bytes": 15141
+          },
+          "preservation": "Actual8recordedPIDs/2IPC absent,23runtime sourcepins/3nativebinarypins match, all18 canonical files agree frozen/before/after-observation/after-teardown/current. NewGUIe8fbf217 diagnosticbuild explicitly distinct from historical02GUI1ee1dfa7; frozen02 runtime/source/rawfailure unchanged. Prior acceptedstorage05 bounded selectedbuffer evidence remains instrumentation-limited.",
+          "actual_tool_receipts": [
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33149,
+              "timestamp": "2026-10-20T21:34:16.134Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3c-8846-7a81-a5de-92070a5dab6c",
+              "call_id": "call_62b16c0a52be4d5ebdee07309333bffb",
+              "chunk_id": "7e017e"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33157,
+              "timestamp": "2026-10-20T21:34:38.537Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3c-dfc9-7060-b3bd-294dbe96a630",
+              "call_id": "call_8a83056de2cc4723b4c8598e4b6aa29f",
+              "chunk_id": "be3e24"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33157,
+              "timestamp": "2026-10-20T21:34:38.537Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3c-dfc9-7060-b3bd-294dbe96a630",
+              "call_id": "call_8a83056de2cc4723b4c8598e4b6aa29f",
+              "chunk_id": "87c970"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33161,
+              "timestamp": "2026-10-20T21:34:43.190Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3c-f1f6-7480-a217-524631a11169",
+              "call_id": "call_4176e1adc6fa46af972df87162714f09",
+              "chunk_id": "dcd4d8"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33176,
+              "timestamp": "2026-10-20T21:35:00.820Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3d-36d4-7520-bef6-a7cb167b59d4",
+              "call_id": "call_3816716f8957419389e766464f4c73ef",
+              "chunk_id": "78785c"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33220,
+              "timestamp": "2026-10-20T21:35:53.459Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3e-0473-7941-81a7-1cd08adcd0e9",
+              "call_id": "call_cccfc17d9ef846b1b7b17cb14191e7ad",
+              "chunk_id": "9fdb7d"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33220,
+              "timestamp": "2026-10-20T21:35:53.459Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3e-0473-7941-81a7-1cd08adcd0e9",
+              "call_id": "call_cccfc17d9ef846b1b7b17cb14191e7ad",
+              "chunk_id": "44f331"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33247,
+              "timestamp": "2026-10-20T21:36:20.210Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3e-6cf2-7e62-a68b-ca334fd6b7f3",
+              "call_id": "call_1e04f936bd3e418bb7bfd415098d930e",
+              "chunk_id": "7d8449"
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 33261,
+              "timestamp": "2026-10-20T21:36:57.703Z",
+              "turn_id": "01a15b2e-60d4-7c22-b07a-9d73a13f0e62",
+              "item_id": "ctco_01a15b3e-ff67-7f70-a5be-ac8b3a7c4c10",
+              "call_id": "call_90eafba74e8d4512b3abe46ac762c0d1",
+              "chunk_id": "28293d"
+            }
+          ],
+          "review_state": "ACCEPTED actual faithful VISUALFAIL recording, scoped CPU-submitted-content/application-present association and qualified recorded-owner cleanup ONLY by both actual independent reviews and appointed PM059 manager. Original visual predicate FAIL, C04open and causeunresolved. Frozenpacket/rawreceipts unchanged; no GPU/compositor/output/feature/all-descendant/ordinaryClose/HUMAN/platform/C05/C06/successor acceptance.",
+          "actual_final_reviews": [
+            {
+              "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+              "turn_id": "01a15b3f-4141-7160-8a42-fede20895335",
+              "result": "Faithful VISUALFAIL record accepted at frozen01367b5f; originalNoSelection/Selnone despite matching selectedCPU/applicationpresent receipts. Packet bindings/18maps/qualified recorded-owner cleanup verify, no record correction; no cause/GPU/output/C04PASS."
+            },
+            {
+              "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+              "turn_id": "01a15b3f-5a90-7741-928a-021efe1cab78",
+              "result": "PASS faithful runtime03 recording/qualified cleanup at frozen01367b5f. CPU/submission evidence valid; visualFAIL retained,8recordedowners/2IPC absent/18canonicalfiles unchanged. No cause/displayed-output/all-descendant/C04 acceptance."
+            }
+          ],
+          "manager_final_disposition": {
+            "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+            "recorded_at": "2026-10-20T21:43:21Z",
+            "candidate_sha256": "01367b5f7261df82a9287f0a04bf208a8584ad11aad70db22ec9b937a152575d",
+            "result": "Appointed PM059 root ACCEPTS faithful failure/scoped CPU association/qualified recorded-owner cleanup only based on both actual final runtime reviews. VISUALFAIL/C04open/causeunresolved remain. Existing source-only barrier finding accepted; do not invent positive control/API/product correction. Final metadata/JSON/diff and root normal-hook landing authorized. Root stages/commits/pushes seven owned paths; no further live or code change before root landing. No feature/ordinaryClose/all-descendant/HUMAN/platform/successor credit."
+          }
+        },
+        "bounded_readonly_timing_finding": {
+          "status": "Scoped source finding accepted by manager; no causal diagnosis or code/live fix",
+          "evidence": "native_surface_transaction.rs521\u2013533 calls pre_present_notify, SurfaceTexture.present and immediately records ownpresentreceipt. Existing local wgpu28 surface_texture.rs27\u201340 schedules/Waylandcommits; Vulkan swapchain/native.rs579\u2013602 returns vkQueuePresentKHR result. Winit0.30.13 window/mod.rs301 andwindow/state.rs253\u2013260 request callback but reuse older outstandingRequested state; eventloop486 uses callbackstate for redrawpacing. None is compositor displayed-content acknowledgement. StartupQA209\u2013237 only checks application ledger/focus/twoequalreads; capture240\u2013260 starts separate weston-screenshooter and getsPNG/exit with no Datum commit token.",
+          "limits": "GPUwatermark log761 andPNGfilemtime do not establish actualsampling time or selectedcontent consumed by compositor. Cross-client commit/repaint/capture ordering is a hypothesis; currentdata also cannot rule out staleGPU/composition content. No supportedAPI/readinesspositivecontrol assumed. No sleeps, frameforcing, extra input/capture or generic sampler/probe performed.",
+          "next_step": "After root landing, research whether deployed existing compositor/backend has a supported per-commit presentation acknowledgement exposed through already authorized API/owner, and whether existing screenshot protocol can join that identity. Reject older/unrelated/discarded acknowledgements in a meaningful control only if an actual API supports that contract. If unavailable, report concrete API/ownership gap to manager; no new dependency/product rule or invented positive control."
         }
       }
     }

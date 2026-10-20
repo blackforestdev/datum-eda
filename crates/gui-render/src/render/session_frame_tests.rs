@@ -50,6 +50,29 @@ fn completion_publishes_the_rendered_snapshot_while_newer_input_stays_pending() 
 }
 
 #[test]
+#[cfg(feature = "visual")]
+fn submitted_content_observes_its_owned_scene_while_newer_preparation_differs() {
+    let mut session = RenderSession::default();
+    prepare(&mut session, false);
+    let old = plan(&mut session, true);
+    let expected = old.scene.native_content_text();
+    assert!(expected.iter().any(|r| r.region == "inspector"));
+    assert!(expected.iter().any(|r| r.region == "footer"));
+    let old_revision = old.receipt.revision();
+    let submitted = SubmittedFrame(old);
+    prepare(&mut session, true);
+    for run in &mut session.prepared.as_mut().unwrap().text_runs {
+        run.text = "newer prepared content must not describe old submission".into();
+    }
+    assert_ne!(session.prepared().unwrap().native_content_text(), expected);
+    assert_ne!(session.content_revision(), old_revision);
+    assert_eq!(submitted.content_revision(), old_revision);
+    assert_eq!(submitted.native_content_text(), expected);
+    assert!(session.complete_submitted(submitted, 1, 2, 3, true));
+    assert!(session.has_pending_frame());
+}
+
+#[test]
 fn failed_or_capture_snapshot_restores_storage_without_native_publication() {
     let mut session = RenderSession::default();
     let hits = prepare(&mut session, true);

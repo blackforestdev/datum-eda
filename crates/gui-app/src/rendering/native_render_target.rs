@@ -140,6 +140,20 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
 // Shared presentation bridge for Main and every owned dialog kind. The receipt
 // captures the platform host, queue epoch and configured surface generation.
 impl SurfaceTransaction {
+    /// Read-only correlation of this retained acquisition and its submission.
+    /// This is not GPU completion, compositor sampling, or displayed-content proof.
+    #[cfg(feature = "visual")]
+    pub(crate) fn frame_diagnostic_identity(
+        &self,
+        frame: &NativeSurfaceFrame,
+    ) -> serde_json::Value {
+        let (epoch, _, _) = self.queue_owner.snapshot();
+        serde_json::json!({"window":format!("{:?}",self.window),"host":self.queue_host,
+            "queue_epoch":epoch,"configuration":frame.lease.generation,
+            "acquisition":frame.lease.active.acquired.get(),
+            "submission_receipt":frame.lease.submission_receipt})
+    }
+
     pub(crate) fn prepare_render_plan(
         &self,
         renderer: &mut datum_gui_render::Renderer,
