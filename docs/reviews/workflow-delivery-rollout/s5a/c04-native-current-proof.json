@@ -15509,5 +15509,227 @@
         }
       }
     }
+  },
+  "committed_buffer_source_preparation_20261020": {
+    "recorded_at": "2026-10-20T19:48:40.942019+00:00",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "authority": "Root grants SOURCE PREPARATION ONLY under retained same-C04 diagnostic scope, including CB-R1 simplified existing exact-owned GUI exit/disposition branch and exceptional failed-cleanup retention. Final independent source/command review and separate exact live release remain required. No source PASS/build/attach/run or new product criteria.",
+    "candidate01": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source-candidate-01.json",
+      "sha256": "9dd5e4660eae58e3092321419923fe25e1bc47f6442a56e8bc2b6149cc6f74e1",
+      "bytes": 16367,
+      "disposition": "REVISE CB-R1, immutable rejected source preparation; command01 never execute"
+    },
+    "candidate01_manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-manifest-01.json",
+      "sha256": "eb1d7d977aad6866ff07b1efed06997241306f9cb32b765e15dfa7f439e6f4ba",
+      "bytes": 36361
+    },
+    "candidate01_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-command-01.json",
+      "sha256": "d9d768794305091cdc75a146714c0f9ca7336e22cbe35d2499969626956ed144",
+      "bytes": 3511
+    },
+    "mandatory_finding": "CB-R1: observer catch/finally could kill owned Weston and return into GDB --batch while guardian GUI STOP debt/resume unresolved. Original72 controls passed only their scoped checks and lacked actual observer-finally teardown coverage; they did not supply source PASS.",
+    "manager_correction_disposition": "Register potential exposure before frozen notification; no extra CONT authority. Attempt existing abort_resume_first then existing GUI SIGTERM/wait6/SIGKILL/wait3 exit/disposition. Observer and parent independently verify retained GUI kernel identity/exit before kill/quit/batch return, stop_owned and return into wrapper cleanup. Bare running sample/EOF/timeout/resume receipt cannot authorize this simplified branch. Keep original10s measurement deadline and failure; existing bounded cleanup waits separate. If unverified, persist+notify CLEANUP_BLOCKED with original failure/residual owners/debt/IPC and retain cleanup-only custody awaiting manager disposition. No diagnostic retry, signal-budget renewal, new forced-exit path or custody transfer. External SIGKILL/OS failure outside controlled-path guarantee.",
+    "candidate02": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source-candidate-02.json",
+      "sha256": "561ffce0caedc79fad990f2b891883c3341914e82afc243bf3024c3d59902306",
+      "bytes": 18044
+    },
+    "manifest02": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-manifest-02.json",
+      "sha256": "85e2643ca11cd32f3e80506d8711d4190846bf1565e970f179125a62847fd558",
+      "bytes": 38041
+    },
+    "exact_future_command02": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-command-02.json",
+      "sha256": "64b56be7efe0490ca578a496091c93d33d66c62bbe3eec0b28ce1d5b622fb437",
+      "bytes": 4705
+    },
+    "state": "SOURCE02_PREPARATION_ACCEPTED_NO_LIVE_RELEASE",
+    "method": {
+      "intent": "Fresh nonce/expected Via/project/revision/binary intent installed in owned observer config BEFORE GUI/input; installed receipt checked. After released exact publicSELECTED/ContextGet/config barrier, controller sends fresh epoch plusGUIpidfd via retained-peer authenticated SOCK_SEQPACKET. Observer nonblocking intake before commit body, actual accepted-event ACK before eligible entry. No past stored commit qualifies.",
+      "selection": "First matching fresh-attachment Main commit after epoch only; typed WESTON_SURFACE_DIRTY_BUFFER distinguishes noattachment/oldstorage from detach. Noattachment stays unqualified; detach fails. Reject nested/later Main entry before matched Finish and ambiguous connection-local Main identity.",
+      "entry_return": "Freeze scalar live client/surface/resource/allocation generations and attributes/fence at entry. At matched same-thread typed Finish re-read actual surface.buffer_ref/resource/client,DMABUFtype/allocation/backpointers/attrs/fence and release/destroy state. Return enum recorded as change bits43/1,not success code. Missing/null/unavailable fields fail; no inferiorcalls or data writes.",
+      "read": "Owned Weston remains verified all-stop; guardian alone attempts GUI STOP with prior authenticated debt notice and all-thread ACK. Existing exact compositor pidfd_getfd/stat/linear reader, implicit prior-write readiness,READ_START/readonlymap/fullcopy/READ_END/unmap/close. Explicit acquire fence unsupported; no implicit fallback. Authenticated postread live revalidation before guardian snapshot completion and verified GUI/Weston resume.",
+      "failure": "CB-R1: potential STOP exposure registered before notification. On abnormal path existing abort_resume_first then existing exact-owned GUI TERM/wait6/SIGKILL/wait3 disposition; observer independently requires retained GUI pidfd verified exit before kill/quit/implicit --batch return, parent independently gates stop_owned AND runner/outer-wrapper return. Running threads, EOF, timeout or any epoch/resume receipt never authorize this simplified failure path. Unverified exit => persist+notify CLEANUP_BLOCKED with original failure, residual owners/debt/IPC, exceptional cleanup-only retention awaiting manager disposition. Not finite success; no new forced-exit mechanism, signal/retry budget, custody transfer or measurement deadline renewal. Existing bounded cleanup waits separate from immutable original10s. External SIGKILL/OS failure outside guarantee. Normal sealed snapshot retains full verified GUI/Weston resume and original deadline.",
+      "receipts": "Distinct committed-buffer frozen/read/sealed/receipt types; no old draw/repaint/capture transaction fields. Original raw plane retained; RGB conversion explicitly derived and undefinedX excluded. Old stopped diagnostics/releases remain unchanged."
+    },
+    "budget": "Fixed existing ordinary Wayland/Vulkan GUI+daemon/input envelope, outerWestonGL/privateXwayland/innerWestonGL and2persistent proto observers retained. Named persistent roles12: wrapper,case runner,outerWeston,Xwayland,innerWeston,GDB,GUI,daemon,innerproto,outerproto,guardian,reader; existing case GUI-owned PTY shell group remains one separately recorded lifecycle (13including shell). No additional terminal/session or observer.1scope-list; initial+zoom inner2originalPNG;6fixedwheels before root baseline review and1fixed center-in gesture after actualADMIT. ONE committed epoch/snapshot only; no released compositor screenshot/import/GLdraw wait. One rawXRGB8888 plane4333056B +explicitly derivedRGB3249792B, fixed1344x806, offset0/stride5376/modifierLINEAR0, no renderer copy/probe. Existing20s startup/read and600s baseline gate. Original10s from publishing selected epoch covers eligible entry/matched Finish,guardian STOP ACK,exactFD/readiness/READ_START/map/copy/READ_END/close,artifacts/postread binding and both verified resumes. Metadata transport/lifecycle polling only; no new native timer/event,extra input,forceddamage,retarget,recapture,retry,deadline reset,build/deps/product/backend change. CB-R1 failure-only owned GUI disposal and separate bounded cleanup waits; unverified disposal enters explicitly authorized cleanup-only retention (not finite diagnostic success), with no original measurement deadline renewal.",
+    "limits": "SOURCE PREPARATION ONLY, no live release. New question is only bytes of exact consumer-committed allocation observed after authenticated selected confirmation. First naturally occurring eligible Main fresh-attachment commit after epoch may include ordinary Console expiry; no selection-cause token/cause inferred. No rendered/sampled/displayed/physicaldesktop/native-export equivalence,product repair,C04/HUMAN/C05/C06/successor acceptance or scheduling/latency credit. No eligible commit within original deadline is measurement gap; no retroactive storage or injected event. Retained --outer-capture/debug exposes globals to endpoint clients;0700 does not exclude sameUID peers. GUI remains ordinary native Wayland/Vulkan, owned Weston passiveGDB/allstop/GUI guardian STOP makes timing observational.",
+    "actual_scoped_checks": {
+      "new_controls": 15,
+      "retargeted_current_controls": 38,
+      "reused_unchanged_guardian_reader_controls": 34,
+      "distinct_total": 87,
+      "current_executed": 53,
+      "result": "PASS offline controls only; no target launch/attach/signals/FD duplication/ioctls/mmap/build.",
+      "original_tool_receipts": [
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30847,
+          "timestamp": "2026-10-20T19:46:12.501Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15ad9-9995-7ef2-a4cf-a82ad6fbfcaf",
+          "call_id": "call_ff05c0df076c4131ba6d593de57b5e51",
+          "chunk_id": "50ef7f",
+          "exit_code": 0,
+          "tests": 14
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30868,
+          "timestamp": "2026-10-20T19:46:46.596Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15ada-1ec4-72f3-9390-89e4c9bb89c5",
+          "call_id": "call_c2d716c5da14489ba401093dabc5f9de",
+          "chunk_id": "c5cd47",
+          "exit_code": 0,
+          "tests": 38
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30875,
+          "timestamp": "2026-10-20T19:47:01.634Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15ada-5982-7d10-9c46-853477c51a4c",
+          "call_id": "call_531c106e74aa415f9927255f1daacfd3",
+          "chunk_id": "dddce8",
+          "exit_code": 0,
+          "tests": 15
+        }
+      ],
+      "retained_prior72_receipts": [
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30322,
+          "timestamp": "2026-10-20T19:09:35.416Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15ab8-1338-7731-830f-fe2ec0d01e90",
+          "call_id": "call_a0eb2c616b9a4ad086ce5cd37ecaaf5c",
+          "chunk_id": "8f6e51",
+          "exit_code": 0,
+          "tests": 23
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30322,
+          "timestamp": "2026-10-20T19:09:35.416Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15ab8-1338-7731-830f-fe2ec0d01e90",
+          "call_id": "call_a0eb2c616b9a4ad086ce5cd37ecaaf5c",
+          "chunk_id": "256701",
+          "exit_code": 0,
+          "tests": 11
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30361,
+          "timestamp": "2026-10-20T19:12:14.323Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15aba-7ff3-7403-bdaf-91ad1af21a4c",
+          "call_id": "call_3d31df6963864e338e7688ff3aca1ebb",
+          "chunk_id": "985046",
+          "exit_code": 0,
+          "tests": 23
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30385,
+          "timestamp": "2026-10-20T19:14:16.952Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15abc-5ef8-7760-8f4d-276c7df293c5",
+          "call_id": "call_df4d7b92785b48ae90310e9491eb6a0a",
+          "chunk_id": "117cd5",
+          "exit_code": 0,
+          "tests": 5
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30397,
+          "timestamp": "2026-10-20T19:15:18.956Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15abd-512c-7810-9722-a8fb7e537c32",
+          "call_id": "call_8a6b2f1dbff347a19453d3e4bd83b8cf",
+          "chunk_id": "2cd882",
+          "exit_code": 0,
+          "tests": 6
+        },
+        {
+          "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 30448,
+          "timestamp": "2026-10-20T19:19:07.901Z",
+          "turn_id": "01a15aa8-7b16-7d50-bca2-c7e11858062b",
+          "item_id": "ctco_01a15ac0-cf7c-7352-ba36-44c6ad596fc7",
+          "call_id": "call_5770aadbc807480d9ff8177a881ae4b4",
+          "chunk_id": "ecf58d",
+          "exit_code": 0,
+          "tests": 4
+        }
+      ],
+      "preliminary14": "50ef7f precedes added original-callback-failure coverage; 14 overlap final15, never added to distinct total.",
+      "coverage": "Actual launch catch/finally -> actual finalizer -> exit gate, including postSTOP error, EOF, expiry, foreign epoch/running rejection, no exposure/no CONT, retained exit fallback, mismatched identity/unverified state/observation failure, blocker persistence failure and original callback primary. Actual controller snapshot failure, actual QA.stop finally, actual QA.stop_owned gate, idempotent bounded GUI disposal and runner finally ordering. Mock retained owners only, no native runtime proof.",
+      "integrity": {
+        "runtime_python_source_count": 38,
+        "explicit_dynamic_seeds": [
+          "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source2.py",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_native_qa_isolated_input.py",
+          "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_gdb_02.py",
+          "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_guardian_host_01.py",
+          "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_reader_host_01.py"
+        ],
+        "source_pins_AST_local_closure": "PASS",
+        "provider_debug_header_pins": "PASS unchanged exact cached/installed pins; no fetch/install",
+        "fresh_paths_absent": [
+          "native-committed-buffer-02",
+          "isolated-committed-buffer-02",
+          "committed-buffer-python-cache-02"
+        ]
+      },
+      "historical_failures": "All prior failed diagnostic/runtime records and candidate01 REVISE retained. No failing controls occurred in this02 preparation. No passed-control claim supplies source/runtime acceptance."
+    },
+    "review_state": {
+      "source": "Actual closeout SOURCE/COMMAND PASS accepted by appointed manager",
+      "evidence": "Actual reorganization bounded EVIDENCE/OWNERSHIP/METADATA + command-binding PASS accepted by appointed manager",
+      "live_release": "NOT_GRANTED; await separate exact command02 message after publication",
+      "C04_complete": false
+    },
+    "preserved_history": "All older producer/consumer/host failures and exact stopped/host releases remain unchanged. Host02 finalized None/strict Main commit20->21 remains FAIL and accepted only faithful recording/cleanup. No product repair, C04/HUMAN/C05/C06/successor acceptance.",
+    "metadata_checks": {
+      "result": "PASS all four bounded metadata gates after source02 entry; no status advanced.",
+      "actual_chunks": {
+        "project_status_check": "c07596",
+        "project_status_check_render": "0a8c76",
+        "evidence_traceability": "f350ec",
+        "git_diff_check": "c4986b"
+      },
+      "reuse": "Existing source-health3272 proof adequate for unchanged tracked production helpers; ignored diagnostic Python and task evidence require no Cargo/source-health replay."
+    },
+    "actual_source02_reviews": {
+      "recorded_at": "2026-10-20T19:54:11.947210+00:00",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "candidate_sha256": "561ffce0caedc79fad990f2b891883c3341914e82afc243bf3024c3d59902306",
+      "manifest_sha256": "85e2643ca11cd32f3e80506d8711d4190846bf1565e970f179125a62847fd558",
+      "command_sha256": "64b56be7efe0490ca578a496091c93d33d66c62bbe3eec0b28ce1d5b622fb437",
+      "reviewed_metadata": {
+        "proof_sha256": "586717152ad3b84328a94fca166591aceb0fde8e08709fac3abed27ef9bb66c2",
+        "Frontier_sha256_prefix": "e331eceb",
+        "beads_sha256_prefix": "ddc2a85d"
+      },
+      "receipts": [
+        {
+          "reviewer_task": "/root/closeout_review",
+          "verdict": "SOURCE/COMMAND PASS",
+          "scope": "CB-R1 resolved including implicit GDB batch return and parent gates; required pinned Python-SHA argument verified; 119 references/82 files; 53 current plus34 reused=87 distinct controls; no mandatory findings."
+        },
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "verdict": "bounded EVIDENCE/OWNERSHIP/METADATA + command-binding PASS",
+          "scope": "142 references/92 unique;38 runtime modules/5 explicit dynamic seeds/100 edges;18 canonical inputs;53 current plus34 reused=87 distinct controls; preserved rejected01 and bounded metadata; no mandatory finding."
+        }
+      ],
+      "manager_disposition": "Root ACCEPTS SOURCE02 correction/preparation ONLY after both actual independent reviews. Frozen source/manifest/command unchanged. Record receipts, synchronize existing claim/export and bounded metadata, then root normal commit/push. Separate exact command02 live release will follow publication; command02 remains unexecuted until that explicit message. No task completion/new product/build/dependency/successor authority."
+    }
   }
 }
