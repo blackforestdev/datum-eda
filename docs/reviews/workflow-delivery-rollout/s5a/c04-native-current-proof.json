@@ -14100,7 +14100,7 @@
     },
     "tracked_progress_checkpoint": "Manager lands only existing .beads/issues.jsonl,specs/active_frontier.json and this proof. Frozen runtime04/source07 and historical failures unchanged; private scratch stays untracked. Follow-on read-only preserved-log comparison is authorized after handoff, with no tracked plan/code/runtime edits.",
     "consumer_source_preparation_20261020": {
-      "state": "Exact one consumer02 execution FAILED before baseline; both actual independent reviews and root bounded acceptance recorded for faithful failure/observed cleanup only. Later exact two-path IPC removal recorded separately. C04 remains open; no retry.",
+      "state": "Consumer runtime01/02 remain FAILED before baseline admission; source04 preparation frozen pending independent source/command review. No further live release; C04 open.",
       "recorded_at": "2026-10-20T09:53:04Z",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "manager_disposition": "PM059 manager explicitly authorized bounded consumer-only source preparation after actual closeout method support; no criterion waiver or new product scope.",
@@ -14114,9 +14114,9 @@
       "graph": "controller -> GDB -> owned inner Weston; normal GUI separately owned; one explicit guardian and one owned reader",
       "finite_budget": "Existing isolated envelope, one scope-list, six fixed wheels, one fixed post-ADMIT gesture, two native and two compositor PNGs plus two raw RGB memory artifacts; existing20/10/600s; zero retries.",
       "retained_requirements": "Authenticated retained pidfd ownership/generations/FD transfer; guardian alone STOPs at most once per phase after arming original capture deadline; all GUI threads stopped and exact prior writer readiness before READ START/copy/END. GUI stays stopped through matched repaint/capture in SAME10s bound, resumes before600s human gate. Independent guardian/watchdog/parent backup; actual primary and cleanup failures preserved.",
-      "pending_exact_seam": "Source02/command02 independently reviewed; command02 executed exactly once and FAILED before baseline. Both actual runtime reviews accepted faithful failure recording; appointed manager accepted only faithful failure/observed cleanup. Exact owned IPC removal completed separately. Main draw/output-capture association and backing-byte evidence remain unproven; cause unknown. No further live release or retry; C04 remains open.",
+      "pending_exact_seam": "Command03 release consumed by failed runtime02; faithful failure/cleanup receipt and bounded closeout recommendation recorded. Source04 typed protocol-less exclusion/failure-context preparation frozen for actual source/command review; no live release. Native baseline ordinal context only; no checkpoint/ADMIT/Main draw/backing-byte/output association or gesture; historical null callback/cause unknown.",
       "boundaries": "The single command02 live release was consumed by the failed run; no further live release or retry is authorized. No GL sampled-texel identity, exact native export join, cause/repair/equivalence, C04/C05/C06/HUMAN/D1/latency/Close/successor acceptance. No build/fetch/install/dependency/backend/input/timeout changes; frozen candidate, runtime packet, source and raw-log bytes remain immutable.",
-      "updated_at": "2026-10-20T15:43:24.177764+00:00",
+      "updated_at": "2026-10-20T16:18:52.362728+00:00",
       "source_candidate": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-source-candidate-02.json",
         "sha256": "6aec9d949ad0f0b0ed5db493b1f07247b88d5162018f7de7faac48b57ddd07a8",
@@ -14744,6 +14744,142 @@
           "/run/user/1000/nqi-6sd6ctz5"
         ],
         "scope": "Exact same-run cleanup after fresh exact-path/UID/mode/symlink/owner/FD/socket checks; six older FD-denial limits preserved. No runtime/raw receipt rewrite, signals, normal Close or successful diagnostic inferred."
+      },
+      "credential_reduction_source_preparation_20261020": {
+        "recorded_at": "2026-10-20T16:02:06.788592+00:00",
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "authority": "Manager accepted actual /root/closeout_review METHOD receipt and released generation-aware credential reduction SOURCE PREPARATION ONLY after read-only localization; claim/tracker synchronized to67ace2e9 before edits.",
+        "state": "Runtime02 remains FAILED; actual ownership review/root cleanup acceptance and closeout correction recommendation recorded. Owned IPC removed separately. Frozen source04 preparation pending actual source/command review; no live release.",
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-source-candidate-03.json",
+          "sha256": "a1b8a0046bac971a042103e1a14dc6958f818d5bc2abed215def48f060e8a6b6",
+          "bytes": 18318
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-manifest-03.json",
+          "sha256": "b8097923ab9cba23bb870c2c7fc4a6ae2ecc752fed2372fdff1a900d2b865704",
+          "bytes": 34682
+        },
+        "exact_future_command": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-command-03.json",
+          "sha256": "658d4ddd3d1bd2164598fb5fbedd46bb94fa9ad4707dfd7eac6d6256638318ca",
+          "bytes": 2383
+        },
+        "changed_runtime_count": 6,
+        "runtime_closure_count": 36,
+        "focused_controls": "22 actual callback controls with inert GDB adapters plus5 actual identity-join controls PASS; all36 source modules compile and local imports close. Prior installed GDB descriptor/type and unchanged owner/read/admission controls reused by exact AST/byte comparisons, not rerun. Preparation failures preserved in candidate.",
+        "method": "Only live matching creation generation and actually covered requested fields skip repeated return/read/check/write. First actual PID-return record immutable; new nullable fields need separately attributed actual returns; actual pending-create bridge and entry/return lifetime checks retained; destruction/reuse retires coverage; trace dependencies include supplemental returns.",
+        "limitations": "Skipped repeat consistency checks explicitly disclosed. Connection-time SO_PEERCRED does not prove current process/executable freshness; initial executable/hash and later pidfd/starttime/UID state retain existing scope. No demonstrated debugger timing cost, startup cause, speedup, repair or dynamic success.",
+        "preserved_runtime_sha256": "988d9d31a6a2d43656bb27511e3ac736bdf312e4fecfcc9b374d3c3e211cc801",
+        "retained_limits": "C04 remains open; no GL sampled texel/native exact-export/equivalence/qualification/C05/C06/HUMAN/D1/latency/Close/successor acceptance.",
+        "actual_source_command_reviews": {
+          "recorded_at": "2026-10-20T16:06:10.252897+00:00",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "candidate_sha256": "a1b8a0046bac971a042103e1a14dc6958f818d5bc2abed215def48f060e8a6b6",
+          "receipts": [
+            {
+              "reviewer_task": "/root/closeout_review",
+              "verdict": "bounded SOURCE/COMMAND PASS"
+            },
+            {
+              "reviewer_task": "/root/reorganization_review",
+              "verdict": "bounded SOURCE/COMMAND PASS"
+            }
+          ],
+          "creation_promotion_limit": "Actual address/event interval plus per-call pending/lifetime checks on the admitted route; no generic multithread token join.",
+          "limits": "Actual source/command review only, no dynamic success or qualification."
+        },
+        "live_release": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "released_at": "2026-10-20T16:06:10.252897+00:00",
+          "authority": "Exactly ONE execution of saved command03 after actual source/command reviews; same retained consumer/input/read/deadline/artifact budget.",
+          "command_sha256": "658d4ddd3d1bd2164598fb5fbedd46bb94fa9ad4707dfd7eac6d6256638318ca",
+          "manifest_sha256": "b8097923ab9cba23bb870c2c7fc4a6ae2ecc752fed2372fdff1a900d2b865704",
+          "execution_limit": 1,
+          "execution_state": "Executed exactly once; shell and QA child exit1, runtime/transport FAIL; Weston actual ExitedEvent exit_code null/killed, not reconstructed. Release consumed; no rerun.",
+          "admission": "Notify manager at actual baseline checkpoint; no gesture before actual three-view pixel review and exact hash-bound ADMIT.",
+          "failure": "Preserve raw failure/cleanup and freeze runtime packet; no retry/sweeps/build/dependency/product edits/repair or qualification claims."
+        },
+        "runtime_candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-runtime-candidate-02.json",
+          "sha256": "069bc32d48ba84767fbea8d577aaaf630368ab1fd0ad5b580f837cab3f764525",
+          "bytes": 28171,
+          "status": "FAIL_BEFORE_BASELINE_ADMISSION",
+          "primary": "ObservationError: null actual resource",
+          "localization": "Shared typed_resource null-pointer check; last events521 capture request,522 task created,523 repaint entry. Draw callback pre-Main resource resolution is a candidate, not uniquely identified by raw logs; failing callback/argument/stack not persisted. Cause unknown.",
+          "counts": {
+            "executions": 1,
+            "scope_lists": 1,
+            "wheel_events": 6,
+            "baseline_capture_attempts": 1,
+            "native_context_PNGs": 1,
+            "compositor_PNGs": 0,
+            "consumer_RGBs": 0,
+            "controlled_gestures": 0,
+            "trace_records": 523
+          },
+          "cleanup": "All14 recorded PIDs,17 Weston LWPs and4 credential PIDs absent in independent post-run check; no scoped argv/FD, run-interval survivor or UNIX socket matches. Six older denied FD scans retained as limits. Both IPC dirs retained; raw false flags and actual helper exit1/1 preserved; no STOP notice/debt/read results. Weston exit code unknown.",
+          "review_state": "Actual ownership review accepted faithful failed-run/cleanup recording. Actual closeout bounded correction recommendation accepted by root; no runtime PASS or qualification. Source04 preparation separately awaiting review.",
+          "limits": "Native baseline ordinal context only; no Main draw/backing-byte/output join, causal repair, equivalence, qualification, C04/C05/C06/HUMAN/D1/latency/Close/successor acceptance."
+        },
+        "actual_runtime_ownership_review": {
+          "recorded_at": "2026-10-20T16:14:00.410507+00:00",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "reviewer_task": "/root/reorganization_review",
+          "runtime_candidate_sha256": "069bc32d48ba84767fbea8d577aaaf630368ab1fd0ad5b580f837cab3f764525",
+          "verdict": "ACCEPT faithful failed-run/cleanup recording only",
+          "manager_disposition": "Root accepts actual reorganization_review runtime02 only as faithful failed-run/cleanup recording; authorizes exact two-path later removal after fresh checks. No product/qualification acceptance or retry."
+        },
+        "later_owned_IPC_removal": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-ipc-removal-02.json",
+          "sha256": "d3ffe5a3c689f5e2fabd7bb2b3aabd786e7037e5f20d632d6e7335aa5a0327a4",
+          "bytes": 3817,
+          "scope": "Only /run/user/1000/npd-wl-ucyxcgun inode1948 and /run/user/1000/nqi-65imrbva inode1943, UID1000 mode0700, no symlinks, after fresh known identity/FD/socket checks. Six preexisting denied-scan limits retained; no signals or credential/context bytes read. Raw failure/false flags unchanged."
+        },
+        "manager_native_baseline_inspection": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "PNG": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-diagnostic-02/native-content/baseline.png",
+            "sha256": "2f4c69de3a13cbd51c1724b8e28c95057a421e9039d7562224cb47abd5bd929c",
+            "bytes": 98188
+          },
+          "actual_inspection": "Root inspected readable Board/Schematic, S5A native core, No selection/Sel none.",
+          "limits": "Ordinal native context only. No three-view review, ADMIT, Main draw, coherent read or consumer/output association credit."
+        },
+        "actual_runtime_closeout_recommendation": {
+          "recorded_at": "2026-10-20T16:18:52.362728+00:00",
+          "reviewer_task": "/root/closeout_review",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "manager_disposition": "Root accepts actual bounded correction recommendation and releases SOURCE PREPARATION ONLY.",
+          "recommendation": "draw_local may skip only typed nonnull weston_surface with actual typed NULL wl_resource, address!=phase.surface and no S.commits entry. Known Main/observed committed NULL refuses; all nonnull validation retained. Add scoped excluded-node evidence and callback-local failure context.",
+          "historical_limit": "Pinned core curtain helper supports protocol-less nodes; actual runtime02 null callback/argument/cause still unknown. No runtime PASS or repair claim."
+        },
+        "protocol_less_source_preparation_20261020": {
+          "recorded_at": "2026-10-20T16:18:52.362728+00:00",
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "state": "Frozen SOURCE04 preparation only; unexecuted; actual independent source/command review and separate live release required.",
+          "candidate": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-source-candidate-04.json",
+            "sha256": "af401f5825361bdf9d5ac70836fd1998d5f6f180d69da2e00b6c6635edca566a",
+            "bytes": 15858
+          },
+          "manifest": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-manifest-04.json",
+            "sha256": "d7e8bb18b7e4a9f4fa29f7b76f48084fc54e70020f6a6b844e7dc283f8214d4c",
+            "bytes": 35923
+          },
+          "exact_future_command": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-command-04.json",
+            "sha256": "6b38eedf3ec6dfaf1c5b944fad2691983cde9d3ecec35462e4bafd5b90ca4b4c",
+            "bytes": 2402
+          },
+          "changed_runtime_count": 5,
+          "runtime_closure_count": 36,
+          "focused_controls": "19 actual callback/resource/failure-context controls with inert typed GDB adapters PASS; syntax/import closure36 PASS. Prior credential27/identity/owner/read/admission/deadline controls reused by exact unchanged AST/byte checks. Failed fixture preparation retained.",
+          "scope": "Skip only admitted typed protocol-less/unselected/uncommitted surfaces; recheck every invocation, one event per actual surface per phase with repeat counts in failure context. Nonnull validation and selected NULL buffer refusal retained; callback context records observed primitive addresses/stage and preserves primary on context persistence failure.",
+          "preserved": "Source03 and runtime01/02 packets and all raw artifacts unchanged. Future runtime03/output03 absent.",
+          "limits": "No historical cause attribution, live run, startup/capture repair, qualification, acceptance, C04/C05/C06/HUMAN/D1/latency/Close/successor grant."
+        }
       }
     }
   }
