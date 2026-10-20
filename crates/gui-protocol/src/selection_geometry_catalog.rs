@@ -181,6 +181,11 @@ pub fn qualification_catalog(
                     }
                     Some(QualificationGeometry::Anchors(anchors))
                 }
+                // Bindings already collapse owned Pads to their Footprint.
+                // An independent source Pad uses the one-anchor family.
+                Class::Pad => Some(QualificationGeometry::Anchors(vec![point(
+                    source(&board, "pads", &id)?.get("position")?,
+                )?])),
                 Class::Track => {
                     let track = source(&board, "tracks", &id)?;
                     let mut anchors = vec![point(track.get("from")?)?, point(track.get("to")?)?];

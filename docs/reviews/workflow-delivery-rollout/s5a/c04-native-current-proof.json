@@ -12050,7 +12050,7 @@
     "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
   },
   "current_readiness_reconciliation_20261019": {
-    "status": "Finite current-evidence reconciliation under appointed SAME-C04 manager. Published canonical Proposal repair remains accepted; horizontal-Track V5 hardware zoom case has actual independent source/pixel/finalcombined PASS and bounded manager acceptance for normal-hook landing. Historical L8/N08/N01/N03 and large-derived audits retain exact scopes. No software-ready/fullV5/fullC04/HUMAN/successor disposition.",
+    "status": "Finite current-evidence reconciliation under the appointed SAME-C04 manager. Published Proposal repair and bounded horizontal-Track V5 remain accepted. A3 is now satisfied at its stated machine-assertion scope after actual independent source/CPU/native/pixel/final combined PASS and manager acceptance; canonical standalone Pad repair is authorized for normal main landing. Historical L8/N08/N01/N03 and large-derived audits retain their exact scopes. No full V5/C04/HUMAN or successor disposition.",
     "authority": {
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
@@ -12127,6 +12127,14 @@
         "accepted_binding": "Actual closeout_review and appointed-manager bounded acceptance: historical live proof file6fc8540501992193a45092d6e636499bcc76f59df1f6e3504793e6e0d930e459 byte-exact delivered2a3bcef84724ca6661c5fd33dea30c65ad2404e3; result61aecddb09cee415fd7cb86a58a2100880396ce5da6873ed1161448d3887170e. Eight observations preserve fullRun5/identity/focus/revision; duplicate resolvingSchematic panes retain independent zoom/restore and canonical/history invariance.",
         "current_source": "Mapped source5682828d->d7f7d70a; duplicate test5ffbbaca6dd6ca095d85cfbf7fc8e2d69dc56803b66c61fd3615fa3daf3b46a3 remains exact. Schematic chrome unchanged; later Library branches do not change this path.",
         "limit": "Historical X11/Vulkan accepted receipt reuse only; archive unavailable. No fresh pixels/Wayland, active-gesture-close/fullN08/HUMAN upgrade or duplicate rerun."
+      },
+      {
+        "predicates": "A3 independent complete-set rectangle and concave-lasso oracle on the existing 100,000-object fixture, plus governed class controls and standalone Pad center repair.",
+        "receipts": [
+          "native_a3_region_oracle_pad_center_20261019"
+        ],
+        "accepted_binding": "Actual /root/closeout_review final combined PASS at candidate f07c23e9c81637a3e6aed20f3d18f738161062e635b0371b08b4640f95dcc4c3 and appointed-manager acceptance. Two successful oracle tests / 20 complete-set comparisons, parent control and matching native02.",
+        "limit": "A3 machine assertion satisfied; native Pad receipt is finite. No general narrow-cue visibility, ordinary window-Close, full C04/HUMAN or successor acceptance."
       }
     ],
     "unresolved_evidence_questions": [
@@ -12240,13 +12248,14 @@
           "shared_cue_budget_correction_20261011",
           "dense_warm_reopen_20261011",
           "maximal_channel_collision_20261012",
-          "hardware_gpu_v5_track_zoom_20261019"
+          "hardware_gpu_v5_track_zoom_20261019",
+          "native_a3_region_oracle_pad_center_20261019"
         ],
-        "next": "Reuse the separate accepted assertion audit and current bounded V5 case; retain A3/V3 exact unresolved receipt predicates. Bind only required scope with actual evidence/disposition; no blanket retest, native-counter requirement, Board timing threshold or duplicate38-assertion audit.",
+        "next": "Reuse the accepted separate assertion audit, A3 complete-set oracle/Pad repair receipt and bounded V5 case. V3 successful-export byte comparison remains unbound. No blanket retest, invented mixed 100k requirement, native-counter campaign, Board timing threshold or duplicate 38-assertion audit.",
         "closure": "All38 required assertions have honest adequate accepted evidence/disposition; unresolved exact controls remain named. R1-R4 are future S5B, not part of38.",
         "separate_actual_audit": "Appointed manager relayed independent closeout_review audit: D1 exact65536/65537 whole-pane union/warm capacity and D2 actual100007 Board collision already bind through accepted shared_cue_budget_correction_20261011/dense_warm_reopen_20261011/maximal_channel_collision_20261012 scopes. No new counter/latency campaign is inferred; Board timing needs existing-receipt lookup, not invented thresholds.",
         "concrete_remaining_bindings": [
-          "A3:100k per-class rectangle+lasso oracle.",
+          "A3: SATISFIED at the stated machine-assertion scope by native_a3_region_oracle_pad_center_20261019, actual /root/closeout_review final combined PASS and appointed-manager acceptance. Dense oracle reuse and separate governed class controls are adequate; broader native/HUMAN/C04 qualification is not inferred.",
           "V3:actual successful export byte comparison.",
           "V5:current measured hardware horizontal-Track case has actual source/pixel CLEAR; broader fullV5/native/HUMAN qualification is not claimed or automatically made a Cartesian class/angle replay queue."
         ]
@@ -12911,6 +12920,79 @@
       "Only horizontal source-bound authored Track cross-section, four actual zooms x two UI scales, hardware offscreen GPU readback. Not ordinary native input/HUMAN, every class/angle or fullV5/C04.",
       "No timing/latency/counter thresholds, new dependency, complete archive qualification or successor authorization. The test has integer-aligned boundary samples; it does not claim arbitrary subpixel/diagonal AA metrology.",
       "No production source changes, new fixture definitions or tracked audit report; evidence stays in ignored owned scratch and this existing proof record."
+    ]
+  },
+  "native_a3_region_oracle_pad_center_20261019": {
+    "state": "Actual independent final combined PASS and appointed-manager acceptance. A3 is satisfied at its stated machine-assertion scope. The standalone Pad repair is authorized for normal-hook main landing at the exact six owned paths; full C04/HUMAN and successors remain open.",
+    "authority": "Retained UVT-S5A-BUILD/S5A-C04; appointed PM059 manager01a13df1-7a0d-72c1-bbdd-f0d96d481598. Actual independent diagnosis binds already-supported nil-package Board Pad identities (accepted maximal_channel_collision_20261012,0800fd56) to ratified independent Pad center/anchor-family rule. Owned Pads still collapse to Footprint. No new subject, editor, product rule, waiver, dependency or fixture.",
+    "problem": "Actual class-oracle02 and diagnostic03 found sole eligible unresolved standalone Pad71000000-0000-4000-8000-000000000001. qualification_catalog omitted Class::Pad and atomically refused nonempty native region evaluation. Diagnostic03 actual0PASS/1FAIL; this is a concrete production omission, not a count-only or inferred timing failure.",
+    "implementation": {
+      "catalog_sha256": "2209cf43e0a79fcdd7ad03016d738e5e0123599c48f90c63d87d8e1c7b40fc37",
+      "change": "Five-line source Pad position-to-one-anchor arm/comments. Existing source identity/ownership binding, Footprint complete-geometry refusal, malformed/missing source-position error and whole-result atomic publication remain unchanged. No scene-AABB, Pad-center fallback for a Footprint or perimeter-majority substitute.",
+      "test_sha256": "c83c9ecc250183fe340b5bdb4c111417f0e702e750176da0bd56d50ac09fbe37",
+      "oracle_sha256": "5215cce83c42a7370e529f70aa987b18883ae290fb4f2c254ef5c343193248b9",
+      "ownership": "Existing tests.rs owns portable pinned input loading and production evaluation orchestration; coherent new oracle_tests.rs owns independent canonical geometry math/enumeration. No new framework, test ceiling exception or product helper."
+    },
+    "input_authority": {
+      "provider": "scripts/provision_s5a_replay_inputs.py --output <fresh permitted private root>; DATUM_REPLAY_INPUTS selects reproduced input, EDA_CLI_BIN explicitly pins existing CLI. No developer-home fallback or exclusive dependence on task leftovers.",
+      "index_sha256": "bcce46b87fc3265f19e244a60af0249388316866d557439a786765bcbccd472c",
+      "families": "Existing dense-and-cancel100000 SchematicText grid plus actual Board4Tracks/empty outline; separate existing class-geometry6Tracks/Pad/Via/Zone plus SchematicText and canonical Line/Rect/Circle/Arc. Per-class oracle ON100kfixture, not invented100k-per-class corpus. Existing pruning/cancellation/A6 receipts remain credited.",
+      "pins": "29dense+47class indexed files before/after each successful test; exact compiled marker and every selected row size/hash, canonical absolute root/no symlink aliases. Independent full universe guard excludes only canonical empty geometry, never filters unresolved or missing expected identities.",
+      "superseded_metadata": "Frozen class fixture pad_anchors/eight-perimeter4fail5pass metadata remains byte-exact but is not product qualification authority. Early oracle/review premise superseded by actual authority reconciliation. Footprint8Pad-center majority and exact30 evidence remain distinct. Provisional center production edit after an earlier release was restored on later hold before any Cargo; same bounded center repair reinstated only after actual applicability review/release."
+    },
+    "cpu_execution": {
+      "candidate_sha256": "7636bad37d5cb1762b635f05b1290d6d60cf6b890b260435d0851602a0673cce",
+      "command": "DATUM_REPLAY_INPUTS=<reproduced root> EDA_CLI_BIN=<repo>/target/debug/datum-eda python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --bin datum-gui native_region_membership_matches_independent_ -- --ignored --nocapture --test-threads=1; corrected04 uses class-only exact filter, no dense repeat.",
+      "result": "Two distinct successful oracle tests and20 complete typed-set comparisons across02(dense8) and04(class12). Aggregate02 remains1PASS/1FAIL;04 actual1PASS0FAIL0.03s. Independent reviewer checked02-to04 delta: only class/Pad changed; dense source has no Pads, so reuse adequate.",
+      "oracle": "Canonical typed IDs independently enumerated, complete production RegionBasis universe equals oracle; RegionEvaluation runs to completion at budgets7/4096. Independent i128 axis-aligned captured-layout intersection >50%, authored anchor majority, analytic circle/full rectangular-island enclosure; no production region predicate as oracle. Captured affine/em basis is input authority.",
+      "results": "Dense Board Rect4/L2 and Schematic Rect20301/L15301 match exact full sets at both budgets. Class Board Rect9/L7, Schematic Rect5/L3 plus Pad silhouette-overlap/center-out empty and tiny center-only Pad1 match exact full sets at both budgets. Concave L paths differ from their AABB on every surface.",
+      "parent_control": "Existing native_parent_recipe::actual_placed_parents_pins_inspection_and_unresolved_pad_boundary actual1PASS/0FAIL0.09s, compile2m53s. Real owned Pad projections still require parent Footprint complete-geometry authority; source/journal invariant. Logcebec9483a9a3a7af85ed2d29753a9b43d8fed747ae9dfa20972cb460743bd1d."
+    },
+    "matching_build": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --bin datum-gui",
+      "result": "PASS12.27s",
+      "gui_sha256": "758549f9b018f08ee8f3698dd931cdefe7be94e0212c294d8aeff16cc688ef9c",
+      "cli_sha256": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+      "daemon_sha256": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+    },
+    "native02": {
+      "raw_root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/a3-native-pad-02",
+      "result_sha256": "b1eb5d31c6b8fe0a98a99b9c4c41597496c415bd2dcda4e56b40da5e78e55769",
+      "raw_status": "CAPTURE_ONLY; independent runtime/pixel/authority review pending",
+      "runner_sha256": "f07afcc25f401af430b9ff30062f4b695eb7394f7a93147db40169c91bd6d824",
+      "execution": "Actualexit0. Native Datum Wayland/Vulkan in private Weston X11 input envelope,1344x806/scale1. Six ordinary wheel-up events yield zoom1.9738227; no setter/bootstrap. Two exact rightward Shift rectangles with17.26px/7.21px physical diagonals exceed existing4px activation. Current ownMain SHIFT/press/heldendpoint/nointerveningrelease-or-focusloss/orderedrelease and active/postrelease presentation gates recorded.",
+      "membership": "Source/index-pinned canonical project20000000-0000-4000-8000-000000000001 revisionc9d9868ddbb9f6ef3d543b0b5eee855e6a8c629c7b238a51249aa8d9f4496dba. Center-out overlaps Pad silhouette yet ordinaryNone/noAX root/publicContextNone; center-in contains center and no historical perimeter point, completeCompoundPad1/scopePad/focusNone and standardSELECTED AX/publicContextGet agree. Actual geometry/camera/source-bound plans and captured active/released frames retained.",
+      "nonmutation_cleanup": "18canonical files equal before/after selection/teardown; operational role counts retained separately. Public ContextGet persists allowlisted selection_context only; opaque context/credential files never read/hashed. Ordinary shell exit and observedPTYclosure before GUI/companions/Westonstop; private0700IPC gone after owners stopped. No HUP, runtime or teardown error in02."
+    },
+    "failures_preserved": [
+      "01CPU compileE0599 WorkspaceFilterState::default, zero tests. Initial source oracle omitted four drawings; corrected before executed02, complete universe guard preserved.",
+      "02CPU aggregate1PASSdense/1FAILclass before membership comparison;03class diagnostic0PASS1FAIL confirms sole Pad unresolved. Neither relabeled PASS.",
+      "Native01 executed two gestures/public observations before review feedback. Actual whole-inventory comparison failed because operational_role_counts changed; canonical_files remained equal. Repeat assertion blocked Weston cleanup after GUI/companions stopped. Later UID/exe/cmdline/PIDFD-verified ownedWestonstop then0700IPCremoval documented; failureHUP housekeeping is not ordinaryshell proof. Raw01/cleanup/executedrunner retained; no end-to-end credit. Corrected runner received actual independent SOURCE CLEAR before02 launch.",
+      "Combinedcandidate1 prose incorrectly counted17nativecanonical maps; raw maps always18. Candidate2 corrects prose, no runtime/source changes."
+    ],
+    "review": {
+      "source_cpu_runner": "Actual independent source CLEAR2209/c83c/5215; execution CLEAR04log045035f2afc9b345f05ee313c9f397f6e020b0081837c0a12bf153573f486477 and dense reuse; corrected native runner SOURCE CLEARf07 routed by appointed manager. No implementation self-PASS.",
+      "native_runtime_pixels": "Actual /root/closeout_review runtime/pixel PASS: native02 confirms canonical Pad center membership, complete GUI/AX/context parity, 18 unchanged canonical files, ordinary shell exit and owned shutdown with IPC removed. The 3 x 17 pixel center-out cue proves presence/disappearance only, not general visibility quality. No separate narrow-cue defect was established.",
+      "final_combined": {
+        "reviewer_task": "/root/closeout_review",
+        "outcome": "Actual FINAL COMBINED PASS; no mandatory findings.",
+        "candidate_sha256": "f07c23e9c81637a3e6aed20f3d18f738161062e635b0371b08b4640f95dcc4c3",
+        "verified": "All 19 source pins and existing artifacts match; six owned paths are clear. Two successful oracle tests, 20 complete-set comparisons at budgets 7/4096, parent control PASS and matching native02 adequately bind the stated A3 machine assertion. Dense evidence reuse and every preserved failure remain explicit."
+      },
+      "reviewer_task": "/root/closeout_review",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_disposition": "Appointed PM059 manager accepts the bounded A3/Pad unit and authorizes the exact six-path normal-hook main commit. Close only dat-standalone-pad-region-g1nh after actual source landing. Parent dat-uvt-s5a-build-1wv and S5A-C04 remain in progress. No ordinary window-Close, full C04/HUMAN, C05/C06 or successor authorization."
+    },
+    "candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/a3-region-oracle-combined-candidate-2.json",
+      "sha256": "0f624a8c9bbf4d7e14ce71a1c01c715635792581e33e66b807aed25d2f0711ac",
+      "pins": "16sources/76indexedinputs/20CPUcomparison lines, parentcontrol/build/binary cohort,36native artifacts including failed01 chronology and qualified cleanup."
+    },
+    "checks": "Scopedformat/whitespace/sourcehealth3260/projectstate101 PASS. New incidental intake initially lacked roadmap label; corrected to roadmap:intake and export thenstate101PASS. Cargo serial guarded, cache-soft-limit/dead-code warnings retained; no cache cleanup, threshold or dependency changes.",
+    "limits": [
+      "A3 is satisfied at its stated machine-assertion scope using the existing 100,000-object fixture and separate governed class controls. No invented mixed 100k/all-native prerequisite is retained. The native receipt itself covers two regions over one canonical standalone Pad, not every Pad shape or deferred definition-editor delivery.",
+      "No latency/counter campaign, new numeric tolerance, source/visual authority refresh, new fixture or standalone tracked report. V3 successful-export byte comparison and other exact qualification gaps remain open.",
+      "dat-standalone-pad-region-g1nh related intake remains open until actual landing evidence; parentdat-uvt-s5a-build-1wv and S5A-C04 remain in_progress."
     ]
   }
 }
