@@ -13550,8 +13550,8 @@
     "ordinary_current_visual_preparation_20261020": {
       "recorded_at": "2026-10-20T20:56:59.562550+00:00",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
-      "authority": "Bounded ordinary Via center-in SOURCE preparation under retainedC04. Existing nativeWayland/Vulkan QA/presentation/capture owners, realfixedinput+typedidentity+appearance+AX/invariance and recorded-owner/shellcleanup; no customsampler, newproductsemantics, build/dependency/fixture or live release.",
-      "state": "SHARED_CAPTURE_HELPER_ACCEPTED_ORDINARY_CASE_SOURCE_REVIEW_PENDING",
+      "authority": "HISTORICAL initial SOURCE-preparation grant (2026-10-20, before source02/live02): Bounded ordinary Via center-in SOURCE preparation under retainedC04. Existing nativeWayland/Vulkan QA/presentation/capture owners, realfixedinput+typedidentity+appearance+AX/invariance and recorded-owner/shellcleanup; no customsampler, newproductsemantics, build/dependency/fixture or live release.",
+      "state": "RUNTIME02_FAILURE_RECORD_AND_RECOVERY_ACCEPTED_VISUAL_AND_WRAPPER_PREDICATES_FAILED",
       "candidate": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-01.json",
         "sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
@@ -13592,10 +13592,10 @@
         "verdict": "SOURCE + CONTROL PASS",
         "scope": "Exact helper3703fdad/test0bbb70f1. Sole focus-before-existingpresentationwait move; actualred2fail/1pass then3green. Actualmethods verify focus-generated newdamage completes beforecapture, pendingdamage refuses beforecapture, and unchangedframe succeeds. Reversing move reproduces publishedblob6718d511 exactly. No API/sleep/forcedframe/dependency change; no Via cause/runtime/pixel acceptance."
       },
-      "manager_helper_disposition": "Root PM059 accepts sharedcapture SOURCE+CONTROL only based on actualreview/receiptlocators. Normal-hook helper landing may proceed with minimalrecord/claim and focusedgates. Ordinarycase and exactcommand require their own source/budget/cleanup review and separate freshlivegrant; no nativeinput or acceptance inferred.",
+      "manager_helper_disposition": "HISTORICAL initial helper-only disposition (2026-10-20, before source02/live02): Root PM059 accepts sharedcapture SOURCE+CONTROL only based on actualreview/receiptlocators. Normal-hook helper landing may proceed with minimalrecord/claim and focusedgates. Ordinarycase and exactcommand require their own source/budget/cleanup review and separate freshlivegrant; no nativeinput or acceptance inferred.",
       "ordinary_case_scope": "Actual ownPID/Main nativeWayland/Vulkan input+fixedgeometry guards, complete typedVia/scopevia/focusNone and publicstandardSELECTED/activepane0/visibleunlocked1/allowlistedContextGet before+after ONE released innercompositorPNG. Actual independent originalpixels must visibly agree (selectedVia/canvas and truthful Inspector/footer); nonblack guard alone insufficient.18canonical/journal maps equal before/after/teardown/current; actualrecordedowners+retainedshelltimelyexits and2IPC disposition; independentreview. Correctthispredicateonly; reuse acceptedunaffectedcenter-out/CPU/class/AX scopes. Fail/None/corrupt/changedstate =>preserveFAIL,no retry/automaticproductfix.",
       "budget": "One unchanged ordinary Wayland/Vulkan GUI+daemon, owned innerWeston x11/GL and existing outerWeston headlessGL/privateXwayland transport; case runner+wrapper and existing one PTY shell leader.8persistent recorded roles including shell; no debugger/guardian/reader/proto/scope-list/scenegraph/import/raw-buffer sampler. Existing setup focus/click/initialEscape;6fixedwheels at550,404 before baseline; root personally reviews2fresh originals/checkpoint and actualADMIT before ONE fixedShift-left center-in554,401->558,405 gesture. Exactly3originalinnerWayland-composed PNGs(initial,zoom,released), no active-previewPNG/extra capture/retry/retarget. Existing20s QA waits,600s rootadmission,10s native screenshot subprocess,15s allowlistedContextGet; no new settling sleeps/timer/forcedframe. Existing owned GUI TERM/wait6/KILL/wait3, daemonTERM/wait3, compositorTERM/wait10 and reviewed fixed7s shellcustody cleanup (singleorigin,lateFAIL,residualCLEANUP_BLOCKED,parent/IPC retention); no new shellsignals or descendant claims.",
-      "limits": "Source preparation only; no live release. Shared helper ordering correction has actual SOURCE+CONTROL acceptance only; proves focus-before-existingbarrier, not Via rootcause/allasync/compositorcontent. Ordinarycase has no exactallocation/GLsampler/cause claim and does not require that diagnosticjoin for C04. No physicaldesktop/KWin/platform/HUMAN ninepanel/ordinarywindowClose/fullC04/C05/C06/successor acceptance. Shellleaderexit does not establish all group/sessionmembers/descendants. All older failed captures and runtime02/acceptedSNAPSHOT_ONLY05 unchanged.",
+      "limits": "HISTORICAL initial preparation limits: source preparation only; no live release at that stage. Subsequent source02 review and explicit live02 release are recorded below; command02 was consumed exactly once and failed its visual and wrapper-receipt predicates. Shared helper ordering correction has actual SOURCE+CONTROL acceptance only; proves focus-before-existingbarrier, not Via rootcause/allasync/compositorcontent. Ordinarycase has no exactallocation/GLsampler/cause claim and does not require that diagnosticjoin for C04. No physicaldesktop/KWin/platform/HUMAN ninepanel/ordinarywindowClose/fullC04/C05/C06/successor acceptance. Shellleaderexit does not establish all group/sessionmembers/descendants. All older failed captures and runtime02/acceptedSNAPSHOT_ONLY05 unchanged.",
       "actual_checks": {
         "shared_controls": 3,
         "ordinary_case_controls": 6,
@@ -13675,7 +13675,186 @@
           "provider_binary_pins": "PASS unchanged installednamedtool/Python/nativebinary hashes, nofetch/install/build"
         }
       },
-      "review_state": "Fullordinarycase/command independentreview in progress. Helper correction proves a temporalguard defect only, not the Via cause or all asynchronous/rendering races. Prior ordinarycapture failures and acceptedSNAPSHOT_ONLY05 stayexacthistorical. Exact GPU allocation->sampling causality is NOT a newC04acceptanceprerequisite. No ordinarywindowClose/physicaldesktop/platform/HUMAN/fullC04/C05/C06/successor acceptance."
+      "review_state": "CURRENT: source02/command02 independently accepted before the separately released exact-once execution. Runtime02 is independently accepted ONLY as faithful failure recording and qualified recorded-owner cleanup/separate recovery. Visual predicate FAIL and wrapper receipt FAIL remain; active continuation is read-only existing-log/source diagnosis. Helper ordering correction is not Via cause/all-asynchronous-race proof. No new live release, runtime success, renderedVia/fullC04/ordinaryClose/all-descendant/physicaldesktop/platform/HUMAN/C05/C06/successor acceptance.",
+      "source01_disposition": {
+        "candidate_sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
+        "disposition": "REJECTED_UNEXECUTED OVC-R1; originalcloseoutPASS superseded by BLOCKED pending correction.",
+        "actual_superseding_receipt": {
+          "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+          "turn_id": "01a15b1f-3a04-7772-9a4e-31c70f116e4c",
+          "verdict": "BLOCKED pending correction",
+          "scope": "Disposal error after safeGUI/shellgates could skip independentcleanup/persistence; sharedhelperacceptance remainsvalid."
+        },
+        "actual_reorganization_receipt": {
+          "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+          "turn_id": "01a15b19-dccd-7a10-a233-9d23dc8b200b",
+          "verdict": "Helper and five-path metadata PASS; ordinary01 BLOCKED OVC-R1, no other mandatory finding."
+        }
+      },
+      "source02_correction": {
+        "recorded_at": "2026-10-20T21:06:04+00:00",
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-02.json",
+          "sha256": "d91ad49b32a59483be707f89e9b3b2aaaf72ff6eddfa31951054b7030f22f70b",
+          "bytes": 10183
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-02.json",
+          "sha256": "d1bc1c6ac34541dbbaed26b3a087e4beeaa61e83f0c8249cb3587206da30fce0",
+          "bytes": 17854
+        },
+        "exact_command": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-command-02.json",
+          "sha256": "a660a16f5826e96ad93784ac5e2dd87990daeafc891f44b5229eec41ce8bd990",
+          "bytes": 4181
+        },
+        "correction": "OVC-R1: Define existing cleanup errors/process snapshot and phase collector BEFORE failure preparation; call prepare_failed_cleanup through that collector. Its unchanged actual adapter first discharges independently verified retained GUI/shell custody gates (unresolved gates retain parent/IPC, never return). An exception after safe discharge is retained as an initial preparation cleanup error, then independent daemon/compositor stops, canonical teardown, error/action persistence and recorded-owner disposition still execute. Original primary failure remains unchanged. No new signals/holds/deadline/gate relaxation/capture or product behavior.",
+        "actual_reviews": [
+          {
+            "reviewer_task": "/root/closeout_review",
+            "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b20-b6d3-7352-b5d2-fa5ddf1b8f00",
+            "verdict": "OVC-R1 resolved; SOURCE/COMMAND PASS",
+            "scope": "Primary+preparationerrors retained; independent cleanup/persistence after safe custodydischarge. Unresolvedcustody holds. Actualred1error/1pass andgreen2pass, exactpins,01rejection preserved; no live/runtime/pixel/C04acceptance."
+          },
+          {
+            "reviewer_task": "/root/reorganization_review",
+            "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b20-d4d4-7b90-8248-5b790bd66427",
+            "verdict": "Bounded SOURCE/COMMAND PASS",
+            "scope": "OVC-R1 resolved, both actualregressionreceipts verified, unresolvedcustody prevents cleanup advancement. No remaining mandatory sourcefinding; runtime/C04pending."
+          }
+        ],
+        "actual_checks": {
+          "focused_current_controls": 2,
+          "reused_prior_scoped_controls": 9,
+          "distinct_controls_with_reuse": 11,
+          "result": "GREEN2/2; actual RED on unchangedfrozen01 had1exceptionerror/1retentionpass, nofixturefailure. Only SOURCE path differs between red/green tests.",
+          "original_tool_receipts": [
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 32273,
+              "timestamp": "2026-10-20T21:01:34.518Z",
+              "turn_id": "01a15b1c-df58-7723-83de-e20959bcf655",
+              "item_id": "ctco_01a15b1e-99b6-76d2-9f00-e6835afa56c1",
+              "call_id": "call_ddbabf386ffe43aabc4917597c7149d1",
+              "chunk_id": "2693fd",
+              "exit_code": 1,
+              "tests": 2
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 32281,
+              "timestamp": "2026-10-20T21:01:58.775Z",
+              "turn_id": "01a15b1c-df58-7723-83de-e20959bcf655",
+              "item_id": "ctco_01a15b1e-f877-77e2-92a0-fc560418fe2f",
+              "call_id": "call_0c8d7817eba348fcbab5ba4d061b8578",
+              "chunk_id": "7853f5",
+              "exit_code": 0,
+              "tests": 2
+            }
+          ],
+          "scope": "Actual runner finally +unchanged actualordinaryadapter prepare_failed_cleanup +real retainedGUI/shell gates with external owner/process/clock/IO fakes. process.wait throws AFTER kernelGUI+shell exits: errorcollector retains prep error/originalprimary and reaches daemon/compositor stops/canonicalteardown/persistedactions+errors. UnresolvedGUI actualgate holds parent/IPC before collector can reach any independenttail/return. Only resource-free daemon fake thread remains parked until testprocess exits; no actual process/FD/IPC created.",
+          "integrity": {
+            "runtime_python_source_count": 19,
+            "AST_local_import_closure": "PASS exactfuture source pins",
+            "unchanged_controlled_input_and_qualification": "Main try/except and all geometry/event/config/selected_boundary ASTs exact01; only finally collector order pluscache02 route differs. Adapter/sharedhelper/control unchanged.",
+            "fresh02_paths_absent": [
+              "native-via-ordinary-02",
+              "isolated-via-ordinary-02",
+              "ordinary-via-python-cache-02"
+            ]
+          },
+          "reuse": "Original shared3red/green actualSOURCE+CONTROL accepted, ordinary6scopedcontrols and originalfixturefailure preserved via01packet. No3/6blanketrerun. Sourcehealth3273PASS181a7f adequate unchangedtracked files. No build/dependency/native input/capture.",
+          "failure_preservation": "Frozen01 genuineOVC-R1 rejection/red2693fd remains; initialordinaryfixtureexceptionexpectationerrorsf5c72c/source01snapshot and all prior runtime/source/storage failures retainoriginalrecords."
+        },
+        "manager_acceptance": "Root PM059 accepts ordinary02 SOURCE/COMMAND only; unchanged input/capture/budget and remainingreviews reused. No runtime/image/C04acceptance."
+      },
+      "live_release02": {
+        "recorded_at": "2026-10-20T21:06:04+00:00",
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "shared_helper_publication": "ff4e0f2f6e400eab425e544d2fa4620bfdb8f31e",
+        "command_sha256": "a660a16f5826e96ad93784ac5e2dd87990daeafc891f44b5229eec41ce8bd990",
+        "authority": "Root LIVE RELEASE exact saved command02 argv ONCE.3originalPNGs/6wheels/1fixedgesture; root personallyviews BOTH freshbaselineoriginals and writes actualADMIT beforegesture. No retry/retarget/newframes/builds/samplers. Preservefailure and reviewedowned/shellcustody cleanup. No runtime/image/C04acceptance.",
+        "preflight": "PASS19runtime source/installedtool/Python/nativebinarypins,18canonicalinputs,3fresh02pathsabsent. No nativeinvocation/build in preflight.",
+        "consumed": true,
+        "execution_state": "CONSUMED ONCE; wrapperactualexit1/childexit0 CAPTURE_ONLY, VISUALFAIL+wrapperreceiptFAIL; no retry or acceptance",
+        "tool_session_id": 31524,
+        "launch_chunk": "cc3107",
+        "actual_wrapper_exit": 1,
+        "actual_child_exit": 0,
+        "final_tool_chunk": "ef5f75",
+        "actual_baseline_admission": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-02/baseline-admission.json",
+          "sha256": "c3fca84265d5edc317aa7bafddfae833ebc6893ddae4612494e799bff0e7b61d",
+          "bytes": 1269
+        }
+      },
+      "runtime_candidate02": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-runtime-candidate-02.json",
+        "sha256": "4400aa59f77ee23750323ab4f8ebd9a9c2c44c36545f051e634dc26f4110692c",
+        "bytes": 22982,
+        "actual_result": "VISUALFAIL plus wrapperreceiptFAIL; rawchildCAPTURE_ONLY unchanged",
+        "counts": {
+          "wheel_events": 6,
+          "original_inner_compositor_PNGs": 3,
+          "fixed_center_in_gestures": 1,
+          "before_after_context_reads": 2,
+          "sampler_debugger_guardian_reader_processes": 0
+        },
+        "original_released": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-02/released.png",
+          "sha256": "f5c7ecfbb5111309457847fb2270667c14ae8f36a9fccfe98d5e42887e6a7629",
+          "bytes": 60380
+        },
+        "actual_baseline": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-ordinary-02/baseline-admission.json",
+          "sha256": "c3fca84265d5edc317aa7bafddfae833ebc6893ddae4612494e799bff0e7b61d",
+          "bytes": 1269
+        },
+        "machine_scope": "Exactly1fixednativegesture/3ordinaryinnercompositorPNGs; before/after exacttypedVia/publicstandardSELECTED/ContextGet/config checks pass;18maps equal. Raw observed scope only, actual independent review accepts faithful scope recording only; no runtime success.",
+        "rendered_failure": "Root personallyviewed coherentupright originalreleasedf5c7ecfb: InspectorNoSelection andfooterSelnone despite Via model/public/context. VISUALFAIL, no Via predicate/fullC04acceptance; sharedfocusorderingfix did not resolve mismatch.",
+        "wrapper_receipt_failure": "Runner emits verified_owner_stops.daemon singular; wrapper inner_owners_stopped requires daemons plural. Wrapperexit1/childexit0, childcleanup_errors[] andall5declaredflags true; wrapperrecords all3outerroles stoppedtrue butretains outerIPC asunverified. Do not patch frozen source/rawreceipts or retroactivelyclaimordinarycleanupPASS.",
+        "root_separate_recovery": {
+          "preinventory_tool": "51a5e2",
+          "actual_recovery_tool": "46f8e6",
+          "exact_target": "/run/user/1000/nqi-xnrf64w3",
+          "metadata": "Rootverified all8PIDsabsent/innerIPCabsent; outeruid1000mode0700inode2061 containingONLY empty-Xauthorityuid1000mode0600inode2065/0B; metadataonly, no authcontentsread/hash.",
+          "action": "Root rechecked PIDabsence/inodes; unlinked ONLY0Bempty-Xauthority withdirfd/O_NOFOLLOW then rmdir exactruntime. BothIPCpaths nowabsent. This recovery is separatefrom ordinary wrappercleanup; rawFAIL/retainedIPC receipt unchanged.",
+          "worker_race": "Concurrent readonly inventory7f1aa5 found targetalreadyabsent at lstat; no inventoryfilewritten or workerdeletion/signals. Actual error preserved."
+        },
+        "postrun": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-postrun-02.json",
+          "sha256": "bcda01c4f02c51356be92c4f7a26053b3c5c1e71cb673ee168d80967ec61caca",
+          "bytes": 2931
+        },
+        "postrecovery": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-postrecovery-02.json",
+          "sha256": "c7fe4a5c25bafac325ccb758e9d51148c1b3a35889ae57a4f04bb16ccbd79e90",
+          "bytes": 1563
+        },
+        "preservation": "8recordedPIDs/2IPC nowabsent afterseparaterootrecovery;19runtimepins/18canonical frozen-before-after-observation-after-teardown-current exact. Priorpostrun truthfullykeepsouterexistsTrue before recovery. No workerdeletion/signals/retry/newcapture.",
+        "diagnostic_field_limits": "complete_inspection=false is explicitly the compact diagnostic projection, not failedruntimeinspection (selection_summary.rs:65). selection_inspector.presented is first SelectionInspectorScroll in presented_hits (action_evidence.rs:208), not allInspector/GPU-presentation receipt; null may be expected for compact1member, rendercondition must be checked. Countersdamage21/presented21 certify a ledgerstate, not selected-content correspondence. These source clarifications received afterpacketfreeze are recorded here, not usedasrootcauseproof.",
+        "review_state": "ACCEPTED faithful FAILURE recording and qualified recorded-owner cleanup/separate recovery ONLY by both actual independent reviewers and appointed PM059 manager. Visual and wrapper-receipt predicates remain FAIL. No cause, repair, retry, renderedVia, ordinaryClose/all-descendant/HUMAN/platform/fullC04/successor acceptance; existing-log/source read-only diagnosis continues.",
+        "actual_final_reviews": [
+          {
+            "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b27-e6dc-7592-ba64-a6251ed06629",
+            "result": "Faithful failure record accepted; ordinary runtime/visual FAIL; original No selection/Sel none personally viewed, source/input hashes and qualified recorded-owner cleanup/separate recovery agree. daemon/daemons integration defect missed in source review requires correction before future runner use."
+          },
+          {
+            "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b28-0339-71e1-aa6c-64c99ff72e62",
+            "result": "Faithful failure-recording and qualified cleanup review PASS; visual and wrapper failures retained, eight recorded PIDs/two IPC absent; current-status metadata wording correction required, recorded in this delta. No runtime success/cause/retry/C04 acceptance."
+          }
+        ],
+        "manager_final_disposition": {
+          "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "turn_id": "01a15b19-8191-73f2-9b69-e3091a8f20e6",
+          "recorded_at": "2026-10-20T21:15:35Z",
+          "result": "Appointed PM059 manager accepts runtime4400aa59 ONLY as faithful FAILURE recording and qualified recorded-owner cleanup/recovery based on both actual reviewer receipts. Visual and wrapper receipt remain FAIL. Current wording correction/claim/export/focused metadata gates authorized; no frozen packet/raw-output/source/product/capture mutation or new live release. Root owns final review/commit/push; retained C04 read-only diagnosis continues."
+        }
+      }
     }
   },
   "native_capture_order_diagnostic_20261019": {
