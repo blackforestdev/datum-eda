@@ -1,5 +1,7 @@
 use super::*;
 use crate::native_selection_overlay::tests::selected_state;
+#[path = "tests/notice.rs"]
+mod notice;
 #[path = "tests/singleton_inspector.rs"]
 mod singleton_inspector;
 #[test]

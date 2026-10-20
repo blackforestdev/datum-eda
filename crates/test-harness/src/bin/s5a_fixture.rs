@@ -5,6 +5,8 @@ use std::path::{Path, PathBuf};
 mod annotations;
 #[path = "s5a_fixture/artifacts.rs"]
 mod artifacts;
+#[path = "s5a_fixture/bus_run.rs"]
+mod bus_run;
 #[path = "s5a_fixture/classes.rs"]
 mod classes;
 #[path = "s5a_fixture/collision.rs"]
@@ -29,7 +31,7 @@ mod workspace;
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision> [<fresh-root>|--managed] [existing CLI binary]",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision|bus-run-refusal> [<fresh-root>|--managed] [existing CLI binary]",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
     // External explicit roots remain valid for pinned replay. New/default
@@ -73,6 +75,9 @@ fn main() -> Result<()> {
     run(family, &root)
 }
 fn run(family: &str, root: &Path) -> Result<()> {
+    if family == "bus-run-refusal" {
+        return bus_run::build(root);
+    }
     if family == "library-base" {
         return library::prepare(root);
     }

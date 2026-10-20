@@ -45,12 +45,25 @@ pub(super) fn render(
         *counts.entry(id.class).or_insert(0usize) += 1;
     }
     let fields = view.fields();
+    let notice_lines = view
+        .notice
+        .as_deref()
+        .map(|notice| {
+            crate::control_text::wrap_text_sized(
+                notice,
+                (rect.width - 24.0).max(0.0),
+                11.0,
+                TextFace::Ui,
+            )
+        })
+        .transpose()?
+        .unwrap_or_default();
     let total = 2
         + usize::from(view.stale)
         + view
             .focus()
             .map_or(0, |id| 1 + usize::from(!id.instance_path.is_empty()))
-        + usize::from(view.notice.is_some())
+        + notice_lines.len()
         + usize::from(!view.related.is_empty())
         + 1
         + 1
@@ -83,7 +96,7 @@ pub(super) fn render(
     let columns = ((rect.width - 24.0).max(0.0) / (11.0 * 0.58)).floor() as usize;
     let row_index = std::cell::Cell::new(0usize);
     let visual_row = std::cell::Cell::new(None);
-    let mut row = |label: &str, target: Option<HitTarget>, active: bool| {
+    let mut row = |label: &str, target: Option<HitTarget>, active: bool, complete: bool| {
         let index = row_index.get();
         row_index.set(index + 1);
         if index < start || index >= start + visible {
@@ -108,7 +121,11 @@ pub(super) fn render(
         if let Some(target) = target {
             hits.push(HitRegion { rect: hit, target });
         }
-        let label = truncate_text(label, columns);
+        let label = if complete {
+            std::borrow::Cow::Borrowed(label)
+        } else {
+            std::borrow::Cow::Owned(truncate_text(label, columns))
+        };
         draw_text(
             &label,
             rect.x + 12.0,
@@ -131,12 +148,14 @@ pub(super) fn render(
         ),
         None,
         false,
+        false,
     );
-    row("", None, false);
+    row("", None, false, false);
     if view.stale {
         row(
             "STALE: previous basis; current geometry unavailable",
             None,
+            false,
             false,
         );
     }
@@ -153,22 +172,26 @@ pub(super) fn render(
             ordinal,
             columns.saturating_sub(prefix.chars().count()),
         );
-        row(&format!("{prefix}{label}"), None, false);
+        row(&format!("{prefix}{label}"), None, false, false);
         if !focus.instance_path.is_empty() {
             row(
                 &inventory_label::occurrence_row(focus, columns),
                 None,
                 false,
+                false,
             );
         }
     }
-    if let Some(notice) = &view.notice {
-        row(notice, None, false);
+    // Refusal explanations are complete readable text, not preview labels.
+    // Each measured line is an ordinary scrollable row with the same styling.
+    for line in &notice_lines {
+        row(line, None, false, true);
     }
     if !view.related.is_empty() {
         row(
             &format!("Related {} · normal appearance", view.related.len()),
             None,
+            false,
             false,
         );
     }
@@ -176,22 +199,25 @@ pub(super) fn render(
         "Move / Rotate / Mirror / Lock / Group: unavailable",
         None,
         false,
+        false,
     );
     row(
         &format!("All {}", view.members.len()),
         Some(HitTarget::SelectionScope(None)),
         view.scope.is_none(),
+        false,
     );
     for (class, n) in counts {
         row(
             &format!("{} {n}", class_label(class)),
             Some(HitTarget::SelectionScope(Some(class))),
             view.scope == Some(class),
+            false,
         );
     }
     for field in fields {
         if row_index.get() < start || row_index.get() >= start + visible {
-            row("", None, false);
+            row("", None, false, false);
             continue;
         }
         let name = truncate_text(
@@ -200,7 +226,7 @@ pub(super) fn render(
         );
         let value =
             view.field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
-        row(&format!("{name}: {value}"), None, false);
+        row(&format!("{name}: {value}"), None, false, false);
     }
     row(
         &format!(
@@ -213,6 +239,7 @@ pub(super) fn render(
             view.scoped_members().count()
         ),
         Some(HitTarget::SelectionInventoryToggle),
+        false,
         false,
     );
     if navigation.inventory_expanded {
@@ -235,7 +262,7 @@ pub(super) fn render(
             // Publish once even when only a status/occurrence subrow is visible.
             visible_members.push(id.clone());
             for label in inventory_label::rows(view, id, index + 1, columns) {
-                row(&label, None, false);
+                row(&label, None, false, false);
             }
         }
         row_index.set(inventory_start + count);
@@ -251,11 +278,13 @@ pub(super) fn render(
         ),
         Some(HitTarget::SelectionFiltersToggle),
         false,
+        false,
     );
     if navigation.filters_expanded {
         row(
             "Future acquisition only; Ctrl+A bypasses filters",
             None,
+            false,
             false,
         );
         for class in CLASSES {
@@ -270,6 +299,7 @@ pub(super) fn render(
                     class_label(class)
                 ),
                 Some(HitTarget::SelectionClassToggle(class)),
+                false,
                 false,
             );
         }
