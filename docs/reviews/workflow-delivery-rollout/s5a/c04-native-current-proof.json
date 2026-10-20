@@ -13675,7 +13675,7 @@
           "provider_binary_pins": "PASS unchanged installednamedtool/Python/nativebinary hashes, nofetch/install/build"
         }
       },
-      "review_state": "CURRENT: Both actual runtime04 reviews and appointed PM059 manager ACCEPT faithful VISUALFAIL recording, exact CPU/application receipts, bounded server-order observations and qualified recorded-owner cleanup/invariance only. Original selectedVia appearance FAIL/C04open/causeunresolved. Runtime04 shows serverpostreleaseMaincommit beforecapture request/complete; no exact selectedsubmission\u2192wirebuffer/GPU/content inference, new prerequisite or feedbackbridge necessity. Exact04 command consumedONCE; no retry/new live. Continued work read-only existing production render/captureboundary diagnosis; no code/Cargo/dependency/framework mutation while root lands. No product/fullC04/ordinaryClose/all-descendant/HUMAN/platform/C05/C06/successor acceptance.",
+      "review_state": "CURRENT: Accepted runtime04 faithful VISUALFAIL/CPU-appreceipt/boundedserverorder/qualifiedcleanup-invariance scopes remain unchanged. Source05 actual two-source reviews PASS and PM059 exact-once release consumed by explicit CPU Vulkan/SHM run05, now independently reviewed and manager accepted as a faithfulVISUALFAIL/explicitCPU-SHM/state/qualifiedcleanup/invariance record only. Actual root+worker original05 releasedpixels still InspectorNoSelection/footerSelnone VISUALFAIL. Runtime05 waiter reused older pre-release damage18 barrier; no Maincommit afterleftrelease throughcapturecomplete. Correct typed/currentCPU selection is not captured GPU content. Both exact04/05 commands consumedONCE; no retry/newlive. Focused read-only waiter/content/lifecycle diagnosis identified05oldbarrier defect;04already satisfies the proposed strongerappreceipt predicate, so04visualuncertainty remains. Await separate manager release before boundedwaitercorrection; no app/helper/build/dependency edits, hardware/performance/cause/fullC04/ordinaryClose/HUMAN/platform/C05/C06/successor acceptance.",
       "source01_disposition": {
         "candidate_sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
         "disposition": "REJECTED_UNEXECUTED OVC-R1; originalcloseoutPASS superseded by BLOCKED pending correction.",
@@ -14766,6 +14766,108 @@
             "candidate_sha256": "5d2e4ae1da6f87c8fc03544031de39ebd94085b46e1ecfdf5667345668ab46a2",
             "scope": "PM059 root ACCEPTS faithfulVISUALFAIL, exactCPU/appreceipt and boundedserverorder observations, qualified recorded-owner cleanup/invariance only on bothactualreviews. No cause/product/C04/successor credit. Root lands4ownedpaths via normalhooks. Continued diagnosis read-only existing nextproduction/render/captureboundary; no furthermutation/live/build/dependency authorized."
           }
+        }
+      },
+      "source05_cpu_vulkan_preparation": {
+        "recorded_at": "2026-10-20T22:38:54Z",
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "authority": "Actual PM059 manager source-preparation continuation in worker turn01a15b74-8fe7-7b70-aa15-d23a3389dae0: one explicit case05 within retainedC04, synchronizeclaim, same binary/helper/input/capture/deadlines/cleanup, qa.env-only Lavapipe selection. No build/dependency/fallback/extra run/helper edit. Live execution held for exact manager release after independent review.",
+        "state": "SOURCE05_ACCEPTED_COMMAND05_CONSUMED_ONCE_RUNTIME05_SCOPED_FAILURE_RECORD_ACCEPTED_VISUALFAIL",
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-05.json",
+          "sha256": "27111df14b5af27c8411d18d1943c7b17bc4cd1d9e835e180dc0a8b2ca16ac5d",
+          "bytes": 13188
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-05.json",
+          "sha256": "2800ccd5164b6a1ed7a16538cf4cacc2082ee45903f5ff551cce883126e3a45d",
+          "bytes": 26887
+        },
+        "exact_future_command": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-command-05.json",
+          "sha256": "92d5271a2bfee09b02e542ee2670350ba99cdb7c1ae4ee3fbd153711f6478327",
+          "bytes": 9276
+        },
+        "application_environment": {
+          "VK_DRIVER_FILES": "/usr/share/vulkan/icd.d/lvp_icd.json"
+        },
+        "scope": "Explicit CPU Wayland/Vulkan/wgpu/SHM ordinary Via case using unchanged GUI binary and inner llvmpipe Weston GL, same fixture/geometry/6wheels/1gesture/3originalPNGs/rootADMIT/deadlines/stateAX/invariance/cleanup. CPU adapter and SHM transport are declared profile changes; no Intel/hardware/performance equivalence.",
+        "actual_preflight": {
+          "meaningful_preflight": "PASSc5333b: compile only + bounded AST comparison; actual identity admission positive and8negative controls reject missing/duplicate, X11, GL, Intel name, hardware device type, incorrect driver or Mesa version; runtime23source pins+13installedpins+Python+3samebinaries exact;18complete canonical map+fixedgeometry exact; samebinary/helper/logger; exactcommand manifestSHA; fresh05 run/transport absent. No runner import, launch, build or capture.",
+          "state_check": "PASS55130f Project status check (101 frontier items).",
+          "reuse": "Existing ordinary input/capture/selection-boundary/receipt/cleanup negative controls and exact same GUI build retained. No blanket control rerun, Cargo or implementation-mirroring argv tests. Software startup usability, actual CPU identity/SHM transport and original pixels remain live proof, not source PASS."
+        },
+        "review_state": "Actual independent closeout/reorganization runtime05 scoped record reviews PASS and appointed PM059 manager ACCEPTS only faithfulVISUALFAIL/explicitCPU-SHM/typedstateAX/qualifiedcleanup/invariance, with actual receipts recorded. Olderbarrier581 vs selectedframe638/present639/ledger641 retained; no selectedGPUcontent proof or04cause. No furtherlive/visualC04/fullqualification/successor acceptance.",
+        "preserved_hardware04": {
+          "manifest": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-04.json",
+            "sha256": "15487625b877d6e8cd79970859e5c57c9600ca0ec4adc556bd74973d516e7707",
+            "bytes": 20737
+          },
+          "runtime": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-runtime-candidate-04.json",
+            "sha256": "5d2e4ae1da6f87c8fc03544031de39ebd94085b46e1ecfdf5667345668ab46a2",
+            "bytes": 16058
+          },
+          "landing": "dbdce706866a027eb25f82314a339ac437c264c5",
+          "limits": "Immutable Intel hardware profile visual failure and accepted scoped record retained; never relabel as CPU profile."
+        },
+        "limits": "Historical SOURCE05 preparation boundary at2026-10-20T22:38:54Z: source-only and independent review/separate exact release then required. That preparation hold was subsequently satisfied by the actual source reviews and manager disposition recorded here; command05 was consumedONCE. Retained scope: explicit CPU Vulkan/SHM only; hardware04failure preserved, no Intel/performance/cause/full-C04/HUMAN/ordinaryClose/platform/successor acceptance. Frozen preparation/runtime packets remain immutable.",
+        "actual_source_reviews": [
+          {
+            "reviewer_thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b74-aaa8-7761-a431-4ec46cbbe6a9",
+            "result": "SOURCE/COMMAND PASS candidate27111df14b5af27c8411d18d1943c7b17bc4cd1d9e835e180dc0a8b2ca16ac5d, no mandatory source findings; runtime/SHM/appearance/cleanup pending."
+          },
+          {
+            "reviewer_thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b78-55ef-79e3-8ef3-c188733cb731",
+            "result": "Bounded source/command/ownership/evidence PASS; stale parent status correction required and subsequently completed cda9f0, independently verified by manager d6b726; frozen packets unchanged."
+          }
+        ],
+        "manager_source_disposition": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "recorded_at": "2026-10-20T22:41:54Z",
+          "candidate_sha256": "27111df14b5af27c8411d18d1943c7b17bc4cd1d9e835e180dc0a8b2ca16ac5d",
+          "result": "Actual appointed PM059 manager ACCEPTS both source reviews after independent pins/delta/receipts/wording verification d6b726, and RELEASES EXACTLY ONCE command05 SHA92d5271a2bfee09b02e542ee2670350ba99cdb7c1ae4ee3fbd153711f6478327; exact pins and fresh paths required, root personal two-original baseline review+freshADMIT before one gesture. Same fixed budgets/guards/cleanup. No retry/fallback/extra input/capture/timeout change/hardware equivalence."
+        },
+        "actual_once_execution": {
+          "unified_session_id": 19849,
+          "launch_chunk": "3b11ff",
+          "final_preflight_exec_chunk": "b4863d",
+          "completion_chunk": "cf4df7",
+          "exit_code": 0,
+          "runtime_candidate": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-runtime-candidate-05.json",
+            "sha256": "d8ddcadc801f5d687f12c15d6985cf621acef054e53c2d0b4c9ed32a579b1322",
+            "bytes": 24853
+          },
+          "postrun": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-postrun-05.json",
+            "sha256": "348562fdc831341397558edc5d3e56215841514132b802e339db9eda80268fa0",
+            "bytes": 3211
+          }
+        },
+        "runtime_review_state": "Actual independent closeout/reorganization runtime05 scoped record reviews PASS and appointed PM059 manager ACCEPTS only faithfulVISUALFAIL/explicitCPU-SHM/typedstateAX/qualifiedcleanup/invariance, with actual receipts recorded. Olderbarrier581 vs selectedframe638/present639/ledger641 retained; no selectedGPUcontent proof or04cause. No furtherlive/visualC04/fullqualification/successor acceptance.",
+        "actual_runtime_reviews": [
+          {
+            "reviewer_thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b7e-5c6f-7c11-bdab-d1ad0640e37c",
+            "runtime_sha256": "d8ddcadc801f5d687f12c15d6985cf621acef054e53c2d0b4c9ed32a579b1322",
+            "result": "FaithfulVISUALFAIL/explicitCPU-SHM/typedVia/currentAX/invariance/qualifiedcleanup record PASS. Actual three originals personally viewed. Olderbarrier18 vs laterselecteddamage20 retained. No04cause/productrendering/C04 credit."
+          },
+          {
+            "reviewer_thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b7f-05a9-7cd1-ab0d-d3ba9cb4d235",
+            "runtime_sha256": "d8ddcadc801f5d687f12c15d6985cf621acef054e53c2d0b4c9ed32a579b1322",
+            "result": "Faithful failure+qualifiedcleanup PASS; personally confirms originalNoSelection/Selnone; oldbarrier/laterselectedframe distinguished, no cause/equivalence/C04. Required metadata sentence historical qualification completed in parent current proof only; frozenpackets unchanged."
+          }
+        ],
+        "manager_runtime_disposition": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "recorded_at": "2026-10-20T22:50:08Z",
+          "runtime_sha256": "d8ddcadc801f5d687f12c15d6985cf621acef054e53c2d0b4c9ed32a579b1322",
+          "result": "Actual appointed PM059 root ACCEPTS both actual runtime05 reviews and faithfulVISUALFAIL+explicitCPU/SHM/state/qualifiedcleanup/invariance record only; independently verified originals22refs/actual8receipts/8PID+2IPCabsence/18maps909dc5. No visualsuccess/cause/hardware-equivalence/fullC04/successor acceptance. Case05 exactcommandconsumedONCE; no furtherlive. Three current metadata paths to rootlanding; boundedwaitercorrection remains separately unreleased."
         }
       }
     }
