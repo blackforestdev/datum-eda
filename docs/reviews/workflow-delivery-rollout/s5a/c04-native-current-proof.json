@@ -13551,7 +13551,7 @@
       "recorded_at": "2026-10-20T20:56:59.562550+00:00",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "authority": "HISTORICAL initial SOURCE-preparation grant (2026-10-20, before source02/live02): Bounded ordinary Via center-in SOURCE preparation under retainedC04. Existing nativeWayland/Vulkan QA/presentation/capture owners, realfixedinput+typedidentity+appearance+AX/invariance and recorded-owner/shellcleanup; no customsampler, newproductsemantics, build/dependency/fixture or live release.",
-      "state": "RUNTIME03_FAILURE_RECORD_CPU_ASSOCIATION_AND_RECORDED_OWNER_CLEANUP_ACCEPTED_VISUAL_PREDICATE_FAILED",
+      "state": "RUNTIME04_FAILURE_RECORD_CPU_APP_SERVER_ORDER_AND_RECORDED_OWNER_CLEANUP_ACCEPTED_VISUALFAIL",
       "candidate": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-01.json",
         "sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
@@ -13675,7 +13675,7 @@
           "provider_binary_pins": "PASS unchanged installednamedtool/Python/nativebinary hashes, nofetch/install/build"
         }
       },
-      "review_state": "CURRENT: Both actual runtime03 independent reviews and appointed PM059 manager ACCEPT faithful VISUALFAIL recording, scoped immutable CPU-submission/application-present association and qualified recorded-owner cleanup only. Original selectedVia appearance remains FAIL and C04 remains open; cause unresolved. Exact03b command consumed ONCE, no retry/new live release. Source-only timing diagnosis establishes existing app-present barrier lacks compositor acknowledgement, and an older wl_surface.frame pacing callback cannot certify the selected commit/content. No API or positive control invented; no GPU/compositor/displayed-output/product/ordinaryClose/all-descendant/HUMAN/platform/C05/C06/successor acceptance.",
+      "review_state": "CURRENT: Both actual runtime04 reviews and appointed PM059 manager ACCEPT faithful VISUALFAIL recording, exact CPU/application receipts, bounded server-order observations and qualified recorded-owner cleanup/invariance only. Original selectedVia appearance FAIL/C04open/causeunresolved. Runtime04 shows serverpostreleaseMaincommit beforecapture request/complete; no exact selectedsubmission\u2192wirebuffer/GPU/content inference, new prerequisite or feedbackbridge necessity. Exact04 command consumedONCE; no retry/new live. Continued work read-only existing production render/captureboundary diagnosis; no code/Cargo/dependency/framework mutation while root lands. No product/fullC04/ordinaryClose/all-descendant/HUMAN/platform/C05/C06/successor acceptance.",
       "source01_disposition": {
         "candidate_sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
         "disposition": "REJECTED_UNEXECUTED OVC-R1; originalcloseoutPASS superseded by BLOCKED pending correction.",
@@ -14619,6 +14619,153 @@
           "evidence": "native_surface_transaction.rs521\u2013533 calls pre_present_notify, SurfaceTexture.present and immediately records ownpresentreceipt. Existing local wgpu28 surface_texture.rs27\u201340 schedules/Waylandcommits; Vulkan swapchain/native.rs579\u2013602 returns vkQueuePresentKHR result. Winit0.30.13 window/mod.rs301 andwindow/state.rs253\u2013260 request callback but reuse older outstandingRequested state; eventloop486 uses callbackstate for redrawpacing. None is compositor displayed-content acknowledgement. StartupQA209\u2013237 only checks application ledger/focus/twoequalreads; capture240\u2013260 starts separate weston-screenshooter and getsPNG/exit with no Datum commit token.",
           "limits": "GPUwatermark log761 andPNGfilemtime do not establish actualsampling time or selectedcontent consumed by compositor. Cross-client commit/repaint/capture ordering is a hypothesis; currentdata also cannot rule out staleGPU/composition content. No supportedAPI/readinesspositivecontrol assumed. No sleeps, frameforcing, extra input/capture or generic sampler/probe performed.",
           "next_step": "After root landing, research whether deployed existing compositor/backend has a supported per-commit presentation acknowledgement exposed through already authorized API/owner, and whether existing screenshot protocol can join that identity. Reject older/unrelated/discarded acknowledgements in a meaningful control only if an actual API supports that contract. If unavailable, report concrete API/ownership gap to manager; no new dependency/product rule or invented positive control."
+        }
+      },
+      "source04_server_protocol_log_preparation": {
+        "state": "SOURCE04_ACCEPTED_COMMAND_CONSUMED_ONCE_RUNTIME04_SCOPED_FAILURE_RECORD_ACCEPTED_VISUALFAIL",
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source-candidate-04.json",
+          "sha256": "f6127902377dbade7829deac337ab18072726f487604c3e9e85174be9cc4e89d",
+          "bytes": 8898
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-manifest-04.json",
+          "sha256": "15487625b877d6e8cd79970859e5c57c9600ca0ec4adc556bd74973d516e7707",
+          "bytes": 20737
+        },
+        "new_helper": {
+          "path": "/home/bfadmin/Documents/datum-eda/scripts/prove_native_project_startup_gui.py",
+          "sha256": "be211add419d56498973847d3e961e47a399f389f6a0b5ff6beffb3f718a3a9e",
+          "bytes": 39592
+        },
+        "new_runner": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-source4.py",
+          "sha256": "894cc1590619234b305676579e793fb0f7376db9805d125f71d2c56cdc1a32e7",
+          "bytes": 23127
+        },
+        "published_prelogger_helper": {
+          "kind": "published git blob",
+          "commit": "2fc746ddcdc98c054132df57e7aea2a524b72493",
+          "repository_path": "scripts/prove_native_project_startup_gui.py",
+          "blob_sha1": "b866047cb462e56a685a6deeed07dbbacbd472dc",
+          "sha256": "3703fdadc44f021473ce36c0bdbfa762865436b9a68cc48924e1ba24787dc66f",
+          "bytes": 39497,
+          "limits": "Resolve historical03 helper using this published blob; never refresh old manifests/current-path hashes. Older cadf2089 pre-focus helper remains separately historical."
+        },
+        "authority": "Appointed PM059 retainedC04 SOURCE PREPARATION release for minimal server-log case only, synchronized exactlease/beads/export3a5911. No live release, dependencies, product change or new acceptance premise.",
+        "checks": {
+          "source_health": "PASSa84fca3273sources",
+          "static_delta_syntax": "PASS8dc081 exactexpectedhelper/source4deltas+syntax; defaultargv unchanged and adapter/input/capture/cleanup bodies identical",
+          "reuse": "Existing actual capture-ordering/selection-boundary/cleanup/custody/receipt controls and sameGUIbuild remain adequate at prior scopes. No argv-mirroring unit test, blanket rerun or Cargo per manager instruction. Future ordinary startup/serverlog remains actual logger activation proof.",
+          "local_capability": "Installed pinnedWeston14.0.2 --help9bbc7e lists --logger-scopes comma-list; installedman1bdef3 says defaultlog scope must retained. Existing accepted05 scope-list-stderr lists proto+log, fullserverproto gives clientPID+rqs/evs. No new compositor/GUI/capture launched."
+        },
+        "actual_tool_receipts": [
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 33696,
+            "timestamp": "2026-10-20T21:52:57.792Z",
+            "turn_id": "01a15b4c-5a08-75a2-91e7-b65c0e43aa4c",
+            "item_id": "ctco_01a15b4d-a5c0-7201-b593-c1ccb16603c9",
+            "call_id": "call_ad3b0b9a857741eebe78ad695b324a1c",
+            "chunk_id": "9bbc7e"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 33704,
+            "timestamp": "2026-10-20T21:53:18.423Z",
+            "turn_id": "01a15b4c-5a08-75a2-91e7-b65c0e43aa4c",
+            "item_id": "ctco_01a15b4d-f657-7740-a1ce-107af1a0c7d2",
+            "call_id": "call_ed4cdef5f09f4e53a14c70188c33685f",
+            "chunk_id": "1bdef3"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 33819,
+            "timestamp": "2026-10-20T21:58:55.711Z",
+            "turn_id": "01a15b52-89b3-7500-b3bc-9397d8aca5af",
+            "item_id": "ctco_01a15b53-1bdf-7e70-b4e0-507f08ee142d",
+            "call_id": "call_1fe51a34658c4368ae8f8c740b46e944",
+            "chunk_id": "3a5911"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 33829,
+            "timestamp": "2026-10-20T21:59:29.577Z",
+            "turn_id": "01a15b52-89b3-7500-b3bc-9397d8aca5af",
+            "item_id": "ctco_01a15b53-a029-7fe3-8e44-0488e6b22bd4",
+            "call_id": "call_7c6024454e204d0d807d52ac545a63de",
+            "chunk_id": "a84fca"
+          },
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 33829,
+            "timestamp": "2026-10-20T21:59:29.577Z",
+            "turn_id": "01a15b52-89b3-7500-b3bc-9397d8aca5af",
+            "item_id": "ctco_01a15b53-a029-7fe3-8e44-0488e6b22bd4",
+            "call_id": "call_7c6024454e204d0d807d52ac545a63de",
+            "chunk_id": "8dc081"
+          }
+        ],
+        "limits": "Minimal04 serverlogger case executedONCE under separate root release and personalADMIT; same frozen binary/budget. Serverreceipt/ordinal peerPID attribution only, not retained shooterlaunchPID or selectedsubmission\u2192wirebuffer/GPU/content/cause proof. Historical03/frozenfailures unchanged. No further live release.",
+        "review_state": "Actual source04 readiness and separate exact-once release remain recorded. Runtime04 now independently accepted ONLY for faithfulVISUALFAIL/CPU-appreceipt/boundedserverorder/qualifiedcleanup/invariance, with actual receipts below; no visual/product/C04 credit.",
+        "actual_final_reviews": [
+          {
+            "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b57-52b1-7f50-911f-a1dbbb07ea0c",
+            "result": "SOURCE/COMMAND PASS f6127902; default-off hook, unchanged behavior/ownership/frozen bindings/actual checks verified, no mandatory findings. Source readiness only."
+          },
+          {
+            "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b57-7979-7871-9314-00eb4fbc182b",
+            "result": "SOURCE/COMMAND/evidence/ownership/metadata PASS f6127902; pins/receipts/cleanup/history verified; no mandatory findings. Source readiness only."
+          }
+        ],
+        "manager_acceptance_and_release": {
+          "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "recorded_at": "2026-10-20T22:06:28Z",
+          "candidate_sha256": "f6127902377dbade7829deac337ab18072726f487604c3e9e85174be9cc4e89d",
+          "exact_command_sha256": "f21dcce1f350cb48a1f1297ff38b6ccdb4f0545c135579f2fef410fc38513283",
+          "result": "Appointed PM059 root accepts SOURCE04 readiness on both actual reviews, separately releases EXACT04 command ONCE after synchronized/preflight record. Same18inputs/8roles/6wheels/1fixedgesture/3PNGs/existingcleanup. Root personally admits2fresh baselineoriginals/checkpoint beforegesture. No extra input/capture/build/deps/retry; preserve any failure and ownedcleanup. Actual logger activation/identity/order reviewed afterward; no source-only GPU/content/cause/visual/C04 acceptance."
+        },
+        "exact_command_consumed_once": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-command-04.json",
+          "sha256": "f21dcce1f350cb48a1f1297ff38b6ccdb4f0545c135579f2fef410fc38513283",
+          "bytes": 5588
+        },
+        "runtime_candidate04": {
+          "packet": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-runtime-candidate-04.json",
+            "sha256": "5d2e4ae1da6f87c8fc03544031de39ebd94085b46e1ecfdf5667345668ab46a2",
+            "bytes": 16058
+          },
+          "result": "VISUALFAIL originalNoSelection/Selnone, freshf5c7ecfbPNG; rawchild/transportCAPTURE_ONLY/exit0,3PNGs/1gesture. CPUactual selectedVia/compound1 (native log713/714/716) still separate from pixels.",
+          "server_order": "weston.log3360buttonrelease\u21923365attachbuffer68/full-damage3366/3368commit\u21923441capture/3442complete; noMaincommitintervenes. Server receipt only; no selectedsubmission\u2192wirebuffer/content inference.",
+          "postrun": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-postrun-04.json",
+            "sha256": "ac345ac518121e93ee3c95d4bab08917ce0c77dd96f579fc9d3cd391f0fd0a1e",
+            "bytes": 3184
+          },
+          "raw_refs_count": 18,
+          "actual_execution_locators": 10,
+          "review_state": "ACCEPTED scoped faithfulVISUALFAIL/CPU-appreceipt/serverorder/qualifiedcleanup/invariance ONLY by bothactual independent reviews and appointedPM059manager. Frozen04/rawoutputs unchanged. Visualagreement remainsrequired, C04open/causeunresolved, no GPUcontent/product/ordinaryClose/all-descendant/HUMAN/platform/successor acceptance.",
+          "actual_final_reviews": [
+            {
+              "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+              "turn_id": "01a15b5c-16ad-7b73-b9d5-df0d3fe9c4b4",
+              "result": "Faithful-record PASS5d2e4ae1; bindings/10executionreceipts/protocolorder/sourceinvariance/recordedownercleanup verified; originalVISUALFAIL remains. No causal/GPUcontent/product/C04acceptance."
+            },
+            {
+              "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+              "turn_id": "01a15b5d-3de6-76e3-b266-ea9286f2cb8e",
+              "result": "PASS faithfulfailure/qualifiedcleanup5d2e4ae1;18rawrefs/10receipts match,8owners/2IPC absent/inputsunchanged/imageVISUALFAIL. No cause/GPUcontent/all-descendant/C04acceptance."
+            }
+          ],
+          "manager_final_disposition": {
+            "thread_id": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+            "recorded_at": "2026-10-20T22:13:49Z",
+            "candidate_sha256": "5d2e4ae1da6f87c8fc03544031de39ebd94085b46e1ecfdf5667345668ab46a2",
+            "scope": "PM059 root ACCEPTS faithfulVISUALFAIL, exactCPU/appreceipt and boundedserverorder observations, qualified recorded-owner cleanup/invariance only on bothactualreviews. No cause/product/C04/successor credit. Root lands4ownedpaths via normalhooks. Continued diagnosis read-only existing nextproduction/render/captureboundary; no furthermutation/live/build/dependency authorized."
+          }
         }
       }
     }

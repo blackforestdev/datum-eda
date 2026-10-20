@@ -115,7 +115,7 @@ class StartupQA:
         assert self.compositor.poll() is None and window == self.host_window
         self.command(*focus_arguments(window, os.environ))
 
-    def start_envelope(self, desktop=False):
+    def start_envelope(self, desktop=False, *, proto_log=False):
         env = dict(os.environ, XDG_RUNTIME_DIR=self.runtime.name)
         self.compositor_log = (self.root / "weston-process.log").open("w")
         config = "--no-config"
@@ -128,6 +128,8 @@ class StartupQA:
                 "--idle-time=0", "--socket=datum-startup-qa", "--log=" + str(self.root / "weston.log")]
         if self.file_actions:
             args.append("--xwayland")
+        if proto_log:
+            args.append("--logger-scopes=log,proto")
         self.compositor = subprocess.Popen(args, env=env, stdout=self.compositor_log,
                                            stderr=subprocess.STDOUT)
         self.actions.append({"owned_compositor_pid": self.compositor.pid, "argv": args})
