@@ -14098,6 +14098,653 @@
       "recorded_at": "2026-10-20T08:43:09Z",
       "retained_boundaries": "C04 remains selected/open/in_progress; C05 independent replay and C06 owner acceptance remain pending. No teardown waiver, earlier mismatch repair/cause, ordinary frozen-GUI/scheduling equivalence, exact imported consumer buffer identity, latency/D1/HUMAN/fullC04/C05/C06/Close/successor acceptance. No new implementation/runtime authority."
     },
-    "tracked_progress_checkpoint": "Manager lands only existing .beads/issues.jsonl,specs/active_frontier.json and this proof. Frozen runtime04/source07 and historical failures unchanged; private scratch stays untracked. Follow-on read-only preserved-log comparison is authorized after handoff, with no tracked plan/code/runtime edits."
+    "tracked_progress_checkpoint": "Manager lands only existing .beads/issues.jsonl,specs/active_frontier.json and this proof. Frozen runtime04/source07 and historical failures unchanged; private scratch stays untracked. Follow-on read-only preserved-log comparison is authorized after handoff, with no tracked plan/code/runtime edits.",
+    "consumer_source_preparation_20261020": {
+      "state": "Exact one consumer02 execution FAILED before baseline; both actual independent reviews and root bounded acceptance recorded for faithful failure/observed cleanup only. Later exact two-path IPC removal recorded separately. C04 remains open; no retry.",
+      "recorded_at": "2026-10-20T09:53:04Z",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_disposition": "PM059 manager explicitly authorized bounded consumer-only source preparation after actual closeout method support; no criterion waiver or new product scope.",
+      "accepted_method_scope": "Exact owned Main commit/resource/DMABUF allocation -> actual draw state -> synchronized backing bytes -> associated output capture. Native PNGs and pairings are ordinal context only; exact native export join remains unsupported.",
+      "actual_review_receipt": "Actual closeout method review support reported by appointed manager over MCP, not full source/runtime acceptance.",
+      "boundary_packet": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-join-boundary-01.json",
+        "sha256": "15d2bcbc022d2b950930d8d21abe83764a0e01c02e4e5eabe76233aa6f44a398",
+        "bytes": 8644
+      },
+      "graph": "controller -> GDB -> owned inner Weston; normal GUI separately owned; one explicit guardian and one owned reader",
+      "finite_budget": "Existing isolated envelope, one scope-list, six fixed wheels, one fixed post-ADMIT gesture, two native and two compositor PNGs plus two raw RGB memory artifacts; existing20/10/600s; zero retries.",
+      "retained_requirements": "Authenticated retained pidfd ownership/generations/FD transfer; guardian alone STOPs at most once per phase after arming original capture deadline; all GUI threads stopped and exact prior writer readiness before READ START/copy/END. GUI stays stopped through matched repaint/capture in SAME10s bound, resumes before600s human gate. Independent guardian/watchdog/parent backup; actual primary and cleanup failures preserved.",
+      "pending_exact_seam": "Source02/command02 independently reviewed; command02 executed exactly once and FAILED before baseline. Both actual runtime reviews accepted faithful failure recording; appointed manager accepted only faithful failure/observed cleanup. Exact owned IPC removal completed separately. Main draw/output-capture association and backing-byte evidence remain unproven; cause unknown. No further live release or retry; C04 remains open.",
+      "boundaries": "The single command02 live release was consumed by the failed run; no further live release or retry is authorized. No GL sampled-texel identity, exact native export join, cause/repair/equivalence, C04/C05/C06/HUMAN/D1/latency/Close/successor acceptance. No build/fetch/install/dependency/backend/input/timeout changes; frozen candidate, runtime packet, source and raw-log bytes remain immutable.",
+      "updated_at": "2026-10-20T15:43:24.177764+00:00",
+      "source_candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-source-candidate-02.json",
+        "sha256": "6aec9d949ad0f0b0ed5db493b1f07247b88d5162018f7de7faac48b57ddd07a8",
+        "bytes": 38896
+      },
+      "exact_future_command": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-command-02.json",
+        "sha256": "41e7e5920d3c69e7b716600dd66fad65f67449541ad8690d15b17471ea9278d3",
+        "bytes": 2330
+      },
+      "manifest": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-manifest-02.json",
+        "sha256": "6e85b1536ef012e059bfc78a572d7afff7edb9f4b823b467a8c4653afab1e7db",
+        "bytes": 33023
+      },
+      "focused_control_summary": {
+        "total": 97,
+        "live_runtime_coverage": false,
+        "results": [
+          {
+            "scope": "contract",
+            "PASS": 16,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_contract_controls_01.py",
+              "sha256": "0b5982f5357bddaee4362ef6c4063c21d37cc63f2c2fd02815b7a277c18feaf6",
+              "bytes": 7480
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-contract-controls-02.log",
+              "sha256": "044abb7902ad91c9e6789c9ef58546743b38c40c7bfa712bc36c7826eb8594d4",
+              "bytes": 2423
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "guardian",
+            "PASS": 20,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_guardian_controls_02.py",
+              "sha256": "eee5ba79a786f682706b8c56f40ecc8ecf31273197bd109abf2cd2804794ac32",
+              "bytes": 8325
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-guardian-controls-06.log",
+              "sha256": "9078de4c8d808debb4db670260b60c4bd905748626ed832ad989c59004e9e326",
+              "bytes": 2935
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "reader",
+            "PASS": 11,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_reader_controls_01.py",
+              "sha256": "4e6a8c7e9cba9496fabae11d2a1a5943f850a8c22d1e6a0976f326767bb829b1",
+              "bytes": 4880
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-reader-controls-02.log",
+              "sha256": "f5a87126cb2222b6cfff665e7d0189be3e87721bcecbe50930699cbbbd2b1c2e",
+              "bytes": 1506
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "channel",
+            "PASS": 10,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_channel_controls_02.py",
+              "sha256": "261e0fbf328d9b193d3da0b1718727e35708b48a1487a42fea31f33df3c99a9d",
+              "bytes": 4121
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-channel-controls-02.log",
+              "sha256": "43cf66b2cd533edf4f9ec493ed974e23db5758c4321b0df7d11f7a9d9f352c3a",
+              "bytes": 1453
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "active_guardian_RPC",
+            "PASS": 5,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_lease_controls_01.py",
+              "sha256": "2d9cd32c682106059e9395001ce2b8411dbbf2146c3c8c0d8009348224e5236a",
+              "bytes": 2964
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-lease-controls-01.log",
+              "sha256": "7c398d335720bd98374a04e0d8bed85954384fc17d96165f2f185ddd5e6c9131",
+              "bytes": 793
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "nullable_credentials",
+            "PASS": 5,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_identity_controls_01.py",
+              "sha256": "5e3d749d41dfaceab965965a3e2a87a7539a7ad624f3b8b7db2feb24e79e1f05",
+              "bytes": 2004
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-identity-controls-01.log",
+              "sha256": "484ea3bace20685b50a109712ee4548174c1f678de0109c6c67b068e866fc6fe",
+              "bytes": 827
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "capture_association",
+            "PASS": 7,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_capture_controls_01.py",
+              "sha256": "c0a788b17799e6eecb0e88163aa29d268a9b50c31a4fd9f75ed60a83ca02f62e",
+              "bytes": 4765
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-capture-controls-02.log",
+              "sha256": "49b74d4e8ef547cabb105ddde8618acf08fa82d7eecce34d0d50232a110ea2c3",
+              "bytes": 1113
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "guardian_host",
+            "PASS": 4,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_host_controls_01.py",
+              "sha256": "71ea36a3914b64189fae2e4189b66e1702447c86d27b7b36c96c7d26806cf193",
+              "bytes": 4383
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-host-controls-01.log",
+              "sha256": "3e9e7f840c7b6e58515ede64a9650d852c89b4a6bce0d78b72d279ad207f3970",
+              "bytes": 710
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "controller",
+            "PASS": 4,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_controller_controls_01.py",
+              "sha256": "d842db479f6dcbfbb27fda5d8d7d1e7471478f27c345f24e39cb0daccf3e3503",
+              "bytes": 2729
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-controller-controls-02.log",
+              "sha256": "a769473e2ddc91a3d463558d0cdf4884ea30f01ab83f692510d226fef495c675",
+              "bytes": 724
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "owner_binding",
+            "PASS": 4,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_owner_controls_01.py",
+              "sha256": "7c1e767114e1caf55e6d270c1f3a0b169c6abf641fbcbe77ae9f6a321ed1cf8b",
+              "bytes": 2740
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-owner-controls-01.log",
+              "sha256": "9970e8dbec76e11f12cc2365ad1ea3465393d3b0a9e52151d31d432903c95ea7",
+              "bytes": 706
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          },
+          {
+            "scope": "installed_GDB_PID0",
+            "PASS": 11,
+            "source": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_gdb_controls_01.py",
+              "sha256": "9c02ec14bd9cb3a480c658ed76096c5786a800df635861bde109faa055caa8a3",
+              "bytes": 6557
+            },
+            "log": {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-gdb-controls-04.log",
+              "sha256": "3accbbdbdcbb77c56d24ba63b9f8921d9b350425d1ea89bf08ebe8fc0e7db34d",
+              "bytes": 1407
+            },
+            "limits": "Offline fakes/adapted constructor or static pinned DWARF only; not actual new owner graph, live frame, GPU/draw/coherence or runtime qualification."
+          }
+        ]
+      },
+      "actual_component_review_receipts": [
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "disposition": "Bounded component SOURCE PASS correcting R3 parent backup full-thread resume; actual20 offline PASS. Full new host/runner/owner graph NOT reviewed.",
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_guardian_02.py",
+            "sha256": "7fb5f4fee997d7a969997f0ef8970d688e027eeebabf97f20a2046ece8654a41",
+            "bytes": 8292
+          },
+          "controls": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_guardian_controls_02.py",
+            "sha256": "eee5ba79a786f682706b8c56f40ecc8ecf31273197bd109abf2cd2804794ac32",
+            "bytes": 8325
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-guardian-controls-06.log",
+            "sha256": "9078de4c8d808debb4db670260b60c4bd905748626ed832ad989c59004e9e326",
+            "bytes": 2935
+          }
+        },
+        {
+          "reviewer_task": "/root/closeout_review",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "disposition": "R2 post-RGB fresh lease/deadline correction resolved; actual11 PASS. Reader kernel predicate inspected, not authenticated active phase/epoch or full graph.",
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_reader_01.py",
+            "bytes": 5103,
+            "sha256": "eda517d6659fb64f6a927bf24613c706dd90009ba80c8a0e6bab0e4f97a50277"
+          },
+          "old_predicate_source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_owners_01.py",
+            "bytes": 4215,
+            "sha256": "8090e2241ded95dedee55620fa4990d883c97ecc10115bd9c69619440739bd2e"
+          },
+          "controls": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_reader_controls_01.py",
+            "sha256": "4e6a8c7e9cba9496fabae11d2a1a5943f850a8c22d1e6a0976f326767bb829b1",
+            "bytes": 4880
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-reader-controls-02.log",
+            "sha256": "f5a87126cb2222b6cfff665e7d0189be3e87721bcecbe50930699cbbbd2b1c2e",
+            "bytes": 1506
+          }
+        },
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "disposition": "Prior channel01 decoder8 controls actual PASS; no additional channel finding. Channel02 adds expected-exited-finalACK delta, pending independent full review.",
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_channel_01.py",
+            "bytes": 3071,
+            "sha256": "757e42ba61e8d5f42847be52c3f263ffa06d3d8f099ac3232f36c7d18c8d063e"
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-channel-controls-01.log",
+            "bytes": 1158,
+            "sha256": "9c2d70f2f1b981443885a3fedf949bb3b1516c7850183f0b6244628b11de9116",
+            "tests": 8,
+            "result": "PASS only for tested component snapshot"
+          }
+        }
+      ],
+      "manager_claim_precision_dispositions": [
+        "Actual closeout method support and PM059 manager disposition authorize exact owned Main commit/resource/DMABUF allocation -> actual draw state -> synchronized backing bytes -> associated output capture. Native PNGs/pairings are ORDINAL CONTEXT ONLY; exact native/export join remains unsupported. No criterion waiver/new product scope.",
+        "Actual API outputs preserve absent uid/gid. Actual nonnull returned PID/client allocation generation is joined to separately authenticated retained ownedprocess pidfd/starttime/exe/currentUID. UID provenance is ownedprocess only; no private client cast, fabricated API output, injected call or extra probe.",
+        "Expected capture destination/client teardown after actual server completion stages immutable history pending exact wire+PNG receipts. Premature destruction/reuse fails. Source/stop exclusion retained through comparison boundary, followed by verified normal GUI resume before human gate.",
+        "Finite capture scope may end after BOTH consumer phases and normal GUI resumes are sealed, with all inherited client/resource/allocation/commit/frame/task dependencies resolved in exact trace prefix. Every disabled pending unselected callback/raw state/reason is retained; no wholetrace/allAPI completion claim. Actual GDB/Weston exit and independent owner/IPC cleanup/errors still required; no historical rewrite/teardown waiver."
+      ],
+      "finite_observation_scope": "End only after both phases and normal GUI resumes are sealed, all inherited client/resource/allocation/commit/frame/task dependencies resolved in exact trace prefix; disabled pending unselected callbacks retained, no whole-trace/allAPI completeness claim. Actual GDB/Weston exit and independent owner/IPC cleanup remain required.",
+      "live_release": {
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "released_at": "2026-10-20T15:30:01.323327+00:00",
+        "authority": "PM059 delegated exact ONE execution of saved argv in reviewed consumer-command02 under retained S5A-C04 consumer diagnostic scope.",
+        "command_path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-command-02.json",
+        "command_sha256": "41e7e5920d3c69e7b716600dd66fad65f67449541ad8690d15b17471ea9278d3",
+        "candidate_sha256": "6aec9d949ad0f0b0ed5db493b1f07247b88d5162018f7de7faac48b57ddd07a8",
+        "manifest_sha256": "6e85b1536ef012e059bfc78a572d7afff7edb9f4b823b467a8c4653afab1e7db",
+        "execution_limit": 1,
+        "execution_state": "Executed exactly once; QA child exit 1; runtime and transport FAIL before baseline. Shell exit unavailable from retained tool output; actual Weston ExitedEvent exit_code 0. No retry authorized or performed.",
+        "budget": "Exact saved process/input/artifact/deadline budget, no retries or adjustments. Notify manager at launch and immediately at baseline checkpoint; no gesture before exact three-view hash-bound manager ADMIT.",
+        "failure_disposition": "Preserve any failure, complete owned cleanup, report and freeze actual runtime/cleanup evidence for independent review; do not rerun.",
+        "retained_limits": "Native remains ordinal context only; no exact native export/GL sampled-texel, cause/repair/equivalence/qualification/acceptance claim."
+      },
+      "retained_boundary": "No execution under prior producer releases. No new run, cause/repair/equivalence, exact native export or GL sampled-texel identity, C04/C05/C06/HUMAN/D1/latency/Close/successor acceptance; old failures and boundary15d2 unchanged.",
+      "prior_consumer_source_candidates": [
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-source-candidate-01.json",
+          "sha256": "a082615a6807b6fd99ad18c4799a12238cdf5e231c65d4934f01200f9122da5b",
+          "bytes": 32972
+        }
+      ],
+      "actual_full_source_reviews_of_01": [
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "verdict": "REVISE / NO LIVE; exactlyO1-O6, no other mandatory owner/controller/command finding.",
+          "verified_scope": "92unique candidate refs,34runtime closure,correctedguardian02/newops wiring,17reusedRust pins and18canonical/history hashes; future output/cache absent. Active guardian RPC phase/epoch/sequence/originaldeadline + kernel-stop checks sound."
+        },
+        {
+          "reviewer_task": "/root/closeout_review",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "verdict": "Corrections required forC1 and stale baseline manifest; no other mandatory consumer identity/synchronization/draw/capture/finite closure finding.",
+          "verified_scope": "106unique hashes and97recorded offline controls including11installedGDB PID0; static/dynamic limits retained."
+        },
+        {
+          "reviewer": "appointed manager root",
+          "verdict": "Candidate01 cannot release as-is forM1; verified160refs/106uniquefiles allpins and futuredirs absent."
+        }
+      ],
+      "correction_map": [
+        {
+          "id": "M1",
+          "problem": "Baseline manifest required absent producer WSI links and lacked explicit actual3-view binding.",
+          "change": "Consumer sealed request/draw/task/evidence, complete-LF prefix/rawRGB and actual normal resume are checkpointed. Gate requires root ADMIT with separate exact artifact hash and actual review for compositor, consumer backingRGB, native ordinal context. No fake WSI fields.",
+          "runtime_paths": [
+            "native-consumer-diagnostic-source2.py",
+            "native_consumer_qa_02.py",
+            "native_consumer_admission_01.py"
+          ],
+          "evidence": [
+            "native-consumer-admission-controls-01.log",
+            "native-consumer-metadata-controls-02.log"
+          ]
+        },
+        {
+          "id": "O1",
+          "problem": "Ambient/default binary_dir selected ordinary target/debug instead of manifest instrumented binaries.",
+          "change": "Set DATUM_QA_BINARY_DIR from exact manifest before constructing StartupQA; actual constructor-field adapter confirms ambient override.",
+          "runtime_paths": [
+            "native-consumer-diagnostic-source2.py"
+          ],
+          "evidence": [
+            "native-consumer-startup-controls-01.log"
+          ]
+        },
+        {
+          "id": "O2",
+          "problem": "Missing inferior.json and bind_gui None-return used as polling predicate prevented startup.",
+          "change": "Publish actual current Weston identity after verified startup; readiness polls only retained inferior plus real record existence. Strict actual Ownership.bind_gui executes once afterward, outside readiness retry.",
+          "runtime_paths": [
+            "native_consumer_gdb_02.py",
+            "native_consumer_qa_02.py"
+          ],
+          "evidence": [
+            "native-consumer-startup-controls-01.log"
+          ]
+        },
+        {
+          "id": "O3",
+          "problem": "Unconditional parent CONT could resume unowned/preexisting stops, including startup/refusal/post-normal-finish failures.",
+          "change": "Authenticated exact-pending ARM pre-STOP notice only after all preflight checks creates possible debt; failed notice prevents STOP. ACK confirms; same-phase normal finish retires debt. Parent recovery once per debt; possible live issuer must quiesce before CONT. No notice/no ARM/preflight refusal/post-retirement gives no CONT authority.",
+          "runtime_paths": [
+            "native_consumer_guardian_03.py",
+            "native_consumer_guardian_host_03.py",
+            "native_consumer_controller_02.py"
+          ],
+          "evidence": [
+            "native-consumer-guardian-controls-07.log",
+            "native-consumer-debt-controls-02.log",
+            "native-consumer-notice-controls-01.log"
+          ]
+        },
+        {
+          "id": "O4",
+          "problem": "RuntimeError health failures were swallowed as transient readiness inside600s gate.",
+          "change": "Terminal health failures escape actual wait adapter as non-RuntimeError immediately; normal readiness still polls. Backup is one attempt per actual/possible owned debt.",
+          "runtime_paths": [
+            "native_consumer_controller_02.py",
+            "native_consumer_qa_02.py"
+          ],
+          "evidence": [
+            "native-consumer-startup-controls-01.log",
+            "native-consumer-debt-controls-02.log"
+          ]
+        },
+        {
+          "id": "O5",
+          "problem": "Instrumentation metadata still named historical producer runner6 as current.",
+          "change": "Current instrumentation.runner pin matches source2 command. Previous runner retained explicitly historical only; current manifest checkpoint paths match actual producer assignments.",
+          "runtime_paths": [
+            "native-consumer-manifest-02.json",
+            "native-consumer-command-02.json"
+          ],
+          "evidence": [
+            "native-consumer-metadata-controls-02.log"
+          ]
+        },
+        {
+          "id": "O6",
+          "problem": "Queued guardian_unverified_resume report was lost when tick threw before intake and abort closed its channel.",
+          "change": "Known owned debt resumes first; absent known debt, nonblocking authenticated notice intake establishes possible lost-ACK debt then immediate recovery. Keep channel through actual exit; bounded exited-owner tail preserves full report and actual exit/unknown/cleanup facts, never a healthy ACK. Helper receipt files retained separately when present.",
+          "runtime_paths": [
+            "native_consumer_controller_02.py",
+            "native_consumer_guardian_host_03.py",
+            "native_consumer_channel_03.py"
+          ],
+          "evidence": [
+            "native-consumer-tail-controls-02.log",
+            "native-consumer-debt-controls-02.log",
+            "native-consumer-channel-controls-03.log"
+          ]
+        },
+        {
+          "id": "C1",
+          "problem": "Capture output gdb.Value first converted after function return; argument could be unreadable.",
+          "change": "Force typed output address to plain int at entry and use only that value in Finish callback. Actual old callback reproduces failure; corrected callback survives invalidated entry argument and refuses foreign task/output.",
+          "runtime_paths": [
+            "native_consumer_gdb_draw_02.py"
+          ],
+          "evidence": [
+            "native-consumer-pull-controls-02.log"
+          ]
+        }
+      ],
+      "focused_correction_results": [
+        {
+          "scope": "guardian preflight/notice/stop/debt state",
+          "PASS": 23,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_guardian_controls_03.py",
+            "sha256": "a2438780fdeccc87a572f94ed0ee581e499195ebf1b1e41bded1b34be2a6fe0a",
+            "bytes": 9496
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-guardian-controls-07.log",
+            "sha256": "285783cac5b8d40f0e4d856ce307dc496d54952b76d0d5340f8fcfca23e33720",
+            "bytes": 3388
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "normal/finalACK/exited-failure-tail transport",
+          "PASS": 12,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_channel_controls_03.py",
+            "sha256": "65ae36805a67ad932c67ff78f50c2c52a6e3d6028b98f2fdd5e3c448010a58a9",
+            "bytes": 5240
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-channel-controls-03.log",
+            "sha256": "1594e74e2f10a3a4d63b0141b65edaef60d751eb5c4e7abcbaac4ad2d4b19c1f",
+            "bytes": 1773
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "guardian actual serve loop",
+          "PASS": 4,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_host_controls_02.py",
+            "sha256": "994a3edebfa73fbe7ad81e1aa5967fdc0b187ab0fb0ac58b19a031485a199615",
+            "bytes": 4391
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-host-controls-02.log",
+            "sha256": "3e9e7f840c7b6e58515ede64a9650d852c89b4a6bce0d78b72d279ad207f3970",
+            "bytes": 710
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "parent owned/possible/no-stop debt and final report",
+          "PASS": 8,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_debt_controls_01.py",
+            "sha256": "b8954713c16f3d2858fbfcf514c283e0e9ffd4799eceaac4feb1b9dcb2a744c9",
+            "bytes": 7257
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-debt-controls-02.log",
+            "sha256": "22cc6fab4e9440dba4b5524834e65251d3174df29c2d1c31b929d72d36c22660",
+            "bytes": 1282
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "actual host-to-controller unverified failure tail",
+          "PASS": 2,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_tail_controls_01.py",
+            "sha256": "624d4ec6f87b5f66a600b186d0cd97c9ccf7952c814e27440cddc85c75d1fcac",
+            "bytes": 2592
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-tail-controls-02.log",
+            "sha256": "a738705c50bf4e1ebdcfc38e1945ed10bfab25a0bdd9339af3dfb709415b67a9",
+            "bytes": 424
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "actual host notice producer/pending ARM authentication",
+          "PASS": 2,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_notice_controls_01.py",
+            "sha256": "375ff0c69104af11268ef486599a9eb1207666b159ad6c04607b694af66e49e2",
+            "bytes": 2548
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-notice-controls-01.log",
+            "sha256": "785a09b7c5f1e24eaaca8c184295ecd70509337cf32c42953d2a25853e54329a",
+            "bytes": 428
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "actual binary/wait/publisher/ownership adapters",
+          "PASS": 5,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_startup_controls_01.py",
+            "sha256": "fddff5834c1016361d23314f434b020d6d746f4dc0899b4ef466064deb20e913",
+            "bytes": 7132
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-startup-controls-01.log",
+            "sha256": "9d211b7a12c74fce1141cd9e6e2a2de229b90778f17628309c02d4c183f04223",
+            "bytes": 937
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "three-view hash-bound manager admission",
+          "PASS": 5,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_admission_controls_01.py",
+            "sha256": "1b45396dff53fdb1524dbc520d6d8fa621d6c466bb8658e8b71bed10242b067e",
+            "bytes": 3957
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-admission-controls-01.log",
+            "sha256": "11e051f6d04d219de3d41a8350a0d752d0b188ab36b7e47f81d399f8af8efcf6",
+            "bytes": 825
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        },
+        {
+          "scope": "actual pull_entry/Finish lazy-value regression",
+          "PASS": 3,
+          "source": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_consumer_pull_controls_01.py",
+            "sha256": "234f19b527f51b21f7525aa6c0f3e5cd0883a740be995ea4f635bf1287c2f953",
+            "bytes": 3585
+          },
+          "log": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-pull-controls-02.log",
+            "sha256": "10d2e127e5cd9ec09f37dbb029cfe6318ef07100101c1275603e2ba080341dab",
+            "bytes": 555
+          },
+          "limits": "Offline simulated process/FD/socket/clock/value seams and actual source bodies/adapter AST only; no new app/inferior/kernel/GPU execution."
+        }
+      ],
+      "focused_correction_count": 64,
+      "metadata_closure_checks": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-metadata-controls-02.log",
+        "sha256": "7f59359171abb24a7bc776c6c28ecdf81994f731dc2bf199204c385a8cebe5dc",
+        "bytes": 553
+      },
+      "GDB_compatibility_reuse": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-gdb-compat-reuse-02.json",
+        "sha256": "59e097faa6de5a2467371f430239c33ce3430832ff541791b3d022a0459850f3",
+        "bytes": 1392
+      },
+      "retained_evidence_scope": "Prior candidate01/fullreview97 controls remain historical, REVISE/NO LIVE. Unchanged evidence reused by exact pins;64 focused correction controls overlap prior component coverage and are not added as an inflated total. Metadata AST closure checks are not live proof.",
+      "consumer02_actual_source_command_reviews": {
+        "recorded_at": "2026-10-20T15:28:51.571357+00:00",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "pins": {
+          "candidate_sha256": "6aec9d949ad0f0b0ed5db493b1f07247b88d5162018f7de7faac48b57ddd07a8",
+          "manifest_sha256": "6e85b1536ef012e059bfc78a572d7afff7edb9f4b823b467a8c4653afab1e7db",
+          "command_sha256": "41e7e5920d3c69e7b716600dd66fad65f67449541ad8690d15b17471ea9278d3"
+        },
+        "receipts": [
+          {
+            "reviewer_task": "/root/closeout_review",
+            "verdict": "SOURCE/COMMAND PASS",
+            "scope": "C1 correction, consumer chain, baseline metadata and justified GDB compatibility reuse",
+            "remaining_mandatory_findings": []
+          },
+          {
+            "reviewer_task": "/root/reorganization_review",
+            "verdict": "SOURCE/COMMAND PASS",
+            "scope": "O1-O6 corrections, ownership/controller/QA, import closure and exact command",
+            "remaining_mandatory_findings": []
+          }
+        ],
+        "manager_verification": "Manager independently rechecked exact candidate/manifest/command pins, absent future paths and valid worker claim at2026-10-20T15:27Z.",
+        "limits": "Actual independent source/command reviews only. No live run/release, kernel/GPU/capture success, cause/repair/equivalence, exact native export or GL sampled texels, C04/C05/C06/HUMAN/D1/latency/Close/successor acceptance."
+      },
+      "runtime_candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-runtime-candidate-01.json",
+        "sha256": "988d9d31a6a2d43656bb27511e3ac736bdf312e4fecfcc9b374d3c3e211cc801",
+        "bytes": 22423,
+        "status": "FAIL_BEFORE_BASELINE",
+        "primary_observed_failure": "RuntimeError: timed out: native window visible; last=None",
+        "startup_last_entry": "wgpu request adapter begin; no completion logged before timeout; cause undetermined",
+        "secondary_failures": "consumer observation incomplete at finalization; terminal transport cleanup timeout; conservative owner-stop flags false and IPC retained. Raw receipts unchanged.",
+        "counts": {
+          "executions": 1,
+          "scope_lists": 1,
+          "captures": 0,
+          "controlled_region_gestures": 0,
+          "trace_records": 1819
+        },
+        "independent_postrun": "All 11 known run PIDs absent; no scoped argv/FD or UNIX socket matches. Six older process FD scan denials retained as limits. Runtime packet records both IPC directories retained at that observation; later removal is separately receipted below. All 36 source pins and 18 canonical files unchanged.",
+        "review_state": "Both actual independent reviews accepted faithful failure/observed cleanup; root bounded acceptance recorded below. Runtime remains FAIL.",
+        "retained_limits": "Faithful failure and observed post-run state only. No observer/driver cause inference, Main draw/backing-byte or pixel proof, repair, equivalence, qualification, C04/C05/C06, HUMAN, D1, latency, Close, acceptance or successor authorization."
+      },
+      "consumer02_actual_runtime_reviews": {
+        "recorded_at": "2026-10-20T15:43:24.177764+00:00",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "runtime_candidate_sha256": "988d9d31a6a2d43656bb27511e3ac736bdf312e4fecfcc9b374d3c3e211cc801",
+        "receipts": [
+          {
+            "reviewer_task": "/root/closeout_review",
+            "verdict": "ACCEPT faithful FAILED recording",
+            "scope": "Exact execution, startup/error ordering, counts and claim limits.",
+            "verified": "31 artifact bindings, 36 sources, exact command/runner, 18 unchanged canonical files; no baseline/ADMIT/gesture/capture; cause undetermined.",
+            "required_correction": "Reconciled stale pending_exact_seam/boundaries to reviewed source02, command02 executed once and failed; no further release."
+          },
+          {
+            "reviewer_task": "/root/reorganization_review",
+            "verdict": "ACCEPT faithful FAILED recording",
+            "scope": "Actual cleanup, descendants, source maps and IPC ownership.",
+            "verified": "31 bindings, 36 sources, 18 unchanged files; all 11 recorded PIDs, 17 Weston LWPs and 3 credential PIDs absent. Six denied processes predate run (start ticks 2498-2918 versus 43956733); no surviving same-UID run-interval process, scoped path/FD match or UNIX entry.",
+            "limits": "Six older FD inspection denials retained as limits; not a concrete blocker to narrowly owned IPC removal."
+          }
+        ],
+        "manager_disposition": "Root accepts both actual runtime reviews ONLY as faithful failure/observed cleanup recording. C04 stays open; cause unknown; no retry or product acceptance.",
+        "authority": "Owner-appointed PM059 manager, received by MCP; no self-review or fabricated PASS."
+      },
+      "later_owned_IPC_removal": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-consumer-ipc-removal-01.json",
+        "sha256": "6a4873754ac2e1b8f4f1648cd5734418ff5f6d2e0f4692e82a598b09f7bd29a1",
+        "bytes": 3418,
+        "removed_paths": [
+          "/run/user/1000/npd-wl-h5re8mq0",
+          "/run/user/1000/nqi-6sd6ctz5"
+        ],
+        "scope": "Exact same-run cleanup after fresh exact-path/UID/mode/symlink/owner/FD/socket checks; six older FD-denial limits preserved. No runtime/raw receipt rewrite, signals, normal Close or successful diagnostic inferred."
+      }
+    }
   }
 }
