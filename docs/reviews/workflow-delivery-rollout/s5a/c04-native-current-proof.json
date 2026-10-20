@@ -13224,5 +13224,155 @@
         "boundary": "Native01 disclosure failure and raw CAPTURE_ONLY results preserved; no fullC04/HUMAN/successor acceptance."
       }
     }
+  },
+  "native_wayland_board_d1_timing_20261019": {
+    "state": "The remaining Board D1 timing cohort is blocked by unreliable exclusive input/focus transport. Native03 remains FAIL, with no completed D1 trial or cohort. Its full 100,007-member/current-basis/fresh-pixel/nonmutation evidence has actual bounded independent and manager acceptance. No further native run is released.",
+    "authority": "Retained UVT-S5A-BUILD/S5A-C04 grant under appointed PM059 manager 01a13df1-7a0d-72c1-bbdd-f0d96d481598. The manager selected the missing Board D1 diagnostic receipt. Prior Schematic92, D1 cap and D2/native110 evidence retain their accepted scopes.",
+    "evidence_gap": "Actual reorganization_review audit found that native110 contains one full Board acquisition and omits optional timing. It does not supply the required cold, warm and warm-repeat Board timing cohort. No numerical latency criterion is introduced.",
+    "input_and_setup": {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin s5a_fixture -- maximal-channel-collision <BASE>/board-d1-collision-input-01 <repo>/target/debug/datum-eda",
+      "actual_exit": 0,
+      "compile": "The guarded fixture build passed in 2m25s. Setup01 then exited 0 after the ordinary producers completed; no GUI rebuild was needed.",
+      "producer": "Copy the 40 catalogue-pinned primary artifacts-v4 files at baseline 85f3b5df, then use the unchanged maximal-channel-collision builder for one canonical batch of 100,000 BoardText objects, ordinary DRC, route export and review. No private graft, source restamp, new fixture design or setup retry.",
+      "log_sha256": "df7292db1dd1598964cd5e0b58ab9f9d4e0a7b70c354c257c897b6bc33086924",
+      "input_manifest_sha256": "18fc8a0a3b1852a362b82e475ed0eb9df00e6c7dd52e4209032fde3bc5461273",
+      "canonical_file_count": 49,
+      "file_count_boundary": "The frozen input has 49 canonical/history files: 40 pinned baseline files and nine lawful check, revision, proposal and fixture-report additions. The historical 45-file/native110 receipt is preserved separately.",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "efc02893df22e1cf7d37a8acd942ad11e113060ea79187a67950bab7a8a9ecde",
+      "oracle": "Choose the deterministic 100,000 BoardText IDs and geometry plus the frozen baseline four Tracks, two standalone nil-package Pads and BoardOutline before native input. All 100,007 typed identities are unique. Check every canonical batch operation against the source rule. Use Rust class order Pad, Track, BoardText, BoardOutline, then UUID order, omitting empty instance paths.",
+      "expected_compact_digest": "sha256:a70bdf0f6ff26aba04077accaf644bc1a270c162c657027698faa6a520bbc257"
+    },
+    "fixture_context": "The existing six DRC errors remain fixture context. This is not a clean-DRC claim.",
+    "method": {
+      "configuration": "One pinned native Wayland/wgpu Vulkan configuration, 1344x806 at scale 1, Board pane 0, dock closed, with unchanged camera and filters. Bind the frozen input, source and current GUI/CLI/daemon hashes; capture actual launched PID/executable identities.",
+      "cold": "The first full Ctrl+A acquisition in a fresh process follows ordinary startup, the focus click, Escape, joint compact-None/public-root-absence and presentation barriers. It does not mean unprepared geometry or flushed OS/GPU caches.",
+      "warm": "Warm and warm-repeat use the same process, input and configuration after each prior full qualification, ordinary Escape, joint None barrier and fresh cleared frame. Full accessibility traversal and captures affect later warmth.",
+      "timing": "Use one monotonic observer clock from command start to the first complete LF-terminated source/hash-matching subject receipt. Record byte offsets and increasing sequence after actual None. This observed upper bound includes command, transport, queue, scheduling, serialization, polling and observer overhead. The exact committed-subject instant remains unmeasured.",
+      "public_qualification": "After a fresh Main frame, deliberately enumerate all 100,007 public members. Persist one raw snapshot before fallible qualification and postconditions, including complete/incomplete status, basis and error metadata. Check every own-PID identity and standard SELECTED state, reject duplicates, compare the entire independent typed set, require stable public basis and active-pane 0 before and after, and guard the full authoritative selection plus project/revision/focus/scope/configuration. Unrelated Inspector publication may advance the global diagnostic sequence.",
+      "persistence": "Measure the public walk and raw snapshot persistence separately. Keep only a compact qualification receipt afterward; do not duplicate the large raw snapshot. Preserve partial evidence and the primary failure if persistence itself fails.",
+      "phase_limits": "Retain whole-workspace prepare_session_workspace, accessibility refresh, renderer and present records with their own meanings. Fresh Main presentation ledger/capture is separate. Isolated selection evaluation, isolated overlay preparation and physical-display latency remain unmeasured. Do not combine SystemTime stamps with monotonic intervals.",
+      "observer_limits": "Verbose file diagnostics and compact action observation are active; stderr timing and extra CPU probes are off. No observer-off comparison exists, so timings are diagnostic and non-qualifying. There is no threshold, percentile-confidence or optimization claim.",
+      "stop_rule": "Each released cohort has exactly one cold, one warm and one warm-repeat input, with no automatic retry. A setup or correctness failure stops the affected batch for explicit assessment. Historical failed cohorts are never pooled or relabeled."
+    },
+    "historical_source_and_launch_dispositions": [
+      {
+        "cohort": "native01",
+        "source": "Actual independent source/method PASS at source2, conditional binding then passed. All 17 source pins, 49 input files, ordered oracle, operations/history and four executables were verified. The manager released the original three-trial cohort; it stopped after its first input.",
+        "bindings": {
+          "source_candidate2_sha256": "f50005c75ece8429a013fec75d2e837a0da3bdf3192804df63676197d2e6e303",
+          "runner_sha256": "06ad8daa7fdd08cbdbefa0dd315d05fd7f0274bd34be784939f4ae476bab8f0d",
+          "binding_candidate1_sha256": "0e6a8d4c91a63a8d7251a72358c642939c4d6bb04443ef617a5a7b8d214e734d",
+          "native_binaries": {
+            "datum-gui": "1ee1dfa7992c3b4fee67a3569344f2a0472bb011c50a196e5971dfaaafa22eae",
+            "datum-eda": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+            "eda-engine-daemon": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f"
+          },
+          "fixture_binary_sha256": "efadebb2afc7727296950651af2ef9f0d607db6a3e77feb982a196abe090454d"
+        },
+        "correction": "R1 required independent bounded cleanup attempts, retained phase errors, verified owner stops before IPC removal, final result persistence and preservation of the primary failure."
+      },
+      {
+        "cohort": "native02",
+        "source": "Actual independent source3/delta and binding PASS. The manager explicitly assessed the native01 observer failure and released one fresh corrected three-trial cohort, with four total acquisition inputs if completed. It stopped after one input, so the cumulative actual count is two.",
+        "source_candidate_sha256": "1eb6bdd74e33ed6a99ba2b255bf6162b2abb3c2f5e3df6ad481a350c3df9e155",
+        "runner_sha256": "9b1928d69f12fbb5c66b9cc7ea4ea2b6cc4c2d8b61f2eff7ffc0f5c0aa708278",
+        "binding_candidate_sha256": "1612b32925dfa577ad111791f7b02ec91b53456d0b0c7b7faab0272e0e9985b0",
+        "command_sha256": "18d5bb3d0245400a6dab3152a5ab041a288ed8a62415a6c5ed05e6db27d80b0d",
+        "correction": "R2 uses existing after_damage barriers before selected captures and between-trial cleared captures. The stale native01 capture remains failed."
+      },
+      {
+        "candidate": "source4",
+        "source_candidate_sha256": "451159adc4b552c48c3a9ac7efb5d81aef0f4a93de818b8f8f19436a478a73e4",
+        "runner_sha256": "f1b738c886677c6afd9551ad501fc91aae0604f7045c2337d76daf118d1b9390",
+        "offline_receipt_sha256": "010fac8c81cd8d71e8a664c7b88922b60927f79845769c807941791e1d4717f6",
+        "review": "Actual /root/reorganization_review independently verified source4, its source/pin bindings and the 17-check offline receipt. The appointed manager accepted that actual review; the manager did not personally rerun or individually audit the 17 checks. R3/R4, raw persistence, joint None and retained R1/R2 passed review. One explicit public active-pane assertion remained for source5. No native source4 execution occurred."
+      },
+      {
+        "cohort": "native03",
+        "source_candidate_sha256": "948d22006dcd19830b59ce35ea7fde65c332972bb8a7e419454f1776cd1fff9f",
+        "runner_sha256": "ecb06bf26d0b97d8a52d699d418cb81b3739d5838ee63d29cd7775971603e4cf",
+        "binding_candidate_sha256": "0cd5fdda1ad179699b182eaab2b988d3a7cb4c014720b5c1c236a8f59dbc5b4e",
+        "command_sha256": "b1d5d17de394f893ee14b6aa8afb897bd5206a411d6eb3158f0b355523a2115e",
+        "review": "Historical actual SOURCE5 DELTA + NATIVE03 BINDING PASS by /root/reorganization_review, with no mandatory findings. All 31 references, 49 input files and GUI/CLI/daemon pins were verified. The manager released one fresh corrected three-input cohort; it stopped after its first input.",
+        "corrections": "Retain R1 cleanup and R2 fresh-frame barriers. R3 compares authoritative selection and configuration, allowing unrelated Inspector sequence advance. Save raw complete/partial evidence before qualification, then compact receipts. Wait jointly for compact None and public-root absence. R4 accepts both legal release orders while rejecting duplicate/repeated A, missing CONTROL, Shift or focus loss. Source5 adds the explicit before/after public active-pane 0 assertion after raw persistence and before qualification credit.",
+        "offline_regression": "Actual 17 checks passed against AST-extracted corrected guards and preserved native02 records/events. They accept Inspector-only publication and both legal release orders; reject changed project/revision/kind/focus/scope/count/hash/stale, backwards sequence, duplicate A, missing CONTROL, Shift and repeat. The independent reviewer verified the source/pins and 17-check receipt; the appointed manager accepted that review without personally rerunning or individually auditing the checks. Source5 retains exactly the same two guard ASTs, so this evidence is reused without another run."
+      }
+    ],
+    "preserved_native01": {
+      "raw_root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wayland-board-d1-01",
+      "actual_exit": 1,
+      "result_sha256": "880398832dfb38a11f0d2844cb503381fa04c6d811057e81f713e10b33759808",
+      "failure_candidate_sha256": "b093d6faada9d861cdec59be632774681f395fe56f5a3e571b9a959909eef454",
+      "executed_runner_sha256": "06ad8daa7fdd08cbdbefa0dd315d05fd7f0274bd34be784939f4ae476bab8f0d",
+      "actual_count": "One cold input, zero completed qualified trials; warm and warm-repeat were not executed.",
+      "compact_observation_upper_bound_ms": 51768.184467,
+      "failure": "The capture barrier accepted old Main generation 3 after the compact matching subject receipt. The stale PNG still shows No selection; the fresh-generation assertion stopped the batch before any full public walk. Later generation 4 presented, but no recapture or retrospective qualification is credited.",
+      "assessment": "Actual reviewer and manager confirmed an observer race, not an established application redraw defect. The raw result, trace, source and two captures remain unchanged.",
+      "cleanup": "All GUI, daemon, clipboard and Weston stops were verified, with no cleanup errors, IPC removed, and all 49 canonical/history maps unchanged. The owned terminal group received HUP during failure cleanup; this is not ordinary shell/window-close acceptance."
+    },
+    "preserved_native02": {
+      "raw_root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wayland-board-d1-02",
+      "actual_exit": 1,
+      "result_sha256": "fc75c2d98e5c52d54262a337f332a1d9ba31bd4ee7ae7eca1f45ff50f68a8231",
+      "failure_candidate_sha256": "bf773de2b304b8617ec317abbbb0d2fa4b30d66d6df39c1ef3a01a74f5dae5d4",
+      "executed_runner_sha256": "9b1928d69f12fbb5c66b9cc7ea4ea2b6cc4c2d8b61f2eff7ffc0f5c0aa708278",
+      "actual_count": "One cold input, zero completed qualified trials; warm and warm-repeat were not executed. Cumulative actual inputs across native01/native02: two cold, zero warm, zero warm-repeat.",
+      "compact_observation_upper_bound_ms": 52066.082405,
+      "public_walk_ms": 403106.708699,
+      "failure": "Fresh Main generation 3 to 4 and the selected PNG were correct. The full public walk and qualify call returned, but an overstrict global sequence guard failed before the raw snapshot was persisted. Sequence 2 to 3 changed only selection_inspector.presented; the authoritative selection and other state were equal. Without persisted full public data, no independent full-membership or completed-trial credit is granted.",
+      "additional_finding": "R4 diagnosed another overstrict guard: the actual valid Ctrl+A chord cleared CONTROL before A release. The check would reject that legal order. The corrected guard requires A press under CONTROL and both release events after press, without ordering those two releases.",
+      "cleanup": "All four owner stops were verified, with no cleanup errors, IPC removed and all 49 canonical/history maps unchanged. The terminal received failure HUP, not ordinary exit credit."
+    },
+    "limits": [
+      "Only the missing Board D1 diagnostic cohort is in scope. Preserve accepted Schematic92, D1 cap and D2/native110 evidence; no broad C04, HUMAN, C05/C06 or successor acceptance.",
+      "Raw artifacts stay in the existing ignored BASE, with this existing proof as the tracked record. No new product instrumentation, dependency, fixture design, product rule, authority digest or standalone tracked report."
+    ],
+    "native03": {
+      "raw_root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wayland-board-d1-03",
+      "source_candidate_sha256": "948d22006dcd19830b59ce35ea7fde65c332972bb8a7e419454f1776cd1fff9f",
+      "runner_sha256": "ecb06bf26d0b97d8a52d699d418cb81b3739d5838ee63d29cd7775971603e4cf",
+      "binding_sha256": "0cd5fdda1ad179699b182eaab2b988d3a7cb4c014720b5c1c236a8f59dbc5b4e",
+      "command_sha256": "b1d5d17de394f893ee14b6aa8afb897bd5206a411d6eb3158f0b355523a2115e",
+      "actual_exit": 1,
+      "raw_result_sha256": "da170e82333be2925c5814153ba93e3282888b9eb6398bd087964602c4ce3d19",
+      "failure_candidate_sha256": "924f8b4b5c7417cf2d88b474584334e9bd37a126fd369061acda0088885c2d3d",
+      "raw_snapshot_sha256": "22c11e8829c1a1cf6c1aada89f6b279338f93b9e7610fdfba082c44de1b3f97f",
+      "qualification_sha256": "cfda407e4090addf031b2e6cbb8bf9418aaa02bb289699400fa4531bdce1c791",
+      "compact_observation_upper_bound_ms": 55254.205449,
+      "public_walk_ms": 453943.35419,
+      "raw_persistence_ms": 695.164174,
+      "actual_input": "One cold Ctrl+A input; the chord itself was valid. CONTROL was active before A press, then cleared before A release. No warm or warm-repeat input occurred.",
+      "failure": "The whole observation interval also contains later Alt input, repeated modifier clears, focus loss/regain and many pointer motions. The strict event guard stopped the batch. Do not weaken the focus guard or trim away this contamination.",
+      "action_trace_assessment": "The recorded actions contain startup pointer/click, Escape, window activation/captures and exactly one Ctrl+A. No Alt command or post-command pointer-motion command appears. StartupQA.focus sends only windowactivate. Shared outer desktop/input interference is supported; no specific actor or product defect is established. The action list lacks individual clock stamps, so precise cross-clock attribution is not claimed.",
+      "persisted_evidence": "The complete raw snapshot contains all 100,007 unique expected typed identities, every own-PID member standard SELECTED, stable project/revision/public basis and active-pane 0 before and after. The compact qualification receipt preserves the exact two Pads, four Tracks, 100,000 BoardText objects and one BoardOutline counts and expected ordered digest. The selected capture is fresh. This is bounded evidence, not a completed or admitted D1 trial.",
+      "cleanup": "The independent reviewer verified all 49 canonical/history maps unchanged, all GUI/daemon/clipboard/Weston stops, no cleanup errors and IPC removal. The appointed manager accepted that review receipt. Owned terminal HUP was failure cleanup; no ordinary shell/window-close acceptance.",
+      "actual_executables": "GUI PID 899533, hash 1ee1dfa7, and owned daemon PID 899659, hash e58d388d, matched the pinned executables. Full bindings and executed source are preserved."
+    },
+    "current_counts": {
+      "actual_cold_inputs": 3,
+      "actual_warm_inputs": 0,
+      "actual_warm_repeat_inputs": 0,
+      "completed_qualified_d1_trials": 0,
+      "completed_d1_cohorts": 0,
+      "pooling_or_relabeling": false
+    },
+    "bounded_native03_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "outcome": "Actual bounded acceptance of full 100,007-member/current-basis/fresh-pixel/nonmutation evidence only. Native03 remains FAIL; no completed D1 trial/cohort, latency PASS or ordinary-exit credit.",
+      "bindings": "Raw snapshot 22c11e88, compact qualification cfda407e and result da170e82; all 49 maps and owned cleanup verified.",
+      "retained": "No contamination actor or application defect is inferred. Prior Schematic92, D1 cap, D2/native110 and other accepted C04 scopes retain their original boundaries.",
+      "failure_packet_sha256": "924f8b4b5c7417cf2d88b474584334e9bd37a126fd369061acda0088885c2d3d",
+      "packet_verification": "Actual reviewer verified all 15 referenced hashes and sizes, with no packet corrections. The same bounded evidence acceptance and failed/incomplete timing disposition remain."
+    },
+    "transport_blocker": {
+      "issue": "dat-native-input-isolation-gv88",
+      "status": "Open related intake, not a new roadmap dependency or implementation grant.",
+      "cause": "StartupQA uses a private Wayland compositor hosted on inherited outer DISPLAY :1 and global windowactivate. That isolates the Wayland socket but not physical desktop input/focus. The native03 interval contains unscripted Alt/focus/pointer traffic after its valid chord. Reliable exclusive-input/focus admission is missing.",
+      "remedy": "Review a bounded owned isolated-input topology using installed Weston/Xwayland, retaining the native Wayland/Vulkan application, source/binary/configuration bindings, strict event/focus guards and error-retaining cleanup. Do not install a dependency, grab the desktop, substitute the app backend, or ask the owner to stop using the desktop. No probe or further cohort is authorized here.",
+      "existing_reuse_route": "Read-only discovery found existing private headless Weston/rootful Xwayland support in scripts/workflow_delivery_pilot_capture.py. Its applicability to the retained native inner Weston/Vulkan cohort still needs a concrete feasibility/source/configuration/cleanup review after this landing."
+    },
+    "required_checks": "Project status check passed for 101 Frontier items; the Active Frontier projection is current; evidence traceability passed for 29 routes and 131 research/prototype artifacts; whitespace passed. No Cargo or native rerun was performed for this evidence landing."
   }
 }
