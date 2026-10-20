@@ -14100,7 +14100,7 @@
     },
     "tracked_progress_checkpoint": "Manager lands only existing .beads/issues.jsonl,specs/active_frontier.json and this proof. Frozen runtime04/source07 and historical failures unchanged; private scratch stays untracked. Follow-on read-only preserved-log comparison is authorized after handoff, with no tracked plan/code/runtime edits.",
     "consumer_source_preparation_20261020": {
-      "state": "Consumer runtime01/02/03 remain FAILED before baseline admission; actual runtime03 reviews accepted faithful FAILURE only and later owned IPC cleanup recorded. No identical retry justified; C04 open.",
+      "state": "Consumer diagnostics stopped by root after actual technical reviews. All runtime01/02/03 remain FAILED with accepted faithful-failure/cleanup recording. No A/B, inferior call, identical retry or product acceptance; ordinary comparison source preparation recorded separately.",
       "recorded_at": "2026-10-20T09:53:04Z",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "manager_disposition": "PM059 manager explicitly authorized bounded consumer-only source preparation after actual closeout method support; no criterion waiver or new product scope.",
@@ -14114,7 +14114,7 @@
       "graph": "controller -> GDB -> owned inner Weston; normal GUI separately owned; one explicit guardian and one owned reader",
       "finite_budget": "Existing isolated envelope, one scope-list, six fixed wheels, one fixed post-ADMIT gesture, two native and two compositor PNGs plus two raw RGB memory artifacts; existing20/10/600s; zero retries.",
       "retained_requirements": "Authenticated retained pidfd ownership/generations/FD transfer; guardian alone STOPs at most once per phase after arming original capture deadline; all GUI threads stopped and exact prior writer readiness before READ START/copy/END. GUI stays stopped through matched repaint/capture in SAME10s bound, resumes before600s human gate. Independent guardian/watchdog/parent backup; actual primary and cleanup failures preserved.",
-      "pending_exact_seam": "Reordering native_sample is NOT viable: it only waits for wheel6/release-armed sample, and capture needs the completed sample for Main identity. Remaining gap is a nonempty Main draw in the capture originating repaint, without retargeting. Actual runtime03 faithful FAILURE reviews and exact owned IPC removal remain recorded. Read-only investigation of a smallest defensible capture-method correction is assigned; no tracked plan/framework, source/product edits, live run, retry, input/timeout sweep, criterion waiver, acceptance or successor authority.",
+      "pending_exact_seam": "Root adopts actual closeout/reorganization recommendation to stop consumer-diagnostic development: A does not supply draw; forced-output-damage B could hide ordinary failure. Same-repaint/nonemptydraw/no-call are diagnostic method limits, not new C04 product criteria. At the historical ordinary outer/inner source-preparation freeze it was unexecuted pending actual review with no live release or criterion waiver. Subsequent actual reviews, exact command03 release and consumed runtime02 FAIL are recorded separately in ordinary_outer_inner_source_preparation_20261020; this historical statement supplies no new release or waiver.",
       "boundaries": "The single command02 live release was consumed by the failed run; no further live release or retry is authorized. No GL sampled-texel identity, exact native export join, cause/repair/equivalence, C04/C05/C06/HUMAN/D1/latency/Close/successor acceptance. No build/fetch/install/dependency/backend/input/timeout changes; frozen candidate, runtime packet, source and raw-log bytes remain immutable.",
       "updated_at": "2026-10-20T16:32:35.417912+00:00",
       "source_candidate": {
@@ -14965,6 +14965,247 @@
           }
         }
       }
+    }
+  },
+  "ordinary_outer_inner_source_preparation_20261020": {
+    "recorded_at": "2026-10-20T17:10:55.121942+00:00",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "authority": "Actual closeout_review METHOD addendum accepted by PM059 root: SOURCE PREPARATION ONLY for default-off outer-capture adding only --debug to owned outer Weston, versioned existing Via case and existing helper/tests/metadata. Explicit subsequent preparation disposition replaces existing timeline slot by outer proto; no additional persistent observer. No live release.",
+    "state": "Command03 exact ONE execution consumed: actual FAIL original pair deadline, including inner launch after deadline. Actual closeout review and reorganization faithful FAILURE-recording/cleanup PASS accepted by root within that bounded scope. No successful pair, product/C04 acceptance or new run; C04 remains open.",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-source-candidate-03.json",
+      "sha256": "e934375e060e7a4e2f8015b729c23a5870c76a332ca1ab31f7b9b235425a49c0",
+      "bytes": 13102
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-manifest-03.json",
+      "sha256": "0304cb5f26263c697e1848c75780cf5c685090ae941ffaf1afa5ebb7bb854152",
+      "bytes": 20178
+    },
+    "exact_future_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-command-03.json",
+      "sha256": "0e79f226b95cb455923b995165ade634065132bf1ef1005d9c31055a3c84227d",
+      "bytes": 2602
+    },
+    "provisional_wrapper_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "scope": "Wrapper46acb19045f9d1888a6f847f63ec40588d2a6ab0dcb4d8e92e03186fe089640f and test324ddcb5d9060ed1dfec965245c3bb4e0f07854e1bdf9aaf3801784dfaeb9614 only: no mandatory findings. Reviewer inspected tests, did not execute or accept runtime. These exact pins remain unchanged; full case/manifest/command pending."
+    },
+    "explicit_method_delta": "Default-off --outer-capture adds --debug only on freshly owned outer Weston. Enables screenshot authority/debug globals to endpoint clients;0700 does not exclude sameUID peers. Existing proto+timeline two persistent slots become inner-proto+outer-proto two; same9 persistent wrapper/runner/outer/Xwayland/inner/GUI/daemon/observers, one scope-list, no optional scene-graph. Four full PNGs: initial+zoom inner and released outer->inner; six wheels/one fixed center-in gesture. One10s whole pair deadline; no retry/GDB/STOP/readback copies/forced damage/backend/input changes.",
+    "claim_limits": "Ordered cross-path/temporal observations only. Either disagreement does not localize cause or prove sameframe; outerNone->innerSelected may be async delivery. Outer is private headless composed host view, not physical display. Existing accepted machine/AX/context/nonmutation and all failed evidence remain credited/preserved. No product or C04/HUMAN/C05/C06/successor acceptance.",
+    "historical_wrapper_source": "Historical frozen wrapper source references resolve to unchanged published585d9b79 Git blob; authorized current helper edit receives new46acb190 pin. Old source packets/raw files and their hashes are not rewritten.",
+    "previous_source_candidates": [
+      {
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-source-candidate-01.json",
+          "sha256": "f1978e31697feb386b42e0b87c40e5e120c18822e278ecfc2b1879c5b042d048",
+          "bytes": 15504
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-manifest-01.json",
+          "sha256": "da627fc253c8952f22989b199c05afa8465febf644d4bae22c72000c2363f914",
+          "bytes": 17956
+        },
+        "command": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-command-01.json",
+          "sha256": "180cec4c1899560e4ce27c9523472d863ecc9d24e78027d2d5ea592a13fbe594",
+          "bytes": 2340
+        },
+        "state": "SOURCE/COMMAND REVISE; never executed; all bytes preserved."
+      },
+      {
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-source-candidate-02.json",
+          "sha256": "8447630f9ac8541480e1a59daf23211720d63039260d3300c9dcc4cb62ec71f7",
+          "bytes": 14847
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-manifest-02.json",
+          "sha256": "a2b8fb86da037880d4fb75b513126982e4c1dbc951dd7d3f7ef1f17bfe981511",
+          "bytes": 19393
+        },
+        "command": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-command-02.json",
+          "sha256": "f48ee4ba38f752940efc5101a46fa37e6a8206e0be39ea0a8dda36b18350cf26",
+          "bytes": 2545
+        },
+        "state": "Actual bounded SOURCE/COMMAND PASS; exact-one command02 consumed by failed runtime01. Frozen bytes retained, no retry."
+      }
+    ],
+    "actual_source01_reviews": {
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "reviewers": [
+        "/root/closeout_review",
+        "/root/reorganization_review"
+      ],
+      "verdict": "SOURCE/COMMAND REVISE",
+      "mandatory_findings": [
+        "OI-R1 geometry must use validated private DISPLAY/XAUTHORITY/retained Xwayland, not qa.env",
+        "OI-R2 endpoint-specific owned shooter request/completion watermark before final Main commit comparison within original pair deadline",
+        "OI-M1 remove inherited contradictory limits and clarify baseline inspection"
+      ],
+      "manager_correction_authority": "SOURCE PREPARATION ONLY for this bounded set; no other mandatory issues reported and no live grant."
+    },
+    "source01_actual_scoped_checks": "11 actual wrapper/CLI controls with fake processes PASS;26 endpoint/ownership/geometry/output/Main lifecycle/pair/actual capture failure controls PASS.22-module syntax/local import closure and tracked source-health3272 PASS. No compositor/client/GUI started. Earlier missing fake endpoint fixture errors preserved in ignored control log.",
+    "actual_scoped_checks": "22 targeted correction/affected controls PASS, including actual runner private-env routing, wrong/dead target refusal, exact capture source/output/client/completion with consumed-prefix hash, lag/missing/wrong shooter and late Main commit guards. Reuse19 unaffected case controls and11 unchanged wrapper controls;41 distinct case controls total, no overlapping26+22 inflation.22-module syntax/local import closure PASS; tracked wrapper/test and prior source-health3272 unchanged. No compositor/client/GUI started.",
+    "correction_summary": "Geometry X11 env is explicitly validated from wrapper private input + retained Xwayland and authority metadata, separated from Wayland envs. Both capture streams drain through exact owned request/completion after pre-Popen watermark, SAME10s pair deadline; final Main comparison checks consumed inner completion hash/bytes. Approved helper/debug delta stays explicit; no additional execution-time changes or localized cause claim. Inspect both originals; ADMIT only usable current zoom with exact state/config/hashes, initial imperfect visual evidence may remain failed without waiving mandatory guards or inventing initial PASS.",
+    "updated_at": "2026-10-20T17:54:20.606259+00:00",
+    "actual_source02_reviews": {
+      "recorded_at": "2026-10-20T17:28:16.364321+00:00",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "candidate_sha256": "8447630f9ac8541480e1a59daf23211720d63039260d3300c9dcc4cb62ec71f7",
+      "receipts": [
+        {
+          "reviewer_task": "/root/closeout_review",
+          "verdict": "bounded SOURCE/COMMAND PASS"
+        },
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "verdict": "bounded SOURCE/COMMAND PASS"
+        }
+      ],
+      "manager_actual_verification": "Root independently verified71refs/45paths,5tracked pins and fresh outputs; OI-R1/R2/M1 resolved.41distinctcase+11wrapper controls credited with scoped reuse, no runtimePASS."
+    },
+    "root_independent_postrun_observation": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "observation": "Root independently confirmed exact recorded5 PIDs1033740/1033741/1033742/1033745/1033753 and both IPC paths npd-wl-c0078j2k/nqi-ffmgo0tf absent; raw cleanup[] and wrapper removed flag true.",
+      "limits": "Initial post-run observation only: no GUI launch/scope/capture/gesture credit; never-launched GUI stop flag is not normal GUI shutdown evidence. Actual reorganization_review faithful FAILURE-recording/cleanup PASS and root bounded acceptance were subsequently received and are recorded in actual_runtime01_review; no comparison/product/C04 acceptance or retry follows."
+    },
+    "actual_runtime01_review": {
+      "recorded_at": "2026-10-20T17:36:57.334046+00:00",
+      "reviewer_task": "/root/reorganization_review",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "candidate_sha256": "5b0cf2db0bce01dffebe84bd82387ff7cff54afa21d10cc4242e47484d416879",
+      "verdict": "faithful FAILURE-recording/cleanup PASS",
+      "manager_disposition": "Root ACCEPTS bounded recording/cleanup only:13refs,22sources,18maps,actualcommand02/exit1,0GUI/input/capture,5PIDs/2IPC absent, raw parent-phase alive states and older FD scan limits retained. No comparison/product/C04 PASS or historical cause."
+    },
+    "OI_R3_source_preparation": {
+      "authority": "Root accepted actual closeout bounded correction review and released SOURCE PREPARATION only, plus exactly1 owned stdlib AF_UNIX listener/connect/accept lifecycle inside existing ignored BASE.",
+      "scope": "Only bound_socket listener-first predicate, scoped refusal details and exact versioned import; preserve all other environment/identity/filesystem/FD/deadline/input/cleanup guards. No GUI/client tool/native retry.",
+      "actual_controls": "8 focused controls PASS including one actual own listener+accepted same-path table: old guard refused, corrected exact owned listener inode admitted. All3 sockets closed, scoped proc rows absent and private directory removed. Added only scoped refusal metadata afterward;7 non-lifecycle controls rerun without a second lifecycle.",
+      "lifecycle_receipt": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-listener-lifecycle-01.json",
+        "sha256": "4c1f64fd11af836a761b1091d156b939a8cedbd4d6b545520ec5e87c2eeda0a4",
+        "bytes": 1431
+      },
+      "reuse": "41 distinct prior case controls and11 unchanged wrapper controls/source reviews retained at scoped unchanged AST/import/closure/ownership/cleanup boundaries; no runtime PASS.",
+      "historical_limit": "Runtime01 raw matching socket rows were never captured. Historical zero versus multiple/cause remains UNKNOWN; current controlled socket evidence does not reconstruct it."
+    },
+    "actual_source03_reviews": {
+      "recorded_at": "2026-10-20T17:42:27.999464+00:00",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "candidate_sha256": "e934375e060e7a4e2f8015b729c23a5870c76a332ca1ab31f7b9b235425a49c0",
+      "receipts": [
+        {
+          "reviewer_task": "/root/closeout_review",
+          "verdict": "SOURCE/COMMAND PASS"
+        },
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "verdict": "evidence/metadata PASS"
+        }
+      ],
+      "reviewed_proof_sha256": "21f2ea57ddf46cd05fbd44a9e36a1bc178115f8fb967e7d0f3aadbc42ef461e4",
+      "limits": "Actual bounded source/command/evidence reviews, not runtime or product acceptance."
+    },
+    "prior_live_releases": [
+      {
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "released_at": "2026-10-20T17:28:16.364321+00:00",
+        "authority": "THIS exact PM059 manager disposition releases command02 exact saved argv ONCE after fresh pins/unused paths. No source changes, retry, alternate command, build, dependency, GDB/STOP/forceddamage or product acceptance.",
+        "candidate_sha256": "8447630f9ac8541480e1a59daf23211720d63039260d3300c9dcc4cb62ec71f7",
+        "manifest_sha256": "a2b8fb86da037880d4fb75b513126982e4c1dbc951dd7d3f7ef1f17bfe981511",
+        "command_sha256": "f48ee4ba38f752940efc5101a46fa37e6a8206e0be39ea0a8dda36b18350cf26",
+        "execution_limit": 1,
+        "execution_state": "Executed exactly once; actual tool session18364 shell exit1 and child exit1. Runtime/transport FAIL before GUI/scope-list/capture/input. Release consumed; no retry.",
+        "baseline": "Notify root at checkpoint; inspect BOTH originals. ADMIT only current usable zoom at exact state/config/hashes. Initial imperfect visual evidence stays failed if mandatoryguards pass; unusable zoom means STOP. No gesture before actual manager ADMIT.",
+        "failure": "Preserve raw primary/cleanup errors and uncertain IPC; freeze actual runtime evidence for independent review."
+      }
+    ],
+    "live_release": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "released_at": "2026-10-20T17:42:27.999464+00:00",
+      "authority": "THIS exact root disposition releases command03 saved argv exactly ONCE after source03/evidence review; fresh runtime02/output02. Same approved budget/guards/cleanup. No additional source/config/input change or retry.",
+      "candidate_sha256": "e934375e060e7a4e2f8015b729c23a5870c76a332ca1ab31f7b9b235425a49c0",
+      "manifest_sha256": "0304cb5f26263c697e1848c75780cf5c685090ae941ffaf1afa5ebb7bb854152",
+      "command_sha256": "0e79f226b95cb455923b995165ade634065132bf1ef1005d9c31055a3c84227d",
+      "execution_limit": 1,
+      "execution_state": "Executed exactly once; actual tool session58459 shell exit1 and child exit1. Six wheels produced baseline; actual root ADMIT then preceded the one gesture. Outer receipt finalized; inner Popen began658838647ns after original deadline and next remaining() rejected before communicate. Release consumed; no retry.",
+      "baseline": "Notify active root immediately at actual checkpoint; personally inspect BOTH originals, ADMIT only usable current zoom with exact hashes/state/config. No gesture before actual ADMIT.",
+      "failure": "Preserve primary/cleanup errors and phase limits; freeze actual runtime/source/canonical/ownership evidence for independent review. No C04/product/successor PASS."
+    },
+    "previous_runtime_candidates": [
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-runtime-candidate-01.json",
+        "sha256": "5b0cf2db0bce01dffebe84bd82387ff7cff54afa21d10cc4242e47484d416879",
+        "bytes": 12244,
+        "status": "FAIL_BEFORE_GUI_OR_BASELINE",
+        "primary": "ObservationError: owned socket kernel binding absent/ambiguous",
+        "counts": {
+          "executions": 1,
+          "GUI_launched": false,
+          "scope_lists": 0,
+          "observers_started": 0,
+          "wheel_inputs": 0,
+          "controlled_region_gestures": 0,
+          "captures": 0,
+          "PNGs": 0,
+          "baseline_ADMIT": false
+        },
+        "cleanup": "Raw inner/wrapper cleanup_errors empty, verified owner stops/IPC removal true. All5 recorded PIDs absent independently, no scoped argv/FD or UNIX matches;6 older denied FD scans retained as limits. Both IPC dirs removed by released normal cleanup; no additional signals/removal.18 canonical maps unchanged. GUI was never launched: raw gui-stop true is vacuous and is not an observed normal GUI shutdown.",
+        "localization_limit": "Guard requires unique exact-path /proc/net/unix row before selecting listening flags/state. Accepted connections may share path; actual matching rows/count were not captured, so historical zero vs multiple/cause unknown.",
+        "review_state": "Actual reorganization_review faithful FAILURE-recording/cleanup PASS and root bounded acceptance received; runtime remains FAIL with no GUI/input/capture/comparison/product acceptance.",
+        "retained_limits": "At immutable runtime01 freeze: no application display/input or outer/inner comparison occurred, and no retry/source correction was then released. Later OI-R3 SOURCE PREPARATION ONLY was explicitly granted and recorded separately. At that historical source-preparation freeze, corrected source03 remained unexecuted with no live release; subsequent command03 release and consumed runtime02 FAIL are recorded separately in live_release/runtime_candidate. No product defect, physical/sameframe/localized cause, repair/equivalence/qualification/C04/HUMAN/C05/C06/successor acceptance."
+      }
+    ],
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-runtime-candidate-02.json",
+      "sha256": "cd13d0590576756df48ef1ccda336685156e537694406a9065008487bd9e91b1",
+      "bytes": 33804,
+      "status": "FAIL_ORIGINAL_PAIR_DEADLINE_AND_INNER_LAUNCH_OVERRUN",
+      "counts": {
+        "scope_lists": 1,
+        "persistent_proto_observers": 2,
+        "wheel_events": 6,
+        "controlled_region_gestures": 1,
+        "capture_attempts": 4,
+        "original_PNGs_total": 4,
+        "runner_finalized_PNGs": 3,
+        "runner_finalized_pair": false
+      },
+      "primary": {
+        "type": "ObservationError",
+        "error": "original outer/inner pair deadline expired"
+      },
+      "exact_monotonic_ns": {
+        "derived_pair_start": 447539690489781,
+        "original_deadline": 447549690489781,
+        "outer_invocation_begin": 447544890065298,
+        "outer_invocation_end": 447545087548719,
+        "inner_invocation_begin": 447550349328428,
+        "inner_begin_after_deadline": 658838647
+      },
+      "baseline": "Actual root personally inspected both initial/zoom originals and wrote ADMIT before region input; exact checkpoint/admission pins retained in frozen runtime02.",
+      "partial_observations": "Public SELECTED and emitted ContextGet exact compound Via at sequence8; outer finalized receipt, raw inner original preserved without final receipt or after-pair stability snapshot. Both released originals reviewed as No selection/Sel none; outer vertically inverted. No rendered Via acceptance.",
+      "cleanup": "Raw cleanup_errors empty; owned failure HUP/SIGTERM teardown, all15 recorded PIDs absent, both owned IPC directories removed by released cleanup, no added signals/removal. Six older sameUID FD permission limits retained. Source22 and canonical18 pins match; before/after canonical18 equal. No ordinary shell/window-Close proof.",
+      "review_state": "Actual closeout runtime review and reorganization faithful FAILURE-recording/cleanup PASS received via root; root ACCEPTS bounded recording/cleanup only. Runtime remains FAIL; no successful pair/product/C04 acceptance or new run.",
+      "limits": "Four capture attempts/four original PNGs, only three runner-finalized captures. Inner exit0 belongs to teardown, not an in-budget completed capture receipt. No completed pair, sameframe/cause/product defect/repair/C04/HUMAN/C05/C06/successor acceptance. No fix/retry authorized."
+    },
+    "actual_runtime02_closeout_review": {
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "reviewer_task": "/root/closeout_review",
+      "receipt": "Actual runtime review complete: exact result/runner; root ADMIT before1gesture; seq8/publicSELECTED/ContextGet exactVia; initial/zoom/outer consumed prefixes match; both released originals personally viewed No selection/Sel none, outer inverted and raw inner out-of-budget.18 canonical maps equal; failure HUP/SIGTERM cleanup, no ordinary Close. Proven source omission: no fresh deadline check immediately before Popen after owner validation. GUI executable digest rereads746896448 bytes; timestamps do not isolate elapsed-time cause.",
+      "additional_read_only_trace": "No product-source defect established. seq8 presented:null is previous hit map during invalidation; later fresh Inspector preparation/submission/GPU completion and seq9 Via basis. Accepted compound proofs share null-to-populated pattern. No Inspector/redraw patch follows.",
+      "limits": "Actual closeout review accepted by root within bounded failure recording/cleanup disposition; runtime remains FAIL with no successful pair/product/C04 acceptance or new run."
+    },
+    "actual_runtime02_review": {
+      "recorded_at": "2026-10-20T17:54:20.606259+00:00",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "candidate_sha256": "cd13d0590576756df48ef1ccda336685156e537694406a9065008487bd9e91b1",
+      "reviewer_task": "/root/reorganization_review",
+      "verdict": "faithful FAILURE-recording/cleanup PASS",
+      "actual_review_scope": "36 references/30 unique,18 canonical maps,15 recorded PIDs absent,2 owned IPC removed;4 capture attempts/3 runner-finalized captures. Late inner Popen and failure-only shutdown preserved.",
+      "manager_disposition": "Root ACCEPTS this bounded recording/cleanup plus prior actual closeout review. No successful pair/product/C04 acceptance or new run. No correction, retry, release or criterion waiver follows."
     }
   }
 }

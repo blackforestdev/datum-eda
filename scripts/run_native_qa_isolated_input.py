@@ -128,6 +128,12 @@ def run(args):
     owners, errors = [], []
     result = {"status": "FAIL", "argv": args.command, "runtime": str(ipc),
               "runtime_mode": oct(ipc.stat().st_mode & 0o777),
+              "outer_capture": {
+                  "debug_requested": bool(getattr(args, "outer_capture", False)),
+                  "runtime": str(ipc), "socket": "datum-qa-input",
+                  "limits": "Opt-in --debug exposes capture and debug globals to clients able "
+                            "to connect. Mode 0700 does not exclude same-UID peers. Private "
+                            "headless composed output, not a physical desktop witness."},
               "limits": "Input transport only; no native/D1 acceptance inferred."}
     primary = None
     child_code = None
@@ -144,10 +150,14 @@ def run(args):
         env = dict(os.environ, XDG_RUNTIME_DIR=runtime.name)
         for key in ("DISPLAY", "WAYLAND_DISPLAY", "WAYLAND_SOCKET", DISPLAY_KEY, OWNER_KEY):
             env.pop(key, None)
-        outer = start("outer-weston", ["/usr/bin/weston", "--backend=headless", "--renderer=gl",
+        outer_argv = ["/usr/bin/weston", "--backend=headless", "--renderer=gl",
                       "--shell=kiosk-shell.so", "--no-config", "--width=1600", "--height=1000",
                       "--scale=1", "--idle-time=0", "--socket=datum-qa-input",
-                      "--log=" + str(output / "outer-weston-detail.log")], env)
+                      "--log=" + str(output / "outer-weston-detail.log")]
+        if result["outer_capture"]["debug_requested"]:
+            outer_argv.append("--debug")
+        result["outer_capture"]["argv"] = list(outer_argv)
+        outer = start("outer-weston", outer_argv, env)
         deadline = time.monotonic() + 20
         while not (ipc / "datum-qa-input").exists():
             if outer.poll() is not None or time.monotonic() >= deadline:
@@ -228,6 +238,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--child-result", type=Path, required=True)
+    parser.add_argument("--outer-capture", action="store_true",
+                        help="Expose capture and debug globals on the owned private outer compositor")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if args.command[:1] == ["--"]:

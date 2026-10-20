@@ -1,16 +1,84 @@
 """Offline protection against the observed shared-display and cleanup failures."""
 import os
+import json
 from pathlib import Path
 import signal
 import subprocess
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import run_native_qa_isolated_input as isolated
 
 
 class PrivateInputTests(unittest.TestCase):
+    def test_outer_capture_is_default_off_and_changes_only_owned_outer_debug_capability(self):
+        for enabled in (False, True):
+            with self.subTest(enabled=enabled), tempfile.TemporaryDirectory() as temporary:
+                parent = Path(temporary)
+                args = SimpleNamespace(output=parent / "transport", child_result=parent / "child.json",
+                                       command=["/owned/runner"])
+                if enabled:
+                    args.outer_capture = True
+                calls = []
+
+                def spawn(argv, *, env, **kwargs):
+                    process = Mock(pid=100 + len(calls), returncode=None)
+                    calls.append((list(argv), dict(env)))
+                    process.poll.side_effect = lambda: process.returncode
+                    process.terminate.side_effect = lambda: setattr(process, "returncode", -15)
+
+                    def wait(timeout=None):
+                        if argv == args.command:
+                            args.child_result.write_text(json.dumps(self.receipt()))
+                        process.returncode = 0
+                        return 0
+
+                    process.wait.side_effect = wait
+                    if argv[0] == "/usr/bin/weston":
+                        (Path(env["XDG_RUNTIME_DIR"]) / "datum-qa-input").touch()
+                    elif argv[0] == "/usr/bin/Xwayland":
+                        os.write(int(argv[argv.index("-displayfd") + 1]), b"27\n")
+                    return process
+
+                with patch.dict(os.environ, {"XDG_RUNTIME_DIR": str(parent), "DISPLAY": ":1",
+                                             "WAYLAND_DISPLAY": "foreign", "WAYLAND_SOCKET": "9"}), \
+                        patch.object(isolated.subprocess, "Popen", side_effect=spawn), \
+                        patch.object(isolated, "_live_xwayland", return_value=True), \
+                        patch.object(isolated, "executable_binding", side_effect=lambda p: {"pid": p.pid}):
+                    self.assertEqual(isolated.run(args), 0)
+                outer, outer_env = calls[0]
+                expected = ["/usr/bin/weston", "--backend=headless", "--renderer=gl",
+                            "--shell=kiosk-shell.so", "--no-config", "--width=1600", "--height=1000",
+                            "--scale=1", "--idle-time=0", "--socket=datum-qa-input",
+                            "--log=" + str(args.output / "outer-weston-detail.log")]
+                self.assertEqual(outer, expected + (["--debug"] if enabled else []))
+                self.assertNotIn("WAYLAND_DISPLAY", outer_env)
+                self.assertNotIn("WAYLAND_SOCKET", outer_env)
+                self.assertNotIn("WAYLAND_DISPLAY", calls[-1][1])
+                self.assertNotIn("WAYLAND_SOCKET", calls[-1][1])
+                receipt = json.loads((args.output / "transport.json").read_text())
+                capability = receipt["outer_capture"]
+                self.assertIs(capability["debug_requested"], enabled)
+                self.assertEqual(capability["runtime"], receipt["runtime"])
+                self.assertEqual(capability["socket"], "datum-qa-input")
+                self.assertEqual(capability["argv"], outer)
+                self.assertIn("same-UID", capability["limits"])
+                self.assertTrue(receipt["runtime_removed_after_owners_stop"])
+
+    def test_outer_capture_cli_requires_explicit_option(self):
+        for option in ([], ["--outer-capture"]):
+            with self.subTest(option=option), \
+                    patch("sys.argv", ["runner", "--output", "/owned/out", "--child-result",
+                                       "/owned/child.json", *option, "--", "/owned/child"]), \
+                    patch.object(isolated, "run", return_value=0) as run:
+                with self.assertRaises(SystemExit) as stopped:
+                    isolated.main()
+                self.assertEqual(stopped.exception.code, 0)
+                self.assertIs(run.call_args.args[0].outer_capture, bool(option))
+                self.assertEqual(run.call_args.args[0].command, ["/owned/child"])
+
     def private_env(self):
         return {"DISPLAY": ":27", isolated.DISPLAY_KEY: ":27", isolated.OWNER_KEY: "123"}
 
