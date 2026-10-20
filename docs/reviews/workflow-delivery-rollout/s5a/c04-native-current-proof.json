@@ -15547,7 +15547,7 @@
       "sha256": "64b56be7efe0490ca578a496091c93d33d66c62bbe3eec0b28ce1d5b622fb437",
       "bytes": 4705
     },
-    "state": "SOURCE02_PREPARATION_ACCEPTED_NO_LIVE_RELEASE",
+    "state": "RUNTIME02_FAITHFUL_FAILURE_RECORD_ACCEPTED_REQUIRED_SOURCE_CORRECTIONS",
     "method": {
       "intent": "Fresh nonce/expected Via/project/revision/binary intent installed in owned observer config BEFORE GUI/input; installed receipt checked. After released exact publicSELECTED/ContextGet/config barrier, controller sends fresh epoch plusGUIpidfd via retained-peer authenticated SOCK_SEQPACKET. Observer nonblocking intake before commit body, actual accepted-event ACK before eligible entry. No past stored commit qualifies.",
       "selection": "First matching fresh-attachment Main commit after epoch only; typed WESTON_SURFACE_DIRTY_BUFFER distinguishes noattachment/oldstorage from detach. Noattachment stays unqualified; detach fails. Reject nested/later Main entry before matched Finish and ambiguous connection-local Main identity.",
@@ -15692,7 +15692,7 @@
     "review_state": {
       "source": "Actual closeout SOURCE/COMMAND PASS accepted by appointed manager",
       "evidence": "Actual reorganization bounded EVIDENCE/OWNERSHIP/METADATA + command-binding PASS accepted by appointed manager",
-      "live_release": "NOT_GRANTED; await separate exact command02 message after publication",
+      "live_release": "CONSUMED ONCE actual FAIL; no retry or new release",
       "C04_complete": false
     },
     "preserved_history": "All older producer/consumer/host failures and exact stopped/host releases remain unchanged. Host02 finalized None/strict Main commit20->21 remains FAIL and accepted only faithful recording/cleanup. No product repair, C04/HUMAN/C05/C06/successor acceptance.",
@@ -15730,6 +15730,77 @@
         }
       ],
       "manager_disposition": "Root ACCEPTS SOURCE02 correction/preparation ONLY after both actual independent reviews. Frozen source/manifest/command unchanged. Record receipts, synchronize existing claim/export and bounded metadata, then root normal commit/push. Separate exact command02 live release will follow publication; command02 remains unexecuted until that explicit message. No task completion/new product/build/dependency/successor authority."
+    },
+    "live_release02": {
+      "recorded_at": "2026-10-20T19:56:44+00:00",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "publication_commit": "d0c52143bc0ad0048728f1d081715eade3fd543a",
+      "command_sha256": "64b56be7efe0490ca578a496091c93d33d66c62bbe3eec0b28ce1d5b622fb437",
+      "authority": "Manager LIVE RELEASE: saved exact command02 argv ONCE, unchanged frozen budget/limits/custody; no build/extra input/capture/retarget/retry. Fresh initial+zoom original baseline checkpoint to root; WAIT actual root ADMIT before one fixed gesture. CLEANUP_BLOCKED notify immediately, retain reviewed cleanup-only custody.",
+      "preflight": "PASS runtime source/provider/debug/header/tool/binary pins, exact18 canonical inputs, fresh02 paths absent. No build or native invocation in preflight.",
+      "execution_state": "CONSUMED ONCE; actual exit1 reader-epoch integration FAIL, no retry",
+      "consumed": true,
+      "limits": "No runtime/product/C04 PASS or task completion/successor grant.",
+      "tool_session_id": 96589,
+      "launch_chunk": "03ce54",
+      "actual_exit_code": 1,
+      "final_tool_chunk": "b88e35",
+      "actual_baseline_admission": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-committed-buffer-02/baseline-admission.json",
+        "sha256": "65a510e565363262cd01df20ebfceb2d29d700d0cb71a5d6241add7b16df64e1",
+        "bytes": 1400
+      }
+    },
+    "runtime_candidate02": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-runtime-candidate-02.json",
+      "sha256": "6bdb8bbb1f5243cc9a6cd907d389a7eb46271159012f61886b298bd2ac6affb8",
+      "bytes": 23264,
+      "status": "FAIL",
+      "primary": {
+        "type": "ObservationError",
+        "error": "reader failed/ambiguous committed receipt"
+      },
+      "reader_primary": "ObservationError('unsupported read epoch')",
+      "counts": {
+        "scope_lists": 1,
+        "wheel_events": 6,
+        "baseline_original_captures": 2,
+        "controlled_region_gestures": 1,
+        "selected_epochs": 1,
+        "matched_frozen_commits": 1,
+        "reader_results": 0,
+        "raw_or_derived_storage_artifacts": 0,
+        "normal_sealed_snapshot_receipts": 0
+      },
+      "partial_observations": "Actual authenticated selected epoch528/fresh Main entry529/matched typed Finish530 within original10s, storage binding/FD31 observed; no reader byte result/READ_END/raw/RGB/seal. Not selection-cause/rendered/sampled/displayed or successful snapshot.",
+      "actual_baseline": "Root personally viewed both fresh02 originals and wrote actual ADMIT65a510e565363262cd01df20ebfceb2d29d700d0cb71a5d6241add7b16df64e1 after configuration/binaries/canonical18/sixwheels/two captures/zero gestures guards. Exactly one fixed gesture after ADMIT.",
+      "failure": "Committed reader host passes committed to inherited GuardianReadLease/ReaderStoppedLease; owners02 constructor supports only baseline/released. Reader raises unsupported read epoch before successful read. Actual prior controls used fake lease and missed real constructor integration.",
+      "cleanup": "Raw child/wrapper cleanup_errors[] and all six owner-stop flags true; actual retained GUI exit/disposition and Weston/GDB/helpers stop verified;15recorded PIDs currently absent,2IPC removed normally. Confirmed STOP debt recovery_attempted but NOT normally retired; guardian failed/unverified resume/termination15 tail preserved. No CLEANUP_BLOCKED. Shell PID/group not separately recorded, no HUP receipt/independent shell or ordinary Close completion proof. No extra cleanup signals/removal.",
+      "preservation": "38runtime sources unchanged;18canonical frozen/before/after/current equal; all older failures/releases unchanged. Command02 consumed once, no retry.",
+      "review_state": "Actual closeout faithful FAILURE-recording accepted and reorganization qualified cleanup/metadata PASS; root accepts faithful failed record ONLY. CB-R2 and CB-R3 required before any future live decision; no runtime/product/C04/ordinary Close acceptance."
+    },
+    "actual_runtime02_reviews": {
+      "recorded_at": "2026-10-20T20:11:33.151887+00:00",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "candidate_sha256": "6bdb8bbb1f5243cc9a6cd907d389a7eb46271159012f61886b298bd2ac6affb8",
+      "reviewed_proof_sha256": "051fbbcbff4b690c151bd115e691b71ff42d112c1f66b4c0f05947a4f3ce061b",
+      "receipts": [
+        {
+          "reviewer_task": "/root/closeout_review",
+          "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+          "turn_id": "01a15aea-6050-7610-b954-d57834bf5c4a",
+          "verdict": "Accepted as faithful FAILURE recording",
+          "scope": "49 references/43 files;38 source bindings/18 canonical maps; actual execution and both fresh original baseline PNGs personally reviewed. Events528->529->530 partial committed identity only; zero bytes/READ_END/seal. Guardian resume unverified, alternate GUI exit independently verified; historical shell closure/HUP unproved. CB-R2 real constructor-chain correction and CB-R3 shell capture/disposition mandatory before any new live release."
+        },
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+          "turn_id": "01a15aea-8d6b-7003-a294-92767f9c10fc",
+          "verdict": "Faithful failure-recording and qualified cleanup/metadata PASS",
+          "scope": "116 unique bindings/37 raw references/4 actual tool receipts.15 recorded PIDs and both IPC paths absent; no recording correction. STOP debt recovery_attempted with retired=false; shell ownership unverified, capture correction required before another run. No runtime/C04/ordinary Close acceptance."
+        }
+      ],
+      "manager_disposition": "Root PM059 ACCEPTS faithful runtime02 FAILURE record ONLY; no recording correction. Actual run remains FAIL, consumed once. No runtime/product/C04 PASS or command03 release. CB-R2 source03 is independently under review; source-only CB-R3 lifecycle method must be proposed before fresh04 preparation. Preserve all frozen02/03 evidence and explicit shell gap:15 recorded PIDs absent does not prove all descendants gone."
     }
   }
 }
