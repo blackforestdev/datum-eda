@@ -13226,7 +13226,7 @@
     }
   },
   "native_wayland_board_d1_timing_20261019": {
-    "state": "The bounded private-input source/runtime/pixel/cleanup admission is accepted and its six-path source landing is being reviewed. Native01/02/03 timing attempts remain failed and unpooled. No completed Board D1 trial/cohort or further acquisition is released.",
+    "state": "The bounded private-input route is source-landed and its related intake is closed with commit evidence. Native01/02/03 remain failed timing attempts, and no completed D1 cohort or further acquisition is released.",
     "authority": "Retained UVT-S5A-BUILD/S5A-C04 grant under appointed PM059 manager 01a13df1-7a0d-72c1-bbdd-f0d96d481598. The manager selected the missing Board D1 diagnostic receipt. Prior Schematic92, D1 cap and D2/native110 evidence retain their accepted scopes.",
     "evidence_gap": "Actual reorganization_review audit found that native110 contains one full Board acquisition and omits optional timing. It does not supply the required cold, warm and warm-repeat Board timing cohort. No numerical latency criterion is introduced.",
     "input_and_setup": {
@@ -13368,10 +13368,10 @@
     },
     "transport_blocker": {
       "issue": "dat-native-input-isolation-gv88",
-      "status": "The bounded opt-in private-display repair passed source and live admission review. Related intake dat-native-input-isolation-gv88 remains open until actual source landing and scoped closure evidence; no new roadmap dependency.",
+      "status": "Related intake dat-native-input-isolation-gv88 is closed with actual source commit6b38665f and the accepted bounded admission. The opt-in private transport is available; the remaining D1 diagnostic cohort still needs exact source/input/configuration/count review and release.",
       "cause": "StartupQA uses a private Wayland compositor hosted on inherited outer DISPLAY :1 and global windowactivate. That isolates the Wayland socket but not physical desktop input/focus. The native03 interval contains unscripted Alt/focus/pointer traffic after its valid chord. Reliable exclusive-input/focus admission is missing.",
       "remedy": "Land the reviewed installed-tool private-display wrapper, validated opt-in QA focus mode and offline tests. Preserve the native Wayland/Vulkan/P630 application and bind the actual outer Quadro M620/inner llvmpipe renderer roles. Any future D1 cohort still requires an exact new source/input/configuration/count release; do not pool previous shared-display timings.",
-      "existing_reuse_route": "The installed-tool headless Weston/rootful Xwayland bootstrap was reused from scripts/workflow_delivery_pilot_capture.py. Only its input/display setup pattern was reused. The retained inner Weston and native Wayland/Vulkan/P630 application completed the separately reviewed admission, which has actual bounded source/runtime/pixel/cleanup acceptance. The pilot application launch and retired workflow were not invoked; reviewed source landing is now pending."
+      "existing_reuse_route": "The installed-tool headless Weston/rootful Xwayland bootstrap was reused from scripts/workflow_delivery_pilot_capture.py. Only its input/display setup pattern was reused. The retained inner Weston and native Wayland/Vulkan/P630 application completed the separately reviewed admission, which has actual bounded source/runtime/pixel/cleanup acceptance. The pilot application launch and retired workflow were not invoked; reviewed source landed in commit 6b38665f; related intake closure cites that actual commit."
     },
     "required_checks": "Project status check passed for 101 Frontier items; the Active Frontier projection is current; evidence traceability passed for 29 routes and 131 research/prototype artifacts; whitespace passed. No Cargo or native rerun was performed for this evidence landing.",
     "transport_repair_preparation": {
@@ -13427,6 +13427,11 @@
         },
         "warnings": "Preserved raw warnings: inner EGL failed to create dri2 screen/query rendering device and allocator initialization; outer EGL lacks native fence sync, disabling GPU timeline/explicit synchronization; Xwayland reported occupied-listener attempts while allocating display :2; the existing debug-protocol warning and AT-SPI GetItems unsupported-interface warning remain. No warning-free EGL, end-to-end hardware, physical-display, AT-SPI conformance or prior-timing equivalence claim is made.",
         "interval_limit": "The accepted input/focus evidence is this single declared 20-second observation on the pinned topology. It is not universal desktop/AT-SPI conformance or a completed D1 diagnostic cohort."
+      },
+      "source_landing": {
+        "commit": "6b38665f4c9041558b52032fc54750944a2f20ad",
+        "outcome": "The exact six reviewed owned paths landed on main through normal file-lane, temporary-artifact and staged rustfmt hooks; all passed, with no bypass. The related gv88 closure uses this actual source landing and the accepted bounded admission.",
+        "retained": "The private-display route is opt-in. Actual renderer roles and warning/finite-interval limits remain explicit. No D1 acquisition, cohort, latency, HUMAN or successor acceptance is inferred."
       }
     }
   }
