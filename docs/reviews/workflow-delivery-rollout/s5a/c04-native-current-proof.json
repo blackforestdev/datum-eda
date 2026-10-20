@@ -12050,7 +12050,7 @@
     "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
   },
   "current_readiness_reconciliation_20261019": {
-    "status": "Finite current-evidence reconciliation under the appointed SAME-C04 manager. Published Proposal repair and bounded horizontal-Track V5 remain accepted. A3 is now satisfied at its stated machine-assertion scope after actual independent source/CPU/native/pixel/final combined PASS and manager acceptance; canonical standalone Pad repair landed on main at 59ab948f7a89014e2b019f2bfaeb358d82b0bda5 through normal hooks. Historical L8/N08/N01/N03 and large-derived audits retain their exact scopes. No full V5/C04/HUMAN or successor disposition.",
+    "status": "Finite current-evidence reconciliation under the appointed SAME-C04 manager. Published Proposal repair and bounded horizontal-Track V5 remain accepted. A3 is now satisfied at its stated machine-assertion scope after actual independent source/CPU/native/pixel/final combined PASS and manager acceptance; canonical standalone Pad repair landed on main at 59ab948f7a89014e2b019f2bfaeb358d82b0bda5 through normal hooks. Historical L8/N08/N01/N03 and large-derived audits retain their exact scopes. No full V5/C04/HUMAN or successor disposition. V3 now has actual independent runtime/pixel/final combined PASS and manager acceptance of the successful-export comparison with prior structural evidence. Related stale bottom-status intake remains open; no full C04/HUMAN or successor disposition.",
     "authority": {
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
@@ -12135,6 +12135,14 @@
         ],
         "accepted_binding": "Actual /root/closeout_review final combined PASS at candidate f07c23e9c81637a3e6aed20f3d18f738161062e635b0371b08b4640f95dcc4c3 and appointed-manager acceptance. Two successful oracle tests / 20 complete-set comparisons, parent control and matching native02.",
         "limit": "A3 machine assertion satisfied; native Pad receipt is finite. No general narrow-cue visibility, ordinary window-Close, full C04/HUMAN or successor acceptance."
+      },
+      {
+        "predicates": "V3 actual successful public export bytes remain identical across ordinary selection and clear, with prior structural evidence.",
+        "receipts": [
+          "native_wayland_v3_successful_export_20261019"
+        ],
+        "accepted_binding": "Actual /root/reorganization_review final combined PASS at candidate f13006e1e7faf6bcc9c5c89879612d69f3dcfd3f3a4eb4527bae986c2a688300 and appointed-manager acceptance: three exit-0 exports, identical 284-byte outputs, exact GUI/AX/context states and unchanged canonical/history maps.",
+        "limit": "Observed Board copper L1 manual_debug_export. No full CAM, all-format, schematic-export, full C04/HUMAN or successor claim; incidental stale status is related intake."
       }
     ],
     "unresolved_evidence_questions": [
@@ -12249,14 +12257,15 @@
           "dense_warm_reopen_20261011",
           "maximal_channel_collision_20261012",
           "hardware_gpu_v5_track_zoom_20261019",
-          "native_a3_region_oracle_pad_center_20261019"
+          "native_a3_region_oracle_pad_center_20261019",
+          "native_wayland_v3_successful_export_20261019"
         ],
-        "next": "Reuse the accepted separate assertion audit, A3 complete-set oracle/Pad repair receipt and bounded V5 case. V3 successful-export byte comparison remains unbound. No blanket retest, invented mixed 100k requirement, native-counter campaign, Board timing threshold or duplicate 38-assertion audit.",
+        "next": "Reuse accepted A3/V3 and bounded V5 evidence. Preserve exact broader C04/HUMAN limits. Related status-display intake pc2q is a separately scoped same-C04 correction, not a V3 prerequisite. No duplicate native run or manufacturing qualification is inferred.",
         "closure": "All38 required assertions have honest adequate accepted evidence/disposition; unresolved exact controls remain named. R1-R4 are future S5B, not part of38.",
         "separate_actual_audit": "Appointed manager relayed independent closeout_review audit: D1 exact65536/65537 whole-pane union/warm capacity and D2 actual100007 Board collision already bind through accepted shared_cue_budget_correction_20261011/dense_warm_reopen_20261011/maximal_channel_collision_20261012 scopes. No new counter/latency campaign is inferred; Board timing needs existing-receipt lookup, not invented thresholds.",
         "concrete_remaining_bindings": [
           "A3: SATISFIED at the stated machine-assertion scope by native_a3_region_oracle_pad_center_20261019, actual /root/closeout_review final combined PASS and appointed-manager acceptance. Dense oracle reuse and separate governed class controls are adequate; broader native/HUMAN/C04 qualification is not inferred.",
-          "V3:actual successful export byte comparison.",
+          "V3: missing successful-export byte comparison SATISFIED with prior structural evidence by native_wayland_v3_successful_export_20261019, actual /root/reorganization_review PASS and appointed-manager acceptance. Board L1 manual_debug_export remains the observed route; no full manufacturing/all-format qualification is inferred.",
           "V5:current measured hardware horizontal-Track case has actual source/pixel CLEAR; broader fullV5/native/HUMAN qualification is not claimed or automatically made a Cartesian class/angle replay queue."
         ]
       }
@@ -13000,6 +13009,78 @@
       "gates": "Normal protected-file lane, temporary-artifact, staged rustfmt and whitespace PASS. No hook bypass, dependency or authority-digest changes.",
       "issue": "dat-standalone-pad-region-g1nh closed only with actual source landing evidence.",
       "retained_boundary": "Parent dat-uvt-s5a-build-1wv and S5A-C04 stay in progress. Transport is handled by the appointed manager after independent landing-delta review; worker does not push."
+    }
+  },
+  "native_wayland_v3_successful_export_20261019": {
+    "state": "Actual independent runtime/pixel and final combined PASS; appointed manager accepts the V3 successful-export byte comparison with the prior structural evidence. Exact five-path normal-hook main landing is authorized. Board L1 manual_debug_export limits and full C04/HUMAN boundaries remain explicit.",
+    "authority": "Retained UVT-S5A-BUILD / S5A-C04 under appointed PM059 manager 01a13df1-7a0d-72c1-bbdd-f0d96d481598. GUI Conformance V3 requires export byte identity under selection. This proves an actual successful public copper-layer export rather than a refused export or synthetic fixture comparison.",
+    "implementation": {
+      "driver": "scripts/prove_s5a_native_selection.py, 697 lines; adds one exclusive --export-invariance option to the existing governed Board Ctrl+A workflow.",
+      "driver_sha256": "0f5a69ad872b95a03df24bd70df83f74817287d12a4e9f853b3f9115106ea49f",
+      "helper": "scripts/s5a_native_export_cases.py owns the three public export stages, source/report/byte checks and complete public context parity. No production code, fixture definition, dependency or general proof framework changes.",
+      "helper_sha256": "abeb0c668c442955228646b75fdedb27fc36c5bb49a9250fce11e471c008768a"
+    },
+    "inputs": {
+      "family": "Existing index-backed s5a-c03-u5-scope-v2, selected through generic --replay-root after scripts/provision_s5a_replay_inputs.py reproduction. No developer-home fallback or sole reliance on historical external scratch.",
+      "index_sha256": "bcce46b87fc3265f19e244a60af0249388316866d557439a786765bcbccd472c",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
+      "expected_geometry": "Four canonical straight L1 Tracks; no Pads, Vias, Zones or unfilled Zones. Ordinary authored Ctrl+A includes those four Tracks plus the canonical empty BoardOutline: exactly five complete typed identities, with no member focus or class scope.",
+      "verification": "All 69 indexed family files match pinned sizes/hashes before launch. Native checkpoints preserve all 69 canonical/history maps, including the existing second-project variant. Expected Project/revision/identities come from the frozen recipe/source, not observed selection."
+    },
+    "execution": {
+      "command": "/usr/bin/python3 scripts/prove_s5a_native_selection.py --run-dir <repo>/.datum/scratch/s5a-c04-managed-20261018/native-wayland-v3-export-invariance-01 --replay-root <reproduced root> --surface board --export-invariance",
+      "raw_root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wayland-v3-export-invariance-01",
+      "actual_exit": 0,
+      "raw_status": "PASS for executed finite selection observations",
+      "result_sha256": "b9f4345ead5787bb1b8cf496f0f5ade2bda52f50d098b873bc9ee648799135a7",
+      "runtime_candidate_sha256": "4c56da44cfd5d092ad31f72e53115a035b5b162104adaf872db001ab17aa81c0",
+      "pins": "13 source files, unchanged three binaries, 69 indexed input rows and 20 actual runtime artifacts: raw reports, output bytes, logs, presented captures and full result.",
+      "configuration": "Native Datum Wayland/Vulkan inside the owned Weston X11 input envelope, 1344x806 at scale 1. Existing current GUI 758549f9b018f08ee8f3698dd931cdefe7be94e0212c294d8aeff16cc688ef9c, CLI be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9 and daemon e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f reused. No Cargo build or baseline campaign.",
+      "superseded_annotation": "Immutable runtime candidate1 inherited the unexecuted runner annotation \"No output success observed yet\". That annotation is superseded by the actual three exit-0 exports, report/file checks and identical raw bytes. Original packets remain unchanged; no runtime or product correction was needed."
+    },
+    "successful_exports": {
+      "public_command": "target/debug/datum-eda --format json project export-gerber-copper-layer <Project> --layer 1 --out <Run>/<before|selected|cleared>.gbr",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "classification": "manual_debug_export",
+      "report_checks": "All three reports identify export_gerber_copper_layer, layer 1, the exact frozen revision, track_count 4, pad_count/zone_count/unfilled_zone_count/via_count 0 and no unfilled IDs. Projection contract datum.production_projection.gerber_copper_layer.v1 and reported paths match the actual public request.",
+      "byte_count_each": 284,
+      "sha256_each": "8da75f2466bacc1b3b7a71fb3c98562dc1d64e9524fc90458459f229c040609e",
+      "comparison": "All three actual files are nonempty, exactly match their reported byte count and SHA-256, and compare byte-for-byte equal without normalization. Outputs live outside the Project in fresh owned ignored scratch."
+    },
+    "ordinary_behavior": {
+      "stages": "Qualified ordinary None -> native Ctrl+A exact five-member Compound -> distinct ordinary Escape / None. Full standard-SELECTED AX inventory, current diagnostic correlation and public ContextGet agree; selected focus and scope are None. Current presented before/selected/cleared captures show the actual selection transition.",
+      "nonmutation": "All 69 canonical/history file maps match before, after selection, after the case and after teardown. Operational role counts remain separately disclosed. ContextGet retains only its emitted public selection_context allowlist; no opaque context or credential file is read or hashed.",
+      "shutdown": "Ordinary terminal shell exit and observed PTY closure precede GUI SIGTERM. Verified owned daemon and Weston stop before private mode-0700 IPC removal. No HUP, runtime error or teardown error. This is not ordinary window-Close acceptance."
+    },
+    "review": {
+      "reviewer_task": "/root/reorganization_review",
+      "source": "Actual runner SOURCE PASS at candidate 07e3a3fda6cdef38d792601cd3c3ea82b25c14a0c4da9688601f201ab14bb258; all 13 source / 3 binary / 69 input pins, four then-dirty owned paths, CLI route/handler/report expectations and claim verified. No mandatory findings.",
+      "runtime_pixels": "Actual /root/reorganization_review runtime/pixel PASS: all three public exports exit 0, produce identical unnormalized 284-byte files and match report count/hash/current revision. Presented None -> complete Compound5 -> None, current GUI/AX/context, 69 unchanged canonical/history maps and ordinary shell/owned shutdown are verified. Incidental stale bottom status is captured separately.",
+      "final_combined": {
+        "reviewer_task": "/root/reorganization_review",
+        "outcome": "Actual FINAL COMBINED PASS; no mandatory V3 findings.",
+        "candidate_sha256": "f13006e1e7faf6bcc9c5c89879612d69f3dcfd3f3a4eb4527bae986c2a688300",
+        "verified": "16 source pins, unchanged three binaries, 69 indexed input rows, 20 runtime artifacts and the exact five owned paths. The inherited pre-execution annotation is explicitly superseded by observed successful outputs; immutable packets remain intact."
+      },
+      "manager_disposition": "Appointed PM059 manager accepts the previously missing V3 successful-export comparison with prior structural evidence and authorizes exact five-path normal-hook main landing. Retain Board copper L1 manual_debug_export scope; no full CAM, all-format, schematic-export, full C04/HUMAN or successor acceptance. No runtime/build repeat or issue closure."
+    },
+    "checks": "Python syntax, whitespace and source health (3261 files) pass. Project-state check passes 101 items. No new compiling runner or dependency change. The AT-SPI GetItems warning is preserved in raw output; complete public AX observations succeeded.",
+    "failures": "No V3 runtime failure in this run. The confirmed incidental status display is recorded in related intake without blocking accepted V3. Earlier A3 compile, class-refusal and native harness failures remain untouched at their actual scopes.",
+    "limits": [
+      "Successful copper L1 manual_debug_export byte invariance over the existing Board fixture only. No full CAM, all-format, schematic export, HUMAN, full C04, C05/C06 or successor acceptance.",
+      "No production source or dependency changes, new fixture, numeric threshold, authority digest refresh or standalone tracked report. Related status-display defect pc2q is captured only; no issue closure. Parent C04 remains in progress."
+    ],
+    "incidental_status_display": {
+      "issue": "dat-status-selection-clear-pc2q",
+      "classification": "Related roadmap:intake; no new V3 prerequisite.",
+      "observed": "After ordinary Escape the bottom status still displays Sel compound 5 while Inspector, current standard AX and public ContextGet report None. No speculative cause or manufacturing/selection-authority failure is claimed.",
+      "capture_sha256": "0900095ac96926605b9700dd975a296ae94faf444404f91429c18794fb43f2bc",
+      "disposition": "Actual independent reviewer and manager confirm the display defect. Capture now, continue V3 landing, then execute the separately scoped same-C04 status-display repair."
     }
   }
 }

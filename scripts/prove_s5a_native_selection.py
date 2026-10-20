@@ -21,6 +21,7 @@ from s5a_native_escape_cases import owned_open_text_keys, region_escape_cancel
 from s5a_native_inspector_cases import focused_compound_scopes, focused_compound_pane_lifecycle, hidden_junction_run
 from provision_s5a_replay_inputs import INPUTS, replay_location
 from s5a_native_selection_observation import latest_state, qualify, selection_snapshot
+from s5a_native_export_cases import export_before_selection, export_selected_and_cleared
 
 ROOT = Path(__file__).resolve().parents[1]
 OWNED = ROOT / '.datum/scratch/s5a-c04-managed-20261018'
@@ -404,7 +405,7 @@ def overlap_menu(qa, main, state, project, contract, result):
 
 
 
-def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False, owned_open=False, region_escape=False, focused_inspector=False, focused_pane_lifecycle=False, hidden_junction=False):
+def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_case=False, pin_case=False, terminal_keys=False, overlap_case=False, owned_open=False, region_escape=False, focused_inspector=False, focused_pane_lifecycle=False, hidden_junction=False, export_invariance=False):
     contract_path = project / ('project.json' if hidden_junction else 's5a-fixture.json')
     contract = json.loads(contract_path.read_text())
     if parents_case or pin_case or terminal_keys or overlap_case or owned_open or region_escape or hidden_junction:
@@ -475,6 +476,7 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         qa.capture('initial-layer-state', main)
         toggle_l1(qa, main, state, result, False)
         qa.capture('l1-hidden-before-acquisition', main)
+    if export_invariance: export_before_selection(qa, main, state, project, expected, frozen_files, result)
     prior = state()['sequence']
     qa.key(main, 'ctrl+a')
     expected_hidden_ids = set(board['tracks']) if prehidden_l1 else set()
@@ -513,8 +515,9 @@ def execute(qa, project, result, frozen_files, surface, prehidden_l1, parents_ca
         assert len(hidden_ids) == 4 and state()['value']['selection']['hidden_count'] == 4
         result['hidden_track_ids'] = sorted(hidden_ids)
     qa.capture(f'selected-complete-{noun}', main)
-    if focused_inspector or focused_pane_lifecycle:
-        if focused_pane_lifecycle:
+    if focused_inspector or focused_pane_lifecycle or export_invariance:
+        if export_invariance: export_selected_and_cleared(qa, main, state, project, expected, frozen_files, result)
+        elif focused_pane_lifecycle:
             focused_compound_pane_lifecycle(qa, main, state, project, result, expected)
         else:
             focused_compound_scopes(qa, main, state, project, result, expected)
@@ -572,7 +575,10 @@ def main():
     parser.add_argument('--focused-pane-lifecycle', action='store_true')
     parser.add_argument('--hidden-junction-run', action='store_true')
     parser.add_argument('--proposal-creation-undo', action='store_true')
+    parser.add_argument('--export-invariance', action='store_true')
     args = parser.parse_args()
+    if args.export_invariance and (args.surface != 'board' or any(v for k, v in vars(args).items() if isinstance(v, bool) and k != 'export_invariance')):
+        parser.error('export invariance is exclusive to the frozen visible Board case')
     if args.proposal_creation_undo:
         if args.surface != 'board' or any(v for k, v in vars(args).items()
                 if isinstance(v, bool) and k != 'proposal_creation_undo'):
@@ -637,9 +643,9 @@ def main():
     qa.env.update({'DATUM_GUI_VERBOSE_LOG': '1', 'DATUM_ACTION_EVIDENCE': '1',
                    'DATUM_GUI_PREFERENCES_PATH': str(run / 'config/gui-preferences.json'),
                    'EDA_CLI_BIN': str(qa.binary_dir / 'datum-eda')})
-    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu or args.owned_open_text or args.region_escape or args.focused_inspector or args.focused_pane_lifecycle or args.hidden_junction_run:
+    if args.prehidden_l1 or args.parents_point or args.pin_point or args.terminal_keys or args.overlap_menu or args.owned_open_text or args.region_escape or args.focused_inspector or args.focused_pane_lifecycle or args.hidden_junction_run or args.export_invariance:
         qa.env['DATUM_TRACE_CLICKS'] = '1'  # Existing passive dispatch observation.
-    result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1,
+    result = {'status': 'FAIL', 'surface': args.surface, 'prehidden_l1': args.prehidden_l1, 'export_invariance': args.export_invariance,
               'parents_point': args.parents_point,
               'pin_point': args.pin_point,
               'terminal_keys': args.terminal_keys,
@@ -656,9 +662,9 @@ def main():
         name: digest(ROOT / 'scripts' / name)
         for name in ['prove_s5a_native_selection.py', 's5a_native_selection_observation.py',
                      'prove_native_project_startup_gui.py', 'native_project_source_inventory.py',
-                     's5a_native_escape_cases.py', 's5a_native_inspector_cases.py']}
+                     's5a_native_escape_cases.py', 's5a_native_inspector_cases.py', 's5a_native_export_cases.py']}
     try:
-        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector, args.focused_pane_lifecycle, args.hidden_junction_run)
+        execute(qa, project, result, frozen_files, args.surface, args.prehidden_l1, args.parents_point, args.pin_point, args.terminal_keys, args.overlap_menu, args.owned_open_text, args.region_escape, args.focused_inspector, args.focused_pane_lifecycle, args.hidden_junction_run, args.export_invariance)
         result['status'] = 'PASS for executed finite selection observations'
     except Exception as error:
         result['error'] = str(error)
