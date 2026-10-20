@@ -13727,5 +13727,377 @@
       "retained_boundaries": "No named component cause/repair/frozen-GUI equivalence/D1/latency/HUMAN/fullC04/C05/C06/Close/successor credit. C04 remains in_progress; both related capture intakes remain OPEN. Runtime01 stays immutable. Separate read-only next-discriminator feasibility review grants no live run.",
       "recorded_at": "2026-10-20T05:44:27Z"
     }
+  },
+  "native_wsi_handoff_source_preparation_20261019": {
+    "state": "Faithful overallfailed runtime04 recording/cleanup accepted; two completed phase-bound observations separately accepted. C04 remains selected/open; no product qualification or further runtime authority.",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "retained_step": "S5A-C04",
+    "scope": "First-party observer/runner/offline controls/frozen method+source+toolpins+command in existing owned scratch. Installed GDB16.3 and existing instrumented GUI b5ec0772172d23f7a3251ec0a4300bc58a35ca880e7bf33e390e1d394e2a0ca2 only.",
+    "bounds": "Typed actual Ash targets/args/returns, bounded readable arrays, fail closed on missing types/addresses/results; no injected function calls/register or app-data writes/guessed offsets/retry/timeout padding. Actual inferior GUI and daemon distinct from GDB parent. Keep existing finite baseline admission/input/capture/cleanup. Independent method/source review before any separate live release.",
+    "recorded_at": "2026-10-20T07:36:40.548565+00:00",
+    "source_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-07.json",
+      "sha256": "bd23bd9e8f5bac2125af21daf0817c5c11430dfc3f16969b667275bd37325d9b",
+      "bytes": 35740
+    },
+    "method_review": {
+      "reviewer_task": "/root/closeout_review",
+      "disposition": "METHOD PASS for PREPARATION only, mandatory full-chain/typed args+returns/timeline/identity/cleanup/perturbation bounds incorporated; live held for source review.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598"
+    },
+    "actual_checks": {
+      "syntax": "Four corrected runtime sources compile as Python syntax, without runner import/execution or observer activation.",
+      "process_cleanup": "13 actual process03 ownership/adaptor/cleanup offline controls PASS, including final-drain late authenticated owner after debugger death/reparent and stopped owner requiring existing bounded SIGKILL path. Injected OS/channel outcomes only, no kernel transport/live proof.",
+      "contract": "23 offline dependency/deferred/native contract controls PASS, final05 includes explicit typed timeline and monotonic guard; fixtures are not runtime proof.",
+      "static": "Existing frozen b5ec ELF, inert observer02 import, all4 actual Ash DWARF prototypes, exact acquire and native-copy push_with entry breakpoints, new_thread inferior property all PASS with inferiorPID0. Host-byte Recording enum payload decoding PASS under Rust language; no live local values.",
+      "failures": "Preserve original01 candidate and failures. Deferred static02 Vec.push exploratory entry has PENDING/NO LOCATIONS despite zero script exit; unusable, replaced by exact resolved native-copy push_with entry03. Enum01 FAIL max_depth0 hid tag; corrected depth1 host fixture02 PASS. Old entry03 NameError failure retained by candidate01.",
+      "reuse": "Actual closeout_review bounded SOURCE PASS for unchanged observer02/contract02 S1/S2,23 controls,35pins/staticPID0 as relayed by appointed manager; source02 process/runner findings remain retained. No new GDB or23control rerun, native run/build/install.17Rust/b5ec reused unchanged.",
+      "runner_tail": "Five direct offline controls extract and execute actual runner3 final result/ownership-error functions via AST without importing main: malformed/unreadable/stat-race receipts preserve primary+actions+attempted persistence, no-primary failure persists then raises, ownership validation errors fail despite successful stops."
+    },
+    "prior_source_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-01.json",
+      "sha256": "2349ec588f51fa024890a223707ee35a85d64ef44660348087c01515882d05d8",
+      "bytes": 14278
+    },
+    "correction_map": {
+      "R1": "Stable retained startup/GUI pidfd ownership survives debugger death and reparenting; authenticated early transfer+ACK, unknown startup gap unresolved, no-adaptor never grants absence, pidfd-only signals prevent PID reuse race.",
+      "R2": "Structured independent cleanup attempts every owner/debugger/observer/IPC/persistence phase despite poll/proc/signal exceptions; strict false/unverified stop flags, original primary error retained, uncertain owner retains IPC.",
+      "S1": "Observed native attempt captured while enqueue FrameTarget is alive, bridged by actual typed encoder/src/dst/device Arc identities and full command description to deferred HAL copy; execution recomputes identities and verifies raw objects/C handles; unavailable dynamic locals fail unqualified.",
+      "S2": "Require acquire dependency at copy-submit using direct acquire wait or preceding observed typed binary/timeline causal chain; full stages/values retained; later unrelated acquire wait, missing/reordered chain or already-satisfied lower timeline value cannot rescue copy."
+    },
+    "prior_source_candidates": [
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-02.json",
+        "sha256": "df21d2b7c8dc59eaf4ae856324eb24fe5a8f839dd731ee9e30f36b82c0187a9e",
+        "bytes": 18897
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-03.json",
+        "sha256": "a2d014799a46564b71a475994ee465b738827260d9a0adcb2e9e1e7b5bc31ca9",
+        "bytes": 23045
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-04.json",
+        "sha256": "5b518aba59c88b7198abf70d5fda2fea1e1359abebfb209fa15897f1ac6e5a65",
+        "bytes": 28698
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-05.json",
+        "sha256": "7b02abc53ca63ef44f8cbd05b02a756eb2f7d5de9dee74f41777b09df8fc9a3b",
+        "bytes": 33311
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-06.json",
+        "sha256": "f0a9dfae72c2f7ed5219ab65b92c223f1f0147a9b20c94c7b96ee97f7f27261d",
+        "bytes": 36279
+      }
+    ],
+    "remaining_correction_map": {
+      "R1-late-owner": "After final authenticated transfer drain, newly retained inferior gets same finite pidfd TERM/wait/KILL/wait before classification. Original owner not stopped twice. No wait bound changes.",
+      "R2-tail": "Actual final WSI stat/read/JSON parse protected; errors preserve primary, actions and final persistence. Five direct runner function controls, not isolated Cleanup-only fixture.",
+      "R2-ownership-errors": "Both report.errors and report.ownership_errors enter final error list without duplicate entries; validation failure cannot return CAPTURE_ONLY after stops succeed.",
+      "runner-provenance": "instrumentation.runner, command03, method.sources and source pins all identify exact source3 bytes. Historical source1/source2 provenance stays in frozen prior candidates."
+    },
+    "actual_independent_partial_review": {
+      "reviewer_task": "/root/closeout_review",
+      "disposition": "Bounded SOURCE PASS for candidate02 unchanged observer02/contract02; S1/S2 resolved,23 controls/35pins/staticPID0 verified. No dynamic proof/live release.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598"
+    },
+    "actual_final_source_review": {
+      "reviewers": [
+        "/root/closeout_review",
+        "/root/reorganization_review"
+      ],
+      "dispositions": [
+        "SOURCE PASS07 minimal private-PTID correction/five installed checks",
+        "SOURCE/COMMAND PASS07 import/pins/fresh04/unchanged cleanup"
+      ],
+      "candidate_sha256": "bd23bd9e8f5bac2125af21daf0817c5c11430dfc3f16969b667275bd37325d9b",
+      "root_verification": "Exact minimal diff and50refs verified.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-20T08:30:45Z"
+    },
+    "finite_live_release": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "command_sha256": "ccd1fd6ffb48a08721ece7a96e288fdc6b2f82ed06615bccc8a6975015b24d45",
+      "candidate_sha256": "bd23bd9e8f5bac2125af21daf0817c5c11430dfc3f16969b667275bd37325d9b",
+      "manifest_sha256": "45a872462d5f3cb858661225d94dd34273a03d7854e68433c2d7abf6516a28d1",
+      "max_executions": 1,
+      "diagnostic_attempt_ordinal": 4,
+      "baseline_gate": "Actual manager dual-baseline images/checkpoint/WSI inspection and hash-bound ADMIT required before fixed gesture.",
+      "bounds": "One GDB/GUI/scope,six fixed wheels,one fixed gesture only after actual ADMIT,two native/max two compositor/max four PNGs.20/10/600s bounds unchanged. First failure stop/preserve raw+cleanup; no retry/build/input/backend/timeout changes. No WSI/C04/D1/HUMAN/cause/repair/successor acceptance.",
+      "recorded_at": "2026-10-20T08:30:45Z"
+    },
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-runtime-candidate-04.json",
+      "sha256": "8153906f0014f5afd2c952b72af503a2e82121822f361fbba3ef8b06b27f437f",
+      "bytes": 47117
+    },
+    "runtime_execution_counts": {
+      "command_executions_this_release": 1,
+      "diagnostic_attempt_ordinal": 4,
+      "GDB": 1,
+      "GUI": 1,
+      "scope_lists": 1,
+      "zoom_wheels": 6,
+      "controlled_region_gestures": 1,
+      "native_jobs_completed": 2,
+      "compositor_captures": 2,
+      "original_PNGs": 4,
+      "retries_this_release": 0,
+      "D1_runs": 0
+    },
+    "runtime_first_failure": {
+      "status": "FAIL_UNQUALIFIED",
+      "reason": "Cannot find user-level thread for LWP 963661: generic error",
+      "pid": 963661,
+      "limits": "Original observation error; no extra run/retry/padding or cause/qualification claim."
+    },
+    "runtime_primary_error": null,
+    "runtime_cleanup_summary": "Ordinary shell exit/observed PTY closure; all recorded owner PIDs+bothIPC fresh-absent,GUI/GDB pidfds exited+absent,18maps equal; native exit unknown; final WSI receipt error retained.",
+    "failed_runtime_recording_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "ACCEPT faithful failed-run recording/cleanup only:30rawpins/counts/12PIDs+2IPC/18maps. Root additionally33refs/currentmaps verified; original FAIL_UNQUALIFIED/unknown native exit/all exceptions retained.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "limits": "No WSI/render/cause/repair/D1/C04 acceptance; one released run consumed."
+    },
+    "source_correction_scope": "Only observer/contract and affected offline controls. Runner4 changes imports only to observer03/contract03; current instrumentation.runner exact. Existing process03/R1/R2 cleanup and actual tail functions unchanged;13+5 evidence reused with AST byte-structure comparison of both actual tail functions.",
+    "source_correction_checks": {
+      "syntax": "All six runtime sources and affected controls compile as Python syntax; no runner import/main or observer activation.",
+      "contract": "23 previous contract controls PASS07 after explicit test type/count declarations. Negative later-wait and missing/reordered dependencies assert specific S2 reason, preventing unrelated unknown-type failures from disguising coverage.",
+      "affected": "14 targeted offline controls PASS: both asymmetric binary/timeline sides, mixed ignored binary !0, binary-only omitted values, required counts/pNext/unknown/ambiguity, actual AST-executed decoder raw-header/full-array/null/oversized preservation, actual AST-executed current owner/index/image/device/prefix provenance and negatives. Fixtures are not runtime or kernel/GPU proof.",
+      "static": "Final04 inert observer03 import + actual vec_element_type helper resolves existing b5ec DWARF full Arc/Mutex/UnsafeCell/typed semaphore prefix, HAL surface slice and Queue.device; inferiorPID0. No new app/inferior run.",
+      "retained_failures": "Offline06 found one previous fixture lacked explicit binary signal304; failed log retained, fixture corrected07. Static02 found RawVecInner erases pointer to u8; failed log retained, exact DWARF Vec generic element parser then actual helper confirmed03/04. No failed-run runtime timeline counts reconstructed.",
+      "reuse": "All process03/runner cleanup13+5, full S1 deferred bridge/source field invariants, dispatch ABI/prototypes/entry checks and original Rust/b5ec build remain reused unchanged. New surface metadata runtime availability remains unproven."
+    },
+    "source_correction_map": {
+      "timeline_decoder": "Actual declared per-side counts/arrays persisted before semantic checks; conditional timeline-side equality, no padding of binary values.",
+      "ledger": "Iterate all actual semaphores/stages independently of timeline value arrays; typed timeline positions alone use values; unknown type fails; binary wait/signal causal tokens preserved.",
+      "surface_provenance": "Existing typed NativeSwapchain current image present prefix with actual C signal match, source-backed binary construction; no inferred enum tags or dummy-sentinel types."
+    },
+    "consumed_release": "Four separately released commands03/04/06/07 consumed once each; runtime01/02/03/04 immutable. No new source/runtime authority.",
+    "prior_source_reviews": [
+      {
+        "reviewer_task": "/root/reorganization_review",
+        "disposition": "SOURCE PASS03 resolves R1/R2/provenance/import closure;13+5controls verified. Reuse actual closeout_review SOURCE PASS02 for byte-identical observer02/contract02.",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "recorded_at": "2026-10-20T07:39:19Z"
+      },
+      {
+        "reviewers": [
+          "/root/closeout_review",
+          "/root/reorganization_review"
+        ],
+        "dispositions": [
+          "SOURCE PASS04 decoder/ledger/provenance/controls",
+          "SOURCE/COMMAND PASS04 runner/import/manifest/fresh outputs/cleanup continuity"
+        ],
+        "root_verification": "34 refs/exact command/fresh02 paths",
+        "candidate_sha256": "5b518aba59c88b7198abf70d5fda2fea1e1359abebfb209fa15897f1ac6e5a65",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "recorded_at": "2026-10-20T07:57:19Z"
+      },
+      {
+        "reviewers": [
+          "/root/closeout_review",
+          "/root/reorganization_review"
+        ],
+        "dispositions": [
+          "SOURCE PASS05 nesting/ancestry/returns/producer exclusion13controls",
+          "SOURCE/COMMAND PASS06 metadata delta/import/command/fresh03/cleanup continuity"
+        ],
+        "candidate_sha256": "f0a9dfae72c2f7ed5219ab65b92c223f1f0147a9b20c94c7b96ee97f7f27261d",
+        "root_verification": "Actual manifest only /limits, command only argv14/16; sources/controls/budgets unchanged; exact hashes/sizes/fresh03 outputs.",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "recorded_at": "2026-10-20T08:22:03Z"
+      }
+    ],
+    "prior_live_releases": [
+      {
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "command_sha256": "8486a079ccf1653844d588dcd1f6ef8b40ce3aabae754c63725e12e3d18324c2",
+        "candidate_sha256": "a2d014799a46564b71a475994ee465b738827260d9a0adcb2e9e1e7b5bc31ca9",
+        "manifest_sha256": "a8e994e7ca6b99f82a6d62b53ade5a75c13fa7a37e0996376e6bd879f2700fb9",
+        "max_executions": 1,
+        "baseline_gate": "Manager actual BOTH baseline pixel inspection and exact hash-bound ADMIT required before fixed gesture.",
+        "bounds": "One GDB/GUI/scope-list,six wheels,one fixed gesture after actual ADMIT,two native plus two compositor original PNGs max. Existing timeouts; no retry/build/install/backend/input changes. Notify baseline or first failure, preserve failures/full cleanup; missing dynamic linkage FAIL_UNQUALIFIED. No cause/repair/D1/fullC04 acceptance.",
+        "recorded_at": "2026-10-20T07:39:19Z"
+      },
+      {
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "command_sha256": "5be16c4f8a4ab08edc2954f2836e2d23fa3223480da627c239d6190df3323fa9",
+        "candidate_sha256": "5b518aba59c88b7198abf70d5fda2fea1e1359abebfb209fa15897f1ac6e5a65",
+        "manifest_sha256": "aa9e8fb5f431facfcf6698f8611a24fffdee919d151b959b292d1d04f19de0d7",
+        "max_executions": 1,
+        "baseline_gate": "Manager actual BOTH baseline images and hash-bound ADMIT before fixed gesture.",
+        "bounds": "One GDB/GUI/scope-list,six wheels,one fixed gesture after actual ADMIT,two native plus two compositor PNGs max. Existing timeouts; no extra retry/build/install/backend/input changes. Notify checkpoint/first failure; unknown dynamic fields FAIL_UNQUALIFIED. Preserve prior01 failure and full cleanup; no cause/repair/D1/fullC04 acceptance.",
+        "recorded_at": "2026-10-20T07:57:19Z"
+      },
+      {
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "command_sha256": "635677f7c923e8d7c62f88e1aeedf178dfc3993092a171de803d8de824a08df4",
+        "candidate_sha256": "f0a9dfae72c2f7ed5219ab65b92c223f1f0147a9b20c94c7b96ee97f7f27261d",
+        "manifest_sha256": "3486f84805a7c4563444fdb081286601cf25e1d45720dcc8242d953bbd941f99",
+        "max_executions": 1,
+        "diagnostic_attempt_ordinal": 3,
+        "baseline_gate": "Manager actual two-baseline images/checkpoint/WSI trace inspection and hash-bound ADMIT required before fixed gesture.",
+        "bounds": "One GDB/GUI/scope,six fixed wheels,one fixed gesture only after actual ADMIT,two native/max two compositor/max four original PNGs. Existing20/10/600s bounds; first failure stop/preserve full raw+cleanup; no retry/build/input/backend changes. No cause/repair/D1/C04/HUMAN/successor grant.",
+        "recorded_at": "2026-10-20T08:22:03Z"
+      }
+    ],
+    "prior_runtime_candidates": [
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-runtime-candidate-01.json",
+        "sha256": "89f2b5a057402bc84780ec5db3d190363f1fbf57a3f6b07fb8b1f98b44a344f1",
+        "bytes": 17604
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-runtime-candidate-02.json",
+        "sha256": "854c5c59c441f9b8d709c8cf4534f341f15c413f1038b9c9d481af7f615ce3ba",
+        "bytes": 23359
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-runtime-candidate-03.json",
+        "sha256": "37fe5b4931420ca303dceff1e689b55c89a2a5c57c33e6de713ecf4591f65eb0",
+        "bytes": 25100
+      }
+    ],
+    "failed_runtime02_recording_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "ACCEPT only faithful failed-run02 recording/cleanup:30raw pins,12PIDs+2IPC,18maps; root34refs/currentmaps and absence verified.",
+      "candidate_sha256": "854c5c59c441f9b8d709c8cf4534f341f15c413f1038b9c9d481af7f615ce3ba",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-20T08:02:56.425162+00:00",
+      "limits": "Both failed runs immutable, unknown inferior native exit and secondary errors preserved; no WSI/render/cause/C04 acceptance."
+    },
+    "runtime02_count_clarification": {
+      "submit_invocation": 2,
+      "wait_semaphore_count": 2,
+      "signal_semaphore_count": 3,
+      "timeline_wait_value_count": 0,
+      "timeline_signal_value_count": 3,
+      "limits": "Actual run02 only; no reconstruction of missing run01 counts."
+    },
+    "bounded_nested_call_source_correction": {
+      "authority": "Appointed PM059 manager",
+      "state": "Candidate05 frozen for actual independent source review; no live release.",
+      "problem": "Submit4 intercepted on same thread while present3 outstanding; no specific helper/signal type/present outcome established.",
+      "limits": "Explicit producer-versus-nested-call recording only, affected controls/new frozen candidate; S1/S2 acceptance unchanged; source04/runtime01/02 immutable.",
+      "candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-gdb-source-candidate-05.json",
+        "sha256": "7b02abc53ca63ef44f8cbd05b02a756eb2f7d5de9dee74f41777b09df8fc9a3b",
+        "bytes": 33311
+      },
+      "criteria": {
+        "proof": "At actual C present entry, observe pinned native.rs present source frame PC/SP/name/source and actual receiver/raw/images/device/queue/texture index/image matching active Main acquisition; record GUI executable mapping plus actual loaded C present-provider mapping. On submit with no typed HAL producer submit frame, require same-thread outstanding producer present; reobserve actual source context; match unique exact parent PC/SP/name/source among bounded actual stack ancestors with actual provider PC before it, matching queue/context. Timing/shape alone never proves ancestry.",
+        "retained_evidence": "entry_raw, complete bounded submit arrays/counts/timeline data, full bounded actual ancestry including unknown symbols, explicit UNKNOWN wait/signal kinds, parent invocation/context and separate nested entry/paired raw return/complete. No vkCreateSemaphore or nested signal type/helper/outcome reconstruction.",
+        "supported_shape": "Observer limitation only: exactly one nested submit per present, one batch, no command buffers/timeline pNext, exact parent present wait list, ALL_COMMANDS stages, exactly one nonzero signal of UNKNOWN kind. Unsupported shape/effects => FAIL_UNQUALIFIED; this is not a Vulkan validity rule or an application defect.",
+        "fail_closed": "No producer frame outside supported actual same-thread parent ancestry, ambiguous/missing ancestry/local/type/context, wrong thread/queue/device/generation/image, unknown/unreadable arrays, unsupported nesting, non-success nested result, wrong/unmatched/out-of-order return or missing actual parent present return => FAIL_UNQUALIFIED. No guessed offsets/calls, general tracer, retry or padding.",
+        "producer_invariants": "Existing S1 consumed-attempt/deferred identity and S2 immediate acquire-to-copy dependency remain exact; nested record never enters Ledger. Native link remains producer acquire/copy/submit/present only; full record includes all supported nested calls separately."
+      }
+    },
+    "nested_source_correction_checks": {
+      "syntax": "All six exact runtime modules plus new nesting controls compile as Python syntax, without importing runner main/activating observer.",
+      "nested_controls": "13 focused offline controls PASS on actual contract04 CallNesting plus actual AST-executed Return.stop/producer-frame probe/present-context observer functions: same-thread true ancestry/matched parent+child returns with UNKNOWN kinds, wrong parent/thread/queue/context/PC-SP-source/provider, unsupported shape, wrong/missing/duplicate/out-of-order returns, failing nested return, no producer Ledger consumption and no S2 dependency rescue. Not runtime/GPU/OS proof.",
+      "static": "Final nesting-static02 inert observer04 import resolves existing b5ec NativeSwapchain present exact executable entry and DWARF self/queue/texture types; frame PC/SP/SAL APIs confirmed; inferiorPID0. Actual optimized locals/unwind/source ancestor availability remains unproven.",
+      "retained_failure": "nesting-static01 failed SyntaxError in outer static script from replacing NATIVE placeholder inside a printed string. No inferior ran. Script corrected with explicit source variable;02 PASS. Failed raw log retained; source behavior was unchanged by script correction.",
+      "reuse": "23+14 prior producer/conditional-count/provenance controls and13+5 cleanup controls reused with exact full prior contract prefix,13 critical observer source AST nodes and actual runner-tail continuity pinned. No build/app/compositor run/install, broad test rerun or generic tracer."
+    },
+    "source05_actual_closeout_review": {
+      "reviewer_task": "/root/closeout_review",
+      "disposition": "SOURCE PASS candidate05,38refs/13controls/S1-S2 continuity; bounded code evidence reused unchanged for metadata06.",
+      "candidate05_sha256": "7b02abc53ca63ef44f8cbd05b02a756eb2f7d5de9dee74f41777b09df8fc9a3b",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598"
+    },
+    "metadata06_delta": {
+      "manifest_json_pointers": [
+        "/limits"
+      ],
+      "before": "SOURCE PREPARATION: no inferior/app/compositor run under this grant. Installed GDB/existing instrumented b5ec GUI and exact frozen CLI/daemon only. Actual method PASS covers preparation; final source review and separate finite live release required. Software/finish breakpoint code-byte/PC/timing perturbation explicitly disclosed. All errors/suboptimal retained; unknown type/address/result/structure/call/return fails unqualified. Successful Vulkan arguments/returns do not prove driver honors synchronization, imported consumer pixels, cause, repair, latency, D1/C04/HUMAN/successor acceptance. This candidate does not authorize replay of consumed command03. Prospective fresh02 output names only; command04 is unexecuted and separately requires review and bounded manager release. Both prior released commands consumed and failures remain immutable. Fresh03 prospective names only; command05 is unexecuted and requires separate actual source review and bounded manager release.",
+      "after": "SOURCE PREPARATION: no inferior/app/compositor run under this grant. Installed GDB/existing instrumented b5ec GUI and exact frozen CLI/daemon only. Actual method PASS covers preparation; final source review and separate finite live release required. Software/finish breakpoint code-byte/PC/timing perturbation explicitly disclosed. All errors/suboptimal retained; unknown type/address/result/structure/call/return fails unqualified. Successful Vulkan arguments/returns do not prove driver honors synchronization, imported consumer pixels, cause, repair, latency, D1/C04/HUMAN/successor acceptance. Commands03 and04 were separately released once each; both releases and fresh01/02 output names are consumed, and failed runtime01/02 remain immutable. Fresh03 prospective output names remain absent. Metadata-corrected command06 is unexecuted and requires the bounded metadata review and separate manager live release; no replay or additional runtime authority follows from this packet.",
+      "command_argv_changed_indices": [
+        14,
+        16
+      ],
+      "candidate_fields_changed": [
+        "state",
+        "manifest",
+        "command",
+        "prior_source_candidate",
+        "metadata_only_delta",
+        "actual_closeout_review"
+      ],
+      "new_filenames_preserve_old_frozen05": "manifest06/command06/candidate06 only; original05 byte-identical",
+      "unchanged": "All implementation/control sources and raw receipts, inputs, output03 names, tool/binary/provider pins, budgets, timeouts and cleanup; no rerun/build."
+    },
+    "runtime_secondary_cleanup_errors": [
+      {
+        "phase": "WSI final receipt collection",
+        "type": "ObservationError",
+        "error": "WSI observer incomplete; original failure/trace retained, no retry or cause claim"
+      }
+    ],
+    "read_only_thread_property_diagnosis": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-thread-api-diagnosis-01.json",
+      "sha256": "9b631870ea8d9ebb5f80ef3b491c273d6665dddc253c457f7c99868339a679d2",
+      "bytes": 2298
+    },
+    "private_ptid_correction_checks": {
+      "syntax": "Six exact runtime sources and focused GDB control script compile as Python syntax; no runner main/observer activation.",
+      "focused_installed_controls": "Five PASS checks in actual installed GDB16.3, inferiorPID0: actual original constructor AST exposes inherited descriptor tuple rejection; corrected constructor AST private tuple/native descriptor unchanged; actual enqueue stop wrong PTID refuses before queue/resource reads; successful actual stop preserves full device/encoder/src/dst key, attempt and trace thread field; all breakpoint subclass custom stores scanned against installed Breakpoint/FinishBreakpoint descriptors, intended silent only.",
+      "adapter_limit": "Only native FinishBreakpoint construction is adapted to an inert REAL Breakpoint subclass because a FinishBreakpoint requires a live frame. Actual constructor/stop class bodies and real identical inherited descriptor retained; resource objects simulated. No live frame/queue/GPU proof.",
+      "reuse": "Unchanged contract04/S1/S2/producer-vs-nested rules13controls, conditional timeline/provenance23+14 controls and process/actual-tail13+5 controls/static receipts reused. Exact3-use observer rename+runner observer-import-only diff pinned. No broad verification/rebuild/new live run.",
+      "read_only_diagnosis": "Official GDB docs plus installed exact TypeError/private field no-inferior receipt pinned; observer-only descriptor collision, no application/render cause."
+    },
+    "private_ptid_continuity": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-thread-continuity-01.json",
+      "sha256": "e29523964996ca4b23a14cb580f110ea0e8bb4abd2bb8e35c3570d781fd66be2",
+      "bytes": 4318
+    },
+    "runtime03_independent_raw_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "Actual raw review:58complete LF records, startup/nested returns but no copy/native-enqueue/final native link;6wheels,0gesture/capture/PNG/checkpoint/admission/completed sample,18maps equal; authenticated GUI/GDB absence, reviewer12owners incl shell+6detachedchildren absent,bothIPC gone; inner EACCES+incomplete receipt retained, outercleanup[] supplies no shell-exit credit. Immutable runtime packet binding pending actual review.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "limits": "This raw review is not runtime/WSI/C04 PASS. Worker packet independently records13knownPIDs including own launch wrapper; scopes retained separately."
+    },
+    "runtime03_recording_acceptance": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "RECORDING/CLEANUP ACCEPTED runtime03, actual FAIL_UNQUALIFIED retained.37refs including31raw,13knownPIDs including execution wrapper plus6detachedchildren absent,2IPCs absent,18maps equal;6wheels/1attempt/0completed.",
+      "candidate_sha256": "37fe5b4931420ca303dceff1e689b55c89a2a5c57c33e6de713ecf4591f65eb0",
+      "manager_disposition": "Accept faithful failed-attempt record only. Root independently37refs/hash/bytes/counts and13PIDs+2IPC absence verified.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-20T08:28:30.996118+00:00",
+      "retained_limits": "Both inner terminal-transport EACCES and incomplete WSI receipt errors remain; native exit unknown; no ordinary shell-exit/runtime/WSI/render/cause/D1/C04 acceptance. Frozen packet unchanged; no retry release."
+    },
+    "runtime04_phase_result": "Both exact RGB pairs equal in this debugger run; Via selected, two complete phase-bound producer WSI/native links accepted. Overall FAIL: missing complete receipt,GDB user-level thread error,unmatched present46 retained. No repair/qualification.",
+    "runtime04_actual_closeout_review": {
+      "reviewer_task": "/root/closeout_review",
+      "disposition": "ACCEPT TWO COMPLETED PREFIX-BOUND OBSERVATIONS only; overallrun04FAIL retained. Actual4originals/fullRGB equality/opaquealpha/correctVia, native records exact83/209recordprefixes, actual acquire/copy/submit/present and nested13/34 before parent12/33.",
+      "result_sha256": "4d5867b3dc795eebd6cf9ddbcd3cfceed2df6f84fa26e54d26e57f1cabe09384",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "limits": "Late present46 lacks return, complete absent, precise teardown cause unestablished. No earlier mismatch repair/cause/equivalence/consumer import identity/C04 acceptance."
+    },
+    "runtime04_read_only_diagnosis": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wsi-finalization-readonly-diagnosis-01.json",
+      "sha256": "fc73498e08c362eaf35a12081c8583f4807122908d19b9c7299519b1743a9c68",
+      "bytes": 9211
+    },
+    "runtime04_actual_recording_cleanup_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "RECORDING/CLEANUP ACCEPTED runtime04; no mandatory correction.52unique refs including44raw;6phase prefix bindings including83/209WSI records;16knownPIDs+6detachedchildren+2IPC absent,18canonical maps equal; ordinary shell/PTY closure.",
+      "candidate_sha256": "8153906f0014f5afd2c952b72af503a2e82121822f361fbba3ef8b06b27f437f",
+      "candidate_bytes": 47117,
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-20T08:43:09Z",
+      "retained_failures": "Overall FAIL, late producer present46 without return, original GDB user-level thread error, final receipt missing and native exit null remain intact."
+    },
+    "runtime04_manager_disposition": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "disposition": "Accept faithful OVERALL FAILED runtime04 record plus closeout review two completed prefix-bound observations ONLY. Root independently63refoccurrences/both actual phase chains/full original pixel equality verified.",
+      "actual_closeout_review_result_sha256": "4d5867b3dc795eebd6cf9ddbcd3cfceed2df6f84fa26e54d26e57f1cabe09384",
+      "recorded_at": "2026-10-20T08:43:09Z",
+      "retained_boundaries": "C04 remains selected/open/in_progress; C05 independent replay and C06 owner acceptance remain pending. No teardown waiver, earlier mismatch repair/cause, ordinary frozen-GUI/scheduling equivalence, exact imported consumer buffer identity, latency/D1/HUMAN/fullC04/C05/C06/Close/successor acceptance. No new implementation/runtime authority."
+    },
+    "tracked_progress_checkpoint": "Manager lands only existing .beads/issues.jsonl,specs/active_frontier.json and this proof. Frozen runtime04/source07 and historical failures unchanged; private scratch stays untracked. Follow-on read-only preserved-log comparison is authorized after handoff, with no tracked plan/code/runtime edits."
   }
 }
