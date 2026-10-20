@@ -15805,7 +15805,7 @@
     "source05_preparation": {
       "recorded_at": "2026-10-20T20:27:48.830751+00:00",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
-      "state": "SOURCE05_PREPARATION_ACCEPTED_NO_LIVE_RELEASE",
+      "state": "RUNTIME05_BOUNDED_STORAGE_AND_RECORDED_OWNER_CLEANUP_ACCEPTED_SNAPSHOT_ONLY",
       "candidate": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source-candidate-05.json",
         "sha256": "d0f6df84e93b7641586cf5c03e84b9fe4dd471d13d2a10e0a0ec5dd5c7df6a84",
@@ -15888,7 +15888,110 @@
         }
       ],
       "manager_disposition": "Root PM059 ACCEPTS SOURCE05/PREPARATION ONLY after both actual independent reviews. Record in existing proof, synchronize existing C04 claim/export and focused metadata for root commit/push. Exact command05 remains unexecuted; separate once-only live release follows publication, with fresh baseline root ADMIT before single fixed gesture. No new reports/tests/product/build/dependency or task-completion authority.",
-      "limits": "No runtime/product/C04/HUMAN/C05/C06/ordinary Close/successor acceptance. All failed runtime02 receipts, unretired STOP debt/guardian resume failure and historical shell-lifecycle gap remain unchanged. Shell leader exit in future proof never establishes all group/session members or descendants exited."
+      "limits": "No runtime/product/C04/HUMAN/C05/C06/ordinary Close/successor acceptance. All failed runtime02 receipts, unretired STOP debt/guardian resume failure and historical shell-lifecycle gap remain unchanged. Shell leader exit in future proof never establishes all group/session members or descendants exited.",
+      "live_release05": {
+        "recorded_at": "2026-10-20T20:29:16+00:00",
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "publication_commit": "f1034515d6b4a4808e86d66f47078d95cff0f31c",
+        "command_sha256": "79765726718d38a5b6f1e97c7969cc6365f5d38938d46ba46996c05ff1d97d22",
+        "authority": "Root LIVE RELEASE one saved exact command05 invocation only, unchanged reviewed budgets/custody/limits. Fresh initial+zoom originals/checkpoint to root; WAIT actual root ADMIT before one fixed gesture. No build/extra input/capture/retarget/retry. Notify CLEANUP_BLOCKED immediately and retain reviewed ownership/IPC custody.",
+        "preflight": "PASS exact source40/provider/debug/header/tool/binary pins, all18 canonical inputs and fresh05 paths absent. No native invocation/build in preflight.",
+        "execution_state": "CONSUMED ONCE; actual exit0 SNAPSHOT_ONLY, bounded independent storage/recorded-owner review accepted; no retry; no C04 acceptance",
+        "consumed": true,
+        "limits": "No runtime/product/C04/ordinary Close/successor acceptance.",
+        "tool_session_id": 63121,
+        "launch_chunk": "345f49",
+        "actual_exit_code": 0,
+        "final_tool_chunk": "d80478",
+        "actual_baseline_admission": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-committed-buffer-05/baseline-admission.json",
+          "sha256": "be86449f0d262232921ed00dd3959f622d6d3a4ac9663c5babf25a7c3d617e3a",
+          "bytes": 1446
+        }
+      },
+      "runtime_candidate05": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-runtime-candidate-05.json",
+        "sha256": "c3e5b4753ac5bfd5d8abc5ca72f022a8b4a486b95b1c24ea76b07121a90163c0",
+        "bytes": 32732,
+        "actual_result": "SNAPSHOT_ONLY exact committed storage after selected barrier; actual independent byte review required; no rendered/sampled/displayed/cause/C04 credit",
+        "counts": {
+          "scope_lists": 1,
+          "wheel_events": 6,
+          "baseline_original_captures": 2,
+          "controlled_region_gestures": 1,
+          "selected_epochs": 1,
+          "matched_frozen_commits": 1,
+          "raw_planes": 1,
+          "derived_RGB": 1,
+          "sealed_snapshot_receipts": 1
+        },
+        "raw_plane": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-committed-buffer-05/committed-buffer.bin",
+          "sha256": "ad2b14b572b01e9e8c868394b6a6172db810e08c3a7c99f0e3b35e7c513b56cc",
+          "bytes": 4333056
+        },
+        "derived_RGB": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-committed-buffer-05/committed-buffer.rgb",
+          "sha256": "50e4d03f7e7a759f41d0c9abca8c6f91ea67c656935e8628152c067ceeeee480",
+          "bytes": 3249792
+        },
+        "sealed": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-committed-buffer-05/committed-gdb/committed-snapshot-sealed.json",
+          "sha256": "4b76ff5fdc5f0df3e3b9ca32b590a3e3eb0c95af001ffb60de0650aaca515859",
+          "bytes": 8083
+        },
+        "actual_baseline": "Root personally viewed both fresh05 originals and wrote actual ADMITbe86449f0d262232921ed00dd3959f622d6d3a4ac9663c5babf25a7c3d617e3a before one fixedgesture;6wheels/2captures/0gestures at admission, exactconfiguration/binaries/canonical18 guards. No extra capture/input/retry.",
+        "storage_scope": "Authenticated selected epoch, first eligible typed Main attachment and matchedreturn, guardianSTOP/actualREAD_START+READ_END/fullraw+derivedRGB/postreadlivebinding and both verified GUI/Weston resumes within original10s; normal sealed snapshot receipt. No selection-cause frame/rendered/sampled/displayed/physicaldesktop/nativeexport equivalence.",
+        "root_independent_byte_view": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "tool_receipt": "f1c2ac",
+          "viewed_artifact": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-committed-buffer-05/committed-buffer.rgb",
+            "sha256": "50e4d03f7e7a759f41d0c9abca8c6f91ea67c656935e8628152c067ceeeee480",
+            "bytes": 3249792
+          },
+          "method": "Root independently viewed existing exact RGB losslessly in memory using stdlib PNG transport only. No new capture, pixel transformation or filesystem artifact; existing reader raw/BGR decode provenance retained.",
+          "actual_observation": "Upright coherent image. Inspector Via: object1, SELECTED, Vias1, Objects1, Layers:F.Cu1objects; bottom Sel compound1; selected Via near555,403.",
+          "limits": "Supports selected content in this EXACT committed allocation only; not compositor sampling/display/cause/ordinary Close/C04 acceptance. This is actual root byte-view receipt, not independent runtime/evidence acceptance."
+        },
+        "cleanup": "Raw child/wrapper cleanup_errors[];all7recorded ownerstopflags true, helperexits0, actualWestonExitedEventexit0. Same-epoch guardianfinish normally retiresSTOPdebt; no outstandingdebt/backuprecovery. Existing ordinary UI shell exit+PTYclosure beforeGUIteardown; retainedshellfirstverified457590.736478446<originalfixed457597.651906836, no late/blocker/failure.16recorded PIDs nowabsent,2IPC removed normally. Shellleaderexit does NOT proveallgroup/sessionmembers/descendants or ordinarywindowClose.",
+        "source_and_input_preservation": "All40runtime sourcepins unchanged;18canonical frozen/before/after-observation/after-teardown/current equal. Existingraw->RGB exactchannelrelation verified withundefinedXignored; no new image/capture/derivative artifact.",
+        "postrun": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-postrun-05.json",
+          "sha256": "010dedaeed3e549eb93558eec6896ff7d5aea83002ba6e9992cc76f27b870289",
+          "bytes": 3998
+        },
+        "additional_actual_root_checks": {
+          "recorded16PIDabsence": "Root independenttool8a5495",
+          "canonical18allmaps": "Root independenttool7ee19a",
+          "limits": "These actual root checks arrived after runtimepacketfreeze; recorded here without modifying immutablepacket."
+        },
+        "review_state": "Both actual independent reviews PASS and root accepts committed backing-storage acquisition/content plus recorded-owner cleanup ONLY. SNAPSHOT_ONLY preserved; exact allocation/epoch->actual consumer sampling/output link unproved. No C04/product/ordinaryClose/platform acceptance or new live release."
+      },
+      "actual_runtime05_reviews": {
+        "recorded_at": "2026-10-20T20:38:47.144069+00:00",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "candidate_sha256": "c3e5b4753ac5bfd5d8abc5ca72f022a8b4a486b95b1c24ea76b07121a90163c0",
+        "reviewed_proof_sha256": "bd0c8cf7d12e1e0f3bc31da38c93f79bb3b403adbd63a19dd3b8a28ba6dfdd1c",
+        "receipts": [
+          {
+            "reviewer_task": "/root/closeout_review",
+            "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+            "turn_id": "01a15b06-0a1a-7201-85b7-6831a0ebada3",
+            "verdict": "Bounded diagnostic PASS",
+            "scope": "No mandatory finding. Personally inspected exact RGB50e4d03f losslessly in memory and verified exact BGRX channel conversion; Via:object1/SELECTED/Vias1/Selcompound1. Authenticated epoch->matched commit->live allocation recheck->synchronized read/READ_END->normal GUI/Weston resumes->seal within original10s. One invocation exit0; debt normally retired; shell leader timely;16 recorded PIDs/2IPC absent;18 canonical files and40 source pins unchanged. Acquisition/content only; raw SNAPSHOT_ONLY, no all-descendant/sampling/output/ordinary-equivalence/product/C04 acceptance."
+          },
+          {
+            "reviewer_task": "/root/reorganization_review",
+            "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+            "turn_id": "01a15b06-2ec1-7773-b961-9ef6b58a8067",
+            "verdict": "Runtime05 bounded diagnostic, evidence, recorded-owner cleanup and metadata PASS",
+            "scope": "127 references/42 raw artifacts/5 actual receipts,40 source pins verified. Independently decoded/viewed exactRGB selectedVia. ActualREAD_END, normalSTOPdebtretirement,27GUI+18Weston thread resume inventories andseal, timelyshell;16 recorded PIDs/2IPCgone and18maps exact. No finding; neither displayed output nor product/C04 acceptance."
+          }
+        ],
+        "manager_disposition": "Root PM059 ACCEPTS bounded committed backing-storage acquisition/content and recorded-owner cleanup ONLY. Preserve raw SNAPSHOT_ONLY and all prior02failure/03/04 rejection+fixture history. No runtime-equivalence/productrepair/C04/ordinaryClose/platform/successor acceptance. Record finalreceipts and remaining exact-allocation-to-sampling/output link, synchronize retained claim/export and focusedmetadata for rootpublication; no new live/build/capture.",
+        "remaining_diagnostic_link": "Exact committed allocation/epoch to actual consumer sampling and output/host pixels remains unproved. Historical host02 was a separate run whose strict Main-commit interval changed20->21. It cannot supply a same-frame comparison or locate cause/repair."
+      }
     }
   }
 }
