@@ -13475,8 +13475,77 @@
         "dependency_basis": {
           "existing_reuse": "Governed GUI Conformance G9/G10 QA already uses Pillow in scripts/check_gui_visual_parity.py and scripts/check_gui_reference_capture.py. G10 PNG verify/open use is present at2eeb8361585fc87e4c834f12a0c063ae2d1774ad (2026-07-09), before PM029 introduction6baecbceca6224f237c8eccca86c254d8d79daca (2026-08-15). Existing installed PNG tooling reused; no new package, download, source vendoring or dependency manifest/lock change.",
           "gate_limit": "The Cargo dependency-authority PASS is a required check, not standalone ratification of Pillow or a new third-party dependency."
+        },
+        "landing": {
+          "commit": "4b1489ac252f74531e12e60072a405a84a54a951",
+          "parent": "a105c3a3802f0ef08cbff4d350fba9a5d4162640",
+          "outcome": "Exact six-path accepted source/proof/tracker/lease content and substantive body landed on main. Normal file-lane/temporary-artifact/staged-rustfmt hooks passed. Appointed manager personally verified exact parent/six committed blob hashes/body/hooks, then pushed/fetched HEAD=origin/main; tree clean at landing. No extra closure commit; n5s7 OPEN and D1 unresolved."
         }
       }
+    }
+  },
+  "native_wayland_via_center_region_20261019": {
+    "state": "Actual bounded split accepted: finite input/membership/context/18-map/ordinary cleanup PASS; rendered proof FAIL. No overall Via acceptance. One actual native process, six fixed wheels, two region gestures, no retry.",
+    "authority": "Actual /root/closeout_review SOURCE/BINDING PASS and appointed-manager acceptance preceded one-shot command01 release and execution under retained C04. Earlier prepare-only phase and immutable source packets remain historical. Actual runtime split review grants only finite machine/invariance/cleanup credit; rendered proof failed.",
+    "proposal": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/via-center-region-readonly-proposal-2.json",
+      "sha256": "a6782db438e42d206b8bfaf0f7dec5b8b599f27aa2a99c619215e4d97ca1b9f4"
+    },
+    "source_candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/via-center-region-source-candidate-1.json",
+      "sha256": "f80ebb6039a8a77ce6c3e9904f84071f07e0b0a79f5d71c85a16e999a8a61b20"
+    },
+    "scope": "Existing18-file class-geometry input and unchanged ordinary binaries; one actual native process and two actual fixed Shift-left rightward region gestures. Center-out annular silhouette overlap excluded canonical center\u2192None; center-in included canonical center\u2192exact one-member Via Compound/scopevia/focusNone in machine evidence. Six fixed ordinary wheel-up events at550,404; safe auto-pan interior and exact camera/configuration guarded. No new fixture, input search, ladder/Net/modifier matrix, Pad replay or D1 retry. Rendered proof failed; no overall native Via acceptance.",
+    "offline": "Syntax compilation and16 actual AST-extracted geometry/configuration/selection-stability/event guard checks PASS. No runner entry, GI, GUI, wrapper, Cargo, context query or native input executed. All18 canonical maps and3 native binary hashes checked read-only.",
+    "required_runtime_evidence": "Original initial/zoom PNG+camera/source binding before fixed gestures; nonblack decode guard is only early rejection. Correct active/released pixels still need actual independent review. Full current public typedVia/standardSELECTED/activePane0 and allowlisted ContextGet parity, selection-specific stability, canonical invariance, ordinary shell/PTY closure and all inner/outer owner stops/IPC receipts required.",
+    "limits": "Source preparation is no native or fullA3/C04/HUMAN acceptance. CPU A3 and accepted nativePad credit reused. D1 remains4cold/0warm/0repeat/0complete, with unresolved black-capture cause and related n5s7 OPEN.",
+    "review": {
+      "reviewer_task": "/root/closeout_review",
+      "source_candidate_sha256": "f80ebb6039a8a77ce6c3e9904f84071f07e0b0a79f5d71c85a16e999a8a61b20",
+      "outcome": "Actual SOURCE/BINDING PASS, no mandatory findings.",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_verification": "Personally verified13 pins,18 current input files,3 binaries, exact command/fresh outputs and runner.",
+      "release": "Accept source/binding and release exact frozen command01 once: one process, six fixed wheels, two fixed gestures. Stop any admission/correctness/pixel failure. No retry/search/backend change/D1 action. Runtime/pixel acceptance still requires actual review."
+    },
+    "runtime_candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/via-center-region-runtime-candidate-1.json",
+      "sha256": "d3db36ab8de1d8510cc4435795fd9704d3578693d7879806e7b29683fde56def"
+    },
+    "corrected_runtime_candidate": {
+      "path": ".datum/scratch/s5a-c04-managed-20261018/via-center-region-runtime-candidate-2.json",
+      "sha256": "e0ec88e354c8f3aea182a23c432c5100d40013d2a23c568ac7b4f4258a6dd35b"
+    },
+    "runtime_review": {
+      "reviewer_task": "/root/closeout_review",
+      "reviewed_candidate_sha256": "d3db36ab8de1d8510cc4435795fd9704d3578693d7879806e7b29683fde56def",
+      "outcome": "Actual finite input/membership/context/18-map/ordinary-cleanup evidence PASS; rendered proof FAIL. No overall native Via/fullA3/C04/HUMAN acceptance.",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "manager_disposition": "Accepts only this split. Personally verified originals/pins/maps/cleanup; source/binary live-executable limitation retained. No retry/new case or standalone administrative commit. Continue read-only cause assessment only.",
+      "summary_correction": "Add reviewer-verified innerWeston921083 to known PID absence enumeration; development agent separately rechecked absence. All21 original pins unchanged.",
+      "timing_limit": "Publication/preparation/app present33 precede capture invocation. GPUdone33 precedes PNG file-write completion only; no proven ordering before actual pixel sampling. No causal inference."
+    },
+    "raw_status": "Original result and transport remain CAPTURE_ONLY unchanged. Review acceptance is separate and bounded to the actual split.",
+    "rendered_failure": "Actual /root/closeout_review and manager review confirm initial02606ad3 partial-black/jagged corruption; original center-in-released45b66b78 still shows Inspector No selection and footer Sel none. Active preview correctness remains unqualified. Nonblack guard rejects exactly black/malformed captures; it establishes neither complete nor semantically current pixels. No attribution to D1 or common cause is inferred.",
+    "machine_credit": "Both original fixed own-Main Shift-left gestures, expected center-out jointNone/public-root absence and ContextGetNone, positive full typedVia/current basis/activePane0/standardSELECTED/Compound scopevia/focusNone and exact allowlisted ContextGet parity receive only the reviewed finite machine-evidence credit. All18 frozen/before/each-after/teardown/current canonical maps equal. Ordinary shell/PTY closure and all inner/outer owner stops/IPC removal reviewed; known PID enumeration corrected with innerWeston921083. No source movement or private write.",
+    "executable_limit": "All3 executable-file hashes were checked before and after the released run and remained pinned; raw launch argv/result GUI PID and full public ownPID bind the process. The run finished before first external monitoring, so no live /proc GUI/daemon executable hash observation was captured. No such receipt is fabricated or rerun requested.",
+    "cause_assessment": {
+      "result": "Unknown among actual prepared/rendered app content, compositor import/composition/synchronization and capture/readback. No speculative correction or another live run justified.",
+      "source_trace": [
+        "crates/gui-app/src/editor/runtime_selection_region.rs:286-291 publishes complete candidates through runtime_selection.rs:332-340.",
+        "crates/gui-app/src/editor/runtime_selection/publication.rs:78-94 replaces authoritative workspace selection, refreshes AX/context and announces through terminal/console_feedback.rs:24-35; viewport/interaction_refresh.rs:23-30 calls composition_changed and traces state.",
+        "crates/gui-render/src/render/render_session.rs:77-80 advances composition and clears prepared. gui-app/terminal/runtime_terminal_render.rs:37 prepares current workspace; gui-render/render/session_preparation.rs:73-96 builds controls and appends native selection.",
+        "crates/gui-app/src/rendering/runtime_present.rs:86-125 encodes; :150-168 presents and replaces presented hits. native_surface_transaction.rs:502-532 invokes pre_present_notify/texture.present; native_frame_coordinator.rs:541 advances app damage receipt. No compositor-output acknowledgment occurs here.",
+        "crates/gui-app/src/editor/runtime_view_actions/action_evidence.rs:205-218 samples existing presented_hits. Seq8 Inspector=null was traced before paint; laterseq9/10 basisVia may simply reflect later sampling, so seq8null alone does not prove frame33 prepared None.",
+        "scripts/prove_native_project_startup_gui.py:209-238 polls app ledger/focus; :240-264 invokes weston-screenshooter on inner Wayland socket with no app surface/subject/submission token or corresponding compositor-output/readback acknowledgment."
+      ],
+      "existing_timing": "Selection publication/view/AX/console completes1792469219.568187640, followed by prepared rebuild and app damage33 presentation1792469219.764730189. App queue completed33 at1792469219.841784387; PNG mtime1792469220.469760285 is file-write completion, not pixel-sampling or display timestamp. No inferred lower bound on compositor latency.",
+      "smallest_evidence_gap": "Missing same-frame app content/output versus compositor surface-buffer/repaint/readback correlation. Existing counters prove neither correct app pixels nor correct composition. This identifies an evidence gap, not a source fix or new probe authorization.",
+      "compositor_semantics_reference": "Official general output composition/repaint documentation https://wayland.pages.freedesktop.org/weston/toc/libweston/output.html; not proof of installed Weston14.0.2 client implementation. Version-specific primary source pages were inaccessible. No downloaded/imported code, probe, new input, source edit or raw-file rewrite."
+    },
+    "related_intake": {
+      "issue": "dat-native-via-pixel-mismatch-xf5l",
+      "status": "OPEN; roadmap:intake and related-only parent link; no roadmap dependency, common D1 cause, product attribution, repair release or closure.",
+      "manager_next_disposition": "Complete corrected failure packet and actual bounded split review in existing proof, prepare exact three-owned-path evidence/tracker/compact-lease landing. No source/native rerun or standalone administrative commit before exact packet review. After landing pursue one separately justified diagnostic method, no extra qualification case."
     }
   }
 }
