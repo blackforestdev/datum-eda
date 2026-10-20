@@ -15241,6 +15241,273 @@
         },
         "manager_disposition": "Root ACCEPTS bounded source/control design plus verified original execution evidence. Candidate/source03/runtime02 preserved. No live authority, rendered/C04 acceptance, new method or diagnostic campaign follows."
       }
+    },
+    "host_source_preparation_05": {
+      "recorded_at": "2026-10-20T18:13:26.186619+00:00",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "actual_method_review": "Root accepts actual closeout METHOD PASS for ONE owned host import observation; explicitly permits retaining existing --outer-capture/debug and2proto observers unchanged, no outer screenshot/extra observer.",
+      "authority": "SOURCE PREPARATION ONLY, no live run/build/dependencies/product edits/renderer change/GDB/STOP or repeated pair. Structured ownership and tracker synchronized before edits.",
+      "candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-source-candidate-05.json",
+        "sha256": "19cdd50eab33905a2a366b2f84b01fea39a3d486a9d66009b13ef7fc4e76c767",
+        "bytes": 17418
+      },
+      "manifest": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-manifest-05.json",
+        "sha256": "1a2d22c5ace4f37ebfcaccc515f99a14d8a6ab8fbb409aa47e4671b7468324f4",
+        "bytes": 19700
+      },
+      "exact_future_command": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-command-05.json",
+        "sha256": "e5ef7fdc9981fa361b2caf1e5d47d17476a6cb250d7c9aa2ad05aba38faf6235",
+        "bytes": 2923
+      },
+      "source": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/via-host-source5.py",
+        "sha256": "217b6f50e7a437e7d4acd5ee07b04b848f729f3e57f3840031855eea7a315235",
+        "bytes": 40616
+      },
+      "capture_guards": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/via_host_capture_05.py",
+        "sha256": "080b1342b59e9517a6baa346d78ced02c0b21fa39411cc30609c942bdfe1fc4f",
+        "bytes": 17041
+      },
+      "controls": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/via_host_controls_05.py",
+        "sha256": "793b53662a3e2dcaf78592bda17c4b2bdc7812d83d40065267384000776910d3",
+        "bytes": 11156
+      },
+      "actual_scoped_checks": {
+        "initial_batch": "24 selected controls PASS exit0, chunk18e099: actual capture_host AST, command/env, wrong endpoint, ownership, expiration, geometry, raw outputs/timeout/PNG preservation, no second attempt, actual owned-host association and installed symlink/resolved pin, one10s stability bound and reused private-input controls.",
+        "final_delta": "Added explicit capture target numeric equality to verified geometry XID. Initial2control delta run had1FAIL in control fixture: accidentally omitted existing wrong-endpoint method header, so its body ran inside new no-retry test. Original chunk1d7f8a retained; no native child. Restored method header;3affected controls PASS exit0 chunk8a8c1d (new wrong/nonnumeric target, existing endpoint refusal, valid exact command).",
+        "distinct_count": "25 distinct controls with scoped reuse; do not sum24+3 as27. Initial malformed-test failure retained.",
+        "syntax_closure": "Final22 source pins+syntax PASS; local-import closure checked at chunk690dc0, unchanged by later numeric target guard; actual private_input_environment helper and bounded_command runner AST identical to previous source04/helper03. Prior source03/source04/runtime02 hashes verified unchanged.",
+        "execution_limit": "Mocks/temp files/file reads only; no GUI/compositor/client/import binary started, no native run/build/Cargo/dependencies/product changes."
+      },
+      "original_tool_references": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-preparation-tool-references-05.json",
+        "sha256": "2f8c156eb380db7252e36920f8868109788c5a63520280dcfb62eb08d2614d85",
+        "bytes": 1825
+      },
+      "host_association": "Retained innerWeston pid/starttime/exe + exact unique emitted startup XID; verified private Xwayland process/display/authority metadata; numeric/class/unique visible1344x806host geometry contained in1600x1000, before/immediately pre-capture/after. Prior _NET_WM_PID property absent; no direct server PID/Xresource owner proof claimed.",
+      "budget": "Same ordinary Wayland/Vulkan GUI+daemon, wrapper/runner/outerWestonGL/privateXwayland/innerWestonGL and2persistent proto observers,1scope-list. Retain --outer-capture/debug capability but NO outer screenshot; mode0700 does not exclude sameUID clients. Initial+zoom inner original2PNG, root actual baseline ADMIT, six fixed wheels BEFORE baseline, one center-in Shift-left554,401->558,405 AFTER ADMIT, one released-host importPNG:3total. At most1transient capture/metadata/ContextGet child at a time. Existing20s startup/read and600s baseline gate. ONE original10s bound covers before state/geometry, single import and after geometry/state. Fresh check immediately before Popen after validation. No retry/sleeps/window loops/root/screen/frame/crop/flip/resize/snaps/forced damage/GDB/STOP/GPU copies/build/deps/backend changes.",
+      "limits": "SOURCE PREPARATION ONLY. Existing retained debug/two observers explicitly accepted by root; full host PNG may include owned Project/terminal data. Private Xserver host drawable observation, not physical desktop, exact sampled-frame/token, consumer-buffer localization, causal repair, producer instrumentation equivalence, latency or C04/HUMAN/C05/C06 acceptance. Missing _NET_WM_PID property is disclosed: host association uses owned retained innerWeston log/start/exe, exact emitted unique XID, private retained Xwayland binding and numeric/class/visible geometry before/after, not direct server PID proof. No live release.",
+      "review_state": "Command05 consumed preGUI FAIL with actual bounded failure-recording/cleanup acceptance. Subsequent separate source06 reviews/exact release/consumed runtime02 FAIL recorded below; no product/C04 acceptance or automatic further run.",
+      "actual_source_command_reviews": {
+        "recorded_at": "2026-10-20T18:20:26.615482+00:00",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "candidate_sha256": "19cdd50eab33905a2a366b2f84b01fea39a3d486a9d66009b13ef7fc4e76c767",
+        "receipts": [
+          {
+            "reviewer_task": "/root/closeout_review",
+            "verdict": "SOURCE/COMMAND PASS"
+          },
+          {
+            "reviewer_task": "/root/reorganization_review",
+            "verdict": "SOURCE/COMMAND PASS"
+          }
+        ],
+        "scope": "25 distinct focused controls, frozen source/manifest/exact command; not runtime/product acceptance."
+      },
+      "live_release": {
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "released_at": "2026-10-20T18:20:26.615482+00:00",
+        "authority": "THIS separate exact root disposition releases saved host-command-05 argv EXACTLY ONCE into fresh native-via-host-01/isolated-via-host-01 after both independent reviews. No changes/retries or C04/HUMAN/successor acceptance.",
+        "command_sha256": "e5ef7fdc9981fa361b2caf1e5d47d17476a6cb250d7c9aa2ad05aba38faf6235",
+        "execution_limit": 1,
+        "execution_state": "Exact saved command executed ONCE in tool session66584, actual shell/child exit1. FAIL before GUI/baseline/input/capture at scope-list live /proc executable binding. Release consumed; no retry.",
+        "baseline": "Notify root immediately at fresh checkpoint; root personally inspects BOTH fresh initial+zoom originals and exact pins/state/config, writes actual ADMIT/STOP. No gesture before ADMIT; no prior-image self-admission.",
+        "failure": "Preserve exact raw result/failure/PNG/cleanup/source/input/tool receipts and freeze runtime evidence for review. No automatic retry."
+      },
+      "runtime_candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-runtime-candidate-01.json",
+        "sha256": "be8b249b106705a1dcd1ebe7d65b09f78fcafb78733211f92747c457e4289013",
+        "bytes": 22668,
+        "status": "FAIL_PRE_GUI_EPHEMERAL_OWNER_OBSERVATION",
+        "primary": {
+          "type": "FileNotFoundError",
+          "error": "[Errno 2] No such file or directory: '/proc/1045664/exe'"
+        },
+        "counts": {
+          "scope_list_attempts": 1,
+          "scope_list_finalized": false,
+          "persistent_observers_started": 0,
+          "GUI_launched": false,
+          "baseline_checkpoint": false,
+          "baseline_ADMIT": false,
+          "wheel_events": 0,
+          "controlled_region_gestures": 0,
+          "capture_attempts": 0,
+          "original_PNGs": 0,
+          "import_launches": 0
+        },
+        "cleanup": "Raw child/wrapper cleanup_errors empty; scope-list teardown exit0 distinct from incomplete live binding. All6 recorded PIDs absent,2owned IPC removed by released cleanup,source22/current canonical18 matches frozen/before/after. Six older FD-scan permission limits preserved; parent-phase alive states retained. GUI/daemon never launched: raw stop flags are vacuous, no normal GUI/shell/window-Close credit. No added signals/IPC removal.",
+        "review_state": "Actual reorganization faithful failed-attempt recording/cleanup PASS accepted by root; closeout independently diagnosed scope-list race. Runtime remains FAIL with no GUI/input/capture/appearance/C04 acceptance.",
+        "limits": "At immutable runtime01 freeze: faithful FAIL only and exact command05 release consumed with no source correction or retry then released. Later separate SOURCE PREPARATION ONLY grant for source06 is recorded in scope_list_source_correction_06. No baseline/gesture/hostPNG/appearance/product/C04/HUMAN/C05/C06/ordinary-Close/successor acceptance or live retry follows."
+      },
+      "actual_runtime01_review": {
+        "recorded_at": "2026-10-20T18:25:58.701442+00:00",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "reviewer_task": "/root/reorganization_review",
+        "candidate_sha256": "be8b249b106705a1dcd1ebe7d65b09f78fcafb78733211f92747c457e4289013",
+        "verdict": "faithful failed-attempt recording/cleanup PASS",
+        "actual_scope": "38references/37unique,6PIDs/2IPC absent,18canonical unchanged,history exact. Root read packet/raw; closeout independently diagnosed scope-list binding/completion race.",
+        "manager_disposition": "Root ACCEPTS faithful failed-attempt recording/cleanup ONLY. Command05 consumed; no GUI/appearance/product/C04 credit. Separate source06 correction grant is not live retry authority."
+      },
+      "scope_list_source_correction_06": {
+        "recorded_at": "2026-10-20T18:25:58.701442+00:00",
+        "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "authority": "Actual closeout diagnosis/root SOURCE PREPARATION ONLY correction: scope-list gets one absolute10s before spawn; missing live /proc observation gets one same-Popen remaining-budget wait/null live receipt/raw exception/actual exit+output; existing completion reuses deadline/status. No live release. Existing lease/tracker synchronized before editing.",
+        "candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-source-candidate-06.json",
+          "sha256": "0a3d851138b73cc2882f0166c0028780c2963a555c6f7469d453a96f17dcf4d1",
+          "bytes": 12039
+        },
+        "source": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/via-host-source6.py",
+          "sha256": "0a2771a817bc00fa521965e7daa9426d7ce934d24beefa2a9bfc91400944d738",
+          "bytes": 42410
+        },
+        "manifest": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-manifest-06.json",
+          "sha256": "9c45149abcd82fb54de50ac55cc111313b688f2271c32affa8e10c0236906dc7",
+          "bytes": 20994
+        },
+        "exact_future_command": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-command-06.json",
+          "sha256": "1f3fa0c839a6ed23ba10d3432dd2e9a05062e383dc5230a69e34e6ea2d435352",
+          "bytes": 3691
+        },
+        "controls": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/via_host_scope_controls_06.py",
+          "sha256": "25552c919073e4d4fb3970ae238adc944ac727aaf47f31a8f444bc6233aab9e8",
+          "bytes": 7813
+        },
+        "actual_checks": {
+          "result": "11 focused deterministic scope controls PASS; affected3 rerun PASS after closing pre-spawn refusal handles (overlap, not14distinct).",
+          "coverage": [
+            "already-exited missing proc",
+            "delayed-exit missing proc with pollNone",
+            "ProcessLookupError",
+            "timeout",
+            "expired before spawn/no child",
+            "expired after observation/no wait/reset",
+            "nonzero exit preserved/refused",
+            "real identity and permission errors propagate",
+            "live success originalremaining7s",
+            "generic host-import missing-proc/pollNone path unchanged",
+            "DiagnosticQA/host capture/baseline/screenshooter,owned_boundary,require_observers,bind_process,admitted,require_gesture AST unchanged; persistent observer path unchanged"
+          ],
+          "retained_warning": "Initial11PASS chunk a961a6 includes2ResourceWarnings for scope log handles on pre-spawn expiry. Corrected only that refusal path to close them; affected3PASS chunkdd996b with explicit closed-handle assertion, original warning output retained.",
+          "original_tool_receipts": [
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 29422,
+              "timestamp": "2026-10-20T18:24:27.889Z",
+              "turn_id": "01a15a8a-aa69-7da2-bc2f-e4b794f50690",
+              "item_id": "ctco_01a15a8e-c2f1-7583-abdc-3df2faa7ef3c",
+              "call_id": "call_90ac6db1586a45338c1c50069b5d8d41",
+              "chunk_id": "a961a6",
+              "exit_code": 0
+            },
+            {
+              "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+              "line": 29430,
+              "timestamp": "2026-10-20T18:24:46.051Z",
+              "turn_id": "01a15a8a-aa69-7da2-bc2f-e4b794f50690",
+              "item_id": "ctco_01a15a8f-09e3-7273-98dc-33215faecf46",
+              "call_id": "call_d6c830aad3694905aa6a2cbfe3138615",
+              "chunk_id": "dd996b",
+              "exit_code": 0
+            }
+          ],
+          "prior_controls": "Reuse prior25 adequate host05 controls and original pins/results; actual DiagnosticQA and relevant guards AST identical, unchanged helper05. No broad rerun.",
+          "integrity": "Final22sourcepins/syntax PASS, module closure unchanged except versioned source6 with identical imports; frozen candidate05/runtime01 hashes verified, futurehost02paths absent.",
+          "execution": "Mocks/file reads/temp files only; no native/compositor/client/live run, build/Cargo/dependencies/product edits."
+        },
+        "unchanged_paths": "Host-import PIPE/screenshooter/DiagnosticQA/capture/input/owned-boundary/observer-health/identity/admission/gesture paths preserved; unchanged helper05, prior25controls reused. Source05/candidate05/consumedcommand05/runtime01 immutable.",
+        "review_state": "Both source/command/evidence reviews accepted; distinct exact-one release consumed by runtime02 FAIL. Actual closeout faithful failure recording accepted, reorganization faithful FAILURE-recording/cleanup and bounded metadata PASS, and manager bounded recording/cleanup acceptance recorded. Main20->21 and original No selection/Sel none retained; runtime and selected-appearance remain failed. No source edit/newrun/cause/repair/product/C04/ordinaryClose credit.",
+        "actual_source_reviews": {
+          "recorded_at": "2026-10-20T18:28:46.725884+00:00",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "candidate_sha256": "0a3d851138b73cc2882f0166c0028780c2963a555c6f7469d453a96f17dcf4d1",
+          "receipts": [
+            {
+              "reviewer_task": "/root/closeout_review",
+              "verdict": "SOURCE/COMMAND PASS"
+            },
+            {
+              "reviewer_task": "/root/reorganization_review",
+              "verdict": "evidence/metadata PASS"
+            }
+          ],
+          "manager_disposition": "Root accepts bounded correction source/command/evidence reviews;11correction controls with prior25adequate reuse. No runtime/product acceptance."
+        },
+        "live_release": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "released_at": "2026-10-20T18:28:46.725884+00:00",
+          "authority": "THIS distinct root finite live release authorizes saved host-command06 argv EXACTLY ONCE into fresh native-via-host-02/isolated-via-host-02 after actual reviews. No source changes/retries/product/C04/HUMAN/successor acceptance.",
+          "command_sha256": "1f3fa0c839a6ed23ba10d3432dd2e9a05062e383dc5230a69e34e6ea2d435352",
+          "execution_limit": 1,
+          "execution_state": "Saved command06 exact argv executed ONCE in tool session44436, shell/child exit1. Root actual fresh baseline ADMIT preceded one gesture;6wheels produced baseline.3original finalized captures including host import exit0; strict observed Main-commit stability FAIL20->21, original host pixels No selection/Sel none. Release consumed, no retry.",
+          "baseline": "Notify root immediately; root personally views BOTH original fresh initial+zoom images and verifies checkpoint/state/config/pins, writes actual ADMIT/STOP. No gesture before actual ADMIT; no prior-image reuse/self-admission.",
+          "failure": "Preserve exact finite raw result/source/input/cleanup/tool receipts for review, no automatic retry."
+        },
+        "runtime_candidate": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/host-runtime-candidate-02.json",
+          "sha256": "ec64a36f56e2233c7b95d5808948315c38a6fd3347f1332a17b74ed255214433",
+          "bytes": 45763,
+          "status": "FAIL_OBSERVED_MAIN_COMMIT_STABILITY_AND_RENDERED_NONE",
+          "primary": {
+            "type": "ObservationError",
+            "error": "Via/public/context/config/observed Main commits changed across host capture"
+          },
+          "counts": {
+            "scope_lists": 1,
+            "persistent_proto_observers": 2,
+            "wheel_events": 6,
+            "controlled_region_gestures": 1,
+            "capture_attempts": 3,
+            "original_PNGs": 3,
+            "runner_finalized_captures": 3,
+            "host_import_launches": 1,
+            "strict_stability_pass": false
+          },
+          "actual_baseline": "Root personally viewed BOTH fresh originals, verified checkpoint/configNone/sixwheels/zero gestures/source/binary/currentcanonical18 then wrote actual ADMIT ac8ded6b003f11ede2fdb8295194f672b54ae3a75cd019b73c1f298160833e6b. No prior-image/self admission.",
+          "partial_observations": "Finalized host import exit0/emptystdout+stderr/fulloriginal1344x806. Exact selected Via/publicSELECTED/ContextGet/config and host geometry equal before/after; observed Main commits20->21 rejects strict stability. Capture invocation within original deadline; no deadline failure. Additional observed commit cause/read-prefix lag/exact sampling unknown.",
+          "original_host_PNG": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-via-host-02/released-host.png",
+            "sha256": "0401d7c62de5cd87e6f24b18f31c86ced6ed9f6a155f991eec9d9ff3556dd272",
+            "bytes": 60166
+          },
+          "cleanup": "Raw child/wrapper cleanup_errors empty; failure HUP/SIGTERM only, all14recorded PIDs inclshellgroup absent,2IPC removed normally.6older FDdenials retained. Source22/canonical18 frozen/before/after/current pins match; parent-phase alive states retained. No additional signals/removal, no ordinary Close proof.",
+          "review_state": "Actual closeout: Faithful failure recording accepted with personal original-pixel review. Actual reorganization: faithful FAILURE-recording/cleanup and bounded metadata PASS. Root accepts that bounded recording/cleanup only. Runtime and selected-appearance remain failed; no product/C04/ordinaryClose acceptance."
+        },
+        "actual_manager_baseline_and_pixel_observations": {
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "recorded_at": "2026-10-20T18:32:08.716101+00:00",
+          "baseline": "Root personally inspected BOTH fresh original initial/zoom and exact checkpoint/state/config/pins before actual ADMIT. Admission solely gates one exact fixed gesture and finite host capture.",
+          "released_original": "Root personally viewed original released-host.png SHA0401d7c62de5cd87e6f24b18f31c86ced6ed9f6a155f991eec9d9ff3556dd272: coherent/upright/readable No selection/Sel none. Observed mismatch with selectedVia records, but strict commit stability failed.",
+          "limits": "Actual original pixel observations only, no stable-capture/product/C04 PASS, cause, repair or retry."
+        },
+        "actual_runtime02_reviews": {
+          "recorded_at": "2026-10-20T18:34:10.400583+00:00",
+          "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "candidate_sha256": "ec64a36f56e2233c7b95d5808948315c38a6fd3347f1332a17b74ed255214433",
+          "receipts": [
+            {
+              "reviewer_task": "/root/closeout_review",
+              "verdict": "Faithful failure recording accepted",
+              "scope": "Personal original-pixel review; runtime and selected-appearance remain failed."
+            },
+            {
+              "reviewer_task": "/root/reorganization_review",
+              "verdict": "faithful FAILURE-recording/cleanup and bounded metadata PASS"
+            }
+          ],
+          "manager_disposition": "Root ACCEPTS faithful FAILURE recording/cleanup ONLY; root personally viewed original images and verified admission/config/pins. Runtime remains FAIL: observed Main commits20->21, original No selection/Sel none despite stable selectedVia data. No cause/repair/product/C04/ordinaryClose credit or new run."
+        }
+      }
     }
   }
 }
