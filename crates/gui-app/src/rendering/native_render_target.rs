@@ -11,6 +11,10 @@ pub(crate) struct NativeRenderTarget<'a, 'window> {
     frame: Option<NativeSurfaceFrame>,
     acquire_elapsed: std::time::Duration,
     upload_submitted: bool,
+    #[cfg(feature = "visual")]
+    content_arm: Option<crate::native_content_probe::Arm>,
+    #[cfg(feature = "visual")]
+    content_work: Option<crate::native_content_probe::Work>,
 }
 impl<'a, 'window> NativeRenderTarget<'a, 'window> {
     pub(crate) fn new(
@@ -31,6 +35,10 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
             frame: None,
             acquire_elapsed: std::time::Duration::ZERO,
             upload_submitted: false,
+            #[cfg(feature = "visual")]
+            content_arm: None,
+            #[cfg(feature = "visual")]
+            content_work: None,
         }
     }
     pub(crate) fn acquire(
@@ -46,7 +54,8 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
             .acquire(self.surface, self.device, self.config, self.health);
         self.acquire_elapsed = start.elapsed();
         self.frame = result?;
-        self.frame
+        let target = self
+            .frame
             .as_ref()
             .map(|frame| {
                 let texture = &frame
@@ -67,7 +76,44 @@ impl<'a, 'window> NativeRenderTarget<'a, 'window> {
                     datum_gui_render::render_input::FrameTarget::full_texture(texture)
                 }
             })
-            .transpose()
+            .transpose()?;
+        #[cfg(feature = "visual")]
+        if let (Some(arm), Some(target)) = (self.content_arm.take(), target.as_ref()) {
+            let readback = datum_gui_render::render_input::NativeReadback::new(
+                self.device,
+                [self.config.width, self.config.height],
+                self.config.format,
+            )?;
+            let (epoch, _, _) = self.transaction.queue_owner.snapshot();
+            let identity = serde_json::json!({"window":format!("{:?}",self.transaction.window),
+                "host":self.transaction.queue_host,"queue_epoch":epoch,
+                "configuration":self.transaction.configuration_generation,
+                "acquisition":self.transaction.texture_active.acquired.get(),
+                "extent":[self.config.width,self.config.height],"format":format!("{:?}",self.config.format)});
+            self.content_work = Some(crate::native_content_probe::Work {
+                arm,
+                readback: readback.clone(),
+                identity,
+                target: [
+                    self.transaction.queue_host,
+                    epoch,
+                    self.transaction.configuration_generation,
+                ],
+            });
+            return Ok(Some(target.clone().with_native_readback(readback)?));
+        }
+        Ok(target)
+    }
+    #[cfg(feature = "visual")]
+    pub(crate) fn arm_content(&mut self, arm: Option<crate::native_content_probe::Arm>) {
+        self.content_arm = arm;
+    }
+    #[cfg(feature = "visual")]
+    pub(crate) fn take_content_work(&mut self) -> Option<crate::native_content_probe::Work> {
+        let mut work = self.content_work.take()?;
+        work.identity["submission_receipt"] =
+            serde_json::json!(self.frame.as_ref().and_then(|f| f.lease.submission_receipt));
+        Some(work)
     }
     pub(crate) fn submitted(&mut self, submission: wgpu::SubmissionIndex) {
         assert!(

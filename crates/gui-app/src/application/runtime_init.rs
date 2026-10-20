@@ -66,7 +66,9 @@ impl Runtime {
         let size = window.inner_size();
         let scale_factor = scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32);
         let caps = surface.get_capabilities(&adapter);
-        let config = gui_runtime_support::surface_configuration(&caps, size, None);
+        let mut config = gui_runtime_support::surface_configuration(&caps, size, None);
+        let native_content =
+            native_content_probe::Probe::from_environment(&caps, &mut config, wake.clone())?;
         let msaa_samples = select_msaa_samples(&adapter, config.format);
         append_gui_diagnostic_line(format!(
             "initial surface configuration requested {}x{} format={:?} present={:?} msaa={}",
@@ -90,6 +92,7 @@ impl Runtime {
             surface_transaction.enable_resize_buffer_reuse();
         }
         let mut runtime = Self {
+            native_content,
             window,
             instance,
             adapter,

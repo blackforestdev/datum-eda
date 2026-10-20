@@ -165,6 +165,34 @@ pub(crate) fn convert_texture_pixels_to_rgba(
     }
 }
 
+/// Only the explicitly opted-in Main caller may request native-source readback.
+#[cfg(feature = "visual")]
+pub(crate) fn admit_main_content_readback(
+    caps: &wgpu::SurfaceCapabilities,
+    config: &mut wgpu::SurfaceConfiguration,
+) -> Result<()> {
+    anyhow::ensure!(
+        caps.usages.contains(wgpu::TextureUsages::COPY_SRC),
+        "Main surface does not support native COPY_SRC"
+    );
+    anyhow::ensure!(
+        caps.formats.contains(&config.format) && config.width > 0 && config.height > 0,
+        "native content format/extent unavailable"
+    );
+    anyhow::ensure!(
+        matches!(
+            config.format,
+            wgpu::TextureFormat::Rgba8Unorm
+                | wgpu::TextureFormat::Rgba8UnormSrgb
+                | wgpu::TextureFormat::Bgra8Unorm
+                | wgpu::TextureFormat::Bgra8UnormSrgb
+        ),
+        "unsupported native content format"
+    );
+    config.usage |= wgpu::TextureUsages::COPY_SRC;
+    Ok(())
+}
+
 /// Explicit measurement override using backends already built into wgpu.
 /// Ordinary startup retains the existing adapter-selection policy.
 pub(crate) fn diagnostic_instance() -> wgpu::Instance {

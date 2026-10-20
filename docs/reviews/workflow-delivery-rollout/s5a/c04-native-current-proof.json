@@ -13633,5 +13633,99 @@
     "clock_limits": "Accepted ordering is within the same proto stream. Timeline T/sample-MONOTONIC and graph/sample-MONOTONIC_RAW numerical associations are supplemental inferences, not implementation clock identification or exact sampling. Clock domains remain separate. Trace/readback changes scheduling; no latency credit.",
     "cleanup_and_invariance": "Actual reviewer and development-agent rechecks verify all13 recorded owners/observers/wrapper PIDs and both IPC roots absent, required observers alive at every recorded validity boundary before intentional shutdown, ordinary shell/PTY closure, all4 inner/all3 outer stop receipts and no cleanup errors. Frozen/before/after-observation/after-teardown/current canonical/history18 mappings match; no entire filesystem/operational-role invariance claim. All30 original pins and CAPTURE_ONLY raw status retained.",
     "next_boundary": "Rendering/capture cause unresolved. Source assessment remains read-only and independent; no new diagnostic/probe/recapture/retry, product edit, backend change, D1 or qualification case authorized. Both related intakes remain OPEN and C04 in_progress."
+  },
+  "native_capture_content_instrumentation_20261019": {
+    "state": "Actual independent bounded runtime recording PASS; compositor rendered FAIL. Appointed manager accepts ONLY opt-in instrumentation and faithful finite observed split, and releases exact20-path normal-hook landing. No component cause, repair or qualification acceptance.",
+    "reviewer_task": "/root/closeout_review",
+    "authority": "Appointed manager releases bounded implementation/focused checks/isolated guarded locked offline instrumented build under retained C04. Actual independent source review precedes any live run. No new planning cycle, dependency/Cargo change or ordinary target/debug replacement.",
+    "scope": [
+      "crates/gui-app/src/application/app_native_events.rs",
+      "crates/gui-app/src/application/native_content_phase_tests.rs",
+      "crates/gui-app/src/application/production_status_refresh.rs",
+      "crates/gui-app/src/application/runtime_init.rs",
+      "crates/gui-app/src/application/runtime_state.rs",
+      "crates/gui-app/src/main.rs",
+      "crates/gui-app/src/rendering/gui_runtime_support.rs",
+      "crates/gui-app/src/rendering/native_content_probe.rs",
+      "crates/gui-app/src/rendering/native_content_probe_tests.rs",
+      "crates/gui-app/src/rendering/native_render_target.rs",
+      "crates/gui-app/src/rendering/runtime_present.rs",
+      "crates/gui-render/src/render/frame_target.rs",
+      "crates/gui-render/src/render/gpu_frame.rs",
+      "crates/gui-render/src/render/native_content_text.rs",
+      "crates/gui-render/src/render/native_content_text_tests.rs",
+      "crates/gui-render/src/render/prepared_scene_access.rs",
+      "crates/gui-render/src/render/session_pointer.rs"
+    ],
+    "method": "Exact consumed frame CPU Inspector/footer text and same-encoder copy of actual acquired single-sample surface texture. Main surface COPY_SRC capability admission only, no fallback/rerender. Retain native acquisition/submission/presentation token and owned map/present result; publish success only after both map and present succeed. Pending map has its own bounded nonblocking refresh service even when normal queue is idle.",
+    "limits": "No app_frame/coordinator/transaction edits; keep existing ownership unchanged. Public protocol IDs remain connection-local; mapping conditional on unambiguous pairing, no invented direct getter. Existing visual/CaptureReadback/image/wgpu reused. Separate instrumented binary alters scheduling; no latency/frozen-binary equivalence/repair/qualification claim.",
+    "source_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-content-source-candidate-02.json",
+      "sha256": "05c89d1a827195e672a5765f7da00223e6d1ecfc757da46d4fc569e618a02d03"
+    },
+    "actual_checks": {
+      "app": "7 PASS in focused02, unchanged source reused",
+      "renderer": "2 PASS in renderer03 with existing frozen EDA_CLI_BIN; no GPU invocation in these tests",
+      "parser": "Source2: 8 existing identity/pairing controls PASS plus12 receipt-drain lag/partial/error/ambiguity controls PASS. Offline historical data only; no new live input/capture. AST function bodies checked before final narrative-only result label update, no functional change.",
+      "build": "guarded --locked --offline visual GUI isolated disk target build01 exit0",
+      "gates": [
+        "source health PASS3272 --base-ref HEAD",
+        "dependency authority PASS",
+        "Cargo resource policy PASS"
+      ],
+      "retained_failures": [
+        "focused01 compiler missing imports, no test outcome",
+        "focused02 renderer fixture setup tried nested Cargo before assertions; app7PASS retained",
+        "drain-controls02: 11 run, one positive-control assumption failed because selected historical frame22 is later cleanup AFTER compositor capture, correctly classified AMBIGUOUS. Control corrected to actual historical last pre-capture frame17 and late-frame ambiguity added; no runner method change for this correction. Raw failure retained."
+      ],
+      "inherited_warning": "pre-existing gui-render native_selection_overlay/cue_plan.rs:197 overflow dead_code; retained resource cache soft-limit warning with ample disk; no cleanup"
+    },
+    "actual_independent_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "SOURCE/BUILD/TEST+RUNNER/COMMAND PASS",
+      "candidate_sha256": "05c89d1a827195e672a5765f7da00223e6d1ecfc757da46d4fc569e618a02d03",
+      "receipt_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-20T05:36:08Z",
+      "limits": "Source/build/tests/runner/command only; no live pixels, repair, latency, D1, fullC04 or successor acceptance."
+    },
+    "finite_live_release": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "command_sha256": "c4b4ae27f01f445c8cf8ed3e26a1cd2b2dd1d562ea553e60c8d3becce52b849c",
+      "max_executions": 1,
+      "baseline_gate": "Manager personally inspects BOTH native and compositor baseline images and writes exact checkpoint admission before gesture",
+      "bounds": "One app/six wheels/one gesture/two native plus two compositor original PNGs maximum. No build/backend/coordinate/retry/extra input. Preserve failures/ambiguity, raw receipts,18maps/process cleanup; stop on failure. No repair/D1/C04 qualification/successor credit."
+    },
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-content-runtime-candidate-01.json",
+      "sha256": "5faec30c96e0f1c75e218ac65886511edf81e6bd65b20eca4b84340a37aab0c8",
+      "bytes": 59893
+    },
+    "execution_counts": {
+      "scope_lists": 1,
+      "apps": 1,
+      "zoom_wheels": 6,
+      "controlled_region_gestures": 1,
+      "native_jobs": 2,
+      "compositor_captures": 2,
+      "original_PNGs": 4,
+      "D1_runs": 0,
+      "retries": 0
+    },
+    "observed_split": "CAPTURE_ONLY diagnostic, not repair or selection qualification. This instrumented run observes correct typed subject, exact consumed CPU Host text, actual copied acquired-texture pixels and accepted app present with recorded Main commit before compositor capture; zero later recorded Main commits through completion in this run. Compositor still returns unselected pixels. Bounds the observed split without identifying import/composition/readback/WSI/component cause; ordinal mapping is not compositor-content acknowledgment. No ordinary frozen-GUI equivalence, latency/D1 result, full C04/C05/C06/HUMAN/Close/successor acceptance. Prior source/build/setup/control failures and unchanged frozen inputs remain pinned by source candidate; no extra run/recapture/backend/coordinate changes.",
+    "actual_runtime_review": {
+      "reviewer_task": "/root/reorganization_review",
+      "disposition": "Bounded runtime recording PASS; compositor rendered FAIL; no recording corrections.",
+      "immutable_runtime_candidate_sha256": "5faec30c96e0f1c75e218ac65886511edf81e6bd65b20eca4b84340a37aab0c8",
+      "verified_scope": "All32rawpins/fouroriginalpixels/exactLFprefixes/18canonicalmaps/13knownPIDs/twoIPCs.",
+      "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-20T05:44:27Z"
+    },
+    "manager_disposition": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "disposition": "ACCEPT opt-in instrumentation and faithful finite native-selected/compositor-unselected diagnostic split; COMMIT RELEASE exact17reviewedRust+existing3metadata paths, normal hooks on main.",
+      "manager_actual_verification": "Personally viewed both baseline and both released originals and CPU/typed subject; independently verified pins/prefixes/input/process/IPC cleanup and staged source/body.",
+      "retained_boundaries": "No named component cause/repair/frozen-GUI equivalence/D1/latency/HUMAN/fullC04/C05/C06/Close/successor credit. C04 remains in_progress; both related capture intakes remain OPEN. Runtime01 stays immutable. Separate read-only next-discriminator feasibility review grants no live run.",
+      "recorded_at": "2026-10-20T05:44:27Z"
+    }
   }
 }

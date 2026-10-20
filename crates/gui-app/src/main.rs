@@ -78,6 +78,8 @@ mod interaction_refresh;
 mod keyboard_focus;
 #[path = "application/local_path.rs"]
 mod local_path;
+#[path = "rendering/native_content_probe.rs"]
+mod native_content_probe;
 #[path = "rendering/native_frame_adapters.rs"]
 mod native_frame_adapters;
 #[path = "rendering/native_frame_coordinator.rs"]

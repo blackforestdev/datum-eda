@@ -2,6 +2,7 @@
 use super::*;
 
 pub(super) struct Runtime {
+    pub(super) native_content: native_content_probe::Probe,
     pub(super) instance: wgpu::Instance,
     pub(super) adapter: wgpu::Adapter,
     pub(super) surface: wgpu::Surface<'static>,

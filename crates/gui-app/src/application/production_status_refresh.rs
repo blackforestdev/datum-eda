@@ -153,6 +153,17 @@ impl App {
         }
         let queue_due = self.service_native_queue_progress();
         self.frames.wake_at(queue_due);
+        if let Some(runtime) = &mut self.runtime {
+            match runtime
+                .native_content
+                .service(&runtime.device, runtime.device_health.failed())
+            {
+                Ok(due) => self.frames.wake_at(due),
+                Err(error) => {
+                    super::fatal_gui_error(event_loop, "native content observation", error)
+                }
+            }
+        }
         let surface_due = self.service_surface_retries();
         self.frames.wake_at(surface_due);
         match self.service_gpu_measurements() {

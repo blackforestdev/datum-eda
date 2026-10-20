@@ -361,6 +361,9 @@ impl App {
                 }
             }
             WindowEvent::MouseWheel { delta, .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.native_content_wheel(delta);
+                }
                 if let Some(runtime) = &mut self.runtime
                     && runtime.handle_native_wheel(delta)
                 {
@@ -399,6 +402,9 @@ impl App {
                 ..
             } => {
                 mark(&mut self.input_observation, "primary_press");
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.native_content_primary(true);
+                }
                 self.handle_primary_button_press();
             }
             WindowEvent::MouseInput {
@@ -408,6 +414,7 @@ impl App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     mark(&mut self.input_observation, "primary_release");
+                    runtime.native_content_primary(false);
                     if let Some(icon) = runtime.finish_dock_resize_drag() {
                         self.apply_cursor_icon(icon);
                         self.request_workspace_redraw();
@@ -491,6 +498,10 @@ impl App {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "native_content_phase_tests.rs"]
+mod native_content_phase_tests;
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {

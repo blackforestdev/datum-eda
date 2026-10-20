@@ -96,6 +96,17 @@ impl Runtime {
             self.config.width,
             self.config.height,
         )?;
+        #[cfg(feature = "visual")]
+        let content_arm = self
+            .native_content
+            .observe_armed(|| self.native_content_subject())
+            .and_then(|subject| {
+                self.native_content.request(
+                    &self.config,
+                    self.renderer.render_session().content_revision(),
+                    subject,
+                )
+            });
         let mut target = NativeRenderTarget::new(
             &mut self.surface_transaction,
             &self.surface,
@@ -104,6 +115,8 @@ impl Runtime {
             &self.config,
             &self.device_health,
         );
+        #[cfg(feature = "visual")]
+        target.arm_content(content_arm);
         let rendered = self.renderer.encode_frame(
             plan,
             &self.device,
@@ -112,11 +125,21 @@ impl Runtime {
             &mut NativeRenderTarget::acquire,
             &mut NativeRenderTarget::submitted,
         );
+        #[cfg(feature = "visual")]
+        let content_work = target.take_content_work();
         let (frame, acquire_elapsed) = target.finish(&self.renderer);
+        #[cfg(feature = "visual")]
+        if let Err(error) = &rendered {
+            self.native_content
+                .render_failed(content_work, &error.to_string());
+            return Err(anyhow::anyhow!("{error:#}"));
+        }
         let Some(submitted) = rendered? else {
             return Ok(false);
         };
         let frame = frame.context("rendered native frame must own an acquisition")?;
+        #[cfg(feature = "visual")]
+        let content_phase = self.native_content.submitted(content_work, &self.device);
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(|| {
             format!("renderer render end {}ms", renderer_elapsed.as_millis())
@@ -125,7 +148,14 @@ impl Runtime {
         if self.device_health.failed() {
             return Ok(false);
         }
-        let present_elapsed = self.present_native_frame(frame, submitted)?;
+        let present_result = self.present_native_frame(frame, submitted);
+        #[cfg(feature = "visual")]
+        self.native_content.present(
+            content_phase,
+            present_result.is_ok(),
+            present_result.as_ref().err().map(|e| format!("{e:#}")),
+        );
+        let present_elapsed = present_result?;
         append_gui_verbose_diagnostic_line(|| {
             format!(
                 "frame present end {}ms total={}ms",

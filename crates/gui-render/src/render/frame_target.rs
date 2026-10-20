@@ -4,6 +4,10 @@ pub struct FrameTarget {
     view: wgpu::TextureView,
     copy_destination: Option<wgpu::Texture>,
     raster_extent: Option<[u32; 2]>,
+    #[cfg(feature = "visual")]
+    native_source: Option<wgpu::Texture>,
+    #[cfg(feature = "visual")]
+    native_readback: Option<NativeReadback>,
 }
 
 impl FrameTarget {
@@ -33,6 +37,13 @@ impl FrameTarget {
                 .usage()
                 .contains(wgpu::TextureUsages::COPY_DST)
                 .then(|| texture.clone()),
+            #[cfg(feature = "visual")]
+            native_source: texture
+                .usage()
+                .contains(wgpu::TextureUsages::COPY_SRC)
+                .then(|| texture.clone()),
+            #[cfg(feature = "visual")]
+            native_readback: None,
         })
     }
 
@@ -71,6 +82,148 @@ impl From<wgpu::TextureView> for FrameTarget {
             view,
             copy_destination: None,
             raster_extent: None,
+            #[cfg(feature = "visual")]
+            native_source: None,
+            #[cfg(feature = "visual")]
+            native_readback: None,
+        }
+    }
+}
+
+#[cfg(feature = "visual")]
+#[derive(Clone)]
+pub struct NativeReadback(std::sync::Arc<NativeReadbackInner>);
+
+#[cfg(feature = "visual")]
+struct NativeReadbackInner {
+    buffer: crate::capture_resource::CaptureReadback,
+    extent: [u32; 2],
+    format: wgpu::TextureFormat,
+    padded_row: u32,
+    snapshot: std::sync::Mutex<Option<NativeContentSnapshot>>,
+}
+
+#[cfg(feature = "visual")]
+#[derive(Clone, Debug)]
+pub struct NativeContentSnapshot {
+    /// Actual consumed FramePlan receipt: owner/attempt/revision/preparation/host/device/config.
+    pub attempt: [u64; 7],
+    pub text: Vec<crate::prepared_scene_access::NativeContentText>,
+}
+
+#[cfg(feature = "visual")]
+impl NativeReadback {
+    pub fn new(
+        device: &wgpu::Device,
+        extent: [u32; 2],
+        format: wgpu::TextureFormat,
+    ) -> anyhow::Result<Self> {
+        anyhow::ensure!(
+            extent.iter().all(|v| *v > 0),
+            "native readback extent is empty"
+        );
+        anyhow::ensure!(
+            matches!(
+                format,
+                wgpu::TextureFormat::Rgba8Unorm
+                    | wgpu::TextureFormat::Rgba8UnormSrgb
+                    | wgpu::TextureFormat::Bgra8Unorm
+                    | wgpu::TextureFormat::Bgra8UnormSrgb
+            ),
+            "unsupported native readback format"
+        );
+        let row = extent[0]
+            .checked_mul(4)
+            .ok_or_else(|| anyhow::anyhow!("native row overflow"))?;
+        let padded_row = row
+            .checked_add(255)
+            .ok_or_else(|| anyhow::anyhow!("native row alignment overflow"))?
+            / 256
+            * 256;
+        let buffer = crate::capture_resource::CaptureReadback::new(
+            device,
+            u64::from(padded_row) * u64::from(extent[1]),
+        )?;
+        Ok(Self(std::sync::Arc::new(NativeReadbackInner {
+            buffer,
+            extent,
+            format,
+            padded_row,
+            snapshot: std::sync::Mutex::new(None),
+        })))
+    }
+    pub fn buffer(&self) -> &wgpu::Buffer {
+        &self.0.buffer
+    }
+    pub fn extent(&self) -> [u32; 2] {
+        self.0.extent
+    }
+    pub fn format(&self) -> wgpu::TextureFormat {
+        self.0.format
+    }
+    pub fn padded_row(&self) -> u32 {
+        self.0.padded_row
+    }
+    pub fn snapshot(&self) -> Option<NativeContentSnapshot> {
+        self.0.snapshot.lock().unwrap().clone()
+    }
+}
+
+#[cfg(feature = "visual")]
+impl FrameTarget {
+    pub fn with_native_readback(mut self, readback: NativeReadback) -> anyhow::Result<Self> {
+        let source = self
+            .native_source
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("native target lacks COPY_SRC"))?;
+        anyhow::ensure!(
+            [source.width(), source.height()] == readback.extent()
+                && source.format() == readback.format(),
+            "native readback target changed"
+        );
+        self.native_readback = Some(readback);
+        Ok(self)
+    }
+    pub(crate) fn encode_native_readback(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        prepared: &crate::PreparedScene,
+        attempt: [u64; 7],
+    ) -> anyhow::Result<()> {
+        let Some(readback) = &self.native_readback else {
+            return Ok(());
+        };
+        let mut snapshot = readback.0.snapshot.lock().unwrap();
+        anyhow::ensure!(snapshot.is_none(), "native readback encoded twice");
+        let source = self
+            .native_source
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("native readback source unavailable"))?;
+        encoder.copy_texture_to_buffer(
+            source.as_image_copy(),
+            wgpu::TexelCopyBufferInfo {
+                buffer: readback.buffer(),
+                layout: wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(readback.padded_row()),
+                    rows_per_image: Some(readback.extent()[1]),
+                },
+            },
+            wgpu::Extent3d {
+                width: readback.extent()[0],
+                height: readback.extent()[1],
+                depth_or_array_layers: 1,
+            },
+        );
+        *snapshot = Some(NativeContentSnapshot {
+            attempt,
+            text: prepared.native_content_text(),
+        });
+        Ok(())
+    }
+    pub(crate) fn hold_native_readback(&self, queue: &wgpu::Queue) {
+        if let Some(readback) = &self.native_readback {
+            readback.0.buffer.hold_submission(queue);
         }
     }
 }

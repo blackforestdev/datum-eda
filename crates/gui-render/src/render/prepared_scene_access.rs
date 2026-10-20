@@ -9,6 +9,11 @@ mod pointer_selection;
 pub use native_selection_overlay::mask::PaintRange as SelectedPaintRange;
 pub use native_selection_overlay::visual_lod::SelectionVisualLod;
 pub(super) use pointer_selection::SelectionHover;
+#[cfg(feature = "visual")]
+#[path = "native_content_text.rs"]
+mod native_content_text;
+#[cfg(feature = "visual")]
+pub use native_content_text::NativeContentText;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {

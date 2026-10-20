@@ -6,6 +6,8 @@ use super::*;
 use crate::SceneSurface;
 use datum_gui_protocol::{CrosshairStyle, HoverTarget, PaneContent, ScreenPointPx};
 pub use frame_target::FrameTarget;
+#[cfg(feature = "visual")]
+pub use frame_target::NativeReadback;
 
 /// Capability for one shared prepared projection, not a caller-supplied revision.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

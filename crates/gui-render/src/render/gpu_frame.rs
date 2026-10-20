@@ -324,6 +324,8 @@ impl Renderer {
             fault,
         )?;
         let encode_elapsed = encode_started.elapsed().saturating_sub(text_encode_elapsed);
+        #[cfg(feature = "visual")]
+        frame_target.encode_native_readback(&mut encoder, prepared, self.measurement_attempt)?;
 
         let trace_enabled = std::env::var_os("DATUM_TRACE_TIMING").is_some();
         let finish_started = trace_enabled.then(std::time::Instant::now);
@@ -339,6 +341,8 @@ impl Renderer {
                 .chain([command_buffer]),
         );
         self.hold_frame_submission(queue, images.as_ref());
+        #[cfg(feature = "visual")]
+        frame_target.hold_native_readback(queue);
         if let Some(batch) = uploads {
             batch.hold(queue);
         }
