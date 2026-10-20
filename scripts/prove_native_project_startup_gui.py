@@ -238,12 +238,12 @@ class StartupQA:
         return receipt
 
     def capture(self, label, window, *, require_stable=True):
+        self.focus(window)
         receipt = self.wait_presented(require_stable=require_stable)
         count = self.capture_counts.get(label, 0) + 1
         self.capture_counts[label] = count
         if count > 1:
             label = f"{label}-{count}"
-        self.focus(window)
         # Capture the private Wayland compositor's presented output, never its
         # potentially stale X11 host backing pixmap. Each output directory is
         # unique because weston-screenshooter filenames have second precision.
