@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Bounded native-Wayland startup QA through an owned Weston input envelope.
 
-Run with /usr/bin/python3 on the existing desktop. No Cargo, genesis helpers,
+Run with /usr/bin/python3 on the desktop or an owned input display. No Cargo, genesis helpers,
 private UI actions, owner Projects or HOME substitution participate.
 """
 from __future__ import annotations
+
+from run_native_qa_isolated_input import focus_arguments, validate_input_display
 
 import argparse
 import json
@@ -41,7 +43,9 @@ class StartupQA:
         self.observations = {}
         self.capture_counts = {}
         self.terminal_dock_open = True
-        self.previous_focus = self.command("xdotool", "getwindowfocus").strip()
+        input_display = validate_input_display(os.environ)
+        self.previous_focus = ("" if input_display else
+                               self.command("xdotool", "getwindowfocus").strip())
         self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir=runtime_parent or "/tmp")
         self.compositor = None
         self.file_actions = False
@@ -108,7 +112,7 @@ class StartupQA:
 
     def focus(self, window):
         assert self.compositor.poll() is None and window == self.host_window
-        self.command("xdotool", "windowactivate", "--sync", window)
+        self.command(*focus_arguments(window, os.environ))
 
     def start_envelope(self, desktop=False):
         env = dict(os.environ, XDG_RUNTIME_DIR=self.runtime.name)

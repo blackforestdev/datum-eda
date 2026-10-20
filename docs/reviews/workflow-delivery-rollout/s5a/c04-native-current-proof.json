@@ -13226,7 +13226,7 @@
     }
   },
   "native_wayland_board_d1_timing_20261019": {
-    "state": "The remaining Board D1 timing cohort is blocked by unreliable exclusive input/focus transport. Native03 remains FAIL, with no completed D1 trial or cohort. Its full 100,007-member/current-basis/fresh-pixel/nonmutation evidence has actual bounded independent and manager acceptance. No further native run is released.",
+    "state": "The bounded private-input source/runtime/pixel/cleanup admission is accepted and its six-path source landing is being reviewed. Native01/02/03 timing attempts remain failed and unpooled. No completed Board D1 trial/cohort or further acquisition is released.",
     "authority": "Retained UVT-S5A-BUILD/S5A-C04 grant under appointed PM059 manager 01a13df1-7a0d-72c1-bbdd-f0d96d481598. The manager selected the missing Board D1 diagnostic receipt. Prior Schematic92, D1 cap and D2/native110 evidence retain their accepted scopes.",
     "evidence_gap": "Actual reorganization_review audit found that native110 contains one full Board acquisition and omits optional timing. It does not supply the required cold, warm and warm-repeat Board timing cohort. No numerical latency criterion is introduced.",
     "input_and_setup": {
@@ -13368,11 +13368,66 @@
     },
     "transport_blocker": {
       "issue": "dat-native-input-isolation-gv88",
-      "status": "Open related intake, not a new roadmap dependency or implementation grant.",
+      "status": "The bounded opt-in private-display repair passed source and live admission review. Related intake dat-native-input-isolation-gv88 remains open until actual source landing and scoped closure evidence; no new roadmap dependency.",
       "cause": "StartupQA uses a private Wayland compositor hosted on inherited outer DISPLAY :1 and global windowactivate. That isolates the Wayland socket but not physical desktop input/focus. The native03 interval contains unscripted Alt/focus/pointer traffic after its valid chord. Reliable exclusive-input/focus admission is missing.",
-      "remedy": "Review a bounded owned isolated-input topology using installed Weston/Xwayland, retaining the native Wayland/Vulkan application, source/binary/configuration bindings, strict event/focus guards and error-retaining cleanup. Do not install a dependency, grab the desktop, substitute the app backend, or ask the owner to stop using the desktop. No probe or further cohort is authorized here.",
-      "existing_reuse_route": "Read-only discovery found existing private headless Weston/rootful Xwayland support in scripts/workflow_delivery_pilot_capture.py. Its applicability to the retained native inner Weston/Vulkan cohort still needs a concrete feasibility/source/configuration/cleanup review after this landing."
+      "remedy": "Land the reviewed installed-tool private-display wrapper, validated opt-in QA focus mode and offline tests. Preserve the native Wayland/Vulkan/P630 application and bind the actual outer Quadro M620/inner llvmpipe renderer roles. Any future D1 cohort still requires an exact new source/input/configuration/count release; do not pool previous shared-display timings.",
+      "existing_reuse_route": "The installed-tool headless Weston/rootful Xwayland bootstrap was reused from scripts/workflow_delivery_pilot_capture.py. Only its input/display setup pattern was reused. The retained inner Weston and native Wayland/Vulkan/P630 application completed the separately reviewed admission, which has actual bounded source/runtime/pixel/cleanup acceptance. The pilot application launch and retired workflow were not invoked; reviewed source landing is now pending."
     },
-    "required_checks": "Project status check passed for 101 Frontier items; the Active Frontier projection is current; evidence traceability passed for 29 routes and 131 research/prototype artifacts; whitespace passed. No Cargo or native rerun was performed for this evidence landing."
+    "required_checks": "Project status check passed for 101 Frontier items; the Active Frontier projection is current; evidence traceability passed for 29 routes and 131 research/prototype artifacts; whitespace passed. No Cargo or native rerun was performed for this evidence landing.",
+    "transport_repair_preparation": {
+      "authority": "The appointed manager released bounded implementation of proposal2 under retained S5A-C04, after independent scope/dependency review. No owner response is pending.",
+      "scope": [
+        "scripts/run_native_qa_isolated_input.py",
+        "scripts/prove_native_project_startup_gui.py",
+        "scripts/test_native_qa_isolated_input.py"
+      ],
+      "source_candidate_sha256": "446740fc6dbc46cc52d1e5872a8ad9a3686188ae31a946e60d0c0170027706b3",
+      "implementation": "A small installed-tool wrapper owns headless Weston GL and rootful Xwayland, then launches the unchanged native runner on the allocated private display. The existing QA helper validates the private display/owned Xwayland marker before any focus command, skips shared-desktop focus query/restore in that mode and uses direct windowfocus on its owned host. Default callers retain their existing behavior. No product binary/backend, fixture, dependency or legacy pilot scenario is changed.",
+      "cleanup": "The wrapper retains independent process-stop errors and requires actual inner owner-stop/IPC receipts before removing its outer runtime. The explicit child-result argument supplies this receipt. Authorization files remain operational and are not read or hashed into proof.",
+      "offline": "Actual nine offline tests passed, zero failed, in 0.025s. They exercise private display/environment routing, rejected marker/owner mismatches, no desktop fallback, direct focus/default compatibility, no shared focus query in private startup, owned-XID/liveness guards, independent failed-owner cleanup, IPC retention and retained stop-timeout errors. No compositor/native/Cargo process ran.",
+      "checks": "Python syntax, whitespace and source health passed for 3265 source files.",
+      "admission": "The manager released one exact zero-D1-acquisition admission after actual independent SOURCE2/COMMAND PASS. It exited 0, then received actual bounded independent runtime/pixel/configuration/cleanup PASS and manager acceptance. Raw CAPTURE_ONLY receipts remain unchanged; the separate nested review records acceptance. No D1 cohort or retry is released.",
+      "historical_source_candidate1_sha256": "59037d12aea3ed0773230b0fb439be0c3b771898290fb666a980084fa865c93e",
+      "source_review": "Actual independent review verified the wrapper, helper, tests, all 18 input pins/binaries, nine-check receipt, routing and cleanup. It requested a final admission-driver freshness/configuration guard. Only that ignored driver changed; the three tracked source/test files and offline receipt remain unchanged.",
+      "driver_delta": "Before the final native capture, require the existing after_damage barrier against the initial Main generation, then assert the same Main and a newer presented generation. Compare final fixed configuration to the initial expected 1344x806/scale1/BoardPane0/dock configuration. The declared pointer motion schedules redraw through existing CursorMoved -> update_hover -> live default FullViewport crosshair -> request_workspace_redraw. No additional input or timeout is introduced.",
+      "admission_release": "Actual independent SOURCE2/COMMAND PASS reported by the appointed manager. The manager separately verified source2 446740fc, driver 199fbb6a, command01 a8317254 and both fresh absent output directories. Exactly one zero-D1-acquisition admission is released; same declared startup/Escape/pointer/20s, input, binaries and configuration. No retry, backend fallback or D1 cohort release.",
+      "admission_result": {
+        "actual_exit": 0,
+        "source_candidate_sha256": "446740fc6dbc46cc52d1e5872a8ad9a3686188ae31a946e60d0c0170027706b3",
+        "runtime_candidate_sha256": "06cf21b6fc30e91aacf9abf6fe6e4729847d9e35f867740df22baed4d7f0c1b4",
+        "driver_result_sha256": "02b9944a2c2b619ab115d905ac581d44fd91ecbf95395f1972be4746f0820b2d",
+        "wrapper_result_sha256": "9708b5b28d4906c013453b18d7f9e29058dd2a1883554f435a6f4637d0447c9c",
+        "input_manifest_sha256": "c47ebaa9785ce7f8f112459e8d7251279d851762bcec1ae5ec4b1d46034e27dc",
+        "command_sha256": "a8317254e748050a7237adc6637652dfd312efa45fae536755856126cd787250",
+        "raw_status": "Raw child and wrapper CAPTURE_ONLY receipts remain unchanged. Actual bounded acceptance is recorded in this object's nested review entry.",
+        "display": {
+          "owned": ":2",
+          "inherited": ":1"
+        },
+        "native_application": "Actual GUI PID 907587, unchanged hash 1ee1dfa7, reported Wayland/Vulkan/Intel HD Graphics P630 integrated hardware, Mesa 25.0.7. No application X11 or software fallback.",
+        "input": "The declared interval contains exactly Escape press/release, pointer at (400, 200) and its redraw request. No Alt, focus loss, extra key, button or undeclared pointer traffic. The fixed 20-second observation is preserved.",
+        "frame": "Own Main presented generation 3 to 4. The fresh native capture and final fixed configuration match the initial 1344x806, scale 1, Board pane 0 and closed dock.",
+        "invariance": "All 18 frozen canonical/history maps are identical before observation, after observation and after teardown.",
+        "cleanup": "Ordinary inner shell exit and observed PTY closure occurred before GUI termination. All inner owners stopped and inner IPC was removed. Wrapper runner/Xwayland/outer Weston owners stopped, outer IPC was removed and no cleanup errors occurred. The independent reviewer verified these receipt facts and the manager accepted that review, as recorded in the nested review entry.",
+        "counts": "Zero D1 acquisition inputs. Existing three failed cold inputs, zero warm/repeat and zero completed D1 trials/cohorts are unchanged.",
+        "annotation": "The first unreviewed runtime-packet narrative said frame 3 to 5; candidate2 corrects it to actual frame 3 to 4. Source, command and raw artifact pins are unchanged; no run was repeated.",
+        "actual_renderer_chain": {
+          "outer": "Headless Weston GL: Quadro M620/PCIe/SSE2, NVIDIA 535.274.02 (EGL vendor NVIDIA).",
+          "inner": "Weston X11 GL: llvmpipe (LLVM 19.1.7, 256 bits), Mesa 25.0.7-2+deb13u1.",
+          "application": "Native Wayland/Vulkan on Intel HD Graphics P630, integrated GPU, Mesa 25.0.7-2+deb13u1.",
+          "qualification_boundary": "These are distinct renderer roles. The probe preserves the application backend/adapter, not an unchanged whole presentation chain or an all-hardware claim. There is no timing equivalence or pooling with shared-display runs. Any later D1 cohort must freeze this actual configuration separately; no renderer change or new run is authorized."
+        },
+        "review": {
+          "reviewer_task": "/root/reorganization_review",
+          "reviewed_runtime_candidate_sha256": "8b40c60d5bb25edc9d0ccedbc5fa4cb084810eb7d41f0acd3e76ee1d48d52409",
+          "outcome": "Actual independent PASS at the bounded input-isolation source/runtime/pixel/configuration/cleanup scope. The reviewer verified all pins, all 18 maps, declared events, ordinary exit and absent owners/IPC.",
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "manager_acceptance": "The appointed manager accepted that actual review and personally verified source/command/result pins and both PNGs. This is not a claim that the manager reran the offline tests or individually audited every reviewer check.",
+          "renderer_metadata_delta": "The manager verified candidate3 differs from accepted candidate2 only by actual renderer identities and the correction annotation; raw/source references are unchanged. This bounded factual delta is accepted without another runtime run or review."
+        },
+        "warnings": "Preserved raw warnings: inner EGL failed to create dri2 screen/query rendering device and allocator initialization; outer EGL lacks native fence sync, disabling GPU timeline/explicit synchronization; Xwayland reported occupied-listener attempts while allocating display :2; the existing debug-protocol warning and AT-SPI GetItems unsupported-interface warning remain. No warning-free EGL, end-to-end hardware, physical-display, AT-SPI conformance or prior-timing equivalence claim is made.",
+        "interval_limit": "The accepted input/focus evidence is this single declared 20-second observation on the pinned topology. It is not universal desktop/AT-SPI conformance or a completed D1 diagnostic cohort."
+      }
+    }
   }
 }
