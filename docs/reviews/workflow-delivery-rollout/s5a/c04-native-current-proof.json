@@ -15801,6 +15801,94 @@
         }
       ],
       "manager_disposition": "Root PM059 ACCEPTS faithful runtime02 FAILURE record ONLY; no recording correction. Actual run remains FAIL, consumed once. No runtime/product/C04 PASS or command03 release. CB-R2 source03 is independently under review; source-only CB-R3 lifecycle method must be proposed before fresh04 preparation. Preserve all frozen02/03 evidence and explicit shell gap:15 recorded PIDs absent does not prove all descendants gone."
+    },
+    "source05_preparation": {
+      "recorded_at": "2026-10-20T20:27:48.830751+00:00",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "state": "SOURCE05_PREPARATION_ACCEPTED_NO_LIVE_RELEASE",
+      "candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source-candidate-05.json",
+        "sha256": "d0f6df84e93b7641586cf5c03e84b9fe4dd471d13d2a10e0a0ec5dd5c7df6a84",
+        "bytes": 12797
+      },
+      "manifest": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-manifest-05.json",
+        "sha256": "70d89403a872ace05a24202d83f6e12bceb272524b22b5dc3767454b901a9ae3",
+        "bytes": 44551
+      },
+      "exact_unexecuted_command": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-command-05.json",
+        "sha256": "79765726718d38a5b6f1e97c7969cc6365f5d38938d46ba46996c05ff1d97d22",
+        "bytes": 8453
+      },
+      "preserved_source03": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source-candidate-03.json",
+        "sha256": "279a37a7194a2e270612e41d14def0b6a1b3ef6c0cac12b979872d7ac32f36da",
+        "bytes": 10592,
+        "disposition": "Actual CB-R2 SOURCE PASS on exact lease/reader-host constructors; command03 never executed or released. Exact CB-R2 files retained through05."
+      },
+      "preserved_source04": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source-candidate-04.json",
+        "sha256": "51bfbe7b37c8bbb2e58e7542aff5addbd466379b5c26def31da2773e7db26e25",
+        "bytes": 14462,
+        "disposition": "Actual both final reviews REVISE solely CB-R3a; no other mandatory finding. Candidate/command04 unexecuted/rejected; actual12 controls and initial e1cc53 fixture failure/ResourceWarning retained unchanged."
+      },
+      "correction": "CB-R3a: On FIRST independently verified retained shell exit, retain actual verification time once. If time>=original fixed cleanup_deadline, immediately mark cleanup_failed/resultFAIL and retain original failure/deadline/exit record, even when blocked_reported was False and abort/GUI work delayed first observation. Verified exact exit still discharges safe custody immediately with NO extra wait/hold/signal/reset. Best-effort receipt/report failure cannot add custody hold; in-memory failure persists. QA.stop propagates cleanup_failed as failed cleanup after safe discharge. A timely first exit verification stays timely on later gates (never retimed). Existing original fixed7s origin, normal UI shell exit, CB-R1 gates, CB-R2 constructors, recorded-owner-only/group limitations unchanged.",
+      "shell_scope": "Exit/disposition proof covers authenticated recorded owners and existing PTY session leader only. Leader exit never proves every process in its group/session or every descendant exited; group_descendants_exit_verified=False is explicit. No historical HUP/shell closure/ordinary Close inferred; prior runtime02 shell gap remains unresolved historical evidence.",
+      "actual_scoped_checks": {
+        "focused_current_controls": 2,
+        "result": "PASS actual gate/QA timing paths only; no blanket rerun.",
+        "original_tool_receipts": [
+          {
+            "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+            "line": 31572,
+            "timestamp": "2026-10-20T20:24:33.941Z",
+            "turn_id": "01a15afb-5bfc-7a32-8248-a2e3a285dd9e",
+            "item_id": "ctco_01a15afc-b795-7b73-a490-5ea72a20eecb",
+            "call_id": "call_ba5ad40a5e6a4d558201ac53269c459a",
+            "chunk_id": "05f5e9",
+            "exit_code": 0,
+            "tests": 2
+          }
+        ],
+        "reused_prior_scoped_controls": 107,
+        "distinct_total_with_reuse": 109,
+        "integrity": {
+          "runtime_python_source_count": 40,
+          "explicit_dynamic_seeds": [
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/committed-buffer-source5.py",
+            "/home/bfadmin/Documents/datum-eda/scripts/run_native_qa_isolated_input.py",
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_gdb_02.py",
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_guardian_host_01.py",
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native_committed_reader_host_03.py"
+          ],
+          "AST_local_import_closure": "PASS exact source pins",
+          "fresh05_paths_absent": [
+            "native-committed-buffer-05",
+            "isolated-committed-buffer-05",
+            "committed-buffer-python-cache-05"
+          ],
+          "provider_input_authority": "Unchanged exact manifest pins; prior adequate runtime02 preflight/postrun reused, no native proof/build/dependency."
+        }
+      },
+      "actual_reviews": [
+        {
+          "reviewer_task": "/root/closeout_review",
+          "thread_id": "01a1432d-460f-7f61-a140-2db7d434147c",
+          "turn_id": "01a15afd-fd15-7410-b5cc-2ad49d69c31a",
+          "verdict": "SOURCE/COMMAND PASS",
+          "scope": "Exact source05 candidate d0f6df84, manifest70d89403, command79765726. CB-R3a resolved: original first-verification timestamp retained, at/after fixed deadline remainsFAIL, immediate safe discharge/report-error handling/QA propagation correct; timely verification not retimed. Actual05f5e9 two focused controls verified;121 references/88 files; prior107 scopedcontrols reused; command05 unexecuted, fresh05paths absent; no mandatory finding. CB-R1/R2 and remaining04 unchanged."
+        },
+        {
+          "reviewer_task": "/root/reorganization_review",
+          "thread_id": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+          "turn_id": "01a15afe-1c02-70d0-ac3d-f13cfc6684e2",
+          "verdict": "Source05 delta PASS",
+          "scope": "CB-R3a resolved;11 affected bindings verified,37 shared files exact,40 modules/5 explicit seeds/104 edges, fresh04/05 paths absent; two actual controls/command bindings/unchanged review scope verified; no remaining mandatory finding. Source preparation only."
+        }
+      ],
+      "manager_disposition": "Root PM059 ACCEPTS SOURCE05/PREPARATION ONLY after both actual independent reviews. Record in existing proof, synchronize existing C04 claim/export and focused metadata for root commit/push. Exact command05 remains unexecuted; separate once-only live release follows publication, with fresh baseline root ADMIT before single fixed gesture. No new reports/tests/product/build/dependency or task-completion authority.",
+      "limits": "No runtime/product/C04/HUMAN/C05/C06/ordinary Close/successor acceptance. All failed runtime02 receipts, unretired STOP debt/guardian resume failure and historical shell-lifecycle gap remain unchanged. Shell leader exit in future proof never establishes all group/session members or descendants exited."
     }
   }
 }
