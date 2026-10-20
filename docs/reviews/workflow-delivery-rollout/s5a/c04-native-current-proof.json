@@ -15206,6 +15206,41 @@
       "verdict": "faithful FAILURE-recording/cleanup PASS",
       "actual_review_scope": "36 references/30 unique,18 canonical maps,15 recorded PIDs absent,2 owned IPC removed;4 capture attempts/3 runner-finalized captures. Late inner Popen and failure-only shutdown preserved.",
       "manager_disposition": "Root ACCEPTS this bounded recording/cleanup plus prior actual closeout review. No successful pair/product/C04 acceptance or new run. No correction, retry, release or criterion waiver follows."
+    },
+    "deadline_source_correction_04": {
+      "recorded_at": "2026-10-20T17:57:26.902182+00:00",
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "authority": "After landing d74e1eb10710aeeff4e113a1ad8347d349bbee35 root released one SOURCE-ONLY correction under retained C04: fresh deadline check immediately before capture Popen after validation, mocked-clock regression and valid/ownership refusal coverage; no live run. Existing ownership synchronized before editing.",
+      "candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outer-inner-deadline-source-candidate-04.json",
+        "sha256": "065c5ff4eae7fac86b46659345e4b960509ded32f0a55346bef09eba69e8d6da",
+        "bytes": 4027
+      },
+      "actual_changes": "Versioned existing ignored source4 adds exactly one remaining(deadline_ns) immediately before Popen after all prior validation/mark work. Existing capture03 module unchanged. Versioned existing controls04 retargets source4/capture03 and adds four focused cases. Original10s deadline/guards/source03/runtime02 retained unchanged.",
+      "actual_checks": "9 ActualCaptureControls PASS, including validation consuming original budget -> no Popen/no observer, exact deadline refusal, valid remaining7s launch without reset, ownership refusal, foreign endpoint refusal and timeout/raw-error retention. Source4/controls04 compile PASS. No native/client/compositor launch.",
+      "review_state": "Actual closeout SOURCE/CONTROL-DESIGN PASS accepted by root; root personally verified original9-control execution receipt. Bounded source/control acceptance only: no live authority/rendered/C04 acceptance or new method.",
+      "actual_review": {
+        "recorded_at": "2026-10-20T18:00:59.670627+00:00",
+        "received_via_manager": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+        "reviewer_task": "/root/closeout_review",
+        "verdict": "SOURCE/CONTROL-DESIGN PASS",
+        "candidate_sha256": "065c5ff4eae7fac86b46659345e4b960509ded32f0a55346bef09eba69e8d6da",
+        "review_scope": "Exact one pre-Popen check in actual capture AST; validation/mark consumes budget -> no launch; valid7s/no reset; ownership refusal; all6 pins.",
+        "original_control_receipt": {
+          "thread_id": "01a15249-fb58-7023-9a10-1828067d8850",
+          "turn_id": "01a15a74-c197-7ea3-b93b-5926f03764b8",
+          "item_id": "ctco_01a15a75-61d7-7af2-a59e-bd98172092b9",
+          "call_id": "call_6e66626108844ee58a9139bd9a173069",
+          "timestamp": "2026-10-20T17:56:44.631Z",
+          "chunk_id": "c4677b",
+          "exit_code": 0,
+          "original_session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+          "line": 28899,
+          "actual_output": "All9 named tests ok; Ran9 tests in0.102s; OK.",
+          "verification": "Root personally read original persisted tool output; no rerun or synthesized output."
+        },
+        "manager_disposition": "Root ACCEPTS bounded source/control design plus verified original execution evidence. Candidate/source03/runtime02 preserved. No live authority, rendered/C04 acceptance, new method or diagnostic campaign follows."
+      }
     }
   }
 }
