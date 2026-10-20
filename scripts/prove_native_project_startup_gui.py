@@ -7,6 +7,7 @@ private UI actions, owner Projects or HOME substitution participate.
 from __future__ import annotations
 
 from run_native_qa_isolated_input import focus_arguments, validate_input_display
+from native_capture_pixels import require_native_capture_pixels
 
 import argparse
 import json
@@ -259,6 +260,7 @@ class StartupQA:
         assert result.returncode == 0 and not result.stderr and len(images) == 1, (
             f"native capture failed: {result.stderr}; images={images}")
         images[0].rename(self.root / f"{label}.png")
+        require_native_capture_pixels(self.root / f"{label}.png")
         self.observations[label] = [
             {"name": node.get_name(), "attributes": self.attributes(node)}
             for node in self.nodes() if node.get_role_name() != "terminal"

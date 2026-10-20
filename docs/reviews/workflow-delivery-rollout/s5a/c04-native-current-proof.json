@@ -13226,7 +13226,7 @@
     }
   },
   "native_wayland_board_d1_timing_20261019": {
-    "state": "The bounded private-input route is source-landed and its related intake is closed with commit evidence. Native01/02/03 remain failed timing attempts, and no completed D1 cohort or further acquisition is released.",
+    "state": "The isolated D1 cohort04 stopped on the appointed manager's concrete pixel failure: the original cold-selected image is entirely black despite a fresh application presentation receipt. One cold input ran; warm and repeat did not start. No completed trial, cohort or latency PASS. The prior accepted input-isolation admission retains only its bounded scope.",
     "authority": "Retained UVT-S5A-BUILD/S5A-C04 grant under appointed PM059 manager 01a13df1-7a0d-72c1-bbdd-f0d96d481598. The manager selected the missing Board D1 diagnostic receipt. Prior Schematic92, D1 cap and D2/native110 evidence retain their accepted scopes.",
     "evidence_gap": "Actual reorganization_review audit found that native110 contains one full Board acquisition and omits optional timing. It does not supply the required cold, warm and warm-repeat Board timing cohort. No numerical latency criterion is introduced.",
     "input_and_setup": {
@@ -13350,7 +13350,7 @@
       "actual_executables": "GUI PID 899533, hash 1ee1dfa7, and owned daemon PID 899659, hash e58d388d, matched the pinned executables. Full bindings and executed source are preserved."
     },
     "current_counts": {
-      "actual_cold_inputs": 3,
+      "actual_cold_inputs": 4,
       "actual_warm_inputs": 0,
       "actual_warm_repeat_inputs": 0,
       "completed_qualified_d1_trials": 0,
@@ -13432,6 +13432,50 @@
         "commit": "6b38665f4c9041558b52032fc54750944a2f20ad",
         "outcome": "The exact six reviewed owned paths landed on main through normal file-lane, temporary-artifact and staged rustfmt hooks; all passed, with no bypass. The related gv88 closure uses this actual source landing and the accepted bounded admission.",
         "retained": "The private-display route is opt-in. Actual renderer roles and warning/finite-interval limits remain explicit. No D1 acquisition, cohort, latency, HUMAN or successor acceptance is inferred."
+      }
+    },
+    "isolated_cohort04": {
+      "binding_sha256": "dfafda899a75ee0857ce0ab1c21830c45d470c7a907e539eaa6981d3bbb4cf39",
+      "command_sha256": "3cec5ba640df8ee639b640423e0208ae8d3397f9db8b41f9097de626284541e7",
+      "release": "Actual independent binding PASS; the appointed manager personally verified packet/command/fresh outputs and released exactly one cold/warm/warm-repeat sequence under retained C04 assessed-repair continuation. No Via or other work is released.",
+      "budget": "Maximum three new inputs, six cumulative if complete: four cold, one warm, one warm-repeat. Previous three failed cold inputs remain unqualified and unpooled. Any failure stops the batch; no automatic retry or renderer fallback.",
+      "configuration": "Preserve original49-file/100007oracle and unchanged product binaries. Verify actual outer Quadro M620, inner llvmpipe and native application Wayland/Vulkan/P630 before credit. Timings remain diagnostic; no whole-chain hardware, physical-display/AT-SPI conformance or prior-timing equivalence.",
+      "status": "FAIL; actual independent failed-packet review and appointed-manager bounded disposition received. Two-PID enumeration correction only; raw evidence unchanged.",
+      "failed_packet": {
+        "path": ".datum/scratch/s5a-c04-managed-20261018/board-d1-failed-isolated04-candidate-1.json",
+        "sha256": "fd1fd7fd6df547df7039e365021bab4ab2f3fa81a01637298705cc82a3724645"
+      },
+      "actual_counts": "One cold input, zero warm, zero repeat, zero completed trials. Cumulative01\u201304: four cold inputs, zero warm/repeat/completed. Previous failed attempts remain separate and unpooled.",
+      "preserved_failure": "Wrapper exit1, child SIGINT/-2 through existing error-preserving cleanup. Partial full public snapshot contains54519/100007 members, complete=false; original traceback, logs, actions, black PNG and source/input bindings preserved. Compact subject upper bound52528.22651ms is diagnostic only; full qualification was not reached.",
+      "pixel_review": "The appointed manager personally viewed black cold-selected.png and directed the stop. The development agent separately viewed the original black frame and valid before-cold Main. RGB extrema are0 in all selected-image channels. Both capture commands returned0; app damage advanced3\u21924, with later native presentation5 logged. No recapture, additional GUI input, retry or renderer change occurred.",
+      "cleanup": "All4 inner and3 outer owner-stop receipts true, zero cleanup errors. Development agent independently rechecked all known owner PIDs absent, both IPC directories absent and all frozen/before/after/current49 canonical mappings equal. Failure cleanup only; no ordinary shell exit/PTY closure credit.",
+      "cause_and_intake": "Cause unresolved among application surface content, compositor import/composition, synchronization and capture/readback. No application-defect or capture-only attribution. Related intake dat-native-dense-black-capture-n5s7 remains open without new roadmap dependency or repair authorization.",
+      "failed_packet_corrected": {
+        "path": ".datum/scratch/s5a-c04-managed-20261018/board-d1-failed-isolated04-candidate-2.json",
+        "sha256": "be499920dd9860f60765aed854adcc95bcade2a600f1603802307672dc53acc6"
+      },
+      "actual_review": "The appointed manager reports actual independent verification of all21 candidate1 artifact pins, black pixels, unresolved cause,49 maps, owner cleanup and counts. Manager accepts only failed cold compact-digest/current-basis and54519 exact-prefix diagnostic evidence. No completed trial, usable selected pixels, fullwalk or ordinary exit credit. The final summary adds inner Weston913405 and cleanup shell913524 to owner-absence enumeration; reviewer independently verified both absent and development agent rechecked. No raw artifact changed.",
+      "capture_guard_correction": {
+        "authority": "Appointed manager released bounded shared StartupQA.capture correction under retained C04, exact source/test claim synchronized before edits. No live probe, recapture, D1, renderer change or Via execution. Another cohort requires separately demonstrated remedy.",
+        "source": [
+          "scripts/prove_native_project_startup_gui.py",
+          "scripts/native_capture_pixels.py",
+          "scripts/test_native_capture_pixels.py"
+        ],
+        "behavior": "After preserving the original named PNG and capture-command log, decode and verify existing PNG support; reject malformed/non-PNG or exactly wholly-black RGB before returning to a caller or walking public shell nodes. No threshold, retry, fallback or rendering acceptance inferred. Source5 D1 runner and originals unchanged.",
+        "verification": "Eight reproducible offline tests pass in0.269s: actual failed RGB8 dimensions, RGB/RGBA one-nonzero-sample acceptance, black-alpha rejection, malformed/truncated/checksum/missing/non-PNG errors, actual shared capture early-stop/original preservation, valid continuation and original command-failure preservation. No scratch input dependency, GI/GUI/Cargo execution or new package. Source-health3267, dependency authority, project-state101/current projection and whitespace checks pass.",
+        "review": {
+          "source_candidate_sha256": "f66071cb45e25d6a02adbf9a2e75e5102c703b2e6496e978f20c3aedf5d5c24a",
+          "actual_independent_outcome": "Actual bounded SOURCE + OFFLINE-EVIDENCE PASS on source candidate f66071cb45e25d6a02adbf9a2e75e5102c703b2e6496e978f20c3aedf5d5c24a: all10 pins, eight-test receipt, actual shared capture method/call order, byte/error preservation and pre-PM029 governed Pillow QA reuse verified. No test rerun or native claim.",
+          "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+          "manager_disposition": "The appointed manager accepts this exact actual independent receipt and corrected failed packet2. Prepare exact six-path normal-hook landing; related n5s7 remains OPEN and D1 unresolved. Guard alone is no black-cause remedy or another D1 release. After landing only Via runner/binding preparation is released; live Via still needs actual review/release.",
+          "reviewer_task": "/root/reorganization_review"
+        },
+        "intake": "dat-native-dense-black-capture-n5s7 remains OPEN. Earlier failure detection does not explain or repair black application/compositor pixels.",
+        "dependency_basis": {
+          "existing_reuse": "Governed GUI Conformance G9/G10 QA already uses Pillow in scripts/check_gui_visual_parity.py and scripts/check_gui_reference_capture.py. G10 PNG verify/open use is present at2eeb8361585fc87e4c834f12a0c063ae2d1774ad (2026-07-09), before PM029 introduction6baecbceca6224f237c8eccca86c254d8d79daca (2026-08-15). Existing installed PNG tooling reused; no new package, download, source vendoring or dependency manifest/lock change.",
+          "gate_limit": "The Cargo dependency-authority PASS is a required check, not standalone ratification of Pillow or a new third-party dependency."
+        }
       }
     }
   }
