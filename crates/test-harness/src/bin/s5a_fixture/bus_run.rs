@@ -12,7 +12,6 @@ use eda_engine::{
 use std::{collections::BTreeSet, path::Path};
 use uuid::Uuid;
 
-const COUNT: usize = 257;
 const STRIDE_NM: i64 = 1_000_000;
 const Y_NM: i64 = 10_000_000;
 const ORIGIN_INDEX: usize = 128;
@@ -20,11 +19,11 @@ const SUBTRACT_INDEX: usize = 129;
 fn id(n: usize) -> Uuid {
     Uuid::from_u128(0x7b000000000040008000000000000000 + n as u128)
 }
-fn provenance() -> WriteProvenance {
+fn provenance(count: usize) -> WriteProvenance {
     WriteProvenance::new(
         "s5a-bus-run-fixture",
         CommitSource::Test,
-        "approved Bus257 topology with frozen native-visible geometry",
+        format!("approved Bus{count} topology with frozen native-visible geometry"),
     )
 }
 fn occurrence(id: Uuid) -> ElectricalOccurrence {
@@ -37,7 +36,11 @@ fn occurrence(id: Uuid) -> ElectricalOccurrence {
 fn gui_identity(id: Uuid) -> serde_json::Value {
     serde_json::json!({"class":"bus_section","id":id,"instance_path":[]})
 }
-pub(super) fn build(root: &Path) -> Result<()> {
+pub(super) fn build(root: &Path, count: usize) -> Result<()> {
+    ensure!(
+        matches!(count, 256 | 257),
+        "Bus Run count must be 256 or 257"
+    );
     ensure!(
         !root.exists(),
         "fresh output required; prior artifacts preserved"
@@ -46,7 +49,7 @@ pub(super) fn build(root: &Path) -> Result<()> {
     let sheet: Uuid = serde_json::from_value(base["sheet_id"].clone())?;
     let mut model = ProjectResolver::new(root).resolve()?;
     // Choose every source identity and expected member before graph querying.
-    let buses: Vec<_> = (0..COUNT)
+    let buses: Vec<_> = (0..count)
         .map(|i| Bus {
             uuid: id(i + 1),
             name: "DATA".into(),
@@ -62,7 +65,7 @@ pub(super) fn build(root: &Path) -> Result<()> {
     let bus_id = id(0x2000);
     let origin = occurrence(buses[ORIGIN_INDEX].uuid);
     let subtract = occurrence(buses[SUBTRACT_INDEX].uuid);
-    let write = BatchComposer::compose(&model, provenance())
+    let write = BatchComposer::compose(&model, provenance(count))
         .push_ops(buses.iter().map(|b| Operation::CreateSchematicBus {
             sheet_id: sheet,
             bus_id: b.uuid,
@@ -80,7 +83,7 @@ pub(super) fn build(root: &Path) -> Result<()> {
             retired: false,
         },
     };
-    let write = electrical::build_create_electrical_identity(&model, provenance(), record)?;
+    let write = electrical::build_create_electrical_identity(&model, provenance(count), record)?;
     native_write::commit_prepared(&mut model, root, write)?;
     let revision = model.model_revision.clone();
     let mut before: Vec<_> = model
@@ -97,7 +100,7 @@ pub(super) fn build(root: &Path) -> Result<()> {
         .map_err(|e| anyhow::anyhow!("Bus Run: {e:?}"))?;
     ensure!(
         run.membership.owned == expected,
-        "complete independent Bus257 set"
+        "complete independent Bus{count} set"
     );
     ensure!(
         run.membership.subject_id == bus_id,
@@ -121,13 +124,18 @@ pub(super) fn build(root: &Path) -> Result<()> {
         ProjectResolver::new(root).resolve()?.model_revision == revision,
         "fresh resolver binds the same frozen source revision"
     );
+    let family = if count == 256 {
+        "bus-run-refusal-256"
+    } else {
+        "bus-run-refusal"
+    };
     let manifest = serde_json::json!({
         "schema_version":1,
-        "family":"bus-run-refusal",
-        "recipe":"existing Bus257 topology; native-visible parameterization v1",
+        "family":family,
+        "recipe":format!("existing Bus{count} topology; native-visible parameterization v1"),
         "source_recipe":"crates/engine/src/api/native_write/electrical/bus_run_query_tests.rs::bus_run_complete_257_spines_and_full_integer_contacts",
         "source_recipe_sha256":"69814342e15beb6d14f0da98c64646ca0e911c3e2dcd03480dd1b4757fb94b94",
-        "geometry":{"count":COUNT,"stride_nm":STRIDE_NM,"y_nm":Y_NM,"original_stride_nm":10,
+        "geometry":{"count":count,"stride_nm":STRIDE_NM,"y_nm":Y_NM,"original_stride_nm":10,
             "note":"Explicit visible-input parameters; not byte-exact historical family4 reconstruction."},
         "base_project":base["project_id"],"sheet_id":sheet,"model_revision":revision,
         "declared_bus_id":bus_id,"expected_members":expected_gui,
@@ -139,7 +147,7 @@ pub(super) fn build(root: &Path) -> Result<()> {
         "expected_refusal":"Cannot remove members from a run selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection.",
         "engine_observation":{"complete_independent_set_equal":true,"member_count":run.membership.owned.len(),
             "semantic_bus_id":run.membership.subject_id,"source_basis":snapshot.source_basis()},
-        "rebuild":"python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin s5a_fixture -- bus-run-refusal <fresh-owned-root>",
+        "rebuild":format!("python3 scripts/run_cargo_guarded.py --workload proof -- cargo run -p eda-test-harness --bin s5a_fixture -- {family} <fresh-owned-root>"),
         "rebuild_limit":"Chosen semantic IDs and geometry are repeatable; canonical write transactions are newly authored. Freeze each actual input/history manifest before native execution, never claim historical byte identity.",
         "native_input":"pending actual source/binary/input/presented-event binding and independent review",
         "acceptance":"not established by setup; no basic cap replay/fullC04/HUMAN/successor claim"
