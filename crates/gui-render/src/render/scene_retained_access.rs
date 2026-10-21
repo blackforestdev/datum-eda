@@ -216,20 +216,13 @@ impl RetainedScene {
         &self,
         state: &ReviewWorkspaceState,
     ) -> Vec<RetainedDrawCommand> {
-        if !authored_visible(state) {
-            return Vec::new();
+        VisibleDrawCommands {
+            commands: &self.draw_commands,
+            filters: Some(&state.ui.filters),
         }
-        self.draw_commands
-            .iter()
-            .filter(|command| match command {
-                RetainedDrawCommand::Quads { layer_id, .. }
-                | RetainedDrawCommand::Glyphs { layer_id, .. }
-                | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id
-                    .as_deref()
-                    .is_none_or(|id| layer_visible(state, id)),
-            })
-            .cloned()
-            .collect()
+        .iter()
+        .cloned()
+        .collect()
     }
 
     pub(crate) fn all_draw_commands(&self) -> &[RetainedDrawCommand] {

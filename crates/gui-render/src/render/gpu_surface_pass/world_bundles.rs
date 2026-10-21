@@ -63,14 +63,14 @@ impl CachedSurfaceBundle {
         glyph: Option<&wgpu::Buffer>,
         material: Option<&wgpu::Buffer>,
         binding: &wgpu::BindGroup,
-        commands: &[RetainedDrawCommand],
+        commands: VisibleDrawCommands<'_>,
     ) -> bool {
         self.vertex_buffer.as_ref() == vertex.filter(|_| self.used_kinds & 1 != 0)
             && self.stroke_buffer.as_ref() == stroke.filter(|_| self.used_kinds & 2 != 0)
             && self.glyph_buffer.as_ref() == glyph.filter(|_| self.used_kinds & 4 != 0)
             && self.material_buffer.as_ref() == material.filter(|_| self.used_kinds & 4 != 0)
             && &self.bind_group == binding
-            && draw_batches(commands).eq(self.batches.iter().cloned())
+            && draw_batches(commands.iter()).eq(self.batches.iter().cloned())
     }
 }
 
@@ -120,16 +120,15 @@ impl Renderer {
             .enumerate()
         {
             let bind_group = &binding.bind_group;
-            let (vertex, stroke, commands) = match surface.surface {
+            let commands = prepared.surface_draw_commands(surface.surface, schematic);
+            let (vertex, stroke) = match surface.surface {
                 SceneSurface::Board => (
                     self.world_vertices_gpu.buffer(),
                     self.world_strokes_gpu.buffer(),
-                    prepared.visible_draw_commands(),
                 ),
                 SceneSurface::Schematic => (
                     self.schematic_world_vertices_gpu.buffer(),
                     self.schematic_world_strokes_gpu.buffer(),
-                    schematic.map_or(&[][..], RetainedScene::all_draw_commands),
                 ),
             };
             let (glyph, material) = match surface.surface {
@@ -150,7 +149,7 @@ impl Renderer {
                 cached.surface = surface.surface;
                 continue;
             }
-            let batches: Box<[_]> = draw_batches(commands).collect();
+            let batches: Box<[_]> = draw_batches(commands.iter()).collect();
             let used_kinds = batches.iter().fold(0, |bits, batch| {
                 bits | match batch.kind {
                     DrawKind::Quads => 1,
@@ -244,7 +243,7 @@ impl Renderer {
                 format!(
                     "world bundle rebuilt pane={} source_commands={} draws={draws}",
                     index,
-                    commands.len()
+                    commands.iter().count()
                 )
             });
         }

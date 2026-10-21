@@ -410,12 +410,7 @@ impl PreparedScene {
                 let presentation = retained
                     .map(|retained| &retained.presentation)
                     .filter(|presentation| request.matches(presentation));
-                let commands = match surface {
-                    SceneSurface::Board => self.visible_draw_commands(),
-                    SceneSurface::Schematic => {
-                        retained.map_or(&[][..], RetainedScene::all_draw_commands)
-                    }
-                };
+                let commands = self.surface_draw_commands(*surface, schematic);
                 presentation.into_iter().flat_map(move |presentation| {
                     commands.iter().flat_map(move |command| {
                         let (stroke, glyph, range, spans) = match command {

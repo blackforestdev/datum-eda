@@ -186,6 +186,7 @@ impl PreparedScene {
             console_overlay_vertices: Vec::new(),
             console_overlay_layout: None,
             visible_draw_commands: Vec::new(),
+            world_filters: None,
             text_runs: Vec::new(),
             terminal_graphics: Vec::new(),
             schematic_scene_viewport: None,

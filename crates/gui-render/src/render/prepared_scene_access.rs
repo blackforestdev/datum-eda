@@ -49,16 +49,11 @@ pub struct PreparedScene {
     pub(super) console_overlay_vertices: Vec<Vertex>,
     pub(super) console_overlay_layout: Option<ConsoleOverlayLayout>,
     pub(super) visible_draw_commands: Vec<RetainedDrawCommand>,
+    pub(super) world_filters: Option<datum_gui_protocol::WorkspaceFilterState>,
     pub(super) text_runs: Vec<TextRun>,
     pub(super) terminal_graphics: Vec<PreparedTerminalGraphic>,
-    // P2.2a bounded second-scene descriptor: the STATIC companion schematic pass.
-    // `Some` only when the layout has a Schematic pane AND the workspace carries a
-    // projected `schematic_scene`; gates the additive second world GPU pass. The
-    // camera is a fixed fit-to-schematic-bounds (no interactive pan/zoom on pane B
-    // this slice). Ranges for that pass are derived in gpu.rs from the threaded
-    // schematic RetainedScene (render() has no `state`), so they are not stored
-    // here — the schematic renders all of its batches (its layers are always
-    // visible, not board-layer-toggle governed).
+    // Companion geometry remains resident. Its world, selected-material and
+    // prepared-admission ranges all use the same snapshotted visibility below.
     pub(super) schematic_scene_viewport: Option<RectPx>,
     pub(super) schematic_pane_id: Option<datum_gui_protocol::PaneId>,
     pub(super) schematic_bounds: datum_gui_protocol::SceneBounds,
@@ -140,5 +135,22 @@ impl PreparedScene {
 
     pub(super) fn visible_draw_commands(&self) -> &[RetainedDrawCommand] {
         &self.visible_draw_commands
+    }
+
+    pub(super) fn surface_draw_commands<'a>(
+        &'a self,
+        surface: SceneSurface,
+        schematic: Option<&'a RetainedScene>,
+    ) -> VisibleDrawCommands<'a> {
+        match surface {
+            SceneSurface::Board => VisibleDrawCommands {
+                commands: self.visible_draw_commands(),
+                filters: None,
+            },
+            SceneSurface::Schematic => VisibleDrawCommands {
+                commands: schematic.map_or(&[][..], RetainedScene::all_draw_commands),
+                filters: self.world_filters.as_ref(),
+            },
+        }
     }
 }

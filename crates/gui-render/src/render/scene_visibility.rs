@@ -1,6 +1,33 @@
 //! Shared authored/proposed/layer visibility policy for scene construction.
 use super::*;
 
+/// Borrowed executed command incidence; retained allocations stay resident.
+#[derive(Clone, Copy)]
+pub(super) struct VisibleDrawCommands<'a> {
+    pub(super) commands: &'a [RetainedDrawCommand],
+    pub(super) filters: Option<&'a datum_gui_protocol::WorkspaceFilterState>,
+}
+
+impl<'a> VisibleDrawCommands<'a> {
+    pub(super) fn iter(self) -> impl Iterator<Item = &'a RetainedDrawCommand> + Clone {
+        let commands = if self.filters.is_some_and(|filters| !filters.show_authored) {
+            &[][..]
+        } else {
+            self.commands
+        };
+        commands.iter().filter(move |command| {
+            self.filters.is_none_or(|filters| {
+                let layer = match command {
+                    RetainedDrawCommand::Quads { layer_id, .. }
+                    | RetainedDrawCommand::Glyphs { layer_id, .. }
+                    | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id.as_deref(),
+                };
+                layer.is_none_or(|id| filters.layer_visibility.get(id).copied().unwrap_or(true))
+            })
+        })
+    }
+}
+
 pub(super) fn authored_visible(state: &ReviewWorkspaceState) -> bool {
     state.ui.filters.show_authored
 }

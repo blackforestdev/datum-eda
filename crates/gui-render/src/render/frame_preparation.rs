@@ -598,6 +598,7 @@ impl PreparedScene {
                 console_overlay_vertices,
                 console_overlay_layout,
                 visible_draw_commands,
+                world_filters: Some(state.ui.filters.clone()),
                 text_runs,
                 terminal_graphics,
                 schematic_scene_viewport,

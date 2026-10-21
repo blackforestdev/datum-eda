@@ -177,13 +177,14 @@ fn command_batch(command: &RetainedDrawCommand) -> DrawBatch {
 /// submitted together. Metadata has already selected visibility/order upstream;
 /// it does not change pipeline state. Gaps, overlaps and backwards ranges remain
 /// separate draws, and a primitive switch is always a batching boundary.
-fn draw_batches(commands: &[RetainedDrawCommand]) -> impl Iterator<Item = DrawBatch> + '_ {
-    let mut remaining = commands;
+fn draw_batches<'a>(
+    commands: impl IntoIterator<Item = &'a RetainedDrawCommand>,
+) -> impl Iterator<Item = DrawBatch> {
+    let mut remaining = commands.into_iter().peekable();
     std::iter::from_fn(move || {
-        let (first, rest) = remaining.split_first()?;
-        remaining = rest;
+        let first = remaining.next()?;
         let mut batch = command_batch(first);
-        while let Some(next) = remaining.first() {
+        while let Some(next) = remaining.peek() {
             let next = command_batch(next);
             if batch.range.is_empty()
                 || next.range.is_empty()
@@ -201,7 +202,7 @@ fn draw_batches(commands: &[RetainedDrawCommand]) -> impl Iterator<Item = DrawBa
                 break;
             }
             batch.range.end = next.range.end;
-            remaining = &remaining[1..];
+            remaining.next();
         }
         Some(batch)
     })

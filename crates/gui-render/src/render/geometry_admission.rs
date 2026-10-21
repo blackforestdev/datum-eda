@@ -66,7 +66,7 @@ pub struct PreparedGeometryAdmission<'a> {
     pub viewport: RectPx,
     pub source: Option<&'a PreparedSourceIdentity>,
     retained: Option<&'a RetainedScene>,
-    commands: &'a [RetainedDrawCommand],
+    commands: VisibleDrawCommands<'a>,
 }
 impl PreparedGeometryAdmission<'_> {
     pub fn ranges(&self) -> impl Iterator<Item = GeometryAdmissionRange> + '_ {
@@ -92,7 +92,7 @@ impl PreparedGeometryAdmission<'_> {
             retained_vertices: retained.world_vertices.len(),
             retained_glyph_vertices: retained.glyph.points.len(),
             retained_stroke_instances: retained.world_strokes.len(),
-            prepared_commands: self.commands.len(),
+            prepared_commands: self.commands.iter().count(),
             ..Default::default()
         };
         for command in self.ranges() {
@@ -155,15 +155,14 @@ impl PreparedScene {
             .iter()
             .map(|pass| (pass.pane_id, pass.surface, pass.scene_viewport))
             .map(move |(pane_id, surface, viewport)| {
-                let (retained, commands, source) = match surface {
+                let commands = self.surface_draw_commands(surface, schematic);
+                let (retained, source) = match surface {
                     SceneSurface::Board => (
                         Some(board),
-                        self.visible_draw_commands.as_slice(),
                         self.admission_sources.as_ref().map(|s| &s.board),
                     ),
                     SceneSurface::Schematic => (
                         schematic,
-                        schematic.map_or(&[][..], RetainedScene::all_draw_commands),
                         self.admission_sources
                             .as_ref()
                             .and_then(|s| s.schematic.as_ref()),
