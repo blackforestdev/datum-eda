@@ -11,6 +11,8 @@ mod bus_run;
 mod classes;
 #[path = "s5a_fixture/collision.rs"]
 mod collision;
+#[path = "s5a_fixture/edge_cuts.rs"]
+mod edge_cuts;
 #[path = "s5a_fixture/filled_board_graphic.rs"]
 mod filled_board_graphic;
 #[path = "s5a_fixture/library.rs"]
@@ -27,6 +29,8 @@ mod recipe;
 mod scope;
 #[path = "s5a_fixture/semantic.rs"]
 mod semantic;
+#[path = "s5a_fixture/source_history.rs"]
+mod source_history;
 #[path = "s5a_fixture/wire_run_hidden.rs"]
 mod wire_run_hidden;
 #[path = "s5a_fixture/workspace.rs"]
@@ -35,7 +39,7 @@ mod workspace;
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision|bus-run-refusal|bus-run-refusal-256|wire-run-hidden-257|filled-board-graphic> [<fresh-root>|--managed] [existing CLI binary]",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision|bus-run-refusal|bus-run-refusal-256|wire-run-hidden-257|filled-board-graphic|component-edge-cuts> [<fresh-root>|--managed] [existing CLI binary]",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
     // External explicit roots remain valid for pinned replay. New/default
@@ -46,6 +50,13 @@ fn main() -> Result<()> {
         Some(value) => PathBuf::from(value),
     };
     workspace::validate_output(&root)?;
+    if family == "component-edge-cuts" {
+        let seed = PathBuf::from(args.next().context("frozen native seed required")?);
+        if args.next().is_some() {
+            bail!("unexpected argument");
+        }
+        return edge_cuts::build(&root, &seed);
+    }
     if matches!(
         family,
         "library-parents"
