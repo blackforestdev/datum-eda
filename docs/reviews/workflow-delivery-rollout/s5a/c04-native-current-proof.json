@@ -12247,7 +12247,8 @@
           "native_wayland_n01_same_click_focus_line_20261020",
           "native_wayland_threshold_dual_modifier_20261020",
           "native_wayland_independent_schematic_drawings_20261021",
-          "native_wayland_individual_port_layout_20261021"
+          "native_wayland_individual_port_layout_20261021",
+          "native_wayland_junction_anchor_region_20261021"
         ],
         "next": "Keep exact accepted class/threshold/source controls credited; remaining entries are concrete unbound receipts, not product defects, roadmap dependencies or Cartesian replay instructions. No additional work is authorized by this map; retain exact existing C04 grant and owner boundaries.",
         "closure": "Every required class predicate is bound at its accepted scope or remains explicitly named. Accepted Line006 focus/acquisition, finite threshold/dual-modifier grammar and Rect007/Circle008-interior/Arc009 acquisition remain distinct. No blanket fresh Wayland, full N01/N03 or C04 acceptance.",
@@ -12260,7 +12261,8 @@
           "FreshfiniteN01 native_wayland_n01_same_click_focus_line_20261020: firstordinaryclickinunfocusedSchematicpane1 focusespane1 andselectsexactindependentLine006Object/schematic_graphic scope/focus006, withactualtwofinalreviews+manageracceptance and18map/qualifiedcleanup. RawCAPTURE_ONLY, CPU Wayland/Vulkan/SHM only; Consolevisibleprefixclips, fullConsoleSTATEseparate. Thisexactfocus+Linepredicate is notmissing; no otherclass/region/threshold or blanketfreshWaylandcredit.",
           "Finite native threshold/dual-modifier grammar is accepted in native_wayland_threshold_dual_modifier_20261020 with both actual reviews and appointed-manager acceptance. Only the corresponding concrete gap is removed; remaining class and qualification entries are unchanged.",
           "Finite independent Schematic Rect007 edge, Circle008 filled interior and Arc009 endpoint plain-click acquisition is accepted in native_wayland_independent_schematic_drawings_20261021 with actual source/test/build/native receipts, two runtime PASS reviews and appointed-manager acceptance. Each replaces the prior Object with exact identity/class scope/focus. Only these three acquisition gaps are reconciled; drawing region qualification, Board graphics and other required class predicates remain open.",
-          "Finite individual top-level Bidirectional Port730...00c oriented-layout plain-click acquisition is accepted in native_wayland_individual_port_layout_20261021 with both actual source/command and runtime PASS reviews, appointed-manager bounded acceptance and root original-pixel/receipt audit. Exact native Port text hit wins over coincident visible GlobalLabel00a; full AX/Context/target-specific CPU readiness and61-file invariance/qualified cleanup agree. Only individual Port acquisition is credited; Port region/all-orientation and Zone point/menu-origin predicates remain separate."
+          "Finite individual top-level Bidirectional Port730...00c oriented-layout plain-click acquisition is accepted in native_wayland_individual_port_layout_20261021 with both actual source/command and runtime PASS reviews, appointed-manager bounded acceptance and root original-pixel/receipt audit. Exact native Port text hit wins over coincident visible GlobalLabel00a; full AX/Context/target-specific CPU readiness and61-file invariance/qualified cleanup agree. Only individual Port acquisition is credited; Port region/all-orientation and Zone point/menu-origin predicates remain separate.",
+          "Finite positive Junction730...00b center-anchor REGION qualification and adjacent-wire member exclusion is accepted in native_wayland_junction_anchor_region_20261021 with both actual source/command and runtime PASS reviews and appointed-manager acceptance. The fixed region contains the connection anchor while excluding the upper dot cap, and each adjacent Wire has only1/2endpoints inside. Exact rawsingletonCompound/scopejunction/focusNone, soleJunctionInspector, full AX/Context, immutable presentation readiness,61-file invariance and qualified cleanup agree. Only this anchor-region predicate is credited; Junction point/NoConnect/other region gaps and accepted Via-region scope remain separate. Related cardinality wording intake dat-compound-cardinality-drift-iu3k remains open and closedvs05/9e170f1b remains accepted; no cardinality/fullC04/HUMAN waiver."
         ],
         "accepted_receipt_sha256": {
           "exact30-native-proof.json": "e65001601d8995bb90ec8386fb8e9d215e8fa1f4dd7c363c39424d0264df4ad2",
@@ -12274,7 +12276,7 @@
         },
         "concrete_unbound_receipt_predicates": [
           "Padless Footprint placement anchor; pinless Symbol is not a substitute.",
-          "Via/Junction/NoConnect anchors.",
+          "Via and Junction point acquisition and NoConnect anchors; accepted Via center-region and Junction center-anchor region scopes remain credited separately.",
           "Standalone filled BoardGraphic and independent Board drawings; Schematic drawing region qualification and any other required drawing predicates beyond the accepted Line006/Rect007/Circle008-interior/Arc009 plain-click acquisitions.",
           "Nonempty independent BoardOutline.",
           "Parent-owned text and component Edge.Cuts negative.",
@@ -18912,5 +18914,166 @@
       }
     ],
     "raw_result_status": "CAPTURE_ONLY retained verbatim; manager/reviewer acceptance is separate from raw collector status."
+  },
+  "native_wayland_junction_anchor_region_20261021": {
+    "recorded_at": "2026-10-21T02:14:45.836815+00:00",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "state": "CONSUMED_REVIEWED_FINITE_POSITIVE_JUNCTION_ANCHOR_REGION_MEMBER_EXCLUSION_ACCEPTED",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/junction-region-source-candidate-01.json",
+      "sha256": "aa3ddb95e61039dbc75e44d43431dc31a32196b930bd57d5e040f25aea4ea51f",
+      "bytes": 16218
+    },
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/junction-region-source1.py",
+      "sha256": "8d3926443f0ac2c7c8c5756b4618dab2aa905a8b0191be8997d58b65760ef4a3",
+      "bytes": 24137
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/junction-region-manifest-01.json",
+      "sha256": "312fce272c887270504bd6d42506022ff9e34dca64e9e1dd79b39470e695ad69",
+      "bytes": 43894
+    },
+    "exact_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/junction-region-command-01.json",
+      "sha256": "60db1115c865283e3b1839402b90da8711b6a958a446bc648eb5059db92b1c91",
+      "bytes": 3360
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/junction-region-geometry-01.json",
+      "sha256": "04f0d69163ce89606164d8360316362c09f5c9a523a814bc90e97cf17f86b423",
+      "bytes": 3377
+    },
+    "actual_source_command_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c36-67d0-7cd3-8c0c-bcc086b3f4ac",
+        "outcome": "Actual SOURCE/COMMAND PASS reported and routed by appointed manager; preliminary geometry/contract clear in same turn, no mandatory findings."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c39-c0db-7d60-a3ea-36e8f14060cc",
+        "outcome": "Actual SOURCE/COMMAND PASS, no mandatory findings."
+      }
+    ],
+    "manager_source_command_disposition": "PM059 appointed manager RELEASES exact frozen candidateaa3ddb95/runner8d392644/manifest312fce27/command60db1115 ONCE, supported by both actual reviews and rootc63d75. OneShiftrectangle714,377->719,381 and2originals; no setup/retarget/retry. Pause at freshinitial for personal root fsyncedADMIT beforeinput; worker owns polling/cleanup. No runtime/fullC04/HUMAN acceptance.",
+    "budget": "One unchanged owned CPU Wayland/Vulkan/SHM envelope; exactly2originals(initial,selected), exactly1Shift Add rectangle714,377->719,381 (6.403px), two fixed motions, Shift press/release+two corresponding modifier transitions, oneLeft press/release. Zero setup/prefocus clicks/Escape/otherkeys/wheel/zoom/lasso/menu/semantic expansion/retarget/retry/forcedframe/settling sleep. Existing20s readiness,600s freshrootADMIT,10s capture,15s allowlistedContext bounds; heldready uses unchangedVia require_stableFalse with NO heldcapture. ExistingnormalUI shell exit/ownedcleanup after proof epoch is separate.",
+    "cardinality_intake": {
+      "id": "dat-compound-cardinality-drift-iu3k",
+      "actual_receipt": "2643e4 exit0",
+      "disposition": "Open roadmap:intake, related-only toC04 andclosedvs05; no dependency/newprerequisite. Existing rawsingletonCompound/scopejunction/focusNone and soleJunctionInspector remain expected; UVT2.2.20 two-or-more wording tension disclosed, no waiver or doctrinechange. Closedvs05/9e170f1b Inspector fix acceptance preserved."
+    },
+    "limits": "Finite positive Junction00b center-anchor rectangle qualification/member exclusion/soleInspector only. Preserve Junction point acquisition, NoConnect anchors, accepted Via-region finite scope, other unbound region predicates and open related cardinality intakeiu3k. Closedvs05/9e170f1b Inspector acceptance preserved. No UVT2.2.20 cardinality/specification waiver, exactboundary/lasso/allclasses/fullC04/HUMAN/hardware/exactpixel sampling/C05/C06/successor acceptance. Audit384d40 and correcteddb32f9 preserved; raw source/results/originals unchanged, no all-descendant/ordinary Close claim.",
+    "source_preparation_status": "Frozen candidate01/command01 consumed exactly once by recorded native run; preparation-only wording in immutable source packet is historical. No retries/retarget/new build.",
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/junction-region-runtime-candidate-01.json",
+      "sha256": "e49f12d82808a9e94ad827427c791926e03a44063b999cd54f7f58e570054b1b",
+      "bytes": 16520
+    },
+    "actual_execution": {
+      "launch": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 39096,
+        "timestamp": "2026-10-21T02:14:47.069Z",
+        "turn_id": "01a15c3c-d3d4-7210-acfa-b207e417629e",
+        "item_id": "ctco_01a15c3d-5a1d-73f3-8681-9fc90b9f10d4",
+        "call_id": "call_32fbd57f26214f85955af2c1691a735b",
+        "chunk_id": "7e741c",
+        "exit_code": null,
+        "exec_session": 80594
+      },
+      "final": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 39156,
+        "timestamp": "2026-10-21T02:16:44.318Z",
+        "turn_id": "01a15c3c-d3d4-7210-acfa-b207e417629e",
+        "item_id": "ctco_01a15c3f-241e-7330-90a6-456016bbf44f",
+        "call_id": "call_694c6bb2fb0e43279a7759c1d0d9b7fd",
+        "chunk_id": "a9d818",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "exec_session": 80594,
+      "exit": 0,
+      "result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-junction-region-01/result.json",
+        "sha256": "711048f8d067f5e944b92b25246120e8c72c8b210b3053baf57443a419a792d4",
+        "bytes": 111415
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-junction-region-01/transport.json",
+        "sha256": "3f2e4385980f4ecb8afc694305ef87bf0ad1d53f3465bf503b36765308f67856",
+        "bytes": 3747
+      },
+      "originals": {
+        "initial.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-junction-region-01/initial.png",
+          "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+          "bytes": 57612
+        },
+        "selected.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-junction-region-01/selected.png",
+          "sha256": "c9631bdb32b7f85b0b23ee33823cf48d9fccc8f54766431efaf3096ae996a6e4",
+          "bytes": 105410
+        }
+      },
+      "baseline_checkpoint": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-junction-region-01/baseline-checkpoint.json",
+        "sha256": "cdfdbc105fa844e14df0239b5f05614a57d5aa46820bde530de6bc3dce13dd82",
+        "bytes": 14583
+      },
+      "manager_fresh_admission": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-junction-region-01/baseline-admission.json",
+        "sha256": "80490a99206abcb33ccc210baf1851a2bf91917202e93e198099924a2f6e8154",
+        "bytes": 1421
+      },
+      "audit": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 39195,
+        "timestamp": "2026-10-21T02:18:39.002Z",
+        "turn_id": "01a15c3c-d3d4-7210-acfa-b207e417629e",
+        "item_id": "ctco_01a15c40-e419-73f1-88a0-653851838662",
+        "call_id": "call_017ec28ea70a49f49b668a736c5ce057",
+        "chunk_id": "db32f9",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "counts": "One Shift Add rectangle714,377->719,381, two original captures, eight controlled input rows and four ordinary redraw requests. Zero individual click acquisitions/setup/wheel/semantic expansion/retarget/retry."
+    },
+    "actual_runtime_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c3f-80e3-7901-b2dd-8fa689b232ef",
+        "outcome": "Bounded Junction runtime PASS against raw711048f8/indexe49f12d8. Both originals/exact Junction-only membership/no focus/appearance/ordering/61files/recorded cleanup verified; no mandatory finding."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c3f-afb0-7123-ba05-c1eaad8ec477",
+        "outcome": "Bounded Junction runtime PASS against raw711048f8. Pixels/exact membership/AXContext/61files/recorded cleanup agree; anchor/member-exclusion scope only, no mandatory findings."
+      }
+    ],
+    "manager_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "outcome": "PM059 appointed manager ACCEPTS finite positive Junction center-anchor region qualification, adjacent-member exclusion and sole-Junction Inspector behavior only, against raw711048f8/indexe49f12d8 with both actual runtime reviews and root131e07/personal original review. Exact existing node/current-map credit and required metadata checks released; root owns inspection/commit/push. No new Cargo/native/framework or subject-cardinality waiver.",
+      "root_audit": "131e07 PASS rawpins/one region eightinput+fourredraw/zeroindividualclick/exactJunctiononly/nofocus/twoContexts/fourAX/61maps3checkpoints+repo/live/bothframeprefixreplays/eightPIDs/twoIPC/timelyshell. Actualfinala9d818 structurally verified atworkerrolloutline39156."
+    },
+    "accepted_behavior": "From natural Board0/None, one fixed Shift Add rectangle containing Junction730...00b connection anchor but excluding its upper dot cap qualifies exactly that Junction, focuses Schematicpane1 and excludes adjacent Wire008/009 with only one of two endpoints inside. Raw subject remains singleton Compound, scopejunction/focusNone, current project2001/revision67a175b3. SoleJunction Inspector title/class-specific view is preserved without inventing focus; full standard public AX/complete Context agree before/after selected original. Both readiness waits bind immutable Junction:object1/SELECTED/All1/Junctions1+footerSchematic/compound1 and separate exact model through256->304->305->307/acq7/receipt8/contentrev28. All61canonical maps unchanged, eight recorded PIDs/two private IPC gone, five stop flags true/errors[], shell timely.",
+    "pixel_and_profile_limits": {
+      "initial": "1344x806 Board0 focused/None, Schematic1 visible/unfocused, no setup. Freshcapture happens to hashidentical acceptedPort initial, neverreusedbaseline.",
+      "selected": "1344x806 Schematic1 focused; soleJunction accentcue at~716,377, Inspector Junction:object1/SELECTED/All1/Junctions1, noFocusrow, membercount1/typejunction1, L202; footerSchematic/compound1. Adjacentwiresretainnormalappearance. ConsolevisibleCompoundselection\u20141objectsprefixclips; fullrawSTATEseparate.",
+      "limits": "Tiny scene/dotcap exclusion not directlymeasured bypixels; exactsource/region+fulltypedmembership establishanchor/memberexclusion. PrivateCPUcomposedoriginal, noHUMAN/physicaldesktop/hardware/exactGPUcompositorsampling acceptance."
+    },
+    "preserved_nonpasses": [
+      {
+        "receipt": "384d40",
+        "cause": "Read-onlyaudit expected duplicate original PNGs to remain in *-native-capture dirs. Existingunchangedhelper line245 RENAMES eachoriginaltolabel.png, leavingdirsempty. Sourceb57b1b confirms; correcteddb32f9 verifies2screenshotactions/2originals withoutduplicatefile assumption. Raw/nativeunchanged, no runtimefailure or rerun."
+      }
+    ],
+    "raw_result_status": "CAPTURE_ONLY retained verbatim; actual independent reviews and appointed-manager bounded acceptance are separate."
   }
 }
