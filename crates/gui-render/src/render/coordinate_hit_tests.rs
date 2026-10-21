@@ -16,6 +16,102 @@ fn schematic_workspace_state() -> ReviewWorkspaceState {
     state
 }
 
+/// Resolve the frozen native drawing source through the normal projector.
+fn native_drawing_workspace_state() -> ReviewWorkspaceState {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+        "../test-harness/testdata/selection/s5a_v1/replay-inputs/native/s5a-c03-u5-v2/class-qualification/variants/class-geometry",
+    );
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .expect("frozen native drawing source resolves");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.schematic_scene = datum_gui_protocol::project_native_schematic_scene(&model, &root)
+        .expect("native drawing projection succeeds");
+    assert!(state.schematic_scene.is_some());
+    state
+}
+
+#[test]
+fn native_filled_drawing_interior_selects_source_while_open_strokes_stay_hollow() {
+    let state = native_drawing_workspace_state();
+    let scene = state.schematic_scene.as_ref().unwrap();
+    let circle_id = "71000000-0000-4000-8000-000000000008";
+    let circle_key = format!("schematic-drawing-circle:{circle_id}");
+    let circle = scene
+        .board_graphics
+        .iter()
+        .find(|g| g.object_id == circle_key)
+        .unwrap();
+    assert_eq!(circle.source_object_uuid, circle_id);
+    assert_eq!(
+        circle.schematic_hit_kind(),
+        Some(datum_gui_protocol::SchematicHitKind::Drawing)
+    );
+    assert_eq!(circle.primitive_kind, "polygon");
+    let retained = RetainedScene::from_workspace_schematic_for_surface(&state, 1344, 806, 1.0)
+        .expect("native Schematic retained scene exists");
+    let at = |x, y| retained.hit_test_authored_world(PointNm { x, y }, &state);
+    let target = |kind: &str, id: &str| {
+        Some(HitTarget::AuthoredObject(format!(
+            "schematic-drawing-{kind}:{id}"
+        )))
+    };
+    // Both material points are far from the sampled outline. This fails before
+    // the fix even though the ordinary renderer already paints the filled disc.
+    assert_eq!(
+        at(35_000_000, 12_500_000),
+        Some(HitTarget::AuthoredObject(circle_key.clone()))
+    );
+    assert_eq!(
+        at(35_500_000, 13_000_000),
+        Some(HitTarget::AuthoredObject(circle_key.clone()))
+    );
+    assert_eq!(
+        at(37_500_000, 12_500_000),
+        Some(HitTarget::AuthoredObject(circle_key.clone()))
+    );
+    assert_eq!(
+        at(37_600_000, 12_500_000),
+        Some(HitTarget::AuthoredObject(circle_key.clone()))
+    );
+    assert_eq!(at(37_300_000, 14_800_000), None);
+    assert_eq!(
+        retained.authored_overlap_world(
+            PointNm {
+                x: 37_450_000,
+                y: 12_550_000
+            },
+            &state,
+            |_| true
+        ),
+        vec![HitTarget::AuthoredObject(circle_key.clone())]
+    );
+    assert_eq!(at(38_000_000, 12_500_000), None);
+    assert_eq!(
+        retained.hit_test_authored_world_eligible(
+            PointNm {
+                x: 35_000_000,
+                y: 12_500_000
+            },
+            &state,
+            |_| false
+        ),
+        None
+    );
+    let rect_id = "71000000-0000-4000-8000-000000000007";
+    assert_eq!(at(22_500_000, 12_500_000), None);
+    assert_eq!(at(22_500_000, 10_000_000), target("rect", rect_id));
+    let arc_id = "71000000-0000-4000-8000-000000000009";
+    assert_eq!(at(45_000_000, 12_500_000), None);
+    assert_eq!(at(45_000_000, 13_500_000), None);
+    assert_eq!(at(47_500_000, 12_500_000), target("arc", arc_id));
+    assert_eq!(
+        at(5_000_000, 10_000_000),
+        target("line", "71000000-0000-4000-8000-000000000006")
+    );
+    assert_eq!(at(5_000_000, 11_000_000), None);
+}
+
 /// The world bbox center of the first projected symbol body — a point that
 /// must fall inside that symbol's hit region.
 fn first_symbol(scene: &BoardReviewSceneV1) -> (&str, PointNm) {
@@ -84,48 +180,62 @@ fn topmost_acquisition_skips_ineligible_foreground_without_changing_hit_order() 
 /// symbol, each tagged with the symbol's stable projected identity.
 #[test]
 fn schematic_hit_storage_is_admitted_before_cloning_and_matches_allocator() {
-    let state = schematic_workspace_state();
-    let scene = state.schematic_scene.as_ref().unwrap();
-    let scope = crate::cpu_alloc::Scope::new("schematic-hit-construction-proof");
-    let mut required = 0;
-    let regions = scope
-        .with(|| {
-            schematic_hit_regions(scene, |bytes| {
-                required = bytes;
-                assert_eq!(scope.usage().allocations, 0, "admission precedes clones");
-                Ok(())
+    for state in [
+        schematic_workspace_state(),
+        native_drawing_workspace_state(),
+    ] {
+        let scene = state.schematic_scene.as_ref().unwrap();
+        let scope = crate::cpu_alloc::Scope::new("schematic-hit-construction-proof");
+        let mut required = 0;
+        let regions = scope
+            .with(|| {
+                schematic_hit_regions(scene, |bytes| {
+                    required = bytes;
+                    assert_eq!(scope.usage().allocations, 0, "admission precedes clones");
+                    Ok(())
+                })
             })
-        })
-        .unwrap();
-    assert!(!regions.is_empty());
-    assert_eq!(regions.capacity(), regions.len());
-    let usage = scope.usage();
-    assert_eq!(required as u64, usage.payload_bytes + usage.tracking_bytes);
-    let eligible = scene
-        .board_graphics
-        .iter()
-        .filter(|graphic| graphic.schematic_hit_kind().is_some() && !graphic.path.is_empty());
-    for (region, graphic) in regions.iter().zip(eligible) {
-        assert_eq!(region.target, graphic.object_id.clone());
-        match &region.shape {
-            WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
-                assert_eq!(path, &graphic.path);
+            .unwrap();
+        assert!(!regions.is_empty());
+        assert_eq!(regions.capacity(), regions.len());
+        let usage = scope.usage();
+        assert_eq!(required as u64, usage.payload_bytes + usage.tracking_bytes);
+        let eligible = scene
+            .board_graphics
+            .iter()
+            .filter(|graphic| graphic.schematic_hit_kind().is_some() && !graphic.path.is_empty());
+        for graphic in eligible {
+            let source_regions: Vec<_> = regions
+                .iter()
+                .filter(|r| r.target == graphic.object_id)
+                .collect();
+            assert!(!source_regions.is_empty());
+            for region in source_regions {
+                match &region.shape {
+                    WorldHitShape::Polyline { path, .. } | WorldHitShape::Polygon(path) => {
+                        assert_eq!(path, &graphic.path);
+                    }
+                    WorldHitShape::Contours { outer, holes } => {
+                        assert_eq!(outer, &graphic.path);
+                        assert_eq!(holes, &graphic.holes);
+                    }
+                    WorldHitShape::Rect(rect) => {
+                        assert_eq!(Some(*rect), bounding_rect_nm(&graphic.path))
+                    }
+                    _ => panic!("unexpected schematic hit shape"),
+                }
             }
-            WorldHitShape::Rect(rect) => {
-                assert_eq!(Some(*rect), bounding_rect_nm(&graphic.path))
-            }
-            _ => panic!("unexpected schematic hit shape"),
         }
-    }
-    drop(regions);
-    assert_eq!(scope.usage().allocations, 0);
-    let refusal = schematic_hit_regions(scene, |bytes| {
-        assert_eq!(bytes, required);
+        drop(regions);
         assert_eq!(scope.usage().allocations, 0);
-        anyhow::bail!("test admission refusal")
-    });
-    assert!(refusal.is_err());
-    assert_eq!(scope.usage().allocations, 0);
+        let refusal = schematic_hit_regions(scene, |bytes| {
+            assert_eq!(bytes, required);
+            assert_eq!(scope.usage().allocations, 0);
+            anyhow::bail!("test admission refusal")
+        });
+        assert!(refusal.is_err());
+        assert_eq!(scope.usage().allocations, 0);
+    }
 }
 
 #[test]

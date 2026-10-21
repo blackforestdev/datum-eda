@@ -251,7 +251,7 @@ impl RetainedScene {
                             .is_none_or(|l| layer_visible(state, l))
                         && region.shape.contains(point)
                     {
-                        hits.push((order, HitTarget::AuthoredObject(region.target.clone())));
+                        hits.push((order, region.target.clone()));
                     }
                 },
             );
@@ -260,7 +260,11 @@ impl RetainedScene {
             }
         }
         hits.sort_unstable_by_key(|(order, _)| std::cmp::Reverse(*order));
-        hits.into_iter().map(|(_, target)| target).collect()
+        let mut seen = std::collections::BTreeSet::new();
+        hits.into_iter()
+            .filter(|(_, key)| seen.insert(key.clone()))
+            .map(|(_, key)| HitTarget::AuthoredObject(key))
+            .collect()
     }
 
     /// Schematic (non-board) world hit-test — no board filters. The schematic's
@@ -301,6 +305,20 @@ pub(crate) fn schematic_hit_regions(
                 };
                 if graphic.path.is_empty() {
                     continue;
+                }
+                // Filled material and its outline share one authored target.
+                // Keep the existing stroke hit below, including its tolerance.
+                if kind == datum_gui_protocol::SchematicHitKind::Drawing
+                    && graphic.primitive_kind == "polygon"
+                {
+                    emit(Region {
+                        target: &graphic.object_id,
+                        layer_id: None,
+                        shape: Shape::Contours {
+                            outer: &graphic.path,
+                            holes: &graphic.holes,
+                        },
+                    })?;
                 }
                 let width = graphic.width_nm.unwrap_or(100_000) as f32;
                 let shape = match kind {
