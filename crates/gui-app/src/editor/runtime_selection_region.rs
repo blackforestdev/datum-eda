@@ -27,7 +27,11 @@ impl Runtime {
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
         };
-        if self.presented_hits.hit_test(x, y).is_some() {
+        if self
+            .presented_hits
+            .hit_test(x, y)
+            .is_some_and(|target| !matches!(target, HitTarget::AuthoredObject(_)))
+        {
             return false;
         }
         let Some(pane) = self.pane_at_screen(x, y) else {
@@ -363,3 +367,7 @@ impl Runtime {
         true
     }
 }
+
+#[cfg(test)]
+#[path = "runtime_selection_region/tests.rs"]
+mod tests;
