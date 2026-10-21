@@ -12175,6 +12175,14 @@
         ],
         "accepted_binding": "Runtime candidate 32594887fe18ccda3762b3d95676b36c6c5db220125a43ea6a4bc95f0b589c02 has both actual independent finite runtime/pixel PASSs and appointed-manager acceptance. Ordinary observed Select Run establishes the precondition, then one Shift-only click on a different existing Bus section preserves all 257 identities, four Context boundaries, eight AX snapshots, 16 Inspector fields and the Run Console summary without a new announcement.",
         "limit": "CPU Wayland/Vulkan/SHM Bus257 case only. No new basic-cap or Ctrl-refusal credit, Run256 extension, pre-hidden/filter/cross-pane combination, omitted-Unavailable-reason parity, direct screen-reader stream, pixel identity, metrology, hardware/performance, all-descendant, full C04/HUMAN/C05/C06 or successor credit."
+      },
+      {
+        "predicates": "N05/N09 eligible visible LabelE explicitly acquires complete Schematic GlobalNet21 after root Wires are hidden before acquisition; restoring visibility preserves the semantic subject and full occurrence-qualified membership.",
+        "receipts": [
+          "native_wayland_prehidden_wires_global_net_20261021"
+        ],
+        "accepted_binding": "Runtime7c67fb05, both actual independent runtime/pixel PASSs and appointed-manager finite acceptance. Exact21 identities include root Wires8/9/D with hidden3 to0;14 hierarchical identities remain unprojected. Full Context/AX and all15 canonical fields agree, with unchanged semantic identity/revision/scope/focus and qualified invariance/cleanup.",
+        "limit": "CPU Wayland/Vulkan/SHM finite Schematic case only. Acquisition selection Console echo and later viewport-action history are distinct; no refreshed Console0 or full restored three-consumer parity. No Board/Bus/large-set/cross-pane, omitted-reason, metrology, hardware, full C04/HUMAN/C05/C06 or successor credit."
       }
     ],
     "unresolved_evidence_questions": [
@@ -12186,11 +12194,13 @@
           "native_wayland_prehidden_authored_20261018",
           "ir01_prefiltered_label_run_20261011",
           "ir01_prefiltered_wire_global_net_20261013",
-          "native_wayland_hidden_junction_run_20261019.native_attempt_02"
+          "native_wayland_hidden_junction_run_20261019.native_attempt_02",
+          "native_wayland_prehidden_wires_global_net_20261021"
         ],
-        "unresolved": "Actual native02 observerPASS, independent final combinedPASS51ab2880 and appointed-manager acceptance establish only the frozen Schematic Wire8-Junctionb-Wire9 positive predicate: hidden-before-acquisition/fullRun5, stable origin, hidden1->0 and complete output/source parity. Broader independently hidden wire-segment/Board/Bus/filter/cap/crosspane predicates retain their exact required scope; fullIR01 is not closed.",
+        "unresolved": "The frozen Wire8-Junctionb-Wire9 Run5 hidden-intermediate predicate remains accepted. Separately, pre-hidden root Wires8/9/D in GlobalNet21 now have both actual runtime reviews and finite manager acceptance in native_wayland_prehidden_wires_global_net_20261021. These exact cases do not establish an independently hidden intermediate Wire segment in a Run, Board/Bus variants, large-set or cross-pane combinations, or full IR01.",
         "smallest_next_lookup_or_work": "Bind the current exact Schematic Junction receipt at its accepted final scope; do not repeat this positive case. Resolve only still-unbound broader predicates from existing receipts before authorizing smallest necessary further work.",
-        "closure": "The frozen Schematic Junction predicate has actual independent combined and manager bounded acceptance in native_wayland_hidden_junction_run_20261019.final_review. Remaining applicable exact broader required predicates still need adequate accepted evidence/disposition; no generic not-full rerun queue."
+        "closure": "The frozen Schematic Junction predicate has actual independent combined and manager bounded acceptance in native_wayland_hidden_junction_run_20261019.final_review. Remaining applicable exact broader required predicates still need adequate accepted evidence/disposition; no generic not-full rerun queue.",
+        "current_global_net_prehidden_Wires": "Exact visible LabelE semantic invocation after L200 pre-hide acquires all21 occurrence-qualified identities, hidden3/unprojected14; L200 restore keeps the same subject and full IDs while live hidden becomes0. Only this Schematic GlobalNet hidden-Wire predicate is reconciled. Acquisition Console history and visibility-action echo remain separately qualified."
       },
       {
         "id": "large-derived-ir01-d4-extensions",
@@ -25835,13 +25845,799 @@
       "retained_boundaries": "Run01 remains FAIL and dat-double-click-dispatch-delay-30lq stays open, unassigned and without dependency. Source03 stays held. Run256 extensions, pre-hidden/filter/cross-pane combinations, omitted-Unavailable-reason parity, full C04, HUMAN, C05, C06 and successor authorization remain open. No new source, native run, build, fixture, product rule or dependency is authorized."
     },
     "landing": {
-      "state": "Pending manager normal final checks, hooks, commit and push",
+      "commit": "766d1eb1a8b882511a1af3838452fdde71356c10",
+      "normal_hooks": "143861 PASS",
+      "push": "e6e4e2",
+      "fetch": "51002e",
+      "root_verified": "Clean HEAD equals origin/main after exact three-path landing. No broader C04 acceptance."
+    }
+  },
+  "native_wayland_prehidden_wires_global_net_20261021": {
+    "state": "FINITE PRE-HIDDEN WIRES GLOBALNET21 ACQUISITION AND RESTORE ACCEPTED; FULL C04/HUMAN OPEN",
+    "recorded_at": "2026-10-21T11:51:02.556771+00:00",
+    "head": "766d1eb1a8b882511a1af3838452fdde71356c10",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-source1.py",
+      "sha256": "6188a753cebc645cbb1d55108f1a8998de42d0df17611f9884f863c2648681a7",
+      "bytes": 32418
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-manifest-02.json",
+      "sha256": "ab635d6c304c21d927eab7bdedb6db84f275e4cd2ce11e43de4fbce8d09972f6",
+      "bytes": 60723
+    },
+    "exact_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-command-02.json",
+      "sha256": "5d58c901c58914642a5958dcf90125a05c521cbd389d412fc779b1f88b816fbf",
+      "bytes": 6974
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-geometry-02.json",
+      "sha256": "3df93e799eee49da09523452d5ea2151dec70308077efec45703d62a10821e18",
+      "bytes": 8189
+    },
+    "controls": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-controls-01.json",
+      "sha256": "89f5373ffb70799cb93f2b448698d3d645f378b8252000a5f37ac0509f1fab2a",
+      "bytes": 1570
+    },
+    "requirement": "preparation-plan.md N05/N09 hidden-member row and repeat-for-schematic-GlobalNet clause308\u2013333; UVT2.2.8 and2.2.19. This is pre-hidden Wires with eligible LabelE semantic invocation, distinct from prior filtered-Wire GlobalNet21 and hidden-Junction Run5.",
+    "input": {
+      "root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/s5a-replay-inputs/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "canonical_count": 61,
+      "index": {
+        "path": "/home/bfadmin/Documents/datum-eda/crates/test-harness/testdata/selection/s5a_v1/replay-inputs/index.json",
+        "sha256": "bcce46b87fc3265f19e244a60af0249388316866d557439a786765bcbccd472c",
+        "bytes": 363185
+      },
+      "classification": "Existing approved semantic-scope source and complete stored history; no input construction or mutation."
+    },
+    "accepted_evidence_reuse": {
+      "complete21": "global_net_ladder_20261011.setup.expected_global_members and exact current source61 map",
+      "filtered_Wire_Net": "ir01_prefiltered_wire_global_net_20261013; filter eligibility is not hidden geometry",
+      "hidden_Junction_Run": "native_wayland_hidden_junction_run_20261019.native_attempt_02; source-backed hidden1\u21920 and viewport-action Console history, no Wire GlobalNet credit",
+      "owner_cleanup": "Accepted Bus no-op source04 FocusQA and entire finally AST are exact; state/natural-baseline helpers differ only logger literal; no lifecycle or terminal implementation change.",
+      "prior_landing": "Bus no-op finite acceptance landed766d1eb1; its result is not replayed or upgraded."
+    },
+    "budget": "One ordinary owned CPU Wayland/Vulkan/SHM envelope and four originals: initial, prehidden, acquired, restored. Fresh personal root initial ADMIT precedes all controlled input. Tab focuses Schematic and F fits; fixed layer swatch18,507 hides L200 before acquisition, leaving None. Fixed914,376 targets visible eligible LabelE; ContextMenu,s,Down,Return activates the actually observed available Select Global Net row after exact Object/Semantic/All order and focus checks. The full21 Net is captured with hidden3/unprojected14. Fixed19,507 restores L200 and captures the same full21 Net with hidden0/unprojected14. Exactly two layer primary press/release pairs; no canvas point bootstrap, regions, wheel, modifiers, row cycling, retargeting or extra gesture. Same20s readiness,600s initial admission,10s captures and15s allowlisted Context bounds. No forced frame, settling sleep, fixture/source mutation, build or retry. Ordinary UI terminal exit and qualified recorded-owner cleanup follow the proof epoch.",
+    "completion_criteria": "Before acquisition, frozen L200false and visible eligible LabelE/L206+L214 are required while selection is None. Exact source-bound Semantic(LabelE) menu action establishes logical Net b151f91b at revision67a175, with complete occurrence-qualified21 identities (9Wire/6Label/3Port/3Junction), no focus/scope/notice/staleness. Only root Wires8/9/D have hidden flags;14 nonroot identities remain unprojected, never relabeled hidden. Six allowlisted Context queries include two prehidden None and four selected boundaries; eight selected AX snapshots and all15 Inspector fields agree, including exact reasons for unavailable full bounds/layer coverage. Selection activation and layer restore each bind their unique own input to immutable full subject/member/hidden-count Inspector text, native present and settled ledger at both selected waits; prehidden None likewise binds its own release. Restoring L200 preserves the full semantic subject/member IDs/revision and updates live hidden3 to0, with unprojected14 unchanged. All fields except hidden_members remain identical across restore. Hidden Wires must have no cue, restored Wires must be selected in independently reviewed originals. All61 canonical maps remain unchanged at before/observation/teardown/current, and authenticated recorded owners/private IPC must be discharged. Both actual source reviews must disposition the Console contract question before release; both runtime reviews and finite manager acceptance remain required.",
+    "console_contract_review_question": "UVT2.2.8/2.2.19 require truthful complete shared selection output. Current source emits acquisition-time Global Net \u2014 21 objects; 3 hidden; 0 locked, then later Layer visibility visible viewport-action history while live Inspector/AX/Context hidden becomes0. Accepted hidden-Junction Run5 restore records the same action-history distinction: native02/result junction_layer_restored seq12 has run/hidden0 and Console Layer visibility visible. Reviewers must determine whether existing contract, PM033 history semantics and adequate evidence support this finite restore observation or expose a consumer defect. Source behavior and prior acceptance do not waive a requirement. No refreshed Console0 selection summary, full post-restore three-consumer parity, fix or waiver is claimed. No extra clearing or selection gesture is allowed.",
+    "limits": "Only pre-hidden root Wires8/9/D in this existing GlobalNet21, acquired from eligible LabelE and restored with the same complete occurrence identities, are accepted. Acquisition Console hidden3 is contemporaneous history; restore emits Layer visibility visible while live counts become0. No refreshed Console0, full restored three-consumer parity, all21 pixels, metrology, omitted-Unavailable-reason, direct screen-reader event, hardware/performance, exact GPU/compositor sampling, ordinary Close or all-descendant claim. Board/Bus/large-set/cross-pane, full C04/HUMAN/C05/C06 and successors remain open.",
+    "preparation_record": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-preparation-01.json",
+      "sha256": "40c75312233f2d7e470848975db6b29adf3524c110420e4c44f643c9bab46124",
+      "bytes": 1243
+    },
+    "fresh_routes": {
+      "run": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-01",
+      "transport": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-prehidden-global-net-01",
+      "required_absent": true
+    },
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-source-candidate-02.json",
+      "sha256": "4c4b77c7fc685cda0016b6cbc2e5340c5abed79991006da032b9852465380e8b",
+      "bytes": 19345
+    },
+    "authority": "The appointed manager accepted this finite Schematic hidden-Wire GlobalNet21 acquisition and restore after both actual runtime reviews. C04 remains in progress; HUMAN and separate C05/C06 remain open.",
+    "source_reviews": {
+      "state": "BOTH ACTUAL SOURCE/COMMAND PASS",
+      "candidate_sha256": "4c4b77c7fc685cda0016b6cbc2e5340c5abed79991006da032b9852465380e8b",
+      "closeout_turn": "01a15e41-defc-7443-b982-1f577e53ecde",
+      "reorganization_turn": "01a15e41-fdaa-76f1-9faf-64976be23b2d",
+      "scope": "Both explanatory corrections resolved; completed unaffected source/controls reused. Bounded Console history distinction supported. No runtime acceptance."
+    },
+    "runtime_acceptance": "Finite behavior accepted at the stated CPU Wayland/Vulkan/SHM scope. Both actual runtime reviews and manager disposition are recorded; raw CAPTURE_ONLY remains unchanged.",
+    "actual_tool_receipts": {
+      "6a172e": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48118,
+        "timestamp": "2026-10-21T11:17:27.019Z",
+        "item_id": "ctco_01a15e2e-2d6b-7071-900f-df1bcbaa63ca",
+        "call_id": "call_e0cbdc6c3bd44ea5ab274fb4e62d2a5d",
+        "chunk_id": "6a172e",
+        "exit_code": 0
+      },
+      "ea3b52": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48201,
+        "timestamp": "2026-10-21T11:19:39.164Z",
+        "item_id": "ctco_01a15e30-319c-7ad3-b995-7fc9905f4060",
+        "call_id": "call_5a9e69628bc8415fa323249ecca0796b",
+        "chunk_id": "ea3b52",
+        "exit_code": 0
+      },
+      "816225": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48208,
+        "timestamp": "2026-10-21T11:19:47.391Z",
+        "item_id": "ctco_01a15e30-51bf-7e12-9b59-3bdd20857408",
+        "call_id": "call_c9ef379bc0114244a3efdc3ac1006733",
+        "chunk_id": "816225",
+        "exit_code": 0
+      },
+      "de2b97": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48276,
+        "timestamp": "2026-10-21T11:23:43.643Z",
+        "item_id": "ctco_01a15e33-ec9b-7720-993a-4087d91e516d",
+        "call_id": "call_075eda9fa598446cb5de054d502d51d0",
+        "chunk_id": "de2b97",
+        "exit_code": 1
+      },
+      "f70d22": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48286,
+        "timestamp": "2026-10-21T11:24:16.069Z",
+        "item_id": "ctco_01a15e34-6b45-70f1-91e1-4e492ed55cb6",
+        "call_id": "call_1c25806e8bdb45cbaecb27f88dbec592",
+        "chunk_id": "f70d22",
+        "exit_code": 1
+      },
+      "20c919": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48299,
+        "timestamp": "2026-10-21T11:25:02.501Z",
+        "item_id": "ctco_01a15e35-20a5-7da1-9366-151b059754c0",
+        "call_id": "call_3ed6be6ceb404b73b7e4209d0cb842aa",
+        "chunk_id": "20c919",
+        "exit_code": 0
+      },
+      "ebbb55": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48306,
+        "timestamp": "2026-10-21T11:25:19.063Z",
+        "item_id": "ctco_01a15e35-6157-74d1-a146-490ee1fd0c52",
+        "call_id": "call_ca7f2d9dd57245cbb38869195a3b9a1d",
+        "chunk_id": "ebbb55",
+        "exit_code": 0
+      },
+      "966870": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48316,
+        "timestamp": "2026-10-21T11:26:43.379Z",
+        "item_id": "ctco_01a15e36-aab3-7cb3-96e1-22392568641b",
+        "call_id": "call_35b60c6d053f4870939967d80cf4624f",
+        "chunk_id": "966870",
+        "exit_code": 0
+      },
+      "a6e141": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48330,
+        "timestamp": "2026-10-21T11:28:38.154Z",
+        "item_id": "ctco_01a15e38-6b09-73a0-95f6-9f980c2f71bb",
+        "call_id": "call_05dc1d85f66943afbb102d9a6ce078db",
+        "chunk_id": "a6e141",
+        "exit_code": 0
+      },
+      "377073": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48435,
+        "timestamp": "2026-10-21T11:38:29.353Z",
+        "item_id": "ctco_01a15e41-7069-75c1-b060-49b1c47ff964",
+        "call_id": "call_740c1ef6943843b79390b96807ec274b",
+        "chunk_id": "377073",
+        "exit_code": 0
+      },
+      "0342c8": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48493,
+        "timestamp": "2026-10-21T11:40:38.691Z",
+        "item_id": "ctco_01a15e43-69a3-7b63-8f8b-dbf2c114ca3e",
+        "call_id": "call_2fd82591d647465ab9a7c6337945e0e2",
+        "chunk_id": "0342c8",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "b81a0d": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48497,
+        "timestamp": "2026-10-21T11:40:48.856Z",
+        "item_id": "ctco_01a15e43-9158-78c0-a877-a601bbd01f62",
+        "call_id": "call_78adc7ccaa3e400894d94a71cc9e96bd",
+        "chunk_id": "b81a0d",
+        "exit_code": null,
+        "exec_session": 58005
+      },
+      "20a2b9": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48510,
+        "timestamp": "2026-10-21T11:41:13.374Z",
+        "item_id": "ctco_01a15e43-f11e-7f71-9c52-fc6ad5c76e6d",
+        "call_id": "call_f5f090162f444812b1ca46c47a8556da",
+        "chunk_id": "20a2b9",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "d6719a": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48568,
+        "timestamp": "2026-10-21T11:42:55.626Z",
+        "item_id": "ctco_01a15e45-808a-7382-825e-ba8647adfeea",
+        "call_id": "call_36d02c21c0f94ce890ed07713c64057e",
+        "chunk_id": "d6719a",
+        "exit_code": 0,
+        "exec_session": null,
+        "owned_exec_session": 58005
+      },
+      "f4bc9c": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48591,
+        "timestamp": "2026-10-21T11:44:59.345Z",
+        "item_id": "ctco_01a15e47-63d1-70b3-a0ec-6cd7b318cc40",
+        "call_id": "call_b4fde32bfef64342b7faad65163bf434",
+        "chunk_id": "f4bc9c",
+        "exit_code": 0
+      },
+      "9076f4": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48599,
+        "timestamp": "2026-10-21T11:45:29.985Z",
+        "item_id": "ctco_01a15e47-db81-7d13-9992-b86e5a2294b0",
+        "call_id": "call_fc04aebeb63443699974b4bad928cefa",
+        "chunk_id": "9076f4",
+        "exit_code": 0
+      },
+      "43c9b0": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48677,
+        "timestamp": "2026-10-21T11:51:02.611Z",
+        "item_id": "ctco_01a15e4c-eed3-74e2-b227-5f084db4464b",
+        "call_id": "call_cb7efe9eca2d45328381ad1fd236d4b2",
+        "chunk_id": "43c9b0",
+        "exit_code": 0
+      },
+      "1c0735": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48677,
+        "timestamp": "2026-10-21T11:51:02.611Z",
+        "item_id": "ctco_01a15e4c-eed3-74e2-b227-5f084db4464b",
+        "call_id": "call_cb7efe9eca2d45328381ad1fd236d4b2",
+        "chunk_id": "1c0735",
+        "exit_code": 0
+      }
+    },
+    "held_source01": {
+      "candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-source-candidate-01.json",
+        "sha256": "a16e93565740c60e5b5b00afe18ecaa1689ea815ba828b318d2562e83bae53ce",
+        "bytes": 17809
+      },
+      "manifest": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-manifest-01.json",
+        "sha256": "f9ca58540e6cce694f199ed4846799aa03f7052f97aac3ed1ed108b6ca0d4d48",
+        "bytes": 60291
+      },
+      "exact_command": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-command-01.json",
+        "sha256": "711e258433f8b0d9dcdf39b7b8622aa9f47a59af781a5a0fd751c44f708902f2",
+        "bytes": 6974
+      },
+      "geometry": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-geometry-01.json",
+        "sha256": "1e7207e334b477535aac5f6b15d8b06c1ad373e77ac222394a9295131ce86849",
+        "bytes": 7984
+      },
+      "actual_reviews": {
+        "closeout_turn": "01a15e39-61d1-7391-9afe-01c6a99ae207",
+        "reorganization_turn": "01a15e39-9709-7ab0-94aa-2dc51487d0cc",
+        "disposition": "REVISE explanatory metadata only: Label Shape::Rect hit-owner description and stale Port/no-hidden/no-semantic input prose. Completed unaffected source review found no other blocker. No native launch or failure."
+      }
+    },
+    "source02_delta": "Only geometry.source_geometry and its inline mirrors change from polyline-tolerance wording to the actual Label Shape::Rect hit algorithm, plus manifest.input.source_isolation changes from stale Port00c/no-hidden/no-semantic text to this actual LabelE/L200/GlobalNet case. Geometry reference paths/hashes and dependent manifest/command/candidate pins follow. Runner, input bytes/map, coordinates, controls and budget are byte-exact.",
+    "console_contract_source_disposition": {
+      "scope": "Both completed source01 reviews support the bounded acquisition-time Console history and later visibility-action/live-count distinction, without a refreshed Console0 or full post-restore three-consumer claim. This is source interpretation only, not runtime acceptance.",
+      "manager_corroboration": "Root PM033 read73721a concurs; actual source02 verdicts and runtime observations remain separate."
+    },
+    "source02_freeze_receipt": "377073 exit0; exact two explanatory scalars and dependent pins only. No controls, app/native input or build rerun.",
+    "manager_exact_release": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-21T11:40:38.371903+00:00",
+      "exact_command": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-command-02.json",
+        "sha256": "5d58c901c58914642a5958dcf90125a05c521cbd389d412fc779b1f88b816fbf",
+        "bytes": 6974
+      },
+      "candidate_sha256": "4c4b77c7fc685cda0016b6cbc2e5340c5abed79991006da032b9852465380e8b",
+      "root_delta_audit": "b91d1f",
+      "root_controls_audit": "18f33c",
+      "root_Console_authority": "73721a",
+      "scope": "One exact command02 on fresh run01/transport01. Four originals, frozen Tab/F, L200 pre-hide, observed LabelE Select Global Net, L200 restore. No retarget, retry, extra gesture, build, fixture/source edit. Fresh personal root initial original/live-owner/input audit and exclusive ADMIT precede all controlled input. Worker owns exec/cleanup. Both runtime reviews and finite acceptance remain pending. Console credit is acquisition-time hidden3 and later action-history/live hidden0; no refreshed0 claim."
+    },
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-runtime-candidate-01.json",
+      "sha256": "7c67fb05ff50421d239a7caf096ade3473088a1afcd405ea15fffa9a280d9192",
+      "bytes": 35072
+    },
+    "runtime_result": {
+      "raw_result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-01/result.json",
+        "sha256": "f3a5f609d9a40189b18c3910e78b50927120ad45cc5fda924f778685f64a56e3",
+        "bytes": 559976
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-prehidden-global-net-01/transport.json",
+        "sha256": "6f40e83abd59b3c355a350d9abf3997770d5349453ce4e5ea0fcecc07340e76b",
+        "bytes": 3797
+      },
+      "actual_execution": {
+        "launch": "b81a0d",
+        "exec_session": 58005,
+        "final": "d6719a",
+        "exit_code": 0,
+        "outcome_read": "fbda25"
+      },
+      "originals": {
+        "initial": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-01/initial.png",
+          "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+          "bytes": 57612
+        },
+        "prehidden": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-01/prehidden.png",
+          "sha256": "f446a2d871e2ecbeda10be9f8d21b379ca61f663d61aab8fb56881eb3f05ad5c",
+          "bytes": 70088
+        },
+        "acquired": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-01/acquired.png",
+          "sha256": "3dec680b3b3c57ba4576e2cc2d283de189694b9ec97d34ccafc54a2360790cd9",
+          "bytes": 113662
+        },
+        "restored": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-01/restored.png",
+          "sha256": "90aca90492d8c1264e61ffe5caae61866aab07c14af832cdd8ad91467462f121",
+          "bytes": 111586
+        }
+      },
+      "budget_observed": {
+        "originals": 4,
+        "setup_keys": [
+          "Tab",
+          "F"
+        ],
+        "layer_primary_press_release_pairs": 2,
+        "semantic_menu_keys": [
+          "ContextMenu",
+          "s",
+          "Down",
+          "Return"
+        ],
+        "semantic_acquisitions": 1,
+        "regions": 0,
+        "wheel_steps": 0,
+        "canvas_point_bootstrap": false,
+        "extra_retry_or_adjustment": false
+      },
+      "selection_result": {
+        "kind": "global_net",
+        "semantic_id": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+        "members": 21,
+        "per_type": {
+          "wire": 9,
+          "label": 6,
+          "port": 3,
+          "junction": 3
+        },
+        "root_hidden_members": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000008"
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000000d"
+          }
+        ],
+        "unprojected_occurrences": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000006c",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000006c",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000006d",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000006d",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000071",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000071",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000006e",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000006e",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-000000000072",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-000000000072",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-000000000070",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-000000000070",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000006f",
+            "instance_path": [
+              "73000000-0000-4000-8000-00000000001f"
+            ]
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000006f",
+            "instance_path": [
+              "73000000-0000-4000-8000-000000000020"
+            ]
+          }
+        ],
+        "hidden_counts": [
+          3,
+          0
+        ],
+        "unprojected_count": 14,
+        "locked": 0,
+        "scope": null,
+        "focus": null,
+        "notice": null,
+        "stale": false,
+        "selected_boundaries": [
+          "acquired_before_capture",
+          "acquired_after_capture",
+          "restored_before_capture",
+          "restored_after_capture"
+        ],
+        "context_queries": 6,
+        "none_context_queries": 2,
+        "selected_context_queries": 4,
+        "selected_AX_snapshots": 8,
+        "full_inspector_fields": 15,
+        "Unavailable_fields": [
+          "combined_bounds_nm",
+          "layer_coverage"
+        ],
+        "identity_scope": "Exact full occurrence-qualified member list and semantic subject/revision/scope/focus remain equal across restoration. Only hidden_member value and member hidden projection flags change; other14 complete Inspector field maps remain equal. Context21 members are complete, truncatedfalse, no omitted fields. Exact small-set Unavailable reason parity does not provide above-cap omitted-reason credit."
+      },
+      "Console_observation": {
+        "prehidden": "Layer visibility hidden",
+        "acquisition": "Global Net \u2014 21 objects; 3 hidden; 0 locked",
+        "restoration": "Layer visibility visible",
+        "source_reviewed_distinction": "Acquisition selection echo is contemporaneously truthful. The later viewport-action echo is timestamped action history; live AX/Context/Inspector counts are hidden0. Both source reviewers and root PM033 read supported this bounded distinction. No refreshed Console0 selection summary or full post-restore three-consumer parity is claimed; no clearing or extra selection gesture."
+      },
+      "readiness": {
+        "prehidden": [
+          {
+            "event": {
+              "line": 243,
+              "start_byte": 69137,
+              "end_byte": 69257
+            },
+            "submitted_content": {
+              "line": 292,
+              "start_byte": 81028,
+              "end_byte": 84799
+            },
+            "native_present": {
+              "line": 293,
+              "start_byte": 84799,
+              "end_byte": 85325
+            },
+            "settled_ledger": {
+              "line": 295,
+              "start_byte": 85415,
+              "end_byte": 85791
+            },
+            "native_identity": {
+              "acquisition": 6,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 8,
+              "window": "WindowId(94709575509088)"
+            },
+            "content_revision": 29,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 243,
+              "start_byte": 69137,
+              "end_byte": 69257
+            },
+            "submitted_content": {
+              "line": 292,
+              "start_byte": 81028,
+              "end_byte": 84799
+            },
+            "native_present": {
+              "line": 293,
+              "start_byte": 84799,
+              "end_byte": 85325
+            },
+            "settled_ledger": {
+              "line": 295,
+              "start_byte": 85415,
+              "end_byte": 85791
+            },
+            "native_identity": {
+              "acquisition": 6,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 8,
+              "window": "WindowId(94709575509088)"
+            },
+            "content_revision": 29,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ],
+        "acquired": [
+          {
+            "event": {
+              "line": 483,
+              "start_byte": 152675,
+              "end_byte": 152879
+            },
+            "submitted_content": {
+              "line": 528,
+              "start_byte": 160306,
+              "end_byte": 172879
+            },
+            "native_present": {
+              "line": 529,
+              "start_byte": 172879,
+              "end_byte": 173414
+            },
+            "settled_ledger": {
+              "line": 531,
+              "start_byte": 173508,
+              "end_byte": 173891
+            },
+            "native_identity": {
+              "acquisition": 13,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 15,
+              "window": "WindowId(94709575509088)"
+            },
+            "content_revision": 47,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 483,
+              "start_byte": 152675,
+              "end_byte": 152879
+            },
+            "submitted_content": {
+              "line": 528,
+              "start_byte": 160306,
+              "end_byte": 172879
+            },
+            "native_present": {
+              "line": 529,
+              "start_byte": 172879,
+              "end_byte": 173414
+            },
+            "settled_ledger": {
+              "line": 531,
+              "start_byte": 173508,
+              "end_byte": 173891
+            },
+            "native_identity": {
+              "acquisition": 13,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 15,
+              "window": "WindowId(94709575509088)"
+            },
+            "content_revision": 47,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ],
+        "restored": [
+          {
+            "event": {
+              "line": 558,
+              "start_byte": 193732,
+              "end_byte": 193851
+            },
+            "submitted_content": {
+              "line": 609,
+              "start_byte": 205830,
+              "end_byte": 218403
+            },
+            "native_present": {
+              "line": 610,
+              "start_byte": 218403,
+              "end_byte": 218938
+            },
+            "settled_ledger": {
+              "line": 612,
+              "start_byte": 219030,
+              "end_byte": 219413
+            },
+            "native_identity": {
+              "acquisition": 15,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 18,
+              "window": "WindowId(94709575509088)"
+            },
+            "content_revision": 56,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 558,
+              "start_byte": 193732,
+              "end_byte": 193851
+            },
+            "submitted_content": {
+              "line": 609,
+              "start_byte": 205830,
+              "end_byte": 218403
+            },
+            "native_present": {
+              "line": 610,
+              "start_byte": 218403,
+              "end_byte": 218938
+            },
+            "settled_ledger": {
+              "line": 612,
+              "start_byte": 219030,
+              "end_byte": 219413
+            },
+            "native_identity": {
+              "acquisition": 15,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 18,
+              "window": "WindowId(94709575509088)"
+            },
+            "content_revision": 56,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ]
+      },
+      "cleanup": {
+        "recorded_pids_absent": [
+          1262312,
+          1262313,
+          1262314,
+          1262317,
+          1262331,
+          1262350,
+          1262354,
+          1262376
+        ],
+        "ipc_paths_absent": [
+          "/run/user/1000/npd-wl-t70t48xn",
+          "/run/user/1000/nqi-8gnt4vgh"
+        ],
+        "verified_owner_stops": {
+          "gui": true,
+          "daemons": true,
+          "shell_leader": true,
+          "Weston": true,
+          "clipboard": true
+        },
+        "cleanup_errors": [],
+        "ordinary_ui_terminal": "Existing ordinary UI shell exit and observed PTY closure before owned GUI disposal.",
+        "shell_deadline_margin_seconds": 6.949340366991237,
+        "limits": "Authenticated recorded owners and PTY leader only. No ordinary window Close, HUP or all-group/session/descendant inference."
+      },
+      "personal_original_review": {
+        "initial": "Board0 focus, None Inspector and unselected Schematic wire/label/Bus context. Root separately personally admitted this original.",
+        "prehidden": "Schematic1 focus, Wire row hidden and No selection. Wires no longer painted; blue label/Port shapes, Junction and gold Bus context remain. Layer visibility hidden toast is visible.",
+        "acquired": "Global Net \u2014 21 objects; All21; Wires9/Labels6/Ports3/Junctions3;3 hidden/0 locked/14 unprojected. Visible labels/Port/Junction receive selected treatment while root wire spans stay absent; gold Bus remains unrelated. Crosshair at LabelE changes pixels. Selection Console toast is clipped.",
+        "restored": "Same semantic Net/full21 Inspector and footer;0 hidden/14 unprojected. Restored root wire spans receive pink selected treatment. Layer visibility visible toast replaces prior selection action history. Pointer moved to layer row, so no pixel-identity claim.",
+        "limits": "Only root7 members can resolve in this pane;14 hierarchical members are honestly unprojected. No screenshot count of all21, isolated overlapping-primitive pixel proof, exact frame-cause, GPU sampling or full Console text claim. Long fields clip; full bounds/layer coverage are Unavailable from unprojected members and quantity formatting remains unqualified."
+      }
+    },
+    "runtime_freeze_receipt": "f4bc9c exit0; saved raw exact21, hidden3 to0, unprojected14, six Context, eight selected AX, all15 fields including reasons, six immutable prefix barriers,61 maps and qualified cleanup.",
+    "runtime_reviews": {
+      "state": "BOTH ACTUAL BOUNDED RUNTIME/PIXEL PASS",
+      "candidate_sha256": "7c67fb05ff50421d239a7caf096ade3473088a1afcd405ea15fffa9a280d9192",
+      "closeout_turn": "01a15e48-0715-7952-a7a1-6553000bccae",
+      "reorganization_turn": "01a15e48-3660-7173-8c93-46400b1b340d",
+      "outcome": "No mandatory finding. Both reviews cover four originals, eligible LabelE invocation after L200 pre-hide, exact21 occurrence identities, hidden3 to0 and unprojected14, six Context queries, eight selected AX snapshots, all15 fields with exact reasons, six immutable prefix bindings,61-file invariance and qualified recorded-owner cleanup."
+    },
+    "root_runtime_audit": {
+      "originals": "cede25 and initial30ae15",
+      "state_input_fields_readiness_cleanup": "8729a4",
+      "scope": "Root independently confirmed six Context exits, eight complete21-member AX snapshots,15 canonical fields and exact two Unavailable reasons, only hidden field changes, truthful Console chronology,61 canonical maps, six immutable prefix replays, eight recorded PIDs and two IPC absent, five stops without errors, timely authenticated shell leader. No independent runtime acceptance is substituted.",
+      "read_only_introspection_correction": "656c1e used fields instead of inspection; corrected d0ae2a before audit8729a4, without artifact mutation."
+    },
+    "manager_finite_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "decision": "ACCEPT only finite Schematic pre-hidden-Wires GlobalNet21 acquisition and visibility restore",
+      "runtime_candidate_sha256": "7c67fb05ff50421d239a7caf096ade3473088a1afcd405ea15fffa9a280d9192",
+      "raw_sha256": "f3a5f609d9a40189b18c3910e78b50927120ad45cc5fda924f778685f64a56e3",
+      "transport_sha256": "6f40e83abd59b3c355a350d9abf3997770d5349453ce4e5ea0fcecc07340e76b",
+      "root_original_review": "cede25 and initial30ae15",
+      "root_runtime_audit": "8729a4",
+      "root_packet_audit": "8c6ed5",
+      "root_actual_exit_audit": "0c5b66",
+      "basis": "Both actual independent runtime reviews and root original, raw state, pins and actual exit checks support only this finite behavior. Raw CAPTURE_ONLY stays unchanged. Acquisition-time Console hidden3 and later visibility-action history/live hidden0 retain their exact bounded interpretation; no refreshed Console0 or full restored three-consumer parity is claimed.",
+      "retained_boundaries": "Source01 and its two metadata findings remain preserved. Board, Bus, large-set and cross-pane IR01 predicates, omitted-Unavailable-reason parity, full C04, HUMAN, C05/C06 and successor authorization remain open. No new source, build, native run, fixture, dependency or product rule is authorized."
+    },
+    "landing": {
+      "state": "Pending root final checks, normal hooks, commit and push",
       "owned_paths": [
         ".beads/issues.jsonl",
         "specs/active_frontier.json",
         "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json"
       ],
-      "scope": "Finite no-op acceptance, preserved failure and incidental intake; no product source or fixture change."
+      "scope": "Finite hidden-GlobalNet evidence, exact source01 corrections and accepted review outcomes; no product source or fixture change."
     }
   }
 }
