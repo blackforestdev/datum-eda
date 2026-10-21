@@ -12191,6 +12191,14 @@
         ],
         "accepted_binding": "Runtime candidate 7ac5084f095675ab46a547e56e53f89e7dca4a848a5976d6368266eb3f7cad97 has actual closeout PASS turn 01a15e6c-f069-7271-98ae-7871260529f4, reorganization PASS turn 01a15e6d-2970-7c80-a237-5f0123544839 and appointed-manager finite acceptance. One Shift rectangle source-qualifies four existing members and two outsiders; native output preserves the entire Run5, full membership and all 15 fields except the exact complete Add/Run notice. Four Context boundaries, eight AX snapshots, four immutable prefix bindings, three originals, 61-file invariance and qualified cleanup agree.",
         "limit": "Finite CPU Wayland/Vulkan/SHM mixed-candidate additive rectangle refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. The six candidates and Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No lasso, subtractive, hidden/filter, large-set/cap or cross-pane extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change."
+      },
+      {
+        "predicates": "D4 N01/N02/N09 mixed-candidate subtractive Ctrl-lasso refuses the whole membership-changing result on Schematic Run5.",
+        "receipts": [
+          "native_wayland_d4_mixed_lasso_refusal_20261021"
+        ],
+        "accepted_binding": "Runtime candidate cda7d66b6c31605cf9ff222324f234f87fe48236ad064ebb20e55b4e4c0f0c59 has actual closeout PASS turn 01a15e86-034e-7eb3-af49-94c389f28ae0, reorganization PASS turn 01a15e86-2e1e-7cd1-b31e-ae91d145de93 and appointed-manager finite acceptance. One closed Ctrl lasso independently source-qualifies four existing members and two outsiders; native output preserves the entire Run5, full membership and all 15 fields except the exact complete Remove/Run notice. Four Context boundaries, eight AX snapshots, four immutable prefix bindings, three originals, 24 controlled core events, 61-file invariance and qualified cleanup agree.",
+        "limit": "Finite CPU Wayland/Vulkan/SHM mixed-candidate subtractive Ctrl-lasso refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. Source01 DL-R1 and the exact source02 metadata correction remain preserved. Six candidates and Lasso/Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No additional class/kind, hidden/filter, large-set/cap, cross-pane or no-op extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change."
       }
     ],
     "unresolved_evidence_questions": [
@@ -27351,6 +27359,1279 @@
       "basis": "Actual closeout and reorganization runtime PASS receipts plus the appointed manager original-image and raw audit. Direct MCP disposition authorizes only this criterion reconciliation, lease/beads/export synchronization and exact three-file metadata freeze for manager review and landing.",
       "retained_boundaries": "Finite CPU Wayland/Vulkan/SHM mixed-candidate additive rectangle refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. The six candidates and Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No lasso, subtractive, hidden/filter, large-set/cap or cross-pane extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change.",
       "chronology": "The one controlled region and refusal announcement are bounded through the refused-capture settled ledger at byte 229036. Later terminal-tab housekeeping remains visible in the full chronology and cleanup. Metadata pre-write failure 3f650f and corrected audit c2c2e6 remain recorded; no native/source/raw retry or change occurred."
+    }
+  },
+  "native_wayland_d4_mixed_lasso_refusal_20261021": {
+    "kind": "datum.s5a.d4-mixed-lasso-source-candidate/v1",
+    "state": "FINITE D4 MIXED SUBTRACTIVE CTRL-LASSO ACCEPTED; BROADER C04 QUALIFICATION REMAINS OPEN",
+    "recorded_at": "2026-10-21T12:57:22.381743+00:00",
+    "head": "acc16a8001db634853670224979dd317ef19f7ab",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-source1.py",
+      "sha256": "ef1c3e3ed288770c1eba78e7e9d91e23839acc7e521cdbcacc45a6d7576e0d44",
+      "bytes": 34009
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-manifest-02.json",
+      "sha256": "f71f3b4006996993e43a64675d99b4645a54ac1ab5f2d3b651314f192642b99e",
+      "bytes": 64734
+    },
+    "exact_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-command-02.json",
+      "sha256": "051b4369e5087e7c4e9b223ace7feb607c7012bd2573bfe02c5ea1193c60f282",
+      "bytes": 4864
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-geometry-01.json",
+      "sha256": "6a3a6f9a178c4dfdbbcf7a3cbec53beb410b116eafeb5b9c73bb818d8f3fa1bc",
+      "bytes": 13935
+    },
+    "controls": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-controls-01.json",
+      "sha256": "f7f632a0f3cd69e7a1e8e98dd86f77b2e6fe31953416e301c99f957aec310e6b",
+      "bytes": 2043
+    },
+    "preparation_record": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-preparation-01.json",
+      "sha256": "b8f27286d05a8f34aaabfb84f41f59dc8d7f17f2b3286b4f51e9db73bb3d39e7",
+      "bytes": 2811
+    },
+    "requirement": "preparation-plan.md:350 D4 requires modified rectangle and lasso mixtures of no-op and membership-changing candidates to refuse atomically. This single Ctrl-lasso uses four current members as changing subtraction candidates and two outsiders as no-ops.",
+    "input": {
+      "root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/s5a-replay-inputs/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "canonical_count": 61,
+      "index": {
+        "path": "/home/bfadmin/Documents/datum-eda/crates/test-harness/testdata/selection/s5a_v1/replay-inputs/index.json",
+        "sha256": "bcce46b87fc3265f19e244a60af0249388316866d557439a786765bcbccd472c",
+        "bytes": 363185
+      },
+      "classification": "Existing approved semantic-scope source and complete stored history, unchanged."
+    },
+    "oracle": {
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "canonical_count": 61,
+      "pane": 1,
+      "bounds_nm": [
+        -5000000,
+        -5420000,
+        95000000,
+        20000000
+      ],
+      "field_px": [
+        662.5,
+        85.0,
+        359.5,
+        637.0
+      ],
+      "fit_camera": {
+        "center_x_nm": 45000000.0,
+        "center_y_nm": 7290000.0,
+        "zoom": 1.0
+      },
+      "projection": {
+        "scale_px_per_nm": 3.594999952838407e-06,
+        "offset_x_px": 662.5,
+        "offset_y_px": 357.80755615234375
+      },
+      "origin": {
+        "class": "wire",
+        "id": "73000000-0000-4000-8000-000000000008"
+      },
+      "origin_px": [
+        698,
+        377
+      ],
+      "origin_world_nm": [
+        4874826,
+        -81351
+      ],
+      "screen_rect_px": [
+        [
+          714,
+          370
+        ],
+        [
+          938,
+          385
+        ]
+      ],
+      "world_rect_nm": [
+        [
+          9325452,
+          -2028500
+        ],
+        [
+          71634215,
+          2143962
+        ]
+      ],
+      "expected_members": [
+        {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-000000000008"
+        },
+        {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-000000000009"
+        },
+        {
+          "class": "label",
+          "id": "73000000-0000-4000-8000-00000000000a"
+        },
+        {
+          "class": "port",
+          "id": "73000000-0000-4000-8000-00000000000c"
+        },
+        {
+          "class": "junction",
+          "id": "73000000-0000-4000-8000-00000000000b"
+        }
+      ],
+      "expected_candidates": [
+        {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-000000000009"
+        },
+        {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-00000000000d"
+        },
+        {
+          "class": "label",
+          "id": "73000000-0000-4000-8000-00000000000a"
+        },
+        {
+          "class": "label",
+          "id": "73000000-0000-4000-8000-00000000000e"
+        },
+        {
+          "class": "port",
+          "id": "73000000-0000-4000-8000-00000000000c"
+        },
+        {
+          "class": "junction",
+          "id": "73000000-0000-4000-8000-00000000000b"
+        }
+      ],
+      "existing_candidates": [
+        {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-000000000009"
+        },
+        {
+          "class": "label",
+          "id": "73000000-0000-4000-8000-00000000000a"
+        },
+        {
+          "class": "port",
+          "id": "73000000-0000-4000-8000-00000000000c"
+        },
+        {
+          "class": "junction",
+          "id": "73000000-0000-4000-8000-00000000000b"
+        }
+      ],
+      "outsiders": [
+        {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-00000000000d"
+        },
+        {
+          "class": "label",
+          "id": "73000000-0000-4000-8000-00000000000e"
+        }
+      ],
+      "qualification": [
+        {
+          "identity": {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000008"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              0,
+              0
+            ],
+            [
+              10000000,
+              0
+            ]
+          ],
+          "inside": [
+            false,
+            true
+          ],
+          "qualified": false
+        },
+        {
+          "identity": {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              10000000,
+              0
+            ],
+            [
+              20000000,
+              0
+            ]
+          ],
+          "inside": [
+            true,
+            true
+          ],
+          "qualified": true
+        },
+        {
+          "identity": {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000000d"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              50000000,
+              0
+            ],
+            [
+              60000000,
+              0
+            ]
+          ],
+          "inside": [
+            true,
+            true
+          ],
+          "qualified": true
+        },
+        {
+          "identity": {
+            "class": "bus_section",
+            "id": "73000000-0000-4000-8000-000000000001"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              0,
+              10000000
+            ],
+            [
+              20000000,
+              10000000
+            ]
+          ],
+          "inside": [
+            false,
+            false
+          ],
+          "qualified": false
+        },
+        {
+          "identity": {
+            "class": "bus_section",
+            "id": "73000000-0000-4000-8000-000000000002"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              20000000,
+              10000000
+            ],
+            [
+              40000000,
+              10000000
+            ]
+          ],
+          "inside": [
+            false,
+            false
+          ],
+          "qualified": false
+        },
+        {
+          "identity": {
+            "class": "bus_section",
+            "id": "73000000-0000-4000-8000-000000000003"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              70000000,
+              10000000
+            ],
+            [
+              90000000,
+              10000000
+            ]
+          ],
+          "inside": [
+            false,
+            false
+          ],
+          "qualified": false
+        },
+        {
+          "identity": {
+            "class": "bus_section",
+            "id": "73000000-0000-4000-8000-000000000004"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              40000000,
+              10000000
+            ],
+            [
+              60000000,
+              10000000
+            ]
+          ],
+          "inside": [
+            false,
+            false
+          ],
+          "qualified": false
+        },
+        {
+          "identity": {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          },
+          "kind": "anchors",
+          "anchors_nm": [
+            [
+              10000000,
+              0
+            ]
+          ],
+          "inside": [
+            true
+          ],
+          "qualified": true
+        },
+        {
+          "identity": {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          "kind": "oriented_layout",
+          "world_bounds_nm": [
+            23175920,
+            -304640,
+            27684080,
+            304640
+          ],
+          "all_corners_inside": true,
+          "qualified": true
+        },
+        {
+          "identity": {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000e"
+          },
+          "kind": "oriented_layout",
+          "world_bounds_nm": [
+            63175920,
+            -304640,
+            67684080,
+            304640
+          ],
+          "all_corners_inside": true,
+          "qualified": true
+        },
+        {
+          "identity": {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          "kind": "oriented_layout",
+          "world_bounds_nm": [
+            21290160,
+            -274560,
+            22289840,
+            274560
+          ],
+          "all_corners_inside": true,
+          "qualified": true
+        },
+        {
+          "identity": {
+            "class": "schematic_text",
+            "id": "50000000-0000-4000-8000-000000001000"
+          },
+          "kind": "oriented_layout",
+          "world_bounds_nm": [
+            0,
+            -223360,
+            163840,
+            223360
+          ],
+          "all_corners_inside": false,
+          "qualified": false
+        }
+      ],
+      "logical_net": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+      "per_type": {
+        "wire": 2,
+        "label": 1,
+        "port": 1,
+        "junction": 1
+      },
+      "full_field_names": [
+        "combined_bounds_nm",
+        "derived_subject_id",
+        "hidden_members",
+        "layer_coverage",
+        "locked_members",
+        "member_count",
+        "member_types",
+        "net_coverage",
+        "non_electrical_members",
+        "projected_bounds_nm",
+        "projected_layer_coverage",
+        "related_subject_ids",
+        "resolved_net_coverage",
+        "unprojected_members",
+        "workspace_coverage"
+      ],
+      "refusal": "Cannot remove members from a run selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection.",
+      "text_layout_reuse": {
+        "accepted_geometry": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-source-geometry-02.json",
+          "sha256": "588b284a7ea53c104f2d861a9d290ecc8f09b199d35e8aa6af3cb68de4ef844a",
+          "bytes": 17269
+        },
+        "font": {
+          "path": "/home/bfadmin/Documents/datum-eda/crates/engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf",
+          "sha256": "e7437c072eef2ef592ae6f2beb0000446287385907abb57ac1cf07bcbaa2aa33",
+          "bytes": 111236,
+          "units_per_em": 1000,
+          "read_method": "Python standard-library read of the existing vendored cmap4/hmtx/loca/glyf metrics. Equal consecutive loca offsets mean no glyph bbox; preserve advance. Exact mesh.rs bounds/center alignment and layout_polygon_from_basis affine; no new dependency/helper/renderer."
+        },
+        "current_exact_pipeline_pins": [
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/schematic_scene_import/common.rs",
+            "sha256": "f450263e90d1ae2ec4860e14809d24a38a3c486b2f60e3f3ed4a2816a92d2297",
+            "bytes": 16965
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/selection_view/inspector_labels.rs",
+            "sha256": "53866a8b0698682b5b812cafc50d870f1391b02ea4c9b651708cb0fe9cbb854d",
+            "bytes": 6954
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/selection_scene.rs",
+            "sha256": "5c421d79fcae9444d683ce1c13d34ce0ff3b1843ecad44a87f9f84eb093ba534",
+            "bytes": 7027
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-render/src/render/text_presentation.rs",
+            "sha256": "700c66922d255e2a74f63369381a5ea0b225ee2a099d1eaf8cbbbfa131077213",
+            "bytes": 1723
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/schematic_scene_import/labels.rs",
+            "sha256": "562f937cc206a86c55264e388e4a5876d7e89d2d449798e2f11eee1c94d82873",
+            "bytes": 4192
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/kicad_scene_import/text.rs",
+            "sha256": "eb10e0cfd04268997bb932c64815b1368b10093803dd47a30c9cfa8b3ca13a77",
+            "bytes": 8749
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/board_text_source.rs",
+            "sha256": "6fed679e99c8c0c55a0e9da082777bdc806402da836e059cea85fe2f2891782f",
+            "bytes": 1926
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/selection_scene/index.rs",
+            "sha256": "1274de2bf2ffa557a0cc4e7e26508e91823b2a694791dde542ef1a04c3b0d678",
+            "bytes": 8377
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/selection_geometry_catalog.rs",
+            "sha256": "2209cf43e0a79fcdd7ad03016d738e5e0123599c48f90c63d87d8e1c7b40fc37",
+            "bytes": 15758
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/gui-protocol/src/selection_geometry_catalog/text_layout_index.rs",
+            "sha256": "b4287801ad1ab5984137c07db088953775de5ffd0f607029e686212b479d15b8",
+            "bytes": 1616
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/engine/src/text/geometry.rs",
+            "sha256": "c65a7ff054a132a932c3bedab966ca95de0d63af83bc1f10b2740fc109d1ef7c",
+            "bytes": 6934
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/engine/src/text/registry.rs",
+            "sha256": "8e7215fd95beba2a3a1455052ba9d7d9cba7fb201699aa3389ed325a6beaae28",
+            "bytes": 9765
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/engine/src/text/mesh.rs",
+            "sha256": "0e43148c99eb4f8c938d7965823a4002be3db00b40765fa6e7fe5999adf0b010",
+            "bytes": 22427
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/engine/src/text/layout.rs",
+            "sha256": "4d1c1712eefea8bef3a7bf4925cd8ac24199504c18ce8ab0e1c7cb32051b802a",
+            "bytes": 26457
+          },
+          {
+            "path": "/home/bfadmin/Documents/datum-eda/crates/engine/src/text/semantic.rs",
+            "sha256": "6a2a323365025148aaba71b76e9b4f31258e5e15ae0a9a9ee801e4f8ebac9ec2",
+            "bytes": 970
+          }
+        ],
+        "scope": "Reuse exact accepted oriented layout rectangles. All three annotation rectangles are fully enclosed; TextI is fully outside. This is layout-area qualification, not an anchor or hit-box oracle."
+      },
+      "exclusions": {
+        "wire8": "Only endpoint10mm is inside;0mm is outside, so1/2 fails strict majority.",
+        "bus_sections": "All four spines have y10mm, outside region.",
+        "bus_entry": "Display-only BusEntry5 is not an authored acquisition member; its geometry has y5..10mm, outside.",
+        "TextI": "Exact accepted oriented layout x0..163840nm lies left of the region.",
+        "other_panes_and_occurrences": "Only current root Schematic scene bindings feed region evaluation. Board pane objects and14 nonroot occurrence identities have no eligible projection in this scene; no cross-pane acquisition."
+      },
+      "oracle": "Existing accepted Run5 and exact six mixed candidates. Independent closed-polygon even-odd containment on source anchors and full exact oriented text layout enclosure; no outcome-derived oracle. Bounding screen_rect_px/world_rect_nm remain only as the identical polygon envelope for accepted geometry reuse.",
+      "screen_lasso_px": [
+        [
+          938,
+          370
+        ],
+        [
+          714,
+          370
+        ],
+        [
+          714,
+          385
+        ],
+        [
+          938,
+          385
+        ],
+        [
+          938,
+          370
+        ]
+      ],
+      "mode": "Remove",
+      "world_lasso_nm": [
+        [
+          71634215,
+          -2028500
+        ],
+        [
+          9325452,
+          -2028500
+        ],
+        [
+          9325452,
+          2143962
+        ],
+        [
+          71634215,
+          2143962
+        ],
+        [
+          71634215,
+          -2028500
+        ]
+      ],
+      "lasso_source_oracle": "One closed axis-aligned polygon traces the previous rectangle boundary. First activation motion is 224 px leftward, so current SelectionGesture chooses Lasso; Control alone chooses Remove. Every sampled coordinate is more than 24 px inside the pane, so source edge-pan speed is zero. Independent even-odd containment recomputes each anchor, and the convex polygon wholly contains or is disjoint from each exact accepted oriented text layout. Four existing candidates change membership under subtraction; two outsiders are no-ops. No native candidate-set or Region-kind trace is claimed."
+    },
+    "accepted_evidence_reuse": {
+      "landed_rectangle": "acc16a8001db634853670224979dd317ef19f7ab; runtime7ac5084f remains accepted only for mixed additive rectangle.",
+      "acquisition": "Exact accepted Wire8 keyboard Select Run precondition, menu controls and complete Run5 oracle.",
+      "layouts": "Exact accepted Port geometry02 and 15 current text pipeline pins, with no font or geometry campaign.",
+      "unchanged_guards": "Prior be8952 positive/25 negatives cover unchanged membership/focus/fields/menu/publication guards. New5c97c7 checks only lasso geometry, event sequence, removal mode and complete reason delta.",
+      "lifecycle": "Exact accepted FocusQA and entire finally AST, with only necessary held-modifier cleanup key literal change."
+    },
+    "budget": "One owned CPU Wayland/Vulkan/SHM envelope, three originals (initial, run, refused), one accepted observed Wire8 Select Run acquisition and one Control-only closed lasso. Fixed Tab/F and origin698,377 are reused. Lasso samples938,370 ->714,370 ->714,385 ->938,385 ->938,370; exactly one primary press/release, five cursor moves, two Control key events and two modifier events: 24 controlled core events including unchanged setup and acquisition. No Shift, wheel, retarget, retry, extra proof gesture or runtime before exact manager release and fresh personal initial ADMIT. Existing readiness and cleanup budgets are unchanged.",
+    "completion_criteria": "One mixed-candidate Ctrl lasso source-qualifies the same four current members and two outsiders, and atomically refuses removal. Preserve exact complete Run5, origin, logical net, revision, no scope/focus, full members and all15 fields except the complete 143-character Remove/Run notice. Require full reason in Context, AX root description, Console summary and contiguous immutable Inspector text. Four Context boundaries, eight AX snapshots, four own event/content/present/settled prefix bindings, unique own release before one announcement, no primary-click fallthrough, 61-file invariance and qualified recorded-owner cleanup. Both actual source and runtime reviews and appointed-manager acceptance remain required.",
+    "limits": "Finite CPU Wayland/Vulkan/SHM mixed-candidate subtractive Ctrl-lasso refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. Source01 DL-R1 and the exact source02 metadata correction remain preserved. Six candidates and Lasso/Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No additional class/kind, hidden/filter, large-set/cap, cross-pane or no-op extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change.",
+    "source_references": {
+      "runtime": 24,
+      "dispatch_contract_geometry": 85,
+      "binaries": 3
+    },
+    "preparation_receipts": {
+      "retained_claim_tracker": "fde0c5 exit0",
+      "accepted_receipt_lookup": "5f3ea0 exit0",
+      "source_owners": "2fe76e and c2b204",
+      "private_source_geometry": "9d4356 exit0",
+      "pure_case_delta_positive_31_negative": "5c97c7 exit0"
+    },
+    "fresh_routes": {
+      "run": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-lasso-01",
+      "transport": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-d4-mixed-lasso-01",
+      "required_absent": true
+    },
+    "review_request": "Both actual independent source/command reviews must check the closed leftward Ctrl-only polygon, same six independently source-qualified candidates, atomic full Run5 preservation with complete 143-character Remove/Run explanation across supported outputs, exact event and immutable prefix bindings, no click fallthrough, unchanged 61 files and qualified cleanup. Scope is source-only; exact manager runtime release and fresh personal initial ADMIT are required before any native input.",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-source-candidate-02.json",
+      "sha256": "732ae8aec52c9445223f26c8913f0e0547a7d4fb4ba053918c3c511c70758471",
+      "bytes": 22984
+    },
+    "authority": "The owner-appointed manager directly authorized only bounded mixed Ctrl-lasso source preparation and source/command review under retained C04. No native runtime release or acceptance is inferred.",
+    "source_reviews": {
+      "state": "BOTH ACTUAL SOURCE02/COMMAND PASS",
+      "candidate_sha256": "732ae8aec52c9445223f26c8913f0e0547a7d4fb4ba053918c3c511c70758471",
+      "closeout_turn": "01a15e7f-b8e3-7641-9aa0-14afc3847474",
+      "reorganization_turn": "01a15e7f-e218-7773-bd36-75b740842d68",
+      "scope": "DL-R1 resolved exactly. Complete unaffected source01 review and 31 negative controls reused; no remaining mandatory finding. No runtime acceptance."
+    },
+    "runtime_acceptance": "Both actual independent runtime/pixel PASS verdicts and appointed-manager finite acceptance establish only the mixed subtractive Ctrl-lasso refusal on Schematic Run5. Raw CAPTURE_ONLY and the source-derived candidate/Lasso attribution remain unchanged; no broader D4/C04 acceptance.",
+    "actual_tool_receipts": {
+      "5f3ea0": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49280,
+        "timestamp": "2026-10-21T12:37:16.118Z",
+        "item_id": "ctco_01a15e77-40d6-79e2-9419-8d8c517762ee",
+        "call_id": "call_f26d3912524841efbdcf61cf74435718",
+        "chunk_id": "5f3ea0",
+        "exit_code": 0
+      },
+      "fde0c5": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49308,
+        "timestamp": "2026-10-21T12:37:50.877Z",
+        "item_id": "ctco_01a15e77-c89d-7f32-b250-7df8939c99af",
+        "call_id": "call_3083a6c77beb4439b40e4c8559fc8831",
+        "chunk_id": "fde0c5",
+        "exit_code": 0
+      },
+      "9d4356": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49322,
+        "timestamp": "2026-10-21T12:38:53.638Z",
+        "item_id": "ctco_01a15e78-bdc5-7c61-bfb7-d9a219d15205",
+        "call_id": "call_068b4a855b9b43da85b02a558f86f367",
+        "chunk_id": "9d4356",
+        "exit_code": 0
+      },
+      "5c97c7": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49338,
+        "timestamp": "2026-10-21T12:39:53.942Z",
+        "item_id": "ctco_01a15e79-a956-74f2-954a-3b10ca5f5183",
+        "call_id": "call_a14b95067c9e4318bc9ef2e3d51e0eca",
+        "chunk_id": "5c97c7",
+        "exit_code": 0
+      },
+      "91c4e7": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49359,
+        "timestamp": "2026-10-21T12:41:00.586Z",
+        "item_id": "ctco_01a15e7a-ada9-7280-b0cc-2fd6bdaa5e1a",
+        "call_id": "call_3ae360a9e02f45d381fd441382e816cd",
+        "chunk_id": "91c4e7",
+        "exit_code": 0
+      },
+      "dc2dd0": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49456,
+        "timestamp": "2026-10-21T12:46:13.394Z",
+        "item_id": "ctco_01a15e7f-7392-7012-879a-ffc55b4bbe13",
+        "call_id": "call_098cecf1c47a4641a3644aa7b15c4615",
+        "chunk_id": "dc2dd0",
+        "exit_code": 0
+      },
+      "5db9cc": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49525,
+        "timestamp": "2026-10-21T12:48:49.360Z",
+        "item_id": "ctco_01a15e81-d4d0-7b70-bd96-66d472675795",
+        "call_id": "call_ddc367725d8944f3b767fb8d1375119d",
+        "chunk_id": "5db9cc",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "5461b3": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49529,
+        "timestamp": "2026-10-21T12:48:56.104Z",
+        "item_id": "ctco_01a15e81-ef28-7640-addd-967a567cf423",
+        "call_id": "call_2ac944f7a512458d9d67d944925e5a15",
+        "chunk_id": "5461b3",
+        "exit_code": null,
+        "exec_session": 47472
+      },
+      "976ad7": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49544,
+        "timestamp": "2026-10-21T12:49:23.495Z",
+        "item_id": "ctco_01a15e82-5a27-7571-b20e-404555acd735",
+        "call_id": "call_c1ce0050fbfc4d148b2d765ded608c02",
+        "chunk_id": "976ad7",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "40f9c8": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49587,
+        "timestamp": "2026-10-21T12:50:39.023Z",
+        "item_id": "ctco_01a15e83-812f-75a1-bba2-02198a97efc4",
+        "call_id": "call_a86bd91330ba45438ea5cd661bcd36f4",
+        "chunk_id": "40f9c8",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "ec0276": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49634,
+        "timestamp": "2026-10-21T12:52:46.873Z",
+        "item_id": "ctco_01a15e85-7499-79c3-b49a-e00af40dace1",
+        "call_id": "call_14b33fdc13bb4dc09445dd7a4299b90c",
+        "chunk_id": "ec0276",
+        "exit_code": 0
+      }
+    },
+    "source01_review": {
+      "state": "BOTH ACTUAL REVISE SOLELY DL-R1",
+      "candidate": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-source-candidate-01.json",
+        "sha256": "24b880a4c9368e6c986c24a2b940c8b4cc074cc2a0e9e5b37e6ae1f2abc85238",
+        "bytes": 21849
+      },
+      "closeout_turn": "01a15e7b-6dac-7201-8205-03ca693ea990",
+      "reorganization_turn": "01a15e7b-90df-7832-83d4-0641a62aeac6",
+      "finding": "Manifest sources[8] named the accepted rectangle runner rather than the current lasso runner, omitting the current executable script from the enforced source closure.",
+      "correction": "Only sources[8] changes to the exact current lasso runner path, SHA and size; manifest and command reference pins propagate into this candidate. Runner, controls, input, geometry and budget remain byte-exact. Source01 and both review receipts remain preserved.",
+      "evidence_reuse": "Completed unaffected source geometry, event/mode/reason oracle, 31 negative controls, 61-file/source audits and lifecycle review remain adequate. No rerun or native input."
+    },
+    "manager_exact_release": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-21T12:48:49.297811+00:00",
+      "candidate_sha256": "732ae8aec52c9445223f26c8913f0e0547a7d4fb4ba053918c3c511c70758471",
+      "command_sha256": "051b4369e5087e7c4e9b223ace7feb607c7012bd2573bfe02c5ea1193c60f282",
+      "scope": "Execute only exact command02 argv once. One run, three originals, accepted menu acquisition and fixed Ctrl lasso. No retarget, retry or extra gesture. Worker owns polling and qualified cleanup. Fresh personal initial image/live-owner/input ADMIT is required before controlled input. Runtime and full C04 acceptance remain pending.",
+      "root_audits": "3b205c and de297a"
+    },
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-lasso-runtime-candidate-01.json",
+      "sha256": "cda7d66b6c31605cf9ff222324f234f87fe48236ad064ebb20e55b4e4c0f0c59",
+      "bytes": 36725
+    },
+    "runtime_result": {
+      "raw_result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-lasso-01/result.json",
+        "sha256": "55511015d12ad345a9bace6c834fd7757337ed7a3831c873dd5df13eedd1df9d",
+        "bytes": 310461
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-d4-mixed-lasso-01/transport.json",
+        "sha256": "5ef3efef040347f0e68ad918649398c483da22ae5db535599d57f02eee3443a2",
+        "bytes": 3737
+      },
+      "originals": {
+        "initial": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-lasso-01/initial.png",
+          "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+          "bytes": 57612
+        },
+        "run": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-lasso-01/run.png",
+          "sha256": "747ac9d2ff6a79ab6c352e38c923ec40eddc455cbdf6abed086b2ba96a9a9c44",
+          "bytes": 110639
+        },
+        "refused": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-lasso-01/refused.png",
+          "sha256": "c92ccedf1bf6bb138f086b8f46f9dd373d004b0ebfbf1fb44eb0723b68914ef2",
+          "bytes": 117833
+        }
+      },
+      "actual_execution": {
+        "launch": "5461b3",
+        "exec_session": 47472,
+        "final": "40f9c8",
+        "exit_code": 0,
+        "outcome_read": "7003e9"
+      },
+      "budget_observed": {
+        "originals": 3,
+        "controlled_core_events": 24,
+        "setup_keys": [
+          "Tab",
+          "F"
+        ],
+        "Run_menu_keys": [
+          "ContextMenu",
+          "s",
+          "Down",
+          "Return"
+        ],
+        "Run_preconditions": 1,
+        "Ctrl_lassos": 1,
+        "region_primary_press_release_pairs": 1,
+        "lasso_core_events": 11,
+        "canvas_point_acquisitions": 0,
+        "wheel_steps": 0,
+        "extra_retry_or_adjustment": false,
+        "post_proof_housekeeping": "The existing ordinary shell-exit owner clicks terminal tab45,764 and types exit/Return after the proof epoch; full chronology retains it separately from the one controlled lasso."
+      },
+      "mixed_lasso_oracle": {
+        "screen_lasso_px": [
+          [
+            938,
+            370
+          ],
+          [
+            714,
+            370
+          ],
+          [
+            714,
+            385
+          ],
+          [
+            938,
+            385
+          ],
+          [
+            938,
+            370
+          ]
+        ],
+        "world_lasso_nm": [
+          [
+            71634215,
+            -2028500
+          ],
+          [
+            9325452,
+            -2028500
+          ],
+          [
+            9325452,
+            2143962
+          ],
+          [
+            71634215,
+            2143962
+          ],
+          [
+            71634215,
+            -2028500
+          ]
+        ],
+        "complete_source_candidates": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000000d"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000e"
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          }
+        ],
+        "existing_candidates": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          }
+        ],
+        "outsiders": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000000d"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000e"
+          }
+        ],
+        "exclusions": {
+          "wire8": "Only endpoint10mm is inside;0mm is outside, so1/2 fails strict majority.",
+          "bus_sections": "All four spines have y10mm, outside region.",
+          "bus_entry": "Display-only BusEntry5 is not an authored acquisition member; its geometry has y5..10mm, outside.",
+          "TextI": "Exact accepted oriented layout x0..163840nm lies left of the region.",
+          "other_panes_and_occurrences": "Only current root Schematic scene bindings feed region evaluation. Board pane objects and14 nonroot occurrence identities have no eligible projection in this scene; no cross-pane acquisition."
+        },
+        "authority": "Independent source-qualified six-candidate oracle. First negative dx and Control imply Lasso/Remove under pinned source; no direct native candidate-set or Region-kind trace."
+      },
+      "selection_result": {
+        "kind": "run",
+        "origin": {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-000000000008"
+        },
+        "logical_net": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+        "members": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000008"
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          }
+        ],
+        "member_count": 5,
+        "per_type": {
+          "wire": 2,
+          "label": 1,
+          "port": 1,
+          "junction": 1
+        },
+        "scope": null,
+        "focus": null,
+        "stale": false,
+        "hidden": 0,
+        "locked": 0,
+        "unprojected": 0,
+        "only_intended_delta": "Entire compact selection remains equal except complete Remove/Run notice. All full public member arrays and 15 canonical field maps remain equal, outsiders absent and no Compound conversion.",
+        "selected_boundaries": [
+          "run_before_capture",
+          "run_after_capture",
+          "refused_before_capture",
+          "refused_after_capture"
+        ],
+        "Context_queries": 4,
+        "selected_AX_snapshots": 8,
+        "full_inspector_fields": 15,
+        "Context_transport": "Complete five members, truncated false and no omitted fields; all 15 canonical values Common. Quantity display remains separately unqualified."
+      },
+      "refusal": {
+        "mode": "Remove",
+        "subject_kind": "run",
+        "exact_reason": "Cannot remove members from a run selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection.",
+        "reason_characters": 143,
+        "Context_AX_Console": "Exact full 143-character reason in Context.notice, full AX root description and Console Run summary; compact preview has omitted_chars0.",
+        "publication_window": {
+          "start_byte": 155432,
+          "end_byte": 291651,
+          "scope": "Fixed region start through refused capture settled ledger; excludes later terminal housekeeping."
+        },
+        "Inspector_before_capture": {
+          "content_binding": {
+            "event": {
+              "line": 733,
+              "start_byte": 271224,
+              "end_byte": 271344
+            },
+            "submitted_content": {
+              "line": 781,
+              "start_byte": 279058,
+              "end_byte": 290644
+            },
+            "native_present": {
+              "line": 782,
+              "start_byte": 290644,
+              "end_byte": 291178
+            },
+            "settled_ledger": {
+              "line": 784,
+              "start_byte": 291269,
+              "end_byte": 291651
+            },
+            "native_identity": {
+              "acquisition": 19,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 20,
+              "window": "WindowId(94265097682720)"
+            },
+            "content_revision": 78,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          "complete_notice_rows": [
+            "Cannot remove members from a run selection. Membership f",
+            "ollows connectivity. Select an object without modifiers to sta",
+            "rt an explicit selection."
+          ]
+        },
+        "Inspector_at_capture": {
+          "content_binding": {
+            "event": {
+              "line": 733,
+              "start_byte": 271224,
+              "end_byte": 271344
+            },
+            "submitted_content": {
+              "line": 781,
+              "start_byte": 279058,
+              "end_byte": 290644
+            },
+            "native_present": {
+              "line": 782,
+              "start_byte": 290644,
+              "end_byte": 291178
+            },
+            "settled_ledger": {
+              "line": 784,
+              "start_byte": 291269,
+              "end_byte": 291651
+            },
+            "native_identity": {
+              "acquisition": 19,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 20,
+              "window": "WindowId(94265097682720)"
+            },
+            "content_revision": 78,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          "complete_notice_rows": [
+            "Cannot remove members from a run selection. Membership f",
+            "ollows connectivity. Select an object without modifiers to sta",
+            "rt an explicit selection."
+          ]
+        },
+        "publication": {
+          "markers": [
+            "[SystemTime { tv_sec: 1792587036, tv_nsec: 915741621 }] selection publish begin",
+            "[SystemTime { tv_sec: 1792587036, tv_nsec: 926632011 }] selection console begin",
+            "[SystemTime { tv_sec: 1792587036, tv_nsec: 927139930 }] selection console end"
+          ],
+          "scope": "One completed announced refusal; expected region candidates are an independent source oracle, not a direct runtime candidate-set receipt."
+        },
+        "announcement_scope": "Exactly one Console announcement follows its unique own release and completed refusal publication. No direct screen-reader stream."
+      },
+      "readiness": {
+        "run": [
+          {
+            "event": {
+              "line": 424,
+              "start_byte": 134970,
+              "end_byte": 135174
+            },
+            "submitted_content": {
+              "line": 469,
+              "start_byte": 142601,
+              "end_byte": 153381
+            },
+            "native_present": {
+              "line": 470,
+              "start_byte": 153381,
+              "end_byte": 153916
+            },
+            "settled_ledger": {
+              "line": 472,
+              "start_byte": 154009,
+              "end_byte": 154392
+            },
+            "native_identity": {
+              "acquisition": 12,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 13,
+              "window": "WindowId(94265097682720)"
+            },
+            "content_revision": 39,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 424,
+              "start_byte": 134970,
+              "end_byte": 135174
+            },
+            "submitted_content": {
+              "line": 469,
+              "start_byte": 142601,
+              "end_byte": 153381
+            },
+            "native_present": {
+              "line": 470,
+              "start_byte": 153381,
+              "end_byte": 153916
+            },
+            "settled_ledger": {
+              "line": 472,
+              "start_byte": 154009,
+              "end_byte": 154392
+            },
+            "native_identity": {
+              "acquisition": 12,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 13,
+              "window": "WindowId(94265097682720)"
+            },
+            "content_revision": 39,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ],
+        "refused": [
+          {
+            "event": {
+              "line": 733,
+              "start_byte": 271224,
+              "end_byte": 271344
+            },
+            "submitted_content": {
+              "line": 781,
+              "start_byte": 279058,
+              "end_byte": 290644
+            },
+            "native_present": {
+              "line": 782,
+              "start_byte": 290644,
+              "end_byte": 291178
+            },
+            "settled_ledger": {
+              "line": 784,
+              "start_byte": 291269,
+              "end_byte": 291651
+            },
+            "native_identity": {
+              "acquisition": 19,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 20,
+              "window": "WindowId(94265097682720)"
+            },
+            "content_revision": 78,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 733,
+              "start_byte": 271224,
+              "end_byte": 271344
+            },
+            "submitted_content": {
+              "line": 781,
+              "start_byte": 279058,
+              "end_byte": 290644
+            },
+            "native_present": {
+              "line": 782,
+              "start_byte": 290644,
+              "end_byte": 291178
+            },
+            "settled_ledger": {
+              "line": 784,
+              "start_byte": 291269,
+              "end_byte": 291651
+            },
+            "native_identity": {
+              "acquisition": 19,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 20,
+              "window": "WindowId(94265097682720)"
+            },
+            "content_revision": 78,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ]
+      },
+      "cleanup": {
+        "recorded_pids_absent": [
+          1273432,
+          1273433,
+          1273434,
+          1273437,
+          1273450,
+          1273469,
+          1273473,
+          1273495
+        ],
+        "ipc_paths_absent": [
+          "/run/user/1000/npd-wl-8mebey35",
+          "/run/user/1000/nqi-cha1vzrx"
+        ],
+        "verified_owner_stops": {
+          "gui": true,
+          "daemons": true,
+          "shell_leader": true,
+          "Weston": true,
+          "clipboard": true
+        },
+        "cleanup_errors": [],
+        "ordinary_ui_terminal": "Existing ordinary UI shell exit and observed PTY closure before owned GUI disposal.",
+        "shell_deadline_margin_seconds": 6.948729235038627,
+        "limits": "Authenticated recorded owners and PTY leader only; no ordinary window Close, HUP or all-descendant/group/session claim."
+      },
+      "personal_original_review": {
+        "initial": "Personally viewed fresh initial original before root ADMIT: Board focus, None, ordinary unselected Schematic.",
+        "run": "Personally viewed original Run5; selected left root geometry and five-object Inspector with no scope/focus. Gray cursor crosshair is separate from connectivity. Outside WireD and LabelE remain ordinary.",
+        "refused": "Personally viewed same Run5 and ordinary outsiders, no active lasso. Complete Remove/Run reason and remedy are visible across three Inspector rows. Crosshair moved and Inspector rows shifted; pixel identity is not claimed.",
+        "limits": "Console and long fields clip. Full programmatic reason and bound immutable Inspector rows separately prove completeness. Bounds quantity display is Unavailable despite Common canonical fields; no metrology, exact GPU/compositor sample, primitive-contribution or HUMAN claim."
+      }
+    },
+    "runtime_reviews": {
+      "state": "BOTH ACTUAL FINITE RUNTIME/PIXEL PASS",
+      "candidate_sha256": "cda7d66b6c31605cf9ff222324f234f87fe48236ad064ebb20e55b4e4c0f0c59",
+      "closeout_turn": "01a15e86-034e-7eb3-af49-94c389f28ae0",
+      "reorganization_turn": "01a15e86-2e1e-7cd1-b31e-ae91d145de93",
+      "outcome": "No mandatory finding. Both actual reviews personally inspect three originals and verify unchanged Run5 and ordinary outsiders, complete 143-character Remove/Run explanation, four Context boundaries, eight AX snapshots, all 15 fields, four immutable prefix bindings, one Ctrl lasso and 24 controlled core events, 61 invariant canonical maps and qualified recorded-owner cleanup."
+    },
+    "root_runtime_audit": {
+      "originals": "ce4d20; fresh initial bfd014",
+      "state_outputs_readiness_input_publication": "91350e",
+      "canonical_map_cleanup": "742c56 and 5d4d24",
+      "read_only_comparator_correction": "Initial root91350e compared a lifecycle wrapper with canonical_files rather than the canonical map itself. Read-only742c56/5d4d24 corrected the key and verified all 61 inventories/current maps, eight absent recorded PIDs, two absent IPC paths, five verified stops and the timely shell margin. No artifact or runtime changed."
+    },
+    "manager_finite_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "decision": "ACCEPT only mixed subtractive Ctrl-lasso refusal on Schematic Run5",
+      "runtime_candidate_sha256": "cda7d66b6c31605cf9ff222324f234f87fe48236ad064ebb20e55b4e4c0f0c59",
+      "raw_sha256": "55511015d12ad345a9bace6c834fd7757337ed7a3831c873dd5df13eedd1df9d",
+      "transport_sha256": "5ef3efef040347f0e68ad918649398c483da22ae5db535599d57f02eee3443a2",
+      "basis": "Both actual independent runtime PASS receipts and the appointed manager personal originals and raw audit. Direct MCP disposition authorizes this exact criterion reconciliation, retained lease/beads/export synchronization and exact three-file metadata freeze for manager review and landing.",
+      "retained_boundaries": "Finite CPU Wayland/Vulkan/SHM mixed-candidate subtractive Ctrl-lasso refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. Source01 DL-R1 and the exact source02 metadata correction remain preserved. Six candidates and Lasso/Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No additional class/kind, hidden/filter, large-set/cap, cross-pane or no-op extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change.",
+      "chronology": "The fixed one-lasso proof epoch ends at refused-capture settled ledger byte 291651. Later ordinary terminal-tab housekeeping remains visible in the full chronology and qualified cleanup. No retry, source/control change or raw-result rewrite occurred."
     }
   }
 }
