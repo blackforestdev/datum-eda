@@ -12248,7 +12248,8 @@
           "native_wayland_threshold_dual_modifier_20261020",
           "native_wayland_independent_schematic_drawings_20261021",
           "native_wayland_individual_port_layout_20261021",
-          "native_wayland_junction_anchor_region_20261021"
+          "native_wayland_junction_anchor_region_20261021",
+          "native_wayland_via_junction_individual_points_20261021"
         ],
         "next": "Keep exact accepted class/threshold/source controls credited; remaining entries are concrete unbound receipts, not product defects, roadmap dependencies or Cartesian replay instructions. No additional work is authorized by this map; retain exact existing C04 grant and owner boundaries.",
         "closure": "Every required class predicate is bound at its accepted scope or remains explicitly named. Accepted Line006 focus/acquisition, finite threshold/dual-modifier grammar and Rect007/Circle008-interior/Arc009 acquisition remain distinct. No blanket fresh Wayland, full N01/N03 or C04 acceptance.",
@@ -12262,7 +12263,8 @@
           "Finite native threshold/dual-modifier grammar is accepted in native_wayland_threshold_dual_modifier_20261020 with both actual reviews and appointed-manager acceptance. Only the corresponding concrete gap is removed; remaining class and qualification entries are unchanged.",
           "Finite independent Schematic Rect007 edge, Circle008 filled interior and Arc009 endpoint plain-click acquisition is accepted in native_wayland_independent_schematic_drawings_20261021 with actual source/test/build/native receipts, two runtime PASS reviews and appointed-manager acceptance. Each replaces the prior Object with exact identity/class scope/focus. Only these three acquisition gaps are reconciled; drawing region qualification, Board graphics and other required class predicates remain open.",
           "Finite individual top-level Bidirectional Port730...00c oriented-layout plain-click acquisition is accepted in native_wayland_individual_port_layout_20261021 with both actual source/command and runtime PASS reviews, appointed-manager bounded acceptance and root original-pixel/receipt audit. Exact native Port text hit wins over coincident visible GlobalLabel00a; full AX/Context/target-specific CPU readiness and61-file invariance/qualified cleanup agree. Only individual Port acquisition is credited; Port region/all-orientation and Zone point/menu-origin predicates remain separate.",
-          "Finite positive Junction730...00b center-anchor REGION qualification and adjacent-wire member exclusion is accepted in native_wayland_junction_anchor_region_20261021 with both actual source/command and runtime PASS reviews and appointed-manager acceptance. The fixed region contains the connection anchor while excluding the upper dot cap, and each adjacent Wire has only1/2endpoints inside. Exact rawsingletonCompound/scopejunction/focusNone, soleJunctionInspector, full AX/Context, immutable presentation readiness,61-file invariance and qualified cleanup agree. Only this anchor-region predicate is credited; Junction point/NoConnect/other region gaps and accepted Via-region scope remain separate. Related cardinality wording intake dat-compound-cardinality-drift-iu3k remains open and closedvs05/9e170f1b remains accepted; no cardinality/fullC04/HUMAN waiver."
+          "Finite positive Junction730...00b center-anchor REGION qualification and adjacent-wire member exclusion is accepted in native_wayland_junction_anchor_region_20261021 with both actual source/command and runtime PASS reviews and appointed-manager acceptance. The fixed region contains the connection anchor while excluding the upper dot cap, and each adjacent Wire has only1/2endpoints inside. Exact rawsingletonCompound/scopejunction/focusNone, soleJunctionInspector, full AX/Context, immutable presentation readiness,61-file invariance and qualified cleanup agree. Only this anchor-region predicate is credited; Junction point/NoConnect/other region gaps and accepted Via-region scope remain separate. Related cardinality wording intake dat-compound-cardinality-drift-iu3k remains open and closedvs05/9e170f1b remains accepted; no cardinality/fullC04/HUMAN waiver.",
+          "Finite ordinary Via710...002 and Junction730...00b individual point acquisition is accepted in native_wayland_via_junction_individual_points_20261021 with actual independent runtime reviews and appointed-manager bounded dispositions. Via exactly selects Object/scopevia/focus002 with full AX/Context, original appearance, immutable CPUFocus/readiness,18before-teardown-current file invariance and qualified failure cleanup. Its observer/result/transport remain FAIL/exit1 after the incorrect Schematic-only trace assertion; no directBoardhittrace, intermediate after_observation inventory or ordinary success cleanup is credited. Prior SOURCE PASS is superseded only for that Via assertion; no product patch or retry. Junction actualexit0 selects exact Object/scopejunction/focus00b via strict Schematic hittrace, with full AX/Context, original/immutableCPUFocus/readiness,61maps and ordinary qualified cleanup. Only these point gaps are removed; separate accepted Via/Junction region scopes, NoConnect/otherclass/region gaps, open cardinalityiu3k and fullC04/HUMAN boundaries remain intact."
         ],
         "accepted_receipt_sha256": {
           "exact30-native-proof.json": "e65001601d8995bb90ec8386fb8e9d215e8fa1f4dd7c363c39424d0264df4ad2",
@@ -12276,7 +12278,7 @@
         },
         "concrete_unbound_receipt_predicates": [
           "Padless Footprint placement anchor; pinless Symbol is not a substitute.",
-          "Via and Junction point acquisition and NoConnect anchors; accepted Via center-region and Junction center-anchor region scopes remain credited separately.",
+          "NoConnect anchors.",
           "Standalone filled BoardGraphic and independent Board drawings; Schematic drawing region qualification and any other required drawing predicates beyond the accepted Line006/Rect007/Circle008-interior/Arc009 plain-click acquisitions.",
           "Nonempty independent BoardOutline.",
           "Parent-owned text and component Edge.Cuts negative.",
@@ -19075,5 +19077,209 @@
       }
     ],
     "raw_result_status": "CAPTURE_ONLY retained verbatim; actual independent reviews and appointed-manager bounded acceptance are separate."
+  },
+  "native_wayland_via_junction_individual_points_20261021": {
+    "recorded_at": "2026-10-21T02:43:20.295834+00:00",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "state": "FINITE_VIA_AND_JUNCTION_INDIVIDUAL_POINT_BEHAVIOR_REVIEWED_ACCEPTED_VIA_RAW_FAIL_PRESERVED",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-via-junction-source-candidate-01.json",
+      "sha256": "a35e085f64fbe3547a39264bfcb1befa7d5a2f081daf212cca91a0cc026d3b1b",
+      "bytes": 20270
+    },
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-via-junction-source1.py",
+      "sha256": "7af07285c9f2c1b49398ffcf6099948e07667ce94e998e34f9b4adf6374e996c",
+      "bytes": 23860
+    },
+    "manifests": {
+      "via": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-via-manifest-01.json",
+        "sha256": "45c9c2f830dfabc68f40023e99f2fd1c81809ad451c814cb3c60ec9735026588",
+        "bytes": 34520
+      },
+      "junction": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-junction-manifest-01.json",
+        "sha256": "a97d900d15bd59708f6dd8498f69283243b9cd09ef41023b1aab582106ca922b",
+        "bytes": 43522
+      }
+    },
+    "exact_commands": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-via-junction-command-01.json",
+      "sha256": "ef98decebe94b4c372ba7837ae8c0d360082ddeecb38d13ce1e04b5ca97caa7d",
+      "bytes": 6767
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-via-junction-geometry-01.json",
+      "sha256": "46439c4a7fb86f2c3ee844fb2f4dd4bd9b2e2e0ce334b7141111dfea6ae72201",
+      "bytes": 7617
+    },
+    "actual_source_command_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c50-fd5c-7132-9fc6-ded2c17f92d7",
+        "outcome": "Actual SOURCE PASS, manager-routed exact command release; no mandatory findings."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c51-3c8f-7f41-a4b7-e851715c4553",
+        "outcome": "Actual SOURCE PASS, manager-routed exact command release; no mandatory findings."
+      }
+    ],
+    "manager_source_command_disposition": "PM059 appointed manager RELEASES exact candidatea35e085f/runner7af07285/manifests45c9c2f8+a97d900d/commandef98dece with both actual SOURCE reviews and roota0ac79 pins/maps/7receipts/freshroutes verification. ExecuteViaexactargvONCE now, freshrootpersonalbaselineADMITbeforeoneclick/twooriginals. JunctionexactargvONCE onlyafterViaactualexit0+cleanteardown, separaterequiredrootfreshADMIT. Sequential/stoponfirstfailure; workerownsallruntimepolling/cleanup; noretry/retarget/build/source/fixturechanges. Geometry.target00b is operativeJunction identity; inheritedinput.targetPort is unusedcontext, not target authority.",
+    "budget": "Twoexistinginputsenvelopessequentially; 2primaryclickstotal,4originalstotal, zero setup/wheel/modifier/region/semanticexpansion. Eachcasesallsource/currentAXContext/readiness/invariance/cleanupcriteriaindependentlyrequired.",
+    "limits": "Twofinitepointacquisitionsonly; noVia/Junctionregionrerun/NoConnect/otherclass/hole-boundary/threshold/modifierCartesianmatrix/semanticexpansion/cardinalitycompliance/fullC04/HUMAN/hardware/exactsampling/C05/C06/successorauthorization.",
+    "via_observed_behavior_disposition": {
+      "state": "FINITE_OBSERVED_VIA_ACQUISITION_ACCEPTED_WITH_RAW_FAIL_PRESERVED",
+      "result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-via-01/result.json",
+        "sha256": "65d68ca48773fc77a1b7b3348f900f31e4d077b1d9d910fefbd3d3170b5862d1",
+        "bytes": 85556
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-point-via-01/transport.json",
+        "sha256": "5270a555c5803a694559dc4aec2c298421e9f0f97abc141fc895430af87ffcce",
+        "bytes": 3698
+      },
+      "originals": {
+        "initial": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-via-01/initial.png",
+          "sha256": "f0c4129483a1de6eb94b93ff84545fad31714aeac372f6496592da69e6f84d27",
+          "bytes": 57584
+        },
+        "selected": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-via-01/selected.png",
+          "sha256": "27a65dde133a4398f0974b1106b46817239704ba7ce3dc8057249a72267c6501",
+          "bytes": 105468
+        }
+      },
+      "actual_launch": "f8b1c8 exec62199",
+      "actual_final": "4e16f2 exit1",
+      "actual_audit": "b476ce exit0/read-only failure assessment; root273b17/904164 independentlyverifiedactualreceipts/originals/currentAXContext/maps/cleanup.",
+      "actual_runtime_reviews": [
+        {
+          "role": "closeout",
+          "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+          "turn": "01a15c5a-4c32-7eb1-b684-5d320bad6f9f",
+          "outcome": "FiniteexistingViaObject/focus/appearance/fullAXContext/readiness/nonmutation/qualifiedfailurecleanup evidence sufficient; no retry toobtainobserverexit0. RawFAIL andmissingdebugphrase/script-tail remainuncredited."
+        },
+        {
+          "role": "reorganization",
+          "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+          "turn": "01a15c5a-6fcb-7412-8446-519e4ff6438c",
+          "outcome": "ActualindependentfiniteViaobservedbehavior acceptance; rawFAIL/missingtrace/intermediatemap/ordinarysuccesscleanup limitsretained, no native rerun."
+        }
+      ],
+      "manager_acceptance": "PM059 appointed manager ACCEPTS finiteVia002 ordinarypoint acquisition behavior using bothactualindependentreviews androot273b17/904164/personallyviewedoriginals. C04completion466-477/preparation279-288 requiredesignerbehavior/identity/appearance/nonmutation, notdebugphrase orscript-tail. No productdefect, designobligationwaiver or retry.",
+      "failure_cause": "IncorrectSchematic-onlydiagnosticoracle copiedintotwo-caseobserver. Boardruntime_primary_pointer.rs215-225 returnsafteracquire_native_key_from_basis beforetrace225+, whileSchematicruntime_camera_pane.rs506 emitsmarker. PriorSOURCEPASS is superseded onlyforthisViaassertion; frozenrunner/candidate/raw stayimmutable.",
+      "credited": "Exactlyoneclick/twooriginals, exactViaObject/scopevia/focus002/currentc9basis, twofullContexts/fourAX andbothimmutableCPUFocus189->233->234->236/acq6/rec7/rev17. Eighteencanonicalfiles before/teardown/currentrepo/liveunchanged; eightrecordedowners/twoIPC gone/timelyapprovedfailurecleanup.",
+      "uncredited": "LiteralresultFAIL/transportexit1; no directBoardhittrace, no canonical_after_observation intermediate inventory, no ordinarysuccessUIexit/terminal_cleanup or successfulobserver/script-tail. No sourcekeys fabricated fromabsence.",
+      "preserved_additional_audits": "Worker3265c0 auditassertedchildexit0 andfailed; managerf77109 shellidentitydictshape auditexception corrected1bff72; no nativeinputimpact, no passingcreditfromfailedassertions."
+    },
+    "junction_continuation_release": "After bothactualViareviews andboundedmanageracceptance, PM059 manager expressly replaces earlierViaexit0 prerequisite with independentlyacceptedfiniteViaevidence plus verifiedcleanfailureteardown. ExactunchangedJunctionargv incommandef98dece/runner7af07285/manifesta97d900d ONCE is separatelyRELEASED. SchematicJunctionhittrace staysstrict. FreshseparaterootpersonalbaselineADMIT before716,377/oneclick/twooriginals. Workerownsallpolling/cleanup, stop/reportfailure. NoVia rerun/source/build/fixturechange, cardinality/fullC04/HUMAN/otherpredicate waiver.",
+    "source_preparation_status": "Frozena35e085f consumedoncepercase sequentially; Viaactualexit1/diagnosticoracleFAIL preservedwithfinitebehavioracceptance, thenexplicitmanagerreleasedunchangedJunctioncommandactualexit0. SourcePASSsupersededonlyforViaSchematic-onlytraceassertion, no source/native retry/productpatch.",
+    "combined_runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/point-via-junction-runtime-candidate-01.json",
+      "sha256": "663ce896880f88110656552a350f6592dd289d1b715c47c11f641372a12d0281",
+      "bytes": 30788
+    },
+    "junction_observed_behavior": {
+      "state": "CONSUMED_REVIEWED_FINITE_JUNCTION_INDIVIDUAL_POINT_ACQUISITION_ACCEPTED",
+      "actual_launch": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 39663,
+        "timestamp": "2026-10-21T02:54:39.724Z",
+        "turn_id": "01a15c60-f59d-7452-957c-b731cf4e6079",
+        "item_id": "ctco_01a15c61-dc6c-74a1-9757-6404b7a91b97",
+        "call_id": "call_eefbd526928b40c5bf5831edb8b1c64d",
+        "chunk_id": "26c0d5",
+        "exit_code": null,
+        "exec_session": 42154
+      },
+      "actual_final": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 39700,
+        "timestamp": "2026-10-21T02:55:56.385Z",
+        "turn_id": "01a15c60-f59d-7452-957c-b731cf4e6079",
+        "item_id": "ctco_01a15c63-07e0-74d1-ad6c-7d96347ac432",
+        "call_id": "call_5bd4cd540d644861b944012f296ad7f1",
+        "chunk_id": "06bdbc",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "exec_session": 42154,
+      "exit": 0,
+      "result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-junction-01/result.json",
+        "sha256": "994e435c11447fb477d8e4dac652a3783084743dade094312822730da6384ff4",
+        "bytes": 111454
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-point-junction-01/transport.json",
+        "sha256": "3bfc176f8381a255270e82e2e549ff5dc6978d3787c01bb8489984a57e1937db",
+        "bytes": 3745
+      },
+      "originals": {
+        "initial.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-junction-01/initial.png",
+          "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+          "bytes": 57612
+        },
+        "selected.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-junction-01/selected.png",
+          "sha256": "6f2479d2a749c26737f650179ab2b679cb3315f9762d69009ba6949e4ae17635",
+          "bytes": 106584
+        }
+      },
+      "baseline_checkpoint": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-junction-01/baseline-checkpoint.json",
+        "sha256": "8b833cdb23286872047b2bedd6772ab8d14c0391ebecee46610e36bcbcc9d9b4",
+        "bytes": 14512
+      },
+      "manager_fresh_admission": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-point-junction-01/baseline-admission.json",
+        "sha256": "caac33f583f14c9d56a08f3bcbf1a60adc74d0ca8078c49673e9e9181435b93c",
+        "bytes": 1368
+      },
+      "strict_source_hit_trace": [
+        "[datum-click] primary click (716.0, 377.0) schematic world (9881780, -81351) hit Some(AuthoredObject(\"schematic-junction:73000000-0000-4000-8000-00000000000b\")) (native selection acquisition)"
+      ],
+      "actual_audit": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 39715,
+        "timestamp": "2026-10-21T02:56:57.490Z",
+        "turn_id": "01a15c60-f59d-7452-957c-b731cf4e6079",
+        "item_id": "ctco_01a15c63-f692-73a0-82d6-531e458decfe",
+        "call_id": "call_f5b180c6c70e408b903d23a0e635e062",
+        "chunk_id": "bf9b4c",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "root_audit": "789040 independentlyverifiedexacthit/2Contexts4AX/immutable211->255->256->258/all61maps/8owners2IPC/timelycleanup; actualfinal06bdbc/d28c47 line39700, launch/release/claimline39663.",
+      "observed_scope": "Onecoldfixed716,377plainclick/twooriginals. ExactJunction00bObject/scopejunction/focus00b/current67abasis/Schematicpane1, soleJunctionInspector+specificCPUFocus, fullAXContext. StrictSchematicnativehittracewinsagainstWireendpoints; bothreadinesswaitssameCPUcontent/nativepresent/settledledger.61mapsbefore/afterobservation/afterteardown/currentrepo/liveunchanged; ordinaryUIexit+qualified8recordedowners2IPC/timelyshellcleanup.",
+      "pixel_limits": "VisibleJunction:object1/SELECTED/All1/Junctions1 andspecificFocuspreviewb/footerSchematicobject1/accent at716377. Tiny24gon/sourcehitorder not directlypixelmeasured; completeidentity/fullmodelseparate.",
+      "raw_status": "CAPTURE_ONLY finite Via or Junction point Object identity/AX/Context/native composed PNG; actual independent pixel/behavior acceptance required, no fullC04/HUMAN",
+      "review_state": "Actualindependentruntime reviews and appointed-managerfiniteacceptance received; rawCAPTURE_ONLYunchanged.",
+      "actual_runtime_reviews": [
+        {
+          "role": "closeout",
+          "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+          "turn": "01a15c63-596d-7932-8ae5-59180fb0522c",
+          "outcome": "ActualfiniteJunctionpoint runtimePASS, no mandatoryfinding; exactObject/focus/AXContext/CPU/nativehit/originals/61maps/qualifiedcleanup agree."
+        },
+        {
+          "role": "reorganization",
+          "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+          "turn": "01a15c63-8f81-78d1-b16e-979f966dc30a",
+          "outcome": "ActualfiniteJunctionpoint runtimePASS, no mandatoryfinding; originalpixels/fulltypedidentity/readiness/nonmutation/recordedcleanup verified."
+        }
+      ],
+      "manager_acceptance": "PM059 appointed manager ACCEPTS finiteJunction00b individualpointacquisition withbothactualruntimePASSreviews androotoriginals/789040. Combinedfrozenindex663ce896 pins verifiedd9f1cf; all16actualreceiptbindingsverified69b49b. ActualJunctionexit0 remains distinctfromViaFAIL/finitebehavioracceptance. Nootherclass/region/cardinality/fullC04/HUMANacceptance."
+    },
+    "manager_combined_disposition": "Both finite ordinary point behaviors accepted through separate actual runtime receipts and appointed-manager dispositions. Via rawFAIL65d68ca4/transport5270a555/exit1 stay immutable; no directBoardhittrace/intermediateafter_observation inventory/ordinarysuccesscleanupcredit. PriorSOURCEPASSsupersededonlyforincorrectViaSchematic-onlyassertion; exactJunctionSchematictrace remainsstrict andpasses. No observer-green rerun, productpatch/newinstrumentation, designerobligationwaiver or cardinalitydisposition. Rootownsfinalinspection/normal-hookcommit/push ofexact3metadatafiles.",
+    "retained_boundaries": "Only Via002 and Junction00b point acquisition gaps reconciled. NoConnect anchors, padlessFootprint, Boardgraphics/outline/parentownedtext/Edge.Cutsnegative/Zonepointmenu andotherapplicableunboundregionpredicates remainopen; acceptedVia/Junctionregionandotherhistoricalreceipts unchanged. Cardinalitydat-compound-cardinality-drift-iu3k remainsopenrelatedonly; closedvs05/9e170f1b Inspectorfixacceptancepreserved. C04in_progress/fullC04/HUMAN/hardware/exactGPUcompositorsampling/C05/C06/successor acceptance notgranted. Viafailure/f77109/3265c0 andqualifiedfailurecleanup remainexplicit."
   }
 }
