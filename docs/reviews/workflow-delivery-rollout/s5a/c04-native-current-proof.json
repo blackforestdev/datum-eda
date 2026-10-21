@@ -1298,9 +1298,9 @@
           "lines": 489
         }
       },
-      "relation_to_executed_checkpoint_3": "Only tests.rs assertion indentation16\u219212spaces; exact reverse reconstruction matches92f35bda. Identical Rust tokens; all five production owner hashes unchanged."
+      "relation_to_executed_checkpoint_3": "Only tests.rs assertion indentation16→12spaces; exact reverse reconstruction matches92f35bda. Identical Rust tokens; all five production owner hashes unchanged."
     },
-    "source_health": "Normal ownership extraction selection_view.rs526\u2192514 with inventory.rs27; no debt-ledger entry or ceiling exception. Actual source-health3086PASS.",
+    "source_health": "Normal ownership extraction selection_view.rs526→514 with inventory.rs27; no debt-ledger entry or ceiling exception. Actual source-health3086PASS.",
     "compiled_gui_sha256": "b758c2a27e7aef8e67972d0dbea04ce6e699d52cf84280d5de3aeba94e8ad937",
     "before_gui_sha256": "869ef608a42d46821df9d34c27f0aa58c88d5ae7ed86cebe6157bc5623c59721",
     "binary_binding": "New GUI built against exact five production bytes shared by executed checkpoint3 and final checkpoint4 over c94ddff19f5370c4036068b799333837ed038810. Executed test92f35bda subsequently received one indentation-only correction to aa7db349, identical tokens verified by exact reverse-hash reconstruction; no assertion or production change. Base HEAD is provenance, not an uncommitted landing claim.",
@@ -1880,7 +1880,7 @@
   },
   "mixed_keyboard_scope_proof_20261011": {
     "scope": "Finite remaining retained C04 N11/N17 ordinary keyboard Inspector scope/inventory case; existing behavior, no production change or whole requirement/phase acceptance.",
-    "authority": "Actual manager authorized retained-grant finite mixed scope proof after bounded reason correction landed. Existing ContextMenu/Shift+F10\u2192Select list\u2192Inspect scope and inventory commands; no new binding/product semantics.",
+    "authority": "Actual manager authorized retained-grant finite mixed scope proof after bounded reason correction landed. Existing ContextMenu/Shift+F10→Select list→Inspect scope and inventory commands; no new binding/product semantics.",
     "source_commit": "2f2967adb946bb48176d07c6bf85303c04bfec09",
     "landing_receipt_commit": "d551d83e2b9ab3fb5f9dff508a07a7894f297256",
     "compiled_gui_sha256": "a8dafa0de51ab2cbc06955f1d7ee9f325bbc84636ca35f4b1cae5a8501105852",
@@ -1958,7 +1958,7 @@
       "retained_observations": 3,
       "canonical_files": 29,
       "canonical_unchanged": true,
-      "scope": "Separate minimal two-command Tracks\u2192All supplement launched before manager no-rerun-needed disposition arrived; source/binary unchanged. Unique prefix preserves actual Tracks-beforeEnter artifact. Not added to authoritative main seven-observation count; no duplicate/full N11/N17 acceptance manufactured."
+      "scope": "Separate minimal two-command Tracks→All supplement launched before manager no-rerun-needed disposition arrived; source/binary unchanged. Unique prefix preserves actual Tracks-beforeEnter artifact. Not added to authoritative main seven-observation count; no duplicate/full N11/N17 acceptance manufactured."
     },
     "evidence_files": {
       "attempt-13-mixed-scope-5-focus.js": "6bf250d0ac98a78518460bbefd90c11aabf9cfece0b15bbf8184a574944a2333",
@@ -2282,7 +2282,7 @@
       "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/identity-lifetime-report-20261011.tar.xz",
       "sha256": "c48afd246a570de558ec25b37e319bf7b9ed2bc721e62418422ecf1253427906",
       "raw_top_level_files": 112,
-      "contents": "Raw failed and successful native cohorts19\u201326, focused tests/build/gates and five frozen source owners; final project snapshots contain ONLY exact canonical source_after hash-map paths. Runtime operational trees and credential payloads excluded.",
+      "contents": "Raw failed and successful native cohorts19–26, focused tests/build/gates and five frozen source owners; final project snapshots contain ONLY exact canonical source_after hash-map paths. Runtime operational trees and credential payloads excluded.",
       "canonical_snapshot_files": 113,
       "entries": 230,
       "superseded_unsafe_archive_sha256": "cb6b398cd22b972fbb6cb007a64d5b41e0e661cd1f79e3826490e9e1cfbc421c",
@@ -2834,7 +2834,7 @@
       "policy": "Exact canonical-after map paths only, known raw evidence, current owned source snapshots; no credentials/operational project trees. Native12 reconstructed parent hash exact, final14 test-only cohort separate."
     },
     "metadata": {
-      "protocol_legacy_ratchet": "Production3093\u21923078; inline1705 unchanged. Renderer root remains129physical/3455expanded. No new debt exception.",
+      "protocol_legacy_ratchet": "Production3093→3078; inline1705 unchanged. Renderer root remains129physical/3455expanded. No new debt exception.",
       "debt_parity": "Only debt inventory row66/hashdc01dde3 updated, independently verified by management.",
       "bindings": "MenuBindings exact Open row/narrative factual PARTIAL change, SHA4aea9609; shell route digest6b41b007 carries adequate complete unchanged-member review."
     },
@@ -2995,7 +2995,7 @@
     "actual_governance_receipt": "Independent management personally checked224regular names/types and223manifesthashes: zero unsafe/link/unlisted entries; canonical48/50/51 22/34/43 match actualmaps, final6current/archivedpins exact. Actual bounded package/governance PASS received; pixel acceptance attributed only auditor/root. Gates amendment independently pending.",
     "archive_supersession": "Initial66c02d9f224-entry archive independently passed; replaced by84471347 226entries solely adding actual finalgates JSON and projectcheck/stagedfmt/lane/whitespace terminal receipts to safe raw whitelist. Existing115raw/99canonical/9sources unchanged; no proof/build rerun.",
     "actual_independent_package_receipt": "Auditor personally verified all initial224regular/223hashes/115originalraw/canonical22+34+43/final6pins/before-unit3HEAD parents. Actual bounded package acceptance received; final2raw gate receipt delta pending correspondence.",
-    "actual_final_package_receipts": "Actual independent code auditor and management both accepted final226safe regular entries/225manifesthashes, exact2newraw gates and stagedreceipts; removing2entries reproduces originalmanifest0afcc583, prior223payloads unchanged. Initial projectcheckFAIL\u2192later82PASS and inheritedparityFAIL/no waiver preserved. Final source/runtime acceptance unchanged; no reruns.",
+    "actual_final_package_receipts": "Actual independent code auditor and management both accepted final226safe regular entries/225manifesthashes, exact2newraw gates and stagedreceipts; removing2entries reproduces originalmanifest0afcc583, prior223payloads unchanged. Initial projectcheckFAIL→later82PASS and inheritedparityFAIL/no waiver preserved. Final source/runtime acceptance unchanged; no reruns.",
     "actual_source_landing": {
       "commit": "674618fe6bebbf478cfe7603175aadb18fd9b3ac",
       "normal_commit_terminal": 0,
@@ -3381,7 +3381,7 @@
       "root": "Root personally verified raw9 observations/8CLI0/3maps/fresh tuple and Reject/reacquire pixels; accepts canonical Draft rejection/restoration only under retained PM059. Accepted route Review withdrawal/fullN10/HUMAN remain unclaimed."
     },
     "limits": [
-      "Canonical production Proposal Draft\u2192Rejected proved; no Accepted route Review withdrawal or same action Review discard equivalence.",
+      "Canonical production Proposal Draft→Rejected proved; no Accepted route Review withdrawal or same action Review discard equivalence.",
       "No fullN10/C04/HUMAN/blanket visibility or narrow-surface qualification.",
       "No source/dependency/policy/threshold changes, private producer setter, manufactured UUID/status or review evidence child selection.",
       "Inherited supervision parity FAIL remains unwaived; no row/collector repair."
@@ -3486,8 +3486,8 @@
         "complete-five-member-inventory",
         "restore-filter-preserves-full-Run5"
       ],
-      "invariance": "All61 prelaunch/startup/source_after/final byte maps equal; startupdelta{}. Label eligibility excluded BEFORE eligible Wire\u2192Run. Full exact5 SelectionView/currentbasis/stale:false/member_count5/hidden0 retained. Inventory and eligibility restoration preserve full SelectionView and canonical bytes.",
-      "pixels": "Implementer/root/auditor viewed Run5 with2Wire/1Label/1Port/1Junction, selected visibleLabela and disconnected same-nameLabele unselected; current focused ExcludeLabels/SelectRun/EnableLabels source-qualified. Inventory first3 rows visible with honest1\u201327/30 paging; not all rows shown. Existing BoundsUnavailable and clipped secondary quantity text remain unqualified."
+      "invariance": "All61 prelaunch/startup/source_after/final byte maps equal; startupdelta{}. Label eligibility excluded BEFORE eligible Wire→Run. Full exact5 SelectionView/currentbasis/stale:false/member_count5/hidden0 retained. Inventory and eligibility restoration preserve full SelectionView and canonical bytes.",
+      "pixels": "Implementer/root/auditor viewed Run5 with2Wire/1Label/1Port/1Junction, selected visibleLabela and disconnected same-nameLabele unselected; current focused ExcludeLabels/SelectRun/EnableLabels source-qualified. Inventory first3 rows visible with honest1–27/30 paging; not all rows shown. Existing BoundsUnavailable and clipped secondary quantity text remain unqualified."
     },
     "independent_review": {
       "code_audit": "Actualsixrequiredframes/source/raw full5/current67a175/stale:false/61maps/drainedGUI independently bounded clear; no allquantity/fullIR01/HUMAN claim. Final91fdb8fc/162safe regular161hashes exact; sole raw staged gate addition reconstructs previous43cf0dbf manifest, prior160fields unchanged.",
@@ -4141,7 +4141,7 @@
     "observations": 7,
     "outcomes": [
       "Distinct committed Wire9 P and exact17 nonWire eligibility exclusions; allfilter/fullP/canonical guards retained.",
-      "Actual Space Pressed BEFORE Left Pressed activates pan; horizontal80px movement changes camera45m\u219234.450548m/yfixed while P unchanged.",
+      "Actual Space Pressed BEFORE Left Pressed activates pan; horizontal80px movement changes camera45m→34.450548m/yfixed while P unchanged.",
       "Actual Space Released BEFORE Left Released stops movement; pointer over distinct eligible Wire8 and primary release retains fullWire9 P, actual pan primary released suppress_click=true.",
       "Ordinary Fit restores camera without selection or design mutation.",
       "Actual active ShiftRectangle is presented/captured BEFORE Space Pressed. Subsequent interior motion while Spaceheld leaves allobservedfullP andcamera unchanged; actualprimarypress held=false active=false, release suppress_click=false.",
@@ -4666,7 +4666,7 @@
     }
   },
   "n11_exact_width_20261011": {
-    "scope": "Finite retained C04 N11 two exact canonical widths whose numeric display rounds equal, ordinary Inspect Tracks/Common\u2192Mixed, public read-only properties/currentbasis/no-write proof.",
+    "scope": "Finite retained C04 N11 two exact canonical widths whose numeric display rounds equal, ordinary Inspect Tracks/Common→Mixed, public read-only properties/currentbasis/no-write proof.",
     "authority": "Explicit appointed-manager retained C04 N11 grant; no new unit/default/width/product policy or source edits.",
     "source_commit_before_unit": "73b978551b68479e91a09cf526b5e523ced7b3a7",
     "compiled_source_cohort": "Unchanged GUI78627a1f compiled7590c663; no source/dependency/build changes.",
@@ -4749,7 +4749,7 @@
       }
     },
     "outcomes": [
-      "Ordinary source-derived interior clicks acquire actual Track1/2/currentProject/revision; each uses focused Inspect Tracks\u2192SomeTrack scope-only transition preserving fullsubject/members/focus/basis and allcanonical bytes.",
+      "Ordinary source-derived interior clicks acquire actual Track1/2/currentProject/revision; each uses focused Inspect Tracks→SomeTrack scope-only transition preserving fullsubject/members/focus/basis and allcanonical bytes.",
       "Native canonical copper_width_nm Common5080000 and Common5080001 remain distinct. Shared engine format_length joins numeric value and suffix withoutspace: both numeric rendered5.080mm, roundedfalse/true. PublicName/Inspector second truthfully appends(rounded); never require byte-identical full labels.",
       "Ordinary ReplaceTrack1 then ShiftAddTrack2 yields exactCompound2 focusTrack2. Initial All scope has no classwidthfield; actual Inspect Tracks alone changes scope, then public widthvalue-state mixed/NameMixed/no canonical scalar, currentkindcompound/count2/fullIDs qualified first.",
       "Public service bound by actual GUI PID; rootkind/basis/memberidentities/count/FieldsNameTracks before fieldquery. Only expected UnknownObject within bounded asyncreadiness is retryable and rawstderr retained; allothertransport failures fatal.",
@@ -4898,8 +4898,8 @@
     "causal_chain": [
       "Actual existing priorWire9 selection on focusedSchematic; Shift primarypress/motion activates meaningfulRectangle crossing additionaleligibleWire8. Presented heldboundary/P invariant evidence captured.",
       "Ordinary ShiftF10 moves to ContextMenu Overlay and cancels gesture BEFORE paneclose; fullSelectionView/canonical maps identical. Actual primaryrelease AFTER focuscancel thenShiftup/Escapedismiss does not publish regionmembers; boundarygone/P retained.",
-      "Ordinary ViewClosePane index10 focusedlabel\u2192closeSchematic; remainingfocusedBoardPane0/livecamera count1/deadPane1 absent. Stable authoritative subject/member/focus/basis/filter selection retained, no canonical writes.",
-      "Ordinary ViewFillPaneSchematic index15 focusedlabel\u2192same survivingPane0 nowSchematic; Fit presentation shows same selectedWire9 cue/currentInspector focus, no selectionresurrection or newacquisition."
+      "Ordinary ViewClosePane index10 focusedlabel→closeSchematic; remainingfocusedBoardPane0/livecamera count1/deadPane1 absent. Stable authoritative subject/member/focus/basis/filter selection retained, no canonical writes.",
+      "Ordinary ViewFillPaneSchematic index15 focusedlabel→same survivingPane0 nowSchematic; Fit presentation shows same selectedWire9 cue/currentInspector focus, no selectionresurrection or newacquisition."
     ],
     "projection_qualification": {
       "compared_authority": "Exact debugprefix before inspection contains currentProject/revision/subject/focus/origin/members/related/scope/typedvalues/authoredanchors; filters same, noticeNone/drop0/stalefalse.",
@@ -4990,7 +4990,7 @@
     }
   },
   "n17_standard_selected_20261011": {
-    "status": "PARTIAL \u2014 bounded N17 implementation/source/native/package objective accepted by appointed root manager; normal hooks/landing pending. Full C04/N17/AT/HUMAN qualification open.",
+    "status": "PARTIAL — bounded N17 implementation/source/native/package objective accepted by appointed root manager; normal hooks/landing pending. Full C04/N17/AT/HUMAN qualification open.",
     "authority": "Retained UVT-S5A-BUILD/S5A-C04 execution and PM059 root manager delegation; preparation304 accessible selectedstates. No new product rule/dependency/successor.",
     "problem": "Current member GetAttributes selected=true disagreed with public GetState, which never set standard SELECTED. Existing read-only membership projection is the authority.",
     "change": "Genuinely extracted one shared baseline state word/body encoder; inherited terminal/preference/default bytes unchanged. Selection sets SELECTED bit23 only after actual current Node::Member lookup. Root keyboard FOCUSED bit12 remains separate; optional selection-focus does not grant keyboardFOCUSED.",
@@ -5005,7 +5005,7 @@
     "route_review_reuse": {
       "gui-selection": "d47bd726045e78a6c3a6fdd38b0d5b63ebe947b9c138b05a44032151e4882a7e",
       "prototype-selection": "78dffa2dc2a85ef1e49e9d2e50720b7bd1b6e4c91c0f2f143175c78202a4ed93",
-      "classification": "Management independently recomputed unchanged complete route and reused adequate complete prior source/consumer review; focused existing preparation304/UVT195\u2013214 reread. No prototype/spec/digest policy change."
+      "classification": "Management independently recomputed unchanged complete route and reused adequate complete prior source/consumer review; focused existing preparation304/UVT195–214 reread. No prototype/spec/digest policy change."
     },
     "native": {
       "attempt": 71,
@@ -5019,7 +5019,7 @@
       "project": "20000000-0000-4000-8000-000000000001",
       "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
       "receipts": 3,
-      "workflow": "Ordinary eligibleWire8\u2192SelectRun5; public PID-bound queries; ordinary distinct externalWireD click replaces Run; qualified newObject public queries and all5formerpaths explicit UnknownObject. No private state mutation.",
+      "workflow": "Ordinary eligibleWire8→SelectRun5; public PID-bound queries; ordinary distinct externalWireD click replaces Run; qualified newObject public queries and all5formerpaths explicit UnknownObject. No private state mutation.",
       "run_members": [
         [
           "Junction",
@@ -5205,7 +5205,7 @@
       "Live Run/Object standardSELECTED only; isolated dispatcher controls additionally qualify Compound optionalfocus and relatedParent/former paths. No fullAT/screenreader/HUMAN/allroles/allstates/allselectionkinds/C04 qualification.",
       "Publicquery channel is read-only; rawCAPTURE_ONLY unchanged and independentacceptance separate. Inherited supervision parityFAIL remains unwaived/dat-supervision-owner-parity-202s."
     ],
-    "staged_checks": "raw/n17-selected-state-staged-checks.json \u2014 exact owned9 stagedfmt/whitespace0",
+    "staged_checks": "raw/n17-selected-state-staged-checks.json — exact owned9 stagedfmt/whitespace0",
     "source_landing": {
       "commit": "2ebe64c9c8b3a97e5371694f7bef71cb9f3bdc28",
       "normal_hooks_exit_code": 0,
@@ -5213,7 +5213,7 @@
     }
   },
   "n05_hidden_layer_origin_20261011": {
-    "status": "PARTIAL \u2014 finite actual hidden-L1 origin/global authored inclusion objective accepted by appointed root manager with actual independent runtime/package/governance receipts; normal hooks/landing pending. Full N05/C04/HUMAN remains open.",
+    "status": "PARTIAL — finite actual hidden-L1 origin/global authored inclusion objective accepted by appointed root manager with actual independent runtime/package/governance receipts; normal hooks/landing pending. Full N05/C04/HUMAN remains open.",
     "authority": "Root selected retained UVT-S5A-BUILD/S5A-C04 N05 behavior; existing hit/menu visibility eligibility and global authored inclusion. No successor/privatefilter/default or product rule change.",
     "setup": {
       "initial_setup": "raw/n05-hidden-layer-origin-setup.json",
@@ -5278,7 +5278,7 @@
       "result_sha256": "662f681e85353f5596e55f0b3e3d91672808c6852b518795f79a7aa69b8eaa0f",
       "outcome": "FAIL",
       "failure": "Exact4globalmembership oracle omitted actualownedBoardOutline; actualCtrlA correctly produced5/hidden4/focusNone.",
-      "reached_subset": "Distinct Track3\u2192L1hide before Track1 input\u2192Mainorderedclick/menu fullposthideP retained\u2192dismiss; fourobservations.",
+      "reached_subset": "Distinct Track3→L1hide before Track1 input→Mainorderedclick/menu fullposthideP retained→dismiss; fourobservations.",
       "gui_pid": 805023,
       "gui_exit_code": 0,
       "shutdown": "drained_device_live",
@@ -5293,14 +5293,14 @@
       "gui_sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3",
       "gui_pid": 805707,
       "receipts": 5,
-      "workflow": "ActualBoardfit/sourceprobes: ordinary currentTrack3 interior45m0 \u2192 ordinaryL1visibilityhide acknowledge before input \u2192 distinct hiddenTrack1 interior5m0 MainLeftpress/release \u2192 actualno-originSelectmenu \u2192 dismiss fullposthideP unchanged \u2192 ordinaryCtrlA complete5/fourhiddenTracks/focusNone.",
+      "workflow": "ActualBoardfit/sourceprobes: ordinary currentTrack3 interior45m0 → ordinaryL1visibilityhide acknowledge before input → distinct hiddenTrack1 interior5m0 MainLeftpress/release → actualno-originSelectmenu → dismiss fullposthideP unchanged → ordinaryCtrlA complete5/fourhiddenTracks/focusNone.",
       "native_input_binding": {
         "window": "27262980",
         "pressed_index": 17,
         "released_index": 21
       },
       "selection_baselines": "L1hide legitimately changes projection/inspection/hidden fields; authoritativeprefix beforevalues and exactpriorTrack3 preserved. Hiddeninput/menu/dismiss compare entire posthideSelectionView byteexact, not normalized broadfields.",
-      "global": "Exact4TrackIDs4000...1\u20134+BoardOutline2000...3/root[]; hiddenexactfourTracks/count4, CompoundfocusNone; no hiddenTrackcanvascues. Outlineemptybounds unavailable honestly; unprojected0.",
+      "global": "Exact4TrackIDs4000...1–4+BoardOutline2000...3/root[]; hiddenexactfourTracks/count4, CompoundfocusNone; no hiddenTrackcanvascues. Outlineemptybounds unavailable honestly; unprojected0.",
       "canonical": "All35prelaunch/startup/source_after/final bytehashes equal; current files rehashed; startupdelta{}. Canonicalsetup and operationalcontext excluded before reads.",
       "shutdown": {
         "phase": "drained_device_live",
@@ -5406,7 +5406,7 @@
       "No-origin menuabsence and absent hiddenTrackcues credited only actual personalpixelreview; no filename/count-only assertion. EmptyownedOutline identity is distinct from renderable geometry.",
       "Inherited supervision parityFAIL remainsunwaived/dat-supervision-owner-parity-202s; no dependency or default/unit/product rule change."
     ],
-    "staged_checks": "raw/n05-hidden-layer-origin-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0",
+    "staged_checks": "raw/n05-hidden-layer-origin-staged-checks.json — exact owned4 stagedfmt/whitespace0",
     "landing": {
       "commit": "42c851c47b4677f730a44df7d1731b22a710ca5f",
       "normal_hooks": 0,
@@ -5415,7 +5415,7 @@
     }
   },
   "global_net_ladder_20261011": {
-    "status": "PARTIAL \u2014 finite actual ordinary Run to GlobalNet behavior accepted by appointed root manager with actual independent runtime/pixel/package/governance receipts. Normal hooks/landing pending; full IR01/C04/HUMAN open.",
+    "status": "PARTIAL — finite actual ordinary Run to GlobalNet behavior accepted by appointed root manager with actual independent runtime/pixel/package/governance receipts. Normal hooks/landing pending; full IR01/C04/HUMAN open.",
     "authority": "Root selected retained UVT-S5A-BUILD/S5A-C04 existing ordinary semantic ladder and replacement, no successor/product rule/private query authority.",
     "setup": {
       "raw": "raw/global-net-ladder-setup.json",
@@ -5611,7 +5611,7 @@
       "gui_sha256": "ad235e288948013d5cb3b8751107ed640fed96e2ec1a794bed58f3aa85bdc6d3",
       "gui_pid": 808422,
       "receipts": 5,
-      "workflow": "Ordinary eligible rootWire8 Object \u2192 actual focused SelectRun menu Run5 exactorigin \u2192 actual focused GlobalNet menu full21 typed/path membership \u2192 Inventory collapsedfalse to acknowledged expandedtrue with exact fullP \u2192 plain disconnected rootWireD Object replacement.",
+      "workflow": "Ordinary eligible rootWire8 Object → actual focused SelectRun menu Run5 exactorigin → actual focused GlobalNet menu full21 typed/path membership → Inventory collapsedfalse to acknowledged expandedtrue with exact fullP → plain disconnected rootWireD Object replacement.",
       "projection": "Exactly14 nonroot occurrence-qualified unprojected identities, root7 represented, hidden0; honest9Wire/6Label/3Port/3Junction. Inventory shows first visible rows with paging; no all21 canvas/inventory visibility claim.",
       "native_input_binding": {
         "window": "27262980",
@@ -5635,14 +5635,14 @@
         "raw/attempt-74-global-net-ladder-plain-Object-replacement-clears-derived-scope.png",
         "raw/attempt-74-global-net-ladder-presented-eligible-Wire.png"
       ],
-      "inventory_freshness_limit": "Seq14 expanded flagtrue/fullP unchanged retained earlier presented metadata basis_expandedfalse. Later actual screenshot shows expanded Members21/first3visible/page1\u201327/74; nextseq15 presented basis_expandedtrue. No same-sequence complete row rendering or all21on-screen claim."
+      "inventory_freshness_limit": "Seq14 expanded flagtrue/fullP unchanged retained earlier presented metadata basis_expandedfalse. Later actual screenshot shows expanded Members21/first3visible/page1–27/74; nextseq15 presented basis_expandedtrue. No same-sequence complete row rendering or all21on-screen claim."
     },
     "incidental_defect": {
       "issue": "dat-cli-nets-semantic-schema-ugj0",
       "classification": "Actual CLI project query nets parse failure retained in setup, not full nativeGlobalNet authority. Intake only, no repair/new prerequisite. Gate initial missing roadmap:intake label corrected and recheckPASS preserved."
     },
     "independent_reviews": {
-      "code_audit": "Actual complete current21typed/path+14unprojected source/native/Maininput/shutdown and personally focusedGlobalNet/inventory first3visible/page1\u201327/74/plainObjectD pixels bounded ACCEPT; final d9c81f82/f1865a72 143safe142hash32origins/current10pins/7equal61maps correspondence ACCEPT received. Exact historical function-body qualification accepted; no outstanding correction.",
+      "code_audit": "Actual complete current21typed/path+14unprojected source/native/Maininput/shutdown and personally focusedGlobalNet/inventory first3visible/page1–27/74/plainObjectD pixels bounded ACCEPT; final d9c81f82/f1865a72 143safe142hash32origins/current10pins/7equal61maps correspondence ACCEPT received. Exact historical function-body qualification accepted; no outstanding correction.",
       "management_review": "Actual correctedproof695fb55a/d9c81f82/f1865a72 bounded governance/package PASS received: 143safe142hash32origins/current10pins/7equal61maps/final61+49blobs, historicalfunctionbody-only reuse and archivedoriginal qualifier truthful, scope/currentgates/owned4 truthful.",
       "root_manager": "Root personally actual74f791/full21+exact14/current61/fullP inventoryexpanded/Mainpress17<release21/plainreplacement/GUI0drain and inventorypixels reviewed; exactimmutable143/142 package independently verified. Final distinct auditorACCEPT and managementPASS received; finite objective accepted/normalownedlanding authorized. FullC04/HUMAN remains open."
     },
@@ -5724,13 +5724,13 @@
       }
     },
     "limits": [
-      "Finite current61source-qualified ordinaryWire8 Object\u2192Run5\u2192GlobalNetb151 full21 occurrencequalifiedmembers (root7+twoinstanced7)\u2192plainObjectWireD replacement.",
+      "Finite current61source-qualified ordinaryWire8 Object→Run5→GlobalNetb151 full21 occurrencequalifiedmembers (root7+twoinstanced7)→plainObjectWireD replacement.",
       "QualifiedSchematicOnlyrelationship board_netNone, no Boardmembers assumed; honest14unprojected/root7 represented, no all21visible canvas/inventory/HUMAN/Bus/fullIR01/C04 claim.",
       "Read-only source/journal/canonical61 with fullmaps; adequate unchangedhistoricalisolated engineoracle reused, no newbuild/privatequeryauthority.",
       "Historical isolated proof logs are retained historical actual PASS, not new ignoredtest execution. CLI schematic nets is not full occurrence/board authority.",
       "Unrelated inherited GUI supervision parity FAIL remains unwaived; no Bus/crosspane interactive/allIR01/fullC04/HUMAN qualification."
     ],
-    "staged_checks": "raw/global-net-ladder-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0",
+    "staged_checks": "raw/global-net-ladder-staged-checks.json — exact owned4 stagedfmt/whitespace0",
     "landing": {
       "commit": "e33eafce27e36e08fd5646007d448a9b889a9e47",
       "normal_hooks": 0,
@@ -5739,7 +5739,7 @@
     }
   },
   "foreign_bus_isolation_20261011": {
-    "status": "PARTIAL \u2014 finite ordinary same-name foreignBus identity/related isolation accepted by appointedroot manager with actual independent source/native/pixel/package/governance receipts. Normal hooks/landing pending; fullBus/IR01/C04/HUMAN open.",
+    "status": "PARTIAL — finite ordinary same-name foreignBus identity/related isolation accepted by appointedroot manager with actual independent source/native/pixel/package/governance receipts. Normal hooks/landing pending; fullBus/IR01/C04/HUMAN open.",
     "authority": "Appointedroot selected unchanged retained UVT-S5A-BUILD/S5A-C04 existing explicitBus entry/identity isolation. No newrule/dependency/writer/sourcefix.",
     "setup": {
       "raw": "raw/foreign-bus-isolation-setup.json",
@@ -5913,7 +5913,7 @@
       "gui_pid": 810913,
       "outcome": "CAPTURE_ONLY_FOREIGN_BUS_ISOLATION_REVIEW_PENDING",
       "receipts": 4,
-      "workflow": "ActualrootBus4 interior50m10m Object \u2192 ordinaryfocusedSelectBus menu \u2192 Bus02a exactowned2 versus Relatedscalar21/disjoint/currentbasis \u2192 Inventory collapsedfalse to acknowledgedexpandedtrue/fullP invariant \u2192 plainWireD replacement/Mainbound orderedpress17/release21.",
+      "workflow": "ActualrootBus4 interior50m10m Object → ordinaryfocusedSelectBus menu → Bus02a exactowned2 versus Relatedscalar21/disjoint/currentbasis → Inventory collapsedfalse to acknowledgedexpandedtrue/fullP invariant → plainWireD replacement/Mainbound orderedpress17/release21.",
       "projection": "Exactnonrootchild68/path1f unprojected1, hidden0/locked0; onlyrootBus4 selected. Scalar21 remainsRelated normalappearance; same-name primaryGUI6/relatedGUI3 absent fromowned by exactset. No BoardBus geometry/selection claim.",
       "canonical": "All61prelaunch/startup/source_after/final maps equal/currentbytes rehashed, startupdelta{}, completecontentblobs recoverable. No intentional canonical design writes.",
       "native_input_binding": {
@@ -6019,7 +6019,7 @@
       "Complete membership comes from actualdeclarations/currentresolver/engine/native source, not same-name or count-only inference. PriorprimaryBus proof notrerun/newcredit.",
       "Inherited GUI supervision parity FAIL retained/unwaived; no full qualification/HUMAN/AT/equalpath/BoardBus claim."
     ],
-    "staged_checks": "raw/foreign-bus-isolation-staged-checks.json \u2014 exact owned4 stagedfmt/whitespace0"
+    "staged_checks": "raw/foreign-bus-isolation-staged-checks.json — exact owned4 stagedfmt/whitespace0"
   },
   "dense_evaluation_resource_correction_20261011": {
     "classification": "Retained C04/N04/N16 routine production indexing/resource-ownership correction and bounded ordinary native dense delivery; full qualification remains open.",
@@ -6045,7 +6045,7 @@
     "native_functional_80": {
       "result_sha256": "77c803451e223f72f83e85fb485d370187ea1085ac631c1f4d392e63b970e2e2",
       "raw_outcome": "FAIL",
-      "subset": "Meaningful singletond287; actual public pending3079\u21926164/fresh6164 before Escape; same wholeP/no partial or delayed commit; actual later Main presentations and cleared-feedback PNG; ordinary source-layout-enclosed exact100000 typed/root identities SHA9fe0389f; healthy acknowledged full100k frame/Inspector100000/minimum100000.",
+      "subset": "Meaningful singletond287; actual public pending3079→6164/fresh6164 before Escape; same wholeP/no partial or delayed commit; actual later Main presentations and cleared-feedback PNG; ordinary source-layout-enclosed exact100000 typed/root identities SHA9fe0389f; healthy acknowledged full100k frame/Inspector100000/minimum100000.",
       "failure": "Selected dense close exceeded existing terminal deadline scheduling and observer shutdown timed out. No samePID80 drain/GUI0 inferred.",
       "timing": "Actual first full prepare_session_workspace4975ms/AX259ms; prior79 aggregate1310405ms not reproduced or causally assigned. No latency/usability threshold or PASS."
     },
@@ -6157,7 +6157,7 @@
   "shared_cue_budget_correction_20261011": {
     "classification": "Bounded existing-contract C04 implementation and ordinary native qualification; fullC04 and remaining matrices remain open.",
     "before_unit_source_commit": "67065225747b87a4735c1d952a3d328cf97bbbe6",
-    "governing_route": "Retained GUI-selection sources/consumers and prototype ownership route previously fully reviewed; UVT810\u2013820, RenderingBook2.8 and selection visual guidance unchanged. No prototype edits/new product rule/dependency/cap.",
+    "governing_route": "Retained GUI-selection sources/consumers and prototype ownership route previously fully reviewed; UVT810–820, RenderingBook2.8 and selection visual guidance unchanged. No prototype edits/new product rule/dependency/cap.",
     "change": [
       "One pane-wide actual visible direct-detail admission joins authored/native, typed Proposal/Review/Diagnostic and actual clipped selected fallback glyph output. Minimum owner cues and region feedback remain outside detailed count; existing retained-world mask carrier ranges are not per-source direct cue emissions.",
       "Overflow atomically retains exact selected silhouette union and baseline Proposal ghost/Review evidence/Diagnostic severity/hit ownership; preserves original selected hit footprints/palette and below-cap emitter geometry/order. Current typed subject/producer/basis and fresh PreparedScene generation qualify source and projection; artifact-only requests use empty authored keys honestly.",
@@ -6244,7 +6244,7 @@
           "log_sha256": "877d6a4a6211689aaf6ff899e19f3e5476a0eee4fc75b4fdb0ca4538d692c366",
           "source_checkpoint": "shared-cue-source-checkpoint-14.json",
           "source_checkpoint_sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
-          "classification": "Actual genuine empty-authored-key typed Proposal88000 detail cold/warm/later-band glyph/no-text controls PASS. Native-fidelity8x split\u2192zoom and immediate horizontalpan both renderOk under unchanged16MiB, stagingpeak12117888 and all actual owner reservations retire0. Headless surfaceNone remains qualified, ordinary native delivery separate."
+          "classification": "Actual genuine empty-authored-key typed Proposal88000 detail cold/warm/later-band glyph/no-text controls PASS. Native-fidelity8x split→zoom and immediate horizontalpan both renderOk under unchanged16MiB, stagingpeak12117888 and all actual owner reservations retire0. Headless surfaceNone remains qualified, ordinary native delivery separate."
         }
       },
       "shared-cue-axis-soa-quad-gpu-1-terminal.json": {
@@ -6259,7 +6259,7 @@
           "log_sha256": "8d44fd7b59fa81ef3b89d9d773142098067e71f7fc394bd5aadf2da11b2f3f3e",
           "source_checkpoint": "shared-cue-source-checkpoint-14.json",
           "source_checkpoint_sha256": "2404316292ffc39bf113ee61c0ca7565c141cb5aaa180288c215ff8c2f4412a8",
-          "classification": "Actual old20/new44 full-image parity, warm1\u21923\u21922 current-count binding, postencode GPU-refusal/pending/retry/finish/reuse/retirement PASS. Complete genuine transition/native remains separate."
+          "classification": "Actual old20/new44 full-image parity, warm1→3→2 current-count binding, postencode GPU-refusal/pending/retry/finish/reuse/retirement PASS. Complete genuine transition/native remains separate."
         }
       },
       "shared-cue-focused-1-terminal.json": {
@@ -6677,9 +6677,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
-            "description": "Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Proposal — 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Proposal — 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask · 0 minimum · 1 panes.'>,)"
         },
         {
           "attributes": {
@@ -6688,9 +6688,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
-            "description": "Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Proposal — 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Proposal — 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask · 0 minimum · 1 panes.'>,)"
         },
         {
           "attributes": {
@@ -6699,9 +6699,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "554096a8a1ead41134ae5c1e61a7c6df1b5b20228b9d5f4cb4ea923306217e6f",
-            "description": "Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Proposal — 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Proposal \u2014 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Proposal — 83000000-0000-4000-8000-000000000001. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask · 0 minimum · 1 panes.'>,)"
         }
       ],
       "canonical_map_count": 5,
@@ -6809,7 +6809,7 @@
       "authority": "Appointed root manager under PM059; retained UVT-S5A-BUILD/C04 grant",
       "disposition": "Finite ACCEPT",
       "basis": "Actual checkpoint14/32sourcepins, axisCPU2+old20GPU1+genuineGPU2 controlled splitzoom and immediatepan Ok/retire0, GUIa7f01f97, ordinary86 typed Proposal/proposed-only/camera pixels/current barriers/exact39 maps/samePID885780 drained_device_live and GUI0; immutable64646634/manifestc8c70896 fully verified by root and both independent reviewers.",
-      "limits": "Raw83\u201385 failures and earlier failed cohorts retained. No fullC04/HUMAN/collision/latency qualification or successor authority."
+      "limits": "Raw83–85 failures and earlier failed cohorts retained. No fullC04/HUMAN/collision/latency qualification or successor authority."
     },
     "final_affected_gates": {
       "path": "target/s5a-c04-inventory-keyboard-20261011/shared-cue-final-gates.json",
@@ -7169,7 +7169,7 @@
     "independent_reviews": {
       "auditor": "Final independent finite source/runtime/pixel/all-entry correspondence CLEAR received at dd5e7172/c05c8394: all180 safeunique/all179hashes/origins/43current and43Git-before/6complete61maps/all49blobs exact. Allfour pixels personally viewed; actual pan prepared/presented frame precedes B LeftPressed, exact world/fullP/focus and samePIDdrain0 verified. No further source/build/native proof requested.",
       "governance": "Separate management reviewer final bounded governance/package PASS received at proof80566348/archive dd5e7172/manifest c05c8394: all180 safeunique/all179hashes/origins/43current and43Git2fd-before/6complete61maps+recoverableblobs verified; rawproducer4f964/currentresult/pixels/terminal and method/failure limits truthful. Final factualreceipt/gates amendments retain payload and scope.",
-      "manager": "Actual appointed root PM059 finite ACCEPT received: exactsameworldrectangle under45m/25m, actualpan\u2192prepared\u2192presented beforeBpress, identicalfull3Wire/root[]focus9/heldP/fourpixels, all6\u00d761maps/currentfiles/samePID891165drainGUI0; immutabledd5e7172/c05c8394 all180safe179hash/43current=Git-before/49blobs verified by root and both independent reviewers. Freshpairedcase only, no63replica/fullN04/C04/HUMAN/waiver/successor."
+      "manager": "Actual appointed root PM059 finite ACCEPT received: exactsameworldrectangle under45m/25m, actualpan→prepared→presented beforeBpress, identicalfull3Wire/root[]focus9/heldP/fourpixels, all6×61maps/currentfiles/samePID891165drainGUI0; immutabledd5e7172/c05c8394 all180safe179hash/43current=Git-before/49blobs verified by root and both independent reviewers. Freshpairedcase only, no63replica/fullN04/C04/HUMAN/waiver/successor."
     },
     "preserved_method_and_utility_failures": [
       "Original63 quantization finding34abe is read-only/unexecuted, no product defect or acceptance. DiscardedFit-normalization draft94b2610d unexecuted and separately retained.",
@@ -7240,7 +7240,7 @@
   "review_diagnostic_channel_proof_20261011": {
     "classification": "Finite N15/N16 current ordinary typed Review and actual anchored Diagnostic selected-channel rendering; no source/build/lifecycle mutation or fullN16/C04/HUMAN/overcap/collision qualification.",
     "source_commit": "e6161e7e332a0b514a81bcc123776a78c2964212",
-    "readiness_and_reuse": "Actual55/51 lifetime proofs reused separately. Actual56 already covers DraftRejected. Current public review_proposal_status requires currentDraft, so AcceptedReview\u2192Rejected/Discard is not invented; missingartifact NotFound is not a publicdiscard route and may be preceded by loader refusal. AcceptedReview withdrawal remains unscheduled/unqualified.",
+    "readiness_and_reuse": "Actual55/51 lifetime proofs reused separately. Actual56 already covers DraftRejected. Current public review_proposal_status requires currentDraft, so AcceptedReview→Rejected/Discard is not invented; missingartifact NotFound is not a publicdiscard route and may be preceded by loader refusal. AcceptedReview withdrawal remains unscheduled/unqualified.",
     "fixture": {
       "setup_path": "target/s5a-c04-inventory-keyboard-20261011/review-diagnostic-channels-setup.json",
       "setup_sha256": "da80bbddba893008ac2ea987f992e8d5c11327b4585dc5075911951617808e47",
@@ -7595,9 +7595,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Review",
@@ -7607,9 +7607,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Review",
@@ -7619,9 +7619,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Review",
@@ -7631,9 +7631,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Review \u2014 sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Review — sha256:65571587a7b91082262e51bc87afaad2895d6837860f598e6ae64a077a8cbf55. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Diagnostic",
@@ -7643,9 +7643,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Diagnostic",
@@ -7655,9 +7655,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Diagnostic",
@@ -7667,9 +7667,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         },
         {
           "kind": "Diagnostic",
@@ -7679,9 +7679,9 @@
             "project-id": "20000000-0000-4000-8000-000000000001",
             "active-pane": "0",
             "model-revision": "85f3b5df6fc6f00742a44bd4e4c79fa779d3f5304212dc954d00f992850078c9",
-            "description": "Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes."
+            "description": "Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes."
           },
-          "description": "(<'Read-only Diagnostic \u2014 sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues \u00b7 0 minimum \u00b7 1 panes.'>,)"
+          "description": "(<'Read-only Diagnostic — sha256:74f43ba50b92f8ea944ba733f86c66588b410ca0a3f0b0f82c66cc518b3cb5d8. Editor pane 0.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Detailed cues · 0 minimum · 1 panes.'>,)"
         }
       ],
       "fullP": "Actual current typedReview655715 orDiagnostic74f43, emptyauthoredmembers/anchors/projectionkeys; complete per-kindSelectionView unchanged through proposedOFF/authoredOFF/cameraredraw. BaselineNativeTrack3 avoids legacyACTIVE-ID-only Reviewstyling.",
@@ -7711,9 +7711,9 @@
     },
     "independent_reviews": {
       "source_preflight": "Both actual fullheld88035b7a/setupda80/consumer preflightsCLEAR before input; adequate landedcurrent32/GUIa7f/build reused without new compilation.",
-      "runtime_pixels": "Actual independent auditor finite source/native/all10pixels and final immutable correspondence CLEAR received: all163safe/all162hashes/allorigins/52current=Git-e616 before/7\u00d738maps/all32blobs/raw8bffa+artifactc0ec exact, fulltypedP/location/currentLOD/barriers/drain0 accepted for root disposition. RawCaptureOnly remains unchanged.",
+      "runtime_pixels": "Actual independent auditor finite source/native/all10pixels and final immutable correspondence CLEAR received: all163safe/all162hashes/allorigins/52current=Git-e616 before/7×38maps/all32blobs/raw8bffa+artifactc0ec exact, fulltypedP/location/currentLOD/barriers/drain0 accepted for root disposition. RawCaptureOnly remains unchanged.",
       "governance": "Separate management reviewer actual final bounded governance record PASS received atfa616a54 and immutable7d2b19c0/248eb770 allentryPASS: source/38vs68/producer/location/readiness/currentP/11barriers/8LODs/all10PNGhashes/samePIDdrain+GUI0 and retainedlimits truthful. Current affectedgates separately embedded below.",
-      "manager": "Actual appointed root PM059 finite ACCEPT: currenttypedReview655715/Diagnostic74f43 at85f3/emptyprojections/per-kindfullP overchannelsOFF+camera; actual5m0L1 redseveritycore withmagentaDiagnosticborder andwhiteReviewevidence/dashedendpoints; Mainacquisitions/11laterframes/8ownPIDDetailed/all7\u00d738maps+artifactc0ec/samePID896736drainedepoch1GUI0; both actual independent runtime/pixel/source/163entry7d2/248correspondence received and root personally source/maps/result/representativepixels verified. No fullN15/N16/C04/HUMAN/overcap/collision/lifecycle replay or successor authority."
+      "manager": "Actual appointed root PM059 finite ACCEPT: currenttypedReview655715/Diagnostic74f43 at85f3/emptyprojections/per-kindfullP overchannelsOFF+camera; actual5m0L1 redseveritycore withmagentaDiagnosticborder andwhiteReviewevidence/dashedendpoints; Mainacquisitions/11laterframes/8ownPIDDetailed/all7×38maps+artifactc0ec/samePID896736drainedepoch1GUI0; both actual independent runtime/pixel/source/163entry7d2/248correspondence received and root personally source/maps/result/representativepixels verified. No fullN15/N16/C04/HUMAN/overcap/collision/lifecycle replay or successor authority."
     },
     "archive": {
       "archive": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/review-diagnostic-channel-20261011.tar.xz",
@@ -8200,7 +8200,7 @@
       "publication": "Real Runtime announced and unannounced complete nine-member selection/accessibility/nonmutation control passed.",
       "observer": "Nine strict incremental LF controls, twelve exact visibility controls and ten full public LOD negative controls passed; older92 and106 raw fixtures qualify transport/method only."
     },
-    "retained_failures": "All native93\u2013109 and original110 raw FAIL retained with source cohorts/receipts. Bootstrap parse, long resolution/OOM, intrusive diagnostic/transport, repeated whole-file reader, hidden-metadata/public-LOD overreach, recovery/optional-log contention and clamped camera cases remain distinct. Compile/oracle/guard/temp-location failures retain actual outcomes and no invented assertion credit.",
+    "retained_failures": "All native93–109 and original110 raw FAIL retained with source cohorts/receipts. Bootstrap parse, long resolution/OOM, intrusive diagnostic/transport, repeated whole-file reader, hidden-metadata/public-LOD overreach, recovery/optional-log contention and clamped camera cases remain distinct. Compile/oracle/guard/temp-location failures retain actual outcomes and no invented assertion credit.",
     "scope_limits": [
       "No full C04/C05/C06, HUMAN/Wayland/exhaustive class/interaction qualification or automatic successor selection.",
       "No native primitive-cap/maximum emitted-collision counter/latency/API-live peak/raster coverage qualification.",
@@ -8288,7 +8288,7 @@
       "compile_seconds": 19.84,
       "test_seconds": 0.75,
       "environment": "Explicit repository-backed TMPDIR/TMP/TEMP and pinnedCLI; ignored serial X11/Vulkan realRuntime control.",
-      "source_fixture": "Actual canonical8 BoardTexts plus closed4vertex BoardOutline930\u2026003 =9; complete source-derived expectedidentities. Initial8/emptyoutline assumption disproved by actual canonical source; original test failure retained.",
+      "source_fixture": "Actual canonical8 BoardTexts plus closed4vertex BoardOutline930…003 =9; complete source-derived expectedidentities. Initial8/emptyoutline assumption disproved by actual canonical source; original test failure retained.",
       "behavior": "Completed announced rectangle and repeated/unannounced lasso Add retain complete9 identities/subject/focus/currentread-only accessibility. Console/announcement updates on changed acquisition, no repeatannouncement on unchanged. Preparedframe clears and pendingframe remains; existing compositionrevision exactly+1 on each completion detects removedduplication.",
       "cancellation": "Staged Remove evaluation cancelled BEFORE its first poll preserves previous complete selection, clears feedback/tick, suppressesrelease and leaves source/journal/head bytes unchanged. This is not an actual OkNone-progress Runtime proof.",
       "unchanged_cooperative_scope": "Existing selection_region_evaluation/tests.rs controls103/137/160 for cooperative/geometry/refusal retained at their prior adequate scope; no fresh pass or broadernative campaign claimed."
@@ -8393,8 +8393,8 @@
   },
   "n14_two_project_units_isolation_20261012": {
     "classification": "Manager accepted finite N14 ordinary existing preconfigured two Project quantity/selection isolation case after actual independent review. Full N14 staleconsumer matrix and C04/C05/C06/HUMAN remain open.",
-    "ordinary_workflow": "Project A metric ObjectT1 \u2192 ordinary File/Open B explicitmil and old selection/AT withdrawal \u2192 fresh B ObjectT1 \u2192 ordinary File/Open A and withdrawal \u2192 fresh A ObjectT1. Same authored Track UUID, independently current Project/revision each time.",
-    "units": "Canonical Common width5080000nm remains exact and unrounded; display5.080mm \u2192200.000mil \u21925.080mm, verified in full typed nativeinspection, currentPID read-only AT field and readable current screenshots.",
+    "ordinary_workflow": "Project A metric ObjectT1 → ordinary File/Open B explicitmil and old selection/AT withdrawal → fresh B ObjectT1 → ordinary File/Open A and withdrawal → fresh A ObjectT1. Same authored Track UUID, independently current Project/revision each time.",
+    "units": "Canonical Common width5080000nm remains exact and unrounded; display5.080mm →200.000mil →5.080mm, verified in full typed nativeinspection, currentPID read-only AT field and readable current screenshots.",
     "scope": "A Ctrl+A fullP5=4Tracks+authoredemptyBoardOutline/focusNone; ordinary InspectTracks gives scoped4/Mixed while all21other SelectionView field spans byteexact; All restores scopeNone/fullP5/focusNone. This is not selectionclear or a new pairMixed campaign.",
     "currentness": "Ordered File/Open selectionNone and old AT rootUnknownObject each before fresh acquisition. None carries no direct ProjectID: association is explicitly source-qualified from exact owned root submission/dialoggone/currentMain plus immediately following samePID typed current Project/revision.",
     "actual_case2": {
@@ -8677,7 +8677,7 @@
   },
   "n01_focused_removal_and_quiet_noop_20261012": {
     "classification": "Finite N01 ordinary focused removal/no auto-promotion/quiet nonmember no-op/explicit refocus accepted by appointed manager after actual independent review",
-    "behavior": "Unique source-qualified TrackT1 plain click\u2192ShiftT2 Compound{T1,T2}/focusT2\u2192CtrlT2 Compound{T1}/focusNone/scopeNone/per-Track Common5080000\u2192CtrlT3 exact whole selection/camera/notice/ConsoleLatest unchanged with complete unannounced publication\u2192plainT1 Object with implicit focus/scopeSomeTrack. No arbitrary singleton promotion.",
+    "behavior": "Unique source-qualified TrackT1 plain click→ShiftT2 Compound{T1,T2}/focusT2→CtrlT2 Compound{T1}/focusNone/scopeNone/per-Track Common5080000→CtrlT3 exact whole selection/camera/notice/ConsoleLatest unchanged with complete unannounced publication→plainT1 Object with implicit focus/scopeSomeTrack. No arbitrary singleton promotion.",
     "actual_case2": {
       "original_handle": 92815,
       "terminal": "3a39c0",
@@ -8752,7 +8752,7 @@
       "exit_code": 0,
       "named_tests_passed": 1,
       "test_seconds": 1.51,
-      "scope": "Actual current ObjectB Move preview/authoring/materialized scene change then Select cancellation restores complete scene/identity/source. Actual acquisitionA+ShiftB/focusB Compound\u2192M\u2192pointer-only\u2192Select asserts previewNone/pendingfalse/inactivegesture/fullscene/fullP/currentAT and all26 canonical/history unchanged.",
+      "scope": "Actual current ObjectB Move preview/authoring/materialized scene change then Select cancellation restores complete scene/identity/source. Actual acquisitionA+ShiftB/focusB Compound→M→pointer-only→Select asserts previewNone/pendingfalse/inactivegesture/fullscene/fullP/currentAT and all26 canonical/history unchanged.",
       "project": "d53e2fff-59b8-44a8-a800-9c59417eb5e0",
       "model_revision": "031555f5310981cbf23f651b8fff3a8443ef9ca22528dd668e305f7f9da073bb"
     },
@@ -8766,7 +8766,7 @@
       "current_Main_barriers": 7,
       "report_admitted_Datum_PNGs": 3,
       "canonical26_and_Global_VALUES_maps": 10,
-      "input": "Actual inverse-f32 bounded owned Pad A firstclick\u2192Shift-ownedPad B resolves exact FootprintA/CompoundABfocusB; actual empty/Shift modifier and Space-up ACKs. Ordinary M\u2192two pointer-only motions\u2192Select uses source-valid own-window keyboard/cursor/presentedMain receipts, no competing input/wheel/resize/scale/focusloss; no screenshot/refocus during Move. Motion reuses latest complete deduplicated state.",
+      "input": "Actual inverse-f32 bounded owned Pad A firstclick→Shift-ownedPad B resolves exact FootprintA/CompoundABfocusB; actual empty/Shift modifier and Space-up ACKs. Ordinary M→two pointer-only motions→Select uses source-valid own-window keyboard/cursor/presentedMain receipts, no competing input/wheel/resize/scale/focusloss; no screenshot/refocus during Move. Motion reuses latest complete deduplicated state.",
       "current_inspection": "Current Project/revision/read-only/activeEditor0 typed publicAT; Compound All generic member_count2/member_typesFootprint2. Whole typed SelectionView, camera, scene bounds/window size/scale/layout/focus/dock/filters byteexact through Move/motion/Select.",
       "natural_GUI_exit": 0,
       "forced_cleanup": false,
@@ -8946,7 +8946,7 @@
     "related_defect": "dat-text-alignment-bounds-7spi; close only with actual landing evidence",
     "focused_proof": {
       "engine": "Original46615/e18574/0: two named alignment tests PASS, compile3m25/runtime0.00s; unchanged engine production/control reused across corrected renderer source. Independent actual asset+glyph-origin envelope covers 3x3 alignment, single/multiline and rotation/mirror/upright; known paint inputs/identity preserved.",
-      "renderer": "Actual singletool012dc3/0: one named renderer test PASS, compile0.18s/runtime0.01s/522filtered. Actual engine batch\u2192LayoutBasis retains the original visible point and actual failed inverse, rejects former raw-only ghost, and agrees for hit/hover/region. Other filtered targets executed zero tests.",
+      "renderer": "Actual singletool012dc3/0: one named renderer test PASS, compile0.18s/runtime0.01s/522filtered. Actual engine batch→LayoutBasis retains the original visible point and actual failed inverse, rejects former raw-only ghost, and agrees for hit/hover/region. Other filtered targets executed zero tests.",
       "cohort_distinction": "Engine executed source91cd89; final renderer/current matching source91 uses443f with only renderer test-only direct typed construction correction. No engine replay or fabricated aggregate PASS."
     },
     "matching_build": "Original70606/723e86/0 dev4m03 guarded cohesive GUI+CLI+daemon build; actual binaries11d566d6/f8571652/5a791062. Fixture-only oldCLI7528 used for renderer host proof is distinct from these freshly built production companions.",
@@ -8956,7 +8956,7 @@
       "raw_outcome": "CAPTURE_ONLY unchanged",
       "gui_pid": 1145084,
       "window": "27262980",
-      "workflow": "Ordinary Schematic CtrlA257\u2192owned existingPTY publicGet257\u2192Editor\u2192Ctrl-only click at original visible aligned Text1080 point\u2192exactCompound256/focusNone/scopeNone\u2192samePTY publicGet256. Current openDock publicComponent bounds and same AccessibleId establish ordinary re-entry; no new tab/session/close or private selection injection.",
+      "workflow": "Ordinary Schematic CtrlA257→owned existingPTY publicGet257→Editor→Ctrl-only click at original visible aligned Text1080 point→exactCompound256/focusNone/scopeNone→samePTY publicGet256. Current openDock publicComponent bounds and same AccessibleId establish ordinary re-entry; no new tab/session/close or private selection injection.",
       "transport": "Same terminal/context suffix1145084-1791864146593586849; Project2000/rev8e8c7280 exact. At257 members=null/truncated=true with10 retained active-All fields and exact3 omissions layer_coverage/non_electrical_members/projected_layer_coverage. At256 all256 exact class/UUID/root[] members and all13 active-All fields, no omissions. Full retained typed values/reasons validated against current GUI before safe projection output; raw query output not stored. DerivedRun15/four omission evidence remains separate.",
       "receipts": 4,
       "successful_present_Main_barriers": 18,
@@ -9399,7 +9399,7 @@
     "nonmutation": "All72canonical source/history files and Global values unchanged through10phases",
     "drain": "SamePID1283815 epoch1 literal drained_device_live persisted beforeACK; naturalGUI0",
     "prior_evidence": "Existing below/above archive0fa0fad03571a96d4875c2840b7b0f3dcab20ed4a5504a2dd3ebc1a59d2d7109 reused at accepted scope; prior fiveFAILs preserved there",
-    "retained_drafts": "Exact-half drafts1\u20133 unexecuted, actual HOLD corrections and finalreview/inputrelease retained",
+    "retained_drafts": "Exact-half drafts1–3 unexecuted, actual HOLD corrections and finalreview/inputrelease retained",
     "archive": {
       "path": "docs/reviews/workflow-delivery-rollout/s5a/native-evidence/n03-rotated-text-exact-half-20261013.tar.xz",
       "sha256": "e78f8ff4fb095e715d2831ff391650f4e2c83d1b9a7ce665b8248bd7b7c3680a",
@@ -9574,7 +9574,7 @@
       "assemblyterminal_sha256": "a9f93df512c2dfa1e147cec334e3e75d6857d56e54c83e7dc8258372b43b688e",
       "actual_allentry_review": "74d6d1/0 +terminalbab32e/0 CLEAR; manager accepts exact644462ae/386156a5 archive300regular299hash/47canonical18variant/7PNG"
     },
-    "retained_provenance": "Executed5/7/8rev2 originalFAIL/-15/zeroregion-drain preserved; OTHERdraftsUNEXECUTED incl9rev1\u20134; accepted9rev5 CAPTURE_ONLY/natural0. Unknownkeyboardrepeat/missingdelivery causesnotasserted; existingordinaryInspector route, noOSsettingschange/repeatwaiver",
+    "retained_provenance": "Executed5/7/8rev2 originalFAIL/-15/zeroregion-drain preserved; OTHERdraftsUNEXECUTED incl9rev1–4; accepted9rev5 CAPTURE_ONLY/natural0. Unknownkeyboardrepeat/missingdelivery causesnotasserted; existingordinaryInspector route, noOSsettingschange/repeatwaiver",
     "preflight_limits": "Originalseparatepreflight allpathguardsnotclaimed; producer beforelaunch/allinvariance safeGlobalpath/generation guards admittedcoreproof. Actualrecords preserved, no retroactiveguarantee",
     "native_six_cases_qualified": true,
     "full_N03_qualified": false,
@@ -11148,7 +11148,7 @@
       {
         "index": 0,
         "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: d73a14b1-02bf-4dd7-be50-b54a7de08e95, instance_path: [] })",
-        "name": "Select Symbols \u00b7 U2 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 7de08e95",
+        "name": "Select Symbols · U2 · Schematic.Symbol · Schematic.RefDes · Schematic.Value · Schematic.PinName · Schematic.PinNumber · 7de08e95",
         "attributes": {
           "dispatch-key": "Arrow keys, Enter",
           "available": "true",
@@ -11159,7 +11159,7 @@
       {
         "index": 1,
         "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: b2b25adc-20e8-4942-b377-bc8d82d91690, instance_path: [] })",
-        "name": "Select Symbols \u00b7 U1 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 82d91690",
+        "name": "Select Symbols · U1 · Schematic.Symbol · Schematic.RefDes · Schematic.Value · Schematic.PinName · Schematic.PinNumber · 82d91690",
         "attributes": {
           "dispatch-key": "Arrow keys, Enter",
           "available": "true",
@@ -11173,7 +11173,7 @@
         {
           "index": 0,
           "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: d73a14b1-02bf-4dd7-be50-b54a7de08e95, instance_path: [] })",
-          "name": "Select Symbols \u00b7 U2 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 7de08e95",
+          "name": "Select Symbols · U2 · Schematic.Symbol · Schematic.RefDes · Schematic.Value · Schematic.PinName · Schematic.PinNumber · 7de08e95",
           "attributes": {
             "dispatch-key": "Arrow keys, Enter",
             "available": "true",
@@ -11184,7 +11184,7 @@
         {
           "index": 1,
           "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: b2b25adc-20e8-4942-b377-bc8d82d91690, instance_path: [] })",
-          "name": "Select Symbols \u00b7 U1 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 82d91690",
+          "name": "Select Symbols · U1 · Schematic.Symbol · Schematic.RefDes · Schematic.Value · Schematic.PinName · Schematic.PinNumber · 82d91690",
           "attributes": {
             "dispatch-key": "Arrow keys, Enter",
             "available": "true",
@@ -11197,7 +11197,7 @@
         {
           "index": 0,
           "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: d73a14b1-02bf-4dd7-be50-b54a7de08e95, instance_path: [] })",
-          "name": "Select Symbols \u00b7 U2 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 7de08e95",
+          "name": "Select Symbols · U2 · Schematic.Symbol · Schematic.RefDes · Schematic.Value · Schematic.PinName · Schematic.PinNumber · 7de08e95",
           "attributes": {
             "dispatch-key": "Arrow keys, Enter",
             "available": "true",
@@ -11208,7 +11208,7 @@
         {
           "index": 1,
           "id": "menu:native-select:72000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Symbol, id: b2b25adc-20e8-4942-b377-bc8d82d91690, instance_path: [] })",
-          "name": "Select Symbols \u00b7 U1 \u00b7 Schematic.Symbol \u00b7 Schematic.RefDes \u00b7 Schematic.Value \u00b7 Schematic.PinName \u00b7 Schematic.PinNumber \u00b7 82d91690",
+          "name": "Select Symbols · U1 · Schematic.Symbol · Schematic.RefDes · Schematic.Value · Schematic.PinName · Schematic.PinNumber · 82d91690",
           "attributes": {
             "dispatch-key": "Arrow keys, Enter",
             "available": "true",
@@ -12183,6 +12183,14 @@
         ],
         "accepted_binding": "Runtime7c67fb05, both actual independent runtime/pixel PASSs and appointed-manager finite acceptance. Exact21 identities include root Wires8/9/D with hidden3 to0;14 hierarchical identities remain unprojected. Full Context/AX and all15 canonical fields agree, with unchanged semantic identity/revision/scope/focus and qualified invariance/cleanup.",
         "limit": "CPU Wayland/Vulkan/SHM finite Schematic case only. Acquisition selection Console echo and later viewport-action history are distinct; no refreshed Console0 or full restored three-consumer parity. No Board/Bus/large-set/cross-pane, omitted-reason, metrology, hardware, full C04/HUMAN/C05/C06 or successor credit."
+      },
+      {
+        "predicates": "D4 N01/N02/N09 mixed-candidate additive rectangle refuses the whole membership-changing result on Schematic Run5.",
+        "receipts": [
+          "native_wayland_d4_mixed_region_refusal_20261021"
+        ],
+        "accepted_binding": "Runtime candidate 7ac5084f095675ab46a547e56e53f89e7dca4a848a5976d6368266eb3f7cad97 has actual closeout PASS turn 01a15e6c-f069-7271-98ae-7871260529f4, reorganization PASS turn 01a15e6d-2970-7c80-a237-5f0123544839 and appointed-manager finite acceptance. One Shift rectangle source-qualifies four existing members and two outsiders; native output preserves the entire Run5, full membership and all 15 fields except the exact complete Add/Run notice. Four Context boundaries, eight AX snapshots, four immutable prefix bindings, three originals, 61-file invariance and qualified cleanup agree.",
+        "limit": "Finite CPU Wayland/Vulkan/SHM mixed-candidate additive rectangle refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. The six candidates and Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No lasso, subtractive, hidden/filter, large-set/cap or cross-pane extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change."
       }
     ],
     "unresolved_evidence_questions": [
@@ -12306,7 +12314,7 @@
           "Finite positive Junction730...00b center-anchor REGION qualification and adjacent-wire member exclusion is accepted in native_wayland_junction_anchor_region_20261021 with both actual source/command and runtime PASS reviews and appointed-manager acceptance. The fixed region contains the connection anchor while excluding the upper dot cap, and each adjacent Wire has only1/2endpoints inside. Exact rawsingletonCompound/scopejunction/focusNone, soleJunctionInspector, full AX/Context, immutable presentation readiness,61-file invariance and qualified cleanup agree. Only this anchor-region predicate is credited; Junction point/NoConnect/other region gaps and accepted Via-region scope remain separate. Related cardinality wording intake dat-compound-cardinality-drift-iu3k remains open and closedvs05/9e170f1b remains accepted; no cardinality/fullC04/HUMAN waiver.",
           "Finite ordinary Via710...002 and Junction730...00b individual point acquisition is accepted in native_wayland_via_junction_individual_points_20261021 with actual independent runtime reviews and appointed-manager bounded dispositions. Via exactly selects Object/scopevia/focus002 with full AX/Context, original appearance, immutable CPUFocus/readiness,18before-teardown-current file invariance and qualified failure cleanup. Its observer/result/transport remain FAIL/exit1 after the incorrect Schematic-only trace assertion; no directBoardhittrace, intermediate after_observation inventory or ordinary success cleanup is credited. Prior SOURCE PASS is superseded only for that Via assertion; no product patch or retry. Junction actualexit0 selects exact Object/scopejunction/focus00b via strict Schematic hittrace, with full AX/Context, original/immutableCPUFocus/readiness,61maps and ordinary qualified cleanup. Only these point gaps are removed; separate accepted Via/Junction region scopes, NoConnect/otherclass/region gaps, open cardinalityiu3k and fullC04/HUMAN boundaries remain intact.",
           "Finite independent nonempty BoardOutline200...003 ordinary edge-point acquisition is accepted in native_wayland_independent_board_outline_point_20261021 with both actual source and runtime PASS reviews and appointed-manager bounded acceptance. Onefixed430,296click selects exact Object/scopeboard_outline/focusrealBoardowner/current85f3basis, visible closed-outline treatment and soleInspector; full2Contexts/4AX/immutableCPUFocus/nativepresentreadiness agree. Expectedassembledoutlinekey is source-inferred from pinned dispatch/alias geometry and300000nmtolerance, directBoarddebugreceiptFalse. Whole68-filecataloguefamily invariant (38activecanonical+28nestedvariant+2recipe/artifactmetadata) andqualifiedcleanup/ordinaryUIexit/timelyshell hold. Only this missingedgepoint is reconciled; priorinventory/Inspector/nonemptyregion credits andViaFAIL/finiteacceptance retained atoriginalscope. No interior/region/otheredge/parentownedEdgeCutsnegative/HUMAN/fullC04/cardinality/hardware/exactsampling waiver.",
-          "Finite Zone710...003 occupied-island right-drag\u2192Select\u2192legibleeligibleObjectentry andactivation is accepted in native_wayland_zone_select_menu_20261021 with bothactualsource/runtimePASS and appointedmanageracceptance/rootoriginalimage83dd57/auditdd649b. Currentnet/layer/type/suffixlabel is48chars, fits53; menupreview retainsNone, standardFOCUSED/availabletrue, exactObject/scopezone/focus003/currentC9/fullAXContext/Inspector/footer/readiness agreeafteractivation. Threeoriginals, all18filesinvariant, qualified8PIDunion/2IPCcleanup/ordinaryUIexit. Historicalpoint-origin binding is correctedatitsoriginalX11/C9scope using recoveredarchive644462ae/producer41fd81f1/method5026739b/result68bd2af6: actualplainpointbootstrap\u2192ObjectZone003/currentbasis; oldledger establishesBoardapplicationfocus, notindependentmember-focusproof. No olddedicatedZoneObjectpointPNG/fullContextGet/freshWaylandCPUv2/exactsampling credit. PrioracceptedZoneall-islandsregion retainedwithoutrepeat. RemoveonlytheconcreteZonepoint/menu-originbindinggap; otherNoConnect/padlessFootprint/geometry/ownedtext/parentEdgeCutsnegative/IR01gaps, ViaFAILfiniteacceptance, cardinalityiu3k/closedvs05, fullC04/HUMAN/C05/C06boundariesremain. No Run/Net/SelectAll activation or successorgrant.",
+          "Finite Zone710...003 occupied-island right-drag→Select→legibleeligibleObjectentry andactivation is accepted in native_wayland_zone_select_menu_20261021 with bothactualsource/runtimePASS and appointedmanageracceptance/rootoriginalimage83dd57/auditdd649b. Currentnet/layer/type/suffixlabel is48chars, fits53; menupreview retainsNone, standardFOCUSED/availabletrue, exactObject/scopezone/focus003/currentC9/fullAXContext/Inspector/footer/readiness agreeafteractivation. Threeoriginals, all18filesinvariant, qualified8PIDunion/2IPCcleanup/ordinaryUIexit. Historicalpoint-origin binding is correctedatitsoriginalX11/C9scope using recoveredarchive644462ae/producer41fd81f1/method5026739b/result68bd2af6: actualplainpointbootstrap→ObjectZone003/currentbasis; oldledger establishesBoardapplicationfocus, notindependentmember-focusproof. No olddedicatedZoneObjectpointPNG/fullContextGet/freshWaylandCPUv2/exactsampling credit. PrioracceptedZoneall-islandsregion retainedwithoutrepeat. RemoveonlytheconcreteZonepoint/menu-originbindinggap; otherNoConnect/padlessFootprint/geometry/ownedtext/parentEdgeCutsnegative/IR01gaps, ViaFAILfiniteacceptance, cardinalityiu3k/closedvs05, fullC04/HUMAN/C05/C06boundariesremain. No Run/Net/SelectAll activation or successorgrant.",
           "Finite ordinary NoConnect center-anchor region and direct-point acquisition is accepted in native_wayland_noconnect_region_point_20261021 after both actual independent source/command and runtime/pixel PASS reviews and appointed-manager acceptance. Existing tracked annotations-v2 marker69c7d112 at (-1500000,500000) is tied to actual U1 instance Pin11fcfebe. The fixed region includes the anchor while excluding part of the X and includes only one of five anchors for each parent; exact singleton Compound/scope no_connect/no focus contains only the marker. The subsequent plain point yields exact Object/marker focus with direct Schematic :b source-hit trace. Full-X cue, sole-object Inspector, four complete Context and eight AX observations, four immutable release/content/present barriers, all73 input files and qualified ordinary-exit cleanup agree. A region-only U1 outline is source/pixel-supported hover (UVT2.2.13), without a direct hover-ID receipt; parent pixels change, but no parent or Pin is selected. Unavailable quantity fields are disclosed without numeric Inspector/metrology credit. Remove only the NoConnect anchor predicate. Padless Footprint, remaining Board/Schematic drawing and parent-owned text/Edge.Cuts obligations, open iu3k, full C04/HUMAN and C05/C06 remain unchanged.",
           "Finite ordinary independent unfilled BoardGraphic Line d2bcdd7a point acquisition is accepted in native_wayland_independent_board_graphic_point_20261021 after both actual source/command and runtime/pixel PASS reviews and appointed-manager acceptance. One fixed plain point at(260,502) on the existing149-file current0315 input selects exactly Object/scope board_graphic/D2 focus, with sole-object Inspector, two full Context and four AX snapshots, two own immutable release/content/present/ledger barriers, unchanged input and qualified ordinary UI-exit cleanup. The short upper line is accented while neighboring drawing remains outside selection membership. The gray crosshair changes pixels; clipped long text and the source-inferred Board key without a direct debug-hit receipt remain explicit. Credit only this unfilled Line point. No filled BoardGraphic exists in the catalogue and18 eligible stale Zones block positive Board regions on this unchanged input. Filled/other required Board and Schematic drawing predicates, padless, parent-owned text/Edge.Cuts, iu3k, full C04/HUMAN and C05/C06 remain open.",
           "Finite independent filled Schematic Circle008 partial-versus-full rectangle enclosure is accepted in native_wayland_independent_schematic_circle_region_20261021 after both actual source/command and runtime/pixel PASS reviews and appointed-manager acceptance. On the unchanged18-file C9 input/current reviewed binary, two fixed Shift regions and3originals show more-than-half-but-incomplete disk enclosure remains a genuine unannounced None/no-op with absent public root, ContextNone and nullConsole;100percent disk enclosure yields exact rawsingletonCompound/schematic_graphic/Circle008only/noFocus. FourContext boundaries/full4AX snapshots,4own immutable release/content/present/ledger bindings,18-file invariance and qualified ordinary UIexit/timely recorded-owner cleanup agree. No repeated point credit or per-shape sweep. Consoleclipping/crosshairpixelchanges/fixturequantityUnavailable and source-backed no-op without a directRegion-kind receipt remain explicit. Credit only this filled Circle rectangle predicate; all other drawing predicates, filledBoard absence/staleZone-blocked Boardregions and padless, parent-ownedtext/Edge.Cuts,iu3k,fullC04/HUMAN/C05/C06 remain open.",
@@ -12504,7 +12512,7 @@
     "production_correction": {
       "status": "Actual corrected SOURCE/RESULTS PASS996914a6 (R1 resolved),4focusedPASS/matching GUI03a32334 buildPASS/native02 observerPASS and actual final combinedPASS51ab2880/appointed manager bounded acceptance. Exact9path landing released; first nativeFAIL unchanged.",
       "issue": "dat-schematic-layers-board-only-agve",
-      "authority": "Appointed manager SAME-C04 release; PM021 and DATUM_GUI_DESIGN_SPEC.md102\u2013104 explicitly bind Layers/Filters to focused document. No new product rule/owner decision.",
+      "authority": "Appointed manager SAME-C04 release; PM021 and DATUM_GUI_DESIGN_SPEC.md102–104 explicitly bind Layers/Filters to focused document. No new product rule/owner decision.",
       "ownership": "Exact4production paths added to same-session Frontier/Beads/export before edits at2026-10-19T21:37:41Z; tests remain in their existing bounded renderer owners.",
       "owners": [
         "crates/gui-render/src/side_panels/render_project_filters.rs",
@@ -12544,7 +12552,7 @@
         "implementation": "All4 use existing shared camera_scene_for_pane(state,focused). Row list/order/swatch use the resolved document layers; cached row capacity, wheel total and existing status Layers count agree. Unresolved/hidden/non-editor contexts yield no borrowed Board layers/count. Existing layer IDs/visibility/reducer/camera semantics retained; no new pane model, fixture, lib.rs/engine/prototype/dependency change.",
         "verification": {
           "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --lib focused_layers_ -- --nocapture",
-          "outcome": "Actual3PASS/0FAIL/nonzero,17.02scompile/.03stest. Board\u2194Schematic/Library/unresolved row identities; clipped head/tail roles/no Board leakage; changed cache capacity/warm Arc reuse; existing Layers status count; exact selection and existing native fixture source bytes preserved. Shared existing camera/scroll controls reused, no source-mirroring or broad suite.",
+          "outcome": "Actual3PASS/0FAIL/nonzero,17.02scompile/.03stest. Board↔Schematic/Library/unresolved row identities; clipped head/tail roles/no Board leakage; changed cache capacity/warm Arc reuse; existing Layers status count; exact selection and existing native fixture source bytes preserved. Shared existing camera/scroll controls reused, no source-mirroring or broad suite.",
           "raw_log": ".datum/scratch/s5a-c04-managed-20261018/hidden-junction-focused-layers-tests.log",
           "source_health": "Actual3258PASS; exact4Rust-path formatter, diffwhitespace PASS.",
           "dependency_authority": "PASS",
@@ -13525,9 +13533,9 @@
         "path": ".datum/scratch/s5a-c04-managed-20261018/board-d1-failed-isolated04-candidate-1.json",
         "sha256": "fd1fd7fd6df547df7039e365021bab4ab2f3fa81a01637298705cc82a3724645"
       },
-      "actual_counts": "One cold input, zero warm, zero repeat, zero completed trials. Cumulative01\u201304: four cold inputs, zero warm/repeat/completed. Previous failed attempts remain separate and unpooled.",
+      "actual_counts": "One cold input, zero warm, zero repeat, zero completed trials. Cumulative01–04: four cold inputs, zero warm/repeat/completed. Previous failed attempts remain separate and unpooled.",
       "preserved_failure": "Wrapper exit1, child SIGINT/-2 through existing error-preserving cleanup. Partial full public snapshot contains54519/100007 members, complete=false; original traceback, logs, actions, black PNG and source/input bindings preserved. Compact subject upper bound52528.22651ms is diagnostic only; full qualification was not reached.",
-      "pixel_review": "The appointed manager personally viewed black cold-selected.png and directed the stop. The development agent separately viewed the original black frame and valid before-cold Main. RGB extrema are0 in all selected-image channels. Both capture commands returned0; app damage advanced3\u21924, with later native presentation5 logged. No recapture, additional GUI input, retry or renderer change occurred.",
+      "pixel_review": "The appointed manager personally viewed black cold-selected.png and directed the stop. The development agent separately viewed the original black frame and valid before-cold Main. RGB extrema are0 in all selected-image channels. Both capture commands returned0; app damage advanced3→4, with later native presentation5 logged. No recapture, additional GUI input, retry or renderer change occurred.",
       "cleanup": "All4 inner and3 outer owner-stop receipts true, zero cleanup errors. Development agent independently rechecked all known owner PIDs absent, both IPC directories absent and all frozen/before/after/current49 canonical mappings equal. Failure cleanup only; no ordinary shell exit/PTY closure credit.",
       "cause_and_intake": "Cause unresolved among application surface content, compositor import/composition, synchronization and capture/readback. No application-defect or capture-only attribution. Related intake dat-native-dense-black-capture-n5s7 remains open without new roadmap dependency or repair authorization.",
       "failed_packet_corrected": {
@@ -13575,7 +13583,7 @@
       "path": ".datum/scratch/s5a-c04-managed-20261018/via-center-region-source-candidate-1.json",
       "sha256": "f80ebb6039a8a77ce6c3e9904f84071f07e0b0a79f5d71c85a16e999a8a61b20"
     },
-    "scope": "Existing18-file class-geometry input and unchanged ordinary binaries; one actual native process and two actual fixed Shift-left rightward region gestures. Center-out annular silhouette overlap excluded canonical center\u2192None; center-in included canonical center\u2192exact one-member Via Compound/scopevia/focusNone in machine evidence. Six fixed ordinary wheel-up events at550,404; safe auto-pan interior and exact camera/configuration guarded. No new fixture, input search, ladder/Net/modifier matrix, Pad replay or D1 retry. Rendered proof failed; no overall native Via acceptance.",
+    "scope": "Existing18-file class-geometry input and unchanged ordinary binaries; one actual native process and two actual fixed Shift-left rightward region gestures. Center-out annular silhouette overlap excluded canonical center→None; center-in included canonical center→exact one-member Via Compound/scopevia/focusNone in machine evidence. Six fixed ordinary wheel-up events at550,404; safe auto-pan interior and exact camera/configuration guarded. No new fixture, input search, ladder/Net/modifier matrix, Pad replay or D1 retry. Rendered proof failed; no overall native Via acceptance.",
     "offline": "Syntax compilation and16 actual AST-extracted geometry/configuration/selection-stability/event guard checks PASS. No runner entry, GI, GUI, wrapper, Cargo, context query or native input executed. All18 canonical maps and3 native binary hashes checked read-only.",
     "required_runtime_evidence": "Original initial/zoom PNG+camera/source binding before fixed gestures; nonblack decode guard is only early rejection. Correct active/released pixels still need actual independent review. Full current public typedVia/standardSELECTED/activePane0 and allowlisted ContextGet parity, selection-specific stability, canonical invariance, ordinary shell/PTY closure and all inner/outer owner stops/IPC receipts required.",
     "limits": "Source preparation is no native or fullA3/C04/HUMAN acceptance. CPU A3 and accepted nativePad credit reused. D1 remains4cold/0warm/0repeat/0complete, with unresolved black-capture cause and related n5s7 OPEN.",
@@ -13755,7 +13763,7 @@
           "provider_binary_pins": "PASS unchanged installednamedtool/Python/nativebinary hashes, nofetch/install/build"
         }
       },
-      "review_state": "CURRENT: Actual source06 two-sourcePASS, exact-once06release/run, actual runtime06a closeout+reorganization boundedPASS and appointed PM059 acceptance recorded. Sharedreadinesscorrection and finiteordinaryCPU Vulkan/SHM Via appearance/identity/nonmutation/qualifiedcleanup accepted only: originalselectedVia/InspectorViaobject1/SELECTED/All1/Vias1/footercompound1; event\u2192immutableCPUtext+separatecurrentVia\u2192matchingnativepresent\u2192settledledger bound in both existingwaits, with stateAX/invariance/recordedcleanup. RawCAPTURE_ONLY preserved. Runtime04/05faithfulVISUALFAIL records and04visualuncertainty retained; no historicalcause/Intelhardware-performanceequivalence/fullC04/ordinaryClose/HUMAN/platform/C05/C06/successor credit. Exact04/05/06commandsconsumedONCE; no furtherlive/retry. Sevenownedpaths frozen forroot normalcommit/push afterfinalmetadatagates.",
+      "review_state": "CURRENT: Actual source06 two-sourcePASS, exact-once06release/run, actual runtime06a closeout+reorganization boundedPASS and appointed PM059 acceptance recorded. Sharedreadinesscorrection and finiteordinaryCPU Vulkan/SHM Via appearance/identity/nonmutation/qualifiedcleanup accepted only: originalselectedVia/InspectorViaobject1/SELECTED/All1/Vias1/footercompound1; event→immutableCPUtext+separatecurrentVia→matchingnativepresent→settledledger bound in both existingwaits, with stateAX/invariance/recordedcleanup. RawCAPTURE_ONLY preserved. Runtime04/05faithfulVISUALFAIL records and04visualuncertainty retained; no historicalcause/Intelhardware-performanceequivalence/fullC04/ordinaryClose/HUMAN/platform/C05/C06/successor credit. Exact04/05/06commandsconsumedONCE; no furtherlive/retry. Sevenownedpaths frozen forroot normalcommit/push afterfinalmetadatagates.",
       "source01_disposition": {
         "candidate_sha256": "8067b9c72eaa82c1a84b44aabd25e4dea31e3bd026134f4460946240159ddd40",
         "disposition": "REJECTED_UNEXECUTED OVC-R1; originalcloseoutPASS superseded by BLOCKED pending correction.",
@@ -14696,7 +14704,7 @@
         },
         "bounded_readonly_timing_finding": {
           "status": "Scoped source finding accepted by manager; no causal diagnosis or code/live fix",
-          "evidence": "native_surface_transaction.rs521\u2013533 calls pre_present_notify, SurfaceTexture.present and immediately records ownpresentreceipt. Existing local wgpu28 surface_texture.rs27\u201340 schedules/Waylandcommits; Vulkan swapchain/native.rs579\u2013602 returns vkQueuePresentKHR result. Winit0.30.13 window/mod.rs301 andwindow/state.rs253\u2013260 request callback but reuse older outstandingRequested state; eventloop486 uses callbackstate for redrawpacing. None is compositor displayed-content acknowledgement. StartupQA209\u2013237 only checks application ledger/focus/twoequalreads; capture240\u2013260 starts separate weston-screenshooter and getsPNG/exit with no Datum commit token.",
+          "evidence": "native_surface_transaction.rs521–533 calls pre_present_notify, SurfaceTexture.present and immediately records ownpresentreceipt. Existing local wgpu28 surface_texture.rs27–40 schedules/Waylandcommits; Vulkan swapchain/native.rs579–602 returns vkQueuePresentKHR result. Winit0.30.13 window/mod.rs301 andwindow/state.rs253–260 request callback but reuse older outstandingRequested state; eventloop486 uses callbackstate for redrawpacing. None is compositor displayed-content acknowledgement. StartupQA209–237 only checks application ledger/focus/twoequalreads; capture240–260 starts separate weston-screenshooter and getsPNG/exit with no Datum commit token.",
           "limits": "GPUwatermark log761 andPNGfilemtime do not establish actualsampling time or selectedcontent consumed by compositor. Cross-client commit/repaint/capture ordering is a hypothesis; currentdata also cannot rule out staleGPU/composition content. No supportedAPI/readinesspositivecontrol assumed. No sleeps, frameforcing, extra input/capture or generic sampler/probe performed.",
           "next_step": "After root landing, research whether deployed existing compositor/backend has a supported per-commit presentation acknowledgement exposed through already authorized API/owner, and whether existing screenshot protocol can join that identity. Reject older/unrelated/discarded acknowledgements in a meaningful control only if an actual API supports that contract. If unavailable, report concrete API/ownership gap to manager; no new dependency/product rule or invented positive control."
         }
@@ -14786,7 +14794,7 @@
             "chunk_id": "8dc081"
           }
         ],
-        "limits": "Minimal04 serverlogger case executedONCE under separate root release and personalADMIT; same frozen binary/budget. Serverreceipt/ordinal peerPID attribution only, not retained shooterlaunchPID or selectedsubmission\u2192wirebuffer/GPU/content/cause proof. Historical03/frozenfailures unchanged. No further live release.",
+        "limits": "Minimal04 serverlogger case executedONCE under separate root release and personalADMIT; same frozen binary/budget. Serverreceipt/ordinal peerPID attribution only, not retained shooterlaunchPID or selectedsubmission→wirebuffer/GPU/content/cause proof. Historical03/frozenfailures unchanged. No further live release.",
         "review_state": "Actual source04 readiness and separate exact-once release remain recorded. Runtime04 now independently accepted ONLY for faithfulVISUALFAIL/CPU-appreceipt/boundedserverorder/qualifiedcleanup/invariance, with actual receipts below; no visual/product/C04 credit.",
         "actual_final_reviews": [
           {
@@ -14819,7 +14827,7 @@
             "bytes": 16058
           },
           "result": "VISUALFAIL originalNoSelection/Selnone, freshf5c7ecfbPNG; rawchild/transportCAPTURE_ONLY/exit0,3PNGs/1gesture. CPUactual selectedVia/compound1 (native log713/714/716) still separate from pixels.",
-          "server_order": "weston.log3360buttonrelease\u21923365attachbuffer68/full-damage3366/3368commit\u21923441capture/3442complete; noMaincommitintervenes. Server receipt only; no selectedsubmission\u2192wirebuffer/content inference.",
+          "server_order": "weston.log3360buttonrelease→3365attachbuffer68/full-damage3366/3368commit→3441capture/3442complete; noMaincommitintervenes. Server receipt only; no selectedsubmission→wirebuffer/content inference.",
           "postrun": {
             "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/ordinary-via-postrun-04.json",
             "sha256": "ac345ac518121e93ee3c95d4bab08917ce0c77dd96f579fc9d3cd391f0fd0a1e",
@@ -14984,7 +14992,7 @@
           "sha256": "5ff7c2ec585095f86392f12a7e97310f9354837274a967d2eefa84efb03a8124",
           "bytes": 6046
         },
-        "scope": "PresentationReadiness owns complete LF+UTF8byte/record positions, ownMain/dialog identity+focus, generic settledledger admission, and optional event/content/native-present correlation. StartupQA retains IO/process-health checks/existing20s waiter/two-readstability/actionreceipts/singlecapture. Real helper extraction700\u2192681lines; newpureowner126lines. Case06 owns exactVia/currentmodel+CPUtext expectations and existinggestureoffset; versionadapter02 forwards requirement only, cleanup unchanged.",
+        "scope": "PresentationReadiness owns complete LF+UTF8byte/record positions, ownMain/dialog identity+focus, generic settledledger admission, and optional event/content/native-present correlation. StartupQA retains IO/process-health checks/existing20s waiter/two-readstability/actionreceipts/singlecapture. Real helper extraction700→681lines; newpureowner126lines. Case06 owns exactVia/currentmodel+CPUtext expectations and existinggestureoffset; versionadapter02 forwards requirement only, cleanup unchanged.",
         "actual_checks": {
           "regression_origin": "READONLY3b88cd reproduced UNMODIFIEDpublishedoldhelper accepting actual05prefix638damage18 afterheld17, no selectedreceipt; supplies actual stalefailure trigger.",
           "controls": "PASS70e01e26focusedtests: existingpixel/focus/defaultcapture controls; sharedreadonlyreadiness compact05/04 fixtures, identity/currentselection/text/order/partial/conflict/upload-only separation; actualcaptureintegration refusesoldframe and invokes solecapture only aftermatchingreceipt+settledledger using oneexistingwaitcall.",
@@ -14995,9 +15003,9 @@
         "actual_frozen_log_replay": {
           "tool_chunk": "aa8b53",
           "actual05_prefix638": "REFUSE oldNonebarrier581damage18 while selectedCPU638acq17/receipt18 lackspresent639.",
-          "actual05_prefix641": "ADMIT release587\u2192selectedCPU638\u2192matchingpresent639\u2192settledledger641damage20, sameCPUidentity.",
+          "actual05_prefix641": "ADMIT release587→selectedCPU638→matchingpresent639→settledledger641damage20, sameCPUidentity.",
           "actual04_prefix713": "REFUSE untilmatchingpresent714+settled716.",
-          "actual04_prefix716": "ADMIT actual04barrierdamage21 with selectedCPU713acq19/receipt20\u2192present714. Existing04originalvisualFAIL remains unexplained.",
+          "actual04_prefix716": "ADMIT actual04barrierdamage21 with selectedCPU713acq19/receipt20→present714. Existing04originalvisualFAIL remains unexplained.",
           "limits": "Read-only actual frozenlog prefixes, no newrun/frame/logging. Applicationreceipt readiness only; ordinary acquiredGPUtexture pixels and compositor sampling remain unproven."
         },
         "review_state": "Actual two independent runtime06a boundedPASS and appointed PM059 acceptance recorded. Credit: sharedcontent-boundreadinesscorrection plus finiteCPU Vulkan/SHM Via appearance/identity/nonmutation/qualifiedcleanup only. RawCAPTURE_ONLY/04-05failures/04uncertainty retained; no hardware/performance/cause/fullC04/HUMAN/ordinaryClose/successor acceptance or newlive.",
@@ -15100,7 +15108,7 @@
     },
     "source1_review": {
       "reviewer_task": "/root/reorganization_review",
-      "outcome": "Actual full REVISION REQUIRED for R1\u2013R3 only; no further mandatory finding.",
+      "outcome": "Actual full REVISION REQUIRED for R1–R3 only; no further mandatory finding.",
       "findings": "R1 required observer could die during long baseline pause and old nonempty files permit continuation; R2 ephemeral client can exit before live /proc check and capture binding failure can lose unread output; R3 exception after AWAITING must persist FAIL.",
       "manager_disposition": "Accept narrow source2 correction and focused offline evidence only. Source1/manifest/command/raw findings remain immutable; no production/helper edit, live launch, build or retry. Scene-graph documented one-shot; installed14 exit0/nonempty within existing10s remains runtime observation, not a new prerequisite."
     },
@@ -15121,7 +15129,7 @@
     "source3_review": {
       "reviewer_task": "/root/reorganization_review",
       "candidate_sha256": "9c905aa8557d1ff41bd5499f7f9cb5466d2ecfbef2f9623c541df70dda0eccf3",
-      "outcome": "Actual SOURCE/COMMAND PASS; R1\u2013R3 resolved.",
+      "outcome": "Actual SOURCE/COMMAND PASS; R1–R3 resolved.",
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "manager_verification": "Personally checked new pins/exact command/unchanged manifest/sole AST change/fresh dirs.",
       "release": "Exactly one frozen command03:1scope-list,1app,6fixed wheels,max2PNGs,1fixedgesture only after manager actual hash-bound baseline admission;0D1/retry/recapture/backend changes. Stop first failure and preserve evidence/cleanup. No runtime/causal/qualification PASS."
@@ -17601,14 +17609,14 @@
       "derivation": "Existing sheet has Line0..10mm@y10, Rect20..25mm/y10..15, Circle35/12.5/r2.5 and Arc45/12.5/r2.5/0..180deg, plus Text anchor0,0. Importerpoints min0,0 max47.5,15mm; schematic_bounds adds5mm eachside. Cold fit center=(23.75,7.5)mm zoom1; pane scene inset10px; sharedProjection scale=min(359.5/57.5e6,637/25e6). Nearestpixel(725,419) lies within0.14px of standalone Line midstroke. Freshbaseline must agree; no image-derived retarget/sweep."
     },
     "ordinary_scope": "NaturalstartupBoard0/None/dockNone with Schematic1visible, no setupapplicationclick/Escape/wheels. Oneoriginalinitialcapture, freshrootpersonalbaselinepixel+checkpoint ADMIT. Exactonecursor725,419; verifyhoverdidnotprefocus/select; oneLeftPressed+oneLeftReleased (no drag/modifier/key), then exactObject/SchematicGraphic006/focus006/pane1. Existingtwoafterinput/capturewaits use samecontentrequirement; exactlyonereleasedoriginalcapture. Before/after publicSELECTED/selectionfocus/activepane1, sourceidentity, ContextGet, Console_latest, config and18canonicalmaps. ExistingordinaryUI shell exit afterobservation and identicalrecorded-owner cleanup.",
-    "dispatch_basis": "OwnMain LeftReleased after exactone fixedmotion/press/release; no prefocusclick/zoom/modifier/key. Press beginsgesture/focus only. Plainreleasefinish(kindNone) returnsNone; handle_primary_click skips inactive authoring native_schematic_click, then resolve_schematic_primary_click in runtime_camera_pane.rs495\u2192selection_world_hit\u2192acquire_native_key_from_basis selects normaldrawing.",
+    "dispatch_basis": "OwnMain LeftReleased after exactone fixedmotion/press/release; no prefocusclick/zoom/modifier/key. Press beginsgesture/focus only. Plainreleasefinish(kindNone) returnsNone; handle_primary_click skips inactive authoring native_schematic_click, then resolve_schematic_primary_click in runtime_camera_pane.rs495→selection_world_hit→acquire_native_key_from_basis selects normaldrawing.",
     "actual_checks": {
       "preflight": "Reuse actual478979 originalfullpins/sourcegeometry/1positive9negativeinputguards/custodyAST evidence at unaffectedscopes; correctedsourceonlydeltae25888 +newreadiness087e44. Originalsource01 no live attempt. Shared26controls/sourcehealth/build unchanged; no broadtest/build/native rerun.",
       "preserved_check_failure": "4c0586 was read-only preflightASTchecker passing a list directly to ast.dump after pins/inputguards; fixed only check wrapping to Module, then fullpreflight478979PASS. No product/source/native failure or runtime run.",
-      "reuse": "Accepted2357f66 sourcehealth/sharedreadiness26controls/frozen04\u201305prefixcontrols and sameGUIbuild/CPUprofile retained. No tests/build/native rerun for unchangedsharedowners; newcaseinput/geometry/sourcepins controls are the only newbatch. Actualclickfocus+Object/Console/pixels/cleanupremainunexecuted.",
+      "reuse": "Accepted2357f66 sourcehealth/sharedreadiness26controls/frozen04–05prefixcontrols and sameGUIbuild/CPUprofile retained. No tests/build/native rerun for unchangedsharedowners; newcaseinput/geometry/sourcepins controls are the only newbatch. Actualclickfocus+Object/Console/pixels/cleanupremainunexecuted.",
       "scope_limits": "One existing standaloneLine+sameclickfocus predicate only; no wholeN01classmatrix/C04/HUMAN/Intelhardware-performance/cause/ordinaryClose/all-descendant/successor credit. ExistingVia06a credit preserved.",
       "corrected_delta": "PASSe25888: exact3scope literal corrections +case-localbaselinepredicate/callback only;20point-dispatch/24runtimesourcepins exact, unchangedinput/config/geometry/CPUprofile/binarypins/budget/adapter/cleanup. Newmanifest-commandSHA/fresh01+02absence/original01immutable. Prior6a3786delta used beforebaselinebundle, retained at that scope.",
-      "new_focused_readiness_control": "PASS087e44 actualcase-localfunctions with actuallatest_state: missingfile/empty/prefix/truncatedLF\u2192notready, validNone\u2192ready,Object\u2192notready; malformed/unsupported/diagnostics_incomplete/sequence-regression\u2192FAIL. No app/process/frame/newbudget or broadcampaign."
+      "new_focused_readiness_control": "PASS087e44 actualcase-localfunctions with actuallatest_state: missingfile/empty/prefix/truncatedLF→notready, validNone→ready,Object→notready; malformed/unsupported/diagnostics_incomplete/sequence-regression→FAIL. No app/process/frame/newbudget or broadcampaign."
     },
     "prior_accepted_via06a": {
       "source_candidate": {
@@ -17624,7 +17632,7 @@
       "landing": "2357f666cfa4293161928a605d9dafdde6929267",
       "limits": "BoundedVia+sharedreadiness credit retained; not N01oneclick proof. Oldadapter02/source6/helper and allraws unchanged."
     },
-    "review_state": "Actualcloseout+reorganization finalruntimePASS and appointedPM059managerboundedacceptance recorded againsta9637714\u2026 runtime02. Creditonly oneordinarysameclickfocusSchematicpane1/selectindependentLine006 with classscope/focus/identity/Inspector/ContextGet/publicSELECTED/ConsoleSTATE+clippedpixelprefix/invariance/qualifiedcleanup. RawCAPTURE_ONLY and allpriorpacket/source01REVISE/acceptedVia scopes preserved. C04open, otherclasses/thresholds/HUMAN/C05C06/Intelhardware-performance/cause/ordinaryClose/all-descendant/successor remain separate. Exactcommand02consumedONCE, no newrun.",
+    "review_state": "Actualcloseout+reorganization finalruntimePASS and appointedPM059managerboundedacceptance recorded againsta9637714… runtime02. Creditonly oneordinarysameclickfocusSchematicpane1/selectindependentLine006 with classscope/focus/identity/Inspector/ContextGet/publicSELECTED/ConsoleSTATE+clippedpixelprefix/invariance/qualifiedcleanup. RawCAPTURE_ONLY and allpriorpacket/source01REVISE/acceptedVia scopes preserved. C04open, otherclasses/thresholds/HUMAN/C05C06/Intelhardware-performance/cause/ordinaryClose/all-descendant/successor remain separate. Exactcommand02consumedONCE, no newrun.",
     "superseded_source01": {
       "candidate": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/n01-focus-line-source-candidate-01.json",
@@ -17653,7 +17661,7 @@
     "corrected_findings": [
       {
         "finding": "FreshObject scopes to class, notAll/None",
-        "correction": "Runnerwanted/currentframe/ContextGet now scope=schematic_graphic; focus006/Object unchanged, no scope navigation. Actualowners selection_view229\u2013231/authored_singleton43\u201349/publication69\u201372."
+        "correction": "Runnerwanted/currentframe/ContextGet now scope=schematic_graphic; focus006/Object unchanged, no scope navigation. Actualowners selection_view229–231/authored_singleton43–49/publication69–72."
       },
       {
         "finding": "Inheritedprofile falsely saidTHREEcaptures",
@@ -17661,7 +17669,7 @@
       },
       {
         "finding": "Narrative routednormaldrawing throughauthoringhandler",
-        "correction": "Fullreleasefinish(kindNone)\u2192handle_primary_click\u2192inactiveauthoringfalse\u2192resolve_schematic_primary_click\u2192selection_world_hit/acquire_native_key_from_basis. Releaseeventanchor unchanged."
+        "correction": "Fullreleasefinish(kindNone)→handle_primary_click→inactiveauthoringfalse→resolve_schematic_primary_click→selection_world_hit/acquire_native_key_from_basis. Releaseeventanchor unchanged."
       },
       {
         "finding": "Naturalbaselinecouldseeempty/incompletefirstdiagnostic andabort",
@@ -17713,7 +17721,7 @@
       "receipt": "948b64",
       "reported_scope": "Actualroot verified original/result/transportpins,oneclick/twoPNGs,pane1Object006/classscope/focus/currentrevision,publicstandardSELECTED/selectionfocus/exactContextGet,fullConsoleSTATEonly,18frozen-before-after-teardown-currentmaps,timelyoriginalshelldeadline,8recordedPIDs/2IPCabsent. Rootpersonallyviewedoriginalinitialand released; formalindependentboundedruntimeacceptancepending."
     },
-    "runtime_observation": "Originalreleased02 selectedLine006 atfixedsourcepoint, magentaSchematicpane1focus, correctInspectorSchematicgraphicObject/classscope/SELECTED and footerSchematic/object1. Consolevisibleprefixonly(clippedtail); exactfullsummaryObject\u20141objects/0hidden/0locked is separaterawSTATEevidence, no fullConsoletextpixelclaim. SourceeventLeftReleased211\u2192immutableCPU255rev21/acq6/sub7\u2192matchingnativepresent256\u2192settled258damage7; both existingwaits samebinding. MainSHMrelease1979\u2192commit1985\u2192capture2058/2059,2uniqueordinalcaptures. Actualpostrunboundedcleanup/invarianceverifiede97cba; rawCAPTURE_ONLY retained.",
+    "runtime_observation": "Originalreleased02 selectedLine006 atfixedsourcepoint, magentaSchematicpane1focus, correctInspectorSchematicgraphicObject/classscope/SELECTED and footerSchematic/object1. Consolevisibleprefixonly(clippedtail); exactfullsummaryObject—1objects/0hidden/0locked is separaterawSTATEevidence, no fullConsoletextpixelclaim. SourceeventLeftReleased211→immutableCPU255rev21/acq6/sub7→matchingnativepresent256→settled258damage7; both existingwaits samebinding. MainSHMrelease1979→commit1985→capture2058/2059,2uniqueordinalcaptures. Actualpostrunboundedcleanup/invarianceverifiede97cba; rawCAPTURE_ONLY retained.",
     "actual_runtime_reviews": [
       {
         "reviewer_thread": "01a1432d-460f-7f61-a140-2db7d434147c",
@@ -18186,7 +18194,7 @@
           "released4": true
         },
         "held_require_stable": false,
-        "held_limits": "Animated phasechanges continue, content/nativepresent/settledledger checks intact. One Maincommit atprotocol2485 overlaps heldcapture2480\u20132486. No claim capturedpixels correspond exactly to app acquisition37/receipt38; actual None state and tinyoriginalboundary independentlyreviewed.",
+        "held_limits": "Animated phasechanges continue, content/nativepresent/settledledger checks intact. One Maincommit atprotocol2485 overlaps heldcapture2480–2486. No claim capturedpixels correspond exactly to app acquisition37/receipt38; actual None state and tinyoriginalboundary independentlyreviewed.",
         "selected3_postinput_equals_capture": true,
         "released4_postinput_equals_capture": true,
         "damage_and_receipts": "Separate ordinal namespaces; selected3 damage9/submission9 coincidence is not generalidentity. Finaldamage44 versus submission43/acquisition42 confirms separation.",
@@ -18278,7 +18286,7 @@
       "recorded_at": "2026-10-21T00:20:17.778123+00:00",
       "runtime_sha256": "7b84d65925035e0d5cfa0bb77770d1c1ee0fcf7e6c24627e0687479ea31a452d",
       "outcome": "ACCEPT finite CPU Wayland/Vulkan/SHM grammar result, supported by both actual independent runtime reviews and root fdd869 verification plus personal original-image inspection. Credit only the ordinary below/at 4 physical px and Shift+Ctrl no-third-operation predicate. Exact command02 was consumed once; no further live release.",
-      "retained_limits": "Raw CAPTURE_ONLY, original draft/nonpass receipts and historical failures remain unchanged. Persistent full-Line outline is source-supported hover appearance, with no directly logged hover ID; it is not a committed selection or region cue. Only eight brighter pixels at x725\u2013728/y418\u2013419 establish the finite held cue, removed on release. Console pixels show a clipped prior-action prefix; full diagnostic echo is separate. Held capture overlaps a normal Main commit, so no exact acquisition-to-image, contrast or animation qualification. No hardware equivalence, full C04, HUMAN, C05/C06 or successor acceptance."
+      "retained_limits": "Raw CAPTURE_ONLY, original draft/nonpass receipts and historical failures remain unchanged. Persistent full-Line outline is source-supported hover appearance, with no directly logged hover ID; it is not a committed selection or region cue. Only eight brighter pixels at x725–728/y418–419 establish the finite held cue, removed on release. Console pixels show a clipped prior-action prefix; full diagnostic echo is separate. Held capture overlaps a normal Main commit, so no exact acquisition-to-image, contrast or animation qualification. No hardware equivalence, full C04, HUMAN, C05/C06 or successor acceptance."
     }
   },
   "native_wayland_independent_schematic_drawings_20261021": {
@@ -18487,7 +18495,7 @@
             22500000,
             10000000
           ],
-          "cpu_focus_text": "Focus: Schema...ject 1 \u00b7 1: 7100...0000007",
+          "cpu_focus_text": "Focus: Schema...ject 1 · 1: 7100...0000007",
           "oracle": "Rect007 top edge, hollow polyline remains selectable; plain replacement."
         },
         {
@@ -18504,7 +18512,7 @@
             35000000,
             12500000
           ],
-          "cpu_focus_text": "Focus: Schema...ject 1 \u00b7 1: 7100...0000008",
+          "cpu_focus_text": "Focus: Schema...ject 1 · 1: 7100...0000008",
           "oracle": "Circle008 filled interior near source center; required repair proves material acquisition, no perimeter workaround."
         },
         {
@@ -18521,7 +18529,7 @@
             47500000,
             12500000
           ],
-          "cpu_focus_text": "Focus: Schema...ject 1 \u00b7 1: 7100...0000009",
+          "cpu_focus_text": "Focus: Schema...ject 1 · 1: 7100...0000009",
           "oracle": "Arc009 open-stroke right endpoint; plain replacement."
         }
       ],
@@ -18535,7 +18543,7 @@
       "current_selection": "Exact per-case Object UUID, members singleton, schematic_graphic scope/focus, same project/revision, stalefalse. Separate currentmodel metadata is not immutable CPU text.",
       "immutable_CPU_text": "Inspector Schematic graphic: object1/SELECTED/All1/class1 and target-specific Focus preview ending0000007/8/9; footerSchematic/object1. Fixed296px Inspector,42columns,35focuscolumns,17identitycolumns; source layout/truncation and actual priorLine text derive previews only, no new-target runtime acceptance.",
       "ordering": "Both existing post-input and capture waits bind same per-case requirement: unique release -> latest expected immutable Inspector target Focus + separate exact currentselection -> same native window/host/queue/configuration/acquisition/submission present -> later settled ledger with repeatstableidentity. Damage and queue receipts remain separate ordinals.",
-      "Console": "Diagnostic console_latest exactly Object \u20141objects;0hidden;0locked, independent full raw state/AX/Context. Immutable CPU text has no Console. Original pixels may expose clipped prefix only; do not claim full text visible.",
+      "Console": "Diagnostic console_latest exactly Object —1objects;0hidden;0locked, independent full raw state/AX/Context. Immutable CPU text has no Console. Original pixels may expose clipped prefix only; do not claim full text visible.",
       "source_controls": "Three modeled matching Focus previews admitted and three other-target same-class stale CPU previews refused with correct separate currentmodel; existing parser26controls reused, no new helper/test campaign.",
       "limits": "Application receipt readiness is not GPU pixels or exact compositor frame proof. Original images and AX/Context/source invariance remain independently reviewed."
     },
@@ -18754,7 +18762,7 @@
         "sha256": "9d9fa3bca311e0cd15acd3aee85ca5151f28ee61c18b343fc44f08e2ba2fc407",
         "bytes": 25283
       },
-      "Console_and_identity_limits": "Each diagnostic Console echo is full Object \u20141objects;0hidden;0locked. Originals expose a clipped Console prefix only. Immutable CPU text includes no Console. Inspector Focus preview is truncated; full typed source identity comes from complete public AX/Context and separately checked current model, not the preview alone."
+      "Console_and_identity_limits": "Each diagnostic Console echo is full Object —1objects;0hidden;0locked. Originals expose a clipped Console prefix only. Immutable CPU text includes no Console. Inspector Focus preview is truncated; full typed source identity comes from complete public AX/Context and separately checked current model, not the preview alone."
     },
     "actual_runtime_reviews": [
       {
@@ -19112,7 +19120,7 @@
     "accepted_behavior": "From natural Board0/None, one fixed Shift Add rectangle containing Junction730...00b connection anchor but excluding its upper dot cap qualifies exactly that Junction, focuses Schematicpane1 and excludes adjacent Wire008/009 with only one of two endpoints inside. Raw subject remains singleton Compound, scopejunction/focusNone, current project2001/revision67a175b3. SoleJunction Inspector title/class-specific view is preserved without inventing focus; full standard public AX/complete Context agree before/after selected original. Both readiness waits bind immutable Junction:object1/SELECTED/All1/Junctions1+footerSchematic/compound1 and separate exact model through256->304->305->307/acq7/receipt8/contentrev28. All61canonical maps unchanged, eight recorded PIDs/two private IPC gone, five stop flags true/errors[], shell timely.",
     "pixel_and_profile_limits": {
       "initial": "1344x806 Board0 focused/None, Schematic1 visible/unfocused, no setup. Freshcapture happens to hashidentical acceptedPort initial, neverreusedbaseline.",
-      "selected": "1344x806 Schematic1 focused; soleJunction accentcue at~716,377, Inspector Junction:object1/SELECTED/All1/Junctions1, noFocusrow, membercount1/typejunction1, L202; footerSchematic/compound1. Adjacentwiresretainnormalappearance. ConsolevisibleCompoundselection\u20141objectsprefixclips; fullrawSTATEseparate.",
+      "selected": "1344x806 Schematic1 focused; soleJunction accentcue at~716,377, Inspector Junction:object1/SELECTED/All1/Junctions1, noFocusrow, membercount1/typejunction1, L202; footerSchematic/compound1. Adjacentwiresretainnormalappearance. ConsolevisibleCompoundselection—1objectsprefixclips; fullrawSTATEseparate.",
       "limits": "Tiny scene/dotcap exclusion not directlymeasured bypixels; exactsource/region+fulltypedmembership establishanchor/memberexclusion. PrivateCPUcomposedoriginal, noHUMAN/physicaldesktop/hardware/exactGPUcompositorsampling acceptance."
     },
     "preserved_nonpasses": [
@@ -19664,7 +19672,7 @@
       }
     ],
     "manager_source_command_disposition": "Actual appointedmanager releases ONE invocation of command5d880903/candidate4acc0bfe/runner35492cd6/manifest44b8d702 at29829e6a after actual bothsourcePASS and rootaudits70804e/562b92/fbcc8f. Persistbeforelaunch; stopatfreshbaseline/sendoriginalcheckpointtransportpins+livehandle forrootpersonalreview and freshADMIT beforetestinput. Exactonedrag/twoUIclicks/threeoriginals. No retarget/retry/build/input/sourcechanges/expandedladder; preservefailures+qualifiedcleanup. No runtimePASS/fullC04 acceptance.",
-    "budget": "One existing owned CPU Wayland/Vulkan/SHM envelope; three originals(initial,menu,selected); one right drag origin602,408\u2192Selectcard602,532; two UI Leftpress/releases(Selectcard, exactObjectrow782,459); exactly three fixed motions. Zero world primary point/bootstrap/region/Shift/Ctrl/key/wheel/zoom/Run/Net/SelectAll activation, retarget/retry/forcedframe/settling sleep. Existing20sreadiness/600sfreshrootADMIT/10scapture/15sContext bounds; unchanged postproof ordinary UI shell exit/qualified owner cleanup.",
+    "budget": "One existing owned CPU Wayland/Vulkan/SHM envelope; three originals(initial,menu,selected); one right drag origin602,408→Selectcard602,532; two UI Leftpress/releases(Selectcard, exactObjectrow782,459); exactly three fixed motions. Zero world primary point/bootstrap/region/Shift/Ctrl/key/wheel/zoom/Run/Net/SelectAll activation, retarget/retry/forcedframe/settling sleep. Existing20sreadiness/600sfreshrootADMIT/10scapture/15sContext bounds; unchanged postproof ordinary UI shell exit/qualified owner cleanup.",
     "scope": "Only actual eligible/legible Zone Select-menu entry and Object activation from currentoccupiedisland on existingclassgeometry18/C9,GUI460f. HistoricalX11point and acceptedall-islandsregion retainedwithoutrepeat.",
     "record_corrections": {
       "label_character_count": 48,
@@ -19762,7 +19770,7 @@
         "bytes": 3687
       },
       "status": "CAPTURE_ONLY occupied-island Zone Select-menu Object identity/AX/Context/native composed PNG; actual independent pixel/behavior acceptance required, no fullC04/HUMAN",
-      "counts": "ExactlyoneRightdrag602408\u2192602532, two UIprimaryclicks Selectcard602532 andZoneObjectrow782459;threefixedmotions/threeoriginals;zero worldpointbootstrap/region/modifier/wheel/semanticexpansion/retarget/retry. Cleanup ordinaryUIexit occurs after proof.",
+      "counts": "ExactlyoneRightdrag602408→602532, two UIprimaryclicks Selectcard602532 andZoneObjectrow782459;threefixedmotions/threeoriginals;zero worldpointbootstrap/region/modifier/wheel/semanticexpansion/retarget/retry. Cleanup ordinaryUIexit occurs after proof.",
       "observed_menu": {
         "pid": 1178067,
         "root": "menu:native-select:20000000-0000-4000-8000-000000000001",
@@ -19771,7 +19779,7 @@
           {
             "index": 0,
             "id": "menu:native-select:20000000-0000-4000-8000-000000000001/Object(AuthoredSelectionIdentity { class: Zone, id: 71000000-0000-4000-8000-000000000003, instance_path: [] })",
-            "name": "Select Zones \u00b7 Net zone source \u00b7 F.Cu \u00b7 00000003",
+            "name": "Select Zones · Net zone source · F.Cu · 00000003",
             "attributes": {
               "dispatch-key": "Arrow keys, Enter",
               "available": "true",
@@ -20010,7 +20018,7 @@
       "baseline_admission_write_receipt": "41a946"
     },
     "manager_acceptance": "Owner-appointed PM059manager01a13df1-7a0d-72c1-bbdd-f0d96d481598 explicitly accepts finiteZoneSelect-menu unit against ratifiedUVT329/427/1208: both actualruntimePASS plus originalimage83dd57/auditdd649b. Updateexistingnode/readiness andsameC04lease/Beads, removeonlyconcreteZonegap, preserveallotherboundaries; requiredstate/projection/traceability/diff/semanticchecks andexactthreeownedfilefreeze forrootcommit/push. No fullC04/HUMAN/Run/Net/geometry expansion or successorgrant.",
-    "accepted_scope": "FreshCPUWayland/Vulkan/SHM occupied-island Rightdrag\u2192Select\u2192exacteligiblelegibleZone003 Objectrow activation. OneRightdrag602408\u2192602532/twoUIclicks/threeoriginals, no pointbootstrap/regionrepeat; currentC9/fullAXContext/focus, Inspector/footer, stableimmutablepresentation,18fileinvariance andqualifiedcleanup. Menu candidateprehighlight visiblepresenceonly; noexactmaskpixel/samplingguarantee. Currentname/net/layerlabel48chars fits53; GlobalNetentryunavailableassignmentnaturallydisplayed, notactivated. HistoricalZonepoint origin retainedonlyoldX11/C9machine/input/evidence scope withBoardapplicationfocus, no oldmember-focus/fullContext/dedicatedpointPNG/freshWaylandCPUv2 claim. ExistingZoneall-islandsregion/otheracceptedcoverage/ViaFAIL unchanged."
+    "accepted_scope": "FreshCPUWayland/Vulkan/SHM occupied-island Rightdrag→Select→exacteligiblelegibleZone003 Objectrow activation. OneRightdrag602408→602532/twoUIclicks/threeoriginals, no pointbootstrap/regionrepeat; currentC9/fullAXContext/focus, Inspector/footer, stableimmutablepresentation,18fileinvariance andqualifiedcleanup. Menu candidateprehighlight visiblepresenceonly; noexactmaskpixel/samplingguarantee. Currentname/net/layerlabel48chars fits53; GlobalNetentryunavailableassignmentnaturallydisplayed, notactivated. HistoricalZonepoint origin retainedonlyoldX11/C9machine/input/evidence scope withBoardapplicationfocus, no oldmember-focus/fullContext/dedicatedpointPNG/freshWaylandCPUv2 claim. ExistingZoneall-islandsregion/otheracceptedcoverage/ViaFAIL unchanged."
   },
   "native_wayland_padless_footprint_anchor_region_20261021": {
     "recorded_at": "2026-10-21T04:36:10.408899+00:00",
@@ -20597,7 +20605,7 @@
       }
     ],
     "manager_source_command_disposition": "The appointed manager released exact command02 ddc8135c once, candidate 676d792e, runner 16cc5e3b and manifest bcb1d736. Root reviewed the delta at efe3fe and 102 current references plus 149 input files at 25e336. One ordinary Wayland/Vulkan/CPU/SHM envelope, two fixed Shift gestures and three originals. First refusal transition and second stable None/refusal state only. Stop at the fresh baseline checkpoint for personal root original/pin/live-owner review and exclusive ADMIT before input. No retry, retargeting or input edits. Preserve all outcomes, ordinary shell exit and qualified cleanup. This release is persisted before launch.",
-    "budget": "One owned ordinary Wayland/Vulkan/CPU/SHM envelope; three originals: initial, outside-refusal, inside-refusal. Exactly two fixed Shift rectangles: 351,557\u2192356,562 then 347,559\u2192352,564. Each uses two fixed motions, one primary press/release and one Shift press/release. No point bootstrap, extra input, class/layer filtering, wheel, zoom, menu activation, semantic expansion, retarget, retry or forced frame. Existing readiness/capture/Context timeouts and post-proof ordinary shell exit/qualified cleanup are reused.",
+    "budget": "One owned ordinary Wayland/Vulkan/CPU/SHM envelope; three originals: initial, outside-refusal, inside-refusal. Exactly two fixed Shift rectangles: 351,557→356,562 then 347,559→352,564. Each uses two fixed motions, one primary press/release and one Shift press/release. No point bootstrap, extra input, class/layer filtering, wheel, zoom, menu activation, semantic expansion, retarget, retry or forced frame. Existing readiness/capture/Context timeouts and post-proof ordinary shell exit/qualified cleanup are reused.",
     "completion_criteria": "Each real authored-label Shift drag exceeds 4 pixels and completes the region path without falling through to a point click. The existing exact Console refusal must be present before and after each capture and ContextGet. Both stages preserve None, public selection-root absence and ContextNone; immutable CPU Inspector No selection/footer Board/none bind each own unique release to content, native present and settled ledger at both readiness calls. Fresh originals establish visible refusal behavior without claiming containment. All 149 active source/history files remain invariant before/after/teardown/current comparison; qualified recorded-owner cleanup and ordinary UI shell exit remain required. Both independent reviews and manager acceptance are required. Only dat-authored-label-region-6khd may close after landing; the padless containment obligation remains open. The initial Console must differ from the expected refusal. The first fixed drag proves transition to the exact refusal with no point-click dispatch. The second fixed drag proves stable None/refusal state with no point-click dispatch; console_latest cannot establish a fresh second Console publication. The reviewed supporting Runtime test directly checks begin, Rectangle and finish for both fixed drags.",
     "limits": "This unit proves only authored-label region routing and atomic refusal on the unchanged input. Original native01 FAIL, the GL and Vulkan containment-support failures, and the original None/Compound containment oracle remain immutable. No padless exclusion/inclusion acceptance, filter hiding, fixture mutation, new product rule, cardinality waiver, full C04, HUMAN or successor acceptance is granted. Open iu3k and closed vs05 remain unchanged. The initial Console must differ from the expected refusal. The first fixed drag proves transition to the exact refusal with no point-click dispatch. The second fixed drag proves stable None/refusal state with no point-click dispatch; console_latest cannot establish a fresh second Console publication. The reviewed supporting Runtime test directly checks begin, Rectangle and finish for both fixed drags.",
     "console_attribution_limit": "The initial Console must differ from the expected refusal. The first fixed drag proves transition to the exact refusal with no point-click dispatch. The second fixed drag proves stable None/refusal state with no point-click dispatch; console_latest cannot establish a fresh second Console publication. The reviewed supporting Runtime test directly checks begin, Rectangle and finish for both fixed drags.",
@@ -21475,7 +21483,7 @@
                 "SELECTED",
                 "All 1",
                 "No-connects 1",
-                "Focus: No-con...ject 1 \u00b7 1: 69c7...63fab69"
+                "Focus: No-con...ject 1 · 1: 69c7...63fab69"
               ],
               "footer": [
                 "Schematic",
@@ -22083,7 +22091,7 @@
               "SELECTED",
               "All 1",
               "Board graphics 1",
-              "Focus: Board ...ject 1 \u00b7 1: d2bc...b55873b"
+              "Focus: Board ...ject 1 · 1: d2bc...b55873b"
             ],
             "footer": [
               "Board",
@@ -22456,7 +22464,7 @@
       "partial": "Separate current kindNone, immutable Inspector No selection/footerSchematic none. Existing publish begin then final invalidate end ordered after own release, plus nullConsole/ContextNone distinguish actual no-op from refusal/dropped input. No invented public None project/revision fields.",
       "full": "Exact Circle singletonCompound/schematic_graphic/noFocus/project/revision/stalefalse; immutable Inspector Schematic graphic: object1/SELECTED/All1/Schematic graphics1; footerSchematic compound1. Full AX/Context parity before/after original.",
       "ordering": "Existing unchanged wait_presented/native_capture_presentation binds own release to immutable content and separate currentselection then native present/host/queue/configuration/acquisition/submission and settled ledger; both calls each phase.",
-      "Console": "Full ActionEvidence STATE console_latest only. Partialnull; fullCompound selection \u2014 1 objects; 0 hidden; 0 locked. Console not in immutable CPUtext; no invented full pixel visibility.",
+      "Console": "Full ActionEvidence STATE console_latest only. Partialnull; fullCompound selection — 1 objects; 0 hidden; 0 locked. Console not in immutable CPUtext; no invented full pixel visibility.",
       "limits": "Application receipts not exact GPU/capture cause; originals independently reviewed."
     },
     "limits": "SOURCE PREPARATION ONLY. Both actual source/command reviews + exact manager release + fresh personal baseline ADMIT precede native input. Only Circle008 filled partial-versus-full rectangle predicate; prior Line006/Rect007/Circle008interior/Arc009 points and Symbol majority/path-curve Track/Zone credits retained without replay. No filled model field/new fixture/filter/build/product change. Raw singletonCompound/noFocus and iu3k retained. Filled standalone BoardGraphic absent;18stale eligibleZones block Boardpositive regions/padless. Keep other drawing predicates, parent-owned text/Edge.Cuts, fullC04/HUMAN/C05/C06/successors open. Explicit softwareCPU profile only; no direct point-hit/exact GPU/compositor sampling/framecause/hardware/performance/ordinaryClose/all-descendant claim.",
@@ -23170,7 +23178,7 @@
       "minority": "SeparatecurrentkindNone andimmutableInspectorNo selection/footerSchematic none. Existingpublishbegin thenfinalinvalidateend afterownrelease +nullConsole/ContextNone/publicrootabsence distinguish source-backedno-op fromrefusal/droppedinput/fallbackclick. NoinventedpublicNoneproject/revision or directRegion-kindreceipt.",
       "majority": "ExactArc009singletonCompound/schematic_graphic/noFocus/project/revision/stalefalse; immutableInspectorSchematic graphic: object1/SELECTED/All1/Schematic graphics1/footerSchematic compound1. FullAX/Contextparityaroundoriginal.",
       "ordering": "AcceptedunchangedCirclewait_presented/native_capture_presentation release->immutablecontent+separatecurrentselection->nativepresent/host/queue/configuration/acquisition/submission->settledledger, bothcallsperphase.",
-      "Console": "FullActionEvidenceSTATEonly;minoritynull,majorityexactCompound selection \u2014 1 objects; 0 hidden; 0 locked. ConsoleabsentfromimmutableCPUtext;originalclippingdisclosed.",
+      "Console": "FullActionEvidenceSTATEonly;minoritynull,majorityexactCompound selection — 1 objects; 0 hidden; 0 locked. ConsoleabsentfromimmutableCPUtext;originalclippingdisclosed.",
       "limits": "ApplicationreceiptsarenotGPU/compositor/capturecause;originalpixelsindependentlyreviewed."
     },
     "limits": "SOURCE PREPARATION ONLY. Actual2source/commandPASSs+exactrootrelease precede launch; freshpersonalrootbaselineADMIT precedesanynativeinput. OnlyArc0091of3-versus2of3topology-anchor rectangle qualification. PriorArcpoint/otherdrawingpoints/Circle100percentregion/nativeSymbolmajority/TrackZonepathcurve credit retainedwithoutreplay;nofilled-area/pathlengthoracle. Nosource/fixture/spec/dependency/build/cardinalitychange. RawsingletonCompound/noFocus andiu3kremain. FilledBoardGraphicabsent;18staleeligibleZones blockpositiveBoardregion/padless. Otherdrawingpredicates/ownedtextEdgeCuts/fullC04/HUMAN/C05/C06/successorsopen. CPUsoftwareprofile only;nodirectRegion-kind/point-hit/exactGPU/compositorsampling/cause/hardware/performance/ordinaryClose/all-descendantclaim.",
@@ -23811,7 +23819,7 @@
       "one_endpoint": "SeparatecurrentkindNone+immutableInspectorNo selection/footerSchematic none. Existingpublishbeginthenfinalinvalidateendafterownrelease+nullConsole/ContextNone/publicabsence distinguishsource-backedno-opfromrefusal/droppedinput/emptyclickfallback. NoinventedNoneproject/revisionordirectRegion-kindreceipt.",
       "both_endpoints": "ExactLine006singletonCompound/schematic_graphic/noFocus/project/revision/stalefalse;immutableInspectorSchematic graphic: object1/SELECTED/All1/Schematic graphics1/footerSchematic compound1. FullAX/Contextaroundoriginal.",
       "ordering": "SameacceptedArc/Circlewait_presented/native_capture_presentation release->immutablecontent+separatecurrentselection->nativepresent/host/queue/configuration/acquisition/submission->settledledger,bothcallsperphase.",
-      "Console": "FullActionEvidenceSTATEonly:one-endpointnull,both-endpointsexactCompound selection \u2014 1 objects; 0 hidden; 0 locked. NoConsoleimmutableCPUtext;originalclippingdisclosed.",
+      "Console": "FullActionEvidenceSTATEonly:one-endpointnull,both-endpointsexactCompound selection — 1 objects; 0 hidden; 0 locked. NoConsoleimmutableCPUtext;originalclippingdisclosed.",
       "limits": "ApplicationreceiptsarenotGPU/compositor/capturecause;originalpixelsindependentlyreviewed."
     },
     "limits": "SOURCE PREPARATION ONLY. Actual2source/commandPASSs+exactrootreleasebeforelaunch;freshpersonalrootbaselineADMITbeforeanyinput. OnlyLine006one-endpointversusboth-endpointsstraight-sectionrectanglequalification. PriorLinepoint/Arc2of3region/Circle100percentfilledregion/TrackZonepathcurveretainseparateacceptedscopeswithoutreplay. NoCartesianexpansion/source/fixture/spec/dependency/build/cardinalitychange. RawsingletonCompound/noFocus andiu3kretained. FilledBoardGraphicabsent;18staleeligibleZonesblockpositiveBoardregion/padless. Otherdrawingpredicates/ownedtextEdgeCuts/fullC04/HUMAN/C05C06/successorsopen. CPUsoftwareonly;nodirectRegion-kind/point-hit/exactGPU/compositorsampling/cause/hardware/performance/ordinaryClose/all-descendantclaim.",
@@ -25245,7 +25253,7 @@
             "center_y_nm": 0.0,
             "zoom": 1.0
           },
-          "console_latest": "Object \u2014 1 objects; 0 hidden; 0 locked",
+          "console_latest": "Object — 1 objects; 0 hidden; 0 locked",
           "context": "pane-1-resolved",
           "dock": "None",
           "focus": "Editor(PaneId(1))",
@@ -25620,7 +25628,7 @@
         "hidden": 0,
         "locked": 0,
         "unprojected": 0,
-        "console_latest": "Run \u2014 257 objects; 0 hidden; 0 locked",
+        "console_latest": "Run — 257 objects; 0 hidden; 0 locked",
         "full_boundaries": [
           "acquisition_before_capture",
           "acquisition_after_capture",
@@ -25816,7 +25824,7 @@
       "personal_original_review": {
         "initial": "None; Board0 focus, red copper and gold unselected Bus; no Inspector subject.",
         "prepared": "None; Schematic1 focus, fixed zoom and crosshair at842,410; view fit Console toast.",
-        "acquired": "Run \u2014 257 objects, SELECTED, All257, Bus sections257, pink selected Bus stripe and footer run257; Run summary toast visible.",
+        "acquired": "Run — 257 objects, SELECTED, All257, Bus sections257, pink selected Bus stripe and footer run257; Run summary toast visible.",
         "noop": "Same Inspector counts/selected Bus stripe/footer; crosshair moved to855,414; prior toast no longer visible. Stable semantic Console and no new publication are separately bound by raw receipts.",
         "limits": "Only a cropped viewport portion of the long257-member graph is visible. Full identity comes from source and public membership, not counting pixels. Long values/Console text are clipped; quantity Bounds/Available bounds display Unavailable. Common canonical field values and cap omission are not new metrology or omitted-Unavailable-reason parity."
       },
@@ -25883,7 +25891,7 @@
       "sha256": "89f5373ffb70799cb93f2b448698d3d645f378b8252000a5f37ac0509f1fab2a",
       "bytes": 1570
     },
-    "requirement": "preparation-plan.md N05/N09 hidden-member row and repeat-for-schematic-GlobalNet clause308\u2013333; UVT2.2.8 and2.2.19. This is pre-hidden Wires with eligible LabelE semantic invocation, distinct from prior filtered-Wire GlobalNet21 and hidden-Junction Run5.",
+    "requirement": "preparation-plan.md N05/N09 hidden-member row and repeat-for-schematic-GlobalNet clause308–333; UVT2.2.8 and2.2.19. This is pre-hidden Wires with eligible LabelE semantic invocation, distinct from prior filtered-Wire GlobalNet21 and hidden-Junction Run5.",
     "input": {
       "root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/s5a-replay-inputs/s5a-c03-u5-semantic-v1/variants/semantic-scope",
       "project": "20000000-0000-4000-8000-000000000001",
@@ -25899,13 +25907,13 @@
     "accepted_evidence_reuse": {
       "complete21": "global_net_ladder_20261011.setup.expected_global_members and exact current source61 map",
       "filtered_Wire_Net": "ir01_prefiltered_wire_global_net_20261013; filter eligibility is not hidden geometry",
-      "hidden_Junction_Run": "native_wayland_hidden_junction_run_20261019.native_attempt_02; source-backed hidden1\u21920 and viewport-action Console history, no Wire GlobalNet credit",
+      "hidden_Junction_Run": "native_wayland_hidden_junction_run_20261019.native_attempt_02; source-backed hidden1→0 and viewport-action Console history, no Wire GlobalNet credit",
       "owner_cleanup": "Accepted Bus no-op source04 FocusQA and entire finally AST are exact; state/natural-baseline helpers differ only logger literal; no lifecycle or terminal implementation change.",
       "prior_landing": "Bus no-op finite acceptance landed766d1eb1; its result is not replayed or upgraded."
     },
     "budget": "One ordinary owned CPU Wayland/Vulkan/SHM envelope and four originals: initial, prehidden, acquired, restored. Fresh personal root initial ADMIT precedes all controlled input. Tab focuses Schematic and F fits; fixed layer swatch18,507 hides L200 before acquisition, leaving None. Fixed914,376 targets visible eligible LabelE; ContextMenu,s,Down,Return activates the actually observed available Select Global Net row after exact Object/Semantic/All order and focus checks. The full21 Net is captured with hidden3/unprojected14. Fixed19,507 restores L200 and captures the same full21 Net with hidden0/unprojected14. Exactly two layer primary press/release pairs; no canvas point bootstrap, regions, wheel, modifiers, row cycling, retargeting or extra gesture. Same20s readiness,600s initial admission,10s captures and15s allowlisted Context bounds. No forced frame, settling sleep, fixture/source mutation, build or retry. Ordinary UI terminal exit and qualified recorded-owner cleanup follow the proof epoch.",
     "completion_criteria": "Before acquisition, frozen L200false and visible eligible LabelE/L206+L214 are required while selection is None. Exact source-bound Semantic(LabelE) menu action establishes logical Net b151f91b at revision67a175, with complete occurrence-qualified21 identities (9Wire/6Label/3Port/3Junction), no focus/scope/notice/staleness. Only root Wires8/9/D have hidden flags;14 nonroot identities remain unprojected, never relabeled hidden. Six allowlisted Context queries include two prehidden None and four selected boundaries; eight selected AX snapshots and all15 Inspector fields agree, including exact reasons for unavailable full bounds/layer coverage. Selection activation and layer restore each bind their unique own input to immutable full subject/member/hidden-count Inspector text, native present and settled ledger at both selected waits; prehidden None likewise binds its own release. Restoring L200 preserves the full semantic subject/member IDs/revision and updates live hidden3 to0, with unprojected14 unchanged. All fields except hidden_members remain identical across restore. Hidden Wires must have no cue, restored Wires must be selected in independently reviewed originals. All61 canonical maps remain unchanged at before/observation/teardown/current, and authenticated recorded owners/private IPC must be discharged. Both actual source reviews must disposition the Console contract question before release; both runtime reviews and finite manager acceptance remain required.",
-    "console_contract_review_question": "UVT2.2.8/2.2.19 require truthful complete shared selection output. Current source emits acquisition-time Global Net \u2014 21 objects; 3 hidden; 0 locked, then later Layer visibility visible viewport-action history while live Inspector/AX/Context hidden becomes0. Accepted hidden-Junction Run5 restore records the same action-history distinction: native02/result junction_layer_restored seq12 has run/hidden0 and Console Layer visibility visible. Reviewers must determine whether existing contract, PM033 history semantics and adequate evidence support this finite restore observation or expose a consumer defect. Source behavior and prior acceptance do not waive a requirement. No refreshed Console0 selection summary, full post-restore three-consumer parity, fix or waiver is claimed. No extra clearing or selection gesture is allowed.",
+    "console_contract_review_question": "UVT2.2.8/2.2.19 require truthful complete shared selection output. Current source emits acquisition-time Global Net — 21 objects; 3 hidden; 0 locked, then later Layer visibility visible viewport-action history while live Inspector/AX/Context hidden becomes0. Accepted hidden-Junction Run5 restore records the same action-history distinction: native02/result junction_layer_restored seq12 has run/hidden0 and Console Layer visibility visible. Reviewers must determine whether existing contract, PM033 history semantics and adequate evidence support this finite restore observation or expose a consumer defect. Source behavior and prior acceptance do not waive a requirement. No refreshed Console0 selection summary, full post-restore three-consumer parity, fix or waiver is claimed. No extra clearing or selection gesture is allowed.",
     "limits": "Only pre-hidden root Wires8/9/D in this existing GlobalNet21, acquired from eligible LabelE and restored with the same complete occurrence identities, are accepted. Acquisition Console hidden3 is contemporaneous history; restore emits Layer visibility visible while live counts become0. No refreshed Console0, full restored three-consumer parity, all21 pixels, metrology, omitted-Unavailable-reason, direct screen-reader event, hardware/performance, exact GPU/compositor sampling, ordinary Close or all-descendant claim. Board/Bus/large-set/cross-pane, full C04/HUMAN/C05/C06 and successors remain open.",
     "preparation_record": {
       "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-preparation-01.json",
@@ -26364,7 +26372,7 @@
       },
       "Console_observation": {
         "prehidden": "Layer visibility hidden",
-        "acquisition": "Global Net \u2014 21 objects; 3 hidden; 0 locked",
+        "acquisition": "Global Net — 21 objects; 3 hidden; 0 locked",
         "restoration": "Layer visibility visible",
         "source_reviewed_distinction": "Acquisition selection echo is contemporaneously truthful. The later viewport-action echo is timestamped action history; live AX/Context/Inspector counts are hidden0. Both source reviewers and root PM033 read supported this bounded distinction. No refreshed Console0 selection summary or full post-restore three-consumer parity is claimed; no clearing or extra selection gesture."
       },
@@ -26598,7 +26606,7 @@
       "personal_original_review": {
         "initial": "Board0 focus, None Inspector and unselected Schematic wire/label/Bus context. Root separately personally admitted this original.",
         "prehidden": "Schematic1 focus, Wire row hidden and No selection. Wires no longer painted; blue label/Port shapes, Junction and gold Bus context remain. Layer visibility hidden toast is visible.",
-        "acquired": "Global Net \u2014 21 objects; All21; Wires9/Labels6/Ports3/Junctions3;3 hidden/0 locked/14 unprojected. Visible labels/Port/Junction receive selected treatment while root wire spans stay absent; gold Bus remains unrelated. Crosshair at LabelE changes pixels. Selection Console toast is clipped.",
+        "acquired": "Global Net — 21 objects; All21; Wires9/Labels6/Ports3/Junctions3;3 hidden/0 locked/14 unprojected. Visible labels/Port/Junction receive selected treatment while root wire spans stay absent; gold Bus remains unrelated. Crosshair at LabelE changes pixels. Selection Console toast is clipped.",
         "restored": "Same semantic Net/full21 Inspector and footer;0 hidden/14 unprojected. Restored root wire spans receive pink selected treatment. Layer visibility visible toast replaces prior selection action history. Pointer moved to layer row, so no pixel-identity claim.",
         "limits": "Only root7 members can resolve in this pane;14 hierarchical members are honestly unprojected. No screenshot count of all21, isolated overlapping-primitive pixel proof, exact frame-cause, GPU sampling or full Console text claim. Long fields clip; full bounds/layer coverage are Unavailable from unprojected members and quantity formatting remains unqualified."
       }
@@ -26631,13 +26639,718 @@
       "retained_boundaries": "Source01 and its two metadata findings remain preserved. Board, Bus, large-set and cross-pane IR01 predicates, omitted-Unavailable-reason parity, full C04, HUMAN, C05/C06 and successor authorization remain open. No new source, build, native run, fixture, dependency or product rule is authorized."
     },
     "landing": {
-      "state": "Pending root final checks, normal hooks, commit and push",
-      "owned_paths": [
-        ".beads/issues.jsonl",
-        "specs/active_frontier.json",
-        "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json"
-      ],
-      "scope": "Finite hidden-GlobalNet evidence, exact source01 corrections and accepted review outcomes; no product source or fixture change."
+      "commit": "44755b5f17590158720fc654e0e6eb289fb32ede",
+      "normal_hooks": "ee4fd7 PASS",
+      "push": "fb548a",
+      "fetch": "2e5e00",
+      "root_verified": "Clean HEAD equals origin/main; exact three owned paths only. No full C04/HUMAN acceptance."
+    }
+  },
+  "native_wayland_d4_mixed_region_refusal_20261021": {
+    "state": "FINITE D4 MIXED ADDITIVE RECTANGLE ACCEPTED; BROADER C04 QUALIFICATION REMAINS OPEN",
+    "recorded_at": "2026-10-21T12:35:00.603979+00:00",
+    "head": "44755b5f17590158720fc654e0e6eb289fb32ede",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-source1.py",
+      "sha256": "730186d585588816a4a339080198d90c181c4b1d2db6ffc0b70e7601ea5fe1bc",
+      "bytes": 32971
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-manifest-01.json",
+      "sha256": "457642c5e493ff25357a3847fa3ca61b1f0a1affe94a90dc0e08ee3eb7a81471",
+      "bytes": 64913
+    },
+    "exact_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-command-01.json",
+      "sha256": "2038b6d80772a30f220da4aeb78cc763302ef18ca74fed0fcff7bb72254c5a56",
+      "bytes": 6233
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-geometry-01.json",
+      "sha256": "e485f7dd484b6212fa1aa0404a972bd585a24d3d66bc47ea2705f4e6d12d88eb",
+      "bytes": 12825
+    },
+    "controls": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-controls-01.json",
+      "sha256": "0cd5fbca95a57e7f2ebf1d39900d3c024febecb1661728f4e6e77ede2170dbf0",
+      "bytes": 1584
+    },
+    "preparation_record": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-preparation-01.json",
+      "sha256": "389cf822f26b7a31767747ec6f6cc922372744bcac418c09ac58f6f3bd66ff32",
+      "bytes": 1317
+    },
+    "requirement": "preparation-plan.md350 D4 N01/N02/N09 refusal: modified rectangle/lasso candidates may mix current members and outsiders; membership-changing whole result refuses atomically. This candidate proves only one additive Schematic rectangle, not a campaign or per-class Cartesian requirement.",
+    "input": {
+      "root": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/s5a-replay-inputs/s5a-c03-u5-semantic-v1/variants/semantic-scope",
+      "project": "20000000-0000-4000-8000-000000000001",
+      "revision": "67a175b36f2c53655d3210ab7d9bb18e2ff3d4f65edc4f07c9efc9206880d1aa",
+      "canonical_count": 61,
+      "index": {
+        "path": "/home/bfadmin/Documents/datum-eda/crates/test-harness/testdata/selection/s5a_v1/replay-inputs/index.json",
+        "sha256": "bcce46b87fc3265f19e244a60af0249388316866d557439a786765bcbccd472c",
+        "bytes": 363185
+      },
+      "classification": "Existing approved semantic-scope source and complete stored history, unchanged."
+    },
+    "accepted_evidence_reuse": {
+      "Run5": "global_net_ladder_20261011.setup.expected_run_members; hidden-Junction and prior Run source/native evidence retain their original scopes.",
+      "point_refusal": "ir01_derived_run_revision_20261011.native62 Shift-click outside WireD is separate; it does not supply a mixed-region receipt.",
+      "oriented_layouts": "Accepted Port geometry02 and exact current source/font pins are reused without recomputing font metrics or adding a renderer.",
+      "region_owners": "Current shared region source/qualification/reducer and authored-label routing fix reused; no production edit.",
+      "Inspector_notice": "Accepted shared complete measured/scrollable refusal-disclosure repair is reused for this exact Add/Run reason; current immutable rows must still prove actual complete output.",
+      "lifecycle": "Exact accepted Bus source04 FocusQA and entire finally; common helpers equal after two logger literal substitutions."
+    },
+    "budget": "One owned CPU Wayland/Vulkan/SHM envelope and three originals: initial, run, refused. Fresh root personal initial ADMIT precedes all controlled input. Frozen Tab/F focuses and fits Schematic; fixed698,377 with ContextMenu,s,Down,Return observes exact Wire8 Object/Run/GlobalNet/All rows and focuses/activates Select Run. This establishes Run5 only as a precondition. One Shift rectangle714,370 to938,385 qualifies four current members plus outside WireD/LabelE and must refuse as a whole. Exactly one region primary press/release pair; no canvas click bootstrap, double-click, lasso, Ctrl, hidden/filter/cap permutation, wheel, row cycling, retarget, retry or extra gesture. Same20s readiness,600s initial admission,10s captures and15s allowlisted Context bounds. No forced frame, settling sleep, source/fixture/build/dependency change. Ordinary UI shell exit and qualified recorded-owner cleanup follow the proof epoch.",
+    "completion_criteria": "Freeze exact source-qualified six region candidates: Wire9/Junctionb/Labela/Portc already in Run5, plus outsiders WireD/LabelE. Wire8 has1/2endpoints inside and fails; four Bus spines and TextI fail; display-only BusEntry has no acquisition identity and is outside. Current scene bindings exclude Board and nonroot occurrences. Reused exact text layouts are wholly enclosed or disjoint, never hit-box/anchor substitutes. Observed eligible Wire8 menu establishes exact Run5 root identities/origin/logicalNet/revision/no scope/no focus. Four selected Context boundaries and eight full AX snapshots around run/refused captures must agree on complete5 and all15 Inspector fields. The one region leaves entire compact selection and complete public membership/fields identical except exact Add/Run notice; outsiders never become selected and no Compound conversion or manufactured focus occurs. Full138-character refusal reason is exact in Context, AX root description and Console summary, and contiguous measured Inspector text fragments concatenate to the same complete reason in both bound immutable content receipts. Publication and its sole Console announcement must follow the unique own region release; there is no primary-click fallthrough. Both selected phases bind own activation/release to exact full Run content, native present and settled ledger at both waits. All61 canonical/source-history hashes and qualified owner/privateIPC cleanup must verify. Both actual source/command and runtime/pixel/output reviews and finite manager acceptance remain required.",
+    "limits": "Finite CPU Wayland/Vulkan/SHM mixed-candidate additive rectangle refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. The six candidates and Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No lasso, subtractive, hidden/filter, large-set/cap or cross-pane extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change.",
+    "fresh_routes": {
+      "run": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-region-01",
+      "transport": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-d4-mixed-region-01",
+      "required_absent": true
+    },
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-source-candidate-01.json",
+      "sha256": "cb31c9ba237c114420916a5fb4397b3507aef046602e209ef6c13784dc6f1d36",
+      "bytes": 22417
+    },
+    "authority": "The appointed manager approved source/command preparation only under retained C04. Both actual independent source verdicts, exact manager release and fresh personal initial baseline ADMIT precede native input.",
+    "source_reviews": {
+      "state": "BOTH ACTUAL SOURCE/COMMAND PASS",
+      "candidate_sha256": "cb31c9ba237c114420916a5fb4397b3507aef046602e209ef6c13784dc6f1d36",
+      "closeout_turn": "01a15e5f-ea87-70b1-a9e7-e1f98fd42068",
+      "reorganization_turn": "01a15e60-3115-7453-87d5-e8975b1a5f09",
+      "scope": "No mandatory finding. Source readiness only; six-candidate/Region route is independently source-bound, not a direct runtime trace."
+    },
+    "runtime_acceptance": "Both actual independent runtime/pixel PASS verdicts and appointed-manager finite acceptance establish only the mixed additive rectangle refusal on Schematic Run5. Raw CAPTURE_ONLY is preserved; no broader D4/C04 acceptance.",
+    "actual_tool_receipts": {
+      "9f6550": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48795,
+        "timestamp": "2026-10-21T11:59:11.054Z",
+        "item_id": "ctco_01a15e54-62ce-71f0-a78e-71c8386f05a1",
+        "call_id": "call_acd49bae7ba343ef83959422b86e4ec9",
+        "chunk_id": "9f6550",
+        "exit_code": 0
+      },
+      "f63682": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48823,
+        "timestamp": "2026-10-21T11:59:54.467Z",
+        "item_id": "ctco_01a15e55-0c63-7c21-8a62-b920174e4631",
+        "call_id": "call_7dd647b6ccf14bb18a697bd8287e8e08",
+        "chunk_id": "f63682",
+        "exit_code": 0
+      },
+      "251583": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48910,
+        "timestamp": "2026-10-21T12:06:03.992Z",
+        "item_id": "ctco_01a15e5a-afd8-7ef1-b149-9912ab8427da",
+        "call_id": "call_d2ad97ec7d934e549152b6b3dd6ebe06",
+        "chunk_id": "251583",
+        "exit_code": 0
+      },
+      "9422d6": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48922,
+        "timestamp": "2026-10-21T12:07:11.172Z",
+        "item_id": "ctco_01a15e5b-b644-7e21-883f-6f2751ffc146",
+        "call_id": "call_9c919b7ae0de405cb25a1f904c640a27",
+        "chunk_id": "9422d6",
+        "exit_code": 0
+      },
+      "be8952": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48932,
+        "timestamp": "2026-10-21T12:08:24.804Z",
+        "item_id": "ctco_01a15e5c-d5e4-7b51-9e01-de6b38a23b6f",
+        "call_id": "call_ea4cf56fa9284c45b391e1e89a15fe46",
+        "chunk_id": "be8952",
+        "exit_code": 0
+      },
+      "d6d43e": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 48946,
+        "timestamp": "2026-10-21T12:10:29.125Z",
+        "item_id": "ctco_01a15e5e-bb85-7933-8a1c-a0b873e5b395",
+        "call_id": "call_afba642e89fd44b6b5e2e8f2985ecb51",
+        "chunk_id": "d6d43e",
+        "exit_code": 0
+      },
+      "dc17eb": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49002,
+        "timestamp": "2026-10-21T12:19:29.922Z",
+        "item_id": "ctco_01a15e66-fc01-7c23-83a7-87e705b3406a",
+        "call_id": "call_59981f8c9a104e8f8b650a788e5221a1",
+        "chunk_id": "dc17eb",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "bc8080": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49006,
+        "timestamp": "2026-10-21T12:19:38.950Z",
+        "item_id": "ctco_01a15e67-1f45-7e83-aa9d-10c0527a5377",
+        "call_id": "call_1c073920cef746cfa6194ee15595acb3",
+        "chunk_id": "bc8080",
+        "exit_code": null,
+        "exec_session": 95313
+      },
+      "e3d213": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49017,
+        "timestamp": "2026-10-21T12:20:01.968Z",
+        "item_id": "ctco_01a15e67-7930-79b2-be7e-706d86835061",
+        "call_id": "call_1eca80a9a8d246fa8e563339b836486c",
+        "chunk_id": "e3d213",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "187c53": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49061,
+        "timestamp": "2026-10-21T12:21:20.433Z",
+        "item_id": "ctco_01a15e68-abb1-7373-86b3-14570c18dbda",
+        "call_id": "call_cdf53b49546b4ca58ed3b77431c841df",
+        "chunk_id": "187c53",
+        "exit_code": 0,
+        "exec_session": null,
+        "owned_exec_session": 95313
+      },
+      "3f650f": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49087,
+        "timestamp": "2026-10-21T12:24:07.632Z",
+        "item_id": "ctco_01a15e6b-38d0-7430-a0bb-c54370bb0d16",
+        "call_id": "call_78907c35de154623b1a7819a822c33ca",
+        "chunk_id": "3f650f",
+        "exit_code": 1
+      },
+      "caaa44": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49094,
+        "timestamp": "2026-10-21T12:24:21.900Z",
+        "item_id": "ctco_01a15e6b-708c-7341-b6d9-db1d96dfacf9",
+        "call_id": "call_8a017912945d4aa8a4804f7f4e9bf252",
+        "chunk_id": "caaa44",
+        "exit_code": 0
+      },
+      "c2c2e6": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 49103,
+        "timestamp": "2026-10-21T12:25:06.246Z",
+        "item_id": "ctco_01a15e6c-1dc6-7532-8cea-03c03df4df5b",
+        "call_id": "call_bbd4b8d488874193a8a6b77f0af1833a",
+        "chunk_id": "c2c2e6",
+        "exit_code": 0
+      }
+    },
+    "manager_exact_release": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "recorded_at": "2026-10-21T12:19:29.788888+00:00",
+      "candidate_sha256": "cb31c9ba237c114420916a5fb4397b3507aef046602e209ef6c13784dc6f1d36",
+      "exact_command": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-command-01.json",
+        "sha256": "2038b6d80772a30f220da4aeb78cc763302ef18ca74fed0fcff7bb72254c5a56",
+        "bytes": 6233
+      },
+      "root_pins_command_audit": "f520d1",
+      "root_actual_controls_freeze": "c54118",
+      "scope": "One exact command01, fresh run01/transport01 only. Frozen Tab/F, observed Wire8 Select Run and one Shift rectangle714,370 to938,385; three originals. No retarget, retry, extra gesture, build or source/fixture edit. Worker owns exec/cleanup; root personal fresh initial audit and exclusive ADMIT precede controlled input. Both runtime reviews and finite manager acceptance remain required; no direct candidate/Region-kind stream or full D4/C04/HUMAN/successor credit."
+    },
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/d4-mixed-region-runtime-candidate-01.json",
+      "sha256": "7ac5084f095675ab46a547e56e53f89e7dca4a848a5976d6368266eb3f7cad97",
+      "bytes": 36446
+    },
+    "runtime_result": {
+      "raw_result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-region-01/result.json",
+        "sha256": "5755f926553800500b1969d63a51f6510b085c9c84b1fd9d1218df5a8e060cb8",
+        "bytes": 309009
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-d4-mixed-region-01/transport.json",
+        "sha256": "8bbc671ee49d707be48ef5b1b8e63a44844a1ca41a66c8ce4bb8a90dcfe0df38",
+        "bytes": 3747
+      },
+      "actual_execution": {
+        "launch": "bc8080",
+        "exec_session": 95313,
+        "final": "187c53",
+        "exit_code": 0,
+        "outcome_read": "d94844"
+      },
+      "originals": {
+        "initial": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-region-01/initial.png",
+          "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+          "bytes": 57612
+        },
+        "run": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-region-01/run.png",
+          "sha256": "747ac9d2ff6a79ab6c352e38c923ec40eddc455cbdf6abed086b2ba96a9a9c44",
+          "bytes": 110639
+        },
+        "refused": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-d4-mixed-region-01/refused.png",
+          "sha256": "0f4c0bbfe878ec7c183c8a6a342ce3d318525990725ca9998e3e07f2b589ec28",
+          "bytes": 118010
+        }
+      },
+      "budget_observed": {
+        "originals": 3,
+        "controlled_core_events": 21,
+        "setup_keys": [
+          "Tab",
+          "F"
+        ],
+        "Run_menu_keys": [
+          "ContextMenu",
+          "s",
+          "Down",
+          "Return"
+        ],
+        "Run_preconditions": 1,
+        "Shift_rectangles": 1,
+        "region_primary_press_release_pairs": 1,
+        "canvas_point_acquisitions": 0,
+        "wheel_steps": 0,
+        "extra_retry_or_adjustment": false,
+        "post_proof_housekeeping": "The unchanged ordinary terminal-exit owner clicks its terminal tab at45,764 after the proof epoch, then types exit/Return. This is separately preserved housekeeping, not a second region or canvas acquisition."
+      },
+      "mixed_region_oracle": {
+        "screen_rect_px": [
+          [
+            714,
+            370
+          ],
+          [
+            938,
+            385
+          ]
+        ],
+        "world_rect_nm": [
+          [
+            9325452,
+            -2028500
+          ],
+          [
+            71634215,
+            2143962
+          ]
+        ],
+        "complete_source_candidates": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000000d"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000e"
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          }
+        ],
+        "existing_candidates": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          }
+        ],
+        "outsiders": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-00000000000d"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000e"
+          }
+        ],
+        "exclusions": {
+          "wire8": "Only endpoint10mm is inside;0mm is outside, so1/2 fails strict majority.",
+          "bus_sections": "All four spines have y10mm, outside region.",
+          "bus_entry": "Display-only BusEntry5 is not an authored acquisition member; its geometry has y5..10mm, outside.",
+          "TextI": "Exact accepted oriented layout x0..163840nm lies left of the region.",
+          "other_panes_and_occurrences": "Only current root Schematic scene bindings feed region evaluation. Board pane objects and14 nonroot occurrence identities have no eligible projection in this scene; no cross-pane acquisition."
+        },
+        "authority": "Exact pre-input source qualification oracle: strict-majority anchors and wholly enclosed accepted oriented layouts. It is not a direct runtime evaluated-candidate receipt. Region path is source-bound to the actual Shift drag, no click fallthrough, completed Add/Run refusal and current source owners; no direct Region-kind event stream is claimed."
+      },
+      "selection_result": {
+        "kind": "run",
+        "origin": {
+          "class": "wire",
+          "id": "73000000-0000-4000-8000-000000000008"
+        },
+        "logical_net": "b151f91b-1da9-478b-8c71-6ff4ad03dd04",
+        "members": [
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000008"
+          },
+          {
+            "class": "wire",
+            "id": "73000000-0000-4000-8000-000000000009"
+          },
+          {
+            "class": "label",
+            "id": "73000000-0000-4000-8000-00000000000a"
+          },
+          {
+            "class": "port",
+            "id": "73000000-0000-4000-8000-00000000000c"
+          },
+          {
+            "class": "junction",
+            "id": "73000000-0000-4000-8000-00000000000b"
+          }
+        ],
+        "member_count": 5,
+        "per_type": {
+          "wire": 2,
+          "label": 1,
+          "port": 1,
+          "junction": 1
+        },
+        "scope": null,
+        "focus": null,
+        "stale": false,
+        "hidden": 0,
+        "locked": 0,
+        "unprojected": 0,
+        "only_intended_delta": "Entire compact selection remains equal except notice. Full selected public member arrays and all15 Inspector field maps remain byte-equal; both outsiders remain absent. No partial conversion, extra member or focus.",
+        "selected_boundaries": [
+          "run_before_capture",
+          "run_after_capture",
+          "refused_before_capture",
+          "refused_after_capture"
+        ],
+        "Context_queries": 4,
+        "selected_AX_snapshots": 8,
+        "full_inspector_fields": 15,
+        "Context_transport": "Complete5 members, truncatedfalse, no omitted fields. All15 canonical values are Common; quantity display formatting is separately unqualified."
+      },
+      "refusal": {
+        "mode": "Add",
+        "subject_kind": "run",
+        "exact_reason": "Cannot add members to a run selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection.",
+        "reason_characters": 138,
+        "Context_AX_Console": "Context.notice, full AX root description and Console Run summary contain the exact same complete reason. Compact notice has omitted_chars0.",
+        "publication_window": {
+          "start_byte": 155354,
+          "end_byte": 229036,
+          "scope": "Frozen region start through the admitted refused-capture settled ledger. The later terminal-tab housekeeping release is outside this proof epoch."
+        },
+        "Inspector_before_capture": {
+          "content_binding": {
+            "event": {
+              "line": 562,
+              "start_byte": 208611,
+              "end_byte": 208731
+            },
+            "submitted_content": {
+              "line": 610,
+              "start_byte": 216445,
+              "end_byte": 228026
+            },
+            "native_present": {
+              "line": 611,
+              "start_byte": 228026,
+              "end_byte": 228561
+            },
+            "settled_ledger": {
+              "line": 613,
+              "start_byte": 228653,
+              "end_byte": 229036
+            },
+            "native_identity": {
+              "acquisition": 16,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 17,
+              "window": "WindowId(94216548729888)"
+            },
+            "content_revision": 51,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          "complete_notice_rows": [
+            "Cannot add members to a run selection. Membership follows",
+            " connectivity. Select an object without modifiers to start an e",
+            "xplicit selection."
+          ]
+        },
+        "Inspector_at_capture": {
+          "content_binding": {
+            "event": {
+              "line": 562,
+              "start_byte": 208611,
+              "end_byte": 208731
+            },
+            "submitted_content": {
+              "line": 610,
+              "start_byte": 216445,
+              "end_byte": 228026
+            },
+            "native_present": {
+              "line": 611,
+              "start_byte": 228026,
+              "end_byte": 228561
+            },
+            "settled_ledger": {
+              "line": 613,
+              "start_byte": 228653,
+              "end_byte": 229036
+            },
+            "native_identity": {
+              "acquisition": 16,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 17,
+              "window": "WindowId(94216548729888)"
+            },
+            "content_revision": 51,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          "complete_notice_rows": [
+            "Cannot add members to a run selection. Membership follows",
+            " connectivity. Select an object without modifiers to start an e",
+            "xplicit selection."
+          ]
+        },
+        "publication": {
+          "markers": [
+            "[SystemTime { tv_sec: 1792585278, tv_nsec: 231657913 }] selection publish begin",
+            "[SystemTime { tv_sec: 1792585278, tv_nsec: 244153783 }] selection console begin",
+            "[SystemTime { tv_sec: 1792585278, tv_nsec: 244722356 }] selection console end"
+          ],
+          "scope": "One completed announced refusal; expected region candidates are an independent source oracle, not a direct runtime candidate-set receipt."
+        },
+        "announcement_scope": "Exactly one Console publication follows the unique own region release and selection publication. No direct screen-reader event-stream witness."
+      },
+      "readiness": {
+        "run": [
+          {
+            "event": {
+              "line": 424,
+              "start_byte": 134891,
+              "end_byte": 135095
+            },
+            "submitted_content": {
+              "line": 469,
+              "start_byte": 142522,
+              "end_byte": 153302
+            },
+            "native_present": {
+              "line": 470,
+              "start_byte": 153302,
+              "end_byte": 153837
+            },
+            "settled_ledger": {
+              "line": 472,
+              "start_byte": 153931,
+              "end_byte": 154314
+            },
+            "native_identity": {
+              "acquisition": 12,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 13,
+              "window": "WindowId(94216548729888)"
+            },
+            "content_revision": 39,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 424,
+              "start_byte": 134891,
+              "end_byte": 135095
+            },
+            "submitted_content": {
+              "line": 469,
+              "start_byte": 142522,
+              "end_byte": 153302
+            },
+            "native_present": {
+              "line": 470,
+              "start_byte": 153302,
+              "end_byte": 153837
+            },
+            "settled_ledger": {
+              "line": 472,
+              "start_byte": 153931,
+              "end_byte": 154314
+            },
+            "native_identity": {
+              "acquisition": 12,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 13,
+              "window": "WindowId(94216548729888)"
+            },
+            "content_revision": 39,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ],
+        "refused": [
+          {
+            "event": {
+              "line": 562,
+              "start_byte": 208611,
+              "end_byte": 208731
+            },
+            "submitted_content": {
+              "line": 610,
+              "start_byte": 216445,
+              "end_byte": 228026
+            },
+            "native_present": {
+              "line": 611,
+              "start_byte": 228026,
+              "end_byte": 228561
+            },
+            "settled_ledger": {
+              "line": 613,
+              "start_byte": 228653,
+              "end_byte": 229036
+            },
+            "native_identity": {
+              "acquisition": 16,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 17,
+              "window": "WindowId(94216548729888)"
+            },
+            "content_revision": 51,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          },
+          {
+            "event": {
+              "line": 562,
+              "start_byte": 208611,
+              "end_byte": 208731
+            },
+            "submitted_content": {
+              "line": 610,
+              "start_byte": 216445,
+              "end_byte": 228026
+            },
+            "native_present": {
+              "line": 611,
+              "start_byte": 228026,
+              "end_byte": 228561
+            },
+            "settled_ledger": {
+              "line": 613,
+              "start_byte": 228653,
+              "end_byte": 229036
+            },
+            "native_identity": {
+              "acquisition": 16,
+              "configuration": 1,
+              "host": 1,
+              "queue_epoch": 1,
+              "submission_receipt": 17,
+              "window": "WindowId(94216548729888)"
+            },
+            "content_revision": 51,
+            "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+          }
+        ]
+      },
+      "cleanup": {
+        "recorded_pids_absent": [
+          1268262,
+          1268263,
+          1268264,
+          1268267,
+          1268299,
+          1268318,
+          1268322,
+          1268344
+        ],
+        "ipc_paths_absent": [
+          "/run/user/1000/npd-wl-t5omxq2u",
+          "/run/user/1000/nqi-4hf_fzn5"
+        ],
+        "verified_owner_stops": {
+          "gui": true,
+          "daemons": true,
+          "shell_leader": true,
+          "Weston": true,
+          "clipboard": true
+        },
+        "cleanup_errors": [],
+        "ordinary_ui_terminal": "Existing ordinary UI shell exit and observed PTY closure before owned GUI disposal.",
+        "shell_deadline_margin_seconds": 6.9493603379814886,
+        "limits": "Authenticated recorded owners and PTY leader only; no ordinary window Close, HUP or all-group/session/descendant claim."
+      },
+      "personal_original_review": {
+        "initial": "Board0 focus and None; unchanged unselected Schematic context. Personally viewed before root fresh ADMIT.",
+        "run": "Run —5 objects, SELECTED, All5 and2Wires/1Label/1Port/1Junction; footer run5. Origin cursor/crosshair crosses wire geometry; gray crosshair is not connectivity or evidence of extra selected members. Outside WireD/LabelE remain outside the public set.",
+        "refused": "Same Run5 Inspector totals/footer and existing selected root geometry. Full Add/Run reason/remedy is visible across three rows. Outside WireD and LabelE retain ordinary appearance and are not selected. Rectangle is no longer active. Pointer/crosshair moved and Inspector rows shifted to fit notice; pixels are not claimed identical.",
+        "limits": "Console text and long fields clip. Exact full reason comes independently from AX/Context/Console state and bound immutable Inspector fragments. Bounds/available-bounds quantity formatting is Unavailable despite Common canonical fields; no metrology. No exact GPU pixels, compositor sample, primitive-contribution, visible frame-cause or HUMAN claim."
+      },
+      "metadata_prewrite_failure_3f650f": "Saved-log audit incorrectly included the later ordinary terminal-tab housekeeping click in the one-region release check. Assertion preceded any runtime-packet write. Read-only diagnostic caaa44 identifies the extra release at1792585279.510174183 after the refused-capture ledger, bound to terminal-tab45,764 action. Corrected only audit byte boundary to the already-admitted proof epoch; raw/source/runtime unchanged, no retry."
+    },
+    "runtime_reviews": {
+      "state": "BOTH ACTUAL FINITE RUNTIME/PIXEL PASS",
+      "candidate_sha256": "7ac5084f095675ab46a547e56e53f89e7dca4a848a5976d6368266eb3f7cad97",
+      "closeout_turn": "01a15e6c-f069-7271-98ae-7871260529f4",
+      "reorganization_turn": "01a15e6d-2970-7c80-a237-5f0123544839",
+      "outcome": "No mandatory finding. The actual reviews support three originals, unchanged selected Run5 and ordinary outsiders, complete 138-character Inspector refusal, four Context boundaries, eight AX snapshots, all 15 fields, four immutable prefix bindings, one region with 21 controlled input rows, 61 invariant canonical maps and qualified recorded-owner cleanup. Candidate-set and Region-route attribution remains source-derived."
+    },
+    "root_runtime_audit": {
+      "originals": "a2987f and initial9b0722",
+      "state_notice_readiness_input_cleanup": "83960a",
+      "scope": "Root personally corroborated same Run5 and unselected outsiders, full three-row Inspector reason, four Context/eight AX/all15 unchanged fields, exact immutable-prefix/notice-row bindings,61-file invariance and qualified eight-owner/two-IPC cleanup. Independent runtime acceptance remains separate.",
+      "read_only_introspection_correction": "70fe8e treated compact notice as a string;325408 established preview/omitted_chars shape, then83960a verified exact138-character preview/omitted0. No artifact changed."
+    },
+    "manager_finite_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "decision": "ACCEPT only D4 mixed additive rectangle refusal on Schematic Run5",
+      "runtime_candidate_sha256": "7ac5084f095675ab46a547e56e53f89e7dca4a848a5976d6368266eb3f7cad97",
+      "raw_sha256": "5755f926553800500b1969d63a51f6510b085c9c84b1fd9d1218df5a8e060cb8",
+      "transport_sha256": "8bbc671ee49d707be48ef5b1b8e63a44844a1ca41a66c8ce4bb8a90dcfe0df38",
+      "basis": "Actual closeout and reorganization runtime PASS receipts plus the appointed manager original-image and raw audit. Direct MCP disposition authorizes only this criterion reconciliation, lease/beads/export synchronization and exact three-file metadata freeze for manager review and landing.",
+      "retained_boundaries": "Finite CPU Wayland/Vulkan/SHM mixed-candidate additive rectangle refusal on Schematic Run5 only. Both actual runtime reviews and appointed-manager acceptance are recorded. Raw CAPTURE_ONLY remains unchanged. The six candidates and Region route are independent source-derived inferences, not direct native candidate or Region-kind traces. No lasso, subtractive, hidden/filter, large-set/cap or cross-pane extension, exact GPU/compositor sampling or visible-frame cause, metrology, hardware/performance, direct screen-reader stream, ordinary Close, all-descendant, full D4/C04, HUMAN, C05/C06 or successor credit. No source, fixture, producer, build, dependency or product-rule change.",
+      "chronology": "The one controlled region and refusal announcement are bounded through the refused-capture settled ledger at byte 229036. Later terminal-tab housekeeping remains visible in the full chronology and cleanup. Metadata pre-write failure 3f650f and corrected audit c2c2e6 remain recorded; no native/source/raw retry or change occurred."
     }
   }
 }
