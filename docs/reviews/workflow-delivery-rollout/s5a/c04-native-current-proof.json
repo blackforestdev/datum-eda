@@ -12231,6 +12231,14 @@
         ],
         "accepted_binding": "Actual native04 runtime candidate da739b0e has both independent runtime/rendered PASS turns 01a15f74-8aac-70e1-b37a-f0c9b918a928 and 01a15f74-aac3-7a60-8741-da40eb268d16 plus appointed-manager finite acceptance. The shared renderer repair passed both source reviews, nine targeted tests and the guarded GUI build. Five fresh originals show the Junction absent while hidden and visible after restoration; full257, 14 Common plus one complete Unavailable field, Context12+3, quiet no-op, hidden-only restoration and qualified cleanup agree.",
         "limit": "Only this fixed Schematic Junction/257-member Run slice on CPU Wayland/Vulkan/SHM. Raw CAPTURE_ONLY, native01/02 FAIL and native03 appearance REVISE remain. No blanket omitted-reason, hidden Wire, pre-filtered, Board/Bus, cross-pane, full IR01/C04/HUMAN/C05/C06 or successor acceptance."
+      },
+      {
+        "predicates": "N05/N09 finite post-repair pre-hidden root Wire GlobalNet21 material suppression/acquisition and selected restoration",
+        "receipts": [
+          "native_wayland_prehidden_wires_global_net_post_repair_20261021"
+        ],
+        "accepted_binding": "Immutable candidate a542c8f0; actual two independent runtime/rendered PASS receipts, reorganization BusEntry narrative supplement and appointed-manager finite ACCEPT. Full21/hidden3->0/unprojected14; all15 inspection fields, complete Context21, source invariance and literal cleanup retained.",
+        "limit": "Historical appearance qualification and raw packet remain unchanged; this is separate current evidence. No hidden intermediate Wire Run, pre-filtered large derived set, Board/Bus/cross-pane extension, refreshed Console0 summary or full restored three-consumer parity acceptance. Acquisition Console hidden3 is history; restore emits Layer visibility visible while live hidden becomes0."
       }
     ],
     "unresolved_evidence_questions": [
@@ -12243,12 +12251,13 @@
           "ir01_prefiltered_label_run_20261011",
           "ir01_prefiltered_wire_global_net_20261013",
           "native_wayland_hidden_junction_run_20261019.native_attempt_02",
-          "native_wayland_prehidden_wires_global_net_20261021"
+          "native_wayland_prehidden_wires_global_net_20261021",
+          "native_wayland_prehidden_wires_global_net_post_repair_20261021"
         ],
-        "unresolved": "Historical Run5 Junction and GlobalNet21 Wire receipts retain their valid typed membership/counts/output/invariance/cleanup scopes, but their hidden-layer appearance credits are explicitly narrowed in dated owning-node qualifications. The repaired native04 Run257 now independently establishes pre-hidden intermediate Junction membership and actual appearance suppression/restoration. Independently hidden Wire segments, pre-filtered and other required Board/Bus/cross-pane intersections remain separate; no full IR01 acceptance.",
+        "unresolved": "Historical Run5 Junction and GlobalNet21 Wire receipts retain valid typed scopes with dated appearance qualifications unchanged. Repaired Run257 establishes pre-hidden intermediate Junction membership and suppression/restoration; fresh repaired GlobalNet21 establishes pre-hidden root Wire material suppression/restoration at its exact scope. Hidden intermediate Wire Run, pre-filtered and applicable Board/Bus/cross-pane intersections remain separate; no full IR01 acceptance.",
         "smallest_next_lookup_or_work": "Reuse the accepted repaired Run257 and valid historical semantic receipts at their exact scopes. Preserve both historical appearance qualifications; no rerun or new prerequisite follows from this correction alone.",
         "closure": "The exact repaired Schematic pre-hidden Junction/Run257/no-op/restore unit has both actual independent runtime/rendered PASS receipts and manager finite acceptance in wire_run_hidden257_delivery_20261021. Older appearance claims are not inherited. Remaining applicable predicates require adequate evidence/disposition without a generic rerun queue.",
-        "current_global_net_prehidden_Wires": "Retain full21/semantic LabelE invocation after L200 pre-hide, hidden-state3 to0/unprojected14 and exact source/output/cleanup observations. Historical Wire disappearance appearance is withdrawn by the dated owning-node qualification; Console acquisition history and later visibility-action echo remain distinct."
+        "current_global_net_prehidden_Wires": "Fresh separate native_wayland_prehidden_wires_global_net_post_repair_20261021 now establishes actual repaired root Wire8/9/D suppression before/during LabelE GlobalNet21 acquisition and selected restoration, full21/hidden3->0/unprojected14 and complete inspection/Context/invariance/cleanup. Both runtime PASS receipts and manager finite ACCEPT include explicit BusEntry correction. Historical qualification is unchanged; Console acquisition history and later visibility-action echo remain distinct."
       },
       {
         "id": "large-derived-ir01-d4-extensions",
@@ -26782,7 +26791,8 @@
       "limit": "The repaired producer and Run257 Junction appearance have separate finite evidence. No retroactive GlobalNet21 appearance PASS, raw rewrite, rerun/new prerequisite, waiver or broader qualification.",
       "retained_visible_observations": "Actual layer rows/swatches, visible selected objects and restored pink selected treatment remain supported. Withdraw hidden-material suppression and full hide/restore appearance credit only.",
       "historical_source_audit": "Independent reorganization audit 01a15f74-aac3-7a60-8741-da40eb268d16 re-viewed old hidden/restored originals. Both Wires and Junctions import as schematic graphics; the all-command bypass applies. Historical source/landing 44755b5 is not retroactively repaired."
-    }
+    },
+    "current_repaired_appearance_evidence": "native_wayland_prehidden_wires_global_net_post_repair_20261021"
   },
   "native_wayland_d4_mixed_region_refusal_20261021": {
     "state": "FINITE D4 MIXED ADDITIVE RECTANGLE ACCEPTED; BROADER C04 QUALIFICATION REMAINS OPEN",
@@ -36583,5 +36593,243 @@
       "#/native_wayland_hidden_junction_run_20261019/appearance_qualification_20261021",
       "#/native_wayland_prehidden_wires_global_net_20261021/appearance_qualification_20261021"
     ]
+  },
+  "native_wayland_prehidden_wires_global_net_post_repair_20261021": {
+    "status": "Finite post-repair root Wire GlobalNet21 suppression/acquisition/restore accepted by appointed manager after both actual independent runtime/rendered PASS receipts; raw CAPTURE_ONLY preserved. C04 remains in_progress.",
+    "recorded_at": "2026-10-21T17:57:43Z",
+    "head": "674c30811e6aed46929500e30698fcc1c1eb9ba8",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "requirement": "N05/N09 finite existing pre-hidden root Wire8/9/D material suppression before/during eligible LabelE GlobalNet21 acquisition, selected restoration and truthful complete membership/inspection. No hidden intermediate Wire Run or full IR01 inference.",
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-runtime-candidate-02.json",
+      "sha256": "a542c8f08ad71d872e8dbe7a9dfd617d9b2f857d6500417880634fb6899fac12",
+      "bytes": 12106
+    },
+    "reused_renderer_repair": "wire_run_hidden257_delivery_20261021.renderer_repair",
+    "source_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-post-repair-source-candidate-01.json",
+      "sha256": "6a6b2e76d94300d38af3a4c3f79f838bfdb3122bcb698c98798dcbbdb03e66df",
+      "bytes": 20944
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-manifest-03.json",
+      "sha256": "dddcda9b6514fc237e1c9e76d5d2b47fc5862e4b67549c3d1ecf3f6574b4c752",
+      "bytes": 65431
+    },
+    "command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-command-03.json",
+      "sha256": "72437ab434607bbc3c2c332dc2820019d4e837b66bcdbccb1448d6f3907201f0",
+      "bytes": 9547
+    },
+    "manager_release": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-post-repair-release-02.json",
+      "sha256": "03e45b276c5c3973859d51fd37d169145fbb80d101863126dd830af0039805a6",
+      "bytes": 842
+    },
+    "actual_execution": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-execution-02.json",
+      "sha256": "b13f563544a2943789b6a589c829da39b353b31189b614f4951b72121b372d48",
+      "bytes": 11396
+    },
+    "actual_final": {
+      "rollout": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+      "line": 53892,
+      "timestamp": "2026-10-21T17:43:10.537Z",
+      "item_id": "ctco_01a15f8f-51c9-7220-980c-dd686d686d22",
+      "call_id": "call_e4fb7024545f4485954fb1d083b9e247",
+      "chunk_id": "00ea8e",
+      "wall_time_seconds": 2.4275e-05,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "runtime_artifacts": [
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/result.json",
+        "sha256": "df77d59883e405e7cf7915c60d3206e68a6e24e641ef8882e754317d1fcd68db",
+        "bytes": 559776
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/initial.png",
+        "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+        "bytes": 57612
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/prehidden.png",
+        "sha256": "29f7be8fde398a2aab5aa5307d3432ef3b7ea3dcf52a8161fbd6a849c601f48e",
+        "bytes": 69943
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/acquired.png",
+        "sha256": "9034eeb89d2767a21f0527411b0e60052e2dfc6730766c12dd30635dd388ee77",
+        "bytes": 113486
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/restored.png",
+        "sha256": "90aca90492d8c1264e61ffe5caae61866aab07c14af832cdd8ad91467462f121",
+        "bytes": 111586
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/baseline-checkpoint.json",
+        "sha256": "8582e2ccba1ad8513c53760887efe39dd886aacea2474c1eae9def9580cf005c",
+        "bytes": 20179
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/baseline-admission.json",
+        "sha256": "fc7cf9e314c7fe47d4426cc01c9359a495f9b7a38ea53333483c5aadbe269120",
+        "bytes": 1424
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/executed-runner.py",
+        "sha256": "6188a753cebc645cbb1d55108f1a8998de42d0df17611f9884f863c2648681a7",
+        "bytes": 32418
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/prehidden-global-net.log",
+        "sha256": "f6213fabdbdb1f3fbe244935ce731ef009f1471d234528bf4a2742fe5f0da093",
+        "bytes": 50391
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-prehidden-global-net-02/prehidden-global-net-diagnostic.log",
+        "sha256": "d8640316ac6ef23b043123ff5161fa5ac30173dbbb805157406965ab6bc4486f",
+        "bytes": 288512
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-prehidden-global-net-02/transport.json",
+        "sha256": "374d8445a8abe8032f8d2e8458a7223fcf07d44f6a5c509e533f98be3566be9d",
+        "bytes": 3797
+      },
+      {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-prehidden-global-net-02/runner.log",
+        "sha256": "6b2438d094b7b238225135916e6ed77adef8dff9c2a4bf1e81ef35b7d79849a7",
+        "bytes": 122
+      }
+    ],
+    "current_GUI": "945ddd7d94e7c2b4ceab2e8ce191ab5e83911f793d2beae2b0e5c9612e45aac9",
+    "unchanged_runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-source1.py",
+      "sha256": "6188a753cebc645cbb1d55108f1a8998de42d0df17611f9884f863c2648681a7",
+      "bytes": 32418
+    },
+    "unchanged_geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-geometry-02.json",
+      "sha256": "3df93e799eee49da09523452d5ea2151dec70308077efec45703d62a10821e18",
+      "bytes": 8189
+    },
+    "unchanged_controls": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/prehidden-global-net-controls-01.json",
+      "sha256": "89f5373ffb70799cb93f2b448698d3d645f378b8252000a5f37ac0509f1fab2a",
+      "bytes": 1570
+    },
+    "actual_counts": {
+      "core_events": 19,
+      "originals": 4,
+      "Context_queries": 6,
+      "selected_AX_snapshots": 8,
+      "canonical_fields": 15,
+      "canonical_unavailable": 2,
+      "canonical_files": 61,
+      "prefix_bindings": 6,
+      "semantic_acquisitions": 1,
+      "layer_toggles": 2,
+      "primary_pairs": 2
+    },
+    "actual_semantic_binding": "Same b151f91b logical Net, full21 occurrence-qualified members (Wire9/Label6/Port3/Junction3), project/revision/scopeNone/focusNone/staleFalse/noticeNone. Hidden rootWires3→0;14 nonroot members remain unprojected; no pruned set or invented hidden9 count.",
+    "actual_consumer_contract": "Full Context21/truncatedfalse/omissions[] and all15 canonical AX fields agree before/after queries at four selected boundaries. combined_bounds_nm and layer_coverage retain exact complete Unavailable reasons; other13 Common. Restoration changes only hidden flags/count/hidden_members field; other14 field attributes remain equal.",
+    "Console_qualification": "Acquisition history is Global Net21 hidden3. Later Console is Layer visibility visible action echo while current Inspector/Context hidden0; no refreshed GlobalNet0 summary or restored full three-consumer parity claim.",
+    "invariance": "All61before/afterobservation/afterteardown/current canonical source/history maps equal; operational role paths excluded before reading.",
+    "cleanup": {
+      "verified_owner_stops": {
+        "gui": true,
+        "daemons": true,
+        "shell_leader": true,
+        "Weston": true,
+        "clipboard": true
+      },
+      "errors": [],
+      "all8_recorded_pids_absent": [
+        1324900,
+        1324901,
+        1324905,
+        1324910,
+        1324920,
+        1324939,
+        1324943,
+        1324965
+      ],
+      "both_privateIPC_absent": [
+        "/run/user/1000/npd-wl-5gzer96z",
+        "/run/user/1000/nqi-k164tadi"
+      ],
+      "shell_exit": {
+        "verified": true,
+        "identity": {
+          "pid": 1324943,
+          "uid": 1000,
+          "starttime": "53380846",
+          "ppid": 1324939,
+          "state": "S",
+          "exe": "/usr/bin/bash",
+          "sha256": "223fe8564b60636bc738b6178d3ba9a50ef7d791266b0efae6363bb716e4c47f"
+        },
+        "state": {
+          "pid": 1324943,
+          "original_starttime": "53380846",
+          "exited": true,
+          "absent": true,
+          "verified": true,
+          "error": null
+        },
+        "limits": "Authenticated recorded PTY session leader only; its exit does not prove every process in its group/session or every descendant exited. No ordinary shell/Close or historical HUP inference.",
+        "group_descendants_exit_verified": false,
+        "cleanup_blocker_reported": false,
+        "binding_error": null,
+        "gate_errors": [],
+        "first_verified_exit_at": 533895.970548322,
+        "original_cleanup_deadline": 533902.917547379,
+        "late_exit_verification": false,
+        "cleanup_failed": false
+      },
+      "terminal_cleanup": "Existing ordinary UI shell exit and observed PTY closure before owned GUI disposal.",
+      "limit": "Literal recorded owners/privateIPC only; ordinary UI shell exit and PTY closure precede owned GUI disposal. No ordinary window Close or all-descendant claim."
+    },
+    "rendered_outcome": "Four original frames establish absent root Wire8/9/D material in prehidden None and acquired GlobalNet21, then restored selected pink Wire material with live hidden3 to0 and unprojected14 unchanged. Full21 occurrence-qualified members (9 Wire,6 Label,3 Port,3 Junction) and all15 canonical inspection fields remain complete. No whole-frame identity or exact primitive metrology claim.",
+    "runtime_reviews": [
+      {
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15f92-994e-7853-b920-d3f26780c117",
+        "disposition": "Finite runtime/rendered PASS; BusEntry other-layer narrative superseded only by the supplement below."
+      },
+      {
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15f92-73d6-70c3-83cc-61acc7971043",
+        "disposition": "Finite runtime/rendered PASS with required BusEntry narrative correction."
+      },
+      {
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15f96-720b-7310-959f-8afa1c7c917a",
+        "disposition": "Narrow narrative supplement PASS: BusEntry shares Wire L200 and hides/restores; Junction L202 and gold Bus remain. Prior runtime PASS unchanged."
+      }
+    ],
+    "narrative_correction": {
+      "superseded_clause": "RootJunction dot and BusEntry green material remain legitimate other-layer context, not hidden Wire spans.",
+      "applies_to": "Only the BusEntry remains/other-layer assertion in immutable candidate02 worker_original_review and both initial review descriptions; no runtime result or original image is altered.",
+      "corrected_fact": "BusEntry uses SCHEMATIC_WIRE_LAYER L200 in crates/gui-protocol/src/schematic_scene_import/buses.rs:35-57. Canonical entry005 (30000000,10000000)->(35000000,15000000) disappears while Wire is hidden and returns restored. Junction L202 and gold Bus remain; gray crosshair is separate.",
+      "source_sha256": "591636b54713bd93d22e2da0717c751b1a55e50843adef280d057e11cee085df",
+      "diagnostic_only": "Source-projected ROI x789-806/y414-431 green counts initial17/prehidden0/acquired0/restored17, plus one darker edge initial/restored. Diagnostic observation only; no new threshold/metrology acceptance.",
+      "preservation": "Candidate02 and raw CAPTURE_ONLY result remain byte-exact. No duplicate runtime packet or rerun."
+    },
+    "root_runtime_audit": {
+      "receipt": "5ce7a4",
+      "result": "All21 candidate references/current pins,61 canonical maps,8 recorded PIDs/2 private IPC endpoints absent, five literal stop booleans true/errors[]. Actual final00ea8e exit0; ordinary UI shell exit6.946999057 seconds before original deadline.",
+      "limits": "Authenticated recorded owners only; no all-descendant or ordinary window-Close inference."
+    },
+    "manager_finite_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "disposition": "ACCEPT exact repaired GlobalNet21 Wire suppression/restore using both actual PASS receipts and root audit; final owning node explicitly supersedes the inaccurate BusEntry clause. Reorganization narrow supplement binds corrected fact.",
+      "retained_boundary": "C04 in_progress; no full IR01/C04/HUMAN/C05/C06 or successor closure."
+    },
+    "retained_boundaries": "Historical appearance qualification and raw packet remain unchanged; this is separate current evidence. No hidden intermediate Wire Run, pre-filtered large derived set, Board/Bus/cross-pane extension, refreshed Console0 summary or full restored three-consumer parity acceptance. Acquisition Console hidden3 is history; restore emits Layer visibility visible while live hidden becomes0."
   }
 }
