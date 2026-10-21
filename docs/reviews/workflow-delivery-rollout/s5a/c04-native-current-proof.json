@@ -20276,7 +20276,7 @@
           "disposition": "SOURCE PASS for the same narrow patch and initial test. No mandatory finding remained. Hidden X11 scope, source preservation and raw native01 FAIL were retained. Actual tests, build and native acceptance were pending at this review."
         }
       ],
-      "status": "The appointed manager accepted only the authored-label routing/refusal repair after both independent runtime reviews. The separate native routing/refusal node records the actual disposition. Landing and issue closure remain pending; padless containment and full C04 remain open.",
+      "status": "Accepted authored-label routing/refusal repair landed in c44506d911afbb144978956f517919f199c250ce; related issue6khd is closed with exact landing evidence. The original native01 FAIL remains immutable. Padless containment, full C04 and iu3k remain open.",
       "verification_limits": "The supporting regression uses real Runtime callbacks in hidden X11/Vulkan; it is not ordinary Wayland or pixel qualification. The initial compile was interrupted (c9501f, exit 130) solely to apply manager-requested scoped TMPDIR before any test ran. Later GL device failure, Vulkan containment failure and routing-test compile failure are preserved separately. No cache cleanup or native retry occurred.",
       "retained_boundaries": "Raw native01 FAIL is immutable. Neither padless exclusion nor inclusion is accepted. Open cardinality issue iu3k, closed vs05, singleton Compound without focus, CPU-only limits, independent review, HUMAN and full C04 boundaries remain unchanged. The current repair proves routing and refusal only.",
       "supporting_runs": [
@@ -20450,12 +20450,13 @@
           "exec_session": null
         }
       ],
-      "separate_native_proof_node": "native_wayland_authored_label_region_refusal_20261021"
+      "separate_native_proof_node": "native_wayland_authored_label_region_refusal_20261021",
+      "landing_commit": "c44506d911afbb144978956f517919f199c250ce"
     }
   },
   "native_wayland_authored_label_region_refusal_20261021": {
     "recorded_at": "2026-10-21T05:32:11.555207+00:00",
-    "state": "MANAGER_ACCEPTED_AUTHORED_LABEL_ROUTING_REFUSAL_REPAIR_PENDING_LANDING",
+    "state": "MANAGER_ACCEPTED_AUTHORED_LABEL_ROUTING_REFUSAL_REPAIR_LANDED",
     "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
     "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
     "issue": "dat-authored-label-region-6khd",
@@ -20943,7 +20944,7 @@
       "original_image_review_receipt": "76f16d",
       "corrected_final_audit_receipt": "33550f",
       "execution_receipt_audit": "71a378",
-      "landing": "Pending; no landing hash or issue closure claimed."
+      "landing": "Accepted repair landed in c44506d911afbb144978956f517919f199c250ce with normal hooks passing. Only dat-authored-label-region-6khd is closed with exact landing evidence. Root will commit closure metadata and push both commits. C04 and padless containment remain open."
     },
     "final_source_checks": {
       "source_health": {
@@ -20964,6 +20965,27 @@
         "exit": 0
       },
       "reuse_rationale": "No dependency or compiling runner change. Final Rust sources are unchanged since the passing support regression and source-health check; remaining changes record actual outcomes and acceptance."
+    },
+    "landing": {
+      "commit": "c44506d911afbb144978956f517919f199c250ce",
+      "issue": "dat-authored-label-region-6khd",
+      "issue_status": "closed",
+      "root_commit_hooks": "All normal hooks passed, as reported by the appointed manager.",
+      "root_final_consistency_receipts": {
+        "state": "c6bc71",
+        "projection": "9414e5",
+        "traceability": "1a9c7e",
+        "governance": "dd2826",
+        "frozen_five_paths_and_prior_nodes": "a2f1ce"
+      },
+      "closure_transaction_receipt": "4397d2",
+      "push": "Pending root integration; no push claimed in this metadata snapshot.",
+      "boundaries": "Only the authored-label gesture routing defect is closed. Raw CAPTURE_ONLY and all prior failures remain unchanged; the second native gesture proves stable None/refusal state, not a fresh Console publication. C04, padless containment and dat-compound-cardinality-drift-iu3k remain open. Reserved C05/C06 and successors are not authorized by this landing."
+    },
+    "execution_receipt_review_addendum": {
+      "role": "reorganization",
+      "turn": "01a15cfa-c6df-7253-88ba-7b0b22721999",
+      "disposition": "Independently read actual worker release 3ef7a6 at line 42634, launch bbae90 at line 42638 and final 832b32 at line 42726, exit 0. Original bounded runtime PASS is unchanged. Root independently bound these at receipt 71a378."
     }
   }
 }
