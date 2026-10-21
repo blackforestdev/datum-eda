@@ -18234,7 +18234,7 @@
     "recorded_at": "2026-10-21T00:44:35.718731+00:00",
     "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
     "authority": "Original native preparation, actual contract-defect assessment, released source repair/red-green/build, two source/test reviews, two native source/command reviews, exact-once release, fresh baseline ADMIT, actual runtime and bounded acceptance are recorded separately here. All work remains within selected S5A-C04; no successor or new product rule is inferred.",
-    "state": "FINITE_CIRCLE_INTERIOR_HIT_REPAIR_AND_THREE_SCHEMATIC_DRAWING_ACQUISITIONS_ACCEPTED_CPU_WAYLAND_VULKAN_SHM",
+    "state": "LANDED_FINITE_CIRCLE_INTERIOR_REPAIR_AND_THREE_SCHEMATIC_DRAWING_ACQUISITIONS_ACCEPTED",
     "candidate": {
       "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/schematic-drawings-source-candidate-01.json",
       "sha256": "e493d87310ce13e53aef19bfe7561a686dd3547c9bbef0349b1a7570bb35fd74",
@@ -18541,7 +18541,7 @@
       "Via_landing": "2357f666cfa4293161928a605d9dafdde6929267",
       "status": "All accepted scopes and historical failures remain unchanged; no duplicate run or blanket upgrade."
     },
-    "review_state": "Both actual independent runtime PASS receipts and appointed PM059 manager acceptance are recorded. The rebuilt Circle interior hit fix and three ordinary acquisitions are accepted at the finite CPU Vulkan/SHM scope. Earlier prelaunch/release records are historical; runtime execution completed once. Landing and actual-hash defect closure remain to be performed by the manager; no further run or expanded scope.",
+    "review_state": "Both actual independent runtime PASS receipts and appointed-manager acceptance are recorded. Code/evidence landed and pushed in547fb0d264f70a28f0cab61bcafc98ccdb58b744; the related Circle defect is closed with that actual landing hash. Earlier prelaunch and acceptance-time landing-pending fields are historical. No further execution or expanded scope is authorized.",
     "limits": "Accepted finite CPU Wayland/Vulkan/SHM Circle interior repair and Rect007/Circle008/Arc009 primary-click replacement only. Source/test and ordinary native proof are separate and both recorded. No region qualification, other drawing/Board classes, blanket modifier/geometry/platform matrix, exact sampling/frame, contrast/animation/hardware/performance/cause, ordinary Close/all-descendant, full C04/HUMAN/C05/C06 or successor acceptance. Preserve all frozen packets and raw CAPTURE_ONLY.",
     "application_profile": {
       "frozen_profile_reference": "Source candidate e493d87310ce13e53aef19bfe7561a686dd3547c9bbef0349b1a7570bb35fd74, application_profile; original bytes preserved.",
@@ -18728,6 +18728,23 @@
       "outcome": "ACCEPT finite Circle hit repair and Rect007/Circle008 interior/Arc009 native acquisition against runtimecf4a2b9d, raw4fc472fb, transporta2beeb6c, repair05e7 and GUI460f12ce. Both actual runtime reviews passed without mandatory findings; root fd6258/5972f3/d510d3 and personal originals independently confirm. Exact command consumed once; no further execution release.",
       "landing": "Five owned paths are prepared for normal manager commit/push. Related Circle defect dat-schematic-filled-circle-hit-0kbx remains open until actual landing hash is available. C04 remains in progress.",
       "retained_limits": "Raw CAPTURE_ONLY, prelaunch records and all nonpasses/historical failures remain immutable. Console pixels expose only a clipped prefix; full typed identity and diagnostic echo are separate. No exact sampling/frame, hardware/performance/cause, region qualification, other classes, ordinary Close/all-descendant, full C04/HUMAN/C05/C06 or successor acceptance."
+    },
+    "landing": {
+      "recorded_at": "2026-10-21T01:07:34.769728+00:00",
+      "commit": "547fb0d264f70a28f0cab61bcafc98ccdb58b744",
+      "pushed": true,
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "root_receipts": {
+        "normal_commit": "b62ed8",
+        "push_fetch_clean_HEAD_equals_origin_main": "7b47b4",
+        "semantic_audit": "faabf9",
+        "explicit_staging": "6d3ba7"
+      },
+      "normal_hooks": "Visual ownership, tmp-resource and rustfmt hooks passed; no bypass.",
+      "runtime_candidate_sha256": "cf4a2b9db1648ce88776ec9636d99fe1856f582e4205096163e42da154fd1e91",
+      "related_defect": "dat-schematic-filled-circle-hit-0kbx",
+      "defect_closure": "Closed after actual code/evidence landing, citing commit547fb0d and accepted runtime candidate. This is bounded defect closure, not full C04 completion.",
+      "retained_boundaries": "C04 remains in progress. Drawing region qualification, other required classes, hardware/performance/exact sampling, ordinary Close/all-descendant, HUMAN/C05/C06 and successor gates remain open. All prior raw CAPTURE_ONLY/nonpasses/history are preserved."
     }
   }
 }
