@@ -12249,7 +12249,8 @@
           "native_wayland_independent_schematic_drawings_20261021",
           "native_wayland_individual_port_layout_20261021",
           "native_wayland_junction_anchor_region_20261021",
-          "native_wayland_via_junction_individual_points_20261021"
+          "native_wayland_via_junction_individual_points_20261021",
+          "native_wayland_independent_board_outline_point_20261021"
         ],
         "next": "Keep exact accepted class/threshold/source controls credited; remaining entries are concrete unbound receipts, not product defects, roadmap dependencies or Cartesian replay instructions. No additional work is authorized by this map; retain exact existing C04 grant and owner boundaries.",
         "closure": "Every required class predicate is bound at its accepted scope or remains explicitly named. Accepted Line006 focus/acquisition, finite threshold/dual-modifier grammar and Rect007/Circle008-interior/Arc009 acquisition remain distinct. No blanket fresh Wayland, full N01/N03 or C04 acceptance.",
@@ -12264,7 +12265,8 @@
           "Finite independent Schematic Rect007 edge, Circle008 filled interior and Arc009 endpoint plain-click acquisition is accepted in native_wayland_independent_schematic_drawings_20261021 with actual source/test/build/native receipts, two runtime PASS reviews and appointed-manager acceptance. Each replaces the prior Object with exact identity/class scope/focus. Only these three acquisition gaps are reconciled; drawing region qualification, Board graphics and other required class predicates remain open.",
           "Finite individual top-level Bidirectional Port730...00c oriented-layout plain-click acquisition is accepted in native_wayland_individual_port_layout_20261021 with both actual source/command and runtime PASS reviews, appointed-manager bounded acceptance and root original-pixel/receipt audit. Exact native Port text hit wins over coincident visible GlobalLabel00a; full AX/Context/target-specific CPU readiness and61-file invariance/qualified cleanup agree. Only individual Port acquisition is credited; Port region/all-orientation and Zone point/menu-origin predicates remain separate.",
           "Finite positive Junction730...00b center-anchor REGION qualification and adjacent-wire member exclusion is accepted in native_wayland_junction_anchor_region_20261021 with both actual source/command and runtime PASS reviews and appointed-manager acceptance. The fixed region contains the connection anchor while excluding the upper dot cap, and each adjacent Wire has only1/2endpoints inside. Exact rawsingletonCompound/scopejunction/focusNone, soleJunctionInspector, full AX/Context, immutable presentation readiness,61-file invariance and qualified cleanup agree. Only this anchor-region predicate is credited; Junction point/NoConnect/other region gaps and accepted Via-region scope remain separate. Related cardinality wording intake dat-compound-cardinality-drift-iu3k remains open and closedvs05/9e170f1b remains accepted; no cardinality/fullC04/HUMAN waiver.",
-          "Finite ordinary Via710...002 and Junction730...00b individual point acquisition is accepted in native_wayland_via_junction_individual_points_20261021 with actual independent runtime reviews and appointed-manager bounded dispositions. Via exactly selects Object/scopevia/focus002 with full AX/Context, original appearance, immutable CPUFocus/readiness,18before-teardown-current file invariance and qualified failure cleanup. Its observer/result/transport remain FAIL/exit1 after the incorrect Schematic-only trace assertion; no directBoardhittrace, intermediate after_observation inventory or ordinary success cleanup is credited. Prior SOURCE PASS is superseded only for that Via assertion; no product patch or retry. Junction actualexit0 selects exact Object/scopejunction/focus00b via strict Schematic hittrace, with full AX/Context, original/immutableCPUFocus/readiness,61maps and ordinary qualified cleanup. Only these point gaps are removed; separate accepted Via/Junction region scopes, NoConnect/otherclass/region gaps, open cardinalityiu3k and fullC04/HUMAN boundaries remain intact."
+          "Finite ordinary Via710...002 and Junction730...00b individual point acquisition is accepted in native_wayland_via_junction_individual_points_20261021 with actual independent runtime reviews and appointed-manager bounded dispositions. Via exactly selects Object/scopevia/focus002 with full AX/Context, original appearance, immutable CPUFocus/readiness,18before-teardown-current file invariance and qualified failure cleanup. Its observer/result/transport remain FAIL/exit1 after the incorrect Schematic-only trace assertion; no directBoardhittrace, intermediate after_observation inventory or ordinary success cleanup is credited. Prior SOURCE PASS is superseded only for that Via assertion; no product patch or retry. Junction actualexit0 selects exact Object/scopejunction/focus00b via strict Schematic hittrace, with full AX/Context, original/immutableCPUFocus/readiness,61maps and ordinary qualified cleanup. Only these point gaps are removed; separate accepted Via/Junction region scopes, NoConnect/otherclass/region gaps, open cardinalityiu3k and fullC04/HUMAN boundaries remain intact.",
+          "Finite independent nonempty BoardOutline200...003 ordinary edge-point acquisition is accepted in native_wayland_independent_board_outline_point_20261021 with both actual source and runtime PASS reviews and appointed-manager bounded acceptance. Onefixed430,296click selects exact Object/scopeboard_outline/focusrealBoardowner/current85f3basis, visible closed-outline treatment and soleInspector; full2Contexts/4AX/immutableCPUFocus/nativepresentreadiness agree. Expectedassembledoutlinekey is source-inferred from pinned dispatch/alias geometry and300000nmtolerance, directBoarddebugreceiptFalse. Whole68-filecataloguefamily invariant (38activecanonical+28nestedvariant+2recipe/artifactmetadata) andqualifiedcleanup/ordinaryUIexit/timelyshell hold. Only this missingedgepoint is reconciled; priorinventory/Inspector/nonemptyregion credits andViaFAIL/finiteacceptance retained atoriginalscope. No interior/region/otheredge/parentownedEdgeCutsnegative/HUMAN/fullC04/cardinality/hardware/exactsampling waiver."
         ],
         "accepted_receipt_sha256": {
           "exact30-native-proof.json": "e65001601d8995bb90ec8386fb8e9d215e8fa1f4dd7c363c39424d0264df4ad2",
@@ -12280,7 +12282,6 @@
           "Padless Footprint placement anchor; pinless Symbol is not a substitute.",
           "NoConnect anchors.",
           "Standalone filled BoardGraphic and independent Board drawings; Schematic drawing region qualification and any other required drawing predicates beyond the accepted Line006/Rect007/Circle008-interior/Arc009 plain-click acquisitions.",
-          "Nonempty independent BoardOutline.",
           "Parent-owned text and component Edge.Cuts negative.",
           "Zone region proof is not point/menu-origin proof."
         ]
@@ -19281,5 +19282,297 @@
     },
     "manager_combined_disposition": "Both finite ordinary point behaviors accepted through separate actual runtime receipts and appointed-manager dispositions. Via rawFAIL65d68ca4/transport5270a555/exit1 stay immutable; no directBoardhittrace/intermediateafter_observation inventory/ordinarysuccesscleanupcredit. PriorSOURCEPASSsupersededonlyforincorrectViaSchematic-onlyassertion; exactJunctionSchematictrace remainsstrict andpasses. No observer-green rerun, productpatch/newinstrumentation, designerobligationwaiver or cardinalitydisposition. Rootownsfinalinspection/normal-hookcommit/push ofexact3metadatafiles.",
     "retained_boundaries": "Only Via002 and Junction00b point acquisition gaps reconciled. NoConnect anchors, padlessFootprint, Boardgraphics/outline/parentownedtext/Edge.Cutsnegative/Zonepointmenu andotherapplicableunboundregionpredicates remainopen; acceptedVia/Junctionregionandotherhistoricalreceipts unchanged. Cardinalitydat-compound-cardinality-drift-iu3k remainsopenrelatedonly; closedvs05/9e170f1b Inspectorfixacceptancepreserved. C04in_progress/fullC04/HUMAN/hardware/exactGPUcompositorsampling/C05/C06/successor acceptance notgranted. Viafailure/f77109/3265c0 andqualifiedfailurecleanup remainexplicit."
+  },
+  "native_wayland_independent_board_outline_point_20261021": {
+    "recorded_at": "2026-10-21T03:21:11.581067+00:00",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "state": "CONSUMED_REVIEWED_FINITE_INDEPENDENT_NONEMPTY_BOARD_OUTLINE_EDGE_POINT_ACCEPTED",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outline-edge-source-candidate-01.json",
+      "sha256": "5f35c50e937babf7f524f101579ecb9ce345916bbdde0cb2e58e5c5d58e9d73b",
+      "bytes": 22630
+    },
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outline-edge-source1.py",
+      "sha256": "72e2c88f316a9e3bc661724aeef73b4dea27ae524e7e20f4634d619249711d18",
+      "bytes": 23682
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outline-edge-manifest-01.json",
+      "sha256": "3afecaecbc05ffc27cb7b5f264fffe4560520962683d8b4d8b118241c9a9a021",
+      "bytes": 47342
+    },
+    "exact_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outline-edge-command-01.json",
+      "sha256": "6f59e7f3f194eb33d6cc0b0043b94a535f08b2ff37b1285cce43695c02177988",
+      "bytes": 3355
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/outline-edge-geometry-01.json",
+      "sha256": "4a2648bf39beee96ca6869f0f9ade304dc6ab22d71ffc9a8082297f1ddc61c6f",
+      "bytes": 4355
+    },
+    "actual_source_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c76-191c-7db3-8074-2abd08ebc4c1",
+        "outcome": "ActualSOURCEPASS, no mandatoryfindings; exactcommandmanagerrelease follows."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c76-3a4d-7512-beb1-44af736e205c",
+        "outcome": "ActualSOURCEPASS, no mandatoryfindings; exactcommandmanagerrelease follows."
+      }
+    ],
+    "manager_source_command_disposition": "PM059appointedmanager RELEASES exactoutline-edge-command-01.json6f59e7f3 ONCE, candidate5f35c50e/runner72e2c88f/manifest3afecaec, afterbothactualsourcePASSreviews androotd2693d pins/68maps/12receipts verification. RootfreshpersonalexclusivefsyncedbaselineADMIT requiredbefore430,296. Oneclick/twooriginals; workerownsallruntimepolling/cleanup; stop/reportfailure, noretry/retarget/fixture/source/buildchange. Rawfinalevidencesentimmediatelyforruntime review, nooptionalpacketprerequisite.",
+    "budget": "OneexistingownedCPUWayland/Vulkan/SHMenvelope,2originals(initial,selected),1fixedmotion430,296+oneLeftpress/release. Zero setup/prefocusclicks/Shift/Ctrl/otherkeys/Escape/wheel/zoom/region/menu/semanticexpansion/retarget/retry/forcedframe/settling sleep. Existing20sreadiness/600sfreshrootpersonalbaselineADMIT/10scapture/15sallowlistedContext bounds; unchangedpostproofordinaryUI shell exit/qualifiedownedcleanup.",
+    "scope": "OnlyindependentnonemptyBoardOutlinepoint acquisition. Retainallpriorregion/Inspector/point/ViaFAILfiniteacceptanceandHUMAN/cardinality/hardwarelimits. Boardexpectedhitkeysource-inferred, nodirectSchematic-onlydebugreceipt requirement.",
+    "limits": "FiniteindependentnonemptyBoardOutlineedgepointonly. AllpriorBoardOutlineinventory/Inspector/nonemptyregionandotherpoint/regionreceiptsretainoriginalscope; ViaFAIL65d68ca4/exit1/missingstages+separatefiniteacceptanceunchanged. Full68familyinventoryisnotallactiveproject. RetainremainingNoConnect/padlessFootprint/Boardgraphics/ownedtext/EdgeCutsnegative/Zonepointmenuandotherapplicableunboundpredicates. Opencardinalityiu3k/closedvs05acceptance unchanged. No directBoarddebughit/GPUpixelidentity/hardware/performance/HUMAN/fullC04/C05/C06/successor waiver.",
+    "source_preparation_status": "Frozen5f35c50e/command6f59e7f3 consumedexactlyonce, actualexit0; sourcepreparation-onlywording inimmutablepacketishistorical. No retry/retarget/newbuild/fixture/sourcechange.",
+    "actual_execution": {
+      "launch": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40026,
+        "timestamp": "2026-10-21T03:21:12.825Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7a-2b79-7970-a621-509b60f44bcf",
+        "call_id": "call_c28f7176846944a7aa8177c8f192675c",
+        "chunk_id": "8bb565",
+        "exit_code": null,
+        "exec_session": 16895
+      },
+      "final": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40074,
+        "timestamp": "2026-10-21T03:22:49.105Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7b-a391-7262-b724-65aa63de0d1b",
+        "call_id": "call_f7641964c0da4c8e8d96459b7cf518df",
+        "chunk_id": "ff9112",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "exec_session": 16895,
+      "exit": 0,
+      "raw_files": {
+        "result.json": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/result.json",
+          "sha256": "d8323c4744c02a69bb20e0fb602726bfd8a621a37ab32cbbbff5ef9240947ebe",
+          "bytes": 114794
+        },
+        "executed-runner.py": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/executed-runner.py",
+          "sha256": "72e2c88f316a9e3bc661724aeef73b4dea27ae524e7e20f4634d619249711d18",
+          "bytes": 23682
+        },
+        "initial.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/initial.png",
+          "sha256": "dbdc725bdc1a746e1bcbbb91b62e116a1d026fef352735094d941e5d6e568f07",
+          "bytes": 60062
+        },
+        "selected.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/selected.png",
+          "sha256": "7779c88e96291385c4238c729074988114e1a0f9e306035b519696e032e7a248",
+          "bytes": 98507
+        },
+        "baseline-checkpoint.json": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/baseline-checkpoint.json",
+          "sha256": "3d53f6683c7bbf60d1f6ded4451165e070a040b700552ac50253cc1ce0b13f07",
+          "bytes": 15628
+        },
+        "baseline-admission.json": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/baseline-admission.json",
+          "sha256": "013f810f9dbae987ce8a8eebc368e38b177c12f478997695de4e27dce9a9d7c3",
+          "bytes": 1413
+        },
+        "outline.log": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/outline.log",
+          "sha256": "d83dccae3e52548f2df1d45b8286af99841c7e5ac400468699bf07b1a77efdc7",
+          "bytes": 15698
+        },
+        "outline-diagnostic.log": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/outline-diagnostic.log",
+          "sha256": "447526c0ae30c9394ed213c06991137e87d61ede7407acbba4d9d61cc5e6df35",
+          "bytes": 162918
+        },
+        "weston.log": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/weston.log",
+          "sha256": "2528f6bcbbbc1364331d555df46bcc3df9b0d5843a965565a58ddbdc92bcbfd7",
+          "bytes": 236430
+        },
+        "weston-process.log": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-outline-edge-01/weston-process.log",
+          "sha256": "d1767ffe2b701db68169fd745b66e2882a2e6f8973c4693e8f01fe90fa97d1fb",
+          "bytes": 216
+        }
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-outline-edge-01/transport.json",
+        "sha256": "51e63dfbb743e67c353a1e5574b643d0ff005c7e0a9ba74ebffa9ccabc41ac96",
+        "bytes": 3717
+      },
+      "status": "CAPTURE_ONLY independent BoardOutline edge Object identity/AX/Context/native composed PNG; actual independent pixel/behavior acceptance required, no fullC04/HUMAN",
+      "counts": "Exactlyonefixed430,296motion/Leftpress/release, threecontrolledinputrows+twoordinaryredrawrequests, twooriginals; zerosetup/wheel/modifier/region/semanticexpansion/retarget/retry.",
+      "source_binding_assessment": {
+        "expected_retained_key": "outline:20000000-0000-4000-8000-000000000003",
+        "direct_debug_hit_receipt": false,
+        "observed_identity": {
+          "class": "board_outline",
+          "id": "20000000-0000-4000-8000-000000000003"
+        },
+        "basis": "Pinned Board dispatch, actual fixed input, source geometry/alias order, exact Object/focus/full AX/Context. No Schematic-only debug marker is required or invented."
+      },
+      "immutable_content_binding": {
+        "event": {
+          "line": 189,
+          "start_byte": 63855,
+          "end_byte": 63975
+        },
+        "submitted_content": {
+          "line": 233,
+          "start_byte": 71339,
+          "end_byte": 81200
+        },
+        "native_present": {
+          "line": 234,
+          "start_byte": 81200,
+          "end_byte": 81726
+        },
+        "settled_ledger": {
+          "line": 236,
+          "start_byte": 81818,
+          "end_byte": 82194
+        },
+        "native_identity": {
+          "acquisition": 6,
+          "configuration": 1,
+          "host": 1,
+          "queue_epoch": 1,
+          "submission_receipt": 7,
+          "window": "WindowId(94895019329328)"
+        },
+        "content_revision": 17,
+        "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+      },
+      "capture_intervals": {
+        "initial": [
+          1952,
+          1953
+        ],
+        "selected": [
+          2058,
+          2059
+        ],
+        "source": "weston.log lineordinals",
+        "finding": "NoownGUI surfacecommitwithineithercaptureinterval; noexactacquisition-to-image/GPUsamplingclaim."
+      },
+      "inventory": "Whole68cataloguedfamily (38activecanonical+28nestedvariant+2artifact/recipemetadata) exactbefore/afterobservation/afterteardown/currentcatalogue+repo/live. All68arenottheactiveproject.",
+      "typed_observations": "Two completeallowlistedContextGet/fourpublicstandardSELECTED snapshotsbefore/afterselectedoriginal agreeexactObject(board_outline,200...003), scopeboard_outline/focussameUUID/currentproject2001/revision85f3/Boardpane0/unlockedvisible/nothidden/notstale. InspectorandimmutableCPUtitle/classchip+specificFocus/footerBoardobject1 bindnativepresent/settledledger189->233->234->236/acq6/receipt7/contentrev17 atbothwaits.",
+      "pixel_review": "Worker/root personallyviewedfreshinitialyellowclosedoutline/Board0/None andselectedclosedoutlineaccent/Boardoutline:object1/SELECTED/Boardoutline1/FocuspreviewUUIDsuffix3/footerBoardobject1. Consolevisibleprefixclips; DRC6/reviewmarkersbaselinefixturecontent. Sourcehitkeyisinferred, directBoarddebugreceiptunavailable/False; no pixelmetrology/HUMAN/hardwarequalification.",
+      "cleanup": "AllfiveverifiedstopflagsliteralTrue/errors[], eightauthenticatedrecordedowners/twoprivateIPCgone, ordinaryUI shell exit+PTYclosure andtimelyrecordedshellleaderdischarge; noall-descendant/sessiongroup/ordinarywindowCloseclaim.",
+      "audit": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40091,
+        "timestamp": "2026-10-21T03:23:54.335Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7c-a25f-7ff0-845c-d640a21476f8",
+        "call_id": "call_a0a0189840654e7c898a6cb8e43458b3",
+        "chunk_id": "75aaaf",
+        "exit_code": 0,
+        "exec_session": null
+      }
+    },
+    "actual_runtime_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c7b-ecbb-7fe1-9689-0c27a7d91b27",
+        "outcome": "ActualfiniteBoardOutlineedge runtimePASS, no mandatoryfinding. ScopeinferredBoardkey/directdebugFalse retained."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c7c-16ba-7502-940a-2f2c227d48cb",
+        "outcome": "ActualfiniteBoardOutlineedge runtimePASS, no mandatoryfinding; originalpixels/fullAXContext/immutableCPUreadiness/68familyinvariance/qualifiedcleanup agree."
+      }
+    ],
+    "root_runtime_audit": "75cf77 independentlyverifiedoriginals/full2Contexts4AX/readiness189->233->234->236/all68familymaps/8owners2IPC/timelycleanup; actualfinalff9112/6d47a3line40074.",
+    "actual_tool_receipts": {
+      "c91515": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40026,
+        "timestamp": "2026-10-21T03:21:12.825Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7a-2b79-7970-a621-509b60f44bcf",
+        "call_id": "call_c28f7176846944a7aa8177c8f192675c",
+        "chunk_id": "c91515",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "8bb565": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40026,
+        "timestamp": "2026-10-21T03:21:12.825Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7a-2b79-7970-a621-509b60f44bcf",
+        "call_id": "call_c28f7176846944a7aa8177c8f192675c",
+        "chunk_id": "8bb565",
+        "exit_code": null,
+        "exec_session": 16895
+      },
+      "4a1f91": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40039,
+        "timestamp": "2026-10-21T03:21:37.386Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7a-8b6a-73e2-993c-56f712bb9e1e",
+        "call_id": "call_f6c67a25d62e4faa9d9615dd90e492dc",
+        "chunk_id": "4a1f91",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "ff9112": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40074,
+        "timestamp": "2026-10-21T03:22:49.105Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7b-a391-7262-b724-65aa63de0d1b",
+        "call_id": "call_f7641964c0da4c8e8d96459b7cf518df",
+        "chunk_id": "ff9112",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "6d47a3": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40074,
+        "timestamp": "2026-10-21T03:22:49.105Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7b-a391-7262-b724-65aa63de0d1b",
+        "call_id": "call_f7641964c0da4c8e8d96459b7cf518df",
+        "chunk_id": "6d47a3",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "75aaaf": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 40091,
+        "timestamp": "2026-10-21T03:23:54.335Z",
+        "turn_id": "01a15c79-83b1-7fe3-b59c-fa9c979770ef",
+        "item_id": "ctco_01a15c7c-a25f-7ff0-845c-d640a21476f8",
+        "call_id": "call_a0a0189840654e7c898a6cb8e43458b3",
+        "chunk_id": "75aaaf",
+        "exit_code": 0,
+        "exec_session": null
+      }
+    },
+    "runtime_review_state": "BothactualruntimePASSreviews andappointed-managerfiniteacceptance received. LiteralrawCAPTURE_ONLY remainsunchanged; no self-acceptance orwholeclass/C04 upgrade.",
+    "manager_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "outcome": "PM059appointedmanager ACCEPTS finiteindependentnonemptyBoardOutlineedgepoint evidence withactualcloseout01a15c7b-ecbb-7fe1-9689-0c27a7d91b27+reorganization01a15c7c-16ba-7502-940a-2f2c227d48cbPASS androotoriginalview/audit75cf77. Exactexistingproof/mapreconciliation andonefinalmetadatagatebatch released; rootownsinspection/commit/push. Source-inferredBoardkey/directdebugFalse, 38+28+2familyclassification, previousregion/Inspector/ViaFAIL andallbroaderlimits retained."
+    },
+    "accepted_scope": "Exactlyoneordinary430,296edgeclick fromBoard0/None selects soleObject(board_outline,realBoardUUID200...003), scopeboard_outline/focussameowner/current85f3basis. ClosedfourvertexBoardOutline visiblyselected withuniqueInspector/specificCPUFocus; fulltwoContexts/fourAX andimmutablecontent189->233->234->236/nativepresent/settledledgeragree atbothwaits. Source-boundoutlinePolyline300000nmtolerance andsameownerderivedsegmentalias150000nmtolerance establishexpectedretainedkeyonlybyinference, neverdirectdebugreceipt. All68cataloguefamilyfilesinvariantat3checkpoints/currentrepo/live, including38activecanonical+28nestedvariant+2recipe/artifactmetadata. Qualified8recordedowners2IPCgone/ordinaryUIexit/timelyshellcleanup. No region/interior/otheredge/parentownedEdgeCutsnegative orblanketBoardOutlinequalification."
   }
 }
