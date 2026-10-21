@@ -12246,7 +12246,8 @@
           "n03_path_curve_islands_20261014",
           "native_wayland_n01_same_click_focus_line_20261020",
           "native_wayland_threshold_dual_modifier_20261020",
-          "native_wayland_independent_schematic_drawings_20261021"
+          "native_wayland_independent_schematic_drawings_20261021",
+          "native_wayland_individual_port_layout_20261021"
         ],
         "next": "Keep exact accepted class/threshold/source controls credited; remaining entries are concrete unbound receipts, not product defects, roadmap dependencies or Cartesian replay instructions. No additional work is authorized by this map; retain exact existing C04 grant and owner boundaries.",
         "closure": "Every required class predicate is bound at its accepted scope or remains explicitly named. Accepted Line006 focus/acquisition, finite threshold/dual-modifier grammar and Rect007/Circle008-interior/Arc009 acquisition remain distinct. No blanket fresh Wayland, full N01/N03 or C04 acceptance.",
@@ -12258,7 +12259,8 @@
           "Owned mechanical graphic source control is accepted historical62f0e358 mapped explicitly to d1275dc66d0d7d7ba67d16bdd70ea63e8ee97cb9: source-bound retained hit -> binding -> eligibility -> reducer/view covers both parents. Not wholly unproved; excludes owned Silkscreen/text/Edge.Cuts negative and OS-input proof. Historical archive absence does not erase acceptance or create fresh Wayland/pixel credit.",
           "FreshfiniteN01 native_wayland_n01_same_click_focus_line_20261020: firstordinaryclickinunfocusedSchematicpane1 focusespane1 andselectsexactindependentLine006Object/schematic_graphic scope/focus006, withactualtwofinalreviews+manageracceptance and18map/qualifiedcleanup. RawCAPTURE_ONLY, CPU Wayland/Vulkan/SHM only; Consolevisibleprefixclips, fullConsoleSTATEseparate. Thisexactfocus+Linepredicate is notmissing; no otherclass/region/threshold or blanketfreshWaylandcredit.",
           "Finite native threshold/dual-modifier grammar is accepted in native_wayland_threshold_dual_modifier_20261020 with both actual reviews and appointed-manager acceptance. Only the corresponding concrete gap is removed; remaining class and qualification entries are unchanged.",
-          "Finite independent Schematic Rect007 edge, Circle008 filled interior and Arc009 endpoint plain-click acquisition is accepted in native_wayland_independent_schematic_drawings_20261021 with actual source/test/build/native receipts, two runtime PASS reviews and appointed-manager acceptance. Each replaces the prior Object with exact identity/class scope/focus. Only these three acquisition gaps are reconciled; drawing region qualification, Board graphics and other required class predicates remain open."
+          "Finite independent Schematic Rect007 edge, Circle008 filled interior and Arc009 endpoint plain-click acquisition is accepted in native_wayland_independent_schematic_drawings_20261021 with actual source/test/build/native receipts, two runtime PASS reviews and appointed-manager acceptance. Each replaces the prior Object with exact identity/class scope/focus. Only these three acquisition gaps are reconciled; drawing region qualification, Board graphics and other required class predicates remain open.",
+          "Finite individual top-level Bidirectional Port730...00c oriented-layout plain-click acquisition is accepted in native_wayland_individual_port_layout_20261021 with both actual source/command and runtime PASS reviews, appointed-manager bounded acceptance and root original-pixel/receipt audit. Exact native Port text hit wins over coincident visible GlobalLabel00a; full AX/Context/target-specific CPU readiness and61-file invariance/qualified cleanup agree. Only individual Port acquisition is credited; Port region/all-orientation and Zone point/menu-origin predicates remain separate."
         ],
         "accepted_receipt_sha256": {
           "exact30-native-proof.json": "e65001601d8995bb90ec8386fb8e9d215e8fa1f4dd7c363c39424d0264df4ad2",
@@ -12276,7 +12278,7 @@
           "Standalone filled BoardGraphic and independent Board drawings; Schematic drawing region qualification and any other required drawing predicates beyond the accepted Line006/Rect007/Circle008-interior/Arc009 plain-click acquisitions.",
           "Nonempty independent BoardOutline.",
           "Parent-owned text and component Edge.Cuts negative.",
-          "Individual Port oriented-layout acquisition; derived/local-All Port is not a substitute. Zone region proof is not point/menu-origin proof."
+          "Zone region proof is not point/menu-origin proof."
         ]
       },
       {
@@ -18746,5 +18748,169 @@
       "defect_closure": "Closed after actual code/evidence landing, citing commit547fb0d and accepted runtime candidate. This is bounded defect closure, not full C04 completion.",
       "retained_boundaries": "C04 remains in progress. Drawing region qualification, other required classes, hardware/performance/exact sampling, ordinary Close/all-descendant, HUMAN/C05/C06 and successor gates remain open. All prior raw CAPTURE_ONLY/nonpasses/history are preserved."
     }
+  },
+  "native_wayland_individual_port_layout_20261021": {
+    "recorded_at": "2026-10-21T01:47:35.463623+00:00",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "state": "CONSUMED_REVIEWED_FINITE_INDIVIDUAL_PORT_LAYOUT_ACQUISITION_ACCEPTED",
+    "candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-acquisition-source-candidate-02.json",
+      "sha256": "be45ad09d64ab5c11bba44aa12acab80086f3dbd8209d5b8e197e098d5e8a880",
+      "bytes": 17783
+    },
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-acquisition-source1.py",
+      "sha256": "7de68c4b29ea273b46242edd822a2796bd2e5dc47d3b29c4706cf9290cd26a2e",
+      "bytes": 23155
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-acquisition-manifest-02.json",
+      "sha256": "84810fac83d931976bd195395a16c0db56bb580c2f1b88683b1168f6aaaf2365",
+      "bytes": 41680
+    },
+    "exact_command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-acquisition-command-02.json",
+      "sha256": "23ac40638496cf9a6cebff9f6d593fde3ac3e8f0e08dc5be5887fd67bf6d8a63",
+      "bytes": 3140
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-source-geometry-02.json",
+      "sha256": "588b284a7ea53c104f2d861a9d290ecc8f09b199d35e8aa6af3cb68de4ef844a",
+      "bytes": 17269
+    },
+    "actual_source_command_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c1f-6a0c-7bb3-bb45-f5f55550aedc",
+        "outcome": "SOURCE/COMMAND PASS, no mandatory findings."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c1f-92b6-7f01-8566-9067835c5670",
+        "outcome": "SOURCE/COMMAND PASS, no mandatory findings."
+      }
+    ],
+    "manager_native_source_command_disposition": {
+      "thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "turn": "01a15c1e-f4f8-7a91-a64d-a79e3c8df574",
+      "message_tool_id": "exec-d584e190-8546-43b7-8843-810a90ab2b95",
+      "outcome": "Exact native RELEASE for frozen candidatebe45ad09/runner7de68c4b/manifest84810fac/command23ac4063 ONCE. One plain click759,377/two originals only; fresh personal manager fsynced baseline ADMIT required before input. Worker owns session polling and cleanup."
+    },
+    "budget": "One fixed motion+one Left press/release, two original captures,61-file invariance at all checkpoints, existing20s/600s/10s/15s bounds and qualified8recordedowner/2IPC/timely shell cleanup. Actual source reviews/release/fresh baseline ADMIT/runtime original+AX/Context review/manager acceptance/landing required.",
+    "limits": "Finite individual top-level Bidirectional Port oriented-layout acquisition only. No Port region/all-orientation/derived semantic expansion, Zone point/menu-origin, IR01/N03/other-class/fullC04/HUMAN/hardware/exact-frame/C05/C06/successor acceptance. All prior receipts and e080db audit assertion error remain preserved; no all-descendant/ordinary Close claim.",
+    "source_preparation_status": "Frozen source candidate02 was consumed exactly once by command02; raw source preparation wording remains historical and immutable. Superseded01 was never executed.",
+    "runtime_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/port-acquisition-runtime-candidate-02.json",
+      "sha256": "3938f8e32ff59b43d46ae6a91848e81945b858f254eee0d5757d6cdbdf940f1a",
+      "bytes": 13760
+    },
+    "actual_execution": {
+      "launch": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 38458,
+        "timestamp": "2026-10-21T01:47:45.673Z",
+        "turn_id": "01a15c20-b6ea-74a0-9cd0-7c46a4a12d1a",
+        "item_id": "ctco_01a15c24-9c89-7d52-a5bc-e43e3e5a79be",
+        "call_id": "call_8c96d755761a43b0be38938190ed633c",
+        "chunk_id": "1b8c61",
+        "exit_code": null,
+        "exec_session": 99492
+      },
+      "final": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 38532,
+        "timestamp": "2026-10-21T01:49:23.331Z",
+        "turn_id": "01a15c20-b6ea-74a0-9cd0-7c46a4a12d1a",
+        "item_id": "ctco_01a15c26-1a02-7a32-9d22-a9f0b16a5e2d",
+        "call_id": "call_f1b613b293114668afb4c9abe50bdd0d",
+        "chunk_id": "25c024",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "exit": 0,
+      "exec_session": 99492,
+      "result": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-port-acquisition-02/result.json",
+        "sha256": "36ee1eef3813d717d2b1bb587afeb7dafb3aa0048cd4cb7a38fd1b24b1937a8d",
+        "bytes": 112323
+      },
+      "transport": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-port-acquisition-02/transport.json",
+        "sha256": "a2050eb67f6a64209e5936b979652a38bf13df477b64de22d750d8a9b255464d",
+        "bytes": 3757
+      },
+      "originals": {
+        "initial.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-port-acquisition-02/initial.png",
+          "sha256": "92d9378507d3771a8d8fe65505926cc5bafca1dd08ca4d613a08fff90d6dc9de",
+          "bytes": 57612
+        },
+        "selected.png": {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-port-acquisition-02/selected.png",
+          "sha256": "e2f4aa6e06dd61b101c70dbab3054353b73099ce4b491c781b58e3c68bb099f4",
+          "bytes": 108547
+        }
+      },
+      "baseline_checkpoint": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-port-acquisition-02/baseline-checkpoint.json",
+        "sha256": "8a1fecd453d5e81e9ff4adfcd1e2d751c43f0673926f2c2af74465a382ea30f9",
+        "bytes": 12461
+      },
+      "manager_fresh_admission": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-port-acquisition-02/baseline-admission.json",
+        "sha256": "88426891e1baa335a3959f629f2d62af938dbecc17a420bf7d95f44b8f5635af",
+        "bytes": 1173
+      },
+      "audit": {
+        "session_path": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+        "line": 38588,
+        "timestamp": "2026-10-21T01:50:58.441Z",
+        "turn_id": "01a15c20-b6ea-74a0-9cd0-7c46a4a12d1a",
+        "item_id": "ctco_01a15c27-8d89-7bb3-9804-2a57ca25a811",
+        "call_id": "call_e4d04792742f4aa5957bdb3600c0b9aa",
+        "chunk_id": "4b5237",
+        "exit_code": 0,
+        "exec_session": null
+      },
+      "source_hit_trace": [
+        "[datum-click] primary click (759.0, 377.0) schematic world (21842838, -81351) hit Some(AuthoredObject(\"board-text:7e702cec-8650-5597-b3f8-a293c99341cd\")) (native selection acquisition)"
+      ],
+      "counts": "Exactly one controlled plain primary click, two originals; three controlled input rows and two ordinary redraw requests; zero controlled regions/setup/modifier/wheel/semantic expansion/retarget/retry."
+    },
+    "actual_runtime_reviews": [
+      {
+        "role": "closeout",
+        "thread": "01a1432d-460f-7f61-a140-2db7d434147c",
+        "turn": "01a15c2a-4a66-7aa2-ac17-8cb55991b6e9",
+        "outcome": "Finite Port runtime PASS for3938f8e3; both originals/exact identity/AXContext/readiness/61files/recorded-owner cleanup agree; no mandatory findings."
+      },
+      {
+        "role": "reorganization",
+        "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "turn": "01a15c2a-7704-7981-abc2-136e38926745",
+        "outcome": "Bounded Port runtime PASS for3938f8e3; no mandatory findings. Consumed preparation status updated here; raw CAPTURE_ONLY and limits retained."
+      }
+    ],
+    "manager_acceptance": {
+      "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "outcome": "PM059 appointed manager ACCEPTS finite individual Port oriented-layout acquisition only, with both actual runtime reviews and root b44b15 audit/personal original-pixel review. Exact existing C04 proof/map reconciliation and necessary metadata checks released; root owns final inspection/commit/push. No new Cargo/native execution.",
+      "root_audit": "b44b15 exit0:9actualreceipts/rawpins/oneclick/exactPorthit/2Contexts/4AX/61maps3checkpoints+repo/live/8PIDs2IPC/timelyshell/bothframeprefixreplays."
+    },
+    "accepted_behavior": "From natural Board0/None, one fixed click759,377 focuses Schematic1 and selects exact Object Port730...00c with scopeport/focus00c/current project2001/revision67a175b3. Actual board-text:7e702cec-8650-5597-b3f8-a293c99341cd hit is the real oriented Port layout, winning over coincident visible GlobalLabel00a. Full standard public AX and complete Context agree before/after selected original. Immutable target-specific CPU Inspector Focus and separate current model join nativepresent/settledledger211->255->256->258 at both waits; originals separately reviewed. All61canonical files unchanged;8authenticated recordedPIDs/2privateIPC gone,5stopsTrue/errors[], shell timely.",
+    "pixel_and_profile_limits": {
+      "initial": "1344x806 Board0 focused/None, Schematic1 visible/unfocused. Tiny scene text not individually legible.",
+      "selected": "1344x806 Schematic1 focused; tiny selected Port cue at759,377, Inspector Port:port/SELECTED/All1/Ports1, Focus suffix000000c, port directionBidirectional/nameport, footerSchematic/object1. Console shows clipped prior action prefix only. No claim full scene label or Console echo legible.",
+      "limits": "Original composed output from private nested Wayland CPU envelope; no physical desktop/HUMAN/hardware/exact GPU/compositor sampling identity."
+    },
+    "preserved_nonpasses": [
+      {
+        "receipt": "e080db",
+        "cause": "Read-only audit incorrectly expected all5 native window rows to be3 controlled input rows; two ordinary redraw requests are valid. Classified correctly in4b5237; raw native result unchanged."
+      }
+    ],
+    "raw_result_status": "CAPTURE_ONLY retained verbatim; manager/reviewer acceptance is separate from raw collector status."
   }
 }
