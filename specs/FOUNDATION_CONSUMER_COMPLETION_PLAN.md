@@ -473,6 +473,31 @@ or journal effects, complete aggregate membership, deterministic performance,
 and matching visual/accessibility states. Run the existing contract and
 conformance gates. A screenshot baseline alone cannot satisfy this step.
 
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C04-COMPLETE -->
+**C04 qualification completed — 2026-10-22.** The appointed manager accepted
+actual independent runtime/pixel PASS and aggregate CLEAR `01a16202-e4d6-7940-aeed-da880470337d`,
+including the final Global Net deletion/report/Undo workflow and accepted Board
+eligibility evidence. Source `037ec5b66402ee7d11d0a310564381ea73245746` and the accepted
+Claude-only status commit `f5d4a080f91f51124f960bbefee885bd9e3f354e` are landed. The
+[current C04 proof](../docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json)
+binds the actual binary, source, native inputs, original images, canonical
+producer/refresh invariants, independent reviews and manager disposition.
+
+The unchanged nine visual/accessibility criteria are accepted through the owner's
+C04-only tool-assisted assessor delegation; no manual HUMAN PASS is claimed.
+Original failures, raw CAPTURE_ONLY outcomes and each receipt's class, platform,
+performance and assessment limits remain historical evidence. Separate Rect007,
+compound-cardinality and other intakes are not closed or promoted to dependencies.
+
+Under the existing conditional owner grant and the manager's explicit release,
+**C05 is selected and claimed**. Its existing reserved reviewer is
+`01a0e343-3d9c-70f1-899e-5bd239513383`; actual independent replay begins only after the
+manager commits and pushes the exact final candidate and provides the handoff.
+The parent issue remains open. C06 acceptance remains owner-only, and no
+cross-probe successor is selected or authorized by C04 completion. This factual
+disposition supersedes earlier current-state C04-pending statements, including
+the dated C03 handoff below, without rewriting their original evidence or limits.
+
 <!-- REQ:UVT-S5A-BUILD:S5A-C05 -->
 ### S5A-C05 — independent replay and defect disposition
 
