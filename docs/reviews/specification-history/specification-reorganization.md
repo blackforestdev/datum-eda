@@ -1560,6 +1560,68 @@ reviewer performs replay and findings. No self-review, early C05, C06 acceptance
 or cross-probe grant follows. Continue the finite semantic D4 and existing-contract
 corrections under the retained C04 grant; landing this unit is not a stop point.
 
+### Semantic D4, transport correction and locked depiction — 2026-10-22
+
+<!-- EVIDENCE:UVT-S5A-BUILD:C04-D4-CAP-LOCKED-DEPICTION-20261022 -->
+
+The appointed manager accepts the finite semantic D4 unit after actual
+independent runtime/pixel PASS `01a16158-38b4-7840-a571-9e0cf5069dce`.
+Root-owned native03 completed with original receipt `fac434`, exit 0: Board
+Global Net3, Schematic Global Net21 and semantic Bus6; 17 completed stages,
+28 Context queries, 52 complete accessibility snapshots, 45 canonical field
+values across the subjects, seven originals, canonical 61-file invariance and
+qualified owned cleanup. Quiet cases precede each subject's first refusal;
+membership-changing operations preserve the whole derived subject. This closes
+the selected finite D4 gap without replaying accepted Run/BusRun matrices.
+
+Native01 and native02 remain FAIL evidence, including the earlier source-review
+misses: a provisional half-pixel Board origin broke an unused Run-row menu
+guard, then a refusal accessibility-description guard misplaced the exact
+reason relative to the pane text. Neither failure supplies the unexecuted
+Schematic cases. The manager delegated observer-only repair to the existing
+reorganization peer, reserved independent review to closeout, and owned the
+fresh released native03 invocation/admission. Saved pre-correction source bytes
+match `08441241` Git blobs; later cap source edits are never attributed to the
+old GUI945 cohort. The raw CAPTURE_ONLY result, failed attempts, controls,
+actual reviews, originals and limits are retained in the existing proof node
+`native_wayland_semantic_global_net_bus_d4_20261022`.
+
+The manager also accepts the cap correction's source/test scope after actual
+independent PASS `01a16152-8cd4-71b1-9e55-0d8bd86fc75a`. Producer-owned detail
+classification preserves ordinary Unavailable reasons above 256 and retains
+authoritative value state beside explicitly omitted member detail. Complete
+field queries, exact reasons, scope and the 256-ID boundary remain unchanged;
+legacy unknown provenance remains conservative. Real canonical 256/257 models
+exercise Common/Mixed/Unavailable, omission states, empty coverage, full-query
+equality and serde compatibility. Fourteen output, six aggregate and one Zone
+tests passed, together with thirteen policy-integrity checks. Two initial new
+tests incorrectly assumed the entire internal identity-keyed view was a JSON
+object; that test-only failure is preserved, and the corrected tests serialize
+the actual inspection scopes and Context transport. Native cap confirmation is
+still pending the next GUI cohort, using an existing large fixture and a focused
+ordinary-reason/state observation rather than another complete Run campaign.
+
+Claude session `8ebf9fc1-fc8b-4700-91f7-6ec6cac36287` exclusively supplied the
+bounded panel3 depiction. Actual independent depiction PASS
+`01a16133-aa6a-7041-ba5f-f9dae97fe73e` and manager acceptance authorize faithful
+native HC hatch clipped per selected locked member to real masks/voids, plus
+one adjacent copy of the existing padlock with the ordinary cursor/crosshair,
+hotspot, modifiers and anchor retained. Actual SOURCE/TEXT PASS
+`01a1615d-8197-7062-94df-aec141b07764` covers the sole factual UVT transport
+paragraph and Claude's two factual status lines; SVG/CSS/default figures are
+unchanged by the latter. Only the owning gui-selection and prototype-selection
+route digests are reconciled, carrying forward complete unchanged reviews and
+the separately assessed exact deltas. Codex neither edits nor stages HTML;
+the responsible Claude lane handles its normal-hook landing.
+
+These source and depiction results supply no new native HC/cursor, cap-GUI,
+hardware, performance, HUMAN or full-C04 acceptance. Implement, test and qualify
+the faithful shared native affordances and focused cap confirmation next under
+the retained grant. C04 remains `in_progress`; the already recorded conditional
+C05 instruction applies only after actual C04 acceptance/closure, with reserved
+independent replay. C06 and cross-probe remain separate and ungranted. Landing
+this reviewed unit is not a stopping point or a new owner approval gate.
+
 ### Worker goals and execution order
 
 1. Reconcile the existing N01-N17 requirements against actual accepted C04

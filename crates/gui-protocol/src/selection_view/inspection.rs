@@ -1,13 +1,37 @@
 //! Canonical aggregate values compiled once for every complete Inspector scope.
 use super::*;
+/// Producer-owned provenance for detail that may enumerate selected identities.
+/// Older serialized views lack this evidence and must not imply safe text.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InspectionDetailKind {
+    #[default]
+    Unknown,
+    Ordinary,
+    Members,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ScopeInspection {
     pub scope: Option<Class>,
     pub fields: BTreeMap<String, InspectionValue>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub field_details: BTreeMap<String, InspectionDetailKind>,
     #[serde(default)]
     pub display_labels: BTreeMap<String, String>,
     #[serde(default)]
     pub quantities: BTreeMap<String, quantities::QuantityPresentation>,
+}
+impl ScopeInspection {
+    pub(super) fn insert_field(
+        &mut self,
+        name: &str,
+        value: InspectionValue,
+        detail: InspectionDetailKind,
+    ) {
+        self.fields.insert(name.into(), value);
+        self.field_details.insert(name.into(), detail);
+    }
 }
 #[derive(Default)]
 struct Aggregate {
@@ -70,7 +94,8 @@ pub(super) fn compile(view: &SelectionView) -> Vec<ScopeInspection> {
             fields.insert("hidden_members".into(),InspectionValue::Common(serde_json::json!(aggregate.hidden)));
             fields.insert("locked_members".into(),InspectionValue::Common(serde_json::json!(aggregate.locked)));
             fields.insert("unprojected_members".into(),InspectionValue::Common(serde_json::json!(aggregate.unprojected)));
-            ScopeInspection { scope,fields, display_labels: BTreeMap::new(), quantities: BTreeMap::new() }
+            let field_details = fields.keys().map(|name| (name.clone(), InspectionDetailKind::Ordinary)).collect();
+            ScopeInspection { scope,fields, field_details, display_labels: BTreeMap::new(), quantities: BTreeMap::new() }
         })
         .collect()
 }

@@ -142,6 +142,17 @@ fn absent_member_projection_and_pending_logical_correspondence_are_disclosed() {
         view.field("resolved_net_coverage"),
         InspectionValue::Common(serde_json::json!({}))
     );
+    let scope = view
+        .inspection
+        .iter()
+        .find(|s| s.scope == view.scope)
+        .unwrap();
+    for name in ["combined_bounds_nm", "layer_coverage", "net_coverage"] {
+        assert_eq!(
+            scope.field_details[name],
+            datum_gui_protocol::selection_view::InspectionDetailKind::Members
+        );
+    }
     Fixture::assert_bytes(&before);
 }
 #[test]

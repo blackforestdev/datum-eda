@@ -184,6 +184,10 @@ pub struct NativeSelectionContext {
     /// Complete per-member evidence is queried explicitly above the member cap.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub omitted_inspection_fields: Vec<String>,
+    /// Canonical value state remains available when only its detail is omitted.
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub omitted_inspection_field_states:
+        std::collections::BTreeMap<String, crate::selection_view::InspectionState>,
     pub hidden: usize,
     pub locked: usize,
     pub unprojected: usize,
@@ -198,7 +202,7 @@ impl NativeSelectionContext {
             other => Some(other.clone()),
         };
         let truncated = view.members.len() > 256;
-        let (inspection, omitted_inspection_fields) =
+        let (inspection, omitted_inspection_fields, omitted_inspection_field_states) =
             selection_inspection::capture(view, truncated);
         Self {
             project: view.project,
@@ -218,6 +222,7 @@ impl NativeSelectionContext {
             members: (view.members.len() <= 256).then(|| view.members.iter().cloned().collect()),
             truncated,
             omitted_inspection_fields,
+            omitted_inspection_field_states,
             hidden: view.hidden.len(),
             locked: view.locked.len(),
             unprojected: view.unprojected.len(),

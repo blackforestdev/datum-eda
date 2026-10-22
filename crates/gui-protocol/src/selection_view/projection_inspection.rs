@@ -182,13 +182,20 @@ pub(super) fn append(
             .iter()
             .filter(|id| s.scope.is_none_or(|class| class == id.class))
             .collect();
-        s.fields.insert(
-            "projected_bounds_nm".into(),
+        let layer_detail = if c.layers.values().all(BTreeSet::is_empty) {
+            InspectionDetailKind::Ordinary
+        } else {
+            InspectionDetailKind::Members
+        };
+        let incomplete_bounds = !missing.is_empty() || !c.unavailable.is_empty();
+        s.insert_field(
+            "projected_bounds_nm",
             InspectionValue::Common(value(&c.bounds)),
+            InspectionDetailKind::Ordinary,
         );
-        s.fields.insert(
-            "combined_bounds_nm".into(),
-            if !missing.is_empty() || !c.unavailable.is_empty() {
+        s.insert_field(
+            "combined_bounds_nm",
+            if incomplete_bounds {
                 InspectionValue::Unavailable(format!(
                     "{} unprojected members: {}; {}",
                     missing.len(),
@@ -198,13 +205,19 @@ pub(super) fn append(
             } else {
                 InspectionValue::Common(value(&c.bounds))
             },
+            if incomplete_bounds {
+                InspectionDetailKind::Members
+            } else {
+                InspectionDetailKind::Ordinary
+            },
         );
-        s.fields.insert(
-            "projected_layer_coverage".into(),
+        s.insert_field(
+            "projected_layer_coverage",
             InspectionValue::Common(serde_json::json!(c.layers)),
+            layer_detail,
         );
-        s.fields.insert(
-            "layer_coverage".into(),
+        s.insert_field(
+            "layer_coverage",
             if missing.is_empty() {
                 InspectionValue::Common(serde_json::json!(c.layers))
             } else {
@@ -214,38 +227,61 @@ pub(super) fn append(
                     serde_json::to_string(&missing).unwrap()
                 ))
             },
+            if missing.is_empty() {
+                layer_detail
+            } else {
+                InspectionDetailKind::Members
+            },
         );
     }
     if let Some(all) = view.inspection.iter_mut().find(|s| s.scope.is_none()) {
         if let Some(e) = electrical {
-            all.fields.insert(
-                "derived_subject_id".into(),
+            all.insert_field(
+                "derived_subject_id",
                 InspectionValue::Common(serde_json::json!(e.subject_id)),
+                InspectionDetailKind::Ordinary,
             );
-            all.fields.insert(
-                "related_subject_ids".into(),
+            all.insert_field(
+                "related_subject_ids",
                 InspectionValue::Common(serde_json::json!(e.related_subjects)),
+                InspectionDetailKind::Ordinary,
             );
         }
         if let Some(r) = run {
-            all.fields.insert(
-                "board_assignment_id".into(),
+            all.insert_field(
+                "board_assignment_id",
                 InspectionValue::Common(serde_json::json!(r.board_net)),
+                InspectionDetailKind::Ordinary,
             );
-            all.fields.insert(
-                "foreign_net_contacts".into(),
+            let detail = match &r.contact_evidence {
+                Ok(contacts) if contacts.is_empty() => InspectionDetailKind::Ordinary,
+                Ok(_) => InspectionDetailKind::Members,
+                Err(eda_engine::connectivity::PhysicalQueryFailure::UnavailableGeometry {
+                    ..
+                }) => InspectionDetailKind::Members,
+                Err(_) => InspectionDetailKind::Ordinary,
+            };
+            all.insert_field(
+                "foreign_net_contacts",
                 match &r.contact_evidence {
                     Ok(contacts) => InspectionValue::Common(serde_json::json!(contacts)),
                     Err(error) => InspectionValue::Unavailable(format!(
                         "Contact evidence unavailable: {error:?}"
                     )),
                 },
+                detail,
             );
         }
         if let Some(b) = bus {
-            all.fields.insert(
-                "foreign_bus_contacts".into(),
+            let detail = if b.contacts.is_empty() {
+                InspectionDetailKind::Ordinary
+            } else {
+                InspectionDetailKind::Members
+            };
+            all.insert_field(
+                "foreign_bus_contacts",
                 InspectionValue::Common(serde_json::json!(b.contacts)),
+                detail,
             );
         }
     }

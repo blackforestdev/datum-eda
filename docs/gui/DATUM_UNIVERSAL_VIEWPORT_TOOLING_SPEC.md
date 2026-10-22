@@ -1960,6 +1960,16 @@ action console, and AI context**:
   consumers rely on `summary` or query explicitly — the payload is bounded
   by contract, never by silent cutoff.
 
+The cap applies to member-enumerating inspection detail as well as the member
+list. When that detail is omitted, `omitted_inspection_fields` names the field
+and `omitted_inspection_field_states` retains its canonical value state. Ordinary
+Unavailable explanations remain exact; `Mixed` and empty coverage remain
+inspectable without inventing member detail. Complete field values and reasons
+remain available through explicit queries in the declared scope. Producer-owned
+detail classification, rather than reason wording, distinguishes an ordinary
+explanation from an enumerated member list; legacy unknown provenance does not
+silently authorize unbounded text.
+
 The wire vocabulary maps one-to-one to the nine subjects ratified by
 Product Mechanics 026 and §2.2.20; shared backing identities do not merge
 subject kinds:

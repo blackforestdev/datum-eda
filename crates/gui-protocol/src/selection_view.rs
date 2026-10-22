@@ -14,7 +14,7 @@ use crate::selection_resolution::{
     NativeSelectionResolution, SelectionAuthority, SelectionModelRevision,
 };
 use crate::{AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, SelectionSubject};
-pub use inspection::ScopeInspection;
+pub use inspection::{InspectionDetailKind, ScopeInspection};
 pub use quantities::QuantityPresentation;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -27,8 +27,22 @@ pub enum InspectionValue {
     Mixed,
     Unavailable(String),
 }
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InspectionState {
+    Common,
+    Mixed,
+    Unavailable,
+}
 mod display_preview;
 impl InspectionValue {
+    pub fn state(&self) -> InspectionState {
+        match self {
+            Self::Common(_) => InspectionState::Common,
+            Self::Mixed => InspectionState::Mixed,
+            Self::Unavailable(_) => InspectionState::Unavailable,
+        }
+    }
     /// Explicit width-limited presentation; exact data remains available to all
     /// read-only query/context/accessibility consumers.
     pub fn display_preview(&self, columns: usize) -> String {
@@ -83,6 +97,14 @@ impl SelectionView {
             .iter()
             .find(|scope| scope.scope == self.scope)
             .and_then(|scope| scope.fields.get(name))
+    }
+    pub(super) fn field_detail_kind(&self, name: &str) -> InspectionDetailKind {
+        self.inspection
+            .iter()
+            .find(|scope| scope.scope == self.scope)
+            .and_then(|scope| scope.field_details.get(name))
+            .copied()
+            .unwrap_or_default()
     }
     pub fn field_quantity_presentation(&self, name: &str) -> Option<&QuantityPresentation> {
         self.inspection
@@ -436,13 +458,24 @@ pub fn build_selection_view(
         let unavailable: Vec<_> = selected
             .iter()
             .filter_map(|id| match zone_statuses.get(*id) {
-                Some(InspectionValue::Unavailable(reason)) => Some(format!("{}: {reason}", id.id)),
-                None => Some(format!("{}: no current surface projection", id.id)),
+                Some(InspectionValue::Unavailable(reason)) => Some((*id, reason.as_str())),
+                None => Some((*id, "no current surface projection")),
                 _ => None,
             })
             .collect();
+        let detail = if unavailable.is_empty() {
+            InspectionDetailKind::Ordinary
+        } else {
+            InspectionDetailKind::Members
+        };
         let status = if !unavailable.is_empty() {
-            InspectionValue::Unavailable(unavailable.join("; "))
+            InspectionValue::Unavailable(
+                unavailable
+                    .iter()
+                    .map(|(id, reason)| format!("{}: {reason}", id.id))
+                    .collect::<Vec<_>>()
+                    .join("; "),
+            )
         } else {
             let values: Vec<_> = selected
                 .iter()
@@ -454,7 +487,7 @@ pub fn build_selection_view(
                 InspectionValue::Mixed
             }
         };
-        scope.fields.insert("occupied_fill_status".into(), status);
+        scope.insert_field("occupied_fill_status", status, detail);
     }
 
     projection_inspection::append(

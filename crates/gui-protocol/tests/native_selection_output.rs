@@ -8,6 +8,8 @@ use datum_gui_protocol::{
 };
 use eda_engine::{ir::geometry::Point, substrate::Operation};
 use fixture::{Fixture, id};
+#[path = "native_selection_output/context_transport.rs"]
+mod context_transport;
 #[path = "native_selection_output/singleton_inspector.rs"]
 mod singleton_inspector;
 fn setup() -> (Fixture, datum_gui_protocol::BoardReviewSceneV1, Vec<Id>) {
@@ -113,77 +115,6 @@ fn inspection_compares_canonical_values_and_scopes_never_change_membership() {
     assert_eq!(details.scope, Some(Class::Track));
     assert_eq!(details.focus, Some(ids[1].clone()));
     assert_eq!(details.members.unwrap().len(), 2);
-    Fixture::assert_bytes(&before);
-}
-#[test]
-fn hidden_projection_does_not_prune_members_and_uncapped_context_is_not_authority() {
-    let (f, scene, ids) = setup();
-    let before = f.source_bytes();
-    let authority = NativeSelectionResolution::capture(&f.model).unwrap();
-    let subject = authority.acquire_run(ids[0].clone(), None).unwrap();
-    let view = build_selection_view(&f.model, &authority, subject.clone(), &scene, None, |_| {
-        false
-    })
-    .unwrap();
-    assert_eq!(view.members.len(), 2);
-    assert_eq!(view.hidden.len(), 2);
-    assert_eq!(view.unprojected.len(), 0);
-    assert_eq!(view.board_keys.len(), 2);
-    let mut dense = view;
-    for n in 3..=256 {
-        dense.members.insert(Id {
-            class: Class::Track,
-            id: id(n),
-            instance_path: vec![],
-        });
-    }
-    let at_cap =
-        DatumSelectionContext::from_selection(&SelectionTarget::Native(Box::new(dense.clone())));
-    let at_cap = at_cap.details.unwrap();
-    assert_eq!(at_cap.total, 256);
-    assert_eq!(at_cap.members.unwrap().len(), 256);
-    assert!(!at_cap.truncated);
-    dense.members.insert(Id {
-        class: Class::Track,
-        id: id(257),
-        instance_path: vec![],
-    });
-    let original = dense.members.clone();
-    let complete_evidence = serde_json::json!(original);
-    dense
-        .inspection
-        .iter_mut()
-        .find(|s| s.scope.is_none())
-        .unwrap()
-        .fields
-        .insert(
-            "non_electrical_members".into(),
-            InspectionValue::Common(complete_evidence.clone()),
-        );
-    let retained = dense.clone();
-    let context = DatumSelectionContext::from_selection(&SelectionTarget::Native(Box::new(dense)));
-    assert_eq!(context.kind, "run");
-    let details = context.details.unwrap();
-    assert_eq!(details.total, 257);
-    assert!(details.members.is_none());
-    assert!(details.truncated);
-    assert!(
-        details
-            .omitted_inspection_fields
-            .contains(&"non_electrical_members".into())
-    );
-    assert!(!details.inspection.contains_key("non_electrical_members"));
-    assert!(
-        !serde_json::to_string(&details)
-            .unwrap()
-            .contains(&id(257).to_string())
-    );
-    assert_eq!(
-        retained.field("non_electrical_members"),
-        InspectionValue::Common(complete_evidence)
-    );
-    assert_eq!(details.subject, Some(subject));
-    assert_eq!(original.len(), 257);
     Fixture::assert_bytes(&before);
 }
 #[test]

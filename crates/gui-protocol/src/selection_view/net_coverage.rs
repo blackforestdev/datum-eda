@@ -132,21 +132,39 @@ pub(super) fn append(
                 }
             }
         }
-        scope.fields.insert(
-            "resolved_net_coverage".into(),
+        let net_detail = if nets.is_empty() {
+            InspectionDetailKind::Ordinary
+        } else {
+            InspectionDetailKind::Members
+        };
+        let unavailable_detail = if unavailable.is_empty() {
+            net_detail
+        } else {
+            InspectionDetailKind::Members
+        };
+        let non_electrical_detail = if non_electrical.is_empty() {
+            InspectionDetailKind::Ordinary
+        } else {
+            InspectionDetailKind::Members
+        };
+        scope.insert_field(
+            "resolved_net_coverage",
             InspectionValue::Common(serde_json::json!(nets)),
+            net_detail,
         );
-        scope.fields.insert(
-            "net_coverage".into(),
+        scope.insert_field(
+            "net_coverage",
             if unavailable.is_empty() {
                 InspectionValue::Common(serde_json::json!(nets))
             } else {
                 InspectionValue::Unavailable(serde_json::to_string(&unavailable).unwrap())
             },
+            unavailable_detail,
         );
-        scope.fields.insert(
-            "non_electrical_members".into(),
+        scope.insert_field(
+            "non_electrical_members",
             InspectionValue::Common(serde_json::json!(non_electrical)),
+            non_electrical_detail,
         );
     }
 }

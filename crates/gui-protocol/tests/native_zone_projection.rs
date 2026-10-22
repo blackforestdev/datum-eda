@@ -82,6 +82,19 @@ fn certified_current_fill_distinguishes_complete_empty_and_unavailable() {
                 InspectionValue::Unavailable(_)
             )),
         }
+        let scope = view
+            .inspection
+            .iter()
+            .find(|s| s.scope == Some(Class::Zone))
+            .unwrap();
+        assert_eq!(
+            scope.field_details["occupied_fill_status"],
+            if expected.is_some() {
+                datum_gui_protocol::selection_view::InspectionDetailKind::Ordinary
+            } else {
+                datum_gui_protocol::selection_view::InspectionDetailKind::Members
+            }
+        );
         // The authored boundary remains inspectable; it is never occupied copper.
         assert!(matches!(
             view.field("combined_bounds_nm"),
