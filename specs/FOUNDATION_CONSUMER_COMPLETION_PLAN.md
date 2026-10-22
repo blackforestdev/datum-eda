@@ -490,9 +490,9 @@ performance and assessment limits remain historical evidence. Separate Rect007,
 compound-cardinality and other intakes are not closed or promoted to dependencies.
 
 Under the existing conditional owner grant and the manager's explicit release,
-**C05 is selected and claimed**. Its existing reserved reviewer is
-`01a0e343-3d9c-70f1-899e-5bd239513383`; actual independent replay begins only after the
-manager commits and pushes the exact final candidate and provides the handoff.
+**C05 was selected and claimed**. Its existing reserved reviewer is
+`01a0e343-3d9c-70f1-899e-5bd239513383`; actual independent replay began only after the
+manager committed and pushed the exact final candidate and provided the handoff.
 The parent issue remains open. C06 acceptance remains owner-only, and no
 cross-probe successor is selected or authorized by C04 completion. This factual
 disposition supersedes earlier current-state C04-pending statements, including
@@ -504,6 +504,28 @@ the dated C03 handoff below, without rewriting their original evidence or limits
 The reserved reviewer independently replays required scenarios against the exact
 candidate and validates evidence provenance and negative cases. Record findings
 and explicit dispositions; unresolved mandatory failures prevent acceptance.
+
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C05-COMPLETE -->
+**C05 independent review completed — 2026-10-22.** The existing reserved reviewer
+`01a0e343-3d9c-70f1-899e-5bd239513383` independently replayed the applicable Board and
+Schematic cases against candidate `2becd6443fdb5eb4cdd849b08ed77408135af900`, source
+`037ec5b66402ee7d11d0a310564381ea73245746` and GUI `d3c151d7`. Actual final review
+`01a16215-c600-74f0-aa6f-0db635ee5f6b` is PASS with no unresolved mandatory findings;
+the appointed manager accepts that objective completion. The actual unchanged
+receipt is bound in the
+[existing proof](../docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json#C05_reserved_independent_review_20261022).
+
+Both serial replays, their original images, complete identities and outputs,
+negative no-ops/refusals, canonical invariance, cleanup, scoped reuse and explicit
+preparation dispositions are recorded. The receipt's frozen C04 proof digest
+`d01e420b` resolves at Git candidate `2becd644`, not the later updated working
+proof. Original raw CAPTURE_ONLY outcomes, failed/preparation history and finite
+class/platform/performance/HUMAN boundaries remain unchanged.
+
+**C06 is the sole pending owner decision.** The worker claim and assignee are
+explicitly released; the parent issue remains open. The existing C06 request and
+response format are unchanged. C05 completion does not accept C06, close S5A or
+select or authorize cross-probe work.
 
 <!-- REQ:UVT-S5A-BUILD:S5A-C06 -->
 <!-- OWNER:UVT-S5A-BUILD:S5A-C06:ACCEPT -->

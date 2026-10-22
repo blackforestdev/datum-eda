@@ -180,17 +180,17 @@
     "Shared native desktop received physical C O P P E R keys outside the scope replay; later Escape was not delivered to the intended window.",
     "Controlled-close timeouts retained; dat-kiel remains separate, no shutdown qualification."
   ],
-  "remaining_executable_proof_blocker": "No remaining mandatory C04 runtime case. Historical shared-desktop and individual failed-observer blockers retain their original scope; actual accepted later native receipts discharge the applicable current predicates. C05 replay waits for the landed exact-candidate handoff, not a new owner approval.",
+  "remaining_executable_proof_blocker": "No remaining required C04/C05 execution. The selected C06 owner decision is an authority boundary: no worker claim, implementation or successor action is authorized.",
   "retained_evidence": [
     "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "No mandatory C04 acceptance gap remains under the actual reviewed current scope. Historical per-receipt limitations and failed attempts are preserved. C05 independent replay/defect disposition and C06 exact owner acceptance remain separate, and the main issue stays open.",
-  "candidate_review_readiness": "C04 is complete and accepted on actual final independent PASS/CLEAR 01a16202-e4d6-7940-aeed-da880470337d. C05 is selected for the existing reserved independent replay after the committed/pushed exact handoff; C06 owner acceptance and whole-S5A closure remain pending.",
+  "remaining_acceptance_gaps": "Only the unchanged C06 owner acceptance request remains. C04/C05 completion preserves the actual failed/preparation history, raw CAPTURE_ONLY and each finite assessment limit. The main issue remains open; no cross-probe successor is selected.",
+  "candidate_review_readiness": "C04 and reserved C05 independent review are complete and manager-accepted. Actual C05 PASS 01a16215-c600-74f0-aa6f-0db635ee5f6b binds candidate2becd644/source037ec5b6/GUI d3c151d7; no unresolved mandatory finding remains. C06 exact owner acceptance and whole-S5A closure remain pending.",
   "C03_complete": true,
   "C04_complete": true,
-  "C05_completed": false,
+  "C05_completed": true,
   "C06_accepted": false,
   "boundaries": "No new product rules, representation, dependency, persistence, tolerance, timeout, performance budget, prototype edit, CAM/T04 waiver, successor authorization or acceptance change.",
   "archive": {
@@ -9973,7 +9973,7 @@
     "next_batch": "After storage review disposition, ordinary current Wayland keyboard acquisition/complete fixture identity and AT-SPI checks, Escape and canonical source/journal preservation. Extend only genuine missing scenarios, with exact path ownership before edits.",
     "reserved_review": "Current manager confirmed reserved audit thread01a0e343-3d9c-70f1-899e-5bd239513383 available for later exact C05 candidate, without starting C05. No actual HUMAN N15-N17 build acceptance receipt is known; reference approval and bounded inspection are not substitutes.",
     "C04_complete": true,
-    "C05_completed": false,
+    "C05_completed": true,
     "C06_accepted": false,
     "c04_assessor_delegation_20261021": {
       "status": "AUTHORIZED_C04_TOOL_ASSISTED_ASSESSOR_ROUTE_RECORDED_NOT_QUALIFIED_OR_ACCEPTED",
@@ -10034,13 +10034,13 @@
       },
       "disposition": "After actual C04 acceptance/closure, explicitly select and synchronize C05 with the worker coordinating preparation/fixes; reserved independent reviewer owns replay/findings. No self-review or earlyC05. C06/cross-probe remain separate and ungranted.",
       "activation_after_actual_C04_closure": {
-        "status": "ACTIVATED_BY_EXPLICIT_MANAGER_RELEASE_AFTER_ACTUAL_C04_ACCEPTANCE",
+        "status": "OWNER_CONDITIONAL_GRANT_EXERCISED_C05_NOW_COMPLETE",
         "recorded_at": "2026-10-22T05:25:09Z",
         "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
         "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
         "selected_step": "S5A-C05",
         "reserved_reviewer_session": "01a0e343-3d9c-70f1-899e-5bd239513383",
-        "execution_boundary": "Selected and claimed only; independent replay begins after the final commit/push/exact handoff. C06 stays owner-only."
+        "execution_boundary": "The exact landed/pushed candidate was independently replayed by the reserved reviewer and accepted by the manager. C06 remains owner-only; this grant supplies no C06 acceptance or successor authorization."
       }
     },
     "historical_completion_flags_before_final_20261022": {
@@ -10050,8 +10050,8 @@
     },
     "current_disposition_20261022": {
       "C04": "Complete after actual independent 01a16202-e4d6-7940-aeed-da880470337d and appointed-manager acceptance.",
-      "C05": "Selected/claimed under the existing owner grant; replay waits for the final committed/pushed exact handoff to the existing reserved reviewer.",
-      "C06": "Owner-only acceptance remains pending.",
+      "C05": "Complete after actual reserved independent PASS 01a16215-c600-74f0-aa6f-0db635ee5f6b and explicit manager acceptance; candidate2becd644, no unresolved mandatory findings.",
+      "C06": "Selected pending with owner_decision authority. Worker claim/assignee explicitly released; main issue remains open.",
       "historical_boundary": "Original remaining-cases, next-batch and accounting fields describe the dated resumption preflight, not current open C04 requirements."
     }
   },
@@ -12129,7 +12129,7 @@
     "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
   },
   "current_readiness_reconciliation_20261019": {
-    "status": "C04 qualification is complete and accepted. Actual final independent runtime/pixel PASS and aggregate CLEAR 01a16202-e4d6-7940-aeed-da880470337d plus appointed-manager acceptance bind the existing accepted current board/schematic evidence. Source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a are the final implementation cohort. C05 is selected for the reserved independent replay after the committed and pushed candidate handoff; C06 remains owner-only.",
+    "status": "C04 and C05 are complete and accepted. Reserved independent review 01a16215-c600-74f0-aa6f-0db635ee5f6b binds candidate 2becd6443fdb5eb4cdd849b08ed77408135af900, source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a. The only remaining task step is the unchanged C06 owner decision; the worker claim and tracker assignee are explicitly released and the main issue remains open.",
     "authority": {
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
@@ -12392,7 +12392,7 @@
       "assessment_method": "tool_assessed",
       "final_review": "01a16202-e4d6-7940-aeed-da880470337d"
     },
-    "smallest_completion_path": "C04 has no remaining execution or acceptance step. C05 is selected under the existing conditional owner grant and explicit manager release, with the existing reserved reviewer. Begin its independent replay only after the manager commits and pushes the exact final candidate and supplies the handoff. C06 owner acceptance and the cross-probe boundary remain separate.",
+    "smallest_completion_path": "Await the existing C06 owner acceptance decision against the exact reviewed candidate and evidence. No agent claim, additional C04/C05 runtime case, new matrix, automatic acceptance or cross-probe successor authorization is supplied.",
     "separate_boundaries": [
       "Reserved C05 independent replay and C06 owner acceptance",
       "P2.4 fuller Inspector grouping",
@@ -12516,7 +12516,7 @@
       },
       "scope": "Current board/schematic C04 machine and nine visual/accessibility criteria are satisfied collectively by the accepted evidence at each recorded class, producer, platform and assessment scope. No new Cartesian matrix, unsupported ingress, hardware/performance target or HUMAN result is inferred. Source implementation and C04 qualification are distinct from C05 reserved independent replay and C06 owner acceptance."
     },
-    "required_checks": "PASS: focused structural drift battery completed actual5c4ed8 exit0 (including state101, source health3285, traceability29/131, governance571 and parity30); projection check0e2f08 and whitespaceb7cbf4 exit0. Existing source tests/native evidence retained without a fresh Cargo build or full qualification replay. Final landing remains with the manager.",
+    "required_checks": "Source/runtime evidence is reused unchanged. Final state/projection, focused structural drift and whitespace checks run for this factual C05 closure/owner-boundary transaction; no Cargo build or qualification replay is required.",
     "subsequent_bindings_20261019": {
       "source_native_producer": "native_wayland_proposal_creation_undo_20261019; actual independent source/runtime-pixel/finalcombined PASS and appointed-manager bounded acceptance, landed66c6a974 through normal hooks; only relatedt8w9 closed. Prior02 actual VISUALFAIL retained.",
       "l8_supported_consumers": {
@@ -12769,7 +12769,9 @@
         "dat-same-pane-header-focus-redraw-omd5"
       ],
       "intake_boundary": "These separate intakes retain their actual dispositions; C04 completion neither closes them nor creates dependencies or owner product rules."
-    }
+    },
+    "historical_status_at_C05_selection_20261022": "C04 qualification is complete and accepted. Actual final independent runtime/pixel PASS and aggregate CLEAR 01a16202-e4d6-7940-aeed-da880470337d plus appointed-manager acceptance bind the existing accepted current board/schematic evidence. Source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a are the final implementation cohort. C05 is selected for the reserved independent replay after the committed and pushed candidate handoff; C06 remains owner-only.",
+    "C05_acceptance_ref": "C05_reserved_independent_review_20261022"
   },
   "native_wayland_hidden_junction_run_20261019": {
     "status": "CURRENT QUALIFIED SCOPE: historical typed Run5 membership/counts/Context/AX/invariance/cleanup retained; hidden-layer appearance credit withdrawn on 2026-10-21. See appearance_qualification_20261021 and wire_run_hidden257_delivery_20261021. Historical review and landing receipts are preserved; C04 remains in_progress.",
@@ -41779,7 +41781,7 @@
     }
   },
   "native_locked_hc_and_finite_closeout_handoff_20261022": {
-    "status": "C04_COMPLETE_C05_SELECTED_AWAITING_LANDED_RESERVED_REVIEW_HANDOFF",
+    "status": "C04_AND_C05_COMPLETE_C06_OWNER_DECISION_PENDING_WORKER_CLAIM_RELEASED",
     "head": "7f7a70353814db74e2d403119394585f958fc376",
     "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
     "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
@@ -42056,7 +42058,7 @@
         "actual_scope": "SingletonGlobalNet acquired2originals/fullContext+AX15fields; canonicaldelete0/newrevision9544; no automatic GUIrefresh, report/Undo notexecuted. Mutatedinput02retained, no private reset.",
         "diagnosis": "No transientNone;states27–29 remain oldGlobalNet1924. ArbitraryPTYoutput doesnotmarkworkspacepending; onlyauthoringhandoff does. Observer/source-review assumptionmiss, no newautomaticreload productrequirement or productfailure inferred."
       },
-      "remaining_gate": "C04 review and manager acceptance complete; no additional C04 execution is authorized or required by this record.",
+      "remaining_gate": "No further C04/C05 native execution or worker claim. C06 owner acceptance remains unissued.",
       "native02_partial_acceptance": {
         "status": "ACTUAL_INDEPENDENT_PARTIAL_SCOPE_MANAGER_ACCEPTED_FULL_NATIVE02_RAW_FAIL_PRESERVED",
         "independent_review": "01a161ec-37bd-74f1-9d6e-c7163770455b",
@@ -42089,7 +42091,7 @@
       "actual_final": "fcbf36 outer0/native0;owned77342discharged",
       "source_review": "01a16201-b104-7f42-9921-462de0257e07",
       "root_observation": "Root5858a7/4de9f9 source/current79/custody andall4original views confirmed; actual independentruntime/pixel review andmanageracceptance pending. No selfPASS.",
-      "current_only_remaining": "No remaining C04 runtime predicate. C05 reserved replay is separately selected and waits for the landed exact-candidate handoff.",
+      "current_only_remaining": "C04 and C05 are complete and accepted. Only the existing C06 owner decision remains.",
       "actual_review": "01a16202-e4d6-7940-aeed-da880470337d"
     },
     "source_landing_20261022": {
@@ -42165,16 +42167,23 @@
       "scope": "Current board/schematic C04 machine and nine visual/accessibility criteria are satisfied collectively by the accepted evidence at each recorded class, producer, platform and assessment scope. No new Cartesian matrix, unsupported ingress, hardware/performance target or HUMAN result is inferred. Source implementation and C04 qualification are distinct from C05 reserved independent replay and C06 owner acceptance."
     },
     "C05_handoff": {
-      "status": "SELECTED_AND_CLAIMED_REPLAY_NOT_STARTED_AWAITING_FINAL_COMMIT_PUSH_AND_HANDOFF",
+      "status": "ACTUAL_RESERVED_REVIEW_COMPLETE_MANAGER_ACCEPTED_C06_OWNER_ONLY",
       "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
       "reserved_reviewer_session": "01a0e343-3d9c-70f1-899e-5bd239513383",
       "source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
       "gui_sha256": "d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a",
       "owner_authority": "Existing conditional owner instruction: once C04 closes, open C05 with the worker agent. The appointed manager now explicitly releases that transition after actual C04 acceptance.",
       "owner_grant_ref": "managed_resumption_preflight_20261018.conditional_C05_owner_direction_20261022",
-      "actual_start_condition": "The manager reviews and lands the final evidence/state commit, pushes it, and hands its exact candidate/evidence to the worker and existing reserved reviewer. No C05 replay has started; no replacement reviewer or repeated owner approval is required.",
-      "final_candidate_commit": null,
-      "C06_boundary": "Exact owner acceptance and cross-probe handoff remain owner-reserved. The main S5A issue remains open; no cross-probe successor is selected or authorized."
+      "actual_start_condition": "Satisfied by the final C04 evidence commit2becd644, successful push e11587 and exact manager handoff; reviewer then independently executed both serial replays. C05 is now complete.",
+      "final_candidate_commit": "2becd6443fdb5eb4cdd849b08ed77408135af900",
+      "C06_boundary": "C06 is selected pending under owner_decision authority. It is not accepted; main issue stays open and no cross-probe successor is selected or authorized.",
+      "review_receipt": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-independent-review-01.json",
+        "sha256": "ca1a238e20125b90b9a42ec55202c9c41195aa3331b09c8fbcf98265f4762361",
+        "bytes": 16376
+      },
+      "review_turn": "01a16215-c600-74f0-aa6f-0db635ee5f6b",
+      "claim_state": "Explicitly released for C06 owner decision; no worker claim or replay remains."
     },
     "historical_frontier_summary_before_C04_completion": "Owner-directed 2026-10-18 S5A-C04 resumption under its retained execution grant is handed to confirmed dev-agent-02 (thread 01a15249-fb58-7023-9a10-1828067d8850). C03 and accepted C04 cases remain credited. Finish genuine native proof gaps and necessary existing-contract corrections; migrate current diagnostic readers before affected proof. Worker ownership includes reviewed frozen replay storage, current diagnostic/complete-membership readers, the existing native QA helper, focused tests, C04 evidence and private ignored scratch, with synchronized metadata. Management coordinates actual review and objective C04 acceptance. Current Wayland/wgpu QA, honest scoped reuse and source/journal preservation remain required. Reserved C05 replay and C06 owner acceptance remain separate; no automatic successor. Owner direction 2026-10-21 removes owner presence/signoff as a C04 development gate only: designated tool-assisted assessors, actual independent review and appointed-manager acceptance must qualify the unchanged nine-panel visual/accessibility criteria. Record tool-assessed observations, never a manufactured HUMAN PASS. C04 remains in_progress until complete reviewed evidence; C05/C06 and successors keep their separate authority. Finite Wire256 prefiltered/prehidden positives and tool-assisted represented visual assessments are independently reviewed and manager accepted at their stated scope. Owner instruction recorded 2026-10-22 conditionally authorizes opening C05 with the worker only after actual C04 closure; C05 is not yet selected or executed, and reserved independent replay remains separate. Finite semantic D4 is independently reviewed and manager accepted. Cap source/tests and exact locked HC/cursor depiction/factual status are accepted at their bounded scopes. Finite nativecap transport is now independently reviewed and manager accepted from complete retained payload while original wrong-prefix observer FAIL remains; no selectedPNG/secondboundary/success-exit credit. Changed-revision Runtime guard is independently accepted supporting proof. Finite ordinary HC/cursor native04 and Global Preferences Escape release preservation are independently reviewed and manager accepted (01a161c7), with50issued/52observed and63canonical preserved. Exact Claude-only status paragraph is independently source/text accepted and its owning route reconciled; depiction unchanged. Finite BoardRun5/GlobalNet6 prehidden/prefiltered ordinary native03 is independently accepted01a161d9. Accepted20source/test/fixturepaths landed037ec5b6 through normalhooks; no nativePASS inferred. GlobalNet native02 independentlyaccepted partial01a161ec demonstrates singleton/delete/exactfreshclearedreport viaordinaryCtrlS refusal/readrefresh withcanonicalinvariance. RawFAIL retained: nextUndo shellhistory losesleading slash afterTerminalEscape; exactReadline state onlysource-consistent hypothesis. GlobalNet native04 exact source7/command08 has actualexit0 fcbf36, fouroriginals, bothcanonicalproducers includingUndo0, exactclearedreport, twoinvariantrefusedSave readrefreshes andrefreshedplainNone/noresurrection; independentruntime/pixelreview andfinalaggregateC04acceptance pending. Prior01/02/03FAIL andunexecuted07REVISE preserved; headerfocusfeedbackintake omd5 separate. Existingcompletion-plan marker scope added beforeanydocumentedit; C04 staysin_progress.",
     "final_factual_state_checks": {
@@ -42200,6 +42209,422 @@
       },
       "retained_source_checks": "Actual accepted source147050/ac29b3/a26756/a21241 and feature/native receipts retained; no new source edit, build, Cargo or full qualification replay.",
       "landing_owner": "Manager reviews, commits through normal hooks and pushes; worker has not staged or committed. C05 replay starts only after the exact landed handoff."
-    }
+    },
+    "historical_C05_selection_handoff_at_C04_close": {
+      "status": "SELECTED_AND_CLAIMED_REPLAY_NOT_STARTED_AWAITING_FINAL_COMMIT_PUSH_AND_HANDOFF",
+      "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+      "reserved_reviewer_session": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+      "gui_sha256": "d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a",
+      "owner_authority": "Existing conditional owner instruction: once C04 closes, open C05 with the worker agent. The appointed manager now explicitly releases that transition after actual C04 acceptance.",
+      "owner_grant_ref": "managed_resumption_preflight_20261018.conditional_C05_owner_direction_20261022",
+      "actual_start_condition": "The manager reviews and lands the final evidence/state commit, pushes it, and hands its exact candidate/evidence to the worker and existing reserved reviewer. No C05 replay has started; no replacement reviewer or repeated owner approval is required.",
+      "final_candidate_commit": null,
+      "C06_boundary": "Exact owner acceptance and cross-probe handoff remain owner-reserved. The main S5A issue remains open; no cross-probe successor is selected or authorized."
+    },
+    "C05_acceptance_ref": "C05_reserved_independent_review_20261022"
+  },
+  "C05_reserved_independent_review_20261022": {
+    "status": "C05_COMPLETE_ACTUAL_RESERVED_INDEPENDENT_PASS_MANAGER_ACCEPTED",
+    "recorded_at": "2026-10-22T05:49:06Z",
+    "reviewer_session": "01a0e343-3d9c-70f1-899e-5bd239513383",
+    "review_turn": "01a16215-c600-74f0-aa6f-0db635ee5f6b",
+    "actual_final_message": {
+      "message_id": "msg_034992c1c2b71f98016ad9a23bc90887d08a331cff6a0c2040",
+      "rollout": "/home/bfadmin/.codex/sessions/2026/09/27/rollout-2026-09-27T07-27-09-01a0e343-3d9c-70f1-899e-5bd239513383.jsonl",
+      "row": 10917,
+      "timestamp": "2026-10-22T05:42:22.063Z",
+      "phase": "final_answer"
+    },
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "manager_disposition": "The appointed manager explicitly accepts C05 objective completion on the actual reserved-reviewer PASS ca1a238e, exact candidate2becd644/source037ec5b6/GUI d3c151d7 and direct baseline/original/receipt/nonmutation/cleanup checks482a50,afe8f5,69447f. This acceptance authorizes the factual C05 completion marker/state transition and explicit worker claim/assignee release. C06 is the existing owner-only pending decision, not accepted or delegated; main issue remains open and no cross-probe successor is selected.",
+    "review_receipt": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-independent-review-01.json",
+      "sha256": "ca1a238e20125b90b9a42ec55202c9c41195aa3331b09c8fbcf98265f4762361",
+      "bytes": 16376
+    },
+    "reviewed_candidate_commit": "2becd6443fdb5eb4cdd849b08ed77408135af900",
+    "source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+    "GUI_sha256": "d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a",
+    "historical_C04_proof_resolution": {
+      "git_ref": "2becd6443fdb5eb4cdd849b08ed77408135af900:docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+      "git_blob": "2c3d2b2f84f052151048afe0274468af5249eb20",
+      "sha256": "d01e420bd5343a9062b20c9670dd20b0ae414e51c2929f65c720b0345a6da236",
+      "bytes": 2566717,
+      "interpretation": "The unchanged original reviewer receipt binds its frozen C04 proof at the reviewed Git commit2becd644. The current working proof now adds this C05 closure record; its new digest does not invalidate or replace the historical reviewed input. Original receipt and raw hashes remain exact."
+    },
+    "actual_independent_receipt": {
+      "kind": "Datum S5A-C05 reserved independent candidate review and actual replay receipt",
+      "reviewer_thread": "01a0e343-3d9c-70f1-899e-5bd239513383",
+      "manager_thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "outcome": "PASS C05 independent candidate review and agreed applicable Board/Schematic replay; no unresolved mandatory finding",
+      "candidate_commit": "2becd6443fdb5eb4cdd849b08ed77408135af900",
+      "source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+      "gui": {
+        "path": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+        "sha256": "d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a",
+        "bytes": 821564536
+      },
+      "C04_frozen_proof": {
+        "path": "/home/bfadmin/Documents/datum-eda/docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+        "sha256": "d01e420bd5343a9062b20c9670dd20b0ae414e51c2929f65c720b0345a6da236",
+        "bytes": 2566717
+      },
+      "review_contract": "FOUNDATION_CONSUMER_COMPLETION_PLAN S5A-C05 and preparation-plan D5/U1-U5; manager-released exact conditional owner grant, separate C06 acceptance.",
+      "execution_ownership": "Reviewer independently prepared fresh private canonical-hash-identical inputs, owned both serial tool executions, inspected raw source-bound oracles/public output and all14 new original PNGs. Worker supplied recipe/source attribution only; actual root baseline ADMIT preserved for each run. No product edits/rebuild or concurrent native input.",
+      "environment": "Existing isolated compositor/session/input ownership. Datum Wayland/wgpu/Vulkan on explicitly pinned llvmpipe CPU; SHM original captures; private Xwayland is input transport only. No owner desktop injection. No hardware capability, physical display latency, native hardware GPU performance or exact8x budget inference.",
+      "independent_replays": [
+        {
+          "case": "board",
+          "outcome": "PASS bounded independent source/runtime/output/pixel review",
+          "manifest": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-manifest.json",
+            "sha256": "3414e78df7bfa464641d680a777c5699616f7c028dd96b25ad1b06c2e2328d50",
+            "bytes": 88497
+          },
+          "command": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-command.json",
+            "sha256": "60bceb060603418b7b767d54ae6ce0f57127a919934d205bf34c9a84144e838a",
+            "bytes": 1596
+          },
+          "raw_result": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/result.json",
+            "sha256": "5af48330770f2c7f65e7d821ee73d4c73a48316365ca2d55acd37ef794fc4139",
+            "bytes": 1110262
+          },
+          "transport": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-isolated/transport.json",
+            "sha256": "73fac061253e7660dd68432c4deac708c6c983b1edc6b9bb7909a26bfee1b200",
+            "bytes": 3775
+          },
+          "baseline_checkpoint": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/baseline-checkpoint.json",
+            "sha256": "cd48b483cf56299fe5121fdd55dae27be4267d1a3348099dd32501cd38e40dad",
+            "bytes": 46092
+          },
+          "actual_manager_admission": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/baseline-admission.json",
+            "sha256": "616a06d88e4ccfe9f58654b087e8fc33f8461a67260841b73e5a4c33d806537a",
+            "bytes": 856
+          },
+          "original_execution": {
+            "owned_exec_session": 7297,
+            "final_chunk": "28a34e",
+            "exit_code": 0,
+            "original_rollout": "/home/bfadmin/.codex/sessions/2026/09/27/rollout-2026-09-27T07-27-09-01a0e343-3d9c-70f1-899e-5bd239513383.jsonl",
+            "original_row": 10682
+          },
+          "captures": [
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/filter_restored.png",
+              "sha256": "6b36850843e89bb7ac313ef3e9a45d2cd6e44721dd75ba5b4939d2b4599d9bc9",
+              "bytes": 94378
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/filtered_global.png",
+              "sha256": "6cd1c6f3a343eddb39350fda9f923a9c3478f1c610e8924ee6a5afcf41fca7dc",
+              "bytes": 96913
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/filtered_run.png",
+              "sha256": "016d139d84dba593a75cfe9bc9a98004b6b2c8d46be8e08e4072f2c43109718f",
+              "bytes": 95326
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/hidden_global.png",
+              "sha256": "a3d6d90860f0052a91c770b8bf6bee7879cebb84cd75b31dc9c6ba3b6f3b8da3",
+              "bytes": 96993
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/hidden_run.png",
+              "sha256": "bbb7447345f5911bea1b95c3742287af182d8268797b232e180231ff675c093f",
+              "bytes": 95375
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/initial.png",
+              "sha256": "1b90d0494479b9ee95f1c18be533bb97107b7d35efc1d134308eda1a4a45f08b",
+              "bytes": 54228
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-board-run/layer_restored.png",
+              "sha256": "87b08e8db9e2a2d3e22554f31c15df237f1547873429baa31a30a8260d34e985",
+              "bytes": 95794
+            }
+          ],
+          "canonical_files_preserved": 35,
+          "cleanup": "Recorded GUI/daemon/PTY shell/Weston/clipboard and outer transport owners stopped; private IPC removed; no cleanup errors. Not an all-descendants or physical desktop claim.",
+          "observations": "Complete Run5 and GlobalNet6 source-qualified IDs; prehidden intermediate Track retained but not cued; excluded Vias retained and cued; disconnected member included only in Net, foreign contact excluded. Visibility/filter restore preserves subject. 180 independent canonical AX/Context field comparisons across12boundaries matched."
+        },
+        {
+          "case": "semantic",
+          "outcome": "PASS bounded independent source/runtime/output/pixel review",
+          "manifest": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-manifest-02.json",
+            "sha256": "4ec02706eb3f2436fea2538619437ed9a0a9f22085c4225158cb526d6fd4dbec",
+            "bytes": 179107
+          },
+          "command": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-command-02.json",
+            "sha256": "566bc4be9c97e6e673bc8b081371d0250ef2de7455de635e7e45a815e5c1561a",
+            "bytes": 1612
+          },
+          "raw_result": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/result.json",
+            "sha256": "76ae4a30b849f43d376bf66077b5ae00ffba8aec1b00cdfc5c1bc7f51c4985f2",
+            "bytes": 2195840
+          },
+          "transport": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-isolated/transport.json",
+            "sha256": "88ac3fda7c32ff464cfbf97dfa69478755480ee7f1f1e8ae3b893ae3c92d4b52",
+            "bytes": 3801
+          },
+          "baseline_checkpoint": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/baseline-checkpoint.json",
+            "sha256": "cf5e467aff37f94e8dfee3c78b5902491fc802b662901c21b278e75af1f3a82c",
+            "bytes": 125309
+          },
+          "actual_manager_admission": {
+            "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/baseline-admission.json",
+            "sha256": "95a321453576c0312090e3f7db0ba9b1049a2754b28b20c1bdb47a82239bc788",
+            "bytes": 937
+          },
+          "original_execution": {
+            "owned_exec_session": 4744,
+            "final_chunk": "bb6719",
+            "exit_code": 0,
+            "original_rollout": "/home/bfadmin/.codex/sessions/2026/09/27/rollout-2026-09-27T07-27-09-01a0e343-3d9c-70f1-899e-5bd239513383.jsonl",
+            "original_row": 10823
+          },
+          "captures": [
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/board.png",
+              "sha256": "f99468b327c513210336d8a6df4b4d94d49daa7ed9ce463c5660568d8b9b8d86",
+              "bytes": 97873
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/board_refused.png",
+              "sha256": "31efe5ed94d3f170d10827cfee0bbfc83269858527ef66ff58625cc1899f2022",
+              "bytes": 105122
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/bus.png",
+              "sha256": "2bd9c84f7998859855093ab66ea6e20e5544dd774f99e060b5f698389553b272",
+              "bytes": 109650
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/bus_refused.png",
+              "sha256": "3bda3271dbfa1ba62988f5e0f46dbac80c3b9caa8eabdb927e0e2575924ebd6f",
+              "bytes": 117143
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/global_net.png",
+              "sha256": "d04f71b839c5568932db4e720bc545dd7793eac95c3c15bc004ece4fce88f37e",
+              "bytes": 112073
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/global_net_refused.png",
+              "sha256": "c930cb7d17589971338579beba5c92352ca06f349aa7fc5f4e0b2d195b8b0679",
+              "bytes": 119864
+            },
+            {
+              "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-01-semantic-run/initial.png",
+              "sha256": "e43698ad157e0905e5ce70a007ad615d1867803fdc7d6228e20fde05a2711310",
+              "bytes": 56272
+            }
+          ],
+          "canonical_files_preserved": 61,
+          "cleanup": "Recorded GUI/daemon/PTY shell/Weston/clipboard and outer transport owners stopped; private IPC removed; no cleanup errors. Not an all-descendants or physical desktop claim.",
+          "observations": "BoardNet3, occurrence-qualified SchematicNet21 and Bus6. 10 exact quiet noops and7 whole-result refusals with only expected notice changes; source-qualified17gesture/146coreevent/34modifier record. 390 independent canonical AX/Context field comparisons across26boundaries, full IDs, reasons and14/3unprojected match. Related24 Bus context stays normally authored. No partial compound conversion."
+        }
+      ],
+      "D5_predicate_disposition": {
+        "identity_membership": "PASS independent full source-qualified Run/Net/Bus membership including occurrence paths and filtered/hidden members; complete AX inventory compared against frozen authored oracle.",
+        "acquisition_refusal_cancellation": "PASS new native acquisitions and negative noops/refusals; two idle Escape clears and fresh semantic acquisition in actual replay. Active rectangle/release/idleEscape cancellation reuses accepted native19 case at exact scope, plus original focus-loss/region-publication controls; no invented fullmatrix rerun.",
+        "lifecycle": "PASS scoped reuse: hash-verified native focused Compound pane lifecycle, current exact-candidate GlobalNet04 retirement/report/Undo; accepted source tests and prior Proposal/Review/Diagnostic lifetime receipts retained. Source037 lifetime delta inspected (explicit GlobalNet/Bus cleared reasons, not invented identity resurrection).",
+        "outputs_accessibility": "PASS complete public AX member IDs/root attributes/standard selected flags and15 canonical fields per subject match Context output; explicit unavailable reasons and unprojected/related semantics preserved. Cap transport and keyboard ownership reused from accepted current C04 evidence. No fabricated HUMAN approval.",
+        "nonmutation": "PASS35/61canonical source/journal/revision maps unchanged through observation and teardown and directly rehashed by reviewer. Operational process/lock metadata is not conflated with canonical data.",
+        "rendering_integration": "PASS bounded original captures show hidden projection absent, filtered-rendered members selected, full same-subject outlines, semantic Bus vs related normal objects and refusal reason; current locked/mask/highcontrast/dense/theme panels reuse actual tool-assessed accepted C04 receipts. No cross-engine pixel equality or full hardware rendering qualification invented.",
+        "PM026_049_051_052": "Identity/read-only rules preserved; shared RenderSession/resize owners reused, no render-quality/painter/submission/retained-resize policy edit by review. No invented latency/CPU/GPU thresholds or replacement acceptance budgets."
+      },
+      "verified_reused_artifacts": [
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wayland-focused-pane-lifecycle-01/result.json",
+          "sha256": "4fceb5c34e51342a109b55ca78c3ebae08f83dafb13ce332ff4bf1e852ec9ff4",
+          "bytes": 348785
+        },
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wayland-region-escape-01/result.json",
+          "sha256": "5b700a679e966ae7e4bb49b43b875c5326f06acaa057c59c76ec6039c40bf93f",
+          "bytes": 220325
+        },
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/global-net-lifetime-native-runtime-candidate-04.json",
+          "sha256": "fd2091e8372860675109f4bbf75a735c4e4df084dbd72f8ea7a5ed8d6167c84d",
+          "bytes": 4969
+        },
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-global-net-lifetime-04/result.json",
+          "sha256": "154daeac13f6841cab3ae6b6949c972f0a72c0de5c7f98b159c9aa18bb524800",
+          "bytes": 325636
+        }
+      ],
+      "mandatory_findings": [],
+      "preparation_and_failed_evidence_dispositions": [
+        {
+          "item": "Historical semantic945 manifest had3 stale point/dispatch references",
+          "disposition": "Found BEFORE any semantic execution. Unexecuted original C05 manifest fcf03ac5 and command f833de35 preserved. New manifest02 4ec02706 explicitly rebinds frame/mask locked repair and UVTcap clarification to frozen current candidate, retaining old hashes/source/binary provenance. Unchanged source5 recipe and geometry/field oracle; actual replay then passed. Not an application failure."
+        },
+        {
+          "item": "Root prelaunch freshness check exited1 after reviewer already created active semantic run",
+          "disposition": "Preserved as timing race in output-path-absence assertion, not native failure. Root independently verified active checkpoint/actual owners/current inputs and admitted; no retry or replacement application run."
+        },
+        {
+          "item": "Initial offline convenience metadata queries used absent context_queries/reason keys",
+          "disposition": "Read-only query errors retained in original reviewer rollout; corrected against actual JSON schema (Unavailable value and actual recorded counters). Subsequent independent raw audits matched. No source/oracle/runtime alteration or app retry."
+        }
+      ],
+      "remaining_boundaries": "C04 accepted status reused at exact scopes; this receipt completes only the reserved C05 independent review recommendation. C06 owner acceptance and cross-probe successor disposition remain owner-only/unissued. Deferred Footprint/Symbol Editor rows, CAM/T04 and undecided performance qualifications retain existing separate disposition; no requirement waiver or new successor grant. Existing failed producer cohorts remain in frozen C04 proof; no failed or CAPTURE_ONLY raw relabeled as independently executed PASS.",
+      "tree": "git status --short clean after replay; no canonical source/evidence edits by reviewer."
+    },
+    "bounded_disposition": "Actual serial independent Board and semantic-D4 replay, provenance, negative cases and justified scoped evidence reuse PASS; no unresolved mandatory finding or required source correction. Fourteen original images,570 canonical AX/Context field comparisons, complete identities,10 no-ops/7 refusals,35/61 canonical invariance and qualified cleanup are independently recorded. The three stale semantic preparation pins were corrected before affected execution with their old candidate retained; no renderer failure or new product rule is inferred.",
+    "explicit_claim_release": {
+      "status": "RELEASED_EXPLICITLY_FOR_C06_OWNER_BOUNDARY_NOT_BY_EXPIRY",
+      "released_at": "2026-10-22T05:49:06Z",
+      "released_worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+      "historical_claim": {
+        "agent": "codex",
+        "claimed_at": "2026-10-19T04:07:35Z",
+        "expires_at": "2026-10-22T13:25:09Z",
+        "harness": "codex-cli",
+        "head": "037ec5b66402ee7d11d0a310564381ea73245746",
+        "heartbeat_at": "2026-10-22T05:25:09Z",
+        "scope": [
+          ".beads/issues.jsonl",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "docs/reviews/specification-history/specification-reorganization.md",
+          "scripts/provision_s5a_replay_inputs.py",
+          "scripts/test_provision_s5a_replay_inputs.py",
+          "scripts/development_workspace.py",
+          "scripts/test_development_workspace.py",
+          "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+          ".datum/scratch/s5a-c04-managed-20261018/",
+          "scripts/prove_native_project_startup_gui.py",
+          "scripts/prove_s5a_native_selection.py",
+          "scripts/s5a_native_selection_observation.py",
+          "scripts/test_s5a_native_selection_observation.py",
+          "scripts/native_project_source_inventory.py",
+          "crates/gui-protocol/src/schematic_scene_import/native_library.rs",
+          "crates/gui-protocol/src/schematic_scene_import/native_library_tests.rs",
+          "crates/gui-app/src/application/app_native_events.rs",
+          "crates/gui-app/src/application/native_owned_escape_tests.rs",
+          "crates/gui-protocol/src/selection_view/inspector_labels.rs",
+          "scripts/s5a_native_escape_cases.py",
+          "crates/gui-render/src/render/native_selection_overlay.rs",
+          "crates/gui-render/src/render/native_selection_overlay/tests.rs",
+          "crates/gui-protocol/src/selection_view.rs",
+          "crates/gui-render/src/side_panels/selection_inspector.rs",
+          "crates/gui-protocol/tests/native_selection_output.rs",
+          "crates/gui-protocol/tests/native_selection_output/singleton_inspector.rs",
+          "crates/gui-render/src/side_panels/selection_inspector/tests.rs",
+          "crates/gui-render/src/side_panels/selection_inspector/tests/singleton_inspector.rs",
+          "crates/gui-app/src/editor/native_edit_selection/lifetime_report_tests.rs",
+          "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/tests.rs",
+          "scripts/s5a_native_inspector_cases.py",
+          "crates/gui-render/src/render/native_selection_overlay/fixtures.rs",
+          "crates/gui-render/src/side_panels/render_project_filters.rs",
+          "crates/gui-render/src/side_panels/filters_layout.rs",
+          "crates/gui-render/src/render/status_bar.rs",
+          "crates/gui-app/src/editor/runtime_revision_workspace.rs",
+          "scripts/s5a_native_artifact_cases.py",
+          "crates/gui-render/src/render/overlay/composition.rs",
+          "crates/gui-render/src/render/production_proposal_tests.rs",
+          "crates/gui-render/src/render/selection_mask_gpu_tests.rs",
+          "crates/gui-app/src/editor/selection_region_evaluation/tests.rs",
+          "crates/gui-app/src/editor/selection_region_evaluation/oracle_tests.rs",
+          "crates/gui-protocol/src/selection_geometry_catalog.rs",
+          "scripts/s5a_native_export_cases.py",
+          "crates/test-harness/src/bin/s5a_fixture.rs",
+          "crates/test-harness/src/bin/s5a_fixture/bus_run.rs",
+          "crates/gui-render/src/side_panels/selection_inspector/tests/notice.rs",
+          "scripts/run_native_qa_isolated_input.py",
+          "scripts/test_native_qa_isolated_input.py",
+          "scripts/native_capture_pixels.py",
+          "scripts/test_native_capture_pixels.py",
+          "crates/gui-app/src/rendering/runtime_present.rs",
+          "crates/gui-app/src/rendering/native_render_target.rs",
+          "crates/gui-app/src/rendering/native_content_probe.rs",
+          "crates/gui-app/src/rendering/native_content_probe_tests.rs",
+          "crates/gui-app/src/application/runtime_init.rs",
+          "crates/gui-app/src/application/runtime_state.rs",
+          "crates/gui-app/src/main.rs",
+          "crates/gui-app/src/application/production_status_refresh.rs",
+          "crates/gui-app/src/rendering/gui_runtime_support.rs",
+          "crates/gui-render/src/render/frame_target.rs",
+          "crates/gui-render/src/render/gpu_frame.rs",
+          "crates/gui-render/src/render/prepared_scene_access.rs",
+          "crates/gui-render/src/render/native_content_text.rs",
+          "crates/gui-render/src/render/native_content_text_tests.rs",
+          "crates/gui-app/src/application/native_content_phase_tests.rs",
+          "crates/gui-render/src/render/session_pointer.rs",
+          "scripts/test_native_capture_presentation.py",
+          "crates/gui-render/src/render/session_frame.rs",
+          "crates/gui-render/src/render/session_frame_tests.rs",
+          "scripts/native_capture_presentation.py",
+          "scripts/test_native_capture_readiness.py",
+          "crates/gui-render/src/render/coordinate_hit.rs",
+          "crates/gui-render/src/render/coordinate_hit_tests.rs",
+          "crates/gui-app/src/editor/runtime_selection_region.rs",
+          "crates/gui-app/src/editor/runtime_selection_region/tests.rs",
+          "crates/test-harness/src/bin/s5a_fixture/wire_run_hidden.rs",
+          "crates/gui-render/src/render/scene_visibility.rs",
+          "crates/gui-render/src/render/scene_retained_access.rs",
+          "crates/gui-render/src/render/frame_preparation.rs",
+          "crates/gui-render/src/render/preferences_scene.rs",
+          "crates/gui-render/src/render/gpu_surface_pass.rs",
+          "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+          "crates/gui-render/src/render/native_selection_overlay/mask.rs",
+          "crates/gui-render/src/render/geometry_admission.rs",
+          "crates/gui-render/src/render/geometry_admission_tests.rs",
+          "crates/test-harness/src/bin/s5a_fixture/filled_board_graphic.rs",
+          "crates/test-harness/src/bin/s5a_fixture/edge_cuts.rs",
+          "crates/test-harness/src/bin/s5a_fixture/source_history.rs",
+          "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "docs/gui/DATUM_RENDERING_BOOK.md",
+          "specs/evidence_traceability_manifest.json",
+          "crates/gui-protocol/src/selection_view/inspection.rs",
+          "crates/gui-protocol/src/selection_view/net_coverage.rs",
+          "crates/gui-protocol/src/selection_view/projection_inspection.rs",
+          "crates/gui-protocol/src/context_envelope.rs",
+          "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+          "crates/gui-protocol/tests/native_selection_output/context_transport.rs",
+          "crates/gui-protocol/tests/native_selection_aggregates.rs",
+          "crates/gui-protocol/tests/native_zone_projection.rs",
+          "crates/gui-render/src/render/native_selection_overlay/mask_tests.rs",
+          "crates/gui-render/src/render/selection_mask.wgsl",
+          "crates/gui-render/src/render/lock_cue.rs",
+          "crates/gui-render/src/render/interaction_overlay.rs",
+          "crates/gui-render/src/render/lock_cue_tests.rs",
+          "crates/gui-render/src/render/selection_mask_gpu_tests/locked.rs",
+          "crates/gui-render/src/render/session_pointer_tests.rs",
+          "crates/gui-render/src/render/session_pointer_tests/locked.rs",
+          "crates/gui-viewport/src/selection_lifetime.rs",
+          "crates/gui-viewport/tests/selection_lifetime.rs",
+          "crates/test-harness/src/bin/s5a_fixture/board_derived_hidden.rs",
+          "crates/test-harness/src/bin/s5a_fixture/global_net_lifetime.rs",
+          "crates/gui-app/src/windows/global_preferences_keyboard.rs",
+          "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"
+        ],
+        "session": "01a15249-fb58-7023-9a10-1828067d8850",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
+      "tracker_status": "open",
+      "assignee": null,
+      "remaining_scope": "Only the unchanged C06 owner acceptance request remains. No worker implementation/replay claim or cross-probe authority remains. All native replay processes and private IPCs are stopped.",
+      "uncommitted_owned_work": "Only this authorized factual evidence/state/document closure transaction awaits manager review, normal commit and push; no source edits."
+    },
+    "historical_frontier_summary_before_C05_completion": "C04 is accepted after final independent runtime/pixel PASS and aggregate CLEAR 01a16202-e4d6-7940-aeed-da880470337d. Source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a are bound in the current proof with preserved failures and finite limits. C05 is selected and claimed under the existing conditional owner grant. Its reserved reviewer is 01a0e343-3d9c-70f1-899e-5bd239513383; replay waits for the final committed and pushed candidate handoff. C06 acceptance remains owner-only, and the main issue stays open.",
+    "C06_accepted": false,
+    "successor_authorized": false
   }
 }
