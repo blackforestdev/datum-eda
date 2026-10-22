@@ -9974,7 +9974,52 @@
     "reserved_review": "Current manager confirmed reserved audit thread01a0e343-3d9c-70f1-899e-5bd239513383 available for later exact C05 candidate, without starting C05. No actual HUMAN N15-N17 build acceptance receipt is known; reference approval and bounded inspection are not substitutes.",
     "C04_complete": false,
     "C05_completed": false,
-    "C06_accepted": false
+    "C06_accepted": false,
+    "c04_assessor_delegation_20261021": {
+      "status": "AUTHORIZED_C04_TOOL_ASSISTED_ASSESSOR_ROUTE_RECORDED_NOT_QUALIFIED_OR_ACCEPTED",
+      "owner_direction": {
+        "source": "/home/bfadmin/.codex/sessions/2026/10/21/rollout-2026-10-21T16-44-02-01a160d9-b499-7923-984a-b3390beb2e34.jsonl",
+        "row": 120,
+        "ordinal": 119,
+        "timestamp": "2026-10-21T23:52:43.833Z",
+        "message_id": "msg_01a160e1-a839-7d13-b894-eabd62267d03",
+        "turn_id": "01a160e1-a80c-7300-8fd6-573cc4fe06d7",
+        "role": "user",
+        "verbatim": "I \"the owner\"  need to be removed as a development gate for this subphase. I have equiped you with the required tooling to more that sufficently qualify the c04 subphase."
+      },
+      "interpretation": "Owner presence, manual participation and signoff are removed as C04 development gates only. PM059 explicitly permits designated assessors/exact delegation. The existing appointed manager and provisioned independent reviewers assess unchanged C04 criteria through tool-supported observations; manager accepts only after complete required evidence and actual independent review. This interpretation is not an additional owner quote.",
+      "manager_session": "codex-reorganization-manager-20261014",
+      "manager_thread": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+      "implementer_thread": "01a15249-fb58-7023-9a10-1828067d8850",
+      "appointment_ref": {
+        "path": "docs/reviews/specification-history/specification-reorganization.md",
+        "marker": "<!-- APPOINTMENT:UVT-S5A-BUILD:C04-MANAGEMENT-20261018 -->"
+      },
+      "delegation_ref": {
+        "path": "docs/reviews/specification-history/specification-reorganization.md",
+        "marker": "<!-- EVIDENCE:UVT-S5A-BUILD:C04-ASSESSOR-DELEGATION-20261021 -->"
+      },
+      "required_panels": [
+        "construction",
+        "compound",
+        "locked/padlock",
+        "maximal collision",
+        "pane parity",
+        "Global Net/Bus",
+        "text/points",
+        "dense fallback",
+        "accessibility/zoom"
+      ],
+      "assessment_method": "Source/binary-bound actual build images and accessibility observations; record method, scope, findings and limits as tool_assessed. Implementer supplies evidence; provisioned independent reviewers assess it; manager records acceptance. No claim that a person performed HUMAN review.",
+      "evidence_status": "No panel or overall C04 PASS is supplied by this delegation. Accepted finite evidence remains reusable at its exact scope; outstanding criteria must be reconciled and evidenced.",
+      "retained_boundaries": [
+        "S5A-C04 remains in_progress until complete evidence and actual independent review/manager acceptance",
+        "C05 reserved independent replay unchanged",
+        "C06 owner acceptance unchanged",
+        "No successor or new product/source/visual/dependency authority",
+        "No prototype or golden edit, generic replay campaign, numerical waiver or criterion reduction"
+      ]
+    }
   },
   "native_wayland_keyboard_subset_20261018": {
     "status": "Actual independent bounded PASS and manager objective acceptance for this reader/native selection subset only; C04 remains in progress.",
@@ -12483,7 +12528,8 @@
     "human_c04_gate": {
       "required": "Build own-golden nine-panel re-review remains explicitly C04: construction, compound, locked/padlock, maximal collision, pane parity, GlobalNet/Bus, text/points, dense fallback, accessibility/zoom.",
       "source": "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md:585-591; preparation-plan N15/N16/N17; FOUNDATION S5A-C04",
-      "status": "Required owner HUMAN review not accepted here. Approved specification reference is not build-golden acceptance. No wholesale transfer to C06."
+      "status": "C04 assessment remains pending against all unchanged nine-panel build-own-golden visual/accessibility criteria. Under the owner direct instruction2026-10-21 and PM059 explicit-assessor exception, designated tool-assisted assessors plus actual independent review and appointed-manager acceptance replace owner presence/manual participation/signoff. Record tool_assessed; no claim HUMAN was performed, no manufactured PASS or transfer to C06.",
+      "delegation_ref": "c04-native-current-proof.json#/managed_resumption_preflight_20261018/c04_assessor_delegation_20261021"
     },
     "smallest_completion_path": "Reuse landed accepted current/historical bindings, including bounded supported-consumer L8, historical duplicate-pane N08, finite N01/N03 map and the canonical native03 producer repair. Resolve still-named evidence questions/assertion or class/threshold bindings only under existing authorization. Preserve owner HUMAN/fullC04 and separate C05/C06 gates; no generic replay campaign or automatic successor.",
     "separate_boundaries": [

@@ -1471,6 +1471,46 @@ initial claim. Existing paused sessions receive no implicit source ownership.
 <!-- APPOINTMENT:UVT-S5A-BUILD:C04-MANAGEMENT-20261018 -->
 {"decision_kinds": ["review_provisioning", "review_receipt", "continuation", "objective_acceptance"], "owner_appointed": true, "session": "codex-reorganization-manager-20261014", "task_keys": ["UVT-S5A-BUILD"]}
 
+### C04-only assessor delegation — 2026-10-21
+
+<!-- EVIDENCE:UVT-S5A-BUILD:C04-ASSESSOR-DELEGATION-20261021 -->
+
+The owner's original direct instruction is preserved verbatim:
+
+> I "the owner"  need to be removed as a development gate for this subphase. I have equiped you with the required tooling to more that sufficently qualify the c04 subphase.
+
+Provenance: direct user message `msg_01a160e1-a839-7d13-b894-eabd62267d03`,
+turn `01a160e1-a80c-7300-8fd6-573cc4fe06d7`,
+`2026-10-21T23:52:43.833Z`; row 120 (ordinal 119) of
+`/home/bfadmin/.codex/sessions/2026/10/21/rollout-2026-10-21T16-44-02-01a160d9-b499-7923-984a-b3390beb2e34.jsonl`.
+The original quote is owner direction; the bounded interpretation below is the
+appointed manager's C04-specific disposition, not an additional owner reply.
+
+Under PM059's explicit-assessor exception, the already appointed management
+session `codex-reorganization-manager-20261014` (MCP
+`01a13df1-7a0d-72c1-bbdd-f0d96d481598`) and the independent reviewers it provisions
+are designated C04 tool-assisted assessors. Owner presence, manual participation
+or signoff is no longer a C04 development gate. The implementing worker supplies
+source/binary-bound observations; actual independent assessment and the manager's
+acceptance against the unchanged C04 criteria remain required. The implementer
+cannot independently accept its own work.
+
+All nine build-own-golden panels remain required: construction, compound,
+locked/padlock, maximal collision, pane parity, Global Net/Bus, text/points,
+dense fallback and accessibility/zoom. Use actual build images and accessibility
+observations with their source, candidate, method and limits. Record the result
+as tool-assessed; do not claim a person performed HUMAN review. Neither this
+routing change nor available tooling supplies missing observations or a PASS.
+Existing accepted finite evidence may be reused at its reviewed scope.
+
+This exception applies only to `UVT-S5A-BUILD` / `S5A-C04`. C04 remains
+`in_progress` pending complete evidence, actual independent review and recorded
+manager acceptance. C05 reserved replay, C06 owner acceptance, other HUMAN/UX or
+product decisions, and successor authorization remain separate. It changes no
+visual criterion, golden, prototype ownership, product/source mechanism,
+dependency, scope or acceptance requirement. Continue finite requirement/evidence
+reconciliation under the retained grant; do not start a generic replay campaign.
+
 ### Worker goals and execution order
 
 1. Reconcile the existing N01-N17 requirements against actual accepted C04
