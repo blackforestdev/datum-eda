@@ -180,18 +180,18 @@
     "Shared native desktop received physical C O P P E R keys outside the scope replay; later Escape was not delivered to the intended window.",
     "Controlled-close timeouts retained; dat-kiel remains separate, no shutdown qualification."
   ],
-  "remaining_executable_proof_blocker": "No remaining required C04/C05 execution. The selected C06 owner decision is an authority boundary: no worker claim, implementation or successor action is authorized.",
+  "remaining_executable_proof_blocker": "No remaining S5A execution or claim. The completed task is landed and the Frontier is explicitly idle. No successor or cross-probe work follows automatically.",
   "retained_evidence": [
     "crates/test-harness/testdata/selection/s5a_v1/delivery-20261008-accessible.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-proof.json",
     "docs/reviews/workflow-delivery-rollout/s5a/exact30-native-evidence.tar.xz"
   ],
-  "remaining_acceptance_gaps": "Only the unchanged C06 owner acceptance request remains. C04/C05 completion preserves the actual failed/preparation history, raw CAPTURE_ONLY and each finite assessment limit. The main issue remains open; no cross-probe successor is selected.",
-  "candidate_review_readiness": "C04 and reserved C05 independent review are complete and manager-accepted. Actual C05 PASS 01a16215-c600-74f0-aa6f-0db635ee5f6b binds candidate2becd644/source037ec5b6/GUI d3c151d7; no unresolved mandatory finding remains. C06 exact owner acceptance and whole-S5A closure remain pending.",
+  "remaining_acceptance_gaps": "No remaining acceptance step for the delivered read-only S5A scope. Actual owner delegation and PM acceptance discharge C06 without changing criteria. Historical failed/preparation records and finite limits remain; cross-probe and deferred work are separate and unselected.",
+  "candidate_review_readiness": "Read-only S5A is complete and accepted through C04, reserved independent C05 PASS and actual owner-delegated PM C06 acceptance. Accepted candidate2becd644/source037ec5b6/GUI d3c151d7 and C05 receipt ca1a238e are unchanged. S5A is closed with actual landing evidence a5209328; no successor is selected.",
   "C03_complete": true,
   "C04_complete": true,
   "C05_completed": true,
-  "C06_accepted": false,
+  "C06_accepted": true,
   "boundaries": "No new product rules, representation, dependency, persistence, tolerance, timeout, performance budget, prototype edit, CAM/T04 waiver, successor authorization or acceptance change.",
   "archive": {
     "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-evidence.tar.xz",
@@ -9974,7 +9974,7 @@
     "reserved_review": "Current manager confirmed reserved audit thread01a0e343-3d9c-70f1-899e-5bd239513383 available for later exact C05 candidate, without starting C05. No actual HUMAN N15-N17 build acceptance receipt is known; reference approval and bounded inspection are not substitutes.",
     "C04_complete": true,
     "C05_completed": true,
-    "C06_accepted": false,
+    "C06_accepted": true,
     "c04_assessor_delegation_20261021": {
       "status": "AUTHORIZED_C04_TOOL_ASSISTED_ASSESSOR_ROUTE_RECORDED_NOT_QUALIFIED_OR_ACCEPTED",
       "owner_direction": {
@@ -10051,7 +10051,7 @@
     "current_disposition_20261022": {
       "C04": "Complete after actual independent 01a16202-e4d6-7940-aeed-da880470337d and appointed-manager acceptance.",
       "C05": "Complete after actual reserved independent PASS 01a16215-c600-74f0-aa6f-0db635ee5f6b and explicit manager acceptance; candidate2becd644, no unresolved mandatory findings.",
-      "C06": "Selected pending with owner_decision authority. Worker claim/assignee explicitly released; main issue remains open.",
+      "C06": "Complete after actual2026-10-22 owner delegation and exact appointed-PM acceptance; S5A landed/closed, no claim and explicit idle. Earlier owner-only pending strings are dated historical boundaries, not current requirements.",
       "historical_boundary": "Original remaining-cases, next-batch and accounting fields describe the dated resumption preflight, not current open C04 requirements."
     }
   },
@@ -12129,7 +12129,7 @@
     "candidate_review_readiness": "Implementation pin and bounded exact30 PASS available for reserved reviewer; full C05 gate not selected or completed while C04 remains incomplete."
   },
   "current_readiness_reconciliation_20261019": {
-    "status": "C04 and C05 are complete and accepted. Reserved independent review 01a16215-c600-74f0-aa6f-0db635ee5f6b binds candidate 2becd6443fdb5eb4cdd849b08ed77408135af900, source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a. The only remaining task step is the unchanged C06 owner decision; the worker claim and tracker assignee are explicitly released and the main issue remains open.",
+    "status": "Read-only S5A is complete and accepted. Actual owner appointment and delegated PM acceptance complete C06 against candidate2becd644/source037ec5b6/GUI d3c151d7 and accepted independent C05 receipt ca1a238e. S5A is landed using actual a5209328 evidence, the issue is closed, there is no agent claim, and the Frontier is explicitly idle. Cross-probe is not selected.",
     "authority": {
       "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
       "base_commit": "5e781f1ab8f5a693cd19ce7d9a2799750c0bb3d9",
@@ -12392,13 +12392,13 @@
       "assessment_method": "tool_assessed",
       "final_review": "01a16202-e4d6-7940-aeed-da880470337d"
     },
-    "smallest_completion_path": "Await the existing C06 owner acceptance decision against the exact reviewed candidate and evidence. No agent claim, additional C04/C05 runtime case, new matrix, automatic acceptance or cross-probe successor authorization is supplied.",
+    "smallest_completion_path": "No remaining S5A step or worker action. Preserve the existing cross-probe handoff; starting any future task requires its separate explicit selection and applicable authority.",
     "separate_boundaries": [
-      "Reserved C05 independent replay and C06 owner acceptance",
       "P2.4 fuller Inspector grouping",
       "Future S5B mutation R1-R4",
       "Standalone performance-S5/latency target campaign; D1 existing diagnostic collection remains required at its stated scope",
-      "Definition-editor native obligations remain outside this board/schematic delivery"
+      "Definition-editor native obligations remain outside this board/schematic delivery",
+      "Cross-probe receives only the completed S5A prerequisite handoff and remains unselected, unclaimed and separately execution-authorized."
     ],
     "test_expectation_correction": {
       "scope": [
@@ -12516,7 +12516,7 @@
       },
       "scope": "Current board/schematic C04 machine and nine visual/accessibility criteria are satisfied collectively by the accepted evidence at each recorded class, producer, platform and assessment scope. No new Cartesian matrix, unsupported ingress, hardware/performance target or HUMAN result is inferred. Source implementation and C04 qualification are distinct from C05 reserved independent replay and C06 owner acceptance."
     },
-    "required_checks": "Source/runtime evidence is reused unchanged. Final state/projection, focused structural drift and whitespace checks run for this factual C05 closure/owner-boundary transaction; no Cargo build or qualification replay is required.",
+    "required_checks": "This bounded owner-decision disposition reuses all accepted source/runtime evidence. Final state/projection, focused structural drift and whitespace checks plus required independent PS012 authority transcription review precede governance landing; no runtime/source/build or new policy is introduced.",
     "subsequent_bindings_20261019": {
       "source_native_producer": "native_wayland_proposal_creation_undo_20261019; actual independent source/runtime-pixel/finalcombined PASS and appointed-manager bounded acceptance, landed66c6a974 through normal hooks; only relatedt8w9 closed. Prior02 actual VISUALFAIL retained.",
       "l8_supported_consumers": {
@@ -12771,7 +12771,16 @@
       "intake_boundary": "These separate intakes retain their actual dispositions; C04 completion neither closes them nor creates dependencies or owner product rules."
     },
     "historical_status_at_C05_selection_20261022": "C04 qualification is complete and accepted. Actual final independent runtime/pixel PASS and aggregate CLEAR 01a16202-e4d6-7940-aeed-da880470337d plus appointed-manager acceptance bind the existing accepted current board/schematic evidence. Source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a are the final implementation cohort. C05 is selected for the reserved independent replay after the committed and pushed candidate handoff; C06 remains owner-only.",
-    "C05_acceptance_ref": "C05_reserved_independent_review_20261022"
+    "C05_acceptance_ref": "C05_reserved_independent_review_20261022",
+    "historical_status_before_C06_delegation_20261022": "C04 and C05 are complete and accepted. Reserved independent review 01a16215-c600-74f0-aa6f-0db635ee5f6b binds candidate 2becd6443fdb5eb4cdd849b08ed77408135af900, source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a. The only remaining task step is the unchanged C06 owner decision; the worker claim and tracker assignee are explicitly released and the main issue remains open.",
+    "C06_acceptance_ref": "C06_owner_delegated_PM_closure_20261022",
+    "historical_separate_boundaries_before_C06_closure": [
+      "Reserved C05 independent replay and C06 owner acceptance",
+      "P2.4 fuller Inspector grouping",
+      "Future S5B mutation R1-R4",
+      "Standalone performance-S5/latency target campaign; D1 existing diagnostic collection remains required at its stated scope",
+      "Definition-editor native obligations remain outside this board/schematic delivery"
+    ]
   },
   "native_wayland_hidden_junction_run_20261019": {
     "status": "CURRENT QUALIFIED SCOPE: historical typed Run5 membership/counts/Context/AX/invariance/cleanup retained; hidden-layer appearance credit withdrawn on 2026-10-21. See appearance_qualification_20261021 and wire_run_hidden257_delivery_20261021. Historical review and landing receipts are preserved; C04 remains in_progress.",
@@ -41781,7 +41790,7 @@
     }
   },
   "native_locked_hc_and_finite_closeout_handoff_20261022": {
-    "status": "C04_AND_C05_COMPLETE_C06_OWNER_DECISION_PENDING_WORKER_CLAIM_RELEASED",
+    "status": "S5A_C06_ACCEPTED_COMPLETE_LANDED_NO_AGENT_CLAIM_EXPLICIT_IDLE",
     "head": "7f7a70353814db74e2d403119394585f958fc376",
     "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
     "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
@@ -42058,7 +42067,7 @@
         "actual_scope": "SingletonGlobalNet acquired2originals/fullContext+AX15fields; canonicaldelete0/newrevision9544; no automatic GUIrefresh, report/Undo notexecuted. Mutatedinput02retained, no private reset.",
         "diagnosis": "No transientNone;states27–29 remain oldGlobalNet1924. ArbitraryPTYoutput doesnotmarkworkspacepending; onlyauthoringhandoff does. Observer/source-review assumptionmiss, no newautomaticreload productrequirement or productfailure inferred."
       },
-      "remaining_gate": "No further C04/C05 native execution or worker claim. C06 owner acceptance remains unissued.",
+      "remaining_gate": "No further S5A execution, acceptance or agent claim. Required independent governance authority transcription review passed in turn01a16413-1a03-7202-afdb-9c7cde09a2c3, as recorded in C06_owner_delegated_PM_closure_20261022.",
       "native02_partial_acceptance": {
         "status": "ACTUAL_INDEPENDENT_PARTIAL_SCOPE_MANAGER_ACCEPTED_FULL_NATIVE02_RAW_FAIL_PRESERVED",
         "independent_review": "01a161ec-37bd-74f1-9d6e-c7163770455b",
@@ -42091,7 +42100,7 @@
       "actual_final": "fcbf36 outer0/native0;owned77342discharged",
       "source_review": "01a16201-b104-7f42-9921-462de0257e07",
       "root_observation": "Root5858a7/4de9f9 source/current79/custody andall4original views confirmed; actual independentruntime/pixel review andmanageracceptance pending. No selfPASS.",
-      "current_only_remaining": "C04 and C05 are complete and accepted. Only the existing C06 owner decision remains.",
+      "current_only_remaining": "No remaining S5A step; C06 accepted through the actual owner-appointed PM. Cross-probe remains separate and unselected.",
       "actual_review": "01a16202-e4d6-7940-aeed-da880470337d"
     },
     "source_landing_20261022": {
@@ -42176,14 +42185,15 @@
       "owner_grant_ref": "managed_resumption_preflight_20261018.conditional_C05_owner_direction_20261022",
       "actual_start_condition": "Satisfied by the final C04 evidence commit2becd644, successful push e11587 and exact manager handoff; reviewer then independently executed both serial replays. C05 is now complete.",
       "final_candidate_commit": "2becd6443fdb5eb4cdd849b08ed77408135af900",
-      "C06_boundary": "C06 is selected pending under owner_decision authority. It is not accepted; main issue stays open and no cross-probe successor is selected or authorized.",
+      "C06_boundary": "Discharged by actual owner appointment of PM01a160d9 and its exact S5A objective acceptance. C06 is complete; no successor is selected or execution-authorized.",
       "review_receipt": {
         "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-independent-review-01.json",
         "sha256": "ca1a238e20125b90b9a42ec55202c9c41195aa3331b09c8fbcf98265f4762361",
         "bytes": 16376
       },
       "review_turn": "01a16215-c600-74f0-aa6f-0db635ee5f6b",
-      "claim_state": "Explicitly released for C06 owner decision; no worker claim or replay remains."
+      "claim_state": "Explicitly released for C06 owner decision; no worker claim or replay remains.",
+      "historical_C06_boundary_at_C05_close": "C06 is selected pending under owner_decision authority. It is not accepted; main issue stays open and no cross-probe successor is selected or authorized."
     },
     "historical_frontier_summary_before_C04_completion": "Owner-directed 2026-10-18 S5A-C04 resumption under its retained execution grant is handed to confirmed dev-agent-02 (thread 01a15249-fb58-7023-9a10-1828067d8850). C03 and accepted C04 cases remain credited. Finish genuine native proof gaps and necessary existing-contract corrections; migrate current diagnostic readers before affected proof. Worker ownership includes reviewed frozen replay storage, current diagnostic/complete-membership readers, the existing native QA helper, focused tests, C04 evidence and private ignored scratch, with synchronized metadata. Management coordinates actual review and objective C04 acceptance. Current Wayland/wgpu QA, honest scoped reuse and source/journal preservation remain required. Reserved C05 replay and C06 owner acceptance remain separate; no automatic successor. Owner direction 2026-10-21 removes owner presence/signoff as a C04 development gate only: designated tool-assisted assessors, actual independent review and appointed-manager acceptance must qualify the unchanged nine-panel visual/accessibility criteria. Record tool-assessed observations, never a manufactured HUMAN PASS. C04 remains in_progress until complete reviewed evidence; C05/C06 and successors keep their separate authority. Finite Wire256 prefiltered/prehidden positives and tool-assisted represented visual assessments are independently reviewed and manager accepted at their stated scope. Owner instruction recorded 2026-10-22 conditionally authorizes opening C05 with the worker only after actual C04 closure; C05 is not yet selected or executed, and reserved independent replay remains separate. Finite semantic D4 is independently reviewed and manager accepted. Cap source/tests and exact locked HC/cursor depiction/factual status are accepted at their bounded scopes. Finite nativecap transport is now independently reviewed and manager accepted from complete retained payload while original wrong-prefix observer FAIL remains; no selectedPNG/secondboundary/success-exit credit. Changed-revision Runtime guard is independently accepted supporting proof. Finite ordinary HC/cursor native04 and Global Preferences Escape release preservation are independently reviewed and manager accepted (01a161c7), with50issued/52observed and63canonical preserved. Exact Claude-only status paragraph is independently source/text accepted and its owning route reconciled; depiction unchanged. Finite BoardRun5/GlobalNet6 prehidden/prefiltered ordinary native03 is independently accepted01a161d9. Accepted20source/test/fixturepaths landed037ec5b6 through normalhooks; no nativePASS inferred. GlobalNet native02 independentlyaccepted partial01a161ec demonstrates singleton/delete/exactfreshclearedreport viaordinaryCtrlS refusal/readrefresh withcanonicalinvariance. RawFAIL retained: nextUndo shellhistory losesleading slash afterTerminalEscape; exactReadline state onlysource-consistent hypothesis. GlobalNet native04 exact source7/command08 has actualexit0 fcbf36, fouroriginals, bothcanonicalproducers includingUndo0, exactclearedreport, twoinvariantrefusedSave readrefreshes andrefreshedplainNone/noresurrection; independentruntime/pixelreview andfinalaggregateC04acceptance pending. Prior01/02/03FAIL andunexecuted07REVISE preserved; headerfocusfeedbackintake omd5 separate. Existingcompletion-plan marker scope added beforeanydocumentedit; C04 staysin_progress.",
     "final_factual_state_checks": {
@@ -42222,7 +42232,8 @@
       "final_candidate_commit": null,
       "C06_boundary": "Exact owner acceptance and cross-probe handoff remain owner-reserved. The main S5A issue remains open; no cross-probe successor is selected or authorized."
     },
-    "C05_acceptance_ref": "C05_reserved_independent_review_20261022"
+    "C05_acceptance_ref": "C05_reserved_independent_review_20261022",
+    "C06_acceptance_ref": "C06_owner_delegated_PM_closure_20261022"
   },
   "C05_reserved_independent_review_20261022": {
     "status": "C05_COMPLETE_ACTUAL_RESERVED_INDEPENDENT_PASS_MANAGER_ACCEPTED",
@@ -42626,5 +42637,144 @@
     "historical_frontier_summary_before_C05_completion": "C04 is accepted after final independent runtime/pixel PASS and aggregate CLEAR 01a16202-e4d6-7940-aeed-da880470337d. Source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a are bound in the current proof with preserved failures and finite limits. C05 is selected and claimed under the existing conditional owner grant. Its reserved reviewer is 01a0e343-3d9c-70f1-899e-5bd239513383; replay waits for the final committed and pushed candidate handoff. C06 acceptance remains owner-only, and the main issue stays open.",
     "C06_accepted": false,
     "successor_authorized": false
+  },
+  "C06_owner_delegated_PM_closure_20261022": {
+    "status": "ACTUAL_OWNER_DELEGATION_PM_C06_ACCEPTANCE_AND_INDEPENDENT_GOVERNANCE_WITNESS_PASS",
+    "recorded_at": "2026-10-22T14:44:45Z",
+    "scope": "Existing read-only board/schematic S5A closure only. No product rule, runtime/source change, requirement/criteria waiver, new policy or successor authorization.",
+    "owner_delegation": {
+      "rollout": "/home/bfadmin/.codex/sessions/2026/10/21/rollout-2026-10-21T16-44-02-01a160d9-b499-7923-984a-b3390beb2e34.jsonl",
+      "row": 742,
+      "timestamp": "2026-10-22T14:31:38.720Z",
+      "message_id": "msg_01a16406-53e0-70a1-9869-a84237afe31a",
+      "turn_id": "01a16406-53ca-7822-bbc1-1f0e9818638a",
+      "role": "user",
+      "verbatim": "I have provided clear direction to remove my acceptance criteria from this scoped work (S5A) so that the assigned PM (you) can facilitate the closure of this \"phase from hell\" (taking to long to complete this section of work) you are the PM an I authorize you to make the necessary decisions to complete the scoped work of S5A. Please proceed to open and close S5A-C06",
+      "verification": "Root independently verified the direct user message; disposition writer independently read exact original row742. This is an actual owner appointment and C06-decision authorization, not an inferred PM self-appointment."
+    },
+    "appointed_PM_acceptance": {
+      "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+      "rollout": "/home/bfadmin/.codex/sessions/2026/10/21/rollout-2026-10-21T16-44-02-01a160d9-b499-7923-984a-b3390beb2e34.jsonl",
+      "row": 762,
+      "timestamp": "2026-10-22T14:32:14.251Z",
+      "call_id": "call_588b7b2dc49c4fc39de17a108e6bc2e7",
+      "verbatim_tool_input": "text(await tools.mcp__codex_tui__send_message_to_thread({threadId:\"01a13df1-7a0d-72c1-bbdd-f0d96d481598\",prompt:'Owner NOW explicitly authorizes PM to make S5A decisions and says \"Please proceed to open and close S5A-C06\". Verify direct message in thread01a160d9-b499-7923-984a-b3390beb2e34. I accept reviewed read-only S5A candidate2becd644/source037ec5b6/GUI d3c151d7, actual C05 PASS01a16215/receiptca1a238e/no mandatory findings under this owner delegation. Execute C06 closure now: record exact owner delegation+manager acceptance; reconcile reserved routing/witnesses; complete C06/land S5A/close br with landing evidence; sync Frontier/PROGRESS/beads and durable idle; preserve cross-probe handoff without successor selection. Run required governance checks, normal commit/push; return final commit and verification. Reuse accepted C04/C05 proof; no new runtime or review campaign or owner confirmation. Repository clean at start. Coordinate exact independent governance review only if required. Remain on this until actual closure.'}));\n",
+      "actual_delivery": {
+        "row": 765,
+        "timestamp": "2026-10-22T14:32:14.345Z",
+        "call_id": "call_588b7b2dc49c4fc39de17a108e6bc2e7",
+        "original_output": [
+          {
+            "type": "input_text",
+            "text": "Script completed\nWall time 0.1 seconds\nOutput:\n"
+          },
+          {
+            "type": "input_text",
+            "text": "{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"threadId\\\":\\\"01a13df1-7a0d-72c1-bbdd-f0d96d481598\\\"}\"}],\"isError\":false}"
+          }
+        ]
+      },
+      "plain_reaffirmation": {
+        "row": 789,
+        "timestamp": "2026-10-22T14:33:18.217Z",
+        "message_id": "msg_01df2f7c4da4ec24016ada1eac27f081969318daa55c760ebc",
+        "text": "I accept the reviewed S5A delivery under your delegation. C04 and C05 have passed, with no unresolved mandatory findings. The existing manager is now recording C06 acceptance and closing the task; no additional runtime testing is needed."
+      },
+      "accepted_candidate": "2becd6443fdb5eb4cdd849b08ed77408135af900",
+      "source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+      "gui_sha256": "d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a",
+      "C05_receipt_sha256": "ca1a238e20125b90b9a42ec55202c9c41195aa3331b09c8fbcf98265f4762361",
+      "C05_review_turn": "01a16215-c600-74f0-aa6f-0db635ee5f6b",
+      "mandatory_findings": "None unresolved in accepted C05; C04/C05 evidence and all original scope limits are reused unchanged."
+    },
+    "preserved_undelivered_attempt": {
+      "row": 755,
+      "call_id": "call_fbd0a0937b8e47fa84e9f37f6932c2f7",
+      "failed_delivery_row": 758,
+      "failure": "Prompt exceeded maximum context budget; this first send is not the operative delivered acceptance. Successful762/765 and plain789 are bound above."
+    },
+    "PS012": {
+      "appointment_id": "s5a-c06-owner-appointed-pm-20261022",
+      "appointment_source_ref": {
+        "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+        "marker": "<!-- APPOINTMENT:UVT-S5A-BUILD:C06-PM-20261022 -->"
+      },
+      "appointment_witness": {
+        "owner_appointed": true,
+        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "task_keys": [
+          "UVT-S5A-BUILD"
+        ],
+        "decision_kinds": [
+          "objective_acceptance"
+        ]
+      },
+      "classification_source_ref": {
+        "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+        "marker": "<!-- DECISION-AUTHORITY:UVT-S5A-BUILD:S5A-C06:OBJECTIVE-ACCEPTANCE-20261022 -->"
+      },
+      "classification_witness": {
+        "task_key": "UVT-S5A-BUILD",
+        "step_id": "S5A-C06",
+        "decision_kind": "objective_acceptance"
+      },
+      "routing": {
+        "step": "S5A-C06",
+        "appointment": "s5a-c06-owner-appointed-pm-20261022",
+        "decision_kind": "objective_acceptance"
+      },
+      "scope_boundary": "Only this actual owner-appointed PM, UVT-S5A-BUILD and C06 objective acceptance. Existing C04 manager appointment and all other tasks/step reservations remain unchanged. JSON structure validates provenance shape; it does not manufacture authority or an independent witness PASS.",
+      "independent_witness_review": {
+        "status": "PASS",
+        "reviewer_session": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+        "review_turn": "01a16413-1a03-7202-afdb-9c7cde09a2c3",
+        "receipt": "Actual MCP peer receipt independently read from reviewer thread; original owner742, delivered PM762/765 and789 match; exact PS012 witnesses/routing/idle valid; C06complete/S5Alanded/closed/no claims; cross-probe planning only; C05 and criteria unchanged; no mandatory findings.",
+        "reviewed_foundation_sha256": "012283c26c5ada7e31f0efc07a2a4b5305a0d92d6daa3bc867f69c9e917341af",
+        "reviewed_frontier_sha256": "5cc384e31eee0ae5d194e1e86e42b64db32497fb42f37c29fd548da6470505a3",
+        "reviewed_proof_sha256_prefix": "7b208215",
+        "reviewed_beads_sha256_prefix": "9c78aaf8",
+        "reviewed_manifest_sha256_prefix": "27537493",
+        "retained_boundaries": "Governance authority transcription and disposition only; no runtime/source/new criteria approval."
+      }
+    },
+    "accepted_landing_evidence": {
+      "landing_commit": "a52093285bda2b6ebff7078e058881ea7118b5c1",
+      "source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+      "reviewed_runtime_candidate": "2becd6443fdb5eb4cdd849b08ed77408135af900",
+      "C05_closure_proof_git_ref": "a52093285bda2b6ebff7078e058881ea7118b5c1:docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+      "C05_closure_proof_sha256": "404c1f591a7d7b5ea0ed42651fe1fe3f65a35b5c1f7e9a9c6ffc4a149ce90414",
+      "interpretation": "These are actual existing landed and pushed delivery/evidence commits, not the future commit for this governance record. The reviewed C04 proof d01e420b remains explicitly resolved at git2becd644:path in the preserved C05 record."
+    },
+    "disposition": "The owner-appointed PM accepts S5A-C06 against the exact reviewed delivery and accepted independent evidence. C06 and read-only S5A are complete; close the main issue using actual accepted landing evidence. No further execution claim is created. Cross-probe receives only the existing prerequisite handoff, remains unselected/unclaimed and retains separate execution authorization.",
+    "historical_owner_packet": {
+      "requests": [
+        {
+          "id": "ACCEPT",
+          "question": "Do you accept the exact delivered scope, candidate and evidence after independent review and defect disposition?",
+          "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+          "source_ref": {
+            "marker": "ACCEPT",
+            "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"
+          }
+        }
+      ],
+      "response_format": "Reply `UVT-S5A-BUILD: accept delivery — <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise — <correction>`, or `UVT-S5A-BUILD: defer — <reason>`."
+    },
+    "historical_frontier_summary": "C04 and C05 are complete and accepted. Reserved independent review 01a16215-c600-74f0-aa6f-0db635ee5f6b binds candidate 2becd6443fdb5eb4cdd849b08ed77408135af900, source 037ec5b66402ee7d11d0a310564381ea73245746 and GUI d3c151d7. C06 is the sole pending owner decision; the worker claim and assignee are explicitly released, the main issue stays open, and no cross-probe successor is selected or authorized.",
+    "idle_source_ref": {
+      "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+      "marker": "<!-- DISPOSITION:UVT-S5A-BUILD:CLOSED-IDLE-20261022 -->"
+    },
+    "cross_probe_handoff": {
+      "issue": "dat-gui-p2-cross-probe-27z",
+      "previous_state": "blocked",
+      "current_state": "planned",
+      "authorization_preserved": "planning",
+      "canonical_next": false,
+      "claim": null,
+      "effect": "Closing the sole S5A prerequisite permits factual planning readiness only; no cross-probe planning work starts and no execution or successor selection is authorized."
+    },
+    "retained_limits": "All accepted C04/C05 raw CAPTURE_ONLY/FAIL/preparation records, source/binary cohorts, class applicability, deferred editors, CAM/T04, hardware/performance and tool-assessed-versus-HUMAN boundaries remain unchanged. This owner appointment delegates the C06 decision; it does not remove ratified criteria or claim new qualification.",
+    "consumed_handoff_reconciliation": "UVT-S5-SPEC and S5A-DERIVED-AUTHORITY live unblocks arrays are now empty because their former sole target S5A is closed. Historical effects/dependency edges are preserved; no successor or authority change."
   }
 }

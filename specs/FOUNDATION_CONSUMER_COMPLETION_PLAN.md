@@ -535,6 +535,45 @@ Present exact candidate/evidence, independent review and defect dispositions
 for owner acceptance. On acceptance, close only read-only S5A and record its
 handoff to `dat-gui-p2-cross-probe-27z`; do not select or authorize that successor.
 
+<!-- EVIDENCE:UVT-S5A-BUILD:S5A-C06-COMPLETE -->
+**C06 acceptance and S5A closure — 2026-10-22.** The owner directly appointed
+PM session `01a160d9-b499-7923-984a-b3390beb2e34` and authorized the necessary S5A decisions,
+explicitly including opening and closing C06 (original user message row742,
+2026-10-22T14:31:38.720Z). That PM accepted the exact reviewed delivery:
+candidate `2becd6443fdb5eb4cdd849b08ed77408135af900`, source `037ec5b66402ee7d11d0a310564381ea73245746`,
+GUI `d3c151d7`, and independent C05 PASS/receipt `ca1a238e` with no unresolved
+mandatory findings. The operative delivered PM acceptance is original row762,
+confirmed by successful delivery row765; the undelivered first attempt is retained
+in the [existing proof](../docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json#C06_owner_delegated_PM_closure_20261022).
+
+This is a bounded use of existing PM059/PS-012 authority, not a new policy,
+requirement waiver or extension beyond read-only S5A. All ratified criteria and
+accepted C04/C05 evidence, raw failed/CAPTURE_ONLY records and finite limitations
+remain unchanged. The former C06 owner-only packet is retained as historical
+source; the actual owner has now delegated this specific objective decision.
+
+<!-- APPOINTMENT:UVT-S5A-BUILD:C06-PM-20261022 -->
+{"owner_appointed":true,"session":"01a160d9-b499-7923-984a-b3390beb2e34","task_keys":["UVT-S5A-BUILD"],"decision_kinds":["objective_acceptance"]}
+
+<!-- DECISION-AUTHORITY:UVT-S5A-BUILD:S5A-C06:OBJECTIVE-ACCEPTANCE-20261022 -->
+{"task_key":"UVT-S5A-BUILD","step_id":"S5A-C06","decision_kind":"objective_acceptance"}
+
+The witnesses transcribe the actual owner appointment and classify only
+`UVT-S5A-BUILD/S5A-C06` as `objective_acceptance`. Independent verification of this
+transcription is required before final route acceptance and governance landing;
+no witness PASS is inferred from structurally valid JSON.
+
+<!-- DISPOSITION:UVT-S5A-BUILD:CLOSED-IDLE-20261022 -->
+Read-only S5A is accepted, complete and closed using actual landed delivery and
+qualification evidence at `a52093285bda2b6ebff7078e058881ea7118b5c1` (source `037ec5b6`,
+reviewed candidate `2becd644`). No future closure commit hash is invented.
+No agent claim or canonical task remains selected: the Frontier is explicitly
+idle. The existing `dat-gui-p2-cross-probe-27z` prerequisite handoff is preserved;
+its planning authorization remains unchanged, but no work starts, no successor
+is selected, and no cross-probe execution authority is granted by this closure.
+This factual disposition supersedes earlier current-state C06-pending statements
+without rewriting their historical receipts or scope.
+
 ## GUI-WRITE-PATH — typed, journaled GUI dispatch
 
 Issue: `dat-gui-write-path-qiu`. Preserve the existing marking-menu-shell and
