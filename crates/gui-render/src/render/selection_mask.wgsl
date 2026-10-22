@@ -74,10 +74,18 @@ struct MaskOut { @location(0) label:vec4<f32>, @location(1) material:vec4<f32> }
  if (!covered(i)) {discard;}
  var o:MaskOut; o.label=encode(i.label);
  var color=i.material; var alpha=0.0;
- if (i.material_role==1u) {color=min(color*1.08,vec3<f32>(1.0)); alpha=1.0;}
- if (i.material_role==0u && (ranges[0].w&2u)!=0u) {
+ let role=i.material_role&3u;
+ if (role==1u) {color=min(color*1.08,vec3<f32>(1.0)); alpha=1.0;}
+ if (role==0u && (ranges[0].w&2u)!=0u) {
   let context=bitcast<vec4<f32>>(ranges[1]); let policy=bitcast<vec4<f32>>(ranges[2]);
   color=mix(max(color*context.w,vec3<f32>(policy.x)),context.xyz,policy.y); alpha=1.0;
+ }
+ // Screen-space approved 7px/1px/45deg hatch, clipped by the retained material
+ // and its voids. Selection boundaries and diagnostic passes remain above it.
+ if ((i.material_role&4u)!=0u && (ranges[0].w&1u)!=0u) {
+  let diagonal=(i.logical.x+i.logical.y)*0.7071067811865476;
+  let phase=diagonal-7.0*floor(diagonal/7.0);
+  if (min(phase,7.0-phase)<=0.5) {color=vec3<f32>(154.0,160.0,168.0)/255.0; alpha=1.0;}
  }
  o.material=vec4<f32>(linear(color),alpha);
  return o;

@@ -8,6 +8,7 @@ struct Choice {
     key: String,
     label: u32,
     boundary: bool,
+    locked: bool,
     minimum: bool,
     islands: Vec<usize>,
 }
@@ -186,6 +187,7 @@ impl Request {
                 key: copy,
                 label,
                 boundary,
+                locked: owner.is_some_and(|owner| view.locked.contains(owner)),
                 minimum: false,
                 islands,
             });
@@ -309,7 +311,8 @@ impl Request {
         presentation.source.as_ref() == Some(&self.0.source)
     }
     /// 0 unrelated authored, 1 selected material, 2 related baseline,
-    /// 3 anonymous structure/void. These are paint roles, never identities.
+    /// 3 anonymous structure/void; bit 2 marks selected locked material.
+    /// These are paint roles, never identities.
     pub(crate) fn material_role(&self, span: &Span) -> u32 {
         if span.role == Role::Void {
             return 3;
@@ -329,7 +332,7 @@ impl Request {
             return 2;
         }
         if Self::selected_part(choice, span.role) {
-            1
+            1 | if choice.locked { 4 } else { 0 }
         } else {
             0
         }

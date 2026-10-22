@@ -304,6 +304,8 @@ fn authored_label_drag_arms_region_and_preserves_atomic_refusal() {
             ModifiersState::empty(),
         );
         preserved_selection(&previous, &runtime.workspace().selection);
+
+        stale_region_completion_preserves_current_selection(&mut runtime);
     }));
 
     runtime.begin_application_terminal_shutdown();
@@ -329,4 +331,106 @@ fn authored_label_drag_arms_region_and_preserves_atomic_refusal() {
         std::panic::resume_unwind(error);
     }
     std::fs::remove_dir_all(root).unwrap();
+}
+
+/// Deterministic stale evaluator at the actual Runtime publication seam. This
+/// checks the revision guard, not a concurrent filesystem/native race.
+fn stale_region_completion_preserves_current_selection(runtime: &mut Runtime) {
+    use datum_gui_viewport::selection_acquisition::AcquisitionMode;
+    assert!(runtime.ensure_selection_authority().unwrap());
+    let native = runtime.native_selection.as_ref().unwrap();
+    let current_revision = native.model.model_revision.0.clone();
+    let basis = native.region_bases.get("board").unwrap().clone();
+    let previous = runtime.workspace().selection.clone();
+    assert!(matches!(previous, SelectionTarget::Native(_)));
+    let stale_revision = "0".repeat(64);
+    assert_ne!(stale_revision, current_revision);
+    // Ordinary eligibility excludes only the known unavailable Zone fill. A
+    // positive control must include the current Object, so publishing this stale
+    // subtractive result would actually remove it rather than quietly do nothing.
+    let original_filters = runtime.workspace().ui.filters.clone();
+    let mut filters = original_filters.clone();
+    filters
+        .excluded_selection_classes
+        .insert(datum_gui_protocol::AuthoredSelectionClass::Zone);
+    runtime.session.workspace_mut().ui.filters = filters.clone();
+    let bounds = &runtime.workspace().scene.bounds;
+    let point = |x, y| datum_gui_protocol::PointNm { x, y };
+    let path = vec![
+        point(bounds.min_x - 1, bounds.min_y - 1),
+        point(bounds.max_x + 1, bounds.min_y - 1),
+        point(bounds.max_x + 1, bounds.max_y + 1),
+        point(bounds.min_x - 1, bounds.max_y + 1),
+    ];
+    let mut control = crate::selection_region_evaluation::RegionEvaluation::begin(
+        datum_gui_protocol::PaneId(0),
+        AcquisitionMode::Remove,
+        current_revision.clone(),
+        basis.clone(),
+        filters.clone(),
+        &path,
+    )
+    .unwrap();
+    let candidates = loop {
+        if let Some(candidates) = control.advance().unwrap() {
+            break candidates;
+        }
+    };
+    let SelectionTarget::Native(view) = &previous else {
+        unreachable!()
+    };
+    assert!(!view.members.is_empty());
+    assert!(
+        view.members.is_subset(&candidates),
+        "positive stale result would remove current Object"
+    );
+    runtime.selection_evaluation = Some(
+        crate::selection_region_evaluation::RegionEvaluation::begin(
+            datum_gui_protocol::PaneId(0),
+            AcquisitionMode::Remove,
+            stale_revision,
+            basis,
+            filters,
+            &path,
+        )
+        .unwrap(),
+    );
+    runtime.session.workspace_mut().ui.selection_region =
+        Some(datum_gui_protocol::SelectionRegionFeedback {
+            pane: datum_gui_protocol::PaneId(0),
+            path,
+            subtractive: true,
+            phase: 0,
+            evaluating: Some(0),
+        });
+    runtime.selection_tick = Some(std::time::Instant::now());
+    while runtime.selection_evaluation.is_some() {
+        assert!(runtime.advance_native_region_evaluation());
+    }
+    preserved_selection(&previous, &runtime.workspace().selection);
+    assert_eq!(
+        runtime
+            .native_selection
+            .as_ref()
+            .unwrap()
+            .model
+            .model_revision
+            .0,
+        current_revision
+    );
+    assert!(runtime.selection_evaluation.is_none());
+    assert!(runtime.workspace().ui.selection_region.is_none());
+    assert!(runtime.selection_tick.is_none());
+    assert_eq!(
+        runtime
+            .workspace()
+            .ui
+            .console
+            .records()
+            .next_back()
+            .unwrap()
+            .message,
+        "Region cancelled: resolved revision changed; no partial selection published"
+    );
+    runtime.session.workspace_mut().ui.filters = original_filters;
 }

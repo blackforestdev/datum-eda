@@ -350,17 +350,24 @@ impl PreparedScene {
                     crosshair_cursor_screen,
                     crosshair_style,
                 );
+                let locked_anchor = state
+                    .ui
+                    .hovered_object
+                    .as_ref()
+                    .filter(|hover| {
+                        menu_hover.is_none()
+                            && hover.surface == datum_gui_protocol::PaneContent::Board
+                    })
+                    .and_then(|hover| board_lock_anchors.get(&hover.object_id));
+                crate::native_selection_overlay::lock_cue::push_cursor(
+                    &mut board_interaction_quads,
+                    crosshair_cursor_screen,
+                    locked_anchor.is_some(),
+                    scene_viewport,
+                );
                 crate::native_selection_overlay::lock_cue::push_hover(
                     &mut board_interaction_quads,
-                    state
-                        .ui
-                        .hovered_object
-                        .as_ref()
-                        .filter(|hover| {
-                            menu_hover.is_none()
-                                && hover.surface == datum_gui_protocol::PaneContent::Board
-                        })
-                        .and_then(|hover| board_lock_anchors.get(&hover.object_id)),
+                    locked_anchor,
                     &board_projection,
                     scene_viewport,
                 );

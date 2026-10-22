@@ -690,3 +690,6 @@ fn native_schematic_text_hover_matches_full_preparation_and_certified_layout() {
     assert_eq!(crate::retained_scene_resolve_count(), resolves);
     assert_eq!(fixture.source_bytes(), source_before);
 }
+
+#[path = "session_pointer_tests/locked.rs"]
+mod locked;

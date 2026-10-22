@@ -5,6 +5,8 @@ use std::path::{Path, PathBuf};
 mod annotations;
 #[path = "s5a_fixture/artifacts.rs"]
 mod artifacts;
+#[path = "s5a_fixture/board_derived_hidden.rs"]
+mod board_derived_hidden;
 #[path = "s5a_fixture/bus_run.rs"]
 mod bus_run;
 #[path = "s5a_fixture/classes.rs"]
@@ -15,6 +17,8 @@ mod collision;
 mod edge_cuts;
 #[path = "s5a_fixture/filled_board_graphic.rs"]
 mod filled_board_graphic;
+#[path = "s5a_fixture/global_net_lifetime.rs"]
+mod global_net_lifetime;
 #[path = "s5a_fixture/library.rs"]
 mod library;
 #[path = "s5a_fixture/lifecycle.rs"]
@@ -39,7 +43,7 @@ mod workspace;
 fn main() -> Result<()> {
     let mut args = std::env::args_os().skip(1);
     let family = args.next().context(
-        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision|bus-run-refusal|bus-run-refusal-256|wire-run-hidden-257|wire-run-hidden-256|filled-board-graphic|component-edge-cuts> [<fresh-root>|--managed] [existing CLI binary]",
+        "usage: s5a_fixture <electrical-scope|compound-output|dense-and-cancel|revision-lifetime|class-qualification|semantic-scope|scope-and-reopen|library-base|library-parents|annotation-scope|non-authored-channels|symbol-majority|maximal-channel-collision|bus-run-refusal|bus-run-refusal-256|wire-run-hidden-257|wire-run-hidden-256|filled-board-graphic|component-edge-cuts|board-derived-hidden|global-net-lifetime> [<fresh-root>|--managed] [existing CLI binary]",
     )?;
     let family = family.to_str().context("family must be UTF-8")?;
     // External explicit roots remain valid for pinned replay. New/default
@@ -96,6 +100,8 @@ fn run(family: &str, root: &Path) -> Result<()> {
         "wire-run-hidden-257" => return wire_run_hidden::build(root, 257),
         "wire-run-hidden-256" => return wire_run_hidden::build(root, 256),
         "filled-board-graphic" => return filled_board_graphic::build(root),
+        "board-derived-hidden" => return board_derived_hidden::build(root),
+        "global-net-lifetime" => return global_net_lifetime::build(root),
         _ => {}
     }
     if family == "library-base" {

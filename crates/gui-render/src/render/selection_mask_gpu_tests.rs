@@ -691,3 +691,6 @@ fn selection_cue_pixels_stay_two_physical_pixels_through_camera_zoom() {
     assert_eq!(fixture.source_bytes(), source);
     assert_eq!(std::fs::read(head_path).unwrap(), head);
 }
+
+#[path = "selection_mask_gpu_tests/locked.rs"]
+mod locked;

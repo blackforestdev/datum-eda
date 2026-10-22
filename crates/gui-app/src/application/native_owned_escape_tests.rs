@@ -303,6 +303,79 @@ fn native_owned_escape_release_survives_host_retirement_and_renderer_filtering()
                 "native Wayland dispatch: {destination} release preserved prior selection; fresh Main Escape cleared; non-Escape/nonpending/repeat controls passed"
             );
         }
+
+        // Global Preferences must own the same closing Escape cycle. This is
+        // the Main-release case after host retirement, using the captured genuine KeyEvent
+        // and actual production dispatch rather than another host matrix.
+        let runtime = app.runtime.as_mut().unwrap();
+        assert!(runtime.native_select_all_on(false));
+        let prior = runtime.workspace().selection.clone();
+        assert_ne!(prior, SelectionTarget::None);
+        assert!(runtime.open_global_preferences());
+        sync_owned(&mut events, &mut app);
+        let owned = app.global_preferences_window.as_ref().unwrap().id();
+        deliver(
+            &mut events,
+            &mut app,
+            owned,
+            &template,
+            NamedKey::Escape,
+            ElementState::Pressed,
+            false,
+        );
+        assert!(
+            !app.runtime
+                .as_ref()
+                .unwrap()
+                .workspace()
+                .ui
+                .global_preferences
+                .open
+        );
+        assert_eq!(app.runtime.as_ref().unwrap().workspace().selection, prior);
+        sync_owned(&mut events, &mut app);
+        assert!(app.global_preferences_window.is_none());
+        deliver(
+            &mut events,
+            &mut app,
+            main,
+            &template,
+            NamedKey::Escape,
+            ElementState::Released,
+            false,
+        );
+        assert_eq!(
+            app.runtime.as_ref().unwrap().workspace().selection,
+            prior,
+            "Global Preferences closing release must preserve selection after host retirement"
+        );
+        deliver(
+            &mut events,
+            &mut app,
+            main,
+            &template,
+            NamedKey::Escape,
+            ElementState::Pressed,
+            false,
+        );
+        assert_eq!(app.runtime.as_ref().unwrap().workspace().selection, prior);
+        deliver(
+            &mut events,
+            &mut app,
+            main,
+            &template,
+            NamedKey::Escape,
+            ElementState::Released,
+            false,
+        );
+        assert_eq!(
+            app.runtime.as_ref().unwrap().workspace().selection,
+            SelectionTarget::None,
+            "the next fresh idle Main Escape must clear after the single owned release"
+        );
+        eprintln!(
+            "native Global Preferences closing press/release preserves selection; next fresh Main cycle clears"
+        );
     }));
     // Explicit test housekeeping on success and assertion failure. This is not
     // evidence of an ordinary user Close or application shutdown workflow.

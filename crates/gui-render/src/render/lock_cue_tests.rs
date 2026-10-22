@@ -325,3 +325,27 @@ fn actual_locked_package_padlock_capture_for_review() {
         .save(out.join("lock-cue-hover.png"))
         .unwrap();
 }
+
+#[test]
+fn cursor_badge_is_one_existing_glyph_and_clears_or_clips_as_a_whole() {
+    let mut expected = Vec::new();
+    push_at(&mut expected, (216.0, 136.0), viewport());
+    let mut actual = Vec::new();
+    push_cursor(&mut actual, Some((200.0, 150.0)), true, viewport());
+    assert!(!actual.is_empty());
+    assert_eq!(
+        actual, expected,
+        "one exact governed glyph at the approved offset"
+    );
+    for (cursor, locked) in [
+        (None, true),
+        (Some((200.0, 150.0)), false),
+        (Some((-1.0, 150.0)), true),
+        (Some((398.0, 150.0)), true),
+        (Some((200.0, 1.0)), true),
+    ] {
+        let mut absent = Vec::new();
+        push_cursor(&mut absent, cursor, locked, viewport());
+        assert!(absent.is_empty(), "no stale, unqualified or partial glyph");
+    }
+}

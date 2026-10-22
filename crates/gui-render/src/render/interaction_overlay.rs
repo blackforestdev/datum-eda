@@ -109,9 +109,16 @@ impl PreparedScene {
                 self.crosshair_cursor_screen,
                 self.crosshair_style,
             );
+            let locked_anchor = board_hover_target.and_then(|id| self.board_lock_anchors.get(id));
+            crate::native_selection_overlay::lock_cue::push_cursor(
+                &mut board,
+                self.crosshair_cursor_screen,
+                locked_anchor.is_some(),
+                pass.scene_viewport,
+            );
             crate::native_selection_overlay::lock_cue::push_hover(
                 &mut board,
-                board_hover_target.and_then(|id| self.board_lock_anchors.get(id)),
+                locked_anchor,
                 &projection,
                 pass.scene_viewport,
             );

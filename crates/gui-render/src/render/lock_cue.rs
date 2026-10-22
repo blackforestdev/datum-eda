@@ -101,6 +101,19 @@ pub(crate) fn push_hover(
     }
 }
 
+/// One transient copy beside the ordinary pointer, using the same qualified
+/// locked-placement hover as the authored-anchor cue. Cursor hotspot is unchanged.
+pub(crate) fn push_cursor(
+    out: &mut Vec<Quad>,
+    cursor: Option<(f32, f32)>,
+    locked_hover: bool,
+    viewport: RectPx,
+) {
+    if locked_hover && let Some((x, y)) = cursor.filter(|&(x, y)| viewport.contains(x, y)) {
+        push_at(out, (x + 16.0, y - 14.0), viewport);
+    }
+}
+
 fn push_at(out: &mut Vec<Quad>, anchor: (f32, f32), viewport: RectPx) {
     // Whole glyph or nothing: a pane edge never shows a partial padlock.
     let half = 12.0 * PX_PER_UNIT;

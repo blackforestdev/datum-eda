@@ -121,6 +121,7 @@ fn zone_qualifier_and_void_construction_never_invent_membership() {
             key: "zone".into(),
             label: 1,
             boundary: false,
+            locked: false,
             minimum: false,
             islands: vec![1],
         }],
@@ -282,4 +283,44 @@ fn canonical_related_parent_keeps_baseline_role_while_selected_pin_keeps_materia
     }
     assert_eq!(state.selection, selection);
     assert_eq!(fixture.source_bytes(), source);
+}
+
+#[test]
+fn locked_paint_role_keeps_exact_islands_voids_and_minimum_group_independence() {
+    // Paint-role construction oracle only; no authored Track/Zone lock is invented.
+    let mut request = Request(Arc::new(Inner {
+        source: Source::default(),
+        high_contrast: true,
+        dim_unrelated: false,
+        choices: vec![Choice {
+            key: "presented-member".into(),
+            label: 1,
+            boundary: false,
+            locked: true,
+            minimum: true,
+            islands: vec![1],
+        }],
+        screen: Vec::new(),
+        screen_permit: None,
+        _permit: None,
+    }));
+    let span = |role| Span {
+        key: Some("presented-member".into()),
+        role,
+        range: 0..3,
+    };
+    for role in [Role::Material, Role::ZoneIsland(1)] {
+        assert_eq!(request.material_role(&span(role)), 5);
+        assert_eq!(
+            request.label(&span(role)),
+            0,
+            "minimum cue suppresses label, not hatch"
+        );
+    }
+    assert_eq!(request.material_role(&span(Role::Void)), 3);
+    for role in [Role::ZoneBoundary, Role::ZoneIsland(0)] {
+        assert_eq!(request.material_role(&span(role)), 0);
+    }
+    Arc::get_mut(&mut request.0).unwrap().choices[0].locked = false;
+    assert_eq!(request.material_role(&span(Role::Material)), 1);
 }

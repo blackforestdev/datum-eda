@@ -231,3 +231,220 @@ fn focused_compound_drop_preserves_survivor_without_promoting_or_resurrecting() 
     assert_eq!(restored.members, view.members);
     assert!(restored.focus().is_none());
 }
+
+#[test]
+fn semantic_identity_retirement_reports_through_prepared_edit_and_shared_runtime_path() {
+    use datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis;
+    use eda_engine::{
+        api::native_write::{self, electrical},
+        schematic::Bus,
+        substrate::{
+            ElectricalIdentity, ElectricalIdentityRecord, ElectricalOccurrence, NetAnchorReason,
+            NetRelationshipIntent, ObjectRevision, RevisionedRef,
+        },
+    };
+    let mut f = fixture::Fixture::new("semantic-lifetime-report");
+    f.line(fixture::id(1), Point::new(0, 0), Point::new(1000, 0));
+    let bus = Bus {
+        uuid: fixture::id(2),
+        name: "spine".into(),
+        members: vec![],
+        segments: vec![Point::new(0, 2000), Point::new(1000, 2000)],
+    };
+    f.commit([Operation::CreateSchematicBus {
+        sheet_id: f.sheet,
+        bus_id: bus.uuid,
+        bus: serde_json::to_value(bus).unwrap(),
+    }]);
+    let occurrence = |class: &str, id| ElectricalOccurrence {
+        class: class.into(),
+        source_id: fixture::id(id),
+        instance_path: vec![],
+    };
+    for (id, identity) in [
+        (
+            800,
+            ElectricalIdentity::Net {
+                anchor: occurrence("tracks", 1),
+                anchor_reason: NetAnchorReason::Authored,
+                retired: false,
+                predecessors: Default::default(),
+            },
+        ),
+        (
+            801,
+            ElectricalIdentity::NetRelationship {
+                logical_net: fixture::id(800),
+                board_net: Some(RevisionedRef {
+                    object_id: f.net,
+                    object_revision: f.model.objects[&f.net].object_revision,
+                }),
+                intent: NetRelationshipIntent::BoardOnly,
+                evidence: vec![],
+            },
+        ),
+        (
+            700,
+            ElectricalIdentity::Bus {
+                name: "original".into(),
+                scalar_nets: Default::default(),
+                representations: [occurrence("buses", 2)].into(),
+                retired: false,
+            },
+        ),
+    ] {
+        let write = electrical::build_create_electrical_identity(
+            &f.model,
+            fixture::provenance(),
+            ElectricalIdentityRecord {
+                id: fixture::id(id),
+                object_revision: ObjectRevision(0),
+                identity,
+            },
+        )
+        .unwrap();
+        native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    }
+    let workspace = |model: &eda_engine::substrate::DesignModel| {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.project_uuid = model.project.project_id.to_string();
+        state.scene.source_revision = model.model_revision.0.clone();
+        state.supervision.journal.accepted_transaction_tip =
+            eda_engine::revision::transaction_tip(&model.journal).map(|id| id.to_string());
+        state
+    };
+    let prepared = |f: &fixture::Fixture, previous, selected| {
+        let mut next = workspace(&f.model);
+        let filters = next.ui.filters.clone();
+        prepare_from_model(
+            &mut next,
+            Inputs {
+                selected,
+                filters,
+                prior: Some(previous),
+            },
+            Arc::new(f.model.clone()),
+            Default::default(),
+        )
+        .unwrap()
+        .selected
+    };
+
+    let previous = Arc::new(NativeSelectionResolution::capture(&f.model).unwrap());
+    let bus_subject = SelectionSubject::Bus(fixture::id(700));
+    let bus_view = build_workspace_selection_view(
+        &f.model,
+        &previous,
+        bus_subject.clone(),
+        &workspace(&f.model),
+    )
+    .unwrap();
+    assert_eq!(bus_view.members.len(), 1);
+    let mut renamed = f.model.electrical_identities[&fixture::id(700)].clone();
+    let ElectricalIdentity::Bus { name, .. } = &mut renamed.identity else {
+        panic!("Bus declaration")
+    };
+    *name = "renamed without replacing identity".into();
+    let write = electrical::build_set_electrical_identity(&f.model, fixture::provenance(), renamed)
+        .unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let source = f.source_bytes();
+    let SelectionTarget::Native(renamed_view) = prepared(
+        &f,
+        previous,
+        SelectionTarget::Native(Box::new(bus_view.clone())),
+    ) else {
+        panic!("stable Bus identity survives rename")
+    };
+    assert_eq!(renamed_view.subject, bus_subject);
+    assert_eq!(renamed_view.members, bus_view.members);
+    assert!(renamed_view.notice.is_none() && renamed_view.dropped.is_empty());
+    fixture::Fixture::assert_bytes(&source);
+
+    for (subject, id, expected_notice) in [
+        (
+            SelectionSubject::GlobalNet(fixture::id(800)),
+            fixture::id(800),
+            "Selected Global Net no longer resolves; selection cleared.",
+        ),
+        (
+            bus_subject,
+            fixture::id(700),
+            "Selected Bus no longer resolves; selection cleared.",
+        ),
+    ] {
+        let previous = Arc::new(NativeSelectionResolution::capture(&f.model).unwrap());
+        let view = build_workspace_selection_view(
+            &f.model,
+            &previous,
+            subject.clone(),
+            &workspace(&f.model),
+        )
+        .unwrap();
+        assert_eq!(view.members.len(), 1);
+        let retirement_ids = if matches!(subject, SelectionSubject::GlobalNet(_)) {
+            vec![fixture::id(801), id]
+        } else {
+            vec![id]
+        };
+        // Retire the Net and its binding atomically; keep its authored Track.
+        // The combined canonical batch supplies fresh guards for both writers.
+        let operations: Vec<_> = retirement_ids
+            .into_iter()
+            .flat_map(|id| {
+                electrical::build_delete_electrical_identity(&f.model, fixture::provenance(), id)
+                    .unwrap()
+                    .batch
+                    .operations
+            })
+            .filter(|op| !matches!(op, Operation::GuardObjectRevision { .. }))
+            .collect();
+        f.commit(operations);
+        let source = f.source_bytes();
+        let target = prepared(
+            &f,
+            previous.clone(),
+            SelectionTarget::Native(Box::new(view)),
+        );
+        assert_eq!(target, report(&f, &previous, &subject));
+        let SelectionTarget::Native(cleared) = &target else {
+            panic!("semantic identity loss must retain its current empty report")
+        };
+        assert_eq!(cleared.subject, SelectionSubject::None);
+        assert_eq!(cleared.revision, f.model.model_revision);
+        assert!(!cleared.stale);
+        assert_eq!(cleared.notice.as_deref(), Some(expected_notice));
+        assert!(cleared.members.is_empty() && cleared.dropped.is_empty());
+        assert!(cleared.focus().is_none() && cleared.related.is_empty());
+        assert!(cleared.board_keys.is_empty() && cleared.schematic_keys.is_empty());
+        assert!(cleared.values.is_empty());
+        assert_eq!(
+            cleared.field_ref("member_count"),
+            Some(
+                &datum_gui_protocol::selection_view::InspectionValue::Common(serde_json::json!(0))
+            )
+        );
+        assert_eq!(cleared.inspector_title(), "No selection");
+        assert!(cleared.summary().ends_with(expected_notice));
+        let inspector = InspectorPresentationBasis::capture(cleared, &Default::default());
+        assert_eq!(inspector.notice.as_deref(), Some(expected_notice));
+        assert_eq!(inspector.member_count, 0);
+        let context = datum_gui_protocol::DatumSelectionContext::from_selection(&target);
+        assert_eq!(context.kind, "none");
+        let details = context.details.unwrap();
+        assert_eq!(details.subject, Some(SelectionSubject::None));
+        assert_eq!(details.notice.as_deref(), Some(expected_notice));
+        assert_eq!(details.total, 0);
+        assert_eq!(details.members, Some(vec![]));
+        assert!(details.focus.is_none());
+        for field in cleared.fields() {
+            assert_eq!(details.inspection.get(field), cleared.field_ref(field));
+        }
+        fixture::Fixture::assert_bytes(&source);
+        let retired = Arc::new(NativeSelectionResolution::capture(&f.model).unwrap());
+        f.undo();
+        let source = f.source_bytes();
+        assert_eq!(prepared(&f, retired, target), SelectionTarget::None);
+        fixture::Fixture::assert_bytes(&source);
+    }
+}

@@ -3,7 +3,9 @@ use datum_gui_protocol::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Identity, CompoundSelection,
     SelectionProjectId, SelectionSubject as Subject,
 };
-use datum_gui_viewport::selection_lifetime::reconcile_selection;
+use datum_gui_viewport::selection_lifetime::{
+    SelectionReconciliationState as State, reconcile_selection,
+};
 use std::collections::{BTreeMap, BTreeSet};
 
 fn uuid(n: u64) -> SelectionProjectId {
@@ -62,11 +64,18 @@ fn surviving_derived_identity_rederives_wholly_and_missing_origin_dissolves() {
     let full = BTreeSet::from([id(1), id(3), id(4)]);
     next.runs.as_mut().unwrap().insert(id(1), full.clone());
     next.nets.as_mut().unwrap().insert(uuid(800), full.clone());
-    for subject in [Subject::Run(id(1).into()), Subject::GlobalNet(uuid(800))] {
+    next.buses = Some(BTreeMap::from([(uuid(700), full.clone())]));
+    for subject in [
+        Subject::Run(id(1).into()),
+        Subject::GlobalNet(uuid(800)),
+        Subject::Bus(uuid(700)),
+    ] {
         let changed = reconcile_selection(&subject, next.project, &next).unwrap();
         assert_eq!(changed.subject, subject);
         assert_eq!(changed.members, full);
         assert!(changed.dropped.is_empty());
+        assert_eq!(changed.state, State::Current);
+        assert_eq!(changed.state.explanation(), None);
     }
     next.authored.remove(&id(1));
     assert!(
@@ -80,6 +89,42 @@ fn surviving_derived_identity_rederives_wholly_and_missing_origin_dissolves() {
             .unwrap()
             .dissolved
     );
+}
+
+#[test]
+fn missing_semantic_identity_reports_without_member_drops_or_resurrection() {
+    for (subject, expected, message) in [
+        (
+            Subject::GlobalNet(uuid(800)),
+            State::GlobalNetCleared,
+            "Selected Global Net no longer resolves; selection cleared.",
+        ),
+        (
+            Subject::Bus(uuid(700)),
+            State::BusCleared,
+            "Selected Bus no longer resolves; selection cleared.",
+        ),
+    ] {
+        let mut next = model();
+        next.buses = Some(BTreeMap::from([(uuid(700), (1..=3).map(id).collect())]));
+        let before = next.clone();
+        next.nets.as_mut().unwrap().clear();
+        next.buses.as_mut().unwrap().clear();
+        next.revision = SelectionModelRevision("semantic-identity-removed".into());
+        let changed = reconcile_selection(&subject, next.project, &next).unwrap();
+        assert_eq!(changed.subject, Subject::None);
+        assert_eq!(changed.state, expected);
+        assert_eq!(changed.state.explanation().as_deref(), Some(message));
+        assert!(changed.dissolved);
+        assert!(changed.members.is_empty() && changed.dropped.is_empty());
+        assert_eq!(changed.revision, next.revision);
+        assert_eq!(next.authored, before.authored, "members were not deleted");
+        let undone = reconcile_selection(&changed.subject, before.project, &before).unwrap();
+        assert_eq!(undone.subject, Subject::None);
+        assert!(undone.members.is_empty() && undone.dropped.is_empty());
+        assert_eq!(undone.state, State::Current);
+        assert!(!undone.dissolved);
+    }
 }
 
 #[test]

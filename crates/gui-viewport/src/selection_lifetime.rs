@@ -11,6 +11,8 @@ use std::collections::BTreeSet;
 pub enum SelectionReconciliationState {
     Current,
     RunOriginCleared,
+    GlobalNetCleared,
+    BusCleared,
     RegionSplit {
         successors: Vec<ZoneRegionQualifier>,
     },
@@ -28,6 +30,10 @@ impl SelectionReconciliationState {
             Self::RunOriginCleared => {
                 Some("Selected Run origin no longer resolves; selection cleared.".into())
             }
+            Self::GlobalNetCleared => {
+                Some("Selected Global Net no longer resolves; selection cleared.".into())
+            }
+            Self::BusCleared => Some("Selected Bus no longer resolves; selection cleared.".into()),
             Self::RegionSplit { successors } => Some(format!(
                 "Selected copper region split into {} components; selection cleared.",
                 successors.len()
@@ -103,9 +109,12 @@ pub fn reconcile_selection(
                 state = SelectionReconciliationState::RunOriginCleared;
                 SelectionSubject::None
             }
-            SelectionSubject::GlobalNet(_) | SelectionSubject::Bus(_)
-                if !resolution.derived_exists(subject)? =>
-            {
+            SelectionSubject::GlobalNet(_) if !resolution.derived_exists(subject)? => {
+                state = SelectionReconciliationState::GlobalNetCleared;
+                SelectionSubject::None
+            }
+            SelectionSubject::Bus(_) if !resolution.derived_exists(subject)? => {
+                state = SelectionReconciliationState::BusCleared;
                 SelectionSubject::None
             }
             SelectionSubject::Proposal(_)

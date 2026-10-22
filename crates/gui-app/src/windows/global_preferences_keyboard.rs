@@ -25,6 +25,10 @@ impl Runtime {
             return Outcome::Consumed;
         }
         if matches!(event.logical_key, Key::Named(NamedKey::Escape)) {
+            // The owned host may close before key-up reaches Main. Retain this
+            // temporary operation's release in the shared overlay key cycle.
+            self.menu_keys
+                .consume_escape_release(&event.logical_key, event.state, true);
             let dismissal = self
                 .session
                 .workspace_mut()
