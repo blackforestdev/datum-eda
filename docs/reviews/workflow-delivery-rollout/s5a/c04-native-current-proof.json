@@ -10019,6 +10019,20 @@
         "No successor or new product/source/visual/dependency authority",
         "No prototype or golden edit, generic replay campaign, numerical waiver or criterion reduction"
       ]
+    },
+    "conditional_C05_owner_direction_20261022": {
+      "status": "RECORDED_CONDITIONAL_AUTHORIZATION_NOT_SELECTED_OR_EXECUTED",
+      "owner_direction": {
+        "source": "/home/bfadmin/.codex/sessions/2026/10/21/rollout-2026-10-21T16-44-02-01a160d9-b499-7923-984a-b3390beb2e34.jsonl",
+        "row": 281,
+        "ordinal": 280,
+        "timestamp": "2026-10-22T00:11:10.396Z",
+        "message_id": "msg_01a160f2-8abc-75c1-9c0e-f24ab1c8f01a",
+        "turn_id": "01a160f2-8a8f-7713-857a-49679eb7bfe1",
+        "role": "user",
+        "verbatim": "once c04 closes, open C05 with the worker agent."
+      },
+      "disposition": "After actual C04 acceptance/closure, explicitly select and synchronize C05 with the worker coordinating preparation/fixes; reserved independent reviewer owns replay/findings. No self-review or earlyC05. C06/cross-probe remain separate and ungranted."
     }
   },
   "native_wayland_keyboard_subset_20261018": {
@@ -12358,7 +12372,8 @@
         "unresolved": "Historical Run5 Junction and GlobalNet21 Wire receipts retain valid typed scopes with dated appearance qualifications unchanged. Repaired Run257 establishes pre-hidden intermediate Junction membership and suppression/restoration; fresh repaired GlobalNet21 establishes pre-hidden root Wire material suppression/restoration at its exact scope. Hidden intermediate Wire Run, pre-filtered and applicable Board/Bus/cross-pane intersections remain separate; no full IR01 acceptance.",
         "smallest_next_lookup_or_work": "Reuse the accepted repaired Run257 and valid historical semantic receipts at their exact scopes. Preserve both historical appearance qualifications; no rerun or new prerequisite follows from this correction alone.",
         "closure": "The exact repaired Schematic pre-hidden Junction/Run257/no-op/restore unit has both actual independent runtime/rendered PASS receipts and manager finite acceptance in wire_run_hidden257_delivery_20261021. Older appearance claims are not inherited. Remaining applicable predicates require adequate evidence/disposition without a generic rerun queue.",
-        "current_global_net_prehidden_Wires": "Fresh separate native_wayland_prehidden_wires_global_net_post_repair_20261021 now establishes actual repaired root Wire8/9/D suppression before/during LabelE GlobalNet21 acquisition and selected restoration, full21/hidden3->0/unprojected14 and complete inspection/Context/invariance/cleanup. Both runtime PASS receipts and manager finite ACCEPT include explicit BusEntry correction. Historical qualification is unchanged; Console acquisition history and later visibility-action echo remain distinct."
+        "current_global_net_prehidden_Wires": "Fresh separate native_wayland_prehidden_wires_global_net_post_repair_20261021 now establishes actual repaired root Wire8/9/D suppression before/during LabelE GlobalNet21 acquisition and selected restoration, full21/hidden3->0/unprojected14 and complete inspection/Context/invariance/cleanup. Both runtime PASS receipts and manager finite ACCEPT include explicit BusEntry correction. Historical qualification is unchanged; Console acquisition history and later visibility-action echo remain distinct.",
+        "current_wire256_binding": "native_wayland_prefiltered_prehidden_wire_run256_20261022: actual independent review and manager finite acceptance of both pre-acquisition256 configurations; fullIDs/all15fields/reason/noomission/sourceinvariance. Existing intermediate Junction satisfies the B law; no separate WireB permutation follows. Separate semantic D4/Boardpositive applicability and typed cap-reason correction remain at their exact scopes."
       },
       {
         "id": "large-derived-ir01-d4-extensions",
@@ -12394,7 +12409,8 @@
         "current_bus257_mixed_pane_focus": "Accepted only at the finite native_wayland_bus_run257_mixed_pane_focus_20261021 scope: global Run257/inspection/capped Context survive fixed-pointer keyboard focus1→0→1 across mixed Schematic/Board projections. This binds that focused consumer slice only. No Board Bus, independently pre-hidden/pre-filtered intermediate origin, Run256 extension, omitted-Unavailable-reason parity or full IR01/D4 is inferred.",
         "current_bus256_d4": "Accepted actual256 member Shift no-op FIRST and Ctrl member subtraction refusal SECOND in bus_run256_d4_reproducible_input_20261021, with reproducible canonical input and complete Context256/all16fields/no omissions. This binds the plain same-pane count256 D4 extension only; no historical reconstruction/basic-cap replay or broader hidden/filter/cross-pane/omitted-Unavailable intersection is inferred.",
         "current_filtered_junction_run257": "Accepted finite native_wayland_prefiltered_junction_run257_20261021: pre-acquisition Junction class exclusion leaves eligible Wire0080 able to acquire all257; the visible Junction receives full selected projection, hidden0. Complete inspection/Context and filter restoration invariance have both actual runtime/rendered PASS receipts and manager finite acceptance. No 256-member, other derived-kind, D4/filter or pane intersection is inferred.",
-        "current_hidden_junction_run257_refusal": "Accepted native_wayland_hidden_junction_run257_member_refusal_20261021 now establishes one meaningful eligible Wire0081 member subtraction from the complete hidden-Junction Run257. The whole result refuses with full257/hidden1/identity/fields/Context preserved except exact notice and Console history, visible complete reason/remedy, source invariance and qualified cleanup. This complements accepted hidden no-op/restore and filtered acquisition; no other D4/filter/region/pane predicate is inferred."
+        "current_hidden_junction_run257_refusal": "Accepted native_wayland_hidden_junction_run257_member_refusal_20261021 now establishes one meaningful eligible Wire0081 member subtraction from the complete hidden-Junction Run257. The whole result refuses with full257/hidden1/identity/fields/Context preserved except exact notice and Console history, visible complete reason/remedy, source invariance and qualified cleanup. This complements accepted hidden no-op/restore and filtered acquisition; no other D4/filter/region/pane predicate is inferred.",
+        "current_wire256_binding": "native_wayland_prefiltered_prehidden_wire_run256_20261022: actual independent review and manager finite acceptance of both pre-acquisition256 configurations; fullIDs/all15fields/reason/noomission/sourceinvariance. Existing intermediate Junction satisfies the B law; no separate WireB permutation follows. Separate semantic D4/Boardpositive applicability and typed cap-reason correction remain at their exact scopes."
       },
       {
         "id": "stale-consumer-restore",
@@ -12531,7 +12547,7 @@
       "status": "C04 assessment remains pending against all unchanged nine-panel build-own-golden visual/accessibility criteria. Under the owner direct instruction2026-10-21 and PM059 explicit-assessor exception, designated tool-assisted assessors plus actual independent review and appointed-manager acceptance replace owner presence/manual participation/signoff. Record tool_assessed; no claim HUMAN was performed, no manufactured PASS or transfer to C06.",
       "delegation_ref": "c04-native-current-proof.json#/managed_resumption_preflight_20261018/c04_assessor_delegation_20261021"
     },
-    "smallest_completion_path": "Reuse landed accepted current/historical bindings, including bounded supported-consumer L8, historical duplicate-pane N08, finite N01/N03 map and the canonical native03 producer repair. Resolve still-named evidence questions/assertion or class/threshold bindings only under existing authorization. Preserve owner HUMAN/fullC04 and separate C05/C06 gates; no generic replay campaign or automatic successor.",
+    "smallest_completion_path": "Reuse accepted current/historical bindings at exact scope, including Wire256 prefiltered/prehidden positives and recorded tool-assisted visual assessments. Complete only concrete remaining existing-contract evidence/corrections under retained C04 grant, actual independent review and appointed-manager objective acceptance. Owner presence/signoff is not a C04 development gate. Record conditional owner C05 authorization now; select/synchronize C05 only after actual C04 closure. C06 and cross-probe remain separate; no generic replay campaign.",
     "separate_boundaries": [
       "Reserved C05 independent replay and C06 owner acceptance",
       "P2.4 fuller Inspector grouping",
@@ -40725,5 +40741,317 @@
     "rendered_scope": "Three actual originals, source-backed eligibility/visibleL44 and rootfreshADMIT. Gray component-only edge stays unselected; real assembled outline accentuates, eightPads stay resting. Full canonicalCommon13 is separate from missingProjectquantity-context Unavailable display/clippedlongrows. No exactGPU/compositorSampling/metrology/hardware/performance/all-descendant/ordinarywindowClose claim.",
     "limits": "Finite synthetic Test-origin component EdgeCuts negative and real-board outline overlap only; no library-derived EdgeCuts mapping/authoring, courtyard41visibility, electrical linkage/undo/CAM/fullC04/HUMAN/C05/C06/successor credit.",
     "recorded_at": "2026-10-21T23:28:57.578718+00:00"
+  },
+  "native_wayland_prefiltered_prehidden_wire_run256_20261022": {
+    "status": "CONSUMED_REVIEWED_FINITE_WIRE256_PREFILTERED_AND_PREHIDDEN_ACQUISITIONS_ACCEPTED",
+    "head": "31f626cb204352d52bfbda7b7b3576cec528a4f4",
+    "manager_session": "01a13df1-7a0d-72c1-bbdd-f0d96d481598",
+    "worker_session": "01a15249-fb58-7023-9a10-1828067d8850",
+    "requirement": "Preparation331 N05/N09\u00d7N12/N17 missing256 prehidden/prefiltered member positives; existing257 mixed-pane/keyboard/omission evidence retained, no basiccap/focus-cycle/D4 replay.",
+    "authority": "Retained UVT-S5A-BUILD/S5A-C04 execution and task-specific tool-assisted assessor delegation; exact source03 independently reviewed and manager released one justified corrected followup. Manager accepted finite runtime after actual independent PASS and its own original-image inspection.",
+    "input_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-input-source-candidate-02.json",
+      "sha256": "0229e340b6f5afb9d5a25dc3c58d63d1dbb8f744f23cd3a80ab91383d33a20f5",
+      "bytes": 33335
+    },
+    "source_candidate": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-native-source-candidate-03.json",
+      "sha256": "34e3793c5ddd3275d5e5208fa731705daa0274a5bfa04a7a0738bbef29cb5b68",
+      "bytes": 6504
+    },
+    "runner": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-native-source1.py",
+      "sha256": "69e3d0b6a56b371ed1a123e398a2dac7f9f9e73449e446973203f9973e3dedbb",
+      "bytes": 39422
+    },
+    "manifest": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-native-manifest-03.json",
+      "sha256": "a5efad9bb0c562a6f9348f29ba2303a29ca91d4e10143cb1ae20cc4d959464b8",
+      "bytes": 212071
+    },
+    "command": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-native-command-03.json",
+      "sha256": "7f774319f6b0e0470640728c547411472a555ab60276a65de36aa2451ef73e2c",
+      "bytes": 3043
+    },
+    "geometry": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-native-geometry-02.json",
+      "sha256": "389de2e7aaa2de3fce6a9b75c0b3ae605d2b01aa465280518ccfe7d934f39eea",
+      "bytes": 153460
+    },
+    "net_oracle": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-net-oracle-01.json",
+      "sha256": "87af05d2423ca42335fb60ad8e50d87ff00a9a702196577368578aaef3f2d5f2",
+      "bytes": 98500
+    },
+    "controls": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-observer-controls-01.json",
+      "sha256": "518c99416d8c9242ec8ffe227c7e9cda21864ee8c21580815b8f3f2fc9399f2d",
+      "bytes": 1769
+    },
+    "build": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-build-01/result.json",
+      "sha256": "f7e224acd83931c2d1316b50c6f750428c7c1806f1de4a863180d6d905333484",
+      "bytes": 2208
+    },
+    "generation": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-input-generation-01/result.json",
+      "sha256": "1c7a225330d8a4b145f0b7a90580d7a30b4404285d87c3ca3f1e2f95e3836849",
+      "bytes": 8883
+    },
+    "raw_result": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/result.json",
+      "sha256": "1915a521c0135a75aafc2a9272fe577eb7cba9486233fdf3a6b51f8d807175ef",
+      "bytes": 3709180
+    },
+    "transport": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-wire-run256-02/transport.json",
+      "sha256": "382ff64ae9a556f2897cdcb010034d1f4d1c172f65b5267aa308a3f3ab2cb9be",
+      "bytes": 3735
+    },
+    "baseline_checkpoint": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/baseline-checkpoint.json",
+      "sha256": "d87458a8ab60762c83c55cb2f9f1f65f5c3bf60b69ee16aef52fa890f82c1c8a",
+      "bytes": 171428
+    },
+    "fresh_admission": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/baseline-admission.json",
+      "sha256": "7a77391f3d7138c922e2d7d8d26edb6f5621a29f73eb7571f84133bec382943b",
+      "bytes": 1358
+    },
+    "originals": {
+      "initial": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/initial.png",
+        "sha256": "c55c6c9744d03f4a02c8f0fe572465c128b68832f8379133c1f147580721ee1c",
+        "bytes": 51221
+      },
+      "filtered": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/filtered.png",
+        "sha256": "946f3aafc79d442f1362554ebe6e682bcac890514718904871c6bd57f7af7b1b",
+        "bytes": 107299
+      },
+      "prehidden": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/prehidden.png",
+        "sha256": "ddc2811dbdeca0c1c0e86d7488a3abaf247903639897623c49d9763b6620c9bc",
+        "bytes": 65535
+      },
+      "hidden": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-02/hidden.png",
+        "sha256": "b5a4093d44873570f46420b644fb30da9aae5933af605012e1a603aa0c6d1448",
+        "bytes": 107121
+      }
+    },
+    "actual_original_final": {
+      "rollout": "/home/bfadmin/.codex/sessions/2026/10/18/rollout-2026-10-18T20-52-22-01a15249-fb58-7023-9a10-1828067d8850.jsonl",
+      "row": 63285,
+      "timestamp": "2026-10-22T00:45:03.989Z",
+      "item_id": "ctco_01a16111-9275-7241-b6ac-a6ce06e3ade7",
+      "call_id": "call_e536cce946ea4a65982291e6e7e836d5",
+      "chunk_id": "96e570",
+      "exit_code": 0
+    },
+    "owned_execution": {
+      "session": 21905,
+      "state": "COMPLETE",
+      "launch_chunk": "7281d7",
+      "exit_code": 0
+    },
+    "source_reviews": [
+      {
+        "reviewer": "reorganization",
+        "turn": "01a160f9-c6b6-7e80-bcae-32da67244f28",
+        "outcome": "SOURCE/INPUT PASS, no finding; root accepts finiteinput/source expectations"
+      },
+      {
+        "reviewer": "reorganization",
+        "turn": "01a1610e-719a-7171-9e2b-c2234d0e862d",
+        "outcome": "SOURCE/COMMAND03 PASS; sole cold-camera expectation correction verified"
+      }
+    ],
+    "runtime_review": {
+      "reviewer": "reorganization",
+      "thread": "01a13e3f-8074-7943-91c1-8a0b09fc21e8",
+      "turn": "01a16111-d76c-7c70-9c09-0cf98adb97e2",
+      "outcome": "Finite RUNTIME/PIXEL PASS, no mandatory finding; personally all four originals and complete public/source/custody evidence"
+    },
+    "manager_finite_acceptance": "Manager ACCEPTS finite two-case Wire256 delivery: complete256/all15/66569-byte reason/6Context/8RunAX, exact153events, independent prefiltered and prehidden semantics, canonical36 preservation and owned cleanup. Root personally inspected actual originals; overall C04 remains in_progress.",
+    "fixture_change": "Existing wire_run_hidden builder parameterized only for256/257; new256 recipe has255 Wires plus one intermediate Junction and distinct Project identity. Existing257 IDs/topology/provenance remain; no product mechanism/dependency/schema or new fixture module. Fresh roots reject symlinks.",
+    "observed": {
+      "cases": [
+        "Junction acquisition class excluded BEFORE keyboard Select Run; rendered Junction remains selected, complete256/hidden0",
+        "Restore class, clear prior Run to None, hide Junction BEFORE fresh independent keyboard Select Run; complete256/hidden1, no Junction cue"
+      ],
+      "core_events": 153,
+      "originals": 4,
+      "run_acquisitions": 2,
+      "object_setup_acquisitions": 1,
+      "filter_toggles": 2,
+      "layer_ui_clicks": 1,
+      "context_queries": 6,
+      "run_AX_snapshots": 8,
+      "object_setup_AX_snapshots": 1,
+      "members": 256,
+      "per_type": {
+        "wire": 255,
+        "junction": 1
+      },
+      "context_truncated": false,
+      "inspection_fields": 15,
+      "Common_fields": 14,
+      "Unavailable_fields": 1,
+      "unavailable_reason_UTF8_bytes": 66569,
+      "unavailable_reason_sha256": "5c45f9233735e775b7d61975da6f8828233dae2447ab17477d1e3770602f4844",
+      "complete_boundaries": "All four Run boundaries retain complete AX/fields and Context before/after originals; two prehidden None boundaries retain Context and absence of public root. Six immutable frame prefixes retained.",
+      "canonical_files": 36,
+      "canonical_maps_equal": true,
+      "invariance": "Canonical source/revision/history/journal identical before/observation/teardown; operational context/session files are excluded from canonical equality.",
+      "cleanup": "Eight recorded PIDs/two private IPC runtimes, five verified stop classes, errors[], timely authenticated shell leader exit; transport child exit0 and runtime removed."
+    },
+    "preserved_failure": {
+      "source02": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-native-source-candidate-02.json",
+        "sha256": "1b039e1e5296cf9ab7b3f95822aaa7de7689cdd57d6bca4e2bbe9e8073e93756",
+        "bytes": 6425
+      },
+      "raw_native01": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-01/result.json",
+        "sha256": "2332b222558fbcb9a3b6703c496ef12f58387f4bf59f1b0ed5021c5b4420476e",
+        "bytes": 29905
+      },
+      "transport01": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/isolated-wire-run256-01/transport.json",
+        "sha256": "76136c9cc1d2c4b81e2d58b446d2853e3dc70085f8b85f446faf5dd2cacf6ba6",
+        "bytes": 3728
+      },
+      "failure": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/native-wire-run256-01/failure.txt",
+        "sha256": "9d40b2bf6553f05126d3fcb10589f1e81cf0e363203e001b1ca024a80b5f119a",
+        "bytes": 942
+      },
+      "correction": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-focus-metadata-correction-01.json",
+        "sha256": "a009b910bce655bfef1ae9dbb951204afd6691250c259d2e60757e5cf93a4ed1",
+        "bytes": 6989
+      },
+      "actual_final": {
+        "session": 25311,
+        "chunk": "639b7b",
+        "exit_code": 1
+      },
+      "disposition": "FAIL after sole Tab, before F/Run. Preparation incorrectly expected render fallback fit as stored warm camera. Actual source and both accepted257 manifests require null until F. Sole metadata correction plus fresh output paths; unchanged executable/geometry/inputs/oracles/budgets. Independent diagnosis01a1610a-d89c-7671-b779-ce58207a2fe5; justified reviewed followup, no acquisition credit from failed01."
+    },
+    "retained_boundaries": [
+      "New finite256 IR01 pre-acquisition positives only; accepted257 keyboard/mixedpane/omission/D4 evidence reused, not replayed.15field prediction14Common+1Unavailable derives unchanged current source and actual input; full66569byte reason must be checked in Context at256. Quantity rendering may show Unavailable/clipped rows despite canonicalCommon, no metrology/fulltext/hardware/framecause claim. Actual independent runtime/pixel review and manager acceptance required. C04 remainsin_progress; conditionalC05 only after actualC04 closure, reservedindependentreviewer separate; C06/crossprobe ungranted.",
+      "Raw result remains CAPTURE_ONLY; independent review and manager finite acceptance are separate records.",
+      "Existing257, basicBus256, D4 and duplicate-pane evidence reused at exact scope; no separate Wire-B or focus-cycle replay required by this finite unit.",
+      "No CPU timing/performance, all-class rendering, quantity metrology, exact GPU sampling, all-descendant exit, fullIR01/fullC04/C05/C06 acceptance."
+    ],
+    "required_checks": {
+      "purpose": "Fixture source and bounded evidence/state reconciliation; reuse actual guarded locked fixture build886b2a and accepted controls/native source/runtime proof. No affected product/dependency change or new Cargo proof required.",
+      "checks": [
+        {
+          "command": "python3 scripts/project_status.py check",
+          "chunk_id": "90900e",
+          "exit_code": 0
+        },
+        {
+          "command": "python3 scripts/project_status.py check-render",
+          "chunk_id": "b23fe5",
+          "exit_code": 0
+        },
+        {
+          "command": "python3 scripts/check_evidence_traceability.py",
+          "chunk_id": "e740a7",
+          "exit_code": 0
+        },
+        {
+          "command": "python3 scripts/check_spec_governance.py",
+          "chunk_id": "392aff",
+          "exit_code": 0
+        },
+        {
+          "command": "python3 scripts/check_source_health.py",
+          "chunk_id": "928d09",
+          "exit_code": 0
+        },
+        {
+          "command": "git diff --check",
+          "chunk_id": "a07b7a",
+          "exit_code": 0
+        },
+        {
+          "command": "python3 scripts/check_rustfmt.py --help",
+          "chunk_id": "d69f9c",
+          "exit_code": 0
+        }
+      ],
+      "rustfmt_note": "Checker has no help mode; literal --help invocation performed its ordinary nonmutating whole-workspace rustfmt check and passed. No formatting mutation.",
+      "semantic_artifact_check": {
+        "chunk_id": "579290",
+        "exit_code": 0,
+        "outcome": "All prior accepted nodes/flags retained, two existing nodes have only intended continuation additions/corrections; all new Wire256 linked artifact pins exact; C04in_progress/C05pending/C06pending."
+      },
+      "independent_landing_review": {"status": "ACTUAL_INDEPENDENT_LANDING_AMENDMENT02_PASS_ROOT_LANDING_NOT_YET_CLAIMED", "reviewer": "reorganization", "turn": "01a1611f-0967-7f41-b374-15c774c089da", "reviewed_freeze": {"path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/wire-run256-landing-freeze-02.json", "sha256": "8824b3f8afbd4cfbfac79f0927e32ebb2b13e0891dd307d2d8e247486efb15d7"}, "outcome": "All seven pins match; stale tracker note corrected, only beads and Frontier heartbeat changed from freeze01; other five pins unchanged. Actual dbef59/f186b9/7800fe/6143bd exit0 authenticated; C04in_progress/C05-C06pending; no mandatory finding. Reviewer allows root verification of this receipt-only finalization.", "preserved_prior_review": {"turn": "01a16119-1f43-7c03-a0ad-b267cb0ccb94", "outcome": "Freeze01 REVISE for stale tracker note; other seven-path source/evidence/owner/gate bindings clear. Freeze01 and freeze02 artifacts preserved."}, "remaining_action": "Root verifies receipt-only amendment and performs normal-hook stage/commit/push; no landed commit or fullC04 acceptance preclaimed."}
+    }
+  },
+  "tool_assessed_visual_criteria_20261022": {
+    "method": "tool_assessed; independent designated assessor; source/binary-bound actual originals plus explicitly scoped accepted reuse. No claimed human participation.",
+    "eight_theme_review": {
+      "reviewer": "reorganization",
+      "turn": "01a160ef-d414-7bd3-b8a1-fd009faa519f",
+      "outcome": "Finite PASS for represented eight themes; panel3 separate, no all-nine/fullC04 acceptance",
+      "actual_receipt": {
+        "rollout": "/home/bfadmin/.codex/sessions/2026/10/14/rollout-2026-10-14T22-03-18-01a13df1-7a0d-72c1-bbdd-f0d96d481598.jsonl",
+        "row": 89803,
+        "timestamp": "2026-10-22T00:13:45.585Z",
+        "item_id": "amsg_01a160f4-e8ed-7471-a705-26a9a524b8ef",
+        "text_sha256": "58fb50fba9f2a5e7dc93754b364b06e7456f9832f827c0b3359e62c7a7ebc53b"
+      },
+      "original_receipt_text": "Message Type: FINAL_ANSWER\nTask name: /root\nSender: /root/reorganization_review\nPayload:\n**Finite tool-assisted assessment PASS for the criteria below**, under the C04 delegation. Panel 3 remains separate. This is not an all-nine-panel or full-C04 acceptance.\n\nI personally inspected the available originals at original resolution against [the approved reference](/home/bfadmin/Documents/datum-eda/docs/gui/reference/selection-study.png), SHA `80c498440c94bed3893598e1eb641442e2c22829bcf9e94843ebb993969e12be`. I reused accepted source, AX and execution receipts without rerunning them.\n\n| Panel | Actual assessment and evidence | Disposition |\n|---|---|---|\n| **1 Construction** | U14 baseline/selected originals show its projected pins and owned text receiving selection together. U1\u2019s body original shows the selected symbol silhouette. Filled-Board partial/full originals visibly retain the pale material, add luminance lift and a crisp perimeter. Rounded Track ends and NoConnect X demonstrate shape-following cues rather than a universal box. | **PASS for represented construction.** Tiny symbol views do not supply stroke metrology or resolve the separately retained placement issue. |\n| **2 Compound** | Personally compared explicit-focus, Track-scope and no-focus originals. The visible Tracks receive equal treatment; Inspector scope/focus changes add no stronger persistent canvas marker. | **PASS.** Bound to focused-Inspector packet `e58d268487c45338bcde550e931a68906b5efb1a8bbd05ba22f873bab2274820`. |\n| **4 Maximal collision** | Reuse accepted actual attempt-110 review: authored/proposal/selection/diagnostic preservation, current-mask qualification and eight captures. | **REUSE PASS at its accepted finite scope.** Original archive `fc01b388\u202678af` is unavailable here; I did not freshly inspect its pixels. Raw FAIL and counter/performance exclusions remain. |\n| **5 Pane parity** | Reuse the accepted eight-observation duplicate-Schematic receipt: identical subject, independent cameras and full cues in resolving panes. Personally inspected the later Board rebound original, confirming retained complete selection after rebind. | **REUSE PASS for equal resolving-pane treatment.** Historical proof `6fc85405\u2026e459` / result `61aecddb\u2026170e`; no fresh duplicate-pane pixels. Bus\u2192nonresolving Board is not substituted for this evidence. |\n| **6 GlobalNet/Bus** | Personally inspected repaired GlobalNet acquired/restored originals. Visible electrical projection receives selection; hidden Wire material is absent, then returns selected. The unrelated Bus retains ordinary appearance. BusEntry correctly shares L200 hide/restore; Junction remains distinct. | **PASS for current GlobalNet projection.** Semantic-Bus isolation retains its accepted actual review under archive `8215a474\u2026224a`; no fresh Bus-original assessment or all-21-visible claim. |\n| **7 Text/points** | Personally inspected NoConnect X, Via and filtered-Junction originals. Their distinct semantic silhouettes remain recognizable under selection. The Junction retains its center and selected perimeter. | **PASS for those point cues.** Standalone rotated-text appearance retains the prior actual three-image review; its originals are unavailable here. Owned refdes does not substitute for standalone text. |\n| **8 Dense fallback** | Personally inspected `native-wayland-board-d1-03/cold-selected.png`, SHA `19d741bc92c94924b7b84b7254b7ae5923285b26af0c1dadd18c4e8454c20dc7`. The visible aggregate and complete 100,007-object Inspector agree with accepted full-set/LOD evidence. Exact-union correctness comes from the retained machine/GPU proof, not its rectangular appearance alone. | **PASS at the accepted dense scope.** Raw native03 FAIL remains; no new capacity or performance credit. |\n| **9 Accessibility/zoom** | Personally compared bare, ordinary-selected and high-contrast Track originals, including thin and scale-2/thick cases. Material is retained; selection adds an external crisp boundary; HC removes the soft-glow contribution while retaining the cue. All 24 original hashes match final V5 packet02. Existing exact measurements establish two physical accent rows per side across eight setups. | **PASS for represented zoom/HC/non-color construction.** Distinct boundaries, point silhouettes and explicit selected-state Inspector/AX labels provide evidence beyond hue. No particular grayscale/CVD file format or simulator is required. |\n\nReduced-motion assessment also **passes at the existing control scope**: production/test sources remain exactly `82751873\u2026befa5` and `74450e0a\u2026bc0d`; the accepted actual controls bind reduced motion to phase-zero geometry across the existing shapes/phases. This is not new animation timing evidence.\n\nPrincipal exact packet bindings:\n\n- U14: `180d2460de7803961c5efbea1446c1b435abbc8ffbbad80a2bf511b1075bd13e`\n- Filled BoardGraphic: `613a8dff9680ed9d98ee3a2f5d60c5c41d5dcd8f656c01254816e040063efa3d`\n- Repaired GlobalNet: `a542c8f08ad71d872e8dbe7a9dfd617d9b2f857d6500417880634fb6899fac12`\n- Filtered Junction: `247763a5f87ac823f7f654aedc31fa8b9b4f995e1105353343dce2038923629f`\n- Via06a: `a488fb0d503263506bbe7e692f5140b0820df5876875fe6ab767151a1bce677f`\n- **V5 final-candidate-2**: `5a10f301c602c6cf43e304036f3f670ad2ff0b6e6c0661d81de52a4141dcd603`\n\nThe evidence spans its recorded builds and methods: current GUI945 CPU Wayland captures, older accepted native builds, historical X11 receipts, and V5 Intel P630 hardware offscreen readback. I do not present them as one freshly captured build cohort. Later renderer visibility changes and historical source mappings retain their reviewed boundaries.\n\nNo new visual defect was established in these assessed criteria. Panel 3\u2019s queued originals remain to assess. Clipped text, formatted-quantity limitations, unavailable historical originals and each underlying finite acceptance remain explicit; no fabricated HUMAN participation, exact compositor sampling, all-class CVD guarantee or performance acceptance.\n\nActual review turn: `01a160ef-d414-7bd3-b8a1-fd009faa519f`. No captures, image alterations, tests, builds or edits performed."
+    },
+    "default_locked_panel3": {
+      "input": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/locked-native-parent-input-01/result.json",
+        "sha256": "f5e73b7d80d000a473216d97fcee778316e52e91fa337fe8b4f95f13db24867d",
+        "bytes": 37754
+      },
+      "capture": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/locked-panel-capture-02/result.json",
+        "sha256": "1aca912f073e6204caa6a939ac5cc77fd56c341cef6936cb26f195cd2bc67260",
+        "bytes": 28426
+      },
+      "reviewer": "closeout",
+      "turn": "01a160fd-92cc-7c60-bd63-2f12b59be559",
+      "outcome": "Default locked eight-pad material silhouette and neutral padlock finite PASS",
+      "capture_method": "Existing ignored native render test, offscreen wgpu, exact test binary reused; typed CLI lock setup in fresh source-qualified copy; input/source invariance.",
+      "originals": [
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/locked-panel-capture-02/lock-cue-hover.png",
+          "bytes": 89293,
+          "sha256": "6f04430dcfb7390d60230346dd2e9fa552709fe4cf06bcb642b8a371e42ca40b"
+        },
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/locked-panel-capture-02/lock-cue-none.png",
+          "bytes": 89005,
+          "sha256": "929e96f4f61855d07a17ff6fd7baff961ab4c823a32c7429c66a516cdf803858"
+        },
+        {
+          "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/locked-panel-capture-02/lock-cue-selected.png",
+          "bytes": 154666,
+          "sha256": "63ec71f1da801beb5a0bfcd82eaba5a3b81d7f15d9ff2b22d47b3f4ba5ca43d9"
+        }
+      ],
+      "preserved_limited_attempt": {
+        "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/locked-panel-capture-01/result.json",
+        "sha256": "9470d8450929200a199bc73896d21722adfbab77eb39dbe99f1dc140c97d0c6b",
+        "bytes": 36100
+      },
+      "limits": "Capture01 lacked source-qualified Pad material and supplies padlock placement only. Capture02 is default offscreen only: no native/HC/hardware/fullC04 claim."
+    },
+    "remaining_existing_contract_findings": {
+      "review_turn": "01a160ff-3911-78d2-8da4-252ffc32ad2e",
+      "scope": "RenderingBook167\u2013171 HC locked hatch/notch and immutable-manipulation cursor remain genuine existing-contract gaps; root coordinates Claude visual lane, not waived by default panel3 PASS."
+    },
+    "status": "FINITE_ASSESSED_CRITERIA_RECORDED_COMPLETE_C04_STILL_OPEN"
   }
 }

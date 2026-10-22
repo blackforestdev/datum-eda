@@ -12,7 +12,6 @@ use eda_engine::{
 use std::{collections::BTreeSet, path::Path};
 use uuid::Uuid;
 
-const WIRE_COUNT: usize = 256;
 const STRIDE_NM: i64 = 1_000_000;
 const Y_NM: i64 = 10_000_000;
 const ORIGIN_INDEX: usize = 127;
@@ -20,11 +19,13 @@ const MEMBER_INDEX: usize = 128;
 fn id(n: usize) -> Uuid {
     Uuid::from_u128(0x7c000000000040008000000000000000 + n as u128)
 }
-fn provenance() -> WriteProvenance {
+fn provenance(wire_count: usize) -> WriteProvenance {
     WriteProvenance::new(
         "s5a-wire-run-hidden-fixture",
         CommitSource::Test,
-        "approved 256-Wire chain with one intermediate Junction; UI pre-hide pending",
+        format!(
+            "approved {wire_count}-Wire chain with one intermediate Junction; UI pre-hide pending"
+        ),
     )
 }
 fn occurrence(class: &str, source_id: Uuid) -> ElectricalOccurrence {
@@ -37,13 +38,18 @@ fn occurrence(class: &str, source_id: Uuid) -> ElectricalOccurrence {
 fn gui_identity(class: &str, source_id: Uuid) -> serde_json::Value {
     serde_json::json!({"class":class,"id":source_id,"instance_path":[]})
 }
-pub(super) fn build(root: &Path) -> Result<()> {
+pub(super) fn build(root: &Path, total_members: usize) -> Result<()> {
     ensure!(
-        !root.exists(),
+        matches!(total_members, 256 | 257),
+        "Wire/Junction total must be 256 or 257"
+    );
+    let wire_count = total_members - 1;
+    ensure!(
+        !root.exists() && !root.is_symlink(),
         "fresh output required; prior artifacts preserved"
     );
     // Declare the full topology, membership and semantic owner before any query.
-    let wires: Vec<_> = (0..WIRE_COUNT)
+    let wires: Vec<_> = (0..wire_count)
         .map(|i| SchematicWire {
             uuid: id(i + 1),
             from: Point::new(i as i64 * STRIDE_NM, Y_NM),
@@ -72,10 +78,15 @@ pub(super) fn build(root: &Path) -> Result<()> {
         },
     };
     ensure!(
-        expected.len() == 257,
-        "independent complete 257-member oracle"
+        expected.len() == total_members,
+        "independent complete {total_members}-member oracle"
     );
-    let base = super::recipe::build_with_project_group(root, 1, 0x28000000)?;
+    let group = if total_members == 256 {
+        0x29000000
+    } else {
+        0x28000000
+    };
+    let base = super::recipe::build_with_project_group(root, 1, group)?;
     let sheet: Uuid = serde_json::from_value(base["sheet_id"].clone())?;
     let mut model = ProjectResolver::new(root).resolve()?;
     for source_id in expected.iter().map(|o| o.source_id).chain([net_id]) {
@@ -100,11 +111,12 @@ pub(super) fn build(root: &Path) -> Result<()> {
         junction_id: junction.uuid,
         junction: serde_json::to_value(&junction)?,
     });
-    let write = BatchComposer::compose(&model, provenance())
+    let write = BatchComposer::compose(&model, provenance(wire_count))
         .push_ops(ops)
         .finish()?;
     native_write::commit_prepared(&mut model, root, write)?;
-    let write = electrical::build_create_electrical_identity(&model, provenance(), record)?;
+    let write =
+        electrical::build_create_electrical_identity(&model, provenance(wire_count), record)?;
     native_write::commit_prepared(&mut model, root, write)?;
     let revision = model.model_revision.clone();
     let mut before: Vec<_> = model
@@ -152,11 +164,11 @@ pub(super) fn build(root: &Path) -> Result<()> {
         );
     }
     let manifest = serde_json::json!({
-        "schema_version":1,"family":"wire-run-hidden-257",
+        "schema_version":1,"family":format!("wire-run-hidden-{total_members}"),
         "recipe":"existing canonical Wire/Junction topology; large pre-hidden input v1",
         "source_recipes":["crates/test-harness/src/bin/s5a_fixture/semantic.rs",
             "crates/engine/src/api/native_write/electrical/tests.rs::net"],
-        "geometry":{"wire_count":WIRE_COUNT,"junction_count":1,"stride_nm":STRIDE_NM,
+        "geometry":{"wire_count":wire_count,"junction_count":1,"stride_nm":STRIDE_NM,
             "y_nm":Y_NM,"junction_position_nm":{"x":128_000_000,"y":Y_NM}},
         "base_project":base["project_id"],"sheet_id":sheet,"model_revision":revision,
         "declared_net_id":net_id,"expected_members":expected_gui,
@@ -172,7 +184,7 @@ pub(super) fn build(root: &Path) -> Result<()> {
         "engine_observation":{"complete_independent_set_equal":true,"member_count":run.owned.len(),
             "semantic_net_id":run.subject_id,"source_basis":snapshot.source_basis(),
             "reopened_membership_and_net_equal":true,"source_journal_queries_unchanged":true},
-        "rebuild":"python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --locked -p eda-test-harness --bin s5a_fixture -- wire-run-hidden-257 <fresh-owned-root>",
+        "rebuild":format!("python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --locked -p eda-test-harness --bin s5a_fixture -- wire-run-hidden-{total_members} <fresh-owned-root>"),
         "rebuild_limit":"Chosen IDs/geometry repeat; canonical transactions are newly authored. Freeze each actual source/history input before native execution.",
         "native_input":"pending actual source/binary/input/presented-event binding and independent review",
         "acceptance":"not established by setup; no pre-filtered/omitted-reason/fullC04/C05/HUMAN/successor claim"

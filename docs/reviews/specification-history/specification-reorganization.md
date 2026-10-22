@@ -1511,6 +1511,55 @@ visual criterion, golden, prototype ownership, product/source mechanism,
 dependency, scope or acceptance requirement. Continue finite requirement/evidence
 reconciliation under the retained grant; do not start a generic replay campaign.
 
+### Finite C04 evidence and conditional C05 direction — 2026-10-22
+
+<!-- EVIDENCE:UVT-S5A-BUILD:C04-WIRE256-AND-CONDITIONAL-C05-20261022 -->
+
+The appointed manager accepts the finite prefiltered and independently prehidden
+Wire256 unit after actual independent runtime/pixel PASS
+`01a16111-d76c-7c70-9c09-0cf98adb97e2`. The existing fixture builder now supports
+255 Wires plus one intermediate Junction alongside its unchanged 257-member
+recipe. Ordinary keyboard Select Run retains all 256 members when Junction
+acquisition is excluded and when the Junction is already hidden. The four
+originals, complete Context/accessibility data, all 15 fields, exact 66,569-byte
+Unavailable reason, 153 controlled events, canonical 36-file invariance and
+owned cleanup are bound in the existing C04 proof node
+`native_wayland_prefiltered_prehidden_wire_run256_20261022`.
+
+The first native attempt remains FAIL: a preparation expectation confused the
+renderer's fallback fit camera with the still-cold stored camera after Tab.
+Source and accepted 257-member contracts confirmed the null stored camera until
+F. The independently reviewed correction changed that single metadata value,
+preserved the failed attempt, and used fresh output/process/admission identities
+for the one manager-released followup. No product camera behavior changed.
+
+The existing proof also records the designated assessor's actual eight-theme
+review `01a160ef-d414-7bd3-b8a1-fd009faa519f`, explicitly distinguishing freshly
+viewed originals from accepted historical reuse, and default locked-panel3 PASS
+`01a160fd-92cc-7c60-bd63-2f12b59be559` on source-qualified eight-pad material.
+These are tool-assessed finite results. Default panel3 is offscreen only;
+high-contrast locked hatch/notch and the immutable-manipulation cursor remain
+existing-contract findings. No combined all-nine-panel or full-C04 PASS is
+inferred. Current readiness wording now follows the recorded assessor delegation
+instead of retaining owner presence/signoff as a C04 development gate.
+
+The owner's additional direct instruction is recorded now, verbatim:
+
+> once c04 closes, open C05 with the worker agent.
+
+Provenance: direct user message `msg_01a160f2-8abc-75c1-9c0e-f24ab1c8f01a`,
+turn `01a160f2-8a8f-7713-857a-49679eb7bfe1`,
+`2026-10-22T00:11:10.396Z`; row 281 (ordinal 280) of
+`/home/bfadmin/.codex/sessions/2026/10/21/rollout-2026-10-21T16-44-02-01a160d9-b499-7923-984a-b3390beb2e34.jsonl`.
+
+This is conditional C05 authority, durably recorded before its condition occurs.
+C04 remains `in_progress`; C05 remains pending and unselected until actual C04
+acceptance and closure. Then explicitly synchronize C05 selection/ownership with
+the worker coordinating preparation and fixes while the reserved independent
+reviewer performs replay and findings. No self-review, early C05, C06 acceptance
+or cross-probe grant follows. Continue the finite semantic D4 and existing-contract
+corrections under the retained C04 grant; landing this unit is not a stop point.
+
 ### Worker goals and execution order
 
 1. Reconcile the existing N01-N17 requirements against actual accepted C04
