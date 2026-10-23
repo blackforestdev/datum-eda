@@ -14,8 +14,6 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** Read-only S5A is complete after actual owner-delegated PM acceptance. No successor is selected or execution-authorized.
-
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -110,8 +108,9 @@
 </details>
 
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
-   S5A is now accepted and closed, satisfying this prerequisite. Existing planning authorization is retained; this task is unselected and unclaimed, no planning work has started, and execution still requires its separate authorization. *state `planned`; authorization `planning`.*
+   XP-C01 actual independent readiness PASS accepted; owner-delegated PM grants exact XP-C02 execution. XP-C03 delivers missing authored ComponentInstance related context and shared Inspector/AX explanation; working Global Net projection reused. XP-C04 visuals, fresh XP-C05 and objective acceptance remain required. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
    Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.

@@ -1,0 +1,1717 @@
+{
+  "fixture_wrapper": {
+    "path": "docs/reviews/workflow-delivery-rollout/crossprobe/fixture-preparation-units.json",
+    "sha256": "678b80d9ddc04d88e0a0cc0b3cab35b3290fb5d7c07169d3bf4e0d8626fc1852"
+  },
+  "gui_binary": {
+    "path": "target/debug/datum-gui",
+    "sha256": "d3c151d7eb5aa534552cbf4c7a441c938e0d5fcc08cb4a8ad1a6105bbe78b68a"
+  },
+  "gui_source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+  "kind": "crossprobe_readiness_observation",
+  "limits": [
+    "Readiness observations only; full post-change native matrix, exact-frame visual/golden proof, independent fresh XP-C05 replay and PM acceptance remain pending.",
+    "No KiCad/import expansion, third-party code, dependency or new product mapping semantics.",
+    "Raw artifacts are machine-local prunable evidence identified by hashes; committed JSON is the durable receipt."
+  ],
+  "native_input_closure": {
+    "boundary": "Named source/tool identities only; no exhaustive dynamic-library census or proof rerun. Historical observer source reconstruction is explicitly attributed.",
+    "controller_interpreter": {
+      "invoked_path": "/usr/bin/python3",
+      "resolved_executable": "/usr/bin/python3.13",
+      "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "version": "Python 3.13.5"
+    },
+    "installed_named_tools": {
+      "Xwayland": {
+        "invoked_path": "/usr/bin/Xwayland",
+        "resolved_executable": "/usr/bin/Xwayland",
+        "sha256": "3e17573235c68ca600dcc1074fd4a64760f229fcf6f21775b6c039fe96e04053"
+      },
+      "python3": {
+        "invoked_path": "/usr/bin/python3",
+        "resolved_executable": "/usr/bin/python3.13",
+        "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9"
+      },
+      "weston": {
+        "invoked_path": "/usr/bin/weston",
+        "resolved_executable": "/usr/bin/weston",
+        "sha256": "5e7b342da0d38508b3001c291f080fbe35c4101f32ade0babc8458915f87352a"
+      },
+      "weston-screenshooter": {
+        "invoked_path": "/usr/bin/weston-screenshooter",
+        "resolved_executable": "/usr/bin/weston-screenshooter",
+        "sha256": "bf4d9e287fbd5c6980ffc1021ac075f0e99d414850b726036c7e89c0d881a778"
+      },
+      "xdotool": {
+        "invoked_path": "/usr/bin/xdotool",
+        "resolved_executable": "/usr/bin/xdotool",
+        "sha256": "2fcee924be08b180f4b1bea93eddedbaa8b0ea4b0886f6cbf77a113e8b8a130f"
+      },
+      "xprop": {
+        "invoked_path": "/usr/bin/xprop",
+        "resolved_executable": "/usr/bin/xprop",
+        "sha256": "715458a47628d90f6333a5a573fa744b8d1ba75c6f35fab86288890fb0f0104c"
+      }
+    },
+    "interpreter_version": "Python 3.13.5",
+    "observer_sources": {
+      "native-inspection": {
+        "all_observer_patch_rows": [
+          790,
+          812,
+          941
+        ],
+        "initial_add_row": 790,
+        "original_rollout": "/home/bfadmin/.codex/sessions/2026/10/23/rollout-2026-10-23T08-58-57-01a1697c-a0f3-7272-9122-673d9fda4eb0.jsonl",
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/observer-snapshots/native-inspection.py",
+        "provenance": "Reconstructed from original exact tool-applied Add File and bounded subsequent deltas; not represented as an originally retained executed copy. Final reconstructed bytes independently equal actual final observer.",
+        "sha256": "3a5b989ce38e47e4c0894b2837b81bcebb214584545f85d07dc7ff31a106d1a3"
+      },
+      "native-inspection2": {
+        "all_observer_patch_rows": [
+          790,
+          812,
+          941
+        ],
+        "initial_add_row": 790,
+        "original_rollout": "/home/bfadmin/.codex/sessions/2026/10/23/rollout-2026-10-23T08-58-57-01a1697c-a0f3-7272-9122-673d9fda4eb0.jsonl",
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/observer-snapshots/native-inspection2.py",
+        "provenance": "Reconstructed from original exact tool-applied Add File and bounded subsequent deltas; not represented as an originally retained executed copy. Final reconstructed bytes independently equal actual final observer.",
+        "sha256": "2997e770377ade7949692a3d54db30949a8535dc9c3f16d6410f70d5b19a29ba"
+      },
+      "native-units": {
+        "all_observer_patch_rows": [
+          790,
+          812,
+          941
+        ],
+        "initial_add_row": 790,
+        "original_rollout": "/home/bfadmin/.codex/sessions/2026/10/23/rollout-2026-10-23T08-58-57-01a1697c-a0f3-7272-9122-673d9fda4eb0.jsonl",
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/observer-snapshots/native-units.py",
+        "provenance": "Reconstructed from original exact tool-applied Add File and bounded subsequent deltas; not represented as an originally retained executed copy. Final reconstructed bytes independently equal actual final observer.",
+        "sha256": "8453d599799767a1ece14ffbc536767d5976f5e7d88c6132219bb5004eac72c1"
+      }
+    },
+    "unchanged_local_python_helpers": {
+      "scripts/native_capture_pixels.py": "c2b534bcf450e2fd2da113dd4b1684b2fb5fc0d06311dc27ee0a8a48e3e0955a",
+      "scripts/native_capture_presentation.py": "5ff7c2ec585095f86392f12a7e97310f9354837274a967d2eefa84efb03a8124",
+      "scripts/native_project_browse_workflow.py": "18abb4b289940a2daefd32628d866672af3c34680cfc301b66d26432337295da",
+      "scripts/native_project_manifest_open.py": "5975f9f82c2530c22f7ae9d631f5d9fe73a28503b927a1bfac7c204d22b1a216",
+      "scripts/native_project_path_assistance.py": "679aa51cde708aadac75de3735b0dc71f986d9f3200fb1cea590a0457c4cd72b",
+      "scripts/native_project_source_inventory.py": "c13d8c8d5315391bf64dd63dcf9e5fd08507739c6e71a1650f27dd589e3ed39e",
+      "scripts/native_project_terminal_handoff.py": "e3597dd8eb05f0b1517d2949ac04be40532e8b49fc3c4382d0db16e4d3b2342e",
+      "scripts/prove_native_project_startup_gui.py": "d3e0d68a08c63bd3c4910f7e02c54e1e1dedc3595b56dbc58ddb52c91a4b28f3",
+      "scripts/prove_s5a_native_selection.py": "0f5a69ad872b95a03df24bd70df83f74817287d12a4e9f853b3f9115106ea49f",
+      "scripts/provision_s5a_replay_inputs.py": "649c1a300723849490a3c08680e80b838083326b2f294d36887b8424890fa447",
+      "scripts/run_native_qa_isolated_input.py": "46acb19045f9d1888a6f847f63ec40588d2a6ab0dcb4d8e92e03186fe089640f",
+      "scripts/s5a_native_artifact_cases.py": "1db4a60477503b9fb85d81e19b0c6ce9fc92a250c0f6fbc8667804138b69885d",
+      "scripts/s5a_native_escape_cases.py": "8209ed22dda26411cf8865c6e3d1f6a178aff01dc1ee615be3b24b92ddc3a696",
+      "scripts/s5a_native_export_cases.py": "abeb0c668c442955228646b75fdedb27fc36c5bb49a9250fce11e471c008768a",
+      "scripts/s5a_native_inspector_cases.py": "6c4bfd19c5e8e0507c5a4aca5b76c7fc5783b1a68548304c15d53eb6be64664b",
+      "scripts/s5a_native_selection_observation.py": "a2f4105508c021395d01d9f6f6d036f3028e22044174b3bbe2a32f0673ccb77f"
+    }
+  },
+  "observed_gap": "Selecting explicitly bound Symbol78000000-0000-4000-8000-000000000001 produces Object1 with0related identities, despite current authored ComponentInstance78000000-0000-4000-8000-000000000003 pointing to Footprint78000000-0000-4000-8000-000000000002. Inspector/AX cannot explain a missing related counterpart.",
+  "observer_session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+  "runs": {
+    "native-inspection": {
+      "actual_controller": [
+        "python3",
+        "scripts/run_native_qa_isolated_input.py",
+        "--output",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport",
+        "--child-result",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/result.json",
+        "--",
+        "/usr/bin/python3",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+      ],
+      "actual_launch": [
+        "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+        "--project-root",
+        "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc01-20261023-attempt4/crossprobe/project"
+      ],
+      "artifacts": {
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/crossprobe-diagnostic.log": "7834a507e0a69e24d1e2def889c7665779bd3674e1aaf8894d9f73ba7e68df40",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/crossprobe.log": "42ada7c5ef9128adc0f3db2368e1a1fb8428feab94355a839008bb34cd7e3e2a",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/weston-process.log": "d1767ffe2b701db68169fd745b66e2882a2e6f8973c4693e8f01fe90fa97d1fb",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/weston.log": "adfffbba6721dd719b6c77bc124c46f6ca97865a8b83c680f4e7ea33da6f9b79"
+      },
+      "cleanup_errors": [],
+      "error": "ValueError('no complete current state observation')",
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-_nu08ba1",
+        "removed_after_owners_stop": true
+      },
+      "metric_inspection_rows": {},
+      "pixel_disposition": "Initial native scene is inspectable. Selected-state captures are temporally unqualified/prior-frame; rejected as selected appearance proof, retained intact. Native state and complete public AX remain scoped observations. Exact-frame selected appearance remains XP-C04.",
+      "relevant_environment": {
+        "DATUM_ACTION_EVIDENCE": "1",
+        "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/crossprobe-diagnostic.log",
+        "DATUM_GUI_PREFERENCES_PATH": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/config/gui-preferences.json",
+        "DATUM_GUI_VERBOSE_LOG": "1",
+        "DISPLAY_in_gui": "removed (native Wayland)",
+        "HISTFILE": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/terminal-history",
+        "WAYLAND_DISPLAY": "datum-startup-qa",
+        "XDG_CACHE_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/cache",
+        "XDG_CONFIG_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/config",
+        "XDG_DATA_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/data",
+        "XDG_RUNTIME_DIR": "/run/user/1000/npd-wl-_nu08ba1",
+        "owned_input_DISPLAY": ":2",
+        "source": "Explicit existing StartupQA constructor/launch plus actual transport record. Operational authorization files are not read or hashed."
+      },
+      "result_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection/result.json",
+      "result_sha256": "8a59124bc8d209c990184ef98744356b86a7a6d210b3d60d45bd28d55a550329",
+      "source_journal_unchanged": true,
+      "status": "FAIL",
+      "transport": {
+        "content": {
+          "argv": [
+            "/usr/bin/python3",
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+          ],
+          "child_exit_code": 1,
+          "child_owner_stops_verified": true,
+          "cleanup_errors": [],
+          "display": ":2",
+          "error": "QA child failed; its original result is preserved",
+          "inherited_display": ":1",
+          "inner_runtime_parent": "/run/user/1000",
+          "limits": "Input transport only; no native/D1 acceptance inferred.",
+          "outer_binding": {
+            "exe": "/usr/bin/weston",
+            "pid": 1711247,
+            "sha256": "5e7b342da0d38508b3001c291f080fbe35c4101f32ade0babc8458915f87352a"
+          },
+          "outer_capture": {
+            "argv": [
+              "/usr/bin/weston",
+              "--backend=headless",
+              "--renderer=gl",
+              "--shell=kiosk-shell.so",
+              "--no-config",
+              "--width=1600",
+              "--height=1000",
+              "--scale=1",
+              "--idle-time=0",
+              "--socket=datum-qa-input",
+              "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport/outer-weston-detail.log"
+            ],
+            "debug_requested": false,
+            "limits": "Opt-in --debug exposes capture and debug globals to clients able to connect. Mode 0700 does not exclude same-UID peers. Private headless composed output, not a physical desktop witness.",
+            "runtime": "/run/user/1000/nqi-1goffv3t",
+            "socket": "datum-qa-input"
+          },
+          "owners": [
+            {
+              "argv": [
+                "/usr/bin/weston",
+                "--backend=headless",
+                "--renderer=gl",
+                "--shell=kiosk-shell.so",
+                "--no-config",
+                "--width=1600",
+                "--height=1000",
+                "--scale=1",
+                "--idle-time=0",
+                "--socket=datum-qa-input",
+                "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport/outer-weston-detail.log"
+              ],
+              "label": "outer-weston",
+              "pid": 1711247,
+              "stopped": true
+            },
+            {
+              "argv": [
+                "/usr/bin/Xwayland",
+                "-displayfd",
+                "5",
+                "-geometry",
+                "1600x1000",
+                "-nolisten",
+                "tcp",
+                "-ac",
+                "-noreset"
+              ],
+              "label": "xwayland",
+              "pid": 1711248,
+              "stopped": true
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+              ],
+              "label": "runner",
+              "pid": 1711251,
+              "stopped": true
+            }
+          ],
+          "runtime": "/run/user/1000/nqi-1goffv3t",
+          "runtime_mode": "0o700",
+          "runtime_removed_after_owners_stop": true,
+          "status": "FAIL",
+          "xwayland_binding": {
+            "exe": "/usr/bin/Xwayland",
+            "pid": 1711248,
+            "sha256": "3e17573235c68ca600dcc1074fd4a64760f229fcf6f21775b6c039fe96e04053"
+          }
+        },
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport/transport.json",
+        "sha256": "1716cc23dc01253f3482db82beee52bc7976b881f7c825d8f490ff4929e427de"
+      },
+      "verified_owner_stops": {
+        "Weston": true,
+        "clipboard": true,
+        "daemons": true,
+        "gui": true
+      }
+    },
+    "native-inspection2": {
+      "actual_controller": [
+        "python3",
+        "scripts/run_native_qa_isolated_input.py",
+        "--output",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport2",
+        "--child-result",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/result.json",
+        "--",
+        "/usr/bin/python3",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+      ],
+      "actual_launch": [
+        "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+        "--project-root",
+        "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc01-20261023-attempt4/crossprobe/project"
+      ],
+      "artifacts": {
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/crossprobe-diagnostic.log": "f7b04b11837aa60c6f5357f0c647f33a4eeb1f08b348d5742bf9d538dc18f777",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/crossprobe.log": "11bc84ae128305b53fe208975f66173594aeac49e934ca2cbb0bb68373cb2013",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/global-net.png": "44e3530211e0c5e591df7097ce37d516e2795a57bb2dd9865e01870845d757b7",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/initial.png": "31bb4be83f7824fa375380fa33fedc0e15f55de18346f70d35f773b2566d07c0",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/point-plan.json": "9e805de6a85b6c793974ded7cb1df76b0e077664a5099d48dbb1c53fd79a790b",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/symbol.png": "e1cc7fb057a36b44143fbcc5cbe1a4120a9dca7eabce81061abd5c3a263a898a",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/weston-process.log": "d1767ffe2b701db68169fd745b66e2882a2e6f8973c4693e8f01fe90fa97d1fb",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/weston.log": "da4336807da84d5a98ed538d87353fc5b9f75eb6414709ae1605777fb31e6099"
+      },
+      "cleanup_errors": [],
+      "error": null,
+      "global_net": {
+        "complete_public_selection": {
+          "after": {
+            "active-pane": "1",
+            "description": "Read-only Global Net \u2014 6 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 2 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 2 panes.",
+            "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "global_net"
+          },
+          "before": {
+            "active-pane": "1",
+            "description": "Read-only Global Net \u2014 6 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 2 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 2 panes.",
+            "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "global_net"
+          },
+          "count": 6,
+          "members": [
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Pad: object 1. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"pad\",\"id\":\"f0780861-7a92-4cb3-8d23-6cfd2418587e\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Track: object 2. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties Midpoint; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"track\",\"id\":\"78000000-0000-4000-8000-000000000022\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Track: object 3. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties Midpoint; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"track\",\"id\":\"78000000-0000-4000-8000-000000000023\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Pin: OUT. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"pin\",\"id\":\"78000000-0000-4000-8000-000000000064\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Wire: object 5. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"wire\",\"id\":\"78000000-0000-4000-8000-00000000001e\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Label: XP_SIGNAL. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"label\",\"id\":\"78000000-0000-4000-8000-00000000001f\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            }
+          ],
+          "pid": 1711530
+        },
+        "diagnostic": {
+          "event": "state",
+          "kind": "datum.action-evidence/v2",
+          "sequence": 7,
+          "value": {
+            "active_review_target_id": "no-proposal-action",
+            "board_camera": {
+              "center_x_nm": 11500000.0,
+              "center_y_nm": 310000.0,
+              "zoom": 1.0
+            },
+            "console_latest": "Global Net \u2014 6 objects; 0 hidden; 0 locked",
+            "context": "pane-1-resolved",
+            "dock": "None",
+            "focus": "Editor(PaneId(1))",
+            "focused_content": "Some(Schematic)",
+            "focused_pane": 1,
+            "layer_filters": "WorkspaceFilterState { show_authored: true, excluded_selection_classes: {}, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L1\"), layer_visibility: {\"L1\": true, \"L2\": false, \"L3\": true, \"L4\": false, \"L45\": false, \"L49\": false}, layer_scroll_offset: 0 }",
+            "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }",
+            "menu": null,
+            "menu_focus_index": 0,
+            "pane_cameras": [
+              {
+                "camera": {
+                  "center_x_nm": 11500000.0,
+                  "center_y_nm": 310000.0,
+                  "zoom": 1.0
+                },
+                "content": "Board",
+                "pane": 0
+              },
+              {
+                "camera": null,
+                "content": "Schematic",
+                "pane": 1
+              }
+            ],
+            "preferences_open": false,
+            "registry": [
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "library.open",
+                "entry_surfaces": [
+                  "library-menu-keyboard",
+                  "library-menu-pointer"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/editor/runtime_library.rs",
+                  "symbol": "datum_gui::Runtime::open_library"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "view.fit",
+                "entry_surfaces": [
+                  "view-fit-menu-keyboard",
+                  "view-fit-menu-pointer",
+                  "view-fit-shortcut"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/viewport/runtime_camera_pane.rs",
+                  "symbol": "datum_gui::Runtime::fit_camera"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Layer Visibility menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "view.layers",
+                "entry_surfaces": [
+                  "view-layers-menu-keyboard",
+                  "view-layers-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Documents menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "window.documents",
+                "entry_surfaces": [
+                  "window-documents-menu-keyboard",
+                  "window-documents-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "About Datum is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "help.about",
+                "entry_surfaces": [
+                  "help-about-menu-keyboard",
+                  "help-about-menu-pointer"
+                ],
+                "handler_ref": null
+              }
+            ],
+            "scale": 1.0,
+            "scene_bounds": {
+              "max_x": 21000000,
+              "max_y": 3000000,
+              "min_x": 2000000,
+              "min_y": -2380000
+            },
+            "selection": {
+              "complete_inspection": false,
+              "dropped_count": 0,
+              "dropped_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "focus": null,
+              "hidden_count": 0,
+              "hidden_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "kind": "global_net",
+              "locked_count": 0,
+              "locked_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "member_count": 6,
+              "member_sample": [
+                {
+                  "class": "pad",
+                  "id": "f0780861-7a92-4cb3-8d23-6cfd2418587e",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "track",
+                  "id": "78000000-0000-4000-8000-000000000022",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "track",
+                  "id": "78000000-0000-4000-8000-000000000023",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "pin",
+                  "id": "78000000-0000-4000-8000-000000000064",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "wire",
+                  "id": "78000000-0000-4000-8000-00000000001e",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "label",
+                  "id": "78000000-0000-4000-8000-00000000001f",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                }
+              ],
+              "members_sha256": "sha256:c552616b0ca16c62e7b0bb3e2fa5c0a34998e1ccfdb0b0fb4e61f6ff5ca5c30e",
+              "notice": null,
+              "omitted_members": 0,
+              "project": "72000000-0000-4000-8000-000000000001",
+              "related_count": 2,
+              "related_sha256": "sha256:3a2552f927baf4ffd4824e55f00e452c43b245291271e25d2b67448ea57252cc",
+              "revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+              "scope": null,
+              "stale": false,
+              "subject_identity": "19aa79b1-1210-4114-b816-efd26a230f6a",
+              "unprojected_count": 0,
+              "unprojected_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            "selection_inspector": {
+              "expanded": false,
+              "filters_expanded": false,
+              "presented": {
+                "basis_expanded": false,
+                "basis_offset": 0,
+                "basis_scope": "None",
+                "total": 25,
+                "visible": 29,
+                "visible_members": []
+              },
+              "scroll_offset": 0
+            },
+            "submenu": null,
+            "window_size": [
+              1344,
+              806
+            ]
+          }
+        }
+      },
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-g1pslbb1",
+        "removed_after_owners_stop": true
+      },
+      "metric_inspection_rows": {
+        "global-net": [
+          "Available bounds: Unavailable \u2014 Project quantity context unavailable: validation error: Project Working Units are not initialized",
+          "Bounds: Unavailable \u2014 Project quantity context unavailable: validation error: Project Working Units are not initialized"
+        ],
+        "symbol": [
+          "Available bounds: Unavailable \u2014 Project quantity context unavailable: validation error: Project Working Units are not initialized",
+          "Rotation: Unavailable \u2014 Project quantity context unavailable: validation error: Project Working Units are not initialized",
+          "Position: Unavailable \u2014 Project quantity context unavailable: validation error: Project Working Units are not initialized",
+          "Bounds: Unavailable \u2014 Project quantity context unavailable: validation error: Project Working Units are not initialized"
+        ]
+      },
+      "pixel_disposition": "Initial native scene is inspectable. Selected-state captures are temporally unqualified/prior-frame; rejected as selected appearance proof, retained intact. Native state and complete public AX remain scoped observations. Exact-frame selected appearance remains XP-C04.",
+      "relevant_environment": {
+        "DATUM_ACTION_EVIDENCE": "1",
+        "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/crossprobe-diagnostic.log",
+        "DATUM_GUI_PREFERENCES_PATH": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/config/gui-preferences.json",
+        "DATUM_GUI_VERBOSE_LOG": "1",
+        "DISPLAY_in_gui": "removed (native Wayland)",
+        "HISTFILE": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/terminal-history",
+        "WAYLAND_DISPLAY": "datum-startup-qa",
+        "XDG_CACHE_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/cache",
+        "XDG_CONFIG_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/config",
+        "XDG_DATA_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/data",
+        "XDG_RUNTIME_DIR": "/run/user/1000/npd-wl-g1pslbb1",
+        "owned_input_DISPLAY": ":2",
+        "source": "Explicit existing StartupQA constructor/launch plus actual transport record. Operational authorization files are not read or hashed."
+      },
+      "result_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-inspection2/result.json",
+      "result_sha256": "82df9b1fc3a1ccf8068f954948fe4bdbd501c20fc9fcdc72b5d5e756c9804ae9",
+      "source_journal_unchanged": true,
+      "status": "OBSERVED; independent review pending; no full XP proof or acceptance",
+      "symbol": {
+        "complete_public_selection": {
+          "after": {
+            "active-pane": "1",
+            "description": "Read-only Object \u2014 1 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.",
+            "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "object"
+          },
+          "before": {
+            "active-pane": "1",
+            "description": "Read-only Object \u2014 1 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.",
+            "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "object"
+          },
+          "count": 1,
+          "members": [
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Symbol: UXP. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus true; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "true",
+                "source-identity": "{\"class\":\"symbol\",\"id\":\"78000000-0000-4000-8000-000000000001\"}",
+                "subject-kind": "object"
+              },
+              "standard_selected": true
+            }
+          ],
+          "pid": 1711530
+        },
+        "diagnostic": {
+          "event": "state",
+          "kind": "datum.action-evidence/v2",
+          "sequence": 3,
+          "value": {
+            "active_review_target_id": "no-proposal-action",
+            "board_camera": {
+              "center_x_nm": 11500000.0,
+              "center_y_nm": 310000.0,
+              "zoom": 1.0
+            },
+            "console_latest": "Object \u2014 1 objects; 0 hidden; 0 locked",
+            "context": "pane-1-resolved",
+            "dock": "None",
+            "focus": "Editor(PaneId(1))",
+            "focused_content": "Some(Schematic)",
+            "focused_pane": 1,
+            "layer_filters": "WorkspaceFilterState { show_authored: true, excluded_selection_classes: {}, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L1\"), layer_visibility: {\"L1\": true, \"L2\": false, \"L3\": true, \"L4\": false, \"L45\": false, \"L49\": false}, layer_scroll_offset: 0 }",
+            "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }",
+            "menu": null,
+            "menu_focus_index": 0,
+            "pane_cameras": [
+              {
+                "camera": {
+                  "center_x_nm": 11500000.0,
+                  "center_y_nm": 310000.0,
+                  "zoom": 1.0
+                },
+                "content": "Board",
+                "pane": 0
+              },
+              {
+                "camera": null,
+                "content": "Schematic",
+                "pane": 1
+              }
+            ],
+            "preferences_open": false,
+            "registry": [
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "library.open",
+                "entry_surfaces": [
+                  "library-menu-keyboard",
+                  "library-menu-pointer"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/editor/runtime_library.rs",
+                  "symbol": "datum_gui::Runtime::open_library"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "view.fit",
+                "entry_surfaces": [
+                  "view-fit-menu-keyboard",
+                  "view-fit-menu-pointer",
+                  "view-fit-shortcut"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/viewport/runtime_camera_pane.rs",
+                  "symbol": "datum_gui::Runtime::fit_camera"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Layer Visibility menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "view.layers",
+                "entry_surfaces": [
+                  "view-layers-menu-keyboard",
+                  "view-layers-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Documents menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "window.documents",
+                "entry_surfaces": [
+                  "window-documents-menu-keyboard",
+                  "window-documents-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "About Datum is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "help.about",
+                "entry_surfaces": [
+                  "help-about-menu-keyboard",
+                  "help-about-menu-pointer"
+                ],
+                "handler_ref": null
+              }
+            ],
+            "scale": 1.0,
+            "scene_bounds": {
+              "max_x": 21000000,
+              "max_y": 3000000,
+              "min_x": 2000000,
+              "min_y": -2380000
+            },
+            "selection": {
+              "complete_inspection": false,
+              "dropped_count": 0,
+              "dropped_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "focus": {
+                "class": "symbol",
+                "id": "78000000-0000-4000-8000-000000000001",
+                "instance_path_count": 0,
+                "instance_path_sample": [],
+                "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+              },
+              "hidden_count": 0,
+              "hidden_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "kind": "object",
+              "locked_count": 0,
+              "locked_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "member_count": 1,
+              "member_sample": [
+                {
+                  "class": "symbol",
+                  "id": "78000000-0000-4000-8000-000000000001",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                }
+              ],
+              "members_sha256": "sha256:6cd6ce413b67e85500b5de1c6fb504d5c175e9e07229a76d980d57cf05fec8e7",
+              "notice": null,
+              "omitted_members": 0,
+              "project": "72000000-0000-4000-8000-000000000001",
+              "related_count": 0,
+              "related_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "revision": "20f850b25d17409719648ea4d90c81187341cba569aaaf3bad4247eb65fc1b3d",
+              "scope": "symbol",
+              "stale": false,
+              "subject_identity": {
+                "class": "symbol",
+                "id": "78000000-0000-4000-8000-000000000001",
+                "instance_path_count": 0,
+                "instance_path_sample": [],
+                "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+              },
+              "unprojected_count": 0,
+              "unprojected_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            "selection_inspector": {
+              "expanded": false,
+              "filters_expanded": false,
+              "presented": null,
+              "scroll_offset": 0
+            },
+            "submenu": null,
+            "window_size": [
+              1344,
+              806
+            ]
+          }
+        }
+      },
+      "transport": {
+        "content": {
+          "argv": [
+            "/usr/bin/python3",
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+          ],
+          "child_exit_code": 0,
+          "child_owner_stops_verified": true,
+          "cleanup_errors": [],
+          "display": ":2",
+          "inherited_display": ":1",
+          "inner_runtime_parent": "/run/user/1000",
+          "limits": "Input transport only; no native/D1 acceptance inferred.",
+          "outer_binding": {
+            "exe": "/usr/bin/weston",
+            "pid": 1711490,
+            "sha256": "5e7b342da0d38508b3001c291f080fbe35c4101f32ade0babc8458915f87352a"
+          },
+          "outer_capture": {
+            "argv": [
+              "/usr/bin/weston",
+              "--backend=headless",
+              "--renderer=gl",
+              "--shell=kiosk-shell.so",
+              "--no-config",
+              "--width=1600",
+              "--height=1000",
+              "--scale=1",
+              "--idle-time=0",
+              "--socket=datum-qa-input",
+              "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport2/outer-weston-detail.log"
+            ],
+            "debug_requested": false,
+            "limits": "Opt-in --debug exposes capture and debug globals to clients able to connect. Mode 0700 does not exclude same-UID peers. Private headless composed output, not a physical desktop witness.",
+            "runtime": "/run/user/1000/nqi-in04bto0",
+            "socket": "datum-qa-input"
+          },
+          "owners": [
+            {
+              "argv": [
+                "/usr/bin/weston",
+                "--backend=headless",
+                "--renderer=gl",
+                "--shell=kiosk-shell.so",
+                "--no-config",
+                "--width=1600",
+                "--height=1000",
+                "--scale=1",
+                "--idle-time=0",
+                "--socket=datum-qa-input",
+                "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport2/outer-weston-detail.log"
+              ],
+              "label": "outer-weston",
+              "pid": 1711490,
+              "stopped": true
+            },
+            {
+              "argv": [
+                "/usr/bin/Xwayland",
+                "-displayfd",
+                "5",
+                "-geometry",
+                "1600x1000",
+                "-nolisten",
+                "tcp",
+                "-ac",
+                "-noreset"
+              ],
+              "label": "xwayland",
+              "pid": 1711491,
+              "stopped": true
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+              ],
+              "label": "runner",
+              "pid": 1711496,
+              "stopped": true
+            }
+          ],
+          "runtime": "/run/user/1000/nqi-in04bto0",
+          "runtime_mode": "0o700",
+          "runtime_removed_after_owners_stop": true,
+          "status": "CAPTURE_ONLY; child and owned transport stopped, independent review pending",
+          "xwayland_binding": {
+            "exe": "/usr/bin/Xwayland",
+            "pid": 1711491,
+            "sha256": "3e17573235c68ca600dcc1074fd4a64760f229fcf6f21775b6c039fe96e04053"
+          }
+        },
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-transport2/transport.json",
+        "sha256": "71e6947aebb9434c83547add25cea6e516d97079a9d98941de03b7a42599477b"
+      },
+      "verified_owner_stops": {
+        "Weston": true,
+        "clipboard": true,
+        "daemons": true,
+        "gui": true
+      }
+    },
+    "native-units": {
+      "actual_controller": [
+        "python3",
+        "scripts/run_native_qa_isolated_input.py",
+        "--output",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units-transport",
+        "--child-result",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/result.json",
+        "--",
+        "/usr/bin/python3",
+        "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+      ],
+      "actual_launch": [
+        "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+        "--project-root",
+        "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc01-20261023-units/crossprobe/project"
+      ],
+      "artifacts": {
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/crossprobe-diagnostic.log": "1188f837a36109025f43a468afa594e0e249fcd8d5639e9b49010a891f0b03ba",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/crossprobe.log": "fd95c429bc4911d40d8dac6627361187ef43c15040280487be69f2a836340011",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/global-net.png": "f7e8460f105e1e4a7af641e458440a669410b8a70713b63bcdb5cd4f45196530",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/initial.png": "cdcbe9c1692e99b1dcf1b153ea59df3f23e235a3b18dd7f3bead55518868f819",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/point-plan.json": "334726407908eeb8d8c518ad127508608896e7e4e833a4066df36e6e381abf18",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/symbol.png": "bf735b719c9f6bff2f79630e1614d4f7fe961d30477b3f77f9be09a45908dee4",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/weston-process.log": "d1767ffe2b701db68169fd745b66e2882a2e6f8973c4693e8f01fe90fa97d1fb",
+        ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/weston.log": "7f5be6904b96e940322265cc02a02ad5e56c0e2247a005dbfa98a213ea833588"
+      },
+      "cleanup_errors": [],
+      "error": null,
+      "global_net": {
+        "complete_public_selection": {
+          "after": {
+            "active-pane": "1",
+            "description": "Read-only Global Net \u2014 6 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 2 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 2 panes.",
+            "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "global_net"
+          },
+          "before": {
+            "active-pane": "1",
+            "description": "Read-only Global Net \u2014 6 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 2 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 2 panes.",
+            "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "global_net"
+          },
+          "count": 6,
+          "members": [
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Pad: object 1. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"pad\",\"id\":\"fa1cb6e0-8bc6-42b3-ae68-8114466b30c0\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Track: object 2. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties Midpoint; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"track\",\"id\":\"78000000-0000-4000-8000-000000000022\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Track: object 3. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties Midpoint; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"track\",\"id\":\"78000000-0000-4000-8000-000000000023\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Pin: OUT. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"pin\",\"id\":\"78000000-0000-4000-8000-000000000064\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Wire: object 5. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"wire\",\"id\":\"78000000-0000-4000-8000-00000000001e\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            },
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Label: XP_SIGNAL. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus false; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "false",
+                "source-identity": "{\"class\":\"label\",\"id\":\"78000000-0000-4000-8000-00000000001f\"}",
+                "subject-kind": "global_net"
+              },
+              "standard_selected": true
+            }
+          ],
+          "pid": 1712684
+        },
+        "diagnostic": {
+          "event": "state",
+          "kind": "datum.action-evidence/v2",
+          "sequence": 7,
+          "value": {
+            "active_review_target_id": "no-proposal-action",
+            "board_camera": {
+              "center_x_nm": 11500000.0,
+              "center_y_nm": 310000.0,
+              "zoom": 1.0
+            },
+            "console_latest": "Global Net \u2014 6 objects; 0 hidden; 0 locked",
+            "context": "pane-1-resolved",
+            "dock": "None",
+            "focus": "Editor(PaneId(1))",
+            "focused_content": "Some(Schematic)",
+            "focused_pane": 1,
+            "layer_filters": "WorkspaceFilterState { show_authored: true, excluded_selection_classes: {}, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L1\"), layer_visibility: {\"L1\": true, \"L2\": false, \"L3\": true, \"L4\": false, \"L45\": false, \"L49\": false}, layer_scroll_offset: 0 }",
+            "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }",
+            "menu": null,
+            "menu_focus_index": 0,
+            "pane_cameras": [
+              {
+                "camera": {
+                  "center_x_nm": 11500000.0,
+                  "center_y_nm": 310000.0,
+                  "zoom": 1.0
+                },
+                "content": "Board",
+                "pane": 0
+              },
+              {
+                "camera": null,
+                "content": "Schematic",
+                "pane": 1
+              }
+            ],
+            "preferences_open": false,
+            "registry": [
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "library.open",
+                "entry_surfaces": [
+                  "library-menu-keyboard",
+                  "library-menu-pointer"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/editor/runtime_library.rs",
+                  "symbol": "datum_gui::Runtime::open_library"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "view.fit",
+                "entry_surfaces": [
+                  "view-fit-menu-keyboard",
+                  "view-fit-menu-pointer",
+                  "view-fit-shortcut"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/viewport/runtime_camera_pane.rs",
+                  "symbol": "datum_gui::Runtime::fit_camera"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Layer Visibility menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "view.layers",
+                "entry_surfaces": [
+                  "view-layers-menu-keyboard",
+                  "view-layers-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Documents menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "window.documents",
+                "entry_surfaces": [
+                  "window-documents-menu-keyboard",
+                  "window-documents-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "About Datum is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "help.about",
+                "entry_surfaces": [
+                  "help-about-menu-keyboard",
+                  "help-about-menu-pointer"
+                ],
+                "handler_ref": null
+              }
+            ],
+            "scale": 1.0,
+            "scene_bounds": {
+              "max_x": 21000000,
+              "max_y": 3000000,
+              "min_x": 2000000,
+              "min_y": -2380000
+            },
+            "selection": {
+              "complete_inspection": false,
+              "dropped_count": 0,
+              "dropped_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "focus": null,
+              "hidden_count": 0,
+              "hidden_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "kind": "global_net",
+              "locked_count": 0,
+              "locked_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "member_count": 6,
+              "member_sample": [
+                {
+                  "class": "pad",
+                  "id": "fa1cb6e0-8bc6-42b3-ae68-8114466b30c0",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "track",
+                  "id": "78000000-0000-4000-8000-000000000022",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "track",
+                  "id": "78000000-0000-4000-8000-000000000023",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "pin",
+                  "id": "78000000-0000-4000-8000-000000000064",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "wire",
+                  "id": "78000000-0000-4000-8000-00000000001e",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                },
+                {
+                  "class": "label",
+                  "id": "78000000-0000-4000-8000-00000000001f",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                }
+              ],
+              "members_sha256": "sha256:0192f4e7a8faf0569261a161f8fa0b4e6b39ab20203c5fd9f241ea5726869ff1",
+              "notice": null,
+              "omitted_members": 0,
+              "project": "72000000-0000-4000-8000-000000000001",
+              "related_count": 2,
+              "related_sha256": "sha256:3a2552f927baf4ffd4824e55f00e452c43b245291271e25d2b67448ea57252cc",
+              "revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+              "scope": null,
+              "stale": false,
+              "subject_identity": "2e838d28-abb8-4133-a2ad-413578c5d913",
+              "unprojected_count": 0,
+              "unprojected_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            "selection_inspector": {
+              "expanded": false,
+              "filters_expanded": false,
+              "presented": {
+                "basis_expanded": false,
+                "basis_offset": 0,
+                "basis_scope": "None",
+                "total": 25,
+                "visible": 29,
+                "visible_members": []
+              },
+              "scroll_offset": 0
+            },
+            "submenu": null,
+            "window_size": [
+              1344,
+              806
+            ]
+          }
+        }
+      },
+      "ipc_runtime": {
+        "path": "/run/user/1000/npd-wl-c48oxjc_",
+        "removed_after_owners_stop": true
+      },
+      "metric_inspection_rows": {
+        "global-net": [
+          "Available bounds: Board: (1.850mm, -2.130mm) to (21.150mm, 0.150mm); Schematic: (-0.14mm, -0.49mm) to (15.53mm, 0.49mm) (rounded)",
+          "Bounds: Board: (1.850mm, -2.130mm) to (21.150mm, 0.150mm); Schematic: (-0.14mm, -0.49mm) to (15.53mm, 0.49mm) (rounded)"
+        ],
+        "symbol": [
+          "Available bounds: Schematic: (-2.88mm, -1.96mm) to (2.88mm, 1.86mm) (rounded)",
+          "Position: (0.00mm, 0.00mm)",
+          "Bounds: Schematic: (-2.88mm, -1.96mm) to (2.88mm, 1.86mm) (rounded)"
+        ]
+      },
+      "pixel_disposition": "Initial native scene is inspectable. Selected-state captures are temporally unqualified/prior-frame; rejected as selected appearance proof, retained intact. Native state and complete public AX remain scoped observations. Exact-frame selected appearance remains XP-C04.",
+      "relevant_environment": {
+        "DATUM_ACTION_EVIDENCE": "1",
+        "DATUM_GUI_LOG": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/crossprobe-diagnostic.log",
+        "DATUM_GUI_PREFERENCES_PATH": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/config/gui-preferences.json",
+        "DATUM_GUI_VERBOSE_LOG": "1",
+        "DISPLAY_in_gui": "removed (native Wayland)",
+        "HISTFILE": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/terminal-history",
+        "WAYLAND_DISPLAY": "datum-startup-qa",
+        "XDG_CACHE_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/cache",
+        "XDG_CONFIG_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/config",
+        "XDG_DATA_HOME": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/data",
+        "XDG_RUNTIME_DIR": "/run/user/1000/npd-wl-c48oxjc_",
+        "owned_input_DISPLAY": ":2",
+        "source": "Explicit existing StartupQA constructor/launch plus actual transport record. Operational authorization files are not read or hashed."
+      },
+      "result_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units/result.json",
+      "result_sha256": "1d16c4b670a1d5dd1211c128981f552c92d97ffdaf852b6e3caa5029420a011f",
+      "source_journal_unchanged": true,
+      "status": "OBSERVED; independent review pending; no full XP proof or acceptance",
+      "symbol": {
+        "complete_public_selection": {
+          "after": {
+            "active-pane": "1",
+            "description": "Read-only Object \u2014 1 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.",
+            "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "object"
+          },
+          "before": {
+            "active-pane": "1",
+            "description": "Read-only Object \u2014 1 objects; 0 hidden; 0 locked. Editor pane 1.  0 unprojected; 0 dropped. Current resolved basis. Move, rotate, mirror, lock and group unavailable for read-only selection. 0 related identities keep normal authored appearance and are not selected. Exact mask \u00b7 0 minimum \u00b7 1 panes.",
+            "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+            "project-id": "72000000-0000-4000-8000-000000000001",
+            "read-only": "true",
+            "subject-kind": "object"
+          },
+          "count": 1,
+          "members": [
+            {
+              "attributes": {
+                "active-pane": "1",
+                "description": "Selected Symbol: UXP. Sheet occurrence depth 0; hidden false; locked false; unprojected false; selection focus true; unavailable properties None; read-only.",
+                "hidden": "false",
+                "locked": "false",
+                "model-revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+                "project-id": "72000000-0000-4000-8000-000000000001",
+                "read-only": "true",
+                "selected": "true",
+                "selection-focus": "true",
+                "source-identity": "{\"class\":\"symbol\",\"id\":\"78000000-0000-4000-8000-000000000001\"}",
+                "subject-kind": "object"
+              },
+              "standard_selected": true
+            }
+          ],
+          "pid": 1712684
+        },
+        "diagnostic": {
+          "event": "state",
+          "kind": "datum.action-evidence/v2",
+          "sequence": 3,
+          "value": {
+            "active_review_target_id": "no-proposal-action",
+            "board_camera": {
+              "center_x_nm": 11500000.0,
+              "center_y_nm": 310000.0,
+              "zoom": 1.0
+            },
+            "console_latest": "Object \u2014 1 objects; 0 hidden; 0 locked",
+            "context": "pane-1-resolved",
+            "dock": "None",
+            "focus": "Editor(PaneId(1))",
+            "focused_content": "Some(Schematic)",
+            "focused_pane": 1,
+            "layer_filters": "WorkspaceFilterState { show_authored: true, excluded_selection_classes: {}, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L1\"), layer_visibility: {\"L1\": true, \"L2\": false, \"L3\": true, \"L4\": false, \"L45\": false, \"L49\": false}, layer_scroll_offset: 0 }",
+            "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }",
+            "menu": null,
+            "menu_focus_index": 0,
+            "pane_cameras": [
+              {
+                "camera": {
+                  "center_x_nm": 11500000.0,
+                  "center_y_nm": 310000.0,
+                  "zoom": 1.0
+                },
+                "content": "Board",
+                "pane": 0
+              },
+              {
+                "camera": null,
+                "content": "Schematic",
+                "pane": 1
+              }
+            ],
+            "preferences_open": false,
+            "registry": [
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "library.open",
+                "entry_surfaces": [
+                  "library-menu-keyboard",
+                  "library-menu-pointer"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/editor/runtime_library.rs",
+                  "symbol": "datum_gui::Runtime::open_library"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": true,
+                    "reason": "Available"
+                  }
+                },
+                "dispatch_key": "view.fit",
+                "entry_surfaces": [
+                  "view-fit-menu-keyboard",
+                  "view-fit-menu-pointer",
+                  "view-fit-shortcut"
+                ],
+                "handler_ref": {
+                  "path": "crates/gui-app/src/viewport/runtime_camera_pane.rs",
+                  "symbol": "datum_gui::Runtime::fit_camera"
+                }
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Layer Visibility menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "view.layers",
+                "entry_surfaces": [
+                  "view-layers-menu-keyboard",
+                  "view-layers-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "Documents menu action is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "window.documents",
+                "entry_surfaces": [
+                  "window-documents-menu-keyboard",
+                  "window-documents-menu-pointer"
+                ],
+                "handler_ref": null
+              },
+              {
+                "contexts": {
+                  "pane-1-resolved": {
+                    "enabled": false,
+                    "reason": "About Datum is unavailable in this build."
+                  }
+                },
+                "dispatch_key": "help.about",
+                "entry_surfaces": [
+                  "help-about-menu-keyboard",
+                  "help-about-menu-pointer"
+                ],
+                "handler_ref": null
+              }
+            ],
+            "scale": 1.0,
+            "scene_bounds": {
+              "max_x": 21000000,
+              "max_y": 3000000,
+              "min_x": 2000000,
+              "min_y": -2380000
+            },
+            "selection": {
+              "complete_inspection": false,
+              "dropped_count": 0,
+              "dropped_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "focus": {
+                "class": "symbol",
+                "id": "78000000-0000-4000-8000-000000000001",
+                "instance_path_count": 0,
+                "instance_path_sample": [],
+                "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+              },
+              "hidden_count": 0,
+              "hidden_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "kind": "object",
+              "locked_count": 0,
+              "locked_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "member_count": 1,
+              "member_sample": [
+                {
+                  "class": "symbol",
+                  "id": "78000000-0000-4000-8000-000000000001",
+                  "instance_path_count": 0,
+                  "instance_path_sample": [],
+                  "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                }
+              ],
+              "members_sha256": "sha256:6cd6ce413b67e85500b5de1c6fb504d5c175e9e07229a76d980d57cf05fec8e7",
+              "notice": null,
+              "omitted_members": 0,
+              "project": "72000000-0000-4000-8000-000000000001",
+              "related_count": 0,
+              "related_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+              "scope": "symbol",
+              "stale": false,
+              "subject_identity": {
+                "class": "symbol",
+                "id": "78000000-0000-4000-8000-000000000001",
+                "instance_path_count": 0,
+                "instance_path_sample": [],
+                "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+              },
+              "unprojected_count": 0,
+              "unprojected_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            "selection_inspector": {
+              "expanded": false,
+              "filters_expanded": false,
+              "presented": null,
+              "scroll_offset": 0
+            },
+            "submenu": null,
+            "window_size": [
+              1344,
+              806
+            ]
+          }
+        }
+      },
+      "transport": {
+        "content": {
+          "argv": [
+            "/usr/bin/python3",
+            "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+          ],
+          "child_exit_code": 0,
+          "child_owner_stops_verified": true,
+          "cleanup_errors": [],
+          "display": ":2",
+          "inherited_display": ":1",
+          "inner_runtime_parent": "/run/user/1000",
+          "limits": "Input transport only; no native/D1 acceptance inferred.",
+          "outer_binding": {
+            "exe": "/usr/bin/weston",
+            "pid": 1712651,
+            "sha256": "5e7b342da0d38508b3001c291f080fbe35c4101f32ade0babc8458915f87352a"
+          },
+          "outer_capture": {
+            "argv": [
+              "/usr/bin/weston",
+              "--backend=headless",
+              "--renderer=gl",
+              "--shell=kiosk-shell.so",
+              "--no-config",
+              "--width=1600",
+              "--height=1000",
+              "--scale=1",
+              "--idle-time=0",
+              "--socket=datum-qa-input",
+              "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units-transport/outer-weston-detail.log"
+            ],
+            "debug_requested": false,
+            "limits": "Opt-in --debug exposes capture and debug globals to clients able to connect. Mode 0700 does not exclude same-UID peers. Private headless composed output, not a physical desktop witness.",
+            "runtime": "/run/user/1000/nqi-ktwfstsd",
+            "socket": "datum-qa-input"
+          },
+          "owners": [
+            {
+              "argv": [
+                "/usr/bin/weston",
+                "--backend=headless",
+                "--renderer=gl",
+                "--shell=kiosk-shell.so",
+                "--no-config",
+                "--width=1600",
+                "--height=1000",
+                "--scale=1",
+                "--idle-time=0",
+                "--socket=datum-qa-input",
+                "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units-transport/outer-weston-detail.log"
+              ],
+              "label": "outer-weston",
+              "pid": 1712651,
+              "stopped": true
+            },
+            {
+              "argv": [
+                "/usr/bin/Xwayland",
+                "-displayfd",
+                "5",
+                "-geometry",
+                "1600x1000",
+                "-nolisten",
+                "tcp",
+                "-ac",
+                "-noreset"
+              ],
+              "label": "xwayland",
+              "pid": 1712652,
+              "stopped": true
+            },
+            {
+              "argv": [
+                "/usr/bin/python3",
+                "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/inspect-native.py"
+              ],
+              "label": "runner",
+              "pid": 1712655,
+              "stopped": true
+            }
+          ],
+          "runtime": "/run/user/1000/nqi-ktwfstsd",
+          "runtime_mode": "0o700",
+          "runtime_removed_after_owners_stop": true,
+          "status": "CAPTURE_ONLY; child and owned transport stopped, independent review pending",
+          "xwayland_binding": {
+            "exe": "/usr/bin/Xwayland",
+            "pid": 1712652,
+            "sha256": "3e17573235c68ca600dcc1074fd4a64760f229fcf6f21775b6c039fe96e04053"
+          }
+        },
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-units-transport/transport.json",
+        "sha256": "dac42f07cf13d758a1f18e449b449ee1eee944f697389ce719c1e907c34de9f1"
+      },
+      "verified_owner_stops": {
+        "Weston": true,
+        "clipboard": true,
+        "daemons": true,
+        "gui": true
+      }
+    }
+  },
+  "schema_version": 1,
+  "status": "source/AX/native fixture readiness observation; final independent readiness review pending; no product acceptance",
+  "units_delta": "Fresh fixture initializes existing metric factory_migration_v1 receipt canonically; actual ordinary AX now exposes rounded metric positions/bounds. Earlier Unavailable context remains historical evidence.",
+  "working_behavior": "Ordinary Wire triple-click yields exact6-member GlobalNet across Board and Schematic,2related parents,0unprojected; complete public AX identities match independent source membership. Reuse shared projection, not rebuild."
+}
