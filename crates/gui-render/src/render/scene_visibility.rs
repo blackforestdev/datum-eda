@@ -2,6 +2,12 @@
 use super::*;
 
 /// Borrowed executed command incidence; retained allocations stay resident.
+///
+/// The AUTHORED project filter is a workspace-wide provenance lens (authored
+/// versus proposed), so it governs every surface alike — Board and Schematic —
+/// unlike per-layer visibility, which only follows each surface's own layer
+/// ids. Unified semantics ratified 2026-10-23
+/// (dat-schematic-show-authored-unification-9tpd).
 #[derive(Clone, Copy)]
 pub(super) struct VisibleDrawCommands<'a> {
     pub(super) commands: &'a [RetainedDrawCommand],

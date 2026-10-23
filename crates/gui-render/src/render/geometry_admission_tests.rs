@@ -214,3 +214,78 @@ fn schematic_layer_visibility_filters_draws_masks_and_counts_without_retiring_ge
     assert_eq!(fixture.source_bytes(), source);
     assert_eq!(state.selection, selection);
 }
+
+#[test]
+fn schematic_honors_the_workspace_authored_filter_without_retiring_geometry() {
+    let (fixture, mut state) = crate::native_selection_overlay::tests::selected_points_state();
+    let source = fixture.source_bytes();
+    let board = RetainedScene::from_workspace(&state, 1280, 800);
+    let schematic =
+        RetainedScene::from_workspace_schematic_for_surface(&state, 1280, 800, 1.0).unwrap();
+    let retained_commands = schematic.all_draw_commands().to_vec();
+    assert!(!retained_commands.is_empty());
+    let resident_vertices = schematic.world_vertices().as_ptr();
+    let prepare = |state: &ReviewWorkspaceState| {
+        let mut prepared = PreparedScene::from_workspace(
+            state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &board,
+        )
+        .unwrap();
+        prepared.append_native_selection(state).unwrap();
+        prepared
+    };
+    let counts = |prepared: &PreparedScene, surface| {
+        prepared
+            .geometry_admission(&board, Some(&schematic))
+            .find(|p| p.surface == surface)
+            .unwrap()
+            .counts()
+            .unwrap()
+    };
+    let commands = |prepared: &PreparedScene| {
+        prepared
+            .surface_draw_commands(SceneSurface::Schematic, Some(&schematic))
+            .iter()
+            .cloned()
+            .collect::<Vec<_>>()
+    };
+    let painted = |prepared: &PreparedScene| {
+        prepared
+            .selected_paint_ranges(&board, Some(&schematic))
+            .filter(|range| range.surface == SceneSurface::Schematic)
+            .count()
+    };
+    let visible = prepare(&state);
+    let visible_counts = counts(&visible, SceneSurface::Schematic);
+    assert_eq!(commands(&visible), retained_commands);
+    assert!(visible_counts.prepared_triangles > 0 && painted(&visible) > 0);
+
+    state.ui.filters.show_authored = false;
+    let hidden = prepare(&state);
+    assert!(commands(&hidden).is_empty());
+    assert_eq!(painted(&hidden), 0);
+    let hidden_counts = counts(&hidden, SceneSurface::Schematic);
+    assert_eq!(hidden_counts.prepared_commands, 0);
+    assert_eq!(hidden_counts.prepared_triangles, 0);
+    assert_eq!(
+        hidden_counts.retained_vertices,
+        visible_counts.retained_vertices
+    );
+    assert_eq!(
+        commands(&visible),
+        retained_commands,
+        "the AUTHORED filter is a frame snapshot"
+    );
+
+    state.ui.filters.show_authored = true;
+    let restored = prepare(&state);
+    assert_eq!(commands(&restored), retained_commands);
+    assert_eq!(counts(&restored, SceneSurface::Schematic), visible_counts);
+    assert_eq!(painted(&restored), painted(&visible));
+    assert_eq!(schematic.world_vertices().as_ptr(), resident_vertices);
+    assert_eq!(schematic.all_draw_commands(), retained_commands);
+    assert_eq!(fixture.source_bytes(), source);
+}
