@@ -1,0 +1,2441 @@
+{
+  "schema_version": 1,
+  "kind": "GUI-P2-CROSSPROBE finite native delivery proof",
+  "status": "CANDIDATE_REVIEW_PENDING",
+  "task": "GUI-P2-CROSSPROBE",
+  "step": "XP-C03/XP-C04",
+  "production_source_commit": "ee9fa28e",
+  "source_proof": {
+    "path": "docs/reviews/workflow-delivery-rollout/crossprobe/binding-source-proof.json",
+    "sha256": "ab7efe48a10c621d0af59cd33165327af5cca7f52c2a9d9c554b70e2a5bf3430"
+  },
+  "preparation": {
+    "path": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/crossprobe-fixture.json",
+    "sha256": "77fcc59b79f5a262a65ad5b1e39925be64dfb5c7c01ca0e1135bef850cacfd52"
+  },
+  "native_configuration": {
+    "normal_launch": "datum-gui --project-root <exact admitted root>",
+    "binary_feature": "visual; passive exact SubmittedFrame diagnostics",
+    "stateful_content_probe": "UNSET",
+    "input": "ordinary pointer/keyboard and public AT-SPI; outer X11-owned Weston, Datum Wayland/Vulkan",
+    "comparison_limit": "No HTML/native/offscreen pixel equality or physical/KWin/HUMAN qualification"
+  },
+  "runs": {
+    "1": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-01/result.json",
+      "sha256": "6befdd1d0c9796d88435d09bb29743ba25deae018521d8359af7dc682185e7a1",
+      "status": "FAIL",
+      "error": "RuntimeError('timed out: current dialog/Main frame presented before native capture; last=None')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "fba0317b7e8bfcf28f5c7dab2f930241494cfbea9acf765a1b3cf081fbeec2b8",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "5e6cf307686d19f93126e1d0b6e372acbf061d23ecefa8fb2f79cc4b7da1a2ac",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N01",
+          "qualified": true,
+          "before_sequence": 1,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-driver.py",
+        "sha256": "5e6cf307686d19f93126e1d0b6e372acbf061d23ecefa8fb2f79cc4b7da1a2ac",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "2": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-02/result.json",
+      "sha256": "a16c0240ec751af9755e158ec14a8daa2c371bd525491da8d1323422b5f8e64d",
+      "status": "FAIL",
+      "error": "RuntimeError('timed out: complete source-qualified public selection; last=None')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "b43eceb56fc1f7ed50c073d1ab32f45144bbf4614d43ee19e0a1b6e945749b8d",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N01-selected-frame",
+          "qualified": true,
+          "before_sequence": 1,
+          "after_sequence": 3
+        },
+        {
+          "number": 2,
+          "case": "XP-N02",
+          "qualified": true,
+          "before_sequence": 4,
+          "after_sequence": 6
+        },
+        {
+          "number": 3,
+          "case": "XP-N03-native-Wire-ladder",
+          "qualified": true,
+          "before_sequence": 7,
+          "after_sequence": 11
+        },
+        {
+          "number": 4,
+          "case": "XP-N04",
+          "qualified": true,
+          "before_sequence": 12,
+          "after_sequence": 13
+        },
+        {
+          "number": 5,
+          "case": "XP-N07-add",
+          "qualified": false,
+          "before_sequence": 13,
+          "after_sequence": 13
+        },
+        {
+          "number": 6,
+          "case": "XP-N07-Compound-All",
+          "qualified": false,
+          "before_sequence": 13,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-visual-driver.py",
+        "sha256": "b43eceb56fc1f7ed50c073d1ab32f45144bbf4614d43ee19e0a1b6e945749b8d",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "3": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-03/result.json",
+      "sha256": "fcbcb8360d6b80a76ce468b32be4032f2aa5f2d3ee6dadfc7c353c42fc7c0677",
+      "status": "FAIL",
+      "error": "RuntimeError('timed out: ordinary Open completed; last=None')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "97294bc888a989e529a608950824b48a65267b8020c9bf1ab6993abc98f9b7eb",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N07-free-before-add",
+          "qualified": true,
+          "before_sequence": 1,
+          "after_sequence": 3
+        },
+        {
+          "number": 2,
+          "case": "XP-N07-Shift-add-bound",
+          "qualified": true,
+          "before_sequence": 3,
+          "after_sequence": 4
+        },
+        {
+          "number": 3,
+          "case": "XP-N07-Ctrl-remove-focused-bound",
+          "qualified": true,
+          "before_sequence": 4,
+          "after_sequence": 5
+        },
+        {
+          "number": 4,
+          "case": "XP-N10-Shift-region-Escape-preserves",
+          "qualified": true,
+          "before_sequence": 6,
+          "after_sequence": 6
+        },
+        {
+          "number": 5,
+          "case": "XP-N10-second-Escape-clears",
+          "qualified": false,
+          "before_sequence": 6,
+          "after_sequence": 7
+        },
+        {
+          "number": 6,
+          "case": "XP-N10-fresh-valid-Net",
+          "qualified": true,
+          "before_sequence": 7,
+          "after_sequence": 10
+        },
+        {
+          "number": 7,
+          "case": "XP-N09-focus-Board-header",
+          "qualified": true,
+          "before_sequence": 11,
+          "after_sequence": 13
+        },
+        {
+          "number": 8,
+          "case": "XP-N09-hide-FCu-whole-Net-retained",
+          "qualified": true,
+          "before_sequence": 13,
+          "after_sequence": 15
+        },
+        {
+          "number": 9,
+          "case": "XP-N09-clear-before-hidden-origin",
+          "qualified": false,
+          "before_sequence": 15,
+          "after_sequence": 16
+        },
+        {
+          "number": 10,
+          "case": "XP-N09-hidden-Track-cannot-originate",
+          "qualified": false,
+          "before_sequence": 16,
+          "after_sequence": 16
+        },
+        {
+          "number": 11,
+          "case": "XP-N09-visible-Wire-origin-complete-hidden-members",
+          "qualified": true,
+          "before_sequence": 16,
+          "after_sequence": 19
+        },
+        {
+          "number": 12,
+          "case": "XP-N09-hide-Wire-keeps-whole-Net",
+          "qualified": true,
+          "before_sequence": 20,
+          "after_sequence": 22
+        },
+        {
+          "number": 13,
+          "case": "XP-N09-restore-Wire",
+          "qualified": true,
+          "before_sequence": 22,
+          "after_sequence": 24
+        },
+        {
+          "number": 14,
+          "case": "XP-N09-focus-Board-for-restore",
+          "qualified": true,
+          "before_sequence": 24,
+          "after_sequence": 26
+        },
+        {
+          "number": 15,
+          "case": "XP-N09-restore-FCu",
+          "qualified": true,
+          "before_sequence": 26,
+          "after_sequence": 28
+        },
+        {
+          "number": 16,
+          "case": "XP-N08-close-Board-Net-persists",
+          "qualified": true,
+          "before_sequence": 28,
+          "after_sequence": 41
+        },
+        {
+          "number": 17,
+          "case": "XP-N08-replace-Schematic-with-Board",
+          "qualified": true,
+          "before_sequence": 41,
+          "after_sequence": 58
+        },
+        {
+          "number": 18,
+          "case": "XP-N08-duplicate-Board-pane",
+          "qualified": true,
+          "before_sequence": 58,
+          "after_sequence": 69
+        },
+        {
+          "number": 19,
+          "case": "XP-N08-wheel-independent-active-Board-camera",
+          "qualified": true,
+          "before_sequence": 69,
+          "after_sequence": 70
+        },
+        {
+          "number": 20,
+          "case": "XP-N08-focus-next-retains-subject",
+          "qualified": true,
+          "before_sequence": 70,
+          "after_sequence": 85
+        },
+        {
+          "number": 21,
+          "case": "XP-N08-replace-focused-pane-Schematic",
+          "qualified": true,
+          "before_sequence": 85,
+          "after_sequence": 103
+        },
+        {
+          "number": 22,
+          "case": "XP-N08-focus-next-before-stage-open",
+          "qualified": true,
+          "before_sequence": 103,
+          "after_sequence": 118
+        },
+        {
+          "number": 23,
+          "case": "XP-N05-ordinary-open-Pending-stage",
+          "qualified": false,
+          "before_sequence": 118,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-remaining-driver.py",
+        "sha256": "97294bc888a989e529a608950824b48a65267b8020c9bf1ab6993abc98f9b7eb",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "4": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-04/result.json",
+      "sha256": "2cb8b124bc76e1c17dd03577ab82399c84e5467e5de890df5ebe839b91a4740e",
+      "status": "FAIL",
+      "error": "RuntimeError('timed out: explicit requested semantic entry; last=None')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "cb262edab0bc705d58935fa2b97ef246d9184db0887540af36165e8da6c75304",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N03-explicit-Board-Global-Net",
+          "qualified": false,
+          "before_sequence": 1,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-menu-driver.py",
+        "sha256": "cb262edab0bc705d58935fa2b97ef246d9184db0887540af36165e8da6c75304",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "5": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-05/result.json",
+      "sha256": "9ba25c9a037dfd412c3fe25f9a40a6eb8c2f4b421c5d10b19a027dc766790248",
+      "status": "FAIL",
+      "error": "RuntimeError('timed out: ordinary View menu focus-loss owner; last=None')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "ca5550c11606ed8ee71b9a79672fa523168b9d6bea5762f3846a409698a6c252",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N03-explicit-Board-Global-Net",
+          "qualified": true,
+          "before_sequence": 1,
+          "after_sequence": 4
+        },
+        {
+          "number": 2,
+          "case": "XP-N07-derived-Shift-refuses-membership-change",
+          "qualified": true,
+          "before_sequence": 4,
+          "after_sequence": 6
+        },
+        {
+          "number": 3,
+          "case": "XP-N07-derived-Ctrl-refuses-membership-change",
+          "qualified": true,
+          "before_sequence": 6,
+          "after_sequence": 6
+        },
+        {
+          "number": 4,
+          "case": "XP-N02-select-parent-after-derived",
+          "qualified": true,
+          "before_sequence": 6,
+          "after_sequence": 9
+        },
+        {
+          "number": 5,
+          "case": "XP-N02-promote-related-Symbol-normally",
+          "qualified": true,
+          "before_sequence": 9,
+          "after_sequence": 11
+        },
+        {
+          "number": 6,
+          "case": "XP-N05-ordinary-Open-Pending-correct-public-control",
+          "qualified": false,
+          "before_sequence": 11,
+          "after_sequence": 15
+        },
+        {
+          "number": 7,
+          "case": "XP-N05-Pending-Wire-object",
+          "qualified": false,
+          "before_sequence": 15,
+          "after_sequence": 16
+        },
+        {
+          "number": 8,
+          "case": "XP-N05-Pending-Global-Net-unavailable",
+          "qualified": false,
+          "before_sequence": 16,
+          "after_sequence": 19
+        },
+        {
+          "number": 9,
+          "case": "XP-N05-reopen-Complete",
+          "qualified": false,
+          "before_sequence": 19,
+          "after_sequence": 23
+        },
+        {
+          "number": 10,
+          "case": "XP-N05-Complete-recovery-explicit-Net",
+          "qualified": true,
+          "before_sequence": 23,
+          "after_sequence": 26
+        },
+        {
+          "number": 11,
+          "case": "XP-N08-focus-Schematic-for-duplicate",
+          "qualified": true,
+          "before_sequence": 27,
+          "after_sequence": 42
+        },
+        {
+          "number": 12,
+          "case": "XP-N08-fill-second-pane-Board-duplicate",
+          "qualified": true,
+          "before_sequence": 42,
+          "after_sequence": 59
+        },
+        {
+          "number": 13,
+          "case": "XP-N08-duplicate-Board-independent-camera",
+          "qualified": true,
+          "before_sequence": 59,
+          "after_sequence": 60
+        },
+        {
+          "number": 14,
+          "case": "XP-N08-restore-second-pane-Schematic",
+          "qualified": true,
+          "before_sequence": 60,
+          "after_sequence": 78
+        },
+        {
+          "number": 15,
+          "case": "XP-N11-open-main-before-compound-scope",
+          "qualified": false,
+          "before_sequence": 78,
+          "after_sequence": 82
+        },
+        {
+          "number": 16,
+          "case": "XP-N11-bound-Symbol-before-mixed-compound",
+          "qualified": true,
+          "before_sequence": 82,
+          "after_sequence": 84
+        },
+        {
+          "number": 17,
+          "case": "XP-N07-N11-selected-parent-pair-excludes-related-union",
+          "qualified": true,
+          "before_sequence": 84,
+          "after_sequence": 86
+        },
+        {
+          "number": 18,
+          "case": "XP-N11-Symbol-inspection-scope-keeps-two-members-focus",
+          "qualified": true,
+          "before_sequence": 86,
+          "after_sequence": 87
+        },
+        {
+          "number": 19,
+          "case": "XP-N10-focus-loss-cancels-Shift-region",
+          "qualified": false,
+          "before_sequence": 87,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-semantic-driver.py",
+        "sha256": "ca5550c11606ed8ee71b9a79672fa523168b9d6bea5762f3846a409698a6c252",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "6": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-06/result.json",
+      "sha256": "a17bc48e566a0ff8c4c93a275e24661359e9bd4358d6847d1d548400c185b868",
+      "status": "NATIVE_OBSERVED_REVIEW_PENDING",
+      "error": null,
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "4018d02612de3346b775780b80598e1fe7d3039e2ccceb44b648f9a12f4474ae",
+      "steps": [
+        {
+          "number": 1,
+          "case": "modifier-isolation-Net-before-Context",
+          "qualified": true,
+          "before_sequence": 1,
+          "after_sequence": 4
+        },
+        {
+          "number": 2,
+          "case": "modifier-isolation-Shift-before-Context",
+          "qualified": true,
+          "before_sequence": 4,
+          "after_sequence": 5
+        },
+        {
+          "number": 3,
+          "case": "modifier-isolation-read-Context-between-events",
+          "qualified": true,
+          "before_sequence": 6,
+          "after_sequence": 6
+        },
+        {
+          "number": 4,
+          "case": "modifier-isolation-Ctrl-after-Context",
+          "qualified": true,
+          "before_sequence": 6,
+          "after_sequence": 6
+        },
+        {
+          "number": 5,
+          "case": "XP-N12-reopen-main-public-Open",
+          "qualified": false,
+          "before_sequence": 7,
+          "after_sequence": 11
+        },
+        {
+          "number": 6,
+          "case": "XP-N12-reopened-current-bound-source",
+          "qualified": true,
+          "before_sequence": 11,
+          "after_sequence": 13
+        },
+        {
+          "number": 7,
+          "case": "XP-N05-Pad-open-Pending",
+          "qualified": false,
+          "before_sequence": 13,
+          "after_sequence": 17
+        },
+        {
+          "number": 8,
+          "case": "XP-N05-Pad-explicit-semantic-unavailable",
+          "qualified": false,
+          "before_sequence": 17,
+          "after_sequence": 19
+        },
+        {
+          "number": 9,
+          "case": "bounded-lock-Pad-reopen-observations-complete",
+          "qualified": false,
+          "before_sequence": 19,
+          "after_sequence": 19
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-lock-driver.py",
+        "sha256": "4018d02612de3346b775780b80598e1fe7d3039e2ccceb44b648f9a12f4474ae",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "7": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-07/result.json",
+      "sha256": "2048562539faeb01ec38ae8ec291e3aa378cec503a2a877a7574d05bb8a70e96",
+      "status": "FAIL",
+      "error": "RuntimeError('timed out: ordinary native Main Close exits process; last=None')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "4cb79b221aebc5a25ed80b45d59aa7fcb07e938aa4accc0ed46fede8858b5588",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N12-native-Main-close-via-desktop-AltF4",
+          "qualified": false,
+          "before_sequence": 1,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-close-driver.py",
+        "sha256": "4cb79b221aebc5a25ed80b45d59aa7fcb07e938aa4accc0ed46fede8858b5588",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "8": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-08/result.json",
+      "sha256": "366a0d32f3624120baacd549de8730beaa95a187ff766b47d817b763b142ab8e",
+      "status": "FAIL",
+      "error": "RuntimeError('App exited 0: ordinary native Main Close exits process')",
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "3c1340ebf78ae3901b3a9c1c5992a0704f4b554366d0baee60059f8d194124db",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N12-visible-native-window-Close-control",
+          "qualified": false,
+          "before_sequence": 1,
+          "after_sequence": null
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-close-control-driver.py",
+        "sha256": "3c1340ebf78ae3901b3a9c1c5992a0704f4b554366d0baee60059f8d194124db",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    },
+    "9": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-09/result.json",
+      "sha256": "19630258a493cbffafe79fedfbd1c7a93bf49afe8672e67ecb7a7220294e0102",
+      "status": "NATIVE_OBSERVED_REVIEW_PENDING",
+      "error": null,
+      "canonical_unchanged": {
+        "main": true,
+        "complete": true,
+        "pending": true
+      },
+      "verified_owner_stops": {
+        "gui": true,
+        "companions": true,
+        "Weston": true,
+        "runtime_removed": true
+      },
+      "cleanup_errors": [],
+      "binary_hashes": {
+        "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+        "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+      },
+      "driver_sha256": "0f0eb147c74cbd2cd0c05c5d1cce39dd63213bed5ec6538beccdc2d333ea9828",
+      "steps": [
+        {
+          "number": 1,
+          "case": "XP-N12-fresh-process-reopen-after-native-Close",
+          "qualified": true,
+          "before_sequence": 1,
+          "after_sequence": 3
+        },
+        {
+          "number": 2,
+          "case": "XP-N12-fresh-reopen-complete",
+          "qualified": false,
+          "before_sequence": 3,
+          "after_sequence": 3
+        }
+      ],
+      "executed_driver_source": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-crossprobe-reopen-driver.py",
+        "sha256": "0f0eb147c74cbd2cd0c05c5d1cce39dd63213bed5ec6538beccdc2d333ea9828",
+        "provenance": "Original immutable executed file retained; actual bytes equal that run recorded driver_sha256. No retrospective reconstruction or common final-driver claim."
+      }
+    }
+  },
+  "selected_frames": [
+    {
+      "run": 2,
+      "step": 1,
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-02/n01-bound-symbol.png",
+      "sha256": "be66ee00e9133a27bf0e947a117ebc1e45b602ad37c5021764c7f58c4b38fadd",
+      "requirement": {
+        "after_byte": 43545,
+        "event": "mouse input Left Released",
+        "selection_fields": {
+          "kind": "object",
+          "project": "72000000-0000-4000-8000-000000000001",
+          "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505",
+          "scope": "symbol",
+          "members": [
+            {
+              "class": "symbol",
+              "id": "78000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "focus": {
+            "class": "symbol",
+            "id": "78000000-0000-4000-8000-000000000001"
+          }
+        },
+        "text_by_region": {
+          "inspector": [
+            "Symbol: UXP",
+            "SELECTED",
+            "All 1",
+            "Symbols 1",
+            "Related 1 \u00b7 normal appearance",
+            "Related component: Footprint UXP \u2014 compon\u2026"
+          ],
+          "footer": [
+            "object 1"
+          ]
+        }
+      },
+      "presentation": {
+        "attempts": 5,
+        "counts": {
+          "coalesced": 1,
+          "duplicate_tokens": 0,
+          "presentations": 4,
+          "received": 5,
+          "requested": 5,
+          "suppressed": 4
+        },
+        "damage": 6,
+        "device_generation": 1,
+        "host_generation": 1,
+        "pending": false,
+        "presented_damage": 6,
+        "ready": false,
+        "reason": "presented",
+        "rendering": null,
+        "window": "WindowId(94294056812992)",
+        "content_presentation": {
+          "event": {
+            "line": 153,
+            "start_byte": 43545,
+            "end_byte": 43665
+          },
+          "submitted_content": {
+            "line": 216,
+            "start_byte": 53475,
+            "end_byte": 64874
+          },
+          "native_present": {
+            "line": 217,
+            "start_byte": 64874,
+            "end_byte": 65400
+          },
+          "settled_ledger": {
+            "line": 219,
+            "start_byte": 65490,
+            "end_byte": 65866
+          },
+          "native_identity": {
+            "acquisition": 4,
+            "configuration": 1,
+            "host": 1,
+            "queue_epoch": 1,
+            "submission_receipt": 5,
+            "window": "WindowId(94294056812992)"
+          },
+          "content_revision": 20,
+          "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+        }
+      },
+      "limits": "Actual native compositor pixels plus ordered content/present receipts; independent pixel review still required."
+    },
+    {
+      "run": 2,
+      "step": 2,
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-02/n02-bound-footprint.png",
+      "sha256": "4be38f0f24b813e7ae357e9060b56e526ec97ea42c71bf5332d9cdcb120d912b",
+      "requirement": {
+        "after_byte": 103227,
+        "event": "mouse input Left Released",
+        "selection_fields": {
+          "kind": "object",
+          "project": "72000000-0000-4000-8000-000000000001",
+          "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505",
+          "scope": "footprint",
+          "members": [
+            {
+              "class": "footprint",
+              "id": "78000000-0000-4000-8000-000000000002"
+            }
+          ],
+          "focus": {
+            "class": "footprint",
+            "id": "78000000-0000-4000-8000-000000000002"
+          }
+        },
+        "text_by_region": {
+          "inspector": [
+            "Part: UXP",
+            "SELECTED",
+            "All 1",
+            "Parts 1",
+            "Related 1 \u00b7 normal appearance",
+            "Related component: Symbol UXP \u2014 component\u2026"
+          ],
+          "footer": [
+            "object 1"
+          ]
+        }
+      },
+      "presentation": {
+        "attempts": 8,
+        "counts": {
+          "coalesced": 2,
+          "duplicate_tokens": 0,
+          "presentations": 7,
+          "received": 8,
+          "requested": 8,
+          "suppressed": 7
+        },
+        "damage": 10,
+        "device_generation": 1,
+        "host_generation": 1,
+        "pending": false,
+        "presented_damage": 10,
+        "ready": false,
+        "reason": "presented",
+        "rendering": null,
+        "window": "WindowId(94294056812992)",
+        "content_presentation": {
+          "event": {
+            "line": 284,
+            "start_byte": 103227,
+            "end_byte": 103347
+          },
+          "submitted_content": {
+            "line": 330,
+            "start_byte": 111284,
+            "end_byte": 123113
+          },
+          "native_present": {
+            "line": 331,
+            "start_byte": 123113,
+            "end_byte": 123638
+          },
+          "settled_ledger": {
+            "line": 333,
+            "start_byte": 123726,
+            "end_byte": 124103
+          },
+          "native_identity": {
+            "acquisition": 7,
+            "configuration": 1,
+            "host": 1,
+            "queue_epoch": 1,
+            "submission_receipt": 8,
+            "window": "WindowId(94294056812992)"
+          },
+          "content_revision": 30,
+          "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+        }
+      },
+      "limits": "Actual native compositor pixels plus ordered content/present receipts; independent pixel review still required."
+    },
+    {
+      "run": 2,
+      "step": 3,
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-02/n03-wire-global-net.png",
+      "sha256": "969ef3940d250a04e56db93b06df774c2f171995ae15b498992a333a38a8a4d4",
+      "requirement": {
+        "after_byte": 187785,
+        "event": "mouse input Left Released",
+        "selection_fields": {
+          "kind": "global_net",
+          "project": "72000000-0000-4000-8000-000000000001",
+          "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505",
+          "scope": null,
+          "members": [
+            {
+              "class": "pad",
+              "id": "f5e79bdf-6d3e-4f2a-870a-49ce9c1032a0"
+            },
+            {
+              "class": "track",
+              "id": "78000000-0000-4000-8000-000000000022"
+            },
+            {
+              "class": "track",
+              "id": "78000000-0000-4000-8000-000000000023"
+            },
+            {
+              "class": "pin",
+              "id": "78000000-0000-4000-8000-000000000064"
+            },
+            {
+              "class": "wire",
+              "id": "78000000-0000-4000-8000-00000000001e"
+            },
+            {
+              "class": "label",
+              "id": "78000000-0000-4000-8000-00000000001f"
+            }
+          ],
+          "focus": null
+        },
+        "text_by_region": {
+          "inspector": [
+            "Global Net \u2014 6 objects",
+            "SELECTED",
+            "All 6",
+            "Pads 1",
+            "Tracks 2",
+            "Pins 1",
+            "Wires 1",
+            "Labels 1",
+            "Related 2 \u00b7 normal appearance"
+          ],
+          "footer": [
+            "global_net 6"
+          ]
+        }
+      },
+      "presentation": {
+        "attempts": 13,
+        "counts": {
+          "coalesced": 7,
+          "duplicate_tokens": 0,
+          "presentations": 12,
+          "received": 13,
+          "requested": 13,
+          "suppressed": 12
+        },
+        "damage": 20,
+        "device_generation": 1,
+        "host_generation": 1,
+        "pending": false,
+        "presented_damage": 20,
+        "ready": false,
+        "reason": "presented",
+        "rendering": null,
+        "window": "WindowId(94294056812992)",
+        "content_presentation": {
+          "event": {
+            "line": 505,
+            "start_byte": 187785,
+            "end_byte": 187905
+          },
+          "submitted_content": {
+            "line": 573,
+            "start_byte": 212361,
+            "end_byte": 223675
+          },
+          "native_present": {
+            "line": 574,
+            "start_byte": 223675,
+            "end_byte": 224210
+          },
+          "settled_ledger": {
+            "line": 576,
+            "start_byte": 224299,
+            "end_byte": 224682
+          },
+          "native_identity": {
+            "acquisition": 12,
+            "configuration": 1,
+            "host": 1,
+            "queue_epoch": 1,
+            "submission_receipt": 13,
+            "window": "WindowId(94294056812992)"
+          },
+          "content_revision": 51,
+          "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+        }
+      },
+      "limits": "Actual native compositor pixels plus ordered content/present receipts; independent pixel review still required."
+    },
+    {
+      "run": 2,
+      "step": 4,
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-02/n04-unlinked-symbol.png",
+      "sha256": "4073dd90ce42e24c0269ff37ce888597252bda5aa19346d2ad416d199399064e",
+      "requirement": {
+        "after_byte": 261765,
+        "event": "mouse input Left Released",
+        "selection_fields": {
+          "kind": "object",
+          "project": "72000000-0000-4000-8000-000000000001",
+          "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505",
+          "scope": "symbol",
+          "members": [
+            {
+              "class": "symbol",
+              "id": "78000000-0000-4000-8000-000000000005"
+            }
+          ],
+          "focus": {
+            "class": "symbol",
+            "id": "78000000-0000-4000-8000-000000000005"
+          }
+        },
+        "text_by_region": {
+          "inspector": [
+            "Symbol: UFREE",
+            "SELECTED",
+            "All 1",
+            "Symbols 1",
+            "Related component: Unavailable \u2014 No curre\u2026"
+          ],
+          "footer": [
+            "object 1"
+          ]
+        }
+      },
+      "presentation": {
+        "attempts": 16,
+        "counts": {
+          "coalesced": 8,
+          "duplicate_tokens": 0,
+          "presentations": 15,
+          "received": 16,
+          "requested": 16,
+          "suppressed": 15
+        },
+        "damage": 24,
+        "device_generation": 1,
+        "host_generation": 1,
+        "pending": false,
+        "presented_damage": 24,
+        "ready": false,
+        "reason": "presented",
+        "rendering": null,
+        "window": "WindowId(94294056812992)",
+        "content_presentation": {
+          "event": {
+            "line": 639,
+            "start_byte": 261765,
+            "end_byte": 261885
+          },
+          "submitted_content": {
+            "line": 685,
+            "start_byte": 269843,
+            "end_byte": 281001
+          },
+          "native_present": {
+            "line": 686,
+            "start_byte": 281001,
+            "end_byte": 281536
+          },
+          "settled_ledger": {
+            "line": 688,
+            "start_byte": 281625,
+            "end_byte": 282008
+          },
+          "native_identity": {
+            "acquisition": 15,
+            "configuration": 1,
+            "host": 1,
+            "queue_epoch": 1,
+            "submission_receipt": 16,
+            "window": "WindowId(94294056812992)"
+          },
+          "content_revision": 60,
+          "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+        }
+      },
+      "limits": "Actual native compositor pixels plus ordered content/present receipts; independent pixel review still required."
+    },
+    {
+      "run": 5,
+      "step": 17,
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-05/n07-explicit-parent-pair.png",
+      "sha256": "e4124db84df3f575989b7d616eac82ed457e4bc2918d64cc42c9f32c79a5a242",
+      "requirement": {
+        "after_byte": 4758283,
+        "event": "keyboard physical=Code(ShiftLeft) logical=Named(Shift) state=Released repeat=false text=None synthetic=false",
+        "selection_fields": {
+          "kind": "compound",
+          "project": "72000000-0000-4000-8000-000000000001",
+          "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505",
+          "scope": null,
+          "members": [
+            {
+              "class": "footprint",
+              "id": "78000000-0000-4000-8000-000000000002"
+            },
+            {
+              "class": "symbol",
+              "id": "78000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "focus": {
+            "class": "footprint",
+            "id": "78000000-0000-4000-8000-000000000002"
+          }
+        },
+        "text_by_region": {
+          "inspector": [
+            "Compound Selection \u2014 2 objects",
+            "SELECTED",
+            "All 2",
+            "Parts 1",
+            "Symbols 1"
+          ],
+          "footer": [
+            "compound 2"
+          ]
+        }
+      },
+      "presentation": {
+        "attempts": 283,
+        "counts": {
+          "coalesced": 684,
+          "duplicate_tokens": 0,
+          "presentations": 220,
+          "received": 283,
+          "requested": 277,
+          "suppressed": 220
+        },
+        "damage": 906,
+        "device_generation": 1,
+        "host_generation": 1,
+        "pending": false,
+        "presented_damage": 906,
+        "ready": false,
+        "reason": "presented",
+        "rendering": null,
+        "window": "WindowId(94068859149776)",
+        "content_presentation": {
+          "event": {
+            "line": 11083,
+            "start_byte": 4758283,
+            "end_byte": 4758486
+          },
+          "submitted_content": {
+            "line": 11117,
+            "start_byte": 4765166,
+            "end_byte": 4775834
+          },
+          "native_present": {
+            "line": 11118,
+            "start_byte": 4775834,
+            "end_byte": 4776378
+          },
+          "settled_ledger": {
+            "line": 11120,
+            "start_byte": 4776467,
+            "end_byte": 4776859
+          },
+          "native_identity": {
+            "acquisition": 220,
+            "configuration": 1,
+            "host": 1,
+            "queue_epoch": 1,
+            "submission_receipt": 297,
+            "window": "WindowId(94068859149776)"
+          },
+          "content_revision": 519,
+          "limits": "Ordered application content/present/ledger receipts only; not GPU pixels, compositor sampling or visible-output acceptance."
+        }
+      },
+      "limits": "Actual native compositor pixels plus ordered content/present receipts; independent pixel review still required."
+    }
+  ],
+  "retained_corrections": [
+    {
+      "finding": "Auditor initially reported stale footer pixels in two images.",
+      "disposition": "RETRACTED after auditor and PM reopened each exact original PNG individually with unchanged hashes; pixels match recorded selection. No renderer defect, patch or capture retry."
+    },
+    {
+      "finding": "Run02 used Ctrl as additive input, then expected Compound2.",
+      "disposition": "Controller oracle incorrect; ratified Shift-add/Ctrl-remove corrected in03. No02 Compound credit."
+    },
+    {
+      "finding": "Run03 Open used fixed Tab count and did not replace prepopulated Location.",
+      "disposition": "Preserved FAIL;05 uses Ctrl+A and actual public available/focused Open control."
+    },
+    {
+      "finding": "Run04 marking menu omitted entering Select submenu.",
+      "disposition": "Preserved FAIL;05 enters submenu through ordinary Down, public source-qualified rows."
+    },
+    {
+      "finding": "Run03 split command intent said duplicate Board.",
+      "disposition": "Observed Board+Schematic; only05 steps12\u201313 qualify real Board+Board and independent camera."
+    },
+    {
+      "finding": "Run05 focus-loss gesture failed to establish requested owner.",
+      "disposition": "Preserved FAIL; no fresh focus-loss credit. Actual accepted focus-loss reuse reviewed independently and accepted by PM."
+    },
+    {
+      "finding": "Run05 derived modifier notice reported transient live-writer lock.",
+      "disposition": "Original holder/cause unknown. Run06 bounded before/after /proc/locks+fuser observed no holder; no causal claim. An unchanged-subject predicate could return before input; only raw06seq6 receives fresh proper Shift-refusal credit. Ctrl on unselected parent is only a no-op."
+    },
+    {
+      "finding": "Run07 AltF4 had no supported action.",
+      "disposition": "Preserved FAIL; no Close credit."
+    },
+    {
+      "finding": "Run08 generic qa.wait treats successful expected exit as failure.",
+      "disposition": "Preserved controller FAIL separately. One actual titlebar Close click, AppExited0, native Main ownership released=true, attachments0, no SIGTERM. Distinct audit and PM accept bounded Close;09 fresh process restores current source."
+    }
+  ],
+  "goldens": {
+    "status": "FIVE_STRICT_COMPARISONS_PASS_PENDING_FINAL_XP04_REVIEW",
+    "source": {
+      "path": "crates/gui-render/tests/selection_ownership.rs",
+      "sha256": "f8eba5af709a71d505090e43bba79cf300dfe3169c766cb818f983ffb45a9b6f"
+    },
+    "candidate_command": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidate-command.json",
+      "sha256": "a74e39b37763f37137959b8ff240bbf07e541e2071fd23379116ee5540e02abb"
+    },
+    "candidate_log": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidate.log",
+      "sha256": "b138e219592b79e0d30c7d76d6e2ff59126be5b6bf495c752bb75b41064ebbdb"
+    },
+    "images": [
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/bound-footprint.png",
+        "sha256": "4092614366da8ed4c3cd9cf02560fc2486387bedcb9a1095f5998e612c194e74"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/bound-symbol.png",
+        "sha256": "88a41cd0becbc5fbc37e2ddc52bb823693036b8f7778739c0106f308c527ed74"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/explicit-parent-pair.png",
+        "sha256": "e00c26cce5ae9ac3a8792459bb41f53e5962eea918335f78dc39f8fee3e66bc1"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/global-net.png",
+        "sha256": "2314ed417fb026e2257f83a94b3470c5aa1d4baecb389273f59706284f9bc087"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/unlinked-symbol.png",
+        "sha256": "df21999cbeb5f6dcdfdbb61ab71bedc54f23ebf4e1d9c2e07811a3c791bd9c98"
+      }
+    ],
+    "limits": "Offscreen Boardfocus/terminaltab differ from native configuration. No native/offscreen/HTML pixel equality or interaction proof. Candidate generation was not credited as comparison; top tool transport143 with inner candidate command0 is preserved separately.",
+    "oracle": "Five original new same-engine images independently reviewed one at a time against PM026/selection-study/renderbook role semantics plus scoped native frames. Only exact reviewed hashes promoted after actual PM authorization; comparison is fresh rendering against separately reviewed versioned baselines, not generation or blind self-comparison.",
+    "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "actual_image_review": "CANDIDATE_IMAGE_REVIEW_PASS; no mandatory appearance findings; exact5original PNG pins.",
+    "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "actual_manager_disposition": "Authorizes promotion only exact five reviewed images; no other refresh/prototype edit.",
+    "baseline_images": [
+      {
+        "path": "crates/gui-render/testdata/golden/crossprobe/bound-footprint.png",
+        "sha256": "4092614366da8ed4c3cd9cf02560fc2486387bedcb9a1095f5998e612c194e74"
+      },
+      {
+        "path": "crates/gui-render/testdata/golden/crossprobe/bound-symbol.png",
+        "sha256": "88a41cd0becbc5fbc37e2ddc52bb823693036b8f7778739c0106f308c527ed74"
+      },
+      {
+        "path": "crates/gui-render/testdata/golden/crossprobe/explicit-parent-pair.png",
+        "sha256": "e00c26cce5ae9ac3a8792459bb41f53e5962eea918335f78dc39f8fee3e66bc1"
+      },
+      {
+        "path": "crates/gui-render/testdata/golden/crossprobe/global-net.png",
+        "sha256": "2314ed417fb026e2257f83a94b3470c5aa1d4baecb389273f59706284f9bc087"
+      },
+      {
+        "path": "crates/gui-render/testdata/golden/crossprobe/unlinked-symbol.png",
+        "sha256": "df21999cbeb5f6dcdfdbb61ab71bedc54f23ebf4e1d9c2e07811a3c791bd9c98"
+      }
+    ],
+    "comparison_command": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-comparison-command.json",
+      "sha256": "18cb092094223f3917d0b18b3c2edb5e782ce71d9aa90fc0541ea9eb4b9ac8e0"
+    },
+    "comparison_log": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-comparison.log",
+      "sha256": "f8d00e2af174fcfbc9a2b46210c631366143fc6b673daa0d719af1db7fb02318"
+    },
+    "actual_comparisons": 5,
+    "comparison_exit_code": 0,
+    "view_parameters": {
+      "viewport": [
+        1344,
+        806
+      ],
+      "ui_scale": 1,
+      "renderer": "production OffscreenRenderer",
+      "layout": "BoardSchematic",
+      "focus": "Board0; subject global across panes",
+      "terminal": "default terminal tab; no native shell content equality claim",
+      "reviewed_test_sha256": "f8eba5af709a71d505090e43bba79cf300dfe3169c766cb818f983ffb45a9b6f"
+    }
+  },
+  "retention": "Committed JSON receipts are durable evidence. Raw scratch logs, project inputs and images are local/prunable, not committed evidence archives.",
+  "qualification_limits": [
+    "Fresh distinct XP-C05 replay and actual PM XP-C06 objective acceptance remain open.",
+    "Full engine suite is not claimed PASS;12 failed supplemental cases retain static causal exclusions with historical runtime origins unproven.",
+    "Existing minimal fixture and electrical record cache limitations remain disclosed in source proof."
+  ],
+  "case_matrix": [
+    {
+      "case": "XP-N01",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "2",
+          "steps": [
+            1
+          ]
+        }
+      ],
+      "result_and_limits": "Symbol1 relatedFootprint1; exact CI/endpoint context and normal related appearance."
+    },
+    {
+      "case": "XP-N02",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "2",
+          "steps": [
+            2
+          ]
+        },
+        {
+          "run": "5",
+          "steps": [
+            4,
+            5
+          ]
+        }
+      ],
+      "result_and_limits": "Reverse Footprint1 relatedSymbol1; direct Symbol promotion replaces normally."
+    },
+    {
+      "case": "XP-N03",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "2",
+          "steps": [
+            3
+          ]
+        },
+        {
+          "run": "3",
+          "steps": [
+            6
+          ]
+        },
+        {
+          "run": "5",
+          "steps": [
+            1
+          ]
+        }
+      ],
+      "result_and_limits": "Wire ladder and Board explicit Global Net return exact6 across panes; foreign same-name Track excluded; related2."
+    },
+    {
+      "case": "XP-N04",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "2",
+          "steps": [
+            4
+          ]
+        }
+      ],
+      "result_and_limits": "Unlinked SymbolObject1; honest unavailable relation; no name/Part inference."
+    },
+    {
+      "case": "XP-N05",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "5",
+          "steps": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "run": "6",
+          "steps": [
+            7,
+            8
+          ]
+        }
+      ],
+      "result_and_limits": "PendingWire unavailable PendingBinding; PendingPad unavailableAssignment. Complete ordinaryOpen recovers exact6; no partialNet."
+    },
+    {
+      "case": "XP-N06",
+      "evidence_class": "SOURCE_AND_REUSED_ACCEPTED_SCOPE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [],
+      "result_and_limits": "7actual relation/context source regressions plus accepted unchanged absent-source/lifetime predicates. No fabricated Mismatch fixture or fresh source-deletion pixel credit."
+    },
+    {
+      "case": "XP-N07",
+      "evidence_class": "FRESH_AND_REUSED_ACCEPTED_SCOPE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "3",
+          "steps": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "run": "5",
+          "steps": [
+            17,
+            18
+          ]
+        },
+        {
+          "run": "6",
+          "steps": [
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "result_and_limits": "Shift-add/Ctrl focused removal; Compound1/no focus; explicit parentsCompound2/related0. Fresh proper derivedShift refusal raw06seq6. Ctrl unselected parent onlyNoOp; existing D4 subtractive/membership guard reuse."
+    },
+    {
+      "case": "XP-N08",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "3",
+          "steps": [
+            7,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22
+          ]
+        },
+        {
+          "run": "5",
+          "steps": [
+            11,
+            12,
+            13,
+            14
+          ]
+        }
+      ],
+      "result_and_limits": "Subject survives focus/closure/replacement;05Board0+Board1 actualduplicate, onlycamera1 changes.03split isBoard+Schematic, not duplicateBoard."
+    },
+    {
+      "case": "XP-N09",
+      "evidence_class": "FRESH_AND_REUSED_ACCEPTED_SCOPE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "3",
+          "steps": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      ],
+      "result_and_limits": "Net6 kept with3hidden FCu then4hidden Wire, restores; visibleWire obtains complete hidden membership. Unchanged origin eligibility uses accepted source scope; unchanged/noOp snapshot alone not input acknowledgment."
+    },
+    {
+      "case": "XP-N10",
+      "evidence_class": "FRESH_AND_REUSED_ACCEPTED_SCOPE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "3",
+          "steps": [
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "result_and_limits": "Fresh Shift-region Escape preserves, secondEscape clears, validWire recovers6. Actual independently verified/PM accepted focusloss reuse;05failedgesture earns no freshcredit."
+    },
+    {
+      "case": "XP-N11",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "2",
+          "steps": [
+            1,
+            2,
+            4
+          ]
+        },
+        {
+          "run": "5",
+          "steps": [
+            16,
+            17,
+            18
+          ]
+        }
+      ],
+      "result_and_limits": "Project/revision-qualified positions/bounds/noncolor labels. CompoundSymbol scope retains global2+Footprint focus. Canonical coordinates unchanged."
+    },
+    {
+      "case": "XP-N12",
+      "evidence_class": "FRESH_NATIVE",
+      "status": "OBSERVED_PENDING_XP03_04_REVIEW",
+      "observations": [
+        {
+          "run": "6",
+          "steps": [
+            5,
+            6
+          ]
+        },
+        {
+          "run": "8",
+          "steps": [
+            1
+          ]
+        },
+        {
+          "run": "9",
+          "steps": [
+            1,
+            2
+          ]
+        }
+      ],
+      "result_and_limits": "ActualtitlebarClose cleanexit0/ownerreleased/attachments0/noSIGTERM; controllerFAIL distinct. Fresh09process None\u2192boundSymbol1/related1. All3 complete canonical file/path/journal inventories unchanged."
+    }
+  ],
+  "canonical_sources": {
+    "main": {
+      "project": {
+        "path": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/project",
+        "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505"
+      },
+      "canonical_files": {
+        "project.json": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        "board/board.json": "0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214",
+        "schematic/main.json": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        "schematic/schematic.json": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        "rules/rules.json": "8b154e147848162f43ebdc8c8792ebc3f79d7ab2a18e8d23309af0f13dce6147",
+        ".datum/journal/transactions.jsonl": "2730ce635b055113ce9bc67dbd49ba48d40a30814b0f8f799b082e88fe300bd1",
+        ".datum/journal/cursor.json": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337",
+        ".datum/electrical_identities/78000000-0000-4000-8000-000000000028.json": "3af2f4cb246bffbe5f8b37b0ff7cffb3448acc1821fafeb6308eec4d8c159ed5",
+        ".datum/electrical_identities/a0c3d885-6edb-4f0a-9f9b-c336a4c68f0a.json": "3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf",
+        ".datum/electrical_identities/641921a0-3abd-4036-9dc2-e2d10d00f88b.json": "919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379",
+        ".datum/electrical_identities/8898c3a5-7a40-4667-bf80-1735114a8993.json": "07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d",
+        ".datum/electrical_identities/bce34ec4-3c50-4122-a51d-785cc8e403ba.json": "95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c",
+        ".datum/electrical_identities/2a37d59c-3026-4bcc-89bc-5f8b68794fa3.json": "51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9",
+        ".datum/electrical_identities/e9c07047-f35c-4b46-a528-3c6b31511c58.json": "7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8",
+        ".datum/electrical_identities/00056ad0-70f1-4008-a784-a7d6164a9121.json": "0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57",
+        ".datum/electrical_identities/b8c64de5-ffbe-42c0-ab16-b613c88b16da.json": "e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103",
+        ".datum/electrical_identities/ded13969-a458-48e7-8749-4ed009fe61cf.json": "4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553",
+        ".datum/electrical_identities/57afeb10-80d1-4ebd-9397-561e9b5b77a3.json": "96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7",
+        ".datum/component_instances/78000000-0000-4000-8000-000000000003.json": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/head.json": "a4d8ca3053ea6cb877ab6f36fba5988ced09e8a5b9ebcc1d69710a94180c6f7d",
+        ".datum/revision/v1/generations/88e2286e8b018b4d12c97da4b15c5cfeeb7962db726bd0198c0f38b741f27dea.json": "83b03f3205f1e91a0e9d3390260d04249bbb4de67fcb61e097dc8fd3ea9ce4ff",
+        ".datum/revision/v1/generations/bd19405916071c70b023ec1ae60d7de96bf8396f4be80920e82b650a3be4ce77.json": "bf8b0a89925b0bb466a072eb8a8983c82a516c11eeaf5f71fc1cf971d0f8dade",
+        ".datum/revision/v1/generations/14500b52ae25b5fc4e60bb4a463702b8f175f8b90304e11e3caf073b08740adc.json": "602e10da054a2a93edee292d6a92299864c6af7c5ef37aa010e85044d3089d3f",
+        ".datum/revision/v1/generations/34ce654ccce4fae376080c4a960e6ccd3751d8eea1d92c069cd8bd04ccef2e9c.json": "b17669ff816a5c13e3140e3b736ac4b7351d593f44251eed0c9b4b04e18061f9",
+        ".datum/revision/v1/generations/9e1df2dd255e9f5c4965652f1164f279b3196e6e990122b61ac7b3eae811306e.json": "62c3d7d149b8113114beb0b57f0856423785ef0da6e8cdb645e1fd348a782624",
+        ".datum/revision/v1/generations/9979d21d0675591d2ca121631781703ce2f52bec1252c8078976c674537762bd.json": "25b8e26a309a3737506b4634e3e10ff4208400ae8dd5e6e74e6e5218675be847",
+        ".datum/revision/v1/generations/03622f9fae7bf1dcc45b7046ff856e5035509288512bceda355f111014ddc876.json": "a9e6a212f9be9ca307aa2e5965fb6ccd57768b8de6960d9f0b9703f3072b22f5",
+        ".datum/revision/v1/generations/22740cb77829ea5cd7fbd2fe19e8aea2134eff3fc736182631fe2e84822cf025.json": "b4dc045a6871cc94a700e3d1bd189e56f43b2dccaf9a91e82af7db24f9a4289a",
+        ".datum/revision/v1/generations/afd83474dd6ffed7df07ee644ef2611f8b23e28800ef796879112c2d1db0fa0f.json": "72a6967c82ef893b90f074e8e9d5c5bc627f7cb339f505eaff78104d51b159f8",
+        ".datum/revision/v1/generations/f32310ac248343de7442201318dfe3ce5904903c1116ae23f6ea6c314514aaac.json": "bcf564d4280831ca89239d0fd02a59d37594dee234cdfcebc280e1d90ce3e04b",
+        ".datum/revision/v1/generations/7bcbbd40ce9cc9fbc5b1ea2e04d06a34dbeb266ca019345868b396a7fd2599fe.json": "fdd38578d207ef388e7fdb484838607ff08c4523dcc61570a71920a329788d4a",
+        ".datum/revision/v1/generations/fad293b0dfbb697afd494096d9980d865b14b7b0a0f84051b5072c612fbf2d4a.json": "efda28b289e5f77df9e744af019f024c4bebe865e9db974cb5b7cef6d045defd",
+        ".datum/revision/v1/generations/5fe9e8113b6feee509aeaa744622826d6ba20a7af2b0f03051afdfff456fad5a.json": "db14e7ff684c50ad98a3af05c2a275aa237752d322717ddf96e6c2d7f59b4c81",
+        ".datum/revision/v1/generations/1289de07136c16e2588ac366ab0d9d2907be903068c678f316c6916ad97c77e6.json": "96c4ea7d8e88e63817bc7179d309a65cd00598b4072b7e4b5efc390fd424068b",
+        ".datum/revision/v1/generations/7809e40d4bd4c5b74974bb484adff93a020ce0057763645dff32897f9c430e6a.json": "dac47cefa7395f1f8457a7c37e17669301329a0863312a6cbe0895dd0903e3ef",
+        ".datum/revision/v1/blobs/sha256/597313dae2747c367b694ded9f3361286b5e32046a59df62c3b8b805cbfdc948": "597313dae2747c367b694ded9f3361286b5e32046a59df62c3b8b805cbfdc948",
+        ".datum/revision/v1/blobs/sha256/04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        ".datum/revision/v1/blobs/sha256/aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        ".datum/revision/v1/blobs/sha256/f176a35c05c25085c62022daff26d928da41e2f90c041dcfcbb78ee0cb47ce91": "f176a35c05c25085c62022daff26d928da41e2f90c041dcfcbb78ee0cb47ce91",
+        ".datum/revision/v1/blobs/sha256/bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        ".datum/revision/v1/blobs/sha256/3af2f4cb246bffbe5f8b37b0ff7cffb3448acc1821fafeb6308eec4d8c159ed5": "3af2f4cb246bffbe5f8b37b0ff7cffb3448acc1821fafeb6308eec4d8c159ed5",
+        ".datum/revision/v1/blobs/sha256/1ecedb319a97f1c501ce491d48a4440a5edae9ef6bbacd07ba90221c2c98ab0d": "1ecedb319a97f1c501ce491d48a4440a5edae9ef6bbacd07ba90221c2c98ab0d",
+        ".datum/revision/v1/blobs/sha256/7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8": "7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8",
+        ".datum/revision/v1/blobs/sha256/2a6a796e1369499249829f73d7bd53c2e24562b6c1616ccb1a2a461e2f9dc18a": "2a6a796e1369499249829f73d7bd53c2e24562b6c1616ccb1a2a461e2f9dc18a",
+        ".datum/revision/v1/blobs/sha256/42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033": "42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033",
+        ".datum/revision/v1/blobs/sha256/97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c",
+        ".datum/revision/v1/blobs/sha256/52d806fd9d2e2e954306d3f710499e87f3073f9af915f22910b6b7de4ffe5062": "52d806fd9d2e2e954306d3f710499e87f3073f9af915f22910b6b7de4ffe5062",
+        ".datum/revision/v1/blobs/sha256/0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214": "0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214",
+        ".datum/revision/v1/blobs/sha256/d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        ".datum/revision/v1/blobs/sha256/c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        ".datum/revision/v1/blobs/sha256/5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21": "5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21",
+        ".datum/revision/v1/blobs/sha256/96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7": "96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7",
+        ".datum/revision/v1/blobs/sha256/031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        ".datum/revision/v1/blobs/sha256/919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379": "919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379",
+        ".datum/revision/v1/blobs/sha256/51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9": "51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9",
+        ".datum/revision/v1/blobs/sha256/07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d": "07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d",
+        ".datum/revision/v1/blobs/sha256/1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        ".datum/revision/v1/blobs/sha256/0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57": "0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57",
+        ".datum/revision/v1/blobs/sha256/c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3": "c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3",
+        ".datum/revision/v1/blobs/sha256/59a26a083143451681d47cffe0e4b9ad17e98eaf323804391e9a99601911be71": "59a26a083143451681d47cffe0e4b9ad17e98eaf323804391e9a99601911be71",
+        ".datum/revision/v1/blobs/sha256/e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103": "e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103",
+        ".datum/revision/v1/blobs/sha256/ae3516a38c8cbca838221ad4375181e47ae97b3a65d4b5da9785d9b7f91cd639": "ae3516a38c8cbca838221ad4375181e47ae97b3a65d4b5da9785d9b7f91cd639",
+        ".datum/revision/v1/blobs/sha256/7ec08424c8f36f186e40be17ef097e1db2b24a9b4caec2354dc769be0d8fc267": "7ec08424c8f36f186e40be17ef097e1db2b24a9b4caec2354dc769be0d8fc267",
+        ".datum/revision/v1/blobs/sha256/95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c": "95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c",
+        ".datum/revision/v1/blobs/sha256/24db4efce157e740e4ae05a5e3b67561708c3b66f5b1b95deab5c470be0405ae": "24db4efce157e740e4ae05a5e3b67561708c3b66f5b1b95deab5c470be0405ae",
+        ".datum/revision/v1/blobs/sha256/4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889": "4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889",
+        ".datum/revision/v1/blobs/sha256/9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/blobs/sha256/350836c374a90674a3abd3d77bd850606d626bfb26aada4b31d47192977f25c7": "350836c374a90674a3abd3d77bd850606d626bfb26aada4b31d47192977f25c7",
+        ".datum/revision/v1/blobs/sha256/d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7": "d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7",
+        ".datum/revision/v1/blobs/sha256/00ba2ef8068b68a4cd3d84be507f7e1fcd1d034db412c2d38e3ea90168677474": "00ba2ef8068b68a4cd3d84be507f7e1fcd1d034db412c2d38e3ea90168677474",
+        ".datum/revision/v1/blobs/sha256/505ca7d91c14800602aab27f111a45c1d490601b101d4e6861b44ba89cfd8e02": "505ca7d91c14800602aab27f111a45c1d490601b101d4e6861b44ba89cfd8e02",
+        ".datum/revision/v1/blobs/sha256/4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553": "4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553",
+        ".datum/revision/v1/blobs/sha256/25e76c8bb54be22722ae1175b86eea41caaa9a5222c4b3582b19eac0b442c05f": "25e76c8bb54be22722ae1175b86eea41caaa9a5222c4b3582b19eac0b442c05f",
+        ".datum/revision/v1/blobs/sha256/3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf": "3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf",
+        ".datum/revision/v1/blobs/sha256/52aef2acbc7d92efbe814102b47670e0c981e2bbc0cd26a1058bb69deee7415e": "52aef2acbc7d92efbe814102b47670e0c981e2bbc0cd26a1058bb69deee7415e",
+        ".datum/revision/v1/blobs/sha256/7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        ".datum/revision/v1/blobs/sha256/83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6": "83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6",
+        ".datum/revision/v1/blobs/sha256/dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        ".datum/revision/v1/blobs/sha256/baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        ".datum/revision/v1/blobs/sha256/8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161": "8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161",
+        ".datum/revision/v1/blobs/sha256/e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        ".datum/revision/v1/blobs/sha256/30c8bf88b2a1e634cc2a4dd406b27becdf0205a5ffde0e2e1a1794f6e19f3065": "30c8bf88b2a1e634cc2a4dd406b27becdf0205a5ffde0e2e1a1794f6e19f3065",
+        ".datum/revision/v1/blobs/sha256/8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a": "8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a",
+        ".datum/revision/v1/blobs/sha256/e5c98c82fd021d520b6a7b8892c542e5528641eacaaaf968f30d08ee48cd02f6": "e5c98c82fd021d520b6a7b8892c542e5528641eacaaaf968f30d08ee48cd02f6",
+        ".datum/revision/v1/blobs/sha256/78bb94414a42a75f87d8a01a56765033f9198b1a65580117fd60958e02bfd756": "78bb94414a42a75f87d8a01a56765033f9198b1a65580117fd60958e02bfd756",
+        "pool/entities/40000000-0000-4000-8000-000000000001.json": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        "pool/packages/50000000-0000-4000-8000-000000000001.json": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        "pool/parts/90000000-0000-4000-8000-000000000001.json": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        "pool/padstacks/70000000-0000-4000-8000-000000000001.json": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        "pool/footprints/60000000-0000-4000-8000-000000000001.json": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        "pool/symbols/30000000-0000-4000-8000-000000000001.json": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        "pool/units/20000000-0000-4000-8000-000000000001.json": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed"
+      },
+      "count": 93
+    },
+    "complete": {
+      "project": {
+        "path": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/stages/complete",
+        "revision": "1f089a1b1975bec06c4a9838eac4061511b7732afb927ba58fcc904497a04fbf"
+      },
+      "canonical_files": {
+        "project.json": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        "board/board.json": "0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214",
+        "schematic/main.json": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        "schematic/schematic.json": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        "rules/rules.json": "8b154e147848162f43ebdc8c8792ebc3f79d7ab2a18e8d23309af0f13dce6147",
+        ".datum/journal/transactions.jsonl": "cb51c984b59332efce32b888bfd47dafbc09cd8c148ae9597cd9c1ed47fcbdb3",
+        ".datum/journal/cursor.json": "9996c7606c933f34ff19b9adf58e1fee291f519e6cdb90d398310ebbcddbfefa",
+        ".datum/electrical_identities/78000000-0000-4000-8000-000000000028.json": "c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3",
+        ".datum/electrical_identities/a0c3d885-6edb-4f0a-9f9b-c336a4c68f0a.json": "3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf",
+        ".datum/electrical_identities/641921a0-3abd-4036-9dc2-e2d10d00f88b.json": "919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379",
+        ".datum/electrical_identities/8898c3a5-7a40-4667-bf80-1735114a8993.json": "07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d",
+        ".datum/electrical_identities/bce34ec4-3c50-4122-a51d-785cc8e403ba.json": "95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c",
+        ".datum/electrical_identities/2a37d59c-3026-4bcc-89bc-5f8b68794fa3.json": "51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9",
+        ".datum/electrical_identities/e9c07047-f35c-4b46-a528-3c6b31511c58.json": "7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8",
+        ".datum/electrical_identities/00056ad0-70f1-4008-a784-a7d6164a9121.json": "0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57",
+        ".datum/electrical_identities/b8c64de5-ffbe-42c0-ab16-b613c88b16da.json": "e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103",
+        ".datum/electrical_identities/ded13969-a458-48e7-8749-4ed009fe61cf.json": "4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553",
+        ".datum/electrical_identities/57afeb10-80d1-4ebd-9397-561e9b5b77a3.json": "96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7",
+        ".datum/component_instances/78000000-0000-4000-8000-000000000003.json": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/head.json": "76648fd91e8daca30c8432b94e333e791c99552fbbcf6a31ebe76ddc1f1a6320",
+        ".datum/revision/v1/generations/88e2286e8b018b4d12c97da4b15c5cfeeb7962db726bd0198c0f38b741f27dea.json": "83b03f3205f1e91a0e9d3390260d04249bbb4de67fcb61e097dc8fd3ea9ce4ff",
+        ".datum/revision/v1/generations/bd19405916071c70b023ec1ae60d7de96bf8396f4be80920e82b650a3be4ce77.json": "bf8b0a89925b0bb466a072eb8a8983c82a516c11eeaf5f71fc1cf971d0f8dade",
+        ".datum/revision/v1/generations/14500b52ae25b5fc4e60bb4a463702b8f175f8b90304e11e3caf073b08740adc.json": "602e10da054a2a93edee292d6a92299864c6af7c5ef37aa010e85044d3089d3f",
+        ".datum/revision/v1/generations/34ce654ccce4fae376080c4a960e6ccd3751d8eea1d92c069cd8bd04ccef2e9c.json": "b17669ff816a5c13e3140e3b736ac4b7351d593f44251eed0c9b4b04e18061f9",
+        ".datum/revision/v1/generations/9e1df2dd255e9f5c4965652f1164f279b3196e6e990122b61ac7b3eae811306e.json": "62c3d7d149b8113114beb0b57f0856423785ef0da6e8cdb645e1fd348a782624",
+        ".datum/revision/v1/generations/03622f9fae7bf1dcc45b7046ff856e5035509288512bceda355f111014ddc876.json": "a9e6a212f9be9ca307aa2e5965fb6ccd57768b8de6960d9f0b9703f3072b22f5",
+        ".datum/revision/v1/generations/22740cb77829ea5cd7fbd2fe19e8aea2134eff3fc736182631fe2e84822cf025.json": "b4dc045a6871cc94a700e3d1bd189e56f43b2dccaf9a91e82af7db24f9a4289a",
+        ".datum/revision/v1/generations/afd83474dd6ffed7df07ee644ef2611f8b23e28800ef796879112c2d1db0fa0f.json": "72a6967c82ef893b90f074e8e9d5c5bc627f7cb339f505eaff78104d51b159f8",
+        ".datum/revision/v1/generations/7bcbbd40ce9cc9fbc5b1ea2e04d06a34dbeb266ca019345868b396a7fd2599fe.json": "fdd38578d207ef388e7fdb484838607ff08c4523dcc61570a71920a329788d4a",
+        ".datum/revision/v1/generations/fad293b0dfbb697afd494096d9980d865b14b7b0a0f84051b5072c612fbf2d4a.json": "efda28b289e5f77df9e744af019f024c4bebe865e9db974cb5b7cef6d045defd",
+        ".datum/revision/v1/generations/5fe9e8113b6feee509aeaa744622826d6ba20a7af2b0f03051afdfff456fad5a.json": "db14e7ff684c50ad98a3af05c2a275aa237752d322717ddf96e6c2d7f59b4c81",
+        ".datum/revision/v1/generations/1289de07136c16e2588ac366ab0d9d2907be903068c678f316c6916ad97c77e6.json": "96c4ea7d8e88e63817bc7179d309a65cd00598b4072b7e4b5efc390fd424068b",
+        ".datum/revision/v1/generations/7809e40d4bd4c5b74974bb484adff93a020ce0057763645dff32897f9c430e6a.json": "dac47cefa7395f1f8457a7c37e17669301329a0863312a6cbe0895dd0903e3ef",
+        ".datum/revision/v1/blobs/sha256/597313dae2747c367b694ded9f3361286b5e32046a59df62c3b8b805cbfdc948": "597313dae2747c367b694ded9f3361286b5e32046a59df62c3b8b805cbfdc948",
+        ".datum/revision/v1/blobs/sha256/04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        ".datum/revision/v1/blobs/sha256/aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        ".datum/revision/v1/blobs/sha256/bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        ".datum/revision/v1/blobs/sha256/1ecedb319a97f1c501ce491d48a4440a5edae9ef6bbacd07ba90221c2c98ab0d": "1ecedb319a97f1c501ce491d48a4440a5edae9ef6bbacd07ba90221c2c98ab0d",
+        ".datum/revision/v1/blobs/sha256/7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8": "7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8",
+        ".datum/revision/v1/blobs/sha256/2a6a796e1369499249829f73d7bd53c2e24562b6c1616ccb1a2a461e2f9dc18a": "2a6a796e1369499249829f73d7bd53c2e24562b6c1616ccb1a2a461e2f9dc18a",
+        ".datum/revision/v1/blobs/sha256/42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033": "42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033",
+        ".datum/revision/v1/blobs/sha256/97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c",
+        ".datum/revision/v1/blobs/sha256/0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214": "0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214",
+        ".datum/revision/v1/blobs/sha256/d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        ".datum/revision/v1/blobs/sha256/c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        ".datum/revision/v1/blobs/sha256/5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21": "5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21",
+        ".datum/revision/v1/blobs/sha256/96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7": "96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7",
+        ".datum/revision/v1/blobs/sha256/031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        ".datum/revision/v1/blobs/sha256/919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379": "919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379",
+        ".datum/revision/v1/blobs/sha256/51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9": "51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9",
+        ".datum/revision/v1/blobs/sha256/07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d": "07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d",
+        ".datum/revision/v1/blobs/sha256/1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        ".datum/revision/v1/blobs/sha256/0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57": "0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57",
+        ".datum/revision/v1/blobs/sha256/c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3": "c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3",
+        ".datum/revision/v1/blobs/sha256/59a26a083143451681d47cffe0e4b9ad17e98eaf323804391e9a99601911be71": "59a26a083143451681d47cffe0e4b9ad17e98eaf323804391e9a99601911be71",
+        ".datum/revision/v1/blobs/sha256/e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103": "e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103",
+        ".datum/revision/v1/blobs/sha256/ae3516a38c8cbca838221ad4375181e47ae97b3a65d4b5da9785d9b7f91cd639": "ae3516a38c8cbca838221ad4375181e47ae97b3a65d4b5da9785d9b7f91cd639",
+        ".datum/revision/v1/blobs/sha256/7ec08424c8f36f186e40be17ef097e1db2b24a9b4caec2354dc769be0d8fc267": "7ec08424c8f36f186e40be17ef097e1db2b24a9b4caec2354dc769be0d8fc267",
+        ".datum/revision/v1/blobs/sha256/95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c": "95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c",
+        ".datum/revision/v1/blobs/sha256/4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889": "4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889",
+        ".datum/revision/v1/blobs/sha256/9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/blobs/sha256/350836c374a90674a3abd3d77bd850606d626bfb26aada4b31d47192977f25c7": "350836c374a90674a3abd3d77bd850606d626bfb26aada4b31d47192977f25c7",
+        ".datum/revision/v1/blobs/sha256/d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7": "d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7",
+        ".datum/revision/v1/blobs/sha256/00ba2ef8068b68a4cd3d84be507f7e1fcd1d034db412c2d38e3ea90168677474": "00ba2ef8068b68a4cd3d84be507f7e1fcd1d034db412c2d38e3ea90168677474",
+        ".datum/revision/v1/blobs/sha256/505ca7d91c14800602aab27f111a45c1d490601b101d4e6861b44ba89cfd8e02": "505ca7d91c14800602aab27f111a45c1d490601b101d4e6861b44ba89cfd8e02",
+        ".datum/revision/v1/blobs/sha256/4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553": "4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553",
+        ".datum/revision/v1/blobs/sha256/25e76c8bb54be22722ae1175b86eea41caaa9a5222c4b3582b19eac0b442c05f": "25e76c8bb54be22722ae1175b86eea41caaa9a5222c4b3582b19eac0b442c05f",
+        ".datum/revision/v1/blobs/sha256/3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf": "3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf",
+        ".datum/revision/v1/blobs/sha256/52aef2acbc7d92efbe814102b47670e0c981e2bbc0cd26a1058bb69deee7415e": "52aef2acbc7d92efbe814102b47670e0c981e2bbc0cd26a1058bb69deee7415e",
+        ".datum/revision/v1/blobs/sha256/7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        ".datum/revision/v1/blobs/sha256/83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6": "83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6",
+        ".datum/revision/v1/blobs/sha256/dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        ".datum/revision/v1/blobs/sha256/baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        ".datum/revision/v1/blobs/sha256/8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161": "8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161",
+        ".datum/revision/v1/blobs/sha256/e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        ".datum/revision/v1/blobs/sha256/30c8bf88b2a1e634cc2a4dd406b27becdf0205a5ffde0e2e1a1794f6e19f3065": "30c8bf88b2a1e634cc2a4dd406b27becdf0205a5ffde0e2e1a1794f6e19f3065",
+        ".datum/revision/v1/blobs/sha256/8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a": "8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a",
+        ".datum/revision/v1/blobs/sha256/e5c98c82fd021d520b6a7b8892c542e5528641eacaaaf968f30d08ee48cd02f6": "e5c98c82fd021d520b6a7b8892c542e5528641eacaaaf968f30d08ee48cd02f6",
+        ".datum/revision/v1/blobs/sha256/78bb94414a42a75f87d8a01a56765033f9198b1a65580117fd60958e02bfd756": "78bb94414a42a75f87d8a01a56765033f9198b1a65580117fd60958e02bfd756",
+        "pool/entities/40000000-0000-4000-8000-000000000001.json": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        "pool/packages/50000000-0000-4000-8000-000000000001.json": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        "pool/parts/90000000-0000-4000-8000-000000000001.json": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        "pool/padstacks/70000000-0000-4000-8000-000000000001.json": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        "pool/footprints/60000000-0000-4000-8000-000000000001.json": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        "pool/symbols/30000000-0000-4000-8000-000000000001.json": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        "pool/units/20000000-0000-4000-8000-000000000001.json": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed"
+      },
+      "count": 87
+    },
+    "pending": {
+      "project": {
+        "path": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/stages/pending",
+        "revision": "01df4bb637f4d5eeb2e97ce937bca1d9cacfd749de1d7db4985d4431a809be42"
+      },
+      "canonical_files": {
+        "project.json": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        "board/board.json": "0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214",
+        "schematic/main.json": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        "schematic/schematic.json": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        "rules/rules.json": "8b154e147848162f43ebdc8c8792ebc3f79d7ab2a18e8d23309af0f13dce6147",
+        ".datum/journal/transactions.jsonl": "8df336fc95cdeba3bf1d53e222886883e54edf6105ef9deb3257c4bc07f1fc20",
+        ".datum/journal/cursor.json": "8304ea60b454fc2686b0e046d4f4f5ef169156142567b848313ad6fc9f0a5081",
+        ".datum/electrical_identities/78000000-0000-4000-8000-000000000028.json": "f176a35c05c25085c62022daff26d928da41e2f90c041dcfcbb78ee0cb47ce91",
+        ".datum/electrical_identities/a0c3d885-6edb-4f0a-9f9b-c336a4c68f0a.json": "3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf",
+        ".datum/electrical_identities/641921a0-3abd-4036-9dc2-e2d10d00f88b.json": "919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379",
+        ".datum/electrical_identities/8898c3a5-7a40-4667-bf80-1735114a8993.json": "07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d",
+        ".datum/electrical_identities/bce34ec4-3c50-4122-a51d-785cc8e403ba.json": "95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c",
+        ".datum/electrical_identities/2a37d59c-3026-4bcc-89bc-5f8b68794fa3.json": "51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9",
+        ".datum/electrical_identities/e9c07047-f35c-4b46-a528-3c6b31511c58.json": "7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8",
+        ".datum/electrical_identities/00056ad0-70f1-4008-a784-a7d6164a9121.json": "0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57",
+        ".datum/electrical_identities/b8c64de5-ffbe-42c0-ab16-b613c88b16da.json": "e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103",
+        ".datum/electrical_identities/ded13969-a458-48e7-8749-4ed009fe61cf.json": "4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553",
+        ".datum/electrical_identities/57afeb10-80d1-4ebd-9397-561e9b5b77a3.json": "96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7",
+        ".datum/component_instances/78000000-0000-4000-8000-000000000003.json": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/head.json": "4309d10e8a48a310f34eac37c1d297e63f1c21738704fffbca1358157838a083",
+        ".datum/revision/v1/generations/88e2286e8b018b4d12c97da4b15c5cfeeb7962db726bd0198c0f38b741f27dea.json": "83b03f3205f1e91a0e9d3390260d04249bbb4de67fcb61e097dc8fd3ea9ce4ff",
+        ".datum/revision/v1/generations/bd19405916071c70b023ec1ae60d7de96bf8396f4be80920e82b650a3be4ce77.json": "bf8b0a89925b0bb466a072eb8a8983c82a516c11eeaf5f71fc1cf971d0f8dade",
+        ".datum/revision/v1/generations/14500b52ae25b5fc4e60bb4a463702b8f175f8b90304e11e3caf073b08740adc.json": "602e10da054a2a93edee292d6a92299864c6af7c5ef37aa010e85044d3089d3f",
+        ".datum/revision/v1/generations/34ce654ccce4fae376080c4a960e6ccd3751d8eea1d92c069cd8bd04ccef2e9c.json": "b17669ff816a5c13e3140e3b736ac4b7351d593f44251eed0c9b4b04e18061f9",
+        ".datum/revision/v1/generations/9e1df2dd255e9f5c4965652f1164f279b3196e6e990122b61ac7b3eae811306e.json": "62c3d7d149b8113114beb0b57f0856423785ef0da6e8cdb645e1fd348a782624",
+        ".datum/revision/v1/generations/03622f9fae7bf1dcc45b7046ff856e5035509288512bceda355f111014ddc876.json": "a9e6a212f9be9ca307aa2e5965fb6ccd57768b8de6960d9f0b9703f3072b22f5",
+        ".datum/revision/v1/generations/22740cb77829ea5cd7fbd2fe19e8aea2134eff3fc736182631fe2e84822cf025.json": "b4dc045a6871cc94a700e3d1bd189e56f43b2dccaf9a91e82af7db24f9a4289a",
+        ".datum/revision/v1/generations/afd83474dd6ffed7df07ee644ef2611f8b23e28800ef796879112c2d1db0fa0f.json": "72a6967c82ef893b90f074e8e9d5c5bc627f7cb339f505eaff78104d51b159f8",
+        ".datum/revision/v1/generations/f32310ac248343de7442201318dfe3ce5904903c1116ae23f6ea6c314514aaac.json": "bcf564d4280831ca89239d0fd02a59d37594dee234cdfcebc280e1d90ce3e04b",
+        ".datum/revision/v1/generations/7bcbbd40ce9cc9fbc5b1ea2e04d06a34dbeb266ca019345868b396a7fd2599fe.json": "fdd38578d207ef388e7fdb484838607ff08c4523dcc61570a71920a329788d4a",
+        ".datum/revision/v1/generations/fad293b0dfbb697afd494096d9980d865b14b7b0a0f84051b5072c612fbf2d4a.json": "efda28b289e5f77df9e744af019f024c4bebe865e9db974cb5b7cef6d045defd",
+        ".datum/revision/v1/generations/5fe9e8113b6feee509aeaa744622826d6ba20a7af2b0f03051afdfff456fad5a.json": "db14e7ff684c50ad98a3af05c2a275aa237752d322717ddf96e6c2d7f59b4c81",
+        ".datum/revision/v1/generations/1289de07136c16e2588ac366ab0d9d2907be903068c678f316c6916ad97c77e6.json": "96c4ea7d8e88e63817bc7179d309a65cd00598b4072b7e4b5efc390fd424068b",
+        ".datum/revision/v1/generations/7809e40d4bd4c5b74974bb484adff93a020ce0057763645dff32897f9c430e6a.json": "dac47cefa7395f1f8457a7c37e17669301329a0863312a6cbe0895dd0903e3ef",
+        ".datum/revision/v1/blobs/sha256/597313dae2747c367b694ded9f3361286b5e32046a59df62c3b8b805cbfdc948": "597313dae2747c367b694ded9f3361286b5e32046a59df62c3b8b805cbfdc948",
+        ".datum/revision/v1/blobs/sha256/04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        ".datum/revision/v1/blobs/sha256/aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        ".datum/revision/v1/blobs/sha256/f176a35c05c25085c62022daff26d928da41e2f90c041dcfcbb78ee0cb47ce91": "f176a35c05c25085c62022daff26d928da41e2f90c041dcfcbb78ee0cb47ce91",
+        ".datum/revision/v1/blobs/sha256/bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        ".datum/revision/v1/blobs/sha256/1ecedb319a97f1c501ce491d48a4440a5edae9ef6bbacd07ba90221c2c98ab0d": "1ecedb319a97f1c501ce491d48a4440a5edae9ef6bbacd07ba90221c2c98ab0d",
+        ".datum/revision/v1/blobs/sha256/7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8": "7a7d1315d22502752cfea6ab0a99ac924c7d9391a5acf87e6f331a56a2530bb8",
+        ".datum/revision/v1/blobs/sha256/2a6a796e1369499249829f73d7bd53c2e24562b6c1616ccb1a2a461e2f9dc18a": "2a6a796e1369499249829f73d7bd53c2e24562b6c1616ccb1a2a461e2f9dc18a",
+        ".datum/revision/v1/blobs/sha256/42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033": "42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033",
+        ".datum/revision/v1/blobs/sha256/97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c",
+        ".datum/revision/v1/blobs/sha256/0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214": "0b52162038a1c96ef7a7e2a56c4be88000865585e5708a4f0d4044fd7b71c214",
+        ".datum/revision/v1/blobs/sha256/d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        ".datum/revision/v1/blobs/sha256/c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        ".datum/revision/v1/blobs/sha256/5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21": "5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21",
+        ".datum/revision/v1/blobs/sha256/96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7": "96a9efaf1accbcf257c80cdaf5f39c742e12c537ec2288d397903f1765e880e7",
+        ".datum/revision/v1/blobs/sha256/031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        ".datum/revision/v1/blobs/sha256/919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379": "919f304a509e830c64a83e7f8dab948f9b970ca7c9cf3dcaedd4d705d50b4379",
+        ".datum/revision/v1/blobs/sha256/51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9": "51ad4f36a90b97309a101a054627aa178191f37999a4e351940d70d55a8bd5b9",
+        ".datum/revision/v1/blobs/sha256/07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d": "07639d149bfc3adf4d7939c0afe44627f53be5e23502ce74828cb61757265f9d",
+        ".datum/revision/v1/blobs/sha256/1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        ".datum/revision/v1/blobs/sha256/0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57": "0fd41b838616c53ad103139811993144e104845392810fbbf8bd61841fcbdf57",
+        ".datum/revision/v1/blobs/sha256/c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3": "c1b1ec32db29e58e2d64265700037da82a837632b09f8cb413d440dc7e8be9d3",
+        ".datum/revision/v1/blobs/sha256/59a26a083143451681d47cffe0e4b9ad17e98eaf323804391e9a99601911be71": "59a26a083143451681d47cffe0e4b9ad17e98eaf323804391e9a99601911be71",
+        ".datum/revision/v1/blobs/sha256/e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103": "e0a39bfc788bbcb53fa1870eab521e3f17fa9a4093f2efc8a906e762090a0103",
+        ".datum/revision/v1/blobs/sha256/ae3516a38c8cbca838221ad4375181e47ae97b3a65d4b5da9785d9b7f91cd639": "ae3516a38c8cbca838221ad4375181e47ae97b3a65d4b5da9785d9b7f91cd639",
+        ".datum/revision/v1/blobs/sha256/7ec08424c8f36f186e40be17ef097e1db2b24a9b4caec2354dc769be0d8fc267": "7ec08424c8f36f186e40be17ef097e1db2b24a9b4caec2354dc769be0d8fc267",
+        ".datum/revision/v1/blobs/sha256/95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c": "95926877b28096bad50a57da3124db19f4199f66c182c55e6a81ac15d0513c8c",
+        ".datum/revision/v1/blobs/sha256/24db4efce157e740e4ae05a5e3b67561708c3b66f5b1b95deab5c470be0405ae": "24db4efce157e740e4ae05a5e3b67561708c3b66f5b1b95deab5c470be0405ae",
+        ".datum/revision/v1/blobs/sha256/4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889": "4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889",
+        ".datum/revision/v1/blobs/sha256/9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/blobs/sha256/350836c374a90674a3abd3d77bd850606d626bfb26aada4b31d47192977f25c7": "350836c374a90674a3abd3d77bd850606d626bfb26aada4b31d47192977f25c7",
+        ".datum/revision/v1/blobs/sha256/d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7": "d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7",
+        ".datum/revision/v1/blobs/sha256/00ba2ef8068b68a4cd3d84be507f7e1fcd1d034db412c2d38e3ea90168677474": "00ba2ef8068b68a4cd3d84be507f7e1fcd1d034db412c2d38e3ea90168677474",
+        ".datum/revision/v1/blobs/sha256/505ca7d91c14800602aab27f111a45c1d490601b101d4e6861b44ba89cfd8e02": "505ca7d91c14800602aab27f111a45c1d490601b101d4e6861b44ba89cfd8e02",
+        ".datum/revision/v1/blobs/sha256/4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553": "4d58c3f86aa3b8895a46f2055a555a59efc81b28f68de2b0c9b69b3cdfcbe553",
+        ".datum/revision/v1/blobs/sha256/25e76c8bb54be22722ae1175b86eea41caaa9a5222c4b3582b19eac0b442c05f": "25e76c8bb54be22722ae1175b86eea41caaa9a5222c4b3582b19eac0b442c05f",
+        ".datum/revision/v1/blobs/sha256/3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf": "3b7cf5abb1f826c1ab4f11ad876ca2dc06eec4cf90e5397e1053c0a75ef443bf",
+        ".datum/revision/v1/blobs/sha256/52aef2acbc7d92efbe814102b47670e0c981e2bbc0cd26a1058bb69deee7415e": "52aef2acbc7d92efbe814102b47670e0c981e2bbc0cd26a1058bb69deee7415e",
+        ".datum/revision/v1/blobs/sha256/7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        ".datum/revision/v1/blobs/sha256/83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6": "83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6",
+        ".datum/revision/v1/blobs/sha256/dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        ".datum/revision/v1/blobs/sha256/baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        ".datum/revision/v1/blobs/sha256/8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161": "8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161",
+        ".datum/revision/v1/blobs/sha256/e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        ".datum/revision/v1/blobs/sha256/30c8bf88b2a1e634cc2a4dd406b27becdf0205a5ffde0e2e1a1794f6e19f3065": "30c8bf88b2a1e634cc2a4dd406b27becdf0205a5ffde0e2e1a1794f6e19f3065",
+        ".datum/revision/v1/blobs/sha256/8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a": "8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a",
+        ".datum/revision/v1/blobs/sha256/e5c98c82fd021d520b6a7b8892c542e5528641eacaaaf968f30d08ee48cd02f6": "e5c98c82fd021d520b6a7b8892c542e5528641eacaaaf968f30d08ee48cd02f6",
+        ".datum/revision/v1/blobs/sha256/78bb94414a42a75f87d8a01a56765033f9198b1a65580117fd60958e02bfd756": "78bb94414a42a75f87d8a01a56765033f9198b1a65580117fd60958e02bfd756",
+        "pool/entities/40000000-0000-4000-8000-000000000001.json": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        "pool/packages/50000000-0000-4000-8000-000000000001.json": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        "pool/parts/90000000-0000-4000-8000-000000000001.json": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        "pool/padstacks/70000000-0000-4000-8000-000000000001.json": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        "pool/footprints/60000000-0000-4000-8000-000000000001.json": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        "pool/symbols/30000000-0000-4000-8000-000000000001.json": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        "pool/units/20000000-0000-4000-8000-000000000001.json": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed"
+      },
+      "count": 90
+    }
+  },
+  "relation_source_controls": {
+    "source": {
+      "path": "crates/gui-protocol/tests/native_selection_related.rs",
+      "sha256": "4e456de9d6bc4bccf6508a4147554e1199e1398e9f89b37aa7e8d226b178ca88"
+    },
+    "log": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-protocol-native-related-final.log",
+      "sha256": "2d251a99439810f2c46899f65f07c1be57c62cc1d8d30c7bea0c24bc65549dcc"
+    },
+    "actual_outcome": "7passed1ignored; ignored frozen mutation diagnostic not credited",
+    "tests": [
+      "authored_binding_is_bidirectional_related_only_and_revision_bound",
+      "ambiguous_or_absent_authored_bindings_do_not_infer_a_counterpart",
+      "fresh_revision_drops_removed_binding_without_rewriting_prior_snapshot",
+      "endpoint_revision_change_cannot_reuse_stale_component_references",
+      "source_only_binding_cannot_choose_root_over_repeated_sheet_occurrences",
+      "shared_inspection_explains_relation_without_bypassing_transport_detail_cap",
+      "enumerated_binding_detail_is_bounded_even_when_selected_and_related_sets_are_small"
+    ]
+  },
+  "qualified_reuse": {
+    "status": "REUSED_ACCEPTED_SCOPE",
+    "basis": "Already-reviewed plan permits unchanged S5A geometry/acquisition/cap/pane/focus/cancel/complete derivation/nonmutation reuse; changed relation/Inspector has fresh/source cases above. No waiver.",
+    "frozen_C04": {
+      "commit": "2becd644",
+      "path": "docs/reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json",
+      "sha256": "d01e420bd5343a9062b20c9670dd20b0ae414e51c2929f65c720b0345a6da236"
+    },
+    "accepted_C05_receipt": {
+      "path": "/home/bfadmin/Documents/datum-eda/.datum/scratch/s5a-c04-managed-20261018/c05-reserved-independent-review-01.json",
+      "sha256": "ca1a238e20125b90b9a42ec55202c9c41195aa3331b09c8fbcf98265f4762361",
+      "bytes": 16376
+    },
+    "C05_source_commit": "037ec5b66402ee7d11d0a310564381ea73245746",
+    "focus_loss": {
+      "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "actual_review": "AcceptedC05/frozenC04 verified; OS-focus/applicability receipt objects unchanged;8handlerfiles byte-identical2becd\u2192ee9. No new relation cancel/async/publication owner. Archive absent: no fresh historical pixels/hash claim.",
+      "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+      "actual_PM_disposition": "Accepts REUSED_ACCEPTED_SCOPE under verified historical receipt/applicability and unchanged handlers. Preserve failed05 and freshEscape03 separately.",
+      "unchanged_handler_pins": {
+        "crates/gui-app/src/editor/runtime_selection_region.rs": "b65bbf2e3825612aebd71d0d85d3439763114d75b08cd6312a124dd74fc250cc",
+        "crates/gui-app/src/editor/runtime_selection/publication.rs": "85e6251ced8d9dae38a9e6e839d683cbdbd813c897b3b08c27d55fc281f98476",
+        "crates/gui-app/src/editor/selection_region_evaluation.rs": "4651105cd2bb8ae966aa61e757c78bf45f436ca40bced0dfa2983acd9e13f0fc",
+        "crates/gui-app/src/terminal/keyboard_focus.rs": "223c4bea0988b0f4de1ac601217cbeeaa964dafb69b408ec9a27c7923db05960",
+        "crates/gui-app/src/rendering/native_surface_transaction.rs": "d80ab5d29c8b821373972ccd36a6c87ec0210c9aa94aeafccd6b7bb3c552f89a",
+        "crates/gui-app/src/rendering/native_frame_coordinator.rs": "c58bb07de3b39328b7e423e6ca229471c1866ed5558f5fcbcb03a89f1defffb5",
+        "crates/gui-app/src/viewport/runtime_camera_pane.rs": "dce8a315e6db73c23ebc27c2487e65dfd9af21262d6c8901024c87cb5d33e64d",
+        "crates/gui-app/src/editor/runtime_primary_pointer.rs": "19757c9b3c8a00f86dd386eea2b271b63aba7f91401fd6614ecde0b93ac185a0"
+      },
+      "structurally_unchanged_receipt_object_pins": {
+        "/os_focus_loss_gesture_proof_20261011": "5ec5727fc60c8e8a34a0a5e03693151b95cfca04637d3882826667a0613c51d1",
+        "/current_readiness_reconciliation_20261019/subsequent_bindings_20261019/pane_cancellation_applicability_20261021": "d6a5fc2804891f080d5381fe2a6d5e9d208c1981cfa8a87db8d75af8986c2d1e"
+      },
+      "C05_selector": "/D5_predicate_disposition/acquisition_refusal_cancellation",
+      "historical_raw_result_pin_not_rehashed": "331084879d58250d1322ab0d677257b9bc7f9b7343b4dfb90fd440a9f6380d40"
+    },
+    "lifetime_source": "crates/gui-app/src/editor/native_edit_selection/lifetime_report_tests.rs",
+    "lifetime_predicates": [
+      "last_identity_drop_report_is_empty_and_undo_never_resurrects_selection",
+      "focused_compound_drop_preserves_survivor_without_promoting_or_resurrecting",
+      "semantic_identity_retirement_reports_through_prepared_edit_and_shared_runtime_path"
+    ]
+  },
+  "derived_refusal_raw_states": [
+    {
+      "event": "state",
+      "kind": "datum.action-evidence/v2",
+      "sequence": 6,
+      "value": {
+        "active_review_target_id": "no-proposal-action",
+        "board_camera": {
+          "center_x_nm": 11500000.0,
+          "center_y_nm": 310000.0,
+          "zoom": 1.0
+        },
+        "console_latest": "Global Net \u2014 6 objects; 0 hidden; 0 locked. Cannot add members to a global_net selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection.",
+        "context": "pane-1-resolved",
+        "dock": "None",
+        "focus": "Editor(PaneId(1))",
+        "focused_content": "Some(Schematic)",
+        "focused_pane": 1,
+        "layer_filters": "WorkspaceFilterState { show_authored: true, excluded_selection_classes: {}, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L1\"), layer_visibility: {\"L1\": true, \"L2\": false, \"L3\": true, \"L4\": false, \"L45\": false, \"L49\": false}, layer_scroll_offset: 0 }",
+        "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }",
+        "menu": null,
+        "menu_focus_index": 0,
+        "pane_cameras": [
+          {
+            "camera": {
+              "center_x_nm": 11500000.0,
+              "center_y_nm": 310000.0,
+              "zoom": 1.0
+            },
+            "content": "Board",
+            "pane": 0
+          },
+          {
+            "camera": null,
+            "content": "Schematic",
+            "pane": 1
+          }
+        ],
+        "preferences_open": false,
+        "registry": [
+          {
+            "contexts": {
+              "pane-1-resolved": {
+                "enabled": true,
+                "reason": "Available"
+              }
+            },
+            "dispatch_key": "library.open",
+            "entry_surfaces": [
+              "library-menu-keyboard",
+              "library-menu-pointer"
+            ],
+            "handler_ref": {
+              "path": "crates/gui-app/src/editor/runtime_library.rs",
+              "symbol": "datum_gui::Runtime::open_library"
+            }
+          },
+          {
+            "contexts": {
+              "pane-1-resolved": {
+                "enabled": true,
+                "reason": "Available"
+              }
+            },
+            "dispatch_key": "view.fit",
+            "entry_surfaces": [
+              "view-fit-menu-keyboard",
+              "view-fit-menu-pointer",
+              "view-fit-shortcut"
+            ],
+            "handler_ref": {
+              "path": "crates/gui-app/src/viewport/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            }
+          },
+          {
+            "contexts": {
+              "pane-1-resolved": {
+                "enabled": false,
+                "reason": "Layer Visibility menu action is unavailable in this build."
+              }
+            },
+            "dispatch_key": "view.layers",
+            "entry_surfaces": [
+              "view-layers-menu-keyboard",
+              "view-layers-menu-pointer"
+            ],
+            "handler_ref": null
+          },
+          {
+            "contexts": {
+              "pane-1-resolved": {
+                "enabled": false,
+                "reason": "Documents menu action is unavailable in this build."
+              }
+            },
+            "dispatch_key": "window.documents",
+            "entry_surfaces": [
+              "window-documents-menu-keyboard",
+              "window-documents-menu-pointer"
+            ],
+            "handler_ref": null
+          },
+          {
+            "contexts": {
+              "pane-1-resolved": {
+                "enabled": false,
+                "reason": "About Datum is unavailable in this build."
+              }
+            },
+            "dispatch_key": "help.about",
+            "entry_surfaces": [
+              "help-about-menu-keyboard",
+              "help-about-menu-pointer"
+            ],
+            "handler_ref": null
+          }
+        ],
+        "scale": 1.0,
+        "scene_bounds": {
+          "max_x": 21000000,
+          "max_y": 3000000,
+          "min_x": 2000000,
+          "min_y": -2380000
+        },
+        "selection": {
+          "complete_inspection": false,
+          "dropped_count": 0,
+          "dropped_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "focus": null,
+          "hidden_count": 0,
+          "hidden_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "kind": "global_net",
+          "locked_count": 0,
+          "locked_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "member_count": 6,
+          "member_sample": [
+            {
+              "class": "pad",
+              "id": "f5e79bdf-6d3e-4f2a-870a-49ce9c1032a0",
+              "instance_path_count": 0,
+              "instance_path_sample": [],
+              "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "class": "track",
+              "id": "78000000-0000-4000-8000-000000000022",
+              "instance_path_count": 0,
+              "instance_path_sample": [],
+              "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "class": "track",
+              "id": "78000000-0000-4000-8000-000000000023",
+              "instance_path_count": 0,
+              "instance_path_sample": [],
+              "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "class": "pin",
+              "id": "78000000-0000-4000-8000-000000000064",
+              "instance_path_count": 0,
+              "instance_path_sample": [],
+              "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "class": "wire",
+              "id": "78000000-0000-4000-8000-00000000001e",
+              "instance_path_count": 0,
+              "instance_path_sample": [],
+              "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            },
+            {
+              "class": "label",
+              "id": "78000000-0000-4000-8000-00000000001f",
+              "instance_path_count": 0,
+              "instance_path_sample": [],
+              "instance_path_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+            }
+          ],
+          "members_sha256": "sha256:26a3c6cb73ebabeafaa869eeb692dc9ecfc7535b61f31fa38bffb475216af525",
+          "notice": {
+            "omitted_chars": 0,
+            "preview": "Cannot add members to a global_net selection. Membership follows connectivity. Select an object without modifiers to start an explicit selection."
+          },
+          "omitted_members": 0,
+          "project": "72000000-0000-4000-8000-000000000001",
+          "related_count": 2,
+          "related_sha256": "sha256:3a2552f927baf4ffd4824e55f00e452c43b245291271e25d2b67448ea57252cc",
+          "revision": "505981462dd8e9c3673818923bc6b8af35b0f742cd87735efb72a170b9f0d505",
+          "scope": null,
+          "stale": false,
+          "subject_identity": "b8c64de5-ffbe-42c0-ab16-b613c88b16da",
+          "unprojected_count": 0,
+          "unprojected_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "selection_inspector": {
+          "expanded": false,
+          "filters_expanded": false,
+          "presented": {
+            "basis_expanded": false,
+            "basis_offset": 0,
+            "basis_scope": "None",
+            "total": 27,
+            "visible": 29,
+            "visible_members": []
+          },
+          "scroll_offset": 0
+        },
+        "submenu": null,
+        "window_size": [
+          1344,
+          806
+        ]
+      }
+    }
+  ],
+  "ordinary_close": {
+    "wrapper_status": "FAIL",
+    "wrapper_error": "RuntimeError('App exited 0: ordinary native Main Close exits process')",
+    "actions": [
+      {
+        "argv": [
+          "xdotool",
+          "getwindowfocus"
+        ],
+        "exit": 0,
+        "stdout": "2097152\n",
+        "stderr": ""
+      },
+      {
+        "owned_compositor_pid": 1775888,
+        "argv": [
+          "weston",
+          "--backend=x11",
+          "--renderer=gl",
+          "--shell=desktop-shell.so",
+          "--config=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-08/weston.ini",
+          "--debug",
+          "--width=1344",
+          "--height=806",
+          "--scale=1",
+          "--idle-time=0",
+          "--socket=datum-startup-qa",
+          "--log=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-08/weston.log"
+        ]
+      },
+      {
+        "argv": [
+          "xprop",
+          "-id",
+          "27262981",
+          "WM_CLASS",
+          "_NET_WM_PID"
+        ],
+        "exit": 0,
+        "stdout": "WM_CLASS(STRING) = \"weston-1\", \"Weston Compositor\"\n_NET_WM_PID:  not found.\n",
+        "stderr": ""
+      },
+      {
+        "launch_argv": [
+          "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui",
+          "--project-root",
+          "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/project"
+        ],
+        "isolated_xdg": "/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-xpc03-08"
+      },
+      {
+        "argv": [
+          "xdotool",
+          "windowactivate",
+          "--sync",
+          "27262981"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "xdotool",
+          "mousemove",
+          "--window",
+          "27262981",
+          "600",
+          "400",
+          "click",
+          "1"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "xdotool",
+          "windowactivate",
+          "--sync",
+          "27262981"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "xdotool",
+          "key",
+          "--clearmodifiers",
+          "--repeat",
+          "1",
+          "--repeat-delay",
+          "20",
+          "Escape"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "xdotool",
+          "mousemove",
+          "--window",
+          "27262981",
+          "1300",
+          "15",
+          "click",
+          "1"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "actual_exit_code": 0,
+    "native_owner_released": "[SystemTime { tv_sec: 1792784928, tv_nsec: 400848056 }] native Main window ownership released=true",
+    "no_gui_SIGTERM_action": true,
+    "independent_review": "Distinct reviewer and PM accepted actual bounded Close separate from generic qa.wait expected-exit FAIL."
+  },
+  "native_input_closure": {
+    "boundary": "Named source/tool identities only; no exhaustive dynamic-library census or proof rerun. Historical observer source reconstruction is explicitly attributed.",
+    "C01_receipt": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-readiness.json",
+      "sha256": "5cf8d4cb03d546e77d16d3731e168ae2a475bb7bd286a314c05908910dfa1974"
+    },
+    "controller_interpreter": {
+      "invoked_path": "/usr/bin/python3",
+      "resolved_executable": "/usr/bin/python3.13",
+      "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "version": "Python 3.13.5"
+    },
+    "installed_named_tools": {
+      "Xwayland": {
+        "invoked_path": "/usr/bin/Xwayland",
+        "resolved_executable": "/usr/bin/Xwayland",
+        "sha256": "3e17573235c68ca600dcc1074fd4a64760f229fcf6f21775b6c039fe96e04053"
+      },
+      "python3": {
+        "invoked_path": "/usr/bin/python3",
+        "resolved_executable": "/usr/bin/python3.13",
+        "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9"
+      },
+      "weston": {
+        "invoked_path": "/usr/bin/weston",
+        "resolved_executable": "/usr/bin/weston",
+        "sha256": "5e7b342da0d38508b3001c291f080fbe35c4101f32ade0babc8458915f87352a"
+      },
+      "weston-screenshooter": {
+        "invoked_path": "/usr/bin/weston-screenshooter",
+        "resolved_executable": "/usr/bin/weston-screenshooter",
+        "sha256": "bf4d9e287fbd5c6980ffc1021ac075f0e99d414850b726036c7e89c0d881a778"
+      },
+      "xdotool": {
+        "invoked_path": "/usr/bin/xdotool",
+        "resolved_executable": "/usr/bin/xdotool",
+        "sha256": "2fcee924be08b180f4b1bea93eddedbaa8b0ea4b0886f6cbf77a113e8b8a130f"
+      },
+      "xprop": {
+        "invoked_path": "/usr/bin/xprop",
+        "resolved_executable": "/usr/bin/xprop",
+        "sha256": "715458a47628d90f6333a5a573fa744b8d1ba75c6f35fab86288890fb0f0104c"
+      }
+    },
+    "unchanged_local_python_helpers": {
+      "scripts/native_capture_pixels.py": "c2b534bcf450e2fd2da113dd4b1684b2fb5fc0d06311dc27ee0a8a48e3e0955a",
+      "scripts/native_capture_presentation.py": "5ff7c2ec585095f86392f12a7e97310f9354837274a967d2eefa84efb03a8124",
+      "scripts/native_project_browse_workflow.py": "18abb4b289940a2daefd32628d866672af3c34680cfc301b66d26432337295da",
+      "scripts/native_project_manifest_open.py": "5975f9f82c2530c22f7ae9d631f5d9fe73a28503b927a1bfac7c204d22b1a216",
+      "scripts/native_project_path_assistance.py": "679aa51cde708aadac75de3735b0dc71f986d9f3200fb1cea590a0457c4cd72b",
+      "scripts/native_project_source_inventory.py": "c13d8c8d5315391bf64dd63dcf9e5fd08507739c6e71a1650f27dd589e3ed39e",
+      "scripts/native_project_terminal_handoff.py": "e3597dd8eb05f0b1517d2949ac04be40532e8b49fc3c4382d0db16e4d3b2342e",
+      "scripts/prove_native_project_startup_gui.py": "d3e0d68a08c63bd3c4910f7e02c54e1e1dedc3595b56dbc58ddb52c91a4b28f3",
+      "scripts/prove_s5a_native_selection.py": "0f5a69ad872b95a03df24bd70df83f74817287d12a4e9f853b3f9115106ea49f",
+      "scripts/provision_s5a_replay_inputs.py": "649c1a300723849490a3c08680e80b838083326b2f294d36887b8424890fa447",
+      "scripts/run_native_qa_isolated_input.py": "46acb19045f9d1888a6f847f63ec40588d2a6ab0dcb4d8e92e03186fe089640f",
+      "scripts/s5a_native_artifact_cases.py": "1db4a60477503b9fb85d81e19b0c6ce9fc92a250c0f6fbc8667804138b69885d",
+      "scripts/s5a_native_escape_cases.py": "8209ed22dda26411cf8865c6e3d1f6a178aff01dc1ee615be3b24b92ddc3a696",
+      "scripts/s5a_native_export_cases.py": "abeb0c668c442955228646b75fdedb27fc36c5bb49a9250fce11e471c008768a",
+      "scripts/s5a_native_inspector_cases.py": "6c4bfd19c5e8e0507c5a4aca5b76c7fc5783b1a68548304c15d53eb6be64664b",
+      "scripts/s5a_native_selection_observation.py": "a2f4105508c021395d01d9f6f6d036f3028e22044174b3bbe2a32f0673ccb77f"
+    },
+    "actual_reuse_check": "All16 helpers and6 named installed tools freshly hashed byte-equal to actual committed C01 native_input_closure pins. All16 static local imports additionally byte-equal to production source Git ee9fa28e. Per-run distinct executed drivers are pinned above, not reused C01 observers.",
+    "supplemental_lock_observation_tool": {
+      "path": "/usr/bin/fuser",
+      "sha256": "651e6bf58710f08b3f1dc0a6682f74ed34fa3852db02cf91ae8813b85c13c7fd"
+    }
+  },
+  "native_visual_build": {
+    "record": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-visual-build-disposition.json",
+      "sha256": "5545a1ca5efd3859edc36af3a6843710e02d6787596b7b53c196877d9823a2aa"
+    },
+    "disposition": {
+      "reason": "Existing exact submitted-content diagnostic is compiled only by supported GUI visual feature; ordinary default GUI functional N01 is preserved separately. No source edit, native probe configuration, alternate renderer or state-dependent capture search.",
+      "accepted_default": {
+        "source_proof": "ab7efe48a10c621d0af59cd33165327af5cca7f52c2a9d9c554b70e2a5bf3430",
+        "original_output": "target/debug/datum-gui",
+        "preserved_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/accepted-default-gui/datum-gui",
+        "sha256": "fba0317b7e8bfcf28f5c7dab2f930241494cfbea9acf765a1b3cf081fbeec2b8",
+        "depinfo_sha256": "8d22a5fbb3a6560ebc13cb4daa7b93261c76e8099da3b8d75465cd1dc6863713"
+      },
+      "next_existing_build": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --bin datum-gui --features visual",
+      "runtime": "Normal --project-root launch; existing DATUM_GUI_VERBOSE_LOG=1; DATUM_NATIVE_CONTENT_PROBE remains unset; no visual-test/window-visual-test args.",
+      "build": {
+        "exit_code": 0,
+        "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-visual-build.log",
+        "sha256": "a4b41715b571226aa861d9e2643bc523595e83f938d2d0208b074b76c0fa84e0",
+        "source_commit": "ee9fa28e",
+        "gui": {
+          "path": "target/debug/datum-gui",
+          "sha256": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+          "depinfo_sha256": "9c815b7645aa6a9d132e44a92ac46dc0908e0d4b320119e70473df860c77420b"
+        },
+        "scope": "Existing visual feature, normal runtime mode; different proof binary from accepted default build, not an inferred production-default visual PASS."
+      }
+    },
+    "actual_log": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-visual-build.log",
+      "sha256": "a4b41715b571226aa861d9e2643bc523595e83f938d2d0208b074b76c0fa84e0"
+    },
+    "preserved_default_binary": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/accepted-default-gui/datum-gui",
+      "sha256": "fba0317b7e8bfcf28f5c7dab2f930241494cfbea9acf765a1b3cf081fbeec2b8"
+    },
+    "preserved_default_depinfo": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/accepted-default-gui/datum-gui.d",
+      "sha256": "8d22a5fbb3a6560ebc13cb4daa7b93261c76e8099da3b8d75465cd1dc6863713"
+    },
+    "visual_binary": {
+      "path": "target/debug/datum-gui",
+      "sha256": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0"
+    },
+    "visual_depinfo": {
+      "path": "target/debug/datum-gui.d",
+      "sha256": "9c815b7645aa6a9d132e44a92ac46dc0908e0d4b320119e70473df860c77420b"
+    }
+  }
+}

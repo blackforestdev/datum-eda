@@ -245,3 +245,98 @@ fn datum_test_hover_is_preview_only_and_does_not_overwrite_selection() {
         "with an explicit selection active, hover must not change retained world geometry"
     );
 }
+
+/// Supplemental production-renderer goldens over the admitted canonical input.
+/// Ordinary native acquisition and public identity proof remain separate.
+#[cfg(feature = "visual")]
+#[test]
+#[ignore = "requires the admitted crossprobe Project, revision, Net and reviewed goldens"]
+fn native_crossprobe_same_engine_goldens() -> anyhow::Result<()> {
+    use datum_gui_protocol::{
+        AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, CompoundSelection,
+        SelectionSubject as Subject, WorkspacePreset,
+        selection_artifacts::build_workspace_selection_view,
+        selection_resolution::NativeSelectionResolution,
+    };
+    let root = PathBuf::from(std::env::var("DATUM_CROSSPROBE_PROJECT")?);
+    let output = PathBuf::from(std::env::var("DATUM_CROSSPROBE_VISUAL_OUTPUT")?);
+    let revision = std::env::var("DATUM_CROSSPROBE_REVISION")?;
+    let net = std::env::var("DATUM_CROSSPROBE_NET")?.parse()?;
+    let candidate_only = std::env::var("DATUM_CROSSPROBE_CANDIDATE_ONLY").as_deref() == Ok("1");
+    std::fs::create_dir_all(&output)?;
+    let mut request = datum_test_request();
+    request.project_root = root;
+    request.board_file = None;
+    let (mut state, model) = datum_gui_protocol::load_board_editor_workspace_with_model(&request)?;
+    anyhow::ensure!(
+        model.model_revision.0 == revision,
+        "admitted revision changed"
+    );
+    state
+        .ui
+        .layout
+        .apply_preset(WorkspacePreset::BoardSchematic);
+    let authority = NativeSelectionResolution::capture(&model)
+        .map_err(|e| anyhow::anyhow!("canonical selection authority: {e:?}"))?;
+    let identity = |class, suffix| -> anyhow::Result<Id> {
+        Ok(Id {
+            class,
+            id: format!("78000000-0000-4000-8000-{suffix:012x}").parse()?,
+            instance_path: vec![],
+        })
+    };
+    let symbol = identity(Class::Symbol, 1)?;
+    let footprint = identity(Class::Footprint, 2)?;
+    let cases = [
+        ("bound-symbol", Subject::Object(symbol.clone()), 1, 1),
+        ("bound-footprint", Subject::Object(footprint.clone()), 1, 1),
+        ("global-net", Subject::GlobalNet(net), 6, 2),
+        (
+            "unlinked-symbol",
+            Subject::Object(identity(Class::Symbol, 5)?),
+            1,
+            0,
+        ),
+        (
+            "explicit-parent-pair",
+            Subject::Compound(
+                CompoundSelection::new([symbol, footprint.clone()], Some(footprint))
+                    .map_err(|e| anyhow::anyhow!("parent pair: {e:?}"))?,
+            ),
+            2,
+            0,
+        ),
+    ];
+    let golden_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("testdata/golden/crossprobe");
+    let mut renderer = datum_gui_render::visual_capture::OffscreenRenderer::new(1344, 806)?;
+    for (name, subject, members, related) in cases {
+        let view = build_workspace_selection_view(&model, &authority, subject, &state)
+            .map_err(|e| anyhow::anyhow!("{name} projection: {e:?}"))?;
+        assert_eq!(view.members.len(), members, "{name} complete membership");
+        assert_eq!(
+            view.related.len(),
+            related,
+            "{name} related-only membership"
+        );
+        state.selection = SelectionTarget::Native(Box::new(view));
+        let actual = renderer.render_workspace(&state, None)?;
+        actual.save(output.join(format!("{name}.png")))?;
+        if candidate_only {
+            println!("CANDIDATE_ONLY {name}: rendered; golden comparison NOT RUN");
+            continue;
+        }
+        let expected = image::open(golden_root.join(format!("{name}.golden.png")))?.to_rgba8();
+        assert_eq!(
+            actual.dimensions(),
+            expected.dimensions(),
+            "{name} dimensions"
+        );
+        assert_eq!(
+            actual.as_raw(),
+            expected.as_raw(),
+            "{name} exact renderer golden"
+        );
+        println!("GOLDEN_MATCH {name}: exact same-engine pixels");
+    }
+    Ok(())
+}

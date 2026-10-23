@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "kind": "GUI-P2-CROSSPROBE bounded automated golden filename correction",
+  "status": "NAMING_FIX_CANDIDATE_REVIEW_PENDING",
+  "historical_accepted_proof_immutable": {
+    "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-proof.json",
+    "sha256": "b2f1228cb75c8f46d350fe3e7749a4610069baa70ebee3c1e655950ccce5ab71"
+  },
+  "reason": "Normal commit gate correctly refused .png names for automated baseline inputs. Existing storage policy recognizes actual automated inputs under golden only with .golden.png suffix. No gate/policy change or demo screenshot relocation.",
+  "authority": {
+    "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "actual_grant_summary": "Approved rename only exact5reviewed immutable golden bytes to .golden.png and change only test expected filenames. Preserve b2 immutable, record factual mapping/new source hash and strict5. Existing03/04 behavior acceptance remains scoped; bounded amendment review and normal hooks required.",
+    "receiver_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "actual_receiver_yield_summary": "Explicitly yielded agreed review lease temporarily to original worker for exact naming/test/reference/evidence/state fix, no dirty files/processes; XP05 remains selected and same reviewer assignment retained.",
+    "worker_session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+    "ownership": "Synchronized bounded worker Frontier/bead/export transfer completed before test/image/amendment edits. Return same review-only scope after immutable landing."
+  },
+  "original_reviewed_test_source": {
+    "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/selection_ownership.original-f8eba5af.rs",
+    "sha256": "f8eba5af709a71d505090e43bba79cf300dfe3169c766cb818f983ffb45a9b6f"
+  },
+  "corrected_test_source": {
+    "path": "crates/gui-render/tests/selection_ownership.rs",
+    "sha256": "6e6e8e491693c6c5a590c47ce3e0c01dad9bdc6b6ff543bc95daf2ab8c4c606d"
+  },
+  "only_test_source_delta": {
+    "before": "golden_root.join(format!(\"{name}.png\"))",
+    "after": "golden_root.join(format!(\"{name}.golden.png\"))",
+    "byte_check": "Exact source equality after this one replacement, scoped rustfmt changed zero files."
+  },
+  "baseline_mappings": [
+    {
+      "historical_path": "crates/gui-render/testdata/golden/crossprobe/bound-symbol.png",
+      "final_test_input_path": "crates/gui-render/testdata/golden/crossprobe/bound-symbol.golden.png",
+      "sha256_unchanged": "88a41cd0becbc5fbc37e2ddc52bb823693036b8f7778739c0106f308c527ed74",
+      "original_reviewed_candidate_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/bound-symbol.png"
+    },
+    {
+      "historical_path": "crates/gui-render/testdata/golden/crossprobe/bound-footprint.png",
+      "final_test_input_path": "crates/gui-render/testdata/golden/crossprobe/bound-footprint.golden.png",
+      "sha256_unchanged": "4092614366da8ed4c3cd9cf02560fc2486387bedcb9a1095f5998e612c194e74",
+      "original_reviewed_candidate_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/bound-footprint.png"
+    },
+    {
+      "historical_path": "crates/gui-render/testdata/golden/crossprobe/global-net.png",
+      "final_test_input_path": "crates/gui-render/testdata/golden/crossprobe/global-net.golden.png",
+      "sha256_unchanged": "2314ed417fb026e2257f83a94b3470c5aa1d4baecb389273f59706284f9bc087",
+      "original_reviewed_candidate_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/global-net.png"
+    },
+    {
+      "historical_path": "crates/gui-render/testdata/golden/crossprobe/unlinked-symbol.png",
+      "final_test_input_path": "crates/gui-render/testdata/golden/crossprobe/unlinked-symbol.golden.png",
+      "sha256_unchanged": "df21999cbeb5f6dcdfdbb61ab71bedc54f23ebf4e1d9c2e07811a3c791bd9c98",
+      "original_reviewed_candidate_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/unlinked-symbol.png"
+    },
+    {
+      "historical_path": "crates/gui-render/testdata/golden/crossprobe/explicit-parent-pair.png",
+      "final_test_input_path": "crates/gui-render/testdata/golden/crossprobe/explicit-parent-pair.golden.png",
+      "sha256_unchanged": "e00c26cce5ae9ac3a8792459bb41f53e5962eea918335f78dc39f8fee3e66bc1",
+      "original_reviewed_candidate_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/crossprobe-golden-candidates/explicit-parent-pair.png"
+    }
+  ],
+  "strict_comparison": {
+    "command": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison-command.json",
+      "sha256": "158f8c970339e8586765ecf9a494977f77ac28fe00d8bd3f148b0784b50774cb"
+    },
+    "log": {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison.log",
+      "sha256": "caf93d99e6671273da1dea7b160e9a3d9265dbe5923c00926fd7b99dc43e2561"
+    },
+    "test_executable": {
+      "path": "target/debug/deps/selection_ownership-b66344bed5bb160a",
+      "sha256": "5759baad265734a13c28f7167129126e9ab10de78fa3f3f06adc9abe6e441926"
+    },
+    "exit_code": 0,
+    "exact_matches": 5,
+    "actual_images": [
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison/bound-footprint.png",
+        "sha256": "4092614366da8ed4c3cd9cf02560fc2486387bedcb9a1095f5998e612c194e74"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison/bound-symbol.png",
+        "sha256": "88a41cd0becbc5fbc37e2ddc52bb823693036b8f7778739c0106f308c527ed74"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison/explicit-parent-pair.png",
+        "sha256": "e00c26cce5ae9ac3a8792459bb41f53e5962eea918335f78dc39f8fee3e66bc1"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison/global-net.png",
+        "sha256": "2314ed417fb026e2257f83a94b3470c5aa1d4baecb389273f59706284f9bc087"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/golden-filename-fix/comparison/unlinked-symbol.png",
+        "sha256": "df21999cbeb5f6dcdfdbb61ab71bedc54f23ebf4e1d9c2e07811a3c791bd9c98"
+      }
+    ],
+    "candidate_only": "UNSET",
+    "scope": "Production renderer unchanged; only test expected baseline path changed. Five fresh exact comparisons against original independently reviewed/PM-authorized pixels."
+  },
+  "unchanged_GUI_binary": {
+    "path": "target/debug/datum-gui",
+    "sha256": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0"
+  },
+  "unchanged_CLI_binary": {
+    "path": "target/debug/datum-eda",
+    "sha256": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5"
+  },
+  "unchanged_daemon_binary": {
+    "path": "target/debug/eda-engine-daemon",
+    "sha256": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+  },
+  "limits": [
+    "No GUI/source/fixture/native input change or native matrix rerun.",
+    "Original accepted b2 source/image path pins remain historical; final expected test input paths and corrected test source are exactly above. Original image bytes remain available at original candidate paths.",
+    "Fresh distinct XP05 and actual XP06 acceptance remain required.",
+    "Original precommit naming refusal retained; no gate bypass or blind refresh."
+  ]
+}

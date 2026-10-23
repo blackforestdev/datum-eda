@@ -667,3 +667,63 @@ are in `docs/reviews/workflow-delivery-rollout/crossprobe/history-reference-disp
 The original proposal review is bounded to its historical bytes; a fresh exact
 governing transcription/impact receipt remains required. XP-C03 remains active;
 XP-C04/05/06, full ordinary proof and objective acceptance are not waived.
+
+
+<!-- EVIDENCE:GUI-P2-CROSSPROBE:XP-C03-C04-ACCEPTED-20261023 -->
+### Actual shared delivery and finite native proof acceptance
+
+The shared authored-CI relation and current-reference history repair landed at
+`ee9fa28e`. The exact twelve-case delivery receipt is
+[the native proof](../docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-proof.json),
+SHA256 `b2f1228cb75c8f46d350fe3e7749a4610069baa70ebee3c1e655950ccce5ab71`.
+Its fresh native, source-test and accepted reused predicates remain distinct.
+It binds nine original executed drivers, five selected native frames, all three
+canonical file/path/journal inventories, the existing visual-feature build and
+five strict same-engine golden matches. The five new baselines received actual
+independent image review and exact PM authorization before promotion. Generation
+alone and HTML/native/offscreen pixel equality are not credited.
+
+Reviewer `01a1697c-b5d2-77d1-a9e7-12e688f0f3f6` reports
+`XP_C03_C04_FINITE_PROOF_REVIEW_PASS`, mandatory findings **NONE**, on those exact
+staged receipt bytes. The reviewer verified 53 pinned records, all nine original
+drivers, 16 unchanged helpers and six named tools, the default/visual binaries,
+five raw frame barriers, actual strict golden outputs and unchanged 93/87/90-file
+inventories. The exact source/reuse mapping, retained controller failures,
+retracted footer finding, unidentified transient lock and successful native Close
+versus expected-exit harness failure remain explicit. The absent historical
+focus-loss archive is not represented as freshly verified pixels.
+
+Appointed PM `01a160d9-b499-7923-984a-b3390beb2e34` accepts **XP-C03 and XP-C04**
+complete on this actual independent receipt and selects **XP-C05** for distinct
+fresh replay. [The actual review and disposition](../docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-review.json)
+records the exact acceptance and explicit receiver acknowledgment. Development
+availability and XP-C06 objective acceptance remain open until that replay and
+its findings are resolved. Full-engine twelve-failure, electrical cache, minimal
+fixture and broader host/HUMAN limits remain separate; no successor is selected.
+
+<!-- EVIDENCE:GUI-P2-CROSSPROBE:XP-C05-REVIEW-HANDOFF-20261023 -->
+### Explicit distinct replay handoff
+
+PM assigns reviewer `01a1697c-b5d2-77d1-a9e7-12e688f0f3f6` the complete bounded
+fresh XP-C05 matrix under the accepted source/reuse limits. The receiver explicitly
+acknowledges a synchronized review-only Frontier/beads lease, with output under
+`.datum/scratch/gui-p2-crossprobe-xpc05-independent-20261023`. All worker native
+input/runtime ownership is released. The reviewer receives the immutable landing
+commit and exact handoff JSON after normal commit hooks; no producer-log readback
+can substitute for that receiver's fresh events, observations and source checks.
+Product paths are excluded from this review lease. The original implementer
+remains available for concrete findings; any product correction requires explicit
+claim/scope reconciliation. XP-C05/06 are not marked complete by this handoff.
+
+
+The normal landing gate subsequently required the five automated baseline inputs
+to use the existing `.golden.png` naming convention. The historical `b2f1228c`
+receipt remains immutable. [The bounded filename amendment](../docs/reviews/workflow-delivery-rollout/crossprobe/native-golden-filename-amendment.json),
+SHA256 `a8db63685121b6399217bf6f3c2f75b54dbdb87c37ed8bd8c9214302fa04c479`,
+records unchanged reviewed pixels, original source `f8eba5af…`, corrected expected
+filename source `6e6e8e491693c6c5a590c47ce3e0c01dad9bdc6b6ff543bc95daf2ab8c4c606d`
+and five actual fresh strict matches. The same distinct reviewer reports
+`GOLDEN_FILENAME_AMENDMENT_REVIEW_PASS`, no mandatory findings, and the appointed
+PM accepts those exact amended pins. No GUI, source fixture, product behavior or
+visual authority changed. The explicit temporary worker landing claim returns to
+the acknowledged review-only XP-C05 receiver after normal hook landing.
