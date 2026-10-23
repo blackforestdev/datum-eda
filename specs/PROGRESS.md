@@ -14,8 +14,6 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** Appointed PM accepted complete GUI-P2-CROSSPROBE delivery after exact independent replay; closure selects no successor. Await explicit authorized next assignment.
-
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -113,8 +111,9 @@
 </details>
 
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
-   P2.3 dependency accepted and closed. Existing INSP-C01 planning authorization remains unchanged; task is specified and unselected, with no execution grant, claim or automatic successor selection. Complete Inspector readiness/owner boundaries remain mandatory. *state `specified`; authorization `planning`.*
+   Separately selected by appointed PM after accepted crossprobe closurec93c2dad: INSP-C01 complete bounded component/Net/Sheets/status native readiness and exact field/owner/location authority. Reuse accepted inputs/builds, inspect actual shared handlers and multi-sheet/ERC gaps; no implementation or statusbar change until exact reviewed INSP-C02 disposition and any required decision. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build the inert marking-menu shell** (`GUI-MARKING-MENU`; `dat-marking-menu-shell-g0w`).
    Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go. *state `specified`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* dat-gui-write-path-qiu. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`, `specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.

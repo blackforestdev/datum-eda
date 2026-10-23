@@ -785,3 +785,40 @@ Closure retires the now-closed cross-probe issue from S5A's live unblocks lists
 without reopening or changing S5A acceptance. Inspector's satisfied dependency
 changes its stale blocked status to specified, preserving existing planning-only
 authorization and unselected state. Neither projection grants successor work.
+
+
+<!-- DISPOSITION:GUI-P2-INSPECTOR:INSP-C01-SELECTED-20261023 -->
+### Separate actual Inspector planning selection
+
+After accepted cross-probe closure `c93c2dad`, appointed PM
+`01a160d9-b499-7923-984a-b3390beb2e34` separately selects
+`GUI-P2-INSPECTOR / INSP-C01` under existing planning authorization and assigns
+worker `01a1697c-a0f3-7272-9122-673d9fda4eb0`. This is a new explicit disposition,
+not an automatic successor from cross-probe closure. The verified project-wide
+owner appointment quoted above supplies the PM appointment provenance; its scoped
+PM059 review/continuation/acceptance responsibilities are witnessed below.
+
+Prepare the complete component Identity/Placement/Checks, Net/Members/ERC,
+Sheets hierarchy/multi-sheet selection and Sheet/Grid/ERC status readiness map.
+Inspect current shared native handlers and actual missing behavior. Reuse accepted
+cross-probe inputs, builds, proofs and library/schematic owners; no fresh baseline
+build, new fixture program or full proof campaign without a concrete evidence need.
+Record the full field/owner/location map, deferred status-bar authority and concrete
+recommendation for the authorized decision-maker. This planning selection ratifies
+no UI, product rule, dependency, status-bar contents or implementation mechanism.
+INSP-C02 requires an exact reviewed packet and actual disposition before execution;
+new reserved product/visual decisions require their governing authority.
+
+Independent reviewer `01a1697c-b5d2-77d1-a9e7-12e688f0f3f6` is separately assigned
+read-only readiness review. Cross-probe remains accepted and closed. All inputs
+were released and no claim/dirty work needs transfer for this new planning task.
+The synchronized planning lease excludes production and protected prototype paths.
+
+<!-- APPOINTMENT:GUI-P2-INSPECTOR:PM-20261023 -->
+{"owner_appointed":true,"session":"01a160d9-b499-7923-984a-b3390beb2e34","task_keys":["GUI-P2-INSPECTOR"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance"]}
+
+<!-- DECISION-AUTHORITY:GUI-P2-INSPECTOR:INSP-C02-20261023 -->
+{"task_key":"GUI-P2-INSPECTOR","step_id":"INSP-C02","decision_kind":"continuation"}
+
+<!-- DECISION-AUTHORITY:GUI-P2-INSPECTOR:INSP-C06-20261023 -->
+{"task_key":"GUI-P2-INSPECTOR","step_id":"INSP-C06","decision_kind":"objective_acceptance"}
