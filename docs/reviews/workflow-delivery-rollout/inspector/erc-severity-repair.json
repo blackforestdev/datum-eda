@@ -17,7 +17,7 @@
     "crates/cli/src/commands/check/run_view.rs": "68af9d8b16d7b563bc7c01d9cc99e72cf070e68624ab0096ff98826218d8607e",
     "crates/cli/src/main_tests/main_tests_project_check_run_history.rs": "2abadfbca0e6db6aeb3557f1de819e5e7ad9efb3356fb2729b97b05d8ecaedce"
   },
-  "status": "BOUNDED_REPAIR_INDEPENDENT_PASS_PM_ACCEPTED_SOURCE_LANDING_PENDING",
+  "status": "BOUNDED_REPAIR_ACCEPTED_AND_LANDED",
   "source_after": {
     "crates/cli/src/commands/check/run_view.rs": "7ec7d3195645e87693192424d49d9c1ce742d6926f23dd313714f07eb84f3d6c",
     "crates/cli/src/main_tests/main_tests_project_check_run_history.rs": "c3da651fd88bddc183d5c387e9ea485c29037b1ec57f4869123502fcb6bcb6b1"
@@ -101,5 +101,6 @@
     "reviewed_receipt_sha256": "c6194dbd7ecb84276d9bf8dbf9adb140c6021f0e6971d4bd9dbd8b8b1ca29d16",
     "actual_disposition": "PM ACCEPTS bounded2qi3repair exact receipt and actual ERC-SEVERITY-REPAIR-INDEPENDENT-01 PASS/no findings. Covers recognized mapping, focused1PASS/CLIbuild0/freshstored13warning summary/raw and fingerprint preservation/historical971unchanged. Land normalhooks and close with real sourcecommit; continue separately approved Inspector input planning.",
     "limits": "No engine/schema/rules/fullInspector/readiness or broader suite acceptance."
-  }
+  },
+  "landing_commit": "a56b1231fbe2686e89377ad8a54fd0c127a43d3a"
 }
