@@ -1,0 +1,1017 @@
+{
+  "schema_version": 1,
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C01",
+  "status": "I01_AUTHORITY_CORRECTED_INPUT_PREPARATION_IN_PROGRESS_NO_READINESS_PASS",
+  "execution_ready": false,
+  "C01_readiness_pass_claimed": false,
+  "scope": "Complete read-only P2.4 shared component/Net/Checks and PM062 occurrence-first Navigator, local Document/Source/Occurrence context; no authoring expansion or full execution grant.",
+  "activation_commit": "e75fa10a69642987dcf632ab6019137de12d1a1b",
+  "actual_planning_assignment": {
+    "path": "docs/reviews/workflow-delivery-rollout/inspector/planning-assignment.json",
+    "sha256": "d9a3c77372b955607ba9a895c3e612c4c1bdb3d727a997e4adbf47f2e6bd6d9b"
+  },
+  "base_source_commit": "ee9fa28ee47f4febfd2d013f1bdd07192c23c33c",
+  "field_owner_provenance_location_map": [
+    {
+      "section": "Component Identity",
+      "field": "Reference / Value",
+      "canonical_owner": "Selected current Symbol or placed Board package source UUID + occurrence",
+      "source_or_handler": "crates/gui-protocol/src/selection_view/properties.rs",
+      "current_state": "Existing typed reference/value fields; named section grouping missing",
+      "required_states": "Common/Mixed/Unavailable; source values, no sample U1/STM32 constants",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Component Identity",
+      "field": "Footprint/library identity",
+      "canonical_owner": "Current authored placement/materialized footprint library references; validate source revision, distinguish Package from Footprint",
+      "source_or_handler": "crates/gui-protocol/src/selection_view/component_relations.rs; engine native_write/board_components/pad_materialization.rs",
+      "current_state": "No current shared typed footprint-name row; related-CI caption is not a footprint-library-name query",
+      "required_states": "Available only from explicit current library/placement source; absent/stale/ambiguous honestly unavailable, no Package/name inference",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Component Identity",
+      "field": "Component and related identity",
+      "canonical_owner": "Current explicit CI endpoint relation and library refs",
+      "source_or_handler": "crates/gui-protocol/src/selection_view/component_relations.rs",
+      "current_state": "Accepted crossprobe supplies source/counterpart/CI and related-only semantics",
+      "required_states": "Keep selected set/count separate from related context; repeated source-only binding remains unavailable rather than guessed",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Component Placement",
+      "field": "X / Y / Rotation",
+      "canonical_owner": "Selected authored placement, exact nm/source angle",
+      "source_or_handler": "crates/gui-protocol/src/selection_view/properties.rs; selection_view/quantities.rs",
+      "current_state": "Existing exact placement_position_nm/placement_rotation; grouping and X/Y labels need shared presentation",
+      "required_states": "Project working-unit/precision formatting; negative/fractional/mixed/unavailable; never editable",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Component Placement",
+      "field": "Layer",
+      "canonical_owner": "Actual selected Board placement layer and canonical stackup label",
+      "source_or_handler": "native selected endpoint/materialized source + selection_view/inspector_labels.rs",
+      "current_state": "Current Footprint property vocabulary lacks explicit layer row; Pad layer is not parent placement-layer authority",
+      "required_states": "Board source value/name; schematic-only placement Not applicable; no prototype Top default",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Component Checks",
+      "field": "Run identity / profile / revision / coverage",
+      "canonical_owner": "Engine CheckRun and actual visible/current source context",
+      "source_or_handler": "crates/gui-protocol/src/check_runs.rs + check_runs/loading.rs",
+      "current_state": "Project/revision admission exists; named component Checks integration missing",
+      "required_states": "Not run, actual Running, current evaluated severity counts, stale, unavailable; never equate empty with clean",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Component Checks",
+      "field": "Findings and target/owned-terminal detail",
+      "canonical_owner": "Actual engine finding fingerprints, domain, target UUID+occurrence and related targets",
+      "source_or_handler": "crates/gui-protocol/src/check_runs.rs + check_runs/loading.rs; check_runs/marker.rs",
+      "current_state": "Existing finding/proposal/marker infrastructure; need exact selected component/owned-terminal filtering",
+      "required_states": "Selected source and explicit owned terminals only; related counterpart checks clearly scoped, not selected; unqualified occurrence not guessed",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Net",
+      "field": "Name / identity",
+      "canonical_owner": "Canonical logical Net record and authored current source labels/aliases; no scene-name join",
+      "source_or_handler": "engine captured electrical selection snapshot; selection_view/net_coverage.rs",
+      "current_state": "GlobalNet selected identity and aggregate coverage exist; Net-specific typed name metadata/section missing",
+      "required_states": "Show actual canonical name/alias provenance or unavailable; foreign same-name Net excluded",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Net",
+      "field": "Class",
+      "canonical_owner": "Actual canonical source Net class UUID and resolved class definition",
+      "source_or_handler": "DesignModel Net/class references, not type-count coverage",
+      "current_state": "Current crossprobe has known nil/missing class references; cannot claim positive class proof from that input",
+      "required_states": "Explicit class name/ID if current; absent/unresolved unavailable; no default Signal inference",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Net",
+      "field": "Bus association",
+      "canonical_owner": "Authored Bus identity/membership/interface records qualified by occurrence",
+      "source_or_handler": "engine substrate/electrical_selection_query/origin_binding.rs + bus_run.rs",
+      "current_state": "Canonical source queries exist; no Net-specific bus row; XP fixture has no admitted positive bus metadata case",
+      "required_states": "Explicit zero/one/multiple authored associations or unavailable; no prototype SPI2 text",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Members",
+      "field": "Complete typed selected membership/count",
+      "canonical_owner": "Captured complete GlobalNet resolution and existing shared scope/transport contract",
+      "source_or_handler": "selection_view.rs; selection_view/inspection.rs; selection_inspector inventory",
+      "current_state": "Existing All6/type counts and shared inventory; grouped named Members presentation missing",
+      "required_states": "Always preserve selected complete set/count and bounded enumeration/omission law; hide/filter/pane change never prunes it",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Members",
+      "field": "Connected terminals (separate detail)",
+      "canonical_owner": "Actual canonical pin/port/terminal topology and source ownership",
+      "source_or_handler": "captured electrical source occurrence graph",
+      "current_state": "Prototype Members3 is pin/child-port detail; cannot redefine selected mixed-class Net6",
+      "required_states": "Separate labelled terminal count/list from selected member count; no selected parent count inflation",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Checks (ERC)",
+      "field": "Current ERC availability / count / severities",
+      "canonical_owner": "Current admitted CheckRun with actual ERC-producing profile/domain/coverage",
+      "source_or_handler": "crates/gui-protocol/src/check_runs.rs + check_runs/loading.rs",
+      "current_state": "Current-only admission drops stale runs into same empty default as never-run; shared inspector has no ERC section",
+      "required_states": "Qualified findings remain distinct from target selection. NotRun has no count; Unavailable reason/no count; Stale retains actual historical count with described revision and rerun action without current marker authority. Only current evaluated zero is Clean. Running needs actual producer state. Re-run is explicit canonical generated CheckRun action, separately accounted from no-write navigation.",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Checks (ERC)",
+      "field": "Messages / targets / durable details",
+      "canonical_owner": "Actual ERC findings qualified to Net/component/sheet occurrence",
+      "source_or_handler": "check_runs.rs + marker.rs; canonical check show/list/context",
+      "current_state": "Finding data exists; root marker/domain guards not child-occurrence projection",
+      "required_states": "Filter actual ERC domain and exact source target/path. Board-unrouted/DRC prototype text cannot be relabelled ERC. Durable details and text/icon severity",
+      "proposed_location": "Shared Native Inspector; read-only"
+    },
+    {
+      "section": "Navigator",
+      "field": "Occurrence-first row inspection",
+      "canonical_owner": "Project schematic source sheets, definitions and instances",
+      "source_or_handler": "canonical schematic sheets/definitions/instances + occurrence graph",
+      "current_state": "Native scene chooses one top-level sheet; no live Sheets hierarchy UI",
+      "required_states": "Occurrence-first hierarchy. Single click inspects Navigator row; Enter/double-click opens qualified occurrence BESIDE focused pane, preserving current view/camera in recursive pane tree. Existing canvas hierarchy double-click descend remains. Inspected row, opened/focused canvas and global authored selection are distinct. No Sheet semantic class/SheetSet, implicit Clear, name identity or Sheet n/N; Sheet means Publish page.",
+      "proposed_location": "PM062 S-B Navigator, normal/narrow S-I composition"
+    },
+    {
+      "section": "Navigator / focused pane",
+      "field": "Active document/occurrence",
+      "canonical_owner": "Existing pane document/view principle; proposed explicit source-qualified document context",
+      "source_or_handler": "crates/gui-protocol/src/workspace_pane_content.rs; native_schematic_scene.rs; selection_scene/index.rs",
+      "current_state": "PaneContent::Schematic has no Sheet identity; SceneSelectionBindings currently admits empty instance_path only",
+      "required_states": "Project/revision/schematic/source UUID/instance path qualified. Row inspection is separate from open/focus/global selected subject. Enter/double-click opens beside, no root/name fallback.",
+      "proposed_location": "Shared pane document/occurrence context, PM062 B1/O1"
+    },
+    {
+      "section": "Schematic status",
+      "field": "Document / Source / Occurrence",
+      "canonical_owner": "Focused pane native document, source definition UUID and occurrence instance path; separate Navigator inspected row",
+      "source_or_handler": "canonical schematic sheets/definitions/instances + occurrence graph",
+      "current_state": "Shared Native pane context lacks qualified child occurrence binding; no Sheet ordinal is required or authorized",
+      "required_states": "Qualified breadcrumb and separately named source/occurrence; repeated A/B differ by path, no Sheet n/N or fabricated denominator",
+      "proposed_location": "PM062 S-A/S-I pane header and empty-selection Inspector"
+    },
+    {
+      "section": "Schematic status",
+      "field": "Grid basis / units",
+      "canonical_owner": "Existing live AuthoringSnapState versus independent rendered GridLodState",
+      "source_or_handler": "workspace_tools.rs; workspace_authoring.rs; gui-render/render/grid.rs",
+      "current_state": "Session snap defaults enabled100000nm; visible schematic LOD major/minor tiers differ (1270000/2540000/5080000nm). No single combined authority",
+      "required_states": "Explicit Snap grid from actual live AuthoringSnapState with enabled state and PM040 Project units. Rendered LOD is separate; no preference/default/snapping change.",
+      "proposed_location": "PM062 S-A/S-I local pane context and Inspector detail"
+    },
+    {
+      "section": "Schematic status",
+      "field": "ERC availability / count",
+      "canonical_owner": "Actual current ERC run and qualified document occurrence scope",
+      "source_or_handler": "crates/gui-protocol/src/check_runs.rs + check_runs/loading.rs; domain/target/occurrence projection",
+      "current_state": "Global CheckRun count is not focused-sheet ERC count",
+      "required_states": "Qualified findings remain distinct from target selection. NotRun has no count; Unavailable reason/no count; Stale retains actual historical count with described revision and rerun action without current marker authority. Only current evaluated zero is Clean. Running needs actual producer state. Re-run is explicit canonical generated CheckRun action, separately accounted from no-write navigation.",
+      "proposed_location": "PM062 S-A local pane context and S-G Checks details"
+    },
+    {
+      "section": "Shared inspection",
+      "field": "Focused owner / selection / scope / context",
+      "canonical_owner": "Existing S5A and crossprobe one global typed Project subject, focused PaneID, scoped detail",
+      "source_or_handler": "selection_view/inspection.rs; context_envelope/selection_inspection.rs; runtime_selection_inspector.rs",
+      "current_state": "Current shared Native path works and must be extended; legacy AuthoredObject renderer is bypassed",
+      "required_states": "Empty/Compound mixed/typed scope/stale/foreign/disappeared source; selected counts/focus independent from doc navigation",
+      "proposed_location": "Existing shared Inspector + AX/Context output; no per-editor fork"
+    },
+    {
+      "section": "Component Library context",
+      "field": "Symbol / Origin / Unit pins / Entity-gate / Part binding",
+      "canonical_owner": "Current source Symbol part/entity/gate/library refs plus model-owned pool records with source path/revision",
+      "source_or_handler": "crates/gui-protocol/src/library_browser.rs::LibraryEntry, capture, links; schematic_scene_import/native_library.rs; selected typed source and resolver",
+      "current_state": "Existing LibraryBrowser captures source path/revision/raw candidates and duplicate warning; shared selected-Object Inspector has no complete S-C projection",
+      "required_states": "Resolved/unresolved/ambiguous candidates and exact reason/basis; no names used as identity, no wholegraph prerequisite",
+      "proposed_location": "Shared Native Inspector S-C Library context"
+    },
+    {
+      "section": "Component Library context",
+      "field": "Command readiness / Approval / Basis / Findings",
+      "canonical_owner": "Actual source-specific recorded approval/provenance/findings and existing command admission owners",
+      "source_or_handler": "Existing library_browser.rs raw source/detail_lines + library_authoring.rs command admission; no inferred library approval service",
+      "current_state": "Typed shared S-C fields missing. Source fields may be absent; disclose not recorded/unavailable, never manufacture Approved",
+      "required_states": "Four separate read-only values with provenance; command readiness does not imply Approval or production qualification",
+      "proposed_location": "Shared Native Inspector S-C, no new authoring control"
+    }
+  ],
+  "known_gaps": [
+    {
+      "id": "IMPL-01",
+      "kind": "implementation_gap",
+      "fact": "Native(view) dispatches selection_inspector before legacy render_inspector_panel. Named component and Net sections must extend actual shared Native projection/renderer, not populate dead legacy-only branch.",
+      "remedy": "Shared typed section/field grouping, source-based missing fields, read-only collapse/navigation/AX/Context with existing scope and transport."
+    },
+    {
+      "id": "IMPL-02",
+      "kind": "implementation_gap",
+      "fact": "native_schematic_scene chooses one top-level source sheet; PaneContent::Schematic has no sheet context; SceneSelectionBindings filters empty paths.",
+      "remedy": "Smallest complete shared per-pane document/occurrence binding through projection/hit selection/context; preserve global subject and existing source-availability semantics across navigation, never implicit Clear or new SheetSet."
+    },
+    {
+      "id": "IMPL-03",
+      "kind": "implementation_gap",
+      "fact": "CheckRun current admission is safe but default empty merges never-run and stale-only. Generic finding count does not prove ERC scope.",
+      "remedy": "Read-only provenance-bearing availability plus actual profile/domain/target/occurrence filtering. Do not grant stale marker authority."
+    },
+    {
+      "id": "INPUT-01",
+      "kind": "proof_input_gap",
+      "fact": "Accepted XP root supplies component/Net/placement relations and refusal variants, not complete native multi-sheet+positive metadata/ERC cases. No complete admitted fixture found.",
+      "remedy": "Bounded existing canonical CLI extension on fresh owned copy and actual admission before new ordinary workflow proof; no private writer/Rust generator/new framework."
+    },
+    {
+      "id": "I01",
+      "kind": "settled_authority_correction",
+      "fact": "Initial packet omitted PM062 S-C and misstated B1/O1/local context/G2 as new choices. Revised map follows existing later ratification; initial REVISE retained.",
+      "remedy": "Exact independent correction/readiness review; no new product decision/prototype edit or status-bar reopening."
+    }
+  ],
+  "decisions_for_authorized_owner_or_PM_disposition": [
+    {
+      "id": "EXECUTION_CONTINUATION",
+      "required": "Exact complete corrected readiness/input/source/proof packet needs INSP-C02 disposition before full Inspector execution. PM062 semantics already settled; no new Sheet ordinal/status-bar choice."
+    }
+  ],
+  "full_existing_status_field_reconciliation": {
+    "columns": [
+      "field",
+      "owner",
+      "proposed nearer location",
+      "boundary"
+    ],
+    "rows": [
+      [
+        "focus/document",
+        "Focused pane/document ID and type",
+        "Existing focused pane header/current Sheets row",
+        "Freeze existing global field set; no focus-only mutation of selected subject"
+      ],
+      [
+        "tool",
+        "Shared active tool/session owner",
+        "Existing pane toolbar and canvas-local gesture feedback",
+        "No new tool or writer"
+      ],
+      [
+        "selection",
+        "Existing global typed subject and focus/member counts",
+        "Selection geometry + shared Inspector/AX/Context",
+        "Related mapping not co-selection; preserve complete count"
+      ],
+      [
+        "document/source/occurrence",
+        "Focused pane qualified document/source/path; Navigator row separate",
+        "PM062 S-A/S-I pane header + empty Inspector",
+        "No Sheet n/N; Sheet is Publish page"
+      ],
+      [
+        "Snap grid",
+        "Actual live AuthoringSnapState, PM040 units",
+        "PM062 S-A local context",
+        "No hardcoded prototype pitch or rendered LOD equivalence"
+      ],
+      [
+        "DRC/ERC state",
+        "Actual qualified check producer/profile/domain/currentness",
+        "Pane/canvas marker/summary + durable Checks details",
+        "No prototype or global supervision count substituted"
+      ],
+      [
+        "revision/dirty",
+        "Existing engine Project revision authority",
+        "Preserve existing revision presentation until approved qcz decision",
+        "No new duplicate revision or invented removal"
+      ],
+      [
+        "layer/count",
+        "Focused Board layer source; Layers owner",
+        "Existing Layers sidebar; any relocation conditional on qcz",
+        "Never relabel layer count as Sheet count"
+      ],
+      [
+        "coordinates/gesture/progress",
+        "Shared pointer/gesture/job owner",
+        "Canvas/pane-local feedback; durable appropriate details",
+        "Consequential feedback accessible, not global-only"
+      ],
+      [
+        "version/design-pass",
+        "Existing global application chrome",
+        "Unchanged existing bar until decision",
+        "No retention/content policy invented"
+      ]
+    ],
+    "recommended_global_bar_posture": "Unchanged retention and contents for bounded P2.4; any broader qcz decision must satisfy all8 acceptance items, not this proposal.",
+    "prototype_lane": "Protected prototypes inspected only. PM062 existing S-A/S-B/S-C/S-G/S-I already govern these surfaces; no HTML edits or new visual authority requested."
+  },
+  "input_preparation_proposal": {
+    "status": "AUTHORIZED_CANONICAL_BASE_RECIPE_EXECUTED_NOT_FULL_ADMISSION",
+    "base": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-proof.json",
+      "sha256": "b2f1228cb75c8f46d350fe3e7749a4610069baa70ebee3c1e655950ccce5ab71"
+    },
+    "source_project": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/project",
+    "bound": "One fresh owned external private canonical copy; existing pinned CLI only, no builds/Rust fixture generator/private shard writer. Refuse preexisting output; preserve each failed attempt and original.",
+    "commands": [
+      [
+        "target/debug/datum-eda",
+        "project",
+        "create-sheet",
+        "<FRESH_OWNED_PROJECT_COPY>",
+        "--name",
+        "Inspector child",
+        "--sheet",
+        "79000000-0000-4000-8000-000000000101"
+      ],
+      [
+        "target/debug/datum-eda",
+        "project",
+        "place-text",
+        "<FRESH_OWNED_PROJECT_COPY>",
+        "--sheet",
+        "79000000-0000-4000-8000-000000000101",
+        "--text",
+        "Inspector child occurrence",
+        "--x-nm",
+        "0",
+        "--y-nm",
+        "0"
+      ],
+      [
+        "target/debug/datum-eda",
+        "project",
+        "create-sheet-definition",
+        "<FRESH_OWNED_PROJECT_COPY>",
+        "--root-sheet",
+        "79000000-0000-4000-8000-000000000101",
+        "--name",
+        "Inspector child definition",
+        "--definition",
+        "79000000-0000-4000-8000-000000000201"
+      ],
+      [
+        "target/debug/datum-eda",
+        "project",
+        "create-sheet-instance",
+        "<FRESH_OWNED_PROJECT_COPY>",
+        "--definition",
+        "79000000-0000-4000-8000-000000000201",
+        "--parent-sheet",
+        "10000000-0000-4000-8000-000000000004",
+        "--name",
+        "Child A",
+        "--x-nm",
+        "0",
+        "--y-nm",
+        "0",
+        "--instance",
+        "79000000-0000-4000-8000-000000000301"
+      ],
+      [
+        "target/debug/datum-eda",
+        "project",
+        "create-sheet-instance",
+        "<FRESH_OWNED_PROJECT_COPY>",
+        "--definition",
+        "79000000-0000-4000-8000-000000000201",
+        "--parent-sheet",
+        "10000000-0000-4000-8000-000000000004",
+        "--name",
+        "Child B",
+        "--x-nm",
+        "10000000",
+        "--y-nm",
+        "0",
+        "--instance",
+        "79000000-0000-4000-8000-000000000302"
+      ],
+      [
+        "target/debug/datum-eda",
+        "check",
+        "run",
+        "<FRESH_OWNED_PROJECT_COPY>",
+        "--profile",
+        "erc"
+      ],
+      [
+        "target/debug/datum-eda",
+        "check",
+        "list",
+        "<FRESH_OWNED_PROJECT_COPY>"
+      ]
+    ],
+    "exact_parent_source_gate": "Verify parent UUID matches admitted source manifest root before commands; if not, derive exact typed source ID and record, never infer by name.",
+    "expected_structure": "Root occurrence + two Child A/B paths referring to same child definition/source; distinct active document occurrence IDs and one shared child Text source. No current native child projection claimed.",
+    "required_admission": [
+      "Pin actual generated IDs (place-text allocates), revisions, all source/library/journal paths+hashes and command exits; reopen through resolver/public CLI; verify existing root current binding remains truthful.",
+      "Before check producer capture NoRun state. Persist actual profileerc run; record current run ID/domain/coverage/targets and real severities, never assume nonzero or zero.",
+      "Canonical rename-sheet on child after persisted run supplies stale-only basis; retain pre/post source snapshots as separate exact variants; rerun actual ERC for fresh-current recovery.",
+      "Positive evaluated0 and current findings cases require actual source/rule outcomes; if base cannot supply both, identify smallest existing canonical source case/command extension and admit it explicitly before execution; no invented clean count.",
+      "Positive NetClass/Bus/footprint-library metadata not supplied by XP nil/unbound cases: reuse real existing authored library/bus owners and exact canonical refs or admit a bounded CLI extension; no inferred defaults."
+    ],
+    "remaining_input_blockers": [
+      "Positive evaluated0, NetClass/Bus/Footprint-library cases still need exact admitted source; no invented defaults.",
+      "Public component-instance readback is not strict current NetComplete; exact supported current query/admission route required.",
+      "Native child occurrence projection remains undelivered; input preparation is not feature proof."
+    ],
+    "actual_receipt": ".datum/scratch/gui-p2-inspector-insp01-20261023/input-preparation.json",
+    "actual_outcome": "12 base commands exit0 and original93 source files unchanged; canonical child rename supplies stale variant, fresh corrected persisted ERC4b0604c3 at e165c795 reports13warnings/0infos, actual check show verified, old971 record unchanged. Public current CI retains exact authored refs at revision1. Strict current NetComplete not asserted."
+  },
+  "eight_foundation_answers": {
+    "Units/precision": "Use exact authored nm/source angles and shared Project quantity formatting; per-object/document scope explicit; no precision from rounded pixels.",
+    "Numeric entry": "Read-only fields only. No typing numeric authoring or editing values; keyboard traversal/collapse/navigation is required. Do not imply prototype input boxes are enabled.",
+    "Selection identity": "Occurrence-first hierarchy. Single click inspects Navigator row; Enter/double-click opens qualified occurrence BESIDE focused pane, preserving current view/camera in recursive pane tree. Existing canvas hierarchy double-click descend remains. Inspected row, opened/focused canvas and global authored selection are distinct. No Sheet semantic class/SheetSet, implicit Clear, name identity or Sheet n/N; Sheet means Publish page.",
+    "Grid/snap": "Read-only Snap grid with actual live enabled/pitch and shared Project quantity formatting; rendered LOD separate, no preference or snap behavior changes.",
+    "Undo/cancel": "Existing Escape/gesture ownership and no authored undo entry. Sheet navigation never implicitly changes global selection; no new mutation undo framework.",
+    "Persistence/recovery": "Complete canonical inventories before/after. Reopen uses existing lifetime policy; no selection resurrection or invented document persistence setting. Invalid/stale chosen document must not silently become root.",
+    "Library/connectivity": "Current explicit library/placement/CI/Net/Bus/occurrence authority; no name joins, unpinned footprint name, default class or fabricated ERC. Missing data has reason.",
+    "Settings scope": "Reuse Project units, existing session pane/camera/filter/Inspector state; no new global settings. Current Snap default is live session state, not invented Project preference."
+  },
+  "nine_proof_dimensions": {
+    "Normal": "Complete S-C component/library context, Net/Members/Checks, B1/O1 Navigator and S-A/S-I document/source/occurrence header/empty Inspector.",
+    "Invalid": "Wrong Project/revision/occurrence, missing library/class/Bus, stale/no-run/unqualified checks and disappeared document refuse false values/targets.",
+    "Cancel": "Keyboard/pointer navigation/collapse and existing region/evaluation Escape/focus transitions preserve source and reject delayed stale publication.",
+    "Scope": "Compound/type scope, complete Net vs terminal detail, hidden/locked members, focused pane and repeated occurrence ownership remain distinct.",
+    "Precision": "Project units, negative/fractional coordinates, camera/zoom and independent pane grid basis preserve exact authored source.",
+    "Undo/redo": "Pure inspection/row navigation/open beside adds no authored operations. Explicit canonical Re-run Check may persist generated CheckRun/history; retain exact expected effects separately and snapshot after input preparation before inspection.",
+    "Save/reopen": "Actual normal native Close/reopen, exact canonical paths+bytes/history and truthful document/selection lifetime; cleanup is not Close.",
+    "Accessibility": "Named sections/tree current state/field source/availability/collapse/Check targets and severity accessible by keyboard/AT-SPI/context; not color alone.",
+    "Failure/recovery": "Missing/stale document/run/target and pending evaluation recover only on fresh valid basis; no fake0, root fallback or partial membership."
+  },
+  "finite_future_native_matrix": [
+    {
+      "case": "INSP-N01",
+      "input": "Bound linked Symbol and Footprint from both panes",
+      "required_outcome": "Identity/Placement/Checks named sections, current reference/value/library identity source, correct related-only role; complete S-C Library context and separately qualified Command readiness/Approval/Basis/Findings, unknown not Approved",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N02",
+      "input": "Positive/missing/stale footprint-library and layer source",
+      "required_outcome": "Explicit current named source or reason; no Package-to-Footprint/default-layer substitution",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N03",
+      "input": "Exact full GlobalNet from both entry paths",
+      "required_outcome": "Net name/class/Bus current canonical metadata; complete selected typed membership separate terminal detail",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N04",
+      "input": "Unlinked/Compound mixed and type scope",
+      "required_outcome": "Common/Mixed/Unavailable and scoped quantities without altering complete selected set/focus/count",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N05",
+      "input": "Actual ERC current finding and evaluated0 profiles",
+      "required_outcome": "Correct actual status/severity/domain/targets/provenance, durable detail, no fake clean",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N06",
+      "input": "Never-run/stale-only/unavailable/foreign check context",
+      "required_outcome": "G2 NotRun no count; Unavailable reason/no count; Stale actual historical count+described revision+rerun action, no current marker authority; G1 finding is not target selection",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N07",
+      "input": "Hierarchy root + Child A/B repeated source",
+      "required_outcome": "B1 occurrence-first; click inspects row without opening or changing global subject, Enter/double-click opens BESIDE focused pane preserving prior view/camera; A/B qualified breadcrumbs, no Sheet n/N",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N08",
+      "input": "Select child object in A then B",
+      "required_outcome": "Same source UUID has distinct instance paths; no empty-path hit alias, source fields/Checks target path match",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N09",
+      "input": "Multiple Schematic panes with different documents + Board",
+      "required_outcome": "Recursive pane tree open beside, distinct document/source/occurrence and independent cameras; one focused Inspector, inspected Navigator row separate from focused document/global subject",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N10",
+      "input": "Hidden/filtered/dense complete Net inventory",
+      "required_outcome": "Preserve selected membership; existing transport/detail/omission law and accessible counts, no terminal-only redefinition",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N11",
+      "input": "Grid basis/units and distinct zooms",
+      "required_outcome": "Explicit actual live Snap grid with enabled/pitch and Project units; independently zoomed renderer LOD not relabelled snap",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N12",
+      "input": "Narrow/normal window and empty state",
+      "required_outcome": "PM062 S-A/S-I normal/narrow/tiled composition, named Navigator/Inspector affordances and empty Inspector Document/Source/Occurrence/Checks accessible by keyboard; global bar unchanged",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N13",
+      "input": "Collapse/navigation + Escape/focus-loss",
+      "required_outcome": "No authored operation, stale pending publication or unintended selection clear; reuse accepted unchanged lifecycle predicates honestly",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N14",
+      "input": "Canonical deleted/stale target or document, then recovery",
+      "required_outcome": "Reasoned unavailable; no implicit root/name remapping; fresh current basis restores valid view",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N15",
+      "input": "Actual Close/fresh reopen",
+      "required_outcome": "Canonical full inventories unchanged; existing selection/document persistence rules, owned cleanup distinguished",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    },
+    {
+      "case": "INSP-N16",
+      "input": "Same-engine structural/golden and protected semantic comparison",
+      "required_outcome": "All named section/text/availability roles, related normal appearance and coherent normal/narrow context; no HTML/wgpu pixel equality",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+    }
+  ],
+  "ordinary_path_and_owner_chain": {
+    "launch": "Existing pinned datum-gui --project-root <admitted private native root>; supported passive visual diagnostics only, stateful native probe unset.",
+    "acquisition": "runtime_primary_pointer/runtime_selection_hit/runtime_selection::acquire_native_key_from_basis -> shared publication -> NativeSelectionResolution -> SelectionView -> inspector_dispatch Native branch -> selection_inspector; existing Context/AT-SPI consumers.",
+    "hierarchy_missing_chain": "PM062 B1/O1 row inspection -> Enter/double-click -> recursive pane open beside with qualified source/occurrence -> shared scene bindings/hit/context and focus-owned Inspector. Preserve previous pane/camera and global selected subject; canvas descend behavior unchanged.",
+    "checks_chain": "Canonical actual check run --profileerc producer -> persisted run/context/history -> Project/revision admission + additional availability/domain/occurrence projection -> shared Native Checks/marker/durable details; not global supervision count.; stale historical inspection and explicit rerun generated effects separately accounted; no fake enabled control or CLI-string authoring dispatch."
+  },
+  "source_pins": [
+    {
+      "path": "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
+      "sha256": "27a256c2b6d31f2a8604acf9f28804b07c1c473d8f4a8cbdd7fc8453ed559e06"
+    },
+    {
+      "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+      "sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f"
+    },
+    {
+      "path": "docs/gui/DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md",
+      "sha256": "8be2aeca8a1565120522c8599b36bc473e27cf73dc1589bc230764d753a77f32"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
+      "sha256": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md",
+      "sha256": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md",
+      "sha256": "6cfedfd3fae21e67da05bcc5541f2bba406f3e33a17a4633e4e00b623f435240"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md",
+      "sha256": "fe1e42d4b2160c0ac786769ab7a060a170db46ac68ef3566f6c0074de8a2d63a"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_040_PROJECT_WORKING_UNITS_AUTHORITY.md",
+      "sha256": "86e5a1a36a7ac936feaa4dd32ed3f762fef6def78125be09491dbae3197bfad4"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md",
+      "sha256": "f7ad4ee407cbb97fa050cf6737575366e23900004e2669fcb239e45ab0025376"
+    },
+    {
+      "path": "docs/gui/prototypes/board-editor.html",
+      "sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07"
+    },
+    {
+      "path": "docs/gui/prototypes/schematic-editor.html",
+      "sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/inspector_dispatch.rs",
+      "sha256": "80e7de4a656a5963a0b0b35e1737c6286af693ef6b618066f3e5710551479633"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/selection_inspector.rs",
+      "sha256": "b0bcc1a526dc487e3893e7264d85d2d02c628ca2723d663cb39b7b238057d4a5"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/render_inspector.rs",
+      "sha256": "d56cfc0f7838bdcfa1fe9353d02a4cc10b3c3ae14ba5993108e6885d245b5b31"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/properties.rs",
+      "sha256": "003386bee01c22fc65dcabb77e75e0e38a2934c2521096b7b5f0fbfdb0bb7ada"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/inspection.rs",
+      "sha256": "7f46999b3829b8f41e80eb6dca37c04ff43263efc1159628d6d589197152bc1e"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/quantities.rs",
+      "sha256": "8b2425a051343412f3a071fc7b96de97cc41ea9d778f5c27c01d82815b224af5"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/component_relations.rs",
+      "sha256": "53a52569540b2dbcde41a0dbc8e70dc5da5e2998b71400d6ac7026ce7d3f7d96"
+    },
+    {
+      "path": "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+      "sha256": "935dac4b9757c279870ca80b0f1f8320379dae011fe8f59113da6b716a79ef92"
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs.rs",
+      "sha256": "5418d0a0314f32e28ef3e6725b368cdc1506d67b32918074e8e4b158eee2d922"
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs/loading.rs",
+      "sha256": "c19101d1efc9f38e3ad02a6b73bb591cd86303aa623fe566e58595cfbe50cd66"
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs/marker.rs",
+      "sha256": "50f89a45fd76cfc3999bbda51297a31f4a58185df860eb7796efc34ab49b8527"
+    },
+    {
+      "path": "crates/gui-protocol/src/native_schematic_scene.rs",
+      "sha256": "f4136620ddeed85b06f55b41c3793449e7640719ca25f9cd3713a5394b69392d"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_scene/index.rs",
+      "sha256": "1274de2bf2ffa557a0cc4e7e26508e91823b2a694791dde542ef1a04c3b0d678"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_pane_content.rs",
+      "sha256": "ae043de0f97afb1388309b3175b74d0328f507c62e2938b282ae70f6c8650a70"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_subject.rs",
+      "sha256": "364772b28ba8d7ddc03fdad93ed90bf7f1447afaf81514f49f359b404e392b83"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_tools.rs",
+      "sha256": "27622577fd9a9a426b609675152dfe1bafb42322f1bb6b3ed97094ba98c5215b"
+    },
+    {
+      "path": "crates/gui-render/src/render/grid.rs",
+      "sha256": "a2078da2661a2e1baa050099ca1f68ac7d8a03da39e53dd3528addb2780d4247"
+    },
+    {
+      "path": "crates/gui-render/src/render/status_bar.rs",
+      "sha256": "752c5f53b6be57b9972addf1a72ff27b1803de672ffd65a40a81a78d640cc25c"
+    },
+    {
+      "path": "crates/cli/src/commands/schematic/sheet_mutations.rs",
+      "sha256": "f56b6995cd8628c36078c96011fe8170b31570359cb169ebaea8ed49c59aa45d"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/schematic_sheets.rs",
+      "sha256": "35207d364ad3db11bb53deb6d69a635c3bf8df1cfc7ab898544c6f53c94b4a37"
+    },
+    {
+      "path": "crates/engine/src/api/native_write/electrical/hierarchy_tests.rs",
+      "sha256": "3519ea2dff0aeb8e84c4d90f578007e13a895c68a142ebaf583ff0dfb7895704"
+    },
+    {
+      "path": "crates/gui-protocol/src/library_browser.rs",
+      "sha256": "0de45c4a3f82730cd83bd86ed655f42574058b61fd01f61320ebba6c9955266c"
+    },
+    {
+      "path": "crates/gui-protocol/src/library_authoring.rs",
+      "sha256": "2b88d2a26bcfde1322ae4e8be0efa40d5e6d18c8b0369e861db316a3cf108ab2"
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md",
+      "sha256": "38e7016d638768988c25dcb364c96fe23385982b7d5fb030e41f58cbf49dab04"
+    }
+  ],
+  "accepted_reuse": {
+    "crossprobe_closure": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-acceptance.json",
+      "sha256": "062bde118297b1a17e7644f3f02bcad2079fadba73e04e039bb28a8f1b91e6fb"
+    },
+    "fresh_replay": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-independent-replay.json",
+      "sha256": "d0d6c73615d1187d6b50dc17370bba8ae55f32311f240b649a0dd82efa7dca95"
+    },
+    "source_proof": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/binding-source-proof.json",
+      "sha256": "ab7efe48a10c621d0af59cd33165327af5cca7f52c2a9d9c554b70e2a5bf3430"
+    },
+    "native_frames": "Reuse actual accepted N01/N02/Net/unlinked/Compound frames as current generic-Native Inspector and root Layers baseline, not new named sections/Sheets/ERC proof.",
+    "binaries": {
+      "datum-gui": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+      "datum-eda": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+      "eda-engine-daemon": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a"
+    },
+    "GUI_visual_build": {
+      "record": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-visual-build-disposition.json",
+        "sha256": "5545a1ca5efd3859edc36af3a6843710e02d6787596b7b53c196877d9823a2aa"
+      },
+      "disposition": {
+        "reason": "Existing exact submitted-content diagnostic is compiled only by supported GUI visual feature; ordinary default GUI functional N01 is preserved separately. No source edit, native probe configuration, alternate renderer or state-dependent capture search.",
+        "accepted_default": {
+          "source_proof": "ab7efe48a10c621d0af59cd33165327af5cca7f52c2a9d9c554b70e2a5bf3430",
+          "original_output": "target/debug/datum-gui",
+          "preserved_path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/accepted-default-gui/datum-gui",
+          "sha256": "fba0317b7e8bfcf28f5c7dab2f930241494cfbea9acf765a1b3cf081fbeec2b8",
+          "depinfo_sha256": "8d22a5fbb3a6560ebc13cb4daa7b93261c76e8099da3b8d75465cd1dc6863713"
+        },
+        "next_existing_build": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --bin datum-gui --features visual",
+        "runtime": "Normal --project-root launch; existing DATUM_GUI_VERBOSE_LOG=1; DATUM_NATIVE_CONTENT_PROBE remains unset; no visual-test/window-visual-test args.",
+        "build": {
+          "exit_code": 0,
+          "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-visual-build.log",
+          "sha256": "a4b41715b571226aa861d9e2643bc523595e83f938d2d0208b074b76c0fa84e0",
+          "source_commit": "ee9fa28e",
+          "gui": {
+            "path": "target/debug/datum-gui",
+            "sha256": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0",
+            "depinfo_sha256": "9c815b7645aa6a9d132e44a92ac46dc0908e0d4b320119e70473df860c77420b"
+          },
+          "scope": "Existing visual feature, normal runtime mode; different proof binary from accepted default build, not an inferred production-default visual PASS."
+        }
+      },
+      "actual_log": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/native-visual-build.log",
+        "sha256": "a4b41715b571226aa861d9e2643bc523595e83f938d2d0208b074b76c0fa84e0"
+      },
+      "preserved_default_binary": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/accepted-default-gui/datum-gui",
+        "sha256": "fba0317b7e8bfcf28f5c7dab2f930241494cfbea9acf765a1b3cf081fbeec2b8"
+      },
+      "preserved_default_depinfo": {
+        "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/accepted-default-gui/datum-gui.d",
+        "sha256": "8d22a5fbb3a6560ebc13cb4daa7b93261c76e8099da3b8d75465cd1dc6863713"
+      },
+      "visual_binary": {
+        "path": "target/debug/datum-gui",
+        "sha256": "019235d6a023e9fd9db32c099eda639c0e8fa4d3e23b955e992fe115fab4faf0"
+      },
+      "visual_depinfo": {
+        "path": "target/debug/datum-gui.d",
+        "sha256": "9c815b7645aa6a9d132e44a92ac46dc0908e0d4b320119e70473df860c77420b"
+      }
+    },
+    "helper_tools": {
+      "boundary": "Named source/tool identities only; no exhaustive dynamic-library census or proof rerun. Historical observer source reconstruction is explicitly attributed.",
+      "C01_receipt": {
+        "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-readiness.json",
+        "sha256": "5cf8d4cb03d546e77d16d3731e168ae2a475bb7bd286a314c05908910dfa1974"
+      },
+      "controller_interpreter": {
+        "invoked_path": "/usr/bin/python3",
+        "resolved_executable": "/usr/bin/python3.13",
+        "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+        "version": "Python 3.13.5"
+      },
+      "installed_named_tools": {
+        "Xwayland": {
+          "invoked_path": "/usr/bin/Xwayland",
+          "resolved_executable": "/usr/bin/Xwayland",
+          "sha256": "3e17573235c68ca600dcc1074fd4a64760f229fcf6f21775b6c039fe96e04053"
+        },
+        "python3": {
+          "invoked_path": "/usr/bin/python3",
+          "resolved_executable": "/usr/bin/python3.13",
+          "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9"
+        },
+        "weston": {
+          "invoked_path": "/usr/bin/weston",
+          "resolved_executable": "/usr/bin/weston",
+          "sha256": "5e7b342da0d38508b3001c291f080fbe35c4101f32ade0babc8458915f87352a"
+        },
+        "weston-screenshooter": {
+          "invoked_path": "/usr/bin/weston-screenshooter",
+          "resolved_executable": "/usr/bin/weston-screenshooter",
+          "sha256": "bf4d9e287fbd5c6980ffc1021ac075f0e99d414850b726036c7e89c0d881a778"
+        },
+        "xdotool": {
+          "invoked_path": "/usr/bin/xdotool",
+          "resolved_executable": "/usr/bin/xdotool",
+          "sha256": "2fcee924be08b180f4b1bea93eddedbaa8b0ea4b0886f6cbf77a113e8b8a130f"
+        },
+        "xprop": {
+          "invoked_path": "/usr/bin/xprop",
+          "resolved_executable": "/usr/bin/xprop",
+          "sha256": "715458a47628d90f6333a5a573fa744b8d1ba75c6f35fab86288890fb0f0104c"
+        }
+      },
+      "unchanged_local_python_helpers": {
+        "scripts/native_capture_pixels.py": "c2b534bcf450e2fd2da113dd4b1684b2fb5fc0d06311dc27ee0a8a48e3e0955a",
+        "scripts/native_capture_presentation.py": "5ff7c2ec585095f86392f12a7e97310f9354837274a967d2eefa84efb03a8124",
+        "scripts/native_project_browse_workflow.py": "18abb4b289940a2daefd32628d866672af3c34680cfc301b66d26432337295da",
+        "scripts/native_project_manifest_open.py": "5975f9f82c2530c22f7ae9d631f5d9fe73a28503b927a1bfac7c204d22b1a216",
+        "scripts/native_project_path_assistance.py": "679aa51cde708aadac75de3735b0dc71f986d9f3200fb1cea590a0457c4cd72b",
+        "scripts/native_project_source_inventory.py": "c13d8c8d5315391bf64dd63dcf9e5fd08507739c6e71a1650f27dd589e3ed39e",
+        "scripts/native_project_terminal_handoff.py": "e3597dd8eb05f0b1517d2949ac04be40532e8b49fc3c4382d0db16e4d3b2342e",
+        "scripts/prove_native_project_startup_gui.py": "d3e0d68a08c63bd3c4910f7e02c54e1e1dedc3595b56dbc58ddb52c91a4b28f3",
+        "scripts/prove_s5a_native_selection.py": "0f5a69ad872b95a03df24bd70df83f74817287d12a4e9f853b3f9115106ea49f",
+        "scripts/provision_s5a_replay_inputs.py": "649c1a300723849490a3c08680e80b838083326b2f294d36887b8424890fa447",
+        "scripts/run_native_qa_isolated_input.py": "46acb19045f9d1888a6f847f63ec40588d2a6ab0dcb4d8e92e03186fe089640f",
+        "scripts/s5a_native_artifact_cases.py": "1db4a60477503b9fb85d81e19b0c6ce9fc92a250c0f6fbc8667804138b69885d",
+        "scripts/s5a_native_escape_cases.py": "8209ed22dda26411cf8865c6e3d1f6a178aff01dc1ee615be3b24b92ddc3a696",
+        "scripts/s5a_native_export_cases.py": "abeb0c668c442955228646b75fdedb27fc36c5bb49a9250fce11e471c008768a",
+        "scripts/s5a_native_inspector_cases.py": "6c4bfd19c5e8e0507c5a4aca5b76c7fc5783b1a68548304c15d53eb6be64664b",
+        "scripts/s5a_native_selection_observation.py": "a2f4105508c021395d01d9f6f6d036f3028e22044174b3bbe2a32f0673ccb77f"
+      },
+      "actual_reuse_check": "All16 helpers and6 named installed tools freshly hashed byte-equal to actual committed C01 native_input_closure pins. All16 static local imports additionally byte-equal to production source Git ee9fa28e. Per-run distinct executed drivers are pinned above, not reused C01 observers.",
+      "supplemental_lock_observation_tool": {
+        "path": "/usr/bin/fuser",
+        "sha256": "651e6bf58710f08b3f1dc0a6682f74ed34fa3852db02cf91ae8813b85c13c7fd"
+      }
+    },
+    "scope_limit": "Root-only crossprobe and existing S5A geometry/acquisition/lifetime/transport/cancel predicates only where byte-identical and applicable. No new multi-sheet/ERC/Net metadata normal proof from old root or generic diagnostic."
+  },
+  "performance_and_resources": {
+    "authority": "PM051; reuse existing evidence, no new threshold or withdrawn GPU budget.",
+    "plan": "No fresh baseline build, Rust generator or broad campaign. Actual future changed-source checks/builds use guarded Cargo serially on disk only if needed. Preserve source health, dependency authority and required local gates.",
+    "readiness_operations": "Initial audit scope was source/CLI-help only. Subsequently explicit PM grants authorized12command canonical input preparation, stale/recovery and separately bounded2qi3 CLI source repair/focusedtest/build. Actual receipts are listed; no new Inspector GUI runtime or full implementation/proof campaign yet."
+  },
+  "execution_blockers": [
+    "Complete corrected PM062 shared implementation/readiness/source-health/proof map needs exact independent review and INSP-C02 authorization.",
+    "Actual input admission remains incomplete: strict current root/Net binding and positive evaluated0/class/Bus/Footprint-library source cases."
+  ],
+  "independent_review": {
+    "initial_disposition": "REVISE_PREPARATION_AUTHORITY_MAP (I01), preserved",
+    "revised_disposition": "PENDING; no readiness PASS",
+    "I01_authority_correction": "Actual independent review confirms revised PM062/MD semantics faithful, historical label correction verified; resource paragraph corrected current. Complete C01 readiness still pending input/source/proof scope review."
+  },
+  "limitations": [
+    "Static current implementation analysis and exact existing accepted proof reuse, not new P2.4 runtime or HUMAN proof.",
+    "Historical12engine failures have static causal exclusions with runtime baselineUNPROVEN; cache/minimal-fixture/host limits retained.",
+    "No private writes, dependency, prototype edits, SheetSet semantics, input cap changes, performance budget or global-bar decision ratified.",
+    "No objective acceptance or successor authorization."
+  ],
+  "initial_review": {
+    "receipt": "INSP-C01-READINESS-REVIEW-01",
+    "disposition": "REVISE_PREPARATION_AUTHORITY_MAP",
+    "mandatory_finding": "I01",
+    "initial_readiness_sha256": "b4ef3a1afdde804b616ab64c35524f03f9dfe047ac5fccedcdeef295b9729faf",
+    "initial_decision_sha256": "3c60c415f94a3a606eb763ecfe3ad4c650c1ef24ab99da540bce7ba154896fb7",
+    "preserved_at": ".datum/scratch/gui-p2-inspector-insp01-20261023/initial-*.json",
+    "limit": "Correction is not independent readiness acceptance."
+  },
+  "settled_authority": [
+    {
+      "id": "PM062_B1_O1",
+      "authority": "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md S05.1/S05.2; schematic-surfaces-study.html S-A/S-B",
+      "contract": "Occurrence-first hierarchy. Single click inspects Navigator row; Enter/double-click opens qualified occurrence BESIDE focused pane, preserving current view/camera in recursive pane tree. Existing canvas hierarchy double-click descend remains. Inspected row, opened/focused canvas and global authored selection are distinct. No Sheet semantic class/SheetSet, implicit Clear, name identity or Sheet n/N; Sheet means Publish page."
+    },
+    {
+      "id": "PM062_S_C",
+      "authority": "schematic-surfaces-study.html#S-C and PM062",
+      "contract": "Read-only Symbol/Origin(pool/revision)/Unit(pins)/Entity-gate/Part binding resolved-unresolved-ambiguous with candidates/reasons/pinned basis. Separately inspectable Command readiness, Approval, Basis, Findings; unknown/not recorded is not Approved. Selected Symbol-to-Part binding is not whole Part-Package-Footprint-Padstack-PinPadMap production qualification or new placement prerequisite."
+    },
+    {
+      "id": "PM062_S_A_S_I",
+      "authority": "schematic-surfaces-study.html#S-A; schematic-layout-accessibility-study.html#S-I and PM062 S05.4",
+      "contract": "Local document/source/occurrence breadcrumb and actual grid/saved/ERC pane-header context, empty Inspector Document/Source/Occurrence/Checks. Normal/narrow/tiled layouts, named Navigator/Inspector affordances, one focus-owned Inspector and keyboard access. Existing global status bar retention/contents remain frozen; qcz resumption not required."
+    },
+    {
+      "id": "PM062_G1_G2",
+      "authority": "schematic-surfaces-study.html#S-G and PM062",
+      "contract": "Qualified findings remain distinct from target selection. NotRun has no count; Unavailable reason/no count; Stale retains actual historical count with described revision and rerun action without current marker authority. Only current evaluated zero is Clean. Running needs actual producer state. Re-run is explicit canonical generated CheckRun action, separately accounted from no-write navigation."
+    }
+  ],
+  "authority_route_reconciliation": "authority-route-reconciliation.json",
+  "historical_activation_route_snapshot": [
+    {
+      "id": "workflow-delivery-rollout",
+      "accepted_current_digest": "f502f81de8555785d6d79e4be4f6badb57c6117ae73c372dcd6cf3a5d5809b18",
+      "unchanged_vs_activation_commit": {
+        "research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md": "cca1f5ff61feddd3457c65129d4a6f718a25bc130d23c8da4ebab3a54fe69ef9",
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md": "c2f9cae98a954d0022df4ff23cb87c2d03d70e34c13aa28b71f96f69e1ea3740",
+        "specs/FOUNDATION_FOLLOWUP_PLANS.md": "70d7215c44b8fa0d01882d7473fb69e10e83731806811bef5e55596a71800913",
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": "5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265",
+        "docs/reviews/workflow-delivery-rollout/proposal.json": "2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d",
+        "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": "3b262298f69104789138903681e2bf4f5996f50546f5063654b05564f97a28b0",
+        "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md": "bfca7c34318756704592069b6fee6477809795214a977f233d4554a9d9507557",
+        "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": "33b8298b6b25dbe04f16d1846c7f8f5ed496590d3761e3bab9c6e448bdc9767b",
+        "docs/reviews/workflow-delivery-rollout/category-preflight.json": "f252daabfd2c79977bd21c1c84f33bc5ed924c62a9550548263c0adaefeacd53",
+        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md": "d291463dcea95171ef68154a525da1e2d9c08d4eb05481908b45d4bbccdfc690",
+        "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md": "1899f069e547cefc4a946c32723324707d73da4e43881eabe2f6264081ce9c38",
+        "docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json": "8e391ea9c18b1652be0a15cce20508f93b4ecd0abc924b7e6d47701852f0446b",
+        "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md": "6d8934dac46127153ced2239ec3c7ba2e1411b440a73082e3eba790fdd304016",
+        "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md": "bf37bf40d99f65f1f9a8e352394b00924eb03a78be5ed3bc4dc9b8e0d4665e72",
+        "docs/reviews/workflow-delivery-rollout/clauses/adopted-drafting-standard.json": "b065868c38c760908198e98e5a341d366274e5ea8c17eac1103f5a1f7dfed943",
+        "docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json": "135e62e7fbd840f005ef428e4412a9fbf87ec0a25762957e43188b2b5cbc1cf8",
+        "docs/reviews/workflow-delivery-rollout/clauses/native-connectivity.json": "338ef9903d7a85ee95c5059c3af7951c65e1c6e1a00d6627275b3705acb9a5ed",
+        "docs/reviews/workflow-delivery-rollout/clauses/native-workflow-budgets.json": "6a62ca2dcde7eb68881b782ff660cd0ee21456a3157f82a47325e84f06182607",
+        "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md": "668374887357ea8c3e7b3d30a1207882051f5c4cfd9344bac03dc02235248b27",
+        "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json": "7618332dbc4fe998cfd89ea3729e598869a2defbe5e210b00723b4faede14c8c",
+        "docs/reviews/workflow-delivery-rollout/clauses/project-preferences-spec.json": "c127771c0960aefd55e71313c1bd2abcd2376778de513f06d07305f110d6556d",
+        "docs/reviews/workflow-delivery-rollout/cohort-mappings.json": "d9242f0fbd706d2da61383f93b19b732f1a48b2f02fb8ed6d650a5ac97ea37d7",
+        "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md": "b6bf4479553d6a3133a524060c9063bf6a49dac2aa260efd3156716193bbda89",
+        "docs/reviews/workflow-delivery-rollout/coverage-proposal.json": "859d2591b5eff4b96e8749f4c43137f68294f7e3c1b3b669066cb3470c6e1fe1",
+        "docs/reviews/workflow-delivery-rollout/assembled-source-verification.json": "b1a00880bbdf86b916c2ffe4b6f70cea701ad7a02eec17a8eb8920e7b9f21f74",
+        "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": "b3f77121bd63226ea270c21ffd03dea50175691c73023811109c88cb2281fc85",
+        "docs/reviews/workflow-delivery-rollout/native-project-doorway.md": "88046b4ecf2c187fdedc8083dbe9d2bb92eff1424036660b0eb5a9781fc1e316",
+        "docs/reviews/workflow-delivery-rollout/native-project-doorway.json": "a90e099bdee8cbfec705b92aeb1ea88b6fb5097c4130ac1aa80ab96d395ec151",
+        "docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md": "063c94e349e22ceb7fcc748e3f33df38044af7aa0d2870242be396eae89c1505"
+      },
+      "limit": "Byte identity supports qualified accepted-corpus reuse; not a new runtime, visual or readiness PASS. New conflict/decision map remains under exact review."
+    },
+    {
+      "id": "gui-feedback-and-status",
+      "accepted_current_digest": "c884021b3112b546882ec470820f03983581e4933037e2469a1b56ab52253a65",
+      "unchanged_vs_activation_commit": {
+        "research/application-status-bar/APPLICATION_STATUS_BAR_RESEARCH.md": "03f0c1272f42288cc4393d401d71ce1b12962d9ce29d9e30ce6a820e16246a98",
+        "research/command-feedback/COMMAND_FEEDBACK_RESEARCH.md": "ff0e8bbd922db8459462a6bdfae5ce524a5be5f00037a32efb1c9e9782be4eb9",
+        "docs/gui/DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md": "8be2aeca8a1565120522c8599b36bc473e27cf73dc1589bc230764d753a77f32",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+        "docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md": "4f41bf03011b00bdf08e5b160915d16cc8bde9ead8ae66d5493d0febca781099"
+      },
+      "limit": "Byte identity supports qualified accepted-corpus reuse; not a new runtime, visual or readiness PASS. New conflict/decision map remains under exact review."
+    },
+    {
+      "id": "gui-selection",
+      "accepted_current_digest": "f819c9ecd9fb3933e141eeed7f26cfe200a1cac7e5cb0f7816c5065869ca7883",
+      "unchanged_vs_activation_commit": {
+        "research/gui-compound-selection/GUI_COMPOUND_SELECTION_RESEARCH.md": "22bfb019c34427d45d002ad29c9a4a831f3a0d4e38f8976437a3387fbac39195",
+        "research/selection-visual-language/SELECTION_VISUAL_LANGUAGE_RESEARCH.md": "135587678daf758296da2a2795dddd88bffb346095d05daf3a1645e6cefb2afe",
+        "docs/gui/DATUM_SELECTION_COMPOUND_EDITING_GUIDANCE.md": "bac57403455b30e4e4ec6435423321ab928ef0b19a9accde8552a129d94a98bf",
+        "docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md": "95f0aa6b81c847a556d1b22600a7d39fd4b26bf7e8859b390126a2f3c785b22a",
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md": "02fc14b5e70408407cc13051404f3551f131b985106abbe376f69f1ca05e80fc",
+        "docs/decisions/PRODUCT_MECHANICS_055_BUS_RUN_CONTACT_AUTHORITY.md": "f1551bdeb93e9b1409dc650610656c9b5d81030ee67952dfe98462360c8ef965"
+      },
+      "limit": "Byte identity supports qualified accepted-corpus reuse; not a new runtime, visual or readiness PASS. New conflict/decision map remains under exact review."
+    },
+    {
+      "id": "prototype-editor-shell-and-panes",
+      "accepted_current_digest": "6b16686431be5411fc64bda1fd670c138eb240e85d15b7a2b6f23874711db16f",
+      "unchanged_vs_activation_commit": {
+        "docs/gui/prototypes/board-editor.html": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07",
+        "docs/gui/prototypes/schematic-editor.html": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0",
+        "docs/gui/prototypes/workspace-panes.html": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd",
+        "docs/gui/prototypes/schematic-surfaces-study.html": "48b0237171d1195c9285170f472138d52b48265a2a465b7c11b90894bb85ae23",
+        "docs/gui/prototypes/library-surfaces-study.html": "75a80482ca8e012b3369dfc800d17f54a48b9bb27ed4cf6ddad2cdcf8ca822db",
+        "docs/gui/prototypes/schematic-authoring-states-study.html": "cdf39d286763bcc1c43381271cca309f0224d513c67765f53164eeedc5975385",
+        "docs/gui/prototypes/schematic-layout-accessibility-study.html": "1b1bd8811533637caacea1b0cefd7e107078f7cff77170e558f8aa4e937d55ef",
+        "docs/gui/prototypes/library-kind-editors-study.html": "04130b8689c3b71d299508cf726ef450aa43e8c563c8ccd4d9be3b28673415bd",
+        "docs/gui/prototypes/library-layout-accessibility-study.html": "068b181557c93a4430bccfc6a58c8702bad2173fe4306d37dbee09215248cbe6",
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md": "43770d113ceda03e506521b97a9fc434be055b1b4998e246eb53586a0f6fce51",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990",
+        "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md": "38e7016d638768988c25dcb364c96fe23385982b7d5fb030e41f58cbf49dab04",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md": "99a0f14f5d151f9c237235b3e08d977a7713f7a0f56aa4763b59921b21b5873a",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md": "9acc80fb925b4c19758d262e8f251be71ee3a5a78f13dcca3090a704bdf38e16",
+        "docs/gui/prototypes/surface-studies.css": "638d09defeac1d22308beed1d721298e7b2f4a8bb427739d9800627a3dd92245",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8",
+        "docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json": "2d6b3ce68c52bcad64098c139d73d8fae16f8afb20604ca739553658830f7b90",
+        "docs/reviews/workflow-delivery-rollout/library-gui-authoring-review.json": "deee5b4477285e5c2d414cc3ec2beaef7f16408598e273e83f4064d352964c88",
+        "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74",
+        "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json": "043b81d2664d807c2b70c46b66c497bd8e35e8ec343e03c5413eb55f24f017d9",
+        "docs/reviews/workflow-delivery-rollout/package-gui-creation.json": "f0b88780a7e32e29eb45d371910c7f6a7436dda709754c9521348de3042a2b7a",
+        "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json": "3b60fe2f4d21df1df3d6a96ef4b51bd0fac922f5b1834a79e68790ea43ea9dff",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json": "a6755c8a3f297b909d45ea7112a0d692d98a32415cbbe872854cab41428e640c",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation.json": "5934ff42228ab82efd495471d4b398b3dfcaa2f4d6c241c8b7fee83df5e1c529",
+        "docs/reviews/workflow-delivery-rollout/surface-review-manager-acceptance.json": "641dea968c25ba0f34301ec467dd953ba51677e4697c850eced3934c746f4ab4",
+        "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+        "docs/reviews/workflow-delivery-rollout/surface-s04-manager-acceptance.json": "d016d7619006743db857dfd356ec226c660ad9160f1c9c8a58cbb7718ccc4d91",
+        "docs/reviews/workflow-delivery-rollout/surface-s05-manager-disposition.json": "3b8be3d354ba1c91b3749bd1c2e70f8312fd2759796e67afa797105b37059235",
+        "docs/reviews/workflow-delivery-rollout/surface-specification-combined-review.json": "2f822bc60368377cd0a3aff13dabadb30db95d9977d5116fe0820edd617fe404",
+        "docs/reviews/workflow-delivery-rollout/surface-study-source-health-review.json": "3665a3ea7f7d5855cca7b56e9a77ef22b51cefb5ad35975e6602109111690048",
+        "docs/reviews/workflow-delivery-rollout/surface-visual-review.json": "fbc16345571b990cfea38b9c9371562b10d45625ff77f4e920ab4ebd9ed463a8"
+      },
+      "limit": "Byte identity supports qualified accepted-corpus reuse; not a new runtime, visual or readiness PASS. New conflict/decision map remains under exact review."
+    },
+    {
+      "id": "prototype-selection",
+      "accepted_current_digest": "2395f5f9f4353fce3ba9a4ef64d29455eda6af544e0bd99e0e67b8f95af11e5e",
+      "unchanged_vs_activation_commit": {
+        "docs/gui/prototypes/selection-study.html": "7cd5a3a1889b361c04b86add30d5d7362b6dcef85aadffd6f42a133b521f8832",
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md": "02fc14b5e70408407cc13051404f3551f131b985106abbe376f69f1ca05e80fc",
+        "docs/gui/DATUM_RENDERING_BOOK.md": "7317bc1e6844eccbdbc84a74a36723e922581da275a30d2c861189d5e2d78df9"
+      },
+      "limit": "Byte identity supports qualified accepted-corpus reuse; not a new runtime, visual or readiness PASS. New conflict/decision map remains under exact review."
+    }
+  ],
+  "historical_activation_route_snapshot_applicability": "Original accepted e75fa10a activation snapshot only. Changed Phase2 completion plan and added GUIPhase2 consumer are superseded by current authority-route-reconciliation.json; old digest/hash is not current byte identity.",
+  "input_preparation_actual_receipts": [
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/input-preparation.json",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/stale-recovery-preparation.json",
+    "erc-severity-repair.json"
+  ]
+}

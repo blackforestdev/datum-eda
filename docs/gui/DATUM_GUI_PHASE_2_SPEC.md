@@ -52,6 +52,24 @@ freshly authorized build agent picks up exactly one tractable slice at a time.
 - Fixture: `~/Documents/kicad_projects/Datum-eda/datum-test/` — board
   (`datum-test.kicad_pcb`) and its schematic workspace.
 
+## Later controlling native surface authority
+
+PM062 and the approved `schematic-surfaces-study.html` S-A/S-B/S-C/S-G and
+`schematic-layout-accessibility-study.html` S-I govern native source/occurrence
+presentation over the historical `board-editor.html` / `schematic-editor.html`
+studies. B1 is occurrence-first discovery; O1 single-click selects/inspects a
+navigator row, while Enter/double-click opens its qualified projection **beside**
+the focused pane and preserves the current view. Inspection target, opened view
+and global authored selection remain distinct. Native Design is not Publish:
+there is no `Sheet n/N` display. Document, source and occurrence are separate.
+Pane-local grid/saved/ERC state follows S-A/S-I; S-G/G2 retains stale counts with
+the revision described and a re-run action, while not-run/unavailable has no count
+and only a current evaluated zero is clean. The global Application Status Bar
+remains deferred; no retention/content change follows from this reconciliation.
+Mockup objects, numeric values, and editable-looking controls are not production
+defaults or a write-path grant. Historical first-slice descriptions below stay
+historical; the Frontier and actual acceptance records determine current delivery.
+
 ## Scope
 
 **Phase 2 IS:**
@@ -215,8 +233,8 @@ marker**.
   sheet; the review target is per-element fidelity (colour, symbol, grid), verified
   by zooming in.
   *NOT P2.2 — do not absorb:* net selection/highlight/glow + cross-probe = **P2.3**;
-  the net-centric inspector, the Sheets hierarchy panel, and Application Status Bar
-  segments (Sheet/Grid/ERC) = **P2.4**; a schematic whose `.kicad_sch` only
+  the net-centric inspector, native source/occurrence discovery and pane-local
+  document/grid/ERC context under PM062 = **P2.4**; a schematic whose `.kicad_sch` only
   skeleton-imports (e.g. DOA2526) is the separate **schematic-import track**,
   upstream of render — P2.2 renders faithfully whatever the importer produces.
 
@@ -245,29 +263,54 @@ marker**.
   (`crates/gui-render/tests/selection_ownership.rs` is the natural home), plus a
   cross-probe screenshot golden; lands with the P2.3 build slice.
 
-- **P2.4 — Populated inspector + schematic context surfaces.**
-  **spec only — build is a separate authorized execution phase.**
-  Three coupled surfaces the prototypes show and that today render board-only:
-  (1) the **component inspector** — extend the P2.0 populated inspector into the
-  named **Identity / Placement / Checks** sections (`render_inspector.rs` marks this
-  deferred); (2) the **net-centric inspector** — when a schematic net is selected,
-  the inspector shows **Net / Members / Checks (ERC)** per `schematic-editor.html`
-  (context-follows-focus already routes the inspector to the focused pane); and
-  (3) the **Sheets hierarchy panel** — when a schematic pane is focused, the left
-  Layers slot shows the sheet hierarchy (the model exposes one root sheet today; a
-  multi-sheet panel + selection lands here), plus the Application Status Bar's schematic-context segments
-  (Sheet n/m, Grid, ERC count). Read-only fields only; editable fields stay Phase-3
-  gated on the write path. ERC *findings* feed from the ERC engine (the P2.2e ERC
-  *marker geometry* renders whatever findings exist).
-  *Dependency:* P2.0 (component inspector); the net inspector + Sheets panel depend
-  on P2.2 (schematic render) and share P2.3's selection substrate. May sequence in
-  parallel after P2.0 for the component-inspector piece.
-  *Reuse:* the P2.0 populated-component render branch in
-  `render_inspector.rs` — add sections, do not fork the inspector.
-  *Check disposition:* **TO-ENFORCE** — inspector-content structural test naming
-  the three sections + a populated-inspector golden; lands with the P2.4 build
-  slice. **HUMAN** backstop: owner review of section content/composition against
-  the prototype, golden-backed.
+- **P2.4 — Complete read-only Inspector and native schematic context.**
+  **Spec/readiness only — build requires separate exact authorization.**
+  Extend the actual shared Native selection/inspection path, not merely the
+  legacy P2.0 `AuthoredObject` renderer: `inspector_dispatch` routes
+  `SelectionTarget::Native` to `selection_inspector`. Preserve the single shared
+  Inspector, canonical field/quantity owners and related-only semantics.
+
+  (1) **Component Identity / Placement / Checks:** source-derived reference,
+  value, current placement coordinates/rotation/layer and actual relevant checks.
+  Applicable selected-Symbol inspection also preserves S-C's Symbol, Origin
+  (pool/revision), Unit, Entity/gate and resolved/unresolved/ambiguous Part binding,
+  with Command readiness, Approval, Basis and Findings separately inspectable.
+  A resolved Symbol→Part binding neither approves content nor certifies a complete
+  Part–Package–Footprint–Padstack–PinPadMap graph. Missing metadata is unavailable
+  or unknown; library authoring and placed propagation remain separate.
+
+  (2) **Net / Members / Checks (ERC):** stable source Net identity, actual class
+  and authored Bus association where supplied, complete selected typed membership
+  and separately labelled connection/terminal detail. Terminal-row counts do not
+  redefine Global Net membership, transport limits or related-object roles.
+  Findings retain actual profile/domain/target/occurrence and described revision.
+  S-G/G2 distinguishes current evaluated results, not-run, unavailable and stale;
+  stale retains its actual count with described revision/re-run, never current
+  marker authority. Running requires actual producer evidence. No global
+  supervision counter or historical illustrative warning substitutes for ERC.
+
+  (3) **B1/O1 discovery, opening and pane context:** present the native occurrence
+  hierarchy with source and occurrence separate. Single click inspects the row;
+  Enter/double-click opens the exact projection beside the focused pane, preserving
+  its view/camera in the existing recursive tree. Inherited canvas descend remains
+  unchanged. No authored Sheet class, Sheet-set/Compound semantics, implicit
+  selection clear or name-based source substitution is introduced. Document/source/
+  occurrence and actual grid/saved/ERC context stay reachable under S-A/S-I normal
+  and narrow compositions. `Sheet` remains a Publish-page term; no Sheet ordinal
+  or new global-bar field is required or authorized. Explicit snap-grid status
+  uses the real existing state/PM040 units and remains distinct from view-grid
+  rendering tiers; mockup pitch is not a default.
+
+  Read-only fields only; no authoring, new preference, approval or waiver policy.
+  *Dependency:* landed component, schematic and accepted P2.3/S5A shared owners;
+  the complete task remains separately authorized and selected by the Frontier.
+  *Reuse:* shared Native projection/Inspector/context/AX, recursive pane/camera,
+  existing library query/inspection and actual canonical CheckRun owners.
+  *Check disposition:* **TO-ENFORCE** — complete section/context structural tests,
+  same-engine goldens and finite native component/Net/occurrence/status workflows,
+  including correct availability and normal/narrow/keyboard behavior. **HUMAN**
+  and assistive qualification retain their actual separate authority; no source
+  test, prototype or planning document fabricates those outcomes.
 
 ## Sequencing summary (dependency graph)
 
@@ -280,8 +323,8 @@ P2.1's split-view first slice (two-pane LAYOUT + headers + focus + placeholder
 pane B) has **landed**; real schematic content in pane B (P2.2) and the remaining
 P2.1 depth (focus-switch, per-pane camera, exact split-ratio approval) are still
 **deferred build phases** — this spec sequences and specifies them; it does not
-build them in the P2.0 workflow. P2.4 branches off P2.0 directly and may run
-parallel to P2.1–P2.3.
+build them in the P2.0 workflow. The historical P2.0 branch diagram grants no parallel work. Complete native P2.4
+uses the accepted P2.3/S5A substrate and its own exact Frontier authorization.
 
 ## Reuse map (from the leverage audit — do not rebuild these)
 

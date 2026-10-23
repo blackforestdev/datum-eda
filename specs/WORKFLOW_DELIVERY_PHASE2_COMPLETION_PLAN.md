@@ -103,11 +103,19 @@ unavailable-only behavior, screenshot alone or planning approval closes this tas
 
 After the existing cross-probe prerequisite, author the complete P2.4 contract:
 component Identity/Placement/Checks sections; schematic Net/Members/Checks (ERC)
-inspection; Sheets hierarchy including multi-sheet selection; and complete
-schematic status context (Sheet n/m, Grid, ERC count). The old tracker
+inspection; native source/occurrence discovery and opening; and complete
+pane-local document/source/occurrence, grid/saved/ERC context under PM062. The old tracker
 summary naming only three component sections does not narrow the governing spec.
-Reuse the existing inspector and focused-pane/context/selection authorities;
-editable fields and authored operations remain outside this read-only phase.
+Reuse the actual shared Native inspector and focused-pane/context/selection
+authorities; editable fields and authored operations remain outside this read-only
+phase. PM062 B1/O1 single-click inspects an occurrence row; Enter/double-click
+opens its qualified projection beside the focused pane while preserving its view.
+Navigator inspection is not an authored Sheet class or a selection-set mutation.
+S-A explicitly replaces historical Sheet n/N with document/source/occurrence;
+Sheet is a Publish page. Preserve the applicable S-C Symbol/library/readiness/
+approval/basis/findings fields and S-G/G2 currentness, including stale counts
+labelled with the revision described and re-run action. S-I normal/narrow
+compositions keep one focus-owned Inspector and essential context reachable.
 
 The older Phase 2 global status-bar placement is not ratification. The design
 spec explicitly defers Application Status Bar retention/replacement under
@@ -116,8 +124,10 @@ against current approved authority. Do not remove, replace or materially change
 that bar before the deferred owner decision is resolved; required consequential
 feedback remains pane/canvas-local and accessible. If complete delivery needs
 an unresolved placement or replacement decision, it blocks execution until
-ratified. Neither drop Sheet/Grid/ERC information nor invent its placement to
-make this task appear ready.
+ratified. Use the already-approved S-A/S-I pane-local context and S-G currentness;
+do not revive the superseded Sheet ordinal/global-bar depiction or drop required
+document/source/occurrence/grid/saved/ERC information. No new chrome is ratified
+by this planning record.
 
 Reconcile component, net, sheet and focused-document identities, field provenance,
 units/formatting, empty/mixed/unavailable and stale results, context changes and
@@ -151,7 +161,8 @@ alone is not completion of the net, Sheets and status requirements.
 ### Native proof and visual evidence
 
 Exercise component and net inspection from both native panes, all named sections,
-multi-sheet hierarchy selection and Sheet/Grid/ERC status; switch focus/content
+B1 occurrence inspection/O1 opening and document/source/occurrence/grid/saved/ERC
+context; switch focus/content
 and verify the displayed identity and model-derived results. Include empty,
 mixed, unavailable, stale/disappearing subjects, invalid input, cancellation and
 close/reopen. Prove readable unit/precision presentation without authored numeric
@@ -822,3 +833,37 @@ The synchronized planning lease excludes production and protected prototype path
 
 <!-- DECISION-AUTHORITY:GUI-P2-INSPECTOR:INSP-C06-20261023 -->
 {"task_key":"GUI-P2-INSPECTOR","step_id":"INSP-C06","decision_kind":"objective_acceptance"}
+
+<!-- EVIDENCE:GUI-P2-INSPECTOR:INSP-C01-I01-CORRECTION -->
+### Inspector readiness correction and bounded preparation
+
+The initial readiness proposal (`b4ef3a1a`, decision packet `3c60c415`) received
+actual independent `REVISE_PREPARATION_AUTHORITY_MAP`, mandatory finding I01.
+That proposal and review remain historical; they supplied no readiness PASS.
+Later controlling PM062 already settles B1 occurrence-first Navigator inspection,
+O1 opening beside the focused pane, separate document/source/occurrence context,
+S-C library context and approval provenance, S-A/S-I local normal/narrow context,
+and S-G historical stale counts with described revision and rerun. The corrected
+packet follows that authority, removes the proposed Sheet ordinal, and preserves
+the deferred global status-bar policy. Protected prototypes remain unchanged.
+
+The PM separately approved existing-CLI preparation on one owned canonical copy.
+Twelve commands completed, adding a child source/definition and two occurrences
+and producing thirteen actual ERC warnings. Input admission remains incomplete;
+preparation proves neither native child projection nor current complete Net
+resolution or the missing positive class/Bus/clean-check cases.
+
+Preparation exposed `dat-erc-severity-summary-2qi3`: the CLI copied typed
+`Warning` into an adapter whose summary recognized lowercase only, persisting
+thirteen infos despite the raw engine's correct thirteen warnings. The PM
+explicitly authorized only the existing CLI adapter and focused existing tests.
+Its production paths were added to the active preparation lease before editing;
+this exception does not authorize full INSP-C03 implementation. The bounded repair
+normalizes recognized typed severity, preserves original payload and identity
+material, and leaves engine rules, schemas and historical records unchanged.
+The real producer-to-persisted-record regression passed; the minimally rebuilt CLI
+saved a new run at a canonical renamed-source revision and explicit `check show`
+confirmed thirteen warnings and zero infos. The original inconsistent run remains
+unchanged. Exact source/build/runtime and independent review dispositions belong
+to `inspector/erc-severity-repair.json`; no full Inspector readiness or delivery
+acceptance is inferred from this repair.

@@ -1,0 +1,91 @@
+{
+  "status": "I01_CORRECTED_DELTA_REVIEW_PENDING_INDEPENDENT_RECEIPT",
+  "basis": "Qualified complete prior accepted route reuse plus exact settled-authority consumer delta; no protected prototype changed.",
+  "routes": [
+    {
+      "id": "workflow-delivery-rollout",
+      "unchanged_vs_e75fa10a": {
+        "research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md": "cca1f5ff61feddd3457c65129d4a6f718a25bc130d23c8da4ebab3a54fe69ef9",
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md": "c2f9cae98a954d0022df4ff23cb87c2d03d70e34c13aa28b71f96f69e1ea3740",
+        "specs/FOUNDATION_FOLLOWUP_PLANS.md": "70d7215c44b8fa0d01882d7473fb69e10e83731806811bef5e55596a71800913",
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": "5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265",
+        "docs/reviews/workflow-delivery-rollout/proposal.json": "2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d",
+        "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": "3b262298f69104789138903681e2bf4f5996f50546f5063654b05564f97a28b0",
+        "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md": "bfca7c34318756704592069b6fee6477809795214a977f233d4554a9d9507557",
+        "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": "33b8298b6b25dbe04f16d1846c7f8f5ed496590d3761e3bab9c6e448bdc9767b",
+        "docs/reviews/workflow-delivery-rollout/category-preflight.json": "f252daabfd2c79977bd21c1c84f33bc5ed924c62a9550548263c0adaefeacd53",
+        "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md": "1899f069e547cefc4a946c32723324707d73da4e43881eabe2f6264081ce9c38",
+        "docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json": "8e391ea9c18b1652be0a15cce20508f93b4ecd0abc924b7e6d47701852f0446b",
+        "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md": "6d8934dac46127153ced2239ec3c7ba2e1411b440a73082e3eba790fdd304016",
+        "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md": "bf37bf40d99f65f1f9a8e352394b00924eb03a78be5ed3bc4dc9b8e0d4665e72",
+        "docs/reviews/workflow-delivery-rollout/clauses/adopted-drafting-standard.json": "b065868c38c760908198e98e5a341d366274e5ea8c17eac1103f5a1f7dfed943",
+        "docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json": "135e62e7fbd840f005ef428e4412a9fbf87ec0a25762957e43188b2b5cbc1cf8",
+        "docs/reviews/workflow-delivery-rollout/clauses/native-connectivity.json": "338ef9903d7a85ee95c5059c3af7951c65e1c6e1a00d6627275b3705acb9a5ed",
+        "docs/reviews/workflow-delivery-rollout/clauses/native-workflow-budgets.json": "6a62ca2dcde7eb68881b782ff660cd0ee21456a3157f82a47325e84f06182607",
+        "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md": "668374887357ea8c3e7b3d30a1207882051f5c4cfd9344bac03dc02235248b27",
+        "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json": "7618332dbc4fe998cfd89ea3729e598869a2defbe5e210b00723b4faede14c8c",
+        "docs/reviews/workflow-delivery-rollout/clauses/project-preferences-spec.json": "c127771c0960aefd55e71313c1bd2abcd2376778de513f06d07305f110d6556d",
+        "docs/reviews/workflow-delivery-rollout/cohort-mappings.json": "d9242f0fbd706d2da61383f93b19b732f1a48b2f02fb8ed6d650a5ac97ea37d7",
+        "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md": "b6bf4479553d6a3133a524060c9063bf6a49dac2aa260efd3156716193bbda89",
+        "docs/reviews/workflow-delivery-rollout/coverage-proposal.json": "859d2591b5eff4b96e8749f4c43137f68294f7e3c1b3b669066cb3470c6e1fe1",
+        "docs/reviews/workflow-delivery-rollout/assembled-source-verification.json": "b1a00880bbdf86b916c2ffe4b6f70cea701ad7a02eec17a8eb8920e7b9f21f74",
+        "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": "b3f77121bd63226ea270c21ffd03dea50175691c73023811109c88cb2281fc85",
+        "docs/reviews/workflow-delivery-rollout/native-project-doorway.md": "88046b4ecf2c187fdedc8083dbe9d2bb92eff1424036660b0eb5a9781fc1e316",
+        "docs/reviews/workflow-delivery-rollout/native-project-doorway.json": "a90e099bdee8cbfec705b92aeb1ea88b6fb5097c4130ac1aa80ab96d395ec151",
+        "docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md": "063c94e349e22ceb7fcc748e3f33df38044af7aa0d2870242be396eae89c1505"
+      },
+      "reviewed_delta": [
+        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md"
+      ],
+      "new_consumer": [],
+      "current_digest": "019f28ef52c68754d7bd97bd15d103ef3dd707759a9cb4deaf90ff5d96e6cdf8",
+      "reconciliation": " INSP-C01 I01 correction: complete accepted29-member route reused with28 byte-identical members at e75fa10a and exact completion-plan delta reviewed against settled PM062 B1/O1/S-C/S-A/S-I/G2. No new product choice, Sheet ordinal, global status-bar decision, implementation or readiness PASS."
+    },
+    {
+      "id": "prototype-editor-shell-and-panes",
+      "unchanged_vs_e75fa10a": {
+        "docs/gui/prototypes/board-editor.html": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07",
+        "docs/gui/prototypes/schematic-editor.html": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0",
+        "docs/gui/prototypes/workspace-panes.html": "cc27309e495638149a39fcf03178799036eeecdacdac97ec8b557f02380ca6fd",
+        "docs/gui/prototypes/schematic-surfaces-study.html": "48b0237171d1195c9285170f472138d52b48265a2a465b7c11b90894bb85ae23",
+        "docs/gui/prototypes/library-surfaces-study.html": "75a80482ca8e012b3369dfc800d17f54a48b9bb27ed4cf6ddad2cdcf8ca822db",
+        "docs/gui/prototypes/schematic-authoring-states-study.html": "cdf39d286763bcc1c43381271cca309f0224d513c67765f53164eeedc5975385",
+        "docs/gui/prototypes/schematic-layout-accessibility-study.html": "1b1bd8811533637caacea1b0cefd7e107078f7cff77170e558f8aa4e937d55ef",
+        "docs/gui/prototypes/library-kind-editors-study.html": "04130b8689c3b71d299508cf726ef450aa43e8c563c8ccd4d9be3b28673415bd",
+        "docs/gui/prototypes/library-layout-accessibility-study.html": "068b181557c93a4430bccfc6a58c8702bad2173fe4306d37dbee09215248cbe6",
+        "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md": "43770d113ceda03e506521b97a9fc434be055b1b4998e246eb53586a0f6fce51",
+        "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md": "4a8a08b18d161161fd542c23c73fd2100060178475a8047d5de2d557016b081c",
+        "docs/decisions/PRODUCT_MECHANICS_021_WORKSPACE_PANE_TILING.md": "e9c80d314888045319737f2cfc59fbfa8bd36113e887a6e4d65f071e32dd7990",
+        "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md": "38e7016d638768988c25dcb364c96fe23385982b7d5fb030e41f58cbf49dab04",
+        "docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md": "02ca908ad80415634d9cbac5ef8fb8474560c93182599311e7c3acb8334dc2ed",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md": "99a0f14f5d151f9c237235b3e08d977a7713f7a0f56aa4763b59921b21b5873a",
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md": "9acc80fb925b4c19758d262e8f251be71ee3a5a78f13dcca3090a704bdf38e16",
+        "docs/gui/prototypes/surface-studies.css": "638d09defeac1d22308beed1d721298e7b2f4a8bb427739d9800627a3dd92245",
+        "docs/gui/workspace-and-documentation-specification/PUBLISH_SPACE_VISUAL_STUDY_BRIEF.md": "4c3d7543de03e8dcf7d035bc0b6f96dfa44a4087bfabce8fe30d18d77f52e3f8",
+        "docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json": "2d6b3ce68c52bcad64098c139d73d8fae16f8afb20604ca739553658830f7b90",
+        "docs/reviews/workflow-delivery-rollout/library-gui-authoring-review.json": "deee5b4477285e5c2d414cc3ec2beaef7f16408598e273e83f4064d352964c88",
+        "docs/reviews/workflow-delivery-rollout/library-surface-contract-review.json": "e8f1c71744e18a267f9f904306ed453ffba23fd5c7e1db8ee91abf997edd5c74",
+        "docs/reviews/workflow-delivery-rollout/library-surface-route-preflight.json": "043b81d2664d807c2b70c46b66c497bd8e35e8ec343e03c5413eb55f24f017d9",
+        "docs/reviews/workflow-delivery-rollout/package-gui-creation.json": "f0b88780a7e32e29eb45d371910c7f6a7436dda709754c9521348de3042a2b7a",
+        "docs/reviews/workflow-delivery-rollout/schematic-surface-contract-review.json": "ef812d33410b8eaeedb367dac4ee3bd159db6c5442695341a607b27bf351277f",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-review.json": "3b60fe2f4d21df1df3d6a96ef4b51bd0fac922f5b1834a79e68790ea43ea9dff",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation-visual-addendum.json": "a6755c8a3f297b909d45ea7112a0d692d98a32415cbbe872854cab41428e640c",
+        "docs/reviews/workflow-delivery-rollout/surface-reconciliation.json": "5934ff42228ab82efd495471d4b398b3dfcaa2f4d6c241c8b7fee83df5e1c529",
+        "docs/reviews/workflow-delivery-rollout/surface-review-manager-acceptance.json": "641dea968c25ba0f34301ec467dd953ba51677e4697c850eced3934c746f4ab4",
+        "docs/reviews/workflow-delivery-rollout/surface-route-preflight.json": "9a6bff972233e0c47c28e8eafd68378a052559a54aaed92e77c7c48dbdd91653",
+        "docs/reviews/workflow-delivery-rollout/surface-s04-manager-acceptance.json": "d016d7619006743db857dfd356ec226c660ad9160f1c9c8a58cbb7718ccc4d91",
+        "docs/reviews/workflow-delivery-rollout/surface-s05-manager-disposition.json": "3b8be3d354ba1c91b3749bd1c2e70f8312fd2759796e67afa797105b37059235",
+        "docs/reviews/workflow-delivery-rollout/surface-specification-combined-review.json": "2f822bc60368377cd0a3aff13dabadb30db95d9977d5116fe0820edd617fe404",
+        "docs/reviews/workflow-delivery-rollout/surface-study-source-health-review.json": "3665a3ea7f7d5855cca7b56e9a77ef22b51cefb5ad35975e6602109111690048",
+        "docs/reviews/workflow-delivery-rollout/surface-visual-review.json": "fbc16345571b990cfea38b9c9371562b10d45625ff77f4e920ab4ebd9ed463a8"
+      },
+      "reviewed_delta": [],
+      "new_consumer": [
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md"
+      ],
+      "current_digest": "1d3ecc8be0627279cb37e5db10717972ec0a94d18eb3b0bf4bd8384db36f83a8",
+      "reconciliation": " INSP-C01 I01 correction: reuse complete accepted unchanged35-member route at e75fa10a (all byte identities rechecked); add existing governed GUI Phase2 spec as reviewed consumer36. Later PM062 B1/O1/S-A/S-C/S-G/S-I controls historical first-slice examples: inspect row separately, open qualified occurrence beside preserving pane/camera, complete library provenance and unknown approval, no Sheet n/N, local context and historical stale count/revision/rerun. Existing prototypes and global status-bar policy unchanged; no native delivery/readiness PASS."
+    }
+  ]
+}

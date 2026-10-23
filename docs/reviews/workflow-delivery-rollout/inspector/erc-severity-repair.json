@@ -1,0 +1,105 @@
+{
+  "issue": "dat-erc-severity-summary-2qi3",
+  "manager_thread": "01a160d9-b499-7923-984a-b3390beb2e34",
+  "recorded_at": "2026-10-23T21:22:20Z",
+  "disposition": "APPROVED_BOUNDED_PRODUCTION_REPAIR",
+  "scope": [
+    "crates/cli/src/commands/check/run_view.rs",
+    "crates/cli/src/main_tests/main_tests_project_check_run_history.rs"
+  ],
+  "authority": "Actual PM instruction received before editing; normalize recognized typed severity in existing CLI CheckRun adapter, focused real ERC to persisted-summary regression, independent review and minimal guarded CLI rebuild plus fresh canonical revision readback.",
+  "limits": [
+    "No engine rules/schema/run identity/history rewrites",
+    "Retain inconsistent run 9717927b-f197-50e4-90ae-1febca346ed7",
+    "No full Inspector INSP-C03 execution grant"
+  ],
+  "source_before": {
+    "crates/cli/src/commands/check/run_view.rs": "68af9d8b16d7b563bc7c01d9cc99e72cf070e68624ab0096ff98826218d8607e",
+    "crates/cli/src/main_tests/main_tests_project_check_run_history.rs": "2abadfbca0e6db6aeb3557f1de819e5e7ad9efb3356fb2729b97b05d8ecaedce"
+  },
+  "status": "BOUNDED_REPAIR_INDEPENDENT_PASS_PM_ACCEPTED_SOURCE_LANDING_PENDING",
+  "source_after": {
+    "crates/cli/src/commands/check/run_view.rs": "7ec7d3195645e87693192424d49d9c1ce742d6926f23dd313714f07eb84f3d6c",
+    "crates/cli/src/main_tests/main_tests_project_check_run_history.rs": "c3da651fd88bddc183d5c387e9ea485c29037b1ec57f4869123502fcb6bcb6b1"
+  },
+  "test": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-eda-cli erc_summary_survives_check_run_persistence -- --nocapture",
+    "result": "1 passed; 0 failed; 940 filtered out",
+    "log": ".datum/scratch/gui-p2-inspector-insp01-20261023/erc-summary-test.log",
+    "log_sha256": "65d51df2098de255161094320fa792839d3f13ac5d2c49b268968962c5ddcaa2"
+  },
+  "build": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-eda-cli --bin datum-eda",
+    "exit_code": 0,
+    "log": ".datum/scratch/gui-p2-inspector-insp01-20261023/erc-summary-cli-build.log",
+    "log_sha256": "7656b5e90d65d66cf914cc1bfd894c733aa5114bd40aedbff4de96b84af83f93",
+    "binary_sha256": "9c81fbafacadb15cf3c65c6f729859920fa27468c40aaf23e36565e5ff00e9f3",
+    "depfile_sha256": "213733c13c2c07f4b6fd977d4778f43ed8964b656d26ac36640a3a7c14fb9805",
+    "adapter_in_depfile": true
+  },
+  "persisted_result": {
+    "check_run_id": "4b0604c3-ec98-524e-8ae7-ebcc7a7f2102",
+    "model_revision": "e165c7950ddbcb0d5ac1329aae2672382bab32130536be1d3d98c125eaa88fd3",
+    "summary": {
+      "by_code": [
+        {
+          "code": "power_in_without_source",
+          "count": 4
+        },
+        {
+          "code": "unconnected_component_pin",
+          "count": 9
+        }
+      ],
+      "errors": 0,
+      "infos": 0,
+      "status": "warning",
+      "waived": 0,
+      "warnings": 13
+    },
+    "old_record_unchanged": true,
+    "new_record_verified_via_canonical_show": true,
+    "current_net_complete_claimed": false
+  },
+  "runtime_receipt": {
+    "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/stale-recovery-preparation.json",
+    "sha256": "dde62412bda3253a951eef3dc46025cc54790a7a417b401b0dc8a0928ac1961b"
+  },
+  "observer_correction": "First orchestration asserted whole check-show envelope equality for retained old run. Its envelope model_revision truthfully advances with current Project, while nested immutable check_run retains old described revision. Assertion corrected to nested record equality; no product failure/rerun.",
+  "independent_review": {
+    "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "receipt_id": "ERC-SEVERITY-REPAIR-INDEPENDENT-01",
+    "disposition": "PASS",
+    "reviewed_receipt_sha256": "c6194dbd7ecb84276d9bf8dbf9adb140c6021f0e6971d4bd9dbd8b8b1ca29d16",
+    "actual_received": "Independently matched source/log/build/binary/.d,11steps/22artifactpins, actual fresh physical record+canonical show/raw summary13warnings/0infos,13payload/ID/fingerprint/target equality, retained old971 nested+physicalhash, stale basis and observer correction. No extra run/build or Inspector/fullsuitePASS.",
+    "findings": []
+  },
+  "retained_boundaries": [
+    "No full Inspector execution/readiness PASS",
+    "No engine/rule/schema/run identity/history change; old run retained",
+    "No GUI/daemon rebuild or historical source cohort rewrite",
+    "Unknown severity fallback and existing lowercase values unchanged"
+  ],
+  "source_health": {
+    "before_after_lines": {
+      "crates/cli/src/commands/check/run_view.rs": [
+        512,
+        518
+      ],
+      "crates/cli/src/main_tests/main_tests_project_check_run_history.rs": [
+        247,
+        309
+      ]
+    },
+    "normal_budgets": true,
+    "gate": "PASS3297 files",
+    "policy_regressions": "13PASS",
+    "focused_structural_drift": "PASS, no broader full-workspace suite claim"
+  },
+  "manager_acceptance": {
+    "manager": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "reviewed_receipt_sha256": "c6194dbd7ecb84276d9bf8dbf9adb140c6021f0e6971d4bd9dbd8b8b1ca29d16",
+    "actual_disposition": "PM ACCEPTS bounded2qi3repair exact receipt and actual ERC-SEVERITY-REPAIR-INDEPENDENT-01 PASS/no findings. Covers recognized mapping, focused1PASS/CLIbuild0/freshstored13warning summary/raw and fingerprint preservation/historical971unchanged. Land normalhooks and close with real sourcecommit; continue separately approved Inspector input planning.",
+    "limits": "No engine/schema/rules/fullInspector/readiness or broader suite acceptance."
+  }
+}

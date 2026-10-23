@@ -218,6 +218,12 @@ pub(crate) fn append_finding_values(
             .and_then(serde_json::Value::as_str)
             .unwrap_or("unknown")
             .to_string();
+        let severity = match severity.as_str() {
+            "Error" => "error".to_string(),
+            "Warning" => "warning".to_string(),
+            "Info" => "info".to_string(),
+            _ => severity,
+        };
         let material = format!(
             "datum-eda:check-finding:{model_revision}:{source}:{index}:{}",
             to_json_deterministic(value)?

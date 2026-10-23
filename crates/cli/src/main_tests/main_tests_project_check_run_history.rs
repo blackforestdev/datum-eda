@@ -4,6 +4,68 @@ use super::main_tests_project_check::{
 use super::*;
 
 #[test]
+fn erc_summary_survives_check_run_persistence() {
+    let root = unique_project_root("datum-eda-cli-erc-summary-history");
+    create_native_project(&root, Some("ERC Summary".to_string())).unwrap();
+    build_native_check_fixture(&root);
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--profile",
+            "erc",
+        ])
+        .unwrap(),
+    )
+    .unwrap();
+    let run: serde_json::Value = serde_json::from_str(&output).unwrap();
+    let raw = &run["raw_report"];
+    assert!(raw["summary"]["warnings"].as_u64().unwrap() > 0);
+    assert_eq!(run["summary"], raw["summary"]);
+    assert_eq!(run["status"], raw["summary"]["status"]);
+    let raw_findings = raw["erc"].as_array().unwrap();
+    let findings = run["findings"].as_array().unwrap();
+    assert_eq!(findings.len(), raw_findings.len());
+    for (finding, original) in findings.iter().zip(raw_findings) {
+        assert_eq!(&finding["payload"], original);
+        assert_eq!(
+            finding["severity"],
+            original["severity"].as_str().unwrap().to_ascii_lowercase()
+        );
+    }
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "show",
+            root.to_str().unwrap(),
+            "--check-run",
+            run["check_run_id"].as_str().unwrap(),
+        ])
+        .unwrap(),
+    )
+    .unwrap();
+    let show: serde_json::Value = serde_json::from_str(&output).unwrap();
+    let saved = &show["check_run"];
+    assert_eq!(saved["summary"], run["summary"]);
+    assert_eq!(saved["raw_report"], run["raw_report"]);
+    assert_eq!(saved["status"], run["status"]);
+    for (saved, finding) in saved["findings"].as_array().unwrap().iter().zip(findings) {
+        assert_eq!(saved["severity"], finding["severity"]);
+        assert_eq!(saved["fingerprint"], finding["fingerprint"]);
+        assert_eq!(saved["finding_id"], finding["finding_id"]);
+        assert_eq!(saved["payload"], finding["payload"]);
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn check_list_and_show_report_persisted_check_run_evidence() {
     let root = unique_project_root("datum-eda-cli-check-list-show");
     create_native_project(&root, Some("Check History Demo".to_string()))

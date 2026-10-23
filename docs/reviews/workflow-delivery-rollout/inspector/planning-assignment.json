@@ -59,5 +59,16 @@
     "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
     "disposition": "Accepts bounded activation only, not C01readiness; continue substantive exact packet after normal landing.",
     "limits": "No readiness, implementation, status-bar or product-rule PASS."
-  }
+  },
+  "initial_readiness_review": {
+    "receipt": "INSP-C01-READINESS-REVIEW-01",
+    "disposition": "REVISE_PREPARATION_AUTHORITY_MAP",
+    "mandatory_finding": "I01",
+    "initial_readiness_sha256": "b4ef3a1afdde804b616ab64c35524f03f9dfe047ac5fccedcdeef295b9729faf",
+    "initial_decision_sha256": "3c60c415f94a3a606eb763ecfe3ad4c650c1ef24ab99da540bce7ba154896fb7",
+    "preserved_at": ".datum/scratch/gui-p2-inspector-insp01-20261023/initial-*.json",
+    "limit": "Correction is not independent readiness acceptance."
+  },
+  "later_settled_authority_correction": "readiness-packet.json / authority-route-reconciliation.json, independent correction review pending final recorded receipt; no C01 PASS",
+  "bounded_preparation": "Actual PM existing-CLI input grant; separate exact CLI adapter correctness repair recorded in erc-severity-repair.json. No full Inspector production execution."
 }
