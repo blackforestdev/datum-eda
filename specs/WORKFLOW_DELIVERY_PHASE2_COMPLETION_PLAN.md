@@ -727,3 +727,61 @@ and five actual fresh strict matches. The same distinct reviewer reports
 PM accepts those exact amended pins. No GUI, source fixture, product behavior or
 visual authority changed. The explicit temporary worker landing claim returns to
 the acknowledged review-only XP-C05 receiver after normal hook landing.
+
+
+<!-- EVIDENCE:GUI-P2-CROSSPROBE:XP-C05-INDEPENDENT-PASS-20261023 -->
+### Actual distinct independent replay
+
+Reviewer `01a1697c-b5d2-77d1-a9e7-12e688f0f3f6` completed fresh observations using
+private, hash-identical canonical copies and the exact source-matched visual GUI,
+CLI and daemon. [The immutable replay](../docs/reviews/workflow-delivery-rollout/crossprobe/native-independent-replay.json)
+is SHA256 `d0d6c73615d1187d6b50dc17370bba8ae55f32311f240b649a0dd82efa7dca95`;
+[the independent review](../docs/reviews/workflow-delivery-rollout/crossprobe/native-independent-review.json)
+is SHA256 `b9ccd9f24df1200417a292b51bb4439cc0afa31b4ee6804e49b076db3c752778`.
+The actual outcomes are `INDEPENDENT_BOUNDED_NATIVE_REPLAY_PASS` and
+`INDEPENDENT_XP_C05_BOUNDED_REPLAY_REVIEW_PASS`, with no blocking product finding.
+
+All twelve cases retain their precise fresh native, source or accepted-reuse
+classification. Fresh input includes both component directions, both Net entry
+paths, Compound/focus/type scope and derived add/remove refusals, hiding, duplicate
+panes/cameras, Pending Wire/Pad refusal with Complete recovery, cancellation and
+actual native Close followed by a fresh process. The reviewer separately inspected
+actual selected compositor images, public AX/Context output and complete unchanged
+93/87/90-file canonical inventories. This is distinct execution rather than
+producer-log readback. Admission/controller/log-reader mistakes and outer exit143
+remain disclosed, with cleanup never promoted to ordinary Close proof. XP-N06 and
+OS focus-loss remain accepted source/receipt reuse rather than fresh pixel claims.
+
+<!-- EVIDENCE:GUI-P2-CROSSPROBE:XP-C06-PM-ACCEPTED-20261023 -->
+### Actual delegated objective acceptance and explicit idle
+
+Appointed PM `01a160d9-b499-7923-984a-b3390beb2e34` accepts **XP-C05** and
+**XP-C06 objective delivery** on those exact immutable receipts, delivered
+`3bb094a6d51c2046c2c0c153c02b4f099492da09`, handoff
+`ed471f2dada04f2fc9546e860e149b4d2221fed9`, and the already accepted original
+`b2f1228c…` proof plus `a8db6368…` filename amendment. The verified owner
+appointment and PM059 delegation govern this actual acceptance; it is not an
+implementer-generated PASS. [The acceptance record](../docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-acceptance.json)
+records the exact disposition, explicit closure-only ownership transfer and limits.
+
+The receipt phrase “historical broad engine failures remain unrelated disclosed
+intake” does **not** establish their historical origin. Twelve supplemental engine
+failures retain reviewed **static causal exclusion; runtime baseline/origin remains
+UNPROVEN**. There is no proven-preexisting/proven-unrelated, baseline PASS or full
+engine/workspace PASS. The cancelled baseline build has no test PASS/FAIL. Original
+independent receipts remain unchanged; this actual PM clarification controls the
+closure interpretation. Cache repair, minimal-fixture gaps, broader host/platform,
+physical-input/HUMAN, endurance and performance qualification remain separate.
+
+The PM directs XP-C05/06 complete and bounded development availability true,
+closure of `dat-gui-p2-cross-probe-27z` against the real landed delivery, and release
+of the acknowledged closure claim. The reviewer explicitly consents to landing the
+two exact receipt files, with all native input/process ownership released. This
+finishes the complete accepted read-only P2.3 contract. Selection becomes explicit
+**idle**: no successor, P2.4 Inspector work, native-authoring task or new execution
+grant is selected or implied. Await an explicit authorized next assignment.
+
+Closure retires the now-closed cross-probe issue from S5A's live unblocks lists
+without reopening or changing S5A acceptance. Inspector's satisfied dependency
+changes its stale blocked status to specified, preserving existing planning-only
+authorization and unselected state. Neither projection grants successor work.

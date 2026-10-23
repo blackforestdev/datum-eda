@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "task": "GUI-P2-CROSSPROBE",
+  "step": "XP-C05",
+  "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+  "disposition": "INDEPENDENT_XP_C05_BOUNDED_REPLAY_REVIEW_PASS",
+  "replay": {
+    "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-independent-replay.json",
+    "sha256": "d0d6c73615d1187d6b50dc17370bba8ae55f32311f240b649a0dd82efa7dca95"
+  },
+  "finding": "No blocking product defect found within the declared twelve-case fresh/source/reuse contract. Actual reviewer native events and private copies are distinct from producer observations.",
+  "findings": [],
+  "helper_failures": [
+    "Three pre-native admission schema corrections retained; no native/product effects.",
+    "native01 outer tool exit143 despite final completed 40 actual observed steps and verified owned cleanup; cause unestablished, no outer exit0 claim.",
+    "controller03 timed out waiting for quit41 done marker omitted by driver; actual quit/final result and cleanup inspected separately.",
+    "native02 overall FAIL after successful ordinary Close: helper read old crossprobe.log on fresh process reopen, timed out and cleaned owned processes. Native03 corrected phase-log reader independently completed remaining reopen observation; native02 failure retained.",
+    "Main native01 and final native03 SIGTERM are cleanup, never ordinary Close credit.",
+    "Earlier producer-image footer concern was explicitly retracted after separate original-resolution inspection confirmed correct unchanged images; no renderer defect inferred."
+  ],
+  "retained_boundaries": [
+    "Existing admitted visual-feature Vulkan binary, own Weston X11 host / Wayland native app; no KWin/physical-device/HUMAN/performance/full-workspace PASS.",
+    "XP-N06 and OS focus-loss scope explicitly reused accepted exact source/receipts, not new native pixel observations.",
+    "Known electrical registration-cache issue remains open; bounded compensation and accepted source-health boundaries retained.",
+    "Historical broad engine failures remain unrelated disclosed intake, not a suite PASS; cancelled baseline build carries no PASS/FAIL.",
+    "No new builds, dependency, production source edits, prototype edits, objective acceptance or successor authorization."
+  ],
+  "acceptance_authority": "XP-C06 objective acceptance and claim/state disposition belong to appointed PM-agent-01; this independent review does not close task or authorize successor.",
+  "scratch_retention": "Raw native logs, input commands, drivers, own pixels and inventories are local prunable scratch; committed hashes do not guarantee future raw availability. Canonical JSON retains review disposition and exact provenance."
+}

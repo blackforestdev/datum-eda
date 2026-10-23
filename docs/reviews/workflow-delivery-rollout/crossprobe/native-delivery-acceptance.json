@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "task": "GUI-P2-CROSSPROBE",
+  "status": "XP_C05_REPLAY_AND_XP_C06_OBJECTIVE_DELIVERY_ACCEPTED",
+  "delivery_commit": "3bb094a6d51c2046c2c0c153c02b4f099492da09",
+  "handoff_commit": "ed471f2dada04f2fc9546e860e149b4d2221fed9",
+  "production_source_commit": "ee9fa28ee47f4febfd2d013f1bdd07192c23c33c",
+  "independent_receipts": {
+    "native-independent-replay.json": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-independent-replay.json",
+      "sha256": "d0d6c73615d1187d6b50dc17370bba8ae55f32311f240b649a0dd82efa7dca95"
+    },
+    "native-independent-review.json": {
+      "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-independent-review.json",
+      "sha256": "b9ccd9f24df1200417a292b51bb4439cc0afa31b4ee6804e49b076db3c752778"
+    }
+  },
+  "independent_reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+  "actual_replay_outcome": "INDEPENDENT_BOUNDED_NATIVE_REPLAY_PASS",
+  "actual_review_outcome": "INDEPENDENT_XP_C05_BOUNDED_REPLAY_REVIEW_PASS",
+  "blocking_product_findings": [],
+  "manager_acceptance": {
+    "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "authority": "Verified owner appointment recorded in Phase2 completion plan; PM059 scoped review receipts/continuation/objective acceptance.",
+    "actual_disposition_summary": "PM ACCEPTS XP05 actual independent replay PASS and XP06 objective delivery at exactd0d6c736 replay/b9ccd9f2 review; delivered3bb094a6/handoffed471f2d, originalb2+a8amendment. Complete12case fresh/source/reuse; no blocking product findings. Directs actual receipt/acceptance recording,05/06complete, issue closure with real landing evidence, synchronized Frontier/projection/beads/export and normal hooks. No successor implied."
+  },
+  "accepted_behavior": [
+    "Shared captured authored-CI relation projects linked Symbol/Footprint as related context without increasing selected counts or applying counterpart selection appearance.",
+    "Ordinary Wire ladder and Board selection menu acquire complete six-member cross-domain Net; unlinked, Pending and source/refusal/recovery outcomes remain truthful.",
+    "Compound/focus/type scope, pane duplicate/replacement and independent cameras preserve global identity; hiding never prunes complete derived membership.",
+    "Fresh Escape/recovery, actual native Close/fresh reopen and Project-qualified Inspector/AX/Context observations preserve complete canonical inventories.",
+    "Exact five reviewed automated renderer goldens plus actual distinct native replay support bounded development availability; every case retains its declared fresh/source/accepted-reuse classification."
+  ],
+  "clarification_of_immutable_review_wording": {
+    "phrase": "Historical broad engine failures remain unrelated disclosed intake",
+    "controlling_interpretation": "The supplemental engine run had12failures. Static causal exclusion was reviewed; historical runtime origins/baseline remain UNPROVEN. No proven-preexisting, proven-unrelated, baselinePASS or full-engine/full-workspace PASS is inferred. The cancelled baseline build has no test PASS/FAIL.",
+    "receipt_policy": "Original replay/review bytes are preserved unchanged. This actual PM closure clarification narrows their interpretation and grants no waiver or repair claim."
+  },
+  "retained_limits": [
+    "Electrical-record revision/registration-cache intake remains open; the bounded current-reference/history repair does not repair that cache.",
+    "Minimal fixture source gaps remain disclosed; no invented binding, private source writer or fake Mismatch/deletion fixture credit.",
+    "XP-N06 and OS focus-loss retain independently verified accepted source/receipt reuse, with historical archive absence explicit; no fresh deletion or OS-focus pixel claim.",
+    "Existing native Wayland/Vulkan under owned Weston/X11 input is not KWin, physical-input/HUMAN, endurance, performance or broad platform qualification.",
+    "Observer admission/controller/log-reader failures, outer transport143, cleanup versus ordinary Close and retracted pixel finding remain as recorded; no unsupported exit0 or renderer-defect claim.",
+    "Raw evidence is local/prunable, not guaranteed permanent availability. No new dependencies, prototype edits or successor authority."
+  ],
+  "ownership_handoff": {
+    "worker_session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+    "reviewer_actual_yield_summary": "Explicit closure-only transfer of exact two receipt files and factual PM closure/state/projection/beads/route reconciliation, no product paths. Dirty work only those two untracked receipts, no ongoing edits; all own GUI/daemon/Weston stopped and native input released.",
+    "synchronization": "Closure-only worker Frontier/bead/export transfer completed before edits. All claims released at landed closure.",
+    "independent_witness": "Same independent reviewer will inspect faithful closure transcription/state after landing; no replay or build rerun."
+  },
+  "final_disposition": {
+    "development_ready": true,
+    "task": "landed",
+    "XP-C05": "complete",
+    "XP-C06": "complete",
+    "selection": "explicit idle",
+    "successor_authorized": false
+  },
+  "same_change_governance": {
+    "basis": "Reuse complete accepted owning-route review;28other members byte-identical to delivered/handoff HEAD. Only factual independent replay/actual PM acceptance and clarification/idle append changes the Phase2 consumer; no new product/visual rule or qualification waiver.",
+    "unchanged_route_members": {
+      "research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md": "cca1f5ff61feddd3457c65129d4a6f718a25bc130d23c8da4ebab3a54fe69ef9",
+      "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md": "c2f9cae98a954d0022df4ff23cb87c2d03d70e34c13aa28b71f96f69e1ea3740",
+      "specs/FOUNDATION_FOLLOWUP_PLANS.md": "70d7215c44b8fa0d01882d7473fb69e10e83731806811bef5e55596a71800913",
+      "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": "5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265",
+      "docs/reviews/workflow-delivery-rollout/proposal.json": "2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d",
+      "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": "3b262298f69104789138903681e2bf4f5996f50546f5063654b05564f97a28b0",
+      "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md": "bfca7c34318756704592069b6fee6477809795214a977f233d4554a9d9507557",
+      "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": "33b8298b6b25dbe04f16d1846c7f8f5ed496590d3761e3bab9c6e448bdc9767b",
+      "docs/reviews/workflow-delivery-rollout/category-preflight.json": "f252daabfd2c79977bd21c1c84f33bc5ed924c62a9550548263c0adaefeacd53",
+      "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md": "1899f069e547cefc4a946c32723324707d73da4e43881eabe2f6264081ce9c38",
+      "docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json": "8e391ea9c18b1652be0a15cce20508f93b4ecd0abc924b7e6d47701852f0446b",
+      "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md": "6d8934dac46127153ced2239ec3c7ba2e1411b440a73082e3eba790fdd304016",
+      "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md": "bf37bf40d99f65f1f9a8e352394b00924eb03a78be5ed3bc4dc9b8e0d4665e72",
+      "docs/reviews/workflow-delivery-rollout/clauses/adopted-drafting-standard.json": "b065868c38c760908198e98e5a341d366274e5ea8c17eac1103f5a1f7dfed943",
+      "docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json": "135e62e7fbd840f005ef428e4412a9fbf87ec0a25762957e43188b2b5cbc1cf8",
+      "docs/reviews/workflow-delivery-rollout/clauses/native-connectivity.json": "338ef9903d7a85ee95c5059c3af7951c65e1c6e1a00d6627275b3705acb9a5ed",
+      "docs/reviews/workflow-delivery-rollout/clauses/native-workflow-budgets.json": "6a62ca2dcde7eb68881b782ff660cd0ee21456a3157f82a47325e84f06182607",
+      "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md": "668374887357ea8c3e7b3d30a1207882051f5c4cfd9344bac03dc02235248b27",
+      "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json": "7618332dbc4fe998cfd89ea3729e598869a2defbe5e210b00723b4faede14c8c",
+      "docs/reviews/workflow-delivery-rollout/clauses/project-preferences-spec.json": "c127771c0960aefd55e71313c1bd2abcd2376778de513f06d07305f110d6556d",
+      "docs/reviews/workflow-delivery-rollout/cohort-mappings.json": "d9242f0fbd706d2da61383f93b19b732f1a48b2f02fb8ed6d650a5ac97ea37d7",
+      "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md": "b6bf4479553d6a3133a524060c9063bf6a49dac2aa260efd3156716193bbda89",
+      "docs/reviews/workflow-delivery-rollout/coverage-proposal.json": "859d2591b5eff4b96e8749f4c43137f68294f7e3c1b3b669066cb3470c6e1fe1",
+      "docs/reviews/workflow-delivery-rollout/assembled-source-verification.json": "b1a00880bbdf86b916c2ffe4b6f70cea701ad7a02eec17a8eb8920e7b9f21f74",
+      "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": "b3f77121bd63226ea270c21ffd03dea50175691c73023811109c88cb2281fc85",
+      "docs/reviews/workflow-delivery-rollout/native-project-doorway.md": "88046b4ecf2c187fdedc8083dbe9d2bb92eff1424036660b0eb5a9781fc1e316",
+      "docs/reviews/workflow-delivery-rollout/native-project-doorway.json": "a90e099bdee8cbfec705b92aeb1ea88b6fb5097c4130ac1aa80ab96d395ec151",
+      "docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md": "063c94e349e22ceb7fcc748e3f33df38044af7aa0d2870242be396eae89c1505"
+    },
+    "changed_consumer_sha256": "445b1c0619c1dd45d748db630080399cf4839d7c54e3b0ac7f0055f6c0f88177"
+  },
+  "kind": "ordinary_application",
+  "record_type": "Bounded read-only crossprobe ordinary native delivery and actual PM acceptance",
+  "source_commit": "ee9fa28ee47f4febfd2d013f1bdd07192c23c33c",
+  "launch_command": "/home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-crossprobe-xpc05-independent-20261023/inputs/main",
+  "workflow_results": {
+    "Open a native Project with Board and Schematic panes and complete explicit electrical correspondence.": true,
+    "Select an authored object or Global Net from either pane through ordinary pointer, keyboard or selection-menu input.": true,
+    "Project the selected semantic identity into every resolving pane and expose truthful shared Inspector/context state; linked distinct objects remain related context.": true,
+    "Exercise multi-selection, focus/content/filter transitions, cancel and close/reopen without authored changes.": true
+  },
+  "safety_results": {
+    "Preserve exact project/revision/occurrence identity; never infer correspondence from names or scene proximity.": true,
+    "Refuse stale, absent or incomplete correspondence without false selected counterparts or partial Global Net membership.": true,
+    "Keep related context out of selected member counts and preserve its authored appearance.": true,
+    "Selection and cross-probe leave source shards, transaction journal, history and original input bytes unchanged.": true,
+    "Reuse shared acquisition, camera, selection, context, accessible/non-color and rendering owners; preserve pane targeting and cancellation.": true
+  },
+  "contract_result_basis": {
+    "workflow_cases": [
+      [
+        "XP-N01",
+        "XP-N03",
+        "XP-N05",
+        "XP-N08"
+      ],
+      [
+        "XP-N01",
+        "XP-N02",
+        "XP-N03"
+      ],
+      [
+        "XP-N01",
+        "XP-N02",
+        "XP-N03",
+        "XP-N08",
+        "XP-N11"
+      ],
+      [
+        "XP-N07",
+        "XP-N08",
+        "XP-N09",
+        "XP-N10",
+        "XP-N12"
+      ]
+    ],
+    "safety_cases": [
+      [
+        "XP-N01",
+        "XP-N02",
+        "XP-N03",
+        "XP-N06"
+      ],
+      [
+        "XP-N04",
+        "XP-N05",
+        "XP-N06"
+      ],
+      [
+        "XP-N01",
+        "XP-N02",
+        "XP-N03",
+        "XP-N07"
+      ],
+      [
+        "XP-N01 through XP-N12 canonical inventory checks"
+      ],
+      [
+        "XP-N07",
+        "XP-N08",
+        "XP-N09",
+        "XP-N10",
+        "XP-N11",
+        "XP-N12",
+        "accepted shared source/owner proof"
+      ]
+    ],
+    "classification": "Actual independent PASS and PM acceptance support these exact contract outcomes; every case retains immutable replay fresh/source/reuse classification. No source-only case promoted to fresh native observation."
+  },
+  "projection_reconciliation": {
+    "Inspector": "blocked\u2192specified because its existing only hard dependency closed; planning authorization unchanged, canonical false, no new grant.",
+    "S5A": "Remove closed crossprobe issue from live unblocks metadata only; landed state, acceptance and completion evidence unchanged."
+  },
+  "ordinary_configuration": {
+    "fresh_replay": "Existing visual-feature GUI, passive SubmittedFrame diagnostics; normal --project-root launch. Exact visualGUI/CLI/daemon pins in immutable replay candidate. No stateful native-content probe.",
+    "default_cohort": "Original accepted default build/default functional linked-Symbol N01 observation are preserved in b2 proof/run01 and visual-build disposition; not credited as complete default-build selected visual replay.",
+    "pixel_limit": "Native compositor images independently reviewed; strict offscreen5goldens supplement. No HTML/native/offscreen pixel equality.",
+    "qualification": "No KWin/physical-input/HUMAN/performance/full-workspace qualification inferred."
+  }
+}
