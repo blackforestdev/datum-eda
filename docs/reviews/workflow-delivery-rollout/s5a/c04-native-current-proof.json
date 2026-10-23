@@ -42776,5 +42776,48 @@
     },
     "retained_limits": "All accepted C04/C05 raw CAPTURE_ONLY/FAIL/preparation records, source/binary cohorts, class applicability, deferred editors, CAM/T04, hardware/performance and tool-assessed-versus-HUMAN boundaries remain unchanged. This owner appointment delegates the C06 decision; it does not remove ratified criteria or claim new qualification.",
     "consumed_handoff_reconciliation": "UVT-S5-SPEC and S5A-DERIVED-AUTHORITY live unblocks arrays are now empty because their former sole target S5A is closed. Historical effects/dependency edges are preserved; no successor or authority change."
+  },
+  "owner_directed_pm_audit_20261023": {
+    "appointment": "Owner-directed project-manager audit instructed verbatim on 2026-10-23: audit recent dev-agent-02 and review-agent work and fix found flaws. Bounded to audit, disclosure correction and tracker intake; reopens no closed scope and supplies no new PASS, grant or acceptance.",
+    "auditor": "Claude PM session (same lane as docs/gui/prototypes owner); two independent audit subagents (source-level review of dev-agent-02 commits; governance/receipt cross-check of review-agent and S5A closure records) plus direct hash, tracker, lane and selector verification by the auditing session.",
+    "scope_audited": {
+      "dev_agent_02_source": [
+        "037ec5b6",
+        "7f7a7035",
+        "674c3081",
+        "08441241",
+        "4dcd90c0",
+        "6e1d63d6",
+        "d031c0b6",
+        "81e564f0",
+        "7261b765",
+        "4c08d9e3",
+        "9d38f483",
+        "a4b283a8",
+        "0e65a053"
+      ],
+      "s5a_closure": [
+        "2becd644",
+        "a5209328",
+        "09683bcf"
+      ],
+      "package_gui_arc": [
+        "9136b0e2",
+        "7fe4fb1b",
+        "746af448",
+        "docs/reviews/workflow-delivery-rollout/package-gui-creation.json"
+      ]
+    },
+    "clean_results": "No fabricated PASS, no decisive self-review, no canonical-write bypass, no third-party dependency, no fabricated fixture, no prototype-lane violation (selection-study.html edits were authored by Claude session 8ebf9fc1 and HEAD matches the final receipt sha256 7cd5a3a1), no module-size ceiling breach, claimed test counts verified against the tree, cap boundary exact at 256/257, Escape release single-consumption verified, locked-mask shader preserves ordinary roles bit-exactly, dat-lk0l Clippy baseline honestly disclosed and open, tracker and frontier closure state consistent and selector green at explicit idle.",
+    "disclosure_corrections": {
+      "c06_witness_prior_same_arc_role": "The C06 independent governance witness session 01a13e3f-8074-7943-91c1-8a0b09fc21e8 (PASS turn 01a16413) earlier acted in this same arc as a delegate implementer (recorded three times as delegate_session in this file, with exclusive source paths including crates/gui-viewport/src/selection_lifetime.rs and crates/gui-app/src/editor/native_edit_selection/lifetime_report_tests.rs, landed in 037ec5b6). The witness scope was governance transcription/disposition only, and the decisive C04/C05 source and runtime reviews were performed by sessions appearing only in reviewer roles, so closure stands; the independence label is hereby qualified with this prior role.",
+      "c06_reviewed_frontier_sha256_unresolved": "reviewed_frontier_sha256 5cc384e31eee0ae5d194e1e86e42b64db32497fb42f37c29fd548da6470505a3 in the C06 witness receipt matches no committed specs/active_frontier.json version (verified at 037ec5b6, 2becd644, a5209328, 09683bcf and HEAD: 1b91ccd7/072c578c/459f1b13/9cdd1ebf) nor the rendered projection. The frontier was evidently regenerated after witness review and before commit 09683bcf. Four of five bindings verify exactly (foundation plan, beads, pre-receipt proof, owner delegation rollout row); this one is unverifiable and must not be cited as an exact frozen-file verification.",
+      "evidence_archives_absent": "Every *.tar.xz archive referenced from this record, including the top-level c04-native-current-evidence.tar.xz (sha256 917c9b54...) and the complete native-evidence/ store, is gitignored (.gitignore:8 *.xz), was never git-tracked, and is absent from the working tree as of 2026-10-23. Recorded receipt hashes and committed JSON receipts are the only remaining retention; any wording in this record that calls an archive committed or retained is to be read with this limitation."
+    },
+    "referred_intakes": {
+      "dat-schematic-show-authored-unification-9tpd": "674c3081 also made the Schematic surface honor the global show_authored toggle, unflagged, with the documenting comment removed and the show_authored=false branch untested; owner confirmation plus a focused test (or board-only regating) required.",
+      "dat-s5a-evidence-receipt-retention-gaps-w66d": "Receipt-retention convention gaps: absent archives, the unresolved frontier binding above, and the Package-GUI reviewer identified only as /root/closeout_review with no session id or receipt artifact."
+    },
+    "closure_effect": "None. UVT-S5A-BUILD remains closed at explicit idle; dat-uvt-s5a-build-1wv remains closed; no acceptance is added or withdrawn and no successor is selected or authorized."
   }
 }
