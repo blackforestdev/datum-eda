@@ -207,6 +207,20 @@ State a brief rationale per cohesive batch, reuse adequate evidence across
 handoffs, and keep raw output out of working context. No new approval workflow
 or test ledger is required. Required acceptance and commit checks remain in force.
 
+**Evidence records state their own retention honestly.** Keep these conventions
+whenever a review record references evidence or binds an acceptance hash:
+- Evidence archives (`*.tar.xz` and similar per-run artifacts) are machine-local,
+  prunable retention identified by their SHA-256; they stay gitignored and
+  uncommitted. The committed JSON receipt — per-entry manifests, hashes, and
+  review outcomes — is the durable evidence of record. A record must never
+  describe an ignored or uncommitted path as "committed" or "retained" in-repo.
+- Independent-review receipts must carry the reviewer's session/thread id, not
+  only a role path such as `/root/closeout_review`, so reviewer and manager
+  distinctness rests on an identifier rather than assertion.
+- Acceptance hash bindings must be taken against the exact staged bytes of the
+  commit they bless; re-hash after any regeneration step (for example a frontier
+  sync) so the binding matches what actually lands.
+
 ## Rust build resource discipline
 
 Datum's verification workload is larger and more concurrent than Cargo's
