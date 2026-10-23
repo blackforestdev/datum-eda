@@ -97,6 +97,7 @@ fn prove(rotated: bool) {
     if let ElectricalIdentity::NetRelationship { evidence, .. } = &mut f.relationship.identity {
         evidence[0].board_pad.object_id = pad.uuid;
         evidence[0].board_pad.object_revision = f.model.objects[&pad.uuid].object_revision;
+        evidence[0].component_instance.object_revision = f.model.objects[&ci].object_revision;
     }
     let write = build_adopt_pin_correspondence(
         &f.model,

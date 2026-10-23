@@ -108,7 +108,7 @@
 </details>
 
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
-   XP-C03 active. Current commit/reopen Net6/Run2/linked Object and duplicate/future-pin atomic refusal pass; Undo stale epoch failure retained. Distinct D2-H1 authority/impact review PASS accepted by appointed PM; bounded four-path history implementation authorized with immutable semantic snapshots and explicit monotonic local-reference metadata compensation. No promoted-replay/cache repair grant. XP04/05/06 and complete ordinary delivery remain pending. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   XP-C03 active: bounded current CI/Pad/Net source and compensated history repair independently reviewed and accepted at staged proofab7efe48 with exact focused engine4,36resolver tampercontrols, shared protocol/source/build evidence. Ordinary12case native matrix, frame-correlated selected visuals/goldens and fresh distinct XP05/XP06 acceptance remain pending. Existing fullengine12failures statically excluded with historical origin unproven; cache repair and cancelled baseline remain excluded. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md`, `specs/ENGINE_SPEC.md`, `specs/NATIVE_FORMAT_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
@@ -680,10 +680,11 @@ Recorded coverage: 1 [x], 1 [~]. Detailed scope and limitations remain in the li
 
 ## ENGINE_SPEC.md — Core Types
 
-PM057 D2-H1 target clarification passed independent authority/impact review and
-appointed PM acceptance; four-path current-reference history implementation is
-authorized and pending. Current Net/Run/Object checks pass; Undo completeness does
-not yet pass. No broader availability or qualification is inferred.
+PM057 D2-H1 source integration passed independent bounded source/proof review
+and appointed PM acceptance at proof `ab7efe48`. Current Net/Run/Object and
+canonical Undo/Redo/fresh-reopen checks pass, including exact revision metadata
+and refusal controls. Ordinary native/visual delivery and full qualification
+remain pending; the broader engine regression failures remain disclosed.
 
 Checkpoint evidence and retained boundaries remain in the linked detail; current selection comes from the Active Frontier. [Detailed evidence](progress/contract_coverage_details.md#engine_specmd--core-types).
 

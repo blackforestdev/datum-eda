@@ -6,6 +6,7 @@ use super::{
     CommitProvenance, CommitReport, DesignModel, EngineError, Operation, OperationBatch,
     TransactionKind, TransactionRecord,
 };
+mod component_binding;
 
 impl DesignModel {
     pub fn commit_journal_undo(
@@ -95,27 +96,34 @@ impl DesignModel {
             operations: target.inverse_operations.clone(),
         };
         super::board_batch_basis::bind_imported_fill_history(self, &mut batch)?;
+        let current_component_history =
+            component_binding::prepare(self, project_root, target, &mut batch)?;
         let (undo_of, redo_of) = match transaction_kind {
             TransactionKind::Undo => (Some(target.transaction_id), None),
             TransactionKind::Redo => (None, Some(target.transaction_id)),
             TransactionKind::Normal => (None, None),
         };
-        let after_model_revision = if compensation_needs_revision_override(target) {
-            Some(match transaction_kind {
-                TransactionKind::Undo => target.before_model_revision.clone(),
-                TransactionKind::Redo => target.before_model_revision.clone(),
-                TransactionKind::Normal => self.model_revision.clone(),
-            })
-        } else {
-            None
-        };
+        let after_model_revision =
+            if !current_component_history && compensation_needs_revision_override(target) {
+                Some(match transaction_kind {
+                    TransactionKind::Undo => target.before_model_revision.clone(),
+                    TransactionKind::Redo => target.before_model_revision.clone(),
+                    TransactionKind::Normal => self.model_revision.clone(),
+                })
+            } else {
+                None
+            };
         self.commit_journaled_with_links_and_inverse(
             project_root,
             batch,
             transaction_kind,
             undo_of,
             redo_of,
-            Some(target.operations.clone()),
+            if current_component_history {
+                None
+            } else {
+                Some(target.operations.clone())
+            },
             super::commit::CommitPolicyContext::Direct,
             after_model_revision,
             None,

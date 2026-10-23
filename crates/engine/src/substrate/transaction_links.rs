@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use super::{TransactionKind, TransactionRecord};
+mod component_binding;
 
 pub(super) fn validate_transaction_links(
     transaction: &TransactionRecord,
@@ -94,6 +95,9 @@ fn validate_compensating_payload(
     prior: &[TransactionRecord],
     label: &str,
 ) -> Result<(), String> {
+    if component_binding::matches(transaction, target, prior) {
+        return Ok(());
+    }
     if transaction.operations != target.inverse_operations
         && !super::board_batch_basis::matches_imported_fill_compensation(transaction, target, prior)
     {

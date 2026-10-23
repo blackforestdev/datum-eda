@@ -13,6 +13,9 @@ pub(super) fn capture(
     Vec<String>,
     BTreeMap<String, InspectionState>,
 ) {
+    // Related bindings may enumerate more identities than the selected subject.
+    // The same existing detail cap protects this second path to member evidence.
+    let truncated = truncated || view.related.len() > 256;
     let mut inspection = BTreeMap::new();
     let mut omitted = Vec::new();
     let mut omitted_states = BTreeMap::new();
@@ -25,16 +28,20 @@ pub(super) fn capture(
         // in its canonical reason. Do not leak it through another field or
         // publish a prefix. Name each omitted field for explicit complete query.
         let detail = view.field_detail_kind(name);
+        let detail_members = match value {
+            InspectionValue::Common(value) => member_detail_count(value),
+            _ => 0,
+        };
         let member_evidence = match value {
             // The structural guard also protects legacy/directly replaced
             // Common values whose provenance has not been updated.
-            InspectionValue::Common(value) => {
-                detail != InspectionDetailKind::Ordinary || contains_member(value)
+            InspectionValue::Common(_) => {
+                detail != InspectionDetailKind::Ordinary || detail_members > 0
             }
             InspectionValue::Unavailable(_) => detail != InspectionDetailKind::Ordinary,
             InspectionValue::Mixed => false,
         };
-        if truncated && member_evidence {
+        if (truncated && member_evidence) || detail_members > 256 {
             omitted.push(name.to_owned());
             omitted_states.insert(name.to_owned(), value.state());
         } else {
@@ -44,14 +51,29 @@ pub(super) fn capture(
     (inspection, omitted, omitted_states)
 }
 
-fn contains_member(value: &Value) -> bool {
+fn member_detail_count(value: &Value) -> usize {
     match value {
         Value::Object(fields) => {
-            (fields.contains_key("class")
-                && (fields.contains_key("id") || fields.contains_key("source_id")))
-                || fields.values().any(contains_member)
+            if fields.contains_key("class")
+                && (fields.contains_key("id") || fields.contains_key("source_id"))
+            {
+                1
+            } else {
+                bounded_sum(fields.values())
+            }
         }
-        Value::Array(values) => values.iter().any(contains_member),
-        _ => false,
+        Value::Array(values) => bounded_sum(values.iter()),
+        _ => 0,
     }
+}
+
+fn bounded_sum<'a>(values: impl Iterator<Item = &'a Value>) -> usize {
+    let mut count = 0;
+    for value in values {
+        count += member_detail_count(value);
+        if count > 256 {
+            break;
+        }
+    }
+    count
 }

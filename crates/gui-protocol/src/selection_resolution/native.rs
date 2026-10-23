@@ -24,6 +24,7 @@ pub struct NativeSelectionProjection {
     pub electrical: Option<ElectricalMembership>,
     pub board_run: Option<BoardRunMembership>,
     pub bus_run: Option<BusRunMembership>,
+    pub component_context: eda_engine::substrate::ComponentSelectionContext,
 }
 
 /// Immutable per-model-basis authority, shared by panes. It has no selected
@@ -207,6 +208,7 @@ impl NativeSelectionResolution {
             electrical: None,
             board_run: None,
             bus_run: None,
+            component_context: Default::default(),
         };
         match subject {
             SelectionSubject::None => {}
@@ -305,6 +307,23 @@ impl NativeSelectionResolution {
             .related_parents(self.revision(), &children)
             .map_err(SelectionResolutionError::Engine)?;
         projection.related.extend(self.identities(&parents)?);
+        let component_origins = projection
+            .members
+            .iter()
+            .filter(|id| matches!(id.class, Class::Symbol | Class::Footprint))
+            .map(occurrence)
+            .collect();
+        projection.component_context = self
+            .snapshot
+            .component_selection_context(self.revision(), &component_origins)
+            .map_err(SelectionResolutionError::Engine)?;
+        let counterparts = projection
+            .component_context
+            .relations
+            .iter()
+            .map(|relation| relation.counterpart.clone())
+            .collect();
+        projection.related.extend(self.identities(&counterparts)?);
         projection
             .related
             .retain(|id| !projection.members.contains(id));
@@ -417,6 +436,8 @@ fn source_identity(
 }
 fn occurrence(id: &AuthoredSelectionIdentity) -> ElectricalOccurrence {
     let class = match id.class {
+        Class::Footprint => "packages",
+        Class::Symbol => "symbols",
         Class::Track => "tracks",
         Class::Via => "vias",
         Class::Zone => "zones",

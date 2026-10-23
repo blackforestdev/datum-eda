@@ -10,6 +10,7 @@ use crate::substrate::{
     },
 };
 use std::collections::{BTreeMap, BTreeSet};
+mod component_binding;
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PadLandPatternSource {
     Footprint(Uuid),
@@ -67,7 +68,8 @@ pub fn build_materialize_component_pad_sources(
             "request differs from the guarded placement/Part preimage",
         ));
     }
-    let (pads, transition) = materialize(model, request, &board)?;
+    let (mut pads, transition) = materialize(model, request, &board)?;
+    let binding_updates = component_binding::refresh(model, request, &board, &mut pads)?;
     let mut previous = serde_json::Map::new();
     // Preserve the full historical materialization, including unaffected graphics.
     for (name, map) in board
@@ -128,6 +130,7 @@ pub fn build_materialize_component_pad_sources(
             previous_materialized: serde_json::Value::Object(previous),
             materialized: serde_json::Value::Object(next),
         })
+        .push_ops(binding_updates)
         .primary_object(request.placement.uuid);
     if let Some(id) = request.component_instance {
         let object = model
@@ -483,3 +486,6 @@ mod exact30_tests;
 
 #[cfg(test)]
 mod proposal_tests;
+
+#[cfg(test)]
+mod component_binding_tests;

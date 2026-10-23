@@ -4,6 +4,8 @@
 mod authored_sources;
 #[path = "electrical_selection_query/bus_run.rs"]
 mod bus_run;
+#[path = "electrical_selection_query/component_relations.rs"]
+mod component_relations;
 #[path = "electrical_selection_query/origin_binding.rs"]
 mod origin_binding;
 #[path = "electrical_selection_query/related_parents.rs"]
@@ -15,6 +17,7 @@ use crate::substrate::{
 };
 pub use authored_sources::{AuthoredSelectionSource, SelectionSourceDomain};
 pub use bus_run::{BusRunMembership, CrossBusContact};
+pub use component_relations::{ComponentSelectionContext, ComponentSelectionRelation};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 

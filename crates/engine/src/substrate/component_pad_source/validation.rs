@@ -7,6 +7,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     path::Path,
 };
+mod component_binding;
 pub(crate) fn validate_native(board: &Value) -> Result<(), EngineError> {
     let mut ids = BTreeSet::new();
     if let Some(map) = board.get("component_pads").and_then(Value::as_object) {
@@ -154,6 +155,7 @@ pub(crate) fn validate_batch(
         return Err(invalid("current canonical profile-4 preimage required"));
     }
     let mut current = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    let final_bindings = component_binding::final_bindings(model, batch, kind)?;
     let mut pass = crate::substrate::board_list_journal_ops::BoardPass::new(&mut current);
     for operation in &batch.operations {
         match operation {
@@ -180,6 +182,7 @@ pub(crate) fn validate_batch(
                     None,
                     materialized,
                     kind,
+                    &final_bindings,
                 )?;
             }
             Operation::SetBoardPackagePackage {
@@ -198,6 +201,7 @@ pub(crate) fn validate_batch(
                     Some(previous_materialized),
                     materialized,
                     kind,
+                    &final_bindings,
                 )?;
             }
             Operation::DeleteBoardPackage {
@@ -264,6 +268,7 @@ fn validate_materialization(
     previous: Option<&Value>,
     next: &Value,
     kind: TransactionKind,
+    final_bindings: &BTreeMap<Uuid, crate::substrate::ComponentInstance>,
 ) -> Result<(), EngineError> {
     if let Some(previous) = previous {
         validate_preimage(board, package_id, previous)?;
@@ -382,9 +387,9 @@ fn validate_materialization(
                 check_pin(model, map)?;
             }
             if let Some(reference) = &b.component_instance {
-                let ci = model
-                    .component_instances
+                let ci = final_bindings
                     .get(&reference.object_id)
+                    .or_else(|| model.component_instances.get(&reference.object_id))
                     .filter(|c| {
                         c.object_revision == reference.object_revision
                             && c.part_ref == Some(b.part.object_id)

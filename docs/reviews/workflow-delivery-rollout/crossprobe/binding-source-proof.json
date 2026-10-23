@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "kind": "crossprobe_canonical_binding_source_proof",
+  "status": "Focused canonical binding/history and shared protocol integration PASS; actual independent source/proof receipt and appointed PM disposition recorded separately. No ordinary native availability or objective acceptance.",
+  "task": "GUI-P2-CROSSPROBE",
+  "step": "XP-C03",
+  "base_commit": "922be3dff5f904cb0cd82cd1f4315638019a817f",
+  "source_inputs": {
+    ".cargo/config.toml": "2fd95f9d85f32b6bf4cc170d660db39d16dd078d707792dfbd0a188cdedcc405",
+    "Cargo.lock": "b566a5b6b876e3c1f13674105630af35e8e2294bacd0ffb6b563d0d836343c4f",
+    "Cargo.toml": "ebc10b032c7bf858854e897aa1ab9f79b6f76257023257f55b6d4be19d2332a7",
+    "crates/engine/src/api/native_write/board_components/pad_materialization.rs": "799bd3580b436f5e54552c902ef917e8bc3695cac54204a67ab0676b85d2cc0c",
+    "crates/engine/src/api/native_write/board_components/pad_materialization/component_binding.rs": "325c1ba872c1d9fa499352c269404f8c744e671944723351877b7cee35717f9d",
+    "crates/engine/src/api/native_write/board_components/pad_materialization/component_binding_tests.rs": "103c39dd879221af757770e0c02ec17caf197040984d888a419fc56998123ff3",
+    "crates/engine/src/api/native_write/board_components/pad_materialization/component_binding_tests/tamper.rs": "0bfeeaa19310f92986a613a67ba35863af2d6844413d096d439022263f148c13",
+    "crates/engine/src/api/native_write/electrical/placed_pad_binding_tests.rs": "62fa549829e13b98e611f7581f855343b9c1d09a16f526c0bb64e229ffb1bfd7",
+    "crates/engine/src/substrate/component_pad_source/validation.rs": "82ce6d168811a613adb9cfec45b1fb372a99a2fb867737ca94e67f905d7369c7",
+    "crates/engine/src/substrate/component_pad_source/validation/component_binding.rs": "e1d75977237b6a2df162d5418ff28ddb6860a3236d65d39ce9c0a55b4692942a",
+    "crates/engine/src/substrate/electrical_selection_query.rs": "ef860f9de234279d13a93c23d930ea438dd490f3ea0aa65a009476bea0c3fa9b",
+    "crates/engine/src/substrate/electrical_selection_query/component_relations.rs": "f47ee82634e3595bc3c2ccc1ccc38b4a9a6186bd93c6e3acc65df18466112569",
+    "crates/engine/src/substrate/transaction_links.rs": "3a5e2e4ab1def1a5ebae42bc943c5f58008e7f8a8cf8360e69fe09328bac0577",
+    "crates/engine/src/substrate/transaction_links/component_binding.rs": "51ce6c014acd6f68dca1bb09a6c0f74c497af2dceae4054a39cc7e2a21098b18",
+    "crates/engine/src/substrate/undo_redo.rs": "3c62855a210b364366cefc36d482e76510b3718309140aa7810f0ed83287f2b2",
+    "crates/engine/src/substrate/undo_redo/component_binding.rs": "26bf6382ffa1ba3e66a28e2c032883fb8847b5c9f92deb948b1af2215760561e",
+    "crates/gui-protocol/src/context_envelope/selection_inspection.rs": "935dac4b9757c279870ca80b0f1f8320379dae011fe8f59113da6b716a79ef92",
+    "crates/gui-protocol/src/selection_resolution/native.rs": "d6468516cd138129d736c76fff28ec5c2d7a066c9702d6e6d9e5367b95b9ccf6",
+    "crates/gui-protocol/src/selection_view.rs": "a828e3572a0f6a36a8ec63fef5b2e88920eca4969f04a094b3d23455785d9c8d",
+    "crates/gui-protocol/src/selection_view/component_relations.rs": "53a52569540b2dbcde41a0dbc8e70dc5da5e2998b71400d6ac7026ce7d3f7d96",
+    "crates/gui-protocol/tests/native_selection_related.rs": "4e456de9d6bc4bccf6508a4147554e1199e1398e9f89b37aa7e8d226b178ca88"
+  },
+  "source_snapshots": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-final-source",
+  "source_input_receipt": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-final-source-inputs.json",
+  "authority": {
+    "decision": "docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md#d2-h1--current-references-in-bounded-materialization-compensation",
+    "actual_grants": "docs/reviews/workflow-delivery-rollout/crossprobe/history-reference-disposition.json",
+    "related_issue": "dat-component-pad-ci-pin-lifecycle-43kg"
+  },
+  "focused_engine": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine component_binding_tests -- --nocapture",
+    "exit_code": 0,
+    "passed": 4,
+    "failed": 0,
+    "proof": [
+      "Exact Net6/all origins; Run exactly connected Track+Pad; bidirectional authored Object relation after normal commit/reopen.",
+      "Duplicate/futureCI/missingEI/futureEI Pad pin refuse without source/journal writes.",
+      "Canonical Undo+Redo restore exact recorded semantic fields and only explicit expected metadata deltas; CI/package/Pad advance exactly pre+1 live and after fresh resolver journal replay.",
+      "Original journal prefix and unrelated source bytes unchanged.",
+      "Seven stale/foreign/missing/duplicate/history/counter precondition refusal controls.",
+      "Eighteen actual resolver forward/inverse/semantic/dependency/lineage controls after BOTH Undo and Redo (36 executions), including prior Package Bump/move and affected EI counter/pins. Malformed prior control13 was corrected to typed Operation serialization; no wrong-layer refusal credit."
+    ],
+    "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-final-typed-controls-tests.log",
+    "sha256": "0997d7b346bb04a46920d2735c50753ccb941d3e3b5728a9e9630bd5fa31f00a"
+  },
+  "shared_protocol": {
+    "status": "PASS in affected source scope: 164 reused +12 targeted lib cases,3lib ignored;7native relation/context regressions pass,1ignored.",
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol --lib --test native_selection_related",
+    "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-final-protocol-tests.log",
+    "setup_attempt": {
+      "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-final-protocol-tests.log",
+      "sha256": "b86bc1ff3d222d58ac625b1934d6887e35157e249c4d80cc7c54d014d6e6535f",
+      "exit_code": 101,
+      "passed": 164,
+      "failed": 12,
+      "ignored": 3,
+      "cause": "Eleven failures explicitly report nested matching-CLI build guard refusal. missing_or_corrupt_declared_rules_refuses_open_without_repair_or_publication failed its expected missing_required_shard assertion; its cause remains unknown until targeted post-build rerun. Native selection integration target did not run after lib failure.",
+      "remedy": "Build exact same-source CLI/daemon companions before affected protocol tests, preserving guard; no bypass."
+    },
+    "rerun_policy": "Reuse164 unchanged source passes; after required matching-companion build rerun exactly failed12 plus pending native_selection_related target. No whole-lib repetition.",
+    "failed_group_rerun": {
+      "exit_code": 0,
+      "passed": 12,
+      "failed": 0,
+      "filtered": 167,
+      "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-protocol-failed12-after-prebuild.log",
+      "sha256": "45c1e4397baf2eaf6532c222030b5f81045f93afdc60e871b263eb88ee000aa2",
+      "scope": "Only failed12 after explicit companion prebuild; unchanged164 earlier passes reused,3ignored preserved. Rules-validation unknown cause resolved operationally by actual passing rerun after setup, not asserted retrospectively from first failure."
+    },
+    "native_related": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "ignored": 1,
+      "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-protocol-native-related-final.log",
+      "sha256": "2d251a99439810f2c46899f65f07c1be57c62cc1d8d30c7bea0c24bc65549dcc",
+      "limits": "Regular regressions only; ignored frozen fixture mutation/diagnostic was not run or credited."
+    }
+  },
+  "supplemental_engine_suite": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine --lib -- --test-threads=4",
+    "exit_code": 101,
+    "passed": 1244,
+    "failed": 12,
+    "ignored": 1,
+    "scope": "Earlier source candidate before final Package epoch and tamper corrections; not a final-tree or historical-baseline qualification receipt. No repeat full suite solely to seek green.",
+    "classification": "STATIC_CAUSAL_EXCLUSION, historical runtime origin unproven except exact prior genesis issue; no introduced-regression demonstrated, no fullsuite PASS.",
+    "groups": {
+      "cache_symptom_static_exclusion": [
+        "api::native_write::electrical::binding_membership_tests::final_split_membership_controls_explicit_binding_and_refuses_the_entire_topology_batch",
+        "api::native_write::electrical::binding_tests::explicit_pinned_pin_pad_correspondence_reopen_and_refusal",
+        "api::native_write::electrical::tests::explicit_bus_split_merge_records_survivor_and_replays",
+        "api::native_write::manufacturing::tests::plan_create_set_delete_round_trip_through_commit",
+        "api::native_write::output_jobs::tests::output_job_create_set_delete_round_trip_through_commit"
+      ],
+      "known_concurrent_genesis": [
+        "preferences::project_genesis_lifecycle_tests::concurrent_identical_creators_publish_once_and_replay_one_result"
+      ],
+      "ram_only_generated_evidence": [
+        "substrate::tests::generated_evidence_scope::commit_journaled_rejects_artifact_run_with_mismatched_artifact_metadata_without_staging",
+        "substrate::tests::generated_evidence_scope::commit_journaled_rejects_output_job_run_with_mismatched_artifact_metadata_without_staging"
+      ],
+      "unchanged_noncomponent_attachment_history": [
+        "substrate::tests::pool_library::journaled_pool_part_model_attach_detach_are_replayable_and_undoable"
+      ],
+      "empty_destination_authority_restore": [
+        "substrate::tests::revision_authority::authority_snapshot_is_in_generation_and_design_commit_carries_it_unchanged",
+        "substrate::tests::revision_authority::unknown_authority_schema_survives_backup_and_restore_byte_exact",
+        "substrate::tests::revision_policy::seed_consumption_is_atomic_copy_once_and_receipted"
+      ]
+    },
+    "independent_triage_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "intake_issue": "dat-engine-regression-metadata-history-wvtl",
+    "baseline": "CANCELLED_BY_PM_RESOURCE_SCOPE; no baseline test result; logs/source/target preserved",
+    "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-integration-engine-regressions.log",
+    "sha256": "322b513787ff2d0d9aec8b5aeabd1a3c39314c7206b895b59a15ade3f5dc5cd0"
+  },
+  "fixture_limits": [
+    "The minimal engine unit fixture has two nil NetClass references and one missing library Symbol; supplementary CLI validation is not full fixture PASS. These source-validation defects are not repaired or automatically made cross-probe prerequisites.",
+    "Those are unit fixtures, distinct from the frozen C01 native Project and later ordinary native candidate inputs."
+  ],
+  "retained_attempts": [
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-final-source-health.log",
+      "sha256": "ae6d73ed7ec2f17e7b1ff4b3c5db167674158cf772689ffb561a5b9c5aaea476",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-compensation-tests-import.log",
+      "sha256": "ba32fe24f5ad76d1155955f10a7a36132db999d9b47b3a1d14fa628f26ed1057",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-compensation-tests.log",
+      "sha256": "973d9643f5961521ddf180da60bac63fc4f6be99fb19ccb1c70a5445471cabac",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-composer-check.log",
+      "sha256": "e434c9de0bfdaebc1c247e46beba7930830f68d55664d27ce5afc8dd419b43a9",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-durable-basis-tests-borrow.log",
+      "sha256": "6105fdf47f4af5d9ae482531e75f2e1d3d2fcf55965fc8154c6d486c245651c3",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-durable-basis-tests.log",
+      "sha256": "ae39eca18720d777f59371afa1be93000c58decfe6db2a8d4ca5b02961fb09a0",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-durable-failure-stack.log",
+      "sha256": "9ea090d0f4640735e61c5f122aa59c6af7894855508ff5b396c32e8676361260",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-durable-final-source-health.log",
+      "sha256": "a55f65e1608be90d722130eb9d5f3b9298789e6d94adad88fb6f99afc85e2e17",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-durable-source-health.log",
+      "sha256": "a55f65e1608be90d722130eb9d5f3b9298789e6d94adad88fb6f99afc85e2e17",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-final-package-epoch-tests.log",
+      "sha256": "320303551272b889b15245f331c582eafca31df3520c3b638558f1e17258dd62",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-link-check.log",
+      "sha256": "b26c8da64f0a1f37168a2afe54ff7de797bbe1063d1a83e78ded6323f9e1beda",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-link-parity-tests.log",
+      "sha256": "0d7bd2fedeb1b3c61cc1a54f2cb2f701c051b38b3f4a1be2e5b5c8d3d9cc0d1a",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-link-source-health.log",
+      "sha256": "ae6d73ed7ec2f17e7b1ff4b3c5db167674158cf772689ffb561a5b9c5aaea476",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-pending-basis-tests.log",
+      "sha256": "39c9841013dcf88833dfbd3634fff9a23fb194b39b374cd9a37b0997482a27a9",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-pending-source-health.log",
+      "sha256": "a55f65e1608be90d722130eb9d5f3b9298789e6d94adad88fb6f99afc85e2e17",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-retained-read-only.log",
+      "sha256": "611dd3627a8d6b63bf8a9e31ec3338bb764f88dd3b3785c9fa0da54ddce5a38a",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-source-health.log",
+      "sha256": "a55f65e1608be90d722130eb9d5f3b9298789e6d94adad88fb6f99afc85e2e17",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-owner-check.log",
+      "sha256": "ff2750a07b0102858dc1d93e08d8001dff7526fc1a79537c6b8800f734417e15",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-owner-tests-corrections.log",
+      "sha256": "cf9eeed5b5af538d4c960c53a666e8c41da85d0527dd01bc1280c34a22275c95",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-owner-tests-fresh-pin.log",
+      "sha256": "f30cfdb8eb613e75271d50979a04d5f85014873d080ef7ab2f9ebd8d2eaa2139",
+      "role": "Retained historical attempt; not final-source success"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-owner-tests.log",
+      "sha256": "b731f0a0073974e82e61d70c4e8dd2c49062646e00887208936b9b06b630e495",
+      "role": "Retained historical attempt; not final-source success"
+    }
+  ],
+  "limits": [
+    "No generic stale/current guard relaxation, epoch reset, historical alias, schema or third-party dependency.",
+    "Known electrical registration-cache discrepancy remains unfixed; exact diagnosed caller/durable difference only is admitted under actual PM disposition.",
+    "No promoted-object or generic resolver replay source edit.",
+    "Native finite cases, frame-correlated selected captures/goldens, fresh distinct XP-C05 replay and PM XP-C06 objective acceptance remain required."
+  ],
+  "matching_native_build": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-eda-cli -p eda-engine-daemon -p datum-gui-app -p eda-test-harness --bin datum-eda --bin eda-engine-daemon --bin datum-gui --bin s5a_fixture",
+    "status": "PASS",
+    "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-matching-native-build.log",
+    "exit_code": 0,
+    "sha256": "2bb34a1d017f3794c6262d85bc1762d651811810e0e5042894c92b0c1c4d4d89",
+    "profile": "Cargo dev; exact Cargo.toml/Cargo.lock source inputs pinned",
+    "binaries": {
+      "datum-eda": {
+        "path": "target/debug/datum-eda",
+        "sha256": "7ce87401ad90b4204520fc7bfa224d8244740d10255b0fb3df065d35794779f5",
+        "depinfo_sha256": "213733c13c2c07f4b6fd977d4778f43ed8964b656d26ac36640a3a7c14fb9805"
+      },
+      "eda-engine-daemon": {
+        "path": "target/debug/eda-engine-daemon",
+        "sha256": "52390af2bcf311128ce1dc58d494fe5cc6fc7e92d518976a1913299fd18f332a",
+        "depinfo_sha256": "26bf9f6a490dedb43b26a8c65105276578d269720aba262b752c88d720af6367"
+      },
+      "datum-gui": {
+        "path": "target/debug/datum-gui",
+        "sha256": "fba0317b7e8bfcf28f5c7dab2f930241494cfbea9acf765a1b3cf081fbeec2b8",
+        "depinfo_sha256": "8d22a5fbb3a6560ebc13cb4daa7b93261c76e8099da3b8d75465cd1dc6863713"
+      },
+      "s5a_fixture": {
+        "path": "target/debug/s5a_fixture",
+        "sha256": "12cd37830d09e702287ed3b08ab070192cf361054409676dcb865b1108f65361",
+        "depinfo_sha256": "5d279848d5d1d8887cbba081f97e66a543b060d786e79b613ec84f6a5efa879c"
+      }
+    },
+    "warning": "One existing gui-render PanePlan::overflow dead-code warning, outside edited sources; build succeeds."
+  }
+}

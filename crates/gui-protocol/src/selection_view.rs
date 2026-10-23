@@ -1,4 +1,5 @@
 //! Complete, revision-bound shared output. Never an authored group or writer.
+mod component_relations;
 mod inspection;
 mod inspector_labels;
 mod inventory;
@@ -445,6 +446,7 @@ pub fn build_selection_view(
     result.unprojected = result.members.difference(&represented).cloned().collect();
     placed_pad_inspection::append(&mut result, model, board_source);
     result.inspection = inspection::compile(&result);
+    component_relations::append(&mut result, &projection.component_context);
     if let Some(scope) = result
         .inspection
         .iter_mut()

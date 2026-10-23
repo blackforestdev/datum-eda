@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "Governing transcription independently reviewed and accepted by appointed PM; exact four-path history implementation authorized, source/proof review and delivery pending",
+  "status": "Bounded canonical binding/history source repair independently reviewed and accepted by appointed PM; ordinary native/visual and XP04-06 delivery remain pending",
   "issue_id": "dat-component-pad-ci-pin-lifecycle-43kg",
   "evidence": {
     "focused_log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-owner-tests-fresh-pin.log",
@@ -105,5 +105,30 @@
     "thread": "01a160d9-b499-7923-984a-b3390beb2e34",
     "actual_message": "PM ACCEPTS actual D2-H1_AUTHORITY_IMPACT_REVIEW_PASS/no findings at PM057e99d5184/ENGINE198c6d51/Native12312ee8/Plan5ea5680e/proposal8046e8a3. AUTHORIZE history implementation exact4paths: crates/engine/src/substrate/undo_redo.rs; undo_redo/component_binding.rs; component_pad_source/validation/component_binding.rs; api/native_write/board_components/pad_materialization/component_binding_tests.rs. Sync lease first; reconcile reviewed route digests/classification then land governing clarification owned paths, continue code without admin stop. Implement exact D2-H1 allowlist/semantic restoration/immutablejournal/monotonicrefs/newinverse/atomicrefusal with focused commit-undo-redo-reopen-replay proof. No conditional promotedreplay/cacheissue grant or other schema/guard expansion. Get independent code/proof review before landing. If exact parity requires another path, send concrete narrow delta; no automatic expansion.",
     "status": "Governing candidate review/acceptance supersedes its historical pending labels; four-path implementation authorized, not complete."
+  },
+  "durable_basis_disposition": {
+    "thread": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "actual_message": "APPROVED bounded4path-only durable-basis integration for recognized compensation, not cache repair. Capture existing ProjectResolver basis matching canonical commit; require exact Project/modelrevision/journaltip+byte-identical linked actualtarget and exact caller semantic CI/Net/preimages. Any caller/source semantic mismatch or stale basis refuses, no substitution erasing intervening changes. Compose guards/necessary revision deltas from verified durable basis; retain original expectedmodelrev/tip and immutablejournal. No replay/cachemutation/alias/general guard relaxation. Independently record caller-vs-durable EI discrepancy and expected durable+1; CI/pkg/Pad exactpre+1/live-reopen tests remain. Auditor reviews exact correction and source/refusal proof. Preserve prior safe refusal. Proceed within current exactpaths, no more permission for routine corrections.",
+    "additional_actual_constraint": "Permit ONLY diagnosed EI counter difference, not arbitrary object drift or freshening guards; exact caller source semantic records/journal prefix and unchanged central leased validation required.",
+    "reason": "Prior pending-basis batch safely refused before writes at central guard for affected electrical record: caller expected1 versus canonical durable2. Separate cache issue remains unfixed and excluded.",
+    "source_paths": "Same exact four authorized history paths; no replay path added."
+  },
+  "link_parity_disposition": {
+    "thread": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "actual_message": "PM approves bounded parity extension: crates/engine/src/substrate/transaction_links.rs + cohesive transaction_links/component_binding.rs if needed, existing focused history/tamper tests. I read exact checks: ops==target.inverse and inverse==target.ops conflict D2-H1 newmetadata/newinverse. Sync exact lease. Admit ONLY recognized D2-H1 family via independently validated linkedjournal/semanticpreimages and exact allowlisted deterministic epoch/ref deltas; verify actualcompensationinverse, all unrelated ops/fields byteexact. No genericsemantic-ignore/striprevision/forgedfuturepin acceptance. Keep link/tip/redo-clear checks and otherfamilies unchanged; originaljournal immutable. First pin actual resolver refusal diagnostic as evidence, then implement coherent validator with positive live/reopen/undo/redo/replay and forgedmetadata/semantic/inverse tamper refusal. No promoted/cache change. Independent source/proof review mandatory; prior4path grant continues.",
+    "actual_current_candidate_diagnosis": {
+      "report": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-current-link-refusal.json",
+      "report_sha256": "dc10ffcc4d9c48d2572ef709362b97a49f8c1ae0200a5836afb714f7a32e9e67",
+      "source_inputs": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/history-link-refusal-source-inputs.json",
+      "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-current-link-refusal.log",
+      "exit_code": 0,
+      "limits": "Explicit read-only diagnostic PASS only; no functional history or ordinary product PASS. Owned 80-file retained input unchanged."
+    },
+    "confirmed_cause": "Current candidate resolver accepts17 of18 physical transactions, emits journal_link_mismatch for undo operations vs target inverse and journal_cursor_out_of_range18vs17. Live compensation semantic/current-graph/epoch checks passed before reopen. Existing link owner needs the explicit D2-H1 exact deterministic metadata equivalence, not a Pad epoch reset."
+  },
+  "bounded_source_disposition": {
+    "proof": "docs/reviews/workflow-delivery-rollout/crossprobe/binding-source-proof.json",
+    "proof_sha256": "ab7efe48a10c621d0af59cd33165327af5cca7f52c2a9d9c554b70e2a5bf3430",
+    "actual_review_and_pm_receipt": "docs/reviews/workflow-delivery-rollout/crossprobe/binding-source-review.json"
   }
 }
