@@ -21,6 +21,7 @@ mod command_project_check_run_view;
 mod command_project_check_targets;
 
 use self::command_project_artifact_checks::*;
+pub(crate) use self::command_project_check_run_history::finish_check_run;
 pub(crate) use self::command_project_check_run_view::{
     NativeProjectCheckFindingView, NativeProjectCheckProposalCommandTemplates,
     NativeProjectCheckProposalLinkView, NativeProjectCheckRunView, append_finding_values,
@@ -390,104 +391,96 @@ pub(crate) fn query_native_project_journal_show(
 }
 
 pub(crate) fn query_native_project_check_run(root: &Path) -> Result<NativeProjectCheckRunView> {
-    query_native_project_check_run_with_profile_and_persistence(root, None, false)
+    query_native_project_check_run_with_profile_and_persistence(root, None, false, None)
 }
 
 pub(crate) fn query_native_project_check_run_with_profile(
     root: &Path,
     profile: Option<&str>,
 ) -> Result<NativeProjectCheckRunView> {
-    query_native_project_check_run_with_profile_and_persistence(root, profile, false)
+    query_native_project_check_run_with_profile_and_persistence(root, profile, false, None)
 }
 
 pub(crate) fn run_native_project_check_with_profile(
     root: &Path,
     profile: Option<&str>,
 ) -> Result<NativeProjectCheckRunView> {
-    query_native_project_check_run_with_profile_and_persistence(root, profile, true)
+    query_native_project_check_run_with_profile_and_persistence(root, profile, true, None)
+}
+
+pub(crate) fn run_native_project_check_with_admission(
+    args: &crate::CheckRunArgs,
+) -> Result<NativeProjectCheckRunView> {
+    query_native_project_check_run_with_profile_and_persistence(
+        &args.path,
+        args.profile.as_deref(),
+        true,
+        Some(args),
+    )
 }
 
 fn query_native_project_check_run_with_profile_and_persistence(
     root: &Path,
     profile: Option<&str>,
     persist: bool,
+    admission: Option<&crate::CheckRunArgs>,
 ) -> Result<NativeProjectCheckRunView> {
     let profile_id = resolve_native_project_check_profile(profile)?;
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let project = load_native_project_with_resolved_board(root)?;
-    let report = query_native_project_check_with_inputs(
-        root,
-        check_profile_includes_relationships(profile_id),
-        check_profile_includes_erc(profile_id),
-        check_profile_drc_rules(profile_id),
-    )?;
-    let mut findings = check_run_findings(
-        &model.project.project_id,
-        &model.model_revision.0,
-        &report,
-        &model.artifact_metadata,
-        &model.zone_fills,
-        check_profile_includes_artifacts(profile_id),
-        check_profile_includes_zone_fills(profile_id),
-    )?;
-    filter_check_run_findings_for_profile(profile_id, &mut findings);
-    let waivers = project
-        .schematic
-        .waivers
-        .iter()
-        .filter_map(|value| serde_json::from_value(value.clone()).ok())
-        .collect::<Vec<_>>();
-    apply_fingerprint_waivers(&mut findings, &waivers);
-    let deviations = project
-        .schematic
-        .deviations
-        .iter()
-        .filter_map(|value| serde_json::from_value(value.clone()).ok())
-        .collect::<Vec<_>>();
-    apply_accepted_deviations(&mut findings, &deviations);
-    let proposal_links =
-        command_project_check_proposal_refs::apply_proposal_links(root, &mut findings, &model);
-    let proposal_refs = proposal_links
-        .iter()
-        .map(|link| link.proposal_id.clone())
-        .collect::<Vec<_>>();
-    let summary = summarize_check_run_findings(&findings);
-    let profile_basis = profile_basis_for_check_run(profile_id);
-    let coverage = check_run_coverage_for_profile(profile_id);
-    let run_material = format!(
-        "datum-eda:check-run:{}:{}:{}",
-        model.project.project_id, model.model_revision.0, profile_id
-    );
-    let view = NativeProjectCheckRunView {
-        contract: "check_run_v1",
-        persisted: persist,
-        check_run_id: Uuid::new_v5(&model.project.project_id, run_material.as_bytes()),
-        project_id: model.project.project_id.to_string(),
-        model_revision: model.model_revision.0.clone(),
-        profile_id,
-        status: summary.status,
-        summary,
-        finding_count: findings.len(),
-        findings,
-        proposal_refs,
-        proposal_links,
-        profile_basis,
-        coverage,
-        raw_report: report,
-    };
-    if persist {
-        commit_check_run_evidence(root, &mut model, &view)?;
+    let model = ProjectResolver::new(root).resolve()?;
+    if let Some(args) = admission {
+        command_project_check_run_history::validate_check_job_basis(args, &model, profile_id)?;
     }
-    Ok(view)
+    let captured = if admission.is_some_and(|args| args.expected_project.is_some()) {
+        Some(crate::capture_native_erc_inputs(root, &model)?)
+    } else {
+        None
+    };
+    if let Some(args) = admission {
+        command_project_check_run_history::admit_check_job(args, &model, profile_id)?;
+    }
+    let (project, report) = if let Some(captured) = captured {
+        let report = crate::native_erc_report_from_schematic(&captured.schematic);
+        (captured.project, report)
+    } else {
+        (
+            load_native_project_with_resolved_board(root)?,
+            query_native_project_check_with_inputs(
+                root,
+                check_profile_includes_relationships(profile_id),
+                check_profile_includes_erc(profile_id),
+                check_profile_drc_rules(profile_id),
+            )?,
+        )
+    };
+    finish_check_run(
+        root,
+        model,
+        project,
+        report,
+        profile_id,
+        persist,
+        admission.is_some_and(|args| args.expected_project.is_some()),
+    )
 }
 
 fn commit_check_run_evidence(
     root: &Path,
     model: &mut DesignModel,
     view: &NativeProjectCheckRunView,
+    guarded: bool,
 ) -> Result<()> {
     let check_run = native_check_run_to_substrate(&model.project.project_id, view)?;
     if model.check_runs.contains_key(&check_run.check_run_id) {
+        if guarded {
+            // The no-write branch still needs final basis admission. This read
+            // verifies currentness only; it never supplies report input values.
+            let current = ProjectResolver::new(root).resolve()?;
+            anyhow::ensure!(
+                current.project.project_id == model.project.project_id
+                    && current.model_revision == model.model_revision,
+                "stale check producer basis before existing-run reuse"
+            );
+        }
         return Ok(());
     }
     let prepared = eda_engine::api::native_write::artifacts::build_set_check_run(

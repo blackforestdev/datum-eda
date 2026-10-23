@@ -46,7 +46,9 @@ pub(crate) use self::connectivity_queries::{
     query_native_project_wires,
 };
 pub(crate) use self::helpers::*;
-pub(crate) use self::queries::query_native_project_check_with_inputs;
+pub(crate) use self::queries::{
+    native_erc_report_from_schematic, query_native_project_check_with_inputs,
+};
 pub(crate) use self::queries::{
     query_native_project_check, query_native_project_diagnostics, query_native_project_drawings,
     query_native_project_hierarchy, query_native_project_nets, query_native_project_sheets,

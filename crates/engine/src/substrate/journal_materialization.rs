@@ -1,6 +1,23 @@
 //! Source materialization belongs to the journal owner; query capture certifies its basis.
 use super::*;
 
+impl DesignModel {
+    /// Capture one model-owned shard using the existing certified read/replay owner.
+    pub fn capture_source_shard_value(
+        &self,
+        shard_id: uuid::Uuid,
+    ) -> Result<serde_json::Value, EngineError> {
+        let shard = self
+            .source_shards
+            .iter()
+            .find(|s| s.shard_id == shard_id)
+            .ok_or_else(|| {
+                EngineError::Validation(format!("model missing source shard {shard_id}"))
+            })?;
+        capture_shard_value(self, shard)
+    }
+}
+
 pub(in crate::substrate) fn materialized_shard_value(
     model: &DesignModel,
     shard: &SourceShardRef,

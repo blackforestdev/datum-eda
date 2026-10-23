@@ -361,6 +361,17 @@ pub(crate) fn query_native_project_check_with_inputs(
     })
 }
 
+/// ERC computation over the complete immutable source captured for the producer.
+pub(crate) fn native_erc_report_from_schematic(schematic: &Schematic) -> CheckReport {
+    let erc = run_prechecks(schematic);
+    CheckReport::Combined {
+        summary: summarize_native_combined_checks(&[], &erc, &[]),
+        diagnostics: Vec::new(),
+        erc,
+        drc: Vec::new(),
+    }
+}
+
 fn summarize_native_combined_checks(
     diagnostics: &[ConnectivityDiagnosticInfo],
     erc: &[ErcFinding],

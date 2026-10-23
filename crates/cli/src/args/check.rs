@@ -29,6 +29,15 @@ pub(crate) struct CheckRunArgs {
     /// Check profile id: native-combined, erc, drc, standards, manufacturing, or release
     #[arg(long)]
     pub(crate) profile: Option<String>,
+    /// Refuse production unless the resolved Project UUID matches this basis
+    #[arg(long, requires = "expected_revision")]
+    pub(crate) expected_project: Option<Uuid>,
+    /// Refuse production unless the resolved model revision matches this basis
+    #[arg(long, requires = "expected_project")]
+    pub(crate) expected_revision: Option<String>,
+    /// Emit a producer-acceptance event on stderr for this guarded background job
+    #[arg(long, requires_all = ["expected_project", "expected_revision"])]
+    pub(crate) progress_job: Option<Uuid>,
 }
 
 #[derive(clap::Args)]

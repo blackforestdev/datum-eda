@@ -3,6 +3,179 @@ use super::main_tests_project_check::{
 };
 use super::*;
 
+fn check_source_bytes(root: &Path) -> std::collections::BTreeMap<PathBuf, Vec<u8>> {
+    fn visit(root: &Path, dir: &Path, out: &mut std::collections::BTreeMap<PathBuf, Vec<u8>>) {
+        for entry in std::fs::read_dir(dir).unwrap() {
+            let path = entry.unwrap().path();
+            if path.is_dir() {
+                visit(root, &path, out);
+            } else if !path.ends_with(".datum/revision/writer.lock") {
+                out.insert(
+                    path.strip_prefix(root).unwrap().to_path_buf(),
+                    std::fs::read(path).unwrap(),
+                );
+            }
+        }
+    }
+    let mut out = std::collections::BTreeMap::new();
+    visit(root, root, &mut out);
+    out
+}
+
+#[test]
+fn guarded_check_run_refuses_foreign_and_stale_basis_before_persisting() {
+    let root = unique_project_root("datum-eda-cli-guarded-check");
+    create_native_project(&root, Some("Guarded ERC".to_string())).unwrap();
+    build_native_check_fixture(&root);
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let project = model.project.project_id.to_string();
+    let revision = model.model_revision.0;
+    let job = Uuid::new_v4().to_string();
+    let before = check_source_bytes(&root);
+    let run = |project: &str, revision: &str| {
+        execute(
+            Cli::try_parse_from([
+                "eda",
+                "--format",
+                "json",
+                "check",
+                "run",
+                root.to_str().unwrap(),
+                "--profile",
+                "erc",
+                "--expected-project",
+                project,
+                "--expected-revision",
+                revision,
+                "--progress-job",
+                &job,
+            ])
+            .unwrap(),
+        )
+    };
+    let foreign = Uuid::new_v4().to_string();
+    assert!(
+        run(&foreign, &revision)
+            .unwrap_err()
+            .to_string()
+            .contains("basis mismatch")
+    );
+    assert_eq!(check_source_bytes(&root), before);
+    let unsupported = execute(
+        Cli::try_parse_from([
+            "eda",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--profile",
+            "drc",
+            "--expected-project",
+            &project,
+            "--expected-revision",
+            &revision,
+            "--progress-job",
+            &job,
+        ])
+        .unwrap(),
+    )
+    .unwrap_err();
+    assert!(unsupported.to_string().contains("erc profile only"));
+    assert_eq!(check_source_bytes(&root), before);
+    assert!(
+        run(&project, "stale-revision")
+            .unwrap_err()
+            .to_string()
+            .contains("basis mismatch")
+    );
+    assert_eq!(check_source_bytes(&root), before);
+    let output = run(&project, &revision).unwrap();
+    let report: serde_json::Value = serde_json::from_str(&output).unwrap();
+    assert_eq!(report["project_id"], project);
+    assert_eq!(report["model_revision"], revision);
+    assert_eq!(report["profile_id"], "erc");
+    assert_eq!(report["persisted"], true);
+    let saved = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let id = Uuid::parse_str(report["check_run_id"].as_str().unwrap()).unwrap();
+    assert_eq!(saved.check_runs[&id].model_revision.0, revision);
+    assert_eq!(saved.check_runs[&id].summary, report["summary"]);
+    assert!(
+        Cli::try_parse_from([
+            "eda",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--progress-job",
+            &job,
+        ])
+        .is_err()
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn guarded_check_run_keeps_captured_inputs_and_refuses_changed_source_for_both_run_paths() {
+    for existing_run in [false, true] {
+        let root = unique_project_root("datum-eda-cli-check-capture-race");
+        create_native_project(&root, Some("Captured ERC".into())).unwrap();
+        build_native_check_fixture(&root);
+        if existing_run {
+            run_native_project_check_with_profile(&root, Some("erc")).unwrap();
+        }
+        let model = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        let revision = model.model_revision.clone();
+        let captured = capture_native_erc_inputs(&root, &model).unwrap();
+        let expected =
+            serde_json::to_value(native_erc_report_from_schematic(&captured.schematic)).unwrap();
+        assert!(!expected["erc"].as_array().unwrap().is_empty());
+
+        // The actual canonical source changes after immutable input capture.
+        // Use the existing typed writer, not a private-file race or test hook.
+        let sheets: Vec<_> = captured.schematic.sheets.keys().copied().collect();
+        for sheet in sheets {
+            execute(
+                Cli::try_parse_from([
+                    "eda",
+                    "project",
+                    "delete-sheet",
+                    root.to_str().unwrap(),
+                    "--sheet",
+                    &sheet.to_string(),
+                ])
+                .unwrap(),
+            )
+            .unwrap();
+        }
+        let changed = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        assert_ne!(changed.model_revision, revision);
+        let current = query_native_project_check_run_with_profile(&root, Some("erc")).unwrap();
+        assert_eq!(current.finding_count, 0);
+        let before_finish = check_source_bytes(&root);
+
+        // Computation after that change still uses the retained source only.
+        let report = native_erc_report_from_schematic(&captured.schematic);
+        assert_eq!(serde_json::to_value(&report).unwrap(), expected);
+        let result = finish_check_run(&root, model, captured.project, report, "erc", true, true);
+        assert!(
+            result.is_err(),
+            "changed basis must refuse even when the old run ID exists"
+        );
+        assert_eq!(check_source_bytes(&root), before_finish);
+        let after = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        assert_eq!(after.check_runs.len(), usize::from(existing_run));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+}
+
 #[test]
 fn erc_summary_survives_check_run_persistence() {
     let root = unique_project_root("datum-eda-cli-erc-summary-history");

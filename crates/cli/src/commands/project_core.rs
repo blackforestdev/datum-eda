@@ -92,7 +92,18 @@ pub(crate) fn load_native_project_with_resolved_board_and_model(
     }
 
     let model = ProjectResolver::new(&root).resolve()?;
-    let manifest_value = model.materialized_source_shard_value(SourceShardKind::ProjectManifest)?;
+    let project = native_project_from_reader(&root, |kind| {
+        Ok(model.materialized_source_shard_value(kind)?)
+    })?;
+    Ok((project, model))
+}
+
+fn native_project_from_reader(
+    root: &Path,
+    read: impl Fn(SourceShardKind) -> Result<serde_json::Value>,
+) -> Result<LoadedNativeProject> {
+    let root = root.to_path_buf();
+    let manifest_value = read(SourceShardKind::ProjectManifest)?;
     let manifest: NativeProjectManifest =
         serde_json::from_value(manifest_value).with_context(|| {
             format!(
@@ -103,13 +114,13 @@ pub(crate) fn load_native_project_with_resolved_board_and_model(
     let schematic_path = root.join(&manifest.schematic);
     let board_path = root.join(&manifest.board);
     let rules_path = root.join(&manifest.rules);
-    let schematic_value = model.materialized_source_shard_value(SourceShardKind::SchematicRoot)?;
+    let schematic_value = read(SourceShardKind::SchematicRoot)?;
     let schematic: NativeSchematicRoot = serde_json::from_value(schematic_value)
         .with_context(|| format!("failed to parse resolved {}", schematic_path.display()))?;
-    let board_value = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    let board_value = read(SourceShardKind::BoardRoot)?;
     let board: NativeBoardRoot = serde_json::from_value(board_value)
         .with_context(|| format!("failed to parse resolved {}", board_path.display()))?;
-    let rules_value = model.materialized_source_shard_value(SourceShardKind::RulesRoot)?;
+    let rules_value = read(SourceShardKind::RulesRoot)?;
     let rules: NativeRulesRoot = serde_json::from_value(rules_value)
         .with_context(|| format!("failed to parse resolved {}", rules_path.display()))?;
     let project = LoadedNativeProject {
@@ -122,7 +133,52 @@ pub(crate) fn load_native_project_with_resolved_board_and_model(
         board_path,
         rules_path,
     };
-    Ok((project, model))
+    Ok(project)
+}
+
+/// Complete inputs retained before acknowledging a guarded ERC producer job.
+pub(crate) struct CapturedNativeErcInputs {
+    pub(crate) project: LoadedNativeProject,
+    pub(crate) schematic: Schematic,
+}
+
+pub(crate) fn capture_native_erc_inputs(
+    root: &Path,
+    model: &DesignModel,
+) -> Result<CapturedNativeErcInputs> {
+    let mut values = BTreeMap::new();
+    for shard in &model.source_shards {
+        if matches!(
+            shard.kind,
+            SourceShardKind::ProjectManifest
+                | SourceShardKind::SchematicRoot
+                | SourceShardKind::SchematicSheet
+                | SourceShardKind::SchematicDefinition
+                | SourceShardKind::BoardRoot
+                | SourceShardKind::RulesRoot
+        ) {
+            values.insert(
+                shard.relative_path.clone(),
+                model.capture_source_shard_value(shard.shard_id)?,
+            );
+        }
+    }
+    let read = |path: &str| {
+        values
+            .get(path)
+            .cloned()
+            .ok_or_else(|| anyhow::anyhow!("missing captured source {path}"))
+    };
+    let project = native_project_from_reader(root, |kind| {
+        let shard = model
+            .source_shards
+            .iter()
+            .find(|s| s.kind == kind)
+            .ok_or_else(|| anyhow::anyhow!("missing captured source kind {kind:?}"))?;
+        read(&shard.relative_path)
+    })?;
+    let schematic = build_native_project_schematic_with_reader(&project, read)?;
+    Ok(CapturedNativeErcInputs { project, schematic })
 }
 
 pub(super) fn collect_schematic_counts(
@@ -175,7 +231,6 @@ pub(super) fn collect_schematic_counts(
 }
 
 pub(crate) fn build_native_project_schematic(project: &LoadedNativeProject) -> Result<Schematic> {
-    let mut sheets = HashMap::new();
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -185,12 +240,22 @@ pub(crate) fn build_native_project_schematic(project: &LoadedNativeProject) -> R
             )
         })?;
 
+    build_native_project_schematic_with_reader(project, |path| {
+        Ok(model.materialized_source_shard_value_by_relative_path(path)?)
+    })
+}
+
+fn build_native_project_schematic_with_reader(
+    project: &LoadedNativeProject,
+    read: impl Fn(&str) -> Result<serde_json::Value>,
+) -> Result<Schematic> {
+    let mut sheets = HashMap::new();
+
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let expected_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_value = model
-            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+        let sheet_value = read(&format!("schematic/{relative_path}"))
             .with_context(|| format!("failed to materialize {}", path.display()))?;
         let native_sheet: NativeSheetRoot = serde_json::from_value(sheet_value)
             .with_context(|| format!("failed to parse materialized sheet {}", path.display()))?;
@@ -210,8 +275,7 @@ pub(crate) fn build_native_project_schematic(project: &LoadedNativeProject) -> R
             format!("invalid sheet definition UUID key `{definition_key}` in schematic root")
         })?;
         let path = project.root.join("schematic").join(relative_path);
-        let definition_value = model
-            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+        let definition_value = read(&format!("schematic/{relative_path}"))
             .with_context(|| format!("failed to materialize {}", path.display()))?;
         let definition: NativeSheetDefinitionRoot = serde_json::from_value(definition_value)
             .with_context(|| {

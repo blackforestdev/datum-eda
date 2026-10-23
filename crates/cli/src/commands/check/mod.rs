@@ -20,6 +20,8 @@ use super::*;
 
 mod native_inspect;
 
+#[cfg(test)]
+pub(crate) use self::native_inspect::finish_check_run;
 pub(crate) use self::native_inspect::{
     NativeProjectCheckFindingView, NativeProjectCheckRunView,
     NativeProjectJournalMutationGuardView, NativeProjectJournalMutationView,
