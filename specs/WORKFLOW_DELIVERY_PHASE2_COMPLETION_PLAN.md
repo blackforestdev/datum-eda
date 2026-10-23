@@ -867,3 +867,45 @@ confirmed thirteen warnings and zero infos. The original inconsistent run remain
 unchanged. Exact source/build/runtime and independent review dispositions belong
 to `inspector/erc-severity-repair.json`; no full Inspector readiness or delivery
 acceptance is inferred from this repair.
+
+<!-- EVIDENCE:GUI-P2-INSPECTOR:INSP-C01-FULL-READINESS-REVIEW-04 -->
+### Actual complete Inspector readiness review
+
+Independent reviewer `01a1697c-b5d2-77d1-a9e7-12e688f0f3f6` issued actual
+`INSP-C01-FULL-READINESS-REVIEW-04`: **PASS**, mandatory findings **none**,
+124 current source/receipt pins matched. The complete PM062 field/source/action
+map, sixteen-case proof plan, declared INPUT03 source applicability, real
+dispatch/poll/hit/accessibility owners, same-model producer prewrite admission,
+existing canonical commit race guard, real producer acceptance before Running,
+persisted readback/refusals and cohesive source-health extraction are accounted.
+Exact reviewed candidate SHA256 values:
+
+- `readiness-packet.json`: `533e5d367668d1944b046bacb2781c035eda04aebdebcce2b5d86b3f99cddb8c`
+- `decision-packet.json`: `3a95faa6f847641d41719740193957de7923a8f7cdf8d5e13436291996a94fb6`
+- `input-admission.json`: `6562c9fe7bc27d84a080d0c4ce5b2264e1c07c46ecf2a99e6350ee7df73a7faf`
+- `implementation-scope.json`: `a281c6db74b063470a39608cfbf40e7c7003c9953751c30ca0c62c9db0f3ad8d`
+
+Files are in `docs/reviews/workflow-delivery-rollout/inspector/`. The actual
+receipt is `readiness-review.json`. Initial REVISE/I01 and later bounded authority
+correction/input admission remain distinct. This PASS completes C01 readiness;
+it is not implementation, native/visual/HUMAN proof or objective acceptance.
+
+<!-- DISPOSITION:GUI-P2-INSPECTOR:INSP-C02-AUTHORIZE-EXECUTION-20261023 -->
+### Actual exact Inspector execution authorization
+
+Owner-appointed PM `01a160d9-b499-7923-984a-b3390beb2e34` accepts that actual
+complete readiness PASS and states: **GUI-P2-INSPECTOR: authorize execution** —
+the exact four candidate hashes above. This is the actual scoped INSP-C02
+continuation disposition under the recorded owner appointment, not automatic
+successor authority or a new owner/product decision. Record C01/C02 complete and
+synchronize C03 execution, exact expanded lease and beads/export before product
+edits. Land readiness, then continue the complete shared Inspector, qualified
+document/occurrence navigation, real checks with prewrite guards/accessibility
+and sixteen-case proof. Actual disposition is retained in
+`inspector/execution-authorization.json`.
+
+Preserve PM062, the existing global status-bar/prototype lane, actual input
+source-only/coverage/failed-observer limits, canonical writes, no new dependencies
+and required source-health extraction/downward ratchet. Future actual visuals,
+independent replay and objective acceptance remain required; authorization alone
+does not establish product availability or qualification.

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task": "GUI-P2-INSPECTOR",
   "step": "INSP-C01",
-  "status": "I01_AUTHORITY_CORRECTED_INPUT_PREPARATION_IN_PROGRESS_NO_READINESS_PASS",
+  "status": "COMPLETE_C01_REVIEW_CANDIDATE_WITH_DECLARED_INPUT_APPLICABILITY_NOT_EXECUTION",
   "execution_ready": false,
   "C01_readiness_pass_claimed": false,
   "scope": "Complete read-only P2.4 shared component/Net/Checks and PM062 occurrence-first Navigator, local Document/Source/Occurrence context; no authoring expansion or full execution grant.",
@@ -232,16 +232,16 @@
       "remedy": "Read-only provenance-bearing availability plus actual profile/domain/target/occurrence filtering. Do not grant stale marker authority."
     },
     {
-      "id": "INPUT-01",
-      "kind": "proof_input_gap",
-      "fact": "Accepted XP root supplies component/Net/placement relations and refusal variants, not complete native multi-sheet+positive metadata/ERC cases. No complete admitted fixture found.",
-      "remedy": "Bounded existing canonical CLI extension on fresh owned copy and actual admission before new ordinary workflow proof; no private writer/Rust generator/new framework."
-    },
-    {
       "id": "I01",
       "kind": "settled_authority_correction",
       "fact": "Initial packet omitted PM062 S-C and misstated B1/O1/local context/G2 as new choices. Revised map follows existing later ratification; initial REVISE retained.",
       "remedy": "Exact independent correction/readiness review; no new product decision/prototype edit or status-bar reopening."
+    },
+    {
+      "id": "INPUT-ADMITTED",
+      "kind": "declared_input_applicability",
+      "fact": "Main current source/Net6/scoped evaluated0/Project13warnings, separate authored Class/stale state, actual Footprintbindings and separate explicit Bus source admitted by INSP-C01-INPUT-REVIEW-03. Two failed wrappers and hierarchyCLI parser gap retained.",
+      "remedy": "Use exact per-case scope; never carry rootComplete/currentchecks into class/Busvariants or claim native proof from source admission. Complete changed behavior proof remains INSP-C04."
     }
   ],
   "decisions_for_authorized_owner_or_PM_disposition": [
@@ -323,7 +323,7 @@
     "prototype_lane": "Protected prototypes inspected only. PM062 existing S-A/S-B/S-C/S-G/S-I already govern these surfaces; no HTML edits or new visual authority requested."
   },
   "input_preparation_proposal": {
-    "status": "AUTHORIZED_CANONICAL_BASE_RECIPE_EXECUTED_NOT_FULL_ADMISSION",
+    "status": "EXECUTED_AND_ADMITTED_AT_DECLARED_SOURCE_SCOPE",
     "base": {
       "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-proof.json",
       "sha256": "b2f1228cb75c8f46d350fe3e7749a4610069baa70ebee3c1e655950ccce5ab71"
@@ -427,13 +427,10 @@
       "Positive evaluated0 and current findings cases require actual source/rule outcomes; if base cannot supply both, identify smallest existing canonical source case/command extension and admit it explicitly before execution; no invented clean count.",
       "Positive NetClass/Bus/footprint-library metadata not supplied by XP nil/unbound cases: reuse real existing authored library/bus owners and exact canonical refs or admit a bounded CLI extension; no inferred defaults."
     ],
-    "remaining_input_blockers": [
-      "Positive evaluated0, NetClass/Bus/Footprint-library cases still need exact admitted source; no invented defaults.",
-      "Public component-instance readback is not strict current NetComplete; exact supported current query/admission route required.",
-      "Native child occurrence projection remains undelivered; input preparation is not feature proof."
-    ],
+    "remaining_input_blockers": [],
     "actual_receipt": ".datum/scratch/gui-p2-inspector-insp01-20261023/input-preparation.json",
-    "actual_outcome": "12 base commands exit0 and original93 source files unchanged; canonical child rename supplies stale variant, fresh corrected persisted ERC4b0604c3 at e165c795 reports13warnings/0infos, actual check show verified, old971 record unchanged. Public current CI retains exact authored refs at revision1. Strict current NetComplete not asserted."
+    "actual_outcome": "12 base commands exit0 and original93 source files unchanged; canonical child rename supplies stale variant, fresh corrected persisted ERC4b0604c3 at e165c795 reports13warnings/0infos, actual check show verified, old971 record unchanged. Public current CI retains exact authored refs at revision1. Strict current NetComplete not asserted.",
+    "actual_admission": "input-admission.json; separate Class/Bus source-only and scoped-zero coverage limits retained; no further input campaign required by actual PM"
   },
   "eight_foundation_answers": {
     "Units/precision": "Use exact authored nm/source angles and shared Project quantity formatting; per-object/document scope explicit; no precision from rounded pixels.",
@@ -461,97 +458,200 @@
       "case": "INSP-N01",
       "input": "Bound linked Symbol and Footprint from both panes",
       "required_outcome": "Identity/Placement/Checks named sections, current reference/value/library identity source, correct related-only role; complete S-C Library context and separately qualified Command readiness/Approval/Basis/Findings, unknown not Approved",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N02",
       "input": "Positive/missing/stale footprint-library and layer source",
       "required_outcome": "Explicit current named source or reason; no Package-to-Footprint/default-layer substitution",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT",
+        "CLASS_AND_STALE"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N03",
       "input": "Exact full GlobalNet from both entry paths",
-      "required_outcome": "Net name/class/Bus current canonical metadata; complete selected typed membership separate terminal detail",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "required_outcome": "Current Main Net6 identity/mixed typed Members intact; nil/missing Class/Bus reasoned unavailable. Positive Class field source tested from exact separate authoredBoardNet record without carrying strictlogicalComplete; separate Bus source typed IDs/scalarNet/path distinguish equalnames. Actual native positive output must agree with qualified current implementation/source projection; source admission alone is not UI PASS.",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT",
+        "CLASS_AND_STALE",
+        "BUS_POSITIVE"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N04",
       "input": "Unlinked/Compound mixed and type scope",
       "required_outcome": "Common/Mixed/Unavailable and scoped quantities without altering complete selected set/focus/count",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N05",
-      "input": "Actual ERC current finding and evaluated0 profiles",
-      "required_outcome": "Correct actual status/severity/domain/targets/provenance, durable detail, no fake clean",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "input": "Actual current4b scoped Net0 under evaluated connectivity, Project13warnings, unimplemented hierarchy coverage; explicit supported rerun job path",
+      "required_outcome": "SelectedNet scoped0 uses exact explicit affectedtargets and currentcoverage, not wholeProjectClean; Project13warnings retained. Real Running only after producing job accepted/spawned, explicit typed rerun only, canonical persisted readback with actual ID/revision/coverage/status and expected generated effects; stale completion no current authority.",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N06",
       "input": "Never-run/stale-only/unavailable/foreign check context",
-      "required_outcome": "G2 NotRun no count; Unavailable reason/no count; Stale actual historical count+described revision+rerun action, no current marker authority; G1 finding is not target selection",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "required_outcome": "G2 NotRun no count; Unavailable reason/no count; Stale actual historical count+described revision+rerun action, no current marker authority; G1 finding is not target selection; unsupported or refused real producer is honest Unavailable, not fabricated Running/enabled control",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "BASE_NORUN",
+        "CLASS_AND_STALE",
+        "BUS_POSITIVE"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N07",
-      "input": "Hierarchy root + Child A/B repeated source",
+      "input": "Current root + ChildA/B qualified source, generated child Text actualUUID from pinned source",
       "required_outcome": "B1 occurrence-first; click inspects row without opening or changing global subject, Enter/double-click opens BESIDE focused pane preserving prior view/camera; A/B qualified breadcrumbs, no Sheet n/N",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N08",
       "input": "Select child object in A then B",
-      "required_outcome": "Same source UUID has distinct instance paths; no empty-path hit alias, source fields/Checks target path match",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "required_outcome": "Same source UUID has distinct instance paths; no empty-path hit alias, source fields/Checks target path match; root selection identity preserved by row inspection/open, newly acquired child Text path is exactA versusB",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N09",
       "input": "Multiple Schematic panes with different documents + Board",
       "required_outcome": "Recursive pane tree open beside, distinct document/source/occurrence and independent cameras; one focused Inspector, inspected Navigator row separate from focused document/global subject",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N10",
       "input": "Hidden/filtered/dense complete Net inventory",
       "required_outcome": "Preserve selected membership; existing transport/detail/omission law and accessible counts, no terminal-only redefinition",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N11",
       "input": "Grid basis/units and distinct zooms",
       "required_outcome": "Explicit actual live Snap grid with enabled/pitch and Project units; independently zoomed renderer LOD not relabelled snap",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N12",
       "input": "Narrow/normal window and empty state",
       "required_outcome": "PM062 S-A/S-I normal/narrow/tiled composition, named Navigator/Inspector affordances and empty Inspector Document/Source/Occurrence/Checks accessible by keyboard; global bar unchanged",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT",
+        "BUS_POSITIVE"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N13",
       "input": "Collapse/navigation + Escape/focus-loss",
-      "required_outcome": "No authored operation, stale pending publication or unintended selection clear; reuse accepted unchanged lifecycle predicates honestly",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "required_outcome": "No authored operation, stale pending publication or unintended selection clear; reuse accepted unchanged lifecycle predicates honestly; Escape on inspection never silently launches/cancels canonical committed CheckRun; actual job lifecycle/source effects described, no rollback claim from UI dismissal",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N14",
-      "input": "Canonical deleted/stale target or document, then recovery",
-      "required_outcome": "Reasoned unavailable; no implicit root/name remapping; fresh current basis restores valid view",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "input": "Exact stale/foreign/disappeared-source snapshots and actual delayed-result refusal controls in existing shared owners; class variant separate revision",
+      "required_outcome": "Reasoned unavailable; no implicit root/name remapping; fresh current basis restores valid view; no new destructive fixture edits solely to manufacture refusal; controlled typed stale/foreign tests supplement ordinary actual stale source",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "CLASS_AND_STALE"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N15",
       "input": "Actual Close/fresh reopen",
       "required_outcome": "Canonical full inventories unchanged; existing selection/document persistence rules, owned cleanup distinguished",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     },
     {
       "case": "INSP-N16",
       "input": "Same-engine structural/golden and protected semantic comparison",
-      "required_outcome": "All named section/text/availability roles, related normal appearance and coherent normal/narrow context; no HTML/wgpu pixel equality",
-      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN"
+      "required_outcome": "All named section/text/availability roles, related normal appearance and coherent normal/narrow context; no HTML/wgpu pixel equality; accepted PM062 normal/narrow/tiled semantic roles, source/occurrence/localgrid/check fields and findings separate from selection",
+      "status": "REQUIRED_FUTURE_PROOF_NOT_RUN",
+      "input_case_refs": [
+        "MAIN_CURRENT",
+        "BUS_POSITIVE"
+      ],
+      "input_case_authority": "input-admission.json actual scope, not successful feature proof",
+      "proof_owner": "Worker ordinary application proof, distinct assigned audit replay/source/render review before PM exact acceptance",
+      "no_write_oracle": "Complete canonical files/journal/revision hashes before/after pure inspection/navigation; explicit supported source/check producer actions accounted separately, never hidden inside unchanged oracle."
     }
   ],
   "ordinary_path_and_owner_chain": {
@@ -606,24 +706,8 @@
       "sha256": "5464704f2ece3ceae3f9fcf372e081a66e9fb3826ba060c4b0fcb816958ff4f0"
     },
     {
-      "path": "crates/gui-render/src/side_panels/inspector_dispatch.rs",
-      "sha256": "80e7de4a656a5963a0b0b35e1737c6286af693ef6b618066f3e5710551479633"
-    },
-    {
-      "path": "crates/gui-render/src/side_panels/selection_inspector.rs",
-      "sha256": "b0bcc1a526dc487e3893e7264d85d2d02c628ca2723d663cb39b7b238057d4a5"
-    },
-    {
       "path": "crates/gui-render/src/side_panels/render_inspector.rs",
       "sha256": "d56cfc0f7838bdcfa1fe9353d02a4cc10b3c3ae14ba5993108e6885d245b5b31"
-    },
-    {
-      "path": "crates/gui-protocol/src/selection_view/properties.rs",
-      "sha256": "003386bee01c22fc65dcabb77e75e0e38a2934c2521096b7b5f0fbfdb0bb7ada"
-    },
-    {
-      "path": "crates/gui-protocol/src/selection_view/inspection.rs",
-      "sha256": "7f46999b3829b8f41e80eb6dca37c04ff43263efc1159628d6d589197152bc1e"
     },
     {
       "path": "crates/gui-protocol/src/selection_view/quantities.rs",
@@ -632,34 +716,6 @@
     {
       "path": "crates/gui-protocol/src/selection_view/component_relations.rs",
       "sha256": "53a52569540b2dbcde41a0dbc8e70dc5da5e2998b71400d6ac7026ce7d3f7d96"
-    },
-    {
-      "path": "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
-      "sha256": "935dac4b9757c279870ca80b0f1f8320379dae011fe8f59113da6b716a79ef92"
-    },
-    {
-      "path": "crates/gui-protocol/src/check_runs.rs",
-      "sha256": "5418d0a0314f32e28ef3e6725b368cdc1506d67b32918074e8e4b158eee2d922"
-    },
-    {
-      "path": "crates/gui-protocol/src/check_runs/loading.rs",
-      "sha256": "c19101d1efc9f38e3ad02a6b73bb591cd86303aa623fe566e58595cfbe50cd66"
-    },
-    {
-      "path": "crates/gui-protocol/src/check_runs/marker.rs",
-      "sha256": "50f89a45fd76cfc3999bbda51297a31f4a58185df860eb7796efc34ab49b8527"
-    },
-    {
-      "path": "crates/gui-protocol/src/native_schematic_scene.rs",
-      "sha256": "f4136620ddeed85b06f55b41c3793449e7640719ca25f9cd3713a5394b69392d"
-    },
-    {
-      "path": "crates/gui-protocol/src/selection_scene/index.rs",
-      "sha256": "1274de2bf2ffa557a0cc4e7e26508e91823b2a694791dde542ef1a04c3b0d678"
-    },
-    {
-      "path": "crates/gui-protocol/src/workspace_pane_content.rs",
-      "sha256": "ae043de0f97afb1388309b3175b74d0328f507c62e2938b282ae70f6c8650a70"
     },
     {
       "path": "crates/gui-protocol/src/selection_subject.rs",
@@ -700,6 +756,186 @@
     {
       "path": "docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md",
       "sha256": "38e7016d638768988c25dcb364c96fe23385982b7d5fb030e41f58cbf49dab04"
+    },
+    {
+      "path": "crates/gui-app/src/application/runtime_state.rs",
+      "sha256": "ef276a3ecf71671dd09b7d667ea713cffe0b4cd9d02ee330860101b3d01c29eb"
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_hit_actions.rs",
+      "sha256": "6ba11790374372a9d724dc00a43ae3cc9b3da1041f2523386c369bb0b7cb299d"
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_selection.rs",
+      "sha256": "0377bbf45b80b4ea6ae83608357e24c0f9bbf8902ab51cb4fbdbfae67500cd56"
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_selection_hit.rs",
+      "sha256": "e7d420e3ccfd0a85962e91410fb1608b58a3b3a68b09fb7e99cfebed0a9147e0"
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_selection_inspector.rs",
+      "sha256": "095864d05ca10d6ae774dd5982df0c24b6fa4ed74fe722449267d7de432c351a"
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_view_actions.rs",
+      "sha256": "8c0454951b43b7793571290156c4792bbfff6a018d6142389ef751fd1a3b74f7"
+    },
+    {
+      "path": "crates/gui-app/src/editor/selection_accessibility.rs",
+      "sha256": "50fdfe4b4048b46f150b76aeabdf541236e53ebbfc318545a0e63d93fe52c865"
+    },
+    {
+      "path": "crates/gui-app/src/viewport/pane_cameras.rs",
+      "sha256": "4ffc98713d6fef2b255172c0d9b7c9d4687d40aa3a7389312f5e245ddbd2ce0d"
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs.rs",
+      "sha256": "5418d0a0314f32e28ef3e6725b368cdc1506d67b32918074e8e4b158eee2d922"
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs/loading.rs",
+      "sha256": "c19101d1efc9f38e3ad02a6b73bb591cd86303aa623fe566e58595cfbe50cd66"
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs/marker.rs",
+      "sha256": "50f89a45fd76cfc3999bbda51297a31f4a58185df860eb7796efc34ab49b8527"
+    },
+    {
+      "path": "crates/gui-protocol/src/cli_bridge.rs",
+      "sha256": "f1d8e2da9d7fa1ae65f936ce154a253097b2acfe0c41a2e9abc65b9eaa66f174"
+    },
+    {
+      "path": "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+      "sha256": "935dac4b9757c279870ca80b0f1f8320379dae011fe8f59113da6b716a79ef92"
+    },
+    {
+      "path": "crates/gui-protocol/src/native_schematic_scene.rs",
+      "sha256": "f4136620ddeed85b06f55b41c3793449e7640719ca25f9cd3713a5394b69392d"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_scene/index.rs",
+      "sha256": "1274de2bf2ffa557a0cc4e7e26508e91823b2a694791dde542ef1a04c3b0d678"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view.rs",
+      "sha256": "a828e3572a0f6a36a8ec63fef5b2e88920eca4969f04a094b3d23455785d9c8d"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/inspection.rs",
+      "sha256": "7f46999b3829b8f41e80eb6dca37c04ff43263efc1159628d6d589197152bc1e"
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/properties.rs",
+      "sha256": "003386bee01c22fc65dcabb77e75e0e38a2934c2521096b7b5f0fbfdb0bb7ada"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_interaction/camera.rs",
+      "sha256": "02b20ca10a22e08c6c099e17c97f813f4a4a07b42f677730fd42ca223b549761"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_layout.rs",
+      "sha256": "382dca33dcc0494450e31f4ab8045978b91deee51c71d0c321620ef3aeb13d71"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_pane_content.rs",
+      "sha256": "ae043de0f97afb1388309b3175b74d0328f507c62e2938b282ae70f6c8650a70"
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_state.rs",
+      "sha256": "db5adad483a358520cb1bc7cdbec6e9e97fa3b239e5021e29c63b6b026f19d65"
+    },
+    {
+      "path": "crates/gui-render/src/render/pane_chrome.rs",
+      "sha256": "84304fed5ef3db2136d1d88f996626a2cb79a58f48cd32d3689815d22c9ffac0"
+    },
+    {
+      "path": "crates/gui-render/src/render/pane_layout.rs",
+      "sha256": "302dbe9666b365c8853be0deba37d9d5762720062e8c69af9757172c992e7223"
+    },
+    {
+      "path": "crates/gui-render/src/render/schematic_retained.rs",
+      "sha256": "0a36b83edca4ca140935be89a40d3c769ef325ac0e3e96cc767d1b3e8005fecf"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels.rs",
+      "sha256": "db1c85bc79dd5349d34365be3d99bed9cad763893a8c09c18a6a74c08cd481ab"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/inspector_dispatch.rs",
+      "sha256": "80e7de4a656a5963a0b0b35e1737c6286af693ef6b618066f3e5710551479633"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/selection_inspector.rs",
+      "sha256": "b0bcc1a526dc487e3893e7264d85d2d02c628ca2723d663cb39b7b238057d4a5"
+    },
+    {
+      "path": "crates/gui-protocol/src/lib.rs",
+      "sha256": "5db55e1cdbb14952311263e89d0ab86ea42b7636ba8d1f56208c222b8f5f36af"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "sha256": "d342e76cf02bfff093c3cb981d051e6aaeaa66a4dc3041d7367c386c513410c3"
+    },
+    {
+      "path": "crates/gui-app/src/application/runtime_menu_actions.rs",
+      "sha256": "c025b3717866b8bf643395de8caeac8a2f0a48edd5c9ab4d016f978b567dce7a"
+    },
+    {
+      "path": "crates/gui-app/src/application/production_status_refresh.rs",
+      "sha256": "d04ce4b3928f8bd3d68f04bb78f22ae1fa4722b6111233842f214aa5f943be69"
+    },
+    {
+      "path": "crates/gui-protocol/src/gui_menu_model/action_registry.rs",
+      "sha256": "f28bf13faaf4c007b6a4b4310f1600ff597dad481f87a942dd916ce19205e43a"
+    },
+    {
+      "path": "crates/gui-render/src/hit_target.rs",
+      "sha256": "0189732a1ef6730ee10e44682044290454a676ec03f52ec30f4135aed8fae877"
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
+      "sha256": "872a9bdd41802fb9019689db3712eedbc27d39c2ff6f8d44c71a85d27ec2fe7f"
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/state.rs",
+      "sha256": "7389338ed629fe29ddc1ca4b846e29b8d02d36e125a88250ed675dc155e8addd"
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/children.rs",
+      "sha256": "c1ff69c2073bf26f34f7667e08d9e7520d7c319756916dc6dbb1f8ca13bc89e1"
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/presentation.rs",
+      "sha256": "2cc85023e4ee8f576c8599a0e8b80f2ef05424a4d1cc6f8110ce46eef43cba26"
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/events.rs",
+      "sha256": "599b876bef94327ff60a6e021b1fd40976f757914f7dcf89b29279be8c9012e8"
+    },
+    {
+      "path": "crates/cli/src/args/check.rs",
+      "sha256": "993bc58063042d7b85d634ed90ac4b11ae9948be2b6480f888dacef715be3769"
+    },
+    {
+      "path": "crates/cli/src/commands/check/run_history.rs",
+      "sha256": "91dddca75f5079e889cb65352df0a2d139445854e5b4a5863fe6ff64fcb2e467"
+    },
+    {
+      "path": "crates/cli/src/commands/check/native_inspect.rs",
+      "sha256": "5dd48f21d01f729401b6a0d4ec21693e57ae5d18e6aa8eff170c71827488e36f"
+    },
+    {
+      "path": "crates/cli/src/commands/check/mod.rs",
+      "sha256": "500d941a52ac23f8b3f627c2beba2ca9456bd90ab8684029b3f418b8b274f25b"
+    },
+    {
+      "path": "crates/cli/src/main_tests/main_tests_project_check_run_history.rs",
+      "sha256": "c3da651fd88bddc183d5c387e9ea485c29037b1ec57f4869123502fcb6bcb6b1"
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection.rs",
+      "sha256": "71e01e95f6e696fbceac8abe2980cdfd8680a47c7f5fc1f9d883743d5dd0a379"
     }
   ],
   "accepted_reuse": {
@@ -844,16 +1080,17 @@
   "performance_and_resources": {
     "authority": "PM051; reuse existing evidence, no new threshold or withdrawn GPU budget.",
     "plan": "No fresh baseline build, Rust generator or broad campaign. Actual future changed-source checks/builds use guarded Cargo serially on disk only if needed. Preserve source health, dependency authority and required local gates.",
-    "readiness_operations": "Initial audit scope was source/CLI-help only. Subsequently explicit PM grants authorized12command canonical input preparation, stale/recovery and separately bounded2qi3 CLI source repair/focusedtest/build. Actual receipts are listed; no new Inspector GUI runtime or full implementation/proof campaign yet."
+    "readiness_operations": "Initial source/help audit followed by explicit authorized canonical input preparation, narrow accepted2qi3 repair/focusedtest/CLIbuild, and two retained finite rootGUI qualification failures. Actual full current engine-derived root view independently admits INPUTpredicate only, no native/AX/pixelPASS; no furtherGUI attempt/build/testcampaign. Allownedprocesses stopped; original source unchanged."
   },
   "execution_blockers": [
-    "Complete corrected PM062 shared implementation/readiness/source-health/proof map needs exact independent review and INSP-C02 authorization.",
-    "Actual input admission remains incomplete: strict current root/Net binding and positive evaluated0/class/Bus/Footprint-library source cases."
+    "Actual final complete C01 independent review and exact INSP-C02 disposition; no full INSP-C03 grant yet.",
+    "Implementation must meet declared currentness/availability/ordinary proof scope; source-only Class/Bus admission is not a fabricated current typed/native result. No automatic broader rule/library prerequisite."
   ],
   "independent_review": {
-    "initial_disposition": "REVISE_PREPARATION_AUTHORITY_MAP (I01), preserved",
-    "revised_disposition": "PENDING; no readiness PASS",
-    "I01_authority_correction": "Actual independent review confirms revised PM062/MD semantics faithful, historical label correction verified; resource paragraph corrected current. Complete C01 readiness still pending input/source/proof scope review."
+    "initial_disposition": "INSP-C01-READINESS-REVIEW-01 REVISE_PREPARATION_AUTHORITY_MAP, I01 retained",
+    "authority_correction": "Actual INSP-C01-AUTHORITY-CORRECTION-02 PASS_I01_CORRECTION_ONLY, PM accepts bounded faithful existing-PM062 reconciliation, no fullreadiness",
+    "input_admission": "Actual INSP-C01-INPUT-REVIEW-03 ADMITTED_AT_DECLARED_SOURCE_SCOPE/no finding, PM accepts; exact limits in input-admission.json",
+    "full_readiness_disposition": "PENDING exact final whole packet review; no C01PASS/INSP02/03 inferred"
   },
   "limitations": [
     "Static current implementation analysis and exact existing accepted proof reuse, not new P2.4 runtime or HUMAN proof.",
@@ -1013,5 +1250,40 @@
     ".datum/scratch/gui-p2-inspector-insp01-20261023/input-preparation.json",
     ".datum/scratch/gui-p2-inspector-insp01-20261023/stale-recovery-preparation.json",
     "erc-severity-repair.json"
-  ]
+  ],
+  "actual_input_admission": "input-admission.json / actual INSP-C01-INPUT-REVIEW-03 admitted at declared source scope, accepted by PM; full C01 readiness pending",
+  "implementation_scope_proposal": "implementation-scope.json",
+  "action_owner_map": [
+    {
+      "action": "Navigator row single click / keyboard row traversal",
+      "owner": "Shared schematic_documents/navigation + runtime_schematic_navigation; one explicit inspected row context",
+      "effect": "Inspect row source/path; preserve opened/focused document and global selected subject"
+    },
+    {
+      "action": "Navigator Enter/double click",
+      "owner": "Existing WorkspaceLayout::open_beside focused recursive leaf + warm PaneCameras; qualified document context/projection",
+      "effect": "Open beside preserving previous pane/camera, focus new projection; no authored writer/selection Clear; existing canvas double-click descend preserved"
+    },
+    {
+      "action": "Select native source / change focus/type scope/collapse",
+      "owner": "Existing runtime_selection publication, selection_inspector, selection_accessibility and Context projection",
+      "effect": "Current typed source selection/inspection/focus roles distinct; related only never co-selection"
+    },
+    {
+      "action": "Re-run ERC and actual Running",
+      "owner": "implementation-scope.json canonical_check_producer: existing datum.check.run_profile dispatch + real worker, paired expected basis precommit guard + actual producer acceptance event, production_status_refresh canonical readback",
+      "effect": "Explicit fixed typed request/no shell; Starting until real admitted producer acknowledgement, then actual Running/completion. No autorun/terminal lifecycle proxy. Existing engine commit guard preserves canonical source; generated CheckRun effects separate from no-write oracle."
+    },
+    {
+      "action": "Snap grid / local context display",
+      "owner": "Existing AuthoringSnapState and Project quantity formatter; pane document/source/path",
+      "effect": "Read-only exact live snap pitch/enabled/units; renderer LOD separate, global bar frozen"
+    }
+  ],
+  "replay_arrangement": {
+    "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "ordinary_delivery": "After actual C02 execution grant, worker completes all16 changed fullfeature cases via supported native actions and same shared consumers, actual source/hash/job/input receipts and visualnormal/narrow/context/AT-SPI; exact failures retained and fixed under unchanged grant.",
+    "independent_replay": "Reviewer inspects actual exact source/build/input closure and replays finite changed ordinary paths using accepted helpers and actual canonical inputscope; accounts for findings and same-engine structural/goldens without HTML/wgpu pixel equality or broad baseline campaign. Reviewer receipt cannot self-certify worker output.",
+    "acceptance": "Actual PM exactobjectiveacceptance only after independent full behavior review; no inferred completion from planning/source commit or inputadmission. HUMAN/assistive-device/platform/performance/fullqualification separate."
+  }
 }

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task": "GUI-P2-INSPECTOR",
   "step": "INSP-C01",
-  "status": "I01_CORRECTED_SETTLED_AUTHORITY_NOT_NEW_RATIFICATION",
+  "status": "FINAL_C01_REVIEW_CANDIDATE_EXISTING_AUTHORITY_INPUTS_DECLARED_NOT_RATIFICATION",
   "initial_review": {
     "receipt": "INSP-C01-READINESS-REVIEW-01",
     "disposition": "REVISE_PREPARATION_AUTHORITY_MAP",
@@ -41,7 +41,7 @@
     }
   ],
   "input_preparation": {
-    "status": "AUTHORIZED_CANONICAL_BASE_RECIPE_EXECUTED_NOT_FULL_ADMISSION",
+    "status": "EXECUTED_AND_ADMITTED_AT_DECLARED_SOURCE_SCOPE",
     "base": {
       "path": "docs/reviews/workflow-delivery-rollout/crossprobe/native-delivery-proof.json",
       "sha256": "b2f1228cb75c8f46d350fe3e7749a4610069baa70ebee3c1e655950ccce5ab71"
@@ -145,14 +145,14 @@
       "Positive evaluated0 and current findings cases require actual source/rule outcomes; if base cannot supply both, identify smallest existing canonical source case/command extension and admit it explicitly before execution; no invented clean count.",
       "Positive NetClass/Bus/footprint-library metadata not supplied by XP nil/unbound cases: reuse real existing authored library/bus owners and exact canonical refs or admit a bounded CLI extension; no inferred defaults."
     ],
-    "remaining_input_blockers": [
-      "Positive evaluated0, NetClass/Bus/Footprint-library cases still need exact admitted source; no invented defaults.",
-      "Public component-instance readback is not strict current NetComplete; exact supported current query/admission route required.",
-      "Native child occurrence projection remains undelivered; input preparation is not feature proof."
-    ],
+    "remaining_input_blockers": [],
     "actual_receipt": ".datum/scratch/gui-p2-inspector-insp01-20261023/input-preparation.json",
-    "actual_outcome": "12 base commands exit0 and original93 source files unchanged; canonical child rename supplies stale variant, fresh corrected persisted ERC4b0604c3 at e165c795 reports13warnings/0infos, actual check show verified, old971 record unchanged. Public current CI retains exact authored refs at revision1. Strict current NetComplete not asserted."
+    "actual_outcome": "12 base commands exit0 and original93 source files unchanged; canonical child rename supplies stale variant, fresh corrected persisted ERC4b0604c3 at e165c795 reports13warnings/0infos, actual check show verified, old971 record unchanged. Public current CI retains exact authored refs at revision1. Strict current NetComplete not asserted.",
+    "actual_admission": "input-admission.json; separate Class/Bus source-only and scoped-zero coverage limits retained; no further input campaign required by actual PM"
   },
   "field_map_packet": "readiness-packet.json",
-  "no_execution_before": "Actual exact reviewed INSP-C02 plus required input admission. Separate2qi3 narrow repair grant is not fullInspector execution."
+  "no_execution_before": "Actual exact reviewed INSP-C02 plus required input admission. Separate2qi3 narrow repair grant is not fullInspector execution.",
+  "actual_input_admission": "input-admission.json / INSP-C01-INPUT-REVIEW-03 accepted at declared source scope",
+  "exact_implementation_scope": "implementation-scope.json",
+  "complete_review_and_execution_authority": "Final whole packet independent readiness receipt and actual INSP-C02 disposition required; no C01PASS/INSP03 yet."
 }

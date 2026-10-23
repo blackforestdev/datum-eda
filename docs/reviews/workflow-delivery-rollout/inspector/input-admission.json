@@ -1,0 +1,72 @@
+{
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C01",
+  "status": "ACTUAL_INPUTS_ADMITTED_AT_DECLARED_SOURCE_SCOPE_COMPLETE_READINESS_PENDING",
+  "authority": "input-variant-authorization.json; exact actual PM grants, no full INSP-C03",
+  "receipts": {
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/input-preparation.json": "8b246215f834a7112bab6503db2da4b24c324bb56a3e7ede8442f712cf4d9eab",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/stale-recovery-preparation.json": "dde62412bda3253a951eef3dc46025cc54790a7a417b401b0dc8a0928ac1961b",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/class-variant-preparation.json": "11782d60afe96059f661dd2530d9822bdc3ebec495f587c36fe5ea36192a877d",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/existing-library-source-admission.json": "727e9d4666dfdd73784482bfeef6f719f36b90b2b00ddce576cd9be3d4be58de",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/existing-bus-input-admission.json": "e862477b74e1f24ea968670dabb434d3d3678a07ddc121e98af6489a2d640322",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/current-root-net-input-admission.json": "b830922fc3cf841afb93c715c365fd41bb707a5285e62ca9443f07abc1ec620e",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/scoped-zero-candidate.json": "385225a4bead44030e2f7e984b50c9ce9008bb0a01939309fd8afa4903b7adc8",
+    ".datum/scratch/gui-p2-inspector-insp01-20261023/root-net-observer-correction.json": "b0a3fb9630b4843559c6738f37ac3485666c97a0ee02238c06c7fc17befe5ace"
+  },
+  "cases": [
+    {
+      "id": "MAIN_CURRENT",
+      "project": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-inspector-insp01-20261023/project",
+      "revision": "e165c7950ddbcb0d5ac1329aae2672382bab32130536be1d3d98c125eaa88fd3",
+      "source": "Root linked Symbol/Footprint/CI/strictNet6 and namedFootprintsource; childsource/definition A/Boccurrences",
+      "checks": "Actual current4b0604c3 at e165 Project13warnings; independently admitted scopedNet0 under evaluated schematic_connectivity only, exactexplicitaffectedpin targets exclude rootuniquePin64; hierarchy_power_intent notimplemented, no ProjectClean/allrulesclaim.",
+      "current_root_net_input": "Distinct reviewer and PM accept fresh captured full current engine-derived view only; two native wrapperFAILs retained, no native/AX/pixelPASS."
+    },
+    {
+      "id": "CLASS_AND_STALE",
+      "project": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-inspector-insp01-20261023/class-variant",
+      "revision": "f47e990d7dc3a7c8b9aa5d07940087c45e11f44a09ddd5474a22d07ae135e486",
+      "source": "Canonical allocatedClass561b581f assigned only BoardNet020, same-name021 remainsnil; exact synthetic fixture dimensions. Public source reopen and base source unchanged.",
+      "checks": "Copied correct4b run describes olde165 revision, never current for f47. Stale-only historical source preserved.",
+      "limits": "Admitted positive authored BoardNet class source ONLY; no strict logical correspondence or current4b/ERC claim at f47. Case supplies positive class fields and stale source, not a current logicalNetComplete receipt."
+    },
+    {
+      "id": "BUS_POSITIVE",
+      "project": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-inspector-insp01-20261023/semantic-bus-variant",
+      "source": "Previously accepted serialized semantic-scope61files/indexbcce46...,4explicit logicalBus scalarNet b151... +qualified source representations; distinct equal-name identities. Actual summary and source buses queries exit0, each count8 Bus across2sheets.",
+      "checks": "No new check run or current checks admission claimed.",
+      "limits": "Positive Bus source field provenance accepted by reviewer/PM; no typedBusquery/hierarchyUI/nativePASS. query hierarchy exit2 missing sheet schema_version captured intakeu0bk, no retrofit/repair prerequisite."
+    },
+    {
+      "id": "BASE_NORUN",
+      "project": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc03-native-20261023/crossprobe/project",
+      "source": "Accepted original93canonicalfiles unchanged; before clone check list actual0 and exactsource inventory retained.",
+      "checks": "NotRun input, no fictitious clean count.",
+      "limits": "No new multi-sheet navigation proof from original root."
+    }
+  ],
+  "retained_failures": [
+    "Initial hierarchyCLI schema-version rejection, intake dat-hierarchy-fixture-schema-u0bk, no source edit",
+    "Before GUI launch wrapper rejected relativeoutput path; originallog retained, canonical absoluteoutput used",
+    "Native attempt1 wrapperFAIL due missing observeroracle despite correct fullNet6, noAXsnapshot retained",
+    "Native attempt2 wrapperFAIL reachedRun3 after finite clicks, no furthernative attempt",
+    "Old wrong971 ERCrecord retained; observer whole-envelope assertion corrected to nested immutable record, no productrerun"
+  ],
+  "no_claims": [
+    "No completeC01 readiness/INSP-C02/03",
+    "No ProjectClean/allERCpassed/implementedhierarchicalpower rule",
+    "No carrying rootComplete/currentERC to classvariant or Busfixture",
+    "No new engine/rules/schema/import/dependency/thirdparty/GUIbuild"
+  ],
+  "actual_independent_review": {
+    "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "receipt_id": "INSP-C01-INPUT-REVIEW-03",
+    "disposition": "ADMITTED_AT_DECLARED_SOURCE_SCOPE",
+    "findings": [],
+    "scope": "Root current Net6 input predicate; actual scoped evaluatedNet0/Project13warnings and unimplementedcoverage; classsourceONLY at separatef47; actual8Pad/Footprintbindings; Bus61indexpins/4explicitlogicalassociations/8sourcebuses. No typedBusquery/hierarchyUI/renderedclass/native/AX/pixelPASS."
+  },
+  "actual_manager_acceptance": {
+    "manager": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "disposition": "Accepts actual INSP-C01-INPUT-REVIEW-03 at declared source scope; no more input campaign. Converge exact source-health/fullworkflow16case/Running-rerun/final independent readiness packet. No completeC01PASS until actual final review."
+  }
+}

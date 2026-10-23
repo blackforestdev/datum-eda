@@ -111,7 +111,7 @@
 </details>
 
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
-   INSP-C01 planning: mandatory I01 correction follows settled PM062 B1/O1, S-C library context, S-A/S-I local document/source/occurrence (no Sheet ordinal), G2 historical counts. Existing CLI input recipe completed12 commands, incomplete input admission; actual ERC severity adapter defect2qi3 accepted CLI repair landed ata56b1231; next bounded canonical input variants and readonly current root Net verification approved, recorded in inspector/erc-severity-repair.json. Full corrected readiness review and INSP-C02 remain required; no full Inspector execution. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
+   INSP-C01 full readiness independently PASS04 (124pins), actual PM INSP-C02 authorizes exact533e/3a95/6562/a281 packet. INSP-C03 full shared Inspector/document-occurrence navigation/realChecks+prewrite guards/AX implementation active; no availability/proof/objective acceptance yet. Input03 declared source limits, failed observers, unimplemented hierarchy coverage and globalbar/protected-lane boundaries retained. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build the inert marking-menu shell** (`GUI-MARKING-MENU`; `dat-marking-menu-shell-g0w`).

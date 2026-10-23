@@ -1,0 +1,10 @@
+{
+  "manager": "01a160d9-b499-7923-984a-b3390beb2e34",
+  "status": "APPROVED_BOUNDED_INPUT_PREPARATION_NO_INSP03",
+  "grant": "Existing pinned canonical CLI only on fresh owned variants; actual NetClass/Bus and existing library/Footprint-origin metadata. Exact supported argv/source expectation before each variant; IDs/refs/rawhashes/reopen verified; preserve actual13/stale/oldwrongrun. No imports/deps/thirdparty/Rustgenerator/privatewriter/schema changes. Stop unsupported branches; evaluated0 only from actual covered scope. Strict root Net via existing GUI readonly Wire-to-Net or existing compiled query, no new build/harness.",
+  "unsupported_branches": {
+    "evaluated0": "check run help supports profile only, no explicit target/domain scope; empty child not ProjectClean. Branch stopped.",
+    "logical_bus_cli": "create-bus builder commits source declaration only, no ElectricalIdentity::Bus.scalar_nets association. No name-based substitute; branch stopped."
+  },
+  "existing_positive_library": "Current clone Part900 default_footprint600, Footprint600 actual named SOIC-8_NARROW_IPC7351B_B references Package500, placed package references Part900/Package500. Reuse actual source; no mutation."
+}

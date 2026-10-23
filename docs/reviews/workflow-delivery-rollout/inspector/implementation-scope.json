@@ -1,0 +1,413 @@
+{
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C01",
+  "status": "EXACT_COHESIVE_IMPLEMENTATION_SCOPE_PROPOSAL_NOT_EXECUTION_GRANT",
+  "basis": "PM062 existing B1/O1/S-A/S-C/S-G/S-I and accepted shared S5A/crossprobe owners. No engine/canonical schema/dependency/product rules proposed. Exact final integration/registration paths must be synchronized before execution and any scope adjustment reviewed under actual grant.",
+  "groups": [
+    {
+      "owner": "Shared typed Inspector context",
+      "existing": [
+        "crates/gui-protocol/src/selection_view.rs",
+        "crates/gui-protocol/src/selection_view/properties.rs",
+        "crates/gui-protocol/src/selection_view/inspection.rs",
+        "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+        "crates/gui-protocol/src/workspace_state.rs"
+      ],
+      "new": [
+        "crates/gui-protocol/src/inspector_context.rs",
+        "crates/gui-protocol/src/inspector_context/components.rs",
+        "crates/gui-protocol/src/inspector_context/nets.rs"
+      ],
+      "change": "Capture one immutable current source-backed section/field projection for Native selection and empty/document/Navigator inspected context; exact source/occurrence, Common/Mixed/Unavailable, S-C provenance and related-only roles. Shared Context/AX/render consume same data; no legacy-only implementation."
+    },
+    {
+      "owner": "Check availability, scope and explicit producer",
+      "existing": [
+        "crates/gui-protocol/src/check_runs.rs",
+        "crates/gui-protocol/src/check_runs/loading.rs",
+        "crates/gui-protocol/src/check_runs/marker.rs",
+        "crates/gui-protocol/src/cli_bridge.rs",
+        "crates/gui-app/src/application/runtime_menu_actions.rs",
+        "crates/gui-app/src/application/production_status_refresh.rs",
+        "crates/gui-protocol/src/gui_menu_model/action_registry.rs",
+        "crates/gui-render/src/hit_target.rs",
+        "crates/cli/src/args/check.rs",
+        "crates/cli/src/commands/check/run_history.rs",
+        "crates/cli/src/commands/check/native_inspect.rs",
+        "crates/cli/src/commands/check/mod.rs",
+        "crates/cli/src/main_tests/main_tests_project_check_run_history.rs"
+      ],
+      "new": [
+        "crates/gui-protocol/src/inspector_context/checks.rs",
+        "crates/gui-protocol/src/check_runs/producer.rs",
+        "crates/gui-app/src/editor/runtime_check_runs.rs"
+      ],
+      "change": "Keep current marker admission safe; separately retain historical run/revision/count, distinguish NotRun/Unavailable/Running/current evaluation, exact profile/domain/coverage/target/path filter. Explicit typed rerun request uses existing canonical check producer through fixed argv/no shell, background job with identity/currentness and real pending state. Inspection never runs checks."
+    },
+    {
+      "owner": "Qualified pane documents and occurrence navigation",
+      "existing": [
+        "crates/gui-protocol/src/workspace_pane_content.rs",
+        "crates/gui-protocol/src/workspace_layout.rs",
+        "crates/gui-protocol/src/native_schematic_scene.rs",
+        "crates/gui-protocol/src/selection_scene/index.rs",
+        "crates/gui-protocol/src/workspace_interaction/camera.rs",
+        "crates/gui-app/src/viewport/pane_cameras.rs"
+      ],
+      "new": [
+        "crates/gui-protocol/src/schematic_documents.rs",
+        "crates/gui-protocol/src/schematic_documents/navigation.rs",
+        "crates/gui-protocol/src/schematic_documents/projection.rs",
+        "crates/gui-app/src/editor/runtime_schematic_navigation.rs"
+      ],
+      "change": "Source-qualified document key per existing PaneId; occurrence-first tree and independently inspected row. Reuse recursive WorkspaceLayout::open_beside at focused leaf and warm PaneCameras; preserve current pane/camera/global subject. Project exact occurrence scene/bindings and paths instead of root-only/empty-path filter. No Sheet class, extra layout tree, settings or implicit root fallback."
+    },
+    {
+      "owner": "Native shared surface and interaction integration",
+      "existing": [
+        "crates/gui-render/src/side_panels.rs",
+        "crates/gui-render/src/side_panels/inspector_dispatch.rs",
+        "crates/gui-render/src/side_panels/selection_inspector.rs",
+        "crates/gui-render/src/render/pane_layout.rs",
+        "crates/gui-render/src/render/pane_chrome.rs",
+        "crates/gui-render/src/render/schematic_retained.rs",
+        "crates/gui-app/src/editor/runtime_selection.rs",
+        "crates/gui-app/src/editor/runtime_selection_hit.rs",
+        "crates/gui-app/src/editor/runtime_selection_inspector.rs",
+        "crates/gui-app/src/editor/runtime_view_actions.rs",
+        "crates/gui-app/src/editor/runtime_hit_actions.rs",
+        "crates/gui-app/src/editor/selection_accessibility.rs",
+        "crates/gui-app/src/application/runtime_state.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/state.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/children.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/presentation.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/events.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection.rs"
+      ],
+      "new": [
+        "crates/gui-render/src/side_panels/inspector_sections.rs",
+        "crates/gui-render/src/side_panels/schematic_navigator.rs"
+      ],
+      "change": "Named shared sections and local Document/Source/Occurrence/Snap/ERC with empty state, sourcequalified Navigator actions, focus/keyboard/collapse/narrow composition and one Inspector owner. Same exact context in hits and AT-SPI. Pane-specific scene selection/retention respects qualified document and warm camera. Global bar/protected prototypes unchanged."
+    }
+  ],
+  "existing_source_metrics": [
+    {
+      "path": "crates/gui-app/src/application/runtime_state.rs",
+      "sha256": "ef276a3ecf71671dd09b7d667ea713cffe0b4cd9d02ee330860101b3d01c29eb",
+      "physical_lines": 78,
+      "pre_first_inline_test_lines": 78
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_hit_actions.rs",
+      "sha256": "6ba11790374372a9d724dc00a43ae3cc9b3da1041f2523386c369bb0b7cb299d",
+      "physical_lines": 502,
+      "pre_first_inline_test_lines": 502
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_selection.rs",
+      "sha256": "0377bbf45b80b4ea6ae83608357e24c0f9bbf8902ab51cb4fbdbfae67500cd56",
+      "physical_lines": 481,
+      "pre_first_inline_test_lines": 478
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_selection_hit.rs",
+      "sha256": "e7d420e3ccfd0a85962e91410fb1608b58a3b3a68b09fb7e99cfebed0a9147e0",
+      "physical_lines": 99,
+      "pre_first_inline_test_lines": 99
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_selection_inspector.rs",
+      "sha256": "095864d05ca10d6ae774dd5982df0c24b6fa4ed74fe722449267d7de432c351a",
+      "physical_lines": 189,
+      "pre_first_inline_test_lines": 159
+    },
+    {
+      "path": "crates/gui-app/src/editor/runtime_view_actions.rs",
+      "sha256": "8c0454951b43b7793571290156c4792bbfff6a018d6142389ef751fd1a3b74f7",
+      "physical_lines": 228,
+      "pre_first_inline_test_lines": 211
+    },
+    {
+      "path": "crates/gui-app/src/editor/selection_accessibility.rs",
+      "sha256": "50fdfe4b4048b46f150b76aeabdf541236e53ebbfc318545a0e63d93fe52c865",
+      "physical_lines": 47,
+      "pre_first_inline_test_lines": 47
+    },
+    {
+      "path": "crates/gui-app/src/viewport/pane_cameras.rs",
+      "sha256": "4ffc98713d6fef2b255172c0d9b7c9d4687d40aa3a7389312f5e245ddbd2ce0d",
+      "physical_lines": 330,
+      "pre_first_inline_test_lines": 129
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs.rs",
+      "sha256": "5418d0a0314f32e28ef3e6725b368cdc1506d67b32918074e8e4b158eee2d922",
+      "physical_lines": 581,
+      "pre_first_inline_test_lines": 463
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs/loading.rs",
+      "sha256": "c19101d1efc9f38e3ad02a6b73bb591cd86303aa623fe566e58595cfbe50cd66",
+      "physical_lines": 98,
+      "pre_first_inline_test_lines": 96
+    },
+    {
+      "path": "crates/gui-protocol/src/check_runs/marker.rs",
+      "sha256": "50f89a45fd76cfc3999bbda51297a31f4a58185df860eb7796efc34ab49b8527",
+      "physical_lines": 156,
+      "pre_first_inline_test_lines": 156
+    },
+    {
+      "path": "crates/gui-protocol/src/cli_bridge.rs",
+      "sha256": "f1d8e2da9d7fa1ae65f936ce154a253097b2acfe0c41a2e9abc65b9eaa66f174",
+      "physical_lines": 209,
+      "pre_first_inline_test_lines": 136
+    },
+    {
+      "path": "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+      "sha256": "935dac4b9757c279870ca80b0f1f8320379dae011fe8f59113da6b716a79ef92",
+      "physical_lines": 79,
+      "pre_first_inline_test_lines": 79
+    },
+    {
+      "path": "crates/gui-protocol/src/native_schematic_scene.rs",
+      "sha256": "f4136620ddeed85b06f55b41c3793449e7640719ca25f9cd3713a5394b69392d",
+      "physical_lines": 50,
+      "pre_first_inline_test_lines": 50
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_scene/index.rs",
+      "sha256": "1274de2bf2ffa557a0cc4e7e26508e91823b2a694791dde542ef1a04c3b0d678",
+      "physical_lines": 243,
+      "pre_first_inline_test_lines": 243
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view.rs",
+      "sha256": "a828e3572a0f6a36a8ec63fef5b2e88920eca4969f04a094b3d23455785d9c8d",
+      "physical_lines": 547,
+      "pre_first_inline_test_lines": 547
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/inspection.rs",
+      "sha256": "7f46999b3829b8f41e80eb6dca37c04ff43263efc1159628d6d589197152bc1e",
+      "physical_lines": 101,
+      "pre_first_inline_test_lines": 101
+    },
+    {
+      "path": "crates/gui-protocol/src/selection_view/properties.rs",
+      "sha256": "003386bee01c22fc65dcabb77e75e0e38a2934c2521096b7b5f0fbfdb0bb7ada",
+      "physical_lines": 148,
+      "pre_first_inline_test_lines": 148
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_interaction/camera.rs",
+      "sha256": "02b20ca10a22e08c6c099e17c97f813f4a4a07b42f677730fd42ca223b549761",
+      "physical_lines": 22,
+      "pre_first_inline_test_lines": 22
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_layout.rs",
+      "sha256": "382dca33dcc0494450e31f4ab8045978b91deee51c71d0c321620ef3aeb13d71",
+      "physical_lines": 938,
+      "pre_first_inline_test_lines": 627
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_pane_content.rs",
+      "sha256": "ae043de0f97afb1388309b3175b74d0328f507c62e2938b282ae70f6c8650a70",
+      "physical_lines": 52,
+      "pre_first_inline_test_lines": 52
+    },
+    {
+      "path": "crates/gui-protocol/src/workspace_state.rs",
+      "sha256": "db5adad483a358520cb1bc7cdbec6e9e97fa3b239e5021e29c63b6b026f19d65",
+      "physical_lines": 82,
+      "pre_first_inline_test_lines": 82
+    },
+    {
+      "path": "crates/gui-render/src/render/pane_chrome.rs",
+      "sha256": "84304fed5ef3db2136d1d88f996626a2cb79a58f48cd32d3689815d22c9ffac0",
+      "physical_lines": 523,
+      "pre_first_inline_test_lines": 405
+    },
+    {
+      "path": "crates/gui-render/src/render/pane_layout.rs",
+      "sha256": "302dbe9666b365c8853be0deba37d9d5762720062e8c69af9757172c992e7223",
+      "physical_lines": 92,
+      "pre_first_inline_test_lines": 92
+    },
+    {
+      "path": "crates/gui-render/src/render/schematic_retained.rs",
+      "sha256": "0a36b83edca4ca140935be89a40d3c769ef325ac0e3e96cc767d1b3e8005fecf",
+      "physical_lines": 246,
+      "pre_first_inline_test_lines": 246
+    },
+    {
+      "path": "crates/gui-render/src/side_panels.rs",
+      "sha256": "db1c85bc79dd5349d34365be3d99bed9cad763893a8c09c18a6a74c08cd481ab",
+      "physical_lines": 133,
+      "pre_first_inline_test_lines": 133
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/inspector_dispatch.rs",
+      "sha256": "80e7de4a656a5963a0b0b35e1737c6286af693ef6b618066f3e5710551479633",
+      "physical_lines": 116,
+      "pre_first_inline_test_lines": 45
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/selection_inspector.rs",
+      "sha256": "b0bcc1a526dc487e3893e7264d85d2d02c628ca2723d663cb39b7b238057d4a5",
+      "physical_lines": 330,
+      "pre_first_inline_test_lines": 327
+    },
+    {
+      "path": "crates/gui-protocol/src/lib.rs",
+      "sha256": "5db55e1cdbb14952311263e89d0ab86ea42b7636ba8d1f56208c222b8f5f36af",
+      "physical_lines": 4549,
+      "pre_first_inline_test_lines": 2843
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "sha256": "d342e76cf02bfff093c3cb981d051e6aaeaa66a4dc3041d7367c386c513410c3",
+      "physical_lines": 328,
+      "pre_first_inline_test_lines": 292
+    },
+    {
+      "path": "crates/gui-app/src/application/runtime_menu_actions.rs",
+      "sha256": "c025b3717866b8bf643395de8caeac8a2f0a48edd5c9ab4d016f978b567dce7a",
+      "physical_lines": 571,
+      "pre_first_inline_test_lines": 420
+    },
+    {
+      "path": "crates/gui-app/src/application/production_status_refresh.rs",
+      "sha256": "d04ce4b3928f8bd3d68f04bb78f22ae1fa4722b6111233842f214aa5f943be69",
+      "physical_lines": 421,
+      "pre_first_inline_test_lines": 405
+    },
+    {
+      "path": "crates/gui-protocol/src/gui_menu_model/action_registry.rs",
+      "sha256": "f28bf13faaf4c007b6a4b4310f1600ff597dad481f87a942dd916ce19205e43a",
+      "physical_lines": 102,
+      "pre_first_inline_test_lines": 100
+    },
+    {
+      "path": "crates/gui-render/src/hit_target.rs",
+      "sha256": "0189732a1ef6730ee10e44682044290454a676ec03f52ec30f4135aed8fae877",
+      "physical_lines": 163,
+      "pre_first_inline_test_lines": 163
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
+      "sha256": "872a9bdd41802fb9019689db3712eedbc27d39c2ff6f8d44c71a85d27ec2fe7f",
+      "physical_lines": 522,
+      "pre_first_inline_test_lines": 206
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/state.rs",
+      "sha256": "7389338ed629fe29ddc1ca4b846e29b8d02d36e125a88250ed675dc155e8addd",
+      "physical_lines": 19,
+      "pre_first_inline_test_lines": 19
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/children.rs",
+      "sha256": "c1ff69c2073bf26f34f7667e08d9e7520d7c319756916dc6dbb1f8ca13bc89e1",
+      "physical_lines": 25,
+      "pre_first_inline_test_lines": 25
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/presentation.rs",
+      "sha256": "2cc85023e4ee8f576c8599a0e8b80f2ef05424a4d1cc6f8110ce46eef43cba26",
+      "physical_lines": 73,
+      "pre_first_inline_test_lines": 73
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/events.rs",
+      "sha256": "599b876bef94327ff60a6e021b1fd40976f757914f7dcf89b29279be8c9012e8",
+      "physical_lines": 91,
+      "pre_first_inline_test_lines": 91
+    },
+    {
+      "path": "crates/cli/src/args/check.rs",
+      "sha256": "993bc58063042d7b85d634ed90ac4b11ae9948be2b6480f888dacef715be3769",
+      "physical_lines": 110,
+      "pre_first_inline_test_lines": 110
+    },
+    {
+      "path": "crates/cli/src/commands/check/run_history.rs",
+      "sha256": "91dddca75f5079e889cb65352df0a2d139445854e5b4a5863fe6ff64fcb2e467",
+      "physical_lines": 225,
+      "pre_first_inline_test_lines": 225
+    },
+    {
+      "path": "crates/cli/src/commands/check/native_inspect.rs",
+      "sha256": "5dd48f21d01f729401b6a0d4ec21693e57ae5d18e6aa8eff170c71827488e36f",
+      "physical_lines": 653,
+      "pre_first_inline_test_lines": 653
+    },
+    {
+      "path": "crates/cli/src/commands/check/mod.rs",
+      "sha256": "500d941a52ac23f8b3f627c2beba2ca9456bd90ab8684029b3f418b8b274f25b",
+      "physical_lines": 31,
+      "pre_first_inline_test_lines": 31
+    },
+    {
+      "path": "crates/cli/src/main_tests/main_tests_project_check_run_history.rs",
+      "sha256": "c3da651fd88bddc183d5c387e9ea485c29037b1ec57f4869123502fcb6bcb6b1",
+      "physical_lines": 309,
+      "pre_first_inline_test_lines": 309
+    },
+    {
+      "path": "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection.rs",
+      "sha256": "71e01e95f6e696fbceac8abe2980cdfd8680a47c7f5fc1f9d883743d5dd0a379",
+      "physical_lines": 318,
+      "pre_first_inline_test_lines": 9
+    }
+  ],
+  "source_health_plan": "Normal Rust owners stay within700 pre-test and350 inline-test/700 dedicated-test lines. Existing source-health gate3297 passed at repair; do not add to legacy debt. Cohesive document navigation, section projection and check availability/producer owners live separately. If integration touches a legacy owner, extract real ownership and ratchet exact ledger ceiling in same change before landing; no forwarding/include split or exception. New tests extend existing owner suites; registration only in existing normal roots.",
+  "canonical_check_producer": {
+    "existing_entry": "crates/cli/src/commands/check/native_inspect.rs::run_native_project_check_with_profile -> query_native_project_check_run_with_profile_and_persistence -> commit_check_run_evidence -> canonical commit; recognized severity correction landed a56b1231",
+    "existing_read_transport": "check_runs/loading.rs uses run_cli_json and cli_bridge current companion resolution; reuse same no-shell fixed argv transport",
+    "proposed_request": "Explicit typed CheckRun request with immutable Project/root/revision/profile/job identity; fixed argv check run <root> --profile erc. No arbitrary terminal command or CLI-string authored operation dispatcher. Existing canonical producer retains actual model_revision/run identity; GUI admits result only against current matching basis.",
+    "real_running": "Actual background typed job with captured Project/revision/profile/request ID. Queue/start intent alone is Starting, not ERC Running. Add a minimal opt-in bounded producer-acceptance event from the existing CLI after exact expected-basis admission and before actual check computation, over the job process output channel; default final JSON behavior unchanged. GUI transitions to Running only on matching actual producer acceptance while owned process/job live, then completion/refusal/error from same job. No terminal session proxy or commandstarted-before-write receipt. This is first-party job admission/progress only, no persisted schema/newengine rules/daemon transport overhaul.",
+    "stale_and_refusal": "Stale result remains described historical evidence without current marker authority. WrongProject/revision/unsupported producer refuses/unavailable, not fake enabled action. No silent rerun or assertion allrulespassed.",
+    "expected_generated_effects": "Explicit rerun may append CheckRun/journal through existing canonical writer. Snapshot before/after that action and label generated effects; pure inspection/nonmutation proof snapshots start after canonical input preparation/rerun. Deterministic existing-ID no-write path preserved, never rewriteoldrun.",
+    "current_gui_gap": "docs/gui/menu_model.csv has RunERC/RunDRC datum.check.run_profile, but application/runtime_menu_actions.rs dispatch currently falls through refusal. Catalog entry is not implemented producer. Extend same real shared dispatch and bounded action admission for supported ERC only; no DRC or unrelated check capability inferred.",
+    "completion_admission": "After actual producer exit, use check show/list persisted record identity/revision/profile and current source; do not accept stdout persisted=true alone because existing deterministic run IDs can skip writes. Preserve legacy records and disclose unsupported/malformed/inconsistent data, not rewrite. Existing waiver/deviation effects remain authoritative; raw unwaived engine counts are not substituted for actual scoped active/waived statuses.",
+    "read_only_authority_pin": {
+      "path": "docs/gui/menu_model.csv",
+      "sha256": "50ad81d59926354c4b1a8ba2d9479ad1efe8143411f583161cc1d6a255fb6684",
+      "entry": "datum.check.run_profile, erc; existing catalog only, not execution evidence"
+    },
+    "producer_basis_guard": "Current CLI accepts root/profile only; GUI post-result filtering cannot prevent a stale/foreign request from persisting generated evidence. Add paired optional expected-Project UUID/expected-model-revision admission fields to existing CheckRunArgs/dispatch. The GUI typed request always supplies both. At the SAME ProjectResolver model capture used to build/check/commit the run, compare actual Project/revision and refuse before check production/commit if mismatched. Do not validate with a throwaway model then resolve a new unguarded model. Existing BatchComposer expected_model_revision and commit_prepared->commit_journaled guard close the source-change race at canonical commit. Legacy CLI callers without expectation retain existing behavior; no CheckRun/DesignModel schema change.",
+    "progress_boundaries": "The opt-in acceptance event carries only typed job/Project/revision/profile identity, no credentials/ambient context. Fixed args, no shell or arbitrary command string, no private source writer. Limit/parser is bounded to that one job event and existing final CheckRun response; malformed/foreign/stale event refuses publication, never manufactures success. Independent review must verify precommit negative controls and actual live job acceptance/completion.",
+    "existing_commit_guard_source": {
+      "path": "crates/engine/src/api/native_write/context.rs",
+      "sha256": "599cc0e5ce85c3814a0a4345677941f3405e91e17eabf3f6758a95f76db7db41",
+      "fact": "BatchComposer stamps expected_model_revision, commit_prepared delegates to model.commit_journaled; engine source is read-only in this proposal."
+    }
+  },
+  "validation_plan": "Focused typed-source/availability/occurrence/target/refusal suites; required source-health/policy/drift and dependency gates; one guarded serial changed-source build when implementation needs it. Ordinary existing finite native workflow matrix16cases + normal/narrow/keyboard/AT-SPI/context and actual Close/freshreopen; same-engine structural/goldens only for changed surfaces. Independent source/runtime/replay review before exact objective acceptance. Reuse accepted unchanged behavior/proofs; no broad baseline/campaign. Explicit checks include wrongProject/staleexpectedbasis refusal with canonical bytes/history unchanged, matching current producer acceptance->Running->persisted readback, no-auto-run navigation, deterministic old-run record retained, malformed/stale job acknowledgements refused; producer effects separated from inspection no-write checkpoints.",
+  "registration_and_health": {
+    "existing": [
+      "crates/gui-protocol/src/lib.rs",
+      "crates/gui-app/src/main.rs",
+      "specs/source_module_size_manifest.json"
+    ],
+    "cohesive_legacy_extraction": "Move the complete existing ReviewWorkspaceState consumer interaction implementation (review row presentation, visibility/filter toggles, selected segment evidence and action lookup), currently lib.rs652-720, into its existing workspace_state.rs typed owner. Preserve methods/behavior; no forwarding/include. This belongs with the shared consumer state that owns new Inspector/document context. Root exports/registers real new owners while ending strictly smaller; exact production ceiling ratchets from2842 to measured live lower value in same change, inline-test1705 ceiling unchanged if untouched. Both children remain within normal budgets.",
+    "known_legacy_entry": {
+      "kind": "rust-production",
+      "limits": {
+        "pre_test_lines": 2842,
+        "inline_test_lines": 1705
+      },
+      "owner": "project-owner",
+      "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
+      "target_lines": 350,
+      "status": "decomposition-required",
+      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending. ORG-05 moves eleven board-scene geometry/display payload types and their unchanged outline-layer default into scene_primitives, a normal typed implementation owner; root public exports retain API and serialization. Production ceiling ratchets from 3078 to 2940; inline tests 1705 remain unchanged. NPD-C03 moves the complete workspace constructor to workspace_state, its existing typed state owner; production ceiling 2940 to 2887, inline tests unchanged. NPD-C09 moves editor command definitions into the normal editor_commands owner; production ceiling ratchets to 2842 and inline tests stay unchanged."
+    },
+    "nonmutating_gate": "Existing accepted source-health3297PASS and13policytestsPASS reused; actual changed implementation runs required gate/policy/drift and exact ratchet."
+  },
+  "accessibility_integration": "Extend actual shared terminal_accessibility_bridge and AT-SPI selection state/children/presentation/events to expose named sections, exact read-only fields/availability, empty Document context, Navigator row/tree/current/open action, keyboard focus/collapse, severity text and real check-job state. Existing selection_accessibility adapter alone is insufficient. Shared Context uses same typed source projection; no new per-editor AT-SPI owner."
+}
