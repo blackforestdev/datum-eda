@@ -341,6 +341,16 @@ must produce a `Proposal` first and apply only after acceptance. Undo and redo
 are compensating `OperationBatch` transactions through the same `commit()`;
 there are no per-domain private undo/redo paths.
 
+PM057 D2-H1 governs the bounded same-binding package/ComponentInstance/affected-Net
+materialization compensation. Restore immutable recorded semantic snapshots and
+append canonical compensating operations with monotonic touched revisions and
+only its explicit local-reference metadata allowlist rebased to the validated
+complete final graph. Validate recorded semantics and actual current preimages
+before rebasing; record the inverse of the actual compensation for redo. Historical
+records, IDs, library pins and unrelated bytes remain unchanged. Strict current
+queries and stale/foreign refusal remain required. This is governing target
+behavior; the cross-probe implementation/history proof is still pending.
+
 Current native board operation vocabulary includes exact-payload create,
 replace, and delete coverage for authored board pads, tracks, vias, nets,
 netclasses, dimensions, text, and keepouts where the current product surface

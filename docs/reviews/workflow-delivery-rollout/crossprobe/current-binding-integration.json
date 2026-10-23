@@ -1,0 +1,592 @@
+{
+  "governing_invariants": [
+    "PM026/UVT2.2.20: current Project/revision/occurrence authority; linked component/symbol identities related only, never guess stale mapping.",
+    "PM057: Pad source current explicit per-placement binding, library/CI/PinPadMap authority, canonical journal; no name/geometry remapping.",
+    "PM053: explicit current CI/PinPadMap/terminal correspondence for complete logical/Board Net, no partial complete fallback."
+  ],
+  "issue_id": "dat-component-pad-ci-pin-lifecycle-43kg",
+  "kind": "crossprobe_current_binding_integration",
+  "limits": [
+    "No speculative setup sequence search or new fixture/native proof campaign.",
+    "Current query correctly refuses stale source; do not weaken it to make frozen input pass.",
+    "Electrical relationship cache discrepancy dat-electrical-relation-revision-cache-j8y7 is separate; CI source/object revisions actually agree0/0 then1/1."
+  ],
+  "minimal_sequence": {
+    "before_and_after": [
+      {
+        "ci_object_revision": 0,
+        "ci_source": {
+          "component_instance": {
+            "library_bindings": {
+              "78000000-0000-4000-8000-000000000004": {
+                "binding_role": "pin_pad_map",
+                "pinned_object_revision": 0,
+                "target_object_id": "a0000000-0000-4000-8000-000000000001"
+              }
+            },
+            "object_revision": 0,
+            "part_ref": {
+              "object_id": "90000000-0000-4000-8000-000000000001",
+              "object_revision": 0
+            },
+            "placed_package_refs": [
+              {
+                "object_id": "78000000-0000-4000-8000-000000000002",
+                "object_revision": 0
+              }
+            ],
+            "placed_package_roles": {
+              "78000000-0000-4000-8000-000000000002": {
+                "role": "primary"
+              }
+            },
+            "placed_symbol_refs": [
+              {
+                "object_id": "78000000-0000-4000-8000-000000000001",
+                "object_revision": 0
+              }
+            ],
+            "placed_symbol_roles": {
+              "78000000-0000-4000-8000-000000000001": {
+                "role": "primary"
+              }
+            },
+            "uuid": "78000000-0000-4000-8000-000000000003"
+          },
+          "schema_version": 1
+        },
+        "label": "before",
+        "package_object_revision": 1,
+        "pad_binding_ci_pins": [
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          }
+        ],
+        "related": [],
+        "revision": "89c35e4efb276bf0984c92a1ee68c597622509f7eb217dd8a164e08f7e814df4",
+        "unavailable": [
+          "Authored component binding source or reference revision is stale"
+        ]
+      },
+      {
+        "ci_object_revision": 1,
+        "ci_source": {
+          "component_instance": {
+            "library_bindings": {
+              "78000000-0000-4000-8000-000000000004": {
+                "binding_role": "pin_pad_map",
+                "pinned_object_revision": 0,
+                "target_object_id": "a0000000-0000-4000-8000-000000000001"
+              }
+            },
+            "object_revision": 1,
+            "part_ref": {
+              "object_id": "90000000-0000-4000-8000-000000000001",
+              "object_revision": 0
+            },
+            "placed_package_refs": [
+              {
+                "object_id": "78000000-0000-4000-8000-000000000002",
+                "object_revision": 1
+              }
+            ],
+            "placed_package_roles": {
+              "78000000-0000-4000-8000-000000000002": {
+                "role": "primary"
+              }
+            },
+            "placed_symbol_refs": [
+              {
+                "object_id": "78000000-0000-4000-8000-000000000001",
+                "object_revision": 0
+              }
+            ],
+            "placed_symbol_roles": {
+              "78000000-0000-4000-8000-000000000001": {
+                "role": "primary"
+              }
+            },
+            "uuid": "78000000-0000-4000-8000-000000000003"
+          },
+          "schema_version": 1
+        },
+        "label": "after_current_endpoint_rebind",
+        "package_object_revision": 1,
+        "pad_binding_ci_pins": [
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          },
+          {
+            "object_id": "78000000-0000-4000-8000-000000000003",
+            "object_revision": 0
+          }
+        ],
+        "related": [
+          {
+            "class": "footprint",
+            "id": "78000000-0000-4000-8000-000000000002"
+          }
+        ],
+        "revision": "b823e578ff537e4297bf0e7f9541bc6107e27c4081c6dc24abf4f30f77bdccd7",
+        "unavailable": []
+      }
+    ],
+    "clone": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-ci-pin-diagnosis-20261023/project",
+    "frozen_source_preserved": {
+      "canonical_files": {
+        ".datum/component_instances/78000000-0000-4000-8000-000000000003.json": "d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7",
+        ".datum/electrical_identities/0925dc26-f984-42a6-b3fb-ac449a1b32a8.json": "6cdb2295a34208d165b593447143e6f29e09a7714236a3ed71934204de055c0a",
+        ".datum/electrical_identities/1a81163e-b5d2-47d5-986f-a4e806592497.json": "333f18262d6df5a7ff718765ec3fbb6a80ffdce07fec3092903270de99e62f09",
+        ".datum/electrical_identities/2e838d28-abb8-4133-a2ad-413578c5d913.json": "708b3bb0f964f7fe006b8b3351a8ebbaa3960d114ac5574945fd7e3ba9c2c054",
+        ".datum/electrical_identities/3d80283f-7646-475d-9d2d-2567871afbcd.json": "3bb576696f988e1c9f9a630016ba835449217d36e661ec10f2e1a98ffd9df644",
+        ".datum/electrical_identities/59848439-7cd3-47ec-8012-73f22c4544eb.json": "9dd069b131fb9fb3a4f806ce4d350c6d587be0250e39694c844109fcf78c3b6d",
+        ".datum/electrical_identities/78000000-0000-4000-8000-000000000028.json": "77305fa41bd5959e807f9193713ccbc3e286a69c9571d557765822ccdc38b458",
+        ".datum/electrical_identities/99cdcf96-982f-4672-8e9d-eacb5d80dfc1.json": "5b8489f97c080aa34ebfd671b5c4b40657ab8bd2d80a62031e3d58d6840b2025",
+        ".datum/electrical_identities/a8a37abd-9e70-48ab-825c-983fe80aa325.json": "879cb9c179e5fd29c8870d66ede961f99da8099106e9c32d2ffd966fef208e84",
+        ".datum/electrical_identities/db9035d9-8061-45d3-a0a8-837664954fa6.json": "13b5a85f11a1dce73afa6971997be40df7642545175df22bc46f68f8d9b68c3c",
+        ".datum/electrical_identities/f7ba6b84-c868-4a0e-85a6-64fef1f59931.json": "8eb320061c3e02999186ec7cdafbf4045bc7bc3af37f35220c79ff1ac6a000b3",
+        ".datum/electrical_identities/fd0e0ca7-6bb0-47d9-ac44-ce2d0578a22f.json": "a09e1e1802421479e8a15377379a5f48627551531467de00b21af9279ff80646",
+        ".datum/journal/cursor.json": "b2eb646eb2189e70bdc9b555c57899666fb4d4629d78f25a1fa163821c0c4337",
+        ".datum/journal/transactions.jsonl": "0329a438ea400df8d4cb9e00df1711639ece2e52ab1ec7e195a9f6af0e31b07d",
+        ".datum/revision/v1/blobs/sha256/022d37c6fea09b55effd4993175ccf0e8b532d2ce024ba443bb374098b1810aa": "022d37c6fea09b55effd4993175ccf0e8b532d2ce024ba443bb374098b1810aa",
+        ".datum/revision/v1/blobs/sha256/031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        ".datum/revision/v1/blobs/sha256/04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        ".datum/revision/v1/blobs/sha256/13827b223e2f294421a3a6311b14004c0c82bfb27612e2845fda6f4ca1f5e971": "13827b223e2f294421a3a6311b14004c0c82bfb27612e2845fda6f4ca1f5e971",
+        ".datum/revision/v1/blobs/sha256/13b5a85f11a1dce73afa6971997be40df7642545175df22bc46f68f8d9b68c3c": "13b5a85f11a1dce73afa6971997be40df7642545175df22bc46f68f8d9b68c3c",
+        ".datum/revision/v1/blobs/sha256/1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        ".datum/revision/v1/blobs/sha256/1a3c61a733720f619f04f830541a42e92bff4e744ed6646229a7c6fb88179aef": "1a3c61a733720f619f04f830541a42e92bff4e744ed6646229a7c6fb88179aef",
+        ".datum/revision/v1/blobs/sha256/2df6254aaab3ec9f2a589022bbd193a09268933b37ce773fb4acc3c435ac2883": "2df6254aaab3ec9f2a589022bbd193a09268933b37ce773fb4acc3c435ac2883",
+        ".datum/revision/v1/blobs/sha256/2f1281e61da1dc6b77f657470cbda036f39876e1b7e28e76b458b1457e8d582c": "2f1281e61da1dc6b77f657470cbda036f39876e1b7e28e76b458b1457e8d582c",
+        ".datum/revision/v1/blobs/sha256/333f18262d6df5a7ff718765ec3fbb6a80ffdce07fec3092903270de99e62f09": "333f18262d6df5a7ff718765ec3fbb6a80ffdce07fec3092903270de99e62f09",
+        ".datum/revision/v1/blobs/sha256/366d1503e21464eba17a09c4b833aa6ad866f4213f7ed8184b15f42b56ce2200": "366d1503e21464eba17a09c4b833aa6ad866f4213f7ed8184b15f42b56ce2200",
+        ".datum/revision/v1/blobs/sha256/3bb576696f988e1c9f9a630016ba835449217d36e661ec10f2e1a98ffd9df644": "3bb576696f988e1c9f9a630016ba835449217d36e661ec10f2e1a98ffd9df644",
+        ".datum/revision/v1/blobs/sha256/3dd4271574ff6c496cc284c3e691e55b5fa20f56e8daa4bfd8cc2198de43dff1": "3dd4271574ff6c496cc284c3e691e55b5fa20f56e8daa4bfd8cc2198de43dff1",
+        ".datum/revision/v1/blobs/sha256/42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033": "42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033",
+        ".datum/revision/v1/blobs/sha256/44187cc7c71f49f3d05610622c7086ec45afd3a1f08fe07b990a324888f4f2de": "44187cc7c71f49f3d05610622c7086ec45afd3a1f08fe07b990a324888f4f2de",
+        ".datum/revision/v1/blobs/sha256/4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889": "4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889",
+        ".datum/revision/v1/blobs/sha256/5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21": "5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21",
+        ".datum/revision/v1/blobs/sha256/5b8489f97c080aa34ebfd671b5c4b40657ab8bd2d80a62031e3d58d6840b2025": "5b8489f97c080aa34ebfd671b5c4b40657ab8bd2d80a62031e3d58d6840b2025",
+        ".datum/revision/v1/blobs/sha256/6729e771d159770ee760eb1b1eefe6692d865c79ffd4e4efe095e475153313cd": "6729e771d159770ee760eb1b1eefe6692d865c79ffd4e4efe095e475153313cd",
+        ".datum/revision/v1/blobs/sha256/6c476e7d5d6f43428ec72bb654611733e96e1efe6dbd2004d0d918f3938a430c": "6c476e7d5d6f43428ec72bb654611733e96e1efe6dbd2004d0d918f3938a430c",
+        ".datum/revision/v1/blobs/sha256/6cdb2295a34208d165b593447143e6f29e09a7714236a3ed71934204de055c0a": "6cdb2295a34208d165b593447143e6f29e09a7714236a3ed71934204de055c0a",
+        ".datum/revision/v1/blobs/sha256/708b3bb0f964f7fe006b8b3351a8ebbaa3960d114ac5574945fd7e3ba9c2c054": "708b3bb0f964f7fe006b8b3351a8ebbaa3960d114ac5574945fd7e3ba9c2c054",
+        ".datum/revision/v1/blobs/sha256/77305fa41bd5959e807f9193713ccbc3e286a69c9571d557765822ccdc38b458": "77305fa41bd5959e807f9193713ccbc3e286a69c9571d557765822ccdc38b458",
+        ".datum/revision/v1/blobs/sha256/7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        ".datum/revision/v1/blobs/sha256/7feb5aa386abf53e41084d5ce5d1c6523be0092c80df15553712e0ea048843a3": "7feb5aa386abf53e41084d5ce5d1c6523be0092c80df15553712e0ea048843a3",
+        ".datum/revision/v1/blobs/sha256/8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161": "8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161",
+        ".datum/revision/v1/blobs/sha256/83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6": "83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6",
+        ".datum/revision/v1/blobs/sha256/879cb9c179e5fd29c8870d66ede961f99da8099106e9c32d2ffd966fef208e84": "879cb9c179e5fd29c8870d66ede961f99da8099106e9c32d2ffd966fef208e84",
+        ".datum/revision/v1/blobs/sha256/8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a": "8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a",
+        ".datum/revision/v1/blobs/sha256/8eb320061c3e02999186ec7cdafbf4045bc7bc3af37f35220c79ff1ac6a000b3": "8eb320061c3e02999186ec7cdafbf4045bc7bc3af37f35220c79ff1ac6a000b3",
+        ".datum/revision/v1/blobs/sha256/9037da2723831b39df20834bc02c9a91b94e1cda76113ac2d4d41d5ddbdb1580": "9037da2723831b39df20834bc02c9a91b94e1cda76113ac2d4d41d5ddbdb1580",
+        ".datum/revision/v1/blobs/sha256/90730a48fd132b7378209fbbe9a93758abb69969f89687b6d135055b9f656f71": "90730a48fd132b7378209fbbe9a93758abb69969f89687b6d135055b9f656f71",
+        ".datum/revision/v1/blobs/sha256/97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c",
+        ".datum/revision/v1/blobs/sha256/9dd069b131fb9fb3a4f806ce4d350c6d587be0250e39694c844109fcf78c3b6d": "9dd069b131fb9fb3a4f806ce4d350c6d587be0250e39694c844109fcf78c3b6d",
+        ".datum/revision/v1/blobs/sha256/9f67fda95a30a68fe2a1025e9bb4d42fbb42faca341a7016550ce0f14412ae5c": "9f67fda95a30a68fe2a1025e9bb4d42fbb42faca341a7016550ce0f14412ae5c",
+        ".datum/revision/v1/blobs/sha256/a09e1e1802421479e8a15377379a5f48627551531467de00b21af9279ff80646": "a09e1e1802421479e8a15377379a5f48627551531467de00b21af9279ff80646",
+        ".datum/revision/v1/blobs/sha256/a912fcd4780c170eacf485b2e86b8930647de1921c6c63f23ea3b3d078e9754d": "a912fcd4780c170eacf485b2e86b8930647de1921c6c63f23ea3b3d078e9754d",
+        ".datum/revision/v1/blobs/sha256/aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        ".datum/revision/v1/blobs/sha256/b97f760ef6b52cb078ad0ea4b30ade78a3f7e879d2827d11682d616f73b2251f": "b97f760ef6b52cb078ad0ea4b30ade78a3f7e879d2827d11682d616f73b2251f",
+        ".datum/revision/v1/blobs/sha256/baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        ".datum/revision/v1/blobs/sha256/bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        ".datum/revision/v1/blobs/sha256/c3fa2c010ad869d72f8f3a02dc335ff9fe61efe3cdc190bd1f2770dbf328cdab": "c3fa2c010ad869d72f8f3a02dc335ff9fe61efe3cdc190bd1f2770dbf328cdab",
+        ".datum/revision/v1/blobs/sha256/c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        ".datum/revision/v1/blobs/sha256/d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7": "d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7",
+        ".datum/revision/v1/blobs/sha256/d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        ".datum/revision/v1/blobs/sha256/df85fe27f9584f9289ea0a87151f9a17eda36aba86d8e5fa5a06c2112cb3e7a2": "df85fe27f9584f9289ea0a87151f9a17eda36aba86d8e5fa5a06c2112cb3e7a2",
+        ".datum/revision/v1/blobs/sha256/dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        ".datum/revision/v1/blobs/sha256/e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        ".datum/revision/v1/blobs/sha256/f34507f111c1137db12fdf53e23303b198ffb4b9b2c6dcacaf2221f7c563ef17": "f34507f111c1137db12fdf53e23303b198ffb4b9b2c6dcacaf2221f7c563ef17",
+        ".datum/revision/v1/generations/0d603e62eece89d3d960adf3a39fe508b18ae86b8f85c4189f94c67b678d4fd5.json": "1fa3118132166c0ffd68c762a9e7f4a42a415a179c17bf4fbc5523a488a9dc8b",
+        ".datum/revision/v1/generations/168d9a7ff8e6ed058bacfc5b230f8d9b17d41201692872fc4bd9ee481081ccf8.json": "10be30984b05538fca7e9ef55a3a727646cd1f0897c1f1da2daa4e5a042263f8",
+        ".datum/revision/v1/generations/2cbd7990e436cc129504d57433fa2278b3eb9b07c6a4b1b92a62164694c33c87.json": "f89344336c3f51f8e17a2616a67093dbbd1ccd171ca656838725300e4301e62e",
+        ".datum/revision/v1/generations/348e70c7f8a8c4db5005ef2dd5bb637e806ce816986b10e0d117a119b2d29d80.json": "a9071e55de4030ddbbde59e04addc79f2ff099a25ea0f823878ce39042590d7e",
+        ".datum/revision/v1/generations/58c366c4c83d95bfac4fa34fc06188384f817a6360b9446288b96d10b0111b37.json": "3059378e85eb9ae4645e5fe25dd7924c35c97746e34d25a6e8f30a41188ba51e",
+        ".datum/revision/v1/generations/6a91c2be274d1191909f2172b1e256d701935054b39ae7cf557e199ddb1471c6.json": "4617ae01efd8e811a2438447b7b8210b9c125f4dcd0e4247219941b1e0f325a5",
+        ".datum/revision/v1/generations/7d3cc71fc766bb8ac4622936338a16be1268e73d42f61f2e0fe468251857f305.json": "4d5d54ecc5183113e813f50e79a6aebd6abb2c2b6a8c22a85d9d032d52743c11",
+        ".datum/revision/v1/generations/94aff72a716e51567122128518132e296e803369ed2808ec60186465d86f464e.json": "2f0f0e97695d9fd4dd01d333466add8c1ec6b5cf7fd6314ce6671e3081245bf0",
+        ".datum/revision/v1/generations/94fd6812df0168f418a236afbb4c1b540e23199220cdb5bd61918da50957aeae.json": "3e9144e606d0c97b1c1e6f1f3eb03e2e59cdb102f189b4f1e23024d2df9971b0",
+        ".datum/revision/v1/generations/96a5cfbbb1afc3c1d09fe1e54113cca6cae221a9832153d75de18103cd28e3c1.json": "e99cc32429391bf033812b90bfc7fbd9e66e127a744fc66c4e69b0771e1f982f",
+        ".datum/revision/v1/generations/a4cb1afc847afc90eee22bd1a9178959d0cca0fcdd87c667816492336f8db0c7.json": "14f996eabb4115cb243e1a9f2577a2535c05912e6dfa6b42b32b15ff1aa57712",
+        ".datum/revision/v1/generations/a75836c66c798ca51e443b9a5b347fdee47763a2d1c7cd1ac397b6c76af4d735.json": "5b43b409f294cfa6840c32262a0b16ff8d9a808228af89f5c41431cc517dadef",
+        ".datum/revision/v1/generations/c25f15b3177a515d599daa113fcb73bbced016174d9f447484205fb6d5a3330c.json": "3ffb8f6559fcc899a5761922a6cbcce05c9a46546efdc413236238ce45edccd9",
+        ".datum/revision/v1/generations/cb573f614461002689f39b3a8280d245af07eb37f7f6e88db05439b1037a5203.json": "48ad26d24d670827c25c985b6cbf2ea2cd928c8e04d67d14fa3214fed3cc2fc8",
+        ".datum/revision/v1/generations/d3f1a2575e5d16767141725fc30796dda5256a27ec1f13e94684cdbe07493329.json": "02ae25df88181743568b8ca69bd34f1021de525eeb674271348d9e94bc9ebbad",
+        ".datum/revision/v1/head.json": "bb1cc5152c0dc3aea50aa7dc2df3d8d521dc28e6944242d6c4120359aa243879",
+        "board/board.json": "022d37c6fea09b55effd4993175ccf0e8b532d2ce024ba443bb374098b1810aa",
+        "pool/entities/40000000-0000-4000-8000-000000000001.json": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        "pool/footprints/60000000-0000-4000-8000-000000000001.json": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        "pool/packages/50000000-0000-4000-8000-000000000001.json": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        "pool/padstacks/70000000-0000-4000-8000-000000000001.json": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        "pool/parts/90000000-0000-4000-8000-000000000001.json": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        "pool/symbols/30000000-0000-4000-8000-000000000001.json": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        "pool/units/20000000-0000-4000-8000-000000000001.json": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        "project.json": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        "rules/rules.json": "8b154e147848162f43ebdc8c8792ebc3f79d7ab2a18e8d23309af0f13dce6147",
+        "schematic/main.json": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        "schematic/schematic.json": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325"
+      },
+      "operational_role_counts": {
+        "gui-terminal-context.json": 1,
+        "revision/writer.lock": 1,
+        "terminal-contexts": 5,
+        "tool-sessions": 8
+      },
+      "operational_writer_lock_present": true
+    },
+    "mutated_clone_inventory": {
+      "canonical_files": {
+        ".datum/component_instances/78000000-0000-4000-8000-000000000003.json": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/electrical_identities/0925dc26-f984-42a6-b3fb-ac449a1b32a8.json": "6cdb2295a34208d165b593447143e6f29e09a7714236a3ed71934204de055c0a",
+        ".datum/electrical_identities/1a81163e-b5d2-47d5-986f-a4e806592497.json": "333f18262d6df5a7ff718765ec3fbb6a80ffdce07fec3092903270de99e62f09",
+        ".datum/electrical_identities/2e838d28-abb8-4133-a2ad-413578c5d913.json": "708b3bb0f964f7fe006b8b3351a8ebbaa3960d114ac5574945fd7e3ba9c2c054",
+        ".datum/electrical_identities/3d80283f-7646-475d-9d2d-2567871afbcd.json": "3bb576696f988e1c9f9a630016ba835449217d36e661ec10f2e1a98ffd9df644",
+        ".datum/electrical_identities/59848439-7cd3-47ec-8012-73f22c4544eb.json": "9dd069b131fb9fb3a4f806ce4d350c6d587be0250e39694c844109fcf78c3b6d",
+        ".datum/electrical_identities/78000000-0000-4000-8000-000000000028.json": "77305fa41bd5959e807f9193713ccbc3e286a69c9571d557765822ccdc38b458",
+        ".datum/electrical_identities/99cdcf96-982f-4672-8e9d-eacb5d80dfc1.json": "5b8489f97c080aa34ebfd671b5c4b40657ab8bd2d80a62031e3d58d6840b2025",
+        ".datum/electrical_identities/a8a37abd-9e70-48ab-825c-983fe80aa325.json": "879cb9c179e5fd29c8870d66ede961f99da8099106e9c32d2ffd966fef208e84",
+        ".datum/electrical_identities/db9035d9-8061-45d3-a0a8-837664954fa6.json": "13b5a85f11a1dce73afa6971997be40df7642545175df22bc46f68f8d9b68c3c",
+        ".datum/electrical_identities/f7ba6b84-c868-4a0e-85a6-64fef1f59931.json": "8eb320061c3e02999186ec7cdafbf4045bc7bc3af37f35220c79ff1ac6a000b3",
+        ".datum/electrical_identities/fd0e0ca7-6bb0-47d9-ac44-ce2d0578a22f.json": "a09e1e1802421479e8a15377379a5f48627551531467de00b21af9279ff80646",
+        ".datum/journal/cursor.json": "85252a2a42cd67ab857a40477ec52c16534eca13a48c779b2e6dfeb44617c384",
+        ".datum/journal/transactions.jsonl": "3154baa66b44c297c95378a49800947f25fab1b0d039b870c4dfbb851c840cec",
+        ".datum/revision/v1/blobs/sha256/022d37c6fea09b55effd4993175ccf0e8b532d2ce024ba443bb374098b1810aa": "022d37c6fea09b55effd4993175ccf0e8b532d2ce024ba443bb374098b1810aa",
+        ".datum/revision/v1/blobs/sha256/031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        ".datum/revision/v1/blobs/sha256/04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        ".datum/revision/v1/blobs/sha256/13827b223e2f294421a3a6311b14004c0c82bfb27612e2845fda6f4ca1f5e971": "13827b223e2f294421a3a6311b14004c0c82bfb27612e2845fda6f4ca1f5e971",
+        ".datum/revision/v1/blobs/sha256/13b5a85f11a1dce73afa6971997be40df7642545175df22bc46f68f8d9b68c3c": "13b5a85f11a1dce73afa6971997be40df7642545175df22bc46f68f8d9b68c3c",
+        ".datum/revision/v1/blobs/sha256/1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        ".datum/revision/v1/blobs/sha256/1a3c61a733720f619f04f830541a42e92bff4e744ed6646229a7c6fb88179aef": "1a3c61a733720f619f04f830541a42e92bff4e744ed6646229a7c6fb88179aef",
+        ".datum/revision/v1/blobs/sha256/2df6254aaab3ec9f2a589022bbd193a09268933b37ce773fb4acc3c435ac2883": "2df6254aaab3ec9f2a589022bbd193a09268933b37ce773fb4acc3c435ac2883",
+        ".datum/revision/v1/blobs/sha256/2f1281e61da1dc6b77f657470cbda036f39876e1b7e28e76b458b1457e8d582c": "2f1281e61da1dc6b77f657470cbda036f39876e1b7e28e76b458b1457e8d582c",
+        ".datum/revision/v1/blobs/sha256/333f18262d6df5a7ff718765ec3fbb6a80ffdce07fec3092903270de99e62f09": "333f18262d6df5a7ff718765ec3fbb6a80ffdce07fec3092903270de99e62f09",
+        ".datum/revision/v1/blobs/sha256/366d1503e21464eba17a09c4b833aa6ad866f4213f7ed8184b15f42b56ce2200": "366d1503e21464eba17a09c4b833aa6ad866f4213f7ed8184b15f42b56ce2200",
+        ".datum/revision/v1/blobs/sha256/3bb576696f988e1c9f9a630016ba835449217d36e661ec10f2e1a98ffd9df644": "3bb576696f988e1c9f9a630016ba835449217d36e661ec10f2e1a98ffd9df644",
+        ".datum/revision/v1/blobs/sha256/3dd4271574ff6c496cc284c3e691e55b5fa20f56e8daa4bfd8cc2198de43dff1": "3dd4271574ff6c496cc284c3e691e55b5fa20f56e8daa4bfd8cc2198de43dff1",
+        ".datum/revision/v1/blobs/sha256/42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033": "42923d4b68ae43fe7926d256786a4ffb8504011abac5d6d61c8db27e4756e033",
+        ".datum/revision/v1/blobs/sha256/44187cc7c71f49f3d05610622c7086ec45afd3a1f08fe07b990a324888f4f2de": "44187cc7c71f49f3d05610622c7086ec45afd3a1f08fe07b990a324888f4f2de",
+        ".datum/revision/v1/blobs/sha256/4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889": "4abaa7a14fce959294ac5eb9a9e479ac4acb707197ef31056a86bd313899f889",
+        ".datum/revision/v1/blobs/sha256/5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21": "5a8654685ae1fd56d275e61c3c359fcd38e05bf963260e1b1fe0c59cc7e65e21",
+        ".datum/revision/v1/blobs/sha256/5b8489f97c080aa34ebfd671b5c4b40657ab8bd2d80a62031e3d58d6840b2025": "5b8489f97c080aa34ebfd671b5c4b40657ab8bd2d80a62031e3d58d6840b2025",
+        ".datum/revision/v1/blobs/sha256/6729e771d159770ee760eb1b1eefe6692d865c79ffd4e4efe095e475153313cd": "6729e771d159770ee760eb1b1eefe6692d865c79ffd4e4efe095e475153313cd",
+        ".datum/revision/v1/blobs/sha256/6c476e7d5d6f43428ec72bb654611733e96e1efe6dbd2004d0d918f3938a430c": "6c476e7d5d6f43428ec72bb654611733e96e1efe6dbd2004d0d918f3938a430c",
+        ".datum/revision/v1/blobs/sha256/6cdb2295a34208d165b593447143e6f29e09a7714236a3ed71934204de055c0a": "6cdb2295a34208d165b593447143e6f29e09a7714236a3ed71934204de055c0a",
+        ".datum/revision/v1/blobs/sha256/708b3bb0f964f7fe006b8b3351a8ebbaa3960d114ac5574945fd7e3ba9c2c054": "708b3bb0f964f7fe006b8b3351a8ebbaa3960d114ac5574945fd7e3ba9c2c054",
+        ".datum/revision/v1/blobs/sha256/77305fa41bd5959e807f9193713ccbc3e286a69c9571d557765822ccdc38b458": "77305fa41bd5959e807f9193713ccbc3e286a69c9571d557765822ccdc38b458",
+        ".datum/revision/v1/blobs/sha256/7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        ".datum/revision/v1/blobs/sha256/7feb5aa386abf53e41084d5ce5d1c6523be0092c80df15553712e0ea048843a3": "7feb5aa386abf53e41084d5ce5d1c6523be0092c80df15553712e0ea048843a3",
+        ".datum/revision/v1/blobs/sha256/8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161": "8107853d1071e66ecbffcd835d0d5069c10bde219f590c43e00d748c07841161",
+        ".datum/revision/v1/blobs/sha256/83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6": "83b27f6dfcb3ec273c122d501212376ee1833de499cb42c7a5812c9b2f58a3b6",
+        ".datum/revision/v1/blobs/sha256/879cb9c179e5fd29c8870d66ede961f99da8099106e9c32d2ffd966fef208e84": "879cb9c179e5fd29c8870d66ede961f99da8099106e9c32d2ffd966fef208e84",
+        ".datum/revision/v1/blobs/sha256/8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a": "8d12e02a236bb20c01a1eced31674afc330f4a37e4323f498573956f88e02a9a",
+        ".datum/revision/v1/blobs/sha256/8eb320061c3e02999186ec7cdafbf4045bc7bc3af37f35220c79ff1ac6a000b3": "8eb320061c3e02999186ec7cdafbf4045bc7bc3af37f35220c79ff1ac6a000b3",
+        ".datum/revision/v1/blobs/sha256/9037da2723831b39df20834bc02c9a91b94e1cda76113ac2d4d41d5ddbdb1580": "9037da2723831b39df20834bc02c9a91b94e1cda76113ac2d4d41d5ddbdb1580",
+        ".datum/revision/v1/blobs/sha256/90730a48fd132b7378209fbbe9a93758abb69969f89687b6d135055b9f656f71": "90730a48fd132b7378209fbbe9a93758abb69969f89687b6d135055b9f656f71",
+        ".datum/revision/v1/blobs/sha256/97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c": "97ef39895cc6d9a595be0d727c0f56987d0c9d49d0c243673cedd2edb22c621c",
+        ".datum/revision/v1/blobs/sha256/9b650e2a35b25a5481311071512a0dc1836a37d066596fcdfe302b6a3dbae7ec": "9b650e2a35b25a5481311071512a0dc1836a37d066596fcdfe302b6a3dbae7ec",
+        ".datum/revision/v1/blobs/sha256/9dd069b131fb9fb3a4f806ce4d350c6d587be0250e39694c844109fcf78c3b6d": "9dd069b131fb9fb3a4f806ce4d350c6d587be0250e39694c844109fcf78c3b6d",
+        ".datum/revision/v1/blobs/sha256/9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a": "9e49ca81ce0a6741678e1ca1f53ba71c45d62939e0e28481b37b6dae39917d5a",
+        ".datum/revision/v1/blobs/sha256/9f67fda95a30a68fe2a1025e9bb4d42fbb42faca341a7016550ce0f14412ae5c": "9f67fda95a30a68fe2a1025e9bb4d42fbb42faca341a7016550ce0f14412ae5c",
+        ".datum/revision/v1/blobs/sha256/a09e1e1802421479e8a15377379a5f48627551531467de00b21af9279ff80646": "a09e1e1802421479e8a15377379a5f48627551531467de00b21af9279ff80646",
+        ".datum/revision/v1/blobs/sha256/a912fcd4780c170eacf485b2e86b8930647de1921c6c63f23ea3b3d078e9754d": "a912fcd4780c170eacf485b2e86b8930647de1921c6c63f23ea3b3d078e9754d",
+        ".datum/revision/v1/blobs/sha256/aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        ".datum/revision/v1/blobs/sha256/b97f760ef6b52cb078ad0ea4b30ade78a3f7e879d2827d11682d616f73b2251f": "b97f760ef6b52cb078ad0ea4b30ade78a3f7e879d2827d11682d616f73b2251f",
+        ".datum/revision/v1/blobs/sha256/baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325",
+        ".datum/revision/v1/blobs/sha256/bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        ".datum/revision/v1/blobs/sha256/c3fa2c010ad869d72f8f3a02dc335ff9fe61efe3cdc190bd1f2770dbf328cdab": "c3fa2c010ad869d72f8f3a02dc335ff9fe61efe3cdc190bd1f2770dbf328cdab",
+        ".datum/revision/v1/blobs/sha256/c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        ".datum/revision/v1/blobs/sha256/d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7": "d91c7483f138cc2d9351ee7c4ed781d452113a1473ad6e5d1ea0d9b6cd3dd8e7",
+        ".datum/revision/v1/blobs/sha256/d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        ".datum/revision/v1/blobs/sha256/df85fe27f9584f9289ea0a87151f9a17eda36aba86d8e5fa5a06c2112cb3e7a2": "df85fe27f9584f9289ea0a87151f9a17eda36aba86d8e5fa5a06c2112cb3e7a2",
+        ".datum/revision/v1/blobs/sha256/dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        ".datum/revision/v1/blobs/sha256/e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        ".datum/revision/v1/blobs/sha256/f34507f111c1137db12fdf53e23303b198ffb4b9b2c6dcacaf2221f7c563ef17": "f34507f111c1137db12fdf53e23303b198ffb4b9b2c6dcacaf2221f7c563ef17",
+        ".datum/revision/v1/generations/0d603e62eece89d3d960adf3a39fe508b18ae86b8f85c4189f94c67b678d4fd5.json": "1fa3118132166c0ffd68c762a9e7f4a42a415a179c17bf4fbc5523a488a9dc8b",
+        ".datum/revision/v1/generations/168d9a7ff8e6ed058bacfc5b230f8d9b17d41201692872fc4bd9ee481081ccf8.json": "10be30984b05538fca7e9ef55a3a727646cd1f0897c1f1da2daa4e5a042263f8",
+        ".datum/revision/v1/generations/2cbd7990e436cc129504d57433fa2278b3eb9b07c6a4b1b92a62164694c33c87.json": "f89344336c3f51f8e17a2616a67093dbbd1ccd171ca656838725300e4301e62e",
+        ".datum/revision/v1/generations/348e70c7f8a8c4db5005ef2dd5bb637e806ce816986b10e0d117a119b2d29d80.json": "a9071e55de4030ddbbde59e04addc79f2ff099a25ea0f823878ce39042590d7e",
+        ".datum/revision/v1/generations/58c366c4c83d95bfac4fa34fc06188384f817a6360b9446288b96d10b0111b37.json": "3059378e85eb9ae4645e5fe25dd7924c35c97746e34d25a6e8f30a41188ba51e",
+        ".datum/revision/v1/generations/6a91c2be274d1191909f2172b1e256d701935054b39ae7cf557e199ddb1471c6.json": "4617ae01efd8e811a2438447b7b8210b9c125f4dcd0e4247219941b1e0f325a5",
+        ".datum/revision/v1/generations/777d121b8ce9a4f3a61373bc1ef285799c3dcda526fbf4d1d2dce8c1019f76af.json": "57b095e18247056302905c827eaaab9d199b2112bb955414071dc4b00308235b",
+        ".datum/revision/v1/generations/7d3cc71fc766bb8ac4622936338a16be1268e73d42f61f2e0fe468251857f305.json": "4d5d54ecc5183113e813f50e79a6aebd6abb2c2b6a8c22a85d9d032d52743c11",
+        ".datum/revision/v1/generations/94aff72a716e51567122128518132e296e803369ed2808ec60186465d86f464e.json": "2f0f0e97695d9fd4dd01d333466add8c1ec6b5cf7fd6314ce6671e3081245bf0",
+        ".datum/revision/v1/generations/94fd6812df0168f418a236afbb4c1b540e23199220cdb5bd61918da50957aeae.json": "3e9144e606d0c97b1c1e6f1f3eb03e2e59cdb102f189b4f1e23024d2df9971b0",
+        ".datum/revision/v1/generations/96a5cfbbb1afc3c1d09fe1e54113cca6cae221a9832153d75de18103cd28e3c1.json": "e99cc32429391bf033812b90bfc7fbd9e66e127a744fc66c4e69b0771e1f982f",
+        ".datum/revision/v1/generations/a4cb1afc847afc90eee22bd1a9178959d0cca0fcdd87c667816492336f8db0c7.json": "14f996eabb4115cb243e1a9f2577a2535c05912e6dfa6b42b32b15ff1aa57712",
+        ".datum/revision/v1/generations/a75836c66c798ca51e443b9a5b347fdee47763a2d1c7cd1ac397b6c76af4d735.json": "5b43b409f294cfa6840c32262a0b16ff8d9a808228af89f5c41431cc517dadef",
+        ".datum/revision/v1/generations/c25f15b3177a515d599daa113fcb73bbced016174d9f447484205fb6d5a3330c.json": "3ffb8f6559fcc899a5761922a6cbcce05c9a46546efdc413236238ce45edccd9",
+        ".datum/revision/v1/generations/cb573f614461002689f39b3a8280d245af07eb37f7f6e88db05439b1037a5203.json": "48ad26d24d670827c25c985b6cbf2ea2cd928c8e04d67d14fa3214fed3cc2fc8",
+        ".datum/revision/v1/generations/d3f1a2575e5d16767141725fc30796dda5256a27ec1f13e94684cdbe07493329.json": "02ae25df88181743568b8ca69bd34f1021de525eeb674271348d9e94bc9ebbad",
+        ".datum/revision/v1/head.json": "996a5e27154f6a0c599e26244f47f85ca66a3933f2b78f8996c4c522943f3183",
+        "board/board.json": "022d37c6fea09b55effd4993175ccf0e8b532d2ce024ba443bb374098b1810aa",
+        "pool/entities/40000000-0000-4000-8000-000000000001.json": "7deaac9d6dea65824a740f557ae6cd839f5acfb6d4563f1c8732d298de6e6c4a",
+        "pool/footprints/60000000-0000-4000-8000-000000000001.json": "031ea06ff79802a99f2e1cfc17b7c4df574ca986334691bb555f0f51947fc44b",
+        "pool/packages/50000000-0000-4000-8000-000000000001.json": "aca49b241d3caa0d078155db8da30d256c64a3a0aa3275c593a0245b1f4b91b7",
+        "pool/padstacks/70000000-0000-4000-8000-000000000001.json": "1699e0779cceeb2bcc8a0efdfc4ca74544573b817e6abeedbc90d17c3ab55970",
+        "pool/parts/90000000-0000-4000-8000-000000000001.json": "dfd1cd2d154161ddfede7c8729faf41ed7ca01d69b014fd3d4bd568b113a688c",
+        "pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json": "04ac86a78a904f624695a8fe2b52d4179c661f9e8bd3ef0e7e0420574693cb29",
+        "pool/symbols/30000000-0000-4000-8000-000000000001.json": "e85d734720a0dd04e7d20675e55d21e87bc7fa9b9f3264302c96dbf5d42b97bd",
+        "pool/units/20000000-0000-4000-8000-000000000001.json": "c92e99e9418ad43ae02ed4fe37179641ebb73537db237fccfbd2ec45eb5814ed",
+        "project.json": "bd006f0ff3a376d1e02ca3e52fb3592052bcca1ad4de7b3f32d292737b037624",
+        "rules/rules.json": "8b154e147848162f43ebdc8c8792ebc3f79d7ab2a18e8d23309af0f13dce6147",
+        "schematic/main.json": "d9a97ec9df1dad24ce2e667856398e157432f064922a1c6db90d7c61cb279664",
+        "schematic/schematic.json": "baa45218fa34fcf30cef41b5d4c1500dee5d5d4592f020dc3ccd90fc697f1325"
+      },
+      "operational_role_counts": {
+        "revision/writer.lock": 1
+      },
+      "operational_writer_lock_present": true
+    },
+    "operation": "ONE canonical SetComponentInstance preserving all PinPadMap/library bindings and refreshing placed endpoint refs to actual current objects; no rematerialization trial, source edit or guard relaxation.",
+    "source": "/home/bfadmin/Documents/datum-eda-workspaces/qa/gui-p2-crossprobe-xpc01-20261023-units/crossprobe/project"
+  },
+  "not_automatic_prerequisite": true,
+  "pm_disposition": {
+    "authority": "Actual recorded owner delegation and exact bounded source-owner proposal approval",
+    "conditions": [
+      "ONE canonical guarded batch; original preimages and prospective final CI endpoint/Pad CI/Net references.",
+      "Preserve IDs/Part/map/library pins; refresh only validated unchanged semantics.",
+      "No blanket recertification of preexisting stale/foreign/mismatched evidence, ambiguity or arbitrary future pins.",
+      "Net6/all origins/Run2/bidirectional Object after commit/reopen, atomic stale/foreign refusal and exact unchanged bytes, undo/redo required.",
+      "No schema/dependency/query-guard relaxation or unrelated cache-issue repair; independent source/proof review before landing."
+    ],
+    "outcome": "APPROVED bounded canonical materialization/final-batch-validation repair",
+    "proposal_sha256": "cdc8766f8f9db8d191a56568d0a398117f51e0466da04decc863e5427d77f4ef",
+    "session": "01a160d9-b499-7923-984a-b3390beb2e34"
+  },
+  "proposed_remedy": {
+    "behavior": [
+      "Guard/preimage all original objects, compose mutually current CI endpoint, materialized Pad CI and affected electrical correspondence refs in ONE canonical batch. Preserve Part/PinPadMap/library bindings and exact Pad/placed/Net IDs.",
+      "Validate authorized staged CI/Pad references against complete final typed batch; keep original guarded preimages, current library/source checks and foreign/stale/missing refusal. No acceptance of arbitrary future pins or source-only patch.",
+      "Preserve complete Net6/all origins and distinct related context together after commit/reopen; source/journal/undo semantics remain canonical."
+    ],
+    "focused_tests": [
+      "Positive same fixture: current CI endpoints, Pad CI pin and electrical correspondence after materialization; complete Net6/each origin plus related Object in both directions after reopen.",
+      "Stale/foreign/mismatched or incomplete staged CI/map/pad refs refuse atomically with exact unchanged source/journal/inventory.",
+      "Undo/redo/reopen preserve consistent old/new references, exact IDs, selection lifetime and source preimages; no revision-cache issue automatically included."
+    ],
+    "paths": [
+      "crates/engine/src/api/native_write/board_components/pad_materialization.rs",
+      "crates/engine/src/api/native_write/board_components/pad_materialization/component_binding.rs",
+      "crates/engine/src/substrate/component_pad_source/validation.rs",
+      "focused existing pad materialization/electrical tests"
+    ],
+    "rationale": "Existing canonical builders produce incompatible current pins. Repair source-owner composition and final-batch validation; retain exact ratified serialized identities/revisions and guards. This is a proposal, not an execution grant."
+  },
+  "read_only_net_status": {
+    "command": "DATUM_CROSSPROBE_DIAGNOSTIC_ROOT=<same already-mutated clone> DATUM_CROSSPROBE_DIAGNOSTIC_READ_ONLY=1 python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol --test native_selection_related frozen_fixture_current_binding_diagnosis -- --ignored --exact --nocapture",
+    "exit_code": 0,
+    "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/current-binding-net-read-only.log",
+    "result": {
+      "ci_object_revision": 1,
+      "ci_source": {
+        "component_instance": {
+          "library_bindings": {
+            "78000000-0000-4000-8000-000000000004": {
+              "binding_role": "pin_pad_map",
+              "pinned_object_revision": 0,
+              "target_object_id": "a0000000-0000-4000-8000-000000000001"
+            }
+          },
+          "object_revision": 1,
+          "part_ref": {
+            "object_id": "90000000-0000-4000-8000-000000000001",
+            "object_revision": 0
+          },
+          "placed_package_refs": [
+            {
+              "object_id": "78000000-0000-4000-8000-000000000002",
+              "object_revision": 1
+            }
+          ],
+          "placed_package_roles": {
+            "78000000-0000-4000-8000-000000000002": {
+              "role": "primary"
+            }
+          },
+          "placed_symbol_refs": [
+            {
+              "object_id": "78000000-0000-4000-8000-000000000001",
+              "object_revision": 0
+            }
+          ],
+          "placed_symbol_roles": {
+            "78000000-0000-4000-8000-000000000001": {
+              "role": "primary"
+            }
+          },
+          "uuid": "78000000-0000-4000-8000-000000000003"
+        },
+        "schema_version": 1
+      },
+      "correspondence_status": "Stale",
+      "global_net_query": {
+        "Err": "UnavailableBinding { id: 2e838d28-abb8-4133-a2ad-413578c5d913, status: Stale }"
+      },
+      "label": "current_without_mutation",
+      "package_object_revision": 1,
+      "pad_binding_ci_pins": [
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        },
+        {
+          "object_id": "78000000-0000-4000-8000-000000000003",
+          "object_revision": 0
+        }
+      ],
+      "related": [
+        {
+          "class": "footprint",
+          "id": "78000000-0000-4000-8000-000000000002"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "78000000-0000-4000-8000-000000000028",
+          "identity": {
+            "board_net": {
+              "object_id": "78000000-0000-4000-8000-000000000020",
+              "object_revision": 0
+            },
+            "evidence": [
+              {
+                "board_pad": {
+                  "object_id": "fa1cb6e0-8bc6-42b3-ae68-8114466b30c0",
+                  "object_revision": 0
+                },
+                "component_instance": {
+                  "object_id": "78000000-0000-4000-8000-000000000003",
+                  "object_revision": 0
+                },
+                "library_pad": {
+                  "object_id": "80000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "library_pin": {
+                  "object_id": "20000000-0000-4000-8000-000000000101",
+                  "object_revision": 0
+                },
+                "pin_pad_map": {
+                  "object_id": "a0000000-0000-4000-8000-000000000001",
+                  "object_revision": 0
+                },
+                "schematic_terminal": {
+                  "class": "pins",
+                  "instance_path": [],
+                  "source_id": "78000000-0000-4000-8000-000000000064"
+                }
+              }
+            ],
+            "intent": "implemented",
+            "kind": "net_relationship",
+            "logical_net": "2e838d28-abb8-4133-a2ad-413578c5d913"
+          },
+          "object_revision": 2
+        }
+      ],
+      "revision": "b823e578ff537e4297bf0e7f9541bc6107e27c4081c6dc24abf4f30f77bdccd7",
+      "unavailable": []
+    },
+    "setup_mutations": 0,
+    "sha256": "56df6dd16c2f37d6dfd0c3ab59fea22a1def2556b53b247b28e1948d60ceef09"
+  },
+  "regression_results": {
+    "command": "DATUM_CROSSPROBE_DIAGNOSTIC_ROOT=<owned exact clone> python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-protocol --test native_selection_related -- --include-ignored --nocapture",
+    "exit_code": 0,
+    "explicit_local_diagnoses_passed": 1,
+    "limits": "No native C04/product PASS. Initial private-access compile and definition-root fixture oracle failures retained separately.",
+    "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/related-context-tests-diagnosis.log",
+    "regular_regressions_passed": 7,
+    "sha256": "625c86d5a4b1e385e254f38f5c22fb7638a01f0459325105d4b599aa37314118"
+  },
+  "schema_version": 1,
+  "source_inputs": {
+    "crates/engine/src/api/native_write/board_components/pad_materialization.rs": "7463701b847178bf9038c1e97487fc4020372b98a5183466e64c0796b8cdfc43",
+    "crates/engine/src/api/native_write/component_instances.rs": "a39c8a4073ef92259874db9f33a28e49f5c799b86d782c8ed694b9c49eba34e3",
+    "crates/engine/src/substrate/component_pad_source/projection.rs": "470caa56aa09655b9a2a0c91124354e2c70d55a763d80f2e2e346a3a9a4553dc",
+    "crates/engine/src/substrate/component_pad_source/validation.rs": "9bacbfff69e47d4ddf7a0eb004513ac341c5f8553b641c7e9c3873be461282a5",
+    "crates/engine/src/substrate/electrical_selection_query/component_relations.rs": "f47ee82634e3595bc3c2ccc1ccc38b4a9a6186bd93c6e3acc65df18466112569",
+    "crates/gui-protocol/tests/native_selection_related.rs": "4e456de9d6bc4bccf6508a4147554e1199e1398e9f89b37aa7e8d226b178ca88"
+  },
+  "status": "Exact bounded source-owner repair authorized by appointed PM; implementation/proof/review pending"
+}

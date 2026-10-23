@@ -108,8 +108,8 @@
 </details>
 
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
-   XP-C01 actual independent readiness PASS accepted; owner-delegated PM grants exact XP-C02 execution. XP-C03 delivers missing authored ComponentInstance related context and shared Inspector/AX explanation; working Global Net projection reused. XP-C04 visuals, fresh XP-C05 and objective acceptance remain required. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
-   *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
+   XP-C03 active. Current commit/reopen Net6/Run2/linked Object and duplicate/future-pin atomic refusal pass; Undo stale epoch failure retained. Distinct D2-H1 authority/impact review PASS accepted by appointed PM; bounded four-path history implementation authorized with immutable semantic snapshots and explicit monotonic local-reference metadata compensation. No promoted-replay/cache repair grant. XP04/05/06 and complete ordinary delivery remain pending. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`, `docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md`, `specs/ENGINE_SPEC.md`, `specs/NATIVE_FORMAT_SPEC.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
    Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands. *state `blocked`; authorization `planning`.*
@@ -680,6 +680,11 @@ Recorded coverage: 1 [x], 1 [~]. Detailed scope and limitations remain in the li
 
 ## ENGINE_SPEC.md — Core Types
 
+PM057 D2-H1 target clarification passed independent authority/impact review and
+appointed PM acceptance; four-path current-reference history implementation is
+authorized and pending. Current Net/Run/Object checks pass; Undo completeness does
+not yet pass. No broader availability or qualification is inferred.
+
 Checkpoint evidence and retained boundaries remain in the linked detail; current selection comes from the Active Frontier. [Detailed evidence](progress/contract_coverage_details.md#engine_specmd--core-types).
 
 ### §1.1 Geometry Primitives
@@ -739,6 +744,10 @@ Recorded coverage: 9 [x], 1 [~]. Detailed scope and limitations remain in the li
 Status: [x] Closed for scoped M4 slice [Detailed evidence](progress/contract_coverage_details.md#schematic_editor_specmd--m4-operations).
 
 ## NATIVE_FORMAT_SPEC.md
+
+PM057 D2-H1 distinguishes immutable recorded D2 binding snapshots from new
+monotonic revision metadata in compensating transactions. No schema change;
+exact semantic/current-history proof remains pending in GUI-P2-CROSSPROBE.
 
 Status: [x] Closed for scoped M4 slice [Detailed evidence](progress/contract_coverage_details.md#native_format_specmd). PM061 bounded process implementation landed in `ef32fbe1`; [source-pinned disposition](../docs/reviews/workflow-delivery-rollout/effective-process-owner-delegation.json) retains its exact delivery and availability limits. Standards and broader qualification remain open.
 

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "status": "Governing transcription independently reviewed and accepted by appointed PM; exact four-path history implementation authorized, source/proof review and delivery pending",
+  "issue_id": "dat-component-pad-ci-pin-lifecycle-43kg",
+  "evidence": {
+    "focused_log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-owner-tests-fresh-pin.log",
+    "result": "2 PASS; 1 FAIL: exact authored bytes restored after recorded Undo, but reopened Net status Stale rather than Complete",
+    "retained_project": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/retained-history-failure",
+    "provenance": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/retained-history-failure-provenance.json",
+    "resolved_fields": {
+      "log": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-retained-read-only.log",
+      "report": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/binding-history-retained-read-only.json",
+      "report_sha256": "1cd9fcc2ce417c79d5adfa42e92a2945c9d55b111605dfe5b4807df15cf69e20",
+      "result": "CI source/object1; Package pin1/object3; Net Pad pin0/object2; Net CI pin1/object1; Net Stale",
+      "setup_mutations": 0
+    },
+    "observed_runtime_root": "/tmp/datum_native_write_current_component_pad_net_2175020c-c935-4371-9a50-25f4eb94ef6d",
+    "retention_verification": "All 80 original input and owned preserved-copy files match recorded hashes after the read-only diagnosis; actual runtime input remains identified as original /tmp root. No rerun solely for path."
+  },
+  "governing_invariants": [
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_000D_STORAGE_AND_VERSIONING_MODEL.md",
+      "section": "Transactions",
+      "requirement": "Undo is an appended compensating transaction; existing journal history remains immutable."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_000D_STORAGE_AND_VERSIONING_MODEL.md",
+      "section": "Object Revision",
+      "requirement": "ObjectRevision is monotonic per changed source object."
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md",
+      "section": "D2 \u2014 Placed Pad",
+      "requirement": "Inverse/replay reuse recorded IDs and binding snapshots; explicit correspondence/source authority remains required. No missing/stale partial complete aggregate."
+    }
+  ],
+  "source_cause": {
+    "package_application": "SetBoardPackagePackage advances package and retained Pad object revisions even during compensation.",
+    "component_application": "SetComponentInstance restores the exact revision and reference pins in recorded payload.",
+    "effect": "Restored semantic identities retain historical source pins while package/Pad revision epochs advance; strict query correctly refuses current completeness.",
+    "separate_issue": "dat-electrical-relation-revision-cache-j8y7 is not included."
+  },
+  "decision_requested": {
+    "recommendation": "Explicit bounded D2 compensation clarification and implementation grant; do not silently weaken the history oracle.",
+    "required_behavior": "Restore exact prior semantic IDs, Part, mapping, geometry, library/source identity and allocation/retirement choices. Keep historical snapshots immutable. Preserve current Net6/all origins, Run2 and linked Object context through commit/Undo/Redo/reopen/replay.",
+    "proposed_mechanism": [
+      "Recognize only the already approved same-binding package/CI/affected-Net refresh family through the linked actual journal target. Verify exact recorded semantic snapshots and actual current preimages before generating any operations.",
+      "Build one new canonical compensating batch from recorded inverse snapshots. Advance touched CI/electrical-record revisions monotonically and rebase only validated dependent CI/package/Pad reference-version metadata onto the deterministic final package/Pad/CI revisions. Preserve every other semantic field and all unmodified library pins. Do not resolve new identities, remap names or recertify stale/foreign evidence.",
+      "Generate and record the new compensation inverse from the actual rebased operations, rather than copying historical target operations as a misleading exact preimage. Original target operations/inverses remain unchanged. Redo repeats recorded semantic choices and derives only new current revision metadata.",
+      "Validate complete original and prospective final reference closure for the recognized family; reject incomplete/duplicate/foreign/ambiguous dependency sets before writes. Keep strict query equality, original source-preimage validation, central guard checks and existing unsupported cases.",
+      "Use ordinary canonical commit and resolver journal replay; no source-file pokes, schema/dependency addition, epoch reset, historical alias or general-purpose historical-reference equivalence."
+    ],
+    "bounded_paths": [
+      "crates/engine/src/substrate/undo_redo.rs",
+      "crates/engine/src/substrate/undo_redo/component_binding.rs",
+      "crates/engine/src/substrate/component_pad_source/validation/component_binding.rs",
+      "crates/engine/src/api/native_write/board_components/pad_materialization/component_binding_tests.rs"
+    ],
+    "conditional_paths": "Additional source-owner/replay paths require concrete demonstrated need and explicit disposition, not inferred expansion.",
+    "test_disposition_requested": "Replace only blanket version-bearing byte-equality expectations with exact semantic snapshot equality plus an explicit allowlist of required monotonic revision/reference metadata changes. Retain byte-identical unrelated shards and nonversioned fields, canonical journal prefixes, strict stale/foreign/refusal controls and actual positive current closure at every history step.",
+    "proof": [
+      "Retained failure read-only actual object/source/evidence revision map before edits.",
+      "Recognized-family commit/Undo/Redo and fresh reopen/replay preserve exact IDs, geometry, source/library mappings, Net6 each origin, Run2 and bidirectional linked Object.",
+      "Exact immutable historical journal prefix and actual current preimages; only declared revision metadata differs in compensated semantic snapshots.",
+      "Stale/foreign/duplicate/missing dependency or forged future reference refuses atomically with source/journal unchanged.",
+      "Distinct independent source/proof review and appointed PM receipt before landing."
+    ]
+  },
+  "not_authorized": [
+    "No query guard relaxation or stale-as-success oracle.",
+    "No version reset, historical journal modification or arbitrary revision equivalence.",
+    "No unrelated cache repair or qualification waiver."
+  ],
+  "historical_proposal_review": {
+    "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "result": "BOUNDED_HISTORY_PROPOSAL_REVIEW_PASS",
+    "candidate_sha256": "9ad1041b12cb2e7359ecda020d9855f3a5bb1c3523d5c99281a6b53ab9a096e8",
+    "exact_bytes": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/history-proposal-reviewed.json",
+    "limits": "Historical proposal only; no implementation or current governing transcription PASS"
+  },
+  "pm_disposition": {
+    "thread": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "authority": "Actual owner delegation recorded under APPOINTMENT:GUI-P2-CROSSPROBE:PM-20261023 in Phase2 plan",
+    "actual_message": "PM DECISION under actual owner delegation: adopt auditor's constrained compensation recommendation. Restore exact recorded semantic IDs/geometry/map-presence/Part/map/library pins/roles/correspondence; originaljournal/snapshots immutable. New canonical guarded compensatingops use monotonic touched revisions and ONLY validated necessary localrefs rebased to finalgraph; no historicalalias/reset or stale/changed/foreign recertification. Redo same law/recordedallocations. Unaffectedshards/nonversionedfields/D1graphics byteexact; touchedversionedrecords semanticexact+explicit expected metadata deltas. Author bounded PM057D2/history clarification via owningroute and decision procedures; get independent faithful authority/impact review BEFORE history edits. Identify exact composer/replay paths+lease for bounded implementation next. No schema assumed; preserve full negative/history/replay proof. Record this actual decision, not test waiver."
+  },
+  "governing_transcription": {
+    "decision": "docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md#d2-h1--current-references-in-bounded-materialization-compensation",
+    "route_reuse": ".datum/scratch/gui-p2-crossprobe-xpc01-20261023/history-route-qualified-reuse.json",
+    "scope": "PM057 D2-H1, ENGINE history notes, NativeFormat binding-inverse semantics, Phase2 plan, governing/status/route integration only; review before history code",
+    "inventory": "No operation/API/source schema or inventory shape added; existing parity inventories unchanged."
+  },
+  "governing_authority_impact_review": {
+    "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "result": "D2-H1_AUTHORITY_IMPACT_REVIEW_PASS",
+    "proposal_sha256": "8046e8a3efeaaaf487f1cbebca55058649349caf4ee80443d006aca604118833",
+    "governing_inputs": {
+      "docs/decisions/PRODUCT_MECHANICS_057_C03_SOURCE_AND_ACTION_AUTHORITY.md": "e99d5184a532cac00ad55af6b9418d901ee40ba47d7e9a20b798ebca1f3ccc7c",
+      "specs/ENGINE_SPEC.md": "198c6d51453f32535cbfbd9be7c6991bfc86588b3ceed90d06ed7e92b924f534",
+      "specs/NATIVE_FORMAT_SPEC.md": "12312ee8ec7bfbcacffca943dc1b05a509a43be2ebfd4ad114ba1abffc4a7dcb",
+      "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md": "5ea5680e57bdc3ccdfae25712195630888b1e80d34c56c73ed3319685e5e0677"
+    },
+    "findings": "No mandatory findings. Independent 24+29 member baseline/membership/digest reuse valid; only four reviewed normative documents changed. Exact four proposed history paths accepted for impact; no conditional replay authority or implementation PASS."
+  },
+  "implementation_grant": {
+    "thread": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "actual_message": "PM ACCEPTS actual D2-H1_AUTHORITY_IMPACT_REVIEW_PASS/no findings at PM057e99d5184/ENGINE198c6d51/Native12312ee8/Plan5ea5680e/proposal8046e8a3. AUTHORIZE history implementation exact4paths: crates/engine/src/substrate/undo_redo.rs; undo_redo/component_binding.rs; component_pad_source/validation/component_binding.rs; api/native_write/board_components/pad_materialization/component_binding_tests.rs. Sync lease first; reconcile reviewed route digests/classification then land governing clarification owned paths, continue code without admin stop. Implement exact D2-H1 allowlist/semantic restoration/immutablejournal/monotonicrefs/newinverse/atomicrefusal with focused commit-undo-redo-reopen-replay proof. No conditional promotedreplay/cacheissue grant or other schema/guard expansion. Get independent code/proof review before landing. If exact parity requires another path, send concrete narrow delta; no automatic expansion.",
+    "status": "Governing candidate review/acceptance supersedes its historical pending labels; four-path implementation authorized, not complete."
+  }
+}

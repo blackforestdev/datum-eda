@@ -80,3 +80,53 @@ or undeclared source refuses rather than disappearing from the object index.
 This resolves the pinned packet's schema/profile boundary only. Exact source,
 map-presence, ID/provenance and affected/unaffected-shard undo/replay/reopen proof,
 noncanonical refusal, exact CAM and C04/C05/C06 remain required.
+
+<!-- DECISION:PM057:D2-H1:20261023 -->
+## D2-H1 — Current references in bounded materialization compensation
+
+Status: appointed PM decision under the actual owner delegation recorded in
+`specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`; governing transcription
+and implementation-impact review pending. This clarifies D2 for the existing
+same-binding package/ComponentInstance/affected-Net refresh family only.
+
+Undo and redo restore the recorded semantic IDs, geometry, map presence, Part,
+PinPadMap, library pins, roles, correspondence and allocation/retirement choices.
+They append canonical compensating transactions; original journal records and
+binding snapshots remain immutable. PM000D's monotonic ObjectRevision law and
+PM053's strict current correspondence requirements both continue to apply.
+
+A new compensation may rebase only the following necessary local revision
+metadata onto its validated complete final graph:
+
+- ComponentInstance `object_revision` and
+  `placed_package_refs[*].object_revision` for the unchanged target placement.
+- Affected electrical record `object_revision` and NetRelationship
+  `evidence[*].component_instance.object_revision` and
+  `evidence[*].board_pad.object_revision` for the unchanged affected identities.
+- Materialized Pad `source_binding.component_instance.object_revision` for
+  those same bindings; package and retained Pad object registrations advance
+  under the existing transaction revision owner.
+
+This is an explicit field allowlist, not permission to strip or rewrite every
+revision key. All IDs and nonversioned fields remain exact. Library revisions,
+owner/record hashes, incarnation, `journal_tip` and `materialized_against` retain
+their recorded values. Unaffected shards remain byte-identical; D1 graphics and
+map-presence byte guarantees remain unchanged. Version-bearing D2 records require
+exact semantic snapshot restoration plus enumerated expected metadata deltas,
+rather than historical revision bytes and current monotonic epochs simultaneously.
+
+The composer must verify the linked actual recorded transaction, original
+semantic snapshots and current preimages before rebasing. It must validate the
+complete affected dependency graph and refuse missing, stale, changed, foreign,
+duplicate or ambiguous evidence before writes. It cannot erase intervening
+changes by substituting a new preimage. Record the inverse of the actual new
+compensation so redo has current preimages and retains the same recorded semantic
+choices. Replay and fresh reopen must reproduce that recorded result.
+
+No historical alias, epoch reset, journal rewrite, fresh identity resolution,
+schema addition or relaxed query guard is authorized. The separate electrical
+revision-cache issue is excluded. Required positive commit/undo/redo/reopen/replay,
+exact Net/Run membership, related-object context, atomic refusal and independent
+review remain mandatory. This decision grants the bounded governing transcription;
+history source edits require the subsequent exact-path PM disposition after
+independent authority/impact review. It does not accept implementation or S5A.

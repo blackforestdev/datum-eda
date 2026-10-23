@@ -625,3 +625,45 @@ and the complete 12-case proof contract. Reuse working Net derivation/projection
 Selected visuals/goldens in XP-C04, fresh distinct XP-C05 replay and objective
 XP-C06 acceptance remain mandatory. No waiver, new dependency, source writer,
 prototype edit, product-rule change or successor selection is authorized.
+
+<!-- EVIDENCE:GUI-P2-CROSSPROBE:PM057-D2-H1-20261023 -->
+### Bounded current-reference history disposition
+
+Focused canonical integration now passes current commit/reopen correspondence:
+exact Net six members from every origin, Run exactly connected Track plus Pad,
+and authored linked Object context in both directions. Duplicate staged CI and
+forged future endpoint pins refuse without authored/journal changes. These are
+supplemental source proofs, not native XP-C04 availability or complete acceptance.
+
+Recorded Undo restores the tested authored preimages byte-for-byte, but actual
+fresh resolver inspection of the retained failure reports Package pin 1/object 3
+and Pad evidence pin 0/object 2, with CI source/object 1/1. Strict Net status is
+therefore correctly Stale. The read-only diagnostic used the original temporary
+unit-test Project; its exact 80-file copy and hashes are preserved in task-owned
+disk scratch. Neither path is misrepresented as committed or newly generated
+ordinary product evidence. The separate electrical-record cache issue is excluded.
+
+Appointed PM `01a160d9-b499-7923-984a-b3390beb2e34`, under the actual owner
+delegation already pinned above, explicitly adopts constrained compensation:
+restore recorded semantic IDs, geometry, map presence, Part/map/library pins,
+roles and correspondence; retain immutable history and monotonic touched
+revisions; rebase only necessary validated local reference metadata in new
+canonical compensating operations. The PM separately authorizes transcription
+and source-impact review of PM057 D2-H1, ENGINE history notes and NativeFormat
+binding-inverse semantics. Exact history-code paths require a subsequent PM
+disposition after independent faithful authority/impact review.
+
+PM057 D2-H1 supplies the exact metadata allowlist. History proof must compare
+recorded semantics exactly and assert only its enumerated expected metadata
+deltas, preserve unrelated/nonversioned bytes and original journal prefixes,
+and demonstrate complete current Net/Run/related context through undo, redo,
+replay and reopen. Do not replace the required positive with a Stale expectation,
+strip arbitrary revision keys, reset epochs or rewrite historical snapshots.
+No test assertion or history implementation is changed by this transcription.
+
+The exact proposal, actual PM decision, original independent proposal review,
+resolved field receipt, qualified unchanged-route pins and proposed source paths
+are in `docs/reviews/workflow-delivery-rollout/crossprobe/history-reference-disposition.json`.
+The original proposal review is bounded to its historical bytes; a fresh exact
+governing transcription/impact receipt remains required. XP-C03 remains active;
+XP-C04/05/06, full ordinary proof and objective acceptance are not waived.

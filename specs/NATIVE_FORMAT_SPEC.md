@@ -705,7 +705,14 @@ once and refuses partial/foreign/stale transitions. Continuity requires survivin
 recorded source history; deletion/rebirth cannot reuse a placed ID. Replacement
 allocates fresh IDs. Separate profile adoption remains forward-only. Subsequent
 materialization inverses retain the actual complete JSON payload and its existing
-map presence; canonical-byte undo/redo/reopen is proven from that adopted preimage.
+map presence. PM057 D2-H1 distinguishes immutable recorded snapshots from new
+same-binding compensating transactions: restore exact semantic IDs, geometry,
+map presence, Part, mapping and library pins; rebase only the decision's explicit
+necessary local revision metadata onto monotonic current epochs. Preserve recorded
+library hashes/incarnations/history anchors and `materialized_against`; unrelated
+shards and nonversioned fields remain exact. The actual compensation and its
+inverse are recorded for deterministic redo/replay/reopen. No format/schema change
+or historical journal rewrite is implied; implementation proof remains pending.
 Unsupported noncanonical source writes refuse before staging. Queries never mint
 or adopt, and old unbound/imported canonical Pad sources retain their own rules.
 
