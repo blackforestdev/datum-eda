@@ -111,7 +111,7 @@
 </details>
 
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
-   INSP-C01 full readiness independently PASS04 (124pins), actual PM INSP-C02 authorizes exact533e/3a95/6562/a281 packet. INSP-C03 full shared Inspector/document-occurrence navigation/realChecks+prewrite guards/AX implementation active; no availability/proof/objective acceptance yet. Input03 declared source limits, failed observers, unimplemented hierarchy coverage and globalbar/protected-lane boundaries retained. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
+   INSP-C03 landed in 58545c49. The appointed PM accepted REVIEW46 full 16-case objective replay with REVIEW39 strict goldens, REVIEW44 controls and REVIEW45 concurrent new-append/next-Save proof. INSP-C04 is selected; required owner HUMAN/protected prototype assessment remains open. C05 objective evidence is retained without out-of-order closure. C06, development availability and full qualification remain open; no successor is authorized. Historical failures, observer limits and 18 unrelated Clippy diagnostics remain disclosed. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Build the inert marking-menu shell** (`GUI-MARKING-MENU`; `dat-marking-menu-shell-g0w`).

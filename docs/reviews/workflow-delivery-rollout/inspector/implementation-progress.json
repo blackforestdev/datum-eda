@@ -1,6 +1,6 @@
 {
   "task": "GUI-P2-INSPECTOR",
-  "step": "INSP-C03",
+  "step": "INSP-C04",
   "actual_transition_witness": "INSP-C02-TRANSITION-WITNESS-05 no findings, actual PM accepts; readiness landing2e4ef489",
   "finding_P01": "Initial expected-basis guard passed refusal/persistence test but existing check helpers re-resolved source inputs after admission. Mandatory reviewer P01 is open; no immutable-computation PASS from initial test.",
   "actual_manager_extension": "PM explicitly authorizes existing project_core.rs/schematic/queries.rs and cohesive helper integration within same scope; synchronize before edits, use pure admitted-model builders, keep default wrappers and normal budgets.",
@@ -1198,7 +1198,16 @@
       ],
       "unchanged_settled_boundaries": "PM062 occurrence-firstB1/openbesideO1 and pane-local identity/status; ASBdecision staysfrozen. PrototypeHTML/CSS unchanged; semantic comparison, no cross-rendererpixel equality.",
       "owner_response_format": "Accept required visual comparison for this exact read-only Inspector candidate, or revise with specific differences. Alternatively name an authorized human assessor for this exact assessment. No assent inferred from elapsedtime.",
-      "retained_limits": "Normal/narrow fields may be outside current scrollviewport; exact screenshots do not claim simultaneous fullfieldvisibility. Structural/sameengine12exactRGBA and independentnative45 do not substitute HUMAN. Fullhost/performance/endurance qualification and18baselineClippyerrors remain separately open."
+      "retained_limits": "Normal/narrow fields may be outside current scrollviewport; exact screenshots do not claim simultaneous fullfieldvisibility. Structural/sameengine12exactRGBA and independentnative45 do not substitute HUMAN. Fullhost/performance/endurance qualification and18baselineClippyerrors remain separately open.",
+      "pinned_manual_QA_launcher": {
+        "command": "target/qa/inspector-6cfc5872/debug/datum-gui --project-root .datum/scratch/gui-p2-inspector-insp01-20261023/native-proof-01/project",
+        "purpose": "Launch the exact normal GUI candidate on the retained admitted Main copy for owner inspection; this is review access, not a development-availability acceptance claim.",
+        "build_info_sha256": "3b0e51641ca5ec1ede67e4ec7999b8f1fd41e1aae57bff40dea1b1857cca2d23",
+        "source_commit": "58545c49d699cd29fe43bb6c4ef27882483c769e",
+        "GUI_sha256": "9dc7f71e04834de981326e51d500936227619b87b1f899975da356f9fd04836a",
+        "CLI_sha256": "feef310503d1d7db938851eadd0b69bfccd4c20280f65290708e56619747f226",
+        "daemon_sha256": "a2a6889ef6c4cdbc030471038c51e5a82ba5c475f89aa043d7f234faafe65f0c"
+      }
     },
     "actual_final_independent_review": {
       "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/review-46-full16-independent-reconciliation.json",
@@ -1255,7 +1264,8 @@
         "REVIEW45 nativefirstappend+supportedconcurrentquery+nextSaved+Close",
         "REVIEW46 full16 independentreconciliation"
       ],
-      "remaining_boundary": "Required HUMAN stays explicit C04 ownerboundary; C06/fullfeatureacceptance/developmentavailability/fullqualification/successor notclaimed. Retain originalnewappendfailure/AXonlyrecovery/control18failure/health20failure/Clippy18/missing17exe unknownorigin and observerlimits."
+      "remaining_boundary": "Required HUMAN stays explicit C04 ownerboundary; C06/fullfeatureacceptance/developmentavailability/fullqualification/successor notclaimed. Retain originalnewappendfailure/AXonlyrecovery/control18failure/health20failure/Clippy18/missing17exe unknownorigin and observerlimits.",
+      "C03_actual_landing_acceptance": "58545c49d699cd29fe43bb6c4ef27882483c769e"
     }
   },
   "native_producer_correction_actual_review": {
@@ -1579,6 +1589,18 @@
       "result_sha256": "f119bab77cc0cdda05bd157a7b54f37af2d2402aceddaeaed919fdb48a1a2319",
       "actual_result": "Firstattempt new129\u2192133/4added+3changed generated/oneSetCheckRun, currentcee/f47/13; Starting\u2192Running\u2192Complete with15supportedContextGet observations through next Save; localEscape retainedRunning; ordinarySave Project saved/no additional canonicalchanges. All155sourcepins/3binaryhashes unchanged; normalClose0/cleanup[].",
       "limits": "Step8 postSave AT-SPI unknownobject retained; stable9/13Class proof. Publictip + visiblecurrentrun/Complete + successful expectedtip-guardedSave; no directprivateGUItip observation. No claim everylockschedule or originalholder. Fullmatrix/HUMAN/objective acceptance separate."
+    }
+  },
+  "implementation_landing": {
+    "commit": "58545c49d699cd29fe43bb6c4ef27882483c769e",
+    "paths": 176,
+    "normal_hooks": "Filelane/temporaryartifact/stagedrustfmt actualPASS; no bypass.",
+    "PM_disposition": "Appointed PM explicitly accepts C03 objectiveimplementation onlywithactualcommit; completeC03/selectC04 perstandardtransition. C04requiredHUMAN and C06open; C05objectiveevidence accepted without out-of-orderclosure.",
+    "remaining": "Concrete ownerHUMAN packet in native_case_progress.owner_HUMAN_review_packet. No implementation/replaygap peractual46; no newproofcampaign.",
+    "postlanding_selector": "Fresh project_status.py next selected INSP-C04 under existing active root lease; no INPUT REQUIRED output was fabricated, no C05/C06 advancement. Actual log inspector-postlanding-next-46.log.",
+    "actual_independent_landing_acknowledgment": {
+      "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "actual_result": "Independently gitshow58545c49 for all155source21 paths: everySHA matches frozen reviewed21; currentworking155 alsoexact. No newproductiondelta/tests/replayrerun/newgate;46/45same-source evidence retained. HUMAN/C04/C06/fullqualification remain open."
     }
   }
 }
