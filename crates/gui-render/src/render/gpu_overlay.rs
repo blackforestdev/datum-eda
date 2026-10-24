@@ -41,6 +41,7 @@ impl Renderer {
         // Dialog-only frames have no world-camera consumers. Drop both owners
         // because a cached bundle also retains its camera bind group.
         self.surface_world_bundles.clear();
+        self.qualified_schematic_gpu.entries.clear();
         self.surface_scene_uniforms.clear();
         self.world_vertices_gpu.clear();
         self.world_strokes_gpu.clear();

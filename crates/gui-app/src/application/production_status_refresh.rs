@@ -64,12 +64,21 @@ fn refresh_workspace_after_terminal_output(
     include_review: bool,
     request: &datum_gui_protocol::LiveReviewRequest,
 ) -> Result<ProductionStatusRefresh> {
-    let next = if include_review {
+    let mut next = if include_review {
         load_live_workspace_state(request)?
     } else {
         load_board_editor_workspace_state(request)?
     };
     let before = session.workspace();
+    next.ui.layout = before.ui.layout.clone();
+    if let Some(model) = next.library.basis.as_ref() {
+        next.schematic_documents.restore_views(
+            &before.schematic_documents.navigation(),
+            &next.ui.layout,
+            &request.project_root,
+            model,
+        )?;
+    }
     if next.scene == before.scene
         && next.schematic_scene == before.schematic_scene
         && next.review == before.review
@@ -83,6 +92,13 @@ fn refresh_workspace_after_terminal_output(
     let workspace = session.workspace_mut();
     workspace.scene = next.scene;
     workspace.schematic_scene = next.schematic_scene;
+    workspace.schematic_documents = next.schematic_documents;
+    workspace.schematic_authoring = next.schematic_authoring;
+    let mut library = next.library;
+    library.kind = workspace.library.kind;
+    library.search = workspace.library.search.clone();
+    library.result_offset = workspace.library.result_offset;
+    workspace.library = library;
     workspace.review = next.review;
     workspace.production = next.production;
     workspace.source_shards = next.source_shards;
@@ -121,6 +137,7 @@ impl App {
             changed |= runtime.poll_native_selection_tick();
             changed |= runtime.poll_native_run();
             changed |= runtime.poll_native_edit();
+            changed |= runtime.poll_check_job();
             browser_changed = runtime.poll_folder_browser();
             project_open_changed = runtime.poll_project_open();
             changed |= project_open_changed;

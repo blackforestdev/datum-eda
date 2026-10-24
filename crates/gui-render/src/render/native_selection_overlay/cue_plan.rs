@@ -194,9 +194,6 @@ impl PanePlan {
         );
         Ok(self)
     }
-    pub(crate) fn overflow(&self, emitted_glyphs: usize) -> bool {
-        self.detail_primitives.saturating_add(emitted_glyphs) > DETAILED_PRIMITIVES
-    }
     pub(crate) fn base_output<'a>(
         &'a mut self,
         out: &'a mut Vec<Quad>,
@@ -405,7 +402,9 @@ impl PreparedScene {
             let (scene, consumer) = match pass.surface {
                 SceneSurface::Board => (&state.scene, Consumer::Board),
                 SceneSurface::Schematic => {
-                    let Some(scene) = state.schematic_scene.as_ref() else {
+                    let Some(scene) =
+                        datum_gui_protocol::camera_scene_for_pane(state, pass.pane_id)
+                    else {
                         continue;
                     };
                     (scene, Consumer::Schematic)
@@ -571,7 +570,8 @@ impl PreparedScene {
                 let scene = match pass.surface {
                     SceneSurface::Board => &state.scene,
                     SceneSurface::Schematic => {
-                        state.schematic_scene.as_ref().expect("schematic pass")
+                        datum_gui_protocol::camera_scene_for_pane(state, pass.pane_id)
+                            .expect("qualified schematic pass")
                     }
                 };
                 if let Some(mut request) = mask::Request::capture_screen(

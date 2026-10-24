@@ -125,6 +125,8 @@ impl Renderer {
             .requires_board_world()
             .then_some(&retained.world_vertices);
         let world_strokes = retained.world_strokes();
+        self.qualified_schematic_gpu
+            .sync(device, queue, prepared, &self.atlas.staging_budget)?;
         let schematic_pass = gpu_surface_pass::prepare_schematic_pass(prepared, schematic_retained);
         // S4 grid and interaction overlays remain immediate screen-space geometry;
         // offscreen captures supply neither cursor nor hover quads.

@@ -236,3 +236,39 @@ fn admitted_active_key_and_overlap_refusal_preserve_damage_and_allow_retry() {
     submit(&mut session, &state, &epoch);
     session.check_content_budget().unwrap();
 }
+
+#[test]
+fn document_inventory_epoch_preserves_payload_and_invalidates_preparation() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.unrouted_primitives.clear();
+    state
+        .scene
+        .component_graphics
+        .retain(|g| !(g.closed && g.render_role == "component_mechanical"));
+    let mut epoch = SourceEpoch::default();
+    let mut session = RenderSession::default();
+    submit(&mut session, &state, &epoch);
+    install(&mut session, &state);
+    let old = session.board().unwrap().clone();
+    let old_pointer = session.pointer_generation();
+    epoch.documents_changed();
+    submit(&mut session, &state, &epoch);
+    assert!(session.prepared().is_none());
+    assert!(std::sync::Arc::ptr_eq(
+        &old.world_hit_index,
+        &session.board().unwrap().world_hit_index
+    ));
+    assert!(!session.update_pointer(render_input::PointerUpdate {
+        generation: old_pointer,
+        cursor: None,
+        hover: None,
+        style: datum_gui_protocol::CrosshairStyle::None,
+    }));
+    // A payload replacement still retires old storage even if IDs are unchanged.
+    epoch.replaced();
+    submit(&mut session, &state, &epoch);
+    assert!(!std::sync::Arc::ptr_eq(
+        &old.world_hit_index,
+        &session.board().unwrap().world_hit_index
+    ));
+}

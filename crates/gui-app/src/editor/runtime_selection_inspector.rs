@@ -6,6 +6,40 @@ impl Runtime {
         target: &HitTarget,
     ) -> Option<bool> {
         Some(match target {
+            HitTarget::InspectorSectionToggle { section, basis } => {
+                if datum_gui_protocol::inspector_context::InspectorActionBasis::capture(
+                    self.workspace(),
+                )
+                .as_ref()
+                    == basis.as_ref()
+                {
+                    self.set_application_focus(ApplicationFocus::Inspector);
+                    let state = &mut self.session.workspace_mut().inspector_context;
+                    state.focused = Some(*section);
+                    if !state.collapsed.remove(section) {
+                        state.collapsed.insert(*section);
+                    }
+                    self.invalidate_frame();
+                }
+                true
+            }
+            HitTarget::InspectorRunErc(basis) => {
+                if basis.is_current(self.workspace()) {
+                    self.start_erc_job()
+                } else {
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Viewport,
+                        "Inspector source changed; refresh before rerunning ERC",
+                    );
+                    true
+                }
+            }
+            HitTarget::InspectorSectionNavigation { .. }
+            | HitTarget::InspectorContextScroll { .. } => {
+                self.set_application_focus(ApplicationFocus::Inspector);
+                self.invalidate_frame();
+                true
+            }
             HitTarget::SelectionInventoryToggle => self.toggle_selection_inventory(),
             HitTarget::SelectionFiltersToggle => self.toggle_selection_filters(),
             HitTarget::SelectionClassToggle(class) => self.toggle_selection_class(*class),
@@ -113,6 +147,18 @@ impl Runtime {
                 HitTarget::SelectionInspectorScroll { total, visible, .. } => {
                     Some((*total, *visible))
                 }
+                HitTarget::InspectorContextScroll {
+                    total,
+                    visible,
+                    basis,
+                } if datum_gui_protocol::inspector_context::InspectorActionBasis::capture(
+                    self.workspace(),
+                )
+                .as_ref()
+                    == basis.as_ref() =>
+                {
+                    Some((*total, *visible))
+                }
                 _ => None,
             }
         })?;
@@ -129,6 +175,105 @@ impl Runtime {
             self.invalidate_frame();
         }
         Some(changed)
+    }
+
+    pub(super) fn handle_inspector_navigation_key(
+        &mut self,
+        event: &winit::event::KeyEvent,
+    ) -> bool {
+        use datum_gui_protocol::inspector_context::InspectorSectionId;
+        use winit::keyboard::{Key, NamedKey};
+        if event.state != winit::event::ElementState::Pressed {
+            return true;
+        }
+        let presentation =
+            self.presented_hits
+                .regions()
+                .iter()
+                .find_map(|region| match &region.target {
+                    HitTarget::InspectorSectionNavigation {
+                        basis,
+                        offsets,
+                        total,
+                        visible,
+                    } if basis.is_current(self.workspace()) => {
+                        Some((offsets.clone(), *total, *visible))
+                    }
+                    _ => None,
+                });
+        let Some((sections, total, visible)) = presentation else {
+            self.invalidate_frame();
+            return true;
+        };
+        if sections.is_empty() {
+            return true;
+        }
+        let focused = self.workspace().inspector_context.focused;
+        let index = sections
+            .iter()
+            .position(|(id, _)| Some(*id) == focused)
+            .unwrap_or(0);
+        let mut next = index;
+        match &event.logical_key {
+            Key::Named(NamedKey::ArrowUp) => next = index.saturating_sub(1),
+            Key::Named(NamedKey::ArrowDown) => next = (index + 1).min(sections.len() - 1),
+            Key::Named(NamedKey::Home) => next = 0,
+            Key::Named(NamedKey::End) => next = sections.len() - 1,
+            Key::Named(NamedKey::PageUp | NamedKey::PageDown) => {
+                let page = if event.logical_key == Key::Named(NamedKey::PageUp) {
+                    datum_gui_protocol::selection_view::inspector_state::InspectorPage::Previous
+                } else {
+                    datum_gui_protocol::selection_view::inspector_state::InspectorPage::Next
+                };
+                let offset = self.workspace().ui.selection_inspector.scroll_offset;
+                self.session
+                    .workspace_mut()
+                    .ui
+                    .selection_inspector
+                    .scroll_offset = inspector_page_offset(offset, total, visible, page);
+                self.invalidate_frame();
+                return true;
+            }
+            Key::Character(key)
+                if key.eq_ignore_ascii_case("r")
+                    && sections[index].0 == InspectorSectionId::Checks
+                    && !event.repeat =>
+            {
+                return self.start_erc_job();
+            }
+            Key::Named(
+                NamedKey::ArrowLeft | NamedKey::ArrowRight | NamedKey::Enter | NamedKey::Space,
+            ) => {
+                let section = sections[index].0;
+                let collapsed = &mut self.session.workspace_mut().inspector_context.collapsed;
+                match event.logical_key {
+                    Key::Named(NamedKey::ArrowLeft) => {
+                        collapsed.insert(section);
+                    }
+                    Key::Named(NamedKey::ArrowRight) => {
+                        collapsed.remove(&section);
+                    }
+                    _ if !event.repeat => {
+                        if !collapsed.remove(&section) {
+                            collapsed.insert(section);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            _ => return true,
+        }
+        let (section, row) = sections[next];
+        let state = self.session.workspace_mut();
+        state.inspector_context.focused = Some(section);
+        let offset = &mut state.ui.selection_inspector.scroll_offset;
+        if row < *offset {
+            *offset = row;
+        } else if row >= offset.saturating_add(visible) {
+            *offset = row;
+        }
+        self.invalidate_frame();
+        true
     }
 }
 

@@ -9,13 +9,33 @@ pub(super) fn render_active_inspector(
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<Option<RectPx>> {
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    let visual_row = if state.ui.layout.focused_content()
-        == datum_gui_protocol::PaneContent::Library
+    let visual_row = if state.inspector_context.owner
+        == datum_gui_protocol::inspector_context::InspectorOwner::Navigator
     {
+        super::selection_inspector::render_workspace(
+            state,
+            rect,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        )?
+    } else if state.ui.layout.focused_content() == datum_gui_protocol::PaneContent::Library {
         crate::side_panels::library_surface::inspector(state, rect, panel_quads, text_runs);
         None
     } else if revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
         None
+    } else if matches!(
+        state.selection,
+        SelectionTarget::Native(_) | SelectionTarget::None
+    ) && state.library.basis.is_some()
+    {
+        super::selection_inspector::render_workspace(
+            state,
+            rect,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        )?
     } else if let SelectionTarget::Native(view) = &state.selection {
         super::selection_inspector::render(
             view,

@@ -21,8 +21,7 @@ use crate::global_preferences_primitives::ControlPainter;
 /// GPU pass.
 pub(super) fn render_viewport_panes(
     layout: &ShellLayout,
-    workspace: &datum_gui_protocol::WorkspaceLayout,
-    has_schematic_scene: bool,
+    state: &datum_gui_protocol::ReviewWorkspaceState,
     panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) -> crate::resource_consumers::Consumers {
@@ -30,8 +29,7 @@ pub(super) fn render_viewport_panes(
     let starts = (panel_quads.len(), text_runs.len());
     let consumers = render_viewport_panes_logical(
         &scale.logical_layout(layout.clone()),
-        workspace,
-        has_schematic_scene,
+        state,
         panel_quads,
         text_runs,
     );
@@ -42,14 +40,14 @@ pub(super) fn render_viewport_panes(
 
 fn render_viewport_panes_logical(
     layout: &ShellLayout,
-    workspace: &datum_gui_protocol::WorkspaceLayout,
-    has_schematic_scene: bool,
+    state: &datum_gui_protocol::ReviewWorkspaceState,
     panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) -> crate::resource_consumers::Consumers {
     use crate::resource_consumers::{Consumer, Consumers};
     let mut consumers = Consumers::default();
-    let panes = layout.viewport_panes(workspace);
+    let panes = layout.viewport_panes(&state.ui.layout);
+    let has_schematic_scene = state.schematic_scene.is_some();
     // The leaf that hosts the live board scene (focus-independent). Its canvas gets
     // the substrate + world PCB; any other board leaf is an inactive placeholder.
     let scene_leaf_id = panes.scene_leaf_id();
@@ -72,7 +70,7 @@ fn render_viewport_panes_logical(
         let title = match leaf.content {
             datum_gui_protocol::PaneContent::Library => "Library Browser",
             datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
-            datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
+            datum_gui_protocol::PaneContent::Schematic => "Schematic",
             datum_gui_protocol::PaneContent::Revision(
                 datum_gui_protocol::RevisionPane::Surface(surface),
             ) => surface.label(),
@@ -104,10 +102,19 @@ fn render_viewport_panes_logical(
                 board_surface_color(BoardSurfaceRole::InnerField),
             ));
         }
+        let native_header =
+            datum_gui_protocol::inspector_context::pane_header(state, leaf.id, leaf.content);
         render_pane_header(
             &leaf.rect,
-            title,
-            &PANE_TOOLS,
+            native_header
+                .as_ref()
+                .map_or(title, |header| header.0.as_str()),
+            native_header.as_ref().map(|header| header.1.as_str()),
+            if native_header.is_some() {
+                &[]
+            } else {
+                &PANE_TOOLS
+            },
             focused,
             panel_quads,
             text_runs,
@@ -222,6 +229,7 @@ fn render_pane_placeholder(
 fn render_pane_header(
     pane: &PaneRect,
     title: &str,
+    detail: Option<&str>,
     tools: &[&str],
     focused: bool,
     panel_quads: &mut ControlPainter<'_>,
@@ -294,8 +302,17 @@ fn render_pane_header(
     draw_text_clipped(
         title,
         title_x,
-        header.y + design_tokens::spacing::SP_03,
-        design_tokens::typography::DATA_SIZE,
+        header.y
+            + if detail.is_some() {
+                2.0
+            } else {
+                design_tokens::spacing::SP_03
+            },
+        if detail.is_some() {
+            10.0
+        } else {
+            design_tokens::typography::DATA_SIZE
+        },
         if focused { TEXT_PRIMARY } else { TEXT_MUTED },
         TextFace::Mono,
         RectPx {
@@ -313,6 +330,23 @@ fn render_pane_header(
             estimated_text_run_width_px(title, run.size, run.face),
             header.height,
         ));
+    }
+    if let Some(detail) = detail {
+        draw_text_clipped(
+            detail,
+            title_x,
+            header.y + 16.0,
+            9.0,
+            TEXT_MUTED,
+            TextFace::Ui,
+            RectPx {
+                x: title_x,
+                y: header.y,
+                width: (content_right - title_x).max(0.0),
+                height: header.height,
+            },
+            text_runs,
+        );
     }
     // Tool cluster after the measured pane-title width. Buttons render on the
     // interactive SURFACE_02; the focused pane's active tool gets the accent
@@ -468,6 +502,7 @@ mod tests {
                 render_pane_header(
                     &pane,
                     "Board · Layout",
+                    None,
                     &["S", "M", "R", "V", "Z"],
                     focused,
                     &mut ControlPainter::new(&mut quads, &mut cache, 1.0),
@@ -508,8 +543,7 @@ mod tests {
             let mut quads = Vec::new();
             render_viewport_panes(
                 &layout,
-                &state.ui.layout,
-                false,
+                &state,
                 &mut ControlPainter::new(&mut quads, &mut cache, 1.0),
                 &mut Vec::new(),
             );

@@ -366,7 +366,7 @@ fn preserved(
     };
     let at = r.terminal_accessibility.selection.as_ref().unwrap();
     assert!(
-        at.view.as_ref() == view.as_ref(),
+        at.view.as_deref().unwrap() == view.as_ref(),
         "current accessibility must preserve typed view"
     );
     assert_eq!(at.pane, Some(r.workspace().ui.layout.focused));

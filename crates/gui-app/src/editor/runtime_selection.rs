@@ -5,7 +5,7 @@ use datum_gui_protocol::{
     selection_artifacts::{
         WorkspaceSelectionAuthority, build_workspace_selection_view, is_artifact,
     },
-    selection_resolution::NativeSelectionResolution,
+    selection_resolution::{NativeSelectionResolution, SelectionAuthority},
 };
 use datum_gui_viewport::selection_acquisition::{
     AcquisitionEntry, AcquisitionMode, acquire_authored,
@@ -14,7 +14,7 @@ use eda_engine::substrate::{DesignModel, ProjectReadCache};
 use std::collections::BTreeSet;
 use std::sync::Arc;
 #[path = "runtime_selection/global.rs"]
-mod global;
+pub(super) mod global;
 #[path = "runtime_selection/publication.rs"]
 mod publication;
 
@@ -250,7 +250,10 @@ impl Runtime {
         surface: SceneSurface,
         point: Option<PointNm>,
     ) -> Option<bool> {
-        let basis = match self.native_binding_basis(surface) {
+        let basis = match self.native_binding_basis(
+            surface,
+            (surface == SceneSurface::Schematic).then_some(self.workspace().ui.layout.focused),
+        ) {
             Ok(Some(basis)) => basis,
             Ok(None) => return None,
             Err(error) => {
@@ -356,17 +359,43 @@ impl Runtime {
         }
         let state = self.workspace();
         let authority = &self.native_selection.as_ref().unwrap().authority;
-        let root_sheet = state
-            .schematic_scene
-            .as_ref()
-            .and_then(|s| s.board_uuid.parse().ok());
-        let candidates = match global::candidates(authority, schematic, root_sheet) {
-            Ok(candidates) => candidates,
-            Err(error) => {
-                self.selection_notice(format!("Global selection source unavailable: {error}"));
-                return true;
-            }
-        };
+        let focused_scene = schematic
+            .then(|| datum_gui_protocol::camera_scene_for_pane(state, state.ui.layout.focused))
+            .flatten();
+        if schematic && focused_scene.is_none() {
+            self.selection_notice("Focused document source unavailable".into());
+            return true;
+        }
+        if schematic
+            && focused_scene.is_none_or(|scene| {
+                scene.project_uuid != authority.project().to_string()
+                    || scene.source_revision != authority.revision().0
+                    || scene.schematic_document.as_ref().is_none_or(|document| {
+                        document.project != authority.project()
+                            || authority
+                                .snapshot()
+                                .schematic_source()
+                                .is_none_or(|source| source.uuid != document.schematic)
+                    })
+            })
+        {
+            self.selection_notice(
+                "Focused document is foreign, stale or unavailable; selection preserved".into(),
+            );
+            return true;
+        }
+        let root_sheet = focused_scene.and_then(|scene| scene.board_uuid.parse().ok());
+        let path = focused_scene
+            .and_then(|scene| scene.schematic_document.as_ref())
+            .map_or(&[][..], |key| key.instance_path.as_slice());
+        let candidates =
+            match global::candidates_for_occurrence(authority, schematic, root_sheet, path) {
+                Ok(candidates) => candidates,
+                Err(error) => {
+                    self.selection_notice(format!("Global selection source unavailable: {error}"));
+                    return true;
+                }
+            };
         self.native_selection.as_mut().unwrap().last_click = None;
         self.publish_native_acquisition(
             candidates,

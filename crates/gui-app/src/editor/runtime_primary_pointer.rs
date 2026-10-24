@@ -212,7 +212,11 @@ impl Runtime {
                 ));
                 return true;
             }
-            let hit = match self.selection_world_hit(world_point, SceneSurface::Board) {
+            let hit = match self.selection_world_hit(
+                world_point,
+                SceneSurface::Board,
+                self.pane_at_screen(x, y),
+            ) {
                 Ok(hit) => hit,
                 Err(()) => return true,
             };

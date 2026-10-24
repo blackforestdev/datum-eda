@@ -32,12 +32,16 @@ fn singleton_inspector_public_fields_match_shared_class_inspection_without_focus
     );
     state.selection = Some(SelectionAccessibilitySnapshot {
         visual_lod: None,
-        view: Arc::new(view.clone()),
+        view: Some(Arc::new(view.clone())),
+        inspection: None,
         focused: true,
         evaluating: None,
         pane: Some(datum_gui_protocol::PaneId(0)),
     });
-    assert_eq!(count(&view, Node::Fields), view.fields().len());
+    assert_eq!(
+        children::paths(state.selection.as_ref().unwrap(), Node::Fields).count(),
+        view.fields().len()
+    );
     for field in view.fields() {
         let path = field_path(field);
         assert!(matches!(node(&view, &path), Some(Node::Field(_))));
@@ -53,14 +57,14 @@ fn singleton_inspector_public_fields_match_shared_class_inspection_without_focus
         attributes(&mut state, &member_path(view.project, &id))["selection-focus"],
         "false"
     );
-    Arc::make_mut(&mut state.selection.as_mut().unwrap().view).scope = None;
+    Arc::make_mut(state.selection.as_mut().unwrap().view.as_mut().unwrap()).scope = None;
     let reply = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
     assert_eq!(
         reply.kind,
         MessageType::Error,
         "explicit All retains aggregate inspection"
     );
-    let retained = &state.selection.as_ref().unwrap().view;
+    let retained = state.selection.as_ref().unwrap().view.as_deref().unwrap();
     assert_eq!(retained.subject, group);
     assert_eq!(retained.members, view.members);
     assert!(retained.focus().is_none());
@@ -121,7 +125,8 @@ fn setup() -> (fixture::Fixture, ServiceState) {
     );
     state.selection = Some(SelectionAccessibilitySnapshot {
         visual_lod: None,
-        view: Arc::new(view),
+        view: Some(Arc::new(view)),
+        inspection: None,
         focused: true,
         evaluating: None,
         pane: Some(datum_gui_protocol::PaneId(0)),
@@ -158,13 +163,20 @@ fn selection_accessibility_inventory_is_complete_and_bound_to_source_identity() 
     let (f, mut state) = setup();
     let bytes = f.source_bytes();
     let snapshot = state.selection.as_ref().unwrap();
-    assert_eq!(snapshot.view.members.len(), 258);
-    assert_eq!(snapshot.view.hidden.len(), 1);
+    assert_eq!(snapshot.view.as_ref().unwrap().members.len(), 258);
+    assert_eq!(snapshot.view.as_ref().unwrap().hidden.len(), 1);
     let root_paths = state.root_child_paths();
     assert_eq!(root_paths.last().unwrap(), PATH);
     assert_eq!(root_paths[0], TERMINAL_PATH);
-    let member = snapshot.view.members.first().unwrap().clone();
-    let path = member_path(snapshot.view.project, &member);
+    let member = snapshot
+        .view
+        .as_ref()
+        .unwrap()
+        .members
+        .first()
+        .unwrap()
+        .clone();
+    let path = member_path(snapshot.view.as_ref().unwrap().project, &member);
     let mut body = BodyWriter::new();
     body.string(ACCESSIBLE);
     body.string("ChildCount");
@@ -196,7 +208,10 @@ fn selection_accessibility_inventory_is_complete_and_bound_to_source_identity() 
     let last = reader.object_path().unwrap();
     assert_ne!(last, path);
     assert!(matches!(
-        node(&state.selection.as_ref().unwrap().view, &last),
+        node(
+            state.selection.as_ref().unwrap().view.as_deref().unwrap(),
+            &last
+        ),
         Some(Node::Member(_))
     ));
     fixture::Fixture::assert_bytes(&bytes);
@@ -205,7 +220,15 @@ fn selection_accessibility_inventory_is_complete_and_bound_to_source_identity() 
 fn selection_accessibility_fields_explain_scope_mixed_and_unavailable_without_mutation() {
     let (f, mut state) = setup();
     let bytes = f.source_bytes();
-    let members = state.selection.as_ref().unwrap().view.members.clone();
+    let members = state
+        .selection
+        .as_ref()
+        .unwrap()
+        .view
+        .as_ref()
+        .unwrap()
+        .members
+        .clone();
     let reply = state.dispatch(1, &description_call(&field_path("member_count")));
     assert_eq!(reply.body_reader().variant_string().unwrap(), "258");
     let class_field = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
@@ -214,7 +237,8 @@ fn selection_accessibility_fields_explain_scope_mixed_and_unavailable_without_mu
         MessageType::Error,
         "All has only class-independent aggregates"
     );
-    Arc::make_mut(&mut state.selection.as_mut().unwrap().view).scope = Some(Class::Track);
+    Arc::make_mut(state.selection.as_mut().unwrap().view.as_mut().unwrap()).scope =
+        Some(Class::Track);
     let reply = state.dispatch(2, &description_call(&field_path("copper_width_nm")));
     assert_eq!(reply.body_reader().variant_string().unwrap(), "Mixed");
     assert_eq!(
@@ -224,12 +248,30 @@ fn selection_accessibility_fields_explain_scope_mixed_and_unavailable_without_mu
     let count = attributes(&mut state, &field_path("member_types"));
     assert_eq!(
         count["canonical-value"],
-        match state.selection.as_ref().unwrap().view.field("member_types") {
+        match state
+            .selection
+            .as_ref()
+            .unwrap()
+            .view
+            .as_ref()
+            .unwrap()
+            .field("member_types")
+        {
             InspectionValue::Common(value) => value.to_string(),
             _ => panic!("common counts"),
         }
     );
-    assert_eq!(state.selection.as_ref().unwrap().view.members, members);
+    assert_eq!(
+        state
+            .selection
+            .as_ref()
+            .unwrap()
+            .view
+            .as_ref()
+            .unwrap()
+            .members,
+        members
+    );
     let write = state.dispatch(
         3,
         &call(PATH, PROPERTIES, "Set", "ss", {
@@ -248,7 +290,14 @@ fn selection_accessibility_fields_explain_scope_mixed_and_unavailable_without_mu
     let phantom = state.dispatch(
         5,
         &description_call(&member_path(
-            state.selection.as_ref().unwrap().view.project,
+            state
+                .selection
+                .as_ref()
+                .unwrap()
+                .view
+                .as_ref()
+                .unwrap()
+                .project,
             &Id {
                 class: Class::Track,
                 id: fixture::id(9999),
@@ -277,7 +326,7 @@ fn selection_accessibility_events_are_quiet_for_noop_and_coalesce_dense_lifetime
         )
         .is_empty()
     );
-    Arc::make_mut(&mut state.selection.as_mut().unwrap().view).notice =
+    Arc::make_mut(state.selection.as_mut().unwrap().view.as_mut().unwrap()).notice =
         Some("Derived membership change refused; subject preserved".into());
     let next = state.selection.clone().unwrap();
     let events = messages(
@@ -292,7 +341,7 @@ fn selection_accessibility_events_are_quiet_for_noop_and_coalesce_dense_lifetime
     );
     assert_eq!(events.len(), 1);
     assert_eq!(events[0].header.member.as_deref(), Some("PropertyChange"));
-    let view = Arc::make_mut(&mut state.selection.as_mut().unwrap().view);
+    let view = Arc::make_mut(state.selection.as_mut().unwrap().view.as_mut().unwrap());
     let removed = view.members.pop_first().unwrap();
     view.dropped.insert(removed);
     view.stale = true;
@@ -390,8 +439,14 @@ fn visual_lod_is_read_only_current_presentation_and_coalesces_without_reselectio
         1,
         "one presentation update, no member selection event"
     );
-    assert_eq!(next.view.members, previous.view.members);
-    assert_eq!(next.view.subject, previous.view.subject);
+    assert_eq!(
+        next.view.as_ref().unwrap().members,
+        previous.view.as_ref().unwrap().members
+    );
+    assert_eq!(
+        next.view.as_ref().unwrap().subject,
+        previous.view.as_ref().unwrap().subject
+    );
     state.selection.as_mut().unwrap().visual_lod =
         Some(datum_gui_render::SelectionVisualLod::Unavailable);
     assert!(
@@ -453,7 +508,8 @@ fn related_parent_is_disclosed_without_becoming_an_accessible_selected_member() 
         Vec::new(),
     );
     state.selection = Some(SelectionAccessibilitySnapshot {
-        view: Arc::new(view),
+        view: Some(Arc::new(view)),
+        inspection: None,
         visual_lod: None,
         focused: true,
         evaluating: None,
@@ -521,7 +577,7 @@ fn quantity_accessibility_keeps_canonical_value_and_discloses_project_rounding()
     )
     .unwrap();
     view.scope = Some(Class::Track);
-    state.selection.as_mut().unwrap().view = Arc::new(view);
+    state.selection.as_mut().unwrap().view = Some(Arc::new(view));
     let reply = state.dispatch(1, &description_call(&field_path("copper_width_nm")));
     let value = reply.body_reader().variant_string().unwrap();
     assert_eq!(value, "0.000mm (rounded)");

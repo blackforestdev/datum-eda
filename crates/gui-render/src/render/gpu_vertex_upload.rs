@@ -90,6 +90,9 @@ impl Renderer {
     pub(super) fn cancel_vertex_uploads(&mut self) {
         screen_streams!(self, stream, stream.cancel_uploads(), mut);
         world_streams!(self, stream, stream.cancel_uploads(), mut);
+        for entry in self.qualified_schematic_gpu.entries.iter_mut() {
+            entry.cancel();
+        }
         self.terminal_graphics.cancel_uploads();
     }
 
@@ -104,6 +107,9 @@ impl Renderer {
         let mut refs = Vec::new();
         screen_streams!(self, stream, refs.extend(stream.submission_ref()));
         world_streams!(self, stream, refs.extend(stream.submission_ref()));
+        for entry in self.qualified_schematic_gpu.entries.iter() {
+            refs.extend(entry.refs());
+        }
         refs.extend(self.terminal_graphics.submission_refs());
         refs
     }

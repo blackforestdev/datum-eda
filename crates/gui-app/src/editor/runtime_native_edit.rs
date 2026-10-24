@@ -242,6 +242,17 @@ impl Runtime {
         }
     }
     pub(super) fn native_move_pointer(&mut self, world: PointNm) -> bool {
+        if self.native_edit.pending() {
+            return true;
+        }
+        if self.native_edit.preview.is_some() {
+            let pane = self
+                .last_cursor_pos
+                .and_then(|(x, y)| self.pane_at_screen(x, y));
+            if !self.guard_native_authoring_view(pane) {
+                return true;
+            }
+        }
         let Some(preview) = &self.native_edit.preview else {
             return false;
         };
@@ -257,6 +268,12 @@ impl Runtime {
     /// pointer intent supersedes only the queued destination, not the source
     /// whose upload/presentation is already in progress.
     pub(super) fn prepare_native_move_frame(&mut self) {
+        if self.native_edit.preview.is_some()
+            && !self.native_edit.pending()
+            && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
+        {
+            return;
+        }
         if self.native_edit.preview_awaiting_presentation {
             return;
         }
@@ -304,8 +321,20 @@ impl Runtime {
         })
     }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
+        if !self.native_edit.pending()
+            && matches!(
+                action,
+                NativeEditAction::Move { .. }
+                    | NativeEditAction::MoveSymbol { .. }
+                    | NativeEditAction::Schematic
+            )
+            && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
+        {
+            return true;
+        }
         if !self.native_edit_available()
             || self.native_edit.pending()
+            || self.check_work.pending()
             || self.native_edit.blocked
             || self.application_shutdown_started.is_some()
         {
@@ -480,45 +509,7 @@ impl Runtime {
         }
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
-            let workspace = self.session.workspace_mut();
-            let library_selection = workspace
-                .library
-                .selected(&workspace.selection)
-                .map(|e| e.key());
-            let created = workspace
-                .library
-                .draft
-                .as_ref()
-                .map(|d| format!("library:pool/{}/{}.json", d.kind, d.id));
-            let mut library = next.library;
-            library.kind = workspace.library.kind;
-            library.search = workspace.library.search.clone();
-            library.result_offset = workspace.library.result_offset;
-            workspace.library = library;
-            workspace.scene = next.scene;
-            workspace.schematic_scene = next.schematic_scene;
-            workspace.schematic_authoring = next.schematic_authoring;
-            workspace.review = next.review;
-            workspace.production = next.production;
-            workspace.source_shards = next.source_shards;
-            workspace.checks = next.checks;
-            workspace.ui.console_journal.reconcile(
-                &next.supervision.journal.projection,
-                next.supervision.journal.applied_transaction_count,
-            );
-            workspace.supervision = next.supervision;
-            workspace.backing = next.backing;
-            workspace.selection = prepared.selected;
-            if let Some(key) = created.or(library_selection)
-                && workspace.library.entries.iter().any(|e| e.key() == key)
-            {
-                workspace.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(key);
-            }
-            self.selection_run.cancel();
-            self.native_selection = Some(prepared.session);
-            self.selection_read_cache = prepared.cache;
-            self.refresh_selection_accessibility();
-            self.invalidate_scene();
+            self.publish_prepared_workspace(next, prepared);
         } else {
             self.native_edit.blocked = true;
             self.restore_pending_move_base();

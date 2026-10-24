@@ -40,14 +40,32 @@ impl RetainedScene {
         let Some(schematic_scene) = state.schematic_scene.as_ref() else {
             return Ok(None);
         };
-        let budget = retained_scene_owner::document_cpu::for_scene(&schematic_scene.scene_id);
+        let layout =
+            ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
+        let Some(scene_viewport) = layout.schematic_scene_viewport(&state.ui.layout) else {
+            return Ok(None);
+        };
+        Self::schematic_source_bounded(
+            state,
+            schematic_scene,
+            scene_viewport,
+            &schematic_scene.scene_id,
+            limit,
+        )
+        .map(Some)
+    }
+
+    /// Build one immutable qualified source using the shared schematic allowance.
+    pub(crate) fn schematic_source_bounded(
+        state: &ReviewWorkspaceState,
+        schematic_scene: &BoardReviewSceneV1,
+        scene_viewport: RectPx,
+        document_budget_identity: &str,
+        limit: usize,
+    ) -> anyhow::Result<Self> {
+        let budget = retained_scene_owner::document_cpu::for_scene(document_budget_identity);
         let scope = crate::cpu_alloc::Scope::new("retained-schematic-construction");
         retained_scene_owner::document_cpu::with_constructor(&scope, || {
-            let layout =
-                ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
-            let Some(scene_viewport) = layout.schematic_scene_viewport(&state.ui.layout) else {
-                return Ok(None);
-            };
             let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let reference_projection = Projection::new(
                 board_field,
@@ -216,31 +234,27 @@ impl RetainedScene {
                 )
             })?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
-            Ok(Some(
-                Self {
-                    surface_size_independent: Self::scene_is_surface_size_independent(
-                        schematic_scene,
-                    ),
-                    hover_membership: Default::default(),
-                    presentation,
-                    glyph: retained_glyph::Geometry::from_document(
-                        glyph_points,
-                        glyph_materials,
-                        &schematic_scene.scene_id,
-                    ),
-                    world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
-                        world_vertices,
-                        &schematic_scene.scene_id,
-                    ),
-                    world_strokes: gpu_data::shared_geometry::SharedGeometry::for_document(
-                        world_strokes,
-                        &schematic_scene.scene_id,
-                    ),
-                    draw_commands: draw_commands.into(),
-                    world_hit_index: world_hit_index.into(),
-                }
-                .registered_cpu(&scope, limit)?,
-            ))
+            Ok(Self {
+                surface_size_independent: Self::scene_is_surface_size_independent(schematic_scene),
+                hover_membership: Default::default(),
+                presentation,
+                glyph: retained_glyph::Geometry::from_document(
+                    glyph_points,
+                    glyph_materials,
+                    document_budget_identity,
+                ),
+                world_vertices: gpu_data::shared_geometry::SharedGeometry::for_document(
+                    world_vertices,
+                    document_budget_identity,
+                ),
+                world_strokes: gpu_data::shared_geometry::SharedGeometry::for_document(
+                    world_strokes,
+                    document_budget_identity,
+                ),
+                draw_commands: draw_commands.into(),
+                world_hit_index: world_hit_index.into(),
+            }
+            .registered_cpu(&scope, limit)?)
         })
     }
 }

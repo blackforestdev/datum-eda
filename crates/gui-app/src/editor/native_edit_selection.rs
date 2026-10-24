@@ -11,6 +11,8 @@ use std::sync::Arc;
 
 pub(super) struct Inputs {
     selected: SelectionTarget,
+    layout: datum_gui_protocol::WorkspaceLayout,
+    navigation: datum_gui_protocol::schematic_documents::SchematicNavigation,
     filters: WorkspaceFilterState,
     prior: Option<Arc<NativeSelectionResolution>>,
 }
@@ -18,6 +20,8 @@ impl Inputs {
     pub fn capture(runtime: &Runtime) -> Self {
         Self {
             selected: runtime.workspace().selection.clone(),
+            layout: runtime.workspace().ui.layout.clone(),
+            navigation: runtime.workspace().schematic_documents.navigation(),
             filters: runtime.workspace().ui.filters.clone(),
             prior: runtime
                 .native_selection
@@ -26,8 +30,13 @@ impl Inputs {
         }
     }
     pub fn matches(&self, runtime: &Runtime) -> bool {
-        self.selected == runtime.workspace().selection
-            && self.filters == runtime.workspace().ui.filters
+        self.matches_workspace(runtime.workspace())
+    }
+    fn matches_workspace(&self, workspace: &datum_gui_protocol::ReviewWorkspaceState) -> bool {
+        self.selected == workspace.selection
+            && self.filters == workspace.ui.filters
+            && self.layout == workspace.ui.layout
+            && self.navigation == workspace.schematic_documents.navigation()
     }
 }
 pub(super) struct Prepared {
@@ -52,6 +61,21 @@ pub(super) fn prepare_from_model(
     let authority =
         Arc::new(NativeSelectionResolution::capture(&model).map_err(|e| anyhow::anyhow!("{e:?}"))?);
     next.ui.filters = inputs.filters.clone();
+    next.ui.layout = inputs.layout.clone();
+    if inputs.navigation.project().is_some() {
+        let root = &next
+            .backing
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("Document refresh source unavailable"))?
+            .request
+            .project_root;
+        next.schematic_documents.restore_views(
+            &inputs.navigation,
+            &next.ui.layout,
+            root,
+            &model,
+        )?;
+    }
     let mut lineage = None;
     let selected = if let SelectionTarget::Native(prior) = &inputs.selected {
         let reconcile = if is_artifact(&prior.subject) {
@@ -148,6 +172,81 @@ pub(super) fn target_after_reconciliation(
     }
 }
 
+impl Runtime {
+    /// One atomic source/selection publication path for authored writes and
+    /// generated check evidence. View state remains owned by the live session.
+    pub(super) fn publish_prepared_workspace(
+        &mut self,
+        next: datum_gui_protocol::ReviewWorkspaceState,
+        prepared: Prepared,
+    ) {
+        let same_world = {
+            let current = self.workspace();
+            current.scene == next.scene
+                && current.schematic_scene == next.schematic_scene
+                && current.review == next.review
+                && current.ui.layout == next.ui.layout
+                && current
+                    .schematic_documents
+                    .same_source(&next.schematic_documents)
+                && current.schematic_documents.navigation() == next.schematic_documents.navigation()
+                && current.ui.layout.leaves().into_iter().all(|pane| {
+                    datum_gui_protocol::camera_scene_for_pane(current, pane)
+                        == datum_gui_protocol::camera_scene_for_pane(&next, pane)
+                })
+        };
+        let workspace = self.session.workspace_mut();
+        let library_selection = workspace
+            .library
+            .selected(&workspace.selection)
+            .map(|e| e.key());
+        let created = workspace
+            .library
+            .draft
+            .as_ref()
+            .map(|d| format!("library:pool/{}/{}.json", d.kind, d.id));
+        let mut library = next.library;
+        library.kind = workspace.library.kind;
+        library.search = workspace.library.search.clone();
+        library.result_offset = workspace.library.result_offset;
+        workspace.library = library;
+        if !same_world {
+            workspace.scene = next.scene;
+            workspace.schematic_scene = next.schematic_scene;
+            workspace.schematic_documents = next.schematic_documents;
+        }
+        workspace.schematic_authoring = next.schematic_authoring;
+        if !same_world {
+            workspace.review = next.review;
+        }
+        workspace.production = next.production;
+        workspace.source_shards = next.source_shards;
+        workspace.checks = next.checks;
+        workspace.ui.console_journal.reconcile(
+            &next.supervision.journal.projection,
+            next.supervision.journal.applied_transaction_count,
+        );
+        workspace.supervision = next.supervision;
+        workspace.backing = next.backing;
+        workspace.selection = prepared.selected;
+        if let Some(key) = created.or(library_selection)
+            && workspace.library.entries.iter().any(|e| e.key() == key)
+        {
+            workspace.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(key);
+        }
+        self.selection_run.cancel();
+        self.native_selection = Some(prepared.session);
+        self.selection_read_cache = prepared.cache;
+        self.refresh_selection_accessibility();
+        if same_world {
+            self.render_sources.projections_changed();
+            self.invalidate_frame();
+        } else {
+            self.invalidate_scene();
+        }
+    }
+}
+
 #[cfg(test)]
 #[path = "native_edit_selection/lifetime_report_tests.rs"]
 mod lifetime_report_tests;
@@ -159,3 +258,7 @@ mod artifact_lifetime_tests;
 #[cfg(test)]
 #[path = "native_edit_selection/run_lifetime_tests.rs"]
 mod run_lifetime_tests;
+
+#[cfg(test)]
+#[path = "native_edit_selection/document_navigation_tests.rs"]
+mod document_navigation_tests;

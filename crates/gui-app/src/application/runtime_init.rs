@@ -109,6 +109,8 @@ impl Runtime {
             selection_read_cache: Default::default(),
             selection_run: runtime_selection_run::RunWork::new(wake.clone()),
             native_edit,
+            check_work: runtime_check_runs::CheckWork::new(wake.clone()),
+            schematic_navigation: Default::default(),
             project_open: project_open::OpenWork::new(wake.clone()),
             folder_browser: folder_browser::FolderBrowser::new(wake.clone()),
             native_selection: None,

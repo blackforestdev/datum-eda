@@ -578,6 +578,7 @@ impl PreparedScene {
                 usize::from(schematic_scene_viewport.is_some()),
             );
             Self {
+                schematic_sources: Default::default(),
                 admission_sources: geometry_admission::PreparedSourceIdentities::observe(
                     state,
                     terminal_panes,

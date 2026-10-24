@@ -50,7 +50,10 @@ impl Runtime {
                 self.workspace().scene.source_revision
             ),
             SceneSurface::Schematic => {
-                let scene = self.workspace().schematic_scene.as_ref().unwrap();
+                let Some(scene) = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)
+                else {
+                    return false;
+                };
                 format!("{}@{}", scene.scene_id, scene.source_revision)
             }
         };
@@ -70,7 +73,7 @@ impl Runtime {
             self.swap_pane_focus(|l| l.focused = pane);
         }
         if gesture.mode != AcquisitionMode::Replace
-            && let Err(reason) = self.prepare_native_region_basis(surface)
+            && let Err(reason) = self.prepare_native_region_basis(surface, pane)
         {
             self.selection_notice(reason);
             self.selection_release_suppressed = true;
@@ -79,7 +82,11 @@ impl Runtime {
         self.selection_gesture = Some(gesture);
         true
     }
-    fn prepare_native_region_basis(&mut self, surface: SceneSurface) -> Result<(), String> {
+    fn prepare_native_region_basis(
+        &mut self,
+        surface: SceneSurface,
+        pane: datum_gui_protocol::PaneId,
+    ) -> Result<(), String> {
         match self.ensure_selection_authority() {
             Ok(true) => {}
             Ok(false) => return Err("Native region authority unavailable".into()),
@@ -88,11 +95,10 @@ impl Runtime {
         let native = self.native_selection.as_ref().unwrap();
         let scene = match surface {
             SceneSurface::Board => &self.workspace().scene,
-            SceneSurface::Schematic => self
-                .workspace()
-                .schematic_scene
-                .as_ref()
-                .ok_or("Schematic region authority unavailable")?,
+            SceneSurface::Schematic => {
+                datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)
+                    .ok_or("Qualified schematic region authority unavailable")?
+            }
         };
         if scene.source_revision != native.model.model_revision.0
             || scene.project_uuid != native.model.project.project_id.to_string()
@@ -190,7 +196,9 @@ impl Runtime {
         };
         let scene = match content {
             datum_gui_protocol::PaneContent::Board => Some(&self.workspace().scene),
-            datum_gui_protocol::PaneContent::Schematic => self.workspace().schematic_scene.as_ref(),
+            datum_gui_protocol::PaneContent::Schematic => {
+                datum_gui_protocol::camera_scene_for_pane(self.workspace(), gesture.pane)
+            }
             _ => None,
         };
         if scene.is_none_or(|s| {
@@ -209,7 +217,8 @@ impl Runtime {
         let state = self.workspace();
         let native = self.native_selection.as_ref().unwrap();
         let scene = if content == datum_gui_protocol::PaneContent::Schematic {
-            state.schematic_scene.as_ref().unwrap()
+            datum_gui_protocol::camera_scene_for_pane(state, gesture.pane)
+                .expect("qualified gesture pane")
         } else {
             &state.scene
         };
@@ -268,7 +277,7 @@ impl Runtime {
             .and_then(|content| match content {
                 datum_gui_protocol::PaneContent::Board => Some(&self.workspace().scene),
                 datum_gui_protocol::PaneContent::Schematic => {
-                    self.workspace().schematic_scene.as_ref()
+                    datum_gui_protocol::camera_scene_for_pane(self.workspace(), evaluation.pane)
                 }
                 _ => None,
             });

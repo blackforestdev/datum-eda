@@ -65,11 +65,8 @@ impl Request {
         if keys.is_empty() {
             return Ok(None);
         }
-        let related = match surface {
-            datum_gui_protocol::PaneContent::Board => &view.related_board_keys,
-            datum_gui_protocol::PaneContent::Schematic => &view.related_schematic_keys,
-            datum_gui_protocol::PaneContent::Library
-            | datum_gui_protocol::PaneContent::Revision(_) => unreachable!(),
+        let Some(related) = view.related_projection_keys(scene, surface) else {
+            return Ok(None);
         };
         let count = keys.union(related).count();
         let compound = matches!(
@@ -406,14 +403,19 @@ impl PreparedScene {
                     .any(|pass| pass.pane_id == *pane && pass.surface == *surface)
             })
             .flat_map(move |(pane, surface, request)| {
+                let pass = self
+                    .surface_passes
+                    .iter()
+                    .find(|pass| pass.pane_id == *pane && pass.surface == *surface)
+                    .expect("filtered pane pass");
                 let retained = match surface {
                     SceneSurface::Board => Some(board),
-                    SceneSurface::Schematic => schematic,
+                    SceneSurface::Schematic => self.schematic_for_pass(pass, schematic),
                 };
                 let presentation = retained
                     .map(|retained| &retained.presentation)
                     .filter(|presentation| request.matches(presentation));
-                let commands = self.surface_draw_commands(*surface, schematic);
+                let commands = self.draw_commands_for_pass(pass, schematic);
                 presentation.into_iter().flat_map(move |presentation| {
                     commands.iter().flat_map(move |command| {
                         let (stroke, glyph, range, spans) = match command {

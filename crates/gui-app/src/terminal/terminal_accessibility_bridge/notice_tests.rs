@@ -123,7 +123,7 @@ fn native_selection_notice_publishes_once_for_none_and_complete_selection() {
                     assert_eq!(view.focus(), None);
                     assert!(!view.stale);
                     let accessible = runtime.terminal_accessibility.selection.as_ref().unwrap();
-                    assert_eq!(accessible.view.as_ref(), view.as_ref());
+                    assert_eq!(accessible.view.as_deref().unwrap(), view.as_ref());
                     assert_eq!(accessible.pane, Some(pane));
                     assert_eq!(accessible.evaluating, None);
                 }

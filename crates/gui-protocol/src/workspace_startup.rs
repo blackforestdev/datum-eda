@@ -13,6 +13,7 @@ impl ReviewWorkspaceState {
             board_name: String::new(),
             units: String::new(),
             source_revision: String::new(),
+            schematic_document: None,
             pad_expansion_setup: Default::default(),
             bounds: SceneBounds {
                 min_x: 0,

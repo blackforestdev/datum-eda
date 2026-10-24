@@ -66,6 +66,9 @@ impl Renderer {
             self.control_gpu_budget.clone(),
             Some(self),
         )?;
+        replacement.qualified_schematic_gpu = self
+            .qualified_schematic_gpu
+            .replacement(&self.atlas.staging_budget)?;
         replacement.surface_attachments = self.surface_attachments.replacement();
         replacement.world_glyph_points_gpu = self.world_glyph_points_gpu.replacement();
         replacement.world_glyph_materials_gpu = self.world_glyph_materials_gpu.replacement();
@@ -327,6 +330,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 .unwrap_or_default(),
             world_glyph_points_gpu: Default::default(),
             world_glyph_materials_gpu: Default::default(),
+            qualified_schematic_gpu: Default::default(),
             schematic_glyph_points_gpu: Default::default(),
             schematic_glyph_materials_gpu: Default::default(),
             world_vertices_gpu: Default::default(),

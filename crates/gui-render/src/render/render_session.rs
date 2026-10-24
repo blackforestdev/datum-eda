@@ -1,6 +1,9 @@
 //! Per-host derived rendering state. Editors supply source and view inputs;
 //! active payloads and bounded history share one lifetime/accounting owner.
 use crate::{RetainedScene, TerminalPaneRenderState};
+#[path = "schematic_sources.rs"]
+pub(crate) mod schematic_sources;
+use schematic_sources::SchematicSources;
 #[path = "terminal_damage.rs"]
 mod terminal_damage;
 use terminal_damage::PendingTerminalDamage;
@@ -52,6 +55,7 @@ pub struct RenderSession {
     board_history: RetainedSceneHistory,
     schematic: Option<RetainedScene>,
     schematic_history: RetainedSceneHistory,
+    schematic_sources: SchematicSources,
 }
 
 impl RenderSession {
@@ -130,6 +134,19 @@ impl RenderSession {
         self.board.as_ref()
     }
 
+    pub fn schematic_for_pane(&self, pane: datum_gui_protocol::PaneId) -> Option<&RetainedScene> {
+        let pass = self
+            .prepared
+            .as_ref()?
+            .surface_passes()
+            .iter()
+            .find(|pass| pass.pane_id == pane)?;
+        match pass.schematic_document.as_ref() {
+            Some(key) => self.schematic_sources.scene(Some(key), pass.scene_viewport),
+            None => self.schematic.as_ref(),
+        }
+    }
+
     pub fn schematic(&self) -> Option<&RetainedScene> {
         self.schematic.as_ref()
     }
@@ -155,6 +172,7 @@ impl RenderSession {
 
     fn clear_schematic(&mut self) {
         self.schematic = None;
+        self.schematic_sources = SchematicSources::default();
         self.schematic_history.clear();
     }
 
@@ -197,6 +215,28 @@ impl RenderSession {
         height: u32,
         scale: f32,
     ) -> bool {
+        if state.schematic_documents.project.is_some() {
+            // Native documents retain exactly their visible qualified payloads.
+            // The compatibility root slot must not pin a closed root document.
+            self.schematic = None;
+            match SchematicSources::capture(
+                state,
+                None,
+                &self.schematic_sources,
+                width,
+                height,
+                scale,
+            ) {
+                Ok(sources) => {
+                    self.schematic_sources = sources;
+                    return true;
+                }
+                Err(error) => {
+                    self.schematic_history.construction_error = Some(error.to_string());
+                    return false;
+                }
+            }
+        }
         if self.schematic_history.construction_error.is_some() {
             return false;
         }

@@ -49,7 +49,8 @@ fn selection_accessibility_publication_preserves_all_siblings_and_latest_basis()
     .unwrap();
     let first = SelectionAccessibilitySnapshot {
         visual_lod: None,
-        view: Arc::new(view),
+        view: Some(Arc::new(view)),
+        inspection: None,
         focused: true,
         evaluating: None,
         pane: Some(datum_gui_protocol::PaneId(0)),

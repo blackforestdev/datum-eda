@@ -28,6 +28,9 @@ pub(super) struct OpenWork {
 }
 
 impl OpenWork {
+    pub(super) fn pending(&self) -> bool {
+        self.pending.is_some()
+    }
     pub(super) fn new(wake: winit::event_loop::EventLoopProxy<()>) -> Self {
         Self {
             created_root: None,

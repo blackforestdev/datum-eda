@@ -587,6 +587,7 @@ fn terminal_session_spawns_real_pty_shell() {
         "zone_fill_state"
     );
     context.selection_context = DatumSelectionContext {
+        inspector: None,
         details: None,
         kind: "authored_object".to_string(),
         id: Some("object-live".to_string()),

@@ -87,6 +87,7 @@ pub(super) fn append(
     view: &mut SelectionView,
     authority: &NativeSelectionResolution,
     board: Option<&Value>,
+    model: &eda_engine::substrate::DesignModel,
 ) {
     let origins = origins(authority, &view.members, board);
     let mut cache = BTreeMap::new();
@@ -112,6 +113,53 @@ pub(super) fn append(
         }
     }
     for scope in &mut view.inspection {
+        if let SelectionSubject::GlobalNet(net) = view.subject {
+            let buses: BTreeSet<_> = model
+                .electrical_identities
+                .values()
+                .filter_map(|record| match &record.identity {
+                    eda_engine::substrate::ElectricalIdentity::Bus {
+                        scalar_nets,
+                        retired: false,
+                        ..
+                    } if scalar_nets.contains(&net) => Some(record.id),
+                    _ => None,
+                })
+                .collect();
+            scope.insert_field(
+                "declared_bus_references",
+                InspectionValue::Common(serde_json::json!(buses)),
+                InspectionDetailKind::Members,
+            );
+        }
+        let label_names: BTreeSet<_> = view
+            .members
+            .iter()
+            .filter(|id| scope.scope.is_none_or(|class| class == id.class))
+            .filter_map(|id| view.values.get(id)?.get("net_label_name")?.as_str())
+            .collect();
+        scope.insert_field(
+            "member_label_names",
+            InspectionValue::Common(serde_json::json!(label_names)),
+            InspectionDetailKind::Members,
+        );
+        // Follow explicit member -> BoardNet -> class UUID references. Repeated
+        // names never identify a Net or supply a default class assignment.
+        let assignments: BTreeSet<_> = view
+            .members
+            .iter()
+            .filter(|id| scope.scope.is_none_or(|class| class == id.class))
+            .filter_map(|id| view.values.get(id)?.get("board_net_id")?.as_str())
+            .collect();
+        let rows: Vec<_> = assignments
+            .into_iter()
+            .map(|id| board_net(board, model, id))
+            .collect();
+        scope.insert_field(
+            "board_net_assignments",
+            InspectionValue::Common(serde_json::json!(rows)),
+            InspectionDetailKind::Members,
+        );
         let mut nets: BTreeMap<crate::SelectionProjectId, BTreeSet<Id>> = BTreeMap::new();
         let mut unavailable = Vec::new();
         let mut non_electrical = BTreeSet::new();
@@ -167,4 +215,60 @@ pub(super) fn append(
             non_electrical_detail,
         );
     }
+}
+
+fn board_net(board: Option<&Value>, model: &eda_engine::substrate::DesignModel, id: &str) -> Value {
+    let net = board.and_then(|board| board.get("nets")?.get(id));
+    let Some(net) = net else {
+        return serde_json::json!({"board_net_id":id,"state":"Unavailable — explicit BoardNet reference is absent"});
+    };
+    let class_id = net.get("class").and_then(Value::as_str);
+    let class = class_id.and_then(|id| board?.get("net_classes")?.get(id));
+    let units = eda_engine::api::native_write::project::project_display_units(model)
+        .ok()
+        .and_then(|profile| profile.resolve().ok());
+    let mut constraints = serde_json::Map::new();
+    if let Some(class) = class {
+        for name in [
+            "clearance",
+            "track_width",
+            "via_drill",
+            "via_diameter",
+            "diffpair_width",
+            "diffpair_gap",
+        ] {
+            let Some(nm) = class.get(name).and_then(Value::as_i64) else {
+                continue;
+            };
+            let rendered = units.and_then(|units| {
+                let display = if name == "via_drill" {
+                    units.drill
+                } else {
+                    units.board
+                };
+                eda_engine::ir::units::format_length(eda_engine::ir::units::FormatLengthRequest {
+                    value: eda_engine::ir::units::Nanometers::new(nm),
+                    quantity: eda_engine::ir::units::QuantityKind::Length,
+                    display_unit: display.unit,
+                    measurement_system: units.system,
+                    precision: display.precision,
+                })
+                .ok()
+            });
+            constraints.insert(name.into(), serde_json::json!({"canonical_nm":nm,
+                "display":rendered.as_ref().map(|value| value.rendered.as_str()), "rounded":rendered.as_ref().map(|value| value.rounded)}));
+        }
+    }
+    let status = if class_id
+        .and_then(|id| id.parse::<uuid::Uuid>().ok())
+        .is_some_and(|id| id.is_nil())
+    {
+        "Unassigned — explicit nil class reference"
+    } else if class.is_some() {
+        "Resolved explicit class reference"
+    } else {
+        "Unavailable — referenced class is absent"
+    };
+    serde_json::json!({"board_net_id":id,"name":net.get("name"),"class_id":class_id,"class_state":status,
+        "class_name":class.and_then(|class| class.get("name")),"class_constraints":constraints})
 }

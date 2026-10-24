@@ -16,7 +16,15 @@ pub fn camera_scene_for_pane(
     }
     match state.ui.layout.content_for(pane)? {
         PaneContent::Board => Some(&state.scene),
-        PaneContent::Schematic => state.schematic_scene.as_ref(),
+        PaneContent::Schematic => {
+            if state.schematic_documents.project.is_some() {
+                state
+                    .schematic_documents
+                    .scene_for_pane_with_primary(pane, state.schematic_scene.as_ref())
+            } else {
+                state.schematic_scene.as_ref()
+            }
+        }
         PaneContent::Library | PaneContent::Revision(_) => None,
     }
 }

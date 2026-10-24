@@ -299,7 +299,7 @@ fn compound_unchanged(
     };
     let accessible = runtime.terminal_accessibility.selection.as_ref().unwrap();
     assert!(
-        accessible.view.as_ref() == view.as_ref(),
+        accessible.view.as_deref().unwrap() == view.as_ref(),
         "current accessibility must preserve the complete typed view"
     );
     assert_eq!(accessible.pane, Some(runtime.workspace().ui.layout.focused));

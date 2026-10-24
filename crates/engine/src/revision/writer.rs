@@ -18,6 +18,18 @@ pub struct ProjectWriteLease {
 
 impl ProjectWriteLease {
     pub fn acquire(project_root: &Path) -> Result<Self, EngineError> {
+        Self::acquire_inner(project_root, false)
+    }
+
+    /// Serialize a background completion snapshot behind the current owner.
+    /// Ordinary reads and writers retain the nonblocking `acquire` contract.
+    /// The caller must hold no other lease for this root and must resolve with
+    /// this guard rather than recursively acquiring it or spawning CLI reads.
+    pub fn acquire_serialized(project_root: &Path) -> Result<Self, EngineError> {
+        Self::acquire_inner(project_root, true)
+    }
+
+    fn acquire_inner(project_root: &Path, serialized: bool) -> Result<Self, EngineError> {
         let root = project_root.canonicalize()?;
         if !root.is_dir() {
             return Err(refusal("Project root is not a directory"));
@@ -45,8 +57,13 @@ impl ProjectWriteLease {
             .mode(0o600)
             .open(&path)?;
         // std's Unix opens are close-on-exec. Never duplicate this descriptor.
-        file.try_lock()
-            .map_err(|error| refusal(&format!("live writer or unavailable lock: {error}")))?;
+        if serialized {
+            file.lock()
+                .map_err(|error| refusal(&format!("unavailable serialized lock: {error}")))?;
+        } else {
+            file.try_lock()
+                .map_err(|error| refusal(&format!("live writer or unavailable lock: {error}")))?;
+        }
         let lease = Self { root, path, file };
         lease.validate(project_root)?;
         lease.file.sync_all()?;

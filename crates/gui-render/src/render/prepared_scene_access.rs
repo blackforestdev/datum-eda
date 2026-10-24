@@ -17,6 +17,7 @@ pub use native_content_text::NativeContentText;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
+    pub(crate) schematic_sources: crate::renderer_state::SchematicSources,
     pub(super) admission_sources:
         Option<std::sync::Arc<geometry_admission::PreparedSourceIdentities>>,
     pub(super) consumers: crate::resource_consumers::FrameConsumers,
@@ -135,6 +136,32 @@ impl PreparedScene {
 
     pub(super) fn visible_draw_commands(&self) -> &[RetainedDrawCommand] {
         &self.visible_draw_commands
+    }
+
+    pub(crate) fn schematic_for_pass<'a>(
+        &'a self,
+        pass: &PreparedSurfacePass,
+        legacy: Option<&'a RetainedScene>,
+    ) -> Option<&'a RetainedScene> {
+        if pass.surface != SceneSurface::Schematic {
+            return None;
+        }
+        match pass.schematic_document.as_ref() {
+            Some(document) => self
+                .schematic_sources
+                .scene(Some(document), pass.scene_viewport),
+            None => self
+                .schematic_sources
+                .scene(None, pass.scene_viewport)
+                .or(legacy),
+        }
+    }
+    pub(super) fn draw_commands_for_pass<'a>(
+        &'a self,
+        pass: &PreparedSurfacePass,
+        legacy: Option<&'a RetainedScene>,
+    ) -> VisibleDrawCommands<'a> {
+        self.surface_draw_commands(pass.surface, self.schematic_for_pass(pass, legacy))
     }
 
     pub(super) fn surface_draw_commands<'a>(

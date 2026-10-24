@@ -118,22 +118,28 @@ pub(super) fn append(
     run: Option<&BoardRunMembership>,
     bus: Option<&BusRunMembership>,
     board: &Scene,
-    schematic: Option<&Scene>,
+    schematics: &[&Scene],
 ) {
     let mut coverage: BTreeMap<Option<Class>, Coverage> = view
         .inspection
         .iter()
         .map(|s| (s.scope, Coverage::default()))
         .collect();
-    for (surface, scene) in
-        std::iter::once(("board", board)).chain(schematic.map(|scene| ("schematic", scene)))
+    for (surface, scene) in std::iter::once(("board", board))
+        .chain(schematics.iter().map(|scene| ("schematic", *scene)))
     {
         if scene.project_uuid != view.project.to_string()
             || scene.source_revision != view.revision.0
         {
             continue;
         }
-        let frame = format!("{surface}:{}", scene.board_uuid);
+        let frame = match &scene.schematic_document {
+            Some(document) => format!(
+                "{surface}:{}",
+                serde_json::to_string(document).expect("document key")
+            ),
+            None => format!("{surface}:{}", scene.board_uuid),
+        };
         let geometries = geometry(scene, &view.zone_regions, run.is_some());
         for (key, binding) in SceneSelectionBindings::capture(scene, authority).iter() {
             // A parent owns its projected children; each stable member is
@@ -236,6 +242,16 @@ pub(super) fn append(
     }
     if let Some(all) = view.inspection.iter_mut().find(|s| s.scope.is_none()) {
         if let Some(e) = electrical {
+            if matches!(view.subject, SelectionSubject::Bus(_)) {
+                let net_ids = authority.snapshot().net_ids();
+                let scalar_nets: BTreeSet<_> =
+                    e.related_subjects.intersection(&net_ids).copied().collect();
+                all.insert_field(
+                    "declared_scalar_nets",
+                    InspectionValue::Common(serde_json::json!(scalar_nets)),
+                    InspectionDetailKind::Members,
+                );
+            }
             all.insert_field(
                 "derived_subject_id",
                 InspectionValue::Common(serde_json::json!(e.subject_id)),

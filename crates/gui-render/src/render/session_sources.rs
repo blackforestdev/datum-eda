@@ -2,9 +2,10 @@
 use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 
-/// Producer-owned epoch for immutable board/schematic/review/check/proposal payloads.
-/// Advance whenever any such payload changes, even with identical IDs, revisions,
-/// addresses or lengths. UI/camera changes are compared by the shared owner.
+/// Producer-owned epoch for immutable board/schematic/review/proposal payloads.
+/// Replace whenever those payloads change, even with identical IDs, revisions,
+/// addresses or lengths. Document inventory and check-only overlay changes use
+/// the projection generation while their world payloads remain unchanged.
 /// Producers without that guarantee must submit `None` (replacement every time).
 pub struct SourceEpoch(SourceRevision);
 
@@ -12,6 +13,7 @@ pub struct SourceEpoch(SourceRevision);
 pub struct SourceRevision {
     owner: u64,
     generation: u64,
+    documents: u64,
 }
 
 impl Default for SourceEpoch {
@@ -25,6 +27,7 @@ impl Default for SourceEpoch {
         Self(SourceRevision {
             owner,
             generation: 1,
+            documents: 1,
         })
     }
 }
@@ -39,6 +42,22 @@ impl SourceEpoch {
             .generation
             .checked_add(1)
             .expect("source producer generation exhausted");
+    }
+
+    /// The visible document inventory changed without replacing immutable source
+    /// payloads. Retained payloads still obey their full key and viewport checks.
+    pub fn documents_changed(&mut self) {
+        self.projections_changed();
+    }
+
+    /// Only configured document/check projection inputs changed. Producers must
+    /// retain their unchanged world payloads; this is not a weak damage hint.
+    pub fn projections_changed(&mut self) {
+        self.0.documents = self
+            .0
+            .documents
+            .checked_add(1)
+            .expect("source document generation exhausted");
     }
 }
 
@@ -81,7 +100,18 @@ impl RenderSession {
         scale: f32,
     ) -> anyhow::Result<()> {
         if revision.is_none() || self.sources.revision != revision {
-            self.clear_content();
+            let same_payload = self
+                .sources
+                .revision
+                .zip(revision)
+                .is_some_and(|(old, next)| {
+                    old.owner == next.owner && old.generation == next.generation
+                });
+            if same_payload {
+                self.composition_changed();
+            } else {
+                self.clear_content();
+            }
             self.preparation = None;
             self.sources.revision = revision;
         }
@@ -122,9 +152,11 @@ impl RenderSession {
                 });
             let keep_schematic = same_content
                 && next.schematic_present()
-                && self.schematic.as_ref().is_some_and(|scene| {
-                    scene.can_reuse_for_surface_resize() || active.key.same_projection(&next, true)
-                });
+                && (state.schematic_documents.project.is_some()
+                    || self.schematic.as_ref().is_some_and(|scene| {
+                        scene.can_reuse_for_surface_resize()
+                            || active.key.same_projection(&next, true)
+                    }));
             if active.key == next && self.board.is_some() {
                 drop(next);
                 drop(charge);
@@ -132,6 +164,16 @@ impl RenderSession {
                     self.ensure_schematic(state, width, height, scale),
                     "shared retained schematic preparation refused"
                 );
+                if state.schematic_documents.project.is_none() {
+                    self.schematic_sources = SchematicSources::capture(
+                        state,
+                        self.schematic.as_ref(),
+                        &self.schematic_sources,
+                        width,
+                        height,
+                        scale,
+                    )?;
+                }
                 return self.check_content_budget();
             }
             // A new retained hit array cannot inherit a preparation's region indices.
@@ -166,6 +208,16 @@ impl RenderSession {
             self.ensure_schematic(state, width, height, scale),
             "shared retained schematic preparation refused"
         );
+        if state.schematic_documents.project.is_none() {
+            self.schematic_sources = SchematicSources::capture(
+                state,
+                self.schematic.as_ref(),
+                &self.schematic_sources,
+                width,
+                height,
+                scale,
+            )?;
+        }
         self.check_content_budget()
     }
 }

@@ -66,6 +66,7 @@ impl Runtime {
             && !self.application_shutdown_blocked
             && self.terminal_sessions.all_sessions_closed()
             && !self.native_edit.pending()
+            && !self.check_work.pending()
     }
 
     pub(super) fn retry_application_terminal_shutdown(&mut self) {

@@ -6,6 +6,7 @@ use crate::{ReviewWorkspaceState, camera_scene_for_pane};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ActionHandler {
     FitCamera,
+    FocusNavigator,
     OpenLibrary,
 }
 
@@ -42,7 +43,7 @@ pub const ACTION_CONSUMERS: &[ActionConsumer] = &[
     },
     ActionConsumer {
         key: "window.documents",
-        handler: None,
+        handler: Some(ActionHandler::FocusNavigator),
         entry_surfaces: &[
             "window-documents-menu-keyboard",
             "window-documents-menu-pointer",
@@ -67,6 +68,9 @@ impl ActionConsumer {
             Some(ActionHandler::OpenLibrary) if state.library.basis.is_some() => {
                 Ok(ActionHandler::OpenLibrary)
             }
+            Some(ActionHandler::FocusNavigator) if state.schematic_documents.project.is_some() => {
+                Ok(ActionHandler::FocusNavigator)
+            }
             Some(ActionHandler::FitCamera)
                 if camera_scene_for_pane(state, state.ui.layout.focused).is_some() =>
             {
@@ -83,6 +87,10 @@ impl ActionConsumer {
             ActionHandler::OpenLibrary => Some((
                 "crates/gui-app/src/editor/runtime_library.rs",
                 "datum_gui::Runtime::open_library",
+            )),
+            ActionHandler::FocusNavigator => Some((
+                "crates/gui-app/src/editor/runtime_schematic_navigation.rs",
+                "datum_gui::Runtime::focus_schematic_navigator",
             )),
             ActionHandler::FitCamera => Some((
                 "crates/gui-app/src/viewport/runtime_camera_pane.rs",

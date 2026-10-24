@@ -157,6 +157,54 @@ fn current_256_and_257_transport_retains_ordinary_reasons_and_all_value_states()
             DatumSelectionContext::from_selection(&SelectionTarget::Native(Box::new(view.clone())))
                 .details
                 .unwrap();
+        // The new Inspector context refers to the same governed detail owner;
+        // it must not re-export a dense field through a second context array.
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.schematic_documents.project = Some(f.model.project.project_id);
+        state.selection = SelectionTarget::Native(Box::new(view.clone()));
+        let shared = DatumSelectionContext::from_workspace(&state);
+        assert_eq!(shared.details.as_ref(), Some(&context));
+        let inspector = shared.inspector.as_ref().unwrap();
+        for field in inspector
+            .sections
+            .iter()
+            .flat_map(|section| &section.fields)
+        {
+            if let Some(name) = &field.native_field {
+                assert!(field.value.is_none());
+                assert_eq!(
+                    field.native_value_state,
+                    view.field_ref(name).map(InspectionValue::state)
+                );
+                assert_eq!(
+                    field.detail_omitted,
+                    context.omitted_inspection_fields.contains(name)
+                );
+            }
+        }
+        if count > 256 {
+            assert!(
+                !serde_json::to_string(&shared)
+                    .unwrap()
+                    .contains(&id(257).to_string())
+            );
+        }
+        state.inspector_context.owner =
+            datum_gui_protocol::inspector_context::InspectorOwner::Navigator;
+        let navigation = DatumSelectionContext::from_workspace(&state);
+        assert_eq!(
+            navigation.details, shared.details,
+            "Navigator inspection preserves the global subject and transport cap"
+        );
+        assert!(
+            navigation
+                .inspector
+                .unwrap()
+                .sections
+                .iter()
+                .flat_map(|section| &section.fields)
+                .all(|field| field.native_field.is_none())
+        );
         assert_eq!(context.total, count as usize);
         assert_eq!(context.truncated, count > 256);
         assert_eq!(context.inspection["section_midpoint_nm"], ordinary);

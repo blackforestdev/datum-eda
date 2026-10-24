@@ -181,6 +181,13 @@ impl crate::Renderer {
     /// Whole shared streams carry their producer set; bytes are never multiplied.
     pub(crate) fn publish_resource_consumers(&self) {
         let frame = self.frame_consumers;
+        for entry in self.qualified_schematic_gpu.entries.iter() {
+            let consumers = frame.get(Stream::SchematicWorld);
+            entry.vertices.set_consumers(consumers);
+            entry.strokes.set_consumers(consumers);
+            entry.points.set_consumers(consumers);
+            entry.materials.set_consumers(consumers);
+        }
         self.panel_gpu.set_consumers(frame.get(Stream::Panel));
         self.menu_overlay_gpu
             .set_consumers(frame.get(Stream::Overlay));

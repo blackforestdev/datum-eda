@@ -174,7 +174,8 @@ fn native_region_completion_publishes_once_and_pending_cancel_preserves_selectio
                 .as_ref()
                 .unwrap()
                 .view
-                .as_ref(),
+                .as_deref()
+                .unwrap(),
             view.as_ref()
         );
         assert_eq!(

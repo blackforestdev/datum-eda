@@ -5,6 +5,14 @@ use datum_gui_protocol::{
 };
 use eda_engine::{board::PlacedPad, ir::geometry::Point, substrate::Operation};
 
+fn candidates(
+    authority: &NativeSelectionResolution,
+    schematic: bool,
+    root_sheet: Option<datum_gui_protocol::SelectionProjectId>,
+) -> anyhow::Result<BTreeSet<AuthoredSelectionIdentity>> {
+    candidates_for_occurrence(authority, schematic, root_sheet, &[])
+}
+
 #[test]
 fn global_authored_selection_retains_standalone_pad_complete_projection_and_reopen() {
     let mut f = Fixture::new("global-standalone-pad");

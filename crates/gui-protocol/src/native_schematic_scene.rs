@@ -2,49 +2,43 @@
 use crate::BoardReviewSceneV1;
 use crate::selection_resolution::{NativeSelectionResolution, SelectionAuthority};
 
+pub fn project_native_schematic_documents(
+    model: &eda_engine::substrate::DesignModel,
+    root: &std::path::Path,
+    layout: &crate::WorkspaceLayout,
+) -> anyhow::Result<Option<crate::schematic_documents::SchematicDocuments>> {
+    let authority = NativeSelectionResolution::capture(model)
+        .map_err(|error| anyhow::anyhow!("native document source unavailable: {error:?}"))?;
+    let Some(source) = authority.snapshot().schematic_source() else {
+        return Ok(None);
+    };
+    let mut documents = crate::schematic_documents::SchematicDocuments::from_source(
+        authority.project(),
+        authority.revision().clone(),
+        model.project.name.clone(),
+        source.clone(),
+    )?;
+    documents.bind_initial_panes(layout);
+    let keys: std::collections::BTreeSet<_> = documents.panes.values().cloned().collect();
+    for key in keys {
+        documents.prepare_scene(&key, root, model)?;
+    }
+    Ok(Some(documents))
+}
+
+/// Compatibility entry for the initial native document; all projection comes
+/// from the same qualified document owner used by live multi-pane navigation.
 pub fn project_native_schematic_scene(
     model: &eda_engine::substrate::DesignModel,
     root: &std::path::Path,
 ) -> anyhow::Result<Option<BoardReviewSceneV1>> {
-    let authority = NativeSelectionResolution::capture(model)
-        .map_err(|error| anyhow::anyhow!("native selection source unavailable: {error:?}"))?;
-    let Some(source) = authority.snapshot().schematic_source() else {
-        return Ok(None);
-    };
-    if source.sheets.is_empty() {
-        return Ok(None);
-    }
-    // Prefer an actual top-level source occurrence over an instantiated
-    // definition template. Qualified child membership stays complete even
-    // while the native workspace has no child-occurrence projection.
-    let instantiated: std::collections::BTreeSet<_> = source
-        .sheet_instances
-        .values()
-        .filter_map(|instance| source.sheet_definitions.get(&instance.definition))
-        .map(|definition| definition.root_sheet)
-        .collect();
-    let sheet = source
-        .sheets
-        .values()
-        .filter(|sheet| !instantiated.contains(&sheet.uuid))
-        .min_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
-    let schematic_file = root.join("schematic/schematic.json");
-    let mut scene = if let Some(sheet) = sheet {
-        crate::schematic_scene_import::project_schematic_sheet_source(
-            source,
-            sheet,
-            &schematic_file,
-        )?
-    } else {
-        crate::schematic_scene_import::project_schematic_source(source, &schematic_file)?
-    };
-    if let Some(sheet) = sheet {
-        crate::schematic_scene_import::native_library::project_bodies(
-            &mut scene, model, source, sheet.uuid,
-        )?;
-    }
-    scene.project_uuid = authority.project().to_string();
-    scene.project_name = model.project.name.clone();
-    scene.source_revision = authority.revision().0.clone();
-    Ok(Some(scene))
+    let layout = crate::WorkspaceLayout::board_schematic();
+    Ok(
+        project_native_schematic_documents(model, root, &layout)?.and_then(|documents| {
+            layout
+                .leaves()
+                .into_iter()
+                .find_map(|pane| documents.scene_for_pane(pane).cloned())
+        }),
+    )
 }

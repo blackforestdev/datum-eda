@@ -107,6 +107,13 @@ impl Runtime {
                 };
             }
             C::New | C::Edit => {
+                if self.check_work.pending() {
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Tool,
+                        "Wait for the Project check job before starting library authoring",
+                    );
+                    return true;
+                }
                 if !self.native_edit_available() {
                     self.log_console_refusal(
                         ConsoleFeedbackSource::Tool,

@@ -86,6 +86,7 @@ impl Renderer {
         )?;
         phase("from_workspace end");
         let mut prepared = prepared;
+        prepared.schematic_sources = self.render_session.schematic_sources.clone();
         if let Some(camera) = view.schematic_camera {
             prepared.set_schematic_camera(camera);
         }

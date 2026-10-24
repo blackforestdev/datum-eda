@@ -4,6 +4,7 @@ use super::*;
 pub(crate) mod damage;
 #[path = "render_session.rs"]
 mod render_session;
+pub(crate) use render_session::schematic_sources::SchematicSources;
 pub use render_session::{
     DialogInput, DialogView, FramePlan, RenderSession, SubmittedFrame, WorkspaceView, render_input,
 };
@@ -30,7 +31,11 @@ pub struct ControlMeshUsage {
     pub total_bytes: usize,
 }
 
+#[path = "qualified_world_gpu.rs"]
+pub(crate) mod qualified_world_gpu;
+
 pub struct Renderer {
+    pub(super) qualified_schematic_gpu: qualified_world_gpu::QualifiedWorldGpu,
     pub(super) damage_masks: damage::Masks,
     pub(super) render_session: RenderSession,
     pub(super) screen_admission: std::cell::Cell<

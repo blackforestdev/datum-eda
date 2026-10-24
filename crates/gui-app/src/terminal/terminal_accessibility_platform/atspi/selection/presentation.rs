@@ -35,13 +35,17 @@ pub(super) fn name(
             datum_gui_protocol::selection_view::field_label(field),
             field_value(view, field)
         ),
+        _ => unreachable!("workspace names are configured by the shared dispatcher"),
     }
 }
 pub(super) fn description(
     snapshot: &crate::selection_accessibility::SelectionAccessibilitySnapshot,
     node: Node<'_>,
 ) -> String {
-    let view = &snapshot.view;
+    if let Some(value) = workspace::description(snapshot, node) {
+        return value;
+    }
+    let view = snapshot.view.as_deref().expect("native selection node");
     let pane = snapshot
         .pane
         .map(|pane| format!("Editor pane {}", pane.0))
@@ -69,5 +73,6 @@ pub(super) fn description(
         Node::Field(field)=>field_value(view,field),
         Node::Members=>"Complete authoritative membership, including hidden and cross-sheet occurrences. No transport cap.".into(),
         Node::Fields=>"Common, Mixed and Unavailable compare canonical values in the complete declared scope. No editable fields.".into(),
+        _ => unreachable!("workspace descriptions are configured above"),
     }
 }

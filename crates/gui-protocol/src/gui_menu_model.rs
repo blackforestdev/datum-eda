@@ -65,6 +65,13 @@ fn first_edit_verb(verb: &str) -> bool {
 }
 
 impl GuiMenuItem {
+    pub fn is_guarded_erc(&self) -> bool {
+        self.label == "Run ERC"
+            && matches!(
+                self.binding(),
+                GuiMenuBinding::Verb("datum.check.run_profile")
+            )
+    }
     pub fn binding(&self) -> GuiMenuBinding<'_> {
         if let Some(reason) = self.not_built.as_deref() {
             GuiMenuBinding::NotBuilt(reason)
@@ -92,7 +99,8 @@ impl GuiMenuItem {
     }
 
     pub fn is_enabled(&self, project_open: bool) -> bool {
-        self.is_phase_one_enabled() && (!self.requires_project || project_open)
+        (self.is_phase_one_enabled() || self.is_guarded_erc())
+            && (!self.requires_project || project_open)
     }
 
     /// Contextual production state used by paint and invocation. The legacy
@@ -100,6 +108,16 @@ impl GuiMenuItem {
     pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
         if state.project_unopened && self.requires_project {
             return Some("This action requires an open Project.");
+        }
+        if self.is_guarded_erc() {
+            if matches!(
+                state.check_producer.phase,
+                crate::CheckProducerPhase::Starting | crate::CheckProducerPhase::Running
+            ) {
+                return Some("An ERC job is already pending.");
+            }
+            return (!crate::CheckProducerRequest::workspace_available(state))
+                .then_some("ERC requires an open native Project with a current source basis.");
         }
         if let GuiMenuBinding::GuiLocal(key) = self.binding()
             && let Some(consumer) = action_registry::consumer(key)

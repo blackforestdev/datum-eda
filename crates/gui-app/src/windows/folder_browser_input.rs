@@ -26,11 +26,11 @@ impl Runtime {
                 }
                 state.selected = Some(*index);
                 let now = std::time::Instant::now();
-                let double = self.folder_browser.last_click.is_some_and(|(old, when)| {
-                    old == *index
-                        && now.duration_since(when) < std::time::Duration::from_millis(400)
-                });
-                self.folder_browser.last_click = if double { None } else { Some((*index, now)) };
+                let double = crate::gui_runtime_support::register_navigation_click(
+                    &mut self.folder_browser.last_click,
+                    *index,
+                    now,
+                );
                 if double {
                     project_open_dispatched = self
                         .folder_browser

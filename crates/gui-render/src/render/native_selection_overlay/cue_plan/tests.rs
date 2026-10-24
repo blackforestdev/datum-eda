@@ -1,6 +1,12 @@
 use super::*;
 use crate::native_selection_overlay::tests::selected_state;
 
+impl PanePlan {
+    fn overflow(&self, emitted_glyphs: usize) -> bool {
+        self.detail_primitives.saturating_add(emitted_glyphs) > DETAILED_PRIMITIVES
+    }
+}
+
 fn viewport() -> RectPx {
     RectPx {
         x: 0.0,

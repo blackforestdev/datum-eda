@@ -29,6 +29,7 @@ use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 pub mod gui_menu_model;
 pub mod popup_menu;
+pub mod schematic_documents;
 pub mod single_line_editor;
 pub use gui_menu_model::{
     GuiIconDef, GuiIconSet, GuiMarkingMenu, GuiMenu, GuiMenuBinding, GuiMenuItem, GuiMenuModel,
@@ -131,6 +132,11 @@ pub use board_text_primitives::{
     MeshRectEmPrimitive, MeshVertexEmPrimitive, TextGlyphInstancePrimitive,
 };
 mod check_runs;
+pub mod inspector_context;
+pub use check_runs::producer::{
+    CheckProducerAcceptance, CheckProducerCandidate, CheckProducerPhase, CheckProducerRequest,
+    CheckProducerState, run as run_check_producer,
+};
 pub use check_runs::{
     CheckFindingSummary, CheckRunCoverageSummary, CheckRunProfileBasisSummary, CheckRunReviewState,
     check_finding_scene_target_object_id, check_run_review_state_from_json,
@@ -646,75 +652,6 @@ fn overlay_path_for_action(
             .unwrap_or_else(|| vec![action.from, action.to])
     } else {
         vec![action.from, action.to]
-    }
-}
-
-impl ReviewWorkspaceState {
-    pub fn review_rows(&self) -> Vec<ReviewActionRow> {
-        self.review
-            .proposal_actions
-            .iter()
-            .map(|action| ReviewActionRow {
-                action_id: action.action_id.clone(),
-                title: format!(
-                    "{} {}",
-                    action.proposal_action.to_uppercase(),
-                    action.selected_path_segment_index + 1
-                ),
-                subtitle: format!("LAYER {} {} NM", action.layer, action.width_nm),
-            })
-            .collect()
-    }
-
-    pub fn toggle_show_authored(&mut self) -> bool {
-        self.ui.filters.show_authored = !self.ui.filters.show_authored;
-        true
-    }
-
-    pub fn toggle_show_proposed(&mut self) -> bool {
-        self.ui.filters.show_proposed = !self.ui.filters.show_proposed;
-        true
-    }
-
-    pub fn toggle_show_unrouted(&mut self) -> bool {
-        self.ui.filters.show_unrouted = !self.ui.filters.show_unrouted;
-        true
-    }
-
-    pub fn toggle_dim_unrelated(&mut self) -> bool {
-        self.ui.filters.dim_unrelated = !self.ui.filters.dim_unrelated;
-        true
-    }
-
-    pub fn toggle_layer_visibility(&mut self, layer_id: &str) -> bool {
-        let entry = self
-            .ui
-            .filters
-            .layer_visibility
-            .entry(layer_id.to_string())
-            .or_insert(true);
-        *entry = !*entry;
-        true
-    }
-
-    pub fn selected_segment_evidence(&self) -> Option<&RouteProposalSegmentEvidence> {
-        self.selected_review_action().and_then(|action| {
-            self.review
-                .segment_evidence
-                .iter()
-                .find(|segment| {
-                    segment.layer_segment_index
-                        == action.selected_path_layer_segment_index.unwrap_or(0)
-                })
-                .or_else(|| self.review.segment_evidence.first())
-        })
-    }
-
-    pub fn review_action_index(&self, action_id: &str) -> Option<usize> {
-        self.review
-            .proposal_actions
-            .iter()
-            .position(|action| action.action_id == action_id)
     }
 }
 
@@ -2061,6 +1998,7 @@ fn build_board_review_scene(
             "project:{}:board:{}",
             inspect.project_uuid, inspect.board_uuid
         ),
+        schematic_document: None,
         pad_expansion_setup,
         bounds,
         layers: layer_ids

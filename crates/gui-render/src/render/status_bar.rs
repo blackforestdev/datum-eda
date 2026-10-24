@@ -10,7 +10,9 @@ use super::*;
 pub(crate) fn application_focus_label(state: &ReviewWorkspaceState) -> &'static str {
     match state.ui.focus {
         datum_gui_protocol::ApplicationFocus::Terminal => "Terminal",
-        datum_gui_protocol::ApplicationFocus::Overlay => "Overlay",
+        datum_gui_protocol::ApplicationFocus::Overlay
+        | datum_gui_protocol::ApplicationFocus::Navigator
+        | datum_gui_protocol::ApplicationFocus::Inspector => "Overlay",
         datum_gui_protocol::ApplicationFocus::Editor(pane) => match state
             .ui
             .layout

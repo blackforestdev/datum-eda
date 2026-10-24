@@ -97,11 +97,7 @@ pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> 
     points
 }
 
-pub(super) fn push_dashed_rect_border(
-    quads: &mut ControlPainter<'_>,
-    rect: RectPx,
-    color: [f32; 3],
-) {
+pub(super) fn push_dashed_rect_border(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3]) {
     let dash: f32 = 6.0;
     let gap: f32 = 4.0;
     let mut horizontal = |y: f32| {

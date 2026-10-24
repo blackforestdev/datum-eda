@@ -12,7 +12,7 @@ pub(super) fn prepare_schematic_pass<'a>(
     prepared
         .surface_passes()
         .iter()
-        .any(|pass| pass.surface == SceneSurface::Schematic)
+        .any(|pass| pass.surface == SceneSurface::Schematic && pass.schematic_document.is_none())
         .then_some(schematic_retained)
         .flatten()
 }

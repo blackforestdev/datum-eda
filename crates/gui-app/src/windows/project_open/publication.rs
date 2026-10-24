@@ -45,7 +45,7 @@ impl Runtime {
                 "Open Project origin changed; retry Open"
             );
             anyhow::ensure!(
-                !self.native_edit.pending(),
+                !self.native_edit.pending() && !self.check_work.pending(),
                 "Current Project edit became busy; retry Open"
             );
         } else {
@@ -63,7 +63,7 @@ impl Runtime {
                 answer.ticket,
                 self.project_open.generation,
                 self.workspace().ui.project_open.open,
-                self.native_edit.pending(),
+                self.native_edit.pending() || self.check_work.pending(),
             )?;
         }
         self.terminal_sessions.project_terminal_ready_to_publish()?;
@@ -91,6 +91,7 @@ impl Runtime {
         self.cancel_native_selection_gesture();
         self.selection_run.invalidate_project();
         self.native_edit.reset_project();
+        self.schematic_navigation = Default::default();
         self.native_selection = None;
         self.selection_read_cache = Default::default();
         self.selection_gesture = None;

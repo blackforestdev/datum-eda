@@ -254,3 +254,16 @@ fn diagnostic_frame_latency() -> u32 {
         other => panic!("invalid DATUM_GPU_DIAGNOSTIC_LATENCY: {other:?}; expected 1 or 2"),
     }
 }
+
+/// Existing browser/navigation pair timing, shared by typed read-only rows.
+pub(crate) fn register_navigation_click<T: PartialEq>(
+    previous: &mut Option<(T, std::time::Instant)>,
+    target: T,
+    now: std::time::Instant,
+) -> bool {
+    let double = previous.as_ref().is_some_and(|(old, when)| {
+        old == &target && now.duration_since(*when) < std::time::Duration::from_millis(400)
+    });
+    *previous = if double { None } else { Some((target, now)) };
+    double
+}

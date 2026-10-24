@@ -3,6 +3,13 @@ use super::*;
 pub(super) fn fields(class: Class) -> &'static [(&'static str, &'static str)] {
     match class {
         Class::Footprint => &[
+            (
+                "library_land_pattern_sources",
+                "library_land_pattern_sources",
+            ),
+            ("library_part", "part"),
+            ("library_package", "package"),
+            ("board_layer", "layer"),
             ("pad_materialization_status", "pad_materialization_status"),
             ("placement_position_nm", "position"),
             ("placement_rotation", "rotation"),
@@ -11,6 +18,10 @@ pub(super) fn fields(class: Class) -> &'static [(&'static str, &'static str)] {
             ("locked", "locked"),
         ],
         Class::Symbol => &[
+            ("library_symbol", "lib_id"),
+            ("library_part", "part"),
+            ("library_entity", "entity"),
+            ("library_gate", "gate"),
             ("placement_position_nm", "position"),
             ("placement_rotation", "rotation"),
             ("reference", "reference"),

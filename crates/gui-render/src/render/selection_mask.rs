@@ -119,7 +119,7 @@ impl Owner {
             {
                 let retained = match pass.surface {
                     SceneSurface::Board => Some(board),
-                    SceneSurface::Schematic => schematic,
+                    SceneSurface::Schematic => prepared.schematic_for_pass(pass, schematic),
                 };
                 if let Some(retained) = retained {
                     anyhow::ensure!(
@@ -169,7 +169,7 @@ impl Owner {
         for pass in prepared.surface_passes() {
             let retained = match pass.surface {
                 SceneSurface::Board => Some(board),
-                SceneSurface::Schematic => schematic,
+                SceneSurface::Schematic => prepared.schematic_for_pass(pass, schematic),
             };
             let request = prepared
                 .selection_masks
@@ -297,7 +297,7 @@ impl Owner {
         for (index, pass) in prepared.surface_passes().iter().enumerate() {
             let retained = match pass.surface {
                 SceneSurface::Board => Some(board),
-                SceneSurface::Schematic => schematic,
+                SceneSurface::Schematic => prepared.schematic_for_pass(pass, schematic),
             };
             let request = prepared
                 .selection_masks

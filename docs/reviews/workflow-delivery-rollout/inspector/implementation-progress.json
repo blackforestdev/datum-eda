@@ -45,5 +45,1540 @@
     "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/producer-focused-drift-02.log",
     "sha256": "ebac5db39ef27ac8ac813693667e5bc98668a93a43c88552d90e0da8fc036aa9",
     "result": "PASS focused structural gates; live shared worktree includes owned in-progress GUI source-health extraction. Initial focused batch stopped at expected stale source-health parity metadata; exact owner row reconciled, initial failure retained."
+  },
+  "routine_consumer_paths": {
+    "mechanical_runtime_init": "Actual Runtime constructor is application/runtime_init.rs, not app_bootstrap; approved blanket mechanical initializer grant applies. No app_bootstrap edit needed.",
+    "qualified_projection_helpers": [
+      "crates/gui-protocol/src/selection_view/presentation.rs",
+      "crates/gui-app/src/editor/runtime_selection_run/projection.rs",
+      "crates/gui-render/src/render/native_selection_overlay/mask.rs"
+    ],
+    "basis": "Necessary existing consumers of approved complete document-key binding/overlay/global-set requirement; same shared source owner, no new product authority/cache or canonical schema."
+  },
+  "renderer_extension": {
+    "manager": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "disposition": "APPROVE bounded existing renderer extension; exact consumer inventory subsequently approved",
+    "paths": [
+      "crates/gui-render/src/render/render_session.rs",
+      "crates/gui-render/src/render/session_sources.rs",
+      "crates/gui-render/src/render/retained_scene_history.rs",
+      "crates/gui-render/src/render/session_frame.rs",
+      "crates/gui-render/src/render/session_preparation.rs",
+      "crates/gui-render/src/render/session_pointer.rs",
+      "crates/gui-render/src/render/scene.rs",
+      "crates/gui-render/src/render/prepared_scene_access.rs",
+      "crates/gui-render/src/render/geometry_admission.rs",
+      "crates/gui-render/src/render/gpu_frame_target.rs",
+      "crates/gui-render/src/render/gpu_frame.rs",
+      "crates/gui-render/src/render/gpu_surface_pass.rs",
+      "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+      "crates/gui-render/src/render/cold_world_upload.rs",
+      "crates/gui-render/src/render/renderer_state.rs",
+      "crates/gui-render/src/render/gpu_init.rs",
+      "crates/gui-render/src/render/gpu_vertex_upload.rs",
+      "crates/gui-render/src/render/gpu_overlay.rs",
+      "crates/gui-render/src/render/resource_consumers.rs",
+      "crates/gui-render/src/render/selection_mask_painter.rs",
+      "crates/gui-render/src/render/coordinate_hit.rs",
+      "crates/gui-render/src/render/selection_mask.rs",
+      "crates/gui-render/src/render/cold_world_upload_tests.rs",
+      "crates/gui-render/src/render/session_frame_tests.rs"
+    ],
+    "purpose": "Qualified document retained sources and immutable frame/pass routing in existing rendering/accounting owners; no budget/default/schema/dependency change",
+    "review_constraints": "Preserve exact immutable sources, CPU/GPU accounting, allocation-ID deduplication, in-flight ownership, close/replacement/resize cleanup and all-document diagnostics."
+  },
+  "document_consumer_checkpoint": {
+    "scope": "Shared qualified document source/navigation, live primary camera, read-only child authoring refusal, all-visible-document selection presentation; renderer/native delivery still open",
+    "proof": [
+      {
+        "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-consumers-check-01.log",
+        "sha256": "ffff415484b034d30d88ab72d9b70b01c7cd2301c29561d9e4fd048b5a57a503"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-consumers-check-02.log",
+        "sha256": "0e1e4a6dc877b205c83264e442d20898574e334b70f41b78d82a2a1d3e3bc990"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-occurrence-projection-tests-01.log",
+        "sha256": "9fdd8a3443dc4f08742aae2d1b706f80b0d6a247ef721abcfd8a7c81341443ae"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-occurrence-projection-tests-02.log",
+        "sha256": "89ac8adc333e61870d3ff664a6105cabb301ffbf5d4f69ff6a8dd08860ce1665"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-source-health-01.log",
+        "sha256": "e9873534f5ce6e8786b290ba560099404814a48fe8e6378f52a2b6bee4876b2f"
+      },
+      {
+        "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-source-health-02.log",
+        "sha256": "7fd175dada00022b4bb3b910ac6b15725ef9fca106e64aa4e59ab47b1fda5c65"
+      }
+    ],
+    "results": {
+      "app_check_01": "FAIL private helper visibility, corrected",
+      "app_check_02": "PASS before final protocol document-basis validation; no renderer/native claim",
+      "occurrence_tests_01": "1 PASS/1 FAIL canonical resolver writer lock contention between two cases on shared pinned source; preserved",
+      "occurrence_tests_02": "2 PASS after serializing the two source lease holders; A/B same UUID highlight ownership, foreign/stale refusal, preserved root live preview, read-only child authoring",
+      "source_health_01": "FAIL exact root limit 2778 vs 2779",
+      "source_health_02": "PASS 3302 files after exact downward ratchet to 2778"
+    },
+    "incidental_issue": "dat-demo-route-source-fence-6upf; earlier 179 PASS/1 FAIL/3 ignored retained separately from isolated 1 PASS",
+    "actual_independent_review": {
+      "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "receipt": "INSP03-DOCUMENT-CONSUMER-SOURCE-REVIEW-07",
+      "disposition": "PASS_BOUNDED_SOURCE_CHECKPOINT",
+      "mandatory_findings": [],
+      "source_paths": [
+        "crates/gui-app/src/editor/runtime_native_edit.rs",
+        "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+        "crates/gui-app/src/editor/runtime_schematic.rs",
+        "crates/gui-app/src/editor/runtime_selection_run/projection.rs",
+        "crates/gui-app/src/editor/runtime_view_actions.rs",
+        "crates/gui-protocol/src/board_review_scene.rs",
+        "crates/gui-protocol/src/native_schematic_scene.rs",
+        "crates/gui-protocol/src/schematic_documents.rs",
+        "crates/gui-protocol/src/schematic_documents/navigation.rs",
+        "crates/gui-protocol/src/schematic_documents/projection.rs",
+        "crates/gui-protocol/src/schematic_documents/tests.rs",
+        "crates/gui-protocol/src/selection_scene/index.rs",
+        "crates/gui-protocol/src/selection_view.rs",
+        "crates/gui-protocol/src/selection_view/presentation.rs",
+        "crates/gui-protocol/src/selection_view/projection_inspection.rs",
+        "crates/gui-protocol/src/workspace_interaction/camera.rs",
+        "crates/gui-protocol/src/workspace_loading.rs",
+        "crates/gui-protocol/src/workspace_tools.rs",
+        "crates/gui-render/src/render/native_selection_overlay/mask.rs"
+      ],
+      "source_set_sha256": "b445322c78a158415ef67f07f293d97a01b1a7ef7cb4e29ab408baa433f799fb",
+      "algorithm": "SHA256 repeated sorted UTF8(path) + NUL + raw file bytes + NUL",
+      "retained_limits": "No full safety/runtime/render/AX/native/16-case/Inspector PASS; future changed bytes require delta review."
+    }
+  },
+  "renderer_checkpoint": {
+    "actual_review": "INSP03-QUALIFIED-RENDERER-REVIEW-09",
+    "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "disposition": "PASS_BOUNDED_DELTA",
+    "mandatory_findings": [],
+    "source_paths": [
+      "crates/gui-render/src/render/cold_world_upload.rs",
+      "crates/gui-render/src/render/coordinate_hit.rs",
+      "crates/gui-render/src/render/frame_preparation.rs",
+      "crates/gui-render/src/render/geometry_admission.rs",
+      "crates/gui-render/src/render/gpu_frame.rs",
+      "crates/gui-render/src/render/gpu_init.rs",
+      "crates/gui-render/src/render/gpu_overlay.rs",
+      "crates/gui-render/src/render/gpu_surface_pass.rs",
+      "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+      "crates/gui-render/src/render/gpu_vertex_upload.rs",
+      "crates/gui-render/src/render/native_selection_overlay/cue_plan.rs",
+      "crates/gui-render/src/render/native_selection_overlay/mask.rs",
+      "crates/gui-render/src/render/preferences_scene.rs",
+      "crates/gui-render/src/render/prepared_scene_access.rs",
+      "crates/gui-render/src/render/qualified_world_gpu.rs",
+      "crates/gui-render/src/render/render_session.rs",
+      "crates/gui-render/src/render/renderer_state.rs",
+      "crates/gui-render/src/render/resource_consumers.rs",
+      "crates/gui-render/src/render/scene.rs",
+      "crates/gui-render/src/render/schematic_retained.rs",
+      "crates/gui-render/src/render/schematic_sources.rs",
+      "crates/gui-render/src/render/schematic_sources_tests.rs",
+      "crates/gui-render/src/render/selection_mask.rs",
+      "crates/gui-render/src/render/selection_mask_painter.rs",
+      "crates/gui-render/src/render/session_frame.rs",
+      "crates/gui-render/src/render/session_preparation.rs",
+      "crates/gui-render/src/render/session_sources.rs",
+      "crates/gui-render/src/render/types.rs"
+    ],
+    "source_set_sha256": "2c305f8cbe99704cc485e2e69ea272102d6378d5f81c7ab574832a04598a7e4f",
+    "algorithm": "SHA256 repeated sorted UTF8(path) + NUL + raw bytes + NUL",
+    "cpu_log": {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/qualified-retained-source-tests-02.log",
+      "sha256": "02d4f85e1b38f3bed4d3212e8e98f17b4e1dad42181b0bab56e471b13324cabd",
+      "result": "2 PASS/548 filtered"
+    },
+    "gpu_log": {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/qualified-world-gpu-test-01.log",
+      "sha256": "17938759dae1daf07a57d5b08ff82dcc6f9b6f3824bbe96dd7c24919f9afa877",
+      "result": "1 PASS/693 filtered"
+    },
+    "actual_scope": "Qualified source+viewport retention, pass world/mask/geometry routing, same allowance, distinct payloads/GPU buffers, dynamic chunks/submission holds, replacement/dialog/close retirement and source-epoch reset reviewed. Actual local GPU proof clones PreparedScene and renders it after current preparation changes; it does NOT exercise a native FramePlan submission/publication race. Earlier informal frozen-frame wording means immutable PreparedScene only.",
+    "limits": "No native pixels/full accounting campaign/16-case/AX/HUMAN/full Inspector/objective PASS. Ongoing acquisition, refresh, navigation and source-epoch deltas require review."
+  },
+  "R01_actual_review": {
+    "receipt": "INSP03-R01-REUSE-REVIEW-08",
+    "disposition": "PASS_CORRECTION",
+    "scope": "CPU/source correction to exact construction viewport or actual surface-independent reuse",
+    "pins": {
+      "crates/gui-render/src/render/schematic_sources.rs": "cec577e8c5870abacb2066362eba4e8ee3974bba7f36cad95e057a746ae20263",
+      "crates/gui-render/src/render/qualified_world_gpu.rs": "f29a567bad6b6d0e3cfa43ad7602d13c0efe5bed3e857cd15ebfa5cb417c72f8",
+      "crates/gui-render/src/render/schematic_sources_tests.rs": "03889332f1f631eee1a4a369e8e06c89c775cee0b0f4ad69eafb32f8088a26c6"
+    },
+    "note": "Historical inspected bytes; later test-helper/GPU-test additions superseded by review09 exact source set."
+  },
+  "resource_interruption": {
+    "guard_refusal_log": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-worker-navigation-test-02.log",
+    "result": "Guard refused before Cargo: 40.7 GiB retained vs hard 40 GiB",
+    "disposition": "Explicitly release only rebuildable shared target/debug/incremental (1.9 GiB) at observed idle boundary; managed cleaner checks guard lock and active processes",
+    "inspected_contents": "16 compiler cache directories, only .lock/.bin/.rmeta files, no symlinks",
+    "retained": "All target/qa mixed fixtures/evidence, shared binaries, source and proof logs remain retained; no limit override",
+    "tool_repair_authorization": {
+      "manager": "01a160d9-b499-7923-984a-b3390beb2e34",
+      "actual_proposal_review": "CACHE-METADATA-PROPOSAL-REVIEW-10 ACCEPT_BOUNDED_PROPOSAL",
+      "scope": [
+        "scripts/manage_cargo_cache.py",
+        "scripts/test_manage_cargo_cache.py",
+        "scripts/cargo_cache_metadata.py"
+      ],
+      "related_issue": "dat-cache-metadata-inspection-9qma",
+      "constraints": "Explicit metadata-only incremental mode; all positive metadata identities/inventory, no executable/link/special/unknown/unreadable files; full revalidation under existing lock and active build/app checks; default/general same-user executable inspection refusal unchanged; independent implementation PASS before use."
+    },
+    "daemon_reap": {
+      "receipt": ".datum/scratch/gui-p2-inspector-insp01-20261023/obsolete-npd-daemon-reap.json",
+      "status": "Exact three manager-authorized obsolete NPD proof daemons revalidated and reaped by SIGTERM; historical results unchanged; no retroactive proof cleanup PASS",
+      "related_issue": "dat-proof-daemon-orphans-05wi"
+    },
+    "current_blocker": "Resolved by independently reviewed explicit metadata-only incremental cleanup; 122 metadata files removed, six protected process images uninspectable with no idle claim, rounded retained total40.7 to39.0GiB. No other cache/evidence/binary removed.",
+    "actual_implementation_review": {
+      "receipt": "CACHE-METADATA-IMPLEMENTATION-REVIEW-11",
+      "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "disposition": "PASS",
+      "mandatory_findings": [],
+      "source_pins": {
+        "scripts/manage_cargo_cache.py": "44e2adf314d1bea83de6f2bc26cf941c1f2309e108e2bcc46d177619a97a6cb1",
+        "scripts/cargo_cache_metadata.py": "a6ced1790bb195ad36162a85a498f76232230cdf44a5c43dda03457d6b202e83",
+        "scripts/test_manage_cargo_cache.py": "27c79226e3fddaf6cdb9f8900864d65394973ba09f140be5e37e5a2ec58c3ac2"
+      },
+      "proof": "cache-metadata-safety-tests-02.log 26 PASS; live dryrun02 validated122 metadata/6 uninspectable, no deletion; sourcehealth3309 PASS; cargo resource policy PASS",
+      "limits": "Cooperative build-lock safety; no unknown-process idle assertion or atomic exclusion of arbitrary hostile external filesystem writers; no product PASS"
+    },
+    "landing_commit": "ca42bee8",
+    "actual_usage_receipt": "docs/reviews/workflow-delivery-rollout/inspector/cache-metadata-repair.json"
+  },
+  "document_worker_checkpoint": {
+    "status": "Focused source/worker test PASS; independent delta review pending",
+    "log": ".datum/scratch/gui-p2-inspector-insp01-20261023/document-worker-navigation-test-08.log",
+    "sha256": "b55ad4b985e3600b84e985d642bcf67ba8dde7ced191f895a6ed729a9ddcc609",
+    "result": "1 PASS/554 filtered; all application tests compiled, only this case executed",
+    "scope": "Public native workspace projection from copied admitted hierarchy input; actual canonical Project-name edit; restored A/B document identities and fresh new-model scenes; ordinary selection and reconciled selected A Wire remain A-only; focused A/B Select All candidate sets are distinct; changed inspected row rejects captured publication input; source/journal bytes unchanged by projection/reconciliation after the explicit setup edit.",
+    "retained_failures": "01 private helper visibility compile failure;02/03/04 guard refused/no Cargo;05 shared dashed border argument type compile failure;06/07 exhaustive terminal-entry classifier compile failure (first attempted text edit did not match);08 corrected explicit non-terminal classification PASS. No broad suite, native interaction, keyboard/AX or Inspector completion claim."
+  },
+  "D01_lifecycle_checkpoint": {
+    "status": "source candidate; independent review and ordinary native Runtime proof pending",
+    "authority": "PM-agent-01 direct scoped lifecycle extraction approval and manual-callers audit; PM021/PM062",
+    "source_pins": {
+      "crates/gui-app/src/viewport/runtime_pane_lifecycle.rs": "119a1a918cadaedda7c217919779b52fcc52063f4f0d88e31ef7b1153a2e6e4b",
+      "crates/gui-app/src/viewport/runtime_camera_pane.rs": "3b42a9b10f3d13fe0193fb40efa39210910796a9478c8a1f146b84680133e211",
+      "crates/gui-app/src/viewport/interaction_refresh.rs": "7df6e3f0c21d7f6de8d86956a954f15efb0c3c5044df3fcfc7af5f16973afdf1",
+      "crates/gui-app/src/editor/runtime_schematic_navigation.rs": "86b0148eb92d4050dcc3f9be31dcba29a480a62e61247c747c0806ffad198bcf",
+      "crates/gui-app/src/main.rs": "9b6ea5d2bfe5d397961d56be827a673c17cdf6ff596715bd33223bc88e5bf9f3",
+      "crates/gui-app/src/editor/native_edit_selection/document_navigation_tests.rs": "e32aade0ab94ed8cdd2a8c2542572d0a7926c2374af30e0f4e859553e7da33fc",
+      "crates/gui-protocol/src/schematic_documents.rs": "fa38edd4474e4c90c08f476805089f9f9144838b6af6f30d6f5721e06114e72e",
+      "crates/gui-protocol/src/schematic_documents/lifecycle.rs": "ad4e74c859d81692f25f2957ba0876860fbe6c61a62d340e9a37e919bcffe822",
+      "crates/gui-protocol/src/schematic_documents/navigation.rs": "08f757e5d1c4fe74edeadd410718db27cd8b0b3bf2ded7c66df74be1b5dfcf29",
+      "crates/gui-render/src/render/session_sources.rs": "a7f6d11e3b3b1c4b15d31d857cf85fa14fe8e7e608915ef6733efbc4741b35dc",
+      "crates/gui-render/src/render/session_sources_tests.rs": "a2d3030b468d1bf7aaf42958f66a7cfe9eb659ede277a09b02cf7a5bc03f98ac"
+    },
+    "actual_proof": {
+      "document-lifecycle-test-02.log": "1 passed, 555 filtered; admitted native source through public workspace projection, shared production qualified split, both orientations, independent warm camera store, close/prune, warm fill across refresh, unavailable occurrence preserved, explicit preset captured initial owner, global selection and canonical source/journal bytes unchanged",
+      "document-inventory-epoch-test-02.log": "6 passed, 545 filtered; inventory-only epoch retains immutable payload and retires prepared/pointer generation; payload replacement, foreign/unknown producers, resize, check/selection/filter dependencies, refusal and retry controls retained."
+    },
+    "retained_attempts": {
+      "document-lifecycle-test-01.log": "c08032f902a0f74d9511a86aba212a37ce8cef3ca339a933e10c34d1a6332ea5",
+      "document-lifecycle-test-02.log": "5df3c439aecb0b0620f68783743a71cbcf96bb6859b9a6e5914732d0625a281f",
+      "document-inventory-epoch-test-01.log": "2bc33e77836ccf4f9786d31577f43caa6a0ff2ab391f12512ffdc196097bbfec",
+      "document-inventory-epoch-test-02.log": "391d78920021cc04e4cfb1e758788480ddcca785d0497b999763524544973e47"
+    },
+    "attempt_01_limit": "Compiled all 556 app tests but leaf-only --exact selector ran zero cases; not credited. Corrected fully qualified exact selector in attempt02 reused compilation.",
+    "source_health": "3311 source files passed against HEAD; real lifecycle ownership extraction keeps all owners bounded",
+    "limits": [
+      "Does not instantiate Runtime or dispatch physical input; focused native pane lifecycle proof remains required.",
+      "SourceEpoch focused controls passed; no retained native frame publication race PASS.",
+      "No full Inspector, AX, native 16-case, HUMAN or acceptance PASS."
+    ],
+    "epoch_attempt_01_limit": "Compiled 551 renderer tests but incorrect render:: prefix matched zero; uncredited. Enumerated produced test binary --list to identify actual renderer_state::render_session module; corrected02 reused compilation.",
+    "actual_independent_review": {
+      "receipt": "INSP03-D01-LIFECYCLE-REVIEW-12",
+      "outcome": "PASS_BOUNDED_SOURCE_CORRECTION",
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "source_set_sha256": "46b763c95974f7a9c47ed2e81062d35bfb5a3768b4c4d5b49f94590c41244d7b",
+      "mandatory_source_findings": [],
+      "retained_boundary": "Ordinary Runtime event/native camera/gesture/nonmutation, native frame publication, 16-case, Inspector/AX/HUMAN and objective acceptance remain open."
+    }
+  },
+  "P02_check_worker_candidate": {
+    "status": "bounded transport and app integration; visible Inspector/job and ordinary native proof pending",
+    "source_pins": {
+      "crates/gui-protocol/src/check_runs/producer.rs": "9b4657b92ac8358d0480afb1489627ba8d44208c602d681cfded9fb69e40ea1c",
+      "crates/gui-protocol/src/check_runs/producer/worker.rs": "aebb6b6c688e323c965f9ef6391c29acd05eb2418c1b7cf77619a11f06a26ee5",
+      "crates/gui-protocol/src/check_runs/producer/acceptance_stream.rs": "4394bf9dd67e00091be02ceb166db2656317afbb889715b725d273be87d7b0b7",
+      "crates/gui-protocol/src/check_runs/producer/acceptance_stream_tests.rs": "89755fa470db8675fad0ec592ed4f8f0d9d0fb7489adb4b21ea51a4e97d21f21",
+      "crates/gui-app/src/editor/runtime_check_runs.rs": "0ac28a963767efaa52223ce30d6a60248be49f89fcb7579c62afb8b6a6574da8"
+    },
+    "actual_proof": {
+      "check-worker-acceptance-test-01.log": "2 PASS/183 filtered; bounded incremental framing and real first-party child saturating stdout before malformed/oversized/no-delimiter/invalid-UTF8/duplicate stderr; both pipes drained and child reaped before refusal",
+      "check-worker-integration-check-03.log": "App all test sources compile; no test execution/GUI job PASS"
+    },
+    "log_pins": {
+      "check-worker-acceptance-test-01.log": "30e2b26f96dcc3a13236990f560f3c4e378ee805aceca8fa9991d55ff132fd64",
+      "check-worker-integration-check-01.log": "0f5ad50096302d2065f2fc4622beacb1c45bf21ee0e336ca5d081a4c3dd8a885",
+      "check-worker-integration-check-02.log": "86ca1e6b54c7270034baf7434171b87c2f4f3164710215c128b1d54f3bc83a06",
+      "check-worker-integration-check-03.log": "006b8e1b988b392fa88be3a89bead57275540ce2d24a61f01d96704bcc838ade"
+    },
+    "retained_failures": [
+      "integration01 menu predicate precedence compile error corrected",
+      "integration02 private OpenWork.pending access corrected via existing-owner pending accessor; exact scope synchronized"
+    ],
+    "limits": [
+      "Transport child supplies no real ERC/native workflow evidence.",
+      "Currentness, switch, close, visible Starting/Running/readback and unchanged default CLI proof remains required.",
+      "No Inspector/AX/HUMAN/full qualification acceptance."
+    ],
+    "actual_independent_review": {
+      "receipt": "INSP03-P02-TRANSPORT-REVIEW-13",
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "outcome": "PASS_BOUNDED_CORRECTION",
+      "source_set_sha256": "462db2d5cb24114b4e6ab4c3fbe7f02db592eb55c43e5f43cc59a1516c5f5e75",
+      "mandatory_parser_findings": [],
+      "limits": "Real ERC/GUI Starting/Running/persisted readback/currentness/switch/Close/native/AX/Inspector proof remains required; no objective acceptance."
+    }
+  },
+  "I02_I03_scope_candidate": {
+    "status": "I02/I03 bounded corrections independently accepted; later shared occurrence extraction and native workflow proof pending",
+    "source_pins": {
+      "crates/gui-protocol/src/inspector_context.rs": "0f861816f9226cba6356380445c9e3592ddbc58a2ad7050ca559c1a1fa737f17",
+      "crates/gui-protocol/src/inspector_context/checks.rs": "71da19c54d99016fb388e0ddb0c9fb48bc2cad1eca01acceb2c4c40745b9a49e",
+      "crates/gui-protocol/src/schematic_documents/projection.rs": "8ea38973082d667995a33856e0e7ac19f0318c63f370caacdfdec1af56a44758",
+      "crates/gui-protocol/src/schematic_documents/tests.rs": "b53492e76ef8f8b170083535069f4c6cc7e0799d756d2725c97711326fe8b6a1",
+      "crates/gui-protocol/src/check_runs/loading.rs": "26a5f4ec98f55cc94984c15d561fcd6db4a64540e3f1b386eb48a00394e2705b",
+      "crates/gui-protocol/src/check_runs/loading/tests.rs": "b64211a9c40f0128dbf2a8de57a3864daa83fe04abe2dea13763db3a551f6601"
+    },
+    "actual_proof": {
+      "inspector-occurrence-check-scope-test-02.log": "3 PASS/183 filtered. Admitted authored source, MOCK check report only: repeated missing-path Unavailable, qualified A positive/B excluded, unique-root source object, explicit affected-list ambiguity, wrong-class pin-evidence rejection, board-only and related-only Unavailable, mixed subset labelled, actual resolved GlobalNet evaluated-zero control, unsupported coverage and historical count. Canonical source bytes unchanged. Not real ERC/Pin64/Project13/native proof.",
+      "inspector-check-history-test-01.log": "3 PASS/183 filtered: exact current and historical record identity, foreign/malformed histories refused; historical revision/count kept separate from current authority",
+      "inspector-occurrence-check-scope-test-04.log": "3 PASS/183 filtered (library), all integration targets filtered. Exact current six source pins recompiled: zero empty-Board/nonexistent/foreign-Doc controls, valid Doc and actual resolved Net zero, occurrence/typed affected identity, mixed/suppressed coverage gates. MOCK check report on admitted authored source only; no real ERC/native credit."
+    },
+    "log_pins": {
+      "inspector-occurrence-check-scope-test-01.log": "07960b70425610dba85c8c4d23cf821079eaeda054e13ec0c6d50c980b213772",
+      "inspector-occurrence-check-scope-test-02.log": "bc503f6fcc283a5800def938adb8051b6d7e767727f9846ffd7963de76bc2c14",
+      "inspector-check-history-test-01.log": "168de1ec96c0606f1e4a52e1f95cacb2476a6de8552956fcbb9fe76f35d23838",
+      "shared-inspector-check-01.log": "85c4c3985814584c3d43beb0392b81686f14dfbd2acbfda7055af613b6b856d3",
+      "shared-inspector-check-02.log": "4d57eec75bc0f64091ed1cbe04a4ed6d2953d597b4ff3142a91b8c38cf5a46bd",
+      "inspector-occurrence-check-scope-test-04.log": "b95d2d7d732bf84610a6ef6b9a3f9021e9c14c875f80e568dcafe02657e4097e"
+    },
+    "retained_attempts": [
+      "scope01 passed its limited checks but accepted a Wire UUID in synthetic pin_evidence and had no Board applicability control; superseded for those claims by corrected02",
+      "shared-inspector-check01 exhaustive new HitTarget routing compile failure retained; corrected02 compiles all app/test sources before current AX integration edits",
+      "scope03 includes I03 zero controls, but exact subsequent suppressed/context source closure was not established; scope04 recompiles the current pinned candidate. Later Net metadata additions do not change these six scope owners and need separate integration/native proof."
+    ],
+    "limits": [
+      "Actual admitted Net6/Pin64 scope0 with Project13 warnings, genuine producer running/readback/switch/close, all16 ordinary native cases, AX service and rendered review remain open.",
+      "Shared AX/context/ERC publication source compiled integration02; shared-service execution and native interaction proof pending.",
+      "Native per-pane headers and context envelope are wired; rendered validation and Net class metadata remain pending."
+    ],
+    "actual_independent_review": {
+      "receipt": "INSP03-I02-I03-SCOPE-REVIEW-14",
+      "outcome": "PASS_BOUNDED_CORRECTIONS",
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "source_set_sha256": "e9e6d889cf4c9bda8fe406b9d7688a5de46140d42594de0dfe4313f67b8a2bbb",
+      "mandatory_I02_I03_findings": [],
+      "limits": "MOCK reports on admitted source only; no actual Pin64/Net6/Project13/ERC producer/native16/AX/Inspector acceptance. Historical six source pins remain review14 snapshot; later I04, shared marker parser/qualification extraction, context/AX/job deltas need independent delta review."
+    }
+  },
+  "I04_persistence_and_occurrence_marker_candidate": {
+    "status": "source candidate; focused tests and bounded independent review in progress; actual native saved/queued/preview/G1 proof pending",
+    "source_pins": {
+      "crates/gui-protocol/src/inspector_context.rs": "ac6b6866d91231e77b5aadb85387439db3cf664a2f24a6a772d09746218fc44c",
+      "crates/gui-protocol/src/inspector_context/persistence.rs": "49d5b677a1fcdbb8230d3610f53a1e3d629c46fa0f3044fc4d450e0712279cc4",
+      "crates/gui-protocol/src/inspector_context/persistence_tests.rs": "1b281ec004fee1eba76f81f1724af2738e15944627e1ff3bce2e69fcd713184c",
+      "crates/gui-protocol/src/inspector_context/checks.rs": "fbd0a244a031ad16e2154ff9ed3f64e6068f29f4e3cfbf9e427963b4107cd5eb",
+      "crates/gui-protocol/src/check_runs/marker.rs": "11925a042d32e0eb675c6f3d6f4c23bab1b9366cf0ae12bdd49311368384743d",
+      "crates/gui-protocol/src/check_runs/marker/tests.rs": "00b660ea0721db81cf41ad96bdd235d913b99673a3369dfa661683f0e0251fce",
+      "crates/gui-protocol/src/schematic_documents.rs": "f11fbb0bea8d66564a1dcdab2e48a7905c7b0164b0b86aa5b27c641ec3b5bae2",
+      "crates/gui-protocol/src/selection_artifacts.rs": "af913b2cbf49e7abaf9e50bfdceb210d559621712ec2f10c876609c9cc87bb82",
+      "crates/gui-render/src/render/native_selection_overlay/diagnostics.rs": "a0d160eef2a34bb517f283d8411e870c45f2a0ee9e4b6a773d16be5726ce603a",
+      "crates/gui-app/src/editor/selection_accessibility.rs": "308bc3f6b8480373d36a584789066c2b1686ad13bbd3b6b40691e4ee3e621e54",
+      "crates/gui-app/src/viewport/interaction_refresh.rs": "92371ce4e400f1ed8d0310053ffd6cace37409e856fbe76aff2689c39a6fe6c2"
+    },
+    "proof": {
+      "inspector-persistence-test-01.log": {
+        "result": "1 PASS/186 filtered; prior narrower controls",
+        "sha256": "a2a3f07fa4563d027a357bd047a3f002434480648a8ec3ac2037c62492a68d8a"
+      },
+      "inspector-persistence-test-02.log": {
+        "result": "FAIL compile: test used nonexistent scene accessor; retained",
+        "sha256": "002c5409c5fb720f6ba90ae0c6ac00d5309a575e9485937aacd95ff005825a84"
+      },
+      "inspector-persistence-test-03.log": {
+        "result": "1 PASS/187 filtered: normal durable saved + stale revision unavailable; durably journaled stale raw source Saved, separate materialization; typed pending/preview/unconfirmed/unknown/stale-tip controls, journal/source nonmutation",
+        "sha256": "763e01a8a536e49cbc511049143925f8cf48dcec947f26cf08dd6390444a5b40"
+      },
+      "inspector-marker-occurrence-test-01.log": {
+        "result": "1 PASS/187 filtered: explicit A positive B rejected, ambiguous absent path rejected, conflicting payload/foreign revision rejected; later unique-root marker addition needs02",
+        "sha256": "6e594eae4312b182452cfec6387304f120e102839f5e806ccc3f82efa9c30707"
+      },
+      "inspector-occurrence-check-scope-test-05.log": {
+        "result": "3 PASS/185 filtered after shared parser and qualification extraction; all prior scope controls retained",
+        "sha256": "e62b700762bedd726c3e52deb5e6aaacb8f49c1a249ed5e01f80b6a98c1c3660"
+      },
+      "inspector-marker-occurrence-test-02.log": {
+        "result": "1 PASS/187 filtered; previous marker controls plus actual unique-root absent-path positive over admitted source",
+        "sha256": "ea5463fc912337d2c0a91e03af34c75af687e88ad0fc03cc103be9d9efcc3aa1"
+      }
+    },
+    "limits": [
+      "Runtime Activity is a cheap ephemeral projection of existing owners, no canonical persistence or edit writer.",
+      "Actual activity/queued write/native pixels and 16-case acceptance remain unproven.",
+      "Marker reports are test doubles over admitted source; no actual engine rule/current ERC or native G1 credit."
+    ],
+    "actual_independent_review": {
+      "receipt": "INSP03-I04-MARKER-REVIEW-15",
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "outcome": "PASS_BOUNDED_CORRECTIONS",
+      "source_set_sha256": "9d089af06355bbeada8ae07db1158b937f4ca7c5e55db73f3d3a8c99a4a694b8",
+      "mandatory_findings": [],
+      "limits": "No actual native Runtime activity/queued write/G1 pixels/16-case/AX/Inspector/objective acceptance. Exact source/proof pins retained above."
+    }
+  },
+  "native_integration_checkpoint": {
+    "status": "IMPLEMENTED_BOUNDED_NATIVE_AND_CONTROL_RECEIPTS_ASSEMBLED_FULL_MATRIX_REPLAY_AND_ACCEPTANCE_PENDING",
+    "source_cohort": "native-implementation-cohort-01.json",
+    "source_set_sha256": "da1a036d32de45b39ee3b7a85dbd4323b4fefd80754c888dfb5e97bc11c076cb",
+    "actual_shared_ax_service": {
+      "log": "inspector-shared-ax-service-test-01.log",
+      "sha256": "708b71c7c9a6b2266b87fe7befee8a4cc27ab9a6a40c11eb8e479e01eb96b218",
+      "result": "1 PASS/562 filtered; actual existing shared service dispatch over admitted occurrence tree: named roots/sections/metadata, inspected vs authored selected, pending/running job/collapse/disabled rerun, source bytes unchanged. No native event/queued write/AX frontend qualification."
+    },
+    "matching_build_attempt": {
+      "log": "inspector-matching-native-build-01.log",
+      "sha256": "877bbe4aa626f05f957174c2bffb3c30a37630362ccaf0b8c01cd69c6b675ebe",
+      "argv": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app -p datum-eda-cli -p eda-engine-daemon --features datum-gui-app/visual --bins",
+      "result": "exit75 guard refusal BEFORE Cargo: retained42.2GiB >hard40.0GiB, free140.2GiB/tmp15.6GiB"
+    },
+    "inspection": {
+      "log": "inspector-cache-inspection-after-ax-01.log",
+      "sha256": "8bfc3d309659e97ce8e6678965e925bfeeb847864041da4a1f85b0b2b5c4814c",
+      "result": "target/qa28.1GiB retained mixed proof/binary cohorts; target/debug14.1GiB retained, incremental0.6GiB insufficient. No Cargo/rustc active. No cleanup/threshold change/bypass."
+    },
+    "remedy": "PM/owner must durably release exact obsolete build artifacts sufficient for guarded build or authorize an applicable policy disposition. Existing cleanup tool protects mixed QA evidence trees. No self release of retained evidence or ownership.",
+    "proof_copies": "native-proof-01/source-copies.json: exact123/129/61 canonical source/history files copied, operational contexts/credentials excluded without reading. No native proof or setup mutation.",
+    "prior_binary_retention": "native-previous-binaries-01 hardlinks preserve original3 executable inodes; hashes in source cohort. No new matching native executable yet.",
+    "retained_limits": [
+      "Full Inspector remains incomplete; no sixteen-case, C04/C05 or objective acceptance.",
+      "Actual producer append/readback/tip/next Save REVIEW23, Escape/Close REVIEW22, Class AX24, Net6 scope25 and Bus/narrow26 are bounded evidence, not full feature acceptance.",
+      "Readable Class/Bus scalar metadata correction needs matching cohort07 normal/narrow native replay.",
+      "Actual FramePlan publication race, remaining ordinary type/filter/menu/diagnostic cases and same-engine/protected semantic/render review remain open."
+    ],
+    "current_candidate_cohort": "native-implementation-cohort-13.json",
+    "matching_build_source_failure": {
+      "log": "inspector-matching-native-build-02.log",
+      "sha256": "96dc94735654b350bb6e75d10e4e3a73730d3b6f3f78f8f0e562c7f7e10e6bee",
+      "result": "E0433 production path used dev-only uuid dependency; no new dependency authorized or added; one map formatter changed to standard ToString. Bounded corrective build03 started."
+    },
+    "actual_matching_build": {
+      "log": "inspector-matching-native-build-03.log",
+      "sha256": "94fb42723e9805c8e023353d0a8232564a1cb48516972e705ac379fea865c90e",
+      "result": "SUCCESS actual dev profile12.86s, GUI+CLI+daemon",
+      "pinned_bundle": "target/qa/inspector-135c4d27",
+      "build_info_sha256": "deb411127656ef792d8cd94a35fb394b4da6554956144e1249446944db5b197e",
+      "source_manifest_sha256": "c787fa7b368dcd47024af6b345edc4a74abc616a6d85455cf6be58ba7d8f49eb",
+      "source_cohort_artifact_sha256": "bc583e40549f5d9300421f4a96efb57a2dc532980d7576f03f3af005bad1e8bd",
+      "source_set_sha256": "135c4d27addb939b1c9e870bfa83caa75a73546e8f14fcdb0d1eeb34df734f27",
+      "limits": "No native qualification/objective acceptance from build. .d closure1486files pinned, prior3binaries rehashedunchanged. Current ordinary GUI/input/captures ongoing."
+    },
+    "native_observations_so_far": {
+      "result": "IN_PROGRESS_NOT_ACCEPTED",
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/native-proof-01/vertical-pass-01/result.json",
+      "facts": [
+        "Actual native Wayland/Vulkan empty Board context: Project13warnings current, scoped ERC unavailable; named Doc/Source/Occurrence/Checks AX nodes.",
+        "Actual linked Symbol body click selected780...001; source/library Unit8/Part resolved reference/command bound_with_part ready/ApprovalNotRecorded visible and publicContext total1.",
+        "Actual Navigator single A then B inspection and Enter open existing recursive tree beside focused source; RootSymbol global memberSHA unchanged;4panes actual.",
+        "Keyboard named section navigation reveals CommandReadiness; exact source instance pathsA301/B302 in publicContext. Child B maximized with ordinary z for source-qualified point acquisition next."
+      ],
+      "limits": [
+        "Not all16cases, no real ERC job/running/readback/next intent/Close yet.",
+        "Visual issue observed: unsupported triangle glyph in section header appears as missing-glyph box; retain for bounded actual-render reconciliation, no visual PASS."
+      ]
+    }
+  },
+  "AX01_event_candidate": {
+    "status": "Actual focused03 2PASS and independent bounded correction review19; native AT-SPI/runtime qualification remains open",
+    "review_finding": "AX01 actual auditor message: missing Navigator child/rename events; adjacent lazy field changes need property notification",
+    "source_pins": {
+      "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/events.rs": "2fc41c9b17ed8a61d260e8f85265c5812f0717fa7cd5ad2173f4b7198ba6b247",
+      "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/workspace_tests.rs": "c3f28b54b256ecd694e1f416c80e0c10ab4f19a58ead67ef6a35559e163dc2c6"
+    },
+    "native_source_cohort": "native-implementation-cohort-02.json",
+    "source_set_sha256": "f06dfb09ed14a3c6952a622c23904573791f23abf307357026a09fe8bb6314ea",
+    "controls": "Shared existing service test replays structural events against cached old tree and fresh public child-index dispatch; synthetic row refresh metadata is explicitly test input, actual admitted source/selected Wire used, global members/subject preserved; native value-only field change without metadata change; removed identities defunct and inaccessible; quiet/no-op controls. Not run.",
+    "limits": [
+      "No Cargo restarted after specific hard-limit refusal.",
+      "Prior AX service1PASS was cohort01; it does not cover new AX01 source.",
+      "Native matrix, real ERC rerun/currentness/close and rendered/AX objective proof remain required."
+    ],
+    "actual_independent_source_observation": {
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "outcome": "No new source finding on current two-file delta; NO AX01 PASS pending actual focused compile/execution and exact pins",
+      "scope": "Doc sibling index shifts/moves, child-first removals, parent-first adds, actual-retirement-only defunct, retained names/descriptions, lazy native value/quantity/display-label comparison and event-driven cached-tree/public-dispatch controls reviewed",
+      "limits": "No reviewer build, no test execution, no native/AX01/Inspector acceptance."
+    },
+    "retained_attempts": {
+      "inspector-shared-ax-service-test-02.log": {
+        "sha256": "ee6fb25365e1454c292c6aeba0241f02ae65a586e61dfb6237fc1ba61864a522",
+        "result": "Production alltestsource compiles. New event control1PASS, originalDoc reader1FAIL live-source writer-lease contention between parallel tests. Not AX service batch PASS."
+      }
+    },
+    "current_source_cohort": "native-implementation-cohort-03.json",
+    "test_only_correction": "SOURCE_LEASE mutex serializes two admitted source readers; production event code unchanged, no new input/engine/production coordinator.",
+    "actual_proof": {
+      "log": "inspector-shared-ax-service-test-03.log",
+      "sha256": "2b96ad2438246741eedfcdb76266497841665de9db4aa1fa1b5bbe4704e8af52",
+      "result": "2 PASS/562 filtered; both admitted source/read-only named profile and synthetic metadata/lazy value cached-tree service controls, no native/canonical-row-edit credit"
+    },
+    "actual_independent_review": {
+      "receipt": "INSP03-AX01-SERVICE-REVIEW-19",
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "outcome": "PASS_BOUNDED_CORRECTION",
+      "mandatory_findings": [],
+      "source_pins": {
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/events.rs": "2fc41c9b17ed8a61d260e8f85265c5812f0717fa7cd5ad2173f4b7198ba6b247",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/workspace_tests.rs": "e73e5c6acd8291c138e2230818cb232ace9f5f9616b0f6bfb77bf7ab0447a6f5"
+      },
+      "limits": "No native AT-SPI input/GPU/physical HUMAN/real ERC/16-case/Inspector/objective acceptance."
+    }
+  },
+  "QA_companion_dedup_candidate": {
+    "status": "PM exact apply authorized and completed; resource guard passes; Inspector AX01/native work resumed, operational source not yet landed",
+    "issue": "dat-5jnz (related purpose only, not roadmap successor/dependency authority)",
+    "actual_PM_grant": "PM-agent-01 message authorizes bounded opt-in exact manifest implementation/dryrun; subsequent message selects six matching-mtime cohorts, initial-prefix anchor plus five destinations, startup untouched. No apply authorization yet.",
+    "source_pins": {
+      "scripts/manage_cargo_cache.py": "10c8462a1f56ae53f9eb423a31bf86bca0ee6b8b8a8c81533b62b1ed25f7b34c",
+      "scripts/cargo_qa_companions.py": "ffb8c7feb14bc2dbe428e4569dbb8eb0bca065032917a9c416c9b779bbf00057",
+      "scripts/test_cargo_qa_companions.py": "35a1d24136597db23882c8fc61e889bf25ebb6cd4888122d4b7870bf9a54b976"
+    },
+    "manifest": {
+      "path": "qa-binary-dedup-manifest-02.json",
+      "sha256": "cbc0b9124165130ed992c978f81482a3b82849353b8763d0b7ac17b73edf3cb3",
+      "paths": 12,
+      "allocated_duplicate_bytes_estimate": 3433164800,
+      "preserved": "All QA paths, exact bytes, mode/uid/gid/security xattrs/mtime; no GUI/log/.d/source/user bundle/current artifact changes. Inode/nlink/ctime changes inherent and separately authorized."
+    },
+    "proof": {
+      "qa-companion-kernel-tests-01.log": {
+        "sha256": "19da5b2a0a8fd5e1bf2bdaf70c2ecb203001eb8dfbaff2084dd4187facbfbb9e",
+        "result": "FAILED positive-case ctime tracking; retained"
+      },
+      "qa-companion-kernel-tests-02.log": {
+        "sha256": "7e0a57882a5dec85ddd16fc0841d8d50e6cf94ca12aae148fbb30692aa046baa",
+        "result": "13 PASS including real ETXTBSY, all held exec exclusion, idle/dryrun/positive retention, hash/mode/xattr/mtime/path/symlink/tracked/permission/staging/partial uncertainty controls"
+      },
+      "qa-companion-default-cleanup-controls-01.log": {
+        "sha256": "88344a5625bd07a1e23d7e36638132c5fb7ea542d8197cccd265b1f93e4f8680",
+        "result": "26 PASS; existing default cleanup and unreadable-process safety controls"
+      },
+      "qa-companion-live-dry-run-01.log": {
+        "sha256": "ef698cbf02914cd2f45b2d6cf3b94a127de2a4a276f04cb2e2b2a29b1d1e037d",
+        "result": "exit0, no apply/completed[], actual12 selected fullmetadata before==after,823nonselected entries aggregate12cf22ad... unchanged"
+      }
+    },
+    "retained_failures": [
+      "Kernel01 had 11 passing controls and one positive-case error: atomic rename updated shared anchor ctime even with unchanged link count. Corrected explicit own rename accounting and added injected post-rename-error control; kernel02 passed13.",
+      "The initial14-file proposal failed an early matching-mtime assertion; final proposed12-file manifest selects only matching timestamps. No operational QA mutation occurred."
+    ],
+    "limits": [
+      "Operational apply and measured headroom completed; no matching native build/feature PASS.",
+      "No threshold/privilege/default cleanup relaxation; selected kernel inode exclusion does not assert host process idleness.",
+      "Actual implementation/exact dryrun review and PM apply disposition required before operational use."
+    ],
+    "actual_independent_review": {
+      "receipt": "QA-COMPANION-DEDUP-IMPLEMENTATION-REVIEW-17",
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "outcome": "PASS",
+      "mandatory_findings": [],
+      "source_pins": {
+        "scripts/manage_cargo_cache.py": "10c8462a1f56ae53f9eb423a31bf86bca0ee6b8b8a8c81533b62b1ed25f7b34c",
+        "scripts/cargo_qa_companions.py": "ffb8c7feb14bc2dbe428e4569dbb8eb0bca065032917a9c416c9b779bbf00057",
+        "scripts/test_cargo_qa_companions.py": "35a1d24136597db23882c8fc61e889bf25ebb6cd4888122d4b7870bf9a54b976"
+      },
+      "manifest_sha256": "cbc0b9124165130ed992c978f81482a3b82849353b8763d0b7ac17b73edf3cb3",
+      "limits": "PM exact apply disposition still required. No post-FD-close headroom, matching native build, native feature or objective acceptance. No arbitrary hostile filesystem writer exclusion, full-batch atomicity or unknown-process-idle claim."
+    },
+    "durable_resource_receipt": "docs/reviews/workflow-delivery-rollout/inspector/qa-companion-resource-remedy.json",
+    "actual_apply": {
+      "log_sha256": "9cbffa6a90d4930e658a22dc4d6c966592af17a9e1166f1d75d581cfb498dde0",
+      "status": "complete_all_paths_and_bytes_retained",
+      "confirmed_replacements": 10,
+      "selected_paths": 12,
+      "nonselected_entries": 823,
+      "nonselected_unchanged": true,
+      "actual_selected_allocation_reduction_bytes": 3433164800,
+      "after_fd_close_target_bytes": 30174380032,
+      "cargo_preflight_errors": [],
+      "limit": "Additional cache drop origin UNPROVEN; no cache cleanup by this worker outside exact QA companion dedup."
+    }
+  },
+  "native_vertical_observations_01": {
+    "status": "BOUNDED_OBSERVATIONS_WITH_REQUIRED_CORRECTIONS_NOT_FEATURE_ACCEPTANCE",
+    "source_cohort": "native-implementation-cohort-04.json",
+    "immutable_checkpoints": {
+      ".datum/scratch/gui-p2-inspector-insp01-20261023/native-proof-01/vertical-pass-01/checkpoint-main-through-net.json": "f437d7442fd8748300a2dcc2478c47f6f30705faf40ee285e08fa8f98080f8a4",
+      ".datum/scratch/gui-p2-inspector-insp01-20261023/native-proof-01/vertical-pass-01/checkpoint-class-new-record-failure.json": "7e3f9a49bcfc7fdff1b48c6b98d55218e8b753d21e24e64473a7dd77d93493ab"
+    },
+    "observations": [
+      "Ordinary linked Symbol and Footprint selection with named source/library/readiness fields",
+      "Occurrence-first A/B inspect and open-beside; same Text UUID selected with distinct actual paths; four recursive panes and distinct retained cameras",
+      "Actual Main explicit ERC accepted Running then Complete; existing-ID/no-write only; complete six-member Net has three-of-six schematic coverage, connectivity-only Clean and Project thirteen warnings",
+      "Actual class variant retains stale historical revision/count; new-record explicit ERC reaches Running then Unavailable exit2, journal tip unchanged, staged CheckRun added"
+    ],
+    "required_corrections": [
+      "Local Inspector/Navigator Escape press changed focus and allowed editor release to clear selection",
+      "Section disclosure Unicode triangles missing from governed UI font",
+      "New-record canonical commit failure: exact error was drained without retained diagnostics; cause unproven"
+    ],
+    "transport_interruption": {
+      "cause": "Observer used wrong outer selection-context focus predicate; foreground Ctrl-C also stopped owned compositor, then GUI exited",
+      "normal_close_proof": false,
+      "class_positive_render_proof": false
+    },
+    "next_cohort": {
+      "artifact": ".datum/scratch/gui-p2-inspector-insp01-20261023/native-implementation-cohort-05.json",
+      "artifact_sha256": "fd7445c0b7559cb530b9d7337df162939279554e5b4e863e91e27686896a8272",
+      "source_set_sha256": "31e02f85160f6a6f1c6cc431d338a3e9cf0f7da09811c8b4a05ef7595479a2c8",
+      "status": "FROZEN_UNCOMPILED_BOUNDED_DIAGNOSTICS_ESCAPE_DISCLOSURE_CORRECTIONS"
+    },
+    "boundaries": [
+      "No new-record persistence or next-intent PASS",
+      "No ordinary Close/reopen PASS",
+      "No full sixteen-case native or feature acceptance",
+      "Historical REVIEW20 mutable snapshot hash is not a retained full-byte checkpoint and excludes later Escape failure"
+    ]
+  },
+  "native_case_progress": {
+    "status": "PM_ACCEPTED_REVIEW46_OBJECTIVE_FULL16_EVIDENCE_REQUIRED_C04_OWNER_HUMAN_AND_C06_OPEN",
+    "current_candidate": "native-implementation-cohort-21.json",
+    "evidence_base": ".datum/scratch/gui-p2-inspector-insp01-20261023/",
+    "proof_kind_boundary": "Source/typed controls supplement named ordinary native observations; compact collection or AX/context values alone do not establish readable on-screen detail. Original captures and frozen checkpoints retain source cohort scope. No full case PASS inferred.",
+    "cases": [
+      {
+        "case": "INSP-N01",
+        "retained": "Pass01 linked_symbol/library/readiness and linked_footprint; REVIEW20 plus frozen class-failure checkpoint7e3f9a49 native AX/context supplement. Current exact sources/readiness/Approval and related-only role preserved.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Independent final feature/render reconciliation; reuse adequate component observations.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            6,
+            9,
+            10,
+            88,
+            91
+          ],
+          "actual_outcome": "Actual linked Symbol780...001 and Footprint780...002 from their panes show qualified identity/placement/check sections; source Symbol300...001/unit200...001 and Footprint600...001/rev0/materialized8pins, related-only semantics, Library versus readiness/Approval/Basis distinction.",
+          "supplemental_proof": [
+            "REVIEW20/25/33 independent source/actual native and exact source controls; REVIEW38/39 SymbolLibrary/FootprintSource render states."
+          ],
+          "limits": []
+        }
+      },
+      {
+        "case": "INSP-N02",
+        "retained": "Actual linked Footprint SOIC-8 source600...001/rev0/materialized8pads; missing/unlinked reasons in retained compound. Source resolver controls supplement. Explicit admitted-input missing metadata/catalog and stale catalog controls added in components_tests.rs; execution pending. REVIEW33 explicit admitted source controls13 actual1PASS190filtered0ignored,123canonical invariant. Positive/missingpad metadata/missingcatalog/stale rev999 controls use retainedPart in memory; native positive Footprint remains phase01.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Independent full matrix replay and final acceptance; direct canonical duplicate/source-map collision branches source-reviewed only.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            88,
+            91
+          ],
+          "actual_outcome": "Positive Footprint source agrees with exact materialized8pin source; unavailable values retain reasons and do not inherit Part900...001 as Footprint authority.",
+          "supplemental_proof": [
+            "REVIEW33 actual admitted-Main test positive plus absent pad metadata/missing Footprint catalog/stale rev999 negatives; full123 canonical source unchanged."
+          ],
+          "limits": [
+            "Negative source mutations are controlled in-memory tests, not invented native fixture proof."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N03",
+        "retained": "Main Net6 exact IDs/Pin64 REVIEW25; single Track22 explicit BoardNet Class AX/source REVIEW24 independent of stale logical binding. Bus29 root/A six vs Bus2b B three/path1f vs20, scalarNetb151..., REVIEW26. REVIEW27/28 cohort07 original normal/narrow Class/Bus fields are readable; REVIEW29 ordinary second Main Net entry exact six.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source reconciliation only; preserve stale logical binding refusal separately.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            27,
+            98,
+            105,
+            147,
+            151,
+            164,
+            174
+          ],
+          "actual_outcome": "Both ordinary Main GlobalNet entries yield exact mixed Net6/SHA26a3c6cb... including Pin64. Separate authored Class561b581f for BoardNet020 and6constraint rows is visible in fresh21 Track22; logical UnavailableBinding remains separate. Root/ChildA Bus29 six and ChildB Bus2b three have exact typed IDs, scalarNetb151... and paths1f/20, distinct despite equal names.",
+          "supplemental_proof": [
+            "Fresh21 steps9/13 Class screenshot and AX; REVIEW27/28/33."
+          ],
+          "limits": [
+            "Step98 immediate passive state lagged; following stable105/current context and physical frame qualify second Main entry. Bus missing geometry is declared; no full geometry claim."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N04",
+        "retained": "Pass01 ordinary Compound bound+unbound Symbols2 with related1 and explicit unavailability; reviewed frozen7e3f9a49. REVIEW29 ordinary Compound3 Symbols2 scope retains full subject/focus/SHA and shows Common value, Mixed reference/placement, named unavailable binding/coverage.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source reconciliation.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            19,
+            21
+          ],
+          "actual_outcome": "Actual Compound3(Symbol001+unlinkedSymbol005+Wire01e) and Symbol2 type scope retain full global selected membership/focusWire; common/mixed/unavailable fields and scoped quantities match.",
+          "supplemental_proof": [
+            "ordinary-shift-compound-input.json actual Shift-click sequence; REVIEW29."
+          ],
+          "limits": []
+        }
+      },
+      {
+        "case": "INSP-N05",
+        "retained": "Immutable f437d744 Main Net6 scoped3of6, connectivity0/0/0 only, Project13warnings and unsupported hierarchy REVIEW25. Actual new CheckRun cee3cc1e/f47, Running\u2192Complete, canonical7generated diffs, tip advance and next Save REVIEW23/d25b1667. REVIEW29 original main-net-scoped-zero-readable.png physically shows scoped0/0/0 and Project13 in same capture. REVIEW23 new record/tip/next Save retained separately.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source reconciliation.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            31,
+            32,
+            105
+          ],
+          "actual_outcome": "Actual Main scopedNet0 under evaluated schematic_connectivity keeps Project13warnings and hierarchyNotImplemented; full target set6 with only3 eligible schematic members. Existing-ID actual accepted Running/localEscape/Complete has no canonical write. Fresh21 firstattempt newappend under supported ContextGet reaches Complete/current persisted cee/f47/13; next ordinary Save succeeds and adds no effects.",
+          "supplemental_proof": [
+            "REVIEW45 fresh129\u2192133 exact7generatedeffects/oneSetCheckRun; REVIEW44 actualcanonical lease and transport controls; REVIEW14 scoped tests."
+          ],
+          "limits": [
+            "Original firstappend job7752248e unavailable and staleSave remain failed historical evidence; new corrected attempt does not rewrite them. Scope is connectivity only, never wholeProjectClean."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N06",
+        "retained": "Pass02 BASE_NORUN State Not run/no counts; class stale e165 actual13 then current f47; unsupported Bus schema parse refusal before ACK with Not run/Unavailable/no write REVIEW26. REVIEW29 actual Diagnostic fingerprint e612... has zero authored members/focusNone, no implicit Pin selection. Semantic review exposed false Pin ambiguity from multiple graphics; cohort12/13 correction awaits focused execution/native G1. REVIEW35 corrected native13 exactPin71 marker positive, selectedpinkwarning atterminal(-10000000,1500000), actualDiagnosticfingerprint e612.../zeroauthored/focusNone. REVIEW33 repeatedoccurrence/hidden/missing/stale/foreignprimitive controls passed.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Independent full matrix replay; no new automatic camera-centering or Pin-acquisition claim.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            2,
+            5,
+            137,
+            177,
+            178,
+            181
+          ],
+          "actual_outcome": "Diagnostic selection is a finding fingerprint with zero authored targets; Main proper current markers. Original stale source shows historical4b/e165 counts without current marker authority; fresh21 transitions to current cee/f47 after explicit accepted job. Base no-run has NotRun/no counts. Bus missing-schema producer refuses before ACK with explicit Unavailable and no Running/count fabrication.",
+          "supplemental_proof": [
+            "Fresh21 initial/steps1-7; REVIEW33/35 qualified Pin terminal controls."
+          ],
+          "limits": [
+            "Foreign/missing-source refusal controls are typed controlled tests, not destructive native fixture edits."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N07",
+        "retained": "REVIEW20 actual inspect-only A/B then Enter open-beside, preserved prior selection/panes/cameras; frozen f437d744.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source-scope reuse and independent feature reconciliation.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            59,
+            60,
+            61,
+            62,
+            71,
+            72,
+            73,
+            74
+          ],
+          "actual_outcome": "Click actual ChildA/B Navigator labels inspects occurrence without changing globalNet6/opening. Enter opens selected occurrence beside focused pane preserving existing Board/Main/A camera; breadcrumbs and source/path are qualified without Sheet n/N.",
+          "supplemental_proof": [
+            "REVIEW06/07/12 source and actual navigation controls."
+          ],
+          "limits": [
+            "Earlier x74 clicks missed indented visible labels and are not credited."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N08",
+        "retained": "REVIEW20 same child Text UUID07659356... with distinct A/B instance paths; additional actual Bus section065 paths1f/20 REVIEW26.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source-scope reuse and independent feature reconciliation.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            67,
+            78,
+            164,
+            174
+          ],
+          "actual_outcome": "Same source Text076... selected under exact distinct ChildA path301 versus ChildB302; Bus child source sections065/066/067 similarly use path1f versus20, no implicit root alias.",
+          "supplemental_proof": [
+            "REVIEW08/09/33 typed source/visible-scene/path refusal guards."
+          ],
+          "limits": []
+        }
+      },
+      {
+        "case": "INSP-N09",
+        "retained": "REVIEW20 recursive Board/Main/A/B panes with different actual A/B camera states and focus-owned Inspector; f437d744.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source-scope reuse and independent feature reconciliation.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            69,
+            74,
+            80,
+            82
+          ],
+          "actual_outcome": "Recursive Board0/Main1/ChildA2/ChildB3 tree opens beside focused pane. A and B have distinct centers/zoom1.2544000149 versus0.7920999527; previous pane camera preserved. Focused Inspector/Navigator inspected occurrence/global subject are separate.",
+          "supplemental_proof": [
+            "REVIEW12 actual lifecycle owner repair;20 actual capture ledger extent witnesses."
+          ],
+          "limits": []
+        }
+      },
+      {
+        "case": "INSP-N10",
+        "retained": "Actual Main Net6 complete AX/context membership. Cohort07 context_transport01 actual3PASS/11filtered, hidden projection, 256/257 ordinary omission/value states/Inspector refs and exact full queries. REVIEW29 future Pins acquisition filter excludes then restores without pruning retained Net6/Pin64; F.Cu hide shows3hidden while all6 remain qualified, restore0hidden.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source reconciliation; no dense-source claim beyond prior unchanged predicate evidence.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            36,
+            40,
+            44,
+            46,
+            108,
+            111
+          ],
+          "actual_outcome": "Excluding Pins from future acquisition and then enabling leaves exact selectedNet6 intact; F.Cu hide changes hidden3\u21920 without dropping members. Actual Members and Filters disclosures open/close preserve exact selected dictionary and readable complete member roles.",
+          "supplemental_proof": [
+            "REVIEW27 transport01 typed256/257 boundary and omission controls; REVIEW35 vector disclosure render proof."
+          ],
+          "limits": [
+            "Dense cases are existing typed transport controls supplementing ordinary six-member native inventory; no new dense native fixture claim."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N11",
+        "retained": "Actual Main/child headers and empty Inspector Snap enabled/grid0.100mm with independently different A/B zooms; engine WorkingUnits and snap state controls. Bus units missing shown Unavailable, no guessed pitch.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Explicit final source/render evidence mapping; reuse unchanged Main/child observations.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            0,
+            65,
+            69,
+            80,
+            82,
+            126,
+            137
+          ],
+          "actual_outcome": "Actual Main local Snap Enabled/Grid0.100mm and units persist across independent pane zooms. Bus units/grid unavailable are described honestly rather than assigning a guessed pitch.",
+          "supplemental_proof": [
+            "REVIEW15/34 basis/units structural controls."
+          ],
+          "limits": [
+            "Renderer LOD is not used as snap pitch authority."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N12",
+        "retained": "Normal Main empty/selected and tiled4pane actual observations. REVIEW26 held capture ledger matched native surface present extents960x720 and672x771/original PNGs; named empty Doc/Source/Occurrence/Checks keyboard and collapse. Stale pre-resize action size excluded. REVIEW27/28 exact normal/narrow configured extents and readable Class/Bus originals; prototype S-A/S-C/S-G/S-I DOM/CSS reviewed and successful full-page/prototype S-I captures inspected. REVIEW35 original native13 Members/Acquisition vectorchevrons visible closed\u2192open\u2192closed, wholeNet6selection dictionary identical,123canonical unchanged.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Independent full matrix replay and exact prototype comparison applicability/disposition.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            0,
+            118,
+            120,
+            123,
+            126
+          ],
+          "actual_outcome": "Normal1280x768 and actual narrow960x720 expose named Navigator/Inspector keyboard focus and empty Inspector Document/Source/Occurrence/path301/localgrid/checks; collapse/expand by keyboard works. Tiled recursive pane context remains qualified.",
+          "supplemental_proof": [
+            "extent-witnesses.json20 exactsamewindowcapture ledgers; REVIEW26 narrow/tiled and REVIEW38/39 objective semantic/golden states."
+          ],
+          "limits": [
+            "Objective PM062 semantic role comparison only; HUMAN/owner visual assessment remains separate."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N13",
+        "retained": "Actual Escape failure retained then local release-owned correction/Track22 selection+canonical unchanged REVIEW22. REVIEW26 tiled empty collapse false\u2192true\u2192false/local Escape; actual owned Open Project focus loss/cancel retains Bus selection/source in pass03 after checkpoint. REVIEW29 Main accepted job467343a5... public context Running both before/after ordinary local Escape; focus returns Editor, Net6 retained, completes existing4b with123canonical unchanged. Bus refusal never Running.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source reconciliation; no cancellation/rollback inference.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            32,
+            112,
+            118,
+            120,
+            121,
+            127,
+            152,
+            153,
+            154
+          ],
+          "actual_outcome": "Inspector local Escape/collapse/navigation preserve global selection; explicit Editor Escape intentionally clears for empty case. CtrlO focus loss/cancel keeps Bus6. Escape after real accepted Running leaves canonical job Running then Complete; UI dismissal is not cancellation or rollback.",
+          "supplemental_proof": [
+            "Fresh21 acceptedRunning\u2192Escape\u2192Running\u2192Complete; REVIEW13/22/29 lifecycles."
+          ],
+          "limits": []
+        }
+      },
+      {
+        "case": "INSP-N14",
+        "retained": "Actual class stale source and named stale logical Net refusal; actual guarded producer currentness and native persisted refresh. REVIEW14/15 typed scope/history/persistence/marker positives and stale/foreign/ambiguous controls supplement. REVIEW31 real offscreen GPU FramePlan control passes: old A/B source and hit publication survives newer layout preparation, current plan excludesA and retires old source. Controlled completion feedback scope only. Existing reviewed D01 lifecycle/navigation tests (document-lifecycle-test-02:1PASS, document-worker-navigation-test-08:1PASS) and native_edit_selection lifetime owner tests cover delayed source/revision/selection/layout reconciliation at explicit source scope; FramePlan GPU31 supplies actual oldplan/newpreparation publication control.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Independent mapping/replay of failure/context transitions; no new unproven compositor/performance threshold or platform claim.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            137,
+            177,
+            178,
+            181
+          ],
+          "actual_outcome": "Actual original stale4b/f47 has historical basis and unavailable logical binding; fresh newappend recovers current cee/f47 with coherent nextSave. Source missing-schema refusal is explicit. Delayed/foreign/source-identity/marker guards refuse stale authority instead of root/name remapping.",
+          "supplemental_proof": [
+            "REVIEW31 real FramePlan encode/submission/retirement old/new qualification; REVIEW33 hidden/missing/stale/foreign Pin source controls; REVIEW44 altered-count/nonCheckRun-sourceidentity negatives; REVIEW45 corrected P03."
+          ],
+          "limits": [
+            "FramePlan evidence uses controlled offscreen GPU completion, not a native compositor race; exact original lock-holder PID/FD/stack was not captured."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N15",
+        "retained": "REVIEW22 actual CSD Close/App0/compositoralive/canonical unchanged and fresh class reopen with no selection/default2panes; cleanup/interruption explicitly separate. REVIEW30 actual Main CSD Close exits0 with compositor alive and123canonical unchanged;3pane/Diagnostic becomes fresh2pane/first actionseq1none without explicit Escape/setter. Startup activation click disclosed.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Final source reconciliation and lifetime accounting; cleanup SIGTERM is separate.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            128,
+            129,
+            130,
+            134,
+            135,
+            179,
+            182
+          ],
+          "actual_outcome": "Actual ordinary CSD Close exits0 while compositor stays alive; fresh Main initial seq1 has default2 panes/no selection before any explicit clear; full4 primary inputs canonical unchanged. Bus/no-run close exit0. Fresh21 closes14exit0 with cleanup[] and no further canonical changes.",
+          "supplemental_proof": [
+            "REVIEW45 native21 close; primary result cleanup[]."
+          ],
+          "limits": [
+            "131 wrong CSD coordinate failed;132 correctly refused opening a second process.134 reposition/135 actual close recover observer route.133 still-Main capture is not credited as Bus. StartupQA activation click is disclosed."
+          ]
+        }
+      },
+      {
+        "case": "INSP-N16",
+        "retained": "Bounded source/render reviews, actual normal/narrow/tiled screenshots and independent bounded observations; protected HTML unchanged. Owning route36/36 current bytes match retained reviewed source pins. Protected DOM/CSS plus full-page derived S-C/S-G and actual S-I screenshots inspected; failed blank fragment attempts retained without credit. Sourcehealth11/12 pass, focused prior policy checks retained, Clippy18unchanged engine errors captured dat-lk0l without waiver. REVIEW34 guarded changed-painter structural13 actual10PASS541filtered; exactcurrent compiledrender executable dispatch1PASS550filtered with SHA/source/env before/after receipt. Follow-upCargo preflightexit75 at40.2GiB retained separately; manager approved existing-executable reuse without newCargo/compiler/cache allocation. REVIEW35 G1/disclosure boundednative corrections passed. REVIEW38/39 exactreviewed12normal/narrow same-engine baselines adoptedperPM andstrictsameexe rerender1PASS/12exactRGBA matches, completebaseline/source/exe/canonicalpin equality. Rejected14zero/16focussetup candidates andexact14-17sourcebytes retained; no productionfix forfixturegaps.",
+        "remaining": "Actual REVIEW46 objective independent replay SATISFIED_AT_DECLARED_SCOPE; PM disposition and required owner HUMAN/protected prototype comparison remain separate.",
+        "pre_final_review_remaining": "Independent actual fullmatrixnative replay/source-runtime-render finalreceipt and required ownerHUMAN/protected comparison disposition. No HTML/wgpu pixel equality/fullqualification/objective PASS.",
+        "actual_review46": {
+          "objective_independent_review": "SATISFIED_AT_DECLARED_SCOPE",
+          "fresh_primary_steps": [
+            5,
+            21,
+            91,
+            105,
+            108,
+            111,
+            126
+          ],
+          "actual_outcome": "Independent original native frames and public AX/source agree on named section/text/availability roles, related ordinary appearance, scoped0/Project13 separation, qualified source/path/grid/check context, normal/narrow/tiled objective semantics. Strict same-engine renderer matches all12 adopted exact baselines.",
+          "supplemental_proof": [
+            "REVIEW34 structural10PASS+separate dispatch1PASS; REVIEW38 exact17 candidate/baseline review; REVIEW39 strict1PASS/12GOLDEN_MATCH/0CANDIDATE_ONLY; REVIEW45 physical current/Save/Class frames individually inspected."
+          ],
+          "limits": [
+            "No HTML/wgpu pixel equality or HUMAN assessment claim. Historical exact17 test executable subsequently missing with origin unproven; retained raw strict logs/PNGs/adopted baselines support historical review39. No reviewer cleanup."
+          ]
+        }
+      }
+    ],
+    "followup_review_scope": {
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "manager_thread": "01a160d9-b499-7923-984a-b3390beb2e34",
+      "bounded_receipts": [
+        "27 CLASS_READABILITY",
+        "28 BUS_READABILITY",
+        "29 MAIN_FINITE",
+        "30 MAIN_CLOSE_REOPEN",
+        "31 FRAMEPLAN_GPU",
+        "32 TEST_OWNERSHIP",
+        "33 PIN_FOOTPRINT_CONTROLS",
+        "34 RENDER_STRUCTURAL",
+        "35 G1_DISCLOSURE"
+      ],
+      "boundary": "All bounded receipts preserve their actual source/native/control scopes. No C04/C05/C06/objective/full qualification PASS; actual independent full matrix fresh-event replay and acceptance remain required."
+    },
+    "current_exact_evidence": {
+      "native-implementation-cohort-13.json": "6872a43970b3287946340a4e255a2310625c7d777cd959308e6765fa1dc0779e",
+      "inspector-admitted-controls-13.log": "42ee0cb37c547b4cc38a3d2618f392333173df10f054c8a560eef270a792f92c",
+      "inspector-marker-occurrence-13.log": "809adbc75ca192a16fdb27fd0e4dc75b2129ffae06c3ecb9e88de9e0a74cf64d",
+      "inspector-render-structural-13.log": "14db536e1495c99155c31260bf34dfc4e13efe87c9abebabfdcc8c25462c0992",
+      "inspector-render-dispatch-existing-13.log": "8e7bf4316f4a0c905e12e5d170ead5def96303e10192447433cf911e2bb4d03a",
+      "inspector-render-dispatch-existing-13-receipt.json": "437831e7894dc804629558cef4349091713bae7075a5dc5d59417b480abce393",
+      "inspector-render-dispatch-13.log": "818fbfc9a18373d9f26334054e0492a477744f2b9626935e7c18ea1571b55e87",
+      "inspector-source-health-final-13.log": "88080a51ac3c4ee8ef593086c4a5c86836cbb20a472122427a0be9ff2417c197",
+      "native-proof-01/admitted-readonly-controls-13-source-invariance.json": "92dae21f79b2b1a1b184e1158f9fef971de28e74c60975f088cfcf1ad43a0193",
+      "native-proof-01/vertical-pass-05/checkpoint-qualified-pin-marker-and-vector-disclosures.json": "c53810efa37c38eb560946c74eeb4c8cf9f148136c1ca9a13cd7c44bbdfe1e1a",
+      "native-proof-01/vertical-pass-05/checkpoint-final-close-cleanup.json": "238a8e3c04aa153352ee0ce88900b25c1f4818007d7f9ea5926d00ff65f244a4"
+    },
+    "current_pin": {
+      "path": "target/qa/inspector-6cfc5872",
+      "build_info_sha256": "3b0e51641ca5ec1ede67e4ec7999b8f1fd41e1aae57bff40dea1b1857cca2d23",
+      "boundary": "Actual guarded normal3binary21 matchingbuild,155dirty/test Rust pins+1486actuald closure distinct; REVIEW44 independentlyverified, REVIEW45 all3binary+155sourcepins equal after real native concurrency/Save/Close."
+    },
+    "native_inputs_released": {
+      "main": "native-proof-01/project",
+      "class": "native-proof-01/class-variant",
+      "bus": "native-proof-01/semantic-bus-variant",
+      "no_run": "native-proof-01/base-norun",
+      "state": "Own native05 CSD Close exit0; compositor subsequently cleaned; exact123Main canonicalfiles unchanged. Original phase04/03 class135/Bus61 scopes retained."
+    },
+    "golden_candidate_correction": {
+      "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "review": "REVIEW36 REVISE_NETZERO_SETUP_BEFORE_ADOPTION",
+      "candidate14": "All12 retained/unadopted; two Netzero candidates truthfully render Unavailable because ordinary context summary cap is not complete persisted finding authority. Other10 independently reviewed at actual visible scope; no full-field/viewport claim.",
+      "correction16": "Existing public pinned CLI check show4b +normal parser qualifies project/rev/persisted/full13; shared InspectorContext must yieldactualScoped0/Project13/scope3of6/connectivity-onlyClean before render. Production13 bytes frozen; no newfixture/deps/count injection.",
+      "source_cohort16_sha256": "d75d1c4044ad8abd1c1c4c3b38a7bdc0884766abe51c73e390025d8783af39cc",
+      "guarded_compile16": {
+        "log": "inspector-golden-compile-16.log",
+        "sha256": "b3445da6f2c4076ea48104ed2e3c06d169610119d240791a5944f5feecd580a9",
+        "result": "exit0/2.26s/preflight39.6GiB"
+      },
+      "current_status": "STRICT_12_SAME_ENGINE_GOLDENS_INDEPENDENTLY_PASS39_AT_DECLARED_SCOPES_FULL_NATIVE_REPLAY_AND_OWNER_HUMAN_OPEN",
+      "retained_guard_refusal15": {
+        "log": "inspector-golden-compile-15.log",
+        "sha256": "fc91c91a011a7af0f3a554ec7a91b15acdd9f740878cf79ed37165f7d11581c8",
+        "result": "exit75 BEFORE Cargo at40.9GiB"
+      },
+      "exact_completed_executable_retirements": {
+        "protocol13_receipt_sha256": "cf93567095fcbbe26708a67b304e21b19a125347f52409f1df08499f87bfe52d",
+        "two_completed14_13_receipt_sha256": "17c598e12ba9ed49b73cd397d842cbb5cfe9fd148346f3ee6afdf904b6d45bd1",
+        "authority": "Actual PM exactdisposable executable dispositions; coordinated active reviewer/worker scopes; no general cleanup/limit change/pinnedGUI or source/evidence deletion"
+      },
+      "review37": "REVISE_EMPTY_FOCUS_BEFORE_ADOPTION: reviewer independently viewed12original16images; Netzero now actual0/connectivity-onlyClean; Doc2fixture globalFocusBoard mismatches focusedChildheader, no production finding",
+      "candidate16_receipt_sha256": "5d28dd8b309090946485467b92a37bade11b2ba2b45fd9a110ebe45aed7756be",
+      "correction17": "Align test-only ApplicationFocus::Editor(openedpane) with actual Runtime shared pane transition; assert layout focus. Only Inspector golden integration test changes, production13 frozen.",
+      "source17_sha256": "d96848fcfe33ed0462c22d6dc88c64f703199934c902d0187c4b13285bbe997c",
+      "guarded_compile17": {
+        "log_sha256": "1913ca652ba235ccb7bc5630bcb87a19fe750bf2afbc9e342593b8dac3f09f20",
+        "result": "exit0/2.39s/preflight39.6GiB"
+      },
+      "retirement17_receipt_sha256": "ec560c2c2080380cb7e57e5cac04a3a941ce35fbf7684ea928b66937be63f1c7",
+      "source_health17": {
+        "log_sha256": "089de51e726080887b3bfaf3b0e17557938efccd0c44cd8a80e71823cd6a4831",
+        "result": "3331sourcefilesPASS",
+        "policy_regression_log_sha256": "e8518c30a59034a2a879cb6d94cc54cd8fd4b6b30e5da83956bdb853c928a1ed",
+        "policy_regression_result": "13PASS"
+      },
+      "candidate17_receipt_sha256": "29c28ea0af2fa1fde37484ad27b8b5c87e062cd3c24c34da17b2a8b6ec05f59d",
+      "candidate17_result": "Direct exact freshly compiled executable, candidate-only1PASS0ignored/9.45s; all12rendered,123canonical+153Rustsourcepins+binarySHA before/after unchanged. TENPNGs byte-identical to reviewed16; only Docnormal/narrow focus label changed. Root viewed2 corrected originals, Schematicfocus coherent with qualifiedchild; reviewer image approval pending.",
+      "actual_review38": {
+        "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+        "disposition": "PASS_FOR_BASELINE_ADOPTION_AT_DECLARED_SCOPE",
+        "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "actual_PM_disposition": "Approve ONLY exact17manifest12reviewedimagebytes to scoped Inspector golden filenames; strict samepinnedexe rerender at agreed GPUyield; no HUMAN/native/objective acceptance",
+        "candidate17_receipt_sha256": "29c28ea0af2fa1fde37484ad27b8b5c87e062cd3c24c34da17b2a8b6ec05f59d"
+      },
+      "adoption17_receipt_sha256": "8eff3ab96c85e1c68e79aeec78492f47fe8572348f9061d055e6a72545d3bab7",
+      "strict17": {
+        "receipt_sha256": "f34aefa81444550523e3d30666e22f61d0556ce054421ad24a8dc8160af3ea08",
+        "log_sha256": "6de12dd4ff578329b154d215166f0993326144d659f18d82da51b507ebefce9e",
+        "actual_result": "Direct exact compiled test executable1PASS0ignored/10.08s;12exactRGBA GOLDEN_MATCH/0candidate-only. All12baseline/source153/executable/canonical123 beforeafter unchanged.",
+        "boundary": "Actual objective same-engine regression only; direct executable reuse is not new Cargo PASS. Independent final strictreceipt and fullnative replay/HUMAN/objective acceptance remain separate."
+      },
+      "actual_review39": {
+        "reviewer_thread": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+        "disposition": "PASS_BOUNDED_SAME_ENGINE_REGRESSION/no mandatoryfinding",
+        "actual_result": "Independently verified strict receipt/rawlog,1PASS0ignored/12exactRGBA matches,0candidate-only, all12currentbaseline/source153/exe/canonical123pins. All12actualPNGbytes equal reviewed17 candidates.",
+        "boundary": "Direct compiled executable reuse, not newCargo/native/HUMAN/fullfeature/objective PASS."
+      },
+      "full_failed_and_corrected_test_source_retention": {
+        "manifest_sha256": "323e2f1bdd2730b0b9444b2bce1e51778ca78f00426f0e28fe9269c39acd8182",
+        "status": "Full14/15/16/17testsource bytes nowretained andeachhash matchesoriginalfrozen sourcecohort. Reverse exacttest-only edits+rustfmtstdout used solelyto recoveroldbytes; currentworking source unchanged. Retiredtestexecutables remain explicitlyretiredperPM, notclaimedretained."
+      }
+    },
+    "final_verification_scope": {
+      "focused_drift10": "Allprecedingstructural/policy/spec/dependency/design/projectchecksactualPASS; sourcehealthtailFAILretained, corrected17actual3331PASS +policy13PASS. No fabricatedwholebatch10PASS.",
+      "claim_state17": {
+        "log_sha256": "89b50fd321166b7525f73f501e9dc2769ac80ae3532554a30fbf8ac4a89efc64",
+        "purpose": "Reviewlease/boundedworkermaintenance/baseline scope mutations require fresh claim/state validity; no repeated build or unchanged broad gates."
+      },
+      "clippy": "Owned actualClippy18unchangedengineerrors retained in inspector-owned-clippy-final-10.log and existingdat-lk0l; no baseline/fullsuitePASS, waivers or engine edits. Full-workspace/host/HUMAN/performance qualification remains separate.",
+      "claim_state45": {
+        "log": "inspector-claim-state-45.log",
+        "actual_result": "101frontieritemsPASS after explicit reviewerreturn/rootclaim+br/export sync; no stepadvance."
+      }
+    },
+    "owner_HUMAN_review_packet": {
+      "status": "PREPARED_FOR_OWNER_REQUIRED_VISUAL_ASSESSMENT_AFTER_OBJECTIVE_CONSOLIDATION_NO_HUMAN_PASS",
+      "authority": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md INSP-C04: Protected prototype comparison is a human review. PM059 required HUMAN assessments remain owner-reserved absent exact assessor delegation.",
+      "candidate": "Frozen source21 c90ba18d/sourceSet6cfc5872, normal pin target/qa/inspector-6cfc5872; earlier13 unchanged visual consumer evidence reused at exact scope.",
+      "native_images": [
+        {
+          "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/009-N01-library-context.png",
+          "sha256": "be198e5c89962984720fb96fae1f2ce8d8cebacd42189c87080f2ac3f7c2ed89",
+          "comparison_scope": "S-C component identity/library source; related objects remain separately identified. Long source values use shared Inspector scroll/AX; one screenshot does not show every field.",
+          "root_inspected_original": true
+        },
+        {
+          "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/105-N05-actualzero-disclosures-current.png",
+          "sha256": "d1d48927588a91e40dcdff556b57a796230c9862502720380f4ba8c407e64f6b",
+          "comparison_scope": "S-G current persisted ERC: project13warnings alongside scoped0/0/0; evaluated connectivity-onlyClean, scope3of6 and unsupported coverage named.",
+          "root_inspected_original": true
+        },
+        {
+          "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/151-N03-Bus-scalar-current.png",
+          "sha256": "1b747b8ecc4f4352cd7dc45fbc367338b90a5787f9f94dedfb6afa6867fab8b5",
+          "comparison_scope": "S-G Bus6 with declared scalarNet UUID and named unprojected/missingWorkingUnits; no inferred board correspondence.",
+          "root_inspected_original": true
+        },
+        {
+          "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/123-N12-narrow-qualified-context.png",
+          "sha256": "95960bac988c3880c0984db0dcd59563741697df12c2f7aa019f680f6c05ef6f",
+          "comparison_scope": "S-I narrow document/source/ChildA occurrence/path, real snap0.10mm/savedstate/Checks. Settled B1 inspect-only means current pane staysMain; no new narrow-chrome choice.",
+          "root_inspected_original": true
+        },
+        {
+          "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/postfix-cohort21-session/013-N03-Class-source-constraints-current.png",
+          "sha256": "7c5eff63fcd6f27bb059f7f0edeb1a4abfc86dbd54cfadf4140411d53011d0d4",
+          "comparison_scope": "Fixed21 explicit BoardNet\u2192Class6 real constraints, separate UnavailableBinding, Complete/current persisted ERC. Authoring remains separate.",
+          "root_inspected_original": true
+        }
+      ],
+      "prototype_images": [
+        {
+          "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/prototype-review/S-C-full.png",
+          "sha256": "ebd0d2704f77675536c6478c0a0c7fdde8abb2f9876ad4c6d760d5a949276fa1"
+        },
+        {
+          "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/prototype-review/S-G-full.png",
+          "sha256": "7739d459d8028a1070988212a56cc82a94ac2193962b7fc199fd9682166824fb"
+        },
+        {
+          "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/prototype-review/S-I-painted.png",
+          "sha256": "5034561069630e628e10ee1ff21ae8d11c3917934f3d511d1a85fd5b360365c4"
+        }
+      ],
+      "protected_authorities": [
+        "docs/gui/prototypes/schematic-surfaces-study.html#S-C",
+        "docs/gui/prototypes/schematic-surfaces-study.html#S-G",
+        "docs/gui/prototypes/schematic-layout-accessibility-study.html#S-I"
+      ],
+      "unchanged_settled_boundaries": "PM062 occurrence-firstB1/openbesideO1 and pane-local identity/status; ASBdecision staysfrozen. PrototypeHTML/CSS unchanged; semantic comparison, no cross-rendererpixel equality.",
+      "owner_response_format": "Accept required visual comparison for this exact read-only Inspector candidate, or revise with specific differences. Alternatively name an authorized human assessor for this exact assessment. No assent inferred from elapsedtime.",
+      "retained_limits": "Normal/narrow fields may be outside current scrollviewport; exact screenshots do not claim simultaneous fullfieldvisibility. Structural/sameengine12exactRGBA and independentnative45 do not substitute HUMAN. Fullhost/performance/endurance qualification and18baselineClippyerrors remain separately open."
+    },
+    "actual_final_independent_review": {
+      "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/review-46-full16-independent-reconciliation.json",
+      "sha256": "9a6ee70030311bc27af7e98bfcf2eb7b14331910f0e0cdb5922c73eac6f9bd8e",
+      "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+      "actual_status": "PASS_OBJECTIVE_INDEPENDENT_REPLAY_AT_DECLARED_SCOPE_PM_DISPOSITION_PENDING_HUMAN_SEPARATE",
+      "primary_result_sha256": "8f665a88dc60d2714b97dd6ee1f8d156f5b7334c61d3248612cfacadac6e248b",
+      "primary_recorded_commands": 183,
+      "fresh21_review45_sha256": "292bd7b5e358c0d41eed83e53d4195449712911e6d1af498a48b2eecdf376ac7",
+      "remaining_mandatory_objective_implementation_or_independent_replay_gaps": [],
+      "reuse_basis": {
+        "actual13to21changed_pins": [
+          "crates/engine/src/revision/writer.rs",
+          "crates/gui-app/src/editor/runtime_check_runs.rs",
+          "crates/gui-protocol/src/check_runs/producer.rs",
+          "crates/gui-protocol/src/check_runs/producer/acceptance_stream_tests.rs",
+          "crates/gui-protocol/src/check_runs/producer/worker.rs",
+          "crates/gui-protocol/src/lib.rs",
+          "crates/gui-protocol/src/workspace_loading.rs",
+          "crates/gui-protocol/src/workspace_loading/check_readback_tests.rs",
+          "crates/gui-render/tests/inspector_goldens.rs"
+        ],
+        "removed_pins": [],
+        "meaning": "Original183-event13source behavior retained for unchanged Inspector/navigation/render/AX owners; changed P03 producer/canonical snapshot full route reviewed40-43, actual controls44 and independent fresh native45. Golden test added14-17/unchanged17\u219221. No full baseline campaign solely for new session."
+      },
+      "findings_accounted": {
+        "P03": "REVIEW45 verifies approved correction with actual fresh firstappend/queryoverlap/currentreadback/nextSave and fullgenerateddiff; originalfailure/recovery retained, runtime lock-holder origin unproven.",
+        "original_observer_failures": "131wrongclose/132secondlaunchrefusal recovered at134/135; no false Bus credit.",
+        "fresh21_observer_failure": "PostSave step8 AT-SPI unknown accessible object; stable9/13 prove selection/Class, core1-7passed and no rerun of firstappend.",
+        "retained_resource_and_health_failures": "Clippy18 unchangedengine diagnostics retained as unrelated dat-lk0l, no ClippyPASS or historicalcausality claim. Control18 nestedCargo failed beforebody;20sourcehealthFAIL preserved,21actual3332PASS.",
+        "missing_historical_executable": "17testexe nowmissing originunproven; historical39 exactbinary/proof remains historical, no currentexistenceclaim/cleanupcredit."
+      },
+      "remaining_acceptance_boundaries": [
+        "PM must record bounded C05 disposition against actual receipt; reviewer does not advance canonical steps or invent PASS beyond objective replay scope.",
+        "Required HUMAN/owner assessment remains open unless exact authorized assessor delegation is durably recorded. Objective semantic/source/native/AX/golden evidence does not substitute.",
+        "Final owned landing/required commit gates and full qualification status are worker/PM responsibilities; no successor authorization."
+      ],
+      "not_claimed": [
+        "Fulltask/objective owneracceptance",
+        "HUMAN or finalvisualapproval",
+        "Clippy/fullworkspace qualificationPASS",
+        "Unseen targethosts/performance",
+        "Exact originalruntime lockholder",
+        "All possible concurrent lock schedules"
+      ]
+    },
+    "actual_PM_final_objective_disposition": {
+      "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+      "authority": "Existing owner-appointed PM059 GUI-P2-INSPECTOR review/continuation/objectiveacceptance delegation",
+      "actual_disposition": "ACCEPT REVIEW46 full16 independent objective replay at exactdeclaredscope, receipt9a6ee70030311bc27af7e98bfcf2eb7b14331910f0e0cdb5922c73eac6f9bd8e;13\u219221 delta reuse plus45 newappend/concurrentquery/nextSave. No remaining mandatory objective implementation/replay gaps. Accept C05 evidence without out-of-order canonicalstepadvance; finish ownedimplementationlanding.",
+      "supporting_actual_receipts": [
+        "REVIEW39 strict12sameenginegoldens",
+        "REVIEW44 actual21build/control1PASS/transport5PASS/sourcehealth3332",
+        "REVIEW45 nativefirstappend+supportedconcurrentquery+nextSaved+Close",
+        "REVIEW46 full16 independentreconciliation"
+      ],
+      "remaining_boundary": "Required HUMAN stays explicit C04 ownerboundary; C06/fullfeatureacceptance/developmentavailability/fullqualification/successor notclaimed. Retain originalnewappendfailure/AXonlyrecovery/control18failure/health20failure/Clippy18/missing17exe unknownorigin and observerlimits."
+    }
+  },
+  "native_producer_correction_actual_review": {
+    "review": "INSP03-NEW-RECORD-TIP-REVIEW-23 PASS_BOUNDED_EVIDENCE",
+    "cohort": "native-implementation-cohort-06.json",
+    "frozen_checkpoint": ".datum/scratch/gui-p2-inspector-insp01-20261023/native-proof-01/vertical-pass-03/checkpoint-new-record-tip-next-save.json",
+    "sha256": "d25b16673cf30ba114b4d91b03fabb44b30a4500aa05031ec45f2ee237632558",
+    "transport_proof": "inspector-producer-transport-04.log",
+    "transport_sha256": "5187a7db10e6f42fb64d73d75e5b58a155f1d1b14b9fab60c5abb3a83e85357e",
+    "boundary": "Only manual GUI producer child clears ambient agent-launch metadata; DATUM_COMMIT_SOURCE/agent CLI/MCP/engine validation remain unchanged."
+  },
+  "independent_replay_handoff": {
+    "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "worker_session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+    "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "authority": "Actual PM scoped temporary reviewer lease transfer, full matrix fresh-event independent replay; no product edit or successor authorization",
+    "worker_claim_to_restore": {
+      "agent": "codex",
+      "claimed_at": "2026-10-23T20:47:35Z",
+      "expires_at": "2026-10-24T15:16:00Z",
+      "harness": "codex-cli",
+      "head": "ca42bee84d3a9e6e8952c8a4910a4fc84fab7ca4",
+      "heartbeat_at": "2026-10-24T07:45:27Z",
+      "scope": [
+        "specs/active_frontier.json",
+        "specs/PROGRESS.md",
+        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+        "specs/evidence_traceability_manifest.json",
+        ".beads/issues.jsonl",
+        "docs/reviews/workflow-delivery-rollout/inspector",
+        ".datum/scratch/gui-p2-inspector-insp01-20261023",
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
+        "crates/cli/src/args/check.rs",
+        "crates/cli/src/commands/check/mod.rs",
+        "crates/cli/src/commands/check/native_inspect.rs",
+        "crates/cli/src/commands/check/run_history.rs",
+        "crates/cli/src/main_tests/main_tests_project_check_run_history.rs",
+        "crates/gui-app/src/application/production_status_refresh.rs",
+        "crates/gui-app/src/application/runtime_menu_actions.rs",
+        "crates/gui-app/src/application/runtime_state.rs",
+        "crates/gui-app/src/editor/runtime_check_runs.rs",
+        "crates/gui-app/src/editor/runtime_hit_actions.rs",
+        "crates/gui-app/src/editor/runtime_schematic_navigation.rs",
+        "crates/gui-app/src/editor/runtime_selection.rs",
+        "crates/gui-app/src/editor/runtime_selection_hit.rs",
+        "crates/gui-app/src/editor/runtime_selection_inspector.rs",
+        "crates/gui-app/src/editor/runtime_view_actions.rs",
+        "crates/gui-app/src/editor/selection_accessibility.rs",
+        "crates/gui-app/src/main.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/children.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/events.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/presentation.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/state.rs",
+        "crates/gui-app/src/viewport/pane_cameras.rs",
+        "crates/gui-protocol/src/check_runs.rs",
+        "crates/gui-protocol/src/check_runs/loading.rs",
+        "crates/gui-protocol/src/check_runs/marker.rs",
+        "crates/gui-protocol/src/check_runs/producer.rs",
+        "crates/gui-protocol/src/cli_bridge.rs",
+        "crates/gui-protocol/src/context_envelope/selection_inspection.rs",
+        "crates/gui-protocol/src/gui_menu_model/action_registry.rs",
+        "crates/gui-protocol/src/inspector_context.rs",
+        "crates/gui-protocol/src/inspector_context/checks.rs",
+        "crates/gui-protocol/src/inspector_context/components.rs",
+        "crates/gui-protocol/src/inspector_context/nets.rs",
+        "crates/gui-protocol/src/lib.rs",
+        "crates/gui-protocol/src/native_schematic_scene.rs",
+        "crates/gui-protocol/src/schematic_documents.rs",
+        "crates/gui-protocol/src/schematic_documents/navigation.rs",
+        "crates/gui-protocol/src/schematic_documents/projection.rs",
+        "crates/gui-protocol/src/selection_scene/index.rs",
+        "crates/gui-protocol/src/selection_view.rs",
+        "crates/gui-protocol/src/selection_view/inspection.rs",
+        "crates/gui-protocol/src/selection_view/properties.rs",
+        "crates/gui-protocol/src/workspace_interaction/camera.rs",
+        "crates/gui-protocol/src/workspace_layout.rs",
+        "crates/gui-protocol/src/workspace_pane_content.rs",
+        "crates/gui-protocol/src/workspace_state.rs",
+        "crates/gui-render/src/hit_target.rs",
+        "crates/gui-render/src/render/pane_chrome.rs",
+        "crates/gui-render/src/render/pane_layout.rs",
+        "crates/gui-render/src/render/schematic_retained.rs",
+        "crates/gui-render/src/side_panels.rs",
+        "crates/gui-render/src/side_panels/inspector_dispatch.rs",
+        "crates/gui-render/src/side_panels/inspector_sections.rs",
+        "crates/gui-render/src/side_panels/schematic_navigator.rs",
+        "crates/gui-render/src/side_panels/selection_inspector.rs",
+        "specs/source_module_size_manifest.json",
+        "crates/cli/src/commands/project_core.rs",
+        "crates/cli/src/commands/schematic/queries.rs",
+        "crates/cli/src/commands/schematic/mod.rs",
+        "crates/engine/src/substrate/journal_materialization.rs",
+        "crates/gui-protocol/src/workspace_loading.rs",
+        "specs/SPEC_PARITY.md",
+        "crates/gui-protocol/src/schematic_documents/tests.rs",
+        "crates/gui-app/src/editor/runtime_schematic.rs",
+        "crates/gui-app/src/editor/runtime_native_edit.rs",
+        "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+        "crates/gui-protocol/src/board_review_scene.rs",
+        "crates/gui-protocol/src/workspace_startup.rs",
+        "crates/gui-protocol/src/workspace_authoring.rs",
+        "crates/gui-app/src/application/app_bootstrap.rs",
+        "crates/gui-app/src/application/runtime_init.rs",
+        "crates/gui-protocol/src/selection_view/presentation.rs",
+        "crates/gui-app/src/editor/runtime_selection_run/projection.rs",
+        "crates/gui-render/src/render/native_selection_overlay/mask.rs",
+        "crates/gui-protocol/src/workspace_tools.rs",
+        "crates/gui-protocol/src/selection_view/projection_inspection.rs",
+        "crates/gui-render/src/render/render_session.rs",
+        "crates/gui-render/src/render/session_sources.rs",
+        "crates/gui-render/src/render/retained_scene_history.rs",
+        "crates/gui-render/src/render/session_frame.rs",
+        "crates/gui-render/src/render/session_preparation.rs",
+        "crates/gui-render/src/render/session_pointer.rs",
+        "crates/gui-render/src/render/scene.rs",
+        "crates/gui-render/src/render/prepared_scene_access.rs",
+        "crates/gui-render/src/render/geometry_admission.rs",
+        "crates/gui-render/src/render/gpu_frame_target.rs",
+        "crates/gui-render/src/render/gpu_frame.rs",
+        "crates/gui-render/src/render/gpu_surface_pass.rs",
+        "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs",
+        "crates/gui-render/src/render/cold_world_upload.rs",
+        "crates/gui-render/src/render/renderer_state.rs",
+        "crates/gui-render/src/render/gpu_init.rs",
+        "crates/gui-render/src/render/gpu_vertex_upload.rs",
+        "crates/gui-render/src/render/gpu_overlay.rs",
+        "crates/gui-render/src/render/resource_consumers.rs",
+        "crates/gui-render/src/render/selection_mask_painter.rs",
+        "crates/gui-render/src/render/coordinate_hit.rs",
+        "crates/gui-render/src/render/selection_mask.rs",
+        "crates/gui-render/src/render/cold_world_upload_tests.rs",
+        "crates/gui-render/src/render/session_frame_tests.rs",
+        "crates/gui-render/src/render/types.rs",
+        "crates/gui-render/src/render/schematic_sources.rs",
+        "crates/gui-render/src/render/frame_preparation.rs",
+        "crates/gui-render/src/render/preferences_scene.rs",
+        "crates/gui-render/src/render/qualified_world_gpu.rs",
+        "crates/gui-render/src/render/native_selection_overlay/cue_plan.rs",
+        "crates/gui-app/src/editor/runtime_primary_pointer.rs",
+        "crates/gui-app/src/editor/runtime_selection_menu.rs",
+        "crates/gui-app/src/viewport/runtime_camera_pane.rs",
+        "crates/gui-render/src/render/schematic_sources_tests.rs",
+        "crates/gui-app/src/editor/native_edit_selection.rs",
+        "crates/gui-protocol/src/selection_artifacts.rs",
+        "crates/gui-app/src/editor/runtime_selection/global.rs",
+        "crates/gui-app/src/editor/native_edit_selection/lifetime_report_tests.rs",
+        "crates/gui-app/src/editor/native_edit_selection/run_lifetime_tests.rs",
+        "crates/gui-app/src/editor/native_edit_selection/artifact_lifetime_tests.rs",
+        "crates/gui-app/src/editor/native_edit_selection/document_navigation_tests.rs",
+        "crates/gui-app/src/terminal/keyboard_focus.rs",
+        "crates/gui-app/src/viewport/native_scroll_input.rs",
+        "crates/gui-render/src/side_panels/panel_chrome.rs",
+        "crates/gui-render/src/side_panels/render_project_filters.rs",
+        "crates/gui-app/src/editor/runtime_selection_region.rs",
+        "crates/gui-app/src/rendering/gui_runtime_support.rs",
+        "crates/gui-app/src/windows/folder_browser_input.rs",
+        "crates/gui-app/src/windows/project_open/publication.rs",
+        "crates/gui-render/src/render/status_bar.rs",
+        "scripts/manage_cargo_cache.py",
+        "scripts/test_manage_cargo_cache.py",
+        "scripts/cargo_cache_metadata.py",
+        "crates/gui-render/src/global_preferences_primitives.rs",
+        "crates/gui-app/src/terminal/terminal_regression_boundary_tests.rs",
+        "crates/gui-app/src/viewport/runtime_pane_lifecycle.rs",
+        "crates/gui-app/src/viewport/interaction_refresh.rs",
+        "crates/gui-protocol/src/schematic_documents/lifecycle.rs",
+        "crates/gui-render/src/render/session_sources_tests.rs",
+        "crates/gui-protocol/src/check_runs/producer/worker.rs",
+        "crates/gui-app/src/windows/project_open/prepare.rs",
+        "crates/gui-app/src/terminal/application_terminal_shutdown.rs",
+        "crates/gui-protocol/src/gui_menu_model.rs",
+        "crates/gui-protocol/src/check_runs/producer/acceptance_stream.rs",
+        "crates/gui-protocol/src/check_runs/producer/acceptance_stream_tests.rs",
+        "crates/gui-app/src/windows/project_open.rs",
+        "crates/gui-protocol/src/selection_view/placed_pad_inspection.rs",
+        "crates/gui-protocol/src/check_runs/loading/tests.rs",
+        "crates/gui-app/src/editor/selection_accessibility/workspace.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/workspace.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/workspace_tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/worker/tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_platform/atspi/selection/state_tests.rs",
+        "crates/gui-render/src/render/shell_chrome.rs",
+        "crates/gui-protocol/src/selection_view/net_coverage.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_bridge/region_tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_bridge/notice_tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_bridge/compound_move_tests.rs",
+        "crates/gui-app/src/terminal/terminal_accessibility_bridge/marking_release_tests.rs",
+        "crates/gui-app/src/editor/runtime_library.rs",
+        "crates/gui-protocol/src/selection_view/quantities.rs",
+        "crates/gui-protocol/src/selection_view/inspector_labels.rs",
+        "crates/gui-protocol/src/context_envelope.rs",
+        "crates/gui-protocol/src/context_envelope/inspector_context.rs",
+        "crates/gui-app/src/terminal/terminal_session.rs",
+        "crates/gui-app/src/terminal/runtime_terminal_context.rs",
+        "crates/gui-app/src/terminal/terminal_session_tests.rs",
+        "crates/gui-app/src/terminal/terminal_active_context_tests.rs",
+        "crates/gui-app/src/terminal/terminal_context.rs",
+        "crates/gui-app/src/terminal/terminal_session_context_tests.rs",
+        "crates/gui-app/src/terminal/terminal_working_directory.rs",
+        "crates/gui-protocol/src/inspector_context/persistence.rs",
+        "crates/gui-protocol/src/inspector_context/persistence_tests.rs",
+        "crates/gui-protocol/tests/native_selection_output.rs",
+        "crates/gui-protocol/tests/native_selection_output/context_transport.rs",
+        "crates/gui-render/src/render/native_selection_overlay/diagnostics.rs",
+        "crates/gui-protocol/src/check_runs/marker/tests.rs",
+        "scripts/cargo_qa_companions.py",
+        "scripts/test_cargo_qa_companions.py",
+        "target/qa/initial-prefix-050cdf8c/debug/datum-eda",
+        "target/qa/manifest-open-94d59290/debug/datum-eda",
+        "target/qa/manifest-open-ea04ce38/debug/datum-eda",
+        "target/qa/terminal-handoff-ec2cd61b/debug/datum-eda",
+        "target/qa/terminal-handoff-4b6ff272/debug/datum-eda",
+        "target/qa/file-actions-fdef8fde/debug/datum-eda",
+        "target/qa/initial-prefix-050cdf8c/debug/eda-engine-daemon",
+        "target/qa/manifest-open-94d59290/debug/eda-engine-daemon",
+        "target/qa/manifest-open-ea04ce38/debug/eda-engine-daemon",
+        "target/qa/terminal-handoff-ec2cd61b/debug/eda-engine-daemon",
+        "target/qa/terminal-handoff-4b6ff272/debug/eda-engine-daemon",
+        "target/qa/file-actions-fdef8fde/debug/eda-engine-daemon",
+        "target/qa/file-actions-fdef8fde/debug",
+        "target/qa/initial-prefix-050cdf8c/debug",
+        "target/qa/manifest-open-94d59290/debug",
+        "target/qa/manifest-open-ea04ce38/debug",
+        "target/qa/terminal-handoff-4b6ff272/debug",
+        "target/qa/terminal-handoff-ec2cd61b/debug",
+        "target/qa/inspector-135c4d27",
+        "target/qa/inspector-31e02f85",
+        "target/qa/inspector-c75ccf48",
+        "target/qa/inspector-6d7c9497",
+        ".datum/scratch/gui-p2-inspector-source-tests",
+        "crates/gui-app/src/editor/runtime_selection/global/tests.rs",
+        "crates/gui-render/src/render/native_selection_overlay/cue_plan/tests.rs",
+        "crates/gui-protocol/src/inspector_context/components_tests.rs",
+        "target/qa/inspector-1535ee1b",
+        "crates/engine/src/revision/writer.rs",
+        "crates/gui-protocol/src/workspace_loading/check_readback_tests.rs",
+        "crates/gui-render/tests/inspector_goldens.rs",
+        "crates/gui-render/testdata/golden/inspector",
+        "target/debug/deps/inspector_goldens-8ca948611108da76",
+        "target/qa/inspector-6cfc5872"
+      ],
+      "session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+      "worktree": "/home/bfadmin/Documents/datum-eda"
+    },
+    "remaining_scope": "PM accepted actual46objective full16 evidence and45correction; root completes owned implementation landing/mandatorygates then presents concrete required ownerHUMAN packet. C03 stays selected, no out-of-order canonicaladvance/no successor.",
+    "uncommitted_work": true,
+    "source_cohort": "native-implementation-cohort-21.json",
+    "pin": "target/qa/inspector-6cfc5872",
+    "native_input_state": "Worker allnativeprocesses closed and owncompositor/companions cleaned; canonical123Main invariant; Class135/Bus61/no-run93 admitted scopes retained.",
+    "review_scope": [
+      "specs/active_frontier.json",
+      ".beads/issues.jsonl",
+      "docs/reviews/workflow-delivery-rollout/inspector/implementation-progress.json",
+      ".datum/scratch/gui-p2-inspector-c05-independent-20261023"
+    ],
+    "state": "REVIEW45_NATIVE_CLOSED_EXPLICIT_WORKER_LEASE_RETURN_READONLY_REVIEWER_MATRIX_RECONCILIATION",
+    "worker_bounded_subscope": {
+      "worker_session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+      "authority": "Actual PM exact completed executable retirement and existing renderer golden route approval; active reviewer explicitly acknowledges coordinated worker subscope; production13 frozen",
+      "paths": [
+        "target/debug/deps/datum_gui_protocol-4c70d5311f13a5fc",
+        "crates/gui-render/tests/inspector_goldens.rs",
+        "crates/gui-render/testdata/golden/inspector",
+        ".datum/scratch/gui-p2-inspector-insp01-20261023"
+      ],
+      "limits": "No reviewer scratch or pinned GUI edits. No production changes. Exact single disposable executable only with descriptor proof; no Cargo/rustc active. No competing GPU render until reviewer capture yield. Candidate goldens scratch only; independent image/source review before adoption. No golden PASS before strict rerender.",
+      "uncommitted_work": true,
+      "exact_completed_test_retirement_16": {
+        "authority": "Actual PM grants both exact completed executables; no arbitrary successor/other cache release",
+        "paths": [
+          "target/debug/deps/inspector_goldens-8ca948611108da76",
+          "target/debug/deps/datum_gui_render-8ed5e66e3c5e7984"
+        ],
+        "output": ".datum/scratch/gui-p2-inspector-insp01-20261023/completed-test-executable-retirement-16.json",
+        "retained": "All REVIEW34/36 sources, logs, images and receipts; production13/pinnedGUI/reviewer root excluded"
+      },
+      "golden_test_executable_replacement_authority": {
+        "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "actual_disposition": "PM bounded ongoing replacement of ONLY obsolete current-task inspector_goldens test executable under target/debug/deps, exact path/fullSHA/dev/inode/allocated in actualbuild and beforeapply receipt; no other cache/source/QA/evidence deletion",
+        "current_obsolete_path": "target/debug/deps/inspector_goldens-8ca948611108da76",
+        "current_obsolete_sha256": "119de77eb7308e4b5ab64f650ed8a649532b2c9eeae9feb4e1ac6126fdeaec83",
+        "device": 66306,
+        "inode": 9868666,
+        "nlink": 1,
+        "allocated_bytes": 699723776,
+        "output": ".datum/scratch/gui-p2-inspector-insp01-20261023/obsolete-golden-executable-retirement-17.json",
+        "boundary": "Exact held O_RDWR inode proof/no Cargo-rustc active; active reviewer acknowledged coordinated maintenance scope, native production13 frozen; no competing GPU until capture yield"
+      }
+    },
+    "actual_return": "Actual REVIEW45: fixed21 firstattempt newappend with supported concurrent public ContextGet, Complete/currentrun and next Saved. Normal CSD Close exit0, compositoralive, cleanup[]. Auditor explicitly returned root execution/source lease; ownroot remains reviewer-reserved.",
+    "reviewer_reserved_root": ".datum/scratch/gui-p2-inspector-c05-independent-20261023",
+    "actual_grant": "ExistingappointedPM same-scopefix nativeconcurrency proof and independentreplay; actualsource43/health21/matching21/control21 receipts, no step or objectiveacceptance"
+  },
+  "C05_completion_contention_finding": {
+    "status": "ACTUAL_PM_ACCEPTED_REVIEW45_CORRECTION_AND_REVIEW46_FULL16_OBJECTIVE_EVIDENCE_C04_HUMAN_C06_OPEN",
+    "authority": "Actual PM worker-only canonical postcommit serialization/freshsnapshot/pureprojection correction, preserve defaulttrylock/busy/defaultreader semantics and allfreshness/publicationguards",
+    "failure_checkpoint_sha256": "9aed94d2ff5b613760431120b4fdca25e3ad9cdd43180a92a81d4285b33597ec",
+    "cause_scope": "Source paths and unprefixed error consistent with directnativeworkspace ProjectResolver readback contention with publicContextGet; exactholdingPID/FD/runtimebacktrace NOTcaptured. No provenhistoricalorigin claim.",
+    "required_proof": "Deterministic actualcanonicallease contention control + actualnewappend withsupportedconcurrentContextGet, coherentGUIacceptedtip/currentrun and nextordinarySaved; existingIDAX-onlyrecovery no substitute.",
+    "control_receipt21_sha256": "74f65c363b6f0a7c20563f07d1ce325bbda53acd915cb0f01834e908b76bb849",
+    "source_reviews": [
+      "40source18",
+      "41source19ownership",
+      "42source20fullroute",
+      "43source21APIownership"
+    ],
+    "retained_failures": [
+      "18nestedCLIguardbeforecontrolbody",
+      "20sourcehealthlegacyceiling2781>2780",
+      "originalC05newappendrefreshlock+staleSave9aed94d2"
+    ],
+    "no_acceptance_claim": "No P03native/controlsampling/HUMAN/fullmatrix/objectiveacceptance beforeactualindependentreplayreceipt.",
+    "actual_review44": "Actual independent matching21build/control1PASS+transport5PASS/health3332/source155+canonical123 verified; no native acceptance from controls.",
+    "actual_review45": {
+      "path": ".datum/scratch/gui-p2-inspector-c05-independent-20261023/review-45-fresh-concurrent-newappend-save.json",
+      "checkpoint_sha256": "b37625fc8d001d453163ad6f79944ba19a937cac77d0d24cdd77610bd2a1eb18",
+      "result_sha256": "f119bab77cc0cdda05bd157a7b54f37af2d2402aceddaeaed919fdb48a1a2319",
+      "actual_result": "Firstattempt new129\u2192133/4added+3changed generated/oneSetCheckRun, currentcee/f47/13; Starting\u2192Running\u2192Complete with15supportedContextGet observations through next Save; localEscape retainedRunning; ordinarySave Project saved/no additional canonicalchanges. All155sourcepins/3binaryhashes unchanged; normalClose0/cleanup[].",
+      "limits": "Step8 postSave AT-SPI unknownobject retained; stable9/13Class proof. Publictip + visiblecurrentrun/Complete + successful expectedtip-guardedSave; no directprivateGUItip observation. No claim everylockschedule or originalholder. Fullmatrix/HUMAN/objective acceptance separate."
+    }
   }
 }

@@ -57,11 +57,13 @@ impl RenderSession {
         let board = match preparation.profile {
             PreparedProfile::Workspace => {
                 anyhow::ensure!(
-                    !scene
+                    scene
                         .surface_passes
                         .iter()
-                        .any(|pass| pass.surface == crate::SceneSurface::Schematic)
-                        || self.schematic.is_some(),
+                        .filter(|pass| pass.surface == crate::SceneSurface::Schematic)
+                        .all(|pass| scene
+                            .schematic_for_pass(pass, self.schematic.as_ref())
+                            .is_some()),
                     "prepared schematic pane requires retained schematic content"
                 );
                 self.board

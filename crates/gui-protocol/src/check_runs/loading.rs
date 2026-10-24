@@ -16,20 +16,30 @@ pub(crate) fn load(cli: &[String], request: &LiveReviewRequest) -> Result<CheckR
         cli,
         &["context", "refresh", "--project-root", &project_root],
     ) && let Some(state) = check_run_review_state_from_context_value(&context)
+        && state.check_run_id.is_some()
     {
         return Ok(state);
     }
     // Loading is read-only; history order does not confer current authority.
     let history = run_cli_json::<Value>(cli, &["check", "list", &project_root])?;
     let (empty, id) = history_candidate(&history);
-    let Some(id) = id else {
+    let Some(candidate) = id else {
         return Ok(empty);
     };
-    let record = run_cli_json::<Value>(cli, &["check", "show", &project_root, "--check-run", &id])?;
-    admit_record(empty, &id, &record)
+    let record = run_cli_json::<Value>(
+        cli,
+        &["check", "show", &project_root, "--check-run", &candidate.id],
+    )?;
+    admit_record(empty, &candidate, &record)
 }
 
-fn history_candidate(history: &Value) -> (CheckRunReviewState, Option<String>) {
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct HistoryCandidate {
+    id: String,
+    revision: String,
+}
+
+fn history_candidate(history: &Value) -> (CheckRunReviewState, Option<HistoryCandidate>) {
     let project = history
         .get("project_id")
         .and_then(Value::as_str)
@@ -49,27 +59,52 @@ fn history_candidate(history: &Value) -> (CheckRunReviewState, Option<String>) {
     {
         return (CheckRunReviewState::default(), None);
     }
-    let id = history
+    let runs = history
         .get("check_runs")
         .and_then(Value::as_array)
-        .and_then(|runs| {
-            runs.iter().rev().find(|run| {
-                run.get("project_id").and_then(Value::as_str) == project
-                    && run.get("model_revision").and_then(Value::as_str) == revision
-                    && run
-                        .get("check_run_id")
-                        .and_then(Value::as_str)
-                        .is_some_and(|id| uuid::Uuid::parse_str(id).is_ok())
-            })
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    let valid = |run: &&Value| {
+        run.get("project_id").and_then(Value::as_str) == project
+            && run
+                .get("model_revision")
+                .and_then(Value::as_str)
+                .is_some_and(|r| !r.is_empty())
+            && run
+                .get("check_run_id")
+                .and_then(Value::as_str)
+                .is_some_and(|id| uuid::Uuid::parse_str(id).is_ok())
+    };
+    // Retain actual historical evidence separately from currentness. Stable
+    // history order is not represented as chronological or current authority.
+    let selected = runs
+        .iter()
+        .rev()
+        .filter(valid)
+        .find(|run| run.get("model_revision").and_then(Value::as_str) == revision)
+        .or_else(|| {
+            runs.iter()
+                .rev()
+                .filter(valid)
+                .find(|run| run.get("profile_id").and_then(Value::as_str) == Some("erc"))
         })
-        .and_then(|run| run.get("check_run_id").and_then(Value::as_str))
-        .map(str::to_owned);
+        .or_else(|| runs.iter().rev().find(valid));
+    let id = selected.map(|run| HistoryCandidate {
+        id: run["check_run_id"]
+            .as_str()
+            .expect("validated identity")
+            .into(),
+        revision: run["model_revision"]
+            .as_str()
+            .expect("validated revision")
+            .into(),
+    });
     (empty, id)
 }
 
 fn admit_record(
     empty: CheckRunReviewState,
-    id: &str,
+    candidate: &HistoryCandidate,
     record: &Value,
 ) -> Result<CheckRunReviewState> {
     let run = record.get("check_run");
@@ -83,11 +118,11 @@ fn admit_record(
         || run
             .and_then(|run| run.get("model_revision"))
             .and_then(Value::as_str)
-            != empty.model_revision.as_deref()
+            != Some(candidate.revision.as_str())
         || run
             .and_then(|run| run.get("check_run_id"))
             .and_then(Value::as_str)
-            != Some(id)
+            != Some(candidate.id.as_str())
     {
         return Ok(empty);
     }

@@ -7,7 +7,13 @@
 use super::Runtime;
 
 impl Runtime {
+    pub(super) fn document_sources_changed(&mut self) {
+        self.render_sources.documents_changed();
+        self.renderer.render_session_mut().composition_changed();
+    }
+
     pub(super) fn invalidate_scene(&mut self) {
+        self.refresh_inspector_activity();
         self.render_sources.replaced();
         self.renderer.render_session_mut().clear_content();
     }
@@ -21,6 +27,7 @@ impl Runtime {
     }
 
     pub(super) fn invalidate_frame(&mut self) {
+        self.refresh_inspector_activity();
         self.renderer.render_session_mut().composition_changed();
         // Camera/layout/chrome changes rebuild the prepared projection only.
         // Schematic authored geometry is camera-independent retained world data,

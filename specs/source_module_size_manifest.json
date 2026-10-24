@@ -469,25 +469,25 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2842,
+        "pre_test_lines": 2780,
         "inline_test_lines": 1705
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending. ORG-05 moves eleven board-scene geometry/display payload types and their unchanged outline-layer default into scene_primitives, a normal typed implementation owner; root public exports retain API and serialization. Production ceiling ratchets from 3078 to 2940; inline tests 1705 remain unchanged. NPD-C03 moves the complete workspace constructor to workspace_state, its existing typed state owner; production ceiling 2940 to 2887, inline tests unchanged. NPD-C09 moves editor command definitions into the normal editor_commands owner; production ceiling ratchets to 2842 and inline tests stay unchanged."
+      "note": "Workspace loading owns companion schematic fallback as well as native projection. Worker-owned existing byte-qualified cache supplies the fresh projection basis; both publication guards retained. Production ceiling ratchets downward, inline tests unchanged. NSD-C03 extracts complete shared tool/gesture ownership into workspace_tools; native authoring consumer state stays modular. PM061 extracts substantive process/command ownership into normal child modules; exact measured ceilings ratchet downward. Remaining legacy debt stays open; runtime delivery review remains pending. ORG-05 moves eleven board-scene geometry/display payload types and their unchanged outline-layer default into scene_primitives, a normal typed implementation owner; root public exports retain API and serialization. Production ceiling ratchets from 3078 to 2940; inline tests 1705 remain unchanged. NPD-C03 moves the complete workspace constructor to workspace_state, its existing typed state owner; production ceiling 2940 to 2887, inline tests unchanged. NPD-C09 moves editor command definitions into the normal editor_commands owner; production ceiling ratchets to 2842 and inline tests stay unchanged. INSP-C03 moves complete consumer interaction methods into existing workspace_state owner; root stays smaller while registering qualified document views. Exact live ceiling ratcheted; no behavior/authority exemption."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 2657
+        "expanded_lines": 2647
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Shared typed pointer targets now live in the normal hit_target module. Preserve shared routing and remaining include debt; no ceiling increase. C04 fallback painter correction extracts complete declared RenderStage, shared stage walk and priority into real normal render_stage child of layer_stages; root bytes unchanged and include-expanded ceiling ratchets exactly to 3455. Existing IDs/material/visibility retained, no ceiling increase. C04 shared pane cue integration extracts complete proposal/preview and review geometry plus base/emphasis emission into the normal overlay_channels owner; exact include-expanded ceiling ratchets downward to 3177. Remaining include debt stays open; existing hits and paint law retained. NPD-C09 gives shell and recursive pane geometry the normal layout owner, localizes five unchanged test owners and gives shared test fixtures their normal test_support owner. Root physical lines shrink from 129 to 128 against the pre-C09 landing base; expanded ceiling ratchets exactly to 2657."
+      "note": "Shared typed pointer targets now live in the normal hit_target module. Preserve shared routing and remaining include debt; no ceiling increase. C04 fallback painter correction extracts complete declared RenderStage, shared stage walk and priority into real normal render_stage child of layer_stages; root bytes unchanged and include-expanded ceiling ratchets exactly to 3455. Existing IDs/material/visibility retained, no ceiling increase. C04 shared pane cue integration extracts complete proposal/preview and review geometry plus base/emphasis emission into the normal overlay_channels owner; exact include-expanded ceiling ratchets downward to 3177. Remaining include debt stays open; existing hits and paint law retained. NPD-C09 gives shell and recursive pane geometry the normal layout owner, localizes five unchanged test owners and gives shared test fixtures their normal test_support owner. Root physical lines shrink from 129 to 128 against the pre-C09 landing base; expanded ceiling ratchets exactly to 2657. INSP-C03 moves the complete qualified PreparedSurfacePass type into coordinate_hit, its existing projection/build owner; the include-expanded ceiling ratchets downward without an exception."
     },
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",

@@ -55,51 +55,61 @@ impl Default for LinuxTerminalAccessibilityBridge {
 }
 
 impl LinuxTerminalAccessibilityBridge {
-    pub(crate) fn update_selection(
+    pub(crate) fn update_workspace_selection(
         &mut self,
         view: Option<&datum_gui_protocol::selection_view::SelectionView>,
         pane: Option<datum_gui_protocol::PaneId>,
         evaluating: Option<(datum_gui_protocol::PaneId, usize)>,
         visual_lod: Option<datum_gui_render::SelectionVisualLod>,
+        inspection: Option<crate::selection_accessibility::workspace::WorkspaceInspection>,
     ) {
-        // Only the successful preparation owner supplies a new visual summary.
-        // Identical snapshots keep their prior report without noisy no-op events;
-        // changed subjects/revisions wait for current preparation.
+        let view = view.filter(|_| inspection.as_ref().is_none_or(|ui| ui.selection_visible));
         let visual_lod = visual_lod.or_else(|| {
             self.selection
                 .as_ref()
-                .filter(|previous| view.is_some_and(|view| previous.view.as_ref() == view))
+                .filter(|previous| previous.view.as_deref() == view)
                 .and_then(|previous| previous.visual_lod)
         });
-        let focused = pane.is_some();
-        if match (&self.selection, view) {
-            (Some(previous), Some(view)) => {
-                previous.pane == pane
-                    && previous.evaluating == evaluating
-                    && previous.visual_lod == visual_lod
-                    && previous.view.as_ref() == view
-            }
-            (None, None) => true,
-            _ => false,
-        } {
+        if self.selection.as_ref().is_some_and(|previous| {
+            previous.pane == pane
+                && previous.evaluating == evaluating
+                && previous.visual_lod == visual_lod
+                && previous.view.as_deref() == view
+                && previous.inspection.as_deref() == inspection.as_ref()
+        }) || (self.selection.is_none() && view.is_none() && inspection.is_none())
+        {
             return;
         }
         let shared_view = view.map(|view| {
             self.selection
                 .as_ref()
-                .filter(|previous| previous.view.as_ref() == view)
-                .map(|previous| previous.view.clone())
+                .and_then(|previous| previous.view.as_ref())
+                .filter(|previous| previous.as_ref() == view)
+                .cloned()
                 .unwrap_or_else(|| Arc::new(view.clone()))
         });
-        self.selection = shared_view.map(|view| {
-            crate::selection_accessibility::SelectionAccessibilitySnapshot {
-                view,
-                evaluating,
-                visual_lod,
-                focused,
-                pane,
-            }
+        let shared_inspection = inspection.map(|inspection| {
+            self.selection
+                .as_ref()
+                .and_then(|previous| previous.inspection.as_ref())
+                .filter(|previous| previous.as_ref() == &inspection)
+                .cloned()
+                .unwrap_or_else(|| Arc::new(inspection))
         });
+        self.selection = if shared_view.is_none() && shared_inspection.is_none() {
+            None
+        } else {
+            Some(
+                crate::selection_accessibility::SelectionAccessibilitySnapshot {
+                    view: shared_view,
+                    inspection: shared_inspection,
+                    evaluating,
+                    visual_lod,
+                    focused: pane.is_some(),
+                    pane,
+                },
+            )
+        };
         if !self.publish_platform {
             return;
         }
@@ -427,7 +437,8 @@ mod tests {
                     .as_ref()
                     .unwrap()
                     .view
-                    .as_ref(),
+                    .as_deref()
+                    .unwrap(),
                 view.as_ref()
             );
             if let Some(previous) = &previous {

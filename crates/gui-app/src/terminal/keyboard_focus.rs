@@ -85,7 +85,10 @@ pub(crate) fn key_route(
         (ApplicationFocus::Editor(_), _) => RouteDecision::Unrouted,
         // Overlay owners (marking menu) consume keys through their own guard
         // arms (e.g. the marking-menu Escape arm); no class routes here.
-        (ApplicationFocus::Overlay, _) => RouteDecision::Unrouted,
+        (
+            ApplicationFocus::Overlay | ApplicationFocus::Navigator | ApplicationFocus::Inspector,
+            _,
+        ) => RouteDecision::Unrouted,
     }
 }
 
@@ -230,6 +233,38 @@ impl Runtime {
             self.cancel_native_selection_gesture();
         }
         let report = terminal_focus_report_transition(self.application_focus(), focus);
+        let owner = match focus {
+            ApplicationFocus::Navigator => {
+                Some(datum_gui_protocol::inspector_context::InspectorOwner::Navigator)
+            }
+            ApplicationFocus::Editor(_) => {
+                Some(datum_gui_protocol::inspector_context::InspectorOwner::Selection)
+            }
+            _ => None,
+        };
+        if let Some(owner) = owner {
+            let state = self.session.workspace_mut();
+            if state.inspector_context.owner != owner {
+                state.ui.selection_inspector.reset_scroll();
+            }
+            state.inspector_context.owner = owner;
+        }
+        if focus == ApplicationFocus::Inspector {
+            let sections: Vec<_> =
+                datum_gui_protocol::inspector_context::InspectorContext::capture(self.workspace())
+                    .sections
+                    .iter()
+                    .map(|section| section.id)
+                    .collect();
+            if self
+                .workspace()
+                .inspector_context
+                .focused
+                .is_none_or(|id| !sections.contains(&id))
+            {
+                self.session.workspace_mut().inspector_context.focused = sections.first().copied();
+            }
+        }
         self.session.workspace_mut().ui.focus = focus;
         self.refresh_selection_accessibility();
         if focus != ApplicationFocus::Terminal {
@@ -278,6 +313,14 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         .is_some_and(|runtime| runtime.handle_menu_key(event))
     {
         app.request_redraw_if_needed();
+        return true;
+    }
+    if app
+        .runtime
+        .as_mut()
+        .is_some_and(|runtime| runtime.handle_schematic_navigation_key(event))
+    {
+        app.request_workspace_redraw();
         return true;
     }
     if app

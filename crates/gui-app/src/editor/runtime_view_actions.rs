@@ -9,6 +9,48 @@
 //! super::*`, exactly as the sibling runtime action modules do.
 
 use super::*;
+
+impl Runtime {
+    pub(super) fn capture_native_authoring_view(
+        &self,
+        pane: Option<datum_gui_protocol::PaneId>,
+    ) -> Result<datum_gui_protocol::AuthoringViewBasis, String> {
+        datum_gui_protocol::AuthoringViewBasis::capture(
+            self.workspace(),
+            pane.ok_or("Authoring requires the actual source pane")?,
+        )
+    }
+
+    pub(super) fn refuse_native_authoring_view(&mut self, reason: String) {
+        // A queued immutable canonical request is not redirected or cancelled.
+        if !self.native_edit.pending() {
+            self.cancel_native_schematic();
+            self.cancel_native_move();
+            self.session.workspace_mut().authoring.gesture.view_basis = None;
+        }
+        self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
+    }
+
+    pub(super) fn guard_native_authoring_view(
+        &mut self,
+        pane: Option<datum_gui_protocol::PaneId>,
+    ) -> bool {
+        let valid = pane.is_some_and(|pane| {
+            self.workspace()
+                .authoring
+                .gesture
+                .view_basis
+                .as_ref()
+                .is_some_and(|basis| basis.is_current(self.workspace(), pane))
+        });
+        if !valid {
+            self.refuse_native_authoring_view(
+                "Authoring view changed; restart in the supported source pane".into(),
+            );
+        }
+        valid
+    }
+}
 #[path = "runtime_view_actions/action_evidence.rs"]
 pub(crate) mod action_evidence;
 use action_evidence::EntrySurface;
@@ -36,6 +78,10 @@ impl Runtime {
             match action_registry::admit(action, self.workspace()) {
                 Ok(ActionHandler::OpenLibrary) => {
                     self.open_library();
+                    self.trace_action_attempt(action, surface, true);
+                }
+                Ok(ActionHandler::FocusNavigator) => {
+                    self.focus_schematic_navigator();
                     self.trace_action_attempt(action, surface, true);
                 }
                 Ok(ActionHandler::FitCamera) => {

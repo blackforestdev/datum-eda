@@ -1,5 +1,6 @@
 pub(crate) mod loading;
 pub mod marker;
+pub mod producer;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -157,7 +158,13 @@ pub fn check_run_review_state_from_json(payload: &str) -> Result<CheckRunReviewS
     Ok(match envelope.contract.as_deref() {
         Some("check_run_record_v1") => envelope
             .check_run
-            .map(|check_run| check_run.into_state(envelope.project_id, envelope.model_revision))
+            .map(|check_run| {
+                let mut state = check_run.into_state(envelope.project_id, envelope.model_revision);
+                // This contract is the resolver's persisted-record response;
+                // the canonical CheckRun shard has no redundant persisted flag.
+                state.persisted = true;
+                state
+            })
             .unwrap_or_default(),
         _ => CheckRunPayload {
             check_run_id: envelope.check_run_id,

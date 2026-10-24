@@ -130,11 +130,15 @@ fn actual_run_origin_deletion_reports_empty_and_undo_does_not_resurrect() {
     assert!(!current.authored_contains(&origin));
     let before = history(&root);
     let filters = next.ui.filters.clone();
+    let layout = next.ui.layout.clone();
+    let navigation = next.schematic_documents.navigation();
     let cleared = prepare_from_model(
         &mut next,
         Inputs {
             selected,
             filters,
+            layout,
+            navigation,
             prior: Some(previous),
         },
         model,
@@ -170,11 +174,15 @@ fn actual_run_origin_deletion_reports_empty_and_undo_does_not_resurrect() {
     assert!(authority.authored_contains(&origin));
     let before = history(&root);
     let filters = restored.ui.filters.clone();
+    let layout = restored.ui.layout.clone();
+    let navigation = restored.schematic_documents.navigation();
     let selection = prepare_from_model(
         &mut restored,
         Inputs {
             selected: cleared,
             filters,
+            layout,
+            navigation,
             prior: Some(current),
         },
         model,

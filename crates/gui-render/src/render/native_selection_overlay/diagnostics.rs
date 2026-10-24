@@ -19,9 +19,13 @@ pub(super) fn push(
     );
     let start = out.len();
     let hit_start = hits.len();
-    let anchors = marker::MarkerProjectionIndex::capture(scene, &state.checks, surface, |l| {
-        layer_visible(state, l)
-    });
+    let anchors = marker::MarkerProjectionIndex::capture_qualified(
+        scene,
+        &state.checks,
+        surface,
+        |l| layer_visible(state, l),
+        Some(&state.schematic_documents),
+    );
     for finding in &state.checks.findings {
         let Ok(point) = anchors.anchor(finding) else {
             continue;

@@ -21,6 +21,18 @@
 
 use super::*;
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct PreparedSurfacePass {
+    pub pane_id: datum_gui_protocol::PaneId,
+    pub surface: SceneSurface,
+    pub schematic_document: Option<datum_gui_protocol::schematic_documents::SchematicDocumentKey>,
+    pub scene_viewport: RectPx,
+    pub bounds: datum_gui_protocol::SceneBounds,
+    pub camera: CameraState,
+    pub grid_lod_previous: datum_gui_viewport::GridLodState,
+    pub grid_lod_resolved: datum_gui_viewport::GridLodState,
+}
+
 pub(crate) fn surface_pane_ids(
     shell: &ShellLayout,
     layout: &datum_gui_protocol::WorkspaceLayout,
@@ -61,7 +73,9 @@ pub(crate) fn build_surface_passes(
                 ),
                 datum_gui_protocol::PaneContent::Schematic => (
                     SceneSurface::Schematic,
-                    state.schematic_scene.as_ref()?.bounds.clone(),
+                    datum_gui_protocol::camera_scene_for_pane(state, pane.id)?
+                        .bounds
+                        .clone(),
                     schematic_camera,
                 ),
                 datum_gui_protocol::PaneContent::Library
@@ -70,6 +84,13 @@ pub(crate) fn build_surface_passes(
             Some(PreparedSurfacePass {
                 pane_id: pane.id,
                 surface,
+                schematic_document: if surface == SceneSurface::Schematic {
+                    datum_gui_protocol::camera_scene_for_pane(state, pane.id)?
+                        .schematic_document
+                        .clone()
+                } else {
+                    None
+                },
                 scene_viewport: pane.rect.scene,
                 bounds,
                 camera,
@@ -408,7 +429,15 @@ pub fn resolve_pane_hover(
         }
         Some((world_point, SceneSurface::Schematic)) => {
             let object_id = hit_id(
-                schematic_retained.and_then(|retained| retained.hit_test_world(world_point)),
+                prepared
+                    .surface_passes()
+                    .iter()
+                    .find(|pass| {
+                        pass.surface == SceneSurface::Schematic
+                            && pass.scene_viewport.contains(x, y)
+                    })
+                    .and_then(|pass| prepared.schematic_for_pass(pass, schematic_retained))
+                    .and_then(|retained| retained.hit_test_world(world_point)),
             );
             datum_gui_viewport::InteractionEngine::resolve(
                 datum_gui_protocol::PaneContent::Schematic,

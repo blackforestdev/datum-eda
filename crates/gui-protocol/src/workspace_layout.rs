@@ -368,7 +368,9 @@ impl WorkspaceLayout {
         self.split_focused_with(content, orientation, focus_new)
     }
 
-    fn split_focused_with(
+    /// Open a distinct configured projection using the one recursive pane tree.
+    /// Document identity/deduplication belongs to the shared document consumer.
+    pub fn split_focused_with(
         &mut self,
         content: PaneContent,
         orientation: SplitOrientation,

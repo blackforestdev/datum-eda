@@ -43,6 +43,30 @@ pub(super) fn append(view: &mut SelectionView, model: &DesignModel, board: Optio
         let key = id.id.to_string();
         let mut status = Status::Current;
         let pads = board["component_pads"][&key].as_array();
+        let mut land_patterns = BTreeMap::new();
+        let mut source_pads = 0usize;
+        if let Some(pads) = pads {
+            for pad in pads {
+                if let Some(source) = pad
+                    .get("source_binding")
+                    .and_then(|b| b.get("land_pattern"))
+                {
+                    let reference = serde_json::json!({
+                        "object_id": source.get("object_id"),
+                        "relative_path": source.get("relative_path"),
+                        "object_revision": source.get("object_revision"),
+                        "source_shard_id": source.get("source_shard_id"),
+                    });
+                    land_patterns.insert(reference.to_string(), reference);
+                    source_pads += 1;
+                }
+            }
+        }
+        view.values.entry(id.clone()).or_default().insert(
+            "library_land_pattern_sources".into(),
+            serde_json::json!({ "pad_count": pads.map_or(0, Vec::len),
+                "source_pad_count": source_pads, "sources": land_patterns.into_values().collect::<Vec<_>>() }),
+        );
         if let Some(pads) = pads.filter(|p| !p.is_empty()) {
             let part = serde_json::from_value(board["packages"][&key]["part"].clone());
             let package = serde_json::from_value(board["packages"][&key]["package"].clone());

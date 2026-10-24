@@ -305,6 +305,13 @@ impl ServiceState {
                 .map(|node| menus::path(&node.id)),
         );
         if self.selection.is_some() {
+            if self
+                .selection
+                .as_ref()
+                .is_some_and(|snapshot| snapshot.inspection.is_some())
+            {
+                paths.push(selection::NAVIGATOR.to_owned());
+            }
             paths.push(selection::PATH.to_owned());
         }
         paths

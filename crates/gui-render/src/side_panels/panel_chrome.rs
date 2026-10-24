@@ -3,6 +3,7 @@ use super::*;
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render(
+    state: &ReviewWorkspaceState,
     project_rect: RectPx,
     filters_rect: RectPx,
     inspector_rect: RectPx,
@@ -12,7 +13,14 @@ pub(super) fn render(
     text_runs: &mut Vec<TextRun>,
 ) {
     for (rect, title) in [
-        (project_rect, "PROJECT"),
+        (
+            project_rect,
+            if state.schematic_documents.project.is_some() {
+                "NAVIGATOR"
+            } else {
+                "PROJECT"
+            },
+        ),
         (filters_rect, "LAYERS"),
         (inspector_rect, "INSPECTOR"),
     ] {
@@ -32,6 +40,18 @@ pub(super) fn render(
             rect.y + UI_CARD_DIVIDER_Y,
             rect.width,
             PANEL_CARD_BORDER,
+        );
+    }
+    let focused = match state.ui.focus {
+        datum_gui_protocol::ApplicationFocus::Navigator => Some(project_rect),
+        datum_gui_protocol::ApplicationFocus::Inspector => Some(inspector_rect),
+        _ => None,
+    };
+    if let Some(rect) = focused {
+        crate::global_preferences_primitives::push_dashed_rect_border(
+            panel_quads,
+            rect,
+            TEXT_ACCENT,
         );
     }
     push_section_divider(

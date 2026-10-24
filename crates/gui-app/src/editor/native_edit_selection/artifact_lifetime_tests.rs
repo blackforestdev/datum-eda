@@ -93,6 +93,8 @@ fn prepare(
     let inputs = Inputs {
         selected: prior,
         filters: state.ui.filters.clone(),
+        layout: state.ui.layout.clone(),
+        navigation: state.schematic_documents.navigation(),
         prior: Some(previous),
     };
     prepare_from_model(state, inputs, model, Default::default())

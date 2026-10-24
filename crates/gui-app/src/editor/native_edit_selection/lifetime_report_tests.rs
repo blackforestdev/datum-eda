@@ -34,11 +34,15 @@ fn singleton_inspector_preserves_explicit_scope_through_refresh_and_revision_shr
         prior.scope = scope;
         let mut next = state.clone();
         let filters = next.ui.filters.clone();
+        let layout = next.ui.layout.clone();
+        let navigation = next.schematic_documents.navigation();
         let prepared = prepare_from_model(
             &mut next,
             Inputs {
                 selected: SelectionTarget::Native(Box::new(prior.clone())),
                 filters,
+                layout,
+                navigation,
                 prior: Some(previous.clone()),
             },
             Arc::new(f.model.clone()),
@@ -63,11 +67,15 @@ fn singleton_inspector_preserves_explicit_scope_through_refresh_and_revision_shr
     for prior in priors {
         let mut next = workspace(&f.model);
         let filters = next.ui.filters.clone();
+        let layout = next.ui.layout.clone();
+        let navigation = next.schematic_documents.navigation();
         let prepared = prepare_from_model(
             &mut next,
             Inputs {
                 selected: SelectionTarget::Native(Box::new(prior.clone())),
                 filters,
+                layout,
+                navigation,
                 prior: Some(previous.clone()),
             },
             Arc::new(f.model.clone()),
@@ -316,11 +324,15 @@ fn semantic_identity_retirement_reports_through_prepared_edit_and_shared_runtime
     let prepared = |f: &fixture::Fixture, previous, selected| {
         let mut next = workspace(&f.model);
         let filters = next.ui.filters.clone();
+        let layout = next.ui.layout.clone();
+        let navigation = next.schematic_documents.navigation();
         prepare_from_model(
             &mut next,
             Inputs {
                 selected,
                 filters,
+                layout,
+                navigation,
                 prior: Some(previous),
             },
             Arc::new(f.model.clone()),

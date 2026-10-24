@@ -48,7 +48,7 @@ impl Runtime {
         self.native_move_click(world, Some(target));
     }
     pub(crate) fn native_move_click(&mut self, world: PointNm, target: Option<String>) -> bool {
-        if self.native_edit.pending() || self.native_edit.blocked {
+        if self.native_edit.pending() || self.check_work.pending() || self.native_edit.blocked {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
                 "Wait for the current edit or reopen the Project after an unconfirmed outcome",
@@ -56,6 +56,12 @@ impl Runtime {
             return true;
         }
         if let Some(schematic) = self.native_edit.preview.as_ref().map(|p| p.is_schematic()) {
+            let pane = self
+                .last_cursor_pos
+                .and_then(|(x, y)| self.pane_at_screen(x, y));
+            if !self.guard_native_authoring_view(pane) {
+                return true;
+            }
             let surface = self.last_cursor_pos.and_then(|(x, y)| {
                 self.prepared_scene()
                     .and_then(|s| s.world_point_at_screen(x, y))
@@ -111,6 +117,20 @@ impl Runtime {
             );
             return true;
         };
+        let view_basis = match self.capture_native_authoring_view(
+            self.last_cursor_pos
+                .and_then(|(x, y)| self.pane_at_screen(x, y)),
+        ) {
+            Ok(basis) if basis.content == PaneContent::Board => basis,
+            Ok(_) => {
+                self.refuse_native_authoring_view("Move requires its Board source pane".into());
+                return true;
+            }
+            Err(reason) => {
+                self.refuse_native_authoring_view(reason);
+                return true;
+            }
+        };
         let preview = match FootprintMovePreview::begin(
             &self.workspace().scene,
             &target,
@@ -144,6 +164,7 @@ impl Runtime {
             world,
             target_object_id: Some(target),
         });
+        self.session.workspace_mut().authoring.gesture.view_basis = Some(view_basis);
         self.native_edit.preview_tip = self
             .workspace()
             .supervision
@@ -155,14 +176,18 @@ impl Runtime {
         true
     }
     fn begin_symbol_move(&mut self, id: datum_gui_protocol::AuthoredSelectionIdentity) {
-        if self.native_edit.pending() || self.native_edit.blocked || !self.native_edit_available() {
+        if self.native_edit.pending()
+            || self.check_work.pending()
+            || self.native_edit.blocked
+            || !self.native_edit_available()
+        {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
                 "Wait for the current edit or reopen the Project after an unconfirmed outcome",
             );
             return;
         }
-        let result = (|| -> Result<(NativeMovePreview, PointNm)> {
+        let result = (|| -> Result<(NativeMovePreview, PointNm, datum_gui_protocol::AuthoringViewBasis)> {
             let selected = match &self.workspace().selection {
                 datum_gui_protocol::SelectionTarget::Native(view) => view,
                 _ => anyhow::bail!("Select a current native Symbol before moving"),
@@ -190,6 +215,10 @@ impl Runtime {
                 surface == SceneSurface::Schematic,
                 "Move requires a cursor in the Schematic pane"
             );
+            let view_basis = self.capture_native_authoring_view(self.pane_at_screen(x,y))
+                .map_err(anyhow::Error::msg)?;
+            anyhow::ensure!(view_basis.content == PaneContent::Schematic,
+                "Move requires its schematic source pane");
             let root = self
                 .workspace()
                 .backing
@@ -206,14 +235,15 @@ impl Runtime {
                 self.workspace().authoring.snap,
                 root,
             )?;
-            Ok((preview, world))
+            Ok((preview, world, view_basis))
         })();
         match result {
-            Ok((preview, world)) => {
+            Ok((preview, world, view_basis)) => {
                 self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
                     world,
                     target_object_id: Some(format!("schematic-symbol:{}", id.id)),
                 });
+                self.session.workspace_mut().authoring.gesture.view_basis = Some(view_basis);
                 self.native_edit.preview_tip = self
                     .workspace()
                     .supervision

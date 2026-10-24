@@ -65,6 +65,9 @@ impl crate::Runtime {
             }
             return false;
         }
+        if let Some(changed) = self.handle_schematic_navigation_scroll(lines) {
+            return changed;
+        }
         if let Some(changed) = self.handle_selection_inspector_scroll(lines) {
             return changed;
         }

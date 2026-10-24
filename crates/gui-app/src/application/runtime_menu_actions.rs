@@ -349,6 +349,9 @@ impl Runtime {
         if let Some(action) = item.gui_local.as_deref() {
             return self.activate_gui_local_menu_action(action, surface);
         }
+        if item.is_guarded_erc() {
+            return self.start_erc_job();
+        }
         match item.verb.as_deref() {
             Some("datum.schematic.place_symbol") => return self.begin_native_schematic(false),
             Some("datum.schematic.draw_wire") => return self.begin_native_schematic(true),

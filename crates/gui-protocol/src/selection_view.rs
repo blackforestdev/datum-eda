@@ -50,6 +50,16 @@ impl InspectionValue {
         display_preview::value(self, columns)
     }
 }
+/// A presentation belongs to one source occurrence, even when primitive UUIDs repeat.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SchematicSelectionPresentation {
+    pub document: crate::schematic_documents::SchematicDocumentKey,
+    pub scene_id: String,
+    pub keys: BTreeSet<String>,
+    pub related: BTreeSet<String>,
+    pub owners: BTreeMap<String, Id>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SelectionView {
     pub project: crate::SelectionProjectId,
@@ -65,6 +75,8 @@ pub struct SelectionView {
     pub zone_regions: BTreeMap<String, Vec<Vec<crate::PointNm>>>,
     pub board_keys: BTreeSet<String>,
     pub schematic_keys: BTreeSet<String>,
+    #[serde(default)]
+    pub schematic_documents: Vec<SchematicSelectionPresentation>,
     #[serde(default)]
     pub board_presentations: BTreeMap<String, Id>,
     #[serde(default)]
@@ -201,7 +213,10 @@ impl SelectionView {
         }
         match surface {
             crate::PaneContent::Board => Some(&self.board_keys),
-            crate::PaneContent::Schematic => Some(&self.schematic_keys),
+            crate::PaneContent::Schematic => match &scene.schematic_document {
+                Some(_) => self.document_presentation(scene).map(|p| &p.keys),
+                None => Some(&self.schematic_keys),
+            },
             crate::PaneContent::Library | crate::PaneContent::Revision(_) => None,
         }
     }
@@ -224,6 +239,24 @@ pub fn build_selection_view(
     schematic: Option<&crate::BoardReviewSceneV1>,
     visible: impl Fn(&str) -> bool,
 ) -> Result<SelectionView, crate::selection_resolution::SelectionResolutionError> {
+    build_selection_view_for_documents(
+        model,
+        authority,
+        subject,
+        board,
+        &schematic.into_iter().collect::<Vec<_>>(),
+        visible,
+    )
+}
+
+pub fn build_selection_view_for_documents(
+    model: &eda_engine::substrate::DesignModel,
+    authority: &NativeSelectionResolution,
+    subject: SelectionSubject,
+    board: &crate::BoardReviewSceneV1,
+    schematics: &[&crate::BoardReviewSceneV1],
+    visible: impl Fn(&str) -> bool,
+) -> Result<SelectionView, crate::selection_resolution::SelectionResolutionError> {
     let projection = authority.resolve(&subject)?;
     let mut result = SelectionView {
         project: authority.project(),
@@ -238,6 +271,7 @@ pub fn build_selection_view(
         zone_regions: BTreeMap::new(),
         board_keys: BTreeSet::new(),
         schematic_keys: BTreeSet::new(),
+        schematic_documents: Vec::new(),
         board_presentations: BTreeMap::new(),
         schematic_presentations: BTreeMap::new(),
         related_board_keys: BTreeSet::new(),
@@ -352,91 +386,14 @@ pub fn build_selection_view(
                 .insert(id.clone(), properties::values(id.class, value));
         }
     }
-    let entry_sources: BTreeSet<_> = projection
-        .electrical
-        .as_ref()
-        .into_iter()
-        .flat_map(|e| e.owned.iter())
-        .filter(|e| e.class == "bus_entries" && e.instance_path.is_empty())
-        .map(|e| e.source_id.to_string())
-        .collect();
-    let mut rendered = BTreeSet::new();
-    let mut represented = BTreeSet::new();
-    for (scene, own, related, presentations) in std::iter::once((
+    let (represented, rendered) = presentation::compile(
+        &mut result,
+        authority,
+        projection.electrical.as_ref(),
         board,
-        &mut result.board_keys,
-        &mut result.related_board_keys,
-        &mut result.board_presentations,
-    ))
-    .chain(schematic.map(|scene| {
-        (
-            scene,
-            &mut result.schematic_keys,
-            &mut result.related_schematic_keys,
-            &mut result.schematic_presentations,
-        )
-    })) {
-        if scene.project_uuid != result.project.to_string()
-            || scene.source_revision != result.revision.0
-        {
-            continue;
-        }
-        for graphic in &scene.board_graphics {
-            if entry_sources.contains(&graphic.source_object_uuid) {
-                own.insert(graphic.object_id.clone());
-                // Only an engine-qualified owned entry can use its explicit
-                // source spine for whole-owner presentation LOD. It never
-                // becomes a separate selected member or scalar-net identity.
-                if let Some(entry) = authority
-                    .snapshot()
-                    .schematic_source()
-                    .and_then(|s| {
-                        scene
-                            .board_uuid
-                            .parse()
-                            .ok()
-                            .and_then(|id| s.sheets.get(&id))
-                    })
-                    .and_then(|sheet| {
-                        graphic
-                            .source_object_uuid
-                            .parse()
-                            .ok()
-                            .and_then(|id| sheet.bus_entries.get(&id))
-                    })
-                {
-                    let owner = Id {
-                        class: Class::BusSection,
-                        id: entry.bus,
-                        instance_path: vec![],
-                    };
-                    if result.members.contains(&owner) {
-                        presentations.insert(graphic.object_id.clone(), owner);
-                    }
-                }
-            }
-        }
-        let bindings = crate::selection_scene::SceneSelectionBindings::capture(scene, authority);
-        for (key, binding) in bindings.iter() {
-            for id in [&binding.projected, &binding.acquired] {
-                represented.insert(id.clone());
-                if binding.visible(&visible) {
-                    rendered.insert(id.clone());
-                }
-                if result.members.contains(id) {
-                    own.insert(key.to_owned());
-                    // Projected member wins when both it and its parent are
-                    // selected; repeated owned parts never mint a new member.
-                    presentations
-                        .entry(key.to_owned())
-                        .or_insert_with(|| id.clone());
-                }
-                if result.related.contains(id) {
-                    related.insert(key.to_owned());
-                }
-            }
-        }
-    }
+        schematics,
+        &visible,
+    );
     result.hidden = result
         .members
         .intersection(&represented)
@@ -499,9 +456,9 @@ pub fn build_selection_view(
         projection.board_run.as_ref(),
         projection.bus_run.as_ref(),
         board,
-        schematic,
+        schematics,
     );
-    net_coverage::append(&mut result, authority, board_source);
+    net_coverage::append(&mut result, authority, board_source, model);
     quantities::append(model, &mut result.inspection);
     inspector_labels::append(&mut result.inspection, &shards);
     Ok(result)

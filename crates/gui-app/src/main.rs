@@ -8,6 +8,8 @@ mod runtime_library;
 mod runtime_native_edit;
 #[path = "editor/runtime_schematic.rs"]
 mod runtime_schematic;
+#[path = "editor/runtime_schematic_navigation.rs"]
+mod runtime_schematic_navigation;
 #[path = "application/runtime_state.rs"]
 mod runtime_state;
 use anyhow::{Context, Result};
@@ -127,6 +129,8 @@ mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 #[path = "viewport/runtime_camera_pane.rs"]
 mod runtime_camera_pane;
+#[path = "editor/runtime_check_runs.rs"]
+mod runtime_check_runs;
 #[path = "viewport/runtime_geometry_helpers.rs"]
 mod runtime_geometry_helpers;
 #[path = "editor/runtime_hit_actions.rs"]
@@ -135,6 +139,8 @@ mod runtime_hit_actions;
 mod runtime_init;
 #[path = "application/runtime_menu_actions.rs"]
 mod runtime_menu_actions;
+#[path = "viewport/runtime_pane_lifecycle.rs"]
+mod runtime_pane_lifecycle;
 #[path = "rendering/runtime_present.rs"]
 mod runtime_present;
 #[path = "editor/runtime_primary_button.rs"]

@@ -29,6 +29,12 @@ impl Renderer {
             + self.world_strokes_gpu.pending_bytes()
             + self.schematic_world_vertices_gpu.pending_bytes()
             + self.schematic_world_strokes_gpu.pending_bytes()
+            + self
+                .qualified_schematic_gpu
+                .entries
+                .iter()
+                .map(|e| e.pending_bytes())
+                .sum::<usize>()
     }
 
     pub(crate) fn world_upload_sources_match(
@@ -55,7 +61,20 @@ impl Renderer {
                 && self.world_glyph_points_gpu.buffer().is_none()
                 && self.world_glyph_materials_gpu.buffer().is_none()
         };
+        let qualified_matches = prepared
+            .schematic_sources
+            .iter()
+            .filter(|(key, _, _)| key.is_some())
+            .all(|(_, _, scene)| self.qualified_schematic_gpu.get(scene).is_some());
+        let no_unused = self.qualified_schematic_gpu.entries.iter().all(|entry| {
+            prepared
+                .schematic_sources
+                .iter()
+                .any(|(key, _, scene)| key.is_some() && entry.matches(scene))
+        });
         board_matches
+            && qualified_matches
+            && no_unused
             && match crate::gpu_surface_pass::prepare_schematic_pass(prepared, schematic) {
                 Some(scene) => {
                     self.schematic_world_vertices_gpu
@@ -86,18 +105,27 @@ impl Renderer {
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
         self.publish_resource_consumers();
+        let world_streams = WORLD_STREAMS
+            .checked_add(
+                self.qualified_schematic_gpu
+                    .entries
+                    .len()
+                    .checked_mul(4)
+                    .ok_or_else(|| anyhow::anyhow!("document upload stream overflow"))?,
+            )
+            .ok_or_else(|| anyhow::anyhow!("world upload stream overflow"))?;
         let descriptor_bytes = crate::text_gpu::staging_vec::StagingVec::<
             crate::text_gpu::upload::BufferUpload<'_>,
-        >::capacity_bytes(WORLD_STREAMS)?;
+        >::capacity_bytes(world_streams)?;
         self.release_text_scratch_for(
             CHUNK_BYTES as u64
                 + descriptor_bytes
                 + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?
-                + crate::text_gpu::upload::destination_metadata_bytes(WORLD_STREAMS)?,
+                + crate::text_gpu::upload::destination_metadata_bytes(world_streams)?,
         );
         let mut remaining = CHUNK_BYTES;
         let mut uploads = crate::text_gpu::staging_vec::StagingVec::new(
-            WORLD_STREAMS,
+            world_streams,
             &self.atlas.staging_budget,
         )?;
         let counts = [
@@ -118,6 +146,13 @@ impl Renderer {
             self.schematic_glyph_materials_gpu
                 .append_chunk(&mut remaining, &mut uploads),
         ];
+        let mut document_counts = crate::text_gpu::staging_vec::StagingVec::new(
+            self.qualified_schematic_gpu.entries.len(),
+            &self.atlas.staging_budget,
+        )?;
+        for entry in self.qualified_schematic_gpu.entries.iter() {
+            document_counts.push(entry.append_chunk(&mut remaining, &mut uploads));
+        }
         let mut batch = crate::text_gpu::upload::batch(
             device,
             &self.atlas.owner,
@@ -139,12 +174,25 @@ impl Renderer {
             self.schematic_glyph_points_gpu.submission_ref(),
             self.schematic_glyph_materials_gpu.submission_ref(),
         ];
+        let mut document_resources = crate::text_gpu::staging_vec::StagingVec::new(
+            self.qualified_schematic_gpu
+                .entries
+                .len()
+                .checked_mul(4)
+                .ok_or_else(|| anyhow::anyhow!("document upload hold overflow"))?,
+            &self.atlas.staging_budget,
+        )?;
+        for entry in self.qualified_schematic_gpu.entries.iter() {
+            for resource in entry.refs() {
+                document_resources.push(resource);
+            }
+        }
         let (before, after) = self
             .begin_upload_measurement(device, "world")?
             .map_or((None, None), |(a, b)| (Some(a), Some(b)));
         let submission = queue.submit(before.into_iter().chain([batch.command()]).chain(after));
         batch.hold(queue);
-        queue.on_submitted_work_done(move || drop(resources));
+        queue.on_submitted_work_done(move || drop((resources, document_resources)));
         self.world_vertices_gpu.consume_chunk(counts[0]);
         self.world_strokes_gpu.consume_chunk(counts[1]);
         self.schematic_world_vertices_gpu.consume_chunk(counts[2]);
@@ -153,6 +201,14 @@ impl Renderer {
         self.world_glyph_materials_gpu.consume_chunk(counts[5]);
         self.schematic_glyph_points_gpu.consume_chunk(counts[6]);
         self.schematic_glyph_materials_gpu.consume_chunk(counts[7]);
+        for (entry, counts) in self
+            .qualified_schematic_gpu
+            .entries
+            .iter_mut()
+            .zip(document_counts.iter())
+        {
+            entry.consume_chunk(*counts);
+        }
         self.cold_world.active = self.pending_world_upload_bytes() != 0;
         self.cold_world.chunks += 1;
         self.cold_world.bytes += (CHUNK_BYTES - remaining) as u64;

@@ -83,11 +83,22 @@ impl Renderer {
             }
             pass.set_bind_group(0, &self.surface_scene_uniforms[index].bind_group, &[]);
             pass.set_bind_group(1, &binding.table, &[]);
+            let document_gpu = surface
+                .schematic_document
+                .as_ref()
+                .and_then(|_| prepared.schematic_for_pass(surface, None))
+                .and_then(|scene| self.qualified_schematic_gpu.get(scene));
+            if surface.schematic_document.is_some() && document_gpu.is_none() {
+                continue;
+            }
             let (quads, strokes) = match surface.surface {
                 SceneSurface::Board => (&self.world_vertices_gpu, &self.world_strokes_gpu),
-                SceneSurface::Schematic => (
-                    &self.schematic_world_vertices_gpu,
-                    &self.schematic_world_strokes_gpu,
+                SceneSurface::Schematic => document_gpu.map_or(
+                    (
+                        &self.schematic_world_vertices_gpu,
+                        &self.schematic_world_strokes_gpu,
+                    ),
+                    |gpu| (&gpu.vertices, &gpu.strokes),
                 ),
             };
             let (glyphs, materials) = match surface.surface {
@@ -95,9 +106,12 @@ impl Renderer {
                     &self.world_glyph_points_gpu,
                     &self.world_glyph_materials_gpu,
                 ),
-                SceneSurface::Schematic => (
-                    &self.schematic_glyph_points_gpu,
-                    &self.schematic_glyph_materials_gpu,
+                SceneSurface::Schematic => document_gpu.map_or(
+                    (
+                        &self.schematic_glyph_points_gpu,
+                        &self.schematic_glyph_materials_gpu,
+                    ),
+                    |gpu| (&gpu.points, &gpu.materials),
                 ),
             };
             for (kind, range) in self.surface_world_bundles[index].painter_ranges() {

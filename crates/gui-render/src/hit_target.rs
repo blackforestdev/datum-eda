@@ -4,6 +4,45 @@ use datum_gui_protocol::WorkspaceTool;
 pub use datum_gui_viewport::CameraState;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    InspectorSectionNavigation {
+        basis: datum_gui_protocol::inspector_context::InspectorNavigationBasis,
+        offsets: Vec<(
+            datum_gui_protocol::inspector_context::InspectorSectionId,
+            usize,
+        )>,
+        total: usize,
+        visible: usize,
+    },
+    InspectorSectionToggle {
+        section: datum_gui_protocol::inspector_context::InspectorSectionId,
+        basis: Option<datum_gui_protocol::inspector_context::InspectorActionBasis>,
+    },
+    InspectorRunErc(datum_gui_protocol::inspector_context::InspectorActionBasis),
+    InspectorContextScroll {
+        total: usize,
+        visible: usize,
+        basis: Option<datum_gui_protocol::inspector_context::InspectorActionBasis>,
+    },
+    FocusNavigator,
+    FocusInspector,
+    SchematicDocumentRow {
+        document: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
+        revision: String,
+    },
+    SchematicDocumentExpand {
+        document: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
+        revision: String,
+    },
+    SchematicDocumentOpen {
+        document: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
+        revision: String,
+    },
+    SchematicNavigatorScroll {
+        project: uuid::Uuid,
+        revision: String,
+        total: usize,
+        visible: usize,
+    },
     Library(datum_gui_protocol::library_browser::LibraryControl),
     SchematicPicker,
     SchematicLibraryPage(bool),

@@ -2,10 +2,11 @@
 use super::*;
 use datum_gui_protocol::{AuthoredSelectionClass as C, AuthoredSelectionIdentity};
 
-pub(super) fn candidates(
+pub(crate) fn candidates_for_occurrence(
     authority: &NativeSelectionResolution,
     schematic: bool,
     root_sheet: Option<datum_gui_protocol::SelectionProjectId>,
+    instance_path: &[datum_gui_protocol::SelectionProjectId],
 ) -> anyhow::Result<BTreeSet<AuthoredSelectionIdentity>> {
     let source = authority.snapshot().schematic_source();
     Ok(authority
@@ -36,7 +37,7 @@ pub(super) fn candidates(
             if !schematic {
                 return true;
             }
-            if !id.instance_path.is_empty() {
+            if id.instance_path != instance_path {
                 return false;
             }
             source

@@ -34,6 +34,8 @@ pub struct PaneId(pub u32);
 /// from `WorkspaceLayout::focused` alone.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ApplicationFocus {
+    Navigator,
+    Inspector,
     Editor(PaneId),
     Terminal,
     Overlay,

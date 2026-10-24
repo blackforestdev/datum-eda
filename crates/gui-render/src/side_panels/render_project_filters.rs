@@ -11,84 +11,94 @@ pub(super) fn render_project_and_filters_panel(
     hit_regions: &mut Vec<HitRegion>,
 ) {
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    // Project display slug: data strings render verbatim (mixed case); only
-    // panel/section TITLES stay uppercase.
-    draw_text(
-        &truncate_text(&state.scene.project_name, 24),
-        project_layout.project_name.x,
-        project_layout.project_name.y,
-        15.0,
-        TEXT_PRIMARY,
-        TextFace::UiStrong,
-        text_runs,
-    );
-    let scene_label = if state.scene.kind == "schematic_review_scene" {
-        "Schematic"
+    if state.schematic_documents.project.is_some() {
+        super::schematic_navigator::render(
+            state,
+            project_rect,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        );
     } else {
-        "Board"
-    };
-    // Suppress the scene-kind prefix when the board name would merely duplicate
-    // it (e.g. "Board · board"): show one clean label.
-    let board_name = state.scene.board_name.trim();
-    let board_line = if board_name.is_empty() || board_name.eq_ignore_ascii_case(scene_label) {
-        scene_label.to_string()
-    } else {
-        format!("{} · {}", scene_label, truncate_text(board_name, 18))
-    };
-    draw_text(
-        &board_line,
-        project_layout.board_name.x,
-        project_layout.board_name.y,
-        12.5,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    // (The selected net belongs to the Inspector, not the Project panel — the
-    // "Net <name>" line is removed here to keep the panel a clean project slug.)
-    let _ = project_layout.net;
-    // (Removed the source-shard health line + shard rows from the Project panel
-    // — provenance diagnostics that read as a debug HUD, not the designed tree.)
-    let _ = (project_layout.source_label, project_layout.source_rows);
-    let action_y = project_layout.fit_row.y;
-    let fit_board_rect = RectPx {
-        x: project_layout.fit_row.x,
-        y: action_y,
-        width: 72.0,
-        height: 20.0,
-    };
-    let fit_review_rect = RectPx {
-        x: project_layout.fit_row.x + 80.0,
-        y: action_y,
-        width: 92.0,
-        height: 20.0,
-    };
-    let fit_scene_label = if state.scene.kind == "schematic_review_scene" {
-        "FIT SCH"
-    } else {
-        "FIT BOARD"
-    };
-    for (rect, label, target) in [
-        (fit_board_rect, fit_scene_label, HitTarget::FitBoard),
-        (fit_review_rect, "FIT REVIEW", HitTarget::FitReviewTarget),
-    ] {
-        // REV-I10 gives this permanent Project-panel region to the expanded
-        // Revision Navigator. Fit remains available from View and keyboard
-        // commands; retaining a second button row here would overlap the
-        // owner-approved taxonomy.
-        let _ = (rect, label, target);
+        // Project display slug: data strings render verbatim (mixed case); only
+        // panel/section TITLES stay uppercase.
+        draw_text(
+            &truncate_text(&state.scene.project_name, 24),
+            project_layout.project_name.x,
+            project_layout.project_name.y,
+            15.0,
+            TEXT_PRIMARY,
+            TextFace::UiStrong,
+            text_runs,
+        );
+        let scene_label = if state.scene.kind == "schematic_review_scene" {
+            "Schematic"
+        } else {
+            "Board"
+        };
+        // Suppress the scene-kind prefix when the board name would merely duplicate
+        // it (e.g. "Board · board"): show one clean label.
+        let board_name = state.scene.board_name.trim();
+        let board_line = if board_name.is_empty() || board_name.eq_ignore_ascii_case(scene_label) {
+            scene_label.to_string()
+        } else {
+            format!("{} · {}", scene_label, truncate_text(board_name, 18))
+        };
+        draw_text(
+            &board_line,
+            project_layout.board_name.x,
+            project_layout.board_name.y,
+            12.5,
+            TEXT_SECONDARY,
+            TextFace::Ui,
+            text_runs,
+        );
+        // (The selected net belongs to the Inspector, not the Project panel — the
+        // "Net <name>" line is removed here to keep the panel a clean project slug.)
+        let _ = project_layout.net;
+        // (Removed the source-shard health line + shard rows from the Project panel
+        // — provenance diagnostics that read as a debug HUD, not the designed tree.)
+        let _ = (project_layout.source_label, project_layout.source_rows);
+        let action_y = project_layout.fit_row.y;
+        let fit_board_rect = RectPx {
+            x: project_layout.fit_row.x,
+            y: action_y,
+            width: 72.0,
+            height: 20.0,
+        };
+        let fit_review_rect = RectPx {
+            x: project_layout.fit_row.x + 80.0,
+            y: action_y,
+            width: 92.0,
+            height: 20.0,
+        };
+        let fit_scene_label = if state.scene.kind == "schematic_review_scene" {
+            "FIT SCH"
+        } else {
+            "FIT BOARD"
+        };
+        for (rect, label, target) in [
+            (fit_board_rect, fit_scene_label, HitTarget::FitBoard),
+            (fit_review_rect, "FIT REVIEW", HitTarget::FitReviewTarget),
+        ] {
+            // REV-I10 gives this permanent Project-panel region to the expanded
+            // Revision Navigator. Fit remains available from View and keyboard
+            // commands; retaining a second button row here would overlap the
+            // owner-approved taxonomy.
+            let _ = (rect, label, target);
+        }
+        // (Removed the READ-ONLY BOARD VIEW / "Select objects…" / IMPORT VIEW notices
+        // from the Project panel — the read-only state is already conveyed by the empty
+        // inspector and disabled menu items; these lines read as HUD clutter and are not
+        // part of the designed panel.)
+        let _ = (
+            project_layout.tool_label,
+            project_layout.tool_grid,
+            project_layout.import_notice,
+        );
+        // (Removed the "LAST <action>" command-status line — terminal/debug noise.)
+        let _ = project_layout.last_status;
     }
-    // (Removed the READ-ONLY BOARD VIEW / "Select objects…" / IMPORT VIEW notices
-    // from the Project panel — the read-only state is already conveyed by the empty
-    // inspector and disabled menu items; these lines read as HUD clutter and are not
-    // part of the designed panel.)
-    let _ = (
-        project_layout.tool_label,
-        project_layout.tool_grid,
-        project_layout.import_notice,
-    );
-    // (Removed the "LAST <action>" command-status line — terminal/debug noise.)
-    let _ = project_layout.last_status;
     crate::hit_clipping::clip_content(
         panel_quads,
         text_runs,

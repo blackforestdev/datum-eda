@@ -518,7 +518,7 @@ pub(super) fn terminal_launch_context_from_state(
         production_status: state.production.clone(),
         source_shard_status: state.source_shards.clone(),
         check_status: state.checks.clone(),
-        selection_context: DatumSelectionContext::from_selection(&state.selection),
+        selection_context: DatumSelectionContext::from_workspace(state),
         cursor_context: DatumCursorContext {
             screen_px: None,
             hovered_object_id: state

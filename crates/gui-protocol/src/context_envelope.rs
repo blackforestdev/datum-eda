@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{SceneBounds, SelectionTarget};
+mod inspector_context;
 mod selection_inspection;
+pub use inspector_context::{DatumInspectorContext, DatumInspectorField, DatumInspectorSection};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -51,35 +53,49 @@ pub struct DatumToolSessionMetadata {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DatumSelectionContext {
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub inspector: Option<DatumInspectorContext>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub details: Option<NativeSelectionContext>,
     pub kind: String,
     pub id: Option<String>,
 }
 
 impl DatumSelectionContext {
+    pub fn from_workspace(state: &crate::ReviewWorkspaceState) -> Self {
+        let mut selected = Self::from_selection(&state.selection);
+        if state.schematic_documents.project.is_some() {
+            selected.inspector = Some(DatumInspectorContext::capture(state, &selected));
+        }
+        selected
+    }
     pub fn from_selection(selection: &SelectionTarget) -> Self {
         match selection {
             SelectionTarget::Native(view) => Self {
+                inspector: None,
                 kind: view.subject.kind().into(),
                 id: None,
                 details: Some(NativeSelectionContext::from_view(view)),
             },
             SelectionTarget::None => Self {
+                inspector: None,
                 details: None,
                 kind: "none".to_string(),
                 id: None,
             },
             SelectionTarget::ReviewAction(id) => Self {
+                inspector: None,
                 details: None,
                 kind: "review_action".to_string(),
                 id: Some(id.clone()),
             },
             SelectionTarget::AuthoredObject(id) => Self {
+                inspector: None,
                 details: None,
                 kind: "authored_object".to_string(),
                 id: Some(id.clone()),
             },
             SelectionTarget::CheckFinding(id) => Self {
+                inspector: None,
                 details: None,
                 kind: "check_finding".to_string(),
                 id: Some(id.clone()),
@@ -129,6 +145,7 @@ mod tests {
         assert_eq!(
             DatumSelectionContext::from_selection(&SelectionTarget::None),
             DatumSelectionContext {
+                inspector: None,
                 details: None,
                 kind: "none".to_string(),
                 id: None
@@ -139,6 +156,7 @@ mod tests {
                 "route-action".to_string()
             )),
             DatumSelectionContext {
+                inspector: None,
                 details: None,
                 kind: "review_action".to_string(),
                 id: Some("route-action".to_string())
@@ -149,6 +167,7 @@ mod tests {
                 "board-text".to_string()
             )),
             DatumSelectionContext {
+                inspector: None,
                 details: None,
                 kind: "authored_object".to_string(),
                 id: Some("board-text".to_string())
@@ -159,6 +178,7 @@ mod tests {
                 "sha256:finding-a".to_string()
             )),
             DatumSelectionContext {
+                inspector: None,
                 details: None,
                 kind: "check_finding".to_string(),
                 id: Some("sha256:finding-a".to_string())

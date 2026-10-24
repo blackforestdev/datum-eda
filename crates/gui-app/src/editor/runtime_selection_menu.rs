@@ -23,7 +23,8 @@ impl Runtime {
         let Some((world_point, surface)) = world_point else {
             return false;
         };
-        let basis = match self.native_binding_basis(surface) {
+        let pane = self.pane_at_screen(x, y);
+        let basis = match self.native_binding_basis(surface, pane) {
             Ok(basis) => basis,
             Err(error) => {
                 self.selection_notice(error.to_string());
@@ -35,7 +36,9 @@ impl Runtime {
         }
         let retained = match surface {
             SceneSurface::Board => self.renderer.render_session().board(),
-            SceneSurface::Schematic => self.renderer.render_session().schematic(),
+            SceneSurface::Schematic => {
+                pane.and_then(|pane| self.renderer.render_session().schematic_for_pane(pane))
+            }
         };
         let Some(retained) = retained else {
             return false;

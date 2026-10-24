@@ -11,6 +11,31 @@ use datum_gui_protocol::{
 use std::collections::BTreeSet;
 mod inventory_label;
 
+pub(super) fn render_workspace(
+    state: &ReviewWorkspaceState,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+    hits: &mut Vec<HitRegion>,
+) -> anyhow::Result<Option<RectPx>> {
+    let context = datum_gui_protocol::inspector_context::InspectorContext::capture(state);
+    if let Some(view) = context.view {
+        render_impl(
+            view,
+            &state.ui.selection_inspector,
+            &state.ui.filters.excluded_selection_classes,
+            rect,
+            quads,
+            text,
+            hits,
+            Some((&context, state)),
+        )
+    } else {
+        super::inspector_sections::render_document(state, &context, rect, quads, text, hits)?;
+        Ok(None)
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render(
     view: &SelectionView,
@@ -20,6 +45,23 @@ pub(super) fn render(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
+) -> anyhow::Result<Option<RectPx>> {
+    render_impl(view, navigation, excluded, rect, quads, text, hits, None)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn render_impl(
+    view: &SelectionView,
+    navigation: &SelectionInspectorState,
+    excluded: &BTreeSet<Class>,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+    hits: &mut Vec<HitRegion>,
+    context: Option<(
+        &datum_gui_protocol::inspector_context::InspectorContext<'_>,
+        &ReviewWorkspaceState,
+    )>,
 ) -> anyhow::Result<Option<RectPx>> {
     let title = view.inspector_title();
     push_inspector_title_band(
@@ -45,6 +87,11 @@ pub(super) fn render(
         *counts.entry(id.class).or_insert(0usize) += 1;
     }
     let fields = view.fields();
+    let section_rows = context
+        .map(|(context, state)| {
+            super::inspector_sections::rows(context, &state.inspector_context, rect.width)
+        })
+        .transpose()?;
     let notice_lines = view
         .notice
         .as_deref()
@@ -68,7 +115,7 @@ pub(super) fn render(
         + 1
         + 1
         + counts.len()
-        + fields.len()
+        + section_rows.as_ref().map_or(fields.len(), Vec::len)
         + 1
         + if navigation.inventory_expanded {
             view.scoped_members()
@@ -84,14 +131,41 @@ pub(super) fn render(
             0
         };
     let start = navigation.scroll_offset.min(total.saturating_sub(visible));
+    let selection_basis =
+        datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(
+            view, navigation,
+        );
     let scroll_hit = hits.len();
     let mut visible_members = Vec::new();
     hits.push(HitRegion {
         rect: body,
         target: HitTarget::SelectionInspectorScroll {
-            total, visible, sidebar: [0;4], visible_members: Vec::new(),
-            basis: datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation),
+            total,
+            visible,
+            sidebar: [0; 4],
+            visible_members: Vec::new(),
+            basis: selection_basis.clone(),
         },
+    });
+    let section_navigation_hit = context.map(|(context, state)| {
+        let index = hits.len();
+        hits.push(HitRegion {
+            rect: body,
+            target: HitTarget::InspectorSectionNavigation {
+                basis: datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
+                    state,
+                    context,
+                    Some(selection_basis),
+                ),
+                offsets: section_rows
+                    .as_ref()
+                    .map(|rows| super::inspector_sections::offsets(rows))
+                    .unwrap_or_default(),
+                total,
+                visible,
+            },
+        });
+        index
     });
     let columns = ((rect.width - 24.0).max(0.0) / (11.0 * 0.58)).floor() as usize;
     let row_index = std::cell::Cell::new(0usize);
@@ -102,42 +176,18 @@ pub(super) fn render(
         if index < start || index >= start + visible {
             return;
         }
-        let y = body.y + (index - start) as f32 * 22.0;
-        let hit = RectPx {
-            x: rect.x + 10.0,
-            y,
-            width: (rect.width - 20.0).max(0.0),
-            height: 22.0,
-        };
-        // Row one is reserved for the final camera-qualified presentation
-        // summary. Return typed chrome geometry, never identify rows by text.
         if index == 1 {
-            visual_row.set(Some(hit));
+            visual_row.set(Some(RectPx {
+                x: rect.x + 10.0,
+                y: body.y + (index - start) as f32 * 22.0,
+                width: (rect.width - 20.0).max(0.0),
+                height: 22.0,
+            }));
             return;
         }
-        if active {
-            push_rect_border(quads, hit, TEXT_ACCENT, 1.0);
-        }
-        if let Some(target) = target {
-            hits.push(HitRegion { rect: hit, target });
-        }
-        let label = if complete {
-            std::borrow::Cow::Borrowed(label)
-        } else {
-            std::borrow::Cow::Owned(truncate_text(label, columns))
-        };
-        draw_text(
-            &label,
-            rect.x + 12.0,
-            y + 3.0,
-            11.0,
-            if active { TEXT_ACCENT } else { TEXT_PRIMARY },
-            TextFace::Ui,
-            text,
+        super::inspector_sections::paint_row(
+            rect, body, index, start, visible, label, target, active, complete, quads, text, hits,
         );
-        let run = text.last_mut().expect("visible Inspector row");
-        run.clip_bounds = Some(hit);
-        run.layout_size = Some(((hit.width - 2.0).max(0.0), 18.0));
     };
     row(
         &format!(
@@ -215,18 +265,41 @@ pub(super) fn render(
             false,
         );
     }
-    for field in fields {
-        if row_index.get() < start || row_index.get() >= start + visible {
-            row("", None, false, false);
-            continue;
+    let section_start = row_index.get();
+    if let Some(section_rows) = section_rows {
+        for section_row in section_rows {
+            if row_index.get() < start || row_index.get() >= start + visible {
+                row("", None, false, false);
+                continue;
+            }
+            if let Some(field) = section_row.native_field {
+                let name = truncate_text(&section_row.label, columns / 2);
+                let value = view
+                    .field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
+                row(&format!("{name}: {value}"), None, false, false);
+            } else {
+                row(
+                    &section_row.label,
+                    section_row.target,
+                    section_row.active,
+                    true,
+                );
+            }
         }
-        let name = truncate_text(
-            &datum_gui_protocol::selection_view::field_label(field),
-            columns / 2,
-        );
-        let value =
-            view.field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
-        row(&format!("{name}: {value}"), None, false, false);
+    } else {
+        for field in fields {
+            if row_index.get() < start || row_index.get() >= start + visible {
+                row("", None, false, false);
+                continue;
+            }
+            let name = truncate_text(
+                &datum_gui_protocol::selection_view::field_label(field),
+                columns / 2,
+            );
+            let value =
+                view.field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
+            row(&format!("{name}: {value}"), None, false, false);
+        }
     }
     row(
         &format!(
@@ -302,6 +375,13 @@ pub(super) fn render(
                 false,
                 false,
             );
+        }
+    }
+    if let Some(index) = section_navigation_hit {
+        if let HitTarget::InspectorSectionNavigation { offsets, .. } = &mut hits[index].target {
+            for (_, offset) in offsets {
+                *offset += section_start;
+            }
         }
     }
     if let HitTarget::SelectionInspectorScroll {

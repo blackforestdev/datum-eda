@@ -10,9 +10,11 @@ mod panel_chrome;
 include!("side_panels/layout.rs");
 mod helpers;
 mod inspector_chrome;
+mod inspector_sections;
 mod render_inspector;
 mod render_project_filters;
 mod review_actions;
+mod schematic_navigator;
 mod selection_inspector;
 use helpers::*;
 pub(super) fn render_side_panels(
@@ -101,6 +103,7 @@ fn render_side_panels_logical(
         .unwrap_or_else(|| fallback_right_panel_layout(state, right));
     let (inspector_rect, review_rect) = review_actions::split(state, right_layout.inspector_rect);
     panel_chrome::render(
+        state,
         project_rect,
         filters_rect,
         inspector_rect,
@@ -109,6 +112,22 @@ fn render_side_panels_logical(
         panel_quads,
         text_runs,
     );
+    if state.schematic_documents.project.is_some() {
+        hit_regions.push(HitRegion {
+            rect: RectPx {
+                height: UI_CARD_CONTENT_TOP,
+                ..project_rect
+            },
+            target: HitTarget::FocusNavigator,
+        });
+    }
+    hit_regions.push(HitRegion {
+        rect: RectPx {
+            height: UI_CARD_CONTENT_TOP,
+            ..inspector_rect
+        },
+        target: HitTarget::FocusInspector,
+    });
     render_project_filters::render_project_and_filters_panel(
         state,
         &project_layout,

@@ -2,6 +2,9 @@
 use super::*;
 impl Runtime {
     pub(super) fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
+        if let Some(handled) = self.activate_schematic_navigation_target(target) {
+            return handled;
+        }
         if self.activate_folder_browser_hit(target) {
             return true;
         }
@@ -35,9 +38,23 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::InspectorSectionToggle { .. }
+            | HitTarget::InspectorRunErc(_)
+            | HitTarget::InspectorContextScroll { .. }
+            | HitTarget::InspectorSectionNavigation { .. } => {
+                unreachable!("Inspector controls return above")
+            }
             HitTarget::ProjectOpenModal
             | HitTarget::ProjectOpenCancel
             | HitTarget::ProjectOpenConfirm => unreachable!("Open targets return above"),
+            HitTarget::FocusNavigator
+            | HitTarget::FocusInspector
+            | HitTarget::SchematicDocumentRow { .. }
+            | HitTarget::SchematicDocumentExpand { .. }
+            | HitTarget::SchematicDocumentOpen { .. }
+            | HitTarget::SchematicNavigatorScroll { .. } => {
+                unreachable!("document controls return above")
+            }
             HitTarget::Library(control) => self.activate_library(control.clone()),
             HitTarget::SchematicPicker
             | HitTarget::SchematicLibraryPage(_)

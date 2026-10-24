@@ -1,13 +1,3 @@
-#[derive(Debug, Clone, PartialEq)]
-pub struct PreparedSurfacePass {
-    pub pane_id: datum_gui_protocol::PaneId,
-    pub surface: SceneSurface,
-    pub scene_viewport: RectPx,
-    pub bounds: datum_gui_protocol::SceneBounds,
-    pub camera: CameraState,
-    pub grid_lod_previous: datum_gui_viewport::GridLodState,
-    pub grid_lod_resolved: datum_gui_viewport::GridLodState,
-}
 /// Inspectable placement proof for the one visible focused-pane Console strip.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ConsoleOverlayLayout {

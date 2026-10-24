@@ -120,26 +120,39 @@ impl Renderer {
             .enumerate()
         {
             let bind_group = &binding.bind_group;
-            let commands = prepared.surface_draw_commands(surface.surface, schematic);
+            let commands = prepared.draw_commands_for_pass(surface, schematic);
+            let document_gpu = surface
+                .schematic_document
+                .as_ref()
+                .and_then(|_| prepared.schematic_for_pass(surface, None))
+                .and_then(|scene| self.qualified_schematic_gpu.get(scene));
             let (vertex, stroke) = match surface.surface {
                 SceneSurface::Board => (
                     self.world_vertices_gpu.buffer(),
                     self.world_strokes_gpu.buffer(),
                 ),
-                SceneSurface::Schematic => (
-                    self.schematic_world_vertices_gpu.buffer(),
-                    self.schematic_world_strokes_gpu.buffer(),
-                ),
+                SceneSurface::Schematic => match document_gpu {
+                    Some(gpu) => (gpu.vertices.buffer(), gpu.strokes.buffer()),
+                    None if surface.schematic_document.is_none() => (
+                        self.schematic_world_vertices_gpu.buffer(),
+                        self.schematic_world_strokes_gpu.buffer(),
+                    ),
+                    None => (None, None),
+                },
             };
             let (glyph, material) = match surface.surface {
                 SceneSurface::Board => (
                     self.world_glyph_points_gpu.buffer(),
                     self.world_glyph_materials_gpu.buffer(),
                 ),
-                SceneSurface::Schematic => (
-                    self.schematic_glyph_points_gpu.buffer(),
-                    self.schematic_glyph_materials_gpu.buffer(),
-                ),
+                SceneSurface::Schematic => match document_gpu {
+                    Some(gpu) => (gpu.points.buffer(), gpu.materials.buffer()),
+                    None if surface.schematic_document.is_none() => (
+                        self.schematic_glyph_points_gpu.buffer(),
+                        self.schematic_glyph_materials_gpu.buffer(),
+                    ),
+                    None => (None, None),
+                },
             };
             if let Some(cached) = self.surface_world_bundles.get_mut(index)
                 && cached.matches(vertex, stroke, glyph, material, bind_group, commands)
@@ -206,12 +219,21 @@ impl Renderer {
                     self.world_glyph_points_gpu.prepared_ref(),
                     self.world_glyph_materials_gpu.prepared_ref(),
                 ],
-                SceneSurface::Schematic => [
-                    self.schematic_world_vertices_gpu.prepared_ref(),
-                    self.schematic_world_strokes_gpu.prepared_ref(),
-                    self.schematic_glyph_points_gpu.prepared_ref(),
-                    self.schematic_glyph_materials_gpu.prepared_ref(),
-                ],
+                SceneSurface::Schematic => match document_gpu {
+                    Some(gpu) => [
+                        gpu.vertices.prepared_ref(),
+                        gpu.strokes.prepared_ref(),
+                        gpu.points.prepared_ref(),
+                        gpu.materials.prepared_ref(),
+                    ],
+                    None if surface.schematic_document.is_none() => [
+                        self.schematic_world_vertices_gpu.prepared_ref(),
+                        self.schematic_world_strokes_gpu.prepared_ref(),
+                        self.schematic_glyph_points_gpu.prepared_ref(),
+                        self.schematic_glyph_materials_gpu.prepared_ref(),
+                    ],
+                    None => [None, None, None, None],
+                },
             }
             .into_iter()
             .enumerate()

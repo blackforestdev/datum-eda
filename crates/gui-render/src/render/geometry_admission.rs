@@ -13,6 +13,7 @@ pub struct PreparedSourceIdentities {
     pub terminal_sessions: Vec<String>,
     pub board: PreparedSourceIdentity,
     pub schematic: Option<PreparedSourceIdentity>,
+    pub schematic_panes: Vec<(datum_gui_protocol::PaneId, PreparedSourceIdentity)>,
 }
 impl PreparedSourceIdentities {
     pub(crate) fn observe(
@@ -38,6 +39,20 @@ impl PreparedSourceIdentities {
                     .collect(),
                 board: identity(&state.scene),
                 schematic: state.schematic_scene.as_ref().map(identity),
+                schematic_panes: state
+                    .ui
+                    .layout
+                    .leaves()
+                    .into_iter()
+                    .filter(|pane| {
+                        state.ui.layout.content_for(*pane)
+                            == Some(datum_gui_protocol::PaneContent::Schematic)
+                    })
+                    .filter_map(|pane| {
+                        datum_gui_protocol::camera_scene_for_pane(state, pane)
+                            .map(|scene| (pane, identity(scene)))
+                    })
+                    .collect(),
             })
         })
     }
@@ -151,32 +166,33 @@ impl PreparedScene {
         board: &'a RetainedScene,
         schematic: Option<&'a RetainedScene>,
     ) -> impl Iterator<Item = PreparedGeometryAdmission<'a>> + 'a {
-        self.surface_passes
-            .iter()
-            .map(|pass| (pass.pane_id, pass.surface, pass.scene_viewport))
-            .map(move |(pane_id, surface, viewport)| {
-                let commands = self.surface_draw_commands(surface, schematic);
-                let (retained, source) = match surface {
-                    SceneSurface::Board => (
-                        Some(board),
-                        self.admission_sources.as_ref().map(|s| &s.board),
-                    ),
-                    SceneSurface::Schematic => (
-                        schematic,
-                        self.admission_sources
-                            .as_ref()
-                            .and_then(|s| s.schematic.as_ref()),
-                    ),
-                };
-                PreparedGeometryAdmission {
-                    pane_id,
-                    surface,
-                    viewport,
-                    source,
-                    retained,
-                    commands,
-                }
-            })
+        self.surface_passes.iter().map(move |pass| {
+            let (pane_id, surface, viewport) = (pass.pane_id, pass.surface, pass.scene_viewport);
+            let commands = self.draw_commands_for_pass(pass, schematic);
+            let (retained, source) = match surface {
+                SceneSurface::Board => (
+                    Some(board),
+                    self.admission_sources.as_ref().map(|s| &s.board),
+                ),
+                SceneSurface::Schematic => (
+                    self.schematic_for_pass(pass, schematic),
+                    self.admission_sources.as_ref().and_then(|s| {
+                        s.schematic_panes
+                            .iter()
+                            .find(|(pane, _)| *pane == pane_id)
+                            .map(|(_, source)| source)
+                    }),
+                ),
+            };
+            PreparedGeometryAdmission {
+                pane_id,
+                surface,
+                viewport,
+                source,
+                retained,
+                commands,
+            }
+        })
     }
 }
 

@@ -21,6 +21,9 @@ pub struct BoardReviewSceneV1 {
     pub board_name: String,
     pub units: String,
     pub source_revision: String,
+    /// Transient, engine-qualified view context; never an authored Sheet subject.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub schematic_document: Option<crate::schematic_documents::SchematicDocumentKey>,
     #[serde(default)]
     pub pad_expansion_setup: ScenePadExpansionSetup,
     pub bounds: SceneBounds,

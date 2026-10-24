@@ -10,7 +10,7 @@ impl Runtime {
                 "Wait for the submitted folder action to finish before opening a Project"
             );
             anyhow::ensure!(
-                !self.native_edit.pending(),
+                !self.native_edit.pending() && !self.check_work.pending(),
                 "Wait for the current Project edit before opening another Project"
             );
             anyhow::ensure!(

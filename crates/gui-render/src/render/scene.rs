@@ -15,7 +15,7 @@ mod shell_identity;
 // Per-pane coordinate + hit resolution stays a child module with private scene access.
 #[path = "coordinate_hit.rs"]
 mod coordinate_hit;
-pub use coordinate_hit::resolve_pane_hover;
+pub use coordinate_hit::{PreparedSurfacePass, resolve_pane_hover};
 
 // S4 interaction overlays and status stay child modules with private geometry access.
 mod hit_clipping;

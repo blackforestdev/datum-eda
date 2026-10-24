@@ -42,11 +42,37 @@ pub struct SceneSelectionBindings {
 }
 impl SceneSelectionBindings {
     pub fn capture(scene: &BoardReviewSceneV1, authority: &NativeSelectionResolution) -> Self {
+        if let Some(document) = &scene.schematic_document {
+            use crate::selection_resolution::SelectionAuthority;
+            if document.project != authority.project()
+                || scene.project_uuid != document.project.to_string()
+                || scene.source_revision != authority.revision().0
+                || scene.board_uuid != document.source_sheet.to_string()
+                || authority
+                    .snapshot()
+                    .schematic_source()
+                    .is_none_or(|s| s.uuid != document.schematic)
+            {
+                return Self::default();
+            }
+            Self::capture_for_occurrence(scene, authority, &document.instance_path)
+        } else {
+            // Existing unqualified DTOs retain their original compatibility;
+            // production document consumers must require their explicit key.
+            Self::capture_for_occurrence(scene, authority, &[])
+        }
+    }
+
+    pub fn capture_for_occurrence(
+        scene: &BoardReviewSceneV1,
+        authority: &NativeSelectionResolution,
+        instance_path: &[uuid::Uuid],
+    ) -> Self {
         let mut result = Self::default();
         let sources: BTreeMap<_, _> = authority
             .authored_identities()
             .iter()
-            .filter(|id| id.instance_path.is_empty())
+            .filter(|id| id.instance_path == instance_path)
             .map(|id| (id.id, id))
             .collect();
         let parents: BTreeMap<_, _> = authority
@@ -74,7 +100,7 @@ impl SceneSelectionBindings {
             let projected = Id {
                 class,
                 id: uuid,
-                instance_path: vec![],
+                instance_path: instance_path.to_vec(),
             };
             if !authority.authored_contains(&projected) {
                 return;
@@ -86,7 +112,7 @@ impl SceneSelectionBindings {
                 Id {
                     class,
                     id: uuid,
-                    instance_path: vec![],
+                    instance_path: instance_path.to_vec(),
                 }
             } else if class == Class::Pin {
                 let Some(parent) = parents.get(&uuid) else {
@@ -95,7 +121,7 @@ impl SceneSelectionBindings {
                 Id {
                     class: Class::Symbol,
                     id: *parent,
-                    instance_path: vec![],
+                    instance_path: instance_path.to_vec(),
                 }
             } else {
                 projected.clone()

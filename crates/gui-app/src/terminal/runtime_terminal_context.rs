@@ -19,7 +19,7 @@ impl Runtime {
             return;
         }
         let state = self.workspace();
-        let selection = datum_gui_protocol::DatumSelectionContext::from_selection(&state.selection);
+        let selection = datum_gui_protocol::DatumSelectionContext::from_workspace(state);
         if origin.selection_context == selection
             && origin.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
             && origin.source_revision.as_deref() == Some(state.scene.source_revision.as_str())

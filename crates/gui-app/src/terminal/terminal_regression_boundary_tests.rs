@@ -24,7 +24,17 @@ use winit::event::ElementState;
 /// focus only when the resulting behavior expects terminal typing).
 fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
-        HitTarget::FolderBrowser(_)
+        HitTarget::InspectorSectionToggle { .. }
+        | HitTarget::InspectorRunErc(_)
+        | HitTarget::InspectorContextScroll { .. }
+        | HitTarget::InspectorSectionNavigation { .. }
+        | HitTarget::FocusNavigator
+        | HitTarget::FocusInspector
+        | HitTarget::SchematicDocumentRow { .. }
+        | HitTarget::SchematicDocumentExpand { .. }
+        | HitTarget::SchematicDocumentOpen { .. }
+        | HitTarget::SchematicNavigatorScroll { .. }
+        | HitTarget::FolderBrowser(_)
         | HitTarget::FolderBrowserMenuItem(_)
             | HitTarget::FolderBrowserRow(_)
         | HitTarget::Library(_)

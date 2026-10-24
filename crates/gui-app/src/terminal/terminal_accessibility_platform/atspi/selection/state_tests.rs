@@ -69,7 +69,8 @@ fn set_subject(f: &fixture::Fixture, state: &mut ServiceState, subject: Selectio
     let view =
         build_selection_view(&f.model, &authority, subject, &scene, None, |_| false).unwrap();
     state.selection = Some(SelectionAccessibilitySnapshot {
-        view: Arc::new(view),
+        view: Some(Arc::new(view)),
+        inspection: None,
         visual_lod: None,
         focused: true,
         evaluating: None,
@@ -91,7 +92,14 @@ fn words(state: &mut ServiceState, path: &str) -> Vec<u32> {
 fn selected_state_matches_current_members_without_inventing_keyboard_focus() {
     let (f, mut state) = setup();
     let before = f.source_bytes();
-    let view = state.selection.as_ref().unwrap().view.clone();
+    let view = state
+        .selection
+        .as_ref()
+        .unwrap()
+        .view
+        .as_ref()
+        .unwrap()
+        .clone();
     let baseline = (1 << 8) | (1 << 11) | (1 << 24) | (1 << 25) | (1 << 30);
     for id in &view.members {
         assert_eq!(
@@ -124,7 +132,14 @@ fn selected_state_matches_current_members_without_inventing_keyboard_focus() {
 fn former_members_and_related_parents_are_not_selected_accessible_children() {
     let (f, mut state) = setup();
     let before = f.source_bytes();
-    let view = state.selection.as_ref().unwrap().view.clone();
+    let view = state
+        .selection
+        .as_ref()
+        .unwrap()
+        .view
+        .as_ref()
+        .unwrap()
+        .clone();
     let first = view.members.first().unwrap().clone();
     let last = view.members.last().unwrap().clone();
     set_subject(&f, &mut state, SelectionSubject::Object(last));
@@ -142,7 +157,14 @@ fn former_members_and_related_parents_are_not_selected_accessible_children() {
         .unwrap()
         .clone();
     set_subject(&f, &mut state, SelectionSubject::Object(pad));
-    let view = state.selection.as_ref().unwrap().view.clone();
+    let view = state
+        .selection
+        .as_ref()
+        .unwrap()
+        .view
+        .as_ref()
+        .unwrap()
+        .clone();
     assert_eq!(view.related.len(), 1);
     let related = view.related.first().unwrap();
     let parent = get_state(&mut state, &member_path(view.project, related));

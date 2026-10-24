@@ -40,6 +40,7 @@ impl ReviewWorkspaceState {
             anchor: Some(point),
             preview: Some(point),
             target_object_id,
+            view_basis: None,
         };
         self.last_command_status = Some(EditorCommandStatus {
             action: "begin_authoring_gesture".to_string(),

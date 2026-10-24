@@ -6,6 +6,7 @@ impl Runtime {
     pub(super) fn begin_native_schematic(&mut self, wire: bool) -> bool {
         if !self.native_edit_available()
             || self.native_edit.pending()
+            || self.check_work.pending()
             || self.workspace().ui.layout.focused_content() != PaneContent::Schematic
         {
             self.log_console_refusal(
@@ -14,6 +15,14 @@ impl Runtime {
             );
             return true;
         }
+        let view_basis =
+            match self.capture_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
+                Ok(basis) => basis,
+                Err(reason) => {
+                    self.refuse_native_authoring_view(reason);
+                    return true;
+                }
+            };
         self.cancel_native_schematic();
         self.cancel_native_move();
         let Some(base) = self.workspace().schematic_scene.clone() else {
@@ -29,6 +38,7 @@ impl Runtime {
         if !wire && !editor.choices.is_empty() {
             editor.select(0);
         }
+        self.session.workspace_mut().authoring.gesture.view_basis = Some(view_basis);
         self.invalidate_frame();
         true
     }
@@ -36,7 +46,12 @@ impl Runtime {
         if self.native_edit.pending() {
             return false;
         }
+        let was_active = self.workspace().schematic_authoring.active()
+            || self.workspace().schematic_authoring.picker;
         let base = self.session.workspace_mut().schematic_authoring.cancel();
+        if was_active {
+            self.session.workspace_mut().authoring.gesture.view_basis = None;
+        }
         if let Some(base) = base {
             self.session.workspace_mut().schematic_scene = Some(base);
             self.invalidate_scene();
@@ -46,6 +61,9 @@ impl Runtime {
         }
     }
     fn start_symbol_preview(&mut self) -> bool {
+        if !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
+            return true;
+        }
         let editor = &mut self.session.workspace_mut().schematic_authoring;
         if editor.chosen.is_none()
             || editor.reference.trim().is_empty()
@@ -59,6 +77,12 @@ impl Runtime {
         true
     }
     pub(super) fn handle_schematic_chrome(&mut self, target: &HitTarget) -> bool {
+        if (self.workspace().schematic_authoring.active()
+            || self.workspace().schematic_authoring.picker)
+            && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
+        {
+            return true;
+        }
         match target {
             HitTarget::SchematicLibraryChoice(index) => {
                 self.session
@@ -184,6 +208,9 @@ impl Runtime {
         else {
             return false;
         };
+        if !self.guard_native_authoring_view(self.pane_at_screen(screen.0, screen.1)) {
+            return true;
+        }
         let snapped = self.schematic_snap_point(world, screen);
         if let Some(snapped) = snapped {
             let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -247,6 +274,13 @@ impl Runtime {
             .ok()
     }
     pub(super) fn prepare_native_schematic_frame(&mut self) {
+        if !self.native_edit.pending()
+            && (self.workspace().schematic_authoring.active()
+                || self.workspace().schematic_authoring.picker)
+            && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
+        {
+            return;
+        }
         let e = &self.workspace().schematic_authoring;
         if !e.active() || !e.preview_dirty || self.native_edit.pending() {
             return;
@@ -288,6 +322,9 @@ impl Runtime {
         }
         if !self.workspace().schematic_authoring.active() {
             return false;
+        }
+        if !self.guard_native_authoring_view(self.pane_at_screen(screen.0, screen.1)) {
+            return true;
         }
         if self.native_edit.pending() {
             return true;
@@ -340,6 +377,9 @@ impl Runtime {
         self.queue_native_edit(NativeEditAction::Schematic)
     }
     fn finish_native_wire(&mut self) -> bool {
+        if !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
+            return true;
+        }
         let e = &mut self.session.workspace_mut().schematic_authoring;
         if !e.wire || e.vertices.len() < 2 {
             return true;

@@ -4,6 +4,100 @@ use super::*;
 use eda_engine::substrate::DesignModel;
 use std::sync::Arc;
 
+/// Complete an already persisted check on a fresh serialized canonical model.
+/// This runs on the job worker, never dispatch. No CLI or nested resolver may
+/// execute while the canonical lease is held.
+pub fn load_check_completion_workspace(
+    previous: ReviewWorkspaceState,
+    request: &CheckProducerRequest,
+    run: &CheckRunReviewState,
+) -> Result<ReviewWorkspaceState> {
+    anyhow::ensure!(
+        request.matches_workspace(&previous) && request.admits_run(run),
+        "ERC completion source is unavailable or changed"
+    );
+    let model =
+        {
+            let lease =
+                eda_engine::revision::ProjectWriteLease::acquire_serialized(&request.project_root)?;
+            let model = ProjectResolver::new(&request.project_root).resolve_with_lease(&lease)?;
+            anyhow::ensure!(
+                model.project.project_id == request.project_id
+                    && model.model_revision.0 == request.model_revision,
+                "Project changed during ERC source refresh"
+            );
+            let old = previous
+                .library
+                .basis
+                .as_ref()
+                .context("Previous ERC source model is unavailable")?;
+            // Only CheckRun evidence may differ. This proves the retained world,
+            // library source identities and independent production projection still
+            // describe the exact same inputs; a concurrent other mutation refuses.
+            anyhow::ensure!(
+                old.source_shards
+                    .iter()
+                    .filter(|shard| shard.kind != eda_engine::substrate::SourceShardKind::CheckRun)
+                    .eq(model.source_shards.iter().filter(
+                        |shard| shard.kind != eda_engine::substrate::SourceShardKind::CheckRun
+                    )),
+                "Project source identities changed during ERC completion"
+            );
+            let id = run
+                .check_run_id
+                .as_deref()
+                .context("ERC result has no persisted identity")?
+                .parse::<uuid::Uuid>()?;
+            let persisted = model
+                .check_runs
+                .get(&id)
+                .context("ERC record disappeared during source refresh")?;
+            let mut current =
+                check_run_review_state_from_json(&serde_json::to_string(&serde_json::json!({
+                    "contract":"check_run_record_v1", "project_id":model.project.project_id,
+                    "model_revision":model.model_revision.0, "check_run":persisted,
+                }))?)?;
+            // The CLI enriches these related links from proposals after reading a
+            // record. Preserve its already verified links while comparing every
+            // persisted finding/count/status/coverage fact against the fresh model.
+            current.proposal_refs = run.proposal_refs.clone();
+            current.proposal_links = run.proposal_links.clone();
+            for (current, verified) in current.findings.iter_mut().zip(&run.findings) {
+                current.proposal_refs = verified.proposal_refs.clone();
+                current.proposal_links = verified.proposal_links.clone();
+            }
+            anyhow::ensure!(
+                current == *run,
+                "Persisted ERC facts changed during source refresh"
+            );
+            model
+        }; // Release exclusion before pure view projection.
+    let model = Arc::new(model);
+    let mut next = previous;
+    next.library = crate::library_browser::LibraryBrowser::capture(model.clone());
+    next.schematic_authoring = crate::schematic_authoring::SchematicAuthoring::from_model(&model)?;
+    next.source_shards = source_shard_status::project_source_shard_status(&model);
+    next.checks = run.clone();
+    let source = &next
+        .backing
+        .as_ref()
+        .context("ERC Project origin unavailable")?
+        .request;
+    next.supervision = load_gui_supervision_snapshot(
+        source,
+        &next.scene,
+        &next.production,
+        &next.source_shards,
+        &next.checks,
+        Some(&model),
+    )?;
+    anyhow::ensure!(
+        request.matches_workspace(&next),
+        "ERC completion projection changed its source basis"
+    );
+    Ok(next)
+}
+
 pub fn load_board_editor_workspace_with_model(
     request: &LiveReviewRequest,
 ) -> Result<(ReviewWorkspaceState, Arc<DesignModel>)> {
@@ -114,13 +208,24 @@ pub(super) fn load_workspace(
         .as_deref()
         .unwrap_or(board_path.as_path());
     state.schematic_scene = if request.board_file.is_none() {
-        native_schematic_scene::project_native_schematic_scene(
+        if let Some(documents) = native_schematic_scene::project_native_schematic_documents(
             model
                 .as_deref()
                 .context("Native schematic basis unavailable")?,
             &request.project_root,
-        )?
-        .or_else(|| load_sibling_schematic_scene(schematic_companion_base))
+            &state.ui.layout,
+        )? {
+            let scene = state
+                .ui
+                .layout
+                .leaves()
+                .into_iter()
+                .find_map(|pane| documents.scene_for_pane(pane).cloned());
+            state.schematic_documents = documents;
+            scene
+        } else {
+            load_sibling_schematic_scene(schematic_companion_base)
+        }
     } else {
         load_sibling_schematic_scene(schematic_companion_base)
     };
@@ -428,3 +533,7 @@ mod tests;
 #[cfg(test)]
 #[path = "workspace_loading/review_refresh_tests.rs"]
 mod review_refresh_tests;
+
+#[cfg(test)]
+#[path = "workspace_loading/check_readback_tests.rs"]
+mod check_readback_tests;

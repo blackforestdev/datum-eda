@@ -18,8 +18,12 @@ fn record() -> Value {
 #[test]
 fn fallback_uses_current_summary_and_checks_exact_shown_record() {
     let (empty, id) = history_candidate(&history());
-    assert_eq!(id.as_deref(), Some(CURRENT));
-    let state = admit_record(empty.clone(), CURRENT, &record()).unwrap();
+    assert_eq!(
+        id.as_ref().map(|candidate| candidate.id.as_str()),
+        Some(CURRENT)
+    );
+    let candidate = id.unwrap();
+    let state = admit_record(empty.clone(), &candidate, &record()).unwrap();
     assert_eq!(state.check_run_id.as_deref(), Some(CURRENT));
     assert_eq!(state.status.as_deref(), Some("ok"));
     assert!(state.findings.is_empty());
@@ -30,18 +34,34 @@ fn fallback_uses_current_summary_and_checks_exact_shown_record() {
     ] {
         let mut wrong = record();
         wrong["check_run"][field] = json!(value);
-        assert_eq!(admit_record(empty.clone(), CURRENT, &wrong).unwrap(), empty);
+        assert_eq!(
+            admit_record(empty.clone(), &candidate, &wrong).unwrap(),
+            empty
+        );
     }
     let mut wrong = record();
     wrong["model_revision"] = json!("stale");
-    assert_eq!(admit_record(empty.clone(), CURRENT, &wrong).unwrap(), empty);
+    assert_eq!(
+        admit_record(empty.clone(), &candidate, &wrong).unwrap(),
+        empty
+    );
 }
 #[test]
-fn fallback_no_current_or_missing_basis_cannot_expose_historical_run() {
+fn fallback_retains_actual_history_without_granting_current_authority() {
     let mut absent = history();
     absent["check_runs"][0]["model_revision"] = json!("stale");
     let (empty, id) = history_candidate(&absent);
-    assert!(id.is_none());
+    let candidate = id.unwrap();
+    assert_eq!(candidate.id, OLD);
+    assert_eq!(candidate.revision, "stale");
+    let mut historical = record();
+    historical["check_run"]["check_run_id"] = json!(OLD);
+    historical["check_run"]["model_revision"] = json!("stale");
+    historical["check_run"]["finding_count"] = json!(13);
+    let retained = admit_record(empty.clone(), &candidate, &historical).unwrap();
+    assert_eq!(retained.model_revision.as_deref(), Some("stale"));
+    assert_eq!(retained.finding_count, 13);
+    assert!(retained.persisted);
     assert_eq!(empty.project_id.as_deref(), Some(PROJECT));
     assert_eq!(empty.model_revision.as_deref(), Some("current"));
     assert!(empty.check_run_id.is_none() && empty.status.is_none() && empty.findings.is_empty());
@@ -55,6 +75,9 @@ fn fallback_no_current_or_missing_basis_cannot_expose_historical_run() {
     }
     let mut foreign = history();
     foreign["check_runs"][0]["project_id"] = json!(OLD);
+    let (_, candidate) = history_candidate(&foreign);
+    assert_eq!(candidate.unwrap().id, OLD);
+    foreign["check_runs"][1]["project_id"] = json!(OLD);
     assert!(history_candidate(&foreign).1.is_none());
 }
 

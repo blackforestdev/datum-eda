@@ -168,6 +168,7 @@ pub fn build_workspace_selection_view(
     subject: SelectionSubject,
     state: &ReviewWorkspaceState,
 ) -> Result<crate::selection_view::SelectionView, Error> {
+    let schematics = crate::schematic_documents::visible_scenes(state);
     let visible = |layer: &str| {
         state.ui.filters.show_authored
             && state
@@ -179,12 +180,12 @@ pub fn build_workspace_selection_view(
                 .unwrap_or(true)
     };
     if !is_artifact(&subject) {
-        return crate::selection_view::build_selection_view(
+        return crate::selection_view::build_selection_view_for_documents(
             model,
             native,
             subject,
             &state.scene,
-            state.schematic_scene.as_ref(),
+            &schematics,
             visible,
         );
     }
@@ -196,12 +197,12 @@ pub fn build_workspace_selection_view(
     let payload = authority
         .artifact(&subject)?
         .ok_or(Error::MissingArtifactAuthority)?;
-    let mut view = crate::selection_view::build_selection_view(
+    let mut view = crate::selection_view::build_selection_view_for_documents(
         model,
         native,
         SelectionSubject::None,
         &state.scene,
-        state.schematic_scene.as_ref(),
+        &schematics,
         visible,
     )?;
     view.subject = subject;
@@ -232,15 +233,16 @@ pub fn build_workspace_selection_view(
             (
                 "schematic",
                 crate::PaneContent::Schematic,
-                state.schematic_scene.as_ref(),
+                (schematics.len() == 1).then(|| schematics[0]),
             ),
         ] {
             let projection = scene.map(|scene| {
-                crate::check_runs::marker::MarkerProjectionIndex::capture(
+                crate::check_runs::marker::MarkerProjectionIndex::capture_qualified(
                     scene,
                     &state.checks,
                     content,
                     visible,
+                    Some(&state.schematic_documents),
                 )
                 .anchor(finding)
             });
@@ -251,7 +253,9 @@ pub fn build_workspace_selection_view(
                         serde_json::json!({"navigation_anchor_nm":point,"selected_identity":id}),
                     ),
                     Some(Err(reason)) => V::Unavailable(reason.into()),
-                    None => V::Unavailable("Surface is not available".into()),
+                    None => V::Unavailable(if surface == "schematic" && schematics.len() > 1 {
+                        "Several document views are open; marker navigation requires a qualified document".into()
+                    } else { "Surface is not available".into() }),
                 },
             );
         }
