@@ -1,0 +1,97 @@
+{
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C03",
+  "issue": "dat-cache-metadata-inspection-9qma",
+  "status": "reviewed_bounded_transport_repair_applied",
+  "problem": "The retained-cache hard limit blocked the focused Inspector test, while normal cleanup correctly failed closed on protected same-user desktop executable inspection.",
+  "change": "Add explicit --metadata-only cleanup for exact target/debug/incremental and target/release/incremental. Positive compiler names/header/nonexec metadata proof, descriptor-bound inventory and known-entry unlink; all paths validated and revalidated under existing build lock and active build/application/readable executable checks. Default/general inspection failure remains a refusal.",
+  "source_pins": {
+    "scripts/manage_cargo_cache.py": "44e2adf314d1bea83de6f2bc26cf941c1f2309e108e2bcc46d177619a97a6cb1",
+    "scripts/cargo_cache_metadata.py": "a6ced1790bb195ad36162a85a498f76232230cdf44a5c43dda03457d6b202e83",
+    "scripts/test_manage_cargo_cache.py": "27c79226e3fddaf6cdb9f8900864d65394973ba09f140be5e37e5a2ec58c3ac2"
+  },
+  "actual_independent_review": {
+    "reviewer": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+    "proposal": "CACHE-METADATA-PROPOSAL-REVIEW-10 ACCEPT_BOUNDED_PROPOSAL",
+    "implementation": "CACHE-METADATA-IMPLEMENTATION-REVIEW-11 PASS",
+    "mandatory_findings": []
+  },
+  "actual_manager_disposition": {
+    "manager": "01a160d9-b499-7923-984a-b3390beb2e34",
+    "disposition": "Accept actual review11; authorize exact incremental-only managed usage and normal owned landing. No policy limit, privilege, PID whitelist or broader cleanup."
+  },
+  "validation": {
+    "python_safety_tests": "26 passed, including inherited existing guard controls; no Cargo required",
+    "live_dry_run": "122 metadata files validated; 6 process executables uninspectable, with no process-idle assertion; only selected incremental would be removed",
+    "source_health": "3309 source files PASS",
+    "cargo_resource_policy": "PASS",
+    "diff_check": "PASS",
+    "retained_failure": "First dry-run rejected an unnecessarily strict single-link condition. Cargo hardlinks were then admitted with same-inode content/identity checks and only owned unlink nlink/ctime transitions tracked; external linked data preservation is tested."
+  },
+  "actual_action": {
+    "argv": [
+      "python3",
+      "scripts/manage_cargo_cache.py",
+      "--metadata-only",
+      "--remove",
+      "target/debug/incremental",
+      "--apply"
+    ],
+    "removed": "Only target/debug/incremental; 122 validated metadata files",
+    "before_retained_gib_rounded": 40.7,
+    "after_retained_gib_rounded": 39.0,
+    "exact_removed_bytes": null,
+    "numerical_limit": "The existing report rounded GiB values and did not retain an exact before-byte counter. Approximate aggregate reduction is 1.7 GiB; prior selected-tree apparent size was 1.9 GiB including hardlinks. No exact byte delta is claimed.",
+    "retained": "All target/qa mixed fixtures/evidence, shared binaries, canonical sources and raw proof receipts.",
+    "uninspectable_process_count": 6,
+    "unknown_processes_idle": false
+  },
+  "historical_service_cleanup": {
+    "issue": "dat-proof-daemon-orphans-05wi",
+    "scope": "Separate explicit manager-authorized current reap of exactly three obsolete Oct16 NPD proof listeners after PID/start/executable/socket/log/client revalidation. SIGTERM succeeded; historical result file hashes unchanged.",
+    "limit": "No retroactive historical proof cleanup PASS; no other desktop/user process stopped."
+  },
+  "receipts": [
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-safety-tests-01.log",
+      "sha256": "1abaaeb70a001ca6bbf8c9842a85f8005c59e93f4d3a525dc06596722448cd00"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-safety-tests-02.log",
+      "sha256": "0c37235b41763b3de1b833a1adaebfc3be065c4b534042cdf384e081aee3b41e"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-live-dry-run-01.log",
+      "sha256": "d787d3e8fc4ab4ece307c6829d13b3d5d5ddb849fbff4acfb47a8daf7ada1d20"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-live-dry-run-02.log",
+      "sha256": "4c25d719f88d4e4fc8d35b99803a4905699e500d75fa5b15744e6f73d0e93ac2"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-source-health-02.log",
+      "sha256": "2fbe6bb0a7ddbf135c56b67a85d52b4ba12e1c676c0ad830d16124fa20f271b0"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-resource-policy.log",
+      "sha256": "4c220161f57cf8a40d09eacd28d391d8c0f6680d194660a78971adf755934119"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-metadata-targeted-cleanup.log",
+      "sha256": "0f24d7413a589e955edd17aa9cf6b4a127b3fd869e6209907f278f8e1b1b948b"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/cache-after-targeted-cleanup.log",
+      "sha256": "c8eaa2c39d37ec2df228cfea375bb4b59db02495eaeff9df86cdf163dd882683"
+    },
+    {
+      "path": ".datum/scratch/gui-p2-inspector-insp01-20261023/obsolete-npd-daemon-reap.json",
+      "sha256": "9862caef1df14248ad40c878953e1838ddbad4ff78f31890541e48f89cb91a40"
+    }
+  ],
+  "retained_limits": [
+    "Cooperative build-lock safety; this does not atomically exclude arbitrary hostile filesystem writers.",
+    "Unknown-process idleness, full Inspector development readiness, native pixels, AX/HUMAN and full qualification are not claimed.",
+    "The normal existing Cargo guard and all retained budget limits remain in effect."
+  ]
+}

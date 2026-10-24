@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
+import cargo_cache_metadata as metadata
 import os
 from pathlib import Path
 import shutil
@@ -67,7 +69,7 @@ def validate_cleanup_path(root: Path, relative: str) -> Path:
     return path
 
 
-def active_cache_users(paths: list[Path], proc_root: Path) -> list[str]:
+def active_cache_users(paths: list[Path], proc_root: Path, *, uninspectable: list[str] | None = None) -> list[str]:
     """Also protect a selected tree running an executable with an unknown name."""
     users: list[str] = []
     for process in proc_root.iterdir():
@@ -82,6 +84,9 @@ def active_cache_users(paths: list[Path], proc_root: Path) -> list[str]:
             # inspection failures refuse deletion instead of assuming inactivity.
             if process.stat().st_uid != os.getuid():
                 continue
+            if uninspectable is not None:
+                uninspectable.append(process.name)
+                continue
             raise
         if any(executable == path or path in executable.parents for path in paths):
             users.append(f"{process.name} ({executable})")
@@ -90,6 +95,7 @@ def active_cache_users(paths: list[Path], proc_root: Path) -> list[str]:
 
 def clean_caches(
     root: Path, relative_paths: list[str], lock_path: Path, proc_root: Path = Path("/proc"),
+    *, metadata_only: bool = False, apply: bool = True,
 ) -> None:
     # Share the build guard's lock and fail immediately rather than waiting to
     # delete a cache whose ownership may have changed while this command waited.
@@ -98,12 +104,45 @@ def clean_caches(
         if active:
             raise guard.ResourcePolicyError("cleanup refused while builds/apps are active: " + ", ".join(active))
         paths = [validate_cleanup_path(root, relative) for relative in relative_paths]
+        if metadata_only:
+            clean_incremental_metadata(root, relative_paths, paths, proc_root, apply=apply)
+            return
         users = active_cache_users(paths, proc_root)
         if users:
             raise guard.ResourcePolicyError("cleanup refused for active cache executables: " + ", ".join(users))
         for path in dict.fromkeys(paths):
             shutil.rmtree(path)
             print(f"Removed {path.relative_to(root.resolve())}")
+
+
+def clean_incremental_metadata(root: Path, relatives: list[str], paths: list[Path], proc_root: Path, *, apply: bool) -> None:
+    # Called only under the same build lock and normal path/tracking checks.
+    # Validate the complete batch before considering any process exception.
+    if not relatives or any(relative not in metadata.ALLOWED for relative in relatives):
+        raise guard.ResourcePolicyError("metadata-only mode requires exclusively exact incremental paths")
+    with ExitStack() as stack:
+        trees = [stack.enter_context(metadata.MetadataTree(root, relative)) for relative in dict.fromkeys(relatives)]
+        snapshots = [tree.capture() for tree in trees]
+        uninspectable = []
+        users = active_cache_users(paths, proc_root, uninspectable=uninspectable)
+        if users:
+            raise guard.ResourcePolicyError("cleanup refused for active cache executables: " + ", ".join(users))
+        for tree, snapshot in zip(trees, snapshots):
+            tree.verify_named_root()
+            if tree.capture() != snapshot:
+                raise guard.ResourcePolicyError("incremental metadata inventory changed before deletion")
+        active = active_processes(proc_root)
+        if active:
+            raise guard.ResourcePolicyError("cleanup refused while builds/apps are active: " + ", ".join(active))
+        files = sum(sum(digest is not None for _, digest in snapshot.values()) for snapshot in snapshots)
+        print(f"Validated {files} non-runnable compiler metadata files; {len(uninspectable)} process executables uninspectable (no process-idle assertion).")
+        link_updates = {}
+        for tree, snapshot in zip(trees, snapshots):
+            if apply:
+                tree.remove_known(snapshot, link_updates=link_updates)
+                print(f"Removed {tree.relative} (explicit metadata-only mode)")
+            else:
+                print(f"Would remove {tree.relative} (explicit metadata-only mode)")
 
 
 def report(root: Path) -> None:
@@ -149,12 +188,17 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--remove", action="append", default=[], metavar="PATH")
     parser.add_argument("--apply", action="store_true", help="delete the explicitly selected disposable caches")
+    parser.add_argument("--metadata-only", action="store_true", help="opt in to positive non-runnable compiler-metadata proof, only for exact target/{debug,release}/incremental; does not assert unknown processes are idle")
     args = parser.parse_args()
+    if args.metadata_only and not args.remove:
+        parser.error("--metadata-only requires explicit --remove incremental paths")
     if args.apply and not args.remove:
         parser.error("--apply requires at least one --remove path")
     try:
         if not args.remove:
             report(ROOT)
+        elif args.metadata_only:
+            clean_caches(ROOT, args.remove, guard.load_policy().lock_path, metadata_only=True, apply=args.apply)
         elif args.apply:
             clean_caches(ROOT, args.remove, guard.load_policy().lock_path)
         else:
