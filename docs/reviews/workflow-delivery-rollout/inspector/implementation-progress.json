@@ -1601,6 +1601,15 @@
     "actual_independent_landing_acknowledgment": {
       "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
       "actual_result": "Independently gitshow58545c49 for all155source21 paths: everySHA matches frozen reviewed21; currentworking155 alsoexact. No newproductiondelta/tests/replayrerun/newgate;46/45same-source evidence retained. HUMAN/C04/C06/fullqualification remain open."
+    },
+    "resumed_owner_visual_handoff_20261025": {
+      "manager_session": "01a160d9-b499-7923-984a-b3390beb2e34",
+      "actual_instruction": "PM relayed owner direction to keep agents moving; renew existing expired lease, verify unchanged candidate and route actual visual assessment without new proofwork or invented HUMAN.",
+      "claim": "Existing root session retained; Frontier/br/export synchronized, expiry2026-10-25T22:57:46Z.",
+      "actual_verification": "Clean HEAD263a15d3 before renewal;155source21 SHA exact; all3pinnednormalbinary fullSHA exact; all5native+3prototypeimageSHA exact. No rebuild/replay or tests rerun.",
+      "fresh_selector_stdout": ".datum/scratch/gui-p2-inspector-insp01-20261023/inspector-resume-next-20261025.log",
+      "actionable_PM_handoff": "Delivered ordered4comparison packet plus exact unchanged owner response and pinnednormal QA launch to PM. Actual required owner visual assessment or exact named authorized human assessor remains the concrete authority dependency; generic continuation does not substitute.",
+      "unchanged_boundaries": "C04 selected; C05objectiveevidence accepted without out-of-orderclosure; C06/developmentavailability/fullqualification open. No new product/prototype/sourcechanges or successor."
     }
   }
 }
