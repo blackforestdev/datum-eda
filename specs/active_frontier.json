@@ -7200,12 +7200,12 @@
       "authorization": "execution",
       "canonical_next": true,
       "claim": {
-        "agent": "codex",
-        "claimed_at": "2026-10-24T07:56:00Z",
-        "expires_at": "2026-10-25T22:57:46Z",
-        "harness": "codex-cli",
-        "head": "263a15d3afaee5f35147c5fc911b18f53173fdda",
-        "heartbeat_at": "2026-10-25T14:57:46Z",
+        "agent": "PM-Agent-01",
+        "claimed_at": "2026-10-26T04:42:22Z",
+        "expires_at": "2026-10-26T12:42:22Z",
+        "harness": "claude-code",
+        "head": "3ed1c75c745539b741c56ab86f2172365825856c",
+        "heartbeat_at": "2026-10-26T04:42:22Z",
         "scope": [
           "specs/active_frontier.json",
           "specs/PROGRESS.md",
@@ -7428,7 +7428,7 @@
           "target/debug/deps/inspector_goldens-8ca948611108da76",
           "target/qa/inspector-6cfc5872"
         ],
-        "session": "01a1697c-a0f3-7272-9122-673d9fda4eb0",
+        "session": "0a2e42d7-4b60-47c2-bf4e-4d09d86123b9",
         "worktree": "/home/bfadmin/Documents/datum-eda"
       },
       "completion": {
