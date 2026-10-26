@@ -7449,29 +7449,10 @@
       }
     },
     {
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
-      "claim": {
-        "agent": "dev-agent-01",
-        "claimed_at": "2026-10-26T21:07:28Z",
-        "expires_at": "2026-10-27T05:07:28Z",
-        "harness": "claude-code",
-        "head": "607929745e9f54520c5cd3204760106558716e2f",
-        "heartbeat_at": "2026-10-26T21:07:28Z",
-        "scope": [
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
-          "specs/evidence_traceability_manifest.json",
-          ".beads/issues.jsonl",
-          "docs/reviews/workflow-delivery-rollout/marking-menu",
-          "docs/gui"
-        ],
-        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "MM-C01",
+        "canonical_next_step_id": "MM-C02",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -7499,7 +7480,12 @@
         "steps": [
           {
             "action": "Reconcile the exact inert-shell readiness, live visual authority and full native scenario matrix.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "316c96fc64de22c1103810833ee1eff6e0e9c00d"
+              }
+            ],
             "depends_on": [],
             "id": "MM-C01",
             "kind": "planning",
@@ -7509,7 +7495,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain owner authorization of the exact inert-shell implementation and proof packet.",
@@ -7632,7 +7618,7 @@
           "Dismiss the shell with no operation invoked, no document mutation and no write-path engaged."
         ],
         "prerequisite_reasons": {
-          "step:MM-C01": "MM-C01 reconciles the exact inert-shell readiness, live visual authority and full native scenario matrix before the MM-C02 owner authorization of the inert-shell packet. It is a planning step with no execution grant, no enabled leaves and no build yet; the finished verb-firing menu and its gesture specifics remain for later reviewed, owner-authorized steps."
+          "step:MM-C02": "Owner authorization gate for the inert marking-menu shell. MM-C01 reconciled the inert-shell readiness, live visual authority and native scenario matrix (frontend-dev-01 independent visual verification; recorded in MM-C01-readiness-review.md at 316c96fc). MM-C02 requires exact project-owner authorization of the inert-shell implementation + proof packet and the owner's rulings on the open questions (G1 placement, G2 timing deferral, G3 icon-in-wheel + wedge-sizing, G6 sub-wheel width, F1 cardinal ratification). It is the authorization the owner gives, revises or defers; it is not currently delegated \u2014 no decision_routing entry covers MM-C02 \u2014 so it waits for the owner to authorize directly or add routing. No implementation, enabled leaves or operation invocation precede it; the finished verb-firing menu is a separate later contract. No successor is authorized."
         },
         "qualification_followups": [
           "The finished verb-firing marking menu is a later, separate delivery contract beyond the inert shell."
@@ -7653,7 +7639,7 @@
       "key": "GUI-MARKING-MENU",
       "order": 29,
       "parallel": true,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
