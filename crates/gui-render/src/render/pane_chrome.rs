@@ -347,6 +347,18 @@ fn render_pane_header(
             },
             text_runs,
         );
+        // DEV-B: keep the detail on ONE visible line, exactly as the title above.
+        // Without forcing the shaping width a long detail wraps inside the
+        // fixed-height header and the wrapped 2nd/3rd line is clipped by the
+        // header bottom (text silently lost, worse when a resize narrows the
+        // pane). The natural width keeps it one line; the clip rect trims it at
+        // the right edge instead of spilling or wrapping.
+        if let Some(run) = text_runs.last_mut() {
+            run.layout_size = Some((
+                estimated_text_run_width_px(detail, run.size, run.face),
+                header.height,
+            ));
+        }
     }
     // Tool cluster after the measured pane-title width. Buttons render on the
     // interactive SURFACE_02; the focused pane's active tool gets the accent

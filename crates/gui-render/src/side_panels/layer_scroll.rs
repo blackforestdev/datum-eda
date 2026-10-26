@@ -55,6 +55,10 @@ pub(super) fn render_layer_scroll_affordance(
         },
         TEXT_MUTED,
     ));
+    // DEV-A: the page counter sits in the clear gap just below the last layer
+    // row, not above the first row — at `first.y - 16` it overprinted the
+    // right-aligned "OFF" of the adjacent DIM UNRELATED toggle (garbled "QFF"),
+    // since the toggle rows and the layer list are a contiguous flex column.
     draw_text(
         &format!(
             "{}–{} / {}",
@@ -63,7 +67,7 @@ pub(super) fn render_layer_scroll_affordance(
             layer_count
         ),
         filters_rect.x + filters_rect.width - 72.0,
-        first.y - 16.0,
+        last.y + last.height + 2.0,
         9.0,
         TEXT_MUTED,
         TextFace::Mono,

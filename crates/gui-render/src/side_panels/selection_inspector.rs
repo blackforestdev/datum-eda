@@ -170,7 +170,12 @@ fn render_impl(
     let columns = ((rect.width - 24.0).max(0.0) / (11.0 * 0.58)).floor() as usize;
     let row_index = std::cell::Cell::new(0usize);
     let visual_row = std::cell::Cell::new(None);
+    // Value-column text for the next key/value grid row (DEV-D), set by the
+    // caller immediately before `row(...)` and taken on every call so a clipped
+    // row never leaks its value onto the following row.
+    let pending_kv: std::cell::Cell<Option<(String, f32)>> = std::cell::Cell::new(None);
     let mut row = |label: &str, target: Option<HitTarget>, active: bool, complete: bool| {
+        let kv = pending_kv.take();
         let index = row_index.get();
         row_index.set(index + 1);
         if index < start || index >= start + visible {
@@ -186,7 +191,19 @@ fn render_impl(
             return;
         }
         super::inspector_sections::paint_row(
-            rect, body, index, start, visible, label, target, active, complete, quads, text, hits,
+            rect,
+            body,
+            index,
+            start,
+            visible,
+            label,
+            kv.as_ref().map(|(v, w)| (v.as_str(), *w)),
+            target,
+            active,
+            complete,
+            quads,
+            text,
+            hits,
         );
     };
     row(
@@ -278,6 +295,11 @@ fn render_impl(
                     .field_display_preview(field, columns.saturating_sub(name.chars().count() + 2));
                 row(&format!("{name}: {value}"), None, false, false);
             } else {
+                // DEV-D: non-identity fields render as the two-column grid; the
+                // value is handed to the shared painter via pending_kv.
+                if let Some((value, key_col)) = &section_row.value {
+                    pending_kv.set(Some((value.clone(), *key_col)));
+                }
                 row(
                     &section_row.label,
                     section_row.target,
