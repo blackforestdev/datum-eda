@@ -7198,7 +7198,7 @@
     },
     {
       "authorization": "owner_decision",
-      "canonical_next": true,
+      "canonical_next": false,
       "completion": {
         "canonical_next_step_id": "INSP-C06",
         "execution_policy": {
@@ -7450,7 +7450,26 @@
     },
     {
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-26T21:07:28Z",
+        "expires_at": "2026-10-27T05:07:28Z",
+        "harness": "claude-code",
+        "head": "607929745e9f54520c5cd3204760106558716e2f",
+        "heartbeat_at": "2026-10-26T21:07:28Z",
+        "scope": [
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+          "specs/evidence_traceability_manifest.json",
+          ".beads/issues.jsonl",
+          "docs/reviews/workflow-delivery-rollout/marking-menu",
+          "docs/gui"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "MM-C01",
         "execution_policy": {
@@ -7490,7 +7509,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Obtain owner authorization of the exact inert-shell implementation and proof packet.",
@@ -7603,6 +7622,27 @@
         ]
       },
       "dependencies": [],
+      "feature_delivery": {
+        "development_ready": false,
+        "ordinary_evidence": [],
+        "ordinary_workflow": [
+          "Open a native Project and focus an editor pane that offers the marking menu.",
+          "Invoke the marking menu by its governed invocation gesture; the nested-wheel shell renders with its labeled leaves visibly disabled (inert).",
+          "Traverse the shell's leaves and nested wheels to read structure and labels; no leaf is enabled and no verb fires.",
+          "Dismiss the shell with no operation invoked, no document mutation and no write-path engaged."
+        ],
+        "prerequisite_reasons": {
+          "step:MM-C01": "MM-C01 reconciles the exact inert-shell readiness, live visual authority and full native scenario matrix before the MM-C02 owner authorization of the inert-shell packet. It is a planning step with no execution grant, no enabled leaves and no build yet; the finished verb-firing menu and its gesture specifics remain for later reviewed, owner-authorized steps."
+        },
+        "qualification_followups": [
+          "The finished verb-firing marking menu is a later, separate delivery contract beyond the inert shell."
+        ],
+        "safety_requirements": [
+          "The shell is inert: no leaf is enabled, no operation is authored or invoked, nothing is approved.",
+          "Disabled leaves never mutate the design; the engine mutation/write-path authority stays separate and untouched.",
+          "A usable shell must render (not a refusal-only state) and changes no authored source or history."
+        ]
+      },
       "governing_docs": [
         "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
         "docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md",
@@ -7613,7 +7653,7 @@
       "key": "GUI-MARKING-MENU",
       "order": 29,
       "parallel": true,
-      "state": "specified",
+      "state": "in_progress",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
