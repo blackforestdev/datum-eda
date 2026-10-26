@@ -1,0 +1,60 @@
+{
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C04",
+  "date": "2026-10-26",
+  "actual_manager": "PM-Agent-01",
+  "disposition": "INSP-C04 visual verdict: owner removed the human-in-the-loop gate and delegated the assessment to the managing PM; PM renders conditional parity.",
+  "owner_directive": {
+    "summary": "Owner, while away, removed the human-in-the-loop requirement for the inspector visual verdict and delegated that verdict to PM-Agent-01. This supersedes, for this assessment only, HEAD 3ed1c75c's reservation of the owner HUMAN/protected-prototype visual assessment.",
+    "quotes": [
+      "I need to be kept out of the development and approval loop while I'm away. you are the manager",
+      "You have my approval to unblock this process. please take over.",
+      "you needed to lift this as the PM. this was yours to lift while I am away.",
+      "humans need to be removed"
+    ],
+    "scope_of_delegation": "The INSP-C04 visual parity verdict (running production-renderer output vs the ratified prototype) is delegated to PM-Agent-01. Delegation covers this verdict and the bounded parity-closure execution that follows it; it does not create new product semantics, scope reductions, waivers, or new dependencies.",
+    "direct_confirmation": "2026-10-26: the owner confirmed the gate removal and the PM delegation directly in dev-agent-01's session (dev-agent-01 is that session's user-facing agent), resolving the verifiability requirement dev-agent-01 correctly raised against acting on a peer relay alone. The owner further granted the PM full authority to begin any work on the project and delegate as needed, and to remove roadblocks preventing development progress."
+  },
+  "pm_verdict": {
+    "reference": "docs/gui/prototypes/board-editor.html (visual truth per docs/gui/DATUM_GUI_PHASE_2_SPEC.md)",
+    "candidates": "crates/gui-render/testdata/golden/inspector/ — 12 PNGs, 6 states x {normal, narrow}, same-engine production-renderer output, pinned model_revision e165c795",
+    "content": "PASS — 12/12 states. Required read-only Identity/Placement/Library/Net/ERC/Document content present, on-palette (--acc #CE5A92), IBM Plex per the rendering book, read-only.",
+    "treatment": "CONDITIONAL — not yet at parity; four bounded deltas against the ratified prototype must close before the 12 goldens are frozen and C04 is accepted.",
+    "assessment_method": "PM reviewed the frontend-dev-01 assessment packet and inspected the DEV-C and DEV-D side-by-sides first-hand before rendering this verdict."
+  },
+  "deltas_to_close": [
+    {
+      "id": "DEV-C",
+      "scope": "inspector",
+      "divergence": "Inspector section headers render sentence-case; prototype .sect-hd (L82-83) is text-transform:uppercase. Native already uppercases its INSPECTOR panel header.",
+      "fix": "Uppercase the inspector section headers to match the prototype."
+    },
+    {
+      "id": "DEV-D",
+      "scope": "inspector",
+      "divergence": "Inspector key/value rows are inline key: value that wrap mid-word; long values (64-char revision hash, pool path) break poorly across lines. Prototype .kv (L86) is an aligned 2-col grid grid-template-columns:100px 1fr.",
+      "fix": "Adopt the prototype 2-col grid. For values longer than the prototype's placeholders, the value column wraps WITHIN its own column — no overflow into the label column, no truncation that hides data. Long-value wrap is an ordinary implementation choice made inside the execution grant; the prototype never demonstrated it."
+    },
+    {
+      "id": "DEV-A",
+      "scope": "layers-render (other component, in-frame)",
+      "divergence": "Layers panel page-counter badge overprints the OFF toggle -> garbled 'QFF' (text overdraw). Present in all 12 candidate frames.",
+      "fix": "Fix the overdraw; capture under its own tracker item. Gates the inspector golden freeze while in-frame."
+    },
+    {
+      "id": "DEV-B",
+      "scope": "pane-chrome (other component, in-frame)",
+      "divergence": "Pane headers overflow their height and clip a 3rd line (worse in narrow). Present in all 12 candidate frames.",
+      "fix": "Fix the overflow; capture under its own tracker item. Gates the inspector golden freeze while in-frame."
+    }
+  ],
+  "closure_path": "dev-agent-01 executes the four fixes under the existing INSP-C04 execution grant and re-renders the 12 inspector goldens; frontend-dev-01 verifies the native result against board-editor.html and produces the final parity packet; audit-agent-01 adversarially verifies the closure is honest (fixes close divergences, DEV-A/DEV-B removed not masked, goldens are legitimate same-engine output not a laundering refresh, no scope creep); roadmap-agent-01 stages the C04->C05 frontier/beads transition. PM-Agent-01 performs the frontier/beads mutation and renders the C04 close verdict once fixes land and audit confirms.",
+  "limits": [
+    "Delegation is of the visual verdict and its bounded parity-closure only; no new product semantics, scope reduction, waiver, or dependency.",
+    "No goldens refresh that blesses unfixed output; the 12 goldens freeze only after DEV-A/B/C/D close and audit confirms.",
+    "INSP-C05 objective evidence is retained without out-of-order closure; INSP-C06 acceptance authority and successor authorization remain as governed.",
+    "Claim remains PM-Agent-01 (live lease); authorization: execution.",
+    "Owner confirmed the reading directly in dev-agent-01's session on 2026-10-26; this record documents the delegation chain and the verdict acted upon.",
+    "Claim transferred PM-Agent-01 -> dev-agent-01 for the parity-closure execution; candidate PNGs route to the PM verdict-holder, frontend-dev-01 and audit-agent-01 BEFORE any golden freeze."
+  ]
+}
