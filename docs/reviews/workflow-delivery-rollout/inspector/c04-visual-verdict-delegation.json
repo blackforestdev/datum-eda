@@ -56,5 +56,24 @@
     "Claim remains PM-Agent-01 (live lease); authorization: execution.",
     "Owner confirmed the reading directly in dev-agent-01's session on 2026-10-26; this record documents the delegation chain and the verdict acted upon.",
     "Claim transferred PM-Agent-01 -> dev-agent-01 for the parity-closure execution; candidate PNGs route to the PM verdict-holder, frontend-dev-01 and audit-agent-01 BEFORE any golden freeze."
-  ]
+  ],
+  "extension_ruling": {
+    "date": "2026-10-26",
+    "ruling": "(b) EXTEND: fold the 3 LIBRARY INFO SelectionField identity rows (Component bindings / library package / library part) into the full-value kv grid before the golden freeze — a sixth bounded change beyond the four enumerated deltas, plus a fifth (DEV-D word-wrap refinement: values wrap at word boundaries via wrap_text_words_sized; char-break only for single tokens wider than the value column).",
+    "basis": "frontend-dev-01's rendered parity read plus this record's own no-data-hiding rule: the '...' preview elision hid full package/part UUIDs inside the very section DEV-D targeted, and the DEV-D grid fix made the inconsistency visually obvious. board-editor.html grids all section rows and contains no truncation convention (audit-agent-01 verified by inspection: no text-overflow/ellipsis anywhere; the only nowrap is .ptitle). audit-agent-01 independently verified the mechanics pre-freeze: the folded rows resolve the SAME values previously previewed, now complete (not re-sourced); touches are gui-render presentation only; field_display_preview/elide is a mechanical helper with no ratified rule or encoded test contract, so no governed wall existed. The enumerated-set caveat audit raised is resolved by this amendment: the record now matches what landed.",
+    "pre_existing_disclosure": "The identity-row truncation was pre-existing and byte-identical in the baseline goldens (audit-corroborated); it changed in this landing by explicit PM ruling — ruled convergence, not silent drift."
+  },
+  "close": {
+    "date": "2026-10-26",
+    "verdict": "INSP-C04 CLOSED — visual parity verdict PASS. Content 12/12 parity; all six treatment changes verified in the frozen pixels against the ratified prototype. Rendered under the owner-delegated verdict authority recorded above.",
+    "landing": "d551ffc35760594c785571b36c95cb932521017f — single commit: 5 gui-render source files + 12 regenerated inspector goldens + DEV-A/DEV-B cross-scope captures (dat-layers-pagecounter-overprint-rsan, dat-pane-header-detail-clip-zjt4, open/unassigned against their owning components).",
+    "receipts": {
+      "C1_mechanism_honesty": "audit-agent-01 freeze-gate PASS on d551ffc3: single landing (no standalone golden refresh), inspector_goldens.rs untouched (dims/crop/revision pin e165c795 intact), frozen goldens byte-identical to the adversarially reviewed candidates AND differing from baseline 58545c49, commit scope clean (no frontier/manifest/acceptance/C05/C06 files), correct tracker capture discipline.",
+      "C2_visual_parity": "frontend-dev-01 FINAL 12-state parity confirmation on the exact freeze candidate set (inspector-parity/FINDINGS-postfix.md final-close section + postfix-LIBRARYINFO-fixed.png), plus zero-drift confirmation: frozen goldens md5-identical to the parity-confirmed candidates.",
+      "pm_pixel_review": "PM-Agent-01 personally reviewed candidate pixels across all iterations (footprint-source, symbol-library, qualified-empty-document, net-disclosures; normal + narrow) and issued the freeze clear; this close verdict is rendered on those reviewed pixels, not on reports alone."
+    },
+    "reproducibility": "dev-agent-01 re-ran compare mode against committed source post-landing: 12x GOLDEN_MATCH at pinned e165c795. A second independent guarded proof build was declined per the verification-cost policy; the byte-identity chain (frozen == adversarially-reviewed == parity-confirmed pixels) supplies independent corroboration without burning a redundant build.",
+    "residuals_disclosed": "Non-blocking: the no-section_rows fallback (selection_inspector ~L322) still elides for a context-less selection reached by none of the 12 states — captured as cleanup follow-up, not claimed fixed. Broader HUMAN/host/endurance qualification remains separate per the selector's standing followups.",
+    "boundaries_retained": "INSP-C05 proceeds on its retained objective evidence without out-of-order closure; INSP-C06 acceptance authority remains owner-reserved (appointment still names the paused session; re-point + decision_routing remain owner decisions); no successor authorization."
+  }
 }
