@@ -7450,7 +7450,7 @@
     },
     {
       "authorization": "owner_decision",
-      "canonical_next": true,
+      "canonical_next": false,
       "completion": {
         "canonical_next_step_id": "MM-C02",
         "execution_policy": {
@@ -13127,7 +13127,26 @@
     },
     {
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-26T21:38:34Z",
+        "expires_at": "2026-10-27T05:38:34Z",
+        "harness": "claude-code",
+        "head": "1790aa90d13bd947730082aaa49acadc8e9f25c1",
+        "heartbeat_at": "2026-10-26T21:38:34Z",
+        "scope": [
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl",
+          "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md",
+          "docs/reviews/foundation-followup/project-writer-ownership",
+          "crates/engine"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "PWO-C01",
         "execution_policy": {
@@ -13168,7 +13187,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Reconcile the existing numbered PM060 proposal/decision with full scope and conformance evidence; credit the settled bounded engine-owned choice and name any actual extension or remaining implementation obligation.",
@@ -13243,7 +13262,7 @@
       "key": "PROJECT-WRITER-OWNERSHIP",
       "order": 56,
       "parallel": true,
-      "state": "planned",
+      "state": "in_progress",
       "summary": "Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated.",
       "title": "Ratify project writer ownership and recovery serialization",
       "unblocks": [
