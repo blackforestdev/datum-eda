@@ -7202,10 +7202,10 @@
       "claim": {
         "agent": "PM-Agent-01",
         "claimed_at": "2026-10-26T04:42:22Z",
-        "expires_at": "2026-10-26T12:42:22Z",
+        "expires_at": "2026-10-27T02:59:35Z",
         "harness": "claude-code",
-        "head": "3ed1c75c745539b741c56ab86f2172365825856c",
-        "heartbeat_at": "2026-10-26T04:42:22Z",
+        "head": "285357b08e495e66b3f73481885e0acb099d25fa",
+        "heartbeat_at": "2026-10-26T18:59:35Z",
         "scope": [
           "specs/active_frontier.json",
           "specs/PROGRESS.md",
