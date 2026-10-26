@@ -1,0 +1,21 @@
+{
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C05",
+  "date": "2026-10-26",
+  "actual_manager": "PM-Agent-01",
+  "disposition": "INSP-C05 ACCEPTED — objective acceptance against the recorded criteria (PM059 delegated set). Independent replay SATISFIED AT DECLARED SCOPE.",
+  "independent_reviewer": "audit-agent-01 (distinct from implementer dev-agent-01; read-only throughout the delivery; receipt committed alongside this record as c05-independent-review-receipt.md).",
+  "criteria_evaluation": {
+    "distinct_reviewer_replay": "Satisfied. The full component/net/sheet/status matrix including failure and context transitions rests on REVIEW46's retained 16-case native objective replay (vertical_driver, 5 passes, 13-control source-invariance keyed to check-run 4b0604c3, REVIEW39 strict goldens, REVIEW44 controls, REVIEW45 concurrency) — reuse explicitly sanctioned by the owner at 3ed1c75c ('reused without rebuilding or new proof work'). The d551ffc3 landing touched no gui-app handler files (git-verified), so the retained matrix remains the valid native proof of the unchanged semantics.",
+    "fresh_verification_of_affected_surface": "Satisfied at declared scope. The genuinely changed surface is the render-side row model. Verified: row totals use the actual rendered Row-vec length (accurate by construction for multi-line fold rows); the frozen byte+parity-verified goldens natively prove the interaction post-state extremes (scroll_offset=usize::MAX, 5/2/0-collapsed, narrow, empty, diagnostic, both sizes); handlers read total/visible/offsets from render-emitted hit regions (auto-consistent) with clamping at both handler and render layers; key-column width recomputes per expanded set; stale-basis guards hold on context switches.",
+    "read_only_nonmutation": "Satisfied, structurally: all four inspector hit targets are unreachable in the write dispatch (runtime_hit_actions.rs), mutating only UI scroll/collapsed state; corroborated by the retained REVIEW44 controls and the prior acquire_serialized ERC-worker-only finding. The only compute affordance is the explicit governed ERC rerun.",
+    "findings_accounted": "Satisfied: one accounting disposes every known finding — 18 unrelated Clippy diagnostics (dat-lk0l, out of slice), historical failure 9aed94d2 (corrected, REVIEW45-green), AT-SPI observer limit (disclosed), DEV-A/DEV-B (fixed in d551ffc3; capture tickets dat-layers-pagecounter-overprint-rsan and dat-pane-header-detail-clip-zjt4 confirmed OPEN against their owning components for regression coverage), selection_inspector ~L322 elide fallback (cleanup follow-up, unreached by the 12 states), stale frontier summary (refreshed at 097e99a2).",
+    "boundaries": "No owner acceptance invented; no structural test substituted for required native proof (the native proof is the retained REVIEW46 replay plus the natively rendered frozen goldens; the structural findings corroborate rather than replace it)."
+  },
+  "declined_verification": "audit-agent-01's offered additional CANDIDATE_ONLY render of an intermediate scroll state was DECLINED by the PM under the verification-cost policy: row-total accuracy is code-guaranteed and natively proven at the scroll extreme in the frozen goldens, so the extra render enables no new decision. Consistent with the declined duplicate GOLDEN_MATCH rerun at C04 close.",
+  "limits": [
+    "INSP-C06 owner acceptance remains owner-reserved and is NOT advanced by this acceptance; no successor is selected or authorized.",
+    "Broader host/platform/physical-input/HUMAN, endurance and numerical performance qualification remain separate per the standing followups.",
+    "This acceptance is against the recorded INSP-C05 criteria only; it creates no new product rule, scope change, waiver or dependency."
+  ]
+}

@@ -1,0 +1,50 @@
+# INSP-C05 Independent-Review Receipt
+
+**Reviewer:** audit-agent-01 (distinct reviewer; read-only throughout). **Date:** 2026-10-26. **For:** PM-Agent-01 (objective acceptance against recorded criteria, PM059 delegated set).
+**Subject:** the six-delta inspector parity closure landed at **d551ffc3** (+ frontier close **065b2f9e**). Implementer = dev-agent-01 (claim holder, support-only; did not self-review or pre-judge).
+**Distinctness:** reviewer session is separate from implementer; I authored none of the reviewed code. Read-only: no claim, no edits, guarded runner reserved for compiled work, no owner-acceptance invention (C06 remains the owner's).
+**Recorded C05 criterion:** a distinct reviewer replays the full component/net/sheet/status matrix incl. failure + context transitions, fresh events, verified inputs; checks semantic field provenance, units, read-only behavior, every visual/interaction gap; accounts for every finding; does not invent owner acceptance or substitute structural tests for native proof.
+
+## Verified inputs (dev-supplied, reviewer-confirmed)
+- Admitted root `.datum/scratch/gui-p2-inspector-insp01-20261023/native-proof-01/project` — carries model_revision `e165c795…` + persisted check-run `4b0604c3-…` / 13 findings (confirmed present).
+- CLI `target/debug/datum-eda` — read-only `check show --check-run` query only (confirmed; the goldens harness shells exactly this).
+- Commits under review: d551ffc3 (5 gui-render source + 12 goldens + beads) and 065b2f9e (frontier close). **Confirmed via git show --stat: d551ffc3 touched NO gui-app handler files** — so the interaction handlers are UNCHANGED; this review is a compatibility check of unchanged handlers over the new row accounting, not a review of handler edits.
+
+## Evidence reuse (stated explicitly, per owner 3ed1c75c — reuse without rebuild)
+1. **Semantic matrix UNCHANGED → REUSE REVIEW46** (accepted 16-case objective replay) + REVIEW39 strict goldens + REVIEW44 controls + REVIEW45 concurrency, for field provenance, units, read-only behavior, membership/identity preservation. The six deltas are render-layer only; `field_text` provider semantics are unchanged (values resolve at `usize::MAX`, same source). Reuse basis confirmed present: native-proof-01/{vertical_driver.py, vertical-pass-01..05, admitted-readonly-controls-13-source-invariance.json keyed to check-run 4b0604c3 + the revision tree}.
+2. **Six presentation deltas' visual correctness → REUSE the C04 closure chain:** my C1 freeze-gate (frozen goldens byte-identical to adversarially-reviewed candidates, ≠ baseline), frontend-dev-01 C2 (final 12-state parity + zero-drift md5), PM pixel review. Not re-litigated.
+
+## Fresh verification — the genuinely affected gap (new ROW MODEL: value → one Row per wrapped line; rows.len()/total grew e.g. footprint 35→44; offsets() shifted; key_column_width per expanded set)
+
+**A. Row-accounting ACCURACY over the new model — PASS (code-proven + natively corroborated).**
+- `total` for the selection inspector uses `section_rows.len()` (selection_inspector.rs:118) — the ACTUAL length of the rendered Row vec, not a formula — so every multi-line fold row is counted exactly by construction. The document path uses `rows.len()` identically (inspector_sections.rs:299,311). The row-model growth therefore cannot desync total from the rendered rows.
+- Native corroboration: net-scoped-zero/net-disclosures render at `scroll_offset = usize::MAX` (×normal/narrow) in the FROZEN goldens — the exact state that would expose a total-vs-actual mismatch (blank over-scroll if total too high; unreachable tail if too low). Byte-verified (C1) + parity-confirmed (C2): clean. So the summed-total clamp is natively proven at the extreme.
+
+**B. Scroll transition legs (offset 0 / max / over-scroll clamp; continuation-line reachability; normal+narrow) — PASS.**
+- Handler `scrolled_row_offset` (gui-viewport/src/scroll.rs) clamps to `total.saturating_sub(visible)` and uses `saturating_add/sub` — no overflow; continuation lines reachable because the bound grows with the new larger total. Render side re-clamps identically (inspector_sections.rs:295). Belt-and-suspenders.
+- Handler reads `(total, visible)` FROM the render-emitted hit region (runtime_selection_inspector.rs:142-164) — i.e. the new row count — so the unchanged handler is auto-consistent with the new accounting; no hardcoded counts.
+- Post-state extremes reused from frozen goldens (scroll=0 on symbol/footprint/diagnostic/qualified; scroll=MAX on net ×2; all ×narrow).
+
+**C. Section-nav / jump landing over shifted indices — PASS.** `offsets()` maps each section-toggle Row to its index in the SAME rows vec scroll uses (inspector_sections.rs:18-26); selection path adjusts by `section_start` to absolute (selection_inspector.rs:405). Handler reads offsets from the hit region with an `is_current` basis guard (runtime_selection_inspector.rs:194-203). Jump lands on the correct absolute row with the shifted multi-line indices.
+
+**D. Section collapse/expand toggle + key-column resize — PASS.** `key_column_width` re-measures only non-collapsed fields every frame (inspector_sections.rs:43-46), so toggling deterministically resizes the key column; collapsed set drives both row emission and measurement consistently. Handler toggles are `collapsed.insert/remove` only (runtime_selection_inspector.rs:19-20, 251-258). Post-states reused: 5-collapsed (symbol/footprint), 2-collapsed (net), 0-collapsed (document) span the key-column range ×normal/narrow.
+
+**E. Narrow context switch (45% key cap, more wrap, no clip/overflow/hit drift) — PASS.** Key column capped at `(width*0.45).max(KEY_MIN)`; value column recomputed; paint_row clips key and value to their column widths (inspector_sections.rs paint_row). All 12 ×narrow renders byte+parity verified. Stale-basis guards (`is_current`/basis-match) protect normal↔narrow context switches.
+
+**F. Failure / unavailable / empty — PASS.** Empty value → one empty grid line (`if lines.is_empty() { push empty }`); SelectionField resolves via `field_text(usize::MAX)`. diagnostic-pin + qualified-empty-document post-states reused. Residual: the no-`section_rows` fallback (selection_inspector ~L322) still elides for a context-LESS selection — reached by NONE of the 12 states (all go through section_rows); disclosed cleanup follow-up, out of C05 scope.
+
+**G. Read-only / nonmutation (cancel/close-reopen) — PASS (airtight).** The inspector scroll/toggle/nav hit targets mutate ONLY `ui.selection_inspector.scroll_offset` and `inspector_context.collapsed` (ephemeral UI). In the action/write dispatch (runtime_hit_actions.rs:41-45, 103-104) all four inspector targets are `unreachable!("Inspector controls return above")` — structurally cannot reach a model/journal/commit. No `.commit`/journal/native.write/`acquire_serialized` reachable from any inspection/selection/context path (corroborates the prior C05 staging finding: `acquire_serialized` is ERC-worker-only, a readback not an append). The only compute-triggering affordance is the explicit `'r'` ERC rerun gated to the Checks section + non-repeat (governed job path, not inspection). CLI query is read-only `check show`.
+
+## Verification boundary (transparent)
+I did not author a scratch render harness to add further scroll-extreme states because (a) read-only: I cannot edit the committed goldens harness to inject a new scroll_offset; (b) the scroll=MAX / collapsed / narrow / empty post-states are already in the frozen, byte-and-parity-verified goldens; (c) no gui-app event-replay harness exists to drive the handlers natively (dev confirmed the handlers are inspected, not driven, this session), and total-accuracy is code-guaranteed by `section_rows.len()` + natively proven at scroll=MAX. If PM wants a specific uncovered state rendered, I will run one bounded CANDIDATE_ONLY render on the verified root via the guarded runner.
+
+## One accounting — every known finding disposed (disposition · where it lives)
+1. **18 unrelated engine Clippy diagnostics** — out of scope for this render-layer slice; pre-existing engine debt, not introduced by d551ffc3. · beads `dat-lk0l`.
+2. **Historical contention finding 9aed94d2** (ERC append refresh-lock + stale Save) — CORRECTED, REVIEW45-replayed green; residual disclosed limits (PID/FD/backtrace not captured; no proven historical origin) stand, not re-opened. · REVIEW45 artifacts + prior C05 staging note.
+3. **Post-Save AT-SPI "unknownobject"** (accessibility observer limit) — disclosed, unchanged; stable otherwise. · REVIEW45 step 8.
+4. **DEV-A / DEV-B** (Layers page-counter overprint; pane-header detail clip) — FIXED in d551ffc3; capture tickets remain OPEN against their real owners for regression coverage. · beads `dat-layers-pagecounter-overprint-rsan` (open), `dat-pane-header-detail-clip-zjt4` (open) — both confirmed open with accurate titles.
+5. **Residual no-`section_rows` elide fallback** (selection_inspector ~L322) — reached by none of the 12 states; disclosed cleanup follow-up, not claimed fixed, out of C05 scope. · delegation-record `residuals_disclosed` + my C1 note.
+6. **Stale frontier summary narrative** — routed by dev to roadmap-agent-01 for reconciliation; not a product/semantic defect. · roadmap lane (not independently re-verified here; accounted as routed).
+
+## Verdict
+**INSP-C05 independent replay: SATISFIED AT DECLARED SCOPE.** The new row model is compatible with the unchanged interaction handlers (which consume render-emitted counts), clamps correctly at both handler and render layers over the grown total, lands section jumps on shifted absolute indices, resizes the key column deterministically per expanded set, renders failure/empty correctly, and remains strictly read-only (structurally unreachable write path). Semantic matrix + visual correctness reused per owner 3ed1c75c. No new finding; every known finding accounted with disposition + location. **No owner acceptance invented — INSP-C06 acceptance and any successor authorization remain the owner's.**
