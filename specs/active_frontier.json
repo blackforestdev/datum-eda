@@ -7666,7 +7666,7 @@
       "order": 28,
       "parallel": false,
       "state": "in_progress",
-      "summary": "INSP-C03 landed in 58545c49. The appointed PM accepted REVIEW46 full 16-case objective replay with REVIEW39 strict goldens, REVIEW44 controls and REVIEW45 concurrent new-append/next-Save proof. INSP-C04 is selected; required owner HUMAN/protected prototype assessment remains open. C05 objective evidence is retained without out-of-order closure. C06, development availability and full qualification remain open; no successor is authorized. Historical failures, observer limits and 18 unrelated Clippy diagnostics remain disclosed.",
+      "summary": "INSP-C03 landed in 58545c49. The appointed PM accepted REVIEW46 full 16-case objective replay with REVIEW39 strict goldens, REVIEW44 controls and REVIEW45 concurrent new-append/next-Save proof. INSP-C04 closed in d551ffc3: the owner lifted the human-in-the-loop visual gate and delegated the parity verdict to the appointed PM, whose verdict (content 12/12; six presentation deltas converged to the governed prototype; 12 goldens regenerated) is recorded with independent mechanism and parity receipts in the INSP-C04 task evidence. INSP-C05 independent replay is selected; retained C05 objective evidence is reused without out-of-order closure. C06 owner acceptance, development availability and full qualification remain open; no successor is authorized. Historical failures, observer limits and 18 unrelated Clippy diagnostics remain disclosed.",
       "title": "Build GUI Phase 2 P2.4 full inspector",
       "unblocks": [],
       "work_purpose": {
