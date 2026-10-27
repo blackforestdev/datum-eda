@@ -141,7 +141,7 @@
 </details>
 
 - **Specify distributed project collaboration and semantic merge** (`DISTRIBUTED-COLLAB-SPEC`; `dat-distributed-collaboration-architecture-lt1`).
-   Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
+   Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-documentation-system-spec-y8z`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md`, `specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <details>
