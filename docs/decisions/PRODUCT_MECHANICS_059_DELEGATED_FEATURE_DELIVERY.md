@@ -377,3 +377,14 @@ The following original heading anchors navigate the relocated exact records.
 - <a id="reviewed-first-edit-delivery-restored--2026-10-09"></a>[Reviewed first-edit delivery restored — 2026-10-09](../reviews/specification-history/feature-delivery-records.md#reviewed-first-edit-delivery-restored--2026-10-09)
 - <a id="owner-selected-native-schematic-delivery-readiness--2026-10-09"></a>[Owner-selected native schematic delivery readiness — 2026-10-09](../reviews/specification-history/feature-delivery-records.md#owner-selected-native-schematic-delivery-readiness--2026-10-09)
 - <a id="manager-directed-native-symbol-move-delivery--2026-10-09"></a>[Manager-directed native Symbol Move delivery — 2026-10-09](../reviews/specification-history/feature-delivery-records.md#manager-directed-native-symbol-move-delivery--2026-10-09)
+
+## Owner-directed management automation correction — 2026-10-27
+
+<!-- REQ:PM-AUTOMATION-CORRECTION:PA-C01 -->
+Implement one verified standing project-manager appointment in the existing policy and selector. Route covered decisions to that manager without repeated owner approval; require explicit classification before an unclassified decision can be dispositioned. Preserve owner-retained decisions, revocation, evidence, independent review, holds, mutation safety and source ownership. Use no standalone permission document or per-session waiver ledger.
+
+<!-- REQ:PM-AUTOMATION-CORRECTION:PA-C02 -->
+Obtain distinct review of the exact policy, routing implementation and positive/refusal regressions. Correct findings without claiming an actual appointment, assessment or test outcome from synthetic fixtures.
+
+<!-- REQ:PM-AUTOMATION-CORRECTION:PA-C03 -->
+Verify installed policy and routing, synchronize the existing project records and hand control back to the appointed project manager. Permission to decide never supplies missing proof. History rewriting remains a separately approved, coordinated operation.

@@ -18357,6 +18357,121 @@
         "kind": "product_delivery",
         "rationale": "Deliver the missing ordinary GUI Package-creation capability so a fresh native Project can supply its own named Package to Footprint authoring."
       }
+    },
+    {
+      "authorization": "execution",
+      "canonical_next": false,
+      "claim": {
+        "agent": "codex",
+        "claimed_at": "2026-10-27T16:45:26Z",
+        "expires_at": "2026-10-28T00:44:26Z",
+        "harness": "codex",
+        "head": "46214ba5874f33b64105138decfa52833cf6ef77",
+        "heartbeat_at": "2026-10-27T16:46:26Z",
+        "scope": [
+          "AGENTS.md",
+          "CLAUDE.md",
+          "docs/AGENT_OPERATIONAL_PROCEDURES.md",
+          "docs/PROJECT_STATE_POLICY.md",
+          "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
+          "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+          "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md",
+          "scripts/project_work_authority.py",
+          "scripts/test_project_standing_authority.py",
+          "specs/evidence_traceability_manifest.json"
+        ],
+        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
+      "completion": {
+        "canonical_next_step_id": "PA-C01",
+        "execution_policy": {
+          "dependency_independence_authorizes_parallelism": false,
+          "max_in_progress_steps": 1
+        },
+        "outcome": "Persistent project-PM routing of development decision kinds is installed via the existing appointment/decision_routing machinery with focused tests, independent review and a verified handoff; no evidence, human or external requirement is erased.",
+        "post_completion": {
+          "authorizes_successor": false,
+          "effects": [
+            "Development owner_decision kinds route to the project-PM by standing policy; genuinely-external (evidence/human/license) gates remain intact."
+          ],
+          "selection": "explicit_frontier_update",
+          "selects_successor": false,
+          "unblocks_issue_ids": []
+        },
+        "presentation_policy": {
+          "allow_inferred_concurrency": false,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "mode": "stdout_verbatim",
+          "preserve_step_numbering": true,
+          "preserve_step_order": true
+        },
+        "steps": [
+          {
+            "action": "Implement persistent project-PM routing via the existing appointment/decision_routing machinery with focused tests; no new permission doc; preserve all evidence/human/external requirements.",
+            "completion_evidence": [],
+            "depends_on": [],
+            "id": "PA-C01",
+            "kind": "execution",
+            "requirement_refs": [
+              {
+                "marker": "PA-C01",
+                "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+              }
+            ],
+            "status": "in_progress"
+          },
+          {
+            "action": "Obtain distinct independent review of the routing correction and its tests; account for every finding.",
+            "completion_evidence": [],
+            "depends_on": [
+              "PA-C01"
+            ],
+            "id": "PA-C02",
+            "kind": "execution",
+            "requirement_refs": [
+              {
+                "marker": "PA-C02",
+                "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+              }
+            ],
+            "status": "pending"
+          },
+          {
+            "action": "Verified handoff: confirm installed routing behavior and hand the correction record back; no product acceptance.",
+            "completion_evidence": [],
+            "depends_on": [
+              "PA-C02"
+            ],
+            "id": "PA-C03",
+            "kind": "execution",
+            "requirement_refs": [
+              {
+                "marker": "PA-C03",
+                "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+              }
+            ],
+            "status": "pending"
+          }
+        ]
+      },
+      "dependencies": [],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+      ],
+      "issue_id": "dat-pm-automation-correction-5spq",
+      "key": "PM-AUTOMATION-CORRECTION",
+      "order": 101,
+      "parallel": true,
+      "state": "in_progress",
+      "summary": "Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved.",
+      "title": "Install persistent project-PM decision routing (standing policy correction)",
+      "unblocks": [],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Bounded standing-policy correction under owner tasking; re-routes routine development decision authority, introduces no product delivery, scope change, waiver or new permission doc."
+      }
     }
   ],
   "management_appointments": {

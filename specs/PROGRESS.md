@@ -366,6 +366,9 @@
 
 </details>
 
+- **Install persistent project-PM decision routing (standing policy correction)** (`PM-AUTOMATION-CORRECTION`; `dat-pm-automation-correction-5spq`).
+   Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
