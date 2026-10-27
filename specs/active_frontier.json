@@ -13353,10 +13353,10 @@
       }
     },
     {
-      "authorization": "owner_decision",
+      "authorization": "none",
       "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "NCC-C03",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -13443,7 +13443,13 @@
           },
           {
             "action": "Obtain owner ratification and reconcile all actual route consumers before specification closure.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:NCC-C03-RATIFIED:2026-10-26",
+                "path": "docs/reviews/frontier/OWNER_DELEGATION_AND_GATE_DECISIONS_2026-10-26.md"
+              }
+            ],
             "depends_on": [
               "NCC-REVIEW"
             ],
@@ -13469,7 +13475,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           }
         ]
       },
@@ -13479,9 +13485,10 @@
       ],
       "issue_id": "dat-grid-connectivity-authority-5s6",
       "key": "NATIVE-CONNECTIVITY-CONTRACT",
+      "landing_commit": "ecc88bd09211fd5a860b354ba685e12c193c3d4d",
       "order": 57,
       "parallel": true,
-      "state": "specified",
+      "state": "landed",
       "summary": "Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority.",
       "title": "Reconcile native connectivity identity, formation and gesture authority",
       "unblocks": [],

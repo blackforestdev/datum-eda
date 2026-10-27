@@ -196,7 +196,7 @@
    Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation. *state `specified`; authorization `owner_decision`.*
    *Dependencies:* `dat-drafting-standard-authority-jcz`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md`, `research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md`, `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md`, `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `specs/PUBLISH_SPACE_SPEC.md`, `specs/STANDARDS_COMPLIANCE_SPEC.md`, `specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md`.
 <details>
-<summary>Completed history (7 landed records)</summary>
+<summary>Completed history (9 landed records)</summary>
 
 - **Enforce Claude ownership of GUI visual-truth files** (`VISUAL-TRUTH-FILE-LANE`; `dat-visual-truth-file-lane-enforcement-jfl`).
    Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook. *state `landed`; authorization `none`.*
@@ -219,15 +219,9 @@
 - **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
    Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`.
-
-</details>
-
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
-   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `specified`; authorization `owner_decision`; parallel lane.*
+   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
-<details>
-<summary>Completed history (1 landed records)</summary>
-
 - **Define and deliver the ordinary native GUI project startup doorway** (`NATIVE-PROJECT-DOORWAY`; `dat-native-project-startup-vrf`).
    Accepted C01-C09 native startup delivery: shared New/Open browsing, automatic Units, protected New Folder/Rename, preserved terminal panel and selected Project-root session, manifest activation and successive path completion. C09 implementation 35d5e014 and authorized visual commit 93e94e0c have actual independent review, owner QA and manager objective acceptance. Existing qualification defects and S5A hold remain separate; no successor selected. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/reviews/workflow-delivery-rollout/native-project-doorway.md`, `docs/decisions/PRODUCT_MECHANICS_005_EMBEDDED_TERMINAL.md`, `docs/decisions/PRODUCT_MECHANICS_027_FULL_NATIVE_TERMINAL.md`, `docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md`.
