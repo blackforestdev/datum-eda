@@ -4242,8 +4242,7 @@
           "selection": "explicit_frontier_update",
           "selects_successor": false,
           "unblocks_issue_ids": [
-            "dat-gui-performance-implementation-vkq",
-            "dat-gui-baseline-budgets-j9w8"
+            "dat-gui-performance-implementation-vkq"
           ]
         },
         "presentation_policy": {
@@ -4456,8 +4455,7 @@
       "summary": "GPS-C01-C06 complete and owner-ratified. Owner removed GPS-C01R from specification completion to the existing unresolved, nonblocking resize investigation. Specification closes without resize or runtime acceptance.",
       "title": "Specify the performance-first shared GUI foundation",
       "unblocks": [
-        "dat-gui-performance-implementation-vkq",
-        "dat-gui-baseline-budgets-j9w8"
+        "dat-gui-performance-implementation-vkq"
       ]
     },
     {
@@ -5365,27 +5363,10 @@
       }
     },
     {
-      "authorization": "planning",
-      "canonical_next": true,
-      "claim": {
-        "agent": "dev-agent-01",
-        "claimed_at": "2026-10-27T05:06:38Z",
-        "expires_at": "2026-10-27T13:06:38Z",
-        "harness": "claude-code",
-        "head": "c54a54507a6890e243905844ef9f32c270c010d3",
-        "heartbeat_at": "2026-10-27T05:06:38Z",
-        "scope": [
-          "specs/GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl",
-          "docs/reviews/gui-performance/baseline-budget/p05"
-        ],
-        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
+      "authorization": "none",
+      "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "GBB-P05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -5511,7 +5492,12 @@
           },
           {
             "action": "Preserve and scope seven unmeasured workload families, total instrumentation effects, displayed responsiveness, supported-hardware expectations and complete DRM/resource accounting. Reuse adequate evidence; prepare any future bounded execution request without collecting measurements or optimizing the renderer. Keep budgets undecided and functionality unblocked.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "db4eda9e7846be1babc6775163b2f6a09d85aea8"
+              }
+            ],
             "depends_on": [
               "GBB-P04"
             ],
@@ -5523,7 +5509,7 @@
                 "path": "specs/GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           }
         ]
       },
@@ -5546,9 +5532,10 @@
       ],
       "issue_id": "dat-gui-baseline-budgets-j9w8",
       "key": "GUI-PERFORMANCE-BASELINE",
+      "landing_commit": "db4eda9e7846be1babc6775163b2f6a09d85aea8",
       "order": 22,
       "parallel": true,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Owner accepted only the limited pointer assessment at GBB-P04. Replacement budgets remain undecided. GBB-P05 schedules seven workload families, total instrumentation effects, displayed responsiveness, supported-hardware expectations and complete DRM/resource accounting, nonblocking for functionality. No additional measurement or renderer optimization authorized; representative baseline and qualification incomplete.",
       "title": "Establish reference baseline and derive defensible performance budgets",
       "unblocks": [],
@@ -18457,6 +18444,11 @@
   "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
   "schema_version": 7,
   "selection": {
-    "mode": "selected"
+    "mode": "idle",
+    "reason": "all remaining frontier moves are owner-reserved (eight gates B-I); see disposition",
+    "source_ref": {
+      "marker": "## Disposition",
+      "path": "docs/reviews/frontier/FRONTIER_IDLE_DISPOSITION_2026-10-26.md"
+    }
   }
 }
