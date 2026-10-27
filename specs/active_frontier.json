@@ -18401,34 +18401,8 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "codex",
-        "claimed_at": "2026-10-27T16:45:26Z",
-        "expires_at": "2026-10-28T00:44:26Z",
-        "harness": "codex",
-        "head": "46214ba5874f33b64105138decfa52833cf6ef77",
-        "heartbeat_at": "2026-10-27T16:46:26Z",
-        "scope": [
-          "AGENTS.md",
-          "CLAUDE.md",
-          "docs/AGENT_OPERATIONAL_PROCEDURES.md",
-          "docs/PROJECT_STATE_POLICY.md",
-          "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
-          "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
-          "docs/reviews/specification-history/pm-automation-correction-review.json",
-          "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md",
-          "scripts/cargo_qa_companions.py",
-          "scripts/project_work_authority.py",
-          "scripts/test_cargo_qa_companions.py",
-          "scripts/test_project_standing_authority.py",
-          "scripts/test_project_work_authority.py",
-          "specs/evidence_traceability_manifest.json"
-        ],
-        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
         "canonical_next_step_id": "PA-C01",
         "execution_policy": {
@@ -18466,7 +18440,7 @@
                 "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
               }
             ],
-            "status": "in_progress"
+            "status": "pending"
           },
           {
             "action": "Obtain distinct independent review of the routing correction and its tests; account for every finding.",
@@ -18506,11 +18480,27 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
       ],
+      "hold": {
+        "completion_checkpoint": {
+          "canonical_next_step_id": "PA-C01",
+          "step_statuses": {
+            "PA-C01": "pending",
+            "PA-C02": "pending",
+            "PA-C03": "pending"
+          }
+        },
+        "reason": "PM-AUTOMATION-CORRECTION implementation and independent review are committed (87b71d5a policy; 5af4cef3 dedup) and Codex released the completed-code lease. No step passes and routing is NOT installed: the standing project-manager appointment does not yet exist in management_appointments, which requires the owner-run activation finisher. The wave gate enactments remain classifier-queued for the owner.",
+        "resume_requires": "The standing project-manager appointment is committed to specs/active_frontier.json management_appointments by the owner activation finisher; PA-C01 routing execution then resumes under a fresh synchronized claim.",
+        "source_ref": {
+          "marker": "<!-- EVIDENCE:PM059:STANDING-PROJECT-MANAGER -->",
+          "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+        }
+      },
       "issue_id": "dat-pm-automation-correction-5spq",
       "key": "PM-AUTOMATION-CORRECTION",
       "order": 101,
       "parallel": true,
-      "state": "in_progress",
+      "state": "deferred",
       "summary": "Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved.",
       "title": "Install persistent project-PM decision routing (standing policy correction)",
       "unblocks": [],
