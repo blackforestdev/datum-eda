@@ -4,10 +4,6 @@
 //! every leaf is disabled and fires nothing; a child that is itself a submenu
 //! shows the ▸ navigable affordance. Navigation state (which submenu is open)
 //! lives in `MarkingMenuState::submenu_path`; this module only draws it.
-//!
-//! STATUS: written under the retained grant while the guarded Cargo runner is
-//! refused on the retained-cache ceiling; NOT YET COMPILED. Batch-verify with the
-//! marking/selection guarded test once cache is reclaimed.
 use super::*;
 use datum_gui_protocol::{GuiIconSet, GuiMenuItem};
 
