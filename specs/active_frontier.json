@@ -8550,7 +8550,7 @@
     },
     {
       "authorization": "owner_decision",
-      "canonical_next": true,
+      "canonical_next": false,
       "completion": {
         "canonical_next_step_id": "DC-C04",
         "execution_policy": {
@@ -13781,7 +13781,24 @@
     },
     {
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-27T04:30:05Z",
+        "expires_at": "2026-10-27T12:30:05Z",
+        "harness": "claude-code",
+        "head": "30f512749cc068800d9609e83e88236a6316e4c3",
+        "heartbeat_at": "2026-10-27T04:30:05Z",
+        "scope": [
+          "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl",
+          "docs/reviews/foundation-followup/native-workflow-budgets"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "NWB-C01",
         "execution_policy": {
@@ -13819,7 +13836,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Draft explicit performance budgets, sampling, provenance and failure policy without ratifying thresholds.",
@@ -13893,7 +13910,7 @@
       "key": "NATIVE-WORKFLOW-BUDGETS",
       "order": 59,
       "parallel": true,
-      "state": "planned",
+      "state": "in_progress",
       "summary": "Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed.",
       "title": "Define native workflow fixtures and ratify performance measurement budgets",
       "unblocks": [],
