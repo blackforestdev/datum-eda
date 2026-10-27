@@ -7467,6 +7467,7 @@
           "crates/gui-app/src/editor/marking_menu_native_proof_tests.rs",
           "crates/gui-app/src/editor/runtime_primary_pointer.rs",
           "crates/gui-app/src/editor/runtime_selection_menu.rs",
+          "crates/gui-app/src/main.rs",
           "crates/gui-app/src/viewport/pan_gesture.rs",
           "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
           "crates/gui-protocol/src/gui_menu_model.rs",
