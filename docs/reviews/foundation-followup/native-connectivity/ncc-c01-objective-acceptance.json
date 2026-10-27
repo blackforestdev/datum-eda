@@ -1,0 +1,22 @@
+{
+  "task": "NATIVE-CONNECTIVITY-CONTRACT",
+  "step": "NCC-C01",
+  "date": "2026-10-26",
+  "actual_manager": "PM-Agent-01",
+  "disposition": "NCC-C01 ACCEPTED — objective acceptance against the recorded step criteria (PM059 delegated set). The competing connectivity, native-authoring, selection and grid authority clauses are reviewed and isolated into a clause matrix distinguishing stable electrical identity from geometric connection formation, attached-wire movement and quantization, with the historical contradictions included as record.",
+  "independent_reviewer": "audit-agent-01 (distinct from implementer dev-agent-01; read-only throughout; incremental adversarial verification during drafting plus a full pass). Confirmed the INHERITED/DECISION line is correctly drawn — the three DECISION items map exactly to the authority review's own adjudication rows and the INHERITED items trace to governed doctrine. Two findings, both applied and pre-cleared: the §D formation-layer prose adopted one side's vocabulary (now attributed, not asserted — C01 stays purely isolating) and the Selection visual-authority route was listed as input but undispositioned (now explicitly preserved as owner-approved and S5A-owned, closing the bound's every-route requirement). Receipt committed alongside this record.",
+  "criteria_evaluation": {
+    "four_authorities_isolated": "Satisfied. B1 identity (all inherited — names-as-attributes, stable NetId, read-never-allocates, merge survivor, PM055 bus identity, atomic refusal), B2 formation (inherited except D1), B3 movement (inherited except D2, including the compensating-journal law), B4 quantization (inherited except D3), all along the PM053 authored-vs-recomputable spine with line-cited governing sources.",
+    "historical_contradictions_as_record": "Satisfied. The atomic-refusal, compensating-journal, check-is-not-authoring and junction/net-identity contradictions are carried as recorded adjudication targets with their recorded dispositions; no fresh runtime result was invented from a historical observation.",
+    "semantics_routed_not_decided": "Satisfied. Exactly three semantics items are named for the owner: D1 (native junction/pin-attachment gesture policy), D2 (wire-chain Finish/Escape transaction boundary), D3 (the attachment/update contract binding identity/formation/movement across quantize — the F4/F7 core, proven to be two layers that must not be collapsed). Each is an NCC-C02 draft target ratified at NCC-C03; none is settled in C01.",
+    "cross_references_preserved": "Satisfied. The selection-envelope Run discrepancy, the authoring-clause-authority intake and the parked PWO writer lock are cross-referenced without amendment or new dependency edges; the Selection visual-authority route is dispositioned as preserved, not NCC-reconciled.",
+    "prototype_inspect_only": "Satisfied. units-and-grid-model.html was inspected as a route input only; the file/region/outcome/proof list remains the NCC-C02 deliverable to Claude, and nothing in this lane edited or blessed it."
+  },
+  "process_note": "The adversarial loop again earned its cost: the formation-layer framing lean it caught had already propagated into the PM's own first reading of the draft — exactly the collapse-by-closest-paragraph failure the authority review warns against. The D3 re-grounding note (the study's spec:92 citation now lands on the current spec's labels boundary) was surfaced during correction and is carried for the C02 draft.",
+  "pm_review": "PM-Agent-01 personally read the complete draft at completion and re-read the changed sections (B2, §D, §E, the D3 note) after the correction set before rendering this acceptance.",
+  "limits": [
+    "This acceptance is against the recorded NCC-C01 criteria only; it creates no product rule, scope change, waiver or dependency, and decides no connectivity/selection/grid semantics.",
+    "D1/D2/D3 remain NCC-C02 draft targets and NCC-C03 owner-ratification items; nothing here pre-decides them.",
+    "NCC-C02 proceeds as the next planning step under the existing claim; the prototype reconciliation list remains the C02 deliverable; no implementation grant is created."
+  ]
+}

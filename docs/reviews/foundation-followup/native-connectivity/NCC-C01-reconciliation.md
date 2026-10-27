@@ -1,0 +1,89 @@
+# NCC-C01 — isolate competing authority (connectivity / native-authoring / selection / grid clause matrix)
+
+**Step:** NATIVE-CONNECTIVITY-CONTRACT / NCC-C01 (planning). **By:** dev-agent-01 (claim-holder; front opened a714f89f). **Date:** 2026-10-26. **Reviewer (adversarial, when drafted):** audit-agent-01.
+**Bound (FOUNDATION_FOLLOWUP_PLANS.md:99-108, REQ:NCC-C01):** review the complete connectivity, native-authoring, selection and grid prototype routes from the foundation authority review; produce a clause matrix distinguishing **stable electrical identity** from **geometric connection formation**, **attached-wire movement** and **quantization**; include the historical native-authoring **atomic-refusal** and **compensating-journal** contradictions recorded in the foundation authority review — **as RECORD, do NOT convert the historical observation into a fresh runtime result.**
+**GUARDRAILS (planning, PWO-sibling):** no fixes authored; no connectivity/selection/grid semantics decided; reconcile against governed material only. Any need to CHANGE/EXTEND semantics beyond governed material → **NCC-C03 owner list**, never settled here. The Claude-owned prototype `docs/gui/prototypes/units-and-grid-model.html` is **inspected, never edited/blessed** from this lane (the exact file/region/proof list is the NCC-C02 handoff, not C01). Gaps stay findings.
+
+## §A — Inputs (source-pinned, read-only)
+- **Governed bound:** specs/FOUNDATION_FOLLOWUP_PLANS.md:99-108.
+- **Foundation authority review:** docs/reviews/workflow-foundation/authority-review.md — Process route (§40-56), Selection route + discrepancy (§58-101), Selection visual-authority (§103-131), Grid/connectivity evidence (§682-733), **Native-authoring & storage clause adjudication (§949-987)**, Editor-shell/PM000D table (§998-1008).
+- **Formal connectivity contract:** specs/SCHEMATIC_CONNECTIVITY_SPEC.md — Resolution §4 (4.1 sheet-local :84-91, 4.2 labels :92-96, 4.5 buses :111-131 incl. PM055 foreign-bus :124-131), Net naming/identity §5 (:140-147), Diagnostics §6 (:151-168), **PM053 C01–C03 owning reconciliation (:185-202)**.
+- **Decisions:** PM053 (electrical identity authority — stable NetId, authored-vs-recomputable), PM055 (bus-run contact), PM003 (electrical intent vs physical realization vs authored relationship vs derived status), PM023 (shared snap/profile; object-snap overrides grid; committed coords in nm), PM026 (selection identity law), PM000D (transactions/revision classes; compensating undo), UVT §2.2/§3 (selection/movement/snap).
+- **This bead owns** (authority-review §972-976): the junction, gesture and net-identity observations extending the bounded F4/F7 question in `dat-grid-connectivity-authority-5s6`.
+
+## §B — THE CLAUSE MATRIX: four competing authorities isolated
+The controlling distinction (PM053 via spec :199-200): **authored identity/binding source is distinct from recomputable graph/projection geometry.** The four columns below separate what is *authored & durable* (identity) from what is *recomputed from geometry* (formation), what *gesture moves* (movement) and what *grid/snap rounds* (quantization). Disposition = INHERITED (already governed; reconcile, don't re-decide) vs DECISION (needs a numbered decision at NCC-C02/owner at NCC-C03).
+
+### B1 — Stable electrical IDENTITY (authored, durable; never recomputed from geometry)
+| Clause | Governing source | Disposition |
+|---|---|---|
+| Human-readable net names are ATTRIBUTES, not identities; resolved nets receive stable UUIDs | spec §5 :142-143 | INHERITED |
+| Stable NetId final-state atomic nomination/fallback; persisted NetId transitions follow PM053 C01 | spec §5 :147; PM053 (:187) | INHERITED |
+| read/cache/reopen NEVER allocate identity; display rename PRESERVES identity; a label edit changing electrical groups follows RECORDED transitions | PM053 (:191-192) | INHERITED |
+| merge records deterministic SURVIVOR + complete redistribution; split preserves the anchored group's identity | PM053 (:193-194); PM000D (authority-review §1007) | INHERITED |
+| Bus is a semantic declaration with occurrence-qualified bindings (source + stable instance path); names/member equality NEVER establishes Bus identity; Bus has no board projection | spec §4.5 + PM055 :124-131; PM053 :195-197 | INHERITED |
+| malformed references refuse ATOMICALLY; pending/mismatch are lawful incomplete states, never published as complete cross-domain Net selection | PM053 :198-199 | INHERITED |
+| UUID-from-name rationale (connectivity rationale §4) CANNOT override names-as-attributes / stable NetId/NetAnchor (formal spec §5 + PM003) | authority-review §971 (**contradiction, see §C**) | INHERITED (rationale subordinate to spec) |
+
+### B2 — Geometric connection FORMATION (recomputed from geometry; the gesture/junction lane)
+| Clause | Governing source | Disposition |
+|---|---|---|
+| Endpoints form a connection only by: shared endpoint, OR explicit junction, OR source-format-defined touch | spec §4.1 :85-88 | INHERITED |
+| Crossing wires WITHOUT a junction are NOT connected "unless the source format explicitly marks them as joined" (spec's words); the "never implicitly create a junction" formulation is the authority-review §969 gloss, not the spec's literal text | spec §4.1 :89-91; authority-review §969 | INHERITED |
+| draw-wire §4 auto-junctions at crossings/Ts CONTRADICTS "never implicitly create a junction"; resolve endpoint-on-segment T, crossing-without-junction, crossing-with-explicit-join and pin attachment SEPARATELY; imported-format exceptions cannot set native gesture policy | authority-review §969 (**contradiction, see §C**) | **DECISION** (native T-junction / off-lattice pin-attachment gesture policy — NCC-C02 draft → NCC-C03) |
+| Labels: local within sheet scope; global across sheets; hierarchical through ports; conflicting labels on one segment = connectivity error | spec §4.2 :93-96 | INHERITED |
+| Resolution is deterministic (same graph+labels → same net assignments); diagnostics are resolver-level, not ERC policy | spec §4.4 :108-109, §6 :151-168 | INHERITED |
+| Authored identity/binding source is DISTINCT from recomputable graph/projection geometry | PM053 :199-200 | INHERITED (the matrix's spine) |
+
+### B3 — Attached-wire MOVEMENT (gesture moves geometry; must not rewrite identity/history)
+| Clause | Governing source | Disposition |
+|---|---|---|
+| Moving board geometry CANNOT silently rewrite electrical intent; merely placing a package does not prove its unrouted nets are implemented | PM003 (authority-review §977-980) | INHERITED |
+| Connected move/quantize, rename/identity need EXACT identity + topology assertions, not "visually touching endpoints" | authority-review §971 | INHERITED |
+| One translation rule + one command across invocation surfaces; reference is invocation-specific; a focus member is NOT an implicit pivot or extra mutation authority | UVT §2.2.12 (authority-review §80-82) | INHERITED |
+| Undo restores domain values via a NEW compensating (append-only) transaction that ADVANCES object revisions — NOT by rewinding model history; a blanket "model_revision reverts" requirement is incorrect | authority-review §966, §1006 (**contradiction, see §C**) | INHERITED (compensating-journal law) |
+| wire-chain Finish/Escape transaction boundary is UNANSWERED: which clicked segments are committed, what Escape discards; specify exact before/after journal counts for start/vertex/finish/Escape; preserve no-write cancellation for an uncommitted preview | authority-review §970 | **DECISION** (wire-chain transaction boundary — NCC-C02 draft → NCC-C03) |
+
+### B4 — QUANTIZATION (grid/snap rounds display + gesture; must not touch identity or implicitly move geometry)
+| Clause | Governing source | Disposition |
+|---|---|---|
+| Object snapping OVERRIDES grid within the eligible radius; exact target coords are NANOMETERS, radius is screen-space; gesture snapping is consumer state; only COMMITTED coordinates enter typed operations | UVT §3 + PM023 (authority-review §83-86) | INHERITED |
+| Quantize is an ALIGN parameter (`reference: grid`), NOT an additional private verb | PM023 (authority-review §86, §721) | INHERITED |
+| Switching a units/grid READING must neither move geometry NOR implicitly quantize it; a named preset + rounded label is not an exact edit buffer (0.5 mm = exactly 500,000 nm, not 19.685 mil) | authority-review §691-692, §706-709 | INHERITED |
+| Owner-dispositioned preset values (§7B): Metric default (board 0.5 / schematic 2.5 mm); Mil optional; Imperial-derived never default | authority-review §697-701 | INHERITED |
+| **F4/F7 source conflict (this bead):** units-and-grid-model.html §2 relies on EXACT COORDINATE COINCIDENCE (citing SCHEMATIC_CONNECTIVITY_SPEC.md:92) while UVT §3.3 says connectivity SURVIVES quantize because nets are UUID/net-addressed, not coordinate-coincident | authority-review §712-722 (**the core conflict — see §D**) | **DECISION** (the attachment/update contract distinguishing the two layers — NCC-C02 → NCC-C03) |
+
+## §C — Historical contradictions reconciled AS RECORD (not re-run)
+Per the bound, these are the foundation-authority-review observations carried forward as the recorded reconciliation targets — NOT reproduced as fresh runtime results. Each is an existing adjudication row; NCC-C01 isolates it, NCC-C02 drafts the behavior, NCC-C03 ratifies.
+1. **Atomic-refusal (authority-review §965; UVT §2.2.14/PM026 §77-79):** PCB contract §3 permits locked-member skipping; the later atomic-refusal law covers align and every selection-derived surface. RECORD disposition: complete preflight + WHOLE refusal for locked/stale/incompatible/constrained/invalid members, with **zero journal effect, exact blocker report, unchanged selection**; do not bless the legacy partial result. (Cross-cuts B2 formation + B3 movement; the refusal is the shared failure mode.)
+2. **Compensating-journal (authority-review §966, §1006; PM000D, PM001):** restoring geometry is NOT restoring revision history. Compensating undo is append-only and advances object revisions. RECORD disposition: assert exact restored domain values + stable identities SEPARATELY from the new transaction, object revisions and resulting model hash; test after reopening. (B1 identity + B3 movement; a blanket model_revision-reverts requirement is incorrect.)
+3. **Check-is-not-authoring (authority-review §967):** schematic end-to-end "one transaction per step" contradicts run-erc §10 emitting no Operation. RECORD disposition: count AUTHORED mutations only; check evaluation has no authored-source mutation; a durable check-evidence path needs its own classification, not an invented source edit.
+4. **Junction/gesture (§969) and net-identity (§971):** carried in B2/B1 above; these are the bounded F4/F7 observations this bead owns (§972-976) — they EXTEND the question, they do NOT select a replacement connectivity model or alter a Claude prototype.
+
+## §D — The F4/F7 core conflict, isolated (the reason this lane exists)
+The grid/connectivity evidence (authority-review §712-722) captures the exact competing authority NCC must resolve: **"the study's section 2 relies on exact coordinate coincidence … while UVT section 3.3 says connectivity survives quantize because nets are UUID/net addressed, not coordinate-coincident. These may describe different layers but cannot substitute for a specified attachment/update contract."** Isolation (C01's job): these are TWO LAYERS, not one rule —
+- **Identity layer (B1):** a net's identity is the stable NetId/NetAnchor (authored/recorded), addressed by UUID — it SURVIVES quantize untouched (UVT §3.3). Quantizing geometry never re-IDs a net.
+- **Formation layer (B2):** whether two endpoints FORM a connection is recomputed from geometry. The two sources FRAME this differently and C01 does not settle it: units-and-grid §2 holds that exact coordinate coincidence governs formation, while spec §4.1 frames formation as shared-endpoint / explicit-junction / source-format. Which property governs the formation layer at move/quantize time is exactly what **D3** leaves open (and the native-gesture formation rule is **D1**). Either framing, formation ≠ identity.
+- **Movement layer (B3):** a connected move may change geometry (and thus re-run formation) but must preserve identity and journal as a compensating transaction.
+The attachment/update contract that binds these three (what a connected move does to an attached wire's endpoint, and when a quantize re-runs formation vs leaves identity untouched) is **NOT yet specified** — it is the central NCC-C02 draft target and an NCC-C03 ratification item. C01 does not choose it; it proves the two paragraphs describe different layers and must not be collapsed "from whichever paragraph is closest" (§722). Preserve PM023 exact committed coords, UVT grid-then-object override, screen-pixel eligibility, align `reference: grid`, whole-batch refusal (§719-722).
+
+## §E — Gaps / owner-routing (→ NCC-C03) and cross-references
+**Semantics-change items for NCC-C03 (named, not decided here):**
+- **D1 — native T-junction / crossing / explicit-join / off-lattice pin-attachment gesture policy** (B2; resolves the §969 draw-wire-vs-rationale contradiction for NATIVE authoring, distinct from imported-format semantics).
+- **D2 — wire-chain Finish/Escape transaction boundary** (B3; exact start/vertex/finish/Escape journal counts; no-write cancellation of an uncommitted preview — §970).
+- **D3 — the attachment/update contract** binding identity/formation/movement across quantize (B4/§D; the F4/F7 core). Downstream re-grounding note (for the NCC-C02 draft, not a C01 change): the units-and-grid study's "exact coordinate coincidence" basis is recorded (authority-review §713) as citing SCHEMATIC_CONNECTIVITY_SPEC.md:92, but in the CURRENT spec :92 is the §4.2 labels boundary, not a coordinate rule — the D3 draft must re-ground that citation against current spec text. C01 carries it faithfully as the study's recorded claim.
+These are draft targets for NCC-C02 (separate inherited-vs-decision), reviewed at NCC-REVIEW, ratified at NCC-C03. No native proof, topology rewrite or mechanism is authorized here.
+**Cross-references (not NCC-owned; preserve, do not amend):**
+- **Selection visual-authority route (authority-review §103-131; the prototype-selection VISUAL study)** — reviewed as a route input because the bound names "selection," but it is OWNER-APPROVED (UVT §2.2.21/22, PM026) and S5A/selection-owned; NCC PRESERVES it and does NOT reconcile it. The NCC-relevant selection clauses (UVT §2.2.12 one-translation-rule, §2.2.14 atomic-refusal, §3 object-snap-overrides-grid) are carried inline in B2/B3/B4; this explicitly closes the bound's "selection" dimension (so the NCC-REVIEW account-every-route attestation sees it dispositioned, not merely listed).
+- `dat-selection-envelope-run-flr` — UVT §2.2.19/20 Run subject_kind discrepancy (authority-review §88-101): a selection-route document-level contradiction, owned by that intake + the S5A owner; NCC preserves it, does not resolve it.
+- `dat-authoring-clause-authority-blm` — captures the atomic-refusal / undo-check / stale-grounding reconciliation (authority-review §973); NCC's junction/gesture/identity observations EXTEND the F4/F7 question only.
+- `dat-project-write-ownership-lock-0ne` (PWO, parked at PWO-C03) — single-writer mechanism; connectivity edits commit through that same guarded writer. No NCC dependency edge added.
+**No doctrine/prototype edit:** PM053/PM055/PM003/PM023/PM026/PM000D and SCHEMATIC_CONNECTIVITY_SPEC.md reconciled against, never modified.
+
+## §F — Claude-owned prototype reconciliation (inspect-only; C02 handoff)
+`docs/gui/prototypes/units-and-grid-model.html` is Claude-owned and is the §D conflict's visual source (its §2 is one side of the exact-coordinate-coincidence question). Per the bound and PM029/visual-authority rules, NCC-C01 INSPECTS it as a route input only. The exact file/region/outcome/preserved-decisions/proof list for it is the **NCC-C02** deliverable to Claude (FOUNDATION_FOLLOWUP_PLANS.md:117-120) — NOT authored, edited or blessed from this lane. C01 records only that its §2 exact-coordinate-coincidence claim is one layer of the §D conflict, to be reconciled (not rewritten) downstream.
+
+## §G — Status
+NCC-C01 clause matrix COMPLETE: four competing authorities isolated along the PM053 authored-vs-recomputable spine — IDENTITY (B1, all inherited), FORMATION (B2, one decision D1), MOVEMENT (B3, one decision D2), QUANTIZATION (B4, one decision D3 = the F4/F7 core). The four historical contradictions (atomic-refusal, compensating-journal, check-is-not-authoring, junction/net-identity) are reconciled AS RECORD, not re-run. Three semantics items (D1/D2/D3) are named for NCC-C02 draft → NCC-C03 owner ratification; the selection-envelope-run discrepancy and the PWO writer lock are cross-referenced, not amended. No fixes, no semantics decided, no governed-doc/prototype edit; guardrail held.
+
+**Disposition (final):** audit-agent-01 adversarial pass = **unconditional PASS** (the INHERITED/DECISION line, the §C record-not-re-run handling, the §D layer separation and the scope discipline all confirmed; an initial contingent set of four phrasing/coverage refinements — §D attribution, §E selection-route disposition, the B2 §969-gloss re-attribution, and the D3 spec:92 downstream note — all applied with source verification and pre-cleared). PM-Agent-01 objective acceptance **rendered 2026-10-26**; the audit receipt and the acceptance record are committed alongside this reconciliation. NCC-C01 advances to **NCC-C02** (planning→planning; draft the behavior and owning-lane reconciliation of D1/D2/D3 + the inherited clauses, with the exact prototype proof-list handoff to Claude for units-and-grid-model.html).
