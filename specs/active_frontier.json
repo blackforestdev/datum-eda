@@ -13126,29 +13126,10 @@
       "unblocks": []
     },
     {
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
-      "claim": {
-        "agent": "dev-agent-01",
-        "claimed_at": "2026-10-26T21:38:34Z",
-        "expires_at": "2026-10-27T08:47:30Z",
-        "harness": "claude-code",
-        "head": "855eab868f7db1174acb53dec88c122d2b76f5e8",
-        "heartbeat_at": "2026-10-27T00:47:30Z",
-        "scope": [
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl",
-          "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md",
-          "docs/reviews/foundation-followup/project-writer-ownership",
-          "crates/engine"
-        ],
-        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "PWO-REVIEW",
+        "canonical_next_step_id": "PWO-C03",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -13217,7 +13198,12 @@
           },
           {
             "action": "Obtain independent review of the complete remaining clause/consumer matrix and actual gaps, reusing bounded PM060 review only at its exact scope and accounting for every finding.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "d0159c46d0b6c92b96cc9c0b837373d82006a0be"
+              }
+            ],
             "depends_on": [
               "PWO-C02"
             ],
@@ -13229,7 +13215,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain owner disposition of the reviewed remaining full-scope reconciliation and any genuine broader ratification, crediting bounded PM060 and explicitly scheduling unmet implementation/conformance obligations.",
@@ -13272,7 +13258,7 @@
       "key": "PROJECT-WRITER-OWNERSHIP",
       "order": 56,
       "parallel": true,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated.",
       "title": "Ratify project writer ownership and recovery serialization",
       "unblocks": [
