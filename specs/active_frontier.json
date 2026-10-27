@@ -7464,6 +7464,7 @@
         "heartbeat_at": "2026-10-27T19:01:26Z",
         "scope": [
           "crates/gui-app/src/application/runtime_menu_actions.rs",
+          "crates/gui-app/src/editor/runtime_primary_pointer.rs",
           "crates/gui-app/src/editor/runtime_selection_menu.rs",
           "crates/gui-app/src/viewport/pan_gesture.rs",
           "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
