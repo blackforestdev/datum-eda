@@ -18375,6 +18375,7 @@
           "docs/PROJECT_STATE_POLICY.md",
           "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
           "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+          "docs/reviews/specification-history/pm-automation-correction-review.json",
           "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md",
           "scripts/project_work_authority.py",
           "scripts/test_project_standing_authority.py",
