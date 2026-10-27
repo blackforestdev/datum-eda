@@ -1,0 +1,22 @@
+{
+  "task": "PROJECT-WRITER-OWNERSHIP",
+  "step": "PWO-C01",
+  "date": "2026-10-26",
+  "actual_manager": "PM-Agent-01",
+  "disposition": "PWO-C01 ACCEPTED — objective acceptance against the recorded step criteria (PM059 delegated set). Reconciliation of current writer entry points and the failure matrix against the credited bounded PM060 authority/implementation is complete, independently and adversarially verified, with gaps identified as findings and no historical no-lock re-assertion.",
+  "independent_reviewer": "audit-agent-01 (distinct from implementer dev-agent-01; read-only throughout; full-draft adversarial pass rendered PASS, receipt committed alongside this record). Verified directly: the O1 acquire_serialized caller trace (sole non-test caller on the named datum-erc-job background worker, read path, lease released before projection), the restore inode-preservation reasoning, the cross-process contention and stale-prepared-intent fixtures (writer_ownership.rs spawns a real subprocess), and — at PM direction — the before/after-append fault-injection leg (revision_integrity.rs:36/:75/:183-236 exercise both sides of the journal-append commit point and assert the PM060 outcomes).",
+  "criteria_evaluation": {
+    "entry_points_reconciled": "Satisfied. Every non-test ProjectWriteLease::acquire* call site at HEAD 137cc48a is enumerated and reconciled against the PM060 W4 required integration (eleven consumers, all CONFORMING); W1/W2/W3 clause tables are line-cited to the enforcing sites (W2 citations corrected to the enforcing code per audit, not doc comments).",
+    "failure_matrix_reconciled": "Satisfied. Every PM060 W4 timeline scenario maps to an existing fixture; the plan's presumption that two-process contention and stale-prepared-intent coverage were missing was disproved by the tree and honestly logged. No new fixture authored or needed.",
+    "gaps_identified_not_fixed": "Satisfied. No fixes authored. Semantics-change gaps: NONE. Exactly one doctrine-coverage ratification item is routed to the owner at PWO-C03 (O1-R: the blocking acquire_serialized serialized-readback variant PM060 W1 does not enumerate — behaviorally clean, ratify-or-change is the owner's). Findings O2 (unwired guard-held REV-I04/I05 authority-mutation subsystem) and O3 (optional promote() lease-witness hardening) are recorded as findings with no owner routing, correctly reasoned.",
+    "no_historical_no_lock_reassertion": "Satisfied. The historical no-lock claim is not re-asserted; the reconciliation documents the current lock-based conforming tree.",
+    "named_consumers_looked_at": "Satisfied after correction. The Project Preferences row was initially asserted from a grep that could not have seen a separate writer; audit caught it, and the row was rewritten from actual inspection — the Global-Preferences WriterLease is named and shown out of PM060's Project-writer scope (machine-global ~/.config store, different protocol), and an actual search establishes no live project-scoped preference writer exists to bypass ProjectWriteLease (future-consumer note recorded)."
+  },
+  "pm_review": "PM-Agent-01 personally read the complete reconciliation at draft (W1/W2), at completion (W3/W4/failure matrix), and after the final accuracy edits (Preferences row, O2 subsystem wording, O1-R routing) before rendering this acceptance; the O1-R owner-routing ruling and the evidence landing path are PM rulings recorded in the process.",
+  "limits": [
+    "This acceptance is against the recorded PWO-C01 criteria only; it creates no product rule, scope change, waiver or dependency, and decides no write-path semantics.",
+    "The O1-R doctrine-coverage item is reserved for the owner at PWO-C03 under the existing WRITER-RATIFICATION owner_input request; nothing here pre-decides it.",
+    "PWO-C02 proceeds as the next planning step under the existing claim; no implementation grant is created.",
+    "GUI-dispatch busy/stale presentation and native_write dispatch breadth remain GUI-WRITE-PATH (dat-gui-write-path-qiu) concerns, not advanced here."
+  ]
+}
