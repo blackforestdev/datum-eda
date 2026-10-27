@@ -29,6 +29,9 @@
   .wl.active{fill:#141619;font-weight:600}
   .wk{text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--tx3);font-size:10px;font-family:var(--mono)}
   .wk.active{fill:rgba(20,22,25,.75)}
+  .wic{stroke:var(--tx2);fill:var(--tx2);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+  .wic.active{stroke:#141619;fill:#141619}
+  .wl.sec:not(.active){fill:var(--tx3)}
   .cdot{fill:var(--acc);pointer-events:none}
   .trail{fill:none;stroke:var(--acc);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:.9;pointer-events:none;filter:drop-shadow(0 0 4px rgba(206,90,146,.55))}
   .hubc{fill:rgba(18,20,26,.95);stroke:var(--acc);stroke-width:1.8;cursor:pointer}
@@ -55,11 +58,11 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div class="wrap">
   <p class="eyebrow">Datum GUI · context menu design</p>
   <h1>Compound-mark marking menu</h1>
-<div style="margin:6px 0 10px"><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
+<div style="margin:6px 0 10px"><span class="statusmark" data-state="approved">✓ CURRENT — REFRESHED TO MM-C02 RULINGS 2026-10-27</span></div>
   <p class="sub">A submenu spawns as its <b>own radial at the wedge you flick toward</b> — so the path through levels is <b>one continuous stroke</b> (flick to Align, then flick a direction = a bent "compound mark"). Draw it blind once it's muscle memory.</p>
 
   <div class="stage">
-    <div class="badge" id="badge">Right-clicked <b>U1</b> · component wheel</div>
+    <div class="badge" id="badge">Selected <b>3 components</b> · multi-select wheel</div>
     <svg class="scene" viewBox="0 0 400 400" aria-label="radial marking menu">
       <defs>
         <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#171A20" stroke-width="1"/></pattern>
@@ -87,7 +90,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
       <g id="stack"></g>
       <polyline id="trail" class="trail" points=""/>
       <circle id="hub" class="hubc" cx="200" cy="200" r="50"/>
-      <text id="hubt" class="hubt" x="200" y="200">U1</text>
+      <text id="hubt" class="hubt" x="200" y="200">×3</text>
     </svg>
     <div class="hint">hover to mark · click <b>Align ▸</b> — the sub-wheel spawns there · hub <b>◀</b> back</div>
   </div>
@@ -98,8 +101,16 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
       <p>Flick toward <b>Align</b>, then toward a direction — the two strokes join into one bent gesture (an inverted "L"). Because the sub-wheel always spawns in the same place relative to the parent, the whole shape becomes <b>one memorized flick</b>, drawn without the menu ever showing. That's the exponential speedup Kurtenbach &amp; Buxton measured.</p>
     </div>
     <div class="card">
-      <h3>Spawn-in-place, not re-center</h3>
-      <p>The submenu opens as its <b>own radial at the flicked wedge's location</b> (Sketchbook Pro), and the parent fades/blurs in place behind it — so the gesture flows <b>outward</b> and the path stays constant. Sub-wheels stay <code>4-wide cardinal</code> (Left/Right/Top/Bottom) for reliable blind selection.</p>
+      <h3>Spawn-in-place, and clamp inward at edges</h3>
+      <p>A submenu opens as its <b>own radial at the flicked wedge's location</b>, the parent fading/blurring behind it — so the gesture flows <b>outward</b> and the path stays constant. Near a viewport edge or a narrow pane the <b>whole wheel repositions inward</b> (clamp-inward, the Blender model) so it never spills off-screen and the angular gesture vocabulary stays intact. Sub-wheels are <code>content-sized</code> — the live Align sub-wheel is 3-wide (Horizontal / Vertical / Distribute), not a fixed cardinal count.</p>
+    </div>
+    <div class="card">
+      <h3>Two modes, one gesture</h3>
+      <p><b>Hold ~280 ms</b> and the labelled wheel draws — the novice path. <b>Flick before the threshold</b> and the wheel never draws; only the <b>mark-trail</b> renders as the command commits — the expert path, eyes on the board. The same gesture serves both, so novices become experts without relearning. The 280 ms is a tunable interaction default, not a performance figure.</p>
+    </div>
+    <div class="card">
+      <h3>On one component, the cardinals differ</h3>
+      <p>This demo is the <b>multi-select</b> wheel, where Align is a live sub-wheel. On a <b>single component</b> the canonical cardinals are <b>N Rotate · E Properties · S Delete · W Flip</b> (Move is a secondary at NE), and <b>Align / Distribute lives in the overflow list</b>, not a sub-wheel — per <code>menu_model.json</code>, the ratified source. Delete is always cardinal; a destructive verb never sits on a diagonal.</p>
     </div>
   </div>
 </div>
@@ -108,6 +119,24 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   var NS="http://www.w3.org/2000/svg";
   var stackEl=document.getElementById("stack"),hub=document.getElementById("hub"),hubt=document.getElementById("hubt"),badge=document.getElementById("badge"),trail=document.getElementById("trail");
   var stack=[];
+  // G3 icon+label: representative reference glyphs. data-icon carries the icon_set.json id
+  // (one verb = one icon at build time); the drawn shapes are a reference depiction, not final art.
+  var GLYPH={
+    rotate:'<path d="M5 -4 A6 6 0 1 0 6 1" fill="none"/><path d="M4 -7 L6 -3 L9 -5 Z"/>',
+    move:'<path d="M0 -7V7M-7 0H7" fill="none"/><path d="M0 -8l-3 3h6Z"/><path d="M0 8l-3 -3h6Z"/><path d="M-8 0l3 -3v6Z"/><path d="M8 0l-3 -3v6Z"/>',
+    copy:'<rect x="-6" y="-6" width="8" height="8" rx="1" fill="none"/><rect x="-2" y="-2" width="8" height="8" rx="1" fill="none"/>',
+    flip:'<path d="M0 -7V7" fill="none" stroke-dasharray="2 2"/><path d="M-2 -5L-7 0L-2 5Z" fill="none"/><path d="M2 -5L7 0L2 5Z" fill="none"/>',
+    delete:'<path d="M-6 -4H6M-4 -4V7H4V-4M-2 -4V-6H2V-4M-2 1V4M2 1V4" fill="none"/>',
+    lock:'<rect x="-5" y="-1" width="10" height="8" rx="1" fill="none"/><path d="M-3 -1V-4A3 3 0 0 1 3 -4V-1" fill="none"/>',
+    align:'<path d="M-7 -5H3M-7 0H6M-7 5H1" fill="none"/>',
+    distribute:'<path d="M-6 -6V6M0 -6V6M6 -6V6" fill="none"/>',
+    'align-h':'<path d="M0 -7V7" fill="none"/><rect x="-6" y="-4" width="5" height="3" fill="none"/><rect x="1" y="1" width="5" height="3" fill="none"/>',
+    'align-v':'<path d="M-7 0H7" fill="none"/><rect x="-4" y="-6" width="3" height="5" fill="none"/><rect x="1" y="1" width="3" height="5" fill="none"/>',
+    'dist-spacing':'<path d="M-6 -6V6M0 -6V6M6 -6V6" fill="none"/>',
+    'dist-gaps':'<path d="M-6 -6V6M6 -6V6" fill="none"/><path d="M-6 0H6" fill="none" stroke-dasharray="2 2"/>',
+    'dist-pitch':'<path d="M-6 -6V6M3 -6V6" fill="none"/><path d="M-6 4H3" fill="none"/><path d="M0 2l3 2l-3 2" fill="none"/>'
+  };
+  function glyph(id){return GLYPH[id]||'';}
   function pol(r,a,ox,oy){var t=a*Math.PI/180;return[ox+r*Math.cos(t),oy+r*Math.sin(t)];}
   function fmt(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}
   function sector(center,span,ri,ro,ox,oy){
@@ -118,7 +147,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   function peek(){return stack[stack.length-1];}
   function mark(ang){
     var w=peek();if(!w)return;
-    for(var i=0;i<w.parts.length;i++){var pt=w.parts[i],on=pt.ang===ang;pt.path.classList.toggle("active",on);pt.tl.classList.toggle("active",on);pt.tk.classList.toggle("active",on);}
+    for(var i=0;i<w.parts.length;i++){var pt=w.parts[i],on=pt.ang===ang;pt.path.classList.toggle("active",on);pt.tl.classList.toggle("active",on);pt.tk.classList.toggle("active",on);if(pt.ic)pt.ic.classList.toggle("active",on);}
     var outer=pol(w.ro,ang,w.ox,w.oy),pts="";
     for(var j=0;j<stack.length;j++){pts+=stack[j].ox.toFixed(1)+","+stack[j].oy.toFixed(1)+" ";}
     pts+=outer[0].toFixed(1)+","+outer[1].toFixed(1);
@@ -141,34 +170,49 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         p.addEventListener("click",function(){if(peek()===wheel&&it.children)pushWheel(it.children,it.label,{px:ox,py:oy,pro:RO,ang:ang});});
         g.appendChild(p);
         var pos=pol(RL,ang,ox,oy);
-        var t=document.createElementNS(NS,"text");t.setAttribute("x",pos[0].toFixed(1));t.setAttribute("y",(pos[1]-3).toFixed(1));t.setAttribute("class","wl"+(sm?" sm":"")+(it.children?" sub":""));t.textContent=it.label+(it.children?" ▸":"");
+        var ic=document.createElementNS(NS,"g");ic.setAttribute("class","wic");ic.setAttribute("data-icon",it.icon||"");ic.setAttribute("transform","translate("+pos[0].toFixed(1)+","+(pos[1]-(sm?12:16)).toFixed(1)+") scale("+(sm?0.78:0.95)+")");ic.innerHTML=glyph(it.icon);
+        g.appendChild(ic);
+        var t=document.createElementNS(NS,"text");t.setAttribute("x",pos[0].toFixed(1));t.setAttribute("y",(pos[1]+(sm?2:3)).toFixed(1));t.setAttribute("class","wl"+(sm?" sm":"")+(it.children?" sub":"")+(it.sec?" sec":""));t.textContent=it.label+(it.children?" ▸":"");
         g.appendChild(t);
-        var k=document.createElementNS(NS,"text");k.setAttribute("x",pos[0].toFixed(1));k.setAttribute("y",(pos[1]+(sm?9:11)).toFixed(1));k.setAttribute("class","wk");k.textContent=it.key||"";
+        var k=document.createElementNS(NS,"text");k.setAttribute("x",pos[0].toFixed(1));k.setAttribute("y",(pos[1]+(sm?13:16)).toFixed(1));k.setAttribute("class","wk");k.textContent=it.key||"";
         g.appendChild(k);
-        wheel.parts.push({ang:ang,path:p,tl:t,tk:k});
+        wheel.parts.push({ang:ang,path:p,tl:t,tk:k,ic:ic});
       })(items[i],i);
     }
     if(spawn){var dot=document.createElementNS(NS,"circle");dot.setAttribute("cx",ox.toFixed(1));dot.setAttribute("cy",oy.toFixed(1));dot.setAttribute("r","4");dot.setAttribute("class","cdot");g.appendChild(dot);}
     stackEl.appendChild(g);stack.push(wheel);
-    hubt.textContent=stack.length>1?"◀":"U1";
-    badge.innerHTML=stack.length>1?("U1 › <b>"+label+"</b> — spawned in place"):"Right-clicked <b>U1</b> · component wheel";
+    hubt.textContent=stack.length>1?"◀":"×3";
+    badge.innerHTML=stack.length>1?("Selected › <b>"+label+"</b> — spawned in place"):"Selected <b>3 components</b> · multi-select wheel";
     mark(wheel.parts[0].ang);
   }
   function popWheel(){
     if(stack.length<=1)return;
     var t=peek();t.g.parentNode.removeChild(t.g);stack.pop();
     peek().g.setAttribute("class","whl");
-    hubt.textContent=stack.length>1?"◀":"U1";
-    badge.innerHTML=stack.length>1?("U1 › <b>"+peek().label+"</b> — spawned in place"):"Right-clicked <b>U1</b> · component wheel";
+    hubt.textContent=stack.length>1?"◀":"×3";
+    badge.innerHTML=stack.length>1?("Selected › <b>"+peek().label+"</b> — spawned in place"):"Selected <b>3 components</b> · multi-select wheel";
     mark(peek().parts[0].ang);
   }
   hub.addEventListener("click",popWheel);
   document.querySelector(".scene").addEventListener("mouseleave",function(){if(peek())mark(peek().parts[0].ang);});
 
-  var align=[{label:"Top"},{label:"Right"},{label:"Bottom"},{label:"Left"}];
-  var component=[
-    {label:"Move",key:"M"},{label:"Rotate",key:"R"},{label:"Align",children:align},
-    {label:"Delete",key:"⌫"},{label:"Properties",key:"E"},{label:"Flip",key:"F"}
+  // Live pcb.multiselect wheel (menu_model.json) — the context where Align is a real sub-wheel.
+  // Slots ordered [N,NE,E,SE,S,SW,W,NW] to land on the 8 compass points (4 cardinal + 4 secondary).
+  var alignSub=[
+    {label:"Horizontal",icon:"align-h"},{label:"Vertical",icon:"align-v"},{label:"Distribute",icon:"distribute"}
   ];
-  pushWheel(component,"Component");
+  var distSub=[
+    {label:"Even Spacing",icon:"dist-spacing"},{label:"Even Gaps",icon:"dist-gaps"},{label:"To Pitch",icon:"dist-pitch"}
+  ];
+  var multisel=[
+    {label:"Rotate",icon:"rotate"},
+    {label:"Duplicate",icon:"copy",sec:true},
+    {label:"Move Exactly",icon:"move"},
+    {label:"Flip",icon:"flip",sec:true},
+    {label:"Delete",icon:"delete"},
+    {label:"Lock",icon:"lock",sec:true},
+    {label:"Align",icon:"align",children:alignSub},
+    {label:"Distribute",icon:"distribute",children:distSub,sec:true}
+  ];
+  pushWheel(multisel,"Multi-select");
 </script>

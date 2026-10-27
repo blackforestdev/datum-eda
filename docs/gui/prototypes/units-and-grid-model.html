@@ -123,14 +123,55 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div class="sec">2 · THE DISCOVERY — IN DATUM’S SCHEMATIC, THE GRID IS NOT A PREFERENCE</div>
 <div class="lead">The adversarial pass claimed Datum already connects pins to nets <i>by reference</i>, which would make the lattice purely cosmetic. I checked. It is the opposite, and it is ratified.</div>
 
-<div class="quote">A pin endpoint that coincides with a wire endpoint (within <b>zero tolerance — integer coordinates, exact match</b>) creates a connection.
-<span class="cite">docs/SCHEMATIC_CONNECTIVITY_SPEC.md:92 — ratified</span></div>
+<div class="quote">Two endpoints form a connection when they <b>share an endpoint, an explicit junction joins them, or the source format defines the touch</b>. Exact coordinate coincidence is a <b>sufficient</b> way to make a shared endpoint — not the definition of connection, and not a net's identity.
+<span class="cite">specs/SCHEMATIC_CONNECTIVITY_SPEC.md §4.1:85-91 — normative</span></div>
 
-<div class="lead" style="margin-top:12px">Two objects in a Datum schematic are electrically connected if and only if their integer coordinates are <i>identical</i>. Not close. Identical. And the entire specification that defines this contract contains the word “grid” <b>zero times</b> — I grepped it.</div>
+<div class="lead" style="margin-top:12px">Coincidence is how the wire tool <i>makes</i> a shared endpoint — it is sufficient, not the whole story. A net's <b>electrical identity is authored and addressed by a stable UUID/NetId</b>, and it <i>survives quantize untouched</i>: rounding geometry to the grid never re-identifies a net. Formation (does a connection exist?) and identity (which net is it?) are <b>distinct layers</b>. And the specification that defines formation contains the word “grid” <b>zero times</b> — I grepped it.</div>
 
-<div class="hero"><b>What guarantees that identity is the wire tool snapping to the pin — not the lattice.</b> Start a wire on a pin and the editor writes the pin’s exact coordinate into the endpoint; the integers match because the snap made them match. <span class="k">The grid never has to carry electrical meaning, and in Datum it does not.</span> It is there so the drawing is orthogonal and legible — which is a preference, and can be one.</div>
+<div class="hero"><b>What guarantees the connection forms is the wire tool snapping to the pin — not the lattice.</b> Start a wire on a pin and the editor writes the pin’s exact coordinate into the endpoint; the integers match because the snap made them match. <span class="k">The grid never has to carry electrical meaning, and in Datum it does not.</span> It is there so the drawing is orthogonal and legible — which is a preference, and can be one.</div>
 
 <div class="cap">KiCad’s warning — <i>“Using a grid size other than 50 mil will result in schematics without proper connectivity!”</i> — is often read as a law about coordinate connectivity. It is not. It is a symptom of KiCad leaning on grid coincidence instead of reliable pin snapping. <b>The requirement coordinate connectivity actually imposes is one editor behaviour: the wire tool must snap to pin endpoints exactly, always.</b> Get that right and the lattice is free.</div>
+
+<div class="law" style="margin:16px 0;background:var(--s01)"><b style="color:var(--acc)">Two layers, one picture — formation is not identity.</b> A connection is <i>formed</i> from geometry (coincidence is one sufficient way to make it); a net's <i>identity</i> is authored, addressed by a stable UUID/NetId, and <b>survives quantize untouched</b>. The grid rounds geometry; it never re-identifies a net. <span class="k">specs/ §4.1 formation · identity per PM053 · survives quantize per NCC-C03 ruling (i)</span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px">
+<div>
+<svg viewBox="0 0 240 136" width="100%" style="max-width:320px;display:block" role="img" aria-label="Quantize: geometry rounds to the grid, net identity unchanged">
+  <defs>
+    <pattern id="nccvq" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M18 0H0V18" fill="none" stroke="#1b212b" stroke-width="1"/></pattern>
+    <marker id="nccvar" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#717885"/></marker>
+  </defs>
+  <text x="4" y="12" font-family="PlexMono,monospace" font-size="10.5" fill="#717885">QUANTIZE — geometry rounds</text>
+  <rect x="2" y="20" width="236" height="112" rx="6" fill="#0E1013" stroke="#272C35"/>
+  <rect x="2" y="20" width="236" height="112" fill="url(#nccvq)"/>
+  <rect x="12" y="28" width="184" height="18" rx="4" fill="#1a1420" stroke="#CE5A92"/>
+  <text x="20" y="40.5" font-family="PlexMono,monospace" font-size="10" fill="#CE5A92">NET 7</text>
+  <text x="56" y="40.5" font-family="PlexMono,monospace" font-size="10" fill="#717885">uuid 7f3a… · stable</text>
+  <text x="202" y="41" font-family="PlexMono,monospace" font-size="12" fill="#4FA75A">✓</text>
+  <path d="M28 98 H130" stroke="#5B8BD0" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="130" cy="88" r="4.5" fill="none" stroke="#717885" stroke-dasharray="2 2"/>
+  <path d="M133 91 L149 105" stroke="#717885" stroke-width="1.4" fill="none" marker-end="url(#nccvar)"/>
+  <circle cx="156" cy="110" r="5" fill="#C9974A"/>
+  <text x="96" y="126" font-family="PlexMono,monospace" font-size="9.5" fill="#717885">endpoint → grid node</text>
+</svg>
+<div class="cap">Geometry rounds to the grid. The net keeps its id (NET 7, same uuid) — <b style="color:var(--ok)">identity survives</b>.</div>
+</div>
+<div>
+<svg viewBox="0 0 240 136" width="100%" style="max-width:320px;display:block" role="img" aria-label="Formation: an authored junction forms a connection, two nets merge">
+  <defs><pattern id="nccvf" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M18 0H0V18" fill="none" stroke="#1b212b" stroke-width="1"/></pattern></defs>
+  <text x="4" y="12" font-family="PlexMono,monospace" font-size="10.5" fill="#717885">FORMATION — an authored touch</text>
+  <rect x="2" y="20" width="236" height="112" rx="6" fill="#0E1013" stroke="#272C35"/>
+  <rect x="2" y="20" width="236" height="112" fill="url(#nccvf)"/>
+  <path d="M24 106 H118" stroke="#5B8BD0" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M118 106 V58" stroke="#CE5A92" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="118" cy="106" r="5.5" fill="#CE5A92" stroke="#0E1013" stroke-width="1.5"/>
+  <text x="126" y="102" font-family="PlexMono,monospace" font-size="9.5" fill="#717885">explicit junction</text>
+  <rect x="150" y="62" width="84" height="18" rx="4" fill="#15241a" stroke="#4FA75A"/>
+  <text x="158" y="74.5" font-family="PlexMono,monospace" font-size="10" fill="#4FA75A">NET 7 · merged</text>
+</svg>
+<div class="cap">A shared endpoint or explicit junction <b>forms</b> a connection; two nets merge to a deterministic survivor — a change in <b>formation</b>, not a rename of identity.</div>
+</div>
+</div>
+</div>
 
 <div class="sec">3 · THE MODEL — FOUR RULES</div>
 <div class="lead">Everything above collapses into four sentences. If a user can hold these four in their head, they will never be confused by units in Datum again.</div>
@@ -149,7 +190,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div class="why"><b>The fact worth putting on the box:</b> Gerber in millimetres mandates six decimals, which the specification states in words as a resolution of “10⁻⁶ mm, or 1 nm.” Datum’s storage unit <i>is</i> the manufacturing format’s own grid. Copper export is bit-exact transcription — the integer is written verbatim, with no scaling step to get wrong.</div></div>
 
 <div class="rule"><span class="n">RULE 4</span><h3>Display is a reading. Lattice is a contract.</h3>
-<p>What you <i>read</i> is yours: per person, per surface, free, instant, reversible, and it never moves a single object. What you <i>snap to</i> belongs to the design, because in Datum coincidence <i>is</i> connectivity.</p>
+<p>What you <i>read</i> is yours: per person, per surface, free, instant, reversible, and it never moves a single object. What you <i>snap to</i> belongs to the design, because in Datum coincidence <i>forms</i> a connection — while a net's identity is authored and survives quantize.</p>
 <div class="why"><b>A unit flip therefore does nothing to geometry, nothing to grid values, and never re-snaps</b> — verified as universal: not one surveyed tool converts or re-snaps on a unit change, and KiCad’s grid list is literally a static mixed-unit array (<code>"1000 mil"</code>, <code>"5.0 mm"</code>) that a flip never touches. Grid records are <b>re-labelled, never converted.</b></div></div>
 </div>
 <div class="sec">4 · THE ANSWER TO YOUR ACTUAL QUESTION</div>
