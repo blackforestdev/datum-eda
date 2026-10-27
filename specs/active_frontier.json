@@ -18418,7 +18418,9 @@
           "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
           "docs/reviews/specification-history/pm-automation-correction-review.json",
           "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md",
+          "scripts/cargo_qa_companions.py",
           "scripts/project_work_authority.py",
+          "scripts/test_cargo_qa_companions.py",
           "scripts/test_project_standing_authority.py",
           "scripts/test_project_work_authority.py",
           "specs/evidence_traceability_manifest.json"
