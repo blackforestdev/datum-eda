@@ -7455,6 +7455,33 @@
     {
       "authorization": "execution",
       "canonical_next": false,
+      "claim": {
+        "agent": "frontend-dev-01",
+        "claimed_at": "2026-10-27T19:01:26Z",
+        "expires_at": "2026-10-28T03:01:26Z",
+        "harness": "claude-code",
+        "head": "f6501afff194952e138abc376ff66697470e18c7",
+        "heartbeat_at": "2026-10-27T19:01:26Z",
+        "scope": [
+          "crates/gui-render/src/marking_menu.rs",
+          "crates/gui-render/src/marking_menu/",
+          "crates/gui-render/src/hit_target.rs",
+          "crates/gui-render/src/lib.rs",
+          "crates/gui-render/src/render/marking_shell_tests.rs",
+          "crates/gui-protocol/src/gui_menu_model.rs",
+          "crates/gui-protocol/src/gui_menu_model/",
+          "crates/gui-protocol/src/workspace_layout/marking_state.rs",
+          "crates/gui-protocol/src/workspace_layout/selection_menu.rs",
+          "crates/gui-protocol/src/workspace_layout/selection_menu/",
+          "crates/gui-app/src/editor/runtime_selection_menu.rs",
+          "crates/gui-app/src/application/runtime_menu_actions.rs",
+          "crates/gui-app/src/viewport/pan_gesture.rs",
+          "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
+          "crates/gui-viewport/src/profile.rs"
+        ],
+        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "MM-C03",
         "execution_policy": {
@@ -7551,7 +7578,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Prove usable native shell navigation, context, accessibility, refusal and nonmutation.",
@@ -7649,7 +7676,7 @@
       "key": "GUI-MARKING-MENU",
       "order": 29,
       "parallel": true,
-      "state": "ready",
+      "state": "in_progress",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
