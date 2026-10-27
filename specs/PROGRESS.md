@@ -192,8 +192,9 @@
 </details>
 
 - **Specify the adopted drafting-standard object** (`ADOPTED-DRAFTING-STANDARD-SPEC`; `dat-adopted-drafting-standard-object-er9`).
-   Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation. *state `planned`; authorization `planning`.*
+   Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-drafting-standard-authority-jcz`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md`, `research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md`, `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md`, `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `specs/PUBLISH_SPACE_SPEC.md`, `specs/STANDARDS_COMPLIANCE_SPEC.md`, `specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <details>
 <summary>Completed history (6 landed records)</summary>
 
@@ -222,9 +223,8 @@
    Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `specified`; authorization `owner_decision`; parallel lane.*
    *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`.
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
-   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**; parallel lane.*
+   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `specified`; authorization `owner_decision`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 <details>
 <summary>Completed history (1 landed records)</summary>
 
