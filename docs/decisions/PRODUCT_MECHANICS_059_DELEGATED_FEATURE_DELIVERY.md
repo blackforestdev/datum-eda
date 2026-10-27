@@ -15,98 +15,116 @@ amends PM025's decision routing, not its roadmap, claim or validation authority.
 
 ### Feature delivery enforcement
 
-Target roughly 80% of development effort toward
-implementing usable behavior; this is a prioritization target, not a measured
-commit percentage or permission to skip safety. Commit labels cannot prove effort.
+Prioritize complete usable application behavior. The roughly 80% implementation
+target guides scheduling; commit counts and labels do not measure effort.
 
-Selected or active `work_purpose.kind=product_delivery` must carry
-`feature_delivery` in the structured Frontier, regardless of Beads issue type:
+Select product execution by default. Before selecting a planning or qualification
+detour, the manager identifies the blocked user workflow, the unresolved requirement
+and the finite result needed to resume delivery in the existing task rationale and
+dependency records. Reuse settled research and decisions. Do not cycle through
+unrelated planning lanes while a product unit waits for review or a covered
+manager decision. Explicit owner-requested research and maintenance keep their
+bounded scope; this priority does not invent execution grants or successors.
+
+Selected or active `work_purpose.kind=product_delivery` carries `feature_delivery`:
 `ordinary_workflow`, `safety_requirements`, `qualification_followups`,
-`prerequisite_reasons`, `development_ready` and `ordinary_evidence`. The selector
-rejects missing/empty workflow or safety criteria, unexplained hard prerequisites,
-and planning/decision substeps without a concrete `step:<ID>` blocker reason.
-Changing scope or selecting a successor still requires its existing authority.
-Maintenance, pure qualification and planning remain explicit purposes; tracker
-relabeling cannot remove product obligations. Unselected product lanes require
-a concrete contract before selection/start, not a new contract-writing task now.
-Both next and details expose the applicable contract and development status.
+`prerequisite_reasons`, `development_ready` and `ordinary_evidence`. Existing
+selector checks require concrete workflow/safety criteria and reasons for hard
+prerequisites and non-implementation steps. Planning labels do not remove a
+product obligation. Unselected product work needs its contract before work starts,
+not a separate contract-writing campaign.
 
-`development_ready` may become true only with repository-local ordinary-application
-evidence identifying source commit, launch command and passing results for every
-declared workflow and safety requirement. An offline fixture, document or engine
-test alone cannot satisfy this claim. This is a structural evidence check, not an
-automatic independent PASS, HUMAN assessment or product acceptance.
+Build, test, fix, document, obtain required independent review and deliver the
+ordinary application path as one coherent unit. Routine engineering choices do
+not restart planning. Continue within the grant until delivery or a specific
+blocking authority, correctness, ownership or review/transport condition; identify
+its exact remedy. Capture unrelated defects without making them new prerequisites.
+Supporting fixtures and verification answer named delivery questions; reuse
+adequate proof and keep full qualification separate from development availability.
 
-Within the current grant, continue implementation, focused verification and
-repairs until the usable unit is delivered or a specific authority, safety,
-review/transport or ownership blocker prevents further authorized work. A commit,
-document, lease renewal or successful test is not by itself a stopping condition.
-State the blocker and what exact action resolves it; keep executable authorized
-work moving. Deferred qualification remains explicitly open and cannot be quietly
-turned into a new hard prerequisite. Necessary fixtures supplement ordinary use;
-every new verification batch must identify the decision it enables.
+Keep one maintained task record for the candidate, actual proof, reviewer findings
+and manager disposition, preserving distinct actor identities. Required independent
+review remains independent; a record is not a PASS by itself. Do not create
+separate reconciliation, verification and acceptance files for each routine
+substep, duplicate logs or repeat reviews of an unchanged candidate. Update the
+existing record and link raw evidence once. Separate records remain justified by
+an actual independent authority or distinct acceptance obligation.
 
-A unit is a complete designer-visible behavior with a finite acceptance boundary.
-Within an authorized contract, the default cycle is **build, test, fix, document,
-review and deliver**. Check the contract and existing implementation first; do not
-start a new planning cycle for routine engineering choices. Implement the ordinary
-application path, not just a type, fixture or isolated engine API. Essential
-research precedes unresolved mechanisms; this rhythm is not permission to code
-first and invent product semantics later.
+Land implementation, concise supporting evidence and synchronized tracker/Frontier
+updates together where valid. Existing governed document/review markers can bind
+same-change evidence; do not manufacture a second commit merely to obtain the
+first commit's hash. Ownership and authorization changes may require a separate
+transaction, not a new transaction for every heartbeat or summary. A synchronized
+working claim is required before editing; it does not require a standalone claim
+commit. Every commit still obeys owned staging and mandatory checks.
 
-Use focused verification to answer an identified correctness or delivery question;
-reuse adequate historical evidence. Document implemented behavior, limitations
-and necessary governance with the coherent implementation unit where practical.
-Separate records or commits remain justified for actual authorization changes,
-independent reviews, ownership transfer or required synchronization. There is no
-feature-commit percentage, time quota or permission to relabel supporting work.
-
-Implementers continue through routine repairs and adequate verification under the
-retained grant. Do not stop just because a commit, proof receipt, lease renewal or
-planning summary is complete. Capture unrelated defects and continue unless they
-demonstrably prevent delivery. A verification gap blocks its applicable claim,
-not unrelated authorized implementation. Do not invent extra implementation when
-it is exhausted: arrange review and resolve the finite remaining obligations.
+`development_ready` requires repository-local ordinary-application evidence with
+a resolvable source commit, launch command and passing declared workflow/safety
+results. Preserve independent review and literal observation requirements; neither
+fixtures, documentation nor approval alone establish usable behavior or full
+qualification. Report what the designer can now do, proof and actual blockers;
+administrative completion is not delivered functionality.
 
 ## Management role and delegated authority
 
-The owner appoints a management session; no implementer appoints itself or gains
-authority merely by using that title. Record the named session and delegated task
-scope in the existing handoff or task evidence. This decision is the standing
-owner delegation; task-specific restrictions and explicit nondelegable decisions
-still control. Until a manager is appointed, this policy does not fabricate one.
+The 2026-10-27 standing-project correction prospectively extends the earlier
+bounded routing model. Dated task grants and review receipts keep their original
+scope and results; no historical PASS or human action is inferred.
 
-Within ratified scope, that manager may coordinate assignments and synchronized
-claim transfers, arrange independent reviewers, receive actual review receipts,
-record their outcomes, direct corrections, and approve routine continuation. It
-may disposition intermediate delivery and objective acceptance against existing
-criteria only when complete required evidence and independent review are present.
-It may record explicit successor selection only when the successor's existing
-authorization and prerequisites permit it; completion never authorizes new scope.
-It cannot overwrite another session's claim or work without a valid handoff.
+The owner appoints the project manager. Record the named session and actual scope
+once through the existing management appointment and policy, not a separate
+permission document. A standing project appointment uses `task_keys: ["*"]` and
+covers current and subsequently admitted tasks until revoked. Its declared decision
+kinds may include the four existing routine kinds, `owner_reserved` for explicitly
+classified project decisions, and `decision_classification` for classifying a
+previously unclassified boundary. Legacy task-scoped appointments retain their
+original limits; no appointment is inferred from a job title or an agent's claim.
 
-A step spelled `owner_decision` may be handled by the appointed manager only
-where the decision is within this delegation: review provisioning, receipt of
-an actual independent review, unchanged-scope execution continuation, or objective
-acceptance under already ratified criteria. The manager's durable disposition must
-identify its session, task/step, exact candidate/evidence, this delegation and the
-applicable contract. It is an owner-delegated disposition, never a claim that the
-human replied. Record it and reconcile authorization/step state in the same
-governance transaction before implementation resumes. Do not add a competing
-roadmap or bypass failed selector validation. Existing selector response formats
-and `owner_decision` states remain; routing alone is amended. An implementer at
-such a boundary returns the packet to the manager rather than the busy owner.
+Under a verified standing appointment, the manager is the final decision-maker
+for covered product choices, visual assessment, implementation authorization,
+phase acceptance and successor selection. Task wording such as `owner_decision`
+requires an accountable recorded decision; it does not require another owner
+message when that decision is already delegated. Do not reopen a satisfied
+acceptance gate or request the same authority again at a new phase or session.
+The manager records the decision, rationale and actual evidence in that task's
+existing records, then synchronizes state and ownership before work proceeds.
 
-## Owner-reserved decisions
+An unclassified decision is not automatically delegated for final disposition.
+With the separately declared `decision_classification` capability, it routes to
+the manager with `classification_required`, while execution and completion remain
+stopped. The manager first reads the governing contract and records a verified
+step classification. An explicitly classified `owner_only` decision never routes
+to a manager. Unsupported, revoked, missing or mismatched authority stays with
+the owner; do not fabricate provenance or silently repair an invalid grant.
 
-Escalate new or conflicting product semantics, new source/identity mechanisms,
-changes to ratified scope, requirement reductions, acceptance waivers, dependency
-or licensing adoption under PM029, destructive actions, and decisions explicitly
-reserved to the owner. Unsupported numerical budgets and fabrication tolerances
-remain prohibited; neither a manager nor owner approval supplies missing evidence.
-New UX/product choices and required HUMAN assessments remain owner-reserved unless
-the owner explicitly designates an authorized assessor or separately delegates
-that exact decision. Objective acceptance is not a substitute for HUMAN review.
+The current owner-appointed project manager is recorded below in the existing
+policy. The witness is configuration provenance, not a review result. The owner
+may revoke or narrow it; removal or mismatch restores owner routing. A replacement
+session requires its own verified appointment. Only one standing project manager
+may be active, preventing ambiguous final authority.
+
+<!-- EVIDENCE:PM059:STANDING-PROJECT-MANAGER -->
+{"owner_appointed":true,"session":"0a2e42d7-4b60-47c2-bf4e-4d09d86123b9","task_keys":["*"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance","owner_reserved","decision_classification"]}
+
+## Retained boundaries and evidence
+
+Delegation changes who decides, not what has been demonstrated. Preserve actual
+tests, independent review, source health, canonical mutation, resource discipline
+and the Claude prototype lane. A manager cannot independently review its own
+implementation or materially designed candidate. Covered visual assessment may
+be performed and recorded by an authorized agent assessor, identified honestly;
+it must never be reported as a human-performed test. Requirements that literally
+need a person's physical action, external access or licensed normative material
+remain unmet until the necessary evidence or resource exists. They block their
+associated claims, not unrelated authorized development.
+
+The owner retains exact approval of force-push, history rewriting and destructive
+Git operations. The standing appointment supplies no third-party/license adoption
+under PM029 or external purchase authority. Classify any such decision `owner_only`
+using its governing source before disposition. No missing measurement, tolerance,
+license or qualification is supplied by either manager or owner approval. New
+scope and successor execution need an explicit manager decision within the grant
+and actual prerequisites; task completion never selects or authorizes them itself.
 
 First consult existing research, historical behavior and owning specifications.
 If they settle the question, implement it; engineering judgment alone is not an
@@ -120,7 +138,8 @@ The implementer cannot independently accept its own candidate. Management may
 coordinate review but cannot fabricate availability, findings or PASS. A manager
 that implemented or materially designed the candidate cannot be its independent
 reviewer. Corrections inside the reviewed execution grant do not require renewed
-owner authorization; scope-changing remedies do. Preserve mandatory proof, source
+owner authorization; scope-changing remedies need disposition by the authorized
+manager when covered, or by the owner when outside the grant or explicitly retained. Preserve mandatory proof, source
 health, resource discipline, canonical mutation and Claude's prototype file lane.
 
 Use available authorized session channels for manager/implementer/reviewer

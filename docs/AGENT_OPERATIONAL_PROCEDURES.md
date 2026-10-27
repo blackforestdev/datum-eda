@@ -11,7 +11,8 @@ This consolidation preserves procedures without creating a competing authority.
   `docs/PROJECT_STATE_POLICY.md`; PM059 applies to delegated boundaries.
 - Commits: Commit discipline below.
 - Specification/research edits: Specification governance below and the owning
-  evidence route; preserve complete route review and same-change reconciliation.
+  evidence route; use its verified baseline, affected-delta review and same-change
+  reconciliation below.
 - Rust proof/formatting: corresponding sections below.
 - Performance requirements: Numerical provenance below; no invented budget.
 
@@ -217,9 +218,13 @@ whenever a review record references evidence or binds an acceptance hash:
 - Independent-review receipts must carry the reviewer's session/thread id, not
   only a role path such as `/root/closeout_review`, so reviewer and manager
   distinctness rests on an identifier rather than assertion.
-- Acceptance hash bindings must be taken against the exact staged bytes of the
-  commit they bless; re-hash after any regeneration step (for example a frontier
-  sync) so the binding matches what actually lands.
+- Bind acceptance hashes to the actual reviewed candidate artifacts. If a receipt
+  covers regenerated state files, hash those after regeneration. Unrelated tracker
+  changes do not invalidate an unchanged product candidate or require its replay.
+- Maintain candidate, findings and disposition in the existing task record, with
+  distinct reviewer/manager identities. Store raw logs once. Routine substeps need
+  no separate reconciliation, review and acceptance files. Preserve genuinely
+  distinct review obligations; do not merge reviewer and implementer roles.
 
 ## Rust build resource discipline
 
@@ -291,11 +296,14 @@ change you MUST:
 
 **Research/prototype evidence is part of specification governance.** Before
 drafting, modifying, reviewing, or implementing a specification or decision,
-inspect its route in `specs/evidence_traceability_manifest.json` and read every
-listed research source, GUI prototype, governed specification, and decision.
-The route digest covers both evidence and consumers: changing either side makes
-`scripts/check_evidence_traceability.py` fail until the entire route is reviewed
-and its digest is deliberately refreshed in the same change. Every Markdown
+inspect the complete route in `specs/evidence_traceability_manifest.json`.
+Use an identifiable previously reviewed baseline for unchanged members; read the
+changed artifacts and affected clauses/consumers. Record the reused baseline and
+review boundary concisely in existing task evidence. Review the full route when
+no adequate baseline exists or a change affects meaning across its members.
+The digest covers evidence and consumers: changing either side requires actual
+review and deliberate same-change reconciliation. A matching digest alone never
+establishes review, and protected-file ownership remains unchanged. Every Markdown
 artifact under `research/` and every `docs/gui/prototypes/*.html` file must have
 exactly one owning route. Code/runtime incompleteness or drift never overrides a
 ratified decision or controlling visual source. If sources conflict, preserve
@@ -341,10 +349,10 @@ selection additionally needs a product rationale: responsiveness, supported-host
 expectations and explicit headroom or improvement assumptions. Neither observed
 performance alone nor owner approval supplies a missing technical derivation.
 If a defensible figure cannot be established, leave it undecided and nonblocking
-pending an explicit owner disposition; do not substitute another arbitrary value.
+pending a disposition by the authorized owner or standing project manager; do not substitute another arbitrary value.
 
 Review the provenance of an existing threshold before organizing a repair around
-it. Missing provenance requires a specification correction and owner disposition,
+it. Missing provenance requires a specification correction and authorized decision-maker disposition,
 not silent relaxation or an assumption that implementation must eventually meet
 it. Preserve actual measurements and correctness obligations. Audit adjacent
 CPU/GPU/resource thresholds separately; discovery of one unsupported figure

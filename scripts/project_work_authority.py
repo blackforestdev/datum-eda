@@ -63,7 +63,7 @@ def decision_classification(root: Path, item: dict, step: dict, governed: dict) 
         return "owner_reserved", True
     if (not isinstance(authority, dict) or set(authority) != {"kind", "source_ref"}
             or not isinstance(authority.get("kind"), str)
-            or authority["kind"] not in DECISIONS | {"owner_reserved"}):
+            or authority["kind"] not in DECISIONS | {"owner_reserved", "owner_only"}):
         return "owner_reserved", False
     tail = reference_text(root, authority["source_ref"], governed)
     try:
@@ -137,10 +137,12 @@ def validate_appointments(root: Path, manifest: dict, governed: dict) -> list[st
             failures.append(f"{label}: invalid appointment shape")
             continue
         kinds, keys = appointment.get("decision_kinds"), appointment.get("task_keys")
+        project_scope = keys == ["*"]
+        allowed_kinds = DECISIONS | ({"owner_reserved", "decision_classification"} if project_scope else set())
         if (not text(appointment.get("session")) or not isinstance(kinds, list) or not kinds
-                or any(not isinstance(k, str) or k not in DECISIONS for k in kinds)
+                or any(not isinstance(k, str) or k not in allowed_kinds for k in kinds)
                 or len(kinds) != len(set(kinds)) or not isinstance(keys, list) or not keys
-                or any(not isinstance(k, str) or k not in tasks for k in keys)
+                or (not project_scope and any(not isinstance(k, str) or k not in tasks for k in keys))
                 or len(keys) != len(set(keys))):
             failures.append(f"{label}: needs named session, exact tasks and only delegated decision kinds")
             continue
@@ -153,6 +155,9 @@ def validate_appointments(root: Path, manifest: dict, governed: dict) -> list[st
                     "task_keys": keys, "decision_kinds": kinds}
         if not isinstance(receipt, dict) or receipt.get("owner_appointed") is not True or receipt != expected:
             failures.append(f"{label}: exact owner appointment/scope receipt does not resolve")
+    if sum(isinstance(a, dict) and a.get("task_keys") == ["*"]
+           for a in appointments.values()) > 1:
+        failures.append("only one standing project-wide manager may be appointed")
     for key, item in tasks.items():
         routes = item.get("decision_routing", {})
         if not isinstance(routes, dict):
@@ -183,15 +188,36 @@ def decision_view(item: dict, appointments: dict) -> dict:
     appointment = appointments.get(route.get("appointment"), {})
     authority = selected.get("decision_authority")
     classification = authority.get("kind") if isinstance(authority, dict) else "owner_reserved"
-    delegated = (boundary and classification == route.get("decision_kind")
-                 and route.get("decision_kind") in DECISIONS
-                 and item.get("key") in appointment.get("task_keys", [])
+    classification_required = (boundary and "decision_authority" not in selected
+                               and route.get("decision_kind") == "owner_reserved"
+                               and appointment.get("task_keys") == ["*"]
+                               and {"owner_reserved", "decision_classification"}.issubset(
+                                   appointment.get("decision_kinds", [])))
+    if boundary and not route and classification != "owner_only":
+        candidates = [(name, value) for name, value in appointments.items()
+                      if isinstance(value, dict) and value.get("task_keys") == ["*"]
+                      and (("decision_authority" not in selected
+                            and "decision_classification" in value.get("decision_kinds", []))
+                           or ("decision_authority" in selected
+                               and classification in value.get("decision_kinds", [])))]
+        if len(candidates) == 1:
+            name, appointment = candidates[0]
+            classification_required = "decision_authority" not in selected
+            route = {"appointment": name, "decision_kind": classification}
+    project_scope = appointment.get("task_keys") == ["*"]
+    allowed_kinds = DECISIONS | ({"owner_reserved", "decision_classification"} if project_scope else set())
+    delegated = (boundary and "decision_authority" in selected
+                 and not classification_required and classification != "owner_only"
+                 and classification == route.get("decision_kind")
+                 and route.get("decision_kind") in allowed_kinds
+                 and (project_scope or item.get("key") in appointment.get("task_keys", []))
                  and route.get("decision_kind") in appointment.get("decision_kinds", []))
     return {"decision_input_required": boundary,
-            "decision_routing_status": "delegated" if delegated else "owner_reserved_or_unverified" if boundary else "not_required",
-            "owner_input_required": boundary and not delegated,
-            "decision_maker": appointment.get("session") if delegated else "project_owner" if boundary else None,
-            "decision_authority": appointment if delegated else None}
+            "classification_required": classification_required,
+            "decision_routing_status": "classification_required" if classification_required else "delegated" if delegated else "owner_reserved_or_unverified" if boundary else "not_required",
+            "owner_input_required": boundary and not (delegated or classification_required),
+            "decision_maker": appointment.get("session") if delegated or classification_required else "project_owner" if boundary else None,
+            "decision_authority": appointment if delegated or classification_required else None}
 
 
 def work_start(item: dict, issue: dict, decision: dict, claim_state: str) -> str:
@@ -228,6 +254,8 @@ def authority_lines(view: dict) -> list[str]:
         else:
             lines.append(f"Delegated boundary: INPUT REQUIRED; route to appointed manager {view['decision_maker']}; implementers must stop before any claim or edit.")
             lines.append("Appointment provenance: " + str(view["decision_authority"]["source_ref"]))
+            if view.get("classification_required"):
+                lines.append("Classification required: the manager must reconcile the governing decision class before disposition; no execution or acceptance is authorized.")
     return lines
 
 

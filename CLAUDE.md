@@ -60,8 +60,8 @@ contract, implementation owner and task evidence. Detailed action procedures liv
 in `docs/AGENT_OPERATIONAL_PROCEDURES.md`; its reading map identifies when to load
 each section. Architecture/milestone context is in
 `docs/PROJECT_ARCHITECTURE_REFERENCE.md` and is not startup or next-task authority.
-Do not recursively read every path mentioned in a reference. This does not exempt
-the required complete owning-route review for specification or visual work.
+Do not recursively read every path mentioned in a reference. For specification or visual work, inspect the complete owning route; reuse its
+verified unchanged baseline and review the affected delta under the procedures.
 
 Authority order: this file; product mechanics and numbered decisions; domain tool
 contracts; roadmap/status. Runtime incompleteness cannot override ratified rules
@@ -74,15 +74,24 @@ PM059 controls build → test → fix → document → independent review → de
 The unit is complete designer behavior in the ordinary application. Continue
 routine corrections under the retained grant; commits, evidence packets and lease
 renewals are not stopping points. Capture unrelated issues without expanding scope.
+Select product execution by default; justify planning detours by the blocked
+workflow and finite exit condition. Consolidate routine evidence and state updates
+with delivery under PM059; no separate receipt set for each ordinary substep.
 
-An owner-appointed manager coordinates actual independent review receipts,
-unchanged-scope continuation and objective acceptance against existing criteria.
-Record appointment and bounded disposition in existing task evidence. Implementers
-do not self-appoint or self-review. New semantics, scope reductions, waivers,
-dependencies, destructive actions and nondelegated HUMAN/UX decisions remain
-owner-reserved. PM059 amends owner-boundary routing only; it does not bypass
-selector validation, claims, missing evidence or successor authorization. No
-management session is automatically appointed by these instructions.
+A verified standing project-manager appointment covers its declared decisions
+across current and future tasks until revoked. Route covered product choices,
+visual acceptance, phase acceptance and successor decisions to that manager;
+do not repeatedly ask the owner to renew authority already granted. Unclassified
+decisions require manager classification before disposition only when the grant
+includes that capability; otherwise they remain owner decisions. Classification
+is not automatic approval.
+Explicit owner_only decisions and authority outside the appointment remain owner
+boundaries. Record decisions in existing task evidence and permissions in existing
+policy/configuration; create no standalone permission or per-session waiver document.
+Implementers do not self-appoint or self-review. PM059 preserves selector validation,
+claims, actual proof, independent review and explicit successor selection. A
+literal human-performed observation still requires that observation; permission
+cannot fabricate it. No manager is appointed automatically by this policy.
 
 Owner-authorized cleanup, refocus and reorganization remain separate from product
 development. Product-delivery defaults apply within product execution grants;
@@ -112,7 +121,9 @@ Before reviewing, implementing or changing a specification/decision/GUI contract
 inspect `specs/evidence_traceability_manifest.json` and review all listed sources
 and consumers for its owning route. Reconcile conflicts through the owning
 authority. Source/consumer edits require deliberate digest reconciliation in the
-same change. Every active specification needs classification and roadmap placement;
+same change. Review changed artifacts and affected claims against the verified
+unchanged baseline; full rereading is required when that baseline is unavailable
+or a change alters the route-wide meaning. A digest is no substitute for review. Every active specification needs classification and roadmap placement;
 new mechanisms require a numbered decision. Follow the detailed same-change
 checklist in the operational procedures; no orphan specifications.
 

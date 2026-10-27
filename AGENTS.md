@@ -16,7 +16,10 @@ workflow capabilities, review gates or mutation semantics.
 Deliver complete designer behavior through build, test, fix, document and required
 independent review (PM059). Continue routine work under its existing grant; do not
 stop after administrative updates. Reuse adequate research/proof and capture
-unrelated defects without making them new prerequisites.
+unrelated defects without making them new prerequisites. Select product execution
+by default; planning detours identify the blocked workflow and finite exit. Keep
+one task record and combine routine evidence/state updates with delivery; PM059
+retains actual independent review without a receipt set for every ordinary step.
 
 Default to usable feature implementation; target roughly 80% of effort toward
 that outcome, not a percentage of commit labels. Read the selected task's
@@ -26,11 +29,15 @@ commit or lease update. Continue within the grant until delivery or a concrete
 authority, safety, review/transport or ownership blocker; explain its exact remedy.
 Full qualification remains open separately. Never invent an execution grant or PASS.
 
-An owner-appointed manager may handle only PM059-delegated decisions. Route actual
-review receipts, unchanged-scope continuation and objective acceptance to that
-manager; new product rules, scope reductions, waivers, dependencies and nondelegated
-HUMAN/UX decisions remain owner-only. No self-appointment, fabricated PASS or
-automatic successor authorization.
+A verified standing project-manager appointment routes covered project decisions
+to that manager across current and future tasks. Do not request a new owner grant
+for each phase, acceptance or successor decision already covered by that appointment.
+Unclassified decisions go to the manager for classification before disposition
+only when its appointment includes that capability; otherwise they go to the
+owner. Explicit owner_only decisions and uncovered authority also go to the owner.
+Permission never supplies proof, a human observation or independent PASS. PM059
+controls scope, revocation and retained boundaries; no self-appointment or automatic
+successor selection is authorized.
 
 Read-only audits/research are exempt from implementation claims and selector
 success; disclose unrelated failures and continue. This grants no production edits,
@@ -85,8 +92,10 @@ of the procedures before unfamiliar mutations.
   the lane marker. A tripped gate stays with its responsible lane; do not bless
   unauthorized output by refreshing digests/parity/goldens.
 
-Before spec/research/visual work, inspect the owning evidence route and review all
-listed sources/consumers. Follow same-change classification, status, numbered
+Before spec/research/visual work, inspect the complete owning evidence route.
+Reuse a verified unchanged baseline and review changed artifacts and affected
+claims; reread the full route when the baseline is missing or meaning changes
+across the route. Follow same-change classification, status, numbered
 decision, parity and digest obligations in the procedures; code is not product
 or visual authority.
 

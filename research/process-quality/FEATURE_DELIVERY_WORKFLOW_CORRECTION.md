@@ -56,3 +56,27 @@ landing/closure. It supplies no product execution, blanket manager appointment,
 source/rights decision, qualification PASS, dependency, route subdivision campaign
 or successor grant. Historical receipts retain their original effects; the
 S5A hold preserves C04/C05/C06 and the grant, and final explicit idle resumes none.
+
+## Delivery-overhead correction — 2026-10-27
+
+The owner requested correction after a read-only audit ending at d5ffd9c4 found
+84 of 100 commits limited to documentation/governance and nine touching non-test
+application source. These are activity counts, not time measurements. Selected
+planning lanes excluded implementation; repeated receipt sets, hash-driven
+transition commits and broad evidence rereads amplified the overhead. PM059 now
+prioritizes product execution, finite delivery-linked planning detours, one
+maintained task record, coherent same-change delivery and reuse of verified
+unchanged evidence. Independent review and actual correctness proof remain.
+
+## Standing management routing correction — 2026-10-27
+
+The owner reported that project-wide final-authority instructions still led to
+repeated approval requests, idle agents and documentation replacing development.
+They directed a structural correction and removal of the separate permission
+artifact. The correction uses existing PM059/PM025 policy and appointment data:
+one verified standing project appointment, manager classification of unknown
+decisions before disposition, explicit retained owner approvals, revocation and
+actual independent review. Task records retain decisions, not a new permission
+narrative. This changes routing; it supplies no physical action, external license,
+measurement, test or acceptance result. History cleanup remains a separately
+approved operation with coordinated ownership and preserved decision evidence.

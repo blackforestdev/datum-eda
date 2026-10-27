@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "review": "PM-AUTOMATION-CORRECTION independent routing, policy and route-delta review",
+  "reviewer_session": "01a1697c-b5d2-77d1-a9e7-12e688f0f3f6",
+  "status": "PASS_AT_DECLARED_SOURCE_AND_SYNTHETIC_TEST_SCOPE",
+  "reviewed_sha256": {
+    "AGENTS.md": "f846f6ca49c4ee25253ec14ff776f6563677ce6750a4e6a597ec992c0f198c27",
+    "CLAUDE.md": "b95db10fd600919c12510f1975bae4ad14056efc38f994c6553e543e7aa007a3",
+    "docs/PROJECT_STATE_POLICY.md": "55ecab9b10873ef174a2b1106ddbbf78bef5cb4120f35150c719d3d832f0e129",
+    "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md": "3c84722ada2d487471a27294ee72392d909ccb6150b7f032cba8af7526e8dc2d",
+    "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md": "88a8881a9ea091bbc2bc3bc7e0fd75be42df6aaca7a1ccc1bdacc9354d2a0e62",
+    "docs/AGENT_OPERATIONAL_PROCEDURES.md": "4a5adfd9a9959d45ad6d20663db1f1c93111e034f406dbfe1ee523d082a32a79",
+    "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md": "a93c63364715ac90d5e3e7981009168c3d15d0f7a925831b4bee0a180999d801",
+    "scripts/project_work_authority.py": "d5bb9f7aef1122ffbddce2ed80b4551c75d0d7390ad9d12408d660989887627c",
+    "scripts/test_project_standing_authority.py": "6f2e7e33d2d9841b3c9b56a1cf4eb4fbe1ad2a0c6eccc4be376ce6375d079917"
+  },
+  "corrected_findings": [
+    "Absent classification initially became a delegated final decision; fixed by separate classification_required intake and explicit-classification prerequisite for final delegation.",
+    "An explicit route initially bypassed that prerequisite; exact full-CLI negative controls now retain owner routing without classification capability, or classification-only intake with it.",
+    "Future-task test initially bypassed validation with an old task witness; corrected fixture has valid renamed witnesses and exercises both next/details.",
+    "Startup policy omitted the classification-capability condition; corrected. PM059 stale universal owner-relay sentence for scope remedies now follows covered-manager/outside-grant-owner routing."
+  ],
+  "verification": {
+    "command_actually_run": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.datum/scratch/automation-routing-correction-20261027/candidate/scripts:scripts python3 -B -m unittest test_project_standing_authority test_project_work_authority",
+    "observed_result": "35 tests, 0 failures, OK, 0.934 seconds",
+    "additional_controls_actually_run": "Temporary synthetic fixture full validation and details CLI reproduced the two classification defects; final suite exercises the explicit-route cases with/without capability through validated next/details. Separate direct classification check demonstrated the earlier future-task witness mismatch.",
+    "limits": "Synthetic fixtures establish routing behavior, not owner authenticity, actual actor decisions, HUMAN assessment or installed production acceptance. No independent 111-test result is claimed."
+  },
+  "policy_assessment": {
+    "outcome": "Corrected seven-document delta is coherent with reviewed routing logic.",
+    "standing_appointment": "Named project-manager appointment and continuing decision authority independently checked against owner-origin messages/attachments. No private quotations or transcript locators are reproduced here.",
+    "preserved": "Classification before disposition; owner_only and uncovered authority; revocation; holds; claims; independent review; explicit successor selection/prerequisites; canonical mutation and Claude visual ownership. Agent visual assessment is honestly attributed; literal human/physical evidence cannot be fabricated. Force/history/destructive Git, PM029 adoption and purchases retain specific owner boundaries.",
+    "policy_set_sha256": "f4f9d1093faf9342faa3080df786d470ef87f73a777ef92e84d805d03d15c7b3",
+    "policy_set_digest_encoding": "SHA256 of sorted compact JSON mapping the seven reviewed Markdown relative paths to their SHA256 values."
+  },
+  "route_delta_assessment": {
+    "outcome": "PASS bounded changed-consumer review with retained unchanged-member evidence reuse; no fresh 234-member semantic-review claim.",
+    "routes": [
+      {
+        "id": "feature-delivery-management",
+        "members": 8,
+        "changed_members": 7,
+        "unchanged_members": 1,
+        "expected_digest_at_review": "aa67e9fbe36c33d6d6cc95255f4c3a6afeefc8d53f679b286d4b837484243a96"
+      },
+      {
+        "id": "visual-truth-file-lane-governance",
+        "members": 6,
+        "changed_members": [
+          "AGENTS.md",
+          "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+        ],
+        "unchanged_members": 4,
+        "expected_digest_at_review": "583de5788bcd7bc4a3ae2de54d8a2565b9bf431aef46b820a0c6ce529af54029"
+      },
+      {
+        "id": "gui-performance-recovery",
+        "members": 234,
+        "changed_members": [
+          "CLAUDE.md",
+          "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+        ],
+        "unchanged_members": 232,
+        "expected_digest_at_review": "68995103675184d8fd3053fb189b324a61d78a94a001d79191315347be2d6b57"
+      }
+    ],
+    "actual_checks": "Read-only git show HEAD member comparisons confirmed exactly those changed paths. Read visual lane source/checker/hook/tests and performance primary sources/PM051 at the affected scope. Computed expected digests through the existing checker digest function without mutation; all nine installed files matched reviewed candidate bytes.",
+    "numerical_and_lane_limits": "No prototype, marker authority, code, measurement, budget, blocking threshold or runtime result changed. Three-route same-change reconciliation is appropriate; no unrelated prototype route refresh endorsed.",
+    "retained_intermediate_state": "At review the feature route working digest had already changed from HEAD, while visual/performance retained their HEAD digests; all three were stale against final reviewed content. This was reported, not treated as a passing gate.",
+    "digest_scope": "Expected digests identify content at review; adding this receipt or later authorized source/consumer changes requires normal final reconciliation."
+  },
+  "remaining_mandatory_findings_at_review": [],
+  "not_claimed": [
+    "Installed full-state/governance checks or production landing",
+    "Any history rewrite or force authorization",
+    "Human-performed assessment or missing physical evidence",
+    "Numerical/performance/runtime qualification",
+    "Independent review of later unreviewed changes"
+  ],
+  "handling": "Archived from completed observations only. Reviewer changed no production, tracker, governance, index or Git refs. This receipt may be copied exactly to the authorized normal review destination; copy authority grants no staging, commit or rewrite action.",
+  "amendments": [
+    {
+      "review": "Delivery-overhead bounded policy delta",
+      "status": "PASS_AT_DECLARED_POLICY_DELTA_SCOPE",
+      "supersedes_receipt_sha256": "8bd87c97907684b2d71f0ae3f8e6d30aeafc5f68fd621d5e77efcf9e7c56e061",
+      "reviewed_sha256": {
+        "AGENTS.md": "955b00f857bb80157570686e55922ec192c7a15b8314041a129b70b69af2245a",
+        "CLAUDE.md": "b01b6b2d714843b16ae1d1a7601b5aa4fb1d8bf5f475d697df2750e4af315f07",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md": "8de75d4714b1e03c152a9b5b5ea4191350bf295e467f0bed7299280abbadbdb0",
+        "docs/PROJECT_STATE_POLICY.md": "acbf191d36051d5a3a4384e2ae759b994e71304018a312fc4e9f5871ec88f6d8",
+        "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md": "19f57010844c02af81f6aba9586f13ce3905434be2d7821b9f96d437fd657cff",
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md": "ecbb74fbe262c5353e5b76621684abc6f5c26b4a1d57a36bd5764002f7b956cf",
+        "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md": "2e86bd76117152c0a2e3edf65b51c46b36f4ff9d9b27db81ce633e4a422d6655"
+      },
+      "immutable_pins_file_sha256": "87fdc94b4809a91d7c3144cd27ab8c47ccc8be2536ab699f58417e3bbea5a98d",
+      "reviewed_patch_sha256": "5905bc66a20058d9904f5335fc851bff081893db7031b6603767da76b55ef20a",
+      "actual_review": "Read the complete supplied delta and affected candidate clauses; checked all seven immutable content pins. Compared relevant existing completion/ordinary-evidence validators to same-change-marker and source/landing-commit language. Previous routing code and test hashes remain exact. No tests, builds or runtime campaign repeated for this policy-only amendment.",
+      "outcome": [
+        "Product execution is the default within existing authority; finite planning/qualification detours identify a blocked workflow, unresolved requirement and exit. Explicit owner-requested research/maintenance retains its scope.",
+        "One maintained task record with distinct actual actors/raw evidence removes mandatory per-substep receipt sets without merging implementer and reviewer or inventing PASS. Genuinely distinct authority/review obligations can remain separate.",
+        "Same-change governed review/document markers and batched routine state updates avoid hash-only commits and standalone claim commits, while synchronized claims still precede editing and owned staging/mandatory validation remain.",
+        "Complete route inspection plus verified unchanged baseline and affected-delta review replaces unconditional full rereading. Missing/inadequate baseline or route-wide semantic change still requires full review; matching digest alone is not review. Protected visual ownership and same-change classification/parity/digest rules remain.",
+        "Acceptance binds actual candidate artifacts; regenerated state covered by a receipt must be rehashed, while unrelated tracker changes do not require replaying an unchanged product candidate."
+      ],
+      "correctness_limits": [
+        "Existing resolvable source_commit/landing_commit and completed-step evidence checks remain applicable. Same-change markers are usable only where those existing validators allow them; no self/future commit or false source identity is endorsed. A separate genuine acceptance/ownership transition remains legitimate.",
+        "Earlier routing/policy review and its 35 actual tests retain only their original candidate scope. The earlier three expected route digests do not cover these new Markdown bytes; authorized same-change route reconciliation must use final content. No new field, quota, guard, waiver, numerical threshold or actual grant is introduced.",
+        "The source research cites a prior activity audit of 84/100 documentation/governance commits and nine non-test application-source commits; this amendment review did not rerun that audit or treat those activity counts as time measurements.",
+        "Administrative requirements are concretely reduced by the text. Actual adoption, elapsed-time savings and delivery-ratio improvement are unmeasured; policy review is not a product/runtime qualification result."
+      ],
+      "remaining_mandatory_findings": [],
+      "copy_handoff": "The prior exact-copy handoff extends to this amended complete receipt and its new hash. Original review observations remain intact; copy only through the authorized normal review transaction. No production/index/ref action by reviewer.",
+      "route_delta_reconciliation": {
+        "status": "PASS_BOUNDED_REUSE_AND_REVIEWED_POLICY_DELTA",
+        "prior_receipt_sha256": "a30a8e226b73b11e28e21b9d932b3a385adeac2258f967194a980a594a4949ff",
+        "baseline_commit": "156eaa957c63a32ad06b0a21ebc1345f03edc492",
+        "route_delta_sha256": "76d377e0f9f89c8a1777578666ca61198a3831f6c85e83dc35429e5fb455d64d",
+        "manifest_candidate_sha256": "29623051337e55db1a889425972044d74050a28adae9afa05d7481a18337fe92",
+        "routes": {
+          "visual-truth-file-lane-governance": {
+            "baseline_commit": "156eaa957c63a32ad06b0a21ebc1345f03edc492",
+            "baseline_digest": "ea24275286535786eadca65a54ad79aa17faa75d4d52f45ae0670635bf48c0bd",
+            "candidate_digest": "abecfcb56c8a79afa682225b7aedfbf14eff2c3b888a2804c3e473b21d54f149",
+            "members": 6,
+            "changed_members": [
+              "AGENTS.md",
+              "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+            ]
+          },
+          "gui-performance-recovery": {
+            "baseline_commit": "156eaa957c63a32ad06b0a21ebc1345f03edc492",
+            "baseline_digest": "f62e4e3f3ed708810e6c66d702c5bff2114c17da941603467300b9db14856cef",
+            "candidate_digest": "3210c6de9d3357006232eaf02840f1c1f9f56eb9f506388da9a046c9ba127cfd",
+            "members": 234,
+            "changed_members": [
+              "CLAUDE.md",
+              "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+            ]
+          },
+          "feature-delivery-management": {
+            "baseline_commit": "156eaa957c63a32ad06b0a21ebc1345f03edc492",
+            "baseline_digest": "dbe55a7cbdce84db23e32b018fdf10a3689061e8ab918204d9f3d954c8d066a4",
+            "candidate_digest": "774d044d18b8dacf37e796182dea38273e870b3b4a9d06a9ebf33a20ba8dc114",
+            "members": 8,
+            "changed_members": [
+              "AGENTS.md",
+              "CLAUDE.md",
+              "docs/AGENT_OPERATIONAL_PROCEDURES.md",
+              "docs/PROJECT_STATE_POLICY.md",
+              "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
+              "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+              "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md"
+            ]
+          }
+        },
+        "actual_independent_checks": "Read supplied route inventory/manifest notes; recomputed each baseline digest from git-show baseline member bytes and each candidate digest from those unchanged bytes plus the seven pinned reviewed Markdown artifacts. Verified exact source/consumer membership and changed-member lists, no unreviewed member change, and candidate manifest differs from baseline in only these three routes.",
+        "reuse_boundary": "Prior recorded complete baseline review and prior bounded route review are reused for unchanged four visual-lane,232 performance and one feature-history members. Current amendment assesses the actual changed policy consumers and affected authority/ownership/proof claims. No fresh234-member semantic reread or new runtime proof is claimed.",
+        "outcome": "Same-change reconciliation of exactly these three routes is supported. Protected prototype/checker/hook semantics, PM051 evidence-derived numerical laws, original source/authority distinctions and historical results remain. No numerical gate/measurement/budget, product code or prototype is edited by this policy delta.",
+        "frontend_preservation": "Baseline manifest includes current frontend-owned route entries; manifest candidate leaves all other routes byte-equivalent at the JSON-object level. If shared metadata advances, preserve fresh unrelated route entries and recheck only changed integration identity; this review does not authorize refreshing their digests.",
+        "limits": "No new tests/builds or production/index/refs changed by reviewer. Manifest metadata reconciliation is not proof that a runtime, grant or human observation occurred."
+      }
+    }
+  ]
+}

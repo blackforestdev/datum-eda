@@ -56,11 +56,13 @@ completion queries.
 
 When the selected completion step has kind `owner_decision`, the Frontier item
 MUST carry `owner_decision` authorization and MUST NOT be `in_progress` or carry
-an agent claim. Human and JSON `next`/`details` output MUST expose an owner-input
-boundary plus a closed-shape ordered decision packet: stable request ID,
+an agent claim. Human and JSON `next`/`details` output MUST expose the responsible
+owner or manager boundary plus a closed-shape ordered decision packet: stable request ID,
 question, recommended response, exactly resolving governed source marker, and
-one explicit response format. Agents alert the owner, present that packet, and stop
-without claiming, editing, choosing a disposition, or advancing. After explicit
+one explicit response format. Implementers alert the responsible owner or verified manager, present that packet,
+and stop without claiming, editing, choosing a disposition, or advancing. Covered
+manager decisions do not require a renewed owner message. A classification_required
+boundary requires classification before final disposition, not acceptance. After explicit
 input, one governance transaction records durable review evidence, completes
 the owner step, selects the next dependency-ready step, and changes item
 authorization to that step's kind.
@@ -145,9 +147,12 @@ PM059 is the owner-ratified amendment to PM025's decision routing. The roadmap
 explicitly selects one canonical step or durable idle with the validated claim and
 presentation rules. An implementer never advances an owner boundary on its own.
 
-An owner-appointed management session may resolve only delegated decisions:
-review provisioning, actual independent-review receipts, unchanged-scope execution
-continuation and objective acceptance against ratified criteria. Record appointment
+An owner-appointed management session resolves the decisions in its verified
+scope. A standing project appointment (`task_keys:["*"]`) is reused for declared
+kinds across current and future tasks; explicit owner_only reservations remain
+owner decisions. Unclassified decisions require manager classification before
+disposition when its grant includes that capability; otherwise they stay with
+the owner. Legacy bounded appointments retain their original scope. Record appointment
 and scope in existing handoff/task evidence. Its disposition identifies manager
 session, selected task/step, exact candidate/evidence and PM059 authority; record
 it as delegated input, not a fabricated human reply. Then update step evidence,
@@ -155,9 +160,11 @@ authorization and affected roadmap/tracker projections in the same transaction.
 Use existing response formats and state kinds; do not invent a parallel selector.
 No manager is appointed automatically by this policy.
 
-New mechanisms or conflicting product rules, scope reductions, waivers, dependency
-adoption, destructive actions and nondelegated HUMAN/UX decisions still route to
-the owner. Manager authority does not supply missing evidence, invent a numerical
+Covered product and visual choices route to the standing project manager;
+nondelegated decisions and explicit owner_only reservations route to the owner.
+PM029 adoption, external purchases and destructive Git operations retain PM059's
+specific approval boundaries. Required literal human actions remain evidence
+requirements, not events an agent may assert occurred. Manager authority does not supply missing evidence, invent a numerical
 budget or authorize successors lacking their own grant. Preserve independent
 review, source health, canonical mutation and the Claude prototype lane.
 
@@ -184,6 +191,12 @@ approval or an agent's time allocation. They never change grants or selection.
 The owner-directed target is roughly 80% effort toward usable implementation;
 commit labels are not an effort metric. Continue inside the recorded grant, and
 keep broader qualification separate from bounded development availability.
+The manager selects product execution by default. Planning/qualification detours
+identify a blocked user workflow, unresolved requirement and finite exit in the
+existing rationale/dependencies; they are not a queue of unrelated documentation
+tasks to consume review waiting time. Explicit owner-requested maintenance or
+research keeps its scope. One maintained task record preserves actual independent
+findings and disposition; routine substeps do not require separate receipt sets.
 
 ## Work-Item Workflow
 
@@ -198,9 +211,13 @@ keep broader qualification separate from bounded development availability.
    `in_progress`/assignee, and export beads before editing scoped files.
 6. **Execute:** stay inside claim scope, decision 022, and the authorized
    acceptance boundary. Cite the issue in commits.
-7. **Verify and close:** record proof evidence, close `br` with the landing
-   commit, update Frontier state, regenerate its projection, and export beads in
-   the same change.
+7. **Verify and close:** retain actual proof and independent findings in the
+   existing task record; synchronize Frontier, its projection and beads with the
+   coherent delivery. Use existing governed document/review markers for same-change
+   completion where valid; cite an existing landing commit when available. Do not
+   create a second commit solely to reference the first commit hash. A working
+   synchronized claim need not have its own commit. Separate genuine authority or
+   ownership transitions when necessary; batch routine supporting updates.
 
 ## Claim Contract
 
@@ -275,8 +292,10 @@ to the existing Frontier; no parallel selector or proof ledger is introduced.
   Item `decision_routing` is only a request; it cannot override step reservation.
   Both next/details expose `decision_input_required`, `owner_input_required`,
   `decision_maker`, appointment scope/provenance and the original packet. Exact
-  scoped delegation routes to the named manager; absent/unverified/reserved scope
-  routes to the owner. No route authorizes implementer advancement or self-review.
+  scoped or standing project delegation routes to the named manager. Explicit
+  owner_only and absent/unverified authority route to the owner. A declared
+  classification capability routes unknown decisions to the manager for
+  classification only; it grants no execution or acceptance. No route authorizes implementer advancement or self-review.
 
 For claim scope, use actual worktree-relative file/directory paths; paths are
 normalized with symlinks/parent segments and checked for containment collisions.

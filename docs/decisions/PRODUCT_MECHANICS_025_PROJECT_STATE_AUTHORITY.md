@@ -37,14 +37,16 @@ and commit history MUST NOT substitute for that invocation. If execution or
 validation fails, the agent MUST report the failure and MUST NOT infer an
 answer.
 
-A selected `owner_decision` completion step is a hard autonomy boundary. The
+A selected `owner_decision` completion step is a decision boundary. PM059 and
+PS-012 route covered decisions to the verified manager; uncovered or explicitly
+retained decisions require owner input. For implementers it is an autonomy boundary. The
 parent item MUST expose `owner_decision` authorization, remain unclaimed, and
-produce an explicit owner-input alert and complete ordered decision packet in
+produce an explicit responsible-actor alert and complete ordered decision packet in
 human and JSON selector output. Every request has a stable ID, exact question,
 recommended response, and governed source marker; the packet supplies one exact
-response format. Agents MUST notify the owner, present the packet, and stop;
+response format. Agents MUST notify the responsible owner or manager, present the packet, and stop;
 they MUST NOT claim, edit, choose a disposition, or advance to another step.
-Explicit owner input is recorded as durable review evidence before the same
+The authorized owner or manager disposition is recorded as durable review evidence before the same
 governance transaction completes the step, selects its successor, and changes
 authorization to match that successor.
 
@@ -57,11 +59,12 @@ replace it with a checklist reconstructed from prose.
 ## PM059 decision-routing amendment
 
 The owner-ratified PM059 delegation is an explicit exception to the human-input
-routing above. An owner-appointed manager may disposition only delegated routine
-review/continuation/objective-acceptance decisions within existing ratified scope,
-using durable manager provenance and the same synchronized state transaction.
-Implementers still stop at the boundary; product changes and nondelegated decisions
-remain owner-reserved. No selector/schema, claim, response-format or proof bypass
+routing above. An owner-appointed manager may disposition its covered decisions using durable
+provenance and the same synchronized state transaction. A verified standing
+project appointment covers declared kinds across current and future tasks;
+unclassified decisions require classification first, and explicit owner_only
+decisions stay with the owner. Implementers still stop for actual disposition;
+no routine owner relay is required when the standing appointment already covers it. No selector/schema, claim, response-format or proof bypass
 is authorized. See `PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md` and the
 project-state policy for appointment, evidence and limits.
 
@@ -228,6 +231,12 @@ tracker type, priority or commit labels. Selected/active product delivery needs
 the PM059 contract; unselected planning creates no immediate implementation
 prerequisite. Historical landed records need no fabricated retrospective purpose
 or delivery evidence. Purpose changes require honest same-change review.
+PM059's delivery-priority correction requires planning/qualification detours to
+identify the blocked workflow and finite exit in existing rationale/dependencies.
+Ordinary evidence and synchronized state updates accompany the coherent delivery;
+existing document/review markers avoid hash-only follow-up commits. A synchronized
+working claim requires no separate registration commit. Retain actual ownership,
+independent review and mandatory validation.
 
 Root `management_appointments` maps stable IDs to `session`, exact `task_keys`,
 allowed `decision_kinds` and governed `source_ref`. Immediately after that unique
@@ -235,18 +244,30 @@ literal marker, a JSON witness must exactly match `owner_appointed:true`, sessio
 task keys and decision kinds. This is an independently reviewed transcription of
 actual owner appointment; structure alone cannot establish authenticity.
 
-An owner-decision step defaults to owner-reserved. Only an explicit
-`decision_authority` (`kind`, `source_ref`) with a separately resolving JSON
-witness `{task_key,step_id,decision_kind}` can classify it as delegated. Item
-`decision_routing` maps step IDs to requested `appointment` and `decision_kind`.
-A route delegates only when its kind matches that independently witnessed step
-classification and the verified appointment includes both task and kind. Missing,
-unsupported, out-of-scope and owner-reserved routes remain owner boundaries.
-Malformed appointment/classification provenance fails validation. Human/JSON
-output identifies responsible decision-maker and appointment scope/provenance,
-retaining the exact ordered packet and stop-before-advance rule. One actual
-sequence-scoped appointment may cover its named decisions without repetitive
-owner relays; no broader production appointment is inferred.
+A verified standing project appointment uses the sole task key `"*"`; mixed
+wildcard/list scopes and multiple standing project managers fail validation.
+Its actual owner witness may authorize `owner_reserved` decisions and the
+separate `decision_classification` duty in addition to the four routine kinds.
+Task-scoped appointments cannot acquire these capabilities by adding a route.
+
+A step's `decision_authority` (`kind`, `source_ref`) resolves a separate JSON
+witness `{task_key,step_id,decision_kind}`. Explicit `owner_only` never delegates.
+Explicit `owner_reserved` can route to a verified standing project manager only
+when its actual grant includes that kind. The existing routine classifications
+and task routes retain their scope checks. With no explicit route, a unique
+covering project appointment supplies the manager route; this reuses the standing
+grant without a fresh owner message for each step or future task.
+
+Missing classification never authorizes a final decision. A verified project
+manager with `decision_classification` receives `classification_required`, with
+`decision_input_required:true`, `owner_input_required:false`, and execution still
+stopped. The manager must read the governing source and durably classify the
+step before disposition. Without that capability, owner routing remains. An
+explicit route cannot turn absence into a verified classification. Malformed
+provenance fails validation; invalid explicit routes never silently fall back.
+Human/JSON expose responsible actor, provenance and the unchanged packet. An
+appointment proves no test, assessment or independent review; holds and explicit
+owner-retained approvals remain effective. Revocation restores owner routing.
 
 ### PS-013: Actual claim identities
 
