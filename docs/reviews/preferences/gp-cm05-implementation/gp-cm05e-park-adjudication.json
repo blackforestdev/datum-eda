@@ -1,0 +1,18 @@
+{
+  "task": "GLOBAL-PREFERENCES-COMPLETION",
+  "step": "GP-CM05E",
+  "gate": "park-adjudication (selection provenance)",
+  "date": "2026-10-26",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:GP-CM05E-PARK-LIFTED:2026-10-26",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "GP-CM05E park ADJUDICATED - the park is LIFTED. The 2026-09-17 GP-CM05E park directive is superseded by the owner's recorded current direction (progress, no invisible blockers, PM decides). The live structured frontier (state ready / authorization execution / hold None) is adopted as the operative state; GLOBAL-PREFERENCES-COMPLETION / GP-CM05E becomes workable, and the preferences chain behind it (PROJECT-PREFERENCES-SPEC / PROJECT-PREFERENCES-BUILD) un-sandbags.",
+  "priority_note": "At adjudication, section 9 placed GP-CM05E BELOW the authoring chain and the ADS/DC C05 closes - the candidate ranking, not the canonical slot. The PM subsequently assigned GP-CM05E as the active product-execution lane (ordinary assignment/continuation under the delegation), and selection->selected with GP-CM05E as sole canonical_next was applied at commit c7d1102d. This record documents only the park-lift basis; the selection itself is recorded in c7d1102d (which cites nothing in the deleted disposition and is unaffected by its removal).",
+  "basis": "The live structured frontier state (ready/execution/hold None) versus the stale 2026-09-17 park directive, resolved by the owner's recorded direction. Decision content unchanged from the original disposition; only its home moves.",
+  "owner_revisable": true,
+  "limits": [
+    "No requirement is shrunk: GP-CM05E execution scope remains bounded by its source-scope (Preferences acceptance checkers/capture/tests + named runtime integration; the eight budget limits and the 11-active/45-reserved/8-seed boundary) and the committed production-acceptance contract.",
+    "Final product acceptance of Global Preferences (GP-CM05A) remains a gate (now PM-decided under the delegation), not pre-decided by this park lift.",
+    "Carve-out home (cited, not reproduced as a set): GP-CM05E's source-scope forbids dependency addition; PM029 (no third-party code/vendoring/linking without owner ratification in a numbered decision) is standing doctrine in CLAUDE.md nonnegotiables."
+  ]
+}

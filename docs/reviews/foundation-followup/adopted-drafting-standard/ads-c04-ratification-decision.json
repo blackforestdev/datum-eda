@@ -1,0 +1,26 @@
+{
+  "task": "ADOPTED-DRAFTING-STANDARD-SPEC",
+  "step": "ADS-C04",
+  "gate": "RATIFY",
+  "date": "2026-10-26",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:ADS-C04-RATIFIED:2026-10-26",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "ADS-C04 [RATIFY] RATIFIED - ISO family. Owner_decision gate; ratifying it auto-restarts the ADS-C05 governance close (the lane does not land here - the C05 close lands it separately).",
+  "rulings": {
+    "S1_selections": "The ISO family per the ADS-C01 section C2 candidate-edition table: ISO 129-1 (dimensioning), ISO 3098 (lettering practice; IBM Plex remains the product typeface per the ratified rendering program - conformance posture per S2), ISO 7200 (title block), ISO 5456 (projection methods) with third-angle projection as the product default, explicitly indicated per drawing (electronics-industry norm, ISO-permitted when indicated). Units: SI (mm presentation over the canonical integer-nm engine). Symbols: IEC 60617 - already ratified (Fork B), carried unchanged. Exact editions = the section C2 candidates as listed; any section C2 ambiguity returns to the PM.",
+    "S2_policy": "UNSET-NOT-FABRICATED + EXPLICIT-UNKNOWN. When a selected standard's normative source is unavailable/unlicensed, affected fields/claims render explicitly unknown; nothing is fabricated; the product never refuses to save/work. No conformance claim without F1.",
+    "S3_mechanism": "AUTHORIZED - the ADS-C05 governance close authors the numbered decision record for the adopted-standard mechanism (typed engine-owned mutations through the single guarded write path, append-only compensating undo, migration design), design-level, no implementation.",
+    "S4_schema_name": "adopted_standard",
+    "F1": "Carried as the VISIBLE external prerequisite (retained carve-out (c): licensed ISO/ASME normative-text acquisition is a paid external purchase); gates conformance claims only, not this lane.",
+    "F2": "Reconciled-to-lane disposition accepted as reviewed."
+  },
+  "basis": "The ADS lane's independently reviewed research and specification (ADS-C01/C02/C03 evidence in this directory, including the candidate-edition table and the six-conflict inventory) plus audit's distinct-reviewer receipt. Decision content unchanged from the original disposition; only its home moves.",
+  "owner_revisable": true,
+  "limits": [
+    "Auto-restart, not a land: ratifying ADS-C04 re-arms the ADS-C05 governance close as the canonical_next_step; the lane lands only on the C05 close.",
+    "ADS-C05 authors a new numbered PRODUCT_MECHANICS decision (its number/title and ETM enrollment go to the PM before commit); it is design-level, no implementation.",
+    "F1 licensed-source acquisition remains an owner-side external prerequisite gating conformance claims, recorded pending, not waived.",
+    "Carve-out homes (cited, not reproduced as a set): F1 licensed ISO/ASME normative-text acquisition is this record's own F1 ruling (owner-side paid external prerequisite); PM029 (no third-party code/vendoring/linking without owner ratification in a numbered decision) is standing doctrine in CLAUDE.md nonnegotiables and governs the ADS-C05 mechanism design."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task": "GUI-MARKING-MENU",
+  "step": "MM-C02",
+  "gate": "AUTHORIZE",
+  "date": "2026-10-26",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:MM-C02-AUTHORIZED:2026-10-26",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "MM-C02 [AUTHORIZE] AUTHORIZED. The inert-shell implementation + proof packet is authorized; five queued interaction questions are ruled. Mid-lane owner_decision: authorizing it advances the lane to MM-C03 execution (the lane does not land here).",
+  "rulings": {
+    "G1_off_canvas": "CLAMP-INWARD (Blender model). The full wheel/sub-wheel repositions inward so it is entirely on-screen at viewport edges and narrow panes; no spill, no truncation. Rationale: the most proven production model; preserves the constant angular gesture vocabulary that makes marking menus work; offset-no-clamp breaks gestures at edges.",
+    "G2_timing": "DUAL-MODE ratified. Delayed display at a ~280 ms hold threshold draws the wheel; an expert flick completing before the threshold executes without drawing the wheel and renders the MARK-TRAIL only. Mark-trail: KEEP (the signature expert feedback of the technique). The 280 ms figure is the standard-practice starting value, tunable later via preferences - an interaction default, NOT a PM051 performance claim.",
+    "G3_icon_in_wheel": "ICON+LABEL. Icons aid expert scanning, labels preserve learnability; icon-only fails discoverability, label+key wastes the radial form.",
+    "G6_sub_wheel_width": "OPTION (i) - generalize DESIGN_SPEC L429 to N-wide content-sized (the recommended option); the proven 3-wide Align case is the first instance.",
+    "F1_cardinals": "RATIFY the live menu_model.json cardinal set (4-cardinal + 4-diagonal, Move at secondary NE) as canonical; DESIGN_SPEC L477's divergent per-object proposals are superseded and reconciled to the manifest through the owning evidence route.",
+    "governed_dropped_items": "pan/right-button -> PM023; G5 -> PARAMETRIC_TOOLING; G4 -> counting convention. These stand as cited. All inert-shell leaves stay disabled until the verb-firing step.",
+    "prototype_refresh": "AUTHORIZED as a separate Claude-prototype action (frontend-dev-01, after this gate's transition lands): bring context-menu-marking-menu.html current - fix the three unsupported depictions (4-wide Align sub-wheel -> live overflow-linear reality; even-6 Move-on-cardinal -> manifest 4+4 layout; wedge icon sizing per the G3 icon+label ruling) and depict the G2 dual-mode timing. One pass, Claude prototype lane."
+  },
+  "basis": "The MM-C01 inert-shell readiness review (docs/reviews/workflow-delivery-rollout/marking-menu/MM-C01-readiness-review.md) and the researched option set with recommendations queued for the owner at MM-C01. Decision content unchanged from the original disposition; only its home moves.",
+  "owner_revisable": true,
+  "limits": [
+    "Mid-lane authorize: GUI-MARKING-MENU advances to MM-C03 execution and does NOT land; MM-C03/C04/C05 execution and the MM-C06 owner gate remain.",
+    "The prototype refresh is a separate frontend-lane visual action, not part of the frontier transition.",
+    "The marking-menu bead stays open; GUI-WRITE-PATH stays blocked on it until the MM lane fully lands."
+  ]
+}

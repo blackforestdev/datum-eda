@@ -1,0 +1,24 @@
+{
+  "task": "PROJECT-WRITER-OWNERSHIP",
+  "step": "PWO-C03",
+  "gate": "WRITER-RATIFICATION [RATIFY]",
+  "date": "2026-10-26",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:PWO-C03-RATIFIED:2026-10-26",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "PWO-C03 [WRITER-RATIFICATION] RATIFIED (approve). Terminal owner_decision of the PROJECT-WRITER-OWNERSHIP lane; its ratification lands the lane.",
+  "rulings": {
+    "i_whole_pwo_ratification": "APPROVED. PM060's bounded authority is credited exactly as reviewed; the independently reviewed reconciliation is accepted at its exact clause/consumer/platform/conformance scope; no second bounded ratification is implied. GUI-WRITE-PATH and multi-agent-proposals unblock per their dependency edges, nothing broader.",
+    "ii_O1R_ratified_as_W1_clause": "O1-R RATIFIED AS A W1 CLAUSE. The blocking acquire_serialized serialized-readback variant is ratified into PM060 W1 doctrine WITH its verified confinement as the clause's terms: background ERC readback on datum-erc-job only, off GUI dispatch, releases before projection, no write-append caller. Audit's direct verification (including fault-injection) is the evidence basis.",
+    "iii_C02O1_authorized": "C02-O1 AUTHORIZED. The clerical refresh of the three stale PM060 clause-map lines (:186/:187/:188) to match PM060's own body and the live tree is authorized as a governed-doc edit with in-commit ETM digest reconciliation on its owning routes. Clerical only; no conformance conclusion changes.",
+    "iv_obligation3_human_demo": "NAMED RESIDUAL, non-blocking, carried visibly. The PM060 obligation-3 HUMAN native Wayland+WGPU demonstration remains owner-side evidence by its own terms (retained carve-out (b)); it surfaces when the native-edit front is reached. O2/O3 stay captured as cleanup findings, no routing."
+  },
+  "basis": "The PWO lane's independently reviewed reconciliation (PWO-C01/C02/PWO-REVIEW evidence in this directory) plus audit's distinct-reviewer receipt. Decision content unchanged from the original disposition; only its home moves.",
+  "owner_revisable": true,
+  "limits": [
+    "Landing PROJECT-WRITER-OWNERSHIP closes only its own bead; GUI-WRITE-PATH and multi-agent-proposals stay blocked by their remaining edges (marking-menu lane).",
+    "The O1-R and C02-O1 PM060 edits ride as a separate ETM-reconciling commit, not the landing.",
+    "The obligation-3 HUMAN demonstration is recorded pending, not waived.",
+    "Carve-out home (cited, not reproduced as a set): the obligation-3 HUMAN native Wayland+WGPU demonstration reservation is standing doctrine in PM060 :176 (owner-side evidence by its own terms) and survives the disposition's deletion there."
+  ]
+}

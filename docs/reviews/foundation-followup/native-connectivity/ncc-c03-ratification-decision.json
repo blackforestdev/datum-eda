@@ -1,0 +1,23 @@
+{
+  "task": "NATIVE-CONNECTIVITY-CONTRACT",
+  "step": "NCC-C03",
+  "gate": "CONNECTIVITY-RATIFICATION [RATIFY]",
+  "date": "2026-10-26",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:NCC-C03-RATIFIED:2026-10-26",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "NCC-C03 [CONNECTIVITY-RATIFICATION] RATIFIED - identity-primary, specs/ authoritative. Terminal owner_decision of the NATIVE-CONNECTIVITY-CONTRACT lane; its ratification lands the lane.",
+  "rulings": {
+    "ii_spec_copy_divergence": "The specs/ copy of SCHEMATIC_CONNECTIVITY_SPEC.md (section 4.1) is RATIFIED AUTHORITATIVE (it carries the roadmap progress_anchor and is normative; docs/ is the self-described nonnormative companion). The docs/ companion is reconciled TO specs/ section 4.1 - companion text may keep explaining coincidence as a formation path, but as SUFFICIENCY only, never 'iff'.",
+    "i_D1_D2_D3": "Ratified on the identity-primary model consistent with the One-canonical-DesignModel ethos: electrical identity (net identity surviving quantize) is the authoritative layer; geometric formation per specs/ section 4.1's enumerated paths (explicit junction, source-format touch, shared endpoint, coincidence as a sufficient creator); attached movement preserves identity. Coincidence is SUFFICIENT, not necessary and not identity itself. Live-wire condition: if any recorded D1/D2 option text in the NCC reconciliation materially conflicts with this direction, it returns to the PM before application - do not guess.",
+    "v_side_B": "Resolves as SIDE B automatically: the section 2 '.lead' biconditional and Rule 4 absolutism are unsupported overreach; replaced by section 4.1 shared-endpoint framing.",
+    "iii_iv_prototype_edit": "AUTHORIZED - the pre-scoped ONE-pass edit to units-and-grid-model.html per frontend's DEPICTION_UPDATE_SCOPING.md, side-B branch: add the D3 identity layer + a quantize-vs-formation visual to section 2; replace the section 2 citation/quote with specs/ section 4.1 framing. Scope ceiling binding: section 2 + Rule 4 + one new visual ONLY; section 7B / PM-040 / UNIT-I02R / Rules 1-3 / section 4 / section 8b-c byte-for-byte untouched. frontend-dev-01 executes in the Claude prototype lane."
+  },
+  "basis": "The NCC lane's independently reviewed reconciliation (NCC-C01/C02/NCC-REVIEW evidence in this directory, including the visual reconciliation and the spec-copy divergence finding) plus audit's distinct-reviewer receipt. Decision content unchanged from the original disposition; only its home moves.",
+  "owner_revisable": true,
+  "limits": [
+    "Landing NATIVE-CONNECTIVITY-CONTRACT closes only its own bead; unblocks are empty.",
+    "The docs/ companion reconciliation to specs/ 4.1 and the units-and-grid-model.html side-B prototype edit are separate follow-on governed-doc / frontend-lane actions.",
+    "The D1/D2 live-wire condition stands: a material conflict in the recorded option text returns to the PM, never defaulted."
+  ]
+}
