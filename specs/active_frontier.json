@@ -13780,27 +13780,10 @@
       }
     },
     {
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
-      "claim": {
-        "agent": "dev-agent-01",
-        "claimed_at": "2026-10-27T04:30:05Z",
-        "expires_at": "2026-10-27T12:51:28Z",
-        "harness": "claude-code",
-        "head": "db378f318ac3a7ef310016047de0b5557c93865c",
-        "heartbeat_at": "2026-10-27T04:51:28Z",
-        "scope": [
-          "specs/FOUNDATION_FOLLOWUP_PLANS.md",
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl",
-          "docs/reviews/foundation-followup/native-workflow-budgets"
-        ],
-        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "NWB-REVIEW",
+        "canonical_next_step_id": "NWB-C03",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -13866,7 +13849,12 @@
           },
           {
             "action": "Obtain independent specification review of the complete clause matrix, proposed contract and all findings.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "2f1843ced81efd3b2572e68d638a22283202abb7"
+              }
+            ],
             "depends_on": [
               "NWB-C02"
             ],
@@ -13878,7 +13866,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain owner ratification of the fixture and measurement budget contract.",
@@ -13920,7 +13908,7 @@
       "key": "NATIVE-WORKFLOW-BUDGETS",
       "order": 59,
       "parallel": true,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed.",
       "title": "Define native workflow fixtures and ratify performance measurement budgets",
       "unblocks": [],

@@ -234,7 +234,7 @@
 </details>
 
 - **Define native workflow fixtures and ratify performance measurement budgets** (`NATIVE-WORKFLOW-BUDGETS`; `dat-native-workflow-budgets-0h4`).
-   Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**; parallel lane.*
+   Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 <details>
