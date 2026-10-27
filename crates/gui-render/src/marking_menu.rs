@@ -10,6 +10,7 @@ static MARKING_MENU_MODEL: OnceLock<Result<datum_gui_protocol::GuiMenuModel, Str
 static MARKING_ICON_SET: OnceLock<Result<GuiIconSet, String>> = OnceLock::new();
 
 mod selection_list;
+mod sub_wheel;
 
 const MARKING_RADIUS: f32 = 86.0;
 const MARKING_LABEL_WIDTH: f32 = 118.0;
@@ -27,7 +28,7 @@ pub(super) fn render_marking_menu(
         return;
     };
     let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    render_preview(preview, layout, panel_quads, text_runs, hit_regions);
+    render_preview(state, preview, layout, panel_quads, text_runs, hit_regions);
     crate::hit_clipping::clip_content(
         panel_quads,
         text_runs,
@@ -40,6 +41,7 @@ pub(super) fn render_marking_menu(
 }
 
 fn render_preview(
+    state: &ReviewWorkspaceState,
     preview: &MarkingMenuState,
     layout: &ShellLayout,
     panel_quads: &mut Vec<Quad>,
@@ -75,16 +77,125 @@ fn render_preview(
     let icon_set = marking_icon_set().ok();
     let anchor = clamp_anchor(preview, layout.viewport);
     draw_marking_trail(preview, anchor, panel_quads);
-    draw_marking_center(preview, anchor, panel_quads, text_runs, hit_regions);
-    render_slots(
-        preview,
+    // Nested sub-wheel: when a submenu is open, render that submenu's items as a
+    // content-sized radial instead of the top-level wheel. Navigation-only; the
+    // activation handler pushes/pops `submenu_path`.
+    if let Some(sub_key) = preview.submenu_path.last() {
+        match menu.submenus.get(sub_key) {
+            Some(items) => sub_wheel::render(
+                preview,
+                items,
+                icon_set,
+                anchor,
+                layout.viewport,
+                panel_quads,
+                text_runs,
+                hit_regions,
+            ),
+            None => {
+                draw_marking_error(
+                    preview,
+                    layout,
+                    panel_quads,
+                    text_runs,
+                    &format!("missing sub-wheel {sub_key}"),
+                );
+                return;
+            }
+        }
+    } else {
+        draw_marking_center(preview, anchor, panel_quads, text_runs, hit_regions);
+        render_slots(
+            preview,
+            menu,
+            icon_set,
+            anchor,
+            layout.viewport,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        );
+    }
+    // Truthful disabled-leaf reason (MM-C03): the focused leaf's reason is shown in
+    // the ordinary shell so the designer sees WHY it is unavailable — not only in
+    // the accessibility model. Submenu parents navigate and carry no reason.
+    draw_marking_reason(
+        state,
         menu,
-        icon_set,
+        preview,
         anchor,
         layout.viewport,
         panel_quads,
         text_runs,
-        hit_regions,
+    );
+}
+
+// Draw the focused leaf's truthful unavailable reason below the wheel. Every
+// non-submenu leaf is inert in this shell: its reason is the model's
+// `unavailable_reason` when the model marks it unavailable, else the shell-level
+// inert reason. A submenu parent navigates and shows nothing.
+fn draw_marking_reason(
+    state: &ReviewWorkspaceState,
+    menu: &GuiMarkingMenu,
+    preview: &MarkingMenuState,
+    anchor: (f32, f32),
+    bounds: RectPx,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+) {
+    let Some(slot) = preview.preview_slot.as_deref() else {
+        return;
+    };
+    let item = if let Some(sub_key) = preview.submenu_path.last() {
+        let Some(index) = slot
+            .strip_prefix("SUB:")
+            .and_then(|s| s.parse::<usize>().ok())
+        else {
+            return;
+        };
+        match menu
+            .submenus
+            .get(sub_key)
+            .and_then(|items| items.get(index))
+        {
+            Some(item) => item,
+            None => return,
+        }
+    } else {
+        match menu.cardinal.get(slot).or_else(|| menu.secondary.get(slot)) {
+            Some(item) => item,
+            None => return,
+        }
+    };
+    if matches!(
+        item.binding(),
+        datum_gui_protocol::GuiMenuBinding::Submenu(_)
+    ) {
+        return;
+    }
+    let reason = item
+        .unavailable_reason(state)
+        .unwrap_or("Inert shell — this action is not invoked in this build.");
+    let width = 280.0_f32.min((bounds.width - 8.0).max(0.0));
+    let rect = RectPx {
+        x: (anchor.0 - width * 0.5).clamp(
+            bounds.x + 4.0,
+            (bounds.x + bounds.width - width - 4.0).max(bounds.x + 4.0),
+        ),
+        y: anchor.1 + MARKING_RADIUS + 54.0,
+        width,
+        height: 20.0,
+    };
+    panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
+    push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
+    draw_text(
+        &truncate_text(reason, 44),
+        rect.x + design_tokens::spacing::SP_03,
+        rect.y + design_tokens::spacing::SP_03,
+        design_tokens::typography::CAPTION_SIZE,
+        TEXT_MUTED,
+        TextFace::Ui,
+        text_runs,
     );
 }
 
@@ -107,6 +218,15 @@ fn render_slots(
         };
         let rect = slot_rect(anchor, slot, bounds);
         let active = preview.preview_slot.as_deref() == Some(slot);
+        // Inert-shell rule: a submenu parent navigates (opens its sub-wheel); every
+        // other leaf is disabled and fires nothing. This presentation/activation
+        // state is the shell's own rule, deliberately independent of registry
+        // capability truth (`is_enabled`) — the authorized shell keeps every verb
+        // leaf inert regardless of whether its verb would otherwise be available.
+        let navigable = matches!(
+            item.binding(),
+            datum_gui_protocol::GuiMenuBinding::Submenu(_)
+        );
         let fill = if active {
             REVIEW_ROW_ACTIVE_BG
         } else {
@@ -123,13 +243,25 @@ fn render_slots(
             },
             1.0,
         );
-        render_marking_icon(item, icon_set, rect, active, text_runs);
+        // Icon+label (G3): the verb glyph at the wedge's left, label beside it. A
+        // navigable submenu parent carries the ▸ affordance; disabled leaves stay
+        // muted so the inert shell reads as inert.
+        render_marking_icon(item, icon_set, rect, navigable && active, text_runs);
+        let label = if navigable {
+            format!("{} \u{25b8}", truncate_text(&item.label, 14))
+        } else {
+            truncate_text(&item.label, 16)
+        };
         draw_text(
-            &truncate_text(&item.label, 18),
-            rect.x + design_tokens::spacing::SP_07,
+            &label,
+            rect.x + 20.0,
             rect.y + design_tokens::spacing::SP_03,
             design_tokens::typography::CAPTION_SIZE,
-            if active { TEXT_PRIMARY } else { TEXT_MUTED },
+            if navigable && active {
+                TEXT_PRIMARY
+            } else {
+                TEXT_MUTED
+            },
             TextFace::Ui,
             text_runs,
         );
@@ -362,6 +494,54 @@ mod tests {
     use super::*;
 
     #[test]
+    fn focused_disabled_leaf_shows_truthful_reason_but_submenu_parent_does_not() {
+        let base = datum_gui_protocol::load_fixture_workspace_state();
+        let mut layout = ShellLayout::for_window(1280, 800, None);
+        layout.viewport = RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 1280.0,
+            height: 800.0,
+        };
+        let render = |slot: &str| -> Vec<TextRun> {
+            let mut state = base.clone();
+            state.ui.marking_menu = Some(MarkingMenuState {
+                menu_key: "pcb.multiselect".into(),
+                target_object_id: None,
+                anchor_x_px: 640,
+                anchor_y_px: 360,
+                preview_slot: Some(slot.into()),
+                gesture_dx_px: 0,
+                gesture_dy_px: 0,
+                selection: None,
+                submenu_path: Vec::new(),
+            });
+            let mut q = Vec::new();
+            let mut t = Vec::new();
+            let mut h = Vec::new();
+            render_marking_menu(&state, &layout, &mut q, &mut t, &mut h);
+            t
+        };
+        let has_reason = |runs: &[TextRun]| {
+            runs.iter().any(|run| {
+                let lower = run.text.to_lowercase();
+                lower.contains("unavailable") || lower.contains("inert")
+            })
+        };
+        // N = Rotate (a disabled verb leaf) → the designer sees a truthful reason in
+        // the ordinary shell, not only in the accessibility model.
+        assert!(
+            has_reason(&render("N")),
+            "a focused disabled leaf must show a truthful reason"
+        );
+        // W = Align ▸ (a submenu parent) navigates → no disabled-reason caption.
+        assert!(
+            !has_reason(&render("W")),
+            "a submenu parent navigates and shows no disabled reason"
+        );
+    }
+
+    #[test]
     fn constrained_marking_preview_and_error_share_visible_bounds() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         let mut layout = ShellLayout::for_window(1280, 800, None);
@@ -382,6 +562,7 @@ mod tests {
                     gesture_dx_px: 90,
                     gesture_dy_px: -72,
                     selection: None,
+                    submenu_path: Vec::new(),
                 });
                 let mut quads = Vec::new();
                 let mut text = Vec::new();

@@ -197,6 +197,7 @@ mod tests {
                 preview_keys: Default::default(),
                 scroll: 295,
             }),
+            submenu_path: Vec::new(),
         });
         let mut q = Vec::new();
         let mut t = Vec::new();
@@ -205,7 +206,10 @@ mod tests {
         assert!(h.iter().any(
             |hit| matches!(&hit.target,HitTarget::MarkingMenuItem {slot,..} if slot=="SELECT:302")
         ));
-        assert!(h.len() <= 3);
+        // 3 visible rows + 1 panel dismiss-surface hit. The panel hit was added by
+        // a5df9383 (dismiss on outside right release); this bound was left at 3 and
+        // is corrected to 4 here — pre-existing, attributed to a5df9383, not MM-C03.
+        assert!(h.len() <= 4);
         for hit in h {
             assert!(layout.viewport.contains(hit.rect.x, hit.rect.y));
             assert!(

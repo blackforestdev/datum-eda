@@ -151,10 +151,97 @@ impl Runtime {
                 .strip_prefix("SELECT:")
                 .and_then(|s| s.parse().ok())
                 .is_some_and(|index| self.activate_native_select_item(index)),
-            HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
+            HitTarget::MarkingMenuItem { menu_key, slot, .. } => {
+                // Inert shell: a submenu parent opens its sub-wheel (navigation, no
+                // operation); every other leaf fires nothing and dismisses.
+                if self.marking_open_submenu_if_parent(menu_key, slot) {
+                    true
+                } else {
+                    self.dismiss_marking_menu()
+                }
+            }
+            HitTarget::MarkingMenuSurface { .. } => {
+                // Center back affordance inside a sub-wheel: pop one level. At the
+                // root (empty path) this preserves the prior surface-click = dismiss.
+                if self.marking_pop_submenu() {
+                    true
+                } else {
+                    self.dismiss_marking_menu()
+                }
+            }
             _ => return None,
         };
         Some(handled)
+    }
+
+    /// Resolve the item at `slot` in the currently-open wheel (top-level cardinals/
+    /// secondaries, or the `SUB:n` leaves of the sub-wheel named by the last
+    /// `submenu_path` entry); if it is a submenu parent, push its key so the
+    /// sub-wheel opens. Returns true when a sub-wheel was opened — navigation only,
+    /// no operation is invoked.
+    fn marking_open_submenu_if_parent(&mut self, menu_key: &str, slot: &str) -> bool {
+        let Some(submenu_key) = self.resolve_marking_submenu_at(menu_key, slot) else {
+            return false;
+        };
+        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
+            return false;
+        };
+        menu.submenu_path.push(submenu_key);
+        menu.preview_slot = None;
+        self.invalidate_frame();
+        true
+    }
+
+    fn resolve_marking_submenu_at(&self, menu_key: &str, slot: &str) -> Option<String> {
+        let model = datum_gui_protocol::gui_menu_model::default_gui_menu_model().ok()?;
+        let open = self
+            .workspace()
+            .ui
+            .marking_menu
+            .as_ref()?
+            .submenu_path
+            .last()
+            .cloned();
+        Self::resolve_submenu_key(model, menu_key, open.as_deref(), slot)
+    }
+
+    /// Pure resolution: the submenu key a `slot` opens, or None for an inert leaf.
+    /// `open_submenu` is the currently-open sub-wheel (None at top level, where
+    /// `slot` is a compass direction; otherwise `slot` is `SUB:n`). Kept free of
+    /// runtime state so it is unit-testable against the live menu_model.
+    fn resolve_submenu_key(
+        model: &datum_gui_protocol::gui_menu_model::GuiMenuModel,
+        menu_key: &str,
+        open_submenu: Option<&str>,
+        slot: &str,
+    ) -> Option<String> {
+        let menu = model.marking_menus.get(menu_key)?;
+        let item = if let Some(open) = open_submenu {
+            let index: usize = slot.strip_prefix("SUB:")?.parse().ok()?;
+            menu.submenus.get(open)?.get(index)?
+        } else {
+            menu.cardinal
+                .get(slot)
+                .or_else(|| menu.secondary.get(slot))?
+        };
+        match item.binding() {
+            datum_gui_protocol::GuiMenuBinding::Submenu(key) => Some(key.to_string()),
+            _ => None,
+        }
+    }
+
+    /// Pop one sub-wheel level (back). Returns false at the root (nothing to pop).
+    fn marking_pop_submenu(&mut self) -> bool {
+        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
+            return false;
+        };
+        if menu.submenu_path.is_empty() {
+            return false;
+        }
+        menu.submenu_path.pop();
+        menu.preview_slot = None;
+        self.invalidate_frame();
+        true
     }
 
     pub(super) fn handle_menu_key(&mut self, event: &KeyEvent) -> bool {
@@ -250,7 +337,13 @@ impl Runtime {
         };
         let dx = (pos.0 - menu.anchor_x_px as f32).round() as i32;
         let dy = (pos.1 - menu.anchor_y_px as f32).round() as i32;
-        let next_slot = marking_slot_for_delta(dx, dy);
+        // Inside a sub-wheel the gesture targets a content-sized SUB:n slot; at the
+        // top level it targets a compass slot.
+        let next_slot = if let Some(open) = menu.submenu_path.last() {
+            marking_submenu_slot_for_delta(&menu.menu_key, open, dx, dy)
+        } else {
+            marking_slot_for_delta(dx, dy)
+        };
         if menu.gesture_dx_px == dx && menu.gesture_dy_px == dy && menu.preview_slot == next_slot {
             return false;
         }
@@ -421,9 +514,102 @@ impl Runtime {
     }
 }
 
+/// Map a pointer delta inside an open sub-wheel to its nearest content-sized
+/// `SUB:n` slot. Items are placed at `-90° + i*(360/count)` (mirrors
+/// `sub_wheel::radial_rect`), so the gesture angle picks the closest index.
+fn marking_submenu_slot_for_delta(
+    menu_key: &str,
+    open_submenu: &str,
+    dx: i32,
+    dy: i32,
+) -> Option<String> {
+    if dx == 0 && dy == 0 {
+        return None;
+    }
+    let model = datum_gui_protocol::gui_menu_model::default_gui_menu_model().ok()?;
+    let count = model
+        .marking_menus
+        .get(menu_key)?
+        .submenus
+        .get(open_submenu)?
+        .len();
+    if count == 0 {
+        return None;
+    }
+    let gesture = (dy as f32).atan2(dx as f32).to_degrees();
+    let step = 360.0 / count as f32;
+    let mut best = 0usize;
+    let mut best_delta = f32::MAX;
+    for index in 0..count {
+        let slot_angle = -90.0 + index as f32 * step;
+        let mut delta = (gesture - slot_angle).rem_euclid(360.0);
+        if delta > 180.0 {
+            delta = 360.0 - delta;
+        }
+        if delta < best_delta {
+            best_delta = delta;
+            best = index;
+        }
+    }
+    Some(format!("SUB:{best}"))
+}
+
 #[cfg(test)]
 mod menu_keyboard_tests {
     use super::*;
+
+    #[test]
+    fn submenu_gesture_maps_to_nearest_content_sized_slot() {
+        // Align has 3 children at -90° (up), 30° (lower-right), 150° (lower-left).
+        // Straight up → SUB:0; lower-right → SUB:1; lower-left → SUB:2.
+        assert_eq!(
+            marking_submenu_slot_for_delta("pcb.multiselect", "Align", 0, -50),
+            Some("SUB:0".to_string())
+        );
+        assert_eq!(
+            marking_submenu_slot_for_delta("pcb.multiselect", "Align", 50, 40),
+            Some("SUB:1".to_string())
+        );
+        assert_eq!(
+            marking_submenu_slot_for_delta("pcb.multiselect", "Align", -50, 40),
+            Some("SUB:2".to_string())
+        );
+        // No movement → no slot.
+        assert_eq!(
+            marking_submenu_slot_for_delta("pcb.multiselect", "Align", 0, 0),
+            None
+        );
+    }
+
+    #[test]
+    fn submenu_slots_resolve_only_submenu_parents() {
+        let model = datum_gui_protocol::gui_menu_model::default_gui_menu_model().unwrap();
+        // Top-level: pcb.multiselect W = Align ▸ (a submenu parent) → pushes "Align".
+        assert_eq!(
+            Runtime::resolve_submenu_key(model, "pcb.multiselect", None, "W"),
+            Some("Align".to_string())
+        );
+        // A non-submenu cardinal (N Rotate) is an inert leaf → no push.
+        assert_eq!(
+            Runtime::resolve_submenu_key(model, "pcb.multiselect", None, "N"),
+            None
+        );
+        // Depth-2: inside the Align sub-wheel, SUB:2 (Distribute) is itself a submenu.
+        assert_eq!(
+            Runtime::resolve_submenu_key(model, "pcb.multiselect", Some("Align"), "SUB:2"),
+            Some("Distribute".to_string())
+        );
+        // A verb leaf inside a sub-wheel resolves to None (an inert leaf fires nothing).
+        assert_eq!(
+            Runtime::resolve_submenu_key(model, "pcb.multiselect", Some("Distribute"), "SUB:0"),
+            None
+        );
+        // Out-of-range / malformed slots are safely None.
+        assert_eq!(
+            Runtime::resolve_submenu_key(model, "pcb.multiselect", Some("Align"), "SUB:9"),
+            None
+        );
+    }
 
     #[test]
     fn generic_marking_menu_retains_existing_escape_release_dismissal() {
@@ -436,6 +622,7 @@ mod menu_keyboard_tests {
             gesture_dx_px: 0,
             gesture_dy_px: 0,
             selection: None,
+            submenu_path: Vec::new(),
         };
         let mut owner = MenuKeyOwnership::default();
         let escape = Key::Named(NamedKey::Escape);

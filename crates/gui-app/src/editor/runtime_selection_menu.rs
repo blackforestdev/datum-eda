@@ -125,6 +125,7 @@ impl Runtime {
             gesture_dx_px: 0,
             gesture_dy_px: 0,
             selection,
+            submenu_path: Vec::new(),
         });
         // TF-01: while open, the marking menu is a transient Overlay keyboard
         // owner; `dismiss_marking_menu` restores Editor ownership.
@@ -443,6 +444,7 @@ mod tests {
                 preview_keys: Default::default(),
                 scroll: 0,
             }),
+            submenu_path: Vec::new(),
         };
         let prior = state.selection.clone();
         let target = HitTarget::MarkingMenuItem {

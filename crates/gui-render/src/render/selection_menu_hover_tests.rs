@@ -44,6 +44,7 @@ fn open_menu(state: &mut ReviewWorkspaceState, root: &std::path::Path, schematic
         gesture_dx_px: 0,
         gesture_dy_px: 0,
         selection: Some(menu),
+        submenu_path: Vec::new(),
     });
 }
 

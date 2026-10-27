@@ -99,6 +99,7 @@ fn native_select_menu_keeps_complete_inventory_and_refuses_unbound_semantics_wit
         gesture_dx_px: 0,
         gesture_dy_px: 0,
         selection: Some(open),
+        submenu_path: Vec::new(),
     });
     let nodes = datum_gui_protocol::gui_menu_model::accessibility::menu_accessibility_nodes(
         datum_gui_protocol::gui_menu_model::default_gui_menu_model().unwrap(),

@@ -11,6 +11,7 @@ fn marking_menu_shell_renders_manifest_items_without_command_targets() {
         gesture_dx_px: 0,
         gesture_dy_px: -72,
         selection: None,
+        submenu_path: Vec::new(),
     });
     let retained = RetainedScene::from_workspace(&state, 1280, 768);
     let prepared = PreparedScene::from_workspace(
