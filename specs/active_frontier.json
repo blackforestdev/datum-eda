@@ -10306,14 +10306,26 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T16:36:35Z",
-        "expires_at": "2026-10-28T00:36:35Z",
+        "expires_at": "2026-10-28T02:53:31Z",
         "harness": "claude-code",
         "head": "b33049c08ba6d3f452462a3ebb6de58d7c2e49b1",
-        "heartbeat_at": "2026-10-27T16:36:35Z",
+        "heartbeat_at": "2026-10-27T18:53:31Z",
         "scope": [
-          "specs/active_frontier.json",
+          ".beads/issues.jsonl",
+          "scripts/check_global_preferences_boundary.py",
+          "scripts/check_global_preferences_production_evidence.py",
+          "scripts/check_global_preferences_production_matrix.py",
+          "scripts/global_preferences_acceptance",
+          "scripts/measure_global_preferences_release.py",
+          "scripts/run_global_preferences_production_acceptance.py",
+          "scripts/run_global_preferences_proof.py",
+          "scripts/test_global_preferences_acceptance_runner.py",
+          "scripts/test_global_preferences_boundary.py",
+          "scripts/test_global_preferences_measurements.py",
+          "scripts/test_global_preferences_production_evidence.py",
+          "scripts/test_global_preferences_production_matrix.py",
           "specs/PROGRESS.md",
-          ".beads/issues.jsonl"
+          "specs/active_frontier.json"
         ],
         "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
         "worktree": "/home/bfadmin/Documents/datum-eda"
@@ -18379,6 +18391,7 @@
           "research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md",
           "scripts/project_work_authority.py",
           "scripts/test_project_standing_authority.py",
+          "scripts/test_project_work_authority.py",
           "specs/evidence_traceability_manifest.json"
         ],
         "session": "01a160d9-b499-7923-984a-b3390beb2e34",
