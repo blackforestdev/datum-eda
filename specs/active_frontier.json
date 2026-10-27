@@ -11805,10 +11805,10 @@
       "unblocks": []
     },
     {
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "ADS-C04",
+        "canonical_next_step_id": "ADS-C05",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -11895,7 +11895,13 @@
           },
           {
             "action": "Obtain exact owner ratification of the specification and new mechanism choices.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:ADS-C04-RATIFIED:2026-10-26",
+                "path": "docs/reviews/frontier/OWNER_DELEGATION_AND_GATE_DECISIONS_2026-10-26.md"
+              }
+            ],
             "depends_on": [
               "ADS-C03"
             ],
@@ -11921,7 +11927,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Reconcile accepted specification and future delivery obligations without authorizing implementation.",
