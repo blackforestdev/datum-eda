@@ -13785,10 +13785,10 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T04:30:05Z",
-        "expires_at": "2026-10-27T12:42:52Z",
+        "expires_at": "2026-10-27T12:51:28Z",
         "harness": "claude-code",
-        "head": "f1b618bd7eae120a21232783d93285d9dc448907",
-        "heartbeat_at": "2026-10-27T04:42:52Z",
+        "head": "db378f318ac3a7ef310016047de0b5557c93865c",
+        "heartbeat_at": "2026-10-27T04:51:28Z",
         "scope": [
           "specs/FOUNDATION_FOLLOWUP_PLANS.md",
           "specs/active_frontier.json",
@@ -13800,7 +13800,7 @@
         "worktree": "/home/bfadmin/Documents/datum-eda"
       },
       "completion": {
-        "canonical_next_step_id": "NWB-C02",
+        "canonical_next_step_id": "NWB-REVIEW",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -13845,7 +13845,12 @@
           },
           {
             "action": "Draft explicit performance budgets, sampling, provenance and failure policy without ratifying thresholds.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "db378f318ac3a7ef310016047de0b5557c93865c"
+              }
+            ],
             "depends_on": [
               "NWB-C01"
             ],
@@ -13857,7 +13862,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain independent specification review of the complete clause matrix, proposed contract and all findings.",
@@ -13873,7 +13878,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Obtain owner ratification of the fixture and measurement budget contract.",
