@@ -18,6 +18,8 @@ import run_cargo_guarded as guard
 
 
 class CompanionTests(unittest.TestCase):
+    cohorts = ("initial-prefix-050cdf8c", "manifest-open-94d59290", "manifest-open-ea04ce38")
+
     def setUp(self):
         base = Path(os.environ.get("DATUM_QA_COMPANION_TEST_ROOT",
             Path(__file__).resolve().parents[1] / ".datum/scratch/cargo-qa-companions-tests"))
@@ -28,7 +30,7 @@ class CompanionTests(unittest.TestCase):
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)
         self.lock = self.root / "resource.lock"
         self.paths = []
-        for cohort in ["initial-prefix-050cdf8c", "manifest-open-94d59290", "manifest-open-ea04ce38"]:
+        for cohort in self.cohorts:
             directory = self.root / "target/qa" / cohort / "debug"
             directory.mkdir(parents=True)
             path = directory / "datum-eda"
@@ -268,6 +270,11 @@ class CompanionTests(unittest.TestCase):
         anchor, first = [str(path.relative_to(self.root)) for path in self.paths[:2]]
         self.assertEqual(observed[anchor]["inode"], observed[first]["inode"])
         self.assert_intact()
+
+
+class ReleasedCompanionTests(CompanionTests):
+    """Apply the same real kernel/refusal controls to the newly admitted cohort family."""
+    cohorts = ('auto-global-6183c81e', 'browse-affordance-547d406f', 'browse-affordance-7b3455dd')
 
 
 if __name__ == "__main__":

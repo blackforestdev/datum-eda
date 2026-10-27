@@ -160,5 +160,212 @@
         "limits": "No new tests/builds or production/index/refs changed by reviewer. Manifest metadata reconciliation is not proof that a runtime, grant or human observation occurred."
       }
     }
-  ]
+  ],
+  "autonomy_observation": {
+    "status": "PARTIAL_OBSERVED_NATIVE_WAKEUP_ACTIVATION_AND_FEATURE_CYCLE_PENDING",
+    "run_start_UTC": "2026-10-27T19:03:14Z",
+    "snapshot_UTC": "2026-10-27T19:08:32.928221+00:00",
+    "PM_session": "0a2e42d7-4b60-47c2-bf4e-4d09d86123b9",
+    "activation_snapshot": {
+      "policy_witness": "Unique standing appointment witness names that PM, task_keys[*], six declared capabilities.",
+      "manifest": "No global[*]appointment entry observed; existing bounded appointments remain.",
+      "correction_task": "PM-AUTOMATION-CORRECTION PA-C01 in_progress; PA-C02/03 pending.",
+      "outcome": "NOT activated or closed at this observation; structural code/policy reviewPASS is not activation."
+    },
+    "native_wakeup_samples": [
+      {
+        "source": "Native roadmap-agent result; peer metadata wrapper, not direct owner input.",
+        "prior_PM_end_turn_UTC": "2026-10-27T19:04:37.719Z",
+        "prior_turn_duration_event_UTC": "2026-10-27T19:04:37.747Z",
+        "peer_input_UTC": "2026-10-27T19:04:47.536Z",
+        "API_request_UTC": "2026-10-27T19:04:47.645Z",
+        "first_assistant_event_UTC": "2026-10-27T19:04:51.475Z",
+        "visible_PM_response_UTC": "2026-10-27T19:04:54.091Z",
+        "logged_input_to_API_ms": 109,
+        "direct_human_input_between_prior_stop_and_response": false,
+        "parent_chain": "Peer input directly parents prior turn-duration event; first assistant event parents peer input."
+      },
+      {
+        "source": "Explicit native cross-session ACK-AUTONOMY-1905 probe from coordinating PM; distinct from actual worker-result sample.",
+        "prior_PM_end_turn_UTC": "2026-10-27T19:04:54.091Z",
+        "prior_turn_duration_event_UTC": "2026-10-27T19:04:54.142Z",
+        "peer_input_UTC": "2026-10-27T19:05:39.599Z",
+        "API_request_UTC": "2026-10-27T19:05:39.744Z",
+        "first_assistant_event_UTC": "2026-10-27T19:05:44.328Z",
+        "visible_PM_response_UTC": "2026-10-27T19:05:58.515Z",
+        "logged_input_to_API_ms": 145,
+        "direct_human_input_between_prior_stop_and_response": false,
+        "parent_chain": "Peer input directly parents prior turn-duration event; first assistant event parents peer input."
+      }
+    ],
+    "measured_scope": "Two actual native idle-turn resumptions from cross-session inputs, one real roadmap result and one explicit probe. Logged input/API intervals are observations on one logger, not sender-to-display latency, scheduling guarantees, a new acceptance budget or universal delivery reliability. No external polling was used by this reviewer to cause PM wakeup.",
+    "actual_transport_blocker": {
+      "attempt_UTC": "2026-10-27T19:03:33.929Z",
+      "rejection_UTC": "2026-10-27T19:03:59.034Z",
+      "action": "Native PM SendMessage to dev-agent-01 directing an activation commit attempt.",
+      "actual_result": "Tool result is_error:true; auto-mode classifier denied [Permission Grant]. Message was rejected, not an accepted worker authorization or completed activation.",
+      "limits": "This specific rejection does not prove all future activation methods are forbidden, that only a human can ever perform them, or that one owner command eliminates all future tool approvals. No denied action was retried or bypassed by reviewer."
+    },
+    "feature_pilot_snapshot": {
+      "assigned_to_this_review": "Existing GUI-MARKING-MENU inert-shell MM-C03 through MM-C06, not operation invocation.",
+      "actual_state": "MM-C03 in_progress; MM-C04/C05/C06 pending.",
+      "scope_finding": "The rejected native PM message instead designated a GP-CM05E increment; later visible PM response mentions that increment. Rejected text is not delivered assignment authority. Coordinating PM was asked to align the actually recorded pilot before counting completion.",
+      "outcome": "No full feature-cycle or four-step autonomy PASS claimed."
+    },
+    "actual_observer_actions": "Read-only manifest/witness extraction and native-session JSON event/tool-result inspection using Python. No code tests repeated, source/config/claims/shared records/index/Git refs changed, grants issued or operation invoked.",
+    "remaining": "Observe durable appointment activation and actual authorized pilot implementation/proof/independent-review/repair/landing/PM-disposition; record real blockers and behaviors in existing records. Current incomplete steps are not administrative completion.",
+    "archive_scope": "Material observed results only; earlier review findings and exact source/test scope retained. This observation does not authorize a new gate or independent production action."
+  },
+  "finisher_static_review": {
+    "status": "REVISE_DO_NOT_EXECUTE_AT_REVIEWED_BYTES",
+    "reviewed_script_sha256": "a91ebe7a9719124bbf55fdb1a1063a75c583121e3842f67604a7cd7871272fad",
+    "review_scope": "Read actual updated owner-finisher script at the supplied temporary path, not a proposed copy. No shell execution, dry-run, activation path, test or shared state mutation.",
+    "improvements_observed": [
+      "Initial active_frontier.json working/index-versus-HEAD check.",
+      "Transform from HEAD instead of arbitrary working Frontier.",
+      "Dryrun writes/stages only in its detached disposable worktree and no longer restores the shared Frontier toHEAD."
+    ],
+    "mandatory_findings": [
+      {
+        "id": "F1",
+        "locations": "lines37,48,123-128",
+        "finding": "Unrecognized argument falls through to real commit. For example --dry-run is not dryrun and selects MAIN/commit.",
+        "remedy": "Validate argument count and exact mode before any mutation; allow only the documented modes and reject everything else."
+      },
+      {
+        "id": "F2",
+        "locations": "lines39-45,109,115-116",
+        "finding": "Initial check covers only Frontier. Whole-index path-set check occurs after shared write and staging; pre-existing unrelated staged content causes abort only after partial shared mutation.",
+        "remedy": "Require the complete shared index baseline clean before real shared mutation while preserving unrelated unstaged Rust/other work. Recheck exact staged ownership after staging; do not clean/reset other work."
+      },
+      {
+        "id": "F3",
+        "locations": "lines50,62,83-84,109,115-121,128",
+        "finding": "Separate moving-HEAD reads and no final byte/index/HEAD checks leave drift windows. Detached dryrun can be based on one HEAD while Python reads a newer MAIN HEAD; another applier can edit Frontier after initial guard and be overwritten. Staged-file name alone does not bind staged bytes to computed candidate.",
+        "remedy": "Pin a single source HEAD and derive all source/witness bytes from it; retain coordinated metadata-writer handoff; recheck expected Frontier/index/HEAD before installation/staging/commit, and verify exact staged blob equals expected output. Abort on drift without checkout/reset/cleanup of shared files."
+      }
+    ],
+    "non_guard": "The staged-diff grep ending || true is informational, not structural or content validation. Planned JSON delta comparison does not validate subsequently staged bytes.",
+    "authority_limit": "This is safety review only, not appointment activation or permission to execute a previously rejected action. A failed real path must not discard other sessions changes; no generic promise of universal race exclusion is made.",
+    "scope_preservation": "Unrelated unstaged source work must remain. No additional runtime/selector/claim framework or test campaign requested; only concrete actual-script safety gaps.",
+    "copy_status": "Existing ignored receipt amended with material findings. Earlier code/policy PASS retains its own scope; it does not bless this operational finisher.",
+    "final_actual_pin": {
+      "status": "PASS_BOUNDED_STATIC_F1_F2_F3_WITH_EXCLUSIVE_APPLIER_WINDOW",
+      "actual_script_sha256": "7a2d2ba0c302f739b9c23b19e7ff41a410006163867184d19dbea0e473a64b65",
+      "confirmation": "Actual owned finisher bytes independently hashed equal the previously reviewed guard candidate. No further code review, execution, dryrun or test performed for this confirmation.",
+      "findings_disposition": "F1 explicit argument whitelist; F2 whole-index clean before mutation; F3 single pinned sourceHEAD, targetHEAD/index/basebyte checks before write and exact stagedset/candidateSHA/indexblob checks after gates beforecommit. Earlier unsafe-version findings remain historical.",
+      "required_existing_handoff": "PM must coordinate an exclusive metadata-applier and shared-index window, with no concurrent writers/stagers for the guarded transaction. These sequential checks are not an atomic lock and do not establish general race freedom. Unrelated unstaged source work remains outside scope.",
+      "authority_limit": "Static safety acknowledgment is not permission to activate or bypass a previously rejected operation. No activation/dryrun execution, successful transaction, new grant or runtime feature-cycle PASS is claimed.",
+      "separate_blocker": "Reported Cargo disk-cap pressure remains separate; no cache cleanup, source/config mutation or resource bypass authorized or performed by reviewer."
+    }
+  },
+  "qa_extension_review": {
+    "status": "PASS_BOUNDED_COHORT_ADMISSION_DELTA_AND_ISOLATED_CONTROLS_NO_REAL_CACHE_APPLY",
+    "reviewed_source_sha256": {
+      "cargo_qa_companions.py": "1838dc26402f6335aee1bc92aca676f68e6c623890f5ba648444793815526f68",
+      "test_cargo_qa_companions.py": "37b7c7e4ca1b80684b066dbc95812d69626bfb88c93bc84a0580c4f56577f305"
+    },
+    "delta_patch_sha256": "474d3c35fbc79d2a9ee35cceedc22ce13203cc4957616aa7e8273ea90c5bee49",
+    "manifest_sha256": "e9d83d553e3dc45ae85e85deee482117f7e2a9a8ad2c58f948eba8ab00ddedd9",
+    "inventory_sha256": "91eced4708fbb11e5d94ec9be5d451ce4a32c04a3d5c5a3d07460931757901a3",
+    "retained_worker_test_log_sha256": "a98a3e6cd9d7e05ce88eeb0b167fcf279eb60173b244d420064ac7c14fd7ed9e",
+    "actual_static_review": [
+      "Verified both candidate source pins. AST excluding COHORTS is identical to live helper: exactly ten names added, no removal or algorithm/guard change.",
+      "Manifest has two roles and twenty distinct selected paths in precisely those ten new cohorts; every entry equals the supplied full-byte/security inventory entry.",
+      "Read-only current stat/xattr checks of all twenty files matched manifest device/inode/nlink/size/ownership/mode/mtime/ctime/security metadata. Reviewer reused worker full-byte hashes; did not independently rehash all binaries or execute the real manifest.",
+      "Existing exact manifest SHA, path/role restriction, no-follow inode binding, whole-batch O_RDWR ETXTBSY admission, resource lock/active-process checks, immutable metadata validation, staged link verification, atomic replacement, nonselected inventory and partial-failure reporting remain unchanged.",
+      "Test subclass reuses all thirteen existing kernel/refusal controls for three representative added cohorts; no claim that each new cohort had a distinct runtime test or that real selected binaries were idle."
+    ],
+    "actual_test_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.datum/scratch/automation-routing-correction-20261027/delivery-overhead/qa-extension-candidate:scripts DATUM_QA_COMPANION_TEST_ROOT=/home/bfadmin/Documents/datum-eda/.datum/scratch/gui-p2-inspector-c05-independent-20261023/qa-extension-kernel-tests python3 -B -m unittest test_cargo_qa_companions.ReleasedCompanionTests",
+    "actual_test_result": "13 tests, OK, 0 failures, 5.010 seconds. Isolated temporary copies of the installed runtime exercise real kernel exec/refusal behavior; no real QA-cache manifest applied.",
+    "reused_tests": "Worker retained combined old/new suite log reports26 tests OK/10.558 seconds. Reviewer read that log and reused the old-family result rather than repeating unchanged tests.",
+    "reclaim_estimate": {
+      "duplicate_inode_count": 18,
+      "anchors_retained": 2,
+      "current_duplicate_allocated_bytes": 6179696640,
+      "current_duplicate_allocated_GiB": 5.755290985107422,
+      "meaning": "Potential reclaim only, not an observed capacity recovery or build PASS. Existing paths/bytes remain; successful dedup intentionally changes selected inode/link-count/ctime identity."
+    },
+    "remaining_mandatory_findings": [],
+    "application_boundaries": [
+      "Actual authorized source/claim handoff and resource lock plus no active Cargo/Datum operations still required.",
+      "Whole real batch must pass current descriptor-bound metadata/full-byte/security validation and retained O_RDWR/ETXTBSY proof before mutation; current stat review is not that proof.",
+      "No protected QA path retirement, cap/config change, source rewrite or deletion permission follows this review. Preserve GUI binaries/source/evidence/nonselected inventories.",
+      "A partial application must remain reported as partial; no simulated full success, future-build or feature-cycle claim."
+    ],
+    "handling": "Reviewer made no production/cache/config/index/ref mutations; only isolated test fixtures and this existing ignored receipt. Exact amended receipt may be copied to the previously authorized normal review destination in the owned transaction. No new grant or real manifest execution by reviewer.",
+    "actual_application_outcome": {
+      "status": "PASS_BOUNDED_RECORDED_APPLICATION_OUTCOME",
+      "actual_receipt_sha256": "efe7095f5dc5942bdd061282f4e50f8f180623853d1aac8af3e1a3411ef7bcad",
+      "actual_outcome_sha256": "1efef749701ba85455214bef78e7a8746560fc2254f275bee9052be02a484f4a",
+      "actual_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_retention": "Actual descriptor-bound before/after receipt and outcome/stderr retained once in existing ignored delivery-overhead scratch; complete metadata not duplicated in this durable review.",
+      "reviewed_manifest_sha256": "e9d83d553e3dc45ae85e85deee482117f7e2a9a8ad2c58f948eba8ab00ddedd9",
+      "exit_code": 0,
+      "actual_status": "complete_all_paths_and_bytes_retained",
+      "replaced_duplicate_paths": 18,
+      "retained_paths": 20,
+      "per_role_content_and_paths": [
+        {
+          "role": "datum-eda",
+          "sha256": "be312f69d6ef3b936f0dc3af6975603200438640a6782a784479f0e513126da9",
+          "paths": [
+            "target/qa/auto-global-6183c81e/debug/datum-eda",
+            "target/qa/browse-affordance-547d406f/debug/datum-eda",
+            "target/qa/browse-affordance-7b3455dd/debug/datum-eda",
+            "target/qa/browse-affordance-b0158987/debug/datum-eda",
+            "target/qa/file-actions-33462ad6/debug/datum-eda",
+            "target/qa/file-actions-54ff9702/debug/datum-eda",
+            "target/qa/file-actions-f1336e25/debug/datum-eda",
+            "target/qa/path-assistance-e12d125d/debug/datum-eda",
+            "target/qa/successive-dee25e1e/debug/datum-eda",
+            "target/qa/terminal-handoff-310d9083/debug/datum-eda"
+          ]
+        },
+        {
+          "role": "eda-engine-daemon",
+          "sha256": "e58d388d0e7d845d53344e8ac62627b95eff5b1ba692e6dc486621a482c5d91f",
+          "paths": [
+            "target/qa/auto-global-6183c81e/debug/eda-engine-daemon",
+            "target/qa/browse-affordance-547d406f/debug/eda-engine-daemon",
+            "target/qa/browse-affordance-7b3455dd/debug/eda-engine-daemon",
+            "target/qa/browse-affordance-b0158987/debug/eda-engine-daemon",
+            "target/qa/file-actions-33462ad6/debug/eda-engine-daemon",
+            "target/qa/file-actions-54ff9702/debug/eda-engine-daemon",
+            "target/qa/file-actions-f1336e25/debug/eda-engine-daemon",
+            "target/qa/path-assistance-e12d125d/debug/eda-engine-daemon",
+            "target/qa/successive-dee25e1e/debug/eda-engine-daemon",
+            "target/qa/terminal-handoff-310d9083/debug/eda-engine-daemon"
+          ]
+        }
+      ],
+      "independent_record_checks": [
+        "Manifest identity equals exact previously reviewed manifest; all20 before entries match manifest metadata exactly.",
+        "Completed path list is exactly the18duplicates, with2anchor paths retained. All20after paths present; each role shares its originalanchor inode withnlink10.",
+        "Recorded fullcontent hashes, size, mode, uid/gid, mtime andxattrs match prior values; selected ctime/inode/linkcount changes are the intended dedup representation.",
+        "Nonselected before/after inventory digests match for1099entries; no cleanup_errors or foreign temporary paths reported.",
+        "Outcome exit0/statuscomplete agrees with actualreceipt; byte totals subtract to6179696640 and aftertotal is below the stated40GiBcap."
+      ],
+      "nonselected_inventory_sha256": "bf9f61894e97e41eba8b62e9a0f68584874f96fd0f2ed47bad4896f253b176cf",
+      "resource_outcome": {
+        "before_retained_bytes": 47737688064,
+        "after_retained_bytes": 41557991424,
+        "reclaimed_bytes": 6179696640,
+        "before_retained_GiB": 44.459,
+        "after_retained_GiB": 38.704,
+        "elapsed_seconds": 266.92,
+        "stated_cap_GiB": 40,
+        "cap_change_claimed": false
+      },
+      "proof_boundary": "Reviewed actual retained application records read-only. Reviewer did not execute/reapply the real manifest, rehash binaries, rerun tests, mutatecache/config or independently observe every original syscall. Earlier source/control review and actual receipt support this bounded outcome; no blanket process-idle claim.",
+      "not_claimed": [
+        "Product/featurecyclePASS",
+        "AppointmentactivationPASS",
+        "SubsequentCargo/buildPASS",
+        "Newcache deletion/cap/configauthority",
+        "Unrelatedtest/Clippy/fullqualificationPASS"
+      ],
+      "copy_handoff": "Exact complete amended review bytes may be copied to the previously authorized normal review destination for the coherent two-source-plus-review transaction. Earlier findings/results remain at their original scopes."
+    }
+  }
 }

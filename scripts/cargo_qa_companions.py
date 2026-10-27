@@ -19,6 +19,17 @@ COHORTS = {
     "startup-0a8e8b5d", "initial-prefix-050cdf8c", "manifest-open-94d59290",
     "manifest-open-ea04ce38", "terminal-handoff-ec2cd61b",
     "terminal-handoff-4b6ff272", "file-actions-fdef8fde",
+    # Released QA companions admitted under the same exact-manifest protections.
+    'auto-global-6183c81e',
+    'browse-affordance-547d406f',
+    'browse-affordance-7b3455dd',
+    'browse-affordance-b0158987',
+    'file-actions-33462ad6',
+    'file-actions-54ff9702',
+    'file-actions-f1336e25',
+    'path-assistance-e12d125d',
+    'successive-dee25e1e',
+    'terminal-handoff-310d9083',
 }
 ROLES = {"datum-eda", "eda-engine-daemon"}
 READ = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK
