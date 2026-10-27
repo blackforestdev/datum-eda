@@ -13195,10 +13195,10 @@
       "unblocks": []
     },
     {
-      "authorization": "owner_decision",
+      "authorization": "none",
       "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "PWO-C03",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -13288,7 +13288,13 @@
           },
           {
             "action": "Obtain owner disposition of the reviewed remaining full-scope reconciliation and any genuine broader ratification, crediting bounded PM060 and explicitly scheduling unmet implementation/conformance obligations.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:PWO-C03-RATIFIED:2026-10-26",
+                "path": "docs/reviews/frontier/OWNER_DELEGATION_AND_GATE_DECISIONS_2026-10-26.md"
+              }
+            ],
             "depends_on": [
               "PWO-REVIEW"
             ],
@@ -13314,7 +13320,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           }
         ]
       },
@@ -13325,9 +13331,10 @@
       ],
       "issue_id": "dat-project-write-ownership-lock-0ne",
       "key": "PROJECT-WRITER-OWNERSHIP",
+      "landing_commit": "ecc88bd09211fd5a860b354ba685e12c193c3d4d",
       "order": 56,
       "parallel": true,
-      "state": "specified",
+      "state": "landed",
       "summary": "Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated.",
       "title": "Ratify project writer ownership and recovery serialization",
       "unblocks": [

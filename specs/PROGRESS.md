@@ -196,7 +196,7 @@
    Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation. *state `specified`; authorization `owner_decision`.*
    *Dependencies:* `dat-drafting-standard-authority-jcz`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md`, `research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md`, `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md`, `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `specs/PUBLISH_SPACE_SPEC.md`, `specs/STANDARDS_COMPLIANCE_SPEC.md`, `specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md`.
 <details>
-<summary>Completed history (6 landed records)</summary>
+<summary>Completed history (7 landed records)</summary>
 
 - **Enforce Claude ownership of GUI visual-truth files** (`VISUAL-TRUTH-FILE-LANE`; `dat-visual-truth-file-lane-enforcement-jfl`).
    Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook. *state `landed`; authorization `none`.*
@@ -216,12 +216,12 @@
 - **Prepare broader workflow delivery enforcement and adoption rollout** (`WORKFLOW-DELIVERY-ROLLOUT`; `dat-wdq-broader-rollout-tqh`).
    Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`, `docs/reviews/workflow-foundation/handoff.md`.
+- **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
+   Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`.
 
 </details>
 
-- **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
-   Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `specified`; authorization `owner_decision`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`.
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
    Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `specified`; authorization `owner_decision`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
