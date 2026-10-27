@@ -7453,10 +7453,10 @@
       }
     },
     {
-      "authorization": "owner_decision",
+      "authorization": "execution",
       "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "MM-C02",
+        "canonical_next_step_id": "MM-C03",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -7503,7 +7503,13 @@
           },
           {
             "action": "Obtain owner authorization of the exact inert-shell implementation and proof packet.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:MM-C02-AUTHORIZED:2026-10-26",
+                "path": "docs/reviews/frontier/OWNER_DELEGATION_AND_GATE_DECISIONS_2026-10-26.md"
+              }
+            ],
             "depends_on": [
               "MM-C01"
             ],
@@ -7529,7 +7535,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Implement the authorized shared menu-model-driven inert shell without operation invocation.",
@@ -7643,7 +7649,7 @@
       "key": "GUI-MARKING-MENU",
       "order": 29,
       "parallel": true,
-      "state": "specified",
+      "state": "ready",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
