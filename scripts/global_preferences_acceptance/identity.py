@@ -13,7 +13,7 @@ ROUTE = "workspace-documentation-and-revision"
 
 
 def git(root, *arguments):
-    require(not any(k.startswith("GIT_") and k not in {"GIT_OPTIONAL_LOCKS", "GIT_TERMINAL_PROMPT", "GIT_PAGER"}
+    require(not any(k.startswith("GIT_") and k not in {"GIT_OPTIONAL_LOCKS", "GIT_TERMINAL_PROMPT", "GIT_PAGER", "GIT_EDITOR"}
                     for k in os.environ), "Git environment overrides are not allowed during proof")
     process = subprocess.run(["git", "--no-pager", "--no-replace-objects", "--no-optional-locks", *arguments],
                              cwd=root, capture_output=True, check=False)
