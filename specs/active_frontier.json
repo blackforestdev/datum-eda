@@ -8550,7 +8550,26 @@
     },
     {
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-27T02:26:58Z",
+        "expires_at": "2026-10-27T10:26:58Z",
+        "harness": "claude-code",
+        "head": "1cdb7b78d4716a083d9587959e4e598caa56d074",
+        "heartbeat_at": "2026-10-27T02:26:58Z",
+        "scope": [
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl",
+          "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md",
+          "docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md",
+          "docs/reviews/foundation-followup/distributed-collab"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "DC-C01",
         "execution_policy": {
@@ -8588,7 +8607,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Author the complete architecture, conformance obligations and explicit mechanism choices.",
@@ -8682,7 +8701,7 @@
       "key": "DISTRIBUTED-COLLAB-SPEC",
       "order": 36,
       "parallel": false,
-      "state": "planned",
+      "state": "in_progress",
       "summary": "Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized.",
       "title": "Specify distributed project collaboration and semantic merge",
       "unblocks": [],
@@ -11746,7 +11765,7 @@
     },
     {
       "authorization": "owner_decision",
-      "canonical_next": true,
+      "canonical_next": false,
       "completion": {
         "canonical_next_step_id": "ADS-C04",
         "execution_policy": {
