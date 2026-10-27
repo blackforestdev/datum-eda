@@ -219,12 +219,12 @@
 </details>
 
 - **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
-   Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `specified`; authorization `owner_decision`; **CANONICAL NEXT**; parallel lane.*
+   Bounded PM060 decision, actual independent review/delegated UED ratification and implemented engine-owned lease/fresh revision-tip validation are credited. Pending PWO-C01/C02/REVIEW/C03 reconcile full writer/consumer/platform/concurrency/recovery clauses and any genuinely broader ratification; no repeated bounded lock choice or whole PWO/GWP qualification. Both hard dependents remain gated. *state `specified`; authorization `owner_decision`; parallel lane.*
    *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`, `docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md`.
-   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
-   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `planned`; authorization `planning`; parallel lane.*
+   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `in_progress`; authorization `planning`; **CANONICAL NEXT**; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 <details>
 <summary>Completed history (1 landed records)</summary>
 

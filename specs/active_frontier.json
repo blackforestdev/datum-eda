@@ -13127,7 +13127,7 @@
     },
     {
       "authorization": "owner_decision",
-      "canonical_next": true,
+      "canonical_next": false,
       "completion": {
         "canonical_next_step_id": "PWO-C03",
         "execution_policy": {
@@ -13272,7 +13272,28 @@
     },
     {
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-27T01:09:18Z",
+        "expires_at": "2026-10-27T09:09:18Z",
+        "harness": "claude-code",
+        "head": "e1b61d422cac12fe732ac7b517b47995c088cc5c",
+        "heartbeat_at": "2026-10-27T01:09:18Z",
+        "scope": [
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl",
+          "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "specs/SCHEMATIC_CONNECTIVITY_SPEC.md",
+          "docs/reviews/workflow-foundation/authority-review.md",
+          "docs/reviews/workflow-delivery-rollout/clauses/native-connectivity.json",
+          "docs/reviews/foundation-followup/native-connectivity",
+          "crates/engine/src/connectivity"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "NCC-C01",
         "execution_policy": {
@@ -13310,7 +13331,7 @@
                 "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Draft exact connection formation, attached movement, quantization and gesture behavior with Claude-owned reconciliation.",
@@ -13384,7 +13405,7 @@
       "key": "NATIVE-CONNECTIVITY-CONTRACT",
       "order": 57,
       "parallel": true,
-      "state": "planned",
+      "state": "in_progress",
       "summary": "Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority.",
       "title": "Reconcile native connectivity identity, formation and gesture authority",
       "unblocks": [],
