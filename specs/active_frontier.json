@@ -7488,7 +7488,7 @@
         "worktree": "/home/bfadmin/Documents/datum-eda"
       },
       "completion": {
-        "canonical_next_step_id": "MM-C04",
+        "canonical_next_step_id": "MM-C05",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -7596,7 +7596,12 @@
           },
           {
             "action": "Prove usable native shell navigation, context, accessibility, refusal and nonmutation.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "5ae409eb4222c1da8ab880beaee9eba584331961"
+              }
+            ],
             "depends_on": [
               "MM-C03"
             ],
@@ -7608,7 +7613,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain independent replay of the complete exact shell and account for every finding.",
@@ -7624,7 +7629,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Obtain exact owner acceptance of the inert shell and an unselected write-path handoff.",
