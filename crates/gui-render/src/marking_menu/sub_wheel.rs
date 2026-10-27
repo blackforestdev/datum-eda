@@ -45,11 +45,14 @@ pub(super) fn render(
         text_runs,
     );
 
-    // Content-sized: distribute the N items evenly around the wheel starting at N.
+    // Content-sized radial (ruling G6): N items evenly spaced, each a pie sector
+    // proportional to the count (fewer items -> wider wedges), with the icon+label at
+    // the label radius and a label-area hit rect for clicks.
     let count = items.len().max(1);
+    let step = 360.0 / count as f32;
+    let span = (step * 0.72).min(100.0);
     for (index, item) in items.iter().enumerate() {
-        let ang_deg = -90.0 + (index as f32) * (360.0 / count as f32);
-        let rect = radial_rect(anchor, ang_deg, bounds);
+        let angle = -90.0 + index as f32 * step;
         let slot_id = format!("SUB:{index}");
         let active = preview.preview_slot.as_deref() == Some(slot_id.as_str());
         // Inert-shell rule: a submenu child navigates; every other leaf is disabled
@@ -63,26 +66,25 @@ pub(super) fn render(
         } else {
             PANEL_CARD_BG
         };
-        panel_quads.push(Quad::from_rect(rect, fill));
-        push_rect_border(
+        push_sector(
             panel_quads,
-            rect,
-            if active {
-                TEXT_ACCENT
-            } else {
-                PANEL_CARD_BORDER
-            },
-            1.0,
+            anchor,
+            angle,
+            span,
+            MARKING_INNER,
+            MARKING_RADIUS,
+            fill,
         );
+        let rect = slot_label_rect(anchor, angle, bounds);
         render_marking_icon(item, icon_set, rect, navigable && active, text_runs);
         let label = if navigable {
-            format!("{} >", truncate_text(&item.label, 14))
+            format!("{} >", truncate_text(&item.label, 11))
         } else {
-            truncate_text(&item.label, 16)
+            truncate_text(&item.label, 13)
         };
         draw_text(
             &label,
-            rect.x + 20.0,
+            rect.x + 16.0,
             rect.y + design_tokens::spacing::SP_03,
             design_tokens::typography::CAPTION_SIZE,
             if navigable && active {
@@ -101,28 +103,6 @@ pub(super) fn render(
                 label: item.label.clone(),
             },
         });
-    }
-}
-
-/// Place a wedge rect at `ang_deg` on the wheel, clamped inside the pane bounds
-/// (G1 clamp-inward is applied to the whole wheel via the caller's `clamp_anchor`).
-fn radial_rect(anchor: (f32, f32), ang_deg: f32, bounds: RectPx) -> RectPx {
-    let rad = ang_deg.to_radians();
-    let dx = MARKING_RADIUS * rad.cos();
-    let dy = MARKING_RADIUS * rad.sin();
-    let x = (anchor.0 + dx - MARKING_LABEL_WIDTH * 0.5).clamp(
-        bounds.x + 4.0,
-        (bounds.x + bounds.width - MARKING_LABEL_WIDTH - 4.0).max(bounds.x + 4.0),
-    );
-    let y = (anchor.1 + dy - MARKING_LABEL_HEIGHT * 0.5).clamp(
-        bounds.y + 4.0,
-        (bounds.y + bounds.height - MARKING_LABEL_HEIGHT - 4.0).max(bounds.y + 4.0),
-    );
-    RectPx {
-        x,
-        y,
-        width: MARKING_LABEL_WIDTH,
-        height: MARKING_LABEL_HEIGHT,
     }
 }
 

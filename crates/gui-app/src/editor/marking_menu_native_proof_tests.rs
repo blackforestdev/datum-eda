@@ -133,7 +133,13 @@ fn marking_menu_native_proof_four_states_navigate_inert_no_mutation() {
     let before_rev = runtime.workspace().scene.source_revision.clone();
     let before_sel = runtime.workspace().selection.clone();
 
-    let dir = std::env::temp_dir().join(format!("mm-c04-states-{}", std::process::id()));
+    // Capture dir: an explicit opt-in (DATUM_NATIVE_CAPTURE_OUT) for preserving the
+    // frames to a scratch dir; otherwise a per-pid temp dir (which already honors TMPDIR).
+    let dir = std::env::var_os("DATUM_NATIVE_CAPTURE_OUT")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| {
+            std::env::temp_dir().join(format!("mm-c04-states-{}", std::process::id()))
+        });
     std::fs::create_dir_all(&dir).unwrap();
 
     // Real invocation: a right-click opens the contextual marking menu on the

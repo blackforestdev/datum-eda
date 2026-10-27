@@ -12,10 +12,85 @@ static MARKING_ICON_SET: OnceLock<Result<GuiIconSet, String>> = OnceLock::new();
 mod selection_list;
 mod sub_wheel;
 
-const MARKING_RADIUS: f32 = 86.0;
-const MARKING_LABEL_WIDTH: f32 = 118.0;
-const MARKING_LABEL_HEIGHT: f32 = 30.0;
+const MARKING_RADIUS: f32 = 92.0;
+const MARKING_LABEL_WIDTH: f32 = 96.0;
+const MARKING_LABEL_HEIGHT: f32 = 26.0;
 const MARKING_CENTER_SIZE: f32 = 22.0;
+// Radial-wedge form (ratified §6 acceptance surface): the shell is a ring of
+// pie-sector wedges between the hub (MARKING_INNER) and the rim (MARKING_RADIUS),
+// with each item's icon+label at MARKING_LABEL_R along its slot angle. Wedges are
+// separated by a small angular gap (MARKING_SECTOR_SPAN < the slot step) rather than
+// borders; the active wedge is filled with the accent background.
+const MARKING_INNER: f32 = 34.0;
+const MARKING_LABEL_R: f32 = 63.0;
+const MARKING_SECTOR_SPAN: f32 = 40.0;
+
+/// Compass slot -> wheel angle in degrees (0 = +x / east, -90 = up / north).
+pub(super) fn slot_angle(slot: &str) -> Option<f32> {
+    Some(match slot {
+        "N" => -90.0,
+        "NE" => -45.0,
+        "E" => 0.0,
+        "SE" => 45.0,
+        "S" => 90.0,
+        "SW" => 135.0,
+        "W" => 180.0,
+        "NW" => -135.0,
+        _ => return None,
+    })
+}
+
+/// Emit a filled pie-sector (ring segment) as a strip of quads approximating the
+/// arc between `ri`..`ro` over [center-span/2, center+span/2] degrees.
+pub(super) fn push_sector(
+    panel_quads: &mut Vec<Quad>,
+    anchor: (f32, f32),
+    center_deg: f32,
+    span_deg: f32,
+    ri: f32,
+    ro: f32,
+    color: [f32; 3],
+) {
+    let steps = 10usize;
+    let start = (center_deg - span_deg * 0.5).to_radians();
+    let step = span_deg.to_radians() / steps as f32;
+    for i in 0..steps {
+        let t0 = start + step * i as f32;
+        let t1 = start + step * (i + 1) as f32;
+        let (c0, s0) = (t0.cos(), t0.sin());
+        let (c1, s1) = (t1.cos(), t1.sin());
+        panel_quads.push(Quad {
+            points: [
+                (anchor.0 + ri * c0, anchor.1 + ri * s0),
+                (anchor.0 + ro * c0, anchor.1 + ro * s0),
+                (anchor.0 + ro * c1, anchor.1 + ro * s1),
+                (anchor.0 + ri * c1, anchor.1 + ri * s1),
+            ],
+            color,
+        });
+    }
+}
+
+/// The icon+label rect for a wedge, centered at the label radius along its angle.
+fn slot_label_rect(anchor: (f32, f32), angle_deg: f32, bounds: RectPx) -> RectPx {
+    let rad = angle_deg.to_radians();
+    let cx = anchor.0 + MARKING_LABEL_R * rad.cos();
+    let cy = anchor.1 + MARKING_LABEL_R * rad.sin();
+    let x = (cx - MARKING_LABEL_WIDTH * 0.5).clamp(
+        bounds.x + 4.0,
+        (bounds.x + bounds.width - MARKING_LABEL_WIDTH - 4.0).max(bounds.x + 4.0),
+    );
+    let y = (cy - MARKING_LABEL_HEIGHT * 0.5).clamp(
+        bounds.y + 4.0,
+        (bounds.y + bounds.height - MARKING_LABEL_HEIGHT - 4.0).max(bounds.y + 4.0),
+    );
+    RectPx {
+        x,
+        y,
+        width: MARKING_LABEL_WIDTH,
+        height: MARKING_LABEL_HEIGHT,
+    }
+}
 
 pub(super) fn render_marking_menu(
     state: &ReviewWorkspaceState,
@@ -216,45 +291,44 @@ fn render_slots(
         let Some(item) = item else {
             continue;
         };
-        let rect = slot_rect(anchor, slot, bounds);
+        let Some(angle) = slot_angle(slot) else {
+            continue;
+        };
         let active = preview.preview_slot.as_deref() == Some(slot);
         // Inert-shell rule: a submenu parent navigates (opens its sub-wheel); every
-        // other leaf is disabled and fires nothing. This presentation/activation
-        // state is the shell's own rule, deliberately independent of registry
-        // capability truth (`is_enabled`) — the authorized shell keeps every verb
-        // leaf inert regardless of whether its verb would otherwise be available.
+        // other leaf is disabled and fires nothing — the shell's own rule, independent
+        // of registry capability truth (`is_enabled`).
         let navigable = matches!(
             item.binding(),
             datum_gui_protocol::GuiMenuBinding::Submenu(_)
         );
+        // Radial-wedge form (ratified §6 surface): a pie sector per slot (active =
+        // accent fill), the icon+label at the label radius, and a label-area hit rect
+        // for clicks (the flick gesture resolves by angle separately).
         let fill = if active {
             REVIEW_ROW_ACTIVE_BG
         } else {
             PANEL_CARD_BG
         };
-        panel_quads.push(Quad::from_rect(rect, fill));
-        push_rect_border(
+        push_sector(
             panel_quads,
-            rect,
-            if active {
-                TEXT_ACCENT
-            } else {
-                PANEL_CARD_BORDER
-            },
-            1.0,
+            anchor,
+            angle,
+            MARKING_SECTOR_SPAN,
+            MARKING_INNER,
+            MARKING_RADIUS,
+            fill,
         );
-        // Icon+label (G3): the verb glyph at the wedge's left, label beside it. A
-        // navigable submenu parent carries the ▸ affordance; disabled leaves stay
-        // muted so the inert shell reads as inert.
+        let rect = slot_label_rect(anchor, angle, bounds);
         render_marking_icon(item, icon_set, rect, navigable && active, text_runs);
         let label = if navigable {
-            format!("{} >", truncate_text(&item.label, 14))
+            format!("{} >", truncate_text(&item.label, 11))
         } else {
-            truncate_text(&item.label, 16)
+            truncate_text(&item.label, 13)
         };
         draw_text(
             &label,
-            rect.x + 20.0,
+            rect.x + 16.0,
             rect.y + design_tokens::spacing::SP_03,
             design_tokens::typography::CAPTION_SIZE,
             if navigable && active {
