@@ -14,8 +14,6 @@
 <!-- ACTIVE FRONTIER:START -->
 > Generated from `specs/active_frontier.json` by `scripts/project_status.py`; do not hand-edit.
 
-**Explicit idle:** all remaining frontier moves are owner-reserved (eight gates B-I); see disposition
-
 <details>
 <summary>Completed history (21 landed records)</summary>
 
@@ -167,8 +165,9 @@
 </details>
 
 - **Complete and production-accept Global Preferences** (`GLOBAL-PREFERENCES-COMPLETION`; `dat-global-preferences-completion-f84`).
-   Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates. *state `ready`; authorization `execution`.*
+   Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates. *state `in_progress`; authorization `execution`; **CANONICAL NEXT**.*
    *Dependencies:* `dat-global-preferences-engine-build-vge`, `dat-shared-units-surface-parity-s9x`. *Unblocks:* dat-project-preferences-spec-kiw. *Governing:* `docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md`, `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`, `docs/decisions/PRODUCT_MECHANICS_040_PROJECT_WORKING_UNITS_AUTHORITY.md`, `research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`, `specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md`, `research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md`, `research/preferences-system/GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md`, `specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md`, `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md`, `specs/global_preferences_production_acceptance_matrix.json`, `specs/MCP_API_SPEC.md`, `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md`, `docs/gui/prototypes/preferences-window.html`, `docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md`, `docs/reviews/preferences/gp-cm05-implementation/owner-direction.md`.
+   *Completion plan:* `python3 scripts/project_status.py details`.
 - **Specify the Global and Project Preferences doorway** (`PROJECT-PREFERENCES-SPEC`; `dat-project-preferences-spec-kiw`).
    Complete the exact Project-owned settings inventory, canonical query/mutation contract, conventional menu doorway, interaction/accessibility specification, and protected visual truth after Global Preferences is stable. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-global-preferences-completion-f84`. *Unblocks:* dat-project-preferences-build-tlq. *Governing:* `docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md`, `specs/PROJECT_PREFERENCES_SPEC.md`, `research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `docs/gui/DATUM_GUI_MENU_BINDINGS.md`, `docs/gui/prototypes/preferences-window.html`, `specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md`.

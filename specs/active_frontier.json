@@ -10296,7 +10296,22 @@
     },
     {
       "authorization": "execution",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-27T07:06:18Z",
+        "expires_at": "2026-10-27T15:06:18Z",
+        "harness": "claude-code",
+        "head": "68948b6ad190afe1bd8c22c0d509e28327cb98b7",
+        "heartbeat_at": "2026-10-27T07:06:18Z",
+        "scope": [
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "GP-CM05E",
         "execution_policy": {
@@ -10639,7 +10654,7 @@
                 "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           },
           {
             "action": "Review the exact complete candidate, report, independent proof and publication delta before product acceptance.",
@@ -10677,6 +10692,26 @@
         "dat-global-preferences-engine-build-vge",
         "dat-shared-units-surface-parity-s9x"
       ],
+      "feature_delivery": {
+        "development_ready": false,
+        "ordinary_evidence": [],
+        "ordinary_workflow": [
+          "Open the owned Preferences window and read the active sections, controls, option tokens, labels and defaults the engine service reports (Describe/Read; GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md \u00a74 :176-203).",
+          "Change an active Appearance/Units preference through its control; the human SetUser mutation validates against the active descriptor and commits one User-partition change via the single GlobalPreferencesProductService::commit() path, returning the applied value, resolver explanation and receipt (\u00a75 :228-255).",
+          "Confirm the change persists across a reopen as a new immutable generation in the versioned envelope, and that the resolver reports the inspected generation (\u00a73 :111-157, \u00a75.1 :305-309).",
+          "Reset a preference to its factory default through the ordinary Reset control (ResetUser removes the User contribution; never writes a descriptor default or touches a Project) (\u00a75 :241-265)."
+        ],
+        "prerequisite_reasons": {
+          "issue:dat-global-preferences-engine-build-vge": "The Global Preferences engine build (GlobalPreferencesService / product service) must exist before the completion acceptance checkers, capture and runtime integration can exercise it; it is a closed hard dependency.",
+          "issue:dat-shared-units-surface-parity-s9x": "Shared-units surface parity is required so preference-driven Units defaults and working-units policy render consistently across surfaces during acceptance; it is a closed hard dependency."
+        },
+        "qualification_followups": [],
+        "safety_requirements": [
+          "Every preference mutation goes through the one engine-owned GlobalPreferencesProductService writer and commit() path under writer-lease and expected-generation checks, recording a MutationReceipt (operation, actor kind/id/session, reason, expected/resulting generations, before/after digests); no GUI/CLI/daemon/MCP adapter writes the repository directly (\u00a72 :52-67, \u00a72.1 :87-109, \u00a75.1 :281-303).",
+          "Direct mutation is accepted only from human_gui/human_cli actors; mcp_agent/script_agent/unknown receive proposal_required and must use a side-effect-free proposal, never a private write (\u00a75 :267-279, \u00a76 :311-319).",
+          "Factory-default profile wording/content is owner-ratified policy and is neither authored nor changed by this execution step (governing: PRODUCT_MECHANICS_037; no factory-default wording change without explicit owner ratification)."
+        ]
+      },
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
@@ -10698,7 +10733,7 @@
       "key": "GLOBAL-PREFERENCES-COMPLETION",
       "order": 42,
       "parallel": false,
-      "state": "ready",
+      "state": "in_progress",
       "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "title": "Complete and production-accept Global Preferences",
       "unblocks": [
@@ -18444,11 +18479,6 @@
   "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
   "schema_version": 7,
   "selection": {
-    "mode": "idle",
-    "reason": "all remaining frontier moves are owner-reserved (eight gates B-I); see disposition",
-    "source_ref": {
-      "marker": "## Disposition",
-      "path": "docs/reviews/frontier/FRONTIER_IDLE_DISPOSITION_2026-10-26.md"
-    }
+    "mode": "selected"
   }
 }
