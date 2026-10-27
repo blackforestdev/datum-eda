@@ -11745,30 +11745,10 @@
       "unblocks": []
     },
     {
-      "authorization": "planning",
+      "authorization": "owner_decision",
       "canonical_next": true,
-      "claim": {
-        "agent": "dev-agent-01",
-        "claimed_at": "2026-10-27T01:49:46Z",
-        "expires_at": "2026-10-27T10:13:47Z",
-        "harness": "claude-code",
-        "head": "d09d494d55fe6df7eb3e66cd2ab8fe6ddda7f28d",
-        "heartbeat_at": "2026-10-27T02:13:47Z",
-        "scope": [
-          "specs/active_frontier.json",
-          "specs/PROGRESS.md",
-          ".beads/issues.jsonl",
-          "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
-          "docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md",
-          "specs/STANDARDS_COMPLIANCE_SPEC.md",
-          "specs/PUBLISH_SPACE_SPEC.md",
-          "docs/reviews/foundation-followup/adopted-drafting-standard"
-        ],
-        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "ADS-C03",
+        "canonical_next_step_id": "ADS-C04",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -11834,7 +11814,12 @@
           },
           {
             "action": "Obtain independent specification review and resolve every finding.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "f11b829213873ee4c0e9a46ce67fa99a2a9cf7d7"
+              }
+            ],
             "depends_on": [
               "ADS-C02"
             ],
@@ -11846,7 +11831,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain exact owner ratification of the specification and new mechanism choices.",
@@ -11913,7 +11898,7 @@
       "key": "ADOPTED-DRAFTING-STANDARD-SPEC",
       "order": 49,
       "parallel": false,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation.",
       "title": "Specify the adopted drafting-standard object",
       "unblocks": [],
