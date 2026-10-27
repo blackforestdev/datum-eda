@@ -5366,7 +5366,24 @@
     },
     {
       "authorization": "planning",
-      "canonical_next": false,
+      "canonical_next": true,
+      "claim": {
+        "agent": "dev-agent-01",
+        "claimed_at": "2026-10-27T05:06:38Z",
+        "expires_at": "2026-10-27T13:06:38Z",
+        "harness": "claude-code",
+        "head": "c54a54507a6890e243905844ef9f32c270c010d3",
+        "heartbeat_at": "2026-10-27T05:06:38Z",
+        "scope": [
+          "specs/GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md",
+          ".beads/issues.jsonl",
+          "docs/reviews/gui-performance/baseline-budget/p05"
+        ],
+        "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "GBB-P05",
         "execution_policy": {
@@ -5506,7 +5523,7 @@
                 "path": "specs/GUI_PERFORMANCE_BASELINE_BUDGET_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "in_progress"
           }
         ]
       },
@@ -5531,7 +5548,7 @@
       "key": "GUI-PERFORMANCE-BASELINE",
       "order": 22,
       "parallel": true,
-      "state": "specified",
+      "state": "in_progress",
       "summary": "Owner accepted only the limited pointer assessment at GBB-P04. Replacement budgets remain undecided. GBB-P05 schedules seven workload families, total instrumentation effects, displayed responsiveness, supported-hardware expectations and complete DRM/resource accounting, nonblocking for functionality. No additional measurement or renderer optimization authorized; representative baseline and qualification incomplete.",
       "title": "Establish reference baseline and derive defensible performance budgets",
       "unblocks": [],
@@ -13781,7 +13798,7 @@
     },
     {
       "authorization": "owner_decision",
-      "canonical_next": true,
+      "canonical_next": false,
       "completion": {
         "canonical_next_step_id": "NWB-C03",
         "execution_policy": {
