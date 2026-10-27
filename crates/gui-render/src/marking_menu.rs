@@ -248,7 +248,7 @@ fn render_slots(
         // muted so the inert shell reads as inert.
         render_marking_icon(item, icon_set, rect, navigable && active, text_runs);
         let label = if navigable {
-            format!("{} \u{25b8}", truncate_text(&item.label, 14))
+            format!("{} >", truncate_text(&item.label, 14))
         } else {
             truncate_text(&item.label, 16)
         };

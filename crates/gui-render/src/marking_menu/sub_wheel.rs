@@ -36,7 +36,7 @@ pub(super) fn render(
     panel_quads.push(Quad::from_rect(back, PANEL_CARD_BG));
     push_rect_border(panel_quads, back, TEXT_ACCENT, 1.0);
     draw_text(
-        "\u{25c0}",
+        "<",
         back.x + 6.0,
         back.y + 6.0,
         design_tokens::typography::CAPTION_SIZE,
@@ -76,7 +76,7 @@ pub(super) fn render(
         );
         render_marking_icon(item, icon_set, rect, navigable && active, text_runs);
         let label = if navigable {
-            format!("{} \u{25b8}", truncate_text(&item.label, 14))
+            format!("{} >", truncate_text(&item.label, 14))
         } else {
             truncate_text(&item.label, 16)
         };
