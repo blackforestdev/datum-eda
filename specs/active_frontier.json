@@ -7453,42 +7453,10 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "owner_decision",
       "canonical_next": false,
-      "claim": {
-        "agent": "frontend-dev-01",
-        "claimed_at": "2026-10-27T19:01:26Z",
-        "expires_at": "2026-10-28T03:01:26Z",
-        "harness": "claude-code",
-        "head": "f6501afff194952e138abc376ff66697470e18c7",
-        "heartbeat_at": "2026-10-27T19:01:26Z",
-        "scope": [
-          "crates/gui-app/src/application/runtime_menu_actions.rs",
-          "crates/gui-app/src/editor/marking_menu_native_proof_tests.rs",
-          "crates/gui-app/src/editor/runtime_primary_pointer.rs",
-          "crates/gui-app/src/editor/runtime_selection_menu.rs",
-          "crates/gui-app/src/main.rs",
-          "crates/gui-app/src/viewport/pan_gesture.rs",
-          "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
-          "crates/gui-protocol/src/gui_menu_model.rs",
-          "crates/gui-protocol/src/gui_menu_model/",
-          "crates/gui-protocol/src/workspace_layout/marking_state.rs",
-          "crates/gui-protocol/src/workspace_layout/selection_menu.rs",
-          "crates/gui-protocol/src/workspace_layout/selection_menu/",
-          "crates/gui-protocol/tests/native_selection_menu.rs",
-          "crates/gui-render/src/hit_target.rs",
-          "crates/gui-render/src/lib.rs",
-          "crates/gui-render/src/marking_menu.rs",
-          "crates/gui-render/src/marking_menu/",
-          "crates/gui-render/src/render/marking_shell_tests.rs",
-          "crates/gui-render/src/render/selection_menu_hover_tests.rs",
-          "crates/gui-viewport/src/profile.rs"
-        ],
-        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "MM-C05",
+        "canonical_next_step_id": "MM-C06",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -7617,7 +7585,12 @@
           },
           {
             "action": "Obtain independent replay of the complete exact shell and account for every finding.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "42b3b52514d4fbe5ef8321d15a7c5d89b5f8d383"
+              }
+            ],
             "depends_on": [
               "MM-C04"
             ],
@@ -7629,7 +7602,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Obtain exact owner acceptance of the inert shell and an unselected write-path handoff.",
@@ -7674,7 +7647,8 @@
           "Dismiss the shell with no operation invoked, no document mutation and no write-path engaged."
         ],
         "prerequisite_reasons": {
-          "step:MM-C02": "Owner authorization gate for the inert marking-menu shell. MM-C01 reconciled the inert-shell readiness, live visual authority and native scenario matrix (frontend-dev-01 independent visual verification; recorded in MM-C01-readiness-review.md at 316c96fc). MM-C02 requires exact project-owner authorization of the inert-shell implementation + proof packet and the owner's rulings on the open questions (G1 placement, G2 timing deferral, G3 icon-in-wheel + wedge-sizing, G6 sub-wheel width, F1 cardinal ratification). It is the authorization the owner gives, revises or defers; it is not currently delegated \u2014 no decision_routing entry covers MM-C02 \u2014 so it waits for the owner to authorize directly or add routing. No implementation, enabled leaves or operation invocation precede it; the finished verb-firing menu is a separate later contract. No successor is authorized."
+          "step:MM-C02": "Owner authorization gate for the inert marking-menu shell. MM-C01 reconciled the inert-shell readiness, live visual authority and native scenario matrix (frontend-dev-01 independent visual verification; recorded in MM-C01-readiness-review.md at 316c96fc). MM-C02 requires exact project-owner authorization of the inert-shell implementation + proof packet and the owner's rulings on the open questions (G1 placement, G2 timing deferral, G3 icon-in-wheel + wedge-sizing, G6 sub-wheel width, F1 cardinal ratification). It is the authorization the owner gives, revises or defers; it is not currently delegated \u2014 no decision_routing entry covers MM-C02 \u2014 so it waits for the owner to authorize directly or add routing. No implementation, enabled leaves or operation invocation precede it; the finished verb-firing menu is a separate later contract. No successor is authorized.",
+          "step:MM-C06": "MM-C06 owner acceptance: human visual verdict on the delivered inert shell (PM060 class) + final acceptance against the ratified section 6 surface"
         },
         "qualification_followups": [
           "The finished verb-firing marking menu is a later, separate delivery contract beyond the inert shell."
@@ -7695,7 +7669,7 @@
       "key": "GUI-MARKING-MENU",
       "order": 29,
       "parallel": true,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
