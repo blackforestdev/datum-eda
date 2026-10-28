@@ -25,40 +25,42 @@ pub fn menu_accessibility_nodes(
     model: &GuiMenuModel,
     state: &ReviewWorkspaceState,
 ) -> Vec<MenuAccessibleNode> {
-    if let Some(menu) = state
-        .ui
-        .marking_menu
-        .as_ref()
-        .and_then(|m| m.selection.as_ref())
-    {
-        let root = format!("menu:native-select:{}", menu.project);
-        let mut nodes = vec![menu_node(root.clone(), None, "Select")];
-        if menu.open {
-            for (i, item) in menu.items.iter().enumerate() {
+    if let Some(marking) = state.ui.marking_menu.as_ref() {
+        // Radial marking-menu shell: emit truthful INERT-PILOT nodes for the wheel
+        // leaves (bead gtww) so the radial shell has screen-reader coverage, not only
+        // the selection-list path. The select-list (overflow) nodes still append when
+        // a selection list is present.
+        let mut nodes = radial_marking_nodes(model, state, marking);
+        if let Some(menu) = marking.selection.as_ref() {
+            let root = format!("menu:native-select:{}", menu.project);
+            nodes.push(menu_node(root.clone(), None, "Select"));
+            if menu.open {
+                for (i, item) in menu.items.iter().enumerate() {
+                    nodes.push(MenuAccessibleNode {
+                        id: format!("{root}/{:?}", item.command),
+                        parent: Some(root.clone()),
+                        name: item.label.clone(),
+                        role: MenuAccessibleRole::MenuItem,
+                        key: Some("Arrow keys, Enter".into()),
+                        description: item.unavailable.clone().unwrap_or_else(|| {
+                            "Read-only selection; complete source membership".into()
+                        }),
+                        available: item.unavailable.is_none(),
+                        focused: state.ui.focus == ApplicationFocus::Overlay && menu.focus == i,
+                    });
+                }
+            } else {
                 nodes.push(MenuAccessibleNode {
-                    id: format!("{root}/{:?}", item.command),
+                    id: format!("{root}/open"),
                     parent: Some(root.clone()),
-                    name: item.label.clone(),
+                    name: "Select".into(),
                     role: MenuAccessibleRole::MenuItem,
-                    key: Some("Arrow keys, Enter".into()),
-                    description: item.unavailable.clone().unwrap_or_else(|| {
-                        "Read-only selection; complete source membership".into()
-                    }),
-                    available: item.unavailable.is_none(),
-                    focused: state.ui.focus == ApplicationFocus::Overlay && menu.focus == i,
+                    key: Some("S".into()),
+                    description: "Open read-only Select menu".into(),
+                    available: true,
+                    focused: state.ui.focus == ApplicationFocus::Overlay,
                 });
             }
-        } else {
-            nodes.push(MenuAccessibleNode {
-                id: format!("{root}/open"),
-                parent: Some(root.clone()),
-                name: "Select".into(),
-                role: MenuAccessibleRole::MenuItem,
-                key: Some("S".into()),
-                description: "Open read-only Select menu".into(),
-                available: true,
-                focused: state.ui.focus == ApplicationFocus::Overlay,
-            });
         }
         return nodes;
     }
@@ -147,5 +149,152 @@ fn append_rows(
             available: reason.is_none(),
             focused: focused == Some(index),
         });
+    }
+}
+
+/// Emit truthful INERT-PILOT accessibility nodes for the radial marking-menu wheel
+/// (bead gtww). Walks the same level the render shows — top cardinal+secondary+overflow,
+/// or the current submenu plus a Back node — in a stable slot order so arrow traversal
+/// is predictable. Every non-submenu leaf is `available=false` with a truthful reason
+/// (the shell fires nothing in this build); submenu parents navigate. The
+/// available->is_enabled flip belongs to the verb-firing successor, not here.
+fn radial_marking_nodes(
+    model: &GuiMenuModel,
+    state: &ReviewWorkspaceState,
+    marking: &crate::MarkingMenuState,
+) -> Vec<MenuAccessibleNode> {
+    let Some(menu) = model.marking_menus.get(&marking.menu_key) else {
+        return Vec::new();
+    };
+    let root = format!("menu:marking:{}", marking.menu_key);
+    let mut nodes = vec![menu_node(
+        root.clone(),
+        None,
+        &format!("Marking menu — {}", marking.menu_key),
+    )];
+    let overlay = state.ui.focus == ApplicationFocus::Overlay;
+    if let Some(sub_key) = marking.submenu_path.last() {
+        nodes.push(MenuAccessibleNode {
+            id: format!("{root}/back"),
+            parent: Some(root.clone()),
+            name: "Back".into(),
+            role: MenuAccessibleRole::MenuItem,
+            key: Some("Centre".into()),
+            description: "Return to the previous wheel".into(),
+            available: true,
+            focused: false,
+        });
+        if let Some(items) = menu.submenus.get(sub_key) {
+            for (index, item) in items.iter().enumerate() {
+                let slot = format!("SUB:{index}");
+                nodes.push(radial_item_node(
+                    &root, item, &slot, marking, overlay, state,
+                ));
+            }
+        }
+    } else {
+        for slot in ["N", "E", "S", "W", "NE", "SE", "SW", "NW"] {
+            if let Some(item) = menu.cardinal.get(slot).or_else(|| menu.secondary.get(slot)) {
+                nodes.push(radial_item_node(&root, item, slot, marking, overlay, state));
+            }
+        }
+        for (index, item) in menu.overflow.iter().enumerate() {
+            let slot = format!("MORE:{index}");
+            nodes.push(radial_item_node(
+                &root, item, &slot, marking, overlay, state,
+            ));
+        }
+    }
+    nodes
+}
+
+fn radial_item_node(
+    root: &str,
+    item: &GuiMenuItem,
+    slot: &str,
+    marking: &crate::MarkingMenuState,
+    overlay: bool,
+    state: &ReviewWorkspaceState,
+) -> MenuAccessibleNode {
+    let navigable = matches!(item.binding(), GuiMenuBinding::Submenu(_));
+    let (available, description) = if navigable {
+        (true, format!("Opens the {} actions", item.label))
+    } else {
+        (
+            false,
+            item.unavailable_reason(state)
+                .unwrap_or("This action is not invoked in this build.")
+                .to_owned(),
+        )
+    };
+    MenuAccessibleNode {
+        id: format!("{root}/{slot}"),
+        parent: Some(root.to_owned()),
+        name: item.label.clone(),
+        role: MenuAccessibleRole::MenuItem,
+        key: Some(format!("{slot} (flick or click)")),
+        description,
+        available,
+        focused: overlay && marking.preview_slot.as_deref() == Some(slot),
+    }
+}
+
+#[cfg(test)]
+mod radial_marking_tests {
+    use super::*;
+    fn radial_state(
+        menu_key: &str,
+        submenu_path: Vec<String>,
+        preview: Option<&str>,
+    ) -> ReviewWorkspaceState {
+        let mut state = crate::load_fixture_workspace_state();
+        state.ui.marking_menu = Some(crate::MarkingMenuState {
+            menu_key: menu_key.into(),
+            target_object_id: None,
+            anchor_x_px: 640,
+            anchor_y_px: 400,
+            preview_slot: preview.map(|s| s.to_owned()),
+            gesture_dx_px: 0,
+            gesture_dy_px: 0,
+            selection: None,
+            submenu_path,
+        });
+        state.ui.focus = ApplicationFocus::Overlay;
+        state
+    }
+
+    #[test]
+    fn radial_marking_menu_emits_truthful_inert_nodes() {
+        let model = crate::load_default_gui_menu_model().unwrap();
+        let state = radial_state("pcb.multiselect", Vec::new(), Some("N"));
+        let nodes = menu_accessibility_nodes(&model, &state);
+        // The radial wheel yields a root Menu node plus item nodes (previously 0).
+        assert!(nodes.iter().any(|n| n.role == MenuAccessibleRole::Menu));
+        let rotate = nodes
+            .iter()
+            .find(|n| n.name == "Rotate")
+            .expect("Rotate leaf present");
+        assert!(!rotate.available, "an inert leaf must be unavailable");
+        assert!(
+            !rotate.description.is_empty(),
+            "an inert leaf must carry a truthful reason"
+        );
+        assert!(rotate.focused, "preview_slot N focuses the N (Rotate) leaf");
+        let align = nodes
+            .iter()
+            .find(|n| n.name == "Align")
+            .expect("Align submenu parent present");
+        assert!(align.available, "a submenu parent navigates (available)");
+        assert!(align.description.contains("Align"));
+        // Nested level: a Back node plus the Align children.
+        let sub = menu_accessibility_nodes(
+            &model,
+            &radial_state("pcb.multiselect", vec!["Align".into()], None),
+        );
+        assert!(sub.iter().any(|n| n.name == "Back"), "sub-wheel has Back");
+        assert!(
+            sub.iter().any(|n| n.name == "Horizontal"),
+            "Align sub-wheel exposes its children"
+        );
     }
 }
