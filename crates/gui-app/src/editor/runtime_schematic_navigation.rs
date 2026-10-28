@@ -91,13 +91,13 @@ impl Runtime {
         target: &HitTarget,
     ) -> Option<bool> {
         match target {
-            HitTarget::FocusNavigator => return Some(self.focus_schematic_navigator()),
+            HitTarget::FocusNavigator => Some(self.focus_schematic_navigator()),
             HitTarget::FocusInspector => {
                 self.set_application_focus(ApplicationFocus::Inspector);
                 self.invalidate_frame();
-                return Some(true);
+                Some(true)
             }
-            HitTarget::SchematicNavigatorScroll { .. } => return Some(true),
+            HitTarget::SchematicNavigatorScroll { .. } => Some(true),
             HitTarget::SchematicDocumentRow { document, revision }
             | HitTarget::SchematicDocumentExpand { document, revision }
             | HitTarget::SchematicDocumentOpen { document, revision } => {

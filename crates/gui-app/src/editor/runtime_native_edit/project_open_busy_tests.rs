@@ -126,7 +126,7 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
     let original_selection = format!("{:?}", runtime.workspace().selection);
     let original_layout = runtime.workspace().ui.layout.clone();
     let original_cameras = camera_projection(&runtime);
-    let original_focus = runtime.workspace().ui.focus.clone();
+    let original_focus = runtime.workspace().ui.focus;
     let origin_history_before = canonical_history(&roots[0]);
     let destination_history_before = canonical_history(&roots[1]);
     let origin_generation = runtime.project_open.session_generation;

@@ -54,10 +54,9 @@ impl Runtime {
             .qualification
             .as_ref()
             .is_none_or(|q| q.key != key)
+            && let Err(reason) = self.begin_folder_qualification(key)
         {
-            if let Err(reason) = self.begin_folder_qualification(key) {
-                return Some(reason);
-            }
+            return Some(reason);
         }
         let Some(result) = self
             .folder_browser

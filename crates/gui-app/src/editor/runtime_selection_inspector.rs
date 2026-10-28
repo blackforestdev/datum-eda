@@ -253,10 +253,8 @@ impl Runtime {
                     Key::Named(NamedKey::ArrowRight) => {
                         collapsed.remove(&section);
                     }
-                    _ if !event.repeat => {
-                        if !collapsed.remove(&section) {
-                            collapsed.insert(section);
-                        }
+                    _ if !event.repeat && !collapsed.remove(&section) => {
+                        collapsed.insert(section);
                     }
                     _ => {}
                 }
@@ -267,9 +265,11 @@ impl Runtime {
         let state = self.session.workspace_mut();
         state.inspector_context.focused = Some(section);
         let offset = &mut state.ui.selection_inspector.scroll_offset;
-        if row < *offset {
-            *offset = row;
-        } else if row >= offset.saturating_add(visible) {
+        // Both bounds set offset = row. The scroll-down case (row below the
+        // viewport) most likely intended `row - visible + 1` so the row lands at
+        // the viewport bottom — a separately tracked latent bug. Merging the
+        // identical branches here is behavior-preserving.
+        if row < *offset || row >= offset.saturating_add(visible) {
             *offset = row;
         }
         self.invalidate_frame();

@@ -7,6 +7,9 @@
 use super::*;
 use datum_gui_protocol::{GuiIconSet, GuiMenuItem};
 
+// Full sub-wheel draw parameter set (anchor geometry, items, style, hit sink); a
+// parameter struct would be a single-use aggregate with no clarity gain here.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn render(
     preview: &MarkingMenuState,
     items: &[GuiMenuItem],

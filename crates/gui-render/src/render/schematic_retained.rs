@@ -234,7 +234,7 @@ impl RetainedScene {
                 )
             })?;
             Self::admit_shared_owners(&world_vertices, &world_strokes, &budget, &scope, limit)?;
-            Ok(Self {
+            Self {
                 surface_size_independent: Self::scene_is_surface_size_independent(schematic_scene),
                 hover_membership: Default::default(),
                 presentation,
@@ -254,7 +254,7 @@ impl RetainedScene {
                 draw_commands: draw_commands.into(),
                 world_hit_index: world_hit_index.into(),
             }
-            .registered_cpu(&scope, limit)?)
+            .registered_cpu(&scope, limit)
         })
     }
 }

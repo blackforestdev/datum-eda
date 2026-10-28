@@ -4,20 +4,20 @@ pub(super) fn paths<'a>(
     snapshot: &'a crate::selection_accessibility::SelectionAccessibilitySnapshot,
     node: Node<'a>,
 ) -> Box<dyn Iterator<Item = String> + 'a> {
-    if let Some(ui) = snapshot.inspection.as_ref() {
-        if let Some(paths) = workspace::paths(ui, node) {
-            if matches!(node, Node::Root) {
-                return Box::new(
-                    snapshot
-                        .view
-                        .as_ref()
-                        .map(|_| MEMBERS.to_owned())
-                        .into_iter()
-                        .chain(paths),
-                );
-            }
-            return paths;
+    if let Some(ui) = snapshot.inspection.as_ref()
+        && let Some(paths) = workspace::paths(ui, node)
+    {
+        if matches!(node, Node::Root) {
+            return Box::new(
+                snapshot
+                    .view
+                    .as_ref()
+                    .map(|_| MEMBERS.to_owned())
+                    .into_iter()
+                    .chain(paths),
+            );
         }
+        return paths;
     }
     let Some(view) = snapshot.view.as_ref() else {
         return Box::new(std::iter::empty());

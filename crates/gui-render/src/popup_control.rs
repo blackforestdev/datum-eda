@@ -126,6 +126,9 @@ pub(crate) fn paint<A: Clone>(
             y += 6.0;
         }
     }
+    // Ends `painter`'s mutable borrow of quads/text so the paint calls below can
+    // reuse them; the painter has no Drop impl, hence the allow.
+    #[allow(clippy::drop_non_drop)]
     drop(painter);
     crate::hit_clipping::clip_content(quads, text, hits, starts.0, starts.1, starts.2, viewport);
     Ok(())

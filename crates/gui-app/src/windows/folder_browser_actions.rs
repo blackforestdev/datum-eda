@@ -19,15 +19,14 @@ impl Runtime {
             .is_some_and(|service| service.busy())
     }
     pub(super) fn refresh_host_protection(&mut self) {
-        if self.folder_browser.host_service.is_some() {
-            let protection = self
-                .terminal_sessions
-                .host_path_protection(self.workspace());
-            self.folder_browser
-                .host_service
-                .as_mut()
-                .unwrap()
-                .set_protection(protection);
+        if self.folder_browser.host_service.is_none() {
+            return;
+        }
+        let protection = self
+            .terminal_sessions
+            .host_path_protection(self.workspace());
+        if let Some(service) = self.folder_browser.host_service.as_mut() {
+            service.set_protection(protection);
         }
     }
     pub(super) fn host_action_unavailable(&self) -> Option<String> {
@@ -518,7 +517,9 @@ impl Runtime {
                     .unwrap()
                     .edge(event.logical_key == Key::Named(NamedKey::End)),
                 Key::Named(NamedKey::Enter | NamedKey::Space) => {
-                    if let Some(action) = state.menu.as_ref().unwrap().activate_focused() {
+                    if let Some(action) =
+                        state.menu.as_ref().and_then(|menu| menu.activate_focused())
+                    {
                         self.start_folder_naming(action);
                     }
                 }

@@ -49,11 +49,11 @@ fn scan_cancels_and_worker_delivers_latest_navigation() {
     assert_ne!(old, latest);
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
     loop {
-        if let Some(answer) = scanner.receive() {
-            if answer.ticket == latest {
-                assert!(answer.result.unwrap().entries.is_empty());
-                break;
-            }
+        if let Some(answer) = scanner.receive()
+            && answer.ticket == latest
+        {
+            assert!(answer.result.unwrap().entries.is_empty());
+            break;
         }
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
@@ -66,7 +66,7 @@ fn scan_reports_unreadable_and_disappearing_folder_without_writes() {
     let root = Scratch::new();
     let private = root.path().join("private");
     std::fs::create_dir(&private).unwrap();
-    std::fs::set_permissions(&private, std::fs::Permissions::from_mode(0)).unwrap();
+    std::fs::set_permissions(&private, std::fs::Permissions::from_mode(0o000)).unwrap();
     let result = scan(&private, || true);
     std::fs::set_permissions(&private, std::fs::Permissions::from_mode(0o700)).unwrap();
     if unsafe { libc::geteuid() } != 0 {
@@ -148,13 +148,13 @@ fn path_assistance_worker_matches_literal_substrings_keeps_occupancy_and_disting
         .unwrap();
     let until = std::time::Instant::now() + std::time::Duration::from_secs(5);
     loop {
-        if let Some(answer) = scanner.receive() {
-            if answer.ticket == last {
-                assert_ne!(answer.ticket, old);
-                assert_eq!(answer.input.as_deref(), Some("~/Down"));
-                assert_eq!(answer.result.unwrap().entries[0].name, "Downloads");
-                break;
-            }
+        if let Some(answer) = scanner.receive()
+            && answer.ticket == last
+        {
+            assert_ne!(answer.ticket, old);
+            assert_eq!(answer.input.as_deref(), Some("~/Down"));
+            assert_eq!(answer.result.unwrap().entries[0].name, "Downloads");
+            break;
         }
         assert!(std::time::Instant::now() < until);
         std::thread::sleep(std::time::Duration::from_millis(5));

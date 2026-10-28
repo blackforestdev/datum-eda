@@ -1,5 +1,8 @@
 //! Shared proposal/review composition and hit channel owner.
 use super::*;
+// Full overlay-composition parameter set (sinks, scene, viewport, camera, state);
+// a parameter struct would be a single-use aggregate with no clarity gain here.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn push_scene_overlay_and_hits(
     out: &mut Vec<Quad>,
     scene: &BoardReviewSceneV1,

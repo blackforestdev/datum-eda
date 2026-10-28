@@ -123,7 +123,7 @@ pub(crate) fn render(
                 Some(C::Pad(i) | C::Terminal(i)) => i,
                 _ => 0,
             };
-            let count = records.len().min(4).max(1);
+            let count = records.len().clamp(1, 4);
             let toolbar = RectPx {
                 width: rect.width / count as f32,
                 ..rect
@@ -453,11 +453,10 @@ pub(crate) fn render(
         content,
     );
     scroll.set_offset(state.library.scroll_offset as f32);
-    if state.library.reveal_focus {
-        if let Some(region) = p.hits[starts.2..].iter().find(|r| matches!(&r.target, HitTarget::Library(c) if Some(c) == state.library.focus.as_ref())) {
+    if state.library.reveal_focus
+        && let Some(region) = p.hits[starts.2..].iter().find(|r| matches!(&r.target, HitTarget::Library(c) if Some(c) == state.library.focus.as_ref())) {
             scroll.reveal(region.rect.y - rect.y, region.rect.y + region.rect.height - rect.y);
         }
-    }
     let offset = scroll.offset();
     for quad in &mut p.quads[starts.0 + 1..] {
         for point in &mut quad.points {

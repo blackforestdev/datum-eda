@@ -63,6 +63,11 @@ fn new_runtime(root: &std::path::Path) -> Runtime {
         .build()
         .unwrap();
     let wake = event_loop.create_proxy();
+    // winit 0.30 deprecates EventLoop::create_window for ActiveEventLoop::
+    // create_window, which requires the ApplicationHandler/run_app lifecycle — a
+    // test restructure out of scope for clippy-drift cleanup; flagged for a
+    // separate winit-migration pass.
+    #[allow(deprecated)]
     let window = Arc::new(
         event_loop
             .create_window(

@@ -146,16 +146,12 @@ impl App {
                     let hit = surface
                         .as_ref()
                         .and_then(GlobalPreferencesWindowSurface::hit_target);
-                    if let Some(runtime) = &mut self.runtime {
-                        if runtime
+                    if let Some(runtime) = &mut self.runtime
+                        && runtime
                             .folder_popup_pointer(hit.as_ref(), *state == ElementState::Pressed)
-                        {
-                            self.request_dialog_key_redraw(
-                                DialogInputOutcome::Dialog,
-                                OwnedHost::New,
-                            );
-                            return true;
-                        }
+                    {
+                        self.request_dialog_key_redraw(DialogInputOutcome::Dialog, OwnedHost::New);
+                        return true;
                     }
                 }
                 if surface

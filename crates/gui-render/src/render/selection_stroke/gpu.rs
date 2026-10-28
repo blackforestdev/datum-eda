@@ -105,7 +105,12 @@ fn encode(
     let mut clips = StagingVec::default();
     for stroke in strokes {
         let clip_bytes = bytemuck::bytes_of(&stroke.clip);
-        let clip = match clips.chunks_exact(16).position(|entry| entry == clip_bytes) {
+        let clip = match clips
+            .as_chunks::<16>()
+            .0
+            .iter()
+            .position(|entry| entry == clip_bytes)
+        {
             Some(index) => index,
             None => {
                 let index = clips.len() / 16;

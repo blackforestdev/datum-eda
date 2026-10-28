@@ -54,7 +54,7 @@ impl Renderer {
                 crate::global_preferences_dialog::dialog_coordinates::scale_output(
                     &mut popup_quads,
                     &mut popup_text,
-                    &mut vec![],
+                    &mut [],
                     (0, 0, 0),
                     scale,
                 );

@@ -477,6 +477,7 @@ fn region_short_boundaries_retain_light_dashes_at_every_phase_without_fill_or_ha
         zoom: 1.0,
     };
     let pane = state.ui.layout.focused;
+    #[allow(clippy::type_complexity)]
     let shapes: &[(&str, &[(i64, i64)], bool)] = &[
         (
             "observed14x13",

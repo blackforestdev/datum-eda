@@ -295,14 +295,13 @@ fn project_navigation_accessibility(
         ui.project_open.refusal.as_deref()
     };
     let mut nodes = browser.accessibility_nodes(focus, leaf, !ui.project_open.busy);
-    if let Some(reason) = browser.refusal_details(leaf, refusal) {
-        if let Some(preview) = nodes
+    if let Some(reason) = browser.refusal_details(leaf, refusal)
+        && let Some(preview) = nodes
             .iter_mut()
             .find(|n| n.id == "folder-navigation-preview")
-        {
-            preview.description.push_str("\n\nFull refusal details\n");
-            preview.description.push_str(&reason);
-        }
+    {
+        preview.description.push_str("\n\nFull refusal details\n");
+        preview.description.push_str(&reason);
     }
     nodes
 }

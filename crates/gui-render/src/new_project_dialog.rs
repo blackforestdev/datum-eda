@@ -334,6 +334,9 @@ fn paint_form(
             text,
         );
     }
+    // Ends `painter`'s mutable borrow of quads/text so the paint calls below can
+    // reuse them; the painter has no Drop impl, hence the allow.
+    #[allow(clippy::drop_non_drop)]
     drop(painter);
     navigation::paint_location(
         nav,
@@ -400,6 +403,9 @@ fn paint_form(
         TextFace::UiStrong,
         text,
     );
+    // Ends `painter`'s mutable borrow of quads/text so the paint calls below can
+    // reuse them; the painter has no Drop impl, hence the allow.
+    #[allow(clippy::drop_non_drop)]
     drop(painter);
     navigation::paint_preview(
         nav,
@@ -507,6 +513,9 @@ fn paint_form(
         target: action_target,
         rect: action,
     });
+    // Ends `painter`'s mutable borrow of quads/text before returning; the painter
+    // has no Drop impl, hence the allow.
+    #[allow(clippy::drop_non_drop)]
     drop(painter);
     Ok(())
 }

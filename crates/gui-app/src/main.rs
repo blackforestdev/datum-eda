@@ -1,3 +1,10 @@
+// Many #[cfg(test)] modules mount the shared test-harness helper
+// test-harness/src/development_workspace.rs via #[path]; clippy's 1.98
+// duplicate_mod flags the repeated load. Making the helper a shared library
+// module is a structural refactor out of scope for clippy-drift cleanup, so the
+// lint is allowed crate-wide. (Flagged to audit: crate-level vs per-site allow.)
+#![allow(clippy::duplicate_mod)]
+
 #[path = "rendering/native_device_recovery.rs"]
 mod native_device_recovery;
 #[path = "editor/native_edit_selection.rs"]

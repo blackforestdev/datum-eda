@@ -257,6 +257,9 @@ pub(super) fn paint_navigation(
             text,
         );
     }
+    // Ends `painter`'s mutable borrow of quads/text so the paint calls below can
+    // reuse them; the painter has no Drop impl, hence the allow.
+    #[allow(clippy::drop_non_drop)]
     drop(painter);
     crate::hit_clipping::clip_content(quads, text, hits, starts.0, starts.1, starts.2, list);
     crate::global_preferences_primitives::paint_scrollbar(scroll, quads);
@@ -355,13 +358,15 @@ pub(super) fn paint_preview(
             text,
         );
     }
+    // Ends `painter`'s mutable borrow of quads/text so the paint calls below can
+    // reuse them; the painter has no Drop impl, hence the allow.
+    #[allow(clippy::drop_non_drop)]
     drop(painter);
     crate::hit_clipping::clip_content(quads, text, hits, starts.0, starts.1, starts.2, bounds);
     crate::global_preferences_primitives::paint_scrollbar(scroll, quads);
     Ok(())
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(super) use crate::control_text::{tail_text, wrap_text, wrap_text_face};
 
 #[cfg(test)]

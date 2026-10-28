@@ -79,14 +79,13 @@ impl Runtime {
             C::Search => self.session.workspace_mut().library.search_focus = true,
             C::Result(index) => {
                 let state = self.session.workspace_mut();
-                if state.library.draft.is_none() {
-                    if let Some(e) = state.library.entries.get(index) {
-                        state.selection =
-                            datum_gui_protocol::SelectionTarget::AuthoredObject(e.key());
-                        state.library.detail_offset = 0;
-                        state.library.preview_pad = 0;
-                        state.library.scroll_offset = 0;
-                    }
+                if state.library.draft.is_none()
+                    && let Some(e) = state.library.entries.get(index)
+                {
+                    state.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(e.key());
+                    state.library.detail_offset = 0;
+                    state.library.preview_pad = 0;
+                    state.library.scroll_offset = 0;
                 }
             }
             C::ResultsPage(next) => {
@@ -165,11 +164,11 @@ impl Runtime {
                     .as_ref()
                     .map(|b| b.request.project_root.clone());
                 let mut draft = self.session.workspace_mut().library.draft.take();
-                if let (Some(d), Some(root)) = (&mut draft, root) {
-                    if let Err(e) = d.validate_preview(&self.workspace().library, &root) {
-                        d.preview = None;
-                        d.refusal = Some(e);
-                    }
+                if let (Some(d), Some(root)) = (&mut draft, root)
+                    && let Err(e) = d.validate_preview(&self.workspace().library, &root)
+                {
+                    d.preview = None;
+                    d.refusal = Some(e);
                 }
                 self.session.workspace_mut().library.draft = draft;
             }
@@ -201,10 +200,10 @@ impl Runtime {
                 } else {
                     None
                 };
-                if let Some(d) = &mut self.session.workspace_mut().library.draft {
-                    if let Err(e) = d.switch_pad(index, control == C::RemovePad) {
-                        d.refusal = Some(e);
-                    }
+                if let Some(d) = &mut self.session.workspace_mut().library.draft
+                    && let Err(e) = d.switch_pad(index, control == C::RemovePad)
+                {
+                    d.refusal = Some(e);
                 }
             }
             C::Terminal(_) | C::AddTerminal | C::RemoveTerminal => {
@@ -213,10 +212,10 @@ impl Runtime {
                 } else {
                     None
                 };
-                if let Some(d) = &mut self.session.workspace_mut().library.draft {
-                    if let Err(e) = d.switch_terminal(index, control == C::RemoveTerminal) {
-                        d.refusal = Some(e);
-                    }
+                if let Some(d) = &mut self.session.workspace_mut().library.draft
+                    && let Err(e) = d.switch_terminal(index, control == C::RemoveTerminal)
+                {
+                    d.refusal = Some(e);
                 }
             }
         }
@@ -333,24 +332,23 @@ impl Runtime {
                 let control = controls[next].clone();
                 let selection = self.workspace().selection.clone();
                 let b = &mut self.session.workspace_mut().library;
-                if let C::Field(i) = control {
-                    if let Some(d) = &mut b.draft {
-                        d.focused = i;
-                        d.offset = i;
-                    }
+                if let C::Field(i) = control
+                    && let Some(d) = &mut b.draft
+                {
+                    d.focused = i;
+                    d.offset = i;
                 }
                 if let C::Result(i) = control {
                     if let Some(p) = b.results().iter().position(|j| *j == i) {
                         b.result_offset = p.saturating_sub(2);
                     }
-                    if let Some(entry) = b.selected(&selection) {
-                        if let Some(position) = b
+                    if let Some(entry) = b.selected(&selection)
+                        && let Some(position) = b
                             .links(entry)
                             .iter()
                             .position(|link| link.targets.as_slice() == [i])
-                        {
-                            b.detail_offset = position;
-                        }
+                    {
+                        b.detail_offset = position;
                     }
                 }
                 b.search_focus = control == C::Search;
@@ -363,10 +361,10 @@ impl Runtime {
                 }
             }
             Key::Named(NamedKey::ArrowLeft | NamedKey::ArrowRight) => {
-                if matches!(focus, Some(C::Field(_))) {
-                    if let Some(d) = &mut self.session.workspace_mut().library.draft {
-                        d.cycle(matches!(key, Key::Named(NamedKey::ArrowRight)));
-                    }
+                if matches!(focus, Some(C::Field(_)))
+                    && let Some(d) = &mut self.session.workspace_mut().library.draft
+                {
+                    d.cycle(matches!(key, Key::Named(NamedKey::ArrowRight)));
                 }
             }
             Key::Named(NamedKey::Backspace) => self.library_text(None),
@@ -429,16 +427,16 @@ impl Runtime {
                 b.result_offset = 0;
             }
             Some(C::Field(_)) => {
-                if let Some(d) = &mut b.draft {
-                    if !d.fields[d.focused].selector {
-                        let mut value = d.fields[d.focused].text.clone();
-                        if let Some(text) = text {
-                            value.push_str(text);
-                        } else {
-                            value.pop();
-                        }
-                        d.change(value);
+                if let Some(d) = &mut b.draft
+                    && !d.fields[d.focused].selector
+                {
+                    let mut value = d.fields[d.focused].text.clone();
+                    if let Some(text) = text {
+                        value.push_str(text);
+                    } else {
+                        value.pop();
                     }
+                    d.change(value);
                 }
             }
             _ => {}

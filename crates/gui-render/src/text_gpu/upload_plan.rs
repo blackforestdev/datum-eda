@@ -33,7 +33,7 @@ pub(crate) struct Dirty<'o, 'a> {
 impl<'o, 'a> Dirty<'o, 'a> {
     pub(crate) fn new(old: &'o [u8], new: &'a [u8], stride: usize) -> Self {
         let word = wgpu::COPY_BUFFER_ALIGNMENT as usize;
-        assert!(stride > 0 && stride % word == 0 && new.len() % stride == 0);
+        assert!(stride > 0 && stride.is_multiple_of(word) && new.len().is_multiple_of(stride));
         Self {
             old,
             new,

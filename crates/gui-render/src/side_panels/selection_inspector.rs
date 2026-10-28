@@ -399,11 +399,11 @@ fn render_impl(
             );
         }
     }
-    if let Some(index) = section_navigation_hit {
-        if let HitTarget::InspectorSectionNavigation { offsets, .. } = &mut hits[index].target {
-            for (_, offset) in offsets {
-                *offset += section_start;
-            }
+    if let Some(index) = section_navigation_hit
+        && let HitTarget::InspectorSectionNavigation { offsets, .. } = &mut hits[index].target
+    {
+        for (_, offset) in offsets {
+            *offset += section_start;
         }
     }
     if let HitTarget::SelectionInspectorScroll {

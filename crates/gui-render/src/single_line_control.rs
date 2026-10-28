@@ -110,10 +110,11 @@ pub(crate) fn paint(
         width: (width(&value[..selection.end])? - width(&value[..selection.start])?).max(0.0),
         height: 18.0,
     };
-    if focused && !selection.is_empty() {
-        if let Some(visible) = selection_rect.intersect(inner) {
-            painter.push(Quad::from_rect(visible, design_tokens::chrome::STATUS_INFO));
-        }
+    if focused
+        && !selection.is_empty()
+        && let Some(visible) = selection_rect.intersect(inner)
+    {
+        painter.push(Quad::from_rect(visible, design_tokens::chrome::STATUS_INFO));
     }
     let (shown, shown_x) = if value.is_empty() {
         (placeholder, inner.x + if focused { 3.0 } else { 0.0 })

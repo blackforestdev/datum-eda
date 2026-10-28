@@ -55,13 +55,14 @@ pub(crate) fn render(
                 .iter()
                 .filter(|e| Some(e.id) == id && e.kind == "padstacks")
                 .collect::<Vec<_>>();
-            if choices.len() == 1 && choices[0].warning.is_none() {
-                if let (Some(x), Some(y)) = (
+            if choices.len() == 1
+                && choices[0].warning.is_none()
+                && let (Some(x), Some(y)) = (
                     pad.pointer("/position/x").and_then(Value::as_i64),
                     pad.pointer("/position/y").and_then(Value::as_i64),
-                ) {
-                    pads.push((x, y, choices[0].raw.clone()));
-                }
+                )
+            {
+                pads.push((x, y, choices[0].raw.clone()));
             }
         }
     }
@@ -97,24 +98,24 @@ pub(crate) fn render(
                 .zip(aperture.pointer("/rect/height_nm").and_then(Value::as_i64))
                 .map(|(w, h)| (w, h, false))
         };
-        if let Some((w, h, circle)) = shape.filter(|(w, h, _)| *w > 0 && *h > 0) {
-            if let (Some(min_x), Some(min_y), Some(max_x), Some(max_y)) = (
+        if let Some((w, h, circle)) = shape.filter(|(w, h, _)| *w > 0 && *h > 0)
+            && let (Some(min_x), Some(min_y), Some(max_x), Some(max_y)) = (
                 x.checked_sub(w / 2),
                 y.checked_sub(h / 2),
                 x.checked_add(w / 2),
                 y.checked_add(h / 2),
-            ) {
-                shapes.push((
-                    datum_gui_protocol::RectNm {
-                        min_x,
-                        min_y,
-                        max_x,
-                        max_y,
-                    },
-                    circle,
-                    stack.get("drill_nm").and_then(Value::as_i64),
-                ));
-            }
+            )
+        {
+            shapes.push((
+                datum_gui_protocol::RectNm {
+                    min_x,
+                    min_y,
+                    max_x,
+                    max_y,
+                },
+                circle,
+                stack.get("drill_nm").and_then(Value::as_i64),
+            ));
         }
     }
     let pad = raw

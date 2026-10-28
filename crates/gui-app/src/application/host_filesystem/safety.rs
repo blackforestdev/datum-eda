@@ -59,19 +59,18 @@ impl Stamp {
     }
     fn recheck(&self) -> Result<(), String> {
         let current = Self::read(&self.path)?;
-        if let Some(contents) = &self.contents {
-            if fs::read(&self.path).map_err(|e| e.to_string())? != *contents {
-                return Err("Project classification changed during inspection.".into());
-            }
+        if let Some(contents) = &self.contents
+            && fs::read(&self.path).map_err(|e| e.to_string())? != *contents
+        {
+            return Err("Project classification changed during inspection.".into());
         }
         if let Some(pin) = &self.pin {
-            if let Some(entries) = &self.entries {
-                if &directory_entries(pin)? != entries {
-                    return Err(
-                        "Directory entries changed during safety inspection. Re-read Location."
-                            .into(),
-                    );
-                }
+            if let Some(entries) = &self.entries
+                && &directory_entries(pin)? != entries
+            {
+                return Err(
+                    "Directory entries changed during safety inspection. Re-read Location.".into(),
+                );
             }
             let pinned = pin.metadata().map_err(|e| e.to_string())?;
             if Identity::of(&pinned) != self.identity

@@ -27,8 +27,7 @@ fn session_context(
     let default_tab_label = match &binding {
         TerminalSessionBinding::Project { name, .. } => name.clone(),
         TerminalSessionBinding::Independent => {
-            if std::env::var_os("HOME").is_some_and(|home| PathBuf::from(home) == launch_directory)
-            {
+            if std::env::var_os("HOME").is_some_and(|home| home == launch_directory) {
                 "Home".into()
             } else {
                 "Independent shell".into()

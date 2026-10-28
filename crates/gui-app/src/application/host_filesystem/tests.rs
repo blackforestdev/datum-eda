@@ -218,7 +218,7 @@ fn host_filesystem_subtree_change_unreadable_and_stale_protection_refuse() {
         safety::inspect(&parent, &root.0, &request.command, &Protection::default()).unwrap();
     fs::write(root.0.join("folder/new file"), b"changed subtree").unwrap();
     assert!(inspection.recheck().is_err());
-    fs::set_permissions(root.0.join("folder"), fs::Permissions::from_mode(0)).unwrap();
+    fs::set_permissions(root.0.join("folder"), fs::Permissions::from_mode(0o000)).unwrap();
     if unsafe { libc::geteuid() } != 0 {
         assert!(
             safety::inspect(&parent, &root.0, &request.command, &Protection::default()).is_err()
@@ -391,7 +391,7 @@ fn host_filesystem_project_settings_and_identity_bridge_are_protected_not_global
     for parent in &parents {
         assert_refused(invoke(
             &mut service,
-            rename(&parent, "data.json", "changed.json"),
+            rename(parent, "data.json", "changed.json"),
         ));
         assert_refused(invoke(
             &mut service,

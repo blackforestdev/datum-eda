@@ -32,25 +32,25 @@ pub(super) fn render(raw: &Value, rect: RectPx, quads: &mut Vec<Quad>, text: &mu
         height: (rect.height - heights.iter().sum::<f32>()).max(0.),
         ..rect
     };
-    if let (Some(x), Some(y)) = (x.filter(|n| *n > 0), y.filter(|n| *n > 0)) {
-        if geometry.height > 10. {
-            let bounds = SceneBounds {
-                min_x: 0,
-                min_y: 0,
-                max_x: x,
-                max_y: y,
-            };
-            let mut camera = CameraState::fit_to_bounds(&bounds);
-            camera.zoom = 0.75;
-            let projection = Projection::new(geometry, &bounds, camera);
-            let body = projection.project_rect(datum_gui_protocol::RectNm {
-                min_x: 0,
-                min_y: 0,
-                max_x: x,
-                max_y: y,
-            });
-            push_rect_border(quads, body, TEXT_ACCENT, 1.);
-        }
+    if let (Some(x), Some(y)) = (x.filter(|n| *n > 0), y.filter(|n| *n > 0))
+        && geometry.height > 10.
+    {
+        let bounds = SceneBounds {
+            min_x: 0,
+            min_y: 0,
+            max_x: x,
+            max_y: y,
+        };
+        let mut camera = CameraState::fit_to_bounds(&bounds);
+        camera.zoom = 0.75;
+        let projection = Projection::new(geometry, &bounds, camera);
+        let body = projection.project_rect(datum_gui_protocol::RectNm {
+            min_x: 0,
+            min_y: 0,
+            max_x: x,
+            max_y: y,
+        });
+        push_rect_border(quads, body, TEXT_ACCENT, 1.);
     }
     let mut at = geometry.y + geometry.height;
     for (message, height) in messages.iter().zip(heights) {

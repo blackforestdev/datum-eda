@@ -2,6 +2,9 @@
 use super::*;
 use datum_gui_protocol::{SelectionSubject, selection_artifacts::diagnostic_markers as marker};
 
+// Full marker-draw parameter set (quad/hit sinks, scene, geometry); grouping into
+// a struct would be a single-use aggregate with no clarity gain on this draw path.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn push(
     out: &mut Vec<Quad>,
     hits: &mut Vec<HitRegion>,

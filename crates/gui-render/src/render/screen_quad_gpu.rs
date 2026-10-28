@@ -41,7 +41,7 @@ pub(crate) fn bind<'a>(pass: &mut wgpu::RenderPass<'a>, buffer: &'a wgpu::Buffer
 pub(crate) fn encode(vertices: &[Vertex], staging: &Arc<Budget>) -> anyhow::Result<StagingVec<u8>> {
     anyhow::ensure!(vertices.len().is_multiple_of(6), "incomplete viewport quad");
     // Validate all source topology before allocation or producer publication.
-    for quad in vertices.chunks_exact(6) {
+    for quad in vertices.as_chunks::<6>().0 {
         anyhow::ensure!(
             bytemuck::bytes_of(&quad[0].pos) == bytemuck::bytes_of(&quad[3].pos)
                 && bytemuck::bytes_of(&quad[2].pos) == bytemuck::bytes_of(&quad[4].pos)
@@ -59,7 +59,7 @@ pub(crate) fn encode(vertices: &[Vertex], staging: &Arc<Budget>) -> anyhow::Resu
         staging,
     )?;
     for axis in 0..2 {
-        for quad in vertices.chunks_exact(6) {
+        for quad in vertices.as_chunks::<6>().0 {
             bytes.extend_from_slice(bytemuck::bytes_of(&[
                 quad[0].pos[axis],
                 quad[1].pos[axis],
@@ -68,7 +68,7 @@ pub(crate) fn encode(vertices: &[Vertex], staging: &Arc<Budget>) -> anyhow::Resu
             ]));
         }
     }
-    for quad in vertices.chunks_exact(6) {
+    for quad in vertices.as_chunks::<6>().0 {
         bytes.extend_from_slice(bytemuck::bytes_of(&quad[0].color));
     }
     Ok(bytes)

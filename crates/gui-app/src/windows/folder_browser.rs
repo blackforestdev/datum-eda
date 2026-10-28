@@ -120,15 +120,15 @@ impl Runtime {
     pub(super) fn folder_navigation_focus(&self) -> Option<Focus> {
         use datum_gui_protocol::{NewProjectFocus, ProjectOpenFocus};
         let ui = &self.session.workspace().ui;
-        if ui.new_project.open {
-            if let NewProjectFocus::Navigation(focus) = ui.new_project.focus {
-                return Some(focus);
-            }
+        if ui.new_project.open
+            && let NewProjectFocus::Navigation(focus) = ui.new_project.focus
+        {
+            return Some(focus);
         }
-        if ui.project_open.open {
-            if let ProjectOpenFocus::Navigation(focus) = ui.project_open.focus {
-                return Some(focus);
-            }
+        if ui.project_open.open
+            && let ProjectOpenFocus::Navigation(focus) = ui.project_open.focus
+        {
+            return Some(focus);
         }
         None
     }
@@ -167,7 +167,7 @@ impl Runtime {
         let selected_suggestion = state
             .suggestions
             .as_ref()
-            .and_then(|_| state.selected)
+            .and(state.selected)
             .and_then(|i| {
                 state.entries.get(i).map(|entry| {
                     format!(
