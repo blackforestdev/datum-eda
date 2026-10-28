@@ -96,6 +96,14 @@ def clean_install_missing_store_cli():
 
 # (case, variant, surface) -> observation producer. Later GP-CM05E slices extend
 # this map; each family runs the real product surface and records honest results.
+#
+# COPY RULES for new families (audit-binding, checked per family):
+#   1. Encode the family's REAL semantic observation, not merely returncode == 0.
+#   2. A MUTATING family must make the producer capture the REAL post-run state
+#      manifest for `after` and assert on it — the read-only after==before shortcut
+#      in producer.py is valid only for non-writing cases like this one.
+#   3. recipe.sha256 is a committed-provenance seal (bytes pinned by the candidate
+#      revision), not an exec-time hash gate; never rely on it to validate at run.
 DISPATCH = {
     ("clean-install", "missing-store", "cli"): clean_install_missing_store_cli,
 }

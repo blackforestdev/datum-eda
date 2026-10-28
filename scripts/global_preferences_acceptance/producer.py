@@ -93,6 +93,12 @@ def produce_case(capture, *, key, candidate, binaries, environments,
         "matrix_sha256": matrix_sha256,
         "fixture": fixture_ref,
         "before": state_ref,
+        # AFTER-STATE CAVEAT (audit, binding for every family copy): after==before
+        # is correct ONLY for a READ-ONLY family like this one, whose observations
+        # (no-repository-created / no-project-write) prove nothing changed. The
+        # validator does NOT force `after` to reflect reality, so a MUTATING family
+        # MUST capture the real post-run state manifest here and assert on it;
+        # copying after:=before in a write family silently misreports post-state.
         "after": state_ref,
         "executed_tests": raw["executed_tests"],
         **{k: cmd_row[k] for k in
