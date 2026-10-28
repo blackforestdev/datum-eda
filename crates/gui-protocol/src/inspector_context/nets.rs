@@ -16,21 +16,20 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, _state: &'a ReviewW
             append_board_class(context, record);
         }
     }
-    if matches!(view.subject, crate::SelectionSubject::Bus(_)) {
-        if let Some(crate::selection_view::InspectionValue::Common(value)) =
+    if matches!(view.subject, crate::SelectionSubject::Bus(_))
+        && let Some(crate::selection_view::InspectionValue::Common(value)) =
             view.field_ref("declared_scalar_nets")
+    {
+        for net in value
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|v| v.as_str())
         {
-            for net in value
-                .as_array()
-                .into_iter()
-                .flatten()
-                .filter_map(|v| v.as_str())
-            {
-                context.push(
-                    InspectorSectionId::Connectivity,
-                    InspectorField::text("Declared scalar Net", net),
-                );
-            }
+            context.push(
+                InspectorSectionId::Connectivity,
+                InspectorField::text("Declared scalar Net", net),
+            );
         }
     }
     if !matches!(view.subject, crate::SelectionSubject::GlobalNet(_)) {

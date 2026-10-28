@@ -259,10 +259,10 @@ impl ElectricalBasis {
                     .get("package")
                     .and_then(Value::as_str)
                     .and_then(|id| Uuid::parse_str(id).ok());
-                if let (Some(id), Some(parent)) = (id, parent) {
-                    if requested(&id) {
-                        result.entry(id).or_insert(parent);
-                    }
+                if let (Some(id), Some(parent)) = (id, parent)
+                    && requested(&id)
+                {
+                    result.entry(id).or_insert(parent);
                 }
             }
             let mut bound = BTreeMap::new();

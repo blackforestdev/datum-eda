@@ -154,16 +154,19 @@ impl MarkerProjectionIndex {
                 let foreign_primitive = scene.board_graphics.iter().any(|graphic| {
                     graphic.source_object_uuid == source && graphic.object_kind != "schematic_pin"
                 });
-                let anchor = if point.is_none() || other_source || foreign_primitive {
-                    Err("Target has ambiguous source identities")
-                } else if scene.board_graphics.iter().any(|graphic| {
-                    graphic.source_object_uuid == source
-                        && graphic.object_kind == "schematic_pin"
-                        && visible(&graphic.layer_id)
-                }) {
-                    Ok(point.unwrap())
-                } else {
-                    Err("Target is hidden or has no current navigation anchor")
+                let anchor = match point {
+                    Some(p) if !other_source && !foreign_primitive => {
+                        if scene.board_graphics.iter().any(|graphic| {
+                            graphic.source_object_uuid == source
+                                && graphic.object_kind == "schematic_pin"
+                                && visible(&graphic.layer_id)
+                        }) {
+                            Ok(p)
+                        } else {
+                            Err("Target is hidden or has no current navigation anchor")
+                        }
+                    }
+                    _ => Err("Target has ambiguous source identities"),
                 };
                 targets.insert(id, anchor);
             }
@@ -293,13 +296,13 @@ pub(crate) fn occurrence_path(
             result = Some(path);
         }
     }
-    if let Some(nested) = value.get("occurrence") {
-        if let Some(path) = occurrence_path(nested)? {
-            if result.as_ref().is_some_and(|prior| prior != &path) {
-                return Err("Finding occurrence frames disagree");
-            }
-            result = Some(path);
+    if let Some(nested) = value.get("occurrence")
+        && let Some(path) = occurrence_path(nested)?
+    {
+        if result.as_ref().is_some_and(|prior| prior != &path) {
+            return Err("Finding occurrence frames disagree");
         }
+        result = Some(path);
     }
     Ok(result)
 }

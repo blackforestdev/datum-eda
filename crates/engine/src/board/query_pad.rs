@@ -7,6 +7,14 @@ use super::{
 use crate::ir::geometry::Point;
 use crate::substrate::component_pad_source::ComponentPadSourceBinding;
 type Result<T> = std::result::Result<T, GeometryError>;
+// Query-scratch pad geometry, constructed per pad and matched on the copper-
+// occupancy hot path. The SourceRelative variant is intrinsically large (exact
+// Q(sqrt 3) coordinates: two Quadratic3 carrying i128 rationals, plus the source
+// binding); boxing only that variant leaves Integer(PlacedPad, ~240B) past the
+// 200-byte lint threshold, and boxing both variants adds a per-pad heap
+// allocation on the common integer-pad path. The value is bounded and lives
+// briefly on the stack, so the inline payload is kept.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug)]
 pub enum QueryPadGeometry {
     Integer(PlacedPad),

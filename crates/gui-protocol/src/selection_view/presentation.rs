@@ -89,16 +89,15 @@ pub(super) fn compile(
         {
             continue;
         }
-        if let Some(document) = &scene.schematic_document {
-            if document.project != view.project
+        if let Some(document) = &scene.schematic_document
+            && (document.project != view.project
                 || scene.board_uuid != document.source_sheet.to_string()
                 || authority
                     .snapshot()
                     .schematic_source()
-                    .is_none_or(|source| source.uuid != document.schematic)
-            {
-                continue;
-            }
+                    .is_none_or(|source| source.uuid != document.schematic))
+        {
+            continue;
         }
         let path = scene
             .schematic_document

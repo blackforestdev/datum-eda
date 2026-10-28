@@ -65,12 +65,12 @@ pub fn visible_scenes(state: &crate::ReviewWorkspaceState) -> Vec<&crate::BoardR
         if state.ui.layout.content_for(pane) != Some(crate::PaneContent::Schematic) {
             continue;
         }
-        if let Some(scene) = crate::camera_scene_for_pane(state, pane) {
-            if !scenes.iter().any(|s| {
+        if let Some(scene) = crate::camera_scene_for_pane(state, pane)
+            && !scenes.iter().any(|s| {
                 s.scene_id == scene.scene_id && s.schematic_document == scene.schematic_document
-            }) {
-                scenes.push(scene);
-            }
+            })
+        {
+            scenes.push(scene);
         }
     }
     scenes

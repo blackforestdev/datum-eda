@@ -61,6 +61,11 @@ struct Rounded {
     radius: R,
     hole: R,
 }
+// Copy boundary-arrangement scratch, matched and copied by value inside the
+// exact intersection/containment predicates. Boxing the Circle variant would
+// force dropping Copy (clippy notes this) and heap-allocate transient geometry
+// on that hot path; the size is bounded and lives briefly on the stack.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Copy)]
 enum Feature {
     Segment(V, V),

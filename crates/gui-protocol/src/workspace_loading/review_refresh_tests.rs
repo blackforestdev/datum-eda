@@ -1,3 +1,7 @@
+// Shared test-harness helper deliberately mounted into each sibling test module
+// via #[path]; collapsing to one `mod` + `use` would mean re-exporting it across
+// test-module boundaries for zero behavior change — out of scope for drift cleanup.
+#[allow(clippy::duplicate_mod)]
 #[path = "../../../test-harness/src/development_workspace.rs"]
 mod development_workspace;
 use super::*;

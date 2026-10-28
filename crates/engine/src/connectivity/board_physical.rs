@@ -91,6 +91,12 @@ pub struct BoardRunMembership {
     pub zone_regions: Vec<ZoneRegionQualifier>,
     pub contact_evidence: Result<Vec<CrossNetContact>, PhysicalQueryFailure>,
 }
+// Transient connectivity-graph node payload, built per board element and matched
+// by value while unioning the net graph. The Pad variant carries QueryPadGeometry
+// (the large exact-geometry payload) directly; boxing it would add a per-node
+// heap allocation on the DRC/occupancy hot path. The node is bounded and short-
+// lived, so the inline payload is kept.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone)]
 enum Shape {
     Track(Track),

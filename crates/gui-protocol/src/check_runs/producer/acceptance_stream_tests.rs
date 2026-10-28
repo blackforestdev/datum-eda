@@ -101,9 +101,8 @@ fn refused_child_drains_both_pipes_and_is_reaped_before_the_worker_returns() {
         // Fill stdout beyond ordinary pipe capacity before emitting stderr.
         // The production worker must concurrently drain it even on rejection.
         let script = format!(
-            "import os\nos.write(1,b'x'*{})\nb={}\nwhile b:\n n=os.write(2,b)\n b=b[n:]\n",
+            "import os\nos.write(1,b'x'*{})\nb=bytes({bytes:?})\nwhile b:\n n=os.write(2,b)\n b=b[n:]\n",
             event.len() * 8192,
-            format!("bytes({bytes:?})")
         );
         let cli = vec!["python3".into(), "-c".into(), script];
         let mut count = 0;

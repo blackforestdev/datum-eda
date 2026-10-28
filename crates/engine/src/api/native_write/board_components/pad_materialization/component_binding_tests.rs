@@ -499,36 +499,35 @@ fn assert_history_snapshot(
         if let Some(id) = right["record"]["id"]
             .as_str()
             .and_then(|s| s.parse::<Uuid>().ok())
+            && let Some(revision) = electrical.get(&id)
         {
-            if let Some(revision) = electrical.get(&id) {
-                assert_eq!(right["record"]["object_revision"], json!(revision));
-                left["record"]["object_revision"] = json!(null);
-                right["record"]["object_revision"] = json!(null);
-                for (a, b) in left["record"]["identity"]["evidence"]
-                    .as_array_mut()
-                    .unwrap()
-                    .iter_mut()
-                    .zip(
-                        right["record"]["identity"]["evidence"]
-                            .as_array_mut()
-                            .unwrap(),
-                    )
-                {
-                    if b["component_instance"]["object_id"] != json!(ci) {
-                        continue;
-                    }
-                    for key in ["component_instance", "board_pad"] {
-                        let id: Uuid = serde_json::from_value(b[key]["object_id"].clone()).unwrap();
-                        assert_eq!(
-                            b[key]["object_revision"],
-                            json!(model.objects[&id].object_revision)
-                        );
-                        a[key]["object_revision"] = json!(null);
-                        b[key]["object_revision"] = json!(null);
-                    }
+            assert_eq!(right["record"]["object_revision"], json!(revision));
+            left["record"]["object_revision"] = json!(null);
+            right["record"]["object_revision"] = json!(null);
+            for (a, b) in left["record"]["identity"]["evidence"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .zip(
+                    right["record"]["identity"]["evidence"]
+                        .as_array_mut()
+                        .unwrap(),
+                )
+            {
+                if b["component_instance"]["object_id"] != json!(ci) {
+                    continue;
                 }
-                allowed = true;
+                for key in ["component_instance", "board_pad"] {
+                    let id: Uuid = serde_json::from_value(b[key]["object_id"].clone()).unwrap();
+                    assert_eq!(
+                        b[key]["object_revision"],
+                        json!(model.objects[&id].object_revision)
+                    );
+                    a[key]["object_revision"] = json!(null);
+                    b[key]["object_revision"] = json!(null);
+                }
             }
+            allowed = true;
         }
         if let (Some(a), Some(b)) = (
             left["component_pads"].as_object_mut(),

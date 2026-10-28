@@ -460,8 +460,7 @@ fn validate(
                     .iter()
                     .flat_map(|t| &t.operations)
                     .filter_map(crate::substrate::electrical_identity_store::write)
-                    .filter(|(id, _, _)| *id == record.id)
-                    .last()?;
+                    .rfind(|(id, _, _)| *id == record.id)?;
                 if before_record.2 || before_record.1 != record {
                     return None;
                 }

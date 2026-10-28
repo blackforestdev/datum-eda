@@ -372,12 +372,11 @@ impl FrozenProcessSnapshot {
                 "frozen process source/transform correspondence mismatch",
             ));
         }
-        if let Some(profile) = &self.profile {
-            if profile.project_id != binding.project_id
-                || hash(&serde_json::to_value(&profile.profile)?)? != profile.value_hash
-            {
-                return Err(invalid("frozen profile pin mismatch"));
-            }
+        if let Some(profile) = &self.profile
+            && (profile.project_id != binding.project_id
+                || hash(&serde_json::to_value(&profile.profile)?)? != profile.value_hash)
+        {
+            return Err(invalid("frozen profile pin mismatch"));
         }
         let expected = resolve_padstack_process(
             &self.raw_padstack,

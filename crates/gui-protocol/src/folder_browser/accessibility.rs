@@ -149,6 +149,10 @@ impl FolderBrowserState {
                 "Navigation and explicit host action status; completed actions are not rolled back by dialog Cancel.",
             );
         }
+        // `add` is a FnMut closure borrowing `nodes` mutably; dropping it ends that
+        // borrow so the collected `nodes` can be read below. The closure has no Drop
+        // impl, but the drop still releases the borrow — hence the intentional allow.
+        #[allow(clippy::drop_non_drop)]
         drop(add);
         if self.expanded && self.listing_ready() {
             let rows = self

@@ -59,12 +59,12 @@ fn sync_durable_model(
     // outside this bounded writer's authority.
     for shard in &model.source_shards {
         let path = shard.path.canonicalize()?;
-        if shard.path.starts_with(&root) && !path.starts_with(&root) {
+        if shard.path.starts_with(root) && !path.starts_with(root) {
             return Err(EngineError::Operation(
                 "Project durability refused: local shard escapes the guarded root".into(),
             ));
         }
-        if path.starts_with(&root) {
+        if path.starts_with(root) {
             sync_file(&path)?;
         }
     }
@@ -72,11 +72,11 @@ fn sync_durable_model(
     if store.exists() {
         sync_tree(&store)?;
     }
-    let journal = crate::substrate::transaction_journal_path(&root);
+    let journal = crate::substrate::transaction_journal_path(root);
     if journal.exists() {
         sync_file(&journal)?;
     }
-    crate::substrate::journal_io::write_journal_cursor(&root, &model.journal_cursor)?;
+    crate::substrate::journal_io::write_journal_cursor(root, &model.journal_cursor)?;
     lease.validate(root)?;
     File::open(root)?.sync_all()?;
     Ok(())

@@ -231,16 +231,15 @@ pub(super) fn final_bindings(
         }
         let mut supplied = BTreeSet::new();
         for op in &batch.operations {
-            if let Operation::SetElectricalIdentity { previous, record } = op {
-                if !required.contains_key(&record.id)
+            if let Operation::SetElectricalIdentity { previous, record } = op
+                && (!required.contains_key(&record.id)
                     || !supplied.insert(record.id)
                     || model.electrical_identities.get(&record.id) != Some(previous.as_ref())
-                    || electrical_semantics(previous, ci) != electrical_semantics(record, ci)
-                {
-                    return Err(invalid(
-                        "changed, duplicate or foreign prospective Net dependency",
-                    ));
-                }
+                    || electrical_semantics(previous, ci) != electrical_semantics(record, ci))
+            {
+                return Err(invalid(
+                    "changed, duplicate or foreign prospective Net dependency",
+                ));
             }
         }
         if supplied != required.keys().copied().collect() {

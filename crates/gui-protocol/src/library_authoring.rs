@@ -481,12 +481,10 @@ impl LibraryDraft {
                 }
             }
         }
-        if remove {
-            if let Some(id) = self.pad_id.take() {
-                self.pads.remove(&id.to_string());
-                if self.original_pads.contains(&id.to_string()) {
-                    self.removed.insert(id.to_string());
-                }
+        if remove && let Some(id) = self.pad_id.take() {
+            self.pads.remove(&id.to_string());
+            if self.original_pads.contains(&id.to_string()) {
+                self.removed.insert(id.to_string());
             }
         }
         let selected = index

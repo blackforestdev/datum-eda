@@ -11,6 +11,13 @@ pub struct Quadratic3 {
     pub a: R,
     pub b: R,
 }
+// The exact-coordinate arithmetic here is fallible: each operation returns
+// Result and uses checked_* so an out-of-range value yields GeometryError
+// rather than a silent wrap or a panic. std::ops::{Add,Sub,Mul,Div,Neg} require
+// an infallible `-> Self`, which would force panic-on-overflow — forbidden for
+// this never-rounding exact type — so the inherent add/sub/mul/div/neg names are
+// kept deliberately and the trait-confusion lint is allowed for this impl.
+#[allow(clippy::should_implement_trait)]
 impl Quadratic3 {
     pub fn rational(a: R) -> Self {
         Self { a, b: zero() }

@@ -98,7 +98,7 @@ impl SchematicAuthoring {
         root: &std::path::Path,
     ) -> anyhow::Result<BoardReviewSceneV1> {
         let mut scene = crate::schematic_scene_import::project_schematic_sheet_source(
-            &source,
+            source,
             &source.sheets[&sheet],
             &root.join("schematic/schematic.json"),
         )?;

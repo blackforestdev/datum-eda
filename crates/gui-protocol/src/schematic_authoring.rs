@@ -90,8 +90,10 @@ impl SchematicAuthoring {
     pub fn from_model(model: &DesignModel) -> anyhow::Result<Self> {
         let basis = ElectricalSelectionSnapshot::capture(model)
             .map_err(|e| anyhow::anyhow!("Schematic source unavailable: {e:?}"))?;
-        let mut state = Self::default();
-        state.source = basis.schematic_source().cloned();
+        let mut state = Self {
+            source: basis.schematic_source().cloned(),
+            ..Default::default()
+        };
         if let Some(source) = basis.schematic_source() {
             let authored = basis
                 .authored_sources()

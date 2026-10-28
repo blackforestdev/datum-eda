@@ -175,10 +175,10 @@ impl FolderBrowserState {
         form_refusal: Option<&str>,
     ) -> Option<String> {
         let mut message = form_refusal.map(str::to_owned);
-        if let Some(reason) = self.refusal(leaf) {
-            if message.as_deref() != Some(reason.as_str()) {
-                message = Some(message.map(|s| format!("{s} {reason}")).unwrap_or(reason));
-            }
+        if let Some(reason) = self.refusal(leaf)
+            && message.as_deref() != Some(reason.as_str())
+        {
+            message = Some(message.map(|s| format!("{s} {reason}")).unwrap_or(reason));
         }
         message
     }

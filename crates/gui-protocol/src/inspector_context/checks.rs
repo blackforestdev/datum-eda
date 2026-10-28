@@ -296,6 +296,10 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
     }
 }
 
+// The (Uuid, optional dependent-Uuids) pairs are a localized return shape used by
+// this one analysis only; a type alias would add indirection without clarifying
+// the single call site.
+#[allow(clippy::type_complexity)]
 fn affected_targets(
     state: &ReviewWorkspaceState,
     finding: &crate::CheckFindingSummary,

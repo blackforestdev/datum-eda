@@ -322,14 +322,13 @@ pub(super) fn apply_objects(
                     continue;
                 }
                 let existing = objects.get(id).cloned();
-                if let Some(existing) = &existing {
-                    if existing.source_shard_id != owner.source_shard_id
-                        || previous.as_ref().is_none_or(|p| !p.contains_key(id))
-                    {
-                        return Err(refusal(
-                            "process profile UUID collides with another canonical object",
-                        ));
-                    }
+                if let Some(existing) = &existing
+                    && (existing.source_shard_id != owner.source_shard_id
+                        || previous.as_ref().is_none_or(|p| !p.contains_key(id)))
+                {
+                    return Err(refusal(
+                        "process profile UUID collides with another canonical object",
+                    ));
                 }
                 let revision = existing
                     .as_ref()
