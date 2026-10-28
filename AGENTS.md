@@ -119,3 +119,18 @@ PM029 forbids new third-party code without exact prior owner/license ratificatio
 terminal implementation has no exception. Run dependency authority checks before
 landing dependency or terminal work. Source-health and visual ownership remain
 blocking; detailed command/body examples live in the procedures.
+
+## Session hygiene and context
+
+Externalize state continuously (claims, logs, records, checkpoints); the context
+window holds only the active working set. Checkpoint at every lane boundary into
+one durable recovery file (state, exact next command), report clear-safe to the
+project manager, and let the owner compact or clear the session; never carry a
+finished lane's context into the next lane. No silent idles: send the manager a
+one-line status (completed artifact, blocker, or what is awaited) before ending
+any idle turn. Messages to heavy sessions reference file paths, never inline bulk
+content. Delegate read-heavy, conclusion-cheap work (broad searches, long-log
+digestion, census sweeps) to subagents that return conclusions so bulk content
+stays out of the parent window; lane-critical judgment and implementation stay in
+the owning session, and a subagent's own cost must be weighed against the context
+it spares the parent.
