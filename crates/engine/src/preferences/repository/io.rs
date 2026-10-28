@@ -10,9 +10,9 @@ use uuid::Uuid;
 use crate::ir::serialization::to_json_bytes;
 
 use super::model::{
-    CANONICALIZATION_VERSION, GenerationManifest, GenerationRef, HeadRecord,
-    REPOSITORY_FORMAT_VERSION, RepositoryError, RepositorySnapshot, RepositoryState,
-    UnknownEnvelopeRef, UnreadableEvidence,
+    CANONICALIZATION_VERSION, CURRENT_WRITE_VERSION, GenerationManifest, GenerationRef, HeadRecord,
+    MutationReceipt, REPOSITORY_FORMAT_VERSION_V1, RepositoryError, RepositorySnapshot,
+    RepositoryState, UnknownEnvelopeRef, UnreadableEvidence, is_supported_format_version,
 };
 
 pub(crate) const HEAD_FILE: &str = "head.json";
@@ -79,7 +79,7 @@ pub(crate) fn load_snapshot(
     root: &Path,
     generation: &GenerationRef,
 ) -> Result<RepositorySnapshot, RepositoryError> {
-    if generation.format_version != REPOSITORY_FORMAT_VERSION {
+    if !is_supported_format_version(generation.format_version) {
         return Err(RepositoryError::UnsupportedRepositoryVersion(
             generation.format_version,
         ));
@@ -100,13 +100,106 @@ pub(crate) fn load_snapshot(
     let manifest: GenerationManifest = serde_json::from_slice(&manifest_bytes)?;
     validate_manifest(generation, &manifest)?;
     validate_unknown_payloads(&directory, &manifest.state)?;
+    let receipts = reconstruct_receipts(root, generation, &manifest)?;
     Ok(RepositorySnapshot {
         generation: generation.clone(),
         installation: manifest.state.installation,
         user: manifest.state.user,
         unknown_envelopes: manifest.state.unknown_envelopes,
-        receipts: manifest.state.receipts,
+        receipts,
     })
+}
+
+/// Reconstruct the complete ordered audit log for `head`.
+///
+/// A v1 generation embeds the full accumulated log, so it is returned directly.
+/// A v2 generation stores only its own receipt delta; the full log is the
+/// concatenation of every ancestor's delta, assembled by walking the parent
+/// chain newest-first and verifying each parent against the digest the child
+/// recorded (GP_C04 sections 4/5: the parent/reference graph validated by
+/// integrity facts). The walk stops at the genesis generation or at a v1
+/// ancestor, whose manifest already carries the complete earlier prefix — which
+/// is how a store that began on v1 and advanced to v2 reconstructs correctly.
+pub(crate) fn reconstruct_receipts(
+    root: &Path,
+    head: &GenerationRef,
+    head_manifest: &GenerationManifest,
+) -> Result<Vec<MutationReceipt>, RepositoryError> {
+    if head.format_version == REPOSITORY_FORMAT_VERSION_V1 {
+        return Ok(head_manifest.state.receipts.clone());
+    }
+    let mut segments = vec![head_manifest.state.receipts.clone()];
+    visit_ancestors(
+        root,
+        head,
+        head_manifest,
+        |_generation, _bytes, manifest| {
+            segments.push(manifest.state.receipts.clone());
+            Ok(())
+        },
+    )?;
+    segments.reverse();
+    Ok(segments.into_iter().flatten().collect())
+}
+
+/// Walk a v2 head's parent chain newest-first, invoking `visit` with each
+/// verified ancestor (its generation number, its manifest bytes, the parsed
+/// manifest). This is the single admission gate shared by receipt
+/// reconstruction and exact-backup copying: an ancestor must match the digest
+/// its child recorded and carry a supported format/canonicalization version and
+/// the repository's own identity, or the walk refuses (fail closed). It stops at
+/// genesis or at the first v1 ancestor, whose manifest already holds the
+/// complete earlier prefix. Each parent link must strictly descend in generation
+/// number, so a malformed or cyclic chain is refused and the walk always
+/// terminates.
+pub(crate) fn visit_ancestors(
+    root: &Path,
+    head: &GenerationRef,
+    head_manifest: &GenerationManifest,
+    mut visit: impl FnMut(u64, &[u8], &GenerationManifest) -> Result<(), RepositoryError>,
+) -> Result<(), RepositoryError> {
+    if head.format_version == REPOSITORY_FORMAT_VERSION_V1 {
+        return Ok(());
+    }
+    let mut parent_generation = head_manifest.parent_generation;
+    let mut parent_digest = head_manifest.parent_canonical_manifest_digest.clone();
+    let mut child_generation = head.generation;
+    while let Some(generation) = parent_generation {
+        if generation >= child_generation {
+            return Err(RepositoryError::Invariant(
+                "generation chain parent does not strictly precede its child".to_owned(),
+            ));
+        }
+        let expected = parent_digest.ok_or_else(|| {
+            RepositoryError::Invariant(
+                "v2 generation references a parent without an integrity digest".to_owned(),
+            )
+        })?;
+        let bytes = std::fs::read(generation_dir(root, generation).join(MANIFEST_FILE))?;
+        if digest_bytes(&bytes) != expected {
+            return Err(RepositoryError::Invariant(
+                "generation chain parent digest mismatch".to_owned(),
+            ));
+        }
+        let manifest: GenerationManifest = serde_json::from_slice(&bytes)?;
+        if manifest.generation != generation
+            || manifest.repository_id != head.repository_id
+            || manifest.canonicalization_version != CANONICALIZATION_VERSION
+            || !is_supported_format_version(manifest.format_version)
+        {
+            return Err(RepositoryError::Invariant(
+                "generation chain parent failed identity or format validation".to_owned(),
+            ));
+        }
+        visit(generation, &bytes, &manifest)?;
+        if manifest.format_version == REPOSITORY_FORMAT_VERSION_V1 {
+            break;
+        }
+        child_generation = generation;
+        parent_generation = manifest.parent_generation;
+        parent_digest = manifest.parent_canonical_manifest_digest.clone();
+    }
+    Ok(())
 }
 
 fn validate_manifest(
@@ -188,20 +281,39 @@ pub(crate) fn write_generation(
     root: &Path,
     repository_id: &str,
     generation: u64,
-    parent_generation: Option<u64>,
+    parent: Option<&GenerationRef>,
     writer_instance: &str,
     state: &RepositoryState,
     unknown_bytes: &std::collections::BTreeMap<String, Vec<u8>>,
 ) -> Result<GenerationRef, RepositoryError> {
+    let parent_generation = parent.map(|parent| parent.generation);
+    // v2 persists only this generation's receipt delta; the complete audit log
+    // lives as the parent-digest-verified chain of deltas (see
+    // reconstruct_receipts). Values and unknown envelopes stay complete per
+    // generation — they are bounded by the key set, not by generation count, so
+    // only the receipt log needed deduplication to stop quadratic growth.
+    let manifest_state = RepositoryState {
+        installation: state.installation.clone(),
+        user: state.user.clone(),
+        unknown_envelopes: state.unknown_envelopes.clone(),
+        receipts: state
+            .receipts
+            .iter()
+            .filter(|receipt| receipt.resulting_generation == generation)
+            .cloned()
+            .collect(),
+    };
     let manifest = GenerationManifest {
-        format_version: REPOSITORY_FORMAT_VERSION,
+        format_version: CURRENT_WRITE_VERSION,
         canonicalization_version: CANONICALIZATION_VERSION,
         repository_id: repository_id.to_owned(),
         generation,
         parent_generation,
+        parent_canonical_manifest_digest: parent
+            .map(|parent| parent.canonical_manifest_digest.clone()),
         committed_order: generation,
         writer_instance: writer_instance.to_owned(),
-        state: state.clone(),
+        state: manifest_state,
     };
     let manifest_bytes = canonical_bytes(&manifest)?;
     let generation_ref = GenerationRef {
@@ -211,7 +323,7 @@ pub(crate) fn write_generation(
         canonical_manifest_digest: digest_bytes(&manifest_bytes),
         committed_order: generation,
         writer_instance: writer_instance.to_owned(),
-        format_version: REPOSITORY_FORMAT_VERSION,
+        format_version: CURRENT_WRITE_VERSION,
         canonicalization_version: CANONICALIZATION_VERSION,
     };
 
@@ -322,9 +434,11 @@ pub(crate) fn list_valid_generations(root: &Path) -> Vec<GenerationRef> {
             format_version: manifest.format_version,
             canonicalization_version: manifest.canonicalization_version,
         };
-        if validate_manifest(&generation, &manifest).is_ok()
-            && validate_unknown_payloads(&path, &manifest.state).is_ok()
-        {
+        // Admit a recovery candidate only if it loads completely, including a
+        // valid parent chain: a descendant whose ancestor is missing or corrupt
+        // cannot actually be restored, so it must not be advertised even though
+        // its own manifest validates in isolation.
+        if load_snapshot(root, &generation).is_ok() {
             result.push(generation);
         }
     }

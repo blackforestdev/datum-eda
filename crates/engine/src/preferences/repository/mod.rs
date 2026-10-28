@@ -329,7 +329,7 @@ impl PreferenceRepository {
             &self.root,
             &expected.repository_id,
             next_generation,
-            Some(expected.generation),
+            Some(expected),
             &metadata.writer_instance,
             &state,
             &unknown_bytes,
@@ -520,5 +520,7 @@ fn state_digests(state: &RepositoryState) -> Result<BTreeMap<String, String>, Re
         .collect()
 }
 
+#[cfg(test)]
+mod generation_growth_tests;
 #[cfg(test)]
 mod tests;

@@ -126,7 +126,7 @@ impl PreferenceRepository {
             &self.root,
             &candidate.repository_id,
             next,
-            Some(candidate.generation),
+            Some(candidate),
             &metadata.writer_instance,
             &state,
             &unknown_bytes,
@@ -168,15 +168,31 @@ impl PreferenceRepository {
         let target = self.root.join("backups").join(&backup_id);
         std::fs::create_dir_all(&target)?;
         let snapshot = load_snapshot(&self.root, expected)?;
-        write_new_file(
-            &target.join("manifest.json"),
-            &std::fs::read(source.join("manifest.json"))?,
-        )?;
+        let head_bytes = std::fs::read(source.join("manifest.json"))?;
+        let head_manifest: GenerationManifest = serde_json::from_slice(&head_bytes)?;
+        write_new_file(&target.join("manifest.json"), &head_bytes)?;
         for envelope in snapshot.unknown_envelopes.values() {
             let source_path = io::opaque_path(&source, envelope);
             let target_path = io::opaque_path(&target, envelope);
             write_immutable_content(&target_path, &std::fs::read(source_path)?)?;
         }
+        // Copy the verified ancestor manifests so the backup reconstructs its full
+        // v2 audit log against its own root (GP_C04 §9: a backup carries every
+        // receipt needed to restore and independently verify it). The shared
+        // ancestor visitor validates each parent's digest, format and identity; a
+        // v1 backup holds the full log inline and needs no ancestor subtree.
+        io::visit_ancestors(
+            &self.root,
+            expected,
+            &head_manifest,
+            |generation, bytes, _manifest| {
+                let directory = generation_dir(&target, generation);
+                std::fs::create_dir_all(&directory)?;
+                write_new_file(&directory.join("manifest.json"), bytes)?;
+                Ok(())
+            },
+        )?;
+        sync_parent(&target)?;
         let backup = ExactBackupRef {
             backup_id,
             source_generation: expected.clone(),
@@ -205,12 +221,17 @@ impl PreferenceRepository {
             return Err(RepositoryError::BackupIncomplete(backup.backup_id.clone()));
         }
         let manifest: GenerationManifest = serde_json::from_slice(&bytes)?;
+        // Reconstruct the full audit log against the backup's OWN root (never the
+        // live store) by walking the ancestor manifests copied beside it. A
+        // missing or corrupt ancestor makes the backup incomplete.
+        let receipts = io::reconstruct_receipts(&root, &backup.source_generation, &manifest)
+            .map_err(|_| RepositoryError::BackupIncomplete(backup.backup_id.clone()))?;
         let snapshot = RepositorySnapshot {
             generation: backup.source_generation.clone(),
             installation: manifest.state.installation,
             user: manifest.state.user,
             unknown_envelopes: manifest.state.unknown_envelopes,
-            receipts: manifest.state.receipts,
+            receipts,
         };
         self.backup_unknown_bytes(backup, &snapshot)?;
         Ok(snapshot)

@@ -7,8 +7,29 @@ use uuid::Uuid;
 
 use crate::preferences::PreferenceKey;
 
-pub const REPOSITORY_FORMAT_VERSION: u32 = 1;
+/// Legacy repository format: every generation manifest embeds the complete
+/// accumulated receipt log. Retained for reading pre-existing stores.
+pub const REPOSITORY_FORMAT_VERSION_V1: u32 = 1;
+/// Current repository format: each generation manifest stores only the receipt
+/// delta produced by that generation (receipts whose `resulting_generation`
+/// equals the generation), and carries the parent manifest digest so the full
+/// audit log is reconstructed by walking the integrity-verified parent chain.
+/// The repository/manifest shape and this format-version evolution axis are
+/// governed by GP_C04 (sections 3, 6, 9, 10); v2 realizes the per-mutation
+/// receipt model (section 10) without the quadratic full-copy the contract
+/// never required.
+pub const REPOSITORY_FORMAT_VERSION_V2: u32 = 2;
+/// The format every new generation is written in.
+pub const CURRENT_WRITE_VERSION: u32 = REPOSITORY_FORMAT_VERSION_V2;
 pub const CANONICALIZATION_VERSION: u32 = 1;
+
+/// Whether this build can read a generation written in the given format.
+pub fn is_supported_format_version(version: u32) -> bool {
+    matches!(
+        version,
+        REPOSITORY_FORMAT_VERSION_V1 | REPOSITORY_FORMAT_VERSION_V2
+    )
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GenerationRef {
@@ -122,6 +143,14 @@ pub(crate) struct GenerationManifest {
     pub repository_id: String,
     pub generation: u64,
     pub parent_generation: Option<u64>,
+    /// The parent generation's `canonical_manifest_digest`. This is the
+    /// integrity reference that binds a v2 generation to the exact bytes of its
+    /// parent (GP_C04 sections 4 and 5: the parent/reference graph validated by
+    /// integrity facts), letting a delta-receipt store reconstruct the complete
+    /// audit log by walking a verified chain. Absent on v1 manifests and on the
+    /// genesis generation, so it defaults to `None` when reading older stores.
+    #[serde(default)]
+    pub parent_canonical_manifest_digest: Option<String>,
     pub committed_order: u64,
     pub writer_instance: String,
     pub state: RepositoryState,
