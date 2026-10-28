@@ -1,0 +1,13 @@
+{
+  "task": "GUI-MARKING-MENU",
+  "step": "MM-C06",
+  "gate": "ACCEPT",
+  "date": "2026-10-27",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:MM-C06-REVISE:2026-10-27",
+  "authority": "Standing project-manager appointment (activated 3cdeb4ec; PM059 standing clauses); classification owner_reserved phase-acceptance, delegated (see the classification in the final acceptance record).",
+  "disposition": "GUI-MARKING-MENU: revise - a confirmed ordinary-workflow defect blocks acceptance: pcb.multiselect is unreachable from any production invocation (marking_menu_key_for_target returns only the 7 single/empty keys; the governed menu model defines the wheel; only tests set it), so the proven Align navigation never reaches a real designer. Additionally the MM-C04 proof is programmatic-invocation-only (hidden window, direct calls) and no ordinary-input run of the delivered shell exists. The lane returns to MM-C03 execution for this bounded correction under the original MM-C02 authorization; MM-C04/C05/C06 return to pending for the corrected candidate.",
+  "retained_evidence": "All existing receipts stay in the lane record and are REUSED, not re-run: 3541d0ea shell + audit review + 9ad4b118 F1 repair; 5ae409eb Runtime integration proof (supplemental, honestly scoped); audit's C05 independent replay (valid for the unchanged baseline; C05 re-review is the DELTA on the fix only); 42b3b525 wedge form parity; the C06 disabled-action inventory.",
+  "bounded_correction_scope": "Contextual key resolution only (selected_count -> pcb.multiselect when >1; single -> per-type; none -> pcb.empty) in runtime_selection_menu.rs + runtime_geometry_helpers.rs + focused tests; NO enabled verbs, no write path, no profile migration. C04 re-proof = the 3-scenario ordinary-OS-input run (single-target wheel; multi-select -> pcb.multiselect -> Align -> back; disabled leaf -> dismiss) with screenshots and before/after source+journal byte identity. Final C06 acceptance re-renders from the amended acceptance record against the corrected candidate.",
+  "owner_revisable": true
+}

@@ -7437,10 +7437,25 @@
       }
     },
     {
-      "authorization": "owner_decision",
+      "authorization": "execution",
       "canonical_next": false,
+      "claim": {
+        "agent": "frontend-dev-01",
+        "claimed_at": "2026-10-28T00:52:50Z",
+        "expires_at": "2026-10-28T08:52:50Z",
+        "harness": "claude-code",
+        "head": "49b048b63b76427fd76665433c357b66aabb6d5a",
+        "heartbeat_at": "2026-10-28T00:52:50Z",
+        "scope": [
+          "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
+          "crates/gui-app/src/editor/runtime_selection_menu.rs",
+          "crates/gui-app/src/application/main_tests.rs"
+        ],
+        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
-        "canonical_next_step_id": "MM-C06",
+        "canonical_next_step_id": "MM-C03",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -7523,16 +7538,7 @@
           },
           {
             "action": "Implement the authorized shared menu-model-driven inert shell without operation invocation.",
-            "completion_evidence": [
-              {
-                "kind": "commit",
-                "revision": "3541d0ea027f3620e8891f97d618a586ac52005a"
-              },
-              {
-                "kind": "commit",
-                "revision": "9ad4b1185027e3ba22f71ec1e825e2b4cd69020f"
-              }
-            ],
+            "completion_evidence": [],
             "depends_on": [
               "MM-C02"
             ],
@@ -7544,16 +7550,11 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "complete"
+            "status": "in_progress"
           },
           {
             "action": "Prove usable native shell navigation, context, accessibility, refusal and nonmutation.",
-            "completion_evidence": [
-              {
-                "kind": "commit",
-                "revision": "5ae409eb4222c1da8ab880beaee9eba584331961"
-              }
-            ],
+            "completion_evidence": [],
             "depends_on": [
               "MM-C03"
             ],
@@ -7565,16 +7566,11 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "complete"
+            "status": "pending"
           },
           {
             "action": "Obtain independent replay of the complete exact shell and account for every finding.",
-            "completion_evidence": [
-              {
-                "kind": "commit",
-                "revision": "42b3b52514d4fbe5ef8321d15a7c5d89b5f8d383"
-              }
-            ],
+            "completion_evidence": [],
             "depends_on": [
               "MM-C04"
             ],
@@ -7586,7 +7582,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "complete"
+            "status": "pending"
           },
           {
             "action": "Obtain exact owner acceptance of the inert shell and an unselected write-path handoff.",
@@ -7653,7 +7649,7 @@
       "key": "GUI-MARKING-MENU",
       "order": 29,
       "parallel": true,
-      "state": "specified",
+      "state": "in_progress",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
