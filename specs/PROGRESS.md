@@ -378,12 +378,12 @@
 - **Expose the radial marking-menu shell to menu accessibility nodes** (`MM-RADIAL-A11Y-NODES`; `dat-mm-radial-a11y-node-coverage-gtww`).
    Emit the radial marking-menu shell through menu_accessibility_nodes (node-model-only, truthful inert-pilot values, stable slot order, available->is_enabled flip documented) using the existing MenuAccessibleNode/MenuItem protocol types in gui-protocol accessibility.rs. Hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor; existing protocol types only. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md`.
-- **Repair native_selection_overlay::mask tests for the document-aware path** (`NATIVE-SELECTION-MASK-TESTS`; `dat-native-selection-mask-tests-fail-4dyl`).
-   Update the three failing native_selection_overlay::mask tests (mask_tests.rs / related_fixture.rs) to assert through the document-aware presentation path (projection_keys / schematic_documents[].keys) instead of the stale flat schematic_keys that 037ec5b6's per-document path leaves empty; the forged-capture test forges the consulted field so Err is still asserted. Test-only; source behavior/integrity verified intact. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`.
 <details>
-<summary>Completed history (1 landed records)</summary>
+<summary>Completed history (2 landed records)</summary>
 
+- **Repair native_selection_overlay::mask tests for the document-aware path** (`NATIVE-SELECTION-MASK-TESTS`; `dat-native-selection-mask-tests-fail-4dyl`).
+   Update the three failing native_selection_overlay::mask tests (mask_tests.rs / related_fixture.rs) to assert through the document-aware presentation path (projection_keys / schematic_documents[].keys) instead of the stale flat schematic_keys that 037ec5b6's per-document path leaves empty; the forged-capture test forges the consulted field so Err is still asserted. Test-only; source behavior/integrity verified intact. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`.
 - **Narrow the Cargo cache-cleanup guard for metadata-only incremental reclaim with runtime apps alive** (`CACHE-GUARD-NARROWING`; `dat-mwlp`).
    Bounded PM-authorized guard-narrowing of scripts/manage_cargo_cache.py: a metadata-only incremental reclaim (target/{debug,release}/incremental) may proceed while unrelated runtime apps are alive, gated on the shared build lock + zero Cargo/rustc + positive non-runnable admission + active-exe refusal. Deletion rules, QA companion guards and the retained-cache ceiling unchanged; audit reviews the candidate before --apply. The safer parallel unblock for the GP-CM05E clippy gate. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/AGENT_OPERATIONAL_PROCEDURES.md`.

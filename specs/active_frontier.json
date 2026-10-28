@@ -10328,10 +10328,10 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T16:36:35Z",
-        "expires_at": "2026-10-28T11:20:44Z",
+        "expires_at": "2026-10-28T23:35:00Z",
         "harness": "claude-code",
         "head": "06824410463ef1f3d03551f7d1805f2708ca8996",
-        "heartbeat_at": "2026-10-28T03:20:44Z",
+        "heartbeat_at": "2026-10-28T15:35:00Z",
         "scope": [
           ".beads/issues.jsonl",
           "crates/engine-daemon/src/dispatch.rs",
@@ -18514,10 +18514,10 @@
       "claim": {
         "agent": "frontend-dev-01",
         "claimed_at": "2026-10-28T02:32:28Z",
-        "expires_at": "2026-10-28T10:32:28Z",
+        "expires_at": "2026-10-28T23:35:00Z",
         "harness": "claude-code",
         "head": "4d0f3e687448205e590f6283389024b07197c6ae",
-        "heartbeat_at": "2026-10-28T02:32:28Z",
+        "heartbeat_at": "2026-10-28T15:35:00Z",
         "scope": [
           "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
           "crates/gui-app/src/terminal/terminal_accessibility_bridge/marking_a11y_tests.rs",
@@ -18563,38 +18563,21 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "frontend-dev-01",
-        "claimed_at": "2026-10-28T02:32:28Z",
-        "expires_at": "2026-10-28T10:32:28Z",
-        "harness": "claude-code",
-        "head": "4d0f3e687448205e590f6283389024b07197c6ae",
-        "heartbeat_at": "2026-10-28T02:32:28Z",
-        "scope": [
-          "crates/gui-render/src/render/native_selection_overlay/mask_tests.rs",
-          "crates/gui-render/src/render/native_selection_overlay/related_fixture.rs"
-        ],
-        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "dependencies": [],
       "governing_docs": [
         "docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md"
       ],
       "issue_id": "dat-native-selection-mask-tests-fail-4dyl",
       "key": "NATIVE-SELECTION-MASK-TESTS",
+      "landing_commit": "51d034c2",
       "order": 103,
       "parallel": true,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Update the three failing native_selection_overlay::mask tests (mask_tests.rs / related_fixture.rs) to assert through the document-aware presentation path (projection_keys / schematic_documents[].keys) instead of the stale flat schematic_keys that 037ec5b6's per-document path leaves empty; the forged-capture test forges the consulted field so Err is still asserted. Test-only; source behavior/integrity verified intact.",
       "title": "Repair native_selection_overlay::mask tests for the document-aware path",
-      "unblocks": [],
-      "work_purpose": {
-        "kind": "maintenance",
-        "rationale": "Repairs the three native_selection_overlay::mask tests against the document-aware presentation path introduced by 037ec5b6; test-only, no product or source-behavior change."
-      }
+      "unblocks": []
     },
     {
       "authorization": "none",
