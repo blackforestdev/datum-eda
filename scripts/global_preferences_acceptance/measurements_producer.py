@@ -111,8 +111,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bundle-root", required=True, type=Path)
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release/datum-eda")
-    parser.add_argument("--variant", default="describe/defaults",
-                        help="release-query variant as <verb>/<store>; S2 proof default is describe/defaults")
+    parser.add_argument("--variant", default="all",
+                        help="release-query <verb>/defaults, or 'all' for every defaults verb (S2 headless timed subset)")
     parser.add_argument("--timeout", type=float, default=15)
     parser.add_argument("--scratch", type=Path, default=workspace.scratch("gp-cm05e-measurement-roots"))
     args = parser.parse_args(argv)
@@ -120,9 +120,13 @@ def main(argv=None):
     binary = args.binary.resolve()
     if not (binary.is_file() and os.access(binary, os.X_OK)):
         parser.error("release binary must be executable")
-    verb, _, store = args.variant.partition("/")
-    if verb not in RELEASE_QUERY_ARGV or store != "defaults":
-        parser.error("S2 proof currently implements release-query <verb>/defaults only")
+    if args.variant == "all":
+        verbs = list(RELEASE_QUERY_ARGV)
+    else:
+        verb, _, store = args.variant.partition("/")
+        if verb not in RELEASE_QUERY_ARGV or store != "defaults":
+            parser.error("release-query variant must be <verb>/defaults or 'all'")
+        verbs = [verb]
 
     args.bundle_root.mkdir(parents=True, exist_ok=True)
     scratch = args.scratch.resolve()
@@ -137,25 +141,26 @@ def main(argv=None):
     input_manifest_sha256 = digest(canonical([{"path": str(binary), "sha256": binary_sha256}]))
     environment_id = "headless-linux-x86_64"
 
-    measurement = build_timed_measurement(
-        capture, budget_id="release-query", variant_id=args.variant,
-        argv=RELEASE_QUERY_ARGV[verb], binary=binary, candidate_revision=revision,
-        binary_sha256=binary_sha256, input_manifest_sha256=input_manifest_sha256,
-        matrix_sha256=matrix_sha256, environment_id=environment_id,
-        timeout=args.timeout, scratch=scratch)
+    produced = []
+    for verb in verbs:
+        produced.append(build_timed_measurement(
+            capture, budget_id="release-query", variant_id=f"{verb}/defaults",
+            argv=RELEASE_QUERY_ARGV[verb], binary=binary, candidate_revision=revision,
+            binary_sha256=binary_sha256, input_manifest_sha256=input_manifest_sha256,
+            matrix_sha256=matrix_sha256, environment_id=environment_id,
+            timeout=args.timeout, scratch=scratch))
 
     bundle = Bundle(args.bundle_root.resolve(), list(capture.inventory.values()))
-    measured_p95 = []
-    try:
-        meas.validate_trials(measurement, bundle)
-    except Exception as error:  # preserve + diagnose; never re-roll
-        print(f"MEASUREMENT VALIDATION FAILED (preserved): {error}", file=sys.stderr)
-        return 1
-    for trial in measurement["trials"]:
-        elapsed = [s["elapsed_ns"] for s in trial["samples"]]
-        measured_p95.append(meas.percentile(elapsed))
-    print(f"release-query {args.variant}: validate_trials ACCEPTED; "
-          f"per-trial p95 ns = {measured_p95} (budget p95 <= 50ms)")
+    for measurement in produced:
+        try:
+            meas.validate_trials(measurement, bundle)
+        except Exception as error:  # preserve + diagnose; never re-roll
+            print(f"MEASUREMENT VALIDATION FAILED ({measurement['variant_id']}, preserved): {error}",
+                  file=sys.stderr)
+            return 1
+        p95 = [meas.percentile([s["elapsed_ns"] for s in t["samples"]]) for t in measurement["trials"]]
+        print(f"release-query {measurement['variant_id']}: validate_trials ACCEPTED; "
+              f"per-trial p95 ns = {p95} (budget p95 <= 50ms)")
     return 0
 
 
