@@ -18591,31 +18591,18 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "dev-agent-02",
-        "claimed_at": "2026-10-28T20:32:00Z",
-        "expires_at": "2026-10-29T04:32:00Z",
-        "harness": "claude-code",
-        "head": "9f3650615aca290b3928fbef3f31869ae121a49a",
-        "heartbeat_at": "2026-10-28T20:32:00Z",
-        "scope": [
-          "crates/engine/src/preferences/project_genesis.rs",
-          "crates/engine/src/substrate/project_resolver.rs"
-        ],
-        "session": "de24411e-c28b-4f60-864c-7b26ae23972c",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "dependencies": [],
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md"
       ],
       "issue_id": "dat-genesis-concurrent-writer-wouldblock-9jey",
       "key": "GENESIS-CONCURRENCY-REPLAY",
+      "landing_commit": "9226bc49c62d195f7134353ee5ecccd7b8c73068",
       "order": 105,
       "parallel": false,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock.",
       "title": "Genesis concurrency: idempotent replay on finalize-lease contention",
       "unblocks": [

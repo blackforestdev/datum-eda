@@ -250,7 +250,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (43 landed records)</summary>
+<summary>Completed history (44 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -381,12 +381,12 @@
 - **Narrow the Cargo cache-cleanup guard for metadata-only incremental reclaim with runtime apps alive** (`CACHE-GUARD-NARROWING`; `dat-mwlp`).
    Bounded PM-authorized guard-narrowing of scripts/manage_cargo_cache.py: a metadata-only incremental reclaim (target/{debug,release}/incremental) may proceed while unrelated runtime apps are alive, gated on the shared build lock + zero Cargo/rustc + positive non-runnable admission + active-exe refusal. Deletion rules, QA companion guards and the retained-cache ceiling unchanged; audit reviews the candidate before --apply. The safer parallel unblock for the GP-CM05E clippy gate. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Genesis concurrency: idempotent replay on finalize-lease contention** (`GENESIS-CONCURRENCY-REPLAY`; `dat-genesis-concurrent-writer-wouldblock-9jey`).
+   Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock. *state `landed`; authorization `none`.*
+   *Dependencies:* none. *Unblocks:* deterministic concurrent-genesis idempotency in the GP-CM03 standing proof. *Governing:* `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`.
 
 </details>
 
-- **Genesis concurrency: idempotent replay on finalize-lease contention** (`GENESIS-CONCURRENCY-REPLAY`; `dat-genesis-concurrent-writer-wouldblock-9jey`).
-   Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock. *state `in_progress`; authorization `execution`.*
-   *Dependencies:* none. *Unblocks:* deterministic concurrent-genesis idempotency in the GP-CM03 standing proof. *Governing:* `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
