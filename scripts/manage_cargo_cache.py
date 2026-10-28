@@ -21,8 +21,9 @@ ROOT = guard.ROOT
 ACTIVE_NAMES = {"cargo", "rustc", "datum-gui", "datum-gui-app", "datum-eda", "eda-engine-daem", "eda-engine-daemon"}
 
 
-def active_processes(proc_root: Path = Path("/proc")) -> list[str]:
+def active_processes(proc_root: Path = Path("/proc"), *, builds_only: bool = False) -> list[str]:
     active: list[str] = []
+    names = {"cargo", "rustc"} if builds_only else ACTIVE_NAMES
     for process in proc_root.iterdir():
         if not process.name.isdigit():
             continue
@@ -30,7 +31,7 @@ def active_processes(proc_root: Path = Path("/proc")) -> list[str]:
             name = (process / "comm").read_text().strip()
         except FileNotFoundError:
             continue  # Process exited during enumeration.
-        if name in ACTIVE_NAMES:
+        if name in names:
             active.append(f"{process.name} ({name})")
     return active
 
@@ -71,12 +72,14 @@ def validate_cleanup_path(root: Path, relative: str) -> Path:
     return path
 
 
-def active_cache_users(paths: list[Path], proc_root: Path, *, uninspectable: list[str] | None = None) -> list[str]:
+def active_cache_users(paths: list[Path], proc_root: Path, *, uninspectable: list[str] | None = None,
+                       include_mappings: bool = False) -> list[str]:
     """Also protect a selected tree running an executable with an unknown name."""
     users: list[str] = []
     for process in proc_root.iterdir():
         if not process.name.isdigit():
             continue
+        executable = None
         try:
             executable = (process / "exe").readlink()
         except FileNotFoundError:
@@ -88,10 +91,32 @@ def active_cache_users(paths: list[Path], proc_root: Path, *, uninspectable: lis
                 continue
             if uninspectable is not None:
                 uninspectable.append(process.name)
-                continue
-            raise
-        if any(executable == path or path in executable.parents for path in paths):
+                if not include_mappings:
+                    continue
+            else:
+                raise
+        if executable is not None and any(executable == path or path in executable.parents for path in paths):
             users.append(f"{process.name} ({executable})")
+        if include_mappings:
+            try:
+                mappings = (process / "maps").read_text()
+            except FileNotFoundError:
+                continue
+            except PermissionError:
+                if process.stat().st_uid == os.getuid():
+                    if executable is not None or uninspectable is None:
+                        raise guard.ResourcePolicyError("cannot inspect executable mappings for process " + process.name)
+                    # Both proc views are protected. The metadata caller has
+                    # already proved the entire tree non-runnable; retain that
+                    # original fallback without claiming this process is idle.
+                continue
+            for line in mappings.splitlines():
+                fields = line.split(maxsplit=5)
+                if len(fields) != 6 or "x" not in fields[1] or not fields[5].startswith("/"):
+                    continue
+                mapped = Path(fields[5].removesuffix(" (deleted)"))
+                if any(mapped == path or path in mapped.parents for path in paths):
+                    users.append(f"{process.name} (executable mapping {mapped})")
     return users
 
 
@@ -102,7 +127,10 @@ def clean_caches(
     # Share the build guard's lock and fail immediately rather than waiting to
     # delete a cache whose ownership may have changed while this command waited.
     with guard.acquire_lock(lock_path, 0):
-        active = active_processes(proc_root)
+        # Only positively admitted, non-runnable incremental metadata may be
+        # reclaimed alongside unrelated apps. Ordinary deletion still requires
+        # every recognized build/application process to be absent.
+        active = active_processes(proc_root, builds_only=metadata_only)
         if active:
             raise guard.ResourcePolicyError("cleanup refused while builds/apps are active: " + ", ".join(active))
         paths = [validate_cleanup_path(root, relative) for relative in relative_paths]
@@ -126,14 +154,14 @@ def clean_incremental_metadata(root: Path, relatives: list[str], paths: list[Pat
         trees = [stack.enter_context(metadata.MetadataTree(root, relative)) for relative in dict.fromkeys(relatives)]
         snapshots = [tree.capture() for tree in trees]
         uninspectable = []
-        users = active_cache_users(paths, proc_root, uninspectable=uninspectable)
+        users = active_cache_users(paths, proc_root, uninspectable=uninspectable, include_mappings=True)
         if users:
             raise guard.ResourcePolicyError("cleanup refused for active cache executables: " + ", ".join(users))
         for tree, snapshot in zip(trees, snapshots):
             tree.verify_named_root()
             if tree.capture() != snapshot:
                 raise guard.ResourcePolicyError("incremental metadata inventory changed before deletion")
-        active = active_processes(proc_root)
+        active = active_processes(proc_root, builds_only=True)
         if active:
             raise guard.ResourcePolicyError("cleanup refused while builds/apps are active: " + ", ".join(active))
         files = sum(sum(digest is not None for _, digest in snapshot.values()) for snapshot in snapshots)

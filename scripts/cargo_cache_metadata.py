@@ -18,6 +18,9 @@ BINS = {"query-cache.bin", "dep-graph.bin", "dep-graph.part.bin", "work-products
 CRATE = re.compile(r"[A-Za-z0-9_]+-[a-z0-9]+\Z")
 SESSION = re.compile(r"s-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+\Z")
 LOCK = re.compile(r"s-[a-z0-9]+-[a-z0-9]+\.lock\Z")
+OBJECT = re.compile(r"[a-z0-9]+\.o\Z")
+BITCODE = re.compile(r"[a-z0-9]+\.pre-lto\.bc\Z")
+LTO_KEY = re.compile(rb"[a-z0-9]+ [0-9A-F]{40}\n")
 FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
 
 
@@ -32,6 +35,25 @@ def core(value: os.stat_result) -> tuple:
 
 def refuse(detail: str) -> None:
     raise guard.ResourcePolicyError(f"incremental metadata-only cleanup refused: {detail}")
+
+
+def relocatable_header(header: bytes) -> bool:
+    """Recognize ELF relocatables, never executable or shared-object headers."""
+    if len(header) < 16 or header[:4] != b"\x7fELF" or header[6] != 1:
+        return False
+    if header[4] not in (1, 2) or header[5] not in (1, 2):
+        return False
+    wide = header[4] == 2
+    size = 64 if wide else 52
+    if len(header) < size:
+        return False
+    endian = "little" if header[5] == 1 else "big"
+    integer = lambda start, count: int.from_bytes(header[start:start + count], endian)
+    return (integer(16, 2) == 1 and integer(20, 4) == 1
+            and integer(24, 8 if wide else 4) == 0
+            and integer(32 if wide else 28, 8 if wide else 4) == 0
+            and integer(52 if wide else 40, 2) == size
+            and integer(56 if wide else 44, 2) == 0)
 
 
 class MetadataTree:
@@ -81,17 +103,29 @@ class MetadataTree:
         lock = len(parts) == 2 and LOCK.fullmatch(name)
         metadata = len(parts) == 3 and name == "metadata.rmeta"
         binary = len(parts) == 3 and name in BINS
-        if not (lock or metadata or binary):
+        object_file = len(parts) == 3 and OBJECT.fullmatch(name)
+        bitcode = len(parts) == 3 and BITCODE.fullmatch(name)
+        lto_keys = len(parts) == 3 and name == "thin-lto-past-keys.bin"
+        if not (lock or metadata or binary or object_file or bitcode or lto_keys):
             refuse(f"unknown compiler metadata filename: {relative}")
         descriptor = os.open(name, FLAGS | os.O_NONBLOCK, dir_fd=directory)
         with os.fdopen(descriptor, "rb") as source:
             if identity(os.fstat(source.fileno())) != identity(before):
                 refuse(f"metadata file changed while opening: {relative}")
-            magic = source.read(8)
+            magic = source.read(64)
             if lock:
                 valid = before.st_size == 0 and not magic
             elif metadata:
-                valid = magic == b"rust\x00\x00\x00\x0a"
+                valid = magic[:8] == b"rust\x00\x00\x00\x0a"
+            elif object_file:
+                valid = relocatable_header(magic)
+            elif bitcode:
+                valid = magic.startswith(b"BC\xc0\xde")
+            elif lto_keys:
+                # This file has no fixed magic: it is a text table of CGU names
+                # and 160-bit uppercase hex keys. Validate every complete row.
+                source.seek(0)
+                valid = before.st_size > 0 and all(LTO_KEY.fullmatch(row) for row in source)
             else:
                 valid = magic.startswith(b"RSIC")
             if not valid:

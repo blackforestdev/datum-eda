@@ -123,6 +123,94 @@ class CargoCacheTests(unittest.TestCase):
 
 
 class IncrementalMetadataTests(CargoCacheTests):
+    @staticmethod
+    def object_header(wide=True, endian="little", kind=1):
+        header = bytearray(64 if wide else 52)
+        header[:7] = b"\x7fELF" + bytes((2 if wide else 1, 1 if endian == "little" else 2, 1))
+        header[16:18] = kind.to_bytes(2, endian)
+        header[20:24] = (1).to_bytes(4, endian)
+        offset = 52 if wide else 40
+        header[offset:offset + 2] = len(header).to_bytes(2, endian)
+        return bytes(header)
+
+    def test_relocatable_objects_and_bitcode_preserve_runtime_files(self):
+        root, session = self.metadata_tree()
+        for wide in (False, True):
+            for endian in ("little", "big"):
+                (session / f"unit{int(wide)}{endian}.o").write_bytes(self.object_header(wide, endian))
+        (session / "unit.pre-lto.bc").write_bytes(b"BC\xc0\xde bitcode")
+        (session / "thin-lto-past-keys.bin").write_bytes(b"unit1 " + b"A" * 40 + b"\n")
+        runtime = self.root / "target/debug/application"
+        runtime.write_bytes(b"retained runtime")
+        self.clean("target/debug/incremental", metadata_only=True, apply=False)
+        self.assertTrue(root.exists())
+        self.clean("target/debug/incremental", metadata_only=True)
+        self.assertFalse(root.exists())
+        self.assertEqual(runtime.read_bytes(), b"retained runtime")
+
+    def test_object_impostors_and_runtime_elf_types_refuse_before_deletion(self):
+        root, session = self.metadata_tree()
+        valid = self.object_header()
+        cases = [b"\x7fELF", valid[:17], valid[:63], b"#!/bin/sh\n", b"BC\xc0\xde",
+                 self.object_header(kind=2), self.object_header(kind=3)]
+        for offset, value in [(4, 0), (5, 0), (6, 0), (20, 0), (24, 1), (32, 1), (52, 0), (56, 1)]:
+            changed = bytearray(valid)
+            changed[offset] = value
+            cases.append(bytes(changed))
+        for content in cases:
+            with self.subTest(header=content.hex()):
+                (session / "unit.o").write_bytes(content)
+                with self.assertRaises(guard.ResourcePolicyError):
+                    self.clean("target/debug/incremental", metadata_only=True)
+                self.assertTrue(root.exists())
+                self.assertTrue((session / "query-cache.bin").exists())
+
+    def test_bitcode_names_headers_and_execute_permissions_are_required(self):
+        root, session = self.metadata_tree()
+        for name, content, mode in [("unit.bc", b"BC\xc0\xde", 0o644),
+                                    ("unit.pre-lto.bc", b"\x7fELF", 0o644),
+                                    ("unit.pre-lto.bc", b"BC\xc0", 0o644),
+                                    ("unit.pre-lto.bc", b"BC\xc0\xde", 0o755),
+                                    ("unit.o", self.object_header(), 0o755)]:
+            path = session / name
+            path.write_bytes(content)
+            path.chmod(mode)
+            with self.subTest(name=name, mode=mode), self.assertRaises(guard.ResourcePolicyError):
+                self.clean("target/debug/incremental", metadata_only=True)
+            self.assertTrue(root.exists())
+            path.unlink()
+
+    def test_thin_lto_keys_validate_every_row_instead_of_a_variable_prefix(self):
+        root, session = self.metadata_tree()
+        path = session / "thin-lto-past-keys.bin"
+        good = b"unit1 " + b"A" * 40 + b"\n"
+        for content in [b"", b"#!/bin/sh\n", good + b"bad row\n", good[:-1],
+                        b"unit1 " + b"a" * 40 + b"\n", b"unit1 " + b"A" * 39 + b"\n"]:
+            path.write_bytes(content)
+            with self.subTest(content=content), self.assertRaises(guard.ResourcePolicyError):
+                self.clean("target/debug/incremental", metadata_only=True)
+            self.assertTrue(root.exists())
+
+    def test_both_protected_proc_views_require_whole_tree_non_runnable_proof(self):
+        root, session = self.metadata_tree()
+        original = Path.read_text
+        def read_text(path, *args, **kwargs):
+            if path == self.proc / "123/maps":
+                raise PermissionError("simulated protected process mappings")
+            return original(path, *args, **kwargs)
+        with self.protected_process(), mock.patch.object(Path, "read_text", read_text):
+            # An executable disguised as an object still refuses BEFORE fallback.
+            impostor = session / "unit.o"
+            impostor.write_bytes(self.object_header(kind=2))
+            with self.assertRaises(guard.ResourcePolicyError):
+                self.clean("target/debug/incremental", metadata_only=True)
+            self.assertTrue(root.exists())
+            impostor.unlink()
+            self.clean("target/debug/incremental", metadata_only=True, apply=False)
+            self.assertTrue(root.exists())
+            self.clean("target/debug/incremental", metadata_only=True)
+        self.assertFalse(root.exists())
+
     def metadata_tree(self, relative="target/debug/incremental"):
         root = self.root / relative
         session = root / "example-abc123/s-session-abc123-working"
@@ -136,6 +224,7 @@ class IncrementalMetadataTests(CargoCacheTests):
         process = self.proc / "123"
         process.mkdir()
         (process / "comm").write_text("system-service")
+        (process / "maps").write_text("")
         original = Path.readlink
         def readlink(path):
             if path == process / "exe":
@@ -225,11 +314,11 @@ class IncrementalMetadataTests(CargoCacheTests):
         self.assertEqual(outside.read_bytes(), b"RSIC retained")
         self.assertTrue(root.exists())
 
-    def test_metadata_mode_retains_active_build_application_cache_user_and_lock_guards(self):
+    def test_metadata_mode_retains_active_build_cache_user_and_lock_guards(self):
         root, session = self.metadata_tree()
         process = self.proc / "123"
         process.mkdir()
-        for name in ["cargo", "rustc", "datum-gui", "eda-engine-daem"]:
+        for name in ["cargo", "rustc"]:
             (process / "comm").write_text(name)
             with self.subTest(name=name), self.assertRaises(guard.ResourcePolicyError):
                 self.clean("target/debug/incremental", metadata_only=True)
@@ -240,6 +329,87 @@ class IncrementalMetadataTests(CargoCacheTests):
         with self.lock.open("w") as held:
             fcntl.flock(held.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             with self.assertRaises(guard.ResourcePolicyError): self.clean("target/debug/incremental", metadata_only=True)
+        self.assertTrue(root.exists())
+
+    def test_metadata_mode_preserves_running_apps_outside_selected_cache(self):
+        process = self.proc / "123"
+        process.mkdir()
+        executable = self.root / "running application"
+        executable.write_bytes(b"running executable retained")
+        before = cache.metadata.identity(executable.stat())
+        (process / "exe").symlink_to(executable)
+        (process / "maps").write_text(f"1000-2000 r-xp 0000 00:00 1 {executable}\n")
+        for name in ["datum-gui", "datum-eda", "eda-engine-daem", "eda-engine-daemon"]:
+            with self.subTest(name=name):
+                root, _ = self.metadata_tree()
+                (process / "comm").write_text(name)
+                # Ordinary deletion keeps its original application refusal.
+                with self.assertRaises(guard.ResourcePolicyError):
+                    self.clean("target/debug/incremental")
+                self.clean("target/debug/incremental", metadata_only=True, apply=False)
+                self.assertTrue(root.exists())
+                self.clean("target/debug/incremental", metadata_only=True)
+                self.assertFalse(root.exists())
+                self.assertEqual(executable.read_bytes(), b"running executable retained")
+                self.assertEqual(cache.metadata.identity(executable.stat()), before)
+                self.assertEqual((process / "comm").read_text(), name)
+                self.assertEqual((process / "exe").readlink(), executable)
+
+    def test_metadata_mode_refuses_selected_executable_mapping(self):
+        root, session = self.metadata_tree()
+        process = self.proc / "123"
+        process.mkdir()
+        (process / "comm").write_text("eda-engine-daem")
+        (process / "exe").symlink_to(self.root / "unrelated-runtime")
+        (process / "maps").write_text(
+            f"1000-2000 r-xp 0000 00:00 1 {session / 'query-cache.bin'} (deleted)\n"
+        )
+        with self.assertRaisesRegex(guard.ResourcePolicyError, "active cache executables"):
+            self.clean("target/debug/incremental", metadata_only=True)
+        self.assertTrue(root.exists())
+
+    def test_metadata_mode_checks_mappings_when_executable_is_uninspectable(self):
+        root, session = self.metadata_tree()
+        with self.protected_process():
+            (self.proc / "123/maps").write_text(
+                f"1000-2000 r-xp 0000 00:00 1 {session / 'query-cache.bin'}\n"
+            )
+            with self.assertRaisesRegex(guard.ResourcePolicyError, "active cache executables"):
+                self.clean("target/debug/incremental", metadata_only=True)
+        self.assertTrue(root.exists())
+
+    def test_metadata_mode_refuses_uninspectable_mappings_for_inspectable_process(self):
+        root, _ = self.metadata_tree()
+        process = self.proc / "123"
+        process.mkdir()
+        (process / "comm").write_text("eda-engine-daem")
+        (process / "exe").symlink_to(self.root / "unrelated-runtime")
+        original = Path.read_text
+        def read_text(path, *args, **kwargs):
+            if path == process / "maps":
+                raise PermissionError("mappings unavailable")
+            return original(path, *args, **kwargs)
+        with mock.patch.object(Path, "read_text", read_text):
+            with self.assertRaisesRegex(guard.ResourcePolicyError, "cannot inspect executable mappings"):
+                self.clean("target/debug/incremental", metadata_only=True)
+        self.assertTrue(root.exists())
+
+    def test_metadata_mode_refuses_build_started_after_inventory(self):
+        root, _ = self.metadata_tree()
+        original = cache.metadata.MetadataTree.capture
+        calls = 0
+        def capture(tree):
+            nonlocal calls
+            snapshot = original(tree)
+            calls += 1
+            if calls == 2:
+                process = self.proc / "123"
+                process.mkdir()
+                (process / "comm").write_text("rustc")
+            return snapshot
+        with mock.patch.object(cache.metadata.MetadataTree, "capture", capture):
+            with self.assertRaisesRegex(guard.ResourcePolicyError, "active"):
+                self.clean("target/debug/incremental", metadata_only=True)
         self.assertTrue(root.exists())
 
     def test_metadata_mode_revalidates_all_roots_and_content_before_any_deletion(self):
