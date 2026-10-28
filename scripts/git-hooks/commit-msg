@@ -1,0 +1,12 @@
+#!/bin/sh
+# Reject AI attribution in commit messages (CLAUDE.md nonnegotiable:
+# "no AI attribution anywhere"; owner-ordered enforcement 2026-10-28).
+# Agent harnesses inject Co-Authored-By reminders; this hook makes the
+# project rule mechanical regardless of any session's defaults.
+msg_file="$1"
+if grep -Eqi 'co-authored-by|generated with|noreply@anthropic\.com|claude\.com/claude-code' "$msg_file"; then
+    echo "commit-msg: REJECTED - AI attribution is forbidden in this repository (CLAUDE.md)." >&2
+    echo "Remove the Co-Authored-By / Generated-with line(s) and commit again." >&2
+    exit 1
+fi
+exit 0
