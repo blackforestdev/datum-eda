@@ -6870,12 +6870,6 @@
           }
         ]
       },
-      "decision_routing": {
-        "S5A-C06": {
-          "appointment": "s5a-c06-owner-appointed-pm-20261022",
-          "decision_kind": "objective_acceptance"
-        }
-      },
       "dependencies": [
         "dat-s5-selection-visual-contract-zid",
         "dat-s5a-derived-authority-hhsw"
@@ -7131,16 +7125,6 @@
             "status": "complete"
           }
         ]
-      },
-      "decision_routing": {
-        "XP-C02": {
-          "appointment": "crossprobe-pm-20261023",
-          "decision_kind": "continuation"
-        },
-        "XP-C06": {
-          "appointment": "crossprobe-pm-20261023",
-          "decision_kind": "objective_acceptance"
-        }
       },
       "dependencies": [
         "dat-uvt-s5a-build-1wv"
@@ -18501,145 +18485,22 @@
     }
   ],
   "management_appointments": {
-    "audit-corrections-20261016": {
+    "standing-project-manager": {
       "decision_kinds": [
         "review_provisioning",
         "review_receipt",
         "continuation",
-        "objective_acceptance"
+        "objective_acceptance",
+        "owner_reserved",
+        "decision_classification"
       ],
-      "session": "codex-reorganization-manager-20261014",
+      "session": "0a2e42d7-4b60-47c2-bf4e-4d09d86123b9",
       "source_ref": {
-        "marker": "<!-- APPOINTMENT:CORRECT-AUDIT-FINDINGS:MANAGER -->",
-        "path": "docs/reviews/specification-history/specification-reorganization.md"
+        "marker": "<!-- EVIDENCE:PM059:STANDING-PROJECT-MANAGER -->",
+        "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
       },
       "task_keys": [
-        "CORRECT-AUDIT-FINDINGS"
-      ]
-    },
-    "crossprobe-pm-20261023": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:GUI-P2-CROSSPROBE:PM-20261023 -->",
-        "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md"
-      },
-      "task_keys": [
-        "GUI-P2-CROSSPROBE"
-      ]
-    },
-    "inspector-pm-20261023": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:GUI-P2-INSPECTOR:PM-20261023 -->",
-        "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md"
-      },
-      "task_keys": [
-        "GUI-P2-INSPECTOR"
-      ]
-    },
-    "production-management-20261016": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "codex-production-manager-20261016",
-      "source_ref": {
-        "marker": "\"manager_appointment\": ",
-        "path": "docs/reviews/workflow-delivery-rollout/package-gui-creation.json"
-      },
-      "task_keys": [
-        "LIBRARY-PACKAGE-GUI-CREATE"
-      ]
-    },
-    "reorganization-process-20261016": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "codex-reorganization-manager-20261014",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:PRODUCTION-PROCESS-CORRECTION:MANAGER -->",
-        "path": "docs/reviews/specification-history/specification-reorganization.md"
-      },
-      "task_keys": [
-        "PRODUCTION-PROCESS-CORRECTION"
-      ]
-    },
-    "replay-inputs-20261016": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "codex-reorganization-manager-20261014",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:REPRODUCIBLE-REPLAY-INPUTS:MANAGER -->",
-        "path": "docs/reviews/specification-history/maintenance-records.md"
-      },
-      "task_keys": [
-        "REPRODUCIBLE-REPLAY-INPUTS"
-      ]
-    },
-    "s5a-c04-management-20261018": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "codex-reorganization-manager-20261014",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:UVT-S5A-BUILD:C04-MANAGEMENT-20261018 -->",
-        "path": "docs/reviews/specification-history/specification-reorganization.md"
-      },
-      "task_keys": [
-        "UVT-S5A-BUILD"
-      ]
-    },
-    "s5a-c06-owner-appointed-pm-20261022": {
-      "decision_kinds": [
-        "objective_acceptance"
-      ],
-      "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:UVT-S5A-BUILD:C06-PM-20261022 -->",
-        "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"
-      },
-      "task_keys": [
-        "UVT-S5A-BUILD"
-      ]
-    },
-    "startup-repair-20261017": {
-      "decision_kinds": [
-        "review_provisioning",
-        "review_receipt",
-        "continuation",
-        "objective_acceptance"
-      ],
-      "session": "codex-production-manager-20261016",
-      "source_ref": {
-        "marker": "<!-- APPOINTMENT:NATIVE-PROJECT-DOORWAY:QA-REPAIR -->",
-        "path": "docs/reviews/workflow-delivery-rollout/native-project-doorway.md"
-      },
-      "task_keys": [
-        "NATIVE-PROJECT-DOORWAY"
+        "*"
       ]
     }
   },
