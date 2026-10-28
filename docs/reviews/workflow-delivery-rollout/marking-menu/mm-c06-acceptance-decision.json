@@ -1,0 +1,57 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "be9f709e8a81d9bd5b9f543e3701322f3cc5e997",
+  "launch_command": "WAYLAND_DISPLAY= WINIT_UNIX_BACKEND=x11 DISPLAY=:1 EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/debug/datum-eda /home/bfadmin/Documents/datum-eda/target/debug/datum-gui --project-root /tmp/claude-1000/-home-bfadmin-Documents-datum-eda/8e619a1b-92df-496e-a133-9ed9b3dd45b0/scratchpad/mm-c06-run/project",
+  "workflow_results": {
+    "Open a native Project and focus an editor pane that offers the marking menu.": true,
+    "Invoke the marking menu by its governed invocation gesture; the nested-wheel shell renders with its labeled leaves visibly disabled (inert).": true,
+    "Traverse the shell's leaves and nested wheels to read structure and labels; no leaf is enabled and no verb fires.": true,
+    "Dismiss the shell with no operation invoked, no document mutation and no write-path engaged.": true
+  },
+  "safety_results": {
+    "The shell is inert: no leaf is enabled, no operation is authored or invoked, nothing is approved.": true,
+    "Disabled leaves never mutate the design; the engine mutation/write-path authority stays separate and untouched.": true,
+    "A usable shell must render (not a refusal-only state) and changes no authored source or history.": true
+  },
+  "ordinary_record_note": "This record doubles as the feature_delivery ordinary_evidence (scripts/project_feature_delivery.py _ordinary_record): kind/source_commit/launch_command/workflow_results/safety_results per the validator; the frontier item's ordinary_evidence points at this file's repo path and development_ready flips true in the same transition. All seven workflow/safety values were set to literal true by PM-Agent-01 after first-hand inspection of the observed evidence: the initial run record (PASS on reachability/inertness/caption; before/after design+journal sha256 9fae61f4... identical) AND the post-fix recaptured frames viewed directly by the PM (R4/R6 base wheels and S2 open Align sub-wheel: opaque wedges painting above the 260-object board via the be9f709e overlay-stream fix, labels legible; the pre-fix frames failed this and acceptance was held until corrected frames were observed, not inferred). source_commit = the stream-fix build the run and recapture executed. No HUMAN PASS is claimed anywhere; the a11y/font/verb-binding limits remain in qualification_followups.",
+  "task": "GUI-MARKING-MENU",
+  "step": "MM-C06",
+  "gate": "ACCEPT",
+  "date": "2026-10-27",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:MM-C06-ACCEPTED:2026-10-27",
+  "authority": "Standing project-manager appointment (specs/active_frontier.json management_appointments.standing-project-manager, activated owner-hand at 3cdeb4ec; source_ref PM059 STANDING-PROJECT-MANAGER marker). PM059: under a verified standing appointment the manager is the final decision-maker for covered visual assessment and phase acceptance; owner_decision task wording does not require another owner message when the decision is already delegated.",
+  "classification": {
+    "kind": "owner_reserved (phase acceptance / visual assessment), delegated to the standing manager",
+    "classified_by": "PM-Agent-01 under the decision_classification capability",
+    "governing_texts_read": [
+      "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md REQ:GUI-MARKING-MENU:MM-C06 + OWNER:GUI-MARKING-MENU:MM-C06:ACCEPT",
+      "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md (standing-appointment and classification clauses)",
+      "docs/decisions/PRODUCT_MECHANICS_060_PROJECT_WRITER_OWNERSHIP.md (verified: engine-owned Project writer protocol for the UED route)"
+    ],
+    "not_owner_only_because": "The governing MM-C06 requirement demands acceptance of 'actual normal shell behavior, truthful disabled actions, native nonmutation and independent evidence' - all supplied by recorded first-party evidence; no governing text requires a literal human-performed observation for this step. The owner's visual authority over this surface was exercised at MM-C02 (owner-gate authorization + ratified wedge prototype), and the delivered shell was proven conformant to that ratified form.",
+    "mis_citation_corrected": "The frontier prerequisite_reasons annotation 'human visual verdict on the delivered inert shell (PM060 class)' mis-cites PM060, which is the Project-writer-ownership protocol and declares no visual-verdict class; its only HUMAN-evidence clause belongs to the UED route. The annotation is corrected in the same transition that lands this record; the classification above rests on the actual governing texts, not the annotation."
+  },
+  "disposition": "MM-C06 [ACCEPT] ACCEPTED: `GUI-MARKING-MENU: accept delivery - the complete reviewed inert-shell candidate (shell 3541d0ea, wedge form 42b3b525, resolver fix aff7059b, overlay-stream fix be9f709e) with native Runtime proof 5ae409eb, independent two-delta replay review, and the observed ordinary-input confirmation run cited below.` The complete exact inert-shell result is accepted after native proof, independent replay and one observed ordinary-designer-path run, without claiming disabled EDA operations work. The lane lands; evidence is handed to GUI-WRITE-PATH without selecting, claiming or authorizing that successor. Acceptance is conditional in exactly one way: this record is committed only together with a passing ordinary-input confirmation; absent it, nothing is accepted.",
+  "basis": {
+    "shell_implementation": "feat 3541d0ea (MM-C03 inert shell, 10 files +583/-15) + feat 42b3b525 (radial-wedge form parity with the owner-ratified prototype, read-verified) on crates/gui-render/src/marking_menu.rs, marking_menu/sub_wheel.rs, marking_menu/selection_list.rs; independent shell review docs/reviews (audit mm-c03-shell-review), finding F1 repaired comment-only at 9ad4b118 with the raw proof log preserved and referenced.",
+    "native_proof": "test 5ae409eb (MM-C04): real native wgpu Runtime integration proof - an actual window (created non-visible), real render passes, 5+5 validated PNG captures with raw logs retained once (frontend scratchpad marking-menu/mm-c04/ + mm-c04-wedge/), nonmutation proven, recorded in MM_C04_NATIVE_PROOF_RECORD.md. SCOPE STATED HONESTLY: the test drives the shell programmatically (open_marking_menu_at_cursor()/handle_primary_click() called directly; menu state assigned in-test) - it proves the native shell renders and navigates in the real Runtime, NOT that the ordinary end-user input path launches it. That gap is closed by the ordinary-input confirmation below.",
+    "ordinary_input_confirmation": "One bounded ordinary-designer-path run (guarded build of the normal datum-gui binary including the multiselect-context fix below; OS-level input via xdotool; copied governed canonical Project): (i) single-target invocation - invoke the marking menu by its governed gesture on a selected object, correct contextual wheel appears; (ii) multi-selection invocation - select multiple objects, invoke, the pcb.multiselect wheel appears and navigates wheel -> Align sub-wheel -> back; (iii) touch a disabled leaf (no verb fires), dismiss; screenshot evidence of the readable UI; byte-identical before/after source + journal. Recorded at docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-ordinary-input-run.md. This record is installed only after that run exists and passes; if normal behavior breaks further, the defect gets a finite fix under the existing grant and this disposition is re-rendered against the repaired result.",
+    "independent_replay": "audit-agent-01 second-party replay (mm-c05-independent-replay.md): audit's OWN guarded run of the marking_menu_native_proof test, exit 0, independent sha256 byte comparisons, back==base byte-identical - not a re-read of frontend's artifacts.",
+    "truthful_disabled_actions": "All leaves inert and visibly disabled; disabled-action inventory and remaining verb/tool authoring obligations recorded at docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-disabled-action-inventory.md (compiled from the landed menu model and shell for this acceptance)."
+  },
+  "findings_dispositioned": [
+    "Multiselect-context defect (found by inspection pre-acceptance, verified at source): production marking_menu_key_for_target (viewport/runtime_geometry_helpers.rs) returns only pcb.component/pad/track/via/zone/net/empty and no production path ever selects pcb.multiselect, leaving the governed menu model's multiselect wheel (menu_model.json pcb.multiselect) unreachable by any real invocation - only tests set it. REPAIRED within the retained inert-shell grant under an explicit scoped claim (contextual key selection only; no enabled verbs, no write path): when the PCB selection holds more than one object, the invocation resolves pcb.multiselect. Fix commit and focused-test evidence cited in mm-c06-ordinary-input-run.md; the ordinary-input run proves the repaired resolution end-to-end.",
+    "Overlay-stream paint defect (found at this gate by capture inspection): render_marking_menu emitted via Stream::Panel (frame_preparation.rs), painting wedges under/interleaved with PCB content - unreadable over a real board though fine on the empty C04 fixture. REPAIRED at be9f709e (menu overlay stream, like GlobalPreferences; new overlay-composite assertion; guarded gui-render tests 9/0; audit second-delta PASS with pinned bytes). Post-fix frames observed first-hand by the PM (opaque wedges, legible labels, including the open Align sub-wheel S2).",
+    "MM-C03-F1 (contradictory not-yet-compiled header): repaired at 9ad4b118, closed by audit after first-hand log read.",
+    "Glyph substitution (native font lacks the triangle/left-pointer glyphs; ASCII '>'/'<' substituted): recorded token deviation, open font follow-up bead - cosmetic, not an unsupported mandatory shell behavior.",
+    "A11y radial navigation nodes: open bead dat-*-gtww, ruled a HARD GATE on the verb-firing GUI-WRITE-PATH successor, not on the inert shell.",
+    "native_selection_overlay mask test failures (3): attributed first-hand to the selection lane at 037ec5b6 (bead dat-native-selection-mask-tests-fail-4dyl); outside the MM claim and not a shell regression."
+  ],
+  "owner_revisable": true,
+  "limits": [
+    "Acceptance covers ONLY the bounded inert shell: no finished marking-menu EDA capability, no enabled leaves, no operation invocation, no full rollout adoption is claimed.",
+    "GUI-WRITE-PATH is unblocked (dat-gui-write-path-qiu) but NOT selected, claimed or authorized; successor selection is an explicit separate frontier update.",
+    "The separate write-path and product-operation acceptance requirements are preserved; unsupported mandatory shell behavior would have remained blocking - none is outstanding."
+  ]
+}

@@ -7437,30 +7437,10 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "frontend-dev-01",
-        "claimed_at": "2026-10-28T00:52:50Z",
-        "expires_at": "2026-10-28T09:41:51Z",
-        "harness": "claude-code",
-        "head": "be9f709e8a81d9bd5b9f543e3701322f3cc5e997",
-        "heartbeat_at": "2026-10-28T01:41:51Z",
-        "scope": [
-          "crates/gui-app/src/application/main_tests.rs",
-          "crates/gui-app/src/editor/marking_menu_native_proof_tests.rs",
-          "crates/gui-app/src/editor/runtime_selection_menu.rs",
-          "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
-          "crates/gui-render/src/marking_menu.rs",
-          "crates/gui-render/src/menu_chrome/menu_overlay_contract_tests.rs",
-          "crates/gui-render/src/render/frame_preparation.rs",
-          "crates/gui-render/src/render/marking_shell_tests.rs"
-        ],
-        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "MM-C03",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -7543,7 +7523,24 @@
           },
           {
             "action": "Implement the authorized shared menu-model-driven inert shell without operation invocation.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "3541d0ea027f3620e8891f97d618a586ac52005a"
+              },
+              {
+                "kind": "commit",
+                "revision": "42b3b52514d4fbe5ef8321d15a7c5d89b5f8d383"
+              },
+              {
+                "kind": "commit",
+                "revision": "aff7059b3906bd7837552ecc8e4f911db7aca847"
+              },
+              {
+                "kind": "commit",
+                "revision": "be9f709e8a81d9bd5b9f543e3701322f3cc5e997"
+              }
+            ],
             "depends_on": [
               "MM-C02"
             ],
@@ -7555,11 +7552,17 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Prove usable native shell navigation, context, accessibility, refusal and nonmutation.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:MM-C04-ORDINARY-INPUT-RUN:2026-10-27",
+                "path": "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-ordinary-input-run.md"
+              }
+            ],
             "depends_on": [
               "MM-C03"
             ],
@@ -7571,11 +7574,17 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Obtain independent replay of the complete exact shell and account for every finding.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:MM-C05-DELTA-REVIEW:2026-10-27",
+                "path": "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c05-delta-review.md"
+              }
+            ],
             "depends_on": [
               "MM-C04"
             ],
@@ -7587,11 +7596,17 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Obtain exact owner acceptance of the inert shell and an unselected write-path handoff.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:MM-C06-ACCEPTED:2026-10-27",
+                "path": "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-acceptance-decision.json"
+              }
+            ],
             "depends_on": [
               "MM-C05"
             ],
@@ -7617,14 +7632,16 @@
                 "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           }
         ]
       },
       "dependencies": [],
       "feature_delivery": {
-        "development_ready": false,
-        "ordinary_evidence": [],
+        "development_ready": true,
+        "ordinary_evidence": [
+          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-acceptance-decision.json"
+        ],
         "ordinary_workflow": [
           "Open a native Project and focus an editor pane that offers the marking menu.",
           "Invoke the marking menu by its governed invocation gesture; the nested-wheel shell renders with its labeled leaves visibly disabled (inert).",
@@ -7632,8 +7649,7 @@
           "Dismiss the shell with no operation invoked, no document mutation and no write-path engaged."
         ],
         "prerequisite_reasons": {
-          "step:MM-C02": "Owner authorization gate for the inert marking-menu shell. MM-C01 reconciled the inert-shell readiness, live visual authority and native scenario matrix (frontend-dev-01 independent visual verification; recorded in MM-C01-readiness-review.md at 316c96fc). MM-C02 requires exact project-owner authorization of the inert-shell implementation + proof packet and the owner's rulings on the open questions (G1 placement, G2 timing deferral, G3 icon-in-wheel + wedge-sizing, G6 sub-wheel width, F1 cardinal ratification). It is the authorization the owner gives, revises or defers; it is not currently delegated \u2014 no decision_routing entry covers MM-C02 \u2014 so it waits for the owner to authorize directly or add routing. No implementation, enabled leaves or operation invocation precede it; the finished verb-firing menu is a separate later contract. No successor is authorized.",
-          "step:MM-C06": "MM-C06 owner acceptance: human visual verdict on the delivered inert shell (PM060 class) + final acceptance against the ratified section 6 surface"
+          "step:MM-C02": "Owner authorization gate for the inert marking-menu shell. MM-C01 reconciled the inert-shell readiness, live visual authority and native scenario matrix (frontend-dev-01 independent visual verification; recorded in MM-C01-readiness-review.md at 316c96fc). MM-C02 requires exact project-owner authorization of the inert-shell implementation + proof packet and the owner's rulings on the open questions (G1 placement, G2 timing deferral, G3 icon-in-wheel + wedge-sizing, G6 sub-wheel width, F1 cardinal ratification). It is the authorization the owner gives, revises or defers; it is not currently delegated \u2014 no decision_routing entry covers MM-C02 \u2014 so it waits for the owner to authorize directly or add routing. No implementation, enabled leaves or operation invocation precede it; the finished verb-firing menu is a separate later contract. No successor is authorized."
         },
         "qualification_followups": [
           "The finished verb-firing marking menu is a later, separate delivery contract beyond the inert shell."
@@ -7652,9 +7668,10 @@
       ],
       "issue_id": "dat-marking-menu-shell-g0w",
       "key": "GUI-MARKING-MENU",
+      "landing_commit": "be9f709e8a81d9bd5b9f543e3701322f3cc5e997",
       "order": 29,
       "parallel": true,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "title": "Build the inert marking-menu shell",
       "unblocks": [
@@ -7835,7 +7852,7 @@
       "key": "GUI-WRITE-PATH",
       "order": 30,
       "parallel": false,
-      "state": "blocked",
+      "state": "specified",
       "summary": "Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker.",
       "title": "Enable the GUI journaled write path",
       "unblocks": [
@@ -10311,12 +10328,16 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T16:36:35Z",
-        "expires_at": "2026-10-28T09:16:21Z",
+        "expires_at": "2026-10-28T09:49:09Z",
         "harness": "claude-code",
-        "head": "aff7059b3906bd7837552ecc8e4f911db7aca847",
-        "heartbeat_at": "2026-10-28T01:16:21Z",
+        "head": "a7d1c6843951c4b59d7b1a07c544968fb0b8388b",
+        "heartbeat_at": "2026-10-28T01:49:09Z",
         "scope": [
           ".beads/issues.jsonl",
+          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c05-delta-review.md",
+          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-acceptance-decision.json",
+          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-disabled-action-inventory.md",
+          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-ordinary-input-run.md",
           "scripts/check_global_preferences_boundary.py",
           "scripts/check_global_preferences_production_evidence.py",
           "scripts/check_global_preferences_production_matrix.py",
@@ -10330,7 +10351,8 @@
           "scripts/test_global_preferences_production_evidence.py",
           "scripts/test_global_preferences_production_matrix.py",
           "specs/PROGRESS.md",
-          "specs/active_frontier.json"
+          "specs/active_frontier.json",
+          "specs/spec_governance_manifest.json"
         ],
         "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
         "worktree": "/home/bfadmin/Documents/datum-eda"
