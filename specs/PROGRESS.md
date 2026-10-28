@@ -381,9 +381,15 @@
 - **Repair native_selection_overlay::mask tests for the document-aware path** (`NATIVE-SELECTION-MASK-TESTS`; `dat-native-selection-mask-tests-fail-4dyl`).
    Update the three failing native_selection_overlay::mask tests (mask_tests.rs / related_fixture.rs) to assert through the document-aware presentation path (projection_keys / schematic_documents[].keys) instead of the stale flat schematic_keys that 037ec5b6's per-document path leaves empty; the forged-capture test forges the consulted field so Err is still asserted. Test-only; source behavior/integrity verified intact. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`.
+<details>
+<summary>Completed history (1 landed records)</summary>
+
 - **Narrow the Cargo cache-cleanup guard for metadata-only incremental reclaim with runtime apps alive** (`CACHE-GUARD-NARROWING`; `dat-mwlp`).
-   Bounded PM-authorized guard-narrowing of scripts/manage_cargo_cache.py: a metadata-only incremental reclaim (target/{debug,release}/incremental) may proceed while unrelated runtime apps are alive, gated on the shared build lock + zero Cargo/rustc + positive non-runnable admission + active-exe refusal. Deletion rules, QA companion guards and the retained-cache ceiling unchanged; audit reviews the candidate before --apply. The safer parallel unblock for the GP-CM05E clippy gate. *state `in_progress`; authorization `execution`; parallel lane.*
+   Bounded PM-authorized guard-narrowing of scripts/manage_cargo_cache.py: a metadata-only incremental reclaim (target/{debug,release}/incremental) may proceed while unrelated runtime apps are alive, gated on the shared build lock + zero Cargo/rustc + positive non-runnable admission + active-exe refusal. Deletion rules, QA companion guards and the retained-cache ceiling unchanged; audit reviews the candidate before --apply. The safer parallel unblock for the GP-CM05E clippy gate. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+
+</details>
+
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

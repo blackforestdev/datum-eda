@@ -105,6 +105,49 @@ impl GlobalPreferencesProductService {
             Err(self.error(code, message, details, None)),
         )
     }
+
+    /// Build a structured product response for an adapter-layer decode failure
+    /// (for example a serde `deny_unknown_fields` rejection at the daemon
+    /// boundary) so public clients receive a symbolic code instead of a bare
+    /// transport error. Per the supported-schema contract (sections 3 and 7): an
+    /// unknown field in a supported schema is `invalid_request`; an unknown or
+    /// unsupported schema name/version is `unsupported_schema_version`. The schema
+    /// reference is recovered leniently from the raw params because the typed
+    /// decode has already failed.
+    pub fn decode_rejection_response(
+        &self,
+        raw_params: &Value,
+        message: &str,
+    ) -> PreferenceProductResponseV1 {
+        let schema_value = raw_params
+            .get("request")
+            .and_then(|request| request.get("schema"));
+        let name = schema_value
+            .and_then(|schema| schema.get("name"))
+            .and_then(Value::as_str)
+            .unwrap_or_default();
+        let version = schema_value
+            .and_then(|schema| schema.get("version"))
+            .and_then(Value::as_u64);
+        let supported =
+            is_product_schema_name(name) && version == Some(u64::from(PRODUCT_SCHEMA_VERSION));
+        let code = if supported {
+            PreferenceErrorCodeV1::InvalidRequest
+        } else {
+            PreferenceErrorCodeV1::UnsupportedSchemaVersion
+        };
+        self.response_error(
+            PreferenceSchemaRefV1 {
+                name: name.to_owned(),
+                version: version
+                    .and_then(|value| u32::try_from(value).ok())
+                    .unwrap_or_default(),
+            },
+            code,
+            message,
+            BTreeMap::from([("schema_name".to_owned(), json!(name))]),
+        )
+    }
 }
 
 fn response(
@@ -157,9 +200,98 @@ fn schema_for_payload(payload: &PreferenceProductPayloadV1) -> &'static str {
     }
 }
 
+/// The stable set of versioned V1 product schema names. Mirrors the names
+/// produced by `schema_for_payload`; keep the two in lockstep.
+fn is_product_schema_name(name: &str) -> bool {
+    matches!(
+        name,
+        "datum.preferences.describe"
+            | "datum.preferences.list"
+            | "datum.preferences.get"
+            | "datum.preferences.search"
+            | "datum.preferences.explain"
+            | "datum.preferences.preview_project_units_seed"
+            | "datum.preferences.set"
+            | "datum.preferences.reset"
+            | "datum.preferences.proposal.prepare"
+            | "datum.preferences.proposal.validate"
+            | "datum.preferences.proposal.accept_apply"
+            | "datum.preferences.proposal.reject"
+    )
+}
+
 fn mutation_draft(proposal: &super::PreferenceProposalV1) -> Option<Value> {
     match &proposal.mutation {
         super::PreferenceMutationRequestV1::SetUser { value, .. } => Some(value.clone()),
         super::PreferenceMutationRequestV1::ResetUser { .. } => None,
+    }
+}
+
+#[cfg(test)]
+mod decode_tests {
+    use crate::preferences::*;
+    use serde_json::json;
+    use uuid::Uuid;
+
+    fn service() -> GlobalPreferencesProductService {
+        let base = std::env::temp_dir().join(format!("datum-decode-{}", Uuid::new_v4()));
+        let provider = FixedPreferenceLocationProvider(PreferenceLocations {
+            configuration_base: base.clone(),
+            repository_root: base.join("datum/preferences"),
+            legacy_console_path: base.join("datum/gui-preferences.json"),
+        });
+        GlobalPreferencesProductService::open(&provider, "decode-test")
+            .expect("decode-test product service opens")
+    }
+
+    #[test]
+    fn maps_decode_failures_to_symbolic_codes() {
+        // Adapter decode failures (serde deny_unknown_fields) get a symbolic code,
+        // not a bare -32602: an unknown field in a supported schema -> invalid_request;
+        // an unknown or unsupported schema name/version (or a malformed envelope) ->
+        // unsupported_schema_version.
+        let service = service();
+        let cases = [
+            (
+                "datum.preferences.get",
+                1,
+                PreferenceErrorCodeV1::InvalidRequest,
+            ),
+            (
+                "datum.preferences.nope",
+                1,
+                PreferenceErrorCodeV1::UnsupportedSchemaVersion,
+            ),
+            (
+                "datum.preferences.get",
+                2,
+                PreferenceErrorCodeV1::UnsupportedSchemaVersion,
+            ),
+        ];
+        for (name, version, expected) in cases {
+            let raw = json!({"request": {"schema": {"name": name, "version": version}}});
+            let got = service
+                .decode_rejection_response(&raw, "invalid params: decode failure")
+                .error
+                .expect("typed decode rejection")
+                .code;
+            assert_eq!(got, expected, "{name} v{version}");
+        }
+
+        let garbled = service.decode_rejection_response(&json!({"request": {}}), "invalid params");
+        assert_eq!(
+            garbled.error.expect("typed").code,
+            PreferenceErrorCodeV1::UnsupportedSchemaVersion
+        );
+
+        let named = service.decode_rejection_response(
+            &json!({"request": {"schema": {"name": "datum.preferences.get", "version": 1}}}),
+            "invalid params: unknown field `smuggled`",
+        );
+        assert_eq!(named.schema.name, "datum.preferences.get");
+        assert_eq!(
+            named.error.expect("typed").details["schema_name"],
+            "datum.preferences.get"
+        );
     }
 }

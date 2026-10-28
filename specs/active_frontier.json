@@ -10328,16 +10328,15 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T16:36:35Z",
-        "expires_at": "2026-10-28T10:10:25Z",
+        "expires_at": "2026-10-28T11:20:44Z",
         "harness": "claude-code",
-        "head": "4d0f3e687448205e590f6283389024b07197c6ae",
-        "heartbeat_at": "2026-10-28T02:10:25Z",
+        "head": "06824410463ef1f3d03551f7d1805f2708ca8996",
+        "heartbeat_at": "2026-10-28T03:20:44Z",
         "scope": [
           ".beads/issues.jsonl",
           "crates/engine-daemon/src/dispatch.rs",
           "crates/engine-daemon/src/preferences_state.rs",
           "crates/engine/src/preferences/product_dispatch.rs",
-          "crates/engine/src/preferences/product_tests.rs",
           "scripts/check_global_preferences_boundary.py",
           "scripts/check_global_preferences_production_evidence.py",
           "scripts/check_global_preferences_production_matrix.py",
@@ -18596,32 +18595,18 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "codex",
-        "claimed_at": "2026-10-28T02:40:21Z",
-        "expires_at": "2026-10-28T11:02:57Z",
-        "harness": "codex",
-        "head": "c153ed54b549833dbff4ae9e6f7d752359e774e3",
-        "heartbeat_at": "2026-10-28T03:02:57Z",
-        "scope": [
-          "scripts/cargo_cache_metadata.py",
-          "scripts/manage_cargo_cache.py",
-          "scripts/test_manage_cargo_cache.py"
-        ],
-        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "dependencies": [],
       "governing_docs": [
         "docs/AGENT_OPERATIONAL_PROCEDURES.md"
       ],
       "issue_id": "dat-mwlp",
       "key": "CACHE-GUARD-NARROWING",
+      "landing_commit": "06824410463ef1f3d03551f7d1805f2708ca8996",
       "order": 104,
       "parallel": true,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Bounded PM-authorized guard-narrowing of scripts/manage_cargo_cache.py: a metadata-only incremental reclaim (target/{debug,release}/incremental) may proceed while unrelated runtime apps are alive, gated on the shared build lock + zero Cargo/rustc + positive non-runnable admission + active-exe refusal. Deletion rules, QA companion guards and the retained-cache ceiling unchanged; audit reviews the candidate before --apply. The safer parallel unblock for the GP-CM05E clippy gate.",
       "title": "Narrow the Cargo cache-cleanup guard for metadata-only incremental reclaim with runtime apps alive",
       "unblocks": [],

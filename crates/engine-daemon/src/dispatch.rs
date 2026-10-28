@@ -35,12 +35,21 @@ fn dispatch_request_inner(
         let Some(preferences) = preferences else {
             return error_response(request.id, -32601, "preferences service is unavailable");
         };
+        let raw_params = request.params.clone();
         return match serde_json::from_value::<McpPreferenceProductParams>(request.params) {
             Ok(params) => match preferences.execute_mcp(params.request, params.actor) {
                 Ok(response) => serialized_success_response(request.id, response),
                 Err(message) => error_response(request.id, -32602, &message),
             },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            // A decode failure (e.g. serde deny_unknown_fields) otherwise falls
+            // through to a bare JSON-RPC -32602 with no symbolic code. Surface the
+            // supported-schema contract's structured invalid_request (unknown field
+            // in a supported schema) or unsupported_schema_version instead.
+            Err(err) => serialized_success_response(
+                request.id,
+                preferences
+                    .product_decode_rejection(&raw_params, &format!("invalid params: {err}")),
+            ),
         };
     }
 

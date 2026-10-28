@@ -56,6 +56,18 @@ impl PreferencesDaemonState {
         })
     }
 
+    /// Structured decode-rejection response for an adapter-layer decode failure of
+    /// a `preferences.mcp_product` envelope (an unknown field or an unknown/
+    /// unsupported schema), delegating classification to the product service so
+    /// the daemon surfaces a symbolic code instead of a bare JSON-RPC error.
+    pub(super) fn product_decode_rejection(
+        &self,
+        raw_params: &serde_json::Value,
+        message: &str,
+    ) -> PreferenceProductResponseV1 {
+        self.service.decode_rejection_response(raw_params, message)
+    }
+
     pub fn execute_mcp(
         &mut self,
         request: PreferenceProductRequestV1,
