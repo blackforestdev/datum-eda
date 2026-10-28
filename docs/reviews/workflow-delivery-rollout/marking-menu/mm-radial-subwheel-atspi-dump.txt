@@ -1,0 +1,65 @@
+MM-RADIAL-A11Y-NODES — sub-wheel navigation AT-SPI observation (step-3 evidence)
+Run date: 2026-10-28. Binary: target/debug/datum-gui built 2026-10-28 08:30:44 at HEAD d9e3cdbc (runtime publish-gate fix); runtime-equivalent to HEAD 9e2ae8dd (only later gui-crate commit bd68b60e is #[cfg(test)]-only).
+AT-SPI client: python3 gi Atspi 2.0 (the AT-client API Orca uses) reading the live a11y bus (org.a11y.Bus, unix:path=/run/user/1000/at-spi/bus_1).
+Input: genuine OS events via xdotool after windowactivate; board editor pane focused by click; Ctrl+A select; Menu key (NamedKey::ContextMenu) opened the wheel; left-click W/Align slot entered the sub-wheel; left-click centre (Back) popped out; Escape dismissed.
+
+
+(process:3570084): dbind-WARNING **: 12:24:25.024: AT-SPI: Error in GetItems, sender=:1.1243, error=unsupported interface
+=== AT-SPI STAGE: baseline-menu-closed ===
+NO menu nodes published (menu subtree empty)
+=== END STAGE ===
+
+=== AT-SPI STAGE: A-root-wheel (focus fix) ===
+- role='menu' name='Marking menu — pcb.multiselect' states=[enabled,sensitive,showing,visible,focusable] desc='Menu navigation'
+  - role='menu item' name='Rotate' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Move Exactly' states=[showing,visible,focusable] desc='move-exactly with delta'
+  - role='menu item' name='Delete' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Align' states=[enabled,sensitive,showing,visible,focusable] desc='Opens the Align actions'
+  - role='menu item' name='Duplicate' states=[showing,visible,focusable] desc='duplicate selection'
+  - role='menu item' name='Flip' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Lock' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Distribute' states=[enabled,sensitive,showing,visible,focusable] desc='Opens the Distribute actions'
+- role='menu' name='Select' states=[enabled,sensitive,showing,visible,focusable] desc='Menu navigation'
+  - role='menu item' name='Select' states=[enabled,sensitive,showing,visible,focusable,focused] desc='Open read-only Select menu'
+=== END STAGE ===
+
+=== AT-SPI STAGE: B-align-subwheel ===
+- role='menu' name='Marking menu — pcb.multiselect' states=[enabled,sensitive,showing,visible,focusable] desc='Menu navigation'
+  - role='menu item' name='Back' states=[enabled,sensitive,showing,visible,focusable] desc='Return to the previous wheel'
+  - role='menu item' name='Horizontal' states=[enabled,sensitive,showing,visible,focusable] desc='Opens the Horizontal actions'
+  - role='menu item' name='Vertical' states=[enabled,sensitive,showing,visible,focusable] desc='Opens the Vertical actions'
+  - role='menu item' name='Distribute' states=[enabled,sensitive,showing,visible,focusable,focused] desc='Opens the Distribute actions'
+- role='menu' name='Select' states=[enabled,sensitive,showing,visible,focusable] desc='Menu navigation'
+  - role='menu item' name='Select' states=[enabled,sensitive,showing,visible,focusable,focused] desc='Open read-only Select menu'
+=== END STAGE ===
+
+=== AT-SPI STAGE: C-backed-out-root ===
+- role='menu' name='Marking menu — pcb.multiselect' states=[enabled,sensitive,showing,visible,focusable] desc='Menu navigation'
+  - role='menu item' name='Rotate' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Move Exactly' states=[showing,visible,focusable] desc='move-exactly with delta'
+  - role='menu item' name='Delete' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Align' states=[enabled,sensitive,showing,visible,focusable] desc='Opens the Align actions'
+  - role='menu item' name='Duplicate' states=[showing,visible,focusable] desc='duplicate selection'
+  - role='menu item' name='Flip' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Lock' states=[showing,visible,focusable] desc='This action is unavailable in this build.'
+  - role='menu item' name='Distribute' states=[enabled,sensitive,showing,visible,focusable] desc='Opens the Distribute actions'
+- role='menu' name='Select' states=[enabled,sensitive,showing,visible,focusable] desc='Menu navigation'
+  - role='menu item' name='Select' states=[enabled,sensitive,showing,visible,focusable,focused] desc='Open read-only Select menu'
+=== END STAGE ===
+
+=== AT-SPI STAGE: D-dismissed ===
+NO menu nodes published (menu subtree empty)
+=== END STAGE ===
+
+=== NONMUTATION (sha256 of the 4 design files, before vs after the whole run) ===
+--- before ---
+11861cc182e136abbe7b85becfa989593055140e07261e873d2a0706c0734c55  project.json
+6591f11794f943c9cd38358591069b8b08ef24f5f50741bf423155031d6b7952  board/board.json
+aada0b8432a8b274a6ef53d65256659dee1202b76f0ced9839e957607d2be5f5  schematic/schematic.json
+69028fe12f761561fbb6494ace5e73a0c8efd851040aff792d194d2a13ac0220  rules/rules.json
+--- after ---
+11861cc182e136abbe7b85becfa989593055140e07261e873d2a0706c0734c55  project.json
+6591f11794f943c9cd38358591069b8b08ef24f5f50741bf423155031d6b7952  board/board.json
+aada0b8432a8b274a6ef53d65256659dee1202b76f0ced9839e957607d2be5f5  schematic/schematic.json
+69028fe12f761561fbb6494ace5e73a0c8efd851040aff792d194d2a13ac0220  rules/rules.json
+--- result: byte-identical (no writes) ---

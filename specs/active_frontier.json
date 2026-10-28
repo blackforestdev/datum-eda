@@ -18510,27 +18510,15 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "frontend-dev-01",
-        "claimed_at": "2026-10-28T02:32:28Z",
-        "expires_at": "2026-10-28T23:35:00Z",
-        "harness": "claude-code",
-        "head": "4d0f3e687448205e590f6283389024b07197c6ae",
-        "heartbeat_at": "2026-10-28T15:35:00Z",
-        "scope": [
-          "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
-          "crates/gui-app/src/terminal/terminal_accessibility_bridge/marking_a11y_tests.rs",
-          "crates/gui-protocol/src/gui_menu_model/accessibility.rs"
-        ],
-        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
+      "claim": null,
       "dependencies": [],
       "feature_delivery": {
-        "development_ready": false,
-        "ordinary_evidence": [],
+        "development_ready": true,
+        "ordinary_evidence": [
+          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-radial-a11y-ordinary-application.json"
+        ],
         "ordinary_workflow": [
           "Open a native Project and invoke the marking menu in an editor pane.",
           "With an assistive-technology client active, the assistive layer announces the radial wheel's structure, leaf labels and truthful disabled states.",
@@ -18552,9 +18540,10 @@
       ],
       "issue_id": "dat-mm-radial-a11y-node-coverage-gtww",
       "key": "MM-RADIAL-A11Y-NODES",
+      "landing_commit": "d9e3cdbccfde90424d58ef0305d6e7cd83c82a47",
       "order": 102,
       "parallel": true,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Emit the radial marking-menu shell through menu_accessibility_nodes (node-model-only, truthful inert-pilot values, stable slot order, available->is_enabled flip documented) using the existing MenuAccessibleNode/MenuItem protocol types in gui-protocol accessibility.rs. Hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor; existing protocol types only.",
       "title": "Expose the radial marking-menu shell to menu accessibility nodes",
       "unblocks": [],

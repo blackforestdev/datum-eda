@@ -250,7 +250,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (40 landed records)</summary>
+<summary>Completed history (43 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -372,15 +372,9 @@
 - **Install persistent project-PM decision routing (standing policy correction)** (`PM-AUTOMATION-CORRECTION`; `dat-pm-automation-correction-5spq`).
    Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
-
-</details>
-
 - **Expose the radial marking-menu shell to menu accessibility nodes** (`MM-RADIAL-A11Y-NODES`; `dat-mm-radial-a11y-node-coverage-gtww`).
-   Emit the radial marking-menu shell through menu_accessibility_nodes (node-model-only, truthful inert-pilot values, stable slot order, available->is_enabled flip documented) using the existing MenuAccessibleNode/MenuItem protocol types in gui-protocol accessibility.rs. Hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor; existing protocol types only. *state `in_progress`; authorization `execution`; parallel lane.*
+   Emit the radial marking-menu shell through menu_accessibility_nodes (node-model-only, truthful inert-pilot values, stable slot order, available->is_enabled flip documented) using the existing MenuAccessibleNode/MenuItem protocol types in gui-protocol accessibility.rs. Hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor; existing protocol types only. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md`.
-<details>
-<summary>Completed history (2 landed records)</summary>
-
 - **Repair native_selection_overlay::mask tests for the document-aware path** (`NATIVE-SELECTION-MASK-TESTS`; `dat-native-selection-mask-tests-fail-4dyl`).
    Update the three failing native_selection_overlay::mask tests (mask_tests.rs / related_fixture.rs) to assert through the document-aware presentation path (projection_keys / schematic_documents[].keys) instead of the stale flat schematic_keys that 037ec5b6's per-document path leaves empty; the forged-capture test forges the consulted field so Err is still asserted. Test-only; source behavior/integrity verified intact. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md`.

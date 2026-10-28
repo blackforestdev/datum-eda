@@ -1,0 +1,22 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "d9e3cdbccfde90424d58ef0305d6e7cd83c82a47",
+  "launch_command": "WAYLAND_DISPLAY= WINIT_UNIX_BACKEND=x11 DISPLAY=:1 EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/debug/datum-eda ./target/debug/datum-gui --project-root /tmp/claude-1000/-home-bfadmin-Documents-datum-eda/8e619a1b-92df-496e-a133-9ed9b3dd45b0/scratchpad/obs-step3-project --focus-pane board",
+  "workflow_results": {
+    "Open a native Project and invoke the marking menu in an editor pane.": true,
+    "With an assistive-technology client active, the assistive layer announces the radial wheel's structure, leaf labels and truthful disabled states.": true,
+    "Navigate into a nested sub-wheel and back out; each transition is announced.": true,
+    "Dismiss the marking menu with no operation invoked.": true
+  },
+  "safety_results": {
+    "Every inert leaf reports available=false with its reason; no availability is fabricated.": true,
+    "No verb is enabled and no operation is invoked through the accessibility nodes.": true,
+    "No authored source, document or journal activity results from exposing or navigating the nodes.": true
+  },
+  "ordinary_record_note": "Ordinary-designer-path AT-SPI observation of the DELIVERED datum-gui binary (no Runtime/menu/selection-state injection), closing the one open MM-RADIAL evidence gap dev caught honestly: ordinary_workflow step 3 (nested sub-wheel navigation, each transition announced) had not been observed on the a11y bus - the earlier gtww run and audit's trace both saw Align/Distribute only as navigable PARENTS without entering one. This run enters and exits a sub-wheel. Binary: target/debug/datum-gui built 2026-10-28 08:30:44 at HEAD d9e3cdbc (the runtime publish-gate fix, source_commit above); no rebuild - it is runtime-equivalent to current HEAD 9e2ae8dd because the only later gui-crate commit, bd68b60e, is a #[cfg(test)]-only test relocation (its own body states 'production code unchanged'). AT-SPI client = python3 gi Atspi 2.0 (the AT-client API Orca uses) reading the live a11y bus (org.a11y.Bus, unix:path=/run/user/1000/at-spi/bus_1); input = genuine OS events via xdotool after windowactivate (board editor pane focused by click, Ctrl+A select, Menu key / NamedKey::ContextMenu opened the wheel, left-click on the W/Align slot entered the sub-wheel, left-click on the centre Back affordance popped out, Escape dismissed). Full stage-by-stage node dumps and the before/after sha256 in mm-radial-subwheel-atspi-dump.txt (same directory). Observed node sets: (A) root wheel open - menu 'Marking menu - pcb.multiselect' with 8 leaves, the 6 inert ones (Rotate/Move Exactly/Delete/Duplicate/Flip/Lock) lacking enabled+sensitive and Align/Distribute carrying enabled+sensitive as navigable submenu parents, plus the 'Select' sibling (present because this run had selection=Some); (B) entered Align sub-wheel - the inventory CHANGED to 'Back' (Return to the previous wheel) + Horizontal + Vertical + Distribute, the 8 root leaves gone = the inward transition is announced; (C) backed out via the centre Back affordance - the 8 root leaves restored, Back+children gone = the outward transition is announced; (D) Escape - the menu subtree is empty (0 nodes) = dismissal clears. The four project design files (project.json, board/board.json, schematic/schematic.json, rules/rules.json) were byte-identical by sha256 before and after the whole run: no authored source, document or journal activity. The two submenu parents are the only available=true leaves; every non-parent leaf reports available=false (no enabled/sensitive) with a truthful description, and no verb fired at any step - navigating Align only opened its sub-wheel. All seven workflow/safety values are literal true by first-hand observation of this run's AT-SPI dumps; no human-performed visual verdict is claimed. Honest scope: this run had selection=Some (binding basis present); the selection=None publish/clear is proved separately by the committed regression marking_a11y_tests::radial_marking_menu_without_selection_list_publishes_through_bridge. Breadth beyond this AT-SPI/keyboard scenario (full assistive-client matrix, exhaustive keyboard navigation) remains in qualification_followups.",
+  "task": "GUI-MARKING-MENU",
+  "step": "MM-RADIAL-A11Y-NODES",
+  "bead": "dat-mm-radial-a11y-node-coverage-gtww",
+  "date": "2026-10-28",
+  "observer": "frontend-dev-01"
+}

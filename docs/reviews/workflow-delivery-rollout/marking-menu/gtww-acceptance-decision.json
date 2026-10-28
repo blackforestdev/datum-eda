@@ -1,0 +1,31 @@
+{
+  "task": "MM-RADIAL-A11Y-NODES (gtww)",
+  "bead": "dat-mm-radial-a11y-node-coverage-gtww",
+  "gate": "ACCEPT",
+  "date": "2026-10-28",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:GTWW-ACCEPTED:2026-10-28",
+  "authority": "Standing project-manager appointment (specs/active_frontier.json management_appointments.standing-project-manager, activated owner-hand at 3cdeb4ec; PM059 standing clauses: covered phase acceptance delegated to the manager).",
+  "disposition": "MM-RADIAL-A11Y-NODES: accept delivery - the radial marking-menu accessibility feature is complete designer behavior in the ordinary application: gui-protocol radial nodes (0600d5dd), the runtime publish-gate fix that makes them reachable (d9e3cdbc), the focused None-path regression relocated health-clean (bd68b60e), and the ordinary-input AT-SPI observation evidence (22aa607f), accepted after audit-agent-01's independent integrated review (PASS, all bars). The landing validator surfaced one honest evidence gap post-review - workflow step 3 (sub-wheel navigation announced) had never been observed in the ordinary application - and it was closed by a dedicated observed run (basis.ordinary_evidence item 2), not by rewording the requirement; dev-agent-01's refusal to fabricate the missing result is on record in the deferral.",
+  "basis": {
+    "pinned_head": "22aa607f",
+    "independent_review": "audit-agent-01 gtww lane-completion review (receipt gtww-lane-completion-and-mask-review.md in audit scratchpad 60daf01e-9d05-4712-9f7c-18965c97c6a1): gate-fix byte-verification (suppress only when both menus None; publish branch byte-identical; clear-on-close preserved; no write path; no new protocol surface), real test extraction via #[path] still exercising None publish+clear, source-health green first-hand (3337 files, both checkers exit 0), claims-only evidence bar PASS (record makes no None-specific empirical claim), independent publish-chain trace (invalidate_frame -> refresh_menu_accessibility -> projection -> update_menus) plus empirical real-bus confirmation (:1.639 GetChildren, 8 truthful leaves, 2 navigable parents, Escape -> 0 nodes, no design writes).",
+    "ordinary_evidence": "TWO complementary ordinary-application observations, both genuine OS input on the delivered binary with byte-identical design files before/after: (1) docs/reviews/workflow-delivery-rollout/marking-menu/gtww-atspi-observation.md + gtww-atspi-radial-dump.txt (22aa607f) - root-wheel announcement, truthful inert/navigable states, dismissal; (2) mm-radial-a11y-ordinary-application.json + mm-radial-subwheel-atspi-dump.txt - the workflow step-3 closure, observed not inferred: entering the Align sub-wheel by ordinary input changed the published node set to Back/Horizontal/Vertical/Distribute (each enabled+sensitive with truthful descriptions) and backing out via the centre Back restored the 8 root leaves, both transitions announced on the live bus (python gi Atspi, the real AT-client API); read first-hand by the PM before this record was signed. Screenshots were unavailable under KWin/Xwayland for run (2); the AT-SPI dumps ARE the observation for an accessibility feature - the bus state is what an AT user receives.",
+    "none_path_coverage": "Committed focused regression marking_a11y_tests.rs (bd68b60e): selection=None publishes radial inventory through the bridge; both-menus-None clears to empty. The ordinary run was selection=Some and claims nothing about the None path (complementary evidence, stated honestly in the record)."
+  },
+  "scope_rulings": [
+    "Keyboard invocation accepted in-scope: publication is downstream of marking_menu=Some regardless of open path; keyboard is primary for a screen-reader feature; no governing text demands pointer.",
+    "The publish-gate fix was a continuation of the same undelivered radial-a11y outcome under the gtww grant (PM059 unit = designer behavior in the ordinary application), not new scope."
+  ],
+  "limits": [
+    "No claim that disabled leaves perform EDA operations; leaves remain truthfully inert (available=false + reason caption).",
+    "Live pointer-open under the KWin/Xwayland compositor was not demonstrated (input-routing environment artifact, not a gtww defect; the publish path is invocation-independent). Recorded residual, not blocking.",
+    "AT-SPI verb execution (leaf activation doing work) belongs to the GUI-WRITE-PATH successor; nothing here authorizes or selects it."
+  ],
+  "findings_dispositioned": [
+    "Runtime publish-gate defect (radial-only wheel suppressed): found by frontend pre-observation, code-verified by PM, repaired d9e3cdbc within the lane.",
+    "Source-health inline-test-tail overrun (374>350) introduced by d9e3cdbc's guard test: repaired bd68b60e by real extraction; green at pinned HEAD.",
+    "Attribution trailers (Co-Authored-By, CLAUDE.md no-attribution violation) were found on five chore/bead commits and REMOVED by owner-ordered message-only history rewrite on 2026-10-28 (trees/authors/dates byte-identical; SHA map at PM scratchpad trailer-strip-sha-map.txt; the SHAs cited throughout this record are the post-strip SHAs). Whole-history scan now 0 attribution matches. Standing strip+verify rule adopted by all committing agents."
+  ],
+  "owner_revisable": true
+}

@@ -2,8 +2,8 @@
 
 Bead: `dat-mm-radial-a11y-node-coverage-gtww`
 Date: 2026-10-28
-Commits under review: `0600d5dd` (protocol radial nodes), `6e146a8a` (runtime
-publish-gate fix), `4d59c770` (test-placement repair).
+Commits under review: `0600d5dd` (protocol radial nodes), `d9e3cdbc` (runtime
+publish-gate fix), `bd68b60e` (test-placement repair).
 
 ## What was run (transport, verbatim)
 
@@ -87,5 +87,5 @@ Two complementary pieces, not conflated:
   without_platform().update_menus` with `selection = None` and asserts the radial
   root + inert Rotate + navigable Align publish, then clear.
 
-Together: the runtime gate (`6e146a8a`) makes gtww's radial nodes reachable at
+Together: the runtime gate (`d9e3cdbc`) makes gtww's radial nodes reachable at
 runtime in both the ordinary (selection=Some) and the selection=None cases.
