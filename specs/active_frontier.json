@@ -18519,6 +18519,7 @@
         "head": "4d0f3e687448205e590f6283389024b07197c6ae",
         "heartbeat_at": "2026-10-28T02:32:28Z",
         "scope": [
+          "crates/gui-app/src/terminal/terminal_accessibility_bridge.rs",
           "crates/gui-protocol/src/gui_menu_model/accessibility.rs"
         ],
         "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
