@@ -453,29 +453,32 @@ impl PreparedScene {
                     );
                 }
             }
-            let before_panel_quads = panel_quads.len();
-            let before_text_runs = text_runs.len();
-            // Menus paint above ordinary workspace/Console content. Their hit
-            // regions must win there too; later modal/marking surfaces stay above.
+            let before_marking_overlay_quads = menu_overlay_quads.len();
+            let before_marking_overlay_text = menu_overlay_text_runs.len();
+            // The marking menu is a foreground overlay: it must paint ABOVE the PCB
+            // viewport content, so (like the menu bar's dropdown) its quads and text
+            // go to the menu-overlay streams composited AFTER the viewport passes —
+            // NOT Stream::Panel, which paints below/interleaved with the board and
+            // left the wheel occluded over real content. Its hit regions still win.
             hit_regions[menu_hit_start..].rotate_left(menu_hit_count);
             marking_menu::render_marking_menu(
                 state,
                 &layout,
-                &mut panel_quads,
-                &mut text_runs,
+                &mut menu_overlay_quads,
+                &mut menu_overlay_text_runs,
                 &mut hit_regions,
             );
             consumers.note(
-                Stream::Panel,
+                Stream::Overlay,
                 Consumer::Menu,
-                before_panel_quads,
-                panel_quads.len(),
+                before_marking_overlay_quads,
+                menu_overlay_quads.len(),
             );
             consumers.note(
-                Stream::Text,
+                Stream::OverlayText,
                 Consumer::Menu,
-                before_text_runs,
-                text_runs.len(),
+                before_marking_overlay_text,
+                menu_overlay_text_runs.len(),
             );
             // Application-modal preferences must be appended after every workspace
             // hit region so reverse-order hit testing cannot reach the obscured UI.

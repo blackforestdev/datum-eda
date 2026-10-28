@@ -22,8 +22,10 @@ fn marking_menu_shell_renders_manifest_items_without_command_targets() {
         &retained,
     )
     .unwrap();
+    // The marking menu composites into the menu-overlay streams (above the PCB), so
+    // its labels live in the overlay text sink, not the main text pass.
     let rendered_text = prepared
-        .text_runs
+        .menu_overlay_text_runs()
         .iter()
         .map(|run| run.text.as_str())
         .collect::<Vec<_>>();

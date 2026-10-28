@@ -203,3 +203,56 @@ fn nested_preferences_submenu_is_pointer_targeted_and_edge_safe() {
         })
     );
 }
+
+#[test]
+fn marking_menu_composites_into_menu_overlay_above_the_pcb() {
+    // The marking menu is a foreground overlay: when it is open its wheel must emit
+    // into the dedicated menu-overlay sink (composited AFTER the viewport passes, so
+    // it paints above the PCB), exactly like the menu-bar dropdown — NOT into
+    // panel_vertices, which paint below/interleaved with board content and left the
+    // wheel occluded over a real board.
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    let closed = {
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        )
+        .unwrap()
+        .menu_overlay_vertices()
+        .len()
+    };
+
+    state.ui.marking_menu = Some(datum_gui_protocol::MarkingMenuState {
+        menu_key: "pcb.multiselect".into(),
+        target_object_id: None,
+        anchor_x_px: 640,
+        anchor_y_px: 400,
+        preview_slot: None,
+        gesture_dx_px: 0,
+        gesture_dy_px: 0,
+        selection: None,
+        submenu_path: Vec::new(),
+    });
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    )
+    .unwrap();
+
+    // Opening the marking menu adds geometry to the menu-overlay sink (not only the
+    // panel sink): the wheel composites in the foreground overlay stream.
+    assert!(
+        prepared.menu_overlay_vertices().len() > closed,
+        "an open marking menu must composite its wheel into the menu-overlay sink \
+         (above the PCB), not the panel sink"
+    );
+}

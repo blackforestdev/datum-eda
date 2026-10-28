@@ -95,18 +95,31 @@ fn slot_label_rect(anchor: (f32, f32), angle_deg: f32, bounds: RectPx) -> RectPx
 pub(super) fn render_marking_menu(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
-    panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
+    overlay_quads: &mut Vec<Quad>,
+    overlay_text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
     let Some(preview) = state.ui.marking_menu.as_ref() else {
         return;
     };
-    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    render_preview(state, preview, layout, panel_quads, text_runs, hit_regions);
+    // The marking menu composites into the menu-overlay streams (painted above the
+    // PCB), so these sinks are the overlay quad/text buffers, not panel buffers.
+    let starts = (
+        overlay_quads.len(),
+        overlay_text_runs.len(),
+        hit_regions.len(),
+    );
+    render_preview(
+        state,
+        preview,
+        layout,
+        overlay_quads,
+        overlay_text_runs,
+        hit_regions,
+    );
     crate::hit_clipping::clip_content(
-        panel_quads,
-        text_runs,
+        overlay_quads,
+        overlay_text_runs,
         hit_regions,
         starts.0,
         starts.1,
