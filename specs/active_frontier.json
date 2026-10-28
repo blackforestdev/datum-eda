@@ -10328,16 +10328,16 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T16:36:35Z",
-        "expires_at": "2026-10-28T09:49:09Z",
+        "expires_at": "2026-10-28T10:10:25Z",
         "harness": "claude-code",
-        "head": "a7d1c6843951c4b59d7b1a07c544968fb0b8388b",
-        "heartbeat_at": "2026-10-28T01:49:09Z",
+        "head": "4d0f3e687448205e590f6283389024b07197c6ae",
+        "heartbeat_at": "2026-10-28T02:10:25Z",
         "scope": [
           ".beads/issues.jsonl",
-          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c05-delta-review.md",
-          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-acceptance-decision.json",
-          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-disabled-action-inventory.md",
-          "docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-ordinary-input-run.md",
+          "crates/engine-daemon/src/dispatch.rs",
+          "crates/engine-daemon/src/preferences_state.rs",
+          "crates/engine/src/preferences/product_dispatch.rs",
+          "crates/engine/src/preferences/product_tests.rs",
           "scripts/check_global_preferences_boundary.py",
           "scripts/check_global_preferences_production_evidence.py",
           "scripts/check_global_preferences_production_matrix.py",
@@ -10351,8 +10351,7 @@
           "scripts/test_global_preferences_production_evidence.py",
           "scripts/test_global_preferences_production_matrix.py",
           "specs/PROGRESS.md",
-          "specs/active_frontier.json",
-          "specs/spec_governance_manifest.json"
+          "specs/active_frontier.json"
         ],
         "session": "d350ceb7-6dd2-4f04-85b8-db9267fde98e",
         "worktree": "/home/bfadmin/Documents/datum-eda"
@@ -18508,6 +18507,73 @@
       "work_purpose": {
         "kind": "maintenance",
         "rationale": "Bounded standing-policy correction under owner tasking; re-routes routine development decision authority, introduces no product delivery, scope change, waiver or new permission doc."
+      }
+    },
+    {
+      "authorization": "execution",
+      "canonical_next": false,
+      "claim": {
+        "agent": "frontend-dev-01",
+        "claimed_at": "2026-10-28T02:32:28Z",
+        "expires_at": "2026-10-28T10:32:28Z",
+        "harness": "claude-code",
+        "head": "4d0f3e687448205e590f6283389024b07197c6ae",
+        "heartbeat_at": "2026-10-28T02:32:28Z",
+        "scope": [
+          "crates/gui-protocol/src/gui_menu_model/accessibility.rs"
+        ],
+        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
+      "dependencies": [],
+      "governing_docs": [
+        "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
+      ],
+      "issue_id": "dat-mm-radial-a11y-node-coverage-gtww",
+      "key": "MM-RADIAL-A11Y-NODES",
+      "order": 102,
+      "parallel": true,
+      "state": "in_progress",
+      "summary": "Emit the radial marking-menu shell through menu_accessibility_nodes (node-model-only, truthful inert-pilot values, stable slot order, available->is_enabled flip documented) using the existing MenuAccessibleNode/MenuItem protocol types in gui-protocol accessibility.rs. Hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor; existing protocol types only.",
+      "title": "Expose the radial marking-menu shell to menu accessibility nodes",
+      "unblocks": [],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Completes the already-landed inert marking-menu shell's accessibility-node coverage (node-model-only emission through existing MenuAccessibleNode/MenuItem types; no new designer verb or behavior); hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor."
+      }
+    },
+    {
+      "authorization": "execution",
+      "canonical_next": false,
+      "claim": {
+        "agent": "frontend-dev-01",
+        "claimed_at": "2026-10-28T02:32:28Z",
+        "expires_at": "2026-10-28T10:32:28Z",
+        "harness": "claude-code",
+        "head": "4d0f3e687448205e590f6283389024b07197c6ae",
+        "heartbeat_at": "2026-10-28T02:32:28Z",
+        "scope": [
+          "crates/gui-render/src/render/native_selection_overlay/mask_tests.rs",
+          "crates/gui-render/src/render/native_selection_overlay/related_fixture.rs"
+        ],
+        "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
+      "dependencies": [],
+      "governing_docs": [
+        "docs/gui/DATUM_SELECTION_VISUAL_LANGUAGE_GUIDANCE.md"
+      ],
+      "issue_id": "dat-native-selection-mask-tests-fail-4dyl",
+      "key": "NATIVE-SELECTION-MASK-TESTS",
+      "order": 103,
+      "parallel": true,
+      "state": "in_progress",
+      "summary": "Update the three failing native_selection_overlay::mask tests (mask_tests.rs / related_fixture.rs) to assert through the document-aware presentation path (projection_keys / schematic_documents[].keys) instead of the stale flat schematic_keys that 037ec5b6's per-document path leaves empty; the forged-capture test forges the consulted field so Err is still asserted. Test-only; source behavior/integrity verified intact.",
+      "title": "Repair native_selection_overlay::mask tests for the document-aware path",
+      "unblocks": [],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Repairs the three native_selection_overlay::mask tests against the document-aware presentation path introduced by 037ec5b6; test-only, no product or source-behavior change."
       }
     }
   ],
