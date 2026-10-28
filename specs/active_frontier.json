@@ -18600,6 +18600,28 @@
         "kind": "maintenance",
         "rationale": "Bounded guard-narrowing authorized by PM (coordination-file entry); unblocks metadata-only incremental cache reclaim while leaked native-edit daemons are alive, without changing deletion rules, QA guards or the ceiling."
       }
+    },
+    {
+      "authorization": "execution",
+      "canonical_next": false,
+      "dependencies": [],
+      "governing_docs": [
+        "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md"
+      ],
+      "issue_id": "dat-genesis-concurrent-writer-wouldblock-9jey",
+      "key": "GENESIS-CONCURRENCY-REPLAY",
+      "order": 105,
+      "parallel": false,
+      "state": "ready",
+      "summary": "Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock.",
+      "title": "Genesis concurrency: idempotent replay on finalize-lease contention",
+      "unblocks": [
+        "deterministic concurrent-genesis idempotency in the GP-CM03 standing proof"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Repairs a concurrency regression in Project genesis finalize-resolve (writer-lease WouldBlock surfaced instead of idempotent replay); restores intended concurrent-creation behavior under PM034 never-blocks, adds no new designer verb, authoring surface or capability."
+      }
     }
   ],
   "management_appointments": {
