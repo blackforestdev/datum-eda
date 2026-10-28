@@ -155,7 +155,13 @@ pub(crate) fn selected_related_state() -> (Fixture, ReviewWorkspaceState) {
     };
     assert!(view.related.contains(&parent));
     assert!(!view.members.contains(&parent));
-    assert!(!view.related_schematic_keys.is_empty());
+    // Per-document path: related schematic keys live in the document presentation
+    // (scene.schematic_document is Some), not the flat fallback.
+    assert!(
+        view.schematic_documents
+            .iter()
+            .any(|presentation| !presentation.related.is_empty())
+    );
     state.schematic_scene = Some(scene);
     state.selection = SelectionTarget::Native(Box::new(view));
     (fixture, state)

@@ -66,7 +66,17 @@ fn canonical_mask_source_preserves_identity_and_refuses_foreign_revision_without
                 forged.board_keys.insert("forged-key".into());
             }
             datum_gui_protocol::PaneContent::Schematic => {
-                forged.schematic_keys.insert("forged-key".into());
+                // Forge the field projection_keys actually consults for a schematic
+                // scene: the per-document presentation keys (scene.schematic_document
+                // is Some), not the flat fallback the pre-document tests used.
+                let document = scene.schematic_document.clone().unwrap();
+                forged
+                    .schematic_documents
+                    .iter_mut()
+                    .find(|p| p.document == document && p.scene_id == scene.scene_id)
+                    .expect("schematic presentation entry for the selected document")
+                    .keys
+                    .insert("forged-key".into());
             }
             _ => unreachable!(),
         }
@@ -188,7 +198,13 @@ fn nonresolving_pane_creates_no_mask_request_or_selection_resource() {
         unreachable!()
     };
     assert!(view.board_keys.is_empty());
-    assert!(!view.schematic_keys.is_empty());
+    // Per-document path: the schematic selection lives in the document presentation,
+    // not the flat fallback (scene.schematic_document is Some).
+    assert!(
+        view.schematic_documents
+            .iter()
+            .any(|presentation| !presentation.keys.is_empty())
+    );
     assert!(
         Request::capture(view, &state.scene, datum_gui_protocol::PaneContent::Board)
             .unwrap()
@@ -237,8 +253,18 @@ fn canonical_related_parent_keeps_baseline_role_while_selected_pin_keeps_materia
         let SelectionTarget::Native(view) = &state.selection else {
             unreachable!()
         };
-        for key in &view.related_schematic_keys {
-            if !view.schematic_keys.contains(key) {
+        // Document-aware key sets: the per-document presentation path (the scene has a
+        // schematic_document), not the flat fallback the pre-document tests read.
+        let schematic_keys = view
+            .projection_keys(scene, datum_gui_protocol::PaneContent::Schematic)
+            .cloned()
+            .unwrap_or_default();
+        let related_schematic_keys = view
+            .related_projection_keys(scene, datum_gui_protocol::PaneContent::Schematic)
+            .cloned()
+            .unwrap_or_default();
+        for key in &related_schematic_keys {
+            if !schematic_keys.contains(key) {
                 let span = Span {
                     key: Some(key.clone()),
                     role: Role::Material,
@@ -248,7 +274,7 @@ fn canonical_related_parent_keeps_baseline_role_while_selected_pin_keeps_materia
                 assert_eq!(request.label(&span), 0);
             }
         }
-        for key in &view.schematic_keys {
+        for key in &schematic_keys {
             let span = Span {
                 key: Some(key.clone()),
                 role: Role::Material,
@@ -268,8 +294,8 @@ fn canonical_related_parent_keeps_baseline_role_while_selected_pin_keeps_materia
             .board_texts
             .iter()
             .find(|v| {
-                !view.schematic_keys.contains(&v.object_id)
-                    && !view.related_schematic_keys.contains(&v.object_id)
+                !schematic_keys.contains(&v.object_id)
+                    && !related_schematic_keys.contains(&v.object_id)
             })
             .unwrap();
         assert_eq!(
