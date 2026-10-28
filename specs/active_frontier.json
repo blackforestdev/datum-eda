@@ -18526,6 +18526,25 @@
         "worktree": "/home/bfadmin/Documents/datum-eda"
       },
       "dependencies": [],
+      "feature_delivery": {
+        "development_ready": false,
+        "ordinary_evidence": [],
+        "ordinary_workflow": [
+          "Open a native Project and invoke the marking menu in an editor pane.",
+          "With an assistive-technology client active, the assistive layer announces the radial wheel's structure, leaf labels and truthful disabled states.",
+          "Navigate into a nested sub-wheel and back out; each transition is announced.",
+          "Dismiss the marking menu with no operation invoked."
+        ],
+        "prerequisite_reasons": {},
+        "qualification_followups": [
+          "Breadth beyond the observed AT-SPI/keyboard scenario (full assistive-client matrix, exhaustive keyboard navigation) remains separate."
+        ],
+        "safety_requirements": [
+          "Every inert leaf reports available=false with its reason; no availability is fabricated.",
+          "No verb is enabled and no operation is invoked through the accessibility nodes.",
+          "No authored source, document or journal activity results from exposing or navigating the nodes."
+        ]
+      },
       "governing_docs": [
         "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
       ],
@@ -18538,8 +18557,8 @@
       "title": "Expose the radial marking-menu shell to menu accessibility nodes",
       "unblocks": [],
       "work_purpose": {
-        "kind": "maintenance",
-        "rationale": "Completes the already-landed inert marking-menu shell's accessibility-node coverage (node-model-only emission through existing MenuAccessibleNode/MenuItem types; no new designer verb or behavior); hard-gate a11y prerequisite for the verb-firing GUI-WRITE-PATH successor."
+        "kind": "product_delivery",
+        "rationale": "Screen-reader and keyboard access to the radial marking menu is designer behavior under manual-first doctrine; delivered as the inert shell's accessibility-node emission (node-model-only, no new verb), tracked as delivered designer capability per the owner's capability metric."
       }
     },
     {
@@ -18574,6 +18593,40 @@
       "work_purpose": {
         "kind": "maintenance",
         "rationale": "Repairs the three native_selection_overlay::mask tests against the document-aware presentation path introduced by 037ec5b6; test-only, no product or source-behavior change."
+      }
+    },
+    {
+      "authorization": "execution",
+      "canonical_next": false,
+      "claim": {
+        "agent": "codex",
+        "claimed_at": "2026-10-28T02:40:21Z",
+        "expires_at": "2026-10-28T10:40:21Z",
+        "harness": "codex",
+        "head": "b8dc3c8d4df0cdd7469ea6cd59a453d63a649d78",
+        "heartbeat_at": "2026-10-28T02:40:21Z",
+        "scope": [
+          "scripts/manage_cargo_cache.py",
+          "scripts/test_manage_cargo_cache.py"
+        ],
+        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
+      "dependencies": [],
+      "governing_docs": [
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "issue_id": "dat-mwlp",
+      "key": "CACHE-GUARD-NARROWING",
+      "order": 104,
+      "parallel": true,
+      "state": "in_progress",
+      "summary": "Bounded PM-authorized guard-narrowing of scripts/manage_cargo_cache.py: a metadata-only incremental reclaim (target/{debug,release}/incremental) may proceed while unrelated runtime apps are alive, gated on the shared build lock + zero Cargo/rustc + positive non-runnable admission + active-exe refusal. Deletion rules, QA companion guards and the retained-cache ceiling unchanged; audit reviews the candidate before --apply. The safer parallel unblock for the GP-CM05E clippy gate.",
+      "title": "Narrow the Cargo cache-cleanup guard for metadata-only incremental reclaim with runtime apps alive",
+      "unblocks": [],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Bounded guard-narrowing authorized by PM (coordination-file entry); unblocks metadata-only incremental cache reclaim while leaked native-edit daemons are alive, without changing deletion rules, QA guards or the ceiling."
       }
     }
   ],
