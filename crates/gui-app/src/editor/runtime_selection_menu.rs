@@ -109,10 +109,16 @@ impl Runtime {
             Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => Some(id),
             _ => None,
         };
+        // Selection context the Runtime already holds: a multi-object PCB selection
+        // must open the pcb.multiselect wheel, not the first object's per-type wheel.
+        let selected_count = match &self.workspace().selection {
+            datum_gui_protocol::SelectionTarget::Native(view) => view.members.len(),
+            _ => 0,
+        };
         let menu_key = if surface == SceneSurface::Schematic {
             "schematic.selection".into()
         } else {
-            marking_menu_key_for_target(target_object_id.as_deref())
+            marking_menu_key_for_target(target_object_id.as_deref(), selected_count)
         };
         let ui = &mut self.session.workspace_mut().ui;
         ui.active_menu = None;

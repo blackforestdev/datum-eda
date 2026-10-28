@@ -33,7 +33,16 @@ pub(super) fn bounds_from_points(
     })
 }
 
-pub(super) fn marking_menu_key_for_target(target_object_id: Option<&str>) -> String {
+pub(super) fn marking_menu_key_for_target(
+    target_object_id: Option<&str>,
+    selected_count: usize,
+) -> String {
+    // A multi-object selection opens the multi-select wheel (its Align/Distribute
+    // sub-wheels only exist under `pcb.multiselect`); a single object resolves to its
+    // per-type key; no object falls back to the empty-canvas wheel.
+    if selected_count > 1 {
+        return "pcb.multiselect".to_string();
+    }
     let key = match target_object_id {
         Some(id) if id.starts_with("component:") => "pcb.component",
         Some(id) if id.starts_with("pad:") => "pcb.pad",

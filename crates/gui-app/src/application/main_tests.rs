@@ -30,15 +30,36 @@ fn rejects_invalid_visual_window_size() {
 
 #[test]
 fn marking_menu_key_maps_phase_one_board_objects() {
+    // Single-object (count 1) resolves to the per-type wheel.
     assert_eq!(
-        marking_menu_key_for_target(Some("component:U1")),
+        marking_menu_key_for_target(Some("component:U1"), 1),
         "pcb.component"
     );
-    assert_eq!(marking_menu_key_for_target(Some("pad:P1")), "pcb.pad");
-    assert_eq!(marking_menu_key_for_target(Some("track:T1")), "pcb.track");
-    assert_eq!(marking_menu_key_for_target(Some("via:V1")), "pcb.via");
-    assert_eq!(marking_menu_key_for_target(Some("zone:Z1")), "pcb.zone");
-    assert_eq!(marking_menu_key_for_target(None), "pcb.empty");
+    assert_eq!(marking_menu_key_for_target(Some("pad:P1"), 1), "pcb.pad");
+    assert_eq!(
+        marking_menu_key_for_target(Some("track:T1"), 1),
+        "pcb.track"
+    );
+    assert_eq!(marking_menu_key_for_target(Some("via:V1"), 1), "pcb.via");
+    assert_eq!(marking_menu_key_for_target(Some("zone:Z1"), 1), "pcb.zone");
+    // No object resolves to the empty-canvas wheel.
+    assert_eq!(marking_menu_key_for_target(None, 0), "pcb.empty");
+}
+
+#[test]
+fn marking_menu_key_resolves_multiselect_over_per_type() {
+    // A multi-object selection opens the multi-select wheel regardless of which
+    // object is under the cursor (its Align/Distribute sub-wheels live only here).
+    assert_eq!(
+        marking_menu_key_for_target(Some("component:U1"), 3),
+        "pcb.multiselect"
+    );
+    assert_eq!(marking_menu_key_for_target(None, 2), "pcb.multiselect");
+    // The boundary: exactly one selected object is still the per-type wheel.
+    assert_eq!(
+        marking_menu_key_for_target(Some("component:U1"), 1),
+        "pcb.component"
+    );
 }
 
 #[test]
