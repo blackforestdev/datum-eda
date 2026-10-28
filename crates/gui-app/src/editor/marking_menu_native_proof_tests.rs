@@ -1,9 +1,14 @@
-//! MM-C04 native proof: the inert marking-menu shell renders through the running
-//! wgpu Runtime, is navigated by real pointer input, and commits NO design change.
-//! Everything here is programmatically captured (windowed Runtime + encode_capture
-//! -> PNG, validated by scripts/native_capture_pixels.py). The only owner residual,
-//! scoped out explicitly and never simulated, is the literal human visual verdict
-//! of the captured frames (PM060 class).
+//! MM-C04 native-Runtime INTEGRATION proof: the inert marking-menu shell renders
+//! through a real windowed wgpu Runtime (X11/Vulkan) and commits NO design change.
+//! Input here is DIRECT, not OS-level: the test calls the Runtime's own handlers
+//! (open_marking_menu_at_cursor / handle_primary_click / update_marking_menu_preview)
+//! and assigns the menu state in-test, on a hidden window (nothing composites over a
+//! board). So this proves the Runtime integration + nonmutation, NOT the ordinary
+//! OS-input path and NOT a human visual verdict. The ordinary-designer OS-input proof
+//! (genuine xdotool events through the display server, over a real board) is
+//! docs/reviews/workflow-delivery-rollout/marking-menu/mm-c06-ordinary-input-run.md,
+//! which this round showed matters: it caught a paint-stream defect (be9f709e) that
+//! this hidden-window integration proof could not.
 //!
 //! #[ignore]d: requires X11/Vulkan, a pinned CLI, and the `visual` feature. Run:
 //!   EDA_CLI_BIN=$PWD/target/debug/datum-eda \
@@ -114,10 +119,11 @@ fn capture(runtime: &mut Runtime, dir: &std::path::Path, name: &str) -> PathBuf 
     path
 }
 
-// MM-C04 full matrix: drive the running inert shell through its four states with
-// real pointer input, capture each natively, and prove the whole traversal commits
-// no design change. The literal human visual verdict of these PNGs is the only
-// owner residual (scoped out here, never simulated).
+// MM-C04 integration matrix: drive the running inert shell through four states via
+// the Runtime's own handlers (direct calls + in-test state assignment, NOT OS-level
+// pointer events) on a hidden window, capture each natively, and prove the whole
+// traversal commits no design change. The ordinary OS-input visual proof lives in
+// mm-c06-ordinary-input-run.md.
 #[test]
 #[ignore = "requires X11/Vulkan, pinned CLI, and --features visual; run serially"]
 #[allow(deprecated)]
