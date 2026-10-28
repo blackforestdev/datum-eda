@@ -18375,10 +18375,10 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "PA-C02",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -18427,7 +18427,12 @@
           },
           {
             "action": "Obtain distinct independent review of the routing correction and its tests; account for every finding.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "87b71d5ab4f446e0dd07a38c87ffa64d94282a46"
+              }
+            ],
             "depends_on": [
               "PA-C01"
             ],
@@ -18439,11 +18444,16 @@
                 "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Verified handoff: confirm installed routing behavior and hand the correction record back; no product acceptance.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "3cdeb4ece555302174ab9efc6beeb0474e2b3843"
+              }
+            ],
             "depends_on": [
               "PA-C02"
             ],
@@ -18455,7 +18465,7 @@
                 "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           }
         ]
       },
@@ -18465,9 +18475,10 @@
       ],
       "issue_id": "dat-pm-automation-correction-5spq",
       "key": "PM-AUTOMATION-CORRECTION",
+      "landing_commit": "3cdeb4ece555302174ab9efc6beeb0474e2b3843",
       "order": 101,
       "parallel": true,
-      "state": "ready",
+      "state": "landed",
       "summary": "Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved.",
       "title": "Install persistent project-PM decision routing (standing policy correction)",
       "unblocks": [],

@@ -244,7 +244,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (39 landed records)</summary>
+<summary>Completed history (40 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -363,12 +363,12 @@
 - **Create Packages through the native library GUI** (`LIBRARY-PACKAGE-GUI-CREATE`; `dat-library-package-gui-create-2pdx`).
    Creation-only Package source remains landed at1459e21f with its bounded creation/history/Footprint review. NPD-C07 startup repair at0a8e8b5d now verifies ordinary GUI-created Project-to-Package-draft reachability on native Wayland and restores bounded development availability. No new full Package, platform or HUMAN qualification; S5A held. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/decisions/PRODUCT_MECHANICS_062_SCHEMATIC_LIBRARY_SURFACE_DISPOSITION.md`, `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`, `docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
+- **Install persistent project-PM decision routing (standing policy correction)** (`PM-AUTOMATION-CORRECTION`; `dat-pm-automation-correction-5spq`).
+   Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 
 </details>
 
-- **Install persistent project-PM decision routing (standing policy correction)** (`PM-AUTOMATION-CORRECTION`; `dat-pm-automation-correction-5spq`).
-   Codex maintenance assignment: make project-PM routing of development owner_decision kinds the persistent default via the existing appointment/decision_routing machinery, with focused tests, independent review and verified handoff. No new permission doc; evidence/human/external requirements preserved. *state `ready`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
