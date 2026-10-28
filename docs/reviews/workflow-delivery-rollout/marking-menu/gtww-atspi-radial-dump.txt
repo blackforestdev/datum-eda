@@ -1,0 +1,22 @@
+=== RADIAL MARKING MENU AT-SPI NODE ===
+path id = menu:marking:pcb.multiselect
+Name = 'Marking menu \\342\\200\\224 pcb.multiselect'  Role#= u 33  ChildCount= 8
+State = au 2 1124075776 0
+
+children: 8
+  id='menu:marking:pcb.multiselect/N'
+     Name='Rotate' Role#=35 State=1107298304 0 Desc='This action is unavailable in this build.'
+  id='menu:marking:pcb.multiselect/E'
+     Name='Move Exactly' Role#=35 State=1107298304 0 Desc='move-exactly with delta'
+  id='menu:marking:pcb.multiselect/S'
+     Name='Delete' Role#=35 State=1107298304 0 Desc='This action is unavailable in this build.'
+  id='menu:marking:pcb.multiselect/W'
+     Name='Align' Role#=35 State=1124075776 0 Desc='Opens the Align actions'
+  id='menu:marking:pcb.multiselect/NE'
+     Name='Duplicate' Role#=35 State=1107298304 0 Desc='duplicate selection'
+  id='menu:marking:pcb.multiselect/SE'
+     Name='Flip' Role#=35 State=1107298304 0 Desc='This action is unavailable in this build.'
+  id='menu:marking:pcb.multiselect/SW'
+     Name='Lock' Role#=35 State=1107298304 0 Desc='This action is unavailable in this build.'
+  id='menu:marking:pcb.multiselect/NW'
+     Name='Distribute' Role#=35 State=1124079872 0 Desc='Opens the Distribute actions'
