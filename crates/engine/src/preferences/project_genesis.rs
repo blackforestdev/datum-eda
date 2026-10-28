@@ -569,8 +569,12 @@ fn build_result(
     genesis_request_digest: String,
     receipt: ProjectUnitsSeedReceiptV2,
 ) -> Result<ProjectGenesisResultV1, String> {
+    // Concurrent identical creators both reach this finalize-resolve on the same
+    // freshly published destination (the winner after rename, the loser after
+    // replay_or_refuse_existing). Serialize it so the second finalizer waits on
+    // the first instead of hitting the non-blocking writer lease's WouldBlock.
     ProjectResolver::new(destination)
-        .resolve()
+        .resolve_serialized()
         .map_err(|error| error.to_string())?;
     let published_manifest_digests = [
         "project.json",

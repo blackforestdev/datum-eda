@@ -81,6 +81,20 @@ impl ProjectResolver {
         self.resolve_with_lease(&lease)
     }
 
+    /// Resolve a freshly published genesis destination behind a serialized
+    /// (blocking) lease so two identical concurrent creators wait on the peer
+    /// finalizer instead of surfacing a non-blocking writer-lease `WouldBlock`;
+    /// both then read the same published Project and replay one result.
+    ///
+    /// Confined to the genesis finalize-resolve path: ordinary reads and
+    /// canonical writers keep the non-blocking `resolve`/`acquire` contract, so
+    /// PM034 never-blocks is preserved — this adds no Design-authoring gate, only
+    /// a bounded wait on a peer's finalize-resolve of the same new root.
+    pub fn resolve_serialized(&self) -> Result<DesignModel, EngineError> {
+        let lease = ProjectWriteLease::acquire_serialized(&self.project_root)?;
+        self.resolve_with_lease(&lease)
+    }
+
     pub(crate) fn resolve_for_write_with_lease(
         &self,
         lease: &ProjectWriteLease,

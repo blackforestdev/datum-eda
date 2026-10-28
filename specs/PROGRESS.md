@@ -385,7 +385,7 @@
 </details>
 
 - **Genesis concurrency: idempotent replay on finalize-lease contention** (`GENESIS-CONCURRENCY-REPLAY`; `dat-genesis-concurrent-writer-wouldblock-9jey`).
-   Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock. *state `ready`; authorization `execution`.*
+   Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock. *state `in_progress`; authorization `execution`.*
    *Dependencies:* none. *Unblocks:* deterministic concurrent-genesis idempotency in the GP-CM03 standing proof. *Governing:* `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`.
 <!-- ACTIVE FRONTIER:END -->
 
