@@ -7442,14 +7442,17 @@
       "claim": {
         "agent": "frontend-dev-01",
         "claimed_at": "2026-10-28T00:52:50Z",
-        "expires_at": "2026-10-28T08:52:50Z",
+        "expires_at": "2026-10-28T09:16:21Z",
         "harness": "claude-code",
-        "head": "49b048b63b76427fd76665433c357b66aabb6d5a",
-        "heartbeat_at": "2026-10-28T00:52:50Z",
+        "head": "aff7059b3906bd7837552ecc8e4f911db7aca847",
+        "heartbeat_at": "2026-10-28T01:16:21Z",
         "scope": [
-          "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
+          "crates/gui-app/src/application/main_tests.rs",
           "crates/gui-app/src/editor/runtime_selection_menu.rs",
-          "crates/gui-app/src/application/main_tests.rs"
+          "crates/gui-app/src/viewport/runtime_geometry_helpers.rs",
+          "crates/gui-render/src/marking_menu.rs",
+          "crates/gui-render/src/menu_chrome/menu_overlay_contract_tests.rs",
+          "crates/gui-render/src/render/frame_preparation.rs"
         ],
         "session": "8e619a1b-92df-496e-a133-9ed9b3dd45b0",
         "worktree": "/home/bfadmin/Documents/datum-eda"
@@ -10306,10 +10309,10 @@
       "claim": {
         "agent": "dev-agent-01",
         "claimed_at": "2026-10-27T16:36:35Z",
-        "expires_at": "2026-10-28T02:53:31Z",
+        "expires_at": "2026-10-28T09:16:21Z",
         "harness": "claude-code",
-        "head": "b33049c08ba6d3f452462a3ebb6de58d7c2e49b1",
-        "heartbeat_at": "2026-10-27T18:53:31Z",
+        "head": "aff7059b3906bd7837552ecc8e4f911db7aca847",
+        "heartbeat_at": "2026-10-28T01:16:21Z",
         "scope": [
           ".beads/issues.jsonl",
           "scripts/check_global_preferences_boundary.py",
