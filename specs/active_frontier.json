@@ -4459,24 +4459,10 @@
       ]
     },
     {
-      "authorization": "execution",
+      "authorization": "owner_decision",
       "canonical_next": false,
-      "claim": {
-        "agent": "frontend-dev-01",
-        "claimed_at": "2026-10-29T20:26:00Z",
-        "expires_at": "2026-10-30T04:26:00Z",
-        "harness": "claude-code",
-        "head": "9bc2c86fc83f2e5b75476468a7b9751842e007ef",
-        "heartbeat_at": "2026-10-29T20:26:00Z",
-        "scope": [
-          "docs/reviews/gui-performance/cpu-reconciliation",
-          "docs/reviews/gui-performance/measurements/resize-current-source"
-        ],
-        "session": "1768fc84-18c0-4cc3-9c81-9ec28b33d928",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "GPI-CPU-RESIZE-INVESTIGATE",
+        "canonical_next_step_id": "GPI-S5-PLAN-DISPOSITION",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -5163,7 +5149,20 @@
           },
           {
             "action": "Execute only the approved current-host ordinary horizontal/vertical resize observation and conditional existing-probe diagnosis; preserve failures, no optimization or numerical acceptance.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "47d77852"
+              },
+              {
+                "kind": "commit",
+                "revision": "f0f3d248"
+              },
+              {
+                "kind": "commit",
+                "revision": "5b6f450d"
+              }
+            ],
             "depends_on": [
               "GPI-CPU-RESIZE-SCOPE"
             ],
@@ -5175,11 +5174,17 @@
                 "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Dispose the bounded resize finding: non-reproduction, supported current cause or precise unresolved cause/method gap; no automatic repair/campaign.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:GPI-CPU-RESIZE-DISPOSITION:2026-10-29",
+                "path": "docs/reviews/gui-performance/cpu-reconciliation/gpi-resize-disposition-decision.json"
+              }
+            ],
             "depends_on": [
               "GPI-CPU-RESIZE-INVESTIGATE"
             ],
@@ -5205,7 +5210,7 @@
                 "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Run complete in-scope non-resize adoption/native UX/endurance and independent performance replay; explicitly retain pinned resize resource/temporal exclusions without claiming closure.",
@@ -5372,7 +5377,7 @@
       "key": "GUI-PERFORMANCE-IMPLEMENTATION",
       "order": 21,
       "parallel": true,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Owner resets CPU investigation to current-host horizontal/vertical native-window resize. Historical resize cost and current shared-source changes reviewed; one finite reproduction/conditional diagnosis proposal, budgets undecided. Prior CPU audit/derivation and approved ordinary pointer observation retained, no repeats or overhead claim. S4 closed; S5/GBB-P05 separate; no resize execution yet.",
       "title": "Implement the approved shared GUI performance specification",
       "unblocks": [],

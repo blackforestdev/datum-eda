@@ -1,0 +1,23 @@
+{
+  "task": "GUI-PERFORMANCE-IMPLEMENTATION",
+  "step": "GPI-CPU-RESIZE-DISPOSITION",
+  "gate": "GPI-CPU-RESIZE-DISPOSITION [RESIZE-RESULT]",
+  "date": "2026-10-29",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:GPI-CPU-RESIZE-DISPOSITION:2026-10-29",
+  "authority": "PM059 standing project-manager authority; disposition of the bounded resize finding per the contract's RESIZE-RESULT request.",
+  "disposition": "SUPPORTED CURRENT CAUSE, at the measured scope only. The current-source reproduction (datum-gui built from 8afa4062 under the 9bc2c86f re-pin; commits 47d77852, f0f3d248, 5b6f450d) establishes that ordinary host resize sustains roughly one third of a core of application CPU, and that the cost is the renderer phase performing a full per-frame main-thread scene re-render (~61-67% of application CPU), while surface configuration and compositor delivery are negligible. The within-renderer split (scene re-encode vs draw vs submission) is an explicit unresolved method gap: the phase clocks wrap all three and roughly 12-15% of CPU is explicitly uncovered; resolving it needs profiler/kernel tracing outside the executed packet's scope.",
+  "scope_of_decision": [
+    "No repair, optimization or further investigation is authorized by this disposition; any follow-up requires its own concrete scope, per the gate's own response format.",
+    "The persisting cost is tracked by bead dat-g2jg (bug, P2, intake lane, open/unassigned/unscheduled); the historical bead dat-gui-vertical-resize-cpu-toj stays CLOSED on its bounded 2026-10-01 buffer-reuse scope, whose close note itself directs continued investigation through this lane.",
+    "No number becomes a threshold, budget or qualification (PM051); resize qualification remains separately nonblocking; GPI-S5-PLAN-DISPOSITION and GPI-S5 remain pending owner-boundary steps.",
+    "Results are current-source only; no R4 equivalence is claimed (pinned R4 artifacts lost to cache reclaim, per EVIDENCE:GPI-RESIZE-REPIN:2026-10-29)."
+  ],
+  "independent_review": {
+    "reviewer": "audit-agent-01",
+    "verdict": "Evidence sound and honestly bounded; headline figures reproduced exactly from committed raw report.json; both self-disclosed evidence defects verified as CPU-data-neutral; reconciliation delta 5b6f450d re-checked and acknowledged (premise corrected to tracker truth, SHA256SUMS binds the committed data of record).",
+    "receipt_scratch_path": "audit-agent-01 scratchpad: gpi-resize-investigate-review.md (machine-local scratch; this committed record is the durable evidence)"
+  },
+  "hygiene_note": "The dat-gui-vertical-resize-cpu-toj close note's recorded close commit a89f94b2 is not resolvable in current git history (as is c3949e53 from the same era); the closure itself is verified in the bead JSONL. Both dangling short-shas likely refer to pre-rewrite or workspace-clone provenance; recorded here so the fact is durable without further tracker churn.",
+  "owner_revisable": true
+}
