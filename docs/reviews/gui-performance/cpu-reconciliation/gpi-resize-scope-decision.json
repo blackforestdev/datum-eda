@@ -1,0 +1,17 @@
+{
+  "task": "GUI-PERFORMANCE-IMPLEMENTATION",
+  "step": "GPI-CPU-RESIZE-SCOPE",
+  "gate": "GPI-CPU-RESIZE-SCOPE [APPROVE]",
+  "date": "2026-10-27",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:GPI-CPU-RESIZE-SCOPE-APPROVED:2026-10-27",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "GPI-CPU-RESIZE-SCOPE [APPROVE] APPROVED. An exact bounded execution scope for the CPU host-resize reproduction is authorized against the ratified specification and the admitted fixture/method prerequisites, under standing project-manager authority (implementation authorization; PM059). GUI-PERFORMANCE-IMPLEMENTATION moves authorization owner_decision -> execution and state specified -> ready, with canonical next step GPI-CPU-RESIZE-INVESTIGATE (execution) becoming an available parallel execution lane. No automatic renderer execution follows.",
+  "basis": "The ratified GUI performance implementation contract and the owner resize-reset amendment (resize investigation is nonblocking; its qualification remains separate). Decision kind: bounded implementation-scope authorization of an owner_decision gate (owner_reserved, routable to the appointed manager under PM059). Content faithful to GPI-GRANT/GPI-CPU-RESIZE-SCOPE in specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md.",
+  "owner_revisable": true,
+  "limits": [
+    "Authorizes only the bounded resize-reproduction execution scope; a worker claims and executes GPI-CPU-RESIZE-INVESTIGATE. The downstream owner gates (GPI-CPU-RESIZE-DISPOSITION, S5-PLAN-DISPOSITION, S5) remain pending.",
+    "No numeric budget, measurement threshold or qualification is decided (PM051); no global admission, budget or performance pass follows; resize qualification stays separately nonblocking.",
+    "owner_only decisions never route and stay with the owner: destructive Git, PM029 license/purchase, missing measurement/tolerance/qualification, physical-HUMAN/Wayland demonstration."
+  ]
+}
