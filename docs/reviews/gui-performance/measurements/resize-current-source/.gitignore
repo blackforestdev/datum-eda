@@ -1,0 +1,6 @@
+# Per-run throwaway GUI workspace / isolated config+cache (not evidence).
+*/cache/
+*/config/
+*/datum-eda/
+__pycache__/
+*.pyc

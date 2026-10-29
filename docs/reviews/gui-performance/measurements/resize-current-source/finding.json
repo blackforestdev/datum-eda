@@ -1,0 +1,183 @@
+{
+  "task": "GUI-PERFORMANCE-IMPLEMENTATION",
+  "step": "GPI-CPU-RESIZE-INVESTIGATE",
+  "kind": "current-source reproduction + conditional probe localization (Launch 1 + Launch 2)",
+  "binary_sha256": "47a9082fd4a6078ec9067a7bca72a734a66324bd070b5af24b95528dc96dd4a5",
+  "fixture_board_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "window_backend": "wayland",
+  "launch1_ordinary": [
+    {
+      "phase": "quiet_control",
+      "axis": null,
+      "app_cpu_pct_core": 0.04,
+      "app_user_pct_core": 0.01,
+      "app_system_pct_core": 0.03,
+      "kwin_cpu_pct_core": 0.0,
+      "resize_applies": 0,
+      "peak_100ms_pct_core": 0.07,
+      "verified_axis_grew": null
+    },
+    {
+      "phase": "resize_width",
+      "axis": "width",
+      "app_cpu_pct_core": 34.59,
+      "app_user_pct_core": 32.26,
+      "app_system_pct_core": 2.33,
+      "kwin_cpu_pct_core": 16.08,
+      "resize_applies": 593,
+      "peak_100ms_pct_core": 56.01,
+      "verified_axis_grew": true
+    },
+    {
+      "phase": "resize_height",
+      "axis": "height",
+      "app_cpu_pct_core": 32.15,
+      "app_user_pct_core": 29.56,
+      "app_system_pct_core": 2.59,
+      "kwin_cpu_pct_core": 16.88,
+      "resize_applies": 597,
+      "peak_100ms_pct_core": 48.71,
+      "verified_axis_grew": true
+    },
+    {
+      "phase": "quiet_tail",
+      "axis": null,
+      "app_cpu_pct_core": 0.04,
+      "app_user_pct_core": 0.01,
+      "app_system_pct_core": 0.03,
+      "kwin_cpu_pct_core": 1.59,
+      "resize_applies": 0,
+      "peak_100ms_pct_core": 0.06,
+      "verified_axis_grew": null
+    }
+  ],
+  "launch2_probe": [
+    {
+      "phase_label_corrected": "quiet_control",
+      "axis": null,
+      "app_cpu_pct_core": 0.04,
+      "app_cpu_core_ms": 4.1,
+      "kwin_cpu_pct_core": 3.98,
+      "resize_applies": 0,
+      "peak_100ms_pct_core": 0.08
+    },
+    {
+      "phase_label_corrected": "resize_width",
+      "axis": "width",
+      "app_cpu_pct_core": 35.41,
+      "app_cpu_core_ms": 3925.7,
+      "kwin_cpu_pct_core": 17.41,
+      "resize_applies": 593,
+      "peak_100ms_pct_core": 60.15,
+      "probe_phases": {
+        "window_other": {
+          "count": 1044,
+          "process_ms": 68.4,
+          "thread_ms": 66.2,
+          "pct_of_app_cpu": 1.7
+        },
+        "configure": {
+          "count": 2,
+          "process_ms": 5.0,
+          "thread_ms": 5.0,
+          "pct_of_app_cpu": 0.1
+        },
+        "prepare": {
+          "count": 451,
+          "process_ms": 475.7,
+          "thread_ms": 476.6,
+          "pct_of_app_cpu": 12.1
+        },
+        "acquire": {
+          "count": 451,
+          "process_ms": 58.7,
+          "thread_ms": 58.4,
+          "pct_of_app_cpu": 1.5
+        },
+        "renderer": {
+          "count": 451,
+          "process_ms": 2625.6,
+          "thread_ms": 2625.5,
+          "pct_of_app_cpu": 66.9
+        },
+        "present": {
+          "count": 451,
+          "process_ms": 57.2,
+          "thread_ms": 57.4,
+          "pct_of_app_cpu": 1.5
+        },
+        "event_round": {
+          "count": 2828,
+          "process_ms": 3436.8,
+          "thread_ms": 3429.9,
+          "pct_of_app_cpu": 87.5
+        }
+      },
+      "app_cpu_core_ms_outside_event_round": 488.9
+    },
+    {
+      "phase_label_corrected": "resize_height",
+      "axis": "height",
+      "app_cpu_pct_core": 30.59,
+      "app_cpu_core_ms": 3389.9,
+      "kwin_cpu_pct_core": 17.14,
+      "resize_applies": 598,
+      "peak_100ms_pct_core": 46.2,
+      "probe_phases": {
+        "window_other": {
+          "count": 993,
+          "process_ms": 77.0,
+          "thread_ms": 74.6,
+          "pct_of_app_cpu": 2.3
+        },
+        "configure": {
+          "count": 2,
+          "process_ms": 5.6,
+          "thread_ms": 5.6,
+          "pct_of_app_cpu": 0.2
+        },
+        "prepare": {
+          "count": 395,
+          "process_ms": 495.1,
+          "thread_ms": 496.0,
+          "pct_of_app_cpu": 14.6
+        },
+        "acquire": {
+          "count": 395,
+          "process_ms": 56.5,
+          "thread_ms": 56.2,
+          "pct_of_app_cpu": 1.7
+        },
+        "renderer": {
+          "count": 395,
+          "process_ms": 2054.8,
+          "thread_ms": 2055.4,
+          "pct_of_app_cpu": 60.6
+        },
+        "present": {
+          "count": 395,
+          "process_ms": 54.1,
+          "thread_ms": 54.3,
+          "pct_of_app_cpu": 1.6
+        },
+        "event_round": {
+          "count": 2712,
+          "process_ms": 2879.6,
+          "thread_ms": 2873.4,
+          "pct_of_app_cpu": 84.9
+        }
+      },
+      "app_cpu_core_ms_outside_event_round": 510.3
+    },
+    {
+      "phase_label_corrected": "quiet_tail",
+      "axis": null,
+      "app_cpu_pct_core": 0.03,
+      "app_cpu_core_ms": 2.9,
+      "kwin_cpu_pct_core": 0.0,
+      "resize_applies": 0,
+      "peak_100ms_pct_core": 0.06
+    }
+  ],
+  "note_phase_label_defect": "Launch 2 report.json mislabels the two resize phases as \"event_round\" (a harness variable-shadow slip in the probe parser, fixed in harness.py post-run; CPU data unaffected). Axis identity below is recovered from each phase first_apply."
+}
