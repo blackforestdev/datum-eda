@@ -10328,10 +10328,10 @@
       "claim": {
         "agent": "dev-agent-02",
         "claimed_at": "2026-10-28T20:52:50Z",
-        "expires_at": "2026-10-29T04:52:50Z",
+        "expires_at": "2026-10-30T04:06:10Z",
         "harness": "claude-code",
         "head": "525feb454aee39ebf0bdea340db15cb06a678cb5",
-        "heartbeat_at": "2026-10-28T20:52:50Z",
+        "heartbeat_at": "2026-10-29T20:06:10Z",
         "scope": [
           "crates/cli/src/commands/preferences.rs",
           "crates/cli/src/commands/preferences_daemon.rs",
