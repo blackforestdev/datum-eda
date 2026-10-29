@@ -8082,8 +8082,7 @@
           "selection": "explicit_frontier_update",
           "selects_successor": false,
           "unblocks_issue_ids": [
-            "dat-dimension-selection-reentry-kxk",
-            "dat-distributed-collaboration-architecture-lt1"
+            "dat-dimension-selection-reentry-kxk"
           ]
         },
         "presentation_policy": {
@@ -8259,8 +8258,7 @@
       "summary": "Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation.",
       "title": "Specify the documentation-system object model",
       "unblocks": [
-        "dat-dimension-selection-reentry-kxk",
-        "dat-distributed-collaboration-architecture-lt1"
+        "dat-dimension-selection-reentry-kxk"
       ]
     },
     {
@@ -8605,23 +8603,10 @@
       "unblocks": []
     },
     {
-      "authorization": "planning",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "roadmap-agent-01",
-        "claimed_at": "2026-10-29T20:29:04Z",
-        "expires_at": "2026-10-30T04:29:04Z",
-        "harness": "claude-code",
-        "head": "996b0142",
-        "heartbeat_at": "2026-10-29T20:29:04Z",
-        "scope": [
-          "docs/reviews/foundation-followup/distributed-collab"
-        ],
-        "session": "5ec9e661-3862-4d81-9b76-bb051a5f6942",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "DC-C05",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -8744,7 +8729,13 @@
           },
           {
             "action": "Reconcile governed specification and successor requirements without authorizing implementation.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:DC-C05-GOVERNANCE-CLOSED:2026-10-29",
+                "path": "docs/reviews/foundation-followup/distributed-collab/dc-c05-governance-handoff.json"
+              }
+            ],
             "depends_on": [
               "DC-C04"
             ],
@@ -8756,7 +8747,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           }
         ]
       },
@@ -8770,9 +8761,10 @@
       ],
       "issue_id": "dat-distributed-collaboration-architecture-lt1",
       "key": "DISTRIBUTED-COLLAB-SPEC",
+      "landing_commit": "64aa63400e771ce96a524fbdd80d71e344054b70",
       "order": 36,
       "parallel": false,
-      "state": "in_progress",
+      "state": "landed",
       "summary": "Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized.",
       "title": "Specify distributed project collaboration and semantic merge",
       "unblocks": [],
