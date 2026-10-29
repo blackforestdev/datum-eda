@@ -8607,6 +8607,19 @@
     {
       "authorization": "planning",
       "canonical_next": false,
+      "claim": {
+        "agent": "roadmap-agent-01",
+        "claimed_at": "2026-10-29T20:29:04Z",
+        "expires_at": "2026-10-30T04:29:04Z",
+        "harness": "claude-code",
+        "head": "996b0142",
+        "heartbeat_at": "2026-10-29T20:29:04Z",
+        "scope": [
+          "docs/reviews/foundation-followup/distributed-collab"
+        ],
+        "session": "5ec9e661-3862-4d81-9b76-bb051a5f6942",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "DC-C05",
         "execution_policy": {
@@ -8759,7 +8772,7 @@
       "key": "DISTRIBUTED-COLLAB-SPEC",
       "order": 36,
       "parallel": false,
-      "state": "specified",
+      "state": "in_progress",
       "summary": "Research and specify local-first, Git-compatible semantic collaboration for simultaneous, remote, air-gapped, and high-latency teams before any multi-user implementation is authorized.",
       "title": "Specify distributed project collaboration and semantic merge",
       "unblocks": [],

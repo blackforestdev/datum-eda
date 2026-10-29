@@ -808,6 +808,10 @@
       "class": "governed",
       "notes": "Recorded DC-C04 ratification decision (standing project-manager authority); completion evidence re-opening the DC-C05 governance step."
     },
+    "docs/reviews/foundation-followup/distributed-collab/dc-c05-governance-handoff.json": {
+      "class": "governed",
+      "notes": "DC-C05 governance-handoff record closing DISTRIBUTED-COLLAB-SPEC specification authorship; reconciles routes/matrix/conformance/security-licensing/roadmap-beads, schedules the successor as gated-not-authorized, selects no mechanism; owner-revisable."
+    },
     "docs/reviews/foundation-followup/native-connectivity/ncc-c03-ratification-decision.json": {
       "class": "governed",
       "reason": "PM gate-decision record re-homed from the deleted frontier delegation disposition; governed so its review-evidence marker resolves; owner-revisable."
