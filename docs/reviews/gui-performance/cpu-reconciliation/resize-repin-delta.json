@@ -1,0 +1,70 @@
+{
+  "task": "GUI-PERFORMANCE-IMPLEMENTATION",
+  "step": "GPI-CPU-RESIZE-INVESTIGATE",
+  "record": "re-pin packet delta (current-source artifacts)",
+  "date": "2026-10-29",
+  "author": "frontend-dev-01",
+  "authority_ref": {
+    "decision": "docs/reviews/gui-performance/cpu-reconciliation/gpi-resize-repin-decision.json",
+    "commit": "9bc2c86fc83f2e5b75476468a7b9751842e007ef",
+    "marker": "EVIDENCE:GPI-RESIZE-REPIN:2026-10-29",
+    "gate": "GPI-CPU-RESIZE-SCOPE [METHOD-REVISION] (option b ADOPTED under PM059)"
+  },
+  "labeling": "CURRENT-SOURCE reproduction of the host-resize CPU behavior for the shipping code. This is NOT a replay of the R4 pinned artifact. Any comparison against R4-era numeric results is disclosed as cross-artifact and cross-source.",
+  "superseded_pinned_artifacts_absent": {
+    "reason": "Removed by cache/metadata reclaim since the Sep-29 packet was pinned; restoration (option a) is impossible (PM-verified).",
+    "gui_binary": {
+      "pinned_path": "target/release/datum-gui",
+      "pinned_sha256": "5c1c8f35746b55397f95280799be3b7bc4f28984b76f94514aaac6ef4933816b",
+      "pinned_source": "c3949e53ec7d68e70535892262024fa9f340c00f",
+      "status": "absent; source commit not present in the repository object database"
+    },
+    "cli": {
+      "pinned_path": "target/release/datum-eda",
+      "pinned_sha256": "77b36ff02b6a09e3c42472e89c4631bc773fc7cb1a59677cd28ab3a8b2bf8284",
+      "status": "path present but rebuilt to a different artifact"
+    },
+    "fixture_dirs": {
+      "paths": ["target/gpu-r2-proof/project", "/tmp/datum-gui-candidate-boundary-v3/"],
+      "status": "absent"
+    }
+  },
+  "current_source_artifacts": {
+    "source_sha_at_build": "8afa4062d05b31a7b85bc2cb968ee1adac52b7ee",
+    "head_at_record": "9e564c44c3dc68abec865cf8bf2969fa1a852489",
+    "source_note": "Build was invoked with the working tree at HEAD 8afa4062. HEAD advanced to 9e564c44 during the session via peer frontier/beads/specs commits (DC-C05); no gui-app/gui-render/gui-protocol/gui-viewport crate source changed between those commits, so the binary reflects current gui-app source at both.",
+    "gui_binary": {
+      "path": "target/release/datum-gui",
+      "sha256": "47a9082fd4a6078ec9067a7bca72a734a66324bd070b5af24b95528dc96dd4a5",
+      "size_bytes": 60755624,
+      "package": "datum-gui-app@0.1.0 (crates/gui-app), bin datum-gui",
+      "profile": "release (opt-level 3, debuginfo 0, debug_assertions off)",
+      "features": ["visual"],
+      "build": "one guarded build via scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-gui-app --bin datum-gui --features visual; wall 6m57s; exit 0; single attempt (failure would park the lane, no retry)",
+      "profile_features_source": "matched to docs/reviews/gui-performance/gpu-redraw-proposal/r4-native-result/build-state.json"
+    },
+    "fixture": {
+      "kind": "DOA2526 imported KiCad board (the standing owner test board; F-DOA), materialized into an isolated throwaway workspace by the governed GUI import path at launch",
+      "governed_producer": "scripts/run_gui_doa2526.sh materialization semantics (gui-protocol board materialization); not hand-authored",
+      "board_path": "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+      "board_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "r4_era_pinned_board_sha256": "41c3bf3568a58c6084906f7d4c80973224a5e3db1a8440c5398958730092e532",
+      "drift_disclosure": "The current owner board differs from the R4-era value pinned in docs/reviews/gui-performance/baseline-budget/pointer-declaration.json. Consistent with current-source (not R4) framing; the current SHA is the authoritative fixture identity for this reproduction."
+    },
+    "host_environment": {
+      "backend_expected": "Wayland on KDE (verified from startup window_backend at run time)",
+      "session": "XDG_SESSION_TYPE=wayland, WAYLAND_DISPLAY=wayland-0, XDG_CURRENT_DESKTOP=KDE",
+      "kernel": "6.12.111+deb13-amd64",
+      "mesa": "Mesa 25.0.7-2+deb13u1 (OpenGL 4.6 Compatibility)",
+      "cpu_accounting": "GUI launched inside a fresh owned cgroup v2 scope via systemd-run --user --scope -p Delegate=yes; cpu.stat total/user/system read over bracketed monotonic windows; KWin process CPU accounted separately; compositor/controller CPU excluded from application accounting",
+      "window": "single unmaximized 1280x800 scale-1 board host; isolated XDG config/cache/TMPDIR; no auxiliary windows or terminal workloads",
+      "capture_tool": "spectacle"
+    }
+  },
+  "pm051": "No numeric budget, threshold or qualification is decided or implied by this record. Observations are not thresholds. GPI-CPU-RESIZE-DISPOSITION and all downstream gates remain pending; resize qualification stays separately nonblocking.",
+  "limits_restated": [
+    "At most two GUI launches, no further rebuild or product edit.",
+    "No R4 equivalence may be claimed for any current-source result.",
+    "Inconclusive attribution is an allowed final outcome; it is not permission for another experiment."
+  ]
+}
