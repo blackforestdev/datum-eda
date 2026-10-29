@@ -179,5 +179,13 @@
       "peak_100ms_pct_core": 0.06
     }
   ],
-  "note_phase_label_defect": "Launch 2 report.json mislabels the two resize phases as \"event_round\" (a harness variable-shadow slip in the probe parser, fixed in harness.py post-run; CPU data unaffected). Axis identity below is recovered from each phase first_apply."
+  "note_phase_label_defect": "Launch 2 report.json mislabels the two resize phases as \"event_round\" (a harness variable-shadow slip in the probe parser, fixed in harness.py post-run; CPU data unaffected). Axis identity below is recovered from each phase first_apply.",
+  "tracking": {
+    "toj_bead": "dat-gui-vertical-resize-cpu-toj",
+    "toj_status": "closed 2026-10-01 on owner-approved bounded default-workspace buffer-reuse (recorded close commit a89f94b2); close note directs continued investigation through this lane",
+    "coexistence": "The Oct-1 bounded win stands; this current-source run shows the host-resize CPU cost persists at ~1/3 core after it. No implication the close was wrong.",
+    "live_tracking": "GPI-CPU-RESIZE frontier lane + pending GPI-CPU-RESIZE-DISPOSITION gate",
+    "persisting_cost_bead": "dat-g2jg (open, unassigned, unscheduled; separate repair scoping)",
+    "correction": "An earlier draft of the finding stated the toj bead was open; corrected per audit of f0f3d248."
+  }
 }

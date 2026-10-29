@@ -104,8 +104,21 @@ A **supported current cause with a bounded remaining gap**:
   elsewhere, not decided here.
 
 No repair, optimization or further campaign is implied; any follow-up requires a
-separate concrete owner scope. The original resize issue
-(`dat-gui-vertical-resize-cpu-toj`) stays open.
+separate concrete owner scope.
+
+### Tracking and lineage (corrected)
+
+The original resize bug `dat-gui-vertical-resize-cpu-toj` is **CLOSED**
+(2026-10-01) on an owner-approved **bounded default-workspace buffer-reuse win**
+(recorded close commit `a89f94b2`); its close note explicitly directs continued
+current-host resize investigation through exactly this lane. This finding and
+that close **coexist**: the Oct-1 bounded win stands, and this current-source run
+shows the host-resize CPU cost **persists** at ~1/3 of one core after it — no
+implication that the close was wrong. Live tracking is the **GPI-CPU-RESIZE
+frontier lane** plus the pending `GPI-CPU-RESIZE-DISPOSITION` gate; the persisting
+cost is captured for separate repair scoping in bead **`dat-g2jg`** (open,
+unassigned, unscheduled). An earlier draft of this finding incorrectly stated the
+`toj` bead was open; corrected here per audit of `f0f3d248`.
 
 ### Known evidence defects (disclosed)
 
