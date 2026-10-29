@@ -4461,7 +4461,20 @@
     {
       "authorization": "execution",
       "canonical_next": false,
-      "claim": null,
+      "claim": {
+        "agent": "frontend-dev-01",
+        "claimed_at": "2026-10-29T20:26:00Z",
+        "expires_at": "2026-10-30T04:26:00Z",
+        "harness": "claude-code",
+        "head": "9bc2c86fc83f2e5b75476468a7b9751842e007ef",
+        "heartbeat_at": "2026-10-29T20:26:00Z",
+        "scope": [
+          "docs/reviews/gui-performance/cpu-reconciliation",
+          "docs/reviews/gui-performance/measurements/resize-current-source"
+        ],
+        "session": "1768fc84-18c0-4cc3-9c81-9ec28b33d928",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "GPI-CPU-RESIZE-INVESTIGATE",
         "execution_policy": {
@@ -5359,7 +5372,7 @@
       "key": "GUI-PERFORMANCE-IMPLEMENTATION",
       "order": 21,
       "parallel": true,
-      "state": "ready",
+      "state": "in_progress",
       "summary": "Owner resets CPU investigation to current-host horizontal/vertical native-window resize. Historical resize cost and current shared-source changes reviewed; one finite reproduction/conditional diagnosis proposal, budgets undecided. Prior CPU audit/derivation and approved ordinary pointer observation retained, no repeats or overhead claim. S4 closed; S5/GBB-P05 separate; no resize execution yet.",
       "title": "Implement the approved shared GUI performance specification",
       "unblocks": [],
