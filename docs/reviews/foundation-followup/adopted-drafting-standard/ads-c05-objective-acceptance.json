@@ -1,0 +1,33 @@
+{
+  "task": "ADOPTED-DRAFTING-STANDARD-SPEC",
+  "step": "ADS-C05",
+  "date": "2026-10-29",
+  "decision_maker": "PM-Agent-01",
+  "decision_kind": "objective_acceptance",
+  "evidence_marker": "EVIDENCE:ADS-C05-ACCEPTED:2026-10-29",
+  "authority": "PM059 standing project-manager authority; lane-completion acceptance rendered after independent review.",
+  "accepted": {
+    "commits": ["0bd2ce34", "1278529f"],
+    "worker": "roadmap-agent-01",
+    "deliverable": "ADS-C05 governance close: PRODUCT_MECHANICS_064 'Adopted Drafting-Standard Object Mechanism' authored as design-level doctrine recording the ADS-C04-ratified selections (AdoptedDraftingStandard object, adopted_standard schema, ISO family with third-angle default, SI/mm presentation over integer-nm geometry, S2 explicit-unknown policy, typed single-guarded-write-path authority, PM034 consume-not-compete, migration design only), enrolled as a governed consumer on the workspace-documentation-and-revision ETM route with its reviewed_digest recomputed in the same change; ADOPTED-DRAFTING-STANDARD-SPEC landed (landing_commit 0bd2ce34), bead dat-adopted-drafting-standard-object-er9 closed.",
+    "reserved_calls": "PM-confirmed before landing: decision number 064 (verified free), title, and the ETM route (verified as the owning route carrying PM034/PM035/PM040)."
+  },
+  "independent_review": {
+    "reviewer": "audit-agent-01",
+    "verdict": "PASS on all eight bars",
+    "bars": [
+      "fidelity: governance close only; PM064 authorizes no implementation, migration execution or dependency, selects no successor",
+      "nothing unrecommended decided: section C2 edition ambiguity stays the owner's; F1 licensed-source recorded open as an owner-side PM029 prerequisite, never acquired or claimed; editions confirmed-at-selection is a deferral policy, not a decided edition",
+      "ETM: semantic diff is exactly one enrollment (PM064 added as consumer on workspace-documentation-and-revision, none removed) with the reviewed_digest correctly recomputed; ETM gate green at 0bd2ce34",
+      "derived-state only where forced: no predecessor unblocks referenced the ADS bead, none reconciled",
+      "gates green at both HEADs (project_status check 106 items; ETM 29 routes); GLOBAL-PREFERENCES-COMPLETION canonical throughout",
+      "no attribution trailers",
+      "PM064 present with the confirmed number and title, class doctrine, enrolled in the same change",
+      "claim folded into the first delivery commit per the PM059 consolidation ruling; no standalone claim commit"
+    ],
+    "receipt_scratch_path": "audit-agent-01 scratchpad: ads-c05-governance-close-review.md (machine-local scratch; this committed record is the durable evidence)"
+  },
+  "pm_verification": "First-hand: selector and gates green at HEAD 1278529f; roadmap's landing report reviewed line-by-line; the three reserved calls were PM-verified before authorization (number availability, route ownership).",
+  "owner_revisable": true,
+  "open_owner_items_preserved": "Section C2 exact edition confirmations and the F1 licensed ISO/ASME normative-source acquisition (PM029 purchase) remain open owner items; conformance claims stay gated on F1; implementation of the adopted-standard object requires its own separately authorized scope."
+}
