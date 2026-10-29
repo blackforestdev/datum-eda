@@ -1,0 +1,32 @@
+{
+  "task": "DISTRIBUTED-COLLAB-SPEC",
+  "step": "DC-C05",
+  "date": "2026-10-29",
+  "decision_maker": "PM-Agent-01",
+  "decision_kind": "objective_acceptance",
+  "evidence_marker": "EVIDENCE:DC-C05-ACCEPTED:2026-10-29",
+  "authority": "PM059 standing project-manager authority; lane-completion acceptance rendered after independent review.",
+  "accepted": {
+    "commits": ["64aa6340", "9e564c44"],
+    "worker": "roadmap-agent-01",
+    "deliverable": "DC-C05 governance close: the ratified eight-clause distributed-collaboration architecture reconciled into governing docs with the DC-C01..C05 disposition matrix, section I conformance and PM029-clean security/licensing; DISTRIBUTED-COLLAB-SPEC landed (landing_commit 64aa6340), bead dat-distributed-collaboration-architecture-lt1 closed.",
+    "handoff_record": "docs/reviews/foundation-followup/distributed-collab/dc-c05-governance-handoff.json (EVIDENCE:DC-C05-GOVERNANCE-CLOSED:2026-10-29)"
+  },
+  "independent_review": {
+    "reviewer": "audit-agent-01",
+    "verdict": "PASS on all six bars",
+    "bars": [
+      "fidelity: close specification authorship only; no successor selected/claimed/authorized, no dependency edge, no capability",
+      "no section-J decision: all seven mechanism decisions, F-CAD-1, PWO-C03/O1-R, every PM029 library and the absent numbered decision recorded OPEN and owner-reserved; worker-closing a kind=governance lane is legitimate",
+      "ETM untouched: neither commit touches evidence_traceability_manifest.json; digest unchanged; record registered governed for marker resolution only",
+      "DOC-SYSTEM-SPEC unblocks drop: legitimate derived-state reconciliation of a landed successor",
+      "gates green at both HEADs (project_status check 106 items; ETM 29 routes) in a clean worktree; GLOBAL-PREFERENCES-COMPLETION canonical throughout",
+      "no attribution trailers (reviewer's initial scan false-positive was self-identified as a shell exit-code mask and re-checked clean)"
+    ],
+    "receipt_scratch_path": "audit-agent-01 scratchpad: dc-c05-governance-close-review.md (machine-local scratch; this committed record is the durable evidence)"
+  },
+  "pm_verification": "First-hand: selector and gates green at HEAD 9e564c44; worker report reviewed line-by-line; sibling-lane states (NCC, PWO landed; ADS at C05) cross-checked in the frontier.",
+  "correction": "The review receipt attributes the close to dev-agent-01; the executing worker was roadmap-agent-01 (claim and bead assignee match roadmap-agent-01). Verdict unaffected.",
+  "owner_revisable": true,
+  "open_owner_items_preserved": "All seven section-J mechanism decisions, F-CAD-1 conflict taxonomy, PWO-C03/O1-R, PM029 third-party libraries, and the distributed-collab numbered mechanism decision remain open and owner-reserved; nothing here decides or schedules them."
+}
