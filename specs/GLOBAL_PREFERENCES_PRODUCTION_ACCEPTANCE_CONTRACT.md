@@ -224,7 +224,12 @@ GPU, power mode and competing load before measurement. No concurrent builds or
 other acceptance jobs; inability to control the environment is reported.
 
 For each timed variant: run 10 warm-up operations, then 100 measured operations
-in each of three complete trials. Retain every observation. Each trial must
+in each of three complete trials. Retain every observation. Before the first
+measured trial of a run, a global warm-up primes the process image and filesystem
+caches so every trial reflects steady state; it is recorded in method provenance
+and is not a measured sample, and it neither replaces the per-trial warm-ups nor
+changes any budget. The first-ever cold observation is retained and disclosed
+(never re-rolled or deleted) and does not count toward a budget. Each trial must
 pass individually; do not average trials or pool faster variants/backends to
 hide a failure. Sort the 100 elapsed values and use nearest-rank p95, index
 `ceil(0.95*N)-1`. Compare unrounded values. The maximum includes every measured

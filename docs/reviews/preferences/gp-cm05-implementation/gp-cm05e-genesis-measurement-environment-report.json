@@ -1,0 +1,45 @@
+{
+  "schema": "datum.preferences.measurement-environment-report.v1",
+  "lane": "GP-CM05E",
+  "issue": "dat-global-preferences-completion-f84",
+  "subject": "project-genesis timed budget (p95 <= 100 ms) under the global pre-warm methodology",
+  "authority": "PM-Agent-01 ruling (owner-revisable): land the pre-warm methodology on its merit; both runs preserved; neither is the genesis p95 acceptance number; authoritative near-budget timed acceptance deferred to the serial S6 candidate proof.",
+  "not_acceptance_evidence": true,
+  "runs": [
+    {
+      "id": "clean-idle-pre-prewarm",
+      "bundle": "datum-eda-workspaces/scratch/gp-cm05e-s2/bundle-project",
+      "pre_warm": false,
+      "note": "Idle-window run that PREDATES the pre-warm. Establishes steady-state genesis is comfortably within budget absent contention; it is NOT the acceptance number precisely because it predates the pre-warm methodology.",
+      "project_genesis_p95_ms": {
+        "factory": [107.2, 39.3, 35.0],
+        "global-missing": [42.8, 38.2, 39.2],
+        "global-populated": [38.9, 43.5, 46.4]
+      },
+      "observation": "Steady-state trials 35-46 ms (2-3x under the 100 ms budget); the single over-budget value is the first-ever cold trial0 (107.2 ms), the cold-start characteristic the pre-warm addresses. Retained and disclosed, never re-rolled."
+    },
+    {
+      "id": "prewarmed-contended",
+      "bundle": "datum-eda-workspaces/scratch/gp-cm05e-s2/bundle-project-prewarm/attempt-1793307233",
+      "pre_warm": true,
+      "classification": "environment-control report per GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md measurement-protocol section (line 223: no concurrent builds/jobs; inability to control the environment is reported). NOT a budget failure and NOT acceptance evidence.",
+      "project_genesis_p95_ms": {
+        "factory": [99.5, 100.7, 99.1],
+        "global-missing": [100.5, 99.4, 107.6],
+        "global-populated": [113.1, 111.2, 110.4]
+      },
+      "project_genesis_max_ms_outlier": 993.1,
+      "competing_load": {
+        "loadavg_1_5_15": [0.54, 1.18, 2.13],
+        "cores": 8,
+        "processes": ["kwin_wayland", "plasmashell", "ghostty", "firefox-esr", "codex x3", "claude x3"],
+        "context": "Run executed immediately after a concurrent datum-gui release build (6m57s) plus two ~90s GUI diagnostic launches on the shared KDE desktop; cache eviction and residual load inflated the fork/IO-heavy genesis path."
+      },
+      "observation": "Genesis 99-113 ms across all trials with a 993 ms stall, while the non-near-budget project-validation stayed stable (~27-29 ms). The pre-warm still reduced cold trial0 (107 -> 99.5 ms even under load). The overage is competing load, not the budget or the methodology."
+    }
+  ],
+  "methodology_landed": "Global pre-warm (measurements_producer.prewarm(); datum.preferences.measurement-prewarm.v1 provenance) + the contract measurement-protocol clause sanctioning it; it reduces first-ever cold start and is recorded so the corpus states measurements reflect steady state.",
+  "authoritative_evidence_deferred_to": "S6 serial candidate proof",
+  "s6_protocol_note": "PM-Agent-01 will enforce a floor-wide quiet window at candidate-proof time: all agents idle, no builds, no GUI runs, a single measurement process. This is the controlled environment the contract's env clause requires for genesis and every other near-budget timed budget (release-query/durable/project and the native GUI budgets).",
+  "not_retry_to_green": "Two runs, both preserved, neither cherry-picked. The clean run predates the pre-warm so it is not the acceptance number; the contended run is an environment report, not a pass. No run was repeated to obtain a passing value."
+}

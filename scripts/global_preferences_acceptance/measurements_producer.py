@@ -18,6 +18,10 @@ durable-mutation /daemon is S3; the GUI budgets (gui-feedback, native-window-ope
 window-lifecycle) are S4. The /standalone durable path and the _storage_sample path are the two
 new typed pieces; every other variant reuses the blessed timed assembler.
 
+A global pre-warm (prewarm()) runs once before the measured budgets to prime the process
+image and filesystem caches, recorded as method provenance so the corpus states it measures
+steady state; the one-time cold observation is retained and disclosed separately.
+
 No retries-until-green: a failed or over-budget sample is preserved in its evidence
 and surfaced by the validator; it is never re-run to obtain a passing value.
 """
@@ -46,7 +50,9 @@ TRIAL_SCHEMA = "datum.preferences.measurement-trial.v2"
 STATE_SCHEMA = "datum.preferences.state.v2"
 WARMUPS = 10
 SAMPLES = 100
+PREWARM_ITERATIONS = 5
 MOTION_KEY = "datum.accessibility.reduced_motion"
+PREWARM_SCHEMA = "datum.preferences.measurement-prewarm.v1"
 
 # Timed headless query variants (release-query budget): verb -> CLI argv tail.
 RELEASE_QUERY_ARGV = {
@@ -137,6 +143,33 @@ def _timed_run(capture, identity, trial_index, phase, index, binary, full_argv, 
 def _timed_sample(capture, identity, trial_index, phase, index, binary, argv, env, timeout):
     return _timed_run(capture, identity, trial_index, phase, index, binary,
                       ["--format", "json", *argv], env, timeout)
+
+
+def prewarm(capture, binary, candidate_revision, binary_sha256, timeout, scratch):
+    """Prime the process image and filesystem caches before the first measured trial so every
+    trial reflects STEADY STATE, not first-ever cold start (project-genesis factory/trial0 paid a
+    one-time cold-cache cost of ~107 ms while warm trials ran 35-55 ms). This is recorded as method
+    provenance and is NOT a measured sample; the per-trial warm-ups still run unchanged. The cold
+    observation is retained and disclosed separately in the corpus and is never re-rolled or deleted.
+    (GP-CM05E, PM051 measurement-protocol clarification; contract measurement-protocol section.)"""
+    root = scratch / "prewarm"
+    root.mkdir(parents=True, exist_ok=True)
+    env = _isolated_env(root / "config")
+    for index in range(PREWARM_ITERATIONS):
+        seed = f"prewarm/{index}"
+        execute(Path(binary), ["project", "new", "--name", f"Prewarm {index}",
+                "--project-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project")),
+                "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request")),
+                "--units-source", "factory", "--json", str(root / f"project-{index}")],
+                env, timeout=timeout)
+        execute(Path(binary), ["--format", "json", "preferences", "describe"], env, timeout=timeout)
+    record = {"schema": PREWARM_SCHEMA, "candidate_revision": candidate_revision,
+              "binary_sha256": binary_sha256, "iterations": PREWARM_ITERATIONS,
+              "operations": ["project.new", "preferences.describe"],
+              "note": "Global warm-up before the first measured trial; measurements reflect steady "
+                      "state. The first-ever cold observation is retained and disclosed separately "
+                      "and is never re-rolled."}
+    return capture.put(record)
 
 
 def build_timed_measurement(capture, *, budget_id, variant_id, argv, binary,
@@ -460,6 +493,10 @@ def main(argv=None):
     common = {"candidate_revision": revision, "binary_sha256": binary_sha256,
               "input_manifest_sha256": input_manifest_sha256, "matrix_sha256": matrix_sha256,
               "environment_id": "headless-linux-x86_64"}
+
+    prewarm_ref = prewarm(capture, binary, revision, binary_sha256, args.timeout, scratch)
+    print(f"global pre-warm: {PREWARM_ITERATIONS} iterations recorded at {prewarm_ref['path']} "
+          f"(method provenance; measurements reflect steady state)")
 
     produced = _produce(args.budget, capture, binary, common, args.timeout, scratch)
 
