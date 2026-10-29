@@ -1,0 +1,89 @@
+{
+  "task": "ADOPTED-DRAFTING-STANDARD-SPEC",
+  "step": "ADS-C05",
+  "gate": "ADS-C05 [GOVERNANCE-HANDOFF]",
+  "date": "2026-10-29",
+  "decision_maker": "roadmap-agent-01",
+  "evidence_marker": "EVIDENCE:ADS-C05-GOVERNANCE-CLOSED:2026-10-29",
+  "authority": "Worker governance close of a claimable lane armed by the recorded ADS-C04 ratification; PM-Agent-01 standing project-manager authority, PM059. The new numbered decision's number (064), title and ETM enrollment were reserved to and confirmed by PM-Agent-01 before commit. This record decides no new mechanism and introduces no dependency.",
+  "disposition": "ADS-C05 [GOVERNANCE-HANDOFF] COMPLETE. The ADOPTED-DRAFTING-STANDARD-SPEC is reconciled into its governed routes, classification, clause/disposition matrix, conformance obligations, roadmap and beads, and the ADS-C04-authorized mechanism is recorded as numbered doctrine (Product Mechanics 064). This closes specification authorship only. It selects, claims and authorizes no implementation or migration-execution successor, introduces no dependency, reopens no closed documentation-system task, resumes no Product Revision Engine execution, and absorbs no Global Preferences ownership.",
+  "owner_revisable": true,
+
+  "accepted_decision_reconciled": {
+    "ads_c04_ratification": "docs/reviews/foundation-followup/adopted-drafting-standard/ads-c04-ratification-decision.json (EVIDENCE:ADS-C04-RATIFIED:2026-10-26, PM059). Ratified the ISO family (S1), the UNSET-NOT-FABRICATED/EXPLICIT-UNKNOWN unavailable-source policy (S2), AUTHORIZED this ADS-C05 close to author the numbered mechanism decision (S3), fixed the schema name adopted_standard (S4), and carried F1 (licensed normative-source acquisition) as the owner-side external prerequisite gating conformance claims only.",
+    "new_numbered_decision": "docs/decisions/PRODUCT_MECHANICS_064_ADOPTED_DRAFTING_STANDARD_OBJECT_MECHANISM.md — 'Adopted Drafting-Standard Object Mechanism' (design-level). Records the AdoptedDraftingStandard object/schema (§B), StandardsRegistry basis + six-disposition provenance (§C), the ratified ISO selections (§E/S1) with exact editions confirmed-at-selection and licensed text not redistributed, the S2 unavailable-source policy, typed single-guarded-write-path authority with expected-revision guard and append-only compensating undo (§D), units/conventions preserving nm-geometry/PM040/PM023 (§E), template field-meaning-vs-layout (§F), the PM034 consume-not-compete revision seam with issued-record immutability (§G), receipted seed + independence with Preferences seed-only (§H), migration DESIGN only (§I), and conformance obligations specified-not-performed (§K). Number, title and ETM enrollment confirmed by PM-Agent-01 before commit.",
+    "nothing_new_decided": "The decision records only what ADS-C01–ADS-C04 specified and the owner ratified. It invents no mechanism beyond PM035's ratified object, selects no standard/edition beyond the ratified S1 family, and routes any ADS-C01 §C2 edition ambiguity to the owner. No §J choice was taken by this worker."
+  },
+
+  "source_consumer_routes": {
+    "owning_etm_route": "workspace-documentation-and-revision (specs/evidence_traceability_manifest.json). Product Mechanics 064 is enrolled as a governed CONSUMER on this route, which already carries PM035 (authority) and the DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET as source, and PM034/PM040 which the decision consumes. The route's reviewed_digest is recomputed in the same commit (check_evidence_traceability.py), rebased on dev-agent-01's landed manifest state per the PM sequencing ruling.",
+    "governance_classification": "docs/decisions/PRODUCT_MECHANICS_064_ADOPTED_DRAFTING_STANDARD_OBJECT_MECHANISM.md classified class=doctrine in specs/spec_governance_manifest.json (docs/decisions/*.md is an enforced glob); this governance-handoff record classified class=governed so its evidence marker resolves.",
+    "governing_docs": [
+      "docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md",
+      "docs/decisions/PRODUCT_MECHANICS_064_ADOPTED_DRAFTING_STANDARD_OBJECT_MECHANISM.md",
+      "docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md",
+      "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
+      "specs/PUBLISH_SPACE_SPEC.md",
+      "specs/STANDARDS_COMPLIANCE_SPEC.md",
+      "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md"
+    ],
+    "preserved_authorities": "PM035 (object ownership), PM034 (revision/status/release/issued identity), PM040 (Project Working Units), PM023 (grid/snap), PM010 + STANDARDS_COMPLIANCE_SPEC (standards identity/claims), PUBLISH_SPACE_SPEC (Sheet/template bodies) — extended/consumed, never redefined.",
+    "evidence_corpus": [
+      "ADS-C01-reconciliation.md (+ receipts/acceptance) — commit 97589687",
+      "ADS-C02-reconciliation.md (+ receipts/acceptance) — commit d09d494d",
+      "ads-c03-distinct-reviewer-receipt.md + ads-c03-objective-acceptance.json — commit f11b8292",
+      "ads-c04-ratification-decision.json — EVIDENCE:ADS-C04-RATIFIED:2026-10-26"
+    ]
+  },
+
+  "clause_disposition_matrix": [
+    {"id": "ADS-C01", "kind": "planning", "clause": "Research and reconcile drafting requirements and current authority.", "disposition": "COMPLETE", "evidence": "commit 97589687; five-seam authority map, six-conflict inventory, §C2 candidate-edition identities, F1 licensed-access limit; adversarial PASS."},
+    {"id": "ADS-C02", "kind": "planning", "clause": "Specify the exact object, StandardsRegistry basis, typed operations/queries, units/conventions, templates/annotations, revision seam, migration and receipted seed with conformance obligations.", "disposition": "COMPLETE", "evidence": "commit d09d494d; ten-clause object-and-behavior spec, nothing selected; adversarial clean PASS."},
+    {"id": "ADS-C03", "kind": "planning", "clause": "Independent specification review and finding disposition.", "disposition": "COMPLETE", "evidence": "commit f11b8292; audit-agent-01 distinct-reviewer PASS; every finding folded or routed; doctrine reconciliation held."},
+    {"id": "ADS-C04", "kind": "owner_decision", "clause": "Exact owner ratification of the new mechanism and normative choices, preserving PM035 ownership.", "disposition": "RATIFIED (ISO family; S2 policy; S3 mechanism authorized for ADS-C05 authorship; S4 schema adopted_standard; F1 carried owner-side)", "evidence": "EVIDENCE:ADS-C04-RATIFIED:2026-10-26 (ads-c04-ratification-decision.json, PM059)."},
+    {"id": "ADS-C05", "kind": "governance", "clause": "Governed handoff with separately authorized implementation/migration and no automatic successor selection.", "disposition": "COMPLETE (this record + Product Mechanics 064)", "evidence": "This record (see evidence_marker above); mechanism recorded as numbered doctrine; specification authorship closed; successor scheduled gated-not-authorized."}
+  ],
+
+  "parity_inventory": "Not applicable to this close. No Publish or documentation GUI surface is depicted or changed here; per the ADS-C02 §K GUI contract, any owning-lane visual reconciliation of a depicted surface is a separate, audit-attested Claude-owned prototype action performed under its own authority, not from this governance close.",
+
+  "conformance_obligations_carried": "Carried to any future implementation successor (ADS-C02 §K / Product Mechanics 064): exact value/basis resolution with declared/inferred/unknown/unsupported distinguishable; template and annotation impact; units fidelity (presentation changes never alter canonical nm geometry); typed refusal of invalid/unavailable input with no false conformance; seed independence; migration/refusal behavior; deterministic append-only compensating undo/recovery/reopen; issued-record immutability; standards-claim language that never presents a registry reference as certification; native proof across GUI/CLI/scripting/MCP. These are specification obligations, not delivered behavior.",
+
+  "security_licensing_impact": {
+    "licensing_dependency": "PM029 clean: no third-party code, toolkit or package is added, vendored or linked. F1 — acquisition of licensed ISO/ASME normative text — remains an OWNER-SIDE external purchase, recorded OPEN/pending, never acquired here and never claimed as conformance. Exact editions stay 'confirmed at selection', never asserted as current.",
+    "security_egress": "If future agent/MCP surfaces touch export-controlled standards metadata, the STANDARDS_COMPLIANCE §4.4 ITAR/EAR egress posture governs; no egress behavior is implemented here."
+  },
+
+  "successor_scheduling": {
+    "status": "NO implementation or migration-execution successor is selected, claimed or authorized. ADS-C04 and this close authorize specification/doctrine only.",
+    "gating_requirements_when_approved": [
+      "real consumer readiness (a concrete Publish/documentation authoring consumer, not a placeholder)",
+      "native workflow proof across GUI/CLI/scripting/MCP against a governed real design/fixture",
+      "independent review distinct from the implementer",
+      "owner acceptance of delivered behavior",
+      "for any standards-conformance claim specifically: prior owner-side acquisition of the licensed normative sources (F1, PM029)"
+    ],
+    "do_not": "Do not automatically select, claim or authorize any successor; do not reopen the closed documentation-system (DOC) task; do not resume Product Revision Engine execution; do not absorb Global Preferences ownership."
+  },
+
+  "roadmap_and_beads_reconciliation": {
+    "frontier_item": "ADOPTED-DRAFTING-STANDARD-SPEC (order 49) moves specified → landed on the governance-close landing commit; authorization planning → none; canonical_next_step_id → null; canonical_next stays false (GLOBAL-PREFERENCES-COMPLETION keeps the selected slot); authorizes_successor/selects_successor stay false; claim released.",
+    "bead": "dat-adopted-drafting-standard-object-er9 closed with this evidence; all five acceptance criteria (ADS-C01..ADS-C05) satisfied as specification authorship. Any landed predecessor whose derived post-completion unblocks reference this now-closed bead is reconciled in the same change.",
+    "numbered_decision": "Product Mechanics 064 added as governed doctrine and ETM-enrolled per PM confirmation."
+  },
+
+  "remaining_product_gaps": [
+    "F1 licensed ISO/ASME normative sources are not acquired; no standards-conformance claim is or may be made without them (owner-side PM029 purchase, outstanding).",
+    "Exact standard editions are candidate identities confirmed-at-selection, not asserted as current.",
+    "No adopted drafting-standard capability is implemented; typed operations, seed and migration are design-level only.",
+    "Migration execution is a separate, unauthorized authorization boundary.",
+    "Publish production acceptance remains a separate, separately evidenced product outcome."
+  ],
+
+  "limits": [
+    "Closes specification authorship only — never adopted drafting-standard capability or Publish production acceptance.",
+    "Records design-level doctrine (Product Mechanics 064); authorizes no implementation, migration execution or dependency.",
+    "Selects, claims and authorizes no successor; reopens no closed DOC task; resumes no Revision Engine execution; absorbs no Preferences ownership.",
+    "F1 licensed-source acquisition stays an owner-side external prerequisite (PM029), gating conformance claims only; decided nothing unrecommended; any §C2 edition ambiguity stays the owner's.",
+    "The ETM digest recompute for workspace-documentation-and-revision is rebased on dev-agent-01's landed manifest state (PM sequencing ruling), reconciled in the same commit as the enrollment."
+  ]
+}

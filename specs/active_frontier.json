@@ -11896,6 +11896,19 @@
     {
       "authorization": "planning",
       "canonical_next": false,
+      "claim": {
+        "agent": "roadmap-agent-01",
+        "claimed_at": "2026-10-29T21:24:23Z",
+        "expires_at": "2026-10-30T05:24:23Z",
+        "harness": "claude-code",
+        "head": "ab6cefa2",
+        "heartbeat_at": "2026-10-29T21:24:23Z",
+        "scope": [
+          "docs/reviews/foundation-followup/adopted-drafting-standard"
+        ],
+        "session": "5ec9e661-3862-4d81-9b76-bb051a5f6942",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
       "completion": {
         "canonical_next_step_id": "ADS-C05",
         "execution_policy": {
@@ -12053,7 +12066,7 @@
       "key": "ADOPTED-DRAFTING-STANDARD-SPEC",
       "order": 49,
       "parallel": false,
-      "state": "specified",
+      "state": "in_progress",
       "summary": "Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation.",
       "title": "Specify the adopted drafting-standard object",
       "unblocks": [],

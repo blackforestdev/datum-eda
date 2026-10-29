@@ -514,6 +514,11 @@
       "notes": "Owner-requested reusable New/Open browser controls and explicit host New Folder/Rename delivered and independently reviewed under NPD-C09 at 35d5e014, with authorized visual target 93e94e0c. Protected Project/session and visual ownership boundaries retained; no broader file-management grant.",
       "progress_anchor": "NATIVE-PROJECT-DOORWAY"
     },
+    "docs/decisions/PRODUCT_MECHANICS_064_ADOPTED_DRAFTING_STANDARD_OBJECT_MECHANISM.md": {
+      "class": "doctrine",
+      "notes": "Design-level mechanism doctrine authored at the ADS-C05 governance close under the ADS-C04 §S3 authorization (number/title/ETM enrollment confirmed by the appointed manager). Records the AdoptedDraftingStandard object/schema (adopted_standard), ratified ISO family, S2 unavailable-source policy, typed single-write-path authority, revision seam, seed/migration design and conformance obligations; preserves PM035/PM034/PM040/PM023/PM010 authorities. Authorizes no implementation, migration execution or dependency; F1 licensed-source acquisition stays an owner-side PM029 prerequisite.",
+      "progress_anchor": "ADOPTED-DRAFTING-STANDARD-SPEC"
+    },
     "docs/decisions/PRODUCT_MECHANICS_OPEN_QUESTION_RESOLUTIONS.md": {
       "class": "historical",
       "reason": "Research recommendations awaiting ratification per original header, not a ratified resolutions log. Preserve all proposals; numbered decisions alone own accepted resolutions."
@@ -803,6 +808,10 @@
     "docs/reviews/foundation-followup/adopted-drafting-standard/ads-c04-ratification-decision.json": {
       "class": "governed",
       "reason": "PM gate-decision record re-homed from the deleted frontier delegation disposition; governed so its review-evidence marker resolves; owner-revisable."
+    },
+    "docs/reviews/foundation-followup/adopted-drafting-standard/ads-c05-governance-handoff.json": {
+      "class": "governed",
+      "notes": "ADS-C05 governance-handoff record closing ADOPTED-DRAFTING-STANDARD-SPEC specification authorship; reconciles routes/classification/clause-matrix/conformance/roadmap-beads, records Product Mechanics 064, schedules the implementation/migration successor as gated-not-authorized, and keeps F1 open; owner-revisable."
     },
     "docs/reviews/foundation-followup/distributed-collab/dc-c04-ratification-decision.json": {
       "class": "governed",
