@@ -937,6 +937,10 @@
       "class": "governed",
       "progress_anchor": "GUI-PERFORMANCE-SPEC"
     },
+    "docs/reviews/gui-performance/cpu-reconciliation/gpi-resize-repin-decision.json": {
+      "class": "governed",
+      "notes": "Recorded method revision of GPI-CPU-RESIZE-SCOPE (standing project-manager authority): pinned R4 artifacts lost to cache reclaim; investigation re-pinned to a current-HEAD guarded build as an explicit current-source reproduction."
+    },
     "docs/reviews/gui-performance/cpu-reconciliation/gpi-resize-scope-decision.json": {
       "class": "governed",
       "notes": "Recorded GPI-CPU-RESIZE-SCOPE approval (standing project-manager authority); bounded implementation-scope authorization for GPI-CPU-RESIZE-INVESTIGATE."

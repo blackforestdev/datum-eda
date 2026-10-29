@@ -1,0 +1,19 @@
+{
+  "task": "GUI-PERFORMANCE-IMPLEMENTATION",
+  "step": "GPI-CPU-RESIZE-INVESTIGATE",
+  "gate": "GPI-CPU-RESIZE-SCOPE [METHOD-REVISION]",
+  "date": "2026-10-29",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:GPI-RESIZE-REPIN:2026-10-29",
+  "authority": "PM059 standing project-manager authority; revision of the same bounded implementation-scope authorization recorded in gpi-resize-scope-decision.json (EVIDENCE:GPI-CPU-RESIZE-SCOPE-APPROVED:2026-10-27).",
+  "problem": "The approved no-build, pinned-artifact preflight is unexecutable on this host: pinned release datum-gui (sha256 5c1c8f35...) and its archived candidate copy (target/gpu-regional-r4-native-correction/) were removed by cache/metadata reclaim; target/release/datum-eda was rebuilt (now c889c5b5..., pinned 77b36ff0...); reviewed source base c3949e53ec7d... is not present in the repository object database; fixture target/gpu-r2-proof/project and /tmp/datum-gui-candidate-boundary-v3/ are absent. Restoration (option a) is impossible; executing worker frontend-dev-01 correctly held without mutation.",
+  "disposition": "Option (b) ADOPTED. The investigation re-pins to a freshly built current-HEAD release datum-gui and a regenerated fixture, and proceeds as an explicitly labeled CURRENT-SOURCE reproduction of the CPU host-resize behavior - not a replay of the R4 artifact. One guarded release build of datum-gui (profile and features matching build-state.json: opt-level 3, features [visual]) is authorized via the guarded runner; the fixture is regenerated only from its governed in-repo producer, never hand-authored. The re-pinned packet delta (new source sha at build time, new binary sha256, fixture provenance) is recorded in the lane evidence by the executing worker before any measurement run.",
+  "basis": "The resize investigation's product purpose is whether the host-resize CPU behavior exists and why; current-source reproduction answers that for the shipping code and is the only honest option remaining. The R4-era numeric results stay historical: any comparison against them is disclosed as cross-artifact and cross-source.",
+  "owner_revisable": true,
+  "limits": [
+    "One build attempt via the guarded runner, serialized against any active Cargo; no retries-until-green; a failed build parks the lane (option c) with the failure preserved.",
+    "PM051 intact: no numeric budget, threshold or qualification is decided; observations are not thresholds; GPI-CPU-RESIZE-DISPOSITION and all downstream gates remain pending; resize qualification stays separately nonblocking.",
+    "No R4 equivalence may be claimed for any current-source result; the pinned-artifact loss and this revision are disclosed in the lane evidence.",
+    "owner_only decisions never route and stay with the owner: destructive Git, PM029 license/purchase, missing measurement/tolerance/qualification, physical-HUMAN demonstrations."
+  ]
+}
