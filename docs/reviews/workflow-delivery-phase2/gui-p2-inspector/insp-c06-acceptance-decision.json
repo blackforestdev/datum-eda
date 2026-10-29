@@ -1,0 +1,17 @@
+{
+  "task": "GUI-P2-INSPECTOR",
+  "step": "INSP-C06",
+  "gate": "INSP-C06 [ACCEPT]",
+  "date": "2026-10-27",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:INSP-C06-ACCEPTED:2026-10-27",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "INSP-C06 [ACCEPT] ACCEPTED. Owner acceptance of the full reviewed P2.4 inspector result, prototype comparison and defect dispositions is recorded under standing project-manager authority (phase acceptance; PM059). GUI-P2-INSPECTOR lands: state specified -> landed, authorization owner_decision -> none, landing_commit set, canonical_next_step_id -> null. Bead dat-gui-p2-full-inspector-0ye closes. Honest remaining product status is retained; no authoring or full-EDA completion is claimed; this closure neither selects nor authorizes another roadmap item.",
+  "basis": "The reviewed P2.4 native candidate, independent reviewer receipt, prototype semantic comparison and recorded defect dispositions on the owning route. Decision kind: phase acceptance of an owner_decision gate (owner_reserved, routable to the appointed manager under PM059). INSP-C06 is a bounded native observation, 'not KWin/physical-HUMAN qualification', so no owner_only human demonstration is decided here. Content faithful to the INSP-C06 requirement (ACCEPT) in specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md.",
+  "owner_revisable": true,
+  "limits": [
+    "Landing GUI-P2-INSPECTOR closes only its own bead dat-gui-p2-full-inspector-0ye. GUI-P2-CROSSPROBE's unblocks and post_completion.unblocks_issue_ids drop the now-closed inspector bead and keep dat-native-authoring-depth-sf9 (still open/blocked).",
+    "Any required physical-HUMAN / native Wayland+WGPU demonstration remains owner-side evidence by its own terms; it is a named residual, non-blocking, surfaced when the native-edit front is reached, not decided here.",
+    "No numeric budget, measurement threshold, dependency, scope change or waiver is decided; owner_only decisions never route and stay with the owner."
+  ]
+}
