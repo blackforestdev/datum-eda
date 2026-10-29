@@ -3,19 +3,17 @@
   "step": "DC-C05",
   "gate": "DC-C05 [GOVERNANCE-HANDOFF]",
   "date": "2026-10-29",
-  "decision_maker": "dev-agent-01",
+  "decision_maker": "roadmap-agent-01",
   "evidence_marker": "EVIDENCE:DC-C05-GOVERNANCE-CLOSED:2026-10-29",
-  "authority": "Worker governance close of a claimable lane armed by the recorded DC-C04 ratification (03771f42); PM-Agent-01 standing project-manager authority, PM059. This record decides no §J mechanism and introduces no dependency.",
-  "disposition": "DC-C05 [GOVERNANCE-HANDOFF] COMPLETE. The DISTRIBUTED-COLLAB-SPEC is reconciled into its governed routes, classification, clause/disposition matrix, conformance obligations, security/licensing impact, roadmap and beads. This closes specification authorship only. It selects, claims and authorizes no implementation successor, introduces no dependency, resolves no open §J owner decision, and delivers no distributed-collaboration capability.",
+  "authority": "Worker governance close of a claimable lane armed by the recorded DC-C04 ratification (03771f42); PM-Agent-01 standing project-manager authority, PM059. This record decides no \u00a7J mechanism and introduces no dependency.",
+  "disposition": "DC-C05 [GOVERNANCE-HANDOFF] COMPLETE. The DISTRIBUTED-COLLAB-SPEC is reconciled into its governed routes, classification, clause/disposition matrix, conformance obligations, security/licensing impact, roadmap and beads. This closes specification authorship only. It selects, claims and authorizes no implementation successor, introduces no dependency, resolves no open \u00a7J owner decision, and delivers no distributed-collaboration capability.",
   "owner_revisable": true,
-
   "accepted_contract_reconciled": {
     "what_dc_c04_ratified": "Per docs/reviews/foundation-followup/distributed-collab/dc-c04-ratification-decision.json, DC-C04 ratified the DISTRIBUTED-COLLAB-SPEC as a governed architecture contract under standing project-manager authority (PM059). Its own recorded limits state the ratification 'lands nothing, selects no successor and closes no bead', decides 'no numeric budget, measurement threshold, dependency, scope change, waiver or new permission', and holds owner_only decisions (PM029 third-party/license adoption, PM051 missing measurement/tolerance/qualification, destructive Git, required human/Wayland demonstration) with the owner.",
-    "ratified_architecture": "The eight-clause architecture authored at DC-C02 (docs/reviews/foundation-followup/distributed-collab/DC-C02-reconciliation.md §B-§I) and independently reviewed at DC-C03: MODEL-AUTHORITY, STORAGE-ATOMICITY, DURABLE-MECHANISM, LIVE-MECHANISM, CONFLICT-MECHANISM, SECURITY-MECHANISM, RELEASE-MECHANISM, CONFORMANCE-IMPACT, each mapped 1:1 to its governed clause in specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md (:57-106), with every hard watch-point held and no-shrink preserved.",
-    "explicitly_not_selected": "No §J mechanism was selected by DC-C04. The seven §J owner decisions, the F-CAD-1 exact conflict taxonomy, the PWO→DC concurrency ordering (C-DVCS-3/Q6, presupposing PWO-C03/O1-R), and every PM029 transport/CRDT/crypto library dependency remain EXPLICITLY OPEN and owner-reserved. This handoff does not decide any of them, and surfaces no new recommendation of its own.",
-    "numbered_decision_note": "No docs/decisions/PRODUCT_MECHANICS_NNN mechanism decision exists because no mechanism was selected. The numbered mechanism decision required by the DC-C04 clause is itself a downstream owner gate that attaches to the owner's §J selection, not to this specification-authorship close. Recorded as a gap, not resolved."
+    "ratified_architecture": "The eight-clause architecture authored at DC-C02 (docs/reviews/foundation-followup/distributed-collab/DC-C02-reconciliation.md \u00a7B-\u00a7I) and independently reviewed at DC-C03: MODEL-AUTHORITY, STORAGE-ATOMICITY, DURABLE-MECHANISM, LIVE-MECHANISM, CONFLICT-MECHANISM, SECURITY-MECHANISM, RELEASE-MECHANISM, CONFORMANCE-IMPACT, each mapped 1:1 to its governed clause in specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md (:57-106), with every hard watch-point held and no-shrink preserved.",
+    "explicitly_not_selected": "No \u00a7J mechanism was selected by DC-C04. The seven \u00a7J owner decisions, the F-CAD-1 exact conflict taxonomy, the PWO\u2192DC concurrency ordering (C-DVCS-3/Q6, presupposing PWO-C03/O1-R), and every PM029 transport/CRDT/crypto library dependency remain EXPLICITLY OPEN and owner-reserved. This handoff does not decide any of them, and surfaces no new recommendation of its own.",
+    "numbered_decision_note": "No docs/decisions/PRODUCT_MECHANICS_NNN mechanism decision exists because no mechanism was selected. The numbered mechanism decision required by the DC-C04 clause is itself a downstream owner gate that attaches to the owner's \u00a7J selection, not to this specification-authorship close. Recorded as a gap, not resolved."
   },
-
   "source_consumer_routes": {
     "owning_etm_route": "workflow-delivery-rollout (specs/evidence_traceability_manifest.json). The governed consumer specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md and the rollout clause docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json both sit on this route; its reviewed_digest is unchanged because this close edits no source or consumer on the route.",
     "governing_docs": [
@@ -25,31 +23,57 @@
     ],
     "doctrine_anchors_preserved": "PM001 single commit path + Proposal gating + bypass ban (:316-351); PM007 replica/checkout EXTENDS Project/Workspace with source written only through commit() (:193-214); PM000D compensating-InverseBatch recovery, never history rewind (:388-393); PM034 controlled release consumed with no rival lifecycle (:39/:102/:140-143). The architecture extends, and does not redefine, this doctrine (DC-C03 doctrine-reconciliation PASS).",
     "evidence_corpus": [
-      "docs/reviews/foundation-followup/distributed-collab/DC-C01-reconciliation.md (+ adversarial findings/receipt/acceptance) — commit 26432ec9",
-      "docs/reviews/foundation-followup/distributed-collab/DC-C02-reconciliation.md (+ adversarial findings/receipt/acceptance) — commit ac368a38",
-      "docs/reviews/foundation-followup/distributed-collab/dc-c03-distinct-reviewer-receipt.md + dc-c03-objective-acceptance.json — commit 3eda4a63",
-      "docs/reviews/foundation-followup/distributed-collab/dc-c04-ratification-decision.json — commit 03771f42 (EVIDENCE:DC-C04-RATIFIED:2026-10-27)"
+      "docs/reviews/foundation-followup/distributed-collab/DC-C01-reconciliation.md (+ adversarial findings/receipt/acceptance) \u2014 commit 26432ec9",
+      "docs/reviews/foundation-followup/distributed-collab/DC-C02-reconciliation.md (+ adversarial findings/receipt/acceptance) \u2014 commit ac368a38",
+      "docs/reviews/foundation-followup/distributed-collab/dc-c03-distinct-reviewer-receipt.md + dc-c03-objective-acceptance.json \u2014 commit 3eda4a63",
+      "docs/reviews/foundation-followup/distributed-collab/dc-c04-ratification-decision.json \u2014 commit 03771f42 (EVIDENCE:DC-C04-RATIFIED:2026-10-27)"
     ]
   },
-
   "clause_disposition_matrix": [
-    {"id": "DC-C01", "kind": "planning", "clause": "Research primary sources and complete distributed/offline collaboration constraints.", "disposition": "COMPLETE", "evidence": "commit 26432ec9; both C01 findings folded and verified downstream."},
-    {"id": "DC-C02", "kind": "planning", "clause": "Author the complete architecture, conformance obligations and explicit mechanism choices.", "disposition": "COMPLETE", "evidence": "commit ac368a38; eight clauses §B-§I drafted, §J owner packet prepared, nothing selected; adversarial PASS (dc-c02 receipt)."},
-    {"id": "DC-C03", "kind": "planning", "clause": "Obtain independent specification review and account for every finding.", "disposition": "COMPLETE", "evidence": "commit 3eda4a63; audit-agent-01 distinct-reviewer PASS; doctrine-reconciliation and no-shrink held; every finding folded or preserved explicitly OPEN."},
-    {"id": "DC-C04", "kind": "owner_decision", "clause": "Obtain exact numbered owner ratification of the collaboration mechanisms.", "disposition": "RATIFIED AS CONTRACT (mechanisms NOT selected)", "evidence": "EVIDENCE:DC-C04-RATIFIED:2026-10-27 (dc-c04-ratification-decision.json, PM059); spec ratified as a governed contract; all §J mechanism selections remain owner-reserved and OPEN."},
-    {"id": "DC-C05", "kind": "governance", "clause": "Reconcile governed specification and successor requirements without authorizing implementation.", "disposition": "COMPLETE (this record)", "evidence": "This record (see evidence_marker above); specification authorship closed; successor scheduled as gated-not-authorized; gaps recorded."}
+    {
+      "id": "DC-C01",
+      "kind": "planning",
+      "clause": "Research primary sources and complete distributed/offline collaboration constraints.",
+      "disposition": "COMPLETE",
+      "evidence": "commit 26432ec9; both C01 findings folded and verified downstream."
+    },
+    {
+      "id": "DC-C02",
+      "kind": "planning",
+      "clause": "Author the complete architecture, conformance obligations and explicit mechanism choices.",
+      "disposition": "COMPLETE",
+      "evidence": "commit ac368a38; eight clauses \u00a7B-\u00a7I drafted, \u00a7J owner packet prepared, nothing selected; adversarial PASS (dc-c02 receipt)."
+    },
+    {
+      "id": "DC-C03",
+      "kind": "planning",
+      "clause": "Obtain independent specification review and account for every finding.",
+      "disposition": "COMPLETE",
+      "evidence": "commit 3eda4a63; audit-agent-01 distinct-reviewer PASS; doctrine-reconciliation and no-shrink held; every finding folded or preserved explicitly OPEN."
+    },
+    {
+      "id": "DC-C04",
+      "kind": "owner_decision",
+      "clause": "Obtain exact numbered owner ratification of the collaboration mechanisms.",
+      "disposition": "RATIFIED AS CONTRACT (mechanisms NOT selected)",
+      "evidence": "EVIDENCE:DC-C04-RATIFIED:2026-10-27 (dc-c04-ratification-decision.json, PM059); spec ratified as a governed contract; all \u00a7J mechanism selections remain owner-reserved and OPEN."
+    },
+    {
+      "id": "DC-C05",
+      "kind": "governance",
+      "clause": "Reconcile governed specification and successor requirements without authorizing implementation.",
+      "disposition": "COMPLETE (this record)",
+      "evidence": "This record (see evidence_marker above); specification authorship closed; successor scheduled as gated-not-authorized; gaps recorded."
+    }
   ],
-
-  "conformance_obligations_carried": "The DC-C02 §I conformance bound is carried to any future implementation successor: compatible edits re-resolve and land through the one commit path; conflicting edits are detected, surfaced and review-gated with no silent loss and cancellation by compensating transaction; every accepted/merged change passes ProjectResolver re-resolution, incoherent results refused to recovery mode; stale-revision input reconciled, unauthorized (permission/signature-failed) input refused atomically; recovery is compensating-journal law only, never history rewind; a changeset with unresolved semantic conflicts is not releasable. These are specification obligations, not delivered behavior.",
-
+  "conformance_obligations_carried": "The DC-C02 \u00a7I conformance bound is carried to any future implementation successor: compatible edits re-resolve and land through the one commit path; conflicting edits are detected, surfaced and review-gated with no silent loss and cancellation by compensating transaction; every accepted/merged change passes ProjectResolver re-resolution, incoherent results refused to recovery mode; stale-revision input reconciled, unauthorized (permission/signature-failed) input refused atomically; recovery is compensating-journal law only, never history rewind; a changeset with unresolved semantic conflicts is not releasable. These are specification obligations, not delivered behavior.",
   "security_licensing_impact": {
-    "security": "Four-way separation preserved: signature ≠ permission ≠ semantic validity ≠ release (§G :88-92). Signed self-contained bundles verifiable across remote and air-gapped sites; malformed/forged bundles refused atomically into diagnostic mode (PM000D :944 / §C C02-ATOM-2). Egress policy (O-S3) ties to the governed data-egress gate and stays an owner choice.",
-    "licensing_dependency": "PM029 clean and untouched. Git-compatible deterministic shard serialization is a FORMAT discipline, not a Git dependency. Every candidate library — durable transport/substrate (§D O-D1 Git-as-substrate), live-sync CRDT (§E O-L2), signing/crypto (§G O-S1) — is flagged as an owner_only PM029 adoption decision; none is assumed, vendored, fetched or linked by this specification."
+    "security": "Four-way separation preserved: signature \u2260 permission \u2260 semantic validity \u2260 release (\u00a7G :88-92). Signed self-contained bundles verifiable across remote and air-gapped sites; malformed/forged bundles refused atomically into diagnostic mode (PM000D :944 / \u00a7C C02-ATOM-2). Egress policy (O-S3) ties to the governed data-egress gate and stays an owner choice.",
+    "licensing_dependency": "PM029 clean and untouched. Git-compatible deterministic shard serialization is a FORMAT discipline, not a Git dependency. Every candidate library \u2014 durable transport/substrate (\u00a7D O-D1 Git-as-substrate), live-sync CRDT (\u00a7E O-L2), signing/crypto (\u00a7G O-S1) \u2014 is flagged as an owner_only PM029 adoption decision; none is assumed, vendored, fetched or linked by this specification."
   },
-
   "successor_scheduling": {
     "status": "NO approved implementation successor exists. DC-C04 authorized none and selected no mechanism. This handoff therefore schedules no selectable successor, creates no frontier implementation item and adds no dependency edge (roadmap authoring stays owner-only).",
-    "prerequisite_owner_gate": "An implementation successor cannot be scoped until the owner closes the §J mechanism decisions (durable substrate, identity allocation, live-sync, concurrency/merge model + F-CAD-1 taxonomy + PWO→DC ordering, security model, normative release) and any PM029 library adoptions, AND the PWO-C03/O1-R local-writer boundary is closed. Per PM-Agent-01's standing instruction, any §J item without a recorded recommendation returns to the owner/PM, not decided by a worker.",
+    "prerequisite_owner_gate": "An implementation successor cannot be scoped until the owner closes the \u00a7J mechanism decisions (durable substrate, identity allocation, live-sync, concurrency/merge model + F-CAD-1 taxonomy + PWO\u2192DC ordering, security model, normative release) and any PM029 library adoptions, AND the PWO-C03/O1-R local-writer boundary is closed. Per PM-Agent-01's standing instruction, any \u00a7J item without a recorded recommendation returns to the owner/PM, not decided by a worker.",
     "gating_requirements_when_approved": [
       "real consumer readiness (a concrete native authoring consumer, not a placeholder)",
       "native workflow proof against a governed real design/fixture",
@@ -59,27 +83,25 @@
     ],
     "do_not": "Do not automatically select, claim or authorize any successor from this record."
   },
-
   "roadmap_and_beads_reconciliation": {
-    "frontier_item": "DISTRIBUTED-COLLAB-SPEC (order 36) moves specified → landed on the governance-close landing commit; authorization stays planning → none at land; canonical_next_step_id → null; canonical_next stays false (GLOBAL-PREFERENCES-COMPLETION keeps the selected slot); authorizes_successor/selects_successor stay false; claim released.",
+    "frontier_item": "DISTRIBUTED-COLLAB-SPEC (order 36) moves specified \u2192 landed on the governance-close landing commit; authorization stays planning \u2192 none at land; canonical_next_step_id \u2192 null; canonical_next stays false (GLOBAL-PREFERENCES-COMPLETION keeps the selected slot); authorizes_successor/selects_successor stay false; claim released.",
     "bead": "dat-distributed-collaboration-architecture-lt1 closed with this evidence; all five acceptance criteria (DC-C01..DC-C05) satisfied as specification authorship; the dat-product-revision-engine-k9f related edge is informational and unchanged.",
     "governed_manifest": "This record registered governed in specs/spec_governance_manifest.json so its evidence marker resolves (same convention as dc-c04-ratification-decision.json)."
   },
-
   "remaining_product_gaps": [
-    "All seven §J mechanism decisions remain OPEN and owner-reserved; nothing is selected.",
+    "All seven \u00a7J mechanism decisions remain OPEN and owner-reserved; nothing is selected.",
     "F-CAD-1 exact conflict taxonomy (which Operation pairs commute/conflict; identity split/merge reconciliation) remains an OPEN design target.",
     "PWO-C03 local-writer boundary (O1-R) that the distributed extension presupposes remains parked for the owner and is not advanced here.",
     "Every PM029 library dependency (transport/substrate, CRDT, crypto) is undecided; adoption is an owner_only decision.",
-    "No numbered PRODUCT_MECHANICS mechanism decision exists yet; it attaches to the owner's §J selection.",
+    "No numbered PRODUCT_MECHANICS mechanism decision exists yet; it attaches to the owner's \u00a7J selection.",
     "No distributed-collaboration capability is implemented or proven; this lane produced specification only."
   ],
-
   "limits": [
-    "Closes specification authorship only — never distributed-collaboration capability or successful native delivery.",
-    "Decides no §J mechanism, transport, live-sync algorithm, concurrency/merge model, security model or normative-release form; introduces no dependency; authorizes no proof slice.",
+    "Closes specification authorship only \u2014 never distributed-collaboration capability or successful native delivery.",
+    "Decides no \u00a7J mechanism, transport, live-sync algorithm, concurrency/merge model, security model or normative-release form; introduces no dependency; authorizes no proof slice.",
     "Selects, claims and authorizes no implementation successor; creates no frontier implementation item and no dependency edge.",
     "owner_only decisions (PM029 adoption/purchase, PM051 missing measurement/tolerance/qualification, destructive Git, required human/Wayland demonstration) stay with the owner.",
     "No governed spec source/consumer is edited by this close, so no ETM reviewed_digest reconciliation is required; the workflow-delivery-rollout digest is unchanged."
-  ]
+  ],
+  "clerical_correction": "decision_maker originally recorded as dev-agent-01 (template inheritance from dev-authored DC-C01/C02 records); corrected 2026-10-29 to roadmap-agent-01, matching the claim agent at 64aa6340 and bead assignee at 9e564c44. Caught by audit-agent-01 second-pass cross-check; original value preserved in git history."
 }

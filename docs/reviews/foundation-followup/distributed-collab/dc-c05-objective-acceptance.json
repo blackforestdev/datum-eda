@@ -7,7 +7,10 @@
   "evidence_marker": "EVIDENCE:DC-C05-ACCEPTED:2026-10-29",
   "authority": "PM059 standing project-manager authority; lane-completion acceptance rendered after independent review.",
   "accepted": {
-    "commits": ["64aa6340", "9e564c44"],
+    "commits": [
+      "64aa6340",
+      "9e564c44"
+    ],
     "worker": "roadmap-agent-01",
     "deliverable": "DC-C05 governance close: the ratified eight-clause distributed-collaboration architecture reconciled into governing docs with the DC-C01..C05 disposition matrix, section I conformance and PM029-clean security/licensing; DISTRIBUTED-COLLAB-SPEC landed (landing_commit 64aa6340), bead dat-distributed-collaboration-architecture-lt1 closed.",
     "handoff_record": "docs/reviews/foundation-followup/distributed-collab/dc-c05-governance-handoff.json (EVIDENCE:DC-C05-GOVERNANCE-CLOSED:2026-10-29)"
@@ -26,7 +29,7 @@
     "receipt_scratch_path": "audit-agent-01 scratchpad: dc-c05-governance-close-review.md (machine-local scratch; this committed record is the durable evidence)"
   },
   "pm_verification": "First-hand: selector and gates green at HEAD 9e564c44; worker report reviewed line-by-line; sibling-lane states (NCC, PWO landed; ADS at C05) cross-checked in the frontier.",
-  "correction": "The review receipt attributes the close to dev-agent-01; the executing worker was roadmap-agent-01 (claim and bead assignee match roadmap-agent-01). Verdict unaffected.",
+  "correction": "The dev-agent-01 misattribution ORIGINATES in the committed handoff record (decision_maker field, template inheritance); the review receipt faithfully transcribed it, and this acceptance initially mislocated the origin as the receipt. Handoff record corrected to roadmap-agent-01 in the same commit as this note; claim agent (64aa6340) and bead assignee (9e564c44) were always roadmap-agent-01. Verdict unaffected. Origin identified by audit-agent-01 second pass.",
   "owner_revisable": true,
   "open_owner_items_preserved": "All seven section-J mechanism decisions, F-CAD-1 conflict taxonomy, PWO-C03/O1-R, PM029 third-party libraries, and the distributed-collab numbered mechanism decision remain open and owner-reserved; nothing here decides or schedules them."
 }
