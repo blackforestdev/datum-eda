@@ -524,7 +524,12 @@ permitted. Add exactly these fields according to kind:
   embedded in the generation manifest are counted once in generation bytes;
   their separate-file byte counts are zero. Each mutation before-state must
   equal the preceding after-state through warm-ups and measured samples;
-  distinct trials may use fresh disposable repositories. Fixed overhead is separate.
+  distinct trials may use fresh disposable repositories. Fixed overhead is
+  separate, and its delta is signed: mutable head/lock metadata may legitimately
+  shrink (for example the head's `parent_generation` narrows from null to 0 on the
+  first durable mutation), whereas the `project_bytes`, `generation_bytes`,
+  `receipt_bytes` and `request_index_bytes` deltas are non-negative. Fixed overhead
+  is excluded from the per-generation storage budget, so its sign cannot mask growth.
 - `lifecycle`: `post_close_rss_kib`, `orphan_windows`, `orphan_writer_leases`,
   `owned_windows`, `writer_leases`. Resource entries are `{identity, owner}`.
   `baseline_resources` holds both inventories captured after warm-up, and

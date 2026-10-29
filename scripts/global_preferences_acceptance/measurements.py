@@ -166,9 +166,13 @@ def _storage_sample(sample, variant, limits, bundle, *, context):
            "fixed_overhead_bytes before after outcome evidence", "storage sample")
     require(sample["kind"] == "storage", "storage sample required")
     _identity(sample, bundle, context)
-    for field in ("project_bytes", "generation_bytes", "receipt_bytes", "request_index_bytes",
-                  "fixed_overhead_bytes"):
+    for field in ("project_bytes", "generation_bytes", "receipt_bytes", "request_index_bytes"):
         integer(sample[field], field)
+    # Append-only history above is non-negative, but fixed repository overhead (mutable head/lock
+    # metadata) is reported separately and may legitimately shrink between generations -- e.g. the
+    # head's parent_generation narrows from null to 0 on the first durable mutation -- so its delta
+    # is signed (GP-CM05E governed-schema reconciliation; contract section 11).
+    require(type(sample["fixed_overhead_bytes"]) is int, "fixed_overhead_bytes: integer required")
     from .observations import state_manifest
     before, after = (state_manifest(sample[field], bundle) for field in ("before", "after"))
     require(before["root"] == after["root"], "storage roots differ")
