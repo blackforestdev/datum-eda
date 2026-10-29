@@ -812,6 +812,10 @@
       "class": "governed",
       "reason": "PM gate-decision record re-homed from the deleted frontier delegation disposition; governed so its review-evidence marker resolves; owner-revisable."
     },
+    "docs/reviews/foundation-followup/native-workflow-budgets/nwb-c03-owner-only-classification.md": {
+      "class": "governed",
+      "notes": "PM059 decision classification: NWB-C03 budget blocking-status ratification is owner_only (PM051 express reservation); the gate stays a visible owner boundary and does not route to the appointed manager."
+    },
     "docs/reviews/foundation-followup/project-writer-ownership/pwo-c03-ratification-decision.json": {
       "class": "governed",
       "reason": "PM gate-decision record re-homed from the deleted frontier delegation disposition; governed so its review-evidence marker resolves; owner-revisable."
