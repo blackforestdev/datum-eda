@@ -7,10 +7,16 @@ each a typed sample plus a datum.preferences.measurement-capture.v2 evidence
 record; one datum.preferences.measurement-trial.v2 log per trial). It self-
 validates each produced measurement with the governed validator.
 
-S2 covers the HEADLESS/CLI budgets. durable-mutation /daemon is S3; the GUI budgets
-(gui-feedback, native-window-open, window-lifecycle) are S4. This module currently
-implements the timed-query path and proves it on release-query/describe/defaults;
-the remaining headless variants reuse the same assembler.
+S2 covers the HEADLESS/CLI budgets, selected by --budget:
+  * release-query/{defaults,populated} - timed queries over empty and populated stores.
+  * durable/{set,reset}                - standalone human TTY-confirmed durable mutations
+                                         (execute(confirmation=True); launch_to_response_ns).
+  * project                            - project-genesis + project-validation, three seed modes.
+  * storage                            - storage-growth: three Project modes plus the continuous
+                                         Preferences generation history (_storage_sample).
+durable-mutation /daemon is S3; the GUI budgets (gui-feedback, native-window-open,
+window-lifecycle) are S4. The /standalone durable path and the _storage_sample path are the two
+new typed pieces; every other variant reuses the blessed timed assembler.
 
 No retries-until-green: a failed or over-budget sample is preserved in its evidence
 and surfaced by the validator; it is never re-run to obtain a passing value.
@@ -18,7 +24,9 @@ and surfaced by the validator; it is never re-run to obtain a passing value.
 import argparse
 import json
 import os
+import stat
 import sys
+import uuid
 from pathlib import Path
 
 HERE = Path(__file__).resolve()
@@ -28,14 +36,17 @@ sys.path.insert(0, str(HERE.parents[1]))
 from global_preferences_acceptance import measurements as meas  # noqa: E402
 from global_preferences_acceptance import observations as obs  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
-from global_preferences_acceptance.inputs import Bundle, canonical, digest, parse  # noqa: E402
+from global_preferences_acceptance.inputs import Bundle, canonical, digest, parse, require  # noqa: E402
 from global_preferences_acceptance.process import execute  # noqa: E402
+from global_preferences_acceptance.storage_capture import snapshot  # noqa: E402
 
 MATRIX_RELPATH = "specs/global_preferences_production_acceptance_matrix.json"
 CAPTURE_SCHEMA = "datum.preferences.measurement-capture.v2"
 TRIAL_SCHEMA = "datum.preferences.measurement-trial.v2"
+STATE_SCHEMA = "datum.preferences.state.v2"
 WARMUPS = 10
 SAMPLES = 100
+MOTION_KEY = "datum.accessibility.reduced_motion"
 
 # Timed headless query variants (release-query budget): verb -> CLI argv tail.
 RELEASE_QUERY_ARGV = {
@@ -46,6 +57,37 @@ RELEASE_QUERY_ARGV = {
     "explain": ["preferences", "explain", "datum.accessibility.reduced_motion"],
     "preview-project-units-seed": ["preferences", "preview-project-units-seed", "--source", "global"],
 }
+PROJECT_MODES = ("factory", "global-missing", "global-populated")
+STORAGE_VARIANTS = ("factory", "global-missing", "global-populated", "generation")
+# Validator storage virtual roots -> sample byte field (observations.state_manifest
+# categorisation; see measurements._storage_sample).
+STORAGE_CATEGORIES = {"project": "project_bytes", "generations": "generation_bytes",
+                      "receipts": "receipt_bytes", "request-index": "request_index_bytes",
+                      "fixed": "fixed_overhead_bytes"}
+
+
+def _mutation_argv(action, expected, identity, *, key=MOTION_KEY, value=True):
+    """Model measure_global_preferences_release.mutation(): one human durable mutation."""
+    argv = ["--format", "json", "preferences", action, key, "--expected", json.dumps(expected),
+            "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, identity)),
+            "--reason", "GP-CM05E production acceptance"]
+    if action == "set":
+        argv += ["--value-json", json.dumps(value)]
+    return argv
+
+
+def _run_mutation(binary, action, expected, identity, env, timeout, *, key=MOTION_KEY, value=True):
+    """Drive one real TTY-confirmed durable mutation; return (run, product response)."""
+    run = execute(Path(binary), _mutation_argv(action, expected, identity, key=key, value=value),
+                  env, timeout=timeout, confirmation=True)
+    require(run["exit_code"] == 0 and not run["timed_out"] and run["confirmed"],
+            f"durable mutation failed/timed-out/unconfirmed: {identity}")
+    rendered = run["stdout"].decode("utf-8", "replace").replace("\r", "")
+    start = rendered.find('{\n  "ok"')
+    require(start >= 0, f"TTY mutation produced no product envelope: {identity}")
+    response = parse(rendered[start:].encode(), "TTY product response")
+    require(isinstance(response, dict) and response.get("ok") is True, f"mutation refused: {identity}")
+    return run, response
 
 
 def _sha_file(path):
@@ -61,20 +103,24 @@ def _isolated_env(config_root):
     return env
 
 
-def _timed_sample(capture, identity, trial_index, phase, index, binary, argv, env, timeout):
-    run = execute(Path(binary), ["--format", "json", *argv], env, timeout=timeout)
+def _timed_observation(run, *, launch_to_response_ns=None, daemon_rss_kib=None):
+    """Assemble the closed timed-sample shape minus its index/evidence placeholders."""
     ok = run["exit_code"] == 0 and not run["timed_out"]
-    sample = {
+    return {
         "kind": "timed",
-        "index": index,
         "started_monotonic_ns": run["started_monotonic_ns"],
         "elapsed_ns": run["elapsed_ns"],
         "rss_kib": run["rss_kib"],
-        "daemon_rss_kib": None,
-        "launch_to_response_ns": None,
+        "daemon_rss_kib": daemon_rss_kib,
+        "launch_to_response_ns": launch_to_response_ns,
         "presented_elapsed_ns": None,
         "outcome": "success" if ok else "failure",
     }
+
+
+def _retain(capture, identity, trial_index, phase, index, run, observation):
+    """Seal a sample's underlying measurement-capture.v2 record and attach its reference."""
+    sample = {"index": index, **observation}
     record = {"schema": CAPTURE_SCHEMA, "measurement": identity, "trial_index": trial_index,
               "phase": phase, "exit_code": run["exit_code"], "timed_out": run["timed_out"],
               "observation": dict(sample)}
@@ -82,9 +128,20 @@ def _timed_sample(capture, identity, trial_index, phase, index, binary, argv, en
     return sample
 
 
+def _timed_run(capture, identity, trial_index, phase, index, binary, full_argv, env, timeout):
+    """Timed sample over an exact argv (no implicit --format json)."""
+    run = execute(Path(binary), full_argv, env, timeout=timeout)
+    return _retain(capture, identity, trial_index, phase, index, run, _timed_observation(run))
+
+
+def _timed_sample(capture, identity, trial_index, phase, index, binary, argv, env, timeout):
+    return _timed_run(capture, identity, trial_index, phase, index, binary,
+                      ["--format", "json", *argv], env, timeout)
+
+
 def build_timed_measurement(capture, *, budget_id, variant_id, argv, binary,
                             candidate_revision, binary_sha256, input_manifest_sha256,
-                            matrix_sha256, environment_id, timeout, scratch):
+                            matrix_sha256, environment_id, timeout, scratch, setup=None):
     identity = {"budget_id": budget_id, "variant_id": variant_id, "environment_id": environment_id,
                 "candidate_revision": candidate_revision, "binary_sha256": binary_sha256,
                 "input_manifest_sha256": input_manifest_sha256, "matrix_sha256": matrix_sha256}
@@ -93,6 +150,8 @@ def build_timed_measurement(capture, *, budget_id, variant_id, argv, binary,
         config_root = scratch / f"{budget_id}-{variant_id.replace('/', '_')}-trial{trial_index}"
         config_root.mkdir(parents=True, exist_ok=True)
         env = _isolated_env(config_root)
+        if setup is not None:
+            setup(binary, env, trial_index, timeout)  # one-time per-trial state; not a measured sample
         warmups = [_timed_sample(capture, identity, trial_index, "warmups", i, binary, argv, env, timeout)
                    for i in range(WARMUPS)]
         samples = [_timed_sample(capture, identity, trial_index, "samples", i, binary, argv, env, timeout)
@@ -106,13 +165,279 @@ def build_timed_measurement(capture, *, budget_id, variant_id, argv, binary,
     return {**identity, "trials": trials}
 
 
+def _seal_trial(capture, identity, trial_index, warmups, samples):
+    """Build one trial envelope and seal its measurement-trial.v2 raw log."""
+    trial = {"index": trial_index, "warmup_count": WARMUPS, "warmups": warmups,
+             "baseline_rss_kib": None, "baseline_resources": None, "cold_open": None,
+             "samples": samples}
+    trial_log = {**trial, "schema": TRIAL_SCHEMA, "measurement": identity}
+    trial["log"] = capture.put(trial_log)
+    return trial
+
+
+def _assemble_trials(capture, identity, per_trial):
+    """Wrap three producer callables (one per trial) into the validated trial envelope."""
+    return [_seal_trial(capture, identity, trial_index, *per_trial(trial_index))
+            for trial_index in range(3)]
+
+
+def build_durable_mutation_measurement(capture, *, action, binary, candidate_revision, binary_sha256,
+                                       input_manifest_sha256, matrix_sha256, environment_id, timeout, scratch):
+    """Standalone human durable set/reset: every sample a real TTY-confirmed committed mutation.
+
+    launch_to_response_ns is the full launch->exit interval; elapsed_ns begins at the automatic
+    APPLY submission (process.execute). daemon_rss_kib stays None for the /standalone transport.
+    A reset needs a prior override, so each reset sample is preceded by a retained set that is
+    itself never scored. No sample is re-run to obtain a passing value.
+    """
+    variant_id = f"{action}/standalone"
+    identity = {"budget_id": "durable-mutation", "variant_id": variant_id, "environment_id": environment_id,
+                "candidate_revision": candidate_revision, "binary_sha256": binary_sha256,
+                "input_manifest_sha256": input_manifest_sha256, "matrix_sha256": matrix_sha256}
+
+    def per_trial(trial_index):
+        config_root = scratch / f"durable-{action}-trial{trial_index}"
+        config_root.mkdir(parents=True, exist_ok=True)
+        env = _isolated_env(config_root)
+        state = {"expected": {"kind": "missing"}}
+
+        def one(phase, index):
+            if action == "reset":
+                _, setup = _run_mutation(binary, "set", state["expected"],
+                                         f"durable/{action}/{trial_index}/{phase}/setup/{index}", env, timeout, value=True)
+                state["expected"] = {"kind": "generation", "generation": setup["context"]["generation"]}
+            run, response = _run_mutation(binary, action, state["expected"],
+                                          f"durable/{action}/{trial_index}/{phase}/{index}", env, timeout,
+                                          value=index % 2 == 0)
+            require(response["result"]["class"] == "mutation" and response["result"]["result"]["changed"] is True,
+                    "durable measurement was a no-op rather than a committed mutation")
+            state["expected"] = {"kind": "generation", "generation": response["context"]["generation"]}
+            return _retain(capture, identity, trial_index, phase, index, run,
+                           _timed_observation(run, launch_to_response_ns=run["launch_to_response_ns"]))
+
+        warmups = [one("warmups", i) for i in range(WARMUPS)]
+        samples = [one("samples", i) for i in range(SAMPLES)]
+        return warmups, samples
+
+    return {**identity, "trials": _assemble_trials(capture, identity, per_trial)}
+
+
+def build_project_measurements(capture, *, mode, binary, candidate_revision, binary_sha256,
+                               input_manifest_sha256, matrix_sha256, environment_id, timeout, scratch):
+    """One genesis + validate pass per index yields both project-genesis and project-validation."""
+    common = {"environment_id": environment_id, "candidate_revision": candidate_revision,
+              "binary_sha256": binary_sha256, "input_manifest_sha256": input_manifest_sha256,
+              "matrix_sha256": matrix_sha256}
+    genesis_id = {"budget_id": "project-genesis", "variant_id": mode, **common}
+    validation_id = {"budget_id": "project-validation", "variant_id": mode, **common}
+
+    def per_trial(trial_index):
+        base = scratch / f"project-{mode}-trial{trial_index}"
+        base.mkdir(parents=True, exist_ok=True)
+        env = _isolated_env(base / "config")
+        if mode == "global-populated":
+            _run_mutation(binary, "set", {"kind": "missing"}, f"project/{mode}/{trial_index}/setup",
+                          env, timeout, key="datum.units.system", value="imperial")
+        buckets = {"g": {"warmups": [], "samples": []}, "v": {"warmups": [], "samples": []}}
+
+        def one(phase, index):
+            dest = base / f"{phase}-{index}"
+            seed = f"datum:gp-cm05e:{trial_index}:{mode}:{phase}:{index}"
+            new_argv = ["project", "new", "--name", f"Acceptance {index}",
+                        "--project-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project")),
+                        "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request")),
+                        "--units-source", "factory" if mode == "factory" else "global",
+                        "--json", str(dest)]
+            buckets["g"][phase].append(
+                _timed_run(capture, genesis_id, trial_index, phase, index, binary, new_argv, env, timeout))
+            buckets["v"][phase].append(
+                _timed_run(capture, validation_id, trial_index, phase, index, binary,
+                           ["project", "validate", str(dest)], env, timeout))
+
+        for i in range(WARMUPS):
+            one("warmups", i)
+        for i in range(SAMPLES):
+            one("samples", i)
+        return buckets
+
+    genesis_trials, validation_trials = [], []
+    for trial_index in range(3):
+        buckets = per_trial(trial_index)
+        for ident, trials, key in ((genesis_id, genesis_trials, "g"), (validation_id, validation_trials, "v")):
+            trials.append(_seal_trial(capture, ident, trial_index,
+                                      buckets[key]["warmups"], buckets[key]["samples"]))
+    return [{**genesis_id, "trials": genesis_trials}, {**validation_id, "trials": validation_trials}]
+
+
+def _project_state(destination, capture, root_identity):
+    """State manifest for a published Project under the validator's ``project/`` virtual root."""
+    destination = Path(destination).absolute()
+    require(destination == destination.resolve(), "project destination is redirected")
+    files = []
+    if destination.exists():
+        for path in sorted(destination.rglob("*")):
+            mode = path.lstat().st_mode
+            require(not stat.S_ISLNK(mode), "published Project contains an unexpected symlink")
+            if stat.S_ISDIR(mode):
+                continue
+            require(stat.S_ISREG(mode), "project storage entry is not a regular file")
+            raw = path.read_bytes()
+            reference = capture.put(raw)
+            files.append({"path": "project/" + path.relative_to(destination).as_posix(),
+                          "kind": "file", "bytes": len(raw), "sha256": reference["sha256"]})
+    state = {"schema": STATE_SCHEMA, "root": root_identity,
+             "files": sorted(files, key=lambda entry: entry["path"])}
+    return state, capture.put(state)
+
+
+def _category_totals(state):
+    sizes = {field: 0 for field in STORAGE_CATEGORIES.values()}
+    for entry in state["files"]:
+        sizes[STORAGE_CATEGORIES[entry["path"].split("/", 1)[0]]] += entry["bytes"]
+    return sizes
+
+
+def _storage_sample(capture, identity, trial_index, phase, index, run, before_ref, after_ref,
+                    before_state, after_state):
+    """Storage sample whose byte fields are derived from the retained before/after manifests."""
+    before_totals, after_totals = _category_totals(before_state), _category_totals(after_state)
+    growth = {field: after_totals[field] - before_totals[field] for field in STORAGE_CATEGORIES.values()}
+    ok = run["exit_code"] == 0 and not run["timed_out"]
+    sample = {"kind": "storage", "index": index, "started_monotonic_ns": run["started_monotonic_ns"],
+              "project_bytes": growth["project_bytes"], "generation_bytes": growth["generation_bytes"],
+              "receipt_bytes": growth["receipt_bytes"], "request_index_bytes": growth["request_index_bytes"],
+              "fixed_overhead_bytes": growth["fixed_overhead_bytes"],
+              "before": before_ref, "after": after_ref, "outcome": "success" if ok else "failure"}
+    record = {"schema": CAPTURE_SCHEMA, "measurement": identity, "trial_index": trial_index,
+              "phase": phase, "exit_code": run["exit_code"], "timed_out": run["timed_out"],
+              "observation": dict(sample)}
+    sample["evidence"] = capture.put(record)
+    return sample
+
+
+def build_storage_measurement(capture, *, variant, binary, candidate_revision, binary_sha256,
+                              input_manifest_sha256, matrix_sha256, environment_id, timeout, scratch):
+    """Storage growth. ``generation`` = one continuous Preferences history of committed mutations;
+    the three project modes = independent Project genesis byte growth (before empty, after published)."""
+    identity = {"budget_id": "storage-growth", "variant_id": variant, "environment_id": environment_id,
+                "candidate_revision": candidate_revision, "binary_sha256": binary_sha256,
+                "input_manifest_sha256": input_manifest_sha256, "matrix_sha256": matrix_sha256}
+
+    def per_trial(trial_index):
+        base = scratch / f"storage-{variant}-trial{trial_index}"
+        base.mkdir(parents=True, exist_ok=True)
+
+        if variant == "generation":
+            env = _isolated_env(base / "config")
+            repository = (base / "config/datum/preferences")
+            root_identity = f"generation-storage/trial-{trial_index}"
+            carry = {"expected": {"kind": "missing"}}
+            before_state, before_ref = snapshot(repository, capture, root_identity)
+
+            def one(phase, index):
+                run, response = _run_mutation(binary, "set", carry["expected"],
+                                              f"storage/generation/{trial_index}/{phase}/{index}",
+                                              env, timeout, value=index % 2 == 0)
+                require(response["result"]["class"] == "mutation" and response["result"]["result"]["changed"] is True,
+                        "storage mutation did not retain a new generation")
+                carry["expected"] = {"kind": "generation", "generation": response["context"]["generation"]}
+                after_state, after_ref = snapshot(repository, capture, root_identity)
+                sample = _storage_sample(capture, identity, trial_index, phase, index, run,
+                                         carry["before_ref"], after_ref, carry["before_state"], after_state)
+                carry["before_ref"], carry["before_state"] = after_ref, after_state
+                return sample
+
+            carry["before_ref"], carry["before_state"] = before_ref, before_state
+            warmups = [one("warmups", i) for i in range(WARMUPS)]
+            samples = [one("samples", i) for i in range(SAMPLES)]
+            return warmups, samples
+
+        env = _isolated_env(base / "config")
+        root_identity = f"project-storage/{variant}/trial-{trial_index}"
+        before_state, before_ref = _project_state(base / ".absent", capture, root_identity)
+        if variant == "global-populated":
+            _run_mutation(binary, "set", {"kind": "missing"}, f"storage/{variant}/{trial_index}/setup",
+                          env, timeout, key="datum.units.system", value="imperial")
+
+        def one(phase, index):
+            dest = base / f"{phase}-{index}"
+            seed = f"datum:gp-cm05e:storage:{trial_index}:{variant}:{phase}:{index}"
+            new_argv = ["project", "new", "--name", f"Acceptance {index}",
+                        "--project-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project")),
+                        "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request")),
+                        "--units-source", "factory" if variant == "factory" else "global",
+                        "--json", str(dest)]
+            run = execute(Path(binary), new_argv, env, timeout=timeout)
+            require(run["exit_code"] == 0 and not run["timed_out"], f"project genesis failed: {seed}")
+            after_state, after_ref = _project_state(dest, capture, root_identity)
+            return _storage_sample(capture, identity, trial_index, phase, index, run,
+                                   before_ref, after_ref, before_state, after_state)
+
+        warmups = [one("warmups", i) for i in range(WARMUPS)]
+        samples = [one("samples", i) for i in range(SAMPLES)]
+        if variant != "global-populated":
+            require(not (base / "config/datum/preferences").exists(),
+                    "factory/global-missing genesis created a Preferences repository")
+        return warmups, samples
+
+    return {**identity, "trials": _assemble_trials(capture, identity, per_trial)}
+
+
+def _populate_setup(binary, timeout):
+    def setup(bin_path, env, trial_index, to):
+        _run_mutation(bin_path, "set", {"kind": "missing"}, f"populate/trial-{trial_index}", env, to)
+    return setup
+
+
+def _produce(budget, capture, binary, common, timeout, scratch):
+    """Return the list of measurements for one headless budget selector."""
+    if budget in ("release-query/defaults", "release-query/populated"):
+        store = budget.split("/", 1)[1]
+        setup = _populate_setup(binary, timeout) if store == "populated" else None
+        return [build_timed_measurement(
+            capture, budget_id="release-query", variant_id=f"{verb}/{store}",
+            argv=RELEASE_QUERY_ARGV[verb], binary=binary, timeout=timeout, scratch=scratch,
+            setup=setup, **common) for verb in RELEASE_QUERY_ARGV]
+    if budget in ("durable/set", "durable/reset"):
+        return [build_durable_mutation_measurement(
+            capture, action=budget.split("/", 1)[1], binary=binary, timeout=timeout,
+            scratch=scratch, **common)]
+    if budget == "project":
+        produced = []
+        for mode in PROJECT_MODES:
+            produced.extend(build_project_measurements(
+                capture, mode=mode, binary=binary, timeout=timeout, scratch=scratch, **common))
+        return produced
+    if budget == "storage":
+        return [build_storage_measurement(
+            capture, variant=variant, binary=binary, timeout=timeout, scratch=scratch, **common)
+            for variant in STORAGE_VARIANTS]
+    raise ValueError(f"unknown budget selector {budget!r}")
+
+
+def _report(measurement):
+    budget, variant = measurement["budget_id"], measurement["variant_id"]
+    if budget == "storage-growth":
+        per_trial = [{"project": max(s["project_bytes"] for s in t["samples"]),
+                      "generation": max(s["generation_bytes"] + s["receipt_bytes"] + s["request_index_bytes"]
+                                        for s in t["samples"])} for t in measurement["trials"]]
+        print(f"{budget} {variant}: validate_trials ACCEPTED; per-trial max bytes = {per_trial}")
+    else:
+        limit = meas.BUDGETS[budget]
+        p95 = [meas.percentile([s["elapsed_ns"] for s in t["samples"]]) for t in measurement["trials"]]
+        print(f"{budget} {variant}: validate_trials ACCEPTED; per-trial p95 ns = {p95} "
+              f"(budget p95 <= {limit['p95_ms']}ms)")
+
+
 def main(argv=None):
     import development_workspace as workspace
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bundle-root", required=True, type=Path)
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release/datum-eda")
-    parser.add_argument("--variant", default="all",
-                        help="release-query <verb>/defaults, or 'all' for every defaults verb (S2 headless timed subset)")
+    parser.add_argument("--budget", default="release-query/defaults",
+                        choices=["release-query/defaults", "release-query/populated",
+                                 "durable/set", "durable/reset", "project", "storage"],
+                        help="headless S2 budget selector")
     parser.add_argument("--timeout", type=float, default=15)
     parser.add_argument("--scratch", type=Path, default=workspace.scratch("gp-cm05e-measurement-roots"))
     args = parser.parse_args(argv)
@@ -120,13 +445,6 @@ def main(argv=None):
     binary = args.binary.resolve()
     if not (binary.is_file() and os.access(binary, os.X_OK)):
         parser.error("release binary must be executable")
-    if args.variant == "all":
-        verbs = list(RELEASE_QUERY_ARGV)
-    else:
-        verb, _, store = args.variant.partition("/")
-        if verb not in RELEASE_QUERY_ARGV or store != "defaults":
-            parser.error("release-query variant must be <verb>/defaults or 'all'")
-        verbs = [verb]
 
     args.bundle_root.mkdir(parents=True, exist_ok=True)
     scratch = args.scratch.resolve()
@@ -139,28 +457,21 @@ def main(argv=None):
     binary_sha256 = _sha_file(binary)
     matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
     input_manifest_sha256 = digest(canonical([{"path": str(binary), "sha256": binary_sha256}]))
-    environment_id = "headless-linux-x86_64"
+    common = {"candidate_revision": revision, "binary_sha256": binary_sha256,
+              "input_manifest_sha256": input_manifest_sha256, "matrix_sha256": matrix_sha256,
+              "environment_id": "headless-linux-x86_64"}
 
-    produced = []
-    for verb in verbs:
-        produced.append(build_timed_measurement(
-            capture, budget_id="release-query", variant_id=f"{verb}/defaults",
-            argv=RELEASE_QUERY_ARGV[verb], binary=binary, candidate_revision=revision,
-            binary_sha256=binary_sha256, input_manifest_sha256=input_manifest_sha256,
-            matrix_sha256=matrix_sha256, environment_id=environment_id,
-            timeout=args.timeout, scratch=scratch))
+    produced = _produce(args.budget, capture, binary, common, args.timeout, scratch)
 
     bundle = Bundle(args.bundle_root.resolve(), list(capture.inventory.values()))
     for measurement in produced:
         try:
             meas.validate_trials(measurement, bundle)
         except Exception as error:  # preserve + diagnose; never re-roll
-            print(f"MEASUREMENT VALIDATION FAILED ({measurement['variant_id']}, preserved): {error}",
-                  file=sys.stderr)
+            print(f"MEASUREMENT VALIDATION FAILED ({measurement['budget_id']} "
+                  f"{measurement['variant_id']}, preserved): {error}", file=sys.stderr)
             return 1
-        p95 = [meas.percentile([s["elapsed_ns"] for s in t["samples"]]) for t in measurement["trials"]]
-        print(f"release-query {measurement['variant_id']}: validate_trials ACCEPTED; "
-              f"per-trial p95 ns = {p95} (budget p95 <= 50ms)")
+        _report(measurement)
     return 0
 
 

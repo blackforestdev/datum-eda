@@ -52,7 +52,10 @@ def execute(binary, arguments, environment, *, timeout=15, confirmation=False):
                     reaped = True
                     break
                 if time.monotonic_ns() - started > timeout * 1_000_000_000:
-                    os.killpg(pid, signal.SIGKILL)
+                    try:
+                        os.killpg(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
                     _, status, usage = os.wait4(pid, 0)
                     reaped = True
                     timed_out = True
