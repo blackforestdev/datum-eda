@@ -175,7 +175,7 @@
    Scheduled placeholder for three-rung native ECAD-MCAD interoperability: STEP assembly export, mechanical outline/constraint import, and IDX-class proposal/quarantine/evidence exchange. Datum never embeds a mechanical modeling kernel or permits an external MCAD master. Geometry/STEP-import dependencies require exact Product Mechanics 029 owner approval. Sequence only after Revision Engine production acceptance and Global Preferences, approximately with future 3D-viewer work; no research, specification, dependency, or implementation is authorized. *state `planned`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/STANDARDS_COMPLIANCE_SPEC.md`, `docs/DATUM_SHARED_TOOLING_TAXONOMY.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md`.
 <details>
-<summary>Completed history (2 landed records)</summary>
+<summary>Completed history (12 landed records)</summary>
 
 - **Decide adopted drafting-standard object ownership** (`DRAFTING-STANDARD-AUTHORITY`; `dat-drafting-standard-authority-jcz`).
    Owner decision packet for the authority that adopts a drafting-standard object for a Project. The packet distinguishes projection angle, dimensioning conventions, and sheet symbology from Product Mechanics 034 revision coding; it authorizes no implementation or dependency. *state `landed`; authorization `none`.*
@@ -183,15 +183,9 @@
 - **Resolve schematic canvas background authority** (`SCHEMATIC-BACKGROUND-OWNER-DECISION`; `dat-schematic-background-owner-decision-gom`).
    Ratify Candidate B as one persisted machine Presentation preference selecting the complete governed Dark or Light schematic drawing theme, while preserving the Dark factory default, dark chrome, board color-scheme boundary, and Publish/print independence. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_036_SCHEMATIC_DRAWING_THEMES.md`, `docs/gui/prototypes/canvas-background-decision.html`, `docs/gui/prototypes/preferences-window.html`, `docs/gui/DATUM_RENDERING_BOOK.md`.
-
-</details>
-
 - **Specify the adopted drafting-standard object** (`ADOPTED-DRAFTING-STANDARD-SPEC`; `dat-adopted-drafting-standard-object-er9`).
-   Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation. *state `in_progress`; authorization `planning`.*
+   Specify the documentation-system-owned Project drafting-standard object, its StandardsRegistry references, typed authority, Publish/template seams, migration, provenance, and receipted Global Preferences new-Project seed without authorizing implementation. *state `landed`; authorization `none`.*
    *Dependencies:* `dat-drafting-standard-authority-jcz`. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_035_ADOPTED_DRAFTING_STANDARD_AUTHORITY.md`, `research/documentation-system/DRAFTING_STANDARD_OWNERSHIP_DECISION_PACKET.md`, `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md`, `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `specs/PUBLISH_SPACE_SPEC.md`, `specs/STANDARDS_COMPLIANCE_SPEC.md`, `specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md`.
-<details>
-<summary>Completed history (9 landed records)</summary>
-
 - **Enforce Claude ownership of GUI visual-truth files** (`VISUAL-TRUTH-FILE-LANE`; `dat-visual-truth-file-lane-enforcement-jfl`).
    Codify the owner-directed Claude-only visual-truth file lane, define fail-closed staged commit enforcement and gate-integrity behavior, obtain owner approval of the marker design, and only then implement and prove the hook. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md`, `docs/PROJECT_STATE_POLICY.md`.
