@@ -8586,10 +8586,10 @@
       "unblocks": []
     },
     {
-      "authorization": "owner_decision",
+      "authorization": "planning",
       "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "DC-C04",
+        "canonical_next_step_id": "DC-C05",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -8676,7 +8676,13 @@
           },
           {
             "action": "Obtain exact numbered owner ratification of the collaboration mechanisms.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "EVIDENCE:DC-C04-RATIFIED:2026-10-27",
+                "path": "docs/reviews/foundation-followup/distributed-collab/dc-c04-ratification-decision.json"
+              }
+            ],
             "depends_on": [
               "DC-C03"
             ],
@@ -8702,7 +8708,7 @@
                 "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           },
           {
             "action": "Reconcile governed specification and successor requirements without authorizing implementation.",

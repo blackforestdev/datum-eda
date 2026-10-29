@@ -1,0 +1,17 @@
+{
+  "task": "DISTRIBUTED-COLLAB-SPEC",
+  "step": "DC-C04",
+  "gate": "DC-C04 [RATIFY]",
+  "date": "2026-10-27",
+  "decision_maker": "PM-Agent-01",
+  "evidence_marker": "EVIDENCE:DC-C04-RATIFIED:2026-10-27",
+  "authority": "PM059 standing project-manager authority; decision_maker as recorded.",
+  "disposition": "DC-C04 [RATIFY] RATIFIED (approve). The DISTRIBUTED-COLLAB-SPEC is ratified as a contract under standing project-manager authority. Non-terminal: the spec does not land here; the lane auto-restarts to its next governance step DC-C05, and item authorization moves owner_decision -> planning while state stays specified. DC-C05 becomes an available governance lane a worker may claim and complete.",
+  "basis": "The lane's reviewed specification and its independently reviewed reconciliation on the owning route. Decision kind: ratification of an owner_decision gate (owner_reserved, routable to the appointed manager under PM059). Content faithful to the DC-C04 requirement (RATIFY) in specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md.",
+  "owner_revisable": true,
+  "limits": [
+    "Ratification only makes DC-C05 (governance) available for a worker to claim and complete; it lands nothing, selects no successor and closes no bead.",
+    "No numeric budget, measurement threshold, dependency, scope change, waiver or new permission document is decided.",
+    "owner_only decisions never route and stay with the owner: force-push/history-rewrite/destructive Git, PM029 third-party/license adoption or external purchase, any missing measurement/tolerance/qualification (PM051), and required physical-HUMAN/Wayland demonstration."
+  ]
+}
