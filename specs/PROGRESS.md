@@ -369,6 +369,9 @@
 
 </details>
 
+- **Reserve exhaustive verification for designated major milestones** (`VERIFICATION-CADENCE-CORRECTION`; `dat-verification-cadence-e7xt`).
+   Owner-directed 2026-10-30 cadence correction: routine edits receive focused affected checks; existing complete qualification remains required for a designated major milestone candidate. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

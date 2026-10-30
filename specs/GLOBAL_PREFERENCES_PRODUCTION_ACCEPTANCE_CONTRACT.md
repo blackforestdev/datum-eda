@@ -59,6 +59,17 @@ manufacture acceptance by setting a Boolean or selecting its own candidate.
 `production_accepted` additionally requires the matching owner receipt and
 closure transaction. These states are computed, never trusted input labels.
 
+### Verification cadence
+
+The complete production campaign is a major-milestone qualification gate, not
+the edit/check loop. The project manager explicitly schedules its stable candidate.
+Routine changes use focused affected regression, integration and safety checks;
+capture-tool development uses bounded diagnostic runs until the mechanism is ready.
+Batch known corrections before requesting the next complete qualification run.
+Existing ordinary-application development availability remains separate from this
+contract's `candidate_ready` and `production_accepted` states. A focused pass cannot
+satisfy those states or carry an older candidate's production acceptance forward.
+
 ## 3. Candidate and evidence identity
 
 Use a clean, committed candidate. Record its full Git commit and tree IDs,
@@ -89,7 +100,9 @@ Proof commits may add evidence and governance after the tested commit. At final
 publication, enumerate and review the complete delta from tested candidate to
 publication: only report/artifact additions and necessary governance may differ.
 Any product, test, fixture, dependency, build, checker, matrix or contract change
-invalidates readiness and requires a new candidate and complete proof. No
+invalidates that candidate's readiness. Complete proof is required for the next
+designated milestone candidate; routine development corrections receive focused
+affected checks without immediately restarting the full campaign. No
 agent-selected equivalence, stale HEAD comparison, or silent carry-forward.
 The publication delta is a separate reviewed artifact, avoiding circular hashes.
 
@@ -236,7 +249,8 @@ hide a failure. Sort the 100 elapsed values and use nearest-rank p95, index
 operation. A failed operation, timeout, missing sample or non-finite value
 fails the trial. No outlier removal, successful-retry substitution, or relabeling
 failed product runs as environmental failures. Preserve failures and their
-diagnosis; after a correction, rerun the complete candidate proof.
+diagnosis; when reattempting milestone qualification after candidate corrections,
+rerun the complete candidate proof.
 
 Each measurement has exactly `budget_id`, `variant_id`, `environment_id`,
 `candidate_revision`, `binary_sha256`, `input_manifest_sha256`, `matrix_sha256`,

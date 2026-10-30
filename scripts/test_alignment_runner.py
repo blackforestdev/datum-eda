@@ -19,7 +19,7 @@ class AlignmentRunnerTests(unittest.TestCase):
         self.assertEqual(sum(call.args[0] == ["python3", "mcp-server/server.py", "--self-test"]
                              for call in run.call_args_list), 1)
 
-    def test_focused_mode_has_no_cargo_and_default_retains_full_schedule(self):
+    def test_default_is_focused_and_explicit_full_retains_qualification(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             executable = root / "python3"
@@ -36,10 +36,10 @@ class AlignmentRunnerTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 return log.read_text().splitlines()
             focused = schedule("--focused")
+            self.assertEqual(focused, schedule())
             self.assertFalse(any("run_cargo_guarded.py" in line for line in focused))
             self.assertIn("scripts/check_source_health.py", focused)
             full = schedule("--full")
-            self.assertEqual(full, schedule())
             self.assertIn("scripts/check_alignment.py --run-gates", full)
             self.assertNotIn("mcp-server/server.py --self-test", full)
             self.assertTrue(any("cargo clippy --workspace --all-targets" in line for line in full))

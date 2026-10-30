@@ -57,7 +57,7 @@ mutation or verification is appropriate.
 | --- | --- | --- |
 | Current task and ordered completion steps | `python3 scripts/project_status.py next` / `details` | Read-only joined roadmap/tracker/claim queries. |
 | Structural checks for a focused change | `bash scripts/run_drift_gates.sh --focused` | Resource, source, authority, parity, traceability and boundary checks; no Cargo compilation. |
-| Deliberate full qualification | `bash scripts/run_drift_gates.sh --full` | Compiles and runs workspace, proof and GUI checks; produces output. It is also the default mode. |
+| Major-milestone qualification | `bash scripts/run_drift_gates.sh --full` | Explicitly compiles and runs workspace, proof and GUI checks for a designated milestone. Routine runner/CI defaults are focused; full CI requires a `full_qualification` dispatch. |
 | Guarded Rust work | [run_cargo_guarded.py](../scripts/run_cargo_guarded.py) | Serializes Cargo and checks disk/target policy; select `--workload interactive` or `proof` as required by contributor rules. |
 | Staged formatting check | `python3 scripts/check_rustfmt.py --staged` | Nonmutating check of staged Rust files. |
 | Format selected Rust files | [format_rust.py](../scripts/format_rust.py) | Writes only explicitly named paths; inspect shared-tree status before and after. |

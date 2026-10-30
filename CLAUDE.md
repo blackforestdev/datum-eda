@@ -136,6 +136,19 @@ Capture and inspect visual changes before presenting them.
 
 ## Verification must earn its cost
 
+Routine development uses focused checks for the changed behavior and its affected
+integration/safety boundaries. Exhaustive end-to-end, full-workspace, cross-platform
+and statistical qualification runs only for an explicitly designated major milestone
+or release candidate. The project manager schedules that milestone; a routine edit,
+new commit, lease renewal or evidence-file change does not create one. A line-color
+change calls for the affected rendering checks, not an automatic full campaign.
+
+Batch known corrections and use focused regression checks while iterating. A changed
+qualified candidate loses its old qualification claim; rerun the complete required
+proof when presenting the next milestone candidate, not immediately after every edit.
+Keep required staged commit checks, relevant safety checks and independent review.
+Focused passes establish their stated scope only; they never become a production PASS.
+
 State the requirement/risk, evidence gap and decision enabled per cohesive batch.
 Reuse adequate evidence; a new session or documentation edit is not a rerun reason.
 Use the smallest meaningful checks; do not add implementation-mirroring tests.

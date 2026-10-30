@@ -70,8 +70,8 @@ sufficient).
 ```bash
 python3 scripts/run_cargo_guarded.py --workload interactive -- cargo build
 bash scripts/run_drift_gates.sh --focused # structural repository checks, no builds
-python3 scripts/check_alignment.py --run-health # prebuild companions, then workspace tests
-bash scripts/run_drift_gates.sh --full # full qualification and repository gates (CI default)
+python3 scripts/check_alignment.py --run-health # major milestone: companions + workspace tests
+bash scripts/run_drift_gates.sh --full # explicit major-milestone qualification; CI dispatch only
 ```
 
 Local development output has a separate lifecycle. After releasing ownership,

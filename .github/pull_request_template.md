@@ -25,14 +25,13 @@
       evidence were synchronized under decision 025.
 - [ ] If lane state is `closed` or `blocked-awaiting-contract`: this PR includes one explicit next branch decision (`define-contract` or `switch-slice`) and does not continue same-lane exploratory audit work.
 - [ ] If lane state is `blocked-awaiting-contract`: this PR includes a single `fallback_slice` target.
-- [ ] I ran required local gates:
-  - `python3 scripts/test_source_health_governance.py`
-  - `python3 scripts/check_source_health.py --base-ref <trusted-base-sha>`
-  - `python3 scripts/test_project_status.py`
-  - `python3 scripts/project_status.py check`
-  - `python3 scripts/project_status.py details`
-  - `bash scripts/run_drift_gates.sh`
-  - `cargo test --workspace`
+- [ ] I ran focused checks for the changed behavior and affected safety boundaries,
+      and source-health checks for changed source. Checker regression suites run
+      when those checkers change; state checks run when structured state changes.
+- [ ] Routine structural verification uses `bash scripts/run_drift_gates.sh --focused`.
+      Exhaustive `--full`, workspace tests and end-to-end/statistical campaigns run
+      only for a designated major milestone, as specified in `CLAUDE.md`. Any focused
+      results below are identified by their actual scope and do not claim qualification.
 
 ## Scope
 

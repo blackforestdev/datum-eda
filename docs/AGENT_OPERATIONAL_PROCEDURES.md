@@ -208,6 +208,17 @@ State a brief rationale per cohesive batch, reuse adequate evidence across
 handoffs, and keep raw output out of working context. No new approval workflow
 or test ledger is required. Required acceptance and commit checks remain in force.
 
+During iteration, select the affected unit/integration target and relevant safety
+checks. Use `bash scripts/run_drift_gates.sh` (or `--focused`) for structural checks;
+it does not compile Cargo targets. Reserve `--full`, workspace health, broad native
+campaigns and statistical acceptance runs for a PM-designated major milestone.
+The Alignment workflow's explicit `full_qualification` dispatch selects that mode;
+ordinary pushes and pull requests run focused checks. Keep final tests and matching
+application builds on a consistent guarded configuration and retain full logs with
+their actual exit status. Reuse unchanged-input evidence at its accepted scope;
+batch corrections before the next complete milestone proof. No additional ledger
+or per-edit approval/qualification record is required.
+
 **Evidence records state their own retention honestly.** Keep these conventions
 whenever a review record references evidence or binds an acceptance hash:
 - Evidence archives (`*.tar.xz` and similar per-run artifacts) are machine-local,

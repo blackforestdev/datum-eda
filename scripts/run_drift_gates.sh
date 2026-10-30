@@ -5,10 +5,10 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cargo_guard=(python3 "$repo_root/scripts/run_cargo_guarded.py" --workload proof --)
 cd "$repo_root"
 
-case "${1:---full}" in
+case "${1:---focused}" in
   --focused)
     if [[ $# -gt 1 ]]; then echo "usage: $0 [--focused|--full]" >&2; exit 2; fi
-    # Structural checks only. Full qualification remains the default/CI mode.
+    # Routine structural checks. Full qualification requires explicit --full.
     for gate in check_cargo_resource_policy check_progress_coverage \
         check_spec_parity check_spec_governance check_evidence_traceability \
         check_dependency_authority check_global_preferences_boundary \
