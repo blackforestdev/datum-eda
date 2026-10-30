@@ -55,7 +55,9 @@ def _work_dir(prefix):
 
 
 def _run_cli(binary, args, *, work):
-    """Run the real CLI against an isolated config root; capture typed JSON."""
+    """Run the real CLI against an isolated config root; capture typed JSON. stdin is /dev/null so a
+    mutation with no foreground TTY refuses deterministically (human_presence_required) rather than
+    blocking on input."""
     env = {
         **os.environ,
         "HOME": str(work),
@@ -66,8 +68,19 @@ def _run_cli(binary, args, *, work):
         [binary, "--format", "json", *args],
         capture_output=True,
         text=True,
+        stdin=subprocess.DEVNULL,
         env=env,
     )
+
+
+def _run_and_parse(binary, work, argv):
+    """Run one CLI invocation and parse its JSON stdout REGARDLESS of exit code (refusals exit 2 but
+    still emit a typed error envelope); return (returncode, envelope-or-None)."""
+    proc = _run_cli(binary, argv, work=work)
+    try:
+        return proc.returncode, json.loads(proc.stdout)
+    except (json.JSONDecodeError, TypeError):
+        return proc.returncode, None
 
 
 def _no_project_written(work):
@@ -266,6 +279,145 @@ def surface_parity_negative_active_inventory_cli():
         cleanup()
 
 
+STABLE_KEY_REFUSALS = {
+    "unknown-key": {"argv": ["preferences", "get", "datum.not.a.real.key"],
+                    "code": "unknown_preference_key", "key": "datum.not.a.real.key"},
+    "reserved-key": {"argv": ["preferences", "get", RESERVED_SENTINEL],
+                     "code": "reserved_preference_key", "key": RESERVED_SENTINEL},
+}
+# A deterministic Set attempt on an active key with no foreground TTY -> the human-presence input
+# class (distinct typed code; a write-path probe whose no-write must be checked on disk).
+_HUMAN_PRESENCE_SET = ["preferences", "set", "datum.accessibility.reduced_motion",
+                       "--value-json", "true", "--expected", "{\"kind\":\"missing\"}",
+                       "--request-id", "00000000-0000-0000-0000-000000000001",
+                       "--reason", "surface-parity-negative input-class probe"]
+
+
+def _store_absent(work):
+    return not (work / "config" / "datum" / "preferences").exists()
+
+
+def surface_parity_negative_all_query_schemas_cli():
+    """Every query verb answers from one service with the same envelope shape and the same disclosed
+    context -- same-result-fields (identical top-level + context key sets) and same-disclosure
+    (identical scope/status/generation/catalog-digest/counts across all six verbs). Read-only."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-spn-all-query-schemas-")
+    try:
+        envelopes = []
+        for argv in QUERY_VERBS:
+            rc, envelope = _run_and_parse(binary, work, ["preferences", *argv])
+            if rc != 0 or not (isinstance(envelope, dict) and envelope.get("ok") is True):
+                envelopes = []
+                break
+            envelopes.append(envelope)
+        same_result_fields = same_disclosure = False
+        if len(envelopes) == len(QUERY_VERBS):
+            top_sets = {frozenset(e.keys()) for e in envelopes}
+            ctx_sets = {frozenset((e.get("context") or {}).keys()) for e in envelopes}
+            same_result_fields = bool(
+                top_sets == {frozenset({"ok", "schema", "context", "result", "error"})}
+                and len(ctx_sets) == 1)
+            disclosure_keys = ("scope", "repository_status", "generation", "active_catalog_digest",
+                               "active_descriptor_count", "reserved_descriptor_count")
+            disclosures = {tuple((e.get("context") or {}).get(k) for k in disclosure_keys)
+                           for e in envelopes}
+            same_disclosure = bool(len(ctx_sets) == 1 and len(disclosures) == 1)
+        return {"same-result-fields": bool(same_result_fields),
+                "same-disclosure": bool(same_disclosure)}
+    finally:
+        cleanup()
+
+
+def surface_parity_negative_all_stable_refusals_cli():
+    """Stable key refusals each return their exact typed code plus structured details, the CLI
+    process exits 2, and the refusal is surfaced as the same structured product envelope the MCP
+    surface returns (ok:false + schema + context + typed error) -- not a bare text error. Read
+    refusals, so no store is written."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-spn-all-stable-refusals-")
+    try:
+        exact = exit_two = mcp_envelope = True
+        for probe in STABLE_KEY_REFUSALS.values():
+            rc, envelope = _run_and_parse(binary, work, probe["argv"])
+            error = envelope.get("error") if isinstance(envelope, dict) else None
+            schema = envelope.get("schema") if isinstance(envelope, dict) else None
+            ok_false = isinstance(envelope, dict) and envelope.get("ok") is False
+            exact = exact and bool(
+                ok_false and isinstance(error, dict)
+                and error.get("code") == probe["code"] and isinstance(error.get("details"), dict)
+                and error["details"].get("key") == probe["key"])
+            exit_two = exit_two and (rc == 2)
+            mcp_envelope = mcp_envelope and bool(
+                ok_false and isinstance(schema, dict) and isinstance(schema.get("name"), str)
+                and schema.get("name") and schema.get("version") is not None
+                and isinstance(envelope.get("context"), dict)
+                and isinstance(error, dict) and isinstance(error.get("code"), str)
+                and isinstance(error.get("message"), str) and "details" in error)
+        return {"exact-code-and-details": bool(exact), "cli-exit-2": bool(exit_two),
+                "mcp-envelope": bool(mcp_envelope)}
+    finally:
+        cleanup()
+
+
+def surface_parity_negative_malformed_requests_cli():
+    """Three distinct malformed input classes each map to exactly one typed code (distinct across
+    classes), and no store is written -- the no-write is a DISK-LEVEL check after the set-path probe,
+    not merely an error code."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-spn-malformed-requests-")
+    try:
+        classes = {
+            "unknown-key": (["preferences", "get", "datum.not.a.real.key"], "unknown_preference_key"),
+            "reserved-key": (["preferences", "get", RESERVED_SENTINEL], "reserved_preference_key"),
+            "human-presence": (_HUMAN_PRESENCE_SET, "human_presence_required"),
+        }
+        observed, all_typed = {}, True
+        for name, (argv, expected) in classes.items():
+            rc, envelope = _run_and_parse(binary, work, argv)
+            error = envelope.get("error") if isinstance(envelope, dict) else None
+            code = error.get("code") if isinstance(error, dict) else None
+            observed[name] = code
+            if not (isinstance(envelope, dict) and envelope.get("ok") is False
+                    and code == expected and rc == 2):
+                all_typed = False
+        one_code_per_class = bool(all_typed and None not in observed.values()
+                                  and len(set(observed.values())) == len(classes))
+        no_write = _store_absent(work)  # the set-path refusal persisted nothing on disk
+        return {"one-code-per-input-class": bool(one_code_per_class), "no-write": bool(no_write)}
+    finally:
+        cleanup()
+
+
+def surface_parity_negative_reserved_keys_cli():
+    """Setting a reserved descriptor is a typed refusal (reserved_preference_key) and does not
+    activate it -- no-activation is a DISK-LEVEL check: no store is created and the active inventory
+    still reports exactly eleven active / forty-five reserved."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-spn-reserved-keys-")
+    try:
+        set_argv = ["preferences", "set", RESERVED_SENTINEL, "--value-json", "\"fast\"",
+                    "--expected", "{\"kind\":\"missing\"}",
+                    "--request-id", "00000000-0000-0000-0000-000000000002",
+                    "--reason", "surface-parity-negative reserved-key probe"]
+        rc, envelope = _run_and_parse(binary, work, set_argv)
+        error = envelope.get("error") if isinstance(envelope, dict) else None
+        typed_refusal = bool(
+            isinstance(envelope, dict) and envelope.get("ok") is False and rc == 2
+            and isinstance(error, dict) and error.get("code") == "reserved_preference_key"
+            and isinstance(error.get("details"), dict) and error["details"].get("key") == RESERVED_SENTINEL)
+        _rc2, describe = _run_and_parse(binary, work, ["preferences", "describe"])
+        context = describe.get("context") if isinstance(describe, dict) else None
+        not_promoted = bool(isinstance(describe, dict) and describe.get("ok") is True
+                            and isinstance(context, dict)
+                            and context.get("active_descriptor_count") == 11
+                            and context.get("reserved_descriptor_count") == 45)
+        no_activation = bool(_store_absent(work) and not_promoted)
+        return {"typed-refusal": bool(typed_refusal), "no-activation": bool(no_activation)}
+    finally:
+        cleanup()
+
+
 # (case, variant, surface) -> observation producer. Later GP-CM05E slices extend
 # this map; each family runs the real product surface and records honest results.
 #
@@ -281,6 +433,10 @@ DISPATCH = {
     ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
     ("existing-project-stability", "global-missing", "cli"): existing_project_stability_global_missing_cli,
     ("surface-parity-negative", "active-inventory", "cli"): surface_parity_negative_active_inventory_cli,
+    ("surface-parity-negative", "all-query-schemas", "cli"): surface_parity_negative_all_query_schemas_cli,
+    ("surface-parity-negative", "all-stable-refusals", "cli"): surface_parity_negative_all_stable_refusals_cli,
+    ("surface-parity-negative", "malformed-requests", "cli"): surface_parity_negative_malformed_requests_cli,
+    ("surface-parity-negative", "reserved-keys", "cli"): surface_parity_negative_reserved_keys_cli,
 }
 
 

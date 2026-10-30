@@ -178,7 +178,9 @@ def _family_handlers(family):
         return _empty_state, capture_after
     # Read-only query/parity families: no store is written, so after==before=empty is honest and the
     # recipe's own observations (no-write / absent store) carry the proof. capture_after stays None.
-    if case == "surface-parity-negative" and variant == "active-inventory":
+    if case == "surface-parity-negative" and variant in (
+            "active-inventory", "all-query-schemas", "all-stable-refusals",
+            "malformed-requests", "reserved-keys"):
         return _empty_state, None
     raise ValueError(f"case family not implemented: {family}")
 

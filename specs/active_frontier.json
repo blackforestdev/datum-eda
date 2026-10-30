@@ -10800,7 +10800,12 @@
           "issue:dat-global-preferences-engine-build-vge": "The Global Preferences engine build (GlobalPreferencesService / product service) must exist before the completion acceptance checkers, capture and runtime integration can exercise it; it is a closed hard dependency.",
           "issue:dat-shared-units-surface-parity-s9x": "Shared-units surface parity is required so preference-driven Units defaults and working-units policy render consistently across surfaces during acceptance; it is a closed hard dependency."
         },
-        "qualification_followups": [],
+        "qualification_followups": [
+          "gui-feedback presented_elapsed_ns (P1): the first-party XDamage/XShm presentation-timing helper is a frontend prototype obligation; until it lands, the gui-feedback budget records the declared-incompleteness fallback rather than a presented-frame timestamp.",
+          "prepared-state elapsed_ns has no external ordinary observable; its treatment is an owner-visible ruling deferred to the GP-CM05A gate.",
+          "N06 Orca focus-establishment timing requires tuning; the tuned-first path with an announcements fallback remains an open accessibility-capture refinement.",
+          "The scored 48-scenario native corpus must be rebuilt against datum-gui at the pinned candidate to close source-skew before the native budgets are acceptance-scored."
+        ],
         "safety_requirements": [
           "Every preference mutation goes through the one engine-owned GlobalPreferencesProductService writer and commit() path under writer-lease and expected-generation checks, recording a MutationReceipt (operation, actor kind/id/session, reason, expected/resulting generations, before/after digests); no GUI/CLI/daemon/MCP adapter writes the repository directly (\u00a72 :52-67, \u00a72.1 :87-109, \u00a75.1 :281-303).",
           "Direct mutation is accepted only from human_gui/human_cli actors; mcp_agent/script_agent/unknown receive proposal_required and must use a side-effect-free proposal, never a private write (\u00a75 :267-279, \u00a76 :311-319).",
