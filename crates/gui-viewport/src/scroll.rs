@@ -5,11 +5,7 @@ use crate::ScreenRectPx;
 /// Discrete row adapters retain row authority rather than document offsets.
 /// Clamp against the rendered capacity before applying a native line step.
 pub fn scrolled_row_offset(offset: usize, total: usize, visible: usize, lines: f32) -> usize {
-    let maximum = if visible == 0 {
-        0
-    } else {
-        total.saturating_sub(visible)
-    };
+    let maximum = maximum_row_offset(total, visible);
     let offset = offset.min(maximum);
     if !lines.is_finite() || lines.abs() <= 0.01 {
         return offset;
@@ -19,6 +15,31 @@ pub fn scrolled_row_offset(offset: usize, total: usize, visible: usize, lines: f
         offset.saturating_add(step).min(maximum)
     } else {
         offset.saturating_sub(step)
+    }
+}
+
+/// Reveal a row with the smallest offset change, retaining the surrounding rows.
+/// Empty inventories and zero rendered capacity have no scrollable offset.
+pub fn revealed_row_offset(offset: usize, total: usize, visible: usize, row: usize) -> usize {
+    if total == 0 || visible == 0 {
+        return 0;
+    }
+    let offset = offset.min(maximum_row_offset(total, visible));
+    let row = row.min(total - 1);
+    if row < offset {
+        row
+    } else if row - offset >= visible {
+        row - (visible - 1)
+    } else {
+        offset
+    }
+}
+
+fn maximum_row_offset(total: usize, visible: usize) -> usize {
+    if visible == 0 {
+        0
+    } else {
+        total.saturating_sub(visible)
     }
 }
 
@@ -194,6 +215,40 @@ mod tests {
         assert_eq!(scrolled_row_offset(0, 24, 7, -0.25), 1);
         assert_eq!(scrolled_row_offset(10, 24, 24, -1.0), 0);
         assert_eq!(scrolled_row_offset(10, 24, 0, -1.0), 0);
+    }
+
+    #[test]
+    fn discrete_row_reveal_preserves_context_in_both_directions() {
+        for row in 5..12 {
+            assert_eq!(revealed_row_offset(5, 24, 7, row), 5);
+        }
+        assert_eq!(revealed_row_offset(5, 24, 7, 4), 4);
+        assert_eq!(revealed_row_offset(5, 24, 7, 12), 6);
+        assert_eq!(revealed_row_offset(6, 24, 7, 11), 6);
+        assert_eq!(revealed_row_offset(6, 24, 7, 23), 17);
+        assert_eq!(revealed_row_offset(17, 24, 7, 0), 0);
+    }
+
+    #[test]
+    fn discrete_row_reveal_clamps_reflow_empty_and_stale_inputs() {
+        assert_eq!(revealed_row_offset(23, 24, 7, 23), 17);
+        assert_eq!(revealed_row_offset(17, 3, 7, 2), 0);
+        assert_eq!(revealed_row_offset(17, 24, 0, 23), 0);
+        assert_eq!(revealed_row_offset(17, 0, 7, 23), 0);
+        assert_eq!(revealed_row_offset(0, 24, 7, usize::MAX), 17);
+        assert_eq!(revealed_row_offset(0, 24, 1, 23), 23);
+    }
+
+    #[test]
+    fn discrete_row_reveal_keeps_large_indices_exact_without_overflow() {
+        let total = usize::MAX;
+        assert_eq!(revealed_row_offset(total, total, 7, total), total - 7);
+        assert_eq!(revealed_row_offset(0, total, 7, total - 1), total - 7);
+        assert_eq!(
+            revealed_row_offset(total - 8, total, 7, total - 1),
+            total - 7
+        );
+        assert_eq!(revealed_row_offset(total, total, total, total), 0);
     }
 
     #[test]

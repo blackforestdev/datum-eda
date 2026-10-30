@@ -18741,6 +18741,42 @@
         "rationale": "Owner efficiency goal plus PM-Agent-01 explicit runtime disposition: prevent orphan ownership and recurring cleanup chores."
       },
       "landing_commit": "e2150575e16ec7a2184c129b965bf70e3d15b8b1"
+    },
+    {
+      "key": "INSPECTOR-FOCUS-REVEAL",
+      "issue_id": "dat-5uje",
+      "title": "Preserve inspector context when revealing keyboard focus",
+      "summary": "PM-authorized minimal inspector focus scrolling correction; ordinary keyboard-driven observation required before closure.",
+      "order": 109,
+      "state": "in_progress",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
+        "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner efficiency goal prioritizes real code corrections; PM-Agent-01 explicitly authorized this disjoint tracked bug at2026-10-30T19:18:06Z."
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "claimed_at": "2026-10-30T19:19:07Z",
+        "heartbeat_at": "2026-10-30T19:19:07Z",
+        "expires_at": "2026-10-31T03:19:07Z",
+        "scope": [
+          "crates/gui-app/src/editor/runtime_selection_inspector.rs",
+          "crates/gui-viewport/src/scroll.rs"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "e8b849d3f219d2944c62f169db9c702e11f659f1"
+      }
     }
   ],
   "management_appointments": {

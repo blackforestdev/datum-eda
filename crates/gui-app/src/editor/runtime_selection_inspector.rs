@@ -265,13 +265,7 @@ impl Runtime {
         let state = self.session.workspace_mut();
         state.inspector_context.focused = Some(section);
         let offset = &mut state.ui.selection_inspector.scroll_offset;
-        // Both bounds set offset = row. The scroll-down case (row below the
-        // viewport) most likely intended `row - visible + 1` so the row lands at
-        // the viewport bottom — a separately tracked latent bug. Merging the
-        // identical branches here is behavior-preserving.
-        if row < *offset || row >= offset.saturating_add(visible) {
-            *offset = row;
-        }
+        *offset = datum_gui_viewport::scroll::revealed_row_offset(*offset, total, visible, row);
         self.invalidate_frame();
         true
     }

@@ -378,6 +378,9 @@
 
 </details>
 
+- **Preserve inspector context when revealing keyboard focus** (`INSPECTOR-FOCUS-REVEAL`; `dat-5uje`).
+   PM-authorized minimal inspector focus scrolling correction; ordinary keyboard-driven observation required before closure. *state `in_progress`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
