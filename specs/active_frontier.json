@@ -18925,10 +18925,10 @@
       "key": "TERMINAL-HIT-OWNERSHIP-TEST-BOUNDARY",
       "issue_id": "dat-terminal-hit-sidebar-assertion-agz0",
       "title": "Distinguish sidebar review hits in terminal ownership proof",
-      "summary": "Correct the existing assertion boundary while retaining adversarial camera clipping and terminal hit ownership. Test-only source; no terminal implementation change.",
+      "summary": "Test distinguishes legitimate sidebar ReviewAction cards while retaining scene-only authored hits, complete owner containment, all5camera cases and3terminal hitpoints; full-rectangle terminal exclusion added. Independent review and focused guarded testPASS; no production change or qualification claim.",
       "order": 117,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -18941,18 +18941,41 @@
         "kind": "maintenance",
         "rationale": "Owner-directed removal of repeated false proof failure: valid sidebar ReviewAction hits were incorrectly required inside editor scene. Preserve and strengthen terminal non-overlap assertions."
       },
+      "landing_commit": "a01a47fc3e71c67183376117d539ba5258efbb9f"
+    },
+    {
+      "key": "RENDERER-QUALIFIED-SOURCE-TEST-BINDING",
+      "issue_id": "dat-gui-proof-shared-state-9gaf.1",
+      "title": "Bind qualified sources in renderer regression fixtures",
+      "summary": "Repair test-only source/selection setup using existing renderer source capture and public document-aware selection APIs; retain all original behavior and storage assertions.",
+      "order": 118,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner-directed correction of four concrete stale-fixture failures causing repeated proof work; no production fallback, flattened document identity, weakened assertion or whole-suite campaign."
+      },
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-efficiency-terminal-hit-20261030",
-        "claimed_at": "2026-10-30T23:04:05Z",
-        "heartbeat_at": "2026-10-30T23:04:05Z",
-        "expires_at": "2026-10-31T01:04:05Z",
+        "session": "codex-efficiency-qualified-fixtures-20261030",
+        "claimed_at": "2026-10-30T23:09:03Z",
+        "heartbeat_at": "2026-10-30T23:09:03Z",
+        "expires_at": "2026-10-31T01:09:03Z",
         "scope": [
-          "crates/gui-render/src/terminal_hit_ownership_tests.rs"
+          "crates/gui-render/src/render/session_pointer_tests.rs",
+          "crates/gui-render/src/render/geometry_admission_tests.rs"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "5e78f1351af91ec916c24028bacb8b6e6c2233b8"
+        "head": "a01a47fc3e71c67183376117d539ba5258efbb9f"
       }
     }
   ],

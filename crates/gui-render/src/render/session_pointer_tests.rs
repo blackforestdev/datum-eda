@@ -14,9 +14,10 @@ fn workspace() -> ReviewWorkspaceState {
 }
 
 fn install(session: &mut RenderSession, state: &ReviewWorkspaceState) {
-    assert!(session.ensure_board(state, 1600, 1000, 1.0));
-    assert!(session.ensure_schematic(state, 1600, 1000, 1.0));
-    let scene = PreparedScene::from_workspace_for_surface(
+    session
+        .ensure_sources(state, None, 1600, 1000, 1.0)
+        .unwrap();
+    let mut scene = PreparedScene::from_workspace_for_surface(
         state,
         1600,
         1000,
@@ -25,6 +26,7 @@ fn install(session: &mut RenderSession, state: &ReviewWorkspaceState) {
         session.board().unwrap(),
     )
     .unwrap();
+    scene.schematic_sources = session.schematic_sources.clone();
     session.install_prepared(
         scene,
         Preparation::workspace(state, session.board().unwrap(), [1600, 1000]),
@@ -554,10 +556,11 @@ fn pointer_refresh_suppresses_schematic_members_but_preserves_related_parent_hov
         unreachable!()
     };
     let scene = state.schematic_scene.as_ref().unwrap();
+    let selected_keys = view.projection_keys(scene, PaneContent::Schematic).unwrap();
     let selected = scene
         .board_graphics
         .iter()
-        .find(|g| view.schematic_keys.contains(&g.object_id) && g.schematic_hit_kind().is_some())
+        .find(|g| selected_keys.contains(&g.object_id) && g.schematic_hit_kind().is_some())
         .unwrap()
         .object_id
         .clone();
@@ -565,8 +568,9 @@ fn pointer_refresh_suppresses_schematic_members_but_preserves_related_parent_hov
         .board_graphics
         .iter()
         .find(|g| {
-            view.related_schematic_keys.contains(&g.object_id)
-                && !view.schematic_keys.contains(&g.object_id)
+            view.related_projection_keys(scene, PaneContent::Schematic)
+                .is_some_and(|keys| keys.contains(&g.object_id))
+                && !selected_keys.contains(&g.object_id)
                 && g.schematic_hit_kind().is_some()
         })
         .unwrap()

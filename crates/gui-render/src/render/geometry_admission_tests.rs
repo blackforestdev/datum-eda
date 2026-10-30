@@ -1,5 +1,31 @@
 use super::*;
 
+fn prepare_qualified_schematic(
+    state: &ReviewWorkspaceState,
+    board: &RetainedScene,
+    schematic: &RetainedScene,
+) -> PreparedScene {
+    let mut prepared = PreparedScene::from_workspace(
+        state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        board,
+    )
+    .unwrap();
+    prepared.schematic_sources = crate::renderer_state::SchematicSources::capture(
+        state,
+        Some(schematic),
+        &Default::default(),
+        1280,
+        800,
+        1.0,
+    )
+    .unwrap();
+    prepared.append_native_selection(state).unwrap();
+    prepared
+}
+
 #[test]
 fn prepared_geometry_counts_follow_production_ranges_and_reject_invalid_ranges() {
     let state = crate::gpu_surface_pass::board_fixture_state();
@@ -130,18 +156,8 @@ fn schematic_layer_visibility_filters_draws_masks_and_counts_without_retiring_ge
     )));
     let resident_vertices = schematic.world_vertices().as_ptr();
     let resident_strokes = schematic.world_strokes.as_ptr();
-    let prepare = |state: &ReviewWorkspaceState| {
-        let mut prepared = PreparedScene::from_workspace(
-            state,
-            1280,
-            800,
-            CameraState::fit_to_bounds(&state.scene.bounds),
-            &board,
-        )
-        .unwrap();
-        prepared.append_native_selection(state).unwrap();
-        prepared
-    };
+    let prepare =
+        |state: &ReviewWorkspaceState| prepare_qualified_schematic(state, &board, &schematic);
     let counts = |prepared: &PreparedScene, surface| {
         prepared
             .geometry_admission(&board, Some(&schematic))
@@ -225,18 +241,8 @@ fn schematic_honors_the_workspace_authored_filter_without_retiring_geometry() {
     let retained_commands = schematic.all_draw_commands().to_vec();
     assert!(!retained_commands.is_empty());
     let resident_vertices = schematic.world_vertices().as_ptr();
-    let prepare = |state: &ReviewWorkspaceState| {
-        let mut prepared = PreparedScene::from_workspace(
-            state,
-            1280,
-            800,
-            CameraState::fit_to_bounds(&state.scene.bounds),
-            &board,
-        )
-        .unwrap();
-        prepared.append_native_selection(state).unwrap();
-        prepared
-    };
+    let prepare =
+        |state: &ReviewWorkspaceState| prepare_qualified_schematic(state, &board, &schematic);
     let counts = |prepared: &PreparedScene, surface| {
         prepared
             .geometry_admission(&board, Some(&schematic))
