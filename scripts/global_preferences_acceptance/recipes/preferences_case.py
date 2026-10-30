@@ -392,6 +392,50 @@ def surface_parity_negative_active_inventory_cli():
         cleanup()
 
 
+def _genesis_replay(variant):
+    """project-genesis-replay idempotency of `project new`: first create a Project, then replay or
+    vary the request and observe the destination is unchanged by the second attempt (read-only on the
+    Preferences store -- factory units). One 0-arg handler per variant via this factory. Honest."""
+    def handler():
+        binary = _require_binary("DATUM_EDA_CLI")
+        work, cleanup = _work_dir(f"gp-cm05e-case-genesis-replay-{variant}-")
+        try:
+            dest = work / "project"
+            seed = f"project-genesis-replay/{variant}/cli"
+
+            def new(name, suffix):
+                return _run_and_parse(binary, work, ["project", "new", "--name", name,
+                    "--project-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project" + suffix)),
+                    "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request" + suffix)),
+                    "--units-source", "factory", "--json", str(dest)])
+
+            rc1, first = new("Acceptance", "")
+            created = rc1 == 0 and isinstance(first, dict) and first.get("ok") is True
+            before = _store_digest_map(dest)
+            if variant == "response-loss":            # same request -> idempotent replay
+                rc2, second = new("Acceptance", "")
+            elif variant == "changed-content":        # same request-id, different content
+                rc2, second = new("Different", "")
+            else:                                     # other-request-existing-target: new request, same dest
+                rc2, second = new("Acceptance", "-2")
+            after = _store_digest_map(dest)
+            unchanged = bool(created and before and before == after)
+            error = (second.get("error") or {}).get("code") if isinstance(second, dict) else None
+            if variant == "response-loss":
+                replayed = bool(rc2 == 0 and isinstance(second, dict) and second.get("ok") is True
+                                and (second.get("result") or {}).get("genesis_request_digest")
+                                == (first.get("result") or {}).get("genesis_request_digest"))
+                return {"restart-replay": replayed, "no-second-write": unchanged}
+            if variant == "changed-content":
+                return {"idempotency-conflict": bool(rc2 == 2 and error == "idempotency_conflict"),
+                        "destination-unchanged": unchanged}
+            return {"project-target-exists": bool(rc2 == 2 and error == "project_target_exists"),
+                    "destination-unchanged": unchanged}
+        finally:
+            cleanup()
+    return handler
+
+
 STABLE_KEY_REFUSALS = {
     "unknown-key": {"argv": ["preferences", "get", "datum.not.a.real.key"],
                     "code": "unknown_preference_key", "key": "datum.not.a.real.key"},
@@ -603,6 +647,9 @@ DISPATCH = {
     ("corrupt-store", "missing-generation", "cli"): corrupt_store_cli,
     ("corrupt-store", "wrong-digest", "cli"): corrupt_store_cli,
     ("corrupt-store", "unpublished-generation", "cli"): corrupt_store_cli,
+    ("project-genesis-replay", "response-loss", "cli"): _genesis_replay("response-loss"),
+    ("project-genesis-replay", "changed-content", "cli"): _genesis_replay("changed-content"),
+    ("project-genesis-replay", "other-request-existing-target", "cli"): _genesis_replay("other-request-existing-target"),
 }
 
 

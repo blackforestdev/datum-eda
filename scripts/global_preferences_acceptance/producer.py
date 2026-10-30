@@ -267,6 +267,12 @@ def _family_handlers(family):
         return _empty_state, None, None
     if case == "clean-install" and variant == "reopen":
         return _empty_state, None, None
+    # project-genesis-replay: read-only on the Preferences store (factory units). The recipe creates a
+    # Project then replays/varies the request internally and proves the destination is unchanged; the
+    # Preferences store is never written, so after==before=empty is honest.
+    if case == "project-genesis-replay" and variant in (
+            "response-loss", "changed-content", "other-request-existing-target"):
+        return _empty_state, None, None
     # Corrupt-store: the producer seeds + corrupts a REAL store (setup) as `before`; the read-only
     # describe must not repair it, so `after` is the real post-describe STORE snapshot (audit
     # guardrail #2 -- the mutated surface is the store dir, not a project) and bytes must match.
