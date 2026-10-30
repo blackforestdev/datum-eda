@@ -7,8 +7,9 @@
 //! the `gp_acceptance_driver` binary consumes.
 
 use eda_engine::preferences::acceptance_support::backup_restore::{
-    BackupRestoreVariant, backup_restore_negative_control, backup_restore_observe,
-    backup_restore_setup, store_generation,
+    BackupRestoreVariant, DowngradeVariant, backup_restore_negative_control,
+    backup_restore_observe, backup_restore_setup, downgrade_negative_control, downgrade_observe,
+    downgrade_setup, store_generation,
 };
 use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
@@ -202,5 +203,57 @@ fn well_formed_backup_restore_succeeds_as_the_family_negative_control() {
     assert!(
         commit_ok,
         "a fresh plan must commit without RestorePreviewStale (stale-preview refusal is falsifiable)"
+    );
+}
+
+fn run_downgrade(variant: DowngradeVariant) -> Result<Vec<(&'static str, bool)>, String> {
+    let work = std::env::temp_dir().join(format!("gp-cm05e-dg-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = (|| {
+        downgrade_setup(variant, &work)?;
+        downgrade_observe(variant, &work)
+    })();
+    let _ = std::fs::remove_dir_all(&work);
+    result
+}
+
+#[test]
+fn every_downgrade_preservation_c_variant_yields_its_matrix_observations() {
+    let expected: &[(DowngradeVariant, &[&str])] = &[
+        (
+            DowngradeVariant::RestoreBothDirections,
+            &["original-and-restored-digests", "no-silent-rewrite"],
+        ),
+        (
+            DowngradeVariant::UnknownField,
+            &["inactive", "exact-bytes-survive"],
+        ),
+    ];
+    for (variant, ids) in expected {
+        let observed =
+            run_downgrade(*variant).unwrap_or_else(|error| panic!("{variant:?}: {error}"));
+        assert_eq!(
+            observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+            ids.to_vec(),
+            "{variant:?} observation ids"
+        );
+        for (id, value) in observed {
+            assert!(value, "{variant:?} observation {id} must hold");
+        }
+    }
+}
+
+#[test]
+fn downgrade_known_value_is_active_as_the_family_negative_control() {
+    // PM059 genuinely-falsifying control: a registered known value IS active, so the
+    // `inactive` predicate is not constant-true.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-dg-neg-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = downgrade_negative_control(&work);
+    let _ = std::fs::remove_dir_all(&work);
+
+    assert!(
+        result.expect("negative control runs"),
+        "a registered known value must be active (the inactive predicate is falsifiable)"
     );
 }

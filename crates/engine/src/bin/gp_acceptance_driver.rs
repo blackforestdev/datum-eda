@@ -72,6 +72,20 @@ fn main() -> ExitCode {
                     }
                 }
             }
+            "downgrade-preservation" => {
+                match acceptance_support::backup_restore::DowngradeVariant::parse(&variant) {
+                    Some(downgrade_variant) => work_root().and_then(|root| {
+                        acceptance_support::backup_restore::downgrade_setup(
+                            downgrade_variant,
+                            &root,
+                        )
+                    }),
+                    None => {
+                        eprintln!("gp_acceptance_driver: no setup phase for '{case}/{variant}'");
+                        return ExitCode::FAILURE;
+                    }
+                }
+            }
             _ => {
                 eprintln!("gp_acceptance_driver: no setup phase for '{case}/{variant}'");
                 return ExitCode::FAILURE;
@@ -105,6 +119,32 @@ fn main() -> ExitCode {
                     match work_root().and_then(|root| {
                         acceptance_support::backup_restore::backup_restore_observe(
                             backup_variant,
+                            &root,
+                        )
+                    }) {
+                        Ok(observed) => observed,
+                        Err(error) => {
+                            eprintln!(
+                                "gp_acceptance_driver: observe '{case}/{variant}' failed: {error}"
+                            );
+                            return ExitCode::FAILURE;
+                        }
+                    }
+                }
+                None => {
+                    eprintln!(
+                        "gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'"
+                    );
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
+        "downgrade-preservation" => {
+            match acceptance_support::backup_restore::DowngradeVariant::parse(&variant) {
+                Some(downgrade_variant) => {
+                    match work_root().and_then(|root| {
+                        acceptance_support::backup_restore::downgrade_observe(
+                            downgrade_variant,
                             &root,
                         )
                     }) {

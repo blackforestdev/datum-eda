@@ -49,6 +49,10 @@ ENGINE_COVERAGE = {
     ("backup-restore", "reverse-restore"),
     ("backup-restore", "stale-preview"),
     ("backup-restore", "incomplete-backup"),
+    # downgrade-preservation C variants: a bidirectional recovery round-trip and an
+    # opaque unknown envelope that survives a known mutation, both via the engine journal.
+    ("downgrade-preservation", "restore-both-directions"),
+    ("downgrade-preservation", "unknown-field"),
 }
 
 

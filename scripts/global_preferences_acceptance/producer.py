@@ -318,8 +318,10 @@ def _family_handlers(family):
     # before = store@gen1, after = store@gen2 -> after != before with a REAL new generation, and the
     # restore's CommitExactRestore receipt is in the captured after-state (audit write-family
     # guardrail). The precondition is established through the engine's own commit path, not a writer.
-    if case == "backup-restore" and variant in (
-            "restore", "exact-backup", "reverse-restore", "stale-preview", "incomplete-backup"):
+    if (case == "backup-restore" and variant in (
+            "restore", "exact-backup", "reverse-restore", "stale-preview", "incomplete-backup")) or (
+            case == "downgrade-preservation" and variant in (
+                "restore-both-directions", "unknown-field")):
         def setup(capture, key, work_root):
             _engine_setup_phase(Path(work_root), key[0], key[1])
             repo = Path(work_root) / "config" / "datum" / "preferences"
