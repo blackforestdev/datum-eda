@@ -91,7 +91,7 @@ def _snapshot_dir(capture, root_label, directory, prefix):
 
 def produce_case(capture, *, key, candidate, binaries, environments, input_manifest,
                  matrix_sha256, surface_binaries, initial_state=None, capture_after=None,
-                 setup=None, bundle_root=None):
+                 setup=None, bundle_root=None, recipe_relpath=RECIPE_RELPATH):
     """Build one case_result row by running the committed recipe for its surface.
 
     `before` is either initial_state(key) (a pure manifest) or, when `setup` is given, the snapshot of
@@ -103,11 +103,17 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     """
     case, variant, subcase, surface, _coordinate = key
     required = case_inventory()[key]  # ordered assertion ids for this coverage row
+    environment_ids = [name for name, coordinate in environments.items() if coordinate == key[4]]
+    require(len(environment_ids) == 1, "case coordinate requires exactly one matching environment")
+    environment_id = environment_ids[0]
+    recipe_ref = {"path": recipe_relpath, "sha256": digest(read_file(ROOT, recipe_relpath))}
+    require(recipe_ref in Bundle(capture.root, [input_manifest]).json(input_manifest),
+            "fixture recipe is not in candidate input closure")
 
     # Carry the pinned surface binary -- and, for a work-root family, the work root -- out-of-band so
     # the committed argv stays stable and reproducible. The work root is created BEFORE `setup`/the
     # recipe so a setup hook can build the real on-disk starting state the recipe then observes.
-    os.environ["DATUM_EDA_CLI"] = surface_binaries["cli"]
+    os.environ[f"DATUM_EDA_{surface.upper()}"] = surface_binaries[surface]
     work_root = None
     if capture_after is not None or setup is not None:
         require(bundle_root is not None, "a work-root family needs a bundle_root for its work tree")
@@ -122,7 +128,6 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     before_state = setup(capture, key, work_root) if setup is not None else (initial_state or _empty_state)(key)
     before_ref = capture.put(before_state)
 
-    recipe_ref = {"path": RECIPE_RELPATH, "sha256": _sha_file(ROOT / RECIPE_RELPATH)}
     fixture = {
         "schema": FIXTURE_SCHEMA,
         "source_revision": candidate["revision"],
@@ -144,7 +149,6 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     after_ref = (capture_after(capture, key, work_root, before_state)
                  if capture_after is not None else before_ref)
 
-    environment_id = next(iter(environments))
     row = {
         "case_id": case, "variant_id": variant, "subcase_id": subcase, "surface": surface,
         "environment_id": environment_id,
