@@ -9,6 +9,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::Value;
 
+pub mod acceptance_support;
 mod catalog;
 mod product_acceptance;
 mod product_actor;

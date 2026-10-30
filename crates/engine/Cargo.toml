@@ -17,3 +17,10 @@ lyon_tessellation.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true
+
+# GP-CM05E engine-surface production-acceptance driver (first-party; no new
+# dependencies). Emits honest observation booleans for engine-only resolver
+# states the CLI/MCP/GUI adapters cannot inject.
+[[bin]]
+name = "gp_acceptance_driver"
+path = "src/bin/gp_acceptance_driver.rs"

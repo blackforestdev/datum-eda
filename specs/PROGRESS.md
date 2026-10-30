@@ -232,7 +232,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (48 landed records)</summary>
+<summary>Completed history (49 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -378,6 +378,9 @@
 - **Preserve inspector context when revealing keyboard focus** (`INSPECTOR-FOCUS-REVEAL`; `dat-5uje`).
    Inspector focus reveals minimally at top/bottom. Ten focused tests and independent review passed; genuine OS-keyboard captures confirm both directions, inspected and accepted by appointed PM. Reusable owned-compositor sizing avoids duplicate QA launchers. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
+- **Reuse the case producer across reviewed surfaces** (`GP-PRODUCER-SURFACE-BINDING`; `dat-a08h`).
+   Shared producer safely binds selected surface recipe/binary/environment before execution. CLI defaults unchanged;13 focused tests and independent review passed. Enables separately authorized GUI pattern; no GUI or production acceptance claimed. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md`.
 
 </details>
 

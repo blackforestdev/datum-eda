@@ -34,6 +34,11 @@ from global_preferences_acceptance.matrix import case_inventory  # noqa: E402
 from global_preferences_acceptance.process import execute  # noqa: E402
 
 RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_case.py"
+ENGINE_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_engine_case.py"
+# The committed recipe each surface's cases replay. The CLI default is unchanged;
+# the engine surface runs its disjoint driver recipe (preferences_case.py stays
+# the CLI lane and does not grow). GUI is a separately owned lane.
+SURFACE_RECIPES = {"cli": RECIPE_RELPATH, "engine": ENGINE_RECIPE_RELPATH}
 MATRIX_RELPATH = "specs/global_preferences_production_acceptance_matrix.json"
 STATE_SCHEMA = "datum.preferences.state.v2"
 FIXTURE_SCHEMA = "datum.preferences.fixture.v2"
@@ -291,29 +296,43 @@ def _family_handlers(family):
             repo = Path(work_root) / "config" / "datum" / "preferences"
             return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
         return None, capture_after, setup
+    # managed-offline (engine surface): a pure resolver evaluation -- the engine driver injects a
+    # managed provider generation state and observes it never participates. No store is written, so
+    # after==before=empty is honest and the engine driver's observations carry the proof.
+    if case == "managed-offline" and variant in ("inactive",):
+        return _empty_state, None, None
     raise ValueError(f"case family not implemented: {family}")
 
 
-def build_family(bundle_root, *, cli_binary, family):
-    """Produce every CLI case of one family into a self-contained report + capture bundle."""
+def build_family(bundle_root, *, family, surface="cli", cli_binary=None, engine_binary=None):
+    """Produce every case of one family on the given surface into a self-contained report + bundle.
+
+    The CLI surface (default) is unchanged. The engine surface pins binaries["engine"] (the acceptance
+    driver) and replays the disjoint engine recipe; its cases are pure resolver evaluations whose
+    `after` equals `before` (nothing is written). produce_case (bc73e90e) already exports the surface
+    binary and verifies the surface recipe against the input-manifest closure."""
     capture = Capture(bundle_root)
     revision = _git_head()
-    cli_sha = _sha_file(cli_binary)
+    recipe_relpath = SURFACE_RECIPES[surface]
+    surface_binary = {"cli": cli_binary, "engine": engine_binary}[surface]
+    require(surface_binary is not None, f"surface {surface} needs its candidate binary")
+    surface_sha = _sha_file(surface_binary)
     candidate = {"revision": revision,
-                 "binaries": {"cli": {"path": str(cli_binary), "sha256": cli_sha}}}
-    binaries = {"cli": cli_sha}
-    recipe_ref = {"path": RECIPE_RELPATH, "sha256": _sha_file(ROOT / RECIPE_RELPATH)}
+                 "binaries": {surface: {"path": str(surface_binary), "sha256": surface_sha}}}
+    binaries = {surface: surface_sha}
+    recipe_ref = {"path": recipe_relpath, "sha256": _sha_file(ROOT / recipe_relpath)}
     input_manifest_ref = capture.put([recipe_ref])
     matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
     environments = {"headless-linux-x86_64": None}
     initial_state, capture_after, setup = _family_handlers(family)
-    keys = sorted(k for k in case_inventory() if (k[0], k[1]) == family and k[3] == "cli")
-    require(bool(keys), f"no CLI cases for family {family}")
+    keys = sorted(k for k in case_inventory() if (k[0], k[1]) == family and k[3] == surface)
+    require(bool(keys), f"no {surface} cases for family {family}")
     rows = [produce_case(capture, key=key, candidate=candidate, binaries=binaries,
                          environments=environments, input_manifest=input_manifest_ref,
-                         matrix_sha256=matrix_sha256, surface_binaries={"cli": str(cli_binary)},
+                         matrix_sha256=matrix_sha256, surface_binaries={surface: str(surface_binary)},
                          initial_state=initial_state, capture_after=capture_after,
-                         setup=setup, bundle_root=bundle_root) for key in keys]
+                         setup=setup, bundle_root=bundle_root, recipe_relpath=recipe_relpath)
+            for key in keys]
     report = {
         "origin": {"kind": "product-execution", "producer_session": "dev-agent-02"},
         "candidate": candidate,
@@ -398,23 +417,34 @@ def main(argv=None):
                         help="directory to hold the content-addressed capture bundle")
     parser.add_argument("--report", required=True, type=Path,
                         help="path to write the produced case report JSON")
-    parser.add_argument("--cli-binary", required=True, type=Path,
+    parser.add_argument("--cli-binary", type=Path,
                         help="candidate datum-eda CLI executable (cli surface)")
+    parser.add_argument("--engine-binary", type=Path,
+                        help="candidate engine acceptance-driver executable (engine surface)")
+    parser.add_argument("--surface", choices=("cli", "engine"), default="cli",
+                        help="surface whose cases to produce (default: cli)")
     parser.add_argument("--family",
-                        help="produce a whole CLI case family as case/variant "
+                        help="produce a whole case family as case/variant "
                              "(e.g. existing-project-stability/factory); omit for the S1 pattern case")
     args = parser.parse_args(argv)
     args.bundle_root.mkdir(parents=True, exist_ok=True)
     bundle_root = args.bundle_root.resolve()
-    cli_binary = args.cli_binary.resolve()
+    cli_binary = args.cli_binary.resolve() if args.cli_binary else None
+    engine_binary = args.engine_binary.resolve() if args.engine_binary else None
 
     if args.family:
         family = tuple(args.family.split("/"))
         if len(family) != 2:
             parser.error("--family must be exactly case/variant")
-        report, binaries, environments, keys = build_family(bundle_root, cli_binary=cli_binary, family=family)
+        if args.surface == "cli" and cli_binary is None:
+            parser.error("--cli-binary is required for the cli surface")
+        if args.surface == "engine" and engine_binary is None:
+            parser.error("--engine-binary is required for the engine surface")
+        report, binaries, environments, keys = build_family(
+            bundle_root, family=family, surface=args.surface,
+            cli_binary=cli_binary, engine_binary=engine_binary)
         args.report.write_text(json.dumps(report, indent=2, sort_keys=True))
-        print(f"Produced family {family[0]}/{family[1]}: {len(keys)} CLI case(s)")
+        print(f"Produced family {family[0]}/{family[1]} ({args.surface}): {len(keys)} case(s)")
         bundle = Bundle(bundle_root, report["artifacts"])
         for row, key in zip(report["case_results"], keys):
             for arow in row["assertions"]:
@@ -427,6 +457,8 @@ def main(argv=None):
         print(f"Family {family[0]}/{family[1]} VALIDATOR-ACCEPTED ({len(keys)} case(s)).")
         return 0
 
+    if cli_binary is None:
+        parser.error("--cli-binary is required for the S1 pattern case")
     report, binaries, environments = build_s1(bundle_root, cli_binary=cli_binary)
     args.report.write_text(json.dumps(report, indent=2, sort_keys=True))
 

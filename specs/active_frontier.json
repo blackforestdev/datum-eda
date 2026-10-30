@@ -10368,10 +10368,10 @@
       "claim": {
         "agent": "dev-agent-02",
         "claimed_at": "2026-10-28T20:52:50Z",
-        "expires_at": "2026-10-31T03:17:16Z",
+        "expires_at": "2026-10-31T04:31:06Z",
         "harness": "claude-code",
-        "head": "03237b0e517e43be2193cd3c7fc39d0411ace637",
-        "heartbeat_at": "2026-10-30T19:17:16Z",
+        "head": "bc73e90e8e94c1cdade51617dec83ce70d6c61de",
+        "heartbeat_at": "2026-10-30T20:31:06Z",
         "scope": [
           "crates/cli/src/commands/preferences.rs",
           "crates/cli/src/commands/preferences_daemon.rs",
@@ -18764,6 +18764,28 @@
         "rationale": "Owner efficiency goal prioritizes real code corrections; PM-Agent-01 explicitly authorized this disjoint tracked bug at2026-10-30T19:18:06Z."
       },
       "landing_commit": "11843f8a8e265843b97159627e6d1be41502645d"
+    },
+    {
+      "key": "GP-PRODUCER-SURFACE-BINDING",
+      "issue_id": "dat-a08h",
+      "title": "Reuse the case producer across reviewed surfaces",
+      "summary": "Shared producer safely binds selected surface recipe/binary/environment before execution. CLI defaults unchanged;13 focused tests and independent review passed. Enables separately authorized GUI pattern; no GUI or production acceptance claimed.",
+      "order": 110,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner efficiency goal and explicitPMparallelpilot ruling remove unnecessary serial CLI-only tooling dependency."
+      },
+      "landing_commit": "bc73e90e8e94c1cdade51617dec83ce70d6c61de"
     }
   ],
   "management_appointments": {
