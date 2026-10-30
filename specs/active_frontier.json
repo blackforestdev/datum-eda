@@ -18746,9 +18746,9 @@
       "key": "INSPECTOR-FOCUS-REVEAL",
       "issue_id": "dat-5uje",
       "title": "Preserve inspector context when revealing keyboard focus",
-      "summary": "PM-authorized minimal inspector focus scrolling correction; ordinary keyboard-driven observation required before closure.",
+      "summary": "Inspector focus reveals minimally at top/bottom. Ten focused tests and independent review passed; genuine OS-keyboard captures confirm both directions, inspected and accepted by appointed PM. Reusable owned-compositor sizing avoids duplicate QA launchers.",
       "order": 109,
-      "state": "in_progress",
+      "state": "landed",
       "authorization": "none",
       "canonical_next": false,
       "parallel": true,
@@ -18763,20 +18763,7 @@
         "kind": "maintenance",
         "rationale": "Owner efficiency goal prioritizes real code corrections; PM-Agent-01 explicitly authorized this disjoint tracked bug at2026-10-30T19:18:06Z."
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-        "claimed_at": "2026-10-30T19:19:07Z",
-        "heartbeat_at": "2026-10-30T19:19:07Z",
-        "expires_at": "2026-10-31T03:19:07Z",
-        "scope": [
-          "crates/gui-app/src/editor/runtime_selection_inspector.rs",
-          "crates/gui-viewport/src/scroll.rs"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "e8b849d3f219d2944c62f169db9c702e11f659f1"
-      }
+      "landing_commit": "11843f8a8e265843b97159627e6d1be41502645d"
     }
   ],
   "management_appointments": {

@@ -116,7 +116,10 @@ class StartupQA:
         assert self.compositor.poll() is None and window == self.host_window
         self.command(*focus_arguments(window, os.environ))
 
-    def start_envelope(self, desktop=False, *, proto_log=False):
+    def start_envelope(self, desktop=False, *, proto_log=False, output_size=(1344, 806)):
+        if (not isinstance(output_size, tuple) or len(output_size) != 2
+                or any(type(dimension) is not int or dimension <= 0 for dimension in output_size)):
+            raise ValueError("output_size must be a pair of positive integers")
         env = dict(os.environ, XDG_RUNTIME_DIR=self.runtime.name)
         self.compositor_log = (self.root / "weston-process.log").open("w")
         config = "--no-config"
@@ -125,7 +128,7 @@ class StartupQA:
             settings.write_text("[shell]\nbinding-modifier=ctrl\npanel-position=none\n")
             config = "--config=" + str(settings)
         args = ["weston", "--backend=x11", "--renderer=gl",
-                "--shell=" + ("desktop-shell.so" if desktop else "kiosk-shell.so"), config, "--debug", "--width=1344", "--height=806", "--scale=1",
+                "--shell=" + ("desktop-shell.so" if desktop else "kiosk-shell.so"), config, "--debug", f"--width={output_size[0]}", f"--height={output_size[1]}", "--scale=1",
                 "--idle-time=0", "--socket=datum-startup-qa", "--log=" + str(self.root / "weston.log")]
         if self.file_actions:
             args.append("--xwayland")
