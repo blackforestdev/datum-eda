@@ -18898,6 +18898,41 @@
         "kind": "maintenance",
         "rationale": "A blanket restore erased a peer row after truncated raw-diff inspection. Complete keyed inspection reduces that failure mode without adding runtime interception or a work prerequisite."
       }
+    },
+    {
+      "key": "RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION",
+      "issue_id": "dat-renderer-allocator-owner-j1jj",
+      "title": "Bind allocator proof to its actual constructor owner",
+      "summary": "Replace a global newest-owner guess with test-only thread-local constructor identity; preserve exact accounting and lifetime assertions.",
+      "order": 116,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner-directed efficiency correction of existing repeated allocator proof failure; deterministic owner observation avoids retries and preserves production behavior."
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-efficiency-allocator-owner-20261030",
+        "claimed_at": "2026-10-30T22:57:04Z",
+        "heartbeat_at": "2026-10-30T22:57:04Z",
+        "expires_at": "2026-10-31T00:57:04Z",
+        "scope": [
+          "crates/gui-render/src/render/document_cpu.rs",
+          "crates/gui-render/src/render/document_cpu_tests.rs"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "f81a950f697871a6aea63584e2d3937105ff0e63"
+      }
     }
   ],
   "management_appointments": {

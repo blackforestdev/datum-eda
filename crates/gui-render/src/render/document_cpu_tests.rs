@@ -236,35 +236,45 @@ fn production_document_payload_and_identity_match_live_allocator_bytes() {
     let scope = crate::cpu_alloc::Scope::new("complete-document-owner");
     let scene = scope.with(|| RetainedScene::from_workspace(&state, 960, 720));
     let observer = scene.geometry_observer();
-    let construction_owner = crate::cpu_alloc::usage()
-        .into_iter()
-        .filter(|value| {
-            value.label == "retained-board-construction" && value.owner_id > scope.usage().owner_id
-        })
-        .map(|value| value.owner_id)
-        .max()
-        .expect("constructor owner");
-    let live = || {
-        let value = scope.usage();
-        let construction = crate::cpu_alloc::usage()
-            .into_iter()
-            .find(|value| value.owner_id == construction_owner)
-            .map_or(0, |value| value.payload_bytes + value.tracking_bytes);
-        (value.payload_bytes + value.tracking_bytes + construction) as usize
-    };
-    assert_eq!(usage(&observer), live());
-    let clone = scene.clone();
-    drop(scene);
-    assert_eq!(usage(&observer), live());
-    drop(clone);
-    assert_eq!(
-        usage(&observer),
-        live(),
-        "weak-only ownership remains exact"
-    );
-    drop(observer);
-    gpu_usage();
-    assert_eq!(live(), 0);
+    let construction_owner = LAST_CONSTRUCTOR_OWNER.get().expect("constructor owner");
+    std::thread::scope(|workers| {
+        let (ready, constructed) = std::sync::mpsc::channel();
+        let (release, finished) = std::sync::mpsc::channel();
+        let mut foreign_state = state.clone();
+        foreign_state.scene.scene_id = "cpu-document-allocator-foreign".into();
+        workers.spawn(move || {
+            let foreign = RetainedScene::from_workspace(&foreign_state, 960, 720);
+            ready.send(LAST_CONSTRUCTOR_OWNER.get().unwrap()).unwrap();
+            let _ = finished.recv();
+            drop(foreign);
+        });
+        // Keep a newer foreign constructor live throughout every byte/lifetime
+        // assertion, deterministically exposing the former global-maximum guess.
+        assert!(constructed.recv().unwrap() > construction_owner);
+        assert_eq!(LAST_CONSTRUCTOR_OWNER.get(), Some(construction_owner));
+        let live = || {
+            let value = scope.usage();
+            let construction = crate::cpu_alloc::usage()
+                .into_iter()
+                .find(|value| value.owner_id == construction_owner)
+                .map_or(0, |value| value.payload_bytes + value.tracking_bytes);
+            (value.payload_bytes + value.tracking_bytes + construction) as usize
+        };
+        assert_eq!(usage(&observer), live());
+        let clone = scene.clone();
+        drop(scene);
+        assert_eq!(usage(&observer), live());
+        drop(clone);
+        assert_eq!(
+            usage(&observer),
+            live(),
+            "weak-only ownership remains exact"
+        );
+        drop(observer);
+        gpu_usage();
+        assert_eq!(live(), 0);
+        release.send(()).unwrap();
+    });
 }
 
 #[test]

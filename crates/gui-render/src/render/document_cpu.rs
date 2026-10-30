@@ -28,11 +28,6 @@ static DOCUMENTS: Mutex<Registry> = Mutex::new(Registry { head: None });
 // Native hosts already construct serially; this also protects other API callers.
 static CONSTRUCTION: Mutex<()> = Mutex::new(());
 
-pub(crate) fn with_constructor<T>(scope: &crate::cpu_alloc::Scope, build: impl FnOnce() -> T) -> T {
-    let _construction = CONSTRUCTION.lock().unwrap_or_else(|e| e.into_inner());
-    scope.with(build)
-}
-
 impl Registry {
     fn find(&mut self, identity: &Weak<Budget>) -> Option<&mut Document> {
         let mut cursor = self.head.as_deref_mut();
@@ -407,6 +402,20 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
         "document retained CPU payload budget exceeded: {bytes} bytes across live/retiring owners; limit {limit}"
     );
     Ok(())
+}
+
+pub(crate) fn with_constructor<T>(scope: &crate::cpu_alloc::Scope, build: impl FnOnce() -> T) -> T {
+    let _construction = CONSTRUCTION.lock().unwrap_or_else(|e| e.into_inner());
+    let result = scope.with(build);
+    #[cfg(test)]
+    LAST_CONSTRUCTOR_OWNER.set(Some(scope.usage().owner_id));
+    result
+}
+
+#[cfg(test)]
+thread_local! {
+    // Observe this thread's completed constructor, never a newer global owner.
+    static LAST_CONSTRUCTOR_OWNER: std::cell::Cell<Option<u64>> = const { std::cell::Cell::new(None) };
 }
 
 #[cfg(test)]

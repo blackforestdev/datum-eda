@@ -399,6 +399,9 @@
 - **Prevent destructive dirty shared-tracker Git restores** (`SHARED-TRACKER-RESTORE-PROTECTION`; `dat-2xcj`).
    Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered. *state `deferred`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Bind allocator proof to its actual constructor owner** (`RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION`; `dat-renderer-allocator-owner-j1jj`).
+   Replace a global newest-owner guess with test-only thread-local constructor identity; preserve exact accounting and lifetime assertions. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
