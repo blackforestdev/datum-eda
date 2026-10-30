@@ -10368,10 +10368,10 @@
       "claim": {
         "agent": "dev-agent-02",
         "claimed_at": "2026-10-28T20:52:50Z",
-        "expires_at": "2026-10-31T01:44:17Z",
+        "expires_at": "2026-10-31T03:17:16Z",
         "harness": "claude-code",
-        "head": "525feb454aee39ebf0bdea340db15cb06a678cb5",
-        "heartbeat_at": "2026-10-30T17:44:17Z",
+        "head": "03237b0e517e43be2193cd3c7fc39d0411ace637",
+        "heartbeat_at": "2026-10-30T19:17:16Z",
         "scope": [
           "crates/cli/src/commands/preferences.rs",
           "crates/cli/src/commands/preferences_daemon.rs",
@@ -10801,7 +10801,7 @@
           "issue:dat-shared-units-surface-parity-s9x": "Shared-units surface parity is required so preference-driven Units defaults and working-units policy render consistently across surfaces during acceptance; it is a closed hard dependency."
         },
         "qualification_followups": [
-          "gui-feedback presented_elapsed_ns (P1): the first-party XDamage/XShm presentation-timing helper is a frontend prototype obligation; until it lands, the gui-feedback budget records the declared-incompleteness fallback rather than a presented-frame timestamp.",
+          "gui-feedback presented_elapsed_ns sourced from the proven xcb-present PresentCompleteNotify helper at the milestone capture (XGetImage front-buffer poll as validated fallback).",
           "prepared-state elapsed_ns has no external ordinary observable; its treatment is an owner-visible ruling deferred to the GP-CM05A gate.",
           "N06 Orca focus-establishment timing requires tuning; the tuned-first path with an announcements fallback remains an open accessibility-capture refinement.",
           "The scored 48-scenario native corpus must be rebuilt against datum-gui at the pinned candidate to close source-skew before the native budgets are acceptance-scored."

@@ -230,6 +230,8 @@ def _family_handlers(family):
             "active-inventory", "all-query-schemas", "all-stable-refusals",
             "malformed-requests", "reserved-keys"):
         return _empty_state, None, None
+    if case == "clean-install" and variant == "reopen":
+        return _empty_state, None, None
     # Corrupt-store: the producer seeds + corrupts a REAL store (setup) as `before`; the read-only
     # describe must not repair it, so `after` is the real post-describe STORE snapshot (audit
     # guardrail #2 -- the mutated surface is the store dir, not a project) and bytes must match.

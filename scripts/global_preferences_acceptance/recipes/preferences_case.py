@@ -150,6 +150,30 @@ def _eps_genesis(units_source, seed):
         cleanup()
 
 
+def clean_install_reopen_cli():
+    """Fresh install, no Global repository: opening (describe) then reopening (describe again) reports
+    the same values, and neither read creates a repository. Read-only; honest semantics, not rc==0."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-clean-install-reopen-")
+    try:
+        repo = work / "config" / "datum" / "preferences"
+        rc1, first = _run_and_parse(binary, work, ["preferences", "describe"])
+        repo_after_open = repo.exists()
+        rc2, second = _run_and_parse(binary, work, ["preferences", "describe"])
+        repo_after_reopen = repo.exists()
+
+        def payload(envelope):
+            return (envelope.get("result") or {}).get("result") if isinstance(envelope, dict) else None
+
+        ok_both = (rc1 == 0 and rc2 == 0 and isinstance(first, dict) and first.get("ok") is True
+                   and isinstance(second, dict) and second.get("ok") is True)
+        same_values = bool(ok_both and payload(first) is not None and payload(first) == payload(second))
+        no_repository = (not repo_after_open) and (not repo_after_reopen)
+        return {"same-values": bool(same_values), "no-repository-created": bool(no_repository)}
+    finally:
+        cleanup()
+
+
 def existing_project_stability_factory_cli():
     """Genesis from the factory units profile on the CLI surface: exactly eight sealed seed values,
     an immutable digest-sealed units receipt, and no read or write of the Global preferences
@@ -476,6 +500,7 @@ def surface_parity_negative_reserved_keys_cli():
 #      revision), not an exec-time hash gate; never rely on it to validate at run.
 DISPATCH = {
     ("clean-install", "missing-store", "cli"): clean_install_missing_store_cli,
+    ("clean-install", "reopen", "cli"): clean_install_reopen_cli,
     ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
     ("existing-project-stability", "global-missing", "cli"): existing_project_stability_global_missing_cli,
     ("surface-parity-negative", "active-inventory", "cli"): surface_parity_negative_active_inventory_cli,
