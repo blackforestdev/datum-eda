@@ -13,6 +13,25 @@ pub(crate) use damage::GlobalPreferenceRenderState;
 pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
 
+/// Clamp the initial Global Preferences window size to the available work area / output,
+/// floored at the minimum. A fixed 960-wide default opens unusable — its right-edge controls
+/// clipped — on a smaller output (small laptops, tiled/halved layouts, scaled displays); a
+/// normal desktop window manager would constrain it, so the product owes the clamp itself.
+/// Once the clamp brings the width under 800 the already-governed narrow layout engages.
+fn clamp_initial_preferences_size(
+    default: LogicalSize<f64>,
+    min: LogicalSize<f64>,
+    available: Option<LogicalSize<f64>>,
+) -> LogicalSize<f64> {
+    match available {
+        Some(area) => LogicalSize::new(
+            default.width.min(area.width).max(min.width),
+            default.height.min(area.height).max(min.height),
+        ),
+        None => default,
+    }
+}
+
 /// Text-field input differs from button activation: winit represents a space
 /// as a named key on native backends, even though it is printable text.
 pub(crate) fn dialog_text_input(key: &Key, modifiers: ModifiersState) -> Option<&str> {
@@ -504,11 +523,29 @@ impl App {
             return Ok(());
         }
         if self.global_preferences_window.is_none() {
+            // Clamp the initial size to the available output so the window never opens wider than
+            // the screen (which clips the right-edge controls); the governed narrow layout then
+            // engages once the clamp brings the width under 800.
+            let available = self
+                .window
+                .as_deref()
+                .and_then(|window| window.current_monitor())
+                .or_else(|| event_loop.primary_monitor())
+                .map(|monitor| {
+                    let scale = monitor.scale_factor();
+                    let size = monitor.size();
+                    LogicalSize::new(size.width as f64 / scale, size.height as f64 / scale)
+                });
+            let initial_size = clamp_initial_preferences_size(
+                DEFAULT_PREFERENCES_SIZE,
+                MIN_PREFERENCES_SIZE,
+                available,
+            );
             let window = std::sync::Arc::new(
                 event_loop.create_window(
                     WindowAttributes::default()
                         .with_title("Global Preferences — Datum")
-                        .with_inner_size(DEFAULT_PREFERENCES_SIZE)
+                        .with_inner_size(initial_size)
                         .with_min_inner_size(MIN_PREFERENCES_SIZE)
                         .with_resizable(true)
                         .with_visible(false),
@@ -726,6 +763,30 @@ mod tests {
     fn native_window_defaults_fit_the_approved_preferences_target() {
         assert_eq!(DEFAULT_PREFERENCES_SIZE, LogicalSize::new(960.0, 720.0));
         assert_eq!(MIN_PREFERENCES_SIZE, LogicalSize::new(700.0, 540.0));
+    }
+
+    #[test]
+    fn initial_preferences_size_clamps_to_output_floored_at_min() {
+        let default = DEFAULT_PREFERENCES_SIZE;
+        let min = MIN_PREFERENCES_SIZE;
+        // No monitor information: keep the preferred default.
+        assert_eq!(clamp_initial_preferences_size(default, min, None), default);
+        // Roomy output: the default is already within it, so it is unchanged.
+        assert_eq!(
+            clamp_initial_preferences_size(default, min, Some(LogicalSize::new(1920.0, 1080.0))),
+            default
+        );
+        // The 720x760 matrix geometry: clamp the width to the output (below 800, so the governed
+        // narrow layout engages) and the height to the output.
+        assert_eq!(
+            clamp_initial_preferences_size(default, min, Some(LogicalSize::new(720.0, 760.0))),
+            LogicalSize::new(720.0, 720.0)
+        );
+        // Tiny output: never shrink below the usable minimum.
+        assert_eq!(
+            clamp_initial_preferences_size(default, min, Some(LogicalSize::new(500.0, 400.0))),
+            min
+        );
     }
 }
 
