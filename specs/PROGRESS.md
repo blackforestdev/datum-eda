@@ -232,7 +232,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (45 landed records)</summary>
+<summary>Completed history (46 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -369,12 +369,12 @@
 - **Reserve exhaustive verification for designated major milestones** (`VERIFICATION-CADENCE-CORRECTION`; `dat-verification-cadence-e7xt`).
    Owner-directed cadence correction delivered at 19cc78a7: routine/default/CI checks focused; complete qualification is explicit major-milestone work. Independent review and bounded checks passed; final production requirements remain strict. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Make dependency inspection explicitly read-only and offline** (`DEPENDENCY-INSPECTION-EFFICIENCY`; `dat-dependency-inspection-iffg`).
+   Routine dependency inspection now locked/offline; five focused tests, actual checker, empty-cache compatibility probe and independent review passed. Policy baseline and product acceptance unchanged. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
-- **Make dependency inspection explicitly read-only and offline** (`DEPENDENCY-INSPECTION-EFFICIENCY`; `dat-dependency-inspection-iffg`).
-   Owner-authorized bounded efficiency/safety correction to routine dependency metadata collection; no product authority or dependency baseline change. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
