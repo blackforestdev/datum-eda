@@ -18786,6 +18786,50 @@
         "rationale": "Owner efficiency goal and explicitPMparallelpilot ruling remove unnecessary serial CLI-only tooling dependency."
       },
       "landing_commit": "bc73e90e8e94c1cdade51617dec83ce70d6c61de"
+    },
+    {
+      "key": "QA-OWNED-COMPANION-TEARDOWN",
+      "issue_id": "dat-r61n",
+      "title": "Prevent generic GUI QA from orphaning private companions",
+      "summary": "Generic GUI QA reuses qualified companion teardown after GUI exit. Eleven hermetic tests pass normally and under -O; independent review passed. Runtime and failure records retained on errors; existing processes untouched.",
+      "order": 111,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Explicit owner efficiency goal covers correcting test-resource leaks and recurring cleanup chores; reuse existing qualified housekeeping, preserve retained process boundaries."
+      },
+      "landing_commit": "b39b384d0639bb2a38e3938c14e7f09e53887132"
+    },
+    {
+      "key": "CACHE-METADATA-REPORT-HINT",
+      "issue_id": "dat-wr30",
+      "title": "Expose existing metadata-only incremental reclaim validation",
+      "summary": "Cache reports expose existing non-applying metadata-only validation beside debug/release incremental inventory, with retained ownership/build-lock/admission constraints. Synthetic output controls, syntax/diff and independent review PASS; cleanup semantics unchanged.",
+      "order": 112,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Observed owner-stop deadlock despite already-admitted safe reclaim route; improve discoverability without new policy or tool."
+      },
+      "landing_commit": "5567ec736cd51ef4d689501c3007f3f16daf7e99"
     }
   ],
   "management_appointments": {

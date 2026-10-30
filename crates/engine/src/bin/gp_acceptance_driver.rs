@@ -41,12 +41,18 @@ fn main() -> ExitCode {
     let case = arg_value("--case").unwrap_or_default();
     let variant = arg_value("--variant").unwrap_or_default();
 
-    let observations = match (case.as_str(), variant.as_str()) {
-        ("managed-offline", "inactive") => {
-            let scenario = acceptance_support::managed_offline_inactive_scenario();
-            let explanation = scenario.resolve();
-            acceptance_support::observe_managed_offline(&explanation, &scenario)
-        }
+    let observations = match case.as_str() {
+        "managed-offline" => match acceptance_support::ManagedOfflineVariant::parse(&variant) {
+            Some(managed_variant) => {
+                let scenario = acceptance_support::managed_offline_scenario(managed_variant);
+                let explanation = scenario.resolve();
+                acceptance_support::observe_managed_offline(&explanation, &scenario)
+            }
+            None => {
+                eprintln!("gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'");
+                return ExitCode::FAILURE;
+            }
+        },
         _ => {
             eprintln!("gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'");
             return ExitCode::FAILURE;

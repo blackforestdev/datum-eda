@@ -39,6 +39,9 @@ SCHEMA = "datum.preferences.case-observations.v2"
 # managed Pin whose generation is inactive and observe it never participates.
 ENGINE_COVERAGE = {
     ("managed-offline", "inactive"),
+    ("managed-offline", "expired"),
+    ("managed-offline", "unavailable"),
+    ("managed-offline", "offline"),
 }
 
 

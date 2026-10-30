@@ -81,7 +81,11 @@ def main() -> int:
         ("datum-gui-app", "global_preferences"),
         ("datum-gui-render", "global_preferences"),
     ):
-        run([*GUARD, "cargo", "test", "--locked", "--offline", "-p", package, test_filter], require_tests=True)
+        # Scope the engine row to --lib: its preferences:: tests live in the library, and the
+        # gp_acceptance_driver [[bin]] carries no tests, so an unscoped select would pointlessly
+        # build that binary harness. CLI/daemon/GUI rows and the workspace gates are unchanged.
+        run([*GUARD, "cargo", "test", "--locked", "--offline", "-p", package,
+             *(["--lib"] if package == "eda-engine" else []), test_filter], require_tests=True)
     run(
         [
             sys.executable,

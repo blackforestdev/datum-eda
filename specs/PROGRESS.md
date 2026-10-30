@@ -232,7 +232,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (49 landed records)</summary>
+<summary>Completed history (51 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -381,6 +381,12 @@
 - **Reuse the case producer across reviewed surfaces** (`GP-PRODUCER-SURFACE-BINDING`; `dat-a08h`).
    Shared producer safely binds selected surface recipe/binary/environment before execution. CLI defaults unchanged;13 focused tests and independent review passed. Enables separately authorized GUI pattern; no GUI or production acceptance claimed. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md`.
+- **Prevent generic GUI QA from orphaning private companions** (`QA-OWNED-COMPANION-TEARDOWN`; `dat-r61n`).
+   Generic GUI QA reuses qualified companion teardown after GUI exit. Eleven hermetic tests pass normally and under -O; independent review passed. Runtime and failure records retained on errors; existing processes untouched. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Expose existing metadata-only incremental reclaim validation** (`CACHE-METADATA-REPORT-HINT`; `dat-wr30`).
+   Cache reports expose existing non-applying metadata-only validation beside debug/release incremental inventory, with retained ownership/build-lock/admission constraints. Synthetic output controls, syntax/diff and independent review PASS; cleanup semantics unchanged. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 

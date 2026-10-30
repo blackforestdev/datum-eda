@@ -299,7 +299,7 @@ def _family_handlers(family):
     # managed-offline (engine surface): a pure resolver evaluation -- the engine driver injects a
     # managed provider generation state and observes it never participates. No store is written, so
     # after==before=empty is honest and the engine driver's observations carry the proof.
-    if case == "managed-offline" and variant in ("inactive",):
+    if case == "managed-offline" and variant in ("inactive", "expired", "unavailable", "offline"):
         return _empty_state, None, None
     raise ValueError(f"case family not implemented: {family}")
 

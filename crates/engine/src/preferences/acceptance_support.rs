@@ -40,6 +40,60 @@ pub const PILOT_KEY: &str = "datum.units.system";
 pub const MANAGED_INACTIVE_REASON: &str =
     "managed generation is inactive under its authenticated provider state";
 
+/// The managed-offline provider-state variants the acceptance matrix enumerates.
+/// Each models an authenticated managed generation that is truthfully disclosed yet
+/// must never participate in resolution.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ManagedOfflineVariant {
+    /// Authority was withdrawn: generation Revoked.
+    Inactive,
+    /// The generation's effective interval lapsed: Expired.
+    Expired,
+    /// No authenticated generation is obtainable: Unavailable.
+    Unavailable,
+    /// The provider is unreachable AND the cached generation's offline-validity
+    /// horizon has already lapsed, so it degrades to Unavailable and must not win.
+    /// (A still-valid offline generation would be StaleEffective and would
+    /// legitimately remain effective — a different, non-managed-offline truth. Here
+    /// the horizon is past, which is exactly why the managed Pin cannot participate
+    /// and all four managed-offline observations hold.)
+    Offline,
+}
+
+impl ManagedOfflineVariant {
+    /// The matrix variant id.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Inactive => "inactive",
+            Self::Expired => "expired",
+            Self::Unavailable => "unavailable",
+            Self::Offline => "offline",
+        }
+    }
+
+    /// Parse a matrix variant id, or `None` if it is not a managed-offline variant.
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "inactive" => Some(Self::Inactive),
+            "expired" => Some(Self::Expired),
+            "unavailable" => Some(Self::Unavailable),
+            "offline" => Some(Self::Offline),
+            _ => None,
+        }
+    }
+
+    /// The authenticated-but-inactive provider state this variant carries. All four
+    /// map to a resolver-inactive state (Revoked/Expired/Unavailable) so the managed
+    /// Pin is disclosed yet never participates; Offline degrades to Unavailable.
+    fn provider_state(self) -> ProviderGenerationState {
+        match self {
+            Self::Inactive => ProviderGenerationState::Revoked,
+            Self::Expired => ProviderGenerationState::Expired,
+            Self::Unavailable | Self::Offline => ProviderGenerationState::Unavailable,
+        }
+    }
+}
+
 /// A fully-constructed managed-offline precondition: the descriptor registry, the
 /// key under resolution, the contributions and authority releases to resolve, plus
 /// the facts the driver observes against. Owning the registry keeps the borrow in
@@ -75,13 +129,15 @@ fn pilot_key() -> PreferenceKey {
     PreferenceKey::parse(PILOT_KEY).expect("pilot key is a stable Datum identity")
 }
 
-/// Construct the managed-offline **inactive** precondition: an ordinary User value
-/// (`imperial`) plus an authenticated Organization `Pin(metric)` whose generation
-/// is `Revoked`, under a FullManagement authority release. The release is active
-/// and sufficient, so the ONLY reason the Pin does not win is its inactive
-/// generation state — exactly the truth the case must observe. Constructs TEST
-/// PRECONDITIONS only; it performs no store mutation (pure resolver inputs).
-pub fn managed_offline_inactive_scenario() -> ManagedOfflineScenario {
+/// Build the shared managed-offline precondition for `managed_state`: an ordinary
+/// User value (`imperial`) plus an authenticated Organization `Pin(metric)` under a
+/// FullManagement authority release. The release is active and sufficient, so when
+/// `managed_state` is inactive the ONLY reason the Pin does not win is its generation
+/// state — exactly the truth each case must observe. Constructs TEST PRECONDITIONS
+/// only; it performs no store mutation (pure resolver inputs). `managed_state` is a
+/// parameter so the same honest construction serves every provider-state variant and
+/// the Active negative control.
+fn managed_scenario_with_state(managed_state: ProviderGenerationState) -> ManagedOfflineScenario {
     let key = pilot_key();
     let user_value = json!("imperial");
     let user = Contribution::Value(ValueFact {
@@ -122,15 +178,17 @@ pub fn managed_offline_inactive_scenario() -> ManagedOfflineScenario {
             effective_from: Some("2026-10-01T00:00:00Z".to_owned()),
             effective_until: None,
             // An offline-validity horizon is carried on the cached fact: the
-            // truthful inactive disclosure is computed from it with no live
-            // provider contact (resolve_preference performs no I/O).
+            // truthful disclosure is computed from it with no live provider
+            // contact (resolve_preference performs no I/O). The horizon is in the
+            // past relative to observed_at, modelling a generation whose offline
+            // grace has lapsed (the honest shape for the Offline/Unavailable cases).
             offline_valid_until: Some("2026-10-08T00:00:00Z".to_owned()),
             last_successful_contact: Some("2026-10-01T00:00:00Z".to_owned()),
             reason: "shop policy".to_owned(),
         },
         authenticated: true,
         disclosure: ValueDisclosure::Disclosed,
-        generation_state: ProviderGenerationState::Revoked,
+        generation_state: managed_state,
         remaining_freedom: "user may appeal or revoke released authority".to_owned(),
         appeal_path: Some("manage AuthorityRelease".to_owned()),
         directive: OrganizationDirective::Pin(json!("metric")),
@@ -147,15 +205,37 @@ pub fn managed_offline_inactive_scenario() -> ManagedOfflineScenario {
         revocable: true,
         state: AuthorityReleaseState::Active,
     };
+    // When the managed generation is active it legitimately wins; the honest
+    // effective value is then the Pin's. For every inactive state the user value
+    // stays effective. expected_effective_value reflects that truth.
+    let expected_effective_value = if managed_state == ProviderGenerationState::Active {
+        json!("metric")
+    } else {
+        user_value
+    };
     ManagedOfflineScenario {
         registry: active_v1_registry(),
         key,
         contributions: vec![user, managed],
         authority_releases: vec![release],
         managed_fact_id: "managed".to_owned(),
-        expected_effective_value: user_value,
-        expected_provider_state: ProviderGenerationState::Revoked,
+        expected_effective_value,
+        expected_provider_state: managed_state,
     }
+}
+
+/// Construct the managed-offline precondition for one provider-state variant. Pure
+/// resolver inputs; no store is written.
+pub fn managed_offline_scenario(variant: ManagedOfflineVariant) -> ManagedOfflineScenario {
+    managed_scenario_with_state(variant.provider_state())
+}
+
+/// Construct the negative control for the managed-offline family: the identical
+/// scenario but with an ACTIVE managed generation. The Pin then legitimately wins,
+/// which must flip every managed-offline observation to false — proving the
+/// predicates are falsifiable, not tautological (PM059 negative-control gate).
+pub fn managed_active_negative_control() -> ManagedOfflineScenario {
+    managed_scenario_with_state(ProviderGenerationState::Active)
 }
 
 /// The ordered managed-offline observation ids, matching the acceptance matrix
@@ -236,41 +316,80 @@ pub fn observe_managed_offline(
 mod tests {
     use super::*;
 
+    const VARIANTS: [ManagedOfflineVariant; 4] = [
+        ManagedOfflineVariant::Inactive,
+        ManagedOfflineVariant::Expired,
+        ManagedOfflineVariant::Unavailable,
+        ManagedOfflineVariant::Offline,
+    ];
+
     #[test]
-    fn managed_offline_inactive_pilot_resolves_as_the_case_requires() {
-        let scenario = managed_offline_inactive_scenario();
+    fn every_managed_offline_variant_resolves_as_the_case_requires() {
+        for variant in VARIANTS {
+            let scenario = managed_offline_scenario(variant);
+            let explanation = scenario.resolve();
+
+            let managed = explanation
+                .considered
+                .iter()
+                .find(|fact| fact.id == "managed")
+                .expect("the managed contribution is considered");
+            // The pinned reason string still matches the resolver's wording, and the
+            // managed contribution is disclosed with its inactive provider state.
+            assert_eq!(managed.reason, MANAGED_INACTIVE_REASON, "{variant:?}");
+            assert_eq!(
+                managed.provider_state,
+                Some(scenario.expected_provider_state),
+                "{variant:?}"
+            );
+            assert_ne!(
+                managed.disposition,
+                ContributionDisposition::Effective,
+                "{variant:?}"
+            );
+
+            // The ordinary user value stays effective; the managed Pin never wins.
+            assert_eq!(
+                explanation.outcome,
+                ResolutionOutcome::Effective {
+                    value: json!("imperial"),
+                    winning_fact_ids: vec!["user".to_owned()],
+                },
+                "{variant:?}"
+            );
+
+            // All four observations hold, in the matrix's order.
+            let observed = observe_managed_offline(&explanation, &scenario);
+            assert_eq!(
+                observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+                MANAGED_OFFLINE_OBSERVATIONS.to_vec()
+            );
+            for (id, value) in observed {
+                assert!(value, "{variant:?} observation {id} must hold");
+            }
+        }
+    }
+
+    #[test]
+    fn active_managed_generation_is_the_falsifying_negative_control() {
+        // PM059 negative control: an ACTIVE managed generation legitimately wins, so
+        // every managed-offline observation must flip to false. This proves the
+        // predicates are real, not tautological.
+        let scenario = managed_active_negative_control();
         let explanation = scenario.resolve();
 
-        // The pinned reason string still matches the resolver's wording.
-        let managed = explanation
-            .considered
-            .iter()
-            .find(|fact| fact.id == "managed")
-            .expect("the managed contribution is considered");
-        assert_eq!(managed.reason, MANAGED_INACTIVE_REASON);
-        assert_eq!(managed.disposition, ContributionDisposition::Revoked);
-        assert_eq!(
-            managed.provider_state,
-            Some(ProviderGenerationState::Revoked)
-        );
-
-        // The ordinary user value stays effective; the managed Pin never wins.
+        // The Pin is now effective -- the managed value wins, not the user's.
         assert_eq!(
             explanation.outcome,
             ResolutionOutcome::Effective {
-                value: json!("imperial"),
-                winning_fact_ids: vec!["user".to_owned()],
+                value: json!("metric"),
+                winning_fact_ids: vec!["managed".to_owned()],
             }
         );
 
-        // All four observations hold.
         let observed = observe_managed_offline(&explanation, &scenario);
-        assert_eq!(
-            observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
-            MANAGED_OFFLINE_OBSERVATIONS.to_vec()
-        );
         for (id, value) in observed {
-            assert!(value, "managed-offline/inactive observation {id} must hold");
+            assert!(!value, "negative-control observation {id} must be false");
         }
     }
 }
