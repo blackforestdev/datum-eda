@@ -18672,33 +18672,8 @@
       }
     },
     {
-      "authorization": "execution",
+      "authorization": "none",
       "canonical_next": false,
-      "claim": {
-        "agent": "codex",
-        "claimed_at": "2026-10-30T17:55:20Z",
-        "expires_at": "2026-10-31T01:55:20Z",
-        "harness": "codex-cli",
-        "head": "703d97d27c81419e2a57079313d8fb4b891f8066",
-        "heartbeat_at": "2026-10-30T17:55:20Z",
-        "scope": [
-          ".beads/issues.jsonl",
-          ".github/pull_request_template.md",
-          ".github/workflows/alignment.yml",
-          "CLAUDE.md",
-          "README.md",
-          "docs/AGENT_OPERATIONAL_PROCEDURES.md",
-          "docs/README.md",
-          "scripts/run_drift_gates.sh",
-          "scripts/test_alignment_runner.py",
-          "specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md",
-          "specs/PROGRESS.md",
-          "specs/active_frontier.json",
-          "specs/evidence_traceability_manifest.json"
-        ],
-        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "dependencies": [],
       "governing_docs": [
         "CLAUDE.md",
@@ -18706,10 +18681,11 @@
       ],
       "issue_id": "dat-verification-cadence-e7xt",
       "key": "VERIFICATION-CADENCE-CORRECTION",
+      "landing_commit": "19cc78a7b06e920fb80fb35bc0df0172a72c7709",
       "order": 106,
       "parallel": true,
-      "state": "in_progress",
-      "summary": "Owner-directed 2026-10-30 cadence correction: routine edits receive focused affected checks; existing complete qualification remains required for a designated major milestone candidate.",
+      "state": "landed",
+      "summary": "Owner-directed cadence correction delivered at 19cc78a7: routine/default/CI checks focused; complete qualification is explicit major-milestone work. Independent review and bounded checks passed; final production requirements remain strict.",
       "title": "Reserve exhaustive verification for designated major milestones",
       "unblocks": [],
       "work_purpose": {

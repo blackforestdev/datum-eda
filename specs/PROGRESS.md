@@ -232,7 +232,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (44 landed records)</summary>
+<summary>Completed history (45 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -366,12 +366,12 @@
 - **Genesis concurrency: idempotent replay on finalize-lease contention** (`GENESIS-CONCURRENCY-REPLAY`; `dat-genesis-concurrent-writer-wouldblock-9jey`).
    Serialize genesis finalize-resolve so concurrent identical Project creators replay one published result instead of surfacing writer-lease WouldBlock. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* deterministic concurrent-genesis idempotency in the GP-CM03 standing proof. *Governing:* `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`.
+- **Reserve exhaustive verification for designated major milestones** (`VERIFICATION-CADENCE-CORRECTION`; `dat-verification-cadence-e7xt`).
+   Owner-directed cadence correction delivered at 19cc78a7: routine/default/CI checks focused; complete qualification is explicit major-milestone work. Independent review and bounded checks passed; final production requirements remain strict. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
-- **Reserve exhaustive verification for designated major milestones** (`VERIFICATION-CADENCE-CORRECTION`; `dat-verification-cadence-e7xt`).
-   Owner-directed 2026-10-30 cadence correction: routine edits receive focused affected checks; existing complete qualification remains required for a designated major milestone candidate. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
