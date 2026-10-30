@@ -253,12 +253,13 @@ fn conformance_pane_header_tools_and_binding_chips_render() {
         .collect::<Vec<_>>();
 
     // The default tree tiles a Board leaf and a Schematic leaf; each leaf emits
-    // its content-derived header title, driven from the tree (not fixed literals).
+    // its content-derived header title. This unbound schematic fixture supplies
+    // no document identity or Publish page number to put in its header.
     let panes = prepared.layout.viewport_panes(&state.ui.layout);
     for leaf in &panes.panes {
         let title = match leaf.content {
             datum_gui_protocol::PaneContent::Board => "Board \u{00B7} Layout",
-            datum_gui_protocol::PaneContent::Schematic => "Schematic \u{00B7} Sheet 1",
+            datum_gui_protocol::PaneContent::Schematic => "Schematic",
             datum_gui_protocol::PaneContent::Library => "Library",
             datum_gui_protocol::PaneContent::Revision(_) => "Revision",
         };
