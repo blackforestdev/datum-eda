@@ -18877,6 +18877,27 @@
         "rationale": "Existing reproduced flaky renderer tests cause repeated proof work; isolate only test accounting while preserving production shared admission and exact assertions."
       },
       "landing_commit": "013bcf43e21d207d67612b4f1b48c5b3632b3e0f"
+    },
+    {
+      "key": "SHARED-TRACKER-RESTORE-PROTECTION",
+      "issue_id": "dat-2xcj",
+      "title": "Prevent destructive dirty shared-tracker Git restores",
+      "summary": "Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered.",
+      "order": 115,
+      "state": "deferred",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "A blanket restore erased a peer row after truncated raw-diff inspection. Complete keyed inspection reduces that failure mode without adding runtime interception or a work prerequisite."
+      }
     }
   ],
   "management_appointments": {
