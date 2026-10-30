@@ -57,9 +57,20 @@ fn main() -> ExitCode {
     // Setup phase (write families only): establish the on-disk precondition and
     // print nothing; the producer snapshots the resulting store as `before`.
     if phase == "setup" {
-        let result = match (case.as_str(), variant.as_str()) {
-            ("backup-restore", "restore") => {
-                work_root().and_then(|root| acceptance_support::backup_restore_setup(&root))
+        let result = match case.as_str() {
+            "backup-restore" => {
+                match acceptance_support::backup_restore::BackupRestoreVariant::parse(&variant) {
+                    Some(backup_variant) => work_root().and_then(|root| {
+                        acceptance_support::backup_restore::backup_restore_setup(
+                            backup_variant,
+                            &root,
+                        )
+                    }),
+                    None => {
+                        eprintln!("gp_acceptance_driver: no setup phase for '{case}/{variant}'");
+                        return ExitCode::FAILURE;
+                    }
+                }
             }
             _ => {
                 eprintln!("gp_acceptance_driver: no setup phase for '{case}/{variant}'");
@@ -88,11 +99,28 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             }
         },
-        "backup-restore" if variant == "restore" => {
-            match work_root().and_then(|root| acceptance_support::backup_restore_observe(&root)) {
-                Ok(observed) => observed,
-                Err(error) => {
-                    eprintln!("gp_acceptance_driver: observe '{case}/{variant}' failed: {error}");
+        "backup-restore" => {
+            match acceptance_support::backup_restore::BackupRestoreVariant::parse(&variant) {
+                Some(backup_variant) => {
+                    match work_root().and_then(|root| {
+                        acceptance_support::backup_restore::backup_restore_observe(
+                            backup_variant,
+                            &root,
+                        )
+                    }) {
+                        Ok(observed) => observed,
+                        Err(error) => {
+                            eprintln!(
+                                "gp_acceptance_driver: observe '{case}/{variant}' failed: {error}"
+                            );
+                            return ExitCode::FAILURE;
+                        }
+                    }
+                }
+                None => {
+                    eprintln!(
+                        "gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'"
+                    );
                     return ExitCode::FAILURE;
                 }
             }

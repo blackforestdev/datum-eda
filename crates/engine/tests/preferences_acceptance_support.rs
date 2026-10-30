@@ -6,10 +6,13 @@
 //! They exercise only the PUBLIC `acceptance_support` API, which is the same surface
 //! the `gp_acceptance_driver` binary consumes.
 
+use eda_engine::preferences::acceptance_support::backup_restore::{
+    BackupRestoreVariant, backup_restore_negative_control, backup_restore_observe,
+    backup_restore_setup, store_generation,
+};
 use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
-    backup_restore_observe, backup_restore_setup, managed_active_negative_control,
-    managed_offline_scenario, observe_managed_offline, store_generation,
+    managed_active_negative_control, managed_offline_scenario, observe_managed_offline,
 };
 use eda_engine::preferences::{ContributionDisposition, ResolutionOutcome};
 use serde_json::json;
@@ -99,9 +102,9 @@ fn backup_restore_restore_commits_through_the_journal_and_refuses_stale() {
     let work = std::env::temp_dir().join(format!("gp-cm05e-br-{}", uuid::Uuid::new_v4()));
     std::fs::create_dir_all(&work).expect("create work root");
     let outcome = (|| {
-        backup_restore_setup(&work)?;
+        backup_restore_setup(BackupRestoreVariant::Restore, &work)?;
         let diverged_gen = store_generation(&work);
-        let observed = backup_restore_observe(&work)?;
+        let observed = backup_restore_observe(BackupRestoreVariant::Restore, &work)?;
         let restored_gen = store_generation(&work);
         Ok::<_, String>((diverged_gen, observed, restored_gen))
     })();
@@ -129,4 +132,75 @@ fn backup_restore_restore_commits_through_the_journal_and_refuses_stale() {
     for (id, value) in observed {
         assert!(value, "backup-restore/restore observation {id} must hold");
     }
+}
+
+fn run_backup_restore(variant: BackupRestoreVariant) -> Result<Vec<(&'static str, bool)>, String> {
+    let work = std::env::temp_dir().join(format!("gp-cm05e-br-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = (|| {
+        backup_restore_setup(variant, &work)?;
+        backup_restore_observe(variant, &work)
+    })();
+    let _ = std::fs::remove_dir_all(&work);
+    result
+}
+
+#[test]
+fn every_backup_restore_variant_yields_its_matrix_observations() {
+    let expected: &[(BackupRestoreVariant, &[&str])] = &[
+        (
+            BackupRestoreVariant::ExactBackup,
+            &["all-bytes-preserved", "no-project-write"],
+        ),
+        (
+            BackupRestoreVariant::Restore,
+            &[
+                "preview-pure",
+                "backup-before-restore",
+                "exact-generation-authority",
+            ],
+        ),
+        (
+            BackupRestoreVariant::ReverseRestore,
+            &["original-bytes-restored"],
+        ),
+        (BackupRestoreVariant::StalePreview, &["refusal", "no-write"]),
+        (
+            BackupRestoreVariant::IncompleteBackup,
+            &["refusal", "no-write"],
+        ),
+    ];
+    for (variant, ids) in expected {
+        let observed =
+            run_backup_restore(*variant).unwrap_or_else(|error| panic!("{variant:?}: {error}"));
+        assert_eq!(
+            observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+            ids.to_vec(),
+            "{variant:?} observation ids"
+        );
+        for (id, value) in observed {
+            assert!(value, "{variant:?} observation {id} must hold");
+        }
+    }
+}
+
+#[test]
+fn well_formed_backup_restore_succeeds_as_the_family_negative_control() {
+    // PM059 genuinely-falsifying control: a well-formed backup plans and a fresh plan
+    // commits, so the stale-preview / incomplete-backup refusal predicates are not
+    // constant-true.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-br-neg-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = backup_restore_negative_control(&work);
+    let _ = std::fs::remove_dir_all(&work);
+
+    let (plan_ok, commit_ok) = result.expect("negative control runs");
+    assert!(
+        plan_ok,
+        "an intact backup must plan without BackupIncomplete (incomplete-backup refusal is falsifiable)"
+    );
+    assert!(
+        commit_ok,
+        "a fresh plan must commit without RestorePreviewStale (stale-preview refusal is falsifiable)"
+    );
 }

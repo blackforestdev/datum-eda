@@ -42,9 +42,13 @@ ENGINE_COVERAGE = {
     ("managed-offline", "expired"),
     ("managed-offline", "unavailable"),
     ("managed-offline", "offline"),
-    # Write family: the driver's observe phase plans and commits a restore against
+    # Write family: the driver's observe phase runs the recovery operation against
     # the store the producer's engine setup phase seeded (via DATUM_EDA_WORK_ROOT).
     ("backup-restore", "restore"),
+    ("backup-restore", "exact-backup"),
+    ("backup-restore", "reverse-restore"),
+    ("backup-restore", "stale-preview"),
+    ("backup-restore", "incomplete-backup"),
 }
 
 
