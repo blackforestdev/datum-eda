@@ -17,6 +17,20 @@ struct Answer {
     next: Option<datum_gui_protocol::ReviewWorkspaceState>,
     selection: Option<native_edit_selection::Prepared>,
 }
+
+fn finish_owned_edit<R>(
+    client: R,
+    sender: mpsc::SyncSender<Answer>,
+    answer: Answer,
+    wake: impl FnOnce(),
+) {
+    // Completion lets the UI finish closing. Release the worker's client first
+    // so its thread cannot retain the final daemon owner past Runtime teardown.
+    drop(client);
+    let _ = sender.send(answer);
+    wake();
+}
+
 pub(super) struct EditWork {
     pub preview: Option<NativeMovePreview>,
     preview_tip: Option<String>,
@@ -145,8 +159,9 @@ impl EditWork {
                     Ok(Answer {intent:intent.clone(),result,next:qualified.then_some(next),selection:qualified.then_some(selection)})
                 })();
                 let answer=prepared.unwrap_or_else(|error|Answer {intent,result:Err(format!("{error:#}; reopen the Project before editing")),next:None,selection:None});
-                let _=sender.send(answer);
-                let _=wake.send_event(());
+                finish_owned_edit(client, sender, answer, || {
+                    let _ = wake.send_event(());
+                });
             })?;
         self.pending = Some(receiver);
         Ok(())
@@ -202,8 +217,9 @@ impl EditWork {
                     answer.selection = None;
                     answer.result = Err(format!("{error:#}"));
                 }
-                let _ = sender.send(answer);
-                let _ = wake.send_event(());
+                finish_owned_edit(client, sender, answer, || {
+                    let _ = wake.send_event(());
+                });
             })?;
         self.pending = Some(receiver);
         Ok(())
@@ -542,3 +558,85 @@ mod tests;
 #[cfg(test)]
 #[path = "runtime_native_edit/project_open_busy_tests.rs"]
 mod project_open_busy_tests;
+
+#[cfg(test)]
+mod completion_ownership_tests {
+    use super::*;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::time::Duration;
+
+    struct ClientDropProbe(Arc<AtomicBool>);
+
+    impl Drop for ClientDropProbe {
+        fn drop(&mut self) {
+            self.0.store(true, Ordering::SeqCst);
+        }
+    }
+
+    fn answer() -> Answer {
+        Answer {
+            intent: NativeEditIntent::new(
+                PathBuf::from("unopened-test-project"),
+                uuid::Uuid::new_v4(),
+                "unchanged".into(),
+                None,
+                NativeEditAction::Save,
+            ),
+            result: Ok("completion".into()),
+            next: None,
+            selection: None,
+        }
+    }
+
+    #[test]
+    fn completion_releases_client_before_the_worker_wakes_and_returns() {
+        let dropped = Arc::new(AtomicBool::new(false));
+        let ui_client = Arc::new(ClientDropProbe(dropped.clone()));
+        let worker_client = ui_client.clone();
+        let (sender, receiver) = mpsc::sync_channel(1);
+        let (awake, awakened) = mpsc::channel();
+        let (release, released) = mpsc::channel();
+        let timeout = Duration::from_secs(5);
+        let worker = std::thread::spawn(move || {
+            finish_owned_edit(worker_client, sender, answer(), || {
+                awake.send(()).unwrap();
+                released.recv_timeout(timeout).unwrap();
+            });
+        });
+        let answer = receiver.recv_timeout(timeout).unwrap();
+        awakened.recv_timeout(timeout).unwrap();
+        // The worker is parked inside wake: it has neither returned nor dropped
+        // its stack. The UI must already be the sole client owner at this point.
+        let owners_at_completion = Arc::strong_count(&ui_client);
+        drop(ui_client);
+        let destroyed_before_worker_return = dropped.load(Ordering::SeqCst);
+        release.send(()).unwrap();
+        worker.join().unwrap();
+        assert_eq!(answer.result.unwrap(), "completion");
+        assert_eq!(owners_at_completion, 1);
+        assert!(destroyed_before_worker_return);
+    }
+
+    #[test]
+    fn completion_drops_owned_resource_before_publishing_answer() {
+        struct DropNotifier(mpsc::Sender<()>);
+        impl Drop for DropNotifier {
+            fn drop(&mut self) {
+                let _ = self.0.send(());
+            }
+        }
+        let (destroyed, destruction) = mpsc::channel();
+        // Sending cannot finish until the UI receives. If ownership release
+        // moves after publication, the destruction notice cannot arrive first.
+        let (sender, receiver) = mpsc::sync_channel(0);
+        let worker = std::thread::spawn(move || {
+            finish_owned_edit(DropNotifier(destroyed), sender, answer(), || {});
+        });
+        let timeout = Duration::from_secs(5);
+        let destroyed_before_receiving = destruction.recv_timeout(timeout).is_ok();
+        let answer = receiver.recv_timeout(timeout).unwrap();
+        worker.join().unwrap();
+        assert!(destroyed_before_receiving);
+        assert_eq!(answer.result.unwrap(), "completion");
+    }
+}

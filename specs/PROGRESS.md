@@ -375,6 +375,9 @@
 
 </details>
 
+- **Release native edit worker client before completion** (`NATIVE-EDIT-COMPLETION-OWNERSHIP`; `dat-q4il`).
+   Bounded future normal-close race correction; dat-typb remains open for other lifecycle paths. *state `in_progress`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
