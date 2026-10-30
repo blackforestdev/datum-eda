@@ -20,6 +20,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import uuid
 from pathlib import Path
 
 HERE = Path(__file__).resolve()
@@ -30,6 +31,7 @@ from global_preferences_acceptance import observations as obs  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
 from global_preferences_acceptance.inputs import Bundle, canonical, digest, parse, read_file, require  # noqa: E402
 from global_preferences_acceptance.matrix import case_inventory  # noqa: E402
+from global_preferences_acceptance.process import execute  # noqa: E402
 
 RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_case.py"
 MATRIX_RELPATH = "specs/global_preferences_production_acceptance_matrix.json"
@@ -89,11 +91,12 @@ def _snapshot_dir(capture, root_label, directory, prefix):
 
 def produce_case(capture, *, key, candidate, binaries, environments, input_manifest,
                  matrix_sha256, surface_binaries, initial_state=None, capture_after=None,
-                 bundle_root=None):
+                 setup=None, bundle_root=None):
     """Build one case_result row by running the committed recipe for its surface.
 
-    initial_state(key) supplies the frozen `before`. When capture_after is given the producer runs
-    the recipe against a persistent DATUM_EDA_WORK_ROOT and captures the REAL post-run state as
+    `before` is either initial_state(key) (a pure manifest) or, when `setup` is given, the snapshot of
+    a real on-disk state the producer builds in the work root BEFORE the recipe runs (e.g. a seeded +
+    corrupted store). When capture_after is given the producer captures the REAL post-run state as
     `after`. AFTER-STATE CAVEAT (audit, binding): after==before (capture_after=None) is correct ONLY
     for a READ-ONLY family whose observations prove nothing changed; a MUTATING family MUST pass
     capture_after so `after` reflects reality -- copying after:=before in a write family misreports it.
@@ -101,7 +104,22 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     case, variant, subcase, surface, _coordinate = key
     required = case_inventory()[key]  # ordered assertion ids for this coverage row
 
-    before_state = (initial_state or _empty_state)(key)
+    # Carry the pinned surface binary -- and, for a work-root family, the work root -- out-of-band so
+    # the committed argv stays stable and reproducible. The work root is created BEFORE `setup`/the
+    # recipe so a setup hook can build the real on-disk starting state the recipe then observes.
+    os.environ["DATUM_EDA_CLI"] = surface_binaries["cli"]
+    work_root = None
+    if capture_after is not None or setup is not None:
+        require(bundle_root is not None, "a work-root family needs a bundle_root for its work tree")
+        work_root = Path(bundle_root) / ".work" / "_".join(str(p) for p in (case, variant, subcase, surface))
+        if work_root.exists():
+            shutil.rmtree(work_root)
+        work_root.mkdir(parents=True)
+        os.environ["DATUM_EDA_WORK_ROOT"] = str(work_root)
+    else:
+        os.environ.pop("DATUM_EDA_WORK_ROOT", None)
+
+    before_state = setup(capture, key, work_root) if setup is not None else (initial_state or _empty_state)(key)
     before_ref = capture.put(before_state)
 
     recipe_ref = {"path": RECIPE_RELPATH, "sha256": _sha_file(ROOT / RECIPE_RELPATH)}
@@ -116,20 +134,6 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     fixture_ref = capture.put(fixture)
 
     command = obs.case_command(fixture)
-    # Carry the pinned surface binary -- and, for a mutating family, the work root -- out-of-band so
-    # the committed argv stays stable and reproducible.
-    os.environ["DATUM_EDA_CLI"] = surface_binaries["cli"]
-    work_root = None
-    if capture_after is not None:
-        require(bundle_root is not None, "a mutating family needs a bundle_root for its work tree")
-        work_root = Path(bundle_root) / ".work" / "_".join(str(p) for p in (case, variant, subcase, surface))
-        if work_root.exists():
-            shutil.rmtree(work_root)
-        work_root.mkdir(parents=True)
-        os.environ["DATUM_EDA_WORK_ROOT"] = str(work_root)
-    else:
-        os.environ.pop("DATUM_EDA_WORK_ROOT", None)
-
     cmd_row = capture.command(command, cwd=ROOT, candidate=candidate["revision"],
                               inputs=input_manifest["sha256"])
 
@@ -166,8 +170,52 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     return row
 
 
+def _seed_corrupt_store(work_root, variant):
+    """Create a real single-generation preferences store via one governed TTY-APPLY mutation, drop the
+    transient writer lease (a corrupt store at rest holds no live writer), then apply the variant's
+    corruption to real bytes. Returns the repository path."""
+    config = work_root / "config"
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("XDG_CONFIG_HOME", "DATUM_ENGINE_SOCKET", "EDA_ENGINE_SOCKET",
+                        "DATUM_GUI_PREFERENCES_PATH", "DATUM_EDA_WORK_ROOT")}
+    env["XDG_CONFIG_HOME"] = str(config)
+    argv = ["--format", "json", "preferences", "set", "datum.accessibility.reduced_motion",
+            "--value-json", "true", "--expected", json.dumps({"kind": "missing"}),
+            "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, f"corrupt-store/{variant}")),
+            "--reason", "GP-CM05E corrupt-store fixture seed"]
+    run = execute(Path(os.environ["DATUM_EDA_CLI"]), argv, env, timeout=30, confirmation=True)
+    require(run["exit_code"] == 0 and run["confirmed"] and not run["timed_out"],
+            f"corrupt-store seed mutation failed/unconfirmed: {variant}")
+    repo = config / "datum" / "preferences"
+    require(repo.is_dir(), "seed did not create a preferences repository")
+    lock = repo / "writer.lock"
+    if lock.exists():
+        lock.unlink()
+    head = repo / "head.json"
+    if variant == "truncated-head":
+        head.write_bytes(head.read_bytes()[:120])
+    elif variant == "missing-head":
+        head.unlink()
+    elif variant == "missing-generation":
+        shutil.rmtree(repo / "generations")
+    elif variant == "wrong-digest":
+        data = json.loads(head.read_text())
+        data["generation"]["canonical_manifest_digest"] = "sha256:" + "0" * 64
+        head.write_text(json.dumps(data))
+    elif variant == "unpublished-generation":
+        data = json.loads(head.read_text())
+        data["generation"]["generation"] = 5
+        data["generation"]["committed_order"] = 5
+        head.write_text(json.dumps(data))
+    else:
+        raise ValueError(f"unknown corrupt-store variant {variant}")
+    return repo
+
+
 def _family_handlers(family):
-    """Return (initial_state_fn, capture_after_fn) for a case family; capture_after None = read-only."""
+    """Return (initial_state_fn, capture_after_fn, setup_fn) for a case family. capture_after None =
+    read-only (after==before). setup None = `before` is a pure manifest; otherwise setup builds the
+    real on-disk starting state in the work root and returns its snapshot as `before`."""
     case, variant = family
     # Project-genesis families: the mutating post-state is the published Project; the Global store
     # stays absent (asserted per-variant). capture_after snapshots the REAL project (after != before).
@@ -175,13 +223,27 @@ def _family_handlers(family):
         def capture_after(capture, key, work_root, before_state):
             return capture.put(_snapshot_dir(capture, before_state["root"],
                                              Path(work_root) / "project", "project/"))
-        return _empty_state, capture_after
+        return _empty_state, capture_after, None
     # Read-only query/parity families: no store is written, so after==before=empty is honest and the
     # recipe's own observations (no-write / absent store) carry the proof. capture_after stays None.
     if case == "surface-parity-negative" and variant in (
             "active-inventory", "all-query-schemas", "all-stable-refusals",
             "malformed-requests", "reserved-keys"):
-        return _empty_state, None
+        return _empty_state, None, None
+    # Corrupt-store: the producer seeds + corrupts a REAL store (setup) as `before`; the read-only
+    # describe must not repair it, so `after` is the real post-describe STORE snapshot (audit
+    # guardrail #2 -- the mutated surface is the store dir, not a project) and bytes must match.
+    if case == "corrupt-store" and variant in (
+            "truncated-head", "missing-head", "missing-generation", "wrong-digest",
+            "unpublished-generation"):
+        def setup(capture, key, work_root, _variant=variant):
+            repo = _seed_corrupt_store(Path(work_root), _variant)
+            return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+        def capture_after(capture, key, work_root, before_state):
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+        return None, capture_after, setup
     raise ValueError(f"case family not implemented: {family}")
 
 
@@ -197,14 +259,14 @@ def build_family(bundle_root, *, cli_binary, family):
     input_manifest_ref = capture.put([recipe_ref])
     matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
     environments = {"headless-linux-x86_64": None}
-    initial_state, capture_after = _family_handlers(family)
+    initial_state, capture_after, setup = _family_handlers(family)
     keys = sorted(k for k in case_inventory() if (k[0], k[1]) == family and k[3] == "cli")
     require(bool(keys), f"no CLI cases for family {family}")
     rows = [produce_case(capture, key=key, candidate=candidate, binaries=binaries,
                          environments=environments, input_manifest=input_manifest_ref,
                          matrix_sha256=matrix_sha256, surface_binaries={"cli": str(cli_binary)},
                          initial_state=initial_state, capture_after=capture_after,
-                         bundle_root=bundle_root) for key in keys]
+                         setup=setup, bundle_root=bundle_root) for key in keys]
     report = {
         "origin": {"kind": "product-execution", "producer_session": "dev-agent-02"},
         "candidate": candidate,

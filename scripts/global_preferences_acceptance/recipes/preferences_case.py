@@ -297,6 +297,52 @@ def _store_absent(work):
     return not (work / "config" / "datum" / "preferences").exists()
 
 
+def _store_digest_map(repo):
+    """Map every regular file under the repository to its sha256 -- a disk-level fingerprint used to
+    prove the store bytes are unchanged (no silent repair) across a read."""
+    import hashlib
+    fingerprint = {}
+    if repo.exists():
+        for path in sorted(repo.rglob("*")):
+            if path.is_file() and not path.is_symlink():
+                fingerprint[path.relative_to(repo).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return fingerprint
+
+
+def corrupt_store_cli():
+    """A corrupt Global store is read truthfully and never silently repaired. The producer seeds and
+    corrupts a real store (out-of-band work root); describe must disclose the preserved-unreadable
+    state, leave every byte intact, and write no Project. Disk-level fingerprints before/after the
+    read carry bytes-preserved and no-silent-repair -- honest semantics, never returncode==0."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-corrupt-store-")
+    try:
+        repo = work / "config" / "datum" / "preferences"
+        before = _store_digest_map(repo)
+        rc, envelope = _run_and_parse(binary, work, ["preferences", "describe"])
+        context = envelope.get("context") if isinstance(envelope, dict) else None
+        status = context.get("repository_status") if isinstance(context, dict) else None
+        after = _store_digest_map(repo)
+        # bytes-preserved: every file that existed before the read is still present with identical
+        # bytes (nothing deleted or rewritten).
+        bytes_preserved = bool(before and all(after.get(name) == sha for name, sha in before.items()))
+        # truthful-read-only-state: describe discloses the store is present-but-unreadable, not a
+        # fabricated clean/default state.
+        truthful = bool(isinstance(envelope, dict) and envelope.get("ok") is True
+                        and status == "preserved_unreadable")
+        # no-silent-repair: the on-disk fingerprint is identical (no file added, removed or rewritten)
+        # and the status still reports unreadable (the read did not quietly reconstruct a valid store).
+        no_silent_repair = bool(before == after and status == "preserved_unreadable")
+        return {
+            "bytes-preserved": bytes_preserved,
+            "truthful-read-only-state": truthful,
+            "no-silent-repair": no_silent_repair,
+            "no-project-write": _no_project_written(work),
+        }
+    finally:
+        cleanup()
+
+
 def surface_parity_negative_all_query_schemas_cli():
     """Every query verb answers from one service with the same envelope shape and the same disclosed
     context -- same-result-fields (identical top-level + context key sets) and same-disclosure
@@ -437,6 +483,11 @@ DISPATCH = {
     ("surface-parity-negative", "all-stable-refusals", "cli"): surface_parity_negative_all_stable_refusals_cli,
     ("surface-parity-negative", "malformed-requests", "cli"): surface_parity_negative_malformed_requests_cli,
     ("surface-parity-negative", "reserved-keys", "cli"): surface_parity_negative_reserved_keys_cli,
+    ("corrupt-store", "truncated-head", "cli"): corrupt_store_cli,
+    ("corrupt-store", "missing-head", "cli"): corrupt_store_cli,
+    ("corrupt-store", "missing-generation", "cli"): corrupt_store_cli,
+    ("corrupt-store", "wrong-digest", "cli"): corrupt_store_cli,
+    ("corrupt-store", "unpublished-generation", "cli"): corrupt_store_cli,
 }
 
 
