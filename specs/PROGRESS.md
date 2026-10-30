@@ -372,6 +372,9 @@
 
 </details>
 
+- **Make dependency inspection explicitly read-only and offline** (`DEPENDENCY-INSPECTION-EFFICIENCY`; `dat-dependency-inspection-iffg`).
+   Owner-authorized bounded efficiency/safety correction to routine dependency metadata collection; no product authority or dependency baseline change. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

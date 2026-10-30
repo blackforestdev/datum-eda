@@ -12,7 +12,7 @@ from pathlib import Path
 
 def cargo_external_dependencies(root: Path) -> set[str]:
     result = subprocess.run(
-        ["cargo", "metadata", "--no-deps", "--format-version", "1"],
+        ["cargo", "metadata", "--locked", "--offline", "--no-deps", "--format-version", "1"],
         cwd=root,
         check=True,
         capture_output=True,

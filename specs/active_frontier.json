@@ -18692,6 +18692,44 @@
         "kind": "maintenance",
         "rationale": "Explicit owner instruction to correct repeated full verification and CI execution cadence; no product acceptance or successor selection."
       }
+    },
+    {
+      "authorization": "execution",
+      "canonical_next": false,
+      "claim": {
+        "agent": "codex",
+        "claimed_at": "2026-10-30T18:15:31Z",
+        "expires_at": "2026-10-31T02:15:31Z",
+        "harness": "codex-cli",
+        "head": "7536d557e9bbbb8f3eebc191083355e886ac92f1",
+        "heartbeat_at": "2026-10-30T18:15:31Z",
+        "scope": [
+          "scripts/check_dependency_authority.py",
+          "scripts/test_dependency_authority.py",
+          ".beads/issues.jsonl",
+          "specs/active_frontier.json",
+          "specs/PROGRESS.md"
+        ],
+        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "worktree": "/home/bfadmin/Documents/datum-eda"
+      },
+      "dependencies": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "issue_id": "dat-dependency-inspection-iffg",
+      "key": "DEPENDENCY-INSPECTION-EFFICIENCY",
+      "order": 107,
+      "parallel": true,
+      "state": "in_progress",
+      "summary": "Owner-authorized bounded efficiency/safety correction to routine dependency metadata collection; no product authority or dependency baseline change.",
+      "title": "Make dependency inspection explicitly read-only and offline",
+      "unblocks": [],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner ongoing efficiency goal: avoid network/lock side effects in a routine structural check."
+      }
     }
   ],
   "management_appointments": {
