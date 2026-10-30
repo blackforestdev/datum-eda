@@ -400,7 +400,7 @@
    Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered. *state `deferred`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <details>
-<summary>Completed history (2 landed records)</summary>
+<summary>Completed history (3 landed records)</summary>
 
 - **Bind allocator proof to its actual constructor owner** (`RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION`; `dat-renderer-allocator-owner-j1jj`).
    Exact thread-local test constructor identity replaces the global maximum guess. Deterministic newer-foreign-owner regression retains every byte/lifetime assertion; focused guarded proof and independent review PASS. Production accounting unchanged; no broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
@@ -408,12 +408,12 @@
 - **Distinguish sidebar review hits in terminal ownership proof** (`TERMINAL-HIT-OWNERSHIP-TEST-BOUNDARY`; `dat-terminal-hit-sidebar-assertion-agz0`).
    Test distinguishes legitimate sidebar ReviewAction cards while retaining scene-only authored hits, complete owner containment, all5camera cases and3terminal hitpoints; full-rectangle terminal exclusion added. Independent review and focused guarded testPASS; no production change or qualification claim. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Bind qualified sources in renderer regression fixtures** (`RENDERER-QUALIFIED-SOURCE-TEST-BINDING`; `dat-gui-proof-shared-state-9gaf.1`).
+   Test fixtures use existing qualified source setup and document-aware selection APIs, preserving the original retained schematic allocations and every assertion. One guarded affected-module+2geometry batchPASS14/0/1existingignore; all4prior failuresPASS, independent reviewPASS. No production change or broad qualification claim. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
-- **Bind qualified sources in renderer regression fixtures** (`RENDERER-QUALIFIED-SOURCE-TEST-BINDING`; `dat-gui-proof-shared-state-9gaf.1`).
-   Repair test-only source/selection setup using existing renderer source capture and public document-aware selection APIs; retain all original behavior and storage assertions. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

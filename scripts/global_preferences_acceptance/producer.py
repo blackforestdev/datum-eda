@@ -321,7 +321,7 @@ def _family_handlers(family):
     if (case == "backup-restore" and variant in (
             "restore", "exact-backup", "reverse-restore", "stale-preview", "incomplete-backup")) or (
             case == "downgrade-preservation" and variant in (
-                "restore-both-directions", "unknown-field")):
+                "restore-both-directions", "unknown-field", "future-version", "unknown-key")):
         def setup(capture, key, work_root):
             _engine_setup_phase(Path(work_root), key[0], key[1])
             repo = Path(work_root) / "config" / "datum" / "preferences"

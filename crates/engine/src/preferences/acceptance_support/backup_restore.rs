@@ -10,10 +10,9 @@ use serde_json::json;
 use sha2::{Digest, Sha256};
 
 use super::pilot_key;
-use crate::preferences::PreferenceKey;
 use crate::preferences::repository::{
-    ExactBackupRef, GenerationRef, MutationMetadata, PreferenceMutation, PreferencePartition,
-    PreferenceRepository, RepositoryError, RepositoryStatus, UnknownEnvelope,
+    ExactBackupRef, GenerationRef, MutationMetadata, PreferenceRepository, RepositoryError,
+    RepositoryStatus,
 };
 use crate::preferences::{GlobalPreferencesService, active_v1_registry};
 
@@ -32,11 +31,11 @@ use crate::preferences::{GlobalPreferencesService, active_v1_registry};
 // ===========================================================================
 
 /// The value captured in the backup and restored to.
-const RESTORE_BACKED_VALUE: &str = "imperial";
+pub(crate) const RESTORE_BACKED_VALUE: &str = "imperial";
 /// The diverged value the restore replaces.
-const RESTORE_DIVERGED_VALUE: &str = "metric";
+pub(crate) const RESTORE_DIVERGED_VALUE: &str = "metric";
 /// Sidecar carrying the exact-backup ref from the setup phase to the observe phase.
-const BACKUP_SIDECAR: &str = ".gp_backup_ref.json";
+pub(crate) const BACKUP_SIDECAR: &str = ".gp_backup_ref.json";
 
 /// The on-disk Global preference store under an acceptance work root (the same
 /// layout the CLI families snapshot: `<root>/config/datum/preferences`).
@@ -44,7 +43,7 @@ pub fn preferences_root(work_root: &Path) -> PathBuf {
     work_root.join("config").join("datum").join("preferences")
 }
 
-fn write_metadata(reason: &str) -> MutationMetadata {
+pub(crate) fn write_metadata(reason: &str) -> MutationMetadata {
     // A first-party acceptance-harness writer; the recovery operations carry no
     // product actor/proposal sidecar (audit: None), only the journal basics.
     MutationMetadata {
@@ -57,7 +56,7 @@ fn write_metadata(reason: &str) -> MutationMetadata {
 
 /// A deterministic content fingerprint of every regular file under `dir`, used to
 /// prove a step wrote nothing (preview-pure) at the disk level.
-fn store_fingerprint(dir: &Path) -> BTreeMap<String, String> {
+pub(crate) fn store_fingerprint(dir: &Path) -> BTreeMap<String, String> {
     let mut map = BTreeMap::new();
     fingerprint_into(dir, dir, &mut map);
     map
@@ -94,7 +93,9 @@ pub fn store_generation(work_root: &Path) -> Option<u64> {
     }
 }
 
-fn current_generation(repository: &PreferenceRepository) -> Result<GenerationRef, String> {
+pub(crate) fn current_generation(
+    repository: &PreferenceRepository,
+) -> Result<GenerationRef, String> {
     match repository.inspect() {
         RepositoryStatus::Ready(snapshot) => Ok(snapshot.generation),
         other => Err(format!("store is not Ready: {other:?}")),
@@ -134,7 +135,7 @@ impl BackupRestoreVariant {
     }
 }
 
-fn open_service(work_root: &Path) -> Result<GlobalPreferencesService, String> {
+pub(crate) fn open_service(work_root: &Path) -> Result<GlobalPreferencesService, String> {
     let root = preferences_root(work_root);
     let legacy = work_root.join("absent-legacy-gui-preferences.json");
     GlobalPreferencesService::open(&root, &legacy, "gp-acceptance-driver", "machine")
@@ -142,7 +143,7 @@ fn open_service(work_root: &Path) -> Result<GlobalPreferencesService, String> {
 }
 
 /// Seed generation 0 with the backed value through the product writer; return its ref.
-fn seed_backed(work_root: &Path) -> Result<GenerationRef, String> {
+pub(crate) fn seed_backed(work_root: &Path) -> Result<GenerationRef, String> {
     let mut service = open_service(work_root)?;
     service
         .set_user(pilot_key(), json!(RESTORE_BACKED_VALUE), None)
@@ -156,7 +157,11 @@ fn seed_backed(work_root: &Path) -> Result<GenerationRef, String> {
 
 /// Set the pilot key to `value` through the product writer (expected == `from`);
 /// return the new generation ref.
-fn set_value(work_root: &Path, from: &GenerationRef, value: &str) -> Result<GenerationRef, String> {
+pub(crate) fn set_value(
+    work_root: &Path,
+    from: &GenerationRef,
+    value: &str,
+) -> Result<GenerationRef, String> {
     let mut service = open_service(work_root)?;
     service
         .set_user(pilot_key(), json!(value), Some(from))
@@ -168,7 +173,7 @@ fn set_value(work_root: &Path, from: &GenerationRef, value: &str) -> Result<Gene
         .ok_or_else(|| "no generation after set".to_owned())
 }
 
-fn write_sidecar(work_root: &Path, backup: &ExactBackupRef) -> Result<(), String> {
+pub(crate) fn write_sidecar(work_root: &Path, backup: &ExactBackupRef) -> Result<(), String> {
     std::fs::write(
         work_root.join(BACKUP_SIDECAR),
         serde_json::to_vec(backup).map_err(|error| format!("serialize backup ref: {error}"))?,
@@ -176,7 +181,7 @@ fn write_sidecar(work_root: &Path, backup: &ExactBackupRef) -> Result<(), String
     .map_err(|error| format!("write backup sidecar: {error}"))
 }
 
-fn read_sidecar(work_root: &Path) -> Result<ExactBackupRef, String> {
+pub(crate) fn read_sidecar(work_root: &Path) -> Result<ExactBackupRef, String> {
     serde_json::from_slice(
         &std::fs::read(work_root.join(BACKUP_SIDECAR))
             .map_err(|error| format!("read backup sidecar: {error}"))?,
@@ -184,12 +189,12 @@ fn read_sidecar(work_root: &Path) -> Result<ExactBackupRef, String> {
     .map_err(|error| format!("parse backup sidecar: {error}"))
 }
 
-fn repo(work_root: &Path) -> PreferenceRepository {
+pub(crate) fn repo(work_root: &Path) -> PreferenceRepository {
     PreferenceRepository::new(preferences_root(work_root), active_v1_registry())
 }
 
 /// Whether any `project.json` was written anywhere under the work root.
-fn project_written(work_root: &Path) -> bool {
+pub(crate) fn project_written(work_root: &Path) -> bool {
     fn walk(dir: &Path) -> bool {
         let Ok(entries) = std::fs::read_dir(dir) else {
             return false;
@@ -437,236 +442,4 @@ pub fn backup_restore_negative_control(work_root: &Path) -> Result<(bool, bool),
         Err(_) => false,
     };
     Ok((plan_ok, commit_ok))
-}
-
-// ---------------------------------------------------------------------------
-// downgrade-preservation (C variants). These share the recovery / commit journal
-// machinery above (which is why they live here rather than in a separate module):
-// restore-both-directions is a bidirectional recovery round-trip, and unknown-field
-// preserves an opaque envelope committed through the repository journal (the product
-// Set rejects PutUnknown, so it is committed repository-direct -- still the engine's
-// own lease+journal path, never a private writer).
-// ---------------------------------------------------------------------------
-
-const UNKNOWN_IDENTITY: &str = "vendor.future.setting";
-const UNITS_SYSTEM_CHANGED_KEY: &str = "user:datum.units.system";
-
-fn unknown_bytes() -> Vec<u8> {
-    vec![0, 255, b'{', b'\n', 17, 0, 99]
-}
-
-fn reduced_motion_key() -> PreferenceKey {
-    PreferenceKey::parse("datum.accessibility.reduced_motion").expect("stable active key")
-}
-
-fn unknown_envelope() -> UnknownEnvelope {
-    UnknownEnvelope {
-        identity: UNKNOWN_IDENTITY.to_owned(),
-        provider: Some("vendor.example".to_owned()),
-        scope: "user".to_owned(),
-        source_version: "9".to_owned(),
-        required_extension: Some("vendor.future".to_owned()),
-        ordering: Some("after:vendor.base".to_owned()),
-        exact_bytes: unknown_bytes(),
-    }
-}
-
-/// The downgrade-preservation variants the engine driver can run.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DowngradeVariant {
-    RestoreBothDirections,
-    UnknownField,
-}
-
-impl DowngradeVariant {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::RestoreBothDirections => "restore-both-directions",
-            Self::UnknownField => "unknown-field",
-        }
-    }
-
-    pub fn parse(value: &str) -> Option<Self> {
-        match value {
-            "restore-both-directions" => Some(Self::RestoreBothDirections),
-            "unknown-field" => Some(Self::UnknownField),
-            _ => None,
-        }
-    }
-}
-
-/// SETUP phase for a downgrade-preservation variant.
-pub fn downgrade_setup(variant: DowngradeVariant, work_root: &Path) -> Result<(), String> {
-    match variant {
-        // Same precondition as the backup-restore round-trip: seed, exact-backup, diverge.
-        DowngradeVariant::RestoreBothDirections => {
-            let backed = seed_backed(work_root)?;
-            let backup = repo(work_root)
-                .create_exact_backup(&backed, &write_metadata("GP-CM05E restore-both backup"))
-                .map_err(|error| format!("create_exact_backup: {error:?}"))?;
-            set_value(work_root, &backed, RESTORE_DIVERGED_VALUE)?;
-            write_sidecar(work_root, &backup)
-        }
-        // Store a known value plus an opaque unknown envelope through the repository
-        // journal (the product Set rejects PutUnknown).
-        DowngradeVariant::UnknownField => {
-            let repository = repo(work_root);
-            let initial = repository
-                .initialize(&write_metadata("GP-CM05E unknown-field init"))
-                .map_err(|error| format!("initialize: {error:?}"))?;
-            repository
-                .commit_mutations(
-                    &initial,
-                    &[
-                        PreferenceMutation::Set {
-                            partition: PreferencePartition::User,
-                            key: reduced_motion_key(),
-                            value: json!(true),
-                        },
-                        PreferenceMutation::PutUnknown(unknown_envelope()),
-                    ],
-                    &write_metadata("GP-CM05E unknown-field store known+unknown"),
-                )
-                .map_err(|error| format!("commit known+unknown: {error:?}"))?;
-            Ok(())
-        }
-    }
-}
-
-/// OBSERVE phase for a downgrade-preservation variant.
-pub fn downgrade_observe(
-    variant: DowngradeVariant,
-    work_root: &Path,
-) -> Result<Vec<(&'static str, bool)>, String> {
-    match variant {
-        DowngradeVariant::RestoreBothDirections => observe_restore_both_directions(work_root),
-        DowngradeVariant::UnknownField => observe_unknown_field(work_root),
-    }
-}
-
-fn observe_restore_both_directions(work_root: &Path) -> Result<Vec<(&'static str, bool)>, String> {
-    let repository = repo(work_root);
-    let backed = read_sidecar(work_root)?; // B0 = generation 0 (backed value)
-    let diverged = current_generation(&repository)?; // generation 1 (diverged value)
-    let diverged_backup = repository
-        .create_exact_backup(
-            &diverged,
-            &write_metadata("GP-CM05E restore-both diverged backup"),
-        )
-        .map_err(|error| format!("create_exact_backup (diverged): {error:?}"))?;
-
-    // Forward restore to the backed state; it must change exactly the units key.
-    let plan_forward = repository
-        .plan_restore(&diverged, &backed)
-        .map_err(|error| format!("plan_restore (forward): {error:?}"))?;
-    let forward_changed = plan_forward.changed_keys.clone();
-    let forward = repository
-        .commit_restore(
-            &plan_forward,
-            &write_metadata("GP-CM05E restore-both forward"),
-        )
-        .map_err(|error| format!("commit_restore (forward): {error:?}"))?;
-    let forward_matches = repository
-        .plan_restore(&forward.generation, &backed)
-        .map_err(|error| format!("verify (forward): {error:?}"))?
-        .changed_keys
-        .is_empty();
-
-    // Reverse restore back to the diverged state; again exactly the units key.
-    let plan_reverse = repository
-        .plan_restore(&forward.generation, &diverged_backup)
-        .map_err(|error| format!("plan_restore (reverse): {error:?}"))?;
-    let reverse_changed = plan_reverse.changed_keys.clone();
-    let reverse = repository
-        .commit_restore(
-            &plan_reverse,
-            &write_metadata("GP-CM05E restore-both reverse"),
-        )
-        .map_err(|error| format!("commit_restore (reverse): {error:?}"))?;
-    let reverse_matches = repository
-        .plan_restore(&reverse.generation, &diverged_backup)
-        .map_err(|error| format!("verify (reverse): {error:?}"))?
-        .changed_keys
-        .is_empty();
-
-    // original-and-restored-digests: both directions land on digest-matching states.
-    let original_and_restored_digests = forward_matches && reverse_matches;
-    // no-silent-rewrite: each restore changed exactly the one expected key, nothing else.
-    let expected = vec![UNITS_SYSTEM_CHANGED_KEY.to_owned()];
-    let no_silent_rewrite = forward_changed == expected && reverse_changed == expected;
-
-    Ok(vec![
-        (
-            "original-and-restored-digests",
-            original_and_restored_digests,
-        ),
-        ("no-silent-rewrite", no_silent_rewrite),
-    ])
-}
-
-fn observe_unknown_field(work_root: &Path) -> Result<Vec<(&'static str, bool)>, String> {
-    let repository = repo(work_root);
-    let before = current_generation(&repository)?;
-    // An intervening known mutation (the "downgrade" write) must not disturb the
-    // opaque envelope.
-    repository
-        .commit_mutations(
-            &before,
-            &[PreferenceMutation::Set {
-                partition: PreferencePartition::User,
-                key: reduced_motion_key(),
-                value: json!(false),
-            }],
-            &write_metadata("GP-CM05E unknown-field intervening mutation"),
-        )
-        .map_err(|error| format!("intervening commit: {error:?}"))?;
-    let snapshot = match repository.inspect() {
-        RepositoryStatus::Ready(snapshot) => snapshot,
-        other => return Err(format!("store is not Ready: {other:?}")),
-    };
-
-    // inactive: the unknown envelope is preserved opaquely but is NOT promoted to a
-    // known active value in either partition.
-    let inactive = snapshot.unknown_envelopes.contains_key(UNKNOWN_IDENTITY)
-        && !snapshot.user.contains_key(UNKNOWN_IDENTITY)
-        && !snapshot.installation.contains_key(UNKNOWN_IDENTITY);
-    // exact-bytes-survive: the opaque bytes are byte-identical after the intervening
-    // mutation.
-    let exact_bytes_survive = repository
-        .read_unknown_exact(&snapshot, UNKNOWN_IDENTITY)
-        .map(|bytes| bytes == unknown_bytes())
-        .unwrap_or(false);
-
-    Ok(vec![
-        ("inactive", inactive),
-        ("exact-bytes-survive", exact_bytes_survive),
-    ])
-}
-
-/// Family negative control (PM059, genuinely falsifying): a registered known value
-/// IS active (present in the user partition), so the `inactive` predicate is not
-/// constant-true -- it distinguishes an opaque unknown envelope from an active value.
-pub fn downgrade_negative_control(work_root: &Path) -> Result<bool, String> {
-    let repository = repo(work_root);
-    let initial = repository
-        .initialize(&write_metadata("GP-CM05E downgrade neg init"))
-        .map_err(|error| format!("initialize: {error:?}"))?;
-    repository
-        .commit_mutations(
-            &initial,
-            &[PreferenceMutation::Set {
-                partition: PreferencePartition::User,
-                key: reduced_motion_key(),
-                value: json!(true),
-            }],
-            &write_metadata("GP-CM05E downgrade neg known value"),
-        )
-        .map_err(|error| format!("commit known: {error:?}"))?;
-    let snapshot = match repository.inspect() {
-        RepositoryStatus::Ready(snapshot) => snapshot,
-        other => return Err(format!("store is not Ready: {other:?}")),
-    };
-    Ok(snapshot
-        .user
-        .contains_key("datum.accessibility.reduced_motion"))
 }

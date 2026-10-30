@@ -73,9 +73,10 @@ fn main() -> ExitCode {
                 }
             }
             "downgrade-preservation" => {
-                match acceptance_support::backup_restore::DowngradeVariant::parse(&variant) {
+                match acceptance_support::downgrade_preservation::DowngradeVariant::parse(&variant)
+                {
                     Some(downgrade_variant) => work_root().and_then(|root| {
-                        acceptance_support::backup_restore::downgrade_setup(
+                        acceptance_support::downgrade_preservation::downgrade_setup(
                             downgrade_variant,
                             &root,
                         )
@@ -140,10 +141,10 @@ fn main() -> ExitCode {
             }
         }
         "downgrade-preservation" => {
-            match acceptance_support::backup_restore::DowngradeVariant::parse(&variant) {
+            match acceptance_support::downgrade_preservation::DowngradeVariant::parse(&variant) {
                 Some(downgrade_variant) => {
                     match work_root().and_then(|root| {
-                        acceptance_support::backup_restore::downgrade_observe(
+                        acceptance_support::downgrade_preservation::downgrade_observe(
                             downgrade_variant,
                             &root,
                         )

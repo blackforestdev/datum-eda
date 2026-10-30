@@ -13,6 +13,9 @@ use uuid::Uuid;
 use crate::preferences::{DescriptorRegistry, ResolutionSource};
 
 mod io;
+// Crate-internal, named widening for acceptance precondition construction only
+// (GP-CM05E, PM-authorized). See the module doc for the binding.
+pub(crate) mod acceptance_constructions;
 mod migration;
 mod model;
 mod recovery;

@@ -7,9 +7,11 @@
 //! the `gp_acceptance_driver` binary consumes.
 
 use eda_engine::preferences::acceptance_support::backup_restore::{
-    BackupRestoreVariant, DowngradeVariant, backup_restore_negative_control,
-    backup_restore_observe, backup_restore_setup, downgrade_negative_control, downgrade_observe,
-    downgrade_setup, store_generation,
+    BackupRestoreVariant, backup_restore_negative_control, backup_restore_observe,
+    backup_restore_setup, store_generation,
+};
+use eda_engine::preferences::acceptance_support::downgrade_preservation::{
+    DowngradeVariant, downgrade_negative_control, downgrade_observe, downgrade_setup,
 };
 use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
@@ -226,6 +228,14 @@ fn every_downgrade_preservation_c_variant_yields_its_matrix_observations() {
         ),
         (
             DowngradeVariant::UnknownField,
+            &["inactive", "exact-bytes-survive"],
+        ),
+        (
+            DowngradeVariant::FutureVersion,
+            &["typed-refusal", "exact-bytes-survive"],
+        ),
+        (
+            DowngradeVariant::UnknownKey,
             &["inactive", "exact-bytes-survive"],
         ),
     ];

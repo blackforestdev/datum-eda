@@ -313,6 +313,7 @@ pub fn observe_managed_offline(
 }
 
 pub mod backup_restore;
+pub mod downgrade_preservation;
 
 // The managed-offline resolver tests and the Active negative control live in the
 // focused integration target crates/engine/tests/preferences_acceptance_support.rs

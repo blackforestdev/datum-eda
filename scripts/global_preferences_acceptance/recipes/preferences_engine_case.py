@@ -53,6 +53,9 @@ ENGINE_COVERAGE = {
     # opaque unknown envelope that survives a known mutation, both via the engine journal.
     ("downgrade-preservation", "restore-both-directions"),
     ("downgrade-preservation", "unknown-field"),
+    # future-version via artifact damage; unknown-key via the write_generation seed.
+    ("downgrade-preservation", "future-version"),
+    ("downgrade-preservation", "unknown-key"),
 }
 
 

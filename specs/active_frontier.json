@@ -18947,10 +18947,10 @@
       "key": "RENDERER-QUALIFIED-SOURCE-TEST-BINDING",
       "issue_id": "dat-gui-proof-shared-state-9gaf.1",
       "title": "Bind qualified sources in renderer regression fixtures",
-      "summary": "Repair test-only source/selection setup using existing renderer source capture and public document-aware selection APIs; retain all original behavior and storage assertions.",
+      "summary": "Test fixtures use existing qualified source setup and document-aware selection APIs, preserving the original retained schematic allocations and every assertion. One guarded affected-module+2geometry batchPASS14/0/1existingignore; all4prior failuresPASS, independent reviewPASS. No production change or broad qualification claim.",
       "order": 118,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -18963,20 +18963,7 @@
         "kind": "maintenance",
         "rationale": "Owner-directed correction of four concrete stale-fixture failures causing repeated proof work; no production fallback, flattened document identity, weakened assertion or whole-suite campaign."
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-efficiency-qualified-fixtures-20261030",
-        "claimed_at": "2026-10-30T23:09:03Z",
-        "heartbeat_at": "2026-10-30T23:09:03Z",
-        "expires_at": "2026-10-31T01:09:03Z",
-        "scope": [
-          "crates/gui-render/src/render/session_pointer_tests.rs",
-          "crates/gui-render/src/render/geometry_admission_tests.rs"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "a01a47fc3e71c67183376117d539ba5258efbb9f"
-      }
+      "landing_commit": "912d7c173d0a1c5ad4b0a867cc0c5225dda426dc"
     }
   ],
   "management_appointments": {
