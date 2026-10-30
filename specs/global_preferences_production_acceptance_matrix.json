@@ -913,7 +913,7 @@
     },
     {
       "id": "accessibility-interaction",
-      "source": "crates/gui-app/src/global_preferences_runtime_tests.rs",
+      "source": "crates/gui-app/src/windows/global_preferences_runtime_tests.rs",
       "test": "explanation_accessibility_is_complete_and_in_reading_order",
       "authority": "native semantics expose scope, timing, search, state, and controls",
       "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
