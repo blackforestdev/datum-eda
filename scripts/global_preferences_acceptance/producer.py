@@ -168,10 +168,11 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
 
 def _family_handlers(family):
     """Return (initial_state_fn, capture_after_fn) for a case family; capture_after None = read-only."""
-    if family == ("existing-project-stability", "factory"):
+    case, variant = family
+    # Project-genesis families: the mutating post-state is the published Project; the Global store
+    # stays absent (asserted per-variant). capture_after snapshots the REAL project (after != before).
+    if case == "existing-project-stability" and variant in ("factory", "global-missing"):
         def capture_after(capture, key, work_root, before_state):
-            # The real published Project is the mutating post-state; the Global preferences store
-            # stays absent, asserted separately as no-preference-read-or-write.
             return capture.put(_snapshot_dir(capture, before_state["root"],
                                              Path(work_root) / "project", "project/"))
         return _empty_state, capture_after

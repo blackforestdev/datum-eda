@@ -109,58 +109,91 @@ def clean_install_missing_store_cli():
         shutil.rmtree(work, ignore_errors=True)
 
 
-def existing_project_stability_factory_cli():
-    """Genesis from the factory units profile on the CLI surface: exactly eight sealed seed values,
-    an immutable digest-sealed units receipt, and no read or write of the Global preferences
-    repository. Runs the real `project new --units-source factory`; the producer provides the work
-    root out-of-band (DATUM_EDA_WORK_ROOT) and captures the real published Project as the case's
-    post-state. Observations are honest semantics, never returncode==0."""
+def _eps_genesis(units_source, seed):
+    """Run the real `project new --units-source <...>` against an out-of-band work root (so the
+    producer can capture the published Project as the case post-state) and return
+    (report-or-None, result, units_receipt, items, repository_absent)."""
     binary = _require_binary("DATUM_EDA_CLI")
-    work, cleanup = _work_dir("gp-cm05e-case-eps-factory-")
+    work, cleanup = _work_dir(f"gp-cm05e-case-eps-{units_source}-")
     try:
         destination = work / "project"
-        seed = "existing-project-stability/factory/cli"
         project_id = str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project"))
         request_id = str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request"))
         proc = _run_cli(binary, ["project", "new", "--name", "Acceptance",
                                  "--project-id", project_id, "--request-id", request_id,
-                                 "--units-source", "factory", "--json", str(destination)], work=work)
-        repository = work / "config" / "datum" / "preferences"
-        no_preference = not repository.exists()
-        exact_eight = immutable_receipt = False
+                                 "--units-source", units_source, "--json", str(destination)], work=work)
+        repository_absent = not (work / "config" / "datum" / "preferences").exists()
         report = None
         if proc.returncode == 0:
             try:
                 report = json.loads(proc.stdout)
             except json.JSONDecodeError:
                 report = None
-        if isinstance(report, dict) and report.get("ok") is True:
-            result = report.get("result") or {}
-            receipt = result.get("units_receipt") or {}
-            items = receipt.get("items") or []
-            eight_items = len(items) == 8
-            seeded_from_factory = all(
-                isinstance(item, dict) and item.get("effective_source") == "factory_profile"
-                and item.get("provenance") for item in items)
-            exact_eight = bool(eight_items and seeded_from_factory)
-            # A factory seed must not consult the Global store: the receipt source is the factory
-            # profile, so an absent repository plus a factory-sourced receipt is a truthful
-            # no-read-or-write observation (not merely an absent file).
-            no_preference = bool(no_preference and (receipt.get("source") or {}).get("kind") == "factory"
-                                 and seeded_from_factory)
-            seals = ("units_seed_catalog_digest", "profile_digest",
-                     "genesis_request_digest", "seed_application_digest")
-            immutable_receipt = bool(
-                eight_items and receipt.get("schema_name")
-                and all(isinstance(receipt.get(name), str) and receipt.get(name) for name in seals)
-                and receipt.get("genesis_request_digest") == result.get("genesis_request_digest"))
-        return {
-            "exact-eight-seeds": bool(exact_eight),
-            "no-preference-read-or-write": bool(no_preference),
-            "immutable-receipt": bool(immutable_receipt),
-        }
+        result = report.get("result") if isinstance(report, dict) and report.get("ok") is True else None
+        receipt = (result or {}).get("units_receipt") or {}
+        items = receipt.get("items") or []
+        return report, result, receipt, items, repository_absent
     finally:
         cleanup()
+
+
+def existing_project_stability_factory_cli():
+    """Genesis from the factory units profile on the CLI surface: exactly eight sealed seed values,
+    an immutable digest-sealed units receipt, and no read or write of the Global preferences
+    repository. Observations are honest semantics, never returncode==0."""
+    _report, result, receipt, items, repository_absent = _eps_genesis(
+        "factory", "existing-project-stability/factory/cli")
+    exact_eight = immutable_receipt = False
+    no_preference = repository_absent
+    if result is not None:
+        eight_items = len(items) == 8
+        seeded_from_factory = all(
+            isinstance(item, dict) and item.get("effective_source") == "factory_profile"
+            and item.get("provenance") for item in items)
+        exact_eight = bool(eight_items and seeded_from_factory)
+        # A factory seed must not consult the Global store: the receipt source is the factory
+        # profile, so an absent repository plus a factory-sourced receipt is a truthful
+        # no-read-or-write observation (not merely an absent file).
+        no_preference = bool(repository_absent and (receipt.get("source") or {}).get("kind") == "factory"
+                             and seeded_from_factory)
+        seals = ("units_seed_catalog_digest", "profile_digest",
+                 "genesis_request_digest", "seed_application_digest")
+        immutable_receipt = bool(
+            eight_items and receipt.get("schema_name")
+            and all(isinstance(receipt.get(name), str) and receipt.get(name) for name in seals)
+            and receipt.get("genesis_request_digest") == result.get("genesis_request_digest"))
+    return {
+        "exact-eight-seeds": bool(exact_eight),
+        "no-preference-read-or-write": bool(no_preference),
+        "immutable-receipt": bool(immutable_receipt),
+    }
+
+
+def existing_project_stability_global_missing_cli():
+    """Genesis with --units-source global while NO Global store exists: exactly eight seeds, the
+    factory contribution disclosed in the receipt (global source, no generation, factory_default
+    items), and still no Global store created. Honest semantics, never returncode==0."""
+    _report, result, receipt, items, repository_absent = _eps_genesis(
+        "global", "existing-project-stability/global-missing/cli")
+    exact_eight = disclosed = False
+    if result is not None:
+        eight_items = len(items) == 8
+        exact_eight = bool(eight_items)
+        source = receipt.get("source") or {}
+        # With no Global store the global source resolves to the factory default and the receipt
+        # DISCLOSES that contribution: global kind, no generation, a defaults profile, and every
+        # seed effective_source factory_default with provenance naming it.
+        disclosed = bool(
+            eight_items and source.get("kind") == "global" and source.get("generation") is None
+            and source.get("defaults_profile_id")
+            and all(isinstance(item, dict) and item.get("effective_source") == "factory_default"
+                    and isinstance(item.get("provenance"), str) and "factory_default" in item["provenance"]
+                    for item in items))
+    return {
+        "exact-eight-seeds": bool(exact_eight),
+        "factory-contribution-disclosed": bool(disclosed),
+        "no-preference-store": bool(repository_absent),
+    }
 
 
 # (case, variant, surface) -> observation producer. Later GP-CM05E slices extend
@@ -176,6 +209,7 @@ def existing_project_stability_factory_cli():
 DISPATCH = {
     ("clean-install", "missing-store", "cli"): clean_install_missing_store_cli,
     ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
+    ("existing-project-stability", "global-missing", "cli"): existing_project_stability_global_missing_cli,
 }
 
 
