@@ -190,8 +190,51 @@ pub(crate) fn gpu_process() -> Arc<Budget> {
 
 /// Migrated explicit upload buffers across all hosts, including submitted retirement.
 pub(crate) fn staging_process() -> Arc<Budget> {
+    #[cfg(test)]
+    if let Some(budget) = TEST_STAGING_BUDGETS.with(|budgets| budgets.borrow().last().cloned()) {
+        return budget;
+    }
     static BUDGET: OnceLock<Arc<Budget>> = OnceLock::new();
     BUDGET.get_or_init(|| Budget::new(64 * 1024 * 1024)).clone()
+}
+
+#[cfg(test)]
+thread_local! {
+    static TEST_STAGING_BUDGETS: std::cell::RefCell<Vec<Arc<Budget>>> = const {
+        std::cell::RefCell::new(Vec::new())
+    };
+}
+
+/// Allocate/register outside a cpu_alloc::Scope: the ledger is not owner storage.
+#[cfg(test)]
+pub(crate) struct StagingProcessScope {
+    id: u64,
+    _thread: std::marker::PhantomData<std::rc::Rc<()>>,
+}
+
+#[cfg(test)]
+impl StagingProcessScope {
+    pub(crate) fn new(limit: u64) -> Self {
+        let budget = Budget::new(limit);
+        let id = budget.id();
+        TEST_STAGING_BUDGETS.with(|budgets| budgets.borrow_mut().push(budget));
+        Self {
+            id,
+            _thread: std::marker::PhantomData,
+        }
+    }
+}
+
+#[cfg(test)]
+impl Drop for StagingProcessScope {
+    fn drop(&mut self) {
+        let _ = TEST_STAGING_BUDGETS.try_with(|budgets| {
+            let mut budgets = budgets.borrow_mut();
+            if let Some(index) = budgets.iter().position(|budget| budget.id() == self.id) {
+                budgets.remove(index);
+            }
+        });
+    }
 }
 
 /// Decoded terminal image textures and placement buffers across native hosts.
@@ -203,6 +246,87 @@ pub(crate) fn terminal_process() -> Arc<Budget> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn staging_scopes_restore_after_nesting_panic_and_out_of_order_drop() {
+        let shared = staging_process();
+        let outer = StagingProcessScope::new(32);
+        let first = staging_process();
+        let inner = StagingProcessScope::new(64);
+        let second = staging_process();
+        assert!(!Arc::ptr_eq(&first, &second));
+        drop(inner);
+        assert!(Arc::ptr_eq(&staging_process(), &first));
+        let failed = std::panic::catch_unwind(|| {
+            let _nested = StagingProcessScope::new(128);
+            panic!("test-only scoped budget unwind");
+        });
+        assert!(failed.is_err());
+        assert!(Arc::ptr_eq(&staging_process(), &first));
+        let inner = StagingProcessScope::new(64);
+        let second = staging_process();
+        drop(outer);
+        assert!(Arc::ptr_eq(&staging_process(), &second));
+        let other_thread = std::thread::spawn(staging_process).join().unwrap();
+        assert!(Arc::ptr_eq(&other_thread, &shared));
+        drop(inner);
+        assert!(Arc::ptr_eq(&staging_process(), &shared));
+    }
+
+    #[test]
+    fn overlapping_staging_owners_keep_exact_charges_and_process_refusal_rollback() {
+        use super::super::staging_vec::StagingVec;
+        use std::sync::mpsc;
+        let (ready, observed) = mpsc::channel();
+        let mut releases = Vec::new();
+        let mut workers = Vec::new();
+        for capacity in [17, 31] {
+            let ready = ready.clone();
+            let (release, wait) = mpsc::channel::<()>();
+            releases.push(release);
+            workers.push(std::thread::spawn(move || {
+                let shared = staging_process();
+                let bytes = StagingVec::<u64>::capacity_bytes(capacity).unwrap();
+                let host = Budget::new(bytes * 2);
+                let isolated = StagingProcessScope::new(bytes);
+                let process = staging_process();
+                let plan = StagingVec::<u64>::new(capacity, &host).unwrap();
+                // Host can admit the second allocation, but the process cannot.
+                assert!(StagingVec::<u64>::new(capacity, &host).is_err());
+                assert_eq!(host.used(), bytes);
+                assert_eq!(process.used(), bytes);
+                ready.send((host.clone(), process.clone(), bytes)).unwrap();
+                drop(ready);
+                let _ = wait.recv(); // Main drops senders even when observation fails.
+                drop(plan);
+                assert_eq!(host.used(), 0);
+                assert_eq!(process.used(), 0);
+                drop(isolated);
+                assert!(Arc::ptr_eq(&staging_process(), &shared));
+            }));
+        }
+        drop(ready);
+        let owners: Vec<_> = (0..2)
+            .map(|_| observed.recv_timeout(std::time::Duration::from_secs(5)))
+            .collect();
+        // Both plans remain allocated until after these observations.
+        let charges: Vec<_> = owners
+            .iter()
+            .filter_map(|owner| owner.as_ref().ok())
+            .map(|(host, process, bytes)| (host.used(), process.used(), *bytes, process.id()))
+            .collect();
+        drop(releases);
+        let joined: Vec<_> = workers.into_iter().map(|worker| worker.join()).collect();
+        for result in joined {
+            assert!(result.is_ok());
+        }
+        assert_eq!(charges.len(), 2);
+        assert_ne!(charges[0].3, charges[1].3);
+        for (host, process, bytes, _) in charges {
+            assert_eq!(host, bytes);
+            assert_eq!(process, bytes);
+        }
+    }
+
     #[test]
     fn budget_container_measurement_matches_allocated_capacity_until_last_weak_drop() {
         let expected = Budget::cpu_allocation_bytes();

@@ -113,8 +113,10 @@ mod tests {
         let small = StagingVec::<Option<Entry>>::capacity_bytes(64).unwrap();
         let large = StagingVec::<Option<Entry>>::capacity_bytes(128).unwrap();
         let host = super::super::super::budget::Budget::new(small + large);
-        // Process admission is shared infrastructure, not bucket storage. Create
-        // its singleton outside this owner's scope even when this test runs alone.
+        // Process admission is infrastructure, not bucket storage. Allocate its
+        // isolated test ledger outside this owner's allocator scope.
+        let _process_scope =
+            super::super::super::budget::StagingProcessScope::new(64 * 1024 * 1024);
         let process = super::super::super::budget::staging_process();
         let process_baseline = process.used();
         let scope = crate::cpu_alloc::Scope::new("glyph-lookup-buckets");

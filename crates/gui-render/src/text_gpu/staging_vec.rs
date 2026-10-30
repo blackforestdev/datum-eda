@@ -181,6 +181,7 @@ mod tests {
 
     #[test]
     fn staging_plan_charges_actual_heap_and_refuses_before_growth() {
+        let _process_scope = super::super::budget::StagingProcessScope::new(64 * 1024 * 1024);
         let process = staging_process();
         let baseline = process.used();
         let bytes = StagingVec::<u64>::capacity_bytes(17).unwrap();
