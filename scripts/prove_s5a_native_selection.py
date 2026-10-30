@@ -16,6 +16,7 @@ import time
 import traceback
 
 from prove_native_project_startup_gui import Atspi, StartupQA, digest
+from native_qa_owned_processes import close_owned_companions
 from native_project_source_inventory import validate_frozen_sources
 from s5a_native_escape_cases import owned_open_text_keys, region_escape_cancel
 from s5a_native_inspector_cases import focused_compound_scopes, focused_compound_pane_lifecycle, hidden_junction_run
@@ -48,38 +49,6 @@ def close_failed_transport(qa, result):
     result['failure_transport_cleanup'] = {
         'verified_shell_groups_signalled_HUP': groups,
         'limit': 'Owned process cleanup, not ordinary shell/window-Close proof.'}
-
-
-def close_owned_companions(qa, result):
-    actions = []
-    for proc in Path('/proc').iterdir():
-        if not proc.name.isdecimal():
-            continue
-        try:
-            binary = (qa.binary_dir / 'eda-engine-daemon').resolve()
-            if proc.stat().st_uid != os.getuid() or (proc / 'exe').resolve() != binary:
-                continue
-            argv = [v.decode() for v in (proc / 'cmdline').read_bytes().split(b'\0') if v]
-            if (len(argv) != 3 or argv[1] != '--socket'
-                    or not argv[2].startswith(qa.runtime.name + '/datum-native-edit-')):
-                continue
-            pid = int(proc.name)
-            fd = os.pidfd_open(pid)
-            try:
-                assert (proc / 'cmdline').read_bytes().split(b'\0')[:3] == [v.encode() for v in argv]
-                assert (proc / 'exe').resolve() == binary
-                signal.pidfd_send_signal(fd, signal.SIGTERM)
-            finally:
-                os.close(fd)
-            until = time.monotonic() + 3
-            while proc.exists() and time.monotonic() < until:
-                time.sleep(.05)
-            if proc.exists():
-                raise RuntimeError(f'owned companion {pid} still present after cleanup')
-            actions.append({'pid': pid, 'socket': argv[2], 'signal': 'SIGTERM', 'gone': True})
-        except (FileNotFoundError, ProcessLookupError):
-            continue
-    result['owned_companion_housekeeping'] = actions
 
 
 def toggle_l1(qa, main, state, result, visible):

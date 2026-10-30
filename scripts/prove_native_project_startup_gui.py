@@ -9,6 +9,7 @@ from __future__ import annotations
 from run_native_qa_isolated_input import focus_arguments, validate_input_display
 from native_capture_pixels import require_native_capture_pixels
 from native_capture_presentation import PresentationReadiness
+from native_qa_owned_processes import close_owned_envelope, stop_owned_gui
 
 import argparse
 import json
@@ -158,15 +159,7 @@ class StartupQA:
             "limit": "X11 input to owned Weston; Datum itself native Wayland/Vulkan, not KWin workflow qualification"}
 
     def close_envelope(self):
-        if self.clipboard_writer and self.clipboard_writer.poll() is None:
-            self.clipboard_writer.terminate()
-            self.clipboard_writer.wait(timeout=5)
-        if self.compositor:
-            if self.compositor.poll() is None:
-                self.compositor.terminate()
-                self.compositor.wait(timeout=10)
-            self.compositor_log.close()
-        self.runtime.cleanup()
+        close_owned_envelope(self)
 
     def key(self, window, keys, repeat=1):
         self.focus(window)
@@ -274,26 +267,7 @@ class StartupQA:
         return self.host_window
 
     def stop(self):
-        if not self.process:
-            return
-        if self.process.poll() is None:
-            # Do not close the host envelope: it is reused for a fresh bare App.
-            self.actions.append({"terminate_owned_app_pid": self.process.pid,
-                                 "signal": "SIGTERM",
-                                 "limit": "Process termination, not ordinary window Close"})
-            self.process.terminate()
-            try:
-                self.process.wait(timeout=6)
-            except subprocess.TimeoutExpired:
-                # Only this runner's process group; no name-based process sweep.
-                os.killpg(self.process.pid, signal.SIGTERM)
-                self.process.wait(timeout=6)
-        self.app_log.close()
-        log = Path(self.env["DATUM_GUI_LOG"])
-        if log.exists():
-            self.observations[self.phase + "_all_surface_identities"] = [
-                line for line in log.read_text().splitlines() if "surface identity" in line]
-        self.process = None
+        stop_owned_gui(self)
 
     def terminal_text(self):
         for node in self.nodes():
@@ -671,13 +645,21 @@ def main():
                 result["failure_capture_error"] = str(capture_error)
         raise
     finally:
-        qa.stop()
-        qa.close_envelope()
+        cleanup_errors = {}
+        for label, cleanup in (("GUI", qa.stop), ("envelope", qa.close_envelope)):
+            try:
+                cleanup()
+            except BaseException as error:
+                cleanup_errors[label] = f"{type(error).__name__}: {error}"
+        if cleanup_errors:
+            result.update(status="FAIL", cleanup_errors=cleanup_errors)
         result["observations"] = qa.observations
         (root / "result.json").write_text(json.dumps(result, indent=2) + "\n")
         (root / "commands.json").write_text(json.dumps(qa.actions, indent=2) + "\n")
         if qa.previous_focus:
             qa.command("xdotool", "windowactivate", qa.previous_focus, check=False)
+        if cleanup_errors:
+            raise RuntimeError(f"Owned QA teardown failed: {cleanup_errors}")
 
 
 if __name__ == "__main__":
