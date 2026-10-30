@@ -27,6 +27,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 from pathlib import Path
 
 SCHEMA = "datum.preferences.case-observations.v2"
@@ -37,6 +38,20 @@ def _require_binary(variable):
     if not value or not Path(value).is_file():
         raise SystemExit(f"{variable} must point at the candidate binary for this surface")
     return value
+
+
+def _work_dir(prefix):
+    """Return (work_root, cleanup). When the producer provides DATUM_EDA_WORK_ROOT the recipe runs
+    there and LEAVES it so the producer can capture the real post-run state (mutating families); the
+    path is carried out-of-band exactly like DATUM_EDA_CLI, so the committed fixture argv stays stable.
+    Otherwise it uses a private temp dir it removes itself (read-only families need no post-state)."""
+    provided = os.environ.get("DATUM_EDA_WORK_ROOT")
+    if provided:
+        work = Path(provided)
+        work.mkdir(parents=True, exist_ok=True)
+        return work, (lambda: None)
+    work = Path(tempfile.mkdtemp(prefix=prefix))
+    return work, (lambda: shutil.rmtree(work, ignore_errors=True))
 
 
 def _run_cli(binary, args, *, work):
@@ -94,6 +109,60 @@ def clean_install_missing_store_cli():
         shutil.rmtree(work, ignore_errors=True)
 
 
+def existing_project_stability_factory_cli():
+    """Genesis from the factory units profile on the CLI surface: exactly eight sealed seed values,
+    an immutable digest-sealed units receipt, and no read or write of the Global preferences
+    repository. Runs the real `project new --units-source factory`; the producer provides the work
+    root out-of-band (DATUM_EDA_WORK_ROOT) and captures the real published Project as the case's
+    post-state. Observations are honest semantics, never returncode==0."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-eps-factory-")
+    try:
+        destination = work / "project"
+        seed = "existing-project-stability/factory/cli"
+        project_id = str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project"))
+        request_id = str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request"))
+        proc = _run_cli(binary, ["project", "new", "--name", "Acceptance",
+                                 "--project-id", project_id, "--request-id", request_id,
+                                 "--units-source", "factory", "--json", str(destination)], work=work)
+        repository = work / "config" / "datum" / "preferences"
+        no_preference = not repository.exists()
+        exact_eight = immutable_receipt = False
+        report = None
+        if proc.returncode == 0:
+            try:
+                report = json.loads(proc.stdout)
+            except json.JSONDecodeError:
+                report = None
+        if isinstance(report, dict) and report.get("ok") is True:
+            result = report.get("result") or {}
+            receipt = result.get("units_receipt") or {}
+            items = receipt.get("items") or []
+            eight_items = len(items) == 8
+            seeded_from_factory = all(
+                isinstance(item, dict) and item.get("effective_source") == "factory_profile"
+                and item.get("provenance") for item in items)
+            exact_eight = bool(eight_items and seeded_from_factory)
+            # A factory seed must not consult the Global store: the receipt source is the factory
+            # profile, so an absent repository plus a factory-sourced receipt is a truthful
+            # no-read-or-write observation (not merely an absent file).
+            no_preference = bool(no_preference and (receipt.get("source") or {}).get("kind") == "factory"
+                                 and seeded_from_factory)
+            seals = ("units_seed_catalog_digest", "profile_digest",
+                     "genesis_request_digest", "seed_application_digest")
+            immutable_receipt = bool(
+                eight_items and receipt.get("schema_name")
+                and all(isinstance(receipt.get(name), str) and receipt.get(name) for name in seals)
+                and receipt.get("genesis_request_digest") == result.get("genesis_request_digest"))
+        return {
+            "exact-eight-seeds": bool(exact_eight),
+            "no-preference-read-or-write": bool(no_preference),
+            "immutable-receipt": bool(immutable_receipt),
+        }
+    finally:
+        cleanup()
+
+
 # (case, variant, surface) -> observation producer. Later GP-CM05E slices extend
 # this map; each family runs the real product surface and records honest results.
 #
@@ -106,6 +175,7 @@ def clean_install_missing_store_cli():
 #      revision), not an exec-time hash gate; never rely on it to validate at run.
 DISPATCH = {
     ("clean-install", "missing-store", "cli"): clean_install_missing_store_cli,
+    ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
 }
 
 
