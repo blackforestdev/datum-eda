@@ -18860,10 +18860,10 @@
       "key": "RENDERER-BUDGET-TEST-ISOLATION",
       "issue_id": "dat-renderer-budget-test-race-wkj8",
       "title": "Isolate renderer accounting tests from concurrent process counters",
-      "summary": "Owner efficiency maintenance fixes existing source-confirmed parallel accounting assertion race without weakening exact accounting or serializing renderer tests.",
+      "summary": "Test-only scoped staging budgets preserve exact accounting under parallel execution. Both reported failures and both new overlap/restoration regressions PASS; independent review/source-health/format PASS. Broader renderer library remainsFAILED504/29/23, unrelated setup/assertion evidence retained in existingintake; no fullqualification claim.",
       "order": 114,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -18876,21 +18876,7 @@
         "kind": "maintenance",
         "rationale": "Existing reproduced flaky renderer tests cause repeated proof work; isolate only test accounting while preserving production shared admission and exact assertions."
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-        "claimed_at": "2026-10-30T21:37:02.301605+00:00",
-        "heartbeat_at": "2026-10-30T21:37:02.301605+00:00",
-        "expires_at": "2026-10-30T23:37:02.301605+00:00",
-        "scope": [
-          "crates/gui-render/src/text_gpu/budget.rs",
-          "crates/gui-render/src/text_gpu/staging_vec.rs",
-          "crates/gui-render/src/text_gpu/atlas/glyph_map.rs"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "6261eba43e487eaa5e00e25e2636cb20369dd6d8"
-      }
+      "landing_commit": "013bcf43e21d207d67612b4f1b48c5b3632b3e0f"
     }
   ],
   "management_appointments": {
