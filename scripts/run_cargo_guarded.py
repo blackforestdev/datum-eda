@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import time
+import tomllib
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Iterator, Sequence
@@ -189,11 +190,14 @@ def format_gib(byte_count: int) -> str:
 
 
 def command_environment(
-    base: dict[str, str], workload: str, target_dir: Path, policy: ResourcePolicy
+    base: dict[str, str], workload: str, target_dir: Path, policy: ResourcePolicy,
+    *, build_dir: Path | None = None,
 ) -> dict[str, str]:
     environment = dict(base)
     environment[ACTIVE_GUARD] = str(os.getpid())
     environment["CARGO_TARGET_DIR"] = str(target_dir)
+    environment["CARGO_BUILD_TARGET_DIR"] = str(target_dir)
+    environment["CARGO_BUILD_BUILD_DIR"] = str(build_dir if build_dir is not None else target_dir)
     if workload == "proof":
         environment["CARGO_INCREMENTAL"] = "1" if policy.proof_incremental else "0"
     return environment
@@ -220,12 +224,127 @@ def acquire_lock(lock_path: Path, timeout_seconds: float) -> Iterator[None]:
             fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
 
 
+def _directory(value: str, base: Path) -> Path:
+    if not isinstance(value, str) or not value:
+        raise ResourcePolicyError("Cargo output directory must be a nonempty path")
+    try:
+        path = Path(value)
+        return (path if path.is_absolute() else base / path).resolve()
+    except (OSError, ValueError, RuntimeError):
+        raise ResourcePolicyError("cannot resolve Cargo output directory") from None
+
+
 def _target_from_arguments(explicit: str | None) -> Path:
-    configured = explicit or os.environ.get("CARGO_TARGET_DIR")
-    if configured:
-        path = Path(configured)
-        return path if path.is_absolute() else (Path.cwd() / path)
-    return ROOT / "target"
+    configured = (explicit or os.environ.get("CARGO_TARGET_DIR")
+                  or os.environ.get("CARGO_BUILD_TARGET_DIR"))
+    return _directory(configured, Path.cwd()) if configured else (ROOT / "target").resolve()
+
+
+def _document_targets(document: dict, base: Path) -> dict:
+    build = document.get("build", {})
+    if not isinstance(build, dict):
+        raise ResourcePolicyError("Cargo build configuration must be a table")
+    return {name: (build[name], base) for name in ("target-dir", "build-dir") if name in build}
+
+
+def _included_targets(document: dict, directory: Path, active: tuple[Path, ...]) -> dict:
+    includes = document.get("include", [])
+    if not isinstance(includes, list):
+        raise ResourcePolicyError("Cargo configuration includes must be an array")
+    targets = {}
+    for entry in includes:
+        optional = False
+        if isinstance(entry, dict):
+            optional = entry.get("optional", False)
+            entry = entry.get("path")
+        if not isinstance(entry, str) or not isinstance(optional, bool):
+            raise ResourcePolicyError("invalid Cargo configuration include")
+        path = directory / entry
+        if path.suffix != ".toml":
+            raise ResourcePolicyError("Cargo configuration includes must name TOML files")
+        targets.update(_file_targets(path, active, optional=optional))
+    return targets
+
+
+def _file_targets(path: Path, active: tuple[Path, ...] = (), *, optional: bool = False) -> dict:
+    # Cargo resolves include names beside the including file, but output paths
+    # two levels above the file, including files explicitly passed via --config.
+    try:
+        identity = path.resolve()
+    except (OSError, ValueError, RuntimeError):
+        raise ResourcePolicyError("cannot resolve Cargo configuration file") from None
+    if identity in active or len(active) >= 32:
+        raise ResourcePolicyError("cyclic or excessively nested Cargo configuration includes")
+    try:
+        with path.open("rb") as source:
+            document = tomllib.load(source)
+    except FileNotFoundError:
+        if optional:
+            return {}
+        raise ResourcePolicyError("Cargo configuration file is missing") from None
+    except (OSError, ValueError):
+        raise ResourcePolicyError("cannot read valid Cargo TOML configuration") from None
+    targets = _included_targets(document, path.parent, (*active, identity))
+    targets.update(_document_targets(document, path.parent.parent))
+    return targets
+
+
+def _config_targets(value: str, cwd: Path) -> dict:
+    if "=" not in value:
+        path = Path(value)
+        return _file_targets(path if path.is_absolute() else cwd / path)
+    try:
+        document = tomllib.loads(value)
+    except ValueError:
+        raise ResourcePolicyError("invalid inline Cargo TOML configuration") from None
+    targets = _included_targets(document, cwd, ())
+    targets.update(_document_targets(document, cwd))
+    return targets
+
+
+def validate_output_directories(command: Sequence[str], target: Path) -> Path:
+    """Bind explicit Cargo overrides before resource inspection or child launch.
+
+    The guard is not a sandbox for aliases/plugins or arbitrary subprocesses.
+    Canonical environment paths override ordinary discovered configuration;
+    explicit --config values override that environment and need validation here.
+    """
+    cwd = Path.cwd()
+    targets = {}
+    direct = None
+    index = 1
+    while index < len(command):
+        argument = command[index]
+        if argument == "--":
+            break  # Everything remaining belongs to the test/program/compiler.
+        if argument == "-C" or argument.startswith("-C"):
+            raise ResourcePolicyError("Cargo -C is unsupported; run the guard from the desired directory")
+        option, separator, value = argument.partition("=")
+        if option in {"--target-dir", "--config"}:
+            if not separator:
+                index += 1
+                if index >= len(command) or command[index] == "--":
+                    raise ResourcePolicyError("Cargo target/config option requires a value")
+                value = command[index]
+            if option == "--target-dir":
+                direct = (value, cwd)
+            else:
+                targets.update(_config_targets(value, cwd))
+        index += 1
+    effective = direct if direct is not None else targets.get("target-dir")
+    if effective is not None and _directory(*effective) != target:
+        raise ResourcePolicyError("Cargo target override differs from guarded target; use the same --target-dir")
+    build = targets.get("build-dir")
+    if build is None and os.environ.get("CARGO_BUILD_BUILD_DIR"):
+        build = (os.environ["CARGO_BUILD_BUILD_DIR"], cwd)
+    if build is not None:
+        if not isinstance(build[0], str) or "{" in build[0] or "}" in build[0]:
+            raise ResourcePolicyError("Cargo build-dir needs a concrete guarded path; expand templates explicitly")
+        build_dir = _directory(*build)
+        if not build_dir.is_relative_to(target):
+            raise ResourcePolicyError("Cargo build-dir escapes guarded target; use a concrete directory inside it")
+        return build_dir
+    return target
 
 
 def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
@@ -263,8 +382,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "nested Cargo would wait on its parent guard; build matching "
                 "CLI/daemon companions before starting the test run"
             )
-        policy = load_policy(args.policy)
         target_dir = _target_from_arguments(args.target_dir).resolve()
+        build_dir = validate_output_directories(args.command, target_dir)
+        policy = load_policy(args.policy)
         with acquire_lock(policy.lock_path, policy.lock_timeout_seconds):
             refuse_native_projects(ROOT / "target")
             if target_dir != ROOT / "target":
@@ -286,7 +406,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.check_only:
                 return 0
             environment = command_environment(
-                os.environ, args.workload, target_dir, policy
+                os.environ, args.workload, target_dir, policy, build_dir=build_dir
             )
             return subprocess.run(args.command, env=environment, check=False).returncode
     except (OSError, subprocess.SubprocessError, ResourcePolicyError) as exc:
