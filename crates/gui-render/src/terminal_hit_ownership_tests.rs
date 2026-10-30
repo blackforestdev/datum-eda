@@ -86,25 +86,46 @@ fn editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras() {
         };
         let prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();
         let scene_viewport = prepared.scene_viewport;
-        for region in &prepared.hit_regions {
-            if matches!(
-                region.target,
-                HitTarget::AuthoredObject(_) | HitTarget::ReviewAction(_)
-            ) {
-                assert!(
-                    rect_is_inside(region.rect, scene_viewport),
-                    "editor hit {:?} escaped {:?} at shift={center_shift} zoom={zoom}",
-                    region.rect,
-                    scene_viewport,
-                );
-            }
-        }
-
         let screen = prepared
             .hit_regions
             .iter()
             .find(|region| region.target == HitTarget::TerminalScreen)
             .expect("terminal screen hit target");
+        let mut sidebar_review_hits = 0;
+        for region in &prepared.hit_regions {
+            let owner = match &region.target {
+                HitTarget::AuthoredObject(_) => scene_viewport,
+                // Review actions also have deliberate, camera-independent sidebar
+                // cards. Authored editor objects never receive this exemption.
+                HitTarget::ReviewAction(_)
+                    if region
+                        .rect
+                        .intersect(prepared.layout.right_sidebar)
+                        .is_some() =>
+                {
+                    sidebar_review_hits += 1;
+                    prepared.layout.right_sidebar
+                }
+                HitTarget::ReviewAction(_) => scene_viewport,
+                _ => continue,
+            };
+            assert!(
+                rect_is_inside(region.rect, owner),
+                "hit {:?} escaped its owner {:?} at shift={center_shift} zoom={zoom}",
+                region.rect,
+                owner,
+            );
+            assert!(
+                region.rect.intersect(screen.rect).is_none(),
+                "hit {:?} overlaps terminal screen {:?} at shift={center_shift} zoom={zoom}",
+                region.rect,
+                screen.rect,
+            );
+        }
+        assert!(
+            sidebar_review_hits > 0,
+            "fixture exercises sidebar review hits"
+        );
         for (x, y) in [
             (screen.rect.x + 0.5, screen.rect.y + 0.5),
             (

@@ -18903,10 +18903,10 @@
       "key": "RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION",
       "issue_id": "dat-renderer-allocator-owner-j1jj",
       "title": "Bind allocator proof to its actual constructor owner",
-      "summary": "Replace a global newest-owner guess with test-only thread-local constructor identity; preserve exact accounting and lifetime assertions.",
+      "summary": "Exact thread-local test constructor identity replaces the global maximum guess. Deterministic newer-foreign-owner regression retains every byte/lifetime assertion; focused guarded proof and independent review PASS. Production accounting unchanged; no broader qualification claim.",
       "order": 116,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -18919,19 +18919,40 @@
         "kind": "maintenance",
         "rationale": "Owner-directed efficiency correction of existing repeated allocator proof failure; deterministic owner observation avoids retries and preserves production behavior."
       },
+      "landing_commit": "5e78f1351af91ec916c24028bacb8b6e6c2233b8"
+    },
+    {
+      "key": "TERMINAL-HIT-OWNERSHIP-TEST-BOUNDARY",
+      "issue_id": "dat-terminal-hit-sidebar-assertion-agz0",
+      "title": "Distinguish sidebar review hits in terminal ownership proof",
+      "summary": "Correct the existing assertion boundary while retaining adversarial camera clipping and terminal hit ownership. Test-only source; no terminal implementation change.",
+      "order": 117,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner-directed removal of repeated false proof failure: valid sidebar ReviewAction hits were incorrectly required inside editor scene. Preserve and strengthen terminal non-overlap assertions."
+      },
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-efficiency-allocator-owner-20261030",
-        "claimed_at": "2026-10-30T22:57:04Z",
-        "heartbeat_at": "2026-10-30T22:57:04Z",
-        "expires_at": "2026-10-31T00:57:04Z",
+        "session": "codex-efficiency-terminal-hit-20261030",
+        "claimed_at": "2026-10-30T23:04:05Z",
+        "heartbeat_at": "2026-10-30T23:04:05Z",
+        "expires_at": "2026-10-31T01:04:05Z",
         "scope": [
-          "crates/gui-render/src/render/document_cpu.rs",
-          "crates/gui-render/src/render/document_cpu_tests.rs"
+          "crates/gui-render/src/terminal_hit_ownership_tests.rs"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "f81a950f697871a6aea63584e2d3937105ff0e63"
+        "head": "5e78f1351af91ec916c24028bacb8b6e6c2233b8"
       }
     }
   ],

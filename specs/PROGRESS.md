@@ -399,8 +399,17 @@
 - **Prevent destructive dirty shared-tracker Git restores** (`SHARED-TRACKER-RESTORE-PROTECTION`; `dat-2xcj`).
    Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered. *state `deferred`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+<details>
+<summary>Completed history (1 landed records)</summary>
+
 - **Bind allocator proof to its actual constructor owner** (`RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION`; `dat-renderer-allocator-owner-j1jj`).
-   Replace a global newest-owner guess with test-only thread-local constructor identity; preserve exact accounting and lifetime assertions. *state `in_progress`; authorization `execution`; parallel lane.*
+   Exact thread-local test constructor identity replaces the global maximum guess. Deterministic newer-foreign-owner regression retains every byte/lifetime assertion; focused guarded proof and independent review PASS. Production accounting unchanged; no broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+
+</details>
+
+- **Distinguish sidebar review hits in terminal ownership proof** (`TERMINAL-HIT-OWNERSHIP-TEST-BOUNDARY`; `dat-terminal-hit-sidebar-assertion-agz0`).
+   Correct the existing assertion boundary while retaining adversarial camera clipping and terminal hit ownership. Test-only source; no terminal implementation change. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
