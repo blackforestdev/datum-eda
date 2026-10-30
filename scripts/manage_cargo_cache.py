@@ -205,8 +205,12 @@ def report(root: Path) -> None:
     for profile in ("debug", "release"):
         incremental = root / "target" / profile / "incremental"
         if incremental.is_dir() and not incremental.is_symlink():
-            print(f"Rebuildable shared incremental cache: {incremental.relative_to(root)} "
+            relative = incremental.relative_to(root)
+            print(f"Rebuildable shared incremental cache: {relative} "
                   f"({guard.format_gib(guard._tree_size(incremental))}; included above)")
+            print(f"  python3 scripts/manage_cargo_cache.py --metadata-only --remove {relative}")
+            print("  Validates only; apply requires released ownership, no Cargo/rustc and positive "
+                  "admission under the build lock. Unrelated runtime apps need not exit.")
     print("Read-only report. To remove a released disposable build tree:")
     print("  python3 scripts/manage_cargo_cache.py --remove <reported-relative-path> --apply")
     print("Cleanup never archives or automatically evicts another task's cache.")
