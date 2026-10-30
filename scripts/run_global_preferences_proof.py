@@ -86,6 +86,11 @@ def main() -> int:
         # build that binary harness. CLI/daemon/GUI rows and the workspace gates are unchanged.
         run([*GUARD, "cargo", "test", "--locked", "--offline", "-p", package,
              *(["--lib"] if package == "eda-engine" else []), test_filter], require_tests=True)
+    # The acceptance-support preconditions live in a focused integration target (moved out of the
+    # engine unit-test harness). The --lib row above still covers the rest of the preferences::
+    # library corpus; this row runs exactly the acceptance-support tests.
+    run([*GUARD, "cargo", "test", "--locked", "--offline", "-p", "eda-engine",
+         "--test", "preferences_acceptance_support"], require_tests=True)
     run(
         [
             sys.executable,

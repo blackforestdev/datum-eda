@@ -232,7 +232,7 @@
    Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`, `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md`.
 <details>
-<summary>Completed history (51 landed records)</summary>
+<summary>Completed history (52 landed records)</summary>
 
 - **Resolve current-host window resize resource consumption** (`GUI-RESIZE-REPAIR`; `dat-gui-vertical-resize-cpu-toj`).
    Owner-approved buffer reuse is now the ordinary main workspace default; no special launch option. No-option two-axis visible checks match the opt-in version exactly. Exact fallback, diagnostics, budgets and S4/broad qualification boundaries preserved. *state `landed`; authorization `none`.*
@@ -387,9 +387,15 @@
 - **Expose existing metadata-only incremental reclaim validation** (`CACHE-METADATA-REPORT-HINT`; `dat-wr30`).
    Cache reports expose existing non-applying metadata-only validation beside debug/release incremental inventory, with retained ownership/build-lock/admission constraints. Synthetic output controls, syntax/diff and independent review PASS; cleanup semantics unchanged. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Keep Cargo target overrides inside measured preflight** (`CARGO-TARGET-PREFLIGHT`; `dat-cargo-target-preflight-olt`).
+   Effective explicit Cargo target/config settings bind to measured resource paths before lock/preflight/child; compatible precedence and nested intermediates retained.23 hermetic controls, independent review, source-health and resource-policy PASS; no real build or cleanup. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
+- **Isolate renderer accounting tests from concurrent process counters** (`RENDERER-BUDGET-TEST-ISOLATION`; `dat-renderer-budget-test-race-wkj8`).
+   Owner efficiency maintenance fixes existing source-confirmed parallel accounting assertion race without weakening exact accounting or serializing renderer tests. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

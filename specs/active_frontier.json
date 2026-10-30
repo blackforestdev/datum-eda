@@ -10804,7 +10804,10 @@
           "gui-feedback presented_elapsed_ns sourced from the proven xcb-present PresentCompleteNotify helper at the milestone capture (XGetImage front-buffer poll as validated fallback).",
           "prepared-state elapsed_ns has no external ordinary observable; its treatment is an owner-visible ruling deferred to the GP-CM05A gate.",
           "N06 Orca focus-establishment timing requires tuning; the tuned-first path with an announcements fallback remains an open accessibility-capture refinement.",
-          "The scored 48-scenario native corpus must be rebuilt against datum-gui at the pinned candidate to close source-skew before the native budgets are acceptance-scored."
+          "The scored 48-scenario native corpus must be rebuilt against datum-gui at the pinned candidate to close source-skew before the native budgets are acceptance-scored.",
+          "surface-parity-negative/preference-write-faults is engine-surface-not-producible: there is no fault-injection seam in the preference repository commit path (write_generation/promote_head in repository/io.rs expose no injectable checkpoint); a test-only seam is a production-commit-path mechanism decision deferred to the GP-CM05A owner-visible gate, not added to ship a coverage row.",
+          "upgrade/migration-interruption is engine-surface-not-producible: commit_migration (repository/migration.rs:138) has no interruption or fault seam; deferred to the GP-CM05A owner-visible gate rather than inventing a production-path seam.",
+          "project-genesis-crash/* is not producible from an acceptance binary: the create_project_with_checkpoint seam (preferences/project_genesis.rs:143) is pub(super) and unreachable without a new pub wrapper, and several variants additionally require OS-level fault injection; deferred to the GP-CM05A owner-visible gate."
         ],
         "safety_requirements": [
           "Every preference mutation goes through the one engine-owned GlobalPreferencesProductService writer and commit() path under writer-lease and expected-generation checks, recording a MutationReceipt (operation, actor kind/id/session, reason, expected/resulting generations, before/after digests); no GUI/CLI/daemon/MCP adapter writes the repository directly (\u00a72 :52-67, \u00a72.1 :87-109, \u00a75.1 :281-303).",
@@ -18830,6 +18833,64 @@
         "rationale": "Observed owner-stop deadlock despite already-admitted safe reclaim route; improve discoverability without new policy or tool."
       },
       "landing_commit": "5567ec736cd51ef4d689501c3007f3f16daf7e99"
+    },
+    {
+      "key": "CARGO-TARGET-PREFLIGHT",
+      "issue_id": "dat-cargo-target-preflight-olt",
+      "title": "Keep Cargo target overrides inside measured preflight",
+      "summary": "Effective explicit Cargo target/config settings bind to measured resource paths before lock/preflight/child; compatible precedence and nested intermediates retained.23 hermetic controls, independent review, source-health and resource-policy PASS; no real build or cleanup.",
+      "order": 113,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Existing observed guard bug causes incorrect resource attribution and repeated build work; explicit owner ongoing find-and-correct efficiency goal. Closed historical pilot restriction does not bar this separate maintenance correction."
+      },
+      "landing_commit": "6261eba43e487eaa5e00e25e2636cb20369dd6d8"
+    },
+    {
+      "key": "RENDERER-BUDGET-TEST-ISOLATION",
+      "issue_id": "dat-renderer-budget-test-race-wkj8",
+      "title": "Isolate renderer accounting tests from concurrent process counters",
+      "summary": "Owner efficiency maintenance fixes existing source-confirmed parallel accounting assertion race without weakening exact accounting or serializing renderer tests.",
+      "order": 114,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Existing reproduced flaky renderer tests cause repeated proof work; isolate only test accounting while preserving production shared admission and exact assertions."
+      },
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
+        "claimed_at": "2026-10-30T21:37:02.301605+00:00",
+        "heartbeat_at": "2026-10-30T21:37:02.301605+00:00",
+        "expires_at": "2026-10-30T23:37:02.301605+00:00",
+        "scope": [
+          "crates/gui-render/src/text_gpu/budget.rs",
+          "crates/gui-render/src/text_gpu/staging_vec.rs",
+          "crates/gui-render/src/text_gpu/atlas/glyph_map.rs"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "6261eba43e487eaa5e00e25e2636cb20369dd6d8"
+      }
     }
   ],
   "management_appointments": {
