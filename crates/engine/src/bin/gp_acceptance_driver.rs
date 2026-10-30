@@ -1,22 +1,26 @@
 //! GP-CM05E engine-surface acceptance driver.
 //!
-//! The acceptance contract makes some resolver states (managed provider
-//! generation states) reachable only inside the engine — no CLI/MCP/GUI adapter
-//! can inject them. This thin binary is the `engine` surface the production
-//! acceptance corpus pins as `candidate.binaries["engine"]`: it builds a TEST
-//! PRECONDITION through [`acceptance_support`], resolves it through the ordinary
-//! engine resolver, and prints the honest observation booleans for one coverage
-//! row as a bare JSON object on stdout. The committed Python recipe
-//! (`scripts/global_preferences_acceptance/recipes/preferences_case.py`) invokes
-//! this binary for `surface == "engine"` and wraps its output into the unchanged
-//! `datum.preferences.case-observations.v2` record — the engine binary emits only
-//! the `{assertion_id: bool}` dict.
+//! The acceptance contract makes some engine states reachable only inside the
+//! engine — managed provider generation states (resolver-level) and committed-store
+//! recovery flows — with no CLI/MCP/GUI adapter able to drive them. This thin binary
+//! is the `engine` surface the production acceptance corpus pins as
+//! `candidate.binaries["engine"]`: it builds a TEST PRECONDITION through
+//! [`acceptance_support`] and prints the honest observation booleans for one coverage
+//! row as a bare JSON object on stdout. The committed engine recipe
+//! (`scripts/global_preferences_acceptance/recipes/preferences_engine_case.py`)
+//! invokes it for `surface == "engine"` and wraps the output into the unchanged
+//! `datum.preferences.case-observations.v2` record — the binary emits only the
+//! `{assertion_id: bool}` dict.
 //!
-//! It writes nothing: the managed-offline family is a pure resolver evaluation,
-//! so no store is created or mutated and the one-mutation-path law is not engaged.
-//! Observations are reported as data; a false result is never massaged to true —
-//! the governed per-case validator adjudicates it.
+//! Two phases: the default `observe` phase computes and prints the observation dict;
+//! a write family's `--phase setup` establishes its on-disk precondition under
+//! `DATUM_EDA_WORK_ROOT` (so the producer can snapshot the real `before` state) and
+//! prints nothing. The managed-offline family is a pure resolver read (no store);
+//! the backup-restore family goes through the engine's OWN committed-store path
+//! (product set_user + the repository recovery API) — never a private writer.
+//! Observations are reported as data; a false result is never massaged to true.
 
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 use eda_engine::preferences::acceptance_support;
@@ -37,11 +41,42 @@ fn arg_value(flag: &str) -> Option<String> {
     None
 }
 
+/// The acceptance work root a write family operates in (producer-provided, as the
+/// CLI families receive it).
+fn work_root() -> Result<PathBuf, String> {
+    std::env::var("DATUM_EDA_WORK_ROOT")
+        .map(PathBuf::from)
+        .map_err(|_| "DATUM_EDA_WORK_ROOT must be set for a write-family phase".to_owned())
+}
+
 fn main() -> ExitCode {
     let case = arg_value("--case").unwrap_or_default();
     let variant = arg_value("--variant").unwrap_or_default();
+    let phase = arg_value("--phase").unwrap_or_else(|| "observe".to_owned());
 
-    let observations = match case.as_str() {
+    // Setup phase (write families only): establish the on-disk precondition and
+    // print nothing; the producer snapshots the resulting store as `before`.
+    if phase == "setup" {
+        let result = match (case.as_str(), variant.as_str()) {
+            ("backup-restore", "restore") => {
+                work_root().and_then(|root| acceptance_support::backup_restore_setup(&root))
+            }
+            _ => {
+                eprintln!("gp_acceptance_driver: no setup phase for '{case}/{variant}'");
+                return ExitCode::FAILURE;
+            }
+        };
+        return match result {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(error) => {
+                eprintln!("gp_acceptance_driver: setup '{case}/{variant}' failed: {error}");
+                ExitCode::FAILURE
+            }
+        };
+    }
+
+    // Observe phase: compute the observation booleans for the coverage row.
+    let observations: Vec<(&'static str, bool)> = match case.as_str() {
         "managed-offline" => match acceptance_support::ManagedOfflineVariant::parse(&variant) {
             Some(managed_variant) => {
                 let scenario = acceptance_support::managed_offline_scenario(managed_variant);
@@ -53,6 +88,15 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             }
         },
+        "backup-restore" if variant == "restore" => {
+            match work_root().and_then(|root| acceptance_support::backup_restore_observe(&root)) {
+                Ok(observed) => observed,
+                Err(error) => {
+                    eprintln!("gp_acceptance_driver: observe '{case}/{variant}' failed: {error}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
         _ => {
             eprintln!("gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'");
             return ExitCode::FAILURE;

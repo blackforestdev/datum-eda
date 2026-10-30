@@ -8,7 +8,8 @@
 
 use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
-    managed_active_negative_control, managed_offline_scenario, observe_managed_offline,
+    backup_restore_observe, backup_restore_setup, managed_active_negative_control,
+    managed_offline_scenario, observe_managed_offline, store_generation,
 };
 use eda_engine::preferences::{ContributionDisposition, ResolutionOutcome};
 use serde_json::json;
@@ -87,5 +88,45 @@ fn active_managed_generation_is_the_falsifying_negative_control() {
     let observed = observe_managed_offline(&explanation, &scenario);
     for (id, value) in observed {
         assert!(!value, "negative-control observation {id} must be false");
+    }
+}
+
+#[test]
+fn backup_restore_restore_commits_through_the_journal_and_refuses_stale() {
+    // The write pattern-setter: a full seed -> exact-backup -> diverge -> restore
+    // through the engine's own committed-store path, with a stale-plan refusal as
+    // the PM059 negative control. Runs setup+observe in a throwaway work root.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-br-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let outcome = (|| {
+        backup_restore_setup(&work)?;
+        let diverged_gen = store_generation(&work);
+        let observed = backup_restore_observe(&work)?;
+        let restored_gen = store_generation(&work);
+        Ok::<_, String>((diverged_gen, observed, restored_gen))
+    })();
+    let _ = std::fs::remove_dir_all(&work);
+
+    let (diverged_gen, observed, restored_gen) = outcome.expect("backup-restore/restore runs");
+    assert_eq!(
+        diverged_gen,
+        Some(1),
+        "setup leaves the diverged generation 1"
+    );
+    assert_eq!(
+        restored_gen,
+        Some(2),
+        "the restore commits a real new generation 2"
+    );
+    assert_eq!(
+        observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+        vec![
+            "preview-pure",
+            "backup-before-restore",
+            "exact-generation-authority"
+        ]
+    );
+    for (id, value) in observed {
+        assert!(value, "backup-restore/restore observation {id} must hold");
     }
 }

@@ -244,6 +244,18 @@ def _seed_populated_store(work_root):
     return repo
 
 
+def _engine_setup_phase(work_root, case, variant):
+    """Run the engine acceptance driver's setup phase to establish a write family's on-disk
+    precondition under the work root (seed a committed store + exact backup + diverge, through the
+    engine's own commit path). The driver reads DATUM_EDA_WORK_ROOT; DATUM_EDA_ENGINE is the pinned
+    driver binary (both already exported by produce_case)."""
+    binary = os.environ.get("DATUM_EDA_ENGINE")
+    require(bool(binary) and Path(binary).is_file(), "DATUM_EDA_ENGINE must point at the engine driver")
+    run = subprocess.run([binary, "--case", case, "--variant", variant, "--phase", "setup"],
+                         capture_output=True, text=True)
+    require(run.returncode == 0, f"engine setup {case}/{variant} failed: {run.stderr.strip()}")
+
+
 def _family_handlers(family):
     """Return (initial_state_fn, capture_after_fn, setup_fn) for a case family. capture_after None =
     read-only (after==before). setup None = `before` is a pure manifest; otherwise setup builds the
@@ -301,6 +313,21 @@ def _family_handlers(family):
     # after==before=empty is honest and the engine driver's observations carry the proof.
     if case == "managed-offline" and variant in ("inactive", "expired", "unavailable", "offline"):
         return _empty_state, None, None
+    # backup-restore (engine WRITE family): the engine setup phase seeds a committed store (gen0) +
+    # exact backup and diverges it (gen1); the recipe's observe phase commits a restore (gen2). So
+    # before = store@gen1, after = store@gen2 -> after != before with a REAL new generation, and the
+    # restore's CommitExactRestore receipt is in the captured after-state (audit write-family
+    # guardrail). The precondition is established through the engine's own commit path, not a writer.
+    if case == "backup-restore" and variant == "restore":
+        def setup(capture, key, work_root):
+            _engine_setup_phase(Path(work_root), "backup-restore", "restore")
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+        def capture_after(capture, key, work_root, before_state):
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+        return None, capture_after, setup
     raise ValueError(f"case family not implemented: {family}")
 
 
