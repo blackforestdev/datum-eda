@@ -212,6 +212,29 @@ def _seed_corrupt_store(work_root, variant):
     return repo
 
 
+def _seed_populated_store(work_root):
+    """Populate the Global store with one committed user value (datum.units.system=imperial) via a
+    governed TTY-APPLY mutation -> generation 0; drop the transient writer lease. Returns the repo."""
+    config = work_root / "config"
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("XDG_CONFIG_HOME", "DATUM_ENGINE_SOCKET", "EDA_ENGINE_SOCKET",
+                        "DATUM_GUI_PREFERENCES_PATH", "DATUM_EDA_WORK_ROOT")}
+    env["XDG_CONFIG_HOME"] = str(config)
+    argv = ["--format", "json", "preferences", "set", "datum.units.system",
+            "--value-json", json.dumps("imperial"), "--expected", json.dumps({"kind": "missing"}),
+            "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, "global-populated/seed")),
+            "--reason", "GP-CM05E global-populated fixture seed"]
+    run = execute(Path(os.environ["DATUM_EDA_CLI"]), argv, env, timeout=30, confirmation=True)
+    require(run["exit_code"] == 0 and run["confirmed"] and not run["timed_out"],
+            "global-populated seed mutation failed/unconfirmed")
+    repo = config / "datum" / "preferences"
+    require(repo.is_dir(), "seed did not create a preferences repository")
+    lock = repo / "writer.lock"
+    if lock.exists():
+        lock.unlink()
+    return repo
+
+
 def _family_handlers(family):
     """Return (initial_state_fn, capture_after_fn, setup_fn) for a case family. capture_after None =
     read-only (after==before). setup None = `before` is a pure manifest; otherwise setup builds the
@@ -224,6 +247,18 @@ def _family_handlers(family):
             return capture.put(_snapshot_dir(capture, before_state["root"],
                                              Path(work_root) / "project", "project/"))
         return _empty_state, capture_after, None
+    # global-populated is a store-WRITE family: setup populates the Global store (gen0); the recipe
+    # performs the later edit (gen1); before=store@gen0, after=store@gen1 -> after != before with a
+    # real new generation (audit write-family guardrail; NOT corrupt-store's preserve-equality).
+    if case == "existing-project-stability" and variant == "global-populated":
+        def setup(capture, key, work_root):
+            repo = _seed_populated_store(Path(work_root))
+            return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+        def capture_after(capture, key, work_root, before_state):
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+        return None, capture_after, setup
     # Read-only query/parity families: no store is written, so after==before=empty is honest and the
     # recipe's own observations (no-write / absent store) carry the proof. capture_after stays None.
     if case == "surface-parity-negative" and variant in (

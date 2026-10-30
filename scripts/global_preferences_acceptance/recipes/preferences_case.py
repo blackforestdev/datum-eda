@@ -83,6 +83,32 @@ def _run_and_parse(binary, work, argv):
         return proc.returncode, None
 
 
+# Reuse the governed foreground-TTY helper for the rare case family that must perform a human APPLY
+# mutation (a write family's later edit); importing the sibling package keeps the pty logic in ONE
+# audited place rather than duplicating pty.fork here, and ships with the recipe (reproducible replay).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from global_preferences_acceptance.process import execute as _execute_tty  # noqa: E402
+
+
+def _run_apply(binary, work, argv):
+    """Run a `preferences set/reset` under a pty, auto-submitting APPLY at the foreground-TTY prompt;
+    return (committed: bool, envelope-or-None). Never retries."""
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("DATUM_GUI_PREFERENCES_PATH", "DATUM_ENGINE_SOCKET", "EDA_ENGINE_SOCKET")}
+    env["HOME"] = str(work)
+    env["XDG_CONFIG_HOME"] = str(work / "config")
+    run = _execute_tty(binary, ["--format", "json", *argv], env, timeout=30, confirmation=True)
+    text = run["stdout"].decode("utf-8", "replace").replace("\r", "")
+    start = text.find('{\n  "ok"')
+    try:
+        envelope = json.loads(text[start:]) if start >= 0 else None
+    except json.JSONDecodeError:
+        envelope = None
+    committed = bool(run["exit_code"] == 0 and run["confirmed"] and not run["timed_out"]
+                     and isinstance(envelope, dict) and envelope.get("ok") is True)
+    return committed, envelope
+
+
 def _no_project_written(work):
     """A read-only query writes no native Project anywhere under the work root."""
     return not any(path.name == "project.json" for path in work.rglob("*"))
@@ -248,6 +274,69 @@ def _query_context(binary, work, argv):
         return json.loads(proc.stdout)
     except json.JSONDecodeError:
         return None
+
+
+def existing_project_stability_global_populated_cli():
+    """Genesis from a POPULATED Global store, then a later Global edit that must not change the
+    published Project. The producer's setup populated the store (gen0, datum.units.system=imperial) in
+    the work root; this recipe creates the Project from it (seeds take the USER value), then performs
+    the later Global edit (system=metric, gen0->gen1, foreground-TTY APPLY) and observes the Project is
+    byte-unchanged by it. Honest semantics, never returncode==0."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-eps-global-populated-")
+    try:
+        dest = work / "project"
+        seed = "existing-project-stability/global-populated/cli"
+        rc_new, created = _run_and_parse(binary, work, ["project", "new", "--name", "Acceptance",
+            "--project-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project")),
+            "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request")),
+            "--units-source", "global", "--json", str(dest)])
+        result = created.get("result") if isinstance(created, dict) and created.get("ok") is True else None
+        receipt = (result or {}).get("units_receipt") or {}
+        items = receipt.get("items") or []
+        source = receipt.get("source") or {}
+        system = next((i for i in items if i.get("key") == "datum.units.system"), {})
+        # exact-eight-seeds: eight seeds taken from the POPULATED Global store -- system carries the
+        # user value (imperial), effective_source user, source kind global with a real generation.
+        exact_eight = bool(len(items) == 8 and source.get("kind") == "global" and source.get("generation")
+                           and system.get("copied_value") == "imperial"
+                           and system.get("effective_source") == "user")
+        seals = ("units_seed_catalog_digest", "profile_digest", "genesis_request_digest", "seed_application_digest")
+        immutable_receipt = bool(result and len(items) == 8 and receipt.get("schema_name")
+            and all(isinstance(receipt.get(s), str) and receipt.get(s) for s in seals)
+            and receipt.get("genesis_request_digest") == result.get("genesis_request_digest"))
+        four = ["project.json", "board/board.json", "rules/rules.json", "schematic/schematic.json"]
+        files_ok = True
+        for name in four:
+            path = dest / name
+            if not path.is_file():
+                files_ok = False
+                continue
+            try:
+                json.loads(path.read_text())
+            except (OSError, json.JSONDecodeError):
+                files_ok = False
+        rc_validate, _validated = _run_and_parse(binary, work, ["project", "validate", str(dest)])
+        resolver_valid = bool(rc_new == 0 and files_ok and rc_validate == 0)
+        # later-global-edits-no-change: snapshot the Project, perform the later Global edit
+        # (gen0 -> gen1, TTY APPLY), snapshot again -> the Project is byte-identical.
+        before_project = _store_digest_map(dest)
+        committed, edited = _run_apply(binary, work, ["preferences", "set", "datum.units.system",
+            "--value-json", json.dumps("metric"),
+            "--expected", json.dumps({"kind": "generation", "generation": source.get("generation")}),
+            "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/later-edit")),
+            "--reason", "GP-CM05E later global edit"])
+        changed = bool(committed and ((edited.get("result") or {}).get("result") or {}).get("changed") is True)
+        after_project = _store_digest_map(dest)
+        later_no_change = bool(changed and before_project and before_project == after_project)
+        return {
+            "exact-eight-seeds": bool(exact_eight),
+            "resolver-valid-four-file-project": bool(resolver_valid),
+            "immutable-receipt": bool(immutable_receipt),
+            "later-global-edits-no-change": bool(later_no_change),
+        }
+    finally:
+        cleanup()
 
 
 def surface_parity_negative_active_inventory_cli():
@@ -503,6 +592,7 @@ DISPATCH = {
     ("clean-install", "reopen", "cli"): clean_install_reopen_cli,
     ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
     ("existing-project-stability", "global-missing", "cli"): existing_project_stability_global_missing_cli,
+    ("existing-project-stability", "global-populated", "cli"): existing_project_stability_global_populated_cli,
     ("surface-parity-negative", "active-inventory", "cli"): surface_parity_negative_active_inventory_cli,
     ("surface-parity-negative", "all-query-schemas", "cli"): surface_parity_negative_all_query_schemas_cli,
     ("surface-parity-negative", "all-stable-refusals", "cli"): surface_parity_negative_all_stable_refusals_cli,
