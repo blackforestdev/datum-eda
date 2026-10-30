@@ -18724,9 +18724,9 @@
       "key": "NATIVE-EDIT-COMPLETION-OWNERSHIP",
       "issue_id": "dat-q4il",
       "title": "Release native edit worker client before completion",
-      "summary": "Bounded future normal-close race correction; dat-typb remains open for other lifecycle paths.",
+      "summary": "Both native-edit worker paths release client ownership before completion. Two deterministic headless tests and independent review passed. Partial normal-close fix only; dat-typb remains open.",
       "order": 108,
-      "state": "in_progress",
+      "state": "landed",
       "authorization": "none",
       "canonical_next": false,
       "parallel": true,
@@ -18740,19 +18740,7 @@
         "kind": "maintenance",
         "rationale": "Owner efficiency goal plus PM-Agent-01 explicit runtime disposition: prevent orphan ownership and recurring cleanup chores."
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "01a160d9-b499-7923-984a-b3390beb2e34",
-        "claimed_at": "2026-10-30T18:49:08Z",
-        "heartbeat_at": "2026-10-30T18:49:08Z",
-        "expires_at": "2026-10-31T02:49:08Z",
-        "scope": [
-          "crates/gui-app/src/editor/runtime_native_edit.rs"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "af0af52f98cfc000d2c7b4264e4da99662596152"
-      }
+      "landing_commit": "e2150575e16ec7a2184c129b965bf70e3d15b8b1"
     }
   ],
   "management_appointments": {
