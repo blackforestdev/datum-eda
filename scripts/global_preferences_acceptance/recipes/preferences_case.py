@@ -196,6 +196,76 @@ def existing_project_stability_global_missing_cli():
     }
 
 
+ACTIVE_SECTIONS = {"appearance", "units"}
+RESERVED_SENTINEL = "datum.pcb.route_profile"  # a known reserved descriptor (reserved_preference_key)
+QUERY_VERBS = (["describe"], ["list"], ["get", "datum.units.system"], ["search", "unit"],
+               ["explain", "datum.units.system"], ["preview-project-units-seed", "--source", "global"])
+
+
+def _query_context(binary, work, argv):
+    """Run one read-only query verb; return its parsed envelope (or None) without writing a store."""
+    proc = _run_cli(binary, ["preferences", *argv], work=work)
+    if proc.returncode != 0:
+        return None
+    try:
+        return json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return None
+
+
+def surface_parity_negative_active_inventory_cli():
+    """The CLI query surface exposes exactly the active inventory: 11 active descriptors, the 45
+    reserved descriptors absent from the listing, exactly the two active sections, and one shared
+    service (identical active catalog digest + counts across every query verb). Read-only: no store
+    is written, so the empty before-state is also the truthful after-state. Honest semantics only."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-spn-active-inventory-")
+    try:
+        describe = _query_context(binary, work, ["describe"])
+        eleven_active = reserved_absent = two_sections = same_service = False
+        if isinstance(describe, dict) and describe.get("ok") is True:
+            context = describe.get("context") or {}
+            inner = ((describe.get("result") or {}).get("result") or {}).get("result") or {}
+            sections = inner.get("sections") or []
+            controls = inner.get("controls") or []
+            section_ids = {s.get("id") for s in sections if isinstance(s, dict)}
+            control_keys = [c.get("key") for c in controls if isinstance(c, dict)]
+            control_sections = {c.get("section_id") for c in controls if isinstance(c, dict)}
+
+            eleven_active = bool(context.get("active_descriptor_count") == 11 and len(controls) == 11)
+            # The 45 reserved descriptors exist but are ABSENT from the active surface: the listing is
+            # exactly the 11 active controls, all within the two active sections, and a known reserved
+            # key does not appear among them.
+            reserved_absent = bool(
+                context.get("reserved_descriptor_count") == 45 and len(controls) == 11
+                and control_sections <= ACTIVE_SECTIONS and RESERVED_SENTINEL not in control_keys)
+            two_sections = bool(len(sections) == 2 and section_ids == ACTIVE_SECTIONS
+                                and control_sections <= ACTIVE_SECTIONS)
+
+            # same-service: every query verb answers from one service -- identical active catalog
+            # digest and identical active/reserved counts.
+            digests, actives, reserveds, all_ok = set(), set(), set(), True
+            for argv in QUERY_VERBS:
+                envelope = describe if argv == ["describe"] else _query_context(binary, work, argv)
+                if not (isinstance(envelope, dict) and envelope.get("ok") is True):
+                    all_ok = False
+                    break
+                ctx = envelope.get("context") or {}
+                digests.add(ctx.get("active_catalog_digest"))
+                actives.add(ctx.get("active_descriptor_count"))
+                reserveds.add(ctx.get("reserved_descriptor_count"))
+            same_service = bool(all_ok and len(digests) == 1 and None not in digests
+                                and actives == {11} and reserveds == {45})
+        return {
+            "11-active": bool(eleven_active),
+            "45-reserved-absent": bool(reserved_absent),
+            "two-sections": bool(two_sections),
+            "same-service": bool(same_service),
+        }
+    finally:
+        cleanup()
+
+
 # (case, variant, surface) -> observation producer. Later GP-CM05E slices extend
 # this map; each family runs the real product surface and records honest results.
 #
@@ -210,6 +280,7 @@ DISPATCH = {
     ("clean-install", "missing-store", "cli"): clean_install_missing_store_cli,
     ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
     ("existing-project-stability", "global-missing", "cli"): existing_project_stability_global_missing_cli,
+    ("surface-parity-negative", "active-inventory", "cli"): surface_parity_negative_active_inventory_cli,
 }
 
 

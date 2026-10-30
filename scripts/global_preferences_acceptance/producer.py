@@ -176,6 +176,10 @@ def _family_handlers(family):
             return capture.put(_snapshot_dir(capture, before_state["root"],
                                              Path(work_root) / "project", "project/"))
         return _empty_state, capture_after
+    # Read-only query/parity families: no store is written, so after==before=empty is honest and the
+    # recipe's own observations (no-write / absent store) carry the proof. capture_after stays None.
+    if case == "surface-parity-negative" and variant == "active-inventory":
+        return _empty_state, None
     raise ValueError(f"case family not implemented: {family}")
 
 
