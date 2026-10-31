@@ -1,0 +1,57 @@
+{
+  "schema": "datum.preferences.t1-ordinary-evidence-mapping.v1",
+  "task": "GLOBAL-PREFERENCES-COMPLETION",
+  "step": "GP-CM05E",
+  "gate": "T1 owner-park (ordinary_evidence honesty-fence mapping)",
+  "date": "2026-10-31",
+  "author_session": "roadmap-agent-01",
+  "walked_by": "PM-Agent-01 (walk complete; confirmed with the W2/W3 payload-citation refinement)",
+  "pinned_candidate": "57bd9b1b1a7e10b5867d0a9dd75c9215a5dedc86",
+  "development_ready": false,
+  "development_ready_disposition": "WITHHELD. The pin-bound window corpus asserts accessibility and install/stability predicates, not the designer preference-workflow chains; no preferences ordinary_application run exists at the pin. The flip stays false and the availability capture is OWED as a pin-2 leg.",
+  "candidate_time_capture_sources": [
+    ".datum/scratch/dev-agent-01/pin/cases.json (Leg-1, 47 rows @57bd9b1b: 28 engine + 19 cli; zero gui)",
+    ".datum/scratch/frontend-dev-01/leg2/reports/* (Leg-2 GUI @57bd9b1b)",
+    ".datum/scratch/dev-agent-01/pin/measurements.json (26 headless measurement rows @57bd9b1b)"
+  ],
+  "excluded_non_candidate_time": "frontend-dev-01/gp-cm05e-gui-* capture dirs bind OLD candidates (ee7c3b89 / 2c8987b5 / 7f34cd98), not the pin; excluded under the candidate-time-observation rule.",
+  "ordinary_workflow_mapping": {
+    "W1_open_and_describe_read": {
+      "state": "PARTIAL",
+      "observed": "clean-install/missing-store asserts factory-defaults (opening on a clean store, reading defaults); accessibility-interaction asserts correct-name-role-value-state (controls' names/roles/values/labels read via AT-SPI) at the pin.",
+      "unobserved_remainder": "a dedicated Describe/Read of all active sections and option tokens."
+    },
+    "W2_setuser_change_commit_receipt": {
+      "state": "PARTIAL-WITH-PAYLOAD-CITATIONS",
+      "observed": "set-reset-refusal @57bd9b1b drove a real GUI control change that COMMITTED (store generations advanced; the polite change announcement is in the payload evidence).",
+      "unobserved_remainder": "the applied-value / resolver-explanation / receipt chain specifics (no assertion scores them)."
+    },
+    "W3_persist_across_reopen": {
+      "state": "PARTIAL-WITH-PAYLOAD-CITATIONS",
+      "observed": "native-close-reopen's payload carries persisted=True across the reopen.",
+      "unobserved_remainder": "new-immutable-generation + resolver-reports-inspected-generation (no assertion scores them)."
+    },
+    "W4_resetuser_factory_default": {
+      "state": "UNFILLED",
+      "observed": "none for the ResetUser verb.",
+      "precision": "the a11y row's 'RESET' leg is a second toggle (SetUser), NOT the ResetUser factory-reset verb; the Reset control was rendered (F4c pixels) but never driven."
+    }
+  },
+  "safety_mapping": {
+    "a_commit_path_mutationreceipt_no_direct_write": {
+      "state": "PARTIAL",
+      "observed": "global-populated asserts immutable-receipt; clean-install asserts no-project-write / no-repository-created, at the pin."
+    },
+    "b_agent_proposal_required": {
+      "state": "UNFILLED",
+      "observed": "none; no pin-bound row asserts the mcp_agent/script_agent/unknown proposal_required negative vector (no 'proposal' assertion id; the human-agent-authority / surface-parity-negative families largely scope-exited)."
+    },
+    "c_factory_default_wording_invariance": {
+      "state": "PARTIAL-INVARIANT",
+      "observed": "clean-install factory-defaults observes the factory defaults present/correct; not a positive mutation-path-left-wording-unchanged observation."
+    }
+  },
+  "independent_review_provenance": "Disposition unit audit-blessed (1d91a2fa + 9a7c1a34 hash fix, audit-agent-01); this mapping walked by PM-Agent-01 before the park. This record is the producer's candidate-time mapping (roadmap-agent-01), not itself an independent review.",
+  "gate_packet_item": "Designer-workflow ordinary_application run (W1-W4 chains + safety-b negative) is a pin-2 capture leg; development_ready remains false until that run exists at the pin-2 candidate with a non-producing-session review.",
+  "not_acceptance_evidence": true
+}

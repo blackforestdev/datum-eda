@@ -10363,51 +10363,10 @@
       ]
     },
     {
-      "authorization": "execution",
+      "authorization": "owner_decision",
       "canonical_next": true,
-      "claim": {
-        "agent": "dev-agent-01 (PM-Agent-01 Option-A claim handoff from u3-core-worker: migration-required refusal-precedence fix + CLI acceptance family)",
-        "claimed_at": "2026-10-31T06:36:56Z",
-        "expires_at": "2026-10-31T14:36:56Z",
-        "harness": "claude-code",
-        "head": "f4c0a01f119c36ec32c95d1d7a63d70f423a1abf",
-        "heartbeat_at": "2026-10-31T06:36:56Z",
-        "scope": [
-          "crates/cli/src/commands/preferences.rs",
-          "crates/cli/src/commands/preferences_daemon.rs",
-          "crates/cli/src/main_tests/main_tests_preferences.rs",
-          "crates/engine-daemon/src/dispatch.rs",
-          "crates/engine-daemon/src/preferences_state.rs",
-          "crates/engine/src/preferences",
-          "crates/gui-app/src/app_shell.rs",
-          "crates/gui-app/src/global_preferences_product_adapter.rs",
-          "crates/gui-app/src/global_preferences_projection.rs",
-          "crates/gui-app/src/global_preferences_runtime",
-          "crates/gui-app/src/global_preferences_runtime.rs",
-          "crates/gui-app/src/global_preferences_runtime_tests.rs",
-          "crates/gui-app/src/global_preferences_window.rs",
-          "crates/gui-app/src/new_project_window.rs",
-          "crates/gui-protocol/src/kicad_board_materialization.rs",
-          "crates/gui-render/src/global_preferences_dialog.rs",
-          "crates/gui-render/src/global_preferences_dialog_tests.rs",
-          "mcp-server/server_runtime_preferences.py",
-          "mcp-server/test_preferences_product.py",
-          "scripts/check_global_preferences_production_evidence.py",
-          "scripts/check_global_preferences_production_matrix.py",
-          "scripts/global_preferences_acceptance",
-          "scripts/measure_global_preferences_release.py",
-          "scripts/run_global_preferences_production_acceptance.py",
-          "scripts/run_global_preferences_proof.py",
-          "scripts/test_global_preferences_acceptance_runner.py",
-          "scripts/test_global_preferences_measurements.py",
-          "scripts/test_global_preferences_production_evidence.py",
-          "scripts/test_global_preferences_production_matrix.py"
-        ],
-        "session": "dev-agent-01 (PM-Agent-01 Option-A claim handoff from u3-core-worker: migration-required refusal-precedence fix + CLI acceptance family)",
-        "worktree": "/home/bfadmin/Documents/datum-eda"
-      },
       "completion": {
-        "canonical_next_step_id": "GP-CM05E",
+        "canonical_next_step_id": "GP-CM05A",
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
@@ -10736,7 +10695,12 @@
           },
           {
             "action": "Reconcile and implement the preserved production acceptance contract; prove every case, native observation, budget and gate with independent review before readiness.",
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "57bd9b1b"
+              }
+            ],
             "depends_on": [
               "GP-CM05V"
             ],
@@ -10748,7 +10712,7 @@
                 "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
               }
             ],
-            "status": "in_progress"
+            "status": "complete"
           },
           {
             "action": "Review the exact complete candidate, report, independent proof and publication delta before product acceptance.",
@@ -10797,7 +10761,8 @@
         ],
         "prerequisite_reasons": {
           "issue:dat-global-preferences-engine-build-vge": "The Global Preferences engine build (GlobalPreferencesService / product service) must exist before the completion acceptance checkers, capture and runtime integration can exercise it; it is a closed hard dependency.",
-          "issue:dat-shared-units-surface-parity-s9x": "Shared-units surface parity is required so preference-driven Units defaults and working-units policy render consistently across surfaces during acceptance; it is a closed hard dependency."
+          "issue:dat-shared-units-surface-parity-s9x": "Shared-units surface parity is required so preference-driven Units defaults and working-units policy render consistently across surfaces during acceptance; it is a closed hard dependency.",
+          "step:GP-CM05A": "GP-CM05A is the owner production-acceptance gate: the pinned candidate 57bd9b1b parks NON-READY (development_ready false; native 48-row + scale-2 measurement + genesis-p95 remainders in the disclosed-gap ledger), so its production-acceptance disposition and any re-pin are an explicit owner decision, not an agent action."
         },
         "qualification_followups": [
           "gui-feedback presented_elapsed_ns sourced from the proven xcb-present PresentCompleteNotify helper at the milestone capture (XGetImage front-buffer poll as validated fallback).",
@@ -10812,7 +10777,8 @@
           "The four scale-2 GUI rows (wayland/2.0 and x11/2.0 at both logical window sizes) are environment-blocked on the reference 1920x1080 :1 display: the scale-2 device extents (1024x900@2=2048x1800; 720x760@2=1440x1520) exceed the screen, the owned Weston clamps, and the realized logical viewport mis-binds the matrix coordinate, so production was refused rather than falsely stamped. A feasibility probe at 2304x2048 through the parameterized isolated-input transport (scripts/run_native_qa_isolated_input.py, 189eff3e --input-width/--input-height) showed it binds scale-2 un-clamped (scale 2 applied, realized logical viewport 1024x900 = the matrix coordinate). Scale-2 envelope equivalence ASSESSED (frontend ENVELOPE-EQUIVALENCE-ASSESSMENT.md, audit-reviewed): the OWNER-BAR rests on section 6's requirement of real Linux Wayland and X11 sessions plus the headless-renderer clause's scope -- admitting rows from a fully synthetic headless-backed display requires reading that ratified term to include synthetic sessions, an acceptance-bar doctrinal choice reserved to the owner at GP-CM05A. Section 3's no-agent-selected-equivalence clause concerns candidate/publication identity and is not the basis; the G1/G2 nesting/input-depth silences are assessable context, not reservations. Bounded engineering (transport teardown repair, X11-in-transport diagnostics, R4-R6 capture work) is covered and does not await the owner; only row credit does, and no permission can establish equivalence or a PASS. The four scale-2 coordinate classes stay OWED; remedy order: (1) real-session display >=2048x1800 (owner resource, contract-clean); (2) the parameterized isolated-input transport per the owner's section-6 reading, which additionally requires real R4-R6 production in-transport plus the transport teardown-FAIL repaired; (3) accept the limitation. Cite frontend-dev-01 scale2 FINDING + ENVELOPE-EQUIVALENCE-ASSESSMENT.md.",
           "unavailable-global/cli draft-preserved: audit (25f73452 review) ruled the observation an honest cross-surface projection of the side-effect-free-refusal invariant and recommends, at the matrix owner's discretion at the GP-CM05A gate, renaming the assertion to refusal-side-effect-free or adding a contract note that the CLI (which has no interactive draft) realizes it as the refusal leaving the Global store intact and no partial Project; the landed observation is honest as-is.",
           "The 48 native observations (N01-N06 at the eight GUI coordinates) are scope-exited to the GP-CM05A owner gate for the pinned candidate 57bd9b1b: no recipe in the candidate input closure (4030 entries) can serve a native fixture under the governed \u00a79 independent-replay bar. The contract (\u00a7584) requires native replay to live re-invoke the candidate-bound fixture recipe as `python3 <recipe.path> --native-scenario <scenario_id> --environment <environment_id>` and parse a `datum.preferences.native-replay.v2` output ('true or a nonempty arbitrary log cannot stand in for replay'); report.py:124-127 enforces the exact argv, so a non-invocable module (recipes/accessibility_capture.py, no CLI entry) fails, and the invocable a11y case recipes (preferences_gui_a11y_case.py / _nav_case.py / _modal_case.py) reject the 2-tuple native coverage (their coordinate parser requires the 5-tuple case coverage) and do not compute the N0x native assertion inventories. The only recipe designed for `--native-scenario` (scripts/fixture.py) is synthetic-only, is not in the candidate closure, and is declared never-readiness-bearing (test_support: 'Synthetic regression fixtures only'). A conformant in-closure native recipe cannot be added without committing a file, which is a new candidate identity (revision+tree+manifest) and would invalidate every row captured at this pin. Native coverage therefore cannot reach candidate_ready at 57bd9b1b and is carried to the owner gate as a disclosed structural gap, never a pass. The contract-conformant native recipe + its driver are being built outside the window (frontend's redefined native unit) and enter the closure at the next pin; the second pin consolidates this with the other re-pin triggers (the owner-selected genesis-p95 remedy and any x11-modal outcome) into one deliberate recapture.",
-          "Of the 90 measurement variants, the 32 at scale-2 (scale factor 2.0) -- gui-feedback (24), window-lifecycle (4) and native-window-open (4) -- are OWED to the GP-CM05A owner gate on the standing scale-2 citations, leaving a strict producible set of 58. The scale-2 GUI budgets are environment-blocked on the reference 1920x1080 :1 display for the same reason as the scale-2 case rows: the scale-2 device extents (1024x900@2=2048x1800; 720x760@2=1440x1520) exceed the screen, the owned Weston clamps, and the realized logical viewport mis-binds the matrix coordinate, so a timing-grade measurement cannot be honestly captured at scale-2 and production is refused rather than falsely stamped. Confirmed by frontend-dev-01's live re-verification during the window and the audit-reviewed ENVELOPE-EQUIVALENCE-ASSESSMENT.md; the owner-bar rests on section 6's requirement of real Linux Wayland and X11 sessions plus the headless-renderer clause's scope. The 58 strict measurement variants are captured and scored at this pin; the 32 scale-2 variants stay OWED with the scale-2 remedy order. Cite frontend-dev-01 scale2 FINDING + ENVELOPE-EQUIVALENCE-ASSESSMENT.md; mirrors the landed scale-2 case-row footing (8c8a06e8)."
+          "Of the 90 measurement variants, the 32 at scale-2 (scale factor 2.0) -- gui-feedback (24), window-lifecycle (4) and native-window-open (4) -- are OWED to the GP-CM05A owner gate on the standing scale-2 citations, leaving a strict producible set of 58. The scale-2 GUI budgets are environment-blocked on the reference 1920x1080 :1 display for the same reason as the scale-2 case rows: the scale-2 device extents (1024x900@2=2048x1800; 720x760@2=1440x1520) exceed the screen, the owned Weston clamps, and the realized logical viewport mis-binds the matrix coordinate, so a timing-grade measurement cannot be honestly captured at scale-2 and production is refused rather than falsely stamped. Confirmed by frontend-dev-01's live re-verification during the window and the audit-reviewed ENVELOPE-EQUIVALENCE-ASSESSMENT.md; the owner-bar rests on section 6's requirement of real Linux Wayland and X11 sessions plus the headless-renderer clause's scope. The 58 strict measurement variants are captured and scored at this pin; the 32 scale-2 variants stay OWED with the scale-2 remedy order. Cite frontend-dev-01 scale2 FINDING + ENVELOPE-EQUIVALENCE-ASSESSMENT.md; mirrors the landed scale-2 case-row footing (8c8a06e8).",
+          "Designer-workflow ordinary_application run is OWED as a pin-2 capture leg: the development_ready availability flip requires candidate-time GUI observations of the four ordinary_workflow chains (W1 open+Describe/Read sections/controls/defaults; W2 Appearance/Units SetUser-through-control -> commit() applied-value/resolver-explanation/receipt; W3 reopen new-immutable-generation + resolver-reports-inspected-generation; W4 ResetUser factory-default) plus the safety-b agent proposal_required negative vector. At pin 57bd9b1b the acceptance corpus asserted accessibility + install/stability predicates (not these chains); set-reset-refusal committed a real control change (store generations advanced + polite announcement in payload) but no assertion scored the applied-value/resolver/receipt remainder, native-close-reopen carried persisted=True but not the new-generation/resolver-inspected remainder, and the ResetUser verb was rendered (F4c pixels) but never driven (the a11y RESET leg is a second SetUser toggle). development_ready stays FALSE and this run is consolidated into the pin-2 capture per the native-recipe re-pin. See docs/reviews/preferences/gp-cm05-implementation/gp-cm05e-t1-ordinary-evidence-mapping.json."
         ],
         "safety_requirements": [
           "Every preference mutation goes through the one engine-owned GlobalPreferencesProductService writer and commit() path under writer-lease and expected-generation checks, recording a MutationReceipt (operation, actor kind/id/session, reason, expected/resulting generations, before/after digests); no GUI/CLI/daemon/MCP adapter writes the repository directly (\u00a72 :52-67, \u00a72.1 :87-109, \u00a75.1 :281-303).",
@@ -10841,7 +10807,7 @@
       "key": "GLOBAL-PREFERENCES-COMPLETION",
       "order": 42,
       "parallel": false,
-      "state": "in_progress",
+      "state": "specified",
       "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "title": "Complete and production-accept Global Preferences",
       "unblocks": [
