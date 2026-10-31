@@ -400,7 +400,7 @@
    Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered. *state `deferred`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <details>
-<summary>Completed history (7 landed records)</summary>
+<summary>Completed history (11 landed records)</summary>
 
 - **Bind allocator proof to its actual constructor owner** (`RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION`; `dat-renderer-allocator-owner-j1jj`).
    Exact thread-local test constructor identity replaces the global maximum guess. Deterministic newer-foreign-owner regression retains every byte/lifetime assertion; focused guarded proof and independent review PASS. Production accounting unchanged; no broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
@@ -423,12 +423,21 @@
 - **Reclaim released QA compiler output while preserving proof inputs** (`QA-BUILD-RETENTION`; `dat-qa-build-retention-1o5r`).
    Released-QA binary retirement tool delivered86a635de with16new/36existing tests and independent reviewPASS. Existing build-info release designation/no liveclaim, shared idle guard, exact hash/identity and selected process checks preserve allsource/evidence. No live cleanup or reclaimed-byte claim; advisory targets do not block builds. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Keep released QA retirement hashing linear in selected output** (`QA-RETENTION-LINEAR-HASH`; `dat-qa-retention-linear-hash-xse7`).
+   Released-output hashing correction deliveredee7c3b89:3fullhashes perselectedimage with complete admission/pre-post unlink mutation checks and alias safety.19focusedtests/independent reviewPASS; no actualcleanup/reclaim or productprerequisite. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Configure the size of the existing owned QA input display** (`QA-OWNED-INPUT-SIZE`; `dat-qa-owned-input-size-jdva`).
+   Ownedinputdimensionconfiguration delivered189eff3e;12focusedmockedtests+independentreviewPASS. Existingservers/cleanup/nativechildbackend retained, parentdesktop unchanged. Actualscale2viewport/backend/GPUproof remains owninglane responsibility; no acceptanceclaim. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Scope parity updates to the reviewed inventory** (`SCOPED-SPEC-PARITY-UPDATE`; `dat-scoped-spec-parity-update-vnd8`).
+   Delivered scoped parity updates and labeled item-count/digest diagnostics; six focused offline regressions, source-health and independent review passed. No inventory rows or acceptance requirements changed. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Make documented tracker intake valid at creation** (`LABELED-TRACKER-INTAKE`; `dat-labeled-tracker-intake-3815`).
+   Existing br intake recipes classify at creation; stale traceability diagnostic honors verified-baseline reuse. Independent review and traceability/parity/state checks passed; no new execution or acceptance authority. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
-- **Keep released QA retirement hashing linear in selected output** (`QA-RETENTION-LINEAR-HASH`; `dat-qa-retention-linear-hash-xse7`).
-   Measured quadratic ELF hashing in released-output retirement; retain byte checks at admission and each unlink boundary while making batch identity checks cheap. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

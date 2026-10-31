@@ -19060,10 +19060,10 @@
       "key": "QA-RETENTION-LINEAR-HASH",
       "issue_id": "dat-qa-retention-linear-hash-xse7",
       "title": "Keep released QA retirement hashing linear in selected output",
-      "summary": "Measured quadratic ELF hashing in released-output retirement; retain byte checks at admission and each unlink boundary while making batch identity checks cheap.",
+      "summary": "Released-output hashing correction deliveredee7c3b89:3fullhashes perselectedimage with complete admission/pre-post unlink mutation checks and alias safety.19focusedtests/independent reviewPASS; no actualcleanup/reclaim or productprerequisite.",
       "order": 123,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -19076,20 +19076,73 @@
         "kind": "maintenance",
         "rationale": "Owner-authorized efficiency correction of measured1183fullELF hashes for39selectedimages in temporary13bundlefixture; no actualcleanup, dataretirement, weakenedmutationsafety or productprerequisite."
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-retention-linear-20261031",
-        "claimed_at": "2026-10-31T01:42:39Z",
-        "heartbeat_at": "2026-10-31T01:42:39Z",
-        "expires_at": "2026-10-31T03:42:39Z",
-        "scope": [
-          "scripts/cargo_qa_retention.py",
-          "scripts/test_cargo_qa_retention.py"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "b8e9085b09d7588a692c2da871ff2f37c7cd1ce1"
-      }
+      "landing_commit": "ee7c3b89"
+    },
+    {
+      "key": "QA-OWNED-INPUT-SIZE",
+      "issue_id": "dat-qa-owned-input-size-jdva",
+      "title": "Configure the size of the existing owned QA input display",
+      "summary": "Ownedinputdimensionconfiguration delivered189eff3e;12focusedmockedtests+independentreviewPASS. Existingservers/cleanup/nativechildbackend retained, parentdesktop unchanged. Actualscale2viewport/backend/GPUproof remains owninglane responsibility; no acceptanceclaim.",
+      "order": 124,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner-directed automation correction: existing isolatedinputtransport hardcodes1600x1000 although largerownedinputsurface avoids physicaldesktopcapacitydependency. Configuration extension only; scale2qualification/probe remains owninglane responsibility, no newbackend orhumanacceptance."
+      },
+      "landing_commit": "189eff3e"
+    },
+    {
+      "key": "SCOPED-SPEC-PARITY-UPDATE",
+      "issue_id": "dat-scoped-spec-parity-update-vnd8",
+      "title": "Scope parity updates to the reviewed inventory",
+      "summary": "Delivered scoped parity updates and labeled item-count/digest diagnostics; six focused offline regressions, source-health and independent review passed. No inventory rows or acceptance requirements changed.",
+      "order": 125,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Prevent observed generated parity drift from prompting unrelated narrative work or refreshing unrelated inventory rows."
+      },
+      "landing_commit": "3ee35213"
+    },
+    {
+      "key": "LABELED-TRACKER-INTAKE",
+      "issue_id": "dat-labeled-tracker-intake-3815",
+      "title": "Make documented tracker intake valid at creation",
+      "summary": "Existing br intake recipes classify at creation; stale traceability diagnostic honors verified-baseline reuse. Independent review and traceability/parity/state checks passed; no new execution or acceptance authority.",
+      "order": 126,
+      "state": "landed",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner-directed automation correction of observed selector red caused by following unlabelled documented br intake commands; no new permission or selection mechanism."
+      },
+      "landing_commit": "bd078b8d"
     }
   ],
   "management_appointments": {
