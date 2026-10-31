@@ -417,8 +417,17 @@
 - **Isolate shared demo test fixtures and reconcile unbound pane header proof** (`GUI-PROOF-FIXTURE-ISOLATION`; `dat-gui-proof-shared-state-9gaf`).
    Protocol source path released by committed7032f305 and explicit PM transfer; apply reviewed ownership extraction/private UUID demo fixtures, retaining production wrapper behavior and header proof. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
+<details>
+<summary>Completed history (1 landed records)</summary>
+
 - **Preserve and deduplicate exact immutable GUI QA images** (`QA-GUI-BYTE-PRESERVING-DEDUP`; `dat-qa-gui-byte-preserving-dedup-npfx`).
-   Extend existing descriptor-bound dedup for two byte-identical GUI pairs; preserve paths, contents and safety. Actual apply remains pending independent review and exact PM disposition. *state `in_progress`; authorization `execution`; parallel lane.*
+   Explicit descriptor-proven GUI dedup source312848f8 and exactapprovedapply retain allpaths/bytes/security/mtime and446nonselectedentries.31tests/code/data/postapplyreviewPASS; retainedcache38.5584GiB,preflighterrors[]. Oldguards/limits unchanged; ownprotocolproof held for native integration/producer priority. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+
+</details>
+
+- **Treat retained Cargo cache sizes as advisory targets** (`CARGO-CACHE-ADVISORY-TARGET`; `dat-cargo-cache-advisory-target-jiu6`).
+   Owner directs retained cache size to advise maintenance rather than halt otherwise safe development; preserve hard free-space reserves, full accounting and serialization. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 

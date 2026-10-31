@@ -5,7 +5,7 @@
   "minimum_tmp_free_gib": 6,
   "minimum_target_filesystem_free_gib": 20,
   "target_soft_limit_gib": 20,
-  "target_hard_limit_gib": 40,
+  "target_high_watermark_gib": 40,
   "forbid_tmp_target": true,
   "proof_incremental": false
 }

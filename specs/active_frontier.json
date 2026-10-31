@@ -19006,10 +19006,10 @@
       "key": "QA-GUI-BYTE-PRESERVING-DEDUP",
       "issue_id": "dat-qa-gui-byte-preserving-dedup-npfx",
       "title": "Preserve and deduplicate exact immutable GUI QA images",
-      "summary": "Extend existing descriptor-bound dedup for two byte-identical GUI pairs; preserve paths, contents and safety. Actual apply remains pending independent review and exact PM disposition.",
+      "summary": "Explicit descriptor-proven GUI dedup source312848f8 and exactapprovedapply retain allpaths/bytes/security/mtime and446nonselectedentries.31tests/code/data/postapplyreviewPASS; retainedcache38.5584GiB,preflighterrors[]. Oldguards/limits unchanged; ownprotocolproof held for native integration/producer priority.",
       "order": 120,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -19022,19 +19022,42 @@
         "kind": "maintenance",
         "rationale": "Native acceptance and root fixture proof blocked by40.1GiB retainedfloor. Existing incremental route exhausted and olddedup0reclaim. Finiteexit: exactGUIbyte-preservingreclaim + resourcepreflightadmission; no runtime processstop, cache deletion, capchange, or replacementframework."
       },
+      "landing_commit": "312848f8eb7ab6f7bd7bc7f009b88033ee314373"
+    },
+    {
+      "key": "CARGO-CACHE-ADVISORY-TARGET",
+      "issue_id": "dat-cargo-cache-advisory-target-jiu6",
+      "title": "Treat retained Cargo cache sizes as advisory targets",
+      "summary": "Owner directs retained cache size to advise maintenance rather than halt otherwise safe development; preserve hard free-space reserves, full accounting and serialization.",
+      "order": 121,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Direct owner instruction corrects demonstrated40.2GiB cache target blocking safe builds despite137.9GiB free; no destructive cleanup or safety-gate bypass."
+      },
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-resource-gui-dedup-20261031",
-        "claimed_at": "2026-10-31T00:20:16Z",
-        "heartbeat_at": "2026-10-31T00:20:16Z",
-        "expires_at": "2026-10-31T02:20:16Z",
+        "session": "codex-cache-target-20261031",
+        "claimed_at": "2026-10-31T01:14:11Z",
+        "heartbeat_at": "2026-10-31T01:14:11Z",
+        "expires_at": "2026-10-31T03:14:11Z",
         "scope": [
-          "scripts/cargo_qa_companions.py",
-          "scripts/test_cargo_qa_companions.py"
+          "scripts/run_cargo_guarded.py",
+          "scripts/cargo_resource_policy.json",
+          "scripts/test_run_cargo_guarded.py"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7032f3051112034bfcbc15a5b273f39870a6b1e8"
+        "head": "6ebd5cdefd1b546204eb47fc27e05a73538e0372"
       }
     }
   ],

@@ -47,7 +47,7 @@ class CargoResourceGuardTests(unittest.TestCase):
             minimum_tmp_free_bytes=6 * guard.GIB,
             minimum_target_filesystem_free_bytes=20 * guard.GIB,
             target_soft_limit_bytes=20 * guard.GIB,
-            target_hard_limit_bytes=40 * guard.GIB,
+            target_high_watermark_bytes=40 * guard.GIB,
             forbid_tmp_target=True,
             proof_incremental=False,
         )
@@ -94,16 +94,25 @@ class CargoResourceGuardTests(unittest.TestCase):
         self.assertTrue(any("/tmp reserve" in error for error in errors))
         self.assertTrue(any("target-filesystem reserve" in error for error in errors))
 
-    def test_hard_target_limit_refuses_and_soft_limit_warns(self) -> None:
+    def test_cache_targets_warn_without_blocking_safe_builds(self) -> None:
         policy = self.policy(Path("/tmp/lock"))
-        snapshot = self.snapshot(Path("/workspace/target"), target_gib=41)
-        self.assertTrue(
-            any(
-                "exceeds hard limit" in error
-                for error in guard.evaluate_resources(policy, snapshot, "proof")
-            )
-        )
-        self.assertEqual(len(guard.resource_warnings(policy, snapshot)), 1)
+        for size, message in [(10, None), (21, "soft target"), (41, "advisory high watermark")]:
+            with self.subTest(cache_gib=size):
+                snapshot = self.snapshot(Path("/workspace/target"), target_gib=size)
+                self.assertEqual(guard.evaluate_resources(policy, snapshot, "proof"), [])
+                warnings = guard.resource_warnings(policy, snapshot)
+                self.assertEqual(len(warnings), int(message is not None))
+                if message:
+                    self.assertIn(message, warnings[0])
+
+    def test_over_target_cache_still_refuses_insufficient_disk_reserves(self) -> None:
+        policy = self.policy(Path("/tmp/lock"))
+        snapshot = self.snapshot(Path("/workspace/target"), target_gib=41,
+                                 target_free_gib=19, tmp_free_gib=5)
+        errors = guard.evaluate_resources(policy, snapshot, "proof")
+        self.assertEqual(len(errors), 2)
+        self.assertTrue(any("/tmp reserve" in error for error in errors))
+        self.assertTrue(any("target-filesystem reserve" in error for error in errors))
 
     def test_proof_environment_disables_incremental_compilation(self) -> None:
         policy = self.policy(Path("/tmp/lock"))
@@ -137,16 +146,16 @@ class CargoResourceGuardTests(unittest.TestCase):
     def test_checked_in_policy_loads(self) -> None:
         policy = guard.load_policy()
         self.assertFalse(policy.proof_incremental)
-        self.assertGreater(policy.target_hard_limit_bytes, policy.target_soft_limit_bytes)
+        self.assertGreater(policy.target_high_watermark_bytes, policy.target_soft_limit_bytes)
 
-    def test_small_selected_target_cannot_bypass_retained_cache_limit(self) -> None:
+    def test_small_selected_target_still_reports_total_retained_cache(self) -> None:
         policy = self.policy(Path("/tmp/lock"))
         snapshot = replace(
             self.snapshot(Path("/workspace/target/small"), target_gib=1),
             retained_cache_bytes=41 * guard.GIB,
         )
-        self.assertTrue(any("exceeds hard limit" in error for error in guard.evaluate_resources(policy, snapshot, "proof")))
-        self.assertEqual(len(guard.resource_warnings(policy, snapshot)), 1)
+        self.assertEqual(guard.evaluate_resources(policy, snapshot, "proof"), [])
+        self.assertIn("advisory high watermark", guard.resource_warnings(policy, snapshot)[0])
 
     def test_retained_cache_paths_include_archives_without_duplicate_targets(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

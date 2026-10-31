@@ -35,7 +35,7 @@ class ResourcePolicy:
     minimum_tmp_free_bytes: int
     minimum_target_filesystem_free_bytes: int
     target_soft_limit_bytes: int
-    target_hard_limit_bytes: int
+    target_high_watermark_bytes: int
     forbid_tmp_target: bool
     proof_incremental: bool
 
@@ -81,8 +81,8 @@ def load_policy(path: Path = DEFAULT_POLICY) -> ResourcePolicy:
         target_soft_limit_bytes=_gib(
             document.get("target_soft_limit_gib"), "target_soft_limit_gib"
         ),
-        target_hard_limit_bytes=_gib(
-            document.get("target_hard_limit_gib"), "target_hard_limit_gib"
+        target_high_watermark_bytes=_gib(
+            document.get("target_high_watermark_gib"), "target_high_watermark_gib"
         ),
         forbid_tmp_target=document.get("forbid_tmp_target") is True,
         proof_incremental=document.get("proof_incremental") is True,
@@ -161,13 +161,6 @@ def evaluate_resources(
             f"{format_gib(snapshot.target_filesystem_free_bytes)} free; "
             f"requires {format_gib(policy.minimum_target_filesystem_free_bytes)}"
         )
-    if max(snapshot.target_bytes, snapshot.retained_cache_bytes) > policy.target_hard_limit_bytes:
-        errors.append(
-            "retained Cargo cache total exceeds hard limit: "
-            f"{format_gib(max(snapshot.target_bytes, snapshot.retained_cache_bytes))} used; "
-            f"limit {format_gib(policy.target_hard_limit_bytes)}; "
-            "run python3 scripts/manage_cargo_cache.py to inspect disposable caches"
-        )
     return errors
 
 
@@ -177,10 +170,20 @@ def resource_warnings(
     cache_bytes = max(snapshot.target_bytes, snapshot.retained_cache_bytes)
     if cache_bytes <= policy.target_soft_limit_bytes:
         return []
+    # Retention targets guide maintenance; actual filesystem reserves remain
+    # blocking above. A cache target alone must not strand safe development.
+    if cache_bytes > policy.target_high_watermark_bytes:
+        return [
+            "retained Cargo caches exceed advisory high watermark: "
+            f"{format_gib(cache_bytes)} used; "
+            f"target {format_gib(policy.target_high_watermark_bytes)}; "
+            "build may proceed while filesystem reserves are sufficient; "
+            "inspect with python3 scripts/manage_cargo_cache.py"
+        ]
     return [
-        "retained Cargo caches exceed soft limit: "
+        "retained Cargo caches exceed soft target: "
         f"{format_gib(cache_bytes)} used; "
-        f"soft limit {format_gib(policy.target_soft_limit_bytes)}; "
+        f"target {format_gib(policy.target_soft_limit_bytes)}; "
         "inspect with python3 scripts/manage_cargo_cache.py"
     ]
 
