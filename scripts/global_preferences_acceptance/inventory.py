@@ -161,7 +161,11 @@ BASELINE_SURFACES = {
     ('human-agent-authority', 'daemon-restart'): ['engine', 'cli', 'mcp'],
 }
 
-GATES = ['matrix', 'boundary', 'menu', 'resolver', 'daemon', 'private-writer', 'mcp', 'dependencies', 'cargo-resources', 'source-health', 'governance', 'parity', 'traceability', 'progress', 'alignment', 'project-state', 'workspace-tests', 'clippy', 'checker-regressions']
+# The explicit gate catalog validate_gates admits; it must stay reconciled with gates.commands()
+# (the matrix regression suite asserts the two never drift). acceptance-support-tests/-clippy are
+# the cb67dad4 feature-ON gates keeping full fixture test+clippy coverage outside the shipping
+# workspace gates.
+GATES = ['matrix', 'boundary', 'menu', 'resolver', 'daemon', 'private-writer', 'mcp', 'dependencies', 'cargo-resources', 'source-health', 'governance', 'parity', 'traceability', 'progress', 'alignment', 'project-state', 'workspace-tests', 'clippy', 'acceptance-support-tests', 'acceptance-support-clippy', 'checker-regressions']
 
 PRODUCT_BOUNDARY = {'active_global_descriptors': 11, 'active_sections': ['appearance', 'units'], 'reserved_descriptors': 45, 'project_seed_keys': 8, 'project_seed_modes': ['global', 'factory'], 'live_project_following': False, 'mcp_direct_set_or_reset': False, 'excluded': ['reserved descriptor activation', 'aggregate Project Units seed activation', 'Manage Preferences', 'broader Project Preferences', 'Publish', 'Revision']}
 

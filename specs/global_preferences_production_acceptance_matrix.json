@@ -1139,6 +1139,8 @@
       "project-state",
       "workspace-tests",
       "clippy",
+      "acceptance-support-tests",
+      "acceptance-support-clippy",
       "checker-regressions"
     ],
     "readiness_validator": "Separately evaluates the assembled report; its output is not a self-referential report input."

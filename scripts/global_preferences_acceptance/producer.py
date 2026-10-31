@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE.parents[1]))  # put scripts/ on the path for the pac
 
 from global_preferences_acceptance import observations as obs  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
+from global_preferences_acceptance.identity import validate_environments  # noqa: E402
 from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, digest, parse, read_file, require  # noqa: E402
 from global_preferences_acceptance.matrix import case_inventory  # noqa: E402
 from global_preferences_acceptance.process import execute  # noqa: E402
@@ -396,26 +397,53 @@ def _family_handlers(family):
     raise ValueError(f"case family not implemented: {family}")
 
 
-def build_family(bundle_root, *, family, surface="cli", cli_binary=None, engine_binary=None):
+def build_family(bundle_root, *, family, surface="cli", cli_binary=None, engine_binary=None,
+                 identity=None):
     """Produce every case of one family on the given surface into a self-contained report + bundle.
 
     The CLI surface (default) is unchanged. The engine surface pins binaries["engine"] (the acceptance
     driver) and replays the disjoint engine recipe; its cases are pure resolver evaluations whose
     `after` equals `before` (nothing is written). produce_case (bc73e90e) already exports the surface
-    binary and verifies the surface recipe against the input-manifest closure."""
+    binary and verifies the surface recipe against the input-manifest closure.
+
+    `identity` (the Phase-A Q1 injection; additive with a default preserving standalone behaviour
+    exactly, the bc73e90e recipe_relpath precedent) is the FROZEN shared identity. When given, every
+    identity input is carried VERBATIM from it -- consume, never compute: candidate (the full
+    six-binary identity), the 21-field environments array (projected to the {id: coordinate} mapping
+    by the governed validate_environments, which also rejects a malformed or duplicated entry),
+    input_manifest (the full U2 closure reference, resolvable in this shared bundle_root) and
+    matrix_sha256. The surface executable is still passed as cli_binary/engine_binary, but it must
+    hash to candidate["binaries"][surface]["sha256"]; a mismatch is refused (the frozen identity pins
+    each role binary -- no substitution). The report then carries the frozen 21-field environments
+    array verbatim, so every per-row environment_id binds an id present in that array."""
     capture = Capture(bundle_root)
-    revision = _git_head()
     recipe_relpath = SURFACE_RECIPES[surface]
     surface_binary = {"cli": cli_binary, "engine": engine_binary}[surface]
     require(surface_binary is not None, f"surface {surface} needs its candidate binary")
     surface_sha = _sha_file(surface_binary)
-    candidate = {"revision": revision,
-                 "binaries": {surface: {"path": str(surface_binary), "sha256": surface_sha}}}
+    if identity is None:
+        candidate = {"revision": _git_head(),
+                     "binaries": {surface: {"path": str(surface_binary), "sha256": surface_sha}}}
+        recipe_ref = {"path": recipe_relpath, "sha256": _sha_file(ROOT / recipe_relpath)}
+        input_manifest_ref = capture.put([recipe_ref])
+        matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
+        environments = {"headless-linux-x86_64": None}
+        report_environments = environments
+    else:
+        candidate = identity["candidate"]
+        require(surface_sha == candidate["binaries"][surface]["sha256"],
+                f"surface {surface} binary sha256 differs from the frozen shared identity -- "
+                "candidate.binaries pins each role binary; no substitution")
+        input_manifest_ref = identity["input_manifest"]
+        # The frozen closure is retained in the shared bundle (U2 put it there); list its
+        # reference in this family's artifact inventory so the produced report resolves its own
+        # input_manifest. produce_case still verifies the actual bytes against the reference
+        # digest (Bundle construction) before any case runs.
+        capture.inventory[input_manifest_ref["path"]] = dict(input_manifest_ref)
+        matrix_sha256 = identity["matrix_sha256"]
+        environments = validate_environments(identity["environments"])
+        report_environments = identity["environments"]
     binaries = {surface: surface_sha}
-    recipe_ref = {"path": recipe_relpath, "sha256": _sha_file(ROOT / recipe_relpath)}
-    input_manifest_ref = capture.put([recipe_ref])
-    matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
-    environments = {"headless-linux-x86_64": None}
     initial_state, capture_after, setup = _family_handlers(family)
     keys = sorted(k for k in case_inventory() if (k[0], k[1]) == family and k[3] == surface)
     require(bool(keys), f"no {surface} cases for family {family}")
@@ -430,7 +458,7 @@ def build_family(bundle_root, *, family, surface="cli", cli_binary=None, engine_
         "candidate": candidate,
         "input_manifest": input_manifest_ref,
         "matrix_sha256": matrix_sha256,
-        "environments": environments,
+        "environments": report_environments,
         "artifacts": list(capture.inventory.values()),
         "case_results": rows,
     }

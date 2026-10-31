@@ -4,8 +4,9 @@ import json
 from pathlib import Path
 import unittest
 
+from global_preferences_acceptance.gates import commands
 from global_preferences_acceptance.inputs import EvidenceError, parse
-from global_preferences_acceptance.inventory import BUDGETS
+from global_preferences_acceptance.inventory import BUDGETS, GATES
 from global_preferences_acceptance.matrix import case_inventory, validate_matrix
 from global_preferences_acceptance.measurements import measurement_inventory
 
@@ -16,8 +17,17 @@ MATRIX = json.loads((Path(__file__).resolve().parents[1] /
 class MatrixTests(unittest.TestCase):
     def test_complete_inventory(self):
         validate_matrix(MATRIX)
-        self.assertEqual(len(case_inventory()), 389)
+        # 321 since the surface-disposition co-move (1cae5aa9): 389 minus the 68
+        # dispositioned rows (engine-by-contract absorptions + scope exits).
+        self.assertEqual(len(case_inventory()), 321)
         self.assertEqual(len(measurement_inventory()), 90)
+
+    def test_gate_catalog_matches_commands(self):
+        # Catalog-drift regression: a gate added to gates.commands() without extending the
+        # explicit GATES inventory makes validate_gates reject a complete report ("unknown or
+        # duplicate gate" -- the cb67dad4 feature-ON gates drifted exactly this way).
+        self.assertEqual(len(GATES), len(set(GATES)))
+        self.assertEqual(set(GATES), set(commands(Path(__file__).resolve().parents[1])))
 
     def test_each_required_case_variant_assertion_and_surface(self):
         for index, case in enumerate(MATRIX['durable_corpus']):
