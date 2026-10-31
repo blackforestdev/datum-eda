@@ -441,9 +441,15 @@
 - **Maintain efficient development under the owner mandate** (`DEVELOPMENT-EFFICIENCY-MAINTENANCE`; `dat-development-efficiency-maintenance-ns1o`).
    PM-admitted ongoing maintenance record. Each bounded correction uses an amended narrow path lease and linked incidental intake; retain individual independent reviews and source landing references. No broad repository reservation. Rejustify continuation at GP-CM05A. Admission supplies no product authority or successor rights. *state `ready`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
+<details>
+<summary>Completed history (1 landed records)</summary>
+
 - **Guard native-edit daemon lifecycle against abnormal GUI-exit orphans** (`NATIVE-EDIT-DAEMON-ABNORMAL-EXIT-GUARD`; `dat-typb`).
-   Owner-directed bounded maintenance correction leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31): a first-party daemon-side lifecycle guard in eda-engine-daemon using an opt-in inherited stdin lifetime pipe so abnormal GUI exits cannot orphan native-edit daemons; the normal-path NativeProjectClient::Drop kill/wait (e2150575) is preserved. Focused proof: spawn, SIGKILL the parent stand-in, assert daemon exit within a bounded window; unchanged normal-close; no new orphans after a real GUI run. PM059 independent review by audit-agent-01 via PM-Agent-01 before lane acceptance. Owner-authorized-cleanup class: no product-delivery contract, no successor authority; GP-CM05E remains the sole canonical product lane. *state `in_progress`; authorization `execution`; parallel lane.*
+   GUI-owned native-edit companions now follow the retained process lifetime pipe and exit naturally after an abnormal GUI exit, including idle accept and partial/idle client reads, while already-dispatched canonical operations finish. Delivered at7457f090; guarded process regressions3/3PASS and actual Wayland/Vulkan GUI crash observed natural daemon exit before cleanup. Actual independent audit source/runtime PASS and PM-Agent-01 lane acceptance recorded in dat-typb with source/binary/artifact hashes. Existing normal Drop preserved; historical orphans untouched. Capture artifact k6pr remains separate intake; full qualification and successor work unclaimed. Lease released; GP-CM05E remains canonical. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md`.
+
+</details>
+
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
