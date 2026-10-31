@@ -32,6 +32,13 @@ use introspection::introspection_body;
 pub(super) use menus::messages as menu_messages;
 use properties::{properties_body, property_value, variant_body};
 use text_ranges::{char_range, text_at_offset};
+#[path = "atspi/wire_values.rs"]
+mod wire_values;
+use wire_values::{
+    bool_body, empty_array_body, f64_body, i16_body, i32_body, object_array_body,
+    preference_attributes_body, rect_body, rect_values_body, string_array_body, string_body,
+    two_i32_body, u32_body,
+};
 
 pub(super) const ROOT_PATH: &str = "/org/a11y/atspi/accessible/root";
 // dat-mainwindow-atspi-frame-node-eatt: the main application window is exposed as a FRAME node between
@@ -614,104 +621,4 @@ fn preference_role_name(role: GlobalPreferencesAccessibleRole) -> &'static str {
 }
 fn clamp_i32(value: usize) -> i32 {
     i32::try_from(value).unwrap_or(i32::MAX)
-}
-
-fn object_array_body(bus_name: &str, paths: &[String]) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.array(8, |body| {
-        for path in paths {
-            body.structure(|body| {
-                body.string(bus_name);
-                body.object_path(path);
-            });
-        }
-    });
-    body.finish()
-}
-
-fn preference_attributes_body(node: &GlobalPreferencesAccessibleNode) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.array(8, |body| {
-        for (key, value) in [
-            ("value", node.value.as_deref().unwrap_or("")),
-            ("available", if node.available { "true" } else { "false" }),
-            ("description", node.description.as_str()),
-        ] {
-            body.structure(|body| {
-                body.string(key);
-                body.string(value);
-            });
-        }
-    });
-    body.finish()
-}
-
-fn string_array_body(values: &[&str]) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.array(4, |body| {
-        for value in values {
-            body.string(value);
-        }
-    });
-    body.finish()
-}
-
-fn empty_array_body(alignment: usize) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.array(alignment, |_| {});
-    body.finish()
-}
-fn string_body(value: &str) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.string(value);
-    body.finish()
-}
-fn bool_body(value: bool) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.bool(value);
-    body.finish()
-}
-fn i16_body(value: i16) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.i16(value);
-    body.finish()
-}
-fn i32_body(value: i32) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.i32(value);
-    body.finish()
-}
-fn u32_body(value: u32) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.u32(value);
-    body.finish()
-}
-fn f64_body(value: f64) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.f64(value);
-    body.finish()
-}
-fn two_i32_body(a: i32, b: i32) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.i32(a);
-    body.i32(b);
-    body.finish()
-}
-fn rect_values_body(value: TerminalAccessibilityBounds) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.i32(value.x);
-    body.i32(value.y);
-    body.i32(value.width);
-    body.i32(value.height);
-    body.finish()
-}
-fn rect_body(value: TerminalAccessibilityBounds) -> Vec<u8> {
-    let mut body = BodyWriter::new();
-    body.structure(|body| {
-        body.i32(value.x);
-        body.i32(value.y);
-        body.i32(value.width);
-        body.i32(value.height);
-    });
-    body.finish()
 }

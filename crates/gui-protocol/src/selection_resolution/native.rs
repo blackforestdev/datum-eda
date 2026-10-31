@@ -1,4 +1,5 @@
 //! One read-only engine adapter for board/schematic selection consumers.
+mod run_cache;
 use super::*;
 use crate::selection_subject::{AuthoredSelectionClass as Class, RunSelectionIdentity};
 use eda_engine::{
@@ -10,6 +11,7 @@ use eda_engine::{
         SelectionSourceDomain,
     },
 };
+use run_cache::RunQueryCache;
 
 /// Complete membership and source-qualified owned/related projection evidence.
 /// Bus entry geometry is carried by the engine result and never counted as a
@@ -37,7 +39,7 @@ pub struct NativeSelectionResolution {
     // and inspection. No cross-capture reuse, hit inference or partial result.
     // The acquisition hit is retained so a repeated acquisition of the same
     // origin+hit reuses the completed Run instead of recomputing the graph.
-    run_query: std::sync::Mutex<Option<(RunSelectionIdentity, Option<Point>, BoardRunMembership)>>,
+    run_query: RunQueryCache,
 }
 impl NativeSelectionResolution {
     pub fn capture(model: &DesignModel) -> Result<Self, SelectionResolutionError> {
@@ -85,7 +87,7 @@ impl NativeSelectionResolution {
             snapshot,
             authored,
             standalone_pads,
-            run_query: std::sync::Mutex::new(None),
+            run_query: RunQueryCache::default(),
         })
     }
     pub fn authored_identities(&self) -> &BTreeSet<AuthoredSelectionIdentity> {
@@ -114,40 +116,25 @@ impl NativeSelectionResolution {
             .validate()
             .map_err(SelectionResolutionError::InvalidSubject)?;
         if matches!(run.origin.class, Class::Track | Class::Via | Class::Zone) {
-            // Repeated acquisition of the same Run reuses the one completed result for this
-            // immutable basis instead of recomputing the net graph and cross-net contacts.
-            // The snapshot is immutable, so `board_run` is a pure function of (origin, hit);
-            // a prior success for the same origin and hit reproduces the identical Run. This
-            // keeps a repeated Zone click off the exact polygon/contact sweep that otherwise
-            // re-runs per click (dat-zone-run-freeze-dadx). A Zone requires a concrete hit, so
-            // a hitless entry (the inspection path stores none) never satisfies a Zone reuse.
-            if let Ok(query) = self.run_query.lock()
-                && let Some((cached_run, cached_hit, _)) = query.as_ref()
-                && cached_run.origin == run.origin
-                && *cached_hit == hit
-                && (run.origin.class != Class::Zone || hit.is_some())
-            {
-                return Ok(SelectionSubject::Run(cached_run.clone()));
-            }
-            let result = self
-                .snapshot
-                .board_run(self.revision(), &occurrence(&run.origin), hit)
-                .map_err(SelectionResolutionError::Engine)?;
-            if run.origin.class == Class::Zone {
-                let qualifiers: Vec<_> = result
-                    .zone_regions
-                    .iter()
-                    .filter(|q| q.source().source_id == run.origin.id)
-                    .cloned()
-                    .collect();
-                if qualifiers.len() != 1 {
-                    return Err(SelectionResolutionError::MissingDerivedAuthority);
+            run = self.run_query.acquire(run, hit, |mut run| {
+                let result = self
+                    .snapshot
+                    .board_run(self.revision(), &occurrence(&run.origin), hit)
+                    .map_err(SelectionResolutionError::Engine)?;
+                if run.origin.class == Class::Zone {
+                    let qualifiers: Vec<_> = result
+                        .zone_regions
+                        .iter()
+                        .filter(|q| q.source().source_id == run.origin.id)
+                        .cloned()
+                        .collect();
+                    if qualifiers.len() != 1 {
+                        return Err(SelectionResolutionError::MissingDerivedAuthority);
+                    }
+                    run.zone_region = Some(qualifiers[0].clone());
                 }
-                run.zone_region = Some(qualifiers[0].clone());
-            }
-            if let Ok(mut query) = self.run_query.lock() {
-                *query = Some((run.clone(), hit, result));
-            }
+                Ok((run, result))
+            })?;
         } else {
             self.resolve(&subject)?;
         }
@@ -272,26 +259,18 @@ impl NativeSelectionResolution {
                     projection.bus_run = Some(result);
                 }
                 Class::Track | Class::Via | Class::Zone => {
-                    let cached = self.run_query.lock().ok().and_then(|q| {
-                        q.as_ref()
-                            .filter(|(key, _, _)| key == run)
-                            .map(|(_, _, value)| value.clone())
-                    });
-                    let result = if let Some(result) = cached {
-                        result
-                    } else if run.origin.class == Class::Zone {
-                        match self.region_successor(self, run)? {
-                            ZoneRegionSuccessor::Unique { run, .. } => *run,
-                            _ => return Err(SelectionResolutionError::MissingDerivedAuthority),
+                    let result = self.run_query.resolve(run, || {
+                        if run.origin.class == Class::Zone {
+                            match self.region_successor(self, run)? {
+                                ZoneRegionSuccessor::Unique { run, .. } => Ok(*run),
+                                _ => Err(SelectionResolutionError::MissingDerivedAuthority),
+                            }
+                        } else {
+                            self.snapshot
+                                .board_run(self.revision(), &occurrence(&run.origin), None)
+                                .map_err(SelectionResolutionError::Engine)
                         }
-                    } else {
-                        self.snapshot
-                            .board_run(self.revision(), &occurrence(&run.origin), None)
-                            .map_err(SelectionResolutionError::Engine)?
-                    };
-                    if let Ok(mut query) = self.run_query.lock() {
-                        *query = Some((run.clone(), None, result.clone()));
-                    }
+                    })?;
                     projection.board_run = Some(result);
                 }
                 _ => {
@@ -379,6 +358,7 @@ impl NativeSelectionResolution {
         Ok(result)
     }
 }
+
 impl SelectionAuthority for NativeSelectionResolution {
     fn project(&self) -> ObjectId {
         self.snapshot.project_id()
@@ -473,3 +453,6 @@ fn occurrence(id: &AuthoredSelectionIdentity) -> ElectricalOccurrence {
         instance_path: id.instance_path.clone(),
     }
 }
+
+#[cfg(test)]
+mod tests;
