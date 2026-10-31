@@ -224,17 +224,10 @@ class StartupQA:
         self.actions.append({"capture_presentation_barrier": receipt, "require_stable": require_stable})
         return receipt
 
-    def capture(self, label, window, *, require_stable=True, frame_requirement=None):
-        self.focus(window)
-        receipt = self.wait_presented(require_stable=require_stable, frame_requirement=frame_requirement)
-        count = self.capture_counts.get(label, 0) + 1
-        self.capture_counts[label] = count
-        if count > 1:
-            label = f"{label}-{count}"
-        # Capture the private Wayland compositor's presented output, never its
-        # potentially stale X11 host backing pixmap. Each output directory is
-        # unique because weston-screenshooter filenames have second precision.
-        directory = self.root / f"{label}-native-capture"
+    def _screenshoot_read(self, directory):
+        """One weston-screenshooter read of the private Wayland compositor's presented output (never its
+        potentially stale X11 host backing pixmap); return the single PNG's bytes. Each read uses a fresh
+        directory because weston-screenshooter filenames have only second precision."""
         directory.mkdir()
         result = subprocess.run(["weston-screenshooter"], cwd=directory,
                                 env=dict(self.env, XDG_PICTURES_DIR=str(directory)),
@@ -246,13 +239,42 @@ class StartupQA:
         images = list(directory.glob("*.png"))
         assert result.returncode == 0 and not result.stderr and len(images) == 1, (
             f"native capture failed: {result.stderr}; images={images}")
-        images[0].rename(self.root / f"{label}.png")
-        require_native_capture_pixels(self.root / f"{label}.png")
-        self.observations[label] = [
-            {"name": node.get_name(), "attributes": self.attributes(node)}
-            for node in self.nodes() if node.get_role_name() != "terminal"
-        ]
-        return receipt
+        return images[0].read_bytes()
+
+    def capture(self, label, window, *, require_stable=True, frame_requirement=None):
+        self.focus(window)
+        receipt = self.wait_presented(require_stable=require_stable, frame_requirement=frame_requirement)
+        count = self.capture_counts.get(label, 0) + 1
+        self.capture_counts[label] = count
+        if count > 1:
+            label = f"{label}-{count}"
+        # Double-read de-flake (dat-native-empty-startup-black-capture-k6pr). weston-screenshooter can
+        # read the compositor mid-recomposite and catch a partial/stale frame (a rare transient with no
+        # loggable signal -- the first log-fence attempt was unworkable because gpu completion of the
+        # last idle frame is never recorded). A SETTLED frame is byte-stable (triage: three reads were
+        # byte-identical), so require TWO CONSECUTIVE byte-identical reads with frame-ish spacing; bound
+        # the retries, then fail LOUDLY -- never silently accept a one-off bad read as capture evidence.
+        max_reads = 4  # the first read + up to 3 retries; two consecutive byte-identical reads admit
+        previous = None
+        for attempt in range(max_reads):
+            shot = self._screenshoot_read(self.root / f"{label}-native-capture-{attempt}")
+            if previous is not None and shot == previous:
+                output = self.root / f"{label}.png"
+                output.write_bytes(shot)
+                require_native_capture_pixels(output)
+                self.actions.append({"capture_stable_after_reads": attempt + 1})
+                self.observations[label] = [
+                    {"name": node.get_name(), "attributes": self.attributes(node)}
+                    for node in self.nodes() if node.get_role_name() != "terminal"
+                ]
+                return receipt
+            previous = shot
+            if attempt < max_reads - 1:
+                time.sleep(0.12)  # frame-ish spacing between reads
+        raise AssertionError(
+            f"native capture never produced two consecutive byte-identical weston-screenshooter reads "
+            f"for {label!r} after {max_reads} reads -- a partial/mid-recomposite readback could not be "
+            f"excluded (dat-native-empty-startup-black-capture-k6pr de-flake refusing unstable evidence)")
 
     def launch(self, label, *, project_root: Path | None = None):
         self.app_log = (self.root / f"{label}.log").open("w")

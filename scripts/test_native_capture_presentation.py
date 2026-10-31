@@ -26,6 +26,7 @@ class CapturePresentationTests(unittest.TestCase):
         self.focus_requested = False
         self.calls = []
         self.frames = []
+        self.shot_sequence = None
         self.append_frame(1, 1, False, initial=True)
         def command(*argv):
             self.calls.append(('focus', argv))
@@ -42,14 +43,18 @@ class CapturePresentationTests(unittest.TestCase):
                     self.append_frame(2, 2, False)
             raise TimeoutError(label)
         def run(argv, *, cwd, env, text, capture_output, timeout):
+            index = sum(1 for name, _ in self.calls if name == 'screenshooter')
             self.calls.append(('screenshooter', dict(self.frames[-1])))
-            Image.new('RGB', (2, 2), (1, 2, 3)).save(Path(cwd) / 'original.png')
+            colour = (1, 2, 3)
+            if self.shot_sequence is not None:
+                colour = self.shot_sequence[min(index, len(self.shot_sequence) - 1)]
+            Image.new('RGB', (2, 2), colour).save(Path(cwd) / 'original.png')
             return NS(returncode=0, stdout='', stderr='')
         nodes = next(n for n in ast.parse(SOURCE.read_text()).body
                      if isinstance(n, ast.ClassDef) and n.name == 'StartupQA')
         methods = [n for n in nodes.body if isinstance(n, ast.FunctionDef)
-                   and n.name in {'focus', 'wait_presented', 'capture'}]
-        namespace = {'Path': Path, 'json': json, 're': re, 'os': os,
+                   and n.name in {'focus', 'wait_presented', 'capture', '_screenshoot_read'}]
+        namespace = {'Path': Path, 'json': json, 're': re, 'os': os, 'time': NS(sleep=lambda *_: None),
                      'PresentationReadiness': PresentationReadiness,
                      'subprocess': NS(run=run),
                      'focus_arguments': lambda window, env: ('focus', window),
@@ -58,7 +63,7 @@ class CapturePresentationTests(unittest.TestCase):
         self.qa = NS(root=self.root, env={'DATUM_GUI_LOG': str(self.log), 'WAYLAND_DISPLAY': 'owned'},
                      compositor=NS(poll=lambda: None), host_window='owned-host', command=command,
                      wait=wait, nodes=lambda: [], actions=[], capture_counts={}, observations={})
-        for name in ['focus', 'wait_presented', 'capture']:
+        for name in ['focus', 'wait_presented', 'capture', '_screenshoot_read']:
             setattr(self.qa, name, MethodType(namespace[name], self.qa))
     def append_frame(self, damage, presented, pending, initial=False):
         frame = {'window': 'WindowId(1)', 'damage': damage, 'presented_damage': presented,
@@ -72,11 +77,14 @@ class CapturePresentationTests(unittest.TestCase):
         receipt = self.qa.capture('focus-frame', 'owned-host')
         self.assertEqual((receipt['damage'], receipt['presented_damage']), (2, 2))
         shots = [value for name, value in self.calls if name == 'screenshooter']
-        self.assertEqual(len(shots), 1)
+        # The de-flake takes two byte-identical reads of the settled frame before admitting.
+        self.assertEqual(len(shots), 2)
         self.assertEqual((shots[0]['damage'], shots[0]['presented_damage'], shots[0]['pending']),
                          (2, 2, False))
         self.assertEqual(self.qa.actions[0]['capture_presentation_barrier']['damage'], 2)
         self.assertTrue((self.root / 'focus-frame.png').exists())
+        self.assertEqual(next(a['capture_stable_after_reads'] for a in self.qa.actions
+                              if 'capture_stable_after_reads' in a), 2)
     def test_unfinished_focus_damage_refuses_before_any_capture(self):
         self.complete_focus_frame = False
         with self.assertRaises(TimeoutError):
@@ -87,8 +95,37 @@ class CapturePresentationTests(unittest.TestCase):
         self.focus_damage = False
         receipt = self.qa.capture('unchanged-frame', 'owned-host')
         self.assertEqual((receipt['damage'], receipt['presented_damage']), (1, 1))
-        self.assertEqual([name for name, _ in self.calls], ['focus', 'screenshooter'])
+        self.assertEqual([name for name, _ in self.calls], ['focus', 'screenshooter', 'screenshooter'])
         self.assertEqual(len(self.frames), 1)
+
+    def test_stable_frame_admits_on_two_byte_identical_reads(self):
+        # The common case: a settled frame reads byte-identically twice -> admitted after exactly two
+        # reads, no retry.
+        receipt = self.qa.capture('stable', 'owned-host')
+        self.assertEqual((receipt['damage'], receipt['presented_damage']), (2, 2))
+        self.assertEqual(sum(1 for name, _ in self.calls if name == 'screenshooter'), 2)
+        self.assertTrue((self.root / 'stable.png').exists())
+
+    def test_mismatched_read_retries_until_two_consecutive_match(self):
+        # A one-off differing read (mid-recomposite) is not accepted; capture retries until two
+        # consecutive reads match, then admits that stable frame.
+        self.shot_sequence = [(1, 2, 3), (9, 9, 9), (9, 9, 9)]
+        receipt = self.qa.capture('retry', 'owned-host')
+        self.assertEqual((receipt['damage'], receipt['presented_damage']), (2, 2))
+        self.assertEqual(sum(1 for name, _ in self.calls if name == 'screenshooter'), 3)
+        self.assertTrue((self.root / 'retry.png').exists())
+        self.assertEqual(next(a['capture_stable_after_reads'] for a in self.qa.actions
+                              if 'capture_stable_after_reads' in a), 3)
+
+    def test_never_stable_refuses_loudly_and_writes_no_frame(self):
+        # Every read differs -> no two consecutive match within the bound -> LOUD AssertionError, and NO
+        # frame is written (never ship unstable evidence).
+        self.shot_sequence = [(1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4)]
+        with self.assertRaises(AssertionError) as caught:
+            self.qa.capture('unstable', 'owned-host')
+        self.assertIn('two consecutive byte-identical', str(caught.exception))
+        self.assertEqual(sum(1 for name, _ in self.calls if name == 'screenshooter'), 4)
+        self.assertFalse((self.root / 'unstable.png').exists())
 
     def test_selected_capture_waits_for_same_frame_present_without_extra_wait(self):
         self.focus_damage = False
@@ -111,7 +148,8 @@ class CapturePresentationTests(unittest.TestCase):
         receipt = self.qa.capture('selected', 'owned-host', frame_requirement=REQUIREMENT)
         self.assertEqual(receipt['content_presentation']['native_identity']['submission_receipt'], 18)
         self.assertEqual(len(wait_calls), 1)
-        self.assertEqual([name for name, _ in self.calls], ['focus', 'screenshooter'])
+        self.assertEqual([name for name, _ in self.calls],
+                         ['focus', 'screenshooter', 'screenshooter'])
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
