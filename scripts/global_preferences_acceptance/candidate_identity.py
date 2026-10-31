@@ -92,12 +92,15 @@ def _test_binary_paths(root):
             message = json.loads(line)
         except json.JSONDecodeError:
             continue
-        name = (message.get("target") or {}).get("name")
+        target = message.get("target") or {}
+        name = target.get("name")
         executable = message.get("executable")
-        if not executable:
+        # Cargo reports the lib test target's name in crate-identifier form (hyphens -> underscores),
+        # e.g. package `eda-engine` -> target name `eda_engine`; match that normalized lib artifact.
+        if not executable or "lib" not in (target.get("kind") or []):
             continue
         for role, crate in TEST_BINARY_CRATES.items():
-            if name == crate:
+            if name == crate.replace("-", "_"):
                 located[role] = executable
     require(set(located) == set(TEST_BINARY_CRATES),
             f"missing test binaries: {set(TEST_BINARY_CRATES) - set(located)}")
