@@ -27,6 +27,26 @@ class RunnerTests(unittest.TestCase):
             self.assertIn('--locked', argv)
             self.assertIn('--offline', argv)
         self.assertIn('-D', inventory['clippy'][0])
+        # The workspace gates prove the SHIPPING configuration: they must NOT enable the
+        # GP-CM05E acceptance feature (Option A would compile the fixtures into the
+        # CLI/GUI/daemon build and stop the proof from testing what ships).
+        for name in ('workspace-tests', 'clippy'):
+            self.assertNotIn('--features', inventory[name][0])
+            self.assertNotIn('gp-acceptance-support', inventory[name][0])
+        # Dedicated feature-ON gates keep full test + clippy coverage of the acceptance
+        # fixtures (zero coverage loss) without that unification, scoped to eda-engine.
+        for name in ('acceptance-support-tests', 'acceptance-support-clippy'):
+            self.assertIn(name, inventory)
+            argv = inventory[name][0]
+            self.assertIn('scripts/run_cargo_guarded.py', argv)
+            self.assertIn('-p', argv)
+            self.assertIn('eda-engine', argv)
+            self.assertIn('--features', argv)
+            self.assertIn('gp-acceptance-support', argv)
+            self.assertIn('--all-targets', argv)
+            self.assertIn('--locked', argv)
+            self.assertIn('--offline', argv)
+        self.assertIn('-D', inventory['acceptance-support-clippy'][0])
 
     def test_command_failure_retains_exact_outputs_and_status(self):
         with tempfile.TemporaryDirectory() as root:

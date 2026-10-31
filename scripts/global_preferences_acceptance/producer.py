@@ -319,7 +319,7 @@ def _family_handlers(family):
     # is honest and the driver's observations carry the no-unauthorized-write proof.
     if case == "human-agent-authority" and variant in (
             "spoofed-actor", "direct-mcp-set-reset", "stale-proposal", "acceptance-mismatch",
-            "acceptance-expired", "acceptance-consumed", "request-id-conflict", "daemon-restart"):
+            "acceptance-expired", "acceptance-consumed", "request-id-conflict"):
         return _empty_state, None, None
     # backup-restore (engine WRITE family): the engine setup phase seeds a committed store (gen0) +
     # exact backup and diverges it (gen1); the recipe's observe phase commits a restore (gen2). So

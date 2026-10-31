@@ -25,6 +25,7 @@
 //!     into capability authority. Reserved Capability descriptors have no ordinary
 //!     activation path, so the defense-in-depth property is that unknown data CLAIMING a
 //!     capability identity still cannot become authoritative -- it is authority-refused.
+//!
 //! A state with no such story would be fabrication and is not seeded.
 
 use std::collections::BTreeMap;

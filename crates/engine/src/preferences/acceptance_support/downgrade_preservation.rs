@@ -8,6 +8,7 @@
 //! PROVENANCE (the honest story each hand-built state tells, per the PM ruling):
 //!   * unknown-key    = a key a FUTURE engine version registers, unregistered here.
 //!   * future-version = a store a NEWER engine version wrote at a newer format_version.
+//!
 //! A state with no such story would be fabrication and is not seeded.
 
 use std::path::Path;

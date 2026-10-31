@@ -18,7 +18,7 @@ STATE_FIXTURES = (
     ("stale", "crates/engine/src/preferences/service.rs", "stale_generation_preserves_draft_and_refreshes_truth", "PreferenceServiceRefusalKind::StaleGeneration"),
     ("competing_writer", "crates/engine/src/preferences/service.rs", "writer_conflict_preserves_draft_and_last_valid_truth", "PreferenceServiceRefusalKind::WriterConflict"),
     ("unreadable", "crates/engine/src/preferences/service.rs", "corrupt_head_stays_exact_and_disables_all_rows", "PreferenceServiceStatus::PreservedUnreadable"),
-    ("migration_required", "crates/engine/src/preferences/repository/tests.rs", "migration_plan_is_pure_moves_one_alias_and_writes_a_pre_migration_backup", "RepositoryStatus::MigrationRequired"),
+    ("migration_required", "crates/engine/src/preferences/repository/migration_tests.rs", "migration_plan_is_pure_moves_one_alias_and_writes_a_pre_migration_backup", "RepositoryStatus::MigrationRequired"),
     ("v1_receipt", "crates/engine/src/api/native_write/project_units_receipt_tests.rs", "v1_units_receipt_projects_remain_readable_without_receipt_rewrite", "assert_eq!(model.project.project_units_seed_receipt, Some(exact_v1))"),
     ("global_seed", "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs", "global_seed_is_pinned_once_and_never_follows_later_edits", "ProjectUnitsReceiptSourceV2::Global"),
     ("explicit_factory", "crates/engine/src/preferences/project_genesis.rs", "factory_genesis_publishes_one_complete_eight_item_project_without_preferences", "ACTIVE_UNITS_KEYS"),
@@ -90,7 +90,8 @@ def main() -> int:
     # engine unit-test harness). The --lib row above still covers the rest of the preferences::
     # library corpus; this row runs exactly the acceptance-support tests.
     run([*GUARD, "cargo", "test", "--locked", "--offline", "-p", "eda-engine",
-         "--test", "preferences_acceptance_support"], require_tests=True)
+         "--features", "gp-acceptance-support", "--test", "preferences_acceptance_support"],
+        require_tests=True)
     run(
         [
             sys.executable,

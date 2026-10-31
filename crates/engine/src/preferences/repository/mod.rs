@@ -14,7 +14,10 @@ use crate::preferences::{DescriptorRegistry, ResolutionSource};
 
 mod io;
 // Crate-internal, named widening for acceptance precondition construction only
-// (GP-CM05E, PM-authorized). See the module doc for the binding.
+// (GP-CM05E, PM-authorized). See the module doc for the binding. Gated behind
+// gp-acceptance-support (default-off): used only by acceptance_support, so it
+// compiles only when the fixtures do, never in the shipping build.
+#[cfg(feature = "gp-acceptance-support")]
 pub(crate) mod acceptance_constructions;
 mod migration;
 mod model;

@@ -71,15 +71,15 @@ fn fingerprint_into(base: &Path, dir: &Path, map: &mut BTreeMap<String, String>)
         let Ok(meta) = entry.metadata() else { continue };
         if meta.is_dir() {
             fingerprint_into(base, &path, map);
-        } else if meta.is_file() {
-            if let (Ok(bytes), Ok(rel)) = (std::fs::read(&path), path.strip_prefix(base)) {
-                let mut hasher = Sha256::new();
-                hasher.update(&bytes);
-                map.insert(
-                    rel.to_string_lossy().into_owned(),
-                    format!("{:x}", hasher.finalize()),
-                );
-            }
+        } else if meta.is_file()
+            && let (Ok(bytes), Ok(rel)) = (std::fs::read(&path), path.strip_prefix(base))
+        {
+            let mut hasher = Sha256::new();
+            hasher.update(&bytes);
+            map.insert(
+                rel.to_string_lossy().into_owned(),
+                format!("{:x}", hasher.finalize()),
+            );
         }
     }
 }

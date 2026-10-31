@@ -31,8 +31,22 @@ def commands(root):
         "source-health": [script("check_source_health.py"),
                           [python, "-m", "unittest", "discover", "-s", "scripts", "-p", "test_source_health_governance.py"]],
         "project-state": [script("project_status.py", "check"), script("project_status.py", "check-render")],
+        # The workspace test/clippy gates stay feature-OFF: they must prove the SHIPPING
+        # configuration, in which the GP-CM05E acceptance fixtures are not compiled into the
+        # CLI/GUI/daemon build. Because the gp_acceptance_driver bin and the
+        # preferences_acceptance_support test carry required-features, --all-targets here
+        # correctly excludes them (no fixture rebuild on a shipping edit).
         "workspace-tests": [[*guard, "cargo", "test", "--workspace", "--all-targets", "--locked", "--offline"]],
         "clippy": [[*guard, "cargo", "clippy", "--workspace", "--all-targets", "--locked", "--offline", "--", "-D", "warnings"]],
+        # Dedicated feature-ON gates so the acceptance fixtures still get full test + clippy
+        # coverage (zero coverage loss) WITHOUT unifying the feature into the shipping-config
+        # workspace gates above. Scoped to eda-engine so no other crate links the fixtures.
+        "acceptance-support-tests": [[*guard, "cargo", "test", "-p", "eda-engine",
+                                      "--features", "gp-acceptance-support", "--all-targets",
+                                      "--locked", "--offline"]],
+        "acceptance-support-clippy": [[*guard, "cargo", "clippy", "-p", "eda-engine",
+                                       "--features", "gp-acceptance-support", "--all-targets",
+                                       "--locked", "--offline", "--", "-D", "warnings"]],
         "checker-regressions": [[python, "-m", "unittest", "discover", "-s", "scripts", "-p", "test_global_preferences_*.py"]],
     })
     return result

@@ -15,9 +15,17 @@
 //! project-unchanged is the absence of any project file (preferences are
 //! project-independent).
 //!
-//! NOT COVERED (seam, stop-and-returned, E-deferred): no-foreground-tty -- there is no
-//! TTY/foreground concept in the engine product service or PreferenceActorV1; it is a
-//! CLI-adapter/environment property, so it cannot be driven from the engine surface.
+//! NOT COVERED (seam, stop-and-returned, E-deferred):
+//! - no-foreground-tty -- there is no TTY/foreground concept in the engine product service
+//!   or PreferenceActorV1; it is a CLI-adapter/environment property, so it cannot be driven
+//!   from the engine surface.
+//! - daemon-restart -- a daemon process-lifecycle (adapter) property, not engine-reachable.
+//!   The acceptance broker's state is purely in-memory (see product_acceptance.rs:111-123),
+//!   so no portable authority can persist across a restart: cross-restart authority survival
+//!   is a by-construction non-event, with no persistence seam to defeat. A close_session ->
+//!   Expired proof (a genuine session-close refusal) exists but belongs under an accurately
+//!   named session-lifecycle row, not "daemon-restart" (tracked for intake); it cannot stand
+//!   here without overclaiming the matrix row.
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -129,7 +137,6 @@ pub enum AuthorityVariant {
     AcceptanceExpired,
     AcceptanceConsumed,
     RequestIdConflict,
-    DaemonRestart,
 }
 
 impl AuthorityVariant {
@@ -142,7 +149,6 @@ impl AuthorityVariant {
             Self::AcceptanceExpired => "acceptance-expired",
             Self::AcceptanceConsumed => "acceptance-consumed",
             Self::RequestIdConflict => "request-id-conflict",
-            Self::DaemonRestart => "daemon-restart",
         }
     }
 
@@ -155,7 +161,6 @@ impl AuthorityVariant {
             "acceptance-expired" => Some(Self::AcceptanceExpired),
             "acceptance-consumed" => Some(Self::AcceptanceConsumed),
             "request-id-conflict" => Some(Self::RequestIdConflict),
-            "daemon-restart" => Some(Self::DaemonRestart),
             _ => None,
         }
     }
@@ -172,7 +177,6 @@ pub fn authority_observe(variant: AuthorityVariant) -> Result<Vec<(&'static str,
         AuthorityVariant::AcceptanceExpired => observe_acceptance_expired(),
         AuthorityVariant::AcceptanceConsumed => observe_acceptance_consumed(),
         AuthorityVariant::RequestIdConflict => observe_request_id_conflict(),
-        AuthorityVariant::DaemonRestart => observe_daemon_restart(),
     }
 }
 
@@ -369,25 +373,6 @@ fn observe_acceptance_consumed() -> Result<Vec<(&'static str, bool)>, String> {
         matches!(
             broker.consume(&handle),
             Err(PreferenceAcceptanceRefusal::Consumed)
-        )
-    })
-}
-
-/// daemon-restart: when the daemon tears the originating session down (the restart
-/// boundary), a pending acceptance no longer authorizes an apply -> Expired/closed, and
-/// no portable authority survives the restart.
-fn observe_daemon_restart() -> Result<Vec<(&'static str, bool)>, String> {
-    broker_refusal(|broker, proposal, agent| {
-        broker.close_session(&agent.session_id);
-        matches!(
-            broker.authorization_for_apply(
-                proposal,
-                &agent.session_id,
-                REPO_IDENTITY,
-                Uuid::new_v4(),
-                WITHIN_TTL_MS
-            ),
-            Err(PreferenceAcceptanceRefusal::Expired)
         )
     })
 }

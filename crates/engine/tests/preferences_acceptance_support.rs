@@ -389,7 +389,6 @@ fn every_human_agent_authority_variant_refuses_without_an_unauthorized_write() {
         AuthorityVariant::AcceptanceExpired,
         AuthorityVariant::AcceptanceConsumed,
         AuthorityVariant::RequestIdConflict,
-        AuthorityVariant::DaemonRestart,
     ];
     for variant in variants {
         let observed =

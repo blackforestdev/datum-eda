@@ -9,6 +9,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::Value;
 
+// GP-CM05E acceptance fixtures/harness: compiled only under the gp-acceptance-support
+// feature (default-off), so a fixture edit never invalidates the shipping build.
+#[cfg(feature = "gp-acceptance-support")]
 pub mod acceptance_support;
 mod catalog;
 mod product_acceptance;

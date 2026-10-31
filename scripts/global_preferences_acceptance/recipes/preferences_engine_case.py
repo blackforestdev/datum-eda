@@ -75,7 +75,6 @@ ENGINE_COVERAGE = {
     ("human-agent-authority", "acceptance-expired"),
     ("human-agent-authority", "acceptance-consumed"),
     ("human-agent-authority", "request-id-conflict"),
-    ("human-agent-authority", "daemon-restart"),
 }
 
 

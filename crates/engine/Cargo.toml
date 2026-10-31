@@ -18,9 +18,34 @@ lyon_tessellation.workspace = true
 [dev-dependencies]
 proptest.workspace = true
 
+[features]
+# GP-CM05E acceptance fixtures/harness. Default-OFF so a fixture edit never
+# invalidates the normal engine/CLI/GUI build: the acceptance_support/* and
+# repository/acceptance_constructions module trees compile ONLY under this
+# feature (a compiler-enforced fence, upgrading the prior grep-only fence). The
+# acceptance driver bin, its integration test, and the governed feature-ON proof
+# gates enable it explicitly; nothing in the shipping build does.
+gp-acceptance-support = []
+
 # GP-CM05E engine-surface production-acceptance driver (first-party; no new
 # dependencies). Emits honest observation booleans for engine-only resolver
-# states the CLI/MCP/GUI adapters cannot inject.
+# states the CLI/MCP/GUI adapters cannot inject. Gated behind
+# gp-acceptance-support so a fixture edit never rebuilds the shipping binaries.
+# Build reuse: selecting the feature-enabled preferences_acceptance_support
+# integration test makes Cargo BUILD this binary target as a side effect (that
+# test exercises the library API directly and does not execute the binary), so
+# the producer reuses that artifact instead of a redundant standalone
+# `cargo build --bin`; build a fresh one only when the required feature set,
+# profile, or source freshness differs.
 [[bin]]
 name = "gp_acceptance_driver"
 path = "src/bin/gp_acceptance_driver.rs"
+required-features = ["gp-acceptance-support"]
+
+# The acceptance-support integration target (moved out of the engine unit-test
+# harness). An explicit [[test]] so it can carry required-features; without the
+# feature it is not built, so an ordinary `cargo test -p eda-engine` excludes it.
+[[test]]
+name = "preferences_acceptance_support"
+path = "tests/preferences_acceptance_support.rs"
+required-features = ["gp-acceptance-support"]
