@@ -85,13 +85,14 @@ class RunnerTests(unittest.TestCase):
 
 
     def produce_binding(self, surface='cli', *, environments=None, recipe=None,
-                manifest_mode=None, capture_after=None, setup=None, redirected=False):
+                manifest_mode=None, capture_after=None, setup=None, redirected=False,
+                command_stdout=None, command_exit=0, command_stderr=b''):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
         bundle_root = root / 'bundle'
         bundle_root.mkdir()
-        capture = Capture(bundle_root)
+        capture = self.last_capture = Capture(bundle_root)
         gui_recipe = 'scripts/gui_case.py'
         recipes = []
         for relative in (producer.RECIPE_RELPATH, gui_recipe):
@@ -127,10 +128,13 @@ class RunnerTests(unittest.TestCase):
             stdout = capture.put({'schema': 'datum.preferences.case-observations.v2',
                                   'executed_tests': 1,
                                   'observations': {name: True for name in inventory[key]}})
+            if command_stdout is not None:
+                stdout = capture.put(command_stdout)
             record = {'schema': 'datum.preferences.command-observation.v2', 'command': argv,
-                      'exit_code': 0, 'candidate_revision': candidate,
+                      'exit_code': command_exit, 'candidate_revision': candidate,
                       'input_manifest_sha256': inputs, 'executed_tests': 1,
-                      'stdout': stdout, 'stderr': capture.put(b'')}
+                      'stdout': stdout, 'stderr': capture.put(command_stderr)}
+            self.last_command_record = record
             return {name: record[name] for name in ('command', 'exit_code', 'candidate_revision',
                                                    'input_manifest_sha256')} | {'log': capture.put(record)}
 
@@ -150,6 +154,35 @@ class RunnerTests(unittest.TestCase):
         capture, row, report, key, binaries, environments, _ = result
         producer.validate_case_row(Bundle(capture.root, list(capture.inventory.values())),
                                    row, key, report, binaries, environments)
+
+    def test_invalid_case_output_reports_retained_failure_locations(self):
+        for stdout in (b'', b'{malformed', b'\xff'):
+            with self.subTest(stdout=stdout):
+                with self.assertRaises(EvidenceError) as caught:
+                    self.produce_binding(command_stdout=stdout, command_exit=7,
+                                         command_stderr=b'private recipe traceback')
+                capture = self.last_capture
+                bundle = Bundle(capture.root, list(capture.inventory.values()))
+                record = self.last_command_record
+                message = str(caught.exception)
+                self.assertIn('exit_code=7', message)
+                for field in ('stdout', 'stderr'):
+                    self.assertIn(str(capture.root / record[field]['path']), message)
+                log = next(ref for ref in capture.inventory.values()
+                           if bundle.read(ref) == producer.canonical(record))
+                self.assertIn(str(capture.root / log['path']), message)
+                self.assertEqual(bundle.read(record['stdout']), stdout)
+                self.assertEqual(bundle.read(record['stderr']), b'private recipe traceback')
+                self.assertNotIn('private recipe traceback', message)
+                self.assertIsInstance(caught.exception.__cause__,
+                                      (json.JSONDecodeError, UnicodeDecodeError))
+                self.last_command.assert_called_once()
+
+    def test_valid_case_output_preserves_nonzero_exit(self):
+        result = self.produce_binding(command_exit=7)
+        self.assertEqual(result[1]['exit_code'], 7)
+        self.assertEqual(result[1]['executed_tests'], 1)
+        self.last_command.assert_called_once()
 
     def test_default_cli_unchanged(self):
         result = self.produce_binding()

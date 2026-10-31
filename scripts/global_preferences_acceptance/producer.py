@@ -29,7 +29,7 @@ sys.path.insert(0, str(HERE.parents[1]))  # put scripts/ on the path for the pac
 
 from global_preferences_acceptance import observations as obs  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
-from global_preferences_acceptance.inputs import Bundle, canonical, digest, parse, read_file, require  # noqa: E402
+from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, digest, parse, read_file, require  # noqa: E402
 from global_preferences_acceptance.matrix import case_inventory  # noqa: E402
 from global_preferences_acceptance.process import execute  # noqa: E402
 
@@ -148,7 +148,15 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
                               inputs=input_manifest["sha256"])
 
     raw = json.loads(_read_artifact(capture, cmd_row["log"]))
-    case_output = json.loads(_read_artifact(capture, raw["stdout"]))
+    try:
+        case_output = json.loads(_read_artifact(capture, raw["stdout"]))
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        raise EvidenceError(
+            f"case recipe output is not JSON: exit_code={raw['exit_code']}; "
+            f"stdout={capture.root / raw['stdout']['path']}; "
+            f"stderr={capture.root / raw['stderr']['path']}; "
+            f"command_log={capture.root / cmd_row['log']['path']}"
+        ) from error
     observed = case_output["observations"]
 
     after_ref = (capture_after(capture, key, work_root, before_state)
