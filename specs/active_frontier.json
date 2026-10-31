@@ -19191,6 +19191,116 @@
       },
       "claim": null,
       "landing_commit": "7457f090595472288c90b8068e3c4f8f78fd2202"
+    },
+    {
+      "key": "GUI-LOCAL-MENU-ENABLEMENT-TRUTHFULNESS",
+      "issue_id": "dat-gui-local-readiness-uev",
+      "title": "Make GUI-local menu enablement truthful (enabled IFF a dispatch handler exists)",
+      "summary": "Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31, ~80%-to-behavior allocation): GuiMenuItem::is_phase_one_enabled accepts any GuiLocal binding while the runtime dispatch lacks handlers for several declared actions (view.layers, window.documents, help.about), so an ENABLED entry falls through and reports 'View action is unavailable' (native WDQ-C01 repro recorded: research/process-quality/evidence/wdq-c01-current/). Deliver a consumer-aware enablement contract: an entry is enabled IFF a runtime dispatch handler exists, and unbound entries are disabled yet truthfully exposed. NO implementing the missing features. PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane and Preferences ownership is preserved.",
+      "order": 129,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md",
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+      ],
+      "work_purpose": {
+        "kind": "product_delivery",
+        "rationale": "Delivers truthful GUI-local menu behavior a user experiences directly (no enabled entry that errors on activation); owner ~80%-to-usable-behavior allocation, handed to the Codex team under the PM-Agent-01 standing appointment. Bounded to enablement truthfulness, not feature implementation; no successor authority, and GP-CM05E stays the sole canonical product lane."
+      },
+      "feature_delivery": {
+        "ordinary_workflow": [
+          "Launch datum-gui and open the application menu bar; read each top-level menu and its entries as the GUI renders them.",
+          "Invoke Help -> About Datum: it either opens the About surface (a runtime dispatch handler is bound) or is shown as a disabled entry truthfully exposed as unavailable -- never an enabled entry that errors with 'View action is unavailable'.",
+          "Confirm across View/Window/Help that every entry is enabled if and only if a runtime dispatch handler exists for its action (consumer-aware enablement); unbound actions such as view.layers and window.documents render disabled and stay visible, not enabled-then-refusing."
+        ],
+        "safety_requirements": [
+          "Menu enablement is computed solely from the presence of a bound runtime dispatch handler (gui_menu_model <-> runtime_menu_actions/runtime_view_actions); no entry is enabled without a handler and no missing feature is implemented to satisfy enablement.",
+          "Disabled entries stay visible and truthfully labeled unavailable -- no silent hiding, no fabricated capability, and the activation fallback never presents as a working action.",
+          "Negative tests cover the currently-unbound actions (view.layers, window.documents, help.about and peers) asserting disabled-and-exposed; changes stay within the leased menu/dispatch scope and touch no global_preferences_runtime or GP-CM05E files (Preferences ownership preserved)."
+        ],
+        "qualification_followups": [
+          "Acceptance observable is the native menu drive on a real GUI build, per the recorded WDQ-C01 reproduction (research/process-quality/evidence/wdq-c01-current/help-menu.png, help-about-refusal.png): the About entry must resolve to work-or-truthfully-disabled, not the enabled-then-refusing state."
+        ],
+        "prerequisite_reasons": {},
+        "development_ready": false,
+        "ordinary_evidence": []
+      },
+      "claim": {
+        "agent": "codex-cli",
+        "harness": "codex",
+        "session": "codex-cli",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "f87cbf053cd41095c8e7f02188ab4e2540e0a6d8",
+        "claimed_at": "2026-10-31T08:19:24Z",
+        "heartbeat_at": "2026-10-31T08:19:24Z",
+        "expires_at": "2026-10-31T16:19:24Z",
+        "scope": [
+          "crates/gui-protocol/src/gui_menu_model.rs",
+          "crates/gui-protocol/src/gui_menu_model",
+          "crates/gui-app/src/application/runtime_menu_actions.rs",
+          "crates/gui-app/src/editor/runtime_view_actions.rs",
+          "docs/gui/menu_model.json"
+        ]
+      }
+    },
+    {
+      "key": "ADVERTISED-ZOOM-OUT-SHORTCUT-DISPATCH",
+      "issue_id": "dat-advertised-zoom-shortcut-icbx",
+      "title": "Dispatch the advertised Ctrl+- Zoom Out shortcut from board/workspace focus",
+      "summary": "Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31, ~80%-to-behavior allocation): docs/gui/menu_model.json advertises Ctrl+- for View Zoom Out, but application/workspace_keyboard.rs has no Minus/Zoom action and returns None, so the advertised shortcut never zooms the focused board (native C04 repro: retained initial camera, no post-key publication). Wire the keyboard path to the EXISTING view.zoom_out action (runtime_view_actions) -- bounded keyboard-dispatch integration that reuses the implemented behavior, no new mechanism or product rule. Proof includes terminal-focus discrimination (the shortcut must not fire into a focused terminal). PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane.",
+      "order": 130,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md",
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+      ],
+      "work_purpose": {
+        "kind": "product_delivery",
+        "rationale": "Delivers an advertised shortcut a user expects to work (Ctrl+- zooms the board out); owner ~80%-to-usable-behavior allocation, handed to the Codex team under the PM-Agent-01 standing appointment. Bounded to reusing the existing view.zoom_out action via keyboard dispatch; no new mechanism, no successor authority, and GP-CM05E stays the sole canonical product lane."
+      },
+      "feature_delivery": {
+        "ordinary_workflow": [
+          "Launch datum-gui, open a board in the Board editor and give the board viewport focus.",
+          "Press the advertised Ctrl+- (View -> Zoom Out) shortcut: the board camera zooms out via the existing view.zoom_out action and the post-key state publishes the new camera, not the stale initial sequence.",
+          "Give a terminal pane focus and press Ctrl+-: the board does NOT zoom (focus discrimination) -- the keystroke stays with the focused terminal, confirming the shortcut only fires from board/workspace focus."
+        ],
+        "safety_requirements": [
+          "The shortcut REUSES the existing view.zoom_out action (runtime_view_actions handler); no new zoom mechanism, product rule or camera behavior is introduced -- bounded keyboard-dispatch integration only.",
+          "Ctrl+- is dispatched only from workspace/board keyboard focus via workspace_keyboard::character_action; a focused terminal keeps its keystrokes (terminal screen-authority preserved; no edit to terminal routing).",
+          "Changes stay within the leased application/workspace_keyboard.rs scope and its focused tests; a negative test asserts the board does not zoom while a terminal is focused."
+        ],
+        "qualification_followups": [
+          "Acceptance observable is the native keyboard drive on a real GUI build: an exact ControlLeft/Minus press-release produces a fresh post-zoom camera publication (the retained-initial-state result in the C04 run01 repro, .datum/scratch/s5a-c04-managed-20261018/native-filled-board-graphic-01/result.json, is the negative baseline)."
+        ],
+        "prerequisite_reasons": {},
+        "development_ready": false,
+        "ordinary_evidence": []
+      },
+      "claim": {
+        "agent": "codex-cli",
+        "harness": "codex",
+        "session": "codex-cli",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "f87cbf053cd41095c8e7f02188ab4e2540e0a6d8",
+        "claimed_at": "2026-10-31T08:20:24Z",
+        "heartbeat_at": "2026-10-31T08:20:24Z",
+        "expires_at": "2026-10-31T16:20:24Z",
+        "scope": [
+          "crates/gui-app/src/application/workspace_keyboard.rs"
+        ]
+      }
     }
   ],
   "management_appointments": {
