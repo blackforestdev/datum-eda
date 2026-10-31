@@ -35,13 +35,17 @@ pub(crate) fn execute_preferences_command(
 
     let session_id = format!("cli:{}:{}", std::process::id(), Uuid::new_v4());
 
-    // Proposal operations (prepare/validate/accept_apply/reject) keep their existing path in this
-    // slice; owning-daemon routing here covers the ordinary query/Set/Reset requests (bead i4d,
-    // §2.1). NOTE/FOLLOW-ON: `proposal accept_apply` still commits through a local service, which
-    // is the remaining second-writer surface to route or refuse when a daemon owns the repository.
+    // Proposal operations participate in owning-daemon routing like every other ordinary request
+    // (§2.1). The committing `accept_apply` discovers a reachable owner and routes its commit
+    // through the daemon's single writer -- never a local commit with an owner present; standalone
+    // it commits locally, unchanged. The side-effect-free creation ops (prepare/validate/reject)
+    // take no writer lease and stay on the local path.
     if let PreferencesCommands::Proposal { action } = action {
-        let mut service = open_local_service()?;
-        let response = execute_proposal(&mut service, action, &session_id)?;
+        let response = if matches!(action, PreferencesProposalCommands::AcceptApply { .. }) {
+            Backend::discover()?.confirmed_proposal_apply(action, &session_id)?
+        } else {
+            execute_proposal(&mut open_local_service()?, action, &session_id)?
+        };
         return Ok((
             render_output(format, &response),
             if response.ok { 0 } else { 2 },
@@ -252,6 +256,63 @@ impl Backend {
             &human_actor(session_id),
         )
     }
+
+    /// The current product context, for a client-side refusal. Standalone reads it from the local
+    /// service; against an owner it comes from a describe query (which also re-confirms the owner is
+    /// reachable), its connection released before any confirmation wait.
+    fn context(&mut self, session_id: &str) -> Result<PreferenceContextV1> {
+        if let Backend::Standalone { service } = self {
+            return Ok(service.context());
+        }
+        Ok(self
+            .query(
+                "datum.preferences.describe",
+                PreferenceQueryV1::Describe,
+                session_id,
+            )?
+            .context)
+    }
+
+    /// Apply a prepared proposal under a human's foreground-TTY confirmation. With a reachable owner
+    /// the committing accept routes through the daemon's single writer (the request carries the
+    /// AcceptAndApply mutation under the host route); standalone it commits through the local
+    /// service. Never a local commit with an owner present. The TTY confirmation is performed
+    /// client-side before the apply request is sent, and any describe connection is released first.
+    fn confirmed_proposal_apply(
+        &mut self,
+        action: PreferencesProposalCommands,
+        session_id: &str,
+    ) -> Result<PreferenceProductResponseV1> {
+        let PreferencesProposalCommands::AcceptApply { proposal_json } = action else {
+            unreachable!("confirmed_proposal_apply handles accept_apply only")
+        };
+        let proposal: PreferenceProposalV1 = read_json(&proposal_json)?;
+        let schema = "datum.preferences.proposal.accept_apply";
+        let summary = format!(
+            "Global · this device\nProposal: {}\nMutation: {}\nRationale: {}",
+            proposal.proposal_id,
+            serde_json::to_string(&proposal.mutation)?,
+            proposal.rationale,
+        );
+        let context = self.context(session_id)?;
+        if !confirm_on_foreground_tty(&summary) {
+            return Ok(human_presence_refusal(
+                context,
+                schema,
+                None,
+                serde_json::to_value(&proposal).ok(),
+            ));
+        }
+        self.run(
+            product_request(
+                schema,
+                PreferenceProductPayloadV1::Proposal(Box::new(
+                    PreferenceProposalActionV1::AcceptAndApply { proposal },
+                )),
+            ),
+            &human_actor(session_id),
+        )
+    }
 }
 
 fn owning_socket() -> Option<PathBuf> {
@@ -338,12 +399,16 @@ fn execute_host_through_daemon(
     Ok(envelope)
 }
 
+/// The side-effect-free proposal creation ops (prepare / validate / reject), which take no writer
+/// lease and run as a script actor on the local service. The committing `accept_apply` is handled
+/// by `Backend::confirmed_proposal_apply` (owner-routed or standalone), and `authorize-mcp` reaches
+/// the owning daemon directly -- neither reaches here.
 fn execute_proposal(
     service: &mut GlobalPreferencesProductService,
     action: PreferencesProposalCommands,
     session_id: &str,
 ) -> Result<PreferenceProductResponseV1> {
-    let (schema, proposal_action, human_confirmation) = match action {
+    let (schema, proposal_action) = match action {
         PreferencesProposalCommands::Prepare {
             request_json,
             rationale,
@@ -353,62 +418,32 @@ fn execute_proposal(
                 mutation: read_json(&request_json)?,
                 rationale,
             },
-            false,
         ),
         PreferencesProposalCommands::Validate { proposal_json } => (
             "datum.preferences.proposal.validate",
             PreferenceProposalActionV1::Validate {
                 proposal: read_json(&proposal_json)?,
             },
-            false,
-        ),
-        PreferencesProposalCommands::AcceptApply { proposal_json } => (
-            "datum.preferences.proposal.accept_apply",
-            PreferenceProposalActionV1::AcceptAndApply {
-                proposal: read_json(&proposal_json)?,
-            },
-            true,
         ),
         PreferencesProposalCommands::Reject { proposal_json } => (
             "datum.preferences.proposal.reject",
             PreferenceProposalActionV1::Reject {
                 proposal: read_json(&proposal_json)?,
             },
-            false,
         ),
+        PreferencesProposalCommands::AcceptApply { .. } => {
+            unreachable!("accept_apply is routed through Backend::confirmed_proposal_apply")
+        }
         PreferencesProposalCommands::AuthorizeMcp { .. } => {
             unreachable!("authorize-mcp is routed to the owning daemon")
         }
-    };
-    let actor = if human_confirmation {
-        let proposal = match &proposal_action {
-            PreferenceProposalActionV1::AcceptAndApply { proposal } => proposal,
-            _ => unreachable!(),
-        };
-        let summary = format!(
-            "Global · this device\nProposal: {}\nMutation: {}\nRationale: {}",
-            proposal.proposal_id,
-            serde_json::to_string(&proposal.mutation)?,
-            proposal.rationale,
-        );
-        if !confirm_on_foreground_tty(&summary) {
-            return Ok(human_presence_refusal(
-                service.context(),
-                schema,
-                None,
-                serde_json::to_value(proposal).ok(),
-            ));
-        }
-        human_actor(session_id)
-    } else {
-        script_actor(session_id)
     };
     Ok(service.execute(
         product_request(
             schema,
             PreferenceProductPayloadV1::Proposal(Box::new(proposal_action)),
         ),
-        &actor,
+        &script_actor(session_id),
     ))
 }
 
