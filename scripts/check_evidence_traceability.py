@@ -104,7 +104,8 @@ def main() -> int:
         elif route.get("reviewed_digest") != current:
             failures.append(
                 f"{route_id}: evidence/spec review is stale; set reviewed_digest to {current} "
-                "only after reviewing every listed source against every listed consumer"
+                "only after reviewing affected claims against a verified unchanged route baseline; "
+                "review the complete route when no adequate baseline exists or meaning changes across it"
             )
 
     discovered = discovered_sources()
