@@ -38,6 +38,7 @@ ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE.parents[1]))
 
 from global_preferences_acceptance import measurements as meas  # noqa: E402
+from global_preferences_acceptance.identity import validate_live_inputs  # noqa: E402
 from global_preferences_acceptance import observations as obs  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
 from global_preferences_acceptance.inputs import Bundle, canonical, digest, parse, require  # noqa: E402
@@ -557,6 +558,7 @@ def main(argv=None):
     import subprocess
     revision = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
                               capture_output=True, text=True, check=True).stdout.strip()
+    validate_live_inputs(ROOT, revision)
     binary_sha256 = _sha_file(binary)
     matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
     input_manifest_sha256 = digest(canonical([{"path": str(binary), "sha256": binary_sha256}]))
@@ -571,6 +573,7 @@ def main(argv=None):
     produced = _produce(args.budget, capture, binary, common, args.timeout, scratch,
                         daemon_binary=daemon_binary, warmups=args.daemon_warmups,
                         samples=args.daemon_samples, trials=args.daemon_trials)
+    validate_live_inputs(ROOT, revision)
 
     bundle = Bundle(args.bundle_root.resolve(), list(capture.inventory.values()))
     for measurement in produced:

@@ -7,8 +7,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, digest
+from global_preferences_acceptance.identity import validate_live_inputs
 from global_preferences_acceptance.report import validate_report
 from global_preferences_acceptance.test_support import (
     SyntheticBundle, lift_dispositions, restore_dispositions)
@@ -130,28 +132,90 @@ class EvidenceTests(unittest.TestCase):
             self.check(report)
 
     def test_changed_live_input_and_new_untracked_input(self):
+        # Historical proof remains about its original candidate. New execution must
+        # still refuse the same changed worktree, rather than relabeling it as that pin.
         path = self.fixture.root / 'scripts/fixture.py'
         original = path.read_bytes()
         try:
             path.write_bytes(b'changed input')
+            self.assertEqual(self.check(self.fixture.report)['candidate'], self.fixture.revision)
             with self.assertRaisesRegex(EvidenceError, 'current proof input changed'):
-                self.check(self.fixture.report)
+                validate_live_inputs(self.fixture.root, self.fixture.revision)
         finally:
             path.write_bytes(original)
         extra = self.fixture.root / 'scripts/unreviewed.py'
         try:
             extra.write_bytes(b'unreviewed')
+            self.assertEqual(self.check(self.fixture.report)['candidate'], self.fixture.revision)
             with self.assertRaisesRegex(EvidenceError, 'new or removed proof input'):
-                self.check(self.fixture.report)
+                validate_live_inputs(self.fixture.root, self.fixture.revision)
         finally:
             extra.unlink()
         mode = path.stat().st_mode
         try:
             path.chmod(0o755)
+            self.assertEqual(self.check(self.fixture.report)['candidate'], self.fixture.revision)
             with self.assertRaisesRegex(EvidenceError, 'executable mode'):
-                self.check(self.fixture.report)
+                validate_live_inputs(self.fixture.root, self.fixture.revision)
         finally:
             path.chmod(mode)
+
+    def test_original_matrix_and_candidate_remain_bound_after_live_edits(self):
+        path = self.fixture.root / 'specs/global_preferences_production_acceptance_matrix.json'
+        original = path.read_bytes()
+        try:
+            path.write_bytes(b'{"unrelated_current_matrix":true}')
+            result = self.check(self.fixture.report)
+            self.assertEqual(result['candidate'], self.fixture.revision)
+            self.assertFalse(result['production_accepted'])
+            with self.assertRaisesRegex(EvidenceError, 'current proof input changed'):
+                validate_live_inputs(self.fixture.root, self.fixture.revision)
+            report = deepcopy(self.fixture.report)
+            report['candidate']['revision'] = '0' * 40
+            with self.assertRaisesRegex(EvidenceError, 'different requested candidate'):
+                self.check(report)
+        finally:
+            path.write_bytes(original)
+
+    def test_manifest_cannot_be_rewritten_to_match_changed_worktree(self):
+        report = deepcopy(self.fixture.report)
+        entries = self.fixture.refresh().json(report['input_manifest'])
+        entries[0]['sha256'] = '0' * 64
+        # A content-addressed rewrite cannot turn altered inputs into the recorded Git pin.
+        report['input_manifest'] = self.fixture.put(entries)
+        build = report['candidate']['build_commands'][0]
+        build['input_manifest_sha256'] = report['input_manifest']['sha256']
+        log = self.fixture.refresh().json(build['log'])
+        log['input_manifest_sha256'] = report['input_manifest']['sha256']
+        build['log'] = self.fixture.put(log)
+        report['artifacts'] = list(self.fixture.artifacts.values())
+        with self.assertRaisesRegex(EvidenceError, 'candidate input digest differs'):
+            self.check(report)
+
+    def test_build_refuses_changes_before_and_during_capture(self):
+        from global_preferences_acceptance import candidate_identity as ci
+        from global_preferences_acceptance.capture import Capture
+        path = self.fixture.root / 'scripts/fixture.py'
+        original = path.read_bytes()
+        capture = Capture(self.fixture.directory)
+        try:
+            path.write_bytes(b'changed before build')
+            with patch.object(ci, 'release_build_observation') as build:
+                with self.assertRaisesRegex(EvidenceError, 'current proof input changed'):
+                    ci.build_candidate(self.fixture.root, capture, self.fixture.revision)
+                build.assert_not_called()
+            path.write_bytes(original)
+
+            def concurrent_edit(*args):
+                path.write_bytes(b'changed during build')
+                return self.fixture.report['candidate']['build_commands'][0]
+
+            with patch.object(ci, 'release_build_observation', side_effect=concurrent_edit), \
+                 patch.object(ci, 'retain_binaries', return_value=self.fixture.report['candidate']['binaries']):
+                with self.assertRaisesRegex(EvidenceError, 'current proof input changed'):
+                    ci.build_candidate(self.fixture.root, capture, self.fixture.revision)
+        finally:
+            path.write_bytes(original)
 
     def test_stale_matrix_environment_and_historical_report(self):
         for field, value in [('matrix_sha256', '0' * 64), ('environments', []),

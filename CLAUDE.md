@@ -180,9 +180,12 @@ or release candidate. The project manager schedules that milestone; a routine ed
 new commit, lease renewal or evidence-file change does not create one. A line-color
 change calls for the affected rendering checks, not an automatic full campaign.
 
-Batch known corrections and use focused regression checks while iterating. A changed
-qualified candidate loses its old qualification claim; rerun the complete required
-proof when presenting the next milestone candidate, not immediately after every edit.
+Batch known corrections and use focused regression checks while iterating. Changes
+invalidate only affected qualification claims; retained proof keeps its original
+candidate and provenance. Establish ordinary designer workflow behavior before
+broad qualification. The next milestone needs complete evidence applicable to its
+candidate, not automatic wholesale recapture after every edit. Historical proof
+alone cannot establish a new candidate's release readiness.
 Keep required staged commit checks, relevant safety checks and independent review.
 Focused passes establish their stated scope only; they never become a production PASS.
 

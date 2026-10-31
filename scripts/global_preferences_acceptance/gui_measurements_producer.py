@@ -22,6 +22,7 @@ from . import measurements_producer as mp
 from .assemble import assembled_report, load_frozen
 from .capture import Capture
 from .environment_record import _scale_label
+from .identity import validate_live_inputs
 from .inputs import Bundle
 from .inventory import TIMED_VARIANTS
 from .matrix import gui_coordinates
@@ -160,6 +161,7 @@ def build_gui_measurements(bundle_root, identity, *, drive, coordinates=None, bu
     :func:`frozen_common` (role ``gui``). Every produced row is replayed through the governed
     :func:`measurements.validate_trials`; a failed/over-budget row raises and the run stops with the
     evidence preserved (one-attempt; never re-rolled). No readiness is issued."""
+    validate_live_inputs(mp.ROOT, identity["candidate"]["revision"])
     bundle_root = Path(bundle_root).resolve()
     bundle_root.mkdir(parents=True, exist_ok=True)
     capture = Capture(bundle_root)
@@ -180,6 +182,7 @@ def build_gui_measurements(bundle_root, identity, *, drive, coordinates=None, bu
         for measurement in produced:
             meas.validate_trials(measurement, bundle)
     rows = merge_measurements(identity, produced)
+    validate_live_inputs(mp.ROOT, identity["candidate"]["revision"])
     return assembled_report(capture, identity, case_results=(), measurements=rows,
                             producer_session=producer_session)
 

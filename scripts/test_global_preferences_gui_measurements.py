@@ -14,6 +14,7 @@ assembled report is asserted to stay non-ready.
 """
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from global_preferences_acceptance import assemble
@@ -75,6 +76,10 @@ class FakeGuiDrive(gm.GuiDrive):
 
 class GuiMeasurementProducerTests(unittest.TestCase):
     def setUp(self):
+        # FakeGuiDrive exercises mechanics; it supplies no Git/product proof.
+        guard = patch.object(gm, "validate_live_inputs")
+        self.live_guard = guard.start()
+        self.addCleanup(guard.stop)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
@@ -97,6 +102,18 @@ class GuiMeasurementProducerTests(unittest.TestCase):
         return gm.build_gui_measurements(self.bundle_root, self.identity,
                                          drive=drive or FakeGuiDrive(), coordinates=[COORDINATE],
                                          budgets=budgets, producer_session="dev-agent-01")
+
+    def test_changed_inputs_refuse_before_gui_drive(self):
+        self.live_guard.side_effect = EvidenceError("current proof input changed")
+        with patch.object(FakeGuiDrive, "interact_and_present") as feedback:
+            with self.assertRaisesRegex(EvidenceError, "current proof input changed"):
+                self.build()
+            feedback.assert_not_called()
+
+    def test_changed_inputs_during_gui_drive_refuse_report(self):
+        self.live_guard.side_effect = [None, EvidenceError("current proof input changed")]
+        with self.assertRaisesRegex(EvidenceError, "current proof input changed"):
+            self.build(budgets={"gui-feedback"})
 
     # --- coordinate -> frozen environment id --------------------------------------------------
     def test_coordinate_environment_id(self):

@@ -66,6 +66,16 @@ the edit/check loop. The project manager explicitly schedules its stable candida
 Routine changes use focused affected regression, integration and safety checks;
 capture-tool development uses bounded diagnostic runs until the mechanism is ready.
 Batch known corrections before requesting the next complete qualification run.
+First demonstrate the task's ordinary designer workflows through the Rust product
+paths, including actual Describe/Read, Set, Reset and persistence/reopen;
+accessibility predicates and fixture results alone do not establish that behavior.
+Before broad collection, check that every required operation, recipe, tool and
+display coordinate can actually be exercised in the owned isolated environment.
+If a requirement is unproducible, stop that campaign and obtain the scoped PM bar
+review: reduce the bar within recorded authority or route one sentence to the owner.
+Do not accumulate new OWED work or build disposition machinery around an impossible
+bar. Preserve existing observations and historical dispositions without promoting
+them to acceptance. Record this assessment in the existing task, not a new ledger.
 Existing ordinary-application development availability remains separate from this
 contract's `candidate_ready` and `production_accepted` states. A focused pass cannot
 satisfy those states or carry an older candidate's production acceptance forward.
@@ -99,11 +109,17 @@ The report does not contain the owner receipt or a mutable acceptance flag.
 Proof commits may add evidence and governance after the tested commit. At final
 publication, enumerate and review the complete delta from tested candidate to
 publication: only report/artifact additions and necessary governance may differ.
-Any product, test, fixture, dependency, build, checker, matrix or contract change
-invalidates that candidate's readiness. Complete proof is required for the next
-designated milestone candidate; routine development corrections receive focused
-affected checks without immediately restarting the full campaign. No
-agent-selected equivalence, stale HEAD comparison, or silent carry-forward.
+Changes to product, test, fixture, dependency, build, checker, matrix or contract
+require assessment of the affected claims; they do not erase observations bound
+to the original candidate. Routine corrections rerun affected checks and retain
+unaffected proof with its original provenance in the existing task. Historical
+inspection checks committed candidate inputs and retained artifacts, independently
+of later working-tree changes. A new release claim still requires complete evidence
+for its exact candidate under sections 3–9: no cross-candidate row relabeling,
+agent-selected equivalence, stale HEAD comparison or silent carry-forward. Existing
+V2 reports bind one candidate; engineering reuse does not make a mixed-candidate
+report ready. Schedule any remaining qualification at the designated stable
+candidate, rather than automatically recapturing all rows during routine fixes.
 The publication delta is a separate reviewed artifact, avoiding circular hashes.
 
 ## 4. Closed report shapes and result accounting
@@ -249,8 +265,9 @@ hide a failure. Sort the 100 elapsed values and use nearest-rank p95, index
 operation. A failed operation, timeout, missing sample or non-finite value
 fails the trial. No outlier removal, successful-retry substitution, or relabeling
 failed product runs as environmental failures. Preserve failures and their
-diagnosis; when reattempting milestone qualification after candidate corrections,
-rerun the complete candidate proof.
+diagnosis. Candidate corrections require affected measurements to be repeated;
+retain unaffected observations at their original pins under section 3. A full
+release claim still requires the complete candidate-bound proof.
 
 Each measurement has exactly `budget_id`, `variant_id`, `environment_id`,
 `candidate_revision`, `binary_sha256`, `input_manifest_sha256`, `matrix_sha256`,
@@ -358,20 +375,23 @@ retained-history growth, known exclusions and the exact accepted report.
 
 Under the installed GP-CM05E authorization, implement in this order:
 
-1. Build V2 closed-shape parsing, identity/artifact validation and negative tests
+1. Demonstrate the ordinary designer workflows and check campaign producibility
+   as required by section 2. Fix demonstrated Rust behavior first; an impossible
+   bar returns for scoped review before broad collection or more harness work.
+2. Build V2 closed-shape parsing, identity/artifact validation and negative tests
    alongside the existing historical V1 reader. V1 remains inspectable but
    cannot produce a V2 readiness or acceptance verdict.
-2. Expand matrix-driven execution to assert actual test discovery/results and
+3. Expand matrix-driven execution to assert actual test discovery/results and
    every variant. Include `datum-gui-render` responsive/non-color tests; the
    current focused runner does not run that package. Retain per-case logs.
-3. Upgrade release measurements to raw samples and the exact protocol; add
+4. Upgrade release measurements to raw samples and the exact protocol; add
    native Wayland/X11 capture and lifecycle accounting through existing product
    paths. Tests must observe actual behavior rather than set synthetic pass flags.
-4. Resolve the unknown-field code inconsistency and any demonstrated in-scope
+5. Resolve the unknown-field code inconsistency and any demonstrated in-scope
    failures through the same product authority. Add cross-surface negative
    vectors. A needed new mechanism, dependency or visual change returns to its
    existing owner; it cannot be inferred from this quality contract.
-5. Pin the final candidate, run the full proof serially, obtain independent
+6. Pin the final candidate, run the required proof serially, obtain independent
    replay/review, assemble support notes and present the exact GP-CM05A packet.
 
 The specification is complete when these obligations are discoverable,
@@ -406,7 +426,7 @@ Case surfaces select the identically named binary role. Headless measurements
 select CLI; native measurements and scenarios select GUI. A digest from a
 different role cannot substitute.
 
-**Surface dispositions.** A surface named in a variant's coverage is owed on its own binary role unless the triggering state is unreachable from that surface, in which case the assertion-class has no independent authority there — it is a projection of engine state — and the row is proven on the engine surface through the resolver/repository injection harness. Each such reclassification is recorded with its ruling and the sites proving unreachability. Managed-provider state (`resolver.rs` ProviderGenerationState/offline_valid_until/ManagedPin) is resolver-level only with no product, CLI, MCP, environment or file path to activate it (per the managed/offline fixture rule above); the `managed-offline` non-engine surfaces are therefore engine-surface-by-contract, reclassified to the injection harness. Surfaces that are owed and merely produced by a later in-lane workstream are not reclassified; rows that cannot be evidenced before the pinned candidate are disclosed in `qualification_followups` and ruled at the GP-CM05A owner gate.
+**Surface dispositions.** A surface named in a variant's coverage requires its own binary role unless the triggering state is unreachable from that surface, in which case the assertion-class has no independent authority there — it is a projection of engine state — and the row is proven on the engine surface through the resolver/repository injection harness. Each such reclassification is recorded with its ruling and the sites proving unreachability. Managed-provider state (`resolver.rs` ProviderGenerationState/offline_valid_until/ManagedPin) is resolver-level only with no product, CLI, MCP, environment or file path to activate it (per the managed/offline fixture rule above); the `managed-offline` non-engine surfaces are therefore engine-surface-by-contract, reclassified to the injection harness. Historical `qualification_followups` retain their recorded gaps and rulings; they authorize neither new deferred work nor a readiness waiver. Newly discovered unproducibility follows section 2 before further collection.
 
 `build_commands` contains the complete
 release-build command observation, in the same shape as each gate command;
@@ -415,10 +435,13 @@ A passing command with no release build cannot satisfy this requirement.
 
 The input closure includes all tracked files beneath Cargo.toml, Cargo.lock,
 .cargo, crates, mcp-server, scripts, CLAUDE.md, AGENTS.md, the traceability
-manifest, and every source and consumer of the owning route. Compare each
-entry with both committed bytes and current bytes/executable mode. Reject new
-untracked inputs, removed inputs, symlinks and Git identity overrides. The
-matrix argument must equal the current, candidate-bound matrix, not a separate
+manifest, and every source and consumer of the owning route. At build/capture and
+gate execution, compare entries with both committed bytes and current bytes and
+executable mode; reject untracked inputs, removals, symlinks and Git identity
+overrides. Retained-report validation compares the complete manifest and matrix
+against their original candidate's committed bytes and checks retained artifact
+hashes; later workspace drift does not invalidate that historical observation.
+The matrix argument must equal the candidate-bound matrix, not a separate
 producer-selected substitute. The independently selected
 `--environment-sha256` is the canonical digest of the complete environment
 array recorded before trials; carry it unchanged into replay and owner review.
@@ -464,18 +487,19 @@ kind is `native` or `at-spi`; tool names the actual recorder/version; actions
 match the ordered row actions; payload references the retained capture bytes.
 AT-SPI payloads include the tree/events and screen-reader spoken-output record.
 Every N01–N06 scenario runs at all eight coordinates: 48 observations.
-The 48 native observations are scope-exited to the GP-CM05A owner gate for the
-pinned candidate: no recipe in the candidate input closure can serve a native
+The historical pin `57bd9b1b` scope-exited 48 native observations to the GP-CM05A
+owner gate: no recipe in that candidate input closure could serve a native
 fixture under the §9 independent-replay bar (report.py:124-127 enforces the exact
 `python3 <recipe.path> --native-scenario <id> --environment <id>` argv and the
 `datum.preferences.native-replay.v2` result — `accessibility_capture.py` has no
 CLI entry, the a11y case recipes reject the 2-tuple native coverage, and the only
 `--native-scenario` recipe `scripts/fixture.py` is synthetic-only and out of
-closure), and adding a conformant in-closure recipe requires a re-pin that
-invalidates this pin's rows. Native coverage therefore cannot reach
-`candidate_ready` and is carried to the owner gate as a disclosed structural gap,
-disclosed in `qualification_followups` (`inventory.NATIVE_DISPOSITIONS`); the
-pin-strict required native set is therefore the empty set.
+closure). Adding a recipe requires a new candidate for those observations, but
+does not invalidate retained rows at the original pin. That historical structural
+gap remains disclosed in `qualification_followups` (`inventory.NATIVE_DISPOSITIONS`)
+and cannot reach `candidate_ready`; the dispositioned native set remains empty.
+This records the existing non-ready corpus, not a procedure for new campaigns.
+Re-entry requires section 2's producibility and bar review before capture.
 Capture manifests cannot be relabeled across those coordinates. A nonempty
 payload alone does not demonstrate usability: replay and visual/accessibility
 review remain mandatory and no prototype authority is changed here.
@@ -502,11 +526,13 @@ four mutation variants (set/reset × standalone/daemon), three genesis and three
 validation variants (factory/global-missing/global-populated), four storage
 variants (those three plus generation), 48 GUI-feedback variants (six actions
 × eight coordinates), eight window-open and eight lifecycle variants.
-The four scale-2 GUI coordinate classes (wayland/2.0 and x11/2.0 at both logical
-window sizes) are environment-blocked on the reference 1920×1080 :1 display, so
-their 32 measurement variants are OWED and disclosed in `qualification_followups`,
-ruled at the GP-CM05A owner gate; the pin-strict required measurement set is
-therefore 90 − 32 = 58 (`inventory.MEASUREMENT_DISPOSITIONS`).
+At historical pin `57bd9b1b`, four scale-2 GUI coordinate classes (wayland/2.0 and
+x11/2.0 at both logical window sizes) were environment-blocked on the reference
+1920×1080 :1 display. Their 32 variants remain disclosed in the historical
+`qualification_followups`; the dispositioned measurement set remains 90 − 32 = 58
+(`inventory.MEASUREMENT_DISPOSITIONS`). This is no new OWED assignment or acceptance
+waiver. Re-entry follows section 2's producibility and scoped bar review using an
+owned isolated display; the owner's active display is never a capture fallback.
 `inventory.py` carries the exact action and variant spellings checked against
 this contract and the matrix; no other variant substitutes.
 
@@ -627,9 +653,16 @@ separately receipt-bound publication review has schema
 changed_paths, reviewer_session and disposition approved. These structural
 checks never replace the installed owner boundary or authorize its transition.
 
-The full runner requires explicit report, bundle, candidate, environment digest
-and a new output path. It retains every mandatory gate's output, runs Cargo
-serially through the resource guard, records failures/timeouts, and validates
+The full runner requires explicit report, bundle, candidate, environment digest,
+`--ordinary-evidence` and a new output path. The ordinary evidence is the existing
+repository-relative `ordinary_application` record: its source commit must match
+the candidate and its workflow/safety results must satisfy the selected feature's
+`feature_delivery` contract. No new schema, route or productivity ledger is needed.
+Before expensive gates, reject unresolved structural/environment coverage
+dispositions and validate the supplied environment, case, native and measurement
+corpora. The runner enforces live candidate inputs around execution, retains every
+mandatory gate's output, runs Cargo serially through the resource guard, records
+failures/timeouts, and validates
 the complete pre-review report before returning `reviewable`. Independent
 review then binds that captured subject, and `check_global_preferences_production_evidence.py
 --ready` validates the final reviewed report. It has no optional full-workspace or

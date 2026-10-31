@@ -1,11 +1,13 @@
 """Capture failures, enforce mandatory compilation and reject legacy subset modes."""
 import json
+import io
 import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from unittest.mock import Mock, patch
 
 from global_preferences_acceptance import producer
@@ -13,6 +15,127 @@ from global_preferences_acceptance.capture import Capture, executed_tests
 from global_preferences_acceptance.gates import commands
 from global_preferences_acceptance.inputs import Bundle, EvidenceError, digest
 from global_preferences_acceptance.matrix import case_inventory
+import run_global_preferences_production_acceptance as runner
+from test_global_preferences_production_matrix import MATRIX
+
+
+class QualificationEntryTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        (self.root / 'specs').mkdir()
+        (self.root / 'specs/global_preferences_production_acceptance_matrix.json').write_text(json.dumps(MATRIX))
+        contract = {'ordinary_workflow': ['change, reopen, reset'], 'safety_requirements': ['canonical mutation']}
+        (self.root / 'specs/active_frontier.json').write_text(json.dumps({'frontier': [
+            {'key': 'GLOBAL-PREFERENCES-COMPLETION', 'feature_delivery': contract}]}))
+        self.ordinary = {'kind': 'ordinary_application', 'source_commit': 'a' * 40,
+                         'launch_command': 'isolated synthetic test fixture',
+                         'workflow_results': {'change, reopen, reset': True},
+                         'safety_results': {'canonical mutation': True}}
+        self.capture = Capture(self.root)
+        artifact = self.capture.put(b'synthetic entry test, never production evidence')
+        self.report = {'schema': 'datum-global-preferences-production-evidence-v2',
+                       'origin': {'kind': 'product-execution'}, 'artifacts': [artifact],
+                       'candidate': {}, 'input_manifest': artifact, 'environments': [],
+                       'matrix_sha256': digest(runner.canonical(MATRIX)),
+                       'case_results': [], 'native_observations': [], 'measurements': []}
+        for target, value in [('ROOT', self.root), ('validate_candidate', Mock(return_value={})),
+                              ('validate_environments', Mock(return_value={})),
+                              ('validate_live_inputs', Mock())]:
+            patched = patch.object(runner, target, value)
+            patched.start()
+            self.addCleanup(patched.stop)
+        commit = patch('project_feature_delivery.commit_exists', return_value=True)
+        commit.start()
+        self.addCleanup(commit.stop)
+        for name in ('SURFACE_DISPOSITIONS', 'NATIVE_DISPOSITIONS', 'MEASUREMENT_DISPOSITIONS'):
+            patched = patch.object(runner.inventory, name, {})
+            patched.start()
+            self.addCleanup(patched.stop)
+
+    def run_refused(self, expected, *, ordinary_path='ordinary.json', environment=None):
+        (self.root / 'ordinary.json').write_text(json.dumps(self.ordinary))
+        report_path = self.root / 'report.json'
+        report_path.write_text(json.dumps(self.report))
+        output = self.root / 'result.json'
+        stdout = io.StringIO()
+        with patch.object(Capture, 'command') as command, redirect_stdout(stdout):
+            result = runner.main(['--report', str(report_path), '--bundle-root', str(self.root),
+                                  '--candidate', 'a' * 40, '--environment-sha256', environment or digest(b'[]'),
+                                  '--ordinary-evidence', ordinary_path, '--output', str(output)])
+        self.assertEqual(result, 1)
+        self.assertIn(expected, stdout.getvalue())
+        command.assert_not_called()
+        self.assertFalse(output.exists())
+
+    def test_unproducible_bar_refuses_before_any_command(self):
+        runner.inventory.NATIVE_DISPOSITIONS['missing-recipe'] = {'mode': 'scope_exit'}
+        self.run_refused('This bar cannot be met as written')
+
+    def test_declared_workflow_and_safety_must_both_pass(self):
+        for field, key in [('workflow_results', 'change, reopen, reset'),
+                           ('safety_results', 'canonical mutation')]:
+            with self.subTest(field=field):
+                self.ordinary[field][key] = False
+                self.run_refused('ordinary evidence lacks passing ' + field)
+                self.ordinary[field][key] = True
+
+    def test_ordinary_evidence_cannot_escape_repository(self):
+        self.run_refused('repository-relative path', ordinary_path='../outside.json')
+
+    def test_ordinary_evidence_must_cover_selected_candidate(self):
+        self.ordinary['source_commit'] = 'b' * 40
+        self.run_refused('ordinary workflow evidence is for a different candidate')
+
+    def test_malformed_ordinary_record_is_a_controlled_refusal(self):
+        self.ordinary = []
+        self.run_refused('ordinary evidence must describe an ordinary application run')
+
+    def test_environment_mismatch_refuses_before_any_command(self):
+        self.run_refused('observed environments differ', environment='0' * 64)
+
+    def test_missing_retained_corpus_refuses_before_any_command(self):
+        self.run_refused('case results: list required')
+
+    def run_complete(self, *, drift=False):
+        (self.root / 'ordinary.json').write_text(json.dumps(self.ordinary))
+        report_path = self.root / 'report.json'
+        report_path.write_text(json.dumps(self.report))
+        output = self.root / 'result.json'
+        # Corpus mechanics are covered by their validator suites. Here those completed
+        # validations admit the runner so execution ordering and evidence retention are tested.
+        with patch.object(runner, 'validate_cases') as cases, \
+                patch.object(runner, 'validate_native') as native, \
+                patch.object(runner, 'validate_measurements') as measurements, \
+                patch.object(runner, 'commands', return_value={'focused-stub': [['synthetic-test']]}), \
+                patch.object(Capture, 'command', return_value={'exit_code': 0, 'log': 'retained-stub'}) as command, \
+                patch.object(runner, 'validate_report', return_value={'state': 'reviewable'}) as final, \
+                redirect_stdout(io.StringIO()) as stdout:
+            runner.validate_live_inputs.side_effect = [None, EvidenceError('live inputs changed')] if drift else None
+            result = runner.main(['--report', str(report_path), '--bundle-root', str(self.root),
+                                  '--candidate', 'a' * 40, '--environment-sha256', digest(b'[]'),
+                                  '--ordinary-evidence', 'ordinary.json', '--output', str(output)])
+        for validator in (cases, native, measurements):
+            validator.assert_called_once()
+        command.assert_called_once()
+        self.assertEqual(runner.validate_live_inputs.call_count, 2)
+        retained = json.loads(output.read_text())
+        self.assertEqual(retained['gate_results'][0]['commands'][0]['log'], 'retained-stub')
+        return result, stdout.getvalue(), final
+
+    def test_valid_entry_reaches_commands_and_full_validation(self):
+        result, stdout, final = self.run_complete()
+        self.assertEqual(result, 0)
+        self.assertIn('reviewable', stdout)
+        final.assert_called_once()
+
+    def test_execution_input_drift_preserves_logs_without_readiness(self):
+        result, stdout, final = self.run_complete(drift=True)
+        self.assertEqual(result, 1)
+        self.assertIn('live inputs changed', stdout)
+        self.assertNotIn('reviewable', stdout)
+        final.assert_not_called()
 
 
 class RunnerTests(unittest.TestCase):
@@ -141,7 +264,10 @@ class RunnerTests(unittest.TestCase):
         capture.command = self.last_command = Mock(side_effect=command)
         self.last_work = bundle_root / '.work'
         options = {'recipe_relpath': selected_recipe} if surface == 'gui' or recipe else {}
-        with patch.object(producer, 'ROOT', root), patch.dict(os.environ):
+        # This fixture isolates row bindings without a Git repository. Live candidate
+        # integrity is exercised separately against real committed input closures.
+        with patch.object(producer, 'ROOT', root), patch.dict(os.environ), \
+                patch.object(producer, 'validate_live_inputs'):
             row = producer.produce_case(
                 capture, key=key, candidate=candidate, binaries=binaries,
                 environments=environments, input_manifest=manifest, matrix_sha256='b' * 64,

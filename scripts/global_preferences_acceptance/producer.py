@@ -29,7 +29,7 @@ sys.path.insert(0, str(HERE.parents[1]))  # put scripts/ on the path for the pac
 
 from global_preferences_acceptance import observations as obs  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
-from global_preferences_acceptance.identity import validate_environments  # noqa: E402
+from global_preferences_acceptance.identity import validate_environments, validate_live_inputs  # noqa: E402
 from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, digest, parse, read_file, require  # noqa: E402
 from global_preferences_acceptance.matrix import case_inventory  # noqa: E402
 from global_preferences_acceptance.process import execute  # noqa: E402
@@ -107,6 +107,7 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     for a READ-ONLY family whose observations prove nothing changed; a MUTATING family MUST pass
     capture_after so `after` reflects reality -- copying after:=before in a write family misreports it.
     """
+    validate_live_inputs(ROOT, candidate["revision"])
     case, variant, subcase, surface, _coordinate = key
     required = case_inventory()[key]  # ordered assertion ids for this coverage row
     environment_ids = [name for name, coordinate in environments.items() if coordinate == key[4]]
@@ -191,6 +192,7 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
         assertion_rows.append({"id": aid, "expected": {"operator": "equal", "value": True},
                                "observed": value, "evidence": evidence})
     row["assertions"] = assertion_rows
+    validate_live_inputs(ROOT, candidate["revision"])
     return row
 
 

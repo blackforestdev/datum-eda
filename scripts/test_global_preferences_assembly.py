@@ -49,6 +49,10 @@ def fake_command(capture, argv, *, cwd, candidate, inputs, timeout=3600):
 
 class AssemblyTests(unittest.TestCase):
     def setUp(self):
+        # These assembly fixtures deliberately use synthetic, non-Git identities.
+        guard = patch.object(producer, "validate_live_inputs")
+        self.live_guard = guard.start()
+        self.addCleanup(guard.stop)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
@@ -89,6 +93,20 @@ class AssemblyTests(unittest.TestCase):
                 self.bundle_root, family=family, surface=surface,
                 cli_binary=self.binaries["cli"], engine_binary=self.binaries["engine"],
                 identity=self.identity)
+
+    def test_changed_capture_inputs_refuse_before_recipe(self):
+        self.live_guard.side_effect = EvidenceError("current proof input changed")
+        with patch.object(Capture, "command") as command:
+            with self.assertRaisesRegex(EvidenceError, "current proof input changed"):
+                with patch.object(producer, "ROOT", self.root):
+                    producer.build_family(self.bundle_root, family=PAIRS[0][0], surface="cli",
+                                          cli_binary=self.binaries["cli"], identity=self.identity)
+            command.assert_not_called()
+
+    def test_changes_during_recipe_refuse_completed_row(self):
+        self.live_guard.side_effect = [None, EvidenceError("current proof input changed")]
+        with self.assertRaisesRegex(EvidenceError, "current proof input changed"):
+            self.build_injected_family(*PAIRS[0])
 
     def assemble_pairs(self, pairs=PAIRS):
         patches = self.patched()

@@ -35,6 +35,10 @@ NATIVE_SPEC = {"coordinate": "wayland/1.0/1024x900",
 
 class MeasurementAssemblyTests(unittest.TestCase):
     def setUp(self):
+        # Measurement mechanics use synthetic identities and mocked product runs.
+        guard = patch.object(ma, "validate_live_inputs")
+        self.live_guard = guard.start()
+        self.addCleanup(guard.stop)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
@@ -166,6 +170,7 @@ class MeasurementAssemblyTests(unittest.TestCase):
 
         # Pre-warm ran exactly once, with the FROZEN revision + cli binary sha (not a HEAD recompute).
         prewarm.assert_called_once()
+        self.assertEqual(self.live_guard.call_count, 2)
         self.assertEqual(prewarm.call_args.args[2], self.candidate["revision"])
         self.assertEqual(prewarm.call_args.args[3], self.role_shas["cli"])
         # Each budget was produced once under the SAME frozen-derived common (verbatim, no recompute).

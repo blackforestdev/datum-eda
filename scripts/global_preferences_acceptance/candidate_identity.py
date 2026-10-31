@@ -18,7 +18,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from .identity import git, required_paths
+from .identity import git, required_paths, validate_live_inputs
 from .inputs import canonical, digest, require
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -155,10 +155,13 @@ def build_candidate(root, capture, revision):
     """Capture-time orchestration: assemble the full candidate object. Runs the guarded release
     build, locates+retains the six role binaries, computes the input manifest, and returns
     (candidate, input_manifest_ref). Fully validated by validate_candidate at the real capture."""
-    manifest_ref = input_manifest(root, capture, revision)
-    build = release_build_observation(capture, root, revision, manifest_ref["sha256"])
+    selected = git(root, "rev-parse", "--verify", revision + "^{commit}").decode().strip()
+    validate_live_inputs(root, selected)
+    manifest_ref = input_manifest(root, capture, selected)
+    build = release_build_observation(capture, root, selected, manifest_ref["sha256"])
     binaries = retain_binaries(capture, root)
-    identity = revision_identity(root, revision)
+    validate_live_inputs(root, selected)
+    identity = revision_identity(root, selected)
     candidate = {**identity, "build_commands": [build], "binaries": binaries}
     return candidate, manifest_ref
 

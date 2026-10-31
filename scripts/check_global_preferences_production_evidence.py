@@ -4,11 +4,11 @@ import argparse
 import json
 from pathlib import Path
 
-from global_preferences_acceptance.inputs import EvidenceError, parse
+from global_preferences_acceptance.identity import git
+from global_preferences_acceptance.inputs import EvidenceError, parse, revision
 from global_preferences_acceptance.report import validate_acceptance, validate_report
 
 ROOT = Path(__file__).resolve().parents[1]
-MATRIX = ROOT / 'specs/global_preferences_production_acceptance_matrix.json'
 EVIDENCE = ROOT / 'specs/evidence/preferences/gp-cm05-candidate-20260907.json'
 
 
@@ -20,7 +20,7 @@ def main(argv=None):
     mode.add_argument('--acceptance', action='store_true')
     mode.add_argument('--test-only', action='store_true', help='validate synthetic regression evidence; never readiness')
     parser.add_argument('--report', type=Path)
-    parser.add_argument('--matrix', type=Path, default=MATRIX)
+    parser.add_argument('--matrix', type=Path, help='defaults to the selected candidate committed matrix')
     parser.add_argument('--bundle-root', type=Path)
     parser.add_argument('--candidate')
     parser.add_argument('--environment-sha256')
@@ -42,7 +42,9 @@ def main(argv=None):
         if not all((args.report, args.bundle_root, args.candidate, args.environment_sha256)):
             parser.error('V2 requires --report, --bundle-root, --candidate and --environment-sha256')
         report = parse(args.report.read_bytes(), 'report')
-        matrix = parse(args.matrix.read_bytes(), 'matrix')
+        matrix = parse(args.matrix.read_bytes() if args.matrix else git(ROOT, 'show',
+                       revision(args.candidate) + ':specs/global_preferences_production_acceptance_matrix.json'),
+                       'candidate matrix')
         options = dict(root=ROOT, bundle_root=args.bundle_root, expected_revision=args.candidate,
                        expected_environment_sha256=args.environment_sha256)
         if args.acceptance:

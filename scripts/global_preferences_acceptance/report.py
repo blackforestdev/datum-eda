@@ -1,7 +1,7 @@
 """Compute V2 readiness from complete observations; acceptance is separately selected."""
 
-from .identity import command_line, validate_candidate, validate_environments
-from .inputs import Bundle, array, canonical, closed, digest, parse, read_file, require, revision, sha, text, validation
+from .identity import command_line, git, validate_candidate, validate_environments
+from .inputs import Bundle, array, canonical, closed, digest, parse, require, revision, sha, text, validation
 from .inventory import PRODUCT_BOUNDARY
 from .matrix import validate_matrix
 from .measurements import measurement_inventory, validate_trials
@@ -26,9 +26,9 @@ def validate_report(report, matrix, *, root, bundle_root, expected_revision, exp
     text(report["origin"]["producer_session"], "producing session")
     require(report["origin"]["kind"] == ("synthetic-test" if test_only else "product-execution"),
             "synthetic evidence is not eligible for production readiness")
-    require(canonical(matrix) == canonical(parse(read_file(root,
-            "specs/global_preferences_production_acceptance_matrix.json"), "committed matrix")),
-            "supplied matrix differs from actual proof input")
+    require(canonical(matrix) == canonical(parse(git(root, "show", revision(expected_revision) +
+            ":specs/global_preferences_production_acceptance_matrix.json"), "candidate matrix")),
+            "supplied matrix differs from committed candidate proof input")
     require(digest(canonical(report["environments"])) == sha(expected_environment_sha256, "selected environments"),
             "observed environments differ from the selected reference environment record")
     require(sha(report["matrix_sha256"], "matrix digest") == digest(canonical(matrix)),

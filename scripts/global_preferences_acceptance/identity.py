@@ -1,6 +1,7 @@
-"""Bind evidence to the actual committed and current product input closure."""
+"""Authenticate retained candidate evidence separately from live execution inputs."""
 
 from pathlib import Path
+import hashlib
 import os
 import subprocess
 
@@ -34,6 +35,11 @@ def required_paths(root, candidate):
 
 
 def validate_candidate(root, candidate, input_reference, bundle, expected_revision):
+    """Validate the exact recorded Git candidate and artifacts, never the mutable worktree.
+
+    This authenticates only expected_revision; it cannot transfer rows to another candidate.
+    Execution callers must additionally call validate_live_inputs before and after capture.
+    """
     closed(candidate, "revision tree cargo_lock_sha256 toolchains build_commands binaries", "candidate")
     selected = revision(candidate["revision"])
     require(selected == revision(expected_revision), "evidence is for a different requested candidate")
@@ -71,15 +77,38 @@ def validate_candidate(root, candidate, input_reference, bundle, expected_revisi
         expected = sha(entry["sha256"], name)
         require(digest(git(root, "show", selected + ":" + name)) == expected,
                 "candidate input digest differs: " + name)
-        require(digest(read_file(root, name)) == expected, "current proof input changed: " + name)
         require(modes.get(name) in {"100644", "100755"}, "unsupported proof input type: " + name)
-        require(bool((Path(root) / name).stat().st_mode & 0o111) == (modes[name] == "100755"),
-                "current proof input executable mode changed: " + name)
     require(paths == required, "input manifest must cover the complete sorted product/route closure")
+    return {role: ref["sha256"] for role, ref in binaries.items()}
+
+
+def validate_live_inputs(root, candidate_revision):
+    """Refuse execution against changed, redirected, added or removed candidate inputs.
+
+    Retained proof does not depend on today's files. Running new commands does: use this
+    guard at capture boundaries, including after execution to detect concurrent edits.
+    """
+    selected = revision(candidate_revision)
+    require(git(root, "rev-parse", "--show-object-format").strip() == b"sha1",
+            "unsupported Git object format for live input validation")
+    roots, required = required_paths(root, selected)
+    records = git(root, "ls-tree", "-r", "-z", selected).decode().split("\0")
+    objects = {name: header.split() for record in records if record
+               for header, name in [record.split("\t", 1)]}
+    for name in required:
+        mode, kind, oid = objects[name]
+        require(mode in {"100644", "100755"} and kind == "blob", "unsupported proof input type: " + name)
+        raw = read_file(root, name)
+        # Git's SHA-1 object identity avoids a subprocess per file. Retained proof still
+        # authenticates its complete manifest and binary artifacts with SHA-256.
+        actual = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        require(actual == oid,
+                "current proof input changed: " + name)
+        require(bool((Path(root) / name).stat().st_mode & 0o111) == (mode == "100755"),
+                "current proof input executable mode changed: " + name)
     current = git(root, "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", *roots)
     require(sorted(set(p for p in current.decode().split("\0") if p)) == required,
             "new or removed proof input requires recapture")
-    return {role: ref["sha256"] for role, ref in binaries.items()}
 
 
 def command_line(value):

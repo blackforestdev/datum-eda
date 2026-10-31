@@ -35,6 +35,7 @@ from global_preferences_acceptance import measurements_producer as mp  # noqa: E
 from global_preferences_acceptance.assemble import assembled_report, load_frozen  # noqa: E402
 from global_preferences_acceptance.capture import Capture  # noqa: E402
 from global_preferences_acceptance.environment_record import HEADLESS_ID  # noqa: E402
+from global_preferences_acceptance.identity import validate_live_inputs  # noqa: E402
 from global_preferences_acceptance.inputs import Bundle, require  # noqa: E402
 
 # The GUI measurement budgets, exactly as ``observations.identity`` resolves the gui surface
@@ -116,6 +117,7 @@ def assemble_measurements(bundle_root, identity, *, binary, scratch, budgets=HEA
     exactly once before the first budget (``prewarm_once``), never per budget. Every produced row is
     replayed through the governed ``measurements.validate_trials`` before merge. No readiness is
     issued."""
+    validate_live_inputs(mp.ROOT, identity["candidate"]["revision"])
     bundle_root = Path(bundle_root).resolve()
     bundle_root.mkdir(parents=True, exist_ok=True)
     scratch = Path(scratch).resolve()
@@ -134,6 +136,7 @@ def assemble_measurements(bundle_root, identity, *, binary, scratch, budgets=HEA
         for measurement in produced:
             meas.validate_trials(measurement, bundle)
     rows = merge_measurements(identity, produced)
+    validate_live_inputs(mp.ROOT, identity["candidate"]["revision"])
     return assembled_report(capture, identity, case_results=(), measurements=rows,
                             producer_session=producer_session)
 
