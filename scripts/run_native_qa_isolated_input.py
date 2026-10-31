@@ -116,6 +116,9 @@ def executable_binding(process):
 
 
 def run(args):
+    width, height = getattr(args, "input_width", 1600), getattr(args, "input_height", 1000)
+    if any(type(value) is not int or value <= 0 for value in (width, height)):
+        raise ValueError("input dimensions must be positive integers")
     output = args.output
     if not output.is_absolute() or output.resolve() != output or output.exists():
         raise ValueError("a fresh canonical absolute output directory is required")
@@ -128,6 +131,7 @@ def run(args):
     owners, errors = [], []
     result = {"status": "FAIL", "argv": args.command, "runtime": str(ipc),
               "runtime_mode": oct(ipc.stat().st_mode & 0o777),
+              "requested_input_dimensions": {"width": width, "height": height},
               "outer_capture": {
                   "debug_requested": bool(getattr(args, "outer_capture", False)),
                   "runtime": str(ipc), "socket": "datum-qa-input",
@@ -151,7 +155,7 @@ def run(args):
         for key in ("DISPLAY", "WAYLAND_DISPLAY", "WAYLAND_SOCKET", DISPLAY_KEY, OWNER_KEY):
             env.pop(key, None)
         outer_argv = ["/usr/bin/weston", "--backend=headless", "--renderer=gl",
-                      "--shell=kiosk-shell.so", "--no-config", "--width=1600", "--height=1000",
+                      "--shell=kiosk-shell.so", "--no-config", f"--width={width}", f"--height={height}",
                       "--scale=1", "--idle-time=0", "--socket=datum-qa-input",
                       "--log=" + str(output / "outer-weston-detail.log")]
         if result["outer_capture"]["debug_requested"]:
@@ -168,7 +172,7 @@ def run(args):
         try:
             xenv = dict(env, WAYLAND_DISPLAY="datum-qa-input")
             server = start("xwayland", ["/usr/bin/Xwayland", "-displayfd", str(write_fd),
-                           "-geometry", "1600x1000", "-nolisten", "tcp", "-ac", "-noreset"],
+                           "-geometry", f"{width}x{height}", "-nolisten", "tcp", "-ac", "-noreset"],
                            xenv, pass_fds=(write_fd,))
             os.close(write_fd)
             write_fd = None
@@ -238,6 +242,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--child-result", type=Path, required=True)
+    parser.add_argument("--input-width", type=int, default=1600, help="owned input display width")
+    parser.add_argument("--input-height", type=int, default=1000, help="owned input display height")
     parser.add_argument("--outer-capture", action="store_true",
                         help="Expose capture and debug globals on the owned private outer compositor")
     parser.add_argument("command", nargs=argparse.REMAINDER)

@@ -14,13 +14,16 @@ import run_native_qa_isolated_input as isolated
 
 class PrivateInputTests(unittest.TestCase):
     def test_outer_capture_is_default_off_and_changes_only_owned_outer_debug_capability(self):
-        for enabled in (False, True):
-            with self.subTest(enabled=enabled), tempfile.TemporaryDirectory() as temporary:
+        for enabled, dimensions in ((False, None), (True, None), (False, (2304, 2048))):
+            with self.subTest(enabled=enabled, dimensions=dimensions), tempfile.TemporaryDirectory() as temporary:
                 parent = Path(temporary)
                 args = SimpleNamespace(output=parent / "transport", child_result=parent / "child.json",
                                        command=["/owned/runner"])
                 if enabled:
                     args.outer_capture = True
+                if dimensions is not None:
+                    args.input_width, args.input_height = dimensions
+                width, height = dimensions or (1600, 1000)
                 calls = []
 
                 def spawn(argv, *, env, **kwargs):
@@ -47,10 +50,12 @@ class PrivateInputTests(unittest.TestCase):
                         patch.object(isolated.subprocess, "Popen", side_effect=spawn), \
                         patch.object(isolated, "_live_xwayland", return_value=True), \
                         patch.object(isolated, "executable_binding", side_effect=lambda p: {"pid": p.pid}):
+                    parent_environment = dict(os.environ)
                     self.assertEqual(isolated.run(args), 0)
+                    self.assertEqual(dict(os.environ), parent_environment)
                 outer, outer_env = calls[0]
                 expected = ["/usr/bin/weston", "--backend=headless", "--renderer=gl",
-                            "--shell=kiosk-shell.so", "--no-config", "--width=1600", "--height=1000",
+                            "--shell=kiosk-shell.so", "--no-config", f"--width={width}", f"--height={height}",
                             "--scale=1", "--idle-time=0", "--socket=datum-qa-input",
                             "--log=" + str(args.output / "outer-weston-detail.log")]
                 self.assertEqual(outer, expected + (["--debug"] if enabled else []))
@@ -59,6 +64,8 @@ class PrivateInputTests(unittest.TestCase):
                 self.assertNotIn("WAYLAND_DISPLAY", calls[-1][1])
                 self.assertNotIn("WAYLAND_SOCKET", calls[-1][1])
                 receipt = json.loads((args.output / "transport.json").read_text())
+                self.assertEqual(calls[1][0][calls[1][0].index("-geometry") + 1], f"{width}x{height}")
+                self.assertEqual(receipt["requested_input_dimensions"], {"width": width, "height": height})
                 capability = receipt["outer_capture"]
                 self.assertIs(capability["debug_requested"], enabled)
                 self.assertEqual(capability["runtime"], receipt["runtime"])
@@ -68,7 +75,7 @@ class PrivateInputTests(unittest.TestCase):
                 self.assertTrue(receipt["runtime_removed_after_owners_stop"])
 
     def test_outer_capture_cli_requires_explicit_option(self):
-        for option in ([], ["--outer-capture"]):
+        for option in ([], ["--outer-capture"], ["--input-width", "2304", "--input-height", "2048"]):
             with self.subTest(option=option), \
                     patch("sys.argv", ["runner", "--output", "/owned/out", "--child-result",
                                        "/owned/child.json", *option, "--", "/owned/child"]), \
@@ -76,8 +83,25 @@ class PrivateInputTests(unittest.TestCase):
                 with self.assertRaises(SystemExit) as stopped:
                     isolated.main()
                 self.assertEqual(stopped.exception.code, 0)
-                self.assertIs(run.call_args.args[0].outer_capture, bool(option))
+                self.assertIs(run.call_args.args[0].outer_capture, "--outer-capture" in option)
+                expected = (2304, 2048) if "--input-width" in option else (1600, 1000)
+                self.assertEqual((run.call_args.args[0].input_width, run.call_args.args[0].input_height), expected)
                 self.assertEqual(run.call_args.args[0].command, ["/owned/child"])
+
+    def test_invalid_dimensions_refuse_before_artifacts_or_processes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            parent = Path(temporary)
+            for width, height in ((0, 1000), (1600, -1), (True, 1000), (1600, 1.5), ("2304", 2048)):
+                with self.subTest(width=width, height=height):
+                    args = SimpleNamespace(output=parent / "transport", child_result=parent / "child.json",
+                                           command=["/owned/runner"], input_width=width, input_height=height)
+                    with patch.object(isolated.subprocess, "Popen") as spawn, \
+                            patch.object(isolated.tempfile, "TemporaryDirectory") as runtime:
+                        with self.assertRaisesRegex(ValueError, "positive integers"):
+                            isolated.run(args)
+                    spawn.assert_not_called()
+                    runtime.assert_not_called()
+                    self.assertEqual(list(parent.iterdir()), [])
 
     def private_env(self):
         return {"DISPLAY": ":27", isolated.DISPLAY_KEY: ":27", isolated.OWNER_KEY: "123"}
