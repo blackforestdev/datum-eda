@@ -19171,7 +19171,7 @@
       "key": "NATIVE-EDIT-DAEMON-ABNORMAL-EXIT-GUARD",
       "issue_id": "dat-typb",
       "title": "Guard native-edit daemon lifecycle against abnormal GUI-exit orphans",
-      "summary": "Owner-directed bounded maintenance correction leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31): a first-party daemon-side lifecycle guard in eda-engine-daemon (PR_SET_PDEATHSIG parent-death detection and/or control-socket peer-disconnect idle timeout) so abnormal GUI exits cannot orphan native-edit daemons; the normal-path NativeProjectClient::Drop kill/wait (e2150575) is preserved. Focused proof: spawn, SIGKILL the parent stand-in, assert daemon exit within a bounded window; unchanged normal-close; no new orphans after a real GUI run. PM059 independent review by audit-agent-01 via PM-Agent-01 before lane acceptance. Owner-authorized-cleanup class: no product-delivery contract, no successor authority; GP-CM05E remains the sole canonical product lane.",
+      "summary": "Owner-directed bounded maintenance correction leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31): a first-party daemon-side lifecycle guard in eda-engine-daemon using an opt-in inherited stdin lifetime pipe so abnormal GUI exits cannot orphan native-edit daemons; the normal-path NativeProjectClient::Drop kill/wait (e2150575) is preserved. Focused proof: spawn, SIGKILL the parent stand-in, assert daemon exit within a bounded window; unchanged normal-close; no new orphans after a real GUI run. PM059 independent review by audit-agent-01 via PM-Agent-01 before lane acceptance. Owner-authorized-cleanup class: no product-delivery contract, no successor authority; GP-CM05E remains the sole canonical product lane.",
       "order": 128,
       "state": "in_progress",
       "authorization": "execution",
@@ -19191,17 +19191,18 @@
       },
       "claim": {
         "agent": "codex-cli",
-        "harness": "codex",
-        "session": "codex-cli",
+        "harness": "codex-cli",
+        "session": "01a190d3-3e2e-7051-86b4-2470bde281b9",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "0f125a881a2df8ed101eceef2d9460a6c2e09844",
+        "head": "103d10bb7f07042da5605e8aac21e4585c51c064",
         "claimed_at": "2026-10-31T07:37:11Z",
-        "heartbeat_at": "2026-10-31T07:37:11Z",
-        "expires_at": "2026-10-31T15:37:11Z",
+        "heartbeat_at": "2026-10-31T07:39:37Z",
+        "expires_at": "2026-10-31T15:39:37Z",
         "scope": [
           "crates/engine-daemon/src/main.rs",
           "crates/engine-daemon/src/native_edit_companion.rs",
-          "crates/gui-protocol/src/native_edit_client.rs"
+          "crates/gui-protocol/src/native_edit_client.rs",
+          "crates/engine-daemon/tests/owned_companion_lifetime.rs"
         ]
       }
     }

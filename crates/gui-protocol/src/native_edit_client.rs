@@ -95,7 +95,10 @@ impl NativeProjectClient {
         let spawned = Command::new(&binary)
             .arg("--socket")
             .arg(&socket)
-            .stdin(Stdio::null())
+            .env("DATUM_NATIVE_EDIT_LIFETIME_STDIN", "1")
+            // Child retains the pipe writer across temporary worker-thread exits.
+            // Process death closes it even when NativeProjectClient::Drop cannot run.
+            .stdin(Stdio::piped())
             .stdout(Stdio::null())
             .stderr(Stdio::inherit())
             .spawn();

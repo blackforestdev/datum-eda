@@ -26,9 +26,11 @@ use serde_json::{Value, json};
 
 mod check_run_view;
 mod dispatch;
+mod native_edit_companion;
 mod native_history;
 mod preferences_state;
 use dispatch::{dispatch_request, dispatch_request_with_preferences};
+use native_edit_companion::NativeEditCompanion;
 use preferences_state::PreferencesDaemonState;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -229,7 +231,9 @@ fn serialized_success_response<T: Serialize>(id: Value, payload: T) -> JsonRpcRe
 fn main() {
     match parse_socket_arg() {
         Some(path) => {
-            if let Err(err) = serve_socket(&path) {
+            let owned_companion =
+                std::env::var("DATUM_NATIVE_EDIT_LIFETIME_STDIN").as_deref() == Ok("1");
+            if let Err(err) = serve_socket(&path, owned_companion) {
                 eprintln!("eda-engine-daemon: {err:#}");
                 std::process::exit(1);
             }
@@ -251,23 +255,45 @@ fn parse_socket_arg() -> Option<PathBuf> {
     None
 }
 
-fn serve_socket(path: &Path) -> Result<()> {
+fn serve_socket(path: &Path, owned_companion: bool) -> Result<()> {
     if path.exists() {
         std::fs::remove_file(path)?;
     }
     let listener = UnixListener::bind(path)?;
+    let companion = owned_companion
+        .then(|| NativeEditCompanion::watch_stdin(path))
+        .transpose()?;
     let mut engine = Engine::new()?;
     let mut preferences = PreferencesDaemonState::open_installed()?;
 
     for stream in listener.incoming() {
-        handle_client_with_preferences(&mut engine, &mut preferences, stream?)?;
+        let stream = stream?;
+        if let Some(companion) = &companion {
+            if !companion.register_connection(&stream)? {
+                break;
+            }
+        }
+        let result = handle_client_inner(
+            &mut engine,
+            Some(&mut preferences),
+            stream,
+            companion.as_ref(),
+        );
+        if let Some(companion) = &companion {
+            companion.clear_connection();
+            if companion.stopped() {
+                // EOF may close the reply socket during a completed operation.
+                break;
+            }
+        }
+        result?;
     }
 
     Ok(())
 }
 
 fn handle_client(engine: &mut Engine, stream: UnixStream) -> Result<()> {
-    handle_client_inner(engine, None, stream)
+    handle_client_inner(engine, None, stream, None)
 }
 
 fn handle_client_with_preferences(
@@ -275,13 +301,14 @@ fn handle_client_with_preferences(
     preferences: &mut PreferencesDaemonState,
     stream: UnixStream,
 ) -> Result<()> {
-    handle_client_inner(engine, Some(preferences), stream)
+    handle_client_inner(engine, Some(preferences), stream, None)
 }
 
 fn handle_client_inner(
     engine: &mut Engine,
     mut preferences: Option<&mut PreferencesDaemonState>,
     mut stream: UnixStream,
+    companion: Option<&NativeEditCompanion>,
 ) -> Result<()> {
     let reader_stream = stream.try_clone()?;
     let mut reader = BufReader::new(reader_stream);
@@ -290,7 +317,7 @@ fn handle_client_inner(
     loop {
         line.clear();
         let read = reader.read_line(&mut line)?;
-        if read == 0 {
+        if read == 0 || companion.is_some_and(NativeEditCompanion::stopped) {
             break;
         }
 
