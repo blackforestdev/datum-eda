@@ -3,7 +3,8 @@
 from itertools import product
 
 from .inputs import array, canonical, closed, integer, require, text, unique, validation
-from .inventory import BACKENDS, BUDGETS, GATES, PRODUCT_BOUNDARY, SCALES, VARIANTS, WINDOWS, subcases
+from .inventory import (BACKENDS, BASELINE_SURFACES, BUDGETS, GATES, PRODUCT_BOUNDARY, SCALES,
+                        SURFACE_DISPOSITIONS, VARIANTS, WINDOWS, subcases)
 
 
 @validation
@@ -46,6 +47,24 @@ def validate_matrix(matrix):
             surfaces, assertions = VARIANTS[row["id"]][variant["id"]]
             require(variant["surfaces"] == surfaces and variant["assertions"] == assertions,
                     f"{row['id']}/{variant['id']}: required surfaces/assertions changed")
+    # Surface-disposition fence (GP-CM05E): a surface removed from a variant's owed-set vs its
+    # pre-reduction baseline must cite a resolvable disposition (no silent weakening), and every
+    # disposition must name a genuinely-absent surface of a still-present variant. Deleted
+    # variants are disclosed in qualification_followups, not here.
+    for (fam, var), baseline in BASELINE_SURFACES.items():
+        require(fam in VARIANTS and var in VARIANTS[fam], f"{fam}/{var}: baseline names an absent variant")
+        for surf in baseline:
+            if surf not in VARIANTS[fam][var][0]:
+                require((fam, var, surf) in SURFACE_DISPOSITIONS,
+                        f"{fam}/{var}/{surf}: surface removed without a disposition")
+    for (fam, var, surf), disposition in SURFACE_DISPOSITIONS.items():
+        require(disposition["mode"] in ("engine_surface_by_contract", "native", "scope_exit"),
+                f"{fam}/{var}/{surf}: unknown disposition mode")
+        if disposition["mode"] == "engine_surface_by_contract":
+            require(bool(disposition.get("citations")), f"{fam}/{var}/{surf}: absorption needs citations")
+        require(fam in VARIANTS and var in VARIANTS[fam], f"{fam}/{var}/{surf}: disposition names an absent variant")
+        require(surf not in VARIANTS[fam][var][0],
+                f"{fam}/{var}/{surf}: disposed surface must be absent from the owed set")
     budgets = array(matrix["candidate_resource_budgets"], "budgets")
     unique([b["id"] for b in budgets], "budget ids")
     require({b["id"] for b in budgets} == set(BUDGETS), "budget inventory differs")

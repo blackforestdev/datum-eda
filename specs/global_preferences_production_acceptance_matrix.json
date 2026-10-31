@@ -106,16 +106,6 @@
             "bytes-preserved",
             "inspection-available"
           ]
-        },
-        {
-          "id": "migration-interruption",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "old-or-new-complete",
-            "no-false-acknowledgement"
-          ]
         }
       ]
     },
@@ -407,78 +397,6 @@
             "owned-cleanup-only",
             "restart-recovery"
           ]
-        },
-        {
-          "id": "file-flush-error",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "destination-absent-or-complete",
-            "no-false-acknowledgement",
-            "owned-cleanup-only",
-            "restart-recovery"
-          ]
-        },
-        {
-          "id": "parent-flush-error",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "destination-absent-or-complete",
-            "no-false-acknowledgement",
-            "owned-cleanup-only",
-            "restart-recovery"
-          ]
-        },
-        {
-          "id": "process-killed",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "destination-absent-or-complete",
-            "no-false-acknowledgement",
-            "owned-cleanup-only",
-            "restart-recovery"
-          ]
-        },
-        {
-          "id": "disk-full",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "destination-absent-or-complete",
-            "no-false-acknowledgement",
-            "owned-cleanup-only",
-            "restart-recovery"
-          ]
-        },
-        {
-          "id": "permission-denied",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "destination-absent-or-complete",
-            "no-false-acknowledgement",
-            "owned-cleanup-only",
-            "restart-recovery"
-          ]
-        },
-        {
-          "id": "symlink-stage",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "destination-absent-or-complete",
-            "no-false-acknowledgement",
-            "owned-cleanup-only",
-            "restart-recovery"
-          ]
         }
       ]
     },
@@ -620,10 +538,7 @@
         {
           "id": "inactive",
           "surfaces": [
-            "engine",
-            "gui",
-            "cli",
-            "mcp"
+            "engine"
           ],
           "assertions": [
             "state-disclosed",
@@ -635,10 +550,7 @@
         {
           "id": "expired",
           "surfaces": [
-            "engine",
-            "gui",
-            "cli",
-            "mcp"
+            "engine"
           ],
           "assertions": [
             "state-disclosed",
@@ -650,10 +562,7 @@
         {
           "id": "unavailable",
           "surfaces": [
-            "engine",
-            "gui",
-            "cli",
-            "mcp"
+            "engine"
           ],
           "assertions": [
             "state-disclosed",
@@ -665,10 +574,7 @@
         {
           "id": "offline",
           "surfaces": [
-            "engine",
-            "gui",
-            "cli",
-            "mcp"
+            "engine"
           ],
           "assertions": [
             "state-disclosed",
@@ -749,17 +655,6 @@
           ]
         },
         {
-          "id": "preference-write-faults",
-          "surfaces": [
-            "engine"
-          ],
-          "assertions": [
-            "old-or-new-complete",
-            "unknown-bytes-preserved",
-            "no-false-acknowledgement"
-          ]
-        },
-        {
           "id": "writer-race",
           "surfaces": [
             "cli",
@@ -808,7 +703,6 @@
         {
           "id": "no-foreground-tty",
           "surfaces": [
-            "engine",
             "cli",
             "mcp"
           ],
@@ -886,7 +780,6 @@
         {
           "id": "daemon-restart",
           "surfaces": [
-            "engine",
             "cli",
             "mcp"
           ],

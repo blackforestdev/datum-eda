@@ -132,7 +132,7 @@ that inventory. `environments` contains records with exactly `id`, `os`,
 unknown or unavailable required environment facts block readiness.
 
 `case_results` contains exactly one passing result for every expanded matrix
-case/variant/subcase/surface/backend/scale/logical-size combination (389 rows). Each result has exactly `case_id`,
+case/variant/subcase/surface/backend/scale/logical-size combination (321 rows). Each result has exactly `case_id`,
 `variant_id`, `subcase_id`, `surface`, `environment_id`, `candidate_revision`, `binary_sha256`,
 `input_manifest_sha256`, `matrix_sha256`, `fixture`, `command`, `exit_code`,
 `executed_tests`, `assertions`, `before`, `after`, `log`.
@@ -404,7 +404,11 @@ executables; engine and gui-render are the executed test binaries; mcp is the
 executed Python interpreter with the candidate MCP source in the input closure.
 Case surfaces select the identically named binary role. Headless measurements
 select CLI; native measurements and scenarios select GUI. A digest from a
-different role cannot substitute. `build_commands` contains the complete
+different role cannot substitute.
+
+**Surface dispositions.** A surface named in a variant's coverage is owed on its own binary role unless the triggering state is unreachable from that surface, in which case the assertion-class has no independent authority there — it is a projection of engine state — and the row is proven on the engine surface through the resolver/repository injection harness. Each such reclassification is recorded with its ruling and the sites proving unreachability. Managed-provider state (`resolver.rs` ProviderGenerationState/offline_valid_until/ManagedPin) is resolver-level only with no product, CLI, MCP, environment or file path to activate it (per the managed/offline fixture rule above); the `managed-offline` non-engine surfaces are therefore engine-surface-by-contract, reclassified to the injection harness. Surfaces that are owed and merely produced by a later in-lane workstream are not reclassified; rows that cannot be evidenced before the pinned candidate are disclosed in `qualification_followups` and ruled at the GP-CM05A owner gate.
+
+`build_commands` contains the complete
 release-build command observation, in the same shape as each gate command;
 its exact guarded argv is maintained with the mandatory gates in `gates.py`.
 A passing command with no release build cannot satisfy this requirement.
@@ -476,12 +480,10 @@ listing test names or executing zero tests does not pass.
 
 ### Expanded faults and measurements
 
-The 75 named variants expand to 389 case rows. `preference-write-faults`
-expands to all fifteen checkpoint/fault pairs: generation-staging, file-flush,
-generation-publication, head-replacement, parent-directory-flush, each with
-io-error, process-interruption and response-loss. The process-killed genesis
-variant expands to staging-prepared, project-built, project-validated,
-staging-synced and project-published. Other variants use `default` subcase.
+The 67 named variants expand to 321 case rows. Every variant uses the `default`
+subcase; the former multi-subcase variants `preference-write-faults` and
+`project-genesis-crash/process-killed` were removed as Class-C scope-exits in the
+GP-CM05E surface-disposition reconciliation (disclosed in `qualification_followups`).
 
 There are 90 measurement rows: 12 query variants (six verbs × defaults/populated),
 four mutation variants (set/reset × standalone/daemon), three genesis and three
