@@ -37,10 +37,12 @@ from global_preferences_acceptance.capture import Capture  # noqa: E402
 from global_preferences_acceptance.inputs import canonical, digest, parse, require  # noqa: E402
 from global_preferences_acceptance.matrix import case_inventory  # noqa: E402
 from global_preferences_acceptance.producer import (  # noqa: E402
-    MATRIX_RELPATH, _empty_state, _git_head, _sha_file, produce_case, validate_case,
+    MATRIX_RELPATH, _coverage_root, _empty_state, _git_head, _seed_populated_store, _sha_file,
+    _snapshot_dir, produce_case, validate_case,
 )
 
 GUI_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_case.py"
+GUI_WRITE_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_write_case.py"
 # PM-authorized single pattern/coordinate. The default is the simplest reliable row; any coordinate
 # passed must be a real case_inventory() key for this family.
 DEFAULT_COORDINATE = ("wayland", 1.0, (1024, 900))
@@ -131,39 +133,29 @@ def _consume_identity(identity, gui_binary, coordinate):
     return candidate, binaries, identity["input_manifest"], identity["matrix_sha256"], environments
 
 
-def build_gui_case(bundle_root, *, gui_binary, coordinate, identity=None):
-    """Produce the one clean-install/missing-store/gui row for `coordinate`.
+def _candidate_bindings(capture, gui_binary, coordinate, identity, recipe_relpath):
+    """Resolve (candidate, binaries, input_manifest_ref, matrix_sha256, environments) for one row.
 
-    With `identity` (dev's FROZEN shared identity -- F1 reference wiring) the row BINDS to it and
-    computes nothing, so every surface in the assembled report shares one identity source (no drift).
-    Without it, the standalone/debug path self-computes candidate/manifest/matrix/environment from the
-    local tree (legacy; one surface at a time)."""
-    key = ("clean-install", "missing-store", "default", "gui", coordinate)
-    require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
-    _preflight_candidate_companions(gui_binary)
-
-    capture = Capture(bundle_root)
+    With `identity` (dev's FROZEN shared identity -- F1 reference wiring) BIND to it and compute nothing,
+    so every surface in the assembled report shares one identity source (no drift). Without it, the
+    standalone/debug path self-computes from the local tree (legacy; one surface at a time)."""
     if identity is not None:
-        candidate, binaries, input_manifest_ref, matrix_sha256, environments = _consume_identity(
-            identity, gui_binary, coordinate)
-    else:
-        revision = _git_head()
-        gui_sha = _sha_file(gui_binary)
-        candidate = {"revision": revision,
-                     "binaries": {"gui": {"path": str(gui_binary), "sha256": gui_sha}}}
-        binaries = {"gui": gui_sha}
-        recipe_ref = {"path": GUI_RECIPE_RELPATH, "sha256": _sha_file(ROOT / GUI_RECIPE_RELPATH)}
-        input_manifest_ref = capture.put([recipe_ref])
-        matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
-        # Exactly one environment, whose coordinate equals this row's coordinate: produce_case refuses
-        # any other count (the coordinate-matching rule, verified inert for CLI coordinate-None cases).
-        environments = {_environment_id(coordinate): coordinate}
+        return _consume_identity(identity, gui_binary, coordinate)
+    revision = _git_head()
+    gui_sha = _sha_file(gui_binary)
+    candidate = {"revision": revision,
+                 "binaries": {"gui": {"path": str(gui_binary), "sha256": gui_sha}}}
+    binaries = {"gui": gui_sha}
+    recipe_ref = {"path": recipe_relpath, "sha256": _sha_file(ROOT / recipe_relpath)}
+    input_manifest_ref = capture.put([recipe_ref])
+    matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
+    # Exactly one environment, whose coordinate equals this row's coordinate (produce_case refuses any
+    # other count -- the coordinate-matching rule).
+    environments = {_environment_id(coordinate): coordinate}
+    return candidate, binaries, input_manifest_ref, matrix_sha256, environments
 
-    row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
-                       environments=environments, input_manifest=input_manifest_ref,
-                       matrix_sha256=matrix_sha256, surface_binaries={"gui": str(gui_binary)},
-                       initial_state=_empty_state, capture_after=None, setup=None,
-                       bundle_root=bundle_root, recipe_relpath=GUI_RECIPE_RELPATH)
+
+def _assemble_report(candidate, input_manifest_ref, matrix_sha256, environments, capture, row, identity):
     report = {
         "origin": {"kind": "product-execution", "producer_session": "frontend-dev-01"},
         "candidate": candidate,
@@ -175,7 +167,73 @@ def build_gui_case(bundle_root, *, gui_binary, coordinate, identity=None):
     }
     if identity is not None and "environment_sha256" in identity:
         report["environment_sha256"] = identity["environment_sha256"]
+    return report
+
+
+def build_gui_case(bundle_root, *, gui_binary, coordinate, identity=None):
+    """Produce the clean-install/missing-store/gui row (READ-ONLY family: after==before, no store)."""
+    key = ("clean-install", "missing-store", "default", "gui", coordinate)
+    require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
+    _preflight_candidate_companions(gui_binary)
+    capture = Capture(bundle_root)
+    candidate, binaries, input_manifest_ref, matrix_sha256, environments = _candidate_bindings(
+        capture, gui_binary, coordinate, identity, GUI_RECIPE_RELPATH)
+    row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
+                       environments=environments, input_manifest=input_manifest_ref,
+                       matrix_sha256=matrix_sha256, surface_binaries={"gui": str(gui_binary)},
+                       initial_state=_empty_state, capture_after=None, setup=None,
+                       bundle_root=bundle_root, recipe_relpath=GUI_RECIPE_RELPATH)
+    report = _assemble_report(candidate, input_manifest_ref, matrix_sha256, environments, capture, row, identity)
     return report, binaries, environments, key
+
+
+def _gui_write_setup(capture, key, work_root):
+    """Seed the real on-disk precondition BEFORE the GUI recipe runs: populate the Global store to
+    gen0 (datum.units.system=imperial via a governed TTY-APPLY, writer lease dropped) so the GUI
+    genesis reads a POPULATED store. Mirrors producer._family_handlers' global-populated setup exactly
+    -- this is the store-seed MECHANICS reused, not a reimplementation. Returns the `before` snapshot
+    (store@gen0); the later Global edit the recipe performs takes it to gen1 so after != before."""
+    repo = _seed_populated_store(Path(work_root))
+    return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+
+def _gui_write_capture_after(capture, key, work_root, before_state):
+    """Snapshot the REAL post-run Global Preferences store (after != before for this WRITE family).
+    The recipe's later Global edit commits gen0->gen1 under DATUM_EDA_WORK_ROOT/config; capture_after
+    captures the generations/ tree so the row's `after` reflects the committed mutation (the
+    AFTER-STATE CAVEAT: a mutating family must never report after==before)."""
+    repo = Path(work_root) / "config" / "datum" / "preferences"
+    return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+
+
+def build_gui_write_case(bundle_root, *, gui_binary, coordinate, identity=None):
+    """Produce the existing-project-stability/global-populated/gui WRITE row -- the write-gate pattern.
+
+    A PROJECT-GENESIS flow against a POPULATED Global store: setup seeds the store (gen0); the recipe
+    drives the real New Project modal to genesis a Project (eight seeds taken, the four-file resolver
+    Project published, the immutable genesis receipt), then performs a later Global edit (gen0->gen1,
+    external governed APPLY) and observes the published Project is byte-unchanged by it. before=store
+    @gen0, after=store@gen1 -> after != before with a real new generation (the write-family guardrail,
+    829668b4 bar on the GUI surface; NOT the corrupt-store preserve-equality shape)."""
+    key = ("existing-project-stability", "global-populated", "default", "gui", coordinate)
+    require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
+    _preflight_candidate_companions(gui_binary)
+    capture = Capture(bundle_root)
+    candidate, binaries, input_manifest_ref, matrix_sha256, environments = _candidate_bindings(
+        capture, gui_binary, coordinate, identity, GUI_WRITE_RECIPE_RELPATH)
+    row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
+                       environments=environments, input_manifest=input_manifest_ref,
+                       matrix_sha256=matrix_sha256, surface_binaries={"gui": str(gui_binary)},
+                       capture_after=_gui_write_capture_after, setup=_gui_write_setup,
+                       bundle_root=bundle_root, recipe_relpath=GUI_WRITE_RECIPE_RELPATH)
+    report = _assemble_report(candidate, input_manifest_ref, matrix_sha256, environments, capture, row, identity)
+    return report, binaries, environments, key
+
+
+FAMILY_BUILDERS = {
+    "clean-install": build_gui_case,
+    "global-populated": build_gui_write_case,
+}
 
 
 def main(argv=None):
@@ -194,6 +252,8 @@ def main(argv=None):
                              "environment_sha256 / input_manifest / matrix_sha256). When given the row "
                              "BINDS to it, computing nothing (the Phase-A reference wiring); its "
                              "input_manifest content must be resolvable in the shared --bundle-root.")
+    parser.add_argument("--family", default="clean-install", choices=sorted(FAMILY_BUILDERS),
+                        help="GUI case family: clean-install (read-only) or global-populated (write)")
     args = parser.parse_args(argv)
     args.bundle_root.mkdir(parents=True, exist_ok=True)
     bundle_root = args.bundle_root.resolve()
@@ -201,7 +261,7 @@ def main(argv=None):
     coordinate = _parse_coordinate(args.coordinate) if args.coordinate else DEFAULT_COORDINATE
     identity = json.loads(args.identity.read_text()) if args.identity else None
 
-    report, binaries, environments, key = build_gui_case(
+    report, binaries, environments, key = FAMILY_BUILDERS[args.family](
         bundle_root, gui_binary=gui_binary, coordinate=coordinate, identity=identity)
     args.report.write_text(json.dumps(report, indent=2, sort_keys=True))
 
