@@ -321,6 +321,15 @@ def _family_handlers(family):
             "spoofed-actor", "direct-mcp-set-reset", "stale-proposal", "acceptance-mismatch",
             "acceptance-expired", "acceptance-consumed", "request-id-conflict"):
         return _empty_state, None, None
+    # project-genesis-crash (engine non-fault checkpoint family): each scenario interrupts the
+    # engine's real genesis path at a lifecycle checkpoint inside its OWN throwaway temp dir, so
+    # the coverage work root is never written -- after==before=empty is honest and the driver's
+    # observations carry the destination-absent-or-complete / no-false-acknowledgement /
+    # owned-cleanup-only / restart-recovery proof.
+    if case == "project-genesis-crash" and variant in (
+            "staging-prepared", "project-built", "project-validated", "staging-synced",
+            "project-published"):
+        return _empty_state, None, None
     # backup-restore (engine WRITE family): the engine setup phase seeds a committed store (gen0) +
     # exact backup and diverges it (gen1); the recipe's observe phase commits a restore (gen2). So
     # before = store@gen1, after = store@gen2 -> after != before with a REAL new generation, and the

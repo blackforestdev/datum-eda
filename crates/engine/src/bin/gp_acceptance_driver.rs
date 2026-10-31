@@ -264,6 +264,32 @@ fn main() -> ExitCode {
                 }
             }
         }
+        // project-genesis-crash non-fault checkpoints (the five lifecycle interruption points;
+        // the six OS/IO fault variants are Class-C scope-exits, not engine-reachable here).
+        "project-genesis-crash" => {
+            match acceptance_support::project_genesis_checkpoint::CheckpointVariant::parse(&variant)
+            {
+                Some(checkpoint_variant) => {
+                    match acceptance_support::project_genesis_checkpoint::checkpoint_observe(
+                        checkpoint_variant,
+                    ) {
+                        Ok(observed) => observed,
+                        Err(error) => {
+                            eprintln!(
+                                "gp_acceptance_driver: observe '{case}/{variant}' failed: {error}"
+                            );
+                            return ExitCode::FAILURE;
+                        }
+                    }
+                }
+                None => {
+                    eprintln!(
+                        "gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'"
+                    );
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
         _ => {
             eprintln!("gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'");
             return ExitCode::FAILURE;

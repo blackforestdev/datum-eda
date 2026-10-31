@@ -75,6 +75,14 @@ ENGINE_COVERAGE = {
     ("human-agent-authority", "acceptance-expired"),
     ("human-agent-authority", "acceptance-consumed"),
     ("human-agent-authority", "request-id-conflict"),
+    # project-genesis-crash non-fault checkpoints: a genesis interrupted at each lifecycle
+    # point leaves the destination absent-or-complete with only the owned stage cleaned and a
+    # restart recovers a complete project (the six OS/IO fault variants are Class-C scope-exits).
+    ("project-genesis-crash", "staging-prepared"),
+    ("project-genesis-crash", "project-built"),
+    ("project-genesis-crash", "project-validated"),
+    ("project-genesis-crash", "staging-synced"),
+    ("project-genesis-crash", "project-published"),
 }
 
 

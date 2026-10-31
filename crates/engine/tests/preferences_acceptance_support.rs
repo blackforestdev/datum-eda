@@ -21,6 +21,9 @@ use eda_engine::preferences::acceptance_support::portable_upgrade::{
     portable_collision_observe, portable_collision_setup, upgrade_negative_control,
     upgrade_observe, upgrade_setup,
 };
+use eda_engine::preferences::acceptance_support::project_genesis_checkpoint::{
+    CheckpointVariant, checkpoint_negative_control, checkpoint_observe,
+};
 use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
     managed_active_negative_control, managed_offline_scenario, observe_managed_offline,
@@ -416,5 +419,46 @@ fn trusted_human_write_commits_as_the_authority_negative_control() {
     assert!(
         authority_negative_control().expect("negative control runs"),
         "a trusted human write must commit (the authority refusals are falsifiable)"
+    );
+}
+
+#[test]
+fn every_genesis_checkpoint_leaves_honest_truth() {
+    // Each non-fault lifecycle checkpoint interruption leaves the destination absent-or-complete,
+    // never a false acknowledgement, only the owned stage cleaned, and a restart recovers a
+    // complete project. Each is self-contained in a throwaway temp dir (no work root needed).
+    let variants = [
+        CheckpointVariant::StagingPrepared,
+        CheckpointVariant::ProjectBuilt,
+        CheckpointVariant::ProjectValidated,
+        CheckpointVariant::StagingSynced,
+        CheckpointVariant::ProjectPublished,
+    ];
+    for variant in variants {
+        let observed =
+            checkpoint_observe(variant).unwrap_or_else(|error| panic!("{variant:?}: {error}"));
+        assert_eq!(
+            observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+            vec![
+                "destination-absent-or-complete",
+                "no-false-acknowledgement",
+                "owned-cleanup-only",
+                "restart-recovery"
+            ],
+            "{variant:?} observation ids"
+        );
+        for (id, value) in observed {
+            assert!(value, "{variant:?} observation {id} must hold");
+        }
+    }
+}
+
+#[test]
+fn clean_genesis_publishes_a_complete_project_as_the_checkpoint_negative_control() {
+    // PM059 genuinely-falsifying control: an uninterrupted genesis publishes a complete,
+    // resolvable project, so the checkpoint predicates are not constant-true.
+    assert!(
+        checkpoint_negative_control().expect("negative control runs"),
+        "a clean genesis must publish a complete project (the checkpoint observations are falsifiable)"
     );
 }

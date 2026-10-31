@@ -316,6 +316,7 @@ pub mod backup_restore;
 pub mod downgrade_preservation;
 pub mod human_agent_authority;
 pub mod portable_upgrade;
+pub mod project_genesis_checkpoint;
 
 // The managed-offline resolver tests and the Active negative control live in the
 // focused integration target crates/engine/tests/preferences_acceptance_support.rs
