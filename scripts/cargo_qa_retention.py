@@ -50,24 +50,43 @@ class Bound:
                 refuse("selected binary is not an executable ELF")
         elif relative.endswith(".d") and before.st_mode & 0o111:
             refuse("dependency metadata must not be executable")
-        self.verify()
+        self.verify(content=False)
 
-    def verify(self, *, named=True):
+    def verify(self, *, named=True, content=True):
         with ExitStack() as check:
             _, chain = q.directory(self.root, self.parts[:-1], check)
             if chain != self.chain:
                 refuse("root or parent identity changed")
-        if q.snapshot(self.fd) != self.expected:
+        if content:
+            actual, expected = q.snapshot(self.fd), self.expected
+        else:
+            actual = q.info(os.fstat(self.fd))
+            actual["xattrs_sha256"] = q.security(self.fd)
+            if q.info(os.fstat(self.fd)) != {key: actual[key] for key in q.FIELDS}:
+                refuse("held metadata changed during inspection")
+            expected = {key: self.expected[key] for key in (*q.FIELDS, "xattrs_sha256")}
+        if actual != expected:
             refuse("held input changed")
         if named and q.info(os.stat(self.name, dir_fd=self.parent, follow_symlinks=False)) != q.info(os.fstat(self.fd)):
             refuse("named input changed")
 
-    def unlinked(self):
-        value = os.fstat(self.fd)
-        if value.st_nlink != self.expected["nlink"] - 1:
-            refuse("unexpected link count after unlink")
-        self.expected.update(nlink=value.st_nlink, ctime_ns=value.st_ctime_ns)
-        self.verify(named=False)
+    def post_unlink(self):
+        # Hash before accepting ctime: a concurrent writer must not be hidden
+        # behind the timestamp change legitimately caused by unlink.
+        actual = q.snapshot(self.fd)
+        expected = dict(self.expected, nlink=self.expected["nlink"] - 1,
+                        ctime_ns=actual["ctime_ns"])
+        if actual != expected:
+            refuse("unexpected bytes or metadata after unlink")
+        return actual
+
+    def accept_unlink(self, verified):
+        expected = dict(self.expected, nlink=self.expected["nlink"] - 1,
+                        ctime_ns=verified["ctime_ns"])
+        if verified != expected:
+            refuse("inconsistent shared-inode unlink result")
+        self.expected = verified.copy()
+        self.verify(named=False, content=False)
 
     def json(self):
         return json.loads(os.pread(self.fd, self.expected["size"], 0))
@@ -214,18 +233,20 @@ def retire(root, relatives, lock_path, active_check, users_check, *, apply=False
                         refuse("debug directory membership changed")
                 for value in bound:
                     if value.relative not in receipt["completed"]:
-                        value.verify()
+                        value.verify(content=False)
 
             validate()  # All bundles must pass before the first unlink.
             if apply:
                 for value in bound:
                     validate()
+                    value.verify()
                     os.unlink(value.name, dir_fd=value.parent)
                     receipt["completed"].append(value.relative)
-                    # All held names sharing this inode see the same link/ctime update.
+                    verified = value.post_unlink()
+                    # All held names sharing this inode use the verified result.
                     for alias in bound:
                         if (alias.expected["device"], alias.expected["inode"]) == (value.expected["device"], value.expected["inode"]):
-                            alias.unlinked()
+                            alias.accept_unlink(verified)
                 validate()
                 receipt["status"] = "complete_source_and_evidence_retained"
             else:

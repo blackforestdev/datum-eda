@@ -400,7 +400,7 @@
    Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered. *state `deferred`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <details>
-<summary>Completed history (6 landed records)</summary>
+<summary>Completed history (7 landed records)</summary>
 
 - **Bind allocator proof to its actual constructor owner** (`RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION`; `dat-renderer-allocator-owner-j1jj`).
    Exact thread-local test constructor identity replaces the global maximum guess. Deterministic newer-foreign-owner regression retains every byte/lifetime assertion; focused guarded proof and independent review PASS. Production accounting unchanged; no broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
@@ -420,11 +420,14 @@
 - **Treat retained Cargo cache sizes as advisory targets** (`CARGO-CACHE-ADVISORY-TARGET`; `dat-cargo-cache-advisory-target-jiu6`).
    Owner-directed advisory cache targets delivered8d4c7564.27focusedPython tests/independent reviewPASS; actual40.2GiB Cargo proof admitted with low-free-space/serialization/proof-target safeguards retained. No deletion or broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Reclaim released QA compiler output while preserving proof inputs** (`QA-BUILD-RETENTION`; `dat-qa-build-retention-1o5r`).
+   Released-QA binary retirement tool delivered86a635de with16new/36existing tests and independent reviewPASS. Existing build-info release designation/no liveclaim, shared idle guard, exact hash/identity and selected process checks preserve allsource/evidence. No live cleanup or reclaimed-byte claim; advisory targets do not block builds. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
-- **Reclaim released QA compiler output while preserving proof inputs** (`QA-BUILD-RETENTION`; `dat-qa-build-retention-1o5r`).
-   Owner-directed routine build retirement through existing cache manager; preserve source snapshots/evidence and require positive release and observed idle safety. *state `in_progress`; authorization `execution`; parallel lane.*
+- **Keep released QA retirement hashing linear in selected output** (`QA-RETENTION-LINEAR-HASH`; `dat-qa-retention-linear-hash-xse7`).
+   Measured quadratic ELF hashing in released-output retirement; retain byte checks at admission and each unlink boundary while making batch identity checks cheap. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 

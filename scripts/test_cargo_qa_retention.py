@@ -1,4 +1,5 @@
 """Hermetic released-QA retention controls; no live process or cache actions."""
+from collections import Counter
 from contextlib import redirect_stdout, redirect_stderr
 import io
 import hashlib
@@ -220,6 +221,73 @@ class RetentionTests(unittest.TestCase):
             self.assertEqual(manager.main(), 75)
         active.assert_called_once_with(builds_only=True)
         self.assertEqual(users.call_args.kwargs, {"include_mappings": True})
+
+    def test_selected_elf_digest_count_is_linear(self):
+        bundles = [self.bundle, "target/qa/second", "target/qa/third"]
+        images = set()
+        for bundle in bundles:
+            if bundle != self.bundle:
+                self.create(bundle)
+            base = self.root / bundle
+            blob = (base / "debug/datum-gui").read_bytes()
+            for name in ("datum-eda", "eda-engine-daemon"):
+                p = base / "debug" / name
+                p.write_bytes(blob)
+                p.chmod(0o755)
+            data = json.loads((base / "build-info.json").read_text())
+            data["files_sha256"] = {"debug/" + p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                                   for p in (base / "debug").iterdir()}
+            (base / "build-info.json").write_text(json.dumps(data))
+            for name in r.BINARIES:
+                st = (base / "debug" / name).stat()
+                images.add((st.st_dev, st.st_ino))
+        counts, digest = Counter(), r.q.digest
+        def counted(fd):
+            st = os.fstat(fd)
+            key = (st.st_dev, st.st_ino)
+            if key in images:
+                counts[key] += 1
+            return digest(fd)
+        with patch.object(r.q, "digest", side_effect=counted):
+            result = self.run_retire(bundles, apply=True)
+        self.assertEqual(result["status"], "complete_source_and_evidence_retained")
+        self.assertEqual(set(counts), images)
+        self.assertEqual(set(counts.values()), {3})
+
+    def test_tamper_immediately_before_selected_hash_refuses_unlink(self):
+        verify = r.Bound.verify
+        def tamper(value, *, named=True, content=True):
+            if content and value.name == "datum-gui":
+                os.pwrite(value.fd, b"X", value.expected["size"] - 1)
+            return verify(value, named=named, content=content)
+        with patch.object(r.Bound, "verify", new=tamper):
+            result = self.denied()
+        self.assertEqual(result["completed"], [])
+        self.assertEqual(result["reason"], "released QA build refused: held input changed")
+
+    def test_post_unlink_content_change_cannot_hide_in_new_ctime(self):
+        p = self.root / self.bundle / "debug/datum-gui"
+        original = p.stat()
+        fd = os.open(p, os.O_RDWR)
+        unlink = os.unlink
+        def tamper(path, *args, **kwargs):
+            result = unlink(path, *args, **kwargs)
+            if path == "datum-gui":
+                os.pwrite(fd, b"X", original.st_size - 1)
+                # Keep all expected metadata except unlink's allowed ctime/nlink.
+                os.utime(fd, ns=(original.st_atime_ns, original.st_mtime_ns))
+            return result
+        try:
+            with patch.object(r.os, "unlink", side_effect=tamper):
+                with self.assertRaises(r.Failure) as caught:
+                    self.run_retire(apply=True)
+        finally:
+            os.close(fd)
+        result = caught.exception.receipt
+        self.assertEqual(result["status"], "partial_failure")
+        self.assertEqual(result["completed"], [self.bundle + "/debug/datum-gui"])
+        self.assertIn("unexpected bytes or metadata after unlink", result["reason"])
+        self.assertTrue((p.parent / "datum-gui.d").exists())
 
     def test_partial_failure_receipt_is_honest(self):
         unlink = os.unlink

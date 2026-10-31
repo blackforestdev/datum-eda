@@ -19035,10 +19035,10 @@
       "key": "QA-BUILD-RETENTION",
       "issue_id": "dat-qa-build-retention-1o5r",
       "title": "Reclaim released QA compiler output while preserving proof inputs",
-      "summary": "Owner-directed routine build retirement through existing cache manager; preserve source snapshots/evidence and require positive release and observed idle safety.",
+      "summary": "Released-QA binary retirement tool delivered86a635de with16new/36existing tests and independent reviewPASS. Existing build-info release designation/no liveclaim, shared idle guard, exact hash/identity and selected process checks preserve allsource/evidence. No live cleanup or reclaimed-byte claim; advisory targets do not block builds.",
       "order": 122,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -19051,20 +19051,41 @@
         "kind": "maintenance",
         "rationale": "Prevent repeat six-agent pause over obsolete QA builds by adding missing mixed-bundle lifecycle under owner instruction and PM standing maintenance classification; no destructive cron, new permission ledger or product prerequisite."
       },
+      "landing_commit": "86a635de"
+    },
+    {
+      "key": "QA-RETENTION-LINEAR-HASH",
+      "issue_id": "dat-qa-retention-linear-hash-xse7",
+      "title": "Keep released QA retirement hashing linear in selected output",
+      "summary": "Measured quadratic ELF hashing in released-output retirement; retain byte checks at admission and each unlink boundary while making batch identity checks cheap.",
+      "order": 123,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Owner-authorized efficiency correction of measured1183fullELF hashes for39selectedimages in temporary13bundlefixture; no actualcleanup, dataretirement, weakenedmutationsafety or productprerequisite."
+      },
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-qa-retention-20261031",
-        "claimed_at": "2026-10-31T01:26:00Z",
-        "heartbeat_at": "2026-10-31T01:26:00Z",
-        "expires_at": "2026-10-31T03:26:00Z",
+        "session": "codex-retention-linear-20261031",
+        "claimed_at": "2026-10-31T01:42:39Z",
+        "heartbeat_at": "2026-10-31T01:42:39Z",
+        "expires_at": "2026-10-31T03:42:39Z",
         "scope": [
-          "scripts/manage_cargo_cache.py",
           "scripts/cargo_qa_retention.py",
           "scripts/test_cargo_qa_retention.py"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "8d4c7564557058067005f71e140d708312433c72"
+        "head": "b8e9085b09d7588a692c2da871ff2f37c7cd1ce1"
       }
     }
   ],
