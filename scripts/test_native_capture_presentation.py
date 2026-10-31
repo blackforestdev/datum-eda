@@ -13,7 +13,7 @@ from native_capture_pixels import require_native_capture_pixels
 from native_capture_presentation import PresentationReadiness
 from test_native_capture_readiness import REQUIREMENT, content, present, record, ledger
 
-SOURCE = Path(__file__).with_name('prove_native_project_startup_gui.py')
+SOURCE = Path(__file__).with_name('native_readiness_capture.py')
 
 class CapturePresentationTests(unittest.TestCase):
     def setUp(self):
@@ -51,7 +51,7 @@ class CapturePresentationTests(unittest.TestCase):
             Image.new('RGB', (2, 2), colour).save(Path(cwd) / 'original.png')
             return NS(returncode=0, stdout='', stderr='')
         nodes = next(n for n in ast.parse(SOURCE.read_text()).body
-                     if isinstance(n, ast.ClassDef) and n.name == 'StartupQA')
+                     if isinstance(n, ast.ClassDef) and n.name == 'NativeReadinessCapture')
         methods = [n for n in nodes.body if isinstance(n, ast.FunctionDef)
                    and n.name in {'focus', 'wait_presented', 'capture', '_screenshoot_read'}]
         namespace = {'Path': Path, 'json': json, 're': re, 'os': os, 'time': NS(sleep=lambda *_: None),
