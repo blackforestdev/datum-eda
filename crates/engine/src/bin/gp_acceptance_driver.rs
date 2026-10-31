@@ -290,6 +290,18 @@ fn main() -> ExitCode {
                 }
             }
         }
+        // existing-project-stability/fixed-identities (engine surface): a normalized factory
+        // genesis is byte-identical across destinations (the only engine-surface variant of the
+        // family; global-populated/global-missing/factory/unavailable-global are user surfaces).
+        "existing-project-stability" if variant == "fixed-identities" => {
+            match acceptance_support::existing_project_stability::fixed_identities_observe() {
+                Ok(observed) => observed,
+                Err(error) => {
+                    eprintln!("gp_acceptance_driver: observe '{case}/{variant}' failed: {error}");
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
         _ => {
             eprintln!("gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'");
             return ExitCode::FAILURE;

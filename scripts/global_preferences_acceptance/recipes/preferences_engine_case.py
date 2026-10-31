@@ -83,6 +83,9 @@ ENGINE_COVERAGE = {
     ("project-genesis-crash", "project-validated"),
     ("project-genesis-crash", "staging-synced"),
     ("project-genesis-crash", "project-published"),
+    # existing-project-stability/fixed-identities: a normalized factory genesis is byte-identical
+    # across destinations (engine idempotency / request-determined identity).
+    ("existing-project-stability", "fixed-identities"),
 }
 
 

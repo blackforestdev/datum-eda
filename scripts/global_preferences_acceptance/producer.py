@@ -308,6 +308,19 @@ def _family_handlers(family):
             repo = Path(work_root) / "config" / "datum" / "preferences"
             return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
         return None, capture_after, setup
+    # existing-project-stability/unavailable-global (CLI surface): the producer seeds + corrupts a REAL
+    # Global store (setup) as `before` -- an explicit `project new --units-source global` must be refused
+    # (seed_source_unavailable) without creating a Project or repairing the store, so `after` is the real
+    # post-run STORE snapshot and bytes must match (a PRESERVE case, like corrupt-store).
+    if case == "existing-project-stability" and variant == "unavailable-global":
+        def setup(capture, key, work_root):
+            repo = _seed_corrupt_store(Path(work_root), "truncated-head")
+            return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+        def capture_after(capture, key, work_root, before_state):
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+        return None, capture_after, setup
     # managed-offline (engine surface): a pure resolver evaluation -- the engine driver injects a
     # managed provider generation state and observes it never participates. No store is written, so
     # after==before=empty is honest and the engine driver's observations carry the proof.
@@ -329,6 +342,12 @@ def _family_handlers(family):
     if case == "project-genesis-crash" and variant in (
             "staging-prepared", "project-built", "project-validated", "staging-synced",
             "project-published"):
+        return _empty_state, None, None
+    # existing-project-stability/fixed-identities (engine surface): each scenario creates factory
+    # projects at several destinations inside its OWN throwaway temp dir and byte-compares them, so
+    # the coverage work root is never written -- after==before=empty is honest and the driver's
+    # byte-identical-projects / same-normalized-request observations carry the proof.
+    if case == "existing-project-stability" and variant == "fixed-identities":
         return _empty_state, None, None
     # backup-restore (engine WRITE family): the engine setup phase seeds a committed store (gen0) +
     # exact backup and diverges it (gen1); the recipe's observe phase commits a restore (gen2). So

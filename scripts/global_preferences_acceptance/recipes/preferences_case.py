@@ -259,6 +259,44 @@ def existing_project_stability_global_missing_cli():
     }
 
 
+def existing_project_stability_unavailable_global_cli():
+    """Genesis with --units-source global while the Global store is present-but-UNREADABLE: the
+    explicit Global request is refused with the typed seed_source_unavailable (never rc==0), NO
+    Project is created (no implicit factory fallback), and the refusal is side-effect-free -- the
+    Global store bytes are preserved and no partial Project is left (the CLI analog of a preserved
+    draft: nothing to recover; retry or explicit Factory stays open). The producer's setup seeded
+    and corrupted the Global store in the out-of-band work root as `before`."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-eps-unavailable-global-")
+    try:
+        repo = work / "config" / "datum" / "preferences"
+        dest = work / "project"
+        before = _store_digest_map(repo)
+        seed = "existing-project-stability/unavailable-global/cli"
+        rc, envelope = _run_and_parse(binary, work, ["project", "new", "--name", "Acceptance",
+            "--project-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/project")),
+            "--request-id", str(uuid.uuid5(uuid.NAMESPACE_URL, seed + "/request")),
+            "--units-source", "global", "--json", str(dest)])
+        after = _store_digest_map(repo)
+        error = (envelope.get("error") or {}) if isinstance(envelope, dict) else {}
+        # refusal: the explicit Global genesis is refused with the typed seed_source_unavailable code,
+        # exit non-zero, never a silent success.
+        refusal = bool(rc != 0 and isinstance(envelope, dict) and envelope.get("ok") is False
+                       and error.get("code") == "seed_source_unavailable")
+        # no-implicit-factory-fallback: no Project was created -- it did not quietly seed from Factory.
+        no_fallback = bool(not dest.exists() and _no_project_written(work))
+        # draft-preserved (CLI side-effect-free analog): the Global store bytes are intact (the refused
+        # read repaired nothing) and nothing partial was left behind, so a retry or Factory stays open.
+        draft_preserved = bool(before and before == after and not dest.exists())
+        return {
+            "refusal": refusal,
+            "no-implicit-factory-fallback": no_fallback,
+            "draft-preserved": draft_preserved,
+        }
+    finally:
+        cleanup()
+
+
 ACTIVE_SECTIONS = {"appearance", "units"}
 RESERVED_SENTINEL = "datum.pcb.route_profile"  # a known reserved descriptor (reserved_preference_key)
 QUERY_VERBS = (["describe"], ["list"], ["get", "datum.units.system"], ["search", "unit"],
@@ -637,6 +675,7 @@ DISPATCH = {
     ("existing-project-stability", "factory", "cli"): existing_project_stability_factory_cli,
     ("existing-project-stability", "global-missing", "cli"): existing_project_stability_global_missing_cli,
     ("existing-project-stability", "global-populated", "cli"): existing_project_stability_global_populated_cli,
+    ("existing-project-stability", "unavailable-global", "cli"): existing_project_stability_unavailable_global_cli,
     ("surface-parity-negative", "active-inventory", "cli"): surface_parity_negative_active_inventory_cli,
     ("surface-parity-negative", "all-query-schemas", "cli"): surface_parity_negative_all_query_schemas_cli,
     ("surface-parity-negative", "all-stable-refusals", "cli"): surface_parity_negative_all_stable_refusals_cli,

@@ -314,6 +314,7 @@ pub fn observe_managed_offline(
 
 pub mod backup_restore;
 pub mod downgrade_preservation;
+pub mod existing_project_stability;
 pub mod human_agent_authority;
 pub mod portable_upgrade;
 pub mod project_genesis_checkpoint;

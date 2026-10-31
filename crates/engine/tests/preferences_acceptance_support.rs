@@ -13,6 +13,9 @@ use eda_engine::preferences::acceptance_support::backup_restore::{
 use eda_engine::preferences::acceptance_support::downgrade_preservation::{
     DowngradeVariant, downgrade_negative_control, downgrade_observe, downgrade_setup,
 };
+use eda_engine::preferences::acceptance_support::existing_project_stability::{
+    fixed_identities_negative_control, fixed_identities_observe,
+};
 use eda_engine::preferences::acceptance_support::human_agent_authority::{
     AuthorityVariant, authority_negative_control, authority_observe,
 };
@@ -460,5 +463,30 @@ fn clean_genesis_publishes_a_complete_project_as_the_checkpoint_negative_control
     assert!(
         checkpoint_negative_control().expect("negative control runs"),
         "a clean genesis must publish a complete project (the checkpoint observations are falsifiable)"
+    );
+}
+
+#[test]
+fn fixed_identities_factory_genesis_is_byte_identical_across_destinations() {
+    // A normalized factory genesis (same request_id + project_id + actor + source) produces a
+    // byte-identical project at every destination, and the identity tracks the request.
+    let observed = fixed_identities_observe().expect("observe runs");
+    assert_eq!(
+        observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+        vec!["byte-identical-projects", "same-normalized-request"],
+        "fixed-identities observation ids"
+    );
+    for (id, value) in observed {
+        assert!(value, "fixed-identities observation {id} must hold");
+    }
+}
+
+#[test]
+fn different_normalized_requests_differ_as_the_fixed_identity_negative_control() {
+    // PM059 genuinely-falsifying control: two different normalized requests produce different
+    // projects, so the byte-identity is request-determined, not constant-true.
+    assert!(
+        fixed_identities_negative_control().expect("negative control runs"),
+        "different normalized requests must produce different projects (byte-identity is falsifiable)"
     );
 }
