@@ -19144,6 +19144,28 @@
         "rationale": "Owner-directed automation correction of observed selector red caused by following unlabelled documented br intake commands; no new permission or selection mechanism."
       },
       "landing_commit": "bd078b8d"
+    },
+    {
+      "key": "DEVELOPMENT-EFFICIENCY-MAINTENANCE",
+      "issue_id": "dat-development-efficiency-maintenance-ns1o",
+      "title": "Maintain efficient development under the owner mandate",
+      "summary": "PM-admitted ongoing maintenance record. Each bounded correction uses an amended narrow path lease and linked incidental intake; retain individual independent reviews and source landing references. No broad repository reservation. Rejustify continuation at GP-CM05A. Admission supplies no product authority or successor rights.",
+      "order": 127,
+      "state": "ready",
+      "authorization": "none",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/PROJECT_STATE_POLICY.md",
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Existing owner efficiency mandate; standing PM admitted this one parent via MAINTENANCE PARENT ADMISSION CLASSIFIED (observed 2026-10-31). Reduce per-fix roadmap and closure churn while preserving actual task ownership, narrow scopes before editing, independent review and source references. No product or successor authority. Continuation review at GP-CM05A; release ownership when idle."
+      }
     }
   ],
   "management_appointments": {

@@ -438,6 +438,9 @@
 
 </details>
 
+- **Maintain efficient development under the owner mandate** (`DEVELOPMENT-EFFICIENCY-MAINTENANCE`; `dat-development-efficiency-maintenance-ns1o`).
+   PM-admitted ongoing maintenance record. Each bounded correction uses an amended narrow path lease and linked incidental intake; retain individual independent reviews and source landing references. No broad repository reservation. Rejustify continuation at GP-CM05A. Admission supplies no product authority or successor rights. *state `ready`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
