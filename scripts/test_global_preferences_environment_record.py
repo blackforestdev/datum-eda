@@ -46,7 +46,7 @@ class EnvironmentRecordTests(unittest.TestCase):
         envs = build_environments(TARGET, NATIVE)
         self.assertEqual(len(envs), 5)
         coords = validate_environments(envs)
-        self.assertEqual(coords["native-wayland-1.0-1024x900"], ("wayland", 1.0, (1024, 900)))
+        self.assertEqual(coords["native-wayland-1-1024x900"], ("wayland", 1.0, (1024, 900)))
         self.assertEqual(len({None, *(v for v in coords.values() if v)}), 5)
 
     def test_environment_sha256_matches_report_binding_formula(self):

@@ -156,13 +156,23 @@ def headless_environment(target):
     }
 
 
+def _scale_label(scale):
+    """Stable env-id scale token: int-if-whole (1.0 -> '1', 2.0 -> '2')."""
+    return str(int(scale)) if float(scale) == int(scale) else str(scale)
+
+
 def _parse_coordinate(text):
-    """'wayland/1.0/1024x900' -> ('wayland', 1.0, [1024, 900]), validated against the matrix axes."""
+    """Accept either the string form 'wayland/1.0/1024x900' or the list form
+    ['wayland', 1.0, [1024, 900]] and return ('wayland', 1.0, [1024, 900]), validated against the
+    matrix axes (BACKENDS/SCALES/WINDOWS)."""
     from .inventory import BACKENDS, SCALES, WINDOWS
-    backend, scale, size = text.split("/")
-    width, height = (int(n) for n in size.lower().split("x"))
+    if isinstance(text, (list, tuple)):
+        backend, scale, size = text[0], text[1], list(text[2])
+        window = [int(size[0]), int(size[1])]
+    else:
+        backend, scale, size = text.split("/")
+        window = [int(n) for n in size.lower().split("x")]
     scale_value = float(scale)
-    window = [width, height]
     require(backend in BACKENDS, f"unknown display backend: {backend}")
     require(scale_value in SCALES, f"unsupported scale factor: {scale_value}")
     require(tuple(window) in WINDOWS, f"unsupported window size: {window}")
@@ -177,7 +187,7 @@ def native_environment(target, coordinate, *, gpu, driver, compositor, backgroun
     backend, scale, window = _parse_coordinate(coordinate)
     environment = headless_environment(target)
     environment.update({
-        "id": f"native-{backend}-{scale}-{window[0]}x{window[1]}",
+        "id": f"native-{backend}-{_scale_label(scale)}-{window[0]}x{window[1]}",
         "gpu": _fact(gpu, "unresolved-gpu"),
         "driver": _fact(driver, "unresolved-driver"),
         "display_backend": backend,
