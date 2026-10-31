@@ -16,8 +16,13 @@ must create no preferences repository and write no Project, so ``after == before
         --gui-binary <candidate datum-gui> [--coordinate wayland/1.0/1024x900]
 
 candidate.revision is stamped to the current git HEAD (producer._git_head): build
-the candidate datum-gui at the HEAD you run this against so the per-row revision
-is honest (the full GUI corpus reruns at the pinned S6 candidate separately).
+the candidate at the HEAD you run this against so the per-row revision is honest
+(the full GUI corpus reruns at the pinned S6 candidate separately). The capture
+envelope's StartupQA hashes THREE same-directory candidate companions for
+provenance -- datum-gui, datum-eda and eda-engine-daemon -- so build all three in
+one guarded invocation of ``gates.release_build()`` (``-p datum-eda-cli
+-p datum-gui-app -p eda-engine-daemon``), not ``--bin datum-gui`` alone; this
+driver preflights their presence and refuses with an actionable missing-list.
 """
 import argparse
 import json
@@ -39,6 +44,23 @@ GUI_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_
 # PM-authorized single pattern/coordinate. The default is the simplest reliable row; any coordinate
 # passed must be a real case_inventory() key for this family.
 DEFAULT_COORDINATE = ("wayland", 1.0, (1024, 900))
+# StartupQA.__init__ (prove_native_project_startup_gui.py) hashes all three same-directory candidate
+# companions for provenance; a missing one aborts the recipe subprocess with an OPAQUE empty-stdout
+# JSONDecodeError in produce_case. Preflight them here with an actionable missing-list instead.
+CANDIDATE_COMPANIONS = ("datum-gui", "datum-eda", "eda-engine-daemon")
+
+
+def _preflight_candidate_companions(gui_binary):
+    """Fail fast (before Capture/recipe/envelope startup) if any StartupQA candidate companion is
+    missing from the candidate directory, naming the canonical all-three build command."""
+    directory = Path(gui_binary).resolve().parent
+    missing = [name for name in CANDIDATE_COMPANIONS if not (directory / name).is_file()]
+    if missing:
+        raise SystemExit(
+            f"candidate directory {directory} is missing StartupQA companion binaries: "
+            f"{', '.join(missing)}. Build all three at the pinned revision in one guarded invocation "
+            f"-- gates.release_build() (-p datum-eda-cli -p datum-gui-app -p eda-engine-daemon) -- "
+            f"not --bin datum-gui alone.")
 
 
 def _parse_coordinate(text):
@@ -60,6 +82,7 @@ def build_gui_case(bundle_root, *, gui_binary, coordinate):
     """Produce the one clean-install/missing-store/gui row for `coordinate`."""
     key = ("clean-install", "missing-store", "default", "gui", coordinate)
     require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
+    _preflight_candidate_companions(gui_binary)
 
     capture = Capture(bundle_root)
     revision = _git_head()
