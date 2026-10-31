@@ -194,8 +194,8 @@ Development availability requires source-pinned ordinary-application evidence fo
 every workflow and safety requirement; fixture-only records cannot satisfy it.
 These checks validate evidence structure, not observation truth, independent
 approval or an agent's time allocation. They never change grants or selection.
-The owner-directed target is roughly 80% effort toward usable implementation;
-commit labels are not an effort metric. Continue inside the recorded grant, and
+CLAUDE.md owns the Rust product-effort requirement; commit labels are not an
+effort metric. Continue inside the recorded grant, and
 keep broader qualification separate from bounded development availability.
 The manager selects product execution by default. Planning/qualification detours
 identify a blocked user workflow, unresolved requirement and finite exit in the
@@ -369,7 +369,8 @@ decision, reorder the roadmap, or reclaim an issue.
 
 Before changing project-state tooling, run the decision 022 source-health gate.
 Keep parsers, validation rules, command presentation, and tests in cohesive
-modules below their applicable budgets. If a legacy oversized file is touched,
-perform real ownership extraction and ratchet its ceiling downward in the same
+modules below their applicable budgets. Apply PM065's bounded no-growth defect
+rule where applicable; decomposition must perform real ownership extraction and
+ratchet its ceiling downward in the same
 change. A generated file, manifest, claim, or tracker entry is never an exception
 to source-health governance.

@@ -644,6 +644,15 @@ Issue: `dat-native-authoring-depth-sf9`. Preserve cross-probe, GUI surface-spec
 and GUI write-path prerequisites. The foundation doorway/one-edit example is
 an initial connected scenario, not a replacement for both domain contracts.
 
+NA-C01–NA-C06 govern the complete native-authoring milestone. They do not prohibit
+separately authorized PM059 feature increments whose product meaning and required
+shared services are already settled. Resolve only the increment's affected
+requirements and actual prerequisite gaps; reuse established engine and visual
+authority. Deliver its ordinary manual workflow with focused checks and independent
+review. Keep the umbrella issue and its unmet scope open. An increment neither
+waives other requirements nor authorizes its successor; no complete-editor matrix
+is required merely to start an independently useful, already-governed increment.
+
 <!-- REQ:NATIVE-AUTHORING:NA-C01 -->
 ### NA-C01 — resolve the complete behavior and coverage matrix
 

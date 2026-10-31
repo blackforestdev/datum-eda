@@ -4,8 +4,8 @@
 The policy is deliberately dependency-free so the same program runs in a clean
 checkout and in CI.  The working-tree scan includes tracked and untracked
 (non-ignored) files.  With ``--base-ref`` it additionally enforces the
-downward-only character of policy and legacy ceilings and requires touched
-legacy monoliths to become smaller.
+downward-only character of policy and legacy ceilings. Bounded no-growth fixes
+need no unrelated extraction; decomposition still requires real ownership.
 """
 
 from __future__ import annotations
@@ -166,6 +166,7 @@ def repository_contract_failures(root: Path) -> list[str]:
     failures: list[str] = []
     required = (
         "docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md",
+        "docs/decisions/PRODUCT_MECHANICS_065_PROPORTIONATE_FEATURE_DELIVERY.md",
         "docs/SOURCE_HEALTH_POLICY.md",
         "scripts/check_source_health.py",
         "scripts/test_source_health_governance.py",
@@ -422,6 +423,12 @@ def base_checks(root: Path, base: str, manifest_rel: str, policy: dict[str, Any]
     decision_path = root / "docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md"
     if old_decision is not None and decision_path.read_bytes() != old_decision:
         failures.append("policy weakening: decision 022 is immutable; add a later amendment")
+    amendment = "docs/decisions/PRODUCT_MECHANICS_065_PROPORTIONATE_FEATURE_DELIVERY.md"
+    old_amendment = blob(root, base, amendment)
+    if old_amendment is not None and (
+        not (root / amendment).is_file() or (root / amendment).read_bytes() != old_amendment
+    ):
+        failures.append("policy weakening: decision 065 is immutable; add a later amendment")
     old_checker = blob(root, base, "scripts/check_source_health.py")
     if old_checker is not None:
         old_thresholds = assignment_literal(old_checker, "DEFAULT_THRESHOLDS")
@@ -459,17 +466,23 @@ def base_checks(root: Path, base: str, manifest_rel: str, policy: dict[str, Any]
             failures.append(f"touched legacy module cannot be compared to base: {rel}")
         else:
             prior_file = count_lines(before)
-            if live[rel].physical >= prior_file:
-                failures.append(f"touched legacy module must shrink: {rel} is {live[rel].physical}, base is {prior_file}")
-            elif not structural_extraction_evidence(root, base, rel, source_set):
-                failures.append(
-                    f"touched legacy module lacks real extraction evidence: {rel}"
-                )
-            if "expanded_lines" in new_entries[rel]["limits"]:
-                old_expanded = logical_lines_at_ref(root, base, rel)
-                if live[rel].logical >= old_expanded:
-                    failures.append(f"include expansion must shrink, not move text: {rel} is {live[rel].logical}, base is {old_expanded}")
+            rust_production = rel.endswith(".rs") and not is_test_path(rel)
+            prior_production, prior_inline = split_rust(before) if rust_production else (prior_file, 0)
+            prior_expanded = (logical_lines_at_ref(root, base, rel)
+                              if rel.endswith(".rs") and b"include!(" in before else 0)
+            prior_values = metric_values(Measurement(
+                prior_file, prior_production, prior_inline, prior_expanded, live[rel].category))
             values = metric_values(live[rel])
+            # PM065: these measurements establish no growth, not task intent or
+            # independent review. Those remain obligations in the existing task.
+            no_growth = all(value <= prior_values[name] for name, value in values.items())
+            if not no_growth:
+                if live[rel].physical >= prior_file:
+                    failures.append(f"touched legacy module must shrink when a metric grows: {rel} is {live[rel].physical}, base is {prior_file}")
+                elif not structural_extraction_evidence(root, base, rel, source_set):
+                    failures.append(f"touched legacy module lacks real extraction evidence: {rel}")
+                if "expanded_lines" in new_entries[rel]["limits"] and live[rel].logical >= prior_expanded:
+                    failures.append(f"include expansion must shrink, not move text: {rel} is {live[rel].logical}, base is {prior_expanded}")
             for name, old_limit in old_entries[rel]["limits"].items():
                 if values[name] < old_limit and new_entries[rel]["limits"].get(name) != values[name]:
                     failures.append(

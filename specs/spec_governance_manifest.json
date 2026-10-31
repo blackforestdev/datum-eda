@@ -519,6 +519,12 @@
       "notes": "Design-level mechanism doctrine authored at the ADS-C05 governance close under the ADS-C04 \u00a7S3 authorization (number/title/ETM enrollment confirmed by the appointed manager). Records the AdoptedDraftingStandard object/schema (adopted_standard), ratified ISO family, S2 unavailable-source policy, typed single-write-path authority, revision seam, seed/migration design and conformance obligations; preserves PM035/PM034/PM040/PM023/PM010 authorities. Authorizes no implementation, migration execution or dependency; F1 licensed-source acquisition stays an owner-side PM029 prerequisite.",
       "progress_anchor": "ADOPTED-DRAFTING-STANDARD-SPEC"
     },
+    "docs/decisions/PRODUCT_MECHANICS_065_PROPORTIONATE_FEATURE_DELIVERY.md": {
+      "class": "doctrine",
+      "controlling": true,
+      "notes": "Owner-authorized bounded delivery correction: proportionate no-growth defect repair and actual owner/independent review before direct-main landing. Amends PM022 only at stated scope; no new debt, qualification or product grant.",
+      "progress_anchor": "DELIVERY-MANAGEMENT"
+    },
     "docs/decisions/PRODUCT_MECHANICS_OPEN_QUESTION_RESOLUTIONS.md": {
       "class": "historical",
       "reason": "Research recommendations awaiting ratification per original header, not a ratified resolutions log. Preserve all proposals; numbered decisions alone own accepted resolutions."

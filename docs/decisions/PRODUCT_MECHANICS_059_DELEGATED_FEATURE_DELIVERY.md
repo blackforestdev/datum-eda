@@ -23,11 +23,17 @@ The verified standing manager may authorize a bounded routine task inside its
 covered, ratified product scope in **one task record**. Record the grant and
 governing scope, named implementer, nonconflicting files owned and expected behavior
 before editing, checking existing task ownership and shared-worktree changes.
+A bounded task includes a new usable feature increment within already-ratified
+product scope. Whole-editor planning or acceptance is not its prerequisite unless
+it resolves an actual dependency of that increment. Record the missing designer
+operation and its fixed done statement in the same task; retain the unfinished
+umbrella scope. The manager may cite an existing covering grant rather than seek
+a new approval. This does not select a milestone or authorize a successor.
 The implementer claims that task, makes the change, runs affected checks,
 obtains one actual independent review and lands it with concise results. Reuse
 existing tests and observations. Batch routine tracking updates with delivery.
 Do not create a child Frontier item, structured lease, completion graph, evidence
-route, availability packet or qualification campaign merely to land the fix.
+route, availability packet or qualification campaign merely to land the increment.
 
 Beads is the operational task record, not an execution gate generator. Its
 `roadmap:intake` label means no independently scheduled milestone; the label,
@@ -194,7 +200,13 @@ permission for unrelated external messaging. If session transport is unavailable
 record that concrete integration limitation rather than silently using the owner
 as the default relay. No new transport dependency or service is authorized.
 
-Report delivered user behavior, verification outcome and genuine blockers. Reuse
+Report delivered user behavior, verification outcome and genuine blockers.
+Distinguish implemented functionality, behavior actually verified, and functionality
+still missing. Keep missing implementation in the existing task's retained scope,
+not among qualification follow-ups. An inert shell, fixture or test-only change
+does not deliver the operation it represents. Select useful feature increments
+against library → schematic → PCB → manufacturing, alongside observed blocking
+defects; Rust file counts alone do not establish product progress. Reuse
 existing receipts and trackers; no new approval framework, proof ledger or separate
 manager authorization is needed for each ordinary unit. The owner is contacted
 only for the reserved decisions above or a specifically requested status report.
@@ -203,6 +215,10 @@ only for the reserved decisions above or a specifically requested status report.
 
 Deliver each usable slice after focused checks for canonical writes, persistence,
 undo/recovery and obvious interaction failures plus its bounded independent review.
+Review the exact landing candidate and the actual affected Rust checks and
+ordinary-path observations. Structural checks establish record consistency only.
+If the candidate changes, review and verify the affected delta; reuse unaffected
+proof. Uncommitted work from another session is not proof for the landed candidate.
 Give the owner a pinned ordinary launch command and a short description of what
 they can do. Owner use is voluntary product feedback, not a required manual test
 script and not a substitute for data-integrity checks. Reproduce reported defects

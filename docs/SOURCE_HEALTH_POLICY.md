@@ -3,8 +3,9 @@
 Status: active
 
 This document is the operational companion to
-`docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`. Decision 022
-is controlling. If this document, a manifest, a script, or a pull-request
+`docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md`, amended by
+`PRODUCT_MECHANICS_065_PROPORTIONATE_FEATURE_DELIVERY.md`. Those decisions
+are controlling. If this document, a manifest, a script, or a pull-request
 instruction conflicts with it, the weaker instruction is invalid and the
 conflict is a blocking governance defect.
 
@@ -14,26 +15,40 @@ Before changing source:
 
 1. Run the source-health gate and note whether any intended write target is in
    the legacy debt ledger.
-2. If a target is oversized, identify a cohesive ownership boundary that can be
-   extracted without changing behavior.
+2. If a target is oversized, identify a cohesive extraction boundary. PM065 permits
+   an independently reviewed bounded defect correction in the existing task to
+   proceed without unrelated extraction when no applicable size metric grows
+   against the actual base. The checker does not certify intent or review.
 3. Keep every new child below its applicable normal budget.
 
 Before landing:
 
-1. Run the source-health and policy-integrity regression tests.
+1. Run the source-health checker against the exact proposed candidate and trusted
+   base. If another session has dirty work, use an isolated candidate checkout
+   with the existing `--root` and `--base-ref` options; retain the complete shared
+   working-tree scan as separately attributed diagnostics. Run source-health and
+   policy-integrity regressions when those mechanisms change, reusing adequate
+   results for ordinary product edits.
 2. Run the focused drift checks for the affected boundary (the drift runner
    defaults to focused checks), reusing adequate existing evidence. The complete,
    full-workspace drift battery is reserved for a PM-designated milestone or
    release candidate and is not required on each landing (ratified verification
    cadence, 19cc78a7).
-3. Record before/after line counts and structural evidence for every touched
-   legacy file.
+3. Record before/after applicable counts in the existing task. A decomposition
+   requires real ownership evidence; PM065's bounded no-growth correction requires
+   its scoped defect proof and actual independent review, not a new waiver record.
 4. Ratchet its baseline and ceiling downward in the same change.
 5. Remove a legacy entry in the same change when the file returns to its normal
    budget.
 
 Registration is never the response to a new oversized file. Decompose it before
 landing.
+
+Protected policy changes require explicit owner authorization and independent
+final-change review, followed by owned staging and direct-main landing under PM065.
+CODEOWNERS identifies protected ownership; its presence does not prove approval or
+remote branch protection. No approval or green structural check supplies missing
+behavioral proof.
 
 Current debt inventory: 65 legacy source entries retain 66 recorded metric
 ceilings. UNIT-I03B moved

@@ -1,6 +1,8 @@
-# Source-health governance is an owner-controlled boundary. Repository branch
-# protection must require this review and dismiss approval after new commits.
+# Source-health governance is owner-controlled. PM065 uses actual owner approval
+# and independent candidate review before direct-main landing; this map is not
+# evidence of approval or remote branch protection.
 /docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_065_PROPORTIONATE_FEATURE_DELIVERY.md @blackforestdev
 /docs/SOURCE_HEALTH_POLICY.md @blackforestdev
 /scripts/check_source_health.py @blackforestdev
 /scripts/test_source_health_governance.py @blackforestdev

@@ -122,14 +122,17 @@ readiness records supply no product grant.
 
 ## Roadmap and editing authority
 
-Routine development follows PM059's **one-task workflow**: the verified manager
+Routine development, including bounded new features within ratified scope,
+follows PM059's **one-task workflow**: the verified manager
 records the bounded grant, implementer, file scope **and the definition of done —
 one or two sentences of designer-visible behavior, fixed before work starts and
 never extensible from inside the work** — in one existing task record; the
 implementer fixes the Rust behavior, runs affected checks, obtains one actual
 independent review and lands it. Work whose done-statement cannot be written
 that way does not start. Milestone-sized work gets its done-statement
-owner-approved first, as one sentence, before any machinery may exist under it;
+owner-approved first (an owner-only decision), as one sentence, before any
+machinery may exist under it; this is not an entrance requirement for separately
+authorized bounded feature increments under PM059;
 acceptance criteria authored and graded by the same process that executes them
 anchor nothing (owner-ratified 2026-10-31, from the GP-CM05 overrun). A tracker claim alone grants nothing. Routine
 work needs no separate Frontier item/lease, completion graph, availability packet
@@ -226,9 +229,10 @@ campaign.
 - PM029: no adding/fetching/vendoring/linking third-party code without prior exact
   owner ratification and license obligations in a numbered decision. The terminal
   emulator/VT/PTY/session/fallback implementation is first-party only.
-- PM022 source health: no new oversized modules or invented ceiling exceptions.
-  Touching legacy debt requires real ownership extraction and a downward ratchet;
-  forwarding/include splits are not decomposition. Load its policy before such edits.
+- PM022/PM065 source health: no new oversized modules or invented ceiling exceptions.
+  Use the bounded no-growth defect rule in PM065 where applicable; real extraction
+  and exact downward ratchets remain required for decomposition. Forwarding/include
+  splits are not decomposition. Load its policy before such edits.
 - Never launch datum-gui, GUI drives, captures or screenshots on the owner's
   live display or active session (owner-ratified 2026-10-31, after three weeks
   of test popups on the owner's desktop). GUI verification runs only in

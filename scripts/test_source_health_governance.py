@@ -165,15 +165,71 @@ class RepositoryTest(unittest.TestCase):
             handle.write("import extracted\n")
         self.assertEqual(self.evaluate(base), [])
 
-    def test_deletion_only_burndown_is_not_structural_evidence(self) -> None:
+    def test_bounded_reduction_needs_exact_ratchet_not_unrelated_extraction(self) -> None:
         self.write_lines("src/legacy.py", 800)
         self.legacy("src/legacy.py", 800)
         base = self.commit()
         self.policy["entries"]["src/legacy.py"]["limits"]["file_lines"] = 790
         self.write_policy()
         self.write_lines("src/legacy.py", 790)
-        failures = self.evaluate(base)
-        self.assertTrue(any("lacks real extraction evidence" in x for x in failures))
+        self.assertEqual(self.evaluate(base), [])
+
+    def test_same_size_bounded_correction_does_not_require_extraction(self) -> None:
+        self.write_lines("src/legacy.py", 800)
+        self.legacy("src/legacy.py", 800)
+        base = self.commit()
+        self.write_lines("src/legacy.py", 800, "corrected")
+        self.assertEqual(self.evaluate(base), [])
+
+    def test_bounded_reduction_cannot_keep_a_loose_ceiling(self) -> None:
+        self.write_lines("src/legacy.py", 800)
+        self.legacy("src/legacy.py", 800)
+        base = self.commit()
+        self.write_lines("src/legacy.py", 790)
+        self.assertTrue(any("must ratchet exactly" in x for x in self.evaluate(base)))
+
+    def test_same_physical_size_cannot_hide_production_or_inline_growth(self) -> None:
+        rel = "crates/a/src/lib.rs"
+        self.write_lines(rel, 1)
+        path = self.root / rel
+        path.write_text("fn old() {}\n" * 760 + "#[cfg(test)]\n" + "// test\n" * 40)
+        self.legacy(rel, 801)
+        entry = self.policy["entries"][rel]
+        entry["kind"] = "rust-production"
+        entry["limits"] = {"pre_test_lines": 770, "inline_test_lines": 50}
+        self.write_policy()
+        base = self.commit()
+        for production, inline, error in (
+            (761, 39, "must shrink when a metric grows"),
+            (759, 41, "must shrink when a metric grows"),
+            (761, 29, "lacks real extraction evidence"),
+        ):
+            with self.subTest(production=production, inline=inline):
+                path.write_text("fn corrected() {}\n" * production + "#[cfg(test)]\n" + "// test\n" * inline)
+                entry["limits"] = {"pre_test_lines": production, "inline_test_lines": inline}
+                self.write_policy()
+                self.assertTrue(any(error in x for x in self.evaluate(base)))
+
+    def test_same_root_size_cannot_hide_include_expansion_growth(self) -> None:
+        rel = "crates/a/src/lib.rs"
+        self.write_lines("crates/a/src/child.rs", 699, "fn child() {}")
+        path = self.root / rel
+        path.write_text('include!("child.rs");\n// before\n')
+        self.legacy(rel, 702)
+        self.policy["entries"][rel]["kind"] = "rust-production"
+        self.policy["entries"][rel]["limits"] = {"expanded_lines": 702}
+        self.write_policy()
+        base = self.commit()
+        path.write_text('include!("child.rs");\n// after\n')
+        self.write_lines("crates/a/src/child.rs", 700, "fn child() {}")
+        self.assertTrue(any("include expansion must shrink" in x for x in self.evaluate(base)))
+
+    def test_landed_proportionate_delivery_amendment_is_immutable(self) -> None:
+        rel = "docs/decisions/PRODUCT_MECHANICS_065_PROPORTIONATE_FEATURE_DELIVERY.md"
+        self.write_lines(rel, 1, "approved amendment")
+        base = self.commit()
+        self.write_lines(rel, 1, "changed amendment")
+        self.assertTrue(any("decision 065 is immutable" in x for x in self.evaluate(base)))
 
     def test_rust_mod_extraction_is_structural_evidence(self) -> None:
         self.write_lines("crates/a/src/lib.rs", 800, "fn legacy() {}")

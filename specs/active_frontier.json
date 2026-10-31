@@ -7680,9 +7680,7 @@
         "prerequisite_reasons": {
           "step:MM-C02": "Owner authorization gate for the inert marking-menu shell. MM-C01 reconciled the inert-shell readiness, live visual authority and native scenario matrix (frontend-dev-01 independent visual verification; recorded in MM-C01-readiness-review.md at 316c96fc). MM-C02 requires exact project-owner authorization of the inert-shell implementation + proof packet and the owner's rulings on the open questions (G1 placement, G2 timing deferral, G3 icon-in-wheel + wedge-sizing, G6 sub-wheel width, F1 cardinal ratification). It is the authorization the owner gives, revises or defers; it is not currently delegated \u2014 no decision_routing entry covers MM-C02 \u2014 so it waits for the owner to authorize directly or add routing. No implementation, enabled leaves or operation invocation precede it; the finished verb-firing menu is a separate later contract. No successor is authorized."
         },
-        "qualification_followups": [
-          "The finished verb-firing marking menu is a later, separate delivery contract beyond the inert shell."
-        ],
+        "qualification_followups": [],
         "safety_requirements": [
           "The shell is inert: no leaf is enabled, no operation is authored or invoked, nothing is approved.",
           "Disabled leaves never mutate the design; the engine mutation/write-path authority stays separate and untouched.",
@@ -15893,7 +15891,6 @@
         ],
         "prerequisite_reasons": {},
         "qualification_followups": [
-          "Full eight-kind authoring/models/approval/generation/general placed update remain retained targets",
           "HUMAN/assistive/physical input, approved seed/source rights and standards manufacturing qualification remain separate",
           "Existing global Clippy and GUI supervision parity failures remain separately retained"
         ],
@@ -18400,7 +18397,6 @@
         ],
         "prerequisite_reasons": {},
         "qualification_followups": [
-          "Full Package editing, tolerance/terminal-position/model capabilities and general placed updates remain later work",
           "Physical-input/HUMAN and assistive-technology, broader platform and complete qualification remain separately open",
           "S5A remains owner-paused; unrelated existing Clippy or parity failures are disclosed without new qualification claims"
         ],

@@ -499,7 +499,7 @@ Imported-board fidelity additionally requires its substrate contracts or an expl
 
 ### Library Foundation Investigation — Repository-Owned Planning
 
-SURFACE-S01–S04 and the distinct combined planning review are accepted. SURFACE-S05 owner disposition remains pending; synthetic studies and fixtures establish neither production-library approval nor native visual delivery. [Detailed evidence](progress/workflow_governance_details.md#library-foundation-investigation--repository-owned-planning).
+SURFACE-S01–S04 and the combined planning review are accepted. SURFACE-S05 disposition and the bounded PM062 library GUI delivery are landed; broader library authoring remains unfinished. Synthetic studies and fixtures establish neither production-library approval nor native visual delivery. [Detailed evidence](progress/workflow_governance_details.md#library-foundation-investigation--repository-owned-planning).
 
 ### Native File-Type Catalog — Owner-Requested Proposal
 
@@ -882,6 +882,12 @@ Checkpoint evidence and retained boundaries remain in the linked detail; current
 ## DELIVERY-MANAGEMENT — owner-directed workflow correction
 
 Owner-appointed management applies PM059 delegation; product rules, waivers and reserved HUMAN decisions remain owner-only. [Detailed evidence](progress/gui_delivery_details.md#delivery-management--owner-directed-workflow-correction).
+
+PM065 and the bounded feature-admission correction remove unrelated decomposition
+and whole-editor planning from eligible small deliveries. Existing tasks retain
+missing implementation separately from qualification; exact-candidate focused
+proof and independent review remain required. This changes delivery procedure,
+not product completion or milestone selection.
 
 ## INSTRUCTION-CONSOLIDATION — task-scoped agent reading
 

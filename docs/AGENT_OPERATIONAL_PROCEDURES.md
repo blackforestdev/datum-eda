@@ -143,7 +143,9 @@ changes.**
   owning-lane change; it never launders a lane violation.
 - **Direct to `main`.** No feature branches, no pull requests (single-author
   project; PRs block in-flight work). Sequence large work as multiple small
-  commits on `main`.
+  commits on `main`. PM065 reconciles protected-policy review with this workflow:
+  cite actual owner authorization and independent review in the existing task;
+  CODEOWNERS is an ownership map, not evidence of approval or remote protection.
 - **No attribution of any kind.** Do **not** add `Co-Authored-By`, `Generated with`,
   or any trailer crediting an AI service. This is a hard rule from `CLAUDE.md`'s
   attribution policy and overrides any tool default.
@@ -167,6 +169,14 @@ changes.**
   owner's explicit say-so first.
 
 A typical end-of-unit sequence:
+
+Bind review and affected checks to the proposed commit, not another session's
+unfinished work. For source-health proof in a shared dirty tree, use an isolated
+copy of that candidate with the existing `check_source_health.py --root <path>
+--base-ref <base>` command; retain full-checkout CI discovery. Reuse adequate
+checker regression proof unless changing the checker/policy itself. Run the
+affected Rust behavior checks and inspect the ordinary workflow; a green
+structural battery alone does not establish feature delivery.
 
 ```bash
 git status                                   # see what changed; confirm ownership
