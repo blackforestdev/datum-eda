@@ -10,6 +10,18 @@ def release_build():
             "-p", "eda-engine-daemon", "--locked", "--offline"]
 
 
+def acceptance_driver_build():
+    """Build the feature-ON engine acceptance driver [[bin]] -- gp_acceptance_driver, the
+    injection-harness binary that actually executes the engine-surface cases and is pinned as
+    candidate.binaries["engine"] (contract section 11; PM engine-role disposition). Built SEPARATELY
+    from the feature-off release companions, exactly as the test binaries are built outside the one
+    recorded release build; its retained bytes are the engine role identity, so this command is not a
+    candidate build_commands entry and never rebuilds the feature-off shipping companions."""
+    return ["python3", "scripts/run_cargo_guarded.py", "--workload", "proof", "--",
+            "cargo", "build", "--release", "-p", "eda-engine", "--features",
+            "gp-acceptance-support", "--bin", "gp_acceptance_driver", "--locked", "--offline"]
+
+
 def commands(root):
     root = Path(root).resolve()
     python = "python3"

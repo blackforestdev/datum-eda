@@ -29,8 +29,16 @@ RELEASE_BINARY_PATHS = {
     "gui": "target/release/datum-gui",
     "daemon": "target/release/eda-engine-daemon",
 }
+# The engine role is the feature-ON acceptance driver [[bin]] -- gp_acceptance_driver, the
+# injection-harness binary that ACTUALLY executes the engine-surface cases (contract section 11:
+# "engine ... are the executed test binaries" + the surface-disposition injection harness;
+# crates/engine/src/bin/gp_acceptance_driver.rs: "the engine surface the production acceptance corpus
+# pins as candidate.binaries[engine]"; cb67dad4 feature-gating; the recorded PM engine-role
+# disposition). It is built separately (gates.acceptance_driver_build) like the test bins and
+# retained by its bytes; it is NOT a candidate build_commands entry.
+ACCEPTANCE_DRIVER_PATH = "target/release/gp_acceptance_driver"
 # test-bin crates whose executed test binary is a role identity (located via cargo metadata JSON).
-TEST_BINARY_CRATES = {"engine": "eda-engine", "gui-render": "datum-gui-render"}
+TEST_BINARY_CRATES = {"gui-render": "datum-gui-render"}
 
 
 def _tool_version(argv):
@@ -83,7 +91,7 @@ def _test_binary_paths(root):
     exact executables are the candidate's engine/gui-render role identities."""
     argv = ["python3", "scripts/run_cargo_guarded.py", "--workload", "proof", "--",
             "cargo", "test", "--no-run", "--locked", "--offline", "--message-format=json",
-            "-p", "eda-engine", "-p", "datum-gui-render"]
+            "-p", "datum-gui-render"]
     result = subprocess.run(argv, cwd=root, capture_output=True, text=True, check=False)
     require(result.returncode == 0, "cargo test --no-run failed locating test binaries")
     located = {}
@@ -107,16 +115,33 @@ def _test_binary_paths(root):
     return located
 
 
+def _build_acceptance_driver(root):
+    """Build the feature-ON engine acceptance driver (gp_acceptance_driver) outside the recorded
+    release build, as the test bins are built outside it. A failed build is reported, never ignored."""
+    from .gates import acceptance_driver_build
+    result = subprocess.run(acceptance_driver_build(), cwd=root, capture_output=True, text=True,
+                            check=False)
+    require(result.returncode == 0,
+            f"engine acceptance driver build failed (exit {result.returncode}): "
+            f"{result.stderr[-800:]}")
+
+
 def retain_binaries(capture, root):
-    """Retain the six role binaries in the bundle and return {role: {path, sha256}}. Release exes
-    come from gates.release_build(); engine/gui-render are the located test bins; mcp is the Python
-    interpreter that runs the candidate MCP source (which is itself in the input closure)."""
+    """Retain the six role binaries in the bundle and return {role: {path, sha256}}. The first three
+    release exes come from gates.release_build(); the engine role is the feature-ON acceptance driver
+    (gp_acceptance_driver, built separately -- the injection-harness binary that executes the engine
+    cases, pinned as candidate.binaries["engine"]); gui-render is the located test bin; mcp is the
+    Python interpreter that runs the candidate MCP source (itself in the input closure)."""
     import sys
     binaries = {}
     for role, relative in RELEASE_BINARY_PATHS.items():
         path = Path(root) / relative
         require(path.is_file(), f"release binary missing (build first): {relative}")
         binaries[role] = capture.put(path.read_bytes())
+    _build_acceptance_driver(root)
+    driver = Path(root) / ACCEPTANCE_DRIVER_PATH
+    require(driver.is_file(), f"engine acceptance driver missing (build first): {ACCEPTANCE_DRIVER_PATH}")
+    binaries["engine"] = capture.put(driver.read_bytes())
     for role, executable in _test_binary_paths(root).items():
         binaries[role] = capture.put(Path(executable).read_bytes())
     interpreter = Path(sys.executable).resolve()
