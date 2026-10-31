@@ -267,7 +267,19 @@ impl Runtime {
                 self.close_new_project();
                 self.open_created_project(std::path::PathBuf::from(created.project_root_identity));
             }
-            Err(_) => self.invalidate_frame(),
+            Err(_) => {
+                // dat #9: announce the Create REFUSAL to the accessibility channel. The modal already
+                // announces open + use-project-name mode-change through the shared announce path
+                // (f87cbf05), but the refusal branch was silent, so a screen-reader user pressing Create
+                // got no spoken signal that creation was refused or why (e.g. "Global Units source
+                // changed since preview"). create_new_project has just set ui.new_project.refusal to the
+                // human-facing message; announce it assertive (High -> AT-SPI detail1 2) because it is an
+                // error the user must act on. Same shared machinery, no second mechanism.
+                if let Some(message) = self.workspace().ui.new_project.refusal.clone() {
+                    self.announce_global_preferences(&message, AnnouncementPriority::High);
+                }
+                self.invalidate_frame();
+            }
         }
         true
     }
