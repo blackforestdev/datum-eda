@@ -55,8 +55,8 @@ instructions must not redefine its capabilities, gates or mutation semantics.
 
 ## Work-effort allocation (controlling; owner-ratified 2026-10-31)
 
-Datum is built in Rust. **At least 80% of work effort — session turns, agent
-assignments and committed lines alike — goes to writing, fixing and reviewing
+Datum is built in Rust. **At least 80% of work effort — what sessions, agents
+and turns are actually spent on — goes to writing, fixing and reviewing
 actual Rust product code**: the engine, GUI, editors, services and verbs a
 designer uses in the running application. Everything else combined — Python
 harnesses, qualification corpora, evidence JSON, governance records, trackers,
@@ -64,8 +64,10 @@ packets, handoffs, coordination — is overhead, capped at the remaining
 fraction. Overhead that outgrows the cap is a defect to cut, not work to
 schedule; a governance or qualification artifact never counts as product
 progress or fix success. Progress is reported as designer-visible behavior
-delivered in the running application, with the measured Rust-vs-overhead ratio
-(git lines and commit touches by extension) in each delivery summary. A
+delivered in the running application; git-history composition (lines/touches
+by extension) serves as a coarse diagnostic of the balance in delivery
+summaries, never as the definition of effort — padding, splitting or
+relabeling work to move a ratio is itself a violation. A
 qualification campaign serves a Rust deliverable and runs once, consolidated,
 at a stable candidate; its records batch with delivery. When choosing the next
 unit of work at equal priority, the Rust product unit always wins. The
