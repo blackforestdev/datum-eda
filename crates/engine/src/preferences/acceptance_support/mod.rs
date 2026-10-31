@@ -314,6 +314,7 @@ pub fn observe_managed_offline(
 
 pub mod backup_restore;
 pub mod downgrade_preservation;
+pub mod human_agent_authority;
 pub mod portable_upgrade;
 
 // The managed-offline resolver tests and the Active negative control live in the

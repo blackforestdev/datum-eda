@@ -313,6 +313,14 @@ def _family_handlers(family):
     # after==before=empty is honest and the engine driver's observations carry the proof.
     if case == "managed-offline" and variant in ("inactive", "expired", "unavailable", "offline"):
         return _empty_state, None, None
+    # human-agent-authority (engine B service-refusal family): each scenario drives the
+    # engine product service / acceptance broker into a typed authority refusal inside its
+    # OWN throwaway store, so the coverage work root is never written -- after==before=empty
+    # is honest and the driver's observations carry the no-unauthorized-write proof.
+    if case == "human-agent-authority" and variant in (
+            "spoofed-actor", "direct-mcp-set-reset", "stale-proposal", "acceptance-mismatch",
+            "acceptance-expired", "acceptance-consumed", "request-id-conflict", "daemon-restart"):
+        return _empty_state, None, None
     # backup-restore (engine WRITE family): the engine setup phase seeds a committed store (gen0) +
     # exact backup and diverges it (gen1); the recipe's observe phase commits a restore (gen2). So
     # before = store@gen1, after = store@gen2 -> after != before with a REAL new generation, and the

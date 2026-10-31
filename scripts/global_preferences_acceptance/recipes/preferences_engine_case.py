@@ -64,6 +64,18 @@ ENGINE_COVERAGE = {
     # through the unknown-data door that stays opaque and authority-refused.
     ("portable-collision", "alias-collision"),
     ("portable-collision", "capability-injection"),
+    # human-agent-authority B service-refusal family: portable agents cannot acquire
+    # direct mutation authority. Each variant is a typed authority/acceptance refusal
+    # driven through the engine product service + acceptance broker, read-only on the
+    # work root. no-foreground-tty is intentionally absent (CLI/env seam, E-deferred).
+    ("human-agent-authority", "spoofed-actor"),
+    ("human-agent-authority", "direct-mcp-set-reset"),
+    ("human-agent-authority", "stale-proposal"),
+    ("human-agent-authority", "acceptance-mismatch"),
+    ("human-agent-authority", "acceptance-expired"),
+    ("human-agent-authority", "acceptance-consumed"),
+    ("human-agent-authority", "request-id-conflict"),
+    ("human-agent-authority", "daemon-restart"),
 }
 
 

@@ -238,6 +238,32 @@ fn main() -> ExitCode {
                 }
             }
         }
+        // human-agent-authority is read-only on the work root: each scenario runs in its
+        // own throwaway store, so no DATUM_EDA_WORK_ROOT is needed (the managed-offline
+        // shape).
+        "human-agent-authority" => {
+            match acceptance_support::human_agent_authority::AuthorityVariant::parse(&variant) {
+                Some(authority_variant) => {
+                    match acceptance_support::human_agent_authority::authority_observe(
+                        authority_variant,
+                    ) {
+                        Ok(observed) => observed,
+                        Err(error) => {
+                            eprintln!(
+                                "gp_acceptance_driver: observe '{case}/{variant}' failed: {error}"
+                            );
+                            return ExitCode::FAILURE;
+                        }
+                    }
+                }
+                None => {
+                    eprintln!(
+                        "gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'"
+                    );
+                    return ExitCode::FAILURE;
+                }
+            }
+        }
         _ => {
             eprintln!("gp_acceptance_driver: unimplemented engine coverage '{case}/{variant}'");
             return ExitCode::FAILURE;

@@ -13,6 +13,9 @@ use eda_engine::preferences::acceptance_support::backup_restore::{
 use eda_engine::preferences::acceptance_support::downgrade_preservation::{
     DowngradeVariant, downgrade_negative_control, downgrade_observe, downgrade_setup,
 };
+use eda_engine::preferences::acceptance_support::human_agent_authority::{
+    AuthorityVariant, authority_negative_control, authority_observe,
+};
 use eda_engine::preferences::acceptance_support::portable_upgrade::{
     PortableCollisionVariant, UpgradeVariant, portable_collision_negative_control,
     portable_collision_observe, portable_collision_setup, upgrade_negative_control,
@@ -370,5 +373,49 @@ fn registered_value_is_active_as_the_portable_collision_negative_control() {
     assert!(
         result.expect("negative control runs"),
         "a registered known value must be active (authority-refused is falsifiable)"
+    );
+}
+
+#[test]
+fn every_human_agent_authority_variant_refuses_without_an_unauthorized_write() {
+    // Every B service-refusal variant drives the engine product service / acceptance
+    // broker into a typed refusal and writes nothing. Each is self-contained in a
+    // throwaway store (no work root needed).
+    let variants = [
+        AuthorityVariant::SpoofedActor,
+        AuthorityVariant::DirectMcpSetReset,
+        AuthorityVariant::StaleProposal,
+        AuthorityVariant::AcceptanceMismatch,
+        AuthorityVariant::AcceptanceExpired,
+        AuthorityVariant::AcceptanceConsumed,
+        AuthorityVariant::RequestIdConflict,
+        AuthorityVariant::DaemonRestart,
+    ];
+    for variant in variants {
+        let observed =
+            authority_observe(variant).unwrap_or_else(|error| panic!("{variant:?}: {error}"));
+        assert_eq!(
+            observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+            vec![
+                "no-unauthorized-write",
+                "safe-error-details",
+                "project-unchanged"
+            ],
+            "{variant:?} observation ids"
+        );
+        for (id, value) in observed {
+            assert!(value, "{variant:?} observation {id} must hold");
+        }
+    }
+}
+
+#[test]
+fn trusted_human_write_commits_as_the_authority_negative_control() {
+    // PM059 genuinely-falsifying control: a trusted HumanGui direct mutation legitimately
+    // commits (changed + a store is written), so the refusal / no-unauthorized-write
+    // predicates are not constant-true.
+    assert!(
+        authority_negative_control().expect("negative control runs"),
+        "a trusted human write must commit (the authority refusals are falsifiable)"
     );
 }
