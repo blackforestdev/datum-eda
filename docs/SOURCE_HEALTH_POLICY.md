@@ -21,7 +21,11 @@ Before changing source:
 Before landing:
 
 1. Run the source-health and policy-integrity regression tests.
-2. Run the complete drift battery.
+2. Run the focused drift checks for the affected boundary (the drift runner
+   defaults to focused checks), reusing adequate existing evidence. The complete,
+   full-workspace drift battery is reserved for a PM-designated milestone or
+   release candidate and is not required on each landing (ratified verification
+   cadence, 19cc78a7).
 3. Record before/after line counts and structural evidence for every touched
    legacy file.
 4. Ratchet its baseline and ceiling downward in the same change.
