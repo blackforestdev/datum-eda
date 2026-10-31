@@ -163,8 +163,33 @@ impl Runtime {
             .open_new_project(&mut self.session.workspace_mut().ui, invoker);
         self.set_application_focus(ApplicationFocus::Overlay);
         self.init_project_navigation(datum_gui_protocol::FolderBrowserMode::New, "");
+        // Announce the modal to the accessibility channel through the SAME path the Global Preferences
+        // dialog uses (announce_console -> events). The modal was previously silent to screen readers
+        // (dat-7ynp); a modal open is informational, so polite (Medium).
+        self.announce_global_preferences(
+            "New Project opened. Enter a project name and location, then Create.",
+            AnnouncementPriority::Medium,
+        );
         self.invalidate_frame();
         true
+    }
+
+    /// Toggle the "use project name for the folder" mode and announce the new state to the
+    /// accessibility channel (shared GP announce machinery, no second mechanism). Called from both the
+    /// pointer and keyboard toggle paths so the announcement fires exactly once per real toggle.
+    fn toggle_new_project_use_name(&mut self) {
+        let next = !self.workspace().ui.new_project.use_project_name;
+        self.session
+            .workspace_mut()
+            .ui
+            .new_project
+            .set_use_project_name(next);
+        let message = if next {
+            "Use project name on. The folder name follows the project name."
+        } else {
+            "Use project name off. Enter the folder name separately."
+        };
+        self.announce_global_preferences(message, AnnouncementPriority::Medium);
     }
 
     pub(crate) fn close_new_project(&mut self) -> bool {
@@ -190,9 +215,8 @@ impl Runtime {
                 dialog.focus = NewProjectFocus::FolderName;
             }
             HitTarget::NewProjectUseName => {
-                let dialog = &mut self.session.workspace_mut().ui.new_project;
-                dialog.focus = NewProjectFocus::UseProjectName;
-                dialog.set_use_project_name(!dialog.use_project_name);
+                self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::UseProjectName;
+                self.toggle_new_project_use_name();
             }
             HitTarget::NewProjectRetryGlobal => {
                 self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::RetryGlobal;
@@ -300,8 +324,7 @@ impl Runtime {
                     Outcome::Dialog
                 }
                 NewProjectFocus::UseProjectName => {
-                    let dialog = &mut self.session.workspace_mut().ui.new_project;
-                    dialog.set_use_project_name(!dialog.use_project_name);
+                    self.toggle_new_project_use_name();
                     self.refresh_folder_browser();
                     Outcome::Dialog
                 }

@@ -46,6 +46,7 @@ GUI_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_
 GUI_WRITE_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_write_case.py"
 GUI_A11Y_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_a11y_case.py"
 GUI_A11Y_NAV_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_a11y_nav_case.py"
+GUI_A11Y_MODAL_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_a11y_modal_case.py"
 # The four read-only accessibility-interaction nav scenarios the dispatching nav recipe handles.
 GUI_A11Y_NAV_VARIANTS = ("keyboard-all-controls", "search-and-clear", "explanation-and-return",
                          "native-close-reopen")
@@ -296,10 +297,32 @@ def build_gui_a11y_nav_case(bundle_root, *, gui_binary, coordinate, identity=Non
     return report, binaries, environments, key
 
 
+def build_gui_a11y_modal_case(bundle_root, *, gui_binary, coordinate, identity=None):
+    """Produce the accessibility-interaction/new-project-modes/gui row -- the New Project MODAL persona
+    over the shared accessibility_capture backbone. READ-ONLY on the Global store (mode exploration
+    creates no Project and writes no store), so the after-state's preferences/ subtree stays EMPTY and
+    the §5 payload ships an explicit no-write fingerprint (store absent); _gui_a11y_capture_after folds
+    the payload into row["after"]. Lands on the mv1k modal-announcement fix (dat-7ynp)."""
+    key = ("accessibility-interaction", "new-project-modes", "default", "gui", coordinate)
+    require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
+    _preflight_candidate_companions(gui_binary)
+    capture = Capture(bundle_root)
+    candidate, binaries, input_manifest_ref, matrix_sha256, environments = _candidate_bindings(
+        capture, gui_binary, coordinate, identity, GUI_A11Y_MODAL_RECIPE_RELPATH)
+    row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
+                       environments=environments, input_manifest=input_manifest_ref,
+                       matrix_sha256=matrix_sha256, surface_binaries={"gui": str(gui_binary)},
+                       capture_after=_gui_a11y_capture_after, setup=None,
+                       bundle_root=bundle_root, recipe_relpath=GUI_A11Y_MODAL_RECIPE_RELPATH)
+    report = _assemble_report(candidate, input_manifest_ref, matrix_sha256, environments, capture, row, identity)
+    return report, binaries, environments, key
+
+
 FAMILY_BUILDERS = {
     "clean-install": build_gui_case,
     "global-populated": build_gui_write_case,
     "set-reset-refusal": build_gui_a11y_case,
+    "new-project-modes": build_gui_a11y_modal_case,
     **{_variant: functools.partial(build_gui_a11y_nav_case, variant=_variant)
        for _variant in GUI_A11Y_NAV_VARIANTS},
 }

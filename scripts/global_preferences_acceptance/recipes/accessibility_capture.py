@@ -296,6 +296,26 @@ def control_states(qa):
     return rows
 
 
+def store_fingerprint(work_root):
+    """An independently-confirmable NO-WRITE artifact for a read-only row: the Global Preferences
+    store's on-disk inventory under <work_root>/config/datum/preferences -- its generation list and
+    every file's relative path + sha256 -- or an explicit absent-store marker when the store was never
+    created. A read-only row ships this in its §5 payload so no-write-by-absence is verifiable from the
+    shipped bytes (parity with a write row's g0/g1 generation chain), not merely asserted by absence."""
+    import hashlib
+    repo = Path(work_root) / "config" / "datum" / "preferences"
+    if not repo.exists():
+        return {"store_present": False, "generations": [], "files": [], "no_write": True}
+    files = []
+    for path in sorted(repo.rglob("*")):
+        if path.is_file() and not path.is_symlink():
+            files.append({"path": path.relative_to(repo).as_posix(),
+                          "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+    gens = (sorted(d.name for d in (repo / "generations").iterdir())
+            if (repo / "generations").is_dir() else [])
+    return {"store_present": True, "generations": gens, "files": files, "no_write": len(gens) == 0}
+
+
 def status_node(qa):
     """The persistent Status node (role=status bar, name 'Global Preferences status') whose Description
     carries the typed preference-status announcement (ANNOUNCEMENT-EVENT-DETERMINATION: the second live

@@ -205,3 +205,60 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
         std::thread::sleep(Duration::from_millis(10));
     }
 }
+
+#[test]
+#[ignore = "requires X11/Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially"]
+#[allow(deprecated)] // Hidden fixture; production creates windows through ActiveEventLoop.
+fn new_project_modal_announces_open_and_use_name_mode_change() {
+    // Regression for dat-7ynp: the New Project modal must announce to the accessibility channel
+    // (previously silent). Open WITHOUT --open-new-project so open_new_project() does the opening and
+    // fires the announcement (the launch-arg path would not exercise it).
+    let board = std::env::var("DATUM_NATIVE_TEST_BOARD").expect("owned real board fixture");
+    let args = GuiArgs::try_parse_from(["datum-gui", "--board", &board]).unwrap();
+    let event_loop = winit::event_loop::EventLoop::<()>::with_user_event()
+        .with_x11()
+        .with_any_thread(true)
+        .build()
+        .unwrap();
+    let wake = event_loop.create_proxy();
+    let window = Arc::new(
+        event_loop
+            .create_window(
+                winit::window::Window::default_attributes()
+                    .with_visible(false)
+                    .with_inner_size(winit::dpi::PhysicalSize::new(1280, 800)),
+            )
+            .unwrap(),
+    );
+    let launch = args.load_launch_state(Some(wake.clone())).unwrap();
+    let mut runtime = pollster::block_on(Runtime::new(window, launch, Some(1.0), wake)).unwrap();
+    assert!(!runtime.workspace().ui.new_project.open);
+
+    // Opening the modal announces it (polite). The announce is the last thing open_new_project does, so
+    // it is the last recorded announcement.
+    assert!(runtime.open_new_project());
+    assert!(runtime.workspace().ui.new_project.open);
+    let open = runtime
+        .terminal_accessibility
+        .last_announcement()
+        .expect("modal open announced");
+    assert_eq!(
+        open.text,
+        "New Project opened. Enter a project name and location, then Create."
+    );
+    assert_eq!(
+        open.priority,
+        crate::console_accessibility::AnnouncementPriority::Medium
+    );
+
+    // Toggling "use project name" changes the mode AND announces it (the exact mode string is proven
+    // end-to-end by the accessibility-interaction/new-project-modes/gui row; here the regression is
+    // that the toggle fires an accessibility announcement at all, which the modal never did before).
+    let before = runtime.workspace().ui.new_project.use_project_name;
+    assert!(runtime.activate_new_project_hit(&HitTarget::NewProjectUseName));
+    assert_ne!(runtime.workspace().ui.new_project.use_project_name, before);
+    assert!(
+        runtime.terminal_accessibility.last_announcement().is_some(),
+        "the use-project-name mode change announces to the accessibility channel"
+    );
+}
