@@ -186,6 +186,22 @@ class AssemblyTests(unittest.TestCase):
             producer.validate_case_row(bundle, row, key, report,
                                        {row["surface"]: row["binary_sha256"]}, environments)
 
+    def test_unwired_family_refuses_loudly(self):
+        # An inventory (family, surface) pair without a producer handler must REFUSE -- a loud
+        # ValueError, never a silent skip -- and the refusal fires before any case command
+        # executes (a partial selection can never masquerade as produced coverage).
+        def forbidden(capture, argv, **kwargs):
+            raise AssertionError("no case may execute for an unwired family")
+        unwired = (("clean-install", "missing-store"), "cli")
+        self.assertIn(unwired, assemble.cli_engine_pairs())
+        with patch.object(producer, "ROOT", self.root), patch.dict(os.environ), \
+                patch.object(Capture, "command", forbidden):
+            with self.assertRaisesRegex(ValueError, "case family not implemented"):
+                assemble.assemble_cases(self.bundle_root, self.identity,
+                                        cli_binary=self.binaries["cli"],
+                                        engine_binary=self.binaries["engine"],
+                                        pairs=[unwired])
+
     def test_duplicate_row_refused(self):
         family_report, *_ = self.build_injected_family(PAIRS[0][0], "cli")
         with self.assertRaisesRegex(EvidenceError, "duplicate case row"):
