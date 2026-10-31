@@ -29,8 +29,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve()
 sys.path.insert(0, str(HERE.parents[1]))
 
-from global_preferences_acceptance import measurements as meas  # noqa: E402
 from global_preferences_acceptance import observations as obs  # noqa: E402
+from global_preferences_acceptance import report as report_module  # noqa: E402
 from global_preferences_acceptance.assemble import (  # noqa: E402
     assembled_report, load_frozen, verify_recipe_membership,
 )
@@ -39,8 +39,6 @@ from global_preferences_acceptance.identity import validate_environments  # noqa
 from global_preferences_acceptance.inputs import Bundle, canonical, parse, require  # noqa: E402
 
 IDENTITY_FIELDS = ("candidate", "input_manifest", "matrix_sha256", "environments")
-MEASUREMENT_FIELDS = ("budget_id variant_id environment_id candidate_revision binary_sha256 "
-                      "input_manifest_sha256 matrix_sha256 trials")
 
 
 def require_frozen_identity(report, identity, label):
@@ -62,24 +60,6 @@ def merge_artifacts(reports):
                     f"conflicting artifact content for {entry['path']}")
             artifacts.setdefault(entry["path"], entry)
     return list(artifacts.values())
-
-
-def validate_measurement_corpus(report, bundle, environments, binaries):
-    """Replay the governed measurement check (mirrors report.validate_report's measurement section:
-    closed-shape rows, the complete 90-variant inventory with no duplicate, per-row identity, and
-    the governed validate_trials). A partial or malformed measurement corpus refuses here."""
-    expected = meas.measurement_inventory()
-    rows = report["measurements"]
-    require(len(rows) == len(expected), "measurement count differs")
-    seen = set()
-    for row in rows:
-        require(set(row) == set(MEASUREMENT_FIELDS.split()), "measurement row shape differs")
-        coordinate = obs.identity(row, report, environments, binaries)
-        key = (row["budget_id"], row["variant_id"], coordinate)
-        require(key in expected and key not in seen, "unknown or duplicate measurement variant")
-        seen.add(key)
-        meas.validate_trials(row, bundle)
-    require(seen == expected, f"missing measurement variants: {len(expected - seen)}")
 
 
 def compose_report(bundle_root, identity, *, case_report, measurement_report, native_report,
@@ -106,7 +86,7 @@ def compose_report(bundle_root, identity, *, case_report, measurement_report, na
     # here; a partial or tampered corpus refuses loudly rather than composing a silent partial.
     obs.validate_cases(case_report, bundle, environments, binaries)
     obs.validate_native(native_report, bundle, environments, binaries)
-    validate_measurement_corpus(measurement_report, bundle, environments, binaries)
+    report_module.validate_measurements(measurement_report, bundle, environments, binaries)
 
     # Seam 2 (recipe-in-manifest) over the composed case + native fixtures.
     verify_recipe_membership(bundle, identity["input_manifest"], case_rows + native_rows)

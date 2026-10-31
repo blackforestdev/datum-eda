@@ -39,6 +39,23 @@ def validate_report(report, matrix, *, root, bundle_root, expected_revision, exp
     environments = validate_environments(report["environments"])
     validate_cases(report, bundle, environments, binaries)
     validate_native(report, bundle, environments, binaries)
+    validate_measurements(report, bundle, environments, binaries)
+    validate_gates(report, bundle, root)
+    if not review_only:
+        validate_review(bundle.json(report["independent_review"]), report, bundle)
+    validate_release(bundle.json(report["release_notes"]), report, bundle)
+    return {"state": "synthetic_validated" if test_only else "reviewable" if review_only else "candidate_ready",
+            "candidate": expected_revision, "input_manifest_sha256": report["input_manifest"]["sha256"],
+            "matrix_sha256": report["matrix_sha256"],
+            "review_subject_sha256": review_subject(report),
+            "report_sha256": digest(canonical(report)), "production_accepted": False}
+
+
+def validate_measurements(report, bundle, environments, binaries):
+    """The complete measurement corpus against the governed inventory: the exact 90 variants with no
+    duplicate, each a closed-shape row bound to the report identity and replayed through the governed
+    validate_trials. Shared by validate_report and the U6 composition core so the one governed check
+    has a single definition (no hand-copied mirror)."""
     expected = measurement_inventory()
     require(len(array(report["measurements"], "measurements")) == len(expected), "measurement count differs")
     seen = set()
@@ -51,15 +68,6 @@ def validate_report(report, matrix, *, root, bundle_root, expected_revision, exp
         seen.add(key)
         validate_trials(row, bundle)
     require(seen == expected, f"missing measurement variants: {len(expected - seen)}")
-    validate_gates(report, bundle, root)
-    if not review_only:
-        validate_review(bundle.json(report["independent_review"]), report, bundle)
-    validate_release(bundle.json(report["release_notes"]), report, bundle)
-    return {"state": "synthetic_validated" if test_only else "reviewable" if review_only else "candidate_ready",
-            "candidate": expected_revision, "input_manifest_sha256": report["input_manifest"]["sha256"],
-            "matrix_sha256": report["matrix_sha256"],
-            "review_subject_sha256": review_subject(report),
-            "report_sha256": digest(canonical(report)), "production_accepted": False}
 
 
 def validate_review(value, report, bundle):
