@@ -228,10 +228,10 @@ be accounted for in the actual binding:
    `crates/engine/src/api/native_write/registry.rs` wires only `project::VERBS`
    + `waivers::VERBS` (7 verbs). The board/schematic/library/routing/etc.
    builders exist but have no `VERBS` table, so `native.write` cannot reach them.
-3. **Daemon verb/schema enumeration.** `native.describe` returns only the
-   stale-guard anchor + project identity — it enumerates no verbs or param
-   schemas. Extend it (or add `native.list_verbs`) so the GUI can discover
-   available operations and their parameters.
+3. **Daemon verb/schema enumeration.** `native.describe` enumerates the native-write
+   verb catalog — each verb's `id` plus its `target` domain — so the GUI can discover
+   the available operations. It does not yet report per-verb param schemas (the verb
+   registry carries none), so dynamic parameter forms remain future work.
 4. **A daemon client in `gui-app`.** `gui-app` does not link the engine and has
    no Unix-socket/JSON-RPC client; its only bridges are `run_cli_json` (reads)
    and the terminal CLI-string handoff (writes). Give it a daemon client (or a

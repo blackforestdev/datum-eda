@@ -71,6 +71,89 @@ fn native_describe_reports_revision_name_and_journal_len() {
 }
 
 #[test]
+fn native_describe_enumerates_exactly_the_registered_write_verbs() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    let root = temp_native_project("describe_verbs");
+
+    let result = describe(&mut engine, 1, &root);
+    let catalog = result["native_write_verbs"]
+        .as_array()
+        .expect("native_write_verbs should be an array");
+
+    // describe enumerates EXACTLY the registered verbs, in the registry's sorted order.
+    let described_ids: Vec<&str> = catalog
+        .iter()
+        .map(|entry| entry["id"].as_str().expect("verb id is a string"))
+        .collect();
+    let registered_ids: Vec<&str> = eda_engine::api::native_write::registry::native_write_verbs()
+        .iter()
+        .map(|verb| verb.id)
+        .collect();
+    assert_eq!(
+        described_ids, registered_ids,
+        "describe must enumerate exactly the registered write verbs"
+    );
+
+    // `target` is the id's domain segment; no param schema is invented (registry carries none).
+    for entry in catalog {
+        let id = entry["id"].as_str().unwrap();
+        let expected_target = id.split('.').nth(1).unwrap_or(id);
+        assert_eq!(entry["target"], expected_target, "{id} target kind");
+        assert_eq!(
+            entry.as_object().unwrap().len(),
+            2,
+            "only id + target are reported for {id} (no invented schema)"
+        );
+    }
+    assert!(described_ids.contains(&"datum.project.set_name"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn a_verb_enumerated_by_describe_round_trips_through_native_write() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    let root = temp_native_project("describe_roundtrip");
+
+    let before = describe(&mut engine, 1, &root);
+    // Take a verb id straight from describe's catalog and invoke it: the catalog names the real
+    // write path, not a cosmetic list.
+    let verb = before["native_write_verbs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry["id"].as_str().unwrap())
+        .find(|id| *id == "datum.project.set_name")
+        .expect("set_name is enumerated");
+    let response = dispatch_request(
+        &mut engine,
+        native_request(
+            2,
+            "native.write",
+            json!({
+                "project_root": root,
+                "verb": verb,
+                "params": {"name": "Renamed By Enumerated Verb"},
+                "actor": "datum-gui",
+                "source": "manual",
+                "reason": "describe-enumerated verb round trip",
+                "expected_model_revision": before["model_revision"],
+            }),
+        ),
+    );
+    assert!(
+        response.error.is_none(),
+        "enumerated verb must write: {response:?}"
+    );
+
+    let after = describe(&mut engine, 3, &root);
+    assert_eq!(after["journal_len"], 1, "the enumerated verb committed");
+    assert_eq!(after["project_name"], "Renamed By Enumerated Verb");
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn native_library_authoring_requires_snapshot_guards_and_never_partially_writes() {
     let mut engine = Engine::new().unwrap();
     let root = temp_native_project("library_guards");

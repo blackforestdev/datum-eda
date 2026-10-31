@@ -525,6 +525,18 @@ fn native_describe_response(
                     "batch_id":t.batch_id,"transaction_id":t.transaction_id,
                     "reason":t.provenance.reason,"after_model_revision":t.after_model_revision.0
                 })).collect::<Vec<_>>(),
+                // Capability discovery: enumerate the existing native-write verb registry so a
+                // GUI/agent client can learn the available operations for the one write path.
+                // `target` is the domain segment of the `datum.<domain>.<verb>` id taxonomy
+                // (e.g. `datum.project.set_name` -> `project`); the registry carries no per-verb
+                // param schema, so none is reported (no schema invention).
+                "native_write_verbs": eda_engine::api::native_write::registry::native_write_verbs()
+                    .iter()
+                    .map(|verb| json!({
+                        "id": verb.id,
+                        "target": verb.id.split('.').nth(1).unwrap_or(verb.id),
+                    }))
+                    .collect::<Vec<_>>(),
             });
             if include_model {
                 let snapshot = match serde_json::to_value(&*model) {

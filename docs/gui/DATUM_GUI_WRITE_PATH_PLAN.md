@@ -27,7 +27,7 @@ owned by GUI-WRITE-PATH/GWP-C01; landed increments do not close that whole task.
 | P0 thin vertical path | [Accepted board edit delivery](../reviews/workflow-delivery-rollout/user-edit/first-edit-delivery.json), [schematic delivery](../reviews/workflow-delivery-rollout/native-schematic/development-acceptance.json) and [library delivery](../reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json) establish bounded GUI-to-journal behavior. | Reuse their actual scopes; this does not claim the historical project-rename proof itself ran or every W case passed. |
 | W1 family registration | [Registry](../../crates/engine/src/api/native_write/registry.rs) aggregates project, board_components, waivers, schematic_edit and library_gui. | Routing/manufacturing/general family breadth and dry-run/applied conformance remain due; registration alone is not behavior proof. |
 | W2 registry-driven dispatch | [Dispatch](../../crates/verb-registry/src/lib.rs) still has Cli and DaemonRpc; no NativeWrite variant. | The proposed third variant/catalog migration below remains pending and needs its existing decision/authorization reconciliation. |
-| W3 discovery/schema exposure | [native.describe](../../crates/engine-daemon/src/dispatch.rs) returns current identity/revision/history/durability and optional model. | No general verb/schema enumeration is established by that response; retain the proposed discovery contract below. |
+| W3 discovery/schema exposure | [native.describe](../../crates/engine-daemon/src/dispatch.rs) returns current identity/revision/history/durability, optional model, and (2026-10-31) the native-write verb catalog (`{id, target}`). | Verb-set enumeration delivered; per-verb param-schema enumeration remains future (the registry carries no schemas) — see the W3 note below. |
 | W4 GUI client/action path | [NativeProjectClient](../../crates/gui-protocol/src/native_edit_client.rs) uses native.describe/native.write; the [GUI worker](../../crates/gui-app/src/editor/runtime_native_edit.rs) handles bounded native edits. | General menu/registry-driven coverage and all retained refusals remain; accepted board/schematic/library delivery is not full authoring or qualification. |
 
 The accepted board delivery pins source `a365ae5ee4813c0280ccad1e770c45c7c9802d92`;
@@ -93,6 +93,16 @@ required mutation path, made reachable.
   catalog) — same-change edit.
 - **Acceptance**: a client can enumerate the authoring verb set and one verb's
   param schema over the socket; covered by a daemon test.
+- **Delivered (2026-10-31, dat-gui-describe-verb-enumeration)**: `native.describe`
+  now returns `native_write_verbs: [{ id, target }]` from `native_write_verbs()`
+  (`target` = the `datum.<domain>.<verb>` id domain); daemon tests assert the catalog
+  is exactly the registry and that a described verb round-trips through `native.write`.
+  Per-verb param schemas are NOT delivered because `NativeWriteVerb` carries none —
+  that half is a possible FUTURE unit (registry schema enrichment), captured here, not
+  a bar on this unit. GAP (not filled here): there is no ETM-gated daemon-protocol
+  contract doc for `native.describe`; its contract is recorded in this plan and in
+  `DATUM_GUI_MENU_BINDINGS.md` (`MCP_API_SPEC.md` is the MCP agent catalog, a different
+  surface).
 
 ### W4 — Give `gui-app` a daemon client + GUI action model
 - **Historical baseline (2026-07-05)**: `gui-app` does not link the engine (dev-dep only) and has no
