@@ -11,6 +11,7 @@ mod kicad_geometry;
 
 use anyhow::{Context, Result};
 use std::path::Path;
+use std::sync::{Mutex, OnceLock};
 
 pub(crate) fn write_known_good_demo_project(root: &Path) -> Result<()> {
     let schematic_dir = root.join("schematic");
@@ -635,4 +636,119 @@ pub(super) fn write_json_file(path: &Path, value: &serde_json::Value) -> Result<
     let payload = serde_json::to_string_pretty(value).context("failed to serialize demo JSON")?;
     std::fs::write(path, format!("{payload}\n"))
         .with_context(|| format!("failed to write {}", path.display()))
+}
+
+pub fn ensure_known_good_demo_request() -> Result<crate::LiveReviewRequest> {
+    static DEMO_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    let _guard = DEMO_LOCK
+        .get_or_init(|| Mutex::new(()))
+        .lock()
+        .expect("demo lock should not be poisoned");
+    request_at(std::env::temp_dir().join("datum-gui-m7-known-good"))
+}
+
+fn request_at(root: std::path::PathBuf) -> Result<crate::LiveReviewRequest> {
+    write_known_good_demo_project(&root)?;
+    Ok(crate::LiveReviewRequest {
+        project_root: root,
+        board_file: None,
+        artifact_path: None,
+        net_uuid: Some("00000000-0000-0000-0000-00000000c200".to_string()),
+        from_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c218".to_string()),
+        to_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c219".to_string()),
+        profile: Some("default".to_string()),
+        kicad_board_source: None,
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{LiveReviewRequest, load_live_workspace_state};
+
+    struct DemoFixture(LiveReviewRequest);
+    impl DemoFixture {
+        fn new(label: &str) -> Self {
+            Self(request_at(crate::tests::unique_project_root(label)).expect("demo materializes"))
+        }
+    }
+    impl Drop for DemoFixture {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0.project_root);
+        }
+    }
+
+    #[test]
+    fn known_good_demo_request_materializes_project_scaffold() {
+        let fixture = DemoFixture::new("known-good-scaffold");
+        let request = &fixture.0;
+        let other = DemoFixture::new("known-good-independent");
+        assert_ne!(request.project_root, other.0.project_root);
+        assert!(request.project_root.join("project.json").is_file());
+        assert!(request.project_root.join("board/board.json").is_file());
+        assert_eq!(
+            request.net_uuid.as_deref(),
+            Some("00000000-0000-0000-0000-00000000c200")
+        );
+        assert_eq!(
+            request.from_anchor_pad_uuid.as_deref(),
+            Some("00000000-0000-0000-0000-00000000c218")
+        );
+        let board_json = std::fs::read_to_string(request.project_root.join("board/board.json"))
+            .expect("known-good board file should exist");
+        let board: serde_json::Value =
+            serde_json::from_str(&board_json).expect("known-good board should decode");
+        assert!(
+            board["packages"]
+                .as_object()
+                .expect("packages should be an object")
+                .len()
+                >= 4
+        );
+        assert!(
+            board["pads"]
+                .as_object()
+                .expect("pads should be an object")
+                .len()
+                >= 4
+        );
+        let u1_mechanical_lines =
+            board["component_mechanical_lines"]["00000000-0000-0000-0000-00000000c203"]
+                .as_array()
+                .expect("U1 mechanical lines should be an array");
+        assert!(
+            u1_mechanical_lines.len() >= 6,
+            "KiCad-backed U1 package geometry should replace the minimal demo geometry"
+        );
+        let j2_mechanical_lines =
+            board["component_mechanical_lines"]["00000000-0000-0000-0000-00000000c204"]
+                .as_array()
+                .expect("J2 mechanical lines should be an array");
+        assert!(
+            j2_mechanical_lines.len() >= 5,
+            "KiCad-backed J2 package geometry should be materialized"
+        );
+        let tp1_mechanical_circles =
+            board["component_mechanical_circles"]["00000000-0000-0000-0000-00000000c209"]
+                .as_array()
+                .expect("TP1 mechanical circles should be an array");
+        assert!(
+            !tp1_mechanical_circles.is_empty(),
+            "KiCad-backed TP1 circular geometry should be materialized"
+        );
+    }
+
+    #[test]
+    fn known_good_demo_request_loads_live_workspace_state() {
+        let fixture = DemoFixture::new("known-good-live");
+        let request = &fixture.0;
+        let workspace =
+            load_live_workspace_state(request).expect("known-good demo should load live state");
+        assert!(!workspace.review.proposal_actions.is_empty());
+        assert!(!workspace.scene.pads.is_empty());
+        assert_eq!(
+            workspace.active_review_target_id,
+            workspace.review.proposal_actions[0].action_id
+        );
+    }
 }

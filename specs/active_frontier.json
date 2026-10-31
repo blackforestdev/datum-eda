@@ -19028,10 +19028,10 @@
       "key": "CARGO-CACHE-ADVISORY-TARGET",
       "issue_id": "dat-cargo-cache-advisory-target-jiu6",
       "title": "Treat retained Cargo cache sizes as advisory targets",
-      "summary": "Owner directs retained cache size to advise maintenance rather than halt otherwise safe development; preserve hard free-space reserves, full accounting and serialization.",
+      "summary": "Owner-directed advisory cache targets delivered8d4c7564.27focusedPython tests/independent reviewPASS; actual40.2GiB Cargo proof admitted with low-free-space/serialization/proof-target safeguards retained. No deletion or broader qualification claim.",
       "order": 121,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -19044,20 +19044,42 @@
         "kind": "maintenance",
         "rationale": "Direct owner instruction corrects demonstrated40.2GiB cache target blocking safe builds despite137.9GiB free; no destructive cleanup or safety-gate bypass."
       },
+      "landing_commit": "8d4c7564"
+    },
+    {
+      "key": "QA-BUILD-RETENTION",
+      "issue_id": "dat-qa-build-retention-1o5r",
+      "title": "Reclaim released QA compiler output while preserving proof inputs",
+      "summary": "Owner-directed routine build retirement through existing cache manager; preserve source snapshots/evidence and require positive release and observed idle safety.",
+      "order": 122,
+      "state": "in_progress",
+      "authorization": "execution",
+      "canonical_next": false,
+      "parallel": true,
+      "dependencies": [],
+      "unblocks": [],
+      "governing_docs": [
+        "CLAUDE.md",
+        "docs/AGENT_OPERATIONAL_PROCEDURES.md"
+      ],
+      "work_purpose": {
+        "kind": "maintenance",
+        "rationale": "Prevent repeat six-agent pause over obsolete QA builds by adding missing mixed-bundle lifecycle under owner instruction and PM standing maintenance classification; no destructive cron, new permission ledger or product prerequisite."
+      },
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
-        "session": "codex-cache-target-20261031",
-        "claimed_at": "2026-10-31T01:14:11Z",
-        "heartbeat_at": "2026-10-31T01:14:11Z",
-        "expires_at": "2026-10-31T03:14:11Z",
+        "session": "codex-qa-retention-20261031",
+        "claimed_at": "2026-10-31T01:26:00Z",
+        "heartbeat_at": "2026-10-31T01:26:00Z",
+        "expires_at": "2026-10-31T03:26:00Z",
         "scope": [
-          "scripts/run_cargo_guarded.py",
-          "scripts/cargo_resource_policy.json",
-          "scripts/test_run_cargo_guarded.py"
+          "scripts/manage_cargo_cache.py",
+          "scripts/cargo_qa_retention.py",
+          "scripts/test_cargo_qa_retention.py"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "6ebd5cdefd1b546204eb47fc27e05a73538e0372"
+        "head": "8d4c7564557058067005f71e140d708312433c72"
       }
     }
   ],

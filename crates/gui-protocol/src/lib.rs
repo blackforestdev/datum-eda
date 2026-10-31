@@ -26,7 +26,6 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::{Mutex, OnceLock};
 pub mod gui_menu_model;
 pub mod popup_menu;
 pub mod schematic_documents;
@@ -144,6 +143,7 @@ pub use check_runs::{
 mod board_review_scene;
 mod known_good_demo;
 pub use board_review_scene::{BoardReviewSceneV1, ScenePadExpansionSetup};
+pub use known_good_demo::ensure_known_good_demo_request;
 mod scene_primitives;
 pub use scene_primitives::{
     BoardGraphicPrimitive, ComponentBounds, ComponentGraphicPrimitive, ComponentTextPrimitive,
@@ -299,26 +299,6 @@ pub struct ReviewActionRow {
     pub action_id: String,
     pub title: String,
     pub subtitle: String,
-}
-
-pub fn ensure_known_good_demo_request() -> Result<LiveReviewRequest> {
-    static DEMO_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-    let _guard = DEMO_LOCK
-        .get_or_init(|| Mutex::new(()))
-        .lock()
-        .expect("demo lock should not be poisoned");
-    let root = std::env::temp_dir().join("datum-gui-m7-known-good");
-    known_good_demo::write_known_good_demo_project(&root)?;
-    Ok(LiveReviewRequest {
-        project_root: root,
-        board_file: None,
-        artifact_path: None,
-        net_uuid: Some("00000000-0000-0000-0000-00000000c200".to_string()),
-        from_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c218".to_string()),
-        to_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c219".to_string()),
-        profile: Some("default".to_string()),
-        kicad_board_source: None,
-    })
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -4401,63 +4381,6 @@ mod tests {
     }
 
     #[test]
-    fn known_good_demo_request_materializes_project_scaffold() {
-        let request = ensure_known_good_demo_request().expect("demo request should materialize");
-        assert!(request.project_root.join("project.json").is_file());
-        assert!(request.project_root.join("board/board.json").is_file());
-        assert_eq!(
-            request.net_uuid.as_deref(),
-            Some("00000000-0000-0000-0000-00000000c200")
-        );
-        assert_eq!(
-            request.from_anchor_pad_uuid.as_deref(),
-            Some("00000000-0000-0000-0000-00000000c218")
-        );
-        let board_json = std::fs::read_to_string(request.project_root.join("board/board.json"))
-            .expect("known-good board file should exist");
-        let board: serde_json::Value =
-            serde_json::from_str(&board_json).expect("known-good board should decode");
-        assert!(
-            board["packages"]
-                .as_object()
-                .expect("packages should be an object")
-                .len()
-                >= 4
-        );
-        assert!(
-            board["pads"]
-                .as_object()
-                .expect("pads should be an object")
-                .len()
-                >= 4
-        );
-        let u1_mechanical_lines =
-            board["component_mechanical_lines"]["00000000-0000-0000-0000-00000000c203"]
-                .as_array()
-                .expect("U1 mechanical lines should be an array");
-        assert!(
-            u1_mechanical_lines.len() >= 6,
-            "KiCad-backed U1 package geometry should replace the minimal demo geometry"
-        );
-        let j2_mechanical_lines =
-            board["component_mechanical_lines"]["00000000-0000-0000-0000-00000000c204"]
-                .as_array()
-                .expect("J2 mechanical lines should be an array");
-        assert!(
-            j2_mechanical_lines.len() >= 5,
-            "KiCad-backed J2 package geometry should be materialized"
-        );
-        let tp1_mechanical_circles =
-            board["component_mechanical_circles"]["00000000-0000-0000-0000-00000000c209"]
-                .as_array()
-                .expect("TP1 mechanical circles should be an array");
-        assert!(
-            !tp1_mechanical_circles.is_empty(),
-            "KiCad-backed TP1 circular geometry should be materialized"
-        );
-    }
-
-    #[test]
     fn native_round_rect_pad_shape_normalizes_to_renderer_shape_name() {
         let pad: EnginePadPayload = serde_json::from_value(json!({
             "uuid": "00000000-0000-0000-0000-000000000001",
@@ -4470,18 +4393,5 @@ mod tests {
         .expect("engine pad should decode");
 
         assert_eq!(pad.shape.to_string(), "roundrect");
-    }
-
-    #[test]
-    fn known_good_demo_request_loads_live_workspace_state() {
-        let request = ensure_known_good_demo_request().expect("demo request should materialize");
-        let workspace =
-            load_live_workspace_state(&request).expect("known-good demo should load live state");
-        assert!(!workspace.review.proposal_actions.is_empty());
-        assert!(!workspace.scene.pads.is_empty());
-        assert_eq!(
-            workspace.active_review_target_id,
-            workspace.review.proposal_actions[0].action_id
-        );
     }
 }

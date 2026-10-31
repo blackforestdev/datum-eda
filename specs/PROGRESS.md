@@ -418,16 +418,19 @@
    Protocol source path released by committed7032f305 and explicit PM transfer; apply reviewed ownership extraction/private UUID demo fixtures, retaining production wrapper behavior and header proof. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
 <details>
-<summary>Completed history (1 landed records)</summary>
+<summary>Completed history (2 landed records)</summary>
 
 - **Preserve and deduplicate exact immutable GUI QA images** (`QA-GUI-BYTE-PRESERVING-DEDUP`; `dat-qa-gui-byte-preserving-dedup-npfx`).
    Explicit descriptor-proven GUI dedup source312848f8 and exactapprovedapply retain allpaths/bytes/security/mtime and446nonselectedentries.31tests/code/data/postapplyreviewPASS; retainedcache38.5584GiB,preflighterrors[]. Oldguards/limits unchanged; ownprotocolproof held for native integration/producer priority. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
+- **Treat retained Cargo cache sizes as advisory targets** (`CARGO-CACHE-ADVISORY-TARGET`; `dat-cargo-cache-advisory-target-jiu6`).
+   Owner-directed advisory cache targets delivered8d4c7564.27focusedPython tests/independent reviewPASS; actual40.2GiB Cargo proof admitted with low-free-space/serialization/proof-target safeguards retained. No deletion or broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 
 </details>
 
-- **Treat retained Cargo cache sizes as advisory targets** (`CARGO-CACHE-ADVISORY-TARGET`; `dat-cargo-cache-advisory-target-jiu6`).
-   Owner directs retained cache size to advise maintenance rather than halt otherwise safe development; preserve hard free-space reserves, full accounting and serialization. *state `in_progress`; authorization `execution`; parallel lane.*
+- **Reclaim released QA compiler output while preserving proof inputs** (`QA-BUILD-RETENTION`; `dat-qa-build-retention-1o5r`).
+   Owner-directed routine build retirement through existing cache manager; preserve source snapshots/evidence and require positive release and observed idle safety. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
