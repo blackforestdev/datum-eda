@@ -4,6 +4,12 @@
 *.db-shm
 *.db-wal
 
+# FrankenSQLite runtime state and schema-migration sidecars (br 0.7+)
+*.db-fsqlite-ns-*
+*.db-wal-cert*
+*.db.fsqlite-migration-state
+.*.db.schema-migration-*
+
 # Lock files
 *.lock
 
