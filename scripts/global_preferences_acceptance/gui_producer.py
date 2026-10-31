@@ -147,7 +147,16 @@ def _candidate_bindings(capture, gui_binary, coordinate, identity, recipe_relpat
     so every surface in the assembled report shares one identity source (no drift). Without it, the
     standalone/debug path self-computes from the local tree (legacy; one surface at a time)."""
     if identity is not None:
-        return _consume_identity(identity, gui_binary, coordinate)
+        candidate, binaries, input_manifest_ref, matrix_sha256, environments = _consume_identity(
+            identity, gui_binary, coordinate)
+        # Register the bound input_manifest in this run's inventory so the row's artifacts are
+        # self-contained and validate_case's Bundle(report["artifacts"]) can resolve it (the blob
+        # lives in the shared bundle_root; produce_case re-verifies its bytes against the reference).
+        # Mirrors the headless identity path (producer.build_family, producer.py:467) -- the GUI
+        # identity path previously omitted this, so per-row validate_case could not resolve the
+        # external input_manifest reference.
+        capture.inventory[input_manifest_ref["path"]] = dict(input_manifest_ref)
+        return candidate, binaries, input_manifest_ref, matrix_sha256, environments
     revision = _git_head()
     gui_sha = _sha_file(gui_binary)
     candidate = {"revision": revision,
