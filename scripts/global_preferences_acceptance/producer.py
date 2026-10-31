@@ -331,6 +331,24 @@ def _family_handlers(family):
             repo = Path(work_root) / "config" / "datum" / "preferences"
             return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
         return None, capture_after, setup
+    # upgrade (alias-migration) + portable-collision (alias-collision, capability-injection): engine
+    # families whose setup seeds a store a different engine version wrote (a retired alias, or a
+    # smuggled capability envelope) through the engine's own write_generation / PutUnknown journal.
+    # alias-migration's observe commits the migration (before=store@seed, after=store@migrated -> a
+    # REAL new generation); alias-collision refuses and capability-injection only reads (after==before
+    # proves no-side-effects / preservation). The precondition is established through the engine's own
+    # path, not a private writer.
+    if (case == "upgrade" and variant == "alias-migration") or (
+            case == "portable-collision" and variant in ("alias-collision", "capability-injection")):
+        def setup(capture, key, work_root):
+            _engine_setup_phase(Path(work_root), key[0], key[1])
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+        def capture_after(capture, key, work_root, before_state):
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+        return None, capture_after, setup
     raise ValueError(f"case family not implemented: {family}")
 
 

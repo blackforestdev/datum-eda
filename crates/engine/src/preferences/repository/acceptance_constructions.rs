@@ -14,6 +14,11 @@
 //! can be enforced by review. Authorized by the PM seed ruling (write_generation with
 //! a hand-built `RepositoryState` is the engine's own test construction; crate-internal
 //! visibility only, no public API or behavior change).
+//!
+//! ENFORCEMENT: `pub(crate)` confines reachability to this crate; the constraint that
+//! only `acceptance_support` (never product code) uses it is review+grep enforced. The
+//! grep surface is the module name `acceptance_constructions` -- any path importing it
+//! outside `crates/engine/src/preferences/acceptance_support` is the defect above.
 
 pub(crate) use super::io::{next_generation_number, promote_head, write_generation};
 pub(crate) use super::model::RepositoryState;

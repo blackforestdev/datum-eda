@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use serde_json::Value;
 
-use crate::preferences::{PreferenceKey, RegistrationRefusal};
+use crate::preferences::PreferenceKey;
 
 use super::io::{WriterLease, copy_unknown_bytes, next_generation_number};
 use super::model::{
@@ -189,12 +189,17 @@ fn migrate_partition(
     migrate_legacy_units_partition(values, changes, reversible)?;
     let original_keys: Vec<_> = values.keys().cloned().collect();
     for stored_key in original_keys {
-        let parsed = PreferenceKey::parse(stored_key.clone()).map_err(|refusal| match refusal {
-            RegistrationRefusal::InvalidKey(key) => RepositoryError::UnknownPreferenceKey(key),
-            _ => RepositoryError::UnknownPreferenceKey(stored_key.clone()),
-        })?;
-        let live_key = if registry.get(&parsed).is_some() {
-            parsed
+        // Resolve a DECLARED alias of the stored spelling BEFORE rejecting the spelling as
+        // an unparseable canonical key -- mirror migration_issues' order (mod.rs). A
+        // declared alias may be a bare, non-canonical spelling (e.g. "console_duration"),
+        // yet GP-C04 §6 requires every declared alias to migrate to its one live identity;
+        // parsing first dropped bare aliases into UnknownPreferenceKey even though
+        // detection reported MigrationRequired. Live-key precedence is preserved: a stored
+        // key that is itself a registered canonical key stays as-is.
+        let parsed = PreferenceKey::parse(stored_key.clone()).ok();
+        let live_key = if let Some(key) = parsed.as_ref().filter(|key| registry.get(key).is_some())
+        {
+            key.clone()
         } else if let Some(alias) = registry.resolve_alias(&stored_key) {
             if values.contains_key(alias.as_str()) {
                 return Err(RepositoryError::AliasCollision(stored_key));
@@ -208,8 +213,12 @@ fn migrate_partition(
                 live_key: alias.as_str().to_owned(),
             });
             alias.clone()
-        } else {
+        } else if parsed.is_some() {
+            // A parseable but unregistered, non-alias key: unchanged -- it remains inactive.
             continue;
+        } else {
+            // An unparseable spelling that is not a declared alias: refuse as before.
+            return Err(RepositoryError::UnknownPreferenceKey(stored_key));
         };
         let descriptor = registry
             .get(&live_key)

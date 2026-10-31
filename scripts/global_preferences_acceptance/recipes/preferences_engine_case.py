@@ -56,6 +56,14 @@ ENGINE_COVERAGE = {
     # future-version via artifact damage; unknown-key via the write_generation seed.
     ("downgrade-preservation", "future-version"),
     ("downgrade-preservation", "unknown-key"),
+    # upgrade (alias-migration): a retired-alias store seeded via write_generation,
+    # then the public plan/commit migration API moves the one alias atomically.
+    ("upgrade", "alias-migration"),
+    # portable-collision: an ambiguous portable identity (both the retired alias and its
+    # live key) refused without writes, and a capability-claiming envelope smuggled
+    # through the unknown-data door that stays opaque and authority-refused.
+    ("portable-collision", "alias-collision"),
+    ("portable-collision", "capability-injection"),
 }
 
 

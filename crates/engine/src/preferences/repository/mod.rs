@@ -526,4 +526,6 @@ fn state_digests(state: &RepositoryState) -> Result<BTreeMap<String, String>, Re
 #[cfg(test)]
 mod generation_growth_tests;
 #[cfg(test)]
+mod migration_tests;
+#[cfg(test)]
 mod tests;

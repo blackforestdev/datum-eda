@@ -247,13 +247,15 @@ fn observe_future_version(work_root: &Path) -> Result<Vec<(&'static str, bool)>,
     let status = repository.inspect();
     let after = store_fingerprint(&root);
     // typed-refusal: the unsupported version is refused as unreadable with a reason that
-    // names the version. (inspect() collapses load errors into Unreadable, and
-    // load_snapshot -- which returns the typed UnsupportedRepositoryVersion -- is not on the
-    // acceptance surface, so the version-typed refusal is observed through the reason text.)
+    // names the SPECIFIC unsupported version. (inspect() collapses load errors into
+    // Unreadable, and load_snapshot -- which returns the typed UnsupportedRepositoryVersion
+    // -- is not on the acceptance surface, so the version-typed refusal is observed through
+    // the reason text.) The reason must contain the exact FUTURE_FORMAT_VERSION constant: a
+    // generic corruption that merely mentions the word "version" cannot forge the precise
+    // number this seed wrote, so the predicate can read false on a non-version Unreadable.
     let typed_refusal = match &status {
         RepositoryStatus::Unreadable(evidence) => {
-            evidence.reason.contains("version")
-                || evidence.reason.contains(&FUTURE_FORMAT_VERSION.to_string())
+            evidence.reason.contains(&FUTURE_FORMAT_VERSION.to_string())
         }
         _ => false,
     };

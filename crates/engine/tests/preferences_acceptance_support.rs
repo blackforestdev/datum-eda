@@ -13,6 +13,11 @@ use eda_engine::preferences::acceptance_support::backup_restore::{
 use eda_engine::preferences::acceptance_support::downgrade_preservation::{
     DowngradeVariant, downgrade_negative_control, downgrade_observe, downgrade_setup,
 };
+use eda_engine::preferences::acceptance_support::portable_upgrade::{
+    PortableCollisionVariant, UpgradeVariant, portable_collision_negative_control,
+    portable_collision_observe, portable_collision_setup, upgrade_negative_control,
+    upgrade_observe, upgrade_setup,
+};
 use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
     managed_active_negative_control, managed_offline_scenario, observe_managed_offline,
@@ -265,5 +270,105 @@ fn downgrade_known_value_is_active_as_the_family_negative_control() {
     assert!(
         result.expect("negative control runs"),
         "a registered known value must be active (the inactive predicate is falsifiable)"
+    );
+}
+
+#[test]
+fn alias_migration_yields_its_matrix_observations() {
+    // The upgrade family: a retired-alias store plans a pure one-alias move, commits it
+    // with a pre-migration backup, and atomically promotes the head.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-up-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let observed = (|| {
+        upgrade_setup(UpgradeVariant::AliasMigration, &work)?;
+        upgrade_observe(UpgradeVariant::AliasMigration, &work)
+    })();
+    let _ = std::fs::remove_dir_all(&work);
+
+    let observed = observed.expect("alias-migration runs");
+    assert_eq!(
+        observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+        vec![
+            "pure-plan",
+            "exact-pre-migration-backup",
+            "one-live-alias",
+            "atomic-promotion"
+        ]
+    );
+    for (id, value) in observed {
+        assert!(value, "alias-migration observation {id} must hold");
+    }
+}
+
+#[test]
+fn alias_free_store_moves_no_alias_as_the_upgrade_negative_control() {
+    // PM059 genuinely-falsifying control: a store with no retired alias plans ZERO alias
+    // moves, so `one-live-alias` is not constant-true.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-up-neg-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = upgrade_negative_control(&work);
+    let _ = std::fs::remove_dir_all(&work);
+
+    assert!(
+        result.expect("negative control runs"),
+        "a store with no retired alias must produce no alias move (one-live-alias is falsifiable)"
+    );
+}
+
+fn run_portable_collision(
+    variant: PortableCollisionVariant,
+) -> Result<Vec<(&'static str, bool)>, String> {
+    let work = std::env::temp_dir().join(format!("gp-cm05e-pc-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = (|| {
+        portable_collision_setup(variant, &work)?;
+        portable_collision_observe(variant, &work)
+    })();
+    let _ = std::fs::remove_dir_all(&work);
+    result
+}
+
+#[test]
+fn every_portable_collision_variant_yields_its_matrix_observations() {
+    let expected: &[(PortableCollisionVariant, &[&str])] = &[
+        (
+            PortableCollisionVariant::AliasCollision,
+            &[
+                "both-values-retained",
+                "whole-operation-refused",
+                "no-side-effects",
+            ],
+        ),
+        (
+            PortableCollisionVariant::CapabilityInjection,
+            &["authority-refused", "unknown-data-preserved"],
+        ),
+    ];
+    for (variant, ids) in expected {
+        let observed =
+            run_portable_collision(*variant).unwrap_or_else(|error| panic!("{variant:?}: {error}"));
+        assert_eq!(
+            observed.iter().map(|(id, _)| *id).collect::<Vec<_>>(),
+            ids.to_vec(),
+            "{variant:?} observation ids"
+        );
+        for (id, value) in observed {
+            assert!(value, "{variant:?} observation {id} must hold");
+        }
+    }
+}
+
+#[test]
+fn registered_value_is_active_as_the_portable_collision_negative_control() {
+    // PM059 genuinely-falsifying control: a registered known value IS active, so the
+    // `authority-refused` "absent from every active partition" predicate is not constant.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-pc-neg-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let result = portable_collision_negative_control(&work);
+    let _ = std::fs::remove_dir_all(&work);
+
+    assert!(
+        result.expect("negative control runs"),
+        "a registered known value must be active (authority-refused is falsifiable)"
     );
 }
