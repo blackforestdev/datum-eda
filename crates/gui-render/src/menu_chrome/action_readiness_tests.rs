@@ -39,6 +39,16 @@ fn rendered_fit_readiness_tracks_context_and_missing_rows_stay_inspectable() {
     assert_eq!(label_color(&state, "Fit to Board"), TEXT_PRIMARY);
     state.ui.active_menu = Some("Help".to_owned());
     assert_eq!(label_color(&state, "About Datum"), TEXT_MUTED);
+    assert_eq!(label_color(&state, "Diagnostics"), TEXT_MUTED);
+    assert_eq!(label_color(&state, "Command Reference"), TEXT_MUTED);
     state.ui.active_menu = Some("Window".to_owned());
     assert_eq!(label_color(&state, "Documents"), TEXT_MUTED);
+}
+
+#[test]
+fn documents_with_a_real_project_remains_enabled() {
+    let mut state = load_fixture_workspace_state();
+    state.ui.active_menu = Some("Window".to_owned());
+    state.schematic_documents.project = Some(Default::default());
+    assert_eq!(label_color(&state, "Documents"), TEXT_PRIMARY);
 }

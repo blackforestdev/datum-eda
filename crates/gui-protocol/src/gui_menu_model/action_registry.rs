@@ -1,5 +1,5 @@
-//! Bounded production action admission (PM041). Other families retain their
-//! existing owners; a missing key in this registry is never an executable action.
+//! Production GUI-local dispatch identity and bounded pilot admission (PM041).
+//! Other families retain their existing owners and contextual behavior.
 
 use crate::{ReviewWorkspaceState, camera_scene_for_pane};
 
@@ -8,6 +8,70 @@ pub enum ActionHandler {
     FitCamera,
     FocusNavigator,
     OpenLibrary,
+}
+
+/// All existing GUI-local dispatch targets. Partial pilot consumers keep their
+/// contextual admission owner; other families retain their runtime behavior.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GuiLocalHandler {
+    Registered(ActionHandler),
+    SaveProject,
+    NewProject,
+    OpenProject,
+    GlobalPreferences,
+    ProjectPreferences,
+    ZoomIn,
+    ZoomOut,
+    ToggleTerminal,
+    SplitVertical,
+    SplitHorizontal,
+    ClosePane,
+    FocusNext,
+    FocusPrevious,
+    MaximizePane,
+    PresetSingle,
+    PresetBoardSchematic,
+    FillBoard,
+    FillSchematic,
+    CursorFull,
+    CursorSmall,
+    CursorNone,
+    ConsoleHistory,
+}
+
+pub const UNAVAILABLE_GUI_LOCAL_REASON: &str = "This action is unavailable in this build.";
+
+/// Shared by menu readiness and exhaustive runtime dispatch. A missing key never
+/// acquires an executable fallback, including keys added to the menu manifest.
+pub fn gui_local_handler(key: &str) -> Option<GuiLocalHandler> {
+    if let Some(entry) = consumer(key) {
+        return entry.handler.map(GuiLocalHandler::Registered);
+    }
+    Some(match key {
+        "project.save" => GuiLocalHandler::SaveProject,
+        "project.new.open" => GuiLocalHandler::NewProject,
+        "project.open" => GuiLocalHandler::OpenProject,
+        "preferences.global.open" => GuiLocalHandler::GlobalPreferences,
+        "preferences.project.open" => GuiLocalHandler::ProjectPreferences,
+        "view.zoom_in" => GuiLocalHandler::ZoomIn,
+        "view.zoom_out" => GuiLocalHandler::ZoomOut,
+        "terminal.toggle" => GuiLocalHandler::ToggleTerminal,
+        "view.split_vertical" => GuiLocalHandler::SplitVertical,
+        "view.split_horizontal" => GuiLocalHandler::SplitHorizontal,
+        "view.close_pane" => GuiLocalHandler::ClosePane,
+        "view.focus_next" => GuiLocalHandler::FocusNext,
+        "view.focus_prev" => GuiLocalHandler::FocusPrevious,
+        "view.maximize_pane" => GuiLocalHandler::MaximizePane,
+        "view.preset_single" => GuiLocalHandler::PresetSingle,
+        "view.preset_board_schematic" => GuiLocalHandler::PresetBoardSchematic,
+        "view.fill_board" => GuiLocalHandler::FillBoard,
+        "view.fill_schematic" => GuiLocalHandler::FillSchematic,
+        "view.cursor.full" => GuiLocalHandler::CursorFull,
+        "view.cursor.small" => GuiLocalHandler::CursorSmall,
+        "view.cursor.none" => GuiLocalHandler::CursorNone,
+        "view.console_history" => GuiLocalHandler::ConsoleHistory,
+        _ => return None,
+    })
 }
 
 #[derive(Debug, Clone, Copy)]

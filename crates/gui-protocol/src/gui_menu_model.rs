@@ -87,15 +87,11 @@ impl GuiMenuItem {
     }
 
     pub fn is_phase_one_enabled(&self) -> bool {
-        if let GuiMenuBinding::GuiLocal(key) = self.binding()
-            && let Some(consumer) = action_registry::consumer(key)
-        {
-            return consumer.handler.is_some();
+        if let GuiMenuBinding::GuiLocal(key) = self.binding() {
+            return action_registry::gui_local_handler(key).is_some();
         }
-        matches!(
-            self.binding(),
-            GuiMenuBinding::GuiLocal(_) | GuiMenuBinding::Submenu(_)
-        ) || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))
+        matches!(self.binding(), GuiMenuBinding::Submenu(_))
+            || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))
     }
 
     pub fn is_enabled(&self, project_open: bool) -> bool {
@@ -123,6 +119,11 @@ impl GuiMenuItem {
             && let Some(consumer) = action_registry::consumer(key)
         {
             return consumer.admit(state).err();
+        }
+        if let GuiMenuBinding::GuiLocal(key) = self.binding()
+            && action_registry::gui_local_handler(key).is_none()
+        {
+            return Some(action_registry::UNAVAILABLE_GUI_LOCAL_REASON);
         }
         if matches!(
             self.binding(),

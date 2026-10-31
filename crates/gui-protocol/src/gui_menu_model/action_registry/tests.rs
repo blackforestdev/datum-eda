@@ -15,6 +15,19 @@ fn production_registry_agrees_with_reviewed_pilot_consumers() {
         assert_eq!(record["unavailable_reason"], entry.unavailable_reason);
         let surfaces = entry.entry_surfaces.to_vec();
         assert_eq!(record["entry_surfaces"], serde_json::json!(surfaces));
+        // Documents gained its real navigator owner after this archived pilot.
+        // Keep the historical receipt immutable and verify the live owner below.
+        if entry.key == "window.documents" {
+            assert_eq!(entry.handler, Some(ActionHandler::FocusNavigator));
+            assert_eq!(
+                entry.handler_ref(),
+                Some((
+                    "crates/gui-app/src/editor/runtime_schematic_navigation.rs",
+                    "datum_gui::Runtime::focus_schematic_navigator",
+                ))
+            );
+            continue;
+        }
         match entry.handler_ref() {
             Some((path, symbol)) => {
                 // The retired pilot pins its original source layout. Preserve
@@ -77,7 +90,7 @@ fn unavailable_consumers_and_unknown_keys_never_admit() {
     let mut state = load_fixture_workspace_state();
     for pane in [PaneId(0), PaneId(1), PaneId(999)] {
         state.ui.layout.focused = pane;
-        for key in ["help.about", "window.documents", "view.layers"] {
+        for key in ["help.about", "view.layers"] {
             let entry = consumer(key).unwrap();
             assert_eq!(admit(key, &state), Err(entry.unavailable_reason));
             assert!(entry.handler_ref().is_none());
@@ -121,4 +134,116 @@ fn real_menu_rows_consume_registry_and_other_families_retain_ownership() {
         .find(|item| item.gui_local.as_deref() == Some("view.focus_next"))
         .unwrap();
     assert!(focus_next.unavailable_reason(&state).is_none());
+}
+
+#[test]
+fn unbound_real_menu_rows_and_unknown_keys_are_disabled_with_exposed_reasons() {
+    let model = load_default_gui_menu_model().unwrap();
+    let mut state = load_fixture_workspace_state();
+    for key in [
+        "help.diagnostics",
+        "help.commands",
+        "help.about",
+        "view.layers",
+        "view.pane_zoom",
+        "view.fullscreen_stage",
+        "view.panels",
+        "view.reset",
+        "window.terminal",
+        "window.layout",
+    ] {
+        let item = model
+            .menubar
+            .iter()
+            .flat_map(|menu| &menu.items)
+            .find(|item| item.gui_local.as_deref() == Some(key))
+            .unwrap();
+        assert!(gui_local_handler(key).is_none(), "{key}");
+        assert!(!item.is_phase_one_enabled(), "{key}");
+        assert!(item.unavailable_reason(&state).is_some(), "{key}");
+        state.ui.active_menu = Some(
+            if key.starts_with("help.") {
+                "Help"
+            } else if key.starts_with("window.") {
+                "Window"
+            } else {
+                "View"
+            }
+            .into(),
+        );
+        let nodes = crate::gui_menu_model::accessibility::menu_accessibility_nodes(&model, &state);
+        let node = nodes
+            .iter()
+            .find(|node| node.key.as_deref() == Some(key))
+            .unwrap();
+        assert!(!node.available, "{key}");
+        assert!(
+            node.description
+                .contains(item.unavailable_reason(&state).unwrap()),
+            "{key}"
+        );
+    }
+    let mut unknown = model
+        .menubar
+        .iter()
+        .flat_map(|menu| &menu.items)
+        .find(|item| item.gui_local.as_deref() == Some("help.diagnostics"))
+        .unwrap()
+        .clone();
+    unknown.gui_local = Some("unknown.future.action".into());
+    assert!(gui_local_handler("unknown.future.action").is_none());
+    assert!(!unknown.is_phase_one_enabled());
+    assert_eq!(
+        unknown.unavailable_reason(&state),
+        Some(UNAVAILABLE_GUI_LOCAL_REASON)
+    );
+}
+
+#[test]
+fn working_preferences_and_documents_keep_their_real_dispatch_owners() {
+    let model = load_default_gui_menu_model().unwrap();
+    let mut state = load_fixture_workspace_state();
+    let edit = model
+        .menubar
+        .iter()
+        .find(|menu| menu.menu == "Edit")
+        .unwrap();
+    for (index, handler) in [
+        GuiLocalHandler::GlobalPreferences,
+        GuiLocalHandler::ProjectPreferences,
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let item = &edit.submenus["edit.preferences"][index];
+        assert_eq!(
+            gui_local_handler(item.gui_local.as_deref().unwrap()),
+            Some(handler)
+        );
+        assert!(item.is_phase_one_enabled());
+        if index == 0 {
+            assert!(item.unavailable_reason(&state).is_none());
+        } else {
+            assert!(!item.is_enabled(false));
+            assert!(item.is_enabled(true));
+        }
+    }
+    let documents = model
+        .menubar
+        .iter()
+        .flat_map(|menu| &menu.items)
+        .find(|item| item.gui_local.as_deref() == Some("window.documents"))
+        .unwrap();
+    assert!(documents.is_phase_one_enabled());
+    assert!(documents.unavailable_reason(&state).is_some());
+    state.schematic_documents.project = Some(uuid::Uuid::nil());
+    assert_eq!(
+        gui_local_handler("window.documents"),
+        Some(GuiLocalHandler::Registered(ActionHandler::FocusNavigator))
+    );
+    assert!(documents.unavailable_reason(&state).is_none());
+    assert_eq!(
+        admit("window.documents", &state),
+        Ok(ActionHandler::FocusNavigator)
+    );
 }

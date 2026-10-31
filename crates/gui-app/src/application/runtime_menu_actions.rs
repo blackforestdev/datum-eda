@@ -662,11 +662,13 @@ mod menu_keyboard_tests {
     }
 
     #[test]
-    fn unavailable_pilot_rows_remain_keyboard_inspectable_and_dismissible() {
+    fn unavailable_rows_remain_keyboard_inspectable_and_dismissible() {
         let model = datum_gui_protocol::load_default_gui_menu_model().unwrap();
         for (menu_name, key) in [
             ("Help", "help.about"),
-            ("Window", "window.documents"),
+            ("Help", "help.diagnostics"),
+            ("Help", "help.commands"),
+            ("Window", "window.layout"),
             ("View", "view.layers"),
         ] {
             let group = model

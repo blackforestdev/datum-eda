@@ -1,7 +1,7 @@
 //! View-local menu-action dispatch and the cursor crosshair (decision 023
 //! UVT-005). Split out of `main.rs`'s `impl Runtime` to give that monolith
 //! source-health headroom (decision 022); behavior unchanged. Owns the
-//! `gui_local` menu-action match (camera/pane view ops) plus the `view.cursor.*`
+//! typed `gui_local` menu-action dispatch (camera/pane view ops) plus `view.cursor.*`
 //! crosshair radio group and its keyboard cycle. All of this is consumer/session
 //! UI state — camera, pane layout, crosshair style — and is NEVER journaled.
 //!
@@ -73,55 +73,66 @@ impl Runtime {
         action: &str,
         surface: EntrySurface,
     ) -> bool {
-        use datum_gui_protocol::gui_menu_model::action_registry::{self, ActionHandler};
-        if action_registry::consumer(action).is_some() {
-            match action_registry::admit(action, self.workspace()) {
-                Ok(ActionHandler::OpenLibrary) => {
-                    self.open_library();
-                    self.trace_action_attempt(action, surface, true);
-                }
-                Ok(ActionHandler::FocusNavigator) => {
-                    self.focus_schematic_navigator();
-                    self.trace_action_attempt(action, surface, true);
-                }
-                Ok(ActionHandler::FitCamera) => {
-                    self.fit_camera();
-                    self.trace_action_attempt(action, surface, true);
-                    self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");
-                }
-                Err(reason) => {
-                    self.trace_action_attempt(action, surface, false);
-                    self.log_console_refusal_for_action(
-                        ConsoleFeedbackSource::Viewport,
-                        action,
-                        reason,
-                    );
-                    self.invalidate_frame();
-                }
-            }
+        use datum_gui_protocol::gui_menu_model::action_registry::{
+            self, ActionHandler, GuiLocalHandler,
+        };
+        let Some(handler) = action_registry::gui_local_handler(action) else {
+            self.log_console_refusal_for_action(
+                ConsoleFeedbackSource::Menu,
+                action,
+                action_registry::UNAVAILABLE_GUI_LOCAL_REASON,
+            );
+            self.invalidate_frame();
             return true;
-        }
-        match action {
-            "project.save" => self
+        };
+        match handler {
+            GuiLocalHandler::Registered(_) => {
+                match action_registry::admit(action, self.workspace()) {
+                    Ok(ActionHandler::OpenLibrary) => {
+                        self.open_library();
+                        self.trace_action_attempt(action, surface, true);
+                    }
+                    Ok(ActionHandler::FocusNavigator) => {
+                        self.focus_schematic_navigator();
+                        self.trace_action_attempt(action, surface, true);
+                    }
+                    Ok(ActionHandler::FitCamera) => {
+                        self.fit_camera();
+                        self.trace_action_attempt(action, surface, true);
+                        self.log_console_echo(ConsoleFeedbackSource::Viewport, "view fit");
+                    }
+                    Err(reason) => {
+                        self.trace_action_attempt(action, surface, false);
+                        self.log_console_refusal_for_action(
+                            ConsoleFeedbackSource::Viewport,
+                            action,
+                            reason,
+                        );
+                        self.invalidate_frame();
+                    }
+                }
+                true
+            }
+            GuiLocalHandler::SaveProject => self
                 .queue_native_edit(datum_gui_protocol::native_edit_client::NativeEditAction::Save),
-            "project.new.open" => {
+            GuiLocalHandler::NewProject => {
                 self.close_project_open();
                 self.open_new_project()
             }
-            "project.open" => self.open_project(),
-            "preferences.global.open" => self.open_global_preferences(),
-            "preferences.project.open" => self.open_project_preferences(),
-            "view.zoom_in" => {
+            GuiLocalHandler::OpenProject => self.open_project(),
+            GuiLocalHandler::GlobalPreferences => self.open_global_preferences(),
+            GuiLocalHandler::ProjectPreferences => self.open_project_preferences(),
+            GuiLocalHandler::ZoomIn => {
                 self.zoom_focused_view(1.2);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "view zoom in");
                 true
             }
-            "view.zoom_out" => {
+            GuiLocalHandler::ZoomOut => {
                 self.zoom_focused_view(1.0 / 1.2);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "view zoom out");
                 true
             }
-            "terminal.toggle" => {
+            GuiLocalHandler::ToggleTerminal => {
                 if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
                     self.close_active_dock()
                 } else {
@@ -129,35 +140,34 @@ impl Runtime {
                 }
             }
             // Workspace pane ops (decision 021). These reach the same warm pane-op
-            // path the FEEL breakpoint proves is zero-re-resolve. The menu manifest
-            // does not emit these ids yet (that is the later bindings pass); wiring
-            // them here keeps the ops reachable through the one action dispatch.
-            "view.split_vertical" => {
+            // path the FEEL breakpoint proves is zero-re-resolve. Typed targets
+            // keep their menu and keyboard entry surfaces on one dispatch path.
+            GuiLocalHandler::SplitVertical => {
                 self.pane_split_focused(datum_gui_protocol::SplitOrientation::Vertical);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "split pane vertical");
                 true
             }
-            "view.split_horizontal" => {
+            GuiLocalHandler::SplitHorizontal => {
                 self.pane_split_focused(datum_gui_protocol::SplitOrientation::Horizontal);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "split pane horizontal");
                 true
             }
-            "view.close_pane" => {
+            GuiLocalHandler::ClosePane => {
                 self.pane_close_focused();
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "close focused pane");
                 true
             }
-            "view.focus_next" => {
+            GuiLocalHandler::FocusNext => {
                 self.pane_focus_next();
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "focus next pane");
                 true
             }
-            "view.focus_prev" => {
+            GuiLocalHandler::FocusPrevious => {
                 self.pane_focus_prev();
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "focus previous pane");
                 true
             }
-            "view.maximize_pane" => {
+            GuiLocalHandler::MaximizePane => {
                 if terminal_owns_maximize(
                     self.application_focus(),
                     self.workspace().ui.active_dock_tab,
@@ -169,12 +179,12 @@ impl Runtime {
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "toggle pane maximize");
                 true
             }
-            "view.preset_single" => {
+            GuiLocalHandler::PresetSingle => {
                 self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::Single);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "workspace preset single");
                 true
             }
-            "view.preset_board_schematic" => {
+            GuiLocalHandler::PresetBoardSchematic => {
                 self.pane_apply_preset(datum_gui_protocol::WorkspacePreset::BoardSchematic);
                 self.log_console_echo(
                     ConsoleFeedbackSource::Viewport,
@@ -182,12 +192,12 @@ impl Runtime {
                 );
                 true
             }
-            "view.fill_board" => {
+            GuiLocalHandler::FillBoard => {
                 self.pane_set_focused_content(datum_gui_protocol::PaneContent::Board);
                 self.log_console_echo(ConsoleFeedbackSource::Viewport, "focused pane shows board");
                 true
             }
-            "view.fill_schematic" => {
+            GuiLocalHandler::FillSchematic => {
                 self.pane_set_focused_content(datum_gui_protocol::PaneContent::Schematic);
                 self.log_console_echo(
                     ConsoleFeedbackSource::Viewport,
@@ -195,32 +205,16 @@ impl Runtime {
                 );
                 true
             }
-            // Secondary view-local actions (crosshair radio group, decision 023)
-            // and the unwired-narration fallback live in the runtime module to keep
-            // this monolith under its source-health ceiling.
-            other => self.activate_view_local_action(other),
-        }
-    }
-
-    /// Secondary `gui_local` view actions dispatched from
-    /// `activate_gui_local_menu_action`'s fallback: the `view.cursor.*` crosshair
-    /// radio group (decision 023 UVT-005), else the "unwired" narration.
-    pub(super) fn activate_view_local_action(&mut self, action: &str) -> bool {
-        use datum_gui_protocol::CrosshairStyle;
-        match action {
-            "view.cursor.full" => self.set_crosshair_style(CrosshairStyle::FullViewport),
-            "view.cursor.small" => self.set_crosshair_style(CrosshairStyle::Local),
-            "view.cursor.none" => self.set_crosshair_style(CrosshairStyle::None),
-            "view.console_history" => self.toggle_console_history(),
-            other => {
-                self.log_console_refusal_for_action(
-                    ConsoleFeedbackSource::Viewport,
-                    other,
-                    "View action is unavailable",
-                );
-                self.invalidate_frame();
-                true
+            GuiLocalHandler::CursorFull => {
+                self.set_crosshair_style(datum_gui_protocol::CrosshairStyle::FullViewport)
             }
+            GuiLocalHandler::CursorSmall => {
+                self.set_crosshair_style(datum_gui_protocol::CrosshairStyle::Local)
+            }
+            GuiLocalHandler::CursorNone => {
+                self.set_crosshair_style(datum_gui_protocol::CrosshairStyle::None)
+            }
+            GuiLocalHandler::ConsoleHistory => self.toggle_console_history(),
         }
     }
 

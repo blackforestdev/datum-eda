@@ -19207,7 +19207,8 @@
       "governing_docs": [
         "CLAUDE.md",
         "docs/AGENT_OPERATIONAL_PROCEDURES.md",
-        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md"
       ],
       "work_purpose": {
         "kind": "product_delivery",
@@ -19215,18 +19216,18 @@
       },
       "feature_delivery": {
         "ordinary_workflow": [
-          "Launch datum-gui and open the application menu bar; read each top-level menu and its entries as the GUI renders them.",
-          "Invoke Help -> Diagnostics (help.diagnostics) and Help -> Command Reference (help.commands): today each is advertised ENABLED but has no runtime handler and falls to generic 'View action is unavailable' narration -- after the fix each either opens its surface (a handler exists) or is shown disabled and truthfully exposed as unavailable.",
-          "Confirm help.about stays correctly DISABLED (the negative control: it has no handler and must not become enabled), and that the other currently-unbound rows (view.pane_zoom, view.fullscreen_stage, view.panels, view.reset, window.terminal, window.layout) render disabled-and-exposed rather than enabled-then-refusing.",
-          "Confirm working rows are NOT regressed: preferences.global.open, project.open and Documents navigation remain enabled and functional (their handlers live outside the partial action registry / via FocusNavigator)."
+          "Open Help on a native datum-gui launch and inspect Diagnostics and Command Reference. Both remain visible and unavailable with a truthful reason; keyboard attempts report that reason instead of executing a missing action.",
+          "Inspect About Datum as an unchanged disabled control; open Window -> Documents and confirm Navigator receives focus.",
+          "Open Edit -> Preferences through the existing menu and confirm the real Global Preferences dialog and controls are exposed."
         ],
         "safety_requirements": [
-          "Menu enablement is computed from genuine dispatch readiness via the existing shared action-registry/readiness owners; an entry is enabled IFF a runtime handler exists. A blanket consumer(key).is_some() over the intentionally-partial registry is forbidden -- it would REGRESS preferences.global.open/project.open (handlers outside the registry) and Documents (real FocusNavigator).",
-          "No missing feature is implemented to satisfy enablement; disabled entries stay visible and truthfully labeled unavailable, the activation fallback never presents as a working action, and docs/gui/menu_model.json is likely unchanged.",
-          "Negative tests cover help.about (stays disabled, the control) and every currently-unbound action (help.diagnostics, help.commands, view.pane_zoom/fullscreen_stage/panels/reset, window.terminal/layout) asserting disabled-and-exposed; regression tests assert the working rows above stay enabled; changes stay within the leased menu/registry/dispatch scope and touch no global_preferences_runtime or GP-CM05E files."
+          "Unimplemented Diagnostics and Command Reference do not dispatch or report success when attempted; their unavailable reason is exposed through accessibility and menu inspection.",
+          "Existing implemented Documents and Preferences stay reachable in a valid native Project context; partial pilot registry membership does not disable them.",
+          "Menu inspection, navigation and opening Preferences leave canonical Project files and journal unchanged; this correction adds no missing feature implementation or new mutation path."
         ],
         "qualification_followups": [
-          "Acceptance observable is the native menu drive on a real GUI build: help.diagnostics and help.commands resolve to work-or-truthfully-disabled (not enabled-then-refusing), help.about stays disabled (negative control), and the working rows (preferences.global.open/project.open/Documents) stay functional. The recorded WDQ-C01 capture (research/process-quality/evidence/wdq-c01-current/) documented the original enabled-then-refusing class; About itself is now the control."
+          "The shared resolver and focused model/runtime/render regressions cover unknown actions, other emitted unavailable keys and existing contextual admission. This bounded native observation does not assert exhaustive native coverage of every menu item or full GUI/product qualification.",
+          "All three native runs retain FAIL/exit1. Added Escape-dismissal step is explicitly outside this menu unit per PM/audit final scope classification; likely observer artifact is retained as dat-gp-escape-diagnostic-observation-tgqk, with cause unproven. Wrong Preferences PNG excluded. Only supported menu/control observations establish bounded availability; full visual/product qualification is unclaimed."
         ],
         "prerequisite_reasons": {},
         "development_ready": false,
@@ -19247,7 +19248,8 @@
           "crates/gui-app/src/application/runtime_menu_actions.rs",
           "crates/gui-app/src/editor/runtime_view_actions.rs",
           "docs/gui/menu_model.json",
-          "crates/gui-render/src/menu_chrome/action_readiness_tests.rs"
+          "crates/gui-render/src/menu_chrome/action_readiness_tests.rs",
+          "docs/reviews/workflow-delivery-rollout/gui-local-menu-readiness-delivery.json"
         ]
       }
     },
@@ -19266,7 +19268,8 @@
       "governing_docs": [
         "CLAUDE.md",
         "docs/AGENT_OPERATIONAL_PROCEDURES.md",
-        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
+        "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+        "docs/gui/DATUM_GUI_MENU_BINDINGS.md"
       ],
       "work_purpose": {
         "kind": "product_delivery",
@@ -19292,15 +19295,16 @@
       },
       "claim": {
         "agent": "codex-cli",
-        "harness": "codex",
-        "session": "codex-cli",
+        "harness": "codex-cli",
+        "session": "01a190d3-3e2e-7051-86b4-2470bde281b9",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "f87cbf053cd41095c8e7f02188ab4e2540e0a6d8",
+        "head": "a5993de7a07940ecc719df996ac3c9fb8a34536f",
         "claimed_at": "2026-10-31T08:20:24Z",
-        "heartbeat_at": "2026-10-31T08:20:24Z",
-        "expires_at": "2026-10-31T16:20:24Z",
+        "heartbeat_at": "2026-10-31T09:13:00Z",
+        "expires_at": "2026-10-31T17:13:00Z",
         "scope": [
-          "crates/gui-app/src/application/workspace_keyboard.rs"
+          "crates/gui-app/src/application/workspace_keyboard.rs",
+          "crates/engine-daemon/src/main.rs"
         ]
       }
     }
