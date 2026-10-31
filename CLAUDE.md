@@ -123,9 +123,15 @@ readiness records supply no product grant.
 ## Roadmap and editing authority
 
 Routine development follows PM059's **one-task workflow**: the verified manager
-records the bounded grant, implementer and file scope in one existing task record;
-the implementer fixes the Rust behavior, runs affected checks, obtains one actual
-independent review and lands it. A tracker claim alone grants nothing. Routine
+records the bounded grant, implementer, file scope **and the definition of done —
+one or two sentences of designer-visible behavior, fixed before work starts and
+never extensible from inside the work** — in one existing task record; the
+implementer fixes the Rust behavior, runs affected checks, obtains one actual
+independent review and lands it. Work whose done-statement cannot be written
+that way does not start. Milestone-sized work gets its done-statement
+owner-approved first, as one sentence, before any machinery may exist under it;
+acceptance criteria authored and graded by the same process that executes them
+anchor nothing (owner-ratified 2026-10-31, from the GP-CM05 overrun). A tracker claim alone grants nothing. Routine
 work needs no separate Frontier item/lease, completion graph, availability packet
 or qualification campaign. Record concise results with delivery. Explicit execution
 holds, conflicting ownership and retained owner-only decisions still stop their
