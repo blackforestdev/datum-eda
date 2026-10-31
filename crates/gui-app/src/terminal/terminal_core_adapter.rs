@@ -155,10 +155,14 @@ impl TerminalCoreSessionAdapter {
 
     pub(crate) fn take_render_state(
         &mut self,
+        scroll_offset: usize,
     ) -> Result<(RenderSnapshot, Vec<Damage>), TerminalCoreAdapterError> {
+        // Per-frame: window to the visible rows so cost is O(visible), not
+        // O(scrollback). The full snapshot stays reserved for the rare
+        // full-history queries (search, scroll-to-point).
         let snapshot = self
             .core
-            .render_snapshot()
+            .render_snapshot_window(scroll_offset)
             .map_err(TerminalCoreAdapterError::Snapshot)?;
         let damage = std::mem::take(&mut self.pending_render_damage);
         Ok((snapshot, damage))

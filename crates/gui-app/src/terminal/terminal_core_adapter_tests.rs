@@ -157,17 +157,64 @@ fn render_state_preserves_surface_pixels_and_consumes_damage_once() {
     adapter.apply_output(&mut lane, b"pixel-aware").unwrap();
     adapter.resize(20, 5, 200, 100).unwrap();
 
-    let (snapshot, first_damage) = adapter.take_render_state().unwrap();
+    let (snapshot, first_damage) = adapter.take_render_state(0).unwrap();
     assert_eq!(snapshot.size().pixels.width, 200);
     assert_eq!(snapshot.size().pixels.height, 100);
     assert_eq!(first_damage, vec![Damage::Full]);
 
-    let (_, second_damage) = adapter.take_render_state().unwrap();
+    let (_, second_damage) = adapter.take_render_state(0).unwrap();
     assert!(second_damage.is_empty());
     adapter.apply_output(&mut lane, b"!").unwrap();
-    let (_, incremental_damage) = adapter.take_render_state().unwrap();
+    let (_, incremental_damage) = adapter.take_render_state(0).unwrap();
     assert!(!incremental_damage.is_empty());
     assert!(!incremental_damage.contains(&Damage::Full));
+}
+
+#[test]
+fn windowed_render_state_is_screen_sized_and_visible_queries_index_it_directly() {
+    let mut adapter = adapter("windowed");
+    let mut lane = TerminalLaneState::default();
+    // Push far more than a screenful into scrollback.
+    let mut payload = Vec::new();
+    for index in 0..500u32 {
+        payload.extend_from_slice(format!("line{index}\r\n").as_bytes());
+    }
+    adapter.apply_output(&mut lane, &payload).unwrap();
+
+    let (snapshot, _) = adapter.take_render_state(0).unwrap();
+    let screen_rows = usize::from(snapshot.size().rows.get());
+
+    // The per-frame snapshot is EXACTLY the visible screen, independent of the
+    // 500 scrollback lines. A consumer that still re-sliced by a tail_start on
+    // this pre-windowed snapshot would mis-render; this pins the invariant.
+    assert_eq!(snapshot.rows().len(), screen_rows);
+    assert!(
+        snapshot.rows().all(|row| matches!(
+            row.source(),
+            datum_terminal_core::RenderRowSource::Screen { .. }
+        )),
+        "at scroll 0 every window row is a live screen row"
+    );
+
+    // Double-windowing guard: a visible-interaction query must treat window row
+    // i as snapshot row i. If it re-applied a tail_start to the pre-windowed
+    // snapshot it would return the wrong row and these assertions would fail.
+    for visible_row in 0..screen_rows {
+        let expected = snapshot
+            .rows()
+            .nth(visible_row)
+            .unwrap()
+            .logical_start()
+            .line;
+        let got = adapter
+            .logical_point_at_visible_cell(screen_rows, 0, visible_row, 0)
+            .unwrap()
+            .expect("visible cell resolves within the window");
+        assert_eq!(
+            got.line, expected,
+            "visible row {visible_row} must map to its own window row"
+        );
+    }
 }
 
 #[test]
@@ -389,14 +436,17 @@ fn osc8_urls_and_cwd_relative_paths_resolve_as_inert_link_targets() {
 fn retry_damage_union_obeys_the_existing_pending_damage_limit() {
     let mut adapter = adapter("bounded-retry");
     adapter.limits.pending_damage = datum_terminal_core::PendingDamageLimit::new(2).unwrap();
-    drop(adapter.take_render_state().unwrap());
+    drop(adapter.take_render_state(0).unwrap());
     adapter.merge_render_damage(&[Damage::Cursor, Damage::Title]);
-    let (_, older) = adapter.take_render_state().unwrap();
+    let (_, older) = adapter.take_render_state(0).unwrap();
     adapter.merge_render_damage(&[Damage::History, Damage::Graphics]);
     adapter.merge_render_damage(&older);
-    assert_eq!(adapter.take_render_state().unwrap().1, vec![Damage::Full]);
+    assert_eq!(adapter.take_render_state(0).unwrap().1, vec![Damage::Full]);
     adapter.merge_render_damage(&[Damage::Cursor, Damage::Cursor]);
-    assert_eq!(adapter.take_render_state().unwrap().1, vec![Damage::Cursor]);
+    assert_eq!(
+        adapter.take_render_state(0).unwrap().1,
+        vec![Damage::Cursor]
+    );
     adapter.merge_render_damage(&[Damage::Title, Damage::Full, Damage::History]);
-    assert_eq!(adapter.take_render_state().unwrap().1, vec![Damage::Full]);
+    assert_eq!(adapter.take_render_state(0).unwrap().1, vec![Damage::Full]);
 }

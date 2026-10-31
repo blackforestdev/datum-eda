@@ -45,29 +45,48 @@ pub(super) struct TerminalRowRenderContext<'a> {
 pub(super) fn prepare_terminal_graphics(
     snapshot: &RenderSnapshot,
     geometry: &TerminalScreenGeometry,
-    scroll_offset: usize,
     graphics: &mut Vec<PreparedTerminalGraphic>,
 ) {
     let screen: RectPx = geometry.screen.into();
-    let total_rows = snapshot.rows().len();
     let max_rows = usize::from(geometry.rows);
-    let scroll = scroll_offset.min(total_rows.saturating_sub(max_rows));
-    let first = total_rows.saturating_sub(max_rows + scroll);
+    // The snapshot is PRE-WINDOWED: its rows ARE the visible window. The leading
+    // `history_row_count()` rows are the history rows inside the window, and the
+    // first window row (when any history is present) carries the absolute
+    // history index of the window top. Map anchors into window positions from
+    // that, instead of a full-history tail_start.
+    let in_window_history = snapshot.history_row_count();
+    let window_top_history_index = snapshot.rows().next().and_then(|row| match row.source() {
+        RenderRowSource::History { index } => Some(index),
+        RenderRowSource::Screen { .. } => None,
+    });
     for graphic in snapshot.graphics() {
         let placement = graphic.placement();
         if placement.is_virtual() {
             continue;
         }
-        let (absolute_row, column, visible_pixel_width, visible_pixel_height) =
+        let (visible_row, column, visible_pixel_width, visible_pixel_height) =
             match graphic.resolution() {
-                GraphicAnchorResolution::History { row, column } => (row, column, 0, 0),
+                GraphicAnchorResolution::History { row, column } => {
+                    // Visible only if this absolute history index is inside the
+                    // window's history span [top, top + in_window_history).
+                    let Some(top) = window_top_history_index else {
+                        continue;
+                    };
+                    let Some(offset) = row.checked_sub(top) else {
+                        continue;
+                    };
+                    if offset >= in_window_history {
+                        continue;
+                    }
+                    (offset, column, 0, 0)
+                }
                 GraphicAnchorResolution::Screen {
                     row,
                     column,
                     visible_pixel_width,
                     visible_pixel_height,
                 } => (
-                    snapshot.history_row_count() + usize::from(row),
+                    in_window_history + usize::from(row),
                     column,
                     visible_pixel_width,
                     visible_pixel_height,
@@ -76,9 +95,6 @@ pub(super) fn prepare_terminal_graphics(
                 | GraphicAnchorResolution::Trimmed
                 | GraphicAnchorResolution::Unknown => continue,
             };
-        let Some(visible_row) = absolute_row.checked_sub(first) else {
-            continue;
-        };
         if visible_row >= max_rows || usize::from(column) >= usize::from(geometry.columns) {
             continue;
         }
@@ -133,15 +149,11 @@ pub(super) fn render_terminal_core_snapshot(
         resolve_background(Color::Default, snapshot.palette(), state.ui.terminal.theme),
     ));
 
-    let rows = snapshot.rows().collect::<Vec<_>>();
+    // The snapshot is PRE-WINDOWED: its rows already ARE the visible window
+    // (scroll was applied in `render_snapshot_window`). Iterate them directly;
+    // re-slicing by a tail_start here would double-window.
     let max_rows = usize::from(geometry.rows);
-    let scroll = state
-        .ui
-        .terminal
-        .scroll_offset
-        .min(rows.len().saturating_sub(max_rows));
-    let first = rows.len().saturating_sub(max_rows + scroll);
-    for (visible_row, row) in rows.iter().skip(first).take(max_rows).enumerate() {
+    for (visible_row, row) in snapshot.rows().take(max_rows).enumerate() {
         let y = screen.y + visible_row as f32 * geometry.metrics.height;
         render_row(
             row,

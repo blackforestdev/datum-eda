@@ -459,6 +459,119 @@ impl ScreenState {
         )
     }
 
+    /// Build a render snapshot of ONLY the visible window at `scroll_offset`.
+    ///
+    /// Unlike [`render_snapshot`](Self::render_snapshot), this never clones the
+    /// full scrollback. It materializes exactly `visible_rows` rows (the active
+    /// grid height), so the per-frame cost is O(visible) and independent of how
+    /// large history has grown. At `scroll_offset == 0` the window is precisely
+    /// the active grid and ZERO history rows are touched or cloned.
+    ///
+    /// Consumers must treat the result as PRE-WINDOWED: its rows already ARE the
+    /// visible window (`rows().len() == visible_rows`), and `history_row_count`
+    /// reports only the history rows INCLUDED in the window, not total history.
+    /// Keep [`render_snapshot`](Self::render_snapshot) for the rare full-history
+    /// operations (interactive search, scroll-to-logical-point).
+    pub fn render_snapshot_window(
+        &self,
+        limits: &CoreLimits,
+        scroll_offset: usize,
+    ) -> Result<crate::RenderSnapshot, SnapshotError> {
+        let visible_rows = self.active_grid().rows.len();
+        let history_count = if self.active_buffer == ScreenBuffer::Primary {
+            self.history.rows().len()
+        } else {
+            0
+        };
+        // The same windowing math used by the pointer/render scroll mapping:
+        // clamp the requested scroll to history, then window the tail.
+        let scroll = scroll_offset.min(history_count);
+        let tail_start = history_count - scroll;
+
+        // The snapshot cell limit is checked over the WINDOW, not full history.
+        let cells = visible_rows
+            .checked_mul(usize::from(self.size.columns.get()))
+            .ok_or(SnapshotError::CellLimit(
+                crate::LimitError::ArithmeticOverflow {
+                    kind: crate::LimitKind::SnapshotCells,
+                },
+            ))?;
+        limits
+            .snapshot_cells
+            .check(cells)
+            .map_err(SnapshotError::CellLimit)?;
+
+        let history = self.history.rows();
+        let grid_rows = &self.active_grid().rows;
+        // The window is the `history_part` tail history rows (absolute indices tail_start..) followed
+        // by the first `grid_part` active-grid rows; grid_part is 0 only when the window lies wholly in
+        // history. Iterate each half's slice with enumerate() rather than range-indexing by the
+        // absolute index (clippy::needless_range_loop). history_count - tail_start == the clamped scroll.
+        let history_part = (history_count - tail_start).min(visible_rows);
+        let grid_part = visible_rows - history_part;
+        let window_history_rows = history_part;
+        let mut rows = Vec::with_capacity(visible_rows);
+        for (offset, row) in history
+            .iter()
+            .skip(tail_start)
+            .take(history_part)
+            .enumerate()
+        {
+            // Clone only the history cells that fall inside the window.
+            rows.push(crate::RenderRow::new(
+                crate::RenderRowSource::History {
+                    index: tail_start + offset,
+                },
+                crate::LogicalPoint {
+                    line: row.logical_line,
+                    cluster: row.cluster_start,
+                },
+                row.cells.clone(),
+                row.soft_wrapped,
+            ));
+        }
+        for (row_index, row) in grid_rows.iter().take(grid_part).enumerate() {
+            rows.push(crate::RenderRow::new(
+                crate::RenderRowSource::Screen {
+                    row: row_index.min(u16::MAX as usize) as u16,
+                },
+                crate::LogicalPoint {
+                    line: row.logical_line,
+                    cluster: row.cluster_start,
+                },
+                row.cells.clone(),
+                row.soft_wrapped,
+            ));
+        }
+        let graphics = self
+            .graphics
+            .iter()
+            .cloned()
+            .map(|placement| {
+                let resolution = self.resolve_graphic(placement.id());
+                crate::RenderGraphic::new(placement, resolution)
+            })
+            .collect();
+        crate::RenderSnapshot::new(
+            self.size,
+            self.active_buffer,
+            rows,
+            window_history_rows,
+            self.history.fingerprint().2,
+            self.cursor,
+            self.modes,
+            crate::RenderPalette::new(
+                self.palette,
+                self.default_foreground,
+                self.default_background,
+                self.cursor_color,
+            ),
+            self.selection,
+            graphics,
+            limits.snapshot_cells,
+        )
+    }
+
     pub(crate) fn active_grid(&self) -> &GridBuffer {
         match self.active_buffer {
             ScreenBuffer::Primary => &self.primary,
@@ -525,5 +638,15 @@ impl TerminalCore {
 
     pub fn render_snapshot(&self) -> Result<crate::RenderSnapshot, SnapshotError> {
         self.state.render_snapshot(&self.limits)
+    }
+
+    /// Windowed, O(visible) render snapshot for the per-frame render and visible
+    /// interaction queries. See [`ScreenState::render_snapshot_window`].
+    pub fn render_snapshot_window(
+        &self,
+        scroll_offset: usize,
+    ) -> Result<crate::RenderSnapshot, SnapshotError> {
+        self.state
+            .render_snapshot_window(&self.limits, scroll_offset)
     }
 }

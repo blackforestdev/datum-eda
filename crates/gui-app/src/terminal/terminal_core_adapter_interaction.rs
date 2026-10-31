@@ -65,10 +65,10 @@ impl TerminalCoreSessionAdapter {
     ) -> Result<Option<LogicalPoint>, TerminalCoreAdapterError> {
         let snapshot = self
             .core
-            .render_snapshot()
+            .render_snapshot_window(scroll_offset)
             .map_err(TerminalCoreAdapterError::Snapshot)?;
         Ok(
-            visible_row_from_snapshot(&snapshot, visible_rows, scroll_offset, visible_row)
+            visible_row_from_snapshot(&snapshot, visible_rows, visible_row)
                 .map(|row| logical_point_in_row(row, column)),
         )
     }
@@ -148,11 +148,9 @@ impl TerminalCoreSessionAdapter {
     ) -> Result<Option<(HyperlinkId, String)>, TerminalCoreAdapterError> {
         let snapshot = self
             .core
-            .render_snapshot()
+            .render_snapshot_window(scroll_offset)
             .map_err(TerminalCoreAdapterError::Snapshot)?;
-        let Some(row) =
-            visible_row_from_snapshot(&snapshot, visible_rows, scroll_offset, visible_row)
-        else {
+        let Some(row) = visible_row_from_snapshot(&snapshot, visible_rows, visible_row) else {
             return Ok(None);
         };
         let Some(id) = row.cells().get(column).and_then(|cell| cell.hyperlink) else {
@@ -177,11 +175,9 @@ impl TerminalCoreSessionAdapter {
     ) -> Result<Option<TerminalLinkTarget>, TerminalCoreAdapterError> {
         let snapshot = self
             .core
-            .render_snapshot()
+            .render_snapshot_window(scroll_offset)
             .map_err(TerminalCoreAdapterError::Snapshot)?;
-        let Some(row) =
-            visible_row_from_snapshot(&snapshot, visible_rows, scroll_offset, visible_row)
-        else {
+        let Some(row) = visible_row_from_snapshot(&snapshot, visible_rows, visible_row) else {
             return Ok(None);
         };
         if let Some(id) = row.cells().get(column).and_then(|cell| cell.hyperlink)
@@ -207,9 +203,9 @@ impl TerminalCoreSessionAdapter {
     ) -> Result<TerminalAccessibilitySnapshot, TerminalCoreAdapterError> {
         let snapshot = self
             .core
-            .render_snapshot()
+            .render_snapshot_window(scroll_offset)
             .map_err(TerminalCoreAdapterError::Snapshot)?;
-        let rows = visible_rows_from_snapshot(&snapshot, visible_rows, scroll_offset);
+        let rows = visible_rows_from_snapshot(&snapshot, visible_rows);
         let selection = snapshot.selection();
         let cursor = snapshot.cursor().position;
         let mut text = String::new();
@@ -420,27 +416,27 @@ fn local_cwd_path(cwd: &str) -> Option<&str> {
         .or_else(|| cwd.starts_with('/').then_some(cwd))
 }
 
+// These helpers consume a PRE-WINDOWED snapshot (built via
+// `render_snapshot_window`): its rows already ARE the visible window, so
+// window row `i` is snapshot row `i`. They must NOT re-slice by a tail_start,
+// or they would double-window and return the wrong row.
 fn visible_row_from_snapshot(
     snapshot: &RenderSnapshot,
     visible_rows: usize,
-    scroll_offset: usize,
     visible_row: usize,
 ) -> Option<&RenderRow> {
-    visible_rows_from_snapshot(snapshot, visible_rows, scroll_offset)
-        .get(visible_row.min(visible_rows.max(1).saturating_sub(1)))
-        .copied()
+    let len = snapshot.rows().len();
+    if len == 0 {
+        return None;
+    }
+    let bound = visible_rows.max(1).min(len);
+    snapshot
+        .rows()
+        .nth(visible_row.min(bound.saturating_sub(1)))
 }
 
-fn visible_rows_from_snapshot(
-    snapshot: &RenderSnapshot,
-    visible_rows: usize,
-    scroll_offset: usize,
-) -> Vec<&RenderRow> {
-    let rows = snapshot.rows().collect::<Vec<_>>();
-    let shown = visible_rows.max(1);
-    let scroll = scroll_offset.min(rows.len().saturating_sub(shown));
-    let first = rows.len().saturating_sub(shown + scroll);
-    rows.into_iter().skip(first).take(shown).collect()
+fn visible_rows_from_snapshot(snapshot: &RenderSnapshot, visible_rows: usize) -> Vec<&RenderRow> {
+    snapshot.rows().take(visible_rows.max(1)).collect()
 }
 
 fn logical_point_in_row(row: &RenderRow, column: usize) -> LogicalPoint {

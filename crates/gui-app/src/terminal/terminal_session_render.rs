@@ -221,17 +221,25 @@ impl TerminalSessionRegistry {
                 );
                 continue;
             };
-            let (snapshot, damage) = match self.sessions[index].core.take_render_state() {
-                Ok(state) => state,
-                Err(error) => {
-                    // Earlier leaves may already have consumed damage. Roll
-                    // those back even though no prepared composition exists.
-                    for (previous, _, _, damage) in snapshots {
-                        self.sessions[previous].core.merge_render_damage(&damage);
-                    }
-                    return Err(error);
-                }
+            // Window each session to the scroll offset of the lane the renderer
+            // will use for it, so the pre-windowed snapshot matches downstream.
+            let scroll_offset = if index == self.active_index {
+                active_lane.scroll_offset
+            } else {
+                self.sessions[index].parked_lane.scroll_offset
             };
+            let (snapshot, damage) =
+                match self.sessions[index].core.take_render_state(scroll_offset) {
+                    Ok(state) => state,
+                    Err(error) => {
+                        // Earlier leaves may already have consumed damage. Roll
+                        // those back even though no prepared composition exists.
+                        for (previous, _, _, damage) in snapshots {
+                            self.sessions[previous].core.merge_render_damage(&damage);
+                        }
+                        return Err(error);
+                    }
+                };
             snapshots.push((index, session_id, snapshot, damage));
         }
         // Finish mutable snapshot consumption before borrowing projections.

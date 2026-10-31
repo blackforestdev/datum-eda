@@ -156,7 +156,7 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
     let before = loop {
         runtime.poll_terminal_output();
         let core = runtime.terminal_sessions.active_core_mut();
-        let (snapshot, damage) = core.take_render_state().unwrap();
+        let (snapshot, damage) = core.take_render_state(0).unwrap();
         core.merge_render_damage(&damage);
         let text: String = snapshot
             .rows()
@@ -193,7 +193,7 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
             .is_none_or(|layout| layout.history_panel.is_none())
     );
     let core = runtime.terminal_sessions.active_core_mut();
-    let (after, damage) = core.take_render_state().unwrap();
+    let (after, damage) = core.take_render_state(0).unwrap();
     assert_eq!(
         before, after,
         "closed preparation preserves terminal bytes and state"
@@ -204,7 +204,7 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
     );
     // A deliberate hidden snapshot consumes the same observable damage. This
     // control makes the absence assertion sensitive to that forbidden work.
-    assert!(core.take_render_state().unwrap().1.is_empty());
+    assert!(core.take_render_state(0).unwrap().1.is_empty());
     core.merge_render_damage(&damage);
     runtime.session.workspace_mut().ui.active_dock_tab = Some(DockTab::Terminal);
     runtime
@@ -243,7 +243,7 @@ fn native_shared_device_hosts_preserve_hidden_terminal_and_console_work() {
         runtime
             .terminal_sessions
             .active_core_mut()
-            .take_render_state()
+            .take_render_state(0)
             .unwrap()
             .1
             .is_empty(),

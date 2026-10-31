@@ -453,7 +453,7 @@ fn sixel_snapshot_produces_clipped_gpu_image_placement() {
     assert_eq!(snapshot.graphics().len(), 1);
     let geometry = geometry();
     let mut graphics = Vec::new();
-    prepare_terminal_graphics(&snapshot, &geometry, 0, &mut graphics);
+    prepare_terminal_graphics(&snapshot, &geometry, &mut graphics);
     assert_eq!(graphics.len(), 1);
     let graphic = &graphics[0];
     assert_eq!(graphic.graphic.placement().width(), 2);

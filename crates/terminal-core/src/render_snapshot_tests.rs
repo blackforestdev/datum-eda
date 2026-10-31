@@ -296,3 +296,117 @@ fn full_visible_damage_retains_independent_history_invalidation() {
         vec![Damage::Full, Damage::History]
     );
 }
+
+/// A 4x2 core whose scrollback limit is large enough to hold the pushed lines,
+/// so the windowed snapshot can be exercised against deep history.
+fn windowed_core(history_lines: usize) -> TerminalCore {
+    TerminalCore::new(
+        CoreLimits::try_from(CoreLimitValues {
+            parameter_count: 64,
+            parameter_digits: 32,
+            parameter_value: usize::MAX,
+            subparameter_count: 64,
+            intermediate_bytes: 64,
+            control_string_bytes: 1 << 20,
+            cluster_bytes: 4_096,
+            title_bytes: 4_096,
+            working_directory_bytes: 4_096,
+            clipboard_bytes: 1 << 20,
+            hyperlink_bytes: 1 << 20,
+            input_bytes: 1 << 20,
+            keyboard_stack: 64,
+            notification_bytes: 4_096,
+            reply_bytes: 4_096,
+            pending_events: 1_024,
+            pending_damage: 1 << 16,
+            history_lines,
+            history_bytes: 1 << 24,
+            graphic_objects: 128,
+            graphic_pixels: 1 << 16,
+            graphic_decoded_bytes: 1 << 18,
+            graphic_frames: 128,
+            compression_ratio: 1_024,
+            parser_work: 1 << 20,
+            search_work: 1 << 20,
+            reflow_work: 1 << 20,
+            screen_cells: 1 << 20,
+            snapshot_cells: 1 << 20,
+        })
+        .unwrap(),
+        TerminalSize::new(4, 2, 40, 20).unwrap(),
+    )
+    .unwrap()
+}
+
+/// Print one distinct glyph per logical line and scroll it, driving the older
+/// lines into scrollback history.
+fn push_history_lines(terminal: &mut TerminalCore, count: usize) {
+    for index in 0..count {
+        let glyph = char::from(b'a' + (index % 26) as u8);
+        terminal.apply(Action::Print(glyph)).unwrap();
+        terminal.reduce(ScreenAction::CarriageReturn).unwrap();
+        terminal.reduce(ScreenAction::LineFeed).unwrap();
+    }
+}
+
+#[test]
+fn render_snapshot_window_is_bounded_and_independent_of_scrollback_depth() {
+    let mut small = windowed_core(1 << 20);
+    push_history_lines(&mut small, 1_000);
+    let mut large = windowed_core(1 << 20);
+    push_history_lines(&mut large, 5_000);
+
+    let visible_rows = small.state().active_grid().rows.len();
+    let small_window = small.render_snapshot_window(0).unwrap();
+    let large_window = large.render_snapshot_window(0).unwrap();
+
+    // The per-frame window is exactly the visible screen in BOTH cases, even
+    // though history differs by thousands of rows: cost no longer scales with
+    // scrollback.
+    assert_eq!(small_window.rows().len(), visible_rows);
+    assert_eq!(large_window.rows().len(), visible_rows);
+    assert_eq!(small_window.rows().len(), large_window.rows().len());
+
+    // Full history genuinely differs, so the window's independence is real.
+    assert!(
+        large.render_snapshot().unwrap().history_row_count()
+            > small.render_snapshot().unwrap().history_row_count()
+    );
+
+    // At scroll 0 NO history row is touched; every window row is a live screen
+    // row. This is the whole point of the windowed builder.
+    assert_eq!(small_window.history_row_count(), 0);
+    assert!(
+        small_window
+            .rows()
+            .all(|row| matches!(row.source(), RenderRowSource::Screen { .. }))
+    );
+}
+
+#[test]
+fn render_snapshot_window_maps_scroll_to_the_expected_history_slice() {
+    let mut terminal = windowed_core(1 << 20);
+    push_history_lines(&mut terminal, 1_000);
+    let full = terminal.render_snapshot().unwrap();
+    let history_count = full.history_row_count();
+    let full_rows = full.rows().collect::<Vec<_>>();
+
+    let scroll = 3;
+    let window = terminal.render_snapshot_window(scroll).unwrap();
+    let tail_start = history_count - scroll;
+
+    // The window's first row maps to absolute history index history_count - k.
+    assert_eq!(
+        window.rows().next().unwrap().source(),
+        RenderRowSource::History { index: tail_start }
+    );
+    // scroll (3) exceeds the two visible rows, so the window is pure history.
+    assert_eq!(window.history_row_count(), window.rows().len());
+
+    // Every window row equals the matching absolute row of the full snapshot.
+    for (offset, row) in window.rows().enumerate() {
+        let expected = full_rows[tail_start + offset];
+        assert_eq!(row.source(), expected.source());
+        assert_eq!(row_text(row), row_text(expected));
+    }
+}

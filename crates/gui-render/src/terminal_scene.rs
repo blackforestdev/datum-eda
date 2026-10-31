@@ -119,12 +119,7 @@ pub(super) fn prepare_graphics(
             .find(|candidate| candidate.session_id == pane.session_id)
             .map(|candidate| candidate.geometry)
             .unwrap_or(root_geometry);
-        crate::terminal_core_render::prepare_terminal_graphics(
-            &pane.snapshot,
-            &geometry,
-            pane.lane.scroll_offset,
-            sink,
-        );
+        crate::terminal_core_render::prepare_terminal_graphics(&pane.snapshot, &geometry, sink);
     }
 }
 

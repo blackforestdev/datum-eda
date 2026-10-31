@@ -137,15 +137,13 @@ impl TerminalSessionRenderCache {
                 lane.theme,
             ),
         ));
-        let rows = snapshot.rows().collect::<Vec<_>>();
+        // The snapshot is PRE-WINDOWED: its rows already ARE the visible window
+        // (scroll applied in `render_snapshot_window`). Take them directly;
+        // re-slicing by a tail_start here would double-window. `scroll` is kept
+        // only as a cache-invalidation key so a scroll change forces a rebuild.
         let max_rows = usize::from(geometry.rows);
-        let scroll = lane.scroll_offset.min(rows.len().saturating_sub(max_rows));
-        let first = rows.len().saturating_sub(max_rows + scroll);
-        let visible = rows
-            .into_iter()
-            .skip(first)
-            .take(max_rows)
-            .collect::<Vec<_>>();
+        let scroll = lane.scroll_offset;
+        let visible = snapshot.rows().take(max_rows).collect::<Vec<_>>();
         let global_dirty = self.screen != Some(screen)
             || self.columns != geometry.columns
             || self.palette.as_ref() != Some(snapshot.palette())
