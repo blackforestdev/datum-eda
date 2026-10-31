@@ -226,6 +226,11 @@ campaign.
 - PM022 source health: no new oversized modules or invented ceiling exceptions.
   Touching legacy debt requires real ownership extraction and a downward ratchet;
   forwarding/include splits are not decomposition. Load its policy before such edits.
+- Never launch datum-gui, GUI drives, captures or screenshots on the owner's
+  live display or active session (owner-ratified 2026-10-31, after three weeks
+  of test popups on the owner's desktop). GUI verification runs only in
+  isolated owned compositor envelopes (headless/offscreen); a check that
+  cannot run isolated is deferred, not run live.
 - Every write uses the canonical engine mutation/journal route. Test against real
   designs; use governed fixtures, not invented product evidence.
 - Rust proof/Clippy/release/smoke uses the guarded runner; no proof artifacts in
