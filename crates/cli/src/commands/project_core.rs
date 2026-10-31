@@ -353,12 +353,14 @@ pub(crate) fn project_bound_component_pads(
     project: &LoadedNativeProject,
     model: Option<&eda_engine::substrate::DesignModel>,
 ) -> Result<Vec<PlacedPad>> {
-    if !project
+    // No placed component Pads to project. A board that carries placements but no adopted Pads
+    // still runs the projection below, so an unadopted placement is refused rather than silently
+    // emitted at footprint-local coordinates.
+    if project
         .board
         .component_pads
         .values()
-        .flatten()
-        .any(|p| p.source_binding.is_some())
+        .all(|pads| pads.is_empty())
     {
         return Ok(vec![]);
     }
@@ -374,6 +376,22 @@ pub(crate) fn project_bound_component_pads(
         model.materialized_source_shard_value(eda_engine::substrate::SourceShardKind::BoardRoot)?;
     let projection =
         eda_engine::substrate::component_pad_source::component_pad_projection(model, &board)?;
+    // Mirror the engine/native placement authority: a component carrying a package placement whose
+    // Pads are not adopted (no journaled materialization) is an incomplete placed state. The engine
+    // refuses to place it and the native/render path refuses to draw it, so copper CAM refuses too
+    // -- never a silent emission at footprint-local coordinates (bead
+    // dat-component-pad-cam-transform-ab4v). A component with no placement is not placed and falls
+    // through to the identity passthrough in the copper-layer context.
+    let placed_unadopted: Vec<_> = projection
+        .unadopted_packages
+        .iter()
+        .filter(|id| project.board.packages.contains_key(&id.to_string()))
+        .copied()
+        .collect();
+    anyhow::ensure!(
+        placed_unadopted.is_empty(),
+        "placed component Pad sources are unadopted (no journaled materialization); copper CAM refuses to emit them at footprint-local coordinates: {placed_unadopted:?}"
+    );
     anyhow::ensure!(
         projection.unavailable.is_empty(),
         "placed Pad exact source geometry unavailable: {:?}",

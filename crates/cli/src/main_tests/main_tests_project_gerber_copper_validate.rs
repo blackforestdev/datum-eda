@@ -346,3 +346,98 @@ fn project_validate_gerber_copper_layer_uses_resolver_materialized_board_state()
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_export_gerber_copper_layer_refuses_unadopted_placed_component_pads() {
+    // dat-component-pad-cam-transform-ab4v: a placed component (a package placement is present)
+    // whose Pads carry no journaled adoption is an incomplete placed state. The engine placement
+    // authority refuses to place it and the native/render path refuses to draw it, so copper CAM
+    // must REFUSE LOUDLY -- never silently emit the Pad at footprint-local coordinates. This is the
+    // render==CAM fidelity law: both defer to the one authority and both refuse the incomplete state.
+    let root = unique_project_root("datum-eda-cli-project-gerber-copper-unadopted");
+    create_native_project(&root, Some("Gerber Copper Unadopted Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let component_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Gerber Copper Unadopted Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {
+                    component_uuid.to_string(): {
+                        "uuid": component_uuid,
+                        "part": Uuid::new_v4(),
+                        "package": Uuid::new_v4(),
+                        "reference": "U1",
+                        "value": "",
+                        "position": { "x": 20000000, "y": 0 },
+                        "rotation": 90,
+                        "layer": 1,
+                        "locked": false
+                    }
+                },
+                "component_pads": {
+                    component_uuid.to_string(): [
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "1",
+                            "position": { "x": -2700000, "y": -1905000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "circle",
+                            "diameter_nm": 500000,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        }
+                    ]
+                },
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let gerber_path = root.join("top-copper.gbr");
+    let export_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "export-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--out",
+        gerber_path.to_str().unwrap(),
+    ])
+    .expect("export CLI should parse");
+    let error = execute(export_cli).expect_err(
+        "copper export must refuse an unadopted placed component, not emit local coords",
+    );
+    let rendered = format!("{error:#}");
+    assert!(
+        rendered.contains("unadopted"),
+        "refusal must name the unadopted placement, got: {rendered}"
+    );
+    assert!(
+        !gerber_path.exists(),
+        "a refused copper export must not write a Gerber carrying footprint-local pad coordinates"
+    );
+
+    let _ = std::fs::remove_dir_all(&root);
+}

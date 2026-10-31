@@ -21,6 +21,15 @@ pub(super) fn resolve_native_project_copper_layer_context(
         .map(|value| serde_json::from_value(value).context("failed to parse board pad"))
         .collect::<Result<Vec<PlacedPad>>>()?;
     for (component_key, component_pads) in &project.board.component_pads {
+        // Placed components (those carrying a package placement) defer to the engine placement
+        // authority via project_bound_component_pads below: bound Pads are transformed to board
+        // coordinates there, and an unadopted placement is refused there. Only a component with no
+        // placement falls through here, where its stored position is already a board coordinate
+        // (identity passthrough). This keeps footprint-local coordinates out of copper CAM
+        // (bead dat-component-pad-cam-transform-ab4v).
+        if project.board.packages.contains_key(component_key) {
+            continue;
+        }
         let component_uuid = Uuid::parse_str(component_key).with_context(|| {
             format!(
                 "failed to parse component UUID in {}",
