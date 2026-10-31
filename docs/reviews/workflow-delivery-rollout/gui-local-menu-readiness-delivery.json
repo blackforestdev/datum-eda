@@ -1,0 +1,68 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "7960c39cfdf9976190ed9fffa71cef75208d6549",
+  "launch_command": "/var/tmp/datum-menu-readiness-0947015b-ae27-4495-a09a-c463461643eb/bin/datum-gui --project-root /tmp/datum-product-allocation-7s7hbz_m/menu-observation-stable/project",
+  "workflow_results": {
+    "Open Help on a native datum-gui launch and inspect Diagnostics and Command Reference. Both remain visible and unavailable with a truthful reason; keyboard attempts report that reason instead of executing a missing action.": true,
+    "Inspect About Datum as an unchanged disabled control; open Window -> Documents and confirm Navigator receives focus.": true,
+    "Open Edit -> Preferences through the existing menu and confirm the real Global Preferences dialog and controls are exposed.": true
+  },
+  "safety_results": {
+    "Unimplemented Diagnostics and Command Reference do not dispatch or report success when attempted; their unavailable reason is exposed through accessibility and menu inspection.": true,
+    "Existing implemented Documents and Preferences stay reachable in a valid native Project context; partial pilot registry membership does not disable them.": true,
+    "Menu inspection, navigation and opening Preferences leave canonical Project files and journal unchanged; this correction adds no missing feature implementation or new mutation path.": true
+  },
+  "source_scope_sha256": {
+    "crates/gui-protocol/src/gui_menu_model.rs": "2a2b17ccbc4430391b567ffa03a0f150a0dbfb80ad4c3d8d5265c1c00ef5c303",
+    "crates/gui-protocol/src/gui_menu_model/action_registry.rs": "b3aff61c1d78ba2aebf40666a609cc2b518b795822ec8c7542f9340aeeac99fe",
+    "crates/gui-protocol/src/gui_menu_model/action_registry/tests.rs": "6516bb4ad6b16fa9dde8123f80b15bfc4a146ea1cd26e83a089530907b5c3e9b",
+    "crates/gui-app/src/application/runtime_menu_actions.rs": "4e1c201df2aa354efdb12a0bfc20093fbfe70ca7f87facfd077b4c067b5657e3",
+    "crates/gui-app/src/editor/runtime_view_actions.rs": "29f8da05283588dd76917a010082cbc31002dd4eb7580546044a814b6620b5fd",
+    "crates/gui-render/src/menu_chrome/action_readiness_tests.rs": "18a587920e9a25e09e8196bddbf5f608a222719b2bfed2699b9aafdcc5af20fc"
+  },
+  "binary_sha256": {
+    "datum-gui": "40f5383bfe136a468b3414390bb079174132ceb798607ca3e4c99c8642f81cbe",
+    "datum-eda": "ca418959e104f507f3e81a44061accf8fd0afdcb64e2381f5b0fce21f197bd3a",
+    "eda-engine-daemon": "ee99f2327b5136bc56635aa5022a6403d63e9b36dfeed9c3e489edddcd7f602f"
+  },
+  "supported_observations": [
+    "Current Help Diagnostics/Command Reference visibly disabled with accessible reasons and truthful native keyboard refusals.",
+    "About baseline preserved; Documents actual Navigator focus.",
+    "Preferences actual dialog/control exposure via AT-SPI; wrong submenu PNG excluded as dialog pixels.",
+    "Canonical Project unchanged; bounded source/component invariants independently reviewed."
+  ],
+  "raw_native_runs": {
+    "menu-result.json": "FAIL",
+    "menu-result-continuation.json": "FAIL",
+    "menu-result-stable.json": "FAIL"
+  },
+  "limits": [
+    "No whole native-run, visual/content-identity or full product qualification acceptance.",
+    "Root-added Escape step explicitly outside unit; source-equivalent unchanged callback path, actual cause unproven; retained observer intake dat-gp-escape-diagnostic-observation-tgqk.",
+    "Only bounded accepted menu observations are represented by workflow results; source-equivalent evidence reused with fingerprints."
+  ],
+  "review": {
+    "assessor": "audit-agent-01",
+    "session": "0cf9c953-8ea9-4f32-8411-cac7d36d1e05",
+    "manager": "PM-Agent-01",
+    "manager_session": "709f6d61-59a8-4817-acd9-50667d9bfd16",
+    "disposition": "Bounded menu unit accepted; original full native runs retain failed status."
+  },
+  "raw_artifacts": {
+    "menu-result-stable.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/menu-result-stable.json",
+      "sha256": "e819288ef2dc2fe0e179b758a80ec5fb9a3ae992d930749af1c4e3018149b99d",
+      "retention": "prunable machine-local; not committed"
+    },
+    "menu-stable-diagnosis.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/menu-stable-diagnosis.json",
+      "sha256": "5d33dd7a28862ca45b0dd00c40be8c817f0f9d3c935a08ac2f5481859a836244",
+      "retention": "prunable machine-local; not committed"
+    },
+    "menu-snapshot-build-results.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/menu-snapshot-build-results.json",
+      "sha256": "420d957cdd9ceaf60d6d3cdc1448a454449fecdbf66bb5e8cd463f6b8fe03c9f",
+      "retention": "prunable machine-local; not committed"
+    }
+  }
+}

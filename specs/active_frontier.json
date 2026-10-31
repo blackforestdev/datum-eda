@@ -19196,10 +19196,10 @@
       "key": "GUI-LOCAL-MENU-ENABLEMENT-TRUTHFULNESS",
       "issue_id": "dat-gui-local-readiness-uev",
       "title": "Make GUI-local menu enablement truthful (enabled IFF a dispatch handler exists)",
-      "summary": "Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission + 2026-10-31 preflight amendment, ~80%-to-behavior allocation): GuiMenuItem::is_phase_one_enabled accepts any GuiLocal binding while the runtime dispatch lacks handlers for several advertised actions, so ENABLED entries fall through to generic 'View action is unavailable' narration. Live defects to make truthful: help.diagnostics and help.commands (enabled, no handler) plus view.pane_zoom/fullscreen_stage/panels/reset and window.terminal/layout; help.about is ALREADY correctly disabled and serves as the negative control. Deliver a consumer-aware enablement contract (enabled IFF a runtime dispatch handler exists; unbound entries disabled yet truthfully exposed) via the existing shared action-registry/readiness owners -- NOT a blanket consumer(key).is_some(), which would REGRESS working rows (preferences.global.open/project.open have handlers outside the intentionally-partial registry; Documents uses a real FocusNavigator). No missing feature is implemented and docs/gui/menu_model.json is likely unchanged. PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane and Preferences ownership is preserved.",
+      "summary": "Shared typed readiness/dispatch landed in7960c39c: unbuilt and unknown GUI-local commands are truthfully unavailable; existing Preferences/Documents/view handlers retain their behavior.26focused regressions and actual bounded menu observations independently accepted. Source-pinned availability evidence records all3rawnativeFAILs and excludes wrong Preferences pixels; Escape diagnostic is separate tgqk intake. Lease released; broader qualification remains open.",
       "order": 129,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -19230,28 +19230,13 @@
           "All three native runs retain FAIL/exit1. Added Escape-dismissal step is explicitly outside this menu unit per PM/audit final scope classification; likely observer artifact is retained as dat-gp-escape-diagnostic-observation-tgqk, with cause unproven. Wrong Preferences PNG excluded. Only supported menu/control observations establish bounded availability; full visual/product qualification is unclaimed."
         ],
         "prerequisite_reasons": {},
-        "development_ready": false,
-        "ordinary_evidence": []
-      },
-      "claim": {
-        "agent": "codex-cli",
-        "harness": "codex-cli",
-        "session": "01a190d3-3e2e-7051-86b4-2470bde281b9",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "ded05c276ff02865064367fce6df3e7ff093e632",
-        "claimed_at": "2026-10-31T08:19:24Z",
-        "heartbeat_at": "2026-10-31T08:22:42Z",
-        "expires_at": "2026-10-31T16:22:42Z",
-        "scope": [
-          "crates/gui-protocol/src/gui_menu_model.rs",
-          "crates/gui-protocol/src/gui_menu_model",
-          "crates/gui-app/src/application/runtime_menu_actions.rs",
-          "crates/gui-app/src/editor/runtime_view_actions.rs",
-          "docs/gui/menu_model.json",
-          "crates/gui-render/src/menu_chrome/action_readiness_tests.rs",
+        "development_ready": true,
+        "ordinary_evidence": [
           "docs/reviews/workflow-delivery-rollout/gui-local-menu-readiness-delivery.json"
         ]
-      }
+      },
+      "claim": null,
+      "landing_commit": "7960c39cfdf9976190ed9fffa71cef75208d6549"
     },
     {
       "key": "ADVERTISED-ZOOM-OUT-SHORTCUT-DISPATCH",
@@ -19284,10 +19269,11 @@
         "safety_requirements": [
           "The shortcut REUSES the existing view.zoom_out action (runtime_view_actions handler); no new zoom mechanism, product rule or camera behavior is introduced -- bounded keyboard-dispatch integration only.",
           "Ctrl+- is dispatched only from workspace/board keyboard focus via workspace_keyboard::character_action; a focused terminal keeps its keystrokes (terminal screen-authority preserved; no edit to terminal routing).",
-          "Changes stay within the leased application/workspace_keyboard.rs scope and its focused tests; a negative test asserts the board does not zoom while a terminal is focused."
+          "Shortcut implementation stays within the leased workspace_keyboard.rs owner and focused production dispatch/focus regressions; the separate PM-authorized daemon collapsed-if cleanup preserves lifecycle behavior. Native Terminal ownership plus the unchanged production key-route exclusion supports no workspace zoom under Terminal focus; no direct fresh negative camera observation is claimed."
         ],
         "qualification_followups": [
-          "Acceptance observable is the native keyboard drive on a real GUI build: an exact ControlLeft/Minus press-release produces a fresh post-zoom camera publication (the retained-initial-state result in the C04 run01 repro, .datum/scratch/s5a-c04-managed-20261018/native-filled-board-graphic-01/result.json, is the negative baseline)."
+          "Acceptance observable is the native keyboard drive on a real GUI build: an exact ControlLeft/Minus press-release produces a fresh post-zoom camera publication (the retained-initial-state result in the C04 run01 repro, .datum/scratch/s5a-c04-managed-20261018/native-filled-board-graphic-01/result.json, is the negative baseline).",
+          "Two raw native runs remain FAIL/exit1 because of over-added diagnostic assertions/readback; actual Board zoom publication is fresh and direct. Terminal discrimination is accepted from native focus/input antecedents plus unchanged production routing exclusion and15regressions, not a direct postnegative camera sample or empty dispatch logs. Broader native/visual qualification remains separate."
         ],
         "prerequisite_reasons": {},
         "development_ready": false,
@@ -19304,7 +19290,8 @@
         "expires_at": "2026-10-31T17:13:00Z",
         "scope": [
           "crates/gui-app/src/application/workspace_keyboard.rs",
-          "crates/engine-daemon/src/main.rs"
+          "crates/engine-daemon/src/main.rs",
+          "docs/reviews/workflow-delivery-rollout/advertised-zoom-shortcut-delivery.json"
         ]
       }
     }

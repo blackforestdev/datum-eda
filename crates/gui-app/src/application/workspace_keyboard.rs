@@ -13,6 +13,7 @@ pub(super) enum WorkspaceCharacterAction {
     Undo,
     Redo,
     FitCamera,
+    ZoomOut,
     FitReviewTarget,
     TogglePaneZoom,
     CycleCrosshair,
@@ -31,6 +32,7 @@ pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCha
         value if value.eq_ignore_ascii_case("z") && control => WorkspaceCharacterAction::Undo,
         value if value.eq_ignore_ascii_case("y") && control => WorkspaceCharacterAction::Redo,
         value if value.eq_ignore_ascii_case("a") && control => WorkspaceCharacterAction::SelectAll,
+        "-" if control => WorkspaceCharacterAction::ZoomOut,
         value if value.eq_ignore_ascii_case("s") => {
             WorkspaceCharacterAction::SetTool(WorkspaceTool::Select)
         }
@@ -81,6 +83,10 @@ pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> 
         WorkspaceCharacterAction::SetTool(tool) => runtime.set_workspace_tool(tool),
         WorkspaceCharacterAction::FitCamera => runtime.activate_gui_local_menu_action(
             "view.fit",
+            crate::runtime_view_actions::action_evidence::EntrySurface::Shortcut,
+        ),
+        WorkspaceCharacterAction::ZoomOut => runtime.activate_gui_local_menu_action(
+            "view.zoom_out",
             crate::runtime_view_actions::action_evidence::EntrySurface::Shortcut,
         ),
         WorkspaceCharacterAction::FitReviewTarget => runtime.fit_review_target(),
@@ -151,6 +157,11 @@ mod tests {
         assert_eq!(character_action("q", false), None);
         assert_eq!(character_action("o", false), None);
         assert_eq!(character_action("n", false), None);
+        assert_eq!(character_action("-", false), None);
+        assert_eq!(
+            character_action("-", true),
+            Some(WorkspaceCharacterAction::ZoomOut)
+        );
         for key in ["n", "N"] {
             assert_eq!(
                 character_action(key, true),

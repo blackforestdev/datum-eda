@@ -268,10 +268,10 @@ fn serve_socket(path: &Path, owned_companion: bool) -> Result<()> {
 
     for stream in listener.incoming() {
         let stream = stream?;
-        if let Some(companion) = &companion {
-            if !companion.register_connection(&stream)? {
-                break;
-            }
+        if let Some(companion) = &companion
+            && !companion.register_connection(&stream)?
+        {
+            break;
         }
         let result = handle_client_inner(
             &mut engine,
