@@ -10,13 +10,19 @@ import unittest
 
 from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, digest
 from global_preferences_acceptance.report import validate_report
-from global_preferences_acceptance.test_support import SyntheticBundle
+from global_preferences_acceptance.test_support import (
+    SyntheticBundle, lift_dispositions, restore_dispositions)
 from test_global_preferences_production_matrix import MATRIX
 
 
 class EvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Mechanics suite: exercise validate_report against the full NOMINAL (pre-disposition / pin-2)
+        # corpus so the §9 native-replay branch and the complete-coverage paths keep coverage. The
+        # current-pin dispositions (scale-2 env-block, native scope-exit) and their non-ready
+        # consequence are asserted separately in test_global_preferences_coverage_dispositions.
+        cls._dispositions = lift_dispositions()
         cls.temporary = tempfile.TemporaryDirectory()
         cls.fixture = SyntheticBundle(cls.temporary.name, MATRIX)
         cls.environment_sha = digest(canonical(cls.fixture.report['environments']))
@@ -24,6 +30,7 @@ class EvidenceTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.temporary.cleanup()
+        restore_dispositions(cls._dispositions)
 
     def check(self, report, **kwargs):
         return validate_report(report, MATRIX, root=self.fixture.root, bundle_root=self.fixture.directory,

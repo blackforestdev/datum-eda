@@ -9,7 +9,27 @@ from .inputs import Bundle, canonical, digest
 from .inventory import NATIVE_ASSERTIONS, PRODUCT_BOUNDARY
 from .matrix import case_inventory, gui_coordinates
 from .measurements import measurement_inventory
-from .observations import case_command, observation_context
+from .observations import case_command, native_inventory, observation_context
+
+
+def lift_dispositions():
+    """Lift the GP-CM05E coverage dispositions for synthetic NOMINAL (pre-disposition / pin-2) corpus
+    tests -- the full 90-measurement + 48-native matrix -- so the validator mechanics, including the
+    §9 native-replay branch, keep coverage even while this pin scope-exits native and env-blocks
+    scale-2. Returns the saved state for :func:`restore_dispositions`. The synthetic report stays
+    origin-walled regardless: test_only yields ``synthetic_validated``, never a readiness verdict."""
+    from . import measurements as meas
+    from . import observations as obs
+    saved = (meas.ENV_BLOCKED_SCALE2_COORDINATES, obs.NATIVE_DISPOSITIONS)
+    meas.ENV_BLOCKED_SCALE2_COORDINATES = ()
+    obs.NATIVE_DISPOSITIONS = {}
+    return saved
+
+
+def restore_dispositions(saved):
+    from . import measurements as meas
+    from . import observations as obs
+    meas.ENV_BLOCKED_SCALE2_COORDINATES, obs.NATIVE_DISPOSITIONS = saved
 
 
 class SyntheticBundle:
@@ -62,18 +82,18 @@ class SyntheticBundle:
             row.update(self.command(case_command(json.loads((self.directory / fixture['path']).read_bytes())),
                                     {r: True for r in required}))
             self.report['case_results'].append(row)
-        for scenario, required in NATIVE_ASSERTIONS.items():
-            for coordinate in gui_coordinates():
-                row = {**self.identity('gui', coordinate), 'scenario_id': scenario,
-                       'fixture': self.fixture((scenario, coordinate), required),
-                       'actions': ['synthetic input'], 'state_evidence': self.state}
-                context = observation_context(row)
-                row['assertions'] = self.assertions(required, context)
-                for field, kind in [('capture', 'native'), ('accessibility_capture', 'at-spi')]:
-                    row[field] = self.put({'schema': 'datum.preferences.native-capture.v2',
-                                          'context': context, 'kind': kind, 'actions': row['actions'],
-                                          'tool': 'synthetic-only', 'payload': self.put(b'synthetic capture')})
-                self.report['native_observations'].append(row)
+        for scenario, coordinate in sorted(native_inventory(), key=str):
+            required = NATIVE_ASSERTIONS[scenario]
+            row = {**self.identity('gui', coordinate), 'scenario_id': scenario,
+                   'fixture': self.fixture((scenario, coordinate), required),
+                   'actions': ['synthetic input'], 'state_evidence': self.state}
+            context = observation_context(row)
+            row['assertions'] = self.assertions(required, context)
+            for field, kind in [('capture', 'native'), ('accessibility_capture', 'at-spi')]:
+                row[field] = self.put({'schema': 'datum.preferences.native-capture.v2',
+                                      'context': context, 'kind': kind, 'actions': row['actions'],
+                                      'tool': 'synthetic-only', 'payload': self.put(b'synthetic capture')})
+            self.report['native_observations'].append(row)
         for budget, variant, coordinate in sorted(measurement_inventory(), key=str):
             row = {**self.identity('gui' if coordinate else 'cli', coordinate),
                    'budget_id': budget, 'variant_id': variant, 'trials': []}
@@ -189,15 +209,20 @@ class SyntheticBundle:
             rows.append({'category': category, 'coverage': [selected[k] for k in
                          ('case_id', 'variant_id', 'subcase_id', 'surface', 'environment_id')],
                          **{k: selected[k] for k in ('command', 'exit_code', 'log')}})
-        selected = self.report['native_observations'][0]
-        coverage = [selected['scenario_id'], selected['environment_id']]
-        native = self.command(['python3', 'scripts/fixture.py', '--native-scenario', selected['scenario_id'],
-                               '--environment', selected['environment_id']], raw_output={
-                                  'schema': 'datum.preferences.native-replay.v2', 'candidate_revision': self.revision,
-                                  'input_manifest_sha256': self.input['sha256'], 'matrix_sha256': self.report['matrix_sha256'],
-                                  'coverage': coverage, 'capture': selected['capture'],
-                                  'accessibility_capture': selected['accessibility_capture']})
-        rows.append({'category': 'native', 'coverage': coverage, **{k: native[k] for k in ('command', 'exit_code', 'log')}})
+        # When the native corpus is scope-exited (native_inventory() empty) there is no native row to
+        # replay, so the review carries no native category -- which validate_review then rejects as an
+        # incomplete §9 replay (the disposition's always-non-ready-while-scope-exited encoding). Under
+        # the nominal (pre-disposition) lift the 48 native rows exist and the native category is built.
+        if self.report['native_observations']:
+            selected = self.report['native_observations'][0]
+            coverage = [selected['scenario_id'], selected['environment_id']]
+            native = self.command(['python3', 'scripts/fixture.py', '--native-scenario', selected['scenario_id'],
+                                   '--environment', selected['environment_id']], raw_output={
+                                      'schema': 'datum.preferences.native-replay.v2', 'candidate_revision': self.revision,
+                                      'input_manifest_sha256': self.input['sha256'], 'matrix_sha256': self.report['matrix_sha256'],
+                                      'coverage': coverage, 'capture': selected['capture'],
+                                      'accessibility_capture': selected['accessibility_capture']})
+            rows.append({'category': 'native', 'coverage': coverage, **{k: native[k] for k in ('command', 'exit_code', 'log')}})
         return rows
 
     def rebind_trials(self, row, *, capture_samples=False):

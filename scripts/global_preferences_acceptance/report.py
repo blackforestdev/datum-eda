@@ -52,10 +52,12 @@ def validate_report(report, matrix, *, root, bundle_root, expected_revision, exp
 
 
 def validate_measurements(report, bundle, environments, binaries):
-    """The complete measurement corpus against the governed inventory: the exact 90 variants with no
-    duplicate, each a closed-shape row bound to the report identity and replayed through the governed
-    validate_trials. Shared by validate_report and the U6 composition core so the one governed check
-    has a single definition (no hand-copied mirror)."""
+    """The complete measurement corpus against the governed inventory: EXACTLY the dispositioned
+    measurement_inventory() (the full 90-row matrix minus the governed coordinate dispositions = 58
+    while the scale-2 classes are env-blocked) with no duplicate, each a closed-shape row bound to the
+    report identity and replayed through the governed validate_trials. No partial tolerance; the owed
+    variants are disclosed in qualification_followups. Shared by validate_report and the U6 composition
+    core so the one governed check has a single definition (no hand-copied mirror)."""
     expected = measurement_inventory()
     require(len(array(report["measurements"], "measurements")) == len(expected), "measurement count differs")
     seen = set()

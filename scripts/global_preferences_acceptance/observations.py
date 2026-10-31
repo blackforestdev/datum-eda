@@ -2,7 +2,7 @@
 
 from .identity import command_line
 from .inputs import array, canonical, closed, integer, require, sha, text, unique
-from .inventory import GATES, NATIVE_ASSERTIONS
+from .inventory import GATES, NATIVE_ASSERTIONS, NATIVE_DISPOSITIONS
 from .matrix import case_inventory, gui_coordinates
 
 
@@ -164,12 +164,46 @@ def validate_cases(report, bundle, environments, binaries):
     require(observed == set(required), f"missing case results: {len(set(required) - observed)}")
 
 
+def native_matrix():
+    """The full nominal native matrix: every N01-N06 scenario at all eight coordinates (48)."""
+    return {(scenario, coordinate) for scenario in NATIVE_ASSERTIONS for coordinate in gui_coordinates()}
+
+
+def native_scope_exited():
+    """Native coverage keys removed by the governed NATIVE_DISPOSITIONS. A scope=='all' structural
+    scope-exit removes the whole native corpus for the pinned candidate (no in-closure native recipe
+    can pass the Section 9 replay bar; see inventory.NATIVE_DISPOSITIONS). Fenced: a keyed disposition
+    (if any is ever added) must name a real matrix key -- no orphan disposition."""
+    matrix = native_matrix()
+    disposed = set()
+    for disposition in NATIVE_DISPOSITIONS.values():
+        if disposition.get("scope") == "all":
+            disposed |= matrix
+        else:
+            keys = set(disposition.get("keys", ()))
+            require(keys <= matrix, "native disposition names a non-matrix key")
+            disposed |= keys
+    return disposed
+
+
+def native_inventory():
+    """The pin-STRICT required native set: the full matrix MINUS the governed scope-exit dispositions
+    (the empty set while the structural scope-exit is active). validate_native requires EXACTLY this
+    set -- no partial tolerance; the removed observations are disclosed in qualification_followups and
+    ruled at the GP-CM05A owner gate (inventory.NATIVE_DISPOSITIONS)."""
+    return native_matrix() - native_scope_exited()
+
+
 def validate_native(report, bundle, environments, binaries):
-    required = {(scenario, coordinate) for scenario in NATIVE_ASSERTIONS for coordinate in gui_coordinates()}
-    require(len(array(report["native_observations"], "native observations")) == len(required),
-            "native observation count differs")
+    # The strict required set equals the dispositioned native_inventory() -- the empty set while the
+    # native corpus is scope-exited, in which case an empty native_observations list is exactly right
+    # (so compose stays green with native owed); final readiness is still blocked by validate_review's
+    # §9 native-replay category, which an owed native corpus cannot satisfy.
+    required = native_inventory()
+    require(len(array(report["native_observations"], "native observations",
+                      nonempty=bool(required))) == len(required), "native observation count differs")
     seen = set()
-    for row in array(report["native_observations"], "native observations"):
+    for row in array(report["native_observations"], "native observations", nonempty=bool(required)):
         closed(row, "scenario_id environment_id candidate_revision binary_sha256 input_manifest_sha256 "
                "matrix_sha256 fixture actions assertions capture accessibility_capture state_evidence", "native observation")
         coordinate = identity(row, report, environments, binaries)

@@ -21,13 +21,18 @@ from global_preferences_acceptance.identity import validate_environments
 from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, digest
 from global_preferences_acceptance.observations import validate_cases
 from global_preferences_acceptance.report import validate_report
-from global_preferences_acceptance.test_support import SyntheticBundle
+from global_preferences_acceptance.test_support import (
+    SyntheticBundle, lift_dispositions, restore_dispositions)
 from test_global_preferences_production_matrix import MATRIX
 
 
 class CompositionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Mechanics suite: compose the full NOMINAL (pre-disposition / pin-2) three-corpus report so
+        # the complete-coverage compose cross-check keeps its meaning. The current-pin dispositions
+        # and their refuse-to-compose consequence are asserted in the coverage-disposition suite.
+        cls._dispositions = lift_dispositions()
         cls.temporary = tempfile.TemporaryDirectory()
         cls.fixture = SyntheticBundle(cls.temporary.name, MATRIX)
         report = cls.fixture.report
@@ -43,6 +48,7 @@ class CompositionTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.temporary.cleanup()
+        restore_dispositions(cls._dispositions)
 
     def sub(self, corpus):
         """A per-corpus sub-report: the shared frozen identity + artifacts + one corpus's rows,

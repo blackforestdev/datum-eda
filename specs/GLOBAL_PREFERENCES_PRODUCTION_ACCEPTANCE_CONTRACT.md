@@ -464,6 +464,18 @@ kind is `native` or `at-spi`; tool names the actual recorder/version; actions
 match the ordered row actions; payload references the retained capture bytes.
 AT-SPI payloads include the tree/events and screen-reader spoken-output record.
 Every N01–N06 scenario runs at all eight coordinates: 48 observations.
+The 48 native observations are scope-exited to the GP-CM05A owner gate for the
+pinned candidate: no recipe in the candidate input closure can serve a native
+fixture under the §9 independent-replay bar (report.py:124-127 enforces the exact
+`python3 <recipe.path> --native-scenario <id> --environment <id>` argv and the
+`datum.preferences.native-replay.v2` result — `accessibility_capture.py` has no
+CLI entry, the a11y case recipes reject the 2-tuple native coverage, and the only
+`--native-scenario` recipe `scripts/fixture.py` is synthetic-only and out of
+closure), and adding a conformant in-closure recipe requires a re-pin that
+invalidates this pin's rows. Native coverage therefore cannot reach
+`candidate_ready` and is carried to the owner gate as a disclosed structural gap,
+disclosed in `qualification_followups` (`inventory.NATIVE_DISPOSITIONS`); the
+pin-strict required native set is therefore the empty set.
 Capture manifests cannot be relabeled across those coordinates. A nonempty
 payload alone does not demonstrate usability: replay and visual/accessibility
 review remain mandatory and no prototype authority is changed here.
@@ -490,6 +502,11 @@ four mutation variants (set/reset × standalone/daemon), three genesis and three
 validation variants (factory/global-missing/global-populated), four storage
 variants (those three plus generation), 48 GUI-feedback variants (six actions
 × eight coordinates), eight window-open and eight lifecycle variants.
+The four scale-2 GUI coordinate classes (wayland/2.0 and x11/2.0 at both logical
+window sizes) are environment-blocked on the reference 1920×1080 :1 display, so
+their 32 measurement variants are OWED and disclosed in `qualification_followups`,
+ruled at the GP-CM05A owner gate; the pin-strict required measurement set is
+therefore 90 − 32 = 58 (`inventory.MEASUREMENT_DISPOSITIONS`).
 `inventory.py` carries the exact action and variant spellings checked against
 this contract and the matrix; no other variant substitutes.
 

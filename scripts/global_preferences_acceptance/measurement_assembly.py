@@ -19,8 +19,9 @@ from the frozen 21-field ``environments`` array are all carried verbatim, never 
 producer builders themselves are reused unchanged (no cloned runner); only the identity they are
 handed changes. The global pre-warm still runs exactly once before the first measured budget.
 
-**No readiness here.** A partial corpus -- fewer than the governed 90 measurement variants, or the
-still-pending gate/review/release placeholders -- is refused by ``validate_report``. This module
+**No readiness here.** A partial corpus -- fewer than the governed ``measurement_inventory()`` (the
+full matrix minus the governed coordinate dispositions), or the still-pending gate/review/release
+placeholders -- is refused by ``validate_report``. This module
 only assembles the skeleton; completeness is computed solely by the governed validator.
 """
 import sys

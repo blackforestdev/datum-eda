@@ -8,7 +8,10 @@ from global_preferences_acceptance.gates import commands
 from global_preferences_acceptance.inputs import EvidenceError, parse
 from global_preferences_acceptance.inventory import BUDGETS, GATES
 from global_preferences_acceptance.matrix import case_inventory, validate_matrix
-from global_preferences_acceptance.measurements import measurement_inventory
+from global_preferences_acceptance.measurements import (
+    measurement_env_blocked_variants, measurement_inventory, measurement_matrix)
+from global_preferences_acceptance.observations import (
+    native_inventory, native_matrix, native_scope_exited)
 
 MATRIX = json.loads((Path(__file__).resolve().parents[1] /
                     'specs/global_preferences_production_acceptance_matrix.json').read_text())
@@ -20,7 +23,15 @@ class MatrixTests(unittest.TestCase):
         # 321 since the surface-disposition co-move (1cae5aa9): 389 minus the 68
         # dispositioned rows (engine-by-contract absorptions + scope exits).
         self.assertEqual(len(case_inventory()), 321)
-        self.assertEqual(len(measurement_inventory()), 90)
+        # Measurement coordinate disposition (scale-2 env-blocked): 90 full matrix minus the 32
+        # scale-2 variants = 58 strict required. Native structural scope-exit: 48 full matrix minus
+        # the whole corpus = 0 strict required. The full-matrix coordinate space is unchanged.
+        self.assertEqual(len(measurement_matrix()), 90)
+        self.assertEqual(len(measurement_env_blocked_variants()), 32)
+        self.assertEqual(len(measurement_inventory()), 58)
+        self.assertEqual(len(native_matrix()), 48)
+        self.assertEqual(len(native_scope_exited()), 48)
+        self.assertEqual(len(native_inventory()), 0)
 
     def test_gate_catalog_matches_commands(self):
         # Catalog-drift regression: a gate added to gates.commands() without extending the

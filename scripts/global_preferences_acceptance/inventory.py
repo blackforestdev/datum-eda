@@ -173,6 +173,86 @@ BACKENDS = ("wayland", "x11")
 SCALES = (1.0, 2.0)
 WINDOWS = ((1024, 900), (720, 760))
 
+# GP-CM05E coordinate-level COVERAGE DISPOSITIONS -- the SURFACE_DISPOSITIONS analog for the timed
+# (measurement) and native corpora. The full-matrix coordinate space (BACKENDS x SCALES x WINDOWS)
+# and the matrix protocol's declared scale_factors are UNCHANGED; a disposition removes a coordinate
+# class from the pin-STRICT REQUIRED set only, with its ruling + resolvable citations, so
+# measurement_inventory()/validate_native require EXACTLY (full matrix - dispositioned) and never a
+# silent partial. Both modes are owner-visible qualification_followups ruled at the GP-CM05A gate:
+#   env_blocked -- capturable nowhere on the reference display this pin (the scale-2 coordinate
+#                  classes); the removed rows are OWED, retained as feasibility disclosure.
+#   scope_exit  -- structurally out of the pinned candidate's acceptance scope (ruled at GP-CM05A).
+# The four scale-2 GUI coordinate classes: device extents (e.g. 1024x900@2 = 2048x1800) exceed the
+# reference 1920x1080 :1 display, the owned Weston clamps, and the realized logical viewport mis-binds
+# the matrix coordinate, so production is refused rather than falsely stamped (verified live via
+# xdotool getdisplaygeometry; measurement AND capture surfaces alike).
+ENV_BLOCKED_SCALE2_COORDINATES = (
+    ("wayland", 2.0, (1024, 900)), ("wayland", 2.0, (720, 760)),
+    ("x11", 2.0, (1024, 900)), ("x11", 2.0, (720, 760)),
+)
+MEASUREMENT_DISPOSITIONS = {
+    'scale-2-environment-blocked': {
+        'mode': 'env_blocked',
+        'coordinates': ENV_BLOCKED_SCALE2_COORDINATES,
+        'ruling': 'PM-Agent-01 2026-10-31: the four scale-2 GUI coordinate classes are '
+                  'environment-blocked on the reference 1920x1080 :1 display, so their 32 measurement '
+                  'variants (gui-feedback 6x4 + native-window-open 1x4 + window-lifecycle 1x4) are '
+                  'OWED rather than falsely stamped; the strict measurement required set is 90 - 32 = 58.',
+        'citations': [
+            'specs/active_frontier.json GP-CM05E ruling: the four scale-2 coordinate classes stay '
+            'OWED with the device-extent/clamp/mis-bind mechanism and the three-step remedy order',
+            'frontend-dev-01 scale2 FINDING (device=logical x2 exceeds screen; verified live via '
+            'xdotool getdisplaygeometry, :1 unchanged at 1920x1080)',
+            'frontend ENVELOPE-EQUIVALENCE-ASSESSMENT.md (audit-reviewed; owner-bar at GP-CM05A)',
+        ],
+        'owner_gate': 'GP-CM05A',
+        'qualification_followup': True,
+    },
+}
+
+# The native observation corpus (N01-N06 at the eight coordinates = 48) is a STRUCTURAL scope-exit
+# for the pinned candidate: no recipe in the candidate input closure (blob 1ebf0783, 4030 entries)
+# can serve a native fixture under the governed Section 9 independent-replay bar. The contract
+# (Section 584) makes native replay live re-invoke `python3 <recipe.path> --native-scenario <id>
+# --environment <id>` and parse datum.preferences.native-replay.v2; report.py:124-127 enforces that
+# exact argv. accessibility_capture.py is a module with no CLI entry (fails invocability); the
+# invocable a11y case recipes reject the 2-tuple native coverage (their parser requires the 5-tuple
+# case coverage) and do not compute the N0x assertion inventories; the only `--native-scenario`
+# recipe (scripts/fixture.py) is synthetic-only, not in the closure, and declared never-readiness
+# (test_support: "Synthetic regression fixtures only"). A conformant in-closure native recipe cannot
+# be added without committing a file = a new candidate identity (revision+tree+manifest) that would
+# invalidate every row captured at this pin. So native coverage cannot reach candidate_ready here and
+# is carried to the GP-CM05A owner gate as a disclosed structural gap, never a pass; the conformant
+# native recipe + driver are built outside the window (the redefined native unit) and enter the
+# closure at the next pin. This is removed from the registry at the pin that admits that recipe.
+# PM-Agent-01 2026-10-31 scope-exit classification, disposition (B)+build; b8e9085b scope-exit
+# precedent (daemon-restart / no-foreground-tty), larger scale.
+NATIVE_DISPOSITIONS = {
+    'native-corpus-structural-scope-exit': {
+        'mode': 'scope_exit',
+        'scope': 'all',
+        'ruling': 'The 48 native observations cannot reach candidate_ready at the pinned candidate: '
+                  'no in-closure recipe satisfies membership + --native-scenario invocability + '
+                  '2-tuple native coverage + native-replay.v2 + N0x assertion computation; adding one '
+                  'requires a re-pin (new candidate identity) that invalidates this pin. Scope-exited '
+                  'to GP-CM05A; the strict native required set is the empty set.',
+        'citations': [
+            'specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md Section 584 (native replay '
+            're-invokes the candidate-bound recipe with --native-scenario/--environment -> '
+            'native-replay.v2; true or a nonempty arbitrary log cannot stand in for replay)',
+            'report.py:124-127 (validate_review native branch enforces the exact argv and the '
+            'native-replay.v2 canonical result)',
+            'candidate input closure blob 1ebf0783 (4030 entries): no conformant native recipe; '
+            'accessibility_capture.py is module-only, the a11y case recipes reject 2-tuple coverage, '
+            'scripts/fixture.py is synthetic-only and out of closure (test_support synthetic-never-readiness)',
+            'roadmap finding gp_cm05e_native_recipe_structural_gap.md (roadmap-agent-01, read-only)',
+        ],
+        'owner_gate': 'GP-CM05A',
+        'qualification_followup': True,
+    },
+}
+
+
 def subcases(case, variant):
     # The former multi-subcase variants (surface-parity-negative/preference-write-faults and
     # project-genesis-crash/process-killed) were removed as Class-C scope-exits in the GP-CM05E

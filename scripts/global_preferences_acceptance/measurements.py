@@ -3,7 +3,7 @@
 from math import ceil
 
 from .inputs import array, canonical, closed, integer, require, unique, validation
-from .inventory import BUDGETS, TIMED_VARIANTS
+from .inventory import BUDGETS, ENV_BLOCKED_SCALE2_COORDINATES, MEASUREMENT_DISPOSITIONS, TIMED_VARIANTS
 from .matrix import gui_coordinates
 
 
@@ -12,7 +12,9 @@ def percentile(values, fraction=0.95):
     return sorted(values)[ceil(len(values) * fraction) - 1]
 
 
-def measurement_inventory():
+def measurement_matrix():
+    """The full nominal measurement matrix: every declared coordinate (BACKENDS x SCALES x WINDOWS),
+    the 90-row corpus the contract enumerates before any pin-level coverage disposition."""
     expected = set()
     for budget, variants in TIMED_VARIANTS.items():
         coordinates = gui_coordinates() if budget in ("gui-feedback", "native-window-open") else (None,)
@@ -21,6 +23,28 @@ def measurement_inventory():
                     for variant in ("factory", "global-missing", "global-populated", "generation"))
     expected.update(("window-lifecycle", "cycles", coordinate) for coordinate in gui_coordinates())
     return expected
+
+
+def measurement_env_blocked_variants():
+    """The measurement coverage keys removed by the env_blocked coordinate disposition (the 32
+    scale-2 variants). Fenced: every dispositioned coordinate must be a real GUI matrix coordinate
+    (no orphan disposition), and every key must be a real member of the full matrix."""
+    coordinates = set(ENV_BLOCKED_SCALE2_COORDINATES)
+    require(coordinates <= set(gui_coordinates()),
+            "env-blocked measurement disposition names a non-matrix coordinate")
+    matrix = measurement_matrix()
+    removed = {key for key in matrix if key[2] in coordinates}
+    require(all(key in matrix for key in removed), "env-blocked measurement key is not in the matrix")
+    return removed
+
+
+def measurement_inventory():
+    """The pin-STRICT required measurement set: the full matrix MINUS the governed coordinate
+    dispositions (the scale-2 env-blocked classes = 32 variants, so 90 - 32 = 58).
+    ``validate_measurements`` requires EXACTLY this set -- no partial tolerance; the removed variants
+    are OWED, disclosed in qualification_followups and ruled at the GP-CM05A owner gate
+    (``inventory.MEASUREMENT_DISPOSITIONS``)."""
+    return measurement_matrix() - measurement_env_blocked_variants()
 
 
 @validation
