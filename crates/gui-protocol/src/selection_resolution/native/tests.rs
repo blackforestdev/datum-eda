@@ -1,6 +1,5 @@
 //! Count actual engine acquisitions across ordinary selection menu and view consumption.
-#[path = "../../../tests/support/native_selection_fixture.rs"]
-mod fixture;
+use crate::native_selection_fixture as fixture;
 
 use super::*;
 use crate::{

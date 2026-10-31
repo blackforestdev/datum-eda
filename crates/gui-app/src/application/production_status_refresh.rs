@@ -144,6 +144,7 @@ impl App {
             changed |= runtime.poll_console_lifetime();
             changed |= runtime.poll_native_selection_tick();
             changed |= runtime.poll_native_run();
+            changed |= runtime.poll_native_catalog();
             changed |= runtime.poll_native_edit();
             changed |= runtime.poll_check_job();
             browser_changed = runtime.poll_folder_browser();

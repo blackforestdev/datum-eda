@@ -1,6 +1,5 @@
 use super::*;
-#[path = "../../tests/support/native_selection_fixture.rs"]
-mod fixture;
+use crate::native_selection_fixture as fixture;
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity as Id, LiveReviewRequest,
     selection_resolution::NativeSelectionResolution,

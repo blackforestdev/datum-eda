@@ -170,14 +170,16 @@ impl NativeProjectClient {
             .context("native writer result missing")
     }
     /// Best-effort startup preparation, never a durability or write receipt.
-    /// Every actual edit still freshly describes and guards the Project.
-    pub fn prepare_read(&self, root: &Path) -> Result<()> {
+    /// Every actual edit still freshly describes and guards the Project. The
+    /// describe response is returned so startup can learn the engine's
+    /// native-write verb catalog (truthful menu enablement) without a second
+    /// round trip; callers that only warm the companion may ignore it.
+    pub fn prepare_read(&self, root: &Path) -> Result<Value> {
         self.call(
             "native.describe",
             json!({"project_root":root}),
             Uuid::new_v4(),
-        )?;
-        Ok(())
+        )
     }
 
     pub fn describe(&self, root: &Path) -> Result<Value> {

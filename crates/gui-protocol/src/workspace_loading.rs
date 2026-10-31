@@ -4,6 +4,17 @@ use super::*;
 use eda_engine::substrate::DesignModel;
 use std::sync::Arc;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkspaceBacking {
+    pub request: LiveReviewRequest,
+    pub board_path: PathBuf,
+    /// Native-write verb ids the engine reports for this open Project via
+    /// `native.describe` (capability discovery, W3). Empty until describe populates
+    /// it; native-edit menu entries are enabled only for verbs present here, so an
+    /// unknown catalog truthfully disables them.
+    pub native_write_verbs: std::collections::BTreeSet<String>,
+}
+
 /// Complete an already persisted check on a fresh serialized canonical model.
 /// This runs on the job worker, never dispatch. No CLI or nested resolver may
 /// execute while the canonical lease is held.

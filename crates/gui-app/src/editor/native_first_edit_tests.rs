@@ -1,6 +1,7 @@
 //! Real owner-board-derived Project through production input dispatch and worker.
 //! Programmatic callbacks are not physical Wayland input qualification.
 use super::*;
+use crate::runtime_view_actions::action_evidence::EntrySurface;
 use clap::Parser;
 use std::{
     path::PathBuf,
@@ -66,8 +67,46 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
             .unwrap(),
     );
     let launch = args.load_launch_state(Some(wake.clone())).unwrap();
+    assert!(
+        launch
+            .state
+            .backing
+            .as_ref()
+            .unwrap()
+            .native_write_verbs
+            .is_empty(),
+        "cold launch must discover capabilities rather than inherit an injected catalog"
+    );
+    let cold_revision = launch.state.scene.source_revision.clone();
+    let cold_transactions = launch.state.supervision.journal.applied_transaction_count;
     let mut runtime = pollster::block_on(Runtime::new(window, launch, Some(1.0), wake)).unwrap();
     assert!(runtime.native_edit_available());
+    let menu = datum_gui_protocol::gui_menu_model::default_gui_menu_model().unwrap();
+    let move_item = menu
+        .menubar
+        .iter()
+        .find(|menu| menu.menu == "Route")
+        .unwrap()
+        .items
+        .iter()
+        .find(|item| item.verb.as_deref() == Some("datum.pcb.move_component"))
+        .unwrap();
+    assert_eq!(
+        move_item.unavailable_reason(runtime.workspace()),
+        None,
+        "cold runtime must publish discovered Move capability before any edit or Save"
+    );
+    assert_eq!(runtime.workspace().scene.source_revision, cold_revision);
+    assert_eq!(
+        runtime
+            .workspace()
+            .supervision
+            .journal
+            .applied_transaction_count,
+        cold_transactions,
+        "capability discovery must not commit a transaction"
+    );
+    assert_eq!(std::fs::read(&board_path).unwrap(), before);
     let grid = runtime.workspace().authoring.snap.grid_nm;
     let component = runtime
         .workspace()
@@ -157,22 +196,25 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
             .position,
         PointNm { x: 223, y: -223 }
     );
-    assert!(runtime.set_workspace_tool(WorkspaceTool::Move));
+    // Move acquires the selected Footprint at the invoking cursor position;
+    // an idle Move canvas click selects instead of starting an authoring gesture.
     runtime.last_cursor_pos = Some(screen(&mut runtime, component.position));
+    assert!(runtime.activate_menu_item("Route", "Move", EntrySurface::MenuKeyboard));
+    assert_eq!(
+        runtime.workspace().tool,
+        WorkspaceTool::Move,
+        "production menu dispatch must activate Move, not merely consume a refused action"
+    );
     assert!(
         !runtime.begin_native_selection_press(),
         "Move press must not begin region selection"
     );
     assert!(runtime.finish_native_selection_press().is_none());
-    assert!(
-        runtime.handle_primary_click(),
-        "production click starts Move"
-    );
     let preview = runtime
         .native_edit
         .preview
         .as_ref()
-        .expect("eligible footprint hit through copper");
+        .expect("production menu starts the selected Footprint Move");
     assert_eq!(
         preview
             .footprint()
@@ -208,7 +250,7 @@ fn wayland_first_edit_dispatch_preview_cancel_commit_history_save_reopen() {
     assert_eq!(std::fs::read(&board_path).unwrap(), before);
 
     runtime.last_cursor_pos = Some(screen(&mut runtime, component.position));
-    runtime.handle_primary_click();
+    assert!(runtime.activate_menu_item("Route", "Move", EntrySurface::MenuKeyboard));
     let world = runtime
         .prepared_scene()
         .unwrap()

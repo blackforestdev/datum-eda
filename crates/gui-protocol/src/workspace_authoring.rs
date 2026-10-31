@@ -384,3 +384,118 @@ pub fn checked_snap_authoring_point(point: PointNm, snap: AuthoringSnapState) ->
         y: one(point.y, snap.grid_nm)?,
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn draw_board_track_handoff_uses_backing_and_review_defaults() {
+        let mut state = load_fixture_workspace_state();
+        state.backing = Some(WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: PathBuf::from("/tmp/datum authoring demo"),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+                kicad_board_source: None,
+            },
+            board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
+            native_write_verbs: Default::default(),
+        });
+
+        let handoff = state
+            .draw_board_track_handoff(
+                PointNm {
+                    x: 100_000,
+                    y: 200_000,
+                },
+                PointNm {
+                    x: 300_000,
+                    y: 400_000,
+                },
+            )
+            .expect("handoff");
+
+        assert_eq!(handoff.command_id, "datum.pcb.draw_board_track");
+        assert!(handoff.command.contains("draw-board-track"));
+        assert!(handoff.command.contains("'/tmp/datum authoring demo'"));
+        assert!(handoff.command.contains("--from-x-nm 100000"));
+        assert!(handoff.command.contains("--to-y-nm 400000"));
+        assert!(handoff.command.contains("--width-nm"));
+    }
+
+    #[test]
+    fn via_move_and_delete_authoring_handoffs_use_scene_context() {
+        let mut state = load_fixture_workspace_state();
+        state.backing = Some(WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: PathBuf::from("/tmp/datum authoring demo"),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+                kicad_board_source: None,
+            },
+            board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
+            native_write_verbs: Default::default(),
+        });
+
+        let via = state
+            .place_board_via_handoff(PointNm {
+                x: 500_000,
+                y: 600_000,
+            })
+            .expect("via handoff");
+        assert_eq!(via.command_id, "datum.pcb.place_board_via");
+        assert!(via.command.contains("place-board-via"));
+        assert!(via.command.contains("--x-nm 500000"));
+        assert!(via.command.contains("--diameter-nm 600000"));
+
+        let component = state.scene.components.first().expect("fixture component");
+        let move_component = state
+            .move_component_handoff(
+                &component.object_id,
+                PointNm {
+                    x: 700_000,
+                    y: 800_000,
+                },
+            )
+            .expect("move handoff");
+        assert_eq!(move_component.command_id, "datum.pcb.move_board_component");
+        assert!(move_component.command.contains("move-board-component"));
+        assert!(move_component.command.contains("--component"));
+        assert!(move_component.command.contains(&component.component_uuid));
+
+        let delete_track = state
+            .delete_authored_object_handoff("track:00000000-0000-0000-0000-000000000123")
+            .expect("delete track handoff");
+        assert_eq!(delete_track.command_id, "datum.pcb.delete_board_track");
+        assert!(delete_track.command.contains("delete-board-track"));
+        assert!(delete_track.command.contains("--track"));
+
+        let text = state
+            .place_board_text_handoff(PointNm {
+                x: 900_000,
+                y: 1_000_000,
+            })
+            .expect("text handoff");
+        assert_eq!(text.command_id, "datum.pcb.place_board_text");
+        assert!(text.command.contains("place-board-text"));
+        assert!(text.command.contains("--text TEXT"));
+        assert!(text.command.contains("--x-nm 900000"));
+        assert!(text.command.contains("--render-intent annotation"));
+
+        let delete_text = state
+            .delete_authored_object_handoff("board-text:00000000-0000-0000-0000-000000000456")
+            .expect("delete text handoff");
+        assert_eq!(delete_text.command_id, "datum.pcb.delete_board_text");
+        assert!(delete_text.command.contains("delete-board-text"));
+        assert!(delete_text.command.contains("--text"));
+    }
+}

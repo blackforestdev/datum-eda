@@ -272,9 +272,71 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
         runtime.terminal_sessions.active().session_id(),
         original_terminal
     );
+    let menu = datum_gui_protocol::gui_menu_model::default_gui_menu_model().unwrap();
+    let move_item = menu
+        .menubar
+        .iter()
+        .find(|menu| menu.menu == "Route")
+        .unwrap()
+        .items
+        .iter()
+        .find(|item| item.verb.as_deref() == Some("datum.pcb.move_component"))
+        .unwrap();
+    assert!(
+        runtime
+            .workspace()
+            .backing
+            .as_ref()
+            .unwrap()
+            .native_write_verbs
+            .is_empty(),
+        "destination must discover its own catalog instead of inheriting the origin's"
+    );
+    assert!(move_item.unavailable_reason(runtime.workspace()).is_some());
+    assert!(runtime.native_edit.catalog_pending.is_some());
+    let destination_revision = runtime.workspace().scene.source_revision.clone();
+    let destination_transactions = runtime
+        .workspace()
+        .supervision
+        .journal
+        .applied_transaction_count;
+    let deadline = Instant::now() + Duration::from_secs(30);
+    while runtime.native_edit.catalog_pending.is_some() && Instant::now() < deadline {
+        runtime.poll_native_catalog();
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    assert!(runtime.native_edit.catalog_pending.is_none());
+    assert_eq!(
+        move_item.unavailable_reason(runtime.workspace()),
+        None,
+        "actual destination discovery must enable Move without a first edit or Save"
+    );
+    assert_eq!(
+        runtime
+            .workspace()
+            .backing
+            .as_ref()
+            .unwrap()
+            .request
+            .project_root,
+        roots[1]
+    );
+    assert_eq!(
+        runtime.workspace().scene.source_revision,
+        destination_revision
+    );
+    assert_eq!(
+        runtime
+            .workspace()
+            .supervision
+            .journal
+            .applied_transaction_count,
+        destination_transactions
+    );
     assert_eq!(canonical_history(&roots[1]), destination_history_before);
     assert_eq!(canonical_history(&roots[0]), origin_history_after_save);
     assert_eq!(canonical_sources(&roots[1]), destination_before);
+    assert_eq!(canonical_sources(&roots[0]), origin_before);
     let deadline =
         Instant::now() + Duration::from_millis(crate::terminal_transport::GLOBAL_SHUTDOWN_MS);
     runtime.terminal_sessions.terminate_all_by(deadline);

@@ -75,15 +75,6 @@ impl Runtime {
         }
         let opened_root = answer.prepared.root.clone();
         let mut workspace = answer.prepared.workspace;
-        // Preserve the engine's native-write verb catalog (a build constant) across the
-        // reopen so truthful native-edit menu enablement survives the project switch until a
-        // fresh native.describe repopulates it (the open-prepare path carries no describe).
-        if let Some(rebuilt) = workspace.backing.as_mut()
-            && rebuilt.native_write_verbs.is_empty()
-            && let Some(current) = self.workspace().backing.as_ref()
-        {
-            rebuilt.native_write_verbs = current.native_write_verbs.clone();
-        }
         // Global preferences are application-owned; all Project consumers and
         // project preferences come from the newly prepared source.
         workspace.ui.global_preferences = self.workspace().ui.global_preferences.clone();
@@ -138,6 +129,13 @@ impl Runtime {
         self.terminal_launch_context = Some(answer.context);
         self.project_open.created_root = None;
         self.project_open.session_generation = self.project_open.session_generation.wrapping_add(1);
+        // Release publication admission before the read-only companion starts.
+        drop(answer._admission);
+        self.native_edit.prepare_read(
+            opened_root.clone(),
+            self.workspace().scene.project_uuid.clone(),
+            self.project_open.session_generation,
+        );
         self.render_sources = Default::default();
         self.sync_terminal_tabs();
         self.resize_terminal_to_dock();

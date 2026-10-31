@@ -47,11 +47,15 @@ impl Runtime {
                 .unwrap_or(camera),
             PaneContent::Library | PaneContent::Revision(_) => camera,
         };
-        let native_edit = runtime_native_edit::EditWork::new(wake.clone());
+        let mut native_edit = runtime_native_edit::EditWork::new(wake.clone());
         let native_preparation =
             if datum_gui_protocol::gui_menu_model::native_project_edit_available(&state) {
                 state.backing.as_ref().and_then(|backing| {
-                    native_edit.prepare_read(backing.request.project_root.clone())
+                    native_edit.prepare_read(
+                        backing.request.project_root.clone(),
+                        state.scene.project_uuid.clone(),
+                        0,
+                    )
                 })
             } else {
                 None
@@ -170,6 +174,7 @@ impl Runtime {
         if let Some(preparation) = native_preparation {
             let _ = preparation.join();
         }
+        runtime.poll_native_catalog();
         // Prepare the validated source basis before the first interactive frame.
         // Subsequent actions still compare canonical inputs through the resolver cache.
         if let Err(error) = runtime.ensure_selection_authority() {

@@ -8,6 +8,8 @@ use datum_gui_protocol::{
     native_edit_client::{NativeEditAction, NativeEditIntent, NativeProjectClient},
 };
 use std::sync::{Arc, Mutex, mpsc};
+#[path = "runtime_native_edit/catalog.rs"]
+mod catalog;
 #[path = "runtime_native_edit/move_acquisition.rs"]
 mod move_acquisition;
 
@@ -54,6 +56,10 @@ pub(super) struct EditWork {
     preview_awaiting_presentation: bool,
     pending_move_base: Option<(bool, datum_gui_protocol::BoardReviewSceneV1)>,
     pending: Option<mpsc::Receiver<Answer>>,
+    /// Startup verb catalog from the warmup describe, fed back through the wake
+    /// so native-edit menus reflect engine capability from cold open rather than
+    /// only after the first edit populates it.
+    catalog_pending: Option<mpsc::Receiver<catalog::CatalogReply>>,
     client: Arc<Mutex<Option<NativeProjectClient>>>,
     wake: winit::event_loop::EventLoopProxy<()>,
     pub blocked: bool,
@@ -67,45 +73,12 @@ impl EditWork {
             preview_awaiting_presentation: false,
             pending_move_base: None,
             pending: None,
+            catalog_pending: None,
             client: Arc::new(Mutex::new(None)),
             wake,
             blocked: false,
         }
     }
-    /// Begin the existing read-only companion preparation before first edit.
-    /// This creates no pending action and supplies no reusable write receipt.
-    pub(super) fn prepare_read(
-        &self,
-        root: std::path::PathBuf,
-    ) -> Option<std::thread::JoinHandle<()>> {
-        let client = self.client.clone();
-        let spawn = std::thread::Builder::new()
-            .name("datum-native-prepare".into())
-            .spawn(move || {
-                let started = std::time::Instant::now();
-                let prepared = (|| -> Result<()> {
-                    let mut owner = client
-                        .lock()
-                        .map_err(|_| anyhow::anyhow!("Native editor worker unavailable"))?;
-                    if owner.is_none() {
-                        *owner = Some(NativeProjectClient::spawn()?);
-                    }
-                    owner.as_ref().unwrap().prepare_read(&root)
-                })();
-                trace_startup_timing(format!(
-                    "native companion preparation {}ms result={prepared:?}",
-                    started.elapsed().as_millis()
-                ));
-            });
-        match spawn {
-            Ok(handle) => Some(handle),
-            Err(error) => {
-                trace_startup_timing(format!("native companion preparation unavailable: {error}"));
-                None
-            }
-        }
-    }
-
     pub(super) fn reset_project(&mut self) {
         debug_assert!(!self.pending());
         self.preview = None;
@@ -114,6 +87,7 @@ impl EditWork {
         self.preview_awaiting_presentation = false;
         self.pending_move_base = None;
         self.blocked = false;
+        self.catalog_pending = None;
     }
     pub fn pending(&self) -> bool {
         self.pending.is_some()
