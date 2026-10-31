@@ -25,6 +25,7 @@ one guarded invocation of ``gates.release_build()`` (``-p datum-eda-cli
 driver preflights their presence and refuses with an actionable missing-list.
 """
 import argparse
+import functools
 import json
 import sys
 from pathlib import Path
@@ -44,6 +45,10 @@ from global_preferences_acceptance.producer import (  # noqa: E402
 GUI_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_case.py"
 GUI_WRITE_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_write_case.py"
 GUI_A11Y_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_a11y_case.py"
+GUI_A11Y_NAV_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_a11y_nav_case.py"
+# The four read-only accessibility-interaction nav scenarios the dispatching nav recipe handles.
+GUI_A11Y_NAV_VARIANTS = ("keyboard-all-controls", "search-and-clear", "explanation-and-return",
+                         "native-close-reopen")
 # PM-authorized single pattern/coordinate. The default is the simplest reliable row; any coordinate
 # passed must be a real case_inventory() key for this family.
 DEFAULT_COORDINATE = ("wayland", 1.0, (1024, 900))
@@ -269,10 +274,34 @@ def build_gui_a11y_case(bundle_root, *, gui_binary, coordinate, identity=None):
     return report, binaries, environments, key
 
 
+def build_gui_a11y_nav_case(bundle_root, *, gui_binary, coordinate, identity=None, variant):
+    """Produce one of the four READ-ONLY accessibility-interaction nav rows (keyboard-all-controls /
+    search-and-clear / explanation-and-return / native-close-reopen) -- thin personas over the shared
+    accessibility_capture backbone via the dispatching nav recipe. These never mutate the Global store,
+    so the after-state's preferences/ subtree stays EMPTY (no-write proven by absence); _gui_a11y_capture_after
+    still folds the F4-DESIGN section-5 typed payload (prefix accessibility-capture/) into row["after"]."""
+    require(variant in GUI_A11Y_NAV_VARIANTS, f"{variant} is not a nav scenario")
+    key = ("accessibility-interaction", variant, "default", "gui", coordinate)
+    require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
+    _preflight_candidate_companions(gui_binary)
+    capture = Capture(bundle_root)
+    candidate, binaries, input_manifest_ref, matrix_sha256, environments = _candidate_bindings(
+        capture, gui_binary, coordinate, identity, GUI_A11Y_NAV_RECIPE_RELPATH)
+    row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
+                       environments=environments, input_manifest=input_manifest_ref,
+                       matrix_sha256=matrix_sha256, surface_binaries={"gui": str(gui_binary)},
+                       capture_after=_gui_a11y_capture_after, setup=None,
+                       bundle_root=bundle_root, recipe_relpath=GUI_A11Y_NAV_RECIPE_RELPATH)
+    report = _assemble_report(candidate, input_manifest_ref, matrix_sha256, environments, capture, row, identity)
+    return report, binaries, environments, key
+
+
 FAMILY_BUILDERS = {
     "clean-install": build_gui_case,
     "global-populated": build_gui_write_case,
     "set-reset-refusal": build_gui_a11y_case,
+    **{_variant: functools.partial(build_gui_a11y_nav_case, variant=_variant)
+       for _variant in GUI_A11Y_NAV_VARIANTS},
 }
 
 
