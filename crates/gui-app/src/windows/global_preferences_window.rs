@@ -10,14 +10,20 @@ mod damage;
 #[path = "owned_dialog_pointer.rs"]
 mod pointer;
 pub(crate) use damage::GlobalPreferenceRenderState;
-pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
+// Default width is the governing prototype's canonical wide-layout window width
+// (docs/gui/prototypes/preferences-window.html `.f5win{width:1160px}`): a roomy screen opens INTO the
+// full wide presentation (> 980 logical). The landed clamp caps this to the available output and the
+// <= 980 narrow breakpoint (global_preferences_dialog.rs) engages the rail-above layout on smaller
+// outputs, floored at MIN_PREFERENCES_SIZE.
+pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(1160.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
 
 /// Clamp the initial Global Preferences window size to the available work area / output,
-/// floored at the minimum. A fixed 960-wide default opens unusable — its right-edge controls
-/// clipped — on a smaller output (small laptops, tiled/halved layouts, scaled displays); a
-/// normal desktop window manager would constrain it, so the product owes the clamp itself.
-/// Once the clamp brings the width under 800 the already-governed narrow layout engages.
+/// floored at the minimum. The 1160-wide default (the prototype's canonical wide layout) opens
+/// unusable — its right-edge controls clipped — on a smaller output (small laptops, tiled/halved
+/// layouts, scaled displays); a normal desktop window manager would constrain it, so the product
+/// owes the clamp itself. Once the clamp brings the width to <= 980 the already-governed narrow
+/// (rail-above) layout engages.
 fn clamp_initial_preferences_size(
     default: LogicalSize<f64>,
     min: LogicalSize<f64>,
@@ -525,7 +531,7 @@ impl App {
         if self.global_preferences_window.is_none() {
             // Clamp the initial size to the available output so the window never opens wider than
             // the screen (which clips the right-edge controls); the governed narrow layout then
-            // engages once the clamp brings the width under 800.
+            // engages once the clamp brings the width to <= 980.
             let available = self
                 .window
                 .as_deref()
@@ -761,7 +767,7 @@ mod tests {
 
     #[test]
     fn native_window_defaults_fit_the_approved_preferences_target() {
-        assert_eq!(DEFAULT_PREFERENCES_SIZE, LogicalSize::new(960.0, 720.0));
+        assert_eq!(DEFAULT_PREFERENCES_SIZE, LogicalSize::new(1160.0, 720.0));
         assert_eq!(MIN_PREFERENCES_SIZE, LogicalSize::new(700.0, 540.0));
     }
 
@@ -776,7 +782,7 @@ mod tests {
             clamp_initial_preferences_size(default, min, Some(LogicalSize::new(1920.0, 1080.0))),
             default
         );
-        // The 720x760 matrix geometry: clamp the width to the output (below 800, so the governed
+        // The 720x760 matrix geometry: clamp the width to the output (<= 980, so the governed
         // narrow layout engages) and the height to the output.
         assert_eq!(
             clamp_initial_preferences_size(default, min, Some(LogicalSize::new(720.0, 760.0))),

@@ -102,7 +102,12 @@ fn render_preferences_dialog_scrolled(
         rect: window,
     });
 
-    let narrow = window.width < 800.0;
+    // Narrow layout breakpoint reconciled to the governing prototype
+    // (docs/gui/prototypes/preferences-window.html `@media (max-width: 980px)`): the rail-above,
+    // content-fill narrow layout engages at <= 980 logical px. CSS `max-width: 980px` is INCLUSIVE of
+    // exactly 980, so the native comparison is `<=`, not `<`. `window` is already in logical pixels (the
+    // dialog normalizes the output scale), so the governed 980 CSS px compares directly.
+    let narrow = window.width <= 980.0;
     let card = window;
     push_rect_border(
         quads,
