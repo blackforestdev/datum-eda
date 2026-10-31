@@ -19196,7 +19196,7 @@
       "key": "GUI-LOCAL-MENU-ENABLEMENT-TRUTHFULNESS",
       "issue_id": "dat-gui-local-readiness-uev",
       "title": "Make GUI-local menu enablement truthful (enabled IFF a dispatch handler exists)",
-      "summary": "Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31, ~80%-to-behavior allocation): GuiMenuItem::is_phase_one_enabled accepts any GuiLocal binding while the runtime dispatch lacks handlers for several declared actions (view.layers, window.documents, help.about), so an ENABLED entry falls through and reports 'View action is unavailable' (native WDQ-C01 repro recorded: research/process-quality/evidence/wdq-c01-current/). Deliver a consumer-aware enablement contract: an entry is enabled IFF a runtime dispatch handler exists, and unbound entries are disabled yet truthfully exposed. NO implementing the missing features. PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane and Preferences ownership is preserved.",
+      "summary": "Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission + 2026-10-31 preflight amendment, ~80%-to-behavior allocation): GuiMenuItem::is_phase_one_enabled accepts any GuiLocal binding while the runtime dispatch lacks handlers for several advertised actions, so ENABLED entries fall through to generic 'View action is unavailable' narration. Live defects to make truthful: help.diagnostics and help.commands (enabled, no handler) plus view.pane_zoom/fullscreen_stage/panels/reset and window.terminal/layout; help.about is ALREADY correctly disabled and serves as the negative control. Deliver a consumer-aware enablement contract (enabled IFF a runtime dispatch handler exists; unbound entries disabled yet truthfully exposed) via the existing shared action-registry/readiness owners -- NOT a blanket consumer(key).is_some(), which would REGRESS working rows (preferences.global.open/project.open have handlers outside the intentionally-partial registry; Documents uses a real FocusNavigator). No missing feature is implemented and docs/gui/menu_model.json is likely unchanged. PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane and Preferences ownership is preserved.",
       "order": 129,
       "state": "in_progress",
       "authorization": "execution",
@@ -19216,16 +19216,17 @@
       "feature_delivery": {
         "ordinary_workflow": [
           "Launch datum-gui and open the application menu bar; read each top-level menu and its entries as the GUI renders them.",
-          "Invoke Help -> About Datum: it either opens the About surface (a runtime dispatch handler is bound) or is shown as a disabled entry truthfully exposed as unavailable -- never an enabled entry that errors with 'View action is unavailable'.",
-          "Confirm across View/Window/Help that every entry is enabled if and only if a runtime dispatch handler exists for its action (consumer-aware enablement); unbound actions such as view.layers and window.documents render disabled and stay visible, not enabled-then-refusing."
+          "Invoke Help -> Diagnostics (help.diagnostics) and Help -> Command Reference (help.commands): today each is advertised ENABLED but has no runtime handler and falls to generic 'View action is unavailable' narration -- after the fix each either opens its surface (a handler exists) or is shown disabled and truthfully exposed as unavailable.",
+          "Confirm help.about stays correctly DISABLED (the negative control: it has no handler and must not become enabled), and that the other currently-unbound rows (view.pane_zoom, view.fullscreen_stage, view.panels, view.reset, window.terminal, window.layout) render disabled-and-exposed rather than enabled-then-refusing.",
+          "Confirm working rows are NOT regressed: preferences.global.open, project.open and Documents navigation remain enabled and functional (their handlers live outside the partial action registry / via FocusNavigator)."
         ],
         "safety_requirements": [
-          "Menu enablement is computed solely from the presence of a bound runtime dispatch handler (gui_menu_model <-> runtime_menu_actions/runtime_view_actions); no entry is enabled without a handler and no missing feature is implemented to satisfy enablement.",
-          "Disabled entries stay visible and truthfully labeled unavailable -- no silent hiding, no fabricated capability, and the activation fallback never presents as a working action.",
-          "Negative tests cover the currently-unbound actions (view.layers, window.documents, help.about and peers) asserting disabled-and-exposed; changes stay within the leased menu/dispatch scope and touch no global_preferences_runtime or GP-CM05E files (Preferences ownership preserved)."
+          "Menu enablement is computed from genuine dispatch readiness via the existing shared action-registry/readiness owners; an entry is enabled IFF a runtime handler exists. A blanket consumer(key).is_some() over the intentionally-partial registry is forbidden -- it would REGRESS preferences.global.open/project.open (handlers outside the registry) and Documents (real FocusNavigator).",
+          "No missing feature is implemented to satisfy enablement; disabled entries stay visible and truthfully labeled unavailable, the activation fallback never presents as a working action, and docs/gui/menu_model.json is likely unchanged.",
+          "Negative tests cover help.about (stays disabled, the control) and every currently-unbound action (help.diagnostics, help.commands, view.pane_zoom/fullscreen_stage/panels/reset, window.terminal/layout) asserting disabled-and-exposed; regression tests assert the working rows above stay enabled; changes stay within the leased menu/registry/dispatch scope and touch no global_preferences_runtime or GP-CM05E files."
         ],
         "qualification_followups": [
-          "Acceptance observable is the native menu drive on a real GUI build, per the recorded WDQ-C01 reproduction (research/process-quality/evidence/wdq-c01-current/help-menu.png, help-about-refusal.png): the About entry must resolve to work-or-truthfully-disabled, not the enabled-then-refusing state."
+          "Acceptance observable is the native menu drive on a real GUI build: help.diagnostics and help.commands resolve to work-or-truthfully-disabled (not enabled-then-refusing), help.about stays disabled (negative control), and the working rows (preferences.global.open/project.open/Documents) stay functional. The recorded WDQ-C01 capture (research/process-quality/evidence/wdq-c01-current/) documented the original enabled-then-refusing class; About itself is now the control."
         ],
         "prerequisite_reasons": {},
         "development_ready": false,
@@ -19233,19 +19234,20 @@
       },
       "claim": {
         "agent": "codex-cli",
-        "harness": "codex",
-        "session": "codex-cli",
+        "harness": "codex-cli",
+        "session": "01a190d3-3e2e-7051-86b4-2470bde281b9",
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "f87cbf053cd41095c8e7f02188ab4e2540e0a6d8",
+        "head": "ded05c276ff02865064367fce6df3e7ff093e632",
         "claimed_at": "2026-10-31T08:19:24Z",
-        "heartbeat_at": "2026-10-31T08:19:24Z",
-        "expires_at": "2026-10-31T16:19:24Z",
+        "heartbeat_at": "2026-10-31T08:22:42Z",
+        "expires_at": "2026-10-31T16:22:42Z",
         "scope": [
           "crates/gui-protocol/src/gui_menu_model.rs",
           "crates/gui-protocol/src/gui_menu_model",
           "crates/gui-app/src/application/runtime_menu_actions.rs",
           "crates/gui-app/src/editor/runtime_view_actions.rs",
-          "docs/gui/menu_model.json"
+          "docs/gui/menu_model.json",
+          "crates/gui-render/src/menu_chrome/action_readiness_tests.rs"
         ]
       }
     },
