@@ -7,6 +7,7 @@ import argparse
 from contextlib import ExitStack
 import cargo_cache_metadata as metadata
 import cargo_qa_companions as companions
+import cargo_qa_retention as retention
 import json
 import os
 from pathlib import Path
@@ -225,17 +226,31 @@ def main() -> int:
     parser.add_argument("--metadata-only", action="store_true", help="opt in to positive non-runnable compiler-metadata proof, only for exact target/{debug,release}/incremental; does not assert unknown processes are idle")
     parser.add_argument("--qa-companions-manifest", type=Path, help="exact approved immutable QA companion hardlink-dedup manifest; preserves every path and byte")
     parser.add_argument("--manifest-sha256", help="required exact reviewed QA manifest SHA256")
+    parser.add_argument("--released-qa-build", action="append", default=[], metavar="target/qa/BUNDLE",
+                        help="validate released rebuildable outputs; append --apply to retire binaries only")
     args = parser.parse_args()
+    if args.released_qa_build and (args.remove or args.metadata_only or args.qa_companions_manifest):
+        parser.error("released QA retirement cannot be mixed with other cleanup modes")
     if bool(args.qa_companions_manifest) != bool(args.manifest_sha256):
         parser.error("QA companion dedup requires both manifest and its exact SHA256")
     if args.qa_companions_manifest and (args.remove or args.metadata_only):
         parser.error("QA companion dedup cannot be mixed with cache removal")
     if args.metadata_only and not args.remove:
         parser.error("--metadata-only requires explicit --remove incremental paths")
-    if args.apply and not (args.remove or args.qa_companions_manifest):
+    if args.apply and not (args.remove or args.qa_companions_manifest or args.released_qa_build):
         parser.error("--apply requires at least one --remove path")
     try:
-        if args.qa_companions_manifest:
+        if args.released_qa_build:
+            try:
+                receipt = retention.retire(ROOT, args.released_qa_build, guard.load_policy().lock_path,
+                    lambda: active_processes(builds_only=True),
+                    lambda paths: active_cache_users(paths, Path("/proc"),
+                        include_mappings=True), apply=args.apply)
+            except retention.Failure as exc:
+                print(json.dumps(exc.receipt, sort_keys=True))
+                raise
+            print(json.dumps(receipt, sort_keys=True))
+        elif args.qa_companions_manifest:
             try:
                 receipt = companions.deduplicate(ROOT, args.qa_companions_manifest,
                     args.manifest_sha256, guard.load_policy().lock_path, active_processes, apply=args.apply)

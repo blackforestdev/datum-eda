@@ -18968,10 +18968,10 @@
       "key": "GUI-PROOF-FIXTURE-ISOLATION",
       "issue_id": "dat-gui-proof-shared-state-9gaf",
       "title": "Isolate shared demo test fixtures and reconcile unbound pane header proof",
-      "summary": "Protocol source path released by committed7032f305 and explicit PM transfer; apply reviewed ownership extraction/private UUID demo fixtures, retaining production wrapper behavior and header proof.",
+      "summary": "Private UUID demo fixtures and real constructor/test ownership extraction landed40fc0f9f. Exact-source independent review and guarded matching-CLI focused3/0PASS; existing header/source-binding/owner regressions retain bounded proof. Public production helper unchanged; canonical-demo concurrency/full qualification remain unclaimed.",
       "order": 119,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -18985,22 +18985,7 @@
         "kind": "maintenance",
         "rationale": "Owner-directed correction of demonstrated shared demo fixture race and stale header expectation causing repeated proof work; coherent ownership extraction lowers oversized protocol entry without new production behavior, dependency, fallback or whole-suite campaign."
       },
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-efficiency-demo-isolation-20261030",
-        "claimed_at": "2026-10-30T23:22:31Z",
-        "heartbeat_at": "2026-10-31T00:02:06Z",
-        "expires_at": "2026-10-31T02:02:06Z",
-        "scope": [
-          "crates/gui-protocol/src/known_good_demo.rs",
-          "crates/gui-render/src/render_contract_tests.rs",
-          "crates/gui-protocol/src/lib.rs",
-          "specs/source_module_size_manifest.json"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7032f3051112034bfcbc15a5b273f39870a6b1e8"
-      }
+      "landing_commit": "40fc0f9f"
     },
     {
       "key": "QA-GUI-BYTE-PRESERVING-DEDUP",

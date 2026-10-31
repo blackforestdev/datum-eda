@@ -400,7 +400,7 @@
    Read-only --diff reports every semantic tracker ID/field change; default invocation is inactive. Optional --hook behavior tested and reviewed; automatic integration remains deferred and unregistered. *state `deferred`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <details>
-<summary>Completed history (3 landed records)</summary>
+<summary>Completed history (6 landed records)</summary>
 
 - **Bind allocator proof to its actual constructor owner** (`RENDERER-ALLOCATOR-OWNER-TEST-ISOLATION`; `dat-renderer-allocator-owner-j1jj`).
    Exact thread-local test constructor identity replaces the global maximum guess. Deterministic newer-foreign-owner regression retains every byte/lifetime assertion; focused guarded proof and independent review PASS. Production accounting unchanged; no broader qualification claim. *state `landed`; authorization `none`; parallel lane.*
@@ -411,15 +411,9 @@
 - **Bind qualified sources in renderer regression fixtures** (`RENDERER-QUALIFIED-SOURCE-TEST-BINDING`; `dat-gui-proof-shared-state-9gaf.1`).
    Test fixtures use existing qualified source setup and document-aware selection APIs, preserving the original retained schematic allocations and every assertion. One guarded affected-module+2geometry batchPASS14/0/1existingignore; all4prior failuresPASS, independent reviewPASS. No production change or broad qualification claim. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
-
-</details>
-
 - **Isolate shared demo test fixtures and reconcile unbound pane header proof** (`GUI-PROOF-FIXTURE-ISOLATION`; `dat-gui-proof-shared-state-9gaf`).
-   Protocol source path released by committed7032f305 and explicit PM transfer; apply reviewed ownership extraction/private UUID demo fixtures, retaining production wrapper behavior and header proof. *state `in_progress`; authorization `execution`; parallel lane.*
+   Private UUID demo fixtures and real constructor/test ownership extraction landed40fc0f9f. Exact-source independent review and guarded matching-CLI focused3/0PASS; existing header/source-binding/owner regressions retain bounded proof. Public production helper unchanged; canonical-demo concurrency/full qualification remain unclaimed. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
-<details>
-<summary>Completed history (2 landed records)</summary>
-
 - **Preserve and deduplicate exact immutable GUI QA images** (`QA-GUI-BYTE-PRESERVING-DEDUP`; `dat-qa-gui-byte-preserving-dedup-npfx`).
    Explicit descriptor-proven GUI dedup source312848f8 and exactapprovedapply retain allpaths/bytes/security/mtime and446nonselectedentries.31tests/code/data/postapplyreviewPASS; retainedcache38.5584GiB,preflighterrors[]. Oldguards/limits unchanged; ownprotocolproof held for native integration/producer priority. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
