@@ -202,6 +202,22 @@ unsupported figures undecided; review feasibility/value after repeated failure.
 Read the numerical-provenance procedure before changing a threshold or measurement
 campaign.
 
+### Acceptance bars (controlling; owner-ratified 2026-10-31, from the GP-CM05 overrun)
+- An acceptance bar is fixed OUTSIDE the work it grades and FROZEN when work
+  starts. New findings become new task records; they never extend a live bar.
+  A bar authored and graded by the same process that executes it anchors nothing.
+- Before any campaign begins, every requirement gets a producibility check
+  against the real environment and engine surfaces. An unproducible requirement
+  is a defect IN THE BAR — cut it or route one sentence to the owner; never
+  defer it, carry it as OWED debt, or build machinery toward it.
+- No acceptance scheme may void all evidence whenever the product improves.
+  A defect fix invalidates only its affected rows. A bar that punishes fixing
+  the product is defective per se.
+- Two consecutive whole-evidence invalidations, or any discovered impossibility,
+  triggers a mandatory PM bar review whose allowed outcomes are: shrink the bar,
+  or one sentence to the owner. More machinery is the forbidden response.
+  "This bar cannot be met as written" is a required escalation, never a failure.
+
 ## Nonnegotiable implementation boundaries
 
 - PM029: no adding/fetching/vendoring/linking third-party code without prior exact
