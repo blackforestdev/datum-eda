@@ -84,12 +84,27 @@ def _coordinate_tuple(raw):
     return (backend, float(scale), (int(window[0]), int(window[1])))
 
 
+def _derive_native_id(coordinate):
+    """The deterministic native environment id ``native-<backend>-<int-scale>-<WxH>`` a producer may
+    derive from its coordinate -- the same construction as assemble.native_environment_id /
+    environment_record._scale_label (int-if-whole scale token). Used ONLY to re-assert the frozen
+    selection id consumer-side, never to mint one."""
+    backend, scale, window = coordinate
+    scale_token = str(int(scale)) if float(scale) == int(scale) else str(scale)
+    return f"native-{backend}-{scale_token}-{window[0]}x{window[1]}"
+
+
 def _consume_identity(identity, gui_binary, coordinate):
     """Bind this row to dev's FROZEN shared identity, computing NOTHING (F1 reference wiring).
 
-    candidate / input_manifest / matrix_sha256 are carried verbatim; the one environment entry whose
-    coordinate matches is selected (by its frozen id); the provided gui binary is verified to be the
-    pinned candidate (no substitution). Returns the same tuple the self-compute path produces."""
+    Seam 1: the frozen baton's 21-field ``environments`` array carries NO per-entry ``coordinate`` key
+    (its closed field set + environment_sha256 binding forbid injecting one). The coordinate->id
+    projection lives in the frozen.json ``selection`` aid, one {coordinate, id} row per native entry;
+    this consumer matches there, then RE-ASSERTS the resolved id against the 21-field array's ids (the
+    seam-1 ONE binding, re-checked consumer-side) and against the deterministic native derivation.
+    candidate / input_manifest / matrix_sha256 are carried verbatim; the provided gui binary is
+    verified to be the pinned candidate (no substitution). Returns the same tuple the self-compute path
+    produces."""
     candidate = identity["candidate"]
     gui_sha = candidate["binaries"]["gui"]["sha256"]
     if _sha_file(gui_binary) != gui_sha:
@@ -97,12 +112,22 @@ def _consume_identity(identity, gui_binary, coordinate):
             f"--gui-binary sha256 != candidate.binaries.gui.sha256 ({gui_sha}); the frozen identity "
             "pins the gui binary -- no substitution")
     binaries = {"gui": gui_sha}
-    matched = [e for e in identity["environments"] if _coordinate_tuple(e["coordinate"]) == coordinate]
+    matched = [row for row in identity["selection"]
+               if _coordinate_tuple(row["coordinate"]) == coordinate]
     if len(matched) != 1:
         raise SystemExit(
-            f"frozen identity must carry exactly one environment for coordinate {coordinate}; "
+            f"frozen identity selection must carry exactly one row for coordinate {coordinate}; "
             f"found {len(matched)}")
-    environments = {matched[0]["id"]: coordinate}
+    environment_id = matched[0]["id"]
+    if environment_id not in {entry["id"] for entry in identity["environments"]}:
+        raise SystemExit(
+            f"selection id {environment_id!r} is not an id in the frozen 21-field environments array "
+            "(seam-1 one-binding violation)")
+    if environment_id != _derive_native_id(coordinate):
+        raise SystemExit(
+            f"selection id {environment_id!r} != deterministic native id "
+            f"{_derive_native_id(coordinate)!r} for coordinate {coordinate}")
+    environments = {environment_id: coordinate}
     return candidate, binaries, identity["input_manifest"], identity["matrix_sha256"], environments
 
 
