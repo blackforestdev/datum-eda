@@ -52,6 +52,7 @@ class StartupQA:
         self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir=runtime_parent or "/tmp")
         self.compositor = None
         self.file_actions = False
+        self.backend = "wayland"
         self.clipboard_writer = None
         self.host_window = None
         self.env = dict(os.environ)
@@ -117,10 +118,16 @@ class StartupQA:
         assert self.compositor.poll() is None and window == self.host_window
         self.command(*focus_arguments(window, os.environ))
 
-    def start_envelope(self, desktop=False, *, proto_log=False, output_size=(1344, 806)):
+    def start_envelope(self, desktop=False, *, proto_log=False, output_size=(1344, 806),
+                       backend="wayland"):
         if (not isinstance(output_size, tuple) or len(output_size) != 2
                 or any(type(dimension) is not int or dimension <= 0 for dimension in output_size)):
             raise ValueError("output_size must be a pair of positive integers")
+        if backend not in ("wayland", "x11"):
+            raise ValueError("backend must be 'wayland' or 'x11'")
+        # The GUI backend governs whether datum-gui runs as a native Wayland client (default) or an
+        # Xwayland/X11 client inside this same owned compositor. x11 implies an owned Xwayland server.
+        self.backend = backend
         env = dict(os.environ, XDG_RUNTIME_DIR=self.runtime.name)
         self.compositor_log = (self.root / "weston-process.log").open("w")
         config = "--no-config"
@@ -131,7 +138,7 @@ class StartupQA:
         args = ["weston", "--backend=x11", "--renderer=gl",
                 "--shell=" + ("desktop-shell.so" if desktop else "kiosk-shell.so"), config, "--debug", f"--width={output_size[0]}", f"--height={output_size[1]}", "--scale=1",
                 "--idle-time=0", "--socket=datum-startup-qa", "--log=" + str(self.root / "weston.log")]
-        if self.file_actions:
+        if self.file_actions or self.backend == "x11":
             args.append("--xwayland")
         if proto_log:
             args.append("--logger-scopes=log,proto")
@@ -143,13 +150,14 @@ class StartupQA:
         match = re.search(r"x11 output .*window id (\d+)", text)
         assert match, "host XID must come from this owned live compositor's log"
         self.host_window = match.group(1)
-        if self.file_actions:
+        if self.file_actions or self.backend == "x11":
             display = self.wait("same owned compositor XWayland display", lambda:
                 re.search(r"xserver listening on display (:\d+)", (self.root / "weston.log").read_text()))
             self.env["DISPLAY"] = display.group(1)
             assert self.env["DISPLAY"] != os.environ.get("DISPLAY"), "never use outer clipboard"
-            self.observations["clipboard_provider"] = {
-                "kind": "same-compositor XWayland clipboard bridge; not native Wayland selection",
+            self.observations["owned_xwayland"] = {
+                "kind": "same-compositor XWayland display; clipboard bridge (file_actions) and/or the "
+                        "datum-gui X11 window backend (backend=x11); not a native Wayland selection",
                 "owned_display": self.env["DISPLAY"], "wayland_display": self.env["WAYLAND_DISPLAY"],
                 "outer_input_display": os.environ.get("DISPLAY")}
         metadata = self.command("xprop", "-id", self.host_window, "WM_CLASS", "_NET_WM_PID")
@@ -253,14 +261,21 @@ class StartupQA:
         args = [str(self.binary_dir / "datum-gui")]
         if project_root is not None:
             args.extend(["--project-root", str(project_root)])
-        self.actions.append({"launch_argv": args, "isolated_xdg": str(self.root)})
-        self.process = subprocess.Popen(args, cwd=Path.home() if os.environ.get("DATUM_QA_TERMINAL_HANDOFF") == "1" else self.root, env=self.env,
+        self.actions.append({"launch_argv": args, "isolated_xdg": str(self.root), "gui_backend": self.backend})
+        # For the x11 coordinate datum-gui runs as an Xwayland/X11 winit client: select X11 and drop
+        # the Wayland socket in the CHILD env only (self.env keeps WAYLAND_DISPLAY so weston-screenshooter
+        # still captures this owned compositor's output). DISPLAY was bound by start_envelope's Xwayland.
+        child_env = dict(self.env)
+        if self.backend == "x11":
+            child_env["WINIT_UNIX_BACKEND"] = "x11"
+            child_env.pop("WAYLAND_DISPLAY", None)
+        self.process = subprocess.Popen(args, cwd=Path.home() if os.environ.get("DATUM_QA_TERMINAL_HANDOFF") == "1" else self.root, env=child_env,
                                         stdout=self.app_log, stderr=subprocess.STDOUT,
                                         start_new_session=True)
         log = Path(self.env["DATUM_GUI_LOG"])
         self.wait("native Main visible", lambda: log.exists() and "window visible" in log.read_text())
         identities = [line for line in log.read_text().splitlines() if "surface identity" in line]
-        assert identities and all("window_backend=wayland" in line and "gpu_backend=Vulkan" in line for line in identities)
+        assert identities and all(f"window_backend={self.backend}" in line and "gpu_backend=Vulkan" in line for line in identities)
         self.observations[label + "_surface_identity"] = identities
         self.focus(self.host_window)
         self.command("xdotool", "mousemove", "--window", self.host_window, "600", "400", "click", "1")

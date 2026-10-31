@@ -132,9 +132,10 @@ def _run_gui_session(binary, work, *, backend, scale, window):
 
     Uses the governed capture envelope ``scripts/prove_native_project_startup_gui.py::StartupQA``
     (owned Weston on the shared display -- the host desktop steals coordinate clicks, so the owned
-    envelope is mandatory; never a bespoke weston launch). The envelope runs datum-gui as a Wayland
-    client at --scale=1, so it binds exactly the wayland/1.0 coordinate; other backends/scales need
-    an envelope extension (milestone scope) and are refused here rather than mis-bound.
+    envelope is mandatory; never a bespoke weston launch). The envelope runs datum-gui at --scale=1
+    as either a native Wayland client (backend=wayland) or an Xwayland/X11 client (backend=x11), so
+    it binds the wayland/1.0 and x11/1.0 coordinates. scale 2.0 needs the envelope's scale/input
+    extension, pending its own feasibility probe, and is refused here rather than mis-bound.
 
     factory-defaults is TRUE iff the dialog opens and every one of the 11 active descriptors
     (Appearance + Units) shows the surface's own "Factory default · Global · this device" provenance
@@ -142,9 +143,9 @@ def _run_gui_session(binary, work, *, backend, scale, window):
     provenance is the authoritative value the resolver projects onto the control; AT-SPI is read for
     tree/role/name/description (reliable), not a CHECKED state (unreliable under immediate mode).
     A failed read or short count returns False; nothing is faked or retried to green."""
-    if backend != "wayland" or float(scale) != 1.0:
-        raise SystemExit(f"this capture envelope supports only the wayland/1.0 coordinate; "
-                         f"got {backend}/{scale}")
+    if backend not in ("wayland", "x11") or float(scale) != 1.0:
+        raise SystemExit(f"this capture envelope supports the wayland/1.0 and x11/1.0 coordinates "
+                         f"(scale 2.0 pending its own feasibility probe); got {backend}/{scale}")
     repo = Path(__file__).resolve().parents[3]
     scripts_dir = str(repo / "scripts")
     if scripts_dir not in sys.path:
@@ -163,7 +164,7 @@ def _run_gui_session(binary, work, *, backend, scale, window):
                 "DATUM_AGENT_PROVENANCE"):
         qa.env.pop(key, None)
     try:
-        qa.start_envelope(output_size=(int(window[0]), int(window[1])))
+        qa.start_envelope(output_size=(int(window[0]), int(window[1])), backend=backend)
         main = qa.launch("clean-install-missing-store-gui")
         qa.menu_item(main, "Edit", "Preferences", child="Global Preferences…")
         qa.wait("Global Preferences dialog open", lambda: any(
