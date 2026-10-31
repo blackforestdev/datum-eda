@@ -43,6 +43,7 @@ from global_preferences_acceptance.producer import (  # noqa: E402
 
 GUI_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_case.py"
 GUI_WRITE_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_write_case.py"
+GUI_A11Y_RECIPE_RELPATH = "scripts/global_preferences_acceptance/recipes/preferences_gui_a11y_case.py"
 # PM-authorized single pattern/coordinate. The default is the simplest reliable row; any coordinate
 # passed must be a real case_inventory() key for this family.
 DEFAULT_COORDINATE = ("wayland", 1.0, (1024, 900))
@@ -230,9 +231,48 @@ def build_gui_write_case(bundle_root, *, gui_binary, coordinate, identity=None):
     return report, binaries, environments, key
 
 
+def _gui_a11y_capture_after(capture, key, work_root, before_state):
+    """Fold BOTH the post-run store (prefix 'preferences/') AND the recipe-written F4-DESIGN §5 typed
+    accessibility-capture payload (prefix 'accessibility-capture/') into ONE after-state manifest. The
+    CASE-row schemas are all closed (assertion evidence = {schema,context,id,observed}; the row's fields
+    are fixed; stdout = the 5 bools), so the PRIMARY typed evidence (ordered event list + priorities +
+    Status-node desc + control table + focus-walk + Orca spoken) has no richer slot -- its content-
+    addressed, row-bound home is row['after'] (state.v2, each file sha-bound)."""
+    root = before_state["root"]
+    store = _snapshot_dir(capture, root, Path(work_root) / "config" / "datum" / "preferences", "preferences/")
+    evidence = _snapshot_dir(capture, root, Path(work_root) / "accessibility-capture", "accessibility-capture/")
+    files = sorted(store["files"] + evidence["files"], key=lambda entry: entry["path"])
+    return capture.put({"schema": store["schema"], "root": root, "files": files})
+
+
+def build_gui_a11y_case(bundle_root, *, gui_binary, coordinate, identity=None):
+    """Produce the accessibility-interaction/set-reset-refusal/gui row -- the §6-N06 a11y-capture anchor.
+
+    The recipe drives the real GP dialog (SET + RESET commit generations; a held-writer-lease REFUSAL is
+    refused with NO new generation) through the shared 3-channel accessibility_capture backbone, and
+    observes the five matrix assertions (native-at-spi-evidence / correct-focus /
+    correct-name-role-value-state / no-trap / truthful-announcement). before=empty store, after=the
+    SET/RESET generations -> after != before (write-family guardrail); the refusal's no-write is proven
+    by the unchanged generation count INSIDE the run, captured in the diagnostics."""
+    key = ("accessibility-interaction", "set-reset-refusal", "default", "gui", coordinate)
+    require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
+    _preflight_candidate_companions(gui_binary)
+    capture = Capture(bundle_root)
+    candidate, binaries, input_manifest_ref, matrix_sha256, environments = _candidate_bindings(
+        capture, gui_binary, coordinate, identity, GUI_A11Y_RECIPE_RELPATH)
+    row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
+                       environments=environments, input_manifest=input_manifest_ref,
+                       matrix_sha256=matrix_sha256, surface_binaries={"gui": str(gui_binary)},
+                       capture_after=_gui_a11y_capture_after, setup=None,
+                       bundle_root=bundle_root, recipe_relpath=GUI_A11Y_RECIPE_RELPATH)
+    report = _assemble_report(candidate, input_manifest_ref, matrix_sha256, environments, capture, row, identity)
+    return report, binaries, environments, key
+
+
 FAMILY_BUILDERS = {
     "clean-install": build_gui_case,
     "global-populated": build_gui_write_case,
+    "set-reset-refusal": build_gui_a11y_case,
 }
 
 
@@ -253,7 +293,7 @@ def main(argv=None):
                              "BINDS to it, computing nothing (the Phase-A reference wiring); its "
                              "input_manifest content must be resolvable in the shared --bundle-root.")
     parser.add_argument("--family", default="clean-install", choices=sorted(FAMILY_BUILDERS),
-                        help="GUI case family: clean-install (read-only) or global-populated (write)")
+                        help="GUI case family: clean-install (read-only), global-populated (write) or set-reset-refusal (a11y capture)")
     args = parser.parse_args(argv)
     args.bundle_root.mkdir(parents=True, exist_ok=True)
     bundle_root = args.bundle_root.resolve()
