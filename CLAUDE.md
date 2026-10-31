@@ -53,6 +53,25 @@ instructions must not redefine its capabilities, gates or mutation semantics.
 > and the per-domain tool contracts in `docs/contracts/`. Read those before
 > inferring product intent from code or a milestone.
 
+## Work-effort allocation (controlling; owner-ratified 2026-10-31)
+
+Datum is built in Rust. **At least 80% of work effort — session turns, agent
+assignments and committed lines alike — goes to writing, fixing and reviewing
+actual Rust product code**: the engine, GUI, editors, services and verbs a
+designer uses in the running application. Everything else combined — Python
+harnesses, qualification corpora, evidence JSON, governance records, trackers,
+packets, handoffs, coordination — is overhead, capped at the remaining
+fraction. Overhead that outgrows the cap is a defect to cut, not work to
+schedule; a governance or qualification artifact never counts as product
+progress or fix success. Progress is reported as designer-visible behavior
+delivered in the running application, with the measured Rust-vs-overhead ratio
+(git lines and commit touches by extension) in each delivery summary. A
+qualification campaign serves a Rust deliverable and runs once, consolidated,
+at a stable candidate; its records batch with delivery. When choosing the next
+unit of work at equal priority, the Rust product unit always wins. The
+standing project manager enforces this allocation continuously; sustained
+violation is a delivery failure regardless of how green the process looks.
+
 ## Start with the task, not the documentation inventory
 
 Read this file and AGENTS.md at startup. Then load only the relevant governed
