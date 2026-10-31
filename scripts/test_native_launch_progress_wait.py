@@ -10,20 +10,30 @@ import unittest
 SOURCE = Path(__file__).with_name('native_readiness_capture.py')
 
 
-def load_wait():
-    """Extract the real wait() method over a mocked monotonic clock (sleep advances it deterministically)."""
+def _extract_wait(time_module):
     tree = ast.parse(SOURCE.read_text())
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'NativeReadinessCapture')
     fn = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == 'wait')
-    clock = {'t': 0.0}
-    time_mock = NS(monotonic=lambda: clock['t'],
-                   sleep=lambda d: clock.__setitem__('t', round(clock['t'] + d, 6)))
 
     class GErr(Exception):
         pass
-    namespace = {'time': time_mock, 'GLib': NS(Error=GErr)}
+    namespace = {'time': time_module, 'GLib': NS(Error=GErr)}
     exec(compile(ast.Module(body=[fn], type_ignores=[]), str(SOURCE), 'exec'), namespace)
-    return namespace['wait'], clock
+    return namespace['wait']
+
+
+def load_wait():
+    """Extract the real wait() method over a mocked monotonic clock (sleep advances it deterministically)."""
+    clock = {'t': 0.0}
+    time_mock = NS(monotonic=lambda: clock['t'],
+                   sleep=lambda d: clock.__setitem__('t', round(clock['t'] + d, 6)))
+    return _extract_wait(time_mock), clock
+
+
+def load_wait_real_clock():
+    """Extract the real wait() over the REAL time module -- no mocked clock, for falsifiability tests."""
+    import time as real_time
+    return _extract_wait(real_time)
 
 
 class LaunchProgressWaitTests(unittest.TestCase):
@@ -77,6 +87,34 @@ class LaunchProgressWaitTests(unittest.TestCase):
         with self.assertRaises(RuntimeError) as caught:
             qa.wait('native Main visible', lambda: None, timeout=1.0, progress=lambda: 0, ceiling=10.0)
         self.assertIn('App exited 1', str(caught.exception))
+
+    # --- Falsifiability over the REAL wall clock (audit: an ACTUAL no-progress condition trips the
+    #     stall budget, not a mocked expiry) ---
+
+    def test_real_clock_genuine_hang_trips_stall_budget_in_real_time(self):
+        import time as real_time
+        wait = load_wait_real_clock()
+        qa = NS(compositor=None, process=None)
+        qa.wait = MethodType(wait, qa)
+        start = real_time.monotonic()
+        with self.assertRaises(RuntimeError) as caught:
+            # predicate never truthy; progress genuinely never advances -> a real no-progress hang
+            qa.wait('real hang', lambda: None, timeout=0.3, progress=lambda: 0, ceiling=2.0)
+        elapsed = real_time.monotonic() - start
+        self.assertIn('genuine hang', str(caught.exception))
+        self.assertGreaterEqual(elapsed, 0.3)   # it actually waited the stall budget in wall-clock time
+        self.assertLess(elapsed, 1.5)           # and tripped well before the 2.0s ceiling (fast-ish)
+
+    def test_real_clock_live_progress_is_admitted_past_the_stall_budget(self):
+        import time as real_time
+        wait = load_wait_real_clock()
+        qa = NS(compositor=None, process=None)
+        qa.wait = MethodType(wait, qa)
+        t0 = real_time.monotonic()
+        # progress advances in real time; predicate becomes true at ~0.5s, past the 0.2s stall budget
+        value = qa.wait('real slow', lambda: ((real_time.monotonic() - t0) >= 0.5) or None,
+                        timeout=0.2, progress=lambda: int((real_time.monotonic() - t0) * 100), ceiling=5.0)
+        self.assertTrue(value)
 
 
 if __name__ == '__main__':
