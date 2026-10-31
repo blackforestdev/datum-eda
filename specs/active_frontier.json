@@ -19242,10 +19242,10 @@
       "key": "ADVERTISED-ZOOM-OUT-SHORTCUT-DISPATCH",
       "issue_id": "dat-advertised-zoom-shortcut-icbx",
       "title": "Dispatch the advertised Ctrl+- Zoom Out shortcut from board/workspace focus",
-      "summary": "Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31, ~80%-to-behavior allocation): docs/gui/menu_model.json advertises Ctrl+- for View Zoom Out, but application/workspace_keyboard.rs has no Minus/Zoom action and returns None, so the advertised shortcut never zooms the focused board (native C04 repro: retained initial camera, no post-key publication). Wire the keyboard path to the EXISTING view.zoom_out action (runtime_view_actions) -- bounded keyboard-dispatch integration that reuses the implemented behavior, no new mechanism or product rule. Proof includes terminal-focus discrimination (the shortcut must not fire into a focused terminal). PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane.",
+      "summary": "Advertised Ctrl+- now invokes existing shared Zoom Out from workspace focus, landed in385cc2c0; terminal input routing preserved.15focused tests and strict daemon Clippy passed; native Board zoom directly observed, terminal discrimination accepted from actual focus/input plus production exclusion. Both raw native runs remain failed; no direct fresh negative camera sample claimed. Source-pinned bounded availability recorded and lease released; full qualification remains separate.",
       "order": 130,
-      "state": "in_progress",
-      "authorization": "execution",
+      "state": "landed",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "dependencies": [],
@@ -19276,24 +19276,13 @@
           "Two raw native runs remain FAIL/exit1 because of over-added diagnostic assertions/readback; actual Board zoom publication is fresh and direct. Terminal discrimination is accepted from native focus/input antecedents plus unchanged production routing exclusion and15regressions, not a direct postnegative camera sample or empty dispatch logs. Broader native/visual qualification remains separate."
         ],
         "prerequisite_reasons": {},
-        "development_ready": false,
-        "ordinary_evidence": []
-      },
-      "claim": {
-        "agent": "codex-cli",
-        "harness": "codex-cli",
-        "session": "01a190d3-3e2e-7051-86b4-2470bde281b9",
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "a5993de7a07940ecc719df996ac3c9fb8a34536f",
-        "claimed_at": "2026-10-31T08:20:24Z",
-        "heartbeat_at": "2026-10-31T09:13:00Z",
-        "expires_at": "2026-10-31T17:13:00Z",
-        "scope": [
-          "crates/gui-app/src/application/workspace_keyboard.rs",
-          "crates/engine-daemon/src/main.rs",
+        "development_ready": true,
+        "ordinary_evidence": [
           "docs/reviews/workflow-delivery-rollout/advertised-zoom-shortcut-delivery.json"
         ]
-      }
+      },
+      "claim": null,
+      "landing_commit": "385cc2c032cc1ba73ef5b6686363c514652fcd6d"
     }
   ],
   "management_appointments": {

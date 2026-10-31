@@ -1,0 +1,84 @@
+{
+  "kind": "ordinary_application",
+  "source_commit": "385cc2c032cc1ba73ef5b6686363c514652fcd6d",
+  "launch_command": "/var/tmp/datum-zoom-readiness-5e38e871-612c-4429-b76b-8bf2c0bbdd2d/bin/datum-gui --project-root /tmp/datum-product-allocation-7s7hbz_m/zoom-observation-continuation/project",
+  "workflow_results": {
+    "Launch datum-gui, open a board in the Board editor and give the board viewport focus.": true,
+    "Press the advertised Ctrl+- (View -> Zoom Out) shortcut: the board camera zooms out via the existing view.zoom_out action and the post-key state publishes the new camera, not the stale initial sequence.": true,
+    "Give a terminal pane focus and press Ctrl+-: the board does NOT zoom (focus discrimination) -- the keystroke stays with the focused terminal, confirming the shortcut only fires from board/workspace focus.": true
+  },
+  "safety_results": {
+    "The shortcut REUSES the existing view.zoom_out action (runtime_view_actions handler); no new zoom mechanism, product rule or camera behavior is introduced -- bounded keyboard-dispatch integration only.": true,
+    "Ctrl+- is dispatched only from workspace/board keyboard focus via workspace_keyboard::character_action; a focused terminal keeps its keystrokes (terminal screen-authority preserved; no edit to terminal routing).": true,
+    "Shortcut implementation stays within the leased workspace_keyboard.rs owner and focused production dispatch/focus regressions; the separate PM-authorized daemon collapsed-if cleanup preserves lifecycle behavior. Native Terminal ownership plus the unchanged production key-route exclusion supports no workspace zoom under Terminal focus; no direct fresh negative camera observation is claimed.": true
+  },
+  "source_scope_sha256": {
+    "crates/gui-protocol/src/gui_menu_model.rs": "2a2b17ccbc4430391b567ffa03a0f150a0dbfb80ad4c3d8d5265c1c00ef5c303",
+    "crates/gui-protocol/src/gui_menu_model/action_registry.rs": "b3aff61c1d78ba2aebf40666a609cc2b518b795822ec8c7542f9340aeeac99fe",
+    "crates/gui-protocol/src/gui_menu_model/action_registry/tests.rs": "6516bb4ad6b16fa9dde8123f80b15bfc4a146ea1cd26e83a089530907b5c3e9b",
+    "crates/gui-app/src/application/runtime_menu_actions.rs": "4e1c201df2aa354efdb12a0bfc20093fbfe70ca7f87facfd077b4c067b5657e3",
+    "crates/gui-app/src/editor/runtime_view_actions.rs": "29f8da05283588dd76917a010082cbc31002dd4eb7580546044a814b6620b5fd",
+    "crates/gui-render/src/menu_chrome/action_readiness_tests.rs": "18a587920e9a25e09e8196bddbf5f608a222719b2bfed2699b9aafdcc5af20fc",
+    "crates/gui-app/src/application/workspace_keyboard.rs": "261b00c9225eedc722053f080fd0c44b36b26662219a4fcae9f9b7624dcaddc8",
+    "crates/engine-daemon/src/main.rs": "a9e424abf80f0eaba1ebc006cb41d4b43ec64636e1cadd3487e97401fb0bd8d6"
+  },
+  "binary_snapshot_receipt": {
+    "path": "/tmp/datum-product-allocation-7s7hbz_m/icbx-snapshot-build-results.json",
+    "sha256": "e94d4cc6a6578928db868479618eb0c792b3d8641935c97424acaea1b31e0831",
+    "retention": "machine-local prunable; not committed"
+  },
+  "direct_native_observation": {
+    "Board_input": "exact ControlLeft/Minus press-release",
+    "sequence_before": 1,
+    "zoom_before": 1.0,
+    "sequences_after": [
+      2,
+      3
+    ],
+    "zoom_after": 0.8333333134651184,
+    "console_feedback": "view zoom out",
+    "Terminal_antecedent": "sequence5 focus plus AT-SPI witnesses bracket exact same input; terminal marker observed and ownership retained"
+  },
+  "negative_verification_basis": "Independent review of production key_route(Terminal,WorkspaceHotkey)=Unrouted, workspace_action_should_fire=false and attached-PTY early return instantiates exclusion under actual native Terminal focus/input witnesses; 14 focus regressions supplement ordinary input. This is a supported structural inference, not a direct postnegative camera observation.",
+  "raw_native_runs": {
+    "zoom-result.json": "FAIL/exit1",
+    "zoom-result-continuation.json": "FAIL/exit1"
+  },
+  "limits": [
+    "Direct fresh postnegative camera publication absent; latest sequence5 precedes terminal keys.",
+    "No absence-of-dispatch-log inference: successful positive path also emits none.",
+    "Fresh negative publication was an over-added measurement, not the original contract; no-Board-zoom requirement remains satisfied on combined evidence, not waived.",
+    "No overall native-run, visual or full product qualification acceptance.",
+    "Initial outerIPC conservatively retained after receipt-key mismatch pending established owned-cleanup assessment; continuation owner stops/runtime removal verified."
+  ],
+  "review": {
+    "assessor": "audit-agent-01",
+    "session": "0cf9c953-8ea9-4f32-8411-cac7d36d1e05",
+    "manager": "PM-Agent-01",
+    "manager_session": "709f6d61-59a8-4817-acd9-50667d9bfd16",
+    "disposition": "Combined proof satisfies terminal discrimination on merits; inference and missing direct observation explicitly retained. main.rs behavior-preserving rider accepted.",
+    "record": "pm-reply.json.notes PM~05:00; actual audit09:43:46 and PM09:44:01"
+  },
+  "raw_artifacts": {
+    "zoom-result.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/zoom-result.json",
+      "sha256": "4cd80a9d14a0cd9e81160799390343556f12a8fa405eb98c63b8e66a05670a7d",
+      "retention": "prunable machine-local; not committed"
+    },
+    "zoom-result-continuation.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/zoom-result-continuation.json",
+      "sha256": "bc6827f967d097f0f35313728df4a3859ca36d7213ad43b83901eb445bdbcc11",
+      "retention": "prunable machine-local; not committed"
+    },
+    "zoom-continuation-diagnosis.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/zoom-continuation-diagnosis.json",
+      "sha256": "790ff2728d01a2af9cc607cd1b1251fa5b6e11a3d790781be0243bfc2ef4d5a7",
+      "retention": "prunable machine-local; not committed"
+    },
+    "icbx-focused-proof.json": {
+      "machine_local_path": "/tmp/datum-product-allocation-7s7hbz_m/icbx-focused-proof.json",
+      "sha256": "8581bb2f6577b063ee935b08ef037f9b320ea1f152821a6d4e2f72e9f4566923",
+      "retention": "prunable machine-local; not committed"
+    }
+  }
+}

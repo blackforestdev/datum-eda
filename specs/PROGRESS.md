@@ -442,7 +442,7 @@
    PM-admitted ongoing maintenance record. Each bounded correction uses an amended narrow path lease and linked incidental intake; retain individual independent reviews and source landing references. No broad repository reservation. Rejustify continuation at GP-CM05A. Admission supplies no product authority or successor rights. *state `ready`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/PROJECT_STATE_POLICY.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`.
 <details>
-<summary>Completed history (2 landed records)</summary>
+<summary>Completed history (3 landed records)</summary>
 
 - **Guard native-edit daemon lifecycle against abnormal GUI-exit orphans** (`NATIVE-EDIT-DAEMON-ABNORMAL-EXIT-GUARD`; `dat-typb`).
    GUI-owned native-edit companions now follow the retained process lifetime pipe and exit naturally after an abnormal GUI exit, including idle accept and partial/idle client reads, while already-dispatched canonical operations finish. Delivered at7457f090; guarded process regressions3/3PASS and actual Wayland/Vulkan GUI crash observed natural daemon exit before cleanup. Actual independent audit source/runtime PASS and PM-Agent-01 lane acceptance recorded in dat-typb with source/binary/artifact hashes. Existing normal Drop preserved; historical orphans untouched. Capture artifact k6pr remains separate intake; full qualification and successor work unclaimed. Lease released; GP-CM05E remains canonical. *state `landed`; authorization `none`; parallel lane.*
@@ -450,12 +450,12 @@
 - **Make GUI-local menu enablement truthful (enabled IFF a dispatch handler exists)** (`GUI-LOCAL-MENU-ENABLEMENT-TRUTHFULNESS`; `dat-gui-local-readiness-uev`).
    Shared typed readiness/dispatch landed in7960c39c: unbuilt and unknown GUI-local commands are truthfully unavailable; existing Preferences/Documents/view handlers retain their behavior.26focused regressions and actual bounded menu observations independently accepted. Source-pinned availability evidence records all3rawnativeFAILs and excludes wrong Preferences pixels; Escape diagnostic is separate tgqk intake. Lease released; broader qualification remains open. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/gui/DATUM_GUI_MENU_BINDINGS.md`.
+- **Dispatch the advertised Ctrl+- Zoom Out shortcut from board/workspace focus** (`ADVERTISED-ZOOM-OUT-SHORTCUT-DISPATCH`; `dat-advertised-zoom-shortcut-icbx`).
+   Advertised Ctrl+- now invokes existing shared Zoom Out from workspace focus, landed in385cc2c0; terminal input routing preserved.15focused tests and strict daemon Clippy passed; native Board zoom directly observed, terminal discrimination accepted from actual focus/input plus production exclusion. Both raw native runs remain failed; no direct fresh negative camera sample claimed. Source-pinned bounded availability recorded and lease released; full qualification remains separate. *state `landed`; authorization `none`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/gui/DATUM_GUI_MENU_BINDINGS.md`.
 
 </details>
 
-- **Dispatch the advertised Ctrl+- Zoom Out shortcut from board/workspace focus** (`ADVERTISED-ZOOM-OUT-SHORTCUT-DISPATCH`; `dat-advertised-zoom-shortcut-icbx`).
-   Owner-directed product unit leased to the resumed Codex team (PM-Agent-01 admission, 2026-10-31, ~80%-to-behavior allocation): docs/gui/menu_model.json advertises Ctrl+- for View Zoom Out, but application/workspace_keyboard.rs has no Minus/Zoom action and returns None, so the advertised shortcut never zooms the focused board (native C04 repro: retained initial camera, no post-key publication). Wire the keyboard path to the EXISTING view.zoom_out action (runtime_view_actions) -- bounded keyboard-dispatch integration that reuses the implemented behavior, no new mechanism or product rule. Proof includes terminal-focus discrimination (the shortcut must not fire into a focused terminal). PM059 independent review by audit-agent-01 via PM-Agent-01 before acceptance. No gating edges; GP-CM05E remains the sole canonical product lane. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md`, `docs/gui/DATUM_GUI_MENU_BINDINGS.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction
