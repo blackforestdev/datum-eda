@@ -17,11 +17,12 @@ use super::{
     PreferenceControlPresentation, PreferenceControlViewV1, PreferenceEnumChoiceV1,
     PreferenceErrorCodeV1, PreferenceErrorV1, PreferenceExplanationV1, PreferenceKey,
     PreferenceMutationRequestV1, PreferenceMutationResultV1, PreferenceRepositoryStatusV1,
-    PreferenceServiceRefusal, PreferenceServiceRefusalKind, PreferenceServiceStatus,
-    PreferenceValueViewV1, ProjectUnitsSeedPreviewV1, ProjectUnitsSourceV1, active_v1_registry,
-    factory_units_seed, reserved_v1_registry,
+    PreferenceServiceStatus, PreferenceValueViewV1, ProjectUnitsSeedPreviewV1,
+    ProjectUnitsSourceV1, active_v1_registry, factory_units_seed, reserved_v1_registry,
 };
 use crate::ir::units::project_profile_to_value;
+
+mod errors;
 
 const SCOPE: &str = "global_this_device";
 const FACTORY_PROFILE: &str = "datum.units.factory.v1";
@@ -215,6 +216,17 @@ impl GlobalPreferencesProductService {
                 ));
             }
             return self.replay_mutation(&key, receipt);
+        }
+        // A non-writable repository status (MigrationRequired / PreservedUnreadable) surfaces its own
+        // typed refusal BEFORE the expected-generation precheck. MigrationRequired deliberately exposes
+        // generation=None (PreferenceServiceStatus::generation), so validate_expectation would always
+        // mask it as StaleGeneration otherwise -- the mv1k shape: detection reports migration-required,
+        // so execution must refuse with that same type, not "generation changed". The inner mutation
+        // guard (service_mutation::commit_user_mutation_with_metadata) already enforces this; surfacing
+        // it here keeps the WRITABLE-store expected-generation path (validate_expectation, below)
+        // exactly as it was -- a Ready store with a stale expectation still refuses StaleGeneration.
+        if !self.service.status().writable() {
+            return Err(self.map_refusal(self.service.refusal_for_status(draft.clone())));
         }
         let before = self.service.status().generation().cloned();
         let expected_ref = self.validate_expectation(expected, draft.clone())?;
@@ -498,49 +510,6 @@ impl GlobalPreferencesProductService {
             .iter()
             .find(|entry| &entry.key == key)
             .expect("active row has catalog entry")
-    }
-
-    pub(super) fn error(
-        &self,
-        code: PreferenceErrorCodeV1,
-        message: &str,
-        details: BTreeMap<String, Value>,
-        preserved_draft: Option<Value>,
-    ) -> PreferenceErrorV1 {
-        PreferenceErrorV1 {
-            code,
-            message: message.to_owned(),
-            details: Box::new(details),
-            current_context: Box::new(self.context()),
-            preserved_draft: preserved_draft.map(Box::new),
-            preserved_proposal: None,
-        }
-    }
-
-    fn map_refusal(&self, refusal: PreferenceServiceRefusal) -> PreferenceErrorV1 {
-        let code = match refusal.kind {
-            PreferenceServiceRefusalKind::StaleGeneration => PreferenceErrorCodeV1::StaleGeneration,
-            PreferenceServiceRefusalKind::WriterConflict => PreferenceErrorCodeV1::WriterConflict,
-            PreferenceServiceRefusalKind::InvalidValue => {
-                PreferenceErrorCodeV1::InvalidPreferenceValue
-            }
-            PreferenceServiceRefusalKind::IneligibleSource => {
-                PreferenceErrorCodeV1::IneligibleSource
-            }
-            PreferenceServiceRefusalKind::UnreadableRepository => {
-                PreferenceErrorCodeV1::RepositoryUnreadable
-            }
-            PreferenceServiceRefusalKind::MigrationRequired => {
-                PreferenceErrorCodeV1::MigrationRequired
-            }
-            PreferenceServiceRefusalKind::Repository => PreferenceErrorCodeV1::RepositoryIo,
-        };
-        self.error(
-            code,
-            &refusal.message,
-            BTreeMap::new(),
-            refusal.preserved_draft,
-        )
     }
 }
 

@@ -31,7 +31,11 @@ use eda_engine::preferences::acceptance_support::{
     MANAGED_INACTIVE_REASON, MANAGED_OFFLINE_OBSERVATIONS, ManagedOfflineVariant,
     managed_active_negative_control, managed_offline_scenario, observe_managed_offline,
 };
-use eda_engine::preferences::{ContributionDisposition, ResolutionOutcome};
+use eda_engine::preferences::{
+    ContributionDisposition, FixedPreferenceLocationProvider, GlobalPreferencesProductService,
+    HeadExpectationV1, PreferenceActorKindV1, PreferenceActorV1, PreferenceErrorCodeV1,
+    PreferenceLocations, PreferenceMutationRequestV1, ResolutionOutcome,
+};
 use serde_json::json;
 
 const VARIANTS: [ManagedOfflineVariant; 4] = [
@@ -488,5 +492,87 @@ fn different_normalized_requests_differ_as_the_fixed_identity_negative_control()
     assert!(
         fixed_identities_negative_control().expect("negative control runs"),
         "different normalized requests must produce different projects (byte-identity is falsifiable)"
+    );
+}
+
+fn store_bytes(root: &std::path::Path) -> std::collections::BTreeMap<std::path::PathBuf, Vec<u8>> {
+    fn walk(
+        dir: &std::path::Path,
+        map: &mut std::collections::BTreeMap<std::path::PathBuf, Vec<u8>>,
+    ) {
+        if let Ok(entries) = std::fs::read_dir(dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    walk(&path, map);
+                } else if let Ok(bytes) = std::fs::read(&path) {
+                    map.insert(path, bytes);
+                }
+            }
+        }
+    }
+    let mut map = std::collections::BTreeMap::new();
+    walk(root, &mut map);
+    map
+}
+
+#[test]
+fn migration_required_store_refuses_mutation_with_the_typed_refusal() {
+    // Direction-1 regression for the refusal-precedence fix, at the library level: a MigrationRequired
+    // store (a retired-alias generation an older engine wrote) refuses a trusted human direct mutation
+    // with the TYPED migration_required code -- never a masking stale_generation -- and leaves every
+    // stored byte untouched. Falsifiable: revert the commit_mutation precedence reorder and this flips
+    // to stale_generation. Seeded through the PUBLIC upgrade_setup (the sanctioned acceptance route);
+    // the non-gated product_tests.rs suite cannot seed this state because the write_generation
+    // construction is deliberately crate-fenced behind gp-acceptance-support.
+    let work = std::env::temp_dir().join(format!("gp-cm05e-mig-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&work).expect("create work root");
+    let outcome = (|| {
+        upgrade_setup(UpgradeVariant::AliasMigration, &work)?;
+        let repo = work.join("config/datum/preferences");
+        let before = store_bytes(&repo);
+        let provider = FixedPreferenceLocationProvider(PreferenceLocations {
+            configuration_base: work.join("config"),
+            repository_root: repo.clone(),
+            legacy_console_path: work.join("config/datum/gui-preferences.json"),
+        });
+        let mut service =
+            GlobalPreferencesProductService::open(&provider, "gp-cm05e-migration-pin")
+                .map_err(|error| format!("open product service: {error:?}"))?;
+        let refusal = service
+            .mutate(
+                PreferenceMutationRequestV1::SetUser {
+                    key: "datum.accessibility.reduced_motion".to_owned(),
+                    value: serde_json::Value::Bool(true),
+                    expected: HeadExpectationV1::Missing,
+                    request_id: uuid::Uuid::new_v4(),
+                    reason: "migration-required precedence pin".to_owned(),
+                },
+                &PreferenceActorV1 {
+                    kind: PreferenceActorKindV1::HumanCli,
+                    session_id: "mig-pin".to_owned(),
+                    local_actor_id: "mig-pin".to_owned(),
+                    invocation_id: uuid::Uuid::new_v4(),
+                },
+            )
+            .err()
+            .ok_or("a MigrationRequired store must refuse the mutation")?;
+        Ok::<_, String>((refusal.code, before, store_bytes(&repo)))
+    })();
+    let _ = std::fs::remove_dir_all(&work);
+
+    let (code, before, after) = outcome.expect("migration-required precedence pin runs");
+    assert_eq!(
+        code,
+        PreferenceErrorCodeV1::MigrationRequired,
+        "the typed migration_required refusal must surface, not stale_generation"
+    );
+    assert!(
+        !before.is_empty(),
+        "the seeded MigrationRequired store has bytes"
+    );
+    assert_eq!(
+        before, after,
+        "the refused mutation left every stored byte untouched"
     );
 }

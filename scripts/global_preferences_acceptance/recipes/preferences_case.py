@@ -21,9 +21,7 @@ validator (not the producer) adjudicates it. Observations never retry to green.
 """
 import argparse
 import json
-import os
 import shutil
-import subprocess
 import sys
 import tempfile
 import time
@@ -33,85 +31,11 @@ from pathlib import Path
 SCHEMA = "datum.preferences.case-observations.v2"
 
 
-def _require_binary(variable):
-    value = os.environ.get(variable)
-    if not value or not Path(value).is_file():
-        raise SystemExit(f"{variable} must point at the candidate binary for this surface")
-    return value
-
-
-def _work_dir(prefix):
-    """Return (work_root, cleanup). When the producer provides DATUM_EDA_WORK_ROOT the recipe runs
-    there and LEAVES it so the producer can capture the real post-run state (mutating families); the
-    path is carried out-of-band exactly like DATUM_EDA_CLI, so the committed fixture argv stays stable.
-    Otherwise it uses a private temp dir it removes itself (read-only families need no post-state)."""
-    provided = os.environ.get("DATUM_EDA_WORK_ROOT")
-    if provided:
-        work = Path(provided)
-        work.mkdir(parents=True, exist_ok=True)
-        return work, (lambda: None)
-    work = Path(tempfile.mkdtemp(prefix=prefix))
-    return work, (lambda: shutil.rmtree(work, ignore_errors=True))
-
-
-def _run_cli(binary, args, *, work):
-    """Run the real CLI against an isolated config root; capture typed JSON. stdin is /dev/null so a
-    mutation with no foreground TTY refuses deterministically (human_presence_required) rather than
-    blocking on input."""
-    env = {
-        **os.environ,
-        "HOME": str(work),
-        "XDG_CONFIG_HOME": str(work / "config"),
-    }
-    env.pop("DATUM_GUI_PREFERENCES_PATH", None)
-    return subprocess.run(
-        [binary, "--format", "json", *args],
-        capture_output=True,
-        text=True,
-        stdin=subprocess.DEVNULL,
-        env=env,
-    )
-
-
-def _run_and_parse(binary, work, argv):
-    """Run one CLI invocation and parse its JSON stdout REGARDLESS of exit code (refusals exit 2 but
-    still emit a typed error envelope); return (returncode, envelope-or-None)."""
-    proc = _run_cli(binary, argv, work=work)
-    try:
-        return proc.returncode, json.loads(proc.stdout)
-    except (json.JSONDecodeError, TypeError):
-        return proc.returncode, None
-
-
-# Reuse the governed foreground-TTY helper for the rare case family that must perform a human APPLY
-# mutation (a write family's later edit); importing the sibling package keeps the pty logic in ONE
-# audited place rather than duplicating pty.fork here, and ships with the recipe (reproducible replay).
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from global_preferences_acceptance.process import execute as _execute_tty  # noqa: E402
-
-
-def _run_apply(binary, work, argv):
-    """Run a `preferences set/reset` under a pty, auto-submitting APPLY at the foreground-TTY prompt;
-    return (committed: bool, envelope-or-None). Never retries."""
-    env = {k: v for k, v in os.environ.items()
-           if k not in ("DATUM_GUI_PREFERENCES_PATH", "DATUM_ENGINE_SOCKET", "EDA_ENGINE_SOCKET")}
-    env["HOME"] = str(work)
-    env["XDG_CONFIG_HOME"] = str(work / "config")
-    run = _execute_tty(binary, ["--format", "json", *argv], env, timeout=30, confirmation=True)
-    text = run["stdout"].decode("utf-8", "replace").replace("\r", "")
-    start = text.find('{\n  "ok"')
-    try:
-        envelope = json.loads(text[start:]) if start >= 0 else None
-    except json.JSONDecodeError:
-        envelope = None
-    committed = bool(run["exit_code"] == 0 and run["confirmed"] and not run["timed_out"]
-                     and isinstance(envelope, dict) and envelope.get("ok") is True)
-    return committed, envelope
-
-
-def _no_project_written(work):
-    """A read-only query writes no native Project anywhere under the work root."""
-    return not any(path.name == "project.json" for path in work.rglob("*"))
+from global_preferences_acceptance.recipes.cli_case_io import (  # noqa: E402
+    _no_project_written, _query_context, _require_binary, _run_and_parse, _run_apply,
+    _run_cli, _store_absent, _store_digest_map, _work_dir,
+)
 
 
 def clean_install_missing_store_cli():
@@ -303,17 +227,6 @@ QUERY_VERBS = (["describe"], ["list"], ["get", "datum.units.system"], ["search",
                ["explain", "datum.units.system"], ["preview-project-units-seed", "--source", "global"])
 
 
-def _query_context(binary, work, argv):
-    """Run one read-only query verb; return its parsed envelope (or None) without writing a store."""
-    proc = _run_cli(binary, ["preferences", *argv], work=work)
-    if proc.returncode != 0:
-        return None
-    try:
-        return json.loads(proc.stdout)
-    except json.JSONDecodeError:
-        return None
-
-
 def existing_project_stability_global_populated_cli():
     """Genesis from a POPULATED Global store, then a later Global edit that must not change the
     published Project. The producer's setup populated the store (gen0, datum.units.system=imperial) in
@@ -488,22 +401,6 @@ _HUMAN_PRESENCE_SET = ["preferences", "set", "datum.accessibility.reduced_motion
                        "--reason", "surface-parity-negative input-class probe"]
 
 
-def _store_absent(work):
-    return not (work / "config" / "datum" / "preferences").exists()
-
-
-def _store_digest_map(repo):
-    """Map every regular file under the repository to its sha256 -- a disk-level fingerprint used to
-    prove the store bytes are unchanged (no silent repair) across a read."""
-    import hashlib
-    fingerprint = {}
-    if repo.exists():
-        for path in sorted(repo.rglob("*")):
-            if path.is_file() and not path.is_symlink():
-                fingerprint[path.relative_to(repo).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return fingerprint
-
-
 def corrupt_store_cli():
     """A corrupt Global store is read truthfully and never silently repaired. The producer seeds and
     corrupts a real store (out-of-band work root); describe must disclose the preserved-unreadable
@@ -533,6 +430,64 @@ def corrupt_store_cli():
             "truthful-read-only-state": truthful,
             "no-silent-repair": no_silent_repair,
             "no-project-write": _no_project_written(work),
+        }
+    finally:
+        cleanup()
+
+
+# One active key with an easy valid value for the human-APPLY probe and the negative control: a
+# boolean switch whose factory default is false, so `--value-json true` is a real, descriptor-valid
+# change that commits on a healthy store (negative control) and is refused on the migration store.
+_MIGRATION_PROBE_KEY = "datum.accessibility.reduced_motion"
+_MIGRATION_PROBE_SET = [
+    "preferences", "set", _MIGRATION_PROBE_KEY,
+    "--value-json", "true", "--expected", '{"kind": "missing"}',
+]
+
+
+def upgrade_migration_required_cli():
+    """A store a DIFFERENT (older) engine version wrote holds a retired alias needing an explicit
+    registered migration before editing: the CLI edit is refused with the TYPED migration_required
+    code (a present human APPLY cannot force past it), the stored bytes are preserved, and read-only
+    inspection stays available and reports the requirement. Negative control: the identical APPLY set
+    COMMITS against a healthy store. The producer seeds the MigrationRequired store out-of-band under
+    DATUM_EDA_WORK_ROOT via the engine's own write_generation route (the alias-migration setup) and
+    snapshots `before`; the recipe runs there and leaves it (a PRESERVE case, like corrupt-store)."""
+    binary = _require_binary("DATUM_EDA_CLI")
+    work, cleanup = _work_dir("gp-cm05e-case-upgrade-migration-required-")
+    try:
+        repo = work / "config" / "datum" / "preferences"
+        # inspection-available: describe is NOT refused and reports the migration requirement.
+        rc_desc, describe = _run_and_parse(binary, work, ["preferences", "describe"])
+        context = describe.get("context") if isinstance(describe, dict) else None
+        status = context.get("repository_status") if isinstance(context, dict) else None
+        inspection_available = bool(
+            rc_desc == 0 and isinstance(describe, dict) and describe.get("ok") is True
+            and status == "migration_required")
+        # mutation-refused: a human-present APPLY set of an active key is refused with the TYPED
+        # migration_required code and never commits -- not a masking stale_generation, not a
+        # human-presence refusal. Disk fingerprints bracket the attempt to prove no write.
+        before = _store_digest_map(repo)
+        committed, envelope = _run_apply(
+            binary, work,
+            [*_MIGRATION_PROBE_SET, "--reason", "GP-CM05E upgrade/migration-required acceptance",
+             "--request-id", str(uuid.uuid4())])
+        after = _store_digest_map(repo)
+        error = envelope.get("error") if isinstance(envelope, dict) else None
+        mutation_refused = bool(
+            committed is False and isinstance(envelope, dict) and envelope.get("ok") is False
+            and isinstance(error, dict) and error.get("code") == "migration_required")
+        # bytes-preserved: the refused edit rewrote nothing -- every seeded file is byte-identical.
+        bytes_preserved = bool(before and before == after)
+        # The recipe emits EXACTLY the three matrix assertions (observations.py binds the output 1:1 to
+        # the coverage row). The PM059 falsification -- a healthy store's identical APPLY set COMMITS --
+        # is the engine *_negative_control pattern carried by the suite regressions: the non-gated
+        # product_tests.rs directions-2&3 test proves the healthy commit and the gated acceptance-support
+        # test proves the typed migration refusal.
+        return {
+            "mutation-refused": mutation_refused,
+            "bytes-preserved": bytes_preserved,
+            "inspection-available": inspection_available,
         }
     finally:
         cleanup()
@@ -686,6 +641,7 @@ DISPATCH = {
     ("corrupt-store", "missing-generation", "cli"): corrupt_store_cli,
     ("corrupt-store", "wrong-digest", "cli"): corrupt_store_cli,
     ("corrupt-store", "unpublished-generation", "cli"): corrupt_store_cli,
+    ("upgrade", "migration-required", "cli"): upgrade_migration_required_cli,
     ("project-genesis-replay", "response-loss", "cli"): _genesis_replay("response-loss"),
     ("project-genesis-replay", "changed-content", "cli"): _genesis_replay("changed-content"),
     ("project-genesis-replay", "other-request-existing-target", "cli"): _genesis_replay("other-request-existing-target"),

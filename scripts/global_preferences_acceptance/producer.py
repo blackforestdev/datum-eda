@@ -119,7 +119,13 @@ def produce_case(capture, *, key, candidate, binaries, environments, input_manif
     # Carry the pinned surface binary -- and, for a work-root family, the work root -- out-of-band so
     # the committed argv stays stable and reproducible. The work root is created BEFORE `setup`/the
     # recipe so a setup hook can build the real on-disk starting state the recipe then observes.
-    os.environ[f"DATUM_EDA_{surface.upper()}"] = surface_binaries[surface]
+    # Export every pinned surface binary out-of-band. A single-surface family carries only its own
+    # binary (unchanged); a cross-surface-seeded family -- a CLI family whose MigrationRequired
+    # precondition is seeded through the engine's OWN write_generation acceptance route -- also carries
+    # the engine driver so its setup hook can reach DATUM_EDA_ENGINE. The committed recipe argv is
+    # unaffected (both binaries stay out-of-band).
+    for _role, _binary_path in surface_binaries.items():
+        os.environ[f"DATUM_EDA_{_role.upper()}"] = _binary_path
     work_root = None
     if capture_after is not None or setup is not None:
         require(bundle_root is not None, "a work-root family needs a bundle_root for its work tree")
@@ -394,6 +400,25 @@ def _family_handlers(family):
             repo = Path(work_root) / "config" / "datum" / "preferences"
             return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
         return None, capture_after, setup
+    # upgrade/migration-required (CLI surface; gui/mcp mirror later): a Global store a DIFFERENT engine
+    # version wrote carries a retired alias that needs an explicit registered migration before editing.
+    # The producer seeds that MigrationRequired store through the engine's OWN write_generation
+    # acceptance route by REUSING the upgrade/alias-migration setup phase (the driver's setup leaves the
+    # store MigrationRequired -- its observe would commit the migration, which this CLI family never
+    # invokes), and snapshots it as `before`. The CLI recipe attempts an active-key edit (refused with
+    # migration_required), inspects (available), and leaves the store untouched, so `after` must be
+    # byte-identical -- a PRESERVE case like corrupt-store. No new engine seam: only the producer's
+    # seed-variant mapping (migration-required -> the existing alias-migration setup) is new.
+    if case == "upgrade" and variant == "migration-required":
+        def setup(capture, key, work_root):
+            _engine_setup_phase(Path(work_root), "upgrade", "alias-migration")
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return _snapshot_dir(capture, _coverage_root(key), repo, "preferences/")
+
+        def capture_after(capture, key, work_root, before_state):
+            repo = Path(work_root) / "config" / "datum" / "preferences"
+            return capture.put(_snapshot_dir(capture, before_state["root"], repo, "preferences/"))
+        return None, capture_after, setup
     raise ValueError(f"case family not implemented: {family}")
 
 
@@ -447,9 +472,16 @@ def build_family(bundle_root, *, family, surface="cli", cli_binary=None, engine_
     initial_state, capture_after, setup = _family_handlers(family)
     keys = sorted(k for k in case_inventory() if (k[0], k[1]) == family and k[3] == surface)
     require(bool(keys), f"no {surface} cases for family {family}")
+    # Runtime binaries exported out-of-band to the recipe/setup. The surface binary is always present;
+    # an engine-seeded CLI family also carries the engine driver so its setup hook can seed the
+    # precondition through the engine's own acceptance route (produce_case exports each role). Additive:
+    # a family with no engine seed passes engine_binary=None and the map is unchanged.
+    runtime_binaries = {surface: str(surface_binary)}
+    if surface != "engine" and engine_binary is not None:
+        runtime_binaries["engine"] = str(engine_binary)
     rows = [produce_case(capture, key=key, candidate=candidate, binaries=binaries,
                          environments=environments, input_manifest=input_manifest_ref,
-                         matrix_sha256=matrix_sha256, surface_binaries={surface: str(surface_binary)},
+                         matrix_sha256=matrix_sha256, surface_binaries=runtime_binaries,
                          initial_state=initial_state, capture_after=capture_after,
                          setup=setup, bundle_root=bundle_root, recipe_relpath=recipe_relpath)
             for key in keys]

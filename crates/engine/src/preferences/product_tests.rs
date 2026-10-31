@@ -133,6 +133,41 @@ fn direct_mutation_requires_trusted_human_and_preserves_project_independence() {
 }
 
 #[test]
+fn migration_refusal_precedence_fix_preserves_writable_store_expectations() {
+    // The refusal-precedence fix (commit_mutation surfaces a non-writable repository status's typed
+    // refusal BEFORE validate_expectation, so MigrationRequired yields the typed migration_required
+    // instead of a masking stale_generation -- the mv1k shape at the product layer) must NOT touch
+    // WRITABLE stores. The MigrationRequired -> migration_required direction is pinned end-to-end by
+    // the upgrade/migration-required acceptance family (real binary, driver-seeded store), which uses
+    // the grep-fenced crate-internal seed and so cannot run from this non-gated module.
+    let (_locations, mut service) = service("migration-precedence-writable");
+    let human = actor(PreferenceActorKindV1::HumanCli);
+    let set = |value: bool| PreferenceMutationRequestV1::SetUser {
+        key: "datum.accessibility.reduced_motion".to_owned(),
+        value: Value::Bool(value),
+        expected: HeadExpectationV1::Missing,
+        request_id: Uuid::new_v4(),
+        reason: "writable-store precedence guard".to_owned(),
+    };
+    // DefaultsOnly + valid set still commits (the guard never fires for a writable store).
+    assert!(
+        service
+            .mutate(set(true), &human)
+            .expect("healthy commit")
+            .changed
+    );
+    assert_eq!(
+        service.context().repository_status,
+        PreferenceRepositoryStatusV1::Ready
+    );
+    // Ready + stale (Missing) expectation still refuses StaleGeneration, unchanged by the fix.
+    assert_eq!(
+        service.mutate(set(false), &human).unwrap_err().code,
+        PreferenceErrorCodeV1::StaleGeneration
+    );
+}
+
+#[test]
 fn factory_seed_preview_never_creates_or_reads_a_repository() {
     let (locations, service) = service("factory-preview");
     let PreferenceQueryResultV1::PreviewProjectUnitsSeed(preview) = service
