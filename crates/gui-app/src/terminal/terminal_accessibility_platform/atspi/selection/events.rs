@@ -36,14 +36,16 @@ pub(in crate::terminal_accessibility_platform) fn messages(
     }
     let mut messages = Vec::new();
     if previous.is_none() != next.is_none() {
+        // dat-mainwindow-atspi-frame-node-eatt: the selection root is a child of the main-window FRAME,
+        // so its add/remove is a ChildrenChanged on the frame, not the application root.
         let index = state
-            .root_child_paths()
+            .main_window_child_paths()
             .iter()
             .position(|p| p == PATH)
-            .unwrap_or(state.root_child_paths().len());
+            .unwrap_or(state.main_window_child_paths().len());
         messages.push(event(
             serial(),
-            ROOT_PATH,
+            MAIN_WINDOW_PATH,
             "ChildrenChanged",
             if next.is_some() { "add" } else { "remove" },
             clamp_i32(index),
@@ -115,15 +117,16 @@ fn workspace_messages(
     }
     let mut messages = Vec::new();
     if old_ui.is_some() != new_ui.is_some() {
+        // dat-mainwindow-atspi-frame-node-eatt: the navigator root is a child of the main-window FRAME.
         let index = state
-            .root_child_paths()
+            .main_window_child_paths()
             .iter()
             .position(|path| path == workspace::NAVIGATOR || path == PATH)
             .unwrap_or(0);
         messages.push(child_change(
             serial(),
             bus,
-            ROOT_PATH,
+            MAIN_WINDOW_PATH,
             workspace::NAVIGATOR,
             new_ui.is_some(),
             index,

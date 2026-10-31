@@ -37,8 +37,9 @@ fn index_in_parent(state: &ServiceState, node: &MenuAccessibleNode) -> usize {
             .position(|child| child.id == node.id)
             .unwrap_or(0)
     } else {
+        // dat-mainwindow-atspi-frame-node-eatt: top-level menus are children of the main-window FRAME.
         state
-            .root_child_paths()
+            .main_window_child_paths()
             .iter()
             .position(|candidate| *candidate == path(&node.id))
             .unwrap_or(0)
@@ -191,7 +192,9 @@ fn property(state: &ServiceState, node: &MenuAccessibleNode, name: &str) -> Disp
                     .parent
                     .as_deref()
                     .map(path)
-                    .unwrap_or_else(|| ROOT_PATH.to_owned()),
+                    // Top-level menus parent to the main-window FRAME, not the application root
+                    // (dat-mainwindow-atspi-frame-node-eatt).
+                    .unwrap_or_else(|| MAIN_WINDOW_PATH.to_owned()),
             ),
         )),
         "ChildCount" => Ok((

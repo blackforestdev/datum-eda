@@ -1,4 +1,4 @@
-use super::atspi::{PREFERENCES_PATH, ROOT_PATH, ServiceState, TERMINAL_PATH};
+use super::atspi::{MAIN_WINDOW_PATH, PREFERENCES_PATH, ROOT_PATH, ServiceState, TERMINAL_PATH};
 use super::body::BodyWriter;
 use super::dbus::Message;
 use crate::terminal_accessibility::{
@@ -33,6 +33,13 @@ fn snapshot() -> TerminalAccessibilitySnapshot {
             width: 800,
             height: 320,
         },
+    }
+}
+
+fn snapshot_focused(focused: bool) -> TerminalAccessibilitySnapshot {
+    TerminalAccessibilitySnapshot {
+        focused,
+        ..snapshot()
     }
 }
 
@@ -155,17 +162,84 @@ fn malformed_object_calls_fail_closed_without_mutating_service_state() {
 }
 
 #[test]
-fn application_service_has_no_terminal_child_when_started_by_console() {
+fn application_root_exposes_the_main_window_frame_which_has_no_terminal_child_by_console() {
+    // dat-mainwindow-atspi-frame-node-eatt: the application root has exactly one child -- the main
+    // window FRAME node -- and the window's content (here empty: console start, no terminal) hangs off
+    // the frame, not the root.
     let mut service = ServiceState::new(snapshot(), false, Vec::new());
-    let children = service.dispatch(
+    let count = service.dispatch(
         1,
-        &call_at(ROOT_PATH, ACCESSIBLE, "GetChildren", "", Vec::new()),
+        &call_at(
+            ROOT_PATH,
+            PROPERTIES,
+            "Get",
+            "ss",
+            two_strings(ACCESSIBLE, "ChildCount"),
+        ),
     );
-    assert_eq!(children.header.signature, "a(so)");
-    let mut children_body = children.body_reader();
-    assert_eq!(children_body.u32().unwrap(), 0);
-    let terminal = service.dispatch(2, &call(ACCESSIBLE, "GetRole", "", Vec::new()));
+    assert_eq!(count.body_reader().variant_i32().unwrap(), 1);
+
+    let child = service.dispatch(
+        2,
+        &call_at(ROOT_PATH, ACCESSIBLE, "GetChildAtIndex", "i", i32_arg(0)),
+    );
+    let mut child_body = child.body_reader();
+    let _bus = child_body.string().unwrap();
+    assert_eq!(child_body.object_path().unwrap(), MAIN_WINDOW_PATH);
+
+    // Pin the NUMERIC role (AT clients identify a window by this, not the role-name string):
+    // ATSPI_ROLE_FRAME == 23 (atspi-constants.h). 20 would be ATSPI_ROLE_FILLER.
+    let role_num = service.dispatch(
+        3,
+        &call_at(MAIN_WINDOW_PATH, ACCESSIBLE, "GetRole", "", Vec::new()),
+    );
+    assert_eq!(role_num.body_reader().u32().unwrap(), 23);
+    let role = service.dispatch(
+        4,
+        &call_at(MAIN_WINDOW_PATH, ACCESSIBLE, "GetRoleName", "", Vec::new()),
+    );
+    assert_eq!(role.body_reader().string().unwrap(), "frame");
+
+    let frame_children = service.dispatch(
+        4,
+        &call_at(
+            MAIN_WINDOW_PATH,
+            PROPERTIES,
+            "Get",
+            "ss",
+            two_strings(ACCESSIBLE, "ChildCount"),
+        ),
+    );
+    assert_eq!(frame_children.body_reader().variant_i32().unwrap(), 0);
+
+    let terminal = service.dispatch(5, &call(ACCESSIBLE, "GetRole", "", Vec::new()));
     assert_eq!(terminal.kind, super::dbus::MessageType::Error);
+}
+
+#[test]
+fn main_window_frame_is_active_and_focused_only_when_the_window_is_focused() {
+    // dat-mainwindow-atspi-frame-node-eatt: the frame reports ACTIVE (1) + FOCUSED (12) exactly when the
+    // window holds focus, and is always SHOWING (25) + VISIBLE (30), so a screen reader can report the
+    // window and whether it is the active one.
+    const STATE_ACTIVE: u32 = 1;
+    const STATE_FOCUSED: u32 = 12;
+    const STATE_SHOWING: u32 = 25;
+    const STATE_VISIBLE: u32 = 30;
+    let has = |words: &[u32], state: u32| words[(state / 32) as usize] & (1 << (state % 32)) != 0;
+    let frame_states = |focused: bool| {
+        let mut service = ServiceState::new(snapshot_focused(focused), true, Vec::new());
+        let state = service.dispatch(
+            1,
+            &call_at(MAIN_WINDOW_PATH, ACCESSIBLE, "GetState", "", Vec::new()),
+        );
+        state.body_reader().u32_array().unwrap()
+    };
+    let focused = frame_states(true);
+    assert!(has(&focused, STATE_SHOWING) && has(&focused, STATE_VISIBLE));
+    assert!(has(&focused, STATE_ACTIVE) && has(&focused, STATE_FOCUSED));
+    let unfocused = frame_states(false);
+    assert!(has(&unfocused, STATE_SHOWING) && has(&unfocused, STATE_VISIBLE));
+    assert!(!has(&unfocused, STATE_ACTIVE) && !has(&unfocused, STATE_FOCUSED));
 }
 
 #[test]

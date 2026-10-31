@@ -34,6 +34,11 @@ use properties::{properties_body, property_value, variant_body};
 use text_ranges::{char_range, text_at_offset};
 
 pub(super) const ROOT_PATH: &str = "/org/a11y/atspi/accessible/root";
+// dat-mainwindow-atspi-frame-node-eatt: the main application window is exposed as a FRAME node between
+// the application root and its content, so screen-reader users get a window-level node (title + ACTIVE
+// state) instead of content hanging directly off the application. The application root has exactly this
+// one child; the former root children (terminal, owned dialog, menus, selection) move under it.
+pub(super) const MAIN_WINDOW_PATH: &str = "/org/a11y/atspi/accessible/window";
 pub(super) const TERMINAL_PATH: &str = "/org/a11y/atspi/accessible/terminal";
 pub(super) const PREFERENCES_PATH: &str = "/org/a11y/atspi/accessible/preferences";
 pub(super) const NULL_PATH: &str = "/org/a11y/atspi/null";
@@ -51,6 +56,7 @@ const INTROSPECTABLE: &str = "org.freedesktop.DBus.Introspectable";
 
 const ROLE_TERMINAL: u32 = 60;
 const ROLE_APPLICATION: u32 = 75;
+const ROLE_FRAME: u32 = 23; // ATSPI_ROLE_FRAME (atspi-constants.h) — a top-level application window.
 const ROLE_LINK: u32 = 88;
 const ROLE_DIALOG: u32 = 16;
 const ROLE_COMBO_BOX: u32 = 11;
@@ -60,6 +66,7 @@ const ROLE_STATUS_BAR: u32 = 54;
 const ROLE_RADIO_BUTTON: u32 = 44;
 const ROLE_TOGGLE_BUTTON: u32 = 62;
 const ROLE_TEXT: u32 = 79;
+const STATE_ACTIVE: u32 = 1; // ATSPI_STATE_ACTIVE — set on the focused top-level window.
 const STATE_EDITABLE: u32 = 7;
 const STATE_ENABLED: u32 = 8;
 const STATE_FOCUSABLE: u32 = 11;
@@ -183,9 +190,11 @@ impl ServiceState {
 
     fn accessible(&self, path: &str, member: &str, call: &Message) -> DispatchResult {
         let terminal = path == TERMINAL_PATH && self.terminal_available;
+        let main_window = path == MAIN_WINDOW_PATH;
         let link = link_index(path).and_then(|index| self.snapshot.links.get(index));
         let preference = preference_index(path).and_then(|index| self.preferences.get(index));
-        if !terminal && path != ROOT_PATH && link.is_none() && preference.is_none() {
+        if !terminal && !main_window && path != ROOT_PATH && link.is_none() && preference.is_none()
+        {
             return Err(unknown_object());
         }
         match member {
@@ -194,6 +203,14 @@ impl ServiceState {
                 let index = usize::try_from(reader.i32().map_err(|_| invalid_args())?)
                     .map_err(|_| invalid_args())?;
                 let paths = self.root_child_paths();
+                let path = paths.get(index).ok_or_else(invalid_args)?;
+                Ok(("(so)", object_reference_body(&self.bus_name, path)))
+            }
+            "GetChildAtIndex" if main_window => {
+                let mut reader = call.body_reader();
+                let index = usize::try_from(reader.i32().map_err(|_| invalid_args())?)
+                    .map_err(|_| invalid_args())?;
+                let paths = self.main_window_child_paths();
                 let path = paths.get(index).ok_or_else(invalid_args)?;
                 Ok(("(so)", object_reference_body(&self.bus_name, path)))
             }
@@ -213,6 +230,10 @@ impl ServiceState {
                 let paths = self.root_child_paths();
                 Ok(("a(so)", object_array_body(&self.bus_name, &paths)))
             }
+            "GetChildren" if main_window => {
+                let paths = self.main_window_child_paths();
+                Ok(("a(so)", object_array_body(&self.bus_name, &paths)))
+            }
             "GetChildren" if preference_index(path) == Some(0) => {
                 let paths: Vec<_> = (1..self.preferences.len()).map(preference_path).collect();
                 Ok(("a(so)", object_array_body(&self.bus_name, &paths)))
@@ -220,7 +241,7 @@ impl ServiceState {
             "GetChildren" => Ok(("a(so)", object_array_body(&self.bus_name, &[]))),
             "GetIndexInParent" => Ok((
                 "i",
-                i32_body(if terminal {
+                i32_body(if terminal || main_window {
                     0
                 } else if let Some(index) = preference_index(path) {
                     if index == 0 {
@@ -237,6 +258,8 @@ impl ServiceState {
                 "u",
                 u32_body(if terminal {
                     ROLE_TERMINAL
+                } else if main_window {
+                    ROLE_FRAME
                 } else if link.is_some() {
                     ROLE_LINK
                 } else if let Some(node) = preference {
@@ -249,6 +272,8 @@ impl ServiceState {
                 "s",
                 string_body(if terminal {
                     "terminal"
+                } else if main_window {
+                    "frame"
                 } else if link.is_some() {
                     "link"
                 } else if let Some(node) = preference {
@@ -261,6 +286,8 @@ impl ServiceState {
                 "au",
                 if let Some(node) = preference {
                     state::preference_state_body(node)
+                } else if main_window {
+                    state::frame_state_body(self.snapshot.focused)
                 } else {
                     state_body(terminal, terminal && self.snapshot.focused, None)
                 },
@@ -275,6 +302,8 @@ impl ServiceState {
                 "as",
                 string_array_body(if terminal {
                     &[ACCESSIBLE, COMPONENT, TEXT, HYPERTEXT]
+                } else if main_window {
+                    &[ACCESSIBLE]
                 } else if link.is_some() {
                     &[ACCESSIBLE, HYPERLINK]
                 } else if preference.is_some() {
@@ -290,7 +319,15 @@ impl ServiceState {
         }
     }
 
+    /// The application root's children: exactly the single main-window FRAME node
+    /// (dat-mainwindow-atspi-frame-node-eatt). The window's content hangs off the frame, not the root.
     fn root_child_paths(&self) -> Vec<String> {
+        vec![MAIN_WINDOW_PATH.to_owned()]
+    }
+
+    /// The main application window's content (the FRAME node's children): terminal, owned dialog,
+    /// menus and selection. These were formerly the application root's direct children.
+    fn main_window_child_paths(&self) -> Vec<String> {
         let mut paths = Vec::new();
         if self.terminal_available {
             paths.push(TERMINAL_PATH.to_owned());

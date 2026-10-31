@@ -39,12 +39,35 @@ pub(super) fn property_value(
             object_reference_body(&state.registry_parent.0, &state.registry_parent.1),
         )),
         (TERMINAL_PATH, ACCESSIBLE, "Parent") => {
-            Ok(("(so)", object_reference_body(&state.bus_name, ROOT_PATH)))
+            // The terminal is content of the main-window FRAME, not a direct child of the application
+            // root (dat-mainwindow-atspi-frame-node-eatt).
+            Ok((
+                "(so)",
+                object_reference_body(&state.bus_name, MAIN_WINDOW_PATH),
+            ))
         }
         (ROOT_PATH, ACCESSIBLE, "ChildCount") => {
             Ok(("i", i32_body(clamp_i32(state.root_child_paths().len()))))
         }
         (TERMINAL_PATH, ACCESSIBLE, "ChildCount") => Ok(("i", i32_body(0))),
+        // The main-window FRAME node (dat-mainwindow-atspi-frame-node-eatt): the application's one
+        // window, holding the window content; parented to the application root.
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "Name") => Ok(("s", string_body("Datum EDA"))),
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "Description") => {
+            Ok(("s", string_body("Datum EDA main window")))
+        }
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "Parent") => {
+            Ok(("(so)", object_reference_body(&state.bus_name, ROOT_PATH)))
+        }
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "ChildCount") => Ok((
+            "i",
+            i32_body(clamp_i32(state.main_window_child_paths().len())),
+        )),
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "Locale") => Ok(("s", string_body(&locale()))),
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "AccessibleId") => {
+            Ok(("s", string_body("datum-eda-window")))
+        }
+        (MAIN_WINDOW_PATH, ACCESSIBLE, "HelpText") => Ok(("s", string_body(""))),
         (_, ACCESSIBLE, "Locale") if terminal || path == ROOT_PATH => {
             Ok(("s", string_body(&locale())))
         }
@@ -85,7 +108,9 @@ pub(super) fn property_value(
         (_, ACCESSIBLE, "Parent") if preference.is_some() => {
             let index = preference_index(path).expect("guarded");
             let parent = if index == 0 {
-                ROOT_PATH.to_owned()
+                // The owned Global Preferences dialog is content of the main-window FRAME
+                // (dat-mainwindow-atspi-frame-node-eatt).
+                MAIN_WINDOW_PATH.to_owned()
             } else {
                 preference_path(0)
             };
@@ -147,7 +172,7 @@ pub(super) fn properties_body(
             "InterfaceVersion",
             "Id",
         ],
-        (ROOT_PATH | TERMINAL_PATH, ACCESSIBLE) => &[
+        (ROOT_PATH | MAIN_WINDOW_PATH | TERMINAL_PATH, ACCESSIBLE) => &[
             "Name",
             "Description",
             "Parent",

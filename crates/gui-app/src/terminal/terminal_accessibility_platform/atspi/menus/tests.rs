@@ -44,8 +44,10 @@ fn call(path: &str, interface: &str, member: &str, signature: &str, body: Vec<u8
 #[test]
 fn live_menu_nodes_preserve_sibling_consumers_and_refuse_phantoms() {
     let (mut service, _) = state();
+    // dat-mainwindow-atspi-frame-node-eatt: these are the main-window FRAME's children now (the
+    // application root's sole child is the frame), so assert against main_window_child_paths().
     assert_eq!(
-        service.root_child_paths(),
+        service.main_window_child_paths(),
         vec![
             TERMINAL_PATH.to_owned(),
             preference_path(0),
@@ -80,7 +82,7 @@ fn live_menu_nodes_preserve_sibling_consumers_and_refuse_phantoms() {
     service.menus.clear();
     let phantom = service.dispatch(5, &call(&row, ACCESSIBLE, "GetState", "", Vec::new()));
     assert_eq!(phantom.kind, MessageType::Error);
-    assert_eq!(service.root_child_paths().len(), 2);
+    assert_eq!(service.main_window_child_paths().len(), 2);
     assert_eq!(service.preferences[0].name, "Preferences");
 }
 

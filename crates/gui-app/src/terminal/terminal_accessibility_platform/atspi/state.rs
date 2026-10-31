@@ -67,6 +67,21 @@ pub(super) fn state_words(
     words
 }
 
+/// A top-level application-window FRAME (dat-mainwindow-atspi-frame-node-eatt): showing and visible
+/// always, and ACTIVE + FOCUSED when the window holds the session focus so a screen reader can report
+/// the window and whether it is the active one.
+pub(super) fn frame_state_body(focused: bool) -> Vec<u8> {
+    let mut words = [0_u32; 2];
+    for state in [STATE_SHOWING, STATE_VISIBLE]
+        .into_iter()
+        .chain(focused.then_some(STATE_ACTIVE))
+        .chain(focused.then_some(STATE_FOCUSED))
+    {
+        words[(state / 32) as usize] |= 1 << (state % 32);
+    }
+    words_body(words)
+}
+
 pub(super) fn words_body(words: [u32; 2]) -> Vec<u8> {
     let mut body = BodyWriter::new();
     body.array(4, |body| {

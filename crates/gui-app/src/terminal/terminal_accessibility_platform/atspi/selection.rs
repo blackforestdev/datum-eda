@@ -122,7 +122,9 @@ fn resolved_name(
 fn parent_path(node: Node<'_>) -> String {
     workspace::parent(node).unwrap_or_else(|| {
         match node {
-            Node::Root => ROOT_PATH,
+            // Selection content is content of the main-window FRAME, not the application root
+            // (dat-mainwindow-atspi-frame-node-eatt).
+            Node::Root => MAIN_WINDOW_PATH,
             Node::Members | Node::Fields => PATH,
             Node::Member(_) => MEMBERS,
             Node::Field(_) => FIELDS,
@@ -251,9 +253,9 @@ pub(super) fn dispatch(
         }
         "GetIndexInParent" => {
             let parent = parent_path(node);
-            let index = if parent == ROOT_PATH {
+            let index = if parent == MAIN_WINDOW_PATH {
                 state
-                    .root_child_paths()
+                    .main_window_child_paths()
                     .iter()
                     .position(|p| p == path)
                     .unwrap_or(0)

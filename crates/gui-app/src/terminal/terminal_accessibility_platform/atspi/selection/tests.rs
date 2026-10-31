@@ -165,9 +165,10 @@ fn selection_accessibility_inventory_is_complete_and_bound_to_source_identity() 
     let snapshot = state.selection.as_ref().unwrap();
     assert_eq!(snapshot.view.as_ref().unwrap().members.len(), 258);
     assert_eq!(snapshot.view.as_ref().unwrap().hidden.len(), 1);
-    let root_paths = state.root_child_paths();
-    assert_eq!(root_paths.last().unwrap(), PATH);
-    assert_eq!(root_paths[0], TERMINAL_PATH);
+    // dat-mainwindow-atspi-frame-node-eatt: terminal + selection are the main-window FRAME's children.
+    let window_paths = state.main_window_child_paths();
+    assert_eq!(window_paths.last().unwrap(), PATH);
+    assert_eq!(window_paths[0], TERMINAL_PATH);
     let member = snapshot
         .view
         .as_ref()

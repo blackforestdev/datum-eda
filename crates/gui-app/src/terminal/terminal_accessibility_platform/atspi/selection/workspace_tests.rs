@@ -84,8 +84,13 @@ fn document_inspection_uses_named_accessible_roots_without_authored_selection() 
         });
     };
     publish(&mut service, &editor);
-    assert!(service.root_child_paths().contains(&NAVIGATOR.to_owned()));
-    assert!(service.root_child_paths().contains(&PATH.to_owned()));
+    // dat-mainwindow-atspi-frame-node-eatt: selection roots are the main-window FRAME's children now.
+    assert!(
+        service
+            .main_window_child_paths()
+            .contains(&NAVIGATOR.to_owned())
+    );
+    assert!(service.main_window_child_paths().contains(&PATH.to_owned()));
     assert_eq!(
         property(&mut service, NAVIGATOR, "Name")
             .body_reader()
