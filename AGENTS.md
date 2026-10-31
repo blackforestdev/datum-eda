@@ -21,8 +21,8 @@ by default; planning detours identify the blocked workflow and finite exit. Keep
 one task record and combine routine evidence/state updates with delivery; PM059
 retains actual independent review without a receipt set for every ordinary step.
 
-Default to usable feature implementation; target roughly 80% of effort toward
-that outcome, not a percentage of commit labels. Read the selected task's
+Default to usable feature implementation; CLAUDE.md requires at least 80% of
+effort on actual Rust product code, not a percentage of commit labels. Read the selected milestone's
 `feature_delivery` contract. Use ordinary application workflows as delivery proof;
 isolated fixtures supplement them. Do not yield merely after a document, test,
 commit or lease update. Continue within the grant until delivery or a concrete
@@ -45,22 +45,26 @@ acceptance or canonical-next claims. Tracked planning still needs authorization.
 
 ## Canonical task and ownership
 
-Run fresh `python3 scripts/project_status.py next` for ordinary next-task queries
+Run fresh `python3 scripts/project_status.py next` for roadmap next-milestone queries
 and fresh `python3 scripts/project_status.py details [key|issue]` for completion
 queries. Return stdout byte-for-byte as the entire answer, with explicitly requested
 analysis separately afterward. Never reconstruct from memory or `br ready`.
 Report selector failure and stop the query. The printed next completion step is
-sole authority; dependency readiness does not authorize alternate or parallel work.
+sole milestone-selection authority; dependency readiness grants no work. Routine
+assignments use the verified manager's recorded PM059 grant, never tracker priority.
 
-Before scheduled editing, synchronize the structured Frontier lease and beads
-status/assignee/export in one transaction. A tracker claim alone is invalid.
-Respect scope, expiry and other sessions' dirty work. Expiry never silently
-releases ownership; transfer explicitly.
+For routine work, record the manager's bounded authorization, implementer and
+file scope in one task before editing; update its assignee/status and export.
+No duplicate Frontier lease or completion plan is required. Scheduled milestone
+execution retains its structured Frontier/beads claim. Respect all scopes and
+other sessions' dirty work; transfer ownership explicitly. A tracker claim alone
+is never execution authority.
 
-If output says `Owner boundary: INPUT REQUIRED`, stop implementation and present
+If output says `Owner boundary: INPUT REQUIRED`, stop the affected milestone decision and present
 the ordered decision packet/response format unchanged. Route it to the owner or
 the appointed manager only within PM059 delegation. Do not claim or advance until
-the authorized disposition is durably recorded and state synchronized.
+the authorized disposition is durably recorded and state synchronized. The PM
+continues separately authorized routine work; owner absence is not a project hold.
 
 Detailed query/response, boundary, state, lease and completion procedures are owned by
 `docs/PROJECT_STATE_POLICY.md`; ordinary command recipes are in the procedures.

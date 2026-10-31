@@ -9,14 +9,57 @@ and correction of the governing documentation. Research and ratified contracts
 must drive implementation; repeated planning, proof packets and administrative
 stops must not replace delivered designer workflows. The supporting evidence is
 `research/process-quality/FEATURE_DELIVERY_WORKFLOW_CORRECTION.md`. This decision
-amends PM025's decision routing, not its roadmap, claim or validation authority.
+amends PM025's decision routing. The 2026-10-31 amendment below also narrows
+roadmap/claim administration to milestones rather than every routine fix.
+
+## One-task routine development — owner amendment, 2026-10-31
+
+The owner directed removal of the duplicated governance obstructing Rust delivery,
+following an owner-absence halt and a small Rust correction held behind roadmap
+restructuring. This prospectively supersedes universal Frontier promotion/lease
+and completion-plan requirements for routine implementation and fixes.
+
+The verified standing manager may authorize a bounded routine task inside its
+covered, ratified product scope in **one task record**. Record the grant and
+governing scope, named implementer, nonconflicting files owned and expected behavior
+before editing, checking existing task ownership and shared-worktree changes.
+The implementer claims that task, makes the change, runs affected checks,
+obtains one actual independent review and lands it with concise results. Reuse
+existing tests and observations. Batch routine tracking updates with delivery.
+Do not create a child Frontier item, structured lease, completion graph, evidence
+route, availability packet or qualification campaign merely to land the fix.
+
+Beads is the operational task record, not an execution gate generator. Its
+`roadmap:intake` label means no independently scheduled milestone; the label,
+priority or claim supplies no grant. A recorded authorization from the verified
+manager supplies routine authority. Milestone queries and state changes continue
+through the existing Frontier selector; routine task ownership and results live
+in the task record without a duplicate roadmap entry. No tracker migration,
+parallel selector or new permission service is required.
+
+An explicit execution hold, revocation, conflicting file ownership, hard safety
+dependency, uncovered authority or owner-only decision still stops that scope.
+Routine authority cannot override any of them. A pending final acceptance,
+missing display or denied enactment stops its specific claim/action; it does not
+revoke another recorded execution grant. The manager must keep authorized product
+work moving while the owner is absent. No earlier out-of-scope edit, missing proof
+or qualification is retroactively approved by this amendment.
+
+Actual product/specification changes still require their governing decisions and
+affected evidence reconciliation. Milestone availability and release claims retain
+their stated observations, source pins, safety and independent review. Changed
+source loses affected qualification claims; recapture waits for the designated
+candidate, rather than running after every correction. New scope, mechanisms,
+dependencies, physical actions and final owner-only acceptance keep their existing
+authority boundaries. Ordinary fixes do not acquire those obligations simply
+because their milestone has not been accepted.
 
 ## Delivery unit and rhythm
 
 ### Feature delivery enforcement
 
-Prioritize complete usable application behavior. The roughly 80% implementation
-target guides scheduling; commit counts and labels do not measure effort.
+Prioritize complete usable application behavior. CLAUDE.md's at-least-80% Rust
+work-effort floor guides scheduling; commit counts and labels do not measure effort.
 
 Select product execution by default. Before selecting a planning or qualification
 detour, the manager identifies the blocked user workflow, the unresolved requirement
@@ -26,13 +69,15 @@ unrelated planning lanes while a product unit waits for review or a covered
 manager decision. Explicit owner-requested research and maintenance keep their
 bounded scope; this priority does not invent execution grants or successors.
 
-Selected or active `work_purpose.kind=product_delivery` carries `feature_delivery`:
+Selected or active Frontier milestones with `work_purpose.kind=product_delivery`
+carry `feature_delivery`:
 `ordinary_workflow`, `safety_requirements`, `qualification_followups`,
 `prerequisite_reasons`, `development_ready` and `ordinary_evidence`. Existing
 selector checks require concrete workflow/safety criteria and reasons for hard
 prerequisites and non-implementation steps. Planning labels do not remove a
-product obligation. Unselected product work needs its contract before work starts,
-not a separate contract-writing campaign.
+product obligation. Unselected product milestones need their contract before
+milestone execution starts, not a separate contract-writing campaign or a new
+contract for each routine correction.
 
 Build, test, fix, document, obtain required independent review and deliver the
 ordinary application path as one coherent unit. Routine engineering choices do
@@ -50,12 +95,13 @@ substep, duplicate logs or repeat reviews of an unchanged candidate. Update the
 existing record and link raw evidence once. Separate records remain justified by
 an actual independent authority or distinct acceptance obligation.
 
-Land implementation, concise supporting evidence and synchronized tracker/Frontier
-updates together where valid. Existing governed document/review markers can bind
+Land implementation, concise supporting evidence and task updates together. When
+milestone state actually changes, synchronize Frontier projections too. Existing governed document/review markers can bind
 same-change evidence; do not manufacture a second commit merely to obtain the
 first commit's hash. Ownership and authorization changes may require a separate
 transaction, not a new transaction for every heartbeat or summary. A synchronized
-working claim is required before editing; it does not require a standalone claim
+milestone claim is required before editing milestone execution; routine tasks use
+the single-record ownership rule above. Neither requires a standalone claim
 commit. Every commit still obeys owned staging and mandatory checks.
 
 `development_ready` requires repository-local ordinary-application evidence with

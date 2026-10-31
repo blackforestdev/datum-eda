@@ -1,5 +1,18 @@
 # Feature delivery workflow correction — owner evidence
 
+## Routine-work simplification — owner direction, 2026-10-31
+
+After another owner-absence halt and a small Rust fix waiting behind roadmap
+restructuring, the owner required at least 80% of work effort on actual Rust code
+and explicitly directed removal of the unsustainable governance overhead. Read-only
+inspection separated Beads task operations from the added Frontier/completion/lease
+system: the latter, not Beads itself, held the correction. PM059 now permits one
+verified manager-authorized task record for routine work, without duplicate
+milestone promotion or qualification machinery. The existing tracker and milestone
+selector stay in place; explicit execution holds, ownership, actual proof,
+independent review and owner-only acceptance remain. This amendment is prospective
+and claims no earlier authorization, runtime result or full qualification.
+
 Recorded 2026-10-08. This is evidence for PM059, not a rival roadmap or a new
 product feature specification.
 

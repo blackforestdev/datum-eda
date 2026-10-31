@@ -64,7 +64,7 @@ br search "keyword"            # full-text search
 
 br q --labels roadmap:intake "short thing I just found" # quick capture -> prints ID
 br create "Title" -t bug -p 1 --slug my-slug --labels roadmap:intake -d "..."
-br update <id> --claim                                  # beads half of a synchronized Frontier claim
+br update <id> --claim                                  # task ownership; milestone work also synchronizes Frontier
 br close <id> --reason "landed in <commit>"             # finish it
 
 br dep add <issue> <depends-on> -t blocks   # <issue> waits until <depends-on> closes
@@ -75,8 +75,9 @@ br sync --flush-only                         # export DB -> issues.jsonl (before
 
 - **Types:** `task`, `bug`, `feature`, `epic`, `chore`, `docs`, `question`
 - **Priority:** `0`–`4` (P0 critical … P4 backlog) — numbers, not words
-- Classify at creation: incidental findings use `roadmap:intake`; this grants no
-  execution or priority. Scheduled work uses `roadmap:frontier` in the synchronized
+- Classify at creation: incidental findings and routine tasks use `roadmap:intake`;
+  the label grants no execution or priority. A verified manager may authorize the
+  routine task under PM059. Milestone work uses `roadmap:frontier` in the synchronized
   Frontier transaction. Missing or conflicting roadmap labels invalidate the selector.
 - **Attribution (audit trail):** set once per session so `br` records who acted —
   `export BR_AGENT_NAME=codex BR_HARNESS=codex-cli BR_MODEL=<model>` and pass
@@ -85,9 +86,10 @@ br sync --flush-only                         # export DB -> issues.jsonl (before
 
 ### Working pattern
 
-1. **Start:** use `project_status.py next/details`. Before editing scheduled work,
-   synchronize its structured Frontier lease with `br update <id> --claim` and
-   export in one transaction. Running the `br` command alone is not a valid claim.
+1. **Start:** for routine work, record the verified manager's bounded grant,
+   implementer and owned paths in one task; claim/export before editing. For
+   milestone work, use `project_status.py next/details` and synchronize its
+   structured Frontier/beads claim. `br` status or priority alone grants nothing.
 2. **Discover:** hit a bug or debt? `br q --labels roadmap:intake "..."` (or
    `br create ... --labels roadmap:intake`) and keep going.
    Wire a dependency if it blocks/relates to other work (`br dep add ...`).
@@ -104,8 +106,9 @@ Use its [Standard Commands](PROJECT_STATE_POLICY.md#standard-commands),
 and [Claim Contract](PROJECT_STATE_POLICY.md#claim-contract). PM025 and PM059
 remain controlling; this command recipe does not restate a competing procedure.
 
-The tracker commands above are the beads half of those transactions, never a
-replacement roadmap or claim. Export with `br sync --flush-only` before landing
+PM059's one-task rule governs routine assignments; Frontier transactions govern
+milestones. Do not make a routine fix another roadmap project. Export with
+`br sync --flush-only` before landing
 tracker changes. Implementation and review evidence remain separate from intake.
 
 ---

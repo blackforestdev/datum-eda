@@ -22,6 +22,12 @@ priority, recent commits, and an assignee are not roadmap authority.
 
 ## Standard Commands
 
+This section reports canonical roadmap milestones and their completion state.
+Routine assignments and results are reported from their single task record under
+PM059; they do not inherit the milestone selector's completion/claim machinery.
+Stop instructions below apply to the affected milestone scope, not every task
+covered by another recorded manager grant.
+
 Use the deterministic selector for every “what is next?” query:
 
 ```bash
@@ -200,6 +206,29 @@ findings and disposition; routine substeps do not require separate receipt sets.
 
 ## Work-Item Workflow
 
+### Routine implementation and fixes
+
+Use PM059's owner-directed one-task amendment. The verified manager records the
+bounded grant/governing scope, implementer, nonconflicting owned paths and intended
+behavior in one Beads task. Claim/export that task before editing, implement, run
+focused checks, obtain one actual independent review and land with concise results.
+The recorded manager grant supplies authority; a label, priority or claim does
+not. `roadmap:intake` records ordinary tasks outside milestone scheduling.
+No new Frontier item/lease, completion graph, availability packet or qualification
+campaign is required for the correction. Existing milestone schema and selector
+checks remain unchanged. Explicit execution holds, revocations, scope conflicts,
+hard safety dependencies and retained owner decisions remain binding.
+
+Final milestone acceptance, unavailable proof or a denied action blocks only its
+identified scope. The manager continues other authorized work while the owner is
+absent. Update milestone projections only when their truth actually changes;
+do not restructure an acceptance plan just to land an in-scope fix.
+
+### Milestone admission and execution
+
+The following workflow applies to scheduled roadmap milestones and genuine new
+scope/authority boundaries, not to each task inside a product grant.
+
 1. **Capture:** create an issue in `br`. It remains intake-only unless promoted.
 2. **Govern:** complete required research, specification, owner choice, and
    numbered decision without claiming implementation authorization.
@@ -274,7 +303,7 @@ The owner-authorized 2026-10-16 PM025 PS-010–013 amendment is controlling over
 earlier generic claim/single-next wording. Current schema 7 adds the following
 to the existing Frontier; no parallel selector or proof ledger is introduced.
 
-- `work_purpose` (`kind`, concrete `rationale`) is required for every unfinished
+- `work_purpose` (`kind`, concrete `rationale`) is required for every unfinished Frontier
   task. Product-delivery contracts apply before selection/start regardless of
   tracker type. Existing landed history needs no retrospective invented evidence.
 - `hold` (`reason`, governed `source_ref`, `resume_requires`, `completion_checkpoint`) retains the grant

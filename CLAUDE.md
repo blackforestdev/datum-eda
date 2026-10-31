@@ -122,14 +122,24 @@ readiness records supply no product grant.
 
 ## Roadmap and editing authority
 
+Routine development follows PM059's **one-task workflow**: the verified manager
+records the bounded grant, implementer and file scope in one existing task record;
+the implementer fixes the Rust behavior, runs affected checks, obtains one actual
+independent review and lands it. A tracker claim alone grants nothing. Routine
+work needs no separate Frontier item/lease, completion graph, availability packet
+or qualification campaign. Record concise results with delivery. Explicit execution
+holds, conflicting ownership and retained owner-only decisions still stop their
+affected scope. Milestone acceptance does not withdraw other recorded grants.
+
 Use fresh `python3 scripts/project_status.py next` or `details [key|issue]`
-for ordinary task/completion queries and return stdout byte-for-byte; never infer
-selection or substitute tracker readiness. Report selector failure and stop the
-query. Stop implementation at an INPUT REQUIRED boundary; PM059 governs any
-appointed manager's exact delegation. The complete presentation, response-packet,
+for roadmap milestone/completion queries and return stdout byte-for-byte; never
+infer milestone selection or substitute tracker readiness. Report selector failure
+and stop that query. An INPUT REQUIRED boundary stops the identified milestone
+decision, not separately authorized routine work. PM059 governs the manager's
+exact delegation. The complete presentation, response-packet,
 claim and transition procedures belong to
 [PROJECT_STATE_POLICY.md](docs/PROJECT_STATE_POLICY.md#standard-commands).
-Synchronize the Frontier lease and beads before scheduled edits.
+Synchronize the Frontier lease and beads before milestone execution edits.
 
 Read-only audits/research need no implementation claim or successful selector;
 disclose unrelated state failures and continue the investigation. This exception

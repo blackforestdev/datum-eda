@@ -8,10 +8,12 @@ Datum records project state through three deliberately separate authorities:
 
 1. Git, tests, and proof gates establish what has landed and been verified.
 2. `specs/active_frontier.json` is the canonical, machine-readable roadmap and
-   determines the next authorized task.
+   determines the next scheduled milestone.
 3. beads (`br`, canonically exported to `.beads/issues.jsonl`) owns operational
    intake, dependencies, assignment, and closure. The Frontier carries the
-   validated lease snapshot for scheduled `in_progress` work.
+   validated lease snapshot for milestone `in_progress` work. PM059's one-task
+   amendment governs separately authorized routine implementation and fixes;
+   these do not require duplicate Frontier admission or leases.
 
 The Active Frontier section of `specs/PROGRESS.md` is a generated human
 projection of `specs/active_frontier.json`, not an independently edited roadmap.
@@ -45,7 +47,9 @@ produce an explicit responsible-actor alert and complete ordered decision packet
 human and JSON selector output. Every request has a stable ID, exact question,
 recommended response, and governed source marker; the packet supplies one exact
 response format. Agents MUST notify the responsible owner or manager, present the packet, and stop;
-they MUST NOT claim, edit, choose a disposition, or advance to another step.
+they MUST NOT claim, edit, choose a disposition, or advance that milestone step.
+This boundary does not stop a separate routine task authorized under PM059;
+explicit execution holds and scope restrictions still apply.
 The authorized owner or manager disposition is recorded as durable review evidence before the same
 governance transaction completes the step, selects its successor, and changes
 authorization to match that successor.
@@ -64,8 +68,10 @@ provenance and the same synchronized state transaction. A verified standing
 project appointment covers declared kinds across current and future tasks;
 unclassified decisions require classification first, and explicit owner_only
 decisions stay with the owner. Implementers still stop for actual disposition;
-no routine owner relay is required when the standing appointment already covers it. No selector/schema, claim, response-format or proof bypass
-is authorized. See `PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md` and the
+no routine owner relay is required when the standing appointment already covers it.
+The 2026-10-31 PM059 amendment prospectively separates routine task authorization
+and ownership from milestone claims; it supplies no proof or owner-only approval.
+See `PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md` and the
 project-state policy for appointment, evidence and limits.
 
 ## Why This Is Required
@@ -89,7 +95,9 @@ compatible historical data) and contain every
 scheduled roadmap item with a stable unique key, contiguous order, lifecycle
 state, authorization state, governing-document links, exact beads issue ID,
 hard dependencies, unblocks, summary, and explicit canonical-next/parallel
-flags. A ready beads issue absent from this file is intake only.
+flags. A ready beads issue absent from this file has no independent milestone
+priority. Routine execution requires PM059's recorded manager grant; intake,
+readiness and assignment alone never grant it.
 
 The manifest MUST explicitly select exactly one deterministic next task or
 record a deliberate idle disposition with reason and governed evidence. Idle
@@ -122,8 +130,9 @@ the next task is specification work; it never authorizes feature execution.
 beads owns operational issue state. Hard `blocks` edges are execution blockers;
 `related` and `parent-child` edges MUST NOT be reported as blockers or a strict
 chain. Roadmap scheduling MUST NOT contradict tracker blockers. When a broad
-issue contains independently executable portions, it MUST be split rather than
-described as both blocked and buildable.
+milestone contains independently executable portions, separate actual blocked
+scope from authorized execution. Do not promote each ordinary correction into
+another roadmap item; PM059 records its bounded authority and ownership once.
 
 ### PS-005: Expiring claims
 
@@ -164,6 +173,9 @@ or data-driven implementation MUST NOT evade physical or logical-module checks.
 No roadmap, tracker, claim, or emergency status can waive source-health gates.
 
 ### PS-009: Canonical completion contract
+
+This contract describes scheduled milestones, not each routine implementation
+task or regression fix. PM059's one-task workflow needs no duplicate step graph.
 
 The selected non-landed item MUST carry one closed-shape ordered completion
 contract with an outcome, stable unique step IDs, work kinds, forward-valid
