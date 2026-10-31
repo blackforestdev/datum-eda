@@ -78,24 +78,61 @@ def _environment_id(coordinate):
     return f"{backend}-{scale:g}-{window[0]}x{window[1]}"
 
 
-def build_gui_case(bundle_root, *, gui_binary, coordinate):
-    """Produce the one clean-install/missing-store/gui row for `coordinate`."""
+def _coordinate_tuple(raw):
+    """Normalise a JSON coordinate [backend, scale, [w, h]] to (backend, float, (w, h))."""
+    backend, scale, window = raw
+    return (backend, float(scale), (int(window[0]), int(window[1])))
+
+
+def _consume_identity(identity, gui_binary, coordinate):
+    """Bind this row to dev's FROZEN shared identity, computing NOTHING (F1 reference wiring).
+
+    candidate / input_manifest / matrix_sha256 are carried verbatim; the one environment entry whose
+    coordinate matches is selected (by its frozen id); the provided gui binary is verified to be the
+    pinned candidate (no substitution). Returns the same tuple the self-compute path produces."""
+    candidate = identity["candidate"]
+    gui_sha = candidate["binaries"]["gui"]["sha256"]
+    if _sha_file(gui_binary) != gui_sha:
+        raise SystemExit(
+            f"--gui-binary sha256 != candidate.binaries.gui.sha256 ({gui_sha}); the frozen identity "
+            "pins the gui binary -- no substitution")
+    binaries = {"gui": gui_sha}
+    matched = [e for e in identity["environments"] if _coordinate_tuple(e["coordinate"]) == coordinate]
+    if len(matched) != 1:
+        raise SystemExit(
+            f"frozen identity must carry exactly one environment for coordinate {coordinate}; "
+            f"found {len(matched)}")
+    environments = {matched[0]["id"]: coordinate}
+    return candidate, binaries, identity["input_manifest"], identity["matrix_sha256"], environments
+
+
+def build_gui_case(bundle_root, *, gui_binary, coordinate, identity=None):
+    """Produce the one clean-install/missing-store/gui row for `coordinate`.
+
+    With `identity` (dev's FROZEN shared identity -- F1 reference wiring) the row BINDS to it and
+    computes nothing, so every surface in the assembled report shares one identity source (no drift).
+    Without it, the standalone/debug path self-computes candidate/manifest/matrix/environment from the
+    local tree (legacy; one surface at a time)."""
     key = ("clean-install", "missing-store", "default", "gui", coordinate)
     require(key in case_inventory(), f"coordinate {coordinate} is not a real GUI case for this family")
     _preflight_candidate_companions(gui_binary)
 
     capture = Capture(bundle_root)
-    revision = _git_head()
-    gui_sha = _sha_file(gui_binary)
-    candidate = {"revision": revision,
-                 "binaries": {"gui": {"path": str(gui_binary), "sha256": gui_sha}}}
-    binaries = {"gui": gui_sha}
-    recipe_ref = {"path": GUI_RECIPE_RELPATH, "sha256": _sha_file(ROOT / GUI_RECIPE_RELPATH)}
-    input_manifest_ref = capture.put([recipe_ref])
-    matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
-    # Exactly one environment, whose coordinate equals this row's coordinate: produce_case refuses
-    # any other count (the coordinate-matching rule, verified inert for CLI coordinate-None cases).
-    environments = {_environment_id(coordinate): coordinate}
+    if identity is not None:
+        candidate, binaries, input_manifest_ref, matrix_sha256, environments = _consume_identity(
+            identity, gui_binary, coordinate)
+    else:
+        revision = _git_head()
+        gui_sha = _sha_file(gui_binary)
+        candidate = {"revision": revision,
+                     "binaries": {"gui": {"path": str(gui_binary), "sha256": gui_sha}}}
+        binaries = {"gui": gui_sha}
+        recipe_ref = {"path": GUI_RECIPE_RELPATH, "sha256": _sha_file(ROOT / GUI_RECIPE_RELPATH)}
+        input_manifest_ref = capture.put([recipe_ref])
+        matrix_sha256 = digest(canonical(parse((ROOT / MATRIX_RELPATH).read_bytes(), "matrix")))
+        # Exactly one environment, whose coordinate equals this row's coordinate: produce_case refuses
+        # any other count (the coordinate-matching rule, verified inert for CLI coordinate-None cases).
+        environments = {_environment_id(coordinate): coordinate}
 
     row = produce_case(capture, key=key, candidate=candidate, binaries=binaries,
                        environments=environments, input_manifest=input_manifest_ref,
@@ -111,6 +148,8 @@ def build_gui_case(bundle_root, *, gui_binary, coordinate):
         "artifacts": list(capture.inventory.values()),
         "case_results": [row],
     }
+    if identity is not None and "environment_sha256" in identity:
+        report["environment_sha256"] = identity["environment_sha256"]
     return report, binaries, environments, key
 
 
@@ -125,14 +164,20 @@ def main(argv=None):
     parser.add_argument("--coordinate", default=None,
                         help="display coordinate backend/scale/WIDTHxHEIGHT "
                              "(default wayland/1.0/1024x900)")
+    parser.add_argument("--identity", default=None, type=Path,
+                        help="dev's FROZEN shared identity JSON (candidate / environments / "
+                             "environment_sha256 / input_manifest / matrix_sha256). When given the row "
+                             "BINDS to it, computing nothing (the Phase-A reference wiring); its "
+                             "input_manifest content must be resolvable in the shared --bundle-root.")
     args = parser.parse_args(argv)
     args.bundle_root.mkdir(parents=True, exist_ok=True)
     bundle_root = args.bundle_root.resolve()
     gui_binary = args.gui_binary.resolve()
     coordinate = _parse_coordinate(args.coordinate) if args.coordinate else DEFAULT_COORDINATE
+    identity = json.loads(args.identity.read_text()) if args.identity else None
 
     report, binaries, environments, key = build_gui_case(
-        bundle_root, gui_binary=gui_binary, coordinate=coordinate)
+        bundle_root, gui_binary=gui_binary, coordinate=coordinate, identity=identity)
     args.report.write_text(json.dumps(report, indent=2, sort_keys=True))
 
     print("Produced case:", key)
