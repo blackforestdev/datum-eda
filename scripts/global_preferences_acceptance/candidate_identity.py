@@ -26,7 +26,7 @@ ROLES = ("cli", "gui", "daemon", "engine", "gui-render", "mcp")
 # release-profile distributed exes built by gates.release_build().
 RELEASE_BINARY_PATHS = {
     "cli": "target/release/datum-eda",
-    "gui": "target/release/datum-gui-app",
+    "gui": "target/release/datum-gui",
     "daemon": "target/release/eda-engine-daemon",
 }
 # test-bin crates whose executed test binary is a role identity (located via cargo metadata JSON).
