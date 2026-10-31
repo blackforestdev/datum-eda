@@ -141,6 +141,7 @@ pub(crate) fn selected_track_state_with_layer(
             .unwrap()
             .path
             .clone(),
+        native_write_verbs: Default::default(),
     });
     state.scene.project_uuid = f.model.project.project_id.to_string();
     state.scene.board_uuid = f.board.to_string();

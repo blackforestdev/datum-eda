@@ -11,6 +11,22 @@ use std::sync::{Arc, Mutex, mpsc};
 #[path = "runtime_native_edit/move_acquisition.rs"]
 mod move_acquisition;
 
+/// Extract the native-write verb ids from a `native.describe` response's `native_write_verbs`
+/// catalog (W3 capability discovery). Used to populate truthful native-edit menu enablement.
+fn native_write_verb_ids(describe: &serde_json::Value) -> std::collections::BTreeSet<String> {
+    describe
+        .get("native_write_verbs")
+        .and_then(serde_json::Value::as_array)
+        .map(|verbs| {
+            verbs
+                .iter()
+                .filter_map(|verb| verb.get("id").and_then(serde_json::Value::as_str))
+                .map(str::to_owned)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
 struct Answer {
     intent: NativeEditIntent,
     result: Result<String, String>,
@@ -141,6 +157,10 @@ impl EditWork {
                     let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
                     trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));
                     let after=client.describe(&intent.project_root)?;
+                    // Capability discovery (truthful menu enablement): carry the engine's
+                    // native-write verb catalog from native.describe into the refreshed
+                    // workspace so native-edit menu entries enable exactly for reported verbs.
+                    if let Some(backing)=next.backing.as_mut(){backing.native_write_verbs=native_write_verb_ids(&after);}
                     trace_startup_timing(format!("native edit qualified answer {}ms",started.elapsed().as_millis()));
                     let qualified=before.get("model_revision")==after.get("model_revision")
                         && before.get("transaction_tip")==after.get("transaction_tip")

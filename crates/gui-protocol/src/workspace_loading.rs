@@ -276,6 +276,9 @@ pub(super) fn load_workspace(
     state.backing = Some(WorkspaceBacking {
         request: request.clone(),
         board_path,
+        // Populated after native.describe reports the engine's verb catalog; empty here
+        // so native-edit menu entries stay truthfully disabled until discovery returns.
+        native_write_verbs: Default::default(),
     });
     trace_protocol_timing(format!(
         "workspace total {}ms",

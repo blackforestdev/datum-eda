@@ -196,6 +196,11 @@ pub struct RectNm {
 pub struct WorkspaceBacking {
     pub request: LiveReviewRequest,
     pub board_path: PathBuf,
+    /// Native-write verb ids the engine reports for this open Project via
+    /// `native.describe` (capability discovery, W3). Empty until describe populates
+    /// it; native-edit menu entries are enabled only for verbs present here, so an
+    /// unknown catalog truthfully disables them.
+    pub native_write_verbs: std::collections::BTreeSet<String>,
 }
 
 mod editor_commands;
@@ -3372,6 +3377,7 @@ mod tests {
                 kicad_board_source: None,
             },
             board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
+            native_write_verbs: Default::default(),
         });
 
         let handoff = state
@@ -3410,6 +3416,7 @@ mod tests {
                 kicad_board_source: None,
             },
             board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
+            native_write_verbs: Default::default(),
         });
 
         let via = state

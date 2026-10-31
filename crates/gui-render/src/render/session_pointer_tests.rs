@@ -448,6 +448,7 @@ fn native_proposal_review_context_and_dim_filters_never_rekey_or_repaint_authore
             kicad_board_source: None,
         },
         board_path: fixture.root().join("board.json"),
+        native_write_verbs: Default::default(),
     });
     state.selection = datum_gui_protocol::SelectionTarget::None;
     state.active_review_target_id.clear();

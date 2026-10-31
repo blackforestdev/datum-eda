@@ -109,6 +109,14 @@ fn refresh_workspace_after_terminal_output(
     );
     workspace.supervision = next.supervision;
     workspace.active_review_target_id = next.active_review_target_id;
+    // Preserve the engine's native-write verb catalog (a build constant) across this
+    // resolver-built refresh so truthful native-edit menu enablement is not reset to empty.
+    if let Some(rebuilt) = next.backing.as_mut()
+        && rebuilt.native_write_verbs.is_empty()
+        && let Some(current) = workspace.backing.as_ref()
+    {
+        rebuilt.native_write_verbs = current.native_write_verbs.clone();
+    }
     workspace.backing = next.backing;
     *production_pending = false;
     *workspace_pending = false;

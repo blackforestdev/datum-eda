@@ -177,7 +177,7 @@ impl Runtime {
     /// generated check evidence. View state remains owned by the live session.
     pub(super) fn publish_prepared_workspace(
         &mut self,
-        next: datum_gui_protocol::ReviewWorkspaceState,
+        mut next: datum_gui_protocol::ReviewWorkspaceState,
         prepared: Prepared,
     ) {
         let same_world = {
@@ -227,6 +227,15 @@ impl Runtime {
             next.supervision.journal.applied_transaction_count,
         );
         workspace.supervision = next.supervision;
+        // Preserve the engine's native-write verb catalog (a build constant) across this
+        // rebuild so truthful native-edit menu enablement is not reset to empty when the
+        // new workspace was built without a fresh native.describe (e.g. a check-run refresh).
+        if let Some(rebuilt) = next.backing.as_mut()
+            && rebuilt.native_write_verbs.is_empty()
+            && let Some(current) = workspace.backing.as_ref()
+        {
+            rebuilt.native_write_verbs = current.native_write_verbs.clone();
+        }
         workspace.backing = next.backing;
         workspace.selection = prepared.selected;
         if let Some(key) = created.or(library_selection)

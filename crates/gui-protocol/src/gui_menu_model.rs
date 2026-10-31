@@ -53,15 +53,26 @@ pub fn native_project_edit_available(state: &crate::ReviewWorkspaceState) -> boo
         .as_ref()
         .is_some_and(|b| b.request.board_file.is_none() && b.request.kicad_board_source.is_none())
 }
-fn first_edit_verb(verb: &str) -> bool {
+/// Journal ops are NOT native-write verbs (the registry does not carry them); their
+/// availability is the journal's own truth (an open editable Project), never the
+/// write-verb catalog. Kept as an explicit carve-out so the catalog gate below governs
+/// native-EDIT verbs only.
+fn journal_verb(verb: &str) -> bool {
+    matches!(verb, "datum.journal.undo" | "datum.journal.redo")
+}
+/// The menu's native-EDIT verb entries. Their AVAILABILITY is engine-derived from
+/// native.describe's verb catalog (see `unavailable_reason`); this set only identifies
+/// which menu entries route to that catalog gate.
+fn native_edit_verb(verb: &str) -> bool {
     matches!(
         verb,
-        "datum.journal.undo"
-            | "datum.journal.redo"
-            | "datum.pcb.move_component"
-            | "datum.schematic.place_symbol"
-            | "datum.schematic.draw_wire"
+        "datum.pcb.move_component" | "datum.schematic.place_symbol" | "datum.schematic.draw_wire"
     )
+}
+/// Statically build-supported edit verbs (journal carve-out + native-edit). Availability
+/// is refined contextually in `unavailable_reason`.
+fn first_edit_verb(verb: &str) -> bool {
+    journal_verb(verb) || native_edit_verb(verb)
 }
 
 impl GuiMenuItem {
@@ -132,11 +143,34 @@ impl GuiMenuItem {
         {
             return Some("This Project needs a native schematic sheet before authoring.");
         }
+        // project.save + journal undo/redo: the only gate is an open editable Project
+        // (journal availability is the journal's own truth, not the write-verb catalog).
         if matches!(self.binding(), GuiMenuBinding::GuiLocal("project.save"))
-            || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))
+            || matches!(self.binding(), GuiMenuBinding::Verb(verb) if journal_verb(verb))
         {
             return (!native_project_edit_available(state))
                 .then_some("Open a persistent Datum Project with --project-root to edit or save.");
+        }
+        // Native-edit verbs: availability is engine-derived from native.describe's verb
+        // catalog (truthful enablement) plus an open editable Project. An unknown/empty
+        // catalog (before describe returns, or no backing) is an absent catalog, so the
+        // entry is disabled rather than enabled-by-default.
+        if let GuiMenuBinding::Verb(verb) = self.binding()
+            && native_edit_verb(verb)
+        {
+            if !native_project_edit_available(state) {
+                return Some(
+                    "Open a persistent Datum Project with --project-root to edit or save.",
+                );
+            }
+            if !state
+                .backing
+                .as_ref()
+                .is_some_and(|backing| backing.native_write_verbs.contains(verb))
+            {
+                return Some("This operation is not offered by the open Project's engine.");
+            }
+            return None;
         }
         if self.requires_project && state.backing.is_none() {
             return Some("This action requires an open Project.");
@@ -458,5 +492,77 @@ mod tests {
             "{menu_key}/{slot}/{} references undeclared icon {icon_id}",
             item.label
         );
+    }
+
+    fn native_edit_item(verb: &str) -> GuiMenuItem {
+        GuiMenuItem {
+            label: verb.to_string(),
+            icon: None,
+            shortcut: None,
+            destructive: false,
+            verb: Some(verb.to_string()),
+            gui_local: None,
+            not_built: None,
+            submenu: None,
+            requires_project: true,
+        }
+    }
+
+    fn native_editable_state(catalog: &[&str]) -> crate::ReviewWorkspaceState {
+        let mut state = crate::load_fixture_workspace_state();
+        state.backing = Some(crate::WorkspaceBacking {
+            request: crate::LiveReviewRequest {
+                project_root: std::path::PathBuf::from("/tmp/datum menu capability demo"),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+                kicad_board_source: None,
+            },
+            board_path: std::path::PathBuf::from(
+                "/tmp/datum menu capability demo/board/board.json",
+            ),
+            native_write_verbs: catalog.iter().map(|verb| verb.to_string()).collect(),
+        });
+        state
+    }
+
+    #[test]
+    fn native_edit_entry_enabled_when_the_engine_reports_the_verb() {
+        let item = native_edit_item("datum.pcb.move_component");
+        let state = native_editable_state(&["datum.pcb.move_component"]);
+        assert_eq!(item.unavailable_reason(&state), None);
+    }
+
+    #[test]
+    fn native_edit_entry_disabled_when_the_verb_is_absent_from_the_catalog() {
+        let item = native_edit_item("datum.pcb.move_component");
+        // A verb the engine does not enumerate must leave the entry disabled rather than
+        // hardcoded-on; the truthful-default empty catalog is likewise disabled.
+        let absent = native_editable_state(&["datum.schematic.place_symbol"]);
+        assert!(item.unavailable_reason(&absent).is_some());
+        let empty = native_editable_state(&[]);
+        assert!(item.unavailable_reason(&empty).is_some());
+    }
+
+    #[test]
+    fn native_edit_entry_disabled_without_an_open_editable_project() {
+        let item = native_edit_item("datum.pcb.move_component");
+        // No backing (no writable Project) is an absent catalog by construction.
+        let state = crate::load_fixture_workspace_state();
+        assert!(item.unavailable_reason(&state).is_some());
+    }
+
+    #[test]
+    fn journal_verbs_are_not_governed_by_the_write_verb_catalog() {
+        // Regression trap: undo/redo are not registered native-write verbs, so an empty
+        // catalog must NOT disable them; their only gate is an open editable Project.
+        let undo = native_edit_item("datum.journal.undo");
+        let empty_catalog = native_editable_state(&[]);
+        assert_eq!(undo.unavailable_reason(&empty_catalog), None);
+        let no_project = crate::load_fixture_workspace_state();
+        assert!(undo.unavailable_reason(&no_project).is_some());
     }
 }

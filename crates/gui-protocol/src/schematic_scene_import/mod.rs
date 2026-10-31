@@ -80,6 +80,7 @@ pub fn load_kicad_schematic_workspace_state(schematic_file: &Path) -> Result<Rev
     state.backing = Some(WorkspaceBacking {
         request,
         board_path: schematic_path,
+        native_write_verbs: Default::default(),
     });
     Ok(state)
 }
