@@ -58,6 +58,20 @@ class ProductionAdapters(unittest.TestCase):
         self.assertIn(Path("crates/gui-app/src/windows/new_project/production.rs"), users)
         self.assertTrue(any("adapter.py" in f for f in failures))
 
+    def test_acceptance_support_subtree_excluded_from_engine_writer_scan(self):
+        # The feature-gated acceptance_support seed/damage tree (default-off, not shipped) is
+        # excluded from the private-writer text scan: its fs mutations are sanctioned preconditions
+        # behind the acceptance_constructions import fence (bead i1ea; PM classification).
+        pref = "crates/engine/src/preferences"
+        self.write(f"{pref}/acceptance_support/backup_restore.rs",
+                   'pub fn seed() { std::fs::write(&path, b"x").unwrap(); }\n')
+        # A non-acceptance engine preferences writer is STILL detected (production boundary intact).
+        self.write(f"{pref}/rogue_writer.rs",
+                   'pub fn w() { std::fs::create_dir_all(&path).unwrap(); }\n')
+        observed = gate.engine_writer_files(self.root)
+        self.assertNotIn(Path(f"{pref}/acceptance_support/backup_restore.rs"), observed)
+        self.assertIn(Path(f"{pref}/rogue_writer.rs"), observed)
+
 
 if __name__ == "__main__":
     unittest.main()

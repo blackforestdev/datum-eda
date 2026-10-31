@@ -70,6 +70,42 @@ def adapter_authority(root: Path) -> tuple[set[Path], list[str]]:
     return product_users, failures
 
 
+def engine_writer_files(root: Path) -> set[Path]:
+    """Engine `preferences` files that perform a direct filesystem mutation, for the
+    private-writer boundary. Inline test modules and `*_tests.rs`/`tests.rs` are excluded, as is
+    the feature-gated `acceptance_support/` subtree.
+
+    acceptance_support is compiled only under the default-off `gp-acceptance-support` feature
+    (crates/engine/src/preferences/mod.rs:14) and is NOT in the shipping binary. Its job is
+    sanctioned precondition seeding and legitimate damage (corrupt-store / checkpoint-Err) behind
+    the compiler-enforced `acceptance_constructions` import fence; a private-writer TEXT scan over a
+    tree whose purpose is damage/seeding yields perpetual false positives. The real boundary for
+    that tree is the import fence plus audit's injection-vs-private-write packet bar, which every
+    acceptance_support addition already passes. The production one-service/private-writer boundary
+    keeps its full guard via the adapter scan, the product-service inventory and the MCP-mutation
+    ban below. (GP-CM05E bead dat-preferences-acceptance-boundary-gate-i1ea; PM classification
+    2026-10-31, routed to audit.)"""
+    preferences_root = root / "crates/engine/src/preferences"
+    write_pattern = re.compile(
+        r"(?:std::fs::|fs::)(?:write|rename|create_dir|create_dir_all|remove_file)\s*\("
+    )
+    observed_writers: set[Path] = set()
+    for path in preferences_root.rglob("*.rs"):
+        relative = path.relative_to(root)
+        if (
+            "tests" in relative.parts
+            or "acceptance_support" in relative.parts
+            or path.name == "tests.rs"
+            or path.name.endswith("_tests.rs")
+        ):
+            continue
+        # Files with inline tests are checked only before the test module.
+        text = path.read_text(encoding="utf-8").split("#[cfg(test)]", 1)[0]
+        if write_pattern.search(text):
+            observed_writers.add(relative)
+    return observed_writers
+
+
 def check() -> int:
     product_users, failures = adapter_authority(ROOT)
 
@@ -80,23 +116,7 @@ def check() -> int:
             f"observed {sorted(map(str, product_users))}"
         )
 
-    preferences_root = ROOT / "crates/engine/src/preferences"
-    write_pattern = re.compile(
-        r"(?:std::fs::|fs::)(?:write|rename|create_dir|create_dir_all|remove_file)\s*\("
-    )
-    observed_writers: set[Path] = set()
-    for path in preferences_root.rglob("*.rs"):
-        relative = path.relative_to(ROOT)
-        if (
-            "tests" in relative.parts
-            or path.name == "tests.rs"
-            or path.name.endswith("_tests.rs")
-        ):
-            continue
-        # Files with inline tests are checked only before the test module.
-        text = path.read_text(encoding="utf-8").split("#[cfg(test)]", 1)[0]
-        if write_pattern.search(text):
-            observed_writers.add(relative)
+    observed_writers = engine_writer_files(ROOT)
 
     unexpected = observed_writers - PREFERENCE_WRITE_FILES - {
         Path("crates/engine/src/preferences/project_genesis.rs")
