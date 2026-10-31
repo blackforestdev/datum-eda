@@ -32,6 +32,11 @@ COHORTS = {
     'terminal-handoff-310d9083',
 }
 ROLES = {"datum-eda", "eda-engine-daemon"}
+GUI_COHORTS = {
+    "manifest-open-94d59290", "manifest-open-ea04ce38",
+    "browse-affordance-b0158987", "browse-affordance-7b3455dd",
+}
+GUI_RUNTIME_PROOF = "held_elf_write_descriptors"
 READ = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK
 WRITE = os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK
 FIELDS = ("device", "inode", "nlink", "size", "uid", "gid", "mode", "mtime_ns", "ctime_ns")
@@ -78,8 +83,11 @@ def snapshot(descriptor):
 def role(path):
     parts = PurePosixPath(path).parts
     if (len(parts) != 5 or parts[:2] != ("target", "qa")
-            or parts[2] not in COHORTS or parts[3] != "debug" or parts[4] not in ROLES
+            or parts[3] != "debug"
             or str(PurePosixPath(path)) != path):
+        refuse(f"not an approved immutable QA companion path: {path}")
+    if not ((parts[4] in ROLES and parts[2] in COHORTS)
+            or (parts[4] == "datum-gui" and parts[2] in GUI_COHORTS)):
         refuse(f"not an approved immutable QA companion path: {path}")
     return parts
 
@@ -91,6 +99,10 @@ def load_manifest(path, expected_sha):
     value = json.loads(raw)
     if value.get("schema_version") != 1 or value.get("operation") != "deduplicate_immutable_qa_binaries":
         refuse("unknown manifest operation")
+    runtime_proof = value.get("runtime_safety")
+    if runtime_proof not in (None, GUI_RUNTIME_PROOF):
+        refuse("unknown runtime safety proof")
+    gui_mode = runtime_proof == GUI_RUNTIME_PROOF
     groups = value.get("groups")
     if not isinstance(groups, list) or not 1 <= len(groups) <= 2:
         refuse("one or two exact companion groups are required")
@@ -100,7 +112,9 @@ def load_manifest(path, expected_sha):
         if not isinstance(duplicates, list) or not duplicates:
             refuse("empty duplicate group")
         name = role(anchor["path"])[-1]
-        if name in roles:
+        if (name == "datum-gui") != gui_mode:
+            refuse("GUI images require the explicit held-ELF runtime proof; legacy roles retain legacy guards")
+        if name in roles and not gui_mode:
             refuse("duplicate companion group")
         roles.add(name)
         for entry in [anchor, *duplicates]:
@@ -112,7 +126,7 @@ def load_manifest(path, expected_sha):
             if any(entry[key] != anchor[key] for key in
                     ("device", "size", "uid", "gid", "mode", "mtime_ns", "sha256", "xattrs_sha256")):
                 refuse("group bytes, filesystem, timestamps or security metadata differ")
-    return groups, paths
+    return groups, paths, gui_mode
 
 
 def directory(root, parts, stack):
@@ -220,19 +234,25 @@ def inventory_sha(value):
 
 def deduplicate(root, manifest, manifest_sha, lock_path, active_check, *, apply=False):
     try:
-        groups, selected = load_manifest(manifest, manifest_sha)
+        groups, selected, gui_mode = load_manifest(manifest, manifest_sha)
     except (ValueError, KeyError, TypeError) as error:
         refuse(f"malformed manifest: {error}")
     root = Path(root).resolve()
     cohorts = {role(path)[2] for path in selected}
     receipt = {"manifest_sha256": manifest_sha, "apply": apply, "completed": [],
                "status": "preflight", "kernel_proof": "selected ELF write descriptors; no process-idle assertion"}
+    receipt["runtime_guard"] = GUI_RUNTIME_PROOF if gui_mode else "all_recognized_builds_and_apps_idle"
     bound = {}
     with guard.acquire_lock(lock_path, 0), ExitStack() as stack:
         temporary = []
         try:
             def idle():
-                if active := active_check():
+                # GUI mode never assumes unrelated apps are idle. Every selected
+                # executable must pass Bound's kernel write-open admission and
+                # stay held through all swaps and postverification. Compilers
+                # remain excluded under the same shared build lock.
+                active = active_check(builds_only=True) if gui_mode else active_check()
+                if active:
                     refuse("active Cargo/Datum process: " + ", ".join(active))
 
             idle()

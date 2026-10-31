@@ -415,8 +415,11 @@
 </details>
 
 - **Isolate shared demo test fixtures and reconcile unbound pane header proof** (`GUI-PROOF-FIXTURE-ISOLATION`; `dat-gui-proof-shared-state-9gaf`).
-   Demo extraction proposal requires explicit transfer of the protocol entry file from the active Preferences lane before editing it. Current nonoverlapping scope is existing demo module and stale header test; preserve production wrapper and all other checks. *state `in_progress`; authorization `execution`; parallel lane.*
+   Protocol source path released by committed7032f305 and explicit PM transfer; apply reviewed ownership extraction/private UUID demo fixtures, retaining production wrapper behavior and header proof. *state `in_progress`; authorization `execution`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
+- **Preserve and deduplicate exact immutable GUI QA images** (`QA-GUI-BYTE-PRESERVING-DEDUP`; `dat-qa-gui-byte-preserving-dedup-npfx`).
+   Extend existing descriptor-bound dedup for two byte-identical GUI pairs; preserve paths, contents and safety. Actual apply remains pending independent review and exact PM disposition. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `CLAUDE.md`, `docs/AGENT_OPERATIONAL_PROCEDURES.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ### Workflow repair admission transaction

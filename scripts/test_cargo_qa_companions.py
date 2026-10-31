@@ -277,5 +277,126 @@ class ReleasedCompanionTests(CompanionTests):
     cohorts = ('auto-global-6183c81e', 'browse-affordance-547d406f', 'browse-affordance-7b3455dd')
 
 
+class GuiCompanionTests(unittest.TestCase):
+    def setUp(self):
+        base = Path(__file__).resolve().parents[1] / '.datum/scratch/cargo-qa-companions-tests'
+        base.mkdir(parents=True, exist_ok=True)
+        self.temporary = tempfile.TemporaryDirectory(dir=base)
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        subprocess.run(['git', 'init', '-q', str(self.root)], check=True)
+        self.lock = self.root / 'resource.lock'
+        self.paths = []
+        for i, cohort in enumerate(('manifest-open-94d59290', 'manifest-open-ea04ce38',
+                                   'browse-affordance-b0158987', 'browse-affordance-7b3455dd')):
+            path = self.root / 'target/qa' / cohort / 'debug/datum-gui'
+            path.parent.mkdir(parents=True)
+            shutil.copy2(sys.executable, path)
+            if i >= 2:
+                with path.open('ab') as stream:
+                    stream.write(b'qa-second-image')
+                os.utime(path, ns=(1700000000000000000, 1700000000000000000))
+            self.paths.append(path)
+            (path.parent / 'datum-eda').write_bytes(b'retained companion')
+            (path.parent.parent / 'result.log').write_text('retained evidence')
+        self.manifest = self.root / 'manifest.json'
+        self.write_manifest()
+
+    def entry(self, path):
+        descriptor = os.open(path, qa.READ)
+        try:
+            return {'path': str(path.relative_to(self.root)), **qa.snapshot(descriptor)}
+        finally:
+            os.close(descriptor)
+
+    def write_manifest(self, change=None):
+        entries = [self.entry(path) for path in self.paths]
+        data = {'schema_version': 1, 'operation': 'deduplicate_immutable_qa_binaries',
+                'runtime_safety': qa.GUI_RUNTIME_PROOF,
+                'groups': [{'anchor': entries[i], 'duplicates': [entries[i + 1]]} for i in (0, 2)]}
+        if change:
+            change(data)
+        self.manifest.write_text(json.dumps(data))
+        self.sha = hashlib.sha256(self.manifest.read_bytes()).hexdigest()
+
+    def unrelated_apps(self, *, builds_only=False):
+        self.assertTrue(builds_only, 'new mode must not claim unrelated apps are idle')
+        return [] if builds_only else ['unrelated Datum runtime']
+
+    def run_dedup(self, *, apply=False, active=None):
+        return qa.deduplicate(self.root, self.manifest, self.sha, self.lock,
+                              active or self.unrelated_apps, apply=apply)
+
+    def test_two_gui_pairs_preserve_bytes_paths_security_mtime_and_other_evidence(self):
+        before = {str(path.relative_to(self.root)): self.entry(path) for path in self.paths}
+        dry = self.run_dedup()
+        self.assertEqual(dry['status'], 'dry_run_validated_no_mutation')
+        result = self.run_dedup(apply=True)
+        self.assertEqual(result['status'], 'complete_all_paths_and_bytes_retained')
+        self.assertEqual(result['runtime_guard'], qa.GUI_RUNTIME_PROOF)
+        self.assertEqual(len(result['completed']), 2)
+        self.assertEqual(result['nonselected_before_sha256'], result['nonselected_after_sha256'])
+        for i in (0, 2):
+            self.assertEqual(self.paths[i].stat().st_ino, self.paths[i + 1].stat().st_ino)
+        self.assertNotEqual(self.paths[0].stat().st_ino, self.paths[2].stat().st_ino)
+        for path in self.paths:
+            key = str(path.relative_to(self.root))
+            for field in ['sha256', 'size', 'mode', 'uid', 'gid', 'mtime_ns', 'xattrs_sha256']:
+                self.assertEqual(before[key][field], result['after'][key][field])
+            self.assertEqual((path.parent / 'datum-eda').read_bytes(), b'retained companion')
+            self.assertEqual((path.parent.parent / 'result.log').read_text(), 'retained evidence')
+
+    def test_gui_mode_is_explicit_and_cannot_select_legacy_roles_or_other_cohorts(self):
+        for change in [lambda data: data.pop('runtime_safety'),
+                       lambda data: data.update(runtime_safety='skip_checks'),
+                       lambda data: data['groups'][0]['anchor'].update(
+                           path='target/qa/startup-0a8e8b5d/debug/datum-gui'),
+                       lambda data: data['groups'][0]['anchor'].update(
+                           path='target/qa/manifest-open-94d59290/debug/datum-eda')]:
+            with self.subTest(change=change):
+                self.write_manifest(change)
+                with self.assertRaises(guard.ResourcePolicyError):
+                    self.run_dedup(apply=True)
+        self.assertEqual(len({path.stat().st_ino for path in self.paths}), 4)
+
+    def test_active_compiler_and_shared_lock_still_refuse(self):
+        with self.assertRaises(qa.Failure):
+            self.run_dedup(apply=True, active=lambda **kwargs: ['cargo'])
+        with guard.acquire_lock(self.lock, 0):
+            with self.assertRaises(guard.ResourcePolicyError):
+                self.run_dedup(apply=True)
+        self.assertEqual(len({path.stat().st_ino for path in self.paths}), 4)
+
+    def test_selected_running_gui_is_kernel_refused_despite_ignoring_unrelated_apps(self):
+        ready = self.root / 'ready'
+        code = f"from pathlib import Path; import time; Path({str(ready)!r}).touch(); time.sleep(30)"
+        process = subprocess.Popen([str(self.paths[0]), '-c', code])
+        try:
+            until = time.monotonic() + 5
+            while not ready.exists() and time.monotonic() < until:
+                self.assertIsNone(process.poll())
+                time.sleep(.01)
+            self.assertTrue(ready.exists())
+            with self.assertRaises(qa.Failure) as caught:
+                self.run_dedup(apply=True)
+            self.assertEqual(caught.exception.__cause__.errno, errno.ETXTBSY)
+            self.assertEqual(len({path.stat().st_ino for path in self.paths}), 4)
+        finally:
+            process.terminate()
+            process.wait(timeout=5)
+
+    def test_all_gui_descriptors_prevent_new_execution_through_postverification(self):
+        original = qa.nonselected_inventory
+        def inspect(*args):
+            for path in self.paths:
+                with self.assertRaises(OSError) as caught:
+                    subprocess.run([str(path), '-c', 'pass'], check=True)
+                self.assertEqual(caught.exception.errno, errno.ETXTBSY)
+            return original(*args)
+        with mock.patch.object(qa, 'nonselected_inventory', side_effect=inspect):
+            self.run_dedup(apply=True)
+        subprocess.run([str(self.paths[1]), '-c', 'pass'], check=True)
+
+
 if __name__ == "__main__":
     unittest.main()
