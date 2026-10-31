@@ -207,6 +207,40 @@ mod tests {
     }
 
     #[test]
+    fn brand_wordmark_does_not_overlap_the_first_menu_title_at_supported_scales() {
+        for scale in [1.0, 1.25, 1.5, 2.0] {
+            let prepared = scene(scale, (1280.0 * scale) as u32);
+            let menu_top = prepared.layout.top_menu_bar.y + prepared.layout.top_menu_bar.height;
+            let brand_right = prepared
+                .text_runs
+                .iter()
+                .filter(|r| {
+                    r.y < menu_top
+                        && r.face == TextFace::UiStrong
+                        && ["Datum", "\u{00B7}", "EDA"].contains(&r.text.as_str())
+                })
+                .map(|r| r.x + measured_text_run_width_px(&r.text, r.size, r.face).unwrap())
+                .fold(0.0_f32, f32::max);
+            assert!(
+                brand_right > 0.0,
+                "scale {scale}: brand wordmark must render"
+            );
+            let first_menu_x = prepared
+                .hit_regions
+                .iter()
+                .filter_map(|h| match &h.target {
+                    HitTarget::MenuTitle(_) => Some(h.rect.x),
+                    _ => None,
+                })
+                .fold(f32::INFINITY, f32::min);
+            assert!(
+                brand_right <= first_menu_x + 0.5,
+                "scale {scale}: brand right edge {brand_right} overlaps first menu x {first_menu_x}"
+            );
+        }
+    }
+
+    #[test]
     fn composed_scaled_status_segments_do_not_overlap_at_supported_width() {
         for scale in [1.0, 1.25, 1.5, 2.0] {
             let prepared = scene(scale, 1280);
