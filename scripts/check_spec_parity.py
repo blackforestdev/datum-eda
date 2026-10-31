@@ -589,9 +589,15 @@ def load_manifest() -> dict:
     return json.loads(read_text(MANIFEST))
 
 
-def expected_rows() -> dict[str, tuple[str, int, str]]:
+def expected_rows(inventory_ids: list[str] | None = None) -> dict[str, tuple[str, int, str]]:
     rows: dict[str, tuple[str, int, str]] = {}
-    for spec in load_manifest()["inventories"]:
+    inventories = load_manifest()["inventories"]
+    if inventory_ids is not None:
+        unknown = set(inventory_ids) - {spec["id"] for spec in inventories}
+        if unknown:
+            raise ValueError(f"unknown inventories: {', '.join(sorted(unknown))}")
+        inventories = [spec for spec in inventories if spec["id"] in inventory_ids]
+    for spec in inventories:
         items = inventory_items(spec)
         rows[spec["id"]] = (spec["owner_spec"], len(items), digest_items(items))
     return rows
@@ -608,9 +614,9 @@ def parse_doc_rows() -> dict[str, tuple[str, int, str]]:
     return rows
 
 
-def update_doc() -> None:
+def update_doc(inventory_ids: list[str] | None = None) -> None:
     text = read_text(PARITY_DOC)
-    rows = expected_rows()
+    rows = expected_rows(inventory_ids)
     for inventory_id, (owner_spec, count, digest) in rows.items():
         replacement = f"| `{inventory_id}` | `{owner_spec}` | {count} | `{digest}` |"
         pattern = re.compile(
@@ -643,7 +649,10 @@ def check() -> int:
             continue
         if actual_row != expected_row:
             failures.append(
-                f"{inventory_id}: doc row {actual_row} != code inventory {expected_row}"
+                f"{inventory_id}: specs/SPEC_PARITY.md records "
+                f"owner={actual_row[0]}, item_count={actual_row[1]}, sha256={actual_row[2]}; "
+                f"derived inventory requires owner={expected_row[0]}, "
+                f"item_count={expected_row[1]}, sha256={expected_row[2]}"
             )
 
     extra = sorted(set(actual) - set(expected))
@@ -654,10 +663,11 @@ def check() -> int:
         print("Spec parity check failed:", file=sys.stderr)
         for failure in failures:
             print(f"  - {failure}", file=sys.stderr)
-        print(
-            "Run `python3 scripts/check_spec_parity.py --update` after updating the owning spec.",
-            file=sys.stderr,
-        )
+        print("Review the affected inventory and owning specification before updating derived rows.",
+              file=sys.stderr)
+        for inventory_id in (key for key in expected if actual.get(key) != expected[key]):
+            print(f"  python3 scripts/check_spec_parity.py --update --inventory {inventory_id}",
+                  file=sys.stderr)
         return 1
 
     print(f"Spec parity check passed ({len(expected)} inventories).")
@@ -667,14 +677,21 @@ def check() -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--update", action="store_true", help="refresh specs/SPEC_PARITY.md")
+    parser.add_argument("--inventory", action="append", metavar="ID",
+                        help="refresh only this inventory with --update; repeat for a reviewed batch")
     parser.add_argument("--print", action="store_true", help="print inventory item names")
     args = parser.parse_args()
+    if args.inventory and (not args.update or args.print):
+        parser.error("--inventory requires --update without --print")
 
     if args.print:
         print_inventory()
         return 0
     if args.update:
-        update_doc()
+        try:
+            update_doc(args.inventory)
+        except ValueError as error:
+            parser.error(str(error))
         return 0
     return check()
 
