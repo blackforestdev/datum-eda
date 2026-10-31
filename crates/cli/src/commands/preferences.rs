@@ -4,67 +4,80 @@ use super::*;
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, IsTerminal, Write};
 use std::os::fd::AsRawFd;
+use std::os::unix::net::UnixStream;
+use std::path::PathBuf;
 
 use eda_engine::preferences::repository::GenerationRef;
 use eda_engine::preferences::{
     AuthorizeMcpPreferenceApplyV1, GlobalPreferencesProductService, HeadExpectationV1,
     InstalledPreferenceLocationProvider, PreferenceActorKindV1, PreferenceActorV1,
-    PreferenceMutationRequestV1, PreferenceProductPayloadV1, PreferenceProductRequestV1,
-    PreferenceProductResponseV1, PreferenceProposalActionV1, PreferenceProposalV1,
-    PreferenceQueryV1, PreferenceSchemaRefV1, ProjectUnitsSourceV1,
+    PreferenceContextV1, PreferenceMutationRequestV1, PreferenceProductPayloadV1,
+    PreferenceProductRequestV1, PreferenceProductResponseV1, PreferenceProposalActionV1,
+    PreferenceProposalV1, PreferenceQueryV1, PreferenceSchemaRefV1, ProjectUnitsSourceV1,
 };
+use serde::Deserialize;
 
 pub(crate) fn execute_preferences_command(
     format: &OutputFormat,
     action: PreferencesCommands,
 ) -> Result<(String, i32)> {
-    let action = match action {
-        PreferencesCommands::Proposal {
-            action:
-                PreferencesProposalCommands::AuthorizeMcp {
-                    proposal_json,
-                    mcp_session,
-                },
-        } => return execute_mcp_authorization(format, &proposal_json, mcp_session),
-        action => action,
-    };
-    let mut service = GlobalPreferencesProductService::open(
-        &InstalledPreferenceLocationProvider,
-        format!("datum-cli-{}", std::process::id()),
-    )
-    .map_err(|error| anyhow::anyhow!("open Global Preferences service: {error:?}"))?;
+    // Host-authorization of an MCP apply has always reached the owning daemon.
+    if let PreferencesCommands::Proposal {
+        action:
+            PreferencesProposalCommands::AuthorizeMcp {
+                proposal_json,
+                mcp_session,
+            },
+    } = action
+    {
+        return execute_mcp_authorization(format, &proposal_json, mcp_session);
+    }
+
     let session_id = format!("cli:{}:{}", std::process::id(), Uuid::new_v4());
 
+    // Proposal operations (prepare/validate/accept_apply/reject) keep their existing path in this
+    // slice; owning-daemon routing here covers the ordinary query/Set/Reset requests (bead i4d,
+    // §2.1). NOTE/FOLLOW-ON: `proposal accept_apply` still commits through a local service, which
+    // is the remaining second-writer surface to route or refuse when a daemon owns the repository.
+    if let PreferencesCommands::Proposal { action } = action {
+        let mut service = open_local_service()?;
+        let response = execute_proposal(&mut service, action, &session_id)?;
+        return Ok((
+            render_output(format, &response),
+            if response.ok { 0 } else { 2 },
+        ));
+    }
+
+    // Ordinary query/Set/Reset: route through a reachable owning daemon; operate standalone ONLY
+    // when no owner is reachable at initial discovery. Once an owner is selected there is no
+    // fallback to a local writer.
+    let mut backend = Backend::discover()?;
+
     let response = match action {
-        PreferencesCommands::Describe => execute_query(
-            &mut service,
+        PreferencesCommands::Describe => backend.query(
             "datum.preferences.describe",
             PreferenceQueryV1::Describe,
-            &script_actor(&session_id),
+            &session_id,
         ),
-        PreferencesCommands::List { section } => execute_query(
-            &mut service,
+        PreferencesCommands::List { section } => backend.query(
             "datum.preferences.list",
             PreferenceQueryV1::List { section },
-            &script_actor(&session_id),
+            &session_id,
         ),
-        PreferencesCommands::Get { key } => execute_query(
-            &mut service,
+        PreferencesCommands::Get { key } => backend.query(
             "datum.preferences.get",
             PreferenceQueryV1::Get { key },
-            &script_actor(&session_id),
+            &session_id,
         ),
-        PreferencesCommands::Search { query } => execute_query(
-            &mut service,
+        PreferencesCommands::Search { query } => backend.query(
             "datum.preferences.search",
             PreferenceQueryV1::Search { query },
-            &script_actor(&session_id),
+            &session_id,
         ),
-        PreferencesCommands::Explain { key } => execute_query(
-            &mut service,
+        PreferencesCommands::Explain { key } => backend.query(
             "datum.preferences.explain",
             PreferenceQueryV1::Explain { key },
-            &script_actor(&session_id),
+            &session_id,
         ),
         PreferencesCommands::PreviewProjectUnitsSeed { source, expected } => {
             let source = match source {
@@ -78,11 +91,10 @@ pub(crate) fn execute_preferences_command(
                     profile_id: "datum.units.factory.v1".to_owned(),
                 },
             };
-            execute_query(
-                &mut service,
+            backend.query(
                 "datum.preferences.preview_project_units_seed",
                 PreferenceQueryV1::PreviewProjectUnitsSeed { source },
-                &script_actor(&session_id),
+                &session_id,
             )
         }
         PreferencesCommands::Set {
@@ -101,8 +113,7 @@ pub(crate) fn execute_preferences_command(
                 request_id,
                 reason,
             };
-            execute_confirmed_mutation(
-                &mut service,
+            backend.confirmed_mutation(
                 "datum.preferences.set",
                 mutation,
                 &key,
@@ -122,83 +133,209 @@ pub(crate) fn execute_preferences_command(
                 request_id,
                 reason,
             };
-            execute_confirmed_mutation(
-                &mut service,
-                "datum.preferences.reset",
-                mutation,
-                &key,
-                None,
-                &session_id,
-            )
+            backend.confirmed_mutation("datum.preferences.reset", mutation, &key, None, &session_id)
         }
-        PreferencesCommands::Proposal { action } => {
-            execute_proposal(&mut service, action, &session_id)?
-        }
-    };
+        // AuthorizeMcp returned early; every other proposal variant took the local path above.
+        PreferencesCommands::Proposal { .. } => unreachable!("proposal commands handled above"),
+    }?;
+
     Ok((
         render_output(format, &response),
         if response.ok { 0 } else { 2 },
     ))
 }
 
-fn execute_query(
-    service: &mut GlobalPreferencesProductService,
-    schema: &str,
-    query: PreferenceQueryV1,
-    actor: &PreferenceActorV1,
-) -> PreferenceProductResponseV1 {
-    service.execute(
-        product_request(schema, PreferenceProductPayloadV1::Query(query)),
-        actor,
-    )
+/// The ordinary-request execution target: a reachable owning daemon, or the in-process standalone
+/// service when no owner is reachable at initial discovery.
+enum Backend {
+    /// A reachable owning daemon selected at initial discovery; every request is a typed RPC and
+    /// there is no fallback to a local writer.
+    Daemon { socket: PathBuf },
+    /// No owner was reachable; the CLI holds the single local product service.
+    Standalone {
+        service: Box<GlobalPreferencesProductService>,
+    },
 }
 
-fn execute_confirmed_mutation(
-    service: &mut GlobalPreferencesProductService,
-    schema: &str,
-    mutation: PreferenceMutationRequestV1,
-    key: &str,
-    proposed: Option<&serde_json::Value>,
-    session_id: &str,
-) -> PreferenceProductResponseV1 {
-    let inspected = execute_query(
-        service,
-        "datum.preferences.get",
-        PreferenceQueryV1::Get {
-            key: key.to_owned(),
-        },
-        &script_actor(session_id),
-    );
-    let summary = match inspected.result {
-        Some(eda_engine::preferences::PreferenceProductResultV1::Query(
-            eda_engine::preferences::PreferenceQueryResultV1::Get(result),
-        )) => format!(
-            "Global · this device\nSetting: {}\nCurrent: {}\nProposed: {}\nTakes effect: {}",
-            result.value.label,
-            result
-                .value
-                .effective_value
-                .map_or_else(|| "unresolved".to_owned(), |value| value.to_string()),
-            proposed.map_or_else(
-                || "Reset to inherited/default authority".to_owned(),
-                serde_json::Value::to_string
-            ),
-            result.value.effect_timing,
-        ),
-        _ => {
-            return match inspected.error {
-                Some(error) => product_error_response(schema, error),
-                None => invalid_product_response(service, schema),
-            };
+impl Backend {
+    /// Select the backend. A configured `DATUM_ENGINE_SOCKET`/`EDA_ENGINE_SOCKET` that accepts a
+    /// connection selects that owning daemon. An absent socket or a connection refusal at this
+    /// initial discovery is the ONLY thing that permits standalone operation; a later connection
+    /// loss, RPC refusal, malformed reply or identity mismatch never selects a local writer.
+    fn discover() -> Result<Self> {
+        if let Some(socket) = owning_socket()
+            && UnixStream::connect(&socket).is_ok()
+        {
+            return Ok(Backend::Daemon { socket });
         }
-    };
-    if !confirm_on_foreground_tty(&summary) {
-        return human_presence_refusal(service, schema, proposed.cloned(), None);
+        Ok(Backend::Standalone {
+            service: Box::new(open_local_service()?),
+        })
     }
-    service.execute(
-        product_request(schema, PreferenceProductPayloadV1::Mutation(mutation)),
-        &human_actor(session_id),
+
+    /// Execute one typed product request, closing any daemon connection before returning so the
+    /// serial socket server is never held across a human confirmation wait.
+    fn run(
+        &mut self,
+        request: PreferenceProductRequestV1,
+        actor: &PreferenceActorV1,
+    ) -> Result<PreferenceProductResponseV1> {
+        match self {
+            Backend::Standalone { service } => Ok(service.execute(request, actor)),
+            Backend::Daemon { socket } => execute_host_through_daemon(socket, request, actor),
+        }
+    }
+
+    fn query(
+        &mut self,
+        schema: &str,
+        query: PreferenceQueryV1,
+        session_id: &str,
+    ) -> Result<PreferenceProductResponseV1> {
+        self.run(
+            product_request(schema, PreferenceProductPayloadV1::Query(query)),
+            &script_actor(session_id),
+        )
+    }
+
+    fn confirmed_mutation(
+        &mut self,
+        schema: &str,
+        mutation: PreferenceMutationRequestV1,
+        key: &str,
+        proposed: Option<&serde_json::Value>,
+        session_id: &str,
+    ) -> Result<PreferenceProductResponseV1> {
+        // Inspect the current value for the confirmation summary. Any daemon connection for this
+        // query is released before the APPLY prompt; the mutation reconnects afterward.
+        let inspected = self.query(
+            "datum.preferences.get",
+            PreferenceQueryV1::Get {
+                key: key.to_owned(),
+            },
+            session_id,
+        )?;
+        let context = inspected.context.clone();
+        let summary = match inspected.result {
+            Some(eda_engine::preferences::PreferenceProductResultV1::Query(
+                eda_engine::preferences::PreferenceQueryResultV1::Get(result),
+            )) => format!(
+                "Global · this device\nSetting: {}\nCurrent: {}\nProposed: {}\nTakes effect: {}",
+                result.value.label,
+                result
+                    .value
+                    .effective_value
+                    .map_or_else(|| "unresolved".to_owned(), |value| value.to_string()),
+                proposed.map_or_else(
+                    || "Reset to inherited/default authority".to_owned(),
+                    serde_json::Value::to_string
+                ),
+                result.value.effect_timing,
+            ),
+            _ => {
+                return Ok(match inspected.error {
+                    Some(error) => product_error_response(schema, error),
+                    None => invalid_product_response(context, schema),
+                });
+            }
+        };
+        if !confirm_on_foreground_tty(&summary) {
+            return Ok(human_presence_refusal(
+                context,
+                schema,
+                proposed.cloned(),
+                None,
+            ));
+        }
+        self.run(
+            product_request(schema, PreferenceProductPayloadV1::Mutation(mutation)),
+            &human_actor(session_id),
+        )
+    }
+}
+
+fn owning_socket() -> Option<PathBuf> {
+    std::env::var_os("DATUM_ENGINE_SOCKET")
+        .or_else(|| std::env::var_os("EDA_ENGINE_SOCKET"))
+        .map(PathBuf::from)
+}
+
+fn open_local_service() -> Result<GlobalPreferencesProductService> {
+    GlobalPreferencesProductService::open(
+        &InstalledPreferenceLocationProvider,
+        format!("datum-cli-{}", std::process::id()),
     )
+    .map_err(|error| anyhow::anyhow!("open Global Preferences service: {error:?}"))
+}
+
+#[derive(Deserialize)]
+struct HostDaemonResponse {
+    id: Option<serde_json::Value>,
+    result: Option<serde_json::Value>,
+    error: Option<HostDaemonError>,
+}
+
+#[derive(Deserialize)]
+struct HostDaemonError {
+    code: i32,
+    message: String,
+}
+
+/// Send one ordinary host product request to the selected owning daemon and return its typed
+/// product envelope. The connection is opened and closed for this single request. A JSON-RPC error,
+/// a missing/mismatched id, a malformed reply, or a product envelope answering a different schema
+/// is surfaced as an error -- it NEVER falls back to a local writer. A product-level refusal (a
+/// typed envelope with `ok == false`) is a successful reply and is returned as the command result.
+fn execute_host_through_daemon(
+    socket: &Path,
+    request: PreferenceProductRequestV1,
+    actor: &PreferenceActorV1,
+) -> Result<PreferenceProductResponseV1> {
+    let schema_name = request.schema.name.clone();
+    let id = serde_json::json!(actor.invocation_id);
+    let mut stream = UnixStream::connect(socket)
+        .with_context(|| format!("connect owning Datum daemon at {}", socket.display()))?;
+    let wire = serde_json::json!({
+        "jsonrpc": "2.0",
+        "id": id,
+        "method": "preferences.host_product",
+        "params": {"request": request, "actor": actor},
+    });
+    serde_json::to_writer(&mut stream, &wire).context("encode daemon preferences request")?;
+    stream
+        .write_all(b"\n")
+        .context("send daemon preferences request")?;
+    stream.flush().context("flush daemon preferences request")?;
+    let mut line = String::new();
+    BufReader::new(stream)
+        .read_line(&mut line)
+        .context("read daemon preferences response")?;
+    let response: HostDaemonResponse =
+        serde_json::from_str(&line).context("decode daemon preferences response")?;
+    if let Some(error) = response.error {
+        anyhow::bail!(
+            "owning daemon rejected the preferences request ({}): {}",
+            error.code,
+            error.message
+        );
+    }
+    if response.id != Some(id) {
+        anyhow::bail!("owning daemon reply did not match the request id");
+    }
+    let envelope: PreferenceProductResponseV1 = serde_json::from_value(
+        response
+            .result
+            .context("daemon preferences response omitted result")?,
+    )
+    .context("decode typed daemon preferences envelope")?;
+    if envelope.schema.name != schema_name {
+        anyhow::bail!(
+            "owning daemon answered a different schema: {} (requested {})",
+            envelope.schema.name,
+            schema_name
+        );
+    }
+    Ok(envelope)
 }
 
 fn execute_proposal(
@@ -256,7 +393,7 @@ fn execute_proposal(
         );
         if !confirm_on_foreground_tty(&summary) {
             return Ok(human_presence_refusal(
-                service,
+                service.context(),
                 schema,
                 None,
                 serde_json::to_value(proposal).ok(),
@@ -379,7 +516,7 @@ fn owns_foreground_tty(_fd: std::os::raw::c_int) -> bool {
 }
 
 fn human_presence_refusal(
-    service: &GlobalPreferencesProductService,
+    context: PreferenceContextV1,
     schema: &str,
     preserved_draft: Option<serde_json::Value>,
     preserved_proposal: Option<serde_json::Value>,
@@ -390,7 +527,7 @@ fn human_presence_refusal(
             code: eda_engine::preferences::PreferenceErrorCodeV1::HumanPresenceRequired,
             message: "Foreground /dev/tty confirmation is required".to_owned(),
             details: Box::default(),
-            current_context: Box::new(service.context()),
+            current_context: Box::new(context),
             preserved_draft: preserved_draft.map(Box::new),
             preserved_proposal: preserved_proposal.map(Box::new),
         },
@@ -414,7 +551,7 @@ fn product_error_response(
 }
 
 fn invalid_product_response(
-    service: &GlobalPreferencesProductService,
+    context: PreferenceContextV1,
     schema: &str,
 ) -> PreferenceProductResponseV1 {
     product_error_response(
@@ -423,9 +560,125 @@ fn invalid_product_response(
             code: eda_engine::preferences::PreferenceErrorCodeV1::InvalidRequest,
             message: "Preference inspection returned an unexpected result".to_owned(),
             details: Box::default(),
-            current_context: Box::new(service.context()),
+            current_context: Box::new(context),
             preserved_draft: None,
             preserved_proposal: None,
         },
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::os::unix::net::UnixListener;
+    use std::thread;
+
+    fn describe_request() -> PreferenceProductRequestV1 {
+        product_request(
+            "datum.preferences.describe",
+            PreferenceProductPayloadV1::Query(PreferenceQueryV1::Describe),
+        )
+    }
+
+    /// A one-shot mock owning daemon on a Unix socket that answers the single request with `reply`.
+    /// When `reply`'s `id` is null the request id is echoed back (so the happy-id case matches).
+    fn mock_owner(reply: serde_json::Value) -> (PathBuf, thread::JoinHandle<()>) {
+        let root = std::env::temp_dir().join(format!("datum-host-route-{}", Uuid::new_v4()));
+        std::fs::create_dir(&root).unwrap();
+        let socket = root.join("daemon.sock");
+        let listener = UnixListener::bind(&socket).unwrap();
+        let handle = thread::spawn(move || {
+            let (stream, _) = listener.accept().unwrap();
+            let mut reader = BufReader::new(stream.try_clone().unwrap());
+            let mut line = String::new();
+            reader.read_line(&mut line).unwrap();
+            let request: serde_json::Value = serde_json::from_str(&line).unwrap();
+            assert_eq!(request["method"], "preferences.host_product");
+            let mut reply = reply;
+            if reply.get("id").is_none_or(serde_json::Value::is_null) {
+                reply["id"] = request["id"].clone();
+            }
+            let mut stream = stream;
+            serde_json::to_writer(&mut stream, &reply).unwrap();
+            stream.write_all(b"\n").unwrap();
+        });
+        (socket, handle)
+    }
+
+    #[test]
+    fn host_route_surfaces_a_json_rpc_error_and_never_falls_back() {
+        let (socket, handle) = mock_owner(serde_json::json!({
+            "jsonrpc": "2.0", "id": null, "result": null,
+            "error": {"code": -32601, "message": "method not found"},
+        }));
+        let outcome =
+            execute_host_through_daemon(&socket, describe_request(), &script_actor("cli:test"));
+        handle.join().unwrap();
+        let error = outcome.expect_err("a daemon JSON-RPC error must surface, never fall back");
+        assert!(error.to_string().contains("owning daemon rejected"));
+        let _ = std::fs::remove_dir_all(socket.parent().unwrap());
+    }
+
+    #[test]
+    fn host_route_rejects_a_reply_whose_id_does_not_match_the_request() {
+        let (socket, handle) = mock_owner(serde_json::json!({
+            "jsonrpc": "2.0", "id": "a-different-id", "result": {"ignored": true}, "error": null,
+        }));
+        let outcome =
+            execute_host_through_daemon(&socket, describe_request(), &script_actor("cli:test"));
+        handle.join().unwrap();
+        let error = outcome.expect_err("a mismatched reply id must surface, never fall back");
+        assert!(error.to_string().contains("did not match the request id"));
+        let _ = std::fs::remove_dir_all(socket.parent().unwrap());
+    }
+
+    #[test]
+    fn host_route_rejects_a_reply_answering_a_different_schema() {
+        // A deserializable envelope (ok refusal needs no result) that answers a DIFFERENT schema
+        // than requested: the identity check must reject it rather than trust a mismatched owner.
+        let (socket, handle) = mock_owner(serde_json::json!({
+            "jsonrpc": "2.0", "id": null, "error": null,
+            "result": {
+                "ok": false,
+                "schema": {"name": "datum.preferences.get", "version": 1},
+                "context": describe_context(),
+                "result": null,
+                "error": {
+                    "code": "invalid_request", "message": "wrong schema", "details": {},
+                    "current_context": describe_context(),
+                    "preserved_draft": null, "preserved_proposal": null,
+                },
+            },
+        }));
+        let outcome =
+            execute_host_through_daemon(&socket, describe_request(), &script_actor("cli:test"));
+        handle.join().unwrap();
+        let error =
+            outcome.expect_err("a schema-mismatched envelope must surface, never fall back");
+        assert!(error.to_string().contains("answered a different schema"));
+        let _ = std::fs::remove_dir_all(socket.parent().unwrap());
+    }
+
+    /// The daemon's real context shape, so the schema-identity test's envelope deserializes.
+    fn describe_context() -> serde_json::Value {
+        serde_json::to_value(
+            open_local_service_for_context()
+                .map(|service| service.context())
+                .expect("installed service context for the test envelope"),
+        )
+        .unwrap()
+    }
+
+    fn open_local_service_for_context() -> Result<GlobalPreferencesProductService> {
+        let base = std::env::temp_dir().join(format!("datum-host-route-ctx-{}", Uuid::new_v4()));
+        let provider = eda_engine::preferences::FixedPreferenceLocationProvider(
+            eda_engine::preferences::PreferenceLocations {
+                configuration_base: base.clone(),
+                repository_root: base.join("preferences"),
+                legacy_console_path: base.join("gui-preferences.json"),
+            },
+        );
+        GlobalPreferencesProductService::open(&provider, "cli-test-context".to_owned())
+            .map_err(|error| anyhow::anyhow!("open context service: {error:?}"))
+    }
 }

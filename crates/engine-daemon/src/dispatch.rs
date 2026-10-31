@@ -5,8 +5,8 @@ use super::check_run_view::{
     explain_erc_finding_by_fingerprint,
 };
 use super::preferences_state::{
-    HostPreferenceAuthorizationParams, McpPreferenceProductParams, McpProjectGenesisParams,
-    PreferencesDaemonState,
+    HostPreferenceAuthorizationParams, HostPreferenceProductParams, McpPreferenceProductParams,
+    McpProjectGenesisParams, PreferencesDaemonState,
 };
 use super::*;
 
@@ -45,6 +45,27 @@ fn dispatch_request_inner(
             // through to a bare JSON-RPC -32602 with no symbolic code. Surface the
             // supported-schema contract's structured invalid_request (unknown field
             // in a supported schema) or unsupported_schema_version instead.
+            Err(err) => serialized_success_response(
+                request.id,
+                preferences
+                    .product_decode_rejection(&raw_params, &format!("invalid params: {err}")),
+            ),
+        };
+    }
+
+    if request.method == "preferences.host_product" {
+        let Some(preferences) = preferences else {
+            return error_response(request.id, -32601, "preferences service is unavailable");
+        };
+        let raw_params = request.params.clone();
+        return match serde_json::from_value::<HostPreferenceProductParams>(request.params) {
+            Ok(params) => match preferences.execute_host(params.request, params.actor) {
+                Ok(response) => serialized_success_response(request.id, response),
+                Err(message) => error_response(request.id, -32602, &message),
+            },
+            // Like the MCP route: surface the product service's symbolic decode rejection
+            // (unknown field in a supported schema / unsupported schema version) instead of a
+            // bare JSON-RPC -32602 with no typed code.
             Err(err) => serialized_success_response(
                 request.id,
                 preferences

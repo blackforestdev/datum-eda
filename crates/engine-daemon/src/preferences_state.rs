@@ -34,6 +34,17 @@ pub(super) struct HostPreferenceAuthorizationParams {
     pub actor: PreferenceActorV1,
 }
 
+/// Params for `preferences.host_product`: an ordinary host (human_cli / script_agent) Preferences
+/// query or mutation executed through the owning daemon's single product service, so a reachable
+/// owner is the sole writer (GP-CM03/§2.1; bead dat-preferences-cli-daemon-routing-i4d). Same shape
+/// as the MCP route, but the host doorway is actor-gated differently (see `execute_host`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct HostPreferenceProductParams {
+    pub request: PreferenceProductRequestV1,
+    pub actor: PreferenceActorV1,
+}
+
 #[derive(Debug)]
 pub(super) struct PreferencesDaemonState {
     service: GlobalPreferencesProductService,
@@ -137,6 +148,40 @@ impl PreferencesDaemonState {
                 .map_err(|refusal| format!("register MCP proposal: {refusal:?}"))?;
         }
         Ok(response)
+    }
+
+    /// Execute an ordinary HOST (human_cli / script_agent) Preferences query or mutation through the
+    /// daemon's single long-lived product service, so a reachable owning daemon is the sole writer
+    /// for the repository (GP-CM03/§2.1 owning-daemon routing; bead i4d).
+    ///
+    /// The host doorway is NOT the MCP doorway: it rejects `mcp_agent` (which must use the
+    /// proposal-only `preferences.mcp_product` route and its broker) and carries no acceptance
+    /// handle. A `human_cli` direct Set/Reset commits through `service.execute` exactly as the
+    /// standalone CLI does, recording a MutationReceipt in the journal; the CLI's foreground-TTY
+    /// confirmation is performed client-side before the mutation request is sent. A `script_agent`
+    /// mutation receives the engine's own `proposal_required` refusal unchanged. Proposal payloads
+    /// are not carried on the host route in this slice (the CLI keeps those on their existing path).
+    pub fn execute_host(
+        &mut self,
+        request: PreferenceProductRequestV1,
+        actor: PreferenceActorV1,
+    ) -> Result<PreferenceProductResponseV1, String> {
+        if actor.kind == PreferenceActorKindV1::McpAgent {
+            return Err(
+                "preferences host route rejects mcp_agent actors; use preferences.mcp_product"
+                    .to_owned(),
+            );
+        }
+        match request.payload {
+            PreferenceProductPayloadV1::Query(_) | PreferenceProductPayloadV1::Mutation(_) => {
+                Ok(self.service.execute(request, &actor))
+            }
+            PreferenceProductPayloadV1::Proposal(_) => Err(
+                "preferences host route does not carry proposal operations; \
+                 use preferences.mcp_product / the proposal workflow"
+                    .to_owned(),
+            ),
+        }
     }
 
     pub fn authorize_mcp_apply(
@@ -453,5 +498,106 @@ mod tests {
             "durable receipt must precede live broker state"
         );
         let _ = std::fs::remove_dir_all(base);
+    }
+
+    fn host_set_request() -> PreferenceProductRequestV1 {
+        PreferenceProductRequestV1 {
+            schema: PreferenceSchemaRefV1 {
+                name: "datum.preferences.set".to_owned(),
+                version: 1,
+            },
+            payload: PreferenceProductPayloadV1::Mutation(PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "host route mutation".to_owned(),
+            }),
+        }
+    }
+
+    #[test]
+    fn host_route_commits_a_human_cli_mutation_through_the_daemon_service() {
+        let (base, mut state) = state("host-set");
+        let response = state
+            .execute_host(host_set_request(), actor(PreferenceActorKindV1::HumanCli))
+            .unwrap();
+        assert!(
+            response.ok,
+            "human_cli host set must commit: {:?}",
+            response.error
+        );
+        // The commit is journaled through the daemon's own service: a matching receipt is returned.
+        match response.result.expect("mutation result") {
+            PreferenceProductResultV1::Mutation(result) => {
+                assert!(
+                    result.receipt.is_some(),
+                    "a direct human commit records a receipt"
+                )
+            }
+            other => panic!("unexpected host set result: {other:?}"),
+        }
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn host_route_rejects_an_mcp_actor() {
+        let (base, mut state) = state("host-reject-mcp");
+        assert!(
+            state
+                .execute_host(host_set_request(), actor(PreferenceActorKindV1::McpAgent))
+                .is_err(),
+            "the host route must reject mcp_agent actors"
+        );
+        assert!(!base.exists());
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn host_route_refuses_a_script_agent_mutation_with_proposal_required() {
+        let (base, mut state) = state("host-script");
+        let response = state
+            .execute_host(
+                host_set_request(),
+                actor(PreferenceActorKindV1::ScriptAgent),
+            )
+            .unwrap();
+        assert_eq!(
+            response.error.expect("typed refusal").code,
+            PreferenceErrorCodeV1::ProposalRequired
+        );
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn json_rpc_host_product_route_returns_the_engine_product_envelope() {
+        let (base, mut preferences) = state("host-json-rpc");
+        let mut engine = eda_engine::api::Engine::new().unwrap();
+        let response = crate::dispatch::dispatch_request_with_preferences(
+            &mut engine,
+            &mut preferences,
+            crate::JsonRpcRequest {
+                jsonrpc: "2.0".to_owned(),
+                id: json!(51),
+                method: "preferences.host_product".to_owned(),
+                params: serde_json::to_value(HostPreferenceProductParams {
+                    request: PreferenceProductRequestV1 {
+                        schema: PreferenceSchemaRefV1 {
+                            name: "datum.preferences.describe".to_owned(),
+                            version: 1,
+                        },
+                        payload: PreferenceProductPayloadV1::Query(PreferenceQueryV1::Describe),
+                    },
+                    actor: actor(PreferenceActorKindV1::HumanCli),
+                })
+                .unwrap(),
+            },
+        );
+        assert!(response.error.is_none());
+        let result = response.result.expect("product envelope");
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["schema"]["name"], "datum.preferences.describe");
+        assert_eq!(result["context"]["active_descriptor_count"], 11);
+        assert!(!base.exists());
     }
 }
