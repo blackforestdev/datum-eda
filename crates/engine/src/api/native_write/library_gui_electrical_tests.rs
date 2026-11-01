@@ -90,6 +90,10 @@ fn electrical_library_creation_preserves_identity_and_materializes_pin_geometry(
     assert_eq!(pins.len(), 1);
     assert_eq!(pins[0].library_pin, Some(pin));
     assert_eq!(pins[0].name, "Sense");
+    assert_eq!(
+        pins[0].number, "Sense",
+        "legacy anchors keep their name fallback"
+    );
     assert_eq!(pins[0].position.x, -2000000);
     assert_eq!(
         pins[0].electrical_type,

@@ -75,7 +75,7 @@ pub fn materialize_pool_symbol_pins(
         pins.push(SymbolPin {
             library_pin: Some(pin_id),
             uuid: Uuid::new_v4(),
-            number: name.clone(),
+            number: anchor.number.clone().unwrap_or_else(|| name.clone()),
             name,
             electrical_type: pool_pin_electrical_type_to_schematic(electrical_type),
             position: anchor.position,

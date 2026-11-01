@@ -33,6 +33,7 @@ pub enum NativeEditAction {
     Save,
     Schematic,
     Library,
+    LibraryAcquire,
 }
 #[derive(Clone, Debug)]
 pub struct NativeEditIntent {
@@ -48,6 +49,8 @@ pub struct NativeEditIntent {
         eda_engine::api::native_write::library_gui::LibraryDefinitionRequest,
     )>,
     pub instance_path: Vec<Uuid>,
+    pub library_acquisition:
+        Option<eda_engine::api::native_write::library_acquisition::LibraryAcquisitionRequest>,
 }
 impl NativeEditIntent {
     pub fn new(
@@ -66,6 +69,7 @@ impl NativeEditIntent {
             request_id: Uuid::new_v4(),
             schematic: None,
             library: None,
+            library_acquisition: None,
             instance_path: Vec::new(),
         }
     }
@@ -302,6 +306,15 @@ impl NativeProjectClient {
                     serde_json::to_value(request)?,
                 )
             }
+            NativeEditAction::LibraryAcquire => (
+                "datum.library.acquire",
+                serde_json::to_value(
+                    intent
+                        .library_acquisition
+                        .as_ref()
+                        .context("Library acquisition payload missing")?,
+                )?,
+            ),
             NativeEditAction::MoveSymbol { symbol, x_nm, y_nm } => (
                 "datum.schematic.move_symbol",
                 json!({"symbol":symbol,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),

@@ -3,6 +3,8 @@ use super::*;
 use datum_gui_protocol::{NewProjectFocus, single_line_editor::SingleLineEditor};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum Target {
+    LibraryPath,
+    LibrarySearch,
     SchematicName,
     ProjectName,
     FolderName,
@@ -47,11 +49,38 @@ impl Runtime {
         {
             return Some(Target::SchematicName);
         }
+        if self.workspace().ui.layout.focused_content() == PaneContent::Library
+            && matches!(
+                self.application_focus(),
+                datum_gui_protocol::ApplicationFocus::Editor(_)
+            )
+            && self.workspace().library.acquisition.is_some()
+        {
+            use datum_gui_protocol::library_browser::LibraryControl as C;
+            return match self.workspace().library.focus {
+                Some(C::AcquirePath) => Some(Target::LibraryPath),
+                Some(C::AcquireSearch) => Some(Target::LibrarySearch),
+                _ => None,
+            };
+        }
         None
     }
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::LibraryPath | Target::LibrarySearch => {
+                let a = self.workspace().library.acquisition.as_ref()?;
+                let path = target == Target::LibraryPath;
+                Some(Snapshot {
+                    text: if path {
+                        a.path.clone()
+                    } else {
+                        a.search.clone()
+                    },
+                    editor: if path { a.path_editor } else { a.search_editor },
+                    editable: !self.native_edit.pending(),
+                })
+            }
             Target::SchematicName => {
                 self.workspace()
                     .schematic_authoring
@@ -93,6 +122,24 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::LibraryPath | Target::LibrarySearch => {
+                if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
+                    if target == Target::LibraryPath {
+                        a.path = snapshot.text;
+                        a.path_editor = snapshot.editor;
+                        if changed {
+                            a.source_changed();
+                        }
+                    } else {
+                        a.search = snapshot.text;
+                        a.search_editor = snapshot.editor;
+                        if changed {
+                            a.offset = 0;
+                        }
+                    }
+                }
+                self.invalidate_frame();
+            }
             Target::SchematicName => {
                 if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation {
                     d.name = snapshot.text;
@@ -264,7 +311,12 @@ impl Runtime {
             }
             Err(reason) if reason.is_empty() => return false,
             Err(reason) => {
-                if target == Target::SchematicName {
+                if matches!(target, Target::LibraryPath | Target::LibrarySearch) {
+                    if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
+                        a.refusal = Some(reason);
+                    }
+                    self.invalidate_frame();
+                } else if target == Target::SchematicName {
                     if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation
                     {
                         d.refusal = Some(reason);
@@ -286,6 +338,12 @@ impl Runtime {
         scale: f32,
     ) -> bool {
         let target = match region.target {
+            HitTarget::Library(
+                datum_gui_protocol::library_browser::LibraryControl::AcquirePath,
+            ) => Target::LibraryPath,
+            HitTarget::Library(
+                datum_gui_protocol::library_browser::LibraryControl::AcquireSearch,
+            ) => Target::LibrarySearch,
             HitTarget::SchematicName => Target::SchematicName,
             HitTarget::NewProjectName => Target::ProjectName,
             HitTarget::NewProjectFolderName => Target::FolderName,
@@ -309,6 +367,14 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::LibraryPath | Target::LibrarySearch => {
+                self.session.workspace_mut().library.focus =
+                    Some(if target == Target::LibraryPath {
+                        datum_gui_protocol::library_browser::LibraryControl::AcquirePath
+                    } else {
+                        datum_gui_protocol::library_browser::LibraryControl::AcquireSearch
+                    });
+            }
             Target::SchematicName => {
                 if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation {
                     d.focus = 0;

@@ -200,6 +200,14 @@ impl Runtime {
             .library
             .selected(&workspace.selection)
             .map(|e| e.key());
+        let acquired = workspace
+            .library
+            .acquisition
+            .as_ref()
+            .and_then(|a| a.preview.as_ref())
+            .and_then(|p| p.symbol.get("uuid"))
+            .and_then(serde_json::Value::as_str)
+            .map(|id| format!("library:pool/symbols/{id}.json"));
         let created = workspace
             .library
             .draft
@@ -209,6 +217,14 @@ impl Runtime {
         library.kind = workspace.library.kind;
         library.search = workspace.library.search.clone();
         library.result_offset = workspace.library.result_offset;
+        if acquired.is_some() {
+            library.kind = datum_gui_protocol::library_browser::KINDS
+                .iter()
+                .position(|(kind, _)| *kind == "symbols")
+                .unwrap_or(0);
+            library.search.clear();
+            library.result_offset = 0;
+        }
         workspace.library = library;
         if !same_world {
             workspace.scene = next.scene;
@@ -238,7 +254,7 @@ impl Runtime {
         }
         workspace.backing = next.backing;
         workspace.selection = prepared.selected;
-        if let Some(key) = created.or(library_selection)
+        if let Some(key) = acquired.or(created).or(library_selection)
             && workspace.library.entries.iter().any(|e| e.key() == key)
         {
             workspace.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(key);

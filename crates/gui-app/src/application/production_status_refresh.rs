@@ -146,6 +146,7 @@ impl App {
             changed |= runtime.poll_native_run();
             changed |= runtime.poll_native_catalog();
             changed |= runtime.poll_native_edit();
+            changed |= runtime.poll_library_acquisition();
             changed |= runtime.poll_check_job();
             browser_changed = runtime.poll_folder_browser();
             project_open_changed = runtime.poll_project_open();

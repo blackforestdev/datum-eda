@@ -517,7 +517,7 @@ pub fn build_kicad_footprint_import(
 
 /// The `CreateImportMapShard` operation for one import-map sidecar write —
 /// the one operation only this family authors.
-fn import_map_shard_operation(
+pub(super) fn import_map_shard_operation(
     relative_path: String,
     entries: Vec<ImportMapEntry>,
 ) -> Result<Operation, EngineError> {

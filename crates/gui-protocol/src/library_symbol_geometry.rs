@@ -1,4 +1,6 @@
 //! Shared, source-declared pin stub geometry for library and schematic displays.
+#[path = "library_symbol_preview.rs"]
+pub mod preview;
 use crate::PointNm;
 use eda_engine::pool::{SymbolPinAnchor, SymbolPinOrientation};
 

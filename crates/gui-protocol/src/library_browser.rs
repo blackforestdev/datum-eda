@@ -4,6 +4,8 @@ use serde_json::Value;
 use std::sync::Arc;
 use uuid::Uuid;
 
+#[path = "library_acquisition.rs"]
+pub mod acquisition;
 #[path = "library_symbol_geometry.rs"]
 pub mod symbol_geometry;
 
@@ -20,6 +22,13 @@ pub const KINDS: [(&str, &str); 8] = [
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LibraryControl {
+    Acquire,
+    AcquirePath,
+    AcquireLoad,
+    AcquireSearch,
+    AcquireResult(usize),
+    AcquirePage(bool),
+    AcquireImport,
     Kind(usize),
     Search,
     Result(usize),
@@ -98,6 +107,7 @@ pub struct LibraryBrowser {
     pub result_offset: usize,
     pub detail_offset: usize,
     pub draft: Option<crate::library_authoring::LibraryDraft>,
+    pub acquisition: Option<acquisition::LibraryAcquisition>,
     pub refusal: Option<String>,
     pub focus: Option<LibraryControl>,
     pub scroll_offset: usize,

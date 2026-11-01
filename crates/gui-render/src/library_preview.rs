@@ -4,7 +4,7 @@ use datum_gui_protocol::LibraryJsonValue as Value;
 use datum_gui_protocol::{ReviewWorkspaceState, SceneBounds};
 
 #[path = "library_electrical_preview.rs"]
-mod electrical;
+pub(crate) mod electrical;
 #[path = "library_package_preview.rs"]
 mod package;
 

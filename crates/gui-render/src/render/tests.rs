@@ -10,6 +10,8 @@ mod production_proposal_tests;
 mod board_text_control_hit_tests;
 #[path = "../lib_extra_tests.rs"]
 mod lib_extra_tests;
+#[path = "library_overlay_tests.rs"]
+mod library_overlay_tests;
 #[path = "../render_contract_tests.rs"]
 mod render_contract_tests;
 

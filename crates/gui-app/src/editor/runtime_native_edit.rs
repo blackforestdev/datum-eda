@@ -433,6 +433,29 @@ impl Runtime {
             expected_tip,
             action,
         );
+        if !matches!(action, NativeEditAction::LibraryAcquire)
+            && self.workspace().library.acquisition.is_some()
+        {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Import or cancel the library acquisition first",
+            );
+            return true;
+        }
+        if matches!(action, NativeEditAction::LibraryAcquire) {
+            let Some(acquisition) = &self.workspace().library.acquisition else {
+                return false;
+            };
+            match acquisition.request() {
+                Ok(request) => intent.library_acquisition = Some(request),
+                Err(error) => {
+                    self.log_console_refusal(ConsoleFeedbackSource::Tool, error);
+                    return true;
+                }
+            }
+            intent.expected_revision = acquisition.revision.clone();
+            intent.expected_tip = acquisition.tip;
+        }
         if matches!(action, NativeEditAction::Library) {
             let Some(draft) = &self.workspace().library.draft else {
                 return false;
@@ -516,6 +539,10 @@ impl Runtime {
                 self.native_edit.pending = None;
                 self.native_edit.blocked = true;
                 self.restore_pending_move_base();
+                if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
+                    a.refusal =
+                        Some("Edit worker stopped; reopen the Project before editing".into());
+                }
                 self.log_console_refusal(
                     ConsoleFeedbackSource::Tool,
                     "Edit worker stopped; reopen the Project before editing",
@@ -552,12 +579,25 @@ impl Runtime {
             _ => None,
         };
         let draft = self.workspace().schematic_authoring.creation.clone();
+        // A qualified refresh can follow a refused write. It must not consume
+        // the acquisition or select its preview as if Import had succeeded.
+        let refused_acquisition = if answer.result.is_err()
+            && matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
+        {
+            self.session.workspace_mut().library.acquisition.take()
+        } else {
+            None
+        };
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
             self.publish_prepared_workspace(next, prepared);
         } else {
             self.native_edit.blocked = true;
             self.restore_pending_move_base();
+        }
+        if let (Err(reason), Some(mut acquisition)) = (&answer.result, refused_acquisition) {
+            acquisition.refusal = Some(reason.clone());
+            self.session.workspace_mut().library.acquisition = Some(acquisition);
         }
         if let Some(sheet) = created {
             self.open_created_schematic(sheet);

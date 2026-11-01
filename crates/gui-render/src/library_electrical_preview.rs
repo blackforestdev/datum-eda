@@ -1,7 +1,7 @@
-//! Read-only Unit rows and the declared rectangular Symbol body / pin stubs.
+//! Unit inspection and shared native Symbol body / pin geometry.
 use crate::*;
 use datum_gui_protocol::library_browser::symbol_geometry::symbol_pin_stub as endpoints;
-use datum_gui_protocol::{LibraryJsonValue as Value, ReviewWorkspaceState, SceneBounds};
+use datum_gui_protocol::{LibraryJsonValue as Value, ReviewWorkspaceState};
 
 pub(super) fn render(
     state: &ReviewWorkspaceState,
@@ -42,66 +42,80 @@ pub(super) fn render(
         }
         return;
     }
-    if raw
-        .get("drawings")
-        .and_then(Value::as_array)
-        .is_none_or(|d| d.len() != 1)
-        || raw
-            .get("fields")
-            .and_then(Value::as_array)
-            .is_some_and(|f| !f.is_empty())
-        || raw
-            .get("pin_anchors")
-            .and_then(Value::as_array)
-            .is_none_or(|anchors| {
-                anchors.iter().any(|a| {
-                    endpoints(a).is_none()
-                        || a.pointer("/style/decoration")
-                            .and_then(Value::as_str)
-                            .is_some_and(|d| d != "none")
-                })
-            })
-    {
-        unavailable(rect, text);
-        return;
-    }
-    let body = raw.pointer("/drawings/0/Rect");
-    let coordinate = |path: &str| body.and_then(|r| r.pointer(path)).and_then(Value::as_i64);
-    let (Some(min_x), Some(min_y), Some(max_x), Some(max_y), Some(width)) = (
-        coordinate("/min/x"),
-        coordinate("/min/y"),
-        coordinate("/max/x"),
-        coordinate("/max/y"),
-        coordinate("/width"),
-    ) else {
-        unavailable(rect, text);
-        return;
-    };
-    if max_x <= min_x || max_y <= min_y || width <= 0 {
-        unavailable(rect, text);
-        return;
-    }
-    let body = datum_gui_protocol::RectNm {
-        min_x,
-        min_y,
-        max_x,
-        max_y,
-    };
-    let mut bounds = SceneBounds {
-        min_x,
-        min_y,
-        max_x,
-        max_y,
-    };
-    let unit = raw.get("unit").and_then(Value::as_str);
-    let pins = state
+    let unit_id = raw.get("unit").and_then(Value::as_str);
+    let unit = state
         .library
         .entries
         .iter()
-        .find(|e| e.kind == "units" && unit == Some(e.id.to_string().as_str()))
-        .and_then(|e| e.raw.get("pins"))
-        .and_then(Value::as_object);
-    let mut anchors = Vec::new();
+        .find(|e| e.kind == "units" && unit_id == Some(e.id.to_string().as_str()))
+        .map(|e| &e.raw);
+    symbol(raw, unit, rect, quads, text);
+}
+
+pub(crate) fn symbol(
+    raw: &Value,
+    unit: Option<&Value>,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+) {
+    let scene =
+        match datum_gui_protocol::library_browser::symbol_geometry::preview::project(raw, unit) {
+            Ok(scene) => scene,
+            Err(reason) => {
+                draw_text_clipped(
+                    &format!("Preview unavailable · {reason}"),
+                    rect.x + 8.,
+                    rect.y + 6.,
+                    11.,
+                    TEXT_MUTED,
+                    TextFace::Ui,
+                    rect,
+                    text,
+                );
+                return;
+            }
+        };
+    let starts = (quads.len(), text.len());
+    let mut camera = CameraState::fit_to_bounds(&scene.bounds);
+    camera.zoom = 0.7;
+    let projection = Projection::new(rect, &scene.bounds, camera);
+    for graphic in &scene.board_graphics {
+        push_polyline_segments(
+            quads,
+            &graphic.path,
+            &projection,
+            TEXT_PRIMARY,
+            projection
+                .world_length_to_px(graphic.width_nm.unwrap_or(1))
+                .max(1.),
+        );
+    }
+    // The same glyph geometry preserves native text rotation and shape.
+    let mut world = Vec::<Quad>::new();
+    if let Some(meshes) =
+        crate::glyph_mesh_lookup::MeshIndex::new(&scene.glyph_mesh_assets, &mut world)
+    {
+        for geometry in &scene.board_text_geometries {
+            push_board_text_geometry_world(
+                &mut world,
+                geometry,
+                &meshes,
+                TEXT_PRIMARY,
+                &projection,
+            );
+        }
+        for mut quad in world {
+            for point in &mut quad.points {
+                point.0 =
+                    projection.offset_x + (point.0 - scene.bounds.min_x as f32) * projection.scale;
+                point.1 =
+                    projection.offset_y + (point.1 - scene.bounds.min_y as f32) * projection.scale;
+            }
+            quads.push(quad);
+        }
+    }
+    let pins = unit.and_then(|u| u.get("pins")).and_then(Value::as_object);
     for anchor in raw
         .get("pin_anchors")
         .and_then(Value::as_array)
@@ -111,79 +125,35 @@ pub(super) fn render(
         let Some((from, to)) = endpoints(anchor) else {
             continue;
         };
-        for p in [from, to] {
-            bounds.min_x = bounds.min_x.min(p.x);
-            bounds.min_y = bounds.min_y.min(p.y);
-            bounds.max_x = bounds.max_x.max(p.x);
-            bounds.max_y = bounds.max_y.max(p.y);
-        }
         let name = anchor
             .get("pin")
             .and_then(Value::as_str)
-            .and_then(|id| pins.and_then(|p| p.get(id)))
+            .and_then(|id| pins.and_then(|pins| pins.get(id)))
             .and_then(|pin| pin.get("name"))
             .and_then(Value::as_str)
             .unwrap_or("Unresolved pin");
-        anchors.push((from, to, name));
-    }
-    if bounds.max_x.checked_sub(bounds.min_x).is_none()
-        || bounds.max_y.checked_sub(bounds.min_y).is_none()
-    {
-        unavailable(rect, text);
-        return;
-    }
-    let mut camera = CameraState::fit_to_bounds(&bounds);
-    camera.zoom = 0.7;
-    let projection = Projection::new(rect, &bounds, camera);
-    push_rect_border(
-        quads,
-        projection.project_rect(body),
-        TEXT_PRIMARY,
-        projection.world_length_to_px(width).max(1.),
-    );
-    for (from, to, name) in anchors {
-        let (x1, y1) = projection.project_point(from);
-        let (x2, y2) = projection.project_point(to);
-        quads.push(Quad::from_rect(
-            RectPx {
-                x: x1.min(x2) - 0.5,
-                y: y1.min(y2) - 0.5,
-                width: (x2 - x1).abs().max(1.),
-                height: (y2 - y1).abs().max(1.),
-            },
-            TEXT_MUTED,
-        ));
-        quads.push(Quad::from_rect(
-            RectPx {
-                x: x1 - 2.,
-                y: y1 - 2.,
-                width: 4.,
-                height: 4.,
-            },
-            TEXT_ACCENT,
-        ));
+        let number = anchor.get("number").and_then(Value::as_str).unwrap_or("");
+        let (x, y) = projection.project_point(to);
         draw_text_clipped(
-            name,
-            x2 + 4.,
-            y2 - 6.,
-            11.,
+            &format!("{number} {name}"),
+            x + 4.,
+            y - 6.,
+            10.,
             TEXT_PRIMARY,
             TextFace::Ui,
             rect,
             text,
         );
+        let (x, y) = projection.project_point(from);
+        quads.push(Quad::from_rect(
+            RectPx {
+                x: x - 2.,
+                y: y - 2.,
+                width: 4.,
+                height: 4.,
+            },
+            TEXT_ACCENT,
+        ));
     }
-}
-
-fn unavailable(rect: RectPx, text: &mut Vec<TextRun>) {
-    draw_text_clipped(
-        "Preview unavailable · unsupported Symbol geometry or styling",
-        rect.x + 8.,
-        rect.y + 6.,
-        11.,
-        TEXT_MUTED,
-        TextFace::Ui,
-        rect,
-        text,
-    );
+    crate::hit_clipping::clip_content(quads, text, &mut Vec::new(), starts.0, starts.1, 0, rect);
 }

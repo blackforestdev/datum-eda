@@ -254,6 +254,7 @@ fn sample_pool() -> Pool {
             }),
             drawings: Vec::new(),
             pin_anchors: vec![SymbolPinAnchor {
+                number: None,
                 pin: Uuid::nil(),
                 position: Point::new(0, 0),
                 style: SymbolPinStyle {

@@ -396,7 +396,9 @@ impl PreparedScene {
         state: &ReviewWorkspaceState,
     ) -> anyhow::Result<()> {
         use crate::resource_consumers::{Consumer, Stream};
-        self.selection_overlay_split = self.viewport_overlay_vertices.len();
+        self.selection_overlay_split = self
+            .selection_overlay_split
+            .min(self.viewport_overlay_vertices.len());
         let mut minimum_count = 0usize;
         for pass in &self.surface_passes {
             let (scene, consumer) = match pass.surface {

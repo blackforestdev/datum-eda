@@ -5,6 +5,8 @@ use datum_gui_protocol::{
     ReviewWorkspaceState,
     library_browser::{KINDS, LibraryControl as C},
 };
+#[path = "library_acquisition_panel.rs"]
+mod acquisition_panel;
 #[path = "library_electrical_form.rs"]
 mod electrical_form;
 
@@ -102,7 +104,9 @@ pub(crate) fn render(
         text,
         hits,
     };
-    if let Some(d) = &state.library.draft {
+    if state.library.acquisition.is_some() {
+        acquisition_panel::render(&mut p);
+    } else if let Some(d) = &state.library.draft {
         p.line(&format!(
             "{} {} · canonical target: pool",
             if d.create { "Create" } else { "Edit" },
@@ -288,6 +292,7 @@ pub(crate) fn render(
         }
     } else {
         p.line("Project pool · source identity / revision remain separate");
+        p.button("Acquire local KiCad symbol", C::Acquire);
         let cell = (rect.width - 12.) / 4.;
         let row_height = KINDS
             .iter()
@@ -512,6 +517,10 @@ pub(crate) fn inspector(
         hits: &mut hits,
     };
     p.line("Library source");
+    if state.library.acquisition.is_some() {
+        acquisition_panel::inspector(&mut p);
+        return;
+    }
     if let Some(d) = &state.library.draft {
         p.line("Draft · target pool · not approved");
         if let Some(reason) = d.refusal.as_ref().or(state.library.refusal.as_ref()) {

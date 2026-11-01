@@ -19,6 +19,7 @@ pub(super) struct Runtime {
     pub(super) selection_read_cache: runtime_selection::SelectionReadCache,
     pub(super) selection_run: runtime_selection_run::RunWork,
     pub(super) schematic_navigation: runtime_schematic_navigation::NavigationWork,
+    pub(super) library_acquisition_work: runtime_library::acquisition::AcquisitionWork,
     pub(super) native_edit: runtime_native_edit::EditWork,
     pub(super) check_work: runtime_check_runs::CheckWork,
     pub(super) folder_browser: folder_browser::FolderBrowser,

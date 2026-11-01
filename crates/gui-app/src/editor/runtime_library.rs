@@ -4,15 +4,36 @@ use datum_gui_protocol::{
     library_authoring::LibraryDraft,
     library_browser::{KINDS, LibraryControl as C},
 };
+#[path = "runtime_library_acquisition.rs"]
+pub(crate) mod acquisition;
 #[path = "runtime_library_text.rs"]
 mod text_input;
 impl Runtime {
     pub(super) fn open_library(&mut self) {
-        let id = self.session.workspace_mut().ui.layout.open_beside(
-            PaneContent::Library,
-            datum_gui_protocol::SplitOrientation::Vertical,
-            true,
-        );
+        let layout = &self.workspace().ui.layout;
+        let existing = layout
+            .leaves()
+            .into_iter()
+            .find(|id| layout.content_for(*id) == Some(PaneContent::Library));
+        let id = if let Some(id) = existing {
+            let layout = &mut self.session.workspace_mut().ui.layout;
+            layout.focused = id;
+            layout.zoomed = None;
+            id
+        } else if let Some(id) = unbound_schematic_pane(self.workspace()) {
+            let layout = &mut self.session.workspace_mut().ui.layout;
+            layout.focused = id;
+            layout.zoomed = None;
+            self.pane_set_focused_content(PaneContent::Library);
+            id
+        } else {
+            self.session.workspace_mut().ui.layout.open_beside_root(
+                PaneContent::Library,
+                datum_gui_protocol::SplitOrientation::Vertical,
+                0.5,
+                true,
+            )
+        };
         self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(id));
         self.invalidate_frame();
     }
@@ -22,7 +43,17 @@ impl Runtime {
         }
         self.session.workspace_mut().library.focus = Some(control.clone());
         self.session.workspace_mut().library.reveal_focus = true;
+        if self.activate_acquisition(&control) {
+            return true;
+        }
         match control {
+            C::Acquire
+            | C::AcquirePath
+            | C::AcquireLoad
+            | C::AcquireSearch
+            | C::AcquireResult(_)
+            | C::AcquirePage(_)
+            | C::AcquireImport => unreachable!(),
             C::Scroll { .. } => {}
             C::Relationship(i) => {
                 let s = self.workspace();
@@ -191,6 +222,9 @@ impl Runtime {
             }
             C::Cancel => {
                 let b = &mut self.session.workspace_mut().library;
+                b.acquisition = None;
+                self.library_acquisition_work.cancel();
+                let b = &mut self.session.workspace_mut().library;
                 b.draft = None;
                 b.refusal = None;
                 b.search_focus = false;
@@ -254,6 +288,9 @@ impl Runtime {
         true
     }
     pub(super) fn handle_library_key(&mut self, event: &winit::event::KeyEvent) -> bool {
+        if self.workspace().library.acquisition.is_some() && self.handle_shared_editor_key(event) {
+            return true;
+        }
         self.handle_library_input(&event.logical_key, event.state)
     }
     /// Shared logical-key consumer, also exercised by programmatic App proof.
@@ -278,7 +315,22 @@ impl Runtime {
             Key::Named(NamedKey::Tab) => {
                 let s = self.workspace();
                 let mut controls = Vec::new();
-                if let Some(d) = &s.library.draft {
+                if let Some(a) = &s.library.acquisition {
+                    controls.extend([C::AcquirePath, C::AcquireLoad, C::AcquireSearch]);
+                    controls.extend(
+                        a.results()
+                            .into_iter()
+                            .skip(a.offset)
+                            .take(4)
+                            .map(C::AcquireResult),
+                    );
+                    controls.extend([
+                        C::AcquirePage(false),
+                        C::AcquirePage(true),
+                        C::AcquireImport,
+                        C::Cancel,
+                    ]);
+                } else if let Some(d) = &s.library.draft {
                     if d.kind == "footprints" {
                         controls.extend((0..d.pads.len()).map(C::Pad));
                         controls.extend([C::AddPad, C::RemovePad]);
@@ -307,6 +359,7 @@ impl Runtime {
                     }
                     controls.extend([C::Notice, C::Preview, C::Commit, C::Cancel]);
                 } else {
+                    controls.push(C::Acquire);
                     controls.extend((0..8).map(C::Kind));
                     controls.push(C::Search);
                     controls.extend(s.library.results().into_iter().map(C::Result));
@@ -458,3 +511,18 @@ impl Runtime {
         Some(changed)
     }
 }
+
+// Compatibility scenes have no document bindings; absence is not vacancy there.
+fn unbound_schematic_pane(
+    state: &datum_gui_protocol::ReviewWorkspaceState,
+) -> Option<datum_gui_protocol::PaneId> {
+    state.schematic_documents.project?;
+    state.ui.layout.leaves().into_iter().find(|id| {
+        state.ui.layout.content_for(*id) == Some(PaneContent::Schematic)
+            && !state.schematic_documents.panes.contains_key(id)
+    })
+}
+
+#[cfg(test)]
+#[path = "runtime_library_layout_tests.rs"]
+mod layout_tests;

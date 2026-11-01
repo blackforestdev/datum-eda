@@ -35,6 +35,9 @@ pub mod history;
 pub mod ids;
 pub mod imports;
 pub mod library;
+pub mod library_acquisition;
+#[cfg(test)]
+mod library_acquisition_tests;
 pub mod library_definition;
 pub mod library_footprint;
 pub mod library_gui;

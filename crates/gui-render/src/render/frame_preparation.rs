@@ -372,6 +372,9 @@ impl PreparedScene {
                     scene_viewport,
                 );
             }
+            // Only the Board prefix uses the primary viewport's GPU scissor.
+            // Following pane surfaces already clip their own screen geometry.
+            let selection_overlay_split = viewport_overlay_quads.len() * 6;
             for pane in layout.viewport_panes(&state.ui.layout).panes {
                 if let datum_gui_protocol::PaneContent::Revision(revision_pane) = pane.content {
                     let before_overlay = viewport_overlay_quads.len();
@@ -599,7 +602,7 @@ impl PreparedScene {
                 menu_overlay_text_runs,
                 viewport_underlay_vertices,
                 viewport_overlay_vertices,
-                selection_overlay_split: usize::MAX,
+                selection_overlay_split,
                 selection_lod_row,
                 selection_visual_lod: None,
                 selection_strokes: Vec::new(),

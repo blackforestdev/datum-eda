@@ -74,6 +74,9 @@ pub struct LibraryObjectProvenance {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SymbolPinAnchor {
     pub pin: Uuid,
+    /// Source schematic pin designator; does not establish physical pad mapping.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub number: Option<String>,
     pub position: Point,
     #[serde(default)]
     pub style: SymbolPinStyle,
@@ -97,6 +100,8 @@ impl<'de> Deserialize<'de> for SymbolPinAnchor {
         #[derive(Deserialize)]
         struct SymbolPinAnchorPayload {
             pin: Uuid,
+            #[serde(default)]
+            number: Option<String>,
             position: Point,
             #[serde(default)]
             style: Option<SymbolPinStyle>,
@@ -112,6 +117,7 @@ impl<'de> Deserialize<'de> for SymbolPinAnchor {
         let base_style = payload.style.unwrap_or_default();
         Ok(Self {
             pin: payload.pin,
+            number: payload.number,
             position: payload.position,
             style: SymbolPinStyle {
                 orientation: payload.orientation.unwrap_or(base_style.orientation),
