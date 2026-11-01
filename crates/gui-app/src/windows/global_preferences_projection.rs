@@ -287,3 +287,56 @@ pub(super) fn apply_live_consumers(
         ui.terminal.theme = previous;
     }
 }
+
+/// Shared keyboard stepping for both scopes; coordinators retain write authority.
+pub(super) fn cycle_control_value(
+    control: &GlobalPreferenceControlUi,
+    delta: isize,
+) -> Option<Value> {
+    match control {
+        GlobalPreferenceControlUi::Boolean { value, .. } => Some(Value::Bool(!value)),
+        GlobalPreferenceControlUi::SingleChoice { value, choices } => {
+            let index = choices
+                .iter()
+                .position(|(candidate, _)| candidate == value)? as isize;
+            let next = (index + delta).rem_euclid(choices.len() as isize) as usize;
+            Some(Value::String(choices[next].0.clone()))
+        }
+        GlobalPreferenceControlUi::Integer {
+            value,
+            min,
+            max,
+            step,
+            ..
+        } => {
+            let step = *step as i64;
+            Some(Value::from(
+                (*value + delta.signum() as i64 * step).clamp(*min, *max),
+            ))
+        }
+        GlobalPreferenceControlUi::Identity { .. }
+        | GlobalPreferenceControlUi::Structured { .. } => None,
+    }
+}
+
+/// Shared Home/End selection for projected controls.
+pub(super) fn control_endpoint_value(
+    control: &GlobalPreferenceControlUi,
+    last: bool,
+) -> Option<Value> {
+    match control {
+        GlobalPreferenceControlUi::Boolean { .. } => Some(Value::Bool(last)),
+        GlobalPreferenceControlUi::SingleChoice { choices, .. } => choices
+            .get(if last {
+                choices.len().saturating_sub(1)
+            } else {
+                0
+            })
+            .map(|(value, _)| Value::String(value.clone())),
+        GlobalPreferenceControlUi::Integer { min, max, .. } => {
+            Some(Value::from(if last { *max } else { *min }))
+        }
+        GlobalPreferenceControlUi::Identity { .. }
+        | GlobalPreferenceControlUi::Structured { .. } => None,
+    }
+}

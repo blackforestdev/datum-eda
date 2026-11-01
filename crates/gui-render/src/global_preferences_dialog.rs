@@ -379,6 +379,7 @@ fn render_preferences_dialog_scrolled(
         y += notice_rect.height;
     }
 
+    y = preferences_rows::render_units_scope(dialog, content_x, content_width, y, text)?;
     preferences_rows::render_rows(
         dialog,
         content_x,

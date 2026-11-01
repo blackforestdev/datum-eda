@@ -33,8 +33,27 @@ fn observe_template_event(event: &Event<()>, main: WindowId, focused: &mut bool)
 
 #[allow(deprecated)]
 fn capture_template(events: &mut EventLoop<()>, app: &mut App) -> KeyEvent {
+    use std::os::unix::fs::MetadataExt;
     let host = std::env::var("DATUM_NATIVE_TEST_INPUT_WINDOW").expect("owned Weston XID");
     let display = std::env::var("DATUM_NATIVE_TEST_INPUT_DISPLAY").expect("outer X11 display");
+    assert_eq!(
+        std::env::var("DATUM_QA_EXCLUSIVE_INPUT_DISPLAY").expect("isolated input display"),
+        display,
+        "keyboard proof must use the owned isolated transport"
+    );
+    let owner: u32 = std::env::var("DATUM_QA_EXCLUSIVE_INPUT_OWNER_PID")
+        .expect("owned Xwayland PID")
+        .parse()
+        .unwrap();
+    let server = std::path::PathBuf::from(format!("/proc/{owner}"));
+    assert_eq!(
+        std::fs::read_link(server.join("exe")).unwrap(),
+        std::path::Path::new("/usr/bin/Xwayland")
+    );
+    assert_eq!(
+        std::fs::metadata(&server).unwrap().uid(),
+        std::fs::metadata("/proc/self").unwrap().uid()
+    );
     assert!(host.bytes().all(|b| b.is_ascii_digit()) && !host.is_empty());
     let main = app.window.as_ref().unwrap().id();
     app.window.as_ref().unwrap().set_visible(true);
@@ -58,7 +77,7 @@ fn capture_template(events: &mut EventLoop<()>, app: &mut App) -> KeyEvent {
                 .success()
         );
     };
-    run(&["windowactivate", "--sync", &host]);
+    run(&["windowfocus", "--sync", &host]);
     // The existing StartupQA envelope setup enters/clicks the owned host. No
     // captured pointer event is supplied to Runtime and no selection exists yet.
     run(&["mousemove", "--window", &host, "600", "400", "click", "1"]);
@@ -143,7 +162,7 @@ fn sync_owned(events: &mut EventLoop<()>, app: &mut App) {
 }
 
 #[test]
-#[ignore = "requires private Wayland/Vulkan, existing native project, pinned CLI and verified owned Weston input XID; run serially"]
+#[ignore = "requires private Wayland/Vulkan, disposable native project copy, pinned CLI and verified owned Weston input XID; mutates Project Units; run serially"]
 #[allow(deprecated)]
 fn native_owned_escape_release_survives_host_retirement_and_renderer_filtering() {
     let project =
@@ -376,6 +395,7 @@ fn native_owned_escape_release_survives_host_retirement_and_renderer_filtering()
         eprintln!(
             "native Global Preferences closing press/release preserves selection; next fresh Main cycle clears"
         );
+        project_preferences_keyboard_workflow(&mut events, &mut app, &template);
     }));
     // Explicit test housekeeping on success and assertion failure. This is not
     // evidence of an ordinary user Close or application shutdown workflow.
@@ -394,4 +414,163 @@ fn native_owned_escape_release_survives_host_retirement_and_renderer_filtering()
     if let Err(failure) = outcome {
         std::panic::resume_unwind(failure);
     }
+}
+
+fn project_preferences_keyboard_workflow(
+    events: &mut EventLoop<()>,
+    app: &mut App,
+    template: &KeyEvent,
+) {
+    use datum_gui_protocol::{GlobalPreferenceControlUi, GlobalPreferencesFocus};
+    use eda_engine::api::native_write::project::{
+        project_display_units, project_units_seed_evidence,
+    };
+    use eda_engine::ir::units::{MeasurementSystem, SYSTEM_KEY};
+    use eda_engine::substrate::{ProjectResolver, SourceShardKind};
+
+    let runtime = app.runtime.as_mut().unwrap();
+    let root = runtime
+        .workspace()
+        .backing
+        .as_ref()
+        .unwrap()
+        .request
+        .project_root
+        .clone();
+    let before = ProjectResolver::new(&root).resolve().unwrap();
+    let source_bytes: Vec<_> = before
+        .source_shards
+        .iter()
+        .filter(|shard| shard.kind != SourceShardKind::ProjectManifest)
+        .map(|shard| {
+            let path = root.join(&shard.path);
+            let bytes = std::fs::read(&path).unwrap();
+            (path, bytes)
+        })
+        .collect();
+    let global_before = runtime.workspace().ui.global_preferences.rows.clone();
+    assert!(runtime.open_project_preferences());
+    sync_owned(events, app);
+    let owned = app.project_preferences_window.as_ref().unwrap().id();
+    let opened = ProjectResolver::new(&root).resolve().unwrap();
+    let receipt = project_units_seed_evidence(&opened).unwrap();
+    let seed = receipt.copied_values[SYSTEM_KEY].as_str().unwrap();
+    let history_before = opened.journal.len();
+    let press = |events: &mut EventLoop<()>, app: &mut App, host, key| {
+        for phase in [ElementState::Pressed, ElementState::Released] {
+            deliver(events, app, host, template, key, phase, false);
+        }
+    };
+    // Reach the first control through actual native Tab dispatch, not focus injection.
+    for _ in 0..3 {
+        press(events, app, owned, NamedKey::Tab);
+    }
+    assert_eq!(
+        app.runtime
+            .as_ref()
+            .unwrap()
+            .workspace()
+            .ui
+            .project_preferences
+            .focus,
+        GlobalPreferencesFocus::Control(SYSTEM_KEY.into())
+    );
+    for (key, expected) in [
+        (NamedKey::Home, MeasurementSystem::Metric),
+        (NamedKey::ArrowRight, MeasurementSystem::Imperial),
+        (NamedKey::ArrowLeft, MeasurementSystem::Metric),
+        (NamedKey::ArrowDown, MeasurementSystem::Imperial),
+        (NamedKey::ArrowUp, MeasurementSystem::Metric),
+        (NamedKey::End, MeasurementSystem::Imperial),
+    ] {
+        press(events, app, owned, key);
+        let saved = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(
+            project_display_units(&saved).unwrap().system,
+            expected,
+            "{key:?} must commit through the Project Units writer"
+        );
+    }
+    let changed_value = if seed == "metric" {
+        "imperial"
+    } else {
+        "metric"
+    };
+    if seed != "metric" {
+        press(events, app, owned, NamedKey::Home);
+    }
+    let saved = ProjectResolver::new(&root).resolve().unwrap();
+    assert!(saved.journal.len() > history_before);
+    assert_eq!(project_units_seed_evidence(&saved).unwrap(), receipt);
+    press(events, app, owned, NamedKey::Escape);
+    sync_owned(events, app);
+    assert!(app.project_preferences_window.is_none());
+
+    assert!(app.runtime.as_mut().unwrap().open_project_preferences());
+    sync_owned(events, app);
+    let owned = app.project_preferences_window.as_ref().unwrap().id();
+    let row = app
+        .runtime
+        .as_ref()
+        .unwrap()
+        .workspace()
+        .ui
+        .project_preferences
+        .rows
+        .iter()
+        .find(|row| row.key == SYSTEM_KEY)
+        .unwrap();
+    assert!(row.changed);
+    assert!(
+        matches!(&row.control, GlobalPreferenceControlUi::SingleChoice { value, .. }
+        if value == changed_value),
+        "reopened dialog must display the durable keyboard edit"
+    );
+    for _ in 0..4 {
+        press(events, app, owned, NamedKey::Tab);
+    }
+    assert_eq!(
+        app.runtime
+            .as_ref()
+            .unwrap()
+            .workspace()
+            .ui
+            .project_preferences
+            .focus,
+        GlobalPreferencesFocus::Reset(SYSTEM_KEY.into())
+    );
+    press(events, app, owned, NamedKey::Enter);
+    let reset = ProjectResolver::new(&root).resolve().unwrap();
+    let expected = if seed == "metric" {
+        MeasurementSystem::Metric
+    } else {
+        MeasurementSystem::Imperial
+    };
+    assert_eq!(project_display_units(&reset).unwrap().system, expected);
+    assert_eq!(reset.journal.len(), saved.journal.len() + 1);
+    assert_eq!(project_units_seed_evidence(&reset).unwrap(), receipt);
+    assert_eq!(
+        app.runtime
+            .as_ref()
+            .unwrap()
+            .workspace()
+            .ui
+            .global_preferences
+            .rows,
+        global_before
+    );
+    for (path, bytes) in source_bytes {
+        assert_eq!(
+            std::fs::read(&path).unwrap(),
+            bytes,
+            "Project keyboard edits must not rescale or rewrite {}",
+            path.display()
+        );
+    }
+    press(events, app, owned, NamedKey::Escape);
+    sync_owned(events, app);
+    assert!(app.project_preferences_window.is_none());
+    eprintln!(
+        "native Project Preferences: Tab, four arrows, Home/End, durable reopen and keyboard Reset passed; seed and non-Project source shards preserved"
+    );
 }

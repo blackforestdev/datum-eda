@@ -236,6 +236,14 @@ their actual exit status. Reuse unchanged-input evidence at its accepted scope;
 batch corrections before the next complete milestone proof. No additional ledger
 or per-edit approval/qualification record is required.
 
+For a changed UI control, identify its governing prototype state, viewport and
+scale; inspect the relevant DOM/CSS and the native image in that same state.
+Exercise the actual control and verify its visible effect and, where applicable,
+persistence after reopening. Accessible-node coverage and passing test counts
+alone do not establish visible usability. Record this focused comparison and
+behavior check in the existing task and include them in its one independent
+review; this requires no new receipt, schema or broad qualification campaign.
+
 **Evidence records state their own retention honestly.** Keep these conventions
 whenever a review record references evidence or binds an acceptance hash:
 - Evidence archives (`*.tar.xz` and similar per-run artifacts) are machine-local,

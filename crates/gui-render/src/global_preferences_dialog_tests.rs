@@ -374,3 +374,96 @@ fn high_contrast_mode_keeps_word_and_shape_state_cues() {
             .any(|run| run.text == "[HC] HIGH CONTRAST + NON-COLOR CUES")
     );
 }
+
+#[test]
+fn native_units_scope_is_visible_only_for_future_project_defaults() {
+    let mut dialog = state_with_preferences_open().ui.global_preferences;
+    dialog.section_id = "units".into();
+    dialog.rows[0].section_id = "units".into();
+    for (width, scale) in [(1160, 1.0), (720, 1.0), (1440, 2.0)] {
+        let scene = PreparedScene::from_native_preferences(&dialog, width, 1080, scale).unwrap();
+        let runs = &scene.menu_overlay_text_runs;
+        let heading = runs
+            .iter()
+            .find(|r| r.text == "Defaults for new Projects")
+            .unwrap();
+        let control = scene
+            .hit_regions
+            .iter()
+            .find(|r| matches!(r.target, HitTarget::GlobalPreferencesControl(_)))
+            .unwrap();
+        assert!(heading.y < control.rect.y);
+        let scope = runs
+            .iter()
+            .map(|r| r.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" ");
+        assert!(scope.contains("Open and existing Projects are unaffected."));
+    }
+    dialog.scope = "Project".into();
+    let scene = PreparedScene::from_native_preferences(&dialog, 720, 760, 1.0).unwrap();
+    assert!(
+        !scene
+            .menu_overlay_text_runs
+            .iter()
+            .any(|r| r.text == "Defaults for new Projects")
+    );
+}
+
+#[test]
+fn native_explanation_preserves_all_text_and_reveals_close_after_wrapping() {
+    let mut dialog = state_with_preferences_open().ui.global_preferences;
+    dialog.rows.truncate(1);
+    dialog.explanation_key = Some(dialog.rows[0].key.clone());
+    dialog.rows[0].explanation_lines = vec![
+        "Descriptor  datum.console.feedback_duration".into(),
+        "Scope  Global · this device".into(),
+        "Effective  6s (factory default)".into(),
+        "Eligible absences  A long explanation must retain all supplied information even when it exceeds the old ninety-four-character truncation boundary.".into(),
+        "Resolved through the typed preference resolver.".into(),
+    ];
+    let expected = dialog.rows[0].explanation_lines.concat();
+    for (width, scale) in [(1160, 1.0), (720, 1.0), (1440, 2.0)] {
+        let scene = PreparedScene::from_native_preferences(&dialog, width, 1400, scale).unwrap();
+        let actual = scene
+            .menu_overlay_text_runs
+            .iter()
+            .filter(|r| r.face == TextFace::Mono && r.text != dialog.rows[0].provenance)
+            .map(|r| r.text.as_str())
+            .collect::<String>();
+        assert!(
+            actual.contains(&expected),
+            "explanation lost information at {width}/{scale}: {actual}"
+        );
+        let top = scene
+            .menu_overlay_text_runs
+            .iter()
+            .find(|r| r.text.starts_with("Descriptor  "))
+            .unwrap()
+            .y;
+        for run in scene
+            .menu_overlay_text_runs
+            .iter()
+            .filter(|r| r.face == TextFace::Mono && r.y >= top)
+        {
+            let clip = run
+                .clip_bounds
+                .expect("explanation must be viewport-clipped");
+            let extent =
+                crate::control_text::measure_text_width(&run.text, run.size, run.face).unwrap();
+            assert!(run.x >= clip.x && run.x + extent <= clip.x + clip.width);
+            assert!(run.y >= clip.y && run.y + run.size <= clip.y + clip.height);
+        }
+        dialog.focus = GlobalPreferencesFocus::ExplanationClose;
+        let compact =
+            PreparedScene::from_native_preferences(&dialog, width, (300.0 * scale) as u32, scale)
+                .unwrap();
+        let close = compact
+            .hit_regions
+            .iter()
+            .find(|r| r.target == HitTarget::GlobalPreferencesExplanationClose)
+            .unwrap();
+        assert!(close.rect.y >= 0.0 && close.rect.y + close.rect.height <= 300.0 * scale);
+        dialog.focus = GlobalPreferencesFocus::SectionNavigation;
+    }
+}

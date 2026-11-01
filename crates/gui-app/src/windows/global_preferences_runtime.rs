@@ -438,30 +438,8 @@ impl Runtime {
             .rows
             .iter()
             .find(|row| row.key == key)
-            .and_then(|row| match &row.control {
-                GlobalPreferenceControlUi::Boolean { value, .. } => Some(Value::Bool(!value)),
-                GlobalPreferenceControlUi::SingleChoice { value, choices } => {
-                    let index = choices
-                        .iter()
-                        .position(|(candidate, _)| candidate == value)?
-                        as isize;
-                    let next = (index + delta).rem_euclid(choices.len() as isize) as usize;
-                    Some(Value::String(choices[next].0.clone()))
-                }
-                GlobalPreferenceControlUi::Integer {
-                    value,
-                    min,
-                    max,
-                    step,
-                    ..
-                } => {
-                    let step = *step as i64;
-                    Some(Value::from(
-                        (*value + delta.signum() as i64 * step).clamp(*min, *max),
-                    ))
-                }
-                GlobalPreferenceControlUi::Identity { .. }
-                | GlobalPreferenceControlUi::Structured { .. } => None,
+            .and_then(|row| {
+                crate::global_preferences_projection::cycle_control_value(&row.control, delta)
             });
         self.commit_projected_value(key, next)
     }
@@ -474,20 +452,8 @@ impl Runtime {
             .rows
             .iter()
             .find(|row| row.key == key)
-            .and_then(|row| match &row.control {
-                GlobalPreferenceControlUi::Boolean { .. } => Some(Value::Bool(last)),
-                GlobalPreferenceControlUi::SingleChoice { choices, .. } => choices
-                    .get(if last {
-                        choices.len().saturating_sub(1)
-                    } else {
-                        0
-                    })
-                    .map(|(value, _)| Value::String(value.clone())),
-                GlobalPreferenceControlUi::Integer { min, max, .. } => {
-                    Some(Value::from(if last { *max } else { *min }))
-                }
-                GlobalPreferenceControlUi::Identity { .. }
-                | GlobalPreferenceControlUi::Structured { .. } => None,
+            .and_then(|row| {
+                crate::global_preferences_projection::control_endpoint_value(&row.control, last)
             });
         self.commit_projected_value(key, next)
     }

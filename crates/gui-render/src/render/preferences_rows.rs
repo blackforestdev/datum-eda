@@ -4,6 +4,51 @@ use super::*;
 const SETTING_HEIGHT: f32 = 58.0;
 const PROVENANCE_HEIGHT: f32 = 28.0;
 
+/// The Units prototype states the future-Project boundary before any controls.
+pub(super) fn render_units_scope(
+    dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
+    x: f32,
+    width: f32,
+    mut y: f32,
+    text: &mut Vec<TextRun>,
+) -> anyhow::Result<f32> {
+    if dialog.scope != "Global · this device"
+        || dialog.section_id != "units"
+        || !dialog.search_query.is_empty()
+    {
+        return Ok(y);
+    }
+    draw_text(
+        "Defaults for new Projects",
+        x + 18.0,
+        y + 12.0,
+        design_tokens::typography::BODY_SIZE,
+        TEXT_PRIMARY,
+        TextFace::UiStrong,
+        text,
+    );
+    y += 36.0;
+    let message = "Changes save immediately and are copied only when creating a new Project. Open and existing Projects are unaffected.";
+    for line in crate::control_text::wrap_text_words_sized(
+        message,
+        (width - 36.0).max(1.0),
+        design_tokens::typography::CAPTION_SIZE,
+        TextFace::Ui,
+    )? {
+        draw_text(
+            &line,
+            x + 18.0,
+            y,
+            design_tokens::typography::CAPTION_SIZE,
+            TEXT_SECONDARY,
+            TextFace::Ui,
+            text,
+        );
+        y += 18.0;
+    }
+    Ok(y + 12.0)
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render_rows(
     dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
@@ -37,17 +82,42 @@ pub(super) fn render_rows(
                 }
                 _ => 0,
             };
+            let explanation_lines = if dialog.explanation_key.as_deref() == Some(row.key.as_str()) {
+                row.explanation_lines
+                    .iter()
+                    .map(|line| {
+                        crate::control_text::wrap_text_face(
+                            line,
+                            (content_width - 67.0).max(1.0),
+                            TextFace::Mono,
+                        )
+                    })
+                    .collect::<anyhow::Result<Vec<_>>>()?
+                    .into_iter()
+                    .flatten()
+                    .collect::<Vec<_>>()
+            } else {
+                Vec::new()
+            };
             let explanation = if dialog.explanation_key.as_deref() == Some(row.key.as_str()) {
-                96.0
+                explanation_lines.len() as f32 * 16.0 + 48.0
             } else {
                 0.0
             };
             let height = SETTING_HEIGHT + PROVENANCE_HEIGHT + choices as f32 * 28.0 + explanation;
             let top = total;
             total += group + height;
-            (row, top, group, height, choices, explanation)
+            Ok((
+                row,
+                top,
+                group,
+                height,
+                choices,
+                explanation,
+                explanation_lines,
+            ))
         })
-        .collect();
+        .collect::<anyhow::Result<_>>()?;
     if !dialog.search_query.is_empty() {
         draw_text(
             &format!(
@@ -74,7 +144,7 @@ pub(super) fn render_rows(
     if let Some(index) = reveal_row {
         if dialog.focus == GlobalPreferencesFocus::ExplanationClose
             && dialog.explanation_key.as_ref() == visible.get(index).map(|(row, ..)| &row.key)
-            && let Some((_, top, group, height, _, explanation_height)) = visible.get(index)
+            && let Some((_, top, group, height, _, explanation_height, _)) = visible.get(index)
         {
             // Reveal the focused button, including when the expanded row is
             // taller than the viewport. Paint uses this same layout below.
@@ -90,7 +160,7 @@ pub(super) fn render_rows(
             scroll.reveal(close.y, close.y + close.height);
         } else if index == 0 {
             scroll.set_offset(0.0);
-        } else if let Some((_, top, group, height, _, _)) = visible.get(index) {
+        } else if let Some((_, top, group, height, _, _, _)) = visible.get(index) {
             scroll.reveal(*top, top + group + height);
         }
     }
@@ -99,7 +169,16 @@ pub(super) fn render_rows(
     let t_start = text.len();
     let h_start = hits.len();
     let content_width = content_width - if scroll.track().is_some() { 11.0 } else { 0.0 };
-    for (row, top, search_group_height, row_height, choice_count, explanation_height) in visible {
+    for (
+        row,
+        top,
+        search_group_height,
+        row_height,
+        choice_count,
+        explanation_height,
+        explanation_lines,
+    ) in visible
+    {
         y = viewport.y + top - scroll.offset();
         if y + search_group_height + row_height <= viewport.y {
             continue;
@@ -317,9 +396,9 @@ pub(super) fn render_rows(
                 explanation,
                 design_tokens::chrome::SURFACE_02,
             ));
-            for (index, line) in row.explanation_lines.iter().take(4).enumerate() {
+            for (index, line) in explanation_lines.iter().enumerate() {
                 draw_text(
-                    &truncate_text(line, 94),
+                    line,
                     explanation.x + 10.0,
                     explanation.y + 8.0 + index as f32 * 16.0,
                     design_tokens::typography::CAPTION_SIZE,
@@ -365,7 +444,7 @@ pub(super) fn render_rows(
 fn explanation_bounds(row: RectPx, height: f32) -> (RectPx, RectPx) {
     let explanation = RectPx {
         x: row.x + 18.0,
-        y: row.y + SETTING_HEIGHT + PROVENANCE_HEIGHT + 8.0,
+        y: row.y + row.height - height + 8.0,
         width: row.width - 36.0,
         height: height - 16.0,
     };
