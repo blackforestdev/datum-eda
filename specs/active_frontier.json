@@ -9780,9 +9780,7 @@
           ],
           "selection": "explicit_frontier_update",
           "selects_successor": false,
-          "unblocks_issue_ids": [
-            "dat-global-preferences-completion-f84"
-          ]
+          "unblocks_issue_ids": []
         },
         "presentation_policy": {
           "allow_inferred_concurrency": false,
@@ -10032,9 +10030,7 @@
       "state": "landed",
       "summary": "Implement the typed resolver and durable repository foundation, then deliver a production-grade three-row Appearance slice through the real nested Edit > Preferences > Global Preferences doorway, with typed presentation metadata, live consumers, durability, accessibility, recovery honesty, and zero Project mutation.",
       "title": "Build the Global Preferences foundation and first GUI slice",
-      "unblocks": [
-        "dat-global-preferences-completion-f84"
-      ]
+      "unblocks": []
     },
     {
       "authorization": "none",
@@ -10055,9 +10051,7 @@
           ],
           "selection": "explicit_frontier_update",
           "selects_successor": false,
-          "unblocks_issue_ids": [
-            "dat-global-preferences-completion-f84"
-          ]
+          "unblocks_issue_ids": []
         },
         "presentation_policy": {
           "allow_inferred_concurrency": false,
@@ -10356,25 +10350,23 @@
       "state": "landed",
       "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "title": "Complete shared Units surface parity through Preferences",
-      "unblocks": [
-        "dat-global-preferences-completion-f84"
-      ]
+      "unblocks": []
     },
     {
-      "authorization": "owner_decision",
-      "canonical_next": true,
+      "authorization": "none",
+      "canonical_next": false,
       "completion": {
-        "canonical_next_step_id": "GP-CM05A",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "dependency_independence_authorizes_parallelism": false,
           "max_in_progress_steps": 1
         },
-        "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
+        "outcome": "The owner-canceled campaign is terminally closed without product acceptance or a readiness claim; historical results and permanent unqualified limitations are retained.",
         "post_completion": {
           "authorizes_successor": false,
           "effects": [
-            "The Project Preferences specification loses its Global Preferences blocker but remains planning-only.",
-            "Revision descriptors and runtime surfaces remain deferred."
+            "The canceled campaign no longer blocks roadmap selection.",
+            "Dependent specification work loses this administrative blocker only; no product acceptance, execution grant or successor selection follows."
           ],
           "selection": "explicit_frontier_update",
           "selects_successor": false,
@@ -10713,8 +10705,14 @@
             "status": "complete"
           },
           {
-            "action": "Review the exact complete candidate, report, independent proof and publication delta before product acceptance.",
-            "completion_evidence": [],
+            "action": "Record the direct owner cancellation of the remaining campaign; retain incomplete qualification and do not grant product acceptance.",
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "marker": "OWNER:GP-CAMPAIGN-CANCELLATION-20261101",
+                "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
+              }
+            ],
             "depends_on": [
               "GP-CM05E"
             ],
@@ -10724,15 +10722,15 @@
               "requests": [
                 {
                   "id": "GP-CM05A",
-                  "question": "Does the exact candidate satisfy the complete revised GP-CM05 contract, native behavior, all budgets, independent review and exclusions?",
-                  "recommended_response": "Accept only complete passing same-candidate evidence; otherwise name the required correction.",
+                  "question": "How does the owner dispose of the remaining acceptance campaign?",
+                  "recommended_response": "Record the explicit owner cancellation; preserve limitations and no product acceptance.",
                   "source_ref": {
                     "marker": "GP-CM05A",
                     "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
                   }
                 }
               ],
-              "response_format": "GLOBAL-PREFERENCES-COMPLETION: accept GP-CM05E <revision> <report-sha256> or GLOBAL-PREFERENCES-COMPLETION: revise GP-CM05E \u2014 <specific correction>"
+              "response_format": "Resolved by direct owner cancellation recorded at OWNER:GP-CAMPAIGN-CANCELLATION-20261101; no response remains pending."
             },
             "requirement_refs": [
               {
@@ -10740,7 +10738,7 @@
                 "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
               }
             ],
-            "status": "pending"
+            "status": "complete"
           }
         ]
       },
@@ -10760,23 +10758,10 @@
         "prerequisite_reasons": {
           "issue:dat-global-preferences-engine-build-vge": "The Global Preferences engine build (GlobalPreferencesService / product service) must exist before the completion acceptance checkers, capture and runtime integration can exercise it; it is a closed hard dependency.",
           "issue:dat-shared-units-surface-parity-s9x": "Shared-units surface parity is required so preference-driven Units defaults and working-units policy render consistently across surfaces during acceptance; it is a closed hard dependency.",
-          "step:GP-CM05A": "GP-CM05A is the owner production-acceptance gate: the pinned candidate 57bd9b1b parks NON-READY (development_ready false; native 48-row + scale-2 measurement + genesis-p95 remainders in the disclosed-gap ledger), so its production-acceptance disposition and any re-pin are an explicit owner decision, not an agent action."
+          "step:GP-CM05A": "Resolved by direct owner cancellation at owner-direction.md final disposition; no production acceptance or re-pin remains scheduled."
         },
         "qualification_followups": [
-          "gui-feedback presented_elapsed_ns sourced from the proven xcb-present PresentCompleteNotify helper at the milestone capture (XGetImage front-buffer poll as validated fallback).",
-          "prepared-state elapsed_ns has no external ordinary observable; its treatment is an owner-visible ruling deferred to the GP-CM05A gate.",
-          "N06 Orca focus-establishment timing requires tuning; the tuned-first path with an announcements fallback remains an open accessibility-capture refinement.",
-          "The scored 48-scenario native corpus must be rebuilt against datum-gui at the pinned candidate to close source-skew before the native budgets are acceptance-scored.",
-          "surface-parity-negative/preference-write-faults is engine-surface-not-producible: there is no fault-injection seam in the preference repository commit path (write_generation/promote_head in repository/io.rs expose no injectable checkpoint); a test-only seam is a production-commit-path mechanism decision deferred to the GP-CM05A owner-visible gate, not added to ship a coverage row.",
-          "upgrade/migration-interruption is engine-surface-not-producible: commit_migration (repository/migration.rs:138) has no interruption or fault seam; deferred to the GP-CM05A owner-visible gate rather than inventing a production-path seam.",
-          "project-genesis-crash: the 5 non-fault checkpoint variants (staging-prepared, project-built, project-validated, staging-synced, project-published) are OWED as a Phase-3 engine family, reachable via acceptance_support's in-crate use of the pub(super) create_project_with_checkpoint seam (preferences/project_genesis.rs:143) with a checkpoint-Err interruption (the engine's own lifecycle path, real partial state), no new pub wrapper; the 6 fault variants (file-flush-error, parent-flush-error, process-killed, disk-full, permission-denied, symlink-stage) require OS-level fault injection and remain deferred to the GP-CM05A owner-visible gate.",
-          "human-agent-authority/daemon-restart is engine-surface-not-producible as a true daemon-process restart: the built variant modeled broker.close_session -> Expired (an acceptance-lifecycle refusal, not a new-daemon-instance empty-state seam); audit reclassified it engine-unreachable at b8e9085b; deferred to the GP-CM05A owner-visible gate.",
-          "human-agent-authority/no-foreground-tty is engine-surface-not-producible: no TTY/foreground concept exists in the engine product service or PreferenceActorV1 (grep-confirmed, cited in the module header); its real home is the CLI/MCP surface; the engine row is deferred to the GP-CM05A owner-visible gate.",
-          "The four scale-2 GUI rows (wayland/2.0 and x11/2.0 at both logical window sizes) are environment-blocked on the reference 1920x1080 :1 display: the scale-2 device extents (1024x900@2=2048x1800; 720x760@2=1440x1520) exceed the screen, the owned Weston clamps, and the realized logical viewport mis-binds the matrix coordinate, so production was refused rather than falsely stamped. A feasibility probe at 2304x2048 through the parameterized isolated-input transport (scripts/run_native_qa_isolated_input.py, 189eff3e --input-width/--input-height) showed it binds scale-2 un-clamped (scale 2 applied, realized logical viewport 1024x900 = the matrix coordinate). Scale-2 envelope equivalence ASSESSED (frontend ENVELOPE-EQUIVALENCE-ASSESSMENT.md, audit-reviewed): the OWNER-BAR rests on section 6's requirement of real Linux Wayland and X11 sessions plus the headless-renderer clause's scope -- admitting rows from a fully synthetic headless-backed display requires reading that ratified term to include synthetic sessions, an acceptance-bar doctrinal choice reserved to the owner at GP-CM05A. Section 3's no-agent-selected-equivalence clause concerns candidate/publication identity and is not the basis; the G1/G2 nesting/input-depth silences are assessable context, not reservations. Bounded engineering (transport teardown repair, X11-in-transport diagnostics, R4-R6 capture work) is covered and does not await the owner; only row credit does, and no permission can establish equivalence or a PASS. The four scale-2 coordinate classes stay OWED; remedy order: (1) real-session display >=2048x1800 (owner resource, contract-clean); (2) the parameterized isolated-input transport per the owner's section-6 reading, which additionally requires real R4-R6 production in-transport plus the transport teardown-FAIL repaired; (3) accept the limitation. Cite frontend-dev-01 scale2 FINDING + ENVELOPE-EQUIVALENCE-ASSESSMENT.md.",
-          "unavailable-global/cli draft-preserved: audit (25f73452 review) ruled the observation an honest cross-surface projection of the side-effect-free-refusal invariant and recommends, at the matrix owner's discretion at the GP-CM05A gate, renaming the assertion to refusal-side-effect-free or adding a contract note that the CLI (which has no interactive draft) realizes it as the refusal leaving the Global store intact and no partial Project; the landed observation is honest as-is.",
-          "The 48 native observations (N01-N06 at the eight GUI coordinates) are scope-exited to the GP-CM05A owner gate for the pinned candidate 57bd9b1b: no recipe in the candidate input closure (4030 entries) can serve a native fixture under the governed \u00a79 independent-replay bar. The contract (\u00a7584) requires native replay to live re-invoke the candidate-bound fixture recipe as `python3 <recipe.path> --native-scenario <scenario_id> --environment <environment_id>` and parse a `datum.preferences.native-replay.v2` output ('true or a nonempty arbitrary log cannot stand in for replay'); report.py:124-127 enforces the exact argv, so a non-invocable module (recipes/accessibility_capture.py, no CLI entry) fails, and the invocable a11y case recipes (preferences_gui_a11y_case.py / _nav_case.py / _modal_case.py) reject the 2-tuple native coverage (their coordinate parser requires the 5-tuple case coverage) and do not compute the N0x native assertion inventories. The only recipe designed for `--native-scenario` (scripts/fixture.py) is synthetic-only, is not in the candidate closure, and is declared never-readiness-bearing (test_support: 'Synthetic regression fixtures only'). A conformant in-closure native recipe cannot be added without committing a file, which is a new candidate identity (revision+tree+manifest) and would invalidate every row captured at this pin. Native coverage therefore cannot reach candidate_ready at 57bd9b1b and is carried to the owner gate as a disclosed structural gap, never a pass. The contract-conformant native recipe + its driver are being built outside the window (frontend's redefined native unit) and enter the closure at the next pin; the second pin consolidates this with the other re-pin triggers (the owner-selected genesis-p95 remedy and any x11-modal outcome) into one deliberate recapture.",
-          "Of the 90 measurement variants, the 32 at scale-2 (scale factor 2.0) -- gui-feedback (24), window-lifecycle (4) and native-window-open (4) -- are OWED to the GP-CM05A owner gate on the standing scale-2 citations, leaving a strict producible set of 58. The scale-2 GUI budgets are environment-blocked on the reference 1920x1080 :1 display for the same reason as the scale-2 case rows: the scale-2 device extents (1024x900@2=2048x1800; 720x760@2=1440x1520) exceed the screen, the owned Weston clamps, and the realized logical viewport mis-binds the matrix coordinate, so a timing-grade measurement cannot be honestly captured at scale-2 and production is refused rather than falsely stamped. Confirmed by frontend-dev-01's live re-verification during the window and the audit-reviewed ENVELOPE-EQUIVALENCE-ASSESSMENT.md; the owner-bar rests on section 6's requirement of real Linux Wayland and X11 sessions plus the headless-renderer clause's scope. The 58 strict measurement variants are captured and scored at this pin; the 32 scale-2 variants stay OWED with the scale-2 remedy order. Cite frontend-dev-01 scale2 FINDING + ENVELOPE-EQUIVALENCE-ASSESSMENT.md; mirrors the landed scale-2 case-row footing (8c8a06e8).",
-          "Designer-workflow ordinary_application run is OWED as a pin-2 capture leg: the development_ready availability flip requires candidate-time GUI observations of the four ordinary_workflow chains (W1 open+Describe/Read sections/controls/defaults; W2 Appearance/Units SetUser-through-control -> commit() applied-value/resolver-explanation/receipt; W3 reopen new-immutable-generation + resolver-reports-inspected-generation; W4 ResetUser factory-default) plus the safety-b agent proposal_required negative vector. At pin 57bd9b1b the acceptance corpus asserted accessibility + install/stability predicates (not these chains); set-reset-refusal committed a real control change (store generations advanced + polite announcement in payload) but no assertion scored the applied-value/resolver/receipt remainder, native-close-reopen carried persisted=True but not the new-generation/resolver-inspected remainder, and the ResetUser verb was rendered (F4c pixels) but never driven (the a11y RESET leg is a second SetUser toggle). development_ready stays FALSE and this run is consolidated into the pin-2 capture per the native-recipe re-pin. See docs/reviews/preferences/gp-cm05-implementation/gp-cm05e-t1-ordinary-evidence-mapping.json."
+          "Permanently canceled by owner; retained unqualified limitations are recorded in docs/reviews/preferences/gp-cm05-implementation/owner-direction.md under Final owner disposition. Historical detailed obligations remain archival and must not be rescheduled."
         ],
         "safety_requirements": [
           "Every preference mutation goes through the one engine-owned GlobalPreferencesProductService writer and commit() path under writer-lease and expected-generation checks, recording a MutationReceipt (operation, actor kind/id/session, reason, expected/resulting generations, before/after digests); no GUI/CLI/daemon/MCP adapter writes the repository directly (\u00a72 :52-67, \u00a72.1 :87-109, \u00a75.1 :281-303).",
@@ -10805,16 +10790,17 @@
       "key": "GLOBAL-PREFERENCES-COMPLETION",
       "order": 42,
       "parallel": false,
-      "state": "specified",
-      "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
-      "title": "Complete and production-accept Global Preferences",
+      "state": "landed",
+      "summary": "Owner canceled the remaining campaign permanently. Closure records that disposition only; historical evidence and unqualified limitations remain, development_ready stays false, and no production acceptance or successor is authorized.",
+      "title": "Close canceled Preferences qualification campaign",
       "unblocks": [
         "dat-project-preferences-spec-kiw"
       ],
       "work_purpose": {
-        "kind": "product_delivery",
-        "rationale": "Remaining scope delivers application behavior; tracker type does not change delivery obligations. A concrete ordinary-workflow contract is required before selection or work start; this migration grants no execution."
-      }
+        "kind": "maintenance",
+        "rationale": "Record the direct owner cancellation and remove stale campaign selection; no product acceptance, new qualification or successor authority."
+      },
+      "landing_commit": "958ed51b"
     },
     {
       "authorization": "planning",
@@ -10956,7 +10942,7 @@
       "key": "PROJECT-PREFERENCES-SPEC",
       "order": 43,
       "parallel": false,
-      "state": "blocked",
+      "state": "planned",
       "summary": "Complete the exact Project-owned settings inventory, canonical query/mutation contract, conventional menu doorway, interaction/accessibility specification, and protected visual truth after Global Preferences is stable.",
       "title": "Specify the Global and Project Preferences doorway",
       "unblocks": [
@@ -19272,6 +19258,11 @@
   "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",
   "schema_version": 7,
   "selection": {
-    "mode": "selected"
+    "mode": "idle",
+    "reason": "Owner-canceled campaign closed; no successor milestone has been selected. Separately authorized routine Rust delivery remains unaffected.",
+    "source_ref": {
+      "marker": "OWNER:GP-CAMPAIGN-CANCELLATION-20261101",
+      "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
+    }
   }
 }
