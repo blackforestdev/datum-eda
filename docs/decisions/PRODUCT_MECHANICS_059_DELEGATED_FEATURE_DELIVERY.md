@@ -156,7 +156,19 @@ session requires its own verified appointment. Only one standing project manager
 may be active, preventing ambiguous final authority.
 
 <!-- EVIDENCE:PM059:STANDING-PROJECT-MANAGER -->
-{"owner_appointed":true,"session":"0a2e42d7-4b60-47c2-bf4e-4d09d86123b9","task_keys":["*"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance","owner_reserved","decision_classification"]}
+{"owner_appointed":true,"session":"01a18df2-2fa1-7613-9e7d-1f61dc7e8923","task_keys":["*"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance","owner_reserved","decision_classification"]}
+
+The owner replaced the previous manager in the current session: “you are the new
+PM” and “welcome to your promotion.” This changes the named manager, retaining
+the scope and boundaries above; historical decisions keep their original actors.
+Appointment and review evidence live in task `dat-pm-handoff-product-delivery-bkuk`.
+The owner also directed ongoing waste reduction using Toyota Production System
+thinking. Keep that attention bounded within the existing overhead limit: remove
+repeated reads, waiting, duplicate approvals and rework as they obstruct delivery;
+prefer small corrections to new process machinery. Judge improvement by usable
+Rust behavior delivered with less effort, not administrative output. Cancelled
+Preferences qualification does not block independently authorized routine work;
+this appointment supplies no missing product acceptance or denied enactment.
 
 ## Retained boundaries and evidence
 
