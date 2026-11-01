@@ -47,7 +47,11 @@ impl Runtime {
         self.invalidate_frame();
         true
     }
-    fn open_schematic_document(&mut self, key: &SchematicDocumentKey, revision: &str) -> bool {
+    pub(super) fn open_schematic_document(
+        &mut self,
+        key: &SchematicDocumentKey,
+        revision: &str,
+    ) -> bool {
         let result = (|| -> anyhow::Result<()> {
             anyhow::ensure!(
                 self.navigation_basis(key, revision),

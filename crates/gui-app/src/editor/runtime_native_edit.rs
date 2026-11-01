@@ -310,6 +310,17 @@ impl Runtime {
             && self.native_edit.pending_position.is_some()
             && !self.native_edit.preview_awaiting_presentation
     }
+    pub(super) fn activate_native_edit_menu(&mut self, verb: Option<&str>) -> Option<bool> {
+        Some(match verb? {
+            "datum.schematic.create_sheet" => self.begin_schematic_creation(),
+            "datum.schematic.place_symbol" => self.begin_native_schematic(false),
+            "datum.schematic.draw_wire" => self.begin_native_schematic(true),
+            "datum.journal.undo" => self.queue_native_history(false),
+            "datum.journal.redo" => self.queue_native_history(true),
+            "datum.pcb.move_component" => self.set_workspace_tool(WorkspaceTool::Move),
+            _ => return None,
+        })
+    }
     pub(super) fn queue_native_history(&mut self, redo: bool) -> bool {
         let tip = self
             .workspace()
@@ -331,7 +342,15 @@ impl Runtime {
         })
     }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
-        if !self.native_edit.pending()
+        let creating = matches!(action, NativeEditAction::Schematic)
+            && matches!(
+                self.workspace().schematic_authoring.pending_request,
+                Some(
+                    datum_gui_protocol::schematic_authoring::SchematicEditRequest::CreateSheet { .. }
+                )
+            );
+        if !creating
+            && !self.native_edit.pending()
             && matches!(
                 action,
                 NativeEditAction::Move { .. }
@@ -367,7 +386,8 @@ impl Runtime {
         }
         if !matches!(action, NativeEditAction::Schematic)
             && (self.workspace().schematic_authoring.active()
-                || self.workspace().schematic_authoring.picker)
+                || self.workspace().schematic_authoring.picker
+                || self.workspace().schematic_authoring.creation.is_some())
         {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
@@ -429,6 +449,10 @@ impl Runtime {
         }
         if let Some(preview) = &self.native_edit.preview {
             intent.instance_path = preview.instance_path();
+        }
+        if creating && let Some(draft) = &self.workspace().schematic_authoring.creation {
+            intent.expected_revision = draft.revision.clone();
+            intent.expected_tip = draft.tip;
         }
         if matches!(action, NativeEditAction::Schematic) {
             intent.schematic = self
@@ -517,12 +541,29 @@ impl Runtime {
             }
             return true;
         }
+        let created = match (&answer.result, &answer.intent.schematic) {
+            (
+                Ok(_),
+                Some(datum_gui_protocol::schematic_authoring::SchematicEditRequest::CreateSheet {
+                    sheet,
+                    ..
+                }),
+            ) if answer.next.is_some() && answer.selection.is_some() => Some(*sheet),
+            _ => None,
+        };
+        let draft = self.workspace().schematic_authoring.creation.clone();
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
             self.publish_prepared_workspace(next, prepared);
         } else {
             self.native_edit.blocked = true;
             self.restore_pending_move_base();
+        }
+        if let Some(sheet) = created {
+            self.open_created_schematic(sheet);
+        } else if let (Err(reason), Some(mut draft)) = (&answer.result, draft) {
+            draft.refusal = Some(reason.clone());
+            self.session.workspace_mut().schematic_authoring.creation = Some(draft);
         }
         match answer.result {
             Ok(message) => {

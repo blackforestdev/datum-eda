@@ -245,6 +245,7 @@ impl Runtime {
     }
 
     pub(super) fn handle_menu_key(&mut self, event: &KeyEvent) -> bool {
+        self.trace_schematic_creation_event("menu key", Some(event));
         let ui = &self.workspace().ui;
         let menu_active =
             menu_owns_escape_press(ui.active_menu.as_deref(), ui.marking_menu.as_ref());
@@ -368,6 +369,7 @@ impl Runtime {
     }
 
     pub(super) fn toggle_menu(&mut self, menu: &str) -> bool {
+        self.trace_schematic_creation_event("toggle menu", None);
         let ui = &mut self.session.workspace_mut().ui;
         ui.terminal_clipboard_menu = None;
         ui.active_submenu = None;
@@ -445,15 +447,8 @@ impl Runtime {
         if item.is_guarded_erc() {
             return self.start_erc_job();
         }
-        match item.verb.as_deref() {
-            Some("datum.schematic.place_symbol") => return self.begin_native_schematic(false),
-            Some("datum.schematic.draw_wire") => return self.begin_native_schematic(true),
-            Some("datum.journal.undo") => return self.queue_native_history(false),
-            Some("datum.journal.redo") => return self.queue_native_history(true),
-            Some("datum.pcb.move_component") => {
-                return self.set_workspace_tool(WorkspaceTool::Move);
-            }
-            _ => {}
+        if let Some(handled) = self.activate_native_edit_menu(item.verb.as_deref()) {
+            return handled;
         }
         let reason = item
             .not_built

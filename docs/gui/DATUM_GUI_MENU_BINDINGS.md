@@ -64,6 +64,7 @@ operations is.
 | Menu item | Backing mechanism | Status |
 |---|---|---|
 | New Project | `GlobalPreferencesProductService::create_project` / CLI `project new` | WIRED — native input-modal form; exact eight-key Units genesis |
+| New Schematic… | `datum.schematic.create_sheet` through the native-edit worker and canonical `CreateSchematicSheet` batch | PARTIAL — named in-canvas creation form opens the committed schematic document; broader hierarchy editing and library authoring remain separate |
 | Open Project | GUI-local `project.open` / Ctrl+O; owned native form, read-only preparation and origin-qualified session publication | PARTIAL — ordinary cancellation/refusal, copied-root replacement and preserved terminal origins at the source/runtime pins in [C04 proof](../reviews/workflow-delivery-rollout/s5a/c04-native-current-proof.json); full C04 remains open |
 | Import | `build_kicad_board_import` / `build_kicad_schematic_import` / `build_kicad_footprint_import` / `build_eagle_library_import`; CLI `project import-kicad-*` / `import-eagle-library` | ENGINE-READY / GUI-BLOCKED |
 | Save / Save As | Typed native project Save through the existing GUI native-edit client; Save As is separate | PARTIAL for project Save/history/reopen receipts; Save As and complete menu projection remain unqualified |

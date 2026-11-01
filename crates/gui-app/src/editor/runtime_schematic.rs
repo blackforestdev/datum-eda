@@ -46,6 +46,7 @@ impl Runtime {
         if self.native_edit.pending() {
             return false;
         }
+        self.session.workspace_mut().schematic_authoring.creation = None;
         let was_active = self.workspace().schematic_authoring.active()
             || self.workspace().schematic_authoring.picker;
         let base = self.session.workspace_mut().schematic_authoring.cancel();
@@ -77,6 +78,9 @@ impl Runtime {
         true
     }
     pub(super) fn handle_schematic_chrome(&mut self, target: &HitTarget) -> bool {
+        if self.workspace().schematic_authoring.creation.is_some() {
+            return self.handle_schematic_creation_hit(target);
+        }
         if (self.workspace().schematic_authoring.active()
             || self.workspace().schematic_authoring.picker)
             && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
@@ -117,6 +121,7 @@ impl Runtime {
         true
     }
     pub(super) fn handle_schematic_key(&mut self, event: &winit::event::KeyEvent) -> bool {
+        self.trace_schematic_creation_event("schematic key", Some(event));
         if !matches!(
             self.application_focus(),
             datum_gui_protocol::ApplicationFocus::Editor(_)
@@ -125,6 +130,9 @@ impl Runtime {
         }
         if event.state != ElementState::Pressed {
             return false;
+        }
+        if self.workspace().schematic_authoring.creation.is_some() {
+            return self.handle_schematic_creation_key(event);
         }
         if !self.workspace().schematic_authoring.active()
             && !self.workspace().schematic_authoring.picker

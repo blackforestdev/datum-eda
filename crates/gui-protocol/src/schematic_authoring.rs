@@ -20,6 +20,10 @@ pub struct LibrarySymbolChoice {
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    CreateSheet {
+        sheet: Uuid,
+        name: String,
+    },
     PlaceSymbol {
         sheet: Uuid,
         library_symbol: Uuid,
@@ -36,6 +40,10 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::CreateSheet { sheet, name } => (
+                "datum.schematic.create_sheet",
+                serde_json::json!({"sheet":sheet,"name":name}),
+            ),
             Self::PlaceSymbol {
                 sheet,
                 library_symbol,
@@ -60,8 +68,19 @@ pub enum PlacementField {
     Reference,
     Value,
 }
+#[derive(Debug, Clone, PartialEq)]
+pub struct NewSchematicDraft {
+    pub name: String,
+    pub editor: crate::single_line_editor::SingleLineEditor,
+    /// Name, Cancel, Create; shared keyboard and pointer focus order.
+    pub focus: usize,
+    pub revision: String,
+    pub tip: Option<Uuid>,
+    pub refusal: Option<String>,
+}
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
+    pub creation: Option<NewSchematicDraft>,
     pub move_paths: std::collections::BTreeMap<Uuid, Vec<Uuid>>,
     pub move_bases: std::collections::BTreeMap<
         Uuid,

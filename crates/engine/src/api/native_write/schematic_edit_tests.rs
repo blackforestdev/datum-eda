@@ -9,6 +9,79 @@ fn p(x: i64, y: i64) -> Point {
 }
 
 #[test]
+fn native_create_sheet_validates_shape_and_creates_first_sheet_from_genesis() {
+    use crate::api::native_write::genesis::{GenesisSpec, bootstrap_native_project};
+    let root = crate::api::native_write::test_support::temp_project_root("first_native_sheet");
+    bootstrap_native_project(
+        &root,
+        GenesisSpec {
+            project_name: "Empty project".into(),
+            existing_ids: None,
+        },
+    )
+    .unwrap();
+    let mut model = ProjectResolver::new(&root).resolve().unwrap();
+    assert!(schematic(&model).unwrap().sheets.is_empty());
+    let sheet = Uuid::new_v4();
+    let context = NativeWriteContext {
+        model: &model,
+        project_root: &root,
+    };
+    for params in [
+        serde_json::json!({"sheet":sheet,"name":" \n\t"}),
+        serde_json::json!({"sheet":sheet}),
+        serde_json::json!({"name":"Main"}),
+        serde_json::json!({"sheet":"not-a-uuid","name":"Main"}),
+        serde_json::json!({"sheet":sheet,"name":"Main","relative_path":"../escape.json"}),
+        serde_json::json!({"sheet":sheet,"name":"Main","schema_version":2}),
+    ] {
+        assert!(create_sheet(&context, provenance(), params).is_err());
+    }
+    let path = root.join(format!("schematic/sheets/{sheet}.json"));
+    std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+    std::fs::write(&path, b"existing unreferenced file").unwrap();
+    assert!(
+        create_sheet(
+            &context,
+            provenance(),
+            serde_json::json!({"sheet":sheet,"name":"Main"})
+        )
+        .is_err()
+    );
+    assert_eq!(std::fs::read(&path).unwrap(), b"existing unreferenced file");
+    std::fs::remove_file(&path).unwrap();
+    let prepared = create_sheet(
+        &context,
+        provenance(),
+        serde_json::json!({"sheet":sheet,"name":"  Main  "}),
+    )
+    .unwrap();
+    assert_eq!(prepared.primary_object_id, Some(sheet));
+    assert!(
+        !path.exists(),
+        "adapter only builds; commit owns persistence"
+    );
+    commit_prepared(&mut model, &root, prepared).unwrap();
+    let reopened = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&reopened).unwrap().sheets[&sheet].name, "Main");
+    let raw: serde_json::Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    assert_eq!(raw["schema_version"], 1);
+    assert_eq!(raw["uuid"], sheet.to_string());
+    assert!(
+        create_sheet(
+            &NativeWriteContext {
+                model: &reopened,
+                project_root: &root
+            },
+            provenance(),
+            serde_json::json!({"sheet":sheet,"name":"Duplicate"})
+        )
+        .is_err()
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn native_wire_t_contact_is_atomic_and_survives_undo_redo_reopen() {
     let mut f = fixture("native_wire_t_gesture");
     let sheet = schematic(&f.model).unwrap().sheets[&f.sheet].clone();

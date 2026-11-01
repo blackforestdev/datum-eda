@@ -169,6 +169,35 @@ fn root_preview_uses_the_live_primary_scene_and_authoring_never_borrows_another_
     );
     let basis = crate::AuthoringViewBasis::capture(&state, PaneId(1)).unwrap();
     assert!(basis.is_current(&state, PaneId(1)));
+    let base = state.schematic_scene.clone().unwrap();
+    let original_source = state.schematic_authoring.source.clone();
+    state.schematic_authoring.wire = true;
+    state.schematic_authoring.vertices = vec![
+        crate::PointNm { x: 0, y: 0 },
+        crate::PointNm { x: 1_000_000, y: 0 },
+    ];
+    let preview = state
+        .schematic_authoring
+        .preview_scene(&base, &root)
+        .unwrap();
+    assert_eq!(preview.schematic_document, base.schematic_document);
+    assert_eq!(preview.scene_id, base.scene_id);
+    assert!(preview.board_graphics.len() > base.board_graphics.len());
+    assert_eq!(
+        state.schematic_authoring.source, original_source,
+        "preview must not mutate its source"
+    );
+    state.schematic_scene = Some(preview.clone());
+    assert!(
+        basis.is_current(&state, PaneId(1)),
+        "wire preview must remain qualified in the named source pane"
+    );
+    state.schematic_scene.as_mut().unwrap().schematic_document = None;
+    assert!(
+        !basis.is_current(&state, PaneId(1)),
+        "unqualified preview must still be refused"
+    );
+    state.schematic_scene = Some(preview);
     let selected = state.selection.clone();
     let other = state.ui.layout.split_focused_with(
         PaneContent::Schematic,

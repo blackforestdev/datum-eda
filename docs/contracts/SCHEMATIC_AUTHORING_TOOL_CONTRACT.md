@@ -35,10 +35,11 @@ mutation files; this contract collapses them to **ten** typed operations
 by making kind, target, and edit-vs-create into parameters of existing
 operations rather than separate tools.
 
-Out of scope for this slice: hierarchy/sheet-structure authoring
-(create-sheet / sheet-instance / sheet-pin), variant overlay editing, and
-library object authoring (see `008` contract). These are documented as
-gaps, not tools.
+Broader hierarchy authoring (sheet instances, sheet pins and cross-sheet net
+rewiring), variant overlays and library object authoring (see `008` contract)
+remain outside this ten-tool slice. Native flat schematic document creation
+already has a journaled engine/CLI operation; its ordinary GUI binding is a
+separately bounded implementation increment.
 
 ### Current-engine grounding (verified)
 
@@ -536,13 +537,12 @@ any sheet-structure change that rewires existing nets, author-waiver.
   `members[]`/`entries[]` and an optional `bus_id` for edit.
 - **rename-label op** — rename is `SetObjectField` on the label text (a
   display change per the `NetAnchor` rule); no separate operation.
-- **create-sheet / sheet-instance / sheet-pin authoring (this slice)** —
-  NOT redundant but OUT OF SCOPE: entirely unimplemented (only the
-  `ProjectNew` scaffold + read queries; `sheet_instances` exists in the IR
-  but has no authoring op), structural and cross-sheet (net-rewiring →
-  proposal class), and an open owner question. Demoted from the tool set
-  to a documented gap; including it would be a maximal-catalog defect for
-  a slice that cannot prove it. See **Not-Yet-Supported**.
+- **Sheet-structure authoring** — native sheet creation, definitions,
+  instances and bindings already have canonical journaled operations. These
+  structural operations remain outside this ten-tool inventory. Exposing flat
+  document creation through the ordinary GUI does not deliver broader hierarchy
+  editing; sheet-pin authoring and cross-sheet net rewiring retain their existing
+  boundaries. See **Not-Yet-Supported**.
 - **any commit/save schematic tool distinct from the global `commit()`** —
   there is exactly one `commit()` primitive in the ratified spine; a
   per-domain save tool would be a forbidden private write path (precisely
@@ -597,7 +597,7 @@ hierarchy-mismatch-demo golden referenced in
 `crates/cli/src/main_tests_query_goldens.rs`.
 
 If a clean multi-sheet hierarchical native fixture is needed for any
-future create-sheet proof, ASK the owner to provide a real one rather than
+broader hierarchy proof, ASK the owner to provide a real one rather than
 fabricating sheet JSON (per the no-synthetic-kicad / ask-for-fixtures
 memory).
 

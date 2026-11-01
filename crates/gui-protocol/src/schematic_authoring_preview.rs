@@ -115,6 +115,10 @@ impl SchematicAuthoring {
                 )?;
             }
         }
+        // Preview ink retains the immutable source occurrence it was acquired from.
+        // Dropping this envelope would make the named pane reject its own preview.
+        scene.schematic_document = base.schematic_document.clone();
+        scene.scene_id = base.scene_id.clone();
         scene.bounds = base.bounds.clone();
         scene.source_revision = base.source_revision.clone();
         scene.project_uuid = base.project_uuid.clone();

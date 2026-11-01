@@ -51,7 +51,7 @@ pub(super) fn render_menu_bar(
         menu_overlay_quads,
         menu_overlay_text_runs,
         hit_regions,
-    );
+    )?;
     scale.quads(&mut panel_quads[starts.0..]);
     scale.quads(&mut menu_overlay_quads[starts.1..]);
     scale.text_geometry(&mut menu_overlay_text_runs[starts.2..]);

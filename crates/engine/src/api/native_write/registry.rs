@@ -145,6 +145,7 @@ mod tests {
                 "datum.project.set_name",
                 "datum.project.set_rule",
                 "datum.project.set_rules",
+                "datum.schematic.create_sheet",
                 "datum.schematic.draw_wire",
                 "datum.schematic.move_symbol",
                 "datum.schematic.place_symbol",

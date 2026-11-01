@@ -3,6 +3,7 @@ use super::*;
 use datum_gui_protocol::{NewProjectFocus, single_line_editor::SingleLineEditor};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum Target {
+    SchematicName,
     ProjectName,
     FolderName,
     Location,
@@ -28,15 +29,40 @@ impl Runtime {
                 _ => {}
             }
         }
-        match self.folder_navigation_focus() {
+        if let Some(target) = match self.folder_navigation_focus() {
             Some(Focus::Path) => Some(Target::Location),
             Some(Focus::NameEditor) => Some(Target::EntryName),
             _ => None,
+        } {
+            return Some(target);
         }
+        if !ui.new_project.open
+            && !ui.project_open.open
+            && self
+                .workspace()
+                .schematic_authoring
+                .creation
+                .as_ref()
+                .is_some_and(|d| d.focus == 0)
+        {
+            return Some(Target::SchematicName);
+        }
+        None
     }
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::SchematicName => {
+                self.workspace()
+                    .schematic_authoring
+                    .creation
+                    .as_ref()
+                    .map(|d| Snapshot {
+                        text: d.name.clone(),
+                        editor: d.editor,
+                        editable: !self.native_edit.pending(),
+                    })
+            }
             Target::ProjectName => Some(Snapshot {
                 text: ui.new_project.project_name.clone(),
                 editor: ui.new_project.project_name_editor,
@@ -67,6 +93,15 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::SchematicName => {
+                if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation {
+                    d.name = snapshot.text;
+                    d.editor = snapshot.editor;
+                    if changed {
+                        d.refusal = None;
+                    }
+                }
+            }
             Target::ProjectName => {
                 let d = &mut self.session.workspace_mut().ui.new_project;
                 d.project_name = snapshot.text;
@@ -229,7 +264,12 @@ impl Runtime {
             }
             Err(reason) if reason.is_empty() => return false,
             Err(reason) => {
-                if target == Target::EntryName {
+                if target == Target::SchematicName {
+                    if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation
+                    {
+                        d.refusal = Some(reason);
+                    }
+                } else if target == Target::EntryName {
                     self.folder_input_refusal(reason);
                 } else if let Some(s) = &mut self.folder_browser.state {
                     s.input_refusal = Some(reason);
@@ -246,6 +286,7 @@ impl Runtime {
         scale: f32,
     ) -> bool {
         let target = match region.target {
+            HitTarget::SchematicName => Target::SchematicName,
             HitTarget::NewProjectName => Target::ProjectName,
             HitTarget::NewProjectFolderName => Target::FolderName,
             HitTarget::FolderBrowser(Focus::Path) => Target::Location,
@@ -268,6 +309,11 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::SchematicName => {
+                if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation {
+                    d.focus = 0;
+                }
+            }
             Target::ProjectName => {
                 self.session.workspace_mut().ui.new_project.focus = NewProjectFocus::ProjectName
             }

@@ -41,7 +41,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProjectOpenModal
         | HitTarget::ProjectOpenCancel
         | HitTarget::ProjectOpenConfirm => false,
-        HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
+        HitTarget::SchematicName | HitTarget::SchematicCreate
+        | HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
         | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicReference
         | HitTarget::SchematicValue | HitTarget::SchematicPlace
         | HitTarget::SchematicCancel | HitTarget::SchematicFinishWire => false,

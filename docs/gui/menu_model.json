@@ -12,6 +12,12 @@
           "shortcut": "Ctrl+N"
         },
         {
+          "label": "New Schematic\u2026",
+          "icon": "file-new",
+          "verb": "datum.schematic.create_sheet",
+          "requires_project": true
+        },
+        {
           "label": "Open Project",
           "icon": "folder-open",
           "gui_local": "project.open",

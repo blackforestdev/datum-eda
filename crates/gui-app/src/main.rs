@@ -17,6 +17,8 @@ mod runtime_native_edit;
 mod runtime_schematic;
 #[path = "editor/runtime_schematic_navigation.rs"]
 mod runtime_schematic_navigation;
+#[path = "editor/runtime_sheet_creation.rs"]
+mod runtime_sheet_creation;
 #[path = "application/runtime_state.rs"]
 mod runtime_state;
 use anyhow::{Context, Result};

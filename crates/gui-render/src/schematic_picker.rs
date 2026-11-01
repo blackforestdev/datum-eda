@@ -1,5 +1,7 @@
 //! Native symbol selection and gesture controls using existing chrome tokens.
 use crate::*;
+#[path = "schematic_creation.rs"]
+mod creation;
 use datum_gui_protocol::{ReviewWorkspaceState, schematic_authoring::PlacementField};
 pub(super) fn render(
     state: &ReviewWorkspaceState,
@@ -7,7 +9,10 @@ pub(super) fn render(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
-) {
+) -> anyhow::Result<()> {
+    if state.schematic_authoring.creation.is_some() {
+        return creation::render(state, layout, quads, text, hits);
+    }
     let authoring = &state.schematic_authoring;
     if authoring.picker {
         let width = 480f32.min(layout.top_menu_bar.width - 32.0);
@@ -258,6 +263,7 @@ pub(super) fn render(
             );
         }
     }
+    Ok(())
 }
 fn button(
     label: &str,

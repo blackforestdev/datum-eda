@@ -15,6 +15,10 @@ use uuid::Uuid;
 
 pub(crate) const VERBS: &[NativeWriteVerb] = &[
     NativeWriteVerb {
+        id: "datum.schematic.create_sheet",
+        build: create_sheet,
+    },
+    NativeWriteVerb {
         id: "datum.schematic.move_symbol",
         build: super::schematic_symbol_move::move_symbol,
     },
@@ -27,6 +31,59 @@ pub(crate) const VERBS: &[NativeWriteVerb] = &[
         build: draw_wire,
     },
 ];
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CreateSheetParams {
+    sheet: Uuid,
+    name: String,
+}
+
+fn create_sheet(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    let params: CreateSheetParams = parse_verb_params("datum.schematic.create_sheet", params)?;
+    let name = params.name.trim();
+    if name.is_empty() {
+        return Err(EngineError::Validation(
+            "sheet name must not be empty".into(),
+        ));
+    }
+    let source = schematic(context.model)?;
+    if source.sheets.contains_key(&params.sheet) {
+        return Err(EngineError::Validation(format!(
+            "sheet already exists in native schematic root: {}",
+            params.sheet
+        )));
+    }
+    let relative_path = format!("sheets/{}.json", params.sheet);
+    if context
+        .project_root
+        .join("schematic")
+        .join(&relative_path)
+        .exists()
+    {
+        return Err(EngineError::Validation(format!(
+            "sheet file already exists: schematic/{relative_path}"
+        )));
+    }
+    // Preserve the canonical native shard shape used by CLI sheet creation.
+    let sheet = serde_json::json!({
+        "schema_version": 1, "uuid": params.sheet, "name": name, "frame": null,
+        "symbols": {}, "wires": {}, "junctions": {}, "labels": {}, "buses": {},
+        "bus_entries": {}, "ports": {}, "noconnects": {}, "texts": {}, "drawings": {}
+    });
+    super::schematic_sheets::build_create_schematic_sheet(
+        context.model,
+        provenance,
+        source.uuid,
+        params.sheet,
+        &relative_path,
+        sheet,
+    )
+}
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]

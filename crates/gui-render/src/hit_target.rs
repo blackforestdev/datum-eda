@@ -45,6 +45,8 @@ pub enum HitTarget {
     },
     Library(datum_gui_protocol::library_browser::LibraryControl),
     SchematicPicker,
+    SchematicName,
+    SchematicCreate,
     SchematicLibraryPage(bool),
     SchematicLibraryChoice(usize),
     SchematicReference,

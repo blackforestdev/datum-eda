@@ -11,10 +11,18 @@ use eda_engine::substrate::CommitSource;
 pub(super) fn parse_params(value: Value) -> Result<NativeWriteParams, String> {
     if matches!(
         value.get("verb").and_then(Value::as_str),
-        Some("datum.library.create" | "datum.library.edit")
+        Some("datum.library.create" | "datum.library.edit" | "datum.schematic.create_sheet")
     ) && value.get("expected_transaction_tip").is_none()
     {
-        return Err("library editing requires explicit expected_transaction_tip (null for an empty journal)".into());
+        let action =
+            if value.get("verb").and_then(Value::as_str) == Some("datum.schematic.create_sheet") {
+                "sheet creation"
+            } else {
+                "library editing"
+            };
+        return Err(format!(
+            "{action} requires explicit expected_transaction_tip (null for an empty journal)"
+        ));
     }
     serde_json::from_value(value).map_err(|error| error.to_string())
 }
@@ -86,6 +94,7 @@ pub(super) fn native_write_response(
             "datum.pcb.move_component"
                 | "datum.journal.undo"
                 | "datum.journal.redo"
+                | "datum.schematic.create_sheet"
                 | "datum.schematic.place_symbol"
                 | "datum.schematic.draw_wire"
         ))
@@ -103,6 +112,7 @@ pub(super) fn native_write_response(
             "datum.pcb.move_component"
                 | "datum.journal.undo"
                 | "datum.journal.redo"
+                | "datum.schematic.create_sheet"
                 | "datum.schematic.place_symbol"
                 | "datum.schematic.draw_wire"
         ))
