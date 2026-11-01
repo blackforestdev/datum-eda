@@ -1,11 +1,14 @@
 //! One value/cursor/selection/clipboard input controller for native form fields.
 use super::*;
-use datum_gui_protocol::{NewProjectFocus, single_line_editor::SingleLineEditor};
+use datum_gui_protocol::{
+    NewProjectFocus, schematic_authoring::PlacementField, single_line_editor::SingleLineEditor,
+};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum Target {
     LibraryPath,
     LibrarySearch,
     SchematicName,
+    SchematicPlacement(PlacementField),
     ProjectName,
     FolderName,
     Location,
@@ -49,6 +52,18 @@ impl Runtime {
         {
             return Some(Target::SchematicName);
         }
+        if !ui.new_project.open
+            && !ui.project_open.open
+            && ui.active_menu.is_none()
+            && ui.layout.focused_content() == PaneContent::Schematic
+            && self.application_focus()
+                == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
+            && self.workspace().schematic_authoring.picker
+        {
+            return Some(Target::SchematicPlacement(
+                self.workspace().schematic_authoring.field,
+            ));
+        }
         if self.workspace().ui.layout.focused_content() == PaneContent::Library
             && matches!(
                 self.application_focus(),
@@ -68,6 +83,21 @@ impl Runtime {
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::SchematicPlacement(field) => {
+                let e = &self.workspace().schematic_authoring;
+                if !e.picker {
+                    return None;
+                }
+                let (text, editor) = match field {
+                    PlacementField::Reference => (e.reference.clone(), e.reference_editor),
+                    PlacementField::Value => (e.value.clone(), e.value_editor),
+                };
+                Some(Snapshot {
+                    text,
+                    editor,
+                    editable: !self.native_edit.pending(),
+                })
+            }
             Target::LibraryPath | Target::LibrarySearch => {
                 let a = self.workspace().library.acquisition.as_ref()?;
                 let path = target == Target::LibraryPath;
@@ -122,6 +152,23 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::SchematicPlacement(field) => {
+                let e = &mut self.session.workspace_mut().schematic_authoring;
+                match field {
+                    PlacementField::Reference => {
+                        e.reference = snapshot.text;
+                        e.reference_editor = snapshot.editor;
+                    }
+                    PlacementField::Value => {
+                        e.value = snapshot.text;
+                        e.value_editor = snapshot.editor;
+                    }
+                }
+                if changed {
+                    e.refusal = None;
+                }
+                self.invalidate_frame();
+            }
             Target::LibraryPath | Target::LibrarySearch => {
                 if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
                     if target == Target::LibraryPath {
@@ -134,7 +181,7 @@ impl Runtime {
                         a.search = snapshot.text;
                         a.search_editor = snapshot.editor;
                         if changed {
-                            a.offset = 0;
+                            a.search_changed();
                         }
                     }
                 }
@@ -316,6 +363,9 @@ impl Runtime {
                         a.refusal = Some(reason);
                     }
                     self.invalidate_frame();
+                } else if matches!(target, Target::SchematicPlacement(_)) {
+                    self.session.workspace_mut().schematic_authoring.refusal = Some(reason);
+                    self.invalidate_frame();
                 } else if target == Target::SchematicName {
                     if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation
                     {
@@ -345,6 +395,8 @@ impl Runtime {
                 datum_gui_protocol::library_browser::LibraryControl::AcquireSearch,
             ) => Target::LibrarySearch,
             HitTarget::SchematicName => Target::SchematicName,
+            HitTarget::SchematicReference => Target::SchematicPlacement(PlacementField::Reference),
+            HitTarget::SchematicValue => Target::SchematicPlacement(PlacementField::Value),
             HitTarget::NewProjectName => Target::ProjectName,
             HitTarget::NewProjectFolderName => Target::FolderName,
             HitTarget::FolderBrowser(Focus::Path) => Target::Location,
@@ -367,6 +419,9 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::SchematicPlacement(field) => {
+                self.session.workspace_mut().schematic_authoring.field = field;
+            }
             Target::LibraryPath | Target::LibrarySearch => {
                 self.session.workspace_mut().library.focus =
                     Some(if target == Target::LibraryPath {

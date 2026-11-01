@@ -57,6 +57,25 @@ fn optional_binding_picker_selects_valid_unit_backed_symbol_and_retains_diagnost
     assert!(picker.select(0));
     assert_eq!(picker.chosen, Some(0));
     assert!(picker.refusal.is_none());
+    let reference = picker.reference.clone();
+    let default_value = picker.value.clone();
+    picker.value_editor.select_all(&picker.value);
+    picker
+        .value_editor
+        .replace(&mut picker.value, "10k")
+        .unwrap();
+    assert_eq!(
+        picker.value, "10k",
+        "typing replaces the selected default value"
+    );
+    assert_eq!(
+        picker.reference, reference,
+        "value editing leaves reference intact"
+    );
+    assert!(picker.select(0));
+    assert_eq!(picker.value, default_value);
+    assert_eq!(picker.value_editor.caret, picker.value.len());
+    assert!(picker.value_editor.selection(&picker.value).is_empty());
     assert_eq!(
         ProjectResolver::new(&root)
             .resolve()

@@ -1,4 +1,5 @@
 //! Native symbol selection and gesture controls using existing chrome tokens.
+use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter};
 use crate::*;
 #[path = "schematic_creation.rs"]
 mod creation;
@@ -137,16 +138,19 @@ pub(super) fn render(
             );
         }
         y = panel.y + 215.;
-        for (label, value, field, target) in [
+        let mut controls = ControlMeshCache::default();
+        for (label, value, editor, field, target) in [
             (
                 "Reference",
                 &authoring.reference,
+                authoring.reference_editor,
                 PlacementField::Reference,
                 HitTarget::SchematicReference,
             ),
             (
                 "Value",
                 &authoring.value,
+                authoring.value_editor,
                 PlacementField::Value,
                 HitTarget::SchematicValue,
             ),
@@ -166,27 +170,21 @@ pub(super) fn render(
                 width: width - 126.,
                 height: 27.,
             };
-            quads.push(Quad::from_rect(row, design_tokens::chrome::SURFACE_02));
-            push_rect_border(
-                quads,
+            crate::single_line_control::paint(
+                value,
+                "",
+                editor,
+                authoring.field == field
+                    && state.ui.active_menu.is_none()
+                    && state.ui.focus
+                        == datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused),
+                true,
                 row,
-                if authoring.field == field {
-                    TEXT_ACCENT
-                } else {
-                    design_tokens::chrome::BORDER_SUBTLE
-                },
-                1.,
-            );
-            draw_text(
-                &truncate_text(value, 46),
-                row.x + 7.,
-                y + 7.,
-                12.,
-                TEXT_PRIMARY,
-                TextFace::Ui,
+                &mut ControlPainter::new(quads, &mut controls, 1.),
                 text,
-            );
-            hits.push(HitRegion { target, rect: row });
+                hits,
+                target,
+            )?;
             y += 35.;
         }
         if let Some(refusal) = &authoring.refusal {

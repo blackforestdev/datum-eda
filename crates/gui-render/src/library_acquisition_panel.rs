@@ -6,15 +6,49 @@ pub(super) fn render(p: &mut Painter<'_>) {
     let a = p.state.library.acquisition.as_ref().unwrap();
     if a.bundled {
         p.line("Datum symbol library");
-        p.line("Shipped native symbols · no KiCad installation required");
+        p.line("Choose a symbol, then continue to placement");
     } else {
         p.line("Browse KiCad symbols");
         p.line("Library folder or .kicad_sym file");
         field(p, &a.path, a.path_editor, C::AcquirePath);
         p.button("Refresh source", C::AcquireLoad);
     }
-    p.line("Search libraries, symbols and descriptions");
+    p.line("Search symbols (Ctrl+F)");
     field(p, &a.search, a.search_editor, C::AcquireSearch);
+    if let Some(preview) = &a.preview {
+        p.line(&format!("Selected: {}", preview.name));
+        if preview
+            .notices
+            .iter()
+            .any(|n| n.starts_with("Already in this Project:"))
+        {
+            p.line("Uses this Project's saved symbol.");
+        }
+        p.button(
+            if a.placement_pane.is_some() {
+                "Continue to placement…"
+            } else if a.bundled {
+                "Add to Project library"
+            } else {
+                "Import into Project pool"
+            },
+            C::AcquireImport,
+        );
+        let rect = RectPx {
+            x: p.rect.x + 8.,
+            y: p.y,
+            width: (p.rect.width - 16.).max(0.),
+            height: 120.,
+        };
+        super::super::library_preview::electrical::symbol(
+            &preview.symbol,
+            Some(&preview.unit),
+            rect,
+            p.quads,
+            p.text,
+        );
+        p.y += rect.height;
+    }
     if a.loading {
         p.line("Reading local source…");
     } else if !a.loaded {
@@ -23,20 +57,33 @@ pub(super) fn render(p: &mut Painter<'_>) {
         p.line("This source contains no named symbols");
     } else {
         let results = a.results();
-        p.line(&format!(
-            "{} matching symbols · exact first, then library/name",
-            results.len()
-        ));
+        p.line(&format!("{} matching symbols", results.len()));
+        if results.is_empty() {
+            p.line("No matching symbols. Try a name such as resistor or capacitor.");
+        }
         for index in results.iter().skip(a.offset).take(4) {
             p.button(
-                &format!("Preview {}", a.names[*index]),
+                &a.sources
+                    .get(*index)
+                    .map(|s| s.display_label())
+                    .unwrap_or_else(|| a.names[*index].clone()),
                 C::AcquireResult(*index),
             );
         }
         if results.len() > 4 {
-            p.button("Previous names", C::AcquirePage(false));
-            p.button("Next names", C::AcquirePage(true));
+            p.button("Previous results", C::AcquirePage(false));
+            p.button("Next results", C::AcquirePage(true));
         }
+    }
+    if a.bundled {
+        p.button(
+            if a.include_unavailable {
+                "Hide unavailable symbols"
+            } else {
+                "Show unavailable symbols"
+            },
+            C::AcquireShowUnavailable,
+        );
     }
     if !a.catalog_notices.is_empty() {
         if !a.bundled {
@@ -51,42 +98,6 @@ pub(super) fn render(p: &mut Painter<'_>) {
     }
     if let Some(reason) = &a.refusal {
         p.line(reason);
-    }
-    if let Some(preview) = &a.preview {
-        p.line(&format!("{} · preview only", preview.name));
-        p.line("Checks: unchecked · approval: unavailable · standards basis: unknown");
-        for notice in &preview.notices {
-            p.line(notice);
-        }
-        let pins = preview.unit.get("pins").and_then(Value::as_object);
-        p.line(&format!(
-            "{} logical pins · native Unit and Symbol",
-            pins.map_or(0, |pins| pins.len())
-        ));
-        let rect = RectPx {
-            x: p.rect.x + 8.,
-            y: p.y,
-            width: (p.rect.width - 16.).max(0.),
-            height: 190.,
-        };
-        super::super::library_preview::electrical::symbol(
-            &preview.symbol,
-            Some(&preview.unit),
-            rect,
-            p.quads,
-            p.text,
-        );
-        p.y += rect.height;
-        p.button(
-            if a.placement_pane.is_some() {
-                "Use symbol"
-            } else if a.bundled {
-                "Add to Project library"
-            } else {
-                "Import into Project pool"
-            },
-            C::AcquireImport,
-        );
     }
     p.button("Cancel · leave source and Project unchanged", C::Cancel);
 }
@@ -106,7 +117,11 @@ fn field(
     let mut cache = ControlMeshCache::default();
     let _ = crate::single_line_control::paint(
         value,
-        "",
+        if control == C::AcquireSearch {
+            "resistor, capacitor, connector…"
+        } else {
+            ""
+        },
         editor,
         p.state.library.focus.as_ref() == Some(&control),
         true,
@@ -133,6 +148,9 @@ pub(super) fn inspector(p: &mut Painter<'_>) {
     p.line("Standards basis and production qualification: unknown");
     if let Some(preview) = &a.preview {
         p.line(&preview.name);
+        for notice in &preview.notices {
+            p.line(notice);
+        }
         p.line(&format!(
             "Original source: {}",
             preview.source_path.display()

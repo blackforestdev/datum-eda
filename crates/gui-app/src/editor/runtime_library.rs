@@ -52,6 +52,7 @@ impl Runtime {
             | C::AcquirePath
             | C::AcquireLoad
             | C::AcquireSearch
+            | C::AcquireShowUnavailable
             | C::AcquireResult(_)
             | C::AcquirePage(_)
             | C::AcquireImport => unreachable!(),
@@ -293,8 +294,27 @@ impl Runtime {
         true
     }
     pub(super) fn handle_library_key(&mut self, event: &winit::event::KeyEvent) -> bool {
-        if self.workspace().library.acquisition.is_some() && self.handle_shared_editor_key(event) {
-            return true;
+        if self.workspace().library.acquisition.is_some()
+            && self.workspace().ui.layout.focused_content() == PaneContent::Library
+            && matches!(
+                self.application_focus(),
+                datum_gui_protocol::ApplicationFocus::Editor(_)
+            )
+        {
+            if event.state == ElementState::Pressed {
+                let modifiers = self.modifiers;
+                if text_input::focus_acquisition_search(
+                    &mut self.session.workspace_mut().library,
+                    &event.logical_key,
+                    modifiers,
+                ) {
+                    self.invalidate_frame();
+                    return true;
+                }
+            }
+            if self.handle_shared_editor_key(event) {
+                return true;
+            }
         }
         self.handle_library_input(&event.logical_key, event.state)
     }
@@ -325,6 +345,9 @@ impl Runtime {
                         controls.extend([C::AcquirePath, C::AcquireLoad]);
                     }
                     controls.push(C::AcquireSearch);
+                    if a.preview.is_some() {
+                        controls.push(C::AcquireImport);
+                    }
                     controls.extend(
                         a.results()
                             .into_iter()
@@ -335,8 +358,8 @@ impl Runtime {
                     if a.results().len() > 4 {
                         controls.extend([C::AcquirePage(false), C::AcquirePage(true)]);
                     }
-                    if a.preview.is_some() {
-                        controls.push(C::AcquireImport);
+                    if a.bundled {
+                        controls.push(C::AcquireShowUnavailable);
                     }
                     controls.push(C::Cancel);
                 } else if let Some(d) = &s.library.draft {

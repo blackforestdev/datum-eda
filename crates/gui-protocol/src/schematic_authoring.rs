@@ -108,7 +108,9 @@ pub struct SchematicAuthoring {
     pub picker: bool,
     pub field: PlacementField,
     pub reference: String,
+    pub reference_editor: crate::single_line_editor::SingleLineEditor,
     pub value: String,
+    pub value_editor: crate::single_line_editor::SingleLineEditor,
     pub position: Option<PointNm>,
     pub preview_dirty: bool,
     pub wire: bool,
@@ -236,6 +238,9 @@ impl SchematicAuthoring {
             .unwrap();
         self.reference = format!("{}{n}", choice.prefix);
         self.value = choice.name.clone();
+        self.reference_editor =
+            crate::single_line_editor::SingleLineEditor::at_end(&self.reference);
+        self.value_editor = crate::single_line_editor::SingleLineEditor::at_end(&self.value);
         self.refusal = None;
         true
     }

@@ -2,6 +2,38 @@
 use super::*;
 use datum_gui_protocol::library_browser::LibraryBrowser;
 
+/// Printable keys over a result list start a search instead of disappearing.
+/// An explicitly focused source-path editor retains its normal text ownership.
+pub(super) fn focus_acquisition_search(
+    browser: &mut LibraryBrowser,
+    key: &Key,
+    modifiers: winit::keyboard::ModifiersState,
+) -> bool {
+    let Some(a) = &mut browser.acquisition else {
+        return false;
+    };
+    if modifiers.alt_key() || modifiers.super_key() {
+        return false;
+    }
+    if modifiers.control_key() {
+        if matches!(key, Key::Character(s) if s.eq_ignore_ascii_case("f")) {
+            browser.focus = Some(C::AcquireSearch);
+            a.search_editor.select_all(&a.search);
+            browser.reveal_focus = true;
+            return true;
+        }
+        return false;
+    }
+    if matches!(key, Key::Character(s) if !s.chars().any(char::is_control))
+        && !matches!(browser.focus, Some(C::AcquirePath | C::AcquireSearch))
+    {
+        browser.focus = Some(C::AcquireSearch);
+        a.search_editor.select_all(&a.search);
+        browser.reveal_focus = true;
+    }
+    false
+}
+
 pub(super) fn apply(browser: &mut LibraryBrowser, key: &Key) -> bool {
     let text = match key {
         Key::Character(text) => Some(text.as_str()),
@@ -53,6 +85,37 @@ pub(super) fn apply(browser: &mut LibraryBrowser, key: &Key) -> bool {
 mod tests {
     use super::*;
     use datum_gui_protocol::library_authoring::LibraryDraft;
+
+    #[test]
+    fn acquisition_typing_from_a_result_starts_a_new_search_but_keeps_source_path_editing() {
+        use datum_gui_protocol::library_browser::acquisition::LibraryAcquisition;
+        let mut browser = LibraryBrowser::default();
+        let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
+        acquisition.search = "resistor".into();
+        browser.acquisition = Some(acquisition);
+        browser.focus = Some(C::AcquireResult(0));
+        assert!(!focus_acquisition_search(
+            &mut browser,
+            &Key::Character("c".into()),
+            Default::default()
+        ));
+        assert_eq!(browser.focus, Some(C::AcquireSearch));
+        let a = browser.acquisition.as_ref().unwrap();
+        assert_eq!(a.search_editor.selected_text(&a.search), "resistor");
+        browser.focus = Some(C::AcquirePath);
+        assert!(!focus_acquisition_search(
+            &mut browser,
+            &Key::Character("r".into()),
+            Default::default()
+        ));
+        assert_eq!(browser.focus, Some(C::AcquirePath));
+        assert!(focus_acquisition_search(
+            &mut browser,
+            &Key::Character("f".into()),
+            winit::keyboard::ModifiersState::CONTROL
+        ));
+        assert_eq!(browser.focus, Some(C::AcquireSearch));
+    }
 
     #[test]
     fn library_named_space_preserves_name_and_search_without_editing_selectors() {

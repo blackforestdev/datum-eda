@@ -106,11 +106,24 @@ impl Runtime {
                     e.choice_offset = e.choice_offset.saturating_sub(4);
                 }
             }
-            HitTarget::SchematicReference => {
-                self.session.workspace_mut().schematic_authoring.field = PlacementField::Reference
-            }
-            HitTarget::SchematicValue => {
-                self.session.workspace_mut().schematic_authoring.field = PlacementField::Value
+            HitTarget::SchematicReference | HitTarget::SchematicValue => {
+                self.session.workspace_mut().schematic_authoring.field =
+                    if *target == HitTarget::SchematicReference {
+                        PlacementField::Reference
+                    } else {
+                        PlacementField::Value
+                    };
+                if let Some(region) = self
+                    .presented_hits
+                    .regions()
+                    .iter()
+                    .find(|r| &r.target == target)
+                    .cloned()
+                    && let Some((x, _)) = self.last_cursor_pos
+                {
+                    self.start_dialog_editor_pointer(region, x, self.scale_factor);
+                    self.finish_dialog_editor_pointer();
+                }
             }
             HitTarget::SchematicPlace => return self.start_symbol_preview(),
             HitTarget::SchematicCancel => {
@@ -152,6 +165,9 @@ impl Runtime {
             return true;
         }
         let picker = self.workspace().schematic_authoring.picker;
+        if picker && self.handle_shared_editor_key(event) {
+            return true;
+        }
         match &event.logical_key {
             Key::Named(NamedKey::Escape)
                 if !picker
@@ -177,22 +193,6 @@ impl Runtime {
                 } else {
                     PlacementField::Reference
                 };
-            }
-            Key::Named(NamedKey::Backspace) if picker => {
-                let e = &mut self.session.workspace_mut().schematic_authoring;
-                if e.field == PlacementField::Reference {
-                    e.reference.pop();
-                } else {
-                    e.value.pop();
-                }
-            }
-            Key::Character(text) if picker && !self.modifiers.control_key() => {
-                let e = &mut self.session.workspace_mut().schematic_authoring;
-                if e.field == PlacementField::Reference {
-                    e.reference.push_str(text);
-                } else {
-                    e.value.push_str(text);
-                }
             }
             _ => {}
         }

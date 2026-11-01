@@ -23,6 +23,7 @@ pub struct LibraryAcquisition {
     pub tip: Option<Uuid>,
     pub path: String,
     pub bundled: bool,
+    pub include_unavailable: bool,
     pub path_editor: SingleLineEditor,
     pub search: String,
     pub search_editor: SingleLineEditor,
@@ -50,6 +51,7 @@ impl LibraryAcquisition {
             path_editor: SingleLineEditor::at_end(&path),
             path,
             bundled: false,
+            include_unavailable: false,
             search: String::new(),
             search_editor: SingleLineEditor::default(),
             names: Vec::new(),
@@ -68,11 +70,18 @@ impl LibraryAcquisition {
     }
 
     pub fn results(&self) -> Vec<usize> {
-        let query = self.search.to_lowercase();
+        let query = self.search.trim().to_lowercase();
         let mut results: Vec<_> =
             self.names
                 .iter()
                 .enumerate()
+                .filter(|(index, _)| {
+                    self.include_unavailable
+                        || self
+                            .sources
+                            .get(*index)
+                            .is_none_or(|source| !source.is_unavailable())
+                })
                 .filter(|(index, name)| {
                     name.to_lowercase().contains(&query)
                         || self.sources.get(*index).is_some_and(|source| {
@@ -82,14 +91,39 @@ impl LibraryAcquisition {
                 .map(|(index, _)| index)
                 .collect();
         results.sort_by_cached_key(|index| {
-            let exact = self.names[*index].to_lowercase() == query
-                || self.sources.get(*index).is_some_and(|source| {
-                    source.name.to_lowercase() == query
-                        || source.description.to_lowercase() == query
-                });
-            (!exact, self.names[*index].to_lowercase())
+            let exact = !query.is_empty()
+                && (self.names[*index].to_lowercase() == query
+                    || self.sources.get(*index).is_some_and(|source| {
+                        source.name.to_lowercase() == query
+                            || source.description.to_lowercase() == query
+                    }));
+            let unavailable = self
+                .sources
+                .get(*index)
+                .is_some_and(LibrarySourceSymbol::is_unavailable);
+            (!exact, unavailable, self.names[*index].to_lowercase())
         });
         results
+    }
+
+    pub fn unavailable_count(&self) -> usize {
+        self.sources
+            .iter()
+            .filter(|source| source.is_unavailable())
+            .count()
+    }
+
+    /// A changed query retires a selected preview, not the catalog being read.
+    pub fn search_changed(&mut self) {
+        self.offset = 0;
+        self.refusal = None;
+        self.preview = None;
+        self.selected = None;
+        self.selected_source = None;
+        if self.loaded {
+            self.session = Uuid::new_v4();
+            self.loading = false;
+        }
     }
 
     /// Editing the source invalidates all results and outstanding reads of it.
@@ -140,6 +174,87 @@ impl LibraryAcquisition {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn bundled_search_finds_resistor_and_hides_refused_symbols_until_requested() {
+        let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
+        acquisition.bundled = true;
+        acquisition.sources = catalog::bundled().unwrap().symbols;
+        acquisition.names = acquisition
+            .sources
+            .iter()
+            .map(|s| s.label.clone())
+            .collect();
+        let manifest = eda_engine::import::library_bundle::catalog().unwrap();
+        let visible = acquisition.results();
+        assert_eq!(visible.len(), manifest.converted as usize);
+        assert!(
+            visible
+                .iter()
+                .all(|index| !acquisition.sources[*index].is_unavailable())
+        );
+        assert_eq!(acquisition.unavailable_count(), manifest.refused as usize);
+
+        acquisition.search = "  ReSiStOr  ".into();
+        let first = &acquisition.sources[acquisition.results()[0]];
+        assert_eq!(first.label, "Device:R");
+        assert_eq!(first.availability, catalog::SourceAvailability::Supported);
+        assert_eq!(first.display_label(), "Resistor — Device:R");
+        assert_eq!(first.path, std::path::Path::new("kicad/Device.kicad_sym"));
+
+        for query in ["Amplifier_Operational:TL072", "4xxx_IEEE:4001"] {
+            acquisition.search = query.into();
+            acquisition.include_unavailable = false;
+            assert!(
+                acquisition
+                    .results()
+                    .iter()
+                    .all(|index| acquisition.sources[*index].label != query)
+            );
+            acquisition.include_unavailable = true;
+            let first = &acquisition.sources[acquisition.results()[0]];
+            assert_eq!(first.label, query);
+            assert!(first.is_unavailable());
+            assert!(first.display_label().ends_with(" · unavailable"));
+        }
+    }
+
+    #[test]
+    fn changing_query_preserves_catalog_read_but_retires_previous_preview() {
+        let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
+        acquisition.loading = true;
+        let catalog_session = acquisition.session;
+        acquisition.search_changed();
+        assert_eq!(acquisition.session, catalog_session);
+        assert!(acquisition.loading);
+
+        acquisition.loaded = true;
+        acquisition.names = vec!["Device:R".into()];
+        acquisition.offset = 4;
+        acquisition.selected = Some("R".into());
+        acquisition.selected_source = Some("kicad/Device.kicad_sym".into());
+        acquisition.refusal = Some("Previous selection was unavailable".into());
+        acquisition.preview = Some(LibraryAcquisitionPreview {
+            name: "R".into(),
+            source_digest: "hash".into(),
+            source_path: "kicad/Device.kicad_sym".into(),
+            unit: Value::Null,
+            symbol: Value::Null,
+            notices: Vec::new(),
+        });
+        acquisition.search_changed();
+        assert_ne!(acquisition.session, catalog_session);
+        assert!(!acquisition.loading);
+        assert!(acquisition.loaded);
+        assert_eq!(acquisition.names, vec!["Device:R"]);
+        assert_eq!(acquisition.offset, 0);
+        assert!(acquisition.refusal.is_none());
+        assert!(acquisition.preview.is_none());
+        assert!(acquisition.selected.is_none());
+        assert!(acquisition.selected_source.is_none());
+        assert!(acquisition.request().is_err());
+    }
+
     #[test]
     fn exact_name_precedes_other_substring_matches_without_hiding_them() {
         let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
@@ -157,6 +272,7 @@ mod tests {
                 name: "R".into(),
                 label: format!("{library}:R"),
                 description: "Resistor".into(),
+                availability: catalog::SourceAvailability::Unchecked,
             })
             .collect();
         acquisition.names = acquisition

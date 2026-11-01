@@ -12,6 +12,44 @@ pub struct LibrarySourceSymbol {
     pub name: String,
     pub label: String,
     pub description: String,
+    pub availability: SourceAvailability,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SourceAvailability {
+    Supported,
+    /// A local source name has not yet passed conversion during preview.
+    Unchecked,
+    Unavailable,
+}
+
+impl LibrarySourceSymbol {
+    pub fn is_unavailable(&self) -> bool {
+        self.availability == SourceAvailability::Unavailable
+    }
+
+    /// Keep the source identifier distinct from the readable result label.
+    pub fn display_label(&self) -> String {
+        let description = self
+            .description
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+        let mut short: String = description.chars().take(72).collect();
+        if description.chars().nth(72).is_some() {
+            short.push('…');
+        }
+        let label = if short.is_empty() {
+            self.label.clone()
+        } else {
+            format!("{short} — {}", self.label)
+        };
+        if self.is_unavailable() {
+            format!("{label} · unavailable")
+        } else {
+            label
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -42,16 +80,17 @@ pub fn bundled() -> Result<SourceCatalog, String> {
             .and_then(|s| s.to_str())
             .unwrap_or("Library");
         for entry in &library.symbols {
-            let suffix = if matches!(entry.outcome, BundleEntryOutcome::Refused { .. }) {
-                " · unavailable"
+            let availability = if matches!(entry.outcome, BundleEntryOutcome::Refused { .. }) {
+                SourceAvailability::Unavailable
             } else {
-                ""
+                SourceAvailability::Supported
             };
             result.symbols.push(LibrarySourceSymbol {
                 path: library.source.clone(),
                 name: entry.name.clone(),
-                label: format!("{prefix}:{}{suffix}", entry.name),
+                label: format!("{prefix}:{}", entry.name),
                 description: entry.description.clone().unwrap_or_default(),
+                availability,
             });
         }
     }
@@ -90,6 +129,7 @@ fn file_symbols(path: &Path) -> Result<Vec<LibrarySourceSymbol>, String> {
             label: format!("{library}:{}", entry.name),
             name: entry.name,
             description: entry.description.unwrap_or_default(),
+            availability: SourceAvailability::Unchecked,
         })
         .collect();
     if stamp(&path)? != before {
@@ -183,6 +223,7 @@ mod tests {
         let first = discover(&root).unwrap();
         assert_eq!(first.symbols[0].label, "Device:R");
         assert_eq!(first.symbols[0].description, "Resistor");
+        assert_eq!(first.symbols[0].availability, SourceAvailability::Unchecked);
         assert_eq!(discover(&root).unwrap().symbols, first.symbols);
         std::fs::write(&path, "(kicad_symbol_lib (symbol \"Capacitor\"))").unwrap();
         assert_eq!(discover(&root).unwrap().symbols[0].name, "Capacitor");

@@ -191,6 +191,12 @@ impl Runtime {
                     };
                 }
             }
+            C::AcquireShowUnavailable => {
+                if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
+                    a.include_unavailable = !a.include_unavailable;
+                    a.search_changed();
+                }
+            }
             C::AcquireImport => {
                 if self
                     .workspace()

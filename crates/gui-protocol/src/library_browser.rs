@@ -27,6 +27,7 @@ pub enum LibraryControl {
     AcquirePath,
     AcquireLoad,
     AcquireSearch,
+    AcquireShowUnavailable,
     AcquireResult(usize),
     AcquirePage(bool),
     AcquireImport,
