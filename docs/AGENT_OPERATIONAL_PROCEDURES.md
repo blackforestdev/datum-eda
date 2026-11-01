@@ -7,8 +7,9 @@ This consolidation preserves procedures without creating a competing authority.
 
 ## Reading map
 
-- Tracker/claims and ordinary roadmap responses: Issue tracker below and
-  `docs/PROJECT_STATE_POLICY.md`; PM059 applies to delegated boundaries.
+- Tracker/claims: Issue tracker below; load the applicable workflow/claim section
+  of `docs/PROJECT_STATE_POLICY.md` before a transition. Ordinary roadmap queries
+  use its Standard Commands section; PM059 applies to delegated boundaries.
 - Commits: Commit discipline below.
 - Specification/research edits: Specification governance below and the owning
   evidence route; use its verified baseline, affected-delta review and same-change
@@ -20,7 +21,7 @@ This consolidation preserves procedures without creating a competing authority.
 
 | Concern | Existing detailed owner | Controlling authority |
 | --- | --- | --- |
-| Task/completion queries and exact presentation | [Project-state Standard Commands](PROJECT_STATE_POLICY.md#standard-commands) | PM025, amended by PM059 |
+| Task/completion queries and concise presentation | [Project-state Standard Commands](PROJECT_STATE_POLICY.md#standard-commands) | PM025, amended by PM059 |
 | Claims, transitions and synchronized closure | [Project-state workflow/claim contract](PROJECT_STATE_POLICY.md#work-item-workflow) | PM025 |
 | Owner boundaries and delegated review/continuation | [Project-state delegated routing](PROJECT_STATE_POLICY.md#delegated-decision-routing-and-delivery-rhythm) | PM059 within its exact appointment/scope |
 | Beads commands and safe commits | Tracker/commit sections below | CLAUDE.md and the shared-worktree rules |
@@ -57,9 +58,10 @@ environment, so `cargo install` will not work).
 ### Essential commands
 
 ```bash
-br ready                       # actionable work: open, unblocked, not deferred
-br list --status open          # everything open
-br show <id>                   # full detail + dependencies
+br ready --limit 10            # discovery only, never selection or authorization
+br list --status open --limit 10 # bounded discovery; narrow filters before paging
+br list --all --id <id> --format csv --fields id,title,status,assignee # current status
+br show <id>                   # explicit full record, including accumulated history
 br search "keyword"            # full-text search
 
 br q --labels roadmap:intake "short thing I just found" # quick capture -> prints ID
@@ -72,6 +74,22 @@ br dep add <issue> <depends-on> -t related  # non-blocking link
 br blocked                                   # what's waiting on something
 br sync --flush-only                         # export DB -> issues.jsonl (before commit)
 ```
+
+For routine task pickup, filter the existing JSON response before it enters the
+agent context (replace `<id>` with the assigned task):
+
+```bash
+br show <id> --json | jq '.[0] | {id,title,status,assignee,description,acceptance_criteria,prerequisites,agent_context,dependencies,updated_at}'
+```
+
+Inspect `notes` or specific `comments` only when the grant, latest result or blocker
+lives there; omitted history is not waived authority. Full records and repository
+ledgers are storage, not startup reading. Read a contract once on pickup and reuse
+the verified unchanged context; reload affected fields when it changes. Use the
+fresh selector for milestone selection and current task/dependency records for
+ownership and blockers; a status-only view does not establish them. Progress
+updates report delivered behavior, proof and blockers; handoffs point to the task,
+owned files and exact next action rather than copying its history.
 
 - **Types:** `task`, `bug`, `feature`, `epic`, `chore`, `docs`, `question`
 - **Priority:** `0`–`4` (P0 critical … P4 backlog) — numbers, not words

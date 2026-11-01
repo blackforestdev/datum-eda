@@ -140,5 +140,8 @@ content. Delegate read-heavy, conclusion-cheap work (broad searches, long-log
 digestion, census sweeps) to subagents that return conclusions so bulk content
 stays out of the parent window; lane-critical judgment and implementation stay in
 the owning session, and a subagent's own cost must be weighed against the context
-it spares the parent. Recovery files point to current task records; replace obsolete
+it spares the parent. Use bounded task lists and field-filtered records (procedure
+recipes); load history only for a specific unanswered question. Reuse verified
+unchanged instructions, while refreshing current status and ownership. Recovery
+files point to current task records; replace obsolete
 next actions when work lands rather than keeping a second active-task queue.

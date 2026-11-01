@@ -83,6 +83,9 @@ each section. Architecture/milestone context is in
 `docs/PROJECT_ARCHITECTURE_REFERENCE.md` and is not startup or next-task authority.
 Do not recursively read every path mentioned in a reference. For specification or visual work, inspect the complete owning route; reuse its
 verified unchanged baseline and review the affected delta under the procedures.
+Use compact task/status reads and bounded, filtered tracker lists. Load exact
+requirements on pickup; reload changed sections, not accumulated history. Keep
+progress and handoffs to current results, blockers and next actions with pointers.
 
 Authority order: this file; product mechanics and numbered decisions; domain tool
 contracts; roadmap/status. Runtime incompleteness cannot override ratified rules
