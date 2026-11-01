@@ -4,6 +4,9 @@ use serde_json::Value;
 use std::sync::Arc;
 use uuid::Uuid;
 
+#[path = "library_symbol_geometry.rs"]
+pub mod symbol_geometry;
+
 pub const KINDS: [(&str, &str); 8] = [
     ("units", "Unit"),
     ("symbols", "Symbol"),

@@ -187,14 +187,17 @@ fn frozen_rotated_body_load_and_preview_preserve_pins_and_all_source_history() {
         let pins = |s: &BoardReviewSceneV1| {
             s.board_graphics
                 .iter()
-                .filter(|g| g.object_kind == "schematic_pin")
+                .filter(|g| {
+                    g.object_kind == "schematic_pin"
+                        && g.object_id.starts_with("schematic-symbol-pin-terminal:")
+                })
                 .cloned()
                 .collect::<Vec<_>>()
         };
         assert_eq!(
             pins(scene),
             pins(&raw),
-            "persisted pin projections remain unchanged"
+            "persisted pin terminal projections remain unchanged"
         );
         assert!(!pins(scene).is_empty());
         assert_eq!(scene.board_texts, raw.board_texts);

@@ -9,6 +9,9 @@ use eda_engine::schematic::PlacedSymbol;
 use eda_engine::substrate::DesignModel;
 use uuid::Uuid;
 
+#[path = "native_symbol_pins.rs"]
+mod pins;
+
 pub(crate) fn project_bodies(
     scene: &mut BoardReviewSceneV1,
     model: &DesignModel,
@@ -151,6 +154,7 @@ pub(crate) fn replace_body(
             scene.glyph_mesh_assets.push(asset);
         }
     }
+    pins::project(&mut scene.board_graphics, placed, symbol)?;
     Ok(())
 }
 

@@ -1,6 +1,7 @@
 //! Read-only Unit rows and the declared rectangular Symbol body / pin stubs.
 use crate::*;
-use datum_gui_protocol::{LibraryJsonValue as Value, PointNm, ReviewWorkspaceState, SceneBounds};
+use datum_gui_protocol::library_browser::symbol_geometry::symbol_pin_stub as endpoints;
+use datum_gui_protocol::{LibraryJsonValue as Value, ReviewWorkspaceState, SceneBounds};
 
 pub(super) fn render(
     state: &ReviewWorkspaceState,
@@ -185,35 +186,4 @@ fn unavailable(rect: RectPx, text: &mut Vec<TextRun>) {
         rect,
         text,
     );
-}
-
-fn endpoints(anchor: &Value) -> Option<(PointNm, PointNm)> {
-    let from = PointNm {
-        x: anchor.pointer("/position/x")?.as_i64()?,
-        y: anchor.pointer("/position/y")?.as_i64()?,
-    };
-    let length = anchor.pointer("/style/length_nm")?.as_i64()?;
-    if length < 0 {
-        return None;
-    }
-    let to = match anchor.pointer("/style/orientation")?.as_str()? {
-        "Left" => PointNm {
-            x: from.x.checked_sub(length)?,
-            y: from.y,
-        },
-        "Right" => PointNm {
-            x: from.x.checked_add(length)?,
-            y: from.y,
-        },
-        "Up" => PointNm {
-            x: from.x,
-            y: from.y.checked_sub(length)?,
-        },
-        "Down" => PointNm {
-            x: from.x,
-            y: from.y.checked_add(length)?,
-        },
-        _ => return None,
-    };
-    Some((from, to))
 }
