@@ -134,17 +134,13 @@ fn place_symbol(
     }
     let id = params.library_symbol.to_string();
     let resolved = resolve_pool_symbol_component_binding(context.model, Some(&id))?;
-    let binding = resolved
-        .binding
-        .as_ref()
-        .and_then(|binding| binding.part.as_ref().map(|part| (binding, part)))
-        .ok_or_else(|| {
-            EngineError::Validation(format!(
-                "Native symbol cannot be placed: {}. {}",
-                resolved.status,
-                resolved.diagnostics.join("; ")
-            ))
-        })?;
+    let binding = resolved.binding.as_ref();
+    let part_binding = binding
+        .and_then(|binding| binding.part.as_ref())
+        .map(|part| PlacedSymbolPartBinding {
+            pool_symbol_id: params.library_symbol,
+            part_id: part.part_id,
+        });
     let mut pins = materialize_pool_symbol_pins(context.model, Some(&id))?;
     // Placed schematic pins are absolute electrical/scene attachment points;
     // the reusable pool anchors are local. Existing cardinal poses are exact.
@@ -161,9 +157,9 @@ fn place_symbol(
     }
     let symbol = PlacedSymbol {
         uuid: Uuid::new_v4(),
-        part: Some(binding.1.part_id),
-        entity: Some(binding.0.entity_id),
-        gate: Some(binding.0.gate_id),
+        part: part_binding.as_ref().map(|part| part.part_id),
+        entity: binding.map(|binding| binding.entity_id),
+        gate: binding.map(|binding| binding.gate_id),
         lib_id: Some(id.clone()),
         reference: params.reference,
         value: params.value,
@@ -185,10 +181,7 @@ fn place_symbol(
         provenance,
         params.sheet,
         &symbol,
-        Some(&PlacedSymbolPartBinding {
-            pool_symbol_id: params.library_symbol,
-            part_id: binding.1.part_id,
-        }),
+        part_binding.as_ref(),
     )?;
     prepare_native_birth(context.model, prepared)
 }

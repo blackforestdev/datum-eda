@@ -16,7 +16,21 @@ pub struct LibrarySymbolChoice {
     pub symbol: Symbol,
     pub pins: Vec<eda_engine::schematic::SymbolPin>,
     pub binding_status: String,
+    pub binding_diagnostics: Vec<String>,
     pub refusal: Option<String>,
+}
+impl LibrarySymbolChoice {
+    pub fn binding_label(&self) -> &'static str {
+        match self.binding_status.as_str() {
+            "bound_with_part" => "Part binding resolved",
+            "bound_without_part" => "No Part binding: no matching Part",
+            "ambiguous_part" => "No Part binding: multiple compatible Parts",
+            "incompatible_part" => "No Part binding: no compatible Part",
+            "unresolved_entity_gate" => "No Part binding: no matching entity/gate",
+            "ambiguous_entity_gate" => "No Part binding: multiple entity/gate matches",
+            _ => "No Part binding",
+        }
+    }
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
@@ -176,7 +190,6 @@ impl SchematicAuthoring {
                 )?;
                 let id = symbol.uuid.to_string();
                 let binding = resolve_pool_symbol_component_binding(model, Some(&id))?;
-                let available = binding.binding.as_ref().is_some_and(|b| b.part.is_some());
                 Ok(LibrarySymbolChoice {
                     id: symbol.uuid,
                     name: symbol.name.clone(),
@@ -187,7 +200,10 @@ impl SchematicAuthoring {
                         .unwrap_or_else(|| "U".into()),
                     pins: materialize_pool_symbol_pins(model, Some(&id))?,
                     binding_status: binding.status.into(),
-                    refusal: (!available).then(|| binding.diagnostics.join("; ")),
+                    binding_diagnostics: binding.diagnostics,
+                    // Materialization above is the eligibility boundary. A missing
+                    // or ambiguous Part is an explicit non-ComponentInstance placement.
+                    refusal: None,
                 })
             })();
             match choice {
@@ -227,3 +243,7 @@ impl SchematicAuthoring {
 
 #[path = "schematic_authoring_preview.rs"]
 mod preview;
+
+#[cfg(test)]
+#[path = "schematic_authoring_tests.rs"]
+mod tests;

@@ -1,3 +1,5 @@
+#[path = "schematic_optional_binding_tests.rs"]
+mod optional_binding;
 use super::*;
 use crate::api::native_write::{commit_prepared, electrical::binding_fixture::fixture};
 use crate::substrate::{CommitSource, ProjectResolver};

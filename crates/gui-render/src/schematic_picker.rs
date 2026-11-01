@@ -187,6 +187,19 @@ pub(super) fn render(
                 text,
             );
         }
+        if authoring.refusal.is_none()
+            && let Some(choice) = authoring.chosen.and_then(|i| authoring.choices.get(i))
+        {
+            draw_text(
+                choice.binding_label(),
+                panel.x + 16.,
+                panel.y + 203.,
+                11.,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text,
+            );
+        }
         button(
             "Cancel",
             HitTarget::SchematicCancel,
