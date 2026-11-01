@@ -1,8 +1,9 @@
 # GP-CM05 correction implementation direction
 
-This record preserves the owner's implementation direction in the current
-Preferences conversation on 2026-09-16. It is not product acceptance, an exact
-promotion receipt, or authorization to resume WORKFLOW-OWNER-REVISION.
+Current disposition: permanently canceled by direct owner instruction on
+2026-11-01; see the final disposition below. Earlier implementation and acceptance
+directions are historical. This record is not product acceptance or authorization
+to resume WORKFLOW-OWNER-REVISION.
 
 <!-- OWNER:GP-CM05V:REVISE-IMPLEMENT-20260916 -->
 The owner directed implementation of the preserved revised contract:
@@ -49,3 +50,39 @@ or `GLOBAL-PREFERENCES-COMPLETION: revise GP-CM05E — <specific correction>`.
 Dependency/licensing impact: none. No implementation or production proof is
 asserted by the proposed authority transition. Other task records, gates and
 installed trust remain unchanged until exact owner-controlled promotion.
+
+## Final owner disposition — campaign canceled
+
+<!-- OWNER:GP-CAMPAIGN-CANCELLATION-20261101 -->
+In the appointed PM conversation on 2026-11-01, the owner directly instructed:
+
+> I need you to finish this up. global prefrences I'm done with global prefrences.
+
+The owner then explicitly directed correction of the governance-document bug
+that continued returning the stopped campaign as the next task. This is fresh
+direct authority for the closure transaction that previously remained unlanded;
+it is not authority inferred from a handoff or an override of a current denial.
+
+The disposition is permanent cancellation of the remaining acceptance campaign,
+including pin-2 recapture and all further qualification under this task. It
+supersedes the earlier acceptance/revision request and outstanding campaign work,
+not product safety requirements. Final-step completion records this cancellation
+decision only. Closing the task does not assert production acceptance, passing
+qualification, or completed missing evidence. `development_ready` remains false;
+historical candidate results and failures retain their original scope.
+
+Permanent unqualified limitations include native replay and ordinary-workflow
+evidence gaps, scale-2 observations and budgets, accessibility capture refinement,
+prepared-state measurement, genesis performance/crash coverage, unavailable
+repository/migration fault injection, and daemon/TTY authority coverage. These
+are retained limitations, not a recapture queue. The prior detailed inventory
+remains in the historical Frontier and candidate evidence; no result is promoted.
+Existing runtime behavior, prototype authority and safety requirements are unchanged.
+
+Reconcile the existing task, Frontier and generated roadmap as one closure;
+remove its canonical selection and record explicit milestone-selection idle.
+No successor is selected or authorized by cancellation. Separately granted
+routine Rust delivery continues under PM059. Dependency release is administrative,
+not evidence of product acceptance or permission to start dependent work.
+Do not resume this campaign from old instructions, unresolved evidence rows or
+tracker readiness. Only a new explicit owner direction can reopen its scope.

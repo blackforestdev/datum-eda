@@ -362,6 +362,17 @@ them together:
 - proof or conformance evidence; and
 - issue-linked commit message.
 
+When the owner cancels scheduled work, record the disposition in its existing
+governed source and reconcile the Frontier, generated projection and tracker
+before reporting closure. Complete only the cancellation decision, explicitly
+supersede canceled obligations, retain historical results and unproved limitations,
+and describe the landed outcome as cancellation, not product acceptance or
+readiness. Never mark missing execution or proof as passed. Remove canceled work
+from canonical selection; use an explicitly authorized successor or the existing
+idle disposition. Do not leave a canceled campaign selected or restart it to
+satisfy obsolete acceptance requirements. New owner direction is required to
+reopen its scope. Separately authorized routine work is unaffected.
+
 Run `git status` and stage only files owned by the current claim. Do not sweep up
 another session's work.
 
