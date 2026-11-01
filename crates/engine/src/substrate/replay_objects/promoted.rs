@@ -34,16 +34,29 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
                 ..
             } = operation
             {
-                objects.entry(*sheet_id).or_insert_with(|| DomainObject {
-                    object_id: *sheet_id,
-                    object_revision: ObjectRevision(0),
-                    source_shard_id: Uuid::new_v5(
-                        &Uuid::NAMESPACE_URL,
-                        format!("datum-eda:source-shard:schematic/{relative_path}").as_bytes(),
-                    ),
-                    domain: "schematic".to_string(),
-                    kind: "schematic_sheet".to_string(),
-                });
+                let shard_id = Uuid::new_v5(
+                    &Uuid::NAMESPACE_URL,
+                    format!("datum-eda:source-shard:schematic/{relative_path}").as_bytes(),
+                );
+                objects
+                    .entry(*sheet_id)
+                    .and_modify(|object| {
+                        // Source collection sees a JSON root; the validated
+                        // creation operation retains its canonical sheet kind.
+                        if object.domain == "schematic"
+                            && object.source_shard_id == shard_id
+                            && object.kind == "$"
+                        {
+                            object.kind = "schematic_sheet".to_string();
+                        }
+                    })
+                    .or_insert_with(|| DomainObject {
+                        object_id: *sheet_id,
+                        object_revision: ObjectRevision(0),
+                        source_shard_id: shard_id,
+                        domain: "schematic".to_string(),
+                        kind: "schematic_sheet".to_string(),
+                    });
             }
             if let Operation::CreateSchematicDefinition {
                 definition_id,

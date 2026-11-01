@@ -62,6 +62,16 @@ fn journaled_schematic_sheet_create_delete_and_undoes() {
         "Child"
     );
     assert!(model.objects.contains_key(&sheet_id));
+    let created_registration = model.objects[&sheet_id].clone();
+    assert_eq!(created_registration.kind, "schematic_sheet");
+    let ordinarily_reopened = ProjectResolver::new(&root)
+        .resolve()
+        .expect("ordinary reopen should preserve the created sheet registration");
+    assert_eq!(ordinarily_reopened.objects[&sheet_id], created_registration);
+    assert_eq!(
+        ordinarily_reopened.objects[&board_id],
+        model.objects[&board_id]
+    );
 
     let mut stale_root = schematic.clone();
     stale_root["sheets"]
@@ -87,6 +97,7 @@ fn journaled_schematic_sheet_create_delete_and_undoes() {
         .expect("materialized created sheet should read");
     assert_eq!(replayed_sheet["name"], "Child");
     assert!(replayed.objects.contains_key(&sheet_id));
+    assert_eq!(replayed.objects[&sheet_id], created_registration);
 
     let mut reopened = replayed;
     reopened
@@ -107,6 +118,26 @@ fn journaled_schematic_sheet_create_delete_and_undoes() {
             .contains_key(&sheet_id.to_string())
     );
     assert!(!sheet_path.exists());
+    let mut undone = ProjectResolver::new(&root)
+        .resolve()
+        .expect("reopen after undo should succeed");
+    assert!(!undone.objects.contains_key(&sheet_id));
+    undone
+        .commit_journal_redo(
+            &root,
+            CommitProvenance {
+                actor: "test".to_string(),
+                source: CommitSource::Test,
+                reason: "redo schematic sheet".to_string(),
+            },
+        )
+        .expect("schematic sheet redo should commit");
+    assert_eq!(undone.objects[&sheet_id], created_registration);
+    let redone = ProjectResolver::new(&root)
+        .resolve()
+        .expect("reopen after redo should succeed");
+    assert_eq!(redone.objects[&sheet_id], created_registration);
+    assert_eq!(read_json_value(&sheet_path).unwrap(), sheet);
 }
 
 #[test]
@@ -214,6 +245,13 @@ fn journaled_schematic_sheet_delete_cascades_payload_objects_and_undoes() {
     assert!(model.objects.contains_key(&sheet_id));
     assert!(model.objects.contains_key(&label_id));
     assert!(model.objects.contains_key(&wire_id));
+
+    let reopened = ProjectResolver::new(&root)
+        .resolve()
+        .expect("reopen populated schematic sheet");
+    for id in [sheet_id, label_id, wire_id, board_id] {
+        assert_eq!(reopened.objects[&id], model.objects[&id]);
+    }
 
     model
         .commit_journaled(
