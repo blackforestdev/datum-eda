@@ -5,6 +5,7 @@ from pathlib import Path
 import signal
 import subprocess
 import tempfile
+import time
 import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -13,6 +14,127 @@ import run_native_qa_isolated_input as isolated
 
 
 class PrivateInputTests(unittest.TestCase):
+    def test_existing_scenario_evidence_is_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            receipt = output / "private-bus.json"
+            receipt.write_text("original evidence\n")
+            result = subprocess.run(["/usr/bin/python3", str(Path(isolated.__file__)),
+                "--scenario", "preferences", "--output", str(output)],
+                capture_output=True, text=True, timeout=5)
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("fresh directory", result.stderr)
+            self.assertEqual(receipt.read_text(), "original evidence\n")
+
+    def test_sigterm_stops_private_bus_group_before_runtime_removal(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ready = root / "ready"
+            child = f"from pathlib import Path; import time; Path({str(ready)!r}).touch(); time.sleep(30)"
+            code = ("from pathlib import Path; from run_native_qa_isolated_input import run_private_bus; "
+                    f"run_private_bus(['/usr/bin/python3', '-c', {child!r}], Path({str(root)!r}))")
+            process = subprocess.Popen(["/usr/bin/python3", "-c", code],
+                cwd=Path(isolated.__file__).parent, env=dict(os.environ, XDG_RUNTIME_DIR=str(root)),
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                until = time.monotonic() + 5
+                while not ready.exists() and process.poll() is None and time.monotonic() < until:
+                    time.sleep(.02)
+                self.assertTrue(ready.exists(), "private bus child did not start")
+                process.terminate()
+                _, stderr = process.communicate(timeout=12)
+                self.assertNotEqual(process.returncode, 0, stderr)
+                cleanup = json.loads((root / "private-bus.json").read_text())
+                self.assertTrue(cleanup["owned_group_stopped"])
+                self.assertTrue(cleanup["runtime_removed"])
+                self.assertEqual(isolated.live_group_members(cleanup["process_group"]), [])
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.communicate(timeout=5)
+
+    def test_private_bus_activates_accessibility_but_refuses_desktop_services(self):
+        # Exercise the real D-Bus activation catalogue, not just environment dicts.
+        code = '''import json, os, subprocess, sys
+from pathlib import Path
+results = {}
+for name in ["org.a11y.Bus", "org.freedesktop.portal.Desktop", "org.kde.kwalletd6", "org.freedesktop.Notifications"]:
+    run = subprocess.run(["dbus-send", "--session", "--print-reply", "--dest=org.freedesktop.DBus",
+        "/org/freedesktop/DBus", "org.freedesktop.DBus.StartServiceByName", "string:" + name, "uint32:0"],
+        capture_output=True, text=True, timeout=10)
+    results[name] = {"exit": run.returncode, "error": run.stderr}
+    assert (run.returncode == 0) == (name == "org.a11y.Bus"), results
+assert os.environ["DISPLAY"] == "datum-qa-disabled"
+Path(sys.argv[1]).write_text(json.dumps(results))
+'''
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with patch.dict(os.environ, {"XDG_RUNTIME_DIR": str(root)}):
+                self.assertEqual(isolated.run_private_bus(
+                    ["/usr/bin/python3", "-c", code, str(root / "activation.json")], root), 0)
+            proof = json.loads((root / "activation.json").read_text())
+            self.assertEqual(proof["org.a11y.Bus"]["exit"], 0)
+            self.assertIn("ServiceUnknown", proof["org.kde.kwalletd6"]["error"])
+            cleanup = json.loads((root / "private-bus.json").read_text())
+            self.assertTrue(cleanup["owned_group_stopped"])
+            self.assertTrue(cleanup["runtime_removed"])
+
+    def test_live_group_members_excludes_other_groups_and_dead_processes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for pid, state, group in ((10, "S", 10), (11, "S", 10), (12, "Z", 10), (13, "S", 99)):
+                (root / str(pid)).mkdir()
+                (root / str(pid) / "stat").write_text(f"{pid} (name with ) spaces) {state} 1 {group} 10")
+            self.assertEqual(sorted(isolated.live_group_members(10, root)), [10, 11])
+
+    def test_activated_services_cannot_inherit_owner_desktop_or_default_socket(self):
+        owner = {"DISPLAY": ":1", "WAYLAND_DISPLAY": "wayland-0", "WAYLAND_SOCKET": "8",
+                 "XAUTHORITY": "/owner/auth", "XDG_RUNTIME_DIR": "/run/user/1000",
+                 "DBUS_SESSION_BUS_ADDRESS": "owner-bus", "XDG_CURRENT_DESKTOP": "KDE",
+                 "XDG_ACTIVATION_TOKEN": "owner-token"}
+        private = isolated.private_bus_environment(owner, "/owned/private-runtime")
+        self.assertEqual(private["XDG_RUNTIME_DIR"], "/owned/private-runtime")
+        self.assertEqual(private["DISPLAY"], "datum-qa-disabled")
+        self.assertEqual(private["WAYLAND_DISPLAY"], "datum-qa-disabled")
+        self.assertEqual(private["QT_QPA_PLATFORM"], "offscreen")
+        for key in ("WAYLAND_SOCKET", "XAUTHORITY", "DBUS_SESSION_BUS_ADDRESS", "XDG_ACTIVATION_TOKEN"):
+            self.assertNotIn(key, private)
+        self.assertEqual(owner["DISPLAY"], ":1")
+        child = isolated.child_environment(private, ":27", 123, "/owned/auth")
+        self.assertEqual(child["DISPLAY"], ":27")
+        self.assertNotIn("WAYLAND_DISPLAY", child)
+        self.assertEqual(child["XDG_RUNTIME_DIR"], "/owned/private-runtime")
+
+    def test_display_binding_requires_listening_socket_owned_by_exact_server(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            proc = Path(temporary)
+            (proc / "123/fd").mkdir(parents=True)
+            (proc / "net").mkdir()
+            (proc / "123/exe").symlink_to("/usr/bin/Xwayland")
+            (proc / "123/fd/7").symlink_to("socket:[999]")
+            table = proc / "net/unix"
+            table.write_text("0000: 0002 0000 00010000 0001 01 999 @/tmp/.X11-unix/X27\n")
+            self.assertTrue(isolated._live_xwayland(123, ":27", proc_root=proc))
+            self.assertFalse(isolated._live_xwayland(123, ":1", proc_root=proc))
+            table.write_text("0000: 0002 0000 00010000 0001 01 998 @/tmp/.X11-unix/X27\n")
+            self.assertFalse(isolated._live_xwayland(123, ":27", proc_root=proc))
+            table.write_text("0000: 0002 0000 00000000 0001 03 999 @/tmp/.X11-unix/X27\n")
+            self.assertFalse(isolated._live_xwayland(123, ":27", proc_root=proc))
+
+    def test_missing_isolation_refuses_before_any_desktop_command(self):
+        from prove_native_project_startup_gui import StartupQA
+        with patch.dict(os.environ, {}, clear=True), patch.object(StartupQA, "command") as command:
+            with self.assertRaisesRegex(ValueError, "owned input display required"):
+                StartupQA(Path("/unused"))
+            command.assert_not_called()
+
+    def test_named_scenario_and_generic_child_cannot_be_combined(self):
+        result = subprocess.run(["/usr/bin/python3", str(Path(isolated.__file__)),
+            "--scenario", "preferences", "--output", "/unused", "--", "false"],
+            capture_output=True, text=True, timeout=5)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("cannot be combined", result.stderr)
+
     def test_outer_capture_is_default_off_and_changes_only_owned_outer_debug_capability(self):
         for enabled, dimensions in ((False, None), (True, None), (False, (2304, 2048))):
             with self.subTest(enabled=enabled, dimensions=dimensions), tempfile.TemporaryDirectory() as temporary:
@@ -123,18 +245,18 @@ class PrivateInputTests(unittest.TestCase):
             isolated.child_environment(original, ":1", 123, "/owned/empty-authority")
 
     def test_private_focus_uses_direct_owned_window_without_window_manager(self):
-        self.assertEqual(isolated.focus_arguments("789", self.private_env(), lambda pid: pid == 123),
+        self.assertEqual(isolated.focus_arguments("789", self.private_env(), lambda pid, display: pid == 123 and display == ":27"),
                          ["xdotool", "windowfocus", "--sync", "789"])
-        self.assertEqual(isolated.focus_arguments("789", {}),
-                         ["xdotool", "windowactivate", "--sync", "789"])
+        with self.assertRaises(ValueError):
+            isolated.focus_arguments("789", {})
 
     def test_mismatched_or_dead_private_display_never_falls_back_to_desktop(self):
         for changes in [{"DISPLAY": ":1"}, {isolated.DISPLAY_KEY: "desktop"},
                         {isolated.OWNER_KEY: "not-a-pid"}]:
             with self.subTest(changes=changes), self.assertRaises(ValueError):
-                isolated.focus_arguments("789", {**self.private_env(), **changes}, lambda pid: True)
+                isolated.focus_arguments("789", {**self.private_env(), **changes}, lambda pid, display: True)
         with self.assertRaises(ValueError):
-            isolated.focus_arguments("789", self.private_env(), lambda pid: False)
+            isolated.focus_arguments("789", self.private_env(), lambda pid, display: False)
 
     def receipt(self):
         return {"verified_owner_stops": dict.fromkeys(["gui", "daemons", "clipboard", "Weston"], True),

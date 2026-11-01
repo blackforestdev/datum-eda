@@ -9,6 +9,7 @@ self.env, self.actions, self.observations, self.capture_counts, self.root, self.
 self.attributes) that these methods read -- the methods are owned here, the harness state stays there.
 """
 import os
+import json
 import subprocess
 import time
 from pathlib import Path
@@ -16,7 +17,7 @@ from pathlib import Path
 from gi.repository import GLib
 
 from native_capture_pixels import require_native_capture_pixels
-from native_capture_presentation import PresentationReadiness
+from native_capture_presentation import PresentationReadiness, matched_presentation
 from run_native_qa_isolated_input import focus_arguments
 
 # dat-xjjn mechanism #1: the native GUI launch ("window visible") first-paint latency scales with host
@@ -86,16 +87,64 @@ class NativeReadinessCapture:
         assert self.compositor.poll() is None and window == self.host_window
         self.command(*focus_arguments(window, os.environ))
 
-    def wait_presented(self, after_damage=None, *, require_stable=True, frame_requirement=None):
+    def wait_presented(self, after_damage=None, *, require_stable=True, frame_requirement=None,
+                       expectation=None):
         readiness = PresentationReadiness(after_damage, require_stable=require_stable,
-                                          frame_requirement=frame_requirement)
+                                          frame_requirement=frame_requirement,
+                                          target_window=expectation['window'] if expectation else None)
         log = Path(self.env["DATUM_GUI_LOG"])
         def current_frame():
-            return readiness(log.read_text(), owned_dialog=any(
+            text = log.read_text()
+            result = readiness(text, owned_dialog=any(
                 n.get_role_name() == "dialog" for n in self.nodes()))
+            return result if not expectation or matched_presentation(text, expectation) else False
         receipt = self.wait("current dialog/Main frame presented before native capture", current_frame)
         self.actions.append({"capture_presentation_barrier": receipt, "require_stable": require_stable})
         return receipt
+
+    def _matched_snapshot(self, expectation):
+        if self.process is None or self.process.pid != expectation['pid'] or self.process.poll() is not None:
+            raise RuntimeError('Matched capture GUI PID is no longer the requested live process')
+        log = Path(self.env['DATUM_GUI_LOG'])
+        before = matched_presentation(log.read_text(), expectation)
+        if before is None:
+            raise RuntimeError('Matched capture target has no current post-action present at the requested extent')
+        # Without a production native-window/AT-SPI identity map, matched mode
+        # supports only the one newly opened dialog. Never borrow Main's nodes.
+        dialogs = []
+        for node in self.nodes():
+            if node.get_process_id() != expectation['pid']:
+                raise RuntimeError('Matched capture accessibility node belongs to a different PID')
+            if node.get_role_name() == 'dialog':
+                dialogs.append(node)
+        if len(dialogs) != 1 or dialogs[0].get_name() != expectation['dialog']:
+            raise RuntimeError('Matched capture requires exactly the requested sole dialog')
+        # Copy descendants while live; never retain AT-SPI proxies as evidence.
+        snapshot = []
+        pending = [dialogs[0]]
+        while pending:
+            node = pending.pop()
+            if node is None:
+                continue
+            if len(snapshot) >= 3000:
+                raise RuntimeError('Matched capture dialog subtree exceeds bounded traversal')
+            if node.get_process_id() != expectation['pid']:
+                raise RuntimeError('Matched capture accessibility node belongs to a different PID')
+            snapshot.append({'name': node.get_name(), 'role': node.get_role_name(),
+                             'attributes': dict(self.attributes(node))})
+            pending.extend(node.get_child_at_index(index) for index in range(node.get_child_count()))
+        self.actions.append({'matched_capture_observed': {'pid': expectation['pid'],
+                             'presentation': before, 'nodes': snapshot}})
+        for expected in expectation['nodes']:
+            matches = [node for node in snapshot if node['name'] == expected['name']
+                       and ('role' not in expected or node['role'] == expected['role'])]
+            if len(matches) != 1 or any(matches[0]['attributes'].get(key) != value
+                                        for key, value in expected.get('attributes', {}).items()):
+                raise RuntimeError(f'Matched capture accessibility state mismatch: {expected!r}')
+        after = matched_presentation(log.read_text(), expectation)
+        if before != after or self.process.poll() is not None:
+            raise RuntimeError('Matched capture target changed while reading accessibility state')
+        return {'pid': expectation['pid'], 'presentation': before, 'nodes': snapshot}
 
     def _screenshoot_read(self, directory):
         """One weston-screenshooter read of the private Wayland compositor's presented output (never its
@@ -114,9 +163,42 @@ class NativeReadinessCapture:
             f"native capture failed: {result.stderr}; images={images}")
         return images[0].read_bytes()
 
-    def capture(self, label, window, *, require_stable=True, frame_requirement=None):
+    def capture(self, label, window, *, require_stable=True, frame_requirement=None,
+                expectation=None):
+        """Capture diagnostic pixels, or match the sole normally opened dialog.
+
+        expectation binds pid/window/dialog/opened_after_byte/after_byte/extent
+        and unique named AT-SPI descendants (optional role and attribute subsets).
+        opened_after_byte precedes the ordinary menu action; exactly one new
+        surface and one accessible dialog are supported. extent is physical client
+        geometry from native telemetry, not a claim about logical scale or HTML.
+        The action byte fence precedes the caller's ordinary menu/control input.
+        Both modes require subsequent visual review; neither awards visual PASS.
+        """
+        if expectation is not None:
+            if (not isinstance(expectation, dict)
+                    or type(expectation.get('pid')) is not int or expectation['pid'] <= 0
+                    or not isinstance(expectation.get('window'), str) or not expectation['window']
+                    or not isinstance(expectation.get('dialog'), str) or not expectation['dialog']
+                    or type(expectation.get('after_byte')) is not int or expectation['after_byte'] < 0
+                    or type(expectation.get('opened_after_byte')) is not int
+                    or not 0 <= expectation['opened_after_byte'] <= expectation['after_byte']
+                    or not isinstance(expectation.get('extent'), list) or len(expectation['extent']) != 2
+                    or any(type(n) is not int or n <= 0 for n in expectation['extent'])
+                    or not isinstance(expectation.get('nodes'), list) or not expectation['nodes']
+                    or any(not isinstance(node, dict) or not isinstance(node.get('name'), str)
+                           or not isinstance(node.get('attributes', {}), dict)
+                           for node in expectation['nodes'])):
+                raise ValueError('Matched capture requires PID, sole dialog/window, open/action byte fences, extent and nodes')
+            # An inline deep copy keeps later caller mutation out of the transaction.
+            expectation = json.loads(json.dumps(expectation))
+            self.actions.append({'matched_capture_requested': expectation})
         self.focus(window)
-        receipt = self.wait_presented(require_stable=require_stable, frame_requirement=frame_requirement)
+        receipt = self.wait_presented(require_stable=require_stable, frame_requirement=frame_requirement,
+                                      expectation=expectation)
+        before = self._matched_snapshot(expectation) if expectation else None
+        if before is not None:
+            self.actions.append({'matched_capture_before': before})
         count = self.capture_counts.get(label, 0) + 1
         self.capture_counts[label] = count
         if count > 1:
@@ -133,13 +215,27 @@ class NativeReadinessCapture:
             shot = self._screenshoot_read(self.root / f"{label}-native-capture-{attempt}")
             if previous is not None and shot == previous:
                 output = self.root / f"{label}.png"
+                if expectation:
+                    after = self._matched_snapshot(expectation)
+                    self.actions.append({'matched_capture_after': after})
+                    if before != after:
+                        raise RuntimeError('Matched capture target, generation or state changed across pixel reads')
+                    raw = self.root / f'{label}-native-capture-{attempt}'
+                    require_native_capture_pixels(next(raw.glob('*.png')))
                 output.write_bytes(shot)
                 require_native_capture_pixels(output)
                 self.actions.append({"capture_stable_after_reads": attempt + 1})
-                self.observations[label] = [
+                self.observations[label] = after['nodes'] if expectation else [
                     {"name": node.get_name(), "attributes": self.attributes(node)}
                     for node in self.nodes() if node.get_role_name() != "terminal"
                 ]
+                receipt = dict(receipt, capture_path=str(output.resolve()), review_pending=True,
+                               capture_scope=('matched sole-dialog state and stable compositor pixels; '
+                                              'visual review pending' if expectation else
+                                              'diagnostic native capture; visual review pending'))
+                if expectation:
+                    receipt['matched_state'] = after
+                self.actions.append({'capture_result': receipt})
                 return receipt
             previous = shot
             if attempt < max_reads - 1:

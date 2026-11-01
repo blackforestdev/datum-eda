@@ -104,6 +104,33 @@ design target, **never pixel-diffed against the app** (cross-engine wgpu-vs-HTML
 never matches — see §5), so its exact size need not equal the app golden's. Use
 the command above only when you want a *reproducible* HiDPI re-capture.
 
+### Preferences: routine native/reference check
+
+From the repository root, use the existing isolated-input runner with a fresh
+absolute output directory and the directory containing the candidate binaries:
+
+```bash
+python3 scripts/run_native_qa_isolated_input.py --scenario preferences \
+  --output /absolute/fresh/preferences-check --binary-dir /absolute/target/release
+```
+
+`--binary-dir` defaults to this checkout's `target/release`. The runner isolates
+D-Bus and desktop input and retains native/reference images and actual behavior
+results. Inspect those results and images; command completion alone is not visual
+acceptance. Compare the current prototype's **C-B · Units** state at browser
+viewports **1160 × 720** and **720 × 720**, scale **1**, against the native captures.
+The original prototype frame can be smaller than the viewport and taller than the
+image; use the recorded frame/crop geometry and disclose differences.
+The current native and prototype narrow layouts differ; inspect the pair and
+describe the visible differences rather than treating capture success as parity.
+
+The reference-only command is `node scripts/capture_gui_reference.mjs --output
+/absolute/fresh/reference-check` (installed Node 22 and `/usr/bin/chromium`). It
+scrolls the original DOM into view without moving nodes or overriding CSS, records
+the source hash, selector, browser version and actual geometry, and verifies the
+source remained unchanged. Neither capture command asserts cross-engine parity;
+record the focused comparison in the existing task and its independent review.
+
 ## 3. The region-by-region review protocol
 
 Put `board-editor.png` and a fresh build golden side by side and walk the **nine

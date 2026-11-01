@@ -75,10 +75,12 @@ def selected_presentation(records, host, requirement, ledger_position):
 class PresentationReadiness:
     """Own host/focus/settled-frame admission and optional content correlation."""
 
-    def __init__(self, after_damage=None, *, require_stable=True, frame_requirement=None):
+    def __init__(self, after_damage=None, *, require_stable=True, frame_requirement=None,
+                 target_window=None):
         self.after_damage = after_damage
         self.require_stable = require_stable
         self.frame_requirement = frame_requirement
+        self.target_window = target_window
         self.settled = None
 
     def __call__(self, text, *, owned_dialog=False):
@@ -95,7 +97,9 @@ class PresentationReadiness:
         identities = re.findall(r'surface identity window=(WindowId\([0-9]+\))', text)
         if not identities:
             return self.not_ready()
-        host = identities[-1] if owned_dialog else identities[0]
+        host = self.target_window or (identities[-1] if owned_dialog else identities[0])
+        if host not in identities:
+            return self.not_ready()
         focus = re.findall(r'window event (WindowId\([0-9]+\)) focused (true|false)', text)
         if not focus or focus[-1] != (host, 'true'):
             return self.not_ready()
@@ -124,3 +128,54 @@ class PresentationReadiness:
     def not_ready(self):
         self.settled = None
         return False
+
+
+def matched_presentation(text, expectation):
+    """Bind the sole newly opened dialog to a post-action native present.
+
+    These are application telemetry observations, never proof of GPU correctness.
+    The caller must compare this binding around the compositor pixel reads.
+    """
+    if not text.endswith('\n'):
+        return None
+    target = expectation['window']
+    receipt = PresentationReadiness(require_stable=False, target_window=target)(text)
+    if not receipt:
+        return None
+    try:
+        records = list(complete_records(text))
+        opened = [match.group(1) for position, line in records
+                  if position['start_byte'] >= expectation['opened_after_byte']
+                  for match in [re.search(r'surface identity window=(WindowId\([0-9]+\))', line)]
+                  if match]
+        if opened != [target]:
+            return None
+        lifecycles = [(position, value) for position, value in
+                      structured_records(records, 'native_surface_lifecycle ')
+                      if value['window'] == target]
+        presents = [(position, value) for position, value in lifecycles
+                    if value['reason'] == 'present'
+                    and position['start_byte'] >= expectation['after_byte']]
+        if not presents:
+            return None
+        position, presented = presents[-1]
+        latest = lifecycles[-1][1]
+        keys = ('window', 'host', 'queue_epoch', 'configuration_generation',
+                'configured_extent', 'acquired', 'last_present_receipt')
+        identity = {key: presented[key] for key in keys}
+        if (presented['active'] != 0 or latest['active'] != 0
+                or presented['last_present_receipt'] != presented['last_frame_submission_receipt']
+                or presented['last_present_receipt'] <= 0
+                or identity['configured_extent'] != expectation['extent']
+                or any(latest[key] != value for key, value in identity.items())):
+            return None
+        ledgers = [(where, value) for where, value in
+                   structured_records(records, 'native redraw ledger ')
+                   if value['window'] == target]
+        ledger_position = ledgers[-1][0]
+        if ledger_position['start_byte'] < position['end_byte']:
+            return None
+        return {'native_identity': identity, 'native_present': position,
+                'settled_ledger': ledger_position, 'ledger': receipt}
+    except (KeyError, TypeError, ValueError, IndexError):
+        return None

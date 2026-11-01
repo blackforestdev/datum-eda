@@ -180,9 +180,11 @@ def _run_gui_session(binary, work, *, backend, scale, window):
             qa.key(main, "Right")
             time.sleep(0.4)
         try:
-            qa.capture("global-preferences-factory-defaults", main)  # retained visual evidence
-        except Exception:
-            pass
+            qa.capture("global-preferences-factory-defaults", main)  # optional diagnostic only
+        except Exception as error:
+            # The return value below checks semantic provenance only, never visual
+            # conformance. Preserve a failed optional capture rather than hiding it.
+            (work / "capture-failure.txt").write_text(f"{type(error).__name__}: {error}\n")
         controls = [control for section in collected.values() for control in section]
         dialog_present = any(
             node.get_role_name() == "dialog" and node.get_name() == "Global Preferences"

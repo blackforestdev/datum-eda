@@ -4,7 +4,7 @@ from pathlib import Path
 import struct
 import subprocess
 import tempfile
-from types import SimpleNamespace
+from types import MethodType, SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 import zlib
@@ -72,17 +72,19 @@ class NativeCapturePixelsTests(unittest.TestCase):
 
     def capture(self, image, *, exit_code=0, stderr=""):
         # Execute the actual capture method without importing/starting GI or GUI.
-        source = Path(__file__).with_name("prove_native_project_startup_gui.py")
+        source = Path(__file__).with_name("native_readiness_capture.py")
         tree = ast.parse(source.read_text())
-        owner = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "StartupQA")
-        method = next(n for n in owner.body if isinstance(n, ast.FunctionDef) and n.name == "capture")
-        namespace = {"subprocess": subprocess,
+        owner = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "NativeReadinessCapture")
+        methods = [n for n in owner.body if isinstance(n, ast.FunctionDef)
+                   and n.name in {'capture', '_screenshoot_read'}]
+        namespace = {"subprocess": subprocess, "Path": Path, "time": SimpleNamespace(sleep=lambda _: None),
                      "require_native_capture_pixels": require_native_capture_pixels}
-        exec(compile(ast.Module(body=[method], type_ignores=[]), str(source), "exec"), namespace)
+        exec(compile(ast.Module(body=methods, type_ignores=[]), str(source), "exec"), namespace)
         qa = SimpleNamespace(root=self.root, capture_counts={}, actions=[], observations={},
                              env={"WAYLAND_DISPLAY": "owned-qa"}, focus=Mock(),
                              wait_presented=Mock(return_value={"presented_damage": 4}),
                              nodes=Mock(return_value=[]))
+        qa._screenshoot_read = MethodType(namespace['_screenshoot_read'], qa)
         def screenshooter(*args, **kwargs):
             if image is not None:
                 (kwargs["cwd"] / "weston-shot.png").write_bytes(image)
@@ -100,11 +102,13 @@ class NativeCapturePixelsTests(unittest.TestCase):
             self.capture(original)
         self.last_qa.nodes.assert_not_called()
         self.assertEqual((self.root / "selected.png").read_bytes(), original)
-        self.assertEqual(len(self.last_qa.actions), 1)  # No retry.
+        self.assertEqual(len(self.last_qa.actions), 2)  # Stable pair; no retry after invalid pixels.
         self.assertEqual(self.last_qa.actions[0]["exit"], 0)
 
     def test_shared_capture_valid_pixels_continue_to_public_observation(self):
-        self.assertEqual(self.capture(png(nonblack=True)), {"presented_damage": 4})
+        receipt = self.capture(png(nonblack=True))
+        self.assertEqual(receipt['presented_damage'], 4)
+        self.assertTrue(receipt['review_pending'])
         self.last_qa.nodes.assert_called_once_with()
         self.assertEqual(self.last_qa.observations, {"selected": []})
 
@@ -113,7 +117,7 @@ class NativeCapturePixelsTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "native capture failed: capture error"):
             self.capture(original, exit_code=1, stderr="capture error")
         self.last_qa.nodes.assert_not_called()
-        self.assertEqual((self.root / "selected-native-capture/weston-shot.png").read_bytes(), original)
+        self.assertEqual((self.root / "selected-native-capture-0/weston-shot.png").read_bytes(), original)
 
 
 if __name__ == "__main__":

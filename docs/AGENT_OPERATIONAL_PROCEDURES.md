@@ -243,6 +243,8 @@ persistence after reopening. Accessible-node coverage and passing test counts
 alone do not establish visible usability. Record this focused comparison and
 behavior check in the existing task and include them in its one independent
 review; this requires no new receipt, schema or broad qualification campaign.
+For the reusable Preferences capture command, see the
+[reference-image routine](gui/reference/README.md#preferences-routine-nativereference-check).
 
 **Evidence records state their own retention honestly.** Keep these conventions
 whenever a review record references evidence or binds an acceptance hash:

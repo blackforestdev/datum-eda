@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bounded native-Wayland startup QA through an owned Weston input envelope.
 
-Run with /usr/bin/python3 on the desktop or an owned input display. No Cargo, genesis helpers,
+Run with /usr/bin/python3 inside run_native_qa_isolated_input.py. No Cargo, genesis helpers,
 private UI actions, owner Projects or HOME substitution participate.
 """
 from __future__ import annotations
@@ -38,7 +38,8 @@ OWNED = REPO / ".datum/native-project-startup-repair"
 class StartupQA(NativeReadinessCapture):
     source_files = staticmethod(source_files)
 
-    def __init__(self, root: Path, *, runtime_parent: Path | None = None):
+    def __init__(self, root: Path, *, runtime_parent: Path | None = None,
+                 binary_dir: Path | None = None, startup_probe=False):
         self.root = root
         self.process = None
         self.app_log = None
@@ -46,9 +47,8 @@ class StartupQA(NativeReadinessCapture):
         self.observations = {}
         self.capture_counts = {}
         self.terminal_dock_open = True
-        input_display = validate_input_display(os.environ)
-        self.previous_focus = ("" if input_display else
-                               self.command("xdotool", "getwindowfocus").strip())
+        validate_input_display(os.environ)
+        self.previous_focus = ""
         self.runtime = tempfile.TemporaryDirectory(prefix="npd-wl-", dir=runtime_parent or "/tmp")
         self.compositor = None
         self.file_actions = False
@@ -65,6 +65,8 @@ class StartupQA(NativeReadinessCapture):
             "DATUM_GUI_PREFERENCES_PATH": str(root / "config/gui-preferences.json"),
             "HISTFILE": str(root / "terminal-history"),
             "DATUM_GUI_VERBOSE_LOG": "1",
+        })
+        startup_environment = {
             "DATUM_PROJECT_ROOT": "/c08-stale-parent-project",
             "DATUM_DISCOVERY": "/c08-stale-parent-discovery",
             "DATUM_AGENT_CREDENTIAL_FILE": "/c08-stale-parent-credential",
@@ -72,10 +74,15 @@ class StartupQA(NativeReadinessCapture):
             "DATUM_ENGINE_SOCKET": "/c08-stale-parent-engine",
             "DATUM_MCP_ENDPOINT": "/c08-stale-parent-mcp",
             "DATUM_AGENT_PROVENANCE": "c08-stale-parent-provenance",
-        })
+        }
+        for key in startup_environment:
+            self.env.pop(key, None)
+        if startup_probe:
+            self.env.update(startup_environment)
         for key in ["DISPLAY", "WAYLAND_SOCKET", "WINIT_UNIX_BACKEND", "DATUM_GPU_DIAGNOSTIC_BACKEND"]:
             self.env.pop(key, None)
-        self.binary_dir = Path(os.environ.get("DATUM_QA_BINARY_DIR", REPO / "target/debug")).resolve()
+        self.binary_dir = Path(binary_dir or os.environ.get("DATUM_QA_BINARY_DIR", REPO / "target/debug")).resolve()
+        self.env["EDA_CLI_BIN"] = str(self.binary_dir / "datum-eda")
         self.binary_hashes = {
             name: digest(self.binary_dir / name)
             for name in ["datum-gui", "datum-eda", "eda-engine-daemon"]
@@ -99,6 +106,7 @@ class StartupQA(NativeReadinessCapture):
 
     def start_envelope(self, desktop=False, *, proto_log=False, output_size=(1344, 806),
                        backend="wayland"):
+        validate_input_display(os.environ)
         if (not isinstance(output_size, tuple) or len(output_size) != 2
                 or any(type(dimension) is not int or dimension <= 0 for dimension in output_size)):
             raise ValueError("output_size must be a pair of positive integers")
@@ -571,7 +579,7 @@ def main():
     if args.native_launch_smoke:
         native_launch_smoke(root)
         return
-    qa = StartupQA(root)
+    qa = StartupQA(root, startup_probe=True)
     qa.file_actions = args.file_actions
     result = {"mode": "bare native Wayland/WGPU/Vulkan Datum; real X11 input through owned Weston; PID-qualified GI inspection",
               "binary_hashes": qa.binary_hashes, "status": "FAIL",
