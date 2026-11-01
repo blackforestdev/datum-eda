@@ -94,9 +94,10 @@ owned files and exact next action rather than copying its history.
 - **Types:** `task`, `bug`, `feature`, `epic`, `chore`, `docs`, `question`
 - **Priority:** `0`–`4` (P0 critical … P4 backlog) — numbers, not words
 - Classify at creation: incidental findings and routine tasks use `roadmap:intake`;
-  the label grants no execution or priority. A verified manager may authorize the
-  routine task under PM059. Milestone work uses `roadmap:frontier` in the synchronized
-  Frontier transaction. Missing or conflicting roadmap labels invalidate the selector.
+  the label grants no execution or priority. The owner or a verified manager may
+  authorize the routine task under PM059. Milestone work uses `roadmap:frontier`
+  in the synchronized Frontier transaction. Missing or conflicting roadmap labels
+  invalidate the selector.
 - **Attribution (audit trail):** set once per session so `br` records who acted —
   `export BR_AGENT_NAME=codex BR_HARNESS=codex-cli BR_MODEL=<model>` and pass
   `--actor codex`. (These are `br`'s audit fields only; they are **not** git
@@ -104,7 +105,7 @@ owned files and exact next action rather than copying its history.
 
 ### Working pattern
 
-1. **Start:** for routine work, record the verified manager's bounded grant,
+1. **Start:** for routine work, record the direct-owner or verified-PM bounded grant,
    implementer and owned paths in one task; claim/export before editing. For
    milestone work, use `project_status.py next/details` and synchronize its
    structured Frontier/beads claim. `br` status or priority alone grants nothing.
@@ -113,6 +114,13 @@ owned files and exact next action rather than copying its history.
    Wire a dependency if it blocks/relates to other work (`br dep add ...`).
 3. **Finish:** `br close <id> --reason "..."`, citing the commit where it landed.
 4. **Before committing:** `br sync --flush-only` so `issues.jsonl` reflects your changes.
+
+If session messaging fails, use the existing task record: note the failed channel,
+any exact missing decision and the action it blocks, then export. Continue the
+nonconflicting work covered by an existing valid grant; do not seek reapproval or
+ask the owner to relay it. At work boundaries the PM checks shared task updates,
+including blocked tasks, and records pending decision dispositions there. A queued
+request is not permission, successful message delivery or independent review.
 
 ### Project-state procedure owner
 

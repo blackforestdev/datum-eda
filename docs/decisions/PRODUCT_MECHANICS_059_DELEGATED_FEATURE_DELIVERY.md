@@ -19,9 +19,10 @@ following an owner-absence halt and a small Rust correction held behind roadmap
 restructuring. This prospectively supersedes universal Frontier promotion/lease
 and completion-plan requirements for routine implementation and fixes.
 
-The verified standing manager may authorize a bounded routine task inside its
-covered, ratified product scope in **one task record**. Record the grant and
-governing scope, named implementer, nonconflicting files owned and expected behavior
+The owner or verified standing manager may authorize a bounded routine task in
+**one task record**; the manager remains within its covered, ratified product scope.
+Record the grant and governing scope, named implementer, nonconflicting files
+owned and expected behavior
 before editing, checking existing task ownership and shared-worktree changes.
 A bounded task includes a new usable feature increment within already-ratified
 product scope. Whole-editor planning or acceptance is not its prerequisite unless
@@ -37,9 +38,9 @@ route, availability packet or qualification campaign merely to land the incremen
 
 Beads is the operational task record, not an execution gate generator. Its
 `roadmap:intake` label means no independently scheduled milestone; the label,
-priority or claim supplies no grant. A recorded authorization from the verified
-manager supplies routine authority. Milestone queries and state changes continue
-through the existing Frontier selector; routine task ownership and results live
+priority or claim supplies no grant. A recorded direct-owner or verified-PM
+authorization supplies routine authority. Milestone queries and state changes
+continue through the existing Frontier selector; routine task ownership and results live
 in the task record without a duplicate roadmap entry. No tracker migration,
 parallel selector or new permission service is required.
 
@@ -208,9 +209,17 @@ health, resource discipline, canonical mutation and Claude's prototype file lane
 
 Use available authorized session channels for manager/implementer/reviewer
 handoffs. The owner authorizes those development-team handoffs; this is not
-permission for unrelated external messaging. If session transport is unavailable,
-record that concrete integration limitation rather than silently using the owner
-as the default relay. No new transport dependency or service is authorized.
+permission for unrelated external messaging. Unavailable transport does not revoke
+an existing valid direct-owner or verified-PM grant. Continue its nonconflicting
+authorized work without reapproval; holds, ownership, proof and owner-only
+boundaries remain. Record failed communication and any genuinely missing decision
+in the existing task, naming the requested disposition and blocked action, then
+export it. The appointed PM checks shared task updates at work boundaries and
+records its disposition there. A queued request supplies no authority; stop only
+the action needing that decision and continue separately authorized work. Do not
+ask the owner to relay messages or repeat an existing authorization. Unavailable
+required independent review still blocks delivery. No fallback appointment, new
+transport dependency or service is authorized.
 
 Report delivered user behavior, verification outcome and genuine blockers.
 Distinguish implemented functionality, behavior actually verified, and functionality

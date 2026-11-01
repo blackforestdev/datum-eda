@@ -216,11 +216,11 @@ findings and disposition; routine substeps do not require separate receipt sets.
 
 ### Routine implementation and fixes
 
-Use PM059's owner-directed one-task amendment. The verified manager records the
-bounded grant/governing scope, implementer, nonconflicting owned paths and intended
+Use PM059's owner-directed one-task amendment. Record the bounded direct-owner or
+verified-PM grant/governing scope, implementer, nonconflicting owned paths and intended
 behavior in one Beads task. Claim/export that task before editing, implement, run
 focused checks, obtain one actual independent review and land with concise results.
-The recorded manager grant supplies authority; a label, priority or claim does
+The recorded owner or verified-PM grant supplies authority; a label, priority or claim does
 not. `roadmap:intake` records ordinary tasks outside milestone scheduling.
 No new Frontier item/lease, completion graph, availability packet or qualification
 campaign is required for the correction. Existing milestone schema and selector

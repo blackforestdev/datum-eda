@@ -53,10 +53,12 @@ or `--json` only when the task needs that detail; paste raw output only when the
 user explicitly requests it. Never reconstruct from memory or `br ready`.
 Report selector failure and stop the query. The printed next completion step is
 sole milestone-selection authority; dependency readiness grants no work. Routine
-assignments use the verified manager's recorded PM059 grant, never tracker priority.
+assignments use a recorded direct-owner or verified-PM grant under PM059, never
+tracker priority.
 
-For routine work, record the manager's bounded authorization, implementer and
-file scope in one task before editing; update its assignee/status and export.
+For routine work, record the owner's or verified manager's bounded authorization,
+implementer and file scope in one task before editing; update its assignee/status
+and export.
 No duplicate Frontier lease or completion plan is required. Scheduled milestone
 execution retains its structured Frontier/beads claim. Respect all scopes and
 other sessions' dirty work; transfer ownership explicitly. A tracker claim alone

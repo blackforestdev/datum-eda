@@ -126,8 +126,8 @@ readiness records supply no product grant.
 ## Roadmap and editing authority
 
 Routine development, including bounded new features within ratified scope,
-follows PM059's **one-task workflow**: the verified manager
-records the bounded grant, implementer, file scope **and the definition of done —
+follows PM059's **one-task workflow**: record the bounded direct-owner or verified-PM
+grant, implementer, file scope **and the definition of done —
 one or two sentences of designer-visible behavior, fixed before work starts and
 never extensible from inside the work** — in one existing task record; the
 implementer fixes the Rust behavior, runs affected checks, obtains one actual
