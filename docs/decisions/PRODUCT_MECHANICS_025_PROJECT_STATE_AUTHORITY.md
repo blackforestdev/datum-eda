@@ -121,13 +121,26 @@ The generated region is bounded by the literal markers
 Every scheduled item MUST separately state:
 
 - lifecycle: `planned`, `specified`, `ready`, `in_progress`, `blocked`,
-  `deferred`, or `landed`; and
+  `deferred`, `landed`, or `canceled`; and
 - authorization: `planning`, `execution`, `owner_decision`, or `none`.
 
 An item is executable only when its lifecycle, authorization, dependencies,
 explicit selection, absence of a hold and claim state jointly permit execution. “Specified,” “ready,” “NEXT,” and
 “in_progress” are not synonyms. `specified` + `planning` MAY be selected when
 the next task is specification work; it never authorizes feature execution.
+
+Owner-directed correction, 2026-11-01: `canceled` is a terminal disposition
+distinct from delivered work. Its `cancellation` record contains a nonempty
+`reason` and resolving governed owner `source_ref` (`path`, `marker`). It requires
+closed tracker state, no execution authorization, no canonical selection, no
+claim/hold, and no active or selected completion step. Unfinished steps and their
+missing evidence remain historical; cancellation never requires fabricated
+completion, readiness or acceptance. A canceled prerequisite remains unsatisfied
+until the dependency itself is explicitly reconciled; tracker closure alone is
+not delivery. Once committed, the cancellation record and task identity remain
+terminal and cannot be deleted or reactivated. Renewed owner-authorized work uses
+a separate task. The selector checks retained cancellation against committed
+Frontier state and rejects contradictory lifecycle, ownership or selection.
 
 ### PS-004: Tracker role and dependency honesty
 
@@ -181,7 +194,7 @@ No roadmap, tracker, claim, or emergency status can waive source-health gates.
 This contract describes scheduled milestones, not each routine implementation
 task or regression fix. PM059's one-task workflow needs no duplicate step graph.
 
-The selected non-landed item MUST carry one closed-shape ordered completion
+The selected nonterminal item MUST carry one closed-shape ordered completion
 contract with an outcome, stable unique step IDs, work kinds, forward-valid
 dependencies, exactly one explicit canonical next substep while work remains,
 governed evidence markers, post-completion effects, and an explicit successor
@@ -199,8 +212,9 @@ or unblocking work MUST NOT silently authorize or select its successor.
 Each completion contract also carries closed-shape execution and presentation
 policies. Exactly one step may be `in_progress`; if present, it MUST be the
 canonical next substep. The canonical substep MUST be pending or in progress
-with every dependency complete, and becomes `null` only when every step is
-complete. Dependency independence MUST NOT be represented as authorization for
+with every dependency complete, and becomes `null` when every step is
+complete or the item is canceled. Unfinished canceled steps remain historical,
+not implicitly passed or scheduled. Dependency independence MUST NOT be represented as authorization for
 parallel work. Presentation mode is `human_summary`: ordinary replies summarize
 relevant steps in canonical order and distinguish current work from later work.
 Order/numbering and no-regrouping/supplementation flags protect the canonical

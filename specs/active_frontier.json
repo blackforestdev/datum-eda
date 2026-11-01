@@ -10365,8 +10365,8 @@
         "post_completion": {
           "authorizes_successor": false,
           "effects": [
-            "The canceled campaign no longer blocks roadmap selection.",
-            "Dependent specification work loses this administrative blocker only; no product acceptance, execution grant or successor selection follows."
+            "The canceled campaign cannot be selected or resumed.",
+            "Cancellation does not satisfy product prerequisites or select a successor."
           ],
           "selection": "explicit_frontier_update",
           "selects_successor": false,
@@ -10790,7 +10790,7 @@
       "key": "GLOBAL-PREFERENCES-COMPLETION",
       "order": 42,
       "parallel": false,
-      "state": "landed",
+      "state": "canceled",
       "summary": "Owner canceled the remaining campaign permanently. Closure records that disposition only; historical evidence and unqualified limitations remain, development_ready stays false, and no production acceptance or successor is authorized.",
       "title": "Close canceled Preferences qualification campaign",
       "unblocks": [
@@ -10800,7 +10800,13 @@
         "kind": "maintenance",
         "rationale": "Record the direct owner cancellation and remove stale campaign selection; no product acceptance, new qualification or successor authority."
       },
-      "landing_commit": "958ed51b"
+      "cancellation": {
+        "reason": "Owner permanently canceled the remaining campaign; historical limitations remain unqualified. No acceptance or readiness is asserted.",
+        "source_ref": {
+          "marker": "OWNER:GP-CAMPAIGN-CANCELLATION-20261101",
+          "path": "docs/reviews/preferences/gp-cm05-implementation/owner-direction.md"
+        }
+      }
     },
     {
       "authorization": "planning",
@@ -10942,7 +10948,7 @@
       "key": "PROJECT-PREFERENCES-SPEC",
       "order": 43,
       "parallel": false,
-      "state": "planned",
+      "state": "blocked",
       "summary": "Complete the exact Project-owned settings inventory, canonical query/mutation contract, conventional menu doorway, interaction/accessibility specification, and protected visual truth after Global Preferences is stable.",
       "title": "Specify the Global and Project Preferences doorway",
       "unblocks": [

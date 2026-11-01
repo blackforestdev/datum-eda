@@ -95,7 +95,8 @@ tasks cannot smuggle implementation into their completion plan.
 The contract also names exactly one `canonical_next_step_id` whenever
 incomplete work remains. It must identify a pending or in-progress step whose
 dependencies are complete; an active step and the canonical step must be
-identical. A `null` value is valid only after every step is complete. Manifest
+identical. A `null` value is valid after every step is complete or the item is
+canceled; unfinished canceled steps remain historical and unscheduled. Manifest
 order remains presentation order, but order or dependency readiness alone never
 selects among multiple candidates.
 
@@ -296,6 +297,11 @@ interpretable without them.
 - `deferred`: deliberately outside the current executable frontier.
 - `landed`: committed work, with a required `landing_commit`; verification and
   tracker closure are represented by evidence and tracker state.
+- `canceled`: owner-terminated work with a `cancellation` reason and governed
+  `source_ref`, closed tracker, authorization `none`, and no selection, claim,
+  hold or active step. Retain pending steps and unproved evidence honestly.
+  No `landing_commit` is implied. Cancellation does not satisfy a delivery
+  dependency; reconcile any administrative dependency explicitly.
 
 Authorization is independent:
 
@@ -364,14 +370,15 @@ them together:
 
 When the owner cancels scheduled work, record the disposition in its existing
 governed source and reconcile the Frontier, generated projection and tracker
-before reporting closure. Complete only the cancellation decision, explicitly
+before reporting closure. Use the terminal `canceled` state, explicitly
 supersede canceled obligations, retain historical results and unproved limitations,
-and describe the landed outcome as cancellation, not product acceptance or
+and describe the outcome as cancellation, not product acceptance or
 readiness. Never mark missing execution or proof as passed. Remove canceled work
 from canonical selection; use an explicitly authorized successor or the existing
 idle disposition. Do not leave a canceled campaign selected or restart it to
-satisfy obsolete acceptance requirements. New owner direction is required to
-reopen its scope. Separately authorized routine work is unaffected.
+satisfy obsolete acceptance requirements. A committed cancellation record cannot
+be deleted or reactivated; renewed work requires new owner direction in a separate
+task. Separately authorized routine work is unaffected.
 
 Run `git status` and stage only files owned by the current claim. Do not sweep up
 another session's work.

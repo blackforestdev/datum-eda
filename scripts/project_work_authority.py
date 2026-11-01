@@ -84,7 +84,7 @@ def validate_item_authority(root: Path, item: dict, governed: dict, version: int
     key = item.get("key", "?")
     purpose = item.get("work_purpose")
     if purpose is None:
-        if item.get("state") != "landed":
+        if item.get("state") not in {"landed", "canceled"}:
             failures.append(f"{key}: unfinished work requires explicit work_purpose")
     elif (not isinstance(purpose, dict) or set(purpose) != {"kind", "rationale"}
           or not isinstance(purpose.get("kind"), str) or purpose.get("kind") not in PURPOSES or not text(purpose.get("rationale"))):
@@ -225,6 +225,8 @@ def decision_view(item: dict, appointments: dict) -> dict:
 
 
 def work_start(item: dict, issue: dict, decision: dict, claim_state: str) -> str:
+    if item.get("state") == "canceled":
+        return "STOP: canceled work; no resumption or product acceptance. Renewed owner-authorized work requires a separate task."
     if item.get("hold"):
         return "STOP: held work. " + item["hold"]["resume_requires"]
     if claim_state != "none":
@@ -292,7 +294,8 @@ def render_brief(view: dict, details: bool = False) -> str:
         f"State: {view['state']}; authorization: {view['authorization']}; "
         f"tracker: {view['tracker_status']}; assignee: {view['assignee'] or 'unassigned'}; "
         f"claim: {view['claim_state']}",
-        (f"Next step: [{step_id}] {short(selected['action'])}" if selected else
+        ("Next step: none; canceled. Unfinished historical steps are not scheduled." if view["state"] == "canceled" else
+         f"Next step: [{step_id}] {short(selected['action'])}" if selected else
          "Next step: none; all steps complete." if steps else
          "Next step: none recorded; this query does not authorize work."),
         "Work start: " + short(view["work_start"]),
@@ -305,7 +308,7 @@ def render_brief(view: dict, details: bool = False) -> str:
                      f"routing: {view['decision_routing_status']}. Read the full packet before requesting a disposition.")
         if view.get("classification_required"):
             lines.append("Classification required: manager classification must precede any disposition; no acceptance or execution is authorized.")
-    if details and steps:
+    if details and steps and view["state"] != "canceled":
         remaining = [(i, s) for i, s in enumerate(steps, 1) if s["status"] != "complete"]
         lines.append(f"Steps: {len(steps) - len(remaining)}/{len(steps)} complete; {len(remaining)} remaining.")
         for i, step in remaining[:5]:

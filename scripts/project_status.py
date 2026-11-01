@@ -32,6 +32,7 @@ from project_task_details import (
 from project_feature_delivery import delivery_lines, validate_feature_delivery
 from history_commit_locator import commit_exists
 from project_claim_scope import claim_scope_failures
+from project_cancellation import validate_cancellation, validate_cancellation_history
 from project_work_authority import (
     validate_item_authority, validate_selection, validate_appointments,
     decision_view, work_start, authority_lines, idle_view, render_idle,
@@ -42,7 +43,7 @@ from project_work_authority import (
 START_MARKER = "<!-- ACTIVE FRONTIER:START -->"
 END_MARKER = "<!-- ACTIVE FRONTIER:END -->"
 VALID_STATES = {
-    "planned", "specified", "ready", "in_progress", "blocked", "deferred", "landed"
+    "planned", "specified", "ready", "in_progress", "blocked", "deferred", "landed", "canceled"
 }
 VALID_AUTHORIZATIONS = {"planning", "execution", "owner_decision", "none"}
 STATE_AUTHORIZATIONS = {
@@ -53,13 +54,14 @@ STATE_AUTHORIZATIONS = {
     "blocked": {"execution", "planning", "owner_decision", "none"},
     "deferred": {"none"},
     "landed": {"none"},
+    "canceled": {"none"},
 }
 ROOT_KEYS = {"schema_version", "policy_decision", "claim_ttl_hours", "frontier", "selection", "management_appointments"}
 REQUIRED_ROOT_KEYS = ROOT_KEYS - {"selection", "management_appointments"}
 ITEM_KEYS = {
     "key", "order", "title", "issue_id", "related_issue_ids", "governing_docs",
     "state", "authorization", "canonical_next", "parallel", "summary",
-    "dependencies", "unblocks", "landing_commit", "claim", "completion", "feature_delivery", "work_purpose", "hold", "decision_routing",
+    "dependencies", "unblocks", "landing_commit", "claim", "completion", "feature_delivery", "work_purpose", "hold", "decision_routing", "cancellation",
 }
 REQUIRED_ITEM_KEYS = {
     "key", "order", "title", "issue_id", "governing_docs", "state",
@@ -246,6 +248,8 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
     primary_ids: set[str] = set()
     next_items: list[dict[str, Any]] = []
     active_claims: list[tuple[str, dict[str, Any]]] = []
+    canceled_ids = {x["issue_id"] for x in frontier if isinstance(x, dict)
+                    and nonempty(x.get("issue_id")) and x.get("state") == "canceled"}
     moment = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
     for index, raw in enumerate(frontier):
         if not isinstance(raw, dict):
@@ -330,8 +334,8 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
                 f"{label}: dependency mismatch (frontier={sorted(declared)}, "
                 f"tracker hard blocks={sorted(tracker_hard)})"
             )
-        unresolved = hard_blockers(issue, issues)
-        expected_status = "closed" if state == "landed" else "deferred" if state == "deferred" else "in_progress" if state == "in_progress" else "open"
+        unresolved = hard_blockers(issue, issues) | (declared & canceled_ids)
+        expected_status = "closed" if state in {"landed", "canceled"} else "deferred" if state == "deferred" else "in_progress" if state == "in_progress" else "open"
         if state in VALID_STATES and issue.get("status") != expected_status:
             failures.append(
                 f"{label}: state {state} requires tracker status {expected_status}, "
@@ -347,7 +351,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
             next_items.append(item)
             if "completion" not in item:
                 failures.append(f"{label}: canonical next requires a completion plan")
-            if state in {"blocked", "deferred", "landed"} or unresolved:
+            if state in {"blocked", "deferred", "landed", "canceled"} or unresolved:
                 failures.append(f"{label}: canonical next is not actionable")
             if state == "planned" and authorization not in {"planning", "owner_decision"}:
                 failures.append(
@@ -362,6 +366,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
         elif landing is not None:
             failures.append(f"{label}: landing_commit is only allowed for landed state")
         validate_claim(item, issue, ttl, moment, failures)
+        failures.extend(validate_cancellation(root, item, governed))
         failures.extend(validate_item_authority(root, item, governed, manifest.get("schema_version")))
         failures.extend(validate_feature_delivery(root, item, issue))
         if "completion" in item:
@@ -376,6 +381,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
         from workflow_delivery_selector import selector_failures
         failures.extend(selector_failures(root, manifest))
     failures.extend(validate_selection(root, manifest, next_items, governed))
+    failures.extend(validate_cancellation_history(root, manifest))
     failures.extend(validate_appointments(root, manifest, governed))
     if orders and orders != set(range(len(orders))):
         failures.append("frontier order values must be contiguous from 0")

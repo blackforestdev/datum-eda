@@ -297,7 +297,10 @@ def validate_completion(
         failures.append(f"{key}: at most {maximum_active} completion step may be in_progress")
     canonical_step = completion.get("canonical_next_step_id")
     incomplete_steps = [step_id for step_id in step_ids if statuses.get(step_id) != "complete"]
-    if not incomplete_steps:
+    if item.get("state") == "canceled":
+        if canonical_step is not None or active_steps:
+            failures.append(f"{key}: canceled plan cannot have a selected or active step")
+    elif not incomplete_steps:
         if canonical_step is not None:
             failures.append(f"{key}: completed plan requires canonical_next_step_id null")
         if item.get("canonical_next"):
@@ -432,6 +435,7 @@ def completion_view(item: dict[str, Any], issue: dict[str, Any], appointments: d
         "summary": item["summary"],
         "canonical_next": item["canonical_next"],
         "hold": item.get("hold"),
+        "cancellation": item.get("cancellation"),
         "work_purpose": item.get("work_purpose"),
         "feature_delivery": item.get("feature_delivery"),
         "key": item["key"],
@@ -527,7 +531,9 @@ def render_completion(view: dict[str, Any]) -> str:
         f"Completion outcome: {view['outcome']}",
     ]
     canonical_step = view["canonical_next_step_id"]
-    if canonical_step is None:
+    if view["state"] == "canceled":
+        lines.append("Next completion step: none; canceled. Unfinished historical steps are not scheduled.")
+    elif canonical_step is None:
         lines.append("Next completion step: none; every completion step is complete.")
     else:
         selected = next(step for step in view["steps"] if step["id"] == canonical_step)

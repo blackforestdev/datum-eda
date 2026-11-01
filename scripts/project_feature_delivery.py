@@ -123,7 +123,7 @@ def delivery_lines(view: dict) -> list[str]:
     if (not view.get("decision_input_required", view.get("owner_input_required"))
             and not view.get("hold")
             and ("canonical_next" not in view or view["canonical_next"])
-            and ("state" not in view or view["state"] not in {"blocked", "deferred", "landed"})):
+            and ("state" not in view or view["state"] not in {"blocked", "deferred", "landed", "canceled"})):
         lines.append(
             "Delivery rule: continue within the recorded grant through implementation, focused safety checks, "
             "repairs and required review; stop only for delivery or a concrete authority, safety, review/transport "
