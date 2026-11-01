@@ -2,6 +2,9 @@
 # is governed by crates/terminal-core/unicode/SHA256SUMS, not repository style.
 crates/terminal-core/unicode/** -whitespace
 
+# Preserve the packaged upstream library license and exception byte-for-byte.
+crates/engine/assets/library/kicad/COPYRIGHT.txt -whitespace
+
 # Preserve exact diagnostic receipts, including patch context spaces and profiler EOF.
 docs/reviews/gui-performance/measurements/resize-dialog-isolation/source.patch -whitespace
 docs/reviews/gui-performance/measurements/resize-minimal-native/source.patch -whitespace
