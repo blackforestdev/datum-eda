@@ -229,15 +229,11 @@ impl Runtime {
         true
     }
     fn schematic_snap_point(&self, world: PointNm, screen: (f32, f32)) -> Option<PointNm> {
+        let pane = self.pane_at_screen(screen.0, screen.1)?;
+        let scene = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?;
         if let Some(HitTarget::AuthoredObject(id)) =
             self.presented_hits.hit_test(screen.0, screen.1)
-            && let Some(graphic) = self
-                .workspace()
-                .schematic_scene
-                .as_ref()?
-                .board_graphics
-                .iter()
-                .find(|g| &g.object_id == id)
+            && let Some(graphic) = scene.board_graphics.iter().find(|g| &g.object_id == id)
             && let Some(point) = self
                 .workspace()
                 .schematic_authoring
@@ -248,16 +244,16 @@ impl Runtime {
         // Authored world ink is retained, not a screen-chrome hit region. Reuse
         // its existing geometry predicate, admitting only complete committed
         // source pins from the gesture's revision-qualified immutable basis.
-        if let Some(retained) = self.renderer.render_session().schematic()
+        if let Some(retained) = self.renderer.render_session().schematic_for_pane(pane)
             && let Some(HitTarget::AuthoredObject(id)) =
                 retained.hit_test_authored_world_eligible(world, self.workspace(), |target| {
                     let HitTarget::AuthoredObject(id) = target else {
                         return false;
                     };
-                    self.workspace()
-                        .schematic_scene
-                        .as_ref()
-                        .and_then(|scene| scene.board_graphics.iter().find(|g| &g.object_id == id))
+                    scene
+                        .board_graphics
+                        .iter()
+                        .find(|g| &g.object_id == id)
                         .and_then(|graphic| {
                             self.workspace()
                                 .schematic_authoring
@@ -265,11 +261,10 @@ impl Runtime {
                         })
                         .is_some()
                 })
-            && let Some(point) = self
-                .workspace()
-                .schematic_scene
-                .as_ref()
-                .and_then(|scene| scene.board_graphics.iter().find(|g| g.object_id == id))
+            && let Some(point) = scene
+                .board_graphics
+                .iter()
+                .find(|g| g.object_id == id)
                 .and_then(|graphic| {
                     self.workspace()
                         .schematic_authoring

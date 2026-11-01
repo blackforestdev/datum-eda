@@ -5,6 +5,8 @@ use datum_gui_protocol::{
     ReviewWorkspaceState,
     library_browser::{KINDS, LibraryControl as C},
 };
+#[path = "library_electrical_form.rs"]
+mod electrical_form;
 
 struct Painter<'a> {
     rect: RectPx,
@@ -116,6 +118,9 @@ pub(crate) fn render(
             p.line("Physical body / terminals · no Footprint lands");
             p.line("Tolerances, terminal positions and governed models unavailable");
         }
+        if matches!(d.kind.as_str(), "units" | "symbols") {
+            electrical_form::table(&mut p, d, rect);
+        }
         if matches!(d.kind.as_str(), "footprints" | "packages") {
             let package = d.kind == "packages";
             let records = if package { &d.terminals } else { &d.pads };
@@ -192,6 +197,8 @@ pub(crate) fn render(
                     || {
                         if field.text.is_empty() {
                             "Unavailable / not authored".into()
+                        } else if matches!(d.kind.as_str(), "units" | "symbols") && field.selector {
+                            "Unavailable selection".into()
                         } else {
                             field.text.clone()
                         }
@@ -219,8 +226,11 @@ pub(crate) fn render(
                 );
             }
         }
+        if matches!(d.kind.as_str(), "units" | "symbols") {
+            electrical_form::review(&mut p, d);
+        }
         p.button(
-            if d.kind == "packages" {
+            if matches!(d.kind.as_str(), "packages" | "units" | "symbols") {
                 "Inspect complete refusal in Console"
             } else {
                 "Inspect complete refusal / process reason in Console"
@@ -356,7 +366,7 @@ pub(crate) fn render(
         }
         if matches!(
             KINDS[state.library.kind].0,
-            "footprints" | "padstacks" | "packages"
+            "footprints" | "padstacks" | "packages" | "units" | "symbols"
         ) {
             p.button(
                 &format!("Create {} · target pool", KINDS[state.library.kind].1),

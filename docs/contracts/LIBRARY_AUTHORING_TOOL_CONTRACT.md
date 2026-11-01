@@ -153,6 +153,15 @@ The preview is a dimensional envelope; terminal positions and exact outline are
 unavailable. Saved-Package editing, tolerance/model authoring, placed updates and
 broader qualification remain open.
 
+The creation-only Unit and Symbol GUI increment uses the same canonical writer
+and shared library form. A Unit has named logical pins and electrical types; a
+separate Symbol links to a named Unit and supplies one explicit rectangular body
+and named pin anchors with positions, directions and stub lengths. The form shows
+the pin table, declared geometry preview and change review before Commit; Cancel
+discards the draft. Created Symbols are available to the schematic placement
+picker without requiring a physical Part binding. Saved-definition editing,
+general graphics editing, approval and placed-definition propagation remain open.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

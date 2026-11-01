@@ -13,7 +13,9 @@ use serde_json::{Map, Value, json};
 use std::{collections::BTreeSet, path::Path};
 use uuid::Uuid;
 
+mod electrical;
 mod package;
+pub use electrical::ElectricalDraft;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibraryField {
@@ -40,6 +42,7 @@ pub struct LibraryDraft {
     pub original_pads: BTreeSet<String>,
     pub terminal_id: Option<Uuid>,
     pub terminals: Map<String, Value>,
+    pub electrical: ElectricalDraft,
     pub preview: Option<Value>,
     pub refusal: Option<String>,
 }
@@ -51,13 +54,22 @@ impl LibraryDraft {
         revision: String,
         tip: Option<Uuid>,
     ) -> Result<Self, String> {
-        if !matches!(kind, "footprints" | "padstacks" | "packages") {
+        if !matches!(
+            kind,
+            "footprints" | "padstacks" | "packages" | "units" | "symbols"
+        ) {
             return Err(
-                "Authoring is available for Footprint, Padstack and Package creation".into(),
+                "Authoring is available for Unit, Symbol, Footprint, Padstack and Package creation"
+                    .into(),
             );
         }
-        if kind == "packages" && entry.is_some() {
-            return Err("Saved Package editing is unavailable in this increment".into());
+        if matches!(kind, "packages" | "units" | "symbols") && entry.is_some() {
+            return Err(
+                "Saved Package, Unit and Symbol editing is unavailable in this increment".into(),
+            );
+        }
+        if kind == "symbols" && browser.choices("units").is_empty() {
+            return Err("Create a named Unit before creating its Symbol".into());
         }
         if kind == "footprints" && entry.is_none() && browser.choices("packages").is_empty() {
             return Err(
@@ -84,12 +96,15 @@ impl LibraryDraft {
             original_pads: BTreeSet::new(),
             terminal_id: None,
             terminals: Map::new(),
+            electrical: ElectricalDraft::default(),
             preview: None,
             refusal: None,
         };
         let raw = entry.map(|e| &e.raw).unwrap_or(&Value::Null);
         draft.field("name", "Name", raw.get("name"), vec![]);
-        if kind == "packages" {
+        if matches!(kind, "units" | "symbols") {
+            draft.electrical_fields(browser);
+        } else if kind == "packages" {
             draft.package_fields();
         } else if kind == "padstacks" {
             let aperture = raw.get("aperture").unwrap_or(&Value::Null);
@@ -247,7 +262,17 @@ impl LibraryDraft {
             choices,
             selector: matches!(
                 key,
-                "shape" | "plated" | "span" | "mask" | "paste" | "package" | "padstack"
+                "shape"
+                    | "plated"
+                    | "span"
+                    | "mask"
+                    | "paste"
+                    | "package"
+                    | "padstack"
+                    | "unit"
+                    | "pin_type"
+                    | "anchor_pin"
+                    | "anchor_orientation"
             ),
         });
     }
@@ -258,6 +283,12 @@ impl LibraryDraft {
             .map_or("", |f| f.text.as_str())
     }
     pub fn change(&mut self, text: String) {
+        if self.fields[self.focused].key == "pin_name"
+            && self.electrical.pin_id.is_none()
+            && !text.trim().is_empty()
+        {
+            self.electrical.pin_id = Some(Uuid::new_v4());
+        }
         if self.fields[self.focused].key == "terminal_name"
             && self.terminal_id.is_none()
             && !text.trim().is_empty()
@@ -273,6 +304,9 @@ impl LibraryDraft {
         let field = &mut self.fields[self.focused];
         field.text = text;
         self.dirty.insert(field.key);
+        if self.kind == "symbols" && self.fields[self.focused].key == "unit" {
+            self.refresh_unit_pin_choices();
+        }
         self.preview = None;
         self.refusal = None;
     }
@@ -298,7 +332,9 @@ impl LibraryDraft {
         if changed(&["name"]) {
             fields.insert("name".into(), json!(self.value("name")));
         }
-        if self.kind == "packages" {
+        if matches!(self.kind.as_str(), "units" | "symbols") {
+            self.electrical_request(&mut fields)?;
+        } else if self.kind == "packages" {
             self.package_request(&mut fields)?;
         } else if self.kind == "padstacks" {
             if changed(&["shape", "width", "height"]) {

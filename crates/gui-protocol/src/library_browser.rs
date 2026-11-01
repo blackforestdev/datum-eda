@@ -42,6 +42,12 @@ pub enum LibraryControl {
     Terminal(usize),
     AddTerminal,
     RemoveTerminal,
+    Pin(usize),
+    AddPin,
+    RemovePin,
+    Anchor(usize),
+    AddAnchor,
+    RemoveAnchor,
 }
 
 #[derive(Debug, Clone, PartialEq)]

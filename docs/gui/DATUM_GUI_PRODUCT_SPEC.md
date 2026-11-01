@@ -324,8 +324,8 @@ Unavailable fields are shown honestly; absent metadata is never fabricated.
 
 | Kind | Detail / manual authoring content | Current reusable seam and remaining delivery |
 |---|---|---|
-| Unit | Logical pin identity, name, electrical direction, alternate names and swap groups | Pool schema, resolver and typed pin authoring exist; full browser/editor proof pending |
-| Symbol | Unit link, native graphics, pin anchors/stubs, fields, prefix, style assertions and basis | Named picker and native body/pin projection delivered at bounded scope; complete detail/graphics editor pending |
+| Unit | Logical pin identity, name, electrical direction, alternate names and swap groups | Creation GUI supports named logical pins and electrical types, with a pin table and change review; saved-Unit editing, alternate names and swap-group controls remain pending |
+| Symbol | Unit link, native graphics, pin anchors/stubs, fields, prefix, style assertions and basis | Creation GUI supports a named Unit link, one explicit rectangular body, named pin anchors and declared geometry preview; named schematic placement is available, while saved-Symbol editing and the complete graphics editor remain pending |
 | Entity | Named gates, their Unit/Symbol links, prefix and multiplicity | Schema, gate authoring and reference diagnostics exist; complete multi-gate GUI pending |
 | Part | Manufacturer/orderable identity, lifecycle, parametrics, datasheet/qualification metadata, Entity and physical/map/model options | Native metadata/binding builders exist; complete orderable-part browser/editor pending |
 | Package | Physical body and terminals, family/code, dimensions/tolerances, height, mounting and model references | Creation GUI supports existing metadata, optional nominal dimensions/heights and terminal identity/name/role with envelope preview; saved-Package editing, tolerances, terminal positions and models remain pending |

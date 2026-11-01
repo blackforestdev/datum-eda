@@ -4,6 +4,8 @@ use datum_gui_protocol::{
     library_authoring::LibraryDraft,
     library_browser::{KINDS, LibraryControl as C},
 };
+#[path = "runtime_library_text.rs"]
+mod text_input;
 impl Runtime {
     pub(super) fn open_library(&mut self) {
         let id = self.session.workspace_mut().ui.layout.open_beside(
@@ -218,6 +220,35 @@ impl Runtime {
                     d.refusal = Some(e);
                 }
             }
+            C::Pin(_)
+            | C::AddPin
+            | C::RemovePin
+            | C::Anchor(_)
+            | C::AddAnchor
+            | C::RemoveAnchor => {
+                let browser = &mut self.session.workspace_mut().library;
+                if let Some(d) = &mut browser.draft {
+                    let pin = matches!(control, C::Pin(_) | C::AddPin | C::RemovePin);
+                    let index = match control {
+                        C::Pin(i) | C::Anchor(i) => Some(i),
+                        _ => None,
+                    };
+                    let result = if pin {
+                        d.switch_pin(index, control == C::RemovePin)
+                    } else {
+                        d.switch_anchor(index, control == C::RemoveAnchor)
+                    };
+                    match result {
+                        Ok(()) => {
+                            let key = if pin { "pin_name" } else { "anchor_pin" };
+                            d.focused = d.fields.iter().position(|f| f.key == key).unwrap();
+                            d.offset = d.focused;
+                            browser.focus = Some(C::Field(d.focused));
+                        }
+                        Err(error) => d.refusal = Some(error),
+                    }
+                }
+            }
         }
         self.invalidate_frame();
         true
@@ -256,6 +287,14 @@ impl Runtime {
                         controls.extend((0..d.terminals.len()).map(C::Terminal));
                         controls.extend([C::AddTerminal, C::RemoveTerminal]);
                     }
+                    if d.kind == "units" {
+                        controls.extend((0..d.electrical.pins.len()).map(C::Pin));
+                        controls.extend([C::AddPin, C::RemovePin]);
+                    }
+                    if d.kind == "symbols" {
+                        controls.extend((0..d.electrical.anchors.len()).map(C::Anchor));
+                        controls.extend([C::AddAnchor, C::RemoveAnchor]);
+                    }
                     controls.extend((0..d.fields.len()).map(C::Field));
                     if let Some(raw) = &d.preview {
                         controls.extend(
@@ -273,7 +312,7 @@ impl Runtime {
                     controls.extend(s.library.results().into_iter().map(C::Result));
                     if matches!(
                         KINDS[s.library.kind].0,
-                        "footprints" | "padstacks" | "packages"
+                        "footprints" | "padstacks" | "packages" | "units" | "symbols"
                     ) {
                         controls.push(C::New);
                     }
@@ -367,8 +406,11 @@ impl Runtime {
                     d.cycle(matches!(key, Key::Named(NamedKey::ArrowRight)));
                 }
             }
-            Key::Named(NamedKey::Backspace) => self.library_text(None),
-            Key::Character(text) => self.library_text(Some(text)),
+            Key::Named(NamedKey::Backspace | NamedKey::Space) | Key::Character(_) => {
+                if !text_input::apply(&mut self.session.workspace_mut().library, key) {
+                    return false;
+                }
+            }
             _ => return false,
         }
         self.invalidate_frame();
@@ -414,32 +456,5 @@ impl Runtime {
             self.invalidate_frame();
         }
         Some(changed)
-    }
-    fn library_text(&mut self, text: Option<&str>) {
-        let b = &mut self.session.workspace_mut().library;
-        match b.focus {
-            Some(C::Search) => {
-                if let Some(text) = text {
-                    b.search.push_str(text);
-                } else {
-                    b.search.pop();
-                }
-                b.result_offset = 0;
-            }
-            Some(C::Field(_)) => {
-                if let Some(d) = &mut b.draft
-                    && !d.fields[d.focused].selector
-                {
-                    let mut value = d.fields[d.focused].text.clone();
-                    if let Some(text) = text {
-                        value.push_str(text);
-                    } else {
-                        value.pop();
-                    }
-                    d.change(value);
-                }
-            }
-            _ => {}
-        }
     }
 }

@@ -227,7 +227,7 @@ pub fn resolve_pool_symbol_component_binding(
     })
 }
 
-fn materialized_pool_object(
+pub(super) fn materialized_pool_object(
     model: &DesignModel,
     object_id: Uuid,
     object_kind: &str,

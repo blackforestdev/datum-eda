@@ -3,6 +3,8 @@ use crate::*;
 use datum_gui_protocol::LibraryJsonValue as Value;
 use datum_gui_protocol::{ReviewWorkspaceState, SceneBounds};
 
+#[path = "library_electrical_preview.rs"]
+mod electrical;
 #[path = "library_package_preview.rs"]
 mod package;
 
@@ -15,6 +17,10 @@ pub(crate) fn render(
     text: &mut Vec<TextRun>,
 ) {
     if rect.height < 25. || rect.width < 10. {
+        return;
+    }
+    if matches!(kind, "units" | "symbols") {
+        electrical::render(state, kind, raw, rect, quads, text);
         return;
     }
     if kind == "packages" {

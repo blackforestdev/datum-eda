@@ -11,6 +11,8 @@ use super::{
 };
 use crate::{error::EngineError, substrate::SourceShardKind};
 
+#[path = "library_gui_electrical.rs"]
+mod electrical;
 #[path = "library_gui_package.rs"]
 mod package;
 
@@ -75,6 +77,9 @@ pub fn build_definition(
             "Library authoring requires the canonical project-owned pool target",
         ));
     }
+    if matches!(request.kind.as_str(), "units" | "symbols") {
+        return electrical::build(context, provenance, request, create);
+    }
     if request.kind == "packages" {
         return package::build(context, provenance, request, create);
     }
@@ -99,7 +104,7 @@ pub fn build_definition(
         ],
         _ => {
             return Err(refusal(
-                "This library kind is available for inspection; authoring supports Footprint, Padstack and Package creation",
+                "This library kind is available for inspection; authoring supports Unit, Symbol, Footprint, Padstack and Package creation",
             ));
         }
     };
@@ -347,3 +352,7 @@ mod tests;
 #[cfg(test)]
 #[path = "library_gui_package_tests.rs"]
 mod package_tests;
+
+#[cfg(test)]
+#[path = "library_gui_electrical_tests.rs"]
+mod electrical_tests;
