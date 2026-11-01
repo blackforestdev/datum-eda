@@ -89,7 +89,7 @@ fn kitty_encoding_reports_events_and_text_while_flag_one_keeps_plain_tab() {
     assert_bytes(
         &core,
         key_with(KeyCode::Up, modifiers(true, false, false)),
-        b"\x1b[57352;2:1u",
+        b"\x1b[1;2A",
     );
 
     apply(&mut core, limits, b"\x1b[=30;1u");
@@ -113,7 +113,7 @@ fn kitty_encoding_reports_events_and_text_while_flag_one_keeps_plain_tab() {
             modifiers: KeyModifiers::default(),
             kind: KeyEventKind::Release,
         },
-        b"\x1b[57352;1:3u",
+        b"\x1b[1;1:3A",
     );
     assert_bytes(
         &core,
@@ -162,6 +162,113 @@ fn focus_paste_and_ime_commit_have_distinct_transmission_contracts() {
             .unwrap()
             .bytes(),
         Some("文".as_bytes())
+    );
+}
+
+#[test]
+fn enhanced_navigation_and_function_keys_use_protocol_functional_sequences() {
+    // Normative Kitty functional-key definitions, rather than private-use
+    // character identifiers. Applications must receive editing keys, not text.
+    let limits = limits(4_096, 16);
+    let mut core = core(limits);
+    apply(&mut core, limits, b"\x1b[?1h\x1b[=1;1u");
+    for (code, expected) in [
+        (KeyCode::Left, "\x1b[D"),
+        (KeyCode::Right, "\x1b[C"),
+        (KeyCode::Up, "\x1b[A"),
+        (KeyCode::Down, "\x1b[B"),
+        (KeyCode::Home, "\x1b[H"),
+        (KeyCode::End, "\x1b[F"),
+        (KeyCode::Insert, "\x1b[2~"),
+        (KeyCode::Delete, "\x1b[3~"),
+        (KeyCode::PageUp, "\x1b[5~"),
+        (KeyCode::PageDown, "\x1b[6~"),
+        (KeyCode::Function(1), "\x1b[P"),
+        (KeyCode::Function(2), "\x1b[Q"),
+        (KeyCode::Function(3), "\x1b[13~"),
+        (KeyCode::Function(4), "\x1b[S"),
+        (KeyCode::Function(5), "\x1b[15~"),
+        (KeyCode::Function(6), "\x1b[17~"),
+        (KeyCode::Function(7), "\x1b[18~"),
+        (KeyCode::Function(8), "\x1b[19~"),
+        (KeyCode::Function(9), "\x1b[20~"),
+        (KeyCode::Function(10), "\x1b[21~"),
+        (KeyCode::Function(11), "\x1b[23~"),
+        (KeyCode::Function(12), "\x1b[24~"),
+        (KeyCode::Function(13), "\x1b[57376;1u"),
+    ] {
+        assert_bytes(&core, key(code), expected.as_bytes());
+    }
+    assert_bytes(
+        &core,
+        key_with(KeyCode::Left, modifiers(false, true, false)),
+        b"\x1b[1;3D",
+    );
+    assert_bytes(
+        &core,
+        key_with(KeyCode::Delete, modifiers(true, false, true)),
+        b"\x1b[3;6~",
+    );
+    apply(&mut core, limits, b"\x1b[=0;1u");
+    assert_bytes(&core, key(KeyCode::Left), b"\x1bOD");
+}
+
+#[test]
+fn enhanced_repeat_and_release_respect_negotiated_event_reporting() {
+    let limits = limits(4_096, 16);
+    let mut core = core(limits);
+    apply(&mut core, limits, b"\x1b[=1;1u");
+    assert_bytes(
+        &core,
+        KeyInput {
+            kind: KeyEventKind::Repeat,
+            ..key(KeyCode::Left)
+        },
+        b"\x1b[D",
+    );
+    assert_eq!(
+        core.encode_key(&KeyInput {
+            kind: KeyEventKind::Release,
+            ..key(KeyCode::Left)
+        })
+        .unwrap(),
+        InputDisposition::Ignored
+    );
+    apply(&mut core, limits, b"\x1b[=3;1u");
+    assert_bytes(
+        &core,
+        KeyInput {
+            kind: KeyEventKind::Repeat,
+            ..key(KeyCode::Left)
+        },
+        b"\x1b[1;1:2D",
+    );
+    assert_bytes(
+        &core,
+        KeyInput {
+            kind: KeyEventKind::Release,
+            ..key_with(KeyCode::Right, modifiers(false, false, true))
+        },
+        b"\x1b[1;5:3C",
+    );
+    for code in [KeyCode::Enter, KeyCode::Tab, KeyCode::Backspace] {
+        assert_eq!(
+            core.encode_key(&KeyInput {
+                kind: KeyEventKind::Release,
+                ..key(code)
+            })
+            .unwrap(),
+            InputDisposition::Ignored
+        );
+    }
+    apply(&mut core, limits, b"\x1b[=11;1u");
+    assert_bytes(
+        &core,
+        KeyInput {
+            kind: KeyEventKind::Release,
+            ..key(KeyCode::Enter)
+        },
+        b"\x1b[13;1:3u",
     );
 }
 

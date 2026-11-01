@@ -20,6 +20,14 @@ fn should_encode_kitty(input: &KeyInput, flags: u8) -> bool {
     if input.kind == KeyEventKind::Release && flags & KITTY_REPORT_EVENTS == 0 {
         return false;
     }
+    if flags & KITTY_REPORT_ALL == 0
+        && matches!(
+            input.code,
+            KeyCode::Enter | KeyCode::Tab | KeyCode::Backspace
+        )
+    {
+        return false;
+    }
     if flags & KITTY_REPORT_ALL != 0 {
         return true;
     }
@@ -33,22 +41,28 @@ fn should_encode_kitty(input: &KeyInput, flags: u8) -> bool {
             || input.modifiers.super_key
             || input.modifiers.hyper
             || input.modifiers.meta)
-        && !matches!(
-            input.code,
-            KeyCode::Enter | KeyCode::Tab | KeyCode::Backspace
-        )
 }
 
 fn kitty(input: &KeyInput, flags: u8) -> Option<Vec<u8>> {
-    let code = kitty_code(&input.code)?;
+    let (code, final_byte) = kitty_code(&input.code)?;
     let modifiers = modifier_parameter(input.modifiers);
+    let report_events = flags & KITTY_REPORT_EVENTS != 0;
+    // Functional keys retain their CSI letter/tilde forms under enhancement.
+    // Their private-use identifiers are not interchangeable CSI-u encodings.
+    if final_byte != 'u' && modifiers == 1 && !report_events {
+        return Some(if final_byte == '~' {
+            format!("\x1b[{code}~").into_bytes()
+        } else {
+            format!("\x1b[{final_byte}").into_bytes()
+        });
+    }
     let event = match input.kind {
         KeyEventKind::Press => 1,
         KeyEventKind::Repeat => 2,
         KeyEventKind::Release => 3,
     };
     let mut sequence = format!("\x1b[{code}");
-    if flags & KITTY_REPORT_ALTERNATE != 0 {
+    if final_byte == 'u' && flags & KITTY_REPORT_ALTERNATE != 0 {
         if let Some(shifted) = input.shifted_key {
             sequence.push(':');
             sequence.push_str(&shifted.to_string());
@@ -61,7 +75,10 @@ fn kitty(input: &KeyInput, flags: u8) -> Option<Vec<u8>> {
             sequence.push_str(&base_layout.to_string());
         }
     }
-    sequence.push_str(&format!(";{modifiers}:{event}"));
+    sequence.push_str(&format!(";{modifiers}"));
+    if report_events {
+        sequence.push_str(&format!(":{event}"));
+    }
     if flags & KITTY_ASSOCIATED_TEXT != 0
         && let KeyCode::Text(text) = &input.code
         && !text.is_empty()
@@ -74,38 +91,48 @@ fn kitty(input: &KeyInput, flags: u8) -> Option<Vec<u8>> {
             sequence.push_str(&(character as u32).to_string());
         }
     }
-    sequence.push('u');
+    sequence.push(final_byte);
     Some(sequence.into_bytes())
 }
 
-fn kitty_code(code: &KeyCode) -> Option<u32> {
+fn kitty_code(code: &KeyCode) -> Option<(u32, char)> {
+    // Kitty keyboard protocol, Functional key definitions. F3 uses 13~ to
+    // avoid the cursor-position-report ambiguity of CSI ... R.
     Some(match code {
-        KeyCode::Text(text) => text.chars().next()? as u32,
-        KeyCode::Escape => 27,
-        KeyCode::Enter => 13,
-        KeyCode::Tab => 9,
-        KeyCode::Backspace => 127,
-        KeyCode::Insert => 57_348,
-        KeyCode::Delete => 57_349,
-        KeyCode::Left => 57_350,
-        KeyCode::Right => 57_351,
-        KeyCode::Up => 57_352,
-        KeyCode::Down => 57_353,
-        KeyCode::PageUp => 57_354,
-        KeyCode::PageDown => 57_355,
-        KeyCode::Home => 57_356,
-        KeyCode::End => 57_357,
-        KeyCode::Function(number @ 1..=35) => 57_363 + u32::from(*number),
+        KeyCode::Text(text) => (text.chars().next()? as u32, 'u'),
+        KeyCode::Escape => (27, 'u'),
+        KeyCode::Enter => (13, 'u'),
+        KeyCode::Tab => (9, 'u'),
+        KeyCode::Backspace => (127, 'u'),
+        KeyCode::Insert => (2, '~'),
+        KeyCode::Delete => (3, '~'),
+        KeyCode::Left => (1, 'D'),
+        KeyCode::Right => (1, 'C'),
+        KeyCode::Up => (1, 'A'),
+        KeyCode::Down => (1, 'B'),
+        KeyCode::PageUp => (5, '~'),
+        KeyCode::PageDown => (6, '~'),
+        KeyCode::Home => (1, 'H'),
+        KeyCode::End => (1, 'F'),
+        KeyCode::Function(1) => (1, 'P'),
+        KeyCode::Function(2) => (1, 'Q'),
+        KeyCode::Function(3) => (13, '~'),
+        KeyCode::Function(4) => (1, 'S'),
+        KeyCode::Function(number @ 5..=12) => (
+            [15, 17, 18, 19, 20, 21, 23, 24][usize::from(*number - 5)],
+            '~',
+        ),
+        KeyCode::Function(number @ 13..=35) => (57_363 + u32::from(*number), 'u'),
         KeyCode::Function(_) => return None,
-        KeyCode::Keypad(key) => kitty_keypad_code(*key)?,
-        KeyCode::CapsLock => 57_358,
-        KeyCode::ScrollLock => 57_359,
-        KeyCode::NumLock => 57_360,
-        KeyCode::PrintScreen => 57_361,
-        KeyCode::Pause => 57_362,
-        KeyCode::Menu => 57_363,
-        KeyCode::Media(key) => 57_428 + media_offset(*key),
-        KeyCode::Modifier(key) => 57_441 + modifier_offset(*key),
+        KeyCode::Keypad(key) => (kitty_keypad_code(*key)?, 'u'),
+        KeyCode::CapsLock => (57_358, 'u'),
+        KeyCode::ScrollLock => (57_359, 'u'),
+        KeyCode::NumLock => (57_360, 'u'),
+        KeyCode::PrintScreen => (57_361, 'u'),
+        KeyCode::Pause => (57_362, 'u'),
+        KeyCode::Menu => (57_363, 'u'),
+        KeyCode::Media(key) => (57_428 + media_offset(*key), 'u'),
+        KeyCode::Modifier(key) => (57_441 + modifier_offset(*key), 'u'),
     })
 }
 
