@@ -292,7 +292,10 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
             .is_empty(),
         "destination must discover its own catalog instead of inheriting the origin's"
     );
-    assert!(move_item.unavailable_reason(runtime.workspace()).is_some());
+    assert_eq!(
+        move_item.unavailable_reason(runtime.workspace()),
+        Some("Project editing capabilities are not available yet.")
+    );
     assert!(runtime.native_edit.catalog_pending.is_some());
     let destination_revision = runtime.workspace().scene.source_revision.clone();
     let destination_transactions = runtime

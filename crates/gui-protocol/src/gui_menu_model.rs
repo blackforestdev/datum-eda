@@ -163,6 +163,13 @@ impl GuiMenuItem {
                     "Open a persistent Datum Project with --project-root to edit or save.",
                 );
             }
+            if state
+                .backing
+                .as_ref()
+                .is_some_and(|backing| backing.native_write_verbs.is_empty())
+            {
+                return Some("Project editing capabilities are not available yet.");
+            }
             if !state
                 .backing
                 .as_ref()
@@ -542,9 +549,15 @@ mod tests {
         // A verb the engine does not enumerate must leave the entry disabled rather than
         // hardcoded-on; the truthful-default empty catalog is likewise disabled.
         let absent = native_editable_state(&["datum.schematic.place_symbol"]);
-        assert!(item.unavailable_reason(&absent).is_some());
+        assert_eq!(
+            item.unavailable_reason(&absent),
+            Some("This operation is not offered by the open Project's engine.")
+        );
         let empty = native_editable_state(&[]);
-        assert!(item.unavailable_reason(&empty).is_some());
+        assert_eq!(
+            item.unavailable_reason(&empty),
+            Some("Project editing capabilities are not available yet.")
+        );
     }
 
     #[test]
