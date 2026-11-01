@@ -255,11 +255,12 @@ fn configure_mcp(
     runtime: &mut AgentRuntime,
     command: &mut Command,
 ) -> Result<()> {
+    let broker_executable = env::current_exe().context("locate running Datum CLI for agent MCP")?;
     let discovery = discovery_path.to_string_lossy();
     let broker_args = ["mcp", "serve", "--discovery", discovery.as_ref()];
     match adapter.mcp.ephemeral {
         EphemeralConfigStrategy::CommandLineOverrides { flag } => {
-            let command_value = serde_json::to_string("datum-eda")?;
+            let command_value = serde_json::to_string(&broker_executable)?;
             let args_value = serde_json::to_string(&broker_args)?;
             command
                 .arg(flag)
@@ -270,7 +271,7 @@ fn configure_mcp(
         EphemeralConfigStrategy::CommandLineFile { flags } => {
             let config = runtime.write_json(
                 "mcp.json",
-                &json!({"mcpServers": {"datum": {"command": "datum-eda", "args": broker_args}}}),
+                &json!({"mcpServers": {"datum": {"command": broker_executable, "args": broker_args}}}),
             )?;
             for flag in flags {
                 command.arg(flag);
@@ -289,7 +290,7 @@ fn configure_mcp(
             }
             runtime.install_project_overlay(
                 args.project_root.join(relative_path),
-                json!({"mcpServers": {"datum": {"command": "datum-eda", "args": broker_args}}}),
+                json!({"mcpServers": {"datum": {"command": broker_executable, "args": broker_args}}}),
             )?;
         }
         EphemeralConfigStrategy::DiscoveryOnly => {

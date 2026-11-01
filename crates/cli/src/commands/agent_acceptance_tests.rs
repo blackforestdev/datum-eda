@@ -30,6 +30,69 @@ fn command_args(command: &Command) -> Vec<OsString> {
 }
 
 #[test]
+fn generated_mcp_configs_select_the_running_cli_without_path_lookup() {
+    let executable = env::current_exe().expect("running executable");
+    assert!(executable.is_absolute());
+    for adapter_id in ["codex", "claude-code", "cursor-cli"] {
+        let project = fixture_root(adapter_id);
+        let discovery = project.join("discovery.json");
+        fs::write(&discovery, b"{}").expect("discovery");
+        let mut args = launch_args(adapter_id, &project, &discovery);
+        args.approve_project_config = true;
+        let mut runtime =
+            AgentRuntime::create(project.join(".datum/runtime/probe")).expect("runtime");
+        let mut command = Command::new("/bin/true");
+        configure_mcp(
+            agent_adapter(adapter_id).expect("adapter"),
+            &args,
+            &discovery,
+            &mut runtime,
+            &mut command,
+        )
+        .expect("configure MCP");
+        let argv = command_args(&command);
+        let broker: Value = if adapter_id == "codex" {
+            let mut values = Map::new();
+            for pair in argv.chunks_exact(2) {
+                assert_eq!(pair[0], "-c");
+                let (key, value) = pair[1]
+                    .to_str()
+                    .expect("config argument")
+                    .split_once('=')
+                    .expect("config assignment");
+                values.insert(
+                    key.strip_prefix("mcp_servers.datum.")
+                        .expect("Datum server config")
+                        .to_owned(),
+                    serde_json::from_str(value).expect("config value"),
+                );
+            }
+            Value::Object(values)
+        } else {
+            let config_path = if adapter_id == "claude-code" {
+                assert_eq!(argv[0], "--mcp-config");
+                assert_eq!(argv[2], "--strict-mcp-config");
+                PathBuf::from(&argv[1])
+            } else {
+                project.join(".cursor/mcp.json")
+            };
+            let config: Value = serde_json::from_slice(&fs::read(config_path).expect("config"))
+                .expect("valid config JSON");
+            config["mcpServers"]["datum"].clone()
+        };
+        assert_eq!(broker["command"], json!(executable), "{adapter_id}");
+        assert_eq!(
+            broker["args"],
+            json!(["mcp", "serve", "--discovery", discovery.to_str().unwrap()]),
+            "{adapter_id} preserves broker arguments"
+        );
+        runtime.cleanup().expect("runtime cleanup");
+        assert!(!project.join(".cursor/mcp.json").exists());
+        fs::remove_dir_all(project).expect("remove fixture");
+    }
+}
+
+#[test]
 fn doctor_reports_probe_version_and_missing_or_nonexecutable_clients() {
     let root = fixture_root("doctor");
     let versioned = root.join("versioned-agent");

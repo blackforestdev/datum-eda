@@ -47,10 +47,10 @@ def _broker_command(adapter: str, arguments: list[str]) -> tuple[str, list[str]]
 
 
 class Broker:
-    def __init__(self, arguments: list[str]) -> None:
+    def __init__(self, executable: str, arguments: list[str]) -> None:
         self._next_id = 1
         self._process = subprocess.Popen(
-            [os.environ["DATUM_EXPECT_CLI"], *arguments],
+            [executable, *arguments],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -281,7 +281,13 @@ def main() -> int:
     if "DATUM_MCP_ENDPOINT" in os.environ:
         raise RuntimeError("adapter proof must not rely on DATUM_MCP_ENDPOINT")
     command, broker_args = _broker_command(adapter, arguments)
-    if command != "datum-eda":
+    if adapter == "local-generic":
+        valid_command = command == "datum-eda"
+    else:
+        valid_command = Path(command).is_absolute() and os.path.samefile(
+            command, os.environ["DATUM_EXPECT_CLI"]
+        )
+    if not valid_command:
         raise RuntimeError(f"native adapter selected unexpected MCP command {command!r}")
     expected_discovery = os.environ["DATUM_AGENT_DISCOVERY"]
     if broker_args != ["mcp", "serve", "--discovery", expected_discovery]:
@@ -291,7 +297,10 @@ def main() -> int:
     Path(expected_discovery).write_text(
         json.dumps(discovery_document, separators=(",", ":")), encoding="utf-8"
     )
-    broker = Broker(broker_args)
+    broker_executable = (
+        os.environ["DATUM_EXPECT_CLI"] if adapter == "local-generic" else command
+    )
+    broker = Broker(broker_executable, broker_args)
     capabilities = broker.request("initialize")["capabilities"]
     if not {"tools", "resources", "prompts"}.issubset(capabilities):
         raise RuntimeError("broker did not declare the required MCP capabilities")
