@@ -43,7 +43,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProjectOpenConfirm => false,
         HitTarget::SchematicName | HitTarget::SchematicCreate
         | HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
-        | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicReference
+        | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicBrowseLibraries | HitTarget::SchematicReference
         | HitTarget::SchematicValue | HitTarget::SchematicPlace
         | HitTarget::SchematicCancel | HitTarget::SchematicFinishWire => false,
         // Deliberate entry: the shell-content cell rectangle, the dock

@@ -61,6 +61,7 @@ impl Runtime {
             | HitTarget::SchematicCreate
             | HitTarget::SchematicLibraryPage(_)
             | HitTarget::SchematicLibraryChoice(_)
+            | HitTarget::SchematicBrowseLibraries
             | HitTarget::SchematicReference
             | HitTarget::SchematicValue
             | HitTarget::SchematicPlace

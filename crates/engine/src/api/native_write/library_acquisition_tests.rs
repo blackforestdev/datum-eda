@@ -227,6 +227,52 @@ fn acquisition_commit_reopen_preserves_pin_identity_provenance_and_atomic_histor
 }
 
 #[test]
+fn bundled_native_acquisition_is_read_only_until_commit_and_preserves_saved_definition() {
+    let project = Project::new();
+    let mut model = project.resolve();
+    let source = Path::new("kicad/Device.kicad_sym");
+    let converted = crate::import::library_bundle::preview(source, "R").unwrap();
+    let request = LibraryAcquisitionRequest {
+        source_format: "datum_bundle".into(),
+        source_path: source.into(),
+        symbol_name: "R".into(),
+        expected_source_hash: converted.source_hash.clone(),
+    };
+    let before = disk_snapshot(&project.work);
+    drop(project.prepare(&model, request.clone()).unwrap());
+    assert_eq!(
+        disk_snapshot(&project.work),
+        before,
+        "preview/cancel is read-only"
+    );
+    let mut wrong_hash = request.clone();
+    wrong_hash.expected_source_hash = "sha256:stale-bundle".into();
+    assert!(project.prepare(&model, wrong_hash).is_err());
+    assert_eq!(disk_snapshot(&project.work), before);
+    let prepared = project.prepare(&model, request.clone()).unwrap();
+    commit_prepared(&mut model, &project.root, prepared).unwrap();
+    let reopened = project.resolve();
+    assert_eq!(
+        persisted_symbol(&reopened, converted.symbol.uuid),
+        converted.symbol
+    );
+    let entry = reopened
+        .import_map
+        .values()
+        .find(|entry| entry.object_id == converted.symbol.uuid)
+        .unwrap();
+    assert_eq!(entry.source_tool, "datum_bundle");
+    assert_eq!(entry.source_path, "kicad/Device.kicad_sym");
+    assert_eq!(entry.source_hash, converted.source_hash);
+    let saved = disk_snapshot(&project.work);
+    assert!(
+        project.prepare(&reopened, request).is_err(),
+        "existing definition cannot be overwritten"
+    );
+    assert_eq!(disk_snapshot(&project.work), saved);
+}
+
+#[test]
 #[ignore = "requires installed local KiCad libraries; explicitly run for canonical real-source proof"]
 fn installed_real_components_acquire_through_canonical_commit() {
     let project = Project::new();

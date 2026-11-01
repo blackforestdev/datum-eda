@@ -38,9 +38,22 @@ pub(super) fn render(
             text,
         );
         let mut y = panel.y + 50.;
+        button(
+            "Browse libraries…",
+            HitTarget::SchematicBrowseLibraries,
+            RectPx {
+                x: panel.x + width - 192.,
+                y: panel.y + 10.,
+                width: 176.,
+                height: 29.,
+            },
+            quads,
+            text,
+            hits,
+        );
         if authoring.choices.is_empty() {
             draw_text(
-                "No native symbols in this Project's library",
+                "No project symbols yet. Browse libraries to choose one.",
                 panel.x + 16.,
                 y,
                 12.,

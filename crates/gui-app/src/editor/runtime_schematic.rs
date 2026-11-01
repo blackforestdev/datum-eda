@@ -2,6 +2,8 @@
 use super::*;
 use datum_gui_protocol::native_edit_client::NativeEditAction;
 use datum_gui_protocol::schematic_authoring::{PlacementField, SchematicEditRequest};
+#[path = "runtime_schematic_library.rs"]
+mod library;
 impl Runtime {
     pub(super) fn begin_native_schematic(&mut self, wire: bool) -> bool {
         if !self.native_edit_available()
@@ -88,6 +90,7 @@ impl Runtime {
             return true;
         }
         match target {
+            HitTarget::SchematicBrowseLibraries => return self.browse_schematic_libraries(),
             HitTarget::SchematicLibraryChoice(index) => {
                 self.session
                     .workspace_mut()
@@ -159,6 +162,11 @@ impl Runtime {
             }
             Key::Named(NamedKey::Escape) => {
                 self.cancel_native_schematic();
+            }
+            Key::Named(NamedKey::Enter)
+                if picker && self.workspace().schematic_authoring.choices.is_empty() =>
+            {
+                return self.browse_schematic_libraries();
             }
             Key::Named(NamedKey::Enter) if picker => return self.start_symbol_preview(),
             Key::Named(NamedKey::Enter) => return self.finish_native_wire(),

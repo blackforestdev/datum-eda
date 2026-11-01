@@ -22,3 +22,5 @@ pub(crate) use self::query::{
     collect_native_project_pool_ref_views, query_native_project_pool_library_objects,
     query_native_project_pool_models, query_native_project_pools,
 };
+
+mod command;

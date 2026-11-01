@@ -1,4 +1,6 @@
 //! Read-only local KiCad symbol acquisition. Persistence belongs to native writes.
+pub mod batch;
+pub mod bundle_format;
 mod convert;
 mod geometry;
 mod pins;
@@ -39,6 +41,7 @@ fn refusal(message: impl Into<String>) -> EngineError {
 struct Library {
     path: PathBuf,
     hash: String,
+    format_version: Option<String>,
     symbols: BTreeMap<String, Node>,
 }
 
@@ -70,6 +73,10 @@ impl Library {
         Ok(Self {
             path,
             hash: super::ids_sidecar::compute_source_hash_bytes(source.as_bytes()),
+            format_version: root
+                .child("version")
+                .and_then(|version| version.atom(1))
+                .map(str::to_owned),
             symbols,
         })
     }

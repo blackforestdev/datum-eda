@@ -48,6 +48,7 @@ impl Runtime {
         }
         match control {
             C::Acquire
+            | C::BrowseBundled
             | C::AcquirePath
             | C::AcquireLoad
             | C::AcquireSearch
@@ -221,6 +222,7 @@ impl Runtime {
                     Some("Preview the current fields before committing".into());
             }
             C::Cancel => {
+                let origin = self.acquisition_placement_origin();
                 let b = &mut self.session.workspace_mut().library;
                 b.acquisition = None;
                 self.library_acquisition_work.cancel();
@@ -228,6 +230,9 @@ impl Runtime {
                 b.draft = None;
                 b.refusal = None;
                 b.search_focus = false;
+                if let Some(origin) = origin {
+                    self.resume_library_placement(origin, None);
+                }
             }
             C::Pad(_) | C::AddPad | C::RemovePad => {
                 let index = if let C::Pad(i) = control {
@@ -316,7 +321,10 @@ impl Runtime {
                 let s = self.workspace();
                 let mut controls = Vec::new();
                 if let Some(a) = &s.library.acquisition {
-                    controls.extend([C::AcquirePath, C::AcquireLoad, C::AcquireSearch]);
+                    if !a.bundled {
+                        controls.extend([C::AcquirePath, C::AcquireLoad]);
+                    }
+                    controls.push(C::AcquireSearch);
                     controls.extend(
                         a.results()
                             .into_iter()
@@ -324,12 +332,13 @@ impl Runtime {
                             .take(4)
                             .map(C::AcquireResult),
                     );
-                    controls.extend([
-                        C::AcquirePage(false),
-                        C::AcquirePage(true),
-                        C::AcquireImport,
-                        C::Cancel,
-                    ]);
+                    if a.results().len() > 4 {
+                        controls.extend([C::AcquirePage(false), C::AcquirePage(true)]);
+                    }
+                    if a.preview.is_some() {
+                        controls.push(C::AcquireImport);
+                    }
+                    controls.push(C::Cancel);
                 } else if let Some(d) = &s.library.draft {
                     if d.kind == "footprints" {
                         controls.extend((0..d.pads.len()).map(C::Pad));
@@ -359,7 +368,7 @@ impl Runtime {
                     }
                     controls.extend([C::Notice, C::Preview, C::Commit, C::Cancel]);
                 } else {
-                    controls.push(C::Acquire);
+                    controls.extend([C::BrowseBundled, C::Acquire]);
                     controls.extend((0..8).map(C::Kind));
                     controls.push(C::Search);
                     controls.extend(s.library.results().into_iter().map(C::Result));

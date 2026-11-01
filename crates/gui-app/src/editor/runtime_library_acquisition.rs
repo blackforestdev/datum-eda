@@ -1,12 +1,13 @@
 //! Background local-file reads with disposable, origin-qualified publication.
 use super::*;
 use datum_gui_protocol::library_browser::acquisition::{
-    LibraryAcquisition, LibraryAcquisitionPreview,
+    LibraryAcquisition, LibraryAcquisitionPreview, LibrarySourceSymbol,
+    catalog::{self, SourceCatalog},
 };
 use std::sync::mpsc;
 
 enum ReadResult {
-    Names(Vec<String>),
+    Names(SourceCatalog),
     Preview(LibraryAcquisitionPreview),
 }
 struct Answer {
@@ -25,23 +26,28 @@ impl AcquisitionWork {
             wake,
         }
     }
-    pub(super) fn cancel(&mut self) {
+    pub(crate) fn cancel(&mut self) {
         self.pending = None;
     }
-    fn start(&mut self, acquisition: &LibraryAcquisition, name: Option<String>) {
+    fn start(&mut self, acquisition: &LibraryAcquisition, source: Option<LibrarySourceSymbol>) {
         let (sender, receiver) = mpsc::channel();
         self.pending = Some(receiver);
         let session = acquisition.session;
         let revision = acquisition.revision.clone();
         let path = std::path::PathBuf::from(&acquisition.path);
+        let bundled = acquisition.bundled;
         let wake = self.wake.clone();
         std::thread::spawn(move || {
             let result = (|| {
-                if let Some(name) = name {
-                    let converted = eda_engine::import::kicad_library::convert(&path, &name)
-                        .map_err(|error| error.to_string())?;
+                if let Some(source) = source {
+                    let converted = if bundled {
+                        eda_engine::import::library_bundle::preview(&source.path, &source.name)
+                    } else {
+                        eda_engine::import::kicad_library::convert(&source.path, &source.name)
+                    }
+                    .map_err(|error| error.to_string())?;
                     Ok(ReadResult::Preview(LibraryAcquisitionPreview {
-                        name,
+                        name: source.name,
                         source_digest: converted.source_hash,
                         source_path: converted.source_path,
                         unit: serde_json::to_value(converted.unit).map_err(|e| e.to_string())?,
@@ -49,10 +55,10 @@ impl AcquisitionWork {
                             .map_err(|e| e.to_string())?,
                         notices: converted.warnings,
                     }))
+                } else if bundled {
+                    catalog::bundled().map(ReadResult::Names)
                 } else {
-                    eda_engine::import::kicad_library::catalog(&path)
-                        .map(|names| ReadResult::Names(names.into_iter().map(|s| s.name).collect()))
-                        .map_err(|error| error.to_string())
+                    catalog::discover(&path).map(ReadResult::Names)
                 }
             })();
             let _ = sender.send(Answer {
@@ -100,26 +106,29 @@ impl Runtime {
         }
         a.loading = false;
         match answer.result {
-            Ok(ReadResult::Names(names)) => {
-                a.names = names;
+            Ok(ReadResult::Names(catalog)) => {
+                a.names = catalog.symbols.iter().map(|s| s.label.clone()).collect();
+                a.sources = catalog.symbols;
+                a.catalog_notices = catalog.notices;
                 a.loaded = true;
             }
             Ok(ReadResult::Preview(preview)) => a.preview = Some(preview),
             Err(reason) => a.refusal = Some(reason),
         }
+        self.preview_existing_project_symbol();
         self.invalidate_frame();
         true
     }
 
     pub(super) fn activate_acquisition(&mut self, control: &C) -> bool {
         match control {
-            C::Acquire => {
+            C::Acquire | C::BrowseBundled => {
                 if !self.native_edit_available() || self.check_work.pending() {
                     self.log_console_refusal(ConsoleFeedbackSource::Tool, "Open a native Project and finish its check job before acquiring a library symbol");
                     return true;
                 }
                 let state = self.workspace();
-                let acquisition = LibraryAcquisition::begin(
+                let mut acquisition = LibraryAcquisition::begin(
                     state.scene.source_revision.clone(),
                     state
                         .supervision
@@ -128,9 +137,15 @@ impl Runtime {
                         .as_ref()
                         .and_then(|s| s.parse().ok()),
                 );
+                acquisition.bundled = *control == C::BrowseBundled;
+                if acquisition.bundled {
+                    acquisition.path.clear();
+                }
+                acquisition.loading = true;
+                self.library_acquisition_work.start(&acquisition, None);
                 let browser = &mut self.session.workspace_mut().library;
                 browser.acquisition = Some(acquisition);
-                browser.focus = Some(C::AcquirePath);
+                browser.focus = Some(C::AcquireSearch);
                 browser.scroll_offset = 0;
             }
             C::AcquirePath | C::AcquireSearch => {
@@ -150,22 +165,22 @@ impl Runtime {
                 let Some(a) = &mut self.session.workspace_mut().library.acquisition else {
                     return true;
                 };
-                let name = if let C::AcquireResult(index) = control {
-                    let Some(name) = a.names.get(*index).cloned() else {
+                let source = if let C::AcquireResult(index) = control {
+                    let Some(source) = a.sources.get(*index).cloned() else {
                         return true;
                     };
-                    Some(name)
+                    Some(source)
                 } else {
                     a.source_changed();
                     None
                 };
                 a.session = eda_engine::substrate::ObjectId::new_v4();
-                a.selected = name.clone();
+                a.selected = source.as_ref().map(|s| s.name.clone());
+                a.selected_source = source.as_ref().map(|s| s.path.clone());
                 a.preview = None;
                 a.refusal = None;
                 a.loading = true;
-                let snapshot = a.clone();
-                self.library_acquisition_work.start(&snapshot, name);
+                self.library_acquisition_work.start(a, source);
             }
             C::AcquirePage(next) => {
                 if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
@@ -177,6 +192,15 @@ impl Runtime {
                 }
             }
             C::AcquireImport => {
+                if self
+                    .workspace()
+                    .library
+                    .acquisition
+                    .as_ref()
+                    .is_some_and(|a| a.placement_pane.is_some())
+                {
+                    return self.acquire_symbol_for_placement();
+                }
                 return self.queue_native_edit(
                     datum_gui_protocol::native_edit_client::NativeEditAction::LibraryAcquire,
                 );

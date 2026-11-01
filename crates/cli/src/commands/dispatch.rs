@@ -1328,12 +1328,7 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             CheckCommands::AcceptDeviation(args) => args.run(format),
             CheckCommands::Imported(args) => args.run(format),
         },
-        Commands::Pool { action } => match action {
-            PoolCommands::Search { query, libraries } => {
-                let results = search_pool(&query, &libraries)?;
-                Ok((render_output(format, &results), 0))
-            }
-        },
+        Commands::Pool { action } => action.run(format),
         Commands::Proposal { action } => match action {
             ProposalCommands::Create(args) => args.run(format),
             ProposalCommands::CreatePlaceLabel(args) => args.run(format),

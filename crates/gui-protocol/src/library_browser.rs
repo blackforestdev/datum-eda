@@ -23,6 +23,7 @@ pub const KINDS: [(&str, &str); 8] = [
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LibraryControl {
     Acquire,
+    BrowseBundled,
     AcquirePath,
     AcquireLoad,
     AcquireSearch,

@@ -292,6 +292,7 @@ pub(crate) fn render(
         }
     } else {
         p.line("Project pool · source identity / revision remain separate");
+        p.button("Browse shipped symbols", C::BrowseBundled);
         p.button("Acquire local KiCad symbol", C::Acquire);
         let cell = (rect.width - 12.) / 4.;
         let row_height = KINDS

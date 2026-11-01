@@ -579,6 +579,19 @@ impl Runtime {
             _ => None,
         };
         let draft = self.workspace().schematic_authoring.creation.clone();
+        let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
+            .then(|| self.acquisition_placement_origin())
+            .flatten();
+        let placement_symbol = self
+            .workspace()
+            .library
+            .acquisition
+            .as_ref()
+            .and_then(|a| a.preview.as_ref())
+            .and_then(|p| p.symbol.get("uuid"))
+            .and_then(serde_json::Value::as_str)
+            .and_then(|s| s.parse().ok());
+        let acquired = answer.result.is_ok() && answer.next.is_some() && answer.selection.is_some();
         // A qualified refresh can follow a refused write. It must not consume
         // the acquisition or select its preview as if Import had succeeded.
         let refused_acquisition = if answer.result.is_err()
@@ -604,6 +617,9 @@ impl Runtime {
         } else if let (Err(reason), Some(mut draft)) = (&answer.result, draft) {
             draft.refusal = Some(reason.clone());
             self.session.workspace_mut().schematic_authoring.creation = Some(draft);
+        }
+        if acquired && let Some(origin) = placement {
+            self.resume_library_placement(origin, placement_symbol);
         }
         match answer.result {
             Ok(message) => {

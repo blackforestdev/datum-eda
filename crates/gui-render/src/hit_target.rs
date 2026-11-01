@@ -49,6 +49,7 @@ pub enum HitTarget {
     SchematicCreate,
     SchematicLibraryPage(bool),
     SchematicLibraryChoice(usize),
+    SchematicBrowseLibraries,
     SchematicReference,
     SchematicValue,
     SchematicPlace,

@@ -11,7 +11,11 @@ use super::{
     library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
 };
-use crate::{error::EngineError, import::kicad_library, substrate::ImportMapEntry};
+use crate::{
+    error::EngineError,
+    import::{kicad_library, library_bundle},
+    substrate::ImportMapEntry,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -46,12 +50,15 @@ pub fn build_acquisition(
     provenance: WriteProvenance,
     request: LibraryAcquisitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
-    if request.source_format != "kicad_symbol" {
-        return Err(EngineError::Validation(
-            "Unsupported library source format".into(),
-        ));
-    }
-    let converted = kicad_library::convert(&request.source_path, &request.symbol_name)?;
+    let converted = match request.source_format.as_str() {
+        "kicad_symbol" => kicad_library::convert(&request.source_path, &request.symbol_name)?,
+        "datum_bundle" => library_bundle::preview(&request.source_path, &request.symbol_name)?,
+        _ => {
+            return Err(EngineError::Validation(
+                "Unsupported library source format".into(),
+            ));
+        }
+    };
     if converted.source_hash != request.expected_source_hash {
         return Err(EngineError::Validation(
             "Library source changed since preview; load and preview it again".into(),
@@ -88,7 +95,7 @@ pub fn build_acquisition(
             object_id: id,
             source_shard_id: source_shard_id_for_relative_path(&target.relative_path),
             status: Default::default(),
-            source_tool: "kicad_symbol".into(),
+            source_tool: request.source_format.clone(),
             source_path: source_path.clone(),
             source_object_ref: converted.source_symbol.clone(),
             source_hash: converted.source_hash.clone(),

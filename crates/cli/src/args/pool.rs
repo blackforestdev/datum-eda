@@ -9,6 +9,8 @@ pub(crate) enum ReplacementPolicyArg {
 
 #[derive(Subcommand)]
 pub(crate) enum PoolCommands {
+    /// Print the shipped symbol library's attribution, license and design exception
+    License,
     /// Search for parts
     Search {
         /// Search query
