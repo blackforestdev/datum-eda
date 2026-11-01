@@ -28,9 +28,11 @@ python3 scripts/project_status.py next
 
 `--json` changes presentation, not selection. Agents MUST use this command
 instead of inferring priority from recent commits, `br ready`, issue priority,
-or prose outside the generated Frontier. Ordinary human answers MUST reproduce
-its stdout byte-for-byte, including the canonical completion substep, without
-supplementation or inferred alternatives.
+or prose outside the generated Frontier. Per owner direction on 2026-10-31,
+ordinary human answers summarize the selected task, canonical completion substep
+and blockers concisely. Compact command output is the default; retrieve `--full`
+or `--json` only when needed. Paste raw output only on explicit user request.
+Summary wording grants no alternative selection or execution authority.
 
 The command MUST be freshly invoked in the current repository during every user
 turn that asks for next-task or completion-plan state. Memory, cached output,
@@ -44,9 +46,11 @@ PS-012 route covered decisions to the verified manager; uncovered or explicitly
 retained decisions require owner input. For implementers it is an autonomy boundary. The
 parent item MUST expose `owner_decision` authorization, remain unclaimed, and
 produce an explicit responsible-actor alert and complete ordered decision packet in
-human and JSON selector output. Every request has a stable ID, exact question,
+full human and JSON selector output. Every request has a stable ID, exact question,
 recommended response, and governed source marker; the packet supplies one exact
-response format. Agents MUST notify the responsible owner or manager, present the packet, and stop;
+response format. Agents MUST notify the responsible owner or manager and stop.
+Before soliciting a disposition, read the full packet; present a concise explanation
+preserving request IDs, option meanings and exact response tokens;
 they MUST NOT claim, edit, choose a disposition, or advance that milestone step.
 This boundary does not stop a separate routine task authorized under PM059;
 explicit execution holds and scope restrictions still apply.
@@ -184,7 +188,7 @@ governed evidence markers, post-completion effects, and an explicit successor
 policy. Planning/owner-decision authorization MUST reject
 execution-kind steps. Every step ID MUST occur exactly once in the bead acceptance criteria;
 every namespaced requirement marker in its governing documents MUST be covered.
-`details` human and JSON output MUST preserve the same order and content.
+`details --full` and JSON output MUST preserve the same order and content.
 
 Work-start guidance is derived from validated claim state: open/unassigned work
 requires the synchronized Frontier-plus-beads claim transaction only when
@@ -197,10 +201,13 @@ policies. Exactly one step may be `in_progress`; if present, it MUST be the
 canonical next substep. The canonical substep MUST be pending or in progress
 with every dependency complete, and becomes `null` only when every step is
 complete. Dependency independence MUST NOT be represented as authorization for
-parallel work. The ordinary human
-answer is `details` stdout byte-for-byte: manifest order and numbering are
-preserved, and regrouping, supplementation, and inferred concurrency are
-forbidden. JSON MUST expose the same policies.
+parallel work. Presentation mode is `human_summary`: ordinary replies summarize
+relevant steps in canonical order and distinguish current work from later work.
+Order/numbering and no-regrouping/supplementation flags protect the canonical
+contract, not the wording of a human summary. Summaries must not invent steps,
+evidence, authorization or concurrency. JSON exposes the same policies; `--full`
+retains the complete ordered report. This supersedes earlier verbatim-reply rules
+without rewriting historical completion evidence.
 
 ## Owner-authorized production-process correction — 2026-10-16
 
@@ -217,7 +224,7 @@ and unique literal marker), `resume_requires`, and `completion_checkpoint`
 (the exact internal `canonical_next_step_id` and `step_statuses` map). It preserves underlying
 lifecycle/grant and internal completion selection. Held work MUST NOT carry an
 agent claim, active completion step or landed lifecycle, or advance beyond its
-held completion checkpoint. Both human/JSON next
+held completion checkpoint. Both full human/JSON next
 and details expose hold provenance and resumption boundary with STOP guidance.
 Clearing a hold requires the actual authorized resumption disposition; a checker
 cannot authenticate human intent. A named query never selects or authorizes work.
@@ -277,7 +284,7 @@ stopped. The manager must read the governing source and durably classify the
 step before disposition. Without that capability, owner routing remains. An
 explicit route cannot turn absence into a verified classification. Malformed
 provenance fails validation; invalid explicit routes never silently fall back.
-Human/JSON expose responsible actor, provenance and the unchanged packet. An
+Full human/JSON expose responsible actor, provenance and the unchanged packet. An
 appointment proves no test, assessment or independent review; holds and explicit
 owner-retained approvals remain effective. Revocation restores owner routing.
 
@@ -314,7 +321,7 @@ This decision is implemented when tests prove that:
 - blocked, deferred, and landed items are not selected as executable work, and
   planning authorization cannot select feature execution;
 - all project-state tooling passes decision 022 source-health enforcement;
-- human and JSON task details expose the same complete evidence-linked plan;
+- full human and JSON task details expose the same complete evidence-linked plan;
 - incomplete plans expose exactly one dependency-ready canonical next substep;
 - missing acceptance IDs and uncovered governed requirements fail checks; and
 - completion never implies automatic successor authorization or selection.

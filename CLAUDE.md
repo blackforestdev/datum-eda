@@ -141,8 +141,10 @@ holds, conflicting ownership and retained owner-only decisions still stop their
 affected scope. Milestone acceptance does not withdraw other recorded grants.
 
 Use fresh `python3 scripts/project_status.py next` or `details [key|issue]`
-for roadmap milestone/completion queries and return stdout byte-for-byte; never
-infer milestone selection or substitute tracker readiness. Report selector failure
+for roadmap milestone/completion queries. Use compact default output and summarize
+the selected task, next step and blockers in plain language. Retrieve `--full` or
+`--json` only when needed; raw output in chat requires an explicit user request.
+Never infer milestone selection or substitute tracker readiness. Report selector failure
 and stop that query. An INPUT REQUIRED boundary stops the identified milestone
 decision, not separately authorized routine work. PM059 governs the manager's
 exact delegation. The complete presentation, response-packet,

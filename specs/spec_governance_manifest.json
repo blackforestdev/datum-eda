@@ -312,7 +312,7 @@
     "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md": {
       "class": "doctrine",
       "controlling": true,
-      "notes": "Ratifies the structured Active Frontier, generated human projection, deterministic next-task, completion-detail, and canonical-substep selectors, mandatory fresh invocation, explicit governed owner-decision packets and autonomy boundaries, byte-for-byte next/detail presentation, beads synchronization, expiring claims, evidence-linked completion contracts, one-active-step execution policy, and blocking cross-ledger validation while preserving decision 022.",
+      "notes": "Ratifies the structured Active Frontier, generated human projection, deterministic next-task, completion-detail, and canonical-substep selectors, mandatory fresh invocation, explicit governed owner-decision packets and autonomy boundaries, compact next/detail briefings and concise human summaries with full reports on request, beads synchronization, expiring claims, evidence-linked completion contracts, one-active-step execution policy, and blocking cross-ledger validation while preserving decision 022.",
       "progress_anchor": "STATE-ALIGNMENT"
     },
     "docs/decisions/PRODUCT_MECHANICS_026_SELECTION_IDENTITY.md": {

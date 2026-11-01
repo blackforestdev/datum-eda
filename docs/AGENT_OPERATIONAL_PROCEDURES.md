@@ -350,7 +350,7 @@ owner/decision transaction rather than inventing a replacement from memory.
 
 **Roadmap wayfinding:** use the single
 [project-state procedure owner](PROJECT_STATE_POLICY.md#standard-commands).
-That policy defines `next`/`details`, exact stdout presentation, fresh queries,
+That policy defines `next`/`details`, concise human presentation, fresh queries,
 selector failure, owner/PM059-delegated boundaries and step selection. The
 structured Frontier, generated projection and beads export must stay synchronized;
 see its [same-change checklist](PROJECT_STATE_POLICY.md#same-change-checklist).

@@ -46,7 +46,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -573,7 +573,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -765,7 +765,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -919,7 +919,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -1121,7 +1121,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -1275,7 +1275,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -1384,7 +1384,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -1984,7 +1984,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -2601,7 +2601,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -2898,7 +2898,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -2970,7 +2970,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3042,7 +3042,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3194,7 +3194,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3347,7 +3347,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3498,7 +3498,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3652,7 +3652,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3788,7 +3788,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -3984,7 +3984,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -4249,7 +4249,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -4481,7 +4481,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -5409,7 +5409,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -5594,7 +5594,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -5822,7 +5822,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -6336,7 +6336,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -6630,7 +6630,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -6962,7 +6962,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -7229,7 +7229,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -7490,7 +7490,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -7734,7 +7734,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -7913,7 +7913,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -8092,7 +8092,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -8308,7 +8308,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -8458,7 +8458,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -8628,7 +8628,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -8803,7 +8803,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -9102,7 +9102,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -9672,7 +9672,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -9788,7 +9788,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -10063,7 +10063,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -10386,7 +10386,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -10841,7 +10841,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -10990,7 +10990,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -11136,7 +11136,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -11893,7 +11893,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -12070,7 +12070,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -12196,7 +12196,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -12559,7 +12559,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -12729,7 +12729,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -12897,7 +12897,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -13179,7 +13179,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -13305,7 +13305,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -13454,7 +13454,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -13599,7 +13599,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -13940,7 +13940,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -14089,7 +14089,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -14476,7 +14476,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -14620,7 +14620,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -14814,7 +14814,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -14880,7 +14880,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -15129,7 +15129,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -15634,7 +15634,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -15802,7 +15802,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -15941,7 +15941,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16118,7 +16118,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16274,7 +16274,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16430,7 +16430,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16586,7 +16586,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16697,7 +16697,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16830,7 +16830,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -16985,7 +16985,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17099,7 +17099,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17237,7 +17237,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17397,7 +17397,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17561,7 +17561,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17702,7 +17702,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17833,7 +17833,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -17934,7 +17934,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -18035,7 +18035,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -18138,7 +18138,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -18249,7 +18249,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -18347,7 +18347,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },
@@ -18452,7 +18452,7 @@
           "allow_inferred_concurrency": false,
           "allow_regrouping": false,
           "allow_supplementation": false,
-          "mode": "stdout_verbatim",
+          "mode": "human_summary",
           "preserve_step_numbering": true,
           "preserve_step_order": true
         },

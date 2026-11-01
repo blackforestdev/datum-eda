@@ -10,6 +10,10 @@ from pathlib import Path
 
 PURPOSES = {"product_delivery", "qualification", "maintenance", "planning"}
 DECISIONS = {"review_provisioning", "review_receipt", "continuation", "objective_acceptance"}
+PRESENTATION_GUIDANCE = (
+    "Presentation: summarize the selected task, next step and blockers concisely; "
+    "paste raw output only on explicit request. Do not infer authorization."
+)
 
 
 def text(value):
@@ -264,6 +268,50 @@ def idle_view(manifest: dict) -> dict:
 
 
 def render_idle(view: dict) -> str:
-    return ("Presentation contract: return this stdout byte-for-byte; do not supplement it.\n"
+    return (PRESENTATION_GUIDANCE + "\n"
             "Next task: none; explicit idle.\n" + view["work_start"] + "\nIdle reason: "
             + view["selection"]["reason"] + "\nIdle provenance: " + str(view["selection"]["source_ref"]))
+
+
+def render_brief(view: dict, details: bool = False) -> str:
+    """Bound routine reading without hiding selection or work-start restrictions."""
+    def short(value, limit=240):
+        value = " ".join(str(value).split())
+        return value if len(value) <= limit else value[:limit - 1] + "…"
+
+    if "issue_id" not in view:
+        return ("Next task: none; explicit idle.\n" + view["work_start"]
+                + "\nReason: " + short(view["selection"]["reason"])
+                + "\nFull record: python3 scripts/project_status.py next --full")
+    completion = view.get("completion") or view
+    steps = completion.get("steps", [])
+    step_id = completion.get("canonical_next_step_id")
+    selected = next((step for step in steps if step["id"] == step_id), None)
+    lines = [
+        f"Task: {short(view['title'], 160)} ({view['issue_id']})",
+        f"State: {view['state']}; authorization: {view['authorization']}; "
+        f"tracker: {view['tracker_status']}; assignee: {view['assignee'] or 'unassigned'}; "
+        f"claim: {view['claim_state']}",
+        (f"Next step: [{step_id}] {short(selected['action'])}" if selected else
+         "Next step: none; all steps complete." if steps else
+         "Next step: none recorded; this query does not authorize work."),
+        "Work start: " + short(view["work_start"]),
+    ]
+    if view.get("hold"):
+        lines.append("Hold: " + short(view["hold"]["reason"]))
+    if view.get("decision_input_required"):
+        boundary = "Owner" if view["owner_input_required"] else "Delegated"
+        lines.append(f"{boundary} boundary: INPUT REQUIRED from {view['decision_maker']}; "
+                     f"routing: {view['decision_routing_status']}. Read the full packet before requesting a disposition.")
+        if view.get("classification_required"):
+            lines.append("Classification required: manager classification must precede any disposition; no acceptance or execution is authorized.")
+    if details and steps:
+        remaining = [(i, s) for i, s in enumerate(steps, 1) if s["status"] != "complete"]
+        lines.append(f"Steps: {len(steps) - len(remaining)}/{len(steps)} complete; {len(remaining)} remaining.")
+        for i, step in remaining[:5]:
+            lines.append(f"{i}. [{step['id']}] ({step['kind']}; {step['status']}) {short(step['action'], 160)}")
+        if len(remaining) > 5:
+            lines.append(f"… {len(remaining) - 5} more steps in the full contract.")
+    lines.append(f"Full record: python3 scripts/project_status.py details {view['issue_id']} --full")
+    lines.append("Briefing only; read the full contract before editing. No successor or parallel work is authorized.")
+    return "\n".join(lines)

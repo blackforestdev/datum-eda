@@ -95,7 +95,7 @@ class ProjectStatusTest(unittest.TestCase):
                     "dependency_independence_authorizes_parallelism": False,
                 },
                 "presentation_policy": {
-                    "mode": "stdout_verbatim",
+                    "mode": "human_summary",
                     "preserve_step_order": True,
                     "preserve_step_numbering": True,
                     "allow_regrouping": False,
@@ -170,17 +170,17 @@ class ProjectStatusTest(unittest.TestCase):
     def test_next_supports_human_and_json_output(self) -> None:
         output = io.StringIO()
         with redirect_stdout(output):
-            self.assertEqual(0, status.main(["--root", str(self.root), "next"]))
+            self.assertEqual(0, status.main(["--root", str(self.root), "next", "--full"]))
         human = output.getvalue()
         self.assertTrue(human.startswith(
-            "Presentation contract: return this stdout byte-for-byte;"
+            "Presentation: summarize"
         ))
         self.assertIn("dat-next", human)
         self.assertIn("Tracker: open; assignee: unassigned; live claim: none", human)
         self.assertIn(
             "Next completion step: [TEST-C01] Complete the fixture requirement.", human
         )
-        self.assertIn("do not preface, summarize, infer a different substep, or supplement it", human)
+        self.assertIn("paste raw output only on explicit request", human)
 
         for arguments in (
             ["--root", str(self.root), "next", "--json"],
@@ -199,12 +199,12 @@ class ProjectStatusTest(unittest.TestCase):
     def test_details_supports_human_and_json_output(self) -> None:
         output = io.StringIO()
         with redirect_stdout(output):
-            self.assertEqual(0, status.main(["--root", str(self.root), "details"]))
+            self.assertEqual(0, status.main(["--root", str(self.root), "details", "--full"]))
         human = output.getvalue()
         lines = human.splitlines()
         self.assertEqual(
-            "Presentation contract: return this stdout byte-for-byte; do not preface, "
-            "summarize, regroup, renumber, or supplement it.", lines[0],
+            "Presentation: summarize the selected task, next step and blockers concisely; "
+            "paste raw output only on explicit request. Do not infer authorization.", lines[0],
         )
         self.assertEqual(
             "Execution policy: at most one completion step may be in_progress; "
@@ -228,7 +228,7 @@ class ProjectStatusTest(unittest.TestCase):
         self.assertFalse(
             details["execution_policy"]["dependency_independence_authorizes_parallelism"]
         )
-        self.assertEqual("stdout_verbatim", details["presentation_policy"]["mode"])
+        self.assertEqual("human_summary", details["presentation_policy"]["mode"])
     def test_details_named_key_and_issue_id_resolve_identically(self) -> None:
         payloads = []
         for target in ("alignment", "dat-next"):
@@ -329,7 +329,7 @@ class ProjectStatusTest(unittest.TestCase):
             "presentation_policy.allow_inferred_concurrency must be false",
             "presentation_policy.preserve_step_order must be true",
             "presentation_policy.preserve_step_numbering must be true",
-            "presentation mode must be stdout_verbatim",
+            "presentation mode must be human_summary",
         ):
             self.assertTrue(any(needle in value for value in found), found)
     def test_completion_rejects_bad_step_dependency_and_acceptance(self) -> None:

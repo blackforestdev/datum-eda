@@ -35,6 +35,7 @@ from project_claim_scope import claim_scope_failures
 from project_work_authority import (
     validate_item_authority, validate_selection, validate_appointments,
     decision_view, work_start, authority_lines, idle_view, render_idle,
+    render_brief, PRESENTATION_GUIDANCE,
 )
 
 
@@ -497,8 +498,7 @@ def render_next(view: dict[str, Any]) -> str:
     step_id = completion["canonical_next_step_id"]
     selected = next(step for step in completion["steps"] if step["id"] == step_id)
     lines = [
-        "Presentation contract: return this stdout byte-for-byte; do not preface, "
-        "summarize, infer a different substep, or supplement it.",
+        PRESENTATION_GUIDANCE,
         f"Next task: {view['title']} ({view['issue_id']})",
         f"State: {view['state']}; authorization: {view['authorization']}",
         f"Tracker: {view['tracker_status']}; assignee: {assignee}; "
@@ -527,6 +527,8 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("check", "next", "details", "render", "check-render"):
         sub = commands.add_parser(name)
         sub.add_argument("--json", action="store_true", dest="json_command")
+        if name in {"next", "details"}:
+            sub.add_argument("--full", action="store_true", help="include the full report; default is a compact briefing")
         if name == "details":
             sub.add_argument("target", nargs="?", help="Frontier key or issue id; defaults to next")
     args = parser.parse_args(argv)
@@ -552,10 +554,10 @@ def main(argv: list[str] | None = None) -> int:
             item = state["next"]
             if item is None:
                 view = idle_view(state["manifest"])
-                emit({"ok": True, "next": None, **view}, as_json, render_idle(view))
+                emit({"ok": True, "next": None, **view}, as_json, render_idle(view) if args.full else render_brief(view))
                 return 0
             view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
-            emit({"ok": True, "next": view}, as_json, render_next(view))
+            emit({"ok": True, "next": view}, as_json, render_next(view) if args.full else render_brief(view))
         else:
             item = state["next"]
             if args.target:
@@ -572,13 +574,13 @@ def main(argv: list[str] | None = None) -> int:
                 item = matches[0]
             if item is None:
                 view = idle_view(state["manifest"])
-                emit({"ok": True, "details": None, **view}, as_json, render_idle(view))
+                emit({"ok": True, "details": None, **view}, as_json, render_idle(view) if args.full else render_brief(view))
                 return 0
             if "completion" not in item:
                 view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
                 view["completion"] = None
                 human = "\n".join([
-                    "Presentation contract: return this stdout byte-for-byte; do not supplement it.",
+                    PRESENTATION_GUIDANCE,
                     f"Task details: {view['title']} ({view['issue_id']})",
                     f"State: {view['state']}; authorization: {view['authorization']}",
                     f"Tracker: {view['tracker_status']}; assignee: {view['assignee'] or 'unassigned'}; live claim: {view['claim_detail']}",
@@ -586,10 +588,10 @@ def main(argv: list[str] | None = None) -> int:
                     *authority_lines(view), *delivery_lines(view),
                     "Completion plan: none recorded; this query does not authorize work.",
                 ])
-                emit({"ok": True, "details": view}, as_json, human)
+                emit({"ok": True, "details": view}, as_json, human if args.full else render_brief(view, True))
                 return 0
             view = completion_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
-            emit({"ok": True, "details": view}, as_json, render_completion(view))
+            emit({"ok": True, "details": view}, as_json, render_completion(view) if args.full else render_brief(view, True))
         return 0
     if args.command in {"render", "check-render"}:
         failures, _ = validate(root)

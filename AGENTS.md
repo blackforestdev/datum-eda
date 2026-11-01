@@ -47,8 +47,10 @@ acceptance or canonical-next claims. Tracked planning still needs authorization.
 
 Run fresh `python3 scripts/project_status.py next` for roadmap next-milestone queries
 and fresh `python3 scripts/project_status.py details [key|issue]` for completion
-queries. Return stdout byte-for-byte as the entire answer, with explicitly requested
-analysis separately afterward. Never reconstruct from memory or `br ready`.
+queries. Use the compact default output and give a concise plain-language answer:
+the selected task, next step and any blocker or required decision. Fetch `--full`
+or `--json` only when the task needs that detail; paste raw output only when the
+user explicitly requests it. Never reconstruct from memory or `br ready`.
 Report selector failure and stop the query. The printed next completion step is
 sole milestone-selection authority; dependency readiness grants no work. Routine
 assignments use the verified manager's recorded PM059 grant, never tracker priority.
@@ -60,8 +62,9 @@ execution retains its structured Frontier/beads claim. Respect all scopes and
 other sessions' dirty work; transfer ownership explicitly. A tracker claim alone
 is never execution authority.
 
-If output says `Owner boundary: INPUT REQUIRED`, stop the affected milestone decision and present
-the ordered decision packet/response format unchanged. Route it to the owner or
+If output reports `INPUT REQUIRED`, stop the affected milestone decision and present
+the decision concisely. Read the full packet before requesting a disposition;
+preserve request IDs, option meanings and exact response tokens. Route it to the owner or
 the appointed manager only within PM059 delegation. Do not claim or advance until
 the authorized disposition is durably recorded and state synchronized. The PM
 continues separately authorized routine work; owner absence is not a project hold.

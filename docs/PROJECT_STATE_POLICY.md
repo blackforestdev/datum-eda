@@ -32,6 +32,7 @@ Use the deterministic selector for every “what is next?” query:
 
 ```bash
 python3 scripts/project_status.py next
+python3 scripts/project_status.py next --full
 python3 scripts/project_status.py next --json
 python3 scripts/project_status.py details [<Frontier-key|issue-id>]
 python3 scripts/project_status.py details --json
@@ -47,10 +48,14 @@ them with stale conversational ownership or earlier tracker output.
 `render` updates only the region between `<!-- ACTIVE FRONTIER:START -->` and
 `<!-- ACTIVE FRONTIER:END -->`; `check-render` rejects projection drift.
 
-For an ordinary “what is next?” query, stdout from `next` is the entire answer
-and MUST be returned byte-for-byte. It reports both the selected Frontier task
-and that task's `canonical_next_step_id`; agents must not infer, substitute, or
-append another dependency-ready substep.
+For an ordinary “what is next?” query, use compact default output and answer in
+a few plain-language sentences: selected task, canonical next step, work-start
+status and any blocker or required decision. Do not infer, substitute or append
+another dependency-ready substep. Retrieve `--full` or `--json` only when the
+work needs the complete contract, evidence or decision packet. Raw output in chat
+requires an explicit user request. This owner-directed correction (2026-10-31)
+protects both agent context and human attention; historical verbatim rules are
+superseded. A shortened action is a briefing, not sufficient execution instructions.
 
 Every such answer requires a fresh invocation in the current repository during
 the current user turn. Prior conversation, memory, cached output, an earlier
@@ -65,8 +70,11 @@ MUST carry `owner_decision` authorization and MUST NOT be `in_progress` or carry
 an agent claim. Human and JSON `next`/`details` output MUST expose the responsible
 owner or manager boundary plus a closed-shape ordered decision packet: stable request ID,
 question, recommended response, exactly resolving governed source marker, and
-one explicit response format. Implementers alert the responsible owner or verified manager, present that packet,
-and stop without claiming, editing, choosing a disposition, or advancing. Covered
+one explicit response format in full/JSON output. Compact output names the boundary
+and responsible actor. Implementers alert that actor and stop without claiming,
+editing, choosing a disposition or advancing. Before requesting a disposition,
+read the full packet and explain the decision concisely, preserving request IDs,
+option meanings and exact response tokens. Covered
 manager decisions do not require a renewed owner message. A classification_required
 boundary requires classification before final disposition, not acceptance. After explicit
 input, one governance transaction records durable review evidence, completes
@@ -75,8 +83,9 @@ authorization to that step's kind.
 
 For every “how do we finish/complete this task?” query, agents MUST run
 `details` (no target for current; stable key/issue ID for a named task) and
-reproduce its ordered steps, work-start instruction, requirements, evidence,
-and post-completion policy without adding a reconstructed rival plan. The
+summarize its relevant ordered steps, work-start instruction and blockers without
+adding a reconstructed rival plan. Read the complete contract before execution;
+requirements, evidence and post-completion policy remain authoritative. The
 canonical item carries a closed-shape completion contract whose stable step IDs
 must appear exactly once in the bead acceptance criteria and whose evidence
 markers must resolve exactly once in its governed documents. Each step declares
@@ -90,12 +99,11 @@ identical. A `null` value is valid only after every step is complete. Manifest
 order remains presentation order, but order or dependency readiness alone never
 selects among multiple candidates.
 
-For an ordinary request for the steps, stdout from `details` is the entire
-answer and MUST be returned byte-for-byte: no preface, summary, regrouping,
-renumbering, relabeling, or postscript. If the user explicitly requests analysis
-in addition to the steps, reproduce the stdout block unchanged before a clearly
-separate analysis. Dependency independence describes ordering validity only; it
-does not authorize parallel agents or concurrent step execution.
+For an ordinary request for steps, give a concise summary in canonical order;
+expand relevant detail when asked. Omitted detail remains available through
+`details --full` or `--json`, and must not be treated as waived. Dependency
+independence describes ordering validity only; it does not authorize parallel
+agents or concurrent step execution.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C01 -->
 Every completion contract fixes `max_in_progress_steps` to one and states that
@@ -105,21 +113,21 @@ Every incomplete completion contract selects exactly one dependency-ready
 canonical next substep, and human/JSON details expose the same selection.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C02 -->
-Every completion contract requires `stdout_verbatim`, preserves manifest step
-order and numbering, and forbids regrouping, supplementation, and inferred
-concurrency.
+Every completion contract requires `human_summary`. Its order/numbering and
+no-regrouping/supplementation flags protect the canonical contract, not the prose
+of a summary. Summaries must preserve meaning and never infer concurrency.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C03 -->
-Human task details render the canonical presentation and execution policy before
-the task; JSON exposes the same closed-shape policy objects.
+Compact task details expose selection, work-start restrictions and decision
+routing. Full text and JSON retain the complete contract and closed-shape policies.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C04 -->
-Claude and AGENTS-aware tools must return task-detail stdout byte-for-byte for
-ordinary completion-step queries, with no surrounding narrative.
+Claude and AGENTS-aware tools use compact output and concise plain-language
+answers by default. Raw reports in chat require an explicit user request.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C05 -->
-Hermetic tests lock exact policy wording, manifest order, numbering, and JSON
-parity and reject any weakened or unknown policy value.
+Hermetic tests verify compact output, retained blockers, full-report availability,
+manifest order and JSON parity, rejecting unknown policy values.
 
 <!-- REQ:STATE-DETAIL-PRESENTATION:DP-C06 -->
 The correction closes only after project-state, governance, and source-health
@@ -132,7 +140,7 @@ beads mirrors its acceptance IDs, and governed documents own the requirements.
 
 <!-- REQ:STATE-TASK-DETAILS:TD-C02 -->
 The `details` command must validate the same state and select the same canonical
-item as `next`, with equivalent ordered content in human and JSON output.
+item as `next`, with equivalent ordered content in full human and JSON output.
 
 <!-- REQ:STATE-TASK-DETAILS:TD-C03 -->
 The first production plan must reconcile all S5 controlling requirements,

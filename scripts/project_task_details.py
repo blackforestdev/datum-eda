@@ -10,7 +10,7 @@ from typing import Any
 
 from history_commit_locator import commit_exists
 from project_feature_delivery import delivery_lines
-from project_work_authority import decision_view, work_start, authority_lines
+from project_work_authority import decision_view, work_start, authority_lines, PRESENTATION_GUIDANCE
 
 
 COMPLETION_KEYS = {
@@ -94,8 +94,8 @@ def validate_completion(
         f"{key}: presentation_policy", failures,
     ):
         assert isinstance(presentation, dict)
-        if presentation.get("mode") != "stdout_verbatim":
-            failures.append(f"{key}: presentation mode must be stdout_verbatim")
+        if presentation.get("mode") != "human_summary":
+            failures.append(f"{key}: presentation mode must be human_summary")
         for name in ("preserve_step_order", "preserve_step_numbering"):
             if presentation.get(name) is not True:
                 failures.append(f"{key}: presentation_policy.{name} must be true")
@@ -517,8 +517,7 @@ def render_completion(view: dict[str, Any]) -> str:
     assignee = view["assignee"] or "unassigned"
     claim = view.get("claim_detail", "active" if view["live_claim"] else "none")
     lines = [
-        "Presentation contract: return this stdout byte-for-byte; do not preface, "
-        "summarize, regroup, renumber, or supplement it.",
+        PRESENTATION_GUIDANCE,
         "Execution policy: at most one completion step may be in_progress; "
         "dependency independence does not authorize parallel work.",
         f"Task details: {view['title']} ({view['issue_id']})",
