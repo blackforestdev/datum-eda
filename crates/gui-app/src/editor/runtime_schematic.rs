@@ -167,6 +167,9 @@ impl Runtime {
         if event.state != ElementState::Pressed {
             return false;
         }
+        if self.handle_symbol_move_pose_key(event) {
+            return true;
+        }
         if self.workspace().schematic_authoring.creation.is_some() {
             return self.handle_schematic_creation_key(event);
         }

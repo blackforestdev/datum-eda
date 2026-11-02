@@ -425,8 +425,8 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         .expect("output pin should be present");
     assert_eq!(output_pin["number"], "OUT");
     assert_eq!(output_pin["electrical_type"], "Output");
-    assert_eq!(output_pin["x_nm"], 100);
-    assert_eq!(output_pin["y_nm"], 200);
+    assert_eq!(output_pin["x_nm"], 1100);
+    assert_eq!(output_pin["y_nm"], 2200);
     assert_eq!(output_pin["anchor_orientation"], "Left");
     assert_eq!(output_pin["anchor_length_nm"], 2540000);
     assert_eq!(output_pin["anchor_decoration"], "inverted");
@@ -437,8 +437,8 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         .expect("power pin should be present");
     assert_eq!(power_pin["number"], "VCC");
     assert_eq!(power_pin["electrical_type"], "PowerIn");
-    assert_eq!(power_pin["x_nm"], 300);
-    assert_eq!(power_pin["y_nm"], 400);
+    assert_eq!(power_pin["x_nm"], 1300);
+    assert_eq!(power_pin["y_nm"], 2400);
     assert_eq!(power_pin["anchor_orientation"], "Right");
     assert!(power_pin["anchor_length_nm"].is_null());
     assert_eq!(power_pin["anchor_decoration"], "none");

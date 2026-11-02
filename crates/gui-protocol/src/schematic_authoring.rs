@@ -157,6 +157,23 @@ pub struct NewSchematicDraft {
     pub tip: Option<Uuid>,
     pub refusal: Option<String>,
 }
+impl PlacementTransform {
+    /// Mirror local X before rotation; world-axis flips compose with that pose.
+    pub fn apply(self, rotation_deg: i32, mirrored: bool) -> (i32, bool) {
+        let rotation = i64::from(rotation_deg);
+        let rotation = match self {
+            Self::Rotate => rotation + 90,
+            Self::FlipX => -rotation,
+            Self::FlipY => 180 - rotation,
+        }
+        .rem_euclid(360) as i32;
+        (
+            rotation,
+            mirrored ^ matches!(self, Self::FlipX | Self::FlipY),
+        )
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct LabelDraft {
     pub kind: LabelKind,
@@ -231,18 +248,7 @@ impl SchematicAuthoring {
         if self.picker || self.wire || self.label.is_some() || self.chosen.is_none() {
             return false;
         }
-        self.rotation_deg = match transform {
-            PlacementTransform::Rotate => self.rotation_deg + 90,
-            PlacementTransform::FlipX => -self.rotation_deg,
-            PlacementTransform::FlipY => 180 - self.rotation_deg,
-        }
-        .rem_euclid(360);
-        if matches!(
-            transform,
-            PlacementTransform::FlipX | PlacementTransform::FlipY
-        ) {
-            self.mirrored = !self.mirrored;
-        }
+        (self.rotation_deg, self.mirrored) = transform.apply(self.rotation_deg, self.mirrored);
         self.preview_dirty = true;
         true
     }

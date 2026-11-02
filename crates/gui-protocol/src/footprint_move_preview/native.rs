@@ -1,7 +1,7 @@
 //! One native Move session, configured by its authored target surface.
 use super::*;
 use crate::native_edit_client::NativeEditAction;
-use crate::schematic_authoring::SchematicAuthoring;
+use crate::schematic_authoring::{PlacementTransform, SchematicAuthoring};
 use eda_engine::api::native_write::schematic_symbol_move::SymbolMoveBasis;
 use std::path::PathBuf;
 use uuid::Uuid;
@@ -13,6 +13,8 @@ pub enum NativeMovePreview {
         basis: SymbolMoveBasis,
         authoring: Box<SchematicAuthoring>,
         cursor_anchor: PointNm,
+        rotation_deg: Option<i32>,
+        mirrored: Option<bool>,
         instance_path: Vec<Uuid>,
         root: PathBuf,
     },
@@ -48,6 +50,8 @@ impl NativeMovePreview {
             cursor_anchor: checked_snap_authoring_point(cursor, snap)?,
             instance_path: id.instance_path.clone(),
             root,
+            rotation_deg: None,
+            mirrored: None,
         })
     }
     pub fn base(&self) -> &BoardReviewSceneV1 {
@@ -96,12 +100,44 @@ impl NativeMovePreview {
                 x_nm: at.x,
                 y_nm: at.y,
             },
-            Self::Symbol { basis, .. } => NativeEditAction::MoveSymbol {
+            Self::Symbol {
+                basis,
+                rotation_deg,
+                mirrored,
+                ..
+            } => NativeEditAction::MoveSymbol {
                 symbol: basis.symbol.uuid,
                 x_nm: at.x,
                 y_nm: at.y,
+                rotation_deg: *rotation_deg,
+                mirrored: *mirrored,
             },
         })
+    }
+    /// Validate the complete connected geometry before changing the desired pose.
+    /// Repeated keys always transform the immutable original, never rounded previews.
+    pub fn transform_symbol(&mut self, transform: PlacementTransform, at: PointNm) -> Result<bool> {
+        let Self::Symbol {
+            basis,
+            rotation_deg,
+            mirrored,
+            ..
+        } = self
+        else {
+            return Ok(false);
+        };
+        let (rotation, mirror) = transform.apply(
+            rotation_deg.unwrap_or(basis.symbol.rotation),
+            mirrored.unwrap_or(basis.symbol.mirrored),
+        );
+        basis.destination_with_pose(
+            eda_engine::ir::geometry::Point { x: at.x, y: at.y },
+            Some(rotation),
+            Some(mirror),
+        )?;
+        *rotation_deg = Some(rotation);
+        *mirrored = Some(mirror);
+        Ok(true)
     }
     pub fn destination(&self, cursor: PointNm, snap: AuthoringSnapState) -> Result<PointNm> {
         match self {
@@ -131,10 +167,15 @@ impl NativeMovePreview {
                 basis,
                 authoring,
                 root,
+                rotation_deg,
+                mirrored,
                 ..
             } => {
-                let moved =
-                    basis.destination_edit(eda_engine::ir::geometry::Point { x: at.x, y: at.y })?;
+                let moved = basis.destination_with_pose(
+                    eda_engine::ir::geometry::Point { x: at.x, y: at.y },
+                    *rotation_deg,
+                    *mirrored,
+                )?;
                 let mut source = authoring
                     .source
                     .clone()

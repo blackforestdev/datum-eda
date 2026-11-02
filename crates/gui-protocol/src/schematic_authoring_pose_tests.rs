@@ -204,3 +204,237 @@ fn placement_pose_transforms_asymmetric_body_and_pins_and_resets_on_cancel() {
         "wire gestures do not acquire symbol poses"
     );
 }
+
+#[test]
+fn placed_symbol_pose_preview_keeps_asymmetric_body_pins_wire_and_payload_together() {
+    use crate::footprint_move_preview::native::NativeMovePreview;
+    use crate::native_edit_client::NativeEditAction;
+    use eda_engine::api::native_write::{
+        WriteProvenance, commit_prepared,
+        registry::{NativeWriteContext, find_native_write_verb},
+    };
+    use serde_json::json;
+    fn write(
+        model: &mut eda_engine::substrate::DesignModel,
+        root: &std::path::Path,
+        verb: &str,
+        params: serde_json::Value,
+    ) {
+        let prepared = (find_native_write_verb(verb).unwrap().build)(
+            &NativeWriteContext {
+                model,
+                project_root: root,
+            },
+            WriteProvenance::new(
+                "test",
+                eda_engine::substrate::CommitSource::Test,
+                "connected pose preview",
+            ),
+            params,
+        )
+        .unwrap();
+        commit_prepared(model, root, prepared).unwrap();
+    }
+    let fixture = isolated_fixture();
+    let root = &fixture.0;
+    let mut model = eda_engine::substrate::ProjectResolver::new(root)
+        .resolve()
+        .unwrap();
+    let authoring = SchematicAuthoring::from_model(&model).unwrap();
+    let sheet = authoring.sheet.unwrap();
+    let library = authoring
+        .choices
+        .iter()
+        .find(|c| c.name == "Datum single op amp symbol")
+        .unwrap()
+        .id;
+    write(
+        &mut model,
+        root,
+        "datum.schematic.place_symbol",
+        json!({
+            "sheet":sheet,"library_symbol":library,"reference":"U3","value":"pose preview",
+            "x_nm":40_000_000,"y_nm":40_000_000,"rotation_deg":0,"mirrored":false
+        }),
+    );
+    write(
+        &mut model,
+        root,
+        "datum.schematic.draw_wire",
+        json!({
+            "sheet":sheet,"points":[{"x":41_500_000,"y":40_000_000},{"x":60_000_000,"y":40_000_000}]
+        }),
+    );
+    let authoring = SchematicAuthoring::from_model(&model).unwrap();
+    let source = authoring.source.as_ref().unwrap();
+    let symbol = source.sheets[&sheet]
+        .symbols
+        .values()
+        .find(|s| s.reference == "U3")
+        .unwrap();
+    let wire = source.sheets[&sheet]
+        .wires
+        .values()
+        .find(|w| w.to.x == 60_000_000)
+        .unwrap();
+    let terminal = symbol.pins.iter().find(|p| p.name == "IN-").unwrap().uuid;
+    let id = crate::AuthoredSelectionIdentity {
+        class: crate::AuthoredSelectionClass::Symbol,
+        id: symbol.uuid,
+        instance_path: authoring.move_paths[&symbol.uuid].clone(),
+    };
+    let base = crate::native_schematic_scene::project_native_schematic_scene(&model, root)
+        .unwrap()
+        .unwrap();
+    let origin = PointNm {
+        x: 40_000_000,
+        y: 40_000_000,
+    };
+    let snap = crate::AuthoringSnapState {
+        enabled: false,
+        grid_nm: 100_000,
+    };
+    let bytes: Vec<_> = model
+        .source_shards
+        .iter()
+        .map(|s| (s.path.clone(), std::fs::read(&s.path).unwrap()))
+        .collect();
+    let point = |(x, y)| PointNm {
+        x: i64::from(x) * 500_000,
+        y: i64::from(y) * 500_000,
+    };
+    for (steps, pose, edge, input, output) in [
+        (
+            vec![Rotate],
+            (90, false),
+            [(82, 78), (80, 82)],
+            (81, 77),
+            (80, 83),
+        ),
+        (
+            vec![Rotate, FlipX],
+            (270, true),
+            [(78, 78), (80, 82)],
+            (79, 77),
+            (80, 83),
+        ),
+        (
+            vec![Rotate, FlipY],
+            (90, true),
+            [(82, 82), (80, 78)],
+            (81, 83),
+            (80, 77),
+        ),
+        (
+            vec![Rotate, Rotate, Rotate, Rotate],
+            (0, false),
+            [(78, 78), (82, 80)],
+            (77, 79),
+            (83, 80),
+        ),
+    ] {
+        let mut preview =
+            NativeMovePreview::symbol(&base, &authoring, &id, origin, snap, root.clone()).unwrap();
+        for step in steps {
+            assert!(preview.transform_symbol(step, origin).unwrap());
+        }
+        let scene = preview.scene_at(origin).unwrap();
+        let body = scene
+            .board_graphics
+            .iter()
+            .find(|g| g.object_id == format!("schematic-symbol:{}:library:0", id.id))
+            .unwrap();
+        assert_eq!(body.path, edge.map(point).to_vec(), "body {pose:?}");
+        let pin = scene
+            .board_graphics
+            .iter()
+            .find(|g| {
+                g.object_id
+                    .starts_with(&format!("schematic-symbol-pin-terminal:{}:", id.id))
+                    && g.source_object_uuid == terminal.to_string()
+            })
+            .unwrap();
+        let center = point(input);
+        assert_eq!(
+            (
+                pin.path.iter().map(|p| p.x).min(),
+                pin.path.iter().map(|p| p.x).max(),
+                pin.path.iter().map(|p| p.y).min(),
+                pin.path.iter().map(|p| p.y).max()
+            ),
+            (
+                Some(center.x - 90_000),
+                Some(center.x + 90_000),
+                Some(center.y - 90_000),
+                Some(center.y + 90_000)
+            ),
+            "pin {pose:?}"
+        );
+        let segment = scene
+            .board_graphics
+            .iter()
+            .find(|g| g.source_object_uuid == wire.uuid.to_string() && g.path.len() == 2)
+            .unwrap();
+        assert_eq!(
+            segment.path,
+            vec![
+                point(output),
+                PointNm {
+                    x: 60_000_000,
+                    y: 40_000_000
+                }
+            ],
+            "attached wire {pose:?}"
+        );
+        let NativeEditAction::MoveSymbol {
+            symbol: target,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            mirrored,
+        } = preview.action(origin).unwrap()
+        else {
+            panic!("symbol action")
+        };
+        assert_eq!(
+            (target, x_nm, y_nm, rotation_deg, mirrored),
+            (id.id, origin.x, origin.y, Some(pose.0), Some(pose.1))
+        );
+        assert_eq!(preview.base(), &base, "immutable cancel source");
+    }
+    let mut refused =
+        NativeMovePreview::symbol(&base, &authoring, &id, origin, snap, root.clone()).unwrap();
+    assert!(
+        refused
+            .transform_symbol(
+                Rotate,
+                PointNm {
+                    x: 60_000_000,
+                    y: 38_500_000
+                }
+            )
+            .is_err(),
+        "collapsing attached wire is refused"
+    );
+    let NativeEditAction::MoveSymbol {
+        rotation_deg,
+        mirrored,
+        ..
+    } = refused.action(origin).unwrap()
+    else {
+        panic!("symbol action")
+    };
+    assert_eq!(
+        (rotation_deg, mirrored),
+        (None, None),
+        "refusal retains the prior pose"
+    );
+    assert_eq!(authoring.source.as_ref().unwrap(), source);
+    for (path, before) in bytes {
+        assert_eq!(
+            std::fs::read(path).unwrap(),
+            before,
+            "preview/cancel writes no source bytes"
+        );
+    }
+}

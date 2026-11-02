@@ -385,16 +385,32 @@ pub fn place_local_point(
     rotation: i32,
     mirrored: bool,
 ) -> Result<Point, EngineError> {
-    let x = if mirrored {
-        point.x.checked_neg()
-    } else {
-        Some(point.x)
-    }
-    .ok_or_else(|| {
-        EngineError::Validation("Symbol reflection exceeds integer coordinates".into())
-    })?;
-    let y = point.y;
-    let (x, y) = match rotation.rem_euclid(360) {
+    let (x, y) = cardinal_symbol_point(
+        (i128::from(point.x), i128::from(point.y)),
+        rotation,
+        mirrored,
+    )?;
+    Ok(Point {
+        x: i64::try_from(i128::from(origin.x) + x).map_err(|_| {
+            EngineError::Validation("Symbol placement exceeds integer coordinates".into())
+        })?,
+        y: i64::try_from(i128::from(origin.y) + y).map_err(|_| {
+            EngineError::Validation("Symbol placement exceeds integer coordinates".into())
+        })?,
+    })
+}
+
+/// Shared mirror-X-then-cardinal-rotation law for placement and existing symbols.
+/// Wide offsets preserve cancellation when absolute coordinates and origins
+/// differ by more than i64; only the final stored point must fit.
+pub(super) fn cardinal_symbol_point(
+    (x, y): (i128, i128),
+    rotation: i32,
+    mirrored: bool,
+) -> Result<(i128, i128), EngineError> {
+    let x = if mirrored { x.checked_neg() } else { Some(x) }
+        .ok_or_else(|| EngineError::Validation("Symbol coordinate overflow".into()))?;
+    let result = match rotation.rem_euclid(360) {
         0 => (Some(x), Some(y)),
         90 => (y.checked_neg(), Some(x)),
         180 => (x.checked_neg(), y.checked_neg()),
@@ -405,12 +421,8 @@ pub fn place_local_point(
             ));
         }
     };
-    Ok(Point {
-        x: x.and_then(|x| origin.x.checked_add(x)).ok_or_else(|| {
-            EngineError::Validation("Symbol placement exceeds integer coordinates".into())
-        })?,
-        y: y.and_then(|y| origin.y.checked_add(y)).ok_or_else(|| {
-            EngineError::Validation("Symbol placement exceeds integer coordinates".into())
-        })?,
-    })
+    match result {
+        (Some(x), Some(y)) => Ok((x, y)),
+        _ => Err(EngineError::Validation("Symbol coordinate overflow".into())),
+    }
 }

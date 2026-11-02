@@ -73,6 +73,33 @@ pub(super) fn compute_model_revision(
     ModelRevision(sha256_digest_hex(hasher.finalize().as_slice()))
 }
 
+/// Generated check results retain the accepted authored input. Older journals
+/// may carry hashes made before typed object registrations were corrected; a
+/// check must not silently migrate those historical tips. Mixed design/evidence
+/// transactions still recompute, and other evidence families keep their rules.
+pub(super) fn authored_revision_after_operations(
+    model: &DesignModel,
+    before: &ModelRevision,
+    operations: &[Operation],
+) -> ModelRevision {
+    if !operations.is_empty()
+        && operations.iter().all(|operation| {
+            matches!(
+                operation,
+                Operation::SetCheckRun { .. } | Operation::DeleteCheckRun { .. }
+            )
+        })
+    {
+        before.clone()
+    } else {
+        compute_model_revision(
+            &model.project.project_id,
+            &model.source_shards,
+            &model.objects,
+        )
+    }
+}
+
 // History restores the exact saved geometry, but source-object revisions may
 // advance during compensation. Bind only imported evidence to that actual basis.
 pub(super) fn bind_imported_fill_history(

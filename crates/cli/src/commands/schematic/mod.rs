@@ -33,6 +33,7 @@ mod proposals;
 mod queries;
 mod sheet_mutations;
 mod symbol_component_instance;
+mod symbol_geometry;
 mod symbol_library_materialization;
 mod symbol_mutations;
 mod symbol_reports;

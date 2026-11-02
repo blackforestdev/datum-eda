@@ -23,6 +23,10 @@ pub enum NativeEditAction {
         symbol: Uuid,
         x_nm: i64,
         y_nm: i64,
+        #[serde(default)]
+        rotation_deg: Option<i32>,
+        #[serde(default)]
+        mirrored: Option<bool>,
     },
     Undo {
         expected_tip: Uuid,
@@ -315,9 +319,15 @@ impl NativeProjectClient {
                         .context("Library acquisition payload missing")?,
                 )?,
             ),
-            NativeEditAction::MoveSymbol { symbol, x_nm, y_nm } => (
+            NativeEditAction::MoveSymbol {
+                symbol,
+                x_nm,
+                y_nm,
+                rotation_deg,
+                mirrored,
+            } => (
                 "datum.schematic.move_symbol",
-                json!({"symbol":symbol,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
+                json!({"symbol":symbol,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
             ),
             NativeEditAction::Save => unreachable!(),
         };

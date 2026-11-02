@@ -6,6 +6,7 @@ mod artifact_metadata_validation;
 mod artifact_output_oracle;
 mod artifact_run_replay;
 mod artifact_run_schema;
+mod check_run_electrical_replay;
 mod check_run_replay;
 mod check_run_schema;
 mod check_run_target_validation;

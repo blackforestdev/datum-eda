@@ -327,6 +327,39 @@ pub(super) fn render(
                 hits,
             );
         }
+    } else if state.authoring.gesture.tool == datum_gui_protocol::WorkspaceTool::Move
+        && state
+            .authoring
+            .gesture
+            .target_object_id
+            .as_deref()
+            .is_some_and(|id| id.starts_with("schematic-symbol:"))
+    {
+        let panel = RectPx {
+            x: layout.top_menu_bar.width / 2. - 210.,
+            y: 76.,
+            width: 420.,
+            height: 60.,
+        };
+        quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
+        draw_text(
+            "Move symbol · R: rotate · X/Y: flip horiz/vert",
+            panel.x + 10.,
+            panel.y + 10.,
+            12.,
+            TEXT_PRIMARY,
+            TextFace::UiStrong,
+            text,
+        );
+        draw_text(
+            "Click: apply · Esc: cancel",
+            panel.x + 10.,
+            panel.y + 32.,
+            11.,
+            TEXT_MUTED,
+            TextFace::Ui,
+            text,
+        );
     }
     Ok(())
 }

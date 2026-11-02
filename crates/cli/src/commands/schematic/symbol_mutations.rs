@@ -45,6 +45,18 @@ pub(crate) fn place_native_project_symbol(
     rotation_deg: i32,
     mirrored: bool,
 ) -> Result<NativeProjectSymbolMutationReportView> {
+    if let Some(library_symbol) = lib_id.as_deref().and_then(|id| Uuid::parse_str(id).ok()) {
+        return super::symbol_geometry::place_pool_symbol(
+            root,
+            sheet_uuid,
+            library_symbol,
+            reference,
+            value,
+            position,
+            rotation_deg,
+            mirrored,
+        );
+    }
     let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let pins = materialize_pool_symbol_pins(root, lib_id.as_deref())?;
@@ -109,18 +121,11 @@ pub(crate) fn move_native_project_symbol(
     symbol_uuid: Uuid,
     position: Point,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project_with_resolved_board(root)?;
-    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
-        load_native_symbol_mutation_target(&project, symbol_uuid)?;
-    symbol.position = position;
-    commit_symbol_update(root, "move schematic symbol", sheet_uuid, &symbol)?;
-    Ok(symbol_mutation_report(
-        "move_symbol",
-        &project,
-        sheet_uuid,
-        &sheet_path,
-        &symbol,
-    ))
+    super::symbol_geometry::transform_symbol(
+        root,
+        symbol_uuid,
+        super::symbol_geometry::Transform::Move(position),
+    )
 }
 
 pub(crate) fn rotate_native_project_symbol(
@@ -128,36 +133,22 @@ pub(crate) fn rotate_native_project_symbol(
     symbol_uuid: Uuid,
     rotation_deg: i32,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project_with_resolved_board(root)?;
-    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
-        load_native_symbol_mutation_target(&project, symbol_uuid)?;
-    symbol.rotation = rotation_deg;
-    commit_symbol_update(root, "rotate schematic symbol", sheet_uuid, &symbol)?;
-    Ok(symbol_mutation_report(
-        "rotate_symbol",
-        &project,
-        sheet_uuid,
-        &sheet_path,
-        &symbol,
-    ))
+    super::symbol_geometry::transform_symbol(
+        root,
+        symbol_uuid,
+        super::symbol_geometry::Transform::Rotate(rotation_deg),
+    )
 }
 
 pub(crate) fn mirror_native_project_symbol(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project_with_resolved_board(root)?;
-    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
-        load_native_symbol_mutation_target(&project, symbol_uuid)?;
-    symbol.mirrored = !symbol.mirrored;
-    commit_symbol_update(root, "mirror schematic symbol", sheet_uuid, &symbol)?;
-    Ok(symbol_mutation_report(
-        "mirror_symbol",
-        &project,
-        sheet_uuid,
-        &sheet_path,
-        &symbol,
-    ))
+    super::symbol_geometry::transform_symbol(
+        root,
+        symbol_uuid,
+        super::symbol_geometry::Transform::Mirror,
+    )
 }
 
 pub(crate) fn delete_native_project_symbol(

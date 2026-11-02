@@ -329,6 +329,7 @@ mod main_tests_project_standards_silk_repairs;
 mod main_tests_project_standards_zone_fill_repairs;
 mod main_tests_project_symbol;
 mod main_tests_project_symbol_binding;
+mod main_tests_project_symbol_geometry;
 mod main_tests_project_symbol_library_materialization;
 mod main_tests_project_symbol_resolution;
 mod main_tests_project_symbol_semantics;

@@ -2,6 +2,7 @@
 use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, parse_verb_params},
+    schematic_edit::cardinal_symbol_point,
 };
 use crate::{
     connectivity::SymbolContactBasis,
@@ -95,18 +96,59 @@ impl SymbolMoveBasis {
     }
 
     pub fn destination_edit(&self, position: Point) -> Result<SymbolMoveDestination, EngineError> {
+        self.destination_with_pose(position, None, None)
+    }
+
+    /// Apply an absolute requested pose to the immutable source basis. Omitted
+    /// pose fields preserve historical translation-only behavior and bytes.
+    pub fn destination_with_pose(
+        &self,
+        position: Point,
+        rotation_deg: Option<i32>,
+        mirrored: Option<bool>,
+    ) -> Result<SymbolMoveDestination, EngineError> {
+        let rotation = rotation_deg.unwrap_or(self.symbol.rotation);
+        let mirrored = mirrored.unwrap_or(self.symbol.mirrored);
+        let pose_changed = rotation.rem_euclid(360) != self.symbol.rotation.rem_euclid(360)
+            || mirrored != self.symbol.mirrored;
+        if pose_changed
+            && (rotation.rem_euclid(90) != 0 || self.symbol.rotation.rem_euclid(90) != 0)
+        {
+            return Err(invalid("Symbol rotation requires an exact cardinal pose"));
+        }
         // i128 deltas allow the full i64 origin domain; only the final stored
         // coordinates must fit. No rounding or newly invented tolerance.
         let dx = i128::from(position.x) - i128::from(self.symbol.position.x);
         let dy = i128::from(position.y) - i128::from(self.symbol.position.y);
         let mut symbol = self.symbol.clone();
         symbol.position = position;
+        symbol.rotation = rotation;
+        symbol.mirrored = mirrored;
         for pin in &mut symbol.pins {
+            let (x, y) = if pose_changed {
+                let relative = (
+                    i128::from(pin.position.x) - i128::from(self.symbol.position.x),
+                    i128::from(pin.position.y) - i128::from(self.symbol.position.y),
+                );
+                // Invert source rotation, then source reflection; apply target
+                // reflection, then target rotation using the placement law.
+                let unrotated =
+                    cardinal_symbol_point(relative, -self.symbol.rotation.rem_euclid(360), false)?;
+                let local = cardinal_symbol_point(unrotated, 0, self.symbol.mirrored)?;
+                let posed = cardinal_symbol_point(local, rotation, mirrored)?;
+                (
+                    i128::from(position.x) + posed.0,
+                    i128::from(position.y) + posed.1,
+                )
+            } else {
+                (
+                    i128::from(pin.position.x) + dx,
+                    i128::from(pin.position.y) + dy,
+                )
+            };
             pin.position = Point {
-                x: i64::try_from(i128::from(pin.position.x) + dx)
-                    .map_err(|_| invalid("Symbol pin coordinate overflow"))?,
-                y: i64::try_from(i128::from(pin.position.y) + dy)
-                    .map_err(|_| invalid("Symbol pin coordinate overflow"))?,
+                x: i64::try_from(x).map_err(|_| invalid("Symbol pin coordinate overflow"))?,
+                y: i64::try_from(y).map_err(|_| invalid("Symbol pin coordinate overflow"))?,
             };
         }
         let wires = self.contacts.moved_wires(&symbol)?;
@@ -116,11 +158,15 @@ impl SymbolMoveBasis {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
+// Existing move_symbol schema adds optional absolute pose; absent/null values
+// preserve the source pose and the historical translation-only request.
 struct MoveParams {
     symbol: Uuid,
     instance_path: Vec<Uuid>,
     x_nm: i64,
     y_nm: i64,
+    rotation_deg: Option<i32>,
+    mirrored: Option<bool>,
 }
 
 pub(super) fn move_symbol(
@@ -132,11 +178,15 @@ pub(super) fn move_symbol(
     let snapshot = ElectricalSelectionSnapshot::capture(context.model)
         .map_err(|e| invalid(format!("Symbol source/contact basis unavailable: {e:?}")))?;
     let basis = SymbolMoveBasis::capture(&snapshot, params.symbol, &params.instance_path)?;
-    let destination = basis.destination_edit(Point {
-        x: params.x_nm,
-        y: params.y_nm,
-    })?;
-    if destination.symbol.position == basis.symbol.position {
+    let destination = basis.destination_with_pose(
+        Point {
+            x: params.x_nm,
+            y: params.y_nm,
+        },
+        params.rotation_deg,
+        params.mirrored,
+    )?;
+    if destination.symbol == basis.symbol {
         return Err(invalid("Symbol move destination is unchanged"));
     }
     let mut operations = vec![Operation::SetSchematicSymbol {

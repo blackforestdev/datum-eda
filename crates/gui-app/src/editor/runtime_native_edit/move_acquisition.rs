@@ -1,5 +1,7 @@
 //! Shared native Move acquisition and complete selected-target ownership.
 use super::*;
+#[path = "symbol_pose.rs"]
+mod symbol_pose;
 impl Runtime {
     // The bounded first-edit capability moves one complete Footprint. Never
     // silently reduce a Run, compound selection or another object to a subset.

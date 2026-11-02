@@ -132,6 +132,29 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
             objects.remove(object_id);
         }
         restore_library_source_registrations(objects, transaction);
+        // Electrical sidecars already store their exact object revision. Generic
+        // promoted diffs must not add historical advances a second time. Restore
+        // the typed operation postimage, including inverse/redo records and
+        // deletions, after the compatibility object-diff reconstruction.
+        for operation in &transaction.operations {
+            if let Some((id, record, delete)) =
+                super::super::electrical_identity_store::write(operation)
+            {
+                if delete {
+                    objects.remove(&id);
+                } else {
+                    let path = super::super::electrical_identity_store::relative_path(id);
+                    let shard_id = Uuid::new_v5(
+                        &Uuid::NAMESPACE_URL,
+                        format!("datum-eda:source-shard:{path}").as_bytes(),
+                    );
+                    objects.insert(
+                        id,
+                        super::super::electrical_identity_store::object(record, shard_id),
+                    );
+                }
+            }
+        }
     }
 }
 

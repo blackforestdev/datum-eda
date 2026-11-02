@@ -483,3 +483,6 @@ fn symbol_move_unavailable_contact_geometry_never_becomes_isolation() {
 
 #[path = "schematic_connected_move_tests.rs"]
 mod connected_tests;
+
+#[path = "schematic_symbol_pose_tests.rs"]
+mod pose_tests;

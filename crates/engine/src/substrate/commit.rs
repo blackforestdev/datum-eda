@@ -11,7 +11,6 @@ use crate::revision::{
 use super::{
     AgentCommitProvenance, CommitDiff, CommitReport, DesignModel, EngineError, JournalCursor,
     ModelRevision, Operation, OperationBatch, TransactionKind, TransactionRecord,
-    compute_model_revision,
     journal::{
         append_transaction_journal, inverse_operations_for_batch, promote_staged_shard_writes,
         sort_source_shards, stage_operation_shard_writes, update_staged_source_hashes,
@@ -61,8 +60,11 @@ impl DesignModel {
         apply_operations(self, &batch.operations, &mut diff)?;
         diff.modified.sort();
         diff.modified.dedup();
-        self.model_revision =
-            compute_model_revision(&self.project.project_id, &self.source_shards, &self.objects);
+        self.model_revision = super::board_batch_basis::authored_revision_after_operations(
+            self,
+            &before_model_revision,
+            &batch.operations,
+        );
         let transaction = TransactionRecord {
             transaction_id: Uuid::new_v5(
                 &self.project.project_id,
@@ -555,10 +557,10 @@ pub(super) fn refresh_journaled_report_revision(
 ) -> Result<(), EngineError> {
     sort_source_shards(&mut committed.source_shards);
     committed.model_revision = after_model_revision_override.unwrap_or_else(|| {
-        compute_model_revision(
-            &committed.project.project_id,
-            &committed.source_shards,
-            &committed.objects,
+        super::board_batch_basis::authored_revision_after_operations(
+            committed,
+            &report.transaction.before_model_revision,
+            &report.transaction.operations,
         )
     });
     let transaction_id = Uuid::new_v5(
