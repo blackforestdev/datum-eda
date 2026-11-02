@@ -12,6 +12,9 @@ use std::{
 };
 use uuid::Uuid;
 
+#[path = "native_proposal_client.rs"]
+mod proposal;
+
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub enum NativeEditAction {
     Move {
@@ -23,6 +26,12 @@ pub enum NativeEditAction {
         label: Uuid,
         x_nm: i64,
         y_nm: i64,
+    },
+    MoveSymbols {
+        x_nm: i64,
+        y_nm: i64,
+        rotation_deg: i32,
+        mirrored: bool,
     },
     MoveSymbol {
         symbol: Uuid,
@@ -40,6 +49,7 @@ pub enum NativeEditAction {
         expected_tip: Uuid,
     },
     Save,
+    Proposal,
     Schematic,
     Library,
     LibraryAcquire,
@@ -52,6 +62,10 @@ pub struct NativeEditIntent {
     pub expected_tip: Option<Uuid>,
     pub action: NativeEditAction,
     pub request_id: Uuid,
+    pub proposal:
+        Option<eda_engine::api::native_write::schematic_delete_proposal::NativeProposalAction>,
+    pub symbol_group:
+        Option<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveSetRequest>,
     pub schematic: Option<crate::schematic_authoring::SchematicEditRequest>,
     pub library: Option<(
         bool,
@@ -77,6 +91,8 @@ impl NativeEditIntent {
             action,
             request_id: Uuid::new_v4(),
             schematic: None,
+            symbol_group: None,
+            proposal: None,
             library: None,
             library_acquisition: None,
             instance_path: Vec::new(),
@@ -88,7 +104,12 @@ impl NativeEditIntent {
 pub struct NativeEditReceipt {
     pub applied: bool,
     pub reconciled: bool,
+    pub proposal_refusal: Option<String>,
+    /// Null only when a confirmed Proposal response outlived a failed snapshot.
+    /// The worker must recover a fresh description before any model publication.
     pub description: Value,
+    pub proposal:
+        Option<eda_engine::api::native_write::schematic_delete_proposal::NativeProposalResponse>,
 }
 
 pub struct NativeProjectClient {
@@ -261,6 +282,9 @@ impl NativeProjectClient {
         {
             bail!("Project changed since the edit began; refresh before editing");
         }
+        if let NativeEditAction::Proposal = intent.action {
+            return self.execute_proposal(intent);
+        }
         if let NativeEditAction::Save = intent.action {
             if initial
                 .get("diagnostics")
@@ -279,6 +303,8 @@ impl NativeProjectClient {
                 applied: false,
                 reconciled: false,
                 description: initial,
+                proposal: None,
+                proposal_refusal: None,
             });
         }
         let (verb, params) = match intent.action {
@@ -328,6 +354,30 @@ impl NativeProjectClient {
                 "datum.schematic.move_label",
                 json!({"label":label,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
             ),
+            NativeEditAction::MoveSymbols {
+                x_nm,
+                y_nm,
+                rotation_deg,
+                mirrored,
+            } => {
+                let request = intent
+                    .symbol_group
+                    .as_ref()
+                    .context("Complete Symbol transform payload missing")?;
+                anyhow::ensure!(
+                    (
+                        request.x_nm,
+                        request.y_nm,
+                        request.rotation_deg,
+                        request.mirrored
+                    ) == (x_nm, y_nm, rotation_deg, mirrored),
+                    "Symbol transform payload differs from its preview"
+                );
+                (
+                    "datum.schematic.move_symbol",
+                    serde_json::to_value(request)?,
+                )
+            }
             NativeEditAction::MoveSymbol {
                 symbol,
                 x_nm,
@@ -338,7 +388,7 @@ impl NativeProjectClient {
                 "datum.schematic.move_symbol",
                 json!({"symbol":symbol,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
             ),
-            NativeEditAction::Save => unreachable!(),
+            NativeEditAction::Save | NativeEditAction::Proposal => unreachable!(),
         };
         let reason = format!("GUI {verb}; request {}", intent.request_id);
         let result = self.call(
@@ -363,11 +413,15 @@ impl NativeProjectClient {
                 applied: true,
                 reconciled: false,
                 description,
+                proposal: None,
+                proposal_refusal: None,
             }),
             Err(_) if found => Ok(NativeEditReceipt {
                 applied: true,
                 reconciled: true,
                 description,
+                proposal: None,
+                proposal_refusal: None,
             }),
             Err(error) => Err(error.context("edit not confirmed; no retry was sent")),
             Ok(_) => bail!("edit receipt could not be reconciled against the Project journal"),

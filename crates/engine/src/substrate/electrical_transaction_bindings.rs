@@ -29,6 +29,13 @@ pub(super) fn compose(
             Some(id)
         }
     };
+    // Source-deletion lifecycle writes only remove drawing representations.
+    // They still inherit the canonical final-state Net remap. Explicit semantic
+    // membership/name changes retain their existing authoritative-write behavior.
+    let projection_only: BTreeSet<_> = operations
+        .iter()
+        .filter_map(|op| projection_only_removal(model, op))
+        .collect();
     let mut finals = model.electrical_identities.clone();
     let mut explicitly_written = BTreeSet::new();
     for op in operations.iter() {
@@ -42,7 +49,7 @@ pub(super) fn compose(
         }
     }
     for record in finals.values_mut() {
-        if explicitly_written.contains(&record.id) {
+        if explicitly_written.contains(&record.id) && !projection_only.contains(&record.id) {
             continue;
         }
         match &mut record.identity {
@@ -134,4 +141,42 @@ pub(super) fn compose(
         }
     }
     Ok(())
+}
+
+fn projection_only_removal(model: &DesignModel, operation: &Operation) -> Option<Uuid> {
+    let Operation::SetElectricalIdentity { previous, record } = operation else {
+        return None;
+    };
+    if model.electrical_identities.get(&record.id) != Some(previous.as_ref()) {
+        return None;
+    }
+    let ElectricalIdentity::Bus {
+        representations: old,
+        retired: false,
+        ..
+    } = &previous.identity
+    else {
+        return None;
+    };
+    let ElectricalIdentity::Bus {
+        representations: new,
+        retired: false,
+        ..
+    } = &record.identity
+    else {
+        return None;
+    };
+    if new == old || !new.is_subset(old) {
+        return None;
+    }
+    let mut expected = previous.as_ref().clone();
+    let ElectricalIdentity::Bus {
+        representations, ..
+    } = &mut expected.identity
+    else {
+        unreachable!()
+    };
+    *representations = new.clone();
+    expected.object_revision = super::ObjectRevision(previous.object_revision.0.checked_add(1)?);
+    (&expected == record).then_some(record.id)
 }

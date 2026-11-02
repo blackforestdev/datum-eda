@@ -3,7 +3,7 @@ use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, parse_verb_params},
     schematic_edit::cardinal_symbol_point,
-    schematic_symbol_payload::{set_point, source_symbol_payload},
+    schematic_symbol_payload::{member_payload, set_point, source_sheet_payload},
 };
 use crate::{
     connectivity::SymbolContactBasis,
@@ -14,6 +14,10 @@ use crate::{
 };
 use serde::Deserialize;
 use uuid::Uuid;
+
+#[path = "schematic_symbol_move_set.rs"]
+mod set;
+pub use set::{SymbolMoveSetBasis, SymbolMoveSetDestination, SymbolMoveSetRequest};
 
 /// Immutable preview basis; source fields and every absolute pin move together.
 /// The writer captures its own current basis before authoring the guarded Set.
@@ -36,65 +40,11 @@ impl SymbolMoveBasis {
         symbol_uuid: Uuid,
         instance_path: &[Uuid],
     ) -> Result<Self, EngineError> {
-        let sources = snapshot
-            .authored_sources()
-            .map_err(|e| invalid(format!("Symbol occurrence basis unavailable: {e:?}")))?;
-        let occurrences: Vec<_> = sources
-            .iter()
-            .filter(|s| {
-                s.domain == SelectionSourceDomain::Schematic
-                    && s.occurrence.class == "symbols"
-                    && s.occurrence.source_id == symbol_uuid
-            })
-            .collect();
-        if occurrences.len() != 1 || occurrences[0].occurrence.instance_path != instance_path {
-            return Err(invalid(
-                "Symbol move requires exactly one complete matching occurrence",
-            ));
-        }
-        let schematic = snapshot
-            .schematic_source()
-            .ok_or_else(|| invalid("Native schematic source unavailable"))?;
-        let sheets: Vec<_> = schematic
-            .sheets
-            .values()
-            .filter(|s| s.symbols.contains_key(&symbol_uuid))
-            .collect();
-        if sheets.len() != 1 {
-            return Err(invalid("Symbol source ownership is ambiguous"));
-        }
-        let sheet = sheets[0];
-        let symbol = sheet.symbols[&symbol_uuid].clone();
-        if symbol.uuid != symbol_uuid || sheet.symbols.iter().any(|(id, s)| *id != s.uuid) {
-            return Err(invalid("Symbol source identity is inconsistent"));
-        }
-        let mut pin_ids = std::collections::BTreeSet::new();
-        if sheet
-            .symbols
-            .values()
-            .flat_map(|s| &s.pins)
-            .any(|pin| !pin_ids.insert(pin.uuid))
-        {
-            return Err(invalid("Symbol pin source identity is ambiguous"));
-        }
-        let mut field_ids = std::collections::BTreeSet::new();
-        if symbol
-            .fields
-            .iter()
-            .any(|field| !field_ids.insert(field.uuid))
-        {
-            return Err(invalid("Symbol field source identity is ambiguous"));
-        }
-        if symbol.pin_overrides.iter().any(|p| p.position.is_some()) {
-            return Err(invalid(
-                "Symbol move with positioned pin overrides is not supported",
-            ));
-        }
-        let contacts = SymbolContactBasis::capture(sheet, symbol_uuid)?;
+        let mut basis = set::capture(snapshot, &[symbol_uuid], instance_path, false)?;
         Ok(Self {
-            sheet_id: sheet.uuid,
-            symbol,
-            contacts,
+            sheet_id: basis.sheet_id,
+            symbol: basis.symbols.remove(0),
+            contacts: basis.contacts,
         })
     }
 
@@ -170,13 +120,20 @@ impl SymbolMoveBasis {
 #[serde(deny_unknown_fields)]
 // Existing move_symbol schema adds optional absolute pose; absent/null values
 // preserve the source pose and the historical translation-only request.
-struct MoveParams {
+struct SingleMoveParams {
     symbol: Uuid,
     instance_path: Vec<Uuid>,
     x_nm: i64,
     y_nm: i64,
     rotation_deg: Option<i32>,
     mirrored: Option<bool>,
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum MoveParams {
+    Single(SingleMoveParams),
+    Group(SymbolMoveSetRequest),
 }
 
 pub(super) fn move_symbol(
@@ -187,6 +144,10 @@ pub(super) fn move_symbol(
     let params: MoveParams = parse_verb_params("datum.schematic.move_symbol", params)?;
     let snapshot = ElectricalSelectionSnapshot::capture(context.model)
         .map_err(|e| invalid(format!("Symbol source/contact basis unavailable: {e:?}")))?;
+    let params = match params {
+        MoveParams::Single(params) => params,
+        MoveParams::Group(params) => return set::build(context, provenance, &snapshot, params),
+    };
     let basis = SymbolMoveBasis::capture(&snapshot, params.symbol, &params.instance_path)?;
     let destination = basis.destination_with_pose(
         Point {
@@ -199,42 +160,87 @@ pub(super) fn move_symbol(
     if destination.symbol == basis.symbol {
         return Err(invalid("Symbol move destination is unchanged"));
     }
-    let mut symbol = source_symbol_payload(context.model, basis.sheet_id, &basis.symbol)?;
-    set_point(&mut symbol["position"], destination.symbol.position);
-    symbol["rotation"] = serde_json::to_value(destination.symbol.rotation)?;
-    symbol["mirrored"] = serde_json::to_value(destination.symbol.mirrored)?;
-    for (index, pin) in destination.symbol.pins.iter().enumerate() {
-        set_point(&mut symbol["pins"][index]["position"], pin.position);
+    transform_write(
+        context,
+        provenance,
+        basis.sheet_id,
+        std::slice::from_ref(&basis.symbol),
+        std::slice::from_ref(&destination.symbol),
+        destination.wires,
+        &basis.contacts,
+    )
+}
+
+fn transform_write(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    sheet_id: Uuid,
+    originals: &[PlacedSymbol],
+    destinations: &[PlacedSymbol],
+    wires: Vec<SchematicWire>,
+    contacts: &SymbolContactBasis,
+) -> Result<PreparedWrite, EngineError> {
+    if originals.len() != destinations.len()
+        || originals
+            .iter()
+            .zip(destinations)
+            .any(|(a, b)| a.uuid != b.uuid)
+    {
+        return Err(invalid(
+            "Transform destination does not match the complete source set",
+        ));
     }
-    for (index, field) in destination.symbol.fields.iter().enumerate() {
-        if let Some(position) = field.position {
-            set_point(&mut symbol["fields"][index]["position"], position);
+    let raw = source_sheet_payload(
+        context.model,
+        sheet_id,
+        originals
+            .first()
+            .ok_or_else(|| invalid("Transform source set is empty"))?
+            .uuid,
+    )?;
+    let mut operations = Vec::new();
+    for (original, destination) in originals.iter().zip(destinations) {
+        let mut symbol = member_payload(&raw, "symbols", original.uuid, original)?;
+        set_point(&mut symbol["position"], destination.position);
+        symbol["rotation"] = serde_json::to_value(destination.rotation)?;
+        symbol["mirrored"] = serde_json::to_value(destination.mirrored)?;
+        for (index, pin) in destination.pins.iter().enumerate() {
+            set_point(&mut symbol["pins"][index]["position"], pin.position);
         }
+        for (index, field) in destination.fields.iter().enumerate() {
+            if let Some(position) = field.position {
+                set_point(&mut symbol["fields"][index]["position"], position);
+            }
+        }
+        operations.push(Operation::SetSchematicSymbol {
+            sheet_id,
+            symbol_id: destination.uuid,
+            symbol,
+        });
     }
-    let mut operations = vec![Operation::SetSchematicSymbol {
-        sheet_id: basis.sheet_id,
-        symbol_id: destination.symbol.uuid,
-        symbol,
-    }];
-    for wire in destination.wires {
-        // Canonical wire operations have no Set variant. Delete/Create with
-        // the same UUID is one guarded final-state edit, never an identity birth.
+    for wire in wires {
+        let original = member_payload(&raw, "wires", wire.uuid, contacts.original_wire(wire.uuid))?;
+        let mut moved = original.clone();
+        set_point(&mut moved["from"], wire.from);
+        set_point(&mut moved["to"], wire.to);
         operations.push(Operation::DeleteSchematicWire {
-            sheet_id: basis.sheet_id,
+            sheet_id,
             wire_id: wire.uuid,
-            wire: serde_json::to_value(basis.contacts.original_wire(wire.uuid))?,
+            wire: original,
         });
         operations.push(Operation::CreateSchematicWire {
-            sheet_id: basis.sheet_id,
+            sheet_id,
             wire_id: wire.uuid,
-            wire: serde_json::to_value(wire)?,
+            wire: moved,
         });
     }
-    BatchComposer::compose(context.model, provenance)
-        .push_ops(operations)
-        .primary_object(destination.symbol.uuid)
-        .finish()
+    let mut composer = BatchComposer::compose(context.model, provenance).push_ops(operations);
+    if originals.len() == 1 {
+        composer = composer.primary_object(originals[0].uuid);
+    }
+    composer.finish()
 }
+
 fn invalid(reason: impl Into<String>) -> EngineError {
     EngineError::Validation(reason.into())
 }

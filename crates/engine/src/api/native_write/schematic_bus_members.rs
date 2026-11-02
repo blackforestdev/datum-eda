@@ -134,7 +134,7 @@ pub(super) fn declaration(
 
 // A native Bus owns its entries, while explicit shared/interface declarations need
 // a semantic rebind. Deleting this source removes projections, not scalar Nets.
-pub(super) fn admit_delete(
+pub(in crate::api::native_write) fn admit_delete(
     context: &NativeWriteContext<'_>,
     bus: Uuid,
     path: &[Uuid],

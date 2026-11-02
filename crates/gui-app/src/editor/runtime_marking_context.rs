@@ -8,6 +8,9 @@ impl Runtime {
             return false;
         }
         let prepare = (|| {
+            if self.workspace().schematic_authoring.delete_review.is_some() {
+                return Err("Accept or dismiss the deletion proposal first".into());
+            }
             if self.native_edit.pending()
                 || self.check_work.pending()
                 || self.native_edit.preview.is_some()
@@ -92,8 +95,19 @@ impl Runtime {
         ) {
             return false;
         }
+        let move_symbol = item.verb.as_deref() == Some("datum.schematic.move_symbol");
+        let pickup = self
+            .workspace()
+            .ui
+            .marking_menu
+            .as_ref()
+            .and_then(|menu| menu.selection.as_ref())
+            .map(|menu| menu.pickup_world);
+        let preserve=move_symbol && target.as_ref().is_some_and(|target|
+            matches!(&self.workspace().selection,datum_gui_protocol::SelectionTarget::Native(view)
+                if !view.stale && datum_gui_protocol::footprint_move_preview::native::group::subject_contains(&view.subject,target)));
         self.dismiss_marking_menu();
-        if let Some(target) = target {
+        if let Some(target) = target.filter(|_| !preserve) {
             self.cancel_native_selection_gesture();
             self.native_selection.as_mut().unwrap().reset_click_depth();
             self.publish_native_acquisition(
@@ -111,6 +125,18 @@ impl Runtime {
                 );
                 return true;
             }
+        }
+        if move_symbol {
+            if let Some(pickup) = pickup {
+                self.dispatch_session_command(SessionCommand::SetTool(WorkspaceTool::Move));
+                self.begin_selected_native_move_at(Some(pickup));
+            } else {
+                self.log_console_refusal(
+                    ConsoleFeedbackSource::Menu,
+                    "Move pickup source changed; reopen the menu",
+                );
+            }
+            return true;
         }
         if let Some(action) = item.gui_local.as_deref() {
             return self.activate_gui_local_menu_action(action, EntrySurface::MenuPointer);

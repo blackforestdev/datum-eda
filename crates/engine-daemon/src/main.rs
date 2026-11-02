@@ -28,6 +28,7 @@ mod check_run_view;
 mod dispatch;
 mod native_edit_companion;
 mod native_history;
+mod native_proposal;
 mod preferences_state;
 use dispatch::{dispatch_request, dispatch_request_with_preferences};
 use native_edit_companion::NativeEditCompanion;

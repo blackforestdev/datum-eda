@@ -296,12 +296,7 @@ fn render_impl(
             false,
         );
     }
-    row(
-        "Move / Rotate / Mirror / Lock / Group: unavailable",
-        None,
-        false,
-        false,
-    );
+    row("Lock / create named group: unavailable", None, false, false);
     row(
         &format!("All {}", view.members.len()),
         Some(HitTarget::SelectionScope(None)),

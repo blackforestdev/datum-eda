@@ -45,23 +45,24 @@ pub(crate) struct SymbolContactBasis {
     source_points: Vec<Point>,
 }
 impl SymbolContactBasis {
-    pub(crate) fn capture(sheet: &Sheet, symbol: Uuid) -> Result<Self, EngineError> {
+    pub(crate) fn capture_symbols(sheet: &Sheet, symbols: &[Uuid]) -> Result<Self, EngineError> {
+        let selected: HashSet<_> = symbols.iter().copied().collect();
         let mut points: Vec<_> = sheet
             .symbols
             .values()
-            .filter(|s| s.uuid != symbol)
+            .filter(|s| !selected.contains(&s.uuid))
             .flat_map(|s| s.pins.iter().map(|p| p.position))
             .collect();
         points.extend(sheet.labels.values().map(|l| l.position));
-        let symbol = sheet
-            .symbols
-            .get(&symbol)
-            .ok_or_else(|| invalid("Symbol source unavailable"))?;
-        Self::capture_points(
-            sheet,
-            symbol.pins.iter().map(|pin| pin.position).collect(),
-            points,
-        )
+        let mut source_points = Vec::new();
+        for id in symbols {
+            let symbol = sheet
+                .symbols
+                .get(id)
+                .ok_or_else(|| invalid("Symbol source unavailable"))?;
+            source_points.extend(symbol.pins.iter().map(|p| p.position));
+        }
+        Self::capture_points(sheet, source_points, points)
     }
 
     pub(crate) fn capture_label(sheet: &Sheet, label: Uuid) -> Result<Self, EngineError> {
@@ -185,9 +186,20 @@ impl SymbolContactBasis {
         &self,
         symbol: &PlacedSymbol,
     ) -> Result<Vec<SchematicWire>, EngineError> {
+        self.moved_symbols(std::slice::from_ref(symbol))
+    }
+
+    pub(crate) fn moved_symbols(
+        &self,
+        symbols: &[PlacedSymbol],
+    ) -> Result<Vec<SchematicWire>, EngineError> {
         let mut sheet = self.sheet.as_ref().clone();
-        sheet.symbols.insert(symbol.uuid, symbol.clone());
-        self.moved_geometry(sheet, symbol.pins.iter().map(|p| p.position).collect())
+        let mut points = Vec::new();
+        for symbol in symbols {
+            sheet.symbols.insert(symbol.uuid, symbol.clone());
+            points.extend(symbol.pins.iter().map(|p| p.position));
+        }
+        self.moved_geometry(sheet, points)
     }
 
     pub(crate) fn moved_label_wires(

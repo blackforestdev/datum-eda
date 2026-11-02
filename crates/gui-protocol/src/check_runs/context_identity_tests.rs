@@ -31,6 +31,7 @@ fn context() -> Value {
 
 fn menu() -> SelectionMenu {
     SelectionMenu {
+        pickup_world: crate::PointNm { x: 0, y: 0 },
         project: PROJECT.parse().unwrap(),
         revision: context()["model_revision"].as_str().unwrap().into(),
         schematic: false,

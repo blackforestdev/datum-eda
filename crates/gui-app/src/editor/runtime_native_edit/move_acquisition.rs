@@ -5,6 +5,12 @@ mod symbol_pose;
 impl Runtime {
     pub(crate) fn pick_schematic_move(&mut self, world: PointNm, screen: (f32, f32)) {
         use datum_gui_protocol::{SelectionSubject, SelectionTarget};
+        if matches!(&self.workspace().selection, SelectionTarget::Native(view)
+            if !view.stale && matches!(&view.subject, SelectionSubject::Compound(_)))
+        {
+            self.begin_selected_native_move_at(Some(world));
+            return;
+        }
         let Ok(hit) = self.selection_world_hit(
             world,
             SceneSurface::Schematic,
@@ -33,8 +39,7 @@ impl Runtime {
             self.begin_selected_native_move_at(Some(world));
         }
     }
-    // The bounded first-edit capability moves one complete Footprint. Never
-    // silently reduce a Run, compound selection or another object to a subset.
+    // Every admitted subject is indivisible; acquisition never uses Inspector scope.
     pub(crate) fn begin_selected_native_move(&mut self) {
         // A toolbar/menu command arms Move; acquisition waits for a canvas
         // click. A shortcut over the canvas can acquire the selected object now.
@@ -50,6 +55,10 @@ impl Runtime {
         }
     }
     pub(crate) fn begin_selected_native_move_at(&mut self, anchor: Option<PointNm>) {
+        if self.workspace().schematic_authoring.delete_review.is_some() {
+            return;
+        }
+
         use datum_gui_protocol::{AuthoredSelectionClass, SelectionSubject, SelectionTarget};
         let SelectionTarget::Native(selected) = &self.workspace().selection else {
             return;
@@ -61,6 +70,11 @@ impl Runtime {
             );
             return;
         }
+        if matches!(&selected.subject, SelectionSubject::Compound(_)) {
+            let subject = selected.subject.clone();
+            self.begin_schematic_move(subject, anchor);
+            return;
+        }
         let SelectionSubject::Object(id) = &selected.subject else {
             return;
         };
@@ -69,7 +83,7 @@ impl Runtime {
             AuthoredSelectionClass::Symbol | AuthoredSelectionClass::Label
         ) {
             let id = id.clone();
-            self.begin_schematic_move(id, anchor);
+            self.begin_schematic_move(SelectionSubject::Object(id), anchor);
             return;
         }
         if id.class != AuthoredSelectionClass::Footprint {
@@ -97,6 +111,10 @@ impl Runtime {
         self.native_move_click(anchor.unwrap_or(world), Some(target));
     }
     pub(crate) fn native_move_click(&mut self, world: PointNm, target: Option<String>) -> bool {
+        if self.workspace().schematic_authoring.delete_review.is_some() {
+            return true;
+        }
+
         if self.native_edit.pending() || self.check_work.pending() || self.native_edit.blocked {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
@@ -129,13 +147,13 @@ impl Runtime {
                 return true;
             }
             let preview = self.native_edit.preview.as_ref().unwrap();
-            let valid = preview.identity().is_ok_and(|id| {
+            let valid = {
                 matches!(&self.workspace().selection,
                 datum_gui_protocol::SelectionTarget::Native(view)
                     if !view.stale && view.project.to_string() == preview.base().project_uuid
                         && view.revision.0 == preview.base().source_revision
-                        && view.subject == datum_gui_protocol::SelectionSubject::Object(id))
-            });
+                        && preview.matches_subject(&view.subject))
+            };
             if !valid {
                 self.log_console_refusal(
                     ConsoleFeedbackSource::Tool,
@@ -226,7 +244,7 @@ impl Runtime {
     }
     fn begin_schematic_move(
         &mut self,
-        id: datum_gui_protocol::AuthoredSelectionIdentity,
+        subject: datum_gui_protocol::SelectionSubject,
         anchor: Option<PointNm>,
     ) {
         if self.native_edit.pending()
@@ -260,17 +278,17 @@ impl Runtime {
             let (x, y) = self
                 .last_cursor_pos
                 .context("Move requires a cursor in the Schematic pane")?;
-            let (world, surface) = self
-                .prepared_scene()
-                .and_then(|s| s.world_point_at_screen(x, y))
-                .context("Move requires a cursor in the Schematic pane")?;
-            anyhow::ensure!(
-                surface == SceneSurface::Schematic,
-                "Move requires a cursor in the Schematic pane"
-            );
-            let world = anchor.unwrap_or(world);
-            let view_basis = self.capture_native_authoring_view(self.pane_at_screen(x,y))
-                .map_err(anyhow::Error::msg)?;
+            // A captured press/menu pickup survives selection publication, which
+            // invalidates PreparedScene. Never re-hit or substitute the menu leaf.
+            let (world,pane)=if let Some(world)=anchor {
+                (world,Some(self.workspace().ui.layout.focused))
+            } else {
+                let (world,surface)=self.prepared_scene().and_then(|s|s.world_point_at_screen(x,y))
+                    .context("Move requires a cursor in the Schematic pane")?;
+                anyhow::ensure!(surface==SceneSurface::Schematic,"Move requires a cursor in the Schematic pane");
+                (world,self.pane_at_screen(x,y))
+            };
+            let view_basis=self.capture_native_authoring_view(pane).map_err(anyhow::Error::msg)?;
             anyhow::ensure!(view_basis.content == PaneContent::Schematic,
                 "Move requires its schematic source pane");
             let root = self
@@ -281,32 +299,52 @@ impl Runtime {
                 .request
                 .project_root
                 .clone();
-            let begin = if id.class == datum_gui_protocol::AuthoredSelectionClass::Label {
-                NativeMovePreview::label
-            } else { NativeMovePreview::symbol };
-            let preview = begin(
-                &base,
-                &self.workspace().schematic_authoring,
-                &id,
-                world,
-                self.workspace().authoring.snap,
-                root,
-            )?;
+            let preview = match &subject {
+                datum_gui_protocol::SelectionSubject::Object(id) => {
+                    let begin = if id.class == datum_gui_protocol::AuthoredSelectionClass::Label {
+                        NativeMovePreview::label
+                    } else { NativeMovePreview::symbol };
+                    begin(&base,&self.workspace().schematic_authoring,id,world,self.workspace().authoring.snap,root)?
+                }
+                _ => {
+                    use datum_gui_protocol::footprint_move_preview::native::group::{symbol_members,SymbolGroupPreview};
+                    let members=symbol_members(&subject)?;
+                    let native=self.native_selection.as_ref().context("Native selection authority unavailable")?;
+                    anyhow::ensure!(native.model.project.project_id.to_string()==base.project_uuid
+                        && native.model.model_revision.0==base.source_revision,"Move authority changed; select the complete set again");
+                    let authority=&native.authority;
+                    let basis=eda_engine::api::native_write::schematic_symbol_move::SymbolMoveSetBasis::capture(
+                        authority.snapshot(), &members.iter().map(|id|id.id).collect::<Vec<_>>(), &members[0].instance_path)?;
+                    NativeMovePreview::Symbols(SymbolGroupPreview::begin(&base,&self.workspace().schematic_authoring,&subject,basis,world,self.workspace().authoring.snap,root)?)
+                }
+            };
             Ok((preview, world, view_basis))
         })();
         match result {
             Ok((preview, world, view_basis)) => {
+                let (world, target) = match &preview {
+                    NativeMovePreview::Symbols(group) => (
+                        group.reference,
+                        format!(
+                            "schematic-symbols:{}",
+                            match &subject {
+                                datum_gui_protocol::SelectionSubject::Compound(c) =>
+                                    c.members.len(),
+                                _ => 0,
+                            }
+                        ),
+                    ),
+                    NativeMovePreview::Label { basis, .. } => {
+                        (world, format!("schematic-label:{}", basis.label.uuid))
+                    }
+                    NativeMovePreview::Symbol { basis, .. } => {
+                        (world, format!("schematic-symbol:{}", basis.symbol.uuid))
+                    }
+                    _ => unreachable!(),
+                };
                 self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
                     world,
-                    target_object_id: Some(format!(
-                        "schematic-{}:{}",
-                        if id.class == datum_gui_protocol::AuthoredSelectionClass::Label {
-                            "label"
-                        } else {
-                            "symbol"
-                        },
-                        id.id
-                    )),
+                    target_object_id: Some(target),
                 });
                 self.session.workspace_mut().authoring.gesture.view_basis = Some(view_basis);
                 self.native_edit.preview_tip = self

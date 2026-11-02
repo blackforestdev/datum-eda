@@ -41,6 +41,13 @@ impl Runtime {
         true
     }
     fn prepare_native_schematic(&mut self, wire: bool) -> bool {
+        if self.workspace().schematic_authoring.delete_review.is_some() {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Accept or dismiss the deletion proposal first",
+            );
+            return false;
+        }
         if !self.native_edit_available()
             || self.native_edit.pending()
             || self.check_work.pending()
@@ -210,6 +217,9 @@ impl Runtime {
         }
         if event.state != ElementState::Pressed {
             return false;
+        }
+        if self.workspace().schematic_authoring.delete_review.is_some() {
+            return self.handle_delete_review_key(event);
         }
         if self.handle_symbol_move_pose_key(event) {
             return true;

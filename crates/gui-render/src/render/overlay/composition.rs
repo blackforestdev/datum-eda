@@ -1,5 +1,9 @@
 //! Shared proposal/review composition and hit channel owner.
 use super::*;
+#[path = "native_group_reference.rs"]
+mod native_group_reference;
+#[path = "native_proposal_review.rs"]
+mod native_proposal_review;
 // Full overlay-composition parameter set (sinks, scene, viewport, camera, state);
 // a parameter struct would be a single-use aggregate with no clarity gain here.
 #[allow(clippy::too_many_arguments)]
@@ -282,6 +286,42 @@ pub(super) fn push_scene_overlay_and_hits(
                 _ => true,
             };
         push_review_channels(out, plan, review, &projection, active);
+    }
+}
+
+/// Command feedback follows the qualified pane's final camera, independently
+/// of whether the workspace contains a Board pane.
+pub(crate) fn push_schematic_authoring_feedback(
+    out: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+    scene: &BoardReviewSceneV1,
+    state: &ReviewWorkspaceState,
+    pane: datum_gui_protocol::PaneId,
+    plan: &mut native_selection_overlay::cue_plan::PanePlan,
+) {
+    let projection = Projection::new(
+        inset_rect(plan.viewport, 10., 10., 10., 10.),
+        &scene.bounds,
+        plan.camera,
+    );
+    if state
+        .authoring
+        .gesture
+        .view_basis
+        .as_ref()
+        .is_some_and(|b| b.pane == pane)
+    {
+        let mut reference = Vec::new();
+        native_group_reference::render(&mut reference, scene, &projection, state);
+        plan.base_output(out, false).extend(reference);
+    }
+    if state
+        .schematic_authoring
+        .delete_review
+        .as_ref()
+        .is_some_and(|r| r.basis.pane == pane)
+    {
+        native_proposal_review::render(out, text, scene, plan.viewport, &projection, state, plan);
     }
 }
 

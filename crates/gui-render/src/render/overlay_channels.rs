@@ -124,6 +124,17 @@ pub(super) fn push_overlay(
     if editor_move_preview {
         return push_overlay_move_preview(out, overlay, projection, color, selected);
     }
+    if overlay.render_role == "proposed_delete" {
+        return push_dashed_polyline_segments(
+            out,
+            &overlay.path,
+            projection,
+            color,
+            overlay_route_width_px(overlay.width_nm, false, Some(projection)),
+            6.0,
+            5.0,
+        );
+    }
     let layer_color = proposal_layer_color(overlay.layer_id.as_deref());
     let outer_color = if selected {
         PROPOSAL_OUTER

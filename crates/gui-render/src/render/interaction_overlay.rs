@@ -158,7 +158,7 @@ fn push_hover_ring(out: &mut Vec<Quad>, screen_rect: RectPx, scale_px_per_nm: f3
 
 /// Push a small `Local` class-A crosshair centred on `cursor`: a short cross that
 /// marks the cursor without dividing the view.
-fn push_local_crosshair(out: &mut Vec<Quad>, cursor: (f32, f32), scale_px_per_nm: f32) {
+pub(super) fn push_local_crosshair(out: &mut Vec<Quad>, cursor: (f32, f32), scale_px_per_nm: f32) {
     let (cx, cy) = cursor;
     let w = CROSSHAIR_WEIGHT.resolve_px(scale_px_per_nm);
     // Horizontal arm.

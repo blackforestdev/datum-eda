@@ -202,7 +202,7 @@ mod adoption;
 pub use adoption::{PlacedPinAdoption, build_adopt_pin_correspondence};
 
 mod projection_lifecycle;
-pub(super) use projection_lifecycle::projection_removals;
+pub(super) use projection_lifecycle::{merge_projection_removals, projection_removals};
 
 /// Explicitly adopt all currently resolved schematic Net groups. Reads allocate
 /// nothing; this authored command preserves source IDs and existing Net owners.

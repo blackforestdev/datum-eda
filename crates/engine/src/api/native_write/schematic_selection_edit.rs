@@ -15,11 +15,9 @@ use super::{
     schematic_symbol_payload::source_symbol_payload,
     schematic_symbols::build_delete_schematic_symbol,
 };
-use crate::{
-    error::EngineError,
-    schematic::Schematic,
-    substrate::{ElectricalSelectionSnapshot, Operation, SelectionSourceDomain},
-};
+use crate::{error::EngineError, substrate::Operation};
+#[cfg(test)]
+use crate::{schematic::Schematic, substrate::ElectricalSelectionSnapshot};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -108,55 +106,12 @@ fn delete_label(
     )
 }
 
-pub(super) fn selected_source(
-    context: &NativeWriteContext<'_>,
-    class: &str,
-    id: Uuid,
-    path: &[Uuid],
-) -> Result<(Schematic, Uuid), EngineError> {
-    let snapshot = ElectricalSelectionSnapshot::capture(context.model)
-        .map_err(|e| invalid(format!("Selected source unavailable: {e:?}")))?;
-    let authored = snapshot
-        .authored_sources()
-        .map_err(|e| invalid(format!("Selected occurrence unavailable: {e:?}")))?;
-    let occurrences: Vec<_> = authored
-        .iter()
-        .filter(|source| {
-            source.domain == SelectionSourceDomain::Schematic
-                && source.occurrence.class == class
-                && source.occurrence.source_id == id
-        })
-        .collect();
-    if occurrences.len() != 1 || occurrences[0].occurrence.instance_path != path {
-        return Err(invalid(
-            "Edit requires exactly one complete matching schematic occurrence",
-        ));
-    }
-    let source = snapshot
-        .schematic_source()
-        .ok_or_else(|| invalid("Native schematic source unavailable"))?;
-    let sheets: Vec<_> = source
-        .sheets
-        .values()
-        .filter(|sheet| match class {
-            "symbols" => sheet.symbols.get(&id).is_some_and(|s| s.uuid == id),
-            "wires" => sheet.wires.get(&id).is_some_and(|w| w.uuid == id),
-            "labels" => sheet.labels.get(&id).is_some_and(|l| l.uuid == id),
-            "ports" => sheet.ports.get(&id).is_some_and(|p| p.uuid == id),
-            "buses" => sheet.buses.get(&id).is_some_and(|b| b.uuid == id),
-            "bus_entries" => sheet.bus_entries.get(&id).is_some_and(|e| e.uuid == id),
-            "junctions" => sheet.junctions.get(&id).is_some_and(|j| j.uuid == id),
-            "noconnects" => sheet.noconnects.get(&id).is_some_and(|n| n.uuid == id),
-            _ => false,
-        })
-        .collect();
-    if sheets.len() != 1 {
-        return Err(invalid("Selected source ownership is ambiguous"));
-    }
-    Ok((source.clone(), sheets[0].uuid))
-}
+pub(super) use super::schematic_selected_source::selected_source;
 
-fn require_unbound_symbol(context: &NativeWriteContext<'_>, id: Uuid) -> Result<(), EngineError> {
+pub(super) fn require_unbound_symbol(
+    context: &NativeWriteContext<'_>,
+    id: Uuid,
+) -> Result<(), EngineError> {
     if context
         .model
         .component_instances

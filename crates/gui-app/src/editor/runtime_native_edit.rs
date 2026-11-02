@@ -15,8 +15,12 @@ mod catalog;
 use catalog::native_write_verb_ids;
 #[path = "runtime_native_edit/move_acquisition.rs"]
 mod move_acquisition;
+#[path = "runtime_native_edit/worker.rs"]
+mod worker;
 
 struct Answer {
+    proposal:
+        Option<eda_engine::api::native_write::schematic_delete_proposal::NativeProposalResponse>,
     intent: NativeEditIntent,
     result: Result<String, String>,
     next: Option<datum_gui_protocol::ReviewWorkspaceState>,
@@ -78,74 +82,6 @@ impl EditWork {
     }
     pub fn pending(&self) -> bool {
         self.pending.is_some()
-    }
-    fn start(
-        &mut self,
-        intent: NativeEditIntent,
-        request: LiveReviewRequest,
-        inputs: native_edit_selection::Inputs,
-    ) -> Result<()> {
-        anyhow::ensure!(!self.pending(), "An edit is already pending");
-        let (sender, receiver) = mpsc::sync_channel(1);
-        let client = self.client.clone();
-        let wake = self.wake.clone();
-        std::thread::Builder::new()
-            .name("datum-native-edit".into())
-            .spawn(move || {
-                let prepared = (|| -> Result<Answer> {
-                    let mut owner = client.lock().map_err(|_|anyhow::anyhow!("Native editor worker unavailable"))?;
-                    if owner.is_none() {*owner=Some(NativeProjectClient::spawn()?);}
-                    let client=owner.as_ref().unwrap();
-                    let started=std::time::Instant::now();
-                    let operation=client.execute(&intent);
-                    trace_startup_timing(format!("native edit canonical operation {}ms",started.elapsed().as_millis()));
-                    // Qualify the entire refresh against both revision and tip,
-                    // including an undo/redo cycle that restores the same bytes.
-                    // A confirmed receipt already carries a freshly resolved, durable
-                    // post-write description. It is the pre-refresh boundary;
-                    // failures still require a fresh recovery-qualified description.
-                    let recovered;
-                    let before=match &operation {
-                        Ok(receipt)=>&receipt.description,
-                        Err(_)=>{recovered=client.describe(&intent.project_root)?; &recovered}
-                    };
-                    let refreshed=std::time::Instant::now();
-                    // Populate existing byte-qualified read evidence on the worker;
-                    // publishing an empty cache would cold-resolve on the next click.
-                    let mut cache=runtime_selection::SelectionReadCache::default();
-                    let model=cache.resolve_with_engine_reader(&intent.project_root,|| client.read_model(&intent.project_root,before))?;
-                    let mut next=datum_gui_protocol::workspace_loading::project_board_editor_workspace(&request,model.clone())?;
-                    let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
-                    trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));
-                    let after=client.describe(&intent.project_root)?;
-                    // Capability discovery (truthful menu enablement): carry the engine's
-                    // native-write verb catalog from native.describe into the refreshed
-                    // workspace so native-edit menu entries enable exactly for reported verbs.
-                    if let Some(backing)=next.backing.as_mut(){backing.native_write_verbs=native_write_verb_ids(&after);}
-                    trace_startup_timing(format!("native edit qualified answer {}ms",started.elapsed().as_millis()));
-                    let qualified=before.get("model_revision")==after.get("model_revision")
-                        && before.get("transaction_tip")==after.get("transaction_tip")
-                        && after.get("project_id")==Some(&serde_json::json!(intent.project_id))
-                        && next.scene.project_uuid==intent.project_id.to_string()
-                        && next.supervision.model_revision==next.scene.source_revision
-                        && after.get("model_revision").and_then(serde_json::Value::as_str)==Some(next.scene.source_revision.as_str())
-                        && after.get("transaction_tip").and_then(serde_json::Value::as_str)==next.supervision.journal.accepted_transaction_tip.as_deref();
-                    let result=match operation {
-                        Ok(receipt) if qualified && receipt.description.get("model_revision")==after.get("model_revision")
-                            && receipt.description.get("transaction_tip")==after.get("transaction_tip") =>
-                            Ok(if receipt.applied {if receipt.reconciled {"Edit committed; recovered receipt confirmed"} else {"Edit committed"}} else {"Project saved"}.into()),
-                        Ok(_)=>Err("Edit completed but the Project changed during refresh; reopen before editing".into()),
-                        Err(error)=>Err(format!("{error:#}")),
-                    };
-                    Ok(Answer {intent:intent.clone(),result,next:qualified.then_some(next),selection:qualified.then_some(selection)})
-                })();
-                let answer=prepared.unwrap_or_else(|error|Answer {intent,result:Err(format!("{error:#}; reopen the Project before editing")),next:None,selection:None});
-                finish_owned_edit(client, sender, answer, || {
-                    let _ = wake.send_event(());
-                });
-            })?;
-        self.pending = Some(receiver);
-        Ok(())
     }
     fn reconcile_again(
         &mut self,
@@ -282,7 +218,11 @@ impl Runtime {
         };
         match preview.scene_at(position) {
             Ok(scene) => {
-                self.set_move_scene(preview.is_schematic(), scene);
+                let schematic = preview.is_schematic();
+                if matches!(preview, NativeMovePreview::Symbols(_)) {
+                    self.session.workspace_mut().authoring.gesture.preview = Some(position);
+                }
+                self.set_move_scene(schematic, scene);
                 self.native_edit.preview_awaiting_presentation = true;
                 self.invalidate_scene();
             }
@@ -298,6 +238,15 @@ impl Runtime {
             && !self.native_edit.preview_awaiting_presentation
     }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
+        if !matches!(action, NativeEditAction::Proposal)
+            && self.workspace().schematic_authoring.delete_review.is_some()
+        {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Accept or dismiss the deletion proposal first",
+            );
+            return true;
+        }
         let creating = matches!(action, NativeEditAction::Schematic)
             && matches!(
                 self.workspace().schematic_authoring.pending_request,
@@ -311,6 +260,7 @@ impl Runtime {
                 action,
                 NativeEditAction::Move { .. }
                     | NativeEditAction::MoveSymbol { .. }
+                    | NativeEditAction::MoveSymbols { .. }
                     | NativeEditAction::MoveLabel { .. }
                     | NativeEditAction::Schematic
             )
@@ -334,6 +284,7 @@ impl Runtime {
             action,
             NativeEditAction::Move { .. }
                 | NativeEditAction::MoveSymbol { .. }
+                | NativeEditAction::MoveSymbols { .. }
                 | NativeEditAction::MoveLabel { .. }
         ) && self.native_edit.preview.is_some()
         {
@@ -401,6 +352,14 @@ impl Runtime {
             );
             return true;
         }
+        if matches!(action, NativeEditAction::Proposal) {
+            let Some(review) = &self.workspace().schematic_authoring.delete_review else {
+                return false;
+            };
+            intent.proposal = review.pending.clone();
+            intent.expected_revision = review.revision.clone();
+            intent.expected_tip = review.tip;
+        }
         if matches!(action, NativeEditAction::LibraryAcquire) {
             let Some(acquisition) = &self.workspace().library.acquisition else {
                 return false;
@@ -431,6 +390,9 @@ impl Runtime {
         }
         if let Some(preview) = &self.native_edit.preview {
             intent.instance_path = preview.instance_path();
+            if let NativeEditAction::MoveSymbols { x_nm, y_nm, .. } = action {
+                intent.symbol_group = preview.group_request(PointNm { x: x_nm, y: y_nm });
+            }
         }
         if creating && let Some(draft) = &self.workspace().schematic_authoring.creation {
             intent.expected_revision = draft.revision.clone();
@@ -457,6 +419,7 @@ impl Runtime {
             (
                 NativeEditAction::Move { x_nm, y_nm, .. }
                 | NativeEditAction::MoveSymbol { x_nm, y_nm, .. }
+                | NativeEditAction::MoveSymbols { x_nm, y_nm, .. }
                 | NativeEditAction::MoveLabel { x_nm, y_nm, .. },
                 Some(preview),
             ) => match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
@@ -489,7 +452,18 @@ impl Runtime {
                 });
                 self.log_console_echo(ConsoleFeedbackSource::Tool, "Applying Project action");
             }
-            Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
+            Err(error) => {
+                if let Some(review) = &mut self
+                    .session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .delete_review
+                {
+                    review.pending = None;
+                    review.refusal = Some(error.to_string());
+                }
+                self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
+            }
         }
         self.invalidate_frame();
         true
@@ -544,6 +518,7 @@ impl Runtime {
             ) if answer.next.is_some() && answer.selection.is_some() => Some(*sheet),
             _ => None,
         };
+        let review = self.workspace().schematic_authoring.delete_review.clone();
         let draft = self.workspace().schematic_authoring.creation.clone();
         let editing = self.selected_schematic_edit_snapshot();
         let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
@@ -575,6 +550,7 @@ impl Runtime {
             self.native_edit.blocked = true;
             self.restore_pending_move_base();
         }
+        self.restore_delete_review(review, answer.proposal, &answer.result);
         if let (Err(reason), Some(mut acquisition)) = (&answer.result, refused_acquisition) {
             acquisition.refusal = Some(reason.clone());
             self.session.workspace_mut().library.acquisition = Some(acquisition);
@@ -636,6 +612,7 @@ mod completion_ownership_tests {
 
     fn answer() -> Answer {
         Answer {
+            proposal: None,
             intent: NativeEditIntent::new(
                 PathBuf::from("unopened-test-project"),
                 uuid::Uuid::new_v4(),

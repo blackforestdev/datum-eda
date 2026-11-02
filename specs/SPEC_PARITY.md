@@ -25,13 +25,13 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `s5a_exact_thirty_proposal` | `docs/reviews/workflow-delivery-rollout/s5a/thirty-degree-proposal.md` | 1 | `d188f7708b95b54560f3c85aff4607fa1448e0963efbeacaa00aa95b8c5b7494` |
 | `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 6 | `a6a7114d0266bae6408f57949cf0ed65c317fcc8a91b71433d1f34a9916d4df5` |
 | `workflow_delivery_environment_selections` | `docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md` | 2 | `52776ee3874773fe795616e958a8d420def65bd5aeb622c7924707316ea92252` |
-| `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 190 | `f9cd8102aff153cd4c9f3a86ecc501fc99aac66d41010eb8d33309740e5b48f5` |
+| `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 191 | `303f5a8116598783b5a766c89c280b716f6d60e23d835d03547d46be42f77933` |
 | `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 290 | `052a16a8ae8c8165b02fa0ae88579ef9506e9618c1eabd3db3beb1484a52c15c` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 5 | `990b4a0e4fd6bddc8a5e74b6f2ee5795f32800c2dafcc40dd31476c1515d64c8` |
 | `workspace_crates` | `specs/PROGRESS.md` | 10 | `8f610e4e2a644b1a60bbf735eca22e1193b711eb4e2bb93ad959a9a477c1279c` |
-| `daemon_dispatch_methods` | `specs/PROGRESS.md` | 43 | `a1a7bd690633d6ebfbd765988cda081ce14c167bec3086e12a0648671f8131d7` |
-| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 265 | `7d4e21fc78f78911149dd6caab9b4af5bc99ec4e6bf754ef7857252505cea794` |
+| `daemon_dispatch_methods` | `specs/PROGRESS.md` | 44 | `f1423538b9dbfcd289c3c65c00fd2497fdb94aa0cd0cbe54c3959d9728e8d1b8` |
+| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 269 | `4adbc2915bae4fe1feac215af049682d37436e0f053d37b09a08a952429a88be` |
 | `standards_check_surface` | `specs/CHECKING_ARCHITECTURE_SPEC.md` | 29 | `56e6d1bca3d5e3245655ab9e4f5089013b0b1368156a4b7303aabd394550f2af` |
 | `pool_library_surface` | `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` | 115 | `2cbc95f1de4a410dbe6fb181eec5ffe4644afcc7ef946be8254c12fae893d1d2` |
 | `erc_pin_taxonomy_surface` | `specs/ERC_SPEC.md` | 33 | `8f44622d66f182ef0d12cd5a49eb0033647eb56f1b277adc0645b5ae3033a8a9` |

@@ -8,7 +8,12 @@ use eda_engine::api::native_write::{
 use std::path::PathBuf;
 use uuid::Uuid;
 
+#[path = "group.rs"]
+pub mod group;
+use group::SymbolGroupPreview;
+
 pub enum NativeMovePreview {
+    Symbols(SymbolGroupPreview),
     Footprint(FootprintMovePreview),
     Label {
         base: BoardReviewSceneV1,
@@ -99,6 +104,7 @@ impl NativeMovePreview {
     pub fn base(&self) -> &BoardReviewSceneV1 {
         match self {
             Self::Footprint(p) => &p.base,
+            Self::Symbols(p) => &p.base,
             Self::Symbol { base, .. } | Self::Label { base, .. } => base,
         }
     }
@@ -109,10 +115,14 @@ impl NativeMovePreview {
         }
     }
     pub fn is_schematic(&self) -> bool {
-        matches!(self, Self::Symbol { .. } | Self::Label { .. })
+        matches!(
+            self,
+            Self::Symbols(_) | Self::Symbol { .. } | Self::Label { .. }
+        )
     }
     pub fn instance_path(&self) -> Vec<Uuid> {
         match self {
+            Self::Symbols(p) => p.members[0].instance_path.clone(),
             Self::Symbol { instance_path, .. } | Self::Label { instance_path, .. } => {
                 instance_path.clone()
             }
@@ -121,6 +131,7 @@ impl NativeMovePreview {
     }
     pub fn identity(&self) -> Result<crate::AuthoredSelectionIdentity> {
         Ok(match self {
+            Self::Symbols(_) => anyhow::bail!("A compound has no privileged single identity"),
             Self::Footprint(p) => crate::AuthoredSelectionIdentity {
                 class: crate::AuthoredSelectionClass::Footprint,
                 id: p.component.component_uuid.parse()?,
@@ -146,8 +157,31 @@ impl NativeMovePreview {
             },
         })
     }
+    pub fn matches_subject(&self, subject: &crate::SelectionSubject) -> bool {
+        match self {
+            Self::Symbols(p) => p.matches_subject(subject),
+            _ => self
+                .identity()
+                .is_ok_and(|id| subject == &crate::SelectionSubject::Object(id)),
+        }
+    }
+    pub fn group_request(
+        &self,
+        at: PointNm,
+    ) -> Option<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveSetRequest> {
+        match self {
+            Self::Symbols(p) => Some(p.request(at)),
+            _ => None,
+        }
+    }
     pub fn action(&self, at: PointNm) -> Result<NativeEditAction> {
         Ok(match self {
+            Self::Symbols(p) => NativeEditAction::MoveSymbols {
+                x_nm: at.x,
+                y_nm: at.y,
+                rotation_deg: p.rotation,
+                mirrored: p.mirrored,
+            },
             Self::Footprint(p) => NativeEditAction::Move {
                 component: p.component.component_uuid.parse()?,
                 x_nm: at.x,
@@ -175,6 +209,9 @@ impl NativeMovePreview {
     /// Validate the complete connected geometry before changing the desired pose.
     /// Repeated keys always transform the immutable original, never rounded previews.
     pub fn transform_symbol(&mut self, transform: PlacementTransform, at: PointNm) -> Result<bool> {
+        if let Self::Symbols(p) = self {
+            return p.transform(transform, at);
+        }
         let Self::Symbol {
             basis,
             rotation_deg,
@@ -200,6 +237,7 @@ impl NativeMovePreview {
     pub fn destination(&self, cursor: PointNm, snap: AuthoringSnapState) -> Result<PointNm> {
         match self {
             Self::Footprint(p) => p.destination(cursor, snap),
+            Self::Symbols(_) => checked_snap_authoring_point(cursor, snap),
             Self::Symbol {
                 basis,
                 cursor_anchor,
@@ -215,6 +253,7 @@ impl NativeMovePreview {
     pub fn scene_at(&self, at: PointNm) -> Result<BoardReviewSceneV1> {
         match self {
             Self::Footprint(p) => p.scene_at(at),
+            Self::Symbols(p) => p.scene_at(at),
             Self::Label {
                 base,
                 basis,

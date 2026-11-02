@@ -1,11 +1,9 @@
 //! Direct manipulation reuses native Move; this owner only qualifies pointer lifetime.
 use super::*;
-use datum_gui_protocol::{
-    AuthoredSelectionClass, AuthoredSelectionIdentity, SelectionSubject, SelectionTarget,
-};
+use datum_gui_protocol::{AuthoredSelectionClass, SelectionSubject, SelectionTarget};
 
 pub(crate) struct SelectionMoveDrag {
-    target: AuthoredSelectionIdentity,
+    subject: SelectionSubject,
     anchor: PointNm,
     started: bool,
     previous_tool: WorkspaceTool,
@@ -27,28 +25,32 @@ impl Runtime {
         if view.stale {
             return None;
         }
-        let SelectionSubject::Object(target) = &view.subject else {
-            return None;
-        };
+        let subject = view.subject.clone();
         if !matches!(
-            target.class,
-            AuthoredSelectionClass::Symbol
-                | AuthoredSelectionClass::Footprint
-                | AuthoredSelectionClass::Label
+            &subject,
+            SelectionSubject::Compound(_)
+                | SelectionSubject::Object(datum_gui_protocol::AuthoredSelectionIdentity {
+                    class: AuthoredSelectionClass::Symbol
+                        | AuthoredSelectionClass::Footprint
+                        | AuthoredSelectionClass::Label,
+                    ..
+                })
         ) {
             return None;
         }
-        let target = target.clone();
         let hit = self.selection_world_hit(world, surface, Some(pane)).ok()?;
         let HitTarget::AuthoredObject(key) = hit.target? else {
             return None;
         };
         let basis = hit.basis?;
-        if basis.bindings.get(&key)?.acquired != target {
+        if !datum_gui_protocol::footprint_move_preview::native::group::subject_contains(
+            &subject,
+            &basis.bindings.get(&key)?.acquired,
+        ) {
             return None;
         }
         Some(SelectionMoveDrag {
-            target,
+            subject,
             anchor: world,
             started: false,
             previous_tool: self.workspace().tool,
@@ -60,7 +62,7 @@ impl Runtime {
             return true;
         };
         let current = matches!(&self.workspace().selection, SelectionTarget::Native(view)
-            if !view.stale && view.subject == SelectionSubject::Object(drag.target.clone()));
+            if !view.stale && view.subject == drag.subject);
         if !current || self.check_work.pending() {
             if drag.started {
                 self.cancel_native_move();

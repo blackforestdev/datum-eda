@@ -2,6 +2,8 @@
 use super::*;
 #[path = "runtime_schematic_custom_field.rs"]
 mod custom_field;
+#[path = "runtime_schematic_delete_review.rs"]
+mod delete_review;
 #[path = "runtime_schematic_selected_label.rs"]
 mod label_edit;
 use datum_gui_protocol::schematic_authoring::{
@@ -67,6 +69,7 @@ impl Runtime {
             || self.workspace().schematic_authoring.active()
             || self.workspace().schematic_authoring.picker
             || self.workspace().schematic_authoring.creation.is_some()
+            || self.workspace().schematic_authoring.delete_review.is_some()
             || self.workspace().library.draft.is_some()
             || self.workspace().library.acquisition.is_some()
         {
@@ -212,6 +215,10 @@ impl Runtime {
     }
 
     pub(crate) fn delete_selected_schematic(&mut self) -> bool {
+        if matches!(&self.workspace().selection,datum_gui_protocol::SelectionTarget::Native(view) if view.members.len()>1)
+        {
+            return self.begin_schematic_delete_review();
+        }
         let (basis, target) = match self.selected_schematic_action(false) {
             Ok(value) => value,
             Err(reason) => {

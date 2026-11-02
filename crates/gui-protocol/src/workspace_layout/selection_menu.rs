@@ -31,6 +31,8 @@ pub struct Item {
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SelectionMenu {
+    /// Immutable invocation point, independent of later menu/camera movement.
+    pub pickup_world: crate::PointNm,
     pub project: crate::SelectionProjectId,
     pub revision: String,
     pub schematic: bool,
@@ -159,6 +161,7 @@ impl SelectionMenu {
             }
         }
         Self {
+            pickup_world: point,
             project: authority.project(),
             revision: authority.revision().0.clone(),
             schematic: false,

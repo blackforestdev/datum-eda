@@ -3,6 +3,13 @@ use crate::*;
 
 impl Runtime {
     pub(crate) fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
+        if self.workspace().schematic_authoring.delete_review.is_some() {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Accept or dismiss the deletion proposal first",
+            );
+            return true;
+        }
         if !matches!(tool, WorkspaceTool::Select)
             && !(tool == WorkspaceTool::Move && self.native_edit_available())
         {

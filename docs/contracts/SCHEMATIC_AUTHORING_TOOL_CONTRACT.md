@@ -213,11 +213,16 @@ restated.
   mirror; assert `OperationResult.modified = symbol uuid`, undo restores
   the exact prior `PlacedSymbol` bytes, derived `net_info` recomputes
   identical net membership.
-- **(8) Not yet supported:** Three redundant CLI verbs today instead of
-  one normalized parametric surface. Current compatibility transforms emit
-  journaled operations with history. Ordinary GUI Move is delivered only for
-  its independently reviewed isolated unique-occurrence scope; this does not
-  establish connected/bulk/repeated transforms or complete rotate/mirror GUI.
+- **(8) Delivery boundary:** A compatible Symbol selection uses the existing
+  drag, M and selected-symbol menu Move paths, with R/X/Y and one atomic edit
+  (`dat-schematic-group-transform-7a5p`). The pickup point specified by UVT
+  section 2.2.12 is the displayed common group reference, translated with the
+  destination. Attached wires are updated once against the complete final
+  geometry; owned fields follow their Symbols. Cancel restores the source.
+  Unsupported members, locks, repeated occurrences and unsupported fixed
+  contacts refuse the complete group. The existing native verb retains its
+  singleton absolute-pose form and adds a distinct group-delta form. Public
+  CLI normalization and broader occurrence/contact transforms remain pending.
 
 ### 3. delete-object (any schematic object, by id list)
 
@@ -244,10 +249,15 @@ restated.
 - **(7) Proof slice:** On `datum-test`, delete one symbol + its attached
   wire in one batch op; assert two deleted refs, undo restores both
   atomically; deleting a board-bound symbol instead returns a Proposal.
-- **(8) Not yet supported:** Ten type-specific delete verbs today instead
-  of one normalized id-list surface; complete heterogeneous/bulk and
-  board-bound proposal escalation and ordinary GUI delivery remain pending.
-  This is not an absence of canonical history for current native deletes.
+- **(8) Delivery boundary:** Supported multi-object schematic selections use
+  an inline Proposal preview, explicit Tab acceptance or Escape dismissal,
+  and one undoable design deletion (`dat-schematic-batch-delete-m8zf`). The
+  complete selected set is validated; owned children are deduplicated and
+  surviving external dependencies refuse the operation. Dismissal preserves
+  design source; Proposal review metadata may be journaled. Existing root-view,
+  repeated-source, component-bound Symbol, hierarchy-bound Port and shared Bus
+  limits remain. The public normalized id-list surface, remaining object classes
+  and board-bound escalation are still pending.
 
 ### 4. draw-wire
 

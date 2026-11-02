@@ -325,3 +325,6 @@ fn invalid(reason: impl Into<String>) -> EngineError {
 #[cfg(test)]
 #[path = "schematic_bus_tests.rs"]
 mod tests;
+
+// Shared final-state batch deletion uses the same semantic dependency admission.
+pub(super) use members::admit_delete as admit_bus_delete;

@@ -444,7 +444,9 @@ pub(super) fn render(
             .gesture
             .target_object_id
             .as_deref()
-            .is_some_and(|id| id.starts_with("schematic-symbol:"))
+            .is_some_and(|id| {
+                id.starts_with("schematic-symbol:") || id.starts_with("schematic-symbols:")
+            })
     {
         let panel = RectPx {
             x: layout.top_menu_bar.width / 2. - 210.,
@@ -453,8 +455,17 @@ pub(super) fn render(
             height: 60.,
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
+        let group = state
+            .authoring
+            .gesture
+            .target_object_id
+            .as_deref()
+            .and_then(|id| id.strip_prefix("schematic-symbols:"));
+        let title = group
+            .map(|count| format!("Move {count} symbols · R: rotate · X/Y: flip"))
+            .unwrap_or_else(|| "Move symbol · R: rotate · X/Y: flip horiz/vert".into());
         draw_text(
-            "Move symbol · R: rotate · X/Y: flip horiz/vert",
+            &title,
             panel.x + 10.,
             panel.y + 10.,
             12.,
@@ -463,7 +474,11 @@ pub(super) fn render(
             text,
         );
         draw_text(
-            "Click: apply · Esc: cancel",
+            if group.is_some() {
+                "Cross: pickup reference · Click apply · Esc cancel"
+            } else {
+                "Click: apply · Esc: cancel"
+            },
             panel.x + 10.,
             panel.y + 32.,
             11.,

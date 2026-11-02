@@ -6,11 +6,12 @@ impl Runtime {
     pub(crate) fn handle_symbol_move_pose_key(&mut self, event: &winit::event::KeyEvent) -> bool {
         if self.workspace().schematic_authoring.picker
             || self.workspace().schematic_authoring.creation.is_some()
-            || !self
-                .native_edit
-                .preview
-                .as_ref()
-                .is_some_and(|p| matches!(p, NativeMovePreview::Symbol { .. }))
+            || !self.native_edit.preview.as_ref().is_some_and(|p| {
+                matches!(
+                    p,
+                    NativeMovePreview::Symbol { .. } | NativeMovePreview::Symbols(_)
+                )
+            })
             || self.modifiers.control_key()
             || self.modifiers.alt_key()
             || self.modifiers.super_key()

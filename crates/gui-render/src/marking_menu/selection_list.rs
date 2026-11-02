@@ -178,6 +178,7 @@ mod tests {
             gesture_dx_px: 0,
             gesture_dy_px: 0,
             selection: Some(datum_gui_protocol::selection_menu::SelectionMenu {
+                pickup_world: datum_gui_protocol::PointNm { x: 0, y: 0 },
                 project: datum_gui_protocol::SelectionProjectId::nil(),
                 revision: "mechanism".into(),
                 source_scene: "mechanism".into(),

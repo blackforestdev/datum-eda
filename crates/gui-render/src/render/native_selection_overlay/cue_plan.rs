@@ -513,6 +513,16 @@ impl PreparedScene {
                 surface,
                 &mut plan,
             );
+            if pass.surface == SceneSurface::Schematic {
+                crate::push_schematic_authoring_feedback(
+                    &mut quads,
+                    &mut self.text_runs,
+                    scene,
+                    state,
+                    pass.pane_id,
+                    &mut plan,
+                );
+            }
             let offset = u32::try_from(self.viewport_overlay_vertices.len())?;
             for span in plan.screen.iter_mut() {
                 span.range.start = span

@@ -109,35 +109,61 @@ impl MarkingMenuState {
             }
         }
         let authoring = &state.schematic_authoring;
+        if authoring.delete_review.is_some() {
+            return Err("Accept or dismiss the deletion proposal first".into());
+        }
         if authoring.active() || authoring.picker || authoring.creation.is_some() {
             return Err("Finish or cancel the current edit first".into());
         }
         let class = target.map(|id| id.class);
-        let verb =
-            match item.binding() {
-                B::Verb("datum.schematic.rename_label") if class == Some(C::Label) => {
-                    "datum.schematic.rename_label"
-                }
-                B::Verb(
-                    verb @ ("datum.schematic.set_symbol_reference"
-                    | "datum.schematic.set_symbol_value"),
-                ) if class == Some(C::Symbol) => verb,
-                B::GuiLocal("schematic.symbol_fields.open") if class == Some(C::Symbol) => {
-                    "datum.schematic.set_symbol_reference"
-                }
-                B::Verb(
-                    verb @ ("datum.schematic.place_label" | "datum.schematic.place_junction"),
-                ) if class == Some(C::Wire) || self.menu_key == "schematic.empty" => verb,
-                B::Verb(verb @ ("datum.schematic.place_symbol" | "datum.schematic.draw_wire"))
-                    if self.menu_key == "schematic.empty" =>
+        let verb = match item.binding() {
+            B::Verb("datum.schematic.move_symbol") if class == Some(C::Symbol) => {
+                if let crate::SelectionTarget::Native(view) = &state.selection
+                    && !view.stale
+                    && view.project == menu.project
+                    && view.revision.0 == menu.revision
+                    && crate::footprint_move_preview::native::group::subject_contains(
+                        &view.subject,
+                        target.unwrap(),
+                    )
                 {
-                    verb
+                    if !view.locked.is_empty() {
+                        return Err(
+                            "Move cannot change a selection containing locked objects".into()
+                        );
+                    }
+                    if matches!(&view.subject, crate::SelectionSubject::Compound(_)) {
+                        crate::footprint_move_preview::native::group::symbol_members(&view.subject)
+                            .map_err(|e| e.to_string())?;
+                    }
                 }
-                B::GuiLocal("schematic.power_port.open") if self.menu_key == "schematic.empty" => {
-                    "datum.schematic.place_label"
-                }
-                _ => return Err(item.not_built.as_deref().unwrap_or(unavailable).into()),
-            };
+                "datum.schematic.move_symbol"
+            }
+            B::Verb("datum.schematic.rename_label") if class == Some(C::Label) => {
+                "datum.schematic.rename_label"
+            }
+            B::Verb(
+                verb
+                @ ("datum.schematic.set_symbol_reference" | "datum.schematic.set_symbol_value"),
+            ) if class == Some(C::Symbol) => verb,
+            B::GuiLocal("schematic.symbol_fields.open") if class == Some(C::Symbol) => {
+                "datum.schematic.set_symbol_reference"
+            }
+            B::Verb(verb @ ("datum.schematic.place_label" | "datum.schematic.place_junction"))
+                if class == Some(C::Wire) || self.menu_key == "schematic.empty" =>
+            {
+                verb
+            }
+            B::Verb(verb @ ("datum.schematic.place_symbol" | "datum.schematic.draw_wire"))
+                if self.menu_key == "schematic.empty" =>
+            {
+                verb
+            }
+            B::GuiLocal("schematic.power_port.open") if self.menu_key == "schematic.empty" => {
+                "datum.schematic.place_label"
+            }
+            _ => return Err(item.not_built.as_deref().unwrap_or(unavailable).into()),
+        };
         crate::gui_menu_model::native_edit_unavailable_reason(state, verb)
             .map_or(Ok(()), |reason| Err(reason.into()))
     }

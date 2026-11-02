@@ -523,3 +523,9 @@ mod bus_tests;
 
 #[path = "schematic_custom_field_tests.rs"]
 mod custom_field_tests;
+
+#[path = "schematic_delete_review_tests.rs"]
+mod delete_review_tests;
+
+#[path = "schematic_group_move_tests.rs"]
+mod group_move_tests;
