@@ -9,6 +9,8 @@ pub enum EditorTool {
     Symbol,
     Power,
     Label,
+    Junction,
+    NoConnect,
 }
 
 #[cfg(test)]
@@ -32,6 +34,23 @@ mod tests {
         assert_eq!(EditorTool::active(&state), EditorTool::Symbol);
         state.schematic_authoring.cancel();
         assert_eq!(EditorTool::active(&state), EditorTool::Select);
+        for (kind, tool) in [
+            (
+                crate::schematic_authoring::MarkerKind::Junction,
+                EditorTool::Junction,
+            ),
+            (
+                crate::schematic_authoring::MarkerKind::NoConnect,
+                EditorTool::NoConnect,
+            ),
+        ] {
+            state.schematic_authoring.marker = Some(kind);
+            assert_eq!(EditorTool::active(&state), tool);
+            assert_eq!(tool.label(), kind.label());
+            assert_eq!(tool.menu_entry(), Some(("Place", kind.label())));
+            state.schematic_authoring.cancel();
+            assert_eq!(EditorTool::active(&state), EditorTool::Select);
+        }
         state.tool = WorkspaceTool::Move;
         assert_eq!(EditorTool::active(&state), EditorTool::Move);
     }
@@ -43,6 +62,12 @@ impl EditorTool {
             let schematic = &state.schematic_authoring;
             if schematic.wire {
                 return Self::Wire;
+            }
+            if let Some(marker) = schematic.marker {
+                return match marker {
+                    crate::schematic_authoring::MarkerKind::Junction => Self::Junction,
+                    crate::schematic_authoring::MarkerKind::NoConnect => Self::NoConnect,
+                };
             }
             if let Some(label) = &schematic.label {
                 return if label.kind == eda_engine::schematic::LabelKind::Power {
@@ -70,6 +95,8 @@ impl EditorTool {
             Self::Symbol => "Symbol",
             Self::Power => "Power",
             Self::Label => "Label",
+            Self::Junction => "Junction",
+            Self::NoConnect => "No-Connect",
         }
     }
 
@@ -80,6 +107,8 @@ impl EditorTool {
             Self::Symbol => Some(("Place", "Symbol")),
             Self::Power => Some(("Place", "Power Port")),
             Self::Label => Some(("Place", "Net Label")),
+            Self::Junction => Some(("Place", "Junction")),
+            Self::NoConnect => Some(("Place", "No-Connect")),
             Self::Select | Self::Move => None,
         }
     }

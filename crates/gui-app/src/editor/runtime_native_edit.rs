@@ -437,10 +437,10 @@ impl Runtime {
             intent.expected_tip = draft.tip;
         }
         if matches!(action, NativeEditAction::Schematic)
-            && let Some(draft) = &self.workspace().schematic_authoring.editing
+            && let Some((basis, tip)) = self.selected_schematic_edit_basis()
         {
-            intent.expected_revision = draft.basis.revision.clone();
-            intent.expected_tip = draft.tip;
+            intent.expected_revision = basis.revision.clone();
+            intent.expected_tip = tip;
         }
         if matches!(action, NativeEditAction::Schematic) {
             intent.schematic = self
@@ -545,7 +545,7 @@ impl Runtime {
             _ => None,
         };
         let draft = self.workspace().schematic_authoring.creation.clone();
-        let editing = self.selected_symbol_edit_snapshot();
+        let editing = self.selected_schematic_edit_snapshot();
         let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
             .then(|| self.acquisition_placement_origin())
             .flatten();
@@ -586,7 +586,7 @@ impl Runtime {
             self.session.workspace_mut().schematic_authoring.creation = Some(draft);
         }
         if let (Err(reason), Some(editing)) = (&answer.result, editing) {
-            self.restore_selected_symbol_edit(editing, reason);
+            self.restore_selected_schematic_edit(editing, reason);
         }
         if acquired && let Some(origin) = placement {
             self.resume_library_placement(origin, placement_symbol);

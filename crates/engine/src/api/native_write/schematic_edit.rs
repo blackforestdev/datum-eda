@@ -254,7 +254,7 @@ fn place_symbol(
     prepare_native_birth(context.model, prepared)
 }
 
-fn prepare_native_birth(
+pub(super) fn prepare_native_birth(
     model: &DesignModel,
     mut prepared: PreparedWrite,
 ) -> Result<PreparedWrite, EngineError> {

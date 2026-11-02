@@ -467,6 +467,8 @@ Admission and repair evidence are historical; current selection and authorizatio
 
 [Delivered foundations and twenty-task outcome map](progress/production_foundation_details.md#native-product-outcomes--initial-reorganization) connects library → schematic → PCB → manufacturing to existing owners and actual gaps. It is navigation, not selection, execution authority or full qualification.
 
+[Schematic authoring](../docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md): bounded routine delivery now covers Junction/No-Connect placement and singleton deletion, exact off-grid junction acquisition, and Inspector label/power name/kind editing, with cancellation, history and reopening (`dat-schematic-marker-tools-jwiv`, `dat-schematic-label-edit-yx35`). Context commands, the remaining authoring tools and full qualification remain open; this does not advance the Active Frontier.
+
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 
 ### WORKFLOW-DELIVERY-IMPLEMENTATION — prepared infrastructure contract

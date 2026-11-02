@@ -4,13 +4,19 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SchematicWire, SymbolDisplayMode};
 impl SchematicAuthoring {
     pub fn active(&self) -> bool {
-        (self.chosen.is_some() || self.label.is_some()) && !self.picker || self.wire
+        if self.label_edit.is_some() {
+            return true;
+        }
+        (self.chosen.is_some() || self.label.is_some() || self.marker.is_some()) && !self.picker
+            || self.wire
     }
     pub fn cancel(&mut self) -> Option<BoardReviewSceneV1> {
         self.picker = false;
         self.chosen = None;
         self.label = None;
+        self.marker = None;
         self.editing = None;
+        self.label_edit = None;
         self.position = None;
         self.rotation_deg = 0;
         self.mirrored = false;
@@ -36,19 +42,60 @@ impl SchematicAuthoring {
             .sheets
             .get_mut(&sheet)
             .ok_or_else(|| anyhow::anyhow!("Native sheet changed"))?;
-        if let Some(label) = &self.label
+        if let Some(kind) = self.marker
             && let Some(at) = self.position
             && !self.picker
         {
-            selected.labels.insert(
-                Uuid::nil(),
-                eda_engine::schematic::NetLabel {
-                    uuid: Uuid::nil(),
-                    kind: label.kind.clone(),
-                    name: label.name.clone(),
-                    position: Point { x: at.x, y: at.y },
-                },
-            );
+            let position = Point { x: at.x, y: at.y };
+            match kind {
+                MarkerKind::Junction => {
+                    selected.junctions.insert(
+                        Uuid::nil(),
+                        eda_engine::schematic::Junction {
+                            uuid: Uuid::nil(),
+                            position,
+                        },
+                    );
+                }
+                MarkerKind::NoConnect => {
+                    // An off-pin X is only cursor ink. The request owner below
+                    // requires one exact source pin before any canonical write.
+                    let (symbol, pin) =
+                        self.marker_target(at).unwrap_or((Uuid::nil(), Uuid::nil()));
+                    selected.noconnects.insert(
+                        Uuid::nil(),
+                        eda_engine::schematic::NoConnectMarker {
+                            uuid: Uuid::nil(),
+                            symbol,
+                            pin,
+                            position,
+                        },
+                    );
+                }
+            }
+        }
+        if let Some(label) = &self.label {
+            if let Some(edit) = &self.label_edit {
+                // Invalid intermediate text retains source ink. It remains editable
+                // in the form and cannot become a request until validation passes.
+                if selected.labels.get(&edit.target.id) == Some(&edit.original)
+                    && let Ok(replacement) = edit.replacement(&label.name, label.kind.clone())
+                {
+                    selected.labels.insert(replacement.uuid, replacement);
+                }
+            } else if let Some(at) = self.position
+                && !self.picker
+            {
+                selected.labels.insert(
+                    Uuid::nil(),
+                    eda_engine::schematic::NetLabel {
+                        uuid: Uuid::nil(),
+                        kind: label.kind.clone(),
+                        name: label.name.clone(),
+                        position: Point { x: at.x, y: at.y },
+                    },
+                );
+            }
         }
         if let Some(index) = self.chosen
             && let Some(at) = self.position
@@ -146,6 +193,9 @@ impl SchematicAuthoring {
     /// Exact terminal pickup uses source-qualified pin or Power-port graphics,
     /// never an invented distance threshold. Background uses shared grid snap.
     pub fn pin_point(&self, source_uuid: &str) -> Option<PointNm> {
+        if self.marker == Some(MarkerKind::NoConnect) {
+            return self.marker_pin_point(source_uuid);
+        }
         let sheet = self.source.as_ref()?.sheets.get(&self.sheet?)?;
         let id: Uuid = source_uuid.parse().ok()?;
         let position = sheet
@@ -164,6 +214,70 @@ impl SchematicAuthoring {
         Some(PointNm {
             x: position.x,
             y: position.y,
+        })
+    }
+    /// Source-pin-only pickup for No-Connect; Power labels are not pin identity.
+    pub fn marker_pin_point(&self, source_uuid: &str) -> Option<PointNm> {
+        let sheet = self.source.as_ref()?.sheets.get(&self.sheet?)?;
+        let id: Uuid = source_uuid.parse().ok()?;
+        let mut matches = sheet
+            .symbols
+            .values()
+            .flat_map(|s| &s.pins)
+            .filter(|p| p.uuid == id);
+        let pin = matches.next()?;
+        if matches.next().is_some() {
+            return None;
+        }
+        Some(PointNm {
+            x: pin.position.x,
+            y: pin.position.y,
+        })
+    }
+    /// Exact immutable source identity; no proximity or rendered bounds become authority.
+    fn marker_target(&self, at: PointNm) -> Result<(Uuid, Uuid), String> {
+        let sheet = self
+            .source
+            .as_ref()
+            .and_then(|s| self.sheet.and_then(|id| s.sheets.get(&id)))
+            .ok_or("Native marker sheet unavailable")?;
+        let mut pins = sheet
+            .symbols
+            .values()
+            .flat_map(|s| s.pins.iter().map(move |p| (s.uuid, p)))
+            .filter(|(_, p)| p.position.x == at.x && p.position.y == at.y);
+        let (symbol, pin) = pins
+            .next()
+            .ok_or("Place No-Connect on an exact symbol pin")?;
+        if pins.next().is_some() {
+            return Err("No-Connect requires one unambiguous symbol pin".into());
+        }
+        Ok((symbol, pin.uuid))
+    }
+    pub fn marker_request(&self, at: PointNm) -> Result<SchematicEditRequest, String> {
+        let kind = self.marker.ok_or("Choose a marker tool first")?;
+        let sheet = self.sheet.ok_or("Native marker sheet unavailable")?;
+        if self
+            .source
+            .as_ref()
+            .is_none_or(|source| !source.sheets.contains_key(&sheet))
+        {
+            return Err("Native marker sheet unavailable".into());
+        }
+        let (symbol, pin) = match kind {
+            MarkerKind::Junction => (None, None),
+            MarkerKind::NoConnect => {
+                let (symbol, pin) = self.marker_target(at)?;
+                (Some(symbol), Some(pin))
+            }
+        };
+        Ok(SchematicEditRequest::PlaceMarker {
+            sheet,
+            kind,
+            x_nm: at.x,
+            y_nm: at.y,
+            symbol,
+            pin,
         })
     }
 }

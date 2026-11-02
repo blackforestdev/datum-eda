@@ -441,3 +441,9 @@ fn placed_symbol_pose_preview_keeps_asymmetric_body_pins_wire_and_payload_togeth
 
 #[path = "schematic_label_move_tests.rs"]
 mod label_move_tests;
+
+#[path = "schematic_marker_tests.rs"]
+mod marker_tests;
+
+#[path = "schematic_label_edit_tests.rs"]
+mod label_edit_tests;

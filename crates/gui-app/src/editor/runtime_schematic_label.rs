@@ -17,6 +17,9 @@ impl Runtime {
     }
 
     fn start_label_preview(&mut self) -> bool {
+        if self.workspace().schematic_authoring.label_edit.is_some() {
+            return self.apply_selected_label_fields();
+        }
         if !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
             return true;
         }
@@ -47,10 +50,23 @@ impl Runtime {
             HitTarget::SchematicCancel => {
                 self.cancel_native_schematic();
             }
-            HitTarget::SchematicLabelPreview => return self.start_label_preview(),
+            HitTarget::SchematicLabelPreview | HitTarget::SchematicEditApply => {
+                return self.start_label_preview();
+            }
             HitTarget::SchematicLabelKind => {
-                if let Some(draft) = &mut self.session.workspace_mut().schematic_authoring.label {
-                    draft.cycle_kind();
+                let e = &mut self.session.workspace_mut().schematic_authoring;
+                if let Some(draft) = &mut e.label {
+                    if e.label_edit.is_some() {
+                        draft.kind = match draft.kind {
+                            LabelKind::Local => LabelKind::Global,
+                            LabelKind::Global => LabelKind::Hierarchical,
+                            LabelKind::Hierarchical => LabelKind::Power,
+                            LabelKind::Power => LabelKind::Local,
+                        };
+                        e.preview_dirty = true;
+                    } else {
+                        draft.cycle_kind();
+                    }
                     draft.focus = 1;
                 }
             }
@@ -123,6 +139,9 @@ impl Runtime {
     }
 
     pub(super) fn place_native_label(&mut self, at: PointNm) -> bool {
+        if self.workspace().schematic_authoring.label_edit.is_some() {
+            return true;
+        }
         let e = &mut self.session.workspace_mut().schematic_authoring;
         let Some(label) = &e.label else { return false };
         let Some(sheet) = e.sheet else { return true };

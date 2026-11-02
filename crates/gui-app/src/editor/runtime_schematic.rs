@@ -4,10 +4,14 @@ use datum_gui_protocol::native_edit_client::NativeEditAction;
 use datum_gui_protocol::schematic_authoring::{
     PlacementField, PlacementTransform, SchematicEditRequest,
 };
+#[path = "runtime_schematic_junction.rs"]
+mod junction;
 #[path = "runtime_schematic_label.rs"]
 mod label;
 #[path = "runtime_schematic_library.rs"]
 mod library;
+#[path = "runtime_schematic_marker.rs"]
+mod marker;
 #[path = "runtime_schematic_selected.rs"]
 mod selected;
 impl Runtime {
@@ -195,6 +199,18 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
+        if !self.workspace().schematic_authoring.picker
+            && !self.workspace().schematic_authoring.wire
+            && !self.modifiers.control_key()
+            && !self.modifiers.alt_key()
+            && !self.modifiers.super_key()
+            && matches!(&event.logical_key, Key::Character(key) if key.eq_ignore_ascii_case("w"))
+        {
+            return self.begin_native_schematic(true);
+        }
+        if self.workspace().schematic_authoring.marker.is_some() {
+            return self.handle_marker_key(event);
+        }
         if self.workspace().schematic_authoring.label.is_some() {
             return self.handle_label_key(event);
         }
@@ -270,6 +286,9 @@ impl Runtime {
         true
     }
     pub(super) fn native_schematic_pointer(&mut self, screen: (f32, f32)) -> bool {
+        if self.workspace().schematic_authoring.label_edit.is_some() {
+            return true;
+        }
         if self
             .native_edit
             .preview
@@ -297,7 +316,7 @@ impl Runtime {
         if !self.guard_native_authoring_view(self.pane_at_screen(screen.0, screen.1)) {
             return true;
         }
-        let snapped = self.schematic_snap_point(world, screen);
+        let snapped = self.schematic_command_point(world, screen);
         if let Some(snapped) = snapped {
             let e = &mut self.session.workspace_mut().schematic_authoring;
             e.preview_dirty |= e.position != Some(snapped);
@@ -420,9 +439,12 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
-        let Some(at) = self.schematic_snap_point(world, screen) else {
+        let Some(at) = self.schematic_command_point(world, screen) else {
             return true;
         };
+        if self.workspace().schematic_authoring.marker.is_some() {
+            return self.place_native_marker(at);
+        }
         if self.workspace().schematic_authoring.label.is_some() {
             return self.place_native_label(at);
         }

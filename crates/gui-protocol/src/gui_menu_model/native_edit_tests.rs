@@ -159,3 +159,66 @@ fn label_and_power_port_share_sheet_and_native_capability_admission() {
         );
     }
 }
+
+#[test]
+fn marker_place_entries_require_sheet_and_each_engine_capability() {
+    let model = default_gui_menu_model().unwrap();
+    let place = model
+        .menubar
+        .iter()
+        .find(|menu| menu.menu == "Place")
+        .unwrap();
+    for (label, verb) in [
+        ("Junction", "datum.schematic.place_junction"),
+        ("No-Connect", "datum.schematic.place_noconnect"),
+    ] {
+        let item = place.items.iter().find(|item| item.label == label).unwrap();
+        assert_eq!(item.verb.as_deref(), Some(verb));
+        assert!(item.is_phase_one_enabled());
+        let mut state = native_editable_state(&[verb]);
+        state.schematic_authoring.sheet = Some(uuid::Uuid::new_v4());
+        assert_eq!(item.unavailable_reason(&state), None);
+        state
+            .backing
+            .as_mut()
+            .unwrap()
+            .native_write_verbs
+            .remove(verb);
+        state
+            .backing
+            .as_mut()
+            .unwrap()
+            .native_write_verbs
+            .insert("datum.schematic.place_symbol".into());
+        assert_eq!(
+            item.unavailable_reason(&state),
+            Some("This operation is not offered by the open Project's engine.")
+        );
+        state
+            .backing
+            .as_mut()
+            .unwrap()
+            .native_write_verbs
+            .insert(verb.into());
+        state.schematic_authoring.sheet = None;
+        assert_eq!(
+            item.unavailable_reason(&state),
+            Some("This Project needs a native schematic sheet before authoring.")
+        );
+    }
+}
+
+#[test]
+fn marker_delete_entries_use_native_catalog_without_placement_prerequisites() {
+    for verb in [
+        "datum.schematic.delete_junction",
+        "datum.schematic.delete_noconnect",
+    ] {
+        let item = native_edit_item(verb);
+        let mut state = native_editable_state(&[verb]);
+        assert!(item.is_phase_one_enabled());
+        assert_eq!(item.unavailable_reason(&state), None);
+        state.backing.as_mut().unwrap().native_write_verbs.clear();
+        assert!(item.unavailable_reason(&state).is_some());
+    }
+}

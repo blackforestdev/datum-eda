@@ -1,9 +1,12 @@
 //! Revision-qualified single-object editing; displayed Inspector values are not authority.
 use super::SchematicEditRequest;
+#[path = "schematic_label_edit.rs"]
+mod label_edit;
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity, AuthoringViewBasis, PaneContent,
     ReviewWorkspaceState, SelectionSubject, SelectionTarget,
 };
+pub use label_edit::{LabelEditDraft, label_admission};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -12,6 +15,8 @@ pub enum DeleteKind {
     Symbol,
     Wire,
     Label,
+    Junction,
+    NoConnect,
 }
 impl DeleteKind {
     pub fn from_class(class: Class) -> Result<Self, String> {
@@ -19,7 +24,9 @@ impl DeleteKind {
             Class::Symbol => Ok(Self::Symbol),
             Class::Wire => Ok(Self::Wire),
             Class::Label => Ok(Self::Label),
-            _ => Err("Select one Symbol, Wire or Label to delete".into()),
+            Class::Junction => Ok(Self::Junction),
+            Class::NoConnect => Ok(Self::NoConnect),
+            _ => Err("Select one Symbol, Wire, Label, Junction or No-Connect to delete".into()),
         }
     }
     pub fn verb_and_key(self) -> (&'static str, &'static str) {
@@ -27,6 +34,8 @@ impl DeleteKind {
             Self::Symbol => ("datum.schematic.delete_symbol", "symbol"),
             Self::Wire => ("datum.schematic.delete_wire", "wire"),
             Self::Label => ("datum.schematic.delete_label", "label"),
+            Self::Junction => ("datum.schematic.delete_junction", "junction"),
+            Self::NoConnect => ("datum.schematic.delete_noconnect", "noconnect"),
         }
     }
 }
@@ -96,10 +105,14 @@ pub fn target(
         Class::Symbol => sheet.symbols.contains_key(&id.id),
         Class::Wire => sheet.wires.contains_key(&id.id),
         Class::Label => sheet.labels.contains_key(&id.id),
+        Class::Junction => sheet.junctions.contains_key(&id.id),
+        Class::NoConnect => sheet.noconnects.contains_key(&id.id),
         _ => false,
     };
     if !present {
-        return Err("Select a Symbol, Wire or Label in this source sheet".into());
+        return Err(
+            "Select a Symbol, Wire, Label, Junction or No-Connect in this source sheet".into(),
+        );
     }
     Ok((basis, id.clone()))
 }
@@ -123,6 +136,19 @@ pub fn admission(state: &ReviewWorkspaceState, edit_fields: bool) -> Result<&'st
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn marker_delete_kinds_keep_class_identity_and_reject_other_classes() {
+        assert_eq!(
+            DeleteKind::from_class(Class::Junction).unwrap(),
+            DeleteKind::Junction
+        );
+        assert_eq!(
+            DeleteKind::from_class(Class::NoConnect).unwrap(),
+            DeleteKind::NoConnect
+        );
+        assert!(DeleteKind::from_class(Class::Track).is_err());
+        assert!(DeleteKind::from_class(Class::Port).is_err());
+    }
     #[test]
     fn field_apply_is_atomic_and_unchanged_or_invalid_input_has_no_request() {
         let target = AuthoredSelectionIdentity {
@@ -153,7 +179,13 @@ mod tests {
             params,
             serde_json::json!({"symbol":target.id,"instance_path":[],"reference":"R2","value":"22k"})
         );
-        for kind in [DeleteKind::Symbol, DeleteKind::Wire, DeleteKind::Label] {
+        for kind in [
+            DeleteKind::Symbol,
+            DeleteKind::Wire,
+            DeleteKind::Label,
+            DeleteKind::Junction,
+            DeleteKind::NoConnect,
+        ] {
             let request = SchematicEditRequest::DeleteObject {
                 object: target.id,
                 instance_path: vec![Uuid::nil()],

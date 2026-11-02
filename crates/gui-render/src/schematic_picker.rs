@@ -5,7 +5,10 @@ use crate::*;
 mod creation;
 #[path = "schematic_label.rs"]
 mod label;
-use datum_gui_protocol::{ReviewWorkspaceState, schematic_authoring::PlacementField};
+use datum_gui_protocol::{
+    ReviewWorkspaceState,
+    schematic_authoring::{MarkerKind, PlacementField},
+};
 pub(super) fn render(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
@@ -268,18 +271,20 @@ pub(super) fn render(
             hits,
         );
     } else if authoring.active() {
+        let compact = authoring.wire || authoring.marker.is_some();
         let panel = RectPx {
             x: layout.top_menu_bar.width / 2. - 200.,
             y: 76.,
             width: 400.,
-            height: if authoring.wire { 65. } else { 86. },
+            height: if compact { 65. } else { 86. },
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         draw_text(
-            if authoring.wire {
-                "Place Wire · click vertices"
-            } else {
-                "Click: place · R: rotate · X/Y: flip horiz/vert"
+            match authoring.marker {
+                Some(MarkerKind::Junction) => "Place Junction · click a wire crossing",
+                Some(MarkerKind::NoConnect) => "Place No-Connect · click an open pin",
+                None if authoring.wire => "Place Wire · click vertices",
+                None => "Click: place · R: rotate · X/Y: flip horiz/vert",
             },
             panel.x + 10.,
             panel.y + 10.,
@@ -288,7 +293,7 @@ pub(super) fn render(
             TextFace::UiStrong,
             text,
         );
-        if !authoring.wire {
+        if !compact {
             draw_text(
                 "Tab: reference/value · Esc: cancel",
                 panel.x + 10.,
@@ -304,7 +309,7 @@ pub(super) fn render(
             HitTarget::SchematicCancel,
             RectPx {
                 x: panel.x + 10.,
-                y: panel.y + if authoring.wire { 30. } else { 53. },
+                y: panel.y + if compact { 30. } else { 53. },
                 width: 90.,
                 height: 26.,
             },
@@ -325,6 +330,16 @@ pub(super) fn render(
                 quads,
                 text,
                 hits,
+            );
+        } else if authoring.marker.is_some() {
+            draw_text(
+                "Esc: cancel",
+                panel.x + 115.,
+                panel.y + 37.,
+                11.,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text,
             );
         }
     } else if state.authoring.gesture.tool == datum_gui_protocol::WorkspaceTool::Move
@@ -383,4 +398,46 @@ fn button(
         text,
     );
     hits.push(HitRegion { target, rect });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn marker_placement_guidance_names_command_and_only_offers_relevant_controls() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let layout = ShellLayout::for_window(1280, 800, None);
+        for marker in [MarkerKind::Junction, MarkerKind::NoConnect] {
+            state.schematic_authoring.marker = Some(marker);
+            let (mut quads, mut text, mut hits) = (vec![], vec![], vec![]);
+            render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+            assert!(
+                text.iter()
+                    .any(|run| run.text.starts_with(&format!("Place {}", marker.label())))
+            );
+            assert!(text.iter().any(|run| run.text == "Esc: cancel"));
+            assert!(
+                hits.iter()
+                    .any(|hit| hit.target == HitTarget::SchematicCancel)
+            );
+            assert!(
+                !hits
+                    .iter()
+                    .any(|hit| hit.target == HitTarget::SchematicFinishWire)
+            );
+            assert!(
+                !text
+                    .iter()
+                    .any(|run| run.text.contains("rotate") || run.text.contains("reference/value"))
+            );
+            state.schematic_authoring.cancel();
+            text.clear();
+            hits.clear();
+            render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+            assert!(
+                text.is_empty() && hits.is_empty(),
+                "cancel removes marker placement controls"
+            );
+        }
+    }
 }

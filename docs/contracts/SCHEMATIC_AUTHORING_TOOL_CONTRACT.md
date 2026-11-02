@@ -304,9 +304,13 @@ restated.
   assert that pin's net merges into VCC in derived `net_info`,
   `power_in_without_source` clears if a source is present, undo reverts
   net membership.
-- **(8) Not yet supported:** Complete ordinary label GUI delivery and target
-  result/normalization coverage remain pending. Current native label commands
-  are journaled with history; label kind remains one parameterized capability.
+- **(8) Delivery boundary:** For a uniquely qualified source occurrence, native
+  GUI creation, Move/Delete and Inspector name/kind editing use canonical writes
+  and journal history. Editing previews an immutable replacement at the existing
+  position, with Apply/Cancel and exact undo/redo/reopen (delivery
+  `dat-schematic-label-edit-yx35`). Context-menu entry remains separate work;
+  contract-shaped result/normalization coverage remains pending. Label kind
+  remains one parameterized capability.
 
 ### 6. place-marker (kind: junction | no-connect)
 
@@ -314,7 +318,7 @@ restated.
   connection; `Place > No-Connect` on an intentionally open pin.
 - **(2) Operation:** `PlaceMarker{sheet_id, position, kind:
   Junction|NoConnect}` → `OperationBatch` (local edits). Junction is also
-  auto-emitted inside future `DrawWire` batches. Implemented substrate slice:
+  auto-emitted at exact T contacts inside `DrawWire` batches. Implemented substrate slice:
   `Operation::PlaceSchematicMarker { sheet_id, marker_id, marker_kind,
   marker }` is the journal vocabulary for both point-marker placements.
   It persists into either the `junctions` or `noconnects` sheet map based on
@@ -339,10 +343,16 @@ restated.
   deliberately open pin; assert `unconnected_component_pin` for that pin
   clears while `noconnect_connected` stays absent, undo restores the
   warning. Then place-marker kind=junction at a T; assert net merge.
-- **(8) Not yet supported:** The normalized public CLI/MCP alias
-  `place-marker` / `datum.schematic.place_marker`, auto-junction inference
-  during wire draw, and contract-shaped `OperationResult` are still target
-  work. The journal operation itself is normalized.
+- **(8) Delivery boundary:** Native GUI placement uses the normalized journal
+  operation through `native.write`; preview/cancel, singleton deletion and
+  history/reopen are also delivered (`dat-schematic-marker-tools-jwiv`).
+  Preview/cancel writes nothing; deletion uses the canonical delete operations.
+  Junction acquisition uses
+  exact nearby wire contacts, including off-grid crossings; ambiguous or
+  unrepresentable intersections are refused rather than rounded. No-Connect
+  requires an exact unique pin. Normalized public CLI/MCP entry points and
+  contract-shaped `OperationResult` remain target work; native-write registry
+  availability does not establish those public entry points.
 
 ### 7. place-port (create-or-edit, hierarchical / interface port)
 

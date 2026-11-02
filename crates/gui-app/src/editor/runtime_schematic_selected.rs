@@ -1,5 +1,7 @@
 //! Selected-object edits share native selection, guarded source ownership and the writer.
 use super::*;
+#[path = "runtime_schematic_selected_label.rs"]
+mod label_edit;
 use datum_gui_protocol::schematic_authoring::selected::{self, DeleteKind, SymbolEditDraft};
 
 impl Runtime {
@@ -38,6 +40,12 @@ impl Runtime {
         ),
         String,
     > {
+        self.selected_schematic_idle()?;
+        selected::admission(self.workspace(), edit_fields)?;
+        selected::target(self.workspace())
+    }
+
+    fn selected_schematic_idle(&self) -> Result<(), String> {
         if !self.native_edit_available()
             || self.native_edit.pending()
             || self.check_work.pending()
@@ -50,8 +58,7 @@ impl Runtime {
         {
             return Err("Finish or cancel the current edit before changing the selection".into());
         }
-        selected::admission(self.workspace(), edit_fields)?;
-        selected::target(self.workspace())
+        Ok(())
     }
 
     pub(crate) fn begin_selected_symbol_edit(&mut self) -> bool {

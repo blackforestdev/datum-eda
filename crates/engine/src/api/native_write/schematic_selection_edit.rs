@@ -107,7 +107,7 @@ fn delete_label(
     )
 }
 
-fn selected_source(
+pub(super) fn selected_source(
     context: &NativeWriteContext<'_>,
     class: &str,
     id: Uuid,
@@ -141,6 +141,8 @@ fn selected_source(
             "symbols" => sheet.symbols.get(&id).is_some_and(|s| s.uuid == id),
             "wires" => sheet.wires.get(&id).is_some_and(|w| w.uuid == id),
             "labels" => sheet.labels.get(&id).is_some_and(|l| l.uuid == id),
+            "junctions" => sheet.junctions.get(&id).is_some_and(|j| j.uuid == id),
+            "noconnects" => sheet.noconnects.get(&id).is_some_and(|n| n.uuid == id),
             _ => false,
         })
         .collect();

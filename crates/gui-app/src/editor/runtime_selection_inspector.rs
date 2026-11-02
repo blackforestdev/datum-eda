@@ -23,14 +23,18 @@ impl Runtime {
                 }
                 true
             }
-            HitTarget::InspectorEditSymbol(basis) => {
+            HitTarget::InspectorEditSymbol(basis) | HitTarget::InspectorEditLabel(basis) => {
                 if basis.is_current(self.workspace()) {
                     self.set_application_focus(ApplicationFocus::Editor(basis.pane));
-                    self.begin_selected_symbol_edit()
+                    if matches!(target, HitTarget::InspectorEditLabel(_)) {
+                        self.begin_selected_label_edit()
+                    } else {
+                        self.begin_selected_symbol_edit()
+                    }
                 } else {
                     self.log_console_refusal(
                         ConsoleFeedbackSource::Viewport,
-                        "Inspector selection changed; choose the current Symbol again",
+                        "Inspector selection changed; choose the current object again",
                     );
                     true
                 }

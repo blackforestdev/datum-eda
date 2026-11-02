@@ -35,8 +35,34 @@ impl LibrarySymbolChoice {
         }
     }
 }
+/// One marker placement command, configured by its electrical meaning.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum MarkerKind {
+    Junction,
+    NoConnect,
+}
+impl MarkerKind {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Junction => "Junction",
+            Self::NoConnect => "No-Connect",
+        }
+    }
+    pub fn token(self) -> &'static str {
+        match self {
+            Self::Junction => "junction",
+            Self::NoConnect => "noconnect",
+        }
+    }
+}
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    EditLabel {
+        label: Uuid,
+        instance_path: Vec<Uuid>,
+        name: String,
+        kind: LabelKind,
+    },
     EditSymbol {
         symbol: Uuid,
         instance_path: Vec<Uuid>,
@@ -68,6 +94,14 @@ pub enum SchematicEditRequest {
         sheet: Uuid,
         points: Vec<eda_engine::ir::geometry::Point>,
     },
+    PlaceMarker {
+        sheet: Uuid,
+        kind: MarkerKind,
+        x_nm: i64,
+        y_nm: i64,
+        symbol: Option<Uuid>,
+        pin: Option<Uuid>,
+    },
     PlaceLabel {
         sheet: Uuid,
         kind: LabelKind,
@@ -79,6 +113,17 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::EditLabel {
+                label,
+                instance_path,
+                name,
+                kind,
+            } => (
+                "datum.schematic.rename_label",
+                serde_json::json!({"label":label,"instance_path":instance_path,"name":name,"kind": match kind {
+                    LabelKind::Local => "local", LabelKind::Global => "global", LabelKind::Hierarchical => "hierarchical", LabelKind::Power => "power",
+                }}),
+            ),
             Self::EditSymbol {
                 symbol,
                 instance_path,
@@ -118,6 +163,17 @@ impl SchematicEditRequest {
             Self::DrawWire { sheet, points } => (
                 "datum.schematic.draw_wire",
                 serde_json::json!({"sheet":sheet,"points":points}),
+            ),
+            Self::PlaceMarker {
+                sheet,
+                kind,
+                x_nm,
+                y_nm,
+                symbol,
+                pin,
+            } => (
+                "datum.schematic.place_marker",
+                serde_json::json!({"sheet":sheet,"kind":kind.token(),"x_nm":x_nm,"y_nm":y_nm,"symbol":symbol,"pin":pin}),
             ),
             Self::PlaceLabel {
                 sheet,
@@ -212,7 +268,9 @@ impl LabelDraft {
 pub struct SchematicAuthoring {
     pub creation: Option<NewSchematicDraft>,
     pub editing: Option<selected::SymbolEditDraft>,
+    pub label_edit: Option<selected::LabelEditDraft>,
     pub label: Option<LabelDraft>,
+    pub marker: Option<MarkerKind>,
     pub move_paths: std::collections::BTreeMap<Uuid, Vec<Uuid>>,
     pub move_bases: std::collections::BTreeMap<
         Uuid,
@@ -249,7 +307,12 @@ impl SchematicAuthoring {
     /// The engine reflects local X before rotating. World-X/Y flips therefore
     /// change both pose fields; toggling local mirror alone is wrong after R.
     pub fn transform_placement(&mut self, transform: PlacementTransform) -> bool {
-        if self.picker || self.wire || self.label.is_some() || self.chosen.is_none() {
+        if self.picker
+            || self.wire
+            || self.label.is_some()
+            || self.marker.is_some()
+            || self.chosen.is_none()
+        {
             return false;
         }
         (self.rotation_deg, self.mirrored) = transform.apply(self.rotation_deg, self.mirrored);

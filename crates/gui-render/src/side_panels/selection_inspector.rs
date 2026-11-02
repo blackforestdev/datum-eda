@@ -106,14 +106,14 @@ fn render_impl(
         .transpose()?
         .unwrap_or_default();
     let edit_action = context.and_then(|(context, state)| {
-        datum_gui_protocol::schematic_authoring::selected::admission(state, true)
-            .ok()
-            .map(|_| HitTarget::InspectorEditSymbol(
-                datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
-                    state, context,
-                    Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation)),
-                ),
-            ))
+        let basis = datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
+            state, context, Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation)),
+        );
+        if datum_gui_protocol::schematic_authoring::selected::admission(state, true).is_ok() {
+            Some(HitTarget::InspectorEditSymbol(basis))
+        } else if datum_gui_protocol::schematic_authoring::selected::label_admission(state).is_ok() {
+            Some(HitTarget::InspectorEditLabel(basis))
+        } else { None }
     });
     let total = 2
         + usize::from(edit_action.is_some())
@@ -261,7 +261,12 @@ fn render_impl(
         }
     }
     if let Some(target) = edit_action {
-        row("Edit symbol fields…", Some(target), false, false);
+        let label = if matches!(target, HitTarget::InspectorEditLabel(_)) {
+            "Edit label name/kind…"
+        } else {
+            "Edit symbol fields…"
+        };
+        row(label, Some(target), false, false);
     }
     // Refusal explanations are complete readable text, not preview labels.
     // Each measured line is an ordinary scrollable row with the same styling.

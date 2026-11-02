@@ -18,6 +18,7 @@ pub enum HitTarget {
         basis: Option<datum_gui_protocol::inspector_context::InspectorActionBasis>,
     },
     InspectorEditSymbol(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
+    InspectorEditLabel(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorRunErc(datum_gui_protocol::inspector_context::InspectorActionBasis),
     InspectorContextScroll {
         total: usize,

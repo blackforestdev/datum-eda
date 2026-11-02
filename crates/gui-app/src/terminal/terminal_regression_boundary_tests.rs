@@ -27,6 +27,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         HitTarget::InspectorSectionToggle { .. }
         | HitTarget::InspectorRunErc(_)
         | HitTarget::InspectorEditSymbol(_)
+            | HitTarget::InspectorEditLabel(_)
         | HitTarget::InspectorContextScroll { .. }
         | HitTarget::InspectorSectionNavigation { .. }
         | HitTarget::FocusNavigator

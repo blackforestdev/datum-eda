@@ -73,11 +73,16 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
+            | "datum.schematic.rename_label"
+            | "datum.schematic.place_junction"
+            | "datum.schematic.place_noconnect"
             | "datum.schematic.set_symbol_reference"
             | "datum.schematic.set_symbol_value"
             | "datum.schematic.delete_symbol"
             | "datum.schematic.delete_wire"
             | "datum.schematic.delete_label"
+            | "datum.schematic.delete_junction"
+            | "datum.schematic.delete_noconnect"
     )
 }
 /// Statically build-supported edit verbs (journal carve-out + native-edit). Availability
@@ -96,6 +101,8 @@ pub fn native_edit_unavailable_reason(
         "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
+            | "datum.schematic.place_junction"
+            | "datum.schematic.place_noconnect"
     ) && state.schematic_authoring.sheet.is_none()
     {
         return Some("This Project needs a native schematic sheet before authoring.");
@@ -161,10 +168,20 @@ impl GuiMenuItem {
         use crate::schematic_authoring::selected;
         if matches!(
             self.binding(),
+            GuiMenuBinding::Verb("datum.schematic.rename_label")
+        ) {
+            return selected::label_admission(state)
+                .err()
+                .map(|_| "Select one current Label in an editable schematic");
+        }
+        if matches!(
+            self.binding(),
             GuiMenuBinding::GuiLocal("schematic.selection.delete")
         ) {
             let Ok((_, target)) = selected::target(state) else {
-                return Some("Select one current schematic Symbol, Wire or Label");
+                return Some(
+                    "Select one current schematic Symbol, Wire, Label, Junction or No-Connect",
+                );
             };
             let Ok(kind) = selected::DeleteKind::from_class(target.class) else {
                 return Some("This selected object cannot be deleted here");

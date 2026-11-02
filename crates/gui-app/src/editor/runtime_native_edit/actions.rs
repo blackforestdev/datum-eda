@@ -6,12 +6,20 @@ impl Runtime {
             "datum.schematic.create_sheet" => self.begin_schematic_creation(),
             "datum.schematic.place_symbol" => self.begin_native_schematic(false),
             "datum.schematic.draw_wire" => self.begin_native_schematic(true),
+            "datum.schematic.rename_label" => self.begin_selected_label_edit(),
+            "datum.schematic.place_junction" => self
+                .begin_native_marker(datum_gui_protocol::schematic_authoring::MarkerKind::Junction),
+            "datum.schematic.place_noconnect" => self.begin_native_marker(
+                datum_gui_protocol::schematic_authoring::MarkerKind::NoConnect,
+            ),
             "datum.schematic.set_symbol_reference" | "datum.schematic.set_symbol_value" => {
                 self.begin_selected_symbol_edit()
             }
             verb @ ("datum.schematic.delete_symbol"
             | "datum.schematic.delete_wire"
-            | "datum.schematic.delete_label") => self.delete_selected_schematic_verb(verb),
+            | "datum.schematic.delete_label"
+            | "datum.schematic.delete_junction"
+            | "datum.schematic.delete_noconnect") => self.delete_selected_schematic_verb(verb),
             "datum.schematic.place_label" => {
                 self.begin_native_label(eda_engine::schematic::LabelKind::Local)
             }

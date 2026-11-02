@@ -171,6 +171,7 @@ impl Runtime {
                     label.editor = snapshot.editor;
                     if changed {
                         e.refusal = None;
+                        e.preview_dirty |= e.label_edit.is_some();
                     }
                 }
                 self.invalidate_frame();

@@ -313,6 +313,19 @@ impl RetainedScene {
 /// Emit retained shapes from explicit schematic interaction metadata. Selection
 /// eligibility remains a tool concern; hit construction covers ordinary symbols,
 /// pins, wires, buses, labels, junctions, and no-connect markers.
+fn schematic_stroke_hit_radius(width_nm: Option<i64>) -> f32 {
+    (width_nm.unwrap_or(100_000) as f32 * 0.5).max(150_000.0)
+}
+
+/// Point anchors use the same eligibility envelope as their visible source stroke.
+pub fn schematic_anchor_contains(width_nm: Option<i64>, anchor: PointNm, pointer: PointNm) -> bool {
+    WorldHitShape::Circle {
+        center: anchor,
+        radius_nm: schematic_stroke_hit_radius(width_nm),
+    }
+    .contains(pointer)
+}
+
 pub(crate) fn schematic_hit_regions(
     scene: &BoardReviewSceneV1,
     admit: impl FnOnce(usize) -> anyhow::Result<()>,
@@ -341,7 +354,6 @@ pub(crate) fn schematic_hit_regions(
                         },
                     })?;
                 }
-                let width = graphic.width_nm.unwrap_or(100_000) as f32;
                 let shape = match kind {
                     datum_gui_protocol::SchematicHitKind::Symbol
                     | datum_gui_protocol::SchematicHitKind::Label
@@ -355,7 +367,7 @@ pub(crate) fn schematic_hit_regions(
                     }
                     _ => Shape::Polyline {
                         path: &graphic.path,
-                        half_width_nm: (width * 0.5).max(150_000.0),
+                        half_width_nm: schematic_stroke_hit_radius(graphic.width_nm),
                     },
                 };
                 emit(Region {

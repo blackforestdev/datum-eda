@@ -296,6 +296,10 @@ fn topology_edit(op: &Operation) -> bool {
         Operation::CreateSchematicWire { .. }
             | Operation::DeleteSchematicWire { .. }
             | Operation::CreateSchematicJunction { .. }
+            | Operation::PlaceSchematicMarker {
+                marker_kind: super::SchematicMarkerKind::Junction,
+                ..
+            }
             | Operation::DeleteSchematicJunction { .. }
             | Operation::CreateSchematicLabel { .. }
             | Operation::SetSchematicLabel { .. }
