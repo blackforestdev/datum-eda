@@ -143,20 +143,27 @@ impl SchematicAuthoring {
         scene.project_name = base.project_name.clone();
         Ok(scene)
     }
-    /// Exact terminal pickup uses existing pin-terminal graphic identity, never
-    /// an invented distance threshold. Background coordinates use shared snap.
+    /// Exact terminal pickup uses source-qualified pin or Power-port graphics,
+    /// never an invented distance threshold. Background uses shared grid snap.
     pub fn pin_point(&self, source_uuid: &str) -> Option<PointNm> {
-        self.source
-            .as_ref()?
-            .sheets
-            .get(&self.sheet?)?
+        let sheet = self.source.as_ref()?.sheets.get(&self.sheet?)?;
+        let id: Uuid = source_uuid.parse().ok()?;
+        let position = sheet
             .symbols
             .values()
             .flat_map(|s| s.pins.iter())
-            .find(|pin| pin.uuid.to_string() == source_uuid)
-            .map(|p| PointNm {
-                x: p.position.x,
-                y: p.position.y,
-            })
+            .find(|pin| pin.uuid == id)
+            .map(|pin| pin.position)
+            .or_else(|| {
+                sheet
+                    .labels
+                    .get(&id)
+                    .filter(|label| label.kind == eda_engine::schematic::LabelKind::Power)
+                    .map(|label| label.position)
+            })?;
+        Some(PointNm {
+            x: position.x,
+            y: position.y,
+        })
     }
 }

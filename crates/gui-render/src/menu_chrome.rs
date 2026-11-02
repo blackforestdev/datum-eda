@@ -1,3 +1,5 @@
+#[path = "pane_tools.rs"]
+pub(crate) mod pane_tools;
 #[path = "schematic_picker.rs"]
 mod schematic_picker;
 use super::*;
@@ -35,6 +37,13 @@ pub(super) fn render_menu_bar(
         menu_overlay_text_runs.len(),
         text_runs.len(),
         hit_regions.len(),
+    );
+    pane_tools::render(
+        state,
+        &scale.logical_layout(layout.clone()),
+        panel_quads,
+        text_runs,
+        hit_regions,
     );
     render_menu_bar_logical(
         state,

@@ -74,27 +74,15 @@ impl Runtime {
                 self.workspace().ui.filters.clone(),
             );
             menu.schematic = surface == SceneSurface::Schematic;
-            menu.source_scene = if menu.schematic {
-                self.workspace()
-                    .schematic_scene
-                    .as_ref()
-                    .unwrap()
-                    .scene_id
-                    .clone()
-            } else {
-                self.workspace().scene.scene_id.clone()
-            };
-            menu.filters = self.workspace().ui.filters.clone();
-            let scene = if menu.schematic {
-                self.workspace().schematic_scene.as_ref().unwrap()
-            } else {
-                &self.workspace().scene
-            };
+            let scene = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane.unwrap())
+                .expect("selection basis qualified the source pane");
+            menu.source_scene = scene.scene_id.clone();
             menu.bind_presentation(
                 scene,
                 &basis.bindings,
                 &self.native_selection.as_ref().unwrap().authority,
             );
+            menu.append_document_selection();
             menu.append_checks(&self.workspace().checks);
             if let SelectionTarget::Native(view) = &self.workspace().selection {
                 menu.append_inspection(view);
@@ -120,6 +108,9 @@ impl Runtime {
         } else {
             marking_menu_key_for_target(target_object_id.as_deref(), selected_count)
         };
+        if let Some(pane) = pane.filter(|pane| *pane != self.workspace().ui.layout.focused) {
+            self.swap_pane_focus(|layout| layout.focused = pane);
+        }
         let ui = &mut self.session.workspace_mut().ui;
         ui.active_menu = None;
         ui.marking_menu = Some(MarkingMenuState {
@@ -195,14 +186,11 @@ impl Runtime {
             }
         }
         let authority = &self.native_selection.as_ref().unwrap().authority;
-        let scene_id = if schematic {
-            self.workspace()
-                .schematic_scene
-                .as_ref()
-                .map(|s| s.scene_id.as_str())
-        } else {
-            Some(self.workspace().scene.scene_id.as_str())
-        };
+        let scene_id = datum_gui_protocol::camera_scene_for_pane(
+            self.workspace(),
+            self.workspace().ui.layout.focused,
+        )
+        .map(|scene| scene.scene_id.as_str());
         if authority.project() != project
             || authority.revision().0 != revision
             || self.workspace().ui.filters != filters
@@ -213,6 +201,10 @@ impl Runtime {
             return true;
         }
         use datum_gui_protocol::selection_menu::Command;
+        if item.command == Command::AllInDocument {
+            self.dismiss_marking_menu();
+            return self.native_select_all_on(schematic);
+        }
         if item.command == Command::All {
             let candidates = self
                 .workspace()

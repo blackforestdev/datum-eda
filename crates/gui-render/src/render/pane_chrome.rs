@@ -110,11 +110,18 @@ fn render_viewport_panes_logical(
                 .as_ref()
                 .map_or(title, |header| header.0.as_str()),
             native_header.as_ref().map(|header| header.1.as_str()),
-            if native_header.is_some() {
-                &[]
-            } else {
-                &PANE_TOOLS
-            },
+            (
+                if native_header.is_some() {
+                    &[]
+                } else {
+                    &PANE_TOOLS
+                },
+                if leaf.content == datum_gui_protocol::PaneContent::Schematic {
+                    crate::menu_chrome::pane_tools::reserve(leaf.rect.header)
+                } else {
+                    0.0
+                },
+            ),
             focused,
             panel_quads,
             text_runs,
@@ -230,11 +237,12 @@ fn render_pane_header(
     pane: &PaneRect,
     title: &str,
     detail: Option<&str>,
-    tools: &[&str],
+    tools: (&[&str], f32),
     focused: bool,
     panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) {
+    let (tools, tools_reserved) = tools;
     let quad_start = panel_quads.len();
     let text_start = text_runs.len();
     let header = pane.header;
@@ -293,7 +301,10 @@ fn render_pane_header(
     // the adjacent (enlarged) pane — the panel/text passes are not scissored
     // per-pane, so overflow would otherwise float over the neighbor's header.
     let content_right = header.x + header.width
-        - if focused {
+        - tools_reserved
+        - if tools_reserved > 0.0 {
+            crate::menu_chrome::pane_tools::RIGHT_INSET_PX
+        } else if focused {
             design_tokens::spacing::SP_04 + 7.0 + design_tokens::spacing::SP_02
         } else {
             design_tokens::spacing::SP_02
@@ -515,7 +526,7 @@ mod tests {
                     &pane,
                     "Board · Layout",
                     None,
-                    &["S", "M", "R", "V", "Z"],
+                    (&["S", "M", "R", "V", "Z"], 0.0),
                     focused,
                     &mut ControlPainter::new(&mut quads, &mut cache, 1.0),
                     &mut text,

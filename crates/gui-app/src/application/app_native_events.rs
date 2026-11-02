@@ -259,8 +259,12 @@ impl App {
                 }
                 if let Some(runtime) = &mut self.runtime {
                     runtime.window_focused = focused;
-                    if !focused && runtime.clear_interaction_overlay() {
-                        self.request_workspace_redraw();
+                    if !focused {
+                        let cancelled = runtime.cancel_native_selection_gesture();
+                        let cleared = runtime.clear_interaction_overlay();
+                        if cancelled || cleared {
+                            self.request_workspace_redraw();
+                        }
                     }
                 }
             }
@@ -456,6 +460,7 @@ impl App {
                         return;
                     }
                     if runtime.finish_native_selection_press().is_some() {
+                        self.refresh_editor_cursor();
                         self.request_workspace_redraw();
                         return;
                     }
@@ -493,8 +498,25 @@ impl App {
                     return;
                 }
                 keyboard_focus::handle_keyboard_input(self, &event);
+                self.refresh_editor_cursor();
             }
             _ => {}
+        }
+    }
+
+    // A key can change editor mode without pointer motion. Redraw itself must
+    // not replace cursor ownership during terminal selection or dock gestures.
+    fn refresh_editor_cursor(&mut self) {
+        let cursor = self.runtime.as_mut().and_then(|runtime| {
+            if !matches!(runtime.application_focus(), ApplicationFocus::Editor(_)) {
+                return None;
+            }
+            runtime
+                .last_cursor_pos
+                .map(|point| runtime.pointer_cursor_icon(point))
+        });
+        if let Some(cursor) = cursor {
+            self.apply_cursor_icon(cursor);
         }
     }
 }

@@ -21,6 +21,10 @@ pub(crate) const VERBS: &[NativeWriteVerb] = &[
         build: create_sheet,
     },
     NativeWriteVerb {
+        id: "datum.schematic.move_label",
+        build: super::schematic_label_move::move_label,
+    },
+    NativeWriteVerb {
         id: "datum.schematic.move_symbol",
         build: super::schematic_symbol_move::move_symbol,
     },

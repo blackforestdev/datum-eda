@@ -235,7 +235,8 @@ fn authored_label_drag_arms_region_and_preserves_atomic_refusal() {
         // Tool, authoring and conflicting-modifier gates remain in force.
         runtime.last_cursor_pos = Some((351.0, 557.0));
         assert!(runtime.set_workspace_tool(WorkspaceTool::Move));
-        assert!(!runtime.begin_native_selection_press());
+        assert!(runtime.begin_native_selection_press());
+        assert!(runtime.cancel_native_selection_gesture());
         assert!(runtime.set_workspace_tool(WorkspaceTool::Select));
         runtime.session.workspace_mut().schematic_authoring.picker = true;
         assert!(!runtime.begin_native_selection_press());

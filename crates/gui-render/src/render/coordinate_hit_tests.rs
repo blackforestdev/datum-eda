@@ -112,6 +112,109 @@ fn native_filled_drawing_interior_selects_source_while_open_strokes_stay_hollow(
     assert_eq!(at(5_000_000, 11_000_000), None);
 }
 
+#[test]
+fn schematic_symbol_label_and_port_lines_hit_visible_strokes_and_preserve_body_boxes() {
+    let state = schematic_workspace_state();
+    let mut scene = state.schematic_scene.unwrap();
+    let template = scene.board_graphics[0].clone();
+    scene.board_text_geometries.clear();
+    for kind in ["schematic_symbol", "schematic_label", "schematic_port"] {
+        for (width, inside, outside) in [(100_000, 100_000, 150_001), (600_000, 250_000, 300_001)] {
+            // Literal horizontal/vertical primitives are what the ordinary power
+            // projector emits for the GND bars and stem. Offset probes distinguish
+            // their visible stroke/tolerance from a zero-area bounding rectangle.
+            let line = |key: &str, path: Vec<PointNm>| datum_gui_protocol::BoardGraphicPrimitive {
+                object_id: key.into(),
+                object_kind: kind.into(),
+                primitive_kind: "line".into(),
+                path,
+                width_nm: Some(width),
+                ..template.clone()
+            };
+            scene.board_graphics = vec![
+                line(
+                    "horizontal",
+                    vec![PointNm { x: 0, y: 0 }, PointNm { x: 4_000_000, y: 0 }],
+                ),
+                line(
+                    "vertical",
+                    vec![
+                        PointNm { x: 8_000_000, y: 0 },
+                        PointNm {
+                            x: 8_000_000,
+                            y: 4_000_000,
+                        },
+                    ],
+                ),
+                datum_gui_protocol::BoardGraphicPrimitive {
+                    object_id: "body".into(),
+                    object_kind: kind.into(),
+                    primitive_kind: "polygon".into(),
+                    path: vec![
+                        PointNm {
+                            x: -4_000_000,
+                            y: 0,
+                        },
+                        PointNm {
+                            x: -2_000_000,
+                            y: 0,
+                        },
+                        PointNm {
+                            x: -2_000_000,
+                            y: 2_000_000,
+                        },
+                        PointNm {
+                            x: -4_000_000,
+                            y: 2_000_000,
+                        },
+                        PointNm {
+                            x: -4_000_000,
+                            y: 0,
+                        },
+                    ],
+                    width_nm: Some(width),
+                    ..template.clone()
+                },
+            ];
+            let index = datum_gui_viewport::SpatialHitIndex::new(
+                schematic_hit_regions(&scene, |_| Ok(())).unwrap(),
+            );
+            let hit = |x, y| {
+                index
+                    .hit_test(PointNm { x, y }, |_| true)
+                    .target
+                    .map(String::as_str)
+            };
+            for offset in [0, inside, -inside] {
+                assert_eq!(
+                    hit(2_000_000, offset),
+                    Some("horizontal"),
+                    "{kind} width {width}"
+                );
+                assert_eq!(
+                    hit(8_000_000 + offset, 2_000_000),
+                    Some("vertical"),
+                    "{kind} width {width}"
+                );
+            }
+            for offset in [outside, -outside] {
+                assert_eq!(hit(2_000_000, offset), None);
+                assert_eq!(hit(8_000_000 + offset, 2_000_000), None);
+            }
+            assert_eq!(
+                hit(-3_000_000, 1_000_000),
+                Some("body"),
+                "body interior remains selectable"
+            );
+            assert_eq!(
+                hit(-4_000_001, 1_000_000),
+                None,
+                "body bounds do not acquire stroke tolerance"
+            );
+        }
+    }
+}
+
 /// The world bbox center of the first projected symbol body — a point that
 /// must fall inside that symbol's hit region.
 fn first_symbol(scene: &BoardReviewSceneV1) -> (&str, PointNm) {

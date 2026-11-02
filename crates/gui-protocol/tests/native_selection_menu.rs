@@ -101,10 +101,16 @@ fn native_select_menu_keeps_complete_inventory_and_refuses_unbound_semantics_wit
         selection: Some(open),
         submenu_path: Vec::new(),
     });
-    let nodes = datum_gui_protocol::gui_menu_model::accessibility::menu_accessibility_nodes(
-        datum_gui_protocol::gui_menu_model::default_gui_menu_model().unwrap(),
-        &workspace,
-    );
+    let nodes: Vec<_> =
+        datum_gui_protocol::gui_menu_model::accessibility::menu_accessibility_nodes(
+            datum_gui_protocol::gui_menu_model::default_gui_menu_model().unwrap(),
+            &workspace,
+        )
+        .into_iter()
+        // The wheel has its own accessible nodes; this oracle covers the complete
+        // source-bound Select inventory, independently of radial menu contents.
+        .filter(|node| node.id.starts_with("menu:native-select:"))
+        .collect();
     assert_eq!(nodes.len(), 304);
     assert!(nodes[300].focused);
     assert!(nodes[300].id.contains(&id(1).to_string()));
@@ -205,7 +211,11 @@ fn explicit_checks_entries_keep_complete_fingerprints_and_refuse_ambiguous_or_fo
         menu.items[300].command,
         Command::Diagnostic("sha256:finding-299".into())
     );
-    assert!(menu.items.iter().all(|item| item.unavailable.is_none()));
+    assert!(
+        menu.items[1..]
+            .iter()
+            .all(|item| item.unavailable.is_none())
+    );
     checks.findings.push(checks.findings[0].clone());
     let mut ambiguous = menu.clone();
     ambiguous.items.clear();
@@ -217,4 +227,48 @@ fn explicit_checks_entries_keep_complete_fingerprints_and_refuse_ambiguous_or_fo
     foreign.items.clear();
     foreign.append_checks(&checks);
     assert!(foreign.items.is_empty());
+}
+
+#[test]
+fn empty_canvas_exposes_document_selection_without_repurposing_overlap_selection() {
+    let fixture = Fixture::new("menu-global-and-overlap");
+    let before = fixture.source_bytes();
+    let authority = NativeSelectionResolution::capture(&fixture.model).unwrap();
+    let mut menu = SelectionMenu::capture(
+        &authority,
+        vec![],
+        PointNm { x: 0, y: 0 },
+        datum_gui_protocol::load_fixture_workspace_state()
+            .ui
+            .filters,
+    );
+    for schematic in [false, true] {
+        menu.schematic = schematic;
+        let mut presented = menu.clone();
+        presented.append_document_selection();
+        let overlap = &presented.items[0];
+        assert_eq!(overlap.command, Command::All);
+        assert_eq!(overlap.label, "Select All Overlapping");
+        assert!(
+            overlap
+                .unavailable
+                .as_ref()
+                .unwrap()
+                .contains("under the pointer")
+        );
+        let global = &presented.items[1];
+        assert_eq!(global.command, Command::AllInDocument);
+        assert_eq!(
+            global.label,
+            if schematic {
+                "Select All on Sheet (Ctrl+A)"
+            } else {
+                "Select All on Board (Ctrl+A)"
+            }
+        );
+        assert!(global.unavailable.is_none());
+        assert_eq!(presented.overlap_candidates().count(), 0);
+        assert_eq!(resolve(&authority, &global.command).unwrap(), None);
+    }
+    Fixture::assert_bytes(&before);
 }

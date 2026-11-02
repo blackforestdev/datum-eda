@@ -123,6 +123,7 @@ impl Runtime {
             folder_browser: folder_browser::FolderBrowser::new(wake.clone()),
             native_selection: None,
             selection_gesture: None,
+            selection_move: None,
             selection_evaluation: None,
             selection_release_suppressed: false,
             selection_tick: None,

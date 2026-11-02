@@ -8,6 +8,8 @@
 //! fields/methods via `use super::*` exactly as the inline impl did.
 
 use super::*;
+#[path = "../editor/runtime_tool_cursor.rs"]
+mod tool_cursor;
 
 fn hovered_terminal_close_session(target: Option<&HitTarget>) -> Option<String> {
     match target {
@@ -65,7 +67,7 @@ impl Runtime {
             Some(datum_gui_protocol::SplitOrientation::Horizontal) => {
                 winit::window::CursorIcon::NsResize
             }
-            None => winit::window::CursorIcon::Default,
+            None => self.editor_cursor_icon(pointer),
         }
     }
 

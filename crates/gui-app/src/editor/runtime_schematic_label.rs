@@ -89,6 +89,7 @@ impl Runtime {
         match event.logical_key {
             Key::Named(NamedKey::Escape) => {
                 self.cancel_native_schematic();
+                self.set_workspace_tool(WorkspaceTool::Select);
             }
             Key::Named(NamedKey::Tab) => {
                 let backward = self.modifiers.shift_key();
@@ -114,6 +115,7 @@ impl Runtime {
             _ if picker && focus == 0 => {
                 self.handle_shared_editor_key(event);
             }
+            _ if !picker => return false,
             _ => {}
         }
         self.invalidate_frame();

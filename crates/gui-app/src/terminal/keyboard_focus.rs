@@ -515,6 +515,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
     if escape_released {
         if let Some(runtime) = &mut app.runtime {
             if runtime.dispatch_session_command(SessionCommand::CancelAuthoringGesture) {
+                runtime.set_workspace_tool(crate::WorkspaceTool::Select);
                 app.request_workspace_redraw();
                 return true;
             }

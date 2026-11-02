@@ -311,6 +311,7 @@ impl Runtime {
                 action,
                 NativeEditAction::Move { .. }
                     | NativeEditAction::MoveSymbol { .. }
+                    | NativeEditAction::MoveLabel { .. }
                     | NativeEditAction::Schematic
             )
             && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
@@ -331,7 +332,9 @@ impl Runtime {
         }
         if !matches!(
             action,
-            NativeEditAction::Move { .. } | NativeEditAction::MoveSymbol { .. }
+            NativeEditAction::Move { .. }
+                | NativeEditAction::MoveSymbol { .. }
+                | NativeEditAction::MoveLabel { .. }
         ) && self.native_edit.preview.is_some()
         {
             self.log_console_refusal(
@@ -453,7 +456,8 @@ impl Runtime {
         let pending_move = match (action, self.native_edit.preview.as_ref()) {
             (
                 NativeEditAction::Move { x_nm, y_nm, .. }
-                | NativeEditAction::MoveSymbol { x_nm, y_nm, .. },
+                | NativeEditAction::MoveSymbol { x_nm, y_nm, .. }
+                | NativeEditAction::MoveLabel { x_nm, y_nm, .. },
                 Some(preview),
             ) => match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
                 Ok(scene) => Some((preview.is_schematic(), preview.base().clone(), scene)),

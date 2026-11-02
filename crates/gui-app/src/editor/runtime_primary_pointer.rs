@@ -91,6 +91,13 @@ impl Runtime {
             if let Some(target @ (HitTarget::MenuTitle(_) | HitTarget::MenuItem { .. })) = target {
                 return self.select_hit_target(&target);
             }
+            // A canvas click dismisses the menu as well as returning focus.
+            // Otherwise its invisible keyboard owner consumes later tool keys.
+            let ui = &mut self.session.workspace_mut().ui;
+            ui.active_menu = None;
+            ui.active_submenu = None;
+            ui.menu_focus_index = 0;
+            self.invalidate_frame();
         }
         // Focus and dispatch are one gesture: after activating a different pane,
         // continue resolving this same click in that pane's camera/content.
@@ -113,13 +120,17 @@ impl Runtime {
                 focus_changed = true;
             }
         }
-        // Move acts on an acquired gesture, not every click while its toolbar
-        // mode remains selected. Idle clicks select; pending moves are refused.
+        // Schematic Move can pick its target after toolbar activation. Route
+        // authored ink through that acquisition owner, including pin/text hits;
+        // chrome controls and modified selection clicks retain their owners.
         let authoring_gesture = self.workspace().schematic_authoring.active()
             || self.active_tool_is_authoring()
                 && (self.workspace().tool != WorkspaceTool::Move
                     || self.native_edit.preview.is_some()
-                    || self.native_edit.pending());
+                    || self.native_edit.pending()
+                    || (self.workspace().ui.layout.focused_content() == PaneContent::Schematic
+                        && !self.modifiers.shift_key()
+                        && !self.modifiers.control_key()));
         let hit_started = std::time::Instant::now();
         let prepared_target = self.presented_hits.hit_test(x, y).cloned();
         let hit_elapsed = hit_started.elapsed();

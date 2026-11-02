@@ -234,6 +234,7 @@ impl Runtime {
             }
             Key::Named(NamedKey::Escape) => {
                 self.cancel_native_schematic();
+                self.set_workspace_tool(WorkspaceTool::Select);
             }
             Key::Named(NamedKey::Enter)
                 if picker && self.workspace().schematic_authoring.editing.is_some() =>
@@ -260,6 +261,9 @@ impl Runtime {
                     PlacementField::Reference
                 };
             }
+            // Placement owns its editing keys, not the whole keyboard. Let
+            // shared tool/navigation shortcuts switch away from a preview.
+            _ if !picker => return false,
             _ => {}
         }
         self.invalidate_frame();
@@ -396,6 +400,16 @@ impl Runtime {
             .is_some_and(|p| p.is_schematic())
         {
             return self.native_move_click(world, None);
+        }
+        if self.workspace().tool == WorkspaceTool::Move
+            && !self.workspace().schematic_authoring.active()
+            && !self.modifiers.shift_key()
+            && !self.modifiers.control_key()
+            && !self.modifiers.alt_key()
+            && !self.modifiers.super_key()
+        {
+            self.pick_schematic_move(world, screen);
+            return true;
         }
         if !self.workspace().schematic_authoring.active() {
             return false;

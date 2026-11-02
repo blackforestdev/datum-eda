@@ -10,7 +10,7 @@ impl Runtime {
                 .native_edit
                 .preview
                 .as_ref()
-                .is_some_and(|p| p.is_schematic())
+                .is_some_and(|p| matches!(p, NativeMovePreview::Symbol { .. }))
             || self.modifiers.control_key()
             || self.modifiers.alt_key()
             || self.modifiers.super_key()

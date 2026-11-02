@@ -13,6 +13,8 @@ pub enum Command {
     },
     Semantic(Id),
     All,
+    /// Explicit document-wide selection, sharing the Ctrl+A acquisition path.
+    AllInDocument,
     InspectScope(Option<crate::AuthoredSelectionClass>),
     InventoryToggle,
     InspectorPage {
@@ -49,6 +51,7 @@ pub fn resolve(
 ) -> Result<Option<SelectionSubject>, crate::selection_resolution::SelectionResolutionError> {
     let subject = match command {
         Command::All
+        | Command::AllInDocument
         | Command::InspectScope(_)
         | Command::InventoryToggle
         | Command::InspectorPage { .. }
@@ -144,9 +147,11 @@ impl SelectionMenu {
             }
         }
         items.push(Item {
-            label: "Select All".into(),
+            label: "Select All Overlapping".into(),
             command: Command::All,
-            unavailable: None,
+            unavailable: seen
+                .is_empty()
+                .then(|| "No eligible objects under the pointer".into()),
         });
         for item in &mut items {
             if let Err(error) = resolve(authority, &item.command) {
@@ -171,6 +176,18 @@ impl SelectionMenu {
 }
 
 impl SelectionMenu {
+    /// Keep explicit global selection separate from the local conflict inventory.
+    pub fn append_document_selection(&mut self) {
+        self.items.push(Item {
+            label: format!(
+                "Select All on {} (Ctrl+A)",
+                if self.schematic { "Sheet" } else { "Board" }
+            ),
+            command: Command::AllInDocument,
+            unavailable: None,
+        });
+    }
+
     pub fn append_inspection(&mut self, view: &crate::selection_view::SelectionView) {
         self.inspection_subject = Some(view.subject.clone());
         for scope in &view.inspection {

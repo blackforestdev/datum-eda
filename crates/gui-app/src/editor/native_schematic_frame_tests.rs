@@ -10,6 +10,10 @@ use std::{
     time::{Duration, Instant},
 };
 use winit::platform::wayland::EventLoopBuilderExtWayland;
+#[path = "native_schematic_frame_tests/context_menu.rs"]
+mod context_menu;
+#[path = "native_schematic_frame_tests/region_selection.rs"]
+mod region_selection;
 #[path = "native_schematic_frame_tests/symbol_move.rs"]
 mod symbol_move;
 

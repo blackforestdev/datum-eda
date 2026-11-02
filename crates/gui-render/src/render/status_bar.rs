@@ -93,7 +93,11 @@ pub(crate) fn render_status_bar_logical(
         | SelectionTarget::AuthoredObject(id)
         | SelectionTarget::CheckFinding(id) => truncate_text(suffix_id(id), 8),
     };
-    let tool = workspace_tool_label(state.tool);
+    let tool = if state.ui.layout.focused_content() == datum_gui_protocol::PaneContent::Schematic {
+        datum_gui_protocol::EditorTool::active(state).label()
+    } else {
+        workspace_tool_label(state.tool)
+    };
     let layers = datum_gui_protocol::camera_scene_for_pane(state, state.ui.layout.focused)
         .map_or(0, |scene| scene.layers.len())
         .to_string();

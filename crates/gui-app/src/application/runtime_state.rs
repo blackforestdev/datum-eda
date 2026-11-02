@@ -26,6 +26,7 @@ pub(super) struct Runtime {
     pub(super) project_open: project_open::OpenWork,
     pub(super) native_selection: Option<runtime_selection::NativeSelectionSession>,
     pub(super) selection_gesture: Option<datum_gui_viewport::selection_gesture::SelectionGesture>,
+    pub(super) selection_move: Option<runtime_selection_region::SelectionMoveDrag>,
     pub(super) selection_evaluation: Option<selection_region_evaluation::RegionEvaluation>,
     pub(super) selection_release_suppressed: bool,
     pub(super) selection_tick: Option<std::time::Instant>,

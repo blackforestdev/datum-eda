@@ -50,6 +50,7 @@ pub mod registry;
 pub mod revision;
 pub mod schematic_connectivity;
 pub mod schematic_edit;
+pub mod schematic_label_move;
 pub mod schematic_library;
 mod schematic_selection_edit;
 pub mod schematic_sheets;

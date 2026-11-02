@@ -148,6 +148,12 @@ impl MoveWorkflow {
                 r.invalidate_frame();
             }
             1 => {
+                super::region_selection::exercise(
+                    &mut self.host,
+                    events,
+                    self.original.as_ref().unwrap(),
+                );
+                self.unchanged();
                 let pin = &self.original.as_ref().unwrap().pins[0];
                 self.host.world(
                     events,

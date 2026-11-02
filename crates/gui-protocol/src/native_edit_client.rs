@@ -19,6 +19,11 @@ pub enum NativeEditAction {
         x_nm: i64,
         y_nm: i64,
     },
+    MoveLabel {
+        label: Uuid,
+        x_nm: i64,
+        y_nm: i64,
+    },
     MoveSymbol {
         symbol: Uuid,
         x_nm: i64,
@@ -318,6 +323,10 @@ impl NativeProjectClient {
                         .as_ref()
                         .context("Library acquisition payload missing")?,
                 )?,
+            ),
+            NativeEditAction::MoveLabel { label, x_nm, y_nm } => (
+                "datum.schematic.move_label",
+                json!({"label":label,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
             ),
             NativeEditAction::MoveSymbol {
                 symbol,

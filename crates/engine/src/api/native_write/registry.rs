@@ -153,6 +153,7 @@ mod tests {
                 "datum.schematic.delete_symbol",
                 "datum.schematic.delete_wire",
                 "datum.schematic.draw_wire",
+                "datum.schematic.move_label",
                 "datum.schematic.move_symbol",
                 "datum.schematic.place_label",
                 "datum.schematic.place_symbol",

@@ -4,9 +4,17 @@ use datum_gui_viewport::{
     selection_acquisition::{AcquisitionEntry, AcquisitionMode},
     selection_gesture::SelectionGesture,
 };
+#[path = "runtime_selection_region/drag.rs"]
+mod drag;
+pub(super) use drag::SelectionMoveDrag;
 impl Runtime {
     pub(super) fn begin_native_selection_press(&mut self) -> bool {
-        if self.workspace().tool != WorkspaceTool::Select
+        if !matches!(
+            self.workspace().tool,
+            WorkspaceTool::Select | WorkspaceTool::Move
+        ) || self.native_edit.preview.is_some()
+            || self.native_edit.pending()
+            || self.workspace().ui.active_menu.is_some()
             || self.workspace().schematic_authoring.active()
             || self.workspace().schematic_authoring.picker
         {
@@ -79,6 +87,11 @@ impl Runtime {
             self.selection_release_suppressed = true;
             return true;
         }
+        self.selection_move = if gesture.mode == AcquisitionMode::Replace {
+            self.capture_selection_move(world, surface, pane)
+        } else {
+            None
+        };
         self.selection_gesture = Some(gesture);
         true
     }
@@ -145,7 +158,7 @@ impl Runtime {
             return false;
         }
         if gesture.mode == AcquisitionMode::Replace {
-            return true;
+            return self.advance_selection_move(world);
         }
         let feedback = datum_gui_protocol::SelectionRegionFeedback {
             pane,
@@ -167,9 +180,10 @@ impl Runtime {
         true
     }
     pub(super) fn cancel_native_selection_gesture(&mut self) -> bool {
+        let move_changed = self.cancel_selection_move();
         let gesture_changed = self.selection_gesture.take().is_some();
         let evaluation_changed = self.selection_evaluation.take().is_some();
-        let changed = gesture_changed || evaluation_changed;
+        let changed = gesture_changed || evaluation_changed || move_changed;
         self.session.workspace_mut().ui.selection_region = None;
         self.selection_tick = None;
         self.refresh_selection_accessibility();
@@ -184,13 +198,15 @@ impl Runtime {
             return Some(true);
         }
         let gesture = self.selection_gesture.take()?;
+        let direct_move = self.selection_move.take();
         self.session.workspace_mut().ui.selection_region = None;
         self.selection_tick = None;
         gesture.kind?;
         self.invalidate_frame();
         if gesture.mode == AcquisitionMode::Replace {
+            self.finish_selection_move(direct_move, &gesture);
             return Some(true);
-        } // Reserved plain drag is inert in S5A.
+        }
         let Some(content) = self.workspace().ui.layout.content_for(gesture.pane) else {
             return Some(true);
         };

@@ -13,6 +13,7 @@ impl Runtime {
             self.invalidate_frame();
             return true;
         }
+        self.cancel_native_selection_gesture();
         self.cancel_native_move();
         self.cancel_native_schematic();
         if self.workspace().tool != tool {

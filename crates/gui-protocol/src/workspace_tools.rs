@@ -1,5 +1,8 @@
 //! Shared workspace tool and gesture state.
 use crate::{PaneContent, PaneId, PointNm, ReviewWorkspaceState};
+#[path = "workspace_tools/feedback.rs"]
+mod feedback;
+pub use feedback::EditorTool;
 
 /// One shared consumer token for native authoring previews. It grants no write
 /// authority; the canonical client still checks its own immutable intent basis.

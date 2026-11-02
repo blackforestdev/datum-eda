@@ -2,12 +2,22 @@
 use super::*;
 use crate::native_edit_client::NativeEditAction;
 use crate::schematic_authoring::{PlacementTransform, SchematicAuthoring};
-use eda_engine::api::native_write::schematic_symbol_move::SymbolMoveBasis;
+use eda_engine::api::native_write::{
+    schematic_label_move::LabelMoveBasis, schematic_symbol_move::SymbolMoveBasis,
+};
 use std::path::PathBuf;
 use uuid::Uuid;
 
 pub enum NativeMovePreview {
     Footprint(FootprintMovePreview),
+    Label {
+        base: BoardReviewSceneV1,
+        basis: LabelMoveBasis,
+        authoring: Box<SchematicAuthoring>,
+        cursor_anchor: PointNm,
+        instance_path: Vec<Uuid>,
+        root: PathBuf,
+    },
     Symbol {
         base: BoardReviewSceneV1,
         basis: SymbolMoveBasis,
@@ -54,10 +64,42 @@ impl NativeMovePreview {
             mirrored: None,
         })
     }
+    pub fn label(
+        base: &BoardReviewSceneV1,
+        authoring: &SchematicAuthoring,
+        id: &crate::AuthoredSelectionIdentity,
+        cursor: PointNm,
+        snap: AuthoringSnapState,
+        root: PathBuf,
+    ) -> Result<Self> {
+        let basis = authoring
+            .label_move_bases
+            .get(&id.id)
+            .context("Label Move source unavailable")?
+            .as_ref()
+            .map_err(|reason| anyhow::anyhow!("{reason}"))?
+            .clone();
+        anyhow::ensure!(
+            authoring.move_paths.get(&id.id) == Some(&id.instance_path),
+            "Label occurrence changed; select it again"
+        );
+        anyhow::ensure!(
+            authoring.sheet == Some(basis.sheet_id),
+            "Select a Label on the current native sheet"
+        );
+        Ok(Self::Label {
+            base: base.clone(),
+            basis,
+            authoring: Box::new(authoring.clone()),
+            cursor_anchor: checked_snap_authoring_point(cursor, snap)?,
+            instance_path: id.instance_path.clone(),
+            root,
+        })
+    }
     pub fn base(&self) -> &BoardReviewSceneV1 {
         match self {
             Self::Footprint(p) => &p.base,
-            Self::Symbol { base, .. } => base,
+            Self::Symbol { base, .. } | Self::Label { base, .. } => base,
         }
     }
     pub fn footprint(&self) -> Option<&FootprintMovePreview> {
@@ -67,11 +109,13 @@ impl NativeMovePreview {
         }
     }
     pub fn is_schematic(&self) -> bool {
-        matches!(self, Self::Symbol { .. })
+        matches!(self, Self::Symbol { .. } | Self::Label { .. })
     }
     pub fn instance_path(&self) -> Vec<Uuid> {
         match self {
-            Self::Symbol { instance_path, .. } => instance_path.clone(),
+            Self::Symbol { instance_path, .. } | Self::Label { instance_path, .. } => {
+                instance_path.clone()
+            }
             _ => vec![],
         }
     }
@@ -81,6 +125,15 @@ impl NativeMovePreview {
                 class: crate::AuthoredSelectionClass::Footprint,
                 id: p.component.component_uuid.parse()?,
                 instance_path: vec![],
+            },
+            Self::Label {
+                basis,
+                instance_path,
+                ..
+            } => crate::AuthoredSelectionIdentity {
+                class: crate::AuthoredSelectionClass::Label,
+                id: basis.label.uuid,
+                instance_path: instance_path.clone(),
             },
             Self::Symbol {
                 basis,
@@ -97,6 +150,11 @@ impl NativeMovePreview {
         Ok(match self {
             Self::Footprint(p) => NativeEditAction::Move {
                 component: p.component.component_uuid.parse()?,
+                x_nm: at.x,
+                y_nm: at.y,
+            },
+            Self::Label { basis, .. } => NativeEditAction::MoveLabel {
+                label: basis.label.uuid,
                 x_nm: at.x,
                 y_nm: at.y,
             },
@@ -146,22 +204,40 @@ impl NativeMovePreview {
                 basis,
                 cursor_anchor,
                 ..
-            } => {
-                let at = checked_snap_authoring_point(cursor, snap)?;
-                let translate = |original: i64, current: i64, anchor: i64| {
-                    i64::try_from(i128::from(original) + i128::from(current) - i128::from(anchor))
-                        .context("Move exceeds integer coordinates")
-                };
-                Ok(PointNm {
-                    x: translate(basis.symbol.position.x, at.x, cursor_anchor.x)?,
-                    y: translate(basis.symbol.position.y, at.y, cursor_anchor.y)?,
-                })
-            }
+            } => translated_destination(basis.symbol.position, *cursor_anchor, cursor, snap),
+            Self::Label {
+                basis,
+                cursor_anchor,
+                ..
+            } => translated_destination(basis.label.position, *cursor_anchor, cursor, snap),
         }
     }
     pub fn scene_at(&self, at: PointNm) -> Result<BoardReviewSceneV1> {
         match self {
             Self::Footprint(p) => p.scene_at(at),
+            Self::Label {
+                base,
+                basis,
+                authoring,
+                root,
+                ..
+            } => {
+                let moved =
+                    basis.destination_edit(eda_engine::ir::geometry::Point { x: at.x, y: at.y })?;
+                let mut source = authoring
+                    .source
+                    .clone()
+                    .context("Native schematic source unavailable")?;
+                let sheet = source
+                    .sheets
+                    .get_mut(&basis.sheet_id)
+                    .context("Native sheet changed")?;
+                sheet.labels.insert(moved.label.uuid, moved.label);
+                for wire in moved.wires {
+                    sheet.wires.insert(wire.uuid, wire);
+                }
+                authoring.project_source(&source, basis.sheet_id, base, root)
+            }
             Self::Symbol {
                 base,
                 basis,
@@ -192,4 +268,21 @@ impl NativeMovePreview {
             }
         }
     }
+}
+
+fn translated_destination(
+    position: eda_engine::ir::geometry::Point,
+    anchor: PointNm,
+    cursor: PointNm,
+    snap: AuthoringSnapState,
+) -> Result<PointNm> {
+    let at = checked_snap_authoring_point(cursor, snap)?;
+    let translate = |original: i64, current: i64, anchor: i64| {
+        i64::try_from(i128::from(original) + i128::from(current) - i128::from(anchor))
+            .context("Move exceeds integer coordinates")
+    };
+    Ok(PointNm {
+        x: translate(position.x, at.x, anchor.x)?,
+        y: translate(position.y, at.y, anchor.y)?,
+    })
 }

@@ -218,6 +218,10 @@ pub struct SchematicAuthoring {
         Uuid,
         Result<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveBasis, String>,
     >,
+    pub label_move_bases: std::collections::BTreeMap<
+        Uuid,
+        Result<eda_engine::api::native_write::schematic_label_move::LabelMoveBasis, String>,
+    >,
     pub source: Option<eda_engine::schematic::Schematic>,
     pub sheet: Option<Uuid>,
     pub choices: Vec<LibrarySymbolChoice>,
@@ -287,6 +291,29 @@ impl SchematicAuthoring {
                     Err("Move requires one unique resolved Symbol occurrence".into())
                 };
                 state.move_bases.insert(symbol.uuid, qualified);
+            }
+            for label in source
+                .sheets
+                .values()
+                .flat_map(|sheet| sheet.labels.values())
+            {
+                let paths: Vec<_> = authored
+                    .iter()
+                    .filter(|s| {
+                        s.occurrence.class == "labels" && s.occurrence.source_id == label.uuid
+                    })
+                    .map(|s| s.occurrence.instance_path.clone())
+                    .collect();
+                let qualified = if paths.len() == 1 {
+                    state.move_paths.insert(label.uuid, paths[0].clone());
+                    eda_engine::api::native_write::schematic_label_move::LabelMoveBasis::capture(
+                        &basis, label.uuid, &paths[0],
+                    )
+                    .map_err(|e| e.to_string())
+                } else {
+                    Err("Move requires one unique resolved Label occurrence".into())
+                };
+                state.label_move_bases.insert(label.uuid, qualified);
             }
             let instantiated: std::collections::BTreeSet<_> = source
                 .sheet_instances
