@@ -23,11 +23,10 @@ pub(crate) fn push_retained_board_graphic_batches(
     let trace_graphics = std::env::var_os("DATUM_TRACE_GRAPHICS").is_some();
 
     for stage in POST_COPPER_STAGES {
-        for gfx in scene
-            .board_graphics
-            .iter()
-            .filter(|gfx| render_stage_for_layer(&gfx.layer_id, sl) == stage)
-        {
+        for gfx in scene.board_graphics.iter().filter(|gfx| {
+            gfx.object_kind != "schematic_field_tether"
+                && render_stage_for_layer(&gfx.layer_id, sl) == stage
+        }) {
             out.source(Some(&gfx.object_id), Role::Material);
             strokes.source(Some(&gfx.object_id), Role::Material);
             let quad_start = out.len();

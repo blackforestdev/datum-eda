@@ -121,6 +121,37 @@ fn push_native_impl(
     );
     lod.push_cues(selection_strokes, viewport);
     for graphic in &scene.board_graphics {
+        if graphic.object_kind == "schematic_field_tether" {
+            // Newly exposed hidden text has no cached selection projection key yet.
+            // Its guarded active owner still receives the shared manipulation tether.
+            let active_owner = surface == datum_gui_protocol::PaneContent::Schematic
+                && state
+                    .schematic_authoring
+                    .field_placement()
+                    .is_some_and(|draft| {
+                        draft.symbol.target.id.to_string() == graphic.source_object_uuid
+                            && draft.symbol.basis.document == scene.schematic_document
+                    });
+            if (active_owner
+                || graphic
+                    .object_id
+                    .strip_suffix(":field-tether")
+                    .is_some_and(|text| keys.contains(text)))
+                && layer_visible(state, &graphic.layer_id)
+            {
+                // Rendering Book §6: owner tether is selection/manipulation chrome.
+                push_dashed_polyline_segments(
+                    out,
+                    &graphic.path,
+                    &projection,
+                    design_tokens::content::SELECTION,
+                    1.2,
+                    4.0,
+                    3.0,
+                );
+            }
+            continue;
+        }
         if mask_world {
             continue;
         }

@@ -248,6 +248,30 @@ impl Runtime {
         {
             return self.begin_native_schematic(true);
         }
+        if self
+            .workspace()
+            .schematic_authoring
+            .field_placement()
+            .is_some()
+        {
+            match &event.logical_key {
+                Key::Named(NamedKey::Enter) => {
+                    return self
+                        .workspace()
+                        .schematic_authoring
+                        .position
+                        .map(|at| self.place_custom_field(at))
+                        .unwrap_or(true);
+                }
+                Key::Named(NamedKey::Tab) => return self.return_custom_field_form(),
+                Key::Character(key)
+                    if ["r", "x", "y"].iter().any(|s| key.eq_ignore_ascii_case(s)) =>
+                {
+                    return true;
+                }
+                _ => {}
+            }
+        }
         if self.workspace().schematic_authoring.marker.is_some() {
             return self.handle_marker_key(event);
         }
@@ -501,6 +525,14 @@ impl Runtime {
         let Some(at) = self.schematic_command_point(world, screen) else {
             return true;
         };
+        if self
+            .workspace()
+            .schematic_authoring
+            .field_placement()
+            .is_some()
+        {
+            return self.place_custom_field(at);
+        }
         if self.workspace().schematic_authoring.marker.is_some() {
             return self.place_native_marker(at);
         }

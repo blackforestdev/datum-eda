@@ -60,6 +60,7 @@ mod schematic_port;
 mod schematic_selection_edit;
 pub mod schematic_sheets;
 pub mod schematic_symbol_move;
+mod schematic_symbol_payload;
 pub mod schematic_symbols;
 pub mod waivers;
 

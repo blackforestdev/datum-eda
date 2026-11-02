@@ -1,4 +1,4 @@
-//! UUID-qualified custom metadata uses the shared two-field form, without presentation edits.
+//! UUID-qualified custom fields use the shared text form and explicit point placement.
 use super::*;
 use eda_engine::schematic::{PlacedSymbol, SymbolField};
 
@@ -10,6 +10,9 @@ pub enum CustomFieldControl {
     New,
     Remove,
     Symbol,
+    Show,
+    Hide,
+    Place,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -18,6 +21,8 @@ pub struct CustomFieldDraft {
     pub original: PlacedSymbol,
     pub field_id: Option<Uuid>,
     pub remove: bool,
+    pub visibility: Option<bool>,
+    pub placing: bool,
 }
 impl CustomFieldDraft {
     pub fn selected(&self) -> Option<&SymbolField> {
@@ -50,7 +55,12 @@ impl CustomFieldDraft {
     }
     pub fn require_clean(&self, key: &str, value: &str) -> Result<(), String> {
         let original = self.fields();
-        if self.remove || key != original.0 || value != original.1 {
+        if self.remove
+            || self.visibility.is_some()
+            || self.placing
+            || key != original.0
+            || value != original.1
+        {
             return Err("Apply or cancel the current field changes first".into());
         }
         Ok(())
@@ -64,6 +74,21 @@ impl CustomFieldDraft {
     ) -> Result<(), String> {
         self.require_clean(key, value)?;
         match control {
+            CustomFieldControl::Show | CustomFieldControl::Hide | CustomFieldControl::Place => {
+                let field = self
+                    .selected()
+                    .ok_or("Apply the new metadata before placing its text")?;
+                let position = field.position;
+                let visible = field.visible;
+                match control {
+                    CustomFieldControl::Show => {
+                        self.visibility = (!visible).then_some(true);
+                        self.placing = position.is_none();
+                    }
+                    CustomFieldControl::Hide => self.visibility = visible.then_some(false),
+                    _ => self.placing = true,
+                }
+            }
             CustomFieldControl::New => self.field_id = None,
             CustomFieldControl::Remove => {
                 if self.selected().is_none() {
@@ -93,18 +118,29 @@ impl CustomFieldDraft {
         Ok(())
     }
     pub fn request(&self, key: &str, value: &str) -> Result<Option<SchematicEditRequest>, String> {
+        if self.placing
+            || (self.visibility == Some(true)
+                && self.selected().is_some_and(|f| f.position.is_none()))
+        {
+            return Err("Click the canvas to place this field, or cancel".into());
+        }
         let (old_key, old_value) = self.fields();
         if self.remove {
             if self.field_id.is_none() || key != old_key || value != old_value {
                 return Err("Cancel the removal before editing field text".into());
             }
         } else {
-            if self.field_id.is_some() && key == old_key && value == old_value {
+            if self.field_id.is_some()
+                && key == old_key
+                && value == old_value
+                && self.visibility.is_none()
+            {
                 return Ok(None);
             }
-            if key.trim().is_empty()
-                || key.chars().any(char::is_control)
-                || value.chars().any(char::is_control)
+            if (self.field_id.is_none() || key != old_key || value != old_value)
+                && (key.trim().is_empty()
+                    || key.chars().any(char::is_control)
+                    || value.chars().any(char::is_control))
             {
                 return Err("Enter a nonempty single-line key and a single-line value".into());
             }
@@ -113,9 +149,73 @@ impl CustomFieldDraft {
             symbol: self.symbol.target.id,
             instance_path: self.symbol.target.instance_path.clone(),
             field_id: self.field_id,
-            key: (!self.remove).then(|| key.into()),
-            value: (!self.remove).then(|| value.into()),
+            key: (!self.remove
+                && (self.field_id.is_none() || key != old_key || value != old_value))
+                .then(|| key.into()),
+            value: (!self.remove
+                && (self.field_id.is_none() || key != old_key || value != old_value))
+                .then(|| value.into()),
             clear: self.remove,
+            visible: self.visibility,
+            position: None,
         }))
+    }
+}
+
+impl CustomFieldDraft {
+    /// Leaving a point gesture cancels only its placement intent; an ordinary
+    /// form refusal retains staged Show/Hide along with the edited text.
+    pub fn return_to_form(&mut self) -> bool {
+        if !self.placing {
+            return false;
+        }
+        self.placing = false;
+        self.visibility = None;
+        true
+    }
+    pub fn point_request(&self, at: PointNm) -> Result<SchematicEditRequest, String> {
+        if !self.placing || self.selected().is_none() {
+            return Err("No field placement is active".into());
+        }
+        Ok(SchematicEditRequest::CustomField {
+            symbol: self.symbol.target.id,
+            instance_path: self.symbol.target.instance_path.clone(),
+            field_id: self.field_id,
+            key: None,
+            value: None,
+            clear: false,
+            visible: self.visibility,
+            position: Some(eda_engine::ir::geometry::Point::new(at.x, at.y)),
+        })
+    }
+    pub fn preview_at(
+        &self,
+        at: PointNm,
+        sheet: &mut eda_engine::schematic::Sheet,
+    ) -> Result<(), String> {
+        let current = sheet
+            .symbols
+            .get_mut(&self.symbol.target.id)
+            .ok_or("Field owner unavailable")?;
+        if current != &self.original {
+            return Err("Field owner source changed".into());
+        }
+        let field = current
+            .fields
+            .iter_mut()
+            .find(|f| Some(f.uuid) == self.field_id)
+            .ok_or("Field unavailable")?;
+        field.position = Some(eda_engine::ir::geometry::Point::new(at.x, at.y));
+        // A hidden field is shown only in this immutable manipulation preview.
+        field.visible = true;
+        Ok(())
+    }
+}
+impl SchematicAuthoring {
+    pub fn field_placement(&self) -> Option<&CustomFieldDraft> {
+        match &self.editing {
+            Some(FieldsEditDraft::Custom(d)) if d.placing && !self.picker => Some(d),
+            _ => None,
+        }
     }
 }

@@ -10,7 +10,7 @@ pub enum FieldsEditDraft {
 }
 impl FieldsEditDraft {
     pub fn text_editable(&self) -> bool {
-        !matches!(self, Self::Custom(d) if d.remove)
+        !matches!(self, Self::Custom(d) if d.remove || d.placing)
     }
     pub fn basis(&self) -> &AuthoringViewBasis {
         match self {

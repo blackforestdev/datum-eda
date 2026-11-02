@@ -79,6 +79,8 @@ pub enum SchematicEditRequest {
         key: Option<String>,
         value: Option<String>,
         clear: bool,
+        visible: Option<bool>,
+        position: Option<eda_engine::ir::geometry::Point>,
     },
     AddBusEntry {
         sheet: Uuid,
@@ -173,6 +175,8 @@ impl SchematicEditRequest {
                 key,
                 value,
                 clear,
+                visible,
+                position,
             } => {
                 let mut params = serde_json::json!({"symbol":symbol,"instance_path":instance_path,"field":"custom"});
                 if let Some(id) = field_id {
@@ -186,6 +190,12 @@ impl SchematicEditRequest {
                 }
                 if *clear {
                     params["clear"] = serde_json::json!(true);
+                }
+                if let Some(visible) = visible {
+                    params["visible"] = serde_json::json!(visible);
+                }
+                if let Some(position) = position {
+                    params["position"] = serde_json::json!(position);
                 }
                 ("datum.schematic.set_symbol_field", params)
             }

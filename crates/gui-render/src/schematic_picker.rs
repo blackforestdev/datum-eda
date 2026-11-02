@@ -351,7 +351,8 @@ pub(super) fn render(
             hits,
         );
     } else if authoring.active() {
-        let compact = authoring.wire || authoring.marker.is_some();
+        let compact =
+            authoring.wire || authoring.marker.is_some() || authoring.field_placement().is_some();
         let panel = RectPx {
             x: layout.top_menu_bar.width / 2. - 200.,
             y: 76.,
@@ -360,12 +361,22 @@ pub(super) fn render(
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         draw_text(
-            match authoring.marker {
-                Some(MarkerKind::Junction) => "Place Junction · click a wire crossing",
-                Some(MarkerKind::NoConnect) => "Place No-Connect · click an open pin",
-                None if authoring.wire && authoring.bus => "Place Bus · click vertices",
-                None if authoring.wire => "Place Wire · click vertices",
-                None => "Click: place · R: rotate · X/Y: flip horiz/vert",
+            if let Some(draft) = authoring.field_placement() {
+                if draft.visibility == Some(true) {
+                    "Show field text · click to place"
+                } else if draft.selected().is_some_and(|f| !f.visible) {
+                    "Move field text · remains hidden after commit"
+                } else {
+                    "Move field text · click to place"
+                }
+            } else {
+                match authoring.marker {
+                    Some(MarkerKind::Junction) => "Place Junction · click a wire crossing",
+                    Some(MarkerKind::NoConnect) => "Place No-Connect · click an open pin",
+                    None if authoring.wire && authoring.bus => "Place Bus · click vertices",
+                    None if authoring.wire => "Place Wire · click vertices",
+                    None => "Click: place · R: rotate · X/Y: flip horiz/vert",
+                }
             },
             panel.x + 10.,
             panel.y + 10.,

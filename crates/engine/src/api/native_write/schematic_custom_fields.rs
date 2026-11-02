@@ -3,8 +3,9 @@ use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
     schematic_selection_edit::selected_source,
+    schematic_symbol_payload::{set_point, source_symbol_payload},
 };
-use crate::{error::EngineError, schematic::PlacedSymbol, substrate::Operation};
+use crate::{error::EngineError, ir::geometry::Point, substrate::Operation};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::collections::BTreeSet;
@@ -30,6 +31,8 @@ struct Params {
     field_id: Option<Uuid>,
     key: Option<String>,
     value: Option<String>,
+    visible: Option<bool>,
+    position: Option<Point>,
     #[serde(default)]
     clear: bool,
 }
@@ -45,16 +48,28 @@ fn set_symbol_field(
 ) -> Result<PreparedWrite, EngineError> {
     let params: Params = parse_verb_params("datum.schematic.set_symbol_field", params)?;
     let Field::Custom = params.field;
+    let presentation = params.visible.is_some() || params.position.is_some();
     if params.clear {
-        if params.field_id.is_none() || params.key.is_some() || params.value.is_some() {
-            return Err(invalid("Clear requires field_id and forbids key/value"));
+        if params.field_id.is_none()
+            || params.key.is_some()
+            || params.value.is_some()
+            || presentation
+        {
+            return Err(invalid("Clear requires field_id and forbids field edits"));
         }
     } else {
+        if params.field_id.is_none() && presentation {
+            return Err(invalid(
+                "New metadata must be hidden and unpositioned; edit an existing field to place it",
+            ));
+        }
         if params.field_id.is_none() && (params.key.is_none() || params.value.is_none()) {
             return Err(invalid("A new custom field requires key and value"));
         }
-        if params.key.is_none() && params.value.is_none() {
-            return Err(invalid("A custom field edit requires key or value"));
+        if params.key.is_none() && params.value.is_none() && !presentation {
+            return Err(invalid(
+                "A custom field edit requires metadata or presentation",
+            ));
         }
         if params
             .key
@@ -79,36 +94,7 @@ fn set_symbol_field(
         return Err(invalid("Custom field UUID ownership is ambiguous"));
     }
 
-    // Materialize through the resolver, not a typed round trip: imported symbol,
-    // pin and field extensions must survive edits and their canonical inverse.
-    let object = context
-        .model
-        .objects
-        .get(&params.symbol)
-        .ok_or_else(|| invalid("Selected symbol source object is missing"))?;
-    let shards: Vec<_> = context
-        .model
-        .source_shards
-        .iter()
-        .filter(|shard| shard.shard_id == object.source_shard_id)
-        .collect();
-    if shards.len() != 1 {
-        return Err(invalid("Selected symbol source shard is ambiguous"));
-    }
-    let payload = context
-        .model
-        .materialized_source_shard_value_by_relative_path(&shards[0].relative_path)?;
-    if payload.get("uuid") != Some(&json!(sheet)) {
-        return Err(invalid("Selected symbol source sheet does not match"));
-    }
-    let mut symbol = payload
-        .get("symbols")
-        .and_then(|symbols| symbols.get(params.symbol.to_string()))
-        .cloned()
-        .ok_or_else(|| invalid("Selected symbol payload is missing"))?;
-    if serde_json::from_value::<PlacedSymbol>(symbol.clone())? != *original {
-        return Err(invalid("Selected symbol payload does not match its source"));
-    }
+    let mut symbol = source_symbol_payload(context.model, sheet, original)?;
     let before = symbol.clone();
     let fields = symbol
         .get_mut("fields")
@@ -131,6 +117,12 @@ fn set_symbol_field(
             }
             if let Some(value) = params.value {
                 field.insert("value".into(), Value::String(value));
+            }
+            if let Some(visible) = params.visible {
+                field.insert("visible".into(), Value::Bool(visible));
+            }
+            if let Some(position) = params.position {
+                set_point(field.entry("position").or_insert(Value::Null), position);
             }
         }
     } else {

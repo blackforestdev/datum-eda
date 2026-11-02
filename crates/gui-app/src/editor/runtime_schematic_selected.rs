@@ -19,9 +19,13 @@ impl Runtime {
 
     pub(crate) fn restore_selected_symbol_edit(
         &mut self,
-        (draft, reference, value): (FieldsEditDraft, String, String),
+        (mut draft, reference, value): (FieldsEditDraft, String, String),
         reason: &str,
     ) {
+        let placement_canceled = match &mut draft {
+            FieldsEditDraft::Custom(draft) => draft.return_to_form(),
+            _ => false,
+        };
         let basis = draft.basis().clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
         e.bus = matches!(draft, FieldsEditDraft::Bus(_));
@@ -32,7 +36,11 @@ impl Runtime {
             datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&e.reference);
         e.value_editor = datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&e.value);
         e.picker = true;
-        e.refusal = Some(reason.into());
+        e.refusal = Some(if placement_canceled {
+            format!("{reason}; placement canceled. Choose Show or Place text to retry")
+        } else {
+            reason.into()
+        });
         self.session.workspace_mut().authoring.gesture.view_basis = Some(basis);
     }
 

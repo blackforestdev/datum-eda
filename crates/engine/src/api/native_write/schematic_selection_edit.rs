@@ -7,17 +7,18 @@
 //! commit together in one SetSchematicSymbol when supplied. The project root
 //! and expected revision are supplied by the native write envelope.
 use super::{
-    context::{PreparedWrite, WriteProvenance},
+    context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
     schematic_connectivity::{
         build_delete_schematic_label, build_delete_schematic_noconnect, build_delete_schematic_wire,
     },
-    schematic_symbols::{build_delete_schematic_symbol, build_set_schematic_symbol},
+    schematic_symbol_payload::source_symbol_payload,
+    schematic_symbols::build_delete_schematic_symbol,
 };
 use crate::{
     error::EngineError,
     schematic::Schematic,
-    substrate::{ElectricalSelectionSnapshot, SelectionSourceDomain},
+    substrate::{ElectricalSelectionSnapshot, Operation, SelectionSourceDomain},
 };
 use serde::Deserialize;
 use uuid::Uuid;
@@ -307,7 +308,21 @@ fn set_symbol_fields(
     if symbol == source.sheets[&sheet].symbols[&params.symbol] {
         return Err(invalid("Symbol fields are unchanged"));
     }
-    build_set_schematic_symbol(context.model, provenance, sheet, &symbol)
+    let mut payload = source_symbol_payload(
+        context.model,
+        sheet,
+        &source.sheets[&sheet].symbols[&params.symbol],
+    )?;
+    payload["reference"] = serde_json::Value::String(symbol.reference);
+    payload["value"] = serde_json::Value::String(symbol.value);
+    BatchComposer::compose(context.model, provenance)
+        .push_op(Operation::SetSchematicSymbol {
+            sheet_id: sheet,
+            symbol_id: params.symbol,
+            symbol: payload,
+        })
+        .primary_object(params.symbol)
+        .finish()
 }
 
 fn invalid(reason: impl Into<String>) -> EngineError {

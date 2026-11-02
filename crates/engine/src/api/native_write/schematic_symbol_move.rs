@@ -3,6 +3,7 @@ use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, parse_verb_params},
     schematic_edit::cardinal_symbol_point,
+    schematic_symbol_payload::{set_point, source_symbol_payload},
 };
 use crate::{
     connectivity::SymbolContactBasis,
@@ -76,11 +77,17 @@ impl SymbolMoveBasis {
         {
             return Err(invalid("Symbol pin source identity is ambiguous"));
         }
-        if symbol.fields.iter().any(|f| f.position.is_some())
-            || symbol.pin_overrides.iter().any(|p| p.position.is_some())
+        let mut field_ids = std::collections::BTreeSet::new();
+        if symbol
+            .fields
+            .iter()
+            .any(|field| !field_ids.insert(field.uuid))
         {
+            return Err(invalid("Symbol field source identity is ambiguous"));
+        }
+        if symbol.pin_overrides.iter().any(|p| p.position.is_some()) {
             return Err(invalid(
-                "Symbol move with positioned fields or pin overrides is not supported",
+                "Symbol move with positioned pin overrides is not supported",
             ));
         }
         let contacts = SymbolContactBasis::capture(sheet, symbol_uuid)?;
@@ -124,11 +131,11 @@ impl SymbolMoveBasis {
         symbol.position = position;
         symbol.rotation = rotation;
         symbol.mirrored = mirrored;
-        for pin in &mut symbol.pins {
+        let transform = |point: Point| -> Result<Point, EngineError> {
             let (x, y) = if pose_changed {
                 let relative = (
-                    i128::from(pin.position.x) - i128::from(self.symbol.position.x),
-                    i128::from(pin.position.y) - i128::from(self.symbol.position.y),
+                    i128::from(point.x) - i128::from(self.symbol.position.x),
+                    i128::from(point.y) - i128::from(self.symbol.position.y),
                 );
                 // Invert source rotation, then source reflection; apply target
                 // reflection, then target rotation using the placement law.
@@ -141,15 +148,18 @@ impl SymbolMoveBasis {
                     i128::from(position.y) + posed.1,
                 )
             } else {
-                (
-                    i128::from(pin.position.x) + dx,
-                    i128::from(pin.position.y) + dy,
-                )
+                (i128::from(point.x) + dx, i128::from(point.y) + dy)
             };
-            pin.position = Point {
-                x: i64::try_from(x).map_err(|_| invalid("Symbol pin coordinate overflow"))?,
-                y: i64::try_from(y).map_err(|_| invalid("Symbol pin coordinate overflow"))?,
-            };
+            Ok(Point {
+                x: i64::try_from(x).map_err(|_| invalid("Symbol owned coordinate overflow"))?,
+                y: i64::try_from(y).map_err(|_| invalid("Symbol owned coordinate overflow"))?,
+            })
+        };
+        for pin in &mut symbol.pins {
+            pin.position = transform(pin.position)?;
+        }
+        for field in &mut symbol.fields {
+            field.position = field.position.map(transform).transpose()?;
         }
         let wires = self.contacts.moved_wires(&symbol)?;
         Ok(SymbolMoveDestination { symbol, wires })
@@ -189,10 +199,22 @@ pub(super) fn move_symbol(
     if destination.symbol == basis.symbol {
         return Err(invalid("Symbol move destination is unchanged"));
     }
+    let mut symbol = source_symbol_payload(context.model, basis.sheet_id, &basis.symbol)?;
+    set_point(&mut symbol["position"], destination.symbol.position);
+    symbol["rotation"] = serde_json::to_value(destination.symbol.rotation)?;
+    symbol["mirrored"] = serde_json::to_value(destination.symbol.mirrored)?;
+    for (index, pin) in destination.symbol.pins.iter().enumerate() {
+        set_point(&mut symbol["pins"][index]["position"], pin.position);
+    }
+    for (index, field) in destination.symbol.fields.iter().enumerate() {
+        if let Some(position) = field.position {
+            set_point(&mut symbol["fields"][index]["position"], position);
+        }
+    }
     let mut operations = vec![Operation::SetSchematicSymbol {
         sheet_id: basis.sheet_id,
         symbol_id: destination.symbol.uuid,
-        symbol: serde_json::to_value(&destination.symbol)?,
+        symbol,
     }];
     for wire in destination.wires {
         // Canonical wire operations have no Set variant. Delete/Create with

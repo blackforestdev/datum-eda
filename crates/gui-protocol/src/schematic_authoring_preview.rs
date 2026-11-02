@@ -4,7 +4,7 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SchematicWire, SymbolDisplayMode};
 impl SchematicAuthoring {
     pub fn active(&self) -> bool {
-        if self.named_edit.is_some() {
+        if self.named_edit.is_some() || self.field_placement().is_some() {
             return true;
         }
         (self.chosen.is_some() || self.label.is_some() || self.marker.is_some()) && !self.picker
@@ -45,6 +45,12 @@ impl SchematicAuthoring {
             .sheets
             .get_mut(&sheet)
             .ok_or_else(|| anyhow::anyhow!("Native sheet changed"))?;
+        if let Some(draft) = self.field_placement()
+            && let Some(at) = self.position
+        {
+            draft.check_source(self).map_err(anyhow::Error::msg)?;
+            draft.preview_at(at, selected).map_err(anyhow::Error::msg)?;
+        }
         if let Some(kind) = self.marker
             && let Some(at) = self.position
             && !self.picker

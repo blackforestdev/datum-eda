@@ -141,3 +141,142 @@ fn refused_glyph_material_cannot_publish_a_draw_command() {
     assert!(quads.is_empty());
     assert!(commands.is_empty());
 }
+
+#[test]
+fn custom_field_presentation_tether_is_selected_chrome_without_retained_paint_or_hit() {
+    let (_fixture, mut state) =
+        crate::native_selection_overlay::tests::selected_schematic_text_state();
+    let before =
+        RetainedScene::from_workspace_schematic_for_surface(&state, 1280, 800, 1.0).unwrap();
+    let scene = state.schematic_scene.as_mut().unwrap();
+    let text = &scene.board_texts[0];
+    let tether_id = format!("{}:field-tether", text.object_id);
+    scene
+        .board_graphics
+        .push(datum_gui_protocol::BoardGraphicPrimitive {
+            object_id: tether_id.clone(),
+            object_kind: "schematic_field_tether".into(),
+            primitive_kind: "tether".into(),
+            source_object_uuid: text.source_object_uuid.clone().unwrap(),
+            layer_id: text.layer_id.clone(),
+            path: vec![PointNm { x: 0, y: 0 }, text.position],
+            holes: vec![],
+            width_nm: None,
+        });
+    let retained =
+        RetainedScene::from_workspace_schematic_for_surface(&state, 1280, 800, 1.0).unwrap();
+    assert_eq!(before.glyph, retained.glyph);
+    assert_eq!(
+        bytemuck::cast_slice::<Vertex, u8>(before.world_vertices()),
+        bytemuck::cast_slice::<Vertex, u8>(retained.world_vertices())
+    );
+    assert_eq!(
+        bytemuck::cast_slice::<WorldStrokeInstance, u8>(before.world_strokes().as_ref()),
+        bytemuck::cast_slice::<WorldStrokeInstance, u8>(retained.world_strokes().as_ref())
+    );
+    assert!(crate::interaction_overlay::board_hover_bounds(&retained, &tether_id).is_none());
+    let scene = state.schematic_scene.as_ref().unwrap();
+    let viewport = RectPx {
+        x: 0.,
+        y: 0.,
+        width: 1280.,
+        height: 800.,
+    };
+    let camera = CameraState::fit_to_bounds(&scene.bounds);
+    let overlay = |state: &ReviewWorkspaceState, scene: &BoardReviewSceneV1| {
+        let mut quads = Vec::new();
+        crate::native_selection_overlay::tests::push_native(
+            &mut Vec::new(),
+            &mut quads,
+            &mut Vec::new(),
+            scene,
+            state,
+            viewport,
+            camera,
+            datum_gui_protocol::PaneContent::Schematic,
+        );
+        quads
+    };
+    let selected = overlay(&state, scene);
+    let mut without = scene.clone();
+    without.board_graphics.retain(|g| g.object_id != tether_id);
+    assert!(
+        selected.len() > overlay(&state, &without).len(),
+        "selected owner gets tether"
+    );
+    let mut preview = state.clone();
+    if let SelectionTarget::Native(view) = &mut preview.selection {
+        view.schematic_keys.clear();
+        for document in &mut view.schematic_documents {
+            document.keys.clear();
+        }
+    }
+    assert_eq!(
+        overlay(&preview, scene).len(),
+        overlay(&preview, &without).len()
+    );
+    use datum_gui_protocol::schematic_authoring::{
+        CustomFieldDraft, FieldsEditDraft, selected::SymbolEditDraft,
+    };
+    let owner = scene.board_texts[0]
+        .source_object_uuid
+        .as_ref()
+        .unwrap()
+        .parse()
+        .unwrap();
+    preview.schematic_authoring.editing = Some(FieldsEditDraft::Custom(CustomFieldDraft {
+        symbol: SymbolEditDraft {
+            target: datum_gui_protocol::AuthoredSelectionIdentity {
+                class: datum_gui_protocol::AuthoredSelectionClass::Symbol,
+                id: owner,
+                instance_path: vec![],
+            },
+            basis: datum_gui_protocol::AuthoringViewBasis {
+                project: owner,
+                revision: scene.source_revision.clone(),
+                pane: datum_gui_protocol::PaneId(1),
+                content: datum_gui_protocol::PaneContent::Schematic,
+                source: owner,
+                document: scene.schematic_document.clone(),
+            },
+            tip: None,
+            original_reference: "R1".into(),
+            original_value: "22k".into(),
+        },
+        original: eda_engine::schematic::PlacedSymbol {
+            uuid: owner,
+            part: None,
+            entity: None,
+            gate: None,
+            lib_id: None,
+            reference: "R1".into(),
+            value: "22k".into(),
+            fields: vec![],
+            pins: vec![],
+            position: eda_engine::ir::geometry::Point::new(0, 0),
+            rotation: 0,
+            mirrored: false,
+            unit_selection: None,
+            display_mode: eda_engine::schematic::SymbolDisplayMode::LibraryDefault,
+            pin_overrides: vec![],
+            hidden_power_behavior:
+                eda_engine::schematic::HiddenPowerBehavior::SourceDefinedImplicit,
+        },
+        field_id: None,
+        remove: false,
+        visibility: Some(true),
+        placing: true,
+    }));
+    assert!(
+        overlay(&preview, scene).len() > overlay(&preview, &without).len(),
+        "newly exposed text gets its active owner's tether before cached keys refresh"
+    );
+    preview.schematic_authoring.cancel();
+    assert_eq!(
+        overlay(&preview, scene).len(),
+        overlay(&preview, &without).len()
+    );
+    let mut unselected = state.clone();
+    unselected.selection = datum_gui_protocol::SelectionTarget::None;
+    assert!(overlay(&unselected, scene).is_empty());
+}

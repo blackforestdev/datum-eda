@@ -64,6 +64,8 @@ impl Runtime {
                         original,
                         field_id,
                         remove: false,
+                        visibility: None,
+                        placing: false,
                     };
                     custom.check_source(e)?;
                     Ok(FieldsEditDraft::Custom(custom))
@@ -82,9 +84,21 @@ impl Runtime {
                 _ => Err("Open the selected Symbol's custom metadata first".into()),
             }
         })();
+        let base = self.workspace().schematic_scene.clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
         match result {
             Ok(draft) => {
+                if let FieldsEditDraft::Custom(custom) = &draft
+                    && custom.placing
+                {
+                    e.base = base;
+                    e.picker = false;
+                    e.position = custom
+                        .selected()
+                        .and_then(|f| f.position)
+                        .map(|p| PointNm { x: p.x, y: p.y });
+                    e.preview_dirty = true;
+                }
                 (e.reference, e.value) = draft.fields();
                 e.reference_editor =
                     datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&e.reference);
@@ -95,6 +109,65 @@ impl Runtime {
                 e.refusal = None;
             }
             Err(reason) => e.refusal = Some(reason),
+        }
+        self.invalidate_frame();
+        true
+    }
+}
+
+impl Runtime {
+    pub(in crate::runtime_schematic) fn place_custom_field(&mut self, at: PointNm) -> bool {
+        let request = (|| {
+            let e = &self.workspace().schematic_authoring;
+            let fields = e.editing.as_ref().ok_or("Field edit unavailable")?;
+            self.guard_selected_fields_edit(fields)?;
+            let draft = e.field_placement().ok_or("Field placement unavailable")?;
+            draft.check_source(e)?;
+            let field = draft.selected().ok_or("Field unavailable")?;
+            if field.position == Some(eda_engine::ir::geometry::Point::new(at.x, at.y))
+                && draft
+                    .visibility
+                    .is_none_or(|visible| visible == field.visible)
+            {
+                return Ok(None);
+            }
+            draft.point_request(at).map(Some)
+        })();
+        match request {
+            Ok(None) => {
+                self.cancel_native_schematic();
+                self.invalidate_frame();
+                true
+            }
+            Ok(Some(request)) => {
+                let e = &mut self.session.workspace_mut().schematic_authoring;
+                e.position = Some(at);
+                e.preview_dirty = true;
+                e.pending_request = Some(request);
+                self.prepare_native_schematic_frame();
+                self.queue_native_edit(
+                    datum_gui_protocol::native_edit_client::NativeEditAction::Schematic,
+                )
+            }
+            Err(reason) => {
+                self.session.workspace_mut().schematic_authoring.refusal = Some(reason);
+                self.invalidate_frame();
+                true
+            }
+        }
+    }
+    pub(in crate::runtime_schematic) fn return_custom_field_form(&mut self) -> bool {
+        let e = &mut self.session.workspace_mut().schematic_authoring;
+        if let Some(FieldsEditDraft::Custom(draft)) = &mut e.editing {
+            draft.return_to_form();
+        }
+        e.picker = true;
+        e.position = None;
+        e.preview_dirty = false;
+        let base = e.base.take();
+        if let Some(base) = base {
+            self.session.workspace_mut().schematic_scene = Some(base);
+            self.invalidate_scene();
         }
         self.invalidate_frame();
         true

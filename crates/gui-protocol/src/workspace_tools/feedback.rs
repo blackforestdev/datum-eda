@@ -8,6 +8,7 @@ pub enum EditorTool {
     Wire,
     Bus,
     BusEntry,
+    Field,
     Symbol,
     Power,
     Label,
@@ -87,6 +88,9 @@ impl EditorTool {
     pub fn active(state: &ReviewWorkspaceState) -> Self {
         if state.ui.layout.focused_content() == PaneContent::Schematic {
             let schematic = &state.schematic_authoring;
+            if schematic.field_placement().is_some() {
+                return Self::Field;
+            }
             if schematic.bus_entry.is_some() {
                 return Self::BusEntry;
             }
@@ -129,6 +133,7 @@ impl EditorTool {
             Self::Wire => "Wire",
             Self::Bus => "Bus",
             Self::BusEntry => "Bus Entry",
+            Self::Field => "Field text",
             Self::Symbol => "Symbol",
             Self::Power => "Power",
             Self::Label => "Label",
@@ -150,7 +155,7 @@ impl EditorTool {
             Self::Port => Some(("Place", "Port")),
             Self::Junction => Some(("Place", "Junction")),
             Self::NoConnect => Some(("Place", "No-Connect")),
-            Self::Select | Self::Move => None,
+            Self::Select | Self::Move | Self::Field => None,
         }
     }
 }

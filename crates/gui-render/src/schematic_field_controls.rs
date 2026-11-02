@@ -6,7 +6,7 @@ use datum_gui_protocol::schematic_authoring::{
 
 pub(super) fn extra(e: &SchematicAuthoring) -> f32 {
     match e.editing {
-        Some(FieldsEditDraft::Custom(_)) => 68.,
+        Some(FieldsEditDraft::Custom(_)) => 102.,
         Some(FieldsEditDraft::Symbol(_)) => 34.,
         _ => 0.,
     }
@@ -87,6 +87,42 @@ pub(super) fn render(
             hits,
         );
     }
+    let field = draft.selected();
+    let visible = field.is_some_and(|f| f.visible);
+    let positioned = field.is_some_and(|f| f.position.is_some());
+    let width = (panel.width - 38.) / 2.;
+    for (index, (label, target)) in [
+        (
+            if visible { "Hide" } else { "Show" },
+            if visible { C::Hide } else { C::Show },
+        ),
+        (
+            if positioned {
+                "Move text…"
+            } else {
+                "Place text…"
+            },
+            C::Place,
+        ),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        control(
+            label,
+            target,
+            available && field.is_some() && !draft.remove && draft.visibility.is_none(),
+            RectPx {
+                x: panel.x + 16. + index as f32 * (width + 6.),
+                y: panel.y + 167.,
+                width,
+                height: 27.,
+            },
+            quads,
+            text,
+            hits,
+        );
+    }
     let (identity, metadata) = if let Some(field) = draft.selected() {
         let index = draft
             .original
@@ -99,8 +135,16 @@ pub(super) fn render(
             identity,
             if draft.remove {
                 "Removal pending · Apply to remove; Cancel to keep".into()
+            } else if let Some(visible) = draft.visibility {
+                if visible {
+                    "Show pending · Apply to show".into()
+                } else {
+                    "Hide pending · Apply to hide".into()
+                }
+            } else if field.visible && field.position.is_some() {
+                "Visible · manually positioned".into()
             } else if field.visible {
-                "Visible setting preserved · not drawn by this editor".into()
+                "Position required · Place text to choose a location".into()
             } else if field.position.is_some() {
                 "Hidden · position preserved".into()
             } else {
@@ -113,7 +157,7 @@ pub(super) fn render(
             "Hidden / not drawn · no position".into(),
         )
     };
-    for (label, y) in [(identity, 170.), (metadata, 185.)] {
+    for (label, y) in [(identity, 204.), (metadata, 219.)] {
         draw_text(
             &truncate_text(&label, 66),
             panel.x + 16.,

@@ -459,12 +459,17 @@ restated.
   both, `symbol_semantics` reflect the new pin types.
 - **(8) Delivery boundary:** The selected-Symbol form supports reference/value
   and UUID-qualified custom metadata add/edit/remove through shared controls
-  (`dat-schematic-custom-fields-3bec`). New metadata is explicitly hidden and
-  unpositioned; edits preserve existing visibility, position and unrelated raw
-  symbol/field payload. Cancel/no-op do not write; accepted changes use canonical
-  history. This does not deliver canvas field placement, a bulk fields table or
-  part/entity/gate assignment. Complete normalization of the compatibility
-  set/clear surfaces and guaranteed `ComponentInstance` joins remain pending.
+  (`dat-schematic-custom-fields-3bec`). New metadata starts hidden and unpositioned.
+  Show/Hide and explicit Place/Move text controls author visibility and position
+  (`dat-schematic-field-presentation-jvu3`); Show without a position enters
+  placement rather than inventing one. Text remains owned by its Symbol, with a
+  selection/gesture tether. Supported parent transforms carry positioned fields,
+  including hidden ones, without extending occurrence/contact admission.
+  Custom-field, reference/value and parent-transform writes preserve unrelated
+  raw symbol/pin/field payload. Cancel/no-op do not write; accepted changes use
+  canonical history. Automatic position presets, a bulk fields table,
+  part/entity/gate assignment, complete public-surface normalization and
+  guaranteed `ComponentInstance` joins remain pending.
 
 ### 10. run-erc (read-only) + author-waiver
 

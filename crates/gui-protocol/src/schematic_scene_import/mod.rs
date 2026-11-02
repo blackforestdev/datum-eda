@@ -10,6 +10,7 @@ use super::*;
 mod buses;
 mod common;
 mod drawings;
+mod fields;
 mod labels;
 mod layers;
 mod power;

@@ -245,3 +245,6 @@ fn native_custom_fields_stale_prepared_edit_cannot_overwrite_newer_metadata() {
     );
     std::fs::remove_dir_all(f.root).unwrap();
 }
+
+#[path = "schematic_field_presentation_tests.rs"]
+mod presentation;

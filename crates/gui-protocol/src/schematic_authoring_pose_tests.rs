@@ -266,6 +266,38 @@ fn placed_symbol_pose_preview_keeps_asymmetric_body_pins_wire_and_payload_togeth
         }),
     );
     let authoring = SchematicAuthoring::from_model(&model).unwrap();
+    let owner = authoring.source.as_ref().unwrap().sheets[&sheet]
+        .symbols
+        .values()
+        .find(|s| s.reference == "U3")
+        .unwrap()
+        .uuid;
+    write(
+        &mut model,
+        root,
+        "datum.schematic.set_symbol_field",
+        json!({
+            "symbol":owner,"instance_path":[],"field":"custom","key":"Note","value":"field pose"
+        }),
+    );
+    let field = SchematicAuthoring::from_model(&model)
+        .unwrap()
+        .source
+        .unwrap()
+        .sheets[&sheet]
+        .symbols[&owner]
+        .fields[0]
+        .uuid;
+    write(
+        &mut model,
+        root,
+        "datum.schematic.set_symbol_field",
+        json!({
+            "symbol":owner,"instance_path":[],"field":"custom","field_id":field,"visible":true,
+            "position":{"x":42_000_000,"y":41_000_000}
+        }),
+    );
+    let authoring = SchematicAuthoring::from_model(&model).unwrap();
     let source = authoring.source.as_ref().unwrap();
     let symbol = source.sheets[&sheet]
         .symbols
@@ -339,6 +371,41 @@ fn placed_symbol_pose_preview_keeps_asymmetric_body_pins_wire_and_payload_togeth
             assert!(preview.transform_symbol(step, origin).unwrap());
         }
         let scene = preview.scene_at(origin).unwrap();
+        let field_text = scene
+            .board_texts
+            .iter()
+            .find(|t| t.text == "field pose")
+            .unwrap();
+        let expected = match pose {
+            (90, false) => PointNm {
+                x: 39_000_000,
+                y: 42_000_000,
+            },
+            (270, true) => PointNm {
+                x: 41_000_000,
+                y: 42_000_000,
+            },
+            (90, true) => PointNm {
+                x: 39_000_000,
+                y: 38_000_000,
+            },
+            (0, false) => PointNm {
+                x: 42_000_000,
+                y: 41_000_000,
+            },
+            _ => unreachable!(),
+        };
+        assert_eq!(
+            field_text.position, expected,
+            "owned field follows preview pose"
+        );
+        let original_field = base
+            .board_texts
+            .iter()
+            .find(|t| t.text == "field pose")
+            .unwrap();
+        assert_eq!(field_text.object_id, original_field.object_id);
+        assert_eq!(field_text.source_object_uuid, Some(id.id.to_string()));
         let body = scene
             .board_graphics
             .iter()

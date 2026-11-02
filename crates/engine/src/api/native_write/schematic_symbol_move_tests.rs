@@ -307,23 +307,13 @@ fn symbol_move_refuses_all_existing_and_destination_contact_kinds_without_writes
 #[test]
 fn symbol_move_refuses_positioned_owners_and_repeated_or_wrong_occurrence() {
     let mut f = fixture("symbol_move_owned_geometry");
-    for field in [true, false] {
+    {
         let mut symbol = f.symbol.clone();
-        if field {
-            symbol.fields.push(SymbolField {
-                uuid: Uuid::new_v4(),
-                key: "value".into(),
-                value: "V".into(),
-                position: Some(p(3, 4)),
-                visible: true,
-            });
-        } else {
-            symbol.pin_overrides.push(PinDisplayOverride {
-                pin: symbol.pins[0].uuid,
-                visible: true,
-                position: Some(p(3, 4)),
-            });
-        }
+        symbol.pin_overrides.push(PinDisplayOverride {
+            pin: symbol.pins[0].uuid,
+            visible: true,
+            position: Some(p(3, 4)),
+        });
         let write = build_set_schematic_symbol(&f.model, provenance(), f.sheet, &symbol).unwrap();
         commit_prepared(&mut f.model, &f.root, write).unwrap();
         let before = bytes(&f.root, &f.model);

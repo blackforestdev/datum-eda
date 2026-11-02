@@ -208,7 +208,7 @@ impl SchematicTextSink {
 
 /// Deterministic, collision-resistant text UUID derived from the owning object
 /// and a per-text role key (e.g. `refdes`, `pin-name:3`).
-fn text_uuid(object_uuid: Uuid, key: &str) -> Uuid {
+pub(super) fn text_uuid(object_uuid: Uuid, key: &str) -> Uuid {
     Uuid::new_v5(
         &Uuid::NAMESPACE_URL,
         format!("datum:schematic-projection-text:{object_uuid}:{key}").as_bytes(),

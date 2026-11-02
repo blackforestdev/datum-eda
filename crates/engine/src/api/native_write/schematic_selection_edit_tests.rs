@@ -438,3 +438,6 @@ fn repeated_source_occurrence_refuses_field_edits_and_all_supported_deletions() 
     assert_eq!(persisted_bytes(&root), before);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[path = "schematic_symbol_property_payload_tests.rs"]
+mod property_payload;
