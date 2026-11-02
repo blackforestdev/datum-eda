@@ -25,12 +25,21 @@ pub(super) fn render(
     let authoring = &state.schematic_authoring;
     if authoring.picker {
         let editing = authoring.editing.is_some();
+        let bus = authoring.bus;
+        let compact = editing || bus;
+        let entries = match &authoring.editing {
+            Some(datum_gui_protocol::schematic_authoring::FieldsEditDraft::Bus(draft)) => {
+                draft.entries.as_slice()
+            }
+            _ => &[],
+        };
+        let extra = if entries.is_empty() { 0. } else { 34. };
         let width = 480f32.min(layout.top_menu_bar.width - 32.0);
         let panel = RectPx {
             x: (layout.top_menu_bar.width - width) / 2.,
             y: 76.,
             width,
-            height: if editing { 235. } else { 350. },
+            height: if compact { 235. + extra } else { 350. },
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         push_rect_border(quads, panel, design_tokens::chrome::BORDER_STRONG, 1.);
@@ -39,7 +48,9 @@ pub(super) fn render(
             rect: panel,
         });
         draw_text(
-            if editing {
+            if bus {
+                if editing { "Edit Bus" } else { "Place Bus" }
+            } else if editing {
                 "Edit Symbol"
             } else {
                 "Place Symbol"
@@ -52,7 +63,7 @@ pub(super) fn render(
             text,
         );
         let mut y = panel.y + 50.;
-        if !editing {
+        if !compact {
             button(
                 "Browse libraries…",
                 HitTarget::SchematicBrowseLibraries,
@@ -152,18 +163,18 @@ pub(super) fn render(
                 );
             }
         }
-        y = panel.y + if editing { 60. } else { 215. };
+        y = panel.y + if compact { 60. } else { 215. };
         let mut controls = ControlMeshCache::default();
         for (label, value, editor, field, target) in [
             (
-                "Reference",
+                if bus { "Name" } else { "Reference" },
                 &authoring.reference,
                 authoring.reference_editor,
                 PlacementField::Reference,
                 HitTarget::SchematicReference,
             ),
             (
-                "Value",
+                if bus { "Members" } else { "Value" },
                 &authoring.value,
                 authoring.value_editor,
                 PlacementField::Value,
@@ -202,25 +213,71 @@ pub(super) fn render(
             )?;
             y += 35.;
         }
+        if let Some(entry) = entries.get(authoring.bus_entry_choice) {
+            let label = format!(
+                "Entry {}/{} · {:.3}, {:.3} mm",
+                authoring.bus_entry_choice + 1,
+                entries.len(),
+                entry.position.x as f64 / 1e6,
+                entry.position.y as f64 / 1e6
+            );
+            button(
+                &label,
+                HitTarget::SchematicBusEntryChoice,
+                RectPx {
+                    x: panel.x + 16.,
+                    y: panel.y + 133.,
+                    width: width - 142.,
+                    height: 27.,
+                },
+                quads,
+                text,
+                hits,
+            );
+            button(
+                "Delete entry",
+                HitTarget::SchematicBusEntryDelete,
+                RectPx {
+                    x: panel.x + width - 118.,
+                    y: panel.y + 133.,
+                    width: 102.,
+                    height: 27.,
+                },
+                quads,
+                text,
+                hits,
+            );
+        }
         if let Some(refusal) = &authoring.refusal {
             draw_text(
                 &truncate_text(refusal, 65),
                 panel.x + 16.,
-                panel.y + if editing { 140. } else { 203. },
+                panel.y + if compact { 140. + extra } else { 203. },
                 11.,
                 design_tokens::chrome::STATUS_ERROR,
                 TextFace::Ui,
                 text,
             );
         }
-        if !editing
+        if bus && authoring.refusal.is_none() {
+            draw_text(
+                "Members: existing scalar names separated by commas",
+                panel.x + 16.,
+                panel.y + 140. + extra,
+                11.,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text,
+            );
+        }
+        if !compact
             && authoring.refusal.is_none()
             && let Some(choice) = authoring.chosen.and_then(|i| authoring.choices.get(i))
         {
             draw_text(
                 choice.binding_label(),
                 panel.x + 16.,
-                panel.y + if editing { 140. } else { 203. },
+                panel.y + if compact { 140. + extra } else { 203. },
                 11.,
                 TEXT_MUTED,
                 TextFace::Ui,
@@ -232,7 +289,7 @@ pub(super) fn render(
             HitTarget::SchematicCancel,
             RectPx {
                 x: panel.x + 16.,
-                y: panel.y + if editing { 190. } else { 305. },
+                y: panel.y + if compact { 190. + extra } else { 305. },
                 width: 90.,
                 height: 29.,
             },
@@ -243,18 +300,26 @@ pub(super) fn render(
         draw_text(
             if editing {
                 "Enter: apply changes · Escape: cancel"
+            } else if bus {
+                "Enter: draw bus · Escape: cancel"
             } else {
                 "Enter: resume placement"
             },
             panel.x + 16.,
-            panel.y + if editing { 166. } else { 286. },
+            panel.y + if compact { 166. + extra } else { 286. },
             11.,
             TEXT_MUTED,
             TextFace::Ui,
             text,
         );
         button(
-            if editing { "Apply" } else { "Resume" },
+            if editing {
+                "Apply"
+            } else if bus {
+                "Draw"
+            } else {
+                "Resume"
+            },
             if editing {
                 HitTarget::SchematicEditApply
             } else {
@@ -262,7 +327,7 @@ pub(super) fn render(
             },
             RectPx {
                 x: panel.x + width - 106.,
-                y: panel.y + if editing { 190. } else { 305. },
+                y: panel.y + if compact { 190. + extra } else { 305. },
                 width: 90.,
                 height: 29.,
             },
@@ -283,6 +348,7 @@ pub(super) fn render(
             match authoring.marker {
                 Some(MarkerKind::Junction) => "Place Junction · click a wire crossing",
                 Some(MarkerKind::NoConnect) => "Place No-Connect · click an open pin",
+                None if authoring.wire && authoring.bus => "Place Bus · click vertices",
                 None if authoring.wire => "Place Wire · click vertices",
                 None => "Click: place · R: rotate · X/Y: flip horiz/vert",
             },
@@ -319,7 +385,11 @@ pub(super) fn render(
         );
         if authoring.wire {
             button(
-                "Finish wire",
+                if authoring.bus {
+                    "Finish bus"
+                } else {
+                    "Finish wire"
+                },
                 HitTarget::SchematicFinishWire,
                 RectPx {
                     x: panel.x + 115.,
@@ -439,5 +509,38 @@ mod tests {
                 "cancel removes marker placement controls"
             );
         }
+    }
+    #[test]
+    fn bus_form_and_polyline_configure_shared_fields_and_finish_control() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.schematic_authoring.bus = true;
+        state.schematic_authoring.picker = true;
+        let layout = ShellLayout::for_window(1280, 800, None);
+        let (mut quads, mut text, mut hits) = (vec![], vec![], vec![]);
+        render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+        for expected in ["Place Bus", "Name", "Members", "Draw", "Cancel"] {
+            assert!(
+                text.iter().any(|r| r.text == expected),
+                "missing {expected}"
+            );
+        }
+        assert!(
+            !hits
+                .iter()
+                .any(|h| h.target == HitTarget::SchematicBrowseLibraries)
+        );
+        state.schematic_authoring.picker = false;
+        state.schematic_authoring.wire = true;
+        text.clear();
+        hits.clear();
+        render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+        assert!(text.iter().any(|r| r.text == "Place Bus · click vertices"));
+        assert!(text.iter().any(|r| r.text == "Finish bus"));
+        assert_eq!(
+            hits.iter()
+                .filter(|h| h.target == HitTarget::SchematicFinishWire)
+                .count(),
+            1
+        );
     }
 }

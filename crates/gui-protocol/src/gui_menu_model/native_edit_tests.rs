@@ -172,6 +172,8 @@ fn schematic_place_entries_require_sheet_and_each_engine_capability() {
         ("Junction", "datum.schematic.place_junction"),
         ("No-Connect", "datum.schematic.place_noconnect"),
         ("Port", "datum.schematic.place_port"),
+        ("Bus", "datum.schematic.create_bus"),
+        ("Bus Entry", "datum.schematic.place_bus_entry"),
     ] {
         let item = place.items.iter().find(|item| item.label == label).unwrap();
         assert_eq!(item.verb.as_deref(), Some(verb));

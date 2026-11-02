@@ -68,6 +68,9 @@ impl Runtime {
                 return self.start_label_preview();
             }
             HitTarget::SchematicLabelKind => {
+                if self.workspace().schematic_authoring.bus_entry.is_some() {
+                    return self.cycle_bus_entry_choice(true);
+                }
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 if let Some(draft) = &mut e.label {
                     if draft.port_direction.is_some() {
@@ -88,6 +91,9 @@ impl Runtime {
                 }
             }
             HitTarget::SchematicLabelName => {
+                if self.workspace().schematic_authoring.bus_entry.is_some() {
+                    return self.cycle_bus_entry_choice(false);
+                }
                 if let Some(draft) = &mut self.session.workspace_mut().schematic_authoring.label {
                     draft.focus = 0;
                 }
@@ -145,6 +151,16 @@ impl Runtime {
             {
                 return self.handle_label_chrome(&HitTarget::SchematicLabelKind);
             }
+            Key::Named(NamedKey::Space | NamedKey::ArrowLeft | NamedKey::ArrowRight)
+                if picker
+                    && focus == 0
+                    && self.workspace().schematic_authoring.bus_entry.is_some() =>
+            {
+                return self.cycle_bus_entry_choice(false);
+            }
+            _ if picker
+                && focus == 0
+                && self.workspace().schematic_authoring.bus_entry.is_some() => {}
             _ if picker && focus == 0 => {
                 self.handle_shared_editor_key(event);
             }

@@ -13,6 +13,12 @@ mod named_point;
 #[path = "schematic_selection_edit.rs"]
 pub mod selected;
 pub use named_point::LabelDraft;
+#[path = "schematic_bus.rs"]
+mod bus;
+pub use bus::{BusEditDraft, FieldsEditDraft, bus_fields};
+#[path = "schematic_bus_entry.rs"]
+mod bus_entry;
+pub use bus_entry::BusEntryDraft;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {
@@ -60,6 +66,27 @@ impl MarkerKind {
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    AddBusEntry {
+        sheet: Uuid,
+        bus: Uuid,
+        instance_path: Vec<Uuid>,
+        wire: Uuid,
+        at: PointNm,
+        wire_end: eda_engine::api::native_write::schematic_bus::WireEnd,
+    },
+    DeleteBusEntry {
+        bus: Uuid,
+        bus_entry: Uuid,
+        instance_path: Vec<Uuid>,
+    },
+    CreateBus {
+        sheet: Uuid,
+        bus: Option<Uuid>,
+        instance_path: Vec<Uuid>,
+        name: String,
+        members: Vec<String>,
+        points: Option<Vec<eda_engine::ir::geometry::Point>>,
+    },
     PlacePort {
         sheet: Uuid,
         port: Option<Uuid>,
@@ -125,6 +152,39 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::AddBusEntry {
+                sheet,
+                bus,
+                instance_path,
+                wire,
+                at,
+                wire_end,
+            } => (
+                "datum.schematic.create_bus",
+                serde_json::json!({"sheet":sheet,"bus":bus,"instance_path":instance_path,"entries":[{"wire":wire,"x_nm":at.x,"y_nm":at.y,"wire_end":wire_end}]}),
+            ),
+            Self::DeleteBusEntry {
+                bus,
+                bus_entry,
+                instance_path,
+            } => (
+                "datum.schematic.delete_bus_entry",
+                serde_json::json!({"bus":bus,"bus_entry":bus_entry,"instance_path":instance_path}),
+            ),
+            Self::CreateBus {
+                sheet,
+                bus,
+                instance_path,
+                name,
+                members,
+                points,
+            } => {
+                let mut params = serde_json::json!({"sheet":sheet,"bus":bus,"instance_path":instance_path,"name":name,"members":members});
+                if let Some(points) = points {
+                    params["points"] = serde_json::json!(points);
+                }
+                ("datum.schematic.create_bus", params)
+            }
             Self::PlacePort {
                 sheet,
                 port,
@@ -260,7 +320,7 @@ impl PlacementTransform {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
     pub creation: Option<NewSchematicDraft>,
-    pub editing: Option<selected::SymbolEditDraft>,
+    pub editing: Option<FieldsEditDraft>,
     pub named_edit: Option<selected::NamedPointEditDraft>,
     pub label: Option<LabelDraft>,
     pub marker: Option<MarkerKind>,
@@ -288,6 +348,10 @@ pub struct SchematicAuthoring {
     pub rotation_deg: i32,
     pub mirrored: bool,
     pub preview_dirty: bool,
+    /// Bus configures the shared polyline gesture and two-field form.
+    pub bus: bool,
+    pub bus_entry: Option<BusEntryDraft>,
+    pub bus_entry_choice: usize,
     pub wire: bool,
     pub vertices: Vec<PointNm>,
     pub last_wire_click: Option<(PointNm, std::time::Instant)>,

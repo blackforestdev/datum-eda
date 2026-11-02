@@ -2,23 +2,27 @@
 use super::*;
 #[path = "runtime_schematic_selected_label.rs"]
 mod label_edit;
-use datum_gui_protocol::schematic_authoring::selected::{self, DeleteKind, SymbolEditDraft};
+use datum_gui_protocol::schematic_authoring::{
+    BusEditDraft, FieldsEditDraft,
+    selected::{self, DeleteKind, SymbolEditDraft},
+};
 
 impl Runtime {
     pub(crate) fn selected_symbol_edit_snapshot(
         &self,
-    ) -> Option<(SymbolEditDraft, String, String)> {
+    ) -> Option<(FieldsEditDraft, String, String)> {
         let e = &self.workspace().schematic_authoring;
         Some((e.editing.clone()?, e.reference.clone(), e.value.clone()))
     }
 
     pub(crate) fn restore_selected_symbol_edit(
         &mut self,
-        (draft, reference, value): (SymbolEditDraft, String, String),
+        (draft, reference, value): (FieldsEditDraft, String, String),
         reason: &str,
     ) {
-        let basis = draft.basis.clone();
+        let basis = draft.basis().clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
+        e.bus = matches!(draft, FieldsEditDraft::Bus(_));
         e.editing = Some(draft);
         e.reference = reference;
         e.value = value;
@@ -45,7 +49,7 @@ impl Runtime {
         selected::target(self.workspace())
     }
 
-    fn selected_schematic_idle(&self) -> Result<(), String> {
+    pub(super) fn selected_schematic_idle(&self) -> Result<(), String> {
         if !self.native_edit_available()
             || self.native_edit.pending()
             || self.check_work.pending()
@@ -62,52 +66,101 @@ impl Runtime {
     }
 
     pub(crate) fn begin_selected_symbol_edit(&mut self) -> bool {
-        let (basis, target) = match self.selected_schematic_action(true) {
-            Ok(value) => value,
+        self.begin_selected_fields_edit(false)
+    }
+    pub(crate) fn begin_selected_bus_edit(&mut self) -> bool {
+        self.begin_selected_fields_edit(true)
+    }
+    fn begin_selected_fields_edit(&mut self, bus: bool) -> bool {
+        let prepare = (|| {
+            self.selected_schematic_idle()?;
+            if bus {
+                selected::bus_admission(self.workspace())?;
+            } else {
+                selected::admission(self.workspace(), true)?;
+            }
+            let (basis, target) = selected::target(self.workspace())?;
+            let tip = self
+                .workspace()
+                .supervision
+                .journal
+                .accepted_transaction_tip
+                .as_ref()
+                .and_then(|t| t.parse().ok());
+            let sheet = self
+                .workspace()
+                .schematic_authoring
+                .source
+                .as_ref()
+                .and_then(|s| s.sheets.get(&basis.source))
+                .ok_or("Selected source unavailable")?;
+            let draft = if bus {
+                FieldsEditDraft::Bus(BusEditDraft {
+                    entries: {
+                        let mut entries: Vec<_> = sheet
+                            .bus_entries
+                            .values()
+                            .filter(|e| e.bus == target.id)
+                            .cloned()
+                            .collect();
+                        entries.sort_by_key(|e| e.uuid);
+                        entries
+                    },
+                    original: sheet
+                        .buses
+                        .get(&target.id)
+                        .cloned()
+                        .ok_or("Selected Bus unavailable")?,
+                    target,
+                    basis,
+                    tip,
+                })
+            } else {
+                let symbol = sheet
+                    .symbols
+                    .get(&target.id)
+                    .ok_or("Selected Symbol unavailable")?;
+                FieldsEditDraft::Symbol(SymbolEditDraft {
+                    original_reference: symbol.reference.clone(),
+                    original_value: symbol.value.clone(),
+                    target,
+                    basis,
+                    tip,
+                })
+            };
+            Ok::<_, String>(draft)
+        })();
+        let draft = match prepare {
+            Ok(draft) => draft,
             Err(reason) => {
                 self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
                 return true;
             }
         };
-        let symbol = self
-            .workspace()
-            .schematic_authoring
-            .source
-            .as_ref()
-            .unwrap()
-            .sheets[&basis.source]
-            .symbols[&target.id]
-            .clone();
-        let tip = self
-            .workspace()
-            .supervision
-            .journal
-            .accepted_transaction_tip
-            .as_ref()
-            .and_then(|tip| tip.parse().ok());
         self.cancel_native_schematic();
+        let basis = draft.basis().clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
-        e.reference = symbol.reference.clone();
-        e.value = symbol.value.clone();
+        (e.reference, e.value) = draft.fields();
         e.reference_editor =
             datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&e.reference);
         e.value_editor = datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&e.value);
         e.field = PlacementField::Reference;
+        e.bus = bus;
         e.picker = true;
         e.refusal = None;
-        e.editing = Some(SymbolEditDraft {
-            target,
-            basis: basis.clone(),
-            tip,
-            original_reference: symbol.reference,
-            original_value: symbol.value,
-        });
+        e.editing = Some(draft);
         self.session.workspace_mut().authoring.gesture.view_basis = Some(basis);
         self.invalidate_frame();
         true
     }
 
     pub(super) fn apply_selected_symbol_fields(&mut self) -> bool {
+        self.apply_selected_fields_action(false)
+    }
+    pub(super) fn delete_selected_bus_entry(&mut self) -> bool {
+        self.apply_selected_fields_action(true)
+    }
+    fn apply_selected_fields_action(&mut self, delete_entry: bool) -> bool {
         if self.native_edit.pending() {
             return true;
         }
@@ -125,22 +178,19 @@ impl Runtime {
                 .accepted_transaction_tip
                 .as_ref()
                 .and_then(|tip| tip.parse().ok());
-            if basis != draft.basis || target != draft.target || tip != draft.tip {
+            if &basis != draft.basis() || &target != draft.target() || tip != draft.tip() {
                 return Err(
                     "Selection or Project history changed; cancel and reopen the edit".into(),
                 );
             }
-            if e.source.as_ref().is_some_and(|source| {
-                source.sheets.values().any(|sheet| {
-                    sheet
-                        .symbols
-                        .values()
-                        .any(|s| s.uuid != target.id && s.reference == e.reference)
-                })
-            }) {
-                return Err("That reference is already in use".into());
+            if delete_entry {
+                let FieldsEditDraft::Bus(bus) = draft else {
+                    return Err("Select a Bus entry in the Bus form".into());
+                };
+                Ok(Some(bus.delete_entry(e)?))
+            } else {
+                draft.request(e)
             }
-            draft.request(&e.reference, &e.value)
         })();
         match request {
             Ok(None) => {

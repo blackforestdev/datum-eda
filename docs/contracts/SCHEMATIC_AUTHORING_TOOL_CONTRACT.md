@@ -416,9 +416,19 @@ restated.
 - **(7) Proof slice:** On `datum-test` (or a bus fixture), create bus
   D[0..3] with one entry tapping a wire; assert derived `net_info` shows
   4 member nets and the tapped wire joins D0, undo reverts.
-- **(8) Not yet supported:** The future unified bus create/edit operation
-  that folds geometry, members, and entries into one richer authoring command
-  is not yet exposed.
+- **(8) Not yet supported:** New scalar member Nets from previously unused
+  names, shared-declaration/hierarchy editing, and normalized public CLI/MCP
+  entry points remain open. Native `Place > Bus` uses the shared polyline
+  gesture and explicit names of existing, distinct canonical scalar Nets;
+  missing or ambiguous members are refused. Native `create_bus` accepts an
+  optional existing bus and member/geometry/entry parameters. Bus Entry binds
+  an existing member wire endpoint to an exact bus contact without shorting
+  scalar members. The Bus Inspector edits name/members and deletes qualified
+  owned entries. Deleting the selected bus removes its spine and owned entries
+  in one journal transaction, preserves scalar wires/Net identities, and retains
+  the semantic Bus identity under the existing projection lifecycle. Cancel,
+  undo/redo and reopening remain part of this bounded native workflow; this is
+  not complete bus/hierarchy authoring or full qualification.
 
 ### 9. set-symbol-field (reference/value/lib_id/part/entity/unit/gate/...)
 

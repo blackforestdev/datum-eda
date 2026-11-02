@@ -23,6 +23,9 @@ impl SchematicAuthoring {
         self.vertices.clear();
         self.last_wire_click = None;
         self.wire = false;
+        self.bus = false;
+        self.bus_entry = None;
+        self.bus_entry_choice = 0;
         self.pending_request = None;
         self.base.take()
     }
@@ -75,7 +78,14 @@ impl SchematicAuthoring {
             }
         }
         if let Some(label) = &self.label {
-            if let Some(edit) = &self.named_edit {
+            if let Some(entry) = &self.bus_entry {
+                if !self.picker
+                    && let Some(at) = self.position
+                    && let Ok(preview) = entry.preview(at, selected)
+                {
+                    selected.bus_entries.insert(preview.uuid, preview);
+                }
+            } else if let Some(edit) = &self.named_edit {
                 edit.preview(label, selected);
             } else if let Some(at) = self.position
                 && !self.picker
@@ -144,19 +154,33 @@ impl SchematicAuthoring {
             {
                 points.push(at);
             }
-            for pair in points.windows(2) {
-                let wire = SchematicWire {
-                    uuid: Uuid::new_v4(),
-                    from: Point {
-                        x: pair[0].x,
-                        y: pair[0].y,
-                    },
-                    to: Point {
-                        x: pair[1].x,
-                        y: pair[1].y,
-                    },
-                };
-                selected.wires.insert(wire.uuid, wire);
+            if self.bus {
+                if let Ok((name, members)) = bus_fields(&self.reference, &self.value) {
+                    selected.buses.insert(
+                        Uuid::nil(),
+                        eda_engine::schematic::Bus {
+                            uuid: Uuid::nil(),
+                            name,
+                            members,
+                            segments: points.iter().map(|p| Point { x: p.x, y: p.y }).collect(),
+                        },
+                    );
+                }
+            } else {
+                for pair in points.windows(2) {
+                    let wire = SchematicWire {
+                        uuid: Uuid::new_v4(),
+                        from: Point {
+                            x: pair[0].x,
+                            y: pair[0].y,
+                        },
+                        to: Point {
+                            x: pair[1].x,
+                            y: pair[1].y,
+                        },
+                    };
+                    selected.wires.insert(wire.uuid, wire);
+                }
             }
         }
         self.project_source(&source, sheet, base, root)

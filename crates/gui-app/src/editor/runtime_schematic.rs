@@ -2,8 +2,10 @@
 use super::*;
 use datum_gui_protocol::native_edit_client::NativeEditAction;
 use datum_gui_protocol::schematic_authoring::{
-    PlacementField, PlacementTransform, SchematicEditRequest,
+    PlacementField, PlacementTransform, SchematicEditRequest, bus_fields,
 };
+#[path = "runtime_schematic_bus_entry.rs"]
+mod bus_entry;
 #[path = "runtime_schematic_junction.rs"]
 mod junction;
 #[path = "runtime_schematic_label.rs"]
@@ -22,6 +24,20 @@ impl Runtime {
         if !wire {
             return self.browse_schematic_libraries();
         }
+        true
+    }
+    pub(crate) fn begin_native_bus(&mut self) -> bool {
+        if !self.prepare_native_schematic(false) {
+            return true;
+        }
+        let e = &mut self.session.workspace_mut().schematic_authoring;
+        e.bus = true;
+        e.chosen = None;
+        e.reference.clear();
+        e.value.clear();
+        e.reference_editor = datum_gui_protocol::single_line_editor::SingleLineEditor::at_end("");
+        e.value_editor = datum_gui_protocol::single_line_editor::SingleLineEditor::at_end("");
+        self.invalidate_frame();
         true
     }
     fn prepare_native_schematic(&mut self, wire: bool) -> bool {
@@ -87,7 +103,17 @@ impl Runtime {
             return true;
         }
         let editor = &mut self.session.workspace_mut().schematic_authoring;
-        if editor.chosen.is_none()
+        if editor.bus {
+            match bus_fields(&editor.reference, &editor.value) {
+                Ok(_) => {
+                    editor.picker = false;
+                    editor.wire = true;
+                    editor.preview_dirty = true;
+                    editor.refusal = None;
+                }
+                Err(reason) => editor.refusal = Some(reason),
+            }
+        } else if editor.chosen.is_none()
             || editor.reference.trim().is_empty()
             || editor.taken_references.contains(&editor.reference)
         {
@@ -113,6 +139,17 @@ impl Runtime {
             return self.handle_label_chrome(target);
         }
         match target {
+            HitTarget::SchematicBusEntryChoice => {
+                let e = &mut self.session.workspace_mut().schematic_authoring;
+                if let Some(datum_gui_protocol::schematic_authoring::FieldsEditDraft::Bus(draft)) =
+                    &e.editing
+                {
+                    if !draft.entries.is_empty() {
+                        e.bus_entry_choice = (e.bus_entry_choice + 1) % draft.entries.len();
+                    }
+                }
+            }
+            HitTarget::SchematicBusEntryDelete => return self.delete_selected_bus_entry(),
             HitTarget::SchematicBrowseLibraries => return self.browse_schematic_libraries(),
             HitTarget::SchematicLibraryChoice(index) => {
                 self.session
@@ -258,7 +295,9 @@ impl Runtime {
                 return self.apply_selected_symbol_fields();
             }
             Key::Named(NamedKey::Enter)
-                if picker && self.workspace().schematic_authoring.choices.is_empty() =>
+                if picker
+                    && !self.workspace().schematic_authoring.bus
+                    && self.workspace().schematic_authoring.choices.is_empty() =>
             {
                 return self.browse_schematic_libraries();
             }
@@ -445,6 +484,9 @@ impl Runtime {
         if self.workspace().schematic_authoring.marker.is_some() {
             return self.place_native_marker(at);
         }
+        if self.workspace().schematic_authoring.bus_entry.is_some() {
+            return self.place_native_bus_entry(at);
+        }
         if self.workspace().schematic_authoring.label.is_some() {
             return self.place_native_label(at);
         }
@@ -504,14 +546,14 @@ impl Runtime {
         }
         e.position = e.vertices.last().copied();
         e.preview_dirty = true;
-        e.pending_request = Some(SchematicEditRequest::DrawWire {
-            sheet: e.sheet.unwrap(),
-            points: e
-                .vertices
-                .iter()
-                .map(|p| eda_engine::ir::geometry::Point { x: p.x, y: p.y })
-                .collect(),
-        });
+        match e.polyline_request() {
+            Ok(request) => e.pending_request = Some(request),
+            Err(reason) => {
+                e.refusal = Some(reason);
+                self.invalidate_frame();
+                return true;
+            }
+        }
         self.prepare_native_schematic_frame();
         self.queue_native_edit(NativeEditAction::Schematic)
     }

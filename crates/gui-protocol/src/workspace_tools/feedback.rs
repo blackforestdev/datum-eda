@@ -6,6 +6,8 @@ pub enum EditorTool {
     Select,
     Move,
     Wire,
+    Bus,
+    BusEntry,
     Symbol,
     Power,
     Label,
@@ -85,6 +87,12 @@ impl EditorTool {
     pub fn active(state: &ReviewWorkspaceState) -> Self {
         if state.ui.layout.focused_content() == PaneContent::Schematic {
             let schematic = &state.schematic_authoring;
+            if schematic.bus_entry.is_some() {
+                return Self::BusEntry;
+            }
+            if schematic.bus {
+                return Self::Bus;
+            }
             if schematic.wire {
                 return Self::Wire;
             }
@@ -119,6 +127,8 @@ impl EditorTool {
             Self::Select => "Select",
             Self::Move => "Move",
             Self::Wire => "Wire",
+            Self::Bus => "Bus",
+            Self::BusEntry => "Bus Entry",
             Self::Symbol => "Symbol",
             Self::Power => "Power",
             Self::Label => "Label",
@@ -132,6 +142,8 @@ impl EditorTool {
     pub fn menu_entry(self) -> Option<(&'static str, &'static str)> {
         match self {
             Self::Wire => Some(("Place", "Wire")),
+            Self::Bus => Some(("Place", "Bus")),
+            Self::BusEntry => Some(("Place", "Bus Entry")),
             Self::Symbol => Some(("Place", "Symbol")),
             Self::Power => Some(("Place", "Power Port")),
             Self::Label => Some(("Place", "Net Label")),

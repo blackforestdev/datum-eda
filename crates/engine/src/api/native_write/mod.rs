@@ -48,6 +48,7 @@ pub mod process;
 pub mod project;
 pub mod registry;
 pub mod revision;
+pub mod schematic_bus;
 pub mod schematic_connectivity;
 pub mod schematic_edit;
 mod schematic_label_edit;

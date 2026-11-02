@@ -21,6 +21,7 @@ pub enum DeleteKind {
     Junction,
     NoConnect,
     Port,
+    Bus,
 }
 impl DeleteKind {
     pub fn from_class(class: Class) -> Result<Self, String> {
@@ -31,9 +32,11 @@ impl DeleteKind {
             Class::Junction => Ok(Self::Junction),
             Class::NoConnect => Ok(Self::NoConnect),
             Class::Port => Ok(Self::Port),
-            _ => {
-                Err("Select one Symbol, Wire, Label, Port, Junction or No-Connect to delete".into())
-            }
+            Class::BusSection => Ok(Self::Bus),
+            _ => Err(
+                "Select one Symbol, Wire, Label, Port, Bus, Junction or No-Connect to delete"
+                    .into(),
+            ),
         }
     }
     pub fn verb_and_key(self) -> (&'static str, &'static str) {
@@ -44,6 +47,7 @@ impl DeleteKind {
             Self::Junction => ("datum.schematic.delete_junction", "junction"),
             Self::NoConnect => ("datum.schematic.delete_noconnect", "noconnect"),
             Self::Port => ("datum.schematic.delete_port", "port"),
+            Self::Bus => ("datum.schematic.delete_bus", "bus"),
         }
     }
 }
@@ -116,11 +120,12 @@ pub fn target(
         Class::Junction => sheet.junctions.contains_key(&id.id),
         Class::NoConnect => sheet.noconnects.contains_key(&id.id),
         Class::Port => sheet.ports.contains_key(&id.id),
+        Class::BusSection => sheet.buses.contains_key(&id.id),
         _ => false,
     };
     if !present {
         return Err(
-            "Select a Symbol, Wire, Label, Port, Junction or No-Connect in this source sheet"
+            "Select a Symbol, Wire, Label, Port, Bus, Junction or No-Connect in this source sheet"
                 .into(),
         );
     }
@@ -137,6 +142,18 @@ pub fn admission(state: &ReviewWorkspaceState, edit_fields: bool) -> Result<&'st
     } else {
         DeleteKind::from_class(id.class)?.verb_and_key().0
     };
+    if let Some(reason) = crate::gui_menu_model::native_edit_unavailable_reason(state, verb) {
+        return Err(reason.into());
+    }
+    Ok(verb)
+}
+
+pub fn bus_admission(state: &ReviewWorkspaceState) -> Result<&'static str, String> {
+    let (_, target) = target(state)?;
+    if target.class != Class::BusSection {
+        return Err("Select one current Bus to edit its members".into());
+    }
+    let verb = "datum.schematic.create_bus";
     if let Some(reason) = crate::gui_menu_model::native_edit_unavailable_reason(state, verb) {
         return Err(reason.into());
     }

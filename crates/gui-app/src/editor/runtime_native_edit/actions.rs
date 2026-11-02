@@ -7,6 +7,8 @@ impl Runtime {
             "datum.schematic.place_symbol" => self.begin_native_schematic(false),
             "datum.schematic.draw_wire" => self.begin_native_schematic(true),
             "datum.schematic.place_port" => self.begin_native_port(),
+            "datum.schematic.create_bus" => self.begin_native_bus(),
+            "datum.schematic.place_bus_entry" => self.begin_native_bus_entry(),
             "datum.schematic.rename_label" => self.begin_selected_label_edit(),
             "datum.schematic.place_junction" => self
                 .begin_native_marker(datum_gui_protocol::schematic_authoring::MarkerKind::Junction),
@@ -20,6 +22,7 @@ impl Runtime {
             | "datum.schematic.delete_wire"
             | "datum.schematic.delete_label"
             | "datum.schematic.delete_port"
+            | "datum.schematic.delete_bus"
             | "datum.schematic.delete_junction"
             | "datum.schematic.delete_noconnect") => self.delete_selected_schematic_verb(verb),
             "datum.schematic.place_label" => {

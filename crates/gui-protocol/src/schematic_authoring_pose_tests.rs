@@ -450,3 +450,6 @@ mod label_edit_tests;
 
 #[path = "schematic_marking_context_tests.rs"]
 mod marking_context_tests;
+
+#[path = "schematic_bus_tests.rs"]
+mod bus_tests;

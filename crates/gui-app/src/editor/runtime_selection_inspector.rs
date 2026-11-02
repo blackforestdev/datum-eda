@@ -37,7 +37,15 @@ impl Runtime {
                             self.begin_selected_label_edit()
                         }
                     } else {
-                        self.begin_selected_symbol_edit()
+                        if datum_gui_protocol::schematic_authoring::selected::bus_admission(
+                            self.workspace(),
+                        )
+                        .is_ok()
+                        {
+                            self.begin_selected_bus_edit()
+                        } else {
+                            self.begin_selected_symbol_edit()
+                        }
                     }
                 } else {
                     self.log_console_refusal(

@@ -109,7 +109,8 @@ fn render_impl(
         let basis = datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
             state, context, Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation)),
         );
-        if datum_gui_protocol::schematic_authoring::selected::admission(state, true).is_ok() {
+        if datum_gui_protocol::schematic_authoring::selected::admission(state, true).is_ok()
+            || datum_gui_protocol::schematic_authoring::selected::bus_admission(state).is_ok() {
             Some(HitTarget::InspectorEditSymbol(basis))
         } else if datum_gui_protocol::schematic_authoring::selected::label_admission(state).is_ok()
             || datum_gui_protocol::schematic_authoring::selected::port_admission(state).is_ok() {
@@ -272,7 +273,13 @@ fn render_impl(
                 "Edit label name/kind…"
             }
         } else {
-            "Edit symbol fields…"
+            if view.focus().is_some_and(|id| {
+                id.class == datum_gui_protocol::AuthoredSelectionClass::BusSection
+            }) {
+                "Edit bus members/entries…"
+            } else {
+                "Edit symbol fields…"
+            }
         };
         row(label, Some(target), false, false);
     }

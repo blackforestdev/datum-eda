@@ -467,7 +467,7 @@ Admission and repair evidence are historical; current selection and authorizatio
 
 [Delivered foundations and twenty-task outcome map](progress/production_foundation_details.md#native-product-outcomes--initial-reorganization) connects library → schematic → PCB → manufacturing to existing owners and actual gaps. It is navigation, not selection, execution authority or full qualification.
 
-[Schematic authoring](../docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md): bounded routine delivery covers Junction/No-Connect placement and singleton deletion, exact off-grid junction acquisition, Inspector label/power editing, and supported right-click label/symbol commands targeting the clicked object. Interface ports add placement, name/direction editing and qualified deletion through shared controls, with cancellation, history and reopening (`dat-schematic-interface-ports-7l5q`). Full hierarchy authoring, the remaining tools and full qualification remain open; this does not advance the Active Frontier.
+[Schematic authoring](../docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md): bounded routine delivery covers Junction/No-Connect placement/deletion, exact off-grid junction acquisition, label/power editing, supported clicked-object context commands, and interface-port placement/editing/deletion. Bus authoring adds shared polyline drawing, explicit existing scalar members, qualified entry taps, member editing and atomic removal of owned geometry (`dat-schematic-bus-authoring-k6fl`), with cancellation, history and reopening. New member-net creation, full hierarchy authoring, the remaining tools and full qualification remain open; this does not advance the Active Frontier.
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 

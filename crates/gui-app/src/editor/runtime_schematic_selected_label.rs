@@ -1,12 +1,12 @@
 //! Existing label form configured for one source-qualified in-place edit.
 use super::*;
 use datum_gui_protocol::schematic_authoring::{
-    LabelDraft,
+    FieldsEditDraft, LabelDraft,
     selected::{LabelEditDraft, NamedPointEditDraft, PortEditDraft},
 };
 
 pub(crate) enum SelectedSchematicEditSnapshot {
-    Symbol(SymbolEditDraft, String, String),
+    Symbol(FieldsEditDraft, String, String),
     NamedPoint(
         NamedPointEditDraft,
         LabelDraft,
@@ -24,7 +24,7 @@ impl Runtime {
         if let Some(draft) = &e.named_edit {
             return Some((draft.basis(), draft.tip()));
         }
-        e.editing.as_ref().map(|draft| (&draft.basis, draft.tip))
+        e.editing.as_ref().map(|draft| (draft.basis(), draft.tip()))
     }
     pub(crate) fn selected_schematic_edit_snapshot(&self) -> Option<SelectedSchematicEditSnapshot> {
         let e = &self.workspace().schematic_authoring;

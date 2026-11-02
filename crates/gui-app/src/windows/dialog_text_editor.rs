@@ -61,6 +61,9 @@ impl Runtime {
                 == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
             && self.workspace().schematic_authoring.picker
         {
+            if self.workspace().schematic_authoring.bus_entry.is_some() {
+                return None;
+            }
             if let Some(label) = &self.workspace().schematic_authoring.label {
                 return (label.focus == 0).then_some(Target::SchematicLabel);
             }
@@ -88,6 +91,9 @@ impl Runtime {
         let ui = &self.workspace().ui;
         match target {
             Target::SchematicLabel => {
+                if self.workspace().schematic_authoring.bus_entry.is_some() {
+                    return None;
+                }
                 let label = self.workspace().schematic_authoring.label.as_ref()?;
                 Some(Snapshot {
                     text: label.name.clone(),

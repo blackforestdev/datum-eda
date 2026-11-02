@@ -25,7 +25,11 @@ pub(super) fn render(
     });
     if !e.picker {
         draw_text(
-            if label.port_direction.is_some() {
+            if e.bus_entry.is_some() {
+                e.refusal
+                    .as_deref()
+                    .unwrap_or("Click bus spine · Tab: bus/end · Esc: cancel")
+            } else if label.port_direction.is_some() {
                 "Click to place · Tab: edit name/direction · Esc: cancel"
             } else {
                 "Click to place · Tab: edit name/kind · Esc: cancel"
@@ -53,7 +57,9 @@ pub(super) fn render(
         return Ok(());
     }
     draw_text(
-        if label.port_direction.is_some() {
+        if e.bus_entry.is_some() {
+            "Place Bus Entry"
+        } else if label.port_direction.is_some() {
             if e.named_edit.is_some() {
                 "Edit Port"
             } else {
@@ -74,7 +80,9 @@ pub(super) fn render(
         text,
     );
     draw_text(
-        if label.port_direction.is_some() {
+        if e.bus_entry.is_some() {
+            "Bus"
+        } else if label.port_direction.is_some() {
             "Name"
         } else {
             "Net name"
@@ -89,29 +97,55 @@ pub(super) fn render(
     let focused = state.ui.active_menu.is_none()
         && state.ui.focus == datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused);
     let mut controls = ControlMeshCache::default();
-    crate::single_line_control::paint(
-        &label.name,
-        if label.port_direction.is_some() {
-            "Port name…"
-        } else {
-            "GND, VCC, signal…"
-        },
-        label.editor,
-        focused && label.focus == 0,
-        true,
-        RectPx {
+    if let Some(entry) = &e.bus_entry {
+        let rect = RectPx {
             x: panel.x + 90.,
             y: panel.y + 50.,
             width: width - 106.,
             height: 34.,
-        },
-        &mut ControlPainter::new(quads, &mut controls, 1.),
-        text,
-        hits,
-        HitTarget::SchematicLabelName,
-    )?;
+        };
+        let name = entry
+            .bus()
+            .map(|bus| format!("{} · {}", bus.name, &bus.uuid.to_string()[..8]))
+            .unwrap_or_else(|| "No Bus".into());
+        button(
+            &truncate_text(&name, 39),
+            HitTarget::SchematicLabelName,
+            rect,
+            quads,
+            text,
+            hits,
+        );
+        if focused && label.focus == 0 {
+            push_rect_border(quads, rect, TEXT_ACCENT, 2.);
+        }
+    } else {
+        crate::single_line_control::paint(
+            &label.name,
+            if label.port_direction.is_some() {
+                "Port name…"
+            } else {
+                "GND, VCC, signal…"
+            },
+            label.editor,
+            focused && label.focus == 0,
+            true,
+            RectPx {
+                x: panel.x + 90.,
+                y: panel.y + 50.,
+                width: width - 106.,
+                height: 34.,
+            },
+            &mut ControlPainter::new(quads, &mut controls, 1.),
+            text,
+            hits,
+            HitTarget::SchematicLabelName,
+        )?;
+    }
     draw_text(
-        if label.port_direction.is_some() {
+        if e.bus_entry.is_some() {
+            "Wire end"
+        } else if label.port_direction.is_some() {
             "Direction"
         } else {
             "Kind"
@@ -130,7 +164,9 @@ pub(super) fn render(
         height: 29.,
     };
     button(
-        label.kind_name(),
+        e.bus_entry
+            .as_ref()
+            .map_or_else(|| label.kind_name(), |entry| entry.end_name()),
         HitTarget::SchematicLabelKind,
         kind,
         quads,
@@ -142,7 +178,9 @@ pub(super) fn render(
     }
     draw_text(
         &truncate_text(
-            e.refusal.as_deref().unwrap_or(if e.named_edit.is_some() {
+            e.refusal.as_deref().unwrap_or(if e.bus_entry.is_some() {
+                "Bus/end: click or arrow keys · Enter: preview"
+            } else if e.named_edit.is_some() {
                 "Live preview · Enter: apply · Escape: cancel"
             } else {
                 "Enter: preview · click canvas to place · Escape: cancel"

@@ -56,6 +56,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::schematic_label_edit::VERBS);
         verbs.extend_from_slice(super::schematic_marker::VERBS);
         verbs.extend_from_slice(super::schematic_port::VERBS);
+        verbs.extend_from_slice(super::schematic_bus::VERBS);
         verbs.extend_from_slice(super::schematic_selection_edit::VERBS);
         verbs.extend_from_slice(super::library_gui::VERBS);
         verbs.extend_from_slice(super::library_acquisition::VERBS);
@@ -151,7 +152,10 @@ mod tests {
                 "datum.project.set_name",
                 "datum.project.set_rule",
                 "datum.project.set_rules",
+                "datum.schematic.create_bus",
                 "datum.schematic.create_sheet",
+                "datum.schematic.delete_bus",
+                "datum.schematic.delete_bus_entry",
                 "datum.schematic.delete_junction",
                 "datum.schematic.delete_label",
                 "datum.schematic.delete_noconnect",
@@ -161,6 +165,7 @@ mod tests {
                 "datum.schematic.draw_wire",
                 "datum.schematic.move_label",
                 "datum.schematic.move_symbol",
+                "datum.schematic.place_bus_entry",
                 "datum.schematic.place_junction",
                 "datum.schematic.place_label",
                 "datum.schematic.place_marker",
