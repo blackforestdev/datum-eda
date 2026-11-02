@@ -8,6 +8,8 @@ use eda_engine::schematic::LabelKind;
 use eda_engine::substrate::{DesignModel, ElectricalSelectionSnapshot};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+#[path = "schematic_selection_edit.rs"]
+pub mod selected;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {
@@ -35,6 +37,17 @@ impl LibrarySymbolChoice {
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    EditSymbol {
+        symbol: Uuid,
+        instance_path: Vec<Uuid>,
+        reference: String,
+        value: String,
+    },
+    DeleteObject {
+        object: Uuid,
+        instance_path: Vec<Uuid>,
+        kind: selected::DeleteKind,
+    },
     CreateSheet {
         sheet: Uuid,
         name: String,
@@ -66,6 +79,25 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::EditSymbol {
+                symbol,
+                instance_path,
+                reference,
+                value,
+            } => (
+                "datum.schematic.set_symbol_reference",
+                serde_json::json!({"symbol":symbol,"instance_path":instance_path,"reference":reference,"value":value}),
+            ),
+            Self::DeleteObject {
+                object,
+                instance_path,
+                kind,
+            } => {
+                let (verb, key) = kind.verb_and_key();
+                let mut params = serde_json::json!({"instance_path":instance_path});
+                params[key] = serde_json::json!(object);
+                (verb, params)
+            }
             Self::CreateSheet { sheet, name } => (
                 "datum.schematic.create_sheet",
                 serde_json::json!({"sheet":sheet,"name":name}),
@@ -162,6 +194,7 @@ impl LabelDraft {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
     pub creation: Option<NewSchematicDraft>,
+    pub editing: Option<selected::SymbolEditDraft>,
     pub label: Option<LabelDraft>,
     pub move_paths: std::collections::BTreeMap<Uuid, Vec<Uuid>>,
     pub move_bases: std::collections::BTreeMap<

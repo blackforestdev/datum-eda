@@ -40,6 +40,7 @@ impl Runtime {
         match target {
             HitTarget::InspectorSectionToggle { .. }
             | HitTarget::InspectorRunErc(_)
+            | HitTarget::InspectorEditSymbol(_)
             | HitTarget::InspectorContextScroll { .. }
             | HitTarget::InspectorSectionNavigation { .. } => {
                 unreachable!("Inspector controls return above")
@@ -68,6 +69,7 @@ impl Runtime {
             | HitTarget::SchematicReference
             | HitTarget::SchematicValue
             | HitTarget::SchematicPlace
+            | HitTarget::SchematicEditApply
             | HitTarget::SchematicCancel
             | HitTarget::SchematicFinishWire => self.handle_schematic_chrome(target),
             HitTarget::NewProjectModal

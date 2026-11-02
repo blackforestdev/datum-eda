@@ -17,6 +17,7 @@ pub enum HitTarget {
         section: datum_gui_protocol::inspector_context::InspectorSectionId,
         basis: Option<datum_gui_protocol::inspector_context::InspectorActionBasis>,
     },
+    InspectorEditSymbol(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorRunErc(datum_gui_protocol::inspector_context::InspectorActionBasis),
     InspectorContextScroll {
         total: usize,
@@ -56,6 +57,7 @@ pub enum HitTarget {
     SchematicReference,
     SchematicValue,
     SchematicPlace,
+    SchematicEditApply,
     SchematicCancel,
     SchematicFinishWire,
     FolderBrowser(datum_gui_protocol::FolderBrowserFocus),

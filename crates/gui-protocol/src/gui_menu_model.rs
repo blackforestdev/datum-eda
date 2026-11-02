@@ -73,6 +73,11 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
+            | "datum.schematic.set_symbol_reference"
+            | "datum.schematic.set_symbol_value"
+            | "datum.schematic.delete_symbol"
+            | "datum.schematic.delete_wire"
+            | "datum.schematic.delete_label"
     )
 }
 /// Statically build-supported edit verbs (journal carve-out + native-edit). Availability
@@ -153,6 +158,30 @@ impl GuiMenuItem {
     /// Contextual production state used by paint and invocation. The legacy
     /// project-only query cannot establish focused-camera eligibility.
     pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
+        use crate::schematic_authoring::selected;
+        if matches!(
+            self.binding(),
+            GuiMenuBinding::GuiLocal("schematic.selection.delete")
+        ) {
+            let Ok((_, target)) = selected::target(state) else {
+                return Some("Select one current schematic Symbol, Wire or Label");
+            };
+            let Ok(kind) = selected::DeleteKind::from_class(target.class) else {
+                return Some("This selected object cannot be deleted here");
+            };
+            return native_edit_unavailable_reason(state, kind.verb_and_key().0);
+        }
+        if matches!(
+            self.binding(),
+            GuiMenuBinding::GuiLocal("schematic.symbol_fields.open")
+                | GuiMenuBinding::Verb(
+                    "datum.schematic.set_symbol_reference" | "datum.schematic.set_symbol_value"
+                )
+        ) && !selected::target(state)
+            .is_ok_and(|(_, target)| target.class == crate::AuthoredSelectionClass::Symbol)
+        {
+            return Some("Select one current schematic Symbol to edit its fields");
+        }
         if let GuiMenuBinding::GuiLocal(key) = self.binding()
             && let Some(action_registry::GuiLocalHandler::OpenRecentProject(index)) =
                 action_registry::gui_local_handler(key)
@@ -196,6 +225,9 @@ impl GuiMenuItem {
         // catalog (before describe returns, or no backing) is an absent catalog, so the
         // entry is disabled rather than enabled-by-default.
         let native_verb = match self.binding() {
+            GuiMenuBinding::GuiLocal("schematic.symbol_fields.open") => {
+                Some("datum.schematic.set_symbol_reference")
+            }
             GuiMenuBinding::GuiLocal("schematic.power_port.open") => {
                 Some("datum.schematic.place_label")
             }

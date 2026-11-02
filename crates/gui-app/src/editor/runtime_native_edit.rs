@@ -8,26 +8,13 @@ use datum_gui_protocol::{
     native_edit_client::{NativeEditAction, NativeEditIntent, NativeProjectClient},
 };
 use std::sync::{Arc, Mutex, mpsc};
+#[path = "runtime_native_edit/actions.rs"]
+mod actions;
 #[path = "runtime_native_edit/catalog.rs"]
 mod catalog;
+use catalog::native_write_verb_ids;
 #[path = "runtime_native_edit/move_acquisition.rs"]
 mod move_acquisition;
-
-/// Extract the native-write verb ids from a `native.describe` response's `native_write_verbs`
-/// catalog (W3 capability discovery). Used to populate truthful native-edit menu enablement.
-fn native_write_verb_ids(describe: &serde_json::Value) -> std::collections::BTreeSet<String> {
-    describe
-        .get("native_write_verbs")
-        .and_then(serde_json::Value::as_array)
-        .map(|verbs| {
-            verbs
-                .iter()
-                .filter_map(|verb| verb.get("id").and_then(serde_json::Value::as_str))
-                .map(str::to_owned)
-                .collect()
-        })
-        .unwrap_or_default()
-}
 
 struct Answer {
     intent: NativeEditIntent,
@@ -310,40 +297,6 @@ impl Runtime {
             && self.native_edit.pending_position.is_some()
             && !self.native_edit.preview_awaiting_presentation
     }
-    pub(super) fn activate_native_edit_menu(&mut self, verb: Option<&str>) -> Option<bool> {
-        Some(match verb? {
-            "datum.schematic.create_sheet" => self.begin_schematic_creation(),
-            "datum.schematic.place_symbol" => self.begin_native_schematic(false),
-            "datum.schematic.draw_wire" => self.begin_native_schematic(true),
-            "datum.schematic.place_label" => {
-                self.begin_native_label(eda_engine::schematic::LabelKind::Local)
-            }
-            "datum.journal.undo" => self.queue_native_history(false),
-            "datum.journal.redo" => self.queue_native_history(true),
-            "datum.pcb.move_component" => self.set_workspace_tool(WorkspaceTool::Move),
-            _ => return None,
-        })
-    }
-    pub(super) fn queue_native_history(&mut self, redo: bool) -> bool {
-        let tip = self
-            .workspace()
-            .supervision
-            .journal
-            .accepted_transaction_tip
-            .clone();
-        let Some(tip) = tip.and_then(|t| t.parse().ok()) else {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "No journal transaction is available",
-            );
-            return true;
-        };
-        self.queue_native_edit(if redo {
-            NativeEditAction::Redo { expected_tip: tip }
-        } else {
-            NativeEditAction::Undo { expected_tip: tip }
-        })
-    }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
         let creating = matches!(action, NativeEditAction::Schematic)
             && matches!(
@@ -480,6 +433,12 @@ impl Runtime {
             intent.expected_revision = draft.revision.clone();
             intent.expected_tip = draft.tip;
         }
+        if matches!(action, NativeEditAction::Schematic)
+            && let Some(draft) = &self.workspace().schematic_authoring.editing
+        {
+            intent.expected_revision = draft.basis.revision.clone();
+            intent.expected_tip = draft.tip;
+        }
         if matches!(action, NativeEditAction::Schematic) {
             intent.schematic = self
                 .session
@@ -582,6 +541,7 @@ impl Runtime {
             _ => None,
         };
         let draft = self.workspace().schematic_authoring.creation.clone();
+        let editing = self.selected_symbol_edit_snapshot();
         let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
             .then(|| self.acquisition_placement_origin())
             .flatten();
@@ -620,6 +580,9 @@ impl Runtime {
         } else if let (Err(reason), Some(mut draft)) = (&answer.result, draft) {
             draft.refusal = Some(reason.clone());
             self.session.workspace_mut().schematic_authoring.creation = Some(draft);
+        }
+        if let (Err(reason), Some(editing)) = (&answer.result, editing) {
+            self.restore_selected_symbol_edit(editing, reason);
         }
         if acquired && let Some(origin) = placement {
             self.resume_library_placement(origin, placement_symbol);

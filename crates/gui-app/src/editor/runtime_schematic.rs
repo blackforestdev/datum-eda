@@ -8,6 +8,8 @@ use datum_gui_protocol::schematic_authoring::{
 mod label;
 #[path = "runtime_schematic_library.rs"]
 mod library;
+#[path = "runtime_schematic_selected.rs"]
+mod selected;
 impl Runtime {
     pub(super) fn begin_native_schematic(&mut self, wire: bool) -> bool {
         if !self.prepare_native_schematic(wire) {
@@ -143,6 +145,7 @@ impl Runtime {
                 }
             }
             HitTarget::SchematicPlace => return self.start_symbol_preview(),
+            HitTarget::SchematicEditApply => return self.apply_selected_symbol_fields(),
             HitTarget::SchematicCancel => {
                 self.cancel_native_schematic();
             }
@@ -170,6 +173,14 @@ impl Runtime {
         if !self.workspace().schematic_authoring.active()
             && !self.workspace().schematic_authoring.picker
         {
+            if self.workspace().ui.layout.focused_content() == PaneContent::Schematic
+                && matches!(event.logical_key, Key::Named(NamedKey::Delete))
+                && !self.modifiers.control_key()
+                && !self.modifiers.alt_key()
+                && !self.modifiers.super_key()
+            {
+                return self.delete_selected_schematic();
+            }
             if self.workspace().ui.layout.focused_content() == PaneContent::Schematic
                 && !self.modifiers.control_key()
                 && matches!(&event.logical_key,Key::Character(key) if key.eq_ignore_ascii_case("w"))
@@ -220,6 +231,11 @@ impl Runtime {
             }
             Key::Named(NamedKey::Escape) => {
                 self.cancel_native_schematic();
+            }
+            Key::Named(NamedKey::Enter)
+                if picker && self.workspace().schematic_authoring.editing.is_some() =>
+            {
+                return self.apply_selected_symbol_fields();
             }
             Key::Named(NamedKey::Enter)
                 if picker && self.workspace().schematic_authoring.choices.is_empty() =>

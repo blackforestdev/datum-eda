@@ -1,4 +1,4 @@
-//! Inspector controls configure the shared consumer; they have no writer.
+//! Inspector controls navigate the shared consumer or open guarded native actions.
 use super::*;
 impl Runtime {
     pub(super) fn activate_selection_inspector_target(
@@ -22,6 +22,18 @@ impl Runtime {
                     self.invalidate_frame();
                 }
                 true
+            }
+            HitTarget::InspectorEditSymbol(basis) => {
+                if basis.is_current(self.workspace()) {
+                    self.set_application_focus(ApplicationFocus::Editor(basis.pane));
+                    self.begin_selected_symbol_edit()
+                } else {
+                    self.log_console_refusal(
+                        ConsoleFeedbackSource::Viewport,
+                        "Inspector selection changed; choose the current Symbol again",
+                    );
+                    true
+                }
             }
             HitTarget::InspectorRunErc(basis) => {
                 if basis.is_current(self.workspace()) {

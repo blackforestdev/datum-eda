@@ -21,12 +21,13 @@ pub(super) fn render(
     }
     let authoring = &state.schematic_authoring;
     if authoring.picker {
+        let editing = authoring.editing.is_some();
         let width = 480f32.min(layout.top_menu_bar.width - 32.0);
         let panel = RectPx {
             x: (layout.top_menu_bar.width - width) / 2.,
             y: 76.,
             width,
-            height: 350.,
+            height: if editing { 235. } else { 350. },
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         push_rect_border(quads, panel, design_tokens::chrome::BORDER_STRONG, 1.);
@@ -35,7 +36,11 @@ pub(super) fn render(
             rect: panel,
         });
         draw_text(
-            "Place Symbol",
+            if editing {
+                "Edit Symbol"
+            } else {
+                "Place Symbol"
+            },
             panel.x + 16.,
             panel.y + 18.,
             16.,
@@ -44,105 +49,107 @@ pub(super) fn render(
             text,
         );
         let mut y = panel.y + 50.;
-        button(
-            "Browse libraries…",
-            HitTarget::SchematicBrowseLibraries,
-            RectPx {
-                x: panel.x + width - 192.,
-                y: panel.y + 10.,
-                width: 176.,
-                height: 29.,
-            },
-            quads,
-            text,
-            hits,
-        );
-        if authoring.choices.is_empty() {
-            draw_text(
-                "No project symbols yet. Browse libraries to choose one.",
-                panel.x + 16.,
-                y,
-                12.,
-                TEXT_MUTED,
-                TextFace::Ui,
-                text,
-            );
-        }
-        for (index, choice) in authoring
-            .choices
-            .iter()
-            .enumerate()
-            .skip(authoring.choice_offset)
-            .take(4)
-        {
-            let row = RectPx {
-                x: panel.x + 12.,
-                y,
-                width: width - 24.,
-                height: 29.,
-            };
-            quads.push(Quad::from_rect(
-                row,
-                if authoring.chosen == Some(index) {
-                    design_tokens::chrome::SURFACE_02
-                } else {
-                    design_tokens::chrome::SURFACE_01
-                },
-            ));
-            let label = format!(
-                "{} · {} pins{}",
-                choice.name,
-                choice.pins.len(),
-                if choice.refusal.is_some() {
-                    " · unavailable"
-                } else {
-                    ""
-                }
-            );
-            draw_text(
-                &truncate_text(&label, 58),
-                row.x + 6.,
-                y + 7.,
-                12.,
-                TEXT_PRIMARY,
-                TextFace::Ui,
-                text,
-            );
-            hits.push(HitRegion {
-                target: HitTarget::SchematicLibraryChoice(index),
-                rect: row,
-            });
-            y += 31.;
-        }
-        if authoring.choices.len() > 4 {
+        if !editing {
             button(
-                "Previous",
-                HitTarget::SchematicLibraryPage(false),
+                "Browse libraries…",
+                HitTarget::SchematicBrowseLibraries,
                 RectPx {
-                    x: panel.x + 16.,
-                    y: panel.y + 177.,
-                    width: 90.,
-                    height: 25.,
+                    x: panel.x + width - 192.,
+                    y: panel.y + 10.,
+                    width: 176.,
+                    height: 29.,
                 },
                 quads,
                 text,
                 hits,
             );
-            button(
-                "Next",
-                HitTarget::SchematicLibraryPage(true),
-                RectPx {
-                    x: panel.x + width - 106.,
-                    y: panel.y + 177.,
-                    width: 90.,
-                    height: 25.,
-                },
-                quads,
-                text,
-                hits,
-            );
+            if authoring.choices.is_empty() {
+                draw_text(
+                    "No project symbols yet. Browse libraries to choose one.",
+                    panel.x + 16.,
+                    y,
+                    12.,
+                    TEXT_MUTED,
+                    TextFace::Ui,
+                    text,
+                );
+            }
+            for (index, choice) in authoring
+                .choices
+                .iter()
+                .enumerate()
+                .skip(authoring.choice_offset)
+                .take(4)
+            {
+                let row = RectPx {
+                    x: panel.x + 12.,
+                    y,
+                    width: width - 24.,
+                    height: 29.,
+                };
+                quads.push(Quad::from_rect(
+                    row,
+                    if authoring.chosen == Some(index) {
+                        design_tokens::chrome::SURFACE_02
+                    } else {
+                        design_tokens::chrome::SURFACE_01
+                    },
+                ));
+                let label = format!(
+                    "{} · {} pins{}",
+                    choice.name,
+                    choice.pins.len(),
+                    if choice.refusal.is_some() {
+                        " · unavailable"
+                    } else {
+                        ""
+                    }
+                );
+                draw_text(
+                    &truncate_text(&label, 58),
+                    row.x + 6.,
+                    y + 7.,
+                    12.,
+                    TEXT_PRIMARY,
+                    TextFace::Ui,
+                    text,
+                );
+                hits.push(HitRegion {
+                    target: HitTarget::SchematicLibraryChoice(index),
+                    rect: row,
+                });
+                y += 31.;
+            }
+            if authoring.choices.len() > 4 {
+                button(
+                    "Previous",
+                    HitTarget::SchematicLibraryPage(false),
+                    RectPx {
+                        x: panel.x + 16.,
+                        y: panel.y + 177.,
+                        width: 90.,
+                        height: 25.,
+                    },
+                    quads,
+                    text,
+                    hits,
+                );
+                button(
+                    "Next",
+                    HitTarget::SchematicLibraryPage(true),
+                    RectPx {
+                        x: panel.x + width - 106.,
+                        y: panel.y + 177.,
+                        width: 90.,
+                        height: 25.,
+                    },
+                    quads,
+                    text,
+                    hits,
+                );
+            }
         }
-        y = panel.y + 215.;
+        y = panel.y + if editing { 60. } else { 215. };
         let mut controls = ControlMeshCache::default();
         for (label, value, editor, field, target) in [
             (
@@ -196,20 +203,21 @@ pub(super) fn render(
             draw_text(
                 &truncate_text(refusal, 65),
                 panel.x + 16.,
-                panel.y + 203.,
+                panel.y + if editing { 140. } else { 203. },
                 11.,
                 design_tokens::chrome::STATUS_ERROR,
                 TextFace::Ui,
                 text,
             );
         }
-        if authoring.refusal.is_none()
+        if !editing
+            && authoring.refusal.is_none()
             && let Some(choice) = authoring.chosen.and_then(|i| authoring.choices.get(i))
         {
             draw_text(
                 choice.binding_label(),
                 panel.x + 16.,
-                panel.y + 203.,
+                panel.y + if editing { 140. } else { 203. },
                 11.,
                 TEXT_MUTED,
                 TextFace::Ui,
@@ -221,7 +229,7 @@ pub(super) fn render(
             HitTarget::SchematicCancel,
             RectPx {
                 x: panel.x + 16.,
-                y: panel.y + 305.,
+                y: panel.y + if editing { 190. } else { 305. },
                 width: 90.,
                 height: 29.,
             },
@@ -230,20 +238,28 @@ pub(super) fn render(
             hits,
         );
         draw_text(
-            "Enter: resume placement",
+            if editing {
+                "Enter: apply changes · Escape: cancel"
+            } else {
+                "Enter: resume placement"
+            },
             panel.x + 16.,
-            panel.y + 286.,
+            panel.y + if editing { 166. } else { 286. },
             11.,
             TEXT_MUTED,
             TextFace::Ui,
             text,
         );
         button(
-            "Resume",
-            HitTarget::SchematicPlace,
+            if editing { "Apply" } else { "Resume" },
+            if editing {
+                HitTarget::SchematicEditApply
+            } else {
+                HitTarget::SchematicPlace
+            },
             RectPx {
                 x: panel.x + width - 106.,
-                y: panel.y + 305.,
+                y: panel.y + if editing { 190. } else { 305. },
                 width: 90.,
                 height: 29.,
             },

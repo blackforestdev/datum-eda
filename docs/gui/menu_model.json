@@ -106,8 +106,14 @@
         {
           "label": "Delete",
           "icon": "delete",
-          "not_built": "per-selection; resolved by object type",
+          "gui_local": "schematic.selection.delete",
           "shortcut": "Delete"
+        },
+        {
+          "label": "Symbol Fields\u2026",
+          "icon": "properties",
+          "gui_local": "schematic.symbol_fields.open",
+          "requires_project": true
         },
         {
           "label": "Preferences",
@@ -1031,7 +1037,7 @@
         "N": {
           "label": "Properties",
           "icon": "properties",
-          "not_built": "symbol properties dialog verb"
+          "gui_local": "schematic.symbol_fields.open"
         },
         "E": {
           "label": "Rotate",

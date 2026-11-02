@@ -26,6 +26,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
         HitTarget::InspectorSectionToggle { .. }
         | HitTarget::InspectorRunErc(_)
+        | HitTarget::InspectorEditSymbol(_)
         | HitTarget::InspectorContextScroll { .. }
         | HitTarget::InspectorSectionNavigation { .. }
         | HitTarget::FocusNavigator
@@ -45,7 +46,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::SchematicLabelName | HitTarget::SchematicLabelKind | HitTarget::SchematicLabelPreview
         | HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
         | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicBrowseLibraries | HitTarget::SchematicReference
-        | HitTarget::SchematicValue | HitTarget::SchematicPlace
+        | HitTarget::SchematicValue | HitTarget::SchematicPlace | HitTarget::SchematicEditApply
         | HitTarget::SchematicCancel | HitTarget::SchematicFinishWire => false,
         // Deliberate entry: the shell-content cell rectangle, the dock
         // terminal tab (owner decision 2026-08-14), and the session actions

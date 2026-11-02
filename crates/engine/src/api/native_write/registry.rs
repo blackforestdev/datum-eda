@@ -53,6 +53,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::board_components::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
         verbs.extend_from_slice(super::schematic_edit::VERBS);
+        verbs.extend_from_slice(super::schematic_selection_edit::VERBS);
         verbs.extend_from_slice(super::library_gui::VERBS);
         verbs.extend_from_slice(super::library_acquisition::VERBS);
         verbs.sort_by(|a, b| a.id.cmp(b.id));
@@ -148,10 +149,15 @@ mod tests {
                 "datum.project.set_rule",
                 "datum.project.set_rules",
                 "datum.schematic.create_sheet",
+                "datum.schematic.delete_label",
+                "datum.schematic.delete_symbol",
+                "datum.schematic.delete_wire",
                 "datum.schematic.draw_wire",
                 "datum.schematic.move_symbol",
                 "datum.schematic.place_label",
                 "datum.schematic.place_symbol",
+                "datum.schematic.set_symbol_reference",
+                "datum.schematic.set_symbol_value",
             ]
         );
     }

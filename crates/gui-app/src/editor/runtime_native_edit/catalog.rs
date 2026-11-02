@@ -2,6 +2,24 @@
 use super::*;
 use std::{collections::BTreeSet, path::Path};
 
+/// Extract the native-write verb ids from a `native.describe` response's `native_write_verbs`
+/// catalog (W3 capability discovery). Used to populate truthful native-edit menu enablement.
+pub(super) fn native_write_verb_ids(
+    describe: &serde_json::Value,
+) -> std::collections::BTreeSet<String> {
+    describe
+        .get("native_write_verbs")
+        .and_then(serde_json::Value::as_array)
+        .map(|verbs| {
+            verbs
+                .iter()
+                .filter_map(|verb| verb.get("id").and_then(serde_json::Value::as_str))
+                .map(str::to_owned)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
 pub(super) struct CatalogReply {
     root: PathBuf,
     project_id: String,

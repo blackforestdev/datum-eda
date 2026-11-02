@@ -10,6 +10,7 @@ impl SchematicAuthoring {
         self.picker = false;
         self.chosen = None;
         self.label = None;
+        self.editing = None;
         self.position = None;
         self.rotation_deg = 0;
         self.mirrored = false;
