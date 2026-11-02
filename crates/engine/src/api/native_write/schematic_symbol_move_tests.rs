@@ -480,3 +480,6 @@ fn symbol_move_unavailable_contact_geometry_never_becomes_isolation() {
         std::fs::remove_dir_all(f.root).unwrap();
     }
 }
+
+#[path = "schematic_connected_move_tests.rs"]
+mod connected_tests;

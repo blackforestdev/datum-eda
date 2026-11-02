@@ -23,6 +23,26 @@ DISPLAY_KEY = "DATUM_QA_EXCLUSIVE_INPUT_DISPLAY"
 OWNER_KEY = "DATUM_QA_EXCLUSIVE_INPUT_OWNER_PID"
 
 
+def read_display_number(fd, timeout=20):
+    """Keep the readiness pipe open until Xwayland finishes its line."""
+    deadline = time.monotonic() + timeout
+    receipt = bytearray()
+    while b"\n" not in receipt:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0 or not select.select([fd], [], [], remaining)[0]:
+            raise RuntimeError("owned Xwayland display readiness timeout")
+        chunk = os.read(fd, 32 - len(receipt))
+        if not chunk:
+            raise RuntimeError("incomplete owned Xwayland display receipt")
+        receipt.extend(chunk)
+        if len(receipt) >= 32 and b"\n" not in receipt:
+            raise RuntimeError("invalid owned Xwayland display receipt")
+    number = bytes(receipt[:-1])
+    if not receipt.endswith(b"\n") or not number.isdigit():
+        raise RuntimeError("invalid owned Xwayland display receipt")
+    return number.decode("ascii")
+
+
 def _live_xwayland(pid, display, *, proc_root=Path("/proc")):
     try:
         proc = proc_root / str(pid)
@@ -273,9 +293,7 @@ def run(args):
                            xenv, pass_fds=(write_fd,))
             os.close(write_fd)
             write_fd = None
-            if not select.select([read_fd], [], [], 20)[0]:
-                raise RuntimeError("owned Xwayland display readiness timeout")
-            number = os.read(read_fd, 32).decode().strip()
+            number = read_display_number(read_fd)
             if not number.isdigit() or server.poll() is not None:
                 raise RuntimeError("invalid owned Xwayland display receipt")
         finally:

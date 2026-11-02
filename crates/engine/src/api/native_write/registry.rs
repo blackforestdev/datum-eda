@@ -137,6 +137,7 @@ mod tests {
             vec![
                 "datum.check.accept_deviation",
                 "datum.check.waive",
+                "datum.library.acquire",
                 "datum.library.create",
                 "datum.library.edit",
                 "datum.pcb.move_component",
@@ -149,6 +150,7 @@ mod tests {
                 "datum.schematic.create_sheet",
                 "datum.schematic.draw_wire",
                 "datum.schematic.move_symbol",
+                "datum.schematic.place_label",
                 "datum.schematic.place_symbol",
             ]
         );

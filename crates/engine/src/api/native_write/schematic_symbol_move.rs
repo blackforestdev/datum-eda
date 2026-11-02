@@ -1,15 +1,14 @@
-//! Source-qualified unconnected Symbol move through canonical Set and history.
+//! Source-qualified Symbol move preserving attached endpoints and electrical members.
 use super::{
-    context::{PreparedWrite, WriteProvenance},
+    context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, parse_verb_params},
-    schematic_symbols::build_set_schematic_symbol,
 };
 use crate::{
     connectivity::SymbolContactBasis,
     error::EngineError,
     ir::geometry::Point,
-    schematic::PlacedSymbol,
-    substrate::{ElectricalSelectionSnapshot, SelectionSourceDomain},
+    schematic::{PlacedSymbol, SchematicWire},
+    substrate::{ElectricalSelectionSnapshot, Operation, SelectionSourceDomain},
 };
 use serde::Deserialize;
 use uuid::Uuid;
@@ -21,6 +20,13 @@ pub struct SymbolMoveBasis {
     pub sheet_id: Uuid,
     pub symbol: PlacedSymbol,
     contacts: SymbolContactBasis,
+}
+
+/// Complete preview/commit result; wires keep their authored identities.
+#[derive(Debug, Clone, PartialEq)]
+pub struct SymbolMoveDestination {
+    pub symbol: PlacedSymbol,
+    pub wires: Vec<SchematicWire>,
 }
 impl SymbolMoveBasis {
     pub fn capture(
@@ -77,7 +83,6 @@ impl SymbolMoveBasis {
             ));
         }
         let contacts = SymbolContactBasis::capture(sheet, symbol_uuid)?;
-        contacts.require_detached(&symbol)?;
         Ok(Self {
             sheet_id: sheet.uuid,
             symbol,
@@ -86,6 +91,10 @@ impl SymbolMoveBasis {
     }
 
     pub fn destination(&self, position: Point) -> Result<PlacedSymbol, EngineError> {
+        Ok(self.destination_edit(position)?.symbol)
+    }
+
+    pub fn destination_edit(&self, position: Point) -> Result<SymbolMoveDestination, EngineError> {
         // i128 deltas allow the full i64 origin domain; only the final stored
         // coordinates must fit. No rounding or newly invented tolerance.
         let dx = i128::from(position.x) - i128::from(self.symbol.position.x);
@@ -100,9 +109,8 @@ impl SymbolMoveBasis {
                     .map_err(|_| invalid("Symbol pin coordinate overflow"))?,
             };
         }
-        self.contacts.require_detached(&self.symbol)?;
-        self.contacts.require_detached(&symbol)?;
-        Ok(symbol)
+        let wires = self.contacts.moved_wires(&symbol)?;
+        Ok(SymbolMoveDestination { symbol, wires })
     }
 }
 
@@ -124,14 +132,36 @@ pub(super) fn move_symbol(
     let snapshot = ElectricalSelectionSnapshot::capture(context.model)
         .map_err(|e| invalid(format!("Symbol source/contact basis unavailable: {e:?}")))?;
     let basis = SymbolMoveBasis::capture(&snapshot, params.symbol, &params.instance_path)?;
-    let symbol = basis.destination(Point {
+    let destination = basis.destination_edit(Point {
         x: params.x_nm,
         y: params.y_nm,
     })?;
-    if symbol.position == basis.symbol.position {
+    if destination.symbol.position == basis.symbol.position {
         return Err(invalid("Symbol move destination is unchanged"));
     }
-    build_set_schematic_symbol(context.model, provenance, basis.sheet_id, &symbol)
+    let mut operations = vec![Operation::SetSchematicSymbol {
+        sheet_id: basis.sheet_id,
+        symbol_id: destination.symbol.uuid,
+        symbol: serde_json::to_value(&destination.symbol)?,
+    }];
+    for wire in destination.wires {
+        // Canonical wire operations have no Set variant. Delete/Create with
+        // the same UUID is one guarded final-state edit, never an identity birth.
+        operations.push(Operation::DeleteSchematicWire {
+            sheet_id: basis.sheet_id,
+            wire_id: wire.uuid,
+            wire: serde_json::to_value(basis.contacts.original_wire(wire.uuid))?,
+        });
+        operations.push(Operation::CreateSchematicWire {
+            sheet_id: basis.sheet_id,
+            wire_id: wire.uuid,
+            wire: serde_json::to_value(wire)?,
+        });
+    }
+    BatchComposer::compose(context.model, provenance)
+        .push_ops(operations)
+        .primary_object(destination.symbol.uuid)
+        .finish()
 }
 fn invalid(reason: impl Into<String>) -> EngineError {
     EngineError::Validation(reason.into())

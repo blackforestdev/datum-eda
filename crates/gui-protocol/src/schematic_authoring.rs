@@ -4,6 +4,7 @@ use eda_engine::api::native_write::schematic_library::{
     materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
 };
 use eda_engine::pool::Symbol;
+use eda_engine::schematic::LabelKind;
 use eda_engine::substrate::{DesignModel, ElectricalSelectionSnapshot};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -45,10 +46,21 @@ pub enum SchematicEditRequest {
         value: String,
         x_nm: i64,
         y_nm: i64,
+        #[serde(default)]
+        rotation_deg: i32,
+        #[serde(default)]
+        mirrored: bool,
     },
     DrawWire {
         sheet: Uuid,
         points: Vec<eda_engine::ir::geometry::Point>,
+    },
+    PlaceLabel {
+        sheet: Uuid,
+        kind: LabelKind,
+        name: String,
+        x_nm: i64,
+        y_nm: i64,
     },
 }
 impl SchematicEditRequest {
@@ -65,13 +77,28 @@ impl SchematicEditRequest {
                 value,
                 x_nm,
                 y_nm,
+                rotation_deg,
+                mirrored,
             } => (
                 "datum.schematic.place_symbol",
-                serde_json::json!({"sheet":sheet,"library_symbol":library_symbol,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm}),
+                serde_json::json!({"sheet":sheet,"library_symbol":library_symbol,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
             ),
             Self::DrawWire { sheet, points } => (
                 "datum.schematic.draw_wire",
                 serde_json::json!({"sheet":sheet,"points":points}),
+            ),
+            Self::PlaceLabel {
+                sheet,
+                kind,
+                name,
+                x_nm,
+                y_nm,
+            } => (
+                "datum.schematic.place_label",
+                serde_json::json!({"sheet":sheet,"kind": match kind {
+                    LabelKind::Local => "local", LabelKind::Global => "global",
+                    LabelKind::Hierarchical => "hierarchical", LabelKind::Power => "power",
+                },"name":name,"x_nm":x_nm,"y_nm":y_nm}),
             ),
         }
     }
@@ -81,6 +108,12 @@ pub enum PlacementField {
     #[default]
     Reference,
     Value,
+}
+#[derive(Debug, Clone, Copy)]
+pub enum PlacementTransform {
+    Rotate,
+    FlipX,
+    FlipY,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct NewSchematicDraft {
@@ -92,9 +125,44 @@ pub struct NewSchematicDraft {
     pub tip: Option<Uuid>,
     pub refusal: Option<String>,
 }
+#[derive(Debug, Clone, PartialEq)]
+pub struct LabelDraft {
+    pub kind: LabelKind,
+    pub name: String,
+    pub editor: crate::single_line_editor::SingleLineEditor,
+    /// Name, kind, Cancel, Preview; shared field/controller focus order.
+    pub focus: usize,
+}
+impl LabelDraft {
+    pub fn new(kind: LabelKind) -> Self {
+        let name = if kind == LabelKind::Power { "GND" } else { "" }.to_owned();
+        Self {
+            kind,
+            editor: crate::single_line_editor::SingleLineEditor::at_end(&name),
+            name,
+            focus: 0,
+        }
+    }
+    pub fn kind_name(&self) -> &'static str {
+        match self.kind {
+            LabelKind::Local => "Local",
+            LabelKind::Global => "Global",
+            LabelKind::Power => "Power",
+            LabelKind::Hierarchical => "Hierarchical",
+        }
+    }
+    pub fn cycle_kind(&mut self) {
+        self.kind = match self.kind {
+            LabelKind::Local => LabelKind::Global,
+            LabelKind::Global => LabelKind::Power,
+            _ => LabelKind::Local,
+        };
+    }
+}
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
     pub creation: Option<NewSchematicDraft>,
+    pub label: Option<LabelDraft>,
     pub move_paths: std::collections::BTreeMap<Uuid, Vec<Uuid>>,
     pub move_bases: std::collections::BTreeMap<
         Uuid,
@@ -112,6 +180,8 @@ pub struct SchematicAuthoring {
     pub value: String,
     pub value_editor: crate::single_line_editor::SingleLineEditor,
     pub position: Option<PointNm>,
+    pub rotation_deg: i32,
+    pub mirrored: bool,
     pub preview_dirty: bool,
     pub wire: bool,
     pub vertices: Vec<PointNm>,
@@ -122,6 +192,27 @@ pub struct SchematicAuthoring {
     pub taken_references: Vec<String>,
 }
 impl SchematicAuthoring {
+    /// The engine reflects local X before rotating. World-X/Y flips therefore
+    /// change both pose fields; toggling local mirror alone is wrong after R.
+    pub fn transform_placement(&mut self, transform: PlacementTransform) -> bool {
+        if self.picker || self.wire || self.label.is_some() || self.chosen.is_none() {
+            return false;
+        }
+        self.rotation_deg = match transform {
+            PlacementTransform::Rotate => self.rotation_deg + 90,
+            PlacementTransform::FlipX => -self.rotation_deg,
+            PlacementTransform::FlipY => 180 - self.rotation_deg,
+        }
+        .rem_euclid(360);
+        if matches!(
+            transform,
+            PlacementTransform::FlipX | PlacementTransform::FlipY
+        ) {
+            self.mirrored = !self.mirrored;
+        }
+        self.preview_dirty = true;
+        true
+    }
     pub fn from_model(model: &DesignModel) -> anyhow::Result<Self> {
         let basis = ElectricalSelectionSnapshot::capture(model)
             .map_err(|e| anyhow::anyhow!("Schematic source unavailable: {e:?}"))?;
@@ -252,3 +343,7 @@ mod preview;
 #[cfg(test)]
 #[path = "schematic_authoring_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_authoring_pose_tests.rs"]
+mod pose_tests;

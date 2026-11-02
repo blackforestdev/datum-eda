@@ -1,5 +1,8 @@
 //! Existing scalar/range label semantics shared by summaries and identity topology.
 use crate::schematic::{LabelKind, NetLabel};
+pub(super) fn is_global_label(kind: &LabelKind) -> bool {
+    matches!(kind, LabelKind::Global | LabelKind::Power)
+}
 pub(super) fn canonical_label_name(name: &str) -> String {
     parse_scalar_bus_member_name(name).unwrap_or_else(|| name.to_string())
 }
@@ -46,7 +49,7 @@ pub(super) fn preferred_name(
 ) -> Option<String> {
     labels
         .iter()
-        .find(|label| matches!(label.kind, LabelKind::Global))
+        .find(|label| is_global_label(&label.kind))
         .or_else(|| {
             labels
                 .iter()

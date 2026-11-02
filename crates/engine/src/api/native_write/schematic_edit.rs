@@ -7,7 +7,9 @@ use super::schematic_library::{
 use super::schematic_symbols::{PlacedSymbolPartBinding, build_place_schematic_symbol};
 use crate::error::EngineError;
 use crate::ir::geometry::Point;
-use crate::schematic::{HiddenPowerBehavior, PlacedSymbol, Sheet, SymbolDisplayMode};
+use crate::schematic::{
+    HiddenPowerBehavior, LabelKind, NetLabel, PlacedSymbol, Sheet, SymbolDisplayMode,
+};
 use crate::substrate::{DesignModel, ElectricalSelectionSnapshot, Operation, SchematicMarkerKind};
 use serde::Deserialize;
 use std::collections::BTreeSet;
@@ -30,7 +32,69 @@ pub(crate) const VERBS: &[NativeWriteVerb] = &[
         id: "datum.schematic.draw_wire",
         build: draw_wire,
     },
+    NativeWriteVerb {
+        id: "datum.schematic.place_label",
+        build: place_label,
+    },
 ];
+
+#[derive(Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum LabelKindParam {
+    Local,
+    Global,
+    #[serde(alias = "hier")]
+    Hierarchical,
+    Power,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LabelParams {
+    sheet: Uuid,
+    name: String,
+    x_nm: i64,
+    y_nm: i64,
+    kind: Option<LabelKindParam>,
+}
+
+fn place_label(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    let params: LabelParams = parse_verb_params("datum.schematic.place_label", params)?;
+    if params.name.trim().is_empty() || params.name.chars().any(char::is_control) {
+        return Err(EngineError::Validation(
+            "Label name must be nonempty and single-line".into(),
+        ));
+    }
+    if !schematic(context.model)?.sheets.contains_key(&params.sheet) {
+        return Err(EngineError::Validation("Native sheet not found".into()));
+    }
+    let kind = match params.kind.unwrap_or(LabelKindParam::Local) {
+        LabelKindParam::Local => LabelKind::Local,
+        LabelKindParam::Global => LabelKind::Global,
+        LabelKindParam::Hierarchical => LabelKind::Hierarchical,
+        LabelKindParam::Power => LabelKind::Power,
+    };
+    let label = NetLabel {
+        uuid: Uuid::new_v4(),
+        name: params.name,
+        kind,
+        position: Point {
+            x: params.x_nm,
+            y: params.y_nm,
+        },
+    };
+    let prepared = super::schematic_connectivity::build_create_schematic_label(
+        context.model,
+        provenance,
+        params.sheet,
+        &label,
+    )?;
+    prepare_native_birth(context.model, prepared)
+}
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -308,6 +372,10 @@ fn strictly_on_segment(p: Point, a: Point, b: Point) -> Result<bool, EngineError
 #[cfg(test)]
 #[path = "schematic_edit_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_power_label_tests.rs"]
+mod power_label_tests;
 
 /// Exact local-to-placed transform for native schematic cardinal poses.
 /// Irrational coordinates cannot be stored in the existing integer pin field.

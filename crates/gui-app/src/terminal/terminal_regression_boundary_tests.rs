@@ -42,6 +42,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProjectOpenCancel
         | HitTarget::ProjectOpenConfirm => false,
         HitTarget::SchematicName | HitTarget::SchematicCreate
+        | HitTarget::SchematicLabelName | HitTarget::SchematicLabelKind | HitTarget::SchematicLabelPreview
         | HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
         | HitTarget::SchematicLibraryChoice(_) | HitTarget::SchematicBrowseLibraries | HitTarget::SchematicReference
         | HitTarget::SchematicValue | HitTarget::SchematicPlace

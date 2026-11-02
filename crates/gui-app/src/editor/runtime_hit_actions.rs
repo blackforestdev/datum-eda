@@ -57,6 +57,9 @@ impl Runtime {
             }
             HitTarget::Library(control) => self.activate_library(control.clone()),
             HitTarget::SchematicPicker
+            | HitTarget::SchematicLabelName
+            | HitTarget::SchematicLabelKind
+            | HitTarget::SchematicLabelPreview
             | HitTarget::SchematicName
             | HitTarget::SchematicCreate
             | HitTarget::SchematicLibraryPage(_)

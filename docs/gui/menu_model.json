@@ -281,6 +281,12 @@
           "verb": "datum.schematic.place_label"
         },
         {
+          "label": "Power Port",
+          "icon": "power",
+          "gui_local": "schematic.power_port.open",
+          "requires_project": true
+        },
+        {
           "label": "Junction",
           "icon": "junction",
           "verb": "datum.schematic.place_junction"
@@ -1177,7 +1183,7 @@
         "S": {
           "label": "Place Power",
           "icon": "power",
-          "not_built": "place power symbol"
+          "gui_local": "schematic.power_port.open"
         },
         "W": {
           "label": "Place Label",

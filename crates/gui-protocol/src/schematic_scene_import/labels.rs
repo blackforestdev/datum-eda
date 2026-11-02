@@ -7,7 +7,8 @@ use super::common::*;
 use crate::*;
 
 /// P2.2e: a net label by kind. `Global`/`Hierarchical` become the pointed pentagon
-/// tag on `Schematic.GlobalLabel` (`--info` blue); `Local`/`Power` keep the chip.
+/// tag on `Schematic.GlobalLabel` (`--info` blue); local labels keep the chip,
+/// while power ports use the shared ground/rail geometry at their net anchor.
 pub(super) fn push_net_label_graphic(
     graphics: &mut Vec<BoardGraphicPrimitive>,
     points: &mut Vec<PointNm>,
@@ -25,7 +26,8 @@ pub(super) fn push_net_label_graphic(
             &label.name,
             1,
         ),
-        LabelKind::Local | LabelKind::Power => push_rect_graphic(
+        LabelKind::Power => super::power::push_power_label_graphics(graphics, points, text, label),
+        LabelKind::Local => push_rect_graphic(
             graphics,
             points,
             text,

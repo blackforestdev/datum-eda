@@ -72,12 +72,47 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.create_sheet"
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
+            | "datum.schematic.place_label"
     )
 }
 /// Statically build-supported edit verbs (journal carve-out + native-edit). Availability
 /// is refined contextually in `unavailable_reason`.
 fn first_edit_verb(verb: &str) -> bool {
     journal_verb(verb) || native_edit_verb(verb)
+}
+
+/// Shared admission for native menu actions and GUI-local configured variants.
+pub fn native_edit_unavailable_reason(
+    state: &crate::ReviewWorkspaceState,
+    verb: &str,
+) -> Option<&'static str> {
+    if matches!(
+        verb,
+        "datum.schematic.place_symbol"
+            | "datum.schematic.draw_wire"
+            | "datum.schematic.place_label"
+    ) && state.schematic_authoring.sheet.is_none()
+    {
+        return Some("This Project needs a native schematic sheet before authoring.");
+    }
+    if state.project_unopened || !native_project_edit_available(state) {
+        return Some("Open a persistent Datum Project with --project-root to edit or save.");
+    }
+    if state
+        .backing
+        .as_ref()
+        .is_some_and(|b| b.native_write_verbs.is_empty())
+    {
+        return Some("Project editing capabilities are not available yet.");
+    }
+    if !state
+        .backing
+        .as_ref()
+        .is_some_and(|b| b.native_write_verbs.contains(verb))
+    {
+        return Some("This operation is not offered by the open Project's engine.");
+    }
+    None
 }
 
 impl GuiMenuItem {
@@ -148,13 +183,6 @@ impl GuiMenuItem {
         {
             return Some(action_registry::UNAVAILABLE_GUI_LOCAL_REASON);
         }
-        if matches!(
-            self.binding(),
-            GuiMenuBinding::Verb("datum.schematic.place_symbol" | "datum.schematic.draw_wire")
-        ) && state.schematic_authoring.sheet.is_none()
-        {
-            return Some("This Project needs a native schematic sheet before authoring.");
-        }
         // project.save + journal undo/redo: the only gate is an open editable Project
         // (journal availability is the journal's own truth, not the write-verb catalog).
         if matches!(self.binding(), GuiMenuBinding::GuiLocal("project.save"))
@@ -167,29 +195,15 @@ impl GuiMenuItem {
         // catalog (truthful enablement) plus an open editable Project. An unknown/empty
         // catalog (before describe returns, or no backing) is an absent catalog, so the
         // entry is disabled rather than enabled-by-default.
-        if let GuiMenuBinding::Verb(verb) = self.binding()
-            && native_edit_verb(verb)
-        {
-            if !native_project_edit_available(state) {
-                return Some(
-                    "Open a persistent Datum Project with --project-root to edit or save.",
-                );
+        let native_verb = match self.binding() {
+            GuiMenuBinding::GuiLocal("schematic.power_port.open") => {
+                Some("datum.schematic.place_label")
             }
-            if state
-                .backing
-                .as_ref()
-                .is_some_and(|backing| backing.native_write_verbs.is_empty())
-            {
-                return Some("Project editing capabilities are not available yet.");
-            }
-            if !state
-                .backing
-                .as_ref()
-                .is_some_and(|backing| backing.native_write_verbs.contains(verb))
-            {
-                return Some("This operation is not offered by the open Project's engine.");
-            }
-            return None;
+            GuiMenuBinding::Verb(verb) if native_edit_verb(verb) => Some(verb),
+            _ => None,
+        };
+        if let Some(verb) = native_verb {
+            return native_edit_unavailable_reason(state, verb);
         }
         if self.requires_project && state.backing.is_none() {
             return Some("This action requires an open Project.");

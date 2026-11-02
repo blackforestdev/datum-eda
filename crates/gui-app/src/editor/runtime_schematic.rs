@@ -1,7 +1,11 @@
 //! Native schematic gestures reuse the existing asynchronous canonical worker.
 use super::*;
 use datum_gui_protocol::native_edit_client::NativeEditAction;
-use datum_gui_protocol::schematic_authoring::{PlacementField, SchematicEditRequest};
+use datum_gui_protocol::schematic_authoring::{
+    PlacementField, PlacementTransform, SchematicEditRequest,
+};
+#[path = "runtime_schematic_label.rs"]
+mod label;
 #[path = "runtime_schematic_library.rs"]
 mod library;
 impl Runtime {
@@ -99,6 +103,9 @@ impl Runtime {
         {
             return true;
         }
+        if self.workspace().schematic_authoring.label.is_some() {
+            return self.handle_label_chrome(target);
+        }
         match target {
             HitTarget::SchematicBrowseLibraries => return self.browse_schematic_libraries(),
             HitTarget::SchematicLibraryChoice(index) => {
@@ -174,9 +181,34 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
+        if self.workspace().schematic_authoring.label.is_some() {
+            return self.handle_label_key(event);
+        }
         let picker = self.workspace().schematic_authoring.picker;
         if picker && self.handle_shared_editor_key(event) {
             return true;
+        }
+        if !self.modifiers.control_key()
+            && !self.modifiers.alt_key()
+            && !self.modifiers.super_key()
+            && let Key::Character(key) = &event.logical_key
+        {
+            let transform = match key.to_ascii_lowercase().as_str() {
+                "r" => Some(PlacementTransform::Rotate),
+                "x" => Some(PlacementTransform::FlipX),
+                "y" => Some(PlacementTransform::FlipY),
+                _ => None,
+            };
+            if let Some(transform) = transform
+                && self
+                    .session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .transform_placement(transform)
+            {
+                self.invalidate_frame();
+                return true;
+            }
         }
         match &event.logical_key {
             Key::Named(NamedKey::Escape)
@@ -358,6 +390,9 @@ impl Runtime {
         let Some(at) = self.schematic_snap_point(world, screen) else {
             return true;
         };
+        if self.workspace().schematic_authoring.label.is_some() {
+            return self.place_native_label(at);
+        }
         if self.workspace().schematic_authoring.wire {
             let now = std::time::Instant::now();
             // Reuse the native selection repeat-click interval; a later click
@@ -398,6 +433,8 @@ impl Runtime {
             value: e.value.clone(),
             x_nm: at.x,
             y_nm: at.y,
+            rotation_deg: e.rotation_deg,
+            mirrored: e.mirrored,
         });
         self.prepare_native_schematic_frame();
         self.queue_native_edit(NativeEditAction::Schematic)

@@ -3,6 +3,8 @@ use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter};
 use crate::*;
 #[path = "schematic_creation.rs"]
 mod creation;
+#[path = "schematic_label.rs"]
+mod label;
 use datum_gui_protocol::{ReviewWorkspaceState, schematic_authoring::PlacementField};
 pub(super) fn render(
     state: &ReviewWorkspaceState,
@@ -13,6 +15,9 @@ pub(super) fn render(
 ) -> anyhow::Result<()> {
     if state.schematic_authoring.creation.is_some() {
         return creation::render(state, layout, quads, text, hits);
+    }
+    if state.schematic_authoring.label.is_some() {
+        return label::render(state, layout, quads, text, hits);
     }
     let authoring = &state.schematic_authoring;
     if authoring.picker {
@@ -251,14 +256,14 @@ pub(super) fn render(
             x: layout.top_menu_bar.width / 2. - 200.,
             y: 76.,
             width: 400.,
-            height: 65.,
+            height: if authoring.wire { 65. } else { 86. },
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         draw_text(
             if authoring.wire {
                 "Place Wire · click vertices"
             } else {
-                "Click to place · Tab: reference/value · Esc: cancel"
+                "Click: place · R: rotate · X/Y: flip horiz/vert"
             },
             panel.x + 10.,
             panel.y + 10.,
@@ -267,12 +272,23 @@ pub(super) fn render(
             TextFace::UiStrong,
             text,
         );
+        if !authoring.wire {
+            draw_text(
+                "Tab: reference/value · Esc: cancel",
+                panel.x + 10.,
+                panel.y + 31.,
+                11.,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text,
+            );
+        }
         button(
             "Cancel",
             HitTarget::SchematicCancel,
             RectPx {
                 x: panel.x + 10.,
-                y: panel.y + 30.,
+                y: panel.y + if authoring.wire { 30. } else { 53. },
                 width: 90.,
                 height: 26.,
             },

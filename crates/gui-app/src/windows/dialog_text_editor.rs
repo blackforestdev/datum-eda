@@ -8,6 +8,7 @@ pub(super) enum Target {
     LibraryPath,
     LibrarySearch,
     SchematicName,
+    SchematicLabel,
     SchematicPlacement(PlacementField),
     ProjectName,
     FolderName,
@@ -60,6 +61,9 @@ impl Runtime {
                 == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
             && self.workspace().schematic_authoring.picker
         {
+            if let Some(label) = &self.workspace().schematic_authoring.label {
+                return (label.focus == 0).then_some(Target::SchematicLabel);
+            }
             return Some(Target::SchematicPlacement(
                 self.workspace().schematic_authoring.field,
             ));
@@ -83,6 +87,14 @@ impl Runtime {
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::SchematicLabel => {
+                let label = self.workspace().schematic_authoring.label.as_ref()?;
+                Some(Snapshot {
+                    text: label.name.clone(),
+                    editor: label.editor,
+                    editable: !self.native_edit.pending(),
+                })
+            }
             Target::SchematicPlacement(field) => {
                 let e = &self.workspace().schematic_authoring;
                 if !e.picker {
@@ -152,6 +164,17 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::SchematicLabel => {
+                let e = &mut self.session.workspace_mut().schematic_authoring;
+                if let Some(label) = &mut e.label {
+                    label.name = snapshot.text;
+                    label.editor = snapshot.editor;
+                    if changed {
+                        e.refusal = None;
+                    }
+                }
+                self.invalidate_frame();
+            }
             Target::SchematicPlacement(field) => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 match field {
@@ -363,7 +386,10 @@ impl Runtime {
                         a.refusal = Some(reason);
                     }
                     self.invalidate_frame();
-                } else if matches!(target, Target::SchematicPlacement(_)) {
+                } else if matches!(
+                    target,
+                    Target::SchematicPlacement(_) | Target::SchematicLabel
+                ) {
                     self.session.workspace_mut().schematic_authoring.refusal = Some(reason);
                     self.invalidate_frame();
                 } else if target == Target::SchematicName {
@@ -395,6 +421,7 @@ impl Runtime {
                 datum_gui_protocol::library_browser::LibraryControl::AcquireSearch,
             ) => Target::LibrarySearch,
             HitTarget::SchematicName => Target::SchematicName,
+            HitTarget::SchematicLabelName => Target::SchematicLabel,
             HitTarget::SchematicReference => Target::SchematicPlacement(PlacementField::Reference),
             HitTarget::SchematicValue => Target::SchematicPlacement(PlacementField::Value),
             HitTarget::NewProjectName => Target::ProjectName,
@@ -419,6 +446,11 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::SchematicLabel => {
+                if let Some(label) = &mut self.session.workspace_mut().schematic_authoring.label {
+                    label.focus = 0;
+                }
+            }
             Target::SchematicPlacement(field) => {
                 self.session.workspace_mut().schematic_authoring.field = field;
             }

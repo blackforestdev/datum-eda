@@ -1,6 +1,6 @@
 //! Internal complete scalar partitions for authored identity transitions.
 //! Uses existing segment and label semantics; no public membership query.
-use super::{canonical_label_name, is_bus_container_label, point_on_wire_segment};
+use super::{canonical_label_name, is_bus_container_label, is_global_label, point_on_wire_segment};
 use crate::{
     error::EngineError,
     schematic::{LabelKind, Schematic, Sheet},
@@ -69,7 +69,7 @@ pub(crate) fn partitions(
         for label in sheet
             .labels
             .values()
-            .filter(|l| matches!(l.kind, LabelKind::Global) && !is_bus_container_label(l))
+            .filter(|l| is_global_label(&l.kind) && !is_bus_container_label(l))
         {
             let member = reference(context, "labels", label.uuid);
             if let Some(first) = global.get(&canonical_label_name(&label.name)) {
@@ -257,7 +257,7 @@ fn local(context: &Context, sheet: &Sheet, groups: &mut Groups, resolve_names: b
         let member = reference(context, "labels", label.uuid);
         // Local labels join only inside this occurrence. Hierarchical labels
         // retain the existing same-sheet interface scope before explicit links.
-        if resolve_names && !matches!(label.kind, LabelKind::Global) {
+        if resolve_names && !is_global_label(&label.kind) {
             let name = (
                 if matches!(label.kind, LabelKind::Local) {
                     0

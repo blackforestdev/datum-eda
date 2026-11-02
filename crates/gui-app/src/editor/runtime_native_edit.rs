@@ -315,6 +315,9 @@ impl Runtime {
             "datum.schematic.create_sheet" => self.begin_schematic_creation(),
             "datum.schematic.place_symbol" => self.begin_native_schematic(false),
             "datum.schematic.draw_wire" => self.begin_native_schematic(true),
+            "datum.schematic.place_label" => {
+                self.begin_native_label(eda_engine::schematic::LabelKind::Local)
+            }
             "datum.journal.undo" => self.queue_native_history(false),
             "datum.journal.redo" => self.queue_native_history(true),
             "datum.pcb.move_component" => self.set_workspace_tool(WorkspaceTool::Move),

@@ -5,6 +5,7 @@ from pathlib import Path
 import signal
 import subprocess
 import tempfile
+import threading
 import time
 import unittest
 from types import SimpleNamespace
@@ -14,6 +15,41 @@ import run_native_qa_isolated_input as isolated
 
 
 class PrivateInputTests(unittest.TestCase):
+    def test_display_receipt_waits_for_fragmented_newline(self):
+        read_fd, write_fd = os.pipe()
+        first_read = threading.Event()
+        original_read = os.read
+        os.write(write_fd, b"123")
+
+        def finish_receipt():
+            if first_read.wait(2):
+                os.write(write_fd, b"\n")
+
+        def read_fragment(fd, size):
+            chunk = original_read(fd, size)
+            first_read.set()
+            return chunk
+
+        writer = threading.Thread(target=finish_receipt)
+        writer.start()
+        try:
+            with patch.object(isolated.os, "read", side_effect=read_fragment):
+                self.assertEqual(isolated.read_display_number(read_fd, 2), "123")
+        finally:
+            writer.join(timeout=3)
+            os.close(read_fd)
+            os.close(write_fd)
+
+    def test_display_receipt_rejects_eof_before_newline(self):
+        read_fd, write_fd = os.pipe()
+        os.write(write_fd, b"123")
+        os.close(write_fd)
+        try:
+            with self.assertRaisesRegex(RuntimeError, "incomplete"):
+                isolated.read_display_number(read_fd, 1)
+        finally:
+            os.close(read_fd)
+
     def test_existing_scenario_evidence_is_never_overwritten(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)

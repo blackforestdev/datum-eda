@@ -186,7 +186,7 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
                 .sheets
                 .insert(sheet.name.clone());
 
-            if matches!(label.kind, LabelKind::Global) {
+            if is_global_label(&label.kind) {
                 global_label_groups_by_name
                     .entry(canonical_label_name(&label.name))
                     .or_default()
@@ -309,7 +309,7 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
             && group
                 .labels
                 .iter()
-                .any(|label| matches!(label.kind, LabelKind::Global))
+                .any(|label| is_global_label(&label.kind))
         {
             continue;
         }
@@ -335,7 +335,13 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
             );
             format!("N${}", &anon_id.as_simple().to_string()[..8])
         });
-        let semantic_class = infer_semantic_class(&name);
+        let semantic_class = infer_semantic_class(&name).or_else(|| {
+            group
+                .labels
+                .iter()
+                .any(|label| matches!(label.kind, LabelKind::Power))
+                .then(|| "power".to_owned())
+        });
         let sheets: Vec<_> = group.sheets.into_iter().collect();
         let mut pins = group.pins;
         pins.sort_by(|a, b| {

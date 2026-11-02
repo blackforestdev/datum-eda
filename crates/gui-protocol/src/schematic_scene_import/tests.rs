@@ -281,6 +281,38 @@ fn global_labels_project_the_pentagon_tag() {
 }
 
 #[test]
+fn native_power_labels_render_at_the_electrical_anchor_with_their_names() {
+    use eda_engine::ir::geometry::Point;
+    use eda_engine::schematic::{LabelKind, NetLabel};
+
+    for (name, ground) in [("GND", true), ("GNDA", true), ("+3V3", false)] {
+        let label = NetLabel {
+            uuid: Uuid::new_v4(),
+            kind: LabelKind::Power,
+            name: name.to_owned(),
+            position: Point::new(2_000_000, 3_000_000),
+        };
+        let mut graphics = Vec::new();
+        let mut points = Vec::new();
+        let mut text = SchematicTextSink::default();
+        super::labels::push_net_label_graphic(&mut graphics, &mut points, &mut text, &label);
+        let stem = graphics
+            .iter()
+            .find(|g| g.object_id.ends_with(":stem"))
+            .unwrap();
+        assert_eq!(stem.path[0], point_nm(label.position));
+        assert_eq!(stem.path[1].y > stem.path[0].y, ground);
+        assert_eq!(graphics.len(), if ground { 4 } else { 2 });
+        assert!(graphics.iter().all(|g| g.layer_id == SCHEMATIC_POWER_LAYER
+            && g.source_object_uuid == label.uuid.to_string()));
+        let (texts, geometry, _) = text.into_parts();
+        assert_eq!(texts.len(), 1);
+        assert_eq!(texts[0].text, name);
+        assert!(!geometry.is_empty(), "the port name needs visible glyphs");
+    }
+}
+
+#[test]
 fn power_symbols_project_rail_flag_and_ground_stack_geometry() {
     // P2.2e: power symbols (`power:*` lib_ids) project a rail flag (stem + one
     // bar) or a ground stack (stem + three shrinking bars) on the Schematic.Power

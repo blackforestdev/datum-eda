@@ -4,12 +4,15 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SchematicWire, SymbolDisplayMode};
 impl SchematicAuthoring {
     pub fn active(&self) -> bool {
-        self.chosen.is_some() && !self.picker || self.wire
+        (self.chosen.is_some() || self.label.is_some()) && !self.picker || self.wire
     }
     pub fn cancel(&mut self) -> Option<BoardReviewSceneV1> {
         self.picker = false;
         self.chosen = None;
+        self.label = None;
         self.position = None;
+        self.rotation_deg = 0;
+        self.mirrored = false;
         self.vertices.clear();
         self.last_wire_click = None;
         self.wire = false;
@@ -32,6 +35,20 @@ impl SchematicAuthoring {
             .sheets
             .get_mut(&sheet)
             .ok_or_else(|| anyhow::anyhow!("Native sheet changed"))?;
+        if let Some(label) = &self.label
+            && let Some(at) = self.position
+            && !self.picker
+        {
+            selected.labels.insert(
+                Uuid::nil(),
+                eda_engine::schematic::NetLabel {
+                    uuid: Uuid::nil(),
+                    kind: label.kind.clone(),
+                    name: label.name.clone(),
+                    position: Point { x: at.x, y: at.y },
+                },
+            );
+        }
         if let Some(index) = self.chosen
             && let Some(at) = self.position
             && !self.picker
@@ -42,8 +59,8 @@ impl SchematicAuthoring {
                 pin.position = eda_engine::api::native_write::schematic_edit::place_local_point(
                     pin.position,
                     Point { x: at.x, y: at.y },
-                    0,
-                    false,
+                    self.rotation_deg,
+                    self.mirrored,
                 )?;
             }
             let symbol = PlacedSymbol {
@@ -57,8 +74,8 @@ impl SchematicAuthoring {
                 fields: Vec::new(),
                 pins,
                 position: Point { x: at.x, y: at.y },
-                rotation: 0,
-                mirrored: false,
+                rotation: self.rotation_deg,
+                mirrored: self.mirrored,
                 unit_selection: None,
                 display_mode: SymbolDisplayMode::LibraryDefault,
                 pin_overrides: Vec::new(),

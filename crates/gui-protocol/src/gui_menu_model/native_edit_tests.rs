@@ -105,3 +105,57 @@ fn journal_verbs_are_not_governed_by_the_write_verb_catalog() {
     let no_project = crate::load_fixture_workspace_state();
     assert!(undo.unavailable_reason(&no_project).is_some());
 }
+
+#[test]
+fn label_and_power_port_share_sheet_and_native_capability_admission() {
+    let menu = default_gui_menu_model().unwrap();
+    let items = &menu
+        .menubar
+        .iter()
+        .find(|m| m.menu == "Place" && m.active_editor.as_deref() == Some("schematic"))
+        .unwrap()
+        .items;
+    let label = items.iter().find(|i| i.label == "Label").unwrap();
+    let power = items.iter().find(|i| i.label == "Power Port").unwrap();
+    assert_eq!(
+        power.gui_local.as_deref(),
+        Some("schematic.power_port.open")
+    );
+    let mut state = native_editable_state(&["datum.schematic.place_label"]);
+    state.schematic_authoring.sheet = Some(uuid::Uuid::new_v4());
+    for item in [label, power] {
+        assert_eq!(item.unavailable_reason(&state), None);
+    }
+    state.backing.as_mut().unwrap().native_write_verbs.clear();
+    for item in [label, power] {
+        assert_eq!(
+            item.unavailable_reason(&state),
+            Some("Project editing capabilities are not available yet.")
+        );
+    }
+    state
+        .backing
+        .as_mut()
+        .unwrap()
+        .native_write_verbs
+        .insert("datum.schematic.place_symbol".into());
+    for item in [label, power] {
+        assert_eq!(
+            item.unavailable_reason(&state),
+            Some("This operation is not offered by the open Project's engine.")
+        );
+    }
+    state
+        .backing
+        .as_mut()
+        .unwrap()
+        .native_write_verbs
+        .insert("datum.schematic.place_label".into());
+    state.schematic_authoring.sheet = None;
+    for item in [label, power] {
+        assert_eq!(
+            item.unavailable_reason(&state),
+            Some("This Project needs a native schematic sheet before authoring.")
+        );
+    }
+}

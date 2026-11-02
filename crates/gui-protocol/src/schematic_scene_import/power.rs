@@ -1,4 +1,4 @@
-use eda_engine::schematic::PlacedSymbol;
+use eda_engine::schematic::{NetLabel, PlacedSymbol};
 use eda_engine::text::{TextHAlign, TextVAlign};
 use uuid::Uuid;
 
@@ -57,6 +57,46 @@ pub(super) fn push_power_symbol_graphics(
     let origin = point_nm(symbol.position);
     let lib = symbol.lib_id.as_deref().unwrap_or("");
     let ground = is_ground_power_symbol(lib);
+    push_power_graphics(
+        graphics,
+        points,
+        text,
+        symbol.uuid,
+        origin,
+        &power_net_name(symbol),
+        ground,
+    );
+}
+
+/// Native power ports carry their electrical name on the label itself. Graphic
+/// style does not alias names: GND and GNDA remain distinct engine nets.
+pub(super) fn push_power_label_graphics(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    label: &NetLabel,
+) {
+    push_power_graphics(
+        graphics,
+        points,
+        text,
+        label.uuid,
+        point_nm(label.position),
+        &label.name,
+        is_ground_power_symbol(&label.name),
+    );
+}
+
+#[allow(clippy::too_many_arguments)]
+fn push_power_graphics(
+    graphics: &mut Vec<BoardGraphicPrimitive>,
+    points: &mut Vec<PointNm>,
+    text: &mut SchematicTextSink,
+    uuid: Uuid,
+    origin: PointNm,
+    name: &str,
+    ground: bool,
+) {
     // sign: +y (down) for ground, -y (up) for a rail flag.
     let sign = if ground { 1 } else { -1 };
 
@@ -65,7 +105,7 @@ pub(super) fn push_power_symbol_graphics(
         x: origin.x,
         y: origin.y + sign * POWER_STEM_NM,
     };
-    push_power_line(graphics, points, symbol.uuid, "stem", origin, stem_end);
+    push_power_line(graphics, points, uuid, "stem", origin, stem_end);
 
     if ground {
         // Three shrinking horizontal bars beyond the stem.
@@ -81,7 +121,7 @@ pub(super) fn push_power_symbol_graphics(
             push_power_line(
                 graphics,
                 points,
-                symbol.uuid,
+                uuid,
                 &format!("gnd-bar:{index}"),
                 PointNm {
                     x: origin.x - half,
@@ -98,7 +138,7 @@ pub(super) fn push_power_symbol_graphics(
         push_power_line(
             graphics,
             points,
-            symbol.uuid,
+            uuid,
             "rail-bar",
             PointNm {
                 x: origin.x - POWER_RAIL_BAR_HALF_NM,
@@ -124,9 +164,9 @@ pub(super) fn push_power_symbol_graphics(
     };
     text.push(
         points,
-        symbol.uuid,
+        uuid,
         "power-net",
-        &power_net_name(symbol),
+        name,
         PointNm {
             x: origin.x,
             y: far_y,

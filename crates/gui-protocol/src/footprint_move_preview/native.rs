@@ -134,17 +134,19 @@ impl NativeMovePreview {
                 ..
             } => {
                 let moved =
-                    basis.destination(eda_engine::ir::geometry::Point { x: at.x, y: at.y })?;
+                    basis.destination_edit(eda_engine::ir::geometry::Point { x: at.x, y: at.y })?;
                 let mut source = authoring
                     .source
                     .clone()
                     .context("Native schematic source unavailable")?;
-                source
+                let sheet = source
                     .sheets
                     .get_mut(&basis.sheet_id)
-                    .context("Native sheet changed")?
-                    .symbols
-                    .insert(moved.uuid, moved);
+                    .context("Native sheet changed")?;
+                sheet.symbols.insert(moved.symbol.uuid, moved.symbol);
+                for wire in moved.wires {
+                    sheet.wires.insert(wire.uuid, wire);
+                }
                 authoring.project_source(&source, basis.sheet_id, base, root)
             }
         }

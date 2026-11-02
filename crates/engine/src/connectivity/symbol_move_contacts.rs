@@ -1,12 +1,15 @@
 //! Exact source-owned electrical contact geometry for a single Symbol move.
 //! Logical labels/hidden-power assignments are not an isolation predicate.
-use super::{is_bus_container_label, segment_geometry::point_on_wire_segment};
+use super::{
+    is_bus_container_label, physical_partitions,
+    segment_geometry::{point_on_wire_segment, segments_touch},
+};
 use crate::{
     error::EngineError,
     ir::geometry::Point,
-    schematic::{PlacedSymbol, Sheet},
+    schematic::{PlacedSymbol, Schematic, SchematicWire, Sheet},
 };
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::Arc};
 use uuid::Uuid;
 
 /// Shared scalar attachment nodes used by the existing connectivity owner.
@@ -37,6 +40,8 @@ pub(super) fn schematic_attachment_points(sheet: &Sheet) -> HashSet<Point> {
 pub(crate) struct SymbolContactBasis {
     points: Vec<Point>,
     segments: Vec<(Point, Point)>,
+    sheet: Arc<Sheet>,
+    attached: Vec<SchematicWire>,
 }
 impl SymbolContactBasis {
     pub(crate) fn capture(sheet: &Sheet, symbol: Uuid) -> Result<Self, EngineError> {
@@ -52,7 +57,36 @@ impl SymbolContactBasis {
         points.extend(sheet.ports.values().map(|p| p.position));
         points.extend(sheet.junctions.values().map(|j| j.position));
         points.extend(sheet.noconnects.values().map(|n| n.position));
-        let mut segments: Vec<_> = sheet.wires.values().map(|w| (w.from, w.to)).collect();
+        let symbol = sheet
+            .symbols
+            .get(&symbol)
+            .ok_or_else(|| invalid("Symbol source unavailable"))?;
+        let pin_positions: HashSet<_> = symbol.pins.iter().map(|pin| pin.position).collect();
+        if pin_positions.len() != symbol.pins.len() {
+            return Err(invalid("Symbol move has ambiguous coincident pins"));
+        }
+        let mut attached = Vec::new();
+        let mut segments = Vec::new();
+        for wire in sheet.wires.values() {
+            if pin_positions
+                .iter()
+                .any(|pin| point_on_wire_segment(*pin, wire.from, wire.to))
+            {
+                if wire.from == wire.to
+                    || pin_positions.iter().any(|pin| {
+                        *pin != wire.from
+                            && *pin != wire.to
+                            && point_on_wire_segment(*pin, wire.from, wire.to)
+                    })
+                {
+                    return Err(invalid(
+                        "Symbol move has ambiguous geometric pin contact inside a wire",
+                    ));
+                }
+                attached.push(wire.clone());
+            }
+        }
+        attached.sort_by_key(|wire| wire.uuid);
         for bus in sheet.buses.values() {
             if bus.segments.len() < 2 || bus.segments.windows(2).any(|p| p[0] == p[1]) {
                 return Err(invalid("Bus contact geometry is incomplete"));
@@ -60,6 +94,14 @@ impl SymbolContactBasis {
             segments.extend(bus.segments.windows(2).map(|p| (p[0], p[1])));
         }
         for entry in sheet.bus_entries.values() {
+            if entry
+                .wire
+                .is_some_and(|id| attached.iter().any(|wire| wire.uuid == id))
+            {
+                return Err(invalid(
+                    "Symbol move cannot reshape a wire owned by a bus entry",
+                ));
+            }
             // A zero authored offset uses a renderer fallback, not complete
             // source geometry; never turn unavailable geometry into isolation.
             if entry.size == Point::zero()
@@ -82,10 +124,17 @@ impl SymbolContactBasis {
             };
             segments.push((entry.position, end));
         }
-        Ok(Self { points, segments })
+        let basis = Self {
+            points,
+            segments,
+            sheet: Arc::new(sheet.clone()),
+            attached,
+        };
+        basis.require_no_foreign_contact(symbol)?;
+        Ok(basis)
     }
 
-    pub(crate) fn require_detached(&self, symbol: &PlacedSymbol) -> Result<(), EngineError> {
+    fn require_no_foreign_contact(&self, symbol: &PlacedSymbol) -> Result<(), EngineError> {
         if symbol.pins.iter().any(|pin| {
             self.points.contains(&pin.position)
                 || self
@@ -94,10 +143,91 @@ impl SymbolContactBasis {
                     .any(|(a, b)| point_on_wire_segment(pin.position, *a, *b))
         }) {
             return Err(invalid(
-                "Symbol move requires no external geometric pin contact in source and destination",
+                "Symbol move has ambiguous external geometric pin contact",
             ));
         }
         Ok(())
+    }
+
+    pub(crate) fn moved_wires(
+        &self,
+        symbol: &PlacedSymbol,
+    ) -> Result<Vec<SchematicWire>, EngineError> {
+        self.require_no_foreign_contact(symbol)?;
+        let original = &self.sheet.symbols[&symbol.uuid];
+        let destinations: std::collections::HashMap<_, _> = original
+            .pins
+            .iter()
+            .zip(&symbol.pins)
+            .map(|(before, after)| (before.position, after.position))
+            .collect();
+        let mut wires = Vec::new();
+        for wire in &self.attached {
+            let mut moved = wire.clone();
+            moved.from = destinations.get(&wire.from).copied().unwrap_or(wire.from);
+            moved.to = destinations.get(&wire.to).copied().unwrap_or(wire.to);
+            if moved.from == moved.to {
+                return Err(invalid("Symbol move would collapse an attached wire"));
+            }
+            if moved != *wire {
+                wires.push(moved);
+            }
+        }
+        let mut sheet = self.sheet.as_ref().clone();
+        sheet.symbols.insert(symbol.uuid, symbol.clone());
+        for wire in &wires {
+            sheet.wires.insert(wire.uuid, wire.clone());
+        }
+        // Equality of complete physical member sets is stronger than equality
+        // of names: labels cannot conceal an accidental shortcut or disconnection.
+        // Only this uniquely occurring sheet's geometry changes; all external
+        // label/hierarchy relationships therefore retain their original members.
+        let before = local_source(self.sheet.as_ref().clone());
+        let after = local_source(sheet);
+        if physical_partitions(&before)? != physical_partitions(&after)? {
+            return Err(invalid(
+                "Symbol move would change electrical connections through geometric pin contact",
+            ));
+        }
+        // Retain every fixed attachment even if another physical path would
+        // conceal its loss. This also covers no-connect and bus-container
+        // labels, which are outside scalar partitions.
+        for wire in &wires {
+            let old = &self.sheet.wires[&wire.uuid];
+            for point in &self.points {
+                if point_on_wire_segment(*point, wire.from, wire.to)
+                    != point_on_wire_segment(*point, old.from, old.to)
+                {
+                    return Err(invalid(
+                        "Symbol move would change a fixed attachment contact",
+                    ));
+                }
+            }
+            if self.segments.iter().any(|(from, to)| {
+                segments_touch(wire.from, wire.to, *from, *to)
+                    || segments_touch(old.from, old.to, *from, *to)
+            }) {
+                return Err(invalid(
+                    "Symbol move cannot reshape a wire contacting bus geometry",
+                ));
+            }
+        }
+        Ok(wires)
+    }
+
+    pub(crate) fn original_wire(&self, id: Uuid) -> &SchematicWire {
+        &self.sheet.wires[&id]
+    }
+}
+
+fn local_source(sheet: Sheet) -> Schematic {
+    Schematic {
+        uuid: Uuid::nil(),
+        sheets: std::collections::HashMap::from([(sheet.uuid, sheet)]),
+        sheet_definitions: Default::default(),
+        sheet_instances: Default::default(),
+        variants: Default::default(),
+        waivers: Vec::new(),
     }
 }
 fn invalid(reason: &str) -> EngineError {

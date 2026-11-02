@@ -76,6 +76,19 @@ fn optional_binding_picker_selects_valid_unit_backed_symbol_and_retains_diagnost
     assert_eq!(picker.value, default_value);
     assert_eq!(picker.value_editor.caret, picker.value.len());
     assert!(picker.value_editor.selection(&picker.value).is_empty());
+    let source_before = picker.source.clone();
+    picker.label = Some(LabelDraft::new(LabelKind::Power));
+    picker.chosen = None;
+    picker.picker = false;
+    assert!(picker.active());
+    picker.cancel();
+    assert!(picker.label.is_none());
+    assert!(!picker.active());
+    assert!(picker.pending_request.is_none());
+    assert_eq!(
+        picker.source, source_before,
+        "label cancellation preserves canonical source"
+    );
     assert_eq!(
         ProjectResolver::new(&root)
             .resolve()
@@ -86,4 +99,30 @@ fn optional_binding_picker_selects_valid_unit_backed_symbol_and_retains_diagnost
     );
     drop(model);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn label_request_uses_native_kind_tokens_and_exact_name_and_position() {
+    let sheet = Uuid::new_v4();
+    assert_eq!(LabelDraft::new(LabelKind::Power).name, "GND");
+    for (kind, token) in [
+        (LabelKind::Local, "local"),
+        (LabelKind::Global, "global"),
+        (LabelKind::Power, "power"),
+        (LabelKind::Hierarchical, "hierarchical"),
+    ] {
+        let request = SchematicEditRequest::PlaceLabel {
+            sheet,
+            kind,
+            name: "+3V3".into(),
+            x_nm: -1_000_000,
+            y_nm: 2_000_000,
+        };
+        let (verb, params) = request.verb_params();
+        assert_eq!(verb, "datum.schematic.place_label");
+        assert_eq!(
+            params,
+            serde_json::json!({"sheet":sheet,"kind":token,"name":"+3V3","x_nm":-1_000_000,"y_nm":2_000_000})
+        );
+    }
 }

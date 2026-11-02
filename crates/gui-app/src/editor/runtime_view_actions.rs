@@ -120,6 +120,24 @@ impl Runtime {
                 self.open_new_project()
             }
             GuiLocalHandler::OpenProject => self.open_project(),
+            GuiLocalHandler::PowerPort => {
+                if let Some(reason) =
+                    datum_gui_protocol::gui_menu_model::native_edit_unavailable_reason(
+                        self.workspace(),
+                        "datum.schematic.place_label",
+                    )
+                {
+                    self.log_console_refusal_for_action(
+                        ConsoleFeedbackSource::Menu,
+                        action,
+                        reason,
+                    );
+                    self.invalidate_frame();
+                    true
+                } else {
+                    self.begin_native_label(eda_engine::schematic::LabelKind::Power)
+                }
+            }
             GuiLocalHandler::OpenRecentProject(index) => self.open_recent_project(index),
             GuiLocalHandler::GlobalPreferences => self.open_global_preferences(),
             GuiLocalHandler::ProjectPreferences => self.open_project_preferences(),
