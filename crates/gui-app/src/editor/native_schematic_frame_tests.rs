@@ -141,6 +141,20 @@ impl Fixture {
         {
             return;
         }
+        // This fixture owns custom Project symbols, so explicitly choose that
+        // source instead of the default shipped-library search. Wait for its
+        // presented picker before dispatching the existing preview/cancel proof.
+        if matches!(self.stage, 2 | 5 | 8) && r.workspace().library.acquisition.is_some() {
+            self.control(
+                events,
+                HitTarget::Library(
+                    datum_gui_protocol::library_browser::LibraryControl::ProjectSymbols,
+                ),
+            );
+            self.since = Instant::now();
+            self.app.request_workspace_redraw();
+            return;
+        }
         match self.stage {
             0 => {
                 let r = self.app.runtime.as_mut().unwrap();

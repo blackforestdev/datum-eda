@@ -24,6 +24,7 @@ pub const KINDS: [(&str, &str); 8] = [
 pub enum LibraryControl {
     Acquire,
     BrowseBundled,
+    ProjectSymbols,
     AcquirePath,
     AcquireLoad,
     AcquireSearch,

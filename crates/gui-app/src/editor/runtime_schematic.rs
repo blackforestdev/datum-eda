@@ -6,6 +6,15 @@ use datum_gui_protocol::schematic_authoring::{PlacementField, SchematicEditReque
 mod library;
 impl Runtime {
     pub(super) fn begin_native_schematic(&mut self, wire: bool) -> bool {
+        if !self.prepare_native_schematic(wire) {
+            return true;
+        }
+        if !wire {
+            return self.browse_schematic_libraries();
+        }
+        true
+    }
+    fn prepare_native_schematic(&mut self, wire: bool) -> bool {
         if !self.native_edit_available()
             || self.native_edit.pending()
             || self.check_work.pending()
@@ -15,24 +24,24 @@ impl Runtime {
                 ConsoleFeedbackSource::Tool,
                 "Focus a native schematic sheet with no pending edit",
             );
-            return true;
+            return false;
         }
         let view_basis =
             match self.capture_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
                 Ok(basis) => basis,
                 Err(reason) => {
                     self.refuse_native_authoring_view(reason);
-                    return true;
+                    return false;
                 }
             };
         self.cancel_native_schematic();
         self.cancel_native_move();
         let Some(base) = self.workspace().schematic_scene.clone() else {
-            return true;
+            return false;
         };
         let editor = &mut self.session.workspace_mut().schematic_authoring;
         if editor.sheet.is_none() {
-            return true;
+            return false;
         }
         editor.base = Some(base);
         editor.wire = wire;
@@ -75,6 +84,7 @@ impl Runtime {
             editor.refusal = Some("Choose an available symbol and a unique reference".into());
         } else {
             editor.picker = false;
+            editor.preview_dirty = true;
         }
         self.invalidate_frame();
         true
@@ -185,7 +195,12 @@ impl Runtime {
                 return self.browse_schematic_libraries();
             }
             Key::Named(NamedKey::Enter) if picker => return self.start_symbol_preview(),
-            Key::Named(NamedKey::Enter) => return self.finish_native_wire(),
+            Key::Named(NamedKey::Enter) if self.workspace().schematic_authoring.wire => {
+                return self.finish_native_wire();
+            }
+            Key::Named(NamedKey::Tab) if !picker && !self.workspace().schematic_authoring.wire => {
+                self.session.workspace_mut().schematic_authoring.picker = true;
+            }
             Key::Named(NamedKey::Tab) if picker => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 e.field = if e.field == PlacementField::Reference {

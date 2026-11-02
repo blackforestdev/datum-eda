@@ -34,6 +34,10 @@ pub struct LibraryAcquisition {
     pub selected_source: Option<std::path::PathBuf>,
     pub placement_pane: Option<crate::PaneId>,
     pub placement_document: Option<crate::schematic_documents::SchematicDocumentKey>,
+    pub placement_zoom: Option<crate::PaneId>,
+    pub placement_temporary_pane: Option<crate::PaneId>,
+    /// Explicit confirmation belongs to one source read, never a later query.
+    pub placement_confirmation: Option<Uuid>,
     pub preview: Option<LibraryAcquisitionPreview>,
     pub refusal: Option<String>,
     pub loading: bool,
@@ -61,6 +65,9 @@ impl LibraryAcquisition {
             selected_source: None,
             placement_pane: None,
             placement_document: None,
+            placement_zoom: None,
+            placement_temporary_pane: None,
+            placement_confirmation: None,
             preview: None,
             refusal: None,
             loading: false,
@@ -113,8 +120,13 @@ impl LibraryAcquisition {
             .count()
     }
 
+    pub fn take_placement_confirmation(&mut self) -> bool {
+        self.placement_confirmation.take() == Some(self.session) && self.placement_pane.is_some()
+    }
+
     /// A changed query retires a selected preview, not the catalog being read.
     pub fn search_changed(&mut self) {
+        self.placement_confirmation = None;
         self.offset = 0;
         self.refusal = None;
         self.preview = None;
@@ -128,6 +140,7 @@ impl LibraryAcquisition {
 
     /// Editing the source invalidates all results and outstanding reads of it.
     pub fn source_changed(&mut self) {
+        self.placement_confirmation = None;
         self.session = Uuid::new_v4();
         self.names.clear();
         self.sources.clear();
@@ -224,11 +237,15 @@ mod tests {
         let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
         acquisition.loading = true;
         let catalog_session = acquisition.session;
+        acquisition.placement_pane = Some(crate::PaneId(1));
+        acquisition.placement_confirmation = Some(catalog_session);
         acquisition.search_changed();
+        assert!(!acquisition.take_placement_confirmation());
         assert_eq!(acquisition.session, catalog_session);
         assert!(acquisition.loading);
 
         acquisition.loaded = true;
+        acquisition.placement_confirmation = Some(acquisition.session);
         acquisition.names = vec!["Device:R".into()];
         acquisition.offset = 4;
         acquisition.selected = Some("R".into());
@@ -253,6 +270,28 @@ mod tests {
         assert!(acquisition.selected.is_none());
         assert!(acquisition.selected_source.is_none());
         assert!(acquisition.request().is_err());
+        assert!(!acquisition.take_placement_confirmation());
+    }
+
+    #[test]
+    fn placement_confirmation_is_explicit_one_shot_and_session_qualified() {
+        let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
+        acquisition.placement_pane = Some(crate::PaneId(1));
+        assert!(!acquisition.take_placement_confirmation());
+        acquisition.placement_confirmation = Some(acquisition.session);
+        assert!(acquisition.take_placement_confirmation());
+        assert!(!acquisition.take_placement_confirmation());
+        acquisition.placement_confirmation = Some(Uuid::new_v4());
+        assert!(!acquisition.take_placement_confirmation());
+        acquisition.placement_confirmation = Some(acquisition.session);
+        acquisition.source_changed();
+        assert!(!acquisition.take_placement_confirmation());
+        acquisition.placement_confirmation = Some(acquisition.session);
+        acquisition.placement_pane = None;
+        assert!(
+            !acquisition.take_placement_confirmation(),
+            "inspection never implies placement"
+        );
     }
 
     #[test]

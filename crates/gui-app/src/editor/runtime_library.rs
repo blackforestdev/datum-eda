@@ -49,6 +49,7 @@ impl Runtime {
         match control {
             C::Acquire
             | C::BrowseBundled
+            | C::ProjectSymbols
             | C::AcquirePath
             | C::AcquireLoad
             | C::AcquireSearch
@@ -345,6 +346,9 @@ impl Runtime {
                         controls.extend([C::AcquirePath, C::AcquireLoad]);
                     }
                     controls.push(C::AcquireSearch);
+                    if a.placement_pane.is_some() {
+                        controls.push(C::ProjectSymbols);
+                    }
                     if a.preview.is_some() {
                         controls.push(C::AcquireImport);
                     }
@@ -480,6 +484,16 @@ impl Runtime {
                 b.reveal_focus = true;
             }
             Key::Named(NamedKey::Enter) => {
+                if matches!(focus, Some(C::AcquireSearch))
+                    && self
+                        .workspace()
+                        .library
+                        .acquisition
+                        .as_ref()
+                        .is_some_and(|a| a.placement_pane.is_some())
+                {
+                    return self.confirm_acquisition_search();
+                }
                 if let Some(control) = focus {
                     return self.activate_library(control);
                 }

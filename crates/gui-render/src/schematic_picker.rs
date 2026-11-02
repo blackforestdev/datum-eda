@@ -224,8 +224,17 @@ pub(super) fn render(
             text,
             hits,
         );
+        draw_text(
+            "Enter: resume placement",
+            panel.x + 16.,
+            panel.y + 286.,
+            11.,
+            TEXT_MUTED,
+            TextFace::Ui,
+            text,
+        );
         button(
-            "Place",
+            "Resume",
             HitTarget::SchematicPlace,
             RectPx {
                 x: panel.x + width - 106.,
@@ -239,9 +248,9 @@ pub(super) fn render(
         );
     } else if authoring.active() {
         let panel = RectPx {
-            x: layout.top_menu_bar.width / 2. - 160.,
+            x: layout.top_menu_bar.width / 2. - 200.,
             y: 76.,
-            width: 320.,
+            width: 400.,
             height: 65.,
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
@@ -249,7 +258,7 @@ pub(super) fn render(
             if authoring.wire {
                 "Place Wire · click vertices"
             } else {
-                "Place Symbol · click destination"
+                "Click to place · Tab: reference/value · Esc: cancel"
             },
             panel.x + 10.,
             panel.y + 10.,

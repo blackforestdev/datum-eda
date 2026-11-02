@@ -6,7 +6,11 @@ pub(super) fn render(p: &mut Painter<'_>) {
     let a = p.state.library.acquisition.as_ref().unwrap();
     if a.bundled {
         p.line("Datum symbol library");
-        p.line("Choose a symbol, then continue to placement");
+        p.line(if a.placement_pane.is_some() {
+            "Search, then Enter or choose a result to place"
+        } else {
+            "Choose a symbol to inspect"
+        });
     } else {
         p.line("Browse KiCad symbols");
         p.line("Library folder or .kicad_sym file");
@@ -15,6 +19,9 @@ pub(super) fn render(p: &mut Painter<'_>) {
     }
     p.line("Search symbols (Ctrl+F)");
     field(p, &a.search, a.search_editor, C::AcquireSearch);
+    if a.placement_pane.is_some() {
+        p.button("Project symbols…", C::ProjectSymbols);
+    }
     if let Some(preview) = &a.preview {
         p.line(&format!("Selected: {}", preview.name));
         if preview
@@ -26,7 +33,7 @@ pub(super) fn render(p: &mut Painter<'_>) {
         }
         p.button(
             if a.placement_pane.is_some() {
-                "Continue to placement…"
+                "Place symbol"
             } else if a.bundled {
                 "Add to Project library"
             } else {

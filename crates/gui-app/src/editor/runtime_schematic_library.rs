@@ -4,20 +4,42 @@ use datum_gui_protocol::{
     PaneId, library_browser::LibraryControl, schematic_documents::SchematicDocumentKey,
 };
 
-pub(crate) type PlacementOrigin = (PaneId, SchematicDocumentKey);
+pub(crate) struct PlacementOrigin {
+    pane: PaneId,
+    document: SchematicDocumentKey,
+    zoom: Option<PaneId>,
+    temporary_library: Option<PaneId>,
+}
 
 fn origin_is_current(
     state: &datum_gui_protocol::ReviewWorkspaceState,
-    (pane, document): &PlacementOrigin,
+    origin: &PlacementOrigin,
 ) -> bool {
+    let (pane, document) = (&origin.pane, &origin.document);
     state.ui.layout.content_for(*pane) == Some(PaneContent::Schematic)
         && state.schematic_documents.panes.get(pane) == Some(document)
         && state.schematic_documents.project == Some(document.project)
 }
 
+fn restore_origin_layout(
+    layout: &mut datum_gui_protocol::WorkspaceLayout,
+    origin: &PlacementOrigin,
+) {
+    if let Some(temporary) = origin.temporary_library
+        && layout.content_for(temporary) == Some(PaneContent::Library)
+    {
+        layout.focused = temporary;
+        layout.close_focused();
+    }
+    layout.focused = origin.pane;
+    layout.zoomed = origin
+        .zoom
+        .filter(|pane| layout.content_for(*pane).is_some());
+}
+
 impl Runtime {
-    /// A reused Project definition is what will be placed, even if its original
-    /// external source changed. Show that definition before the user confirms.
+    /// Placement reuses the saved Project definition, even if its original
+    /// external source changed; the source read never silently updates it.
     pub(crate) fn preview_existing_project_symbol(&mut self) {
         let state = self.workspace();
         let Some(a) = state
@@ -101,23 +123,49 @@ impl Runtime {
         if !self.guard_native_authoring_view(Some(pane)) {
             return true;
         }
+        let zoom = self.workspace().ui.layout.zoomed;
         self.activate_library(LibraryControl::BrowseBundled);
         let Some(acquisition) = &mut self.session.workspace_mut().library.acquisition else {
             return true;
         };
         acquisition.placement_pane = Some(pane);
         acquisition.placement_document = Some(document);
+        acquisition.placement_zoom = zoom;
         self.cancel_native_schematic();
-        self.open_library();
+        let layout = &self.workspace().ui.layout;
+        let existing = layout
+            .leaves()
+            .into_iter()
+            .find(|id| layout.content_for(*id) == Some(PaneContent::Library));
+        let mut temporary = None;
+        self.swap_pane_focus(|layout| {
+            let library = existing.unwrap_or_else(|| {
+                let id = layout.open_beside_root(
+                    PaneContent::Library,
+                    datum_gui_protocol::SplitOrientation::Vertical,
+                    0.5,
+                    true,
+                );
+                temporary = Some(id);
+                id
+            });
+            layout.focused = library;
+            layout.zoomed = Some(library);
+        });
+        if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
+            a.placement_temporary_pane = temporary;
+        }
         true
     }
 
     pub(crate) fn acquisition_placement_origin(&self) -> Option<PlacementOrigin> {
         let acquisition = self.workspace().library.acquisition.as_ref()?;
-        Some((
-            acquisition.placement_pane?,
-            acquisition.placement_document.clone()?,
-        ))
+        Some(PlacementOrigin {
+            pane: acquisition.placement_pane?,
+            document: acquisition.placement_document.clone()?,
+            zoom: acquisition.placement_zoom,
+            temporary_library: acquisition.placement_temporary_pane,
+        })
     }
 
     pub(crate) fn acquire_symbol_for_placement(&mut self) -> bool {
@@ -173,6 +221,27 @@ impl Runtime {
         }
     }
 
+    pub(crate) fn browse_project_symbols_for_placement(&mut self) -> bool {
+        let Some(origin) = self.acquisition_placement_origin() else {
+            return true;
+        };
+        if !origin_is_current(self.workspace(), &origin) {
+            if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
+                a.refusal = Some(
+                    "The original schematic view changed; cancel and browse from that sheet again"
+                        .into(),
+                );
+            }
+            self.invalidate_frame();
+            return true;
+        }
+        self.session.workspace_mut().library.acquisition = None;
+        self.library_acquisition_work.cancel();
+        self.swap_pane_focus(|layout| restore_origin_layout(layout, &origin));
+        self.prepare_native_schematic(false);
+        true
+    }
+
     pub(crate) fn resume_library_placement(
         &mut self,
         origin: PlacementOrigin,
@@ -183,15 +252,15 @@ impl Runtime {
                 "The original schematic view changed; select a sheet and place the Project symbol there");
             return;
         }
-        self.swap_pane_focus(|layout| {
-            layout.focused = origin.0;
-            layout.zoomed = None;
-        });
-        self.begin_native_schematic(false);
-        if !self.workspace().schematic_authoring.picker {
+        self.swap_pane_focus(|layout| restore_origin_layout(layout, &origin));
+        let Some(id) = symbol else {
+            self.cancel_native_schematic();
+            return;
+        };
+        if !self.prepare_native_schematic(false) {
             return;
         }
-        if let Some(id) = symbol {
+        {
             let editor = &mut self.session.workspace_mut().schematic_authoring;
             editor.chosen = None;
             if let Some(index) = editor.choices.iter().position(|c| c.id == id) {
@@ -201,6 +270,7 @@ impl Runtime {
                 editor.refusal = Some("The selected symbol is unavailable in this Project".into());
             }
         }
+        self.start_symbol_preview();
         self.invalidate_frame();
     }
 }
@@ -222,7 +292,12 @@ mod tests {
         };
         state.schematic_documents.project = Some(key.project);
         state.schematic_documents.panes.insert(pane, key.clone());
-        let origin = (pane, key.clone());
+        let origin = PlacementOrigin {
+            pane,
+            document: key.clone(),
+            zoom: None,
+            temporary_library: None,
+        };
         assert!(origin_is_current(&state, &origin));
         state
             .schematic_documents
@@ -240,5 +315,55 @@ mod tests {
         assert!(!origin_is_current(&state, &origin));
         state.schematic_documents.panes.remove(&pane);
         assert!(!origin_is_current(&state, &origin));
+    }
+
+    #[test]
+    fn library_return_restores_zoom_and_removes_only_its_own_temporary_pane() {
+        let mut layout = datum_gui_protocol::WorkspaceLayout::single();
+        let pane = layout.focused;
+        layout.set_focused_content(PaneContent::Schematic);
+        let unrelated = layout.open_beside_root(
+            PaneContent::Board,
+            datum_gui_protocol::SplitOrientation::Vertical,
+            0.5,
+            false,
+        );
+        let before = layout.leaves();
+        let temporary = layout.open_beside_root(
+            PaneContent::Library,
+            datum_gui_protocol::SplitOrientation::Vertical,
+            0.5,
+            true,
+        );
+        let mut origin = PlacementOrigin {
+            pane,
+            document: SchematicDocumentKey {
+                project: eda_engine::substrate::ObjectId::new_v4(),
+                schematic: eda_engine::substrate::ObjectId::new_v4(),
+                source_sheet: eda_engine::substrate::ObjectId::new_v4(),
+                instance_path: vec![],
+            },
+            zoom: Some(pane),
+            temporary_library: Some(temporary),
+        };
+        restore_origin_layout(&mut layout, &origin);
+        assert_eq!(layout.leaves(), before);
+        assert_eq!(layout.content_for(unrelated), Some(PaneContent::Board));
+        assert_eq!(layout.focused, pane);
+        assert_eq!(layout.zoomed, Some(pane));
+        let reused = layout.open_beside_root(
+            PaneContent::Library,
+            datum_gui_protocol::SplitOrientation::Vertical,
+            0.5,
+            true,
+        );
+        origin.temporary_library = None;
+        restore_origin_layout(&mut layout, &origin);
+        assert_eq!(layout.content_for(reused), Some(PaneContent::Library));
+        origin.temporary_library = Some(reused);
+        layout.focused = reused;
+        layout.set_focused_content(PaneContent::Board);
+        restore_origin_layout(&mut layout, &origin);
+        assert_eq!(layout.content_for(reused), Some(PaneContent::Board));
     }
 }

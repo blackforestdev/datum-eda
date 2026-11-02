@@ -82,6 +82,7 @@ impl Runtime {
                 self.library_acquisition_work.pending = None;
                 if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
                     a.loading = false;
+                    a.placement_confirmation = None;
                     a.refusal = Some("Local source read stopped; load the source again".into());
                 }
                 self.invalidate_frame();
@@ -99,29 +100,70 @@ impl Runtime {
         if current_revision != answer.revision {
             a.loading = false;
             a.preview = None;
+            a.placement_confirmation = None;
             a.refusal =
                 Some("Project changed during the source read; cancel and acquire again".into());
             self.invalidate_frame();
             return true;
         }
         a.loading = false;
+        let mut catalog_arrived = false;
         match answer.result {
             Ok(ReadResult::Names(catalog)) => {
                 a.names = catalog.symbols.iter().map(|s| s.label.clone()).collect();
                 a.sources = catalog.symbols;
                 a.catalog_notices = catalog.notices;
                 a.loaded = true;
+                catalog_arrived = true;
             }
             Ok(ReadResult::Preview(preview)) => a.preview = Some(preview),
-            Err(reason) => a.refusal = Some(reason),
+            Err(reason) => {
+                a.placement_confirmation = None;
+                a.refusal = Some(reason);
+            }
         }
+        let confirmed = a.take_placement_confirmation();
         self.preview_existing_project_symbol();
+        if confirmed {
+            if catalog_arrived {
+                self.confirm_acquisition_search();
+            } else {
+                self.acquire_symbol_for_placement();
+            }
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    /// Enter confirms the first usable match. A slow catalog keeps this explicit
+    /// intent only until its session is retired by a source/query edit or Cancel.
+    pub(super) fn confirm_acquisition_search(&mut self) -> bool {
+        let Some(a) = &mut self.session.workspace_mut().library.acquisition else {
+            return false;
+        };
+        if a.placement_pane.is_none() {
+            return false;
+        }
+        if a.loading && !a.loaded {
+            a.placement_confirmation = Some(a.session);
+            return true;
+        }
+        let first = a.results().into_iter().find(|index| {
+            a.sources
+                .get(*index)
+                .is_some_and(|source| !source.is_unavailable())
+        });
+        if let Some(index) = first {
+            return self.activate_acquisition(&C::AcquireResult(index));
+        }
+        a.refusal = Some("No usable symbol matches this search".into());
         self.invalidate_frame();
         true
     }
 
     pub(super) fn activate_acquisition(&mut self, control: &C) -> bool {
         match control {
+            C::ProjectSymbols => return self.browse_project_symbols_for_placement(),
             C::Acquire | C::BrowseBundled => {
                 if !self.native_edit_available() || self.check_work.pending() {
                     self.log_console_refusal(ConsoleFeedbackSource::Tool, "Open a native Project and finish its check job before acquiring a library symbol");
@@ -169,12 +211,32 @@ impl Runtime {
                     let Some(source) = a.sources.get(*index).cloned() else {
                         return true;
                     };
+                    if !a.results().contains(index) {
+                        return true;
+                    }
+                    if a.placement_pane.is_some() && source.is_unavailable() {
+                        a.search_changed();
+                        a.refusal = Some("This symbol is unavailable for placement".into());
+                        self.invalidate_frame();
+                        return true;
+                    }
+                    if a.loading
+                        && a.selected.as_deref() == Some(source.name.as_str())
+                        && a.selected_source.as_ref() == Some(&source.path)
+                    {
+                        if a.placement_pane.is_some() {
+                            a.placement_confirmation = Some(a.session);
+                        }
+                        return true;
+                    }
                     Some(source)
                 } else {
                     a.source_changed();
                     None
                 };
                 a.session = eda_engine::substrate::ObjectId::new_v4();
+                a.placement_confirmation =
+                    (a.placement_pane.is_some() && source.is_some()).then_some(a.session);
                 a.selected = source.as_ref().map(|s| s.name.clone());
                 a.selected_source = source.as_ref().map(|s| s.path.clone());
                 a.preview = None;
