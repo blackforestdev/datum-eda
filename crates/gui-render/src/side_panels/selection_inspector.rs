@@ -113,6 +113,7 @@ fn render_impl(
             || datum_gui_protocol::schematic_authoring::selected::bus_admission(state).is_ok() {
             Some(HitTarget::InspectorEditSymbol(basis))
         } else if datum_gui_protocol::schematic_authoring::selected::label_admission(state).is_ok()
+            || datum_gui_protocol::schematic_authoring::selected::text_admission(state).is_ok()
             || datum_gui_protocol::schematic_authoring::selected::port_admission(state).is_ok() {
             Some(HitTarget::InspectorEditLabel(basis))
         } else { None }
@@ -264,7 +265,11 @@ fn render_impl(
     }
     if let Some(target) = edit_action {
         let label = if matches!(target, HitTarget::InspectorEditLabel(_)) {
-            if view
+            if view.focus().is_some_and(|id| {
+                id.class == datum_gui_protocol::AuthoredSelectionClass::SchematicText
+            }) {
+                "Edit text…"
+            } else if view
                 .focus()
                 .is_some_and(|id| id.class == datum_gui_protocol::AuthoredSelectionClass::Port)
             {

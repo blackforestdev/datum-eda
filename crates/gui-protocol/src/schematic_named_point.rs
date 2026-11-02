@@ -4,6 +4,7 @@ use super::*;
 #[derive(Debug, Clone, PartialEq)]
 pub struct LabelDraft {
     /// The same name/choice form configures a label or interface port.
+    pub text_rotation: Option<i32>,
     pub port_direction: Option<PortDirection>,
     pub kind: LabelKind,
     pub name: String,
@@ -16,10 +17,17 @@ impl LabelDraft {
         let name = if kind == LabelKind::Power { "GND" } else { "" }.to_owned();
         Self {
             port_direction: None,
+            text_rotation: None,
             kind,
             editor: crate::single_line_editor::SingleLineEditor::at_end(&name),
             name,
             focus: 0,
+        }
+    }
+    pub fn text(rotation: i32) -> Self {
+        Self {
+            text_rotation: Some(rotation),
+            ..Self::new(LabelKind::Local)
         }
     }
     pub fn port(direction: PortDirection) -> Self {
@@ -33,6 +41,18 @@ impl LabelDraft {
         sheet: Uuid,
         at: PointNm,
     ) -> Result<SchematicEditRequest, String> {
+        if let Some(rotation) = self.text_rotation {
+            selected::validate_text(&self.name)?;
+            return Ok(SchematicEditRequest::Text {
+                sheet,
+                text: None,
+                instance_path: vec![],
+                value: Some(self.name.clone()),
+                x_nm: Some(at.x),
+                y_nm: Some(at.y),
+                rotation_deg: Some(rotation),
+            });
+        }
         if self.name.trim().is_empty() || self.name.chars().any(char::is_control) {
             return Err("Enter a nonempty single-line name".into());
         }
@@ -74,6 +94,10 @@ impl LabelDraft {
         }
     }
     pub fn cycle_kind(&mut self) {
+        if let Some(rotation) = &mut self.text_rotation {
+            *rotation = ((rotation.rem_euclid(360) / 90 + 1) * 90).rem_euclid(360);
+            return;
+        }
         if let Some(direction) = &mut self.port_direction {
             *direction = match direction {
                 PortDirection::Input => PortDirection::Output,

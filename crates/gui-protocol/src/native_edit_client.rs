@@ -17,6 +17,13 @@ mod proposal;
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub enum NativeEditAction {
+    MoveText {
+        text: Uuid,
+        sheet: Uuid,
+        x_nm: i64,
+        y_nm: i64,
+        rotation_deg: Option<i32>,
+    },
     Move {
         component: Uuid,
         x_nm: i64,
@@ -349,6 +356,16 @@ impl NativeProjectClient {
                         .as_ref()
                         .context("Library acquisition payload missing")?,
                 )?,
+            ),
+            NativeEditAction::MoveText {
+                text,
+                sheet,
+                x_nm,
+                y_nm,
+                rotation_deg,
+            } => (
+                "datum.schematic.place_text",
+                json!({"sheet":sheet,"text":text,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg}),
             ),
             NativeEditAction::MoveLabel { label, x_nm, y_nm } => (
                 "datum.schematic.move_label",

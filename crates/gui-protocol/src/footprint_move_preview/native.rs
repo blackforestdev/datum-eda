@@ -11,8 +11,12 @@ use uuid::Uuid;
 #[path = "group.rs"]
 pub mod group;
 use group::SymbolGroupPreview;
+#[path = "text.rs"]
+mod text;
+use text::TextMovePreview;
 
 pub enum NativeMovePreview {
+    Text(TextMovePreview),
     Symbols(SymbolGroupPreview),
     Footprint(FootprintMovePreview),
     Label {
@@ -104,6 +108,7 @@ impl NativeMovePreview {
     pub fn base(&self) -> &BoardReviewSceneV1 {
         match self {
             Self::Footprint(p) => &p.base,
+            Self::Text(p) => &p.base,
             Self::Symbols(p) => &p.base,
             Self::Symbol { base, .. } | Self::Label { base, .. } => base,
         }
@@ -117,11 +122,12 @@ impl NativeMovePreview {
     pub fn is_schematic(&self) -> bool {
         matches!(
             self,
-            Self::Symbols(_) | Self::Symbol { .. } | Self::Label { .. }
+            Self::Text(_) | Self::Symbols(_) | Self::Symbol { .. } | Self::Label { .. }
         )
     }
     pub fn instance_path(&self) -> Vec<Uuid> {
         match self {
+            Self::Text(p) => p.instance_path.clone(),
             Self::Symbols(p) => p.members[0].instance_path.clone(),
             Self::Symbol { instance_path, .. } | Self::Label { instance_path, .. } => {
                 instance_path.clone()
@@ -131,6 +137,11 @@ impl NativeMovePreview {
     }
     pub fn identity(&self) -> Result<crate::AuthoredSelectionIdentity> {
         Ok(match self {
+            Self::Text(p) => crate::AuthoredSelectionIdentity {
+                class: crate::AuthoredSelectionClass::SchematicText,
+                id: p.id(),
+                instance_path: p.instance_path.clone(),
+            },
             Self::Symbols(_) => anyhow::bail!("A compound has no privileged single identity"),
             Self::Footprint(p) => crate::AuthoredSelectionIdentity {
                 class: crate::AuthoredSelectionClass::Footprint,
@@ -176,6 +187,13 @@ impl NativeMovePreview {
     }
     pub fn action(&self, at: PointNm) -> Result<NativeEditAction> {
         Ok(match self {
+            Self::Text(p) => NativeEditAction::MoveText {
+                text: p.id(),
+                sheet: p.basis.sheet_id,
+                x_nm: at.x,
+                y_nm: at.y,
+                rotation_deg: p.rotation,
+            },
             Self::Symbols(p) => NativeEditAction::MoveSymbols {
                 x_nm: at.x,
                 y_nm: at.y,
@@ -209,6 +227,9 @@ impl NativeMovePreview {
     /// Validate the complete connected geometry before changing the desired pose.
     /// Repeated keys always transform the immutable original, never rounded previews.
     pub fn transform_symbol(&mut self, transform: PlacementTransform, at: PointNm) -> Result<bool> {
+        if let Self::Text(p) = self {
+            return p.transform(transform, at);
+        }
         if let Self::Symbols(p) = self {
             return p.transform(transform, at);
         }
@@ -237,6 +258,9 @@ impl NativeMovePreview {
     pub fn destination(&self, cursor: PointNm, snap: AuthoringSnapState) -> Result<PointNm> {
         match self {
             Self::Footprint(p) => p.destination(cursor, snap),
+            Self::Text(p) => {
+                translated_destination(p.basis.text.position, p.cursor_anchor, cursor, snap)
+            }
             Self::Symbols(_) => checked_snap_authoring_point(cursor, snap),
             Self::Symbol {
                 basis,
@@ -253,6 +277,7 @@ impl NativeMovePreview {
     pub fn scene_at(&self, at: PointNm) -> Result<BoardReviewSceneV1> {
         match self {
             Self::Footprint(p) => p.scene_at(at),
+            Self::Text(p) => p.scene_at(at),
             Self::Symbols(p) => p.scene_at(at),
             Self::Label {
                 base,

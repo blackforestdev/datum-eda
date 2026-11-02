@@ -154,11 +154,11 @@ impl MarkingMenuState {
             {
                 verb
             }
-            B::Verb(verb @ ("datum.schematic.place_symbol" | "datum.schematic.draw_wire"))
-                if self.menu_key == "schematic.empty" =>
-            {
-                verb
-            }
+            B::Verb(
+                verb @ ("datum.schematic.place_text"
+                | "datum.schematic.place_symbol"
+                | "datum.schematic.draw_wire"),
+            ) if self.menu_key == "schematic.empty" => verb,
             B::GuiLocal("schematic.power_port.open") if self.menu_key == "schematic.empty" => {
                 "datum.schematic.place_label"
             }

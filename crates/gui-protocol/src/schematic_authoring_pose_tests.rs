@@ -529,3 +529,6 @@ mod delete_review_tests;
 
 #[path = "schematic_group_move_tests.rs"]
 mod group_move_tests;
+
+#[path = "schematic_text_tests.rs"]
+mod text_tests;

@@ -75,6 +75,15 @@ impl MarkerKind {
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    Text {
+        sheet: Uuid,
+        text: Option<Uuid>,
+        instance_path: Vec<Uuid>,
+        value: Option<String>,
+        x_nm: Option<i64>,
+        y_nm: Option<i64>,
+        rotation_deg: Option<i32>,
+    },
     CustomField {
         symbol: Uuid,
         instance_path: Vec<Uuid>,
@@ -171,6 +180,33 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::Text {
+                sheet,
+                text,
+                instance_path,
+                value,
+                x_nm,
+                y_nm,
+                rotation_deg,
+            } => {
+                let mut params = serde_json::json!({"sheet":sheet,"instance_path":instance_path});
+                if let Some(id) = text {
+                    params["text"] = serde_json::json!(id);
+                }
+                if let Some(value) = value {
+                    params["value"] = serde_json::json!(value);
+                }
+                if let Some(x) = x_nm {
+                    params["x_nm"] = serde_json::json!(x);
+                }
+                if let Some(y) = y_nm {
+                    params["y_nm"] = serde_json::json!(y);
+                }
+                if let Some(rotation) = rotation_deg {
+                    params["rotation_deg"] = serde_json::json!(rotation);
+                }
+                ("datum.schematic.place_text", params)
+            }
             Self::CustomField {
                 symbol,
                 instance_path,
@@ -380,6 +416,10 @@ pub struct SchematicAuthoring {
         Uuid,
         Result<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveBasis, String>,
     >,
+    pub text_move_bases: std::collections::BTreeMap<
+        Uuid,
+        Result<eda_engine::api::native_write::schematic_text::TextMoveBasis, String>,
+    >,
     pub label_move_bases: std::collections::BTreeMap<
         Uuid,
         Result<eda_engine::api::native_write::schematic_label_move::LabelMoveBasis, String>,
@@ -415,6 +455,17 @@ impl SchematicAuthoring {
     /// The engine reflects local X before rotating. World-X/Y flips therefore
     /// change both pose fields; toggling local mirror alone is wrong after R.
     pub fn transform_placement(&mut self, transform: PlacementTransform) -> bool {
+        if !self.picker
+            && matches!(transform, PlacementTransform::Rotate)
+            && let Some(text) = self
+                .label
+                .as_mut()
+                .filter(|draft| draft.text_rotation.is_some())
+        {
+            text.cycle_kind();
+            self.preview_dirty = true;
+            return true;
+        }
         if self.picker
             || self.wire
             || self.label.is_some()
@@ -485,6 +536,29 @@ impl SchematicAuthoring {
                     Err("Move requires one unique resolved Label occurrence".into())
                 };
                 state.label_move_bases.insert(label.uuid, qualified);
+            }
+            for text in source
+                .sheets
+                .values()
+                .flat_map(|sheet| sheet.texts.values())
+            {
+                let paths: Vec<_> = authored
+                    .iter()
+                    .filter(|s| {
+                        s.occurrence.class == "texts" && s.occurrence.source_id == text.uuid
+                    })
+                    .map(|s| s.occurrence.instance_path.clone())
+                    .collect();
+                let qualified = if paths.len() == 1 {
+                    state.move_paths.insert(text.uuid, paths[0].clone());
+                    eda_engine::api::native_write::schematic_text::TextMoveBasis::capture(
+                        &basis, text.uuid, &paths[0],
+                    )
+                    .map_err(|e| e.to_string())
+                } else {
+                    Err("Move requires one unique resolved Text occurrence".into())
+                };
+                state.text_move_bases.insert(text.uuid, qualified);
             }
             let instantiated: std::collections::BTreeSet<_> = source
                 .sheet_instances

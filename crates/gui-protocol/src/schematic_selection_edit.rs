@@ -4,6 +4,8 @@ use super::SchematicEditRequest;
 mod label_edit;
 #[path = "schematic_port_edit.rs"]
 mod port_edit;
+#[path = "schematic_text_edit.rs"]
+mod text_edit;
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity, AuthoringViewBasis, PaneContent,
     ReviewWorkspaceState, SelectionSubject, SelectionTarget,
@@ -11,6 +13,7 @@ use crate::{
 pub use label_edit::{LabelEditDraft, label_admission};
 pub use port_edit::{NamedPointEditDraft, PortEditDraft, port_admission};
 use serde::{Deserialize, Serialize};
+pub use text_edit::{TextEditDraft, text_admission, validate_text};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -22,10 +25,12 @@ pub enum DeleteKind {
     NoConnect,
     Port,
     Bus,
+    Text,
 }
 impl DeleteKind {
     pub fn from_class(class: Class) -> Result<Self, String> {
         match class {
+            Class::SchematicText => Ok(Self::Text),
             Class::Symbol => Ok(Self::Symbol),
             Class::Wire => Ok(Self::Wire),
             Class::Label => Ok(Self::Label),
@@ -34,13 +39,14 @@ impl DeleteKind {
             Class::Port => Ok(Self::Port),
             Class::BusSection => Ok(Self::Bus),
             _ => Err(
-                "Select one Symbol, Wire, Label, Port, Bus, Junction or No-Connect to delete"
+                "Select one Symbol, Wire, Label, Port, Bus, Text, Junction or No-Connect to delete"
                     .into(),
             ),
         }
     }
     pub fn verb_and_key(self) -> (&'static str, &'static str) {
         match self {
+            Self::Text => ("datum.schematic.delete_text", "text"),
             Self::Symbol => ("datum.schematic.delete_symbol", "symbol"),
             Self::Wire => ("datum.schematic.delete_wire", "wire"),
             Self::Label => ("datum.schematic.delete_label", "label"),
@@ -114,6 +120,7 @@ pub fn target(
         .and_then(|s| s.sheets.get(&basis.source))
         .ok_or("Selected schematic source is unavailable")?;
     let present = match id.class {
+        Class::SchematicText => sheet.texts.contains_key(&id.id),
         Class::Symbol => sheet.symbols.contains_key(&id.id),
         Class::Wire => sheet.wires.contains_key(&id.id),
         Class::Label => sheet.labels.contains_key(&id.id),
@@ -125,7 +132,7 @@ pub fn target(
     };
     if !present {
         return Err(
-            "Select a Symbol, Wire, Label, Port, Bus, Junction or No-Connect in this source sheet"
+            "Select a Symbol, Wire, Label, Port, Bus, Text, Junction or No-Connect in this source sheet"
                 .into(),
         );
     }

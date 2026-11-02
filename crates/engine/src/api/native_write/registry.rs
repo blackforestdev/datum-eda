@@ -56,6 +56,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::schematic_label_edit::VERBS);
         verbs.extend_from_slice(super::schematic_marker::VERBS);
         verbs.extend_from_slice(super::schematic_port::VERBS);
+        verbs.extend_from_slice(super::schematic_text::VERBS);
         verbs.extend_from_slice(super::schematic_bus::VERBS);
         verbs.extend_from_slice(super::schematic_custom_fields::VERBS);
         verbs.extend_from_slice(super::schematic_selection_edit::VERBS);

@@ -9,7 +9,9 @@ impl Runtime {
             || !self.native_edit.preview.as_ref().is_some_and(|p| {
                 matches!(
                     p,
-                    NativeMovePreview::Symbol { .. } | NativeMovePreview::Symbols(_)
+                    NativeMovePreview::Symbol { .. }
+                        | NativeMovePreview::Symbols(_)
+                        | NativeMovePreview::Text(_)
                 )
             })
             || self.modifiers.control_key()

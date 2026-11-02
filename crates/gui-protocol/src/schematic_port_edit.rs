@@ -49,6 +49,7 @@ impl PortEditDraft {
 pub enum NamedPointEditDraft {
     Label(LabelEditDraft),
     Port(PortEditDraft),
+    Text(TextEditDraft),
 }
 impl From<LabelEditDraft> for NamedPointEditDraft {
     fn from(draft: LabelEditDraft) -> Self {
@@ -60,22 +61,26 @@ impl NamedPointEditDraft {
         match self {
             Self::Label(d) => &d.basis,
             Self::Port(d) => &d.basis,
+            Self::Text(d) => &d.basis,
         }
     }
     pub fn target(&self) -> &AuthoredSelectionIdentity {
         match self {
             Self::Label(d) => &d.target,
             Self::Port(d) => &d.target,
+            Self::Text(d) => &d.target,
         }
     }
     pub fn tip(&self) -> Option<Uuid> {
         match self {
             Self::Label(d) => d.tip,
             Self::Port(d) => d.tip,
+            Self::Text(d) => d.tip,
         }
     }
     pub fn form(&self) -> LabelDraft {
         let (mut form, name) = match self {
+            Self::Text(d) => (LabelDraft::text(d.original.rotation), &d.original.text),
             Self::Label(d) => (LabelDraft::new(d.original.kind.clone()), &d.original.name),
             Self::Port(d) => (
                 LabelDraft::port(d.original.direction.clone()),
@@ -90,6 +95,7 @@ impl NamedPointEditDraft {
         let at = match self {
             Self::Label(d) => d.original.position,
             Self::Port(d) => d.original.position,
+            Self::Text(d) => d.original.position,
         };
         crate::PointNm { x: at.x, y: at.y }
     }
@@ -97,9 +103,20 @@ impl NamedPointEditDraft {
         match self {
             Self::Label(d) => sheet.labels.get(&d.target.id) == Some(&d.original),
             Self::Port(d) => sheet.ports.get(&d.target.id) == Some(&d.original),
+            Self::Text(d) => sheet.texts.get(&d.target.id) == Some(&d.original),
         }
     }
     pub fn request(&self, form: &LabelDraft) -> Result<Option<SchematicEditRequest>, String> {
+        if let Self::Text(d) = self {
+            return d.request(
+                &form.name,
+                form.text_rotation
+                    .ok_or("Text form changed; reopen the edit")?,
+            );
+        }
+        if form.text_rotation.is_some() {
+            return Err("Object type changed; reopen the edit".into());
+        }
         match (self, &form.port_direction) {
             (Self::Label(d), None) => d.request(&form.name, form.kind.clone()),
             (Self::Port(d), Some(direction)) => d.request(&form.name, direction.clone()),
@@ -108,6 +125,14 @@ impl NamedPointEditDraft {
     }
     pub fn preview(&self, form: &LabelDraft, sheet: &mut Sheet) {
         if !self.source_matches(sheet) {
+            return;
+        }
+        if let Self::Text(d) = self {
+            if let Some(rotation) = form.text_rotation
+                && let Ok(text) = d.replacement(&form.name, rotation)
+            {
+                sheet.texts.insert(text.uuid, text);
+            }
             return;
         }
         // Invalid intermediate text keeps source ink and cannot form a request.

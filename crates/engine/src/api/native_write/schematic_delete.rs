@@ -128,6 +128,12 @@ pub(super) fn build(
                 sheet_id,
                 &sheet.noconnects[&id],
             )?),
+            DeleteClass::SchematicText => append(super::schematic_text::delete_in_sheet(
+                context,
+                provenance.clone(),
+                sheet_id,
+                &sheet.texts[&id],
+            )?),
             DeleteClass::BusSection => {
                 if source.source.sheets.iter().any(|(owner, s)| {
                     *owner != sheet_id && s.bus_entries.values().any(|e| e.bus == id)
@@ -216,6 +222,9 @@ pub(super) fn deleted_object(op: &Operation) -> Option<DeletedObject> {
         Operation::DeleteSchematicSymbol {
             symbol_id, symbol, ..
         } => (*symbol_id, "symbol", symbol, "reference"),
+        Operation::DeleteSchematicText { text_id, text, .. } => {
+            (*text_id, "schematic_text", text, "text")
+        }
         Operation::DeleteSchematicWire { wire_id, wire, .. } => (*wire_id, "wire", wire, ""),
         Operation::DeleteSchematicLabel {
             label_id, label, ..

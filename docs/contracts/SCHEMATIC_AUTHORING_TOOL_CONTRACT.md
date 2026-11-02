@@ -79,6 +79,17 @@ explicit status for compatibility `lib_id`s, unresolved/ambiguous entity gates,
 bound-without-part, ambiguous compatible parts, incompatible parts, and
 bound-with-part; board-package binding remains partial.
 
+The bounded standalone Text slice (`dat-schematic-text-krdm`) uses the existing
+Place Text action, shared content/rotation form, selected Inspector edit and
+shared Move/Delete paths. Notes have independent absolute anchors, preserve
+literal single-line content and raw source extensions, and use canonical
+journaled operations with cancellation, Undo/Redo and reopening. Ordinary note
+text defaults to 1.27 mm, classified as a routine visual choice under PM059 in
+that task; this does not change the Rendering Book's title/fabrication-note
+ladder or add a parent tether. New rotations are cardinal; translation preserves
+an unchanged imported angle. Multiline editing, typography controls, repeated
+source edits and broader hierarchy authoring remain outside this slice.
+
 Confirmed IR facts the matrix relies on:
 
 - `LabelKind` (`Local|Global|Hierarchical|Power`) is already a field on

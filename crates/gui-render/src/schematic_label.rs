@@ -29,6 +29,8 @@ pub(super) fn render(
                 e.refusal
                     .as_deref()
                     .unwrap_or("Click bus spine · Tab: bus/end · Esc: cancel")
+            } else if label.text_rotation.is_some() {
+                "Click: place · R: rotate · Tab: text · Esc: cancel"
             } else if label.port_direction.is_some() {
                 "Click to place · Tab: edit name/direction · Esc: cancel"
             } else {
@@ -59,6 +61,12 @@ pub(super) fn render(
     draw_text(
         if e.bus_entry.is_some() {
             "Place Bus Entry"
+        } else if label.text_rotation.is_some() {
+            if e.named_edit.is_some() {
+                "Edit Text"
+            } else {
+                "Place Text"
+            }
         } else if label.port_direction.is_some() {
             if e.named_edit.is_some() {
                 "Edit Port"
@@ -82,6 +90,8 @@ pub(super) fn render(
     draw_text(
         if e.bus_entry.is_some() {
             "Bus"
+        } else if label.text_rotation.is_some() {
+            "Text"
         } else if label.port_direction.is_some() {
             "Name"
         } else {
@@ -122,7 +132,9 @@ pub(super) fn render(
     } else {
         crate::single_line_control::paint(
             &label.name,
-            if label.port_direction.is_some() {
+            if label.text_rotation.is_some() {
+                "Single-line annotation…"
+            } else if label.port_direction.is_some() {
                 "Port name…"
             } else {
                 "GND, VCC, signal…"
@@ -145,6 +157,8 @@ pub(super) fn render(
     draw_text(
         if e.bus_entry.is_some() {
             "Wire end"
+        } else if label.text_rotation.is_some() {
+            "Rotation"
         } else if label.port_direction.is_some() {
             "Direction"
         } else {
@@ -163,10 +177,17 @@ pub(super) fn render(
         width: width - 106.,
         height: 29.,
     };
+    let choice = label
+        .text_rotation
+        .map(|rotation| format!("{rotation}°"))
+        .unwrap_or_else(|| {
+            e.bus_entry
+                .as_ref()
+                .map_or_else(|| label.kind_name(), |entry| entry.end_name())
+                .into()
+        });
     button(
-        e.bus_entry
-            .as_ref()
-            .map_or_else(|| label.kind_name(), |entry| entry.end_name()),
+        &choice,
         HitTarget::SchematicLabelKind,
         kind,
         quads,
@@ -232,6 +253,85 @@ pub(super) fn render(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn standalone_text_form_configures_existing_literal_rotation_apply_and_cancel_controls() {
+        use datum_gui_protocol::{
+            AuthoredSelectionClass, AuthoredSelectionIdentity, AuthoringViewBasis, PaneContent,
+            PaneId,
+            schematic_authoring::{
+                LabelDraft,
+                selected::{NamedPointEditDraft, TextEditDraft},
+            },
+        };
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let id = uuid::Uuid::nil();
+        let draft = TextEditDraft {
+            target: AuthoredSelectionIdentity {
+                class: AuthoredSelectionClass::SchematicText,
+                id,
+                instance_path: vec![],
+            },
+            basis: AuthoringViewBasis {
+                project: id,
+                revision: "source".into(),
+                pane: PaneId(1),
+                content: PaneContent::Schematic,
+                source: id,
+                document: None,
+            },
+            tip: None,
+            original: eda_engine::schematic::SchematicText {
+                uuid: id,
+                text: "  literal R X Y  ".into(),
+                position: eda_engine::ir::geometry::Point::new(1, 2),
+                rotation: 90,
+            },
+        };
+        let named = NamedPointEditDraft::Text(draft);
+        state.schematic_authoring.label = Some(named.form());
+        state.schematic_authoring.named_edit = Some(named);
+        state.schematic_authoring.picker = true;
+        let layout = ShellLayout::for_window(1280, 800, None);
+        let (mut quads, mut text, mut hits) = (vec![], vec![], vec![]);
+        render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+        assert!(text.iter().any(|t| t.text == "Edit Text"));
+        assert!(text.iter().any(|t| t.text == "Rotation"));
+        assert!(text.iter().any(|t| t.text == "90°"));
+        assert!(
+            !text
+                .iter()
+                .any(|t| ["Net name", "Kind", "Direction"].contains(&t.text.as_str()))
+        );
+        assert_eq!(
+            hits.iter()
+                .filter(|h| h.target == HitTarget::SchematicEditApply)
+                .count(),
+            1
+        );
+        assert!(
+            !hits
+                .iter()
+                .any(|h| h.target == HitTarget::SchematicLabelPreview)
+        );
+        state.schematic_authoring.named_edit = None;
+        state.schematic_authoring.label = Some(LabelDraft::text(0));
+        state.schematic_authoring.picker = false;
+        text.clear();
+        hits.clear();
+        render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+        assert!(text.iter().any(|t| t.text.contains("R: rotate")));
+        assert!(
+            !hits
+                .iter()
+                .any(|h| h.target == HitTarget::SchematicLabelKind),
+            "placement keys operate outside the form"
+        );
+        state.schematic_authoring.cancel();
+        text.clear();
+        hits.clear();
+        render(&state, &layout, &mut quads, &mut text, &mut hits).unwrap();
+        assert!(text.is_empty() && hits.is_empty());
+    }
     #[test]
     fn selected_label_form_offers_one_apply_and_cancel_with_live_preview() {
         use datum_gui_protocol::{

@@ -80,7 +80,9 @@ impl Runtime {
         };
         if matches!(
             id.class,
-            AuthoredSelectionClass::Symbol | AuthoredSelectionClass::Label
+            AuthoredSelectionClass::Symbol
+                | AuthoredSelectionClass::Label
+                | AuthoredSelectionClass::SchematicText
         ) {
             let id = id.clone();
             self.begin_schematic_move(SelectionSubject::Object(id), anchor);
@@ -301,7 +303,8 @@ impl Runtime {
                 .clone();
             let preview = match &subject {
                 datum_gui_protocol::SelectionSubject::Object(id) => {
-                    let begin = if id.class == datum_gui_protocol::AuthoredSelectionClass::Label {
+                    let begin = if id.class == datum_gui_protocol::AuthoredSelectionClass::SchematicText {NativeMovePreview::text}
+                    else if id.class == datum_gui_protocol::AuthoredSelectionClass::Label {
                         NativeMovePreview::label
                     } else { NativeMovePreview::symbol };
                     begin(&base,&self.workspace().schematic_authoring,id,world,self.workspace().authoring.snap,root)?
@@ -334,6 +337,9 @@ impl Runtime {
                             }
                         ),
                     ),
+                    NativeMovePreview::Text(text) => {
+                        (world, format!("schematic-text:{}", text.id()))
+                    }
                     NativeMovePreview::Label { basis, .. } => {
                         (world, format!("schematic-label:{}", basis.label.uuid))
                     }

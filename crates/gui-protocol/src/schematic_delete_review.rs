@@ -250,6 +250,8 @@ impl DeleteReview {
                                 | "bus"
                                 | "buses"
                                 | "bus_section"
+                                | "schematic_text"
+                                | "texts"
                         )
                     })
                     .map(|d| d.name.clone())
@@ -277,6 +279,9 @@ fn targets(
                 return Err("Selection spans schematic occurrences; nothing was omitted".into());
             }
             let (class, present) = match id.class {
+                Class::SchematicText => {
+                    (DeleteClass::SchematicText, sheet.texts.contains_key(&id.id))
+                }
                 Class::Symbol => (DeleteClass::Symbol, sheet.symbols.contains_key(&id.id)),
                 Class::Wire => (DeleteClass::Wire, sheet.wires.contains_key(&id.id)),
                 Class::Label => (DeleteClass::Label, sheet.labels.contains_key(&id.id)),
@@ -303,6 +308,7 @@ fn targets(
 
 fn class_label(class: &str) -> &str {
     match class {
+        "schematic_text" | "texts" => "Text notes",
         "symbol" | "symbols" => "Symbols",
         "wire" | "wires" => "Wires",
         "label" | "labels" => "Labels",

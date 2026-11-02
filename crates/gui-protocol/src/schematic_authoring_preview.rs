@@ -96,7 +96,17 @@ impl SchematicAuthoring {
             } else if let Some(at) = self.position
                 && !self.picker
             {
-                if let Some(direction) = &label.port_direction {
+                if let Some(rotation) = label.text_rotation {
+                    selected.texts.insert(
+                        Uuid::nil(),
+                        eda_engine::schematic::SchematicText {
+                            uuid: Uuid::nil(),
+                            text: label.name.clone(),
+                            position: Point { x: at.x, y: at.y },
+                            rotation,
+                        },
+                    );
+                } else if let Some(direction) = &label.port_direction {
                     selected.ports.insert(
                         Uuid::nil(),
                         eda_engine::schematic::HierarchicalPort {
@@ -229,6 +239,13 @@ impl SchematicAuthoring {
     /// Exact terminal pickup uses source-qualified pin or Power-port graphics,
     /// never an invented distance threshold. Background uses shared grid snap.
     pub fn pin_point(&self, source_uuid: &str) -> Option<PointNm> {
+        if self
+            .label
+            .as_ref()
+            .is_some_and(|draft| draft.text_rotation.is_some())
+        {
+            return None;
+        }
         if self.marker == Some(MarkerKind::NoConnect) {
             return self.marker_pin_point(source_uuid);
         }

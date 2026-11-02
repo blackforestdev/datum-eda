@@ -23,6 +23,7 @@ pub enum DeleteClass {
     BusSection,
     Junction,
     NoConnect,
+    SchematicText,
 }
 impl DeleteClass {
     pub(super) fn source_class(self) -> &'static str {
@@ -34,6 +35,7 @@ impl DeleteClass {
             Self::BusSection => "buses",
             Self::Junction => "junctions",
             Self::NoConnect => "noconnects",
+            Self::SchematicText => "texts",
         }
     }
 }

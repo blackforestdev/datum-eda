@@ -16,6 +16,17 @@ impl Runtime {
         true
     }
 
+    pub(crate) fn begin_native_text(&mut self) -> bool {
+        if !self.prepare_native_schematic(false) {
+            return true;
+        }
+        let e = &mut self.session.workspace_mut().schematic_authoring;
+        e.chosen = None;
+        e.label = Some(LabelDraft::text(0));
+        e.refusal = None;
+        self.invalidate_frame();
+        true
+    }
     pub(crate) fn begin_native_port(&mut self) -> bool {
         if !self.prepare_native_schematic(false) {
             return true;
@@ -45,7 +56,9 @@ impl Runtime {
             e.refusal = Some("Enter a nonempty single-line name".into());
             label.focus = 0;
         } else {
-            label.name = label.name.trim().to_owned();
+            if label.text_rotation.is_none() {
+                label.name = label.name.trim().to_owned();
+            }
             label.editor =
                 datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&label.name);
             e.picker = false;
@@ -73,7 +86,7 @@ impl Runtime {
                 }
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 if let Some(draft) = &mut e.label {
-                    if draft.port_direction.is_some() {
+                    if draft.port_direction.is_some() || draft.text_rotation.is_some() {
                         draft.cycle_kind();
                         e.preview_dirty |= e.named_edit.is_some();
                     } else if e.named_edit.is_some() {
@@ -125,6 +138,22 @@ impl Runtime {
             .as_ref()
             .unwrap()
             .focus;
+        if !picker
+            && !self.modifiers.control_key()
+            && !self.modifiers.alt_key()
+            && !self.modifiers.super_key()
+            && matches!(&event.logical_key,Key::Character(key) if key.eq_ignore_ascii_case("r"))
+            && self
+                .session
+                .workspace_mut()
+                .schematic_authoring
+                .transform_placement(
+                    datum_gui_protocol::schematic_authoring::PlacementTransform::Rotate,
+                )
+        {
+            self.invalidate_frame();
+            return true;
+        }
         match event.logical_key {
             Key::Named(NamedKey::Escape) => {
                 self.cancel_native_schematic();

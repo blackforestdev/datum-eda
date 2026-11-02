@@ -4,6 +4,7 @@ impl Runtime {
     pub(crate) fn activate_native_edit_menu(&mut self, verb: Option<&str>) -> Option<bool> {
         Some(match verb? {
             "datum.schematic.create_sheet" => self.begin_schematic_creation(),
+            "datum.schematic.place_text" => self.begin_native_text(),
             "datum.schematic.place_symbol" => self.begin_native_schematic(false),
             "datum.schematic.draw_wire" => self.begin_native_schematic(true),
             "datum.schematic.place_port" => self.begin_native_port(),
@@ -19,6 +20,7 @@ impl Runtime {
                 self.begin_selected_symbol_edit()
             }
             verb @ ("datum.schematic.delete_symbol"
+            | "datum.schematic.delete_text"
             | "datum.schematic.delete_wire"
             | "datum.schematic.delete_label"
             | "datum.schematic.delete_port"

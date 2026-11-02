@@ -244,16 +244,17 @@ fn push_root_sheet_graphics(
             SCHEMATIC_NOCONNECT_LAYER,
         );
     }
+    const STANDALONE_TEXT_HEIGHT_NM: i64 = 1_270_000; // Ordinary annotation default, dat-schematic-text-krdm.
     for schematic_text in sorted_values(&sheet.texts) {
         // Free schematic text is annotation, not a boxed object: emit it as real
         // text at its own position rather than a bare labelled rect.
-        text.push_rotated(
+        text.push_literal_rotated(
             points,
             schematic_text.uuid,
             "schematic-text",
             &schematic_text.text,
             point_nm(schematic_text.position),
-            LABEL_TEXT_HEIGHT_NM,
+            STANDALONE_TEXT_HEIGHT_NM,
             TextHAlign::Left,
             TextVAlign::Center,
             SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,

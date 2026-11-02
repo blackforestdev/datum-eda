@@ -144,7 +144,33 @@ impl SchematicTextSink {
         layer_int: i32,
         rotation: i32,
     ) {
-        let content = content.trim();
+        self.push_literal_rotated(
+            points,
+            object_uuid,
+            object_key,
+            content.trim(),
+            anchor,
+            height_nm,
+            h_align,
+            v_align,
+            layer_int,
+            rotation,
+        );
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(super) fn push_literal_rotated(
+        &mut self,
+        points: &mut Vec<PointNm>,
+        object_uuid: Uuid,
+        object_key: &str,
+        content: &str,
+        anchor: PointNm,
+        height_nm: i64,
+        h_align: TextHAlign,
+        v_align: TextVAlign,
+        layer_int: i32,
+        rotation: i32,
+    ) {
         if content.is_empty() {
             return;
         }

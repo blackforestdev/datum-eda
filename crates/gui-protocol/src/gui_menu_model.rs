@@ -70,6 +70,8 @@ fn native_edit_verb(verb: &str) -> bool {
         verb,
         "datum.pcb.move_component"
             | "datum.schematic.create_sheet"
+            | "datum.schematic.place_text"
+            | "datum.schematic.delete_text"
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
@@ -105,7 +107,8 @@ pub fn native_edit_unavailable_reason(
 ) -> Option<&'static str> {
     if matches!(
         verb,
-        "datum.schematic.place_symbol"
+        "datum.schematic.place_text"
+            | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
             | "datum.schematic.place_port"

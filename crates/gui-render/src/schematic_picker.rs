@@ -445,7 +445,9 @@ pub(super) fn render(
             .target_object_id
             .as_deref()
             .is_some_and(|id| {
-                id.starts_with("schematic-symbol:") || id.starts_with("schematic-symbols:")
+                id.starts_with("schematic-symbol:")
+                    || id.starts_with("schematic-symbols:")
+                    || id.starts_with("schematic-text:")
             })
     {
         let panel = RectPx {
@@ -461,9 +463,21 @@ pub(super) fn render(
             .target_object_id
             .as_deref()
             .and_then(|id| id.strip_prefix("schematic-symbols:"));
+        let is_text = state
+            .authoring
+            .gesture
+            .target_object_id
+            .as_deref()
+            .is_some_and(|id| id.starts_with("schematic-text:"));
         let title = group
             .map(|count| format!("Move {count} symbols · R: rotate · X/Y: flip"))
-            .unwrap_or_else(|| "Move symbol · R: rotate · X/Y: flip horiz/vert".into());
+            .unwrap_or_else(|| {
+                if is_text {
+                    "Move Text · R: rotate".into()
+                } else {
+                    "Move symbol · R: rotate · X/Y: flip horiz/vert".into()
+                }
+            });
         draw_text(
             &title,
             panel.x + 10.,

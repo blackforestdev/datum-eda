@@ -12,6 +12,7 @@ pub enum EditorTool {
     Symbol,
     Power,
     Label,
+    Text,
     Port,
     Junction,
     NoConnect,
@@ -107,7 +108,9 @@ impl EditorTool {
                 };
             }
             if let Some(label) = &schematic.label {
-                return if label.port_direction.is_some() {
+                return if label.text_rotation.is_some() {
+                    Self::Text
+                } else if label.port_direction.is_some() {
                     Self::Port
                 } else if label.kind == eda_engine::schematic::LabelKind::Power {
                     Self::Power
@@ -137,6 +140,7 @@ impl EditorTool {
             Self::Symbol => "Symbol",
             Self::Power => "Power",
             Self::Label => "Label",
+            Self::Text => "Text",
             Self::Port => "Port",
             Self::Junction => "Junction",
             Self::NoConnect => "No-Connect",
@@ -152,6 +156,7 @@ impl EditorTool {
             Self::Symbol => Some(("Place", "Symbol")),
             Self::Power => Some(("Place", "Power Port")),
             Self::Label => Some(("Place", "Net Label")),
+            Self::Text => Some(("Place", "Text")),
             Self::Port => Some(("Place", "Port")),
             Self::Junction => Some(("Place", "Junction")),
             Self::NoConnect => Some(("Place", "No-Connect")),

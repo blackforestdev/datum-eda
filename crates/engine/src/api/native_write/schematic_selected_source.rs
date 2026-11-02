@@ -17,6 +17,9 @@ impl SelectedSchematicSource {
     pub fn capture(context: &NativeWriteContext<'_>) -> Result<Self, EngineError> {
         let snapshot = ElectricalSelectionSnapshot::capture(context.model)
             .map_err(|e| invalid(format!("Selected source unavailable: {e:?}")))?;
+        Self::from_snapshot(&snapshot)
+    }
+    pub fn from_snapshot(snapshot: &ElectricalSelectionSnapshot) -> Result<Self, EngineError> {
         let authored = snapshot
             .authored_sources()
             .map_err(|e| invalid(format!("Selected occurrence unavailable: {e:?}")))?;
@@ -55,6 +58,7 @@ impl SelectedSchematicSource {
             collect!(bus_entries);
             collect!(junctions);
             collect!(noconnects);
+            collect!(texts);
         }
         Ok(Self {
             source,

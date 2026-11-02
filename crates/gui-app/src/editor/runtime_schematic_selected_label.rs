@@ -2,7 +2,7 @@
 use super::*;
 use datum_gui_protocol::schematic_authoring::{
     FieldsEditDraft, LabelDraft,
-    selected::{LabelEditDraft, NamedPointEditDraft, PortEditDraft},
+    selected::{LabelEditDraft, NamedPointEditDraft, PortEditDraft, TextEditDraft},
 };
 
 pub(crate) enum SelectedSchematicEditSnapshot {
@@ -69,15 +69,25 @@ impl Runtime {
         }
     }
     pub(crate) fn begin_selected_label_edit(&mut self) -> bool {
-        self.begin_selected_named_point_edit(false)
+        self.begin_selected_named_point_edit(datum_gui_protocol::AuthoredSelectionClass::Label)
     }
     pub(crate) fn begin_selected_port_edit(&mut self) -> bool {
-        self.begin_selected_named_point_edit(true)
+        self.begin_selected_named_point_edit(datum_gui_protocol::AuthoredSelectionClass::Port)
     }
-    fn begin_selected_named_point_edit(&mut self, port: bool) -> bool {
+    pub(crate) fn begin_selected_text_edit(&mut self) -> bool {
+        self.begin_selected_named_point_edit(
+            datum_gui_protocol::AuthoredSelectionClass::SchematicText,
+        )
+    }
+    fn begin_selected_named_point_edit(
+        &mut self,
+        class: datum_gui_protocol::AuthoredSelectionClass,
+    ) -> bool {
         let prepare = (|| {
             self.selected_schematic_idle()?;
-            if port {
+            if class == datum_gui_protocol::AuthoredSelectionClass::SchematicText {
+                selected::text_admission(self.workspace())?;
+            } else if class == datum_gui_protocol::AuthoredSelectionClass::Port {
                 selected::port_admission(self.workspace())?;
             } else {
                 selected::label_admission(self.workspace())?;
@@ -100,7 +110,18 @@ impl Runtime {
                 .accepted_transaction_tip
                 .as_ref()
                 .and_then(|tip| tip.parse().ok());
-            let draft = if port {
+            let draft = if class == datum_gui_protocol::AuthoredSelectionClass::SchematicText {
+                NamedPointEditDraft::Text(TextEditDraft {
+                    original: sheet
+                        .texts
+                        .get(&target.id)
+                        .cloned()
+                        .ok_or("Selected Text source unavailable")?,
+                    target,
+                    basis,
+                    tip,
+                })
+            } else if class == datum_gui_protocol::AuthoredSelectionClass::Port {
                 NamedPointEditDraft::Port(PortEditDraft {
                     original: sheet
                         .ports

@@ -32,7 +32,8 @@ impl Runtime {
                 | SelectionSubject::Object(datum_gui_protocol::AuthoredSelectionIdentity {
                     class: AuthoredSelectionClass::Symbol
                         | AuthoredSelectionClass::Footprint
-                        | AuthoredSelectionClass::Label,
+                        | AuthoredSelectionClass::Label
+                        | AuthoredSelectionClass::SchematicText,
                     ..
                 })
         ) {

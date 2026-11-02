@@ -261,6 +261,7 @@ impl Runtime {
                 NativeEditAction::Move { .. }
                     | NativeEditAction::MoveSymbol { .. }
                     | NativeEditAction::MoveSymbols { .. }
+                    | NativeEditAction::MoveText { .. }
                     | NativeEditAction::MoveLabel { .. }
                     | NativeEditAction::Schematic
             )
@@ -285,6 +286,7 @@ impl Runtime {
             NativeEditAction::Move { .. }
                 | NativeEditAction::MoveSymbol { .. }
                 | NativeEditAction::MoveSymbols { .. }
+                | NativeEditAction::MoveText { .. }
                 | NativeEditAction::MoveLabel { .. }
         ) && self.native_edit.preview.is_some()
         {
@@ -420,6 +422,7 @@ impl Runtime {
                 NativeEditAction::Move { x_nm, y_nm, .. }
                 | NativeEditAction::MoveSymbol { x_nm, y_nm, .. }
                 | NativeEditAction::MoveSymbols { x_nm, y_nm, .. }
+                | NativeEditAction::MoveText { x_nm, y_nm, .. }
                 | NativeEditAction::MoveLabel { x_nm, y_nm, .. },
                 Some(preview),
             ) => match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
