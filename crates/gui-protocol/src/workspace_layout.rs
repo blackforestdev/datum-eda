@@ -71,6 +71,8 @@ pub struct WorkspaceUiState {
     pub focus: ApplicationFocus,
     pub active_dock_tab: Option<DockTab>,
     pub active_menu: Option<String>,
+    /// Device-local remembered Project destinations; never design authority.
+    pub recent_projects: crate::gui_menu_model::RecentProjects,
     /// The open child of a menubar submenu, if any. Consumer-only menu state.
     pub active_submenu: Option<String>,
     pub menu_focus_index: usize,
@@ -128,6 +130,7 @@ impl WorkspaceUiState {
             focus: ApplicationFocus::default(),
             active_dock_tab: None,
             active_menu: None,
+            recent_projects: Default::default(),
             active_submenu: None,
             menu_focus_index: 0,
             marking_menu: None,

@@ -9,6 +9,8 @@ use std::sync::mpsc;
 mod prepare;
 #[path = "project_open/publication.rs"]
 mod publication;
+#[path = "project_open/recent.rs"]
+pub(super) mod recent;
 
 struct Answer {
     origin: ProjectOpenOrigin,

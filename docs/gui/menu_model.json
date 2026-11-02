@@ -24,6 +24,11 @@
           "shortcut": "Ctrl+O"
         },
         {
+          "label": "Open Recent Project",
+          "icon": "folder-open",
+          "submenu": "Recent projects"
+        },
+        {
           "label": "Import\u2026",
           "icon": "import",
           "not_built": "project import-kicad-* is CLI; no public import verb",
@@ -54,7 +59,16 @@
           "not_built": "GUI session teardown",
           "shortcut": "Ctrl+Q"
         }
-      ]
+      ],
+      "submenus": {
+        "Recent projects": [
+          {
+            "label": "No recent projects",
+            "icon": "folder-open",
+            "not_built": "No Projects have been opened on this device yet."
+          }
+        ]
+      }
     },
     {
       "menu": "Edit",

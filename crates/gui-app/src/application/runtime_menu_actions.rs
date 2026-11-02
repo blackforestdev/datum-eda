@@ -264,10 +264,11 @@ impl Runtime {
         if event.state != ElementState::Pressed {
             return true;
         }
-        let model = match datum_gui_protocol::gui_menu_model::default_gui_menu_model() {
-            Ok(model) => model,
-            Err(_) => return true,
-        };
+        let model =
+            match datum_gui_protocol::gui_menu_model::workspace_gui_menu_model(self.workspace()) {
+                Ok(model) => model,
+                Err(_) => return true,
+            };
         let Some(group) = model.menubar.iter().find(|group| group.menu == active_menu) else {
             return true;
         };
@@ -395,7 +396,7 @@ impl Runtime {
         label: &str,
         surface: EntrySurface,
     ) -> bool {
-        let item = datum_gui_protocol::gui_menu_model::default_gui_menu_model()
+        let item = datum_gui_protocol::gui_menu_model::workspace_gui_menu_model(self.workspace())
             .ok()
             .and_then(|model| {
                 model.menubar.iter().find_map(|menu| {
@@ -406,7 +407,8 @@ impl Runtime {
                         .get(menu_name)
                         .and_then(|items| items.iter().find(|item| item.label == label))
                 })
-            });
+            })
+            .cloned();
         let Some(item) = item else {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Menu,
@@ -472,10 +474,11 @@ impl Runtime {
         let Some(HitTarget::MenuItem { menu, label }) = target else {
             return false;
         };
-        let model = match datum_gui_protocol::gui_menu_model::default_gui_menu_model() {
-            Ok(model) => model,
-            Err(_) => return false,
-        };
+        let model =
+            match datum_gui_protocol::gui_menu_model::workspace_gui_menu_model(self.workspace()) {
+                Ok(model) => model,
+                Err(_) => return false,
+            };
         let Some((index, item)) = model.menubar.iter().find_map(|group| {
             if group.menu == menu {
                 group

@@ -18,6 +18,7 @@ pub enum GuiLocalHandler {
     SaveProject,
     NewProject,
     OpenProject,
+    OpenRecentProject(usize),
     GlobalPreferences,
     ProjectPreferences,
     ZoomIn,
@@ -44,6 +45,10 @@ pub const UNAVAILABLE_GUI_LOCAL_REASON: &str = "This action is unavailable in th
 /// Shared by menu readiness and exhaustive runtime dispatch. A missing key never
 /// acquires an executable fallback, including keys added to the menu manifest.
 pub fn gui_local_handler(key: &str) -> Option<GuiLocalHandler> {
+    if let Some(index) = key.strip_prefix("project.open_recent.") {
+        let parsed = index.parse::<usize>().ok()?;
+        return (index == parsed.to_string()).then_some(GuiLocalHandler::OpenRecentProject(parsed));
+    }
     if let Some(entry) = consumer(key) {
         return entry.handler.map(GuiLocalHandler::Registered);
     }

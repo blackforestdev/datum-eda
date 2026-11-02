@@ -246,7 +246,7 @@ fn menu_accessibility_projection(
     if workspace.ui.active_menu.is_none() && workspace.ui.marking_menu.is_none() {
         Vec::new()
     } else {
-        datum_gui_protocol::gui_menu_model::default_gui_menu_model()
+        datum_gui_protocol::gui_menu_model::workspace_gui_menu_model(workspace)
             .map(|model| menu_accessibility_nodes(model, workspace))
             .unwrap_or_default()
     }

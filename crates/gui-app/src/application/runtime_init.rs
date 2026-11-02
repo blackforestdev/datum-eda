@@ -22,6 +22,7 @@ impl Runtime {
             open_new_project,
             open_project_preferences,
         } = launch_state;
+        project_open::recent::load_into(&mut state);
         // The initially-focused leaf seeds its warm camera from the launch fit.
         let initial_focus = state.ui.layout.focused;
         let initial_application_focus = if open_global_preferences || open_new_project {
@@ -187,6 +188,7 @@ impl Runtime {
             "runtime total {}ms",
             runtime_started.elapsed().as_millis()
         ));
+        runtime.remember_opened_project();
         Ok(runtime)
     }
 }

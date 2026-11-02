@@ -70,11 +70,11 @@ fn render_menu_bar_logical(
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<()> {
     let title_starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
-    let model = match menu_model() {
+    let model = match datum_gui_protocol::gui_menu_model::workspace_gui_menu_model(state) {
         Ok(model) => model,
         Err(err) => {
             draw_text(
-                &format!("Menu unavailable: {}", truncate_text(err, 48)),
+                &format!("Menu unavailable: {}", truncate_text(&err.to_string(), 48)),
                 layout.top_menu_bar.x + 112.0,
                 layout.top_menu_bar.y + design_tokens::spacing::SP_03,
                 design_tokens::typography::DATA_SIZE,

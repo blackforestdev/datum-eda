@@ -78,6 +78,7 @@ impl Runtime {
         // Global preferences are application-owned; all Project consumers and
         // project preferences come from the newly prepared source.
         workspace.ui.global_preferences = self.workspace().ui.global_preferences.clone();
+        workspace.ui.recent_projects = self.workspace().ui.recent_projects.clone();
         // Dock presentation belongs to the running application, not the
         // destination Project's prepared/default workspace.
         workspace.ui.active_dock_tab = self.workspace().ui.active_dock_tab;
@@ -150,6 +151,7 @@ impl Runtime {
             self.project_open.session_generation
         ));
         self.log_console_echo(ConsoleFeedbackSource::Viewport, message);
+        self.remember_opened_project();
         Ok(())
     }
 }

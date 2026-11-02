@@ -120,6 +120,7 @@ impl Runtime {
                 self.open_new_project()
             }
             GuiLocalHandler::OpenProject => self.open_project(),
+            GuiLocalHandler::OpenRecentProject(index) => self.open_recent_project(index),
             GuiLocalHandler::GlobalPreferences => self.open_global_preferences(),
             GuiLocalHandler::ProjectPreferences => self.open_project_preferences(),
             GuiLocalHandler::ZoomIn => {

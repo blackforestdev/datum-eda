@@ -5,6 +5,8 @@ use std::sync::OnceLock;
 
 pub mod accessibility;
 pub mod action_registry;
+mod recent_projects;
+pub use recent_projects::{RecentProject, RecentProjects, workspace_gui_menu_model};
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 pub struct GuiMenuModel {
@@ -116,6 +118,13 @@ impl GuiMenuItem {
     /// Contextual production state used by paint and invocation. The legacy
     /// project-only query cannot establish focused-camera eligibility.
     pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
+        if let GuiMenuBinding::GuiLocal(key) = self.binding()
+            && let Some(action_registry::GuiLocalHandler::OpenRecentProject(index)) =
+                action_registry::gui_local_handler(key)
+            && state.ui.recent_projects.entries().get(index).is_none()
+        {
+            return Some("This recent Project is no longer listed.");
+        }
         if state.project_unopened && self.requires_project {
             return Some("This action requires an open Project.");
         }
