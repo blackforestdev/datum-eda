@@ -1,12 +1,13 @@
-//! Existing marking-menu entry and read-only selection leaves.
+//! Existing marking-menu entry and source-qualified selection leaves.
+#[path = "runtime_marking_context.rs"]
+mod context;
 use super::*;
 use datum_gui_protocol::SelectionTarget;
 use datum_gui_protocol::selection_resolution::SelectionAuthority;
 use datum_gui_viewport::selection_acquisition::{AcquisitionEntry, AcquisitionMode};
 use std::collections::BTreeSet;
 impl Runtime {
-    /// Open the existing marking menu with source-bound read-only Select leaves
-    /// for either available native surface. General schematic authoring stays S7.
+    /// Open the existing wheel and source-bound Select leaves for either native surface.
     pub(super) fn open_marking_menu_at_cursor(&mut self) -> bool {
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
@@ -113,7 +114,7 @@ impl Runtime {
         }
         let ui = &mut self.session.workspace_mut().ui;
         ui.active_menu = None;
-        ui.marking_menu = Some(MarkingMenuState {
+        let mut marking = MarkingMenuState {
             menu_key,
             target_object_id,
             anchor_x_px: x.round() as i32,
@@ -123,7 +124,11 @@ impl Runtime {
             gesture_dy_px: 0,
             selection,
             submenu_path: Vec::new(),
-        });
+        };
+        if surface == SceneSurface::Schematic {
+            marking.menu_key = marking.schematic_context_key().into();
+        }
+        ui.marking_menu = Some(marking);
         // TF-01: while open, the marking menu is a transient Overlay keyboard
         // owner; `dismiss_marking_menu` restores Editor ownership.
         self.set_application_focus(datum_gui_protocol::ApplicationFocus::Overlay);

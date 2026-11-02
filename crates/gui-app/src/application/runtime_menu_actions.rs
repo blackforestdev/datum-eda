@@ -152,8 +152,10 @@ impl Runtime {
                 .and_then(|s| s.parse().ok())
                 .is_some_and(|index| self.activate_native_select_item(index)),
             HitTarget::MarkingMenuItem { menu_key, slot, .. } => {
-                // Inert shell: a submenu parent opens its sub-wheel (navigation, no
-                // operation); every other leaf fires nothing and dismisses.
+                if self.activate_schematic_marking_item(menu_key, slot) {
+                    return Some(true);
+                }
+                // Unimplemented leaves retain the existing inert shell behavior.
                 if self.marking_open_submenu_if_parent(menu_key, slot) {
                     true
                 } else {

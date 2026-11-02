@@ -447,3 +447,6 @@ mod marker_tests;
 
 #[path = "schematic_label_edit_tests.rs"]
 mod label_edit_tests;
+
+#[path = "schematic_marking_context_tests.rs"]
+mod marking_context_tests;

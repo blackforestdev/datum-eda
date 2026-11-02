@@ -194,6 +194,7 @@ fn render_preview(
     } else {
         draw_marking_center(preview, anchor, panel_quads, text_runs, hit_regions);
         render_slots(
+            state,
             preview,
             menu,
             icon_set,
@@ -218,10 +219,8 @@ fn render_preview(
     );
 }
 
-// Draw the focused leaf's truthful unavailable reason below the wheel. Every
-// non-submenu leaf is inert in this shell: its reason is the model's
-// `unavailable_reason` when the model marks it unavailable, else the shell-level
-// inert reason. A submenu parent navigates and shows nothing.
+// The same admission used by dispatch explains unavailable schematic leaves.
+// Existing board leaves retain the inert shell; submenu parents only navigate.
 fn draw_marking_reason(
     state: &ReviewWorkspaceState,
     menu: &GuiMarkingMenu,
@@ -261,9 +260,16 @@ fn draw_marking_reason(
     ) {
         return;
     }
-    let reason = item
-        .unavailable_reason(state)
-        .unwrap_or("Inert shell — this action is not invoked in this build.");
+    let reason = if preview.menu_key.starts_with("schematic.") {
+        let Some(reason) = preview.schematic_action_unavailable_reason(item, state) else {
+            return;
+        };
+        reason
+    } else {
+        item.unavailable_reason(state)
+            .unwrap_or("Inert shell — this action is not invoked in this build.")
+            .to_owned()
+    };
     let width = 280.0_f32.min((bounds.width - 8.0).max(0.0));
     let rect = RectPx {
         x: (anchor.0 - width * 0.5).clamp(
@@ -277,7 +283,7 @@ fn draw_marking_reason(
     panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
     push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
     draw_text(
-        &truncate_text(reason, 44),
+        &truncate_text(&reason, 44),
         rect.x + design_tokens::spacing::SP_03,
         rect.y + design_tokens::spacing::SP_03,
         design_tokens::typography::CAPTION_SIZE,
@@ -290,6 +296,7 @@ fn draw_marking_reason(
 // Render helper threads many quad/text-run/hit-region sinks.
 #[allow(clippy::too_many_arguments)]
 fn render_slots(
+    state: &ReviewWorkspaceState,
     preview: &MarkingMenuState,
     menu: &GuiMarkingMenu,
     icon_set: Option<&GuiIconSet>,
@@ -308,13 +315,15 @@ fn render_slots(
             continue;
         };
         let active = preview.preview_slot.as_deref() == Some(slot);
-        // Inert-shell rule: a submenu parent navigates (opens its sub-wheel); every
-        // other leaf is disabled and fires nothing — the shell's own rule, independent
-        // of registry capability truth (`is_enabled`).
+        // Existing typed schematic leaves share admission with invocation.
         let navigable = matches!(
             item.binding(),
             datum_gui_protocol::GuiMenuBinding::Submenu(_)
         );
+        let enabled = navigable
+            || preview
+                .schematic_action_unavailable_reason(item, state)
+                .is_none();
         // Radial-wedge form (ratified §6 surface): a pie sector per slot (active =
         // accent fill), the icon+label at the label radius, and a label-area hit rect
         // for clicks (the flick gesture resolves by angle separately).
@@ -333,7 +342,7 @@ fn render_slots(
             fill,
         );
         let rect = slot_label_rect(anchor, angle, bounds);
-        render_marking_icon(item, icon_set, rect, navigable && active, text_runs);
+        render_marking_icon(item, icon_set, rect, enabled && active, text_runs);
         let label = if navigable {
             format!("{} >", truncate_text(&item.label, 11))
         } else {
@@ -344,11 +353,7 @@ fn render_slots(
             rect.x + 16.0,
             rect.y + design_tokens::spacing::SP_03,
             design_tokens::typography::CAPTION_SIZE,
-            if navigable && active {
-                TEXT_PRIMARY
-            } else {
-                TEXT_MUTED
-            },
+            if enabled { TEXT_PRIMARY } else { TEXT_MUTED },
             TextFace::Ui,
             text_runs,
         );

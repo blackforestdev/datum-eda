@@ -26,10 +26,7 @@ pub fn menu_accessibility_nodes(
     state: &ReviewWorkspaceState,
 ) -> Vec<MenuAccessibleNode> {
     if let Some(marking) = state.ui.marking_menu.as_ref() {
-        // Radial marking-menu shell: emit truthful INERT-PILOT nodes for the wheel
-        // leaves (bead gtww) so the radial shell has screen-reader coverage, not only
-        // the selection-list path. The select-list (overflow) nodes still append when
-        // a selection list is present.
+        // Radial leaves share native context admission; the Select list stays available.
         let mut nodes = radial_marking_nodes(model, state, marking);
         if let Some(menu) = marking.selection.as_ref() {
             let root = format!("menu:native-select:{}", menu.project);
@@ -152,12 +149,7 @@ fn append_rows(
     }
 }
 
-/// Emit truthful INERT-PILOT accessibility nodes for the radial marking-menu wheel
-/// (bead gtww). Walks the same level the render shows — top cardinal+secondary+overflow,
-/// or the current submenu plus a Back node — in a stable slot order so arrow traversal
-/// is predictable. Every non-submenu leaf is `available=false` with a truthful reason
-/// (the shell fires nothing in this build); submenu parents navigate. The
-/// available->is_enabled flip belongs to the verb-firing successor, not here.
+/// Publish the same typed actions and unavailable leaves as the visible wheel.
 fn radial_marking_nodes(
     model: &GuiMenuModel,
     state: &ReviewWorkspaceState,
@@ -219,6 +211,11 @@ fn radial_item_node(
     let navigable = matches!(item.binding(), GuiMenuBinding::Submenu(_));
     let (available, description) = if navigable {
         (true, format!("Opens the {} actions", item.label))
+    } else if marking.menu_key.starts_with("schematic.") {
+        match marking.schematic_action_unavailable_reason(item, state) {
+            Some(reason) => (false, reason),
+            None => (true, format!("{} for this context", item.label)),
+        }
     } else {
         (
             false,
