@@ -107,7 +107,9 @@ impl Runtime {
         self.terminal_split_drag = None;
         self.terminal_text_selection_drag = None;
         self.terminal_mouse_button = None;
-        self.last_cursor_pos = None;
+        // The pointer belongs to this window, not the opened Project. Keep its
+        // position so a stationary click can hit the newly presented chrome;
+        // CursorLeft still clears it when the pointer actually leaves.
         self.presented_hits.clear();
         self.presented_console_layout = None;
         self.menu_keys = Default::default();

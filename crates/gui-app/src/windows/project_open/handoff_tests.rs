@@ -121,7 +121,15 @@ fn project_terminal_handoff_preserves_dock_and_original_session_on_publication_a
             );
         }
         let answer = prepared_answer(&runtime, &root.0);
+        let pointer = if height == 313 {
+            None // A pointer that left the window must stay absent.
+        } else {
+            Some((118.0, 17.0))
+        };
+        runtime.last_cursor_pos = pointer;
         runtime.publish_project_open(answer).unwrap();
+        assert_eq!(runtime.last_cursor_pos, pointer);
+        assert!(runtime.presented_hits.regions().is_empty());
         // This is before opening/focusing/resizing the panel: UI actions must
         // not repair a publication reset and hide the regression.
         assert_eq!(
