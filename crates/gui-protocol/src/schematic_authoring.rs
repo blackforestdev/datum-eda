@@ -4,12 +4,15 @@ use eda_engine::api::native_write::schematic_library::{
     materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
 };
 use eda_engine::pool::Symbol;
-use eda_engine::schematic::LabelKind;
+use eda_engine::schematic::{LabelKind, PortDirection};
 use eda_engine::substrate::{DesignModel, ElectricalSelectionSnapshot};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+#[path = "schematic_named_point.rs"]
+mod named_point;
 #[path = "schematic_selection_edit.rs"]
 pub mod selected;
+pub use named_point::LabelDraft;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {
@@ -57,6 +60,15 @@ impl MarkerKind {
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    PlacePort {
+        sheet: Uuid,
+        port: Option<Uuid>,
+        instance_path: Vec<Uuid>,
+        name: String,
+        direction: PortDirection,
+        x_nm: i64,
+        y_nm: i64,
+    },
     EditLabel {
         label: Uuid,
         instance_path: Vec<Uuid>,
@@ -113,6 +125,21 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::PlacePort {
+                sheet,
+                port,
+                instance_path,
+                name,
+                direction,
+                x_nm,
+                y_nm,
+            } => (
+                "datum.schematic.place_port",
+                serde_json::json!({"sheet":sheet,"port":port,"instance_path":instance_path,"name":name,"direction":match direction {
+                    PortDirection::Input => "input", PortDirection::Output => "output",
+                    PortDirection::Bidirectional => "bidirectional", PortDirection::Passive => "passive",
+                },"x_nm":x_nm,"y_nm":y_nm}),
+            ),
             Self::EditLabel {
                 label,
                 instance_path,
@@ -230,45 +257,11 @@ impl PlacementTransform {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct LabelDraft {
-    pub kind: LabelKind,
-    pub name: String,
-    pub editor: crate::single_line_editor::SingleLineEditor,
-    /// Name, kind, Cancel, Preview; shared field/controller focus order.
-    pub focus: usize,
-}
-impl LabelDraft {
-    pub fn new(kind: LabelKind) -> Self {
-        let name = if kind == LabelKind::Power { "GND" } else { "" }.to_owned();
-        Self {
-            kind,
-            editor: crate::single_line_editor::SingleLineEditor::at_end(&name),
-            name,
-            focus: 0,
-        }
-    }
-    pub fn kind_name(&self) -> &'static str {
-        match self.kind {
-            LabelKind::Local => "Local",
-            LabelKind::Global => "Global",
-            LabelKind::Power => "Power",
-            LabelKind::Hierarchical => "Hierarchical",
-        }
-    }
-    pub fn cycle_kind(&mut self) {
-        self.kind = match self.kind {
-            LabelKind::Local => LabelKind::Global,
-            LabelKind::Global => LabelKind::Power,
-            _ => LabelKind::Local,
-        };
-    }
-}
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
     pub creation: Option<NewSchematicDraft>,
     pub editing: Option<selected::SymbolEditDraft>,
-    pub label_edit: Option<selected::LabelEditDraft>,
+    pub named_edit: Option<selected::NamedPointEditDraft>,
     pub label: Option<LabelDraft>,
     pub marker: Option<MarkerKind>,
     pub move_paths: std::collections::BTreeMap<Uuid, Vec<Uuid>>,

@@ -379,10 +379,16 @@ restated.
   port matching a parent hierarchical label; assert the
   hierarchical-connectivity-mismatch count drops, undo restores it; then
   re-issue with `--port` to rename and assert a single modified diff.
-- **(8) Not yet supported:** Complete ordinary port/sheet-pin GUI delivery
-  and unified create-or-edit surface. Current native port and hierarchy-binding
-  operations are journaled; their presence does not establish complete
-  sheet-symbol-with-pins or net-rewiring GUI behavior.
+- **(8) Not yet supported:** Complete sheet-symbol/sheet-pin authoring,
+  hierarchy rewiring, double-click port editing, and normalized public CLI/MCP
+  entry points remain open. Native `Place > Port` now configures the shared
+  name/direction form and immutable pin/grid preview. Inspector editing preserves
+  the selected port's identity and position, with one Apply/Cancel action; native
+  `place_port` accepts an optional existing port and qualified occurrence path.
+  Singleton deletion, undo/redo and reopening use the canonical journal.
+  Deleting a port still bound to a sheet instance is refused until its binding
+  is explicitly removed. This bounded interface-port workflow does not establish
+  complete hierarchy authoring or full schematic qualification.
 
 ### 8. create-bus (members + bus-entry as parameters)
 

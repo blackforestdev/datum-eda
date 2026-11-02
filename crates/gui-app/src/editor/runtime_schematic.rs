@@ -286,7 +286,7 @@ impl Runtime {
         true
     }
     pub(super) fn native_schematic_pointer(&mut self, screen: (f32, f32)) -> bool {
-        if self.workspace().schematic_authoring.label_edit.is_some() {
+        if self.workspace().schematic_authoring.named_edit.is_some() {
             return true;
         }
         if self

@@ -9,6 +9,7 @@ pub enum EditorTool {
     Symbol,
     Power,
     Label,
+    Port,
     Junction,
     NoConnect,
 }
@@ -16,6 +17,30 @@ pub enum EditorTool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn interface_port_feedback_preserves_command_identity_through_form_and_preview() {
+        let mut state = crate::load_fixture_workspace_state();
+        state.ui.layout = crate::WorkspaceLayout::board_schematic();
+        state.ui.layout.focused = PaneId(1);
+        for direction in [
+            eda_engine::schematic::PortDirection::Input,
+            eda_engine::schematic::PortDirection::Output,
+            eda_engine::schematic::PortDirection::Bidirectional,
+            eda_engine::schematic::PortDirection::Passive,
+        ] {
+            state.schematic_authoring.label =
+                Some(crate::schematic_authoring::LabelDraft::port(direction));
+            for picker in [true, false] {
+                state.schematic_authoring.picker = picker;
+                let tool = EditorTool::active(&state);
+                assert_eq!(tool, EditorTool::Port);
+                assert_eq!(tool.label(), "Port");
+                assert_eq!(tool.menu_entry(), Some(("Place", "Port")));
+            }
+            state.schematic_authoring.cancel();
+            assert_eq!(EditorTool::active(&state), EditorTool::Select);
+        }
+    }
     #[test]
     fn live_schematic_command_overrides_stale_generic_select_tool() {
         let mut state = crate::load_fixture_workspace_state();
@@ -70,7 +95,9 @@ impl EditorTool {
                 };
             }
             if let Some(label) = &schematic.label {
-                return if label.kind == eda_engine::schematic::LabelKind::Power {
+                return if label.port_direction.is_some() {
+                    Self::Port
+                } else if label.kind == eda_engine::schematic::LabelKind::Power {
                     Self::Power
                 } else {
                     Self::Label
@@ -95,6 +122,7 @@ impl EditorTool {
             Self::Symbol => "Symbol",
             Self::Power => "Power",
             Self::Label => "Label",
+            Self::Port => "Port",
             Self::Junction => "Junction",
             Self::NoConnect => "No-Connect",
         }
@@ -107,6 +135,7 @@ impl EditorTool {
             Self::Symbol => Some(("Place", "Symbol")),
             Self::Power => Some(("Place", "Power Port")),
             Self::Label => Some(("Place", "Net Label")),
+            Self::Port => Some(("Place", "Port")),
             Self::Junction => Some(("Place", "Junction")),
             Self::NoConnect => Some(("Place", "No-Connect")),
             Self::Select | Self::Move => None,

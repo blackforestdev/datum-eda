@@ -4,7 +4,7 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SchematicWire, SymbolDisplayMode};
 impl SchematicAuthoring {
     pub fn active(&self) -> bool {
-        if self.label_edit.is_some() {
+        if self.named_edit.is_some() {
             return true;
         }
         (self.chosen.is_some() || self.label.is_some() || self.marker.is_some()) && !self.picker
@@ -16,7 +16,7 @@ impl SchematicAuthoring {
         self.label = None;
         self.marker = None;
         self.editing = None;
-        self.label_edit = None;
+        self.named_edit = None;
         self.position = None;
         self.rotation_deg = 0;
         self.mirrored = false;
@@ -75,26 +75,32 @@ impl SchematicAuthoring {
             }
         }
         if let Some(label) = &self.label {
-            if let Some(edit) = &self.label_edit {
-                // Invalid intermediate text retains source ink. It remains editable
-                // in the form and cannot become a request until validation passes.
-                if selected.labels.get(&edit.target.id) == Some(&edit.original)
-                    && let Ok(replacement) = edit.replacement(&label.name, label.kind.clone())
-                {
-                    selected.labels.insert(replacement.uuid, replacement);
-                }
+            if let Some(edit) = &self.named_edit {
+                edit.preview(label, selected);
             } else if let Some(at) = self.position
                 && !self.picker
             {
-                selected.labels.insert(
-                    Uuid::nil(),
-                    eda_engine::schematic::NetLabel {
-                        uuid: Uuid::nil(),
-                        kind: label.kind.clone(),
-                        name: label.name.clone(),
-                        position: Point { x: at.x, y: at.y },
-                    },
-                );
+                if let Some(direction) = &label.port_direction {
+                    selected.ports.insert(
+                        Uuid::nil(),
+                        eda_engine::schematic::HierarchicalPort {
+                            uuid: Uuid::nil(),
+                            name: label.name.clone(),
+                            direction: direction.clone(),
+                            position: Point { x: at.x, y: at.y },
+                        },
+                    );
+                } else {
+                    selected.labels.insert(
+                        Uuid::nil(),
+                        eda_engine::schematic::NetLabel {
+                            uuid: Uuid::nil(),
+                            kind: label.kind.clone(),
+                            name: label.name.clone(),
+                            position: Point { x: at.x, y: at.y },
+                        },
+                    );
+                }
             }
         }
         if let Some(index) = self.chosen

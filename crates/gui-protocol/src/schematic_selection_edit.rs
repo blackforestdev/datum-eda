@@ -2,11 +2,14 @@
 use super::SchematicEditRequest;
 #[path = "schematic_label_edit.rs"]
 mod label_edit;
+#[path = "schematic_port_edit.rs"]
+mod port_edit;
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity, AuthoringViewBasis, PaneContent,
     ReviewWorkspaceState, SelectionSubject, SelectionTarget,
 };
 pub use label_edit::{LabelEditDraft, label_admission};
+pub use port_edit::{NamedPointEditDraft, PortEditDraft, port_admission};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -17,6 +20,7 @@ pub enum DeleteKind {
     Label,
     Junction,
     NoConnect,
+    Port,
 }
 impl DeleteKind {
     pub fn from_class(class: Class) -> Result<Self, String> {
@@ -26,7 +30,10 @@ impl DeleteKind {
             Class::Label => Ok(Self::Label),
             Class::Junction => Ok(Self::Junction),
             Class::NoConnect => Ok(Self::NoConnect),
-            _ => Err("Select one Symbol, Wire, Label, Junction or No-Connect to delete".into()),
+            Class::Port => Ok(Self::Port),
+            _ => {
+                Err("Select one Symbol, Wire, Label, Port, Junction or No-Connect to delete".into())
+            }
         }
     }
     pub fn verb_and_key(self) -> (&'static str, &'static str) {
@@ -36,6 +43,7 @@ impl DeleteKind {
             Self::Label => ("datum.schematic.delete_label", "label"),
             Self::Junction => ("datum.schematic.delete_junction", "junction"),
             Self::NoConnect => ("datum.schematic.delete_noconnect", "noconnect"),
+            Self::Port => ("datum.schematic.delete_port", "port"),
         }
     }
 }
@@ -107,11 +115,13 @@ pub fn target(
         Class::Label => sheet.labels.contains_key(&id.id),
         Class::Junction => sheet.junctions.contains_key(&id.id),
         Class::NoConnect => sheet.noconnects.contains_key(&id.id),
+        Class::Port => sheet.ports.contains_key(&id.id),
         _ => false,
     };
     if !present {
         return Err(
-            "Select a Symbol, Wire, Label, Junction or No-Connect in this source sheet".into(),
+            "Select a Symbol, Wire, Label, Port, Junction or No-Connect in this source sheet"
+                .into(),
         );
     }
     Ok((basis, id.clone()))
@@ -147,7 +157,10 @@ mod tests {
             DeleteKind::NoConnect
         );
         assert!(DeleteKind::from_class(Class::Track).is_err());
-        assert!(DeleteKind::from_class(Class::Port).is_err());
+        assert_eq!(
+            DeleteKind::from_class(Class::Port).unwrap(),
+            DeleteKind::Port
+        );
     }
     #[test]
     fn field_apply_is_atomic_and_unchanged_or_invalid_input_has_no_request() {
@@ -185,6 +198,7 @@ mod tests {
             DeleteKind::Label,
             DeleteKind::Junction,
             DeleteKind::NoConnect,
+            DeleteKind::Port,
         ] {
             let request = SchematicEditRequest::DeleteObject {
                 object: target.id,

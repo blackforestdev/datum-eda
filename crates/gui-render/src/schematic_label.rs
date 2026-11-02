@@ -25,7 +25,11 @@ pub(super) fn render(
     });
     if !e.picker {
         draw_text(
-            "Click to place · Tab: edit name/kind · Esc: cancel",
+            if label.port_direction.is_some() {
+                "Click to place · Tab: edit name/direction · Esc: cancel"
+            } else {
+                "Click to place · Tab: edit name/kind · Esc: cancel"
+            },
             panel.x + 12.,
             panel.y + 12.,
             12.,
@@ -49,7 +53,13 @@ pub(super) fn render(
         return Ok(());
     }
     draw_text(
-        if e.label_edit.is_some() {
+        if label.port_direction.is_some() {
+            if e.named_edit.is_some() {
+                "Edit Port"
+            } else {
+                "Place Port"
+            }
+        } else if e.named_edit.is_some() {
             "Edit Label"
         } else if label.kind == eda_engine::schematic::LabelKind::Power {
             "Place Power Port"
@@ -64,7 +74,11 @@ pub(super) fn render(
         text,
     );
     draw_text(
-        "Net name",
+        if label.port_direction.is_some() {
+            "Name"
+        } else {
+            "Net name"
+        },
         panel.x + 16.,
         panel.y + 61.,
         12.,
@@ -77,7 +91,11 @@ pub(super) fn render(
     let mut controls = ControlMeshCache::default();
     crate::single_line_control::paint(
         &label.name,
-        "GND, VCC, signal…",
+        if label.port_direction.is_some() {
+            "Port name…"
+        } else {
+            "GND, VCC, signal…"
+        },
         label.editor,
         focused && label.focus == 0,
         true,
@@ -93,7 +111,11 @@ pub(super) fn render(
         HitTarget::SchematicLabelName,
     )?;
     draw_text(
-        "Kind",
+        if label.port_direction.is_some() {
+            "Direction"
+        } else {
+            "Kind"
+        },
         panel.x + 16.,
         panel.y + 103.,
         12.,
@@ -120,7 +142,7 @@ pub(super) fn render(
     }
     draw_text(
         &truncate_text(
-            e.refusal.as_deref().unwrap_or(if e.label_edit.is_some() {
+            e.refusal.as_deref().unwrap_or(if e.named_edit.is_some() {
                 "Live preview · Enter: apply · Escape: cancel"
             } else {
                 "Enter: preview · click canvas to place · Escape: cancel"
@@ -141,12 +163,12 @@ pub(super) fn render(
     for (name, target, x, focus) in [
         ("Cancel", HitTarget::SchematicCancel, panel.x + 16., 2),
         (
-            if e.label_edit.is_some() {
+            if e.named_edit.is_some() {
                 "Apply"
             } else {
                 "Preview"
             },
-            if e.label_edit.is_some() {
+            if e.named_edit.is_some() {
                 HitTarget::SchematicEditApply
             } else {
                 HitTarget::SchematicLabelPreview
@@ -184,28 +206,31 @@ mod tests {
         let id = uuid::Uuid::nil();
         state.schematic_authoring.label = Some(LabelDraft::new(LabelKind::Power));
         state.schematic_authoring.picker = true;
-        state.schematic_authoring.label_edit = Some(LabelEditDraft {
-            target: AuthoredSelectionIdentity {
-                class: AuthoredSelectionClass::Label,
-                id,
-                instance_path: vec![],
-            },
-            basis: AuthoringViewBasis {
-                project: id,
-                revision: "source".into(),
-                pane: PaneId(1),
-                content: PaneContent::Schematic,
-                source: id,
-                document: None,
-            },
-            tip: None,
-            original: NetLabel {
-                uuid: id,
-                kind: LabelKind::Power,
-                name: "GND".into(),
-                position: eda_engine::ir::geometry::Point::zero(),
-            },
-        });
+        state.schematic_authoring.named_edit = Some(
+            LabelEditDraft {
+                target: AuthoredSelectionIdentity {
+                    class: AuthoredSelectionClass::Label,
+                    id,
+                    instance_path: vec![],
+                },
+                basis: AuthoringViewBasis {
+                    project: id,
+                    revision: "source".into(),
+                    pane: PaneId(1),
+                    content: PaneContent::Schematic,
+                    source: id,
+                    document: None,
+                },
+                tip: None,
+                original: NetLabel {
+                    uuid: id,
+                    kind: LabelKind::Power,
+                    name: "GND".into(),
+                    position: eda_engine::ir::geometry::Point::zero(),
+                },
+            }
+            .into(),
+        );
         let (mut quads, mut text, mut hits) = (vec![], vec![], vec![]);
         render(
             &state,
@@ -241,6 +266,49 @@ mod tests {
         assert!(
             hits.iter()
                 .any(|h| h.target == HitTarget::SchematicLabelKind)
+        );
+    }
+    #[test]
+    fn interface_port_form_configures_existing_name_choice_and_cancel_controls() {
+        use datum_gui_protocol::schematic_authoring::LabelDraft;
+        use eda_engine::schematic::PortDirection;
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.schematic_authoring.label = Some(LabelDraft::port(PortDirection::Bidirectional));
+        state.schematic_authoring.picker = true;
+        let (mut quads, mut text, mut hits) = (vec![], vec![], vec![]);
+        render(
+            &state,
+            &ShellLayout::for_window(1280, 800, None),
+            &mut quads,
+            &mut text,
+            &mut hits,
+        )
+        .unwrap();
+        for expected in [
+            "Place Port",
+            "Name",
+            "Direction",
+            "Bidirectional",
+            "Preview",
+            "Cancel",
+        ] {
+            assert!(
+                text.iter().any(|run| run.text == expected),
+                "missing {expected}"
+            );
+        }
+        for target in [
+            HitTarget::SchematicLabelName,
+            HitTarget::SchematicLabelKind,
+            HitTarget::SchematicLabelPreview,
+            HitTarget::SchematicCancel,
+        ] {
+            assert_eq!(hits.iter().filter(|hit| hit.target == target).count(), 1);
+        }
+        assert!(
+            !text
+                .iter()
+                .any(|run| run.text == "Kind" || run.text == "Net name")
         );
     }
 }

@@ -1,11 +1,14 @@
 //! Existing label form configured for one source-qualified in-place edit.
 use super::*;
-use datum_gui_protocol::schematic_authoring::{LabelDraft, selected::LabelEditDraft};
+use datum_gui_protocol::schematic_authoring::{
+    LabelDraft,
+    selected::{LabelEditDraft, NamedPointEditDraft, PortEditDraft},
+};
 
 pub(crate) enum SelectedSchematicEditSnapshot {
     Symbol(SymbolEditDraft, String, String),
-    Label(
-        LabelEditDraft,
+    NamedPoint(
+        NamedPointEditDraft,
         LabelDraft,
         Option<datum_gui_protocol::BoardReviewSceneV1>,
     ),
@@ -18,15 +21,15 @@ impl Runtime {
         Option<eda_engine::substrate::ObjectId>,
     )> {
         let e = &self.workspace().schematic_authoring;
-        if let Some(draft) = &e.label_edit {
-            return Some((&draft.basis, draft.tip));
+        if let Some(draft) = &e.named_edit {
+            return Some((draft.basis(), draft.tip()));
         }
         e.editing.as_ref().map(|draft| (&draft.basis, draft.tip))
     }
     pub(crate) fn selected_schematic_edit_snapshot(&self) -> Option<SelectedSchematicEditSnapshot> {
         let e = &self.workspace().schematic_authoring;
-        if let Some(draft) = &e.label_edit {
-            return Some(SelectedSchematicEditSnapshot::Label(
+        if let Some(draft) = &e.named_edit {
+            return Some(SelectedSchematicEditSnapshot::NamedPoint(
                 draft.clone(),
                 e.label.clone()?,
                 e.base.clone(),
@@ -46,15 +49,15 @@ impl Runtime {
             SelectedSchematicEditSnapshot::Symbol(draft, reference, value) => {
                 self.restore_selected_symbol_edit((draft, reference, value), reason)
             }
-            SelectedSchematicEditSnapshot::Label(draft, label, prior_base) => {
-                let basis = draft.basis.clone();
+            SelectedSchematicEditSnapshot::NamedPoint(draft, label, prior_base) => {
+                let basis = draft.basis().clone();
                 let base = if self.native_edit.blocked {
                     prior_base
                 } else {
                     self.workspace().schematic_scene.clone()
                 };
                 let e = &mut self.session.workspace_mut().schematic_authoring;
-                e.label_edit = Some(draft);
+                e.named_edit = Some(draft);
                 e.label = Some(label);
                 e.base = base;
                 e.picker = true;
@@ -66,22 +69,30 @@ impl Runtime {
         }
     }
     pub(crate) fn begin_selected_label_edit(&mut self) -> bool {
+        self.begin_selected_named_point_edit(false)
+    }
+    pub(crate) fn begin_selected_port_edit(&mut self) -> bool {
+        self.begin_selected_named_point_edit(true)
+    }
+    fn begin_selected_named_point_edit(&mut self, port: bool) -> bool {
         let prepare = (|| {
             self.selected_schematic_idle()?;
-            selected::label_admission(self.workspace())?;
+            if port {
+                selected::port_admission(self.workspace())?;
+            } else {
+                selected::label_admission(self.workspace())?;
+            }
             let (basis, target) = selected::target(self.workspace())?;
-            let original = self
+            let sheet = self
                 .workspace()
                 .schematic_authoring
                 .source
                 .as_ref()
                 .and_then(|source| source.sheets.get(&basis.source))
-                .and_then(|sheet| sheet.labels.get(&target.id))
-                .cloned()
-                .ok_or("Selected Label source unavailable")?;
+                .ok_or("Selected schematic source unavailable")?;
             let base = datum_gui_protocol::camera_scene_for_pane(self.workspace(), basis.pane)
                 .cloned()
-                .ok_or("Selected Label scene unavailable")?;
+                .ok_or("Selected schematic scene unavailable")?;
             let tip = self
                 .workspace()
                 .supervision
@@ -89,31 +100,40 @@ impl Runtime {
                 .accepted_transaction_tip
                 .as_ref()
                 .and_then(|tip| tip.parse().ok());
-            Ok::<_, String>((
-                LabelEditDraft {
+            let draft = if port {
+                NamedPointEditDraft::Port(PortEditDraft {
+                    original: sheet
+                        .ports
+                        .get(&target.id)
+                        .cloned()
+                        .ok_or("Selected Port source unavailable")?,
                     target,
                     basis,
                     tip,
-                    original,
-                },
-                base,
-            ))
+                })
+            } else {
+                NamedPointEditDraft::Label(LabelEditDraft {
+                    original: sheet
+                        .labels
+                        .get(&target.id)
+                        .cloned()
+                        .ok_or("Selected Label source unavailable")?,
+                    target,
+                    basis,
+                    tip,
+                })
+            };
+            Ok::<_, String>((draft, base))
         })();
         match prepare {
             Ok((draft, base)) => {
                 self.cancel_native_schematic();
-                let basis = draft.basis.clone();
-                let mut label = LabelDraft::new(draft.original.kind.clone());
-                label.name = draft.original.name.clone();
-                label.editor =
-                    datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&label.name);
+                let basis = draft.basis().clone();
+                let label = draft.form();
                 let e = &mut self.session.workspace_mut().schematic_authoring;
-                e.position = Some(PointNm {
-                    x: draft.original.position.x,
-                    y: draft.original.position.y,
-                });
+                e.position = Some(draft.position());
                 e.label = Some(label);
-                e.label_edit = Some(draft);
+                e.named_edit = Some(draft);
                 e.base = Some(base);
                 e.picker = true;
                 e.preview_dirty = true;
@@ -132,10 +152,13 @@ impl Runtime {
         let request = (|| {
             let e = &self.workspace().schematic_authoring;
             let draft = e
-                .label_edit
+                .named_edit
                 .as_ref()
-                .ok_or("No selected Label edit is open")?;
-            let label = e.label.as_ref().ok_or("Label fields are unavailable")?;
+                .ok_or("No selected named-point edit is open")?;
+            let label = e
+                .label
+                .as_ref()
+                .ok_or("Name and choice fields are unavailable")?;
             let (basis, target) = selected::target(self.workspace())?;
             let tip = self
                 .workspace()
@@ -144,20 +167,16 @@ impl Runtime {
                 .accepted_transaction_tip
                 .as_ref()
                 .and_then(|tip| tip.parse().ok());
-            if basis != draft.basis || target != draft.target || tip != draft.tip {
+            if &basis != draft.basis() || &target != draft.target() || tip != draft.tip() {
                 return Err(
                     "Selection or Project history changed; cancel and reopen the edit".into(),
                 );
             }
-            let current = e
-                .source
-                .as_ref()
-                .and_then(|s| s.sheets.get(&basis.source))
-                .and_then(|s| s.labels.get(&target.id));
-            if current != Some(&draft.original) {
-                return Err("Label source changed; cancel and reopen the edit".into());
+            let current = e.source.as_ref().and_then(|s| s.sheets.get(&basis.source));
+            if current.is_none_or(|sheet| !draft.source_matches(sheet)) {
+                return Err("Object source changed; cancel and reopen the edit".into());
             }
-            draft.request(&label.name, label.kind.clone())
+            draft.request(label)
         })();
         match request {
             Ok(None) => {

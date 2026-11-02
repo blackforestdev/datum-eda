@@ -27,7 +27,15 @@ impl Runtime {
                 if basis.is_current(self.workspace()) {
                     self.set_application_focus(ApplicationFocus::Editor(basis.pane));
                     if matches!(target, HitTarget::InspectorEditLabel(_)) {
-                        self.begin_selected_label_edit()
+                        if datum_gui_protocol::schematic_authoring::selected::port_admission(
+                            self.workspace(),
+                        )
+                        .is_ok()
+                        {
+                            self.begin_selected_port_edit()
+                        } else {
+                            self.begin_selected_label_edit()
+                        }
                     } else {
                         self.begin_selected_symbol_edit()
                     }

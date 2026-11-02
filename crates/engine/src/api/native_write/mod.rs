@@ -54,6 +54,7 @@ mod schematic_label_edit;
 pub mod schematic_label_move;
 pub mod schematic_library;
 mod schematic_marker;
+mod schematic_port;
 mod schematic_selection_edit;
 pub mod schematic_sheets;
 pub mod schematic_symbol_move;

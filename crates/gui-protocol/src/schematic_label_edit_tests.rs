@@ -73,7 +73,7 @@ fn label_edit_preview_replaces_same_identity_at_fixed_position_and_cancel_has_no
         let mut edit = original.clone();
         edit.label = Some(LabelDraft::new(kind.clone()));
         edit.label.as_mut().unwrap().name = "GND".into();
-        edit.label_edit = Some(draft.clone());
+        edit.named_edit = Some(draft.clone().into());
         edit.picker = true;
         edit.position = Some(PointNm {
             x: -25_000_000,
@@ -137,12 +137,15 @@ fn label_edit_preview_replaces_same_identity_at_fixed_position_and_cancel_has_no
             unchanged, old_graphics,
             "invalid intermediate name retains source ink and form"
         );
-        assert!(edit.picker && edit.label_edit.is_some());
+        assert!(edit.picker && edit.named_edit.is_some());
         assert!(edit.cancel().is_some());
-        assert!(edit.label_edit.is_none() && edit.label.is_none() && !edit.active());
+        assert!(edit.named_edit.is_none() && edit.label.is_none() && !edit.active());
         assert_eq!(edit.source, original.source);
     }
     for (path, before) in bytes {
         assert_eq!(std::fs::read(path).unwrap(), before);
     }
 }
+
+#[path = "schematic_port_edit_tests.rs"]
+mod port_tests;

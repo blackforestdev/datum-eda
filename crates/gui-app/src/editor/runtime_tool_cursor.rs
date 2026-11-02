@@ -48,6 +48,26 @@ fn cursor_for_state(
 mod tests {
     use super::*;
     #[test]
+    fn interface_port_cursor_yields_to_form_then_tracks_preview_and_cancel() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.layout = datum_gui_protocol::WorkspaceLayout::board_schematic();
+        state.ui.layout.focused = datum_gui_protocol::PaneId(1);
+        state.schematic_authoring.label =
+            Some(datum_gui_protocol::schematic_authoring::LabelDraft::port(
+                eda_engine::schematic::PortDirection::Input,
+            ));
+        state.schematic_authoring.picker = true;
+        assert_eq!(cursor_for_state(&state, true, false), CursorIcon::Default);
+        state.schematic_authoring.picker = false;
+        assert_eq!(cursor_for_state(&state, true, false), CursorIcon::Crosshair);
+        assert_eq!(cursor_for_state(&state, false, false), CursorIcon::Default);
+        state.ui.active_menu = Some("Place".into());
+        assert_eq!(cursor_for_state(&state, true, false), CursorIcon::Default);
+        state.ui.active_menu = None;
+        state.schematic_authoring.cancel();
+        assert_eq!(cursor_for_state(&state, true, false), CursorIcon::Default);
+    }
+    #[test]
     fn cursor_feedback_follows_live_gesture_and_yields_to_chrome() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.ui.layout = datum_gui_protocol::WorkspaceLayout::board_schematic();

@@ -141,6 +141,7 @@ pub(super) fn selected_source(
             "symbols" => sheet.symbols.get(&id).is_some_and(|s| s.uuid == id),
             "wires" => sheet.wires.get(&id).is_some_and(|w| w.uuid == id),
             "labels" => sheet.labels.get(&id).is_some_and(|l| l.uuid == id),
+            "ports" => sheet.ports.get(&id).is_some_and(|p| p.uuid == id),
             "junctions" => sheet.junctions.get(&id).is_some_and(|j| j.uuid == id),
             "noconnects" => sheet.noconnects.get(&id).is_some_and(|n| n.uuid == id),
             _ => false,

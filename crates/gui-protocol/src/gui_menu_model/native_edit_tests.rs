@@ -161,7 +161,7 @@ fn label_and_power_port_share_sheet_and_native_capability_admission() {
 }
 
 #[test]
-fn marker_place_entries_require_sheet_and_each_engine_capability() {
+fn schematic_place_entries_require_sheet_and_each_engine_capability() {
     let model = default_gui_menu_model().unwrap();
     let place = model
         .menubar
@@ -171,6 +171,7 @@ fn marker_place_entries_require_sheet_and_each_engine_capability() {
     for (label, verb) in [
         ("Junction", "datum.schematic.place_junction"),
         ("No-Connect", "datum.schematic.place_noconnect"),
+        ("Port", "datum.schematic.place_port"),
     ] {
         let item = place.items.iter().find(|item| item.label == label).unwrap();
         assert_eq!(item.verb.as_deref(), Some(verb));

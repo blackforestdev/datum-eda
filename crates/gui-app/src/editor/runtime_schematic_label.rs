@@ -16,8 +16,22 @@ impl Runtime {
         true
     }
 
+    pub(crate) fn begin_native_port(&mut self) -> bool {
+        if !self.prepare_native_schematic(false) {
+            return true;
+        }
+        let e = &mut self.session.workspace_mut().schematic_authoring;
+        e.chosen = None;
+        e.label = Some(LabelDraft::port(
+            eda_engine::schematic::PortDirection::Input,
+        ));
+        e.refusal = None;
+        self.invalidate_frame();
+        true
+    }
+
     fn start_label_preview(&mut self) -> bool {
-        if self.workspace().schematic_authoring.label_edit.is_some() {
+        if self.workspace().schematic_authoring.named_edit.is_some() {
             return self.apply_selected_label_fields();
         }
         if !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
@@ -28,7 +42,7 @@ impl Runtime {
             return false;
         };
         if label.name.trim().is_empty() || label.name.chars().any(char::is_control) {
-            e.refusal = Some("Enter a net name such as GND or VCC".into());
+            e.refusal = Some("Enter a nonempty single-line name".into());
             label.focus = 0;
         } else {
             label.name = label.name.trim().to_owned();
@@ -56,7 +70,10 @@ impl Runtime {
             HitTarget::SchematicLabelKind => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 if let Some(draft) = &mut e.label {
-                    if e.label_edit.is_some() {
+                    if draft.port_direction.is_some() {
+                        draft.cycle_kind();
+                        e.preview_dirty |= e.named_edit.is_some();
+                    } else if e.named_edit.is_some() {
                         draft.kind = match draft.kind {
                             LabelKind::Local => LabelKind::Global,
                             LabelKind::Global => LabelKind::Hierarchical,
@@ -139,7 +156,7 @@ impl Runtime {
     }
 
     pub(super) fn place_native_label(&mut self, at: PointNm) -> bool {
-        if self.workspace().schematic_authoring.label_edit.is_some() {
+        if self.workspace().schematic_authoring.named_edit.is_some() {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -147,13 +164,14 @@ impl Runtime {
         let Some(sheet) = e.sheet else { return true };
         e.position = Some(at);
         e.preview_dirty = true;
-        e.pending_request = Some(SchematicEditRequest::PlaceLabel {
-            sheet,
-            kind: label.kind.clone(),
-            name: label.name.clone(),
-            x_nm: at.x,
-            y_nm: at.y,
-        });
+        match label.placement_request(sheet, at) {
+            Ok(request) => e.pending_request = Some(request),
+            Err(reason) => {
+                e.refusal = Some(reason);
+                self.invalidate_frame();
+                return true;
+            }
+        }
         self.prepare_native_schematic_frame();
         self.queue_native_edit(NativeEditAction::Schematic)
     }

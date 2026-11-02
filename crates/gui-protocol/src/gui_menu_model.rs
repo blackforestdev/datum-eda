@@ -73,6 +73,7 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
+            | "datum.schematic.place_port"
             | "datum.schematic.rename_label"
             | "datum.schematic.place_junction"
             | "datum.schematic.place_noconnect"
@@ -81,6 +82,7 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.delete_symbol"
             | "datum.schematic.delete_wire"
             | "datum.schematic.delete_label"
+            | "datum.schematic.delete_port"
             | "datum.schematic.delete_junction"
             | "datum.schematic.delete_noconnect"
     )
@@ -101,6 +103,7 @@ pub fn native_edit_unavailable_reason(
         "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
+            | "datum.schematic.place_port"
             | "datum.schematic.place_junction"
             | "datum.schematic.place_noconnect"
     ) && state.schematic_authoring.sheet.is_none()
