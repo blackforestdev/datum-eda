@@ -113,7 +113,8 @@ impl Runtime {
                 Some(Snapshot {
                     text,
                     editor,
-                    editable: !self.native_edit.pending(),
+                    editable: !self.native_edit.pending()
+                        && e.editing.as_ref().is_none_or(|d| d.text_editable()),
                 })
             }
             Target::LibraryPath | Target::LibrarySearch => {

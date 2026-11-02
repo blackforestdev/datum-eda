@@ -453,3 +453,6 @@ mod marking_context_tests;
 
 #[path = "schematic_bus_tests.rs"]
 mod bus_tests;
+
+#[path = "schematic_custom_field_tests.rs"]
+mod custom_field_tests;

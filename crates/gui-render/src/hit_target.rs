@@ -48,6 +48,7 @@ pub enum HitTarget {
     Library(datum_gui_protocol::library_browser::LibraryControl),
     SchematicPicker,
     SchematicName,
+    SchematicCustomField(datum_gui_protocol::schematic_authoring::CustomFieldControl),
     SchematicBusEntryChoice,
     SchematicBusEntryDelete,
     SchematicLabelName,

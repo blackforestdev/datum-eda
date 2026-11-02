@@ -81,6 +81,7 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.place_noconnect"
             | "datum.schematic.set_symbol_reference"
             | "datum.schematic.set_symbol_value"
+            | "datum.schematic.set_symbol_field"
             | "datum.schematic.delete_symbol"
             | "datum.schematic.delete_wire"
             | "datum.schematic.delete_label"

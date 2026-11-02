@@ -57,6 +57,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::schematic_marker::VERBS);
         verbs.extend_from_slice(super::schematic_port::VERBS);
         verbs.extend_from_slice(super::schematic_bus::VERBS);
+        verbs.extend_from_slice(super::schematic_custom_fields::VERBS);
         verbs.extend_from_slice(super::schematic_selection_edit::VERBS);
         verbs.extend_from_slice(super::library_gui::VERBS);
         verbs.extend_from_slice(super::library_acquisition::VERBS);
@@ -173,6 +174,7 @@ mod tests {
                 "datum.schematic.place_port",
                 "datum.schematic.place_symbol",
                 "datum.schematic.rename_label",
+                "datum.schematic.set_symbol_field",
                 "datum.schematic.set_symbol_reference",
                 "datum.schematic.set_symbol_value",
             ]

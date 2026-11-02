@@ -1,5 +1,7 @@
 //! Selected-object edits share native selection, guarded source ownership and the writer.
 use super::*;
+#[path = "runtime_schematic_custom_field.rs"]
+mod custom_field;
 #[path = "runtime_schematic_selected_label.rs"]
 mod label_edit;
 use datum_gui_protocol::schematic_authoring::{
@@ -170,19 +172,7 @@ impl Runtime {
                 .editing
                 .as_ref()
                 .ok_or("No selected Symbol edit is open")?;
-            let (basis, target) = selected::target(self.workspace())?;
-            let tip = self
-                .workspace()
-                .supervision
-                .journal
-                .accepted_transaction_tip
-                .as_ref()
-                .and_then(|tip| tip.parse().ok());
-            if &basis != draft.basis() || &target != draft.target() || tip != draft.tip() {
-                return Err(
-                    "Selection or Project history changed; cancel and reopen the edit".into(),
-                );
-            }
+            self.guard_selected_fields_edit(draft)?;
             if delete_entry {
                 let FieldsEditDraft::Bus(bus) = draft else {
                     return Err("Select a Bus entry in the Bus form".into());

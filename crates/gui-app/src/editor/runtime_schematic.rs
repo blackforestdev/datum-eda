@@ -139,6 +139,9 @@ impl Runtime {
             return self.handle_label_chrome(target);
         }
         match target {
+            HitTarget::SchematicCustomField(control) => {
+                return self.handle_custom_field_control(*control);
+            }
             HitTarget::SchematicBusEntryChoice => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 if let Some(datum_gui_protocol::schematic_authoring::FieldsEditDraft::Bus(draft)) =
@@ -252,6 +255,23 @@ impl Runtime {
             return self.handle_label_key(event);
         }
         let picker = self.workspace().schematic_authoring.picker;
+        if picker
+            && matches!(
+                self.workspace().schematic_authoring.editing,
+                Some(datum_gui_protocol::schematic_authoring::FieldsEditDraft::Custom(_))
+            )
+        {
+            use datum_gui_protocol::schematic_authoring::CustomFieldControl;
+            match event.logical_key {
+                Key::Named(NamedKey::PageUp) => {
+                    return self.handle_custom_field_control(CustomFieldControl::Previous);
+                }
+                Key::Named(NamedKey::PageDown) => {
+                    return self.handle_custom_field_control(CustomFieldControl::Next);
+                }
+                _ => {}
+            }
+        }
         if picker && self.handle_shared_editor_key(event) {
             return true;
         }

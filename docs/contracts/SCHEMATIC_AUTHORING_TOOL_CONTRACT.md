@@ -457,10 +457,14 @@ restated.
 - **(7) Proof slice:** On `datum-test`, set R1 value 10k→4k7 and assign a
   pool part; assert a single `OperationResult.modified`, undo restores
   both, `symbol_semantics` reflect the new pin types.
-- **(8) Not yet supported:** Sixteen redundant set/clear verbs collapse to
-  one normalized surface + field enum (+`clear` flag); complete ordinary
-  field GUI and guaranteed `ComponentInstance` join remain pending. Current
-  compatibility field operations already use canonical history.
+- **(8) Delivery boundary:** The selected-Symbol form supports reference/value
+  and UUID-qualified custom metadata add/edit/remove through shared controls
+  (`dat-schematic-custom-fields-3bec`). New metadata is explicitly hidden and
+  unpositioned; edits preserve existing visibility, position and unrelated raw
+  symbol/field payload. Cancel/no-op do not write; accepted changes use canonical
+  history. This does not deliver canvas field placement, a bulk fields table or
+  part/entity/gate assignment. Complete normalization of the compatibility
+  set/clear surfaces and guaranteed `ComponentInstance` joins remain pending.
 
 ### 10. run-erc (read-only) + author-waiver
 

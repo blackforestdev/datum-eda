@@ -44,6 +44,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProjectOpenCancel
         | HitTarget::ProjectOpenConfirm => false,
         HitTarget::SchematicName | HitTarget::SchematicCreate
+        | HitTarget::SchematicCustomField(_)
         | HitTarget::SchematicBusEntryChoice | HitTarget::SchematicBusEntryDelete
             | HitTarget::SchematicLabelName | HitTarget::SchematicLabelKind | HitTarget::SchematicLabelPreview
         | HitTarget::SchematicPicker | HitTarget::SchematicLibraryPage(_)
@@ -167,6 +168,15 @@ fn sample_handoff() -> datum_gui_protocol::TerminalCommandHandoff {
 fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
     let id = || "t0c04".to_string();
     let samples = vec![
+        HitTarget::SchematicCustomField(
+            datum_gui_protocol::schematic_authoring::CustomFieldControl::Open,
+        ),
+        HitTarget::SchematicCustomField(
+            datum_gui_protocol::schematic_authoring::CustomFieldControl::New,
+        ),
+        HitTarget::SchematicCustomField(
+            datum_gui_protocol::schematic_authoring::CustomFieldControl::Remove,
+        ),
         HitTarget::Library(datum_gui_protocol::library_browser::LibraryControl::Search),
         HitTarget::CloseRevisionSurface,
         HitTarget::ToggleRevisionIssuanceArm,

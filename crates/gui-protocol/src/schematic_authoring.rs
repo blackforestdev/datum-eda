@@ -15,7 +15,13 @@ pub mod selected;
 pub use named_point::LabelDraft;
 #[path = "schematic_bus.rs"]
 mod bus;
-pub use bus::{BusEditDraft, FieldsEditDraft, bus_fields};
+pub use bus::{BusEditDraft, bus_fields};
+#[path = "schematic_fields.rs"]
+mod fields;
+pub use fields::FieldsEditDraft;
+#[path = "schematic_custom_field.rs"]
+mod custom_field;
+pub use custom_field::{CustomFieldControl, CustomFieldDraft};
 #[path = "schematic_bus_entry.rs"]
 mod bus_entry;
 pub use bus_entry::BusEntryDraft;
@@ -66,6 +72,14 @@ impl MarkerKind {
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    CustomField {
+        symbol: Uuid,
+        instance_path: Vec<Uuid>,
+        field_id: Option<Uuid>,
+        key: Option<String>,
+        value: Option<String>,
+        clear: bool,
+    },
     AddBusEntry {
         sheet: Uuid,
         bus: Uuid,
@@ -152,6 +166,29 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::CustomField {
+                symbol,
+                instance_path,
+                field_id,
+                key,
+                value,
+                clear,
+            } => {
+                let mut params = serde_json::json!({"symbol":symbol,"instance_path":instance_path,"field":"custom"});
+                if let Some(id) = field_id {
+                    params["field_id"] = serde_json::json!(id);
+                }
+                if let Some(key) = key {
+                    params["key"] = serde_json::json!(key);
+                }
+                if let Some(value) = value {
+                    params["value"] = serde_json::json!(value);
+                }
+                if *clear {
+                    params["clear"] = serde_json::json!(true);
+                }
+                ("datum.schematic.set_symbol_field", params)
+            }
             Self::AddBusEntry {
                 sheet,
                 bus,

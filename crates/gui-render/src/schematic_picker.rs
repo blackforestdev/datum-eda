@@ -3,6 +3,8 @@ use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter};
 use crate::*;
 #[path = "schematic_creation.rs"]
 mod creation;
+#[path = "schematic_field_controls.rs"]
+mod field_controls;
 #[path = "schematic_label.rs"]
 mod label;
 use datum_gui_protocol::{
@@ -33,7 +35,11 @@ pub(super) fn render(
             }
             _ => &[],
         };
-        let extra = if entries.is_empty() { 0. } else { 34. };
+        let custom = matches!(
+            authoring.editing,
+            Some(datum_gui_protocol::schematic_authoring::FieldsEditDraft::Custom(_))
+        );
+        let extra = field_controls::extra(authoring).max(if entries.is_empty() { 0. } else { 34. });
         let width = 480f32.min(layout.top_menu_bar.width - 32.0);
         let panel = RectPx {
             x: (layout.top_menu_bar.width - width) / 2.,
@@ -48,7 +54,9 @@ pub(super) fn render(
             rect: panel,
         });
         draw_text(
-            if bus {
+            if custom {
+                "Custom metadata"
+            } else if bus {
                 if editing { "Edit Bus" } else { "Place Bus" }
             } else if editing {
                 "Edit Symbol"
@@ -167,7 +175,13 @@ pub(super) fn render(
         let mut controls = ControlMeshCache::default();
         for (label, value, editor, field, target) in [
             (
-                if bus { "Name" } else { "Reference" },
+                if custom {
+                    "Key"
+                } else if bus {
+                    "Name"
+                } else {
+                    "Reference"
+                },
                 &authoring.reference,
                 authoring.reference_editor,
                 PlacementField::Reference,
@@ -204,7 +218,7 @@ pub(super) fn render(
                     && state.ui.active_menu.is_none()
                     && state.ui.focus
                         == datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused),
-                true,
+                authoring.editing.as_ref().is_none_or(|d| d.text_editable()),
                 row,
                 &mut ControlPainter::new(quads, &mut controls, 1.),
                 text,
@@ -213,6 +227,7 @@ pub(super) fn render(
             )?;
             y += 35.;
         }
+        field_controls::render(state, panel, quads, text, hits);
         if let Some(entry) = entries.get(authoring.bus_entry_choice) {
             let label = format!(
                 "Entry {}/{} · {:.3}, {:.3} mm",
