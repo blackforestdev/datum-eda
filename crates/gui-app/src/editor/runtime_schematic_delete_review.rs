@@ -61,7 +61,7 @@ impl Runtime {
             return true;
         }
         let result = if accept && !review.current(self.workspace()) {
-            Err("Project or source view changed; dismiss this deletion and select again".into())
+            Err("Project or source evidence changed; dismiss this Proposal and select again".into())
         } else {
             if !accept {
                 // Reject is a metadata operation, and remains possible after a design change.

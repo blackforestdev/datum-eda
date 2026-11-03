@@ -1,6 +1,9 @@
 //! Complete workspace refresh projects one fresh engine-owned model. The edit
 //! caller reuses that same immutable basis for selection before atomic publication.
 use super::*;
+pub use crate::check_runs::loading::{
+    disposition_basis, refresh_disposition_report, retain_current_check_projection,
+};
 use eda_engine::substrate::DesignModel;
 use std::sync::Arc;
 
@@ -154,6 +157,7 @@ pub(super) fn load_workspace(
     include_review: bool,
     resolved: Option<Arc<DesignModel>>,
 ) -> Result<(ReviewWorkspaceState, Option<Arc<DesignModel>>)> {
+    let initial_load = resolved.is_none();
     let workspace_started = std::time::Instant::now();
     let cli = cli_prefix()?;
     let review_started = std::time::Instant::now();
@@ -272,6 +276,15 @@ pub(super) fn load_workspace(
     } else {
         check_runs::loading::load(&cli, request)?
     };
+    if initial_load
+        && model
+            .as_deref()
+            .map(check_runs::loading::has_dispositions)
+            .transpose()?
+            .unwrap_or(false)
+    {
+        check_runs::loading::refresh_disposition_report(&mut state, request)?;
+    }
     state.supervision = load_gui_supervision_snapshot(
         request,
         &state.scene,

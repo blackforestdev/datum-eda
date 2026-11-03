@@ -97,7 +97,8 @@ impl DesignModel {
         };
         super::board_batch_basis::bind_imported_fill_history(self, &mut batch)?;
         let current_component_history =
-            component_binding::prepare(self, project_root, target, &mut batch)?;
+            super::schematic_assignment_history::prepare(self, target, &mut batch)?
+                || component_binding::prepare(self, project_root, target, &mut batch)?;
         let (undo_of, redo_of) = match transaction_kind {
             TransactionKind::Undo => (Some(target.transaction_id), None),
             TransactionKind::Redo => (None, Some(target.transaction_id)),

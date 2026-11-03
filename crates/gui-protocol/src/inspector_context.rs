@@ -458,14 +458,15 @@ pub fn pane_header(
                 "starting"
             }
         )
-    } else if checks.persisted
-        && checks.check_run_id.is_some()
-        && checks.profile_id.as_deref() == Some("erc")
-    {
+    } else if checks.check_run_id.is_some() && checks.profile_id.as_deref() == Some("erc") {
         if checks.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
             && checks.model_revision.as_deref() == Some(state.scene.source_revision.as_str())
         {
-            format!("ERC {} Project findings", checks.finding_count)
+            if checks.persisted {
+                format!("ERC {} Project findings", checks.finding_count)
+            } else {
+                format!("ERC {} findings · read-only report", checks.finding_count)
+            }
         } else {
             format!("ERC stale · {} historical findings", checks.finding_count)
         }

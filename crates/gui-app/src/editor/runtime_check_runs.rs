@@ -108,6 +108,7 @@ impl Runtime {
                 self.native_edit.preview.is_none()
                     && !self.workspace().schematic_authoring.active()
                     && !self.workspace().schematic_authoring.picker
+                    && self.workspace().schematic_authoring.delete_review.is_none()
                     && self.workspace().library.draft.is_none(),
                 "Finish or cancel the current editor preview before running ERC"
             );

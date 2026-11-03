@@ -89,6 +89,12 @@ impl EditorTool {
     pub fn active(state: &ReviewWorkspaceState) -> Self {
         if state.ui.layout.focused_content() == PaneContent::Schematic {
             let schematic = &state.schematic_authoring;
+            if schematic.disposition_draft.is_some()
+                || schematic.assignment_draft.is_some()
+                || schematic.delete_review.is_some()
+            {
+                return Self::Select;
+            }
             if schematic.field_placement().is_some() {
                 return Self::Field;
             }

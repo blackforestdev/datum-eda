@@ -86,6 +86,7 @@ mod replay_proposal;
 mod replay_schematic;
 mod rules_journal_ops;
 mod run_evidence_validation;
+mod schematic_assignment_history;
 mod schematic_definition_journal_ops;
 mod schematic_root_journal_ops;
 mod schematic_sheet_journal_ops;

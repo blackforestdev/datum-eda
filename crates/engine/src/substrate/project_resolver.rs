@@ -13,8 +13,10 @@ use super::artifact::{
 };
 use super::artifact_run::read_artifact_run_shards;
 use super::check_run::read_check_run_shards;
-use super::component_instance::{collect_component_instances, read_component_instance_shards};
-use super::component_instance_journal_ops::apply_component_instance_journal_to_map;
+use super::component_instance::{
+    collect_component_instances, read_component_instance_shards, resolve_component_instance_sources,
+};
+use super::component_instance_journal_ops::apply_component_instance_journal_to_sources;
 use super::forward_annotation_review_journal_ops::FORWARD_ANNOTATION_REVIEW_RELATIVE_PATH;
 use super::generated_evidence_journal_ops::{
     apply_artifact_metadata_journal_to_map, apply_artifact_run_journal_to_map,
@@ -428,7 +430,16 @@ impl ProjectResolver {
             }
         }
         let mut persisted_component_instances = persisted_component_instances;
-        apply_component_instance_journal_to_map(&journal, &mut persisted_component_instances)?;
+        apply_component_instance_journal_to_sources(
+            &journal,
+            &shards,
+            &mut persisted_component_instances,
+        )?;
+        let persisted_component_instances = resolve_component_instance_sources(
+            persisted_component_instances,
+            &mut objects,
+            &mut diagnostics,
+        );
         apply_import_map_journal_to_map(&journal, &mut import_map)?;
         let mut persisted_zone_fills = persisted_zone_fills;
         apply_zone_fill_journal_to_map(&journal, &mut persisted_zone_fills)?;

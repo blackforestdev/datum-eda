@@ -60,23 +60,15 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
         );
         return;
     };
-    if !checks.persisted {
-        context.push(
-            section,
-            InspectorField::text(
-                "State",
-                "Unavailable — result has no persisted-record authority",
-            ),
-        );
-        return;
-    }
     let current = checks.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
         && checks.model_revision.as_deref() == Some(state.scene.source_revision.as_str());
     context.push(
         section,
         InspectorField::text(
             "State",
-            if current {
+            if current && !checks.persisted {
+                "Current read-only report — Run ERC before authoring"
+            } else if current {
                 "Current persisted result"
             } else {
                 "Stale — historical result; rerun on current basis"

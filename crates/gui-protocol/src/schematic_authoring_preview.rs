@@ -11,6 +11,8 @@ impl SchematicAuthoring {
             || self.wire
     }
     pub fn cancel(&mut self) -> Option<BoardReviewSceneV1> {
+        self.disposition_draft = None;
+        self.assignment_draft = None;
         self.picker = false;
         self.chosen = None;
         self.label = None;

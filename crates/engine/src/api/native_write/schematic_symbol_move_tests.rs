@@ -1,7 +1,10 @@
 use super::*;
 use crate::api::native_write::{
-    commit_prepared, electrical::binding_fixture::fixture, schematic_connectivity::*,
-    schematic_sheets::*, schematic_symbols::*,
+    commit_prepared,
+    electrical::binding_fixture::{BindingFixture, fixture as binding_fixture},
+    schematic_connectivity::*,
+    schematic_sheets::*,
+    schematic_symbols::*,
 };
 use crate::schematic::{
     Bus, BusEntry, HierarchicalPort, Junction, LabelKind, NetLabel, NoConnectMarker,
@@ -14,6 +17,39 @@ use std::{collections::BTreeMap, path::Path};
 
 fn provenance() -> WriteProvenance {
     WriteProvenance::new("test", CommitSource::Manual, "move native schematic symbol")
+}
+// These tests mutate geometry directly; physical binding admission has its own tests.
+// Remove the inherited physical owner canonically before changing its revision pins.
+pub(super) fn fixture(name: &str) -> BindingFixture {
+    let mut f = binding_fixture(name);
+    assert_eq!(f.model.component_instances.len(), 1);
+    let owner = f.model.component_instances.values().next().unwrap();
+    assert_eq!(owner.placed_symbol_refs, vec![f.symbol.uuid]);
+    assert!(!owner.placed_package_refs.is_empty());
+    let id = owner.id;
+    let object = &f.model.objects[&id];
+    let shard = f
+        .model
+        .source_shards
+        .iter()
+        .find(|s| s.shard_id == object.source_shard_id)
+        .unwrap();
+    let payload = f
+        .model
+        .materialized_source_shard_value_by_relative_path(&shard.relative_path)
+        .unwrap()["component_instance"]
+        .clone();
+    let write = BatchComposer::compose(&f.model, provenance())
+        .push_op(Operation::DeleteComponentInstance {
+            component_instance_id: id,
+            component_instance: payload,
+        })
+        .finish()
+        .unwrap();
+    commit_prepared(&mut f.model, &f.root, write).unwrap();
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    assert!(f.model.component_instances.is_empty());
+    f
 }
 fn p(x: i64, y: i64) -> Point {
     Point::new(x, y)

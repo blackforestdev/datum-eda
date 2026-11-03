@@ -1,12 +1,11 @@
-use std::collections::BTreeMap;
 use std::path::Path;
 
 use uuid::Uuid;
 
 use super::{
-    COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION, ComponentInstance, EngineError, ObjectId, Operation,
-    OperationBatch, SourceShardKind, TransactionRecord,
-    component_instance::persisted_component_instance_from_value,
+    COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION, EngineError, Operation, OperationBatch,
+    SourceShardKind, SourceShardRef, TransactionRecord,
+    component_instance::{ComponentInstanceSources, PersistedComponentInstance},
     journal::{StagedShardWrite, stage_new_shard_write},
     operation_application_component_instance::authored_relative_path,
 };
@@ -134,34 +133,35 @@ pub(super) fn component_instance_operation_write(
     }
 }
 
-pub(super) fn apply_component_instance_journal_to_map(
+/// Overlay accepted journal payloads before resolving their references. Deserializing
+/// a ComponentInstance into its projection is not a reference-validation step.
+pub(super) fn apply_component_instance_journal_to_sources(
     journal: &[TransactionRecord],
-    component_instances: &mut BTreeMap<ObjectId, ComponentInstance>,
+    shards: &[SourceShardRef],
+    sources: &mut ComponentInstanceSources,
 ) -> Result<(), EngineError> {
+    let mut latest = std::collections::BTreeMap::new();
     for transaction in journal {
         for operation in &transaction.operations {
-            match operation {
-                Operation::CreateComponentInstance {
-                    component_instance_id,
-                    component_instance,
-                }
-                | Operation::SetComponentInstance {
-                    component_instance_id,
-                    component_instance,
-                    ..
-                } => {
-                    let component_instance =
-                        persisted_component_instance_from_value(component_instance)?;
-                    component_instances.insert(*component_instance_id, component_instance);
-                }
-                Operation::DeleteComponentInstance {
-                    component_instance_id,
-                    ..
-                } => {
-                    component_instances.remove(component_instance_id);
-                }
-                _ => {}
+            if let Some((id, payload, delete)) = component_instance_operation_write(operation) {
+                latest.insert(authored_relative_path(id), (!delete).then_some(payload));
             }
+        }
+    }
+    for (path, payload) in latest {
+        if let Some(payload) = payload {
+            let input: PersistedComponentInstance = serde_json::from_value(payload.clone())?;
+            let shard = shards
+                .iter()
+                .find(|s| s.kind == SourceShardKind::ComponentInstance && s.relative_path == path)
+                .ok_or_else(|| {
+                    EngineError::Validation(format!(
+                        "ComponentInstance source shard unavailable: {path}"
+                    ))
+                })?;
+            sources.insert(path, (shard.clone(), input));
+        } else {
+            sources.remove(&path);
         }
     }
     Ok(())

@@ -11,6 +11,7 @@ mod check_run_replay;
 mod check_run_schema;
 mod check_run_target_validation;
 mod component_instance;
+mod component_instance_final_replay;
 mod component_instance_part_ref;
 mod component_instance_proposal_policy;
 mod component_instance_roles;

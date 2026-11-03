@@ -1,5 +1,7 @@
-//! Typed native manual batch deletion through the existing Proposal lifecycle.
+//! Typed native manual commands through the existing Proposal lifecycle.
 //! No direct-write verb is registered: the complete set always requires review.
+pub use super::schematic_assignment::{AssignmentChoice, AssignmentSummary};
+pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
 use super::{context::WriteProvenance, registry::NativeWriteContext, schematic_delete};
 use crate::{
     error::EngineError,
@@ -49,6 +51,20 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateAssignment {
+        proposal_id: Uuid,
+        symbol: Uuid,
+        instance_path: Vec<Uuid>,
+        part: Uuid,
+        gate: Uuid,
+    },
+    CreateDisposition {
+        proposal_id: Uuid,
+        check_run_id: Uuid,
+        fingerprint: String,
+        disposition: DispositionKind,
+        rationale: String,
+    },
     CreateDelete {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -68,7 +84,9 @@ pub enum NativeProposalAction {
 impl NativeProposalAction {
     pub fn proposal_id(&self) -> Uuid {
         match self {
-            Self::CreateDelete { proposal_id, .. }
+            Self::CreateAssignment { proposal_id, .. }
+            | Self::CreateDisposition { proposal_id, .. }
+            | Self::CreateDelete { proposal_id, .. }
             | Self::Preview { proposal_id }
             | Self::AcceptApply { proposal_id }
             | Self::Reject { proposal_id } => *proposal_id,
@@ -98,6 +116,10 @@ pub struct NativeProposalResponse {
     pub current_model_revision: String,
     pub transaction_tip: Option<Uuid>,
     pub deleted: Vec<DeletedObject>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub disposition: Option<DispositionSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assignment: Option<AssignmentSummary>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub selected_count: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -114,13 +136,75 @@ pub fn execute(
         || crate::revision::transaction_tip(&model.journal) != request.expected_transaction_tip
     {
         return Err(invalid(
-            "Selection or Project history changed; prepare the deletion again",
+            "Selection or Project history changed; prepare the proposal again",
         ));
     }
     let id = request.action.proposal_id();
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateAssignment {
+            symbol,
+            instance_path,
+            part,
+            gate,
+            ..
+        } => {
+            let provenance =
+                WriteProvenance::new("datum-gui", CommitSource::Manual, "Assign schematic Part");
+            let mut write = super::schematic_assignment::build(
+                model,
+                provenance,
+                *symbol,
+                instance_path,
+                *part,
+                *gate,
+            )?;
+            write.batch.batch_id = id;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale: "Assign compatible Part and Gate to selected Symbol".into(),
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
+        NativeProposalAction::CreateDisposition {
+            check_run_id,
+            fingerprint,
+            disposition,
+            rationale,
+            ..
+        } => {
+            let provenance =
+                WriteProvenance::new("datum-gui", CommitSource::Manual, "GUI ERC disposition");
+            let mut prepared = super::schematic_disposition::build(
+                model,
+                provenance,
+                *check_run_id,
+                fingerprint,
+                *disposition,
+                rationale,
+            )?;
+            prepared.batch.batch_id = id;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: prepared.batch,
+                    rationale: rationale.clone(),
+                    source: ProposalSource::Manual,
+                    checks_run: vec![*check_run_id],
+                    finding_fingerprints: vec![fingerprint.clone()],
+                },
+            )?;
+        }
         NativeProposalAction::CreateDelete {
             sheet,
             instance_path,
@@ -157,25 +241,26 @@ pub fn execute(
             selected_count = Some(targets.len());
         }
         NativeProposalAction::Preview { .. } => {
-            let proposal = delete_proposal(model, id)?;
+            let proposal = native_proposal(model, id)?;
             if matches!(
                 proposal.status,
                 ProposalStatus::Draft | ProposalStatus::Accepted
             ) {
+                validate_disposition_current(model, proposal)?;
                 preview_proposal_diff_journaled(model, &request.project_root, id)?;
             }
         }
         NativeProposalAction::AcceptApply { .. } => {
-            let status = delete_proposal(model, id)?.status;
+            let proposal = native_proposal(model, id)?;
+            validate_disposition_current(model, proposal)?;
+            let status = proposal.status;
             if status == ProposalStatus::Draft {
                 review_proposal_status(model, &request.project_root, id, ProposalStatus::Accepted)?;
             } else if status != ProposalStatus::Accepted {
-                return Err(invalid(
-                    "Only a draft or accepted deletion proposal can be applied",
-                ));
+                return Err(invalid("Only a draft or accepted proposal can be applied"));
             }
             // The existing gateway puts Applied metadata IN the design batch.
-            // Nothing is journaled after this: one Undo restores all deletions.
+            // Nothing is journaled after this: one Undo restores the authored design.
             transaction_id = Some(
                 apply_accepted_proposal(model, &request.project_root, id)?
                     .transaction
@@ -183,11 +268,11 @@ pub fn execute(
             );
         }
         NativeProposalAction::Reject { .. } => {
-            delete_proposal(model, id)?;
+            native_proposal(model, id)?;
             review_proposal_status(model, &request.project_root, id, ProposalStatus::Rejected)?;
         }
     }
-    let proposal = delete_proposal(model, id)?;
+    let proposal = native_proposal(model, id)?;
     let deleted: Vec<_> = proposal
         .batch
         .operations
@@ -203,22 +288,53 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        disposition: if super::schematic_disposition::is_disposition(proposal) {
+            Some(super::schematic_disposition::summary(
+                model, proposal, false,
+            )?)
+        } else {
+            None
+        },
+        assignment: if super::schematic_assignment::is_assignment(proposal) {
+            let detail = super::schematic_assignment::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         transaction_id: transaction_id.or(proposal.applied_transaction_id),
     })
 }
 
-fn delete_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineError> {
+fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineError> {
     let p = model
         .proposals
         .get(&id)
-        .ok_or_else(|| invalid("Deletion proposal is unavailable"))?;
+        .ok_or_else(|| invalid("Proposal is unavailable"))?;
     if p.source != ProposalSource::Manual
         || p.batch.provenance.source != CommitSource::Manual
-        || !p
-            .batch
-            .operations
-            .iter()
-            .any(|o| schematic_delete::deleted_object(o).is_some())
+        || p.project_id != model.project.project_id
+    {
+        return Err(invalid(
+            "This native action requires a manual proposal for this project",
+        ));
+    }
+    if super::schematic_assignment::is_assignment(p) {
+        super::schematic_assignment::validate_recorded(p)?;
+        return Ok(p);
+    }
+    if super::schematic_disposition::is_disposition(p) {
+        super::schematic_disposition::summary(model, p, false)?;
+        return Ok(p);
+    }
+    if !p
+        .batch
+        .operations
+        .iter()
+        .any(|o| schematic_delete::deleted_object(o).is_some())
         || p.batch.operations.iter().any(|o| {
             schematic_delete::deleted_object(o).is_none()
                 && !matches!(
@@ -235,6 +351,18 @@ fn delete_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
         ));
     }
     Ok(p)
+}
+fn validate_disposition_current(
+    model: &DesignModel,
+    proposal: &Proposal,
+) -> Result<(), EngineError> {
+    if super::schematic_assignment::is_assignment(proposal) {
+        super::schematic_assignment::summary(model, proposal, true)?;
+    }
+    if super::schematic_disposition::is_disposition(proposal) {
+        super::schematic_disposition::summary(model, proposal, true)?;
+    }
+    Ok(())
 }
 fn invalid(reason: &str) -> EngineError {
     EngineError::Validation(reason.into())

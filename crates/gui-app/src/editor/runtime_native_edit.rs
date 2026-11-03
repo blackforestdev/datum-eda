@@ -243,7 +243,7 @@ impl Runtime {
         {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
-                "Accept or dismiss the deletion proposal first",
+                "Accept or dismiss the Proposal first",
             );
             return true;
         }
@@ -435,7 +435,14 @@ impl Runtime {
             _ => None,
         };
         let inputs = native_edit_selection::Inputs::capture(self);
-        match self.native_edit.start(intent, backing.request, inputs) {
+        let previous = (
+            self.workspace().library.basis.clone(),
+            self.workspace().checks.clone(),
+        );
+        match self
+            .native_edit
+            .start(intent, backing.request, inputs, previous)
+        {
             Ok(()) => {
                 if let Some((schematic, base, scene)) = pending_move {
                     self.native_edit.pending_move_base = Some((schematic, base));

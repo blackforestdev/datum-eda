@@ -118,7 +118,16 @@ fn render_impl(
             Some(HitTarget::InspectorEditLabel(basis))
         } else { None }
     });
+    let assignment_action = context.and_then(|(context, state)| {
+        let (_, target) = datum_gui_protocol::schematic_authoring::selected::target(state).ok()?;
+        if target.class != Class::Symbol { return None; }
+        Some(datum_gui_protocol::schematic_authoring::assignment::AssignmentEvidence::admit_selected(state).ok().map(|_| {
+            HitTarget::InspectorAssignPart(datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
+                state, context, Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation))))
+        }))
+    });
     let total = 2
+        + usize::from(assignment_action.is_some())
         + usize::from(edit_action.is_some())
         + usize::from(view.stale)
         + view
@@ -287,6 +296,18 @@ fn render_impl(
             }
         };
         row(label, Some(target), false, false);
+    }
+    if let Some(action) = assignment_action {
+        row(
+            if action.is_some() {
+                "Assign Part…"
+            } else {
+                "Assign Part: unavailable"
+            },
+            action,
+            false,
+            false,
+        );
     }
     // Refusal explanations are complete readable text, not preview labels.
     // Each measured line is an ordinary scrollable row with the same styling.

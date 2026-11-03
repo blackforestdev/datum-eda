@@ -141,6 +141,18 @@ pub fn native_edit_unavailable_reason(
 }
 
 impl GuiMenuItem {
+    pub fn disposition_kind(
+        &self,
+    ) -> Option<eda_engine::api::native_write::schematic_delete_proposal::DispositionKind> {
+        use eda_engine::api::native_write::schematic_delete_proposal::DispositionKind;
+        match self.binding() {
+            GuiMenuBinding::Verb("datum.check.waive") => Some(DispositionKind::Waiver),
+            GuiMenuBinding::Verb("datum.check.accept_deviation") => {
+                Some(DispositionKind::Deviation)
+            }
+            _ => None,
+        }
+    }
     pub fn is_guarded_erc(&self) -> bool {
         self.label == "Run ERC"
             && matches!(
@@ -166,7 +178,11 @@ impl GuiMenuItem {
         if let GuiMenuBinding::GuiLocal(key) = self.binding() {
             return action_registry::gui_local_handler(key).is_some();
         }
-        matches!(self.binding(), GuiMenuBinding::Submenu(_))
+        matches!(
+            self.binding(),
+            GuiMenuBinding::Verb("datum.schematic.set_symbol_part")
+        ) || self.disposition_kind().is_some()
+            || matches!(self.binding(), GuiMenuBinding::Submenu(_))
             || matches!(self.binding(), GuiMenuBinding::Verb(verb) if first_edit_verb(verb))
     }
 
@@ -179,6 +195,43 @@ impl GuiMenuItem {
     /// project-only query cannot establish focused-camera eligibility.
     pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
         use crate::schematic_authoring::selected;
+        if matches!(
+            self.binding(),
+            GuiMenuBinding::Verb("datum.schematic.set_symbol_part")
+        ) {
+            return crate::schematic_authoring::assignment::AssignmentEvidence::admit_selected(
+                state,
+            )
+            .err()
+            .map(|_| "Select an eligible native pool Symbol with compatible Part/Gate choices");
+        }
+        if let Some(kind) = self.disposition_kind() {
+            if let GuiMenuBinding::Verb(verb) = self.binding()
+                && let Some(reason) = native_edit_unavailable_reason(state, verb)
+            {
+                return Some(reason);
+            }
+            if !native_project_edit_available(state) {
+                return Some("Open a persistent native Project before recording dispositions");
+            }
+            if state.schematic_authoring.delete_review.is_some()
+                || state.schematic_authoring.picker
+                || state.schematic_authoring.active()
+                || matches!(
+                    state.check_producer.phase,
+                    crate::CheckProducerPhase::Starting | crate::CheckProducerPhase::Running
+                )
+            {
+                return Some("Finish the current editor operation first");
+            }
+            if state.ui.layout.focused_content() != crate::PaneContent::Schematic {
+                return Some("Focus a native schematic view first");
+            }
+            return crate::schematic_authoring::disposition::DispositionEvidence::capture(
+                state, kind,
+            )
+            .err();
+        }
         if matches!(
             self.binding(),
             GuiMenuBinding::Verb("datum.schematic.rename_label")

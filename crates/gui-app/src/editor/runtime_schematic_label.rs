@@ -42,6 +42,22 @@ impl Runtime {
     }
 
     fn start_label_preview(&mut self) -> bool {
+        if self
+            .workspace()
+            .schematic_authoring
+            .assignment_draft
+            .is_some()
+        {
+            return self.preview_schematic_assignment();
+        }
+        if self
+            .workspace()
+            .schematic_authoring
+            .disposition_draft
+            .is_some()
+        {
+            return self.preview_erc_disposition();
+        }
         if self.workspace().schematic_authoring.named_edit.is_some() {
             return self.apply_selected_label_fields();
         }
@@ -81,6 +97,30 @@ impl Runtime {
                 return self.start_label_preview();
             }
             HitTarget::SchematicLabelKind => {
+                if self
+                    .workspace()
+                    .schematic_authoring
+                    .assignment_draft
+                    .is_some()
+                {
+                    return self.cycle_assignment_choice(true);
+                }
+                if let Some(evidence) = self
+                    .session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .disposition_draft
+                    .as_mut()
+                    .and_then(|review| review.disposition.as_mut())
+                {
+                    evidence.cycle();
+                    if let Some(label) = &mut self.session.workspace_mut().schematic_authoring.label
+                    {
+                        label.focus = 1;
+                    }
+                    self.invalidate_frame();
+                    return true;
+                }
                 if self.workspace().schematic_authoring.bus_entry.is_some() {
                     return self.cycle_bus_entry_choice(true);
                 }
@@ -104,6 +144,14 @@ impl Runtime {
                 }
             }
             HitTarget::SchematicLabelName => {
+                if self
+                    .workspace()
+                    .schematic_authoring
+                    .assignment_draft
+                    .is_some()
+                {
+                    return self.cycle_assignment_choice(false);
+                }
                 if self.workspace().schematic_authoring.bus_entry.is_some() {
                     return self.cycle_bus_entry_choice(false);
                 }
@@ -183,13 +231,23 @@ impl Runtime {
             Key::Named(NamedKey::Space | NamedKey::ArrowLeft | NamedKey::ArrowRight)
                 if picker
                     && focus == 0
-                    && self.workspace().schematic_authoring.bus_entry.is_some() =>
+                    && (self.workspace().schematic_authoring.bus_entry.is_some()
+                        || self
+                            .workspace()
+                            .schematic_authoring
+                            .assignment_draft
+                            .is_some()) =>
             {
-                return self.cycle_bus_entry_choice(false);
+                return self.handle_label_chrome(&HitTarget::SchematicLabelName);
             }
             _ if picker
                 && focus == 0
-                && self.workspace().schematic_authoring.bus_entry.is_some() => {}
+                && (self.workspace().schematic_authoring.bus_entry.is_some()
+                    || self
+                        .workspace()
+                        .schematic_authoring
+                        .assignment_draft
+                        .is_some()) => {}
             _ if picker && focus == 0 => {
                 self.handle_shared_editor_key(event);
             }
@@ -201,7 +259,13 @@ impl Runtime {
     }
 
     pub(super) fn place_native_label(&mut self, at: PointNm) -> bool {
-        if self.workspace().schematic_authoring.named_edit.is_some() {
+        if self.workspace().schematic_authoring.named_edit.is_some()
+            || self
+                .workspace()
+                .schematic_authoring
+                .disposition_draft
+                .is_some()
+        {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;

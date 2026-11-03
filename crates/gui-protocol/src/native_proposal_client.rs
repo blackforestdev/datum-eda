@@ -13,6 +13,8 @@ impl NativeProjectClient {
             .context("Proposal action missing")?;
         let id = match action {
             Action::CreateDelete { proposal_id, .. }
+            | Action::CreateDisposition { proposal_id, .. }
+            | Action::CreateAssignment { proposal_id, .. }
             | Action::Preview { proposal_id }
             | Action::AcceptApply { proposal_id }
             | Action::Reject { proposal_id } => *proposal_id,
@@ -52,7 +54,9 @@ impl NativeProjectClient {
             "Proposal receipt identity mismatch"
         );
         let expected = match action {
-            Action::CreateDelete { .. } => ProposalStatus::Draft,
+            Action::CreateDelete { .. }
+            | Action::CreateDisposition { .. }
+            | Action::CreateAssignment { .. } => ProposalStatus::Draft,
             Action::AcceptApply { .. } => ProposalStatus::Applied,
             Action::Reject { .. } => ProposalStatus::Rejected,
             Action::Preview { .. } => response.status,
@@ -130,6 +134,8 @@ mod tests {
             ProposalStatus::Rejected,
         ] {
             let response = NativeProposalResponse {
+                assignment: None,
+                disposition: None,
                 proposal_id: Uuid::new_v4(),
                 status,
                 prepared_against: "before".into(),

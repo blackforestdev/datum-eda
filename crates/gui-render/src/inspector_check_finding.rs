@@ -49,6 +49,17 @@ pub(super) fn render_check_finding_inspector(
             text_runs,
         );
         render_check_finding_inspector_details(finding, inspector_rect, text_runs);
+        if finding.domain.eq_ignore_ascii_case("erc") {
+            draw_text(
+                "Checks → Waive / Accept Deviation…",
+                inspector_rect.x + 12.,
+                inspector_rect.y + 206.,
+                10.,
+                TEXT_MUTED,
+                TextFace::Ui,
+                text_runs,
+            );
+        }
     }
 }
 

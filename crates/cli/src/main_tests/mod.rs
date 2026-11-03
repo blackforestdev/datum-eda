@@ -343,3 +343,5 @@ mod main_tests_project_wire;
 mod main_tests_query_goldens;
 mod main_tests_query_surface;
 mod main_tests_units;
+
+mod main_tests_erc_disposition;

@@ -1,11 +1,9 @@
 //! Connected-set geometry and source-history proofs over an actual native project.
+use super::super::tests::fixture as geometry_fixture;
 use super::*;
 use crate::api::native_write::{
-    commit_prepared,
-    electrical::binding_fixture::{BindingFixture, fixture as binding_fixture},
-    schematic_connectivity::*,
-    schematic_edit::prepare_native_birth,
-    schematic_symbols::build_place_schematic_symbol,
+    commit_prepared, electrical::binding_fixture::BindingFixture, schematic_connectivity::*,
+    schematic_edit::prepare_native_birth, schematic_symbols::build_place_schematic_symbol,
 };
 use crate::schematic::{LabelKind, NetLabel, SymbolField};
 use crate::substrate::{CommitSource, ProjectResolver, electrical_test_partitions};
@@ -17,7 +15,7 @@ fn raw(f: &BindingFixture) -> Value {
     source_sheet_payload(&f.model, f.sheet, f.symbol.uuid).unwrap()
 }
 fn setup(name: &str) -> (BindingFixture, Uuid, Uuid) {
-    let mut f = binding_fixture(name);
+    let mut f = geometry_fixture(name);
     let mut first = f.symbol.clone();
     first.position = Point::zero();
     first.pins[0].position = Point::zero();

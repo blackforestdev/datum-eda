@@ -1,9 +1,13 @@
 //! Selected-object edits share native selection, guarded source ownership and the writer.
 use super::*;
+#[path = "runtime_schematic_assignment.rs"]
+mod assignment;
 #[path = "runtime_schematic_custom_field.rs"]
 mod custom_field;
 #[path = "runtime_schematic_delete_review.rs"]
 mod delete_review;
+#[path = "runtime_erc_disposition.rs"]
+mod disposition;
 #[path = "runtime_schematic_selected_label.rs"]
 mod label_edit;
 use datum_gui_protocol::schematic_authoring::{

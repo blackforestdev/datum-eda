@@ -117,6 +117,13 @@ impl MarkingMenuState {
         }
         let class = target.map(|id| id.class);
         let verb = match item.binding() {
+            B::Verb("datum.schematic.set_symbol_part") if class == Some(C::Symbol) => {
+                crate::schematic_authoring::assignment::AssignmentEvidence::admit_target(
+                    state,
+                    target.unwrap(),
+                )?;
+                return Ok(());
+            }
             B::Verb("datum.schematic.move_symbol") if class == Some(C::Symbol) => {
                 if let crate::SelectionTarget::Native(view) = &state.selection
                     && !view.stale

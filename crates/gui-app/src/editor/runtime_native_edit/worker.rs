@@ -6,6 +6,10 @@ impl EditWork {
         intent: NativeEditIntent,
         request: LiveReviewRequest,
         inputs: native_edit_selection::Inputs,
+        previous: (
+            Option<std::sync::Arc<eda_engine::substrate::DesignModel>>,
+            datum_gui_protocol::CheckRunReviewState,
+        ),
     ) -> Result<()> {
         anyhow::ensure!(!self.pending(), "An edit is already pending");
         let (sender, receiver) = mpsc::sync_channel(1);
@@ -20,6 +24,11 @@ impl EditWork {
                     if owner.is_none() {*owner=Some(NativeProjectClient::spawn()?);}
                     let client=owner.as_ref().unwrap();
                     let started=std::time::Instant::now();
+                    // An old DesignModel still materializes source shards from disk.
+                    // Freeze this basis before the operation can replace the root.
+                    let previous_dispositions = previous.0.as_deref()
+                        .map(datum_gui_protocol::workspace_loading::disposition_basis)
+                        .transpose()?;
                     let operation=client.execute(&intent);
                     observed_proposal=operation.as_ref().ok().and_then(|r|r.proposal.clone());
                     trace_startup_timing(format!("native edit canonical operation {}ms",started.elapsed().as_millis()));
@@ -39,6 +48,14 @@ impl EditWork {
                     let mut cache=runtime_selection::SelectionReadCache::default();
                     let model=cache.resolve_with_engine_reader(&intent.project_root,|| client.read_model(&intent.project_root,before))?;
                     let mut next=datum_gui_protocol::workspace_loading::project_board_editor_workspace(&request,model.clone())?;
+                    if let Some(previous_dispositions) = previous_dispositions {
+                        use datum_gui_protocol::workspace_loading::{disposition_basis, refresh_disposition_report, retain_current_check_projection};
+                        if previous_dispositions != disposition_basis(&model)? {
+                            refresh_disposition_report(&mut next, &request)?;
+                        } else {
+                            retain_current_check_projection(&mut next, &previous.1);
+                        }
+                    }
                     let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
                     trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));
                     let after=client.describe(&intent.project_root)?;
@@ -59,7 +76,7 @@ impl EditWork {
                     let result=match operation {
                         Ok(receipt) if qualified && receipt.description.get("model_revision")==after.get("model_revision")
                             && receipt.description.get("transaction_tip")==after.get("transaction_tip") =>
-                            Ok(if let Some(proposal)=&receipt.proposal {match proposal.status { eda_engine::substrate::ProposalStatus::Draft=>"Deletion proposal ready; Tab accepts, Esc dismisses",eda_engine::substrate::ProposalStatus::Applied=>"Selected objects deleted",eda_engine::substrate::ProposalStatus::Rejected=>"Deletion proposal dismissed",_=>"Proposal updated"}} else if receipt.applied {if receipt.reconciled {"Edit committed; recovered receipt confirmed"} else {"Edit committed"}} else {"Project saved"}.into()),
+                            Ok(if let Some(proposal)=&receipt.proposal {match proposal.status { eda_engine::substrate::ProposalStatus::Draft=>"Proposal ready; Tab accepts, Esc dismisses",eda_engine::substrate::ProposalStatus::Applied=>if proposal.disposition.is_some() {"ERC disposition recorded"} else if proposal.assignment.is_some() {"Part/Gate assignment recorded"} else {"Selected objects deleted"},eda_engine::substrate::ProposalStatus::Rejected=>"Proposal dismissed",_=>"Proposal updated"}} else if receipt.applied {if receipt.reconciled {"Edit committed; recovered receipt confirmed"} else {"Edit committed"}} else {"Project saved"}.into()),
                         Ok(_)=>Err("Edit completed but the Project changed during refresh; reopen before editing".into()),
                         Err(error)=>Err(format!("{error:#}")),
                     };

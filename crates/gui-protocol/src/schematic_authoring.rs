@@ -26,8 +26,12 @@ pub use custom_field::{CustomFieldControl, CustomFieldDraft};
 mod bus_entry;
 pub use bus_entry::BusEntryDraft;
 
+#[path = "schematic_assignment.rs"]
+pub mod assignment;
 #[path = "schematic_delete_review.rs"]
 pub mod delete_review;
+#[path = "erc_disposition.rs"]
+pub mod disposition;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {
@@ -406,6 +410,8 @@ impl PlacementTransform {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
     pub delete_review: Option<delete_review::DeleteReview>,
+    pub disposition_draft: Option<delete_review::DeleteReview>,
+    pub assignment_draft: Option<delete_review::DeleteReview>,
     pub creation: Option<NewSchematicDraft>,
     pub editing: Option<FieldsEditDraft>,
     pub named_edit: Option<selected::NamedPointEditDraft>,

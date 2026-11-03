@@ -3,6 +3,9 @@ use super::*;
 impl Runtime {
     pub(crate) fn activate_native_edit_menu(&mut self, verb: Option<&str>) -> Option<bool> {
         Some(match verb? {
+            "datum.schematic.set_symbol_part" => self.begin_schematic_assignment(),
+            "datum.check.waive" => self.begin_erc_disposition(eda_engine::api::native_write::schematic_delete_proposal::DispositionKind::Waiver),
+            "datum.check.accept_deviation" => self.begin_erc_disposition(eda_engine::api::native_write::schematic_delete_proposal::DispositionKind::Deviation),
             "datum.schematic.create_sheet" => self.begin_schematic_creation(),
             "datum.schematic.place_text" => self.begin_native_text(),
             "datum.schematic.place_symbol" => self.begin_native_schematic(false),

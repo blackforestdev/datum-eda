@@ -9,7 +9,7 @@ impl Runtime {
         }
         let prepare = (|| {
             if self.workspace().schematic_authoring.delete_review.is_some() {
-                return Err("Accept or dismiss the deletion proposal first".into());
+                return Err("Accept or dismiss the Proposal first".into());
             }
             if self.native_edit.pending()
                 || self.check_work.pending()

@@ -10,6 +10,14 @@ pub(super) fn render(
 ) -> anyhow::Result<()> {
     let e = &state.schematic_authoring;
     let Some(label) = &e.label else { return Ok(()) };
+    let disposition = e
+        .disposition_draft
+        .as_ref()
+        .and_then(|r| r.disposition.as_ref());
+    let assignment = e
+        .assignment_draft
+        .as_ref()
+        .and_then(|r| r.assignment.as_ref());
     let width = 440f32.min(layout.top_menu_bar.width - 32.);
     let panel = RectPx {
         x: (layout.top_menu_bar.width - width) / 2.,
@@ -59,7 +67,11 @@ pub(super) fn render(
         return Ok(());
     }
     draw_text(
-        if e.bus_entry.is_some() {
+        if assignment.is_some() {
+            "Assign Part"
+        } else if disposition.is_some() {
+            "ERC disposition"
+        } else if e.bus_entry.is_some() {
             "Place Bus Entry"
         } else if label.text_rotation.is_some() {
             if e.named_edit.is_some() {
@@ -88,7 +100,11 @@ pub(super) fn render(
         text,
     );
     draw_text(
-        if e.bus_entry.is_some() {
+        if assignment.is_some() {
+            "Part"
+        } else if disposition.is_some() {
+            "Rationale"
+        } else if e.bus_entry.is_some() {
             "Bus"
         } else if label.text_rotation.is_some() {
             "Text"
@@ -107,17 +123,20 @@ pub(super) fn render(
     let focused = state.ui.active_menu.is_none()
         && state.ui.focus == datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused);
     let mut controls = ControlMeshCache::default();
-    if let Some(entry) = &e.bus_entry {
+    if assignment.is_some() || e.bus_entry.is_some() {
         let rect = RectPx {
             x: panel.x + 90.,
             y: panel.y + 50.,
             width: width - 106.,
             height: 34.,
         };
-        let name = entry
-            .bus()
-            .map(|bus| format!("{} · {}", bus.name, &bus.uuid.to_string()[..8]))
-            .unwrap_or_else(|| "No Bus".into());
+        let name = assignment.map(|a| a.part_label()).unwrap_or_else(|| {
+            e.bus_entry
+                .as_ref()
+                .and_then(|entry| entry.bus())
+                .map(|bus| format!("{} · {}", bus.name, &bus.uuid.to_string()[..8]))
+                .unwrap_or_else(|| "No Bus".into())
+        });
         button(
             &truncate_text(&name, 39),
             HitTarget::SchematicLabelName,
@@ -132,7 +151,9 @@ pub(super) fn render(
     } else {
         crate::single_line_control::paint(
             &label.name,
-            if label.text_rotation.is_some() {
+            if disposition.is_some() {
+                "Reason for this disposition…"
+            } else if label.text_rotation.is_some() {
                 "Single-line annotation…"
             } else if label.port_direction.is_some() {
                 "Port name…"
@@ -155,7 +176,11 @@ pub(super) fn render(
         )?;
     }
     draw_text(
-        if e.bus_entry.is_some() {
+        if assignment.is_some() {
+            "Gate"
+        } else if disposition.is_some() {
+            "Disposition"
+        } else if e.bus_entry.is_some() {
             "Wire end"
         } else if label.text_rotation.is_some() {
             "Rotation"
@@ -177,9 +202,10 @@ pub(super) fn render(
         width: width - 106.,
         height: 29.,
     };
-    let choice = label
-        .text_rotation
-        .map(|rotation| format!("{rotation}°"))
+    let choice = assignment
+        .map(|a| a.gate_label())
+        .or_else(|| disposition.map(|d| d.label().to_owned()))
+        .or_else(|| label.text_rotation.map(|rotation| format!("{rotation}°")))
         .unwrap_or_else(|| {
             e.bus_entry
                 .as_ref()
@@ -199,7 +225,11 @@ pub(super) fn render(
     }
     draw_text(
         &truncate_text(
-            e.refusal.as_deref().unwrap_or(if e.bus_entry.is_some() {
+            e.refusal.as_deref().unwrap_or(if assignment.is_some() {
+                "Part/Gate: click or arrows · Enter: review · Escape: cancel"
+            } else if disposition.is_some() {
+                "Enter: review Proposal · Escape: cancel without writing"
+            } else if e.bus_entry.is_some() {
                 "Bus/end: click or arrow keys · Enter: preview"
             } else if e.named_edit.is_some() {
                 "Live preview · Enter: apply · Escape: cancel"

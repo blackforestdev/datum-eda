@@ -6,7 +6,7 @@ impl Runtime {
         if self.workspace().schematic_authoring.delete_review.is_some() {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
-                "Accept or dismiss the deletion proposal first",
+                "Accept or dismiss the Proposal first",
             );
             return true;
         }

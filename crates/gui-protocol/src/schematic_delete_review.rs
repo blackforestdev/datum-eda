@@ -1,4 +1,4 @@
-//! Frozen human review of a complete schematic selection; Proposal owns mutation.
+//! Shared frozen human review, configured by deletion or ERC disposition. Proposal owns mutation.
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity, AuthoringViewBasis,
     BoardReviewSceneV1, PaneContent, ReviewWorkspaceState, SelectionTarget,
@@ -14,6 +14,8 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub disposition: Option<super::disposition::DispositionEvidence>,
+    pub assignment: Option<super::assignment::AssignmentEvidence>,
     pub basis: AuthoringViewBasis,
     pub source: Sheet,
     pub scene: BoardReviewSceneV1,
@@ -27,22 +29,15 @@ pub struct DeleteReview {
 }
 impl DeleteReview {
     pub fn capture(state: &ReviewWorkspaceState) -> Result<Self, String> {
-        let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
-        if basis.content != PaneContent::Schematic {
-            return Err("Focus a schematic selection to delete".into());
-        }
+        let mut review = Self::capture_source(state)?;
+        let basis = &review.basis;
         let SelectionTarget::Native(view) = &state.selection else {
             return Err("Select schematic objects first".into());
         };
         if view.stale || view.project != basis.project || view.revision.0 != basis.revision {
             return Err("Selection changed; select the current objects again".into());
         }
-        let source = state
-            .schematic_authoring
-            .source
-            .as_ref()
-            .and_then(|s| s.sheets.get(&basis.source))
-            .ok_or("Selected source unavailable")?;
+        let source = &review.source;
         let targets = targets(
             source,
             &view.members.iter().cloned().collect::<Vec<_>>(),
@@ -52,33 +47,93 @@ impl DeleteReview {
                 .ok_or("Qualified sheet unavailable")?
                 .instance_path,
         )?;
-        let scene = crate::camera_scene_for_pane(state, basis.pane)
-            .ok_or("Selected view unavailable")?
-            .clone();
-        let proposal_id = Uuid::new_v4();
+        let proposal_id = review.proposal_id;
         let action = NativeProposalAction::CreateDelete {
             proposal_id,
             sheet: basis.source,
             instance_path: basis.document.as_ref().unwrap().instance_path.clone(),
             targets: targets.clone(),
         };
+        review.targets = targets;
+        review.pending = Some(action);
+        Ok(review)
+    }
+    pub fn capture_disposition(
+        state: &ReviewWorkspaceState,
+        kind: eda_engine::api::native_write::schematic_delete_proposal::DispositionKind,
+    ) -> Result<Self, String> {
+        let evidence = super::disposition::DispositionEvidence::capture(state, kind)?;
+        let mut review = Self::capture_source(state)?;
+        review.disposition = Some(evidence);
+        Ok(review)
+    }
+    pub fn capture_assignment(state: &ReviewWorkspaceState) -> Result<Self, String> {
+        let evidence = super::assignment::AssignmentEvidence::selected(state)?;
+        let mut review = Self::capture_source(state)?;
+        review.assignment = Some(evidence);
+        Ok(review)
+    }
+    pub fn stage_assignment(&mut self, state: &ReviewWorkspaceState) -> Result<(), String> {
+        if !self.current(state) {
+            return Err("Project or selected source changed; cancel and reopen assignment".into());
+        }
+        self.pending = Some(
+            self.assignment
+                .as_ref()
+                .ok_or("Assignment choices unavailable")?
+                .action(self.proposal_id)?,
+        );
+        Ok(())
+    }
+    fn capture_source(state: &ReviewWorkspaceState) -> Result<Self, String> {
+        let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+        if basis.content != PaneContent::Schematic {
+            return Err("Focus a native schematic view for this Proposal".into());
+        }
+        let source = state
+            .schematic_authoring
+            .source
+            .as_ref()
+            .and_then(|s| s.sheets.get(&basis.source))
+            .ok_or("Source sheet unavailable")?
+            .clone();
+        let scene = crate::camera_scene_for_pane(state, basis.pane)
+            .ok_or("Source view unavailable")?
+            .clone();
         Ok(Self {
+            disposition: None,
+            assignment: None,
             revision: basis.revision.clone(),
             basis,
-            source: source.clone(),
+            source,
             scene,
-            targets,
-            proposal_id,
+            targets: vec![],
+            proposal_id: Uuid::new_v4(),
+            response: None,
+            pending: None,
+            refusal: None,
             tip: state
                 .supervision
                 .journal
                 .accepted_transaction_tip
                 .as_ref()
                 .and_then(|t| t.parse().ok()),
-            response: None,
-            pending: Some(action),
-            refusal: None,
         })
+    }
+    pub fn stage_disposition(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        rationale: &str,
+    ) -> Result<(), String> {
+        if !self.current(state) {
+            return Err("Project or finding changed; cancel and select the current finding".into());
+        }
+        let evidence = self
+            .disposition
+            .as_mut()
+            .ok_or("Disposition evidence unavailable")?;
+        self.pending = Some(evidence.action(self.proposal_id, rationale)?);
+        Ok(())
     }
     /// Metadata revisions update this envelope; selected ids and design source never change.
     pub fn observe(&mut self, response: NativeProposalResponse) -> Result<(), String> {
@@ -93,6 +148,30 @@ impl DeleteReview {
             .any(|target| !response.deleted.iter().any(|d| d.id == target.id))
         {
             return Err("Proposal omitted part of the selected deletion; dismiss and retry".into());
+        }
+        match (&self.disposition, &response.disposition) {
+            (Some(evidence), Some(summary))
+                if evidence.matches(summary) && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("Proposal disposition identity or rationale changed".into()),
+        }
+        match (&self.assignment, &response.assignment) {
+            (Some(evidence), Some(summary))
+                if evidence.matches(summary)
+                    && response.deleted.is_empty()
+                    && self
+                        .response
+                        .as_ref()
+                        .and_then(|r| r.assignment.as_ref())
+                        .is_none_or(|previous| {
+                            previous.component_instance == summary.component_instance
+                        }) => {}
+            // A confirmed cancellation can outlive its source Symbol/library.
+            // Frozen identity above still qualifies it; missing data never grants apply.
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("Proposal assignment identity changed".into()),
         }
         self.revision = response.current_model_revision.clone();
         self.tip = response.transaction_tip;
@@ -120,6 +199,7 @@ impl DeleteReview {
     }
     pub fn current(&self, state: &ReviewWorkspaceState) -> bool {
         self.source_current(state)
+            && self.disposition.as_ref().is_none_or(|d| d.current(state))
             && state.ui.layout.focused == self.basis.pane
             && state.schematic_documents.panes.get(&self.basis.pane) == self.basis.document.as_ref()
     }
@@ -148,7 +228,7 @@ impl DeleteReview {
             return Err("Close this Proposal review locally; it cannot be rejected".into());
         }
         if accept && !self.ready() {
-            return Err("This deletion is not ready to accept".into());
+            return Err("This Proposal is not ready to accept".into());
         }
         self.pending = Some(if accept {
             NativeProposalAction::AcceptApply {
@@ -210,6 +290,12 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(evidence) = &self.assignment {
+            return format!("Assign Part · {}", evidence.options.original.reference);
+        }
+        if let Some(evidence) = &self.disposition {
+            return format!("{} · {}", evidence.label(), evidence.rule_id);
+        }
         let Some(response) = &self.response else {
             return format!(
                 "Review deletion of {} selected objects…",
@@ -233,6 +319,12 @@ impl DeleteReview {
         )
     }
     pub fn names(&self) -> String {
+        if let Some(evidence) = &self.assignment {
+            return format!("{} · {}", evidence.part_label(), evidence.gate_label());
+        }
+        if let Some(evidence) = &self.disposition {
+            return format!("{} · {}", evidence.message, evidence.rationale);
+        }
         self.response
             .as_ref()
             .map(|r| {

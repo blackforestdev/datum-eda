@@ -234,6 +234,10 @@ fn transform_write(
             wire: moved,
         });
     }
+    operations.extend(super::schematic_assignment::repin_symbols(
+        context.model,
+        originals,
+    )?);
     let mut composer = BatchComposer::compose(context.model, provenance).push_ops(operations);
     if originals.len() == 1 {
         composer = composer.primary_object(originals[0].uuid);
@@ -248,3 +252,7 @@ fn invalid(reason: impl Into<String>) -> EngineError {
 #[cfg(test)]
 #[path = "schematic_symbol_move_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_bound_move_tests.rs"]
+mod bound_tests;

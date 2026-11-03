@@ -95,7 +95,9 @@ fn validate_compensating_payload(
     prior: &[TransactionRecord],
     label: &str,
 ) -> Result<(), String> {
-    if component_binding::matches(transaction, target, prior) {
+    if super::schematic_assignment_history::matches(transaction, target, prior)
+        || component_binding::matches(transaction, target, prior)
+    {
         return Ok(());
     }
     if transaction.operations != target.inverse_operations

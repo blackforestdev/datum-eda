@@ -105,8 +105,9 @@ Confirmed IR facts the matrix relies on:
   (`crates/engine/src/erc/mod.rs:50`,
   `run_prechecks_with_config_and_waivers`): 7 rules + a
   hierarchical-connectivity-mismatch check
-  (`erc/mod.rs:291`), with severity overrides and waivers; NOT
-  revision-keyed.
+  (`erc/mod.rs:291`), with severity overrides and waivers. Native check
+  results have revision-qualified `CheckRun` records and stable finding
+  fingerprints; the in-memory checker is not the persistence boundary.
 - `ProjectResolver` and resolver-materialized schematic read/write paths exist
   for the current native-project slices; `PlacedSymbol` still carries a
   reference string + optional part/entity/gate UUIDs rather than a guaranteed
@@ -232,8 +233,14 @@ restated.
   geometry; owned fields follow their Symbols. Cancel restores the source.
   Unsupported members, locks, repeated occurrences and unsupported fixed
   contacts refuse the complete group. The existing native verb retains its
-  singleton absolute-pose form and adds a distinct group-delta form. Public
-  CLI normalization and broader occurrence/contact transforms remain pending.
+  singleton absolute-pose form and adds a distinct group-delta form. Supported
+  schematic-only, single-Symbol `ComponentInstance` bindings are now preserved
+  by the singleton/group transform implementation in the same atomic pose,
+  attached-wire and history transaction (`dat-schematic-bound-move-p8ks`).
+  Physical-package, multi-Symbol and stale bindings refuse the complete edit;
+  occurrence/contact limits are unchanged. Independent GUI verification covered
+  singleton/group transforms, current bindings, attached wires, Undo/Redo and reopening.
+  Public CLI normalization and broader occurrence/contact transforms remain pending.
 
 ### 3. delete-object (any schematic object, by id list)
 
@@ -488,28 +495,52 @@ restated.
   including hidden ones, without extending occurrence/contact admission.
   Custom-field, reference/value and parent-transform writes preserve unrelated
   raw symbol/pin/field payload. Cancel/no-op do not write; accepted changes use
-  canonical history. Automatic position presets, a bulk fields table,
-  part/entity/gate assignment, complete public-surface normalization and
-  guaranteed `ComponentInstance` joins remain pending.
+  canonical history.
+
+  Bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
+  adds named compatible Part/Gate choices through the selected Symbol Inspector
+  and existing `Assign Part…` context command. It retains the native pool Symbol's
+  Unit and geometry. Explicit shared Proposal acceptance atomically creates an
+  initially missing `ComponentInstance` or updates one existing single-Symbol,
+  schematic-only instance and its current library binding. Current source and
+  compatible pin mappings are revalidated; pin UUIDs/anchors, fields, raw
+  extensions and unaffected connectivity are preserved, with one-step design
+  Undo/Redo and reopening. Physical-package bindings, multi-Symbol components,
+  repeated occurrences and incompatible mappings remain visibly unavailable or
+  refused with reasons. Independent GUI verification covered named assignment and
+  reassignment, dismissal, Undo/Redo and reopening. Supported bound-Symbol
+  Move/Rotate/Mirror implementation is covered by §2; other bound-Symbol field
+  and delete edits retain their existing restrictions.
+
+  Automatic position presets, a bulk fields table, cross-Unit replacement,
+  broader part/entity/gate reassignment, complete public-surface normalization
+  and guaranteed `ComponentInstance` joins for all Symbols remain pending.
 
 ### 10. run-erc (read-only) + author-waiver
 
-- **(1) Manual UI:** `Tools > Electrical Rules Check`; review violations;
-  waive an accepted finding.
-- **(2) Operation:** run-erc emits NO operation (read-only derived check)
-  producing a revision-keyed `CheckRun`/`CheckFinding` set keyed to
-  `model_revision`. Authoring a waiver DOES emit `AuthorWaiver{rule,
-  target, justification}` → a proposal-gated transaction (a waiver is a
-  durable authored record). Today
-  `run_prechecks_with_config_and_waivers` runs over an in-memory
-  `Schematic`, not revision-keyed; there is no waiver-authoring op.
-- **(3) CLI:** `datum-eda project erc --root <dir>` (and `datum-eda project
-  check` for the unified report) — IMPLEMENTED
-  (`query_native_project_erc`). Waiver: `datum-eda project erc-waive --root
-  <dir> --rule <code> --target <id> --reason <text>` (NOT YET).
-- **(4) MCP/AI:** the read-only ERC report is PRESENT via the shared
-  check surface (`get_check_report` in `tools_catalog_data.py`).
-  `author_waiver` is not present (proposal-gated).
+- **(1) Manual UI:** `Checks > Run ERC`; select a current finding, then
+  `Checks > Waive…` or `Accept Deviation…` with a native Schematic pane
+  focused. Enter a rationale in the shared form, preview the Proposal, then
+  explicitly accept with Tab or dismiss with Escape.
+- **(2) Operation:** ERC evaluation is read-only; explicit Run ERC persists
+  revision-qualified check evidence. Findings are addressed by their actual
+  `CheckRun` and stable fingerprint, never a row index. Existing
+  `CreateSchematicWaiver` / `CreateSchematicDeviation` operations record durable
+  dispositions. The GUI configures `native.proposal` with `CreateDisposition`,
+  reusing these builders and the shared acceptance lifecycle rather than a
+  direct waiver commit. Acceptance applies the disposition and Applied metadata
+  atomically; dismissal leaves design source unchanged, though Proposal metadata
+  may be journaled.
+- **(3) CLI:** `datum-eda project query <root> erc` is the read-only report.
+  Existing `project waive-finding <root> --fingerprint <id> --rationale <text>`
+  and `project accept-deviation <root> --fingerprint <id> --rationale <text>`
+  use canonical operations. Their direct-write policy reconciliation remains
+  separate (`dat-waiver-direct-policy-hdj1`); backend availability does not
+  waive the Proposal-first requirement. The normalized `erc-waive` alias remains
+  pending.
+- **(4) MCP/AI:** Read-only reports and existing compatibility check verbs remain
+  on the shared surface. The normalized proposal-gated `author_waiver` alias is
+  pending; this GUI slice does not change global write policy.
 - **(5) AI query/context:** Resolved `DesignModel` + `ErcConfig` (severity
   overrides) + existing waivers; the full connectivity graph so findings
   cite stable object ids.
@@ -523,10 +554,16 @@ restated.
   finding set + codes; introduce an output-output short via draw-wire,
   re-run, assert `output_to_output_conflict` appears, undo the wire,
   assert it clears.
-- **(8) Not yet supported:** Findings not yet revision/hash-keyed to
-  `model_revision`; waiver authoring not yet exposed as a proposal-gated
-  operation/CLI/MCP tool (owner to confirm whether it lands here or in the
-  `009` rules/checks contract).
+- **(8) Bounded native implementation:** Current persisted ERC evidence,
+  project/revision guards, unique fingerprints and nonblank rationale qualify
+  the shared review (`dat-erc-disposition-gui-rs56`). Stale or already disposed
+  findings refuse. Disposition changes and reopening use the existing read-only
+  ERC query for reporting when current persisted evidence is absent; unchanged
+  source refreshes retain that report without recomputation. These reports keep
+  `persisted=false` and cannot authorize another disposition: Run ERC first.
+  No extra check-evidence transaction follows acceptance, preserving one-step
+  design Undo/Redo and reopening. Removal/replacement UI, other check domains,
+  normalized aliases and full qualification remain pending.
 
 ## Minimal-Set Recommendation
 
@@ -550,9 +587,10 @@ The load-bearing, non-negotiable work is NOT new tools but finishing the
 contract normalization on top of the journaled schematic substrate and
 minting/binding `ComponentInstance` at place-symbol and at part assignment.
 Today the current schematic write slices are journaled and MCP-visible, but
-the public shape is still compatibility-heavy. ERC stays read-only (no
-operation) and is implemented; only proposal-gated waiver authoring is new and
-may defer to the `009` contract.
+the public shape is still compatibility-heavy. ERC evaluation is read-only;
+explicit runs persist evidence. Existing canonical disposition operations now
+serve the bounded Proposal-gated GUI in §10; normalized public aliases and
+global direct-write policy reconciliation remain separate work.
 
 Direct-commit class (local, visible, undoable): place-symbol,
 transform-symbol, draw-wire, place-label, place-marker, place-port,
@@ -683,11 +721,11 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
   and parent-port bind/unbind operations are implemented and journaled.
   Sheet-pin authoring and broader net-rewiring hierarchy edits remain
   proposal-first target work.
-- **Revision-keyed ERC + waiver authoring.** ERC findings are not yet
-  `model_revision`/fingerprint-keyed (current addressing is
-  `(domain,index)`), and the proposal-gated `author-waiver` op /
-  `erc-waive` CLI / `author_waiver` MCP tool are unimplemented. run-erc
-  itself is implemented and read-only.
+- **Remaining disposition surfaces and normalization.** Revision-qualified
+  ERC records, fingerprint targeting, canonical waiver/deviation operations
+  and the bounded Proposal-gated GUI exist (§10). Normalized `erc-waive` /
+  `author_waiver` aliases, removal/replacement UI and global direct-write policy
+  reconciliation (`dat-waiver-direct-policy-hdj1`) remain pending.
 - **Auto-junction inference** during `draw-wire`.
 - **Remaining MCP schematic write tools.** The first journaled MCP
   schematic write aliases now exist for connectivity, labels, ports, buses,
@@ -714,9 +752,9 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
    operations exist. Disposition complete GUI hierarchy/sheet-pin authoring
    and proposal-first net-rewiring scope without treating backend availability
    as ordinary designer delivery or creating a new deferral automatically.
-5. **Waiver home.** Should the proposal-gated `author-waiver` op land in
-   THIS schematic contract, or move to the `009` rules/checks contract?
-   (run-erc itself is already implemented and read-only.)
+5. **Disposition normalization.** Reconcile the remaining public aliases and
+   global direct-write policy with the `009` rules/checks contract. Existing
+   canonical operations and the bounded GUI in §10 do not resolve those gaps.
 6. **MCP write timing.** First schematic MCP writes now exist only for
    journaled connectivity primitives (`draw_wire`, `delete_wire`,
    compatibility `place_junction`, `delete_junction`, `place_noconnect`,
