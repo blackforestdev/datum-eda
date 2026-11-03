@@ -509,8 +509,12 @@ restated.
   repeated occurrences and incompatible mappings remain visibly unavailable or
   refused with reasons. Independent GUI verification covered named assignment and
   reassignment, dismissal, Undo/Redo and reopening. Supported bound-Symbol
-  Move/Rotate/Mirror implementation is covered by §2; other bound-Symbol field
-  and delete edits retain their existing restrictions.
+  Move/Rotate/Mirror implementation is covered by §2. Existing Reference/Value
+  and custom metadata/presentation controls also preserve supported single-Symbol,
+  schematic-only bindings (`dat-schematic-bound-fields-0r9i`), including raw
+  payload, library identity and connectivity through cancellation, Undo/Redo
+  and reopening. Physical, multi-Symbol, stale and repeated-source restrictions
+  remain; bound-Symbol deletion is still separate work.
 
   Automatic position presets, a bulk fields table, cross-Unit replacement,
   broader part/entity/gate reassignment, complete public-surface normalization
@@ -562,7 +566,13 @@ restated.
   source refreshes retain that report without recomputation. These reports keep
   `persisted=false` and cannot authorize another disposition: Run ERC first.
   No extra check-evidence transaction follows acceptance, preserving one-step
-  design Undo/Redo and reopening. Removal/replacement UI, other check domains,
+  design Undo/Redo and reopening. The existing Inspector presents qualified
+  human target/message, producing revision/currentness, status and available
+  exact disposition rationale (`dat-erc-readable-inspector-1wof`). Technical
+  identities remain expandable; shared wrapping/scrolling reaches the full
+  content. Current persisted, computed read-only, stale and unavailable reports
+  remain distinct; current rationale is never substituted for historical evidence.
+  Removal/replacement UI, other check domains,
   normalized aliases and full qualification remain pending.
 
 ## Minimal-Set Recommendation
@@ -669,7 +679,12 @@ It does NOT redefine the seven shared operations; see
   artifact projection, not a schematic authoring op.
 - **Journal + Undo/Redo** (`DatumJournalTool`) — global undo/redo of any
   schematic transaction is a compensating batch through the same
-  `commit()`; this contract ships no per-domain undo.
+  `commit()`; this contract ships no per-domain undo. Shared logical history
+  tracks repeated Undo/Redo across reopening and clears pending Redo on a new
+  normal transaction (`dat-journal-multistep-undo-lr67`). The journal remains
+  append-only; noninvertible barriers and Proposal metadata treatment remain
+  unchanged. Supported component compensation validates immutable recorded
+  semantics and current source before rebasing only permitted revision pins.
 
 Selection is consumer-side state, never an Operation and never journaled;
 it is read-only via `selection.describe`. There is no schematic

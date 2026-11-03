@@ -92,6 +92,7 @@ pub fn load_check_completion_workspace(
     next.schematic_authoring = crate::schematic_authoring::SchematicAuthoring::from_model(&model)?;
     next.source_shards = source_shard_status::project_source_shard_status(&model);
     next.checks = run.clone();
+    crate::inspector_context::finding::capture_dispositions(&mut next.checks, &model)?;
     let source = &next
         .backing
         .as_ref()
@@ -276,6 +277,9 @@ pub(super) fn load_workspace(
     } else {
         check_runs::loading::load(&cli, request)?
     };
+    if let Some(model) = model.as_deref() {
+        crate::inspector_context::finding::capture_dispositions(&mut state.checks, model)?;
+    }
     if initial_load
         && model
             .as_deref()

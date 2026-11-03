@@ -19,13 +19,23 @@ pub(super) fn refuse(original: &Path, model: &DesignModel) {
     copy(original, &root);
     let path = crate::substrate::transaction_journal_path(&root);
     let raw = std::fs::read_to_string(&path).unwrap();
-    let records: Vec<serde_json::Value> = raw
+    let original_records: Vec<serde_json::Value> = raw
         .lines()
         .map(|l| serde_json::from_str(l).unwrap())
         .collect();
     let before = authored_bytes(&root, model);
+    let (original_journal, diagnostics) = crate::substrate::read_transaction_journal(&root);
+    assert!(diagnostics.is_empty());
+    assert_eq!(original_journal.len(), original_records.len());
+    for (index, transaction) in original_journal.iter().enumerate() {
+        crate::substrate::validate_transaction_links_for_test(
+            transaction,
+            &original_journal[..index],
+        )
+        .expect("untampered history must pass the actual link validator");
+    }
     for control in 0..18 {
-        let mut records = records.clone();
+        let mut records = original_records.clone();
         let n = records.len() - 1;
         let key = if (6..10).contains(&control) || control == 15 || control == 17 {
             "inverse_operations"
@@ -159,6 +169,11 @@ pub(super) fn refuse(original: &Path, model: &DesignModel) {
                 *pin = json!(pin.as_u64().unwrap() + 1);
             }
         }
+        let first_mutated = records
+            .iter()
+            .zip(&original_records)
+            .position(|(changed, original)| changed != original)
+            .expect("each control must actually corrupt a record");
         // Fault injection is confined to this disposable test copy. The actual
         // journal and its original prefix are never rewritten by compensation.
         let text = records
@@ -166,15 +181,54 @@ pub(super) fn refuse(original: &Path, model: &DesignModel) {
             .map(|v| serde_json::to_string(v).unwrap() + "\n")
             .collect::<String>();
         std::fs::write(&path, &text).unwrap();
-        let refused = ProjectResolver::new(&root).resolve().unwrap();
+        // Prove the actual canonical link validator rejects this history even
+        // when final electrical validation cannot return a partial DesignModel.
+        let (parsed, diagnostics) = crate::substrate::read_transaction_journal(&root);
+        assert!(diagnostics.is_empty(), "tamper {control}: {diagnostics:?}");
+        assert_eq!(parsed.len(), records.len(), "tamper {control}: parse loss");
+        let (rejected, reason) = parsed
+            .iter()
+            .enumerate()
+            .find_map(|(index, transaction)| {
+                crate::substrate::validate_transaction_links_for_test(transaction, &parsed[..index])
+                    .err()
+                    .map(|reason| (index, reason))
+            })
+            .unwrap_or_else(|| panic!("tamper {control}: forged links accepted"));
+        // Some controls corrupt an earlier target. A compensating target is
+        // rejected itself; a normal target is rejected when its inverse is
+        // checked. No untouched earlier prefix may be blamed for either case.
         assert!(
-            refused
-                .diagnostics
-                .iter()
-                .any(|d| d.code == "journal_link_mismatch"),
-            "tamper {control}"
+            (first_mutated..=n).contains(&rejected),
+            "tamper {control}: untouched prefix rejected at {rejected}, first changed {first_mutated}"
         );
-        assert!(refused.journal.len() < records.len(), "tamper {control}");
+        let accepted = &parsed[..rejected];
+        let expected_message = format!(
+            "transaction {} at index {} has invalid undo/redo links: {}",
+            parsed[rejected].transaction_id, rejected, reason
+        );
+        match ProjectResolver::new(&root).resolve() {
+            Ok(refused) => {
+                assert!(
+                    refused
+                        .diagnostics
+                        .iter()
+                        .any(|d| d.code == "journal_link_mismatch" && d.message == expected_message),
+                    "tamper {control}"
+                );
+                assert_eq!(
+                    refused.journal, accepted,
+                    "tamper {control}: accepted prefix changed"
+                );
+            }
+            // A truncated journal cannot qualify the newer physical CI shard;
+            // strict final CI projection drops it, then electrical authority
+            // rejects its dependent Net evidence. No arbitrary resolver error
+            // counts as proof: the exact link refusal above is still mandatory.
+            Err(crate::error::EngineError::Validation(reason))
+                if reason == "invalid electrical authority: missing ComponentInstance" => {}
+            Err(error) => panic!("tamper {control}: unrelated resolver failure: {error}"),
+        }
         assert_eq!(std::fs::read_to_string(&path).unwrap(), text);
         assert_eq!(authored_bytes(&root, model), before);
     }

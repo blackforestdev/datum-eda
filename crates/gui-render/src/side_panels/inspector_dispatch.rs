@@ -24,6 +24,16 @@ pub(super) fn render_active_inspector(
         None
     } else if revision_workspace::render_evidence_inspector(state, rect, panel_quads, text_runs) {
         None
+    } else if let Some(finding) = datum_gui_protocol::inspector_context::finding::capture(state) {
+        super::inspector_check_finding::render_check_finding_inspector(
+            state,
+            finding,
+            rect,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        )?;
+        None
     } else if matches!(
         state.selection,
         SelectionTarget::Native(_) | SelectionTarget::None

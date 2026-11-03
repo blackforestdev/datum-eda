@@ -324,7 +324,7 @@ fn invalid_duplicate_stale_and_unknown_symbol_fields_cannot_write() {
 }
 
 #[test]
-fn any_component_instance_binding_blocks_symbol_edit_and_delete() {
+fn physical_component_instance_binding_blocks_symbol_edit_and_delete() {
     let f = binding_fixture::fixture("selected_bound_refusal");
     assert!(
         f.model
@@ -347,11 +347,16 @@ fn any_component_instance_binding_blocks_symbol_edit_and_delete() {
             serde_json::json!({"symbol":f.symbol.uuid,"instance_path":[],"value":"new"}),
         ),
     ] {
+        let reason = if verb == "datum.schematic.delete_symbol" {
+            "linked to a component"
+        } else {
+            "schematic-only"
+        };
         assert!(
             write(&f.model, &f.root, verb, params)
                 .unwrap_err()
                 .to_string()
-                .contains("linked to a component")
+                .contains(reason)
         );
     }
     assert_eq!(persisted_bytes(&f.root), before);

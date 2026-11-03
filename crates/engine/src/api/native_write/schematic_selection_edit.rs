@@ -232,8 +232,8 @@ fn set_symbol_fields(
 ) -> Result<PreparedWrite, EngineError> {
     let (source, sheet) =
         selected_source(context, "symbols", params.symbol, &params.instance_path)?;
-    require_unbound_symbol(context, params.symbol)?;
-    let mut symbol = source.sheets[&sheet].symbols[&params.symbol].clone();
+    let original = &source.sheets[&sheet].symbols[&params.symbol];
+    let mut symbol = original.clone();
     if let Some(reference) = params.reference {
         if reference.is_empty()
             || reference
@@ -276,6 +276,10 @@ fn set_symbol_fields(
             symbol_id: params.symbol,
             symbol: payload,
         })
+        .push_ops(super::schematic_assignment::repin_symbols(
+            context.model,
+            std::slice::from_ref(original),
+        )?)
         .primary_object(params.symbol)
         .finish()
 }
@@ -287,3 +291,7 @@ fn invalid(reason: impl Into<String>) -> EngineError {
 #[cfg(test)]
 #[path = "schematic_selection_edit_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_bound_fields_tests.rs"]
+mod bound_fields_tests;

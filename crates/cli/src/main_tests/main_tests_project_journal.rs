@@ -383,7 +383,7 @@ fn project_journal_undo_and_redo_append_compensating_transactions() {
     assert_eq!(undo["journal_len"], 3);
     assert_eq!(undo["cursor_before"], 2);
     assert_eq!(undo["cursor_after"], 3);
-    assert_eq!(undo["can_undo"], false);
+    assert_eq!(undo["can_undo"], true);
     assert_eq!(undo["can_redo"], true);
     assert_eq!(undo["transaction"]["transaction_kind"], "undo");
     assert_eq!(undo["transaction"]["undo_of"], original_transaction_id);
@@ -621,7 +621,7 @@ fn project_query_journal_list_normalizes_stale_cursor_behind_tip() {
         serde_json::from_str(&journal_output).expect("journal-list JSON should parse");
     assert_eq!(journal["count"], 3);
     assert_eq!(journal["cursor_index"], 3);
-    assert_eq!(journal["can_undo"], false);
+    assert_eq!(journal["can_undo"], true);
     assert_eq!(journal["can_redo"], true);
 
     let _ = std::fs::remove_dir_all(&root);

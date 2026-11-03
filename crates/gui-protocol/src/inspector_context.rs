@@ -8,6 +8,7 @@ use std::collections::BTreeSet;
 use uuid::Uuid;
 mod checks;
 mod components;
+pub mod finding;
 mod nets;
 mod persistence;
 pub use persistence::{InspectorActivity, materialization_state, saved_state};

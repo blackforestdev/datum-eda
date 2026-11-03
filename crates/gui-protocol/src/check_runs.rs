@@ -121,6 +121,9 @@ pub struct CheckFindingSummary {
     pub waiver_refs: Vec<String>,
     #[serde(default)]
     pub deviation_refs: Vec<String>,
+    /// Worker-captured display evidence; never accepted from serialized reports.
+    #[serde(skip)]
+    pub disposition_details: Vec<crate::inspector_context::finding::DispositionDetail>,
 }
 
 impl CheckFindingSummary {

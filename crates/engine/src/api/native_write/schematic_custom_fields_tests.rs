@@ -30,6 +30,22 @@ fn raw(model: &DesignModel, symbol: Uuid) -> Value {
 
 fn setup(name: &str) -> (BindingFixture, Uuid, Uuid) {
     let mut f = fixture(name);
+    // General field geometry is unbound; physical ownership is tested separately.
+    let ci = f
+        .model
+        .component_instances
+        .values()
+        .find(|c| c.placed_symbol_refs.contains(&f.symbol.uuid))
+        .unwrap()
+        .id;
+    let (write, _) =
+        crate::api::native_write::component_instances::build_delete_component_instance(
+            &f.model,
+            provenance(),
+            ci,
+        )
+        .unwrap();
+    commit_prepared(&mut f.model, &f.root, write).unwrap();
     let (first, second) = (Uuid::new_v4(), Uuid::new_v4());
     let mut symbol = raw(&f.model, f.symbol.uuid);
     symbol["extension"] = json!({"future":[3,"retained",{"flag":true}]});

@@ -277,7 +277,7 @@ fn resolver_rejects_undo_link_that_does_not_target_current_tip() {
         diagnostic.code == "journal_link_mismatch"
             && diagnostic
                 .message
-                .contains("does not reference the current journal tip")
+                .contains("does not reference the current undo target")
     }));
 }
 

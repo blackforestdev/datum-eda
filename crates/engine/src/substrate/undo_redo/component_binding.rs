@@ -154,18 +154,22 @@ pub(super) fn prepare(
     {
         return Err(invalid("unsupported or duplicate recorded refresh family"));
     }
-    if model.journal.last().map(|t| t.transaction_id) != Some(target.transaction_id)
+    if !crate::substrate::journal_history::current_target(&model.journal, target)
         || batch.operations != target.inverse_operations
     {
         return Err(invalid(
             "compensation is not the actual linked recorded inverse",
         ));
     }
+    let rebased_operations =
+        crate::substrate::transaction_links::rebase_component_preimages(target, &model.journal)
+            .ok_or_else(|| {
+                invalid("current preimage differs from the recorded binding semantics")
+            })?;
     let package = packages[0];
     let ci = components[0];
     let caller = model;
-    let caller_ci = batch
-        .operations
+    let caller_ci = rebased_operations
         .iter()
         .find_map(|op| {
             if let Operation::SetComponentInstance {
@@ -186,7 +190,7 @@ pub(super) fn prepare(
     let durable = crate::substrate::ProjectResolver::new(project_root).resolve()?;
     if durable.project.project_id != caller.project.project_id
         || durable.model_revision != caller.model_revision
-        || serde_json::to_vec(&durable.journal.last())? != serde_json::to_vec(&Some(target))?
+        || !crate::substrate::journal_history::current_target(&durable.journal, target)
         || serde_json::to_vec(&durable.journal)? != serde_json::to_vec(&caller.journal)?
         || serde_json::to_vec(&durable.component_instances)?
             != serde_json::to_vec(&caller.component_instances)?
@@ -249,37 +253,11 @@ pub(super) fn prepare(
             "caller and durable source object inventory differs",
         ));
     }
-    for (id, object) in &caller.objects {
-        let current = &durable.objects[id];
-        let mut expected = serde_json::to_value(object)?;
-        let mut actual = serde_json::to_value(current)?;
-        if object.object_revision != current.object_revision {
-            let record = caller_dependencies
-                .get(id)
-                .map(|(_, r)| *r)
-                .ok_or_else(|| invalid("unsupported caller object epoch drift"))?;
-            let advances = durable
-                .journal
-                .iter()
-                .filter(|t| t.diff.modified.contains(id))
-                .count() as u64;
-            if object.object_revision != record.object_revision
-                || record.object_revision.0.checked_add(advances) != Some(current.object_revision.0)
-            {
-                return Err(invalid(
-                    "unsupported electrical registration counter discrepancy",
-                ));
-            }
-            expected["object_revision"] = Value::Null;
-            actual["object_revision"] = Value::Null;
-        }
-        if expected != actual {
-            return Err(invalid("caller and durable source registration differs"));
-        }
+    if caller.objects != durable.objects {
+        return Err(invalid("caller and durable source registration differs"));
     }
     let model = &durable;
-    let recorded_ci = batch
-        .operations
+    let recorded_ci = rebased_operations
         .iter()
         .find_map(|op| {
             if let Operation::SetComponentInstance {
@@ -309,7 +287,7 @@ pub(super) fn prepare(
         }
     }
     let projection = component_pad_projection(model, &board)?;
-    let mut operations = batch.operations.clone();
+    let mut operations = rebased_operations;
     let mut pad_revisions = BTreeMap::new();
     let mut touched = BTreeSet::from([ci, package]);
     for op in &mut operations {

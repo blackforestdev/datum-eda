@@ -635,12 +635,7 @@ fn journal_list_view(model: DesignModel) -> NativeProjectJournalListView {
 }
 
 pub(crate) fn journal_tip_availability(model: &DesignModel) -> (bool, bool) {
-    let Some(transaction) = model.journal.last() else {
-        return (false, false);
-    };
-    let has_inverse = !transaction.inverse_operations.is_empty();
-    (
-        has_inverse && transaction.transaction_kind != eda_engine::substrate::TransactionKind::Undo,
-        has_inverse && transaction.transaction_kind == eda_engine::substrate::TransactionKind::Undo,
-    )
+    model
+        .journal_history_availability()
+        .unwrap_or((false, false))
 }

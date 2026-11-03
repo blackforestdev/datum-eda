@@ -42,6 +42,7 @@ mod generated_evidence_journal_ops;
 mod import_map;
 mod import_map_journal_ops;
 mod journal;
+mod journal_history;
 pub(crate) mod journal_io;
 mod journal_operation_hooks;
 mod operation;
@@ -126,6 +127,7 @@ use journal::{
     canonical_json_hash, materialized_shard_value, replay_journal_shard_value, sort_source_shards,
 };
 pub(crate) use journal_io::read_transaction_journal;
+
 pub use journal_io::transaction_journal_path;
 pub use operation::{Operation, SchematicMarkerKind};
 use operation_application::apply_operation;
@@ -680,6 +682,14 @@ fn sha256_digest_hex(bytes: &[u8]) -> String {
         output.push(HEX[(byte & 0x0f) as usize] as char);
     }
     output
+}
+
+#[cfg(test)]
+pub(crate) fn validate_transaction_links_for_test(
+    transaction: &TransactionRecord,
+    prior: &[TransactionRecord],
+) -> Result<(), String> {
+    transaction_links::validate_transaction_links(transaction, prior)
 }
 
 #[cfg(test)]

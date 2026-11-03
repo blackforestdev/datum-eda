@@ -142,6 +142,10 @@ fn set_symbol_field(
             symbol_id: params.symbol,
             symbol,
         })
+        .push_ops(super::schematic_assignment::repin_symbols(
+            context.model,
+            std::slice::from_ref(original),
+        )?)
         .primary_object(params.symbol)
         .finish()
 }

@@ -1,6 +1,8 @@
 //! Admit only recorded assignment or pose-and-endpoint inverse families.
 use super::{Operation, TransactionRecord, Uuid, Value};
 use std::collections::BTreeMap;
+#[path = "schematic_binding_history_fields.rs"]
+mod fields;
 
 pub(super) fn capture(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
     if let Some((symbol, component)) = assignment(target) {
@@ -110,7 +112,11 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
         return None;
     }
     for (id, next) in &forward.symbols {
-        if !symbol_pose(inverse.symbols[id], next) {
+        if !symbol_pose(inverse.symbols[id], next)
+            && !(forward.symbols.len() == 1
+                && forward.removed_wires.is_empty()
+                && fields::symbol_fields(inverse.symbols[id], next))
+        {
             return None;
         }
     }

@@ -173,6 +173,9 @@ pub fn refresh_disposition_report(
     let run = check_run_review_state_from_json(&serde_json::to_string(&value)?)?;
     admit_projection(state, &run)?;
     state.checks = run;
+    if let Some(model) = &state.library.basis {
+        crate::inspector_context::finding::capture_dispositions(&mut state.checks, model)?;
+    }
     sync_report_summary(state);
     Ok(())
 }

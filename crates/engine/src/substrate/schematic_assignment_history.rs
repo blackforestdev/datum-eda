@@ -57,8 +57,22 @@ fn prior_state(
     }
     Some((value, epoch?))
 }
+fn same_component_semantics(a: &Value, b: &Value, id: Uuid, symbol: Uuid) -> bool {
+    let normalize = |value: &Value| -> Option<Value> {
+        member(value, id, symbol)?;
+        let mut value = value.clone();
+        value["object_revision"] = Value::Null;
+        value["placed_symbol_refs"][0]["object_revision"] = Value::Null;
+        Some(value)
+    };
+    normalize(a).is_some_and(|a| normalize(b).as_ref() == Some(&a))
+}
 fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option<Vec<Operation>> {
     let members = family::capture(target)?;
+    let index = prior
+        .iter()
+        .position(|tx| tx.transaction_id == target.transaction_id)?;
+    let recorded_after = &prior[..=index];
     let mut ops = target.inverse_operations.clone();
     for op in &mut ops {
         let Some(id) = family::component_id(op) else {
@@ -66,12 +80,13 @@ fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option
         };
         let symbol = members[&id];
         let (current, epoch) = prior_state(prior, id, symbol)?;
+        let (historical, _) = prior_state(recorded_after, id, symbol)?;
         let next_pin = epoch.checked_add(1)?;
         match op {
             Operation::CreateComponentInstance {
                 component_instance, ..
             } => {
-                if current.is_some() {
+                if current.is_some() || historical.is_some() {
                     return None;
                 }
                 member(component_instance, id, symbol)?;
@@ -84,9 +99,12 @@ fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option
                 ..
             } => {
                 let current = current.as_ref()?;
-                if *previous_component_instance != *current {
+                if historical.as_ref() != Some(&*previous_component_instance)
+                    || !same_component_semantics(previous_component_instance, current, id, symbol)
+                {
                     return None;
                 }
+                *previous_component_instance = current.clone();
                 member(component_instance, id, symbol)?;
                 component_instance["object_revision"] =
                     json!(current["object_revision"].as_u64()?.checked_add(1)?);
@@ -95,9 +113,13 @@ fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option
             Operation::DeleteComponentInstance {
                 component_instance, ..
             } => {
-                if Some(&*component_instance) != current.as_ref() {
+                let current = current.as_ref()?;
+                if historical.as_ref() != Some(&*component_instance)
+                    || !same_component_semantics(component_instance, current, id, symbol)
+                {
                     return None;
                 }
+                *component_instance = current.clone();
             }
             _ => {}
         }
@@ -112,11 +134,12 @@ pub(super) fn prepare(
     let Some(members) = family::capture(target) else {
         return Ok(false);
     };
-    if model.journal.last().map(|t| t.transaction_id) != Some(target.transaction_id)
+    if !super::journal_history::current_target(&model.journal, target)
         || batch.operations != target.inverse_operations
     {
         return Err(invalid());
     }
+    validate_source_preimages(model, target)?;
     for (id, symbol) in members {
         let (current, epoch) = prior_state(&model.journal, id, symbol).ok_or_else(invalid)?;
         if model.objects.get(&symbol).map(|o| o.object_revision.0) != Some(epoch) {
@@ -142,6 +165,37 @@ pub(super) fn prepare(
     }
     batch.operations = normalized(target, &model.journal).ok_or_else(invalid)?;
     Ok(true)
+}
+fn validate_source_preimages(
+    model: &DesignModel,
+    target: &TransactionRecord,
+) -> Result<(), EngineError> {
+    for op in &target.operations {
+        let (sheet, id, class, expected) = match op {
+            Operation::SetSchematicSymbol {
+                sheet_id,
+                symbol_id,
+                symbol,
+            } => (*sheet_id, *symbol_id, "symbols", symbol),
+            Operation::CreateSchematicWire {
+                sheet_id,
+                wire_id,
+                wire,
+            } => (*sheet_id, *wire_id, "wires", wire),
+            _ => continue,
+        };
+        let object = model.objects.get(&id).ok_or_else(invalid)?;
+        let shard = model
+            .source_shards
+            .iter()
+            .find(|s| s.shard_id == object.source_shard_id)
+            .ok_or_else(invalid)?;
+        let raw = model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
+        if raw["uuid"] != json!(sheet) || raw[class][id.to_string()] != *expected {
+            return Err(invalid());
+        }
+    }
+    Ok(())
 }
 fn sheet_operation(op: &Operation) -> bool {
     matches!(
@@ -237,7 +291,7 @@ pub(super) fn matches(
     target: &TransactionRecord,
     prior: &[TransactionRecord],
 ) -> bool {
-    prior.last().map(|t| t.transaction_id) == Some(target.transaction_id)
+    super::journal_history::selected_target(prior, target, tx.transaction_kind)
         && normalized(target, prior).is_some_and(|ops| {
             tx.operations == ops && inverse(&ops, target).as_ref() == Some(&tx.inverse_operations)
         })

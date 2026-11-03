@@ -1,6 +1,7 @@
 use std::io::Write;
 
 use super::*;
+mod multistep;
 use crate::ir::serialization::to_json_deterministic;
 
 #[test]

@@ -4,6 +4,8 @@ pub(crate) mod library_preview;
 pub(crate) mod library_surface;
 use super::*;
 
+#[path = "inspector_check_finding.rs"]
+mod inspector_check_finding;
 mod inspector_dispatch;
 mod layer_scroll;
 mod panel_chrome;

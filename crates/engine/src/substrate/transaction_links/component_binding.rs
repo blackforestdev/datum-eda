@@ -245,15 +245,121 @@ fn pad_epochs(prior: &[TransactionRecord], needed: &BTreeSet<Uuid>) -> Option<BT
     }
     Some(epochs)
 }
+fn package_semantics(value: &Value, ci: Uuid) -> Option<Value> {
+    let mut value = source_payload(value)?;
+    if let Some(pads) = value.get_mut("component_pads") {
+        for pad in pads.as_array_mut()? {
+            if pad["source_binding"]["component_instance"]["object_id"] == json!(ci) {
+                pad["source_binding"]["component_instance"]["object_revision"] = Value::Null;
+            }
+        }
+    }
+    Some(value)
+}
+/// Only the already-allowed current preimage epochs may differ after intervening
+/// compensations. Desired semantic snapshots still come from the immutable target.
+pub(in crate::substrate) fn rebase_preimages(
+    target: &TransactionRecord,
+    prior: &[TransactionRecord],
+) -> Option<Vec<Operation>> {
+    if !crate::substrate::journal_history::current_target(prior, target) {
+        return None;
+    }
+    let mut ci = None;
+    let mut package = None;
+    for op in &target.inverse_operations {
+        match op {
+            Operation::SetComponentInstance {
+                component_instance_id,
+                ..
+            } if ci.is_none() => ci = Some(*component_instance_id),
+            Operation::SetBoardPackagePackage { package_id, .. } if package.is_none() => {
+                package = Some(*package_id)
+            }
+            Operation::SetElectricalIdentity { .. } => {}
+            _ => return None,
+        }
+    }
+    let (ci, package) = (ci?, package?);
+    let index = prior
+        .iter()
+        .position(|tx| tx.transaction_id == target.transaction_id)?;
+    let historical = &prior[..=index];
+    let historical_ci = latest_ci(historical, ci)?;
+    let historical_package = latest_package(historical, package)?;
+    let current_ci = latest_ci(prior, ci)?;
+    let (current_package_ref, current_package) = latest_package(prior, package)?;
+    let mut records = BTreeMap::new();
+    let mut historical_records = BTreeMap::new();
+    for op in historical.iter().flat_map(|tx| &tx.operations) {
+        if let Some((id, record, delete)) = crate::substrate::electrical_identity_store::write(op) {
+            if delete {
+                historical_records.remove(&id);
+            } else {
+                historical_records.insert(id, record);
+            }
+        }
+    }
+    for op in prior.iter().flat_map(|tx| &tx.operations) {
+        if let Some((id, record, delete)) = crate::substrate::electrical_identity_store::write(op) {
+            if delete {
+                records.remove(&id);
+            } else {
+                records.insert(id, record);
+            }
+        }
+    }
+    let mut ops = target.inverse_operations.clone();
+    for op in &mut ops {
+        match op {
+            Operation::SetComponentInstance {
+                previous_component_instance,
+                ..
+            } => {
+                if *previous_component_instance != historical_ci
+                    || ci_semantics(previous_component_instance) != ci_semantics(&current_ci)
+                {
+                    return None;
+                }
+                *previous_component_instance = current_ci.clone();
+            }
+            Operation::SetBoardPackagePackage {
+                package_ref_id,
+                previous_materialized,
+                ..
+            } => {
+                if historical_package != (*package_ref_id, source_payload(previous_materialized)?)
+                    || *package_ref_id != current_package_ref
+                    || package_semantics(previous_materialized, ci)?
+                        != package_semantics(&current_package, ci)?
+                {
+                    return None;
+                }
+                *previous_materialized = current_package.clone();
+            }
+            Operation::SetElectricalIdentity { previous, .. } => {
+                let current = *records.get(&previous.id)?;
+                if historical_records.get(&previous.id).copied() != Some(previous.as_ref())
+                    || net_semantics(previous, ci)? != net_semantics(current, ci)?
+                {
+                    return None;
+                }
+                *previous = Box::new(current.clone());
+            }
+            _ => return None,
+        }
+    }
+    Some(ops)
+}
 fn validate(
     tx: &TransactionRecord,
     target: &TransactionRecord,
     prior: &[TransactionRecord],
 ) -> Option<()> {
-    if prior.last()?.transaction_id != target.transaction_id {
+    if !crate::substrate::journal_history::selected_target(prior, target, tx.transaction_kind) {
         return None;
     }
-    let mut operations = target.inverse_operations.clone();
+    let mut operations = rebase_preimages(target, prior)?;
     let mut component = None;
     let mut placement = None;
     for op in &operations {
@@ -299,7 +405,10 @@ fn validate(
     }
     let (ci, current_ci, desired_ci) = component?;
     let (package, package_ref, old_pads, new_pads) = placement?;
-    let before_target = &prior[..prior.len().checked_sub(1)?];
+    let target_index = prior
+        .iter()
+        .position(|t| t.transaction_id == target.transaction_id)?;
+    let before_target = &prior[..target_index];
     if latest_ci(prior, ci)? != current_ci
         || latest_ci(before_target, ci)? != desired_ci
         || latest_package(prior, package)? != (package_ref, source_payload(&old_pads)?)
@@ -348,7 +457,6 @@ fn validate(
         .collect::<Option<_>>()?;
     let mut latest_ci = None;
     let mut records = BTreeMap::new();
-    let mut advances: BTreeMap<Uuid, u64> = BTreeMap::new();
     for prior_tx in prior {
         let mut writes = BTreeSet::new();
         for op in &prior_tx.operations {
@@ -382,8 +490,6 @@ fn validate(
                         if !prior_tx.diff.modified.contains(&id) {
                             return None;
                         }
-                        let count = advances.entry(id).or_default();
-                        *count = plus(*count)?;
                     } else if !prior_tx.diff.created.contains(&id) {
                         return None;
                     }
@@ -482,11 +588,9 @@ fn validate(
                         return None;
                     }
                 }
-                let durable_revision = previous
-                    .object_revision
-                    .0
-                    .checked_add(*advances.get(&record.id).unwrap_or(&0))?;
-                record.object_revision = ObjectRevision(plus(durable_revision)?);
+                // Accepted typed records already carry their complete epoch;
+                // replay restores it without adding historical diff advances.
+                record.object_revision = ObjectRevision(plus(previous.object_revision.0)?);
                 let ElectricalIdentity::NetRelationship { evidence, .. } = &mut record.identity
                 else {
                     return None;

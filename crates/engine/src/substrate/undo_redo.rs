@@ -15,15 +15,10 @@ impl DesignModel {
         provenance: CommitProvenance,
     ) -> Result<CommitReport, EngineError> {
         let target = self
-            .journal
-            .last()
+            .journal_history_targets()?
+            .undo
             .cloned()
-            .ok_or_else(|| EngineError::Operation("cannot undo empty journal".to_string()))?;
-        if target.transaction_kind == TransactionKind::Undo {
-            return Err(EngineError::Operation(
-                "last journal transaction is already an undo; use redo".to_string(),
-            ));
-        }
+            .ok_or_else(|| EngineError::Operation("nothing to undo".into()))?;
         self.commit_compensating_transaction(
             project_root,
             &target,
@@ -38,27 +33,25 @@ impl DesignModel {
         provenance: CommitProvenance,
     ) -> Result<CommitReport, EngineError> {
         let target = self
-            .journal
-            .last()
+            .journal_history_targets()?
+            .redo
             .cloned()
-            .ok_or_else(|| EngineError::Operation("cannot redo empty journal".to_string()))?;
-        if target.transaction_kind != TransactionKind::Undo {
-            if target.transaction_kind == TransactionKind::Normal
-                && self
+            .ok_or_else(|| {
+                let reason = if self
                     .journal
-                    .iter()
-                    .rev()
-                    .skip(1)
-                    .any(|transaction| transaction.transaction_kind == TransactionKind::Undo)
-            {
-                return Err(EngineError::Operation(
-                    "redo stack was cleared by a newer normal transaction".to_string(),
-                ));
-            }
-            return Err(EngineError::Operation(
-                "last journal transaction is not an undo; nothing to redo".to_string(),
-            ));
-        }
+                    .last()
+                    .is_some_and(|t| t.transaction_kind == TransactionKind::Normal)
+                    && self
+                        .journal
+                        .iter()
+                        .any(|t| t.transaction_kind == TransactionKind::Undo)
+                {
+                    "redo stack was cleared by a newer normal transaction"
+                } else {
+                    "nothing to redo"
+                };
+                EngineError::Operation(reason.into())
+            })?;
         self.commit_compensating_transaction(
             project_root,
             &target,
@@ -74,6 +67,24 @@ impl DesignModel {
         transaction_kind: TransactionKind,
         provenance: CommitProvenance,
     ) -> Result<CommitReport, EngineError> {
+        if self.journal_cursor.applied_transaction_count != self.journal.len() {
+            return Err(EngineError::Operation(
+                "journal cursor mismatch before compensation".into(),
+            ));
+        }
+        // A caller cannot substitute an old target's payload while retaining its ID
+        // and the current tip. The canonical commit rechecks the live basis under lease.
+        let durable = super::ProjectResolver::new(project_root).resolve()?;
+        if durable.project.project_id != self.project.project_id
+            || durable.model_revision != self.model_revision
+            || durable.journal != self.journal
+            || durable.journal_cursor != self.journal_cursor
+            || !super::journal_history::selected_target(&durable.journal, target, transaction_kind)
+        {
+            return Err(EngineError::Operation(
+                "current durable history or compensation target changed".into(),
+            ));
+        }
         if target.inverse_operations.is_empty() {
             return Err(EngineError::Operation(format!(
                 "transaction {} has no inverse operations",

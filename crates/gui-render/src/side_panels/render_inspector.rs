@@ -20,22 +20,8 @@ pub(super) fn render_inspector_panel(
                 text_runs,
             )?;
         }
-        SelectionTarget::CheckFinding(fingerprint) => {
-            draw_text(
-                "SELECTION",
-                inspector_rect.x + 12.0,
-                inspector_rect.y + 34.0,
-                11.0,
-                TEXT_MUTED,
-                TextFace::Ui,
-                text_runs,
-            );
-            inspector_check_finding::render_check_finding_inspector(
-                state,
-                fingerprint,
-                inspector_rect,
-                text_runs,
-            );
+        SelectionTarget::CheckFinding(_) => {
+            anyhow::bail!("finding Inspector requires shared dispatch")
         }
         SelectionTarget::AuthoredObject(object_id) => {
             let mut y = inspector_rect.y + 54.0;
