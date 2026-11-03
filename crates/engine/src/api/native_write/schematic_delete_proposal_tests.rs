@@ -18,7 +18,7 @@ use std::path::Path;
 fn provenance() -> WriteProvenance {
     WriteProvenance::new("test", CommitSource::Test, "batch deletion fixture")
 }
-fn source(model: &DesignModel) -> Schematic {
+pub(super) fn source(model: &DesignModel) -> Schematic {
     ElectricalSelectionSnapshot::capture(model)
         .unwrap()
         .schematic_source()
@@ -29,7 +29,12 @@ fn persist(model: &mut DesignModel, root: &Path, write: PreparedWrite) {
     let write = prepare_native_birth(model, write).unwrap();
     commit_prepared(model, root, write).unwrap();
 }
-fn verb(model: &mut DesignModel, root: &Path, id: &str, params: serde_json::Value) -> Uuid {
+pub(super) fn verb(
+    model: &mut DesignModel,
+    root: &Path,
+    id: &str,
+    params: serde_json::Value,
+) -> Uuid {
     let write = (find_native_write_verb(id).unwrap().build)(
         &NativeWriteContext {
             model,
@@ -43,7 +48,7 @@ fn verb(model: &mut DesignModel, root: &Path, id: &str, params: serde_json::Valu
     commit_prepared(model, root, write).unwrap();
     id
 }
-fn request(
+pub(super) fn request(
     model: &DesignModel,
     root: &Path,
     action: NativeProposalAction,
@@ -55,7 +60,7 @@ fn request(
         action,
     }
 }
-fn action(
+pub(super) fn action(
     model: &mut DesignModel,
     root: &Path,
     action: NativeProposalAction,
@@ -63,7 +68,7 @@ fn action(
     let request = request(model, root, action);
     execute(model, &request).unwrap()
 }
-fn create(id: Uuid, sheet: Uuid, targets: Vec<DeleteTarget>) -> NativeProposalAction {
+pub(super) fn create(id: Uuid, sheet: Uuid, targets: Vec<DeleteTarget>) -> NativeProposalAction {
     NativeProposalAction::CreateDelete {
         proposal_id: id,
         sheet,
@@ -71,7 +76,7 @@ fn create(id: Uuid, sheet: Uuid, targets: Vec<DeleteTarget>) -> NativeProposalAc
         targets,
     }
 }
-fn target(class: DeleteClass, id: Uuid) -> DeleteTarget {
+pub(super) fn target(class: DeleteClass, id: Uuid) -> DeleteTarget {
     DeleteTarget { class, id }
 }
 fn fixture(name: &str) -> (PathBuf, DesignModel, Uuid, Vec<DeleteTarget>) {
@@ -417,7 +422,7 @@ fn native_batch_delete_proposal_stale_reject_and_complete_selection_guards() {
 }
 
 #[test]
-fn native_batch_delete_proposal_bound_symbol_and_stale_design_refuse() {
+fn native_batch_delete_proposal_physical_binding_and_stale_design_refuse() {
     let mut fixture =
         crate::api::native_write::electrical::binding_fixture::fixture("batch_delete_bound");
     let r = request(
@@ -434,7 +439,7 @@ fn native_batch_delete_proposal_bound_symbol_and_stale_design_refuse() {
         execute(&mut fixture.model, &r)
             .unwrap_err()
             .to_string()
-            .contains("linked to a component")
+            .contains("one schematic-only Symbol per authored ComponentInstance")
     );
     assert_eq!(
         crate::revision::transaction_tip(&fixture.model.journal),

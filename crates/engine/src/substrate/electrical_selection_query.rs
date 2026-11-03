@@ -17,7 +17,10 @@ use crate::substrate::{
 };
 pub use authored_sources::{AuthoredSelectionSource, SelectionSourceDomain};
 pub use bus_run::{BusRunMembership, CrossBusContact};
-pub use component_relations::{ComponentSelectionContext, ComponentSelectionRelation};
+pub use component_relations::{
+    ComponentCounterpartStatus, ComponentSelectionBinding, ComponentSelectionContext,
+    ComponentSelectionRelation,
+};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 

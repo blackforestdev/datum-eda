@@ -230,6 +230,14 @@ impl Runtime {
                 return true;
             }
         };
+        match datum_gui_protocol::schematic_authoring::delete_review::DeleteReview::singleton_requires_review(self.workspace(), &target) {
+            Ok(true) => return self.begin_schematic_delete_review(),
+            Ok(false) => {},
+            Err(reason) => {
+                self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
+                return true;
+            }
+        }
         let kind = DeleteKind::from_class(target.class).unwrap();
         self.session.workspace_mut().authoring.gesture.view_basis = Some(basis);
         self.session

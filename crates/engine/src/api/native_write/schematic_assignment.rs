@@ -13,7 +13,7 @@ use serde_json::{Value, json};
 use uuid::Uuid;
 #[path = "schematic_assignment_component.rs"]
 mod component;
-pub(super) use component::repin_symbols;
+pub(super) use component::{delete_bindings, repin_symbols};
 #[path = "schematic_assignment_options.rs"]
 mod options_impl;
 pub use options_impl::options;

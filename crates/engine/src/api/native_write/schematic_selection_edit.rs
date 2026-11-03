@@ -116,7 +116,13 @@ pub(super) fn require_unbound_symbol(
         .model
         .component_instances
         .values()
-        .any(|instance| instance.placed_symbol_refs.contains(&id))
+        .any(|ci| ci.placed_symbol_refs.contains(&id))
+        || super::schematic_assignment::delete_bindings(
+            context.model,
+            &std::collections::BTreeSet::from([id]),
+            &std::collections::BTreeSet::new(),
+        )?
+        .contains_key(&id)
     {
         return Err(invalid(
             "This symbol is linked to a component; synchronized editing is not yet supported",

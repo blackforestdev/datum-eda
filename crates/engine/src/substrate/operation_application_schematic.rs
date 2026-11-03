@@ -92,6 +92,24 @@ fn existing_schematic_map_payload_objects(
     }
 }
 
+impl DesignModel {
+    /// Read-only identity set shared with canonical map deletion, including UUIDs
+    /// retained in unknown source extensions. This does not admit or mutate edits.
+    pub(crate) fn schematic_member_object_ids(
+        &self,
+        sheet_id: ObjectId,
+        map_name: &str,
+        object_id: ObjectId,
+        value: &serde_json::Value,
+    ) -> Result<std::collections::BTreeSet<ObjectId>, EngineError> {
+        Ok(
+            schematic_map_payload_objects(self, sheet_id, map_name, object_id, value)?
+                .into_keys()
+                .collect(),
+        )
+    }
+}
+
 fn schematic_map_payload_objects(
     model: &DesignModel,
     sheet_id: ObjectId,

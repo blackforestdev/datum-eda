@@ -247,3 +247,6 @@ fn isolated_scalar_label_kinds_share_move_without_renaming_or_retyping() {
         std::fs::remove_dir_all(f.root).unwrap();
     }
 }
+
+#[path = "schematic_label_move_payload_tests.rs"]
+mod payload;

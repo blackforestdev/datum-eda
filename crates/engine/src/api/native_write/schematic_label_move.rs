@@ -2,6 +2,7 @@
 use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, parse_verb_params},
+    schematic_symbol_payload::{member_payload, set_point, source_sheet_payload},
 };
 use crate::{
     connectivity::SymbolContactBasis,
@@ -95,21 +96,33 @@ pub(super) fn move_label(
     if destination.label == basis.label {
         return Err(invalid("Label move destination is unchanged"));
     }
+    let source = source_sheet_payload(context.model, basis.sheet_id, basis.label.uuid)?;
+    let mut label = member_payload(&source, "labels", basis.label.uuid, &basis.label)?;
+    set_point(&mut label["position"], destination.label.position);
     let mut operations = vec![Operation::SetSchematicLabel {
         sheet_id: basis.sheet_id,
         label_id: destination.label.uuid,
-        label: serde_json::to_value(&destination.label)?,
+        label,
     }];
     for wire in destination.wires {
+        let original = member_payload(
+            &source,
+            "wires",
+            wire.uuid,
+            basis.contacts.original_wire(wire.uuid),
+        )?;
+        let mut moved = original.clone();
+        set_point(&mut moved["from"], wire.from);
+        set_point(&mut moved["to"], wire.to);
         operations.push(Operation::DeleteSchematicWire {
             sheet_id: basis.sheet_id,
             wire_id: wire.uuid,
-            wire: serde_json::to_value(basis.contacts.original_wire(wire.uuid))?,
+            wire: original,
         });
         operations.push(Operation::CreateSchematicWire {
             sheet_id: basis.sheet_id,
             wire_id: wire.uuid,
-            wire: serde_json::to_value(wire)?,
+            wire: moved,
         });
     }
     BatchComposer::compose(context.model, provenance)

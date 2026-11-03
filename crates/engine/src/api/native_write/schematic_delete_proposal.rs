@@ -128,6 +128,33 @@ pub struct NativeProposalResponse {
     pub transaction_id: Option<Uuid>,
 }
 
+/// Invocation-only qualified ownership; no menu-paint source reads are needed.
+pub fn bound_symbol_owner(
+    model: &DesignModel,
+    symbol: Uuid,
+    instance_path: &[Uuid],
+) -> Result<Option<Uuid>, EngineError> {
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(model)
+        .map_err(|e| invalid(&format!("Selected source unavailable: {e:?}")))?;
+    let source =
+        super::schematic_selected_source::SelectedSchematicSource::from_snapshot(&snapshot)?;
+    let sheet = source.sheet("symbols", symbol, instance_path)?;
+    let raw = super::schematic_symbol_payload::source_sheet_payload(model, sheet, symbol)?;
+    let children = super::schematic_delete::owned_symbol_objects(
+        model,
+        &source.source.sheets[&sheet],
+        &std::collections::BTreeSet::from([symbol]),
+        &raw,
+    )?;
+    Ok(super::schematic_assignment::delete_bindings(
+        model,
+        &std::collections::BTreeSet::from([symbol]),
+        &children,
+    )?
+    .remove(&symbol)
+    .map(|(id, _)| id))
+}
+
 pub fn execute(
     model: &mut DesignModel,
     request: &NativeProposalRequest,
@@ -350,6 +377,7 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
             "This native action requires a manual schematic deletion proposal",
         ));
     }
+    super::schematic_delete::validate_owned_components(&p.batch.operations)?;
     Ok(p)
 }
 fn validate_disposition_current(
@@ -371,3 +399,7 @@ fn invalid(reason: &str) -> EngineError {
 #[cfg(test)]
 #[path = "schematic_delete_proposal_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_bound_delete_tests.rs"]
+pub(crate) mod bound_tests;

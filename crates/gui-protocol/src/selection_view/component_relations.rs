@@ -1,6 +1,8 @@
 //! One component-binding explanation for Inspector, accessibility and context.
 use super::*;
-use eda_engine::substrate::{ComponentSelectionContext, ElectricalOccurrence};
+use eda_engine::substrate::{
+    ComponentCounterpartStatus, ComponentSelectionContext, ElectricalOccurrence,
+};
 
 fn matches(id: &Id, source: &ElectricalOccurrence) -> bool {
     id.id == source.source_id
@@ -24,6 +26,11 @@ pub(super) fn append(view: &mut SelectionView, context: &ComponentSelectionConte
         if roots.is_empty() {
             continue;
         }
+        let bindings: Vec<_> = context
+            .bindings
+            .iter()
+            .filter(|(source, _)| roots.iter().any(|id| matches(id, source)))
+            .collect();
         let relations: Vec<_> = context
             .relations
             .iter()
@@ -34,7 +41,14 @@ pub(super) fn append(view: &mut SelectionView, context: &ComponentSelectionConte
             .iter()
             .filter(|(source, _)| roots.iter().any(|id| matches(id, source)))
             .collect();
-        let summary = if relations.len() == 1 && unavailable.is_empty() {
+        let summary = if roots.len() == 1
+            && roots[0].class == Class::Symbol
+            && bindings.len() == 1
+            && bindings[0].1.counterpart_status == ComponentCounterpartStatus::NotDeclared
+            && unavailable.is_empty()
+        {
+            "Schematic binding — no board counterpart".into()
+        } else if roots.len() == 1 && relations.len() == 1 && unavailable.is_empty() {
             let relation = relations[0];
             let kind = if relation.counterpart.class == "packages" {
                 "Footprint"
@@ -50,7 +64,8 @@ pub(super) fn append(view: &mut SelectionView, context: &ComponentSelectionConte
             )
         } else {
             format!(
-                "{} component binding relations; {} unavailable; related only",
+                "{} qualified bindings; {} related objects; {} unavailable; related only",
+                bindings.len(),
                 relations.len(),
                 unavailable.len()
             )
@@ -61,6 +76,10 @@ pub(super) fn append(view: &mut SelectionView, context: &ComponentSelectionConte
             InspectionValue::Common(serde_json::json!(summary))
         };
         scope.insert_field("Related component", summary, InspectionDetailKind::Ordinary);
+        let bindings: Vec<_> = bindings
+            .into_iter()
+            .map(|(source, binding)| serde_json::json!({"source":source,"binding":binding}))
+            .collect();
         let unavailable: Vec<_> = unavailable
             .into_iter()
             .map(|(source, reason)| serde_json::json!({"source":source,"reason":reason}))
@@ -68,9 +87,13 @@ pub(super) fn append(view: &mut SelectionView, context: &ComponentSelectionConte
         scope.insert_field(
             "Component bindings",
             InspectionValue::Common(serde_json::json!({
-                "relations":relations,"unavailable":unavailable
+                "bindings":bindings,"relations":relations,"unavailable":unavailable
             })),
             InspectionDetailKind::Members,
         );
     }
 }
+
+#[cfg(test)]
+#[path = "component_relations_tests.rs"]
+mod tests;

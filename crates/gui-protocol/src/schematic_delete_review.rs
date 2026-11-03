@@ -37,6 +37,12 @@ impl DeleteReview {
         if view.stale || view.project != basis.project || view.revision.0 != basis.revision {
             return Err("Selection changed; select the current objects again".into());
         }
+        if view.members.len() == 1 {
+            let target = view.members.iter().next().unwrap();
+            if !Self::singleton_requires_review(state, target)? {
+                return Err("Unbound single objects use the ordinary Delete action".into());
+            }
+        }
         let source = &review.source;
         let targets = targets(
             source,
@@ -57,6 +63,33 @@ impl DeleteReview {
         review.targets = targets;
         review.pending = Some(action);
         Ok(review)
+    }
+    /// Invocation-only canonical ownership capture, never menu or paint readiness.
+    /// Unsupported owners refuse here rather than falling through to direct Delete.
+    pub fn singleton_requires_review(
+        state: &ReviewWorkspaceState,
+        target: &AuthoredSelectionIdentity,
+    ) -> Result<bool, String> {
+        if target.class != Class::Symbol {
+            return Ok(false);
+        }
+        let model = state
+            .library
+            .basis
+            .as_ref()
+            .ok_or("Selected source model unavailable")?;
+        if model.project.project_id.to_string() != state.scene.project_uuid
+            || model.model_revision.0 != state.scene.source_revision
+        {
+            return Err("Selected source changed; select the current Symbol again".into());
+        }
+        eda_engine::api::native_write::schematic_delete_proposal::bound_symbol_owner(
+            model,
+            target.id,
+            &target.instance_path,
+        )
+        .map(|owner| owner.is_some())
+        .map_err(|error| error.to_string())
     }
     pub fn capture_disposition(
         state: &ReviewWorkspaceState,
@@ -362,8 +395,8 @@ fn targets(
     ids: &[AuthoredSelectionIdentity],
     path: &[Uuid],
 ) -> Result<Vec<DeleteTarget>, String> {
-    if ids.len() < 2 {
-        return Err("Batch Delete requires at least two complete selected objects".into());
+    if ids.is_empty() {
+        return Err("Select complete schematic objects to delete".into());
     }
     ids.iter()
         .map(|id| {
@@ -402,6 +435,7 @@ fn class_label(class: &str) -> &str {
     match class {
         "schematic_text" | "texts" => "Text notes",
         "symbol" | "symbols" => "Symbols",
+        "component_instance" => "Component bindings",
         "wire" | "wires" => "Wires",
         "label" | "labels" => "Labels",
         "port" | "ports" => "Ports",

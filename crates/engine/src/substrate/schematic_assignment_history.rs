@@ -6,8 +6,11 @@ use uuid::Uuid;
 fn invalid() -> EngineError {
     EngineError::Validation("Schematic binding history preimage or revision changed".into())
 }
+#[path = "schematic_binding_history_delete.rs"]
+mod deletion;
 #[path = "schematic_binding_history_family.rs"]
 mod family;
+pub(super) use deletion::order_restoration as order_component_restoration;
 fn member(value: &Value, id: Uuid, symbol: Uuid) -> Option<u64> {
     if value["uuid"] != json!(id) || value["placed_package_refs"].as_array()?.len() != 0 {
         return None;
@@ -131,6 +134,9 @@ pub(super) fn prepare(
     target: &TransactionRecord,
     batch: &mut OperationBatch,
 ) -> Result<bool, EngineError> {
+    if deletion::prepare(model, target, batch)? {
+        return Ok(true);
+    }
     let Some(members) = family::capture(target) else {
         return Ok(false);
     };
@@ -291,10 +297,12 @@ pub(super) fn matches(
     target: &TransactionRecord,
     prior: &[TransactionRecord],
 ) -> bool {
-    super::journal_history::selected_target(prior, target, tx.transaction_kind)
-        && normalized(target, prior).is_some_and(|ops| {
-            tx.operations == ops && inverse(&ops, target).as_ref() == Some(&tx.inverse_operations)
-        })
+    deletion::matches(tx, target, prior)
+        || (super::journal_history::selected_target(prior, target, tx.transaction_kind)
+            && normalized(target, prior).is_some_and(|ops| {
+                tx.operations == ops
+                    && inverse(&ops, target).as_ref() == Some(&tx.inverse_operations)
+            }))
 }
 
 #[cfg(test)]

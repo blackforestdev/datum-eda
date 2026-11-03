@@ -272,10 +272,14 @@ restated.
   and one undoable design deletion (`dat-schematic-batch-delete-m8zf`). The
   complete selected set is validated; owned children are deduplicated and
   surviving external dependencies refuse the operation. Dismissal preserves
-  design source; Proposal review metadata may be journaled. Existing root-view,
-  repeated-source, component-bound Symbol, hierarchy-bound Port and shared Bus
-  limits remain. The public normalized id-list surface, remaining object classes
-  and board-bound escalation are still pending.
+  design source; Proposal review metadata may be journaled. Supported single-Symbol,
+  schematic-only component bindings now use the same review, removing the owned
+  binding and no-connect markers atomically while preserving unrelated wires and
+  library source (`dat-schematic-bound-delete-ahmx`). Undo/Redo and reopening
+  restore exact identities and valid binding pins. Existing root-view limits,
+  physical/multi-Symbol bindings, stale or repeated sources, external dependencies,
+  hierarchy-bound Ports and shared Bus restrictions remain. The public normalized id-list surface, remaining
+  object classes and board-bound escalation are still pending.
 
 ### 4. draw-wire
 
@@ -338,7 +342,10 @@ restated.
   position, with Apply/Cancel and exact undo/redo/reopen (delivery
   `dat-schematic-label-edit-yx35`). Context-menu entry remains separate work;
   contract-shaped result/normalization coverage remains pending. Label kind
-  remains one parameterized capability.
+  remains one parameterized capability. Existing Label/Power Move preserves raw
+  label and attached-wire metadata, including nested point extensions, through
+  cancellation and canonical history (`dat-schematic-label-move-payload-h1m9`).
+  This does not claim the same preservation for every label/port field writer.
 
 ### 6. place-marker (kind: junction | no-connect)
 
@@ -514,7 +521,10 @@ restated.
   schematic-only bindings (`dat-schematic-bound-fields-0r9i`), including raw
   payload, library identity and connectivity through cancellation, Undo/Redo
   and reopening. Physical, multi-Symbol, stale and repeated-source restrictions
-  remain; bound-Symbol deletion is still separate work.
+  remain. Supported bound-Symbol deletion is covered by §3. The existing Inspector
+  distinguishes a valid schematic binding with no declared board counterpart from
+  stale, missing or ambiguous bindings (`dat-schematic-binding-inspector-a7rm`);
+  owning a component does not imply cross-domain selection or a complete board graph.
 
   Automatic position presets, a bulk fields table, cross-Unit replacement,
   broader part/entity/gate reassignment, complete public-surface normalization

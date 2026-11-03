@@ -6,8 +6,6 @@ use super::{
     schematic_connectivity::*,
     schematic_delete_proposal::{DeleteClass, DeleteTarget, DeletedObject},
     schematic_selected_source::SelectedSchematicSource,
-    schematic_selection_edit::require_unbound_symbol,
-    schematic_symbols::build_delete_schematic_symbol,
 };
 use crate::{error::EngineError, substrate::Operation};
 use std::collections::{BTreeMap, BTreeSet};
@@ -36,27 +34,50 @@ pub(super) fn build(
         }
     }
     let sheet = &source.source.sheets[&sheet_id];
+    let raw_sheet = super::schematic_symbol_payload::source_sheet_payload(
+        context.model,
+        sheet_id,
+        targets[0].id,
+    )?;
     let removed_entries: BTreeSet<_> = sheet
         .bus_entries
         .values()
         .filter(|e| selected.contains(&(DeleteClass::BusSection, e.bus)))
         .map(|e| e.uuid)
         .collect();
-    let mut operations = Vec::new();
+    let symbol_ids: BTreeSet<_> = selected
+        .iter()
+        .filter_map(|(class, id)| (*class == DeleteClass::Symbol).then_some(*id))
+        .collect();
+    let children = owned_symbol_objects(context.model, sheet, &symbol_ids, &raw_sheet)?;
+    let bindings =
+        super::schematic_assignment::delete_bindings(context.model, &symbol_ids, &children)?;
+    let mut operations: Vec<_> = bindings
+        .values()
+        .map(|(id, raw)| Operation::DeleteComponentInstance {
+            component_instance_id: *id,
+            component_instance: raw.clone(),
+        })
+        .collect();
     let mut append = |prepared: PreparedWrite| {
         operations.extend(prepared.batch.operations);
     };
     for (class, id) in selected {
         match class {
             DeleteClass::Symbol => {
-                require_unbound_symbol(context, id)?;
                 let symbol = &sheet.symbols[&id];
-                append(build_delete_schematic_symbol(
-                    context.model,
-                    provenance.clone(),
-                    sheet_id,
-                    symbol,
-                )?);
+                let raw = super::schematic_symbol_payload::member_payload(
+                    &raw_sheet, "symbols", id, symbol,
+                )?;
+                append(
+                    BatchComposer::compose(context.model, provenance.clone())
+                        .push_op(Operation::DeleteSchematicSymbol {
+                            sheet_id,
+                            symbol_id: id,
+                            symbol: raw,
+                        })
+                        .finish()?,
+                );
                 for marker in sheet.noconnects.values().filter(|n| n.symbol == id) {
                     if source.sheet("noconnects", marker.uuid, path)? != sheet_id
                         || !symbol.pins.iter().any(|p| p.uuid == marker.pin)
@@ -65,12 +86,21 @@ pub(super) fn build(
                             "No-connect marker has inconsistent symbol/pin ownership",
                         ));
                     }
-                    append(build_delete_schematic_noconnect(
-                        context.model,
-                        provenance.clone(),
-                        sheet_id,
+                    let raw = super::schematic_symbol_payload::member_payload(
+                        &raw_sheet,
+                        "noconnects",
+                        marker.uuid,
                         marker,
-                    )?);
+                    )?;
+                    append(
+                        BatchComposer::compose(context.model, provenance.clone())
+                            .push_op(Operation::DeleteSchematicNoConnect {
+                                sheet_id,
+                                noconnect_id: marker.uuid,
+                                noconnect: raw,
+                            })
+                            .finish()?,
+                    );
                 }
             }
             DeleteClass::Wire => {
@@ -122,12 +152,20 @@ pub(super) fn build(
                 sheet_id,
                 &sheet.junctions[&id],
             )?),
-            DeleteClass::NoConnect => append(build_delete_schematic_noconnect(
-                context.model,
-                provenance.clone(),
-                sheet_id,
-                &sheet.noconnects[&id],
-            )?),
+            DeleteClass::NoConnect => append(
+                BatchComposer::compose(context.model, provenance.clone())
+                    .push_op(Operation::DeleteSchematicNoConnect {
+                        sheet_id,
+                        noconnect_id: id,
+                        noconnect: super::schematic_symbol_payload::member_payload(
+                            &raw_sheet,
+                            "noconnects",
+                            id,
+                            &sheet.noconnects[&id],
+                        )?,
+                    })
+                    .finish()?,
+            ),
             DeleteClass::SchematicText => append(super::schematic_text::delete_in_sheet(
                 context,
                 provenance.clone(),
@@ -207,7 +245,9 @@ pub(super) fn build(
     source_deletions.sort_by_key(|(id, operation)| {
         let owned_child = matches!(
             operation,
-            Operation::DeleteSchematicBusEntry { .. } | Operation::DeleteSchematicNoConnect { .. }
+            Operation::DeleteSchematicBusEntry { .. }
+                | Operation::DeleteSchematicNoConnect { .. }
+                | Operation::DeleteComponentInstance { .. }
         );
         (!owned_child, *id)
     });
@@ -219,6 +259,15 @@ pub(super) fn build(
 
 pub(super) fn deleted_object(op: &Operation) -> Option<DeletedObject> {
     let (id, class, payload, key) = match op {
+        Operation::DeleteComponentInstance {
+            component_instance_id,
+            component_instance,
+        } => (
+            *component_instance_id,
+            "component_instance",
+            component_instance,
+            "",
+        ),
         Operation::DeleteSchematicSymbol {
             symbol_id, symbol, ..
         } => (*symbol_id, "symbol", symbol, "reference"),
@@ -262,4 +311,85 @@ pub(super) fn deleted_object(op: &Operation) -> Option<DeletedObject> {
 }
 fn invalid(reason: &str) -> EngineError {
     EngineError::Validation(reason.into())
+}
+
+/// Recorded Proposal qualification never infers ownership from an opaque ID alone.
+pub(super) fn validate_owned_components(ops: &[Operation]) -> Result<(), EngineError> {
+    let symbols: BTreeSet<_> = ops
+        .iter()
+        .filter_map(|op| match op {
+            Operation::DeleteSchematicSymbol { symbol_id, .. } => Some(*symbol_id),
+            _ => None,
+        })
+        .collect();
+    let mut owners = BTreeSet::new();
+    for op in ops {
+        if let Operation::DeleteComponentInstance {
+            component_instance_id,
+            component_instance,
+        } = op
+        {
+            let ci: crate::substrate::ComponentInstanceShard = serde_json::from_value(
+                serde_json::json!({"schema_version":1,"component_instance":component_instance}),
+            )?;
+            let ci = ci.component_instance;
+            if ci.uuid != *component_instance_id
+                || ci.placed_symbol_refs.len() != 1
+                || !ci.placed_package_refs.is_empty()
+                || !symbols.contains(&ci.placed_symbol_refs[0].object_id)
+                || !owners.insert(ci.placed_symbol_refs[0].object_id)
+                || ci.library_bindings.values().any(|b| {
+                    !matches!(
+                        b.binding_role,
+                        crate::substrate::LibraryBindingRole::Part
+                            | crate::substrate::LibraryBindingRole::Symbol
+                    ) || !b.local_override_refs.is_empty()
+                })
+            {
+                return Err(invalid(
+                    "Deletion requires an exact owned schematic-only component",
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+/// The canonical delete's complete recursive identity set, shared by invocation
+/// and complete-set admission. Typed fields alone omit retained extension UUIDs.
+pub(super) fn owned_symbol_objects(
+    model: &crate::substrate::DesignModel,
+    sheet: &crate::schematic::Sheet,
+    symbols: &BTreeSet<Uuid>,
+    raw_sheet: &serde_json::Value,
+) -> Result<BTreeSet<Uuid>, EngineError> {
+    let mut removed = BTreeSet::new();
+    for id in symbols {
+        let raw = super::schematic_symbol_payload::member_payload(
+            raw_sheet,
+            "symbols",
+            *id,
+            &sheet.symbols[id],
+        )?;
+        removed.extend(model.schematic_member_object_ids(sheet.uuid, "symbols", *id, &raw)?);
+    }
+    for marker in sheet
+        .noconnects
+        .values()
+        .filter(|m| symbols.contains(&m.symbol))
+    {
+        let raw = super::schematic_symbol_payload::member_payload(
+            raw_sheet,
+            "noconnects",
+            marker.uuid,
+            marker,
+        )?;
+        removed.extend(model.schematic_member_object_ids(
+            sheet.uuid,
+            "noconnects",
+            marker.uuid,
+            &raw,
+        )?);
+    }
+    Ok(removed)
 }

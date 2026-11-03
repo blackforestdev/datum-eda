@@ -82,6 +82,38 @@ fn current_set(
     }
     Ok(found)
 }
+/// Capture the same strict raw ownership once for the complete selected set.
+/// A surviving external reference cannot be silently discarded with its owner.
+pub(in crate::api::native_write) fn delete_bindings(
+    model: &DesignModel,
+    symbols: &BTreeSet<Uuid>,
+    children: &BTreeSet<Uuid>,
+) -> Result<BTreeMap<Uuid, (Uuid, Value)>, EngineError> {
+    let bindings = current_set(model, symbols)?;
+    let mut removed = symbols.clone();
+    removed.extend(children);
+    removed.extend(bindings.values().map(|(id, _)| *id));
+    if model.relationships.values().any(|r| {
+        r.from
+            .iter()
+            .chain(&r.to)
+            .any(|r| removed.contains(&r.object_id))
+    }) || model.variants.values().any(|v| {
+        v.fitted
+            .keys()
+            .chain(v.property_overrides.keys())
+            .any(|id| removed.contains(id))
+    }) || model.electrical_identities.values().any(|r| {
+        matches!(&r.identity,
+            crate::substrate::ElectricalIdentity::NetRelationship { evidence, .. }
+            if evidence.iter().any(|e| removed.contains(&e.component_instance.object_id)))
+    }) {
+        return Err(invalid(
+            "Component has surviving relationship or variant dependencies",
+        ));
+    }
+    Ok(bindings)
+}
 /// A transform preserves every semantic/raw binding field and only advances
 /// the two exact revision pins. Capture ownership once for the complete set.
 pub(in crate::api::native_write) fn repin_symbols(

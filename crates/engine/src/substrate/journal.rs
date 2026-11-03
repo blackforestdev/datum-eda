@@ -424,6 +424,7 @@ pub(super) fn inverse_operations_for_batch(
         inverse_non_core_operation(operation, &mut inverse_operations);
     }
     inverse_operations.reverse();
+    super::schematic_assignment_history::order_component_restoration(&mut inverse_operations);
     Ok(inverse_operations)
 }
 

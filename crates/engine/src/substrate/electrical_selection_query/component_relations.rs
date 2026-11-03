@@ -10,8 +10,23 @@ pub struct ComponentSelectionRelation {
     pub counterpart_reference: Option<String>,
 }
 
+/// Counterpart inventory is separate from qualification of the owning binding.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ComponentCounterpartStatus {
+    NotDeclared,
+    Resolved,
+    Unavailable,
+}
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComponentSelectionBinding {
+    pub component_instance: Uuid,
+    pub counterpart_status: ComponentCounterpartStatus,
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ComponentSelectionContext {
+    pub bindings: BTreeMap<ElectricalOccurrence, ComponentSelectionBinding>,
     pub relations: BTreeSet<ComponentSelectionRelation>,
     pub unavailable: BTreeMap<ElectricalOccurrence, String>,
 }
@@ -101,6 +116,18 @@ impl ElectricalSelectionSnapshot {
             } else {
                 ("symbols", &owner.placed_symbol_refs)
             };
+            result.bindings.insert(
+                origin.clone(),
+                ComponentSelectionBinding {
+                    component_instance: owner.id,
+                    counterpart_status: ComponentCounterpartStatus::Unavailable,
+                },
+            );
+            if symbol && targets.is_empty() {
+                result.bindings.get_mut(origin).unwrap().counterpart_status =
+                    ComponentCounterpartStatus::NotDeclared;
+                continue;
+            }
             let counterparts: Vec<_> = targets
                 .iter()
                 .map(|id| ElectricalOccurrence {
@@ -128,6 +155,8 @@ impl ElectricalSelectionSnapshot {
                 );
                 continue;
             }
+            result.bindings.get_mut(origin).unwrap().counterpart_status =
+                ComponentCounterpartStatus::Resolved;
             for counterpart in counterparts {
                 let counterpart_reference = self
                     .basis
@@ -198,3 +227,7 @@ impl ElectricalSelectionSnapshot {
             })
     }
 }
+
+#[cfg(test)]
+#[path = "component_relations_tests.rs"]
+mod tests;

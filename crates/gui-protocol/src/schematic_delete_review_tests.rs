@@ -621,3 +621,6 @@ fn erc_disposition_native_diagnostic_entry_uses_exact_current_producing_checkrun
         "legacy compatible entry stays available"
     );
 }
+
+#[path = "schematic_bound_delete_tests.rs"]
+mod bound_delete;
