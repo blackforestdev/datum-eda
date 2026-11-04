@@ -482,13 +482,14 @@ restated.
   custom:<name>`. Current compatibility set/clear and add/edit/delete field
   builders use canonical journaled symbol operations; the normalized field
   surface remains a target.
-- **(3) CLI:** `datum-eda project set-symbol-field --root <dir> --symbol
+- **(3) CLI target inventory:** `datum-eda project set-symbol-field --root <dir> --symbol
   <uuid> --field <reference|value|lib-id|part|entity|unit|gate|
   display-mode|hidden-power|custom:NAME> --value <v> [--clear]`
-- **(4) MCP/AI:** Target `set_symbol_field`: one tool, field+value params;
-  returns `OperationResult` diff(modified). The native daemon verb described below
-  is available through `native.write`; a normalized CLI/MCP field surface remains
-  pending. Existing CLI/MCP reference/value commands remain compatibility paths.
+- **(4) MCP/AI:** `datum.schematic.set_symbol_field` exposes Reference/Value
+  through one field-parameterized CLI bridge. The current response is the canonical
+  commit report with transaction diff and journal length; normalized
+  `OperationResult` and remaining selectors stay targets. Existing CLI/MCP
+  reference/value and Custom commands remain compatibility paths.
 - **(5) AI query/context:** Current symbol fields/semantics
   (`schematic.query` symbol_fields/symbol_semantics/symbol_pins), pool
   part/entity ids for assignment, reference uniqueness, gate/unit
@@ -522,6 +523,20 @@ restated.
   behavior is unchanged. Existing caller/provenance and Proposal requirements
   remain in force; this does not complete the normalized Operation or ten-field
   public surface.
+
+  The CLI/MCP Reference/Value entry (`dat-schematic-field-public-callers-4dpq`)
+  uses that same builder. Current CLI syntax is `project set-symbol-field --root
+  <dir> --symbol <uuid> --field <reference|value> --expected-model-revision <rev>
+  --expected-tip-transaction <uuid|none>` with either `--value <text>` or `--clear`.
+  `--instance-path` accepts ordered instance UUIDs, defaulting to the root sheet.
+  MCP requires the equivalent revision/tip parameters; the literal string `none`
+  asserts an empty journal. Omission, null, malformed, blank or stale qualifications
+  cannot authorize an edit. Callers obtain the revision and last transaction ID
+  from `journal list` / `datum.journal.list`; an empty transaction list uses `none`.
+  The entry checks the caller's snapshot and canonical commit revalidates the
+  persisted revision/tip under the writer lease. MCP retains Tool/Assistant
+  provenance and automated component-bound edits still require Proposal acceptance.
+  The GUI and remaining field selectors are unchanged.
 
   Bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector

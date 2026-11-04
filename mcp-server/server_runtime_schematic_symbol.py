@@ -24,6 +24,24 @@ def install_schematic_symbol_methods(client_cls: type, append_optional: Any) -> 
         return run(self, "set_symbol_reference", {"path": path, "symbol": symbol, "reference": reference}, ["project", "set-symbol-reference", path, "--symbol", symbol, "--reference", reference])
     def set_symbol_value(self, path: str, symbol: str, value: str):
         return run(self, "set_symbol_value", {"path": path, "symbol": symbol, "value": value}, ["project", "set-symbol-value", path, "--symbol", symbol, "--value", value])
+    def set_symbol_field(self, path: str, symbol: str, field: str, expected_model_revision: str, expected_tip_transaction: str, value: str | None = None, clear: bool = False, instance_path: list[str] | None = None):
+        if not isinstance(expected_model_revision, str) or not expected_model_revision.strip():
+            raise ValueError("expected_model_revision must be nonempty")
+        if not isinstance(expected_tip_transaction, str) or not expected_tip_transaction.strip():
+            raise ValueError("expected_tip_transaction requires a UUID or none")
+        params = {"path": path, "symbol": symbol, "field": field,
+                  "expected_model_revision": expected_model_revision,
+                  "expected_tip_transaction": expected_tip_transaction,
+                  "value": value, "clear": clear, "instance_path": instance_path}
+        args = ["project", "set-symbol-field", "--root", path, "--symbol", symbol,
+                "--field", field, "--expected-model-revision", expected_model_revision,
+                "--expected-tip-transaction", expected_tip_transaction]
+        append_optional(args, "value", value)
+        if clear:
+            args.append("--clear")
+        for instance in instance_path or []:
+            args.extend(["--instance-path", instance])
+        return run(self, "set_symbol_field", params, args)
     def set_symbol_display_mode(self, path: str, symbol: str, mode: str):
         return run_symbol(self, "set_symbol_display_mode", "set-symbol-display-mode", path, symbol, {"mode": mode}, "--mode", mode)
     def set_symbol_hidden_power_behavior(self, path: str, symbol: str, behavior: str):
@@ -58,5 +76,5 @@ def install_schematic_symbol_methods(client_cls: type, append_optional: Any) -> 
         args = ["project", "edit-symbol-field", path, "--field", field]; append_optional(args, "key", key); append_optional(args, "value", value); append_optional(args, "visible", None if visible is None else str(visible).lower()); append_optional(args, "x-nm", x_nm); append_optional(args, "y-nm", y_nm); return run(self, "edit_symbol_field", {"path": path, "field": field, "key": key, "value": value, "visible": visible, "x_nm": x_nm, "y_nm": y_nm}, args)
     def delete_symbol_field(self, path: str, field: str):
         return run_field(self, "delete_symbol_field", "delete-symbol-field", path, field, {})
-    for method in [place_symbol, move_symbol, rotate_symbol, mirror_symbol, delete_symbol, set_symbol_reference, set_symbol_value, set_symbol_display_mode, set_symbol_hidden_power_behavior, set_symbol_unit, clear_symbol_unit, set_symbol_gate, clear_symbol_gate, set_symbol_entity, clear_symbol_entity, set_symbol_part, clear_symbol_part, set_symbol_lib_id, clear_symbol_lib_id, set_pin_override, clear_pin_override, add_symbol_field, edit_symbol_field, delete_symbol_field]:
+    for method in [place_symbol, move_symbol, rotate_symbol, mirror_symbol, delete_symbol, set_symbol_reference, set_symbol_value, set_symbol_field, set_symbol_display_mode, set_symbol_hidden_power_behavior, set_symbol_unit, clear_symbol_unit, set_symbol_gate, clear_symbol_gate, set_symbol_entity, clear_symbol_entity, set_symbol_part, clear_symbol_part, set_symbol_lib_id, clear_symbol_lib_id, set_pin_override, clear_pin_override, add_symbol_field, edit_symbol_field, delete_symbol_field]:
         setattr(client_cls, method.__name__, method)

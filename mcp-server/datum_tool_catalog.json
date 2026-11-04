@@ -24939,6 +24939,115 @@
       "write_surface": null
     },
     {
+      "description": "Edit a Symbol reference or value through the shared native editor. Requires observed revision and tip (UUID or none for empty). Clear Value stores empty text; Reference cannot be cleared. Automated component-bound edits retain Proposal requirements.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-field"
+          },
+          {
+            "flag": "--root",
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--field",
+            "param": "field"
+          },
+          {
+            "flag": "--expected-model-revision",
+            "param": "expected_model_revision"
+          },
+          {
+            "flag": "--expected-tip-transaction",
+            "param": "expected_tip_transaction"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "param": "clear",
+            "switch": "--clear"
+          },
+          {
+            "param": "instance_path",
+            "repeated": "--instance-path"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_field"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "field",
+        "expected_model_revision",
+        "expected_tip_transaction",
+        "value",
+        "clear",
+        "instance_path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clear": {
+            "type": "boolean"
+          },
+          "expected_model_revision": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "expected_tip_transaction": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "field": {
+            "enum": [
+              "reference",
+              "value"
+            ],
+            "type": "string"
+          },
+          "instance_path": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "field",
+          "expected_model_revision",
+          "expected_tip_transaction"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_field",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Set one native-project schematic symbol gate UUID.",
       "dispatch": {
         "argv": [

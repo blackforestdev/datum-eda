@@ -13,9 +13,11 @@ from fake_daemon_support_queries import FakeDaemonClientQueriesMixin
 from fake_daemon_support_relationships import FakeDaemonClientRelationshipsMixin
 from fake_daemon_support_replacements import FakeDaemonClientReplacementsMixin
 from fake_daemon_support_units import FakeDaemonClientUnitsMixin
+from fake_daemon_support_symbol_fields import FakeDaemonSymbolFieldsMixin
 
 
 class FakeDaemonClient(
+    FakeDaemonSymbolFieldsMixin,
     FakeDaemonClientBase,
     FakeDaemonClientChecksMixin,
     FakeDaemonClientImportMapMixin,

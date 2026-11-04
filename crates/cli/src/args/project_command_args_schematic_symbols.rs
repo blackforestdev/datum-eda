@@ -1,5 +1,40 @@
 use crate::*;
 
+#[derive(Clone, Copy, clap::ValueEnum, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum SchematicSymbolFieldArg {
+    Reference,
+    Value,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectSetSymbolFieldArgs {
+    /// Project root directory
+    #[arg(long = "root")]
+    pub(crate) path: PathBuf,
+    /// Selected Symbol UUID
+    #[arg(long)]
+    pub(crate) symbol: Uuid,
+    /// Field to edit through the shared native editor
+    #[arg(long, value_enum)]
+    pub(crate) field: SchematicSymbolFieldArg,
+    /// New literal value (may be empty for Value)
+    #[arg(long)]
+    pub(crate) value: Option<String>,
+    /// Clear Value; Reference must remain nonempty
+    #[arg(long)]
+    pub(crate) clear: bool,
+    /// Ordered sheet-instance UUID path; omit for the root sheet
+    #[arg(long, value_delimiter = ',')]
+    pub(crate) instance_path: Vec<Uuid>,
+    /// Revision observed when preparing the edit
+    #[arg(long)]
+    pub(crate) expected_model_revision: String,
+    /// Observed journal tip UUID, or none for an empty journal
+    #[arg(long)]
+    pub(crate) expected_tip_transaction: String,
+}
+
 #[derive(clap::Args)]
 pub(crate) struct ProjectPlaceSymbolArgs {
     /// Project root directory

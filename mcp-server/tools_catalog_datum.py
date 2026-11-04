@@ -527,6 +527,7 @@ _GENERATED_SCHEMATIC_TOOL_ORDER = [
     "datum.schematic.delete_symbol",
     "datum.schematic.set_symbol_reference",
     "datum.schematic.set_symbol_value",
+    "datum.schematic.set_symbol_field",
     "datum.schematic.set_symbol_display_mode",
     "datum.schematic.set_symbol_hidden_power_behavior",
     "datum.schematic.set_symbol_unit",

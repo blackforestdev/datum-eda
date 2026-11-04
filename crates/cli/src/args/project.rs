@@ -426,6 +426,8 @@ pub(crate) enum ProjectCommands {
     MirrorSymbol(ProjectMirrorSymbolArgs),
     /// Set one native schematic symbol reference
     SetSymbolReference(ProjectSetSymbolReferenceArgs),
+    /// Edit Reference or Value through the shared, revision-qualified field editor
+    SetSymbolField(ProjectSetSymbolFieldArgs),
     /// Set one native schematic symbol value
     SetSymbolValue(ProjectSetSymbolValueArgs),
     /// Set one native schematic symbol display mode

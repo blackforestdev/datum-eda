@@ -63,12 +63,15 @@ LIBRARY_AUTHORING_CLI_METHODS = {
 }
 
 
+NATIVE_AUTHORING_CLI_METHODS = {"set_symbol_field"}
+
+
 def cli_run_kwargs_for_method(method: str) -> dict[str, Any]:
     run_kwargs: dict[str, Any] = {"capture_output": True, "text": True, "check": False}
     agent_environment = current_agent_subprocess_environment()
     if agent_environment is not None:
         run_kwargs["env"] = agent_environment
-    if method in LIBRARY_AUTHORING_CLI_METHODS:
+    if method in LIBRARY_AUTHORING_CLI_METHODS | NATIVE_AUTHORING_CLI_METHODS:
         env = dict(run_kwargs.get("env", os.environ))
         if agent_environment is None:
             env["DATUM_COMMIT_SOURCE"] = "tool"

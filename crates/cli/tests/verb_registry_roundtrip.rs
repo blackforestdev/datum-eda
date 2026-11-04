@@ -38,6 +38,14 @@ const CLAP_PARSE_FAILURE_MARKERS: &[&str] = &[
 ];
 
 fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
+    if verb_id == "datum.schematic.set_symbol_field" {
+        match param.name {
+            "field" => return "value",
+            "instance_path" => return "00000000-0000-0000-0000-000000000001",
+            "expected_tip_transaction" => return "none",
+            _ => {}
+        }
+    }
     if verb_id == "datum.pcb.align_components" && param.name == "components" {
         return "00000000-0000-0000-0000-000000000001";
     }
