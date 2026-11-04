@@ -179,9 +179,9 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>
                     next_refs[index]["object_revision"].clone();
             }
         }
-        // Annotation retains its one-Symbol owner boundary; metadata must not
-        // grant a new multi-gate reference rewrite history family.
-        if !changed || (annotation && !forward.metadata.is_empty() && members.len() != 1) {
+        // Shared owners retain every member; only the recorded changed members
+        // advance, with paired metadata and exact reference-only source above.
+        if !changed {
             return None;
         }
         allowed["object_revision"] = next["object_revision"].clone();

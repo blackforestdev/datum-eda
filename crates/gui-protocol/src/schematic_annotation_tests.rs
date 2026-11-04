@@ -208,3 +208,57 @@ fn sheet_annotation_review_refuses_incomplete_or_foreign_plan_and_preserves_noop
             .len()
     );
 }
+
+#[test]
+fn sheet_annotation_admits_complete_multigate_owner_and_refuses_missing_sibling() {
+    use super::gate_placement::{action, selected, setup};
+    use eda_engine::api::native_write::schematic_gate_placement::{
+        self as gates, GatePlacementRequest,
+    };
+    let (fixture, mut model, first) = setup();
+    let options = gates::options(&model, first, &[]).unwrap();
+    let request = GatePlacementRequest {
+        proposal_id: Uuid::new_v4(),
+        component_instance: options.component_instance,
+        sheet: options.sheet,
+        instance_path: vec![],
+        gate: options.choices[0].gate,
+        library_symbol: options.choices[0].library_symbol,
+        reference: "U_SECOND9".into(),
+        value: "second".into(),
+        x_nm: 40_000_000,
+        y_nm: 20_000_000,
+        rotation_deg: 0,
+        mirrored: false,
+    };
+    let second = gates::preview(&model, &request).unwrap().symbol.uuid;
+    action(
+        &mut model,
+        &fixture.0,
+        Action::CreateGatePlacement(request.clone()),
+    );
+    action(
+        &mut model,
+        &fixture.0,
+        Action::AcceptApply {
+            proposal_id: request.proposal_id,
+        },
+    );
+    let mut state = selected(&model, &fixture.0, first);
+    assert!(AnnotationEvidence::admit(&state).is_ok());
+    let review = DeleteReview::capture_annotation(&state).unwrap().unwrap();
+    let evidence = review.annotation.as_ref().unwrap();
+    assert_eq!(evidence.summary.symbol_count, 3);
+    assert!(evidence.summary.changes.iter().any(|c| c.symbol == second));
+    state
+        .schematic_authoring
+        .source
+        .as_mut()
+        .unwrap()
+        .sheets
+        .get_mut(&request.sheet)
+        .unwrap()
+        .symbols
+        .remove(&second);
+    assert!(AnnotationEvidence::admit(&state).is_err());
+}

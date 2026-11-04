@@ -61,3 +61,62 @@ fn native_annotation_history_rejects_unrecorded_reference_pose_and_binding_chang
     }
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn annotation_history_refuses_paired_unchanged_sibling_epoch_tamper() {
+    use crate::api::native_write::{
+        schematic_annotation::tests::annotate,
+        schematic_delete_proposal::NativeProposalAction as Action,
+        schematic_gate_placement::tests::{action, setup},
+    };
+    let (root, mut model, first, mut request) = setup("annotation-history-multigate-tamper");
+    request.reference = "U9".into();
+    action(
+        &mut model,
+        &root,
+        Action::CreateGatePlacement(request.clone()),
+    );
+    action(
+        &mut model,
+        &root,
+        Action::AcceptApply {
+            proposal_id: request.proposal_id,
+        },
+    );
+    annotate(&mut model, &root, request.sheet);
+    let original = model.journal.last().unwrap();
+    assert!(family::capture(original).is_some());
+    let mut tampered = original.clone();
+    let mut replaced = None;
+    for op in &mut tampered.operations {
+        if let Operation::SetComponentInstance {
+            component_instance, ..
+        } = op
+        {
+            for member in component_instance["placed_symbol_refs"]
+                .as_array_mut()
+                .unwrap()
+            {
+                if member["object_id"] == json!(first) {
+                    member["object_revision"] =
+                        json!(member["object_revision"].as_u64().unwrap() + 1);
+                }
+            }
+            replaced = Some(component_instance.clone());
+        }
+    }
+    for op in &mut tampered.inverse_operations {
+        if let Operation::SetComponentInstance {
+            previous_component_instance,
+            ..
+        } = op
+        {
+            *previous_component_instance = replaced.clone().unwrap();
+        }
+    }
+    assert!(
+        family::capture(&tampered).is_none(),
+        "pair equality cannot authorize an untouched sibling epoch"
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}

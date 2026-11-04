@@ -13,9 +13,7 @@ pub(in crate::api::native_write) fn current(
             .as_array()
             .is_some_and(|r| r.len() != 1)
     }) {
-        return Err(invalid(
-            "Part assignment and annotation require one Symbol per component",
-        ));
+        return Err(invalid("Part assignment requires one Symbol per component"));
     }
     Ok(value)
 }

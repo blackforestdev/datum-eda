@@ -93,9 +93,11 @@ fn plan(
             vec![],
         ));
     }
-    for symbol in source.symbols.keys() {
-        super::schematic_assignment::component::current(model, *symbol)?;
-    }
+    // Qualify the complete sheet, including owners whose references will not change.
+    super::schematic_assignment::component::current_set(
+        model,
+        &source.symbols.keys().copied().collect(),
+    )?;
     let mut reserved = BTreeSet::new();
     for (sheet_id, s) in &selected.source.sheets {
         for symbol in s.symbols.values() {
@@ -128,8 +130,6 @@ fn plan(
             .or_default()
             .push(symbol);
     }
-    // Qualify every owner, even when its reference will remain unchanged.
-    let component_ops = repin_symbols(model, &originals)?;
     let mut changes = vec![];
     let mut final_refs = reserved.clone();
     for (prefix, mut symbols) in groups {
@@ -180,28 +180,16 @@ fn plan(
             symbol: payload,
         });
     }
-    for op in component_ops {
-        let Operation::SetComponentInstance {
-            ref component_instance,
-            ..
-        } = op
-        else {
-            return Err(invalid(
-                "Annotation ownership builder emitted an unexpected operation",
-            ));
-        };
-        let id: Uuid = serde_json::from_value(
-            component_instance["placed_symbol_refs"][0]["object_id"].clone(),
-        )?;
-        if changed.contains(&id) {
-            operations.push(op);
-        }
-    }
+    let changed_symbols: Vec<_> = originals
+        .into_iter()
+        .filter(|symbol| changed.contains(&symbol.uuid))
+        .collect();
+    operations.extend(repin_symbols(model, &changed_symbols)?);
     Ok((
         AnnotationSummary {
             sheet,
             instance_path: vec![],
-            symbol_count: originals.len(),
+            symbol_count: source.symbols.len(),
             changes,
         },
         operations,
@@ -225,6 +213,9 @@ pub(super) fn build(
         primary_object_id: Some(sheet),
     })
 }
+#[cfg(test)]
+#[path = "schematic_annotation_multigate_tests.rs"]
+mod multigate_tests;
 #[cfg(test)]
 #[path = "schematic_annotation_tests.rs"]
 pub(crate) mod tests;

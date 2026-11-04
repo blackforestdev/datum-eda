@@ -63,12 +63,16 @@ impl AnnotationEvidence {
             if owners.len() > 1
                 || owners.first().is_some_and(|ci| {
                     ci.authority != eda_engine::substrate::ComponentInstanceAuthority::Authored
-                        || ci.placed_symbol_refs.len() != 1
+                        || ci.placed_symbol_refs.is_empty()
+                        || ci
+                            .placed_symbol_refs
+                            .iter()
+                            .any(|id| !sheet.symbols.contains_key(id))
                         || !ci.placed_package_refs.is_empty()
                 })
             {
                 return Err(
-                    "Annotation supports unbound or single-Symbol schematic-only bindings; nothing is omitted",
+                    "Annotation requires complete same-sheet schematic-only bindings; nothing is omitted",
                 );
             }
         }

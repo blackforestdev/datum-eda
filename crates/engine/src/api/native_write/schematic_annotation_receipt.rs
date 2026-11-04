@@ -11,6 +11,19 @@ fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
     let mut guards = BTreeSet::new();
     let mut components = BTreeSet::new();
     let mut owners = BTreeSet::new();
+    let mut bound_members = BTreeSet::new();
+    let changed: BTreeSet<_> = proposal
+        .batch
+        .operations
+        .iter()
+        .filter_map(|op| {
+            if let Operation::SetSchematicSymbol { symbol_id, .. } = op {
+                Some(*symbol_id)
+            } else {
+                None
+            }
+        })
+        .collect();
     for op in &proposal.batch.operations {
         match op {
             Operation::GuardObjectRevision { object_id, .. } => {
@@ -40,14 +53,13 @@ fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
                 let refs = old["placed_symbol_refs"]
                     .as_array()
                     .ok_or_else(|| invalid("Annotation binding references unavailable"))?;
-                if refs.len() != 1
+                if refs.is_empty()
                     || old["placed_package_refs"]
                         .as_array()
                         .is_none_or(|v| !v.is_empty())
                 {
                     return Err(invalid("Annotation binding is not schematic-only"));
                 }
-                let symbol: Uuid = serde_json::from_value(refs[0]["object_id"].clone())?;
                 let mut expected = old.clone();
                 expected["object_revision"] = json!(
                     old["object_revision"]
@@ -55,16 +67,27 @@ fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
                         .and_then(|v| v.checked_add(1))
                         .ok_or_else(|| invalid("Annotation component epoch unavailable"))?
                 );
-                expected["placed_symbol_refs"][0]["object_revision"] = json!(
-                    refs[0]["object_revision"]
-                        .as_u64()
-                        .and_then(|v| v.checked_add(1))
-                        .ok_or_else(|| invalid("Annotation Symbol epoch unavailable"))?
-                );
+                let mut touched = false;
+                for (index, member) in refs.iter().enumerate() {
+                    let symbol: Uuid = serde_json::from_value(member["object_id"].clone())?;
+                    if !bound_members.insert(symbol) {
+                        return Err(invalid("Annotation contains ambiguous component members"));
+                    }
+                    if changed.contains(&symbol) {
+                        touched = true;
+                        owners.insert(symbol);
+                        expected["placed_symbol_refs"][index]["object_revision"] = json!(
+                            member["object_revision"]
+                                .as_u64()
+                                .and_then(|v| v.checked_add(1))
+                                .ok_or_else(|| invalid("Annotation Symbol epoch unavailable"))?
+                        );
+                    }
+                }
                 if old["uuid"] != json!(component_instance_id)
                     || expected != *next
                     || !components.insert(*component_instance_id)
-                    || !owners.insert(symbol)
+                    || !touched
                 {
                     return Err(invalid("Annotation changes unrelated binding data"));
                 }
@@ -75,6 +98,7 @@ fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
     if !is_annotation(proposal)
         || symbols.is_empty()
         || !owners.iter().all(|id| symbols.contains_key(id))
+        || !bound_members.iter().all(|id| guards.contains(id))
         || !symbols
             .keys()
             .chain(&components)

@@ -543,7 +543,9 @@ restated.
   nonempty, without adding hierarchy navigation. Same-sheet Move, fields and
   Delete retain sibling identities through history. Physical, override, stale and
   repeated-source cases refuse; deletion also refuses surviving external dependencies.
-  Part reassignment and sheet annotation retain their narrower admission.
+  Part reassignment retains its single-Symbol admission. Active-sheet annotation
+  also supports validated same-sheet schematic-only multi-Gate owners
+  (`dat-schematic-multigate-annotation-fy5w`), as specified below.
   Independent ordinary GUI checks covered placement preview/cancel/accept, new-member
   Move/value/Delete with sibling preservation, Undo/Redo and cold reopening. All 658
   saved files remained exact. Immediate-restart writer-lock refusal remains separately
@@ -653,7 +655,15 @@ Unsupported ownership, locked or malformed source and stale/repeated occurrences
 refuse the whole action. Reference-only writes preserve raw fields, pin/library
 identity, connectivity and supported component bindings through Undo/Redo and
 reopening. Cancel preserves design source; an already annotated sheet creates no
-draft. Whole-project annotation and the bulk fields table remain separate targets.
+draft. Supported same-sheet multi-Gate annotation retains distinct per-Symbol
+references and the same ordering. It updates each affected owner once, preserving
+shared membership, unchanged sibling revisions and all Gate/pin identities.
+Independent isolated GUI verification covered preview/cancel/accept, an unchanged
+sibling, Undo/Redo and exact cold reopening. A post-Save query hit the separately
+tracked writer-lock issue (`dat-iwxe`); that failed query remains recorded, with
+cold verification completed on the same saved project after owner shutdown.
+Physical, stale and repeated-source owners remain unsupported. Whole-project
+annotation and the bulk fields table remain separate targets.
 
 ## Omitted / Redundant Tools
 

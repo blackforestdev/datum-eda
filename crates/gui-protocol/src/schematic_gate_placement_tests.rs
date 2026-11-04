@@ -16,7 +16,7 @@ use eda_engine::{
 fn provenance() -> WriteProvenance {
     WriteProvenance::new("test", CommitSource::Test, "Gate picker integration")
 }
-fn action(
+pub(super) fn action(
     model: &mut DesignModel,
     root: &std::path::Path,
     action: Action,
@@ -29,7 +29,7 @@ fn action(
     };
     proposal::execute(model, &request).unwrap()
 }
-fn setup() -> (FixtureRoot, DesignModel, Uuid) {
+pub(super) fn setup() -> (FixtureRoot, DesignModel, Uuid) {
     let root =
         FixtureRoot(std::env::temp_dir().join(format!("datum-gate-picker-{}", Uuid::new_v4())));
     let ids = bootstrap_native_project(
@@ -147,7 +147,11 @@ fn setup() -> (FixtureRoot, DesignModel, Uuid) {
     );
     (root, model, first)
 }
-fn selected(model: &DesignModel, root: &std::path::Path, id: Uuid) -> crate::ReviewWorkspaceState {
+pub(super) fn selected(
+    model: &DesignModel,
+    root: &std::path::Path,
+    id: Uuid,
+) -> crate::ReviewWorkspaceState {
     let mut state = workspace(model, root);
     let authority = crate::selection_resolution::NativeSelectionResolution::capture(model).unwrap();
     state.selection = SelectionTarget::Native(Box::new(
