@@ -2,6 +2,8 @@
 
 use datum_gui_protocol::SceneBounds;
 
+mod refresh;
+
 /// Screen-space rectangle used by camera math without depending on a renderer.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CameraViewport {
@@ -88,7 +90,12 @@ impl CameraEngine {
             return;
         }
         let before = screen_to_world(viewport, bounds, *state, config, screen_x, screen_y);
-        state.zoom = (state.zoom * zoom_delta).clamp(config.min_zoom, config.max_zoom);
+        // A refresh can rebase the fit-relative zoom beyond the input limits.
+        // Permit gradual return, never reverse a gesture to snap back in range.
+        state.zoom = (state.zoom * zoom_delta).clamp(
+            config.min_zoom.min(state.zoom),
+            config.max_zoom.max(state.zoom),
+        );
         let after = screen_to_world(viewport, bounds, *state, config, screen_x, screen_y);
         state.center_x_nm += before.0 - after.0;
         state.center_y_nm += before.1 - after.1;

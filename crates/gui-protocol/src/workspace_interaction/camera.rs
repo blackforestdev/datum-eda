@@ -8,10 +8,19 @@ pub fn camera_scene_for_pane(
     state: &ReviewWorkspaceState,
     pane: PaneId,
 ) -> Option<&BoardReviewSceneV1> {
-    if state.project_unopened {
+    if state.ui.layout.zoomed.is_some_and(|zoomed| zoomed != pane) {
         return None;
     }
-    if state.ui.layout.zoomed.is_some_and(|zoomed| zoomed != pane) {
+    resolved_camera_scene_for_pane(state, pane)
+}
+
+/// Document resolution for retaining view state during publication, including
+/// temporarily hidden split panes. Input still uses `camera_scene_for_pane`.
+pub fn resolved_camera_scene_for_pane(
+    state: &ReviewWorkspaceState,
+    pane: PaneId,
+) -> Option<&BoardReviewSceneV1> {
+    if state.project_unopened {
         return None;
     }
     match state.ui.layout.content_for(pane)? {

@@ -1,7 +1,7 @@
 //! Shared transient viewport interaction and camera context for every surface.
 
 mod camera;
-pub use camera::camera_scene_for_pane;
+pub use camera::{camera_scene_for_pane, resolved_camera_scene_for_pane};
 
 use crate::PaneContent;
 

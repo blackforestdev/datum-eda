@@ -141,6 +141,8 @@ mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 #[path = "viewport/runtime_camera_pane.rs"]
 mod runtime_camera_pane;
+#[path = "viewport/runtime_camera_refresh.rs"]
+mod runtime_camera_refresh;
 #[path = "editor/runtime_check_runs.rs"]
 mod runtime_check_runs;
 #[path = "viewport/runtime_geometry_helpers.rs"]

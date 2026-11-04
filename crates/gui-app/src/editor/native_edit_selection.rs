@@ -195,6 +195,9 @@ impl Runtime {
                         == datum_gui_protocol::camera_scene_for_pane(&next, pane)
                 })
         };
+        if !same_world {
+            self.preserve_cameras_for_refresh(&next);
+        }
         let workspace = self.session.workspace_mut();
         let library_selection = workspace
             .library
