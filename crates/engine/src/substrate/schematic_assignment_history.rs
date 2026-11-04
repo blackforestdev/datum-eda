@@ -308,3 +308,7 @@ pub(super) fn matches(
 #[cfg(test)]
 #[path = "schematic_assignment_history_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_annotation_history_tests.rs"]
+mod annotation_tests;

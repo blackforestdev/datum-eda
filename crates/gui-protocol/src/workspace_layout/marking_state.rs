@@ -15,6 +15,46 @@ pub struct MarkingMenuState {
 }
 
 impl MarkingMenuState {
+    /// Navigation marker, never an authored menu key or operation.
+    pub const OVERFLOW: &'static str = "@overflow";
+    pub fn overflow_open(&self) -> bool {
+        self.submenu_path
+            .last()
+            .is_some_and(|key| key == Self::OVERFLOW)
+    }
+    pub fn overflow_slots(&self, menu: &crate::GuiMarkingMenu) -> Vec<String> {
+        let mut slots: Vec<_> = (0..menu.overflow.len())
+            .map(|i| format!("MORE:{i}"))
+            .collect();
+        if self.selection.is_some() {
+            slots.push("SELECT".into());
+        }
+        slots
+    }
+    pub fn open_overflow(&mut self, menu: &crate::GuiMarkingMenu) -> bool {
+        if menu.overflow.is_empty() || !self.submenu_path.is_empty() {
+            return false;
+        }
+        self.submenu_path.push(Self::OVERFLOW.into());
+        self.preview_slot = self.overflow_slots(menu).into_iter().next();
+        true
+    }
+    pub fn menu_item<'a>(
+        &self,
+        menu: &'a crate::GuiMarkingMenu,
+        slot: &str,
+    ) -> Option<&'a crate::GuiMenuItem> {
+        if self.overflow_open() {
+            let index = slot.strip_prefix("MORE:")?.parse::<usize>().ok()?;
+            menu.overflow.get(index)
+        } else if let Some(open) = self.submenu_path.last() {
+            let index = slot.strip_prefix("SUB:")?.parse::<usize>().ok()?;
+            menu.submenus.get(open)?.get(index)
+        } else {
+            menu.cardinal.get(slot).or_else(|| menu.secondary.get(slot))
+        }
+    }
+
     /// A typed action owns one captured authored identity, never the prior selection.
     pub fn schematic_context_target(&self) -> Option<&crate::AuthoredSelectionIdentity> {
         let menu = self.selection.as_ref().filter(|m| m.schematic)?;
@@ -117,6 +157,10 @@ impl MarkingMenuState {
         }
         let class = target.map(|id| id.class);
         let verb = match item.binding() {
+            B::GuiLocal("schematic.annotation.review") if self.menu_key == "schematic.empty" => {
+                crate::schematic_authoring::annotation::AnnotationEvidence::admit(state)?;
+                return Ok(());
+            }
             B::Verb("datum.schematic.set_symbol_part") if class == Some(C::Symbol) => {
                 crate::schematic_authoring::assignment::AssignmentEvidence::admit_target(
                     state,

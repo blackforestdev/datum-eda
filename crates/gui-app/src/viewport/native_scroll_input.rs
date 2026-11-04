@@ -43,6 +43,9 @@ impl crate::Runtime {
         };
         let lines = wheel.lines(20.0);
         if self.marking_menu_active() {
+            if self.move_marking_overflow_focus(if lines > 0.0 { -1 } else { 1 }) {
+                return true;
+            }
             if let Some(menu) = self
                 .session
                 .workspace_mut()

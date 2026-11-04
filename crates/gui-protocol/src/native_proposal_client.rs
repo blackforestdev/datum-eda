@@ -15,6 +15,7 @@ impl NativeProjectClient {
             Action::CreateDelete { proposal_id, .. }
             | Action::CreateDisposition { proposal_id, .. }
             | Action::CreateAssignment { proposal_id, .. }
+            | Action::CreateAnnotation { proposal_id, .. }
             | Action::Preview { proposal_id }
             | Action::AcceptApply { proposal_id }
             | Action::Reject { proposal_id } => *proposal_id,
@@ -56,7 +57,8 @@ impl NativeProjectClient {
         let expected = match action {
             Action::CreateDelete { .. }
             | Action::CreateDisposition { .. }
-            | Action::CreateAssignment { .. } => ProposalStatus::Draft,
+            | Action::CreateAssignment { .. }
+            | Action::CreateAnnotation { .. } => ProposalStatus::Draft,
             Action::AcceptApply { .. } => ProposalStatus::Applied,
             Action::Reject { .. } => ProposalStatus::Rejected,
             Action::Preview { .. } => response.status,
@@ -134,6 +136,7 @@ mod tests {
             ProposalStatus::Rejected,
         ] {
             let response = NativeProposalResponse {
+                annotation: None,
                 assignment: None,
                 disposition: None,
                 proposal_id: Uuid::new_v4(),

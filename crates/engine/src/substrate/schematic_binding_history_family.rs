@@ -35,6 +35,7 @@ struct PoseOps<'a> {
     components: BTreeMap<Uuid, (&'a Value, &'a Value)>,
     removed_wires: BTreeMap<Uuid, &'a Value>,
     added_wires: BTreeMap<Uuid, &'a Value>,
+    metadata: Vec<&'a Operation>,
 }
 impl<'a> PoseOps<'a> {
     fn capture(ops: &'a [Operation]) -> Option<Self> {
@@ -88,6 +89,10 @@ impl<'a> PoseOps<'a> {
                     }
                     None
                 }
+                Operation::SetProposalMetadata { .. } => {
+                    out.metadata.push(op);
+                    None
+                }
                 _ => return None,
             };
             if let Some(sheet) = sheet {
@@ -111,8 +116,19 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
     {
         return None;
     }
+    let annotation = forward.removed_wires.is_empty()
+        && forward
+            .symbols
+            .iter()
+            .all(|(id, next)| reference_only(inverse.symbols[id], next));
+    if !forward.metadata.is_empty() || !inverse.metadata.is_empty() {
+        if !annotation || !paired_annotation_metadata(&forward.metadata, &inverse.metadata) {
+            return None;
+        }
+    }
     for (id, next) in &forward.symbols {
-        if !symbol_pose(inverse.symbols[id], next)
+        if !annotation
+            && !symbol_pose(inverse.symbols[id], next)
             && !(forward.symbols.len() == 1
                 && forward.removed_wires.is_empty()
                 && fields::symbol_fields(inverse.symbols[id], next))
@@ -281,4 +297,48 @@ fn assignment(target: &TransactionRecord) -> Option<(Uuid, Uuid)> {
         }
     }
     (counts == (1, 1)).then_some(pair)
+}
+
+// Multi-Symbol annotation changes only references; unrelated field/pose edits
+// remain subject to their existing exact recorded families.
+fn reference_only(old: &Value, next: &Value) -> bool {
+    if next["reference"]
+        .as_str()
+        .is_none_or(|s| s.is_empty() || s.chars().any(|c| c.is_whitespace() || c.is_control()))
+    {
+        return false;
+    }
+    let mut expected = old.clone();
+    expected["reference"] = next["reference"].clone();
+    expected == *next
+}
+
+fn paired_annotation_metadata(forward: &[&Operation], inverse: &[&Operation]) -> bool {
+    let (
+        [
+            Operation::SetProposalMetadata {
+                proposal_id: a,
+                relative_path: ap,
+                previous_proposal: old,
+                proposal: next,
+            },
+        ],
+        [
+            Operation::SetProposalMetadata {
+                proposal_id: b,
+                relative_path: bp,
+                previous_proposal: back_old,
+                proposal: back_next,
+            },
+        ],
+    ) = (forward, inverse)
+    else {
+        return false;
+    };
+    a == b
+        && ap == bp
+        && old == back_next
+        && next == back_old
+        && old["batch"] == next["batch"]
+        && old["proposal_id"] == next["proposal_id"]
 }

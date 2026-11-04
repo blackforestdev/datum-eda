@@ -55,7 +55,8 @@ pub fn menu_accessibility_nodes(
                     key: Some("S".into()),
                     description: "Open read-only Select menu".into(),
                     available: true,
-                    focused: state.ui.focus == ApplicationFocus::Overlay,
+                    focused: state.ui.focus == ApplicationFocus::Overlay
+                        && marking.preview_slot.as_deref() == Some("SELECT"),
                 });
             }
         }
@@ -165,7 +166,28 @@ fn radial_marking_nodes(
         &format!("Marking menu — {}", marking.menu_key),
     )];
     let overlay = state.ui.focus == ApplicationFocus::Overlay;
-    if let Some(sub_key) = marking.submenu_path.last() {
+    if marking.overflow_open() {
+        for (index, item) in menu.overflow.iter().enumerate() {
+            nodes.push(radial_item_node(
+                &root,
+                item,
+                &format!("MORE:{index}"),
+                marking,
+                overlay,
+                state,
+            ));
+        }
+        nodes.push(MenuAccessibleNode {
+            id: format!("{root}/back"),
+            parent: Some(root.clone()),
+            name: "Back".into(),
+            role: MenuAccessibleRole::MenuItem,
+            key: Some("Escape".into()),
+            description: "Return to the wheel".into(),
+            available: true,
+            focused: false,
+        });
+    } else if let Some(sub_key) = marking.submenu_path.last() {
         nodes.push(MenuAccessibleNode {
             id: format!("{root}/back"),
             parent: Some(root.clone()),
@@ -190,11 +212,17 @@ fn radial_marking_nodes(
                 nodes.push(radial_item_node(&root, item, slot, marking, overlay, state));
             }
         }
-        for (index, item) in menu.overflow.iter().enumerate() {
-            let slot = format!("MORE:{index}");
-            nodes.push(radial_item_node(
-                &root, item, &slot, marking, overlay, state,
-            ));
+        if !menu.overflow.is_empty() {
+            nodes.push(MenuAccessibleNode {
+                id: format!("{root}/MORE"),
+                parent: Some(root.clone()),
+                name: "More".into(),
+                role: MenuAccessibleRole::MenuItem,
+                key: Some("M".into()),
+                description: "Open additional context actions".into(),
+                available: true,
+                focused: overlay && marking.preview_slot.as_deref() == Some("MORE"),
+            });
         }
     }
     nodes

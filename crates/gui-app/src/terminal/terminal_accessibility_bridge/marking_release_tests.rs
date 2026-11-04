@@ -146,7 +146,7 @@ fn native_outside_right_release_dismisses_without_acquisition_and_preserves_insi
     open(&mut r, anchor);
     let card = region(
         &r,
-        |t| matches!(t, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT"),
+        |t| matches!(t, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT" || slot == "MORE"),
     );
     let card_point = center(&card);
     release(&mut r, card_point, true);
@@ -173,10 +173,23 @@ fn native_outside_right_release_dismisses_without_acquisition_and_preserves_insi
         open(&mut r, anchor);
         let select = region(
             &r,
-            |t| matches!(t, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT"),
+            |t| matches!(t, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT" || slot == "MORE"),
         );
         assert!(r.select_hit_target(&select.target));
         present(&mut r);
+        if r.workspace()
+            .ui
+            .marking_menu
+            .as_ref()
+            .is_some_and(|m| m.overflow_open())
+        {
+            let select = region(
+                &r,
+                |t| matches!(t, HitTarget::MarkingMenuItem {slot,..} if slot == "SELECT"),
+            );
+            assert!(r.select_hit_target(&select.target));
+            present(&mut r);
+        }
         let panel = region(&r, |t| matches!(t, HitTarget::MarkingMenuSurface { .. }));
         let point = match location {
             "header" => (panel.rect.x + 1.0, panel.rect.y + 10.0),
@@ -211,7 +224,7 @@ fn native_outside_right_release_dismisses_without_acquisition_and_preserves_insi
         open(&mut r, anchor);
         let item = region(
             &r,
-            |t| matches!(t, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT"),
+            |t| matches!(t, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT" || slot == "MORE"),
         );
         let mut hits = r.presented_hits.regions().to_vec();
         if invalid == "missing" {

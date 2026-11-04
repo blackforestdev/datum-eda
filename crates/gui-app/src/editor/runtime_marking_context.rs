@@ -33,22 +33,10 @@ impl Runtime {
                 .marking_menus
                 .get(menu_key)
                 .ok_or("Context menu unavailable")?;
-            let item = if let Some(submenu) = marking.submenu_path.last() {
-                slot.strip_prefix("SUB:")
-                    .and_then(|n| n.parse::<usize>().ok())
-                    .and_then(|n| menu.submenus.get(submenu)?.get(n))
-            } else {
-                menu.cardinal
-                    .get(slot)
-                    .or_else(|| menu.secondary.get(slot))
-                    .or_else(|| {
-                        slot.strip_prefix("MORE:")
-                            .and_then(|n| n.parse::<usize>().ok())
-                            .and_then(|n| menu.overflow.get(n))
-                    })
-            }
-            .cloned()
-            .ok_or("Context action unavailable")?;
+            let item = marking
+                .menu_item(menu, slot)
+                .cloned()
+                .ok_or("Context action unavailable")?;
             if matches!(
                 item.binding(),
                 datum_gui_protocol::GuiMenuBinding::Submenu(_)

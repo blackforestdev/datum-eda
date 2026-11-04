@@ -62,6 +62,7 @@ fn review_fixture() -> (
         waivers: vec![],
     });
     state.schematic_authoring.delete_review = Some(DeleteReview {
+        annotation: None,
         assignment: None,
         disposition: None,
         basis: datum_gui_protocol::AuthoringViewBasis {
@@ -90,6 +91,7 @@ fn review_fixture() -> (
         pending: None,
         refusal: None,
         response: Some(NativeProposalResponse {
+            annotation: None,
             assignment: None,
             disposition: None,
             proposal_id,
@@ -451,4 +453,59 @@ fn part_assignment_inline_review_names_binding_without_deleting_symbol_geometry(
             |t| t.text.contains(&choice.part.to_string()) || t.text.contains("accept deletion")
         )
     );
+}
+
+#[test]
+fn sheet_annotation_review_uses_shared_inline_acceptance_without_deletion_ghosts() {
+    use datum_gui_protocol::schematic_authoring::annotation::AnnotationEvidence;
+    use eda_engine::api::native_write::schematic_delete_proposal::{
+        AnnotationChange, AnnotationSummary,
+    };
+    let (mut state, scene, _, symbol) = review_fixture();
+    let review = state.schematic_authoring.delete_review.as_mut().unwrap();
+    let summary = AnnotationSummary {
+        sheet: review.basis.source,
+        instance_path: vec![],
+        symbol_count: 2,
+        changes: vec![AnnotationChange {
+            symbol,
+            previous_reference: "R22".into(),
+            reference: "R1".into(),
+        }],
+    };
+    review.targets.clear();
+    review.response.as_mut().unwrap().deleted.clear();
+    review.response.as_mut().unwrap().annotation = Some(summary.clone());
+    review.annotation = Some(AnnotationEvidence {
+        summary,
+        preview: scene.clone(),
+    });
+    let viewport = RectPx {
+        x: 0.,
+        y: 0.,
+        width: 800.,
+        height: 600.,
+    };
+    let camera = CameraState::fit_to_bounds(&scene.bounds);
+    let projection = Projection::new(viewport, &scene.bounds, camera);
+    let mut plan =
+        native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
+    let mut quads = vec![];
+    let mut text = vec![];
+    render(
+        &mut quads,
+        &mut text,
+        &scene,
+        viewport,
+        &projection,
+        &state,
+        &mut plan,
+    );
+    assert!(
+        text.iter()
+            .any(|t| t.text.contains("Tab accept annotation"))
+    );
+    assert!(text.iter().any(|t| t.text.contains("R22 -> R1")));
+    assert!(!text.iter().any(|t| t.text.contains("deletion")));
+    assert!(text.iter().all(|t| t.clip_bounds.is_some()));
 }

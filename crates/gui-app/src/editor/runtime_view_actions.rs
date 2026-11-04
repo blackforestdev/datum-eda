@@ -121,6 +121,7 @@ impl Runtime {
             }
             GuiLocalHandler::OpenProject => self.open_project(),
             GuiLocalHandler::SymbolFields => self.begin_selected_symbol_edit(),
+            GuiLocalHandler::AnnotateSheet => self.begin_schematic_annotation(),
             GuiLocalHandler::DeleteSchematicSelection => self.delete_selected_schematic(),
             GuiLocalHandler::PowerPort => {
                 if let Some(reason) =

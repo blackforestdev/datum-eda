@@ -3,6 +3,8 @@
 //! continues through the established verb or GUI-local action boundaries.
 
 use super::*;
+#[path = "runtime_marking_navigation.rs"]
+mod marking_navigation;
 use crate::runtime_view_actions::action_evidence::EntrySurface;
 
 #[derive(Default)]
@@ -31,7 +33,8 @@ impl MenuKeyOwnership {
 }
 
 fn menu_owns_escape_press(active_menu: Option<&str>, marking: Option<&MarkingMenuState>) -> bool {
-    active_menu.is_some() || marking.is_some_and(|menu| menu.selection.is_some())
+    active_menu.is_some()
+        || marking.is_some_and(|menu| menu.selection.is_some() || menu.overflow_open())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -144,6 +147,9 @@ impl Runtime {
                 self.refresh_dialog_state();
                 true
             }
+            HitTarget::MarkingMenuItem { slot, .. } if slot == "MORE" => {
+                self.open_marking_overflow()
+            }
             HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT" => {
                 self.open_native_select_list()
             }
@@ -176,76 +182,6 @@ impl Runtime {
         Some(handled)
     }
 
-    /// Resolve the item at `slot` in the currently-open wheel (top-level cardinals/
-    /// secondaries, or the `SUB:n` leaves of the sub-wheel named by the last
-    /// `submenu_path` entry); if it is a submenu parent, push its key so the
-    /// sub-wheel opens. Returns true when a sub-wheel was opened — navigation only,
-    /// no operation is invoked.
-    fn marking_open_submenu_if_parent(&mut self, menu_key: &str, slot: &str) -> bool {
-        let Some(submenu_key) = self.resolve_marking_submenu_at(menu_key, slot) else {
-            return false;
-        };
-        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
-            return false;
-        };
-        menu.submenu_path.push(submenu_key);
-        menu.preview_slot = None;
-        self.invalidate_frame();
-        true
-    }
-
-    fn resolve_marking_submenu_at(&self, menu_key: &str, slot: &str) -> Option<String> {
-        let model = datum_gui_protocol::gui_menu_model::default_gui_menu_model().ok()?;
-        let open = self
-            .workspace()
-            .ui
-            .marking_menu
-            .as_ref()?
-            .submenu_path
-            .last()
-            .cloned();
-        Self::resolve_submenu_key(model, menu_key, open.as_deref(), slot)
-    }
-
-    /// Pure resolution: the submenu key a `slot` opens, or None for an inert leaf.
-    /// `open_submenu` is the currently-open sub-wheel (None at top level, where
-    /// `slot` is a compass direction; otherwise `slot` is `SUB:n`). Kept free of
-    /// runtime state so it is unit-testable against the live menu_model.
-    fn resolve_submenu_key(
-        model: &datum_gui_protocol::gui_menu_model::GuiMenuModel,
-        menu_key: &str,
-        open_submenu: Option<&str>,
-        slot: &str,
-    ) -> Option<String> {
-        let menu = model.marking_menus.get(menu_key)?;
-        let item = if let Some(open) = open_submenu {
-            let index: usize = slot.strip_prefix("SUB:")?.parse().ok()?;
-            menu.submenus.get(open)?.get(index)?
-        } else {
-            menu.cardinal
-                .get(slot)
-                .or_else(|| menu.secondary.get(slot))?
-        };
-        match item.binding() {
-            datum_gui_protocol::GuiMenuBinding::Submenu(key) => Some(key.to_string()),
-            _ => None,
-        }
-    }
-
-    /// Pop one sub-wheel level (back). Returns false at the root (nothing to pop).
-    fn marking_pop_submenu(&mut self) -> bool {
-        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
-            return false;
-        };
-        if menu.submenu_path.is_empty() {
-            return false;
-        }
-        menu.submenu_path.pop();
-        menu.preview_slot = None;
-        self.invalidate_frame();
-        true
-    }
-
     pub(super) fn handle_menu_key(&mut self, event: &KeyEvent) -> bool {
         self.trace_schematic_creation_event("menu key", Some(event));
         let ui = &self.workspace().ui;
@@ -255,6 +191,9 @@ impl Runtime {
             .menu_keys
             .consume_escape_release(&event.logical_key, event.state, menu_active)
         {
+            return true;
+        }
+        if self.handle_marking_overflow_key(event) {
             return true;
         }
         if self.handle_marking_selection_key(event) {
@@ -311,51 +250,6 @@ impl Runtime {
 
     pub(super) fn marking_menu_active(&self) -> bool {
         self.workspace().ui.marking_menu.is_some()
-    }
-
-    pub(super) fn update_marking_menu_preview(&mut self, pos: (f32, f32)) -> bool {
-        if self
-            .workspace()
-            .ui
-            .marking_menu
-            .as_ref()
-            .and_then(|m| m.selection.as_ref())
-            .is_some_and(|m| m.open)
-        {
-            let target = self.presented_hits.hit_test(pos.0, pos.1).cloned();
-            let menu = self
-                .session
-                .workspace_mut()
-                .ui
-                .marking_menu
-                .as_mut()
-                .unwrap();
-            let changed = runtime_selection_menu::focus_pointer_candidate(menu, target.as_ref());
-            if changed {
-                self.invalidate_frame();
-            }
-            return changed;
-        }
-        let Some(menu) = self.session.workspace_mut().ui.marking_menu.as_mut() else {
-            return false;
-        };
-        let dx = (pos.0 - menu.anchor_x_px as f32).round() as i32;
-        let dy = (pos.1 - menu.anchor_y_px as f32).round() as i32;
-        // Inside a sub-wheel the gesture targets a content-sized SUB:n slot; at the
-        // top level it targets a compass slot.
-        let next_slot = if let Some(open) = menu.submenu_path.last() {
-            marking_submenu_slot_for_delta(&menu.menu_key, open, dx, dy)
-        } else {
-            marking_slot_for_delta(dx, dy)
-        };
-        if menu.gesture_dx_px == dx && menu.gesture_dy_px == dy && menu.preview_slot == next_slot {
-            return false;
-        }
-        menu.gesture_dx_px = dx;
-        menu.gesture_dy_px = dy;
-        menu.preview_slot = next_slot;
-        self.invalidate_frame();
-        true
     }
 
     pub(super) fn dismiss_marking_menu(&mut self) -> bool {

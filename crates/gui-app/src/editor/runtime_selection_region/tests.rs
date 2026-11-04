@@ -224,7 +224,7 @@ fn authored_label_drag_arms_region_and_preserves_atomic_refusal() {
         assert!(runtime.open_marking_menu_at_cursor());
         present(&mut runtime);
         let card = runtime.presented_hits.regions().iter().find(|hit| {
-            matches!(&hit.target, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT")
+            matches!(&hit.target, HitTarget::MarkingMenuItem { slot, .. } if slot == "SELECT" || slot == "MORE")
         }).unwrap().rect;
         runtime.last_cursor_pos = Some((card.x + card.width * 0.5, card.y + card.height * 0.5));
         runtime.modifiers = ModifiersState::SHIFT;

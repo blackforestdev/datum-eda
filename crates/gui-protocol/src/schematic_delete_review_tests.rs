@@ -58,6 +58,7 @@ fn workspace(
 }
 fn response(review: &DeleteReview) -> NativeProposalResponse {
     NativeProposalResponse {
+        annotation: None,
         assignment: None,
         disposition: None,
         proposal_id: review.proposal_id,
@@ -285,6 +286,7 @@ fn erc_disposition_review_freezes_evidence_and_requires_explicit_accept_or_dismi
     assert_eq!(rationale, " Intentional test point ");
     let evidence = review.disposition.as_ref().unwrap();
     let mut receipt = NativeProposalResponse {
+        annotation: None,
         assignment: None,
         proposal_id: review.proposal_id,
         status: ProposalStatus::Draft,
@@ -451,6 +453,7 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
         transaction_id: None,
         deleted: vec![],
         disposition: None,
+        annotation: None,
         assignment: Some(AssignmentSummary {
             symbol: evidence.target.id,
             sheet: source.uuid,
@@ -624,3 +627,6 @@ fn erc_disposition_native_diagnostic_entry_uses_exact_current_producing_checkrun
 
 #[path = "schematic_bound_delete_tests.rs"]
 mod bound_delete;
+
+#[path = "schematic_annotation_tests.rs"]
+mod annotation;

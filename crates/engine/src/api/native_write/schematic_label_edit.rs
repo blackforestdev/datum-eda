@@ -1,11 +1,11 @@
 //! Selected label text/kind edits retain source identity and canonical history.
 use super::{
-    context::{PreparedWrite, WriteProvenance},
+    context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
-    schematic_connectivity::build_set_schematic_label,
     schematic_selection_edit::selected_source,
+    schematic_symbol_payload::{member_payload, source_sheet_payload},
 };
-use crate::{error::EngineError, schematic::LabelKind};
+use crate::{error::EngineError, schematic::LabelKind, substrate::Operation};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -57,15 +57,33 @@ fn rename_label(
     let original = &source.sheets[&sheet].labels[&params.label];
     let mut label = original.clone();
     label.name = params.name;
+    let kind_supplied = params.kind.is_some();
     if let Some(kind) = params.kind {
         label.kind = kind.into();
     }
     if &label == original {
         return Err(EngineError::Validation("Label fields are unchanged".into()));
     }
-    build_set_schematic_label(context.model, provenance, sheet, &label)
+    let raw = source_sheet_payload(context.model, sheet, original.uuid)?;
+    let mut payload = member_payload(&raw, "labels", original.uuid, original)?;
+    payload["name"] = serde_json::Value::String(label.name);
+    if kind_supplied {
+        payload["kind"] = serde_json::to_value(label.kind)?;
+    }
+    BatchComposer::compose(context.model, provenance)
+        .push_op(Operation::SetSchematicLabel {
+            sheet_id: sheet,
+            label_id: original.uuid,
+            label: payload,
+        })
+        .primary_object(original.uuid)
+        .finish()
 }
 
 #[cfg(test)]
 #[path = "schematic_label_edit_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_label_port_payload_tests.rs"]
+mod payload_tests;

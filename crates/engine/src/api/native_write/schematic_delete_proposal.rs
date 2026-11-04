@@ -1,5 +1,6 @@
 //! Typed native manual commands through the existing Proposal lifecycle.
 //! No direct-write verb is registered: the complete set always requires review.
+pub use super::schematic_annotation::{AnnotationChange, AnnotationSummary};
 pub use super::schematic_assignment::{AssignmentChoice, AssignmentSummary};
 pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
 use super::{context::WriteProvenance, registry::NativeWriteContext, schematic_delete};
@@ -51,6 +52,11 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateAnnotation {
+        proposal_id: Uuid,
+        sheet: Uuid,
+        instance_path: Vec<Uuid>,
+    },
     CreateAssignment {
         proposal_id: Uuid,
         symbol: Uuid,
@@ -84,7 +90,8 @@ pub enum NativeProposalAction {
 impl NativeProposalAction {
     pub fn proposal_id(&self) -> Uuid {
         match self {
-            Self::CreateAssignment { proposal_id, .. }
+            Self::CreateAnnotation { proposal_id, .. }
+            | Self::CreateAssignment { proposal_id, .. }
             | Self::CreateDisposition { proposal_id, .. }
             | Self::CreateDelete { proposal_id, .. }
             | Self::Preview { proposal_id }
@@ -116,6 +123,8 @@ pub struct NativeProposalResponse {
     pub current_model_revision: String,
     pub transaction_tip: Option<Uuid>,
     pub deleted: Vec<DeletedObject>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub annotation: Option<AnnotationSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disposition: Option<DispositionSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -170,6 +179,29 @@ pub fn execute(
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateAnnotation {
+            sheet,
+            instance_path,
+            ..
+        } => {
+            let mut write = super::schematic_annotation::build(model, *sheet, instance_path)?;
+            write.batch.batch_id = id;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale:
+                        "Review deterministic reference annotation for the complete active sheet"
+                            .into(),
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
+
         NativeProposalAction::CreateAssignment {
             symbol,
             instance_path,
@@ -315,6 +347,16 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        annotation: if super::schematic_annotation::is_annotation(proposal) {
+            let detail = super::schematic_annotation::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         disposition: if super::schematic_disposition::is_disposition(proposal) {
             Some(super::schematic_disposition::summary(
                 model, proposal, false,
@@ -348,6 +390,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
         return Err(invalid(
             "This native action requires a manual proposal for this project",
         ));
+    }
+    if super::schematic_annotation::is_annotation(p) {
+        super::schematic_annotation::validate_recorded(p)?;
+        return Ok(p);
     }
     if super::schematic_assignment::is_assignment(p) {
         super::schematic_assignment::validate_recorded(p)?;
@@ -384,6 +430,9 @@ fn validate_disposition_current(
     model: &DesignModel,
     proposal: &Proposal,
 ) -> Result<(), EngineError> {
+    if super::schematic_annotation::is_annotation(proposal) {
+        super::schematic_annotation::summary(model, proposal, true)?;
+    }
     if super::schematic_assignment::is_assignment(proposal) {
         super::schematic_assignment::summary(model, proposal, true)?;
     }

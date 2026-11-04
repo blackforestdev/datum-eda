@@ -1,18 +1,17 @@
 //! Native interface-port create/edit/delete through canonical schematic writers.
 use super::{
-    context::{PreparedWrite, WriteProvenance},
+    context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
-    schematic_connectivity::{
-        build_create_schematic_port, build_delete_schematic_port, build_set_schematic_port,
-    },
+    schematic_connectivity::{build_create_schematic_port, build_delete_schematic_port},
     schematic_edit::prepare_native_birth,
     schematic_selection_edit::selected_source,
+    schematic_symbol_payload::{member_payload, set_point, source_sheet_payload},
 };
 use crate::{
     error::EngineError,
     ir::geometry::Point,
     schematic::{HierarchicalPort, PortDirection},
-    substrate::ElectricalSelectionSnapshot,
+    substrate::{ElectricalSelectionSnapshot, Operation},
 };
 use serde::Deserialize;
 use uuid::Uuid;
@@ -85,7 +84,20 @@ fn place_port(
         if source.sheets[&sheet].ports[&port.uuid] == port {
             return Err(invalid("Port fields are unchanged"));
         }
-        return build_set_schematic_port(context.model, provenance, sheet, &port);
+        let original = &source.sheets[&sheet].ports[&port.uuid];
+        let raw = source_sheet_payload(context.model, sheet, original.uuid)?;
+        let mut payload = member_payload(&raw, "ports", original.uuid, original)?;
+        payload["name"] = serde_json::Value::String(port.name);
+        payload["direction"] = serde_json::to_value(port.direction)?;
+        set_point(&mut payload["position"], port.position);
+        return BatchComposer::compose(context.model, provenance)
+            .push_op(Operation::SetSchematicPort {
+                sheet_id: sheet,
+                port_id: original.uuid,
+                port: payload,
+            })
+            .primary_object(original.uuid)
+            .finish();
     }
     if params
         .instance_path

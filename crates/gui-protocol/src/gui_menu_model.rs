@@ -197,6 +197,12 @@ impl GuiMenuItem {
         use crate::schematic_authoring::selected;
         if matches!(
             self.binding(),
+            GuiMenuBinding::GuiLocal("schematic.annotation.review")
+        ) {
+            return crate::schematic_authoring::annotation::AnnotationEvidence::admit(state).err();
+        }
+        if matches!(
+            self.binding(),
             GuiMenuBinding::Verb("datum.schematic.set_symbol_part")
         ) {
             return crate::schematic_authoring::assignment::AssignmentEvidence::admit_selected(

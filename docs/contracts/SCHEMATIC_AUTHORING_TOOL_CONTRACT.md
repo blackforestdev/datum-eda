@@ -618,6 +618,20 @@ create-bus, set-symbol-field. Proposal-first class:
 delete-of-a-board-bound-symbol, bulk delete, bulk reference reannotate,
 any sheet-structure change that rewires existing nets, author-waiver.
 
+Bounded active-sheet annotation (`dat-schematic-sheet-annotation-uy8a`) uses
+**Annotate This Sheet…** in the existing blank-canvas overflow and shared Proposal
+review. Every changed reference is shown as old-to-new text on the immutable
+scene; acceptance changes the complete eligible sheet atomically. Prefixes come
+from current references with trailing ASCII digits or a terminal `?` removed;
+within each exact prefix, source y/x/UUID order receives numbers from 1, skipping
+references reserved on other sheets. Active-sheet duplicates can be repaired;
+other sheets retain their references, and the complete final set must be unique.
+Unsupported ownership, locked or malformed source and stale/repeated occurrences
+refuse the whole action. Reference-only writes preserve raw fields, pin/library
+identity, connectivity and supported component bindings through Undo/Redo and
+reopening. Cancel preserves design source; an already annotated sheet creates no
+draft. Whole-project annotation and the bulk fields table remain separate targets.
+
 ## Omitted / Redundant Tools
 
 - **rotate-symbol, mirror-symbol** — pure parameters of

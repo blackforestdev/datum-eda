@@ -1,9 +1,38 @@
-//! Manual batch deletion uses the existing Proposal worker and inline review.
+//! Source-qualified schematic actions share one Proposal worker and inline review.
 use super::*;
 use datum_gui_protocol::schematic_authoring::delete_review::DeleteReview;
 use eda_engine::api::native_write::schematic_delete_proposal::NativeProposalResponse;
 
 impl Runtime {
+    pub(crate) fn begin_schematic_annotation(&mut self) -> bool {
+        let result = (|| {
+            self.selected_schematic_idle()?;
+            DeleteReview::capture_annotation(self.workspace())
+        })();
+        match result {
+            Ok(Some(review)) => {
+                self.session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .delete_review = Some(review);
+                self.queue_native_edit(NativeEditAction::Proposal)
+            }
+            Ok(None) => {
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Tool,
+                    "This sheet is already annotated",
+                );
+                self.invalidate_frame();
+                true
+            }
+            Err(reason) => {
+                self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
+                self.invalidate_frame();
+                true
+            }
+        }
+    }
+
     pub(super) fn begin_schematic_delete_review(&mut self) -> bool {
         let result = (|| {
             self.selected_schematic_idle()?;

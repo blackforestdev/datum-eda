@@ -9,6 +9,8 @@ static MARKING_MENU_MODEL: OnceLock<Result<datum_gui_protocol::GuiMenuModel, Str
     OnceLock::new();
 static MARKING_ICON_SET: OnceLock<Result<GuiIconSet, String>> = OnceLock::new();
 
+mod linear_list;
+mod overflow;
 mod selection_list;
 mod sub_wheel;
 
@@ -162,6 +164,18 @@ fn render_preview(
         );
         return;
     };
+    if preview.overflow_open() {
+        overflow::render(
+            state,
+            preview,
+            menu,
+            layout,
+            panel_quads,
+            text_runs,
+            hit_regions,
+        );
+        return;
+    }
     let icon_set = marking_icon_set().ok();
     let anchor = clamp_anchor(preview, layout.viewport);
     draw_marking_trail(preview, anchor, panel_quads);
@@ -366,27 +380,11 @@ fn render_slots(
             rect,
         });
     }
-    if preview.selection.is_some() {
-        selection_list::entry(
-            preview,
-            slot_rect(anchor, "MORE", bounds),
-            panel_quads,
-            text_runs,
-            hit_regions,
-        );
-    } else if !menu.overflow.is_empty() {
-        let rect = slot_rect(anchor, "MORE", bounds);
-        panel_quads.push(Quad::from_rect(rect, PANEL_BG));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
-        draw_text(
-            "MORE...",
-            rect.x + design_tokens::spacing::SP_03,
-            rect.y + design_tokens::spacing::SP_03,
-            design_tokens::typography::CAPTION_SIZE,
-            TEXT_MUTED,
-            TextFace::Ui,
-            text_runs,
-        );
+    let rect = slot_rect(anchor, "MORE", bounds);
+    if !menu.overflow.is_empty() {
+        overflow::entry(preview, rect, panel_quads, text_runs, hit_regions);
+    } else if preview.selection.is_some() {
+        selection_list::entry(preview, rect, panel_quads, text_runs, hit_regions);
     }
 }
 
@@ -694,3 +692,6 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+mod overflow_tests;

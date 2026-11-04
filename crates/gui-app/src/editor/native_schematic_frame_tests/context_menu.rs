@@ -118,6 +118,12 @@ impl MenuWorkflow {
                     .unwrap()
                     .scene_id
                 );
+                if r.presented_hits.regions().iter().any(|hit| matches!(&hit.target, HitTarget::MarkingMenuItem {slot,..} if slot == "MORE")) {
+                    self.click_slot(events, "MORE");
+                    self.host.since = Instant::now();
+                    self.host.app.request_workspace_redraw();
+                    return; // Wait for the real linear overflow to be presented, then Select.
+                }
                 self.click_slot(events, "SELECT");
             }
             3 | 7 => {

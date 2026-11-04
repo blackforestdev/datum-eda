@@ -26,6 +26,8 @@ pub use custom_field::{CustomFieldControl, CustomFieldDraft};
 mod bus_entry;
 pub use bus_entry::BusEntryDraft;
 
+#[path = "schematic_annotation.rs"]
+pub mod annotation;
 #[path = "schematic_assignment.rs"]
 pub mod assignment;
 #[path = "schematic_delete_review.rs"]

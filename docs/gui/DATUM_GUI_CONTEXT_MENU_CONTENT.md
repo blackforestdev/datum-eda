@@ -181,6 +181,13 @@
 - Overflow: Net Class Directive · No-Connect · Junction · Text/Graphic · Paste ▪ · ⚠ Annotate Schematic · Run ERC ▪ · Zoom/Grid ▪ · Enter/Leave Sheet ▪ · Schematic Setup ▪
 - Submenu: **Place ▸** (full palette mirror)
 
+Native active-sheet delivery configures **Annotate This Sheet…** in this existing
+blank-canvas overflow. It reviews the complete eligible active source sheet,
+shows each old-to-new reference in the immutable scene preview, and requires
+explicit Proposal acceptance; dismissal leaves the design unchanged. This bounded
+entry does not implement the wider **Annotate Schematic** target above or require
+hierarchical sheet-body selection (`dat-schematic-sheet-annotation-uy8a`).
+
 ### Multi-Selection — *intersection / batch launcher*
 - **N** Move ⚡ · **E** Rotate ▪ · **S** Mirror H/V ▪ · **W** Duplicate ▪
 - Secondary: Align ▸★ · Assign Netclass (if nets) ▪ · Copy/Cut ▪ · Cross-probe to PCB ⌖★

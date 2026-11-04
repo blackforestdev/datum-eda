@@ -1,4 +1,4 @@
-//! Shared frozen human review, configured by deletion or ERC disposition. Proposal owns mutation.
+//! Shared frozen human review, configured by purpose. Proposal owns mutation.
 use crate::{
     AuthoredSelectionClass as Class, AuthoredSelectionIdentity, AuthoringViewBasis,
     BoardReviewSceneV1, PaneContent, ReviewWorkspaceState, SelectionTarget,
@@ -14,6 +14,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub annotation: Option<super::annotation::AnnotationEvidence>,
     pub disposition: Option<super::disposition::DispositionEvidence>,
     pub assignment: Option<super::assignment::AssignmentEvidence>,
     pub basis: AuthoringViewBasis,
@@ -100,6 +101,21 @@ impl DeleteReview {
         review.disposition = Some(evidence);
         Ok(review)
     }
+    pub fn capture_annotation(state: &ReviewWorkspaceState) -> Result<Option<Self>, String> {
+        super::annotation::AnnotationEvidence::admit(state)?;
+        let mut review = Self::capture_source(state)?;
+        let evidence = super::annotation::AnnotationEvidence::capture(state, &review)?;
+        if evidence.summary.changes.is_empty() {
+            return Ok(None);
+        }
+        review.pending = Some(NativeProposalAction::CreateAnnotation {
+            proposal_id: review.proposal_id,
+            sheet: review.basis.source,
+            instance_path: evidence.summary.instance_path.clone(),
+        });
+        review.annotation = Some(evidence);
+        Ok(Some(review))
+    }
     pub fn capture_assignment(state: &ReviewWorkspaceState) -> Result<Self, String> {
         let evidence = super::assignment::AssignmentEvidence::selected(state)?;
         let mut review = Self::capture_source(state)?;
@@ -134,6 +150,7 @@ impl DeleteReview {
             .ok_or("Source view unavailable")?
             .clone();
         Ok(Self {
+            annotation: None,
             disposition: None,
             assignment: None,
             revision: basis.revision.clone(),
@@ -205,6 +222,14 @@ impl DeleteReview {
                 if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
             (None, None) => {}
             _ => return Err("Proposal assignment identity changed".into()),
+        }
+        match (&self.annotation, &response.annotation) {
+            (Some(evidence), Some(summary))
+                if evidence.summary == *summary && response.deleted.is_empty() => {}
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("Proposal annotation changed; dismiss and review again".into()),
         }
         self.revision = response.current_model_revision.clone();
         self.tip = response.transaction_tip;
@@ -298,7 +323,11 @@ impl DeleteReview {
     }
     /// Display-only replacement; the source Sheet and exact frozen targets remain intact.
     pub fn preview_scene(&self) -> BoardReviewSceneV1 {
-        let mut scene = self.scene.clone();
+        let mut scene = if let Some(evidence) = &self.annotation {
+            evidence.preview.clone()
+        } else {
+            self.scene.clone()
+        };
         let ids = self.deleted_sources();
         let text_keys: std::collections::BTreeSet<_> = scene
             .board_texts
@@ -323,6 +352,13 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(evidence) = &self.annotation {
+            return format!(
+                "Annotate this sheet · {} of {} references change",
+                evidence.summary.changes.len(),
+                evidence.summary.symbol_count
+            );
+        }
         if let Some(evidence) = &self.assignment {
             return format!("Assign Part · {}", evidence.options.original.reference);
         }
@@ -352,6 +388,15 @@ impl DeleteReview {
         )
     }
     pub fn names(&self) -> String {
+        if let Some(evidence) = &self.annotation {
+            return evidence
+                .summary
+                .changes
+                .iter()
+                .map(|change| format!("{} -> {}", change.previous_reference, change.reference))
+                .collect::<Vec<_>>()
+                .join(", ");
+        }
         if let Some(evidence) = &self.assignment {
             return format!("{} · {}", evidence.part_label(), evidence.gate_label());
         }

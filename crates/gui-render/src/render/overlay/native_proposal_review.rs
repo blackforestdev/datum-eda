@@ -108,7 +108,9 @@ pub(super) fn render(
     } else if review.accepted() && review.ready() && review.current(state) {
         "Tab retry apply · Esc close review"
     } else if review.ready() && review.current(state) {
-        if review.assignment.is_some() {
+        if review.annotation.is_some() {
+            "Tab accept annotation · Esc dismiss"
+        } else if review.assignment.is_some() {
             "Tab accept assignment · Esc dismiss"
         } else if review.disposition.is_some() {
             "Tab accept disposition · Esc dismiss"
