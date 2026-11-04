@@ -485,8 +485,10 @@ restated.
 - **(3) CLI:** `datum-eda project set-symbol-field --root <dir> --symbol
   <uuid> --field <reference|value|lib-id|part|entity|unit|gate|
   display-mode|hidden-power|custom:NAME> --value <v> [--clear]`
-- **(4) MCP/AI:** `set_symbol_field` (not present). One tool, field+value
-  params; returns `OperationResult` diff(modified).
+- **(4) MCP/AI:** Target `set_symbol_field`: one tool, field+value params;
+  returns `OperationResult` diff(modified). The native daemon verb described below
+  is available through `native.write`; a normalized CLI/MCP field surface remains
+  pending. Existing CLI/MCP reference/value commands remain compatibility paths.
 - **(5) AI query/context:** Current symbol fields/semantics
   (`schematic.query` symbol_fields/symbol_semantics/symbol_pins), pool
   part/entity ids for assignment, reference uniqueness, gate/unit
@@ -509,6 +511,17 @@ restated.
   Custom-field, reference/value and parent-transform writes preserve unrelated
   raw symbol/pin/field payload. Cancel/no-op do not write; accepted changes use
   canonical history.
+
+  The existing native daemon `datum.schematic.set_symbol_field` verb accepts
+  `field: reference|value|custom` (`dat-schematic-parametric-reference-value-kyzd`).
+  Reference/value selectors reuse the selected-Symbol form's canonical builder,
+  including raw payload preservation and supported component-binding repinning.
+  They accept `value` or `clear: true`, rejecting custom-field parameters and
+  combined value/clear requests. Clearing Value stores an empty string; clearing
+  Reference refuses under existing nonempty validation. UUID-qualified Custom
+  behavior is unchanged. Existing caller/provenance and Proposal requirements
+  remain in force; this does not complete the normalized Operation or ten-field
+  public surface.
 
   Bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector

@@ -264,3 +264,6 @@ fn native_custom_fields_stale_prepared_edit_cannot_overwrite_newer_metadata() {
 
 #[path = "schematic_field_presentation_tests.rs"]
 mod presentation;
+
+#[path = "schematic_parametric_fields_tests.rs"]
+mod parametric;

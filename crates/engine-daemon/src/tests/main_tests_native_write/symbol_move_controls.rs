@@ -35,6 +35,106 @@ fn preimage(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
 }
 
 #[test]
+fn native_parametric_fields_dispatch_preserves_guards_and_proposal_policy() {
+    let root = std::env::temp_dir().join(format!("datum_field_transport_{}", uuid::Uuid::new_v4()));
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../test-harness/testdata/library/native_authored_baseline_v1"),
+        &root,
+    );
+    let mut engine = Engine::new().unwrap();
+    let before = describe(&mut engine, 1, &root);
+    let placed = dispatch_request(
+        &mut engine,
+        native_request(
+            2,
+            "native.write",
+            json!({
+                "project_root":root, "verb":"datum.schematic.place_symbol",
+                "params":{"sheet":"10000000-0000-4000-8000-000000000004",
+                "library_symbol":"30000000-0000-4000-8000-000000000001",
+                "reference":"U1", "value":"initial", "x_nm":0, "y_nm":0},
+                "source":"manual", "reason":"Place field caller fixture",
+                "expected_model_revision":before["model_revision"],
+                "expected_transaction_tip":before["transaction_tip"]
+            }),
+        ),
+    );
+    assert!(placed.error.is_none(), "{placed:?}");
+    let symbol = placed.result.unwrap()["primary_object_id"].clone();
+    let id: uuid::Uuid = serde_json::from_value(symbol.clone()).unwrap();
+    let initial = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    assert!(
+        initial
+            .component_instances
+            .values()
+            .any(|c| c.placed_symbol_refs.contains(&id))
+    );
+    for patch in [
+        json!({"field":"reference","value":"U9"}),
+        json!({"field":"value","value":"updated"}),
+        json!({"field":"value","clear":true}),
+    ] {
+        let current = describe(&mut engine, 3, &root);
+        let mut params = patch.clone();
+        params["symbol"] = symbol.clone();
+        params["instance_path"] = json!([]);
+        let request = json!({"project_root":root, "verb":"datum.schematic.set_symbol_field",
+            "params":params, "source":"manual", "reason":"Edit field through native caller",
+            "expected_model_revision":current["model_revision"],
+            "expected_transaction_tip":current["transaction_tip"]});
+        let original = preimage(&root);
+        for source in [Value::Null, json!("tool"), json!("assistant")] {
+            let mut automated = request.clone();
+            automated["source"] = source;
+            let response =
+                dispatch_request(&mut engine, native_request(4, "native.write", automated));
+            let error = response
+                .error
+                .expect("automated bound edits require Proposal");
+            assert_eq!(error.code, -32060);
+            assert!(error.message.contains("proposal_required"), "{error:?}");
+            assert_eq!(preimage(&root), original);
+        }
+        let mut stale = request.clone();
+        stale["expected_model_revision"] = json!("stale-revision");
+        let response = dispatch_request(&mut engine, native_request(5, "native.write", stale));
+        assert_eq!(response.error.unwrap().code, -32061);
+        assert_eq!(preimage(&root), original);
+        let mut invalid = request.clone();
+        invalid["params"] =
+            json!({"symbol":symbol,"instance_path":[],"field":"reference","clear":true});
+        let response = dispatch_request(&mut engine, native_request(6, "native.write", invalid));
+        assert!(response.error.unwrap().message.contains("nonempty"));
+        assert_eq!(preimage(&root), original);
+        let response = dispatch_request(&mut engine, native_request(7, "native.write", request));
+        assert!(response.error.is_none(), "{response:?}");
+        let reopened = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        assert_eq!(
+            reopened.journal.len() as u64,
+            current["journal_len"].as_u64().unwrap() + 1
+        );
+        let shard = reopened
+            .source_shards
+            .iter()
+            .find(|s| s.shard_id == reopened.objects[&id].source_shard_id)
+            .unwrap();
+        let raw = reopened
+            .materialized_source_shard_value_by_relative_path(&shard.relative_path)
+            .unwrap();
+        assert_eq!(
+            raw["symbols"][id.to_string()][patch["field"].as_str().unwrap()],
+            patch.get("value").cloned().unwrap_or(json!(""))
+        );
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 #[ignore = "finite direct-daemon contract probe; inspect observations separately from required assertions"]
 fn symbol_move_transport_contract_probe() {
     // Existing synthetic fixture supplies native pool/sheet identities only;

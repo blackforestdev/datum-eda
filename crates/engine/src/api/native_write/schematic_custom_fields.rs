@@ -1,8 +1,8 @@
-//! Occurrence-qualified custom metadata edits retaining the raw symbol payload.
+//! Occurrence-qualified symbol field edits retaining the raw symbol payload.
 use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
-    schematic_selection_edit::selected_source,
+    schematic_selection_edit::{SymbolFieldsParams, selected_source, set_symbol_fields},
     schematic_symbol_payload::{set_point, source_symbol_payload},
 };
 use crate::{error::EngineError, ir::geometry::Point, substrate::Operation};
@@ -19,6 +19,8 @@ pub(crate) const VERBS: &[NativeWriteVerb] = &[NativeWriteVerb {
 #[derive(Deserialize)]
 #[serde(rename_all = "snake_case")]
 enum Field {
+    Reference,
+    Value,
     Custom,
 }
 
@@ -47,7 +49,9 @@ fn set_symbol_field(
     params: Value,
 ) -> Result<PreparedWrite, EngineError> {
     let params: Params = parse_verb_params("datum.schematic.set_symbol_field", params)?;
-    let Field::Custom = params.field;
+    if !matches!(params.field, Field::Custom) {
+        return set_builtin_field(context, provenance, params);
+    }
     let presentation = params.visible.is_some() || params.position.is_some();
     if params.clear {
         if params.field_id.is_none()
@@ -148,6 +152,43 @@ fn set_symbol_field(
         )?)
         .primary_object(params.symbol)
         .finish()
+}
+
+fn set_builtin_field(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: Params,
+) -> Result<PreparedWrite, EngineError> {
+    if params.field_id.is_some()
+        || params.key.is_some()
+        || params.visible.is_some()
+        || params.position.is_some()
+    {
+        return Err(invalid(
+            "Reference and value edits forbid custom-field parameters",
+        ));
+    }
+    let value = match (params.clear, params.value) {
+        (true, None) => String::new(),
+        (false, Some(value)) => value,
+        (true, Some(_)) => return Err(invalid("Clear forbids value")),
+        (false, None) => return Err(invalid("A field edit requires value or clear")),
+    };
+    let (reference, value) = match params.field {
+        Field::Reference => (Some(value), None),
+        Field::Value => (None, Some(value)),
+        Field::Custom => unreachable!("custom fields use their metadata editor"),
+    };
+    set_symbol_fields(
+        context,
+        provenance,
+        SymbolFieldsParams {
+            symbol: params.symbol,
+            instance_path: params.instance_path,
+            reference,
+            value,
+        },
+    )
 }
 
 #[cfg(test)]

@@ -200,11 +200,11 @@ fn delete_selected(
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-struct SymbolFieldsParams {
-    symbol: Uuid,
-    instance_path: Vec<Uuid>,
-    reference: Option<String>,
-    value: Option<String>,
+pub(super) struct SymbolFieldsParams {
+    pub(super) symbol: Uuid,
+    pub(super) instance_path: Vec<Uuid>,
+    pub(super) reference: Option<String>,
+    pub(super) value: Option<String>,
 }
 
 fn set_symbol_reference(
@@ -231,7 +231,7 @@ fn set_symbol_value(
     set_symbol_fields(context, provenance, params)
 }
 
-fn set_symbol_fields(
+pub(super) fn set_symbol_fields(
     context: &NativeWriteContext<'_>,
     provenance: WriteProvenance,
     params: SymbolFieldsParams,
