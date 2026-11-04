@@ -62,6 +62,7 @@ fn review_fixture() -> (
         waivers: vec![],
     });
     state.schematic_authoring.delete_review = Some(DeleteReview {
+        gate_placement: None,
         annotation: None,
         assignment: None,
         disposition: None,
@@ -91,6 +92,7 @@ fn review_fixture() -> (
         pending: None,
         refusal: None,
         response: Some(NativeProposalResponse {
+            gate_placement: None,
             annotation: None,
             assignment: None,
             disposition: None,
@@ -508,4 +510,109 @@ fn sheet_annotation_review_uses_shared_inline_acceptance_without_deletion_ghosts
     assert!(text.iter().any(|t| t.text.contains("R22 -> R1")));
     assert!(!text.iter().any(|t| t.text.contains("deletion")));
     assert!(text.iter().all(|t| t.clip_bounds.is_some()));
+}
+
+#[test]
+fn gate_placement_review_uses_shared_ghost_and_explicit_accept_controls() {
+    use datum_gui_protocol::schematic_authoring::gate_placement::GatePlacementEvidence;
+    use eda_engine::{
+        api::native_write::schematic_gate_placement::{GatePlacementChoice, GatePlacementSummary},
+        ir::geometry::Point,
+        schematic::{HiddenPowerBehavior, PlacedSymbol, SymbolDisplayMode},
+    };
+    let (mut state, scene, _, symbol) = review_fixture();
+    let review = state.schematic_authoring.delete_review.as_mut().unwrap();
+    let posed = PlacedSymbol {
+        uuid: symbol,
+        part: None,
+        entity: None,
+        gate: None,
+        lib_id: None,
+        reference: "U_SECOND".into(),
+        value: String::new(),
+        fields: vec![],
+        pins: vec![],
+        position: Point { x: 0, y: 0 },
+        rotation: 0,
+        mirrored: false,
+        unit_selection: None,
+        display_mode: SymbolDisplayMode::LibraryDefault,
+        pin_overrides: vec![],
+        hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
+    };
+    let summary = GatePlacementSummary {
+        component_instance: uuid::Uuid::new_v4(),
+        sheet: review.basis.source,
+        instance_path: vec![],
+        part: uuid::Uuid::new_v4(),
+        entity: uuid::Uuid::new_v4(),
+        choice: GatePlacementChoice {
+            gate: uuid::Uuid::new_v4(),
+            gate_name: "Second gate".into(),
+            unit: uuid::Uuid::new_v4(),
+            library_symbol: uuid::Uuid::new_v4(),
+            symbol_name: "Op amp".into(),
+        },
+        symbol,
+        reference: posed.reference.clone(),
+        value: posed.value.clone(),
+        position: posed.position,
+        rotation_deg: 0,
+        mirrored: false,
+    };
+    review.targets.clear();
+    review.gate_placement = Some(GatePlacementEvidence {
+        summary: summary.clone(),
+        symbol: posed,
+        preview: scene.clone(),
+    });
+    let receipt = review.response.as_mut().unwrap();
+    receipt.deleted.clear();
+    receipt.gate_placement = Some(summary);
+    let viewport = RectPx {
+        x: 0.,
+        y: 0.,
+        width: 600.,
+        height: 400.,
+    };
+    let camera = CameraState::fit_to_bounds(&scene.bounds);
+    let projection = Projection::new(
+        inset_rect(viewport, 10., 10., 10., 10.),
+        &scene.bounds,
+        camera,
+    );
+    let mut plan =
+        native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
+    let (mut quads, mut text) = (vec![], vec![]);
+    render(
+        &mut quads,
+        &mut text,
+        &scene,
+        viewport,
+        &projection,
+        &state,
+        &mut plan,
+    );
+    assert!(text.iter().any(|run| run.text.contains("U_SECOND")));
+    assert!(text.iter().any(|run| run.text.contains("Second gate")));
+    assert!(
+        text.iter()
+            .any(|run| run.text.contains("Tab accept Gate placement"))
+    );
+    assert!(
+        !text
+            .iter()
+            .any(|run| run.text.contains("deletion") || run.text.contains(&symbol.to_string()))
+    );
+    assert!(!quads.is_empty());
+    assert_eq!(
+        state
+            .schematic_authoring
+            .delete_review
+            .as_ref()
+            .unwrap()
+            .preview_scene()
+            .board_graphics,
+        scene.board_graphics
+    );
 }

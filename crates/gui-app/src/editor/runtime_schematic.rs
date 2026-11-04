@@ -120,6 +120,10 @@ impl Runtime {
                 }
                 Err(reason) => editor.refusal = Some(reason),
             }
+        } else if let Some(result) = editor.start_gate_preview() {
+            if let Err(reason) = result {
+                editor.refusal = Some(reason);
+            }
         } else if editor.chosen.is_none()
             || editor.reference.trim().is_empty()
             || editor.taken_references.contains(&editor.reference)
@@ -160,8 +164,16 @@ impl Runtime {
                 }
             }
             HitTarget::SchematicBusEntryDelete => return self.delete_selected_bus_entry(),
-            HitTarget::SchematicBrowseLibraries => return self.browse_schematic_libraries(),
+            HitTarget::SchematicBrowseLibraries => {
+                if self.workspace().schematic_authoring.gate_draft.is_some() {
+                    return true;
+                }
+                return self.browse_schematic_libraries();
+            }
             HitTarget::SchematicLibraryChoice(index) => {
+                if self.choose_schematic_gate(*index) {
+                    return true;
+                }
                 self.session
                     .workspace_mut()
                     .schematic_authoring
@@ -169,7 +181,7 @@ impl Runtime {
             }
             HitTarget::SchematicLibraryPage(forward) => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
-                if *forward && e.choice_offset + 4 < e.choices.len() {
+                if *forward && e.choice_offset + 4 < e.picker_choices().len() {
                     e.choice_offset += 4;
                 }
                 if !*forward {
@@ -351,6 +363,7 @@ impl Runtime {
             Key::Named(NamedKey::Enter)
                 if picker
                     && !self.workspace().schematic_authoring.bus
+                    && self.workspace().schematic_authoring.gate_draft.is_none()
                     && self.workspace().schematic_authoring.choices.is_empty() =>
             {
                 return self.browse_schematic_libraries();
@@ -542,6 +555,9 @@ impl Runtime {
             .is_some()
         {
             return self.place_custom_field(at);
+        }
+        if self.workspace().schematic_authoring.gate_draft.is_some() {
+            return self.review_schematic_gate(at);
         }
         if self.workspace().schematic_authoring.marker.is_some() {
             return self.place_native_marker(at);

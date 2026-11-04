@@ -1079,6 +1079,12 @@
       },
       "overflow": [
         {
+          "label": "Place Another Gate…",
+          "icon": "symbol",
+          "gui_local": "schematic.gate.place",
+          "requires_project": true
+        },
+        {
           "label": "Delete",
           "icon": "delete",
           "verb": "datum.schematic.delete_symbol",

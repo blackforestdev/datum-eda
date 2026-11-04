@@ -54,7 +54,9 @@ pub(super) fn render(
             rect: panel,
         });
         draw_text(
-            if custom {
+            if authoring.gate_draft.is_some() {
+                "Place another Gate"
+            } else if custom {
                 "Custom metadata"
             } else if bus {
                 if editing { "Edit Bus" } else { "Place Bus" }
@@ -72,20 +74,22 @@ pub(super) fn render(
         );
         let mut y = panel.y + 50.;
         if !compact {
-            button(
-                "Browse libraries…",
-                HitTarget::SchematicBrowseLibraries,
-                RectPx {
-                    x: panel.x + width - 192.,
-                    y: panel.y + 10.,
-                    width: 176.,
-                    height: 29.,
-                },
-                quads,
-                text,
-                hits,
-            );
-            if authoring.choices.is_empty() {
+            if authoring.gate_draft.is_none() {
+                button(
+                    "Browse libraries…",
+                    HitTarget::SchematicBrowseLibraries,
+                    RectPx {
+                        x: panel.x + width - 192.,
+                        y: panel.y + 10.,
+                        width: 176.,
+                        height: 29.,
+                    },
+                    quads,
+                    text,
+                    hits,
+                );
+            }
+            if authoring.picker_choices().is_empty() {
                 draw_text(
                     "No project symbols yet. Browse libraries to choose one.",
                     panel.x + 16.,
@@ -97,7 +101,7 @@ pub(super) fn render(
                 );
             }
             for (index, choice) in authoring
-                .choices
+                .picker_choices()
                 .iter()
                 .enumerate()
                 .skip(authoring.choice_offset)
@@ -142,7 +146,7 @@ pub(super) fn render(
                 });
                 y += 31.;
             }
-            if authoring.choices.len() > 4 {
+            if authoring.picker_choices().len() > 4 {
                 button(
                     "Previous",
                     HitTarget::SchematicLibraryPage(false),
@@ -287,10 +291,20 @@ pub(super) fn render(
         }
         if !compact
             && authoring.refusal.is_none()
-            && let Some(choice) = authoring.chosen.and_then(|i| authoring.choices.get(i))
+            && let Some(choice) = authoring
+                .chosen
+                .and_then(|i| authoring.picker_choices().get(i))
         {
             draw_text(
-                choice.binding_label(),
+                &authoring.gate_draft.as_ref().map_or_else(
+                    || choice.binding_label().to_owned(),
+                    |draft| {
+                        format!(
+                            "Component Part: {} · choose an unused Gate",
+                            draft.options.part_name
+                        )
+                    },
+                ),
                 panel.x + 16.,
                 panel.y + if compact { 140. + extra } else { 203. },
                 11.,
@@ -375,6 +389,9 @@ pub(super) fn render(
                     Some(MarkerKind::NoConnect) => "Place No-Connect · click an open pin",
                     None if authoring.wire && authoring.bus => "Place Bus · click vertices",
                     None if authoring.wire => "Place Wire · click vertices",
+                    None if authoring.gate_draft.is_some() => {
+                        "Click: review Gate · R: rotate · X/Y: flip"
+                    }
                     None => "Click: place · R: rotate · X/Y: flip horiz/vert",
                 }
             },

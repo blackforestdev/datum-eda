@@ -13,6 +13,7 @@ impl SchematicAuthoring {
     pub fn cancel(&mut self) -> Option<BoardReviewSceneV1> {
         self.disposition_draft = None;
         self.assignment_draft = None;
+        self.gate_draft = None;
         self.picker = false;
         self.chosen = None;
         self.label = None;
@@ -135,33 +136,46 @@ impl SchematicAuthoring {
             && let Some(at) = self.position
             && !self.picker
         {
-            let choice = &self.choices[index];
-            let mut pins = choice.pins.clone();
-            for pin in &mut pins {
-                pin.position = eda_engine::api::native_write::schematic_edit::place_local_point(
-                    pin.position,
-                    Point { x: at.x, y: at.y },
-                    self.rotation_deg,
-                    self.mirrored,
-                )?;
-            }
-            let symbol = PlacedSymbol {
-                uuid: Uuid::nil(),
-                part: None,
-                entity: None,
-                gate: None,
-                lib_id: Some(choice.id.to_string()),
-                reference: self.reference.clone(),
-                value: self.value.clone(),
-                fields: Vec::new(),
-                pins,
-                position: Point { x: at.x, y: at.y },
-                rotation: self.rotation_deg,
-                mirrored: self.mirrored,
-                unit_selection: None,
-                display_mode: SymbolDisplayMode::LibraryDefault,
-                pin_overrides: Vec::new(),
-                hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
+            let symbol = if let Some(draft) = &self.gate_draft {
+                draft
+                    .placed(
+                        &self.reference,
+                        &self.value,
+                        at,
+                        self.rotation_deg,
+                        self.mirrored,
+                    )
+                    .map_err(anyhow::Error::msg)?
+            } else {
+                let choice = &self.choices[index];
+                let mut pins = choice.pins.clone();
+                for pin in &mut pins {
+                    pin.position =
+                        eda_engine::api::native_write::schematic_edit::place_local_point(
+                            pin.position,
+                            Point { x: at.x, y: at.y },
+                            self.rotation_deg,
+                            self.mirrored,
+                        )?;
+                }
+                PlacedSymbol {
+                    uuid: Uuid::nil(),
+                    part: None,
+                    entity: None,
+                    gate: None,
+                    lib_id: Some(choice.id.to_string()),
+                    reference: self.reference.clone(),
+                    value: self.value.clone(),
+                    fields: Vec::new(),
+                    pins,
+                    position: Point { x: at.x, y: at.y },
+                    rotation: self.rotation_deg,
+                    mirrored: self.mirrored,
+                    unit_selection: None,
+                    display_mode: SymbolDisplayMode::LibraryDefault,
+                    pin_overrides: Vec::new(),
+                    hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
+                }
             };
             selected.symbols.insert(symbol.uuid, symbol);
         }

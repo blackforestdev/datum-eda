@@ -20,6 +20,31 @@ impl AssignmentEvidence {
         state: &ReviewWorkspaceState,
         target: &AuthoredSelectionIdentity,
     ) -> Result<AuthoringViewBasis, String> {
+        let basis = Self::admit_source(state, target)?;
+        let model = state.library.basis.as_ref().unwrap();
+        let mut owners = model
+            .component_instances
+            .values()
+            .filter(|c| c.placed_symbol_refs.contains(&target.id));
+        if let Some(owner) = owners.next() {
+            if owners.next().is_some()
+                || owner.placed_symbol_refs.len() != 1
+                || !owner.placed_package_refs.is_empty()
+                || owner.authority != eda_engine::substrate::ComponentInstanceAuthority::Authored
+            {
+                return Err(
+                    "Assignment supports one schematic-only Symbol per authored ComponentInstance"
+                        .into(),
+                );
+            }
+        }
+        Ok(basis)
+    }
+    /// Shared source/occurrence admission, before each purpose's owner policy.
+    pub(super) fn admit_source(
+        state: &ReviewWorkspaceState,
+        target: &AuthoredSelectionIdentity,
+    ) -> Result<AuthoringViewBasis, String> {
         if target.class != AuthoredSelectionClass::Symbol {
             return Err("Select one native pool Symbol".into());
         }
@@ -75,22 +100,6 @@ impl AssignmentEvidence {
             && view.locked.contains(target)
         {
             return Err("Selected Symbol is locked".into());
-        }
-        let mut owners = model
-            .component_instances
-            .values()
-            .filter(|c| c.placed_symbol_refs.contains(&target.id));
-        if let Some(owner) = owners.next() {
-            if owners.next().is_some()
-                || owner.placed_symbol_refs.len() != 1
-                || !owner.placed_package_refs.is_empty()
-                || owner.authority != eda_engine::substrate::ComponentInstanceAuthority::Authored
-            {
-                return Err(
-                    "Assignment supports one schematic-only Symbol per authored ComponentInstance"
-                        .into(),
-                );
-            }
         }
         Ok(basis)
     }

@@ -3,6 +3,7 @@
 pub use super::schematic_annotation::{AnnotationChange, AnnotationSummary};
 pub use super::schematic_assignment::{AssignmentChoice, AssignmentSummary};
 pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
+pub use super::schematic_gate_placement::{GatePlacementRequest, GatePlacementSummary};
 use super::{context::WriteProvenance, registry::NativeWriteContext, schematic_delete};
 use crate::{
     error::EngineError,
@@ -52,6 +53,7 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateGatePlacement(GatePlacementRequest),
     CreateAnnotation {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -90,6 +92,7 @@ pub enum NativeProposalAction {
 impl NativeProposalAction {
     pub fn proposal_id(&self) -> Uuid {
         match self {
+            Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateAnnotation { proposal_id, .. }
             | Self::CreateAssignment { proposal_id, .. }
             | Self::CreateDisposition { proposal_id, .. }
@@ -125,6 +128,8 @@ pub struct NativeProposalResponse {
     pub deleted: Vec<DeletedObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub annotation: Option<AnnotationSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub gate_placement: Option<GatePlacementSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disposition: Option<DispositionSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -179,6 +184,23 @@ pub fn execute(
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateGatePlacement(params) => {
+            let mut write = super::schematic_gate_placement::build(model, params)?;
+            write.batch.batch_id = id;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale: "Place explicitly selected unused Gate in its existing component"
+                        .into(),
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
         NativeProposalAction::CreateAnnotation {
             sheet,
             instance_path,
@@ -347,6 +369,16 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        gate_placement: if super::schematic_gate_placement::is_gate_placement(proposal) {
+            let detail = super::schematic_gate_placement::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         annotation: if super::schematic_annotation::is_annotation(proposal) {
             let detail = super::schematic_annotation::summary(model, proposal, false);
             if proposal.status == ProposalStatus::Rejected {
@@ -391,6 +423,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
             "This native action requires a manual proposal for this project",
         ));
     }
+    if super::schematic_gate_placement::is_gate_placement(p) {
+        super::schematic_gate_placement::validate_recorded(p)?;
+        return Ok(p);
+    }
     if super::schematic_annotation::is_annotation(p) {
         super::schematic_annotation::validate_recorded(p)?;
         return Ok(p);
@@ -412,7 +448,8 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
             schematic_delete::deleted_object(o).is_none()
                 && !matches!(
                     o,
-                    Operation::GuardObjectRevision { .. }
+                    Operation::SetComponentInstance { .. }
+                        | Operation::GuardObjectRevision { .. }
                         | Operation::CreateElectricalIdentity { .. }
                         | Operation::SetElectricalIdentity { .. }
                         | Operation::DeleteElectricalIdentity { .. }
@@ -430,6 +467,9 @@ fn validate_disposition_current(
     model: &DesignModel,
     proposal: &Proposal,
 ) -> Result<(), EngineError> {
+    if super::schematic_gate_placement::is_gate_placement(proposal) {
+        super::schematic_gate_placement::summary(model, proposal, true)?;
+    }
     if super::schematic_annotation::is_annotation(proposal) {
         super::schematic_annotation::summary(model, proposal, true)?;
     }

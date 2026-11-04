@@ -23,47 +23,7 @@ pub fn options(
     if raw["locked"].as_bool() == Some(true) {
         return Err(invalid("Selected Symbol is locked"));
     }
-    let library = original
-        .lib_id
-        .as_deref()
-        .and_then(|s| s.parse::<Uuid>().ok())
-        .ok_or_else(|| invalid("Assignment requires a native pool Symbol"))?;
-    let library_value = materialized_pool_object(model, library, "symbols")?;
-    let unit = id(&library_value, "unit")?;
-    let expected = materialize_pool_symbol_pins(model, original.lib_id.as_deref())?;
-    let mut seen = BTreeSet::new();
-    if expected.len() != original.pins.len() {
-        return Err(invalid(
-            "Placed pins no longer match the native Symbol Unit",
-        ));
-    }
-    for pin in &original.pins {
-        let identity = pin
-            .library_pin
-            .ok_or_else(|| invalid("Placed pin has no native Unit identity"))?;
-        if !seen.insert(identity) {
-            return Err(invalid("Placed Unit pin identity is duplicated"));
-        }
-        let expected = expected
-            .iter()
-            .find(|p| p.library_pin == Some(identity))
-            .ok_or_else(|| invalid("Placed Unit pin is unavailable"))?;
-        let at = super::super::schematic_edit::place_local_point(
-            expected.position,
-            Point::new(original.position.x, original.position.y),
-            original.rotation,
-            original.mirrored,
-        )?;
-        if pin.position != at
-            || pin.name != expected.name
-            || pin.number != expected.number
-            || pin.electrical_type != expected.electrical_type
-        {
-            return Err(invalid(
-                "Assignment requires unchanged native Unit pin geometry and semantics",
-            ));
-        }
-    }
+    let (library, unit) = validate_symbol(model, &original)?;
     let current = component::current(model, symbol)?;
     if let Some((_, value)) = &current {
         if value["library_bindings"]
@@ -133,7 +93,54 @@ pub fn options(
         choices,
     })
 }
-fn validate_maps(
+pub(in crate::api::native_write) fn validate_symbol(
+    model: &DesignModel,
+    original: &PlacedSymbol,
+) -> Result<(Uuid, Uuid), EngineError> {
+    let library = original
+        .lib_id
+        .as_deref()
+        .and_then(|s| s.parse::<Uuid>().ok())
+        .ok_or_else(|| invalid("Assignment requires a native pool Symbol"))?;
+    let library_value = materialized_pool_object(model, library, "symbols")?;
+    let unit = id(&library_value, "unit")?;
+    let expected = materialize_pool_symbol_pins(model, original.lib_id.as_deref())?;
+    let mut seen = BTreeSet::new();
+    if expected.len() != original.pins.len() {
+        return Err(invalid(
+            "Placed pins no longer match the native Symbol Unit",
+        ));
+    }
+    for pin in &original.pins {
+        let identity = pin
+            .library_pin
+            .ok_or_else(|| invalid("Placed pin has no native Unit identity"))?;
+        if !seen.insert(identity) {
+            return Err(invalid("Placed Unit pin identity is duplicated"));
+        }
+        let expected = expected
+            .iter()
+            .find(|p| p.library_pin == Some(identity))
+            .ok_or_else(|| invalid("Placed Unit pin is unavailable"))?;
+        let at = super::super::schematic_edit::place_local_point(
+            expected.position,
+            Point::new(original.position.x, original.position.y),
+            original.rotation,
+            original.mirrored,
+        )?;
+        if pin.position != at
+            || pin.name != expected.name
+            || pin.number != expected.number
+            || pin.electrical_type != expected.electrical_type
+        {
+            return Err(invalid(
+                "Assignment requires unchanged native Unit pin geometry and semantics",
+            ));
+        }
+    }
+    Ok((library, unit))
+}
+pub(in crate::api::native_write) fn validate_maps(
     model: &DesignModel,
     part_id: Uuid,
     part: &Value,

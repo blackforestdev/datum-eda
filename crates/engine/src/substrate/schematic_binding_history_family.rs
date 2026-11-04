@@ -1,12 +1,15 @@
 //! Admit only recorded assignment or pose-and-endpoint inverse families.
 use super::{Operation, TransactionRecord, Uuid, Value};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 #[path = "schematic_binding_history_fields.rs"]
 mod fields;
 
-pub(super) fn capture(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
-    if let Some((symbol, component)) = assignment(target) {
-        return Some(BTreeMap::from([(component, symbol)]));
+#[path = "schematic_binding_history_assignment.rs"]
+mod assignment;
+
+pub(super) fn capture(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>>> {
+    if let Some((symbol, component)) = assignment::capture(target) {
+        return Some(BTreeMap::from([(component, BTreeSet::from([symbol]))]));
     }
     transform(target)
 }
@@ -104,7 +107,7 @@ impl<'a> PoseOps<'a> {
         (!out.symbols.is_empty() && !out.components.is_empty()).then_some(out)
     }
 }
-fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
+fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>>> {
     let forward = PoseOps::capture(&target.operations)?;
     let inverse = PoseOps::capture(&target.inverse_operations)?;
     if forward.sheet != inverse.sheet
@@ -152,23 +155,40 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
             return None;
         }
         let refs = old["placed_symbol_refs"].as_array()?;
-        if refs.len() != 1 {
+        let next_refs = next["placed_symbol_refs"].as_array()?;
+        if refs.is_empty() || refs.len() != next_refs.len() {
             return None;
         }
-        let symbol: Uuid = serde_json::from_value(refs[0]["object_id"].clone()).ok()?;
-        if !forward.symbols.contains_key(&symbol) || owners.values().any(|owner| *owner == symbol) {
-            return None;
-        }
-        super::member(old, id, symbol)?;
-        super::member(next, id, symbol)?;
+        let mut members = BTreeSet::new();
         let mut allowed = old.clone();
+        let mut changed = false;
+        for (index, reference) in refs.iter().enumerate() {
+            let symbol: Uuid = serde_json::from_value(reference["object_id"].clone()).ok()?;
+            if !members.insert(symbol)
+                || owners
+                    .values()
+                    .any(|set: &BTreeSet<Uuid>| set.contains(&symbol))
+            {
+                return None;
+            }
+            super::member(old, id, symbol)?;
+            super::member(next, id, symbol)?;
+            if forward.symbols.contains_key(&symbol) {
+                changed = true;
+                allowed["placed_symbol_refs"][index]["object_revision"] =
+                    next_refs[index]["object_revision"].clone();
+            }
+        }
+        // Annotation retains its one-Symbol owner boundary; metadata must not
+        // grant a new multi-gate reference rewrite history family.
+        if !changed || (annotation && !forward.metadata.is_empty() && members.len() != 1) {
+            return None;
+        }
         allowed["object_revision"] = next["object_revision"].clone();
-        allowed["placed_symbol_refs"][0]["object_revision"] =
-            next["placed_symbol_refs"][0]["object_revision"].clone();
         if allowed != *next {
             return None;
         }
-        owners.insert(id, symbol);
+        owners.insert(id, members);
     }
     Some(owners)
 }
@@ -215,88 +235,6 @@ fn symbol_pose(old: &Value, next: &Value) -> bool {
         Some(allowed)
     };
     check().as_ref() == Some(next)
-}
-
-fn assignment(target: &TransactionRecord) -> Option<(Uuid, Uuid)> {
-    let ops = &target.inverse_operations;
-    let mut symbol = None;
-    let mut component = None;
-    for op in ops {
-        match op {
-            Operation::SetSchematicSymbol {
-                sheet_id,
-                symbol_id,
-                symbol: next,
-                ..
-            } if symbol.is_none() => {
-                let paired: Vec<_> = target
-                    .operations
-                    .iter()
-                    .filter_map(|op| match op {
-                        Operation::SetSchematicSymbol {
-                            sheet_id: sheet,
-                            symbol_id: id,
-                            symbol,
-                        } if sheet == sheet_id && id == symbol_id => Some(symbol),
-                        _ => None,
-                    })
-                    .collect();
-                let [previous_symbol] = paired.as_slice() else {
-                    return None;
-                };
-                let mut allowed = (*previous_symbol).clone();
-                for key in ["part", "entity", "gate"] {
-                    if let Some(value) = next.get(key) {
-                        allowed[key] = value.clone();
-                    } else {
-                        allowed.as_object_mut()?.remove(key);
-                    }
-                }
-                if allowed != *next {
-                    return None;
-                }
-                symbol = Some(*symbol_id);
-            }
-            Operation::CreateComponentInstance {
-                component_instance_id,
-                ..
-            }
-            | Operation::SetComponentInstance {
-                component_instance_id,
-                ..
-            }
-            | Operation::DeleteComponentInstance {
-                component_instance_id,
-                ..
-            } if component.is_none() => component = Some(*component_instance_id),
-            Operation::SetProposalMetadata { .. } => {}
-            _ => return None,
-        }
-    }
-    let pair = (symbol?, component?);
-    let mut counts = (0, 0);
-    for op in &target.operations {
-        match op {
-            Operation::SetSchematicSymbol { symbol_id, .. } if *symbol_id == pair.0 => {
-                counts.0 += 1
-            }
-            Operation::CreateComponentInstance {
-                component_instance_id,
-                ..
-            }
-            | Operation::SetComponentInstance {
-                component_instance_id,
-                ..
-            }
-            | Operation::DeleteComponentInstance {
-                component_instance_id,
-                ..
-            } if *component_instance_id == pair.1 => counts.1 += 1,
-            Operation::SetProposalMetadata { .. } => {}
-            _ => return None,
-        }
-    }
-    (counts == (1, 1)).then_some(pair)
 }
 
 // Multi-Symbol annotation changes only references; unrelated field/pose edits

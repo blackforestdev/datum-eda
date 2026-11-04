@@ -12,6 +12,7 @@ impl NativeProjectClient {
             .as_ref()
             .context("Proposal action missing")?;
         let id = match action {
+            Action::CreateGatePlacement(request) => request.proposal_id,
             Action::CreateDelete { proposal_id, .. }
             | Action::CreateDisposition { proposal_id, .. }
             | Action::CreateAssignment { proposal_id, .. }
@@ -58,7 +59,8 @@ impl NativeProjectClient {
             Action::CreateDelete { .. }
             | Action::CreateDisposition { .. }
             | Action::CreateAssignment { .. }
-            | Action::CreateAnnotation { .. } => ProposalStatus::Draft,
+            | Action::CreateAnnotation { .. }
+            | Action::CreateGatePlacement(_) => ProposalStatus::Draft,
             Action::AcceptApply { .. } => ProposalStatus::Applied,
             Action::Reject { .. } => ProposalStatus::Rejected,
             Action::Preview { .. } => response.status,
@@ -136,6 +138,7 @@ mod tests {
             ProposalStatus::Rejected,
         ] {
             let response = NativeProposalResponse {
+                gate_placement: None,
                 annotation: None,
                 assignment: None,
                 disposition: None,

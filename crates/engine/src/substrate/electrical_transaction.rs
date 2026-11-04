@@ -6,7 +6,7 @@ use super::{
 use std::collections::{BTreeMap, BTreeSet};
 use uuid::Uuid;
 
-pub(super) fn compose(
+pub(crate) fn compose(
     model: &DesignModel,
     batch: OperationBatch,
     kind: TransactionKind,

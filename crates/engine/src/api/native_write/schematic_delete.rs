@@ -52,13 +52,25 @@ pub(super) fn build(
     let children = owned_symbol_objects(context.model, sheet, &symbol_ids, &raw_sheet)?;
     let bindings =
         super::schematic_assignment::delete_bindings(context.model, &symbol_ids, &children)?;
-    let mut operations: Vec<_> = bindings
-        .values()
-        .map(|(id, raw)| Operation::DeleteComponentInstance {
-            component_instance_id: *id,
-            component_instance: raw.clone(),
-        })
-        .collect();
+    let mut operations = Vec::new();
+    let unique_bindings: BTreeMap<_, _> = bindings.into_values().collect();
+    for (id, raw) in unique_bindings {
+        let next = detached_component(&raw, &symbol_ids)?;
+        operations.push(
+            if next["placed_symbol_refs"].as_array().unwrap().is_empty() {
+                Operation::DeleteComponentInstance {
+                    component_instance_id: id,
+                    component_instance: raw,
+                }
+            } else {
+                Operation::SetComponentInstance {
+                    component_instance_id: id,
+                    previous_component_instance: raw,
+                    component_instance: next,
+                }
+            },
+        );
+    }
     let mut append = |prepared: PreparedWrite| {
         operations.extend(prepared.batch.operations);
     };
@@ -204,8 +216,13 @@ pub(super) fn build(
     // Recompose guards exactly once against the original captured model.
     let mut unique: BTreeMap<Uuid, Operation> = BTreeMap::new();
     let mut lifecycle = Vec::new();
+    let mut detached = Vec::new();
     for operation in operations {
         if matches!(operation, Operation::GuardObjectRevision { .. }) {
+            continue;
+        }
+        if matches!(operation, Operation::SetComponentInstance { .. }) {
+            detached.push(operation);
             continue;
         }
         if matches!(operation, Operation::SetElectricalIdentity { .. }) {
@@ -253,6 +270,7 @@ pub(super) fn build(
     });
     BatchComposer::compose(context.model, provenance)
         .push_ops(source_deletions.into_iter().map(|(_, operation)| operation))
+        .push_ops(detached)
         .push_ops(lifecycle)
         .finish()
 }
@@ -313,47 +331,10 @@ fn invalid(reason: &str) -> EngineError {
     EngineError::Validation(reason.into())
 }
 
-/// Recorded Proposal qualification never infers ownership from an opaque ID alone.
-pub(super) fn validate_owned_components(ops: &[Operation]) -> Result<(), EngineError> {
-    let symbols: BTreeSet<_> = ops
-        .iter()
-        .filter_map(|op| match op {
-            Operation::DeleteSchematicSymbol { symbol_id, .. } => Some(*symbol_id),
-            _ => None,
-        })
-        .collect();
-    let mut owners = BTreeSet::new();
-    for op in ops {
-        if let Operation::DeleteComponentInstance {
-            component_instance_id,
-            component_instance,
-        } = op
-        {
-            let ci: crate::substrate::ComponentInstanceShard = serde_json::from_value(
-                serde_json::json!({"schema_version":1,"component_instance":component_instance}),
-            )?;
-            let ci = ci.component_instance;
-            if ci.uuid != *component_instance_id
-                || ci.placed_symbol_refs.len() != 1
-                || !ci.placed_package_refs.is_empty()
-                || !symbols.contains(&ci.placed_symbol_refs[0].object_id)
-                || !owners.insert(ci.placed_symbol_refs[0].object_id)
-                || ci.library_bindings.values().any(|b| {
-                    !matches!(
-                        b.binding_role,
-                        crate::substrate::LibraryBindingRole::Part
-                            | crate::substrate::LibraryBindingRole::Symbol
-                    ) || !b.local_override_refs.is_empty()
-                })
-            {
-                return Err(invalid(
-                    "Deletion requires an exact owned schematic-only component",
-                ));
-            }
-        }
-    }
-    Ok(())
-}
+#[path = "schematic_delete_components.rs"]
+mod components;
+use components::detached_component;
+pub(super) use components::validate_owned_components;
 
 /// The canonical delete's complete recursive identity set, shared by invocation
 /// and complete-set admission. Typed fields alone omit retained extension UUIDs.

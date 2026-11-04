@@ -57,6 +57,7 @@ mod schematic_delete;
 pub mod schematic_delete_proposal;
 mod schematic_disposition;
 pub mod schematic_edit;
+pub mod schematic_gate_placement;
 mod schematic_label_edit;
 pub mod schematic_label_move;
 pub mod schematic_library;

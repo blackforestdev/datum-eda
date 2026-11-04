@@ -124,6 +124,16 @@
 - Overflow: Rotate CW · Edit/Assign Footprint ▪ · Show Datasheet · Autoplace Fields ▪ · Highlight Pins' Nets ▪★ · Select on PCB ⌖★ · Align to Grid ▪ · Copy/Cut/Duplicate ▪ · ⚠ Change Symbol · ⚠ Update from Library · ⚠ Delete · ⚠ Reset Fields
 - Submenus: **Edit Field ▸** (Reference/Value/Footprint/Datasheet/user/Add…) · **Unit / Convert ▸** (multi-unit; De Morgan) · **Edit Library Symbol ▸** ⚠
 
+Native same-sheet multi-Gate delivery configures **Place Another Gate…** in the
+selected Symbol overflow (`dat-0fom`). It fixes the existing component/Part,
+uses the existing picker for an unused named Gate and an explicit Reference,
+then shows the existing snapped ghost. A placement click stages Proposal review
+before explicit acceptance. Members share one unique source sheet and qualified
+occurrence path, empty or existing nonempty. This does not broaden Part
+reassignment or hierarchy authoring. Independent GUI checks exercised the picker,
+ghost, Proposal and lifecycle through cold reopening; immediate-restart lock
+behavior remains a separate issue (`dat-iwxe`).
+
 ### Pin *(on a placed symbol)* / *(library-editor pin — separate object)*
 - Canvas pin — **N** Pin Function ▸ · **E** Highlight Net ▪★ · **S** Place No-Connect ▪ · **W** Unfold Wire from Pin ⚡★
 - Library pin — **N** Properties ▪ · **E** Electrical Type ▸ · **S** Move ⚡ · **W** Graphic Style ▸

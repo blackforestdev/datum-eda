@@ -9,11 +9,14 @@ pub(in crate::substrate) fn order_restoration(ops: &mut Vec<Operation>) {
     // Only move a CI across the exact Symbol births it needs; unrelated trailing
     // operations retain their position relative to the restored binding.
     for index in (0..ops.len()).rev() {
-        let Operation::CreateComponentInstance {
-            component_instance, ..
-        } = &ops[index]
-        else {
-            continue;
+        let component_instance = match &ops[index] {
+            Operation::CreateComponentInstance {
+                component_instance, ..
+            }
+            | Operation::SetComponentInstance {
+                component_instance, ..
+            } => component_instance,
+            _ => continue,
         };
         let required: BTreeSet<Uuid> = component_instance["placed_symbol_refs"]
             .as_array()
@@ -81,6 +84,15 @@ fn opposite(op: &Operation) -> Option<Operation> {
         return serde_json::from_value(raw).ok();
     }
     Some(match op {
+        Operation::SetComponentInstance {
+            component_instance_id,
+            previous_component_instance,
+            component_instance,
+        } => Operation::SetComponentInstance {
+            component_instance_id: *component_instance_id,
+            previous_component_instance: component_instance.clone(),
+            component_instance: previous_component_instance.clone(),
+        },
         Operation::CreateElectricalIdentity { record } => Operation::DeleteElectricalIdentity {
             record: record.clone(),
         },
@@ -116,130 +128,9 @@ fn inverse(ops: &[Operation]) -> Option<Vec<Operation>> {
     order_restoration(&mut result);
     Some(result)
 }
-fn capture(target: &TransactionRecord) -> Option<BTreeMap<Uuid, Uuid>> {
-    if inverse(&target.operations).as_ref() != Some(&target.inverse_operations) {
-        return None;
-    }
-    let mut symbols = BTreeMap::new();
-    let mut sheet = None;
-    let mut direction = None;
-    let mut ids = BTreeSet::new();
-    for op in &target.operations {
-        if let Some((owner, id, class, _, create)) = source(op) {
-            if sheet.replace(owner).is_some_and(|old| old != owner)
-                || !ids.insert(id)
-                || direction.replace(create).is_some_and(|old| old != create)
-            {
-                return None;
-            }
-            if class == "symbols" {
-                symbols.insert(id, create);
-            }
-        }
-    }
-    if direction == Some(true)
-        && target.transaction_kind == crate::substrate::TransactionKind::Normal
-    {
-        return None;
-    }
-    let mut members = BTreeMap::new();
-    for op in &target.operations {
-        let (id, raw, create) = match op {
-            Operation::CreateComponentInstance {
-                component_instance_id,
-                component_instance,
-            } => (*component_instance_id, component_instance, true),
-            Operation::DeleteComponentInstance {
-                component_instance_id,
-                component_instance,
-            } => (*component_instance_id, component_instance, false),
-            _ => continue,
-        };
-        let symbol: Uuid =
-            serde_json::from_value(raw["placed_symbol_refs"][0]["object_id"].clone()).ok()?;
-        super::member(raw, id, symbol)?;
-        let parsed: crate::substrate::ComponentInstanceShard =
-            serde_json::from_value(json!({"schema_version":1,"component_instance":raw})).ok()?;
-        if symbols.get(&symbol) != Some(&create)
-            || members.values().any(|s| *s == symbol)
-            || parsed
-                .component_instance
-                .library_bindings
-                .values()
-                .any(|b| {
-                    !matches!(
-                        b.binding_role,
-                        crate::substrate::LibraryBindingRole::Part
-                            | crate::substrate::LibraryBindingRole::Symbol
-                    ) || !b.local_override_refs.is_empty()
-                })
-            || members.insert(id, symbol).is_some()
-        {
-            return None;
-        }
-    }
-    (!members.is_empty()).then_some(members)
-}
-fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option<Vec<Operation>> {
-    let members = capture(target)?;
-    let index = prior
-        .iter()
-        .position(|t| t.transaction_id == target.transaction_id)?;
-    let mut ops = target.inverse_operations.clone();
-    let births: BTreeMap<_, _> = ops
-        .iter()
-        .filter_map(|op| match op {
-            Operation::CreateSchematicSymbol {
-                symbol_id, symbol, ..
-            } => Some((
-                *symbol_id,
-                symbol
-                    .get("object_revision")
-                    .and_then(Value::as_u64)
-                    .unwrap_or(0),
-            )),
-            _ => None,
-        })
-        .collect();
-    for op in &mut ops {
-        match op {
-            Operation::CreateComponentInstance {
-                component_instance_id,
-                component_instance,
-            } => {
-                let id = *component_instance_id;
-                let symbol = members[&id];
-                if super::prior_state(prior, id, symbol)?.0.is_some()
-                    || super::prior_state(&prior[..=index], id, symbol)?
-                        .0
-                        .is_some()
-                {
-                    return None;
-                }
-                component_instance["object_revision"] = json!(0);
-                component_instance["placed_symbol_refs"][0]["object_revision"] =
-                    json!(births.get(&symbol)?);
-            }
-            Operation::DeleteComponentInstance {
-                component_instance_id,
-                component_instance,
-            } => {
-                let id = *component_instance_id;
-                let symbol = members[&id];
-                let historical = super::prior_state(&prior[..=index], id, symbol)?.0?;
-                let current = super::prior_state(prior, id, symbol)?.0?;
-                if historical != *component_instance
-                    || !super::same_component_semantics(component_instance, &current, id, symbol)
-                {
-                    return None;
-                }
-                *component_instance = current;
-            }
-            _ => {}
-        }
-    }
-    Some(ops)
-}
+#[path = "schematic_binding_membership_history.rs"]
+mod membership;
+use membership::{capture, normalized};
 pub(super) fn prepare(
     model: &DesignModel,
     target: &TransactionRecord,
@@ -276,10 +167,8 @@ pub(super) fn prepare(
             }
         }
     }
-    for (id, symbol) in members {
-        let (current, epoch) =
-            super::prior_state(&model.journal, id, symbol).ok_or_else(invalid)?;
-        if let Some(current) = current {
+    for id in members {
+        if let Some(current) = membership::state(&model.journal, id) {
             let object = model.objects.get(&id).ok_or_else(invalid)?;
             let shard = model
                 .source_shards
@@ -288,16 +177,16 @@ pub(super) fn prepare(
                 .ok_or_else(invalid)?;
             let raw =
                 model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
-            if raw["component_instance"] != current
-                || !model.component_instances.contains_key(&id)
-                || model.objects.get(&symbol).map(|o| o.object_revision.0) != Some(epoch)
+            if raw["component_instance"] != current || !model.component_instances.contains_key(&id)
             {
                 return Err(invalid());
             }
-        } else if model.objects.contains_key(&id)
-            || model.component_instances.contains_key(&id)
-            || model.objects.contains_key(&symbol)
-        {
+            for (symbol, epoch) in membership::refs(&current).ok_or_else(invalid)? {
+                if model.objects.get(&symbol).map(|o| o.object_revision.0) != Some(epoch) {
+                    return Err(invalid());
+                }
+            }
+        } else if model.objects.contains_key(&id) || model.component_instances.contains_key(&id) {
             return Err(invalid());
         }
     }
@@ -318,3 +207,7 @@ pub(super) fn matches(
 #[cfg(test)]
 #[path = "schematic_binding_history_delete_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "schematic_gate_history_tests.rs"]
+mod gate_tests;

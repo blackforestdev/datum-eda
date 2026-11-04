@@ -1,87 +1,27 @@
 //! Existing schematic-only ComponentInstance identity is retained atomically.
 use super::*;
-use crate::substrate::{
-    ComponentInstanceAuthority, ComponentInstanceShard, LibraryBindingRole, SourceShardKind,
-};
 
 use std::collections::{BTreeMap, BTreeSet};
 
-pub(super) fn current(
+pub(in crate::api::native_write) fn current(
     model: &DesignModel,
     symbol: Uuid,
 ) -> Result<Option<(Uuid, Value)>, EngineError> {
-    Ok(current_set(model, &BTreeSet::from([symbol]))?.remove(&symbol))
-}
-fn current_set(
-    model: &DesignModel,
-    symbols: &BTreeSet<Uuid>,
-) -> Result<BTreeMap<Uuid, (Uuid, Value)>, EngineError> {
-    let mut found = BTreeMap::new();
-    // Include unresolved source records: a dropped stale projection is never "unbound".
-    for shard in model
-        .source_shards
-        .iter()
-        .filter(|s| s.kind == SourceShardKind::ComponentInstance)
-    {
-        let value = model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
-        let parsed: ComponentInstanceShard = serde_json::from_value(value.clone())?;
-        let ci = &parsed.component_instance;
-        let Some(symbol) = ci
-            .placed_symbol_refs
-            .iter()
-            .find_map(|r| symbols.contains(&r.object_id).then_some(r.object_id))
-        else {
-            continue;
-        };
-        let projected = model
-            .component_instances
-            .get(&ci.uuid)
-            .ok_or_else(|| invalid("ComponentInstance source is stale or unresolved"))?;
-        if found.contains_key(&symbol)
-            || ci.placed_symbol_refs.len() != 1
-            || !ci.placed_package_refs.is_empty()
-            || projected.authority != ComponentInstanceAuthority::Authored
-        {
-            return Err(invalid(
-                "This edit supports one schematic-only Symbol per authored ComponentInstance",
-            ));
-        }
-        let current = |r: &crate::substrate::RevisionedRef| {
-            model
-                .objects
-                .get(&r.object_id)
-                .is_some_and(|o| o.object_revision == r.object_revision)
-        };
-        if !ci.placed_symbol_refs.iter().all(current)
-            || !ci.part_ref.as_ref().is_none_or(current)
-            || model
-                .objects
-                .get(&ci.uuid)
-                .is_none_or(|o| o.object_revision != ci.object_revision)
-            || ci.library_bindings.values().any(|b| {
-                !matches!(
-                    b.binding_role,
-                    LibraryBindingRole::Part | LibraryBindingRole::Symbol
-                ) || !b.local_override_refs.is_empty()
-            })
-        {
-            return Err(invalid(
-                "This edit requires current schematic-only library bindings without overrides",
-            ));
-        }
-        found.insert(symbol, (ci.uuid, value["component_instance"].clone()));
-    }
-    if model.component_instances.values().any(|c| {
-        c.placed_symbol_refs.iter().any(|symbol| {
-            symbols.contains(symbol) && found.get(symbol).is_none_or(|(id, _)| *id != c.id)
-        })
+    let value = current_set(model, &BTreeSet::from([symbol]))?.remove(&symbol);
+    if value.as_ref().is_some_and(|(_, raw)| {
+        raw["placed_symbol_refs"]
+            .as_array()
+            .is_some_and(|r| r.len() != 1)
     }) {
         return Err(invalid(
-            "Symbol has unsupported or ambiguous component ownership",
+            "Part assignment and annotation require one Symbol per component",
         ));
     }
-    Ok(found)
+    Ok(value)
 }
+#[path = "schematic_component_members.rs"]
+mod members;
+pub(in crate::api::native_write) use members::{current_set, gate_set};
 /// Capture the same strict raw ownership once for the complete selected set.
 /// A surviving external reference cannot be silently discarded with its owner.
 pub(in crate::api::native_write) fn delete_bindings(
@@ -114,17 +54,18 @@ pub(in crate::api::native_write) fn delete_bindings(
     }
     Ok(bindings)
 }
-/// A transform preserves every semantic/raw binding field and only advances
-/// the two exact revision pins. Capture ownership once for the complete set.
+/// An edit preserves every semantic/raw binding field and advances only
+/// its owner epoch and the exact changed member pins. Capture ownership once for the complete set.
 pub(in crate::api::native_write) fn repin_symbols(
     model: &DesignModel,
     symbols: &[PlacedSymbol],
 ) -> Result<Vec<Operation>, EngineError> {
     let ids: BTreeSet<_> = symbols.iter().map(|s| s.uuid).collect();
     let bindings = current_set(model, &ids)?;
-    bindings
+    let unique: BTreeMap<_, _> = bindings.into_values().collect();
+    unique
         .into_iter()
-        .map(|(symbol, (id, previous))| {
+        .map(|(id, previous)| {
             let mut next = previous.clone();
             next["object_revision"] = json!(
                 model.objects[&id]
@@ -133,13 +74,21 @@ pub(in crate::api::native_write) fn repin_symbols(
                     .checked_add(1)
                     .ok_or_else(|| invalid("Component revision overflow"))?
             );
-            next["placed_symbol_refs"][0]["object_revision"] = json!(
-                model.objects[&symbol]
-                    .object_revision
-                    .0
-                    .checked_add(1)
-                    .ok_or_else(|| invalid("Symbol revision overflow"))?
-            );
+            for member in next["placed_symbol_refs"]
+                .as_array_mut()
+                .ok_or_else(|| invalid("Component members unavailable"))?
+            {
+                let symbol: Uuid = serde_json::from_value(member["object_id"].clone())?;
+                if ids.contains(&symbol) {
+                    member["object_revision"] = json!(
+                        model.objects[&symbol]
+                            .object_revision
+                            .0
+                            .checked_add(1)
+                            .ok_or_else(|| invalid("Symbol revision overflow"))?
+                    );
+                }
+            }
             Ok(Operation::SetComponentInstance {
                 component_instance_id: id,
                 previous_component_instance: previous,
@@ -148,6 +97,7 @@ pub(in crate::api::native_write) fn repin_symbols(
         })
         .collect()
 }
+
 pub(super) fn operation(
     model: &DesignModel,
     options: &AssignmentOptions,

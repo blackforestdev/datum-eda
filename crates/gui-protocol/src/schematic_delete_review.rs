@@ -14,6 +14,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub gate_placement: Option<super::gate_placement::GatePlacementEvidence>,
     pub annotation: Option<super::annotation::AnnotationEvidence>,
     pub disposition: Option<super::disposition::DispositionEvidence>,
     pub assignment: Option<super::assignment::AssignmentEvidence>,
@@ -134,7 +135,7 @@ impl DeleteReview {
         );
         Ok(())
     }
-    fn capture_source(state: &ReviewWorkspaceState) -> Result<Self, String> {
+    pub(super) fn capture_source(state: &ReviewWorkspaceState) -> Result<Self, String> {
         let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
         if basis.content != PaneContent::Schematic {
             return Err("Focus a native schematic view for this Proposal".into());
@@ -150,6 +151,7 @@ impl DeleteReview {
             .ok_or("Source view unavailable")?
             .clone();
         Ok(Self {
+            gate_placement: None,
             annotation: None,
             disposition: None,
             assignment: None,
@@ -230,6 +232,14 @@ impl DeleteReview {
                 if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
             (None, None) => {}
             _ => return Err("Proposal annotation changed; dismiss and review again".into()),
+        }
+        match (&self.gate_placement, &response.gate_placement) {
+            (Some(evidence), Some(summary))
+                if evidence.summary == *summary && response.deleted.is_empty() => {}
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("Proposal Gate placement identity or pose changed".into()),
         }
         self.revision = response.current_model_revision.clone();
         self.tip = response.transaction_tip;
@@ -323,6 +333,8 @@ impl DeleteReview {
     }
     /// Display-only replacement; the source Sheet and exact frozen targets remain intact.
     pub fn preview_scene(&self) -> BoardReviewSceneV1 {
+        // New Gate geometry is painted by the existing proposed channel, so it
+        // cannot acquire authored hit targets or ignore Proposed visibility.
         let mut scene = if let Some(evidence) = &self.annotation {
             evidence.preview.clone()
         } else {
@@ -352,6 +364,9 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(evidence) = &self.gate_placement {
+            return format!("Place another Gate · {}", evidence.summary.reference);
+        }
         if let Some(evidence) = &self.annotation {
             return format!(
                 "Annotate this sheet · {} of {} references change",
@@ -388,6 +403,12 @@ impl DeleteReview {
         )
     }
     pub fn names(&self) -> String {
+        if let Some(evidence) = &self.gate_placement {
+            return format!(
+                "{} · {}",
+                evidence.summary.choice.gate_name, evidence.summary.choice.symbol_name
+            );
+        }
         if let Some(evidence) = &self.annotation {
             return evidence
                 .summary

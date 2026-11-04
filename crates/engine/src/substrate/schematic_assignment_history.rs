@@ -16,10 +16,14 @@ fn member(value: &Value, id: Uuid, symbol: Uuid) -> Option<u64> {
         return None;
     }
     let refs = value["placed_symbol_refs"].as_array()?;
-    if refs.len() != 1 || refs[0]["object_id"] != json!(symbol) {
+    let matching: Vec<_> = refs
+        .iter()
+        .filter(|r| r["object_id"] == json!(symbol))
+        .collect();
+    let [found] = matching.as_slice() else {
         return None;
-    }
-    refs[0]["object_revision"].as_u64()
+    };
+    found["object_revision"].as_u64()
 }
 /// The last recorded pin is a post-transaction epoch. Later source modifications
 /// advance it exactly as canonical schematic application does; no hash equivalence.
@@ -47,7 +51,9 @@ fn prior_state(
                     component_instance,
                     ..
                 } if *component_instance_id == id => {
-                    epoch = Some(member(component_instance, id, symbol)?);
+                    if let Some(pin) = member(component_instance, id, symbol) {
+                        epoch = Some(pin);
+                    }
                     value = Some(component_instance.clone());
                 }
                 Operation::DeleteComponentInstance {
@@ -65,10 +71,19 @@ fn same_component_semantics(a: &Value, b: &Value, id: Uuid, symbol: Uuid) -> boo
         member(value, id, symbol)?;
         let mut value = value.clone();
         value["object_revision"] = Value::Null;
-        value["placed_symbol_refs"][0]["object_revision"] = Value::Null;
+        for r in value["placed_symbol_refs"].as_array_mut()? {
+            r["object_revision"] = Value::Null;
+        }
         Some(value)
     };
     normalize(a).is_some_and(|a| normalize(b).as_ref() == Some(&a))
+}
+fn repin(raw: &mut Value, pins: &std::collections::BTreeMap<Uuid, u64>) -> Option<()> {
+    for member in raw["placed_symbol_refs"].as_array_mut()? {
+        let symbol: Uuid = serde_json::from_value(member["object_id"].clone()).ok()?;
+        member["object_revision"] = json!(pins.get(&symbol)?);
+    }
+    Some(())
 }
 fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option<Vec<Operation>> {
     let members = family::capture(target)?;
@@ -81,10 +96,15 @@ fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option
         let Some(id) = family::component_id(op) else {
             continue;
         };
-        let symbol = members[&id];
-        let (current, epoch) = prior_state(prior, id, symbol)?;
+        let symbols = &members[&id];
+        let symbol = *symbols.iter().next()?;
+        let (current, _) = prior_state(prior, id, symbol)?;
         let (historical, _) = prior_state(recorded_after, id, symbol)?;
-        let next_pin = epoch.checked_add(1)?;
+        let pins:std::collections::BTreeMap<_,_> = symbols.iter().map(|symbol| {
+            let epoch = prior_state(prior, id, *symbol)?.1;
+            let changed = target.inverse_operations.iter().any(|o| matches!(o, Operation::SetSchematicSymbol { symbol_id,.. } if symbol_id == symbol));
+            Some((*symbol, if changed {epoch.checked_add(1)?} else {epoch}))
+        }).collect::<Option<_>>()?;
         match op {
             Operation::CreateComponentInstance {
                 component_instance, ..
@@ -94,7 +114,7 @@ fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option
                 }
                 member(component_instance, id, symbol)?;
                 component_instance["object_revision"] = json!(0);
-                component_instance["placed_symbol_refs"][0]["object_revision"] = json!(next_pin);
+                repin(component_instance, &pins)?;
             }
             Operation::SetComponentInstance {
                 previous_component_instance,
@@ -111,7 +131,7 @@ fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option
                 member(component_instance, id, symbol)?;
                 component_instance["object_revision"] =
                     json!(current["object_revision"].as_u64()?.checked_add(1)?);
-                component_instance["placed_symbol_refs"][0]["object_revision"] = json!(next_pin);
+                repin(component_instance, &pins)?;
             }
             Operation::DeleteComponentInstance {
                 component_instance, ..
@@ -146,10 +166,14 @@ pub(super) fn prepare(
         return Err(invalid());
     }
     validate_source_preimages(model, target)?;
-    for (id, symbol) in members {
-        let (current, epoch) = prior_state(&model.journal, id, symbol).ok_or_else(invalid)?;
-        if model.objects.get(&symbol).map(|o| o.object_revision.0) != Some(epoch) {
-            return Err(invalid());
+    for (id, symbols) in members {
+        let mut current = None;
+        for symbol in symbols {
+            let (raw, epoch) = prior_state(&model.journal, id, symbol).ok_or_else(invalid)?;
+            if model.objects.get(&symbol).map(|o| o.object_revision.0) != Some(epoch) {
+                return Err(invalid());
+            }
+            current = raw;
         }
         if let Some(current) = current {
             let object = model.objects.get(&id).ok_or_else(invalid)?;

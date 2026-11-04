@@ -237,9 +237,12 @@ restated.
   schematic-only, single-Symbol `ComponentInstance` bindings are now preserved
   by the singleton/group transform implementation in the same atomic pose,
   attached-wire and history transaction (`dat-schematic-bound-move-p8ks`).
-  Physical-package, multi-Symbol and stale bindings refuse the complete edit;
-  occurrence/contact limits are unchanged. Independent GUI verification covered
-  singleton/group transforms, current bindings, attached wires, Undo/Redo and reopening.
+  Supported same-sheet multi-Gate component owners also retain all sibling bindings
+  through these transforms (`dat-0fom`); physical-package and stale bindings refuse
+  the complete edit. Occurrence/contact limits are unchanged. Earlier independent
+  GUI verification covered single-Symbol bindings during singleton/group transforms,
+  attached wires, Undo/Redo and reopening. Multi-Gate GUI checks additionally covered
+  new-member Move, sibling preservation, history and cold reopening (`dat-0fom`).
   Public CLI normalization and broader occurrence/contact transforms remain pending.
 
 ### 3. delete-object (any schematic object, by id list)
@@ -276,9 +279,12 @@ restated.
   schematic-only component bindings now use the same review, removing the owned
   binding and no-connect markers atomically while preserving unrelated wires and
   library source (`dat-schematic-bound-delete-ahmx`). Undo/Redo and reopening
-  restore exact identities and valid binding pins. Existing root-view limits,
-  physical/multi-Symbol bindings, stale or repeated sources, external dependencies,
-  hierarchy-bound Ports and shared Bus restrictions remain. The public normalized id-list surface, remaining
+  restore exact identities and valid binding pins. Supported same-sheet multi-Gate
+  deletion retains surviving siblings in their current owner, removing the owner only
+  with its last Symbol (`dat-0fom`). Members must share one unique source sheet
+  and qualified occurrence path, empty or existing nonempty; this adds no hierarchy
+  navigation. Physical or override bindings, stale or repeated sources, external
+  dependencies, hierarchy-bound Ports and shared Bus restrictions remain. The public normalized id-list surface, remaining
   object classes and board-bound escalation are still pending.
 
 ### 4. draw-wire
@@ -520,11 +526,28 @@ restated.
   and custom metadata/presentation controls also preserve supported single-Symbol,
   schematic-only bindings (`dat-schematic-bound-fields-0r9i`), including raw
   payload, library identity and connectivity through cancellation, Undo/Redo
-  and reopening. Physical, multi-Symbol, stale and repeated-source restrictions
-  remain. Supported bound-Symbol deletion is covered by §3. The existing Inspector
+  and reopening. Supported same-sheet multi-Gate property edits also repin the
+  existing owner without losing siblings (`dat-0fom`). Physical, stale and
+  repeated-source restrictions remain. Supported bound-Symbol deletion is covered by §3. The existing Inspector
   distinguishes a valid schematic binding with no declared board counterpart from
   stale, missing or ambiguous bindings (`dat-schematic-binding-inspector-a7rm`);
   owning a component does not imply cross-domain selection or a complete board graph.
+
+  **Place Another Gate…** configures the selected Symbol's existing picker for
+  explicitly chosen unused Gates of its schematic-only component (`dat-0fom`).
+  Reference starts empty and must be supplied; the chosen Gate fixes its Unit and
+  native library Symbol. After snapped pose preview, a placement click stages the
+  shared Proposal review; explicit acceptance creates the new Symbol/pins and
+  updates the existing owner atomically. Cancel preserves design source. Members
+  share one unique source sheet and qualified occurrence path, empty or existing
+  nonempty, without adding hierarchy navigation. Same-sheet Move, fields and
+  Delete retain sibling identities through history. Physical, override, stale and
+  repeated-source cases refuse; deletion also refuses surviving external dependencies.
+  Part reassignment and sheet annotation retain their narrower admission.
+  Independent ordinary GUI checks covered placement preview/cancel/accept, new-member
+  Move/value/Delete with sibling preservation, Undo/Redo and cold reopening. All 658
+  saved files remained exact. Immediate-restart writer-lock refusal remains separately
+  open (`dat-iwxe`); broader qualification is not claimed.
 
   Automatic position presets, a bulk fields table, cross-Unit replacement,
   broader part/entity/gate reassignment, complete public-surface normalization

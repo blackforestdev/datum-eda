@@ -148,6 +148,7 @@ pub use electrical_identity_validation::net_correspondence_status;
 pub use electrical_net_membership::*;
 pub(crate) use electrical_transaction::adoption as electrical_adoption_operations;
 pub(crate) use electrical_transaction::bootstrap_empty_native_topology;
+pub(crate) use electrical_transaction::compose as compose_electrical_transaction;
 pub use electrical_transition::plan_net_identity_transition;
 
 pub type ObjectId = Uuid;

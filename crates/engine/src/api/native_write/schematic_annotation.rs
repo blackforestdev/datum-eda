@@ -93,6 +93,9 @@ fn plan(
             vec![],
         ));
     }
+    for symbol in source.symbols.keys() {
+        super::schematic_assignment::component::current(model, *symbol)?;
+    }
     let mut reserved = BTreeSet::new();
     for (sheet_id, s) in &selected.source.sheets {
         for symbol in s.symbols.values() {

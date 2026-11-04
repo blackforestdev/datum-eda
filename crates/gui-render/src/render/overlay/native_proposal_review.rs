@@ -20,8 +20,15 @@ pub(super) fn render(
         return;
     }
     if review.current(state) && proposed_visible(state) && review.response.is_some() {
-        let ids = review.deleted_sources();
-        for graphic in &review.scene.board_graphics {
+        let (ghost_scene, ids, role) = if let Some(gate) = &review.gate_placement {
+            let ids = std::iter::once(gate.symbol.uuid.to_string())
+                .chain(gate.symbol.pins.iter().map(|pin| pin.uuid.to_string()))
+                .collect();
+            (&gate.preview, ids, "proposed_preview")
+        } else {
+            (&review.scene, review.deleted_sources(), "proposed_delete")
+        };
+        for graphic in &ghost_scene.board_graphics {
             if graphic.object_kind == "schematic_field_tether"
                 || !ids.contains(&graphic.source_object_uuid)
                 || !layer_visible(state, &graphic.layer_id)
@@ -29,11 +36,11 @@ pub(super) fn render(
                 continue;
             }
             let ghost = ProposalOverlayPrimitive {
-                overlay_id: format!("delete:{}", graphic.object_id),
+                overlay_id: format!("review:{}", graphic.object_id),
                 primitive_kind: "track_path".into(),
                 proposal_action_id: review.proposal_id.to_string(),
                 layer_id: Some(graphic.layer_id.clone()),
-                render_role: "proposed_delete".into(),
+                render_role: role.into(),
                 width_nm: graphic.width_nm,
                 drill_nm: None,
                 diameter_nm: None,
@@ -42,8 +49,8 @@ pub(super) fn render(
             // Same proposal painter, no new authored/selection hit targets.
             push_overlay_channels(out, plan, &ghost, projection, PROPOSAL_BASE, false);
         }
-        let assets = glyph_mesh_lookup::MeshIndex::new(&review.scene.glyph_mesh_assets, out);
-        for owned in review.scene.board_texts.iter().filter(|t| {
+        let assets = glyph_mesh_lookup::MeshIndex::new(&ghost_scene.glyph_mesh_assets, out);
+        for owned in ghost_scene.board_texts.iter().filter(|t| {
             t.source_object_uuid
                 .as_ref()
                 .is_some_and(|id| ids.contains(id))
@@ -52,8 +59,7 @@ pub(super) fn render(
                 continue;
             }
             if let (Some(geometry), Some(assets)) = (
-                review
-                    .scene
+                ghost_scene
                     .board_text_geometries
                     .iter()
                     .find(|g| g.object_id == owned.object_id),
@@ -108,7 +114,9 @@ pub(super) fn render(
     } else if review.accepted() && review.ready() && review.current(state) {
         "Tab retry apply · Esc close review"
     } else if review.ready() && review.current(state) {
-        if review.annotation.is_some() {
+        if review.gate_placement.is_some() {
+            "Tab accept Gate placement · Esc dismiss"
+        } else if review.annotation.is_some() {
             "Tab accept annotation · Esc dismiss"
         } else if review.assignment.is_some() {
             "Tab accept assignment · Esc dismiss"

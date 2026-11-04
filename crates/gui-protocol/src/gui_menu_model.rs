@@ -197,6 +197,16 @@ impl GuiMenuItem {
         use crate::schematic_authoring::selected;
         if matches!(
             self.binding(),
+            GuiMenuBinding::GuiLocal("schematic.gate.place")
+        ) {
+            return crate::schematic_authoring::gate_placement::GatePlacementDraft::admit_selected(
+                state,
+            )
+            .err()
+            .map(|_| "Select an eligible assigned schematic-only Symbol");
+        }
+        if matches!(
+            self.binding(),
             GuiMenuBinding::GuiLocal("schematic.annotation.review")
         ) {
             return crate::schematic_authoring::annotation::AnnotationEvidence::admit(state).err();

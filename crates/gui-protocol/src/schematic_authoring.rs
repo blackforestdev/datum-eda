@@ -26,6 +26,9 @@ pub use custom_field::{CustomFieldControl, CustomFieldDraft};
 mod bus_entry;
 pub use bus_entry::BusEntryDraft;
 
+#[path = "schematic_gate_placement.rs"]
+pub mod gate_placement;
+
 #[path = "schematic_annotation.rs"]
 pub mod annotation;
 #[path = "schematic_assignment.rs"]
@@ -413,6 +416,7 @@ impl PlacementTransform {
 pub struct SchematicAuthoring {
     pub delete_review: Option<delete_review::DeleteReview>,
     pub disposition_draft: Option<delete_review::DeleteReview>,
+    pub gate_draft: Option<gate_placement::GatePlacementDraft>,
     pub assignment_draft: Option<delete_review::DeleteReview>,
     pub creation: Option<NewSchematicDraft>,
     pub editing: Option<FieldsEditDraft>,
@@ -630,7 +634,15 @@ impl SchematicAuthoring {
             .sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.id.cmp(&b.id)));
         Ok(state)
     }
+    pub fn picker_choices(&self) -> &[LibrarySymbolChoice] {
+        self.gate_draft
+            .as_ref()
+            .map_or(&self.choices, |draft| &draft.choices)
+    }
     pub fn select(&mut self, index: usize) -> bool {
+        if self.gate_draft.is_some() {
+            return false;
+        }
         let Some(choice) = self.choices.get(index) else {
             return false;
         };

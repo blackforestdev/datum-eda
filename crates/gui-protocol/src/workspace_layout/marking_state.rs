@@ -157,6 +157,9 @@ impl MarkingMenuState {
         }
         let class = target.map(|id| id.class);
         let verb = match item.binding() {
+            B::GuiLocal("schematic.gate.place") if class == Some(C::Symbol) => {
+                return crate::schematic_authoring::gate_placement::GatePlacementDraft::admit_target(state,target.unwrap());
+            }
             B::GuiLocal("schematic.annotation.review") if self.menu_key == "schematic.empty" => {
                 crate::schematic_authoring::annotation::AnnotationEvidence::admit(state)?;
                 return Ok(());
