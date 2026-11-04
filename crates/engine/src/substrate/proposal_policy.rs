@@ -3,18 +3,25 @@ use super::{CommitSource, Operation, OperationBatch, ProposalApplyBlocker};
 pub(super) fn direct_commit_proposal_policy_blockers(
     batch: &OperationBatch,
 ) -> Vec<ProposalApplyBlocker> {
-    if !matches!(
+    let automated = matches!(
         batch.provenance.source,
         CommitSource::Tool | CommitSource::Assistant
-    ) {
-        return Vec::new();
-    }
+    );
 
     batch
         .operations
         .iter()
         .filter_map(|operation| {
-            let (code, family) = proposal_required_operation(operation)?;
+            // Waiving a check result always requires review. Provenance is an
+            // audit label, never an authority to bypass explicit acceptance.
+            let (code, family) = match operation {
+                Operation::CreateSchematicWaiver { .. } =>
+                    ("proposal_required_for_check_disposition", "schematic waiver"),
+                Operation::CreateSchematicDeviation { .. } =>
+                    ("proposal_required_for_check_disposition", "schematic deviation"),
+                _ if automated => proposal_required_operation(operation)?,
+                _ => return None,
+            };
             Some(ProposalApplyBlocker {
                 code: code.to_string(),
                 message: format!(
@@ -25,6 +32,10 @@ pub(super) fn direct_commit_proposal_policy_blockers(
         })
         .collect()
 }
+
+#[cfg(test)]
+#[path = "proposal_policy/waiver_tests.rs"]
+mod waiver_tests;
 
 pub(super) fn format_proposal_policy_blockers(blockers: &[ProposalApplyBlocker]) -> String {
     blockers

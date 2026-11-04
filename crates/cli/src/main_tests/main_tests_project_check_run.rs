@@ -95,8 +95,8 @@ fn check_waive_command_authors_fingerprint_waiver() {
     let report: serde_json::Value =
         serde_json::from_str(&output).expect("waive report JSON should parse");
 
-    assert_eq!(report["contract"], "project_waive_finding_v1");
-    assert_eq!(report["status"], "applied");
+    assert_eq!(report["contract"], "project_waive_finding_v2");
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(&root, &report);
     assert_fingerprint_status(&root, &fingerprint, "waived");
 
     let _ = std::fs::remove_dir_all(&root);
@@ -354,8 +354,11 @@ fn project_waive_finding_commits_journaled_fingerprint_waiver() {
     .expect("waive-finding should succeed");
     let waive_report: serde_json::Value =
         serde_json::from_str(&waive_output).expect("waive report JSON should parse");
-    assert_eq!(waive_report["contract"], "project_waive_finding_v1");
-    assert_eq!(waive_report["status"], "applied");
+    assert_eq!(waive_report["contract"], "project_waive_finding_v2");
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(
+        &root,
+        &waive_report,
+    );
     assert_eq!(waive_report["fingerprint"], fingerprint);
 
     assert_fingerprint_status(&root, &fingerprint, "waived");
@@ -375,7 +378,7 @@ fn project_waive_finding_commits_journaled_fingerprint_waiver() {
     .expect("journal-list should succeed");
     let journal: serde_json::Value =
         serde_json::from_str(&journal_output).expect("journal JSON should parse");
-    assert_eq!(journal["count"], 1);
+    assert_eq!(journal["count"], 3);
     assert_eq!(journal["transactions"][0]["operations"], 1);
     assert_eq!(journal["can_undo"], true);
 
@@ -448,8 +451,11 @@ fn project_accept_deviation_commits_journaled_fingerprint_deviation() {
     .expect("accept-deviation should succeed");
     let deviation_report: serde_json::Value =
         serde_json::from_str(&deviation_output).expect("deviation report JSON should parse");
-    assert_eq!(deviation_report["contract"], "project_accept_deviation_v1");
-    assert_eq!(deviation_report["status"], "applied");
+    assert_eq!(deviation_report["contract"], "project_accept_deviation_v2");
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(
+        &root,
+        &deviation_report,
+    );
     assert_eq!(deviation_report["fingerprint"], fingerprint);
 
     assert_fingerprint_status(&root, &fingerprint, "accepted_deviation");

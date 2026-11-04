@@ -34,9 +34,7 @@ impl DesignModel {
             TransactionKind::Normal,
             CommitPolicyContext::Direct,
         )?;
-        let batch = super::electrical_transaction::compose(self, batch, TransactionKind::Normal)?;
-        super::electrical_history::validate(self, &batch.operations, TransactionKind::Normal)?;
-        self.commit_without_direct_policy(batch)
+        super::proposal_source_preview::apply_unjournaled(self, batch)
     }
 
     pub(super) fn commit_without_direct_policy(

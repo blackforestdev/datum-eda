@@ -75,13 +75,13 @@ fn write_json(path: &Path, value: serde_json::Value) {
     )
     .expect("json should write");
 }
-fn temp_project_root(name: &str) -> PathBuf {
+pub(super) fn temp_project_root(name: &str) -> PathBuf {
     let root =
         std::env::temp_dir().join(format!("datum_project_resolver_{name}_{}", Uuid::new_v4()));
     std::fs::create_dir_all(&root).expect("temp project root should create");
     root
 }
-fn write_minimal_project(root: &Path, project_id: Uuid, board_id: Uuid) {
+pub(super) fn write_minimal_project(root: &Path, project_id: Uuid, board_id: Uuid) {
     write_json(
         &root.join("project.json"),
         serde_json::json!({

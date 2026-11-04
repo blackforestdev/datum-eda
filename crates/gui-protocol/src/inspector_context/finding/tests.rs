@@ -1,6 +1,5 @@
 use super::*;
 use eda_engine::api::native_write::{
-    commit_prepared,
     context::WriteProvenance,
     genesis::{GenesisSpec, bootstrap_native_project},
     waivers::{
@@ -108,7 +107,7 @@ fn erc_readable_inspector_captures_only_exact_canonical_rationale_without_histor
     )
     .unwrap();
     let waiver_id = waiver.waiver_id;
-    commit_prepared(&mut model, &root, waiver.write).unwrap();
+    apply_disposition(&mut model, &root, waiver.write.batch);
     let deviation = build_create_schematic_deviation(
         &model,
         provenance(),
@@ -122,7 +121,7 @@ fn erc_readable_inspector_captures_only_exact_canonical_rationale_without_histor
     )
     .unwrap();
     let deviation_id = deviation.deviation_id;
-    commit_prepared(&mut model, &root, deviation.write).unwrap();
+    apply_disposition(&mut model, &root, deviation.write.batch);
     model = ProjectResolver::new(&root).resolve().unwrap();
     state.checks.findings[0].waiver_refs = vec![waiver_id.to_string()];
     state.checks.findings[0].status = "waived".into();
@@ -164,4 +163,27 @@ fn erc_readable_inspector_captures_only_exact_canonical_rationale_without_histor
         "ambiguous duplicate waiver reference is not displayed"
     );
     std::fs::remove_dir_all(root).unwrap();
+}
+
+fn apply_disposition(
+    model: &mut DesignModel,
+    root: &std::path::Path,
+    batch: eda_engine::substrate::OperationBatch,
+) {
+    use eda_engine::substrate::*;
+    let proposal = create_draft_proposal_from_batch(
+        model,
+        root,
+        ProposalCreateRequest {
+            proposal_id: None,
+            batch,
+            rationale: "Reviewed test disposition".into(),
+            source: ProposalSource::Manual,
+            checks_run: vec![],
+            finding_fingerprints: vec![],
+        },
+    )
+    .unwrap();
+    review_proposal_status(model, root, proposal.proposal_id, ProposalStatus::Accepted).unwrap();
+    apply_accepted_proposal(model, root, proposal.proposal_id).unwrap();
 }

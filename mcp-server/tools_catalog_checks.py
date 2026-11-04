@@ -68,7 +68,7 @@ CHECK_TOOL_SCHEMAS = {
         },
     },
     "waive_finding": {
-        "description": "Author a fingerprint-scoped check finding waiver through the native project journal.",
+        "description": "Create a draft Proposal for a fingerprint-scoped waiver; explicit Proposal review and apply are required.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -81,7 +81,7 @@ CHECK_TOOL_SCHEMAS = {
         },
     },
     "accept_deviation": {
-        "description": "Accept a fingerprint-scoped check finding as a deviation through the native project journal.",
+        "description": "Create a draft Proposal for a fingerprint-scoped deviation; explicit Proposal review and apply are required.",
         "inputSchema": {
             "type": "object",
             "properties": {

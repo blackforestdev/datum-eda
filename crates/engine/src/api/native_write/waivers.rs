@@ -182,9 +182,9 @@ pub fn build_create_schematic_deviation(
     })
 }
 
-/// Build and immediately commit a fingerprint waiver through the one
-/// journaled commit path. Returns the derived waiver id and the commit
-/// report.
+/// Attempt a direct waiver commit. Proposal policy refuses this route; use
+/// the builder with explicit Proposal review and apply to author a waiver.
+/// No design change is made on refusal.
 pub fn create_schematic_waiver_and_commit(
     model: &mut DesignModel,
     project_root: &Path,
@@ -197,9 +197,9 @@ pub fn create_schematic_waiver_and_commit(
     Ok((waiver_id, report))
 }
 
-/// Build and immediately commit an accepted fingerprint deviation through the
-/// one journaled commit path. Returns the derived deviation id and the commit
-/// report.
+/// Attempt a direct deviation commit. Proposal policy refuses this route; use
+/// the builder with explicit Proposal review and apply to author a deviation.
+/// No design change is made on refusal.
 pub fn create_schematic_deviation_and_commit(
     model: &mut DesignModel,
     project_root: &Path,
@@ -516,55 +516,43 @@ mod tests {
     }
 
     #[test]
-    fn waiver_and_commit_lands_through_journaled_path() {
+    fn waiver_direct_commit_requires_proposal() {
         let (root, mut model, schematic_id) = resolved_minimal_project("waiver_commit");
-        let request = waiver_request(schematic_id);
         let before = model.model_revision.clone();
-
-        let (waiver_id, report) = create_schematic_waiver_and_commit(
+        let error = create_schematic_waiver_and_commit(
             &mut model,
             &root,
-            test_provenance("waive check finding erc:unconnected:abc123"),
-            &request,
+            test_provenance("explicit acceptance"),
+            &waiver_request(schematic_id),
         )
-        .expect("waiver commit should succeed");
-
-        assert_eq!(report.transaction.before_model_revision, before);
-        assert_eq!(
-            report.transaction.after_model_revision,
-            model.model_revision
-        );
-        assert_ne!(model.model_revision, before);
+        .unwrap_err();
         assert!(
-            model.objects.contains_key(&waiver_id),
-            "committed waiver should be a resolved domain object"
+            error
+                .to_string()
+                .contains("proposal_required_for_check_disposition")
         );
-        assert!(
-            crate::substrate::transaction_journal_path(&root).exists(),
-            "journaled commit should append the transaction journal"
-        );
+        assert_eq!(model.model_revision, before);
+        assert!(!crate::substrate::transaction_journal_path(&root).exists());
     }
 
     #[test]
-    fn deviation_and_commit_lands_through_journaled_path() {
+    fn deviation_direct_commit_requires_proposal() {
         let (root, mut model, schematic_id) = resolved_minimal_project("deviation_commit");
-        let request = deviation_request(schematic_id);
         let before = model.model_revision.clone();
-
-        let (deviation_id, report) = create_schematic_deviation_and_commit(
+        let error = create_schematic_deviation_and_commit(
             &mut model,
             &root,
-            test_provenance("accept check finding deviation drc:clearance:def456"),
-            &request,
+            test_provenance("explicit acceptance"),
+            &deviation_request(schematic_id),
         )
-        .expect("deviation commit should succeed");
-
-        assert_eq!(report.transaction.before_model_revision, before);
-        assert_ne!(model.model_revision, before);
+        .unwrap_err();
         assert!(
-            model.objects.contains_key(&deviation_id),
-            "committed deviation should be a resolved domain object"
+            error
+                .to_string()
+                .contains("proposal_required_for_check_disposition")
         );
+        assert_eq!(model.model_revision, before);
+        assert!(!crate::substrate::transaction_journal_path(&root).exists());
     }
 
     #[test]

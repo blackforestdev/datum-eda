@@ -155,9 +155,9 @@ pub(crate) enum ProjectCommands {
     ApplyProposal(ProjectApplyProposalArgs),
     /// Generate draft standards repair proposals from the current check run
     GenerateStandardsRepairProposals(ProjectGenerateStandardsRepairProposalsArgs),
-    /// Author a fingerprint-scoped waiver through the native project journal
+    /// Create a draft waiver Proposal; explicit review and apply are required
     WaiveFinding(ProjectWaiveFindingArgs),
-    /// Accept a fingerprint-scoped check finding as a deviation through the native project journal
+    /// Create a draft deviation Proposal; explicit review and apply are required
     AcceptDeviation(ProjectAcceptDeviationArgs),
     /// Create or reuse a deterministic Gerber-set OutputJob
     CreateGerberOutputJob(ProjectCreateGerberOutputJobArgs),

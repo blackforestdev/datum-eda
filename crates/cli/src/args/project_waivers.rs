@@ -4,7 +4,7 @@ use crate::*;
 pub(crate) struct ProjectWaiveFindingArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
-    /// Stable CheckFinding fingerprint to waive
+    /// Stable CheckFinding fingerprint for a waiver draft (requires Proposal acceptance)
     #[arg(long)]
     pub(crate) fingerprint: String,
     /// Waiver rationale recorded in the authored project
@@ -19,7 +19,7 @@ pub(crate) struct ProjectWaiveFindingArgs {
 pub(crate) struct ProjectAcceptDeviationArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
-    /// Stable CheckFinding fingerprint to accept as a deviation
+    /// Stable CheckFinding fingerprint for a deviation draft (requires Proposal acceptance)
     #[arg(long)]
     pub(crate) fingerprint: String,
     /// Deviation rationale recorded in the authored project

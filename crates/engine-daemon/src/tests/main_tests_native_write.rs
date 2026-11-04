@@ -393,33 +393,38 @@ fn native_write_set_display_units_commits_one_guarded_settings_transaction() {
 }
 
 #[test]
-fn native_write_waive_verb_commits_disposition() {
+fn native_write_waive_verb_requires_proposal() {
     let mut engine = Engine::new().expect("engine should initialize");
     let root = temp_native_project("write_waive");
 
-    let response = dispatch_request(
-        &mut engine,
-        native_request(
-            1,
-            "native.write",
-            json!({
-                "project_root": root.display().to_string(),
-                "verb": "datum.check.waive",
-                "params": {
-                    "domain": "erc",
-                    "fingerprint": "erc:unconnected:daemon123",
-                    "rationale": "reviewed via daemon",
-                    "created_by": "reviewer"
-                },
-                "reason": "waive check finding erc:unconnected:daemon123",
-            }),
-        ),
-    );
-    assert!(response.error.is_none(), "{response:?}");
-    let result = response.result.expect("write result should exist");
-    assert_eq!(result["status"], "applied");
-    assert_eq!(result["operation_count"], 1);
-    assert!(result["primary_object_id"].is_string());
+    for dry_run in [true, false] {
+        let response = dispatch_request(
+            &mut engine,
+            native_request(
+                1,
+                "native.write",
+                json!({
+                    "project_root": root.display().to_string(),
+                    "verb": "datum.check.waive",
+                    "dry_run": dry_run,
+                    "params": {
+                        "domain": "erc",
+                        "fingerprint": "erc:unconnected:daemon123",
+                        "rationale": "reviewed via daemon",
+                        "created_by": "reviewer"
+                    },
+                    "reason": "waive check finding erc:unconnected:daemon123",
+                }),
+            ),
+        );
+        if dry_run {
+            assert_eq!(response.result.unwrap()["status"], "dry_run");
+        } else {
+            let error = response.error.expect("direct disposition must refuse");
+            assert!(format!("{error:?}").contains("proposal_required_for_check_disposition"));
+        }
+        assert!(!eda_engine::substrate::transaction_journal_path(&root).exists());
+    }
 
     let _ = std::fs::remove_dir_all(&root);
 }

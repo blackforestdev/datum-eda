@@ -241,6 +241,7 @@ fn project_waive_finding_authors_standards_domain_waiver() {
     )
     .expect("standards waiver should be authored");
     let report: serde_json::Value = serde_json::from_str(&output).unwrap();
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(&root, &report);
     assert_eq!(report["domain"], "standards");
     assert_standards_finding_status(&root, &fingerprint, "waived", "waiver_refs");
 
@@ -284,6 +285,7 @@ fn project_accept_deviation_authors_standards_domain_deviation() {
     )
     .expect("standards deviation should be authored");
     let report: serde_json::Value = serde_json::from_str(&output).unwrap();
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(&root, &report);
     assert_eq!(report["domain"], "standards");
     assert_standards_finding_status(&root, &fingerprint, "accepted_deviation", "deviation_refs");
 

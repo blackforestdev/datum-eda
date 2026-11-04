@@ -14,9 +14,9 @@ pub(crate) enum CheckCommands {
     FillZones(CheckFillZonesArgs),
     /// Generate standards-repair proposals from the current native project CheckRun
     RepairStandards(CheckRepairStandardsArgs),
-    /// Author a fingerprint-scoped check finding waiver
+    /// Create a draft waiver Proposal; explicit review and apply are required
     Waive(CheckWaiveArgs),
-    /// Accept a fingerprint-scoped check finding as a deviation
+    /// Create a draft deviation Proposal; explicit review and apply are required
     AcceptDeviation(CheckAcceptDeviationArgs),
     /// Run the legacy imported-design check surface
     Imported(CheckImportedArgs),
@@ -83,7 +83,7 @@ pub(crate) struct CheckRepairStandardsArgs {
 pub(crate) struct CheckWaiveArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
-    /// Stable CheckFinding fingerprint to waive
+    /// Stable CheckFinding fingerprint for a waiver draft
     #[arg(long)]
     pub(crate) fingerprint: String,
     /// Waiver rationale recorded in the authored project
@@ -98,7 +98,7 @@ pub(crate) struct CheckWaiveArgs {
 pub(crate) struct CheckAcceptDeviationArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
-    /// Stable CheckFinding fingerprint to accept as a deviation
+    /// Stable CheckFinding fingerprint for a deviation draft
     #[arg(long)]
     pub(crate) fingerprint: String,
     /// Deviation rationale recorded in the authored project

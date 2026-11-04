@@ -368,8 +368,7 @@ pub fn preview_proposal_diff(
         .proposals
         .get(&proposal_id)
         .ok_or_else(|| EngineError::Validation(format!("proposal {proposal_id} not found")))?;
-    let mut preview = model.clone();
-    let report = preview.commit(proposal.batch.clone())?;
+    let report = super::proposal_source_preview::unjournaled_report(model, proposal.batch.clone())?;
     proposal_preview_from_report(model, proposal, report)
 }
 

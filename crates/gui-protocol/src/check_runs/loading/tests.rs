@@ -205,7 +205,7 @@ fn erc_disposition_basis_is_frozen_before_canonical_root_change_and_history() {
     )
     .unwrap();
     let waiver = prepared.waiver_id;
-    commit_prepared(&mut model, &root, prepared.write).unwrap();
+    apply_disposition(&mut model, &root, prepared.write.batch);
     let mut current = ProjectResolver::new(&root).resolve().unwrap();
     let applied = disposition_basis(&current).unwrap();
     assert_ne!(frozen, applied);
@@ -226,4 +226,27 @@ fn erc_disposition_basis_is_frozen_before_canonical_root_change_and_history() {
     current = ProjectResolver::new(&root).resolve().unwrap();
     assert_eq!(disposition_basis(&current).unwrap(), applied);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+fn apply_disposition(
+    model: &mut eda_engine::substrate::DesignModel,
+    root: &std::path::Path,
+    batch: eda_engine::substrate::OperationBatch,
+) {
+    use eda_engine::substrate::*;
+    let proposal = create_draft_proposal_from_batch(
+        model,
+        root,
+        ProposalCreateRequest {
+            proposal_id: None,
+            batch,
+            rationale: "Reviewed test disposition".into(),
+            source: ProposalSource::Manual,
+            checks_run: vec![],
+            finding_fingerprints: vec![],
+        },
+    )
+    .unwrap();
+    review_proposal_status(model, root, proposal.proposal_id, ProposalStatus::Accepted).unwrap();
+    apply_accepted_proposal(model, root, proposal.proposal_id).unwrap();
 }

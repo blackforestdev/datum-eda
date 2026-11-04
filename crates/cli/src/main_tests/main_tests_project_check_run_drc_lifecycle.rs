@@ -60,8 +60,11 @@ fn project_waive_finding_commits_journaled_drc_fingerprint_waiver() {
     .expect("DRC waive-finding should succeed");
     let waive_report: serde_json::Value =
         serde_json::from_str(&waive_output).expect("waive report JSON should parse");
-    assert_eq!(waive_report["contract"], "project_waive_finding_v1");
-    assert_eq!(waive_report["status"], "applied");
+    assert_eq!(waive_report["contract"], "project_waive_finding_v2");
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(
+        &root,
+        &waive_report,
+    );
     assert_eq!(waive_report["domain"], "drc");
     assert_eq!(waive_report["fingerprint"], fingerprint);
 
@@ -116,8 +119,11 @@ fn project_accept_deviation_commits_journaled_drc_fingerprint_deviation() {
     .expect("DRC accept-deviation should succeed");
     let deviation_report: serde_json::Value =
         serde_json::from_str(&deviation_output).expect("deviation report JSON should parse");
-    assert_eq!(deviation_report["contract"], "project_accept_deviation_v1");
-    assert_eq!(deviation_report["status"], "applied");
+    assert_eq!(deviation_report["contract"], "project_accept_deviation_v2");
+    super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(
+        &root,
+        &deviation_report,
+    );
     assert_eq!(deviation_report["domain"], "drc");
     assert_eq!(deviation_report["fingerprint"], fingerprint);
 
@@ -125,4 +131,45 @@ fn project_accept_deviation_commits_journaled_drc_fingerprint_deviation() {
     assert_fingerprint_ref_count(&root, &fingerprint, "deviation_refs", 1);
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+// Exercise the actual public CLI review boundary before lifecycle assertions.
+pub(super) fn accept_disposition_draft(root: &std::path::Path, report: &serde_json::Value) {
+    assert_eq!(report["status"], "draft");
+    assert!(
+        report["next_step"]
+            .as_str()
+            .unwrap()
+            .contains("no disposition has been applied")
+    );
+    let id = report["proposal_id"].as_str().unwrap();
+    let path = root.to_str().unwrap();
+    let before = std::fs::read(root.join("schematic/schematic.json")).unwrap();
+    assert_fingerprint_status(root, report["fingerprint"].as_str().unwrap(), "active");
+    execute(Cli::try_parse_from(["eda", "proposal", "preview", path, "--proposal", id]).unwrap())
+        .unwrap();
+    assert!(
+        execute(Cli::try_parse_from(["eda", "proposal", "apply", path, "--proposal", id]).unwrap())
+            .is_err()
+    );
+    assert_eq!(
+        std::fs::read(root.join("schematic/schematic.json")).unwrap(),
+        before
+    );
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "proposal",
+            "review",
+            path,
+            "--proposal",
+            id,
+            "--status",
+            "accepted",
+        ])
+        .unwrap(),
+    )
+    .unwrap();
+    execute(Cli::try_parse_from(["eda", "proposal", "apply", path, "--proposal", id]).unwrap())
+        .unwrap();
 }

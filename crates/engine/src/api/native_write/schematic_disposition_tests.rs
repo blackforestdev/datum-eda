@@ -1,8 +1,11 @@
 //! Complementary adapter refusals; CLI tests use the actual persisted ERC producer.
 use super::*;
 use crate::{
-    api::native_write::{commit_prepared, electrical::topology_tests},
-    substrate::{CheckRun, CommitSource},
+    api::native_write::electrical::topology_tests,
+    substrate::{
+        CheckRun, CommitSource, ProposalCreateRequest, ProposalSource, ProposalStatus,
+        apply_accepted_proposal, create_draft_proposal_from_batch, review_proposal_status,
+    },
 };
 use serde_json::json;
 
@@ -66,7 +69,27 @@ fn native_erc_disposition_checks_root_duplicates_despite_empty_finding_refs() {
         let fp = run.findings[0].fingerprint.clone();
         model.check_runs.insert(id, run.clone());
         let write = build(&model, provenance(), id, &fp, kind, "existing reason").unwrap();
-        commit_prepared(&mut model, &root, write).unwrap();
+        let proposal = create_draft_proposal_from_batch(
+            &mut model,
+            &root,
+            ProposalCreateRequest {
+                proposal_id: None,
+                batch: write.batch,
+                rationale: "existing reason".into(),
+                source: ProposalSource::Manual,
+                checks_run: vec![],
+                finding_fingerprints: vec![fp.clone()],
+            },
+        )
+        .unwrap();
+        review_proposal_status(
+            &mut model,
+            &root,
+            proposal.proposal_id,
+            ProposalStatus::Accepted,
+        )
+        .unwrap();
+        apply_accepted_proposal(&mut model, &root, proposal.proposal_id).unwrap();
         // Deliberately stale presentation annotations cannot authorize a replacement.
         run.model_revision = model.model_revision.clone();
         model.check_runs.insert(id, run);

@@ -269,12 +269,12 @@ class FakeDaemonClientChecksMixin:
             "2.0",
             133,
             {
-                "contract": "project_waive_finding_v1",
+                "contract": "project_waive_finding_v2",
                 "action": "waive_finding",
                 "project_root": path,
                 "fingerprint": fingerprint,
                 "domain": "standards",
-                "status": "applied",
+                "status": "draft",
             },
             None,
         )
@@ -291,12 +291,12 @@ class FakeDaemonClientChecksMixin:
             "2.0",
             134,
             {
-                "contract": "project_accept_deviation_v1",
+                "contract": "project_accept_deviation_v2",
                 "action": "accept_deviation",
                 "project_root": path,
                 "fingerprint": fingerprint,
                 "domain": "standards",
-                "status": "applied",
+                "status": "draft",
             },
             None,
         )

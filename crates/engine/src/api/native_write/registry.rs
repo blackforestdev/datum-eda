@@ -319,7 +319,7 @@ mod tests {
     }
 
     #[test]
-    fn waive_verb_defaults_schematic_root_and_commits() {
+    fn waive_verb_builds_but_requires_proposal() {
         let (root, mut model) = resolved_genesis_project("registry_waive");
         let verb = find_native_write_verb("datum.check.waive").expect("verb should exist");
 
@@ -341,16 +341,18 @@ mod tests {
             .primary_object_id
             .expect("waiver id should be the primary object");
 
-        commit_prepared(&mut model, &root, prepared).expect("waiver should commit");
+        let error = commit_prepared(&mut model, &root, prepared).unwrap_err();
         assert!(
-            model.objects.contains_key(&waiver_id),
-            "committed waiver should be a resolved domain object"
+            error
+                .to_string()
+                .contains("proposal_required_for_check_disposition")
         );
+        assert!(!model.objects.contains_key(&waiver_id));
         let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]
-    fn accept_deviation_verb_commits_through_journaled_path() {
+    fn accept_deviation_verb_requires_proposal() {
         let (root, mut model) = resolved_genesis_project("registry_deviation");
         let verb =
             find_native_write_verb("datum.check.accept_deviation").expect("verb should exist");
@@ -373,11 +375,13 @@ mod tests {
             .primary_object_id
             .expect("deviation id should be the primary object");
 
-        commit_prepared(&mut model, &root, prepared).expect("deviation should commit");
+        let error = commit_prepared(&mut model, &root, prepared).unwrap_err();
         assert!(
-            model.objects.contains_key(&deviation_id),
-            "committed deviation should be a resolved domain object"
+            error
+                .to_string()
+                .contains("proposal_required_for_check_disposition")
         );
+        assert!(!model.objects.contains_key(&deviation_id));
         let _ = std::fs::remove_dir_all(&root);
     }
 

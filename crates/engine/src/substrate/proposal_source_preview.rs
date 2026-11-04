@@ -32,3 +32,23 @@ pub(super) fn report(
     }
     result
 }
+
+/// Shared unjournaled composition/application. Callers perform board admission
+/// and, for real writes, the direct Proposal policy check before entering.
+pub(super) fn apply_unjournaled(
+    model: &mut DesignModel,
+    batch: OperationBatch,
+) -> Result<CommitReport, EngineError> {
+    let batch = super::electrical_transaction::compose(model, batch, TransactionKind::Normal)?;
+    super::electrical_history::validate(model, &batch.operations, TransactionKind::Normal)?;
+    model.commit_without_direct_policy(batch)
+}
+
+pub(super) fn unjournaled_report(
+    model: &DesignModel,
+    batch: OperationBatch,
+) -> Result<CommitReport, EngineError> {
+    let mut preview = model.clone();
+    super::board_source_profile::refuse_unjournaled(&preview, &batch)?;
+    apply_unjournaled(&mut preview, batch)
+}

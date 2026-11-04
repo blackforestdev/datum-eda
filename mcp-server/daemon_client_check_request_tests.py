@@ -209,7 +209,7 @@ class TestDaemonClientCheckRequests(unittest.TestCase):
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],
             returncode=0,
-            stdout='{"contract":"project_waive_finding_v1","status":"applied"}',
+            stdout='{"contract":"project_waive_finding_v2","status":"draft"}',
             stderr="",
         )
         client = EngineDaemonClient()
@@ -238,15 +238,15 @@ class TestDaemonClientCheckRequests(unittest.TestCase):
             text=True,
             check=False,
         )
-        self.assertEqual(response.result["contract"], "project_waive_finding_v1")
-        self.assertEqual(response.result["status"], "applied")
+        self.assertEqual(response.result["contract"], "project_waive_finding_v2")
+        self.assertEqual(response.result["status"], "draft")
 
     @patch("server_runtime.subprocess.run")
     def test_accepts_deviation_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],
             returncode=0,
-            stdout='{"contract":"project_accept_deviation_v1","status":"applied"}',
+            stdout='{"contract":"project_accept_deviation_v2","status":"draft"}',
             stderr="",
         )
         client = EngineDaemonClient()
@@ -275,5 +275,5 @@ class TestDaemonClientCheckRequests(unittest.TestCase):
             text=True,
             check=False,
         )
-        self.assertEqual(response.result["contract"], "project_accept_deviation_v1")
-        self.assertEqual(response.result["status"], "applied")
+        self.assertEqual(response.result["contract"], "project_accept_deviation_v2")
+        self.assertEqual(response.result["status"], "draft")

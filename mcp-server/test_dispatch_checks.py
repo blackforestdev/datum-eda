@@ -293,10 +293,10 @@ class TestDispatchChecks(unittest.TestCase):
             ],
         )
         payload = response["result"]["content"][0]["json"]
-        self.assertEqual(payload["contract"], "project_waive_finding_v1")
+        self.assertEqual(payload["contract"], "project_waive_finding_v2")
         self.assertEqual(payload["fingerprint"], "sha256:finding")
         self.assertEqual(payload["domain"], "standards")
-        self.assertEqual(payload["status"], "applied")
+        self.assertEqual(payload["status"], "draft")
 
     def test_tools_call_dispatches_accept_deviation(self) -> None:
         daemon = FakeDaemonClient()
@@ -330,7 +330,7 @@ class TestDispatchChecks(unittest.TestCase):
             ],
         )
         payload = response["result"]["content"][0]["json"]
-        self.assertEqual(payload["contract"], "project_accept_deviation_v1")
+        self.assertEqual(payload["contract"], "project_accept_deviation_v2")
         self.assertEqual(payload["fingerprint"], "sha256:finding")
         self.assertEqual(payload["domain"], "standards")
-        self.assertEqual(payload["status"], "applied")
+        self.assertEqual(payload["status"], "draft")
