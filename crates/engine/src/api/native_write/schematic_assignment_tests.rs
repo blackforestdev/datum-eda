@@ -314,3 +314,6 @@ fn native_assignment_refusals_cancel_stale_and_incompatible_choice_do_not_mutate
 
 #[path = "schematic_assignment_admission_tests.rs"]
 mod admission;
+
+#[path = "schematic_assignment_multigate_tests.rs"]
+pub(crate) mod multigate;

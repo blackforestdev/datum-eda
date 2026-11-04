@@ -528,7 +528,12 @@ impl Runtime {
             ) if answer.next.is_some() && answer.selection.is_some() => Some(*sheet),
             _ => None,
         };
-        let review = self.workspace().schematic_authoring.delete_review.clone();
+        let review = self
+            .session
+            .workspace_mut()
+            .schematic_authoring
+            .delete_review
+            .take();
         let draft = self.workspace().schematic_authoring.creation.clone();
         let editing = self.selected_schematic_edit_snapshot();
         let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
@@ -605,6 +610,10 @@ mod tests;
 #[cfg(test)]
 #[path = "runtime_native_edit/project_open_busy_tests.rs"]
 mod project_open_busy_tests;
+
+#[cfg(test)]
+#[path = "runtime_native_edit/proposal_completion_tests.rs"]
+mod proposal_completion_tests;
 
 #[cfg(test)]
 mod completion_ownership_tests {

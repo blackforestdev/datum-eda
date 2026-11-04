@@ -105,6 +105,12 @@ impl NativeSelectionSession {
 }
 impl Runtime {
     pub(super) fn ensure_selection_authority(&mut self) -> anyhow::Result<bool> {
+        // The worker owns the next qualified selection basis. A concurrent cold
+        // resolver here can contend with its post-write refresh and recovery.
+        anyhow::ensure!(
+            !self.native_edit.pending(),
+            "Wait for the pending Project action before changing selection"
+        );
         let Some(backing) = &self.workspace().backing else {
             return Ok(false);
         };

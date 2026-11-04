@@ -398,6 +398,7 @@ fn part_assignment_inline_review_names_binding_without_deleting_symbol_geometry(
         },
         options: AssignmentOptions {
             sheet: review.source.uuid,
+            members: vec![original.clone()],
             original,
             component_instance: None,
             choices: vec![choice.clone()],
@@ -412,6 +413,7 @@ fn part_assignment_inline_review_names_binding_without_deleting_symbol_geometry(
         instance_path: vec![],
         component_instance: uuid::Uuid::new_v4(),
         reference: "R1".into(),
+        symbols: vec![symbol],
         previous_part: None,
         choice: choice.clone(),
     });

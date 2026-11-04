@@ -141,6 +141,22 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
     );
     runtime.queue_native_edit(NativeEditAction::Save);
     assert!(runtime.native_edit.pending());
+    // Force the unsafe alternative to fail: selection must stop before trying
+    // a recovering read while the real worker is parked behind its client gate.
+    let lease = eda_engine::revision::ProjectWriteLease::acquire(&roots[0]).unwrap();
+    let refusal = runtime
+        .ensure_selection_authority()
+        .unwrap_err()
+        .to_string();
+    assert!(
+        refusal.contains("Wait for the pending Project action"),
+        "{refusal}"
+    );
+    assert_eq!(
+        format!("{:?}", runtime.workspace().selection),
+        original_selection
+    );
+    drop(lease);
     let receiver = runtime.native_edit.pending.as_ref().unwrap() as *const _;
     runtime.open_project();
     // Fill the displayed Location, not its derived form cache. Submit must bind
@@ -205,6 +221,10 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
     }
     assert!(!runtime.native_edit.pending());
     assert!(!runtime.native_edit.blocked);
+    assert!(
+        runtime.ensure_selection_authority().unwrap(),
+        "selection resumes after publication"
+    );
     assert_eq!(
         runtime
             .workspace()
@@ -340,6 +360,7 @@ fn actual_canonical_worker_refuses_open_preserves_receiver_then_retries_destinat
     assert_eq!(canonical_history(&roots[0]), origin_history_after_save);
     assert_eq!(canonical_sources(&roots[1]), destination_before);
     assert_eq!(canonical_sources(&roots[0]), origin_before);
+    super::proposal_completion_tests::failed_refresh_consumes_only_terminal_reviews(&mut runtime);
     let deadline =
         Instant::now() + Duration::from_millis(crate::terminal_transport::GLOBAL_SHUTDOWN_MS);
     runtime.terminal_sessions.terminate_all_by(deadline);

@@ -162,7 +162,7 @@ fn native_gate_placement_preview_cancel_accept_and_multi_member_edits_history() 
             &after,
         );
     }
-    assert!(super::super::schematic_assignment::options(&model, first, &[]).is_err());
+    assert!(super::super::schematic_assignment::options(&model, first, &[]).is_ok());
     assert!(super::super::schematic_annotation::preview(&model, req.sheet, &[]).is_err());
     std::fs::remove_dir_all(root).unwrap();
 }

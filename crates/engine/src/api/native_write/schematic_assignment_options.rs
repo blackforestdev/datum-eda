@@ -24,16 +24,33 @@ pub fn options(
         return Err(invalid("Selected Symbol is locked"));
     }
     let (library, unit) = validate_symbol(model, &original)?;
-    let current = component::current(model, symbol)?;
+    let current = component::current_set(model, &BTreeSet::from([symbol]))?.remove(&symbol);
+    let mut members = vec![original.clone()];
     if let Some((_, value)) = &current {
-        if value["library_bindings"]
-            .as_object()
-            .is_some_and(|bindings| {
-                bindings.values().any(|binding| {
-                    binding["binding_role"] == "symbol"
-                        && binding["target_object_id"] != json!(library)
+        for member in value["placed_symbol_refs"].as_array().unwrap() {
+            let member: Uuid = serde_json::from_value(member["object_id"].clone())?;
+            if member != symbol {
+                members.push(
+                    source.source.sheets[&sheet]
+                        .symbols
+                        .get(&member)
+                        .ok_or_else(|| invalid("Assignment members must share the selected sheet"))?
+                        .clone(),
+                );
+            }
+        }
+    }
+    let shared = members.len() > 1;
+    if let Some((_, value)) = &current {
+        if !shared
+            && value["library_bindings"]
+                .as_object()
+                .is_some_and(|bindings| {
+                    bindings.values().any(|binding| {
+                        binding["binding_role"] == "symbol"
+                            && binding["target_object_id"] != json!(library)
+                    })
                 })
-            })
         {
             return Err(invalid(
                 "ComponentInstance refers to a different native Symbol",
@@ -53,6 +70,9 @@ pub fn options(
     {
         let part = materialized_pool_object(model, object.object_id, "parts")?;
         let entity_id = id(&part, "entity")?;
+        if shared && Some(entity_id) != original.entity {
+            continue;
+        }
         let entity = materialized_pool_object(model, entity_id, "entities")?;
         let Some(gates) = entity["gates"].as_object() else {
             continue;
@@ -61,11 +81,23 @@ pub fn options(
             let Ok(gate) = gate_key.parse::<Uuid>() else {
                 continue;
             };
+            if shared && Some(gate) != original.gate {
+                continue;
+            }
             if g["unit"] != json!(unit) || g["symbol"] != json!(library) || g["uuid"] != json!(gate)
             {
                 continue;
             }
             if validate_maps(model, object.object_id, &part, gate).is_err() {
+                continue;
+            }
+            if shared
+                && members.iter().any(|member| {
+                    member.gate.is_none_or(|gate| {
+                        validate_maps(model, object.object_id, &part, gate).is_err()
+                    })
+                })
+            {
                 continue;
             }
             choices.push(AssignmentChoice {
@@ -89,6 +121,7 @@ pub fn options(
     Ok(AssignmentOptions {
         sheet,
         original,
+        members,
         component_instance: current.map(|(id, _)| id),
         choices,
     })

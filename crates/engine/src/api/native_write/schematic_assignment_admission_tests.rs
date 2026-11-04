@@ -83,7 +83,7 @@ fn native_assignment_excludes_invalid_mapping_and_repeated_source() {
     std::fs::remove_dir_all(root).unwrap();
 }
 #[test]
-fn native_assignment_refuses_physical_or_multiple_symbol_ownership() {
+fn native_assignment_refuses_physical_or_unqualified_shared_ownership() {
     use super::super::super::board_components::{BoardPackagePlacement, build_place_board_package};
     use crate::{board::PlacedPackage, ir::geometry::Point};
     for physical in [false, true] {

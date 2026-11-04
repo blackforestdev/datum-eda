@@ -28,12 +28,19 @@ impl AssignmentEvidence {
             .filter(|c| c.placed_symbol_refs.contains(&target.id));
         if let Some(owner) = owners.next() {
             if owners.next().is_some()
-                || owner.placed_symbol_refs.len() != 1
+                || owner.placed_symbol_refs.iter().any(|id| {
+                    state
+                        .schematic_authoring
+                        .source
+                        .as_ref()
+                        .and_then(|source| source.sheets.get(&basis.source))
+                        .is_none_or(|sheet| !sheet.symbols.contains_key(id))
+                })
                 || !owner.placed_package_refs.is_empty()
                 || owner.authority != eda_engine::substrate::ComponentInstanceAuthority::Authored
             {
                 return Err(
-                    "Assignment supports one schematic-only Symbol per authored ComponentInstance"
+                    "Assignment requires a complete same-sheet schematic-only ComponentInstance"
                         .into(),
                 );
             }
@@ -139,6 +146,9 @@ impl AssignmentEvidence {
         self.options.choices.get(self.selected)
     }
     pub fn cycle(&mut self, gate: bool) {
+        if gate && self.options.members.len() > 1 {
+            return;
+        }
         let Some(current) = self.choice().cloned() else {
             return;
         };
@@ -180,10 +190,23 @@ impl AssignmentEvidence {
         )
     }
     pub fn gate_label(&self) -> String {
+        if self.options.members.len() > 1 {
+            return format!("All {} placed Gates retained", self.options.members.len());
+        }
         self.choice().map_or_else(
             || "No compatible Gate".into(),
             |c| format!("{} · {}", c.gate_name, c.entity_name),
         )
+    }
+    pub fn title(&self) -> String {
+        if self.options.members.len() > 1 {
+            format!(
+                "Assign Part · shared component · {} Gates",
+                self.options.members.len()
+            )
+        } else {
+            format!("Assign Part · {}", self.options.original.reference)
+        }
     }
     pub fn action(&self, proposal_id: Uuid) -> Result<NativeProposalAction, String> {
         let choice = self.choice().ok_or("Choose a compatible Part/Gate")?;
@@ -211,6 +234,13 @@ impl AssignmentEvidence {
                 && summary.instance_path == self.target.instance_path
                 && summary.previous_part == self.options.original.part
                 && summary.reference == self.options.original.reference
+                && summary.symbols
+                    == self
+                        .options
+                        .members
+                        .iter()
+                        .map(|member| member.uuid)
+                        .collect::<Vec<_>>()
                 && summary.choice.part == choice.part
                 && summary.choice.entity == choice.entity
                 && summary.choice.gate == choice.gate

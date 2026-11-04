@@ -18,6 +18,13 @@ pub(super) fn render(
         .assignment_draft
         .as_ref()
         .and_then(|r| r.assignment.as_ref());
+    let assignment_title = assignment.map(|assignment| {
+        if assignment.options.members.len() > 1 {
+            assignment.title()
+        } else {
+            "Assign Part".into()
+        }
+    });
     let width = 440f32.min(layout.top_menu_bar.width - 32.);
     let panel = RectPx {
         x: (layout.top_menu_bar.width - width) / 2.,
@@ -67,8 +74,8 @@ pub(super) fn render(
         return Ok(());
     }
     draw_text(
-        if assignment.is_some() {
-            "Assign Part"
+        if let Some(title) = &assignment_title {
+            title
         } else if disposition.is_some() {
             "ERC disposition"
         } else if e.bus_entry.is_some() {
@@ -176,7 +183,9 @@ pub(super) fn render(
         )?;
     }
     draw_text(
-        if assignment.is_some() {
+        if assignment.is_some_and(|assignment| assignment.options.members.len() > 1) {
+            "Scope"
+        } else if assignment.is_some() {
             "Gate"
         } else if disposition.is_some() {
             "Disposition"

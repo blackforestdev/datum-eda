@@ -375,7 +375,7 @@ impl DeleteReview {
             );
         }
         if let Some(evidence) = &self.assignment {
-            return format!("Assign Part · {}", evidence.options.original.reference);
+            return evidence.title();
         }
         if let Some(evidence) = &self.disposition {
             return format!("{} · {}", evidence.label(), evidence.rule_id);
@@ -419,7 +419,18 @@ impl DeleteReview {
                 .join(", ");
         }
         if let Some(evidence) = &self.assignment {
-            return format!("{} · {}", evidence.part_label(), evidence.gate_label());
+            return format!(
+                "{} · {} · {}",
+                evidence.part_label(),
+                evidence.gate_label(),
+                evidence
+                    .options
+                    .members
+                    .iter()
+                    .map(|member| member.reference.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
         }
         if let Some(evidence) = &self.disposition {
             return format!("{} · {}", evidence.message, evidence.rationale);

@@ -412,6 +412,7 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
         },
         options: AssignmentOptions {
             sheet: source.uuid,
+            members: vec![original.clone()],
             original,
             component_instance: None,
             choices: vec![first.clone(), second_gate.clone(), other.clone()],
@@ -463,10 +464,42 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
             instance_path: vec![],
             component_instance: Uuid::new_v4(),
             reference: evidence.options.original.reference.clone(),
+            symbols: evidence
+                .options
+                .members
+                .iter()
+                .map(|member| member.uuid)
+                .collect(),
             previous_part: evidence.options.original.part,
             choice: first.clone(),
         }),
     };
+    {
+        let mut shared = review.assignment.as_ref().unwrap().clone();
+        let mut sibling = shared.options.original.clone();
+        sibling.uuid = Uuid::new_v4();
+        sibling.reference = "R2".into();
+        shared.options.members.push(sibling.clone());
+        let selected = shared.selected;
+        shared.cycle(true);
+        assert_eq!(
+            shared.selected, selected,
+            "shared assignment cannot cycle Gates"
+        );
+        assert!(shared.title().contains("shared component"));
+        assert!(shared.gate_label().contains("All 2 placed Gates retained"));
+        let mut summary = receipt.assignment.clone().unwrap();
+        assert!(
+            !shared.matches(&summary),
+            "a selected-member-only receipt is incomplete"
+        );
+        summary.symbols.push(sibling.uuid);
+        assert!(shared.matches(&summary));
+        let original = review.assignment.replace(shared);
+        assert!(review.summary().contains("shared component"));
+        assert!(review.names().contains("R2"));
+        review.assignment = original;
+    }
     review.observe(receipt.clone()).unwrap();
     assert!(review.ready());
     assert_eq!(
@@ -542,6 +575,7 @@ fn part_assignment_noop_requires_existing_component_and_stale_preview_never_stag
         },
         options: AssignmentOptions {
             sheet: review.source.uuid,
+            members: vec![original.clone()],
             original,
             component_instance: None,
             choices: vec![choice],

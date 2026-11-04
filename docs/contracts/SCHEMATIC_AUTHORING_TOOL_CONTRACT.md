@@ -546,7 +546,7 @@ restated.
   schematic-only instance and its current library binding. Current source and
   compatible pin mappings are revalidated; pin UUIDs/anchors, fields, raw
   extensions and unaffected connectivity are preserved, with one-step design
-  Undo/Redo and reopening. Physical-package bindings, multi-Symbol components,
+  Undo/Redo and reopening. Physical-package bindings, unsupported shared components,
   repeated occurrences and incompatible mappings remain visibly unavailable or
   refused with reasons. Independent GUI verification covered named assignment and
   reassignment, dismissal, Undo/Redo and reopening. Supported bound-Symbol
@@ -561,6 +561,17 @@ restated.
   stale, missing or ambiguous bindings (`dat-schematic-binding-inspector-a7rm`);
   owning a component does not imply cross-domain selection or a complete board graph.
 
+  Same-sheet multi-Gate Part reassignment extends this existing flow to another
+  compatible Part of the same Entity (`dat-schematic-multigate-part-reassignment-sm4i`).
+  The picker and Proposal preview explicitly identify the shared component and all
+  placed Gates; Gate cycling cannot substitute a Gate in this mode. Every member
+  retains its Gate, Unit, native Symbol, reference/value/field payload and pins.
+  The complete owner and every member's pin mapping are revalidated before one
+  atomic acceptance updates all Part references and the component binding.
+  Cancel/no-op do not change design source; stale, locked or incompatible siblings
+  refuse the entire change. Entity/Gate migration, physical/ECO reassignment and
+  broader occurrence admission remain outside this increment.
+
   **Place Another Gate…** configures the selected Symbol's existing picker for
   explicitly chosen unused Gates of its schematic-only component (`dat-0fom`).
   Reference starts empty and must be supplied; the chosen Gate fixes its Unit and
@@ -571,7 +582,7 @@ restated.
   nonempty, without adding hierarchy navigation. Same-sheet Move, fields and
   Delete retain sibling identities through history. Physical, override, stale and
   repeated-source cases refuse; deletion also refuses surviving external dependencies.
-  Part reassignment retains its single-Symbol admission. Active-sheet annotation
+  Part reassignment uses the same-Entity whole-component limit above. Active-sheet annotation
   also supports validated same-sheet schematic-only multi-Gate owners
   (`dat-schematic-multigate-annotation-fy5w`), as specified below.
   Independent ordinary GUI checks covered placement preview/cancel/accept, new-member

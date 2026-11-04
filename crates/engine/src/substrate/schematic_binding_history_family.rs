@@ -8,8 +8,8 @@ mod fields;
 mod assignment;
 
 pub(super) fn capture(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>>> {
-    if let Some((symbol, component)) = assignment::capture(target) {
-        return Some(BTreeMap::from([(component, BTreeSet::from([symbol]))]));
+    if let Some((symbols, component)) = assignment::capture(target) {
+        return Some(BTreeMap::from([(component, symbols)]));
     }
     transform(target)
 }

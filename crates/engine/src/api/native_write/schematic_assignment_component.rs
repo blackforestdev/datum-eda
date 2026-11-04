@@ -3,6 +3,7 @@ use super::*;
 
 use std::collections::{BTreeMap, BTreeSet};
 
+#[cfg(test)]
 pub(in crate::api::native_write) fn current(
     model: &DesignModel,
     symbol: Uuid,
@@ -127,7 +128,7 @@ pub(super) fn operation(
         .and_then(|o| o.object_revision.0.checked_add(1))
         .ok_or_else(|| invalid("Symbol revision overflow"))?;
     component_instance["placed_symbol_refs"][0]["object_revision"] = json!(revision);
-    if let Some((id, previous)) = current(model, symbol)? {
+    if let Some((id, previous)) = current_set(model, &BTreeSet::from([symbol]))?.remove(&symbol) {
         let mut next = previous.clone();
         next["object_revision"] = json!(
             model.objects[&id]
@@ -137,7 +138,22 @@ pub(super) fn operation(
                 .ok_or_else(|| invalid("Component revision overflow"))?
         );
         next["part_ref"] = component_instance["part_ref"].clone();
-        next["placed_symbol_refs"][0]["object_revision"] = json!(revision);
+        let changed: BTreeSet<_> = options.members.iter().map(|member| member.uuid).collect();
+        for member in next["placed_symbol_refs"].as_array_mut().unwrap() {
+            let id: Uuid = serde_json::from_value(member["object_id"].clone())?;
+            if !changed.contains(&id) {
+                return Err(invalid(
+                    "Part assignment must include every component member",
+                ));
+            }
+            member["object_revision"] = json!(
+                model.objects[&id]
+                    .object_revision
+                    .0
+                    .checked_add(1)
+                    .ok_or_else(|| invalid("Symbol revision overflow"))?
+            );
+        }
         if next.get("library_bindings").is_none() {
             next["library_bindings"] = json!({});
         }
