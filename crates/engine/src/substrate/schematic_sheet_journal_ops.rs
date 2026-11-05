@@ -7,6 +7,9 @@ pub(super) fn apply_schematic_sheet_operation(
     sheet_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
+    if let Some(applied) = super::schematic_net_declarations::apply(sheet_value, operation, None)? {
+        return Ok(applied);
+    }
     match operation {
         Operation::SetSchematicSheetName { sheet_id, name }
             if sheet_uuid(sheet_value) == Some(*sheet_id) =>
@@ -245,6 +248,11 @@ pub(super) fn inverse_schematic_sheet_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<bool, EngineError> {
+    if let Some(applied) =
+        super::schematic_net_declarations::apply(sheet_value, operation, Some(inverse_operations))?
+    {
+        return Ok(applied);
+    }
     match operation {
         Operation::SetSchematicSheetName { sheet_id, name }
             if sheet_uuid(sheet_value) == Some(*sheet_id) =>

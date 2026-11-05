@@ -328,6 +328,43 @@ retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
 
 
+### Explicit local scalar declarations — PM053 / a67z
+
+The PM053 local scalar amendment authorizes a nongraphical sheet-owned
+`NetDeclaration { uuid, name }`. Its source UUID is distinct from NetId; a qualified
+`net_declarations` occurrence forms a singleton scalar partition until explicitly
+bound. Bus Entry records an optional qualified declaration occurrence and its wire
+contact, joining only that declaration's group. Names select/display declarations;
+they introduce no implicit union with Labels/Ports. Ambiguous/colliding names, a
+wrong-Bus member target, another member's wire, stale/wrong-sheet targets and member
+removal with surviving entries refuse atomically. Native Label/Port create/rename
+collisions also refuse; sheets without declarations retain their existing semantics.
+
+The initial authoring boundary is a unique root-sheet occurrence. Entry deletion
+removes only its binding; normal complete final partitions determine any split.
+Bus drawing deletion removes owned entries/bindings while retaining independent
+scalar declarations and semantic Bus lifetime. No declaration rename/delete UI or
+unvalidated backend deletion is introduced. Existing PM053 anchor nomination,
+lowest-ID merge, retirement and recorded membership remap remain authoritative.
+Declaration creation does not implicitly adopt unrelated legacy groups. All births,
+source/binding changes and identity transitions share the canonical batch/inverse;
+reads and reopen allocate no identity. This is ratified behavior under a67z, not
+implementation acceptance or full-foundation qualification.
+
+
+Each semantic Bus may retain `scalar_declarations`, a set of qualified declaration
+source occurrences (old absence defaults to empty; empty sets are omitted). A
+declaration-backed member follows its declaration's final scalar group across
+merges and every split, including last-entry removal and zero drawing lifetime.
+`scalar_nets` records the resolved membership, not competing declaration authority.
+Ordinary members retain existing PM053 remapping; remove only the pre-state
+declaration-backed memberships before composing their final groups, preserving
+other members. Net nomination and identity survival are unchanged. Missing,
+wrong-context, ambiguous references or disallowed member collapse refuse. Multiple
+Buses independently follow the same declaration; member removal drops only that
+Bus's source binding. No names or surviving-entry heuristics reconstruct bindings.
+
+
 ## PM054 C04–C06 owning reconciliation
 
 The owner-ratified [PM054](decisions/PRODUCT_MECHANICS_054_NOMINAL_COPPER_DERIVED_AUTHORITY.md)

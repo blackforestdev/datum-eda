@@ -537,6 +537,7 @@ mod tests {
             .expect("project should re-resolve");
 
         let bus_entry = BusEntry {
+            member_declaration: None,
             uuid: Uuid::new_v4(),
             bus: bus.uuid,
             wire: None,

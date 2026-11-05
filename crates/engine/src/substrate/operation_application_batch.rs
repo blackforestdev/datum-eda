@@ -8,7 +8,11 @@ pub(super) fn apply_operations(
     operations: &[Operation],
     diff: &mut CommitDiff,
 ) -> Result<(), EngineError> {
-    if !model.electrical_identities.is_empty()
+    if model
+        .source_shards
+        .iter()
+        .any(|s| s.kind == super::SourceShardKind::SchematicRoot)
+        || !model.electrical_identities.is_empty()
         || operations
             .iter()
             .any(|op| super::electrical_identity_store::write(op).is_some())

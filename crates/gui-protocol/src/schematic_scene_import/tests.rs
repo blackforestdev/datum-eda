@@ -361,6 +361,7 @@ fn power_symbols_project_rail_flag_and_ground_stack_geometry() {
         junctions: HashMap::new(),
         labels: HashMap::new(),
         buses: HashMap::new(),
+        net_declarations: Default::default(),
         bus_entries: HashMap::new(),
         ports: HashMap::new(),
         noconnects: HashMap::new(),

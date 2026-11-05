@@ -43,7 +43,7 @@ pub(super) fn render(
             if e.bus_entry.is_some() {
                 e.refusal
                     .as_deref()
-                    .unwrap_or("Click bus spine · Tab: bus/end · Esc: cancel")
+                    .unwrap_or("Click bus spine · Tab: bus/member/end · Esc: cancel")
             } else if label.text_rotation.is_some() {
                 "Click: place · R: rotate · Tab: text · Esc: cancel"
             } else if label.port_direction.is_some() {
@@ -112,7 +112,7 @@ pub(super) fn render(
         } else if disposition.is_some() {
             "Rationale"
         } else if e.bus_entry.is_some() {
-            "Bus"
+            "Bus / net"
         } else if label.text_rotation.is_some() {
             "Text"
         } else if label.port_direction.is_some() {
@@ -140,8 +140,7 @@ pub(super) fn render(
         let name = assignment.map(|a| a.part_label()).unwrap_or_else(|| {
             e.bus_entry
                 .as_ref()
-                .and_then(|entry| entry.bus())
-                .map(|bus| format!("{} · {}", bus.name, &bus.uuid.to_string()[..8]))
+                .map(|entry| entry.target_label())
                 .unwrap_or_else(|| "No Bus".into())
         });
         button(
@@ -239,7 +238,7 @@ pub(super) fn render(
             } else if disposition.is_some() {
                 "Enter: review Proposal · Escape: cancel without writing"
             } else if e.bus_entry.is_some() {
-                "Bus/end: click or arrow keys · Enter: preview"
+                "Bus/member and end: click or arrows · Enter: preview"
             } else if e.named_edit.is_some() {
                 "Live preview · Enter: apply · Escape: cancel"
             } else {

@@ -161,6 +161,7 @@ fn bus_entry_preview_and_delete_keep_parent_wire_and_occurrence_qualified() {
         original: wire.clone(),
         buses: vec![bus.clone()],
         choice: 0,
+        member_choice: 0,
         wire_end: WireEnd::From,
     };
     let at = PointNm { x: 0, y: 3_000_000 };
@@ -180,8 +181,15 @@ fn bus_entry_preview_and_delete_keep_parent_wire_and_occurrence_qualified() {
     assert_eq!(verb, "datum.schematic.create_bus");
     assert_eq!(
         params["entries"],
-        serde_json::json!([{"wire":wire.uuid,"x_nm":at.x,"y_nm":at.y,"wire_end":"to"}])
+        serde_json::json!([{"wire":wire.uuid,"x_nm":at.x,"y_nm":at.y,"wire_end":"to","member":null}])
     );
+    draft.cycle_target();
+    assert_eq!(draft.member(), Some("D0"));
+    assert!(draft.target_label().contains("D0"));
+    let (_, selected) = draft.request(at, source).unwrap().verb_params();
+    assert_eq!(selected["entries"][0]["member"], "D0");
+    draft.cycle_target();
+    assert_eq!(draft.member(), None);
     for key in ["members", "name", "points"] {
         assert!(params.get(key).is_none());
     }

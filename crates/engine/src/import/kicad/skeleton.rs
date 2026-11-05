@@ -256,6 +256,7 @@ pub(super) fn parse_schematic_skeleton(
         bus_entries.insert(
             entry.uuid,
             crate::schematic::BusEntry {
+                member_declaration: None,
                 uuid: entry.uuid,
                 bus,
                 wire,
@@ -325,6 +326,7 @@ pub(super) fn parse_schematic_skeleton(
         labels,
         buses,
         bus_entries,
+        net_declarations: Default::default(),
         ports,
         noconnects,
         texts: parse_schematic_texts(path, contents, import_map, import_identities.as_deref_mut()),
@@ -603,24 +605,9 @@ fn pad_uuid_anywhere(pad_block: &str) -> Option<Uuid> {
     parse_uuid_line(&rest[..=end])
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum KiCadPadKind {
-    Smd,
-    ThruHole,
-    NpThruHole,
-    Connect,
-}
-
-impl std::fmt::Display for KiCadPadKind {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            KiCadPadKind::Smd => write!(f, "smd"),
-            KiCadPadKind::ThruHole => write!(f, "thru_hole"),
-            KiCadPadKind::NpThruHole => write!(f, "np_thru_hole"),
-            KiCadPadKind::Connect => write!(f, "connect"),
-        }
-    }
-}
+#[path = "pad_kind.rs"]
+mod pad_kind;
+pub(super) use pad_kind::KiCadPadKind;
 
 fn is_back_copper_layer(layer: i32, layer_table: &HashMap<String, i32>) -> bool {
     resolve_layer_id("B.Cu", layer_table)

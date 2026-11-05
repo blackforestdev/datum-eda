@@ -439,7 +439,7 @@ fn query_native_project_check_run_with_profile_and_persistence(
         command_project_check_run_history::admit_check_job(args, &model, profile_id)?;
     }
     let (project, report) = if let Some(captured) = captured {
-        let report = crate::native_erc_report_from_schematic(&captured.schematic);
+        let report = crate::native_erc_report_from_schematic(&captured.schematic, captured.nets);
         (captured.project, report)
     } else {
         (

@@ -12,11 +12,40 @@ pub struct BusEntryDraft {
     pub original: SchematicWire,
     pub buses: Vec<Bus>,
     pub choice: usize,
+    pub member_choice: usize,
     pub wire_end: WireEnd,
 }
 impl BusEntryDraft {
     pub fn bus(&self) -> Option<&Bus> {
         self.buses.get(self.choice)
+    }
+    pub fn member(&self) -> Option<&str> {
+        self.member_choice
+            .checked_sub(1)
+            .and_then(|index| self.bus()?.members.get(index))
+            .map(String::as_str)
+    }
+    pub fn target_label(&self) -> String {
+        self.bus()
+            .map(|bus| {
+                format!(
+                    "{} · {} · {}",
+                    bus.name,
+                    &bus.uuid.to_string()[..8],
+                    self.member().unwrap_or("Existing wire")
+                )
+            })
+            .unwrap_or_else(|| "No Bus".into())
+    }
+    pub fn cycle_target(&mut self) {
+        self.member_choice += 1;
+        if self
+            .bus()
+            .is_none_or(|bus| self.member_choice > bus.members.len())
+        {
+            self.member_choice = 0;
+            self.choice = (self.choice + 1) % self.buses.len().max(1);
+        }
     }
     pub fn end_name(&self) -> &'static str {
         match self.wire_end {
@@ -41,6 +70,14 @@ impl BusEntryDraft {
         let size = entry_geometry(bus, &self.original, position, self.wire_end)
             .map_err(|e| e.to_string())?;
         Ok(BusEntry {
+            member_declaration: self
+                .member()
+                .and_then(|name| sheet.net_declarations.values().find(|d| d.name == name))
+                .map(|d| eda_engine::substrate::ElectricalOccurrence {
+                    class: "net_declarations".into(),
+                    source_id: d.uuid,
+                    instance_path: self.wire.instance_path.clone(),
+                }),
             uuid: Uuid::nil(),
             bus: bus.uuid,
             wire: Some(self.wire.id),
@@ -57,6 +94,7 @@ impl BusEntryDraft {
             wire: self.wire.id,
             at,
             wire_end: self.wire_end,
+            member: self.member().map(str::to_owned),
         })
     }
 }

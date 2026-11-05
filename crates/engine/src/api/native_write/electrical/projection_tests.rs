@@ -29,6 +29,7 @@ fn deleting_last_bus_drawing_keeps_declaration_and_replays_exact_projection() {
         id,
         object_revision: ObjectRevision(0),
         identity: ElectricalIdentity::Bus {
+            scalar_declarations: Default::default(),
             name: "SEMANTIC".into(),
             scalar_nets: BTreeSet::from([n]),
             representations: BTreeSet::from([ElectricalOccurrence {
@@ -43,7 +44,7 @@ fn deleting_last_bus_drawing_keeps_declaration_and_replays_exact_projection() {
     let write = build_delete_schematic_bus(&model, provenance(), sheet, &drawing).unwrap();
     commit_prepared(&mut model, &root, write).unwrap();
     assert!(
-        matches!(&model.electrical_identities[&id].identity, ElectricalIdentity::Bus { representations, scalar_nets, retired: false, name } if representations.is_empty() && scalar_nets == &BTreeSet::from([n]) && name == "SEMANTIC")
+        matches!(&model.electrical_identities[&id].identity, ElectricalIdentity::Bus { representations, scalar_nets, scalar_declarations, retired: false, name } if scalar_declarations.is_empty() && representations.is_empty() && scalar_nets == &BTreeSet::from([n]) && name == "SEMANTIC")
     );
     assert!(!model.objects.contains_key(&drawing.uuid));
     assert_eq!(

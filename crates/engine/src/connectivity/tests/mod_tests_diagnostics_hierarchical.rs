@@ -95,6 +95,7 @@ fn reports_connectivity_diagnostics_for_dangling_and_anonymous_nets() {
                 junctions: HashMap::new(),
                 labels: HashMap::new(),
                 buses: HashMap::new(),
+                net_declarations: Default::default(),
                 bus_entries: HashMap::new(),
                 ports: HashMap::from([(
                     port_uuid,
@@ -152,6 +153,7 @@ fn creates_named_net_for_standalone_port() {
                 junctions: HashMap::new(),
                 labels: HashMap::new(),
                 buses: HashMap::new(),
+                net_declarations: Default::default(),
                 bus_entries: HashMap::new(),
                 ports: HashMap::from([(
                     port_uuid,
@@ -255,6 +257,7 @@ fn disconnected_anonymous_nets_get_distinct_names_and_ids() {
                 junctions: HashMap::new(),
                 labels: HashMap::new(),
                 buses: HashMap::new(),
+                net_declarations: Default::default(),
                 bus_entries: HashMap::new(),
                 ports: HashMap::new(),
                 noconnects: HashMap::new(),
@@ -297,6 +300,7 @@ fn merges_hierarchical_label_with_matching_port_name() {
                     junctions: HashMap::new(),
                     labels: HashMap::new(),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::from([(
                         port_uuid,
@@ -331,6 +335,7 @@ fn merges_hierarchical_label_with_matching_port_name() {
                         },
                     )]),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::new(),
                     noconnects: HashMap::new(),
@@ -394,6 +399,7 @@ fn reports_missing_hierarchical_port_target_for_unresolved_child_interface() {
                     junctions: HashMap::new(),
                     labels: HashMap::new(),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::from([(
                         port_uuid,
@@ -420,6 +426,7 @@ fn reports_missing_hierarchical_port_target_for_unresolved_child_interface() {
                     junctions: HashMap::new(),
                     labels: HashMap::new(),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::new(),
                     noconnects: HashMap::new(),
@@ -481,6 +488,7 @@ fn reports_multiply_mapped_hierarchical_port_for_duplicate_child_targets() {
                     junctions: HashMap::new(),
                     labels: HashMap::new(),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::from([(
                         port_uuid,
@@ -526,6 +534,7 @@ fn reports_multiply_mapped_hierarchical_port_for_duplicate_child_targets() {
                         ),
                     ]),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::new(),
                     noconnects: HashMap::new(),

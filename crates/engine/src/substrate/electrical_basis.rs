@@ -381,9 +381,8 @@ impl ElectricalBasis {
         reference: &ElectricalOccurrence,
     ) -> Result<(), EngineError> {
         let domain = match reference.class.as_str() {
-            "wires" | "labels" | "ports" | "junctions" | "pins" | "buses" | "bus_entries" => {
-                "schematic"
-            }
+            "wires" | "labels" | "ports" | "junctions" | "pins" | "buses" | "bus_entries"
+            | "net_declarations" => "schematic",
             "tracks" | "vias" | "pads" | "zones" => "board",
             _ => return Err(invalid("unsupported occurrence class")),
         };

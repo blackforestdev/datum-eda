@@ -28,6 +28,7 @@ fn declaration(n: u128, reps: BTreeSet<ElectricalOccurrence>) -> ElectricalIdent
         id: id(n),
         object_revision: ObjectRevision(0),
         identity: ElectricalIdentity::Bus {
+            scalar_declarations: Default::default(),
             name: "same".into(),
             scalar_nets: BTreeSet::new(),
             representations: reps,
@@ -46,6 +47,48 @@ fn create(f: &mut Fixture, record: ElectricalIdentityRecord) {
     let write =
         electrical::build_create_electrical_identity(&f.model, provenance(), record).unwrap();
     native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+}
+
+#[test]
+fn schematic_bus_declarations_remain_in_electrical_evidence_without_graphical_members() {
+    let mut f = Fixture::new("native-bus-declarations");
+    let write = (native_write::registry::find_native_write_verb("datum.schematic.create_bus").unwrap().build)(
+        &native_write::registry::NativeWriteContext { model: &f.model, project_root: &f.root },
+        provenance(),
+        serde_json::json!({"sheet":f.sheet,"name":"NEW_BUS","members":["NEW_A","NEW_B"],"points":[{"x":0,"y":0},{"x":1000,"y":0}]}),
+    ).unwrap();
+    let drawing = write.primary_object_id.unwrap();
+    native_write::commit_prepared(&mut f.model, &f.root, write).unwrap();
+    let files = f.source_bytes();
+    let native = Native::capture(&f.model).unwrap();
+    let bus = f
+        .model
+        .electrical_identities
+        .values()
+        .find(|r| matches!(&r.identity, ElectricalIdentity::Bus { .. }))
+        .unwrap()
+        .id;
+    let projection = native.resolve(&Subject::Bus(bus)).unwrap();
+    assert_eq!(
+        projection.members,
+        BTreeSet::from([Identity {
+            class: Class::BusSection,
+            id: drawing,
+            instance_path: vec![]
+        }])
+    );
+    assert!(projection.related.is_empty());
+    let electrical = projection.electrical.unwrap();
+    assert_eq!(
+        electrical
+            .related
+            .iter()
+            .filter(|o| o.class == "net_declarations")
+            .count(),
+        2
+    );
+    assert_eq!(electrical.related_subjects.len(), 2);
+    assert_eq!(f.source_bytes(), files);
 }
 
 #[test]
@@ -136,6 +179,7 @@ fn native_bus_owned_entries_are_projection_not_extra_subject_members_or_scalar_w
         });
     }
     let entry = BusEntry {
+        member_declaration: None,
         uuid: id(5),
         bus: id(2),
         wire: None,

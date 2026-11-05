@@ -140,6 +140,84 @@ M1 is unresolved: retain complete manufacturing obligations without invented
 tolerance or narrowed CAM acceptance. C04–C07/E2–E4 remain unratified/unauthorized.
 
 
+## Local scalar declaration amendment — PM059 disposition, 2026-11-04
+
+Ratified under the standing project-manager appointment in
+`dat-schematic-new-bus-members-a67z`, following independent semantic review.
+This adds explicit source/partition and admission rules; the earlier zero-drawing
+Bus clause alone did not authorize scalar declarations. Implementation and ordinary
+workflow qualification remain tracked by that bounded task.
+
+### Explicit local scalar declarations for Bus authoring
+
+A scalar member may have a first-class nongraphical NetDeclaration in canonical
+schematic source: authored source UUID, scalar name and owning sheet, with no
+fabricated position, wire, label or port. Its qualified source occurrence forms a
+singleton scalar topology group until explicitly bound. The ordinary PM053 Net
+anchor, final-group nomination, allocation, merge/split, retirement and binding
+remap laws apply unchanged. Source UUID and NetId remain distinct; neither is
+computed from a name, geometry or member digest. Read/reopen allocate neither.
+
+This bounded authoring slice admits only a unique root-sheet occurrence. Missing,
+repeated, shared or hierarchy occurrence contexts refuse before any source write;
+this is an implementation boundary, not a permanent limitation of declaration law.
+Creation/member editing composes declaration births, canonical Net identity planning,
+Bus membership and its source changes in one canonical transaction. Existing distinct
+scalar members remain selectable without re-creation.
+
+Declaration names select/display their source identity; they introduce no implicit
+union with same-name Labels or Ports. A new name already resolving uniquely to an
+existing local Label/Port Net selects that existing Net rather than birthing a
+second declaration. A name resolving to multiple identities, multiple declarations,
+or both a declaration and a Label/Port is ambiguous and refuses. Duplicate requested
+members and multiple names resolving to the same selected Net refuse. Native
+Label/Port creation or rename that would collide with a declaration name must also
+refuse; existing Label/Port connectivity rules otherwise remain unchanged. This
+slice adds no declaration rename/delete UI; Bus name edits do not rename members.
+
+An explicit Bus Entry member choice records the declaration's source UUID, qualified
+occurrence context, and referenced member wire/contact. It binds that one scalar
+declaration to the chosen wire group; contact with a Bus spine alone never shorts
+its scalar members. Missing, stale, wrong-sheet or unqualified references refuse
+before writes. The selected declaration must resolve to a current scalar member of
+this exact semantic Bus. Attaching a wire already belonging to another scalar member
+of that Bus refuses; this command cannot authorize merging declared members. Existing
+entries whose wires already belong to the chosen scalar member retain their established
+nonmerging behavior. Names alone never bind entries.
+
+Deleting an entry removes only its authored declaration-to-wire binding. Other
+surviving entries/connections remain, and the normal final-state topology determines
+whether a split occurs. The declaration's surviving occurrence participates in
+PM053 nomination; a name does not guarantee a particular NetId wins a merge or split.
+Ordinary Bus scalar membership follows the existing transition remap. Removing a
+Bus drawing or dropping one member preserves the independent scalar declaration
+and surviving Net; no implicit declaration retirement. Removing a member while any
+surviving entry of that Bus references that member refuses atomically; the user must
+explicitly remove those entries first. No dangling binding or implicit entry cleanup.
+Deleting a Bus drawing uses the existing owned-entry cleanup and removes those
+entries' explicit bindings, while retaining scalar declarations and the semantic
+Bus lifetime defined above; dependency conflicts refuse. Explicit declaration
+deletion and its dependent-binding cleanup remain unavailable in this slice.
+
+Undo/Redo replay recorded source, entry bindings and identity operations, restoring
+exact identities and preimages; cold resolver/cache reconstruction is read-only.
+Persisted schema handling must default genuinely old absent declaration/entry fields
+compatibly, reject malformed/new unsupported shapes explicitly, and never repair a
+missing declaration by generating geometry or IDs during a read.
+
+Each semantic Bus may retain `scalar_declarations`, a set of qualified declaration
+source occurrences (old absence defaults to empty; empty sets are omitted). A
+declaration-backed member follows its declaration's final scalar group across
+merges and every split, including last-entry removal and zero drawing lifetime.
+`scalar_nets` records the resolved membership, not competing declaration authority.
+Ordinary members retain existing PM053 remapping; remove only the pre-state
+declaration-backed memberships before composing their final groups, preserving
+other members. Net nomination and identity survival are unchanged. Missing,
+wrong-context, ambiguous references or disallowed member collapse refuse. Multiple
+Buses independently follow the same declaration; member removal drops only that
+Bus's source binding. No names or surviving-entry heuristics reconstruct bindings.
+
+
 ## Bus Run contact clarification — PM055
 
 

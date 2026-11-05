@@ -344,13 +344,6 @@ impl Runtime {
             }
         }
         match &event.logical_key {
-            Key::Named(NamedKey::Escape)
-                if !picker
-                    && self.workspace().schematic_authoring.wire
-                    && self.workspace().schematic_authoring.vertices.len() >= 2 =>
-            {
-                return self.finish_native_wire();
-            }
             Key::Named(NamedKey::Escape) => {
                 self.cancel_native_schematic();
                 self.set_workspace_tool(WorkspaceTool::Select);

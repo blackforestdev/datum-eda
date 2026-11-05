@@ -294,6 +294,7 @@ fn semantic_identity_retirement_reports_through_prepared_edit_and_shared_runtime
         (
             700,
             ElectricalIdentity::Bus {
+                scalar_declarations: Default::default(),
                 name: "original".into(),
                 scalar_nets: Default::default(),
                 representations: [occurrence("buses", 2)].into(),

@@ -102,6 +102,21 @@ fn validate_bus_entry_refs(
         ))
     })?;
     sheet_map_value(sheet_value, "buses", bus_id)?;
+    if let Some(reference) = value.get("member_declaration") {
+        let member: super::ElectricalOccurrence = serde_json::from_value(reference.clone())?;
+        if member.class != "net_declarations"
+            || !member.instance_path.is_empty()
+            || value
+                .get("wire")
+                .and_then(serde_json::Value::as_str)
+                .is_none()
+        {
+            return Err(EngineError::Validation(
+                "Bus Entry needs a root-sheet scalar declaration and wire".into(),
+            ));
+        }
+        sheet_map_value(sheet_value, "net_declarations", member.source_id)?;
+    }
     if let Some(wire_id) = value.get("wire").and_then(serde_json::Value::as_str) {
         let wire_id = Uuid::parse_str(wire_id).map_err(|_| {
             EngineError::Validation(format!(

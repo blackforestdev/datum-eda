@@ -280,7 +280,7 @@ pub(super) fn render(
         }
         if bus && authoring.refusal.is_none() {
             draw_text(
-                "Members: existing scalar names separated by commas",
+                "Members: scalar names separated by commas",
                 panel.x + 16.,
                 panel.y + 140. + extra,
                 11.,

@@ -576,6 +576,7 @@ Schema example:
   "labels": {},
   "buses": {},
   "bus_entries": {},
+  "net_declarations": {},
   "ports": {},
   "noconnects": {},
   "texts": {},
@@ -1019,6 +1020,49 @@ as complete cross-domain Net selection. Authored identity/binding source is
 distinct from recomputable graph/projection geometry. Canonical writes and replay
 retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
+
+
+### Ratified scalar declaration source extension — PM053 / a67z
+
+A sheet may contain `net_declarations`, a UUID-keyed map of closed records
+`{ "uuid": "<source UUID>", "name": "<scalar name>" }`. Absent collection in old
+sheets means empty, never a request for inferred adoption. Declaration source UUID
+and canonical NetId are distinct; identity shards retain the existing versioned
+Net record and recorded occurrence anchor. A new `net_declarations` occurrence is
+a real nongraphical scalar source, with no position or invented label/wire.
+
+BusEntry adds optional `member_declaration` using the existing qualified occurrence
+shape `{ "class": "net_declarations", "source_id": "<declaration UUID>",
+"instance_path": [] }`. Absent/null retains existing unbound-entry semantics.
+This bounded authoring slice admits a unique root-sheet context; malformed, stale,
+wrong-class/sheet/context, nonmember and conflicting member-wire references refuse.
+The entry's existing wire/contact plus this source reference persist the explicit
+binding. Declaration names never implicitly union with local labels. PM053's new
+collision/lifetime/detach rules and canonical final-state identity planning govern.
+
+`CreateSchematicNetDeclaration` records sheet/source UUIDs and the closed source
+payload. Its exact history inverse `DeleteSchematicNetDeclaration` also records
+`restore_collection_absence` to restore an originally absent optional map; normal
+writes cannot invoke declaration deletion. Canonical operations persist entry
+bindings alongside their identity operations. Old absent fields remain
+compatible; unknown unsupported versions and malformed new records refuse, without
+load-time repair or allocation. Creation never silently adopts unrelated legacy
+groups. No declaration rename/delete UI or unvalidated backend deletion is added.
+Implementation and normal-workflow qualification are tracked by a67z; this source
+contract alone is not a completed-feature or full-format acceptance claim.
+
+Each semantic Bus may retain `scalar_declarations`, a set of qualified declaration
+source occurrences (old absence defaults to empty; empty sets are omitted). A
+declaration-backed member follows its declaration's final scalar group across
+merges and every split, including last-entry removal and zero drawing lifetime.
+`scalar_nets` records the resolved membership, not competing declaration authority.
+Ordinary members retain existing PM053 remapping; remove only the pre-state
+declaration-backed memberships before composing their final groups, preserving
+other members. Net nomination and identity survival are unchanged. Missing,
+wrong-context, ambiguous references or disallowed member collapse refuse. Multiple
+Buses independently follow the same declaration; member removal drops only that
+Bus's source binding. No names or surviving-entry heuristics reconstruct bindings.
+
 
 ### Current E1 source schema (partial implementation under PM053)
 

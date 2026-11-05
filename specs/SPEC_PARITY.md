@@ -38,7 +38,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `schematic_connectivity_surface` | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | 9 | `9e6f3473c2eea9b28598a7e8cf7b24c8b0fef6687ced07442e0bf9920f4e55ed` |
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `0d9d4f46a6326aa551810d2f47ec11ada1fb4ed11712455d07d7320a1fa1ac84` |
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 15 | `0cb536712554560e63413ee1eba3424c0b7b190ad008317609423153402f2ef9` |
-| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 66 | `2962dd11cc5772a8dce1c856ffcdf7a1197c5b20a566dbf89cb525c28a24fef0` |
+| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 66 | `751ead292d08a03c98ba2f1ce2badc364a458f0eabaa97d7404c6936dfee52a9` |
 | `global_preferences_product_surface` | `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` | 227 | `92f922ba4dce0e737bd7b702ba2899cfccd4a8a707e620605706469ac06ef30e` |
 | `global_preferences_acceptance_contract` | `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md` | 1 | `84ef7b2bbe0f4dac20c00683b990ee74c078978b0c4339772beec6e1dea1f68d` |
 | `gui_performance_adoption_contract` | `specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md` | 2 | `29e36b6edfcb15a3c866db0b0b241ee8a55bec9b49eaacdce2e5d4ad5b36e22e` |
@@ -57,5 +57,5 @@ These names and counts do not establish readiness, enrollment, proof or activati
 | `electrical_bus_interfaces` | `specs/NATIVE_FORMAT_SPEC.md` | 2 | `d50413aabab0fca6591550379f84402ac6cbdceade981d4bde7a82777ba06ecc` |
 | `electrical_source_shard_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 22 | `4f2b2b1770e9f5d61d0e1e2ad3af9edde7fcc61f334a2fe07119b0d3d7bcef8b` |
 | `electrical_source_shard_taxa` | `specs/NATIVE_FORMAT_SPEC.md` | 23 | `1ff1a8ca056dd0775614cf993bda5db903ebe046397c86f3a9d07995085eee27` |
-| `canonical_operation_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 144 | `966c0611f0baad80af183470bdfb03c8ef75570cee0bfb4d2dab52543bad6689` |
+| `canonical_operation_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 146 | `fb74a5f2cee4bccf09d42569e5805963c51b20a6c943b0ef85b49ee46dae9def` |
 | `electrical_identity_source_schema` | `specs/NATIVE_FORMAT_SPEC.md` | 1 | `c60c0a32a9e73c4947f5b3dbff1f178c5dc9f1c81a1a8f5ac45a42aea666a1a9` |

@@ -41,6 +41,7 @@ fn declare(
             id,
             object_revision: ObjectRevision(0),
             identity: ElectricalIdentity::Bus {
+                scalar_declarations: Default::default(),
                 name: "DATA".into(),
                 representations: reps,
                 scalar_nets,
@@ -72,6 +73,7 @@ fn bus_run_foreign_contact_never_equates_equal_names_or_scalar_members() {
         &[a.clone(), b.clone(), remote.clone(), foreign.clone()],
     );
     let entry = BusEntry {
+        member_declaration: None,
         uuid: Uuid::new_v4(),
         bus: b.uuid,
         wire: Some(wire.uuid),

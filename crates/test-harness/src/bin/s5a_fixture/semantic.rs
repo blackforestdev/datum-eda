@@ -76,6 +76,7 @@ pub(super) fn build(root: &Path) -> Result<serde_json::Value> {
         });
     }
     let entry = BusEntry {
+        member_declaration: None,
         uuid: id(5),
         bus: id(2),
         wire: None,
@@ -208,6 +209,7 @@ pub(super) fn build(root: &Path) -> Result<serde_json::Value> {
             id: id(n),
             object_revision: ObjectRevision(0),
             identity: ElectricalIdentity::Bus {
+                scalar_declarations: Default::default(),
                 name: "same declaration name".into(),
                 scalar_nets: BTreeSet::from([net]),
                 representations,

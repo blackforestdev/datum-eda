@@ -5,6 +5,7 @@ use uuid::Uuid;
 // These are the source maps queried by existing electrical/selection owners.
 // Unknown classes retain the original recursive lookup.
 const CLASSES: &[&str] = &[
+    "net_declarations",
     "wires",
     "labels",
     "ports",

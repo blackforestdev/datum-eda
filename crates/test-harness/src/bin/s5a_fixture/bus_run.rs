@@ -77,6 +77,7 @@ pub(super) fn build(root: &Path, count: usize) -> Result<()> {
         id: bus_id,
         object_revision: ObjectRevision(0),
         identity: ElectricalIdentity::Bus {
+            scalar_declarations: Default::default(),
             name: "DATA".into(),
             representations: expected.clone(),
             scalar_nets: BTreeSet::new(),

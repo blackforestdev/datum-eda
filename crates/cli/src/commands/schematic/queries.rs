@@ -298,10 +298,8 @@ pub(crate) fn query_native_project_drawings(root: &Path) -> Result<Vec<serde_jso
 }
 
 pub(crate) fn query_native_project_nets(root: &Path) -> Result<Vec<SchematicNetInfo>> {
-    let project = load_native_project_with_resolved_board(root)?;
-    Ok(schematic_net_info(&build_native_project_schematic(
-        &project,
-    )?))
+    let model = ProjectResolver::new(root).resolve()?;
+    Ok(crate::capture_native_erc_inputs(root, &model)?.nets)
 }
 
 pub(crate) fn query_native_project_diagnostics(
@@ -336,15 +334,26 @@ pub(crate) fn query_native_project_check_with_inputs(
     include_erc: bool,
     drc_rules: &[RuleType],
 ) -> Result<CheckReport> {
-    let project = load_native_project_with_resolved_board(root)?;
-    let schematic = build_native_project_schematic(&project)?;
+    let (schematic, nets) = if include_erc {
+        let model = ProjectResolver::new(root).resolve()?;
+        let captured = crate::capture_native_erc_inputs(root, &model)?;
+        (captured.schematic, captured.nets)
+    } else {
+        let project = load_native_project_with_resolved_board(root)?;
+        (build_native_project_schematic(&project)?, Vec::new())
+    };
     let diagnostics = if include_relationships {
         schematic_diagnostics(&schematic)
     } else {
         Default::default()
     };
     let erc = if include_erc {
-        run_prechecks(&schematic)
+        eda_engine::erc::run_prechecks_with_nets(
+            &schematic,
+            &Default::default(),
+            &schematic.waivers,
+            nets,
+        )
     } else {
         Default::default()
     };
@@ -362,8 +371,16 @@ pub(crate) fn query_native_project_check_with_inputs(
 }
 
 /// ERC computation over the complete immutable source captured for the producer.
-pub(crate) fn native_erc_report_from_schematic(schematic: &Schematic) -> CheckReport {
-    let erc = run_prechecks(schematic);
+pub(crate) fn native_erc_report_from_schematic(
+    schematic: &Schematic,
+    nets: Vec<SchematicNetInfo>,
+) -> CheckReport {
+    let erc = eda_engine::erc::run_prechecks_with_nets(
+        schematic,
+        &Default::default(),
+        &schematic.waivers,
+        nets,
+    );
     CheckReport::Combined {
         summary: summarize_native_combined_checks(&[], &erc, &[]),
         diagnostics: Vec::new(),

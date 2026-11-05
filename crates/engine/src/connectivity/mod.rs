@@ -1,4 +1,7 @@
+mod native_net_info;
+pub use native_net_info::native_schematic_net_info;
 mod bus_physical;
+mod net_declarations;
 pub(crate) use bus_physical::bus_physical;
 mod board_physical;
 pub(crate) use board_physical::successor as board_physical_successor;

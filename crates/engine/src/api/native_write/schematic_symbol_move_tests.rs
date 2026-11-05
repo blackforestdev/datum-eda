@@ -316,6 +316,7 @@ fn symbol_move_refuses_all_existing_and_destination_contact_kinds_without_writes
                         provenance(),
                         f.sheet,
                         &BusEntry {
+                            member_declaration: None,
                             uuid: Uuid::new_v4(),
                             bus: bus.uuid,
                             wire: None,
@@ -482,6 +483,7 @@ fn symbol_move_unavailable_contact_geometry_never_becomes_isolation() {
         commit_prepared(&mut f.model, &f.root, write).unwrap();
         if geometry.ends_with("entry") {
             let entry = BusEntry {
+                member_declaration: None,
                 uuid: Uuid::new_v4(),
                 bus: bus.uuid,
                 wire: None,

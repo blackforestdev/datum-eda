@@ -132,6 +132,8 @@ pub(crate) struct NativeSheetRoot {
     pub(crate) junctions: BTreeMap<String, Junction>,
     pub(crate) labels: BTreeMap<String, NetLabel>,
     pub(crate) buses: BTreeMap<String, Bus>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub(crate) net_declarations: BTreeMap<Uuid, eda_engine::schematic::NetDeclaration>,
     pub(crate) bus_entries: BTreeMap<String, BusEntry>,
     pub(crate) ports: BTreeMap<String, HierarchicalPort>,
     pub(crate) noconnects: BTreeMap<String, NoConnectMarker>,

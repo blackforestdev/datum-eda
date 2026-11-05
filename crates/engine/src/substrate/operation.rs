@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{ObjectId, ObjectRevision};
+use super::{ObjectId, ObjectRevision, SchematicMarkerKind};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -595,6 +595,18 @@ pub enum Operation {
         port_id: ObjectId,
         port: serde_json::Value,
     },
+    CreateSchematicNetDeclaration {
+        sheet_id: ObjectId,
+        declaration_id: ObjectId,
+        declaration: serde_json::Value,
+    },
+    /// Compensation only; normal source deletion is not exposed in this slice.
+    DeleteSchematicNetDeclaration {
+        sheet_id: ObjectId,
+        declaration_id: ObjectId,
+        declaration: serde_json::Value,
+        restore_collection_absence: bool,
+    },
     CreateSchematicBus {
         sheet_id: ObjectId,
         bus_id: ObjectId,
@@ -665,21 +677,6 @@ pub enum Operation {
         symbol_id: ObjectId,
         symbol: serde_json::Value,
     },
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum SchematicMarkerKind {
-    Junction,
-    NoConnect,
-}
-
-impl SchematicMarkerKind {
-    pub fn map_name(&self) -> &'static str {
-        match self {
-            SchematicMarkerKind::Junction => "junctions",
-            SchematicMarkerKind::NoConnect => "noconnects",
-        }
-    }
 }
 
 impl Operation {

@@ -14,6 +14,7 @@ pub(super) fn validate_operations(
     model: &DesignModel,
     operations: &[super::Operation],
 ) -> Result<(), EngineError> {
+    super::schematic_net_declarations::validate(model, operations)?;
     if model.electrical_identities.is_empty() {
         return Ok(());
     }
@@ -38,6 +39,7 @@ pub(super) fn validate_operations(
             }
             ElectricalIdentity::Bus {
                 scalar_nets,
+                scalar_declarations,
                 representations,
                 retired,
                 ..
@@ -47,6 +49,27 @@ pub(super) fn validate_operations(
                 }
                 for id in scalar_nets {
                     net(model, *id)?;
+                }
+                let mut declared = std::collections::BTreeSet::new();
+                for source in scalar_declarations {
+                    if source.class != "net_declarations" || !source.instance_path.is_empty() {
+                        return Err(invalid(
+                            "Bus scalar declaration needs a qualified root-sheet source",
+                        ));
+                    }
+                    basis.occurrence(model, source)?;
+                    let owners: Vec<_> = membership
+                        .iter()
+                        .filter_map(|(id, members)| members.contains(source).then_some(*id))
+                        .collect();
+                    if owners.len() != 1
+                        || !scalar_nets.contains(&owners[0])
+                        || !declared.insert(owners[0])
+                    {
+                        return Err(invalid(
+                            "Bus declaration membership is missing, ambiguous or collapsed",
+                        ));
+                    }
                 }
                 for reference in representations {
                     basis.occurrence(model, reference)?;

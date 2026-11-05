@@ -439,6 +439,14 @@ restated.
 
 ### 8. create-bus (members + bus-entry as parameters)
 
+The PM053 local scalar amendment is ratified for `dat-schematic-new-bus-members-a67z`:
+new names use first-class nongraphical source declarations and explicit member entry
+bindings, with no implicit label union. Unique root-sheet scope, collision admission,
+member/dependent-entry refusal, lifetime and canonical history follow that amendment.
+The bounded native workflow is implemented and independently verified through
+ordinary GUI creation, explicit member connection, cancellation/refusal, history
+and exact cold reopening. This does not establish complete schematic qualification.
+
 - **(1) Manual UI:** `Place > Bus`, draw it; `Place > Bus Entry` to tap a
   member wire onto it; bus members named D[0..7].
 - **(2) Operation:** `CreateBus{bus_id?, sheet_id, points, members:[net],
@@ -463,19 +471,37 @@ restated.
 - **(7) Proof slice:** On `datum-test` (or a bus fixture), create bus
   D[0..3] with one entry tapping a wire; assert derived `net_info` shows
   4 member nets and the tapped wire joins D0, undo reverts.
-- **(8) Not yet supported:** New scalar member Nets from previously unused
-  names, shared-declaration/hierarchy editing, and normalized public CLI/MCP
-  entry points remain open. Native `Place > Bus` uses the shared polyline
-  gesture and explicit names of existing, distinct canonical scalar Nets;
-  missing or ambiguous members are refused. Native `create_bus` accepts an
-  optional existing bus and member/geometry/entry parameters. Bus Entry binds
-  an existing member wire endpoint to an exact bus contact without shorting
-  scalar members. The Bus Inspector edits name/members and deletes qualified
-  owned entries. Deleting the selected bus removes its spine and owned entries
-  in one journal transaction, preserves scalar wires/Net identities, and retains
-  the semantic Bus identity under the existing projection lifecycle. Cancel,
-  undo/redo and reopening remain part of this bounded native workflow; this is
+- **(8) Delivered scope and remaining limits:** Native `Place > Bus` uses the
+  shared polyline gesture and explicit names of existing scalar Nets or previously
+  unused names. New names create distinct nongraphical scalar declarations;
+  ambiguous names and multiple names resolving to one scalar Net refuse atomically.
+  Native `create_bus` accepts an optional existing bus and member/geometry/entry
+  parameters. Bus Entry offers an existing-wire choice or an explicit declared
+  member and binds a wire endpoint to an exact bus contact without shorting other
+  scalar members. The Bus Inspector edits name/members and deletes qualified owned
+  entries. Deleting a drawing removes its spine and owned entries in one journal
+  transaction while retaining scalar source and semantic Bus lifetime. Escape and
+  Cancel discard uncommitted Wire/Bus previews without writes; Finish, Enter and
+  double-click retain explicit completion. Undo/redo and cold reopening preserve
+  canonical identities and connectivity. Shared-declaration/hierarchy editing and
+  normalized public CLI/MCP mutation adapters remain open
+  (`dat-bus-public-member-parity-426y`); the older public Bus constructors do not
+  yet expose this native GUI member-creation/selection behavior. Native Nets/ERC
+  reads retain declaration source and recorded NetIds, refusing incomplete scalar
+  adoption rather than fabricating identities. This is bounded native delivery,
   not complete bus/hierarchy authoring or full qualification.
+
+Each semantic Bus may retain `scalar_declarations`, a set of qualified declaration
+source occurrences (old absence defaults to empty; empty sets are omitted). A
+declaration-backed member follows its declaration's final scalar group across
+merges and every split, including last-entry removal and zero drawing lifetime.
+`scalar_nets` records the resolved membership, not competing declaration authority.
+Ordinary members retain existing PM053 remapping; remove only the pre-state
+declaration-backed memberships before composing their final groups, preserving
+other members. Net nomination and identity survival are unchanged. Missing,
+wrong-context, ambiguous references or disallowed member collapse refuse. Multiple
+Buses independently follow the same declaration; member removal drops only that
+Bus's source binding. No names or surviving-entry heuristics reconstruct bindings.
 
 ### 9. set-symbol-field (reference/value/lib_id/part/entity/unit/gate/...)
 

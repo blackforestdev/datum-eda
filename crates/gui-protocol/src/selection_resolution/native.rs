@@ -15,7 +15,8 @@ use run_cache::RunQueryCache;
 
 /// Complete membership and source-qualified owned/related projection evidence.
 /// Bus entry geometry is carried by the engine result and never counted as a
-/// separately acquired authored member in the S5A Bus subject.
+/// separately acquired authored member in the S5A Bus subject. Nongraphical
+/// declarations likewise remain in electrical evidence without invented geometry.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NativeSelectionProjection {
     pub project: ObjectId,
@@ -65,7 +66,10 @@ impl NativeSelectionResolution {
             .map_err(SelectionResolutionError::Engine)?;
         let mut authored = BTreeSet::new();
         for source in sources {
-            if source.occurrence.class == "bus_entries" {
+            if matches!(
+                source.occurrence.class.as_str(),
+                "bus_entries" | "net_declarations"
+            ) {
                 continue;
             }
             authored.insert(source_identity(&source)?);
@@ -332,9 +336,9 @@ impl NativeSelectionResolution {
     ) -> Result<BTreeSet<AuthoredSelectionIdentity>, SelectionResolutionError> {
         let mut result = BTreeSet::new();
         for source in occurrences {
-            if source.class == "bus_entries" {
+            if matches!(source.class.as_str(), "bus_entries" | "net_declarations") {
                 continue;
-            } // owned projection retained above
+            } // Full nongraphical membership remains in projection.electrical.
             let domain = match source.class.as_str() {
                 "packages" | "pads" | "tracks" | "vias" | "zones" => SelectionSourceDomain::Board,
                 "symbols" | "pins" | "wires" | "buses" | "labels" | "ports" | "junctions" => {

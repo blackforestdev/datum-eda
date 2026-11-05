@@ -79,10 +79,48 @@ pub(super) fn compose(
             }
             ElectricalIdentity::Bus {
                 scalar_nets,
+                scalar_declarations,
                 retired: false,
                 ..
             } => {
-                *scalar_nets = scalar_nets.iter().filter_map(|id| remap(*id)).collect();
+                let mut declaration_before = BTreeSet::new();
+                let mut declaration_after = BTreeSet::new();
+                for source in scalar_declarations.iter() {
+                    let old = previous
+                        .iter()
+                        .find(|g| g.members.contains(source))
+                        .ok_or_else(|| {
+                            EngineError::Validation(
+                                "Bus declaration has no previous scalar group".into(),
+                            )
+                        })?;
+                    let new = transition
+                        .final_groups
+                        .iter()
+                        .find(|g| g.members.contains(source))
+                        .ok_or_else(|| {
+                            EngineError::Validation("Bus declaration lost its scalar source".into())
+                        })?;
+                    if !declaration_before.insert(old.net_id)
+                        || !declaration_after.insert(new.net_id)
+                    {
+                        return Err(EngineError::Validation(
+                            "Bus declaration members collapse to one scalar".into(),
+                        ));
+                    }
+                }
+                let mut members: BTreeSet<_> = scalar_nets
+                    .difference(&declaration_before)
+                    .filter_map(|id| remap(*id))
+                    .collect();
+                for id in declaration_after {
+                    if !members.insert(id) {
+                        return Err(EngineError::Validation(
+                            "Bus declaration collapses with another member".into(),
+                        ));
+                    }
+                }
+                *scalar_nets = members;
             }
             _ => {}
         }

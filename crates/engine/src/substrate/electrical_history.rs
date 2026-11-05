@@ -12,6 +12,41 @@ pub(super) fn validate(
     }
     for op in operations {
         match op {
+            Operation::CreateSchematicNetDeclaration { declaration_id, .. }
+                if model.objects.contains_key(declaration_id) =>
+            {
+                return Err(invalid("scalar source UUID already exists"));
+            }
+            Operation::DeleteSchematicSheet {
+                sheet_id, sheet, ..
+            } => {
+                let actual = model
+                    .objects
+                    .get(sheet_id)
+                    .map(|object| {
+                        let shard = model
+                            .source_shards
+                            .iter()
+                            .find(|s| s.shard_id == object.source_shard_id)
+                            .ok_or_else(|| invalid("missing sheet shard"))?;
+                        super::journal::materialized_shard_value(model, shard)
+                    })
+                    .transpose()?;
+                let contains = |value: &serde_json::Value| {
+                    value
+                        .get("net_declarations")
+                        .and_then(serde_json::Value::as_object)
+                        .is_some_and(|m| !m.is_empty())
+                };
+                if actual.as_ref().is_some_and(contains) || contains(sheet) || operations.iter().any(|op| matches!(op, Operation::CreateSchematicNetDeclaration { sheet_id: owner, .. } if owner == sheet_id)) {
+                    return Err(invalid("sheet contains independent scalar declarations; deletion is unavailable"));
+                }
+            }
+            Operation::DeleteSchematicNetDeclaration { .. } => {
+                return Err(invalid(
+                    "scalar source deletion is reserved for exact history compensation",
+                ));
+            }
             Operation::CreateElectricalIdentity { record } => {
                 if record.object_revision.0 != 0
                     || model

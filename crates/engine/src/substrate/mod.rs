@@ -89,8 +89,10 @@ mod rules_journal_ops;
 mod run_evidence_validation;
 mod schematic_assignment_history;
 mod schematic_definition_journal_ops;
+mod schematic_net_declarations;
 mod schematic_root_journal_ops;
 mod schematic_sheet_journal_ops;
+pub(crate) use schematic_net_declarations::plan as plan_native_scalar_sources;
 mod schematic_sheet_maps;
 mod source_shard;
 mod source_shard_ref_builders;
@@ -129,12 +131,14 @@ use journal::{
 pub(crate) use journal_io::read_transaction_journal;
 
 pub use journal_io::transaction_journal_path;
-pub use operation::{Operation, SchematicMarkerKind};
+pub use operation::Operation;
+mod schematic_marker_kind;
 use operation_application::apply_operation;
 pub use project_read_cache::ProjectReadCache;
 pub use proposal::*;
 pub use relationship::{RELATIONSHIP_SHARD_SCHEMA_VERSION, RelationshipShard};
 pub use rules_journal_ops::validate_native_project_rule_payload;
+pub use schematic_marker_kind::SchematicMarkerKind;
 pub use transaction::*;
 pub use variant::{VARIANT_OVERLAY_SHARD_SCHEMA_VERSION, VariantOverlayShard};
 use zone_fill::derive_model_zone_fills;

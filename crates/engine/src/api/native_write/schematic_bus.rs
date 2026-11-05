@@ -1,4 +1,4 @@
-//! Native bus authoring over canonical source and explicit existing scalar-Net identities.
+//! Native bus authoring over canonical source and recorded scalar-Net identities.
 use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
@@ -6,7 +6,6 @@ use super::{
         build_create_schematic_bus, build_create_schematic_bus_entry, build_delete_schematic_bus,
         build_delete_schematic_bus_entry, build_set_schematic_bus,
     },
-    schematic_edit::prepare_native_birth,
     schematic_selection_edit::selected_source,
 };
 use crate::{
@@ -22,6 +21,8 @@ use uuid::Uuid;
 mod geometry;
 #[path = "schematic_bus_members.rs"]
 mod members;
+#[path = "schematic_net_declarations.rs"]
+mod scalar_sources;
 pub use geometry::{WireEnd, entry_geometry};
 
 pub(crate) const VERBS: &[NativeWriteVerb] = &[
@@ -58,6 +59,7 @@ struct Params {
 #[serde(deny_unknown_fields)]
 struct Entry {
     wire: Uuid,
+    member: Option<String>,
     x_nm: i64,
     y_nm: i64,
     wire_end: WireEnd,
@@ -122,6 +124,7 @@ fn prepare(
         }
         None
     };
+    let changing_members = params.members.is_some();
     let bus = Bus {
         uuid: original.map_or_else(Uuid::new_v4, |b| b.uuid),
         name: params
@@ -138,7 +141,8 @@ fn prepare(
             .ok_or_else(|| invalid("Bus points required"))?,
     };
     geometry::validate_bus(&bus)?;
-    let nets = members::member_nets(&snapshot, sheet, &bus.members, path)?;
+    let mut scalars = scalar_sources::prepare(&snapshot, sheet, &bus.members, path)?;
+    let nets = scalars.existing.values().copied().collect();
     // Existing entries must stay attached to a current wire on a retained member.
     let mut occupied = BTreeSet::new();
     for entry in sheet.bus_entries.values().filter(|e| e.bus == bus.uuid) {
@@ -174,7 +178,7 @@ fn prepare(
         entry_geometry(&bus, wire, entry.position, end)?;
         occupied.insert((wire_id, entry.position.x, entry.position.y));
     }
-    let mut operations = Vec::new();
+    let mut operations = std::mem::take(&mut scalars.operations);
     if original.is_none() {
         operations.extend(
             build_create_schematic_bus(context.model, provenance.clone(), params.sheet, &bus)?
@@ -188,22 +192,39 @@ fn prepare(
                 .operations,
         );
     }
-    operations.extend(members::declaration(
-        context,
-        &snapshot,
-        provenance.clone(),
-        &bus,
-        path,
-        nets.clone(),
-        original.is_some(),
-    )?);
     for entry in params.entries {
         let (_, owner) = selected_source(context, "wires", entry.wire, path)?;
         if owner != params.sheet {
             return Err(invalid("Member wire belongs to a different source sheet"));
         }
+        if original.is_some() && !changing_members {
+            if let Some(name) = entry.member.as_deref() {
+                if scalars
+                    .sources
+                    .get(name)
+                    .is_some_and(|source| source.class == "net_declarations")
+                {
+                    let current = snapshot
+                        .bus_for_origin(
+                            snapshot.revision(),
+                            &members::origin("buses", bus.uuid, path),
+                        )
+                        .map_err(|e| invalid(format!("Bus membership unavailable: {e:?}")))?;
+                    if scalars
+                        .existing
+                        .get(name)
+                        .is_none_or(|id| !current.related_subjects.contains(id))
+                    {
+                        return Err(invalid(
+                            "Selected declaration is no longer a current member; edit Bus membership first",
+                        ));
+                    }
+                }
+            }
+        }
         let wire = &sheet.wires[&entry.wire];
-        members::qualify_wire(&snapshot, entry.wire, path, &nets)?;
+        let member_declaration =
+            scalars.entry_member(&snapshot, entry.member.as_deref(), entry.wire, path)?;
         let at = Point::new(entry.x_nm, entry.y_nm);
         let size = entry_geometry(&bus, wire, at, entry.wire_end)?;
         if !occupied.insert((entry.wire, at.x, at.y)) {
@@ -212,6 +233,7 @@ fn prepare(
             ));
         }
         let value = BusEntry {
+            member_declaration,
             uuid: Uuid::new_v4(),
             bus: bus.uuid,
             wire: Some(wire.uuid),
@@ -229,14 +251,42 @@ fn prepare(
             .operations,
         );
     }
-    if operations.is_empty() {
-        return Err(invalid("Bus fields are unchanged"));
-    }
-    let write = BatchComposer::compose(context.model, provenance)
+    let mut write = BatchComposer::compose(context.model, provenance.clone())
         .push_ops(operations)
         .primary_object(bus.uuid)
         .finish()?;
-    prepare_native_birth(context.model, write)
+    let (batch, membership) =
+        crate::substrate::plan_native_scalar_sources(context.model, write.batch)?;
+    write.batch = batch;
+    let nets = scalars.final_nets(&membership)?;
+    let declaration = members::declaration(
+        context,
+        &snapshot,
+        provenance,
+        &bus,
+        path,
+        nets,
+        scalars
+            .sources
+            .values()
+            .filter(|s| s.class == "net_declarations")
+            .cloned()
+            .collect(),
+        original.is_some(),
+    )?;
+    // Replace any automatic membership remap for this Bus with the single final
+    // explicit field edit, preserving the original guarded preimage.
+    if let Some(id) = declaration.iter().find_map(|op| match op {
+        crate::substrate::Operation::SetElectricalIdentity { record, .. } => Some(record.id),
+        _ => None,
+    }) {
+        write.batch.operations.retain(|op| !matches!(op, crate::substrate::Operation::SetElectricalIdentity { record, .. } if record.id == id));
+    }
+    write.batch.operations.extend(declaration);
+    if write.batch.operations.is_empty() {
+        return Err(invalid("Bus fields are unchanged"));
+    }
+    Ok(write)
 }
 
 #[derive(Deserialize)]

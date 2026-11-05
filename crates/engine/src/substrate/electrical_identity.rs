@@ -38,6 +38,8 @@ pub enum ElectricalIdentity {
     Bus {
         name: String,
         scalar_nets: BTreeSet<Uuid>,
+        #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+        scalar_declarations: BTreeSet<ElectricalOccurrence>,
         representations: BTreeSet<ElectricalOccurrence>,
         retired: bool,
     },

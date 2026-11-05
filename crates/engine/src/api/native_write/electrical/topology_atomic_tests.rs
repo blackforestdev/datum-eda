@@ -28,6 +28,7 @@ fn native_merge_rebinds_bus_and_refuses_forged_interface_atomically() {
         id: Uuid::new_v4(),
         object_revision: ObjectRevision(0),
         identity: ElectricalIdentity::Bus {
+            scalar_declarations: Default::default(),
             name: "declaration".into(),
             scalar_nets: ids.clone(),
             representations: projections.iter().cloned().collect(),

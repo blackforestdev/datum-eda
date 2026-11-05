@@ -26,7 +26,7 @@ impl Runtime {
             let mut buses: Vec<_> = sheet.buses.values().cloned().collect();
             buses.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
             if buses.is_empty() {
-                return Err("Draw a Bus with this scalar net declared as a member first".into());
+                return Err("Draw a Bus with scalar members first".into());
             }
             let tip = self
                 .workspace()
@@ -42,6 +42,7 @@ impl Runtime {
                 original,
                 buses,
                 choice: 0,
+                member_choice: 0,
                 wire_end: WireEnd::From,
             })
         })();
@@ -73,7 +74,7 @@ impl Runtime {
         if endpoint {
             entry.cycle_end();
         } else {
-            entry.choice = (entry.choice + 1) % entry.buses.len();
+            entry.cycle_target();
         }
         if let Some(form) = &mut e.label {
             form.name = entry.bus().unwrap().name.clone();

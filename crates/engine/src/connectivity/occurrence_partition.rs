@@ -129,6 +129,12 @@ pub(crate) fn partitions(
             return Err(invalid("unbound child hierarchical label"));
         }
     }
+    for (declaration, wire) in super::net_declarations::bindings(schematic)? {
+        groups.root(&declaration);
+        if let Some(wire) = wire {
+            groups.join(&declaration, &wire);
+        }
+    }
     Ok(finish(groups))
 }
 
@@ -190,6 +196,10 @@ pub(crate) fn authored_occurrences(
             ("buses", sheet.buses.keys().copied().collect()),
             ("bus_entries", sheet.bus_entries.keys().copied().collect()),
             ("ports", sheet.ports.keys().copied().collect()),
+            (
+                "net_declarations",
+                sheet.net_declarations.keys().copied().collect(),
+            ),
             ("noconnects", sheet.noconnects.keys().copied().collect()),
             ("texts", sheet.texts.keys().copied().collect()),
             ("drawings", sheet.drawings.keys().copied().collect()),

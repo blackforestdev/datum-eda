@@ -151,6 +151,7 @@ fn unchanged_connectivity_refuses_reanchor_retirement_provenance_and_type_conver
             }
             (_, 3) => {
                 changed.identity = ElectricalIdentity::Bus {
+                    scalar_declarations: Default::default(),
                     name: "converted".into(),
                     scalar_nets: BTreeSet::new(),
                     representations: BTreeSet::new(),

@@ -140,6 +140,7 @@ fn native_project_from_reader(
 pub(crate) struct CapturedNativeErcInputs {
     pub(crate) project: LoadedNativeProject,
     pub(crate) schematic: Schematic,
+    pub(crate) nets: Vec<eda_engine::schematic::SchematicNetInfo>,
 }
 
 pub(crate) fn capture_native_erc_inputs(
@@ -178,7 +179,12 @@ pub(crate) fn capture_native_erc_inputs(
         read(&shard.relative_path)
     })?;
     let schematic = build_native_project_schematic_with_reader(&project, read)?;
-    Ok(CapturedNativeErcInputs { project, schematic })
+    let nets = eda_engine::connectivity::native_schematic_net_info(model, &schematic)?;
+    Ok(CapturedNativeErcInputs {
+        project,
+        schematic,
+        nets,
+    })
 }
 
 pub(super) fn collect_schematic_counts(

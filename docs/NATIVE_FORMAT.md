@@ -1422,3 +1422,12 @@ collaboration (M8+ if ever).
 - M4: Native format introduced. Schema version 1.
 - M4: Convert-from-import tool
 - M4+: Schema migrations as format evolves
+
+## Nongraphical scalar declaration rationale
+
+The PM053/a67z amendment and `specs/NATIVE_FORMAT_SPEC.md` define first-class
+sheet-owned scalar declarations and explicit Bus Entry source bindings. They avoid
+hidden geometry and name-derived NetIds. Old sheets omit the declaration collection;
+reading them creates nothing. Names do not implicitly bind labels to declarations.
+The normative source specification controls collision, lifetime, detach and history
+rules; this rationale does not claim implementation or broader hierarchy support.

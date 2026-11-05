@@ -73,6 +73,7 @@ pub(super) fn build_with_project_group(
         junctions: HashMap::new(),
         labels: HashMap::new(),
         buses: HashMap::new(),
+        net_declarations: Default::default(),
         bus_entries: HashMap::new(),
         ports: HashMap::new(),
         noconnects: HashMap::new(),

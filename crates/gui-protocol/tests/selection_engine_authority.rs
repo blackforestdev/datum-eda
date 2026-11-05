@@ -38,6 +38,7 @@ fn schematic_summary_identity_changes_on_label_only_rename() {
                     },
                 )]),
                 buses: HashMap::new(),
+                net_declarations: Default::default(),
                 bus_entries: HashMap::new(),
                 ports: HashMap::new(),
                 noconnects: HashMap::new(),

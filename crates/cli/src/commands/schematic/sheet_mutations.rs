@@ -37,6 +37,7 @@ pub(crate) fn create_native_project_sheet(
         junctions: BTreeMap::new(),
         labels: BTreeMap::new(),
         buses: BTreeMap::new(),
+        net_declarations: BTreeMap::new(),
         bus_entries: BTreeMap::new(),
         ports: BTreeMap::new(),
         noconnects: BTreeMap::new(),

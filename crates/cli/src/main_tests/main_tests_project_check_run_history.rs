@@ -130,8 +130,11 @@ fn guarded_check_run_keeps_captured_inputs_and_refuses_changed_source_for_both_r
             .unwrap();
         let revision = model.model_revision.clone();
         let captured = capture_native_erc_inputs(&root, &model).unwrap();
-        let expected =
-            serde_json::to_value(native_erc_report_from_schematic(&captured.schematic)).unwrap();
+        let expected = serde_json::to_value(native_erc_report_from_schematic(
+            &captured.schematic,
+            captured.nets.clone(),
+        ))
+        .unwrap();
         assert!(!expected["erc"].as_array().unwrap().is_empty());
 
         // The actual canonical source changes after immutable input capture.
@@ -160,7 +163,7 @@ fn guarded_check_run_keeps_captured_inputs_and_refuses_changed_source_for_both_r
         let before_finish = check_source_bytes(&root);
 
         // Computation after that change still uses the retained source only.
-        let report = native_erc_report_from_schematic(&captured.schematic);
+        let report = native_erc_report_from_schematic(&captured.schematic, captured.nets.clone());
         assert_eq!(serde_json::to_value(&report).unwrap(), expected);
         let result = finish_check_run(&root, model, captured.project, report, "erc", true, true);
         assert!(

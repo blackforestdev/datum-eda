@@ -91,6 +91,7 @@ fn occurrence_qualified_bus_identity_and_interface_reopen() {
             id,
             object_revision: ObjectRevision(0),
             identity: ElectricalIdentity::Bus {
+                scalar_declarations: Default::default(),
                 name: "DECLARED".into(),
                 scalar_nets: BTreeSet::from([n]),
                 representations: BTreeSet::from([a.clone(), b.clone()]),
@@ -133,6 +134,7 @@ fn occurrence_qualified_bus_identity_and_interface_reopen() {
         id: Uuid::new_v4(),
         object_revision: ObjectRevision(0),
         identity: ElectricalIdentity::Bus {
+            scalar_declarations: Default::default(),
             name: "OTHER".into(),
             scalar_nets: BTreeSet::from([n]),
             representations: BTreeSet::from([a]),

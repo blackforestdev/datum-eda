@@ -2,6 +2,28 @@
 use super::*;
 
 impl ElectricalSelectionSnapshot {
+    /// Canonical schematic membership, including nongraphical declarations.
+    pub(crate) fn schematic_member_net(
+        &self,
+        origin: &ElectricalOccurrence,
+    ) -> Result<Uuid, ElectricalQueryFailure> {
+        self.basis.occurrence(&self.model, origin).map_err(|_| {
+            ElectricalQueryFailure::InvalidOccurrence {
+                origin: origin.clone(),
+            }
+        })?;
+        let owners: Vec<_> = self
+            .logical
+            .iter()
+            .filter_map(|(id, members)| members.contains(origin).then_some(*id))
+            .collect();
+        if owners.len() != 1 {
+            return Err(ElectricalQueryFailure::UnavailableAssignment {
+                origin: origin.clone(),
+            });
+        }
+        Ok(owners[0])
+    }
     /// Resolve the origin's canonical Global Net and its complete declared domain.
     /// A board-local Net UUID is an assignment, not a logical identity. Pending or
     /// contradictory correspondence cannot become a local-only complete result.
@@ -17,7 +39,7 @@ impl ElectricalSelectionSnapshot {
             }
         })?;
         let owners: BTreeSet<_> = match origin.class.as_str() {
-            "wires" | "labels" | "ports" | "junctions" | "pins" => self
+            "wires" | "labels" | "ports" | "junctions" | "pins" | "net_declarations" => self
                 .logical
                 .iter()
                 .filter_map(|(id, members)| members.contains(origin).then_some(*id))

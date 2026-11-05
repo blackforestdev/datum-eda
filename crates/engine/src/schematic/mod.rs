@@ -31,6 +31,8 @@ pub struct Sheet {
     pub labels: HashMap<Uuid, NetLabel>,
     pub buses: HashMap<Uuid, Bus>,
     pub bus_entries: HashMap<Uuid, BusEntry>,
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    pub net_declarations: HashMap<Uuid, NetDeclaration>,
     pub ports: HashMap<Uuid, HierarchicalPort>,
     pub noconnects: HashMap<Uuid, NoConnectMarker>,
     pub texts: HashMap<Uuid, SchematicText>,
@@ -174,12 +176,33 @@ pub struct BusEntry {
     pub uuid: Uuid,
     pub bus: Uuid,
     pub wire: Option<Uuid>,
+    /// Explicit scalar declaration binding; names and spine contact do not bind.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_member_declaration"
+    )]
+    pub member_declaration: Option<crate::substrate::ElectricalOccurrence>,
     pub position: Point,
     /// Diagonal offset of the bus-entry stub in schematic nm (KiCad `(size dx dy)`);
     /// the stub runs from `position` to `position + size`. Defaulted zero for
     /// entries authored through the write path (rendered with a default diagonal).
     #[serde(default = "Point::zero")]
     pub size: Point,
+}
+
+fn deserialize_member_declaration<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<crate::substrate::ElectricalOccurrence>, D::Error> {
+    crate::substrate::ElectricalOccurrence::deserialize(deserializer).map(Some)
+}
+
+/// A real scalar source occurrence with no fabricated drawing or position.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NetDeclaration {
+    pub uuid: Uuid,
+    pub name: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

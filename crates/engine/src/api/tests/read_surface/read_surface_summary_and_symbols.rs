@@ -133,6 +133,7 @@ fn summaries_read_from_in_memory_design() {
                         },
                     )]),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::new(),
                     noconnects: HashMap::new(),
@@ -208,6 +209,7 @@ fn get_symbol_fields_returns_fields_for_matching_symbol() {
                     junctions: HashMap::new(),
                     labels: HashMap::new(),
                     buses: HashMap::new(),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::new(),
                     ports: HashMap::new(),
                     noconnects: HashMap::new(),
@@ -278,9 +280,11 @@ fn get_bus_entries_returns_entries_for_matching_sheet_selection() {
                             segments: Vec::new(),
                         },
                     )]),
+                    net_declarations: Default::default(),
                     bus_entries: HashMap::from([(
                         entry_uuid,
                         crate::schematic::BusEntry {
+                            member_declaration: None,
                             uuid: entry_uuid,
                             bus: bus_uuid,
                             wire: None,

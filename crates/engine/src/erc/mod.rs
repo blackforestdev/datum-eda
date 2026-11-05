@@ -65,9 +65,23 @@ pub fn run_prechecks_with_config_and_waivers(
     config: &ErcConfig,
     waivers: &[CheckWaiver],
 ) -> Vec<ErcFinding> {
+    run_prechecks_with_nets(
+        schematic,
+        config,
+        waivers,
+        connectivity::schematic_net_info(schematic),
+    )
+}
+
+/// Evaluate the same ERC rules over an already qualified native scalar projection.
+pub fn run_prechecks_with_nets(
+    schematic: &Schematic,
+    config: &ErcConfig,
+    waivers: &[CheckWaiver],
+    nets: Vec<crate::schematic::SchematicNetInfo>,
+) -> Vec<ErcFinding> {
     let mut findings = Vec::new();
     findings.extend(hierarchical_mismatch_findings(schematic, config));
-    let nets = connectivity::schematic_net_info(schematic);
     let noconnect_pins = noconnect_pin_uuids(schematic);
     let pin_evidence_by_uuid = pin_evidence_by_uuid(schematic);
 

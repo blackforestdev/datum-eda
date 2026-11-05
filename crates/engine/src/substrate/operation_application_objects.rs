@@ -194,6 +194,8 @@ pub(super) fn apply_operation_to_objects(
         | Operation::DeleteSchematicDeviation { .. } => Ok(()),
         Operation::CreateSchematicLabel { .. } | Operation::DeleteSchematicLabel { .. } => Ok(()),
         Operation::CreateSchematicPort { .. } | Operation::DeleteSchematicPort { .. } => Ok(()),
+        Operation::CreateSchematicNetDeclaration { .. }
+        | Operation::DeleteSchematicNetDeclaration { .. } => Ok(()),
         Operation::CreateSchematicBus { .. } | Operation::DeleteSchematicBus { .. } => Ok(()),
         Operation::CreateSchematicBusEntry { .. } | Operation::DeleteSchematicBusEntry { .. } => {
             Ok(())

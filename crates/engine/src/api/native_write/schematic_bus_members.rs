@@ -1,4 +1,4 @@
-//! Explicit existing-Net bus declaration; names select, never create or merge Nets.
+//! Semantic Bus membership and source drawing lifecycle.
 use super::*;
 use crate::substrate::{
     ElectricalIdentity, ElectricalIdentityRecord, ElectricalOccurrence, ObjectRevision,
@@ -10,51 +10,6 @@ pub(super) fn origin(class: &str, id: Uuid, path: &[Uuid]) -> ElectricalOccurren
         source_id: id,
         instance_path: path.to_vec(),
     }
-}
-
-pub(super) fn member_nets(
-    snapshot: &ElectricalSelectionSnapshot,
-    sheet: &crate::schematic::Sheet,
-    members: &[String],
-    path: &[Uuid],
-) -> Result<BTreeSet<Uuid>, EngineError> {
-    let mut nets = BTreeSet::new();
-    for name in members {
-        let candidates = sheet
-            .labels
-            .values()
-            .filter(|l| &l.name == name)
-            .map(|l| origin("labels", l.uuid, path))
-            .chain(
-                sheet
-                    .ports
-                    .values()
-                    .filter(|p| &p.name == name)
-                    .map(|p| origin("ports", p.uuid, path)),
-            );
-        let mut resolved = BTreeSet::new();
-        for source in candidates {
-            let net = snapshot
-                .schematic_run(snapshot.revision(), &source)
-                .map_err(|e| {
-                    invalid(format!(
-                        "Member {name} has no canonical schematic scalar Net: {e:?}"
-                    ))
-                })?;
-            resolved.insert(net.subject_id);
-        }
-        if resolved.len() != 1 {
-            return Err(invalid(format!(
-                "Member {name} must name one existing scalar Net in this sheet"
-            )));
-        }
-        if !nets.insert(*resolved.first().unwrap()) {
-            return Err(invalid(
-                "Different bus members resolve to the same scalar Net",
-            ));
-        }
-    }
-    Ok(nets)
 }
 
 pub(super) fn qualify_wire(
@@ -79,10 +34,12 @@ pub(super) fn declaration(
     bus: &Bus,
     path: &[Uuid],
     nets: BTreeSet<Uuid>,
+    scalar_declarations: BTreeSet<ElectricalOccurrence>,
     editing: bool,
 ) -> Result<Vec<crate::substrate::Operation>, EngineError> {
     let reference = origin("buses", bus.uuid, path);
     let identity = ElectricalIdentity::Bus {
+        scalar_declarations,
         name: bus.name.clone(),
         scalar_nets: nets,
         representations: BTreeSet::from([reference.clone()]),

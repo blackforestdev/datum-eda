@@ -27,6 +27,7 @@ fn review_fixture() -> (
         junctions: Default::default(),
         labels: Default::default(),
         buses: Default::default(),
+        net_declarations: Default::default(),
         bus_entries: Default::default(),
         ports: Default::default(),
         noconnects: Default::default(),

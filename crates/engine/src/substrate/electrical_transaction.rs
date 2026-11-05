@@ -45,15 +45,41 @@ fn compose_inner(
     // Old projects require explicit adoption; reading or editing unadopted source
     // never silently imports identity provenance.
     let adopted = model.electrical_identities.values().any(|r| matches!(&r.identity,ElectricalIdentity::Net {anchor,..} if schematic_class(&anchor.class)));
-    if !adopted && !native_first_birth {
+    let declaration_birth = batch
+        .operations
+        .iter()
+        .any(|op| matches!(op, Operation::CreateSchematicNetDeclaration { .. }));
+    if !adopted && !native_first_birth && !declaration_birth {
         return Ok(batch);
     }
     let before = super::electrical_topology_source::partitions(model, &[])?;
-    if !adopted && !before.is_empty() {
+    if !adopted && !before.is_empty() && !declaration_birth {
         return Ok(batch);
     }
-    let after = super::electrical_topology_source::partitions(model, &batch.operations)?;
+    let mut after = super::electrical_topology_source::partitions(model, &batch.operations)?;
     let previous = previous(model, &before)?;
+    if declaration_birth
+        || before
+            .iter()
+            .any(|g| g.iter().any(|o| o.class == "net_declarations"))
+    {
+        // A new declaration is not permission to adopt unrelated legacy groups.
+        let unadopted: Vec<_> = before
+            .iter()
+            .filter(|group| !previous.iter().any(|old| &old.members == *group)
+                && !batch.operations.iter().any(|op| matches!(op,
+                    Operation::CreateElectricalIdentity { record } if matches!(&record.identity,
+                        ElectricalIdentity::Net { anchor, retired: false, .. } if group.contains(anchor)))))
+            .collect();
+        for old in &unadopted {
+            if !after.contains(old) {
+                return Err(invalid(
+                    "adopt legacy scalar topology before connecting or changing it",
+                ));
+            }
+        }
+        after.retain(|group| !unadopted.contains(&group));
+    }
     if before == after {
         // No connectivity change can authorize reanchoring, retirement or invented
         // transition provenance. Revision-only writes are lawful and preserve IDs.
@@ -276,7 +302,10 @@ pub(super) fn next(revision: ObjectRevision) -> Result<ObjectRevision, EngineErr
         .ok_or_else(|| invalid("revision overflow"))
 }
 pub(super) fn schematic_class(class: &str) -> bool {
-    matches!(class, "wires" | "labels" | "junctions" | "ports" | "pins")
+    matches!(
+        class,
+        "wires" | "labels" | "junctions" | "ports" | "pins" | "net_declarations"
+    )
 }
 fn schematic_net(identity: &ElectricalIdentity) -> bool {
     matches!(identity, ElectricalIdentity::Net { anchor, .. } if schematic_class(&anchor.class))
@@ -294,6 +323,10 @@ fn topology_edit(op: &Operation) -> bool {
     matches!(
         op,
         Operation::CreateSchematicWire { .. }
+            | Operation::CreateSchematicNetDeclaration { .. }
+            | Operation::DeleteSchematicNetDeclaration { .. }
+            | Operation::CreateSchematicBusEntry { .. }
+            | Operation::DeleteSchematicBusEntry { .. }
             | Operation::DeleteSchematicWire { .. }
             | Operation::CreateSchematicJunction { .. }
             | Operation::PlaceSchematicMarker {

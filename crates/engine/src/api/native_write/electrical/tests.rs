@@ -276,6 +276,7 @@ fn declaration_with_zero_drawings_survives_rename_and_member_order() {
             id,
             object_revision: ObjectRevision(0),
             identity: ElectricalIdentity::Bus {
+                scalar_declarations: Default::default(),
                 name: "DATA".into(),
                 scalar_nets: BTreeSet::from([n]),
                 representations: BTreeSet::new(),
@@ -356,6 +357,7 @@ fn bus(id: Uuid, members: BTreeSet<Uuid>) -> ElectricalIdentityRecord {
         id,
         object_revision: ObjectRevision(0),
         identity: ElectricalIdentity::Bus {
+            scalar_declarations: Default::default(),
             name: "DATA".into(),
             scalar_nets: members,
             representations: BTreeSet::new(),

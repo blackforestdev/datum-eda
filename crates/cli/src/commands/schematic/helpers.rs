@@ -32,6 +32,7 @@ pub(crate) fn native_sheet_into_engine_sheet(native_sheet: NativeSheetRoot) -> S
             .into_values()
             .map(|bus| (bus.uuid, bus))
             .collect(),
+        net_declarations: native_sheet.net_declarations.into_iter().collect(),
         bus_entries: native_sheet
             .bus_entries
             .into_values()

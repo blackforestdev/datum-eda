@@ -474,6 +474,7 @@ pub(crate) fn place_native_project_bus_entry(
 
     let bus_entry_uuid = Uuid::new_v4();
     let bus_entry = BusEntry {
+        member_declaration: None,
         uuid: bus_entry_uuid,
         bus: bus_uuid,
         wire: wire_uuid,

@@ -5,6 +5,7 @@ use crate::api::native_write::{
     electrical::topology_tests::fixture,
     registry::find_native_write_verb,
     schematic_connectivity::{build_create_schematic_label, build_create_schematic_wire},
+    schematic_edit::prepare_native_birth,
 };
 use crate::schematic::{LabelKind, NetLabel, Schematic, SchematicWire};
 use crate::substrate::{CommitSource, DesignModel, ElectricalIdentity, ProjectResolver};
@@ -313,11 +314,11 @@ fn native_bus_members_edit_and_entry_alias_preserve_source_identity_and_geometry
     std::fs::remove_dir_all(root).unwrap();
 }
 #[test]
-fn native_bus_rejects_missing_members_wrong_source_occurrence_geometry_and_stale_edits() {
+fn native_bus_rejects_invalid_members_wrong_source_occurrence_geometry_and_stale_edits() {
     let (root, mut model, sheet, wires) = setup("native_bus_guards");
     let before = source(&model);
     for (field, value) in [
-        ("members", serde_json::json!(["MISSING"])),
+        ("members", serde_json::json!([" untrimmed "])),
         ("members", serde_json::json!(["D0", "D0"])),
         ("members", serde_json::json!([])),
         ("name", serde_json::json!("")),
@@ -410,7 +411,7 @@ fn native_bus_rejects_missing_members_wrong_source_occurrence_geometry_and_stale
         build(&model, &root, "datum.schematic.create_bus", params(sheet))
             .unwrap_err()
             .to_string()
-            .contains("one existing scalar Net")
+            .contains("one scalar Net")
     );
     assert_eq!(source(&model), before);
     assert_eq!(net_ids(&model), ids);
@@ -482,3 +483,6 @@ fn native_bus_entry_refuses_real_foreign_sheet_wire() {
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[path = "schematic_bus_declaration_tests.rs"]
+mod declarations;

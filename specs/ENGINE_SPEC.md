@@ -1068,6 +1068,7 @@ pub struct Sheet {
     pub labels: HashMap<Uuid, NetLabel>,
     pub buses: HashMap<Uuid, Bus>,
     pub bus_entries: HashMap<Uuid, BusEntry>,
+    pub net_declarations: HashMap<Uuid, NetDeclaration>, // absent in old sheets: empty
     pub ports: HashMap<Uuid, HierarchicalPort>,
     pub noconnects: HashMap<Uuid, NoConnectMarker>,
     pub texts: HashMap<Uuid, SchematicText>,
@@ -1170,10 +1171,16 @@ pub struct Bus {
     pub members: Vec<String>,
 }
 
+pub struct NetDeclaration {
+    pub uuid: Uuid,
+    pub name: String,
+}
+
 pub struct BusEntry {
     pub uuid: Uuid,
     pub bus: Uuid,              // → Bus
     pub wire: Option<Uuid>,     // → SchematicWire
+    pub member_declaration: Option<ElectricalOccurrence>, // explicit qualified source
     pub position: Point,
 }
 
@@ -1930,6 +1937,50 @@ partition, including the ordered instance path. Diagnostics report Mismatch for
 a terminal outside that partition and Unverified if authority is unavailable;
 Pending/Mismatch remain explicitly incomplete and do not certify historical or
 contradictory evidence. This uses the internal producer, not public query expansion.
+
+
+### Explicit local scalar declarations — PM053 / a67z
+
+The PM053 local scalar amendment authorizes a nongraphical sheet-owned
+`NetDeclaration { uuid, name }`. Its source UUID is distinct from NetId; a qualified
+`net_declarations` occurrence forms a singleton scalar partition until explicitly
+bound. Bus Entry records an optional qualified declaration occurrence and its wire
+contact, joining only that declaration's group. Names select/display declarations;
+they introduce no implicit union with Labels/Ports. Ambiguous/colliding names, a
+wrong-Bus member target, another member's wire, stale/wrong-sheet targets and member
+removal with surviving entries refuse atomically. Native Label/Port create/rename
+collisions also refuse; sheets without declarations retain their existing semantics.
+
+The initial authoring boundary is a unique root-sheet occurrence. Entry deletion
+removes only its binding; normal complete final partitions determine any split.
+Bus drawing deletion removes owned entries/bindings while retaining independent
+scalar declarations and semantic Bus lifetime. No declaration rename/delete UI or
+unvalidated backend deletion is introduced. Existing PM053 anchor nomination,
+lowest-ID merge, retirement and recorded membership remap remain authoritative.
+Declaration creation does not implicitly adopt unrelated legacy groups. All births,
+source/binding changes and identity transitions share the canonical batch/inverse;
+reads and reopen allocate no identity. This is ratified behavior under a67z, not
+implementation acceptance or full-foundation qualification.
+
+
+Each semantic Bus may retain `scalar_declarations`, a set of qualified declaration
+source occurrences (old absence defaults to empty; empty sets are omitted). A
+declaration-backed member follows its declaration's final scalar group across
+merges and every split, including last-entry removal and zero drawing lifetime.
+`scalar_nets` records the resolved membership, not competing declaration authority.
+Ordinary members retain existing PM053 remapping; remove only the pre-state
+declaration-backed memberships before composing their final groups, preserving
+other members. Net nomination and identity survival are unchanged. Missing,
+wrong-context, ambiguous references or disallowed member collapse refuse. Multiple
+Buses independently follow the same declaration; member removal drops only that
+Bus's source binding. No names or surviving-entry heuristics reconstruct bindings.
+
+Native net queries and ERC for declaration-bearing source consume the same complete
+occurrence partitions and recorded Net IDs, including declaration-only groups.
+Partially adopted topology is explicitly unavailable to these complete projections
+until the user adopts its remaining groups; creating a declaration does not do so.
+Captured ERC jobs retain this qualified net projection with their immutable source.
+Legacy import projections are unchanged; no read allocates or repairs identity.
 
 
 ## PM054 C04–C06 owning reconciliation

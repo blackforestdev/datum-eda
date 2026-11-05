@@ -110,6 +110,7 @@ pub enum SchematicEditRequest {
         wire: Uuid,
         at: PointNm,
         wire_end: eda_engine::api::native_write::schematic_bus::WireEnd,
+        member: Option<String>,
     },
     DeleteBusEntry {
         bus: Uuid,
@@ -254,9 +255,10 @@ impl SchematicEditRequest {
                 wire,
                 at,
                 wire_end,
+                member,
             } => (
                 "datum.schematic.create_bus",
-                serde_json::json!({"sheet":sheet,"bus":bus,"instance_path":instance_path,"entries":[{"wire":wire,"x_nm":at.x,"y_nm":at.y,"wire_end":wire_end}]}),
+                serde_json::json!({"sheet":sheet,"bus":bus,"instance_path":instance_path,"entries":[{"wire":wire,"x_nm":at.x,"y_nm":at.y,"wire_end":wire_end,"member":member}]}),
             ),
             Self::DeleteBusEntry {
                 bus,

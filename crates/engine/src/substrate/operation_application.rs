@@ -449,6 +449,31 @@ pub(super) fn apply_operation(
             port_id,
             port,
         } => apply_schematic_map_delete(model, diff, *sheet_id, "ports", *port_id, port),
+        Operation::CreateSchematicNetDeclaration {
+            sheet_id,
+            declaration_id,
+            declaration,
+        } => apply_schematic_map_create(
+            model,
+            diff,
+            *sheet_id,
+            "net_declarations",
+            *declaration_id,
+            declaration,
+        ),
+        Operation::DeleteSchematicNetDeclaration {
+            sheet_id,
+            declaration_id,
+            declaration,
+            ..
+        } => apply_schematic_map_delete(
+            model,
+            diff,
+            *sheet_id,
+            "net_declarations",
+            *declaration_id,
+            declaration,
+        ),
         Operation::CreateSchematicBus {
             sheet_id,
             bus_id,

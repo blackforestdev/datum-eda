@@ -13,8 +13,7 @@ pub(crate) use eda_engine::board::{
     Board, BoardText, Dimension, Keepout, Net, NetClass, PadAperture, PadShape, PlacedPackage,
     PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone,
 };
-pub(crate) use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
-pub(crate) use eda_engine::erc::run_prechecks;
+pub(crate) use eda_engine::connectivity::schematic_diagnostics;
 pub(crate) use eda_engine::export::{
     render_rs274x_copper_layer, render_rs274x_outline_default, render_rs274x_paste_layer,
     render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,

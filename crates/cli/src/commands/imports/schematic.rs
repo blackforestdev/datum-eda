@@ -338,6 +338,7 @@ fn empty_native_sheet(sheet_id: Uuid, name: &str) -> super::NativeSheetRoot {
         junctions: BTreeMap::new(),
         labels: BTreeMap::new(),
         buses: BTreeMap::new(),
+        net_declarations: BTreeMap::new(),
         bus_entries: BTreeMap::new(),
         ports: BTreeMap::new(),
         noconnects: BTreeMap::new(),
