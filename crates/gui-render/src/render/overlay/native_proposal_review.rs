@@ -13,6 +13,9 @@ pub(super) fn render(
     let Some(review) = &state.schematic_authoring.delete_review else {
         return;
     };
+    if review.fields.is_some() {
+        return;
+    } // The same review is presented in its row table.
     if scene.schematic_document != review.basis.document
         || scene.scene_id != review.scene.scene_id
         || scene.project_uuid != review.basis.project.to_string()

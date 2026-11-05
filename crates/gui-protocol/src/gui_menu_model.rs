@@ -207,7 +207,9 @@ impl GuiMenuItem {
         }
         if matches!(
             self.binding(),
-            GuiMenuBinding::GuiLocal("schematic.annotation.review")
+            GuiMenuBinding::GuiLocal(
+                "schematic.annotation.review" | "schematic.symbol_fields_table.open"
+            )
         ) {
             return crate::schematic_authoring::annotation::AnnotationEvidence::admit(state).err();
         }

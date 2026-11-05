@@ -622,7 +622,21 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   saved files remained exact. Immediate-restart writer-lock refusal remains separately
   open (`dat-iwxe`); broader qualification is not claimed.
 
-  Automatic position presets, a bulk fields table, cross-Unit replacement,
+  **Edit > Symbol Fields Table…** edits Reference and Value across the active
+  unique source sheet (`dat-schematic-bulk-fields-table-3k12`). Rows use the shared
+  text controls, keyboard navigation and paging. **Review changes** freezes exact
+  before/after values in the same table; explicit acceptance applies one canonical
+  design batch. Simultaneous reference swaps are valid when the final set is unique.
+  Empty Values are allowed; malformed, duplicate, stale, locked or unsupported
+  requested edits refuse the complete batch. No-op and draft Cancel write nothing;
+  cancelling a reviewed Proposal changes its metadata but preserves design source.
+  Raw Symbol payload, pins, electrical identities and supported same-sheet singleton
+  and multi-Gate component owners survive atomic Undo/Redo and cold reopening.
+  The existing single-Symbol Fields form remains available. Custom-field columns,
+  Part/library/footprint reassignment, project-wide editing and CSV exchange are
+  outside this table increment.
+
+  Automatic position presets, cross-Unit replacement,
   broader part/entity/gate reassignment, complete public-surface normalization
   and guaranteed `ComponentInstance` joins for all Symbols remain pending.
 
@@ -734,7 +748,7 @@ sibling, Undo/Redo and exact cold reopening. A post-Save query hit the separatel
 tracked writer-lock issue (`dat-iwxe`); that failed query remains recorded, with
 cold verification completed on the same saved project after owner shutdown.
 Physical, stale and repeated-source owners remain unsupported. Whole-project
-annotation and the bulk fields table remain separate targets.
+annotation remains a separate target; the active-sheet fields table is described in §9.
 
 ## Omitted / Redundant Tools
 

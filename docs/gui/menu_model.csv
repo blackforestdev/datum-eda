@@ -11,8 +11,10 @@ menubar,Edit,,,1,Redo,redo,datum.journal.redo,,,,,Ctrl+Shift+Z
 menubar,Edit,,,2,Cut,cut,,,clipboard model,,,Ctrl+X
 menubar,Edit,,,3,Copy,copy,,,clipboard model,,,Ctrl+C
 menubar,Edit,,,4,Paste,paste,,,clipboard model,,,Ctrl+V
-menubar,Edit,,,5,Delete,delete,,,per-selection; resolved by object type,,,Delete
-menubar,Edit,,,6,Preferences…,settings,,,preferences store,,,
+menubar,Edit,,,5,Delete,delete,,schematic.selection.delete,,,,Delete
+menubar,Edit,,,6,Symbol Fields…,properties,,schematic.symbol_fields.open,,,,
+menubar,Edit,,,7,Symbol Fields Table…,properties,,schematic.symbol_fields_table.open,,,,
+menubar,Edit,,,8,Preferences,settings,,,,edit.preferences,,
 menubar,View,,,0,Fit to Board,fit,,view.fit,,,,F
 menubar,View,,,1,Zoom In,zoom-in,,view.zoom_in,,,,Ctrl++
 menubar,View,,,2,Zoom Out,zoom-out,,view.zoom_out,,,,Ctrl+-

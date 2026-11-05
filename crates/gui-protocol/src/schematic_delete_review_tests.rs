@@ -60,6 +60,7 @@ fn response(review: &DeleteReview) -> NativeProposalResponse {
     NativeProposalResponse {
         gate_placement: None,
         annotation: None,
+        fields: None,
         assignment: None,
         disposition: None,
         proposal_id: review.proposal_id,
@@ -289,6 +290,7 @@ fn erc_disposition_review_freezes_evidence_and_requires_explicit_accept_or_dismi
     let mut receipt = NativeProposalResponse {
         gate_placement: None,
         annotation: None,
+        fields: None,
         assignment: None,
         proposal_id: review.proposal_id,
         status: ProposalStatus::Draft,
@@ -458,6 +460,7 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
         disposition: None,
         gate_placement: None,
         annotation: None,
+        fields: None,
         assignment: Some(AssignmentSummary {
             symbol: evidence.target.id,
             sheet: source.uuid,
@@ -670,3 +673,6 @@ mod annotation;
 
 #[path = "schematic_gate_placement_tests.rs"]
 mod gate_placement;
+
+#[path = "schematic_field_table_tests.rs"]
+mod field_table;

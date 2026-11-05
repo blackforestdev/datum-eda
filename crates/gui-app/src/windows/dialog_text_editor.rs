@@ -10,6 +10,7 @@ pub(super) enum Target {
     SchematicName,
     SchematicLabel,
     SchematicPlacement(PlacementField),
+    SchematicFieldTable(usize, PlacementField),
     ProjectName,
     FolderName,
     Location,
@@ -28,6 +29,20 @@ struct Snapshot {
 impl Runtime {
     fn active_editor(&self) -> Option<Target> {
         let ui = &self.workspace().ui;
+        if ui.active_menu.is_none()
+            && !ui.new_project.open
+            && !ui.project_open.open
+            && self.application_focus()
+                == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
+            && let Some(table) = self
+                .workspace()
+                .schematic_authoring
+                .delete_review
+                .as_ref()
+                .and_then(|r| r.fields.as_ref())
+        {
+            return Some(Target::SchematicFieldTable(table.focus_row, table.field));
+        }
         if ui.new_project.open {
             match ui.new_project.focus {
                 NewProjectFocus::ProjectName => return Some(Target::ProjectName),
@@ -90,6 +105,22 @@ impl Runtime {
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::SchematicFieldTable(row, field) => {
+                let review = self
+                    .workspace()
+                    .schematic_authoring
+                    .delete_review
+                    .as_ref()?;
+                let table = review.fields.as_ref()?;
+                let (text, editor) = table.cell(row, field)?;
+                Some(Snapshot {
+                    text,
+                    editor,
+                    editable: table.editable()
+                        && !self.native_edit.pending()
+                        && review.current(self.workspace()),
+                })
+            }
             Target::SchematicLabel => {
                 if self.workspace().schematic_authoring.bus_entry.is_some() {
                     return None;
@@ -171,6 +202,22 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::SchematicFieldTable(row, field) => {
+                if let Some(review) = &mut self
+                    .session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .delete_review
+                {
+                    if let Some(table) = &mut review.fields {
+                        table.store(row, field, snapshot.text, snapshot.editor);
+                    }
+                    if changed {
+                        review.refusal = None;
+                    }
+                }
+                self.invalidate_frame();
+            }
             Target::SchematicLabel => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 if let Some(label) = &mut e.label {
@@ -394,6 +441,16 @@ impl Runtime {
                         a.refusal = Some(reason);
                     }
                     self.invalidate_frame();
+                } else if matches!(target, Target::SchematicFieldTable(..)) {
+                    if let Some(review) = &mut self
+                        .session
+                        .workspace_mut()
+                        .schematic_authoring
+                        .delete_review
+                    {
+                        review.refusal = Some(reason);
+                    }
+                    self.invalidate_frame();
                 } else if matches!(
                     target,
                     Target::SchematicPlacement(_) | Target::SchematicLabel
@@ -432,6 +489,12 @@ impl Runtime {
             HitTarget::SchematicLabelName => Target::SchematicLabel,
             HitTarget::SchematicReference => Target::SchematicPlacement(PlacementField::Reference),
             HitTarget::SchematicValue => Target::SchematicPlacement(PlacementField::Value),
+            HitTarget::SchematicFieldTable(
+                datum_gui_protocol::schematic_authoring::field_table::FieldTableControl::Cell(
+                    row,
+                    field,
+                ),
+            ) => Target::SchematicFieldTable(row, field),
             HitTarget::NewProjectName => Target::ProjectName,
             HitTarget::NewProjectFolderName => Target::FolderName,
             HitTarget::FolderBrowser(Focus::Path) => Target::Location,
@@ -454,6 +517,19 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::SchematicFieldTable(row, field) => {
+                if let Some(table) = self
+                    .session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .delete_review
+                    .as_mut()
+                    .and_then(|r| r.fields.as_mut())
+                {
+                    table.focus_row = row;
+                    table.field = field;
+                }
+            }
             Target::SchematicLabel => {
                 if let Some(label) = &mut self.session.workspace_mut().schematic_authoring.label {
                     label.focus = 0;

@@ -65,6 +65,7 @@ fn review_fixture() -> (
     state.schematic_authoring.delete_review = Some(DeleteReview {
         gate_placement: None,
         annotation: None,
+        fields: None,
         assignment: None,
         disposition: None,
         basis: datum_gui_protocol::AuthoringViewBasis {
@@ -95,6 +96,7 @@ fn review_fixture() -> (
         response: Some(NativeProposalResponse {
             gate_placement: None,
             annotation: None,
+            fields: None,
             assignment: None,
             disposition: None,
             proposal_id,

@@ -37,6 +37,8 @@ pub mod assignment;
 pub mod delete_review;
 #[path = "erc_disposition.rs"]
 pub mod disposition;
+#[path = "schematic_field_table.rs"]
+pub mod field_table;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {

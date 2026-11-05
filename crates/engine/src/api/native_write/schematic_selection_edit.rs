@@ -239,17 +239,9 @@ pub(super) fn set_symbol_fields(
     let (source, sheet) =
         selected_source(context, "symbols", params.symbol, &params.instance_path)?;
     let original = &source.sheets[&sheet].symbols[&params.symbol];
+    validate_field_values(params.reference.as_deref(), params.value.as_deref())?;
     let mut symbol = original.clone();
     if let Some(reference) = params.reference {
-        if reference.is_empty()
-            || reference
-                .chars()
-                .any(|c| c.is_whitespace() || c.is_control())
-        {
-            return Err(invalid(
-                "Reference must be nonempty with no whitespace or control characters",
-            ));
-        }
         if source
             .sheets
             .values()
@@ -261,9 +253,6 @@ pub(super) fn set_symbol_fields(
         symbol.reference = reference;
     }
     if let Some(value) = params.value {
-        if value.chars().any(char::is_control) {
-            return Err(invalid("Value must be single-line"));
-        }
         symbol.value = value;
     }
     if symbol == source.sheets[&sheet].symbols[&params.symbol] {
@@ -288,6 +277,23 @@ pub(super) fn set_symbol_fields(
         )?)
         .primary_object(params.symbol)
         .finish()
+}
+
+pub(super) fn validate_field_values(
+    reference: Option<&str>,
+    value: Option<&str>,
+) -> Result<(), EngineError> {
+    if reference
+        .is_some_and(|r| r.is_empty() || r.chars().any(|c| c.is_whitespace() || c.is_control()))
+    {
+        return Err(invalid(
+            "Reference must be nonempty with no whitespace or control characters",
+        ));
+    }
+    if value.is_some_and(|v| v.chars().any(char::is_control)) {
+        return Err(invalid("Value must be single-line"));
+    }
+    Ok(())
 }
 
 fn invalid(reason: impl Into<String>) -> EngineError {

@@ -116,6 +116,12 @@
           "requires_project": true
         },
         {
+          "label": "Symbol Fields Table\u2026",
+          "icon": "properties",
+          "gui_local": "schematic.symbol_fields_table.open",
+          "requires_project": true
+        },
+        {
           "label": "Preferences",
           "icon": "settings",
           "submenu": "edit.preferences"

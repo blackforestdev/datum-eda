@@ -35,6 +35,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
             deleted: vec![],
             assignment: None,
             annotation: None,
+            fields: None,
             disposition: None,
             gate_placement: None,
         };
@@ -63,6 +64,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
             refusal: None,
             assignment: None,
             annotation: None,
+            fields: None,
             disposition: None,
             gate_placement: None,
         };

@@ -1,119 +1,16 @@
-//! Recorded annotation family and immutable preimages for shared Proposal recovery.
+//! Annotation-specific deterministic review over shared field receipts.
+use super::super::schematic_symbol_edit_receipt::{self as shared, Recorded};
 use super::*;
-struct Recorded<'a> {
-    sheet: Uuid,
-    symbols: BTreeMap<Uuid, &'a Value>,
-    symbol_count: usize,
-}
 fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
-    let mut sheet = None;
-    let mut symbols = BTreeMap::new();
-    let mut guards = BTreeSet::new();
-    let mut components = BTreeSet::new();
-    let mut owners = BTreeSet::new();
-    let mut bound_members = BTreeSet::new();
-    let changed: BTreeSet<_> = proposal
-        .batch
-        .operations
-        .iter()
-        .filter_map(|op| {
-            if let Operation::SetSchematicSymbol { symbol_id, .. } = op {
-                Some(*symbol_id)
-            } else {
-                None
-            }
-        })
-        .collect();
-    for op in &proposal.batch.operations {
-        match op {
-            Operation::GuardObjectRevision { object_id, .. } => {
-                if !guards.insert(*object_id) {
-                    return Err(invalid("Annotation contains duplicate guards"));
-                }
-            }
-            Operation::SetSchematicSymbol {
-                sheet_id,
-                symbol_id,
-                symbol,
-            } => {
-                let typed: PlacedSymbol = serde_json::from_value(symbol.clone())?;
-                prefix(&typed.reference)?;
-                if typed.uuid != *symbol_id
-                    || symbols.insert(*symbol_id, symbol).is_some()
-                    || sheet.replace(*sheet_id).is_some_and(|old| old != *sheet_id)
-                {
-                    return Err(invalid("Annotation changes duplicate or unrelated Symbols"));
-                }
-            }
-            Operation::SetComponentInstance {
-                component_instance_id,
-                previous_component_instance: old,
-                component_instance: next,
-            } => {
-                let refs = old["placed_symbol_refs"]
-                    .as_array()
-                    .ok_or_else(|| invalid("Annotation binding references unavailable"))?;
-                if refs.is_empty()
-                    || old["placed_package_refs"]
-                        .as_array()
-                        .is_none_or(|v| !v.is_empty())
-                {
-                    return Err(invalid("Annotation binding is not schematic-only"));
-                }
-                let mut expected = old.clone();
-                expected["object_revision"] = json!(
-                    old["object_revision"]
-                        .as_u64()
-                        .and_then(|v| v.checked_add(1))
-                        .ok_or_else(|| invalid("Annotation component epoch unavailable"))?
-                );
-                let mut touched = false;
-                for (index, member) in refs.iter().enumerate() {
-                    let symbol: Uuid = serde_json::from_value(member["object_id"].clone())?;
-                    if !bound_members.insert(symbol) {
-                        return Err(invalid("Annotation contains ambiguous component members"));
-                    }
-                    if changed.contains(&symbol) {
-                        touched = true;
-                        owners.insert(symbol);
-                        expected["placed_symbol_refs"][index]["object_revision"] = json!(
-                            member["object_revision"]
-                                .as_u64()
-                                .and_then(|v| v.checked_add(1))
-                                .ok_or_else(|| invalid("Annotation Symbol epoch unavailable"))?
-                        );
-                    }
-                }
-                if old["uuid"] != json!(component_instance_id)
-                    || expected != *next
-                    || !components.insert(*component_instance_id)
-                    || !touched
-                {
-                    return Err(invalid("Annotation changes unrelated binding data"));
-                }
-            }
-            _ => return Err(invalid("Annotation contains unrelated operations")),
-        }
+    if !is_annotation(proposal) {
+        return Err(invalid("Annotation family unavailable"));
     }
-    if !is_annotation(proposal)
-        || symbols.is_empty()
-        || !owners.iter().all(|id| symbols.contains_key(id))
-        || !bound_members.iter().all(|id| guards.contains(id))
-        || !symbols
-            .keys()
-            .chain(&components)
-            .all(|id| guards.contains(id))
-        || !components.is_disjoint(&symbols.keys().copied().collect())
-    {
-        return Err(invalid(
-            "Annotation family or complete source guards unavailable",
-        ));
+    let result = shared::recorded(proposal)?;
+    for value in result.symbols.values() {
+        let typed: PlacedSymbol = serde_json::from_value((*value).clone())?;
+        prefix(&typed.reference)?;
     }
-    Ok(Recorded {
-        sheet: sheet.unwrap(),
-        symbols,
-        symbol_count: guards.len() - components.len(),
-    })
+    Ok(result)
 }
 pub(in crate::api::native_write) fn validate_recorded(
     proposal: &Proposal,
@@ -139,55 +36,7 @@ pub(in crate::api::native_write) fn summary(
             ));
         }
     }
-    let old_payloads: BTreeMap<_, _> = if let Some(id) = proposal.applied_transaction_id {
-        let tx = model
-            .journal
-            .iter()
-            .find(|tx| tx.transaction_id == id)
-            .ok_or_else(|| invalid("Annotation transaction unavailable"))?;
-        if !proposal
-            .batch
-            .operations
-            .iter()
-            .filter(|op| !matches!(op, Operation::GuardObjectRevision { .. }))
-            .all(|op| tx.operations.contains(op))
-        {
-            return Err(invalid(
-                "Annotation transaction does not match its proposal",
-            ));
-        }
-        let mut old = BTreeMap::new();
-        for op in &tx.inverse_operations {
-            if let Operation::SetSchematicSymbol {
-                sheet_id,
-                symbol_id,
-                symbol,
-            } = op
-            {
-                if *sheet_id != recorded.sheet
-                    || !recorded.symbols.contains_key(symbol_id)
-                    || old.insert(*symbol_id, symbol.clone()).is_some()
-                {
-                    return Err(invalid("Annotation inverse source does not match"));
-                }
-            }
-        }
-        old
-    } else {
-        if proposal.prepared_against != model.model_revision {
-            return Err(invalid("Annotation source revision unavailable"));
-        }
-        let source = source_sheet_payload(
-            model,
-            recorded.sheet,
-            *recorded.symbols.keys().next().unwrap(),
-        )?;
-        recorded
-            .symbols
-            .keys()
-            .map(|id| (*id, source["symbols"][id.to_string()].clone()))
-            .collect()
-    };
+    let old_payloads = shared::old_payloads(model, proposal, &recorded)?;
     let mut changes = vec![];
     for (id, next) in recorded.symbols {
         let old = old_payloads

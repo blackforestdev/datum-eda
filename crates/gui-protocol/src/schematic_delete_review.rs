@@ -16,6 +16,7 @@ use uuid::Uuid;
 pub struct DeleteReview {
     pub gate_placement: Option<super::gate_placement::GatePlacementEvidence>,
     pub annotation: Option<super::annotation::AnnotationEvidence>,
+    pub fields: Option<super::field_table::FieldTableDraft>,
     pub disposition: Option<super::disposition::DispositionEvidence>,
     pub assignment: Option<super::assignment::AssignmentEvidence>,
     pub basis: AuthoringViewBasis,
@@ -153,6 +154,7 @@ impl DeleteReview {
         Ok(Self {
             gate_placement: None,
             annotation: None,
+            fields: None,
             disposition: None,
             assignment: None,
             revision: basis.revision.clone(),
@@ -232,6 +234,14 @@ impl DeleteReview {
                 if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
             (None, None) => {}
             _ => return Err("Proposal annotation changed; dismiss and review again".into()),
+        }
+        match (&self.fields, &response.fields) {
+            (Some(table), Some(summary))
+                if table.summary.as_ref() == Some(summary) && response.deleted.is_empty() => {}
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("Proposal field changes differ from the reviewed table".into()),
         }
         match (&self.gate_placement, &response.gate_placement) {
             (Some(evidence), Some(summary))
@@ -364,6 +374,12 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(table) = &self.fields {
+            return format!(
+                "Symbol Fields Table · {} changes",
+                table.summary.as_ref().map_or(0, |s| s.changes.len())
+            );
+        }
         if let Some(evidence) = &self.gate_placement {
             return format!("Place another Gate · {}", evidence.summary.reference);
         }

@@ -124,13 +124,26 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>
             .symbols
             .iter()
             .all(|(id, next)| reference_only(inverse.symbols[id], next));
+    let field_batch = forward.metadata.iter().any(|op| {
+        matches!(op,
+        Operation::SetProposalMetadata { proposal, .. }
+            if proposal["batch"]["provenance"]["reason"].as_str()
+                == Some(crate::api::native_write::schematic_field_batch::REASON))
+    }) && forward.removed_wires.is_empty()
+        && forward
+            .symbols
+            .iter()
+            .all(|(id, next)| fields::reference_value_only(inverse.symbols[id], next));
     if !forward.metadata.is_empty() || !inverse.metadata.is_empty() {
-        if !annotation || !paired_annotation_metadata(&forward.metadata, &inverse.metadata) {
+        if !(annotation || field_batch)
+            || !paired_annotation_metadata(&forward.metadata, &inverse.metadata)
+        {
             return None;
         }
     }
     for (id, next) in &forward.symbols {
         if !annotation
+            && !field_batch
             && !symbol_pose(inverse.symbols[id], next)
             && !(forward.symbols.len() == 1
                 && forward.removed_wires.is_empty()
@@ -180,7 +193,7 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>
             }
         }
         // Shared owners retain every member; only the recorded changed members
-        // advance, with paired metadata and exact reference-only source above.
+        // advance, with paired metadata and exact source-field checks above.
         if !changed {
             return None;
         }

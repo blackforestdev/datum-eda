@@ -59,12 +59,15 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
+        if self.handle_field_table_key(event) {
+            return true;
+        }
         match review_decision(&event.logical_key, self.modifiers) {
             Some(accept) => self.confirm_delete_review(accept),
             None => true,
         }
     }
-    fn confirm_delete_review(&mut self, accept: bool) -> bool {
+    pub(super) fn confirm_delete_review(&mut self, accept: bool) -> bool {
         if self.native_edit.pending() {
             return true;
         }

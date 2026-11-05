@@ -11,16 +11,7 @@ impl NativeProjectClient {
             .proposal
             .as_ref()
             .context("Proposal action missing")?;
-        let id = match action {
-            Action::CreateGatePlacement(request) => request.proposal_id,
-            Action::CreateDelete { proposal_id, .. }
-            | Action::CreateDisposition { proposal_id, .. }
-            | Action::CreateAssignment { proposal_id, .. }
-            | Action::CreateAnnotation { proposal_id, .. }
-            | Action::Preview { proposal_id }
-            | Action::AcceptApply { proposal_id }
-            | Action::Reject { proposal_id } => *proposal_id,
-        };
+        let id = action.proposal_id();
         let call = |action: &Action, revision: &str, tip: Option<Uuid>| {
             self.call(
                 "native.proposal",
@@ -60,6 +51,7 @@ impl NativeProjectClient {
             | Action::CreateDisposition { .. }
             | Action::CreateAssignment { .. }
             | Action::CreateAnnotation { .. }
+            | Action::CreateFieldBatch { .. }
             | Action::CreateGatePlacement(_) => ProposalStatus::Draft,
             Action::AcceptApply { .. } => ProposalStatus::Applied,
             Action::Reject { .. } => ProposalStatus::Rejected,
@@ -140,6 +132,7 @@ mod tests {
             let response = NativeProposalResponse {
                 gate_placement: None,
                 annotation: None,
+                fields: None,
                 assignment: None,
                 disposition: None,
                 proposal_id: Uuid::new_v4(),

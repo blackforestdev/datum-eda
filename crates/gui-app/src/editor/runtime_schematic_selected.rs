@@ -8,6 +8,8 @@ mod custom_field;
 mod delete_review;
 #[path = "runtime_erc_disposition.rs"]
 mod disposition;
+#[path = "runtime_schematic_field_table.rs"]
+mod field_table;
 #[path = "runtime_schematic_gate.rs"]
 mod gate;
 #[path = "runtime_schematic_selected_label.rs"]

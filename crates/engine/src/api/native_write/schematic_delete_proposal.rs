@@ -3,6 +3,7 @@
 pub use super::schematic_annotation::{AnnotationChange, AnnotationSummary};
 pub use super::schematic_assignment::{AssignmentChoice, AssignmentSummary};
 pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
+pub use super::schematic_field_batch::{FieldBatchSummary, FieldRowEdit};
 pub use super::schematic_gate_placement::{GatePlacementRequest, GatePlacementSummary};
 use super::{context::WriteProvenance, registry::NativeWriteContext, schematic_delete};
 use crate::{
@@ -53,6 +54,12 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateFieldBatch {
+        proposal_id: Uuid,
+        sheet: Uuid,
+        instance_path: Vec<Uuid>,
+        edits: Vec<FieldRowEdit>,
+    },
     CreateGatePlacement(GatePlacementRequest),
     CreateAnnotation {
         proposal_id: Uuid,
@@ -93,7 +100,8 @@ impl NativeProposalAction {
     pub fn proposal_id(&self) -> Uuid {
         match self {
             Self::CreateGatePlacement(request) => request.proposal_id,
-            Self::CreateAnnotation { proposal_id, .. }
+            Self::CreateFieldBatch { proposal_id, .. }
+            | Self::CreateAnnotation { proposal_id, .. }
             | Self::CreateAssignment { proposal_id, .. }
             | Self::CreateDisposition { proposal_id, .. }
             | Self::CreateDelete { proposal_id, .. }
@@ -128,6 +136,8 @@ pub struct NativeProposalResponse {
     pub deleted: Vec<DeletedObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub annotation: Option<AnnotationSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fields: Option<FieldBatchSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub gate_placement: Option<GatePlacementSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -195,6 +205,28 @@ pub fn execute(
                     batch: write.batch,
                     rationale: "Place explicitly selected unused Gate in its existing component"
                         .into(),
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
+        NativeProposalAction::CreateFieldBatch {
+            sheet,
+            instance_path,
+            edits,
+            ..
+        } => {
+            let mut write =
+                super::schematic_field_batch::build(model, *sheet, instance_path, edits)?;
+            write.batch.batch_id = id;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale: "Review all Reference and Value changes as one atomic batch".into(),
                     source: ProposalSource::Manual,
                     checks_run: vec![],
                     finding_fingerprints: vec![],
@@ -389,6 +421,16 @@ pub fn execute(
         } else {
             None
         },
+        fields: if super::schematic_field_batch::is_field_batch(proposal) {
+            let detail = super::schematic_field_batch::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         disposition: if super::schematic_disposition::is_disposition(proposal) {
             Some(super::schematic_disposition::summary(
                 model, proposal, false,
@@ -425,6 +467,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
     }
     if super::schematic_gate_placement::is_gate_placement(p) {
         super::schematic_gate_placement::validate_recorded(p)?;
+        return Ok(p);
+    }
+    if super::schematic_field_batch::is_field_batch(p) {
+        super::schematic_field_batch::validate_recorded(p)?;
         return Ok(p);
     }
     if super::schematic_annotation::is_annotation(p) {
@@ -469,6 +515,9 @@ fn validate_disposition_current(
 ) -> Result<(), EngineError> {
     if super::schematic_gate_placement::is_gate_placement(proposal) {
         super::schematic_gate_placement::summary(model, proposal, true)?;
+    }
+    if super::schematic_field_batch::is_field_batch(proposal) {
+        super::schematic_field_batch::summary(model, proposal, true)?;
     }
     if super::schematic_annotation::is_annotation(proposal) {
         super::schematic_annotation::summary(model, proposal, true)?;

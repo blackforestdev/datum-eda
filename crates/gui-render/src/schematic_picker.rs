@@ -5,6 +5,8 @@ use crate::*;
 mod creation;
 #[path = "schematic_field_controls.rs"]
 mod field_controls;
+#[path = "schematic_field_table.rs"]
+mod field_table;
 #[path = "schematic_label.rs"]
 mod label;
 use datum_gui_protocol::{
@@ -18,6 +20,14 @@ pub(super) fn render(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) -> anyhow::Result<()> {
+    if state
+        .schematic_authoring
+        .delete_review
+        .as_ref()
+        .is_some_and(|r| r.fields.is_some())
+    {
+        return field_table::render(state, layout, quads, text, hits);
+    }
     if state.schematic_authoring.creation.is_some() {
         return creation::render(state, layout, quads, text, hits);
     }

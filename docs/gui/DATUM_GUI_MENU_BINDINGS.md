@@ -129,6 +129,7 @@ These additions preserve both Project operations' engine authority.
 |---|---|---|
 | Undo / Redo | `datum.journal.undo` / `redo` as typed GUI journal actions; no terminal CLI-string handoff | PARTIAL for reviewed Symbol/Wire/isolated Move history; complete menu projection remains unqualified |
 | Cut/Copy/Paste/Delete | per-object delete builders exist (`build_delete_*`); no clipboard model | PARTIAL: delete ENGINE-READY; clipboard NOT-BUILT |
+| Symbol Fields Table… | `schematic.symbol_fields_table.open` → shared table controls → typed `CreateFieldBatch` Proposal → canonical atomic Reference/Value batch | PARTIAL: active unique source sheet; exact before/after review and explicit acceptance; no project-wide/custom-column/CSV editing |
 | Preferences > Global Preferences… | none — Product Mechanics 039 and the Global Preferences plan govern the future typed resolver/repository/wgpu route | NOT-BUILT |
 | Preferences > Project Preferences… | none — disabled without an open Project; future writes use canonical journaled Project mutations under `PROJECT_PREFERENCES_SPEC.md` | NOT-BUILT |
 

@@ -60,6 +60,7 @@ pub enum HitTarget {
     SchematicLibraryChoice(usize),
     SchematicBrowseLibraries,
     SchematicReference,
+    SchematicFieldTable(datum_gui_protocol::schematic_authoring::field_table::FieldTableControl),
     SchematicValue,
     SchematicPlace,
     SchematicEditApply,

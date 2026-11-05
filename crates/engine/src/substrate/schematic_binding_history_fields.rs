@@ -3,7 +3,7 @@ use serde_json::Value;
 use std::collections::BTreeSet;
 use uuid::Uuid;
 
-pub(super) fn symbol_fields(old: &Value, next: &Value) -> bool {
+pub(super) fn reference_value_only(old: &Value, next: &Value) -> bool {
     let mut scalar = old.clone();
     for key in ["reference", "value"] {
         if next.get(key).is_none_or(|value| !value.is_string()) {
@@ -11,7 +11,11 @@ pub(super) fn symbol_fields(old: &Value, next: &Value) -> bool {
         }
         scalar[key] = next[key].clone();
     }
-    if scalar == *next {
+    scalar == *next
+}
+
+pub(super) fn symbol_fields(old: &Value, next: &Value) -> bool {
+    if reference_value_only(old, next) {
         return true;
     }
     let (Some(before), Some(after)) = (old["fields"].as_array(), next["fields"].as_array()) else {

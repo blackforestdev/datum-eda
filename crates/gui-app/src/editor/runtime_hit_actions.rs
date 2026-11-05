@@ -59,6 +59,7 @@ impl Runtime {
                 unreachable!("document controls return above")
             }
             HitTarget::Library(control) => self.activate_library(control.clone()),
+            HitTarget::SchematicFieldTable(control) => self.handle_field_table_control(*control),
             HitTarget::SchematicPicker
             | HitTarget::SchematicCustomField(_)
             | HitTarget::SchematicBusEntryChoice
