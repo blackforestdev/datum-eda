@@ -1,3 +1,4 @@
+mod hierarchy;
 mod projection;
 use anyhow::{Context, Result};
 use eda_engine::schematic::{Schematic, Sheet};
@@ -37,6 +38,8 @@ pub enum SchematicHitKind {
     Junction,
     NoConnect,
     Drawing,
+    SheetInstance,
+    SheetInterface,
 }
 
 impl BoardGraphicPrimitive {
@@ -50,6 +53,8 @@ impl BoardGraphicPrimitive {
             "schematic_port" => Some(SchematicHitKind::Port),
             "schematic_junction" => Some(SchematicHitKind::Junction),
             "schematic_no_connect" => Some(SchematicHitKind::NoConnect),
+            "schematic_sheet_instance" => Some(SchematicHitKind::SheetInstance),
+            "schematic_sheet_interface" => Some(SchematicHitKind::SheetInterface),
             "schematic_drawing" => Some(SchematicHitKind::Drawing),
             _ => None,
         }

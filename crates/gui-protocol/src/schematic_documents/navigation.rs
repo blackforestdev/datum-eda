@@ -9,6 +9,22 @@ impl SchematicNavigation {
 }
 
 impl SchematicDocuments {
+    /// Qualified ancestor chain, independent of duplicate display names.
+    pub fn breadcrumbs(&self, key: &SchematicDocumentKey) -> Vec<&SchematicDocumentRow> {
+        let mut rows = Vec::new();
+        let mut current = self.row(key);
+        let mut seen = BTreeSet::new();
+        while let Some(row) = current {
+            if !seen.insert(&row.key) {
+                return Vec::new();
+            }
+            rows.push(row);
+            current = row.parent.as_ref().and_then(|parent| self.row(parent));
+        }
+        rows.reverse();
+        rows
+    }
+
     pub fn navigation(&self) -> SchematicNavigation {
         SchematicNavigation {
             project: self.project,

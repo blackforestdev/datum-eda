@@ -24,7 +24,10 @@ pub(crate) fn push_retained_board_graphic_batches(
 
     for stage in POST_COPPER_STAGES {
         for gfx in scene.board_graphics.iter().filter(|gfx| {
-            gfx.object_kind != "schematic_field_tether"
+            // Interface memberships share the source Port ink; their own keys
+            // remain available to hit testing and the shared selection overlay.
+            gfx.object_kind != "schematic_sheet_interface"
+                && gfx.object_kind != "schematic_field_tether"
                 && render_stage_for_layer(&gfx.layer_id, sl) == stage
         }) {
             out.source(Some(&gfx.object_id), Role::Material);

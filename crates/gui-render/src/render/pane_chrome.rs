@@ -106,9 +106,20 @@ fn render_viewport_panes_logical(
             datum_gui_protocol::inspector_context::pane_header(state, leaf.id, leaf.content);
         render_pane_header(
             &leaf.rect,
-            native_header
-                .as_ref()
-                .map_or(title, |header| header.0.as_str()),
+            native_header.as_ref().map_or(title, |header| {
+                if leaf.content == datum_gui_protocol::PaneContent::Schematic
+                    && state
+                        .schematic_documents
+                        .panes
+                        .get(&leaf.id)
+                        .and_then(|key| state.schematic_documents.row(key))
+                        .is_some()
+                {
+                    "" // Qualified breadcrumb runs and hits are composed together in pane_tools.
+                } else {
+                    header.0.as_str()
+                }
+            }),
             native_header.as_ref().map(|header| header.1.as_str()),
             (
                 if native_header.is_some() {
@@ -300,16 +311,10 @@ fn render_pane_header(
     // must CLIP its header content here instead of spilling the title/tools into
     // the adjacent (enlarged) pane — the panel/text passes are not scissored
     // per-pane, so overflow would otherwise float over the neighbor's header.
-    let content_right = header.x + header.width
-        - tools_reserved
-        - if tools_reserved > 0.0 {
-            crate::menu_chrome::pane_tools::RIGHT_INSET_PX
-        } else if focused {
-            design_tokens::spacing::SP_04 + 7.0 + design_tokens::spacing::SP_02
-        } else {
-            design_tokens::spacing::SP_02
-        };
-    let title_x = glyph.x + glyph.width + design_tokens::spacing::SP_03;
+    let title_bounds =
+        crate::menu_chrome::pane_tools::title_bounds(header, tools_reserved, focused);
+    let title_x = title_bounds.x;
+    let content_right = title_bounds.x + title_bounds.width;
     draw_text_clipped(
         title,
         title_x,

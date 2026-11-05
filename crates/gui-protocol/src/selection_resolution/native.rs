@@ -36,6 +36,8 @@ pub struct NativeSelectionResolution {
     snapshot: ElectricalSelectionSnapshot,
     authored: BTreeSet<AuthoredSelectionIdentity>,
     standalone_pads: BTreeSet<AuthoredSelectionIdentity>,
+    hierarchy:
+        BTreeMap<AuthoredSelectionIdentity, crate::schematic_documents::hierarchy::HierarchyTarget>,
     // One successful physical query per immutable basis, shared by acquisition
     // and inspection. No cross-capture reuse, hit inference or partial result.
     // The acquisition hit is retained so a repeated acquisition of the same
@@ -74,6 +76,23 @@ impl NativeSelectionResolution {
             }
             authored.insert(source_identity(&source)?);
         }
+        let hierarchy = match snapshot.schematic_source() {
+            Some(source) => crate::schematic_documents::hierarchy::capture(
+                snapshot.project_id(),
+                snapshot.revision().clone(),
+                source,
+            )
+            .map_err(|reason| {
+                SelectionResolutionError::Engine(
+                    eda_engine::substrate::ElectricalQueryFailure::UnavailableBasis {
+                        sources: vec![source.uuid],
+                        reason,
+                    },
+                )
+            })?,
+            None => BTreeMap::new(),
+        };
+        authored.extend(hierarchy.keys().cloned());
         let pads = authored
             .iter()
             .filter(|id| id.class == Class::Pad)
@@ -91,9 +110,17 @@ impl NativeSelectionResolution {
             snapshot,
             authored,
             standalone_pads,
+            hierarchy,
             run_query: RunQueryCache::default(),
         })
     }
+    pub fn hierarchy_targets(
+        &self,
+    ) -> &BTreeMap<AuthoredSelectionIdentity, crate::schematic_documents::hierarchy::HierarchyTarget>
+    {
+        &self.hierarchy
+    }
+
     pub fn authored_identities(&self) -> &BTreeSet<AuthoredSelectionIdentity> {
         &self.authored
     }
@@ -176,6 +203,9 @@ impl NativeSelectionResolution {
         &self,
         origin: &AuthoredSelectionIdentity,
     ) -> Result<SelectionSubject, SelectionResolutionError> {
+        if matches!(origin.class, Class::SheetInstance | Class::SheetInterface) {
+            return Err(SelectionResolutionError::MissingDerivedAuthority);
+        }
         if !self.authored_contains(origin) {
             return Err(SelectionResolutionError::UnresolvedDerivedMember(
                 origin.clone(),

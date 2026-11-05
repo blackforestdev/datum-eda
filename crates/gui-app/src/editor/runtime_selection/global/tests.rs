@@ -62,3 +62,37 @@ fn global_authored_selection_retains_standalone_pad_complete_projection_and_reop
     assert_eq!(reopened.members(&subject).unwrap(), expected);
     Fixture::assert_bytes(&files);
 }
+
+#[test]
+#[ignore = "requires DATUM_HIERARCHY_TEST_PROJECT canonical repeated-instance project"]
+fn hierarchy_global_selection_uses_parent_occurrence_and_never_board() {
+    let root = std::path::PathBuf::from(
+        std::env::var_os("DATUM_HIERARCHY_TEST_PROJECT")
+            .expect("supply canonically authored hierarchy project"),
+    );
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let authority = NativeSelectionResolution::capture(&model).unwrap();
+    assert!(!authority.hierarchy_targets().is_empty());
+    let board = candidates_for_occurrence(&authority, false, None, &[]).unwrap();
+    for target in authority.hierarchy_targets().values() {
+        assert!(!board.contains(&target.identity));
+        let parent = candidates_for_occurrence(
+            &authority,
+            true,
+            Some(target.parent.source_sheet),
+            &target.parent.instance_path,
+        )
+        .unwrap();
+        assert!(parent.contains(&target.identity));
+        let child = candidates_for_occurrence(
+            &authority,
+            true,
+            Some(target.child.source_sheet),
+            &target.child.instance_path,
+        )
+        .unwrap();
+        assert!(!child.contains(&target.identity));
+    }
+}

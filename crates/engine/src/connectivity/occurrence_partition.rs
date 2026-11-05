@@ -89,44 +89,15 @@ pub(crate) fn partitions(
         let Some(parent_id) = instance.parent_sheet else {
             continue;
         };
-        let parent = &schematic.sheets[&parent_id];
-        let child = &schematic.sheets[&context.sheet];
         let parent_context = Context {
             sheet: parent_id,
             path: context.path[..context.path.len() - 1].to_vec(),
         };
-        let mut names = BTreeSet::new();
-        for port_id in &instance.ports {
-            let port = parent
-                .ports
-                .get(port_id)
-                .ok_or_else(|| invalid("missing parent port"))?;
-            if !names.insert(&port.name) {
-                return Err(invalid("multiply mapped parent port"));
-            }
-            let labels: Vec<_> = child
-                .labels
-                .values()
-                .filter(|l| {
-                    matches!(l.kind, LabelKind::Hierarchical)
-                        && !is_bus_container_label(l)
-                        && l.name == port.name
-                })
-                .collect();
-            if labels.len() != 1 {
-                return Err(invalid("missing/multiply mapped child port"));
-            }
+        for (port, label) in sheet_interface_bindings(schematic, *instance_id)? {
             groups.join(
-                &reference(&parent_context, "ports", port.uuid),
-                &reference(context, "labels", labels[0].uuid),
+                &reference(&parent_context, "ports", port),
+                &reference(context, "labels", label),
             );
-        }
-        if child.labels.values().any(|l| {
-            matches!(l.kind, LabelKind::Hierarchical)
-                && !is_bus_container_label(l)
-                && !names.contains(&l.name)
-        }) {
-            return Err(invalid("unbound child hierarchical label"));
         }
     }
     for (declaration, wire) in super::net_declarations::bindings(schematic)? {
@@ -136,6 +107,66 @@ pub(crate) fn partitions(
         }
     }
     Ok(finish(groups))
+}
+
+/// Resolve exactly one instance's authored parent ports to child hierarchical
+/// labels. Shared by occurrence connectivity and read-only hierarchy inspection;
+/// sibling instances never supply evidence for this membership.
+pub fn sheet_interface_bindings(
+    schematic: &Schematic,
+    instance_id: Uuid,
+) -> Result<BTreeMap<Uuid, Uuid>, EngineError> {
+    let instance = schematic
+        .sheet_instances
+        .get(&instance_id)
+        .ok_or_else(|| invalid("missing sheet instance"))?;
+    let parent_id = instance
+        .parent_sheet
+        .ok_or_else(|| invalid("instance has no parent sheet"))?;
+    let parent = schematic
+        .sheets
+        .get(&parent_id)
+        .ok_or_else(|| invalid("missing parent sheet"))?;
+    let definition = schematic
+        .sheet_definitions
+        .get(&instance.definition)
+        .ok_or_else(|| invalid("missing sheet definition"))?;
+    let child = schematic
+        .sheets
+        .get(&definition.root_sheet)
+        .ok_or_else(|| invalid("missing child sheet"))?;
+    let mut bindings = BTreeMap::new();
+    let mut names = BTreeSet::new();
+    for port_id in &instance.ports {
+        let port = parent
+            .ports
+            .get(port_id)
+            .ok_or_else(|| invalid("missing parent port"))?;
+        if !names.insert(&port.name) {
+            return Err(invalid("multiply mapped parent port"));
+        }
+        let labels: Vec<_> = child
+            .labels
+            .values()
+            .filter(|l| {
+                matches!(l.kind, LabelKind::Hierarchical)
+                    && !is_bus_container_label(l)
+                    && l.name == port.name
+            })
+            .collect();
+        if labels.len() != 1 {
+            return Err(invalid("missing/multiply mapped child port"));
+        }
+        bindings.insert(port.uuid, labels[0].uuid);
+    }
+    if child.labels.values().any(|l| {
+        matches!(l.kind, LabelKind::Hierarchical)
+            && !is_bus_container_label(l)
+            && !names.contains(&l.name)
+    }) {
+        return Err(invalid("unbound child hierarchical label"));
+    }
+    Ok(bindings)
 }
 
 pub(crate) fn physical_partitions(

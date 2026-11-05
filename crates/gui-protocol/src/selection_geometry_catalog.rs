@@ -130,6 +130,19 @@ pub fn qualification_catalog(
         }
         let geometry = (|| -> Option<QualificationGeometry> {
             match id.class {
+                Class::SheetInstance => {
+                    let target = authority.hierarchy_targets().get(&id)?;
+                    let graphic = scene
+                        .board_graphics
+                        .iter()
+                        .find(|graphic| graphic.object_id == target.graphic_key())?;
+                    Some(QualificationGeometry::Filled(vec![polygon(
+                        graphic.path.iter().copied(),
+                    )]))
+                }
+                Class::SheetInterface => Some(QualificationGeometry::Layout(
+                    text_layouts.layout(&id.id.to_string())?.to_vec(),
+                )),
                 Class::Footprint => {
                     if let Ok(projection) = &projection {
                         let mut anchors = BTreeMap::new();

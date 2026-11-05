@@ -75,6 +75,22 @@ impl SelectionMenu {
             let Command::Object(id) = &item.command else {
                 continue;
             };
+            if let Some(target) = authority.hierarchy_targets().get(id) {
+                let path = target
+                    .child
+                    .instance_path
+                    .iter()
+                    .map(|id| id.to_string()[28..].to_owned())
+                    .collect::<Vec<_>>()
+                    .join("/");
+                item.label = format!(
+                    "Select {} · {} · {}",
+                    target.instance_name,
+                    target.port_name.as_deref().unwrap_or("Sheet"),
+                    path
+                );
+                continue;
+            }
             let uuid = id.id.to_string();
             let reference = scene
                 .components

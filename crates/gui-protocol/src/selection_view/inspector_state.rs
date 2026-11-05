@@ -25,7 +25,7 @@ impl SelectionInspectorState {
     }
 }
 
-pub const ACQUISITION_CLASSES: [crate::AuthoredSelectionClass; 18] = [
+pub const ACQUISITION_CLASSES: [crate::AuthoredSelectionClass; 20] = [
     crate::AuthoredSelectionClass::Footprint,
     crate::AuthoredSelectionClass::Pad,
     crate::AuthoredSelectionClass::Track,
@@ -34,6 +34,8 @@ pub const ACQUISITION_CLASSES: [crate::AuthoredSelectionClass; 18] = [
     crate::AuthoredSelectionClass::BoardText,
     crate::AuthoredSelectionClass::BoardGraphic,
     crate::AuthoredSelectionClass::BoardOutline,
+    crate::AuthoredSelectionClass::SheetInstance,
+    crate::AuthoredSelectionClass::SheetInterface,
     crate::AuthoredSelectionClass::Symbol,
     crate::AuthoredSelectionClass::Pin,
     crate::AuthoredSelectionClass::Wire,
@@ -56,6 +58,8 @@ pub fn class_label(class: crate::AuthoredSelectionClass) -> &'static str {
         crate::AuthoredSelectionClass::BoardText => "Board text",
         crate::AuthoredSelectionClass::BoardGraphic => "Board graphics",
         crate::AuthoredSelectionClass::BoardOutline => "Board outline",
+        crate::AuthoredSelectionClass::SheetInstance => "Sheet instances",
+        crate::AuthoredSelectionClass::SheetInterface => "Sheet interfaces",
         crate::AuthoredSelectionClass::Symbol => "Symbols",
         crate::AuthoredSelectionClass::Pin => "Pins",
         crate::AuthoredSelectionClass::Wire => "Wires",

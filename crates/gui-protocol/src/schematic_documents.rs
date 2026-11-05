@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 use uuid::Uuid;
+pub mod hierarchy;
+#[cfg(test)]
+mod hierarchy_tests;
 mod lifecycle;
 mod navigation;
 mod projection;
@@ -218,7 +221,16 @@ impl SchematicDocuments {
             .collect();
         children.sort_by(|a, b| a.name.cmp(&b.name).then(a.uuid.cmp(&b.uuid)));
         for instance in children {
-            let definition = &schematic.sheet_definitions[&instance.definition];
+            let definition = schematic
+                .sheet_definitions
+                .get(&instance.definition)
+                .ok_or_else(|| {
+                    anyhow::anyhow!(
+                        "Sheet instance {} has an unavailable definition {}",
+                        instance.name,
+                        instance.definition
+                    )
+                })?;
             let child = schematic
                 .sheets
                 .get(&definition.root_sheet)

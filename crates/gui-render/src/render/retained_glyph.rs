@@ -59,11 +59,11 @@ pub(crate) fn push(
         text.world_transform_nm.is_some() && !text.glyphs.is_empty()
     };
     let mut count = 0usize;
-    for text in scene
-        .board_text_geometries
-        .iter()
-        .filter(|t| layer_visible(state, &t.layer_id) && meshes(t))
-    {
+    for text in scene.board_text_geometries.iter().filter(|t| {
+        t.object_kind != "schematic_sheet_interface_text"
+            && layer_visible(state, &t.layer_id)
+            && meshes(t)
+    }) {
         for glyph in &text.glyphs {
             use glyph_mesh_lookup::GlyphMeshLookup;
             if let Some(asset) = assets.mesh(&glyph.glyph_handle) {
@@ -86,7 +86,8 @@ pub(crate) fn push(
     points.reserve_exact(count);
     for stage in POST_COPPER_STAGES {
         for text in scene.board_text_geometries.iter().filter(|t| {
-            render_stage_for_layer(&t.layer_id, &scene.layers) == stage
+            t.object_kind != "schematic_sheet_interface_text"
+                && render_stage_for_layer(&t.layer_id, &scene.layers) == stage
                 && layer_visible(state, &t.layer_id)
         }) {
             let color = board_graphic_world_color(

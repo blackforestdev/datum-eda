@@ -10,6 +10,39 @@ pub(super) struct NavigationWork {
     )>,
 }
 impl Runtime {
+    pub(super) fn descend_schematic_instance(
+        &mut self,
+        identity: &datum_gui_protocol::AuthoredSelectionIdentity,
+    ) -> bool {
+        let target = self.native_selection.as_ref().and_then(|native| {
+            native
+                .authority
+                .hierarchy_targets()
+                .get(identity)
+                .map(|target| (target.clone(), native.model.model_revision.0.clone()))
+        });
+        let Some((target, revision)) = target else {
+            self.selection_notice(
+                "Sheet instance source is unavailable; refresh the document".into(),
+            );
+            return true;
+        };
+        let pane = self.workspace().ui.layout.focused;
+        if target.port.is_some()
+            || self.workspace().schematic_documents.panes.get(&pane) != Some(&target.parent)
+        {
+            self.selection_notice(
+                "Sheet instance occurrence changed; select it again in its parent sheet".into(),
+            );
+            return true;
+        }
+        if let Some(reason) = target.unavailable {
+            self.selection_notice(reason);
+            return true;
+        }
+        self.open_schematic_document(&target.child, &revision)
+    }
+
     fn navigation_basis(&self, key: &SchematicDocumentKey, revision: &str) -> bool {
         let state = self.workspace();
         state.schematic_documents.project == Some(key.project)
@@ -95,6 +128,32 @@ impl Runtime {
         target: &HitTarget,
     ) -> Option<bool> {
         match target {
+            HitTarget::SchematicBreadcrumb {
+                pane,
+                from,
+                document,
+                revision,
+            } => {
+                let valid = self.navigation_basis(document, revision)
+                    && self.workspace().ui.layout.content_for(*pane)
+                        == Some(datum_gui_protocol::PaneContent::Schematic)
+                    && self.workspace().schematic_documents.panes.get(pane) == Some(from)
+                    && document != from
+                    && self
+                        .workspace()
+                        .schematic_documents
+                        .breadcrumbs(from)
+                        .iter()
+                        .any(|row| &row.key == document);
+                if !valid {
+                    self.selection_notice(
+                        "Breadcrumb occurrence changed; refresh the document".into(),
+                    );
+                    return Some(true);
+                }
+                self.swap_pane_focus(|layout| layout.focused = *pane);
+                Some(self.open_schematic_document(document, revision))
+            }
             HitTarget::FocusNavigator => Some(self.focus_schematic_navigator()),
             HitTarget::FocusInspector => {
                 self.set_application_focus(ApplicationFocus::Inspector);

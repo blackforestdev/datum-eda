@@ -35,7 +35,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::FocusInspector
         | HitTarget::SchematicDocumentRow { .. }
         | HitTarget::SchematicDocumentExpand { .. }
-        | HitTarget::SchematicDocumentOpen { .. }
+        | HitTarget::SchematicBreadcrumb { .. }
+            | HitTarget::SchematicDocumentOpen { .. }
         | HitTarget::SchematicNavigatorScroll { .. }
         | HitTarget::FolderBrowser(_)
         | HitTarget::FolderBrowserMenuItem(_)

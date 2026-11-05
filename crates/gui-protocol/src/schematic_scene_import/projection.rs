@@ -31,8 +31,15 @@ pub(crate) fn project_schematic_sheet_source(
     let mut text = SchematicTextSink::default();
     push_root_sheet_graphics(root_sheet, schematic, &mut graphics, &mut points, &mut text);
     tag_schematic_hit_kinds(root_sheet, &mut graphics);
+    super::hierarchy::project(schematic, root_sheet, &mut graphics);
     super::fields::push_fields(root_sheet, &mut graphics, &mut points, &mut text);
-    let (board_texts, board_text_geometries, glyph_mesh_assets) = text.into_parts();
+    let (mut board_texts, mut board_text_geometries, glyph_mesh_assets) = text.into_parts();
+    super::hierarchy::project_text(
+        schematic,
+        root_sheet,
+        &mut board_texts,
+        &mut board_text_geometries,
+    );
     // P2.2f: the schematic pane has NO sheet border (the prototype draws none), so
     // the projection no longer emits the gold `Edge.Cuts` padded-bounds frame. The
     // padded envelope still drives the fit-to-bounds camera, so we compute it and

@@ -41,6 +41,23 @@ remain outside this ten-tool slice. Native flat schematic document creation
 already has a journaled engine/CLI operation; its ordinary GUI binding is a
 separately bounded implementation increment.
 
+### Bounded hierarchy inspection and navigation
+
+`dat-sheet-interaction-reentry-9ee` reenters the historical OPEN-11 deferral for
+read-only sheet-body and child-interface inspection and qualified navigation.
+PM062 supplies occurrence-first discovery and opening; UVT §2.2.16 supplies the
+typed source-backed interaction contract. Bodies use actual SheetInstance UUIDs;
+interfaces preserve actual parent-port UUIDs and authored positions with explicit
+instance membership and ordered occurrence qualification. Repeated definitions
+and shared parent ports never collapse distinct placed memberships. Source,
+definition and occurrence remain separate in inspection; missing or stale targets
+show an unavailable reason. Body double-click descends and qualified breadcrumbs
+return through existing shared panes. No source mutation is part of this command
+family. Bounded implementation and independent ordinary GUI verification cover
+selection, inspection, mouse/keyboard navigation and exact cold reopening without
+design writes. Focused checks cover unavailable references; sheet/interface
+authoring and cross-sheet rewiring remain separate work.
+
 ### Current-engine grounding (verified)
 
 Native schematic authoring has partially migrated onto the engine

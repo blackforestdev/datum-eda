@@ -491,6 +491,18 @@ pub fn pane_header(
         },
         snap_grid_for(state, content)
     );
+    let detail = if content == PaneContent::Schematic {
+        state
+            .schematic_documents
+            .panes
+            .get(&pane)
+            .and_then(|key| state.schematic_documents.row(key))
+            .map_or(detail.clone(), |row| {
+                format!("Source: {} · {detail}", row.source_name)
+            })
+    } else {
+        detail
+    };
     Some((title, detail))
 }
 

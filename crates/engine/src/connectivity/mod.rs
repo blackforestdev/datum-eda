@@ -18,7 +18,7 @@ mod segment_geometry;
 use segment_geometry::point_on_wire_segment;
 pub use segment_geometry::{SegmentIntersectionError, exact_segment_intersection};
 mod label_semantics;
-mod occurrence_partition;
+pub mod occurrence_partition;
 use label_semantics::*;
 pub(crate) use occurrence_partition::{
     authored_occurrences, occurrence_sheet, partitions, physical_partitions,

@@ -54,6 +54,7 @@ impl Runtime {
             | HitTarget::FocusInspector
             | HitTarget::SchematicDocumentRow { .. }
             | HitTarget::SchematicDocumentExpand { .. }
+            | HitTarget::SchematicBreadcrumb { .. }
             | HitTarget::SchematicDocumentOpen { .. }
             | HitTarget::SchematicNavigatorScroll { .. } => {
                 unreachable!("document controls return above")

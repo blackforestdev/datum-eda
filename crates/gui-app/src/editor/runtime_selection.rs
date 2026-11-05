@@ -313,6 +313,10 @@ impl Runtime {
                 .map(|(_, _, _, d)| (*d + 1).min(3))
                 .unwrap_or(1);
             native.last_click = Some((id.clone(), screen, now, depth));
+            if depth == 2 && id.class == datum_gui_protocol::AuthoredSelectionClass::SheetInstance {
+                native.last_click = None;
+                return Some(self.descend_schematic_instance(&id));
+            }
             if depth >= 2 && id.can_originate_run() {
                 let request = crate::runtime_selection_run::Request {
                     model: native.model.clone(),

@@ -36,6 +36,12 @@ pub enum HitTarget {
         document: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
         revision: String,
     },
+    SchematicBreadcrumb {
+        pane: datum_gui_protocol::PaneId,
+        from: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
+        document: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
+        revision: String,
+    },
     SchematicDocumentOpen {
         document: datum_gui_protocol::schematic_documents::SchematicDocumentKey,
         revision: String,

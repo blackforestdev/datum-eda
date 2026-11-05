@@ -372,6 +372,11 @@ pub fn build_selection_view_for_documents(
         index_sources(*shard, value, &mut index);
     }
     for id in &result.members {
+        if let Some(target) = authority.hierarchy_targets().get(id) {
+            result.authored_anchors.insert(id.clone(), target.position);
+            result.values.insert(id.clone(), target.values());
+            continue;
+        }
         if let Some(object) = model.objects.get(&id.id)
             && let Some(value) = index.get(&(object.source_shard_id, id.id))
         {

@@ -357,6 +357,8 @@ pub(crate) fn schematic_hit_regions(
                 let shape = match kind {
                     datum_gui_protocol::SchematicHitKind::Symbol
                     | datum_gui_protocol::SchematicHitKind::Label
+                    | datum_gui_protocol::SchematicHitKind::SheetInstance
+                    | datum_gui_protocol::SchematicHitKind::SheetInterface
                     | datum_gui_protocol::SchematicHitKind::Port
                         if graphic.primitive_kind != "line" =>
                     {

@@ -13,6 +13,11 @@ pub(crate) fn candidates_for_occurrence(
         .authored_identities()
         .iter()
         .filter(|id| {
+            if let Some(target) = authority.hierarchy_targets().get(id) {
+                return schematic
+                    && root_sheet == Some(target.parent.source_sheet)
+                    && instance_path == target.parent.instance_path;
+            }
             if id.class == C::Pin {
                 return false;
             }

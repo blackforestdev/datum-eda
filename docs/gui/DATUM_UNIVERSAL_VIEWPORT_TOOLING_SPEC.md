@@ -852,7 +852,8 @@ rows in §2.2.16 retain their complete product contracts and remain unverified,
 tracked for their respective editor work by `dat-footprint-selection-native-6hfa` and
 `dat-symbol-selection-native-euub`. No new editor or substitute native pass is authorized;
 shared selection is still built once and configured by editors. Dimensions and
-hierarchical-sheet exclusions remain unchanged.
+hierarchical-sheet exclusions describe original S5A scope; the separately authorized
+OPEN-11 reentry below does not rewrite that historical acceptance.
 
 Preserve deterministic work/correctness/resource requirements; S5A latency
 budgets stay undecided under PM051. The packet's approved bounded observations
@@ -1528,23 +1529,36 @@ open — such cells carry `OPEN-n` markers regardless.
   schematic drawings emit as untyped `schematic_graphic`;
   `schematic_hit_kind()` returns None → no hit regions. *Verdict:* spec
   **ratified** (OPEN-5 resolved); substrate **absent**.
-- **Hierarchical sheet representation.**
-  **Deferred from S5A by owner ratification (OPEN-11 resolved,
-  2026-08-14).** Sheets render today (plain `schematic_graphic` rects, id
-  `schematic-sheet-instance:{uuid}`, `schematic_scene_import/mod.rs:293-310`)
-  but carry no hit kind and no typed identity, and the selection subject is
-  undesigned in three directions: no Rendering Book sheet construction, no
-  typed sheet-pin children, and cross-sheet instance identity unaddressed.
-  Sheet interaction is navigation-dominated — the descend/breadcrumb model
-  belongs to the schematic-surface design pass, which precedes selection
-  rules. Visible-but-inert sheet bodies are acceptable in read-only S5A; the
-  Sheets panel (P2) provides list navigation. **Gesture reservation
-  (ratified now):** double click on a sheet body is reserved for
-  descend-into-sheet and no future step may bind it otherwise. **Re-entry
-  condition:** author sheet selection rules when the schematic-surface
-  design pass defines the sheet construction and navigation model AND typed
-  sheet + sheet-pin scene authority exists. *Verdict:* spec **ratified
-  deferral**; substrate **absent** — **unsupported in S5A by design**.
+- **Hierarchical sheet representation.** The original S5A exclusion remains a
+  historical owner-ratified deferral (OPEN-11, 2026-08-14), not a claim that
+  hierarchy is generally unsupported. Bounded reentry is authorized in
+  `dat-sheet-interaction-reentry-9ee` under PM062's settled occurrence-first
+  surface/navigation choreography. Typed scene authority is established before
+  dependent runtime interaction: a sheet body is the actual `SheetInstance`
+  UUID qualified by its ordered occurrence path; a child interface is an actual
+  parent `HierarchicalPort` UUID qualified by the membership instance and that
+  instance's occurrence path. The full child occurrence path includes the
+  membership instance UUID; the parent port's source occurrence is its prefix.
+  No edge-pin objects, UUIDs, geometry or ownership are invented.
+  *Qualification:* reuse the existing sheet rectangle and filled-graphic rule
+  (direct click; 100% region enclosure). Interface targets retain the port's
+  authored geometry. Instance captions belong to the body; interface memberships
+  remain independently selectable. A port bound to multiple instances exposes
+  distinct membership choices through shared overlap/Inspector handling; neither
+  names, proximity nor first-match ordering chooses an owner.
+  *Projection and inspection:* reuse shared visibility, modifiers, overlays,
+  selection lifetime and Inspector. Show source, definition and qualified
+  occurrence separately; linked child hierarchical Labels retain their actual
+  source UUIDs. Missing/stale/unsupported references report unavailable reasons.
+  *Navigation:* body double-click descends through existing qualified document
+  navigation; a distinct interface target does not acquire that body gesture.
+  Qualified breadcrumbs return through the shared pane/navigation owner.
+  Navigator single-click inspection and Enter/double-click opening remain PM062.
+  *Verdict:* bounded inspection/navigation is implemented with independent ordinary
+  GUI verification of selection, distinct membership ink/choices, mouse/keyboard
+  navigation, qualified ancestor return and exact cold reopening without writes.
+  Focused checks cover unavailable references. Sheet/interface authoring, rewiring
+  and full hierarchy acceptance remain separate obligations.
 
 ##### Symbol Editor
 
@@ -2114,6 +2128,10 @@ The known mappings, classified once:
 | Semantic bus spine/name/entries across sheets | same-identity (one Bus subject) |
 | Component ↔ placed symbol (cross-probe) | merely-related (binding relation) |
 | Library definition ↔ placed instances | merely-related (OPEN-6) |
+| Sheet definition ↔ placed instance body | merely-related; repeated instances are distinct qualified identities |
+| Same sheet-instance UUID and full occurrence path in multiple panes | same-identity (one qualified instance body) |
+| Sheet interface membership ↔ its parent source Port or linked child Label | merely-related; membership includes the actual instance UUID and full child occurrence path |
+| One parent Port bound to different instances | distinct interface memberships; never collapse by shared source UUID |
 | Bus ↔ scalar member nets | merely-related (§2.2.13) |
 | Net ↔ parent footprint/symbol bodies | merely-related (§2.2.13) |
 | Check finding ↔ its target authored object | merely-related (navigation aid, §2.2.16) |
@@ -2192,15 +2210,16 @@ specified.
 required durable tracker coverage for the ratified deferrals before
 approval. Satisfied and re-reviewed:
 
-- **Board dimensions (OPEN-10) and hierarchical sheets (OPEN-11) are
-  deliberate exclusions from S5A — not completed selection capabilities.**
+- **Board dimensions (OPEN-10) and hierarchical sheets (OPEN-11) were
+  deliberate exclusions from the original S5A acceptance.** OPEN-11 now has
+  a separately authorized bounded reentry; this history is not a delivery claim.
 - Dimension re-entry is tracked by **`dat-dimension-selection-reentry-kxk`**
   (deferred; blocked by `dat-documentation-system-spec-y8z`, the
   decision-020 documentation-system spec pass).
 - Hierarchical-sheet re-entry is tracked by
-  **`dat-sheet-interaction-reentry-9ee`** (deferred; blocked by
-  `dat-gui-surface-specs-usb`, the schematic/library surface design pass),
-  carrying the binding descend double-click reservation.
+  **`dat-sheet-interaction-reentry-9ee`** (reentered under the 2026-11-04 PM
+  grant after PM062 surface disposition), retaining the binding descend
+  double-click reservation and typed scene authority requirement.
 - Both beads record the exact dual re-entry conditions and reference their
   OPEN register entries; the register cites them back.
 
@@ -2395,7 +2414,13 @@ carries a research-grounded candidate resolution; none is silently resolved.
   double click on a sheet body is reserved for descend-into-sheet.
   Re-entry: schematic-surface design pass + typed sheet/sheet-pin scene
   authority. Re-entry tracked: `dat-sheet-interaction-reentry-9ee`
-  (deferred, rides the schematic-surface design pass).
+  (bounded reentry authorized 2026-11-04). PM062 settles surface/navigation
+  choreography; §2.2.16 defines the source-backed typed body/interface authority
+  to implement before runtime acquisition. Preserve the actual parent-port
+  geometry and explicit instance membership, including shared-port ambiguity.
+  Implementation, ordinary workflow proof and independent review remain required;
+  this reentry does not authorize sheet-pin creation, rewiring or full hierarchy
+  acceptance.
 <!-- OWNER:UVT-S5-SPEC:S5-C01A:OPEN-12 -->
 - **OPEN-12 — non-authored subject semantics.** Region/scope/hidden/locked/
   compound rules for proposal, review, and diagnostic subjects are declared

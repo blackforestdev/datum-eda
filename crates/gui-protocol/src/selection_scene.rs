@@ -11,6 +11,11 @@ pub fn projection_candidate(
     key: &str,
     authority: &NativeSelectionResolution,
 ) -> Option<Id> {
+    if scene.schematic_document.is_some() {
+        return SceneSelectionBindings::capture(scene, authority)
+            .get(key)
+            .map(|binding| binding.projected.clone());
+    }
     let mut source = scene
         .components
         .iter()
@@ -89,6 +94,8 @@ pub fn projection_candidate(
                 crate::SchematicHitKind::NoConnect => Class::NoConnect,
                 crate::SchematicHitKind::Pin => Class::Pin,
                 crate::SchematicHitKind::Drawing => Class::SchematicGraphic,
+                crate::SchematicHitKind::SheetInstance
+                | crate::SchematicHitKind::SheetInterface => return None,
             };
             source = Some((class, graphic.source_object_uuid.parse().ok()?));
         }

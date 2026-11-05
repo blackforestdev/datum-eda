@@ -42,6 +42,8 @@ pub enum AuthoredSelectionClass {
     NoConnect,
     SchematicText,
     SchematicGraphic,
+    SheetInstance,
+    SheetInterface,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]

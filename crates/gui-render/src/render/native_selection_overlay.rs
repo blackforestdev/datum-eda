@@ -152,7 +152,12 @@ fn push_native_impl(
             }
             continue;
         }
-        if mask_world {
+        // Interface aliases deliberately have no retained material span. Their
+        // existing immediate outline remains required even with GPU mask selection.
+        if mask_world
+            && graphic.schematic_hit_kind()
+                != Some(datum_gui_protocol::SchematicHitKind::SheetInterface)
+        {
             continue;
         }
         if !lod.detailed(view, scene, surface, &graphic.object_id)
@@ -194,7 +199,13 @@ fn push_native_impl(
                     out,
                     &graphic.path,
                     &projection,
-                    selected_mechanical_color(material),
+                    if graphic.schematic_hit_kind()
+                        == Some(datum_gui_protocol::SchematicHitKind::SheetInterface)
+                    {
+                        design_tokens::content::SELECTION
+                    } else {
+                        selected_mechanical_color(material)
+                    },
                     3.0,
                 );
             }
@@ -370,7 +381,7 @@ fn push_native_impl(
         }
     }
     for geometry in &scene.board_text_geometries {
-        if mask_world {
+        if mask_world && geometry.object_kind != "schematic_sheet_interface_text" {
             continue;
         }
         if lod.detailed(view, scene, surface, &geometry.object_id)
@@ -385,7 +396,11 @@ fn push_native_impl(
                 &mut glyphs,
                 geometry,
                 glyph_assets,
-                selected_mechanical_color(TEXT_PRIMARY),
+                if geometry.object_kind == "schematic_sheet_interface_text" {
+                    design_tokens::content::SELECTION
+                } else {
+                    selected_mechanical_color(TEXT_PRIMARY)
+                },
                 &projection,
             );
             for mut quad in glyphs {
@@ -544,3 +559,7 @@ mod lod_tests;
 #[cfg(test)]
 #[path = "native_selection_overlay/lod_inspector_tests.rs"]
 mod lod_inspector_tests;
+
+#[cfg(test)]
+#[path = "native_selection_overlay/hierarchy_tests.rs"]
+mod hierarchy_tests;

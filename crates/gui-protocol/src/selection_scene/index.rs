@@ -208,6 +208,9 @@ impl SceneSelectionBindings {
             );
         }
         for v in &scene.board_texts {
+            if v.object_kind == "schematic_sheet_interface_text" {
+                continue;
+            }
             let uuid = v.source_object_uuid.as_deref().unwrap_or(&v.text_uuid);
             let class = uuid
                 .parse()
@@ -232,6 +235,10 @@ impl SceneSelectionBindings {
                     Some(crate::SchematicHitKind::NoConnect) => Class::NoConnect,
                     Some(crate::SchematicHitKind::Pin) => Class::Pin,
                     Some(crate::SchematicHitKind::Drawing) => Class::SchematicGraphic,
+                    Some(
+                        crate::SchematicHitKind::SheetInstance
+                        | crate::SchematicHitKind::SheetInterface,
+                    ) => continue,
                     None => continue,
                 }
             };
@@ -242,6 +249,52 @@ impl SceneSelectionBindings {
                 None,
                 vec![v.layer_id.clone()],
             );
+        }
+        // Membership identities come from the captured source, never display-key parsing.
+        if let Some(document) = &scene.schematic_document {
+            for target in authority
+                .hierarchy_targets()
+                .values()
+                .filter(|target| &target.parent == document)
+            {
+                let key = target.graphic_key();
+                let expected = if target.port.is_some() {
+                    crate::SchematicHitKind::SheetInterface
+                } else {
+                    crate::SchematicHitKind::SheetInstance
+                };
+                for graphic in scene.board_graphics.iter().filter(|graphic| {
+                    graphic.object_id == key
+                        && graphic.source_object_uuid == target.identity.id.to_string()
+                        && graphic.schematic_hit_kind() == Some(expected)
+                }) {
+                    result.insert(
+                        &key,
+                        SceneSelectionBinding {
+                            projected: target.identity.clone(),
+                            acquired: target.identity.clone(),
+                            layers: vec![graphic.layer_id.clone()],
+                        },
+                    );
+                }
+                // Source Port and each membership remain independent choices even
+                // on the name glyph. No alias is inferred by nearest instance.
+                for text in scene.board_texts.iter().filter(|text| {
+                    text.source_object_uuid.as_deref() == Some(&target.identity.id.to_string())
+                        && (target.port.is_none()
+                            || (text.object_id == target.text_key()
+                                && text.object_kind == "schematic_sheet_interface_text"))
+                }) {
+                    result.insert(
+                        &text.object_id,
+                        SceneSelectionBinding {
+                            projected: target.identity.clone(),
+                            acquired: target.identity.clone(),
+                            layers: vec![text.layer_id.clone()],
+                        },
+                    );
+                }
+            }
         }
         result
     }

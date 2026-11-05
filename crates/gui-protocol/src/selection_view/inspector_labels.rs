@@ -80,6 +80,15 @@ impl SelectionView {
             Class::Symbol => "Symbol",
             _ => class_label(id.class).trim_end_matches('s'),
         };
+        if matches!(id.class, Class::SheetInstance | Class::SheetInterface)
+            && let Some(name) = self
+                .values
+                .get(id)
+                .and_then(|values| values.get("name"))
+                .and_then(Value::as_str)
+        {
+            return format!("{class}: {name}");
+        }
         let name = self.values.get(id).and_then(|values| {
             [
                 "reference",
