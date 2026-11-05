@@ -45,7 +45,7 @@ pub fn preview(
 ) -> Result<AnnotationSummary, EngineError> {
     Ok(plan(model, sheet, path)?.0)
 }
-fn prefix(reference: &str) -> Result<&str, EngineError> {
+pub(super) fn prefix(reference: &str) -> Result<&str, EngineError> {
     if reference.is_empty()
         || reference
             .chars()
@@ -65,6 +65,9 @@ fn prefix(reference: &str) -> Result<&str, EngineError> {
     }
     Ok(prefix)
 }
+#[path = "schematic_annotation_plan.rs"]
+pub(super) mod planning;
+
 fn plan(
     model: &DesignModel,
     sheet: Uuid,
@@ -76,13 +79,8 @@ fn plan(
     let snapshot = ElectricalSelectionSnapshot::capture(model)
         .map_err(|e| invalid(format!("Annotation source unavailable: {e:?}")))?;
     let selected = SelectedSchematicSource::from_snapshot(&snapshot)?;
-    let source = selected
-        .source
-        .sheets
-        .get(&sheet)
-        .filter(|s| s.uuid == sheet)
-        .ok_or_else(|| invalid("Annotation sheet is unavailable"))?;
-    if source.symbols.is_empty() {
+    let qualified = planning::qualify(model, &selected, sheet)?;
+    if qualified.symbols.is_empty() {
         return Ok((
             AnnotationSummary {
                 sheet,
@@ -93,14 +91,9 @@ fn plan(
             vec![],
         ));
     }
-    // Qualify the complete sheet, including owners whose references will not change.
-    super::schematic_assignment::component::current_set(
-        model,
-        &source.symbols.keys().copied().collect(),
-    )?;
     let mut reserved = BTreeSet::new();
-    for (sheet_id, s) in &selected.source.sheets {
-        for symbol in s.symbols.values() {
+    for (sheet_id, source) in &selected.source.sheets {
+        for symbol in source.symbols.values() {
             prefix(&symbol.reference)?;
             if *sheet_id != sheet && !reserved.insert(symbol.reference.clone()) {
                 return Err(invalid(
@@ -109,87 +102,16 @@ fn plan(
             }
         }
     }
-    let mut originals: Vec<_> = source.symbols.values().cloned().collect();
-    originals.sort_by_key(|s| s.uuid);
-    let raw = source_sheet_payload(model, sheet, originals[0].uuid)?;
-    let mut payloads = BTreeMap::new();
-    let mut groups: BTreeMap<String, Vec<&PlacedSymbol>> = BTreeMap::new();
-    for symbol in &originals {
-        if selected.sheet("symbols", symbol.uuid, path)? != sheet {
-            return Err(invalid("Annotation Symbol belongs to a different sheet"));
-        }
-        let payload = member_payload(&raw, "symbols", symbol.uuid, symbol)?;
-        if payload.get("locked").and_then(Value::as_bool) == Some(true) {
-            return Err(invalid(
-                "Annotation cannot change a sheet containing locked Symbols",
-            ));
-        }
-        payloads.insert(symbol.uuid, payload);
-        groups
-            .entry(prefix(&symbol.reference)?.into())
-            .or_default()
-            .push(symbol);
-    }
-    let mut changes = vec![];
-    let mut final_refs = reserved.clone();
-    for (prefix, mut symbols) in groups {
-        symbols.sort_by_key(|s| (s.position.y, s.position.x, s.uuid));
-        let mut number = 1u64;
-        for symbol in symbols {
-            let reference = loop {
-                let candidate = format!("{prefix}{number}");
-                number = number
-                    .checked_add(1)
-                    .ok_or_else(|| invalid("Annotation number overflow"))?;
-                if !reserved.contains(&candidate) {
-                    break candidate;
-                }
-            };
-            if !final_refs.insert(reference.clone()) {
-                return Err(invalid("Annotation final reference set is not unique"));
-            }
-            if reference != symbol.reference {
-                changes.push(AnnotationChange {
-                    symbol: symbol.uuid,
-                    previous_reference: symbol.reference.clone(),
-                    reference,
-                });
-            }
-        }
-    }
-    // Stable ID ordering also makes recovered applied receipts deterministic.
-    changes.sort_by_key(|c| c.symbol);
-    let mut operations = vec![];
-    for symbol in &originals {
-        operations.push(Operation::GuardObjectRevision {
-            object_id: symbol.uuid,
-            expected_object_revision: model
-                .objects
-                .get(&symbol.uuid)
-                .ok_or_else(|| invalid("Annotation Symbol object is unavailable"))?
-                .object_revision,
-        });
-    }
-    let changed: BTreeSet<_> = changes.iter().map(|c| c.symbol).collect();
-    for change in &changes {
-        let mut payload = payloads.remove(&change.symbol).unwrap();
-        payload["reference"] = json!(change.reference);
-        operations.push(Operation::SetSchematicSymbol {
-            sheet_id: sheet,
-            symbol_id: change.symbol,
-            symbol: payload,
-        });
-    }
-    let changed_symbols: Vec<_> = originals
-        .into_iter()
-        .filter(|symbol| changed.contains(&symbol.uuid))
-        .collect();
-    operations.extend(repin_symbols(model, &changed_symbols)?);
+    let sheets = [qualified];
+    let changes = planning::references(&sheets, &reserved)?
+        .remove(&sheet)
+        .unwrap();
+    let operations = planning::operations(model, &sheets[0], &changes)?;
     Ok((
         AnnotationSummary {
             sheet,
             instance_path: vec![],
-            symbol_count: source.symbols.len(),
+            symbol_count: sheets[0].symbols.len(),
             changes,
         },
         operations,

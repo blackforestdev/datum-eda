@@ -94,6 +94,7 @@ fn review_fixture() -> (
         pending: None,
         refusal: None,
         response: Some(NativeProposalResponse {
+            project_annotation: None,
             gate_placement: None,
             annotation: None,
             fields: None,

@@ -2471,4 +2471,21 @@ preparation. `process::inspect_materialized_process` resolves disposable
 Footprint/Padstack previews through the shared PM061 resolver using authoritative
 Project profile revision/hash evidence. Inspection does not mutate the model.
 These APIs do not establish ordinary GUI availability or qualification. The
-current engine API inventory is 261 unique public function names.
+engine API inventory at that checkpoint was 261 unique public function names.
+
+
+### Complete root-sheet annotation API
+
+`api::native_write::schematic_project_annotation::preview` qualifies the complete
+supported root-sheet census and returns a typed `ProjectAnnotationSummary`;
+`change_count` counts its reviewed reference changes. The existing native Proposal
+lifecycle carries `CreateProjectAnnotation` into one atomic canonical batch.
+Shared qualification, numbering, source receipts and history preserve the existing
+sheet-only annotation and field-table behavior. Hierarchy, repeated sources,
+physical/cross-sheet owners and stale or invalid participants refuse the complete
+action. Ordinary GUI behavior is independently verified in
+`dat-schematic-project-annotation-ncy0`: complete two-root review, cancellation,
+one atomic design acceptance, Undo/Redo, no-op, Save and exact cold reopening.
+This bounded result does not qualify hierarchy or unsupported owner families.
+The current derived API inventory contains 276 unique public function names; `specs/SPEC_PARITY.md` pins
+that inventory, including this increment's `change_count` addition.

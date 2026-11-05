@@ -227,22 +227,44 @@ fn validate_source_preimages(
     }
     Ok(())
 }
-fn sheet_operation(op: &Operation) -> bool {
-    matches!(
-        op,
-        Operation::SetSchematicSymbol { .. }
-            | Operation::CreateSchematicWire { .. }
-            | Operation::DeleteSchematicWire { .. }
-    )
+fn operation_sheet(op: &Operation) -> Option<Uuid> {
+    match op {
+        Operation::SetSchematicSymbol { sheet_id, .. }
+        | Operation::CreateSchematicWire { sheet_id, .. }
+        | Operation::DeleteSchematicWire { sheet_id, .. } => Some(*sheet_id),
+        _ => None,
+    }
 }
 fn inverse(ops: &[Operation], target: &TransactionRecord) -> Option<Vec<Operation>> {
     let mut inverse = Vec::new();
-    // Canonical journal inversion visits source sheets before non-core metadata,
-    // then reverses that accumulated list (not simply the input operation order).
-    for op in ops
+    // The recorded inverse encodes canonical source-shard traversal in reverse.
+    // Recover that sheet order, retaining input operation order within each sheet.
+    // UUID order and the flat input order are not source-shard traversal order.
+    let mut sheets = Vec::new();
+    for sheet in target
+        .inverse_operations
         .iter()
-        .filter(|op| sheet_operation(op))
-        .chain(ops.iter().filter(|op| !sheet_operation(op)))
+        .rev()
+        .filter_map(operation_sheet)
+    {
+        if !sheets.contains(&sheet) {
+            sheets.push(sheet);
+        }
+    }
+    if ops
+        .iter()
+        .filter_map(operation_sheet)
+        .any(|sheet| !sheets.contains(&sheet))
+    {
+        return None;
+    }
+    for op in sheets
+        .iter()
+        .flat_map(|sheet| {
+            ops.iter()
+                .filter(move |op| operation_sheet(op) == Some(*sheet))
+        })
+        .chain(ops.iter().filter(|op| operation_sheet(op).is_none()))
     {
         inverse.push(match op {
             Operation::SetSchematicSymbol {

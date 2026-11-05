@@ -33,7 +33,8 @@ pub(super) fn component_id(op: &Operation) -> Option<Uuid> {
 
 #[derive(Default)]
 struct PoseOps<'a> {
-    sheet: Option<Uuid>,
+    sheets: BTreeSet<Uuid>,
+    symbol_sheets: BTreeMap<Uuid, Uuid>,
     symbols: BTreeMap<Uuid, &'a Value>,
     components: BTreeMap<Uuid, (&'a Value, &'a Value)>,
     removed_wires: BTreeMap<Uuid, &'a Value>,
@@ -50,6 +51,7 @@ impl<'a> PoseOps<'a> {
                     symbol_id,
                     symbol,
                 } => {
+                    out.symbol_sheets.insert(*symbol_id, *sheet_id);
                     if out.symbols.insert(*symbol_id, symbol).is_some() {
                         return None;
                     }
@@ -99,9 +101,7 @@ impl<'a> PoseOps<'a> {
                 _ => return None,
             };
             if let Some(sheet) = sheet {
-                if out.sheet.replace(sheet).is_some_and(|old| old != sheet) {
-                    return None;
-                }
+                out.sheets.insert(sheet);
             }
         }
         (!out.symbols.is_empty() && !out.components.is_empty()).then_some(out)
@@ -110,7 +110,8 @@ impl<'a> PoseOps<'a> {
 fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>>> {
     let forward = PoseOps::capture(&target.operations)?;
     let inverse = PoseOps::capture(&target.inverse_operations)?;
-    if forward.sheet != inverse.sheet
+    if forward.sheets != inverse.sheets
+        || forward.symbol_sheets != inverse.symbol_sheets
         || forward.symbols.keys().ne(inverse.symbols.keys())
         || forward.components.keys().ne(inverse.components.keys())
         || forward.removed_wires != inverse.added_wires
@@ -134,6 +135,15 @@ fn transform(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>
             .symbols
             .iter()
             .all(|(id, next)| fields::reference_value_only(inverse.symbols[id], next));
+    let project_annotation = forward.metadata.iter().any(|op| {
+        matches!(op,
+        Operation::SetProposalMetadata { proposal, .. }
+            if proposal["batch"]["provenance"]["reason"].as_str()
+                == Some(crate::api::native_write::schematic_project_annotation::REASON))
+    });
+    if (forward.sheets.len() != 1 && !project_annotation) || (project_annotation && !annotation) {
+        return None;
+    }
     if !forward.metadata.is_empty() || !inverse.metadata.is_empty() {
         if !(annotation || field_batch)
             || !paired_annotation_metadata(&forward.metadata, &inverse.metadata)

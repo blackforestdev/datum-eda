@@ -14,6 +14,12 @@ pub struct AnnotationEvidence {
 impl AnnotationEvidence {
     /// Readiness uses captured facts only; canonical preview is read on invocation.
     pub fn admit(state: &ReviewWorkspaceState) -> Result<(), &'static str> {
+        Self::admit_scope(state, false)
+    }
+    pub(crate) fn admit_project(state: &ReviewWorkspaceState) -> Result<(), &'static str> {
+        Self::admit_scope(state, true)
+    }
+    fn admit_scope(state: &ReviewWorkspaceState, project: bool) -> Result<(), &'static str> {
         if !crate::gui_menu_model::native_project_edit_available(state) {
             return Err("Open a persistent native Project");
         }
@@ -31,8 +37,12 @@ impl AnnotationEvidence {
         {
             return Err("Finish or cancel the current operation first");
         }
-        let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)
-            .map_err(|_| "Focus a current supported schematic sheet")?;
+        let basis = if project {
+            AuthoringViewBasis::capture_root_document(state, state.ui.layout.focused)
+        } else {
+            AuthoringViewBasis::capture(state, state.ui.layout.focused)
+        }
+        .map_err(|_| "Focus a current supported schematic sheet")?;
         if basis.content != PaneContent::Schematic {
             return Err("Focus a current supported schematic sheet");
         }

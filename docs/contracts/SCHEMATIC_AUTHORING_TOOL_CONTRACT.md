@@ -747,8 +747,34 @@ Independent isolated GUI verification covered preview/cancel/accept, an unchange
 sibling, Undo/Redo and exact cold reopening. A post-Save query hit the separately
 tracked writer-lock issue (`dat-iwxe`); that failed query remains recorded, with
 cold verification completed on the same saved project after owner shutdown.
-Physical, stale and repeated-source owners remain unsupported. Whole-project
-annotation remains a separate target; the active-sheet fields table is described in §9.
+Physical, stale and repeated-source owners remain unsupported. The active-sheet
+fields table is described in §9.
+
+Bounded project annotation (`dat-schematic-project-annotation-ncy0`) exposes
+**Annotate Project…** through Project and the blank-canvas overflow. It qualifies
+every root sheet before building one atomic Proposal; it never commits a sheet at
+a time or silently skips an unsupported participant. For each reference prefix,
+numbering follows sheet UUID byte order, then source y/x/Symbol UUID order, starting
+at 1. The existing **Annotate This Sheet…** action keeps its separate-sheet reserved
+references and ordering behavior.
+
+Project review uses the shared read-only table to show every changed reference
+with its sheet name and exact before/after text, including offscreen sheets.
+Duplicate sheet names are qualified with source UUIDs. Empty and unchanged sheets
+remain in the complete census. Accept commits all reviewed changes together;
+Cancel changes no design source, and an already annotated project creates no draft.
+Reference-only edits preserve Values, raw fields, pin/library identity, geometry,
+connectivity and supported component owners through Undo/Redo and reopening.
+Same-sheet multi-Gate owners retain distinct per-Symbol references and are updated
+once per affected owner. Any hierarchy/repeated-sheet census, cross-sheet owner,
+physical binding, invalid/locked participant or stale basis refuses the whole
+action. The command is available from any qualified current root-sheet pane,
+including a nonprimary sheet opened through Navigator; this does not change the
+editing targets of sheet-local tools. Independent isolated GUI verification covered
+complete two-sheet review and cancellation, four reference changes in one design
+transaction, offscreen inspection, one-action Undo/Redo, an already-annotated
+no-op, Save and cold reopening with all 851 canonical files exact. Hierarchical
+annotation and arbitrary project-wide field editing remain outside this increment.
 
 ## Omitted / Redundant Tools
 

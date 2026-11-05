@@ -5,6 +5,7 @@ pub use super::schematic_assignment::{AssignmentChoice, AssignmentSummary};
 pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
 pub use super::schematic_field_batch::{FieldBatchSummary, FieldRowEdit};
 pub use super::schematic_gate_placement::{GatePlacementRequest, GatePlacementSummary};
+pub use super::schematic_project_annotation::ProjectAnnotationSummary;
 use super::{context::WriteProvenance, registry::NativeWriteContext, schematic_delete};
 use crate::{
     error::EngineError,
@@ -54,6 +55,9 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateProjectAnnotation {
+        proposal_id: Uuid,
+    },
     CreateFieldBatch {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -102,6 +106,7 @@ impl NativeProposalAction {
             Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateFieldBatch { proposal_id, .. }
             | Self::CreateAnnotation { proposal_id, .. }
+            | Self::CreateProjectAnnotation { proposal_id }
             | Self::CreateAssignment { proposal_id, .. }
             | Self::CreateDisposition { proposal_id, .. }
             | Self::CreateDelete { proposal_id, .. }
@@ -136,6 +141,8 @@ pub struct NativeProposalResponse {
     pub deleted: Vec<DeletedObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub annotation: Option<AnnotationSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub project_annotation: Option<ProjectAnnotationSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fields: Option<FieldBatchSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -194,6 +201,15 @@ pub fn execute(
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateProjectAnnotation { .. } => {
+            let mut write = super::schematic_project_annotation::build(model)?;
+            write.batch.batch_id = id;
+            create_draft_proposal_from_batch(model, &request.project_root, ProposalCreateRequest {
+                proposal_id: Some(id), batch: write.batch,
+                rationale: "Review complete project reference annotation across every supported root sheet".into(),
+                source: ProposalSource::Manual, checks_run: vec![], finding_fingerprints: vec![],
+            })?;
+        }
         NativeProposalAction::CreateGatePlacement(params) => {
             let mut write = super::schematic_gate_placement::build(model, params)?;
             write.batch.batch_id = id;
@@ -411,6 +427,17 @@ pub fn execute(
         } else {
             None
         },
+        project_annotation: if super::schematic_project_annotation::is_project_annotation(proposal)
+        {
+            let detail = super::schematic_project_annotation::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         annotation: if super::schematic_annotation::is_annotation(proposal) {
             let detail = super::schematic_annotation::summary(model, proposal, false);
             if proposal.status == ProposalStatus::Rejected {
@@ -473,6 +500,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
         super::schematic_field_batch::validate_recorded(p)?;
         return Ok(p);
     }
+    if super::schematic_project_annotation::is_project_annotation(p) {
+        super::schematic_project_annotation::validate_recorded(p)?;
+        return Ok(p);
+    }
     if super::schematic_annotation::is_annotation(p) {
         super::schematic_annotation::validate_recorded(p)?;
         return Ok(p);
@@ -518,6 +549,9 @@ fn validate_disposition_current(
     }
     if super::schematic_field_batch::is_field_batch(proposal) {
         super::schematic_field_batch::summary(model, proposal, true)?;
+    }
+    if super::schematic_project_annotation::is_project_annotation(proposal) {
+        super::schematic_project_annotation::summary(model, proposal, true)?;
     }
     if super::schematic_annotation::is_annotation(proposal) {
         super::schematic_annotation::summary(model, proposal, true)?;

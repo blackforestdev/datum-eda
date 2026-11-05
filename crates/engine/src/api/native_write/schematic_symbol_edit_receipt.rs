@@ -12,12 +12,23 @@ fn invalid(reason: impl Into<String>) -> EngineError {
     EngineError::Validation(reason.into())
 }
 pub(super) struct Recorded<'a> {
-    pub(super) sheet: Uuid,
+    pub(super) sheets: BTreeMap<Uuid, Uuid>,
     pub(super) symbols: BTreeMap<Uuid, &'a Value>,
     pub(super) symbol_count: usize,
 }
+impl Recorded<'_> {
+    pub(super) fn single_sheet(&self) -> Result<Uuid, EngineError> {
+        let ids: BTreeSet<_> = self.sheets.values().copied().collect();
+        if ids.len() != 1 {
+            return Err(invalid(
+                "This Symbol edit requires exactly one source sheet",
+            ));
+        }
+        Ok(*ids.first().unwrap())
+    }
+}
 pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
-    let mut sheet = None;
+    let mut sheets = BTreeMap::new();
     let mut symbols = BTreeMap::new();
     let mut guards = BTreeSet::new();
     let mut components = BTreeSet::new();
@@ -50,7 +61,7 @@ pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError>
                 let typed: PlacedSymbol = serde_json::from_value(symbol.clone())?;
                 if typed.uuid != *symbol_id
                     || symbols.insert(*symbol_id, symbol).is_some()
-                    || sheet.replace(*sheet_id).is_some_and(|old| old != *sheet_id)
+                    || sheets.insert(*symbol_id, *sheet_id).is_some()
                 {
                     return Err(invalid(
                         "Symbol field edit changes duplicate or unrelated Symbols",
@@ -125,7 +136,7 @@ pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError>
         ));
     }
     Ok(Recorded {
-        sheet: sheet.unwrap(),
+        sheets,
         symbols,
         symbol_count: guards.len() - components.len(),
     })
@@ -160,7 +171,7 @@ pub(super) fn old_payloads(
                 symbol,
             } = op
             {
-                if *sheet_id != recorded.sheet
+                if recorded.sheets.get(symbol_id) != Some(sheet_id)
                     || !recorded.symbols.contains_key(symbol_id)
                     || old.insert(*symbol_id, symbol.clone()).is_some()
                 {
@@ -173,15 +184,21 @@ pub(super) fn old_payloads(
         if proposal.prepared_against != model.model_revision {
             return Err(invalid("Symbol field edit source revision unavailable"));
         }
-        let source = source_sheet_payload(
-            model,
-            recorded.sheet,
-            *recorded.symbols.keys().next().unwrap(),
-        )?;
+        let mut sources = BTreeMap::new();
+        for (symbol, sheet) in &recorded.sheets {
+            if !sources.contains_key(sheet) {
+                sources.insert(*sheet, source_sheet_payload(model, *sheet, *symbol)?);
+            }
+        }
         recorded
             .symbols
             .keys()
-            .map(|id| (*id, source["symbols"][id.to_string()].clone()))
+            .map(|id| {
+                (
+                    *id,
+                    sources[&recorded.sheets[id]]["symbols"][id.to_string()].clone(),
+                )
+            })
             .collect()
     };
     Ok(old_payloads)

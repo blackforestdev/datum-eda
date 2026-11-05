@@ -34,6 +34,7 @@ fn field_table_review_is_readonly_and_rejects_changed_or_partial_receipts() {
         field: PlacementField::Reference,
         offset: 0,
         summary: None,
+        project_annotation: None,
     };
     let old = table.rows[0].clone();
     table.store(

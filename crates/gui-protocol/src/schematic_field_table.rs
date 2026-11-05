@@ -24,6 +24,9 @@ pub struct FieldTableDraft {
     pub field: PlacementField,
     pub offset: usize,
     pub summary: Option<FieldBatchSummary>,
+    pub project_annotation: Option<
+        eda_engine::api::native_write::schematic_project_annotation::ProjectAnnotationSummary,
+    >,
 }
 impl FieldTableDraft {
     fn capture(review: &DeleteReview) -> Result<Self, String> {
@@ -49,10 +52,11 @@ impl FieldTableDraft {
             field: PlacementField::Reference,
             offset: 0,
             summary: None,
+            project_annotation: None,
         })
     }
     pub fn editable(&self) -> bool {
-        self.summary.is_none()
+        self.summary.is_none() && self.project_annotation.is_none()
     }
     pub fn focus(&mut self, row: usize, field: PlacementField, visible: usize) {
         self.focus_row = row.min(self.rows.len().saturating_sub(1));
@@ -82,6 +86,33 @@ impl FieldTableDraft {
                 }
                 PlacementField::Value => {
                     format!("{:?} → {:?}", change.previous_value, change.value)
+                }
+            };
+        }
+        if let Some(summary) = &self.project_annotation {
+            let (sheet, change) = summary.sheets.iter().find_map(|sheet| {
+                sheet
+                    .changes
+                    .iter()
+                    .find(|c| c.symbol == value.symbol)
+                    .map(|c| (sheet, c))
+            })?;
+            text = match field {
+                PlacementField::Reference => {
+                    if summary
+                        .sheets
+                        .iter()
+                        .filter(|s| s.name == sheet.name)
+                        .count()
+                        > 1
+                    {
+                        format!("{} ({})", sheet.name, sheet.sheet)
+                    } else {
+                        sheet.name.clone()
+                    }
+                }
+                PlacementField::Value => {
+                    format!("{} → {}", change.previous_reference, change.reference)
                 }
             };
         }
@@ -136,6 +167,9 @@ impl DeleteReview {
             .fields
             .as_mut()
             .ok_or("Symbol Fields Table is unavailable")?;
+        if !table.editable() {
+            return Err("This table is already in read-only Proposal review".into());
+        }
         let summary = schematic_field_batch::preview(model, self.basis.source, &[], &table.rows)
             .map_err(|e| e.to_string())?;
         if summary.changes.is_empty() {

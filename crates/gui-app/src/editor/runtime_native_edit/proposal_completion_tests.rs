@@ -24,6 +24,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
         let id = Uuid::new_v4();
         let sheet = Uuid::new_v4();
         let response = NativeProposalResponse {
+            project_annotation: None,
             proposal_id: id,
             status,
             prepared_against: revision.clone(),

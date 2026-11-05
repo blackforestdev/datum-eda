@@ -6,6 +6,7 @@ fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
         return Err(invalid("Annotation family unavailable"));
     }
     let result = shared::recorded(proposal)?;
+    result.single_sheet()?;
     for value in result.symbols.values() {
         let typed: PlacedSymbol = serde_json::from_value((*value).clone())?;
         prefix(&typed.reference)?;
@@ -23,13 +24,14 @@ pub(in crate::api::native_write) fn summary(
     current: bool,
 ) -> Result<AnnotationSummary, EngineError> {
     let recorded = recorded(proposal)?;
+    let sheet = recorded.single_sheet()?;
     if current {
         if proposal.prepared_against != model.model_revision
             || proposal.batch.expected_model_revision.as_ref() != Some(&model.model_revision)
         {
             return Err(invalid("Design changed; prepare sheet annotation again"));
         }
-        let rebuilt = build(model, recorded.sheet, &[])?;
+        let rebuilt = build(model, sheet, &[])?;
         if rebuilt.batch.operations != proposal.batch.operations {
             return Err(invalid(
                 "Annotation differs from the complete current sheet",
@@ -58,7 +60,7 @@ pub(in crate::api::native_write) fn summary(
         });
     }
     Ok(AnnotationSummary {
-        sheet: recorded.sheet,
+        sheet,
         instance_path: vec![],
         symbol_count: recorded.symbol_count,
         changes,

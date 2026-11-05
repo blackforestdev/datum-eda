@@ -5,9 +5,19 @@ use eda_engine::api::native_write::schematic_delete_proposal::NativeProposalResp
 
 impl Runtime {
     pub(crate) fn begin_schematic_annotation(&mut self) -> bool {
+        self.begin_annotation_scope(false)
+    }
+    pub(crate) fn begin_schematic_project_annotation(&mut self) -> bool {
+        self.begin_annotation_scope(true)
+    }
+    fn begin_annotation_scope(&mut self, project: bool) -> bool {
         let result = (|| {
             self.selected_schematic_idle()?;
-            DeleteReview::capture_annotation(self.workspace())
+            if project {
+                DeleteReview::capture_project_annotation(self.workspace())
+            } else {
+                DeleteReview::capture_annotation(self.workspace())
+            }
         })();
         match result {
             Ok(Some(review)) => {
@@ -15,12 +25,21 @@ impl Runtime {
                     .workspace_mut()
                     .schematic_authoring
                     .delete_review = Some(review);
+                if project {
+                    self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(
+                        self.workspace().ui.layout.focused,
+                    ));
+                }
                 self.queue_native_edit(NativeEditAction::Proposal)
             }
             Ok(None) => {
                 self.log_console_echo(
                     ConsoleFeedbackSource::Tool,
-                    "This sheet is already annotated",
+                    if project {
+                        "This project is already annotated"
+                    } else {
+                        "This sheet is already annotated"
+                    },
                 );
                 self.invalidate_frame();
                 true

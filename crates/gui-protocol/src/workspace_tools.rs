@@ -18,6 +18,24 @@ pub struct AuthoringViewBasis {
 
 impl AuthoringViewBasis {
     pub fn capture(state: &ReviewWorkspaceState, pane: PaneId) -> Result<Self, String> {
+        let basis = Self::capture_root_document(state, pane)?;
+        if basis.content == PaneContent::Schematic
+            && state.schematic_authoring.sheet != Some(basis.source)
+        {
+            return Err(
+                "This document is read-only; native authoring requires its supported root view"
+                    .into(),
+            );
+        }
+        Ok(basis)
+    }
+
+    /// Project-wide operations use a qualified root view without selecting a new
+    /// sheet-local editing target. Their engine-owned census supplies write scope.
+    pub(crate) fn capture_root_document(
+        state: &ReviewWorkspaceState,
+        pane: PaneId,
+    ) -> Result<Self, String> {
         if state.project_unopened || state.ui.layout.focused != pane {
             return Err("Focus the supported native source pane before authoring".into());
         }
@@ -60,7 +78,6 @@ impl AuthoringViewBasis {
                     || state.schematic_documents.row(document).is_none()
                     || document.project != model.project.project_id
                     || !document.instance_path.is_empty()
-                    || state.schematic_authoring.sheet != Some(document.source_sheet)
                     || state
                         .schematic_authoring
                         .source

@@ -123,6 +123,7 @@ impl Runtime {
             GuiLocalHandler::SymbolFields => self.begin_selected_symbol_edit(),
             GuiLocalHandler::SymbolFieldsTable => self.begin_schematic_field_table(),
             GuiLocalHandler::AnnotateSheet => self.begin_schematic_annotation(),
+            GuiLocalHandler::AnnotateProject => self.begin_schematic_project_annotation(),
             GuiLocalHandler::PlaceAnotherGate => self.begin_schematic_gate_placement(),
             GuiLocalHandler::DeleteSchematicSelection => self.delete_selected_schematic(),
             GuiLocalHandler::PowerPort => {

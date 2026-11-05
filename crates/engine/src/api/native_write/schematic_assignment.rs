@@ -100,6 +100,7 @@ pub(super) fn build(
 pub(super) fn is_assignment(proposal: &Proposal) -> bool {
     if super::schematic_annotation::is_annotation(proposal)
         || super::schematic_field_batch::is_field_batch(proposal)
+        || super::schematic_project_annotation::is_project_annotation(proposal)
     {
         return false;
     }

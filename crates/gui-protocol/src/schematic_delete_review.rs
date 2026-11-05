@@ -138,6 +138,12 @@ impl DeleteReview {
     }
     pub(super) fn capture_source(state: &ReviewWorkspaceState) -> Result<Self, String> {
         let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+        Self::capture_source_basis(state, basis)
+    }
+    pub(super) fn capture_source_basis(
+        state: &ReviewWorkspaceState,
+        basis: AuthoringViewBasis,
+    ) -> Result<Self, String> {
         if basis.content != PaneContent::Schematic {
             return Err("Focus a native schematic view for this Proposal".into());
         }
@@ -238,10 +244,29 @@ impl DeleteReview {
         match (&self.fields, &response.fields) {
             (Some(table), Some(summary))
                 if table.summary.as_ref() == Some(summary) && response.deleted.is_empty() => {}
+            (Some(table), None)
+                if table.project_annotation.is_some() && response.deleted.is_empty() => {}
             (Some(_), None)
                 if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
             (None, None) => {}
             _ => return Err("Proposal field changes differ from the reviewed table".into()),
+        }
+        match (
+            self.fields
+                .as_ref()
+                .and_then(|t| t.project_annotation.as_ref()),
+            &response.project_annotation,
+        ) {
+            (Some(expected), Some(summary))
+                if expected == summary && response.deleted.is_empty() => {}
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => {
+                return Err(
+                    "Project annotation differs from the complete reviewed sheet census".into(),
+                );
+            }
         }
         match (&self.gate_placement, &response.gate_placement) {
             (Some(evidence), Some(summary))
@@ -375,6 +400,13 @@ impl DeleteReview {
     }
     pub fn summary(&self) -> String {
         if let Some(table) = &self.fields {
+            if let Some(summary) = &table.project_annotation {
+                return format!(
+                    "Annotate Project · {} sheets · {} references",
+                    summary.sheets.len(),
+                    summary.change_count()
+                );
+            }
             return format!(
                 "Symbol Fields Table · {} changes",
                 table.summary.as_ref().map_or(0, |s| s.changes.len())

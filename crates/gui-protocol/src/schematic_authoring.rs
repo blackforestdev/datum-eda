@@ -39,6 +39,8 @@ pub mod delete_review;
 pub mod disposition;
 #[path = "schematic_field_table.rs"]
 pub mod field_table;
+#[path = "schematic_project_annotation.rs"]
+pub mod project_annotation;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {

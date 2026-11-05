@@ -450,6 +450,12 @@
           "label": "Settings\u2026",
           "icon": "settings",
           "not_built": "project settings surface"
+        },
+        {
+          "label": "Annotate Project\u2026",
+          "icon": "rename",
+          "gui_local": "schematic.annotation.project",
+          "requires_project": true
         }
       ]
     },
@@ -1236,6 +1242,12 @@
           "label": "Annotate This Sheet…",
           "icon": "rename",
           "gui_local": "schematic.annotation.review",
+          "requires_project": true
+        },
+        {
+          "label": "Annotate Project\u2026",
+          "icon": "rename",
+          "gui_local": "schematic.annotation.project",
           "requires_project": true
         }
       ],

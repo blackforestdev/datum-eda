@@ -64,6 +64,7 @@ pub mod schematic_label_move;
 pub mod schematic_library;
 mod schematic_marker;
 mod schematic_port;
+pub mod schematic_project_annotation;
 mod schematic_selected_source;
 mod schematic_selection_edit;
 pub mod schematic_sheets;

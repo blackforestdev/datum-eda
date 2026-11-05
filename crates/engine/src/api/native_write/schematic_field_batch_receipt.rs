@@ -8,6 +8,7 @@ fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
         return Err(invalid("Symbol Fields Table proposal family unavailable"));
     }
     let result = shared::recorded(proposal)?;
+    result.single_sheet()?;
     for value in result.symbols.values() {
         let typed: PlacedSymbol = serde_json::from_value((*value).clone())?;
         validate_field_values(Some(&typed.reference), Some(&typed.value))?;
@@ -27,6 +28,7 @@ pub(in crate::api::native_write) fn summary(
     current: bool,
 ) -> Result<FieldBatchSummary, EngineError> {
     let recorded = recorded(proposal)?;
+    let sheet = recorded.single_sheet()?;
     if current {
         if proposal.prepared_against != model.model_revision
             || proposal.batch.expected_model_revision.as_ref() != Some(&model.model_revision)
@@ -47,7 +49,7 @@ pub(in crate::api::native_write) fn summary(
                 })
             })
             .collect::<Result<Vec<_>, EngineError>>()?;
-        let rebuilt = build(model, recorded.sheet, &[], &edits)?;
+        let rebuilt = build(model, sheet, &[], &edits)?;
         if rebuilt.batch.operations != proposal.batch.operations {
             return Err(invalid(
                 "Symbol Fields Table proposal differs from the current complete batch",
@@ -83,7 +85,7 @@ pub(in crate::api::native_write) fn summary(
         });
     }
     Ok(FieldBatchSummary {
-        sheet: recorded.sheet,
+        sheet,
         instance_path: vec![],
         changes,
     })

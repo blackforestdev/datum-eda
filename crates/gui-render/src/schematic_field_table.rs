@@ -15,6 +15,7 @@ pub(super) fn render(
     let Some(table) = &review.fields else {
         return Ok(());
     };
+    let project = table.project_annotation.as_ref();
     let width = (layout.top_menu_bar.width - 24.).min(760.).max(160.);
     let y = layout.top_menu_bar.y + layout.top_menu_bar.height + 16.;
     let available = layout.status_bar.y - y - 12.;
@@ -35,7 +36,11 @@ pub(super) fn render(
         rect: panel,
     });
     draw_text(
-        "Symbol Fields Table",
+        if project.is_some() {
+            "Annotate Project"
+        } else {
+            "Symbol Fields Table"
+        },
         panel.x + 16.,
         y + 15.,
         16.,
@@ -45,10 +50,21 @@ pub(super) fn render(
     );
     draw_text(
         &truncate_text(
-            &format!(
-                "Active sheet: {} · {} Symbols",
-                review.source.name,
-                table.rows.len()
+            &project.map_or_else(
+                || {
+                    format!(
+                        "Active sheet: {} · {} Symbols",
+                        review.source.name,
+                        table.rows.len()
+                    )
+                },
+                |p| {
+                    format!(
+                        "All {} root sheets · {} reference changes",
+                        p.sheets.len(),
+                        p.change_count()
+                    )
+                },
             ),
             ((width - 32.) / 7.).max(1.) as usize,
         ),
@@ -88,7 +104,9 @@ pub(super) fn render(
     let value_x = panel.x + 24. + reference_width;
     for (label, x) in [
         (
-            if table.editable() {
+            if project.is_some() {
+                "Sheet"
+            } else if table.editable() {
                 "Reference"
             } else {
                 "Reference · before → after"
@@ -96,7 +114,9 @@ pub(super) fn render(
             panel.x + 16.,
         ),
         (
-            if table.editable() {
+            if project.is_some() {
+                "Reference · before → after"
+            } else if table.editable() {
                 "Value"
             } else {
                 "Value · before → after"

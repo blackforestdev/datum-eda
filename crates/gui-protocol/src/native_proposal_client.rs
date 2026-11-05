@@ -51,6 +51,7 @@ impl NativeProjectClient {
             | Action::CreateDisposition { .. }
             | Action::CreateAssignment { .. }
             | Action::CreateAnnotation { .. }
+            | Action::CreateProjectAnnotation { .. }
             | Action::CreateFieldBatch { .. }
             | Action::CreateGatePlacement(_) => ProposalStatus::Draft,
             Action::AcceptApply { .. } => ProposalStatus::Applied,
@@ -130,6 +131,7 @@ mod tests {
             ProposalStatus::Rejected,
         ] {
             let response = NativeProposalResponse {
+                project_annotation: None,
                 gate_placement: None,
                 annotation: None,
                 fields: None,

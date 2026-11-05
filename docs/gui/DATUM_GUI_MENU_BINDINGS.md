@@ -181,6 +181,7 @@ GUI-LOCAL.
 | Rename | `build_set_project_name` / CLI `project set-project-name` | ENGINE-READY / GUI-BLOCKED |
 | Design rules | `build_*_project_rule(s)` / CLI `project set-project-rules` etc. | ENGINE-READY / GUI-BLOCKED |
 | General settings | none beyond rules/name | NOT-BUILT |
+| Annotate Project… | `schematic.annotation.project` → shared read-only table → typed `CreateProjectAnnotation` Proposal → one canonical atomic reference batch | PARTIAL: complete unique-root census and offscreen before/after review from any qualified root pane; atomic accept, Cancel, history, no-op and exact saved/cold reopen independently verified; hierarchy/physical/cross-sheet owners refuse |
 
 ### Checks
 | Item | Verb | Status |
