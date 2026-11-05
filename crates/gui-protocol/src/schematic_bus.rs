@@ -77,7 +77,9 @@ impl BusEditDraft {
 
 impl SchematicAuthoring {
     pub fn polyline_request(&self) -> Result<SchematicEditRequest, String> {
-        let sheet = self.sheet.ok_or("Native schematic sheet unavailable")?;
+        let sheet = self
+            .placement_sheet()
+            .ok_or("Native schematic sheet unavailable")?;
         if !self.wire || self.vertices.len() < 2 {
             return Err("Draw at least two distinct vertices".into());
         }
@@ -97,7 +99,11 @@ impl SchematicAuthoring {
                 points: Some(points),
             })
         } else {
-            Ok(SchematicEditRequest::DrawWire { sheet, points })
+            Ok(SchematicEditRequest::DrawWire {
+                sheet,
+                instance_path: self.placement_path(),
+                points,
+            })
         }
     }
 }

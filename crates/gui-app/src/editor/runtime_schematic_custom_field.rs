@@ -4,7 +4,11 @@ use datum_gui_protocol::schematic_authoring::{CustomFieldControl, CustomFieldDra
 
 impl Runtime {
     pub(super) fn guard_selected_fields_edit(&self, draft: &FieldsEditDraft) -> Result<(), String> {
-        let (basis, target) = selected::target(self.workspace())?;
+        let (basis, target) = if matches!(draft, FieldsEditDraft::Symbol(_)) {
+            selected::symbol_fields_target(self.workspace())?
+        } else {
+            selected::target(self.workspace())?
+        };
         let tip = self
             .workspace()
             .supervision

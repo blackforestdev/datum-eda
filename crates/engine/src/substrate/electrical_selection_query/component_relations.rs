@@ -57,13 +57,6 @@ impl ElectricalSelectionSnapshot {
                     origin: origin.clone(),
                 });
             }
-            if !origin.instance_path.is_empty() {
-                result.unavailable.insert(
-                    origin.clone(),
-                    "Component binding does not qualify this sheet occurrence".into(),
-                );
-                continue;
-            }
             if authored
                 .iter()
                 .filter(|id| id.class == origin.class && id.source_id == origin.source_id)
@@ -104,6 +97,25 @@ impl ElectricalSelectionSnapshot {
                 result.unavailable.insert(origin.clone(), reason.into());
                 continue;
             };
+            if !origin.instance_path.is_empty()
+                && (!symbol
+                    || !owner.placed_package_refs.is_empty()
+                    || owner.placed_symbol_refs.iter().any(|id| {
+                        let members: Vec<_> = authored
+                            .iter()
+                            .filter(|occurrence| {
+                                occurrence.class == "symbols" && occurrence.source_id == *id
+                            })
+                            .collect();
+                        members.len() != 1 || members[0].instance_path != origin.instance_path
+                    }))
+            {
+                result.unavailable.insert(
+                    origin.clone(),
+                    "Child occurrence binding requires a unique schematic-only owner".into(),
+                );
+                continue;
+            }
             if !self.current_component_binding(owner) {
                 result.unavailable.insert(
                     origin.clone(),

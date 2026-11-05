@@ -110,7 +110,20 @@ impl MarkingMenuState {
             return Err(unavailable.into());
         }
         let menu = self.selection.as_ref().ok_or("Reopen the context menu")?;
-        let basis = crate::AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+        let circuit = matches!(
+            item.binding(),
+            B::Verb(
+                "datum.schematic.place_symbol"
+                    | "datum.schematic.draw_wire"
+                    | "datum.schematic.set_symbol_reference"
+                    | "datum.schematic.set_symbol_value"
+            ) | B::GuiLocal("schematic.symbol_fields.open")
+        );
+        let basis = if circuit {
+            crate::AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?
+        } else {
+            crate::AuthoringViewBasis::capture(state, state.ui.layout.focused)?
+        };
         let scene = crate::camera_scene_for_pane(state, basis.pane)
             .ok_or("Schematic source unavailable")?;
         if !menu.schematic

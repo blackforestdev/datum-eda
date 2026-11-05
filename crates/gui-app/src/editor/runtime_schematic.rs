@@ -18,12 +18,23 @@ mod marker;
 mod selected;
 impl Runtime {
     pub(super) fn begin_native_schematic(&mut self, wire: bool) -> bool {
-        if !self.prepare_native_schematic(wire) {
+        if !self.prepare_native_circuit(wire) {
             return true;
         }
         if !wire {
             return self.browse_schematic_libraries();
         }
+        true
+    }
+    pub(super) fn prepare_native_circuit(&mut self, wire: bool) -> bool {
+        if !self.prepare_native_schematic_in(wire, true) {
+            return false;
+        }
+        let basis = self.workspace().authoring.gesture.view_basis.clone();
+        self.session
+            .workspace_mut()
+            .schematic_authoring
+            .circuit_basis = basis;
         true
     }
     pub(crate) fn begin_native_bus(&mut self) -> bool {
@@ -103,7 +114,8 @@ impl Runtime {
         if self.native_edit.pending() {
             return false;
         }
-        let child = self.workspace().schematic_authoring.child_draft.is_some();
+        let child = self.workspace().schematic_authoring.child_draft.is_some()
+            || self.workspace().schematic_authoring.circuit_basis.is_some();
         self.session.workspace_mut().schematic_authoring.creation = None;
         let was_active = self.workspace().schematic_authoring.active()
             || self.workspace().schematic_authoring.picker
@@ -514,6 +526,11 @@ impl Runtime {
                     &mut self.session.workspace_mut().schematic_authoring.child_draft
                 {
                     child.scene = Some(scene);
+                } else if self.workspace().schematic_authoring.circuit_basis.is_some() {
+                    self.session
+                        .workspace_mut()
+                        .schematic_authoring
+                        .circuit_preview = Some(scene);
                 } else {
                     self.session.workspace_mut().schematic_scene = Some(scene);
                 }
@@ -624,7 +641,8 @@ impl Runtime {
         e.position = Some(at);
         e.preview_dirty = true;
         e.pending_request = Some(SchematicEditRequest::PlaceSymbol {
-            sheet: e.sheet.unwrap(),
+            sheet: e.placement_sheet().unwrap(),
+            instance_path: e.placement_path(),
             library_symbol: e.choices[index].id,
             reference: e.reference.clone(),
             value: e.value.clone(),

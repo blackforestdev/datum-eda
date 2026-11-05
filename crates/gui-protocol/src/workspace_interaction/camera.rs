@@ -26,6 +26,22 @@ pub fn resolved_camera_scene_for_pane(
     match state.ui.layout.content_for(pane)? {
         PaneContent::Board => Some(&state.scene),
         PaneContent::Schematic => {
+            if let Some(basis) = &state.schematic_authoring.circuit_basis
+                && basis.pane == pane
+                && state.schematic_documents.panes.get(&pane) == basis.document.as_ref()
+                && state.schematic_documents.project == Some(basis.project)
+                && state
+                    .schematic_documents
+                    .revision
+                    .as_ref()
+                    .is_some_and(|r| r.0 == basis.revision)
+                && let Some(scene) = &state.schematic_authoring.circuit_preview
+                && scene.schematic_document == basis.document
+                && scene.source_revision == basis.revision
+                && scene.project_uuid == basis.project.to_string()
+            {
+                return Some(scene);
+            }
             if let Some(child) = &state.schematic_authoring.child_draft
                 && child.review.basis.pane == pane
                 && child.review.current(state)

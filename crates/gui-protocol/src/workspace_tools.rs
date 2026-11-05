@@ -38,7 +38,7 @@ impl AuthoringViewBasis {
     ) -> Result<Self, String> {
         Self::capture_document(state, pane, false)
     }
-    /// Explicit hierarchy command basis; does not enable other source writers.
+    /// Explicit unique-occurrence basis; callers retain their tool admission limits.
     pub fn capture_qualified_schematic(
         state: &ReviewWorkspaceState,
         pane: PaneId,

@@ -238,7 +238,7 @@ impl Runtime {
         self.session.workspace_mut().library.acquisition = None;
         self.library_acquisition_work.cancel();
         self.swap_pane_focus(|layout| restore_origin_layout(layout, &origin));
-        self.prepare_native_schematic(false);
+        self.prepare_native_circuit(false);
         true
     }
 
@@ -257,7 +257,7 @@ impl Runtime {
             self.cancel_native_schematic();
             return;
         };
-        if !self.prepare_native_schematic(false) {
+        if !self.prepare_native_circuit(false) {
             return;
         }
         {

@@ -37,8 +37,8 @@ operations rather than separate tools.
 
 Broader hierarchy authoring (sheet instances, sheet pins and cross-sheet net
 rewiring), variant overlays and library object authoring (see `008` contract)
-remain outside this ten-tool slice except for the separately bounded blank-child
-creation below. Native flat schematic document creation
+remain outside this ten-tool slice except for the separately bounded child-sheet
+increments below. Native flat schematic document creation
 already has a journaled engine/CLI operation; its ordinary GUI binding is a
 separately bounded implementation increment.
 
@@ -80,6 +80,30 @@ creation after history, qualified navigation, Save and exact cold reopening. Exi
 creation, cycles, sheet pins and rewiring remain outside this increment. Other
 authoring tools retain their actual qualified capabilities; no root substitution
 makes an unsupported child edit available.
+
+### Bounded circuit authoring inside a unique child
+
+`dat-schematic-child-circuit-authoring-clq0` extends the existing Symbol picker,
+Wire gesture and Reference/Value form to an exact unique child occurrence. The
+shared captured basis carries its source, ordered path, pane and revision through
+preview and invocation. Symbol and Wire requests include that path; engine
+admission checks the complete sheet census, including empty sheets. Omitted paths
+retain root compatibility and cannot silently address a child. Cancellation clears
+only the captured preview, preserving the primary pane and canonical source.
+
+Supported schematic-only component ownership retains the existing source-addressed
+schema and shared repin/history operations. Inspection resolves a unique owner
+only when all its Symbol members share the selected unique occurrence and no
+physical counterpart is declared. Repeated sources and stale or mismatched paths
+refuse. Other child tools, Part assignment, bulk editing, cross-sheet wiring and
+physical correspondence are not enabled by this increment. Root document creation
+and the delivered unique-parent child-sheet command remain available.
+
+Focused engine and real-project protocol checks pass for bound placement, fields,
+wire/history, refusal and pane isolation. Independent ordinary GUI verification
+passed cancellation with no design writes, two bound symbols in a nested child,
+Reference/Value editing, a pin-to-pin wire chain, four Undo/Redo steps, unchanged
+parent/sibling sources, Save and exact cold reopening.
 
 ### Current-engine grounding (verified)
 

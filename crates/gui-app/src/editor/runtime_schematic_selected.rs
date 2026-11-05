@@ -38,6 +38,7 @@ impl Runtime {
         };
         let basis = draft.basis().clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
+        e.circuit_basis = matches!(draft, FieldsEditDraft::Symbol(_)).then(|| basis.clone());
         e.bus = matches!(draft, FieldsEditDraft::Bus(_));
         e.editing = Some(draft);
         e.reference = reference;
@@ -66,7 +67,11 @@ impl Runtime {
     > {
         self.selected_schematic_idle()?;
         selected::admission(self.workspace(), edit_fields)?;
-        selected::target(self.workspace())
+        if edit_fields {
+            selected::symbol_fields_target(self.workspace())
+        } else {
+            selected::target(self.workspace())
+        }
     }
 
     pub(super) fn selected_schematic_idle(&self) -> Result<(), String> {
@@ -100,7 +105,11 @@ impl Runtime {
             } else {
                 selected::admission(self.workspace(), true)?;
             }
-            let (basis, target) = selected::target(self.workspace())?;
+            let (basis, target) = if bus {
+                selected::target(self.workspace())?
+            } else {
+                selected::symbol_fields_target(self.workspace())?
+            };
             let tip = self
                 .workspace()
                 .supervision
@@ -161,6 +170,7 @@ impl Runtime {
         self.cancel_native_schematic();
         let basis = draft.basis().clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
+        e.circuit_basis = (!bus).then(|| basis.clone());
         (e.reference, e.value) = draft.fields();
         e.reference_editor =
             datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&e.reference);

@@ -157,6 +157,8 @@ fn create_sheet(
 #[serde(deny_unknown_fields)]
 struct PlaceParams {
     sheet: Uuid,
+    #[serde(default)]
+    instance_path: Vec<Uuid>,
     library_symbol: Uuid,
     reference: String,
     value: String,
@@ -185,9 +187,7 @@ fn place_symbol(
 ) -> Result<PreparedWrite, EngineError> {
     let params: PlaceParams = parse_verb_params("datum.schematic.place_symbol", params)?;
     let source = schematic(context.model)?;
-    if !source.sheets.contains_key(&params.sheet) {
-        return Err(EngineError::Validation("Native sheet not found".into()));
-    }
+    require_unique_occurrence(&source, params.sheet, &params.instance_path)?;
     if params.reference.trim().is_empty()
         || source.sheets.values().any(|sheet| {
             sheet
@@ -266,7 +266,26 @@ pub(super) fn prepare_native_birth(
 #[serde(deny_unknown_fields)]
 struct WireParams {
     sheet: Uuid,
+    #[serde(default)]
+    instance_path: Vec<Uuid>,
     points: Vec<Point>,
+}
+
+fn require_unique_occurrence(
+    source: &crate::schematic::Schematic,
+    sheet: Uuid,
+    path: &[Uuid],
+) -> Result<(), EngineError> {
+    let occurrences = crate::connectivity::occurrence_partition::sheet_occurrences(source)?;
+    if occurrences
+        .get(&sheet)
+        .is_none_or(|paths| paths.len() != 1 || paths[0] != path)
+    {
+        return Err(EngineError::Validation(
+            "Authoring requires one exact, unrepeated sheet occurrence".into(),
+        ));
+    }
+    Ok(())
 }
 
 fn draw_wire(
@@ -276,6 +295,7 @@ fn draw_wire(
 ) -> Result<PreparedWrite, EngineError> {
     let params: WireParams = parse_verb_params("datum.schematic.draw_wire", params)?;
     let source = schematic(context.model)?;
+    require_unique_occurrence(&source, params.sheet, &params.instance_path)?;
     let sheet = source
         .sheets
         .get(&params.sheet)
@@ -372,6 +392,10 @@ fn strictly_on_segment(p: Point, a: Point, b: Point) -> Result<bool, EngineError
     let rhs = dy.unsigned_abs() * px.unsigned_abs();
     Ok(lhs == rhs && (lhs == 0 || dx.signum() * py.signum() == dy.signum() * px.signum()))
 }
+
+#[cfg(test)]
+#[path = "schematic_child_circuit_tests.rs"]
+mod child_circuit_tests;
 
 #[cfg(test)]
 #[path = "schematic_edit_tests.rs"]

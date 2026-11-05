@@ -3,6 +3,20 @@ use super::*;
 use eda_engine::ir::geometry::Point;
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SchematicWire, SymbolDisplayMode};
 impl SchematicAuthoring {
+    pub fn placement_sheet(&self) -> Option<Uuid> {
+        self.circuit_basis
+            .as_ref()
+            .map(|basis| basis.source)
+            .or(self.sheet)
+    }
+    pub fn placement_path(&self) -> Vec<Uuid> {
+        self.circuit_basis
+            .as_ref()
+            .and_then(|basis| basis.document.as_ref())
+            .map(|document| document.instance_path.clone())
+            .unwrap_or_default()
+    }
+
     pub fn active(&self) -> bool {
         if self.named_edit.is_some()
             || self.field_placement().is_some()
@@ -14,6 +28,8 @@ impl SchematicAuthoring {
             || self.wire
     }
     pub fn cancel(&mut self) -> Option<BoardReviewSceneV1> {
+        self.circuit_basis = None;
+        self.circuit_preview = None;
         self.disposition_draft = None;
         self.assignment_draft = None;
         self.gate_draft = None;
@@ -54,7 +70,7 @@ impl SchematicAuthoring {
             .clone()
             .ok_or_else(|| anyhow::anyhow!("Native schematic unavailable"))?;
         let sheet = self
-            .sheet
+            .placement_sheet()
             .ok_or_else(|| anyhow::anyhow!("Native sheet unavailable"))?;
         let selected = source
             .sheets
@@ -277,7 +293,7 @@ impl SchematicAuthoring {
         if self.marker == Some(MarkerKind::NoConnect) {
             return self.marker_pin_point(source_uuid);
         }
-        let sheet = self.source.as_ref()?.sheets.get(&self.sheet?)?;
+        let sheet = self.source.as_ref()?.sheets.get(&self.placement_sheet()?)?;
         let id: Uuid = source_uuid.parse().ok()?;
         let position = sheet
             .symbols

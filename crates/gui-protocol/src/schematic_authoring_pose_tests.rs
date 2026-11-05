@@ -169,6 +169,7 @@ fn placement_pose_transforms_asymmetric_body_and_pins_and_resets_on_cancel() {
         );
         let request = SchematicEditRequest::PlaceSymbol {
             sheet: draft.sheet.unwrap(),
+            instance_path: vec![],
             library_symbol: draft.choices[choice].id,
             reference: draft.reference.clone(),
             value: draft.value.clone(),

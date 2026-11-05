@@ -94,6 +94,25 @@ pub fn target(
     state: &ReviewWorkspaceState,
 ) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
     let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+    target_in(state, basis)
+}
+
+/// Reference/Value alone admits a selected Symbol in an exact unique child.
+pub fn symbol_fields_target(
+    state: &ReviewWorkspaceState,
+) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
+    let basis = AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
+    let result = target_in(state, basis)?;
+    if result.1.class != Class::Symbol {
+        return Err("Select one Symbol to edit its fields".into());
+    }
+    Ok(result)
+}
+
+fn target_in(
+    state: &ReviewWorkspaceState,
+    basis: AuthoringViewBasis,
+) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
     if basis.content != PaneContent::Schematic {
         return Err("Focus the selected object's schematic pane".into());
     }
@@ -140,7 +159,11 @@ pub fn target(
 }
 
 pub fn admission(state: &ReviewWorkspaceState, edit_fields: bool) -> Result<&'static str, String> {
-    let (_, id) = target(state)?;
+    let (_, id) = if edit_fields {
+        symbol_fields_target(state)?
+    } else {
+        target(state)?
+    };
     let verb = if edit_fields {
         if id.class != Class::Symbol {
             return Err("Select one Symbol to edit its fields".into());

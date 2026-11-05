@@ -163,6 +163,13 @@ GUI-LOCAL.
 | Sheet | GUI-local `schematic.child_sheet.place` → shared name/pose → typed `CreateChildSheet` Proposal → existing source/definition/instance operations | Bounded implementation and independent GUI verification: new blank child under one unique qualified parent, including a unique child; explicit acceptance/cancel/history/Save/cold reopen; no existing-source reuse/pins/rewiring |
 | Text / Drawing | `datum.schematic.place_text` / `place_drawing_*` | ENGINE-READY / GUI-BLOCKED |
 
+The bounded unique-child circuit increment (`dat-schematic-child-circuit-authoring-clq0`)
+configures existing Symbol/Wire controls and the Reference/Value form for the
+actual unique child source/path. Other child tools retain explicit refusal;
+root document and unique-parent Sheet creation remain available. Focused checks
+and independent ordinary GUI placement/cancel/fields/wire/history/Save/cold
+verification pass for this bounded circuit.
+
 ### Place / Route (PCB, active-editor-gated)
 | Item | Verb / builder | Status |
 |---|---|---|

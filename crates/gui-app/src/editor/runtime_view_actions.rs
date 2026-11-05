@@ -42,7 +42,9 @@ impl Runtime {
                 .view_basis
                 .as_ref()
                 .is_some_and(|basis| {
-                    if self.workspace().schematic_authoring.child_draft.is_some() {
+                    if self.workspace().schematic_authoring.child_draft.is_some()
+                        || self.workspace().schematic_authoring.circuit_basis.is_some()
+                    {
                         datum_gui_protocol::AuthoringViewBasis::capture_qualified_schematic(
                             self.workspace(),
                             pane,

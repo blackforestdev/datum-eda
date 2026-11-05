@@ -101,6 +101,30 @@ fn first_edit_verb(verb: &str) -> bool {
 }
 
 /// Shared admission for native menu actions and GUI-local configured variants.
+fn native_project_verb_unavailable_reason(
+    state: &crate::ReviewWorkspaceState,
+    verb: &str,
+) -> Option<&'static str> {
+    if state.project_unopened || !native_project_edit_available(state) {
+        return Some("Open a persistent Datum Project with --project-root to edit or save.");
+    }
+    if state
+        .backing
+        .as_ref()
+        .is_some_and(|b| b.native_write_verbs.is_empty())
+    {
+        return Some("Project editing capabilities are not available yet.");
+    }
+    if !state
+        .backing
+        .as_ref()
+        .is_some_and(|b| b.native_write_verbs.contains(verb))
+    {
+        return Some("This operation is not offered by the open Project's engine.");
+    }
+    None
+}
+
 pub fn native_edit_unavailable_reason(
     state: &crate::ReviewWorkspaceState,
     verb: &str,
@@ -120,22 +144,33 @@ pub fn native_edit_unavailable_reason(
     {
         return Some("This Project needs a native schematic sheet before authoring.");
     }
-    if state.project_unopened || !native_project_edit_available(state) {
-        return Some("Open a persistent Datum Project with --project-root to edit or save.");
+    if let Some(reason) = native_project_verb_unavailable_reason(state, verb) {
+        return Some(reason);
     }
-    if state
-        .backing
-        .as_ref()
-        .is_some_and(|b| b.native_write_verbs.is_empty())
+    if verb.starts_with("datum.schematic.")
+        // New document creates a root; it does not edit the focused occurrence.
+        && verb != "datum.schematic.create_sheet"
+        && state.ui.layout.focused_content() == crate::PaneContent::Schematic
+        && state
+            .schematic_documents
+            .panes
+            .get(&state.ui.layout.focused)
+            .is_some_and(|document| !document.instance_path.is_empty())
     {
-        return Some("Project editing capabilities are not available yet.");
-    }
-    if !state
-        .backing
-        .as_ref()
-        .is_some_and(|b| b.native_write_verbs.contains(verb))
-    {
-        return Some("This operation is not offered by the open Project's engine.");
+        if !matches!(
+            verb,
+            "datum.schematic.place_symbol"
+                | "datum.schematic.draw_wire"
+                | "datum.schematic.set_symbol_reference"
+                | "datum.schematic.set_symbol_value"
+        ) {
+            return Some("This tool is not available in a child sheet.");
+        }
+        if crate::AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)
+            .is_err()
+        {
+            return Some("Authoring requires one current, unrepeated sheet occurrence.");
+        }
     }
     None
 }
@@ -200,7 +235,7 @@ impl GuiMenuItem {
             GuiMenuBinding::GuiLocal("schematic.child_sheet.place")
         ) {
             if let Some(reason) =
-                native_edit_unavailable_reason(state, "datum.schematic.create_sheet")
+                native_project_verb_unavailable_reason(state, "datum.schematic.create_sheet")
             {
                 return Some(reason);
             }
@@ -315,7 +350,7 @@ impl GuiMenuItem {
                 | GuiMenuBinding::Verb(
                     "datum.schematic.set_symbol_reference" | "datum.schematic.set_symbol_value"
                 )
-        ) && !selected::target(state)
+        ) && !selected::symbol_fields_target(state)
             .is_ok_and(|(_, target)| target.class == crate::AuthoredSelectionClass::Symbol)
         {
             return Some("Select one current schematic Symbol to edit its fields");

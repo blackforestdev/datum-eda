@@ -2281,6 +2281,19 @@ construction. Required T-junction markers share the wire batch. Manual GUI
 provenance preserves Tool/Assistant proposal policy. Revision and transaction-tip
 guards qualify these requests before canonical preparation and commit.
 
+The bounded unique-child extension (`dat-schematic-child-circuit-authoring-clq0`)
+carries `instance_path` through Symbol/Wire requests and checks that the target
+sheet has exactly that one occurrence before building operations. Default empty
+paths preserve root callers; wrong, stale and repeated targets refuse. Existing
+Reference/Value editing already supplies occurrence qualification and shared owner
+repinning. Schematic-only binding inspection now admits a unique child only when
+all owner members resolve at that path and no physical counterpart is declared.
+The component source schema, deterministic owner IDs and electrical mutation path
+remain unchanged. Focused creation/wire/field/refusal/cold-history tests pass.
+Independent ordinary GUI verification covers two bound symbols and a connected
+pin-to-pin wire in a nested child, field edits, cancellation, four Undo/Redo
+steps, preserved parent/sibling source, Save and exact cold reopening.
+
 Only the new native adapters may initialize first Net identities from a complete,
 authoritatively empty pre-topology, using the existing final-partition nomination
 planner and recorded operations. Missing identities in nonempty historical source

@@ -163,6 +163,8 @@ pub enum SchematicEditRequest {
     },
     PlaceSymbol {
         sheet: Uuid,
+        #[serde(default)]
+        instance_path: Vec<Uuid>,
         library_symbol: Uuid,
         reference: String,
         value: String,
@@ -175,6 +177,8 @@ pub enum SchematicEditRequest {
     },
     DrawWire {
         sheet: Uuid,
+        #[serde(default)]
+        instance_path: Vec<Uuid>,
         points: Vec<eda_engine::ir::geometry::Point>,
     },
     PlaceMarker {
@@ -339,6 +343,7 @@ impl SchematicEditRequest {
             ),
             Self::PlaceSymbol {
                 sheet,
+                instance_path,
                 library_symbol,
                 reference,
                 value,
@@ -348,11 +353,15 @@ impl SchematicEditRequest {
                 mirrored,
             } => (
                 "datum.schematic.place_symbol",
-                serde_json::json!({"sheet":sheet,"library_symbol":library_symbol,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
+                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"library_symbol":library_symbol,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
             ),
-            Self::DrawWire { sheet, points } => (
+            Self::DrawWire {
+                sheet,
+                instance_path,
+                points,
+            } => (
                 "datum.schematic.draw_wire",
-                serde_json::json!({"sheet":sheet,"points":points}),
+                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"points":points}),
             ),
             Self::PlaceMarker {
                 sheet,
@@ -422,6 +431,9 @@ impl PlacementTransform {
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SchematicAuthoring {
+    /// Only Symbol placement, Wire and Reference/Value opt into this qualified basis.
+    pub circuit_basis: Option<crate::AuthoringViewBasis>,
+    pub circuit_preview: Option<BoardReviewSceneV1>,
     pub delete_review: Option<delete_review::DeleteReview>,
     pub disposition_draft: Option<delete_review::DeleteReview>,
     pub gate_draft: Option<gate_placement::GatePlacementDraft>,
@@ -687,3 +699,7 @@ mod tests;
 #[cfg(test)]
 #[path = "schematic_authoring_pose_tests.rs"]
 mod pose_tests;
+
+#[cfg(test)]
+#[path = "schematic_child_circuit_tests.rs"]
+mod child_circuit_tests;
