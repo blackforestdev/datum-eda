@@ -168,7 +168,64 @@ fn native_gate_placement_preview_cancel_accept_and_multi_member_edits_history() 
 }
 #[test]
 fn native_gate_placement_subset_and_last_delete_keep_sibling_owner_and_history() {
-    let (root, mut model, first, req) = setup("gate-delete");
+    gate_delete_history(false);
+}
+#[test]
+fn native_child_gate_subset_and_last_delete_keep_sibling_owner_and_history() {
+    gate_delete_history(true);
+}
+fn gate_delete_history(child: bool) {
+    let (root, mut model, mut first, mut req) = setup(if child {
+        "child-gate-delete"
+    } else {
+        "gate-delete"
+    });
+    let root_first = first;
+    let parent_before = raw(&model, first);
+    if child {
+        use crate::api::native_write::schematic_child_sheet::{self, ChildSheetRequest};
+        let parent = req.sheet;
+        let part = options(&model, first, &[]).unwrap().part;
+        let child = ChildSheetRequest {
+            proposal_id: Uuid::new_v4(),
+            parent,
+            instance_path: vec![],
+            sheet: Uuid::new_v4(),
+            definition: Uuid::new_v4(),
+            instance: Uuid::new_v4(),
+            name: "Gate child".into(),
+            position: Point::new(0, 0),
+        };
+        let write = schematic_child_sheet::build(&model, &child).unwrap();
+        commit_prepared(&mut model, &root, write).unwrap();
+        let write = (find_native_write_verb("datum.schematic.place_symbol").unwrap().build)(
+            &NativeWriteContext {model:&model, project_root:&root}, provenance(),
+            json!({"sheet":child.sheet,"instance_path":[child.instance],"library_symbol":req.library_symbol,"reference":"U_CHILD","value":"gate child","x_nm":10_000_000,"y_nm":20_000_000})).unwrap();
+        first = write.primary_object_id.unwrap();
+        commit_prepared(&mut model, &root, write).unwrap();
+        let draft = action(
+            &mut model,
+            &root,
+            Action::CreateAssignment {
+                proposal_id: Uuid::new_v4(),
+                symbol: first,
+                instance_path: vec![child.instance],
+                part,
+                gate: "40000000-0000-4000-8000-000000000101".parse().unwrap(),
+            },
+        );
+        req.component_instance = draft.assignment.unwrap().component_instance;
+        action(
+            &mut model,
+            &root,
+            Action::AcceptApply {
+                proposal_id: draft.proposal_id,
+            },
+        );
+        req.sheet = child.sheet;
+        req.instance_path = vec![child.instance];
+        req.reference = "U_CHILD2".into();
+    }
     let second = preview(&model, &req).unwrap().symbol.uuid;
     action(&mut model, &root, Action::CreateGatePlacement(req.clone()));
     action(
@@ -183,7 +240,7 @@ fn native_gate_placement_subset_and_last_delete_keep_sibling_owner_and_history()
     let delete = |symbol| Action::CreateDelete {
         proposal_id: Uuid::new_v4(),
         sheet: req.sheet,
-        instance_path: vec![],
+        instance_path: req.instance_path.clone(),
         targets: vec![DeleteTarget {
             class: DeleteClass::Symbol,
             id: symbol,
@@ -209,6 +266,47 @@ fn native_gate_placement_subset_and_last_delete_keep_sibling_owner_and_history()
     );
     roundtrip(&mut model, &root, req.component_instance, &both, &ci, &one);
     let before_binding = binding(&model, req.component_instance);
+    if child {
+        use crate::substrate::{ObjectRevision, Relationship, RelationshipKind, RevisionedRef};
+        let relationship = Relationship {
+            id: Uuid::new_v4(),
+            kind: RelationshipKind::SchematicOnly,
+            from: vec![RevisionedRef {
+                object_id: req.component_instance,
+                object_revision: model.objects[&req.component_instance].object_revision,
+            }],
+            to: vec![],
+            authored_intent: vec![],
+            object_revision: ObjectRevision(0),
+        };
+        let write = BatchComposer::compose(&model, provenance())
+            .push_op(Operation::CreateRelationship {
+                relationship_id: relationship.id,
+                relationship: serde_json::to_value(relationship).unwrap(),
+            })
+            .finish()
+            .unwrap();
+        commit_prepared(&mut model, &root, write).unwrap();
+        let source = raw(&model, second);
+        let owner = binding(&model, req.component_instance);
+        let journal = model.journal.len();
+        let request = fixture::request(&model, &root, delete(second));
+        assert!(
+            proposal::execute(&mut model, &request)
+                .unwrap_err()
+                .to_string()
+                .contains("dependencies")
+        );
+        assert_eq!(raw(&model, second), source);
+        assert_eq!(binding(&model, req.component_instance), owner);
+        assert_eq!(model.journal.len(), journal);
+        model
+            .commit_journal_undo(&root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(raw(&model, second), one);
+        assert_eq!(binding(&model, req.component_instance), before_binding);
+    }
     let d = action(&mut model, &root, delete(second));
     action(
         &mut model,
@@ -233,5 +331,8 @@ fn native_gate_placement_subset_and_last_delete_keep_sibling_owner_and_history()
             .component_instances
             .contains_key(&req.component_instance)
     );
+    if child {
+        assert_eq!(raw(&model, root_first), parent_before);
+    }
     std::fs::remove_dir_all(root).unwrap();
 }

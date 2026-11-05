@@ -15,6 +15,8 @@ mod catalog;
 use catalog::native_write_verb_ids;
 #[path = "runtime_native_edit/move_acquisition.rs"]
 mod move_acquisition;
+#[path = "runtime_native_edit/move_scene.rs"]
+mod move_scene;
 #[path = "runtime_native_edit/worker.rs"]
 mod worker;
 
@@ -146,33 +148,6 @@ impl EditWork {
 impl Runtime {
     pub(super) fn native_edit_available(&self) -> bool {
         datum_gui_protocol::gui_menu_model::native_project_edit_available(self.workspace())
-    }
-    pub(super) fn cancel_native_move(&mut self) -> bool {
-        self.native_edit.pending_position = None;
-        self.native_edit.preview_awaiting_presentation = false;
-        if let Some(preview) = self.native_edit.preview.take() {
-            self.native_edit.preview_tip = None;
-            self.set_move_scene(preview.is_schematic(), preview.base().clone());
-            self.session.workspace_mut().cancel_authoring_gesture();
-            self.invalidate_scene();
-            return true;
-        }
-        false
-    }
-    fn restore_pending_move_base(&mut self) {
-        if let Some((schematic, base)) = self.native_edit.pending_move_base.take()
-            && base.project_uuid == self.workspace().scene.project_uuid
-        {
-            self.set_move_scene(schematic, base);
-            self.invalidate_scene();
-        }
-    }
-    fn set_move_scene(&mut self, schematic: bool, scene: datum_gui_protocol::BoardReviewSceneV1) {
-        if schematic {
-            self.session.workspace_mut().schematic_scene = Some(scene);
-        } else {
-            self.session.workspace_mut().scene = scene;
-        }
     }
     pub(super) fn native_move_pointer(&mut self, world: PointNm) -> bool {
         if self.native_edit.pending() {

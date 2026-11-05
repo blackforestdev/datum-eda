@@ -59,8 +59,11 @@ impl NativeMovePreview {
             "Symbol occurrence changed; select it again"
         );
         anyhow::ensure!(
-            authoring.sheet == Some(basis.sheet_id),
-            "Select a Symbol on the current native sheet"
+            base.schematic_document
+                .as_ref()
+                .is_some_and(|document| document.source_sheet == basis.sheet_id
+                    && document.instance_path == id.instance_path),
+            "Select a Symbol in the captured schematic occurrence"
         );
         Ok(Self::Symbol {
             base: base.clone(),

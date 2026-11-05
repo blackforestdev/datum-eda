@@ -117,6 +117,7 @@ impl MarkingMenuState {
                     | "datum.schematic.draw_wire"
                     | "datum.schematic.set_symbol_reference"
                     | "datum.schematic.set_symbol_value"
+                    | "datum.schematic.move_symbol"
             ) | B::GuiLocal("schematic.symbol_fields.open")
         );
         let basis = if circuit {

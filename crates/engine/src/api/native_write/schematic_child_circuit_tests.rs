@@ -175,6 +175,143 @@ fn unique_child_circuit_place_wire_fields_refusal_and_cold_history() {
             assert_eq!(binding(&model, *symbol, &path), *owner);
         }
     }
+    // The same real child and its bound owners support the existing pose lifecycle.
+    let partitions = crate::substrate::electrical_test_partitions(&model, &[]).unwrap();
+    let moves = [
+        json!({"symbol":symbols[0],"instance_path":path,"x_nm":11_000_000,"y_nm":21_000_000}),
+        json!({"symbol":symbols[0],"instance_path":path,"x_nm":11_000_000,"y_nm":21_000_000,"rotation_deg":90}),
+        json!({"symbol":symbols[0],"instance_path":path,"x_nm":11_000_000,"y_nm":21_000_000,"mirrored":true}),
+        json!({"symbols":symbols,"instance_path":path,"reference":{"x":11_000_000,"y":21_000_000},
+            "x_nm":12_000_000,"y_nm":22_000_000,"rotation_deg":90,"mirrored":true}),
+    ];
+    for params in moves {
+        let before = schematic(&model).unwrap();
+        let write = prepare(&model, &root, "datum.schematic.move_symbol", params).unwrap();
+        assert_eq!(
+            schematic(&model).unwrap(),
+            before,
+            "preview/cancel writes nothing"
+        );
+        commit_prepared(&mut model, &root, write).unwrap();
+        model = ProjectResolver::new(&root).resolve().unwrap();
+        let after = schematic(&model).unwrap();
+        assert_eq!(after.sheets[&parent], original.sheets[&parent]);
+        assert_eq!(
+            after.sheets[&child.sheet].wires.keys().collect::<Vec<_>>(),
+            before.sheets[&child.sheet].wires.keys().collect::<Vec<_>>()
+        );
+        assert_eq!(
+            crate::substrate::electrical_test_partitions(&model, &[]).unwrap(),
+            partitions
+        );
+        for (symbol, owner) in symbols.iter().zip(&owners) {
+            assert_eq!(binding(&model, *symbol, &path), *owner);
+            assert_eq!(
+                after.sheets[&child.sheet].symbols[symbol]
+                    .pins
+                    .iter()
+                    .map(|p| p.uuid)
+                    .collect::<Vec<_>>(),
+                before.sheets[&child.sheet].symbols[symbol]
+                    .pins
+                    .iter()
+                    .map(|p| p.uuid)
+                    .collect::<Vec<_>>()
+            );
+        }
+        model
+            .commit_journal_undo(&root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(schematic(&model).unwrap(), before);
+        model
+            .commit_journal_redo(&root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(&root).resolve().unwrap();
+        assert_eq!(schematic(&model).unwrap(), after);
+        assert_eq!(
+            model
+                .electrical_identities
+                .keys()
+                .copied()
+                .collect::<BTreeSet<_>>(),
+            identities
+        );
+    }
+    let refused_source = schematic(&model).unwrap();
+    let refused_tip = model.journal.len();
+    for wrong in [vec![], vec![Uuid::new_v4()]] {
+        assert!(
+            prepare(
+                &model,
+                &root,
+                "datum.schematic.move_symbol",
+                json!({"symbol":symbols[0],"instance_path":wrong,"x_nm":0,"y_nm":0})
+            )
+            .is_err()
+        );
+    }
+    assert_eq!(schematic(&model).unwrap(), refused_source);
+    assert_eq!(model.journal.len(), refused_tip);
+    use crate::api::native_write::schematic_delete_proposal::{
+        self as proposal, DeleteClass, DeleteTarget, NativeProposalAction as Action,
+        NativeProposalRequest,
+    };
+    let act = |model: &mut DesignModel, action| {
+        let request = NativeProposalRequest {
+            project_root: root.clone(),
+            expected_model_revision: model.model_revision.0.clone(),
+            expected_transaction_tip: crate::revision::transaction_tip(&model.journal),
+            action,
+        };
+        proposal::execute(model, &request).unwrap()
+    };
+    let before_delete = schematic(&model).unwrap();
+    let draft = act(
+        &mut model,
+        Action::CreateDelete {
+            proposal_id: Uuid::new_v4(),
+            sheet: child.sheet,
+            instance_path: path.clone(),
+            targets: vec![DeleteTarget {
+                class: DeleteClass::Symbol,
+                id: symbols[0],
+            }],
+        },
+    );
+    act(
+        &mut model,
+        Action::AcceptApply {
+            proposal_id: draft.proposal_id,
+        },
+    );
+    let after_delete = schematic(&model).unwrap();
+    assert!(
+        !after_delete.sheets[&child.sheet]
+            .symbols
+            .contains_key(&symbols[0])
+    );
+    assert_eq!(
+        after_delete.sheets[&child.sheet].symbols[&symbols[1]],
+        before_delete.sheets[&child.sheet].symbols[&symbols[1]]
+    );
+    assert_eq!(after_delete.sheets[&parent], before_delete.sheets[&parent]);
+    assert_eq!(binding(&model, symbols[1], &path), owners[1]);
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), before_delete);
+    assert_eq!(binding(&model, symbols[0], &path), owners[0]);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), after_delete);
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
     let mut repeated = expected.sheet_instances[&child.instance].clone();
     repeated.uuid = Uuid::new_v4();
     repeated.name = "Repeated amplifier".into();
@@ -187,6 +324,8 @@ fn unique_child_circuit_place_wire_fields_refusal_and_cold_history() {
     )
     .unwrap();
     commit_prepared(&mut model, &root, write).unwrap();
+    let refused_source = schematic(&model).unwrap();
+    let refused_tip = model.journal.len();
     assert!(
         prepare(
             &model,
@@ -206,5 +345,16 @@ fn unique_child_circuit_place_wire_fields_refusal_and_cold_history() {
         )
         .is_err()
     );
+    assert!(
+        prepare(
+            &model,
+            &root,
+            "datum.schematic.move_symbol",
+            json!({"symbol":symbols[0],"instance_path":path,"x_nm":0,"y_nm":0})
+        )
+        .is_err()
+    );
+    assert_eq!(schematic(&model).unwrap(), refused_source);
+    assert_eq!(model.journal.len(), refused_tip);
     std::fs::remove_dir_all(root).unwrap();
 }

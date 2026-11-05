@@ -71,7 +71,7 @@ impl Runtime {
         if edit_fields {
             selected::symbol_fields_target(self.workspace())
         } else {
-            selected::target(self.workspace())
+            selected::delete_target(self.workspace())
         }
     }
 
@@ -257,6 +257,12 @@ impl Runtime {
             }
         }
         let kind = DeleteKind::from_class(target.class).unwrap();
+        if target.class == datum_gui_protocol::AuthoredSelectionClass::Symbol {
+            self.session
+                .workspace_mut()
+                .schematic_authoring
+                .circuit_basis = Some(basis.clone());
+        }
         self.session.workspace_mut().authoring.gesture.view_basis = Some(basis);
         self.session
             .workspace_mut()

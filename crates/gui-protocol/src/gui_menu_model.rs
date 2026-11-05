@@ -164,6 +164,8 @@ pub fn native_edit_unavailable_reason(
                 | "datum.schematic.set_symbol_reference"
                 | "datum.schematic.set_symbol_value"
                 | "datum.schematic.place_label"
+                | "datum.schematic.move_symbol"
+                | "datum.schematic.delete_symbol"
         ) {
             return Some("This tool is not available in a child sheet.");
         }
@@ -335,7 +337,7 @@ impl GuiMenuItem {
             self.binding(),
             GuiMenuBinding::GuiLocal("schematic.selection.delete")
         ) {
-            let Ok((_, target)) = selected::target(state) else {
+            let Ok((_, target)) = selected::delete_target(state) else {
                 return Some(
                     "Select one current schematic Symbol, Wire, Label, Junction or No-Connect",
                 );

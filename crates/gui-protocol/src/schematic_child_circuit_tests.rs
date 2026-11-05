@@ -96,6 +96,8 @@ fn child_circuit_preview_requests_and_tool_admission() {
         "datum.schematic.set_symbol_reference",
         "datum.schematic.set_symbol_value",
         "datum.schematic.place_label",
+        "datum.schematic.move_symbol",
+        "datum.schematic.delete_symbol",
     ] {
         assert_eq!(
             crate::gui_menu_model::native_edit_unavailable_reason(&state, verb),
@@ -113,6 +115,87 @@ fn child_circuit_preview_requests_and_tool_admission() {
     let base = crate::camera_scene_for_pane(&state, PaneId(1))
         .unwrap()
         .clone();
+    let symbol = *state.schematic_authoring.source.as_ref().unwrap().sheets[&key.source_sheet]
+        .symbols
+        .keys()
+        .next()
+        .unwrap();
+    let id = crate::AuthoredSelectionIdentity {
+        class: crate::AuthoredSelectionClass::Symbol,
+        id: symbol,
+        instance_path: key.instance_path.clone(),
+    };
+    let authority =
+        crate::selection_resolution::NativeSelectionResolution::capture(&model).unwrap();
+    state.selection = crate::SelectionTarget::Native(Box::new(
+        crate::selection_view::build_selection_view(
+            &model,
+            &authority,
+            crate::SelectionSubject::Object(id.clone()),
+            &state.scene,
+            Some(&base),
+            |_| true,
+        )
+        .unwrap(),
+    ));
+    assert_eq!(selected::delete_target(&state).unwrap().0, basis);
+    assert!(selected::admission(&state, false).is_ok());
+    let delete_command: crate::GuiMenuItem = serde_json::from_value(serde_json::json!({
+        "label":"Delete", "gui_local":"schematic.selection.delete", "requires_project":true
+    }))
+    .unwrap();
+    assert_eq!(delete_command.unavailable_reason(&state), None);
+    let review = delete_review::DeleteReview::capture(&state).unwrap();
+    assert!(review.symbol_delete());
+    assert_eq!(review.basis, basis);
+    assert_eq!(review.preview_scene().schematic_document, Some(key.clone()));
+    use crate::footprint_move_preview::native::NativeMovePreview;
+    let at = PointNm {
+        x: 12_000_000,
+        y: 25_000_000,
+    };
+    let mut moving = NativeMovePreview::symbol(
+        &base,
+        &state.schematic_authoring,
+        &id,
+        at,
+        state.authoring.snap,
+        root.clone(),
+    )
+    .unwrap();
+    assert!(
+        NativeMovePreview::symbol(
+            &primary,
+            &state.schematic_authoring,
+            &id,
+            at,
+            state.authoring.snap,
+            root.clone()
+        )
+        .is_err()
+    );
+    moving
+        .transform_symbol(PlacementTransform::Rotate, at)
+        .unwrap();
+    moving
+        .transform_symbol(PlacementTransform::FlipX, at)
+        .unwrap();
+    assert_eq!(moving.instance_path(), key.instance_path);
+    let moved = moving.scene_at(at).unwrap();
+    assert_eq!(moved.schematic_document, Some(key.clone()));
+    state.schematic_authoring.circuit_basis = Some(basis.clone());
+    state.schematic_authoring.circuit_preview = Some(moved.clone());
+    assert_eq!(
+        crate::camera_scene_for_pane(&state, PaneId(1)),
+        Some(&moved)
+    );
+    assert_eq!(
+        crate::camera_scene_for_pane(&state, PaneId(0)),
+        Some(&primary)
+    );
+    state.schematic_authoring.cancel();
+    assert_eq!(crate::camera_scene_for_pane(&state, PaneId(1)), Some(&base));
+    assert_eq!(state.schematic_authoring.source, before);
     let choice = state
         .schematic_authoring
         .choices

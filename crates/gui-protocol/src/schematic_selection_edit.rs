@@ -97,6 +97,19 @@ pub fn target(
     target_in(state, basis)
 }
 
+/// Delete opts in only a single Symbol; other object classes retain their admission.
+pub fn delete_target(
+    state: &ReviewWorkspaceState,
+) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
+    if matches!(&state.selection, SelectionTarget::Native(view)
+        if matches!(&view.subject, SelectionSubject::Object(id) if id.class == Class::Symbol))
+    {
+        symbol_fields_target(state)
+    } else {
+        target(state)
+    }
+}
+
 /// Existing root-only Text, Bus and member-Wire workflows use the focused source.
 pub fn root_tool_target(
     state: &ReviewWorkspaceState,
@@ -181,7 +194,7 @@ pub fn admission(state: &ReviewWorkspaceState, edit_fields: bool) -> Result<&'st
     let (_, id) = if edit_fields {
         symbol_fields_target(state)?
     } else {
-        target(state)?
+        delete_target(state)?
     };
     let verb = if edit_fields {
         if id.class != Class::Symbol {

@@ -261,22 +261,10 @@ impl Runtime {
             return;
         }
         let result = (|| -> Result<(NativeMovePreview, PointNm, datum_gui_protocol::AuthoringViewBasis)> {
-            let selected = match &self.workspace().selection {
-                datum_gui_protocol::SelectionTarget::Native(view) => view,
+            let (selection_stale, selection_project, selection_revision) = match &self.workspace().selection {
+                datum_gui_protocol::SelectionTarget::Native(view) => (view.stale, view.project, view.revision.0.clone()),
                 _ => anyhow::bail!("Select a current native schematic object before moving"),
             };
-            let base = self
-                .workspace()
-                .schematic_scene
-                .as_ref()
-                .context("Native schematic scene unavailable")?
-                .clone();
-            anyhow::ensure!(
-                !selected.stale
-                    && selected.project.to_string() == base.project_uuid
-                    && selected.revision.0 == base.source_revision,
-                "Schematic selection changed; select it again"
-            );
             let (x, y) = self
                 .last_cursor_pos
                 .context("Move requires a cursor in the Schematic pane")?;
@@ -290,7 +278,24 @@ impl Runtime {
                 anyhow::ensure!(surface==SceneSurface::Schematic,"Move requires a cursor in the Schematic pane");
                 (world,self.pane_at_screen(x,y))
             };
-            let view_basis=self.capture_native_authoring_view(pane).map_err(anyhow::Error::msg)?;
+            let symbol_move = matches!(&subject,
+                datum_gui_protocol::SelectionSubject::Object(id) if id.class == datum_gui_protocol::AuthoredSelectionClass::Symbol)
+                || matches!(&subject, datum_gui_protocol::SelectionSubject::Compound(_));
+            let view_basis = if symbol_move {
+                datum_gui_protocol::AuthoringViewBasis::capture_qualified_schematic(
+                    self.workspace(), pane.context("Move requires its source pane")?)
+            } else {
+                self.capture_native_authoring_view(pane)
+            }.map_err(anyhow::Error::msg)?;
+            let base = if symbol_move {
+                datum_gui_protocol::camera_scene_for_pane(self.workspace(), view_basis.pane)
+            } else {
+                self.workspace().schematic_scene.as_ref()
+            }.context("Native schematic scene unavailable")?.clone();
+            anyhow::ensure!(!selection_stale
+                && selection_project.to_string() == base.project_uuid
+                && selection_revision == base.source_revision,
+                "Schematic selection changed; select it again");
             anyhow::ensure!(view_basis.content == PaneContent::Schematic,
                 "Move requires its schematic source pane");
             let root = self
@@ -352,6 +357,15 @@ impl Runtime {
                     world,
                     target_object_id: Some(target),
                 });
+                if matches!(
+                    &preview,
+                    NativeMovePreview::Symbol { .. } | NativeMovePreview::Symbols(_)
+                ) {
+                    self.session
+                        .workspace_mut()
+                        .schematic_authoring
+                        .circuit_basis = Some(view_basis.clone());
+                }
                 self.session.workspace_mut().authoring.gesture.view_basis = Some(view_basis);
                 self.native_edit.preview_tip = self
                     .workspace()

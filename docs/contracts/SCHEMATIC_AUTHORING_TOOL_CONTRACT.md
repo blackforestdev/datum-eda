@@ -130,6 +130,31 @@ parent/interface evidence; run79's nonprimary-root Port refusal remains recorded
 Narrow-card acceptance refusal has automated coverage, without a narrow-viewport
 visual claim. Other ERC findings and full qualification remain separate.
 
+### Bounded Symbol manipulation inside a unique child
+
+`dat-schematic-child-symbol-lifecycle-h3n1` admits existing Symbol Move,
+Rotate/Mirror keys and Delete on an exact unique child occurrence. Acquisition,
+preview, cancellation and failed-write restoration retain the captured source,
+ordered instance path and pane. Shared Move geometry and canonical operations
+remain the owners; other child object classes and repeated-source edits retain
+their existing restrictions. Symbol-only Delete review uses the same Proposal
+controls, with revision/path checks and existing dependency refusal.
+
+Focused canonical tests cover connected child transforms, bound deletion,
+unchanged parent source, stable pin/wire identities and cold history. Root and
+child multi-gate tests verify surviving sibling membership, last-owner deletion
+and child external-dependency refusal. Existing root group/pose regressions and
+a real-project child preview/admission test pass.
+
+Independent ordinary isolated GUI verification passed a composed Move/Rotate/
+FlipX preview cancellation, acceptance and Undo/Redo on a bound nested-child
+Symbol with its attached wire. Delete Proposal dismissal, acceptance, Undo/Redo
+and restoration preserved the sibling and wire; Save and cold reopen retained
+all 1,144 canonical files exactly. This is not a separate-transform or FlipY GUI
+observation; child multi-gate behavior has focused canonical proof, not a GUI
+fixture claim. Failed-write restoration has source review. Full hierarchy,
+physical/ECO workflows and full qualification remain open.
+
 ### Current-engine grounding (verified)
 
 Native schematic authoring has partially migrated onto the engine

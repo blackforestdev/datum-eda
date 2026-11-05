@@ -64,8 +64,11 @@ impl SymbolGroupPreview {
             "Move basis must contain the complete selected Symbol set"
         );
         anyhow::ensure!(
-            authoring.sheet == Some(basis.sheet_id),
-            "Select Symbols on the current sheet"
+            base.schematic_document
+                .as_ref()
+                .is_some_and(|document| document.source_sheet == basis.sheet_id
+                    && document.instance_path == members[0].instance_path),
+            "Select Symbols in the captured schematic occurrence"
         );
         anyhow::ensure!(
             members

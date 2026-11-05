@@ -34,8 +34,23 @@ pub struct DeleteReview {
     pub refusal: Option<String>,
 }
 impl DeleteReview {
+    pub fn symbol_delete(&self) -> bool {
+        !self.targets.is_empty()
+            && self
+                .targets
+                .iter()
+                .all(|target| target.class == DeleteClass::Symbol)
+    }
     pub fn capture(state: &ReviewWorkspaceState) -> Result<Self, String> {
-        let mut review = Self::capture_source(state)?;
+        let mut review = if matches!(&state.selection, SelectionTarget::Native(view)
+            if !view.members.is_empty() && view.members.iter().all(|id| id.class == Class::Symbol))
+        {
+            let basis =
+                AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
+            Self::capture_source_basis(state, basis)?
+        } else {
+            Self::capture_source(state)?
+        };
         let basis = &review.basis;
         let SelectionTarget::Native(view) = &state.selection else {
             return Err("Select schematic objects first".into());
