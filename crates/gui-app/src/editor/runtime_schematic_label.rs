@@ -33,7 +33,7 @@ impl Runtime {
     }
 
     pub(crate) fn begin_native_text(&mut self) -> bool {
-        if !self.prepare_native_schematic(false) {
+        if !self.prepare_native_root_schematic() {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -44,14 +44,7 @@ impl Runtime {
         true
     }
     pub(crate) fn begin_native_port(&mut self) -> bool {
-        if let Err(reason) = datum_gui_protocol::AuthoringViewBasis::capture_unique_root_schematic(
-            self.workspace(),
-            self.workspace().ui.layout.focused,
-        ) {
-            self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
-            return true;
-        }
-        if !self.prepare_native_circuit(false) {
+        if !self.prepare_native_root_schematic() {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;

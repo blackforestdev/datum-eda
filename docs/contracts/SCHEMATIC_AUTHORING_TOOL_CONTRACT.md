@@ -179,6 +179,25 @@ ladder or add a parent tether. New rotations are cardinal; translation preserves
 an unchanged imported angle. Multiline editing, typography controls, repeated
 source edits and broader hierarchy authoring remain outside this slice.
 
+The bounded root-admission correction (`dat-schematic-nonprimary-root-tools-o800`)
+allows existing Text creation/editing, Bus creation/member editing and member-Wire
+entry controls on any uniquely qualified root sheet. These paths reuse the
+focused source and pane-scoped preview; generic tool admission is unchanged.
+Child and repeated-source editing remain excluded. Text failure restoration
+retains the captured pane basis instead of substituting the primary scene.
+
+Focused real-project checks cover root requests, pane isolation, cancellation
+and stale-selection refusal. Independent ordinary isolated GUI verification
+passed Text creation/editing and both cancellation paths, Text Undo/Redo, Bus
+creation/cancellation, explicit member Entry creation/cancellation and refused
+undeclared-member attachment, Entry Undo/Redo, Save and cold reopening with all
+1,105 canonical files exact. Only the intended pin group joined the chosen
+member; unrelated nets and other root/child sources remained unchanged. The
+existing Bus member form was inspected and canceled after reopening; changed
+Bus-member submission and failed-edit restoration have source review only in
+this increment. The long refusal suffix was clipped (`dat-bus-entry-refusal-details-bq5n`);
+no complete-message visual or full qualification claim is made.
+
 Confirmed IR facts the matrix relies on:
 
 - `LabelKind` (`Local|Global|Hierarchical|Power`) is already a field on

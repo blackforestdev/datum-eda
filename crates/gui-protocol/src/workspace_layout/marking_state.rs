@@ -121,6 +121,11 @@ impl MarkingMenuState {
         );
         let basis = if circuit {
             crate::AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?
+        } else if matches!(item.binding(), B::Verb("datum.schematic.place_text")) {
+            crate::AuthoringViewBasis::capture_unique_root_schematic(
+                state,
+                state.ui.layout.focused,
+            )?
         } else {
             crate::AuthoringViewBasis::capture(state, state.ui.layout.focused)?
         };

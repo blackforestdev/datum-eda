@@ -306,7 +306,6 @@ def erc_pin_taxonomy_surface() -> list[str]:
     electrical = read_text(ROOT / "crates/engine/src/erc/electrical.rs")
     erc_mod = read_text(ROOT / "crates/engine/src/erc/mod.rs")
     erc_hierarchy = read_text(ROOT / "crates/engine/src/erc/hierarchy.rs")
-
     actual_variants = set(
         rust_enum_variants(
             ROOT / "crates/engine/src/pool/pin.rs",

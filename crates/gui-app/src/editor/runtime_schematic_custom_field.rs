@@ -6,6 +6,11 @@ impl Runtime {
     pub(super) fn guard_selected_fields_edit(&self, draft: &FieldsEditDraft) -> Result<(), String> {
         let (basis, target) = if matches!(draft, FieldsEditDraft::Symbol(_)) {
             selected::symbol_fields_target(self.workspace())?
+        } else if matches!(draft, FieldsEditDraft::Bus(_)) {
+            selected::root_tool_target(
+                self.workspace(),
+                datum_gui_protocol::AuthoredSelectionClass::BusSection,
+            )?
         } else {
             selected::target(self.workspace())?
         };

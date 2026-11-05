@@ -209,7 +209,7 @@ fn child_circuit_preview_requests_and_tool_admission() {
         .unwrap()
         .clone();
     let draft = &mut state.schematic_authoring;
-    draft.circuit_basis = Some(basis);
+    draft.circuit_basis = Some(basis.clone());
     draft.chosen = None;
     let mut port = LabelDraft::port(PortDirection::Input);
     port.name = "ROOT_INTERFACE".into();
@@ -235,6 +235,94 @@ fn child_circuit_preview_requests_and_tool_admission() {
         Some(root_key.clone())
     );
     draft.cancel();
+    // Text and Bus share the same root basis and never replace the primary pane.
+    let draft = &mut state.schematic_authoring;
+    draft.circuit_basis = Some(basis.clone());
+    let mut text = LabelDraft::text(90);
+    text.name = "Nonprimary root note".into();
+    let (_, params) = text
+        .placement_request(draft.placement_sheet().unwrap(), at)
+        .unwrap()
+        .verb_params();
+    assert_eq!(params["sheet"], serde_json::json!(root_key.source_sheet));
+    draft.label = Some(text);
+    draft.position = Some(at);
+    draft.picker = false;
+    let ghost = draft.preview_scene(&base, &root).unwrap();
+    assert_eq!(ghost.schematic_document, Some(root_key.clone()));
+    draft.circuit_preview = Some(ghost.clone());
+    assert_eq!(
+        crate::camera_scene_for_pane(&state, PaneId(1)),
+        Some(&ghost)
+    );
+    assert_eq!(
+        crate::camera_scene_for_pane(&state, PaneId(0)),
+        Some(&primary)
+    );
+    let draft = &mut state.schematic_authoring;
+    draft.label = None;
+    draft.wire = true;
+    draft.bus = true;
+    draft.reference = "ROOT_BUS".into();
+    draft.value = "SIGNAL_A,SIGNAL_B".into();
+    draft.vertices = vec![PointNm { x: 0, y: 0 }, at];
+    let (verb, params) = draft.polyline_request().unwrap().verb_params();
+    assert_eq!(verb, "datum.schematic.create_bus");
+    assert_eq!(params["sheet"], serde_json::json!(root_key.source_sheet));
+    assert_eq!(params["instance_path"], serde_json::json!([]));
+    assert_eq!(
+        draft
+            .preview_scene(&base, &root)
+            .unwrap()
+            .schematic_document,
+        Some(root_key.clone())
+    );
+    draft.cancel();
+    assert_eq!(state.schematic_authoring.source, before);
+    assert_eq!(crate::camera_scene_for_pane(&state, PaneId(1)), Some(&base));
+    // Real existing root objects exercise the selected-edit source/revision guards.
+    let authority =
+        crate::selection_resolution::NativeSelectionResolution::capture(&model).unwrap();
+    let sheet = &state.schematic_authoring.source.as_ref().unwrap().sheets[&root_key.source_sheet];
+    let targets = [
+        (
+            crate::AuthoredSelectionClass::SchematicText,
+            *sheet.texts.keys().next().unwrap(),
+        ),
+        (
+            crate::AuthoredSelectionClass::Wire,
+            *sheet.wires.keys().next().unwrap(),
+        ),
+    ];
+    for (class, id) in targets {
+        let id = crate::AuthoredSelectionIdentity {
+            class,
+            id,
+            instance_path: vec![],
+        };
+        state.selection = crate::SelectionTarget::Native(Box::new(
+            crate::selection_view::build_selection_view(
+                &model,
+                &authority,
+                crate::SelectionSubject::Object(id.clone()),
+                &state.scene,
+                Some(&base),
+                |_| true,
+            )
+            .unwrap(),
+        ));
+        assert_eq!(selected::root_tool_target(&state, class).unwrap().1, id);
+        assert!(
+            selected::target(&state).is_err(),
+            "generic tools stay primary-only"
+        );
+        if class == crate::AuthoredSelectionClass::SchematicText {
+            assert!(selected::text_admission(&state).is_ok());
+        }
+        state.scene.source_revision.push_str("-stale");
+        assert!(selected::root_tool_target(&state, class).is_err());
+        state.scene.source_revision = model.model_revision.0.clone();
+    }
     let mut repeated_root = state.schematic_documents.row(&root_key).unwrap().clone();
     repeated_root.key.instance_path.push(Uuid::new_v4());
     state.schematic_documents.rows.push(repeated_root);

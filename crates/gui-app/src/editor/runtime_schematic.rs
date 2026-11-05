@@ -39,8 +39,18 @@ impl Runtime {
             .circuit_basis = basis;
         true
     }
+    pub(super) fn prepare_native_root_schematic(&mut self) -> bool {
+        if let Err(reason) = datum_gui_protocol::AuthoringViewBasis::capture_unique_root_schematic(
+            self.workspace(),
+            self.workspace().ui.layout.focused,
+        ) {
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
+            return false;
+        }
+        self.prepare_native_circuit(false)
+    }
     pub(crate) fn begin_native_bus(&mut self) -> bool {
-        if !self.prepare_native_schematic(false) {
+        if !self.prepare_native_root_schematic() {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;

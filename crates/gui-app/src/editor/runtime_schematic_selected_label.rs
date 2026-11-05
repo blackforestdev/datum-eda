@@ -54,9 +54,11 @@ impl Runtime {
                 let base = if self.native_edit.blocked {
                     prior_base
                 } else {
-                    self.workspace().schematic_scene.clone()
+                    datum_gui_protocol::camera_scene_for_pane(self.workspace(), basis.pane).cloned()
                 };
                 let e = &mut self.session.workspace_mut().schematic_authoring;
+                e.circuit_basis =
+                    matches!(draft, NamedPointEditDraft::Text(_)).then(|| basis.clone());
                 e.named_edit = Some(draft);
                 e.label = Some(label);
                 e.base = base;
@@ -92,7 +94,12 @@ impl Runtime {
             } else {
                 selected::label_admission(self.workspace())?;
             }
-            let (basis, target) = selected::target(self.workspace())?;
+            let (basis, target) =
+                if class == datum_gui_protocol::AuthoredSelectionClass::SchematicText {
+                    selected::root_tool_target(self.workspace(), class)?
+                } else {
+                    selected::target(self.workspace())?
+                };
             let sheet = self
                 .workspace()
                 .schematic_authoring
@@ -154,6 +161,8 @@ impl Runtime {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 e.position = Some(draft.position());
                 e.label = Some(label);
+                e.circuit_basis =
+                    matches!(draft, NamedPointEditDraft::Text(_)).then(|| basis.clone());
                 e.named_edit = Some(draft);
                 e.base = Some(base);
                 e.picker = true;
@@ -180,7 +189,14 @@ impl Runtime {
                 .label
                 .as_ref()
                 .ok_or("Name and choice fields are unavailable")?;
-            let (basis, target) = selected::target(self.workspace())?;
+            let (basis, target) = if matches!(draft, NamedPointEditDraft::Text(_)) {
+                selected::root_tool_target(
+                    self.workspace(),
+                    datum_gui_protocol::AuthoredSelectionClass::SchematicText,
+                )?
+            } else {
+                selected::target(self.workspace())?
+            };
             let tip = self
                 .workspace()
                 .supervision

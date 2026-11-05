@@ -97,6 +97,25 @@ pub fn target(
     target_in(state, basis)
 }
 
+/// Existing root-only Text, Bus and member-Wire workflows use the focused source.
+pub fn root_tool_target(
+    state: &ReviewWorkspaceState,
+    class: Class,
+) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
+    if !matches!(
+        class,
+        Class::SchematicText | Class::BusSection | Class::Wire
+    ) {
+        return Err("Unsupported root tool selection".into());
+    }
+    let basis = AuthoringViewBasis::capture_unique_root_schematic(state, state.ui.layout.focused)?;
+    let result = target_in(state, basis)?;
+    if result.1.class != class {
+        return Err("Select the current object for this tool".into());
+    }
+    Ok(result)
+}
+
 /// Reference/Value alone admits a selected Symbol in an exact unique child.
 pub fn symbol_fields_target(
     state: &ReviewWorkspaceState,
@@ -179,7 +198,7 @@ pub fn admission(state: &ReviewWorkspaceState, edit_fields: bool) -> Result<&'st
 }
 
 pub fn bus_admission(state: &ReviewWorkspaceState) -> Result<&'static str, String> {
-    let (_, target) = target(state)?;
+    let (_, target) = root_tool_target(state, Class::BusSection)?;
     if target.class != Class::BusSection {
         return Err("Select one current Bus to edit its members".into());
     }

@@ -7,7 +7,10 @@ impl Runtime {
     pub(crate) fn begin_native_bus_entry(&mut self) -> bool {
         let prepare = (|| {
             self.selected_schematic_idle()?;
-            let (basis, wire) = selected::target(self.workspace())?;
+            let (basis, wire) = selected::root_tool_target(
+                self.workspace(),
+                datum_gui_protocol::AuthoredSelectionClass::Wire,
+            )?;
             if wire.class != datum_gui_protocol::AuthoredSelectionClass::Wire {
                 return Err("Select an existing scalar member Wire first".into());
             }
@@ -53,7 +56,7 @@ impl Runtime {
                 return true;
             }
         };
-        if !self.prepare_native_schematic(false) {
+        if !self.prepare_native_root_schematic() {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -89,7 +92,10 @@ impl Runtime {
         let request = (|| {
             let e = &self.workspace().schematic_authoring;
             let draft = e.bus_entry.as_ref().ok_or("No Bus Entry is open")?;
-            let (basis, wire) = selected::target(self.workspace())?;
+            let (basis, wire) = selected::root_tool_target(
+                self.workspace(),
+                datum_gui_protocol::AuthoredSelectionClass::Wire,
+            )?;
             let tip = self
                 .workspace()
                 .supervision
