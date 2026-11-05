@@ -25,10 +25,13 @@ impl Runtime {
             }
             HitTarget::InspectorEditSymbol(basis)
             | HitTarget::InspectorEditLabel(basis)
-            | HitTarget::InspectorAssignPart(basis) => {
+            | HitTarget::InspectorAssignPart(basis)
+            | HitTarget::InspectorBindInterface(basis) => {
                 if basis.is_current(self.workspace()) {
                     self.set_application_focus(ApplicationFocus::Editor(basis.pane));
-                    if matches!(target, HitTarget::InspectorAssignPart(_)) {
+                    if matches!(target, HitTarget::InspectorBindInterface(_)) {
+                        self.begin_schematic_interface_binding()
+                    } else if matches!(target, HitTarget::InspectorAssignPart(_)) {
                         self.begin_schematic_assignment()
                     } else if matches!(target, HitTarget::InspectorEditLabel(_)) {
                         if datum_gui_protocol::schematic_authoring::selected::text_admission(

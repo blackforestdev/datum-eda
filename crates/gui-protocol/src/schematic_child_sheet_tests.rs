@@ -129,6 +129,7 @@ fn child_sheet_form_preview_qualified_identity_and_review_refusals() {
             current_model_revision: review.revision.clone(),
             transaction_tip: review.tip,
             child_sheet: Some(summary),
+            interface_binding: None,
             gate_placement: None,
             project_annotation: None,
             annotation: None,

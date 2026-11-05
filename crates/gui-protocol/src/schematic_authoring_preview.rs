@@ -32,6 +32,7 @@ impl SchematicAuthoring {
         self.circuit_preview = None;
         self.disposition_draft = None;
         self.assignment_draft = None;
+        self.interface_draft = None;
         self.gate_draft = None;
         self.child_draft = None;
         self.picker = false;

@@ -229,3 +229,34 @@ Bus tier; explicit Bus interfaces do not make local physical bridges. This is
 complete derived membership within the lawful subject, independent of visibility
 and context caps. Foreign contact is not co-selection or a scalar short. Missing
 or ambiguous declaration/source authority is explicitly unavailable.
+
+
+## Optional native child interfaces — PM059 disposition, 2026-11-05
+
+The standing project manager classified and approved the incomplete-design
+semantics in `dat-schematic-child-interface-binding-u073`. This distinguishes an
+absent optional membership from a missing referenced object; C01–C03 identity,
+nomination, allocation and canonical transaction laws remain unchanged.
+
+A child HierarchicalLabel may exist without a parent binding. It participates in
+existing occurrence-local connectivity and label rules, but has no cross-sheet
+connection unless a valid explicit `SheetInstance.ports` membership supplies one.
+That membership references a real Port on the actual parent source and matches
+exactly one HierarchicalLabel of the same name in the selected child source. Equal
+names across sheets alone never create a join; no drawn edge pin supplies authority.
+The ordered instance UUID path qualifies each side of the connection.
+
+Explicit Unbind removes only that membership and retains both Port and Label.
+The resulting final topology uses the existing PM053 split/merge/remap history.
+Unbound endpoints must be truthfully inspected and diagnosed per source UUID and
+occurrence path; navigation availability is not a claim of electrical binding.
+This does not permit silent repair or a failed binding reported as successful.
+
+Missing referenced source, definition or parent Port, wrong parent/path, cycles,
+unreachable invalid hierarchy, duplicate selected mappings, and missing or
+ambiguous child endpoints for an explicit binding still refuse atomically.
+Read validation distinguishes optional absence per occurrence, including reused
+sources; repeated-source authoring remains outside this bounded implementation.
+No source schema, general hierarchy rewrite, physical/ECO policy or implicit
+name-matching rule is added. Implementation and ordinary GUI proof remain tracked
+by the bounded task; this disposition alone is not verification or qualification.

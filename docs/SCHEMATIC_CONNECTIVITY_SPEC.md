@@ -82,8 +82,13 @@ Four kinds, each with different scoping rules:
 - A BusEntry without a connecting wire or label is a connectivity error.
 
 ### Hierarchical Ports
-- A HierarchicalPort on a sheet defines a named connection point that is
-  visible as a pin on the parent sheet's SheetInstance block.
+- A native HierarchicalPort is a real named connection point on its owning
+  parent source sheet. A selected `SheetInstance.ports` UUID binds it to exactly
+  one same-name HierarchicalLabel in that instance's child source. Drawn block
+  edges or inferred pins do not supply native source identity.
+- An unbound child HierarchicalLabel is valid local source with a qualified
+  unbound diagnostic, not an implicit cross-sheet connection. Unbind retains
+  both endpoints. Imported adapters keep their declared source-format limits.
 - Direction (Input, Output, Bidirectional, Passive) is metadata for ERC,
   not a connectivity constraint.
 
@@ -171,24 +176,24 @@ After all sheets have local connectivity:
 ### Phase 3: Hierarchical Resolution
 
 ```
-For each SheetInstance in the design:
-  1. Identify the child sheet (from SheetDefinition → root_sheet).
-  2. Identify Hierarchical labels on the child sheet.
-  3. For each Hierarchical label:
-     a. Find the matching HierarchicalPort on the child sheet
-        (name must match exactly).
-     b. Find the corresponding port pin on the parent sheet's
-        SheetInstance block.
-     c. The wire connected to the SheetInstance port pin on the parent
-        sheet determines the parent-side net.
-     d. Merge the child-side net segment (containing the Hierarchical label)
-        with the parent-side net.
+For each native SheetInstance occurrence in the design:
+  1. Resolve its actual parent, SheetDefinition and child root source.
+  2. Resolve each explicit instance.ports UUID on the actual parent sheet.
+  3. For each selected parent Port:
+     a. Find exactly one same-name HierarchicalLabel on the child source.
+     b. Join that parent Port's local group to that child Label's local group,
+        using the actual ordered instance paths. No fabricated block pin or
+        blanket cross-sheet name union participates.
+     c. Missing or ambiguous selected endpoints, wrong parent/path, duplicate
+        mappings, cycles or invalid unreachable source refuse atomically.
 
-  4. Unmatched ports:
-     - A HierarchicalPort on a child sheet with no matching label inside
-       the sheet → connectivity diagnostic (unused port).
-     - A SheetInstance port on the parent with no wire connected →
-       connectivity diagnostic (floating port).
+  4. Optional unbound endpoints:
+     - A child HierarchicalLabel without selected membership remains in its
+       existing occurrence-local group; report its unbound UUID/path.
+     - A parent Port without a wire remains an authored local connection point
+       with the existing floating-port diagnostic.
+     - Explicit Unbind removes only membership, retaining both endpoints;
+       PM053 plans the complete final connectivity and recorded identity changes.
 
   5. Multi-instance sheets:
      - If the same SheetDefinition is instantiated multiple times, each

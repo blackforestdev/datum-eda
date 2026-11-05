@@ -23,6 +23,7 @@ pub struct HierarchyTarget {
     pub port_direction: Option<Value>,
     pub child_label: Option<Uuid>,
     pub unavailable: Option<String>,
+    pub unbound_labels: Option<Vec<Uuid>>,
 }
 impl HierarchyTarget {
     pub fn graphic_key(&self) -> String {
@@ -67,6 +68,18 @@ impl HierarchyTarget {
                 json!(self.unavailable.as_deref().unwrap_or("Available")),
             ),
         ]);
+        values.insert(
+            "interface_binding_status".into(),
+            json!(match &self.unbound_labels {
+                Some(labels) if labels.is_empty() => "No unbound child endpoints",
+                Some(_) => "Unbound child endpoints remain local",
+                None => "Interface diagnostics unavailable",
+            }),
+        );
+        values.insert(
+            "unbound_child_label_uuids".into(),
+            json!(self.unbound_labels),
+        );
         if let Some(port) = self.port {
             values.insert("parent_port_uuid".into(), json!(port));
             values.insert("port_name".into(), json!(self.port_name));
@@ -97,6 +110,7 @@ pub fn capture(
         SchematicDocuments::from_source(project, revision, String::new(), source.clone())
             .map_err(|error| error.to_string())?;
     let mut targets = BTreeMap::new();
+    let unbound = eda_engine::connectivity::occurrence_partition::unbound_interfaces(source);
     for row in &documents.rows {
         let Some(parent) = &row.parent else {
             continue;
@@ -136,6 +150,13 @@ pub fn capture(
             port_direction: None,
             child_label: None,
             unavailable: None,
+            unbound_labels: unbound.as_ref().ok().map(|labels| {
+                labels
+                    .keys()
+                    .filter(|label| label.instance_path == row.key.instance_path)
+                    .map(|label| label.source_id)
+                    .collect()
+            }),
         };
         let bindings = eda_engine::connectivity::occurrence_partition::sheet_interface_bindings(
             source,

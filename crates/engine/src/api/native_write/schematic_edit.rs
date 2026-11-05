@@ -56,6 +56,8 @@ enum LabelKindParam {
 #[serde(deny_unknown_fields)]
 struct LabelParams {
     sheet: Uuid,
+    #[serde(default)]
+    instance_path: Vec<Uuid>,
     name: String,
     x_nm: i64,
     y_nm: i64,
@@ -73,15 +75,19 @@ fn place_label(
             "Label name must be nonempty and single-line".into(),
         ));
     }
-    if !schematic(context.model)?.sheets.contains_key(&params.sheet) {
-        return Err(EngineError::Validation("Native sheet not found".into()));
-    }
+    let source = schematic(context.model)?;
+    require_unique_occurrence(&source, params.sheet, &params.instance_path)?;
     let kind = match params.kind.unwrap_or(LabelKindParam::Local) {
         LabelKindParam::Local => LabelKind::Local,
         LabelKindParam::Global => LabelKind::Global,
         LabelKindParam::Hierarchical => LabelKind::Hierarchical,
         LabelKindParam::Power => LabelKind::Power,
     };
+    if !params.instance_path.is_empty() && !matches!(kind, LabelKind::Hierarchical) {
+        return Err(EngineError::Validation(
+            "Child label authoring currently supports Hierarchical labels only".into(),
+        ));
+    }
     let label = NetLabel {
         uuid: Uuid::new_v4(),
         name: params.name,

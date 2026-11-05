@@ -6,6 +6,7 @@ pub use super::schematic_child_sheet::{ChildSheetRequest, ChildSheetSummary};
 pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
 pub use super::schematic_field_batch::{FieldBatchSummary, FieldRowEdit};
 pub use super::schematic_gate_placement::{GatePlacementRequest, GatePlacementSummary};
+pub use super::schematic_interface_binding::{InterfaceBindingRequest, InterfaceBindingSummary};
 pub use super::schematic_project_annotation::ProjectAnnotationSummary;
 use super::{context::WriteProvenance, registry::NativeWriteContext, schematic_delete};
 use crate::{
@@ -67,6 +68,7 @@ pub enum NativeProposalAction {
     },
     CreateGatePlacement(GatePlacementRequest),
     CreateChildSheet(ChildSheetRequest),
+    CreateInterfaceBinding(InterfaceBindingRequest),
     CreateAnnotation {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -107,6 +109,7 @@ impl NativeProposalAction {
         match self {
             Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateChildSheet(request) => request.proposal_id,
+            Self::CreateInterfaceBinding(request) => request.proposal_id,
             Self::CreateFieldBatch { proposal_id, .. }
             | Self::CreateAnnotation { proposal_id, .. }
             | Self::CreateProjectAnnotation { proposal_id }
@@ -152,6 +155,8 @@ pub struct NativeProposalResponse {
     pub gate_placement: Option<GatePlacementSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub child_sheet: Option<ChildSheetSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub interface_binding: Option<InterfaceBindingSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disposition: Option<DispositionSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -212,6 +217,14 @@ pub fn execute(
             create_draft_proposal_from_batch(model, &request.project_root, ProposalCreateRequest {
                 proposal_id: Some(id), batch: write.batch,
                 rationale: "Review complete project reference annotation across every supported root sheet".into(),
+                source: ProposalSource::Manual, checks_run: vec![], finding_fingerprints: vec![],
+            })?;
+        }
+        NativeProposalAction::CreateInterfaceBinding(params) => {
+            let write = super::schematic_interface_binding::build(model, params)?;
+            create_draft_proposal_from_batch(model, &request.project_root, ProposalCreateRequest {
+                proposal_id: Some(id), batch: write.batch,
+                rationale: "Review one explicit parent Port to child Hierarchical Label membership change".into(),
                 source: ProposalSource::Manual, checks_run: vec![], finding_fingerprints: vec![],
             })?;
         }
@@ -433,6 +446,16 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        interface_binding: if super::schematic_interface_binding::is_interface_binding(proposal) {
+            let detail = super::schematic_interface_binding::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         child_sheet: if super::schematic_child_sheet::is_child_sheet(proposal) {
             let detail = super::schematic_child_sheet::summary(model, proposal, false);
             if proposal.status == ProposalStatus::Rejected {
@@ -518,6 +541,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
             "This native action requires a manual proposal for this project",
         ));
     }
+    if super::schematic_interface_binding::is_interface_binding(p) {
+        super::schematic_interface_binding::validate_recorded(p)?;
+        return Ok(p);
+    }
     if super::schematic_child_sheet::is_child_sheet(p) {
         super::schematic_child_sheet::validate_recorded(p)?;
         return Ok(p);
@@ -574,6 +601,9 @@ fn validate_disposition_current(
     model: &DesignModel,
     proposal: &Proposal,
 ) -> Result<(), EngineError> {
+    if super::schematic_interface_binding::is_interface_binding(proposal) {
+        super::schematic_interface_binding::summary(model, proposal, true)?;
+    }
     if super::schematic_child_sheet::is_child_sheet(proposal) {
         super::schematic_child_sheet::summary(model, proposal, true)?;
     }

@@ -17,6 +17,7 @@ pub enum HitTarget {
         section: datum_gui_protocol::inspector_context::InspectorSectionId,
         basis: Option<datum_gui_protocol::inspector_context::InspectorActionBasis>,
     },
+    InspectorBindInterface(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorAssignPart(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorEditSymbol(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorEditLabel(datum_gui_protocol::inspector_context::InspectorNavigationBasis),

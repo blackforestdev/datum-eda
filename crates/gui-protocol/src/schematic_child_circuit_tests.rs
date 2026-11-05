@@ -72,6 +72,7 @@ fn child_circuit_preview_requests_and_tool_admission() {
     let basis = AuthoringViewBasis::capture_qualified_schematic(&state, PaneId(1)).unwrap();
     assert_eq!(basis.document, Some(key.clone()));
     assert!(AuthoringViewBasis::capture(&state, PaneId(1)).is_err());
+    assert!(AuthoringViewBasis::capture_unique_root_schematic(&state, PaneId(1)).is_err());
     let child_command: crate::GuiMenuItem = serde_json::from_value(serde_json::json!({
         "label":"Sheet", "gui_local":"schematic.child_sheet.place", "requires_project":true
     }))
@@ -94,6 +95,7 @@ fn child_circuit_preview_requests_and_tool_admission() {
         "datum.schematic.draw_wire",
         "datum.schematic.set_symbol_reference",
         "datum.schematic.set_symbol_value",
+        "datum.schematic.place_label",
     ] {
         assert_eq!(
             crate::gui_menu_model::native_edit_unavailable_reason(&state, verb),
@@ -102,7 +104,6 @@ fn child_circuit_preview_requests_and_tool_admission() {
     }
     for verb in [
         "datum.schematic.create_bus",
-        "datum.schematic.place_label",
         "datum.schematic.set_symbol_field",
         "datum.schematic.place_port",
     ] {
@@ -142,6 +143,15 @@ fn child_circuit_preview_requests_and_tool_admission() {
     );
     assert_eq!(state.schematic_scene.as_ref(), Some(&primary));
     let draft = &mut state.schematic_authoring;
+    draft.chosen = None;
+    let mut label = LabelDraft::new(LabelKind::Hierarchical);
+    label.name = "CHILD_SIGNAL".into();
+    draft.label = Some(label);
+    let label_ghost = draft.preview_scene(&base, &root).unwrap();
+    assert_eq!(label_ghost.schematic_document, Some(key.clone()));
+    assert_eq!(draft.source, before);
+    draft.label = None;
+    let draft = &mut state.schematic_authoring;
     draft.wire = true;
     draft.vertices = vec![
         PointNm { x: 0, y: 0 },
@@ -176,4 +186,57 @@ fn child_circuit_preview_requests_and_tool_admission() {
         )
         .is_some()
     );
+    // Parent Port uses a unique root, even when another root is the primary scene.
+    let root_key = state
+        .schematic_documents
+        .rows
+        .iter()
+        .find(|row| row.name == "Library access" && row.key.instance_path.is_empty())
+        .unwrap()
+        .key
+        .clone();
+    state
+        .schematic_documents
+        .prepare_scene(&root_key, &root, &model)
+        .unwrap();
+    state
+        .schematic_documents
+        .panes
+        .insert(PaneId(1), root_key.clone());
+    assert_ne!(state.schematic_authoring.sheet, Some(root_key.source_sheet));
+    let basis = AuthoringViewBasis::capture_unique_root_schematic(&state, PaneId(1)).unwrap();
+    let base = crate::camera_scene_for_pane(&state, PaneId(1))
+        .unwrap()
+        .clone();
+    let draft = &mut state.schematic_authoring;
+    draft.circuit_basis = Some(basis);
+    draft.chosen = None;
+    let mut port = LabelDraft::port(PortDirection::Input);
+    port.name = "ROOT_INTERFACE".into();
+    let at = PointNm {
+        x: 10_000_000,
+        y: 10_000_000,
+    };
+    let (verb, params) = port
+        .placement_request(draft.placement_sheet().unwrap(), at)
+        .unwrap()
+        .verb_params();
+    assert_eq!(verb, "datum.schematic.place_port");
+    assert_eq!(params["sheet"], serde_json::json!(root_key.source_sheet));
+    assert_eq!(params["instance_path"], serde_json::json!([]));
+    draft.label = Some(port);
+    draft.picker = false;
+    draft.position = Some(at);
+    assert_eq!(
+        draft
+            .preview_scene(&base, &root)
+            .unwrap()
+            .schematic_document,
+        Some(root_key.clone())
+    );
+    draft.cancel();
+    let mut repeated_root = state.schematic_documents.row(&root_key).unwrap().clone();
+    repeated_root.key.instance_path.push(Uuid::new_v4());
+    state.schematic_documents.rows.push(repeated_root);
+    assert!(AuthoringViewBasis::capture_unique_root_schematic(&state, PaneId(1)).is_err());
 }

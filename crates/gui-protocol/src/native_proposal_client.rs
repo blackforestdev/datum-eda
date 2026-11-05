@@ -47,7 +47,8 @@ impl NativeProjectClient {
             "Proposal receipt identity mismatch"
         );
         let expected = match action {
-            Action::CreateChildSheet(_)
+            Action::CreateInterfaceBinding(_)
+            | Action::CreateChildSheet(_)
             | Action::CreateDelete { .. }
             | Action::CreateDisposition { .. }
             | Action::CreateAssignment { .. }
@@ -135,6 +136,7 @@ mod tests {
                 project_annotation: None,
                 gate_placement: None,
                 child_sheet: None,
+                interface_binding: None,
                 annotation: None,
                 fields: None,
                 assignment: None,

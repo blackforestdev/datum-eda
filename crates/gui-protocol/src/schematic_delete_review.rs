@@ -5,7 +5,8 @@ use crate::{
 };
 use eda_engine::{
     api::native_write::schematic_delete_proposal::{
-        DeleteClass, DeleteTarget, NativeProposalAction, NativeProposalResponse,
+        DeleteClass, DeleteTarget, InterfaceBindingSummary, NativeProposalAction,
+        NativeProposalResponse,
     },
     schematic::Sheet,
     substrate::ProposalStatus,
@@ -14,6 +15,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub interface_binding: Option<InterfaceBindingSummary>,
     pub child_sheet: Option<super::child_sheet::ChildSheetEvidence>,
     pub gate_placement: Option<super::gate_placement::GatePlacementEvidence>,
     pub annotation: Option<super::annotation::AnnotationEvidence>,
@@ -161,6 +163,7 @@ impl DeleteReview {
         Ok(Self {
             gate_placement: None,
             child_sheet: None,
+            interface_binding: None,
             annotation: None,
             fields: None,
             disposition: None,
@@ -267,6 +270,18 @@ impl DeleteReview {
             _ => {
                 return Err(
                     "Project annotation differs from the complete reviewed sheet census".into(),
+                );
+            }
+        }
+        match (&self.interface_binding, &response.interface_binding) {
+            (Some(expected), Some(actual)) if expected == actual && response.deleted.is_empty() => {
+            }
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => {
+                return Err(
+                    "Parent port, child label or occurrence differs from interface review".into(),
                 );
             }
         }
@@ -413,6 +428,13 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(binding) = &self.interface_binding {
+            return format!(
+                "{} interface · {}",
+                if binding.bind { "Bind" } else { "Unbind" },
+                binding.name
+            );
+        }
         if let Some(child) = &self.child_sheet {
             return format!("Create blank child sheet · {}", child.summary.name);
         }
@@ -469,6 +491,21 @@ impl DeleteReview {
         )
     }
     pub fn names(&self) -> String {
+        if let Some(binding) = &self.interface_binding {
+            return format!(
+                "Parent {} · Port {} → child {} · Label {} · occurrence {}",
+                binding.parent,
+                binding.parent_port,
+                binding.child,
+                binding.child_label,
+                binding
+                    .instance_path
+                    .iter()
+                    .map(Uuid::to_string)
+                    .collect::<Vec<_>>()
+                    .join("/")
+            );
+        }
         if let Some(child) = &self.child_sheet {
             return format!(
                 "Parent: {} · new source + definition + placed instance",

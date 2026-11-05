@@ -163,6 +163,7 @@ pub fn native_edit_unavailable_reason(
                 | "datum.schematic.draw_wire"
                 | "datum.schematic.set_symbol_reference"
                 | "datum.schematic.set_symbol_value"
+                | "datum.schematic.place_label"
         ) {
             return Some("This tool is not available in a child sheet.");
         }
@@ -402,6 +403,16 @@ impl GuiMenuItem {
                 Some("datum.schematic.set_symbol_reference")
             }
             GuiMenuBinding::GuiLocal("schematic.power_port.open") => {
+                if state
+                    .schematic_documents
+                    .panes
+                    .get(&state.ui.layout.focused)
+                    .is_some_and(|document| !document.instance_path.is_empty())
+                {
+                    return Some(
+                        "Child label authoring currently supports Hierarchical labels only.",
+                    );
+                }
                 Some("datum.schematic.place_label")
             }
             GuiMenuBinding::Verb(verb) if native_edit_verb(verb) => Some(verb),

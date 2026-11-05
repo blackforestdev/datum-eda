@@ -9,6 +9,7 @@ use crate::schematic::{CheckDomain, CheckWaiver, Schematic, WaiverTarget};
 
 mod electrical;
 mod finding_id;
+mod hierarchy;
 mod pin_evidence;
 use electrical::{
     is_conflicting_output, is_explicit_driver, is_input, is_no_connect, is_passive, is_power_input,
@@ -81,7 +82,7 @@ pub fn run_prechecks_with_nets(
     nets: Vec<crate::schematic::SchematicNetInfo>,
 ) -> Vec<ErcFinding> {
     let mut findings = Vec::new();
-    findings.extend(hierarchical_mismatch_findings(schematic, config));
+    findings.extend(hierarchy::findings(schematic, config));
     let noconnect_pins = noconnect_pin_uuids(schematic);
     let pin_evidence_by_uuid = pin_evidence_by_uuid(schematic);
 
@@ -314,103 +315,6 @@ pub fn run_prechecks_with_nets(
             .then_with(|| a.pin.cmp(&b.pin))
             .then_with(|| a.net_name.cmp(&b.net_name))
     });
-    findings
-}
-
-fn hierarchical_mismatch_findings(schematic: &Schematic, config: &ErcConfig) -> Vec<ErcFinding> {
-    let mut findings = Vec::new();
-    for sheet in schematic.sheets.values() {
-        let mut label_names: BTreeMap<String, Vec<Uuid>> = BTreeMap::new();
-        for label in sheet.labels.values() {
-            if matches!(label.kind, crate::schematic::LabelKind::Hierarchical) {
-                label_names
-                    .entry(label.name.clone())
-                    .or_default()
-                    .push(label.uuid);
-            }
-        }
-        let mut port_names: BTreeMap<String, Vec<Uuid>> = BTreeMap::new();
-        for port in sheet.ports.values() {
-            port_names
-                .entry(port.name.clone())
-                .or_default()
-                .push(port.uuid);
-        }
-
-        if port_names.is_empty() {
-            continue;
-        }
-
-        let missing_ports: Vec<_> = label_names
-            .keys()
-            .filter(|name| !port_names.contains_key(*name))
-            .cloned()
-            .collect();
-        let missing_labels: Vec<_> = port_names
-            .keys()
-            .filter(|name| !label_names.contains_key(*name))
-            .cloned()
-            .collect();
-
-        if missing_ports.is_empty() && missing_labels.is_empty() {
-            continue;
-        }
-
-        let mut object_uuids = Vec::new();
-        for name in &missing_ports {
-            if let Some(uuids) = label_names.get(name) {
-                object_uuids.extend(uuids.iter().copied());
-            }
-        }
-        for name in &missing_labels {
-            if let Some(uuids) = port_names.get(name) {
-                object_uuids.extend(uuids.iter().copied());
-            }
-        }
-        object_uuids.sort();
-        object_uuids.dedup();
-
-        let mut objects = vec![object_ref("sheet", sheet.name.clone())];
-        for name in &missing_ports {
-            objects.push(object_ref("hierarchical_label", name.clone()));
-        }
-        for name in &missing_labels {
-            objects.push(object_ref("port", name.clone()));
-        }
-
-        let mut message_parts = Vec::new();
-        if !missing_ports.is_empty() {
-            message_parts.push(format!(
-                "labels without matching ports: {}",
-                missing_ports.join(", ")
-            ));
-        }
-        if !missing_labels.is_empty() {
-            message_parts.push(format!(
-                "ports without matching labels: {}",
-                missing_labels.join(", ")
-            ));
-        }
-        findings.push(build_finding(
-            "hierarchical_connectivity_mismatch",
-            severity_for(
-                config,
-                "hierarchical_connectivity_mismatch",
-                ErcSeverity::Warning,
-            ),
-            format!(
-                "sheet {} has hierarchical interface mismatch ({})",
-                sheet.name,
-                message_parts.join("; ")
-            ),
-            None,
-            None,
-            None,
-            objects,
-            object_uuids,
-            Vec::new(),
-        ));
-    }
     findings
 }
 

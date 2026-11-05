@@ -69,7 +69,7 @@ pub struct HierarchicalLink {
     pub parent_sheet: Uuid,
     pub child_sheet: Uuid,
     pub parent_port: Uuid,
-    pub child_port: Uuid,
+    pub child_port: Uuid, // native child HierarchicalLabel source UUID
     pub net: Uuid,
 }
 ```
@@ -92,7 +92,8 @@ resolved graph must be byte-stable when serialized.
 ### 4.2 Labels
 - Local labels connect segments within the same sheet scope
 - Global labels connect segments across all sheets
-- Hierarchical labels connect through sheet ports only
+- Native HierarchicalLabels participate in occurrence-local connectivity;
+  cross-sheet joins require the explicit membership in §4.4
 - Conflicting labels on the same resolved segment are a connectivity error
 
 ### 4.3 Power Symbols
@@ -103,10 +104,20 @@ resolved graph must be byte-stable when serialized.
   source format defines them that way
 
 ### 4.4 Hierarchy
-- Child-sheet ports are linked to parent-sheet hierarchical labels/ports
-- Missing or multiply-mapped ports produce connectivity diagnostics
-- Hierarchical resolution is deterministic: same sheet graph and labels
-  always produce the same net assignments
+- Native `SheetInstance.ports` explicitly selects real parent-source Port UUIDs.
+  Each selected Port resolves exactly one same-name child HierarchicalLabel;
+  the actual ordered instance path qualifies the parent/child occurrences.
+- Only those explicit valid memberships join the two local groups. Equal names
+  across sheets alone do not bind them; no drawn block pin creates authority.
+- An absent optional membership is valid unbound local source, diagnosed and
+  inspected with its Label UUID and occurrence path. Unbind retains both
+  endpoints and uses ordinary PM053 final-state identity transitions.
+- Missing referenced parent/source/definition/Port, wrong paths, cycles and
+  missing or multiply matched child targets for an explicit binding refuse.
+  Imported source-format adapters retain their declared orientation and limits;
+  unsupported correspondence is diagnosed, never silently made native authority.
+- Resolution remains deterministic. Reused source occurrences retain independent
+  local scope; bounded GUI authoring of repeated sources is not enabled here.
 
 ### 4.5 Buses
 - Buses are containers for scalar nets, not electrical nets by themselves

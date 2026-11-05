@@ -60,6 +60,7 @@ mod schematic_disposition;
 pub mod schematic_edit;
 pub mod schematic_field_batch;
 pub mod schematic_gate_placement;
+pub mod schematic_interface_binding;
 mod schematic_label_edit;
 pub mod schematic_label_move;
 pub mod schematic_library;

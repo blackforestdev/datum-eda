@@ -18,6 +18,7 @@ pub(super) fn render(
         .assignment_draft
         .as_ref()
         .and_then(|r| r.assignment.as_ref());
+    let interface = e.interface_draft.as_ref();
     let assignment_title = assignment.map(|assignment| {
         if assignment.options.members.len() > 1 {
             assignment.title()
@@ -74,7 +75,9 @@ pub(super) fn render(
         return Ok(());
     }
     draw_text(
-        if let Some(title) = &assignment_title {
+        if interface.is_some() {
+            "Child interface binding"
+        } else if let Some(title) = &assignment_title {
             title
         } else if disposition.is_some() {
             "ERC disposition"
@@ -107,7 +110,9 @@ pub(super) fn render(
         text,
     );
     draw_text(
-        if assignment.is_some() {
+        if interface.is_some() {
+            "Port"
+        } else if assignment.is_some() {
             "Part"
         } else if disposition.is_some() {
             "Rationale"
@@ -130,19 +135,22 @@ pub(super) fn render(
     let focused = state.ui.active_menu.is_none()
         && state.ui.focus == datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused);
     let mut controls = ControlMeshCache::default();
-    if assignment.is_some() || e.bus_entry.is_some() {
+    if interface.is_some() || assignment.is_some() || e.bus_entry.is_some() {
         let rect = RectPx {
             x: panel.x + 90.,
             y: panel.y + 50.,
             width: width - 106.,
             height: 34.,
         };
-        let name = assignment.map(|a| a.part_label()).unwrap_or_else(|| {
-            e.bus_entry
-                .as_ref()
-                .map(|entry| entry.target_label())
-                .unwrap_or_else(|| "No Bus".into())
-        });
+        let name = interface
+            .map(|i| i.port_label())
+            .or_else(|| assignment.map(|a| a.part_label()))
+            .unwrap_or_else(|| {
+                e.bus_entry
+                    .as_ref()
+                    .map(|entry| entry.target_label())
+                    .unwrap_or_else(|| "No Bus".into())
+            });
         button(
             &truncate_text(&name, 39),
             HitTarget::SchematicLabelName,
@@ -182,7 +190,9 @@ pub(super) fn render(
         )?;
     }
     draw_text(
-        if assignment.is_some_and(|assignment| assignment.options.members.len() > 1) {
+        if interface.is_some() {
+            "Action"
+        } else if assignment.is_some_and(|assignment| assignment.options.members.len() > 1) {
             "Scope"
         } else if assignment.is_some() {
             "Gate"
@@ -210,8 +220,9 @@ pub(super) fn render(
         width: width - 106.,
         height: 29.,
     };
-    let choice = assignment
-        .map(|a| a.gate_label())
+    let choice = interface
+        .map(|i| i.action_label().to_owned())
+        .or_else(|| assignment.map(|a| a.gate_label()))
         .or_else(|| disposition.map(|d| d.label().to_owned()))
         .or_else(|| label.text_rotation.map(|rotation| format!("{rotation}°")))
         .unwrap_or_else(|| {
@@ -233,7 +244,9 @@ pub(super) fn render(
     }
     draw_text(
         &truncate_text(
-            e.refusal.as_deref().unwrap_or(if assignment.is_some() {
+            e.refusal.as_deref().unwrap_or(if interface.is_some() {
+                "Port: click or arrows · Enter: review · Escape: cancel"
+            } else if assignment.is_some() {
                 "Part/Gate: click or arrows · Enter: review · Escape: cancel"
             } else if disposition.is_some() {
                 "Enter: review Proposal · Escape: cancel without writing"

@@ -30,6 +30,8 @@ pub use bus_entry::BusEntryDraft;
 pub mod child_sheet;
 #[path = "schematic_gate_placement.rs"]
 pub mod gate_placement;
+#[path = "schematic_interface_binding.rs"]
+pub mod interface_binding;
 
 #[path = "schematic_annotation.rs"]
 pub mod annotation;
@@ -191,6 +193,7 @@ pub enum SchematicEditRequest {
     },
     PlaceLabel {
         sheet: Uuid,
+        instance_path: Vec<Uuid>,
         kind: LabelKind,
         name: String,
         x_nm: i64,
@@ -376,13 +379,14 @@ impl SchematicEditRequest {
             ),
             Self::PlaceLabel {
                 sheet,
+                instance_path,
                 kind,
                 name,
                 x_nm,
                 y_nm,
             } => (
                 "datum.schematic.place_label",
-                serde_json::json!({"sheet":sheet,"kind": match kind {
+                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"kind": match kind {
                     LabelKind::Local => "local", LabelKind::Global => "global",
                     LabelKind::Hierarchical => "hierarchical", LabelKind::Power => "power",
                 },"name":name,"x_nm":x_nm,"y_nm":y_nm}),
@@ -438,6 +442,7 @@ pub struct SchematicAuthoring {
     pub disposition_draft: Option<delete_review::DeleteReview>,
     pub gate_draft: Option<gate_placement::GatePlacementDraft>,
     pub child_draft: Option<child_sheet::ChildSheetDraft>,
+    pub interface_draft: Option<interface_binding::InterfaceBindingDraft>,
     pub assignment_draft: Option<delete_review::DeleteReview>,
     pub creation: Option<NewSchematicDraft>,
     pub editing: Option<FieldsEditDraft>,

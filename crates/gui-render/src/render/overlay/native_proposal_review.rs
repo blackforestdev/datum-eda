@@ -96,11 +96,25 @@ pub(super) fn render(
         }
     }
     let width = (viewport.width - 28.).clamp(80., 520.);
+    let interface_layout = review.interface_binding.as_ref().map(|binding| {
+        datum_gui_protocol::schematic_authoring::interface_binding::review_layout(
+            binding,
+            review.refusal.as_deref(),
+            viewport.width,
+            viewport.height,
+        )
+    });
+    let fits = interface_layout.as_ref().is_none_or(|layout| layout.fits);
+    let height = interface_layout
+        .as_ref()
+        .filter(|_| fits)
+        .map_or(74., |layout| layout.height);
+    let interface_lines = interface_layout.filter(|_| fits).map(|layout| layout.lines);
     let chip = RectPx {
         x: viewport.x + (viewport.width - width) * 0.5,
-        y: viewport.y + viewport.height - 88.,
+        y: viewport.y + viewport.height - height - 14.,
         width,
-        height: 74.,
+        height,
     };
     // open-decisions.html .ghostchip: surface03, accent border, six-pixel radius.
     let mut chrome = Vec::new();
@@ -117,13 +131,21 @@ pub(super) fn render(
     };
     let columns = ((width - 20.) / 6.7).max(1.) as usize;
     let summary = truncate_text(&review.summary(), columns);
-    let detail = review.refusal.clone().unwrap_or_else(|| review.names());
-    let action = if review.pending.is_some() {
+    let detail = if !fits {
+        "Enlarge the parent pane to review every interface identity".into()
+    } else {
+        review.refusal.clone().unwrap_or_else(|| review.names())
+    };
+    let action = if !fits {
+        "Acceptance unavailable · Esc dismiss"
+    } else if review.pending.is_some() {
         "Preparing Proposal…"
     } else if review.accepted() && review.ready() && review.current(state) {
         "Tab retry apply · Esc close review"
     } else if review.ready() && review.current(state) {
-        if review.child_sheet.is_some() {
+        if review.interface_binding.is_some() {
+            datum_gui_protocol::schematic_authoring::interface_binding::INTERFACE_ACCEPT_HINT
+        } else if review.child_sheet.is_some() {
             "Tab accept child sheet · Esc dismiss"
         } else if review.gate_placement.is_some() {
             "Tab accept Gate placement · Esc dismiss"
@@ -139,11 +161,21 @@ pub(super) fn render(
     } else {
         "Proposal unavailable · Esc dismiss"
     };
-    for (line, y, color) in [
-        (summary, chip.y + 10., TEXT_PRIMARY),
-        (truncate_text(&detail, columns), chip.y + 29., TEXT_MUTED),
-        (action.into(), chip.y + 49., design_tokens::chrome::ACCENT),
-    ] {
+    let mut lines = vec![(summary, chip.y + 10., TEXT_PRIMARY)];
+    if let Some(details) = interface_lines {
+        for (index, line) in details.into_iter().enumerate() {
+            lines.push((line, chip.y + 29. + index as f32 * 17., TEXT_MUTED));
+        }
+        lines.push((
+            action.into(),
+            chip.y + height - 20.,
+            design_tokens::chrome::ACCENT,
+        ));
+    } else {
+        lines.push((truncate_text(&detail, columns), chip.y + 29., TEXT_MUTED));
+        lines.push((action.into(), chip.y + 49., design_tokens::chrome::ACCENT));
+    }
+    for (line, y, color) in lines {
         draw_text_clipped(
             &line,
             chip.x + 10.,
@@ -160,3 +192,7 @@ pub(super) fn render(
 #[cfg(test)]
 #[path = "native_proposal_review_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "native_interface_review_tests.rs"]
+mod interface_tests;

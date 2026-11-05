@@ -170,14 +170,33 @@ pub fn sheet_interface_bindings(
         }
         bindings.insert(port.uuid, labels[0].uuid);
     }
-    if child.labels.values().any(|l| {
-        matches!(l.kind, LabelKind::Hierarchical)
-            && !is_bus_container_label(l)
-            && !names.contains(&l.name)
-    }) {
-        return Err(invalid("unbound child hierarchical label"));
-    }
     Ok(bindings)
+}
+
+/// Optional child interfaces retain local connectivity without a cross-sheet join.
+/// Invalid explicitly referenced bindings still fail through the shared resolver.
+pub fn unbound_interfaces(
+    schematic: &Schematic,
+) -> Result<BTreeMap<ElectricalOccurrence, Uuid>, EngineError> {
+    let mut unbound = BTreeMap::new();
+    for context in contexts(schematic)? {
+        let Some(instance) = context.path.last() else {
+            continue;
+        };
+        if schematic.sheet_instances[instance].parent_sheet.is_none() {
+            continue;
+        }
+        let bindings = sheet_interface_bindings(schematic, *instance)?;
+        for label in schematic.sheets[&context.sheet].labels.values() {
+            if matches!(label.kind, LabelKind::Hierarchical)
+                && !is_bus_container_label(label)
+                && !bindings.values().any(|id| *id == label.uuid)
+            {
+                unbound.insert(reference(&context, "labels", label.uuid), context.sheet);
+            }
+        }
+    }
+    Ok(unbound)
 }
 
 pub(crate) fn physical_partitions(

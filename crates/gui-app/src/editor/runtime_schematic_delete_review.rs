@@ -93,6 +93,31 @@ impl Runtime {
         let Some(mut review) = self.workspace().schematic_authoring.delete_review.clone() else {
             return false;
         };
+        if accept && let Some(binding) = &review.interface_binding {
+            let layout = self
+                .current_layout()
+                .viewport_panes(&self.workspace().ui.layout);
+            let fits = layout
+                .panes
+                .iter()
+                .find(|pane| pane.id == review.basis.pane)
+                .is_some_and(|pane| {
+                    datum_gui_protocol::schematic_authoring::interface_binding::review_layout(
+                        binding,
+                        review.refusal.as_deref(),
+                        pane.rect.scene.width,
+                        pane.rect.scene.height,
+                    )
+                    .fits
+                });
+            if !fits {
+                self.log_console_refusal(
+                    ConsoleFeedbackSource::Tool,
+                    "Enlarge the parent pane to review every interface identity before accepting",
+                );
+                return true;
+            }
+        }
         if !accept && (review.closes_locally() || self.native_edit.blocked) {
             // Accepted is not rejectable. Closing is local and never retries a mutation.
             if review.source_current(self.workspace()) {

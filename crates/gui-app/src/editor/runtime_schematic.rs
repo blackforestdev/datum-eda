@@ -6,6 +6,8 @@ use datum_gui_protocol::schematic_authoring::{
 };
 #[path = "runtime_schematic_bus_entry.rs"]
 mod bus_entry;
+#[path = "runtime_schematic_interface_binding.rs"]
+mod interface_binding;
 #[path = "runtime_schematic_junction.rs"]
 mod junction;
 #[path = "runtime_schematic_label.rs"]

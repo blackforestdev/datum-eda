@@ -4,8 +4,24 @@ use datum_gui_protocol::schematic_authoring::LabelDraft;
 use eda_engine::schematic::LabelKind;
 
 impl Runtime {
-    pub(crate) fn begin_native_label(&mut self, kind: LabelKind) -> bool {
-        if !self.prepare_native_schematic(false) {
+    pub(crate) fn begin_native_label(&mut self, mut kind: LabelKind) -> bool {
+        let child = self
+            .workspace()
+            .schematic_documents
+            .panes
+            .get(&self.workspace().ui.layout.focused)
+            .is_some_and(|document| !document.instance_path.is_empty());
+        if child && kind == LabelKind::Power {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Child label authoring currently supports Hierarchical labels only",
+            );
+            return true;
+        }
+        if child {
+            kind = LabelKind::Hierarchical;
+        }
+        if !self.prepare_native_circuit(false) {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -28,7 +44,14 @@ impl Runtime {
         true
     }
     pub(crate) fn begin_native_port(&mut self) -> bool {
-        if !self.prepare_native_schematic(false) {
+        if let Err(reason) = datum_gui_protocol::AuthoringViewBasis::capture_unique_root_schematic(
+            self.workspace(),
+            self.workspace().ui.layout.focused,
+        ) {
+            self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
+            return true;
+        }
+        if !self.prepare_native_circuit(false) {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -42,6 +65,14 @@ impl Runtime {
     }
 
     fn start_label_preview(&mut self) -> bool {
+        if self
+            .workspace()
+            .schematic_authoring
+            .interface_draft
+            .is_some()
+        {
+            return self.preview_schematic_interface_binding();
+        }
         if self
             .workspace()
             .schematic_authoring
@@ -100,6 +131,14 @@ impl Runtime {
                 if self
                     .workspace()
                     .schematic_authoring
+                    .interface_draft
+                    .is_some()
+                {
+                    return true;
+                }
+                if self
+                    .workspace()
+                    .schematic_authoring
                     .assignment_draft
                     .is_some()
                 {
@@ -125,6 +164,7 @@ impl Runtime {
                     return self.cycle_bus_entry_choice(true);
                 }
                 let e = &mut self.session.workspace_mut().schematic_authoring;
+                let child = !e.placement_path().is_empty();
                 if let Some(draft) = &mut e.label {
                     if draft.port_direction.is_some() || draft.text_rotation.is_some() {
                         draft.cycle_kind();
@@ -137,13 +177,21 @@ impl Runtime {
                             LabelKind::Power => LabelKind::Local,
                         };
                         e.preview_dirty = true;
-                    } else {
+                    } else if !child {
                         draft.cycle_kind();
                     }
                     draft.focus = 1;
                 }
             }
             HitTarget::SchematicLabelName => {
+                if self
+                    .workspace()
+                    .schematic_authoring
+                    .interface_draft
+                    .is_some()
+                {
+                    return self.cycle_interface_choice();
+                }
                 if self
                     .workspace()
                     .schematic_authoring
@@ -231,7 +279,12 @@ impl Runtime {
             Key::Named(NamedKey::Space | NamedKey::ArrowLeft | NamedKey::ArrowRight)
                 if picker
                     && focus == 0
-                    && (self.workspace().schematic_authoring.bus_entry.is_some()
+                    && ((self.workspace().schematic_authoring.bus_entry.is_some()
+                        || self
+                            .workspace()
+                            .schematic_authoring
+                            .interface_draft
+                            .is_some())
                         || self
                             .workspace()
                             .schematic_authoring
@@ -242,7 +295,12 @@ impl Runtime {
             }
             _ if picker
                 && focus == 0
-                && (self.workspace().schematic_authoring.bus_entry.is_some()
+                && ((self.workspace().schematic_authoring.bus_entry.is_some()
+                    || self
+                        .workspace()
+                        .schematic_authoring
+                        .interface_draft
+                        .is_some())
                     || self
                         .workspace()
                         .schematic_authoring
@@ -269,12 +327,20 @@ impl Runtime {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
+        let path = e.placement_path();
+        let Some(sheet) = e.placement_sheet() else {
+            return true;
+        };
         let Some(label) = &e.label else { return false };
-        let Some(sheet) = e.sheet else { return true };
         e.position = Some(at);
         e.preview_dirty = true;
         match label.placement_request(sheet, at) {
-            Ok(request) => e.pending_request = Some(request),
+            Ok(mut request) => {
+                if let SchematicEditRequest::PlaceLabel { instance_path, .. } = &mut request {
+                    *instance_path = path;
+                }
+                e.pending_request = Some(request);
+            }
             Err(reason) => {
                 e.refusal = Some(reason);
                 self.invalidate_frame();

@@ -105,6 +105,31 @@ passed cancellation with no design writes, two bound symbols in a nested child,
 Reference/Value editing, a pin-to-pin wire chain, four Undo/Redo steps, unchanged
 parent/sibling sources, Save and exact cold reopening.
 
+### Bounded explicit child interfaces
+
+`dat-schematic-child-interface-binding-u073` adds Hierarchical Label placement
+inside a unique child and real Port placement on the focused unique root sheet.
+Selecting its child instance exposes Bind/Unbind through the shared choice form
+and Proposal review. The review displays the parent/child source UUIDs, real Port
+and Label UUIDs and occurrence paths; acceptance refuses until the complete card
+fits. Escape cancels without changing the design.
+
+Only explicit valid instance membership connects the real parent Port to the
+exact-name child HierarchicalLabel. Unbound labels remain local and are diagnosed
+with their source UUID and occurrence path. Unbind preserves both endpoints and
+wire geometry. Existing typed operations and PM053 transitions preserve atomic
+history; stale, wrong-path, ambiguous and repeated-source requests refuse.
+No child Port placement, repeated-source editing, generated edge pins, new schema
+or physical correspondence is enabled.
+
+Focused engine/protocol/render checks and independent isolated ordinary GUI
+verification cover placement, reviewed cancellation, Bind/Unbind, unrelated-net
+preservation, Undo/Redo, Save and cold reopening with all 1,076 canonical files
+exact. Retained run79 child placement evidence is paired with corrected run80
+parent/interface evidence; run79's nonprimary-root Port refusal remains recorded.
+Narrow-card acceptance refusal has automated coverage, without a narrow-viewport
+visual claim. Other ERC findings and full qualification remain separate.
+
 ### Current-engine grounding (verified)
 
 Native schematic authoring has partially migrated onto the engine
@@ -407,7 +432,14 @@ restated.
   membership/merge (lowest `NetId` survives); ERC
   `power_in_without_source`, hierarchical-connectivity-mismatch;
   `unconnected_interface_port` if a hierarchical label has no matching
-  port.
+  explicit parent binding. Under the PM059 disposition in
+  `dat-schematic-child-interface-binding-u073` and PM053's optional-interface
+  amendment, an unbound child HierarchicalLabel is valid occurrence-local source,
+  reported as unbound with its UUID/path. Only explicit valid instance membership
+  joins a real parent Port to one exact-name child label. Unbind retains both
+  endpoints; invalid referenced bindings still refuse atomically. This bounded
+  workflow uses existing controls and Proposal review; focused checks and
+  independent ordinary GUI binding/history/cold-reopen verification pass.
 - **(7) Proof slice:** On `datum-test`, add a global label VCC on a pin;
   assert that pin's net merges into VCC in derived `net_info`,
   `power_in_without_source` clears if a source is present, undo reverts

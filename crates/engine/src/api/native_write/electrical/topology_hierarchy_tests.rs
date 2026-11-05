@@ -3,7 +3,8 @@ use super::*;
 use crate::schematic::{HierarchicalPort, PortDirection};
 
 #[test]
-fn nested_instance_interfaces_join_only_their_parent_occurrence_and_refuse_missing_binding() {
+fn nested_instance_interfaces_join_only_their_parent_occurrence_and_allow_unbound_local_interfaces()
+{
     let (root, mut model, schematic, parent) = fixture("e1_nested_interfaces");
     let child = Uuid::new_v4();
     add_sheet(&mut model, &root, schematic, child, "sheets/child.json");
@@ -111,7 +112,7 @@ fn nested_instance_interfaces_join_only_their_parent_occurrence_and_refuse_missi
     assert_ne!(ids[0], ids[1]);
     let before = model.clone();
     let mut missing = nested.clone();
-    missing.ports.clear();
+    missing.ports = vec![Uuid::new_v4()];
     let write = build_set_schematic_sheet_instance(
         &model,
         provenance(),
@@ -128,6 +129,67 @@ fn nested_instance_interfaces_join_only_their_parent_occurrence_and_refuse_missi
         std::fs::read(crate::substrate::transaction_journal_path(&root)).unwrap(),
         journal
     );
+    // Optional membership removal splits each occurrence without deleting endpoints.
+    let mut unbound = nested.clone();
+    unbound.ports.clear();
+    let write = build_set_schematic_sheet_instance(
+        &model,
+        provenance(),
+        schematic,
+        nested.uuid,
+        serde_json::to_value(&nested).unwrap(),
+        serde_json::to_value(&unbound).unwrap(),
+    )
+    .unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    let mut split = Vec::new();
+    for parent_path in &parents {
+        split.push(BTreeSet::from([
+            member("wires", parent_wire.uuid, &[*parent_path]),
+            member("ports", port.uuid, &[*parent_path]),
+        ]));
+        split.push(BTreeSet::from([
+            member("wires", child_wire.uuid, &[*parent_path, nested.uuid]),
+            member("labels", label.uuid, &[*parent_path, nested.uuid]),
+        ]));
+    }
+    split.sort();
+    assert_eq!(electrical_test_partitions(&model, &[]).unwrap(), split);
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&model).unwrap();
+    let source = snapshot.schematic_source().unwrap();
+    let endpoints = crate::connectivity::occurrence_partition::unbound_interfaces(source).unwrap();
+    assert_eq!(endpoints.len(), 2);
+    let findings = crate::erc::run_prechecks(source);
+    for parent_path in &parents {
+        assert_eq!(
+            endpoints.get(&member("labels", label.uuid, &[*parent_path, nested.uuid])),
+            Some(&child)
+        );
+        let path = format!("{parent_path}/{}", nested.uuid);
+        assert!(findings.iter().any(|finding| {
+            finding.code == "hierarchical_connectivity_mismatch"
+                && finding.object_uuids == vec![label.uuid]
+                && finding
+                    .objects
+                    .iter()
+                    .any(|object| object.kind == "sheet_occurrence" && object.key == path)
+        }));
+    }
+    let split_ids = model.electrical_identities.clone();
+    persisted(&root, &model);
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(electrical_test_partitions(&model, &[]).unwrap(), expected);
+    assert_eq!(model.electrical_identities, before.electrical_identities);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(model.electrical_identities, split_ids);
+    persisted(&root, &model);
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
     let copy = SheetInstance {
         uuid: Uuid::new_v4(),
         definition: defs[0],

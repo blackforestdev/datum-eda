@@ -70,6 +70,7 @@ impl LabelDraft {
         } else {
             SchematicEditRequest::PlaceLabel {
                 sheet,
+                instance_path: vec![],
                 kind: self.kind.clone(),
                 name,
                 x_nm: at.x,
@@ -109,7 +110,8 @@ impl LabelDraft {
         }
         self.kind = match self.kind {
             LabelKind::Local => LabelKind::Global,
-            LabelKind::Global => LabelKind::Power,
+            LabelKind::Global => LabelKind::Hierarchical,
+            LabelKind::Hierarchical => LabelKind::Power,
             _ => LabelKind::Local,
         };
     }

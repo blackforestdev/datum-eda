@@ -57,6 +57,21 @@ impl AuthoringViewBasis {
         }
         Ok(basis)
     }
+    /// Sheet-local root tools can address any unique root without granting child editing.
+    pub fn capture_unique_root_schematic(
+        state: &ReviewWorkspaceState,
+        pane: PaneId,
+    ) -> Result<Self, String> {
+        let basis = Self::capture_qualified_schematic(state, pane)?;
+        if basis
+            .document
+            .as_ref()
+            .is_none_or(|document| !document.instance_path.is_empty())
+        {
+            return Err("This tool requires an unrepeated root schematic sheet".into());
+        }
+        Ok(basis)
+    }
     fn capture_document(
         state: &ReviewWorkspaceState,
         pane: PaneId,

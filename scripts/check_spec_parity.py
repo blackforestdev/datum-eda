@@ -305,6 +305,7 @@ def erc_pin_taxonomy_surface() -> list[str]:
     schematic = read_text(ROOT / "crates/engine/src/schematic/mod.rs")
     electrical = read_text(ROOT / "crates/engine/src/erc/electrical.rs")
     erc_mod = read_text(ROOT / "crates/engine/src/erc/mod.rs")
+    erc_hierarchy = read_text(ROOT / "crates/engine/src/erc/hierarchy.rs")
 
     actual_variants = set(
         rust_enum_variants(
@@ -330,7 +331,7 @@ def erc_pin_taxonomy_surface() -> list[str]:
         items.add(f"canonical_name:{variant}={name}")
 
     for code in ERC_FINDING_CODES:
-        if code in erc_mod:
+        if code in erc_mod or code in erc_hierarchy:
             items.add(f"erc_code:{code}")
 
     return sorted(items)

@@ -126,7 +126,13 @@ fn render_impl(
                 state, context, Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation))))
         }))
     });
+    let interface_action = context.and_then(|(context, state)| {
+        if view.focus().is_none_or(|id| id.class != Class::SheetInstance) { return None; }
+        Some(HitTarget::InspectorBindInterface(datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
+            state, context, Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation)))))
+    });
     let total = 2
+        + usize::from(interface_action.is_some())
         + usize::from(assignment_action.is_some())
         + usize::from(edit_action.is_some())
         + usize::from(view.stale)
@@ -296,6 +302,9 @@ fn render_impl(
             }
         };
         row(label, Some(target), false, false);
+    }
+    if let Some(action) = interface_action {
+        row("Bind / unbind interface…", Some(action), false, false);
     }
     if let Some(action) = assignment_action {
         row(

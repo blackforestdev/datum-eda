@@ -7,7 +7,7 @@ use eda_engine::{
     schematic::{Schematic, Sheet},
     substrate::ProposalStatus,
 };
-fn review_fixture() -> (
+pub(super) fn review_fixture() -> (
     ReviewWorkspaceState,
     BoardReviewSceneV1,
     uuid::Uuid,
@@ -65,6 +65,7 @@ fn review_fixture() -> (
     state.schematic_authoring.delete_review = Some(DeleteReview {
         gate_placement: None,
         child_sheet: None,
+        interface_binding: None,
         annotation: None,
         fields: None,
         assignment: None,
@@ -98,6 +99,7 @@ fn review_fixture() -> (
             project_annotation: None,
             gate_placement: None,
             child_sheet: None,
+            interface_binding: None,
             annotation: None,
             fields: None,
             assignment: None,

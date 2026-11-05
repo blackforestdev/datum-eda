@@ -1895,8 +1895,17 @@ partitions from authored wires, pins, junctions, labels and ports, qualified by
 ordered SheetInstance UUID paths. It reuses existing segment and label laws;
 local labels isolate occurrences, globals union them, and explicit parent-port /
 unique child hierarchical-label bindings connect only the parent occurrence.
-Missing, multiply mapped, cyclic or unreachable hierarchy refuses; source display
-names do not replace instance identity. Bus-container display syntax is recognized
+Missing referenced objects, multiply mapped explicit bindings, cyclic or
+unreachable invalid hierarchy refuse; source display names do not replace
+instance identity. PM053's optional-interface amendment distinguishes an unbound
+child HierarchicalLabel from an invalid reference: it remains in existing local
+connectivity and is diagnosed per source UUID/occurrence path. Only a valid
+explicit instance membership joins across sheets. Unbind retains both endpoints
+and invokes the normal final-state transitions. The bounded unique-child GUI
+workflow (`dat-schematic-child-interface-binding-u073`) has focused engine, protocol
+and rendering coverage plus independent ordinary GUI Bind/Unbind, cancellation,
+Undo/Redo, Save and exact cold-reopen proof. Repeated-source editing and full
+hierarchy qualification remain outside this increment. Bus-container display syntax is recognized
 without enumerating its range and is not scalar membership authority.
 
 The canonical source owner builds immutable pre/final inputs using materialized

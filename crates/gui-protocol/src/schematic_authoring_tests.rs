@@ -112,6 +112,7 @@ fn label_request_uses_native_kind_tokens_and_exact_name_and_position() {
         (LabelKind::Hierarchical, "hierarchical"),
     ] {
         let request = SchematicEditRequest::PlaceLabel {
+            instance_path: vec![],
             sheet,
             kind,
             name: "+3V3".into(),
@@ -122,7 +123,7 @@ fn label_request_uses_native_kind_tokens_and_exact_name_and_position() {
         assert_eq!(verb, "datum.schematic.place_label");
         assert_eq!(
             params,
-            serde_json::json!({"sheet":sheet,"kind":token,"name":"+3V3","x_nm":-1_000_000,"y_nm":2_000_000})
+            serde_json::json!({"sheet":sheet,"instance_path":[],"kind":token,"name":"+3V3","x_nm":-1_000_000,"y_nm":2_000_000})
         );
     }
 }

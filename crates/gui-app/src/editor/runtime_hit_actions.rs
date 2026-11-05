@@ -41,6 +41,7 @@ impl Runtime {
             HitTarget::InspectorSectionToggle { .. }
             | HitTarget::InspectorRunErc(_)
             | HitTarget::InspectorEditSymbol(_)
+            | HitTarget::InspectorBindInterface(_)
             | HitTarget::InspectorAssignPart(_)
             | HitTarget::InspectorEditLabel(_)
             | HitTarget::InspectorContextScroll { .. }
