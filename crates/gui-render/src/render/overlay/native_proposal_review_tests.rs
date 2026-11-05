@@ -64,6 +64,7 @@ fn review_fixture() -> (
     });
     state.schematic_authoring.delete_review = Some(DeleteReview {
         gate_placement: None,
+        child_sheet: None,
         annotation: None,
         fields: None,
         assignment: None,
@@ -96,6 +97,7 @@ fn review_fixture() -> (
         response: Some(NativeProposalResponse {
             project_annotation: None,
             gate_placement: None,
+            child_sheet: None,
             annotation: None,
             fields: None,
             assignment: None,

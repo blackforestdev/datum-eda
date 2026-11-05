@@ -41,7 +41,17 @@ impl Runtime {
                 .gesture
                 .view_basis
                 .as_ref()
-                .is_some_and(|basis| basis.is_current(self.workspace(), pane))
+                .is_some_and(|basis| {
+                    if self.workspace().schematic_authoring.child_draft.is_some() {
+                        datum_gui_protocol::AuthoringViewBasis::capture_qualified_schematic(
+                            self.workspace(),
+                            pane,
+                        )
+                        .is_ok_and(|current| current == *basis)
+                    } else {
+                        basis.is_current(self.workspace(), pane)
+                    }
+                })
         });
         if !valid {
             self.refuse_native_authoring_view(
@@ -124,6 +134,7 @@ impl Runtime {
             GuiLocalHandler::SymbolFieldsTable => self.begin_schematic_field_table(),
             GuiLocalHandler::AnnotateSheet => self.begin_schematic_annotation(),
             GuiLocalHandler::AnnotateProject => self.begin_schematic_project_annotation(),
+            GuiLocalHandler::PlaceChildSheet => self.begin_child_sheet(),
             GuiLocalHandler::PlaceAnotherGate => self.begin_schematic_gate_placement(),
             GuiLocalHandler::DeleteSchematicSelection => self.delete_selected_schematic(),
             GuiLocalHandler::PowerPort => {

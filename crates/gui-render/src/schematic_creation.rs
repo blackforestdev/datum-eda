@@ -25,7 +25,11 @@ pub(super) fn render(
         rect: panel,
     });
     draw_text(
-        "New Schematic",
+        if state.schematic_authoring.child_draft.is_some() {
+            "New blank child sheet"
+        } else {
+            "New Schematic"
+        },
         panel.x + 16.,
         panel.y + 18.,
         16.,
@@ -60,6 +64,17 @@ pub(super) fn render(
         hits,
         HitTarget::SchematicName,
     )?;
+    if let Some(child) = &state.schematic_authoring.child_draft {
+        draw_text(
+            &truncate_text(&format!("Parent: {}", child.review.source.name), 65),
+            panel.x + 16.,
+            panel.y + 124.,
+            11.,
+            TEXT_MUTED,
+            TextFace::Ui,
+            text,
+        );
+    }
     if let Some(reason) = &draft.refusal {
         draw_text(
             &truncate_text(reason, 65),
@@ -74,7 +89,11 @@ pub(super) fn render(
     for (label, target, x, focus) in [
         ("Cancel", HitTarget::SchematicCancel, panel.x + 16., 1),
         (
-            "Create",
+            if state.schematic_authoring.child_draft.is_some() {
+                "Place"
+            } else {
+                "Create"
+            },
             HitTarget::SchematicCreate,
             panel.x + width - 106.,
             2,

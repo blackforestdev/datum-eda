@@ -399,6 +399,7 @@ pub(super) fn render(
                     Some(MarkerKind::NoConnect) => "Place No-Connect · click an open pin",
                     None if authoring.wire && authoring.bus => "Place Bus · click vertices",
                     None if authoring.wire => "Place Wire · click vertices",
+                    None if authoring.child_draft.is_some() => "Click or Enter: review child sheet",
                     None if authoring.gate_draft.is_some() => {
                         "Click: review Gate · R: rotate · X/Y: flip"
                     }
@@ -414,7 +415,11 @@ pub(super) fn render(
         );
         if !compact {
             draw_text(
-                "Tab: reference/value · Esc: cancel",
+                if authoring.child_draft.is_some() {
+                    "Esc: cancel"
+                } else {
+                    "Tab: reference/value · Esc: cancel"
+                },
                 panel.x + 10.,
                 panel.y + 31.,
                 11.,

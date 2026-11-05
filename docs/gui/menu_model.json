@@ -314,6 +314,12 @@
           "verb": "datum.schematic.place_port"
         },
         {
+          "label": "Sheet",
+          "icon": "panel",
+          "gui_local": "schematic.child_sheet.place",
+          "requires_project": true
+        },
+        {
           "label": "Bus",
           "icon": "bus",
           "verb": "datum.schematic.create_bus"

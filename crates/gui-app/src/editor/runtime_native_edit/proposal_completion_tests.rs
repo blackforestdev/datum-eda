@@ -39,6 +39,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
             fields: None,
             disposition: None,
             gate_placement: None,
+            child_sheet: None,
         };
         let review = DeleteReview {
             basis: AuthoringViewBasis {
@@ -68,6 +69,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
             fields: None,
             disposition: None,
             gate_placement: None,
+            child_sheet: None,
         };
         runtime
             .session

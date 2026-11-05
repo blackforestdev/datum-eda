@@ -60,6 +60,7 @@ fn response(review: &DeleteReview) -> NativeProposalResponse {
     NativeProposalResponse {
         project_annotation: None,
         gate_placement: None,
+        child_sheet: None,
         annotation: None,
         fields: None,
         assignment: None,
@@ -291,6 +292,7 @@ fn erc_disposition_review_freezes_evidence_and_requires_explicit_accept_or_dismi
     let mut receipt = NativeProposalResponse {
         project_annotation: None,
         gate_placement: None,
+        child_sheet: None,
         annotation: None,
         fields: None,
         assignment: None,
@@ -462,6 +464,7 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
         deleted: vec![],
         disposition: None,
         gate_placement: None,
+        child_sheet: None,
         annotation: None,
         fields: None,
         assignment: Some(AssignmentSummary {

@@ -4,6 +4,8 @@ use datum_gui_protocol::{
     native_edit_client::NativeEditAction,
     schematic_authoring::{NewSchematicDraft, SchematicEditRequest},
 };
+#[path = "runtime_child_sheet.rs"]
+mod child;
 impl Runtime {
     pub(super) fn trace_schematic_creation_event(&self, source: &str, key: Option<&KeyEvent>) {
         if self.workspace().schematic_authoring.creation.is_some()
@@ -58,6 +60,10 @@ impl Runtime {
         true
     }
     fn submit_schematic_creation(&mut self) -> bool {
+        if self.workspace().schematic_authoring.child_draft.is_some() {
+            return self.choose_child_sheet_name();
+        }
+
         if self.native_edit.pending() {
             return true;
         }

@@ -51,6 +51,7 @@ pub mod revision;
 pub mod schematic_annotation;
 pub mod schematic_assignment;
 pub mod schematic_bus;
+pub mod schematic_child_sheet;
 pub mod schematic_connectivity;
 mod schematic_custom_fields;
 mod schematic_delete;

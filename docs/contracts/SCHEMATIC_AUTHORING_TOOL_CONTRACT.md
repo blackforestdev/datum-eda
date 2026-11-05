@@ -37,7 +37,8 @@ operations rather than separate tools.
 
 Broader hierarchy authoring (sheet instances, sheet pins and cross-sheet net
 rewiring), variant overlays and library object authoring (see `008` contract)
-remain outside this ten-tool slice. Native flat schematic document creation
+remain outside this ten-tool slice except for the separately bounded blank-child
+creation below. Native flat schematic document creation
 already has a journaled engine/CLI operation; its ordinary GUI binding is a
 separately bounded implementation increment.
 
@@ -56,7 +57,29 @@ return through existing shared panes. No source mutation is part of this command
 family. Bounded implementation and independent ordinary GUI verification cover
 selection, inspection, mouse/keyboard navigation and exact cold reopening without
 design writes. Focused checks cover unavailable references; sheet/interface
-authoring and cross-sheet rewiring remain separate work.
+authoring and cross-sheet rewiring are not supplied by that read-only increment.
+
+### Bounded blank child-sheet creation
+
+`dat-schematic-create-child-sheet-g28d` configures `Place > Sheet`, the existing
+name form, snapped placement preview and explicit Proposal review to create a
+new blank child. The parent must be one complete unique occurrence; a unique
+child can itself be that parent. Source, definition and placed instance are
+created together through the existing three canonical operations, with stable
+identities and one design acceptance. The parent and unrelated source stay intact.
+
+Preview cancellation creates no design records. Dismissing a staged Proposal
+retains its normal metadata/history but creates no sheet, definition or instance.
+Undo/Redo removes/restores the complete accepted set, including both new files.
+Proposal-only metadata preserves the authored revision after history; an actual
+design change still invalidates stale acceptance. Destination collisions refuse
+before acceptance without overwriting the existing file. Focused canonical and
+real-project cold-history checks pass. Independent ordinary GUI checks cover
+name/pose cancellation, Proposal dismissal, atomic acceptance, Undo/Redo, nested
+creation after history, qualified navigation, Save and exact cold reopening. Existing-source reuse, repeated-parent editing, recursive subtree
+creation, cycles, sheet pins and rewiring remain outside this increment. Other
+authoring tools retain their actual qualified capabilities; no root substitution
+makes an unsupported child edit available.
 
 ### Current-engine grounding (verified)
 

@@ -15,6 +15,17 @@ struct Context {
     path: Vec<Uuid>,
 }
 
+/// Complete sheet occurrences, including empty sheets with no selectable objects.
+pub fn sheet_occurrences(
+    schematic: &Schematic,
+) -> Result<BTreeMap<Uuid, Vec<Vec<Uuid>>>, EngineError> {
+    let mut result: BTreeMap<Uuid, Vec<Vec<Uuid>>> = BTreeMap::new();
+    for context in contexts(schematic)? {
+        result.entry(context.sheet).or_default().push(context.path);
+    }
+    Ok(result)
+}
+
 #[derive(Default)]
 struct Groups {
     parent: BTreeMap<ElectricalOccurrence, ElectricalOccurrence>,

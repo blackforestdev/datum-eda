@@ -73,9 +73,9 @@ pub(super) fn compute_model_revision(
     ModelRevision(sha256_digest_hex(hasher.finalize().as_slice()))
 }
 
-/// Generated check results retain the accepted authored input. Older journals
+/// Check results and Proposal-only metadata retain the accepted authored input. Older journals
 /// may carry hashes made before typed object registrations were corrected; a
-/// check must not silently migrate those historical tips. Mixed design/evidence
+/// metadata update must not silently migrate those historical tips. Mixed design/evidence
 /// transactions still recompute, and other evidence families keep their rules.
 pub(super) fn authored_revision_after_operations(
     model: &DesignModel,
@@ -86,7 +86,11 @@ pub(super) fn authored_revision_after_operations(
         && operations.iter().all(|operation| {
             matches!(
                 operation,
-                Operation::SetCheckRun { .. } | Operation::DeleteCheckRun { .. }
+                Operation::SetCheckRun { .. }
+                    | Operation::DeleteCheckRun { .. }
+                    | Operation::CreateProposalMetadata { .. }
+                    | Operation::SetProposalMetadata { .. }
+                    | Operation::DeleteProposalMetadata { .. }
             )
         })
     {

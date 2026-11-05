@@ -2,6 +2,7 @@
 //! No direct-write verb is registered: the complete set always requires review.
 pub use super::schematic_annotation::{AnnotationChange, AnnotationSummary};
 pub use super::schematic_assignment::{AssignmentChoice, AssignmentSummary};
+pub use super::schematic_child_sheet::{ChildSheetRequest, ChildSheetSummary};
 pub use super::schematic_disposition::{DispositionKind, DispositionSummary};
 pub use super::schematic_field_batch::{FieldBatchSummary, FieldRowEdit};
 pub use super::schematic_gate_placement::{GatePlacementRequest, GatePlacementSummary};
@@ -65,6 +66,7 @@ pub enum NativeProposalAction {
         edits: Vec<FieldRowEdit>,
     },
     CreateGatePlacement(GatePlacementRequest),
+    CreateChildSheet(ChildSheetRequest),
     CreateAnnotation {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -104,6 +106,7 @@ impl NativeProposalAction {
     pub fn proposal_id(&self) -> Uuid {
         match self {
             Self::CreateGatePlacement(request) => request.proposal_id,
+            Self::CreateChildSheet(request) => request.proposal_id,
             Self::CreateFieldBatch { proposal_id, .. }
             | Self::CreateAnnotation { proposal_id, .. }
             | Self::CreateProjectAnnotation { proposal_id }
@@ -147,6 +150,8 @@ pub struct NativeProposalResponse {
     pub fields: Option<FieldBatchSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub gate_placement: Option<GatePlacementSummary>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub child_sheet: Option<ChildSheetSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disposition: Option<DispositionSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -208,6 +213,14 @@ pub fn execute(
                 proposal_id: Some(id), batch: write.batch,
                 rationale: "Review complete project reference annotation across every supported root sheet".into(),
                 source: ProposalSource::Manual, checks_run: vec![], finding_fingerprints: vec![],
+            })?;
+        }
+        NativeProposalAction::CreateChildSheet(params) => {
+            super::schematic_child_sheet::check_new_paths(&request.project_root, params)?;
+            let write = super::schematic_child_sheet::build(model, params)?;
+            create_draft_proposal_from_batch(model,&request.project_root,ProposalCreateRequest {
+                proposal_id:Some(id),batch:write.batch,rationale:"Create a new blank child source, definition and placed instance as one operation".into(),
+                source:ProposalSource::Manual,checks_run:vec![],finding_fingerprints:vec![],
             })?;
         }
         NativeProposalAction::CreateGatePlacement(params) => {
@@ -381,6 +394,9 @@ pub fn execute(
         }
         NativeProposalAction::AcceptApply { .. } => {
             let proposal = native_proposal(model, id)?;
+            if super::schematic_child_sheet::is_child_sheet(proposal) {
+                super::schematic_child_sheet::check_destinations(proposal, &request.project_root)?;
+            }
             validate_disposition_current(model, proposal)?;
             let status = proposal.status;
             if status == ProposalStatus::Draft {
@@ -417,6 +433,16 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        child_sheet: if super::schematic_child_sheet::is_child_sheet(proposal) {
+            let detail = super::schematic_child_sheet::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         gate_placement: if super::schematic_gate_placement::is_gate_placement(proposal) {
             let detail = super::schematic_gate_placement::summary(model, proposal, false);
             if proposal.status == ProposalStatus::Rejected {
@@ -492,6 +518,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
             "This native action requires a manual proposal for this project",
         ));
     }
+    if super::schematic_child_sheet::is_child_sheet(p) {
+        super::schematic_child_sheet::validate_recorded(p)?;
+        return Ok(p);
+    }
     if super::schematic_gate_placement::is_gate_placement(p) {
         super::schematic_gate_placement::validate_recorded(p)?;
         return Ok(p);
@@ -544,6 +574,9 @@ fn validate_disposition_current(
     model: &DesignModel,
     proposal: &Proposal,
 ) -> Result<(), EngineError> {
+    if super::schematic_child_sheet::is_child_sheet(proposal) {
+        super::schematic_child_sheet::summary(model, proposal, true)?;
+    }
     if super::schematic_gate_placement::is_gate_placement(proposal) {
         super::schematic_gate_placement::summary(model, proposal, true)?;
     }

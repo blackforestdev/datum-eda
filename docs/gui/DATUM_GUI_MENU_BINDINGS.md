@@ -160,6 +160,7 @@ GUI-LOCAL.
 | Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | PARTIAL: terminal-connected multisegment preview/cancel/finish/history; auto-junction/full editing and every menu projection remain open |
 | Label | `datum.schematic.place_label` / `build_create_schematic_label` | ENGINE-READY / GUI-BLOCKED |
 | Junction / No-connect / Port / Bus / Bus-entry | `datum.schematic.place_*` / connectivity builders | ENGINE-READY / GUI-BLOCKED |
+| Sheet | GUI-local `schematic.child_sheet.place` → shared name/pose → typed `CreateChildSheet` Proposal → existing source/definition/instance operations | Bounded implementation and independent GUI verification: new blank child under one unique qualified parent, including a unique child; explicit acceptance/cancel/history/Save/cold reopen; no existing-source reuse/pins/rewiring |
 | Text / Drawing | `datum.schematic.place_text` / `place_drawing_*` | ENGINE-READY / GUI-BLOCKED |
 
 ### Place / Route (PCB, active-editor-gated)

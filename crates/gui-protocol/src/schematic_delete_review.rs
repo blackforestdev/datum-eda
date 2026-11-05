@@ -14,6 +14,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub child_sheet: Option<super::child_sheet::ChildSheetEvidence>,
     pub gate_placement: Option<super::gate_placement::GatePlacementEvidence>,
     pub annotation: Option<super::annotation::AnnotationEvidence>,
     pub fields: Option<super::field_table::FieldTableDraft>,
@@ -159,6 +160,7 @@ impl DeleteReview {
             .clone();
         Ok(Self {
             gate_placement: None,
+            child_sheet: None,
             annotation: None,
             fields: None,
             disposition: None,
@@ -265,6 +267,18 @@ impl DeleteReview {
             _ => {
                 return Err(
                     "Project annotation differs from the complete reviewed sheet census".into(),
+                );
+            }
+        }
+        match (&self.child_sheet, &response.child_sheet) {
+            (Some(evidence), Some(summary))
+                if evidence.summary == *summary && response.deleted.is_empty() => {}
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => {
+                return Err(
+                    "Child source, definition, parent or placement differs from review".into(),
                 );
             }
         }
@@ -399,6 +413,10 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(child) = &self.child_sheet {
+            return format!("Create blank child sheet · {}", child.summary.name);
+        }
+
         if let Some(table) = &self.fields {
             if let Some(summary) = &table.project_annotation {
                 return format!(
@@ -451,6 +469,13 @@ impl DeleteReview {
         )
     }
     pub fn names(&self) -> String {
+        if let Some(child) = &self.child_sheet {
+            return format!(
+                "Parent: {} · new source + definition + placed instance",
+                child.summary.parent_name
+            );
+        }
+
         if let Some(evidence) = &self.gate_placement {
             return format!(
                 "{} · {}",

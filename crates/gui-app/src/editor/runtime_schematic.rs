@@ -40,7 +40,10 @@ impl Runtime {
         self.invalidate_frame();
         true
     }
-    fn prepare_native_schematic(&mut self, wire: bool) -> bool {
+    pub(super) fn prepare_native_schematic(&mut self, wire: bool) -> bool {
+        self.prepare_native_schematic_in(wire, false)
+    }
+    pub(super) fn prepare_native_schematic_in(&mut self, wire: bool, qualified: bool) -> bool {
         if self.workspace().schematic_authoring.delete_review.is_some() {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
@@ -59,17 +62,27 @@ impl Runtime {
             );
             return false;
         }
-        let view_basis =
-            match self.capture_native_authoring_view(Some(self.workspace().ui.layout.focused)) {
-                Ok(basis) => basis,
-                Err(reason) => {
-                    self.refuse_native_authoring_view(reason);
-                    return false;
-                }
-            };
+        let view_basis = match if qualified {
+            datum_gui_protocol::AuthoringViewBasis::capture_qualified_schematic(
+                self.workspace(),
+                self.workspace().ui.layout.focused,
+            )
+        } else {
+            self.capture_native_authoring_view(Some(self.workspace().ui.layout.focused))
+        } {
+            Ok(basis) => basis,
+            Err(reason) => {
+                self.refuse_native_authoring_view(reason);
+                return false;
+            }
+        };
         self.cancel_native_schematic();
         self.cancel_native_move();
-        let Some(base) = self.workspace().schematic_scene.clone() else {
+        let Some(base) = (if qualified {
+            datum_gui_protocol::camera_scene_for_pane(self.workspace(), view_basis.pane).cloned()
+        } else {
+            self.workspace().schematic_scene.clone()
+        }) else {
             return false;
         };
         let editor = &mut self.session.workspace_mut().schematic_authoring;
@@ -90,15 +103,19 @@ impl Runtime {
         if self.native_edit.pending() {
             return false;
         }
+        let child = self.workspace().schematic_authoring.child_draft.is_some();
         self.session.workspace_mut().schematic_authoring.creation = None;
         let was_active = self.workspace().schematic_authoring.active()
-            || self.workspace().schematic_authoring.picker;
+            || self.workspace().schematic_authoring.picker
+            || child;
         let base = self.session.workspace_mut().schematic_authoring.cancel();
         if was_active {
             self.session.workspace_mut().authoring.gesture.view_basis = None;
         }
         if let Some(base) = base {
-            self.session.workspace_mut().schematic_scene = Some(base);
+            if !child {
+                self.session.workspace_mut().schematic_scene = Some(base);
+            }
             self.invalidate_scene();
             true
         } else {
@@ -238,6 +255,9 @@ impl Runtime {
         }
         if self.workspace().schematic_authoring.creation.is_some() {
             return self.handle_schematic_creation_key(event);
+        }
+        if self.workspace().schematic_authoring.child_draft.is_some() {
+            return self.child_sheet_key(event);
         }
         if !self.workspace().schematic_authoring.active()
             && !self.workspace().schematic_authoring.picker
@@ -490,7 +510,13 @@ impl Runtime {
         };
         match e.preview_scene(base, &backing.request.project_root) {
             Ok(scene) => {
-                self.session.workspace_mut().schematic_scene = Some(scene);
+                if let Some(child) =
+                    &mut self.session.workspace_mut().schematic_authoring.child_draft
+                {
+                    child.scene = Some(scene);
+                } else {
+                    self.session.workspace_mut().schematic_scene = Some(scene);
+                }
                 self.session
                     .workspace_mut()
                     .schematic_authoring
@@ -548,6 +574,9 @@ impl Runtime {
             .is_some()
         {
             return self.place_custom_field(at);
+        }
+        if self.workspace().schematic_authoring.child_draft.is_some() {
+            return self.review_child_sheet(at);
         }
         if self.workspace().schematic_authoring.gate_draft.is_some() {
             return self.review_schematic_gate(at);

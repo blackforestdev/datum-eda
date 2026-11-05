@@ -26,6 +26,8 @@ pub use custom_field::{CustomFieldControl, CustomFieldDraft};
 mod bus_entry;
 pub use bus_entry::BusEntryDraft;
 
+#[path = "schematic_child_sheet.rs"]
+pub mod child_sheet;
 #[path = "schematic_gate_placement.rs"]
 pub mod gate_placement;
 
@@ -423,6 +425,7 @@ pub struct SchematicAuthoring {
     pub delete_review: Option<delete_review::DeleteReview>,
     pub disposition_draft: Option<delete_review::DeleteReview>,
     pub gate_draft: Option<gate_placement::GatePlacementDraft>,
+    pub child_draft: Option<child_sheet::ChildSheetDraft>,
     pub assignment_draft: Option<delete_review::DeleteReview>,
     pub creation: Option<NewSchematicDraft>,
     pub editing: Option<FieldsEditDraft>,

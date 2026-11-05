@@ -197,6 +197,34 @@ impl GuiMenuItem {
         use crate::schematic_authoring::selected;
         if matches!(
             self.binding(),
+            GuiMenuBinding::GuiLocal("schematic.child_sheet.place")
+        ) {
+            if let Some(reason) =
+                native_edit_unavailable_reason(state, "datum.schematic.create_sheet")
+            {
+                return Some(reason);
+            }
+            let Some(key) = state
+                .schematic_documents
+                .panes
+                .get(&state.ui.layout.focused)
+            else {
+                return Some("Focus a qualified native parent sheet");
+            };
+            if state
+                .schematic_documents
+                .rows
+                .iter()
+                .filter(|row| row.key.source_sheet == key.source_sheet)
+                .count()
+                != 1
+            {
+                return Some("Child creation requires an unrepeated parent sheet");
+            }
+            return None;
+        }
+        if matches!(
+            self.binding(),
             GuiMenuBinding::GuiLocal("schematic.gate.place")
         ) {
             return crate::schematic_authoring::gate_placement::GatePlacementDraft::admit_selected(

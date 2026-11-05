@@ -4,7 +4,10 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SchematicWire, SymbolDisplayMode};
 impl SchematicAuthoring {
     pub fn active(&self) -> bool {
-        if self.named_edit.is_some() || self.field_placement().is_some() {
+        if self.named_edit.is_some()
+            || self.field_placement().is_some()
+            || self.child_draft.as_ref().is_some_and(|d| d.choosing_pose)
+        {
             return true;
         }
         (self.chosen.is_some() || self.label.is_some() || self.marker.is_some()) && !self.picker
@@ -14,6 +17,7 @@ impl SchematicAuthoring {
         self.disposition_draft = None;
         self.assignment_draft = None;
         self.gate_draft = None;
+        self.child_draft = None;
         self.picker = false;
         self.chosen = None;
         self.label = None;
@@ -37,6 +41,14 @@ impl SchematicAuthoring {
         base: &BoardReviewSceneV1,
         root: &std::path::Path,
     ) -> anyhow::Result<BoardReviewSceneV1> {
+        if let Some(child) = &self.child_draft {
+            return child.scene_at(
+                self,
+                base,
+                root,
+                self.position.unwrap_or(PointNm { x: 0, y: 0 }),
+            );
+        }
         let mut source = self
             .source
             .clone()

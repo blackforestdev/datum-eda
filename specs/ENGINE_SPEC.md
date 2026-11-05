@@ -2487,5 +2487,27 @@ action. Ordinary GUI behavior is independently verified in
 `dat-schematic-project-annotation-ncy0`: complete two-root review, cancellation,
 one atomic design acceptance, Undo/Redo, no-op, Save and exact cold reopening.
 This bounded result does not qualify hierarchy or unsupported owner families.
-The current derived API inventory contains 276 unique public function names; `specs/SPEC_PARITY.md` pins
-that inventory, including this increment's `change_count` addition.
+The derived API inventory at that checkpoint contained 276 unique public function
+names, including that increment's `change_count` addition.
+
+
+### Blank child-sheet Proposal API
+
+`api::native_write::schematic_child_sheet::parent_occurrence` qualifies one exact
+unique parent path, including an empty or uniquely placed child sheet.
+`preview_source` returns the immutable planned blank source and typed summary for
+the shared placement preview. `CreateChildSheet` on the existing native Proposal
+lifecycle composes the existing sheet, definition and instance create operations
+into one atomic design batch. No new Operation, generic verb or private writer is
+introduced. Repeated parents, invalid identities, destination collisions and stale
+requests refuse; acceptance rechecks the complete recorded batch.
+
+Proposal-only metadata preserves its authored input revision through history.
+Mixed design/Proposal batches still compute a new design revision, and actual
+intervening design edits invalidate stale acceptance. Focused canonical tests and
+the real-project cold-history regression cover creation, cancellation, exact
+inverse files and these revision boundaries. Independent ordinary GUI verification
+for `dat-schematic-create-child-sheet-g28d` covers shared name/pose/Proposal controls,
+cancellation, atomic creation, Undo/Redo, nested creation after history, qualified
+navigation, Save and exact cold reopening. The derived inventory
+now has 278 unique public function names, pinned in `specs/SPEC_PARITY.md`.

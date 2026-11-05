@@ -36,6 +36,32 @@ impl AuthoringViewBasis {
         state: &ReviewWorkspaceState,
         pane: PaneId,
     ) -> Result<Self, String> {
+        Self::capture_document(state, pane, false)
+    }
+    /// Explicit hierarchy command basis; does not enable other source writers.
+    pub fn capture_qualified_schematic(
+        state: &ReviewWorkspaceState,
+        pane: PaneId,
+    ) -> Result<Self, String> {
+        let basis = Self::capture_document(state, pane, true)?;
+        if basis.content != PaneContent::Schematic
+            || state
+                .schematic_documents
+                .rows
+                .iter()
+                .filter(|row| row.key.source_sheet == basis.source)
+                .count()
+                != 1
+        {
+            return Err("Choose one unrepeated schematic parent occurrence".into());
+        }
+        Ok(basis)
+    }
+    fn capture_document(
+        state: &ReviewWorkspaceState,
+        pane: PaneId,
+        qualified: bool,
+    ) -> Result<Self, String> {
         if state.project_unopened || state.ui.layout.focused != pane {
             return Err("Focus the supported native source pane before authoring".into());
         }
@@ -77,7 +103,7 @@ impl AuthoringViewBasis {
                         .is_none_or(|r| r.0 != model.model_revision.0)
                     || state.schematic_documents.row(document).is_none()
                     || document.project != model.project.project_id
-                    || !document.instance_path.is_empty()
+                    || (!qualified && !document.instance_path.is_empty())
                     || state
                         .schematic_authoring
                         .source

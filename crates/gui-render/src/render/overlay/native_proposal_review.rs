@@ -23,7 +23,13 @@ pub(super) fn render(
         return;
     }
     if review.current(state) && proposed_visible(state) && review.response.is_some() {
-        let (ghost_scene, ids, role) = if let Some(gate) = &review.gate_placement {
+        let (ghost_scene, ids, role) = if let Some(child) = &review.child_sheet {
+            (
+                &child.preview,
+                std::collections::BTreeSet::from([child.summary.instance.to_string()]),
+                "proposed_preview",
+            )
+        } else if let Some(gate) = &review.gate_placement {
             let ids = std::iter::once(gate.symbol.uuid.to_string())
                 .chain(gate.symbol.pins.iter().map(|pin| pin.uuid.to_string()))
                 .collect();
@@ -117,7 +123,9 @@ pub(super) fn render(
     } else if review.accepted() && review.ready() && review.current(state) {
         "Tab retry apply · Esc close review"
     } else if review.ready() && review.current(state) {
-        if review.gate_placement.is_some() {
+        if review.child_sheet.is_some() {
+            "Tab accept child sheet · Esc dismiss"
+        } else if review.gate_placement.is_some() {
             "Tab accept Gate placement · Esc dismiss"
         } else if review.annotation.is_some() {
             "Tab accept annotation · Esc dismiss"
