@@ -195,8 +195,9 @@ restated.
 - **(7) Proof slice:** On `datum-test`, place one R symbol on the main
   sheet; assert `OperationResult.created` carries the symbol UUID + a
   freshly minted `ComponentInstance` id, the journal gained one
-  `TransactionRecord`, undo removes it, `model_revision` changes then
-  reverts.
+  `TransactionRecord`; Undo removes the placed domain objects through an
+  append-only compensating transaction. The restored geometry is not a rewind
+  of journal or revision identity; Redo is another recorded transaction.
 - **(8) Not yet supported:** Compatibility/non-pool symbols do not mint
   ComponentInstances, ambiguous/unresolved library bindings remain explicit
   non-ComponentInstance placements, and board package refs attach only after
@@ -289,9 +290,14 @@ restated.
 
 ### 4. draw-wire
 
-- **(1) Manual UI:** `Place > Wire`, click start, click vertices,
-  double-click/Esc to finish; auto-junction where it crosses an existing
-  net.
+- **(1) Manual UI:** `Place > Wire`, click start and vertices to build an
+  uncommitted chain; explicit Finish/double-click commits the whole chain.
+  Escape cancels the uncommitted chain with no design writes, preserving prior
+  accepted wires. An authored endpoint on an existing segment creates an explicit
+  junction in the same atomic batch; a mere crossing or overlap does not join.
+  This applies the NCC-C03 D1/D2 PM clarification recorded on 2026-11-04 in
+  `dat-schematic-connectivity-spec-copy-divergence-form-qkmo`; it is the required
+  behavior, not a claim that the complete gesture is implemented.
 - **(2) Operation:** `DrawWire{sheet_id, points:[Point], net_hint?}` →
   `OperationBatch`; co-emits implicit `PlaceMarker{kind:Junction}` at
   T-intersections in the SAME batch (one undo entry). Current
@@ -808,9 +814,16 @@ memory).
 
 **End-to-end gate for this contract:** a place-symbol → set-symbol-field
 (part bind) → draw-wire → place-label → run-erc sequence on `datum-test`
-that, for each step, produces exactly one journaled `TransactionRecord`
-with provenance, a `model_revision` that moves and reverts under undo, and
-a `ComponentInstance` minted at place-symbol and bound at part assignment.
+that records each accepted design edit as one atomic design transaction with
+provenance, and restores domain state through append-only compensating Undo/Redo
+transactions rather than reverting revision identity. Read-only ERC evaluation
+does not mutate design source; explicit Run ERC persists separate
+revision-qualified check evidence. Proposal metadata and check evidence are
+distinguished from the atomic design transaction instead of imposing one journal
+row on every UI action. For the supported pool-backed fixture, assert a
+`ComponentInstance` is minted at place-symbol and bound at Part assignment;
+the unresolved/ambiguous compatibility cases in §1 require their own explicit
+status and refusal checks rather than a fabricated binding.
 
 ## Not-Yet-Supported
 

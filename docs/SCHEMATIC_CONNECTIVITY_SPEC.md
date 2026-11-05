@@ -98,6 +98,12 @@ Four kinds, each with different scoping rules:
   graphics, transformed by the PlacedSymbol's position, rotation, mirror).
 - A pin endpoint that coincides with a wire endpoint (within zero
   tolerance — integer coordinates, exact match) creates a connection.
+- This is a sufficient formation path, not a necessary condition for all
+  connectivity and not the definition of Net identity. The normative
+  `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` §4.1 also admits shared endpoints,
+  explicit junctions and source-format-defined connections. Once formed,
+  electrical identity and attached movement follow PM053 and the identity-primary
+  NCC-C03 ratification; coordinate changes do not by themselves replace Net identity.
 
 ---
 
