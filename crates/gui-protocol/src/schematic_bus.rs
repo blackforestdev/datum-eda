@@ -93,7 +93,7 @@ impl SchematicAuthoring {
             Ok(SchematicEditRequest::CreateBus {
                 sheet,
                 bus: None,
-                instance_path: vec![],
+                instance_path: self.placement_path(),
                 name,
                 members,
                 points: Some(points),

@@ -96,14 +96,35 @@ impl Runtime {
                 _ => Err("Open the selected Symbol's custom metadata first".into()),
             }
         })();
-        let base = self.workspace().schematic_scene.clone();
+        let result = result.and_then(|draft| {
+            let base = if matches!(&draft, FieldsEditDraft::Custom(custom) if custom.placing) {
+                let basis = draft.basis();
+                let state = self.workspace();
+                Some(
+                    state
+                        .schematic_documents
+                        .scene_for_pane_with_primary(basis.pane, state.schematic_scene.as_ref())
+                        .filter(|scene| {
+                            scene.schematic_document == basis.document
+                                && scene.source_revision == basis.revision
+                                && scene.project_uuid == basis.project.to_string()
+                        })
+                        .cloned()
+                        .ok_or("The captured field source is unavailable; reopen the fields")?,
+                )
+            } else {
+                None
+            };
+            Ok((draft, base))
+        });
         let e = &mut self.session.workspace_mut().schematic_authoring;
         match result {
-            Ok(draft) => {
+            Ok((draft, base)) => {
                 if let FieldsEditDraft::Custom(custom) = &draft
                     && custom.placing
                 {
                     e.base = base;
+                    e.circuit_preview = None;
                     e.picker = false;
                     e.position = custom
                         .selected()
@@ -176,8 +197,15 @@ impl Runtime {
         e.picker = true;
         e.position = None;
         e.preview_dirty = false;
+        let qualified = e.circuit_basis.is_some();
         let base = e.base.take();
-        if let Some(base) = base {
+        if qualified {
+            self.session
+                .workspace_mut()
+                .schematic_authoring
+                .circuit_preview = None;
+            self.invalidate_scene();
+        } else if let Some(base) = base {
             self.session.workspace_mut().schematic_scene = Some(base);
             self.invalidate_scene();
         }

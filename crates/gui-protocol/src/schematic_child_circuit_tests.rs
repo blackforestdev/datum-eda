@@ -454,6 +454,17 @@ fn child_circuit_preview_requests_and_tool_admission() {
         params["instance_path"],
         serde_json::json!(key.instance_path)
     );
+    draft.bus = true;
+    draft.reference = "CHILD_BUS".into();
+    draft.value = "SIGNAL_A,SIGNAL_B".into();
+    let (verb, params) = draft.polyline_request().unwrap().verb_params();
+    assert_eq!(verb, "datum.schematic.create_bus");
+    assert_eq!(params["sheet"], key.source_sheet.to_string());
+    assert_eq!(
+        params["instance_path"],
+        serde_json::json!(key.instance_path),
+        "Bus creation retains the same captured child occurrence as Wire creation"
+    );
     draft.cancel();
     assert!(draft.circuit_basis.is_none());
     assert!(draft.circuit_preview.is_none());
