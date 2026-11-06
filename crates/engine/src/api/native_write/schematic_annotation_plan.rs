@@ -13,6 +13,16 @@ pub(in crate::api::native_write) fn qualify(
     selected: &SelectedSchematicSource,
     sheet: Uuid,
 ) -> Result<QualifiedSheet, EngineError> {
+    qualify_at(model, selected, sheet, &[])
+}
+
+pub(super) fn qualify_at(
+    model: &DesignModel,
+    selected: &SelectedSchematicSource,
+    sheet: Uuid,
+    path: &[Uuid],
+) -> Result<QualifiedSheet, EngineError> {
+    super::super::schematic_edit::require_unique_occurrence(&selected.source, sheet, path)?;
     let source = selected
         .source
         .sheets
@@ -40,7 +50,7 @@ pub(in crate::api::native_write) fn qualify(
     let mut payloads = BTreeMap::new();
     for symbol in &symbols {
         prefix(&symbol.reference)?;
-        if selected.sheet("symbols", symbol.uuid, &[])? != sheet {
+        if selected.sheet("symbols", symbol.uuid, path)? != sheet {
             return Err(invalid("Annotation Symbol belongs to a different sheet"));
         }
         let payload = member_payload(raw.as_ref().unwrap(), "symbols", symbol.uuid, symbol)?;

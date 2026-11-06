@@ -32,9 +32,15 @@ impl TextMovePreview {
             .map_err(|r| anyhow::anyhow!("{r}"))?
             .clone();
         anyhow::ensure!(
-            authoring.move_paths.get(&id.id) == Some(&id.instance_path)
-                && authoring.sheet == Some(basis.sheet_id),
+            authoring.move_paths.get(&id.id) == Some(&id.instance_path),
             "Text occurrence changed; select it again"
+        );
+        anyhow::ensure!(
+            base.schematic_document
+                .as_ref()
+                .is_some_and(|document| document.source_sheet == basis.sheet_id
+                    && document.instance_path == id.instance_path),
+            "Select a Text note in the captured schematic occurrence"
         );
         Ok(Self {
             base: base.clone(),

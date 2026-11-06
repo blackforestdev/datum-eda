@@ -27,6 +27,20 @@ impl Recorded<'_> {
         Ok(*ids.first().unwrap())
     }
 }
+/// A receipt identifies the actual unique source occurrence, including empty sheets.
+pub(super) fn occurrence_path(model: &DesignModel, sheet: Uuid) -> Result<Vec<Uuid>, EngineError> {
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(model)
+        .map_err(|e| invalid(format!("Symbol edit source unavailable: {e:?}")))?;
+    let source = snapshot
+        .schematic_source()
+        .ok_or_else(|| invalid("Symbol edit schematic source unavailable"))?;
+    let paths = crate::connectivity::occurrence_partition::sheet_occurrences(source)?;
+    paths
+        .get(&sheet)
+        .filter(|paths| paths.len() == 1)
+        .map(|paths| paths[0].clone())
+        .ok_or_else(|| invalid("Symbol edit requires one current, unrepeated sheet occurrence"))
+}
 pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
     let mut sheets = BTreeMap::new();
     let mut symbols = BTreeMap::new();

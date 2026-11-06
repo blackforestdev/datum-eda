@@ -4,7 +4,7 @@ use datum_gui_protocol::schematic_authoring::MarkerKind;
 
 impl Runtime {
     pub(crate) fn begin_native_marker(&mut self, kind: MarkerKind) -> bool {
-        if !self.prepare_native_schematic(false) {
+        if !self.prepare_native_circuit(false) {
             return true;
         }
         let editor = &mut self.session.workspace_mut().schematic_authoring;

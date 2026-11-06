@@ -281,6 +281,32 @@ impl SchematicAuthoring {
         scene.project_name = base.project_name.clone();
         Ok(scene)
     }
+    /// Exact electrical contact on one captured source wire. `Ok(None)` when
+    /// the visible-ink source is not a wire of the captured placement
+    /// occurrence (callers keep their existing behavior, e.g. grid). An exact
+    /// arithmetic failure propagates as a refusal — never an off-wire point.
+    /// Pins retain precedence through the existing `pin_point` path.
+    pub fn wire_point(
+        &self,
+        source_uuid: &str,
+        desired: PointNm,
+    ) -> Result<Option<PointNm>, String> {
+        let sheet = match self
+            .placement_sheet()
+            .and_then(|id| self.source.as_ref().map(|source| source.sheets.get(&id)))
+        {
+            Some(Some(sheet)) => sheet,
+            _ => return Ok(None),
+        };
+        let Ok(id) = source_uuid.parse::<Uuid>() else {
+            return Ok(None);
+        };
+        let Some(wire) = sheet.wires.get(&id) else {
+            return Ok(None);
+        };
+        super::schematic_wire_anchor::exact_wire_contact(wire.from, wire.to, desired).map(Some)
+    }
+
     /// Exact terminal pickup uses source-qualified pin or Power-port graphics,
     /// never an invented distance threshold. Background uses shared grid snap.
     pub fn pin_point(&self, source_uuid: &str) -> Option<PointNm> {
@@ -316,7 +342,7 @@ impl SchematicAuthoring {
     }
     /// Source-pin-only pickup for No-Connect; Power labels are not pin identity.
     pub fn marker_pin_point(&self, source_uuid: &str) -> Option<PointNm> {
-        let sheet = self.source.as_ref()?.sheets.get(&self.sheet?)?;
+        let sheet = self.source.as_ref()?.sheets.get(&self.placement_sheet()?)?;
         let id: Uuid = source_uuid.parse().ok()?;
         let mut matches = sheet
             .symbols
@@ -337,7 +363,7 @@ impl SchematicAuthoring {
         let sheet = self
             .source
             .as_ref()
-            .and_then(|s| self.sheet.and_then(|id| s.sheets.get(&id)))
+            .and_then(|s| self.placement_sheet().and_then(|id| s.sheets.get(&id)))
             .ok_or("Native marker sheet unavailable")?;
         let mut pins = sheet
             .symbols
@@ -354,7 +380,9 @@ impl SchematicAuthoring {
     }
     pub fn marker_request(&self, at: PointNm) -> Result<SchematicEditRequest, String> {
         let kind = self.marker.ok_or("Choose a marker tool first")?;
-        let sheet = self.sheet.ok_or("Native marker sheet unavailable")?;
+        let sheet = self
+            .placement_sheet()
+            .ok_or("Native marker sheet unavailable")?;
         if self
             .source
             .as_ref()
@@ -371,6 +399,7 @@ impl SchematicAuthoring {
         };
         Ok(SchematicEditRequest::PlaceMarker {
             sheet,
+            instance_path: self.placement_path(),
             kind,
             x_nm: at.x,
             y_nm: at.y,

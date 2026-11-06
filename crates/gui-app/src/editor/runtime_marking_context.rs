@@ -83,7 +83,10 @@ impl Runtime {
         ) {
             return false;
         }
-        let move_symbol = item.verb.as_deref() == Some("datum.schematic.move_symbol");
+        let move_object = matches!(
+            item.verb.as_deref(),
+            Some("datum.schematic.move_symbol" | "datum.schematic.move")
+        );
         let pickup = self
             .workspace()
             .ui
@@ -91,7 +94,7 @@ impl Runtime {
             .as_ref()
             .and_then(|menu| menu.selection.as_ref())
             .map(|menu| menu.pickup_world);
-        let preserve=move_symbol && target.as_ref().is_some_and(|target|
+        let preserve=move_object && target.as_ref().is_some_and(|target|
             matches!(&self.workspace().selection,datum_gui_protocol::SelectionTarget::Native(view)
                 if !view.stale && datum_gui_protocol::footprint_move_preview::native::group::subject_contains(&view.subject,target)));
         self.dismiss_marking_menu();
@@ -114,7 +117,7 @@ impl Runtime {
                 return true;
             }
         }
-        if move_symbol {
+        if move_object {
             if let Some(pickup) = pickup {
                 self.dispatch_session_command(SessionCommand::SetTool(WorkspaceTool::Move));
                 self.begin_selected_native_move_at(Some(pickup));

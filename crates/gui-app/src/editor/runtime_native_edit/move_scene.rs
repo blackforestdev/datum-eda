@@ -8,10 +8,9 @@ impl Runtime {
         if let Some(preview) = self.native_edit.preview.take() {
             self.native_edit.preview_tip = None;
             self.set_move_scene(preview.is_schematic(), preview.base().clone());
-            if matches!(
-                preview,
-                NativeMovePreview::Symbol { .. } | NativeMovePreview::Symbols(_)
-            ) {
+            // Every schematic Move acquired a qualified occurrence basis;
+            // cancellation clears it uniformly for every subject class.
+            if preview.is_schematic() {
                 let editor = &mut self.session.workspace_mut().schematic_authoring;
                 editor.circuit_basis = None;
                 editor.circuit_preview = None;

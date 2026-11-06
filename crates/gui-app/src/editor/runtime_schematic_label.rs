@@ -4,23 +4,7 @@ use datum_gui_protocol::schematic_authoring::LabelDraft;
 use eda_engine::schematic::LabelKind;
 
 impl Runtime {
-    pub(crate) fn begin_native_label(&mut self, mut kind: LabelKind) -> bool {
-        let child = self
-            .workspace()
-            .schematic_documents
-            .panes
-            .get(&self.workspace().ui.layout.focused)
-            .is_some_and(|document| !document.instance_path.is_empty());
-        if child && kind == LabelKind::Power {
-            self.log_console_refusal(
-                ConsoleFeedbackSource::Tool,
-                "Child label authoring currently supports Hierarchical labels only",
-            );
-            return true;
-        }
-        if child {
-            kind = LabelKind::Hierarchical;
-        }
+    pub(crate) fn begin_native_label(&mut self, kind: LabelKind) -> bool {
         if !self.prepare_native_circuit(false) {
             return true;
         }
@@ -44,7 +28,7 @@ impl Runtime {
         true
     }
     pub(crate) fn begin_native_port(&mut self) -> bool {
-        if !self.prepare_native_root_schematic() {
+        if !self.prepare_native_circuit(false) {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -157,7 +141,6 @@ impl Runtime {
                     return self.cycle_bus_entry_choice(true);
                 }
                 let e = &mut self.session.workspace_mut().schematic_authoring;
-                let child = !e.placement_path().is_empty();
                 if let Some(draft) = &mut e.label {
                     if draft.port_direction.is_some() || draft.text_rotation.is_some() {
                         draft.cycle_kind();
@@ -170,7 +153,7 @@ impl Runtime {
                             LabelKind::Power => LabelKind::Local,
                         };
                         e.preview_dirty = true;
-                    } else if !child {
+                    } else {
                         draft.cycle_kind();
                     }
                     draft.focus = 1;

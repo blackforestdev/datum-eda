@@ -48,7 +48,7 @@ pub fn validate_text(value: &str) -> Result<(), String> {
     Ok(())
 }
 pub fn text_admission(state: &ReviewWorkspaceState) -> Result<&'static str, String> {
-    let (_, target) = root_tool_target(state, Class::SchematicText)?;
+    let (_, target) = tool_target(state, Class::SchematicText)?;
     if target.class != Class::SchematicText {
         return Err("Select one current Text annotation".into());
     }

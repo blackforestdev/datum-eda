@@ -117,11 +117,7 @@ fn prepare(
         }
         Some(&sheet.buses[&id])
     } else {
-        if !path.is_empty() {
-            return Err(invalid(
-                "Bus creation requires the supported source-sheet view",
-            ));
-        }
+        super::schematic_edit::require_unique_occurrence(source, params.sheet, path)?;
         None
     };
     let changing_members = params.members.is_some();

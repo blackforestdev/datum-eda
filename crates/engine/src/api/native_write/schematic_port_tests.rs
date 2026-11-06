@@ -240,7 +240,7 @@ fn native_port_rejects_wrong_sheet_occurrence_name_and_stale_write_without_mutat
     let mut nonroot = params(sheet, None, "NEW_PORT");
     nonroot["instance_path"] = serde_json::json!([Uuid::new_v4()]);
     let error = build(&model, &root, "datum.schematic.place_port", nonroot).unwrap_err();
-    assert!(error.to_string().contains("supported source-sheet view"));
+    assert!(error.to_string().contains("sheet occurrence"));
     assert_eq!(source(&model), before);
     assert_eq!(
         source(&ProjectResolver::new(&root).resolve().unwrap()),

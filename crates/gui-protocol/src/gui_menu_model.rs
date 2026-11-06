@@ -74,6 +74,7 @@ fn native_edit_verb(verb: &str) -> bool {
             | "datum.schematic.delete_text"
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
+            | "datum.schematic.move"
             | "datum.schematic.place_label"
             | "datum.schematic.place_port"
             | "datum.schematic.create_bus"
@@ -162,11 +163,29 @@ pub fn native_edit_unavailable_reason(
             "datum.schematic.place_symbol"
                 | "datum.schematic.place_text"
                 | "datum.schematic.draw_wire"
+                | "datum.schematic.place_marker"
+                | "datum.schematic.place_junction"
+                | "datum.schematic.place_noconnect"
                 | "datum.schematic.set_symbol_reference"
                 | "datum.schematic.set_symbol_value"
+                | "datum.schematic.set_symbol_field"
                 | "datum.schematic.place_label"
+                | "datum.schematic.rename_label"
+                | "datum.schematic.place_port"
+                | "datum.schematic.create_bus"
+                | "datum.schematic.place_bus_entry"
                 | "datum.schematic.move_symbol"
+                | "datum.schematic.move"
+                | "datum.schematic.move_label"
                 | "datum.schematic.delete_symbol"
+                | "datum.schematic.delete_label"
+                | "datum.schematic.delete_text"
+                | "datum.schematic.delete_port"
+                | "datum.schematic.delete_wire"
+                | "datum.schematic.delete_junction"
+                | "datum.schematic.delete_noconnect"
+                | "datum.schematic.delete_bus"
+                | "datum.schematic.delete_bus_entry"
         ) {
             return Some("This tool is not available in a child sheet.");
         }
@@ -406,16 +425,6 @@ impl GuiMenuItem {
                 Some("datum.schematic.set_symbol_reference")
             }
             GuiMenuBinding::GuiLocal("schematic.power_port.open") => {
-                if state
-                    .schematic_documents
-                    .panes
-                    .get(&state.ui.layout.focused)
-                    .is_some_and(|document| !document.instance_path.is_empty())
-                {
-                    return Some(
-                        "Child label authoring currently supports Hierarchical labels only.",
-                    );
-                }
                 Some("datum.schematic.place_label")
             }
             GuiMenuBinding::Verb(verb) if native_edit_verb(verb) => Some(verb),

@@ -57,8 +57,7 @@ impl Runtime {
                     datum_gui_protocol::camera_scene_for_pane(self.workspace(), basis.pane).cloned()
                 };
                 let e = &mut self.session.workspace_mut().schematic_authoring;
-                e.circuit_basis =
-                    matches!(draft, NamedPointEditDraft::Text(_)).then(|| basis.clone());
+                e.circuit_basis = Some(basis.clone());
                 e.named_edit = Some(draft);
                 e.label = Some(label);
                 e.base = base;
@@ -96,7 +95,7 @@ impl Runtime {
             }
             let (basis, target) =
                 if class == datum_gui_protocol::AuthoredSelectionClass::SchematicText {
-                    selected::root_tool_target(self.workspace(), class)?
+                    selected::tool_target(self.workspace(), class)?
                 } else {
                     selected::target(self.workspace())?
                 };
@@ -161,8 +160,7 @@ impl Runtime {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
                 e.position = Some(draft.position());
                 e.label = Some(label);
-                e.circuit_basis =
-                    matches!(draft, NamedPointEditDraft::Text(_)).then(|| basis.clone());
+                e.circuit_basis = Some(basis.clone());
                 e.named_edit = Some(draft);
                 e.base = Some(base);
                 e.picker = true;
@@ -190,7 +188,7 @@ impl Runtime {
                 .as_ref()
                 .ok_or("Name and choice fields are unavailable")?;
             let (basis, target) = if matches!(draft, NamedPointEditDraft::Text(_)) {
-                selected::root_tool_target(
+                selected::tool_target(
                     self.workspace(),
                     datum_gui_protocol::AuthoredSelectionClass::SchematicText,
                 )?

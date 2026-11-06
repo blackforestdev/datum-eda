@@ -1,5 +1,7 @@
 //! Native schematic gestures reuse the existing asynchronous canonical worker.
 use super::*;
+#[path = "runtime_schematic_snap.rs"]
+mod snap;
 use datum_gui_protocol::native_edit_client::NativeEditAction;
 use datum_gui_protocol::schematic_authoring::{
     PlacementField, PlacementTransform, SchematicEditRequest, bus_fields,
@@ -39,18 +41,8 @@ impl Runtime {
             .circuit_basis = basis;
         true
     }
-    pub(super) fn prepare_native_root_schematic(&mut self) -> bool {
-        if let Err(reason) = datum_gui_protocol::AuthoringViewBasis::capture_unique_root_schematic(
-            self.workspace(),
-            self.workspace().ui.layout.focused,
-        ) {
-            self.log_console_refusal(ConsoleFeedbackSource::Tool, reason);
-            return false;
-        }
-        self.prepare_native_circuit(false)
-    }
     pub(crate) fn begin_native_bus(&mut self) -> bool {
-        if !self.prepare_native_root_schematic() {
+        if !self.prepare_native_circuit(false) {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -467,54 +459,6 @@ impl Runtime {
             self.invalidate_frame();
         }
         true
-    }
-    fn schematic_snap_point(&self, world: PointNm, screen: (f32, f32)) -> Option<PointNm> {
-        let pane = self.pane_at_screen(screen.0, screen.1)?;
-        let scene = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?;
-        if let Some(HitTarget::AuthoredObject(id)) =
-            self.presented_hits.hit_test(screen.0, screen.1)
-            && let Some(graphic) = scene.board_graphics.iter().find(|g| &g.object_id == id)
-            && let Some(point) = self
-                .workspace()
-                .schematic_authoring
-                .pin_point(&graphic.source_object_uuid)
-        {
-            return Some(point);
-        }
-        // Authored world ink is retained, not a screen-chrome hit region. Reuse
-        // its existing geometry predicate, admitting only complete committed
-        // source pins from the gesture's revision-qualified immutable basis.
-        if let Some(retained) = self.renderer.render_session().schematic_for_pane(pane)
-            && let Some(HitTarget::AuthoredObject(id)) =
-                retained.hit_test_authored_world_eligible(world, self.workspace(), |target| {
-                    let HitTarget::AuthoredObject(id) = target else {
-                        return false;
-                    };
-                    scene
-                        .board_graphics
-                        .iter()
-                        .find(|g| &g.object_id == id)
-                        .and_then(|graphic| {
-                            self.workspace()
-                                .schematic_authoring
-                                .pin_point(&graphic.source_object_uuid)
-                        })
-                        .is_some()
-                })
-            && let Some(point) = scene
-                .board_graphics
-                .iter()
-                .find(|g| g.object_id == id)
-                .and_then(|graphic| {
-                    self.workspace()
-                        .schematic_authoring
-                        .pin_point(&graphic.source_object_uuid)
-                })
-        {
-            return Some(point);
-        }
-        datum_gui_protocol::checked_snap_authoring_point(world, self.workspace().authoring.snap)
-            .ok()
     }
     pub(super) fn prepare_native_schematic_frame(&mut self) {
         if !self.native_edit.pending()

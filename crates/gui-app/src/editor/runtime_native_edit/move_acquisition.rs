@@ -83,6 +83,9 @@ impl Runtime {
             AuthoredSelectionClass::Symbol
                 | AuthoredSelectionClass::Label
                 | AuthoredSelectionClass::SchematicText
+                | AuthoredSelectionClass::Wire
+                | AuthoredSelectionClass::Junction
+                | AuthoredSelectionClass::Port
         ) {
             let id = id.clone();
             self.begin_schematic_move(SelectionSubject::Object(id), anchor);
@@ -278,20 +281,14 @@ impl Runtime {
                 anyhow::ensure!(surface==SceneSurface::Schematic,"Move requires a cursor in the Schematic pane");
                 (world,self.pane_at_screen(x,y))
             };
-            let symbol_move = matches!(&subject,
-                datum_gui_protocol::SelectionSubject::Object(id) if id.class == datum_gui_protocol::AuthoredSelectionClass::Symbol)
-                || matches!(&subject, datum_gui_protocol::SelectionSubject::Compound(_));
-            let view_basis = if symbol_move {
-                datum_gui_protocol::AuthoringViewBasis::capture_qualified_schematic(
-                    self.workspace(), pane.context("Move requires its source pane")?)
-            } else {
-                self.capture_native_authoring_view(pane)
-            }.map_err(anyhow::Error::msg)?;
-            let base = if symbol_move {
-                datum_gui_protocol::camera_scene_for_pane(self.workspace(), view_basis.pane)
-            } else {
-                self.workspace().schematic_scene.as_ref()
-            }.context("Native schematic scene unavailable")?.clone();
+            // Every schematic Move subject uses the one qualified focused
+            // occurrence basis and its pane camera scene; no class keeps a
+            // primary-sheet fallback (PM direction on circuit authoring).
+            let view_basis = datum_gui_protocol::AuthoringViewBasis::capture_qualified_schematic(
+                self.workspace(), pane.context("Move requires its source pane")?)
+                .map_err(anyhow::Error::msg)?;
+            let base = datum_gui_protocol::camera_scene_for_pane(self.workspace(), view_basis.pane)
+                .context("Native schematic scene unavailable")?.clone();
             anyhow::ensure!(!selection_stale
                 && selection_project.to_string() == base.project_uuid
                 && selection_revision == base.source_revision,
@@ -308,10 +305,15 @@ impl Runtime {
                 .clone();
             let preview = match &subject {
                 datum_gui_protocol::SelectionSubject::Object(id) => {
-                    let begin = if id.class == datum_gui_protocol::AuthoredSelectionClass::SchematicText {NativeMovePreview::text}
-                    else if id.class == datum_gui_protocol::AuthoredSelectionClass::Label {
-                        NativeMovePreview::label
-                    } else { NativeMovePreview::symbol };
+                    use datum_gui_protocol::AuthoredSelectionClass as Class;
+                    let begin = match id.class {
+                        Class::SchematicText => NativeMovePreview::text,
+                        Class::Label => NativeMovePreview::label,
+                        Class::Wire | Class::Junction | Class::Port => {
+                            NativeMovePreview::connectivity
+                        }
+                        _ => NativeMovePreview::symbol,
+                    };
                     begin(&base,&self.workspace().schematic_authoring,id,world,self.workspace().authoring.snap,root)?
                 }
                 _ => {
@@ -351,21 +353,28 @@ impl Runtime {
                     NativeMovePreview::Symbol { basis, .. } => {
                         (world, format!("schematic-symbol:{}", basis.symbol.uuid))
                     }
+                    NativeMovePreview::Connectivity { .. } => (
+                        world,
+                        format!(
+                            "schematic-connectivity:{}",
+                            preview
+                                .identity()
+                                .map(|id| id.id.to_string())
+                                .unwrap_or_default()
+                        ),
+                    ),
                     _ => unreachable!(),
                 };
                 self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
                     world,
                     target_object_id: Some(target),
                 });
-                if matches!(
-                    &preview,
-                    NativeMovePreview::Symbol { .. } | NativeMovePreview::Symbols(_)
-                ) {
-                    self.session
-                        .workspace_mut()
-                        .schematic_authoring
-                        .circuit_basis = Some(view_basis.clone());
-                }
+                // Every schematic Move retains the exact captured occurrence
+                // basis; cancel/restoration clears it uniformly.
+                self.session
+                    .workspace_mut()
+                    .schematic_authoring
+                    .circuit_basis = Some(view_basis.clone());
                 self.session.workspace_mut().authoring.gesture.view_basis = Some(view_basis);
                 self.native_edit.preview_tip = self
                     .workspace()

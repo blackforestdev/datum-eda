@@ -64,7 +64,8 @@ impl AssignmentEvidence {
         {
             return Err("Finish or cancel the current editor operation".into());
         }
-        let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+        let basis =
+            AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
         if basis.content != crate::PaneContent::Schematic
             || basis
                 .document

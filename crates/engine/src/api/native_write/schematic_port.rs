@@ -3,7 +3,7 @@ use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
     schematic_connectivity::{build_create_schematic_port, build_delete_schematic_port},
-    schematic_edit::prepare_native_birth,
+    schematic_edit::{prepare_native_birth, require_unique_occurrence},
     schematic_selection_edit::selected_source,
     schematic_symbol_payload::{member_payload, set_point, source_sheet_payload},
 };
@@ -99,15 +99,6 @@ fn place_port(
             .primary_object(original.uuid)
             .finish();
     }
-    if params
-        .instance_path
-        .as_ref()
-        .is_some_and(|path| !path.is_empty())
-    {
-        return Err(invalid(
-            "Port creation requires the supported source-sheet view",
-        ));
-    }
     let snapshot = ElectricalSelectionSnapshot::capture(context.model)
         .map_err(|e| invalid(format!("Schematic source unavailable: {e:?}")))?;
     let source = snapshot
@@ -120,6 +111,11 @@ fn place_port(
     {
         return Err(invalid("Native sheet not found"));
     }
+    require_unique_occurrence(
+        source,
+        params.sheet,
+        params.instance_path.as_deref().unwrap_or(&[]),
+    )?;
     let write = build_create_schematic_port(context.model, provenance, params.sheet, &port)?;
     prepare_native_birth(context.model, write)
 }

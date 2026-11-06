@@ -202,3 +202,82 @@ fn noconnect_rejects_off_pin_and_coincident_pins_and_never_picks_power_labels() 
     authoring.marker = None;
     assert!(authoring.marker_request(at).is_err());
 }
+
+#[test]
+fn marker_request_binds_to_focused_child_occurrence() {
+    let fixture = isolated_fixture();
+    let model = marker_model(&fixture.0);
+    let mut authoring = SchematicAuthoring::from_model(&model).unwrap();
+    let root_sheet = authoring.sheet.unwrap();
+    let child_sheet = Uuid::new_v4();
+    let instance = Uuid::new_v4();
+    {
+        let source = authoring.source.as_mut().unwrap();
+        let mut sheet = source.sheets[&root_sheet].clone();
+        sheet.uuid = child_sheet;
+        source.sheets.insert(child_sheet, sheet);
+    }
+    authoring.marker = Some(crate::schematic_authoring::MarkerKind::Junction);
+    let at = PointNm { x: 0, y: 0 };
+    // Without a circuit basis the request still binds to the primary sheet
+    // with the empty root occurrence path.
+    let (_, params) = authoring.marker_request(at).unwrap().verb_params();
+    assert_eq!(params["sheet"], root_sheet.to_string());
+    assert_eq!(params["instance_path"], serde_json::json!([]));
+    // With the focused child basis, sheet and exact occurrence path follow it.
+    authoring.circuit_basis = Some(crate::AuthoringViewBasis {
+        project: Uuid::new_v4(),
+        revision: "test-source".into(),
+        pane: crate::PaneId(1),
+        content: crate::PaneContent::Schematic,
+        source: child_sheet,
+        document: Some(crate::schematic_documents::SchematicDocumentKey {
+            project: Uuid::new_v4(),
+            schematic: Uuid::new_v4(),
+            source_sheet: child_sheet,
+            instance_path: vec![instance],
+        }),
+    });
+    let (verb, params) = authoring.marker_request(at).unwrap().verb_params();
+    assert_eq!(verb, "datum.schematic.place_marker");
+    assert_eq!(params["sheet"], child_sheet.to_string());
+    assert_eq!(params["instance_path"], serde_json::json!([instance]));
+    // No-connect pin identity is resolved on the focused sheet, and pin
+    // pickup follows the same basis rather than the primary sheet.
+    authoring.marker = Some(crate::schematic_authoring::MarkerKind::NoConnect);
+    let source = authoring.source.as_ref().unwrap();
+    let (pin_at, pin_id) = source.sheets[&child_sheet]
+        .symbols
+        .values()
+        .flat_map(|s| s.pins.iter())
+        .map(|pin| {
+            (
+                PointNm {
+                    x: pin.position.x,
+                    y: pin.position.y,
+                },
+                pin.uuid,
+            )
+        })
+        .find(|(at, _)| {
+            source.sheets[&child_sheet]
+                .symbols
+                .values()
+                .flat_map(|s| &s.pins)
+                .filter(|p| p.position.x == at.x && p.position.y == at.y)
+                .count()
+                == 1
+        })
+        .unwrap();
+    let (_, params) = authoring.marker_request(pin_at).unwrap().verb_params();
+    assert_eq!(params["sheet"], child_sheet.to_string());
+    assert_eq!(params["instance_path"], serde_json::json!([instance]));
+    assert_eq!(params["pin"], pin_id.to_string());
+    assert_eq!(
+        authoring.marker_pin_point(&pin_id.to_string()),
+        Some(pin_at)
+    );
+}
+
+#[path = "schematic_connectivity_move_tests.rs"]
+mod connectivity_move_tests;

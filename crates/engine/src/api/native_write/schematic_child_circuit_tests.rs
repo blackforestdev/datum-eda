@@ -47,6 +47,306 @@ fn binding(model: &DesignModel, symbol: Uuid, path: &[Uuid]) -> Uuid {
     );
     context.bindings[&occurrence].component_instance
 }
+fn install_library(model: &mut DesignModel, root: &Path) {
+    let baseline = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../test-harness/testdata/library/native_authored_baseline_v1/pool");
+    let mut objects = vec![];
+    for kind in [
+        "units",
+        "symbols",
+        "entities",
+        "packages",
+        "padstacks",
+        "footprints",
+        "parts",
+        "pin_pad_maps",
+    ] {
+        for entry in std::fs::read_dir(baseline.join(kind)).unwrap() {
+            let object: Value =
+                serde_json::from_slice(&std::fs::read(entry.unwrap().path()).unwrap()).unwrap();
+            objects.push(Spec::Create {
+                target: Target::new(
+                    "pool",
+                    kind,
+                    object["uuid"].as_str().unwrap().parse().unwrap(),
+                ),
+                object,
+            });
+        }
+    }
+    let write =
+        library::build_pool_library_write(model, provenance(), Some("pool"), objects).unwrap();
+    commit_prepared(model, root, write).unwrap();
+}
+#[test]
+fn unique_child_field_table_and_annotation_share_canonical_review_and_history() {
+    use crate::api::native_write::{
+        schematic_annotation,
+        schematic_delete_proposal::{
+            self as proposal, NativeProposalAction as Action, NativeProposalRequest,
+        },
+        schematic_field_batch::{self, FieldRowEdit},
+    };
+    let (root, mut model, _, parent) = topology_tests::fixture("unique_child_bulk_fields");
+    install_library(&mut model, &root);
+    let child = ChildSheetRequest {
+        proposal_id: Uuid::new_v4(),
+        parent,
+        instance_path: vec![],
+        sheet: Uuid::new_v4(),
+        definition: Uuid::new_v4(),
+        instance: Uuid::new_v4(),
+        name: "Child fields".into(),
+        position: Point::new(0, 0),
+    };
+    let write = schematic_child_sheet::build(&model, &child).unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    let path = vec![child.instance];
+    let mut symbols = Vec::new();
+    for (reference, x) in [("U_CHILD20", 10_000_000), ("U_CHILD10", 40_000_000)] {
+        let write = prepare(
+            &model,
+            &root,
+            "datum.schematic.place_symbol",
+            json!({"sheet":child.sheet,
+            "instance_path":path,"library_symbol":"30000000-0000-4000-8000-000000000001",
+            "reference":reference,"value":"OPAMP","x_nm":x,"y_nm":20_000_000}),
+        )
+        .unwrap();
+        symbols.push(write.primary_object_id.unwrap());
+        commit_prepared(&mut model, &root, write).unwrap();
+    }
+    let owners: Vec<_> = symbols.iter().map(|s| binding(&model, *s, &path)).collect();
+    let original = schematic(&model).unwrap();
+    let edits: Vec<_> = original.sheets[&child.sheet]
+        .symbols
+        .values()
+        .map(|s| FieldRowEdit {
+            symbol: s.uuid,
+            reference: s.reference.clone(),
+            value: format!("{} literal", s.reference),
+        })
+        .collect();
+    for wrong in [vec![], vec![Uuid::new_v4()]] {
+        assert!(schematic_field_batch::preview(&model, child.sheet, &wrong, &edits).is_err());
+        assert!(schematic_annotation::preview(&model, child.sheet, &wrong).is_err());
+    }
+    let preview = schematic_field_batch::preview(&model, child.sheet, &path, &edits).unwrap();
+    assert_eq!(preview.instance_path, path);
+    assert_eq!(preview.changes.len(), 2);
+    let execute = |model: &mut DesignModel, action| {
+        let request = NativeProposalRequest {
+            project_root: root.clone(),
+            expected_model_revision: model.model_revision.0.clone(),
+            expected_transaction_tip: crate::revision::transaction_tip(&model.journal),
+            action,
+        };
+        proposal::execute(model, &request).unwrap()
+    };
+    let id = Uuid::new_v4();
+    execute(
+        &mut model,
+        Action::CreateFieldBatch {
+            proposal_id: id,
+            sheet: child.sheet,
+            instance_path: path.clone(),
+            edits: edits.clone(),
+        },
+    );
+    assert_eq!(
+        schematic(&model).unwrap(),
+        original,
+        "draft changes no design source"
+    );
+    execute(&mut model, Action::Reject { proposal_id: id });
+    assert_eq!(
+        schematic(&model).unwrap(),
+        original,
+        "cancel preserves all source"
+    );
+    let id = Uuid::new_v4();
+    execute(
+        &mut model,
+        Action::CreateFieldBatch {
+            proposal_id: id,
+            sheet: child.sheet,
+            instance_path: path.clone(),
+            edits,
+        },
+    );
+    execute(&mut model, Action::AcceptApply { proposal_id: id });
+    let fields = schematic(&model).unwrap();
+    assert_eq!(fields.sheets[&parent], original.sheets[&parent]);
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), original);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), fields);
+    let annotation = schematic_annotation::preview(&model, child.sheet, &path).unwrap();
+    assert_eq!(annotation.instance_path, path);
+    assert_eq!(annotation.symbol_count, 2);
+    let id = Uuid::new_v4();
+    execute(
+        &mut model,
+        Action::CreateAnnotation {
+            proposal_id: id,
+            sheet: child.sheet,
+            instance_path: path.clone(),
+        },
+    );
+    assert_eq!(schematic(&model).unwrap(), fields);
+    execute(&mut model, Action::AcceptApply { proposal_id: id });
+    let after = schematic(&model).unwrap();
+    assert_eq!(after.sheets[&parent], original.sheets[&parent]);
+    assert_eq!(
+        after.sheets[&child.sheet]
+            .symbols
+            .values()
+            .map(|s| s.reference.as_str())
+            .collect::<BTreeSet<_>>(),
+        BTreeSet::from(["U_CHILD1", "U_CHILD2"])
+    );
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    // Each accepted design edit is one history action; intervening Proposal
+    // metadata retains the established canonical history semantics.
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), fields);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), after);
+    for (symbol, owner) in symbols.iter().zip(owners) {
+        assert_eq!(binding(&model, *symbol, &path), owner);
+    }
+}
+#[test]
+fn unique_child_point_annotations_preserve_source_and_cold_history() {
+    let (root, mut model, _, parent) = topology_tests::fixture("unique_child_annotations");
+    let child = ChildSheetRequest {
+        proposal_id: Uuid::new_v4(),
+        parent,
+        instance_path: vec![],
+        sheet: Uuid::new_v4(),
+        definition: Uuid::new_v4(),
+        instance: Uuid::new_v4(),
+        name: "Annotated child".into(),
+        position: Point::new(0, 0),
+    };
+    let write = schematic_child_sheet::build(&model, &child).unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    let before = schematic(&model).unwrap();
+    let mut writes = 0;
+    for (index, kind) in ["local", "global", "power", "hierarchical"]
+        .into_iter()
+        .enumerate()
+    {
+        let params = |path: Vec<Uuid>| {
+            json!({"sheet":child.sheet,"instance_path":path,
+            "name":format!("CHILD_{kind}"),"kind":kind,"x_nm":(index+1)*10_000_000,"y_nm":20_000_000})
+        };
+        for wrong in [vec![], vec![Uuid::new_v4()]] {
+            assert!(prepare(&model, &root, "datum.schematic.place_label", params(wrong)).is_err());
+        }
+        let unchanged = schematic(&model).unwrap();
+        let write = prepare(
+            &model,
+            &root,
+            "datum.schematic.place_label",
+            params(vec![child.instance]),
+        )
+        .unwrap();
+        assert_eq!(
+            schematic(&model).unwrap(),
+            unchanged,
+            "label preview creates no source"
+        );
+        commit_prepared(&mut model, &root, write).unwrap();
+        writes += 1;
+    }
+    let port_params = |path: Vec<Uuid>| {
+        json!({"sheet":child.sheet,"instance_path":path,
+        "name":"NESTED_IN","direction":"input","x_nm":0,"y_nm":0})
+    };
+    for wrong in [vec![], vec![Uuid::new_v4()]] {
+        assert!(
+            prepare(
+                &model,
+                &root,
+                "datum.schematic.place_port",
+                port_params(wrong)
+            )
+            .is_err()
+        );
+    }
+    let write = prepare(
+        &model,
+        &root,
+        "datum.schematic.place_port",
+        port_params(vec![child.instance]),
+    )
+    .unwrap();
+    let port = write.primary_object_id.unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    writes += 1;
+    let write = prepare(
+        &model,
+        &root,
+        "datum.schematic.place_port",
+        json!({"sheet":child.sheet,
+        "port":port,"instance_path":[child.instance],"name":"NESTED_SIGNAL",
+        "direction":"bidirectional","x_nm":1_000_000,"y_nm":2_000_000}),
+    )
+    .unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    writes += 1;
+    let after = schematic(&model).unwrap();
+    assert_eq!(after.sheets[&parent], before.sheets[&parent]);
+    let source = &after.sheets[&child.sheet];
+    for (name, kind) in [
+        ("local", LabelKind::Local),
+        ("global", LabelKind::Global),
+        ("power", LabelKind::Power),
+        ("hierarchical", LabelKind::Hierarchical),
+    ] {
+        let label = source
+            .labels
+            .values()
+            .find(|l| l.name == format!("CHILD_{name}"))
+            .unwrap();
+        assert_eq!(label.kind, kind);
+    }
+    assert_eq!(source.ports[&port].name, "NESTED_SIGNAL");
+    assert_eq!(
+        source.ports[&port].position,
+        Point::new(1_000_000, 2_000_000)
+    );
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), after);
+    for _ in 0..writes {
+        model
+            .commit_journal_undo(&root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(&root).resolve().unwrap();
+    }
+    assert_eq!(schematic(&model).unwrap(), before);
+    for _ in 0..writes {
+        model
+            .commit_journal_redo(&root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(&root).resolve().unwrap();
+    }
+    assert_eq!(schematic(&model).unwrap(), after);
+}
 #[test]
 fn unique_child_text_placement_refusal_and_cold_history() {
     let (root, mut model, _, parent) = topology_tests::fixture("unique_child_text");
@@ -106,35 +406,7 @@ fn unique_child_text_placement_refusal_and_cold_history() {
 #[test]
 fn unique_child_circuit_place_wire_fields_refusal_and_cold_history() {
     let (root, mut model, _, parent) = topology_tests::fixture("unique_child_circuit");
-    let baseline = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../test-harness/testdata/library/native_authored_baseline_v1/pool");
-    let mut objects = vec![];
-    for kind in [
-        "units",
-        "symbols",
-        "entities",
-        "packages",
-        "padstacks",
-        "footprints",
-        "parts",
-        "pin_pad_maps",
-    ] {
-        for entry in std::fs::read_dir(baseline.join(kind)).unwrap() {
-            let object: Value =
-                serde_json::from_slice(&std::fs::read(entry.unwrap().path()).unwrap()).unwrap();
-            objects.push(Spec::Create {
-                target: Target::new(
-                    "pool",
-                    kind,
-                    object["uuid"].as_str().unwrap().parse().unwrap(),
-                ),
-                object,
-            });
-        }
-    }
-    let write =
-        library::build_pool_library_write(&model, provenance(), Some("pool"), objects).unwrap();
-    commit_prepared(&mut model, &root, write).unwrap();
+    install_library(&mut model, &root);
     let child = ChildSheetRequest {
         proposal_id: Uuid::new_v4(),
         parent,

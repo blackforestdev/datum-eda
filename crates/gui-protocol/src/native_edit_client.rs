@@ -34,6 +34,11 @@ pub enum NativeEditAction {
         x_nm: i64,
         y_nm: i64,
     },
+    MoveConnectivity {
+        object: Uuid,
+        x_nm: i64,
+        y_nm: i64,
+    },
     MoveSymbols {
         x_nm: i64,
         y_nm: i64,
@@ -370,6 +375,10 @@ impl NativeProjectClient {
             NativeEditAction::MoveLabel { label, x_nm, y_nm } => (
                 "datum.schematic.move_label",
                 json!({"label":label,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
+            ),
+            NativeEditAction::MoveConnectivity { object, x_nm, y_nm } => (
+                "datum.schematic.move",
+                json!({"object":object,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
             ),
             NativeEditAction::MoveSymbols {
                 x_nm,

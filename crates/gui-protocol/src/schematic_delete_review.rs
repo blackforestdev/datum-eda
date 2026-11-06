@@ -155,7 +155,8 @@ impl DeleteReview {
         Ok(())
     }
     pub(super) fn capture_source(state: &ReviewWorkspaceState) -> Result<Self, String> {
-        let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+        let basis =
+            AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
         Self::capture_source_basis(state, basis)
     }
     pub(super) fn capture_source_basis(

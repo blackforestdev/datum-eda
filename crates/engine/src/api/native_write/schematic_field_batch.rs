@@ -68,14 +68,10 @@ fn plan(
     path: &[Uuid],
     edits: &[FieldRowEdit],
 ) -> Result<(FieldBatchSummary, Vec<Operation>), EngineError> {
-    if !path.is_empty() {
-        return Err(invalid(
-            "Symbol Fields Table requires the unique source-sheet view",
-        ));
-    }
     let snapshot = ElectricalSelectionSnapshot::capture(model)
         .map_err(|e| invalid(format!("Symbol fields source unavailable: {e:?}")))?;
     let selected = SelectedSchematicSource::from_snapshot(&snapshot)?;
+    super::schematic_edit::require_unique_occurrence(&selected.source, sheet, path)?;
     let source = selected
         .source
         .sheets

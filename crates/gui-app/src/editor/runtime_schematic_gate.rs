@@ -9,7 +9,7 @@ impl Runtime {
         })();
         match result {
             Ok(draft) => {
-                if !self.prepare_native_schematic(false) {
+                if !self.prepare_native_circuit(false) {
                     return true;
                 }
                 let e = &mut self.session.workspace_mut().schematic_authoring;

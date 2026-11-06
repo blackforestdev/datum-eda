@@ -40,7 +40,7 @@ impl AnnotationEvidence {
         let basis = if project {
             AuthoringViewBasis::capture_root_document(state, state.ui.layout.focused)
         } else {
-            AuthoringViewBasis::capture(state, state.ui.layout.focused)
+            AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)
         }
         .map_err(|_| "Focus a current supported schematic sheet")?;
         if basis.content != PaneContent::Schematic {

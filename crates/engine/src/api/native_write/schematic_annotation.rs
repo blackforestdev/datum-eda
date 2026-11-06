@@ -73,18 +73,15 @@ fn plan(
     sheet: Uuid,
     path: &[Uuid],
 ) -> Result<(AnnotationSummary, Vec<Operation>), EngineError> {
-    if !path.is_empty() {
-        return Err(invalid("Annotation requires the unique source-sheet view"));
-    }
     let snapshot = ElectricalSelectionSnapshot::capture(model)
         .map_err(|e| invalid(format!("Annotation source unavailable: {e:?}")))?;
     let selected = SelectedSchematicSource::from_snapshot(&snapshot)?;
-    let qualified = planning::qualify(model, &selected, sheet)?;
+    let qualified = planning::qualify_at(model, &selected, sheet, path)?;
     if qualified.symbols.is_empty() {
         return Ok((
             AnnotationSummary {
                 sheet,
-                instance_path: vec![],
+                instance_path: path.to_vec(),
                 symbol_count: 0,
                 changes: vec![],
             },
@@ -110,7 +107,7 @@ fn plan(
     Ok((
         AnnotationSummary {
             sheet,
-            instance_path: vec![],
+            instance_path: path.to_vec(),
             symbol_count: sheets[0].symbols.len(),
             changes,
         },

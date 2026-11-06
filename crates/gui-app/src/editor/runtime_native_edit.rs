@@ -398,7 +398,8 @@ impl Runtime {
                 | NativeEditAction::MoveSymbol { x_nm, y_nm, .. }
                 | NativeEditAction::MoveSymbols { x_nm, y_nm, .. }
                 | NativeEditAction::MoveText { x_nm, y_nm, .. }
-                | NativeEditAction::MoveLabel { x_nm, y_nm, .. },
+                | NativeEditAction::MoveLabel { x_nm, y_nm, .. }
+                | NativeEditAction::MoveConnectivity { x_nm, y_nm, .. },
                 Some(preview),
             ) => match preview.scene_at(PointNm { x: x_nm, y: y_nm }) {
                 Ok(scene) => Some((preview.is_schematic(), preview.base().clone(), scene)),

@@ -6,7 +6,7 @@ use super::{
         build_delete_schematic_junction, build_delete_schematic_noconnect,
         build_place_schematic_marker,
     },
-    schematic_edit::prepare_native_birth,
+    schematic_edit::{prepare_native_birth, require_unique_occurrence},
     schematic_selection_edit::selected_source,
 };
 use crate::{
@@ -52,6 +52,8 @@ enum Kind {
 #[serde(deny_unknown_fields)]
 struct PlaceParams {
     sheet: Uuid,
+    #[serde(default)]
+    instance_path: Vec<Uuid>,
     kind: Option<Kind>,
     x_nm: i64,
     y_nm: i64,
@@ -98,6 +100,7 @@ fn place(
     let source = snapshot
         .schematic_source()
         .ok_or_else(|| invalid("Native schematic source unavailable"))?;
+    require_unique_occurrence(source, params.sheet, &params.instance_path)?;
     let sheet = source
         .sheets
         .get(&params.sheet)

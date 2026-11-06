@@ -38,8 +38,7 @@ impl Runtime {
         };
         let basis = draft.basis().clone();
         let e = &mut self.session.workspace_mut().schematic_authoring;
-        e.circuit_basis = matches!(draft, FieldsEditDraft::Symbol(_) | FieldsEditDraft::Bus(_))
-            .then(|| basis.clone());
+        e.circuit_basis = Some(basis.clone());
         e.bus = matches!(draft, FieldsEditDraft::Bus(_));
         e.editing = Some(draft);
         e.reference = reference;
@@ -107,7 +106,7 @@ impl Runtime {
                 selected::admission(self.workspace(), true)?;
             }
             let (basis, target) = if bus {
-                selected::root_tool_target(
+                selected::tool_target(
                     self.workspace(),
                     datum_gui_protocol::AuthoredSelectionClass::BusSection,
                 )?

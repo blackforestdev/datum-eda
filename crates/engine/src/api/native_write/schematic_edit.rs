@@ -83,11 +83,6 @@ fn place_label(
         LabelKindParam::Hierarchical => LabelKind::Hierarchical,
         LabelKindParam::Power => LabelKind::Power,
     };
-    if !params.instance_path.is_empty() && !matches!(kind, LabelKind::Hierarchical) {
-        return Err(EngineError::Validation(
-            "Child label authoring currently supports Hierarchical labels only".into(),
-        ));
-    }
     let label = NetLabel {
         uuid: Uuid::new_v4(),
         name: params.name,
@@ -402,6 +397,10 @@ fn strictly_on_segment(p: Point, a: Point, b: Point) -> Result<bool, EngineError
 #[cfg(test)]
 #[path = "schematic_child_circuit_tests.rs"]
 mod child_circuit_tests;
+
+#[cfg(test)]
+#[path = "schematic_child_bus_tests.rs"]
+mod child_bus_tests;
 
 #[cfg(test)]
 #[path = "schematic_edit_tests.rs"]

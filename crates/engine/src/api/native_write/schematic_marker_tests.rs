@@ -197,6 +197,84 @@ fn native_marker_junction_merges_crossing_and_history_separates_nets() {
 }
 
 #[test]
+fn native_marker_child_placement_requires_exact_occurrence_path() {
+    use crate::api::native_write::schematic_child_sheet::{self, ChildSheetRequest};
+    let (root, mut model, _, parent) = fixture("marker_child_path");
+    let child = ChildSheetRequest {
+        proposal_id: Uuid::new_v4(),
+        parent,
+        instance_path: vec![],
+        sheet: Uuid::new_v4(),
+        definition: Uuid::new_v4(),
+        instance: Uuid::new_v4(),
+        name: "Child".into(),
+        position: Point::zero(),
+    };
+    let write = schematic_child_sheet::build(&model, &child).unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    for (from, to) in [
+        (Point::new(-100, 0), Point::new(100, 0)),
+        (Point::new(0, -100), Point::new(0, 100)),
+    ] {
+        let wire = SchematicWire {
+            uuid: Uuid::new_v4(),
+            from,
+            to,
+        };
+        let write = build_create_schematic_wire(&model, provenance(), child.sheet, &wire).unwrap();
+        let write = prepare_native_birth(&model, write).unwrap();
+        commit_prepared(&mut model, &root, write).unwrap();
+    }
+    let before = source(&model);
+    let child_params = |path: serde_json::Value| {
+        let mut params = place_params(child.sheet, "junction");
+        params["instance_path"] = path;
+        params
+    };
+    // The exact unique occurrence is required: primary-sheet (empty) and
+    // invented paths refuse without touching the model.
+    for path in [serde_json::json!([]), serde_json::json!([Uuid::new_v4()])] {
+        assert!(
+            build(
+                &model,
+                &root,
+                "datum.schematic.place_junction",
+                child_params(path)
+            )
+            .is_err()
+        );
+    }
+    assert_eq!(source(&model), before);
+    let write = build(
+        &model,
+        &root,
+        "datum.schematic.place_junction",
+        child_params(serde_json::json!([child.instance])),
+    )
+    .unwrap();
+    let id = write.primary_object_id.unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    let marked = source(&model);
+    assert!(marked.sheets[&child.sheet].junctions.contains_key(&id));
+    assert_eq!(marked.sheets[&parent], before.sheets[&parent]);
+    let write = build(
+        &model,
+        &root,
+        "datum.schematic.delete_junction",
+        serde_json::json!({"junction":id,"instance_path":[child.instance]}),
+    )
+    .unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    assert_eq!(source(&model), before);
+    history(&mut model, &root, false);
+    assert_eq!(source(&model), marked);
+    history(&mut model, &root, true);
+    assert_eq!(source(&model), before);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn native_marker_aliases_refuse_duplicate_mismatched_and_unqualified_targets() {
     let (root, mut model, _, sheet) = fixture("marker_admission");
     let symbol = add_pin(&mut model, &root, sheet);

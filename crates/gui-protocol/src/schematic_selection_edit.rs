@@ -93,7 +93,7 @@ impl SymbolEditDraft {
 pub fn target(
     state: &ReviewWorkspaceState,
 ) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
-    let basis = AuthoringViewBasis::capture(state, state.ui.layout.focused)?;
+    let basis = AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
     target_in(state, basis)
 }
 
@@ -110,8 +110,8 @@ pub fn delete_target(
     }
 }
 
-/// Existing root-only Text, Bus and member-Wire workflows use the focused source.
-pub fn root_tool_target(
+/// Existing typed forms retain the complete focused source and occurrence.
+pub fn tool_target(
     state: &ReviewWorkspaceState,
     class: Class,
 ) -> Result<(AuthoringViewBasis, AuthoredSelectionIdentity), String> {
@@ -119,9 +119,9 @@ pub fn root_tool_target(
         class,
         Class::SchematicText | Class::BusSection | Class::Wire
     ) {
-        return Err("Unsupported root tool selection".into());
+        return Err("Unsupported schematic tool selection".into());
     }
-    let basis = AuthoringViewBasis::capture_unique_root_schematic(state, state.ui.layout.focused)?;
+    let basis = AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
     let result = target_in(state, basis)?;
     if result.1.class != class {
         return Err("Select the current object for this tool".into());
@@ -157,6 +157,9 @@ fn target_in(
     let SelectionSubject::Object(id) = &view.subject else {
         return Err("This edit requires one complete selected object".into());
     };
+    if view.locked.contains(id) {
+        return Err("Selected schematic object is locked".into());
+    }
     if basis
         .document
         .as_ref()
@@ -211,7 +214,7 @@ pub fn admission(state: &ReviewWorkspaceState, edit_fields: bool) -> Result<&'st
 }
 
 pub fn bus_admission(state: &ReviewWorkspaceState) -> Result<&'static str, String> {
-    let (_, target) = root_tool_target(state, Class::BusSection)?;
+    let (_, target) = tool_target(state, Class::BusSection)?;
     if target.class != Class::BusSection {
         return Err("Select one current Bus to edit its members".into());
     }

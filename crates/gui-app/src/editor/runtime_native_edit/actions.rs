@@ -14,6 +14,10 @@ impl Runtime {
             "datum.schematic.create_bus" => self.begin_native_bus(),
             "datum.schematic.place_bus_entry" => self.begin_native_bus_entry(),
             "datum.schematic.rename_label" => self.begin_selected_label_edit(),
+            "datum.schematic.move" => {
+                self.begin_selected_native_move();
+                true
+            }
             "datum.schematic.place_junction" => self
                 .begin_native_marker(datum_gui_protocol::schematic_authoring::MarkerKind::Junction),
             "datum.schematic.place_noconnect" => self.begin_native_marker(

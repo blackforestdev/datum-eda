@@ -3,7 +3,7 @@ use super::*;
 use crate::{AuthoringViewBasis, PaneContent, PaneId};
 use eda_engine::substrate::ProjectResolver;
 #[test]
-#[ignore = "requires DATUM_CHILD_CIRCUIT_PROJECT saved run77 project"]
+#[ignore = "requires DATUM_CHILD_CIRCUIT_PROJECT saved run85 project"]
 fn child_circuit_preview_requests_and_tool_admission() {
     let root = std::path::PathBuf::from(std::env::var_os("DATUM_CHILD_CIRCUIT_PROJECT").unwrap());
     let model = ProjectResolver::new(&root).resolve().unwrap();
@@ -97,6 +97,15 @@ fn child_circuit_preview_requests_and_tool_admission() {
         "datum.schematic.set_symbol_reference",
         "datum.schematic.set_symbol_value",
         "datum.schematic.place_label",
+        "datum.schematic.set_symbol_field",
+        "datum.schematic.place_port",
+        "datum.schematic.create_bus",
+        "datum.schematic.place_bus_entry",
+        "datum.schematic.place_junction",
+        "datum.schematic.place_noconnect",
+        "datum.schematic.delete_wire",
+        "datum.schematic.delete_junction",
+        "datum.schematic.delete_noconnect",
         "datum.schematic.move_symbol",
         "datum.schematic.delete_symbol",
     ] {
@@ -104,13 +113,6 @@ fn child_circuit_preview_requests_and_tool_admission() {
             crate::gui_menu_model::native_edit_unavailable_reason(&state, verb),
             None
         );
-    }
-    for verb in [
-        "datum.schematic.create_bus",
-        "datum.schematic.set_symbol_field",
-        "datum.schematic.place_port",
-    ] {
-        assert!(crate::gui_menu_model::native_edit_unavailable_reason(&state, verb).is_some());
     }
     let before = state.schematic_authoring.source.clone();
     let base = crate::camera_scene_for_pane(&state, PaneId(1))
@@ -141,6 +143,188 @@ fn child_circuit_preview_requests_and_tool_admission() {
     ));
     assert_eq!(selected::delete_target(&state).unwrap().0, basis);
     assert!(selected::admission(&state, false).is_ok());
+    let assignment = assignment::AssignmentEvidence::selected(&state).unwrap();
+    assert_eq!(assignment.options.sheet, key.source_sheet);
+    assert_eq!(assignment.target.instance_path, key.instance_path);
+    let annotated = delete_review::DeleteReview::capture_annotation(&state)
+        .unwrap()
+        .expect("saved child has references requiring annotation");
+    assert_eq!(annotated.basis, basis);
+    assert_eq!(
+        annotated.annotation.as_ref().unwrap().summary.instance_path,
+        key.instance_path
+    );
+    let mut table = delete_review::DeleteReview::capture_field_table(&state).unwrap();
+    table.fields.as_mut().unwrap().rows[0]
+        .value
+        .push_str(" child field review");
+    assert!(table.stage_field_table(&state).unwrap());
+    match table.pending.as_ref().unwrap() {
+        eda_engine::api::native_write::schematic_delete_proposal::NativeProposalAction::CreateFieldBatch {
+            sheet, instance_path, ..
+        } => {
+            assert_eq!(*sheet, key.source_sheet);
+            assert_eq!(*instance_path, key.instance_path);
+        }
+        _ => panic!("field review must carry the complete qualified child intent"),
+    }
+    assert_eq!(
+        state.schematic_authoring.source, before,
+        "reviewing child fields writes no source"
+    );
+    let prior_selection = state.selection.clone();
+    let label = state.schematic_authoring.source.as_ref().unwrap().sheets[&key.source_sheet]
+        .labels
+        .values()
+        .next()
+        .unwrap()
+        .clone();
+    let label_id = crate::AuthoredSelectionIdentity {
+        class: crate::AuthoredSelectionClass::Label,
+        id: label.uuid,
+        instance_path: key.instance_path.clone(),
+    };
+    state.selection = crate::SelectionTarget::Native(Box::new(
+        crate::selection_view::build_selection_view(
+            &model,
+            &authority,
+            crate::SelectionSubject::Object(label_id.clone()),
+            &state.scene,
+            Some(&base),
+            |_| true,
+        )
+        .unwrap(),
+    ));
+    assert!(selected::label_admission(&state).is_ok());
+    let label_draft = selected::LabelEditDraft {
+        target: label_id.clone(),
+        basis: basis.clone(),
+        tip: None,
+        original: label.clone(),
+    };
+    let (_, params) = label_draft
+        .request("REVIEWED_CHILD_LABEL", label.kind)
+        .unwrap()
+        .unwrap()
+        .verb_params();
+    assert_eq!(
+        params["instance_path"],
+        serde_json::json!(key.instance_path)
+    );
+    assert_ne!(state.schematic_authoring.sheet, Some(key.source_sheet));
+    let label_at = PointNm {
+        x: label.position.x,
+        y: label.position.y,
+    };
+    let label_move = crate::footprint_move_preview::native::NativeMovePreview::label(
+        &base,
+        &state.schematic_authoring,
+        &label_id,
+        label_at,
+        state.authoring.snap,
+        root.clone(),
+    )
+    .unwrap();
+    assert_eq!(
+        label_move
+            .scene_at(PointNm {
+                x: label_at.x + 1_000_000,
+                y: label_at.y + 1_000_000
+            })
+            .unwrap()
+            .schematic_document,
+        Some(key.clone())
+    );
+    let text_key = state
+        .schematic_documents
+        .rows
+        .iter()
+        .find(|r| r.name == "Nested child")
+        .unwrap()
+        .key
+        .clone();
+    state
+        .schematic_documents
+        .prepare_scene(&text_key, &root, &model)
+        .unwrap();
+    state
+        .schematic_documents
+        .panes
+        .insert(PaneId(1), text_key.clone());
+    let text_scene = crate::camera_scene_for_pane(&state, PaneId(1))
+        .unwrap()
+        .clone();
+    let text = state.schematic_authoring.source.as_ref().unwrap().sheets[&text_key.source_sheet]
+        .texts
+        .values()
+        .next()
+        .unwrap()
+        .clone();
+    let text_id = crate::AuthoredSelectionIdentity {
+        class: crate::AuthoredSelectionClass::SchematicText,
+        id: text.uuid,
+        instance_path: text_key.instance_path.clone(),
+    };
+    state.selection = crate::SelectionTarget::Native(Box::new(
+        crate::selection_view::build_selection_view(
+            &model,
+            &authority,
+            crate::SelectionSubject::Object(text_id.clone()),
+            &state.scene,
+            Some(&text_scene),
+            |_| true,
+        )
+        .unwrap(),
+    ));
+    assert!(selected::text_admission(&state).is_ok());
+    let text_basis = selected::tool_target(&state, crate::AuthoredSelectionClass::SchematicText)
+        .unwrap()
+        .0;
+    let text_draft = selected::TextEditDraft {
+        target: text_id.clone(),
+        basis: text_basis,
+        tip: None,
+        original: text.clone(),
+    };
+    let (_, params) = text_draft
+        .request("Literal child Text edit", 90)
+        .unwrap()
+        .unwrap()
+        .verb_params();
+    assert_eq!(params["sheet"], serde_json::json!(text_key.source_sheet));
+    assert_eq!(
+        params["instance_path"],
+        serde_json::json!(text_key.instance_path)
+    );
+    assert_ne!(state.schematic_authoring.sheet, Some(text_key.source_sheet));
+    let text_at = PointNm {
+        x: text.position.x,
+        y: text.position.y,
+    };
+    let text_move = crate::footprint_move_preview::native::NativeMovePreview::text(
+        &text_scene,
+        &state.schematic_authoring,
+        &text_id,
+        text_at,
+        state.authoring.snap,
+        root.clone(),
+    )
+    .unwrap();
+    assert_eq!(
+        text_move
+            .scene_at(PointNm {
+                x: text_at.x + 1_000_000,
+                y: text_at.y + 1_000_000
+            })
+            .unwrap()
+            .schematic_document,
+        Some(text_key.clone())
+    );
+    state
+        .schematic_documents
+        .panes
+        .insert(PaneId(1), key.clone());
+    state.selection = prior_selection;
     let delete_command: crate::GuiMenuItem = serde_json::from_value(serde_json::json!({
         "label":"Delete", "gui_local":"schematic.selection.delete", "requires_project":true
     }))
@@ -418,16 +602,17 @@ fn child_circuit_preview_requests_and_tool_admission() {
             )
             .unwrap(),
         ));
-        assert_eq!(selected::root_tool_target(&state, class).unwrap().1, id);
-        assert!(
-            selected::target(&state).is_err(),
-            "generic tools stay primary-only"
+        assert_eq!(selected::tool_target(&state, class).unwrap().1, id);
+        assert_eq!(
+            selected::target(&state).unwrap().1,
+            id,
+            "shared acquisition retains the focused qualified source"
         );
         if class == crate::AuthoredSelectionClass::SchematicText {
             assert!(selected::text_admission(&state).is_ok());
         }
         state.scene.source_revision.push_str("-stale");
-        assert!(selected::root_tool_target(&state, class).is_err());
+        assert!(selected::tool_target(&state, class).is_err());
         state.scene.source_revision = model.model_revision.0.clone();
     }
     let mut repeated_root = state.schematic_documents.row(&root_key).unwrap().clone();

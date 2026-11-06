@@ -110,26 +110,8 @@ impl MarkingMenuState {
             return Err(unavailable.into());
         }
         let menu = self.selection.as_ref().ok_or("Reopen the context menu")?;
-        let circuit = matches!(
-            item.binding(),
-            B::Verb(
-                "datum.schematic.place_symbol"
-                    | "datum.schematic.draw_wire"
-                    | "datum.schematic.set_symbol_reference"
-                    | "datum.schematic.set_symbol_value"
-                    | "datum.schematic.move_symbol"
-            ) | B::GuiLocal("schematic.symbol_fields.open")
-        );
-        let basis = if circuit {
-            crate::AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?
-        } else if matches!(item.binding(), B::Verb("datum.schematic.place_text")) {
-            crate::AuthoringViewBasis::capture_unique_root_schematic(
-                state,
-                state.ui.layout.focused,
-            )?
-        } else {
-            crate::AuthoringViewBasis::capture(state, state.ui.layout.focused)?
-        };
+        let basis =
+            crate::AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
         let scene = crate::camera_scene_for_pane(state, basis.pane)
             .ok_or("Schematic source unavailable")?;
         if !menu.schematic
@@ -161,6 +143,11 @@ impl MarkingMenuState {
                 C::Symbol => sheet.symbols.contains_key(&target.id),
                 C::Wire => sheet.wires.contains_key(&target.id),
                 C::Label => sheet.labels.contains_key(&target.id),
+                C::Junction => sheet.junctions.contains_key(&target.id),
+                C::NoConnect => sheet.noconnects.contains_key(&target.id),
+                C::Port => sheet.ports.contains_key(&target.id),
+                C::SchematicText => sheet.texts.contains_key(&target.id),
+                C::BusSection => sheet.buses.contains_key(&target.id),
                 _ => false,
             };
             if !present {
@@ -189,6 +176,11 @@ impl MarkingMenuState {
                     target.unwrap(),
                 )?;
                 return Ok(());
+            }
+            B::Verb("datum.schematic.move")
+                if matches!(class, Some(C::Wire | C::Junction | C::Port)) =>
+            {
+                "datum.schematic.move"
             }
             B::Verb("datum.schematic.move_symbol") if class == Some(C::Symbol) => {
                 if let crate::SelectionTarget::Native(view) = &state.selection

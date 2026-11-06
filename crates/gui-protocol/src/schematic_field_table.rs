@@ -170,7 +170,13 @@ impl DeleteReview {
         if !table.editable() {
             return Err("This table is already in read-only Proposal review".into());
         }
-        let summary = schematic_field_batch::preview(model, self.basis.source, &[], &table.rows)
+        let path = &self
+            .basis
+            .document
+            .as_ref()
+            .ok_or("Qualified sheet unavailable")?
+            .instance_path;
+        let summary = schematic_field_batch::preview(model, self.basis.source, path, &table.rows)
             .map_err(|e| e.to_string())?;
         if summary.changes.is_empty() {
             return Ok(false);
@@ -178,7 +184,7 @@ impl DeleteReview {
         self.pending = Some(NativeProposalAction::CreateFieldBatch {
             proposal_id: self.proposal_id,
             sheet: self.basis.source,
-            instance_path: vec![],
+            instance_path: path.clone(),
             edits: table.rows.clone(),
         });
         table.summary = Some(summary);

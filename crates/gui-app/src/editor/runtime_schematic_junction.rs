@@ -10,13 +10,24 @@ impl Runtime {
         world: PointNm,
         screen: (f32, f32),
     ) -> Option<PointNm> {
-        if self.workspace().schematic_authoring.marker != Some(MarkerKind::Junction) {
-            return self.schematic_snap_point(world, screen);
-        }
-        match self.junction_anchor(world, screen) {
-            Ok(anchor) => {
+        // Junction keeps exact endpoint/crossing anchors first; everything
+        // else — including the junction single-wire case — resolves through
+        // the one shared snap service (pin priority, exact wire contact,
+        // grid), which owns the ink-envelope and far-jump policy.
+        let resolved = if self.workspace().schematic_authoring.marker == Some(MarkerKind::Junction)
+        {
+            match self.junction_anchor(world, screen) {
+                Ok(Some(anchor)) => Ok(anchor),
+                Ok(None) => self.schematic_snap_point(world, screen),
+                Err(reason) => Err(reason),
+            }
+        } else {
+            self.schematic_snap_point(world, screen)
+        };
+        match resolved {
+            Ok(point) => {
                 self.session.workspace_mut().schematic_authoring.refusal = None;
-                anchor.or_else(|| self.schematic_snap_point(world, screen))
+                Some(point)
             }
             Err(reason) => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -41,11 +52,23 @@ impl Runtime {
         let scene = datum_gui_protocol::camera_scene_for_pane(state, pane)
             .ok_or("Schematic source is unavailable")?;
         let authoring = &state.schematic_authoring;
+        // Anchors come from the captured placement occurrence — the same
+        // source sheet the marker request will target — never the primary
+        // sheet, which would alias wire UUID lookups on a focused child.
+        let placement = authoring
+            .placement_sheet()
+            .ok_or("Schematic source is unavailable")?;
         let sheet = authoring
             .source
             .as_ref()
-            .and_then(|s| s.sheets.get(&authoring.sheet?))
+            .and_then(|s| s.sheets.get(&placement))
             .ok_or("Schematic source is unavailable")?;
+        if scene.schematic_document.as_ref().is_none_or(|document| {
+            document.source_sheet != placement
+                || document.instance_path != authoring.placement_path()
+        }) {
+            return Err("Finish the Junction gesture in its captured source pane".into());
+        }
         let retained = self
             .renderer
             .render_session()
@@ -100,6 +123,9 @@ impl Runtime {
         }
         match anchors.len() {
             0 if wires.len() > 1 => Err("Point at the wire crossing to place a junction".into()),
+            // One hit wire with no endpoint/crossing anchor falls through to
+            // the shared snap service, which applies the same exact wire
+            // contact under the common grid and ink-envelope policy.
             0 => Ok(None),
             1 => {
                 let (x, y) = *anchors.first().unwrap();

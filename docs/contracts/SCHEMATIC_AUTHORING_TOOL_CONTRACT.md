@@ -155,6 +155,47 @@ observation; child multi-gate behavior has focused canonical proof, not a GUI
 fixture claim. Failed-write restoration has source review. Full hierarchy,
 physical/ECO workflows and full qualification remain open.
 
+### Ordinary root and child authoring — integration in progress
+
+The owner-selected goal in `dat-ordinary-circuit-authoring-zvhw` is to finish
+ordinary circuit authoring across root and child sheets: build a circuit, revise
+its symbols, wiring and annotations, connect child sheets, and save/reopen it
+without arbitrary differences between sheets. Earlier bounded delivery receipts
+above retain their original scope. This integration is not yet ordinary-workflow
+acceptance or full schematic qualification.
+
+Existing forms and gestures use one captured project/revision/source/ordered-path/
+pane basis for unique root or child occurrences, including revalidation,
+cancellation and failure restoration. The integration covers symbol fields,
+compatible Part/Gate choices, named annotations, Power labels, Ports, Bus/member
+forms and explicit markers through their existing operations and Proposal rules.
+Bulk sheet annotation and Reference/Value tables must review and accept the same
+complete qualified source they displayed; current receipts must identify that path.
+The existing explicit interface-binding model also applies when a unique child
+is itself the parent of another child. Repeated or ambiguous occurrences, stale
+or wrong sources, locks, incompatible mappings, unsupported physical/cross-sheet
+component ownership and explicit unbinding requirements remain meaningful limits.
+
+The shared Move tool adds a single native adapter,
+`datum.schematic.move {object, instance_path, x_nm, y_nm}`, for Wire/Junction/Port
+translation. The resolved source determines the class. A Wire's destination is
+its `from` anchor and its `to` point receives the same checked delta; a Junction
+uses an absolute point. Port relocation uses the existing position-only
+`SetSchematicPort` edit, retaining its name, direction and explicit instance
+membership. No-connect remains pin-owned; changing its pin uses delete/recreate
+at an actual pin, while Symbol movement retains its existing owned-marker rules.
+Unselected coincident geometry stays authored where it
+is, and electrical connectivity re-derives under the existing explicit-junction
+and PM053 rules. Existing Symbol pin/wire attachment behavior remains. This does
+not supply interactive wire Drag/stretch or implicit reconnection. Raw metadata,
+nested point extensions and object identity must survive; locked objects,
+overflow, duplicates and existing external dependencies refuse. Move preview and
+history use the shared lifecycle for supported schematic classes on either sheet.
+
+Integrated source review, focused canonical/protocol regressions and independent
+ordinary root/child workflow proof are required before reporting this goal done.
+Individual engine passes or enabled menu entries do not establish that workflow.
+
 ### Current-engine grounding (verified)
 
 Native schematic authoring has partially migrated onto the engine

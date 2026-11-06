@@ -29,6 +29,7 @@ pub(in crate::api::native_write) fn summary(
 ) -> Result<FieldBatchSummary, EngineError> {
     let recorded = recorded(proposal)?;
     let sheet = recorded.single_sheet()?;
+    let path = shared::occurrence_path(model, sheet)?;
     if current {
         if proposal.prepared_against != model.model_revision
             || proposal.batch.expected_model_revision.as_ref() != Some(&model.model_revision)
@@ -49,7 +50,7 @@ pub(in crate::api::native_write) fn summary(
                 })
             })
             .collect::<Result<Vec<_>, EngineError>>()?;
-        let rebuilt = build(model, sheet, &[], &edits)?;
+        let rebuilt = build(model, sheet, &path, &edits)?;
         if rebuilt.batch.operations != proposal.batch.operations {
             return Err(invalid(
                 "Symbol Fields Table proposal differs from the current complete batch",
@@ -86,7 +87,7 @@ pub(in crate::api::native_write) fn summary(
     }
     Ok(FieldBatchSummary {
         sheet,
-        instance_path: vec![],
+        instance_path: path,
         changes,
     })
 }

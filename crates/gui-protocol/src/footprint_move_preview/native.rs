@@ -37,6 +37,47 @@ pub enum NativeMovePreview {
         instance_path: Vec<Uuid>,
         root: PathBuf,
     },
+    Connectivity {
+        base: BoardReviewSceneV1,
+        target: ConnectivityMoveTarget,
+        sheet_id: Uuid,
+        authoring: Box<SchematicAuthoring>,
+        cursor_anchor: PointNm,
+        instance_path: Vec<Uuid>,
+        root: PathBuf,
+    },
+}
+
+/// Immutable source copy of one rigid connectivity move subject.
+#[derive(Clone)]
+pub enum ConnectivityMoveTarget {
+    Wire(eda_engine::schematic::SchematicWire),
+    Junction(eda_engine::schematic::Junction),
+    Port(eda_engine::schematic::HierarchicalPort),
+}
+impl ConnectivityMoveTarget {
+    fn id(&self) -> Uuid {
+        match self {
+            Self::Wire(wire) => wire.uuid,
+            Self::Junction(junction) => junction.uuid,
+            Self::Port(port) => port.uuid,
+        }
+    }
+    fn class(&self) -> crate::AuthoredSelectionClass {
+        match self {
+            Self::Wire(_) => crate::AuthoredSelectionClass::Wire,
+            Self::Junction(_) => crate::AuthoredSelectionClass::Junction,
+            Self::Port(_) => crate::AuthoredSelectionClass::Port,
+        }
+    }
+    /// The anchor the engine verb's absolute destination applies to.
+    fn anchor(&self) -> eda_engine::ir::geometry::Point {
+        match self {
+            Self::Wire(wire) => wire.from,
+            Self::Junction(junction) => junction.position,
+            Self::Port(port) => port.position,
+        }
+    }
 }
 impl NativeMovePreview {
     pub fn symbol(
@@ -96,12 +137,83 @@ impl NativeMovePreview {
             "Label occurrence changed; select it again"
         );
         anyhow::ensure!(
-            authoring.sheet == Some(basis.sheet_id),
-            "Select a Label on the current native sheet"
+            base.schematic_document
+                .as_ref()
+                .is_some_and(|document| document.source_sheet == basis.sheet_id
+                    && document.instance_path == id.instance_path),
+            "Select a Label in the captured schematic occurrence"
         );
         Ok(Self::Label {
             base: base.clone(),
             basis,
+            authoring: Box::new(authoring.clone()),
+            cursor_anchor: checked_snap_authoring_point(cursor, snap)?,
+            instance_path: id.instance_path.clone(),
+            root,
+        })
+    }
+    /// One rigid Wire/Junction move subject acquired from the focused
+    /// qualified occurrence; the engine `datum.schematic.move` adapter
+    /// resolves the kind again from its own source.
+    pub fn connectivity(
+        base: &BoardReviewSceneV1,
+        authoring: &SchematicAuthoring,
+        id: &crate::AuthoredSelectionIdentity,
+        cursor: PointNm,
+        snap: AuthoringSnapState,
+        root: PathBuf,
+    ) -> Result<Self> {
+        let document = base
+            .schematic_document
+            .as_ref()
+            .context("Move requires its captured schematic occurrence")?;
+        anyhow::ensure!(
+            document.instance_path == id.instance_path,
+            "Select a Wire or Junction in the captured schematic occurrence"
+        );
+        let sheet_id = document.source_sheet;
+        let sheet = authoring
+            .source
+            .as_ref()
+            .and_then(|source| source.sheets.get(&sheet_id))
+            .context("Native schematic source unavailable")?;
+        let target = match id.class {
+            crate::AuthoredSelectionClass::Wire => ConnectivityMoveTarget::Wire(
+                sheet
+                    .wires
+                    .get(&id.id)
+                    .context("Wire Move source unavailable")?
+                    .clone(),
+            ),
+            crate::AuthoredSelectionClass::Junction => ConnectivityMoveTarget::Junction(
+                sheet
+                    .junctions
+                    .get(&id.id)
+                    .context("Junction Move source unavailable")?
+                    .clone(),
+            ),
+            crate::AuthoredSelectionClass::Port => ConnectivityMoveTarget::Port(
+                sheet
+                    .ports
+                    .get(&id.id)
+                    .context("Port Move source unavailable")?
+                    .clone(),
+            ),
+            _ => anyhow::bail!("Move supports a selected Wire, Junction or Port here"),
+        };
+        if let ConnectivityMoveTarget::Wire(wire) = &target {
+            anyhow::ensure!(
+                !sheet
+                    .bus_entries
+                    .values()
+                    .any(|entry| entry.wire == Some(wire.uuid)),
+                "Wire is referenced by a bus entry; remove the entry first"
+            );
+        }
+        Ok(Self::Connectivity {
+            base: base.clone(),
+            target,
+            sheet_id,
             authoring: Box::new(authoring.clone()),
             cursor_anchor: checked_snap_authoring_point(cursor, snap)?,
             instance_path: id.instance_path.clone(),
@@ -113,7 +225,9 @@ impl NativeMovePreview {
             Self::Footprint(p) => &p.base,
             Self::Text(p) => &p.base,
             Self::Symbols(p) => &p.base,
-            Self::Symbol { base, .. } | Self::Label { base, .. } => base,
+            Self::Symbol { base, .. }
+            | Self::Label { base, .. }
+            | Self::Connectivity { base, .. } => base,
         }
     }
     pub fn footprint(&self) -> Option<&FootprintMovePreview> {
@@ -125,16 +239,20 @@ impl NativeMovePreview {
     pub fn is_schematic(&self) -> bool {
         matches!(
             self,
-            Self::Text(_) | Self::Symbols(_) | Self::Symbol { .. } | Self::Label { .. }
+            Self::Text(_)
+                | Self::Symbols(_)
+                | Self::Symbol { .. }
+                | Self::Label { .. }
+                | Self::Connectivity { .. }
         )
     }
     pub fn instance_path(&self) -> Vec<Uuid> {
         match self {
             Self::Text(p) => p.instance_path.clone(),
             Self::Symbols(p) => p.members[0].instance_path.clone(),
-            Self::Symbol { instance_path, .. } | Self::Label { instance_path, .. } => {
-                instance_path.clone()
-            }
+            Self::Symbol { instance_path, .. }
+            | Self::Label { instance_path, .. }
+            | Self::Connectivity { instance_path, .. } => instance_path.clone(),
             _ => vec![],
         }
     }
@@ -167,6 +285,15 @@ impl NativeMovePreview {
             } => crate::AuthoredSelectionIdentity {
                 class: crate::AuthoredSelectionClass::Symbol,
                 id: basis.symbol.uuid,
+                instance_path: instance_path.clone(),
+            },
+            Self::Connectivity {
+                target,
+                instance_path,
+                ..
+            } => crate::AuthoredSelectionIdentity {
+                class: target.class(),
+                id: target.id(),
                 instance_path: instance_path.clone(),
             },
         })
@@ -225,6 +352,11 @@ impl NativeMovePreview {
                 rotation_deg: *rotation_deg,
                 mirrored: *mirrored,
             },
+            Self::Connectivity { target, .. } => NativeEditAction::MoveConnectivity {
+                object: target.id(),
+                x_nm: at.x,
+                y_nm: at.y,
+            },
         })
     }
     /// Validate the complete connected geometry before changing the desired pose.
@@ -275,6 +407,11 @@ impl NativeMovePreview {
                 cursor_anchor,
                 ..
             } => translated_destination(basis.label.position, *cursor_anchor, cursor, snap),
+            Self::Connectivity {
+                target,
+                cursor_anchor,
+                ..
+            } => translated_destination(target.anchor(), *cursor_anchor, cursor, snap),
         }
     }
     pub fn scene_at(&self, at: PointNm) -> Result<BoardReviewSceneV1> {
@@ -332,6 +469,58 @@ impl NativeMovePreview {
                     sheet.wires.insert(wire.uuid, wire);
                 }
                 authoring.project_source(&source, basis.sheet_id, base, root)
+            }
+            Self::Connectivity {
+                base,
+                target,
+                sheet_id,
+                authoring,
+                root,
+                ..
+            } => {
+                let mut source = authoring
+                    .source
+                    .clone()
+                    .context("Native schematic source unavailable")?;
+                let sheet = source
+                    .sheets
+                    .get_mut(sheet_id)
+                    .context("Native sheet changed")?;
+                let translate = |point: eda_engine::ir::geometry::Point,
+                                 anchor: eda_engine::ir::geometry::Point|
+                 -> Result<eda_engine::ir::geometry::Point> {
+                    let shift = |p: i64, a: i64, c: i64| {
+                        i64::try_from(i128::from(p) + i128::from(c) - i128::from(a))
+                            .context("Move exceeds integer coordinates")
+                    };
+                    Ok(eda_engine::ir::geometry::Point {
+                        x: shift(point.x, anchor.x, at.x)?,
+                        y: shift(point.y, anchor.y, at.y)?,
+                    })
+                };
+                match target {
+                    ConnectivityMoveTarget::Wire(wire) => {
+                        let moved = eda_engine::schematic::SchematicWire {
+                            uuid: wire.uuid,
+                            from: translate(wire.from, wire.from)?,
+                            to: translate(wire.to, wire.from)?,
+                        };
+                        sheet.wires.insert(moved.uuid, moved);
+                    }
+                    ConnectivityMoveTarget::Junction(junction) => {
+                        let moved = eda_engine::schematic::Junction {
+                            uuid: junction.uuid,
+                            position: translate(junction.position, junction.position)?,
+                        };
+                        sheet.junctions.insert(moved.uuid, moved);
+                    }
+                    ConnectivityMoveTarget::Port(port) => {
+                        let mut moved = port.clone();
+                        moved.position = translate(port.position, port.position)?;
+                        sheet.ports.insert(moved.uuid, moved);
+                    }
+                }
+                authoring.project_source(&source, *sheet_id, base, root)
             }
         }
     }
