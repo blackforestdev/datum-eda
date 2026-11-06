@@ -125,7 +125,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div class="win">
   <div class="wt">quick-connector-brd<span class="path">new project · 0 settings touched</span></div>
   <div class="canvasmock">Board authored · 7 components · 12 nets<br>
-  Revision policy &nbsp;<span style="color:#3B6E45">Unmanaged</span> — nothing adopted, nothing recorded, nothing asked<br>
+  Revision policy &nbsp;<span style="color:#3B6E45">Unmanaged</span> — nothing adopted, no revision records, nothing asked <span style="color:var(--tx3);font-size:11px">(undo and the technical journal still run below the UI — PM-034/PM-038)</span><br>
   Manufacturing &nbsp;&nbsp;&nbsp;<span style="color:var(--val)">Gerber · Excellon · BOM · pick-and-place — all available</span></div>
 </div>
 <div class="cap"><b>This is the whole point.</b> Ten minutes of authorship costs zero minutes of setup. The revision engine is attached and completely silent. Nothing about this path is degraded, provisional, or second-class — it is a supported way to use Datum forever.</div>
@@ -152,7 +152,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
       <div class="ghead">Versioning</div>
       <div class="row">
         <div class="lbl"><b>How this project is versioned</b>
-          <span>Not tracked. Author freely — nothing is recorded, nothing is required, and no approval gate exists.</span></div>
+          <span>Not tracked. Author freely — no revision records, nothing required, and no approval gate exists. Undo and the technical journal keep operating below the UI (PM-034/PM-038).</span></div>
         <div class="ctl"><div class="sel">Don't track revisions</div></div>
       </div>
       <div class="prov"><b>seeded from</b> your global default for new projects · copy-once at creation · this project owns it now</div>
@@ -167,7 +167,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div>
 <div class="menu">
   <div class="mi sel-on">Don't track revisions
-    <small>Nothing recorded, nothing required, no gate — the default</small></div>
+    <small>No revision records, nothing required, no gate — the default (undo + technical journal still run below the UI)</small></div>
   <div class="mi">Track revisions, don't gate authoring
     <small>Changes recorded as you work; you are never stopped or asked</small></div>
   <div class="mi">Require an approved change before authoring
@@ -195,7 +195,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 </div>
 
 <div class="law" style="margin-top:14px"><b>What this preserves from PM-034, without ceremony.</b> The engine cannot block authoring because under the two default states there is nothing for it to enforce, and under the third the user explicitly asked for the gate. Ignoring the revision engine entirely stays a first-class workflow — it is the shipped default, not a fallback.</div>
-<div class="cap"><b>One wording conflict to resolve.</b> PM-034 line 173 currently reads that the engine "never blocks, <b>prompts</b>, or delays Design authoring." Section 3's nag is a prompt in the plain reading of that sentence. Either the clause means <i>interrupting</i> prompts in the authoring path — which the strip above is not — or the nag needs the clause amended to say so.</div>
+<div class="cap"><b style="color:#3B6E45">Wording conflict resolved by withdrawal (PM-038, 2026-08-30).</b> The question concerned Section 3's guidance-strip nag; PM-038 withdrew that strip with the section, so there is no nag and PM-034's "never blocks, <b>prompts</b>, or delays Design authoring" clause stands unamended. <span style="color:var(--tx3)"><b style="color:#E5534B">⊘ retained comparison (the original question):</b> "PM-034 line 173 currently reads that the engine 'never blocks, prompts, or delays Design authoring.' Section 3's nag is a prompt in the plain reading of that sentence. Either the clause means interrupting prompts in the authoring path — or the nag needs the clause amended to say so."</span></div>
 
 <div class="cap" style="margin-top:20px"><b>Status.</b> Clay. Nothing here is ratified and nothing is being asked for. Project Preferences as a surface is undrawn beyond this one section; only the revision gate is proposed.</div>
 </body></html>

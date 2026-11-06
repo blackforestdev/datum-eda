@@ -65,7 +65,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <tr><td class="k">create + validate a typed proposal</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
 <tr><td class="k">commit a proposal <b>you already approved</b></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
 <tr><td class="k">commit a design mutation with <b>no per-action approval</b></td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="w">only tools on your allowlist</td></tr>
-<tr><td class="k">mint an EngineeringRevision · issue a Release</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n" style="color:var(--err)">never — see §3</td></tr>
+<tr><td class="k">mint an EngineeringRevision · issue a Release</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n" style="color:var(--err)">closed by default (D1 2026-08-28) — deliberate human Preferences opt-in only · see §3/§4</td></tr>
 </table>
 <div class="cap"><b>Cumulative, not orthogonal.</b> every level keeps the one below it · the jump that matters is apply-approved → unattended: the first three all end at a human decision, the fourth does not</div>
 
@@ -91,27 +91,27 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 <div class="sec">3 · WHAT NO LEVEL EVER GRANTS</div>
 <div class="hard">
 <b>Never, at any authority level, for any agent, under any organization policy:</b><br>
-mint an <b>EngineeringRevision</b> · issue a <b>Release</b> · sign or satisfy an <b>attestation</b> · alter an <b>issued record</b>, its bytes, approvals, or standing · change <b>Project policy</b> · grant itself or another agent authority · edit the <b>allowlist</b> · bypass the proposal path for a design mutation · act on a <b>Capability-class</b> preference<br>
-<span style="color:var(--tx3);font-size:11px">an agent is an <b>ActorIdentity</b> of kind “controlled automation principal” (PM-034); it may hold Author capability, and the release-class capabilities are structurally unavailable to it</span>
+mint an <b>EngineeringRevision</b> · issue a <b>Release</b> <span style="color:var(--tx3);font-size:11px">(blocked by default — openable only by the owner’s deliberate D1 Preferences opt-in, 2026-08-28; no other path)</span> · sign or satisfy an <b>attestation</b> <span style="color:var(--tx3);font-size:11px">(never — the D1 opt-in does not cover attestation)</span> · alter an <b>issued record</b>, its bytes, approvals, or standing · change <b>Project policy</b> · grant itself or another agent authority · edit the <b>allowlist</b> · bypass the proposal path for a design mutation · act on a <b>Capability-class</b> preference<br>
+<span style="color:var(--tx3);font-size:11px">an agent is an <b>ActorIdentity</b> of kind “controlled automation principal” (PM-034); it may hold Author capability. <b style="color:#E5534B">⊘ superseded wording (retained comparison):</b> “the release-class capabilities are structurally unavailable to it” — <b style="color:#3B6E45">owner disposition D1 2026-08-28:</b> release capability ships closed by default, not structurally absent; only a deliberate human Preferences act can open it, with the cost stated first and Keep blocked as the default. Attestation, issued-record alteration, Project policy, self-granting, allowlist edits and proposal-path bypass remain never-granted at every level</span>
 </div>
-<div class="cap"><b>This is the line that makes the rest safe.</b> everything above it is convenience; this is the part that cannot be configured away — not by the user, not by an organization directive, not by an allowlist entry</div>
+<div class="cap"><b>This is the line that makes the rest safe.</b> everything above it is convenience; none of it can be configured away by an organization directive or an allowlist entry (R1 2026-08-28). <b style="color:#E5534B">⊘ superseded (retained comparison):</b> “not by the user” — <b style="color:#3B6E45">D1 2026-08-28:</b> the release line alone may be opened by the user, only as a deliberate Preferences act with the cost stated first and Keep blocked the default; every other line holds against the user too</div>
 
-<div class="sec">4 · THE TWO OPEN DECISIONS</div>
+<div class="sec">4 · THE TWO DECISIONS — <span style="color:#3B6E45">OWNER-DISPOSITIONED 2026-08-28</span> · RETAINED COMPARISON</div>
 <div class="grid2">
   <div><div class="card">
-    <div class="chd">D1 — is release authority forbidden or merely default-off?<span class="tag">DECIDE</span></div>
+    <div class="chd">D1 — is release authority forbidden or merely default-off?<span class="tag" style="color:#3B6E45;border-color:#3B6E45">DECIDED 2026-08-28</span></div>
     <div class="row"><div class="l"><b>A · structurally forbidden</b><span>no code path exists for an agent to hold release-class capability; the grant cannot be expressed</span></div></div>
     <div class="prov">strongest guarantee · an org that wants agent-issued releases cannot have them, ever · matches manual-first doctrine: a human authorizes what ships</div>
     <div class="row"><div class="l"><b>B · default-off, grantable</b><span>an owner could deliberately grant release capability to an automation principal</span></div></div>
     <div class="prov">flexible for CI-style pipelines · but the attestation would name a machine, and the “who authorized this board” answer becomes a policy file</div>
-  </div><div class="cap"><b>D1.</b> recommendation: <b>A</b> — the whole revision engine exists so a human stands behind an issued record</div></div>
+  </div><div class="cap"><b>D1.</b> recommendation: <b>A</b> — the whole revision engine exists so a human stands behind an issued record · <b style="color:#3B6E45">owner disposition 2026-08-28: B, hardened</b> — ships closed, deliberate Preferences opt-in with the cost stated first, Keep blocked default (header block above); recommendation A retained as dated comparison, not adopted</div></div>
   <div><div class="card">
-    <div class="chd">D2 — must unattended grants expire?<span class="tag">DECIDE</span></div>
+    <div class="chd">D2 — must unattended grants expire?<span class="tag" style="color:#3B6E45;border-color:#3B6E45">DECIDED 2026-08-28</span></div>
     <div class="row"><div class="l"><b>A · always time-boxed</b><span>every unattended grant carries an expiry; maximum bounded by policy</span></div></div>
     <div class="prov">grants decay to propose unless renewed · prevents the forgotten-permission failure that every long-lived token suffers</div>
     <div class="row"><div class="l"><b>B · optional expiry</b><span>expiry available, “until revoked” permitted</span></div></div>
     <div class="prov">less friction for a trusted local workflow · but an unattended grant nobody remembers making is exactly what an audit finds later</div>
-  </div><div class="cap"><b>D2.</b> recommendation: <b>A</b> — a grant you must re-affirm is a grant you still understand</div></div>
+  </div><div class="cap"><b>D2.</b> recommendation: <b>A</b> — a grant you must re-affirm is a grant you still understand · <b style="color:#3B6E45">owner disposition 2026-08-28: A adopted</b> — unattended grants expire by default and lapse to propose</div></div>
 </div>
 
 <div class="sec">5 · WHAT YOU SEE WHEN AN AGENT ACTS</div>
@@ -122,5 +122,5 @@ mint an <b>EngineeringRevision</b> · issue a <b>Release</b> · sign or satisfy 
   <div class="prov">actor <b>claude-code</b> (automation principal) · launch <b>ag-7714</b> · session <b>s-2291</b> · authority <b>unattended</b> · allowlist entry <b>datum.pcb.move_component</b> granted by you 2026-08-26, expires 2026-09-02 · expected revision <b>r-1183</b> · one typed operation batch · diff and undo available like any other commit</div>
 </div>
 <div class="cap"><b>No separate agent journal.</b> agent work is ordinary journaled work with a fuller provenance record — one mutation path, per CLAUDE.md · the ⛉ marker is a fact on the row, never a different lane</div>
-<div class="note" style="margin-top:22px">Everything above is drawn from ratified law: the four profiles are the terminal interop spec's; ActorIdentity/automation principal and release capability are PM-034's; Capability-class protection is Q3/Q7; one mutation path with full provenance is CLAUDE.md's. <b>The two open decisions (D1, D2) are what this surface exists to resolve.</b></div>
+<div class="note" style="margin-top:22px">Everything above is drawn from ratified law: the four profiles are the terminal interop spec's; ActorIdentity/automation principal and release capability are PM-034's; Capability-class protection is Q3/Q7; one mutation path with full provenance is CLAUDE.md's. <b>The two decisions (D1, D2) this surface existed to resolve were owner-dispositioned 2026-08-28</b> — see the disposition block at the top; §4 stands as dated retained comparison, not an open question.</div>
 </body></html>
