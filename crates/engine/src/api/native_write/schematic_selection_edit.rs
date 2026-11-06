@@ -367,7 +367,7 @@ fn move_wire(
         .finish()
 }
 
-/// Absolute identity-preserving junction relocation under placement admission.
+/// Junction relocation carries incident endpoints and keeps through-wires fixed.
 fn move_junction(
     context: &NativeWriteContext<'_>,
     provenance: WriteProvenance,
@@ -393,18 +393,40 @@ fn move_junction(
     require_unlocked(&original)?;
     let mut moved = original.clone();
     set_point(&mut moved["position"], position);
-    BatchComposer::compose(context.model, provenance)
-        .push_op(Operation::DeleteSchematicJunction {
+    let destination = super::schematic_junction_move::JunctionMoveBasis::capture(sheet, p.object)?
+        .destination_edit(position)?;
+    let mut operations = vec![
+        Operation::DeleteSchematicJunction {
             sheet_id,
             junction_id: p.object,
             junction: original,
-        })
-        .push_op(Operation::PlaceSchematicMarker {
+        },
+        Operation::PlaceSchematicMarker {
             sheet_id,
             marker_id: p.object,
             marker_kind: crate::substrate::SchematicMarkerKind::Junction,
             marker: moved,
-        })
+        },
+    ];
+    for wire in destination.wires {
+        let original = member_payload(&raw, "wires", wire.uuid, &sheet.wires[&wire.uuid])?;
+        require_unlocked(&original)?;
+        let mut moved = original.clone();
+        set_point(&mut moved["from"], wire.from);
+        set_point(&mut moved["to"], wire.to);
+        operations.push(Operation::DeleteSchematicWire {
+            sheet_id,
+            wire_id: wire.uuid,
+            wire: original,
+        });
+        operations.push(Operation::CreateSchematicWire {
+            sheet_id,
+            wire_id: wire.uuid,
+            wire: moved,
+        });
+    }
+    BatchComposer::compose(context.model, provenance)
+        .push_ops(operations)
         .primary_object(p.object)
         .finish()
 }

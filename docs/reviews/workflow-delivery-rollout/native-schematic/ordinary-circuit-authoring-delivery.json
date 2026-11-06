@@ -313,5 +313,102 @@
       "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
     }
   },
-  "retention": "Raw logs, screenshots, native QA project copies and manifests under .datum/scratch are machine-local, ignored and prunable. This committed delivery JSON retains their reviewed hashes/outcomes; it does not claim the raw artifacts are committed."
+  "retention": "Raw logs, screenshots, native QA project copies and manifests under .datum/scratch are machine-local, ignored and prunable. This committed delivery JSON retains their reviewed hashes/outcomes; it does not claim the raw artifacts are committed.",
+  "connected_junction_correction": {
+    "task": "dat-schematic-connected-junction-drag-nmu2",
+    "source_base_commit": "55cf17b5dc855bb0c96d1cb5d0f8482b366fa47a",
+    "result": "PASS for bounded owner connected-junction correction; broader owner usability QA remains open",
+    "owner_case": "Existing test01 circuit: Select-drag R1/C1 junction from (-2400000,1200000) to (-2400000,700000) nm. Carry Q1 base branch endpoint, keep through-wire/pins fixed.",
+    "change": "Configure existing shared Move for qualified Wire/Junction/Port Select-drag; a connected Junction owns incident wire endpoints through the shared contact planner and atomic canonical edit. No new public verb or rerouter.",
+    "reviewed_source_pins": {
+      "crates/engine/src/connectivity/symbol_move_contacts.rs": "940f1d91222da3ef536f944442bb1cb311a1e9ebef32f0a040f157b60576b34b",
+      "crates/engine/src/api/native_write/mod.rs": "f311ae2a07b8f693b8abc6fce2e59b51128bc80b1b64ae754268400cc3b9ed77",
+      "crates/engine/src/api/native_write/schematic_selection_edit.rs": "50f1f097363d507c219059f69ece145548ff97aea2624906a958294e88d7f803",
+      "crates/engine/src/api/native_write/schematic_junction_move.rs": "f38ed4d4d09632d44880f83e9787aab9b73ca2451bef9bfcb2dbb919e1504adf",
+      "crates/engine/src/api/native_write/schematic_junction_move_tests.rs": "999376f8b577e8a0c26b131387430488dacdfabc7ae0c803a9f627e11dc02969",
+      "crates/gui-app/src/editor/runtime_selection_region/drag.rs": "f3b31f09421f3eb1707456b12dc0dd6fe95473b20c3c172a83b9331998f81ea0",
+      "crates/gui-app/src/editor/runtime_selection_region/tests.rs": "3d49378bca34f45542a41ca8ba9b81dbfd99913bfe77346f8b26ed3637ef0dd6",
+      "crates/gui-app/src/editor/runtime_selection_region/move_drag_tests.rs": "c5efefed046902e12ff11268d4c2f989304a96752bc67447e8b84d62de19c52a",
+      "crates/gui-protocol/src/footprint_move_preview/native.rs": "5fcea7c12f667e62069c449b1e090a4bb9bf523bc4f56850b48ed7526e02f75f",
+      "crates/gui-protocol/src/schematic_connectivity_move_tests.rs": "3984759a002f5756ae363e164b711ad6c9257ac3019143c7604c3c038f24a8cd"
+    },
+    "binary_sha256": {
+      "datum-gui": "4f6b6f8077fb398a0fd3886e7221435e8ad325053e77ae08c6ee4cb2447abfc5",
+      "datum-eda": "277fb459f73f69b5a20843409ee0b21a1166e4fcbb83a3b31fad34a401f0fdbc",
+      "eda-engine-daemon": "864338dc546ca628c8b596932bf5b80274727b1502134be5ecdff2770fb5c1c2"
+    },
+    "binary_input_freshness": {
+      "datum-gui": 1330,
+      "datum-eda": 848,
+      "eda-engine-daemon": 548
+    },
+    "test_only_supplement_after_release": "schematic_junction_move_tests.rs adds read-only actual-owner identity/partition comparison; excluded by all three release depfiles. Production source and binaries unchanged.",
+    "focused_checks": {
+      "engine_primary_and_existing_label_symbol": 25,
+      "engine_existing_wire_junction_port": 3,
+      "protocol_preview_lock_raw_history": 2,
+      "gui_gesture_controls": 3,
+      "actual_owner_cpu_hit_and_preview": 1,
+      "actual_owner_resolved_identity_and_complete_partitions": 1,
+      "unique_tests_passed": 35,
+      "cold_identity_repeat": "PASS 1; no additional unique test counted"
+    },
+    "actual_gui": {
+      "reviewer_thread": "01a1af1d-0f7b-71c2-ae5b-abf0775af53f",
+      "cancel_and_continuous_drag": "run101ownerdrag actual GUI passed cases only; raw aggregate FAIL retained",
+      "history_save_cold": "run102ownerhistory actual exit 0, PASS",
+      "initial_no_write_cancel_files": 309,
+      "saved_cold_canonical_files_exact": 316,
+      "authored_identity_files_exact": 21,
+      "geometry": "Only Junction.position.y and incident Wire.to.y changed; through-wire/pins/all other source geometry exact",
+      "selection_limit": "GUI prior selection was a singleton Wire; no GUI Run6 claim. Run acquisition has CPU coverage.",
+      "cleanup": "All private GUI/daemons/clipboard/Weston stopped and IPC removed; no cleanup errors"
+    },
+    "independent_review": {
+      "thread": "01a1af1d-0f7b-71c2-ae5b-abf0775af53f",
+      "result": "PASS within stated source/ordinary GUI scopes",
+      "local_receipt": ".datum/scratch/codex-delivery/nmu2-independent-source-review.txt"
+    },
+    "retained_failures": [
+      {
+        "run": "run100ownerdrag",
+        "result": "FAIL retained; input invalid for cancellation: mouse release preceded Escape due helper modifiers. No product cancellation defect established."
+      },
+      {
+        "run": "run101ownerdrag",
+        "result": "FAIL retained at strict legacy query identity comparison after valid cancel/continuous drag. Direct authored NetIds and complete logical/physical partitions passed; only observed anonymous legacy query name/UUID exception allowed in remaining history proof."
+      },
+      {
+        "checks": "Initial bad Cargo filter arguments, zero-test filters and GUI test import compile error retained; corrected commands actually executed. No pass credited to unexecuted tests."
+      }
+    ],
+    "separate_defect": "dat-schematic-net-query-authored-identity-vbd3: declaration-free legacy query reports coordinate-derived anonymous name/UUID despite unchanged authored NetIds. Raw query results retained; all other fields and all named query UUIDs compared exactly.",
+    "limits": [
+      "No physical/HUMAN observation, performance claim or full schematic qualification",
+      "Broader owner usability QA and existing selection/performance intake remain open",
+      "Arbitrary wire elbows, rerouting and implicit reconnection remain outside this correction"
+    ],
+    "artifacts": {
+      ".datum/scratch/codex-delivery/nmu2-engine-before.log": "dde72e94e85448327c769d8f771d5183c113b363ce61599f311ae69c21eda2d2",
+      ".datum/scratch/codex-delivery/nmu2-engine-after.log": "612d2e579c4be5b0bdf80fb38a03d1a44f22e46714dea764d3e131bc0fe43364",
+      ".datum/scratch/codex-delivery/nmu2-existing-move-tests.log": "3643d582408a1ad5696f1b8e3e30fe87e98bdcfe8d28134a5ca9d5da3ce8d9b0",
+      ".datum/scratch/codex-delivery/nmu2-protocol-executed-tests.log": "146eb17bf2cb15ddf94391bf23077e93635d6a5ec75326b91b987cb8888654c5",
+      ".datum/scratch/codex-delivery/nmu2-gui-gesture-tests-corrected.log": "dc3949c3909fea0562e1ed4dbcf1a73ce26f89028ecce4098b2e6c67d30d364d",
+      ".datum/scratch/codex-delivery/nmu2-owner-pickup-test.log": "7743c284c5361c8c8c490696b5cf5bcf6964c5ca016b84b3c69a2f3b5893db2b",
+      ".datum/scratch/codex-delivery/nmu2-owner-authored-identity-test.log": "42019e5cfb4d3c54d0203d8b8e5ed8f8e2a593b73c7f9c719acca5b5902b21e2",
+      ".datum/scratch/codex-delivery/nmu2-owner-cold-identity-test.log": "e548a2f95e7c64e4a0a49c8dbe6fa6f99e8f6aa30dc12de6eecab50259644f95",
+      ".datum/scratch/codex-delivery/nmu2-release-build.log": "760dcc047773ee60e6a16aae5816e0ca633c54e6349a6503b5cdcc1ea3d81e28",
+      ".datum/scratch/schematic-interaction-qa/run100ownerdrag/result.json": "4f5ef6f44b27c87c9117164306255d6106e0465709cb794bcc4a538324e0b330",
+      ".datum/scratch/schematic-interaction-qa/run100ownerdrag/commands.json": "7cefe8486c588d2173d4c9096b2a3e74c9b5ea3b4ce5df86ba3bc0ae509b13e7",
+      ".datum/scratch/schematic-interaction-qa/run100ownerdrag/observations.json": "efd5f78452131ace27bea354dda6bfabf1671c8c9a2b2e27101057ddaf1fbc4c",
+      ".datum/scratch/schematic-interaction-qa/run101ownerdrag/result.json": "b6b3ec8d605f66354fb83edc2ae4340bf547f0616581f57f90581e99485391e7",
+      ".datum/scratch/schematic-interaction-qa/run101ownerdrag/commands.json": "05147d1f8492d89b63eee98dd4cce750c4b6302a52727caf80fb0456b33d1d02",
+      ".datum/scratch/schematic-interaction-qa/run101ownerdrag/observations.json": "32cb8fa61e74107ac62037bac2f055acfd5aeef812e9545798f8d665b2f98a62",
+      ".datum/scratch/schematic-interaction-qa/run102ownerhistory/result.json": "2f88e25a512d16e4145b4f7f49a6e6ca118bc7723c2e189e6a66d5726950714c",
+      ".datum/scratch/schematic-interaction-qa/run102ownerhistory/commands.json": "735e02245ffc13b263436937c1d72b2bd006fd6795e794bad59e642613ab80bf",
+      ".datum/scratch/schematic-interaction-qa/run102ownerhistory/observations.json": "4719ebb454445521836e5b6e5f966ba49c62e18ed429b8cdc592146730eb4f6c",
+      ".datum/scratch/schematic-interaction-qa/run102ownerhistory/Owner-cold-horizontal-branch-retained.png": "85a95f9f3b4ce03a636f2c82f10edf664cb84a558fda7e97103a4dc37ed5733f"
+    },
+    "retention": "This correction entry is durable. Referenced .datum raw logs, images, copied projects, review receipt and binaries are machine-local ignored/prunable evidence, not committed artifacts. Earlier top-level delivery candidate/evidence retains its original scope."
+  }
 }

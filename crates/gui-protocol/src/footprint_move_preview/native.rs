@@ -3,7 +3,8 @@ use super::*;
 use crate::native_edit_client::NativeEditAction;
 use crate::schematic_authoring::{PlacementTransform, SchematicAuthoring};
 use eda_engine::api::native_write::{
-    schematic_label_move::LabelMoveBasis, schematic_symbol_move::SymbolMoveBasis,
+    schematic_junction_move::JunctionMoveBasis, schematic_label_move::LabelMoveBasis,
+    schematic_symbol_move::SymbolMoveBasis,
 };
 use std::path::PathBuf;
 use uuid::Uuid;
@@ -52,14 +53,14 @@ pub enum NativeMovePreview {
 #[derive(Clone)]
 pub enum ConnectivityMoveTarget {
     Wire(eda_engine::schematic::SchematicWire),
-    Junction(eda_engine::schematic::Junction),
+    Junction(JunctionMoveBasis),
     Port(eda_engine::schematic::HierarchicalPort),
 }
 impl ConnectivityMoveTarget {
     fn id(&self) -> Uuid {
         match self {
             Self::Wire(wire) => wire.uuid,
-            Self::Junction(junction) => junction.uuid,
+            Self::Junction(basis) => basis.junction.uuid,
             Self::Port(port) => port.uuid,
         }
     }
@@ -74,7 +75,7 @@ impl ConnectivityMoveTarget {
     fn anchor(&self) -> eda_engine::ir::geometry::Point {
         match self {
             Self::Wire(wire) => wire.from,
-            Self::Junction(junction) => junction.position,
+            Self::Junction(basis) => basis.junction.position,
             Self::Port(port) => port.position,
         }
     }
@@ -185,13 +186,9 @@ impl NativeMovePreview {
                     .context("Wire Move source unavailable")?
                     .clone(),
             ),
-            crate::AuthoredSelectionClass::Junction => ConnectivityMoveTarget::Junction(
-                sheet
-                    .junctions
-                    .get(&id.id)
-                    .context("Junction Move source unavailable")?
-                    .clone(),
-            ),
+            crate::AuthoredSelectionClass::Junction => {
+                ConnectivityMoveTarget::Junction(JunctionMoveBasis::capture(sheet, id.id)?)
+            }
             crate::AuthoredSelectionClass::Port => ConnectivityMoveTarget::Port(
                 sheet
                     .ports
@@ -507,12 +504,15 @@ impl NativeMovePreview {
                         };
                         sheet.wires.insert(moved.uuid, moved);
                     }
-                    ConnectivityMoveTarget::Junction(junction) => {
-                        let moved = eda_engine::schematic::Junction {
-                            uuid: junction.uuid,
-                            position: translate(junction.position, junction.position)?,
-                        };
-                        sheet.junctions.insert(moved.uuid, moved);
+                    ConnectivityMoveTarget::Junction(basis) => {
+                        let moved = basis.destination_edit(eda_engine::ir::geometry::Point {
+                            x: at.x,
+                            y: at.y,
+                        })?;
+                        sheet.junctions.insert(moved.junction.uuid, moved.junction);
+                        for wire in moved.wires {
+                            sheet.wires.insert(wire.uuid, wire);
+                        }
                     }
                     ConnectivityMoveTarget::Port(port) => {
                         let mut moved = port.clone();

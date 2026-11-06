@@ -4,6 +4,12 @@ use datum_gui_protocol::{AuthoredSelectionClass, SelectionSubject, SelectionTarg
 
 pub(crate) struct SelectionMoveDrag {
     subject: SelectionSubject,
+    selection_at_press: Option<(
+        SelectionSubject,
+        datum_gui_protocol::SelectionProjectId,
+        String,
+    )>,
+    acquisition: Option<(String, std::sync::Arc<runtime_selection_hit::BindingBasis>)>,
     anchor: PointNm,
     started: bool,
     previous_tool: WorkspaceTool,
@@ -19,39 +25,26 @@ impl Runtime {
         if self.modifiers.alt_key() || self.modifiers.super_key() {
             return None;
         }
-        let SelectionTarget::Native(view) = &self.workspace().selection else {
-            return None;
+        let selection_at_press = match &self.workspace().selection {
+            SelectionTarget::Native(view) if !view.stale => {
+                Some((view.subject.clone(), view.project, view.revision.0.clone()))
+            }
+            SelectionTarget::None => None,
+            _ => return None,
         };
-        if view.stale {
-            return None;
-        }
-        let subject = view.subject.clone();
-        if !matches!(
-            &subject,
-            SelectionSubject::Compound(_)
-                | SelectionSubject::Object(datum_gui_protocol::AuthoredSelectionIdentity {
-                    class: AuthoredSelectionClass::Symbol
-                        | AuthoredSelectionClass::Footprint
-                        | AuthoredSelectionClass::Label
-                        | AuthoredSelectionClass::SchematicText,
-                    ..
-                })
-        ) {
-            return None;
-        }
         let hit = self.selection_world_hit(world, surface, Some(pane)).ok()?;
         let HitTarget::AuthoredObject(key) = hit.target? else {
             return None;
         };
         let basis = hit.basis?;
-        if !datum_gui_protocol::footprint_move_preview::native::group::subject_contains(
-            &subject,
-            &basis.bindings.get(&key)?.acquired,
-        ) {
-            return None;
-        }
+        let binding = basis.bindings.get(&key)?;
+        let current = selection_at_press.as_ref().map(|(subject, _, _)| subject);
+        let subject = drag_subject(current, &binding.acquired)?;
+        let acquisition = (current != Some(&subject)).then_some((key, basis));
         Some(SelectionMoveDrag {
             subject,
+            selection_at_press,
+            acquisition,
             anchor: world,
             started: false,
             previous_tool: self.workspace().tool,
@@ -62,8 +55,21 @@ impl Runtime {
         let Some(mut drag) = self.selection_move.take() else {
             return true;
         };
-        let current = matches!(&self.workspace().selection, SelectionTarget::Native(view)
-            if !view.stale && view.subject == drag.subject);
+        let current = if drag.started {
+            matches!(&self.workspace().selection, SelectionTarget::Native(view)
+                if !view.stale && view.subject == drag.subject)
+        } else {
+            match (&self.workspace().selection, &drag.selection_at_press) {
+                (SelectionTarget::None, None) => true,
+                (SelectionTarget::Native(view), Some((subject, project, revision))) => {
+                    !view.stale
+                        && &view.subject == subject
+                        && &view.project == project
+                        && &view.revision.0 == revision
+                }
+                _ => false,
+            }
+        };
         if !current || self.check_work.pending() {
             if drag.started {
                 self.cancel_native_move();
@@ -80,6 +86,39 @@ impl Runtime {
                 format!("{}@{}", s.scene_id, s.source_revision) != gesture.source_revision
             }) {
                 return true;
+            }
+            if let Some((key, captured)) = drag.acquisition.take() {
+                // Revalidate the exact occurrence and filters before publishing.
+                // A drag picks one authored object, never a repeated-click Run.
+                let pane = gesture.pane;
+                let Ok(Some(current)) =
+                    self.native_binding_basis(SceneSurface::Schematic, Some(pane))
+                else {
+                    return true;
+                };
+                if !std::sync::Arc::ptr_eq(&captured, &current)
+                    || !captured
+                        .bindings
+                        .get(&key)
+                        .is_some_and(|binding| binding.eligible(&self.workspace().ui.filters))
+                {
+                    return true;
+                }
+                let SelectionSubject::Object(id) = &drag.subject else {
+                    return true;
+                };
+                self.native_selection.as_mut().unwrap().reset_click_depth();
+                self.publish_native_acquisition(
+                    [id.clone()].into_iter().collect(),
+                    AcquisitionMode::Replace,
+                    AcquisitionEntry::Individual,
+                    None,
+                );
+                if !matches!(&self.workspace().selection, SelectionTarget::Native(view)
+                    if !view.stale && view.subject == drag.subject)
+                {
+                    return true;
+                }
             }
             // Acquisition uses the press point, so crossing the threshold cannot
             // jump the object or discard the first segment of pointer travel.
@@ -136,4 +175,40 @@ impl Runtime {
         }
         self.dispatch_session_command(SessionCommand::SetTool(drag.previous_tool));
     }
+}
+
+/// Preserve an admitted selected subject; connectivity pickup is an explicit
+/// singleton even when the preceding point click selected a derived Run.
+pub(super) fn drag_subject(
+    current: Option<&SelectionSubject>,
+    hit: &datum_gui_protocol::AuthoredSelectionIdentity,
+) -> Option<SelectionSubject> {
+    let admitted = current.filter(|subject| {
+        matches!(
+            subject,
+            SelectionSubject::Compound(_)
+                | SelectionSubject::Object(datum_gui_protocol::AuthoredSelectionIdentity {
+                    class: AuthoredSelectionClass::Symbol
+                        | AuthoredSelectionClass::Footprint
+                        | AuthoredSelectionClass::Label
+                        | AuthoredSelectionClass::SchematicText
+                        | AuthoredSelectionClass::Wire
+                        | AuthoredSelectionClass::Junction
+                        | AuthoredSelectionClass::Port,
+                    ..
+                })
+        )
+    });
+    if let Some(subject) = admitted.filter(|subject| {
+        datum_gui_protocol::footprint_move_preview::native::group::subject_contains(subject, hit)
+    }) {
+        return Some(subject.clone());
+    }
+    matches!(
+        hit.class,
+        AuthoredSelectionClass::Wire
+            | AuthoredSelectionClass::Junction
+            | AuthoredSelectionClass::Port
+    )
+    .then(|| SelectionSubject::Object(hit.clone()))
 }

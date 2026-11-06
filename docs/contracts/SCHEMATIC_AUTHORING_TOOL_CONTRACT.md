@@ -155,14 +155,19 @@ observation; child multi-gate behavior has focused canonical proof, not a GUI
 fixture claim. Failed-write restoration has source review. Full hierarchy,
 physical/ECO workflows and full qualification remain open.
 
-### Ordinary root and child authoring — delivered
+### Ordinary root and child authoring — owner QA open
 
 The owner-selected goal in `dat-ordinary-circuit-authoring-zvhw` is to finish
 ordinary circuit authoring across root and child sheets: build a circuit, revise
 its symbols, wiring and annotations, connect child sheets, and save/reopen it
 without arbitrary differences between sheets. Earlier bounded delivery receipts
-above retain their original scope. The ordinary workflow is delivered for unique
-qualified root and child occurrences; full schematic qualification remains separate.
+above retain their original scope. Owner QA reopened the goal after normal
+Select-drag failed on a connected junction in an existing circuit. The earlier
+workflow evidence does not establish that interaction. The correction in
+`dat-schematic-connected-junction-drag-nmu2` passes ordinary Select-drag,
+cancellation, history and Save/cold reopening on a copy of that circuit;
+broader owner usability QA remains open.
+Full schematic qualification remains separate.
 
 Existing forms and gestures use one captured project/revision/source/ordered-path/
 pane basis for unique root or child occurrences, including revalidation,
@@ -180,15 +185,22 @@ The shared Move tool adds a single native adapter,
 `datum.schematic.move {object, instance_path, x_nm, y_nm}`, for Wire/Junction/Port
 translation. The resolved source determines the class. A Wire's destination is
 its `from` anchor and its `to` point receives the same checked delta; a Junction
-uses an absolute point. Port relocation uses the existing position-only
+uses an absolute point. A connected Junction moves its incident wire endpoints
+through the existing contact planner while interior through-wires stay fixed;
+the complete physical connectivity partition and fixed contacts must survive.
+An isolated Junction retains absolute marker placement. Port relocation uses
+the existing position-only
 `SetSchematicPort` edit, retaining its name, direction and explicit instance
 membership. No-connect remains pin-owned; changing its pin uses delete/recreate
 at an actual pin, while Symbol movement retains its existing owned-marker rules.
-Unselected coincident geometry stays authored where it
+Unowned coincident geometry stays authored where it
 is, and electrical connectivity re-derives under the existing explicit-junction
 and PM053 rules. Existing Symbol pin/wire attachment behavior remains. This does
-not supply interactive wire Drag/stretch or implicit reconnection. Raw metadata,
-nested point extensions and object identity must survive; locked objects,
+not supply arbitrary wire elbow editing, rerouting or implicit reconnection.
+Normal Select-drag configures the same Move lifecycle for Wire/Junction/Port:
+after the existing drag threshold it acquires the exact qualified hit rather
+than widening the prior derived Run into a move. Wire movement remains rigid.
+Raw metadata, nested point extensions and object identity must survive; locked objects,
 overflow, duplicates and existing external dependencies refuse. Move preview and
 history use the shared lifecycle for supported schematic classes on either sheet.
 An interior scalar Label can slide along its existing wire while all incident
@@ -205,6 +217,18 @@ objects, all 1,543 canonical files and the resolved nets exactly. The
 binds the reviewed source, binaries, actual workflow evidence and retained failures.
 This is programmatic ordinary GUI proof, not physical/HUMAN, performance or full
 schematic qualification. The admission limits above remain in force.
+
+The connected-junction correction retains the earlier proof at its original
+scope. Independent copied-owner GUI input straightened the Q1 base branch by
+moving only the junction and its incident endpoint; the through-wire and pins
+stayed fixed. Escape preserved all 309 initial canonical files. Undo/Redo,
+one Save and cold reopening preserved the final 316-file inventory exactly.
+Direct resolved-model checks preserved all authored electrical identities,
+NetIds, and complete logical and physical membership. The legacy anonymous
+net query's coordinate-derived display name/UUID discrepancy is separately
+tracked in `dat-schematic-net-query-authored-identity-vbd3`; those compatibility
+fields are not evidence of semantic NetId stability. The delivery record's
+correction entry retains the failed input/oracle attempts and actual proof.
 
 ### Current-engine grounding (verified)
 

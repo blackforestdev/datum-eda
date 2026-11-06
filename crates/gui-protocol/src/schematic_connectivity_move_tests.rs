@@ -11,7 +11,7 @@ use eda_engine::api::native_write::{
 use serde_json::json;
 
 #[test]
-fn wire_and_junction_move_previews_translate_rigidly_without_writes() {
+fn wire_and_junction_move_previews_preserve_qualified_source_without_writes() {
     let fixture = isolated_fixture();
     let root = &fixture.0;
     let mut model = eda_engine::substrate::ProjectResolver::new(root)
@@ -178,6 +178,223 @@ fn wire_and_junction_move_previews_translate_rigidly_without_writes() {
             std::fs::read(path).unwrap(),
             before,
             "preview writes no source bytes"
+        );
+    }
+}
+
+#[test]
+fn connected_junction_preview_moves_incident_endpoint_and_keeps_through_wire() {
+    let fixture = isolated_fixture();
+    let root = &fixture.0;
+    let mut model = eda_engine::substrate::ProjectResolver::new(root)
+        .resolve()
+        .unwrap();
+    let sheet = SchematicAuthoring::from_model(&model)
+        .unwrap()
+        .sheet
+        .unwrap();
+    for points in [
+        json!([{"x":70_000_000,"y":80_000_000},{"x":70_000_000,"y":90_000_000}]),
+        json!([{"x":75_000_000,"y":85_000_000},{"x":70_000_000,"y":86_000_000}]),
+    ] {
+        let prepared = (find_native_write_verb("datum.schematic.draw_wire")
+            .unwrap()
+            .build)(
+            &NativeWriteContext {
+                model: &model,
+                project_root: root,
+            },
+            WriteProvenance::new(
+                "test",
+                eda_engine::substrate::CommitSource::Test,
+                "junction preview",
+            ),
+            json!({"sheet":sheet,"instance_path":[],"points":points}),
+        )
+        .unwrap();
+        commit_prepared(&mut model, root, prepared).unwrap();
+    }
+    let authoring = SchematicAuthoring::from_model(&model).unwrap();
+    let sheet_source = &authoring.source.as_ref().unwrap().sheets[&sheet];
+    let branch = sheet_source
+        .wires
+        .values()
+        .find(|w| w.from.x == 75_000_000)
+        .unwrap();
+    let through = sheet_source
+        .wires
+        .values()
+        .find(|w| w.from.y == 80_000_000)
+        .unwrap();
+    let junction = sheet_source
+        .junctions
+        .values()
+        .find(|j| j.position.y == 86_000_000)
+        .unwrap();
+    let base = crate::native_schematic_scene::project_native_schematic_scene(&model, root)
+        .unwrap()
+        .unwrap();
+    let original_source = authoring.source.clone();
+    let path = base
+        .schematic_document
+        .as_ref()
+        .unwrap()
+        .instance_path
+        .clone();
+    let preview = NativeMovePreview::connectivity(
+        &base,
+        &authoring,
+        &AuthoredSelectionIdentity {
+            class: AuthoredSelectionClass::Junction,
+            id: junction.uuid,
+            instance_path: path.clone(),
+        },
+        PointNm {
+            x: 70_000_000,
+            y: 86_000_000,
+        },
+        crate::AuthoringSnapState {
+            enabled: false,
+            grid_nm: 100_000,
+        },
+        root.clone(),
+    )
+    .unwrap();
+    let destination = PointNm {
+        x: 70_000_000,
+        y: 85_000_000,
+    };
+    let moved = preview.scene_at(destination).unwrap();
+    let graphic = |scene: &crate::BoardReviewSceneV1, id: uuid::Uuid| {
+        scene
+            .board_graphics
+            .iter()
+            .find(|g| g.source_object_uuid == id.to_string() && g.object_kind == "schematic_wire")
+            .map(|g| g.path.clone())
+            .unwrap()
+    };
+    assert_eq!(
+        graphic(&moved, branch.uuid),
+        vec![
+            PointNm {
+                x: 75_000_000,
+                y: 85_000_000
+            },
+            destination
+        ]
+    );
+    assert_eq!(graphic(&moved, through.uuid), graphic(&base, through.uuid));
+    assert_eq!(preview.instance_path(), path);
+    assert!(preview.action(destination).unwrap().is_move());
+    assert_eq!(
+        authoring.source, original_source,
+        "preview never edits source"
+    );
+    assert!(
+        preview
+            .scene_at(PointNm {
+                x: 72_000_000,
+                y: 85_000_000
+            })
+            .is_err(),
+        "detaching from through wire refuses"
+    );
+
+    // Endpoint ownership also brings the incident wire's raw lock and future
+    // metadata under the same atomic commit, even though only the junction is
+    // selected. The through-wire is never rewritten.
+    use eda_engine::api::native_write::context::BatchComposer;
+    use eda_engine::substrate::{Operation, ProjectResolver};
+    let provenance = || {
+        WriteProvenance::new(
+            "test",
+            eda_engine::substrate::CommitSource::Test,
+            "connected junction payload",
+        )
+    };
+    let mut original = serde_json::to_value(branch).unwrap();
+    let load_sheet = || {
+        let index: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(root.join("schematic/schematic.json")).unwrap())
+                .unwrap();
+        let path = index["sheets"][sheet.to_string()].as_str().unwrap();
+        serde_json::from_slice::<serde_json::Value>(
+            &std::fs::read(root.join("schematic").join(path)).unwrap(),
+        )
+        .unwrap()
+    };
+    let move_params = json!({"object":junction.uuid,"instance_path":path,"x_nm":destination.x,"y_nm":destination.y});
+    for locked in [true, false] {
+        let mut payload = original.clone();
+        payload["locked"] = json!(locked);
+        payload["future_extension"] = json!({"literal":"${KEEP}"});
+        payload["to"]["future_coordinate"] = json!("keep this extension");
+        let prepared = BatchComposer::compose(&model, provenance())
+            .push_ops(vec![
+                Operation::DeleteSchematicWire {
+                    sheet_id: sheet,
+                    wire_id: branch.uuid,
+                    wire: original,
+                },
+                Operation::CreateSchematicWire {
+                    sheet_id: sheet,
+                    wire_id: branch.uuid,
+                    wire: payload.clone(),
+                },
+            ])
+            .finish()
+            .unwrap();
+        commit_prepared(&mut model, root, prepared).unwrap();
+        model = ProjectResolver::new(root).resolve().unwrap();
+        original = payload;
+        let before = load_sheet();
+        let count = model.journal.len();
+        let prepared = (find_native_write_verb("datum.schematic.move")
+            .unwrap()
+            .build)(
+            &NativeWriteContext {
+                model: &model,
+                project_root: root,
+            },
+            provenance(),
+            move_params.clone(),
+        );
+        if locked {
+            assert!(
+                prepared.is_err(),
+                "a selected junction must not reshape a locked branch"
+            );
+            assert_eq!(model.journal.len(), count);
+            assert_eq!(load_sheet(), before);
+            continue;
+        }
+        commit_prepared(&mut model, root, prepared.unwrap()).unwrap();
+        model = ProjectResolver::new(root).resolve().unwrap();
+        let mut expected = before.clone();
+        expected["junctions"][junction.uuid.to_string()]["position"]["y"] = json!(destination.y);
+        expected["wires"][branch.uuid.to_string()]["to"]["y"] = json!(destination.y);
+        assert_eq!(
+            load_sheet(),
+            expected,
+            "only the marker and owned endpoint change"
+        );
+        model
+            .commit_journal_undo(root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(root).resolve().unwrap();
+        assert_eq!(
+            load_sheet(),
+            before,
+            "cold Undo restores exact raw payloads"
+        );
+        model
+            .commit_journal_redo(root, provenance().into())
+            .unwrap();
+        model = ProjectResolver::new(root).resolve().unwrap();
+        assert_eq!(
+            load_sheet(),
+            expected,
+            "cold Redo preserves future metadata"
         );
     }
 }

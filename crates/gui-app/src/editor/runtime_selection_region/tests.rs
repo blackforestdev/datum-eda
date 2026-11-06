@@ -435,3 +435,6 @@ fn stale_region_completion_preserves_current_selection(runtime: &mut Runtime) {
     );
     runtime.session.workspace_mut().ui.filters = original_filters;
 }
+
+#[path = "move_drag_tests.rs"]
+mod move_drag_tests;

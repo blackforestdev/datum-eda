@@ -7,14 +7,16 @@ use super::{
 use crate::{
     error::EngineError,
     ir::geometry::Point,
-    schematic::{NetLabel, PlacedSymbol, Schematic, SchematicWire, Sheet},
+    schematic::{Junction, NetLabel, PlacedSymbol, Schematic, SchematicWire, Sheet},
 };
 use std::{collections::HashSet, sync::Arc};
 use uuid::Uuid;
 
+#[derive(Clone, Copy)]
 enum ContactOrigin {
     SymbolPins,
     Label,
+    Junction(Uuid),
 }
 
 /// Shared scalar attachment nodes used by the existing connectivity owner.
@@ -93,6 +95,25 @@ impl SymbolContactBasis {
         Self::capture_points(sheet, vec![target.position], points, ContactOrigin::Label)
     }
 
+    pub(crate) fn capture_junction(sheet: &Sheet, id: Uuid) -> Result<Self, EngineError> {
+        let junction = sheet
+            .junctions
+            .get(&id)
+            .ok_or_else(|| invalid("Junction source unavailable"))?;
+        let points = sheet
+            .symbols
+            .values()
+            .flat_map(|symbol| symbol.pins.iter().map(|pin| pin.position))
+            .chain(sheet.labels.values().map(|label| label.position))
+            .collect();
+        Self::capture_points(
+            sheet,
+            vec![junction.position],
+            points,
+            ContactOrigin::Junction(id),
+        )
+    }
+
     fn capture_points(
         sheet: &Sheet,
         source_points: Vec<Point>,
@@ -101,7 +122,9 @@ impl SymbolContactBasis {
     ) -> Result<Self, EngineError> {
         // All fixed scalar markers, including bus containers, qualify the move.
         points.extend(sheet.ports.values().map(|p| p.position));
-        points.extend(sheet.junctions.values().map(|j| j.position));
+        points.extend(sheet.junctions.values().filter(|junction| {
+            !matches!(origin, ContactOrigin::Junction(id) if junction.uuid == id)
+        }).map(|junction| junction.position));
         points.extend(sheet.noconnects.values().map(|n| n.position));
         let pin_positions: HashSet<_> = source_points.iter().copied().collect();
         if pin_positions.len() != source_points.len() {
@@ -125,19 +148,24 @@ impl SymbolContactBasis {
                 .iter()
                 .any(|pin| point_on_wire_segment(*pin, wire.from, wire.to))
             {
+                let interior = pin_positions.iter().any(|point| {
+                    *point != wire.from
+                        && *point != wire.to
+                        && point_on_wire_segment(*point, wire.from, wire.to)
+                });
                 if wire.from == wire.to
-                    || (!keep_wires_fixed
-                        && pin_positions.iter().any(|pin| {
-                            *pin != wire.from
-                                && *pin != wire.to
-                                && point_on_wire_segment(*pin, wire.from, wire.to)
-                        }))
+                    || (interior
+                        && !keep_wires_fixed
+                        && !matches!(origin, ContactOrigin::Junction(_)))
                 {
                     return Err(invalid(
                         "Move has ambiguous geometric pin contact inside a wire",
                     ));
                 }
-                if !keep_wires_fixed {
+                // A through-wire stays fixed when its junction slides; only
+                // wires ending at that junction acquire endpoint ownership.
+                if !keep_wires_fixed && !(interior && matches!(origin, ContactOrigin::Junction(_)))
+                {
                     attached.push(wire.clone());
                 }
             }
@@ -200,6 +228,23 @@ impl SymbolContactBasis {
             return Err(invalid("Move has ambiguous external geometric pin contact"));
         }
         Ok(())
+    }
+
+    pub(crate) fn has_source_wire_contact(&self) -> bool {
+        self.sheet.wires.values().any(|wire| {
+            self.source_points
+                .iter()
+                .any(|point| point_on_wire_segment(*point, wire.from, wire.to))
+        })
+    }
+
+    pub(crate) fn moved_junction_wires(
+        &self,
+        junction: &Junction,
+    ) -> Result<Vec<SchematicWire>, EngineError> {
+        let mut sheet = self.sheet.as_ref().clone();
+        sheet.junctions.insert(junction.uuid, junction.clone());
+        self.moved_geometry(sheet, vec![junction.position])
     }
 
     pub(crate) fn moved_wires(
