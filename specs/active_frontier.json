@@ -5586,8 +5586,7 @@
           "selection": "explicit_frontier_update",
           "selects_successor": false,
           "unblocks_issue_ids": [
-            "dat-native-authoring-depth-sf9",
-            "dat-sheet-interaction-reentry-9ee"
+            "dat-native-authoring-depth-sf9"
           ]
         },
         "presentation_policy": {
@@ -5794,8 +5793,7 @@
       "summary": "Delegated SURFACE-S05 disposition ratified and landed in fc287786 after actual corrected distinct policy/contract and governance review. PM062 records B1/O1, shared library composition and truthful warning/readiness/narrow presentation; broader placement/pool/source/standards/HUMAN obligations remain. Explicit finite LIBRARY-GUI-AUTHORING execution selected separately; this specification issue closes without runtime qualification.",
       "title": "Complete schematic and library GUI surface specifications",
       "unblocks": [
-        "dat-native-authoring-depth-sf9",
-        "dat-sheet-interaction-reentry-9ee"
+        "dat-native-authoring-depth-sf9"
       ]
     },
     {
@@ -19251,7 +19249,7 @@
         "owner_reserved",
         "decision_classification"
       ],
-      "session": "01a18df2-2fa1-7613-9e7d-1f61dc7e8923",
+      "session": "01a1af09-2188-7dc0-ada3-f2745ca59ddd",
       "source_ref": {
         "marker": "<!-- EVIDENCE:PM059:STANDING-PROJECT-MANAGER -->",
         "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md"
