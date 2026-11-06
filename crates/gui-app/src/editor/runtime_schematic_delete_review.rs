@@ -120,16 +120,17 @@ impl Runtime {
         }
         if !accept && (review.closes_locally() || self.native_edit.blocked) {
             // Accepted is not rejectable. Closing is local and never retries a mutation.
-            if review.source_current(self.workspace()) {
+            if review.basis.document.is_some() {
+                // Discard local preview state even after a source change; the
+                // committed document cache supplies the current pane's scene.
+                let editor = &mut self.session.workspace_mut().schematic_authoring;
+                editor.circuit_basis = None;
+                editor.circuit_preview = None;
+                self.invalidate_scene();
+            } else if review.source_current(self.workspace()) {
                 let mut scene = review.scene.clone();
                 scene.source_revision = review.revision.clone();
-                if review.symbol_delete() {
-                    let editor = &mut self.session.workspace_mut().schematic_authoring;
-                    editor.circuit_basis = None;
-                    editor.circuit_preview = None;
-                } else {
-                    self.session.workspace_mut().schematic_scene = Some(scene);
-                }
+                self.session.workspace_mut().schematic_scene = Some(scene);
                 self.invalidate_scene();
             }
             self.session
@@ -193,7 +194,7 @@ impl Runtime {
         }
         if !review.finished() {
             if review.ready() && review.current(self.workspace()) {
-                if review.symbol_delete() {
+                if review.basis.document.is_some() {
                     let mut basis = review.basis.clone();
                     basis.revision = review.revision.clone();
                     let editor = &mut self.session.workspace_mut().schematic_authoring;

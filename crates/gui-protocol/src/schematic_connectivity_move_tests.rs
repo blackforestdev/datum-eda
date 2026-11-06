@@ -122,7 +122,13 @@ fn wire_and_junction_move_previews_translate_rigidly_without_writes() {
             (anchor.x + 2_000_000, anchor.y + 3_000_000),
             "anchor-relative rigid translation"
         );
-        match preview.action(at).unwrap() {
+        let action = preview.action(at).unwrap();
+        // The produced action must carry the shared runtime Move permission:
+        // this is the preview→action→gate contract the run94 commit-gate
+        // omission broke, asserted across the real layers rather than a
+        // mirrored enum list.
+        assert!(action.is_move());
+        match action {
             NativeEditAction::MoveConnectivity { object, x_nm, y_nm } => {
                 assert_eq!(object, id);
                 assert_eq!((x_nm, y_nm), (at.x, at.y));

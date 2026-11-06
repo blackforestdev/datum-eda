@@ -231,15 +231,7 @@ impl Runtime {
             );
         if !creating
             && !self.native_edit.pending()
-            && matches!(
-                action,
-                NativeEditAction::Move { .. }
-                    | NativeEditAction::MoveSymbol { .. }
-                    | NativeEditAction::MoveSymbols { .. }
-                    | NativeEditAction::MoveText { .. }
-                    | NativeEditAction::MoveLabel { .. }
-                    | NativeEditAction::Schematic
-            )
+            && (action.is_move() || matches!(action, NativeEditAction::Schematic))
             && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
         {
             return true;
@@ -256,15 +248,7 @@ impl Runtime {
             );
             return true;
         }
-        if !matches!(
-            action,
-            NativeEditAction::Move { .. }
-                | NativeEditAction::MoveSymbol { .. }
-                | NativeEditAction::MoveSymbols { .. }
-                | NativeEditAction::MoveText { .. }
-                | NativeEditAction::MoveLabel { .. }
-        ) && self.native_edit.preview.is_some()
-        {
+        if !action.is_move() && self.native_edit.preview.is_some() {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
                 "Finish or cancel the Move preview first",

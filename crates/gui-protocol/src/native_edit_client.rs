@@ -66,6 +66,30 @@ pub enum NativeEditAction {
     Library,
     LibraryAcquire,
 }
+
+impl NativeEditAction {
+    /// One exhaustive Move classification shared by every queue, view-guard
+    /// and commit gate. The match is deliberately total with no wildcard so
+    /// a new action variant fails compilation here instead of silently
+    /// missing a gate (the run94 MoveConnectivity commit-gate omission).
+    pub fn is_move(&self) -> bool {
+        match self {
+            Self::Move { .. }
+            | Self::MoveSymbol { .. }
+            | Self::MoveSymbols { .. }
+            | Self::MoveText { .. }
+            | Self::MoveLabel { .. }
+            | Self::MoveConnectivity { .. } => true,
+            Self::Undo { .. }
+            | Self::Redo { .. }
+            | Self::Save
+            | Self::Proposal
+            | Self::Schematic
+            | Self::Library
+            | Self::LibraryAcquire => false,
+        }
+    }
+}
 #[derive(Clone, Debug)]
 pub struct NativeEditIntent {
     pub project_root: PathBuf,
