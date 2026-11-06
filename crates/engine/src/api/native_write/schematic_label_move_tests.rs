@@ -218,9 +218,14 @@ fn label_move_refuses_ambiguous_contacts_collapses_and_stale_writes() {
         LabelKind::Global,
     );
     let snapshot = ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+    let interior_basis = LabelMoveBasis::capture(&snapshot, interior.uuid, &[]).unwrap();
+    let slide = interior_basis.destination_edit(Point::new(750, 0)).unwrap();
+    assert!(slide.wires.is_empty(), "sliding a Label leaves wires fixed");
     assert!(
-        LabelMoveBasis::capture(&snapshot, interior.uuid, &[]).is_err(),
-        "wire interior has no unique movable endpoint"
+        interior_basis
+            .destination_edit(Point::new(750, 500))
+            .is_err(),
+        "an interior Label cannot disconnect from its wire"
     );
     std::fs::remove_dir_all(f.root).unwrap();
 }
@@ -246,6 +251,28 @@ fn isolated_scalar_label_kinds_share_move_without_renaming_or_retyping() {
         );
         std::fs::remove_dir_all(f.root).unwrap();
     }
+}
+
+#[test]
+fn symbol_pin_move_still_refuses_interior_wire_contact() {
+    let mut f = fixture("symbol_pin_interior_move");
+    let pin = f.symbol.pins[0].position;
+    wire(
+        &mut f.model,
+        &f.root,
+        f.sheet,
+        Point::new(pin.x - 1000, pin.y),
+        Point::new(pin.x + 1000, pin.y),
+    );
+    let before = source(&f.model);
+    let error = crate::connectivity::SymbolContactBasis::capture_symbols(
+        &before.sheets[&f.sheet],
+        &[f.symbol.uuid],
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains("pin contact inside a wire"));
+    assert_eq!(source(&f.model), before);
+    std::fs::remove_dir_all(f.root).unwrap();
 }
 
 #[path = "schematic_label_move_payload_tests.rs"]

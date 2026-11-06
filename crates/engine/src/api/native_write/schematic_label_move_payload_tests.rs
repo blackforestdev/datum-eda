@@ -121,3 +121,100 @@ fn label_move_preserves_raw_connected_sources_and_exact_history() {
         std::fs::remove_dir_all(f.root).unwrap();
     }
 }
+
+#[test]
+fn interior_label_move_keeps_wire_payloads_membership_and_cold_history() {
+    for kind in [
+        LabelKind::Local,
+        LabelKind::Global,
+        LabelKind::Hierarchical,
+        LabelKind::Power,
+    ] {
+        let mut f = fixture("interior_label_move_history");
+        let moving = label(&mut f.model, &f.root, f.sheet, Point::new(500, 0), kind);
+        let fixed = wire(
+            &mut f.model,
+            &f.root,
+            f.sheet,
+            Point::zero(),
+            Point::new(1000, 0),
+        );
+        wire(
+            &mut f.model,
+            &f.root,
+            f.sheet,
+            Point::new(0, 500),
+            Point::new(1000, 500),
+        );
+        let original = sheet_payload(&f.model, f.sheet, moving.uuid);
+        let key = moving.uuid.to_string();
+        let mut raw_label = original["labels"][&key].clone();
+        raw_label["source_extension"] = json!({"literal":"${LABEL}", "future":[false,7]});
+        raw_label["position"]["source_coordinate"] = json!("500,0");
+        let old_wire = original["wires"][fixed.uuid.to_string()].clone();
+        let mut raw_wire = old_wire.clone();
+        raw_wire["source_extension"] = json!({"literal":"keep wire"});
+        raw_wire["from"]["source_coordinate"] = json!("0,0");
+        let write = BatchComposer::compose(&f.model, provenance())
+            .push_ops(vec![
+                Operation::SetSchematicLabel {
+                    sheet_id: f.sheet,
+                    label_id: moving.uuid,
+                    label: raw_label,
+                },
+                Operation::DeleteSchematicWire {
+                    sheet_id: f.sheet,
+                    wire_id: fixed.uuid,
+                    wire: old_wire,
+                },
+                Operation::CreateSchematicWire {
+                    sheet_id: f.sheet,
+                    wire_id: fixed.uuid,
+                    wire: raw_wire,
+                },
+            ])
+            .finish()
+            .unwrap();
+        commit_prepared(&mut f.model, &f.root, write).unwrap();
+        f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+        let before = sheet_payload(&f.model, f.sheet, moving.uuid);
+        let partitions = electrical_test_partitions(&f.model, &[]).unwrap();
+        let identities = f.model.electrical_identities.clone();
+        let count = f.model.journal.len();
+        let snapshot = ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+        let basis = LabelMoveBasis::capture(&snapshot, moving.uuid, &[]).unwrap();
+        assert!(basis.destination_edit(Point::new(750, 500)).is_err());
+        assert!(basis.destination_edit(Point::new(750, 100)).is_err());
+        let at = Point::new(750, 0);
+        assert!(basis.destination_edit(at).unwrap().wires.is_empty());
+        assert_eq!(f.model.journal.len(), count, "preview/refusals never write");
+        assert_eq!(sheet_payload(&f.model, f.sheet, moving.uuid), before);
+        let write = build(&f.model, &f.root, moving.uuid, at).unwrap();
+        commit_prepared(&mut f.model, &f.root, write).unwrap();
+        f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+        let mut expected = before.clone();
+        expected["labels"][&key]["position"]["x"] = json!(750);
+        assert_eq!(sheet_payload(&f.model, f.sheet, moving.uuid), expected);
+        assert_eq!(
+            electrical_test_partitions(&f.model, &[]).unwrap(),
+            partitions
+        );
+        assert_eq!(f.model.electrical_identities, identities);
+        f.model
+            .commit_journal_undo(&f.root, provenance().into())
+            .unwrap();
+        f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+        assert_eq!(sheet_payload(&f.model, f.sheet, moving.uuid), before);
+        f.model
+            .commit_journal_redo(&f.root, provenance().into())
+            .unwrap();
+        f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+        assert_eq!(sheet_payload(&f.model, f.sheet, moving.uuid), expected);
+        assert_eq!(
+            electrical_test_partitions(&f.model, &[]).unwrap(),
+            partitions
+        );
+        assert_eq!(f.model.electrical_identities, identities);
+        std::fs::remove_dir_all(f.root).unwrap();
+    }
+}

@@ -12,6 +12,11 @@ use crate::{
 use std::{collections::HashSet, sync::Arc};
 use uuid::Uuid;
 
+enum ContactOrigin {
+    SymbolPins,
+    Label,
+}
+
 /// Shared scalar attachment nodes used by the existing connectivity owner.
 pub(super) fn schematic_attachment_points(sheet: &Sheet) -> HashSet<Point> {
     sheet
@@ -62,7 +67,7 @@ impl SymbolContactBasis {
                 .ok_or_else(|| invalid("Symbol source unavailable"))?;
             source_points.extend(symbol.pins.iter().map(|p| p.position));
         }
-        Self::capture_points(sheet, source_points, points)
+        Self::capture_points(sheet, source_points, points, ContactOrigin::SymbolPins)
     }
 
     pub(crate) fn capture_label(sheet: &Sheet, label: Uuid) -> Result<Self, EngineError> {
@@ -85,13 +90,14 @@ impl SymbolContactBasis {
                 .filter(|l| l.uuid != label)
                 .map(|l| l.position),
         );
-        Self::capture_points(sheet, vec![target.position], points)
+        Self::capture_points(sheet, vec![target.position], points, ContactOrigin::Label)
     }
 
     fn capture_points(
         sheet: &Sheet,
         source_points: Vec<Point>,
         mut points: Vec<Point>,
+        origin: ContactOrigin,
     ) -> Result<Self, EngineError> {
         // All fixed scalar markers, including bus containers, qualify the move.
         points.extend(sheet.ports.values().map(|p| p.position));
@@ -101,6 +107,17 @@ impl SymbolContactBasis {
         if pin_positions.len() != source_points.len() {
             return Err(invalid("Move has ambiguous coincident attachment points"));
         }
+        // An interior Label slides without acquiring endpoint ownership of any
+        // incident wire. Complete physical partition equality below still
+        // rejects disconnection, reconnection or a lost T-contact.
+        let keep_wires_fixed = matches!(origin, ContactOrigin::Label)
+            && sheet.wires.values().any(|wire| {
+                pin_positions.iter().any(|point| {
+                    *point != wire.from
+                        && *point != wire.to
+                        && point_on_wire_segment(*point, wire.from, wire.to)
+                })
+            });
         let mut attached = Vec::new();
         let mut segments = Vec::new();
         for wire in sheet.wires.values() {
@@ -109,17 +126,20 @@ impl SymbolContactBasis {
                 .any(|pin| point_on_wire_segment(*pin, wire.from, wire.to))
             {
                 if wire.from == wire.to
-                    || pin_positions.iter().any(|pin| {
-                        *pin != wire.from
-                            && *pin != wire.to
-                            && point_on_wire_segment(*pin, wire.from, wire.to)
-                    })
+                    || (!keep_wires_fixed
+                        && pin_positions.iter().any(|pin| {
+                            *pin != wire.from
+                                && *pin != wire.to
+                                && point_on_wire_segment(*pin, wire.from, wire.to)
+                        }))
                 {
                     return Err(invalid(
                         "Move has ambiguous geometric pin contact inside a wire",
                     ));
                 }
-                attached.push(wire.clone());
+                if !keep_wires_fixed {
+                    attached.push(wire.clone());
+                }
             }
         }
         attached.sort_by_key(|wire| wire.uuid);
