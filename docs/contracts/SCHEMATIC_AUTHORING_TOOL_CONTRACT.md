@@ -155,14 +155,14 @@ observation; child multi-gate behavior has focused canonical proof, not a GUI
 fixture claim. Failed-write restoration has source review. Full hierarchy,
 physical/ECO workflows and full qualification remain open.
 
-### Ordinary root and child authoring — integration in progress
+### Ordinary root and child authoring — delivered
 
 The owner-selected goal in `dat-ordinary-circuit-authoring-zvhw` is to finish
 ordinary circuit authoring across root and child sheets: build a circuit, revise
 its symbols, wiring and annotations, connect child sheets, and save/reopen it
 without arbitrary differences between sheets. Earlier bounded delivery receipts
-above retain their original scope. This integration is not yet ordinary-workflow
-acceptance or full schematic qualification.
+above retain their original scope. The ordinary workflow is delivered for unique
+qualified root and child occurrences; full schematic qualification remains separate.
 
 Existing forms and gestures use one captured project/revision/source/ordered-path/
 pane basis for unique root or child occurrences, including revalidation,
@@ -191,10 +191,20 @@ not supply interactive wire Drag/stretch or implicit reconnection. Raw metadata,
 nested point extensions and object identity must survive; locked objects,
 overflow, duplicates and existing external dependencies refuse. Move preview and
 history use the shared lifecycle for supported schematic classes on either sheet.
+An interior scalar Label can slide along its existing wire while all incident
+wires stay fixed and the complete physical connectivity partition is preserved.
+Symbol-pin interior-contact refusal and existing endpoint Label/Power attachment
+behavior remain unchanged.
 
 Integrated source review, focused canonical/protocol regressions and independent
-ordinary root/child workflow proof are required before reporting this goal done.
-Individual engine passes or enabled menu entries do not establish that workflow.
+ordinary GUI input cover circuit creation and revision, field/annotation Proposal
+review, Bus/member Entries, shared Move/history, and explicit interfaces including
+a child acting as parent. One Save and cold reopening preserved all seven sheet
+objects, all 1,543 canonical files and the resolved nets exactly. The
+[consolidated delivery record](../reviews/workflow-delivery-rollout/native-schematic/ordinary-circuit-authoring-delivery.json)
+binds the reviewed source, binaries, actual workflow evidence and retained failures.
+This is programmatic ordinary GUI proof, not physical/HUMAN, performance or full
+schematic qualification. The admission limits above remain in force.
 
 ### Current-engine grounding (verified)
 

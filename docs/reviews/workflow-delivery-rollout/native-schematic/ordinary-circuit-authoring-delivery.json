@@ -1,0 +1,317 @@
+{
+  "kind": "ordinary-circuit-authoring-delivery",
+  "task": "dat-ordinary-circuit-authoring-zvhw",
+  "owner_goal": "Finish ordinary circuit authoring across root and child sheets.",
+  "production_source_commit": "f36a13ca",
+  "implementation_commits": [
+    "7ded3083",
+    "0db388e3",
+    "3de11619",
+    "cc32f00a",
+    "f36a13ca"
+  ],
+  "scope": "Manual-first native circuit authoring on unique qualified root and child occurrences, using ordinary GUI programmatic input and independent screenshot review; retained earlier proofs keep their original candidate and scope.",
+  "production_source_pins": {
+    "crates/engine/src/api/native_write/registry.rs": "ad4da8e648d593e5133c41c949ad529d87ded755ea8417df27d3dfb8e1f7c1e0",
+    "crates/engine/src/api/native_write/schematic_annotation.rs": "db2f5f9bb27bb3cd4d3f38d577735fbe6243f0359526b112dfc8c0412ee6487a",
+    "crates/engine/src/api/native_write/schematic_annotation_plan.rs": "4cc18c2697a05183e5fb2a99a3d775313025f91b401770e0529bc9cc5daa7dd9",
+    "crates/engine/src/api/native_write/schematic_annotation_receipt.rs": "15a10e076a37e838de9dc518c52c3ae057c5785130bbc48a890edc0f40edd828",
+    "crates/engine/src/api/native_write/schematic_bus.rs": "10c1614020a9a4a492f57ca5197c8fa8ea90033b8c320eee436dfeba76b21a22",
+    "crates/engine/src/api/native_write/schematic_child_bus_tests.rs": "17181612daf1befdffad516caad8ccc500e3194e0178a22ebabf9ebb7953f6bf",
+    "crates/engine/src/api/native_write/schematic_child_circuit_tests.rs": "6f7a81b551a37ebd44ad07aa9cd38ff67864ebe48ae1f7954dd2236b64fb2864",
+    "crates/engine/src/api/native_write/schematic_edit.rs": "2fdc3bc829ae8bbf15b7f6300c766e577fc3993292c13aea917c1690397fd0fc",
+    "crates/engine/src/api/native_write/schematic_field_batch.rs": "668ac37dd193432b73d43567a7db5016316223872ad31ff3554e169976413f6c",
+    "crates/engine/src/api/native_write/schematic_field_batch_receipt.rs": "ca613147548090a2255cd150dc56057b6a131a7e4ed7db9ad0d371d6214793f7",
+    "crates/engine/src/api/native_write/schematic_label_move_payload_tests.rs": "442126c1da40d1edaa0685ea6128727d4e66e28d4b6785b21dbf04aab760747f",
+    "crates/engine/src/api/native_write/schematic_label_move_tests.rs": "3e1e92bbc4abb010c0e3c2bb1f55ffae6c1ea0566e11473d06d1dcd921bf63d1",
+    "crates/engine/src/api/native_write/schematic_marker.rs": "6c5460b71844fcd281fb643208e99b4d52f2fc0da83231180db76b7859eb6964",
+    "crates/engine/src/api/native_write/schematic_marker_tests.rs": "dba2f8e1a7dea069866856e1b1c91e13564e92f9fe0750a3d3f24ca275039571",
+    "crates/engine/src/api/native_write/schematic_port.rs": "ac1522f052a798e978c1fba660c50fbc2c71cd5e8fabce8b398bd3fa5006e13e",
+    "crates/engine/src/api/native_write/schematic_port_tests.rs": "18dfd4fa1267daa67830f830483209774ab275220bbdca5f9c9d6b09a31ec3fc",
+    "crates/engine/src/api/native_write/schematic_selection_edit.rs": "2b6295765c5a86c2ec1353a31cf07027ec9629f582bd85469a45672a347365ba",
+    "crates/engine/src/api/native_write/schematic_selection_move_tests.rs": "4f739752a72bb258e3018588508c9955268db6a15747a78e5651904ca0cbd351",
+    "crates/engine/src/api/native_write/schematic_symbol_edit_receipt.rs": "2031881e0f5fdbbf426f5d03f25924f8c11147a5a5ce49813552626a281cd210",
+    "crates/engine/src/connectivity/symbol_move_contacts.rs": "dfabba8e27f55f388db6754bb7652bacbc2ee8091dd39b5acbef9e5957166fc0",
+    "crates/gui-app/src/editor/runtime_marking_context.rs": "c38bd7ff5c72fd30964d4eb3fcb0ca06abc4ee50763e2b44296053c177101e8d",
+    "crates/gui-app/src/editor/runtime_native_edit.rs": "2810bb143efba8ccf223153202a95af2fc0a9c3ba25a5e397da695dcee045b51",
+    "crates/gui-app/src/editor/runtime_native_edit/actions.rs": "0750a67f2bd27689119c7dc27bd395343a0812436728cf610f3fb473b2a8b184",
+    "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs": "02b6266dd04ccfc7fcd878bc789145a869f7f0d044a7e9b13d56ee8fe745cf22",
+    "crates/gui-app/src/editor/runtime_native_edit/move_scene.rs": "e6d7b19fbe84596b7bebc9258755972ef9183f6d4beca845978e0e63b888d2dc",
+    "crates/gui-app/src/editor/runtime_schematic.rs": "62078eeaccb02b33a465a53273536135964cdabce433b42b4df6873c565be8e6",
+    "crates/gui-app/src/editor/runtime_schematic_assignment.rs": "2fde54fd3d60f2a693f3ee7a782c38a1614013cb65e84cc1bae8378ab0be0330",
+    "crates/gui-app/src/editor/runtime_schematic_bus_entry.rs": "c990324555cdacee82412804618ed73b4dbed98a568bf4c879e1730817321d95",
+    "crates/gui-app/src/editor/runtime_schematic_custom_field.rs": "d41b4cecd418b5d0ddc1a466538c44ac8d7c0b46b139be9cfbdf3bf8d22e2fb1",
+    "crates/gui-app/src/editor/runtime_schematic_delete_review.rs": "9f21e9aeed1a634e303fff9ae553560e21a1c12a5c460ce76ca20ffb61d69b29",
+    "crates/gui-app/src/editor/runtime_schematic_gate.rs": "18613e00da41d727a700d0e5dc29b5f17d9127ae9a79d60a4247d1bfe726507d",
+    "crates/gui-app/src/editor/runtime_schematic_junction.rs": "75b97d9cef187a28327f6eb4d0687ee10b56963cb10c94203afbb9face5b00c5",
+    "crates/gui-app/src/editor/runtime_schematic_label.rs": "bcea85a3a6fe153ed8d3bef1b2c1e9c4724a9588b352c8ece21764d7b5d6fe9f",
+    "crates/gui-app/src/editor/runtime_schematic_marker.rs": "7845ba0248113984263ff906de55477c846096c0ca87c12d3440d0728217847f",
+    "crates/gui-app/src/editor/runtime_schematic_selected.rs": "5d57d41d7abc8f18d2f4af85b895e41b4153cc12c345f4f64f734f6f0bbb5ca4",
+    "crates/gui-app/src/editor/runtime_schematic_selected_label.rs": "b476513b4d965014e57e214241e7179d24deee6a6d23aa5d4a9fc7e2e4c9cd21",
+    "crates/gui-app/src/editor/runtime_schematic_snap.rs": "4ee37120f286e32ee687c99e77bc3d8e035773b9657d1006aa5735f9baefcbc6",
+    "crates/gui-protocol/src/footprint_move_preview/native.rs": "2d10f7dd94cbc7234f450d093afb03d25f950c126afc01fded284fa9f5046d3c",
+    "crates/gui-protocol/src/footprint_move_preview/text.rs": "b400f83103c880d5abcb7082aa45db0f54f204f623b09d3e6136c67d0bfbd64c",
+    "crates/gui-protocol/src/gui_menu_model.rs": "5cd1162877419e094d0e060026849981f9c7852360cfe290eba45049e9d0a9a4",
+    "crates/gui-protocol/src/native_edit_client.rs": "74c4471def6d00208057859357c0662a2978b4534fe0aa29e961d0c9df70125b",
+    "crates/gui-protocol/src/schematic_annotation.rs": "aca9c91174ac9f773fdd2507b6cb39a6a0bd544ccf2e53fef6958d0f55533bbb",
+    "crates/gui-protocol/src/schematic_assignment.rs": "fc16edc60c2567ff4ba313614eaab65508c0c6c028465549306ef56bcccc9cc9",
+    "crates/gui-protocol/src/schematic_authoring.rs": "be75f8a01559e0502b0b9f51dd0882e8463b3dba08fc474903cfcf05fe275dca",
+    "crates/gui-protocol/src/schematic_authoring_preview.rs": "79dfa152b00087831bbdb6bbd436a937908443a92f869efa553299d794bb711b",
+    "crates/gui-protocol/src/schematic_bus.rs": "88dbd3382deb59bdad8469c8846b74a3e680a0dc62ea7f9d26e7149ca9960b29",
+    "crates/gui-protocol/src/schematic_child_circuit_tests.rs": "33188d41282edcbc3b989c4d290d3e10fdb2edfd154156524458bf51a115ede8",
+    "crates/gui-protocol/src/schematic_connectivity_move_tests.rs": "45f3ff118fa32f4104e33fea35ef8162bcde1a3b261bd40071251a3fe1497d4d",
+    "crates/gui-protocol/src/schematic_delete_review.rs": "7b2e6c0c6c0805906751bc34728f3bf3219a1dea98e7630d1ac3a7d97995a0bd",
+    "crates/gui-protocol/src/schematic_edit_request.rs": "65f3d1a05043c0745acf075282ed8971d0c74c497eaf076cb47a277f820819fe",
+    "crates/gui-protocol/src/schematic_field_table.rs": "de4d745fba0d13b4d6c5cc30d7138594943bf50af2fc65369340c185a804eb26",
+    "crates/gui-protocol/src/schematic_marker_tests.rs": "c5c76162b61879d7aa42fb416dd6db1cdc85033514a31e6102cc1cd0a6f8fd9f",
+    "crates/gui-protocol/src/schematic_selection_edit.rs": "c8fde6057ac25c820604421b48751c6f86bbee0aff7b48a7166a216d4b860041",
+    "crates/gui-protocol/src/schematic_text_edit.rs": "15a1e5a192b51e48c8757b7bb5eec0484156a2b6b5d0c749556efb208444192c",
+    "crates/gui-protocol/src/schematic_wire_anchor.rs": "8e9cf19392f0696829c477efc4150b8894e4b46dc7a4bec0d0d95f59f9b1d9af",
+    "crates/gui-protocol/src/schematic_wire_anchor_tests.rs": "8c4f661db9429d3fd24f054e8f18f809ec1fa04b2c9ebf411b8d5ac3362e7843",
+    "crates/gui-protocol/src/workspace_layout/marking_state.rs": "5d9e62c7e228aeb922f6835a8aaee5d9aef024e531d1634484049c4e5a857d0c"
+  },
+  "binary_sha256": {
+    "datum-gui": "0de59a70c2a612a205aebb670b65128eb43efde6a5d86bd04fa1a7fb3d504c8c",
+    "datum-eda": "3fb1c78e24f8d31e9ef12e2d04d48ebd2f14ca883ddf13338311f044eb87fe35",
+    "eda-engine-daemon": "963bc8c5979c992a058471f8be8195771bce126cd87b02dd797413ce96b3fb52"
+  },
+  "build": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-gui-app -p datum-eda-cli -p eda-engine-daemon",
+    "exit_code": 0,
+    "elapsed": "6m 33s",
+    "all_depfile_and_ancestor_manifest_inputs_current": true,
+    "input_counts": {
+      "datum-gui": 1333,
+      "datum-eda": 847,
+      "eda-engine-daemon": 547
+    }
+  },
+  "requirements": [
+    {
+      "requirement": "Build real native circuits on root and child sheets",
+      "result": "PASS",
+      "evidence": "Independent retained run89 root and run90/91 child placement/Part/Gate/pin-wire input chain; final-navigation confirms retained circuits; ordinary_gui_review binds the actual prior runs."
+    },
+    {
+      "requirement": "Revise symbols, Part/Gate choices and fields through shared controls",
+      "result": "PASS",
+      "evidence": "Retained child custom metadata/Part reassignment; run96 Fields Table review/cancel/accept and Undo/Redo; root field cancel/no-write and value commits; run98 cold12k and warm20k with confirmed SelectionNone."
+    },
+    {
+      "requirement": "Author and revise named annotations, Power, Text, Ports and markers",
+      "result": "PASS",
+      "evidence": "Retained run93/94/95 ordinary input and history; run96 Label slide/cancel preserves wire bytes and complete net membership; active-child annotation Proposal; root literal Text and exact diagonal-wire Label. NoConnect remains pin-owned."
+    },
+    {
+      "requirement": "Revise wiring and Bus members without hidden Drag/stretch",
+      "result": "PASS",
+      "evidence": "run96 child Bus/Entry create/cancel/commit/member edit/history; distinct scalar identities; Wire rigid Move with fixed Junction and Junction absolute Move with fixed wires; both cancel/history/Delete/restore exact."
+    },
+    {
+      "requirement": "Bind root-child interfaces and allow a child to act as parent",
+      "result": "PASS",
+      "evidence": "run96 explicit QA_LINK root binding and QA_NESTED nested binding; complete source/path/endpoint review, cancellation and acceptance; resolved nets span all three sheets."
+    },
+    {
+      "requirement": "Save and cold reopen the completed circuit",
+      "result": "PASS",
+      "evidence": "run99 exactly one File Save with completed saved basis; actual new-process root/child/nested views; all1543 canonical files and all7 sheet objects exact; before-save and cold-reopen nets exact."
+    },
+    {
+      "requirement": "Preserve unrelated source and canonical mutation/history authority",
+      "result": "PASS",
+      "evidence": "30 original protected board/pool/sheet/component source files exact; no source seeding/private writers; all edits use existing canonical operations/journal and Proposal semantics. Focused raw payload/identity/lock/stale/occurrence/history checks retain their stated scopes."
+    }
+  ],
+  "focused_verification": {
+    "engine_integration": {
+      "passed": 54,
+      "failed": 0,
+      "scope": "retained integration batch; affected later corrections receive their own proof"
+    },
+    "latest_label_symbol_regression": {
+      "passed": 24,
+      "failed": 0
+    },
+    "move_protocol_regression": {
+      "passed": 3,
+      "failed": 0
+    },
+    "genuine_saved_child_preview": {
+      "passed": 1,
+      "failed": 0
+    },
+    "staged_source_health": {
+      "passed": 3656
+    },
+    "staged_format_and_private_writer_checks": "PASS for landed Rust; final documentation gates recorded in task landing evidence"
+  },
+  "independent_reviews": [
+    {
+      "reviewer_thread": "01a1af1d-0f7b-71c2-ae5b-abf0775af53f",
+      "result": "PASS",
+      "scope": "Codex source lane, affected corrections and ordinary root/child GUI workflow through actual Save/cold reopen",
+      "receipt_artifacts": [
+        "codex_lane_source_review",
+        "ordinary_gui_review"
+      ]
+    },
+    {
+      "reviewer_thread": "01a1af35-cfdf-74b0-bf96-d0cdbf976b48",
+      "result": "PASS within stated source scopes",
+      "scope": "shared Move/geometry correction review and original-goal coverage pre-audit; GUI acceptance remains the distinct reviewer above",
+      "receipt_artifacts": [
+        "shared_move_source_review"
+      ]
+    }
+  ],
+  "final_project": {
+    "revision": "42c9d9 (display prefix)",
+    "sheets": 7,
+    "canonical_files_exact": 1543,
+    "source_sheets": {
+      "root_sheet": "19d168e3-a1ca-4b90-8cf5-f6fa3cb2e2c4",
+      "child_sheet": "34e1ac98-4ba6-4359-ad10-b20b4323ed4e",
+      "nested_sheet": "4e736efc-e363-4d91-a98a-97fcf707dd05"
+    },
+    "protected_original_sources_exact": 30,
+    "resolved_nets_saved_reopened_exact": true,
+    "hierarchy": "QA_DATA0 joined net retains4pins/4labels/2Ports across root/child/nested; QA_SUPPLY remains distinct",
+    "cleanup": {
+      "gui": true,
+      "daemons": true,
+      "clipboard": true,
+      "Weston": true
+    },
+    "ipc_runtime_removed": true,
+    "cleanup_errors": []
+  },
+  "retained_limits": [
+    "Unique supported occurrences only; repeated/ambiguous sources, stale/wrong basis, locks, unsupported physical/cross-sheet component ownership and explicit bound-Port unbinding remain guarded.",
+    "No new interactive Drag/stretch, implicit reconnect or tolerance policy. Label interior slide keeps incident wires fixed and physical partitions equal; strict Symbol-pin interior refusal remains.",
+    "NoConnect relocation remains delete/recreate at an actual pin. Port Move preserves position-only Set semantics and existing explicit membership.",
+    "Full schematic/physical/HUMAN, performance and broader release qualification are not claimed; historical ERC results may be stale and no ERC-clean claim is made.",
+    "Owner preliminary lag/picking observations and selected pin/text legibility or Navigator clipping remain intake dat-schematic-editing-usability-gvwr; they are not fabricated source/cache fixes."
+  ],
+  "excluded_failures": [
+    "Earlier wrong shortcut/pane and reviewer input/watchdog failures are retained in ordinary_gui_review; they do not establish product PASS or invalidate unrelated completed evidence.",
+    "Actual wire contact, singleton Delete basis, child Bus/custom-field preview, Move admission and interior Label slide failures were corrected and their affected ordinary workflow rechecked; initial source-review mandatory findings retain their corrected disposition.",
+    "run96 alleged stale Value was not established by selected text crossed by pin ink; run98 confirmed cold12k and warm20k with Escape-cleared SelectionNone. No speculative rendering fix is claimed.",
+    "run97 startup helper timed out at20s but actual window appeared at22.88s; genuine-hang characterization withdrawn. Diagnostic/final driver reused existing120s absolute visible ceiling, with other strict waits/captures unchanged. No performance PASS.",
+    "run98 intentionally stopped with old compiled14k diagnostic expectation after PM chose20k before the sole field action. Its exit1 is retained; source/capture diagnostic observations are not rewritten into a test PASS.",
+    "run99 preserves one Navigator scroll/capture timeout; corrected ordinary input produced the independently observed strict completed capture. No source edits or second Save on reopening."
+  ],
+  "artifacts": {
+    "ordinary_gui_review": {
+      "path": ".datum/scratch/codex-delivery/zvhw-independent-gui-review.txt",
+      "sha256": "0058fef5938fa65421cbb7fdc878487675da9080cf33f440cca62efe577a9ce3",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "codex_lane_source_review": {
+      "path": ".datum/scratch/codex-delivery/zvhw-codex-source-review.txt",
+      "sha256": "474fd8996c5e43a9866ee5e4fe32d4a0ebdf868f5b647c92eacdb6c274b93c25",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "shared_move_source_review": {
+      "path": ".datum/scratch/codex-delivery/zvhw-claude-source-review.txt",
+      "sha256": "b1c3e347a3e6ab56031b4b9faa71808b902169aa73e12b0bf5344304748f84c9",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "release_build": {
+      "path": ".datum/scratch/codex-delivery/zvhw-label-slide-release-build.log",
+      "sha256": "f27d82cdfd0efe95444827292c4f53d3b81ecb88ef597b196283cd384e582fbb",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "engine_integration_54": {
+      "path": ".datum/scratch/codex-delivery/zvhw-engine-integration-tests.log",
+      "sha256": "33ca20f6caf771bf602fe81dee95cdbfd6f086ca810689c6ff5304e523e51c5b",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "label_symbol_regression_24": {
+      "path": ".datum/scratch/codex-delivery/zvhw-label-slide-engine-tests.log",
+      "sha256": "7e57f7c18d12a194b706e2c19083ec6ae73c0e0f5acaed63162705908ea8edb3",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "move_protocol_regression_3": {
+      "path": ".datum/scratch/codex-delivery/zvhw-move-gates-protocol-tests.log",
+      "sha256": "1d981aa675abdb9726be5c8758fb8460609c107b83e923b6dbdf7caab7043cce",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "real_child_preview_regression": {
+      "path": ".datum/scratch/codex-delivery/zvhw-real-child-preview-tests.log",
+      "sha256": "d485cbfc49bd97136e6e3eeb0267074b575653d7c6164c8991d09bb3424422cd",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "staged_source_health": {
+      "path": ".datum/scratch/codex-delivery/zvhw-label-slide-staged-source-health.log",
+      "sha256": "53f73573b799ccdc4031fbddd88d60a511d67ef12f5b1488e0e91754b1d40a09",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "final_workflow_result": {
+      "path": ".datum/scratch/schematic-interaction-qa/run99finalsave/result.json",
+      "sha256": "5d44ccc62f785754b1456042e73462167a23228a12d4a2b4b3797ed7e6072a1e",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "saved_file_manifest": {
+      "path": ".datum/scratch/schematic-interaction-qa/run99finalsave/saved-files.json",
+      "sha256": "20dea7f7360e6a6c9c2cd5ce24341d7cdc9cdcbbd4a5e3c2f2bda61ff8274635",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "reopened_file_manifest": {
+      "path": ".datum/scratch/schematic-interaction-qa/run99finalsave/reopened-files.json",
+      "sha256": "20dea7f7360e6a6c9c2cd5ce24341d7cdc9cdcbbd4a5e3c2f2bda61ff8274635",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "final_sheet_objects": {
+      "path": ".datum/scratch/schematic-interaction-qa/run99finalsave/final-sources.json",
+      "sha256": "22082e32f48349daab27ac35017b4c0b9378f9ea0c24167a52730791a6c84856",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "before_save_nets": {
+      "path": ".datum/scratch/schematic-interaction-qa/run99finalsave/before-save-nets.json",
+      "sha256": "94e52cc5763f04c8f7161e3f80e7b49a32efbe5196652ac60ca4dde9cdaa5c78",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "cold_reopen_nets": {
+      "path": ".datum/scratch/schematic-interaction-qa/run99finalsave/cold-reopen-nets.json",
+      "sha256": "94e52cc5763f04c8f7161e3f80e7b49a32efbe5196652ac60ca4dde9cdaa5c78",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "value_diagnostic": {
+      "path": ".datum/scratch/schematic-interaction-qa/run98valuediagnostic/diagnostic-observations.json",
+      "sha256": "f4eb6b496f72813f530d0b815ff2eacab85962ea465dd04f5faa56459659b22b",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "Label-slide-regression": {
+      "path": ".datum/scratch/schematic-interaction-qa/run96labelslide/Label-slide-regression-inspection.json",
+      "sha256": "c3757f4f0069486cc8ed217d425de15da8979bebac302f042a4574f60a7df4b2",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "child-fields": {
+      "path": ".datum/scratch/schematic-interaction-qa/run96labelslide/child-fields-inspection.json",
+      "sha256": "ce6bcc302de7edad4422ec42d0e63b7b5b1b4695cd8ccb792ef5d8f5d773a8df",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "child-bus": {
+      "path": ".datum/scratch/schematic-interaction-qa/run96labelslide/child-bus-inspection.json",
+      "sha256": "8be007ae9267bdb6e4ac43ddb7ca4a04ef5f21df5e2627679d7375b98ebad8a2",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "wire-junction": {
+      "path": ".datum/scratch/schematic-interaction-qa/run96labelslide/wire-junction-inspection.json",
+      "sha256": "6bd3536c0ddf8977f89ba4eea837ab78aa6e41a7deafe84d5e10b837d3d1465c",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "nested-interface": {
+      "path": ".datum/scratch/schematic-interaction-qa/run96labelslide/nested-interface-inspection.json",
+      "sha256": "5f3672e37d22af9cacc6807e4366c70e90b5386f0e6e1d026963c7c945c8df46",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    },
+    "root-interface": {
+      "path": ".datum/scratch/schematic-interaction-qa/run96labelslide/root-interface-inspection.json",
+      "sha256": "9a119ce3102b821b8a2de3b910cc468d0e95e5041aed7e5bed7a60347eade93a",
+      "retention": "machine-local, gitignored and prunable; this committed receipt retains the reviewed hash and outcome"
+    }
+  },
+  "retention": "Raw logs, screenshots, native QA project copies and manifests under .datum/scratch are machine-local, ignored and prunable. This committed delivery JSON retains their reviewed hashes/outcomes; it does not claim the raw artifacts are committed."
+}
