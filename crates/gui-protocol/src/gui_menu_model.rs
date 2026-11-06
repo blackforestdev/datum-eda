@@ -160,6 +160,7 @@ pub fn native_edit_unavailable_reason(
         if !matches!(
             verb,
             "datum.schematic.place_symbol"
+                | "datum.schematic.place_text"
                 | "datum.schematic.draw_wire"
                 | "datum.schematic.set_symbol_reference"
                 | "datum.schematic.set_symbol_value"

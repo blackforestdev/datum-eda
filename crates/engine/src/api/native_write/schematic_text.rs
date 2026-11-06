@@ -2,7 +2,7 @@
 use super::{
     context::{BatchComposer, PreparedWrite, WriteProvenance},
     registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params},
-    schematic_edit::prepare_native_birth,
+    schematic_edit::{prepare_native_birth, require_unique_occurrence},
     schematic_selected_source::{SelectedSchematicSource, selected_source},
     schematic_sheets::build_create_schematic_text,
     schematic_symbol_payload::{member_payload, set_point, source_sheet_payload},
@@ -149,11 +149,6 @@ fn place_text(
             .primary_object(id)
             .finish();
     }
-    if params.instance_path.as_ref().is_some_and(|p| !p.is_empty()) {
-        return Err(invalid(
-            "Text creation requires the supported source-sheet view",
-        ));
-    }
     let source = snapshot
         .schematic_source()
         .ok_or_else(|| invalid("Native schematic source unavailable"))?;
@@ -164,16 +159,11 @@ fn place_text(
     {
         return Err(invalid("Native sheet not found"));
     }
-    if source.sheet_instances.values().any(|instance| {
-        source
-            .sheet_definitions
-            .get(&instance.definition)
-            .is_some_and(|d| d.root_sheet == params.sheet)
-    }) {
-        return Err(invalid(
-            "Text creation requires an uninstantiated source-sheet view",
-        ));
-    }
+    require_unique_occurrence(
+        source,
+        params.sheet,
+        params.instance_path.as_deref().unwrap_or(&[]),
+    )?;
     let mut id = Uuid::new_v4();
     while context.model.objects.contains_key(&id) {
         id = Uuid::new_v4();

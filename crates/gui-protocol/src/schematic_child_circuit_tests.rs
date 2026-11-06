@@ -92,6 +92,7 @@ fn child_circuit_preview_requests_and_tool_admission() {
     );
     for verb in [
         "datum.schematic.place_symbol",
+        "datum.schematic.place_text",
         "datum.schematic.draw_wire",
         "datum.schematic.set_symbol_reference",
         "datum.schematic.set_symbol_value",
@@ -233,6 +234,25 @@ fn child_circuit_preview_requests_and_tool_admission() {
     let label_ghost = draft.preview_scene(&base, &root).unwrap();
     assert_eq!(label_ghost.schematic_document, Some(key.clone()));
     assert_eq!(draft.source, before);
+    let mut text = LabelDraft::text(90);
+    text.name = "Literal ${CHILD} note".into();
+    draft.label = Some(text);
+    let at = draft.position.unwrap();
+    let (verb, params) = draft.named_point_request(at).unwrap().verb_params();
+    assert_eq!(verb, "datum.schematic.place_text");
+    assert_eq!(params["sheet"], serde_json::json!(key.source_sheet));
+    assert_eq!(
+        params["instance_path"],
+        serde_json::json!(key.instance_path)
+    );
+    assert_eq!(params["value"], "Literal ${CHILD} note");
+    assert_eq!(params["rotation_deg"], 90);
+    let text_ghost = draft.preview_scene(&base, &root).unwrap();
+    assert_eq!(text_ghost.schematic_document, Some(key.clone()));
+    assert_eq!(
+        draft.source, before,
+        "Text preview leaves canonical source intact"
+    );
     draft.label = None;
     let draft = &mut state.schematic_authoring;
     draft.wire = true;
@@ -268,6 +288,10 @@ fn child_circuit_preview_requests_and_tool_admission() {
             "datum.schematic.place_symbol"
         )
         .is_some()
+    );
+    assert!(
+        crate::gui_menu_model::native_edit_unavailable_reason(&state, "datum.schematic.place_text")
+            .is_some()
     );
     // Parent Port uses a unique root, even when another root is the primary scene.
     let root_key = state

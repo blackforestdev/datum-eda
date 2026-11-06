@@ -208,7 +208,7 @@ The bounded root-admission correction (`dat-schematic-nonprimary-root-tools-o800
 allows existing Text creation/editing, Bus creation/member editing and member-Wire
 entry controls on any uniquely qualified root sheet. These paths reuse the
 focused source and pane-scoped preview; generic tool admission is unchanged.
-Child and repeated-source editing remain excluded. Text failure restoration
+That increment excluded child and repeated-source editing. Text failure restoration
 retains the captured pane basis instead of substituting the primary scene.
 
 Focused real-project checks cover root requests, pane isolation, cancellation
@@ -222,6 +222,17 @@ existing Bus member form was inspected and canceled after reopening; changed
 Bus-member submission and failed-edit restoration have source review only in
 this increment. The long refusal suffix was clipped (`dat-bus-entry-refusal-details-bq5n`);
 no complete-message visual or full qualification claim is made.
+
+The bounded child Text placement extension (`dat-child-text-placement-d7ht`)
+uses the same Text content/rotation form in an exact unique child occurrence.
+Its captured source, ordered instance path and pane own both the immutable
+preview and canonical placement request; cancellation clears that preview without
+substituting the primary sheet. Literal single-line content, cardinal rotations
+and the existing default text size retain their root semantics. Repeated sources,
+stale bases and mismatched occurrences refuse. This increment enables placement
+only: child Text editing, Move/Delete and other child tools retain their existing
+restrictions. Acceptance evidence is recorded in the task; this scope definition
+does not establish full hierarchy or schematic qualification.
 
 Confirmed IR facts the matrix relies on:
 

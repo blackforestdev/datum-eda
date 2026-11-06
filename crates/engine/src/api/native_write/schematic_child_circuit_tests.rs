@@ -48,6 +48,62 @@ fn binding(model: &DesignModel, symbol: Uuid, path: &[Uuid]) -> Uuid {
     context.bindings[&occurrence].component_instance
 }
 #[test]
+fn unique_child_text_placement_refusal_and_cold_history() {
+    let (root, mut model, _, parent) = topology_tests::fixture("unique_child_text");
+    let child = ChildSheetRequest {
+        proposal_id: Uuid::new_v4(),
+        parent,
+        instance_path: vec![],
+        sheet: Uuid::new_v4(),
+        definition: Uuid::new_v4(),
+        instance: Uuid::new_v4(),
+        name: "Notes".into(),
+        position: Point::new(0, 0),
+    };
+    let write = schematic_child_sheet::build(&model, &child).unwrap();
+    commit_prepared(&mut model, &root, write).unwrap();
+    let before = schematic(&model).unwrap();
+    let params = |path: Vec<Uuid>| {
+        json!({"sheet":child.sheet,"instance_path":path,
+        "value":"  Literal ${CHILD} note  ","x_nm":10_000_000,"y_nm":20_000_000,"rotation_deg":90})
+    };
+    for path in [vec![], vec![Uuid::new_v4()]] {
+        assert!(prepare(&model, &root, "datum.schematic.place_text", params(path)).is_err());
+    }
+    let write = prepare(
+        &model,
+        &root,
+        "datum.schematic.place_text",
+        params(vec![child.instance]),
+    )
+    .unwrap();
+    let id = write.primary_object_id.unwrap();
+    assert_eq!(
+        schematic(&model).unwrap(),
+        before,
+        "preparing writes no source"
+    );
+    commit_prepared(&mut model, &root, write).unwrap();
+    let after = schematic(&model).unwrap();
+    assert_eq!(after.sheets[&parent], before.sheets[&parent]);
+    let text = &after.sheets[&child.sheet].texts[&id];
+    assert_eq!(text.text, "  Literal ${CHILD} note  ");
+    assert_eq!(text.position, Point::new(10_000_000, 20_000_000));
+    assert_eq!(text.rotation, 90);
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), after);
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), before);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(schematic(&model).unwrap(), after);
+}
+#[test]
 fn unique_child_circuit_place_wire_fields_refusal_and_cold_history() {
     let (root, mut model, _, parent) = topology_tests::fixture("unique_child_circuit");
     let baseline = Path::new(env!("CARGO_MANIFEST_DIR"))

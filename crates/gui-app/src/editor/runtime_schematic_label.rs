@@ -33,7 +33,7 @@ impl Runtime {
     }
 
     pub(crate) fn begin_native_text(&mut self) -> bool {
-        if !self.prepare_native_root_schematic() {
+        if !self.prepare_native_circuit(false) {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
@@ -320,18 +320,13 @@ impl Runtime {
             return true;
         }
         let e = &mut self.session.workspace_mut().schematic_authoring;
-        let path = e.placement_path();
-        let Some(sheet) = e.placement_sheet() else {
-            return true;
-        };
-        let Some(label) = &e.label else { return false };
+        if e.label.is_none() {
+            return false;
+        }
         e.position = Some(at);
         e.preview_dirty = true;
-        match label.placement_request(sheet, at) {
-            Ok(mut request) => {
-                if let SchematicEditRequest::PlaceLabel { instance_path, .. } = &mut request {
-                    *instance_path = path;
-                }
+        match e.named_point_request(at) {
+            Ok(request) => {
                 e.pending_request = Some(request);
             }
             Err(reason) => {

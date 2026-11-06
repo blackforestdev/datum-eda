@@ -1,6 +1,26 @@
 //! Shared name/choice form for label and interface-port point authoring.
 use super::*;
 
+impl SchematicAuthoring {
+    /// Bind the shared form to its captured occurrence, including standalone Text.
+    pub fn named_point_request(&self, at: PointNm) -> Result<SchematicEditRequest, String> {
+        let sheet = self
+            .placement_sheet()
+            .ok_or("Schematic source is unavailable")?;
+        let label = self.label.as_ref().ok_or("No point annotation is active")?;
+        let mut request = label.placement_request(sheet, at)?;
+        match &mut request {
+            SchematicEditRequest::PlaceLabel { instance_path, .. }
+            | SchematicEditRequest::Text { instance_path, .. }
+            | SchematicEditRequest::PlacePort { instance_path, .. } => {
+                *instance_path = self.placement_path();
+            }
+            _ => unreachable!("point form produces only Label, Text or Port"),
+        }
+        Ok(request)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct LabelDraft {
     /// The same name/choice form configures a label or interface port.

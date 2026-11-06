@@ -277,7 +277,7 @@ struct WireParams {
     points: Vec<Point>,
 }
 
-fn require_unique_occurrence(
+pub(super) fn require_unique_occurrence(
     source: &crate::schematic::Schematic,
     sheet: Uuid,
     path: &[Uuid],
