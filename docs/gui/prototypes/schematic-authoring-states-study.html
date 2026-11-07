@@ -28,7 +28,7 @@
   <div style="margin:7px 0 10px">
     <span class="statusmark" data-state="open">◐ OPEN CANDIDATE · SURFACE-S04 · not approved, not implemented, not product-ratified</span>
   </div>
-  <p class="sub">Wire and isolated Move, the seven readiness and authoring conditions, and tool-family dispositions (frames S-E, S-F, S-H). This page is part of a three-page candidate study; the index, frame legend and frame → clause map are in
+  <p class="sub">Wire and isolated Move, wire edit handle states and the numeric placement form, the seven readiness and authoring conditions, and tool-family dispositions (frames S-E, S-J, S-K, S-F, S-H). This page is part of a three-page candidate study; the index, frame legend and frame → clause map are in
   <code>schematic-surfaces-study.html</code>. Nothing here selects a presentation, a policy, a threshold or an implementation successor; the owner's SURFACE-S05 disposition is still ahead.</p>
   <p class="sub">Every design, component, net, name and library item drawn here is an <b>illustrative synthetic first-party
   example</b>. None is an approved library asset, a manufacturer part or a production seed. Pixel sizes and font stacks are
@@ -45,6 +45,8 @@
     <a href="schematic-surfaces-study.html#S-C">S-C Selected Symbol + library context</a>
     <a href="schematic-surfaces-study.html#S-D">S-D Symbol picker / preview</a>
     <a href="schematic-authoring-states-study.html#S-E">S-E Wire and Move</a>
+    <a href="schematic-authoring-states-study.html#S-J">S-J Wire edit handles</a>
+    <a href="schematic-authoring-states-study.html#S-K">S-K Numeric placement form</a>
     <a href="schematic-authoring-states-study.html#S-F">S-F Readiness and authoring states</a>
     <a href="schematic-surfaces-study.html#S-G">S-G Net, Bus, ERC</a>
     <a href="schematic-authoring-states-study.html#S-H">S-H Tool families</a>
@@ -86,6 +88,26 @@
       <g fill="var(--tx2)" font-size="7" font-family="monospace"><text x="429" y="241">SPI</text><text x="429" y="256">+3V3</text></g>
       <g stroke="var(--tx2)" stroke-width="1.3"><path d="M60 160l8 8M68 160l-8 8"/></g>
     </symbol>
+    <!-- T topology: through-wire DATA0 with authored junction and a branch to R7 (frames J3–J5, J8, J9, K1–K3).
+         R7's top pin sits at (300,186), deliberately OFF the drawn 18px display grid: exact pin contact beats grid. -->
+    <symbol id="wt" viewBox="0 0 520 300">
+      <rect width="520" height="300" fill="url(#sgrid)"/>
+      <text x="70" y="78" fill="var(--tx3)" font-size="8" font-family="monospace">DATA0</text>
+      <g stroke="var(--wire)" stroke-width="1.5" fill="none"><path d="M70 90H430"/><path d="M240 90V190"/></g>
+      <circle cx="240" cy="90" r="2.6" fill="var(--wire)"/>
+      <g fill="var(--sym)"><circle cx="70" cy="90" r="1.7"/><circle cx="430" cy="90" r="1.7"/></g>
+      <rect x="294" y="192" width="12" height="30" rx="1.5" fill="#161A24" stroke="var(--sym)" stroke-width="1.3"/>
+      <path d="M300 186v6" stroke="var(--sym)" stroke-width="1.2" fill="none"/><circle cx="300" cy="186" r="1.7" fill="var(--sym)"/>
+      <text x="312" y="202" fill="var(--tx2)" font-size="8" font-family="monospace">R7</text>
+      <text x="312" y="212" fill="var(--tx3)" font-size="7" font-family="monospace">4k7</text>
+    </symbol>
+    <!-- three-segment wire NET_A between two pins (frames J1, J2, J6, J7) -->
+    <symbol id="wz" viewBox="0 0 520 300">
+      <rect width="520" height="300" fill="url(#sgrid)"/>
+      <text x="104" y="252" fill="var(--tx3)" font-size="8" font-family="monospace">NET_A</text>
+      <path d="M110 230V120H390V230" stroke="var(--wire)" stroke-width="1.5" fill="none"/>
+      <g fill="var(--sym)"><circle cx="110" cy="230" r="1.7"/><circle cx="390" cy="230" r="1.7"/></g>
+    </symbol>
     <!-- placed capacitor C9 (used by completed / reopened frames) -->
     <symbol id="c9" viewBox="0 0 520 300">
       <g stroke="var(--sym)" stroke-width="1.6" fill="none"><path d="M50 238h22M50 246h22"/><path d="M61 238v-14M61 246v14"/></g>
@@ -102,7 +124,12 @@
   <p class="cap">Reviewed scope only: Wire from a pin terminal through vertices to a pin terminal, with cancel, finish and canonical undo/redo;
   Move for an <b>isolated, unique-occurrence</b> Symbol with preview, cancel and commit. Connected, repeated, ambiguous and positioned-owner
   Move cases keep their current refusal. Auto-junction, polyline editing, rotate and mirror GUI are not delivered. One completed gesture is one
-  canonical history entry; the initial click focuses and dispatches together; Escape cancels the gesture before anything else.</p>
+  canonical history entry; the initial click focuses and dispatches together; Escape cancels the gesture before anything else.
+  <b>Supersession 2026-11-07:</b> the clause “Auto-junction, polyline editing, rotate and mirror GUI are not delivered” is superseded for
+  wires — shared wire editing (endpoint / node / span Move, Split Wire, Insert Bend, Remove Segment, Remove Bend, Reconnect End, wire
+  clipboard and R/X/Y transforms) is delivered at its recorded scope (wire-editing delivery, commit <code>18d59b9a</code>, task
+  <code>dat-schematic-wire-endpoint-edit-4368</code>). The handle and numeric-form <i>presentation</i> remains undelivered; frames
+  <a href="#S-J">S-J</a> and <a href="#S-K">S-K</a> below are its candidate visual contract.</p>
   <div class="grid3">
     <div>
       <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl">Sel</span><span class="tl">Sym</span><span class="tl on">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
@@ -127,6 +154,263 @@
           <rect x="102" y="82" width="16" height="32" rx="2.5" fill="none" stroke="var(--acc)" stroke-width="2"/></svg>
           <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Move refused — R1 has connected wires. Nothing changed.</span><span class="hb">▤ history</span></div></div></div></div></div>
       <p class="cell-cap"><b>E3 — connected Move refused.</b> The refusal names the reason and states that source and journal are unchanged; no ghost is offered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== S-J -->
+<section class="fr" id="S-J">
+  <div class="sec-label"><span class="n">S-J</span><span>Wire edit handle states — end, bend and span over the logical contact graph</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag own">◐ OWNER CHOICE · S05</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Candidate presentation for the <b>delivered</b> shared wire-editing verbs (<code>18d59b9a</code>): the engine already edits
+  wire ends, nodes and spans through the one shared Move with canonical batch, raw identity, locks and history, but <b>no handle glyph is
+  rendered yet</b> — this family is the visual contract for them. Vocabulary extends frame E1 (square = vertex, ring = snap target):
+  <b>□ end handle</b> on a physical wire end, <b>◇ bend handle</b> on an interior vertex, the <b>span</b> is the segment itself, and
+  <b>◉ node</b> is a junction-owned shared contact whose drag preserves every connection. Shape distinguishes them; colour is redundant.
+  Handles render for the <b>selected</b> wire only and share the one acquisition envelope; drawn pixel sizes are placeholders (Design Book
+  tokens govern). Datum laws unchanged: Ctrl is subtractive selection, Escape cancels the gesture first, Space pan is untouched, commits are
+  one canonical journal entry each. Altium is comparator only — no key, default or glyph is copied.</p>
+  <div class="grid3">
+    <div id="J1">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Selected wire showing end, bend and span handles"><use href="#wz"/>
+          <path d="M110 230V120H390V230" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="106" y="226" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="386" y="226" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="106" y="116" width="8" height="8" transform="rotate(45 110 120)" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="386" y="116" width="8" height="8" transform="rotate(45 390 120)" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>selected</b> NET_A · 3 segments · □ ends · ◇ bends · span = segment</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J1 — selected: the whole handle family.</b> One selected three-segment wire presents two □ end handles on its
+      physical ends, ◇ bend handles on interior vertices, and each span as its own grabbable body. Nothing renders on unselected ink.</p>
+    </div>
+    <div id="J2">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Hover over an end handle"><use href="#wz"/>
+          <path d="M110 230V120H390V230" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="106" y="226" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="106" y="116" width="8" height="8" transform="rotate(45 110 120)" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="386" y="116" width="8" height="8" transform="rotate(45 390 120)" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="386" y="226" width="8" height="8" fill="var(--acc-h)" stroke="var(--acc)" stroke-width="1.6"/>
+          <circle cx="390" cy="230" r="9" fill="none" stroke="var(--acc-h)" stroke-width="1.2" opacity=".8"/>
+          <path d="M398 244l7 9M398 244h5M398 244v5" stroke="var(--tx2)" stroke-width="1.3" fill="none"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">wire end · press to move this end — the other end stays fixed</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J2 — hover ≠ selection.</b> The pointer over a handle fills it and draws the halo; nothing is acquired and
+      nothing is written. The Console names the gesture the press would start. Hover over unselected ink keeps today's hit highlight only.</p>
+    </div>
+    <div id="J3">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Armed end drag snapping to an off-grid pin"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--acc)" stroke="var(--acc)" stroke-width="1.6"/>
+          <path d="M240 90L300 186" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>
+          <circle cx="300" cy="186" r="5" fill="none" stroke="var(--acc)" stroke-width="1.2"/>
+          <path d="M288 172h10M293 167v10" stroke="var(--acc)" stroke-width="1.2" fill="none"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>move end</b> → pin R7.1 · exact off-grid contact · other end fixed at junction</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J3 — armed end drag with exact pin snap.</b> Past the shared threshold the handle fills solid and the dashed
+      preview follows. The nearest <b>eligible</b> pin beats the grid in preview <b>and</b> release, at the pin's exact world-nm coordinate
+      (R7.1 is off the drawn grid) — never the displayed rounded value. Press offset and the authored source stay untouched until commit.</p>
+    </div>
+  </div>
+  <div class="grid3" style="margin-top:16px">
+    <div id="J4">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Branch selected on an unsplit through-wire"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <circle cx="240" cy="90" r="8" fill="none" stroke="var(--acc)" stroke-width="1.2" stroke-dasharray="3 3"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx">selected branch · DATA0 through-wire is <b>one</b> source segment · ◉ node at T</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J4 — unsplit source.</b> The through-wire is authored as one segment; the branch meets it at an authored
+      junction. The selected branch presents □ at its free end and the junction-owned ◉ node at the T — never a bare end square on the dot.</p>
+    </div>
+    <div id="J5">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Branch selected on a segmented through-wire with identical handles"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <circle cx="240" cy="90" r="8" fill="none" stroke="var(--acc)" stroke-width="1.2" stroke-dasharray="3 3"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx">selected branch · DATA0 authored as <b>two</b> segments meeting at T · same handles</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J5 — segmented source, identical presentation.</b> The same circuit drawn as two through-segments presents
+      byte-for-byte the same handles as J4: handles derive from the logical contact graph, so draw order never changes edit ownership
+      (audit <code>draw_order_equivalence</code>). The through-segments' physical ends at T present as the shared ◉ node, not reconnectable
+      bare ends; choosing a physical end there is the explicit Reconnect End intent (J7).</p>
+    </div>
+    <div id="J6">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Span drag stretches neighbors and keeps ends connected"><use href="#wz"/>
+          <path d="M110 230V120H390V230" stroke="var(--acc)" stroke-width="4" opacity=".18" fill="none"/>
+          <path d="M110 230V170H390V230" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>
+          <rect x="246" y="166" width="8" height="8" fill="var(--acc)"/>
+          <rect x="106" y="226" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/>
+          <rect x="386" y="226" width="8" height="8" fill="var(--canvas)" stroke="var(--acc)" stroke-width="1.6"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>drag span</b> · neighbor segments stretch · both ends stay on their pins</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J6 — span drag is connection-preserving.</b> Grabbing a segment body slides it orthogonally while its neighbor
+      segments stretch; ends and every fixed contact stay attached. A body pickup <b>never</b> rigidly detaches a connected wire — the
+      owner-QA defect shape that opened task 4368 cannot recur by gesture.</p>
+    </div>
+  </div>
+  <div class="grid3" style="margin-top:16px">
+    <div id="J7">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Wire context menu with the landed editing commands"><use href="#wz"/>
+          <path d="M110 230V120H390V230" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/></svg>
+          <div style="position:absolute;left:150px;top:14px;width:224px;background:var(--s03);border:1px solid var(--bd-str);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.55);font-size:12.5px;padding:4px">
+            <div class="row" style="color:var(--tx)">Reconnect End</div>
+            <div class="row" style="color:var(--tx)">Split Wire</div>
+            <div class="row" style="color:var(--tx)">Insert Bend</div>
+            <div class="row" style="color:var(--err)">Remove Segment<span class="meta">destructive</span></div>
+            <div class="row" style="color:var(--tx)">Remove Bend</div>
+            <div class="row" style="color:var(--tx3);border-top:1px solid var(--bd-sub);margin-top:3px">Routing Free · 90° · 45°<span class="meta">drawing</span></div>
+          </div>
+          <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">context · selected wire NET_A</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J7 — explicit intents live in the context menu.</b> The rows are the landed commands
+      (<code>schematic.wire.*</code> in <code>menu_model.json</code>) configuring the one shared Move — no new tool family or key.
+      <b>Reconnect End</b> is the explicit physical-end reconnection intent: it arms a physical end even where ordinary drag prefers the
+      shared ◉ node. Remove Segment and Delete remain deliberate destructive operations and carry the destructive mark; routing rows are
+      drawing posture, shown muted here.</p>
+    </div>
+    <div id="J8">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="End edit refused because it would orphan the junction contact"><use href="#wt"/>
+          <path d="M70 90H430" stroke="var(--acc)" stroke-width="4" opacity=".18" fill="none"/>
+          <path d="M70 90H200" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>
+          <rect x="196" y="86" width="8" height="8" fill="var(--acc)"/>
+          <circle cx="240" cy="90" r="8" fill="none" stroke="var(--err)" stroke-width="1.4" stroke-dasharray="3 3"/></svg>
+          <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Move refused — end edit would orphan the junction contact on DATA0. Nothing changed.</span><span class="hb">▤ history</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J8 — a plan that loses a fixed contact refuses whole.</b> This drag is refused because the proposed plan
+      actually drops the junction's fixed contact from the wire; the refusal names it, and source and journal are untouched, matching the
+      whole-operation lock law. The rule is plan-based, not proximity-based: edits whose plan preserves every fixed contact and marker gate
+      — including admitted contact-preserving splitting or reshaping — proceed normally, and Datum never silently reroutes to make a losing
+      plan fit.</p>
+    </div>
+    <div id="J9">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Cancel writes nothing; a commit is one journal entry"><use href="#wt"/></svg>
+          <div class="hist" role="log" aria-label="Console history for one cancelled and one committed end edit"><div class="hhd">session history<span class="flt"><span class="chip on">all</span><span class="chip">ops</span><span class="chip">errors</span></span></div>
+            <div class="hrow"><span class="g">·</span><span class="tx">move wire end — preview</span><span class="pv">gui</span></div>
+            <div class="hrow"><span class="g">·</span><span class="tx">Escape — gesture cancelled, source unchanged</span><span class="pv">gui</span></div>
+            <div class="hrow j"><span class="g">◆</span><span class="tx">move wire end · exact pin contact R7.1</span><span class="pv">op·journal #21</span></div>
+            <div class="hrow j"><span class="g">◆</span><span class="tx">undo · move wire end — exact raw geometry restored</span><span class="pv">op·journal #22</span></div></div>
+          <div class="fstack"><div class="fstrip"><span class="gl">·</span><span class="tx">undo — move wire end</span><span class="hb">▤ history</span></div></div></div></div></div>
+      <p class="cell-cap"><b>J9 — cancel is zero writes; a commit is one entry.</b> Escape before release discards the preview with nothing
+      written or journaled. A committed edit is exactly one canonical batch; Undo restores the raw authored payload — locks, extensions and
+      identity — bit-exact.</p>
+    </div>
+  </div>
+  <table class="t" style="margin-top:16px" id="J-PRI" aria-label="Candidate hit priority where schematic ink overlaps">
+    <tr><th>Overlapping ink at the press point</th><th>Candidate winner <span class="tag own">◐ OWNER CHOICE · S05</span></th><th>Rationale</th></tr>
+    <tr><td class="n">Authored junction dot + wire span</td><td>◉ node — connection-preserving drag carries all incident endpoints</td><td>A genuine dot is never demoted to a body grab; recorded behavior since <code>b4fc1a18</code>.</td></tr>
+    <tr><td class="n">□ end handle sitting on a pin terminal</td><td>end handle while its wire is selected; pin otherwise</td><td>Selection declares edit intent on the wire; without it the pin keeps today's acquisition.</td></tr>
+    <tr><td class="n">◉ node or ◇ bend coincident with a physical wire end</td><td>the node / bend by default; the physical end is chosen only through explicit Reconnect End (J7)</td><td>Default editing preserves connections; a coincident physical end is a deliberate intent, never a hit-test accident.</td></tr>
+    <tr><td class="n">Selected wire's span + unselected other ink</td><td>the selected wire's span — after authored nodes and every higher-priority shared hit</td><td>Mirrors the landed captured-selection preference in the context-menu path; it is not a blanket drag priority.</td></tr>
+  </table>
+  <p class="cell-cap" style="margin-top:8px">The ranking is a candidate only: envelope, nearest-distance ranking and ties live in the one
+  shared acquisition service, and the final ordering is an S05 owner disposition (audit open decision 4). Ctrl-subtractive selection is
+  unaffected by every row.</p>
+</section>
+
+<!-- ======================================================== S-K -->
+<section class="fr" id="S-K">
+  <div class="sec-label"><span class="n">S-K</span><span>Numeric placement form — exact coordinates for a captured handle</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag own">◐ OWNER CHOICE · S05</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">The canonical move verb already accepts exact integer-nm absolute anchors (<span class="tag cur">● CURRENT · bounded</span>
+  at its recorded scope); the ordinary manual form is undelivered (audit <code>wire_precise_xy_offset</code>). This is the <b>one shared
+  form</b>, configured by the captured handle — wire end here, any Move subject by the same shape — not a wire-only editor. Values display in
+  <b>Project Working Units captured when the edit begins (PM040)</b>; a mid-edit units change never retargets an open form. The source i64 nm
+  is the authority: an untouched field keeps its exact value, and display rounding never writes back. The opener is a visible
+  <b>Coordinates…</b> button in the captured Move prompt — no new global hotkey. Cancel or Escape closes the form, preserves the prior Move
+  preview and writes nothing; the <b>next</b> Escape cancels the Move itself. <span class="kbd">Tab</span> / <span class="kbd">Shift+Tab</span>
+  traverse the fields through the existing shared single-line editor, which also owns text, caret and clipboard behavior; mouse Apply
+  validates and submits the same captured plan as a pointer release. Plain arrow keys in the captured gesture are the shared Move
+  displacement input (K4) — one current-grid step per press, no separate nudge panel, speed modifier or extra hotkey; Space pan is untouched.</p>
+  <div class="grid3">
+    <div id="K0">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:340px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Captured Move prompt offering the Coordinates opener"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--acc)"/>
+          <path d="M240 90L300 186" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>
+          <circle cx="300" cy="186" r="5" fill="none" stroke="var(--acc)" stroke-width="1.2"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>move end</b> · click applies · <span class="kbd">Esc</span> cancel</span><span class="btn" style="font-size:10.5px;padding:0 8px">Coordinates…</span></div></div></div></div></div>
+      <p class="cell-cap"><b>K0 — the opener lives in the captured Move prompt.</b> While a Move is captured, the prompt strip carries a
+      visible <b>Coordinates…</b> button — the only opener, no new global hotkey. Pressing it opens the common form (K1) while the Move
+      preview persists beneath; closing the form returns here with the preview intact.</p>
+    </div>
+    <div id="K1">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:340px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Absolute coordinate entry for a captured wire end"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--acc)"/></svg>
+          <div class="picker" style="width:258px">
+            <div class="hd">Move wire end — exact position</div>
+            <div style="display:flex;gap:4px;margin:7px 9px 2px;font-family:var(--mono);font-size:10px">
+              <span style="color:var(--acc);border:1px solid var(--acc);border-radius:3px;padding:0 7px;line-height:16px">absolute</span>
+              <span style="color:var(--tx3);border:1px solid var(--bd-sub);border-radius:3px;padding:0 7px;line-height:16px">delta</span></div>
+            <div class="kv"><span class="k">X</span><span class="v m"><span style="display:inline-block;background:#20161c;border:1px solid var(--acc);border-radius:4px;padding:1px 8px">24.000000<span class="cur-b"></span></span> mm</span></div>
+            <div class="kv"><span class="k">Y</span><span class="v m"><span style="display:inline-block;background:var(--s02);border:1px solid var(--bd-str);border-radius:4px;padding:1px 8px">18.600000</span> mm</span></div>
+            <div class="kv"><span class="k">exact</span><span class="v m" style="color:var(--tx3)">24 000 000 · 18 600 000 nm</span></div>
+            <div class="kv"><span class="k">units</span><span class="v m" style="color:var(--tx3)">mm — at edit begin (PM040)</span></div>
+            <div style="display:flex;gap:8px;align-items:center;padding:7px 12px 9px"><span class="btn">Apply</span><span class="btn">Cancel</span><span class="kbd">Esc</span><span style="font-size:10.5px;color:var(--tx3)">cancel</span></div>
+          </div>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>numeric move</b> · preview tracks the entered exact coordinate</span></div></div></div></div></div>
+      <p class="cell-cap"><b>K1 — absolute entry, focused field.</b> The focused field carries the accent border and block caret
+      (terminal-study vocabulary); the ghost preview tracks the entered value, and <span class="kbd">Tab</span> /
+      <span class="kbd">Shift+Tab</span> traverse X → Y through the existing shared field controller. Mouse Apply validates and submits the
+      <b>same</b> captured plan as a pointer release — numeric entry is not a bypass. Cancel or Escape closes the form, keeps the prior Move
+      preview and writes nothing.</p>
+    </div>
+    <div id="K2">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:340px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Delta coordinate entry for a captured wire end"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--acc)"/></svg>
+          <div class="picker" style="width:258px">
+            <div class="hd">Move wire end — exact position</div>
+            <div style="display:flex;gap:4px;margin:7px 9px 2px;font-family:var(--mono);font-size:10px">
+              <span style="color:var(--tx3);border:1px solid var(--bd-sub);border-radius:3px;padding:0 7px;line-height:16px">absolute</span>
+              <span style="color:var(--acc);border:1px solid var(--acc);border-radius:3px;padding:0 7px;line-height:16px">delta</span></div>
+            <div class="kv"><span class="k">ΔX</span><span class="v m"><span style="display:inline-block;background:#20161c;border:1px solid var(--acc);border-radius:4px;padding:1px 8px">+0.400000<span class="cur-b"></span></span> mm</span></div>
+            <div class="kv"><span class="k">ΔY</span><span class="v m"><span style="display:inline-block;background:var(--s02);border:1px solid var(--bd-str);border-radius:4px;padding:1px 8px">+0.000000</span> mm</span></div>
+            <div class="kv"><span class="k">exact</span><span class="v m" style="color:var(--tx3)">Δ +400 000 · +0 nm</span></div>
+            <div class="kv"><span class="k">units</span><span class="v m" style="color:var(--tx3)">mm — at edit begin (PM040)</span></div>
+            <div style="display:flex;gap:8px;align-items:center;padding:7px 12px 9px"><span class="btn">Apply</span><span class="btn">Cancel</span><span class="kbd">Esc</span><span style="font-size:10.5px;color:var(--tx3)">cancel</span></div>
+          </div>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>numeric move</b> · delta applies to the captured exact source nm</span></div></div></div></div></div>
+      <p class="cell-cap"><b>K2 — delta entry preserves exactness.</b> Deltas apply to the handle's exact captured source nm; a
+      <code>+0</code> axis is a bit-exact no-op. Switching absolute ↔ delta preserves the exact destination and re-derives the display only —
+      it never rewrites the source or accumulates rounding.</p>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div id="K3">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:340px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Numeric apply refused; the form persists for correction"><use href="#wt"/>
+          <path d="M70 90H430" stroke="var(--acc)" stroke-width="4" opacity=".18" fill="none"/>
+          <circle cx="240" cy="90" r="8" fill="none" stroke="var(--err)" stroke-width="1.4" stroke-dasharray="3 3"/></svg>
+          <div class="picker" style="width:258px">
+            <div class="hd">Move wire end — exact position</div>
+            <div class="kv"><span class="k">X</span><span class="v m"><span style="display:inline-block;background:#20161c;border:1px solid var(--acc);border-radius:4px;padding:1px 8px">11.200000<span class="cur-b"></span></span> mm</span></div>
+            <div class="kv"><span class="k">Y</span><span class="v m"><span style="display:inline-block;background:var(--s02);border:1px solid var(--bd-str);border-radius:4px;padding:1px 8px">5.000000</span> mm</span></div>
+            <div style="display:flex;gap:8px;align-items:center;padding:7px 12px 9px"><span class="btn">Apply</span><span class="btn">Cancel</span></div>
+          </div>
+          <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Apply refused — destination would orphan the junction contact. Nothing written.</span></div></div></div></div></div>
+      <p class="cell-cap"><b>K3 — refusal keeps the form.</b> A numeric destination obeys the same plan-based fixed-contact rule as J8: the
+      refusal names the actual contact, nothing is written, the prior Move preview persists, and the form keeps its values and focus for
+      correction. Cancel or Escape discards it with zero writes.</p>
+    </div>
+    <div id="K4">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="tools"><span class="tl on">Sel</span><span class="tl">Sym</span><span class="tl">Wire</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:240px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Arrow keys step the captured Move preview by one grid increment"><use href="#wt"/>
+          <path d="M240 90V190" stroke="var(--acc)" stroke-width="4" opacity=".25" fill="none"/>
+          <rect x="236" y="186" width="8" height="8" fill="var(--acc)" opacity=".45"/>
+          <path d="M240 90V172" stroke="var(--acc-h)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>
+          <rect x="236" y="168" width="8" height="8" fill="var(--acc)"/>
+          <path d="M262 184V164M257 170l5-6 5 6" stroke="var(--tx2)" stroke-width="1.3" fill="none"/></svg>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>move end</b> · <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> step one grid (0.100 mm) · click applies · <span class="kbd">Esc</span> cancel</span></div></div></div></div></div>
+      <p class="cell-cap"><b>K4 — arrow keys are the shared Move displacement input (W53).</b> In the captured gesture, with canvas focus
+      and no text field, menu, modal or Space-pan owner, each plain arrow press steps the preview by one current-grid increment. Nothing is
+      written until the ordinary apply click; Escape cancels; a plan-based fixed-contact refusal leaves the prior preview standing. Arrows
+      inside a text field keep caret behavior and navigation arrows keep Navigator ownership — no modifier or Space binding is overridden,
+      and there is no separate nudge panel or speed modifier.</p>
     </div>
   </div>
 </section>
@@ -249,10 +533,16 @@
   <table class="t" style="margin-top:16px" aria-label="Schematic tool family dispositions">
     <tr><th>Family</th><th>Disposition (per DATUM_GUI_MENU_BINDINGS.md)</th><th>Label in this study</th></tr>
     <tr><td class="n">Symbol place</td><td>PARTIAL — named narrow picker, preview, cancel, place; full browser and approved seed open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
-    <tr><td class="n">Wire</td><td>PARTIAL — terminal-connected multisegment preview, cancel, finish, history; auto-junction and editing open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
-    <tr><td class="n">Move (isolated Symbol)</td><td>Reviewed isolated unique-occurrence scope only; connected, bulk, repeated, rotate, mirror open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
+    <tr><td class="n">Wire</td><td>PARTIAL — terminal-connected multisegment preview, cancel, finish, history; auto-junction and editing open.
+      <b>Superseded 2026-11-07:</b> shared wire editing (end/node/span Move, Split Wire, Insert Bend, Remove Segment, Remove Bend, Reconnect
+      End, clipboard, R/X/Y) delivered at its recorded scope (<code>18d59b9a</code>); handle presentation is frames S-J/S-K.</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
+    <tr><td class="n">Move (isolated Symbol)</td><td>Reviewed isolated unique-occurrence scope only; connected, bulk, repeated, rotate, mirror open.
+      <b>Superseded 2026-11-07:</b> the one shared Move now covers connected Wire/Junction/Port, connected-junction drag and wiring
+      selections at their recorded scopes (<code>cc32f00a</code>, <code>b4fc1a18</code>, <code>18d59b9a</code>).</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
     <tr><td class="n">Undo / Redo · Save</td><td>PARTIAL — canonical history and project Save for the reviewed paths; Save As and full menu projection open</td><td><span class="tag cur">● CURRENT · bounded</span></td></tr>
-    <tr><td class="n">Label · Junction · No-connect · Port · Bus · Bus entry · Text / Drawing</td><td>ENGINE-READY / GUI-BLOCKED — no ordinary GUI binding established</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
+    <tr><td class="n">Label · Junction · No-connect · Port · Bus · Bus entry · Text / Drawing</td><td>ENGINE-READY / GUI-BLOCKED — no ordinary GUI binding established.
+      <b>Superseded 2026-11-07:</b> ordinary GUI bindings for Label, Junction, Port, Bus, Bus entry and Text landed under
+      <code>dat-ordinary-circuit-authoring-zvhw</code> at their recorded scopes (delivery <code>16699b68</code>).</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
     <tr><td class="n">Heterogeneous delete · Symbol fields · ERC waiver</td><td>Normalized surface and complete GUI pending; waiver stays proposal-gated</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
   </table>
 </section>
