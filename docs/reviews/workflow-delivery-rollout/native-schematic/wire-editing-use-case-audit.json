@@ -1,0 +1,2532 @@
+{
+  "kind": "nonnormative_schematic_wire_editing_use_case_audit",
+  "task": "dat-schematic-wire-endpoint-edit-4368",
+  "date": "2026-11-06",
+  "baseline_commit": "bb780ae65b2dcbbe0dc8a58e9a8ae1bf76d4878d",
+  "request": "Determine all schematic wire manipulation/modification use cases and code updates using Altium Designer as a behavioral template.",
+  "status": "Audit complete; proposed behavior/code changes are not implemented or ratified by this record.",
+  "scope": "54 documented/reference Altium and ordinary manipulation cases cross-checked against 43 Datum source cases. Reference unknowns and optional features are explicit; this is not exhaustive installed-Altium or Datum runtime qualification.",
+  "owner_observations": [
+    "Attempted junction drag moved an R1-C1 wire body and detached fixed pins.",
+    "Original R1-C1 source wire was unsplit; redrawing endpoint-connected C1/Q1/R1 geometry behaved as expected.",
+    "Owner expects editable wire ends and nearest-pin snapping."
+  ],
+  "conclusions": [
+    "The original T is electrically connected. Missing editing ownership makes equivalent unsplit and segmented drawings behave differently.",
+    "The central update is a shared source-qualified wire edit basis and canonical handle/attachment plan, followed by acquisition and snap integration.",
+    "Automatic source splitting alone is not a complete or harmless fix; crossing-junction deletion, raw identity and Bus Entry references must remain deliberate.",
+    "Current exact pin snapping during creation exists; nearest-candidate ranking and electrical snap integration in Move are the gaps.",
+    "Altium is a behavioral comparator. Datum shared tooling, complete-operation lock refusal, canonical journal, explicit crossing and selection key laws remain controlling."
+  ],
+  "altium_sources": {
+    "connectivity": {
+      "url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "page_updated": "2026-10-06",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 192
+    },
+    "editing": {
+      "url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "page_updated": "2026-10-06",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 177
+    },
+    "preferences": {
+      "url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "page_updated": "2026-11-02",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 97
+    },
+    "grids": {
+      "url": "https://www.altium.com/documentation/altium-designer/schematic/setting-up-document",
+      "page_updated": "2026-10-06",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 46
+    },
+    "shortcuts": {
+      "url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "page_updated": "2026-10-06",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 121
+    },
+    "multiple": {
+      "url": "https://www.altium.com/documentation/altium-designer/editing-multiple-design-objects",
+      "page_updated": "2026-11-02",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 45
+    },
+    "tutorial": {
+      "url": "https://www.altium.com/documentation/altium-designer/tutorial/capturing-schematic",
+      "page_updated": "2026-10-15",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 16
+    },
+    "saving": {
+      "url": "https://www.altium.com/documentation/altium-designer/saving-projects-documents",
+      "page_updated": "2026-11-02",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 89
+    },
+    "history": {
+      "url": "https://www.altium.com/documentation/altium-designer/preferences/data-management",
+      "page_updated": "2026-11-02",
+      "fetched_current_page": true,
+      "article_paraphrase_words": 19
+    }
+  },
+  "altium_cases": [
+    {
+      "use_case": "create/start",
+      "status": "documented",
+      "behavior": "Place Wire or Ctrl+W starts wiring; click/Enter anchors the start and subsequent vertices.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Availability; Placement",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "finish/current_wire_vs_exit",
+      "status": "documented",
+      "behavior": "First Esc/right-click completes the current wire; a subsequent one exits repeated placement.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Placement",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "remove_latest_unfinished_vertex",
+      "status": "documented",
+      "behavior": "Backspace/Delete removes the latest placed vertex during wiring.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "Interactive Shortcuts",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "escape_interactive_stage",
+      "status": "documented",
+      "behavior": "Esc/right-click escapes the current interactive stage or command.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "Interactive Shortcuts",
+      "source_id": "shortcuts",
+      "limit": "Exact mouse-held cancellation event phases and atomicity are not specified."
+    },
+    {
+      "use_case": "selected_wire_endpoint",
+      "status": "documented",
+      "behavior": "Selected-wire endpoint handles reposition individual ends.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Graphical Editing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "selected_wire_vertex",
+      "status": "documented",
+      "behavior": "Dragging a vertex keeps wire endpoints anchored.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Graphical Editing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "selected_wire_segment",
+      "status": "documented",
+      "behavior": "Dragging a selected segment keeps other vertices and endpoints anchored.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Graphical Editing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "unselected_whole_wire",
+      "status": "documented",
+      "behavior": "Holding and moving an unselected wire repositions the entire wire.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Graphical Editing",
+      "source_id": "connectivity",
+      "limit": "Literal object-movement description; actual connectivity behavior depends on Always Drag. No default setting is established.",
+      "additional_source_urls": [
+        "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+        "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques"
+      ]
+    },
+    {
+      "use_case": "insert_vertex",
+      "status": "documented",
+      "behavior": "Hold a selected segment and press Insert to add a vertex.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "Interactive Shortcuts",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "remove_existing_vertex",
+      "status": "documented",
+      "behavior": "Hold an existing vertex and press Delete to remove it.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "Interactive Shortcuts",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "extend_shorten",
+      "status": "partially_documented",
+      "behavior": "Endpoint repositioning supports changing length; no separate current Extend Wire command established.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Graphical Editing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "numeric_geometry",
+      "status": "documented",
+      "behavior": "Properties exposes editable vertex coordinates and add/remove controls.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Vertices",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "manual_corner_modes",
+      "status": "documented",
+      "behavior": "Manual modes include 45-degree, 90-degree and unrestricted angles.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Placement Modes",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "placement_corner_controls",
+      "status": "documented",
+      "behavior": "Shift+Space cycles wire placement modes; Space switches start/end corner orientation in orthogonal modes.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "Interactive Shortcuts",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "auto_wire",
+      "status": "documented",
+      "behavior": "Auto Wire offers point-to-point path calculation with obstacle avoidance.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Placement Modes",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "move_vs_drag",
+      "status": "documented",
+      "behavior": "Move ignores connectivity; Drag attempts to retain it.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Repositioning an Object",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "selected_group_move_vs_drag",
+      "status": "documented",
+      "behavior": "Move Selection ignores connections; Drag Selection retains electrical connections.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Movement Commands",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "default_mouse_behavior",
+      "status": "documented",
+      "behavior": "Always Drag retains wiring while moving components or component selections.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "Graphical Editing",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "temporary_behavior_switch",
+      "status": "documented",
+      "behavior": "Ctrl temporarily reverses Always Drag behavior.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Repositioning an Object",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "unions",
+      "status": "documented",
+      "behavior": "Moving a union member can move the group; electrical dragging can override union movement.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Working with Unions",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "orthogonal_drag",
+      "status": "documented",
+      "behavior": "Drag Orthogonal keeps connected wiring orthogonal; disabling it permits oblique adjustment.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "General",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "drag_corner_shortcut_conflict",
+      "status": "conflicting_current_documentation",
+      "behavior": "Current pages disagree on Space versus Ctrl+Space for connected-wire corner modes.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Repositioning an Object",
+      "source_id": "editing",
+      "limit": "Preferences and shortcut reference assign Ctrl+Space; editing overview assigns Space and assigns Ctrl+Space to selection rotation. Verify against a target installation."
+    },
+    {
+      "use_case": "electrical_hotspots",
+      "status": "documented",
+      "behavior": "Electrical snapping overrides the placement grid within its attraction range, permitting off-grid connections.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/setting-up-document",
+      "source_basis": "Grids and Cursors",
+      "source_id": "grids"
+    },
+    {
+      "use_case": "grid_and_hotspot_configuration",
+      "status": "documented",
+      "behavior": "Grid settings are document-specific; Shift+E toggles electrical hotspot snapping.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/setting-up-document",
+      "source_basis": "Grids and Cursors",
+      "source_id": "grids"
+    },
+    {
+      "use_case": "nearest_pin_and_ties",
+      "status": "partially_documented",
+      "behavior": "Attraction-range snapping is documented; nearest-candidate metric, ambiguity resolution and equal-distance pin priority are not specified.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/setting-up-document",
+      "source_basis": "Grids and Cursors",
+      "source_id": "grids"
+    },
+    {
+      "use_case": "branch_T_creation_and_segmentation",
+      "status": "documented",
+      "behavior": "Break Wires At Autojunctions enabled splits existing T-contact segments; disabled leaves through-wires unbroken.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "General",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "generated_junction_editability",
+      "status": "documented",
+      "behavior": "Compiler-generated junctions are automatic, not independently graphically editable.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Compiler Generated Junction / Editing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "branch_delete_merge",
+      "status": "documented",
+      "behavior": "Removing one T branch removes its redundant junction and merges the remaining two segments.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Selecting and Removing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "segment_subselection_delete",
+      "status": "documented",
+      "behavior": "Selected wire segments can be individually subselected and deleted.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Selecting and Removing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "split_break_cut",
+      "status": "documented",
+      "behavior": "Break Wire removes a visible cut length; modes target a segment, grid multiple or fixed length.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Polyline Object Editing",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "break_exit",
+      "status": "documented",
+      "behavior": "Break Wire repeats until Esc/right-click exits.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Polyline Object Editing",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "split_vs_junction",
+      "status": "documented",
+      "behavior": "Break Wire removes material; autojunction splitting is separately configured.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Polyline Object Editing",
+      "source_id": "editing",
+      "limit": "Do not equate a gap-producing cutter with connectivity-preserving T segmentation.",
+      "additional_source_urls": [
+        "https://www.altium.com/documentation/altium-designer/preferences/schematic"
+      ]
+    },
+    {
+      "use_case": "overlap_cleanup",
+      "status": "documented",
+      "behavior": "Optimize Wires & Buses removes overlapping wire/polyline/bus redundancy.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "General",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "component_insert_into_wire",
+      "status": "documented",
+      "behavior": "Components Cut Wires terminates cut segments on two hot pins; optimization must also be enabled.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "General",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "four_way_crossing",
+      "status": "documented",
+      "behavior": "With cross-junction conversion disabled, newly crossing wires remain disconnected; conversion produces adjacent three-way junctions.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "General",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "lock_and_partial_group",
+      "status": "documented",
+      "behavior": "Protect Locked Objects prevents movement and excludes locked members from moved selections; disabling protection prompts a warning.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/schematic",
+      "source_basis": "Graphical Editing",
+      "source_id": "preferences"
+    },
+    {
+      "use_case": "multiple_property_edit",
+      "status": "documented",
+      "behavior": "Select objects, inspect common properties, then apply edits through shared panels.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/editing-multiple-design-objects",
+      "source_basis": "Selecting Objects; Inspecting Objects",
+      "source_id": "multiple"
+    },
+    {
+      "use_case": "parallel_multiwire_end_extension",
+      "status": "undocumented_in_reviewed_current_sources",
+      "behavior": "Aligned parallel multiwire endpoint extension was not established in the reviewed current Designer pages.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/editing-multiple-design-objects",
+      "source_basis": "Reviewed Designer editing documentation",
+      "source_id": "multiple",
+      "limit": "Search surfaced CircuitStudio descriptions; these were deliberately excluded as evidence for Designer."
+    },
+    {
+      "use_case": "undo_redo",
+      "status": "documented",
+      "behavior": "Ctrl+Z undoes; Ctrl+Y redoes.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "General Editing",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "deleted_wire_recovery",
+      "status": "documented",
+      "behavior": "The tutorial deletes a wire, undoes the deletion, and revalidates connectivity.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/tutorial/capturing-schematic",
+      "source_basis": "Wiring / deliberate validation error",
+      "source_id": "tutorial"
+    },
+    {
+      "use_case": "document_vs_project_save",
+      "status": "documented",
+      "behavior": "Document Save writes the active document; project-only Save does not save constituent design documents. Save All covers modified files.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/saving-projects-documents",
+      "source_basis": "Saving a Document",
+      "source_id": "saving"
+    },
+    {
+      "use_case": "local_vs_server_save",
+      "status": "documented",
+      "behavior": "Local Save updates the working copy; Save to Server separately commits selected project changes to the Workspace.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/saving-projects-documents",
+      "source_basis": "Saving a Project",
+      "source_id": "saving"
+    },
+    {
+      "use_case": "close_unsaved",
+      "status": "documented",
+      "behavior": "Closing projects/application with multiple unsaved documents offers save/discard choices according to local/Workspace state.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/saving-projects-documents",
+      "source_basis": "Saving when Closing a Project",
+      "source_id": "saving"
+    },
+    {
+      "use_case": "local_history_boundary",
+      "status": "documented",
+      "behavior": "When enabled, Local History retains the previous file version on each save; autosaved versions can be included.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/preferences/data-management",
+      "source_basis": "Local History",
+      "source_id": "history"
+    },
+    {
+      "use_case": "persistent_undo_boundary",
+      "status": "undocumented_in_reviewed_current_sources",
+      "behavior": "Cold-reopen undo persistence and exact per-wire gesture transaction grouping were not established by these sources.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/saving-projects-documents",
+      "source_basis": "Reviewed save/history documentation",
+      "source_id": "saving",
+      "limit": "Local History snapshots are not evidence of a persistent Undo stack."
+    },
+    {
+      "use_case": "delete_junction_vs_disconnect_crossing",
+      "status": "undocumented_in_reviewed_current_sources",
+      "behavior": "Deleting a standalone junction to disconnect a crossing is not established; generated-junction visibility is not connectivity removal.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/creating-circuit-connectivity",
+      "source_basis": "Compiler Generated Junction / Editing",
+      "source_id": "connectivity"
+    },
+    {
+      "use_case": "clipboard_copy",
+      "status": "documented",
+      "behavior": "Ctrl+C copies the current selection.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "General Editing",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "clipboard_cut",
+      "status": "documented",
+      "behavior": "Ctrl+X cuts the current selection.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "General Editing",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "clipboard_paste",
+      "status": "documented",
+      "behavior": "Ctrl+V pastes the selection.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "General Editing",
+      "source_id": "shortcuts"
+    },
+    {
+      "use_case": "clipboard_duplicate",
+      "status": "partially_documented",
+      "behavior": "Ctrl+R copies selected objects for repeated placement.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/shortcut-keys/schematic-editors",
+      "source_basis": "General Editing",
+      "source_id": "shortcuts",
+      "limit": "Repeat-placement is documented; no distinct standalone Duplicate command established here. Copy/Paste remains a separate command sequence."
+    },
+    {
+      "use_case": "selection_rotate",
+      "status": "documented",
+      "behavior": "Rotate Selection commands rotate selected objects clockwise or counterclockwise.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Movement Commands",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "selection_mirror",
+      "status": "documented",
+      "behavior": "X/Y flips the moving selection along its corresponding axis.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Repositioning an Object",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "selection_grid_nudge",
+      "status": "documented",
+      "behavior": "Ctrl+Arrow nudges one grid; adding Shift nudges ten.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Repositioning an Object",
+      "source_id": "editing"
+    },
+    {
+      "use_case": "selection_precise_xy_offset",
+      "status": "documented",
+      "behavior": "Move Selection by X,Y applies entered coordinate deltas.",
+      "source_url": "https://www.altium.com/documentation/altium-designer/schematic/placement-editing-techniques",
+      "source_basis": "Movement Commands",
+      "source_id": "editing"
+    }
+  ],
+  "datum_cases": [
+    {
+      "id": "create_chain",
+      "status": "supported",
+      "baseline_behavior": "PlaceWire captures clicked vertices; explicitFinish/Enter/repeatedsamevertex double-click commits whole chain. Straight segments accept arbitrary angles; no automatic finish at pin.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "function": "begin_native_schematic; native_schematic_click; finish_native_wire"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_bus.rs",
+          "function": "SchematicAuthoring::polyline_request"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "draw_wire; build_wire_gesture"
+        }
+      ],
+      "recommendation": "Retain shared captured basis and atomic chain; distinguish click vertex vs finish in interaction specification.",
+      "evidence": "source; prior ordinary GUI authored pin wires; not full placement-mode qualification",
+      "dependencies": []
+    },
+    {
+      "id": "placement_modes",
+      "status": "absent",
+      "baseline_behavior": "No schematic orthogonal/45-degree posture solver, corner-mode cycling or dynamic bend insertion in inspected Wire gesture; clicked polyline only.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "function": "native_schematic_click; handle_schematic_key"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "build_wire_gesture"
+        }
+      ],
+      "recommendation": "If required by owner/Altium crosswalk, configure shared geometry solver for posture/corner choice; do not create independent wire controller.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "create_chain"
+      ]
+    },
+    {
+      "id": "remove_last_preview_vertex",
+      "status": "absent",
+      "baseline_behavior": "Escape discards entire uncommitted chain; no active-Wire backspace/pop-last-vertex branch.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "function": "handle_schematic_key; cancel_native_schematic"
+        }
+      ],
+      "recommendation": "Add explicit remove-last-vertex transition to same draft state if required; preserve full Escape cancellation.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "create_chain"
+      ]
+    },
+    {
+      "id": "creation_cancel",
+      "status": "supported",
+      "baseline_behavior": "Escape discards draft vertices/preview with no design commit; accepted prior chains retained.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "function": "cancel_native_schematic; handle_schematic_key"
+        }
+      ],
+      "recommendation": "Retain; test held gesture key delivery without clearing mouse modifiers.",
+      "evidence": "source plus prior ordinary GUI creation cancellation; run101 Escape concerns Move, not placement",
+      "dependencies": []
+    },
+    {
+      "id": "pin_snap_during_creation",
+      "status": "partial",
+      "baseline_behavior": "Already implemented exact static pin/power-anchor snap before grid during Wire placement. Missing pieces are nearest-distance ranking among eligible contacts and using that shared snap for Move endpoint edits; do not classify all pin snap as absent.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_snap.rs",
+          "function": "Runtime::schematic_snap_point"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_authoring_preview.rs",
+          "function": "SchematicAuthoring::pin_point"
+        }
+      ],
+      "recommendation": "Use one source-qualified nearest eligible pin selector within existing hit envelope, deterministically tie-break; share between placement and endpoint editing.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "qualified_hit_filters"
+      ]
+    },
+    {
+      "id": "wire_ink_snap",
+      "status": "supported",
+      "baseline_behavior": "Electrical Wire/Label/Port/Junction fallback acquires visible committed wire ink and exact integer incidence; refuses distant exact lattice point rather than electrical false contact.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_snap.rs",
+          "function": "Runtime::schematic_snap_point"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_wire_anchor.rs",
+          "function": "exact_wire_contact"
+        }
+      ],
+      "recommendation": "Retain exact-source/lattice/ink-envelope guard; feed nearest contact before background grid.",
+      "evidence": "source; prior run93 actual off-grid wire contact regression, not performance proof",
+      "dependencies": []
+    },
+    {
+      "id": "endpoint_to_segment_T",
+      "status": "supported",
+      "baseline_behavior": "DrawWire detects authored endpoint strictly inside existing segment (and old endpoint inside new segment), emits explicit junction atomically; existing wire remains unsplit.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "build_wire_gesture; strictly_on_segment"
+        }
+      ],
+      "recommendation": "Make editing operate consistently on logical contact nodes independently of source draw order, or adopt explicit canonical segmentation with identity/deletion policy first.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "crossing_overlap",
+      "status": "supported",
+      "baseline_behavior": "Mere crossing without authored endpoint emits no junction; explicit junction joins crossing. Zero consecutive vertices refuse; broader overlap cleanup not implemented.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "build_wire_gesture"
+        },
+        {
+          "path": "crates/engine/src/connectivity/occurrence_partition.rs",
+          "function": "local"
+        }
+      ],
+      "recommendation": "Retain explicit junction semantics; define overlap/duplicate-segment cleanup separately before normalizing source edges.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "explicit_junction_place_delete",
+      "status": "supported",
+      "baseline_behavior": "PlaceJunction emits marker only. Connectivity attaches marker to every incident segment. DeleteJunction can separate crossing nets again.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_marker.rs",
+          "function": "place; delete_junction"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_connectivity.rs",
+          "function": "build_place_schematic_marker; build_delete_schematic_junction"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_marker_tests.rs",
+          "function": "native_marker_junction_merges_crossing_and_history_separates_nets"
+        }
+      ],
+      "recommendation": "Do not auto-split all crossing wires without preserving DeleteJunction disconnect behavior. Any split normalizer must handle inverse ownership/provenance.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "draw_order_equivalence",
+      "status": "partial",
+      "baseline_behavior": "Electrically valid interior marker joins unsplit source segment; drawing separate endpoint segments produces equivalent circuit with different edit ownership. SchematicWire has uuid/from/to only, no canonical interior-vertex list.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "build_wire_gesture"
+        },
+        {
+          "path": "crates/engine/src/schematic/mod.rs",
+          "function": "SchematicWire"
+        },
+        {
+          "path": "crates/engine/src/connectivity/occurrence_partition.rs",
+          "function": "local"
+        }
+      ],
+      "recommendation": "Centralize contact/vertex ownership for existing AND newly drawn projects. If source splitting chosen, one engine helper called by draw gesture and marker placement, plus explicit existing-project normalization policy; not GUI/private rewrite.",
+      "evidence": "source + owner reports redraw split segments behaves differently; no segmentation-normalization proof",
+      "dependencies": []
+    },
+    {
+      "id": "qualified_hit_filters",
+      "status": "supported",
+      "baseline_behavior": "Hit binding validates project/revision/source/path; ordinary acquisition uses authored/class/layer visibility; exact acquired source origin differs from derived Run.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_hit.rs",
+          "function": "native_binding_basis; selection_world_hit"
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_scene/index.rs",
+          "function": "SceneSelectionBindings::capture; acquisition_eligible"
+        }
+      ],
+      "recommendation": "Reuse for handle eligibility and nearest-pin candidates, including hidden/excluded classes and actual pane; do not use stale/global source fallback.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "select_drag_pickup",
+      "status": "partial",
+      "baseline_behavior": "Thresholded Replace Select-drag picks exact singleton Wire/Junction/Port instead of widening prior Run; existing Symbol/compound ownership remains. Wire pickup anywhere starts rigid Move, including near junction if wire wins hit.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_region/drag.rs",
+          "function": "capture_selection_move; advance_selection_move; drag_subject"
+        }
+      ],
+      "recommendation": "Separate explicit endpoint handle vs segment body vs genuine Junction hit; body/near-dot must never rigidly detach connected wire. Preserve existing threshold/modifier/basis/filters.",
+      "evidence": "nmu2 source+CPU tests; run101 GUI prior singletonWire\u2192exactJunction, no GUI Run6 claim; latest owner near-dot/body failure",
+      "dependencies": []
+    },
+    {
+      "id": "wire_rigid_move_baseline",
+      "status": "partial",
+      "baseline_behavior": "MoveWire translates BOTH endpoints by delta, with no connected-contact preservation check. Locked raw wire and bus-entry dependency refuse. This is landed behavior that can detach original R1/C1 through-wire.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "move_wire"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "NativeMovePreview::connectivity; destination; scene_at"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "function": "begin_schematic_move"
+        }
+      ],
+      "recommendation": "Replace ordinary wire-body translation admission with explicit owner-approved endpoint/segment intent; do not silently retain unsafe rigid Move via alternate toolbar/context entry.",
+      "evidence": "source and new owner failure; old isolated rigid-move tests intentionally graded this now-disputed behavior",
+      "dependencies": []
+    },
+    {
+      "id": "wire_endpoint_handles",
+      "status": "absent",
+      "baseline_behavior": "No landed WireEndpoint schema/handles/single-end Move. MoveParams only object/path/x/y; preview anchors Wire.from and translates both ends.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "MoveParams; move_wire"
+        },
+        {
+          "path": "crates/gui-protocol/src/native_edit_client.rs",
+          "function": "NativeEditAction::MoveConnectivity"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "ConnectivityMoveTarget; NativeMovePreview::destination"
+        }
+      ],
+      "recommendation": "Configure existing Move with explicit From/To endpoint, opposite endpoint fixed; share geometry between canonical build and preview. Reject missing/invalid endpoint and nonwire endpoint parameter.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "select_drag_pickup",
+        "pin_snap_during_creation"
+      ]
+    },
+    {
+      "id": "wire_endpoint_snap",
+      "status": "absent",
+      "baseline_behavior": "Generic connectivity Move destination applies cursor delta/grid; does not invoke authoring electrical pin snap.",
+      "code": [
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "NativeMovePreview::destination"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit.rs",
+          "function": "native_move_pointer"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "function": "native_move_click"
+        }
+      ],
+      "recommendation": "Endpoint destination must use nearest eligible exact off-grid pin contact before grid in BOTH preview and release; maintain press-offset/endpoint handle semantics.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "wire_endpoint_handles",
+        "pin_snap_during_creation"
+      ]
+    },
+    {
+      "id": "fixed_interior_contact_endpoint_edit",
+      "status": "absent",
+      "baseline_behavior": "Landed rigid wire Move has no fixed-interior-attachment check. Quarantined endpoint prototype adds one, but it is NOT product baseline.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "move_wire"
+        },
+        {
+          "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+          "function": "schematic_attachment_points"
+        }
+      ],
+      "recommendation": "A one-end edit must preserve all fixed old interior pins/junctions/ports/labels/other-wire endpoints or refuse; do not orphan T contact or silently split/reroute. Use branch30c5.from\u2192R1 pin positive case, not f067.from offaxis.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "wire_endpoint_handles",
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "junction_connected_drag",
+      "status": "supported",
+      "baseline_behavior": "Junction source node owns incident endpoint wires; interior through-wires stay fixed. Same shared JunctionMoveBasis validates preview+commit using full physical partitions and fixed contacts.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_junction_move.rs",
+          "function": "JunctionMoveBasis::capture; destination_edit"
+        },
+        {
+          "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+          "function": "capture_junction; moved_geometry"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "move_junction"
+        }
+      ],
+      "recommendation": "Retain while fixing wire pickup; genuine dot must not be demoted to wire-body/endpoint action. Keep incident-wire raw lock checks.",
+      "evidence": "actual35 focused nmu2 tests at declared scopes; run101 held/cancel/continuous Select-drag owner case, run102 history/cold",
+      "dependencies": []
+    },
+    {
+      "id": "wire_elbow_vertex_drag",
+      "status": "absent",
+      "baseline_behavior": "Source edges can form polylines, but no landed shared elbow handle, stretch segment with two neighbors, corner insertion/removal, or re-entrant bend editor.",
+      "code": [
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "ConnectivityMoveTarget"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "move_wire"
+        },
+        {
+          "path": "crates/engine/src/schematic/mod.rs",
+          "function": "SchematicWire"
+        }
+      ],
+      "recommendation": "Owner/Altium crosswalk should explicitly choose segment/vertex editing semantics; implement through shared typed source graph edit, not whole-wire rigid translation or new rerouter.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "wire_break_trim_split",
+      "status": "absent",
+      "baseline_behavior": "Menu marks wire.break at point not_built; no landed native split/break writer in inspected registry/Move/create/delete families.",
+      "code": [
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "wire.break at point not_built"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "VERBS; build_wire_gesture"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "VERBS"
+        }
+      ],
+      "recommendation": "If required, canonical atomic split/trim edit with existing raw/identity/bus guards and meaningful explicit gap behavior; do not approximate by arbitrary pixel erasure.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "wire_group_transform",
+      "status": "refusal",
+      "baseline_behavior": "Compound Move routing exists but schematic group transform scope is supported Symbol owners, not arbitrary connected wire-network rubber banding.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "function": "begin_selected_native_move_at; begin_schematic_move"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/group.rs",
+          "function": "subject_contains"
+        }
+      ],
+      "recommendation": "Preserve refusal until owner-defined multiwire/vertex graph transform; do not turn Run selection into mass Move implicitly.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "symbol_attached_wires",
+      "status": "supported",
+      "baseline_behavior": "Selected Symbol move reshapes owned incident wire endpoints and preserves contact partition; ambiguous Symbolpin-interior and external attachment cases refuse.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_symbol_move.rs",
+          "function": "SymbolMoveBasis::capture; destination_edit; transform_write"
+        },
+        {
+          "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+          "function": "capture_symbols; moved_geometry"
+        }
+      ],
+      "recommendation": "Keep existing owned attachment behavior; do not use it as proof arbitrary wire-segment drag exists.",
+      "evidence": "focused Label/Symbol nmu2 regressions retained; prior ordinary root/child Symbol workflow proof",
+      "dependencies": []
+    },
+    {
+      "id": "label_power_ports_contacts",
+      "status": "partial",
+      "baseline_behavior": "Interior scalar Label slides on fixed wires with partition preservation; endpoint Label/Power may own endpoint contacts; Port Move is position-only and leaves wires fixed.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_label_move.rs",
+          "function": "LabelMoveBasis::capture; destination_edit"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "move_port"
+        },
+        {
+          "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+          "function": "capture_label; moved_geometry"
+        }
+      ],
+      "recommendation": "Crosswalk must distinguish annotation movement vs reconnect intent; retain explicit port/interface ownership and no implicit wiring inference.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "delete_wire_single",
+      "status": "partial",
+      "baseline_behavior": "GUI singleton delete supports qualified Wire; external BusEntry reference refuses. Engine typed delete builder serializes resolved SchematicWire rather than raw member; direct path has no explicit raw lock check in inspected selected-source/delete builder.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_selected.rs",
+          "function": "delete_selected_schematic"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_selection_edit.rs",
+          "function": "target_in; delete_target"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "delete_selected"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_connectivity.rs",
+          "function": "build_delete_schematic_wire"
+        }
+      ],
+      "recommendation": "Audit/fix raw extension and lock parity for canonical delete callers; UI locked refusal is not an engine raw-lock guarantee. Preserve identity/journal inverse exact payload.",
+      "evidence": "source gap; no newly executed raw-locked singleton delete test",
+      "dependencies": []
+    },
+    {
+      "id": "delete_network_batch",
+      "status": "supported",
+      "baseline_behavior": "Multiobject deletion uses explicit Proposal, unique sheet/path, dedup ownership; surviving BusEntry dependency refuses, can delete owning bus/entry together.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_delete.rs",
+          "function": "build"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_delete_proposal.rs",
+          "function": "DeleteClass; proposal action"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_delete_review.rs",
+          "function": "DeleteReview"
+        }
+      ],
+      "recommendation": "Retain atomic Proposal/cancel/history and external dependency guards; include raw wire deletion parity in same audit.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "delete_wire_single"
+      ]
+    },
+    {
+      "id": "bus_spine_members",
+      "status": "supported",
+      "baseline_behavior": "Bus is grouped scalar identities, not an electrical short. Shared polyline creation and member/name edits available; existing entries must retain compatible member endpoints.",
+      "code": [
+        {
+          "path": "crates/gui-protocol/src/schematic_bus.rs",
+          "function": "polyline_request; BusEditDraft::request"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_bus.rs",
+          "function": "prepare; create_bus"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_bus_members.rs",
+          "function": "qualify_wire"
+        }
+      ],
+      "recommendation": "Retain scalar identities; do not conflate Bus spine manipulation with Wire topology. Rich bus vertex/segment edit shares unresolved wire vertex model.",
+      "evidence": "prior ordinary root/child Bus GUI; nmu2 does not retest Bus",
+      "dependencies": []
+    },
+    {
+      "id": "bus_entry_attach_edit",
+      "status": "supported",
+      "baseline_behavior": "Select existing scalar Wire, choose Bus/member and From/To, snap exact spine; entry records wire UUID and visible vector to endpoint. Member edits/deletion exposed; no free Move of wire referenced by entry.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_bus_entry.rs",
+          "function": "begin_native_bus_entry; place_native_bus_entry"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_bus_entry.rs",
+          "function": "BusEntryDraft::request"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_bus_geometry.rs",
+          "function": "entry_geometry"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_bus.rs",
+          "function": "prepare; delete_entry"
+        }
+      ],
+      "recommendation": "Wire endpoint edits must preserve/recompute qualified entry vector or explicitly refuse existing entries; split normalizer must choose correct new edge, not leave stale wire UUID.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "wire_endpoint_handles",
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "snap_grid_controls",
+      "status": "partial",
+      "baseline_behavior": "AuthoringSnapState grid is shared; pin/power/wire electrical contacts can override grid during creation. Existing4mil/0.1mm display quantization is not evidence source points are on-grid.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_snap.rs",
+          "function": "schematic_snap_point"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "NativeMovePreview::destination"
+        }
+      ],
+      "recommendation": "Use exact world nm pin coordinates, not displayed rounded mil/grid, for endpoint nearest-pin contact. Keep existing envelope, no arbitrary new snap radius.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "locks_visibility_hierarchy",
+      "status": "partial",
+      "baseline_behavior": "Qualified unique occurrence+stale/project/revision/path guards and layer/class acquisition are shared. Move explicitly checks raw selected wire/junction and changed incident-wire locks; singleton Delete engine parity is not established.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selected_source.rs",
+          "function": "SelectedSchematicSource::sheet"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "selected_source; require_unlocked; move_wire; move_junction"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_selection_edit.rs",
+          "function": "target_in"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_hit.rs",
+          "function": "native_binding_basis; selection_world_hit"
+        }
+      ],
+      "recommendation": "Preserve same complete basis for all handles and snapping; fix mutation lock/raw parity where absent. Repeated/ambiguous sources remain refusal rather than accidental cross-instance edits.",
+      "evidence": "source only; no new execution",
+      "dependencies": []
+    },
+    {
+      "id": "move_cancel_release",
+      "status": "supported",
+      "baseline_behavior": "Shared selection gesture cancels on Escape release and suppresses subsequent release; preview source immutable. Native pointer/frame/release/queue guards qualify original pane/revision/source.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_region.rs",
+          "function": "cancel_native_selection_gesture; finish_native_selection_press"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_region/drag.rs",
+          "function": "cancel_selection_move; finish_selection_move"
+        },
+        {
+          "path": "crates/gui-app/src/terminal/keyboard_focus.rs",
+          "function": "Escape release -> cancel_native_selection_gesture"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "function": "native_move_click"
+        }
+      ],
+      "recommendation": "Retain; test physical input order. qa.key --clearmodifiers releases held mouse, so held Escape proof must use raw keydown/up.",
+      "evidence": "actual run101 native mousedown\u2192EscapePressed/Released\u2192mouseup and309files exact; run100 invalid cancellation input preserved",
+      "dependencies": []
+    },
+    {
+      "id": "commit_history_save",
+      "status": "supported",
+      "baseline_behavior": "Canonical batch/journal/supervised expected revision+tip; preview no source writes; UndoRedo and cold resolve preserve owner changed geometry/raw identity.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit.rs",
+          "function": "queue_native_edit"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/context.rs",
+          "function": "BatchComposer"
+        },
+        {
+          "path": "crates/engine/src/substrate/undo_redo.rs",
+          "function": "commit_journal_undo; commit_journal_redo"
+        }
+      ],
+      "recommendation": "Reuse history path; new endpoint/vertex edits must stay one design batch with exact raw inverse. No private source rewrite.",
+      "evidence": "actual run102 oneUndo/Redo/Save/cold316canonicalfiles exact and21identityfiles exact; not full wiring qualification",
+      "dependencies": []
+    },
+    {
+      "id": "query_identity_feedback",
+      "status": "partial",
+      "baseline_behavior": "No-declaration sheets use legacy coordinate-root anonymous query name/UUID even when authoritative authored NetIds unchanged.",
+      "code": [
+        {
+          "path": "crates/engine/src/connectivity/native_net_info.rs",
+          "function": "native_schematic_net_info"
+        },
+        {
+          "path": "crates/engine/src/connectivity/mod.rs",
+          "function": "schematic_net_info"
+        },
+        {
+          "path": "crates/engine/src/substrate/electrical_selection_query.rs",
+          "function": "ElectricalSelectionSnapshot::net_ids"
+        }
+      ],
+      "recommendation": "Separate intake vbd3: use authored identity in query projection, preserve PM053 semantics. Do not use generated query UUID as stable semantic ID or hide unexpected changes.",
+      "evidence": "run101 raw query discrepancy; authoritative owner/cold CPU1PASS each fullidentities/net_ids/logical+physicalpartitions; separate defect open",
+      "dependencies": []
+    },
+    {
+      "id": "existing_project_compatibility",
+      "status": "partial",
+      "baseline_behavior": "Existing unsplit T markers valid. Current endpoint/segment ownership is source-edge-dependent, so redrawing segmented wires changes available edit behavior; no automatic migration of old edges.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "build_wire_gesture"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_junction_move.rs",
+          "function": "JunctionMoveBasis::capture"
+        },
+        {
+          "path": "crates/engine/src/connectivity/occurrence_partition.rs",
+          "function": "local"
+        }
+      ],
+      "recommendation": "Any new vertex semantics must work on existing unsplit project without forcing redraw. Prefer shared logical contact graph ownership or explicitly guarded atomic normalization preserving raw/NetId/bus/inverse semantics.",
+      "evidence": "source only; no new execution",
+      "dependencies": [
+        "draw_order_equivalence",
+        "wire_endpoint_handles"
+      ]
+    },
+    {
+      "id": "symbol_insert_wire_autotrim",
+      "status": "absent",
+      "baseline_behavior": "Symbol placement materializes pins and component binding; does not emit wire split/trim/reconnect edits. Existing wire under inserted two-pin symbol is not automatically removed; pin coincidence can connect both terminals to unchanged wire.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "function": "place_symbol"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_symbols.rs",
+          "function": "build_place_schematic_symbol"
+        }
+      ],
+      "recommendation": "If confirmed as required Altium preference by parent crosswalk, configure explicit insertion/autotrim policy with preview showing removed wire span, exact raw/identity/lock/bus guards and atomic inverse. Do not silently treat pin projection as auto-trim.",
+      "evidence": "source only; no component insertion-on-wire GUI proof",
+      "dependencies": [
+        "draw_order_equivalence",
+        "wire_break_trim_split"
+      ]
+    },
+    {
+      "id": "remove_vertex_coalesce",
+      "status": "absent",
+      "baseline_behavior": "No landed canonical remove-collinear-vertex/coalesce-adjacent-wire writer. Deleting a wire removes edge; deleting junction removes marker, not automatic geometry repair. Endpoint-coincident segments stay joined without junction, while crossing interior wires require marker.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_marker.rs",
+          "function": "delete_junction"
+        },
+        {
+          "path": "crates/engine/src/connectivity/occurrence_partition.rs",
+          "function": "local"
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_connectivity.rs",
+          "function": "build_delete_schematic_wire"
+        }
+      ],
+      "recommendation": "Distinguish remove vertex with collinear merge vs delete junction electrical disconnect vs delete segment/gap. Define raw edge identity/BusEntry/marker ownership before adding shared atomic coalescence.",
+      "evidence": "source + existing crossing marker delete regression; no general coalescence proof",
+      "dependencies": [
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "modifier_gesture_conflict",
+      "status": "supported",
+      "baseline_behavior": "Shared SelectionGesture::begin maps Ctrl-drag to subtractive region selection, Shift to additive, plain Replace to direct Move; Ctrl+Shift/Space do not initiate selection gesture.",
+      "code": [
+        {
+          "path": "crates/gui-viewport/src/selection_gesture.rs",
+          "function": "SelectionGesture::begin"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_region.rs",
+          "function": "begin_native_selection_press; advance_native_selection"
+        }
+      ],
+      "recommendation": "Do not copy an Altium Ctrl-Move/Drag toggle over inherited Ctrl-subtractive selection. Configure existing tool intent/handles with documented compatible shortcut mapping.",
+      "evidence": "source + existing nmu2 modifier CPU controls; not new GUI proof",
+      "dependencies": [
+        "select_drag_pickup"
+      ]
+    },
+    {
+      "id": "wire_cut",
+      "status": "absent",
+      "baseline_behavior": "Global Edit Cut/CtrlX is explicitly not_built clipboard model. No native schematic Wire cut extraction+atomic removal route established; terminal/text Cut is separate.",
+      "code": [
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "global Edit menu: Cut/Copy/Paste not_built clipboard model; schematic.wire context"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/actions.rs",
+          "function": "activate_native_edit_menu"
+        }
+      ],
+      "recommendation": "If required, implement shared design clipboard extraction and atomic canonical cut with qualified raw/identity/BusEntry/external dependency rules; do not route to text/terminal clipboard.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "delete_wire_single"
+      ]
+    },
+    {
+      "id": "wire_copy",
+      "status": "absent",
+      "baseline_behavior": "Global Edit Copy/CtrlC explicitly not_built clipboard model. No native schematic wiring graph serialization/paste payload route; ordinary selection is not clipboard support.",
+      "code": [
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "global Edit menu: Cut/Copy/Paste not_built clipboard model; schematic.wire context"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/actions.rs",
+          "function": "activate_native_edit_menu"
+        }
+      ],
+      "recommendation": "Define portable shared design clipboard of selected wires/owned junctions/annotations plus external terminals; preserve relative coordinates and distinguish new IDs from existing references.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": []
+    },
+    {
+      "id": "wire_paste",
+      "status": "absent",
+      "baseline_behavior": "Global Edit Paste/CtrlV explicitly not_built clipboard model. No schematic paste ghost/new-object commit route; terminal paste and symbol placement are not wire paste.",
+      "code": [
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "global Edit menu: Cut/Copy/Paste not_built clipboard model; schematic.wire context"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "function": "native_schematic_click; prepare_native_schematic_frame"
+        }
+      ],
+      "recommendation": "Configure shared placement ghost for copied graph with unique IDs/qualified destination, electrical/Bus declaration mapping, cancel and one atomic paste history.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "wire_copy",
+        "pin_snap_during_creation"
+      ]
+    },
+    {
+      "id": "wire_duplicate",
+      "status": "absent",
+      "baseline_behavior": "No Duplicate in schematic.wire wheel. The duplicate selection not_built item near menu_model line962 belongs PCB multiselect context, not schematic; no native schematic wiring clone action found.",
+      "code": [
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "marking_menus/pcb.multiselect/secondary/NE Duplicate vs schematic.wire"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/actions.rs",
+          "function": "activate_native_edit_menu"
+        }
+      ],
+      "recommendation": "If required, reuse shared graph-copy/paste machinery with a new-ID placement preview; do not present PCB menu placeholder as schematic availability.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "wire_copy",
+        "wire_paste"
+      ]
+    },
+    {
+      "id": "wire_rotate",
+      "status": "absent",
+      "baseline_behavior": "R pose shortcut accepts only Symbol/Symbols/Text Move previews. Native Connectivity Wire preview is excluded; transform_symbol returns false for it. No Wire Rotate contextual/property action found.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/symbol_pose.rs",
+          "function": "handle_symbol_move_pose_key"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "NativeMovePreview::transform_symbol"
+        },
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "schematic.wire context"
+        }
+      ],
+      "recommendation": "If required, configure shared transform over explicit wire/vertex ownership and pivot; preserve connected-contact constraints. Do not enable R by blindly rotating a connected whole source edge.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "wire_endpoint_handles",
+        "draw_order_equivalence"
+      ]
+    },
+    {
+      "id": "wire_mirror",
+      "status": "absent",
+      "baseline_behavior": "X/Y pose shortcuts accept only Symbol/Symbols/Text Move previews. Wire Connectivity preview has no mirror transform or schematic context/property route; Symbol Flip support does not imply Wire mirror.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/symbol_pose.rs",
+          "function": "handle_symbol_move_pose_key"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "NativeMovePreview::transform_symbol"
+        },
+        {
+          "path": "docs/gui/menu_model.json",
+          "function": "schematic.wire context"
+        }
+      ],
+      "recommendation": "If required, configure shared transform with explicit pivot/axis and contact semantics; include single edge/network bounds, raw inverse and BusEntry constraints.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "wire_rotate"
+      ]
+    },
+    {
+      "id": "wire_grid_nudge",
+      "status": "absent",
+      "baseline_behavior": "No Wire grid-nudge action/arrow-key endpoint update found. Arrow keys in selection Inspector navigate sections; shared Move grid-snaps pointer destination, which is not keyboard nudge.",
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_inspector.rs",
+          "function": "handle_inspector_navigation_key"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit.rs",
+          "function": "native_move_pointer"
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "function": "NativeMovePreview::destination"
+        }
+      ],
+      "recommendation": "If required, configure shared keyboard displacement intent using current grid with explicit selected endpoint/vertex ownership and same canonical geometry guard, not a second nudge writer.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "wire_endpoint_handles"
+      ]
+    },
+    {
+      "id": "wire_precise_xy_offset",
+      "status": "partial",
+      "baseline_behavior": "Canonical datum.schematic.move accepts exact integer absolute x_nm/y_nm anchor; baseline Wire implementation rigidly translates both ends. No ordinary Wire numeric X/Y/relative-delta property form or precision-offset action found; Inspector is inspection, not endpoint editor.",
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "function": "MoveParams; move_wire"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "function": "native_move_click"
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_selected.rs",
+          "function": "begin_selected_fields_edit"
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_selection_edit.rs",
+          "function": "target_in; symbol_fields_target"
+        }
+      ],
+      "recommendation": "If required, expose shared precise coordinate/delta entry configured for explicit endpoint/vertex intent, same snap choice and commit validation. Distinguish existing absolute CLI adapter from absent manual numeric workflow.",
+      "evidence": "read-only source/menu/keyboard/context audit at bb780ae6; no new GUI/test PASS",
+      "dependencies": [
+        "wire_endpoint_handles",
+        "fixed_interior_contact_endpoint_edit"
+      ]
+    }
+  ],
+  "crosswalk": [
+    {
+      "id": "W01",
+      "reference_use_case": "create/start",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "create_chain"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Retain atomic chain creation; make starting and terminating on electrical contacts predictable."
+    },
+    {
+      "id": "W02",
+      "reference_use_case": "finish/current_wire_vs_exit",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "different_by_design",
+      "datum_case_ids": [
+        "create_chain",
+        "creation_cancel"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Keep Datum Escape as no-write draft cancellation; define Finish separately rather than adopting Altium Escape-to-finish."
+    },
+    {
+      "id": "W03",
+      "reference_use_case": "remove_latest_unfinished_vertex",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "remove_last_preview_vertex"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Add remove-last-draft-vertex to the existing gesture state."
+    },
+    {
+      "id": "W04",
+      "reference_use_case": "escape_interactive_stage",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "supported",
+      "datum_case_ids": [
+        "creation_cancel",
+        "move_cancel_release"
+      ],
+      "update_group": "verification",
+      "needed_update": "Retain cancellation and release suppression; verify actual input ordering for new handles."
+    },
+    {
+      "id": "W05",
+      "reference_use_case": "selected_wire_endpoint",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_endpoint_handles",
+        "fixed_interior_contact_endpoint_edit"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Edit the selected endpoint/span while holding all other attached nodes fixed; never use rigid translation as endpoint editing."
+    },
+    {
+      "id": "W06",
+      "reference_use_case": "selected_wire_vertex",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_elbow_vertex_drag"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Represent bend handles and plan adjacent-edge changes with fixed external anchors."
+    },
+    {
+      "id": "W07",
+      "reference_use_case": "selected_wire_segment",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_elbow_vertex_drag",
+        "select_drag_pickup"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Plan segment dragging with neighboring bends and preserved endpoint/interior contacts."
+    },
+    {
+      "id": "W08",
+      "reference_use_case": "unselected_whole_wire",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "unsafe_partial",
+      "datum_case_ids": [
+        "wire_rigid_move_baseline",
+        "select_drag_pickup"
+      ],
+      "update_group": "acquisition_and_snap",
+      "needed_update": "Distinguish explicit whole-object Move from connectivity-preserving editing; ordinary connected body pickup must not detach pins."
+    },
+    {
+      "id": "W09",
+      "reference_use_case": "insert_vertex",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_elbow_vertex_drag"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Add vertex insertion as an atomic source-backed edit, preserving identity and external references."
+    },
+    {
+      "id": "W10",
+      "reference_use_case": "remove_existing_vertex",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "remove_vertex_coalesce"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Add vertex removal/coalescing with explicit edge identity and junction semantics."
+    },
+    {
+      "id": "W11",
+      "reference_use_case": "extend_shorten",
+      "altium_status": "partially_documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_endpoint_handles"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Use the same endpoint handle/plan for extending and shortening."
+    },
+    {
+      "id": "W12",
+      "reference_use_case": "numeric_geometry",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_endpoint_handles"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Expose exact wire endpoint/vertex coordinates through existing shared property editing, backed by the same canonical plan."
+    },
+    {
+      "id": "W13",
+      "reference_use_case": "manual_corner_modes",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "placement_modes"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Add shared 90/45/free-angle posture generation; preserve exact electrical anchors."
+    },
+    {
+      "id": "W14",
+      "reference_use_case": "placement_corner_controls",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "placement_modes",
+        "modifier_gesture_conflict"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Configure posture/corner controls without overriding inherited selection and pan bindings."
+    },
+    {
+      "id": "W15",
+      "reference_use_case": "auto_wire",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing_optional",
+      "datum_case_ids": [
+        "placement_modes"
+      ],
+      "update_group": "optional_automation",
+      "needed_update": "Consider obstacle-aware Auto Wire separately after basic connected wire editing works."
+    },
+    {
+      "id": "W16",
+      "reference_use_case": "move_vs_drag",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "wire_rigid_move_baseline",
+        "symbol_attached_wires"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Make connectivity policy explicit in the shared Move intent; preserve existing supported symbol attachments."
+    },
+    {
+      "id": "W17",
+      "reference_use_case": "selected_group_move_vs_drag",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "wire_group_transform",
+        "symbol_attached_wires"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Extend complete qualified group planning deliberately; a derived Run must not imply a network-wide edit."
+    },
+    {
+      "id": "W18",
+      "reference_use_case": "default_mouse_behavior",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "symbol_attached_wires",
+        "wire_group_transform"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Provide consistent connectivity-preserving movement across supported subjects; document refusals."
+    },
+    {
+      "id": "W19",
+      "reference_use_case": "temporary_behavior_switch",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "different_by_design",
+      "datum_case_ids": [
+        "modifier_gesture_conflict"
+      ],
+      "update_group": "acquisition_and_snap",
+      "needed_update": "Retain Datum Ctrl-subtractive selection; choose compatible intent controls instead of copying Altium shortcuts."
+    },
+    {
+      "id": "W20",
+      "reference_use_case": "unions",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "wire_group_transform"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Keep supported Symbol compounds atomic; specify wire-network/group ownership before extending group transforms."
+    },
+    {
+      "id": "W21",
+      "reference_use_case": "orthogonal_drag",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "placement_modes",
+        "symbol_attached_wires"
+      ],
+      "update_group": "canonical_edit_plan",
+      "needed_update": "Add constrained drag geometry that preserves attached anchors without requiring diagonal rewiring."
+    },
+    {
+      "id": "W22",
+      "reference_use_case": "drag_corner_shortcut_conflict",
+      "altium_status": "conflicting_current_documentation",
+      "altium_source_id": "editing",
+      "datum_assessment": "reference_uncertain",
+      "datum_case_ids": [
+        "modifier_gesture_conflict",
+        "placement_modes"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Resolve a Datum shortcut mapping from its own controls; current Altium pages disagree on the cited drag shortcut."
+    },
+    {
+      "id": "W23",
+      "reference_use_case": "electrical_hotspots",
+      "altium_status": "documented",
+      "altium_source_id": "grids",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "pin_snap_during_creation",
+        "wire_endpoint_snap"
+      ],
+      "update_group": "acquisition_and_snap",
+      "needed_update": "Share electrical snapping between creation and edits, preserving exact off-grid contacts before grid rounding."
+    },
+    {
+      "id": "W24",
+      "reference_use_case": "grid_and_hotspot_configuration",
+      "altium_status": "documented",
+      "altium_source_id": "grids",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "snap_grid_controls"
+      ],
+      "update_group": "acquisition_and_snap",
+      "needed_update": "Use shared snap state and clear feedback; document electrical acquisition range and actual setting persistence before adding preferences."
+    },
+    {
+      "id": "W25",
+      "reference_use_case": "nearest_pin_and_ties",
+      "altium_status": "partially_documented",
+      "altium_source_id": "grids",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "pin_snap_during_creation",
+        "wire_endpoint_snap"
+      ],
+      "update_group": "acquisition_and_snap",
+      "needed_update": "Rank eligible nearby contacts by distance with deterministic tie behavior; Altium tie rules are undocumented."
+    },
+    {
+      "id": "W26",
+      "reference_use_case": "branch_T_creation_and_segmentation",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "endpoint_to_segment_T",
+        "draw_order_equivalence",
+        "existing_project_compatibility"
+      ],
+      "update_group": "edit_topology",
+      "needed_update": "Recognize the same editable T node for unsplit and endpoint-segmented source. Decide persistent split policy separately."
+    },
+    {
+      "id": "W27",
+      "reference_use_case": "generated_junction_editability",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "different_by_design",
+      "datum_case_ids": [
+        "junction_connected_drag",
+        "explicit_junction_place_delete"
+      ],
+      "update_group": "edit_topology",
+      "needed_update": "Retain Datum authored Junction behavior; do not equate it with Altium compiler-generated junction editability."
+    },
+    {
+      "id": "W28",
+      "reference_use_case": "branch_delete_merge",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "remove_vertex_coalesce",
+        "delete_wire_single"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Plan redundant-junction removal and collinear merge explicitly; preserve crossing-disconnect behavior and exact inverses."
+    },
+    {
+      "id": "W29",
+      "reference_use_case": "segment_subselection_delete",
+      "altium_status": "documented",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "delete_wire_single",
+        "delete_network_batch"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Allow segment/span deletion without accidentally removing an entire unsplit through-wire; verify lock/raw inverse parity."
+    },
+    {
+      "id": "W30",
+      "reference_use_case": "split_break_cut",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_break_trim_split"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Implement an atomic explicit gap/cut operation through existing canonical editing; preserve source references."
+    },
+    {
+      "id": "W31",
+      "reference_use_case": "break_exit",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_break_trim_split"
+      ],
+      "update_group": "editing_gestures",
+      "needed_update": "Use the shared gesture lifecycle for repeated break/cut placement and cancellation."
+    },
+    {
+      "id": "W32",
+      "reference_use_case": "split_vs_junction",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "needs_policy",
+      "datum_case_ids": [
+        "wire_break_trim_split",
+        "explicit_junction_place_delete"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Keep source segmentation, cutting a physical gap, and disconnecting a crossing as distinct intents."
+    },
+    {
+      "id": "W33",
+      "reference_use_case": "overlap_cleanup",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "missing_optional",
+      "datum_case_ids": [
+        "crossing_overlap",
+        "remove_vertex_coalesce"
+      ],
+      "update_group": "optional_automation",
+      "needed_update": "Consider duplicate/overlap cleanup only with explicit identity, lock, raw metadata and Bus Entry rules."
+    },
+    {
+      "id": "W34",
+      "reference_use_case": "component_insert_into_wire",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "missing_optional",
+      "datum_case_ids": [
+        "symbol_insert_wire_autotrim"
+      ],
+      "update_group": "optional_automation",
+      "needed_update": "Consider component insertion/auto-trim as an explicit atomic policy; current symbol placement does not cut underlying wire."
+    },
+    {
+      "id": "W35",
+      "reference_use_case": "four_way_crossing",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "different_by_design",
+      "datum_case_ids": [
+        "crossing_overlap",
+        "explicit_junction_place_delete"
+      ],
+      "update_group": "edit_topology",
+      "needed_update": "Preserve Datum explicit crossing/junction laws; do not silently adopt Altium crossing-conversion preferences."
+    },
+    {
+      "id": "W36",
+      "reference_use_case": "lock_and_partial_group",
+      "altium_status": "documented",
+      "altium_source_id": "preferences",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "locks_visibility_hierarchy",
+        "delete_wire_single"
+      ],
+      "update_group": "verification",
+      "needed_update": "Preserve whole-edit lock refusal; verify canonical singleton delete and raw inverse behavior instead of copying partial locked-group moves."
+    },
+    {
+      "id": "W37",
+      "reference_use_case": "multiple_property_edit",
+      "altium_status": "documented",
+      "altium_source_id": "multiple",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "qualified_hit_filters",
+        "wire_endpoint_handles",
+        "wire_group_transform"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Reuse shared selection/property infrastructure for wire geometry; do not invent a wire-specific inspector authority."
+    },
+    {
+      "id": "W38",
+      "reference_use_case": "parallel_multiwire_end_extension",
+      "altium_status": "undocumented_in_reviewed_current_sources",
+      "altium_source_id": "multiple",
+      "datum_assessment": "reference_uncertain",
+      "datum_case_ids": [
+        "wire_group_transform"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Parallel multiwire extension needs a separately specified scope; current reviewed Designer evidence does not establish it."
+    },
+    {
+      "id": "W39",
+      "reference_use_case": "undo_redo",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "supported",
+      "datum_case_ids": [
+        "commit_history_save"
+      ],
+      "update_group": "verification",
+      "needed_update": "Require one canonical batch and exact Undo/Redo for each completed new edit."
+    },
+    {
+      "id": "W40",
+      "reference_use_case": "deleted_wire_recovery",
+      "altium_status": "documented",
+      "altium_source_id": "tutorial",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "delete_wire_single",
+        "commit_history_save"
+      ],
+      "update_group": "verification",
+      "needed_update": "Retain wire delete/history and add meaningful raw/lock/refusal checks before claiming full delete coverage."
+    },
+    {
+      "id": "W41",
+      "reference_use_case": "document_vs_project_save",
+      "altium_status": "documented",
+      "altium_source_id": "saving",
+      "datum_assessment": "different_by_design",
+      "datum_case_ids": [
+        "commit_history_save"
+      ],
+      "update_group": "verification",
+      "needed_update": "Keep Datum canonical project Save/reopen semantics; do not transplant Altium document-only/project-only commands."
+    },
+    {
+      "id": "W42",
+      "reference_use_case": "local_vs_server_save",
+      "altium_status": "documented",
+      "altium_source_id": "saving",
+      "datum_assessment": "out_of_scope",
+      "datum_case_ids": [
+        "commit_history_save"
+      ],
+      "update_group": "optional_automation",
+      "needed_update": "Cloud/Workspace publication is not a schematic wire editing requirement."
+    },
+    {
+      "id": "W43",
+      "reference_use_case": "close_unsaved",
+      "altium_status": "documented",
+      "altium_source_id": "saving",
+      "datum_assessment": "not_established",
+      "datum_case_ids": [
+        "commit_history_save",
+        "creation_cancel"
+      ],
+      "update_group": "verification",
+      "needed_update": "Document draft/accepted-edit close behavior from Datum lifecycle separately; no new runtime close/save claim is made here."
+    },
+    {
+      "id": "W44",
+      "reference_use_case": "local_history_boundary",
+      "altium_status": "documented",
+      "altium_source_id": "history",
+      "datum_assessment": "different_by_design",
+      "datum_case_ids": [
+        "commit_history_save"
+      ],
+      "update_group": "verification",
+      "needed_update": "Retain canonical journal/history; Altium file-version history is a separate facility, not a wire edit primitive."
+    },
+    {
+      "id": "W45",
+      "reference_use_case": "persistent_undo_boundary",
+      "altium_status": "undocumented_in_reviewed_current_sources",
+      "altium_source_id": "saving",
+      "datum_assessment": "reference_uncertain",
+      "datum_case_ids": [
+        "commit_history_save"
+      ],
+      "update_group": "verification",
+      "needed_update": "Datum cold history guarantees come from its own contract/tests, not undocumented Altium behavior."
+    },
+    {
+      "id": "W46",
+      "reference_use_case": "delete_junction_vs_disconnect_crossing",
+      "altium_status": "undocumented_in_reviewed_current_sources",
+      "altium_source_id": "connectivity",
+      "datum_assessment": "needs_policy",
+      "datum_case_ids": [
+        "explicit_junction_place_delete",
+        "remove_vertex_coalesce"
+      ],
+      "update_group": "topology_lifecycle",
+      "needed_update": "Preserve existing DeleteJunction crossing-disconnect semantics; define cleanup/segmentation provenance before changing them."
+    },
+    {
+      "id": "W47",
+      "reference_use_case": "clipboard_copy",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_copy"
+      ],
+      "update_group": "design_clipboard",
+      "needed_update": "Implement shared wiring-graph copy with relative geometry and explicit internal/external reference ownership."
+    },
+    {
+      "id": "W48",
+      "reference_use_case": "clipboard_cut",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_cut"
+      ],
+      "update_group": "design_clipboard",
+      "needed_update": "Cut must combine shared clipboard extraction with guarded atomic canonical removal."
+    },
+    {
+      "id": "W49",
+      "reference_use_case": "clipboard_paste",
+      "altium_status": "documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_paste"
+      ],
+      "update_group": "design_clipboard",
+      "needed_update": "Paste through shared placement preview and canonical object births, fresh IDs, snap and exact cancellation/history."
+    },
+    {
+      "id": "W50",
+      "reference_use_case": "clipboard_duplicate",
+      "altium_status": "partially_documented",
+      "altium_source_id": "shortcuts",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_duplicate"
+      ],
+      "update_group": "design_clipboard",
+      "needed_update": "Reuse graph copy/paste for repeated placement; do not infer schematic availability from the PCB Duplicate placeholder."
+    },
+    {
+      "id": "W51",
+      "reference_use_case": "selection_rotate",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_rotate"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Extend the shared transform plan to selected wire handles/graphs with an explicit pivot and connection policy."
+    },
+    {
+      "id": "W52",
+      "reference_use_case": "selection_mirror",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_mirror"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Use the same qualified transform plan for wire mirroring with fixed-contact or explicit reconnect intent."
+    },
+    {
+      "id": "W53",
+      "reference_use_case": "selection_grid_nudge",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "missing",
+      "datum_case_ids": [
+        "wire_grid_nudge"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Add keyboard grid displacement through the same endpoint/vertex plan, not another mutation writer."
+    },
+    {
+      "id": "W54",
+      "reference_use_case": "selection_precise_xy_offset",
+      "altium_status": "documented",
+      "altium_source_id": "editing",
+      "datum_assessment": "partial",
+      "datum_case_ids": [
+        "wire_precise_xy_offset"
+      ],
+      "update_group": "property_and_group_editing",
+      "needed_update": "Expose manual exact coordinate/relative offset entry through shared forms; retain existing integer absolute adapter and guard connections."
+    }
+  ],
+  "recommended_update_groups": [
+    {
+      "id": "edit_topology",
+      "order": 1,
+      "purpose": "Draw-order-independent editing ownership",
+      "changes": [
+        "Build one source-qualified editable contact graph/basis over existing wire edges, junctions, pins, ports and labels. An unconnected crossing stays distinct.",
+        "Resolve endpoint, interior contact, bend and span handles from that basis for both old unsplit and new segmented designs.",
+        "Prefer deriving edit handles before deciding whether all stored edges should be split. Do not migrate or rewrite sources on selection/hover."
+      ],
+      "code": [
+        {
+          "path": "crates/engine/src/connectivity/occurrence_partition.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/schematic/mod.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_marker.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "canonical_edit_plan",
+      "order": 2,
+      "purpose": "One shared endpoint/junction/vertex/segment edit planner",
+      "changes": [
+        "Extend the existing parameterized Move/contact planning path with an explicit handle and connectivity intent rather than another verb per object or editor controller.",
+        "Hold unmoved pins, junctions and other attachments fixed; an explicitly reconnected endpoint may legitimately change net membership under PM053.",
+        "Plan all affected edges once; share the same immutable geometry/identity plan between preview and commit, including any edge births or removals.",
+        "Retain exact raw/nested payloads, locks, Bus Entry dependencies, captured source/path and canonical batch/history guards."
+      ],
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_junction_move.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/connectivity/symbol_move_contacts.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/native.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/native_edit_client.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "edit_topology"
+      ]
+    },
+    {
+      "id": "acquisition_and_snap",
+      "order": 3,
+      "purpose": "Unambiguous handle pickup and nearest exact pin snapping",
+      "changes": [
+        "Distinguish endpoint/bend/junction/segment pickup using inherited hit/selection primitives and visible feedback; preserve threshold, filters, source and pane lifetime.",
+        "Prevent the connected wire body from falling through to rigid translation when a junction hit is missed. Cover Select-drag, Move shortcut, toolbar and context entry consistently.",
+        "Use one nearest eligible source-qualified electrical contact selector in creation, preview and release; electrical contacts override grid, including off-grid pins.",
+        "Keep existing acquisition envelope until measured evidence supports changing it. Preserve Ctrl-subtractive selection and existing pan/menu ownership."
+      ],
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_region/drag.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic_snap.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-render/src/render/coordinate_hit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_scene/index.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "edit_topology",
+        "canonical_edit_plan"
+      ]
+    },
+    {
+      "id": "topology_lifecycle",
+      "order": 2,
+      "purpose": "Creation, deletion, split, merge and break consistency",
+      "changes": [
+        "Decide T-only segmentation versus general contact-graph editing before modifying storage. A universal source split is not a safe substitute for editing semantics.",
+        "Implement insert/remove vertex, span delete, break/trim and redundant geometry cleanup through atomic canonical operations.",
+        "Preserve explicit crossing disconnection on DeleteJunction, or ratify and record a deliberate replacement rule before changing it.",
+        "Keep old wire IDs/anchors and Bus Entry ownership valid through splits/merges, or refuse the complete operation with an exact reason. No hidden query/selection repairs.",
+        "Verify singleton wire delete lock/raw inverse parity with a focused negative test before treating the source inspection as a demonstrated runtime defect."
+      ],
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_connectivity.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_marker.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_edit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_marker_tests.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/substrate/electrical_transaction.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "edit_topology"
+      ]
+    },
+    {
+      "id": "editing_gestures",
+      "order": 4,
+      "purpose": "Complete ordinary wire construction and reshape interactions",
+      "changes": [
+        "Add remove-last-draft-vertex, constrained 90/45/free postures and corner selection to shared gesture/geometry services.",
+        "Use existing cancellation/Finish and asynchronous preview/presentation ownership; do not adopt Altium Escape-to-finish or conflicting key bindings automatically."
+      ],
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_bus.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_authoring.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-viewport/src/selection_gesture.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "canonical_edit_plan",
+        "topology_lifecycle",
+        "acquisition_and_snap"
+      ]
+    },
+    {
+      "id": "property_and_group_editing",
+      "order": 5,
+      "purpose": "Numeric and complete group wire editing",
+      "changes": [
+        "Expose supported geometry fields through the shared property/form controls and the same canonical edit plan.",
+        "Specify complete network/group ownership before extending arbitrary multiwire edits; preserve current indivisible selections and meaningful refusal.",
+        "Cover rotate/mirror, grid nudge and precise coordinate/delta entry through shared transform intent; current Symbol-only pose support is not Wire support."
+      ],
+      "code": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/footprint_move_preview/group.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/selection_scene/index.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "canonical_edit_plan",
+        "acquisition_and_snap"
+      ]
+    },
+    {
+      "id": "optional_automation",
+      "order": 6,
+      "purpose": "Template features beyond the immediate ordinary-editing defect",
+      "changes": [
+        "Evaluate Auto Wire obstacle avoidance, component insertion/auto-trim and overlap cleanup separately.",
+        "Do not make Altium Workspace/server save or undocumented multiwire shortcuts prerequisites for Datum schematic editing."
+      ],
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_symbols.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "topology_lifecycle",
+        "canonical_edit_plan"
+      ]
+    },
+    {
+      "id": "verification",
+      "order": 0,
+      "purpose": "Required with every delivered Rust edit, not a final acceptance campaign",
+      "changes": [
+        "Exercise old unsplit and equivalently segmented real circuits, both draw orders and unique root/child occurrences.",
+        "Cover safe body/near-junction pickup, endpoint pin snapping/off-grid/nearest ambiguity, bends/segments/junctions, explicit reconnect and expected net transitions.",
+        "Preserve no-write preview/cancel, one atomic commit, exact Undo/Redo and Save/cold source equality for each affected workflow; reuse adequate unchanged proof.",
+        "Cover locked/raw fields, Bus Entry references, hidden targets, stale/ambiguous source/path and group refusal.",
+        "Use actual authored NetId/recorded transitions and complete membership; the separate legacy query UUID issue vbd3 is not a semantic identity oracle."
+      ],
+      "code": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_selection_move_tests.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_junction_move_tests.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/schematic_connectivity_move_tests.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_selection_region/move_drag_tests.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "design_clipboard",
+      "order": 5,
+      "purpose": "Shared Cut/Copy/Paste and repeated placement for wiring graphs",
+      "changes": [
+        "Use the shared design clipboard and placement services; keep terminal/text clipboard separate.",
+        "Capture selected wire/owned junction/annotation geometry and explicit boundary terminals. Clone internal authored IDs on paste and validate intended external connections through canonical birth/identity rules.",
+        "Use one preview/cancel and atomic paste/cut history path, preserving source scope, raw data, locks and Bus Entry dependencies."
+      ],
+      "code": [
+        {
+          "path": "docs/gui/menu_model.json",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_native_edit/actions.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-app/src/editor/runtime_schematic.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/gui-protocol/src/native_edit_client.rs",
+          "exists_at_baseline": true
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_edit.rs",
+          "exists_at_baseline": true
+        }
+      ],
+      "depends_on": [
+        "edit_topology",
+        "canonical_edit_plan",
+        "acquisition_and_snap"
+      ]
+    }
+  ],
+  "execution_order_note": "Proposed engineering dependency order only, not roadmap-selector authority or a new implementation grant. Topology lifecycle and canonical planning coordinate before graph-changing GUI edits; verification accompanies each delivered unit.",
+  "decisions_to_resolve_before_mutation": [
+    "Derive interior editing vertices versus persist source segmentation; cover existing projects and preserve crossing deletion semantics.",
+    "Default connectivity-preserving edit versus explicit disconnecting Move; user-directed endpoint editing and safe body behavior must be unambiguous.",
+    "90/45/free postures, label/port attachment ownership, split/coalesce raw-ID policy and supported Bus Entry rebinding/refusal.",
+    "Nearest-target ranking/ties and compatible controls; no undocumented Altium rule or Ctrl override inferred."
+  ],
+  "baseline_source_pins": {
+    "crates/engine/src/api/native_write/context.rs": "599cc0e5ce85c3814a0a4345677941f3405e91e17eabf3f6758a95f76db7db41",
+    "crates/engine/src/api/native_write/schematic_bus.rs": "10c1614020a9a4a492f57ca5197c8fa8ea90033b8c320eee436dfeba76b21a22",
+    "crates/engine/src/api/native_write/schematic_bus_geometry.rs": "ed332605aa9044d564ca7c3f24409048ad40ca7ca0919c3c361a7dd3fc6db8e6",
+    "crates/engine/src/api/native_write/schematic_bus_members.rs": "33f6ae3681d707d2099518899d8a9302c766fc0ae78a29d0426257f4d9abd651",
+    "crates/engine/src/api/native_write/schematic_connectivity.rs": "fd68e14fead8b25e78b603d0fc7e96205e7acc4f08e69986824f68be3d65c11d",
+    "crates/engine/src/api/native_write/schematic_delete.rs": "4f30c7c0bf2263e1667fd542a21134eaba9dbec2558424f4c793dc2e68ab5295",
+    "crates/engine/src/api/native_write/schematic_delete_proposal.rs": "713a14ec87b09e190f3c81e507e13ddc48bedbb782658e46f6bc80f767fbd49e",
+    "crates/engine/src/api/native_write/schematic_edit.rs": "2fdc3bc829ae8bbf15b7f6300c766e577fc3993292c13aea917c1690397fd0fc",
+    "crates/engine/src/api/native_write/schematic_junction_move.rs": "f38ed4d4d09632d44880f83e9787aab9b73ca2451bef9bfcb2dbb919e1504adf",
+    "crates/engine/src/api/native_write/schematic_label_move.rs": "dfc3bbe75f83b797b3de7aeaefc0bc2fb0cc1b7c30475a8f376f91fb16bfa220",
+    "crates/engine/src/api/native_write/schematic_marker.rs": "6c5460b71844fcd281fb643208e99b4d52f2fc0da83231180db76b7859eb6964",
+    "crates/engine/src/api/native_write/schematic_marker_tests.rs": "dba2f8e1a7dea069866856e1b1c91e13564e92f9fe0750a3d3f24ca275039571",
+    "crates/engine/src/api/native_write/schematic_selected_source.rs": "29c2982b3b8ab0f2478d9b9cdf07a78b94908a3976b55cc203bd9b9bf8702359",
+    "crates/engine/src/api/native_write/schematic_selection_edit.rs": "50f1f097363d507c219059f69ece145548ff97aea2624906a958294e88d7f803",
+    "crates/engine/src/api/native_write/schematic_symbol_move.rs": "c0c967d9ea2b7ced52555ff8432aec22841f0f155c4568802d4156ad735e705c",
+    "crates/engine/src/connectivity/mod.rs": "fcd8e7e08d3d4f80da8c6fc0e2d21a9d02fac7631077dd7017896c7c1a9ae617",
+    "crates/engine/src/connectivity/native_net_info.rs": "bd94d6abed8be75c1ea882e65a437f9514b9effc5773ac7fa0afefdc1212d6a0",
+    "crates/engine/src/connectivity/occurrence_partition.rs": "08c30950778961c60513f8175fcda75ae8d07080783beacafe70d389510d4f7e",
+    "crates/engine/src/connectivity/symbol_move_contacts.rs": "940f1d91222da3ef536f944442bb1cb311a1e9ebef32f0a040f157b60576b34b",
+    "crates/engine/src/schematic/mod.rs": "9ad615c88945b7114c71c60179ef2a3239e24395cefcbeab4c5a84263fd3a4a2",
+    "crates/engine/src/substrate/electrical_selection_query.rs": "7e178250d8bd3065944757fabc7916e10cc03911bc9eca69e2acde888f167060",
+    "crates/gui-app/src/editor/runtime_native_edit.rs": "2810bb143efba8ccf223153202a95af2fc0a9c3ba25a5e397da695dcee045b51",
+    "crates/gui-app/src/editor/runtime_native_edit/move_acquisition.rs": "02b6266dd04ccfc7fcd878bc789145a869f7f0d044a7e9b13d56ee8fe745cf22",
+    "crates/gui-app/src/editor/runtime_schematic.rs": "62078eeaccb02b33a465a53273536135964cdabce433b42b4df6873c565be8e6",
+    "crates/gui-app/src/editor/runtime_schematic_bus_entry.rs": "c990324555cdacee82412804618ed73b4dbed98a568bf4c879e1730817321d95",
+    "crates/gui-app/src/editor/runtime_schematic_selected.rs": "5d57d41d7abc8f18d2f4af85b895e41b4153cc12c345f4f64f734f6f0bbb5ca4",
+    "crates/gui-app/src/editor/runtime_schematic_snap.rs": "4ee37120f286e32ee687c99e77bc3d8e035773b9657d1006aa5735f9baefcbc6",
+    "crates/gui-app/src/editor/runtime_selection_hit.rs": "22086a871926e4ae4e4bc5c888996eebcfc9a75ec90cb7ced193c3f3fb7e8830",
+    "crates/gui-app/src/editor/runtime_selection_region.rs": "84b5ef0636da644d29440d7cb163d9120f2509e6947a06552301404754693750",
+    "crates/gui-app/src/editor/runtime_selection_region/drag.rs": "f3b31f09421f3eb1707456b12dc0dd6fe95473b20c3c172a83b9331998f81ea0",
+    "crates/gui-app/src/terminal/keyboard_focus.rs": "3d01be40ab62f8c51e151c894c4dd15f5f01c597609612dc7faa9899f241d098",
+    "crates/gui-protocol/src/footprint_move_preview/native.rs": "5fcea7c12f667e62069c449b1e090a4bb9bf523bc4f56850b48ed7526e02f75f",
+    "crates/gui-protocol/src/native_edit_client.rs": "74c4471def6d00208057859357c0662a2978b4534fe0aa29e961d0c9df70125b",
+    "crates/gui-protocol/src/schematic_authoring.rs": "be75f8a01559e0502b0b9f51dd0882e8463b3dba08fc474903cfcf05fe275dca",
+    "crates/gui-protocol/src/schematic_bus.rs": "88dbd3382deb59bdad8469c8846b74a3e680a0dc62ea7f9d26e7149ca9960b29",
+    "crates/gui-protocol/src/schematic_bus_entry.rs": "f197b6f654b7b9f9da4b9a5ca18e1c944646c22a2a68c4e021a994b541e43ee8",
+    "crates/gui-protocol/src/schematic_delete_review.rs": "7b2e6c0c6c0805906751bc34728f3bf3219a1dea98e7630d1ac3a7d97995a0bd",
+    "crates/gui-protocol/src/schematic_selection_edit.rs": "c8fde6057ac25c820604421b48751c6f86bbee0aff7b48a7166a216d4b860041",
+    "crates/gui-protocol/src/schematic_wire_anchor.rs": "8e9cf19392f0696829c477efc4150b8894e4b46dc7a4bec0d0d95f59f9b1d9af",
+    "crates/gui-protocol/src/selection_scene/index.rs": "e0642f375e946d721c9336b5995e8c372c0c5877e243088b7ffdf6b336766b46",
+    "docs/gui/menu_model.json": "7bb2a38ffb29818facb73903fe1c8f56fd961a7150868561ebb5e3527f06ebe3",
+    "crates/engine/src/api/native_write/schematic_symbols.rs": "b8b9a4487e43764465f7fb1e7ade6b99c0e15a65ec7bbbfa79da31d2034ef9bd",
+    "crates/gui-viewport/src/selection_gesture.rs": "1347f11a459c65c0aec81f59eaa642a16ab7906d37603ce520a89816fa4ec44a",
+    "crates/gui-protocol/src/schematic_authoring_preview.rs": "79dfa152b00087831bbdb6bbd436a937908443a92f869efa553299d794bb711b",
+    "crates/gui-protocol/src/footprint_move_preview/group.rs": "c3b1de3a500d1e68377522d8f79ded1d6aa1ed4f17cd6953bd592140d2d53f4a",
+    "crates/engine/src/substrate/undo_redo.rs": "75fc05489d2b4239c8d4c190231c173d88f7b13cd6a45c078a43e66d50a68009",
+    "crates/gui-app/src/editor/runtime_native_edit/actions.rs": "0750a67f2bd27689119c7dc27bd395343a0812436728cf610f3fb473b2a8b184",
+    "crates/gui-app/src/editor/runtime_native_edit/symbol_pose.rs": "02fb3e2510dec669a9c24056125f3e8e3ad45bcd32a5ade7822ae8df7913889f",
+    "crates/gui-app/src/editor/runtime_selection_inspector.rs": "935ebdfc12f64c0fc167cfce2dcb0e0acc2ad152ef089a561cff8069ac117a60"
+  },
+  "retained_proof_limits": [
+    "Source-supported does not imply independently executed designer workflow for every row.",
+    "35 nmu2 focused tests establish their declared correction scopes only; run101/102 GUI supports exact Junction ownercase, cancellation/history/cold, not endpoint/segment editing.",
+    "Latest owner report exposes connected-wire body/near-dot detach hazard despite prior bounded Junction proof.",
+    "Live owner project changed between read-only inspections; original frozen309 unsplit baseline is stable evidence."
+  ],
+  "known_separate_issue": "dat-schematic-net-query-authored-identity-vbd3",
+  "prototype_state": "Six partial engine files were quarantined with hashes/patch under .datum/scratch/codex-delivery/wire-endpoint-prototype-deferred and only owned tracked paths restored. Not compiled, reviewed or delivered. Current release remains unchanged.",
+  "research_threads": {
+    "altium": "01a1af35-cfdf-74b0-bf96-d0cdbf976b48",
+    "datum": "01a1af1d-0f7b-71c2-ae5b-abf0775af53f"
+  },
+  "local_research_inputs": {
+    ".datum/scratch/codex-delivery/wire-audit-altium.json": "159206ec0cc51097378e58266d5b6e2edbc4ccc174bbd7c0718004653218d092",
+    ".datum/scratch/codex-delivery/wire-audit-datum.json": "3357ebc70e8f41bf7fe469854389cfcfe4014e74ebcaa4e5c38e601fd3dfebad"
+  },
+  "governing_baseline": {
+    "route": "prototype-editor-shell-and-panes",
+    "digest": "c181793f9c00036a8f47cba034017274fadcf10c7b2457616ad43ae2058713d6",
+    "members": 36,
+    "normative_edits": "none; existing route baseline verified unchanged"
+  },
+  "reference_limits": [
+    "Selected handles, unselected-object movement, Move and connectivity-retaining Drag are different documented interactions.",
+    "Automatic T-junction segmentation depends on preferences; unsplit through-wires are documented configurations.",
+    "Current documentation has a drag-corner shortcut discrepancy; this audit does not resolve it by assumption.",
+    "CircuitStudio/CircuitMaker, PCB routing and harness-only behavior were excluded from schematic-wire evidence.",
+    "No claim about exact picking tolerances, nearest-pin tie breaking, raw payload identity, journal atomicity, or cold Undo can be inferred from these articles.",
+    "Research supplies template behavior only. Datum implementation, retained safety, and designer-visible scope need separate PM/owner disposition.",
+    "Datum currently uses Ctrl for subtractive selection. Altium modifier bindings are comparator evidence, not automatically portable bindings; no default Always Drag state was established."
+  ],
+  "retention": "This report and its CSV are durable audit artifacts. Referenced .datum scratch research, independent review receipt, quarantined prototype, old GUI captures and copied projects are ignored machine-local/prunable evidence, not committed artifacts.",
+  "independent_review": {
+    "reviewer_thread": "01a1b448-09d5-7ee1-86e6-1f1839adea46",
+    "receipt": ".datum/scratch/codex-delivery/wire-audit-independent-review.json",
+    "scope": "Independent audit review only; actual disposition recorded in task4368. No runtime acceptance or implementation authority."
+  },
+  "coverage_review_delta": "Independent review coverage-1 added Cut/Copy/Paste/duplicate/rotate/mirror/nudge/precise XY cases W47-W54. Initial changes-requested receipt is retained by the reviewer; no product code changed."
+}
