@@ -13,7 +13,7 @@ pub use board_physical::{
     ZoneCopperProjection, ZoneRegionQualifier, ZoneRegionSuccessor,
 };
 mod symbol_move_contacts;
-pub(crate) use symbol_move_contacts::SymbolContactBasis;
+pub(crate) use symbol_move_contacts::{SymbolContactBasis, schematic_attachment_points};
 mod segment_geometry;
 use segment_geometry::point_on_wire_segment;
 pub use segment_geometry::{SegmentIntersectionError, exact_segment_intersection};

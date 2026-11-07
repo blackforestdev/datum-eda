@@ -89,7 +89,9 @@ pub fn load_check_completion_workspace(
     let model = Arc::new(model);
     let mut next = previous;
     next.library = crate::library_browser::LibraryBrowser::capture(model.clone());
+    let wire_route = next.schematic_authoring.wire_route;
     next.schematic_authoring = crate::schematic_authoring::SchematicAuthoring::from_model(&model)?;
+    next.schematic_authoring.wire_route = wire_route;
     next.source_shards = source_shard_status::project_source_shard_status(&model);
     next.checks = run.clone();
     crate::inspector_context::finding::capture_dispositions(&mut next.checks, &model)?;

@@ -49,6 +49,7 @@ impl NativeProjectClient {
         let expected = match action {
             Action::CreateInterfaceBinding(_)
             | Action::CreateChildSheet(_)
+            | Action::CreateDesignEdit { .. }
             | Action::CreateDelete { .. }
             | Action::CreateDisposition { .. }
             | Action::CreateAssignment { .. }

@@ -400,6 +400,9 @@ pub(super) fn render(
                     None if authoring.wire && authoring.bus => "Place Bus · click vertices",
                     None if authoring.wire => "Place Wire · click vertices",
                     None if authoring.child_draft.is_some() => "Click or Enter: review child sheet",
+                    None if authoring.design_placement.is_some() => {
+                        "Click: place wiring · R: rotate · X/Y: flip"
+                    }
                     None if authoring.gate_draft.is_some() => {
                         "Click: review Gate · R: rotate · X/Y: flip"
                     }
@@ -415,7 +418,7 @@ pub(super) fn render(
         );
         if !compact {
             draw_text(
-                if authoring.child_draft.is_some() {
+                if authoring.child_draft.is_some() || authoring.design_placement.is_some() {
                     "Esc: cancel"
                 } else {
                     "Tab: reference/value · Esc: cancel"
@@ -480,6 +483,7 @@ pub(super) fn render(
                 id.starts_with("schematic-symbol:")
                     || id.starts_with("schematic-symbols:")
                     || id.starts_with("schematic-text:")
+                    || id.starts_with("schematic-wiring-")
             })
     {
         let panel = RectPx {
@@ -504,7 +508,15 @@ pub(super) fn render(
         let title = group
             .map(|count| format!("Move {count} symbols · R: rotate · X/Y: flip"))
             .unwrap_or_else(|| {
-                if is_text {
+                if state
+                    .authoring
+                    .gesture
+                    .target_object_id
+                    .as_deref()
+                    .is_some_and(|id| id.starts_with("schematic-wiring-"))
+                {
+                    "Move wiring · R: rotate · X/Y: flip".into()
+                } else if is_text {
                     "Move Text · R: rotate".into()
                 } else {
                     "Move symbol · R: rotate · X/Y: flip horiz/vert".into()

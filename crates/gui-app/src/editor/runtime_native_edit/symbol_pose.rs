@@ -12,6 +12,8 @@ impl Runtime {
                     NativeMovePreview::Symbol { .. }
                         | NativeMovePreview::Symbols(_)
                         | NativeMovePreview::Text(_)
+                        | NativeMovePreview::Wiring(_)
+                        | NativeMovePreview::Connectivity { target: datum_gui_protocol::footprint_move_preview::native::ConnectivityMoveTarget::Wiring { .. }, .. }
                 )
             })
             || self.modifiers.control_key()
@@ -48,20 +50,32 @@ impl Runtime {
                 .context("Move requires a cursor in its schematic pane")?;
             anyhow::ensure!(
                 surface == SceneSurface::Schematic,
-                "Return to the original schematic pane to transform the Symbol"
+                "Return to the original schematic pane to transform the selected objects"
             );
-            let snap = self.workspace().authoring.snap;
+            let position = self.native_move_destination(
+                self.native_edit
+                    .preview
+                    .as_ref()
+                    .context("Move preview ended")?,
+                world,
+            )?;
             let preview = self
                 .native_edit
                 .preview
                 .as_mut()
                 .context("Move preview ended")?;
-            let position = preview.destination(world, snap)?;
             preview.transform_symbol(transform, position)?;
             Ok(position)
         })();
         match result {
             Ok(position) => {
+                if matches!(self.native_edit.preview, Some(NativeMovePreview::Wiring(_))) {
+                    self.session
+                        .workspace_mut()
+                        .authoring
+                        .gesture
+                        .target_object_id = Some("schematic-wiring-selection".into());
+                }
                 self.native_edit.pending_position = Some(position);
                 self.invalidate_frame();
             }

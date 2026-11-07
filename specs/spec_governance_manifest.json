@@ -179,7 +179,8 @@
       "progress_anchor": "docs/contracts/RULES_CHECKS_TOOL_CONTRACT.md"
     },
     "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md": {
-      "class": "governed"
+      "class": "governed",
+      "notes": "Governed schematic authoring contract. Routine4368 reconciles configured shared wire handles/topology/routing, Wire/Junction clipboard and existing-object transforms with fixed contacts and original identity; manual precision/nudge/handle feedback and full qualification remain open. No new public verb family or protected prototype authority."
     },
     "docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md": {
       "class": "governed",
@@ -555,7 +556,7 @@
     },
     "docs/gui/DATUM_GUI_MENU_BINDINGS.md": {
       "class": "governed",
-      "notes": "Menu-command binding reference under decision 019; maps each GUI menu item to its verb/builder/CLI mechanism and records the write-path plumbing prerequisites. Derived from the 2026-07-05 four-source capability inventory. S04 reconciles only reviewed native Symbol/Wire/history/project Save paths as PARTIAL; no inference that every menu projection or full editor is delivered. Historical count/plumbing baseline explicit."
+      "notes": "Menu-command binding reference under decision 019; maps each GUI menu item to its verb/builder/CLI mechanism and records the write-path plumbing prerequisites. Derived from the 2026-07-05 four-source capability inventory. S04 reconciles only reviewed native Symbol/Wire/history/project Save paths as PARTIAL; no inference that every menu projection or full editor is delivered. Historical count/plumbing baseline explicit. Routine4368 records shared Wire/Junction clipboard and configured wire editing as partial; retained manual precision/nudge/handle feedback and qualification limits remain explicit."
     },
     "docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md": {
       "class": "governed",

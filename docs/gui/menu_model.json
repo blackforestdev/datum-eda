@@ -88,20 +88,20 @@
         {
           "label": "Cut",
           "icon": "cut",
-          "not_built": "clipboard model",
-          "shortcut": "Ctrl+X"
+          "shortcut": "Ctrl+X",
+          "gui_local": "edit.cut"
         },
         {
           "label": "Copy",
           "icon": "copy",
-          "not_built": "clipboard model",
-          "shortcut": "Ctrl+C"
+          "shortcut": "Ctrl+C",
+          "gui_local": "edit.copy"
         },
         {
           "label": "Paste",
           "icon": "paste",
-          "not_built": "clipboard model",
-          "shortcut": "Ctrl+V"
+          "shortcut": "Ctrl+V",
+          "gui_local": "edit.paste"
         },
         {
           "label": "Delete",
@@ -1097,7 +1097,7 @@
       },
       "overflow": [
         {
-          "label": "Place Another Gate…",
+          "label": "Place Another Gate\u2026",
           "icon": "symbol",
           "gui_local": "schematic.gate.place",
           "requires_project": true
@@ -1144,7 +1144,7 @@
         "S": {
           "label": "Drag",
           "icon": "drag",
-          "not_built": "interactive wire drag"
+          "verb": "datum.schematic.move"
         },
         "W": {
           "label": "Add Junction",
@@ -1157,11 +1157,86 @@
         {
           "label": "Delete",
           "icon": "delete",
-          "verb": "datum.schematic.delete_wire",
+          "gui_local": "schematic.selection.delete",
           "destructive": true
+        },
+        {
+          "label": "Reconnect End",
+          "icon": "wire",
+          "gui_local": "schematic.wire.reconnect_end"
+        },
+        {
+          "label": "Split Wire",
+          "icon": "wire",
+          "gui_local": "schematic.wire.split"
+        },
+        {
+          "label": "Insert Bend",
+          "icon": "wire",
+          "gui_local": "schematic.wire.insert_vertex"
+        },
+        {
+          "label": "Remove Segment",
+          "icon": "delete",
+          "gui_local": "schematic.wire.remove_span",
+          "destructive": true
+        },
+        {
+          "label": "Remove Bend",
+          "icon": "wire",
+          "gui_local": "schematic.wire.remove_vertex"
+        },
+        {
+          "label": "Wire Routing",
+          "icon": "wire",
+          "submenu": "Wire Routing"
+        },
+        {
+          "label": "Copy",
+          "icon": "copy",
+          "gui_local": "edit.copy"
+        },
+        {
+          "label": "Cut",
+          "icon": "cut",
+          "gui_local": "edit.cut",
+          "destructive": true
+        },
+        {
+          "label": "Duplicate",
+          "icon": "copy",
+          "gui_local": "edit.duplicate"
         }
       ],
-      "submenus": {}
+      "submenus": {
+        "Wire Routing": [
+          {
+            "label": "Free",
+            "icon": "wire",
+            "gui_local": "schematic.wire.route.free"
+          },
+          {
+            "label": "90\u00b0",
+            "icon": "wire",
+            "gui_local": "schematic.wire.route.90"
+          },
+          {
+            "label": "45\u00b0",
+            "icon": "wire",
+            "gui_local": "schematic.wire.route.45"
+          },
+          {
+            "label": "Swap Bend Direction",
+            "icon": "wire",
+            "gui_local": "schematic.wire.corner.swap"
+          },
+          {
+            "label": "Remove Last Vertex",
+            "icon": "wire",
+            "gui_local": "schematic.wire.vertex.undo"
+          }
+        ]
+      }
     },
     "schematic.label": {
       "cardinal": {
@@ -1245,7 +1320,7 @@
       },
       "overflow": [
         {
-          "label": "Annotate This Sheet…",
+          "label": "Annotate This Sheet\u2026",
           "icon": "rename",
           "gui_local": "schematic.annotation.review",
           "requires_project": true
@@ -1255,9 +1330,47 @@
           "icon": "rename",
           "gui_local": "schematic.annotation.project",
           "requires_project": true
+        },
+        {
+          "label": "Wire Routing",
+          "icon": "wire",
+          "submenu": "Wire Routing"
+        },
+        {
+          "label": "Paste",
+          "icon": "paste",
+          "gui_local": "edit.paste"
         }
       ],
-      "submenus": {}
+      "submenus": {
+        "Wire Routing": [
+          {
+            "label": "Free",
+            "icon": "wire",
+            "gui_local": "schematic.wire.route.free"
+          },
+          {
+            "label": "90\u00b0",
+            "icon": "wire",
+            "gui_local": "schematic.wire.route.90"
+          },
+          {
+            "label": "45\u00b0",
+            "icon": "wire",
+            "gui_local": "schematic.wire.route.45"
+          },
+          {
+            "label": "Swap Bend Direction",
+            "icon": "wire",
+            "gui_local": "schematic.wire.corner.swap"
+          },
+          {
+            "label": "Remove Last Vertex",
+            "icon": "wire",
+            "gui_local": "schematic.wire.vertex.undo"
+          }
+        ]
+      }
     }
   }
 }

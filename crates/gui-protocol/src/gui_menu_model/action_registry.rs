@@ -27,6 +27,11 @@ pub enum GuiLocalHandler {
     PlaceAnotherGate,
     PlaceChildSheet,
     DeleteSchematicSelection,
+    CopyDesign,
+    CutDesign,
+    PasteDesign,
+    DuplicateDesign,
+    WireEdit(super::wire_commands::WireCommand),
     GlobalPreferences,
     ProjectPreferences,
     ZoomIn,
@@ -53,6 +58,9 @@ pub const UNAVAILABLE_GUI_LOCAL_REASON: &str = "This action is unavailable in th
 /// Shared by menu readiness and exhaustive runtime dispatch. A missing key never
 /// acquires an executable fallback, including keys added to the menu manifest.
 pub fn gui_local_handler(key: &str) -> Option<GuiLocalHandler> {
+    if let Some(command) = super::wire_commands::WireCommand::from_action(key) {
+        return Some(GuiLocalHandler::WireEdit(command));
+    }
     if let Some(index) = key.strip_prefix("project.open_recent.") {
         let parsed = index.parse::<usize>().ok()?;
         return (index == parsed.to_string()).then_some(GuiLocalHandler::OpenRecentProject(parsed));
@@ -61,6 +69,10 @@ pub fn gui_local_handler(key: &str) -> Option<GuiLocalHandler> {
         return entry.handler.map(GuiLocalHandler::Registered);
     }
     Some(match key {
+        "edit.copy" => GuiLocalHandler::CopyDesign,
+        "edit.cut" => GuiLocalHandler::CutDesign,
+        "edit.paste" => GuiLocalHandler::PasteDesign,
+        "edit.duplicate" => GuiLocalHandler::DuplicateDesign,
         "project.save" => GuiLocalHandler::SaveProject,
         "project.new.open" => GuiLocalHandler::NewProject,
         "project.open" => GuiLocalHandler::OpenProject,
@@ -193,3 +205,52 @@ pub fn admit(key: &str, state: &ReviewWorkspaceState) -> Result<ActionHandler, &
 
 #[cfg(test)]
 mod tests;
+
+/// Clipboard readiness is a source/selection decision, never a platform read
+/// during painting. The editor/text/terminal input owners dispatch first.
+pub fn design_clipboard_unavailable_reason(
+    key: &str,
+    state: &ReviewWorkspaceState,
+) -> Option<Option<&'static str>> {
+    if !matches!(
+        key,
+        "edit.copy" | "edit.cut" | "edit.paste" | "edit.duplicate"
+    ) {
+        return None;
+    }
+    let reason = (|| {
+        if state.ui.layout.focused_content() != crate::PaneContent::Schematic {
+            return Some("Focus a schematic source pane");
+        }
+        if let Some(reason) =
+            super::native_project_verb_unavailable_reason(state, "datum.schematic.draw_wire")
+        {
+            return Some(reason);
+        }
+        if state.schematic_authoring.active()
+            || state.schematic_authoring.picker
+            || state.schematic_authoring.delete_review.is_some()
+        {
+            return Some("Finish or cancel the current schematic gesture first");
+        }
+        if key != "edit.paste" {
+            let crate::SelectionTarget::Native(view) = &state.selection else {
+                return Some("Select wires or junctions first");
+            };
+            if view.stale
+                || view.members.is_empty()
+                || view.members.iter().any(|id| {
+                    !matches!(
+                        id.class,
+                        crate::AuthoredSelectionClass::Wire
+                            | crate::AuthoredSelectionClass::Junction
+                    )
+                })
+            {
+                return Some("Select current wires or junctions");
+            }
+        }
+        None
+    })();
+    Some(reason)
+}

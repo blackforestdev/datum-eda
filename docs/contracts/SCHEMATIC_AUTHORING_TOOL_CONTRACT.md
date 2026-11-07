@@ -181,28 +181,47 @@ is itself the parent of another child. Repeated or ambiguous occurrences, stale
 or wrong sources, locks, incompatible mappings, unsupported physical/cross-sheet
 component ownership and explicit unbinding requirements remain meaningful limits.
 
-The shared Move tool adds a single native adapter,
-`datum.schematic.move {object, instance_path, x_nm, y_nm}`, for Wire/Junction/Port
-translation. The resolved source determines the class. A Wire's destination is
-its `from` anchor and its `to` point receives the same checked delta; a Junction
-uses an absolute point. A connected Junction moves its incident wire endpoints
-through the existing contact planner while interior through-wires stay fixed;
-the complete physical connectivity partition and fixed contacts must survive.
-An isolated Junction retains absolute marker placement. Port relocation uses
-the existing position-only
-`SetSchematicPort` edit, retaining its name, direction and explicit instance
-membership. No-connect remains pin-owned; changing its pin uses delete/recreate
-at an actual pin, while Symbol movement retains its existing owned-marker rules.
-Unowned coincident geometry stays authored where it
-is, and electrical connectivity re-derives under the existing explicit-junction
-and PM053 rules. Existing Symbol pin/wire attachment behavior remains. This does
-not supply arbitrary wire elbow editing, rerouting or implicit reconnection.
-Normal Select-drag configures the same Move lifecycle for Wire/Junction/Port:
-after the existing drag threshold it acquires the exact qualified hit rather
-than widening the prior derived Run into a move. Wire movement remains rigid.
-Raw metadata, nested point extensions and object identity must survive; locked objects,
-overflow, duplicates and existing external dependencies refuse. Move preview and
-history use the shared lifecycle for supported schematic classes on either sheet.
+The shared Move tool configures `datum.schematic.move` with the captured object,
+ordered instance path, absolute destination and explicit `wire_edit` handle/action
+for wiring. Wire endpoints reconnect deliberately; a Junction or contact vertex
+reshapes incident spans while fixed attachments remain connected. An axis-aligned
+selected span moves perpendicular to itself with fixed outer ends; free diagonal
+spans use the requested displacement. Insert Bend, Split Wire,
+Remove Segment and Remove Bend configure the same immutable geometry plan and
+canonical operation batch. Free, 90-degree and 45-degree routing share the drawing
+and editing path; Remove Last Vertex removes the last actual generated draft
+vertex. Exact eligible pin and wire contacts take precedence over background grid
+rounding. Preview and final click use the same destination and validation.
+
+Select-drag acquires the qualified source handle after the existing drag threshold.
+An unselected wire body does not start a rigid whole-wire move; a selected body
+can acquire its span. A real Junction takes node precedence. Explicit Reconnect End
+chooses one physical wire end even at a shared Junction. Existing unsplit source
+wires expose derived contact handles without rewriting files on read or selection.
+Topology edits retain the explicit-Junction deletion law; a split or off-axis
+reshape that would erase an existing marker gate refuses. Bus Entry references,
+locks, overflow, duplicate edges, lost fixed contacts and unintended foreign net
+contacts remain guarded. Raw extensions, physical UUIDs and exact history inverse
+must survive. Port Move retains its existing position-only `SetSchematicPort`
+behavior and explicit membership; No-connect remains pin-owned.
+
+Shared design clipboard support currently covers explicit Wire/Junction objects.
+Copy is read-only; Cut uses reviewed canonical deletion. After the explicit
+placement click, manual Paste and Duplicate assign fresh physical IDs through
+one guarded direct batch. Common R/X/Y placement pose uses
+checked coordinates. Existing selected wiring rotation/mirroring is a separate
+shared Move configuration with an explicit pivot and fixed-contact policy: it
+retains original UUIDs and raw data, never expands a derived Run into ownership,
+and refuses an incomplete selection that would detach an unselected contact.
+Both single edges and complete supported Wire/Junction compounds use the same
+preview/canonical plan. Local visible manual placement and transforms commit
+one design transaction without hidden Draft/Accepted bookkeeping in Undo.
+Explicit Proposal consumers retain their immutable prepared receipts and review
+policy; existing Proposal history is not rewritten. This increment does not supply
+component clipboard support, obstacle routing, new keyboard nudge bindings or a
+manual precise-coordinate form. Shared checked handle displacement is available
+in the engine; manual nudge and precise-entry controls and visible handle feedback
+remain open under `dat-schematic-wire-endpoint-edit-4368`.
 An interior scalar Label can slide along its existing wire while all incident
 wires stay fixed and the complete physical connectivity partition is preserved.
 Symbol-pin interior-contact refusal and existing endpoint Label/Power attachment
@@ -519,14 +538,16 @@ restated.
   behavior, not a claim that the complete gesture is implemented.
 - **(2) Operation:** `DrawWire{sheet_id, points:[Point], net_hint?}` →
   `OperationBatch`; co-emits implicit `PlaceMarker{kind:Junction}` at
-  T-intersections in the SAME batch (one undo entry). Current
-  `draw_native_project_wire` uses the journaled schematic operation path, but
-  does not infer junctions.
+  T-intersections in the SAME batch (one undo entry). The native
+  `datum.schematic.draw_wire` path accepts a qualified polyline and batches
+  endpoint-to-segment Junctions. The legacy CLI `draw_native_project_wire`
+  remains a journaled straight-segment adapter without Junction inference.
 - **(3) CLI:** `datum-eda project draw-wire <dir> --sheet <uuid>
   --from-x-nm <nm> --from-y-nm <nm> --to-x-nm <nm> --to-y-nm <nm>`
-- **(4) MCP/AI:** `datum.schematic.draw_wire` and `delete_wire` exist for
-  the current straight-segment slice. Future richer wire authoring must return
-  the batch including any auto-junctions.
+- **(4) MCP/AI:** The native `datum.schematic.draw_wire` service accepts the
+  qualified polyline and returns its atomic batch, including required Junctions;
+  `delete_wire` uses the shared deletion path. This does not claim that every
+  public compatibility surface exposes the complete native gesture.
 - **(5) AI query/context:** Sheet pin coordinates and existing
   wire/junction geometry (`schematic.query`
   wires/junctions/symbol_pins) so endpoints snap to pins and
@@ -539,8 +560,8 @@ restated.
   pins; assert derived `net_info` shows both pins on one net, an
   auto-junction op was batched at any T, undo restores prior
   connectivity.
-- **(8) Not yet supported:** No auto-junction inference or polyline/arc wire
-  authoring in the canonical MCP slice yet.
+- **(8) Not yet supported:** Arc/obstacle routing and full compatibility-surface
+  parity remain open. The legacy straight-segment CLI does not infer Junctions.
 
 ### 5. place-label (kind: local | global | hierarchical | power)
 

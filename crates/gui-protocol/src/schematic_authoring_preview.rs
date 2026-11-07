@@ -18,7 +18,8 @@ impl SchematicAuthoring {
     }
 
     pub fn active(&self) -> bool {
-        if self.named_edit.is_some()
+        if self.design_placement.is_some()
+            || self.named_edit.is_some()
             || self.field_placement().is_some()
             || self.child_draft.as_ref().is_some_and(|d| d.choosing_pose)
         {
@@ -35,6 +36,7 @@ impl SchematicAuthoring {
         self.interface_draft = None;
         self.gate_draft = None;
         self.child_draft = None;
+        self.design_placement = None;
         self.picker = false;
         self.chosen = None;
         self.label = None;
@@ -58,6 +60,13 @@ impl SchematicAuthoring {
         base: &BoardReviewSceneV1,
         root: &std::path::Path,
     ) -> anyhow::Result<BoardReviewSceneV1> {
+        if let Some(clipboard) = &self.design_placement {
+            let Some(at) = self.position else {
+                // An armed or refused gesture has no acquired placement pose.
+                return Ok(base.clone());
+            };
+            return clipboard.scene_at(self, base, root, at);
+        }
         if let Some(child) = &self.child_draft {
             return child.scene_at(
                 self,
@@ -209,12 +218,7 @@ impl SchematicAuthoring {
             selected.symbols.insert(symbol.uuid, symbol);
         }
         if self.wire {
-            let mut points = self.vertices.clone();
-            if let Some(at) = self.position
-                && points.last() != Some(&at)
-            {
-                points.push(at);
-            }
+            let points = self.preview_wire_points().map_err(anyhow::Error::msg)?;
             if self.bus {
                 if let Ok((name, members)) = bus_fields(&self.reference, &self.value) {
                     selected.buses.insert(
@@ -291,12 +295,23 @@ impl SchematicAuthoring {
         source_uuid: &str,
         desired: PointNm,
     ) -> Result<Option<PointNm>, String> {
-        let sheet = match self
-            .placement_sheet()
-            .and_then(|id| self.source.as_ref().map(|source| source.sheets.get(&id)))
-        {
-            Some(Some(sheet)) => sheet,
-            _ => return Ok(None),
+        let Some(sheet) = self.placement_sheet() else {
+            return Ok(None);
+        };
+        self.wire_point_for_sheet(sheet, source_uuid, desired)
+    }
+    pub fn wire_point_for_sheet(
+        &self,
+        sheet_id: Uuid,
+        source_uuid: &str,
+        desired: PointNm,
+    ) -> Result<Option<PointNm>, String> {
+        let Some(sheet) = self
+            .source
+            .as_ref()
+            .and_then(|source| source.sheets.get(&sheet_id))
+        else {
+            return Ok(None);
         };
         let Ok(id) = source_uuid.parse::<Uuid>() else {
             return Ok(None);
@@ -320,7 +335,10 @@ impl SchematicAuthoring {
         if self.marker == Some(MarkerKind::NoConnect) {
             return self.marker_pin_point(source_uuid);
         }
-        let sheet = self.source.as_ref()?.sheets.get(&self.placement_sheet()?)?;
+        self.pin_point_for_sheet(self.placement_sheet()?, source_uuid)
+    }
+    pub fn pin_point_for_sheet(&self, sheet_id: Uuid, source_uuid: &str) -> Option<PointNm> {
+        let sheet = self.source.as_ref()?.sheets.get(&sheet_id)?;
         let id: Uuid = source_uuid.parse().ok()?;
         let position = sheet
             .symbols

@@ -1,53 +1,10 @@
-use anyhow::{Context, Result};
-use serde::Deserialize;
-use std::collections::BTreeMap;
-use std::sync::OnceLock;
-
+mod inventory;
+pub use inventory::*;
 pub mod accessibility;
 pub mod action_registry;
 mod recent_projects;
+pub mod wire_commands;
 pub use recent_projects::{RecentProject, RecentProjects, workspace_gui_menu_model};
-
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-pub struct GuiMenuModel {
-    pub schema: String,
-    #[serde(default)]
-    pub menubar: Vec<GuiMenu>,
-    #[serde(default)]
-    pub marking_menus: BTreeMap<String, GuiMarkingMenu>,
-}
-
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-pub struct GuiMenu {
-    pub menu: String,
-    #[serde(default)]
-    pub active_editor: Option<String>,
-    #[serde(default)]
-    pub items: Vec<GuiMenuItem>,
-    #[serde(default)]
-    pub submenus: BTreeMap<String, Vec<GuiMenuItem>>,
-}
-
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-pub struct GuiMenuItem {
-    pub label: String,
-    #[serde(default)]
-    pub icon: Option<String>,
-    #[serde(default)]
-    pub shortcut: Option<String>,
-    #[serde(default)]
-    pub destructive: bool,
-    #[serde(default)]
-    pub verb: Option<String>,
-    #[serde(default)]
-    pub gui_local: Option<String>,
-    #[serde(default)]
-    pub not_built: Option<String>,
-    #[serde(default)]
-    pub submenu: Option<String>,
-    #[serde(default)]
-    pub requires_project: bool,
-}
 
 pub fn native_project_edit_available(state: &crate::ReviewWorkspaceState) -> bool {
     state
@@ -253,6 +210,18 @@ impl GuiMenuItem {
     /// project-only query cannot establish focused-camera eligibility.
     pub fn unavailable_reason(&self, state: &crate::ReviewWorkspaceState) -> Option<&str> {
         use crate::schematic_authoring::selected;
+        if let GuiMenuBinding::GuiLocal(key) = self.binding() {
+            if let Some(reason) = action_registry::design_clipboard_unavailable_reason(key, state) {
+                return reason;
+            }
+        }
+        if let GuiMenuBinding::GuiLocal(key) = self.binding() {
+            if let Some(command) = wire_commands::WireCommand::from_action(key) {
+                if let Some(reason) = command.unavailable_reason(state) {
+                    return Some(reason);
+                }
+            }
+        }
         if matches!(
             self.binding(),
             GuiMenuBinding::GuiLocal("schematic.child_sheet.place")
@@ -421,6 +390,11 @@ impl GuiMenuItem {
         // catalog (before describe returns, or no backing) is an absent catalog, so the
         // entry is disabled rather than enabled-by-default.
         let native_verb = match self.binding() {
+            GuiMenuBinding::GuiLocal(key)
+                if wire_commands::WireCommand::from_action(key).is_some() =>
+            {
+                Some("datum.schematic.move")
+            }
             GuiMenuBinding::GuiLocal("schematic.symbol_fields.open") => {
                 Some("datum.schematic.set_symbol_reference")
             }
@@ -453,58 +427,10 @@ pub enum GuiMenuBinding<'a> {
     Empty,
 }
 
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
-pub struct GuiMarkingMenu {
-    #[serde(default)]
-    pub cardinal: BTreeMap<String, GuiMenuItem>,
-    #[serde(default)]
-    pub secondary: BTreeMap<String, GuiMenuItem>,
-    #[serde(default)]
-    pub overflow: Vec<GuiMenuItem>,
-    #[serde(default)]
-    pub submenus: BTreeMap<String, Vec<GuiMenuItem>>,
-}
-
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-pub struct GuiIconSet {
-    pub schema: String,
-    #[serde(default)]
-    pub icons: BTreeMap<String, GuiIconDef>,
-}
-
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-pub struct GuiIconDef {
-    pub source: String,
-    #[serde(default)]
-    pub glyph: Option<String>,
-    #[serde(default)]
-    pub asset: Option<String>,
-    pub status: String,
-}
-
-pub fn load_default_gui_menu_model() -> Result<GuiMenuModel> {
-    default_gui_menu_model().cloned()
-}
-
-/// Borrow the immutable, compiled-in inventory without parsing or cloning it on
-/// each frame. Action availability still comes from the caller's live workspace.
-pub fn default_gui_menu_model() -> Result<&'static GuiMenuModel> {
-    static MODEL: OnceLock<std::result::Result<GuiMenuModel, serde_json::Error>> = OnceLock::new();
-    MODEL
-        .get_or_init(|| serde_json::from_str(include_str!("../../../docs/gui/menu_model.json")))
-        .as_ref()
-        .map_err(|error| anyhow::anyhow!("{error}"))
-        .context("parse docs/gui/menu_model.json")
-}
-
-pub fn load_default_gui_icon_set() -> Result<GuiIconSet> {
-    serde_json::from_str(include_str!("../../../docs/gui/icon_set.json"))
-        .context("parse docs/gui/icon_set.json")
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeMap;
 
     #[test]
     fn shared_menu_inventory_is_reused_and_matches_embedded_source() {

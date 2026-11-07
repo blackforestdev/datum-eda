@@ -128,7 +128,7 @@ These additions preserve both Project operations' engine authority.
 | Menu item | Backing mechanism | Status |
 |---|---|---|
 | Undo / Redo | `datum.journal.undo` / `redo` as typed GUI journal actions; no terminal CLI-string handoff | PARTIAL for reviewed Symbol/Wire/isolated Move history; complete menu projection remains unqualified |
-| Cut/Copy/Paste/Delete | per-object delete builders exist (`build_delete_*`); no clipboard model | PARTIAL: delete ENGINE-READY; clipboard NOT-BUILT |
+| Cut/Copy/Paste/Delete | shared typed Wire/Junction clipboard, direct manual placement/transform batches and reviewed Cut/Delete; inherited platform clipboard | PARTIAL: explicit Wire/Junction Copy/Cut/Paste/Duplicate and supported deletion; component clipboard and complete menu qualification remain open |
 | Symbol Fields Table… | `schematic.symbol_fields_table.open` → shared table controls → typed `CreateFieldBatch` Proposal → canonical atomic Reference/Value batch | PARTIAL: active unique source sheet; exact before/after review and explicit acceptance; no project-wide/custom-column/CSV editing |
 | Preferences > Global Preferences… | none — Product Mechanics 039 and the Global Preferences plan govern the future typed resolver/repository/wgpu route | NOT-BUILT |
 | Preferences > Project Preferences… | none — disabled without an open Project; future writes use canonical journaled Project mutations under `PROJECT_PREFERENCES_SPEC.md` | NOT-BUILT |
@@ -157,7 +157,7 @@ GUI-LOCAL.
 | Item | Verb / builder | Status |
 |---|---|---|
 | Symbol | `datum.schematic.place_symbol` / `build_place_schematic_symbol` | PARTIAL: named narrow picker/place/preview/cancel; full browser/approved seed and every menu projection remain open |
-| Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | PARTIAL: terminal-connected multisegment preview/cancel/finish/history; auto-junction/full editing and every menu projection remain open |
+| Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | PARTIAL: qualified polyline/endpoint Junctions, shared handle Move and Split/Insert Bend/Remove Segment/Remove Bend; Free/90/45 routing and nearest-pin contacts; manual precision/nudge/handle feedback and full menu qualification remain open |
 | Label | `datum.schematic.place_label` / `build_create_schematic_label` | ENGINE-READY / GUI-BLOCKED |
 | Junction / No-connect / Port / Bus / Bus-entry | `datum.schematic.place_*` / connectivity builders | ENGINE-READY / GUI-BLOCKED |
 | Sheet | GUI-local `schematic.child_sheet.place` → shared name/pose → typed `CreateChildSheet` Proposal → existing source/definition/instance operations | Bounded implementation and independent GUI verification: new blank child under one unique qualified parent, including a unique child; explicit acceptance/cancel/history/Save/cold reopen; no existing-source reuse/pins/rewiring |

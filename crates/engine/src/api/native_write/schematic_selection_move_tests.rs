@@ -39,6 +39,10 @@ fn write(
         params,
     )
 }
+fn wire_move(object: Uuid, end: &str, x: i64, y: i64) -> serde_json::Value {
+    serde_json::json!({"object":object,"instance_path":[],"x_nm":x,"y_nm":y,
+        "wire_edit":{"handle":{"kind":"endpoint","end":end},"routing":"free","edit_seed":Uuid::new_v4()}})
+}
 #[test]
 fn selected_wire_and_junction_moves_preserve_identity_and_history() {
     let (root, mut model, _, sheet) = topology_tests::fixture("move_wire_junction");
@@ -71,10 +75,11 @@ fn selected_wire_and_junction_moves_preserve_identity_and_history() {
             "datum.schematic.move",
             serde_json::json!({"object":wire.uuid,"instance_path":[],"x_nm":0,"y_nm":0}),
         ),
-        (
-            "datum.schematic.move",
-            serde_json::json!({"object":wire.uuid,"instance_path":[Uuid::new_v4()],"x_nm":100,"y_nm":0}),
-        ),
+        ("datum.schematic.move", {
+            let mut p = wire_move(wire.uuid, "to", 100, 0);
+            p["instance_path"] = serde_json::json!([Uuid::new_v4()]);
+            p
+        }),
         (
             "datum.schematic.move",
             serde_json::json!({"object":junction.uuid,"instance_path":[],"x_nm":0,"y_nm":0}),
@@ -90,13 +95,23 @@ fn selected_wire_and_junction_moves_preserve_identity_and_history() {
     ] {
         assert!(write(&model, &root, verb, params).is_err());
     }
+    assert!(
+        write(
+            &model,
+            &root,
+            "datum.schematic.move",
+            wire_move(junction.uuid, "from", 200, 300)
+        )
+        .is_err(),
+        "Junction must not accept a Wire endpoint handle"
+    );
     assert_eq!(source(&model), before);
-    // Rigid wire translate preserves the authored identity and segment shape.
+    // Explicit endpoint editing preserves the opposite endpoint and identity.
     let prepared = write(
         &model,
         &root,
         "datum.schematic.move",
-        serde_json::json!({"object":wire.uuid,"instance_path":[],"x_nm":2500,"y_nm":-1500}),
+        wire_move(wire.uuid, "to", 2500, -1500),
     )
     .unwrap();
     assert_eq!(prepared.primary_object_id, Some(wire.uuid));
@@ -105,11 +120,11 @@ fn selected_wire_and_junction_moves_preserve_identity_and_history() {
     let wire_moved = source(&model);
     assert_eq!(
         wire_moved.sheets[&sheet].wires[&wire.uuid].from,
-        Point::new(2500, -1500)
+        Point::new(0, 0)
     );
     assert_eq!(
         wire_moved.sheets[&sheet].wires[&wire.uuid].to,
-        Point::new(3500, -1500)
+        Point::new(2500, -1500)
     );
     // Coincident geometry stays authored where it was: the junction at the
     // original endpoint does not follow the moved wire.
@@ -122,7 +137,7 @@ fn selected_wire_and_junction_moves_preserve_identity_and_history() {
         &model,
         &root,
         "datum.schematic.move",
-        serde_json::json!({"object":junction.uuid,"instance_path":[],"x_nm":2500,"y_nm":-1500}),
+        serde_json::json!({"object":junction.uuid,"instance_path":[],"x_nm":-200,"y_nm":100}),
     )
     .unwrap();
     assert_eq!(prepared.primary_object_id, Some(junction.uuid));
@@ -131,7 +146,7 @@ fn selected_wire_and_junction_moves_preserve_identity_and_history() {
     let after = source(&model);
     assert_eq!(
         after.sheets[&sheet].junctions[&junction.uuid].position,
-        Point::new(2500, -1500)
+        Point::new(-200, 100)
     );
     // Each move is one history entry; two undos restore the exact source.
     for _ in 0..2 {
@@ -197,7 +212,11 @@ fn moves_refuse_locked_members_and_preserve_raw_extensions() {
                 &model,
                 &root,
                 "datum.schematic.move",
-                serde_json::json!({"object":object,"instance_path":[],"x_nm":100,"y_nm":100}),
+                if object == locked_wire {
+                    wire_move(object, "from", 100, 100)
+                } else {
+                    serde_json::json!({"object":object,"instance_path":[],"x_nm":100,"y_nm":100})
+                },
             )
             .is_err()
         );
@@ -209,7 +228,7 @@ fn moves_refuse_locked_members_and_preserve_raw_extensions() {
         &model,
         &root,
         "datum.schematic.move",
-        serde_json::json!({"object":wire_id,"instance_path":[],"x_nm":2000,"y_nm":3000}),
+        wire_move(wire_id, "from", 2000, 3000),
     )
     .unwrap();
     commit_prepared(&mut model, &root, prepared).unwrap();
@@ -222,7 +241,7 @@ fn moves_refuse_locked_members_and_preserve_raw_extensions() {
     );
     assert_eq!(member["vendor_ext"], "keep");
     assert_eq!(member["from"], serde_json::json!({"x":2000,"y":3000}));
-    assert_eq!(member["to"], serde_json::json!({"x":3000,"y":3000}));
+    assert_eq!(member["to"], serde_json::json!({"x":1000,"y":0}));
     // One history entry; undo restores the exact original raw member.
     model
         .commit_journal_undo(&root, provenance().into())
@@ -303,6 +322,16 @@ fn port_move_relocates_position_only_with_set_semantics() {
         .is_err()
     );
     assert_eq!(source(&model), before);
+    assert!(
+        write(
+            &model,
+            &root,
+            "datum.schematic.move",
+            wire_move(extended, "to", 1, 2)
+        )
+        .is_err(),
+        "Port must reject Wire-only edit parameters"
+    );
     // The Set-based move changes position only; name, direction and vendor
     // extensions ride through byte-identical.
     let prepared = write(

@@ -29,7 +29,31 @@ impl Runtime {
         {
             anyhow::bail!("Selection requires the actual schematic pane");
         }
-        let native = self.native_selection.as_ref().unwrap();
+        let basis = self.read_native_binding_basis(surface, pane)?;
+        if let Some(basis) = &basis {
+            let key = if surface == SceneSurface::Board {
+                "board"
+            } else {
+                "schematic"
+            };
+            self.native_selection
+                .as_mut()
+                .unwrap()
+                .binding_bases
+                .insert(key.into(), basis.clone());
+        }
+        Ok(basis)
+    }
+    /// Snap and selection consume the same revision-qualified source bindings.
+    /// Existing gestures reuse the cached index; no source read or UUID birth.
+    pub(super) fn read_native_binding_basis(
+        &self,
+        surface: SceneSurface,
+        pane: Option<datum_gui_protocol::PaneId>,
+    ) -> anyhow::Result<Option<Arc<BindingBasis>>> {
+        let Some(native) = self.native_selection.as_ref() else {
+            return Ok(None);
+        };
         let (key, scene) = match surface {
             SceneSurface::Board => ("board", &self.workspace().scene),
             SceneSurface::Schematic => (
@@ -61,11 +85,6 @@ impl Runtime {
             document: scene.schematic_document.clone(),
             bindings: SceneSelectionBindings::capture(scene, &native.authority),
         });
-        self.native_selection
-            .as_mut()
-            .unwrap()
-            .binding_bases
-            .insert(key.into(), basis.clone());
         Ok(Some(basis))
     }
     pub(super) fn selection_world_hit(

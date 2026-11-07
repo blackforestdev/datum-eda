@@ -20,7 +20,27 @@ use crate::schematic::{
 };
 use crate::substrate::{DesignModel, ObjectId, Operation, SchematicMarkerKind};
 
-use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
+use super::{
+    context::{BatchComposer, PreparedWrite, WriteProvenance},
+    schematic_symbol_payload::{member_payload, source_sheet_payload},
+};
+
+fn raw_delete_payload<T: serde::de::DeserializeOwned + PartialEq>(
+    model: &DesignModel,
+    sheet: ObjectId,
+    class: &str,
+    id: ObjectId,
+    original: &T,
+) -> Result<serde_json::Value, EngineError> {
+    let source = source_sheet_payload(model, sheet, id)?;
+    let raw = member_payload(&source, class, id, original)?;
+    if raw.get("locked").and_then(serde_json::Value::as_bool) == Some(true) {
+        return Err(EngineError::Validation(
+            "Selected schematic object is locked".into(),
+        ));
+    }
+    Ok(raw)
+}
 
 /// Build the batch that places a net label on `sheet_id`.
 pub fn build_create_schematic_label(
@@ -106,7 +126,7 @@ pub fn build_delete_schematic_wire(
         .push_op(Operation::DeleteSchematicWire {
             sheet_id,
             wire_id: wire.uuid,
-            wire: serde_json::to_value(wire)?,
+            wire: raw_delete_payload(model, sheet_id, "wires", wire.uuid, wire)?,
         })
         .primary_object(wire.uuid)
         .finish()
@@ -162,7 +182,7 @@ pub fn build_delete_schematic_junction(
         .push_op(Operation::DeleteSchematicJunction {
             sheet_id,
             junction_id: junction.uuid,
-            junction: serde_json::to_value(junction)?,
+            junction: raw_delete_payload(model, sheet_id, "junctions", junction.uuid, junction)?,
         })
         .primary_object(junction.uuid)
         .finish()

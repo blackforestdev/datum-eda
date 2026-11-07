@@ -76,7 +76,7 @@ impl EditWork {
                     let result=match operation {
                         Ok(receipt) if qualified && receipt.description.get("model_revision")==after.get("model_revision")
                             && receipt.description.get("transaction_tip")==after.get("transaction_tip") =>
-                            Ok(if let Some(proposal)=&receipt.proposal {match proposal.status { eda_engine::substrate::ProposalStatus::Draft=>"Proposal ready; Tab accepts, Esc dismisses",eda_engine::substrate::ProposalStatus::Applied=>if proposal.disposition.is_some() {"ERC disposition recorded"} else if proposal.assignment.is_some() {"Part/Gate assignment recorded"} else if proposal.interface_binding.is_some() {"Interface membership updated"} else if proposal.child_sheet.is_some() {"Child sheet created"} else if proposal.gate_placement.is_some() {"Another Gate placed"} else if proposal.annotation.is_some() {"Sheet references annotated"} else if proposal.project_annotation.is_some() {"Project references annotated"} else if proposal.fields.is_some() {"Symbol fields updated"} else {"Selected objects deleted"},eda_engine::substrate::ProposalStatus::Rejected=>"Proposal dismissed",_=>"Proposal updated"}} else if receipt.applied {if receipt.reconciled {"Edit committed; recovered receipt confirmed"} else {"Edit committed"}} else {"Project saved"}.into()),
+                            Ok(if let Some(proposal)=&receipt.proposal {match proposal.status { eda_engine::substrate::ProposalStatus::Draft=>"Proposal ready; Tab accepts, Esc dismisses",eda_engine::substrate::ProposalStatus::Applied=>if proposal.disposition.is_some() {"ERC disposition recorded"} else if proposal.assignment.is_some() {"Part/Gate assignment recorded"} else if proposal.interface_binding.is_some() {"Interface membership updated"} else if proposal.child_sheet.is_some() {"Child sheet created"} else if proposal.gate_placement.is_some() {"Another Gate placed"} else if proposal.annotation.is_some() {"Sheet references annotated"} else if proposal.project_annotation.is_some() {"Project references annotated"} else if proposal.fields.is_some() {"Symbol fields updated"} else {"Selected objects deleted"},eda_engine::substrate::ProposalStatus::Rejected=>"Proposal dismissed",_=>"Proposal updated"}} else if receipt.applied {committed_feedback(&intent, receipt.reconciled)} else {"Project saved"}.into()),
                         Ok(_)=>Err("Edit completed but the Project changed during refresh; reopen before editing".into()),
                         Err(error)=>Err(format!("{error:#}")),
                     };
@@ -90,5 +90,22 @@ impl EditWork {
             })?;
         self.pending = Some(receiver);
         Ok(())
+    }
+}
+
+fn committed_feedback(intent: &NativeEditIntent, reconciled: bool) -> &'static str {
+    use datum_gui_protocol::schematic_authoring::SchematicEditRequest;
+    use eda_engine::api::native_write::design_clipboard_edit::DesignEditIntent;
+    match &intent.schematic {
+        Some(SchematicEditRequest::DesignEdit {
+            edit: DesignEditIntent::PlaceBundle { .. },
+            ..
+        }) => "Wiring placed",
+        Some(SchematicEditRequest::DesignEdit {
+            edit: DesignEditIntent::TransformExisting { .. },
+            ..
+        }) => "Wiring transformed",
+        _ if reconciled => "Edit committed; recovered receipt confirmed",
+        _ => "Edit committed",
     }
 }

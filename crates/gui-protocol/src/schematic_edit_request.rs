@@ -5,6 +5,11 @@ use super::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SchematicEditRequest {
+    DesignEdit {
+        sheet: Uuid,
+        instance_path: Vec<Uuid>,
+        edit: eda_engine::api::native_write::design_clipboard_edit::DesignEditIntent,
+    },
     Text {
         sheet: Uuid,
         text: Option<Uuid>,
@@ -118,6 +123,14 @@ pub enum SchematicEditRequest {
 impl SchematicEditRequest {
     pub fn verb_params(&self) -> (&'static str, serde_json::Value) {
         match self {
+            Self::DesignEdit {
+                sheet,
+                instance_path,
+                edit,
+            } => (
+                "datum.schematic.move",
+                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"design_edit":edit}),
+            ),
             Self::Text {
                 sheet,
                 text,

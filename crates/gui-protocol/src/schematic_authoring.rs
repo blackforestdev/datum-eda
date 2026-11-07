@@ -15,7 +15,12 @@ pub mod selected;
 pub use named_point::LabelDraft;
 #[path = "schematic_bus.rs"]
 mod bus;
+#[path = "design_clipboard_placement.rs"]
+pub mod design_clipboard_placement;
+#[path = "schematic_wire_draft.rs"]
+mod wire_draft;
 pub use bus::{BusEditDraft, bus_fields};
+pub use design_clipboard_placement::DesignClipboardPlacement;
 #[path = "schematic_fields.rs"]
 mod fields;
 pub use fields::FieldsEditDraft;
@@ -145,6 +150,7 @@ pub struct SchematicAuthoring {
     pub disposition_draft: Option<delete_review::DeleteReview>,
     pub gate_draft: Option<gate_placement::GatePlacementDraft>,
     pub child_draft: Option<child_sheet::ChildSheetDraft>,
+    pub design_placement: Option<DesignClipboardPlacement>,
     pub interface_draft: Option<interface_binding::InterfaceBindingDraft>,
     pub assignment_draft: Option<delete_review::DeleteReview>,
     pub creation: Option<NewSchematicDraft>,
@@ -186,6 +192,8 @@ pub struct SchematicAuthoring {
     pub bus_entry_choice: usize,
     pub wire: bool,
     pub vertices: Vec<PointNm>,
+    /// Transient posture shared by Wire and Bus preview and anchored vertices.
+    pub wire_route: eda_engine::api::native_write::schematic_wire_edit::WireRouteConfig,
     pub last_wire_click: Option<(PointNm, std::time::Instant)>,
     pub base: Option<BoardReviewSceneV1>,
     pub pending_request: Option<SchematicEditRequest>,
@@ -211,7 +219,7 @@ impl SchematicAuthoring {
             || self.wire
             || self.label.is_some()
             || self.marker.is_some()
-            || self.chosen.is_none()
+            || (self.chosen.is_none() && self.design_placement.is_none())
         {
             return false;
         }

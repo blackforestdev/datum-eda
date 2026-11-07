@@ -2,6 +2,10 @@
 use super::*;
 #[path = "symbol_pose.rs"]
 mod symbol_pose;
+#[path = "wire_commands.rs"]
+mod wire_commands;
+#[path = "wire_handles.rs"]
+mod wire_handles;
 impl Runtime {
     pub(crate) fn pick_schematic_move(&mut self, world: PointNm, screen: (f32, f32)) {
         use datum_gui_protocol::{SelectionSubject, SelectionTarget};
@@ -21,6 +25,10 @@ impl Runtime {
         let (Some(HitTarget::AuthoredObject(key)), Some(basis)) = (hit.target, hit.basis) else {
             return;
         };
+        let key = self
+            .pane_at_screen(screen.0, screen.1)
+            .map(|pane| self.wire_handle_pickup_key(key.clone(), &basis, world, pane))
+            .unwrap_or(key);
         let Some(expected) = basis
             .bindings
             .get(&key)
@@ -72,7 +80,7 @@ impl Runtime {
         }
         if matches!(&selected.subject, SelectionSubject::Compound(_)) {
             let subject = selected.subject.clone();
-            self.begin_schematic_move(subject, anchor);
+            self.begin_schematic_move(subject, anchor, None);
             return;
         }
         let SelectionSubject::Object(id) = &selected.subject else {
@@ -88,7 +96,7 @@ impl Runtime {
                 | AuthoredSelectionClass::Port
         ) {
             let id = id.clone();
-            self.begin_schematic_move(SelectionSubject::Object(id), anchor);
+            self.begin_schematic_move(SelectionSubject::Object(id), anchor, None);
             return;
         }
         if id.class != AuthoredSelectionClass::Footprint {
@@ -166,7 +174,7 @@ impl Runtime {
                 );
                 return true;
             }
-            let destination = match preview.destination(world, self.workspace().authoring.snap) {
+            let destination = match self.native_move_destination(preview, world) {
                 Ok(p) => p,
                 Err(error) => {
                     self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
@@ -251,6 +259,9 @@ impl Runtime {
         &mut self,
         subject: datum_gui_protocol::SelectionSubject,
         anchor: Option<PointNm>,
+        wire_edit: Option<
+            eda_engine::api::native_write::schematic_wire_edit_adapter::WireEditParams,
+        >,
     ) {
         if self.native_edit.pending()
             || self.check_work.pending()
@@ -306,15 +317,29 @@ impl Runtime {
             let preview = match &subject {
                 datum_gui_protocol::SelectionSubject::Object(id) => {
                     use datum_gui_protocol::AuthoredSelectionClass as Class;
-                    let begin = match id.class {
-                        Class::SchematicText => NativeMovePreview::text,
-                        Class::Label => NativeMovePreview::label,
-                        Class::Wire | Class::Junction | Class::Port => {
-                            NativeMovePreview::connectivity
+                    if matches!(id.class, Class::Wire | Class::Junction | Class::Port) {
+                        let edit = match wire_edit {Some(edit)=>Some(edit),None=>self.wire_edit_configuration(&base,id,world)?};
+                        let mut preview = NativeMovePreview::connectivity_with_wire_edit(&base,&self.workspace().schematic_authoring,id,world,self.workspace().authoring.snap,root,edit)?;
+                        if matches!(id.class, Class::Wire | Class::Junction) {
+                            preview.set_wire_locked_members(self.wire_locked_source_members(&base, id)?);
                         }
-                        _ => NativeMovePreview::symbol,
-                    };
-                    begin(&base,&self.workspace().schematic_authoring,id,world,self.workspace().authoring.snap,root)?
+                        preview
+                    } else {
+                        let begin = match id.class {
+                            Class::SchematicText => NativeMovePreview::text,
+                            Class::Label => NativeMovePreview::label,
+                            _ => NativeMovePreview::symbol,
+                        };
+                        begin(&base,&self.workspace().schematic_authoring,id,world,self.workspace().authoring.snap,root)?
+                    }
+                }
+                _ if datum_gui_protocol::footprint_move_preview::native::wiring::wiring_members(&subject).is_ok() => {
+                    use datum_gui_protocol::footprint_move_preview::native::wiring::WiringGroupPreview;
+                    let members = datum_gui_protocol::footprint_move_preview::native::wiring::wiring_members(&subject)?;
+                    let locked = self.wire_locked_source_members(&base, &members[0])?;
+                    NativeMovePreview::Wiring(WiringGroupPreview::begin(&base,
+                        &self.workspace().schematic_authoring, &subject,
+                        datum_gui_protocol::checked_snap_authoring_point(world, self.workspace().authoring.snap)?, root, &locked)?)
                 }
                 _ => {
                     use datum_gui_protocol::footprint_move_preview::native::group::{symbol_members,SymbolGroupPreview};
@@ -333,6 +358,9 @@ impl Runtime {
         match result {
             Ok((preview, world, view_basis)) => {
                 let (world, target) = match &preview {
+                    NativeMovePreview::Wiring(group) => {
+                        (group.reference, "schematic-wiring-selection".into())
+                    }
                     NativeMovePreview::Symbols(group) => (
                         group.reference,
                         format!(

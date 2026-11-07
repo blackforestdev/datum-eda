@@ -234,7 +234,9 @@ impl Runtime {
             workspace.schematic_scene = next.schematic_scene;
             workspace.schematic_documents = next.schematic_documents;
         }
+        let wire_route = workspace.schematic_authoring.wire_route;
         workspace.schematic_authoring = next.schematic_authoring;
+        workspace.schematic_authoring.wire_route = wire_route;
         if !same_world {
             workspace.review = next.review;
         }

@@ -1,5 +1,7 @@
 //! Native schematic gestures reuse the existing asynchronous canonical worker.
 use super::*;
+#[path = "runtime_design_clipboard.rs"]
+mod design_clipboard;
 #[path = "runtime_schematic_snap.rs"]
 mod snap;
 use datum_gui_protocol::native_edit_client::NativeEditAction;
@@ -401,7 +403,15 @@ impl Runtime {
             Key::Named(NamedKey::Enter) if self.workspace().schematic_authoring.wire => {
                 return self.finish_native_wire();
             }
-            Key::Named(NamedKey::Tab) if !picker && !self.workspace().schematic_authoring.wire => {
+            Key::Named(NamedKey::Tab)
+                if !picker
+                    && !self.workspace().schematic_authoring.wire
+                    && self
+                        .workspace()
+                        .schematic_authoring
+                        .design_placement
+                        .is_none() =>
+            {
                 self.session.workspace_mut().schematic_authoring.picker = true;
             }
             Key::Named(NamedKey::Tab) if picker => {
@@ -442,16 +452,39 @@ impl Runtime {
         if !self.workspace().schematic_authoring.active() || self.native_edit.pending() {
             return false;
         }
-        let Some((world, SceneSurface::Schematic)) = self
+        let resolved = self
             .prepared_scene()
-            .and_then(|scene| scene.world_point_at_screen(screen.0, screen.1))
-        else {
+            .and_then(|scene| scene.world_point_at_screen(screen.0, screen.1));
+        if self
+            .workspace()
+            .schematic_authoring
+            .design_placement
+            .is_some()
+        {
+            crate::append_gui_verbose_diagnostic_line(|| {
+                format!("clipboard pointer screen={screen:?} resolved={resolved:?}")
+            });
+        }
+        let Some((world, SceneSurface::Schematic)) = resolved else {
             return false;
         };
         if !self.guard_native_authoring_view(self.pane_at_screen(screen.0, screen.1)) {
             return true;
         }
         let snapped = self.schematic_command_point(world, screen);
+        if self
+            .workspace()
+            .schematic_authoring
+            .design_placement
+            .is_some()
+        {
+            crate::append_gui_verbose_diagnostic_line(|| {
+                format!(
+                    "clipboard snap={snapped:?} refusal={:?}",
+                    self.workspace().schematic_authoring.refusal
+                )
+            });
+        }
         if let Some(snapped) = snapped {
             let e = &mut self.session.workspace_mut().schematic_authoring;
             e.preview_dirty |= e.position != Some(snapped);
@@ -459,6 +492,26 @@ impl Runtime {
             self.invalidate_frame();
         }
         true
+    }
+    pub(crate) fn publish_schematic_preview_scene(
+        &mut self,
+        scene: datum_gui_protocol::BoardReviewSceneV1,
+    ) {
+        if let Some(child) = &mut self.session.workspace_mut().schematic_authoring.child_draft {
+            child.scene = Some(scene);
+        } else if self.workspace().schematic_authoring.circuit_basis.is_some() {
+            self.session
+                .workspace_mut()
+                .schematic_authoring
+                .circuit_preview = Some(scene);
+        } else {
+            self.session.workspace_mut().schematic_scene = Some(scene);
+        }
+        self.session
+            .workspace_mut()
+            .schematic_authoring
+            .preview_dirty = false;
+        self.invalidate_scene();
     }
     pub(super) fn prepare_native_schematic_frame(&mut self) {
         if !self.native_edit.pending()
@@ -469,6 +522,14 @@ impl Runtime {
             return;
         }
         let e = &self.workspace().schematic_authoring;
+        if e.design_placement.is_some() {
+            crate::append_gui_verbose_diagnostic_line(|| {
+                format!(
+                    "clipboard frame position={:?} dirty={} picker={} refusal={:?}",
+                    e.position, e.preview_dirty, e.picker, e.refusal
+                )
+            });
+        }
         if !e.active() || !e.preview_dirty || self.native_edit.pending() {
             return;
         }
@@ -477,28 +538,20 @@ impl Runtime {
             return;
         };
         match e.preview_scene(base, &backing.request.project_root) {
-            Ok(scene) => {
-                if let Some(child) =
-                    &mut self.session.workspace_mut().schematic_authoring.child_draft
-                {
-                    child.scene = Some(scene);
-                } else if self.workspace().schematic_authoring.circuit_basis.is_some() {
-                    self.session
-                        .workspace_mut()
-                        .schematic_authoring
-                        .circuit_preview = Some(scene);
-                } else {
-                    self.session.workspace_mut().schematic_scene = Some(scene);
-                }
-                self.session
-                    .workspace_mut()
-                    .schematic_authoring
-                    .preview_dirty = false;
-                self.invalidate_scene();
-            }
+            Ok(scene) => self.publish_schematic_preview_scene(scene),
             Err(error) => {
-                self.session.workspace_mut().schematic_authoring.refusal = Some(error.to_string());
-                self.cancel_native_schematic();
+                let recoverable = self
+                    .workspace()
+                    .schematic_authoring
+                    .design_placement
+                    .is_some();
+                if recoverable {
+                    self.refuse_design_placement_pose(error.to_string());
+                } else {
+                    self.session.workspace_mut().schematic_authoring.refusal =
+                        Some(error.to_string());
+                    self.cancel_native_schematic();
+                }
             }
         }
     }
@@ -540,6 +593,14 @@ impl Runtime {
         let Some(at) = self.schematic_command_point(world, screen) else {
             return true;
         };
+        if self
+            .workspace()
+            .schematic_authoring
+            .design_placement
+            .is_some()
+        {
+            return self.place_design_clipboard(at);
+        }
         if self
             .workspace()
             .schematic_authoring
@@ -586,7 +647,9 @@ impl Runtime {
                 return true;
             }
             let e = &mut self.session.workspace_mut().schematic_authoring;
-            e.vertices.push(at);
+            if let Err(reason) = e.append_wire_vertex(at) {
+                e.refusal = Some(reason);
+            }
             e.position = Some(at);
             e.preview_dirty = true;
             self.invalidate_frame();

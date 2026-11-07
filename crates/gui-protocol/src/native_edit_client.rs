@@ -36,6 +36,12 @@ pub enum NativeEditAction {
     },
     MoveConnectivity {
         object: Uuid,
+        wire_edit:
+            Option<eda_engine::api::native_write::schematic_wire_edit_adapter::WireEditParams>,
+        x_nm: i64,
+        y_nm: i64,
+    },
+    MoveDesign {
         x_nm: i64,
         y_nm: i64,
     },
@@ -77,6 +83,7 @@ impl NativeEditAction {
             Self::Move { .. }
             | Self::MoveSymbol { .. }
             | Self::MoveSymbols { .. }
+            | Self::MoveDesign { .. }
             | Self::MoveText { .. }
             | Self::MoveLabel { .. }
             | Self::MoveConnectivity { .. } => true,
@@ -358,7 +365,7 @@ impl NativeProjectClient {
             NativeEditAction::Redo { expected_tip } => {
                 ("datum.journal.redo", json!({"expected_tip":expected_tip}))
             }
-            NativeEditAction::Schematic => intent
+            NativeEditAction::Schematic | NativeEditAction::MoveDesign { .. } => intent
                 .schematic
                 .as_ref()
                 .context("Schematic edit payload missing")?
@@ -400,9 +407,14 @@ impl NativeProjectClient {
                 "datum.schematic.move_label",
                 json!({"label":label,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
             ),
-            NativeEditAction::MoveConnectivity { object, x_nm, y_nm } => (
+            NativeEditAction::MoveConnectivity {
+                object,
+                x_nm,
+                y_nm,
+                wire_edit,
+            } => (
                 "datum.schematic.move",
-                json!({"object":object,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm}),
+                json!({"object":object,"instance_path":intent.instance_path,"x_nm":x_nm,"y_nm":y_nm,"wire_edit":wire_edit}),
             ),
             NativeEditAction::MoveSymbols {
                 x_nm,
@@ -441,11 +453,19 @@ impl NativeProjectClient {
             NativeEditAction::Save | NativeEditAction::Proposal => unreachable!(),
         };
         let reason = format!("GUI {verb}; request {}", intent.request_id);
+        // Empty-native bootstrap allocates once from this captured gesture seed.
+        // The canonical builder and final write envelope must keep that batch ID.
+        let batch_id = match &intent.schematic {
+            Some(crate::schematic_authoring::SchematicEditRequest::DesignEdit {
+                edit: eda_engine::api::native_write::design_clipboard_edit::DesignEditIntent::PlaceBundle { edit_seed, .. }, ..
+            }) => *edit_seed,
+            _ => intent.request_id,
+        };
         let result = self.call(
             "native.write",
             json!({"project_root":intent.project_root,
             "verb":verb,"params":params,"actor":"datum-gui","source":"manual","reason":reason,
-            "expected_model_revision":intent.expected_revision,"expected_transaction_tip":intent.expected_tip,"batch_id":intent.request_id}),
+            "expected_model_revision":intent.expected_revision,"expected_transaction_tip":intent.expected_tip,"batch_id":batch_id}),
             intent.request_id,
         );
         // An error/timeout never means a second attempt. Query the canonical

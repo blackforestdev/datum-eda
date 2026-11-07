@@ -1,4 +1,4 @@
-//! Rigid Wire/Junction Move previews over the immutable qualified source.
+//! Contact-aware connectivity previews over the immutable qualified source.
 use super::*;
 use crate::{
     AuthoredSelectionClass, AuthoredSelectionIdentity,
@@ -95,19 +95,30 @@ fn wire_and_junction_move_previews_preserve_qualified_source_without_writes() {
             id,
             instance_path: document_path.clone(),
         };
-        let preview = NativeMovePreview::connectivity(
+        let wire_edit = (class == AuthoredSelectionClass::Wire).then(|| {
+            eda_engine::api::native_write::schematic_wire_edit_adapter::WireEditParams {
+                action: eda_engine::api::native_write::schematic_wire_edit::WireEditAction::Move,
+                handle: eda_engine::api::native_write::schematic_wire_edit::WireHandle::Endpoint {
+                    end: eda_engine::api::native_write::schematic_wire_edit::WireEndpoint::From,
+                },
+                routing: eda_engine::api::native_write::schematic_wire_edit::WireRouting::Free,
+                edit_seed: uuid::Uuid::new_v4(),
+            }
+        });
+        let preview = NativeMovePreview::connectivity_with_wire_edit(
             &base,
             &authoring,
             &identity,
             cursor,
             snap,
             root.clone(),
+            wire_edit,
         )
         .unwrap();
         assert!(preview.is_schematic());
         assert_eq!(preview.identity().unwrap(), identity);
         assert_eq!(preview.instance_path(), document_path);
-        // Translation is cursor-delta applied to the object's anchor.
+        // Endpoint handles follow the exact destination; other subjects retain their cursor offset.
         let at = preview
             .destination(
                 PointNm {
@@ -119,8 +130,12 @@ fn wire_and_junction_move_previews_preserve_qualified_source_without_writes() {
             .unwrap();
         assert_eq!(
             (at.x, at.y),
-            (anchor.x + 2_000_000, anchor.y + 3_000_000),
-            "anchor-relative rigid translation"
+            if class == AuthoredSelectionClass::Wire {
+                (73_000_000, 84_000_000)
+            } else {
+                (anchor.x + 2_000_000, anchor.y + 3_000_000)
+            },
+            "handle-qualified destination"
         );
         let action = preview.action(at).unwrap();
         // The produced action must carry the shared runtime Move permission:
@@ -129,14 +144,42 @@ fn wire_and_junction_move_previews_preserve_qualified_source_without_writes() {
         // mirrored enum list.
         assert!(action.is_move());
         match action {
-            NativeEditAction::MoveConnectivity { object, x_nm, y_nm } => {
+            NativeEditAction::MoveConnectivity {
+                object,
+                x_nm,
+                y_nm,
+                wire_edit,
+            } => {
+                assert_eq!(wire_edit.is_some(), class == AuthoredSelectionClass::Wire);
                 assert_eq!(object, id);
                 assert_eq!((x_nm, y_nm), (at.x, at.y));
             }
             other => panic!("unexpected action {other:?}"),
         }
         // Preview ink projects a scene; the authored source bytes never change.
-        preview.scene_at(at).unwrap();
+        let moved = preview.scene_at(at).unwrap();
+        if class == AuthoredSelectionClass::Wire {
+            let path = &moved
+                .board_graphics
+                .iter()
+                .find(|g| {
+                    g.source_object_uuid == wire.uuid.to_string()
+                        && g.object_kind == "schematic_wire"
+                })
+                .unwrap()
+                .path;
+            assert_eq!(
+                path,
+                &vec![
+                    at,
+                    PointNm {
+                        x: wire.to.x,
+                        y: wire.to.y
+                    }
+                ],
+                "only the selected endpoint moves"
+            );
+        }
     }
     // A mismatched occurrence path and a non-connectivity class both refuse.
     assert!(
@@ -578,3 +621,6 @@ fn wire_point_returns_exact_contact_only_for_captured_source_wires() {
     );
     assert_eq!(authoring.wire_point("not-a-uuid", desired).unwrap(), None);
 }
+
+#[path = "schematic_wire_preview_tests.rs"]
+mod wire_preview_tests;

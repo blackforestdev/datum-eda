@@ -56,7 +56,28 @@ impl Runtime {
                 .get(key)
                 .is_some_and(|binding| binding.eligible(&self.workspace().ui.filters))
         });
-        let retained_target = hits.first().cloned();
+        let preferred = match &self.workspace().selection {
+            SelectionTarget::Native(view) if !view.stale && surface == SceneSurface::Schematic => {
+                match &view.subject {
+                    datum_gui_protocol::SelectionSubject::Object(id)
+                        if id.class == datum_gui_protocol::AuthoredSelectionClass::Wire =>
+                    {
+                        hits.iter().find(|hit| {
+                            let HitTarget::AuthoredObject(key) = hit else {
+                                return false;
+                            };
+                            basis
+                                .as_ref()
+                                .and_then(|basis| basis.bindings.get(key))
+                                .is_some_and(|binding| binding.acquired == *id)
+                        })
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
+        };
+        let retained_target = preferred.or_else(|| hits.first()).cloned();
         let selection = basis.as_ref().map(|basis| {
             let origins = hits
                 .iter()
@@ -87,6 +108,9 @@ impl Runtime {
             menu.append_checks(&self.workspace().checks);
             if let SelectionTarget::Native(view) = &self.workspace().selection {
                 menu.append_inspection(view);
+                if view.stale {
+                    menu.inspection_subject = None;
+                }
                 menu.append_inspector_pages(
                     self.workspace().ui.selection_inspector.inventory_expanded,
                     view.scope,

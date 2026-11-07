@@ -44,6 +44,7 @@ fn finish_owned_edit<R>(
 
 pub(super) struct EditWork {
     pub preview: Option<NativeMovePreview>,
+    previous_context_tool: Option<WorkspaceTool>,
     preview_tip: Option<String>,
     pending_position: Option<PointNm>,
     preview_awaiting_presentation: bool,
@@ -61,6 +62,7 @@ impl EditWork {
     pub fn new(wake: winit::event_loop::EventLoopProxy<()>) -> Self {
         Self {
             preview: None,
+            previous_context_tool: None,
             preview_tip: None,
             pending_position: None,
             preview_awaiting_presentation: false,
@@ -75,6 +77,7 @@ impl EditWork {
     pub(super) fn reset_project(&mut self) {
         debug_assert!(!self.pending());
         self.preview = None;
+        self.previous_context_tool = None;
         self.preview_tip = None;
         self.pending_position = None;
         self.preview_awaiting_presentation = false;
@@ -164,8 +167,13 @@ impl Runtime {
         let Some(preview) = &self.native_edit.preview else {
             return false;
         };
-        match preview.destination(world, self.workspace().authoring.snap) {
-            Ok(position) => self.native_edit.pending_position = Some(position),
+        match self.native_move_destination(preview, world) {
+            Ok(position) => {
+                crate::append_gui_verbose_diagnostic_line(|| {
+                    format!("native move intent {position:?}")
+                });
+                self.native_edit.pending_position = Some(position);
+            }
             Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
         }
         // Input captures the latest complete intent. The native frame materializes
@@ -185,6 +193,15 @@ impl Runtime {
         if self.native_edit.preview_awaiting_presentation {
             return;
         }
+        crate::append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native move frame preview={} awaiting={} pending={:?} tool={:?}",
+                self.native_edit.preview.is_some(),
+                self.native_edit.preview_awaiting_presentation,
+                self.native_edit.pending_position,
+                self.workspace().tool
+            )
+        });
         let Some(position) = self.native_edit.pending_position.take() else {
             return;
         };
@@ -193,8 +210,14 @@ impl Runtime {
         };
         match preview.scene_at(position) {
             Ok(scene) => {
+                crate::append_gui_verbose_diagnostic_line(|| {
+                    format!("native move scene ready {position:?}")
+                });
                 let schematic = preview.is_schematic();
-                if matches!(preview, NativeMovePreview::Symbols(_)) {
+                if matches!(
+                    preview,
+                    NativeMovePreview::Symbols(_) | NativeMovePreview::Wiring(_)
+                ) {
                     self.session.workspace_mut().authoring.gesture.preview = Some(position);
                 }
                 self.set_move_scene(schematic, scene);
@@ -354,6 +377,15 @@ impl Runtime {
             if let NativeEditAction::MoveSymbols { x_nm, y_nm, .. } = action {
                 intent.symbol_group = preview.group_request(PointNm { x: x_nm, y: y_nm });
             }
+            if let NativeEditAction::MoveDesign { x_nm, y_nm } = action {
+                match preview.design_request(PointNm { x: x_nm, y: y_nm }) {
+                    Ok(request) => intent.schematic = Some(request),
+                    Err(error) => {
+                        self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
+                        return true;
+                    }
+                }
+            }
         }
         if creating && let Some(draft) = &self.workspace().schematic_authoring.creation {
             intent.expected_revision = draft.revision.clone();
@@ -381,6 +413,7 @@ impl Runtime {
                 NativeEditAction::Move { x_nm, y_nm, .. }
                 | NativeEditAction::MoveSymbol { x_nm, y_nm, .. }
                 | NativeEditAction::MoveSymbols { x_nm, y_nm, .. }
+                | NativeEditAction::MoveDesign { x_nm, y_nm }
                 | NativeEditAction::MoveText { x_nm, y_nm, .. }
                 | NativeEditAction::MoveLabel { x_nm, y_nm, .. }
                 | NativeEditAction::MoveConnectivity { x_nm, y_nm, .. },
@@ -404,6 +437,7 @@ impl Runtime {
             .start(intent, backing.request, inputs, previous)
         {
             Ok(()) => {
+                self.restore_context_move_tool();
                 if let Some((schematic, base, scene)) = pending_move {
                     self.native_edit.pending_move_base = Some((schematic, base));
                     self.native_edit.preview = None;

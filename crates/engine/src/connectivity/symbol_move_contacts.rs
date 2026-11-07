@@ -20,7 +20,7 @@ enum ContactOrigin {
 }
 
 /// Shared scalar attachment nodes used by the existing connectivity owner.
-pub(super) fn schematic_attachment_points(sheet: &Sheet) -> HashSet<Point> {
+pub(crate) fn schematic_attachment_points(sheet: &Sheet) -> HashSet<Point> {
     sheet
         .junctions
         .values()

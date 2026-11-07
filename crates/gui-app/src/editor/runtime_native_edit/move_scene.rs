@@ -16,6 +16,7 @@ impl Runtime {
                 editor.circuit_preview = None;
             }
             self.session.workspace_mut().cancel_authoring_gesture();
+            self.restore_context_move_tool();
             self.invalidate_scene();
             return true;
         }

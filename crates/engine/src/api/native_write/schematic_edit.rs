@@ -317,29 +317,10 @@ pub fn build_wire_gesture(
             "Wire needs distinct consecutive vertices".into(),
         ));
     }
-    let mut junctions = BTreeSet::new();
+    let segments: Vec<_> = points.windows(2).map(|pair| (pair[0], pair[1])).collect();
+    let junctions = wire_t_contacts(sheet, &segments)?;
     let mut operations = Vec::new();
-    for pair in points.windows(2) {
-        let (a, b) = (pair[0], pair[1]);
-        for wire in sheet.wires.values() {
-            for endpoint in [a, b] {
-                if strictly_on_segment(endpoint, wire.from, wire.to)? {
-                    junctions.insert((endpoint.x, endpoint.y));
-                }
-            }
-            for endpoint in [wire.from, wire.to] {
-                if strictly_on_segment(endpoint, a, b)? {
-                    junctions.insert((endpoint.x, endpoint.y));
-                }
-            }
-        }
-        for other in points.windows(2) {
-            for endpoint in [other[0], other[1]] {
-                if strictly_on_segment(endpoint, a, b)? {
-                    junctions.insert((endpoint.x, endpoint.y));
-                }
-            }
-        }
+    for (a, b) in segments {
         let wire = crate::schematic::SchematicWire {
             uuid: Uuid::new_v4(),
             from: a,
@@ -371,6 +352,42 @@ pub fn build_wire_gesture(
         .push_ops(operations)
         .finish()?;
     prepare_native_birth(model, prepared)
+}
+
+/// Shared exact T-contact census for drawing and design-bundle placement.
+/// Endpoint-to-segment contacts create explicit markers; mere crossings do not.
+pub(super) fn wire_t_contacts(
+    sheet: &Sheet,
+    segments: &[(Point, Point)],
+) -> Result<BTreeSet<(i64, i64)>, EngineError> {
+    let mut junctions = BTreeSet::new();
+    for &(a, b) in segments {
+        if a == b {
+            return Err(EngineError::Validation(
+                "Wire needs distinct consecutive vertices".into(),
+            ));
+        }
+        for wire in sheet.wires.values() {
+            for endpoint in [a, b] {
+                if strictly_on_segment(endpoint, wire.from, wire.to)? {
+                    junctions.insert((endpoint.x, endpoint.y));
+                }
+            }
+            for endpoint in [wire.from, wire.to] {
+                if strictly_on_segment(endpoint, a, b)? {
+                    junctions.insert((endpoint.x, endpoint.y));
+                }
+            }
+        }
+        for &(from, to) in segments {
+            for endpoint in [from, to] {
+                if strictly_on_segment(endpoint, a, b)? {
+                    junctions.insert((endpoint.x, endpoint.y));
+                }
+            }
+        }
+    }
+    Ok(junctions)
 }
 
 fn strictly_on_segment(p: Point, a: Point, b: Point) -> Result<bool, EngineError> {

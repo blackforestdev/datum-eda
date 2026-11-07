@@ -489,6 +489,32 @@ ownership, full qualification and performance/HUMAN QA remain separate. Interfac
 legibility findings are retained as intake. This routine delivery does not advance
 the Active Frontier.
 
+The current wire-editing increment (`dat-schematic-wire-endpoint-edit-4368`)
+implements contact-aware endpoint, Junction, bend and selected-span editing over
+existing unsplit or segmented source wiring. Shared routing, topology commands,
+nearest-pin contacts and Wire/Junction clipboard use canonical atomic history.
+Independent isolated X11 checks cover copied-owner span/bend edits, context Delete
+and exact Undo, root Save/cold equality and one unique-child paste preserving the
+other six source sheets. Earlier refusal/failed-capture attempts retain their
+limits; the earlier child Paste worker's completed feedback was not established.
+Existing-object
+rotation/mirroring has separate identity-preserving engine/Move integration.
+Independent source review and focused tests pass; ordinary GUI input confirms
+exact off-grid pin reconnection and rotation, cancellation and fixed-contact
+refusal. Consecutive Undo exposed hidden Proposal bookkeeping in the manual
+binding. The correction uses one guarded direct batch per manual placement or
+transform and preserves explicit Proposal/history policy. The guarded release
+build and 92 focused checks pass. Independent isolated X11 review confirms exact
+off-grid endpoint reconnection followed by rotation and two consecutive Undo
+steps, context-tool restoration, truthful Paste completion, Paste Undo/Redo and
+Save/cold equality of all 385 saved canonical files. The failed history run is
+retained. Independent child rotation/mirroring review confirms the selected Wire/Junction
+UUIDs and other six source sheets remain intact. The traced
+child completion took about 29 seconds, so responsiveness is not qualified.
+Manual precise input, nudge controls and visible handle feedback remain open.
+The parent goal stays in progress; neither full qualification nor Wayland delivery
+is inferred from this increment.
+
 PM059 routine `dat-schematic-new-bus-members-a67z` delivers unused scalar Bus
 members as real nongraphical declarations, explicit member Entry selection, stable
 canonical identities and native Nets/ERC projection. Shared Wire/Bus Escape now

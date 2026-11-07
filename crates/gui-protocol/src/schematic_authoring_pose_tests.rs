@@ -533,3 +533,6 @@ mod group_move_tests;
 
 #[path = "schematic_text_tests.rs"]
 mod text_tests;
+
+#[path = "schematic_wiring_transform_preview_tests.rs"]
+mod wiring_transform_preview_tests;

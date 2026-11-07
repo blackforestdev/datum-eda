@@ -7,6 +7,9 @@ use datum_gui_protocol::{SessionCommand, WorkspaceTool};
 pub(super) enum WorkspaceCharacterAction {
     SetTool(WorkspaceTool),
     SelectAll,
+    CopyDesign,
+    CutDesign,
+    PasteDesign,
     Save,
     OpenProject,
     NewProject,
@@ -19,11 +22,15 @@ pub(super) enum WorkspaceCharacterAction {
     CycleCrosshair,
     PreviousReview,
     NextReview,
-    Consume,
 }
 
 pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCharacterAction> {
     let action = match text {
+        value if value.eq_ignore_ascii_case("c") && control => WorkspaceCharacterAction::CopyDesign,
+        value if value.eq_ignore_ascii_case("x") && control => WorkspaceCharacterAction::CutDesign,
+        value if value.eq_ignore_ascii_case("v") && control => {
+            WorkspaceCharacterAction::PasteDesign
+        }
         value if value.eq_ignore_ascii_case("s") && control => WorkspaceCharacterAction::Save,
         value if value.eq_ignore_ascii_case("n") && control => WorkspaceCharacterAction::NewProject,
         value if value.eq_ignore_ascii_case("o") && control => {
@@ -54,7 +61,6 @@ pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCha
         value if value.eq_ignore_ascii_case("f") => WorkspaceCharacterAction::FitCamera,
         value if value.eq_ignore_ascii_case("t") => WorkspaceCharacterAction::FitReviewTarget,
         value if value.eq_ignore_ascii_case("z") => WorkspaceCharacterAction::TogglePaneZoom,
-        value if value.eq_ignore_ascii_case("c") && control => WorkspaceCharacterAction::Consume,
         value if value.eq_ignore_ascii_case("c") => WorkspaceCharacterAction::CycleCrosshair,
         "[" => WorkspaceCharacterAction::PreviousReview,
         "]" => WorkspaceCharacterAction::NextReview,
@@ -65,6 +71,9 @@ pub(super) fn character_action(text: &str, control: bool) -> Option<WorkspaceCha
 
 pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> bool {
     match action {
+        WorkspaceCharacterAction::CopyDesign => runtime.copy_design_selection(false),
+        WorkspaceCharacterAction::CutDesign => runtime.copy_design_selection(true),
+        WorkspaceCharacterAction::PasteDesign => runtime.paste_design_clipboard(),
         WorkspaceCharacterAction::Save => runtime
             .queue_native_edit(datum_gui_protocol::native_edit_client::NativeEditAction::Save),
         WorkspaceCharacterAction::NewProject => runtime.activate_gui_local_menu_action(
@@ -104,7 +113,6 @@ pub(super) fn apply(runtime: &mut Runtime, action: WorkspaceCharacterAction) -> 
         WorkspaceCharacterAction::NextReview => {
             runtime.dispatch_session_command(SessionCommand::SelectNextReviewAction)
         }
-        WorkspaceCharacterAction::Consume => false,
     }
 }
 
@@ -152,7 +160,15 @@ mod tests {
         }
         assert_eq!(
             character_action("c", true),
-            Some(WorkspaceCharacterAction::Consume)
+            Some(WorkspaceCharacterAction::CopyDesign)
+        );
+        assert_eq!(
+            character_action("x", true),
+            Some(WorkspaceCharacterAction::CutDesign)
+        );
+        assert_eq!(
+            character_action("v", true),
+            Some(WorkspaceCharacterAction::PasteDesign)
         );
         assert_eq!(character_action("q", false), None);
         assert_eq!(character_action("o", false), None);

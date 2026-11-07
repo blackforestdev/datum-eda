@@ -59,12 +59,23 @@ impl MarkingMenuState {
     pub fn schematic_context_target(&self) -> Option<&crate::AuthoredSelectionIdentity> {
         let menu = self.selection.as_ref().filter(|m| m.schematic)?;
         let mut candidates = menu.overlap_candidates();
-        let target = candidates.next()?;
-        if candidates.next().is_some()
-            || !menu
-                .preview_keys
-                .get(target)?
-                .contains(self.target_object_id.as_ref()?)
+        let first = candidates.next()?;
+        let target = if candidates.next().is_none() {
+            first
+        } else {
+            let crate::SelectionSubject::Object(preferred) = menu.inspection_subject.as_ref()?
+            else {
+                return None;
+            };
+            if preferred.class != crate::AuthoredSelectionClass::Wire {
+                return None;
+            }
+            menu.overlap_candidates().find(|id| *id == preferred)?
+        };
+        if !menu
+            .preview_keys
+            .get(target)?
+            .contains(self.target_object_id.as_ref()?)
         {
             return None;
         }
@@ -158,11 +169,42 @@ impl MarkingMenuState {
         if authoring.delete_review.is_some() {
             return Err("Accept or dismiss the deletion proposal first".into());
         }
+        if let B::GuiLocal(key) = item.binding() {
+            if let Some(command) =
+                crate::gui_menu_model::wire_commands::WireCommand::from_action(key)
+                    .filter(|c| c.is_configuration())
+            {
+                if let Some(reason) = command.unavailable_reason(state) {
+                    return Err(reason.into());
+                }
+                return crate::gui_menu_model::native_edit_unavailable_reason(
+                    state,
+                    "datum.schematic.move",
+                )
+                .map_or(Ok(()), |reason| Err(reason.into()));
+            }
+        }
         if authoring.active() || authoring.picker || authoring.creation.is_some() {
             return Err("Finish or cancel the current edit first".into());
         }
         let class = target.map(|id| id.class);
         let verb = match item.binding() {
+            B::GuiLocal("schematic.selection.delete") if class == Some(C::Wire) => {
+                "datum.schematic.delete_wire"
+            }
+            B::GuiLocal("edit.copy" | "edit.cut" | "edit.duplicate") if class == Some(C::Wire) => {
+                "datum.schematic.draw_wire"
+            }
+            B::GuiLocal("edit.paste") if self.menu_key == "schematic.empty" => {
+                "datum.schematic.draw_wire"
+            }
+            B::GuiLocal(key)
+                if class == Some(C::Wire)
+                    && crate::gui_menu_model::wire_commands::WireCommand::from_action(key)
+                        .is_some() =>
+            {
+                "datum.schematic.move"
+            }
             B::GuiLocal("schematic.gate.place") if class == Some(C::Symbol) => {
                 return crate::schematic_authoring::gate_placement::GatePlacementDraft::admit_target(state,target.unwrap());
             }

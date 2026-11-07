@@ -26,6 +26,13 @@ pub mod board_layout;
 pub mod board_routing;
 pub mod component_instances;
 pub mod context;
+pub mod design_clipboard;
+pub mod design_clipboard_edit;
+mod design_clipboard_receipt;
+#[cfg(test)]
+mod design_clipboard_receipt_tests;
+#[cfg(test)]
+mod design_clipboard_tests;
 pub mod durability;
 pub mod electrical;
 pub mod forward_annotation;
@@ -56,6 +63,7 @@ pub mod schematic_connectivity;
 mod schematic_custom_fields;
 mod schematic_delete;
 pub mod schematic_delete_proposal;
+mod schematic_design_move;
 mod schematic_disposition;
 pub mod schematic_edit;
 pub mod schematic_field_batch;
@@ -78,6 +86,12 @@ pub mod schematic_symbol_move;
 mod schematic_symbol_payload;
 pub mod schematic_symbols;
 pub mod schematic_text;
+pub mod schematic_wire_edit;
+pub mod schematic_wire_edit_adapter;
+#[cfg(test)]
+mod schematic_wire_edit_adapter_tests;
+#[cfg(test)]
+mod schematic_wire_lifecycle_adapter_tests;
 pub mod waivers;
 
 #[cfg(test)]

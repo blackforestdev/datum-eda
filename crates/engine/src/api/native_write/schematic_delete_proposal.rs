@@ -57,6 +57,12 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateDesignEdit {
+        proposal_id: Uuid,
+        sheet: Uuid,
+        instance_path: Vec<Uuid>,
+        edit: super::design_clipboard_edit::DesignEditIntent,
+    },
     CreateProjectAnnotation {
         proposal_id: Uuid,
     },
@@ -110,7 +116,8 @@ impl NativeProposalAction {
             Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateChildSheet(request) => request.proposal_id,
             Self::CreateInterfaceBinding(request) => request.proposal_id,
-            Self::CreateFieldBatch { proposal_id, .. }
+            Self::CreateDesignEdit { proposal_id, .. }
+            | Self::CreateFieldBatch { proposal_id, .. }
             | Self::CreateAnnotation { proposal_id, .. }
             | Self::CreateProjectAnnotation { proposal_id }
             | Self::CreateAssignment { proposal_id, .. }
@@ -211,6 +218,42 @@ pub fn execute(
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateDesignEdit {
+            sheet,
+            instance_path,
+            edit,
+            ..
+        } => {
+            let context = NativeWriteContext {
+                model,
+                project_root: &request.project_root,
+            };
+            let (mut write, rationale) = super::design_clipboard_receipt::prepare(
+                &context,
+                WriteProvenance::new(
+                    "datum-gui",
+                    CommitSource::Manual,
+                    super::design_clipboard_receipt::REASON,
+                ),
+                id,
+                *sheet,
+                instance_path,
+                edit,
+            )?;
+            write.batch.batch_id = id;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale,
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
         NativeProposalAction::CreateProjectAnnotation { .. } => {
             let mut write = super::schematic_project_annotation::build(model)?;
             write.batch.batch_id = id;
@@ -401,7 +444,7 @@ pub fn execute(
                 proposal.status,
                 ProposalStatus::Draft | ProposalStatus::Accepted
             ) {
-                validate_disposition_current(model, proposal)?;
+                validate_disposition_current(model, proposal, &request.project_root)?;
                 preview_proposal_diff_journaled(model, &request.project_root, id)?;
             }
         }
@@ -410,7 +453,7 @@ pub fn execute(
             if super::schematic_child_sheet::is_child_sheet(proposal) {
                 super::schematic_child_sheet::check_destinations(proposal, &request.project_root)?;
             }
-            validate_disposition_current(model, proposal)?;
+            validate_disposition_current(model, proposal, &request.project_root)?;
             let status = proposal.status;
             if status == ProposalStatus::Draft {
                 review_proposal_status(model, &request.project_root, id, ProposalStatus::Accepted)?;
@@ -541,6 +584,10 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
             "This native action requires a manual proposal for this project",
         ));
     }
+    if super::design_clipboard_receipt::is_design_edit(p) {
+        super::design_clipboard_receipt::validate_recorded(p)?;
+        return Ok(p);
+    }
     if super::schematic_interface_binding::is_interface_binding(p) {
         super::schematic_interface_binding::validate_recorded(p)?;
         return Ok(p);
@@ -600,7 +647,15 @@ fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineErr
 fn validate_disposition_current(
     model: &DesignModel,
     proposal: &Proposal,
+    root: &std::path::Path,
 ) -> Result<(), EngineError> {
+    if super::design_clipboard_receipt::is_design_edit(proposal) {
+        let context = NativeWriteContext {
+            model,
+            project_root: root,
+        };
+        super::design_clipboard_receipt::validate_current(&context, proposal)?;
+    }
     if super::schematic_interface_binding::is_interface_binding(proposal) {
         super::schematic_interface_binding::summary(model, proposal, true)?;
     }

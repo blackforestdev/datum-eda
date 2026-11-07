@@ -4,7 +4,7 @@
 //! `{symbol|wire|label: UUID, instance_path: [UUID]}`. One parametrized
 //! `datum.schematic.move` accepts `{object, instance_path, x_nm, y_nm}`: the
 //! kind resolves from the actual source, the destination is the object's
-//! anchor (junction point, or wire `from` with rigid `to` translation), and
+//! anchor, with an explicit `wire_edit` handle required for wires), and
 //! placement-grade duplicate refusal applies to junctions. `set_symbol_reference`
 //! requires `{symbol, instance_path, reference}` and optionally `value`;
 //! `set_symbol_value` requires `value` and optionally `reference`. Both fields
@@ -213,24 +213,50 @@ struct MoveParams {
     instance_path: Vec<Uuid>,
     x_nm: i64,
     y_nm: i64,
+    #[serde(default)]
+    wire_edit: Option<super::schematic_wire_edit_adapter::WireEditParams>,
 }
 
-/// One parametrized connectivity move: the kind is resolved from the actual
-/// source, never from a caller-declared class. The destination is the moved
-/// object's anchor — a junction's point, or a wire's `from` endpoint with the
-/// `to` endpoint translated rigidly. Unselected authored geometry stays fixed;
-/// connectivity re-derives under the existing explicit-junction rules
-/// (PM disposition on dat-ordinary-circuit-authoring-zvhw).
+/// One shared Move adapter. Wires require an explicit source-qualified handle;
+/// A Junction may use its exact graph Vertex; Port rejects wire parameters.
+/// Geometry is planned over the immutable complete source before any operation.
 fn move_selected(
     context: &NativeWriteContext<'_>,
     provenance: WriteProvenance,
     params: serde_json::Value,
 ) -> Result<PreparedWrite, EngineError> {
+    if params.get("design_edit").is_some() {
+        return super::schematic_design_move::build(context, provenance, params);
+    }
     let p: MoveParams = parse_verb_params("datum.schematic.move", params)?;
     let snapshot = ElectricalSelectionSnapshotRef::capture(context)?;
     let class = snapshot.movable_class(p.object)?;
+    if !matches!(class, "wires" | "junctions") && p.wire_edit.is_some() {
+        return Err(invalid(
+            "Wire edit parameters require a selected Wire or Junction",
+        ));
+    }
     match class {
-        "wires" => move_wire(context, provenance, &p),
+        "wires" => super::schematic_wire_edit_adapter::move_handle(
+            context,
+            provenance,
+            p.object,
+            class,
+            &p.instance_path,
+            crate::ir::geometry::Point::new(p.x_nm, p.y_nm),
+            p.wire_edit
+                .as_ref()
+                .ok_or_else(|| invalid("Select an explicit wire edit handle"))?,
+        ),
+        "junctions" if p.wire_edit.is_some() => super::schematic_wire_edit_adapter::move_handle(
+            context,
+            provenance,
+            p.object,
+            class,
+            &p.instance_path,
+            crate::ir::geometry::Point::new(p.x_nm, p.y_nm),
+            p.wire_edit.as_ref().unwrap(),
+        ),
         "junctions" => move_junction(context, provenance, &p),
         "ports" => move_port(context, provenance, &p),
         _ => Err(invalid(
@@ -304,64 +330,6 @@ fn move_port(
             sheet_id,
             port_id: p.object,
             port: payload,
-        })
-        .primary_object(p.object)
-        .finish()
-}
-
-/// Rigid identity-preserving translation of one authored wire segment.
-/// Coincident geometry stays authored where it is; connectivity re-derives.
-fn move_wire(
-    context: &NativeWriteContext<'_>,
-    provenance: WriteProvenance,
-    p: &MoveParams,
-) -> Result<PreparedWrite, EngineError> {
-    let (source, sheet_id) = selected_source(context, "wires", p.object, &p.instance_path)?;
-    let sheet = &source.sheets[&sheet_id];
-    if sheet
-        .bus_entries
-        .values()
-        .any(|entry| entry.wire == Some(p.object))
-    {
-        return Err(invalid(
-            "Wire is referenced by a bus entry; remove the entry first",
-        ));
-    }
-    let wire = &sheet.wires[&p.object];
-    let (dx, dy) = (
-        i128::from(p.x_nm) - i128::from(wire.from.x),
-        i128::from(p.y_nm) - i128::from(wire.from.y),
-    );
-    if dx == 0 && dy == 0 {
-        return Err(invalid("Wire move destination is unchanged"));
-    }
-    let translate = |point: crate::ir::geometry::Point| {
-        let x = i128::from(point.x) + dx;
-        let y = i128::from(point.y) + dy;
-        match (i64::try_from(x), i64::try_from(y)) {
-            (Ok(x), Ok(y)) => Ok(crate::ir::geometry::Point { x, y }),
-            _ => Err(invalid("Wire moved coordinate overflow")),
-        }
-    };
-    // Raw authored payload stays authoritative: Delete carries the exact
-    // original bytes and Create the same clone with only the endpoints set
-    // (the Symbol attached-wire pattern).
-    let raw = source_sheet_payload(context.model, sheet_id, p.object)?;
-    let original = member_payload(&raw, "wires", p.object, wire)?;
-    require_unlocked(&original)?;
-    let mut moved = original.clone();
-    set_point(&mut moved["from"], translate(wire.from)?);
-    set_point(&mut moved["to"], translate(wire.to)?);
-    BatchComposer::compose(context.model, provenance)
-        .push_op(Operation::DeleteSchematicWire {
-            sheet_id,
-            wire_id: p.object,
-            wire: original,
-        })
-        .push_op(Operation::CreateSchematicWire {
-            sheet_id,
-            wire_id: p.object,
-            wire: moved,
         })
         .primary_object(p.object)
         .finish()

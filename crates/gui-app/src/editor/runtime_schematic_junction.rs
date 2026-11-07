@@ -14,16 +14,21 @@ impl Runtime {
         // else — including the junction single-wire case — resolves through
         // the one shared snap service (pin priority, exact wire contact,
         // grid), which owns the ink-envelope and far-jump policy.
-        let resolved = if self.workspace().schematic_authoring.marker == Some(MarkerKind::Junction)
-        {
-            match self.junction_anchor(world, screen) {
-                Ok(Some(anchor)) => Ok(anchor),
-                Ok(None) => self.schematic_snap_point(world, screen),
-                Err(reason) => Err(reason),
+        let bindings = self
+            .pane_at_screen(screen.0, screen.1)
+            .ok_or_else(|| "Focus the schematic".to_owned())
+            .and_then(|pane| self.prepare_schematic_contact_bindings(pane));
+        let resolved = bindings.and_then(|()| {
+            if self.workspace().schematic_authoring.marker == Some(MarkerKind::Junction) {
+                match self.junction_anchor(world, screen) {
+                    Ok(Some(anchor)) => Ok(anchor),
+                    Ok(None) => self.schematic_snap_point(world, screen),
+                    Err(reason) => Err(reason),
+                }
+            } else {
+                self.schematic_snap_point(world, screen)
             }
-        } else {
-            self.schematic_snap_point(world, screen)
-        };
+        });
         match resolved {
             Ok(point) => {
                 self.session.workspace_mut().schematic_authoring.refusal = None;
@@ -74,10 +79,18 @@ impl Runtime {
             .render_session()
             .schematic_for_pane(pane)
             .ok_or("Wait for the current schematic frame")?;
+        let bindings = self
+            .read_native_binding_basis(SceneSurface::Schematic, Some(pane))
+            .map_err(|error| error.to_string())?
+            .ok_or("Electrical source authority is unavailable")?;
         let source_wire = |target: &HitTarget| {
             let HitTarget::AuthoredObject(id) = target else {
                 return None;
             };
+            bindings
+                .bindings
+                .get(id)
+                .filter(|binding| binding.eligible(&state.ui.filters))?;
             let graphic = scene.board_graphics.iter().find(|g| &g.object_id == id)?;
             let uuid = graphic
                 .source_object_uuid

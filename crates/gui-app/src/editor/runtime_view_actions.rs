@@ -139,6 +139,11 @@ impl Runtime {
             GuiLocalHandler::PlaceChildSheet => self.begin_child_sheet(),
             GuiLocalHandler::PlaceAnotherGate => self.begin_schematic_gate_placement(),
             GuiLocalHandler::DeleteSchematicSelection => self.delete_selected_schematic(),
+            GuiLocalHandler::CopyDesign => self.copy_design_selection(false),
+            GuiLocalHandler::CutDesign => self.copy_design_selection(true),
+            GuiLocalHandler::PasteDesign => self.paste_design_clipboard(),
+            GuiLocalHandler::DuplicateDesign => self.duplicate_design_selection(),
+            GuiLocalHandler::WireEdit(command) => self.activate_wire_command(command, None),
             GuiLocalHandler::PowerPort => {
                 if let Some(reason) =
                     datum_gui_protocol::gui_menu_model::native_edit_unavailable_reason(

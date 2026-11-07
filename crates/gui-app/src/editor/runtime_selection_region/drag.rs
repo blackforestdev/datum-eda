@@ -37,9 +37,23 @@ impl Runtime {
             return None;
         };
         let basis = hit.basis?;
+        let key = if surface == SceneSurface::Schematic {
+            self.wire_handle_pickup_key(key, &basis, world, pane)
+        } else {
+            key
+        };
         let binding = basis.bindings.get(&key)?;
         let current = selection_at_press.as_ref().map(|(subject, _, _)| subject);
         let subject = drag_subject(current, &binding.acquired)?;
+        if binding.acquired.class == AuthoredSelectionClass::Wire {
+            let scene = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?;
+            let allow_segment = current == Some(&subject);
+            self.wire_pickup_handle(scene, &binding.acquired, world, allow_segment)
+                .ok()?;
+        }
+        crate::append_gui_verbose_diagnostic_line(|| {
+            format!("selection drag captured subject={subject:?} anchor={world:?}")
+        });
         let acquisition = (current != Some(&subject)).then_some((key, basis));
         Some(SelectionMoveDrag {
             subject,
@@ -70,6 +84,13 @@ impl Runtime {
                 _ => false,
             }
         };
+        crate::append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "selection drag advance started={} current={current} pending={}",
+                drag.started,
+                self.check_work.pending()
+            )
+        });
         if !current || self.check_work.pending() {
             if drag.started {
                 self.cancel_native_move();
@@ -85,6 +106,7 @@ impl Runtime {
             if scene.is_none_or(|s| {
                 format!("{}@{}", s.scene_id, s.source_revision) != gesture.source_revision
             }) {
+                crate::append_gui_verbose_diagnostic_line(|| "selection drag source scene changed");
                 return true;
             }
             if let Some((key, captured)) = drag.acquisition.take() {
@@ -102,6 +124,9 @@ impl Runtime {
                         .get(&key)
                         .is_some_and(|binding| binding.eligible(&self.workspace().ui.filters))
                 {
+                    crate::append_gui_verbose_diagnostic_line(
+                        || "selection drag binding basis changed",
+                    );
                     return true;
                 }
                 let SelectionSubject::Object(id) = &drag.subject else {
@@ -125,6 +150,9 @@ impl Runtime {
             self.dispatch_session_command(SessionCommand::SetTool(WorkspaceTool::Move));
             self.begin_selected_native_move_at(Some(drag.anchor));
             drag.started = self.native_edit.preview.is_some();
+            crate::append_gui_verbose_diagnostic_line(|| {
+                format!("selection drag move begun={}", drag.started)
+            });
             if !drag.started {
                 self.dispatch_session_command(SessionCommand::SetTool(drag.previous_tool));
                 return true;

@@ -83,6 +83,15 @@ impl Runtime {
         ) {
             return false;
         }
+        if let Some(command) = item
+            .gui_local
+            .as_deref()
+            .and_then(datum_gui_protocol::gui_menu_model::wire_commands::WireCommand::from_action)
+            .filter(|c| c.is_configuration())
+        {
+            self.dismiss_marking_menu();
+            return self.activate_wire_command(command, None);
+        }
         let move_object = matches!(
             item.verb.as_deref(),
             Some("datum.schematic.move_symbol" | "datum.schematic.move")
@@ -116,6 +125,13 @@ impl Runtime {
                 );
                 return true;
             }
+        }
+        if let Some(command) = item
+            .gui_local
+            .as_deref()
+            .and_then(datum_gui_protocol::gui_menu_model::wire_commands::WireCommand::from_action)
+        {
+            return self.activate_wire_command(command, pickup);
         }
         if move_object {
             if let Some(pickup) = pickup {
