@@ -70,6 +70,7 @@ pub struct PreparedScene {
     /// Revision-qualified keys shared by prepared clones; pointer hover cannot
     /// add a second halo to an actual selected member.
     pub(super) selection_hover: SelectionHover,
+    pub(super) wire_handles: native_selection_overlay::wire_handles::Catalog,
     /// Source-qualified menu pre-highlight survives pointer suffix refreshes.
     pub(super) menu_hover: Option<(
         Option<datum_gui_protocol::RectNm>,
@@ -89,6 +90,43 @@ pub struct PreparedScene {
 }
 
 impl PreparedScene {
+    pub fn has_edit_handles(
+        &self,
+        state: &ReviewWorkspaceState,
+        pane: datum_gui_protocol::PaneId,
+    ) -> bool {
+        self.wire_handles.is_current(state) && self.wire_handles.contains_pane(pane)
+    }
+    pub fn edit_handle_at_screen(
+        &self,
+        state: &ReviewWorkspaceState,
+        x: f32,
+        y: f32,
+    ) -> Option<datum_gui_protocol::MoveHandleKind> {
+        if !self.wire_handles.is_current(state) {
+            return None;
+        }
+        self.surface_passes
+            .iter()
+            .find_map(|pass| self.wire_handles.hover_kind(pass, (x, y)))
+    }
+    pub fn edit_handle_pick_at_screen(
+        &self,
+        state: &ReviewWorkspaceState,
+        x: f32,
+        y: f32,
+    ) -> Option<(
+        String,
+        datum_gui_protocol::AuthoredSelectionIdentity,
+        eda_engine::api::native_write::schematic_wire_edit::WireHandle,
+    )> {
+        if !self.wire_handles.is_current(state) {
+            return None;
+        }
+        self.surface_passes
+            .iter()
+            .find_map(|pass| self.wire_handles.pick(pass, (x, y)))
+    }
     pub fn selection_visual_lod(&self) -> Option<SelectionVisualLod> {
         self.selection_visual_lod
     }

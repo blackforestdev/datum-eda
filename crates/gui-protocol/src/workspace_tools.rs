@@ -3,6 +3,15 @@ use crate::{PaneContent, PaneId, PointNm, ReviewWorkspaceState};
 #[path = "workspace_tools/feedback.rs"]
 mod feedback;
 pub use feedback::EditorTool;
+#[path = "coordinate_entry.rs"]
+pub mod coordinate_entry;
+pub use coordinate_entry::{CoordinateEntry, CoordinateEntryMode};
+#[path = "move_handle_feedback.rs"]
+mod move_handle_feedback;
+pub use move_handle_feedback::{MoveHandleFeedback, MoveHandleKind};
+#[path = "coordinate_entry_form.rs"]
+mod coordinate_entry_form;
+pub use coordinate_entry_form::{CoordinateEntryControl, CoordinateEntryForm};
 
 /// One shared consumer token for native authoring previews. It grants no write
 /// authority; the canonical client still checks its own immutable intent basis.
@@ -211,6 +220,8 @@ impl AuthoringGestureState {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthoringToolState {
+    pub handle_feedback: Option<MoveHandleFeedback>,
+    pub coordinates: Option<CoordinateEntryForm>,
     pub snap: AuthoringSnapState,
     pub gesture: AuthoringGestureState,
 }

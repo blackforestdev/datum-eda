@@ -4,6 +4,8 @@ use super::*;
 mod symbol_pose;
 #[path = "wire_commands.rs"]
 mod wire_commands;
+#[path = "wire_feedback.rs"]
+mod wire_feedback;
 #[path = "wire_handles.rs"]
 mod wire_handles;
 impl Runtime {
@@ -36,15 +38,46 @@ impl Runtime {
         else {
             return;
         };
+        // The grip catalogue belongs to the presented selection. Capture its
+        // typed edit before publishing the picked identity invalidates it.
+        let wire_edit = if matches!(
+            expected.class,
+            datum_gui_protocol::AuthoredSelectionClass::Wire
+                | datum_gui_protocol::AuthoredSelectionClass::Junction
+        ) {
+            let Some(scene) = self
+                .pane_at_screen(screen.0, screen.1)
+                .and_then(|pane| datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane))
+            else {
+                return;
+            };
+            match self.wire_edit_configuration(scene, &expected, world) {
+                Ok(edit) => edit,
+                Err(error) => {
+                    self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
+                    return;
+                }
+            }
+        } else {
+            None
+        };
         // Publishing selection invalidates PreparedScene. Keep this qualified
         // identity instead of re-hitting a scene that awaits the next frame.
         if self
             .acquire_native_key_from_basis(&key, Some(world), &basis)
             .unwrap_or(false)
             && matches!(&self.workspace().selection, SelectionTarget::Native(view)
-                if !view.stale && view.subject == SelectionSubject::Object(expected))
+                if !view.stale && view.subject == SelectionSubject::Object(expected.clone()))
         {
-            self.begin_selected_native_move_at(Some(world));
+            if wire_edit.is_some() {
+                self.begin_schematic_move(
+                    SelectionSubject::Object(expected),
+                    Some(world),
+                    wire_edit,
+                );
+            } else {
+                self.begin_selected_native_move_at(Some(world));
+            }
         }
     }
     // Every admitted subject is indivisible; acquisition never uses Inspector scope.
@@ -174,7 +207,12 @@ impl Runtime {
                 );
                 return true;
             }
-            let destination = match self.native_move_destination(preview, world) {
+            let destination = match self
+                .native_edit
+                .exact_position
+                .map(Ok)
+                .unwrap_or_else(|| self.native_move_destination(preview, world))
+            {
                 Ok(p) => p,
                 Err(error) => {
                     self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
@@ -251,11 +289,14 @@ impl Runtime {
             .journal
             .accepted_transaction_tip
             .clone();
+        self.native_edit.exact_position = None;
+        self.native_edit.exact_cursor = None;
+        self.native_edit.current_position = Some(preview.component.position);
         self.native_edit.preview = Some(NativeMovePreview::Footprint(preview));
         self.invalidate_frame();
         true
     }
-    fn begin_schematic_move(
+    pub(crate) fn begin_schematic_move(
         &mut self,
         subject: datum_gui_protocol::SelectionSubject,
         anchor: Option<PointNm>,
@@ -410,6 +451,9 @@ impl Runtime {
                     .journal
                     .accepted_transaction_tip
                     .clone();
+                self.native_edit.exact_position = None;
+                self.native_edit.exact_cursor = None;
+                self.native_edit.current_position = Some(preview.reference_position());
                 self.native_edit.preview = Some(preview);
                 self.invalidate_frame();
             }

@@ -3,6 +3,11 @@ use super::*;
 
 impl Runtime {
     pub(crate) fn cancel_native_move(&mut self) -> bool {
+        self.session.workspace_mut().authoring.handle_feedback = None;
+        self.session.workspace_mut().authoring.coordinates = None;
+        self.native_edit.exact_position = None;
+        self.native_edit.current_position = None;
+        self.native_edit.exact_cursor = None;
         self.native_edit.pending_position = None;
         self.native_edit.preview_awaiting_presentation = false;
         if let Some(preview) = self.native_edit.preview.take() {

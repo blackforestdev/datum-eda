@@ -157,7 +157,7 @@ GUI-LOCAL.
 | Item | Verb / builder | Status |
 |---|---|---|
 | Symbol | `datum.schematic.place_symbol` / `build_place_schematic_symbol` | PARTIAL: named narrow picker/place/preview/cancel; full browser/approved seed and every menu projection remain open |
-| Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | PARTIAL: qualified polyline/endpoint Junctions, shared handle Move and Split/Insert Bend/Remove Segment/Remove Bend; Free/90/45 routing and nearest-pin contacts; manual precision/nudge/handle feedback and full menu qualification remain open |
+| Wire | `datum.schematic.draw_wire` / `build_create_schematic_wire` | PARTIAL: qualified polyline/endpoint Junctions, shared handle Move and Split/Insert Bend/Remove Segment/Remove Bend; Free/90/45 routing and nearest-pin contacts; captured Move Coordinates… exact absolute/delta entry, canvas-owned grid nudge and qualified wire grips; full menu qualification remains open |
 | Label | `datum.schematic.place_label` / `build_create_schematic_label` | ENGINE-READY / GUI-BLOCKED |
 | Junction / No-connect / Port / Bus / Bus-entry | `datum.schematic.place_*` / connectivity builders | ENGINE-READY / GUI-BLOCKED |
 | Sheet | GUI-local `schematic.child_sheet.place` → shared name/pose → typed `CreateChildSheet` Proposal → existing source/definition/instance operations | Bounded implementation and independent GUI verification: new blank child under one unique qualified parent, including a unique child; explicit acceptance/cancel/history/Save/cold reopen; no existing-source reuse/pins/rewiring |

@@ -54,6 +54,8 @@ pub enum HitTarget {
         visible: usize,
     },
     Library(datum_gui_protocol::library_browser::LibraryControl),
+    MoveCoordinates,
+    CoordinateEntry(datum_gui_protocol::CoordinateEntryControl),
     SchematicPicker,
     SchematicName,
     SchematicCustomField(datum_gui_protocol::schematic_authoring::CustomFieldControl),

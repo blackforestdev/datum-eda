@@ -304,6 +304,17 @@ pub(crate) fn push_schematic_authoring_feedback(
         &scene.bounds,
         plan.camera,
     );
+    let viewport = plan.viewport;
+    let mut grips = Vec::new();
+    native_selection_overlay::wire_handles::push_selected(
+        &mut grips,
+        scene,
+        state,
+        pane,
+        &projection,
+        viewport,
+    );
+    plan.base_output(out, false).extend(grips);
     if state
         .authoring
         .gesture

@@ -9,6 +9,8 @@ mod field_controls;
 mod field_table;
 #[path = "schematic_label.rs"]
 mod label;
+#[path = "move_controls.rs"]
+mod move_controls;
 use datum_gui_protocol::{
     ReviewWorkspaceState,
     schematic_authoring::{MarkerKind, PlacementField},
@@ -20,6 +22,9 @@ pub(super) fn render(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) -> anyhow::Result<()> {
+    if state.authoring.coordinates.is_some() {
+        return crate::single_line_control::coordinates::render(state, layout, quads, text, hits);
+    }
     if state
         .schematic_authoring
         .delete_review
@@ -473,78 +478,10 @@ pub(super) fn render(
                 text,
             );
         }
-    } else if state.authoring.gesture.tool == datum_gui_protocol::WorkspaceTool::Move
-        && state
-            .authoring
-            .gesture
-            .target_object_id
-            .as_deref()
-            .is_some_and(|id| {
-                id.starts_with("schematic-symbol:")
-                    || id.starts_with("schematic-symbols:")
-                    || id.starts_with("schematic-text:")
-                    || id.starts_with("schematic-wiring-")
-            })
-    {
-        let panel = RectPx {
-            x: layout.top_menu_bar.width / 2. - 210.,
-            y: 76.,
-            width: 420.,
-            height: 60.,
-        };
-        quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
-        let group = state
-            .authoring
-            .gesture
-            .target_object_id
-            .as_deref()
-            .and_then(|id| id.strip_prefix("schematic-symbols:"));
-        let is_text = state
-            .authoring
-            .gesture
-            .target_object_id
-            .as_deref()
-            .is_some_and(|id| id.starts_with("schematic-text:"));
-        let title = group
-            .map(|count| format!("Move {count} symbols · R: rotate · X/Y: flip"))
-            .unwrap_or_else(|| {
-                if state
-                    .authoring
-                    .gesture
-                    .target_object_id
-                    .as_deref()
-                    .is_some_and(|id| id.starts_with("schematic-wiring-"))
-                {
-                    "Move wiring · R: rotate · X/Y: flip".into()
-                } else if is_text {
-                    "Move Text · R: rotate".into()
-                } else {
-                    "Move symbol · R: rotate · X/Y: flip horiz/vert".into()
-                }
-            });
-        draw_text(
-            &title,
-            panel.x + 10.,
-            panel.y + 10.,
-            12.,
-            TEXT_PRIMARY,
-            TextFace::UiStrong,
-            text,
-        );
-        draw_text(
-            if group.is_some() {
-                "Cross: pickup reference · Click apply · Esc cancel"
-            } else {
-                "Click: apply · Esc: cancel"
-            },
-            panel.x + 10.,
-            panel.y + 32.,
-            11.,
-            TEXT_MUTED,
-            TextFace::Ui,
-            text,
-        );
+    } else {
+        move_controls::render(state, layout, quads, text, hits)?;
     }
+
     Ok(())
 }
 fn button(

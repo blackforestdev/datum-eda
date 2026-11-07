@@ -217,11 +217,18 @@ Both single edges and complete supported Wire/Junction compounds use the same
 preview/canonical plan. Local visible manual placement and transforms commit
 one design transaction without hidden Draft/Accepted bookkeeping in Undo.
 Explicit Proposal consumers retain their immutable prepared receipts and review
-policy; existing Proposal history is not rewritten. This increment does not supply
-component clipboard support, obstacle routing, new keyboard nudge bindings or a
-manual precise-coordinate form. Shared checked handle displacement is available
-in the engine; manual nudge and precise-entry controls and visible handle feedback
-remain open under `dat-schematic-wire-endpoint-edit-4368`.
+policy; existing Proposal history is not rewritten. Captured Move exposes
+Coordinates… with exact absolute/delta X/Y entry using captured Project units.
+Valid values update the same guarded preview; invalid or refused values preserve
+the preceding valid pose and editable text. Apply submits the same plan without
+pointer snapping. Cancel/Escape closes the form and restores the preceding Move
+preview; the next Escape cancels Move. With captured canvas ownership, plain
+arrows displace the preview by the displayed exact current-grid increment; the
+ordinary apply click commits it. Text, navigation, menu and pan owners retain
+their inputs. Qualified selected wire grips distinguish physical ends, contact
+vertices and existing Junctions, with the same captured handle used for pickup.
+Component clipboard support, obstacle routing and full editor qualification remain
+outside this increment under `dat-schematic-wire-endpoint-edit-4368`.
 An interior scalar Label can slide along its existing wire while all incident
 wires stay fixed and the complete physical connectivity partition is preserved.
 Symbol-pin interior-contact refusal and existing endpoint Label/Power attachment

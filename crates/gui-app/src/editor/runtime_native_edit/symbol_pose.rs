@@ -34,31 +34,38 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
-        let pane = self
-            .last_cursor_pos
-            .and_then(|(x, y)| self.pane_at_screen(x, y));
+        let pane = if self.native_edit.exact_position.is_some() {
+            Some(self.workspace().ui.layout.focused)
+        } else {
+            self.last_cursor_pos
+                .and_then(|(x, y)| self.pane_at_screen(x, y))
+        };
         if !self.guard_native_authoring_view(pane) {
             return true;
         }
         let result = (|| -> Result<PointNm> {
-            let (x, y) = self
-                .last_cursor_pos
-                .context("Move requires a cursor in its schematic pane")?;
-            let (world, surface) = self
-                .prepared_scene()
-                .and_then(|scene| scene.world_point_at_screen(x, y))
-                .context("Move requires a cursor in its schematic pane")?;
-            anyhow::ensure!(
-                surface == SceneSurface::Schematic,
-                "Return to the original schematic pane to transform the selected objects"
-            );
-            let position = self.native_move_destination(
-                self.native_edit
-                    .preview
-                    .as_ref()
-                    .context("Move preview ended")?,
-                world,
-            )?;
+            let position = if let Some(position) = self.native_edit.exact_position {
+                position
+            } else {
+                let (x, y) = self
+                    .last_cursor_pos
+                    .context("Move requires a cursor in its schematic pane")?;
+                let (world, surface) = self
+                    .prepared_scene()
+                    .and_then(|scene| scene.world_point_at_screen(x, y))
+                    .context("Move requires a cursor in its schematic pane")?;
+                anyhow::ensure!(
+                    surface == SceneSurface::Schematic,
+                    "Return to the original schematic pane to transform the selected objects"
+                );
+                self.native_move_destination(
+                    self.native_edit
+                        .preview
+                        .as_ref()
+                        .context("Move preview ended")?,
+                    world,
+                )?
+            };
             let preview = self
                 .native_edit
                 .preview

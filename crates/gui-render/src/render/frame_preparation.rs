@@ -593,6 +593,7 @@ impl PreparedScene {
                 layout,
                 hit_regions,
                 scene_viewport,
+                wire_handles: native_selection_overlay::wire_handles::Catalog::capture(state),
                 surface_passes,
                 board_pane_id,
                 scene_bounds: state.scene.bounds.clone(),

@@ -5,6 +5,8 @@ use datum_gui_protocol::{
 };
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum Target {
+    CoordinateX,
+    CoordinateY,
     LibraryPath,
     LibrarySearch,
     SchematicName,
@@ -29,6 +31,17 @@ struct Snapshot {
 impl Runtime {
     fn active_editor(&self) -> Option<Target> {
         let ui = &self.workspace().ui;
+        if self.coordinate_input_owner_available()
+            && self.application_focus()
+                == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
+            && let Some(form) = &self.workspace().authoring.coordinates
+        {
+            return match form.focus {
+                datum_gui_protocol::CoordinateEntryControl::X => Some(Target::CoordinateX),
+                datum_gui_protocol::CoordinateEntryControl::Y => Some(Target::CoordinateY),
+                _ => None,
+            };
+        }
         if ui.active_menu.is_none()
             && !ui.new_project.open
             && !ui.project_open.open
@@ -105,6 +118,20 @@ impl Runtime {
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::CoordinateX | Target::CoordinateY => {
+                let form = self.workspace().authoring.coordinates.as_ref()?;
+                let (text, editor) = if target == Target::CoordinateX {
+                    (&form.entry.x, form.entry.x_editor)
+                } else {
+                    (&form.entry.y, form.entry.y_editor)
+                };
+                Some(Snapshot {
+                    text: text.clone(),
+                    editor,
+                    editable: !self.native_edit.pending() && !form.pending && !form.stale,
+                })
+            }
+
             Target::SchematicFieldTable(row, field) => {
                 let review = self
                     .workspace()
@@ -202,6 +229,22 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::CoordinateX | Target::CoordinateY => {
+                if let Some(form) = &mut self.session.workspace_mut().authoring.coordinates {
+                    if target == Target::CoordinateX {
+                        form.entry.x = snapshot.text;
+                        form.entry.x_editor = snapshot.editor;
+                    } else {
+                        form.entry.y = snapshot.text;
+                        form.entry.y_editor = snapshot.editor;
+                    }
+                }
+                if changed {
+                    self.refresh_coordinate_preview();
+                }
+                self.invalidate_frame();
+            }
+
             Target::SchematicFieldTable(row, field) => {
                 if let Some(review) = &mut self
                     .session
@@ -436,7 +479,9 @@ impl Runtime {
             }
             Err(reason) if reason.is_empty() => return false,
             Err(reason) => {
-                if matches!(target, Target::LibraryPath | Target::LibrarySearch) {
+                if matches!(target, Target::CoordinateX | Target::CoordinateY) {
+                    self.coordinate_refusal(reason, false);
+                } else if matches!(target, Target::LibraryPath | Target::LibrarySearch) {
                     if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
                         a.refusal = Some(reason);
                     }
@@ -479,6 +524,12 @@ impl Runtime {
         scale: f32,
     ) -> bool {
         let target = match region.target {
+            HitTarget::CoordinateEntry(datum_gui_protocol::CoordinateEntryControl::X) => {
+                Target::CoordinateX
+            }
+            HitTarget::CoordinateEntry(datum_gui_protocol::CoordinateEntryControl::Y) => {
+                Target::CoordinateY
+            }
             HitTarget::Library(
                 datum_gui_protocol::library_browser::LibraryControl::AcquirePath,
             ) => Target::LibraryPath,
@@ -517,6 +568,16 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::CoordinateX | Target::CoordinateY => {
+                if let Some(form) = &mut self.session.workspace_mut().authoring.coordinates {
+                    form.focus = if target == Target::CoordinateX {
+                        datum_gui_protocol::CoordinateEntryControl::X
+                    } else {
+                        datum_gui_protocol::CoordinateEntryControl::Y
+                    };
+                }
+            }
+
             Target::SchematicFieldTable(row, field) => {
                 if let Some(table) = self
                     .session

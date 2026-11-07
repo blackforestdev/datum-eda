@@ -122,6 +122,16 @@ impl Runtime {
     ) -> Result<WireHandle> {
         let sheet = self.wire_handle_sheet(scene, id)?;
         self.wire_primary_unlocked(scene, id)?;
+        if let Some((x, y)) = self.last_cursor_pos
+            && let Some(prepared) = self.renderer.render_session().prepared()
+            && prepared.world_point_at_screen(x, y).map(|(point, _)| point) == Some(world)
+            && let Some((_, identity, handle)) =
+                prepared.edit_handle_pick_at_screen(self.workspace(), x, y)
+            && identity == *id
+            && available_handles(sheet, id.id)?.contains(&handle)
+        {
+            return Ok(handle);
+        }
         let width = scene
             .board_graphics
             .iter()

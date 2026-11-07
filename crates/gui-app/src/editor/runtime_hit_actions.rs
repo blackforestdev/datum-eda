@@ -38,6 +38,8 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::MoveCoordinates => self.open_move_coordinates(),
+            HitTarget::CoordinateEntry(control) => self.coordinate_field_click(*control),
             HitTarget::InspectorSectionToggle { .. }
             | HitTarget::InspectorRunErc(_)
             | HitTarget::InspectorEditSymbol(_)

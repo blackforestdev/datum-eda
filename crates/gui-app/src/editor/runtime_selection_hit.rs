@@ -132,6 +132,42 @@ impl Runtime {
                 SceneSurface::Schematic => retained.hit_test_world(point),
             }
         };
+        let target = if surface == SceneSurface::Schematic {
+            let grip = self.last_cursor_pos.and_then(|(x, y)| {
+                let prepared = self.renderer.render_session().prepared()?;
+                if prepared.world_point_at_screen(x, y).map(|(world, _)| world) != Some(point) {
+                    return None;
+                }
+                prepared.edit_handle_pick_at_screen(self.workspace(), x, y)
+            });
+            if let Some((key, identity, _)) = grip {
+                let eligible = basis
+                    .as_ref()
+                    .and_then(|b| b.bindings.get(&key))
+                    .is_some_and(|b| b.acquired == identity && b.eligible(&state.ui.filters));
+                let other_node = target
+                    .as_ref()
+                    .and_then(|hit| {
+                        let HitTarget::AuthoredObject(key) = hit else {
+                            return None;
+                        };
+                        basis.as_ref()?.bindings.get(key)
+                    })
+                    .is_some_and(|b| {
+                        b.acquired.class == datum_gui_protocol::AuthoredSelectionClass::Junction
+                            && b.acquired != identity
+                    });
+                if eligible && !other_node {
+                    Some(HitTarget::AuthoredObject(key))
+                } else {
+                    target
+                }
+            } else {
+                target
+            }
+        } else {
+            target
+        };
         Ok(SelectionWorldHit { target, basis })
     }
 }

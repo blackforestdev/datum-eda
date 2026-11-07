@@ -6,6 +6,8 @@ impl ReviewWorkspaceState {
         if self.tool == tool {
             return false;
         }
+        self.authoring.coordinates = None;
+        self.authoring.handle_feedback = None;
         self.tool = tool;
         self.authoring.gesture = AuthoringGestureState::idle(tool);
         self.last_command_status = Some(EditorCommandStatus {
@@ -71,6 +73,8 @@ impl ReviewWorkspaceState {
     }
 
     pub fn cancel_authoring_gesture(&mut self) -> bool {
+        self.authoring.handle_feedback = None;
+        self.authoring.coordinates = None;
         if !self.authoring.gesture.is_active() {
             return false;
         }

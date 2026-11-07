@@ -511,7 +511,17 @@ Save/cold equality of all 385 saved canonical files. The failed history run is
 retained. Independent child rotation/mirroring review confirms the selected Wire/Junction
 UUIDs and other six source sheets remain intact. The traced
 child completion took about 29 seconds, so responsiveness is not qualified.
-Manual precise input, nudge controls and visible handle feedback remain open.
+Exact absolute/delta coordinate controls, canvas-owned grid preview displacement
+and qualified visible wire grips now use the shared Move path. Focused checks and
+independent staged-source review pass. Isolated X11 checks confirm both grip
+pickup paths, valid/invalid live previews, input ownership and no-write cancellation,
+exact off-grid placement and grid stepping, and two consecutive Undo/Redo steps.
+The final continuation confirms readable refusals, passive prompt ownership, one
+Save/cold reopening with all 399 saved canonical files exact, and one qualified
+child endpoint edit preserving its UUID, opposite end and the other six sheets.
+The initial grip-corner failure and later unsupported-key harness failure remain
+recorded; their unaffected passing cases retain their original scope. Stale
+Inspector placement readouts after Undo remain separate usability intake.
 The parent goal stays in progress; neither full qualification nor Wayland delivery
 is inferred from this increment.
 

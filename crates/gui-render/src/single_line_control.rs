@@ -1,4 +1,6 @@
 //! Shared single-line value/selection/caret paint and matching pointer placement.
+#[path = "coordinate_entry_control.rs"]
+pub(crate) mod coordinates;
 use super::*;
 use crate::global_preferences_primitives::{
     ControlPainter, push_dashed_rect_border, push_rounded_rect_with_border,

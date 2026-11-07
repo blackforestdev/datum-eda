@@ -137,6 +137,16 @@ impl PreparedScene {
                     self.crosshair_style,
                 )
             });
+        if let Some(pass) = active
+            .as_ref()
+            .filter(|pass| pass.surface == SceneSurface::Schematic)
+            && let Some(cursor) = self.crosshair_cursor_screen
+        {
+            let mut handles = Vec::new();
+            self.wire_handles.push_hover(&mut handles, pass, cursor);
+            self.schematic_overlay_vertices
+                .extend(quads_to_vertices(&handles));
+        }
     }
 }
 

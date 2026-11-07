@@ -67,6 +67,8 @@ impl ReviewWorkspaceState {
             active_review_target_id,
             tool: WorkspaceTool::Select,
             authoring: AuthoringToolState {
+                handle_feedback: None,
+                coordinates: None,
                 snap: AuthoringSnapState::default(),
                 gesture: AuthoringGestureState::idle(WorkspaceTool::Select),
             },

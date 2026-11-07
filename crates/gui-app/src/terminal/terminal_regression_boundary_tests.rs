@@ -46,7 +46,8 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
         | HitTarget::ProjectOpenModal
         | HitTarget::ProjectOpenCancel
         | HitTarget::ProjectOpenConfirm => false,
-        HitTarget::SchematicName | HitTarget::SchematicCreate
+        HitTarget::MoveCoordinates | HitTarget::CoordinateEntry(_)
+        | HitTarget::SchematicName | HitTarget::SchematicCreate
         | HitTarget::SchematicCustomField(_)
         | HitTarget::SchematicBusEntryChoice | HitTarget::SchematicBusEntryDelete
             | HitTarget::SchematicLabelName | HitTarget::SchematicLabelKind | HitTarget::SchematicLabelPreview
@@ -171,6 +172,8 @@ fn sample_handoff() -> datum_gui_protocol::TerminalCommandHandoff {
 fn terminal_focus_entry_is_exhaustively_classified_over_every_hit_target() {
     let id = || "t0c04".to_string();
     let samples = vec![
+        HitTarget::MoveCoordinates,
+        HitTarget::CoordinateEntry(datum_gui_protocol::CoordinateEntryControl::X),
         HitTarget::SchematicCustomField(
             datum_gui_protocol::schematic_authoring::CustomFieldControl::Open,
         ),

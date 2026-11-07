@@ -35,6 +35,41 @@ pub enum AutomationLengthRefusal {
     Units(UnitsRefusal),
 }
 
+impl std::fmt::Display for AutomationLengthRefusal {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use super::RefusalReason as R;
+        match self {
+            Self::MissingInput => f.write_str("Enter a length"),
+            Self::ConflictingCanonicalAndExpression => f.write_str("Supply only one length value"),
+            Self::MissingBareExpressionContext => f.write_str("Include an explicit length unit"),
+            Self::Units(refusal) => match &refusal.reason {
+                R::EmptyToken => f.write_str("Enter a length"),
+                R::MalformedNumber => f.write_str("Enter a valid number"),
+                R::WrongQuantityKind => f.write_str("Use a length value"),
+                R::MissingUnitContext => f.write_str("Include an explicit length unit"),
+                R::AmbiguousSuffix(suffix) => {
+                    write!(f, "Use an unambiguous length unit instead of '{suffix}'")
+                }
+                R::UnsupportedSuffix(suffix) => write!(f, "Unsupported unit suffix '{suffix}'"),
+                R::NonIntegralNanometer => f.write_str("Value must resolve to a whole nanometer"),
+                R::NonIntegralCanonicalValue => {
+                    f.write_str("Value has more precision than this field supports")
+                }
+                R::Overflow => f.write_str("Length is outside the supported range"),
+                R::UnsupportedPrecision(_) => {
+                    f.write_str("Use a supported number of decimal places")
+                }
+                R::MissingCanonicalAngleScale => {
+                    f.write_str("Angle scale is unavailable for this field")
+                }
+                R::UnitNotAllowedForQuantity { unit, .. } => {
+                    write!(f, "Unit '{}' is not supported by this field", unit.suffix())
+                }
+            },
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct GuiProjectLengthInput<'a> {
     pub token: &'a str,
@@ -125,6 +160,29 @@ fn resolve_expression(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn project_length_refusals_explain_the_input_problem_without_debug_metadata() {
+        for (token, expected) in [
+            ("", "Enter a length"),
+            ("NaN", "Unsupported unit suffix 'NaN'"),
+            ("0.1nm", "Value must resolve to a whole nanometer"),
+            (
+                "9999999999999999999999999999999999999999nm",
+                "Length is outside the supported range",
+            ),
+        ] {
+            let error = resolve_gui_project_length(GuiProjectLengthInput {
+                token,
+                project_id: "project",
+                field_id: "schematic.x",
+                quantity: LengthQuantity::SchematicGeometry,
+                units: super::super::UnitsProfile::default().resolve().unwrap(),
+            })
+            .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+        }
+    }
 
     #[test]
     fn canonical_and_expression_fields_are_mutually_exclusive() {

@@ -167,7 +167,7 @@ impl PreparedScene {
     }
 }
 
-fn editor_viewport(
+pub(crate) fn editor_viewport(
     pane_id: datum_gui_protocol::PaneId,
     surface: SceneSurface,
     projection: &Projection,
@@ -324,6 +324,29 @@ pub fn schematic_anchor_contains(width_nm: Option<i64>, anchor: PointNm, pointer
         radius_nm: schematic_stroke_hit_radius(width_nm),
     }
     .contains(pointer)
+}
+
+/// One source-anchor ranking for acquisition, electrical snap and handle hover.
+impl PreparedScene {
+    pub fn nearest_schematic_contact<T>(
+        world: PointNm,
+        candidates: impl IntoIterator<Item = (PointNm, Option<i64>, String, T)>,
+    ) -> Option<T> {
+        let distance = |point: PointNm| {
+            let x = (i128::from(point.x) - i128::from(world.x)).unsigned_abs();
+            let y = (i128::from(point.y) - i128::from(world.y)).unsigned_abs();
+            x.saturating_mul(x).saturating_add(y.saturating_mul(y))
+        };
+        candidates
+            .into_iter()
+            .filter(|(point, width, _, _)| schematic_anchor_contains(*width, *point, world))
+            .min_by(|a, b| {
+                distance(a.0)
+                    .cmp(&distance(b.0))
+                    .then_with(|| a.2.cmp(&b.2))
+            })
+            .map(|candidate| candidate.3)
+    }
 }
 
 pub(crate) fn schematic_hit_regions(

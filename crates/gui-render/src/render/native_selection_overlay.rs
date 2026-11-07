@@ -11,6 +11,8 @@ pub(crate) mod mask;
 use super::*;
 #[path = "native_selection_overlay/visual_lod.rs"]
 pub(crate) mod visual_lod;
+#[path = "wire_handle_overlay.rs"]
+pub(crate) mod wire_handles;
 
 pub(super) fn push_lightweight_selection_overlay(
     out: &mut Vec<Quad>,

@@ -21,6 +21,8 @@ use text::TextMovePreview;
 #[path = "wiring.rs"]
 pub mod wiring;
 use wiring::WiringGroupPreview;
+#[path = "handle_feedback.rs"]
+mod handle_feedback;
 
 pub enum NativeMovePreview {
     Text(TextMovePreview),
@@ -262,6 +264,23 @@ impl NativeMovePreview {
             instance_path: id.instance_path.clone(),
             root,
         })
+    }
+    /// Exact captured anchor/pivot for numeric absolute or relative placement.
+    /// Pointer offsets and background snap do not alter this reference.
+    pub fn reference_position(&self) -> PointNm {
+        let point = match self {
+            Self::Footprint(p) => return p.component.position,
+            Self::Wiring(p) => return p.reference,
+            Self::Symbols(p) => return p.reference,
+            Self::Text(p) => p.basis.text.position,
+            Self::Symbol { basis, .. } => basis.symbol.position,
+            Self::Label { basis, .. } => basis.label.position,
+            Self::Connectivity { target, .. } => target.anchor(),
+        };
+        PointNm {
+            x: point.x,
+            y: point.y,
+        }
     }
     pub fn base(&self) -> &BoardReviewSceneV1 {
         match self {

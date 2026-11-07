@@ -375,6 +375,7 @@ impl Runtime {
             .pointer_viewport(pos)
             .is_some_and(|route| route.viewport.contains(pos.0, pos.1))
         {
+            self.clear_wire_handle_hint();
             return self.clear_interaction_overlay();
         }
         // Shared preparation validates both retained sources before projection.
@@ -417,9 +418,19 @@ impl Runtime {
         if hover_changed {
             self.session.workspace_mut().ui.hovered_object = new_hover;
         }
+        let handle_hint_changed = self.refresh_wire_handle_hint(pos);
+        let handles_live = self.pane_at_screen(pos.0, pos.1).is_some_and(|pane| {
+            self.renderer
+                .render_session()
+                .prepared()
+                .is_some_and(|prepared| prepared.has_edit_handles(self.workspace(), pane))
+        });
         let crosshair_live =
             self.session.workspace().ui.crosshair_style != datum_gui_protocol::CrosshairStyle::None;
-        if hover_changed || (cursor_moved && crosshair_live) {
+        if hover_changed
+            || handle_hint_changed
+            || (cursor_moved && (crosshair_live || handles_live))
+        {
             self.refresh_interaction_overlay();
             return true;
         }

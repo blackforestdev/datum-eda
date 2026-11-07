@@ -13,8 +13,12 @@ mod actions;
 #[path = "runtime_native_edit/catalog.rs"]
 mod catalog;
 use catalog::native_write_verb_ids;
+#[path = "runtime_native_edit/coordinates.rs"]
+mod coordinates;
 #[path = "runtime_native_edit/move_acquisition.rs"]
 mod move_acquisition;
+#[path = "runtime_native_edit/move_preview.rs"]
+mod move_preview;
 #[path = "runtime_native_edit/move_scene.rs"]
 mod move_scene;
 #[path = "runtime_native_edit/worker.rs"]
@@ -47,6 +51,10 @@ pub(super) struct EditWork {
     previous_context_tool: Option<WorkspaceTool>,
     preview_tip: Option<String>,
     pending_position: Option<PointNm>,
+    exact_position: Option<PointNm>,
+    current_position: Option<PointNm>,
+    exact_cursor: Option<(f32, f32)>,
+    coordinate_escape_release: bool,
     preview_awaiting_presentation: bool,
     pending_move_base: Option<(bool, datum_gui_protocol::BoardReviewSceneV1)>,
     pending: Option<mpsc::Receiver<Answer>>,
@@ -65,6 +73,10 @@ impl EditWork {
             previous_context_tool: None,
             preview_tip: None,
             pending_position: None,
+            exact_position: None,
+            current_position: None,
+            exact_cursor: None,
+            coordinate_escape_release: false,
             preview_awaiting_presentation: false,
             pending_move_base: None,
             pending: None,
@@ -80,6 +92,10 @@ impl EditWork {
         self.previous_context_tool = None;
         self.preview_tip = None;
         self.pending_position = None;
+        self.exact_position = None;
+        self.current_position = None;
+        self.exact_cursor = None;
+        self.coordinate_escape_release = false;
         self.preview_awaiting_presentation = false;
         self.pending_move_base = None;
         self.blocked = false;
@@ -151,89 +167,6 @@ impl EditWork {
 impl Runtime {
     pub(super) fn native_edit_available(&self) -> bool {
         datum_gui_protocol::gui_menu_model::native_project_edit_available(self.workspace())
-    }
-    pub(super) fn native_move_pointer(&mut self, world: PointNm) -> bool {
-        if self.native_edit.pending() {
-            return true;
-        }
-        if self.native_edit.preview.is_some() {
-            let pane = self
-                .last_cursor_pos
-                .and_then(|(x, y)| self.pane_at_screen(x, y));
-            if !self.guard_native_authoring_view(pane) {
-                return true;
-            }
-        }
-        let Some(preview) = &self.native_edit.preview else {
-            return false;
-        };
-        match self.native_move_destination(preview, world) {
-            Ok(position) => {
-                crate::append_gui_verbose_diagnostic_line(|| {
-                    format!("native move intent {position:?}")
-                });
-                self.native_edit.pending_position = Some(position);
-            }
-            Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
-        }
-        // Input captures the latest complete intent. The native frame materializes
-        // it once, so accumulated motion does not rebuild copper on every event.
-        true
-    }
-    /// Keep the complete source stable across upload-only native turns. New
-    /// pointer intent supersedes only the queued destination, not the source
-    /// whose upload/presentation is already in progress.
-    pub(super) fn prepare_native_move_frame(&mut self) {
-        if self.native_edit.preview.is_some()
-            && !self.native_edit.pending()
-            && !self.guard_native_authoring_view(Some(self.workspace().ui.layout.focused))
-        {
-            return;
-        }
-        if self.native_edit.preview_awaiting_presentation {
-            return;
-        }
-        crate::append_gui_verbose_diagnostic_line(|| {
-            format!(
-                "native move frame preview={} awaiting={} pending={:?} tool={:?}",
-                self.native_edit.preview.is_some(),
-                self.native_edit.preview_awaiting_presentation,
-                self.native_edit.pending_position,
-                self.workspace().tool
-            )
-        });
-        let Some(position) = self.native_edit.pending_position.take() else {
-            return;
-        };
-        let Some(preview) = &self.native_edit.preview else {
-            return;
-        };
-        match preview.scene_at(position) {
-            Ok(scene) => {
-                crate::append_gui_verbose_diagnostic_line(|| {
-                    format!("native move scene ready {position:?}")
-                });
-                let schematic = preview.is_schematic();
-                if matches!(
-                    preview,
-                    NativeMovePreview::Symbols(_) | NativeMovePreview::Wiring(_)
-                ) {
-                    self.session.workspace_mut().authoring.gesture.preview = Some(position);
-                }
-                self.set_move_scene(schematic, scene);
-                self.native_edit.preview_awaiting_presentation = true;
-                self.invalidate_scene();
-            }
-            Err(error) => self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string()),
-        }
-    }
-    pub(super) fn native_move_frame_presented(&mut self) {
-        self.native_edit.preview_awaiting_presentation = false;
-    }
-    pub(super) fn native_move_frame_needed(&self) -> bool {
-        self.native_edit.preview.is_some()
-            && self.native_edit.pending_position.is_some()
-            && !self.native_edit.preview_awaiting_presentation
     }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
         if !matches!(action, NativeEditAction::Proposal)
@@ -441,6 +374,9 @@ impl Runtime {
                 if let Some((schematic, base, scene)) = pending_move {
                     self.native_edit.pending_move_base = Some((schematic, base));
                     self.native_edit.preview = None;
+                    self.native_edit.exact_position = None;
+                    self.native_edit.current_position = None;
+                    self.native_edit.exact_cursor = None;
                     self.native_edit.preview_tip = None;
                     self.native_edit.pending_position = None;
                     self.native_edit.preview_awaiting_presentation = false;

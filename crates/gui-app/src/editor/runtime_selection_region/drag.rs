@@ -10,6 +10,7 @@ pub(crate) struct SelectionMoveDrag {
         String,
     )>,
     acquisition: Option<(String, std::sync::Arc<runtime_selection_hit::BindingBasis>)>,
+    wire_edit: Option<eda_engine::api::native_write::schematic_wire_edit_adapter::WireEditParams>,
     anchor: PointNm,
     started: bool,
     previous_tool: WorkspaceTool,
@@ -51,6 +52,21 @@ impl Runtime {
             self.wire_pickup_handle(scene, &binding.acquired, world, allow_segment)
                 .ok()?;
         }
+        // Retain the typed press handle: once the drag crosses its threshold,
+        // the cursor is no longer over that grip and selection publication may
+        // have invalidated its prepared scene. Never re-hit the motion point.
+        let wire_edit = match &subject {
+            SelectionSubject::Object(id)
+                if matches!(
+                    id.class,
+                    AuthoredSelectionClass::Wire | AuthoredSelectionClass::Junction
+                ) =>
+            {
+                let scene = datum_gui_protocol::camera_scene_for_pane(self.workspace(), pane)?;
+                self.wire_edit_configuration(scene, id, world).ok()?
+            }
+            _ => None,
+        };
         crate::append_gui_verbose_diagnostic_line(|| {
             format!("selection drag captured subject={subject:?} anchor={world:?}")
         });
@@ -59,6 +75,7 @@ impl Runtime {
             subject,
             selection_at_press,
             acquisition,
+            wire_edit,
             anchor: world,
             started: false,
             previous_tool: self.workspace().tool,
@@ -148,7 +165,11 @@ impl Runtime {
             // Acquisition uses the press point, so crossing the threshold cannot
             // jump the object or discard the first segment of pointer travel.
             self.dispatch_session_command(SessionCommand::SetTool(WorkspaceTool::Move));
-            self.begin_selected_native_move_at(Some(drag.anchor));
+            if drag.wire_edit.is_some() {
+                self.begin_schematic_move(drag.subject.clone(), Some(drag.anchor), drag.wire_edit);
+            } else {
+                self.begin_selected_native_move_at(Some(drag.anchor));
+            }
             drag.started = self.native_edit.preview.is_some();
             crate::append_gui_verbose_diagnostic_line(|| {
                 format!("selection drag move begun={}", drag.started)

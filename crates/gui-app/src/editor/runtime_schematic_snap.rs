@@ -38,6 +38,15 @@ impl Runtime {
         let pane = self
             .pane_at_screen(screen.0, screen.1)
             .ok_or("Focus the schematic")?;
+        self.schematic_pin_snap_point_in(world, pane)
+    }
+
+    /// A captured authoring pane can retain exact feedback while a form owns input.
+    pub(crate) fn schematic_pin_snap_point_in(
+        &self,
+        world: PointNm,
+        pane: datum_gui_protocol::PaneId,
+    ) -> Result<Option<PointNm>, String> {
         let state = self.workspace();
         let scene = datum_gui_protocol::camera_scene_for_pane(state, pane)
             .ok_or("Schematic source is unavailable")?;
@@ -201,22 +210,7 @@ impl Runtime {
         world: PointNm,
         candidates: impl IntoIterator<Item = (PointNm, Option<i64>, String, T)>,
     ) -> Option<T> {
-        let distance = |point: PointNm| {
-            let x = (i128::from(point.x) - i128::from(world.x)).unsigned_abs();
-            let y = (i128::from(point.y) - i128::from(world.y)).unsigned_abs();
-            x.saturating_mul(x).saturating_add(y.saturating_mul(y))
-        };
-        candidates
-            .into_iter()
-            .filter(|(point, width, _, _)| {
-                datum_gui_render::schematic_anchor_contains(*width, *point, world)
-            })
-            .min_by(|a, b| {
-                distance(a.0)
-                    .cmp(&distance(b.0))
-                    .then_with(|| a.2.cmp(&b.2))
-            })
-            .map(|candidate| candidate.3)
+        datum_gui_render::PreparedScene::nearest_schematic_contact(world, candidates)
     }
 }
 
