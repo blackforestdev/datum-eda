@@ -256,7 +256,7 @@ pub(super) fn load_workspace(
             Default::default(),
         )
     } else {
-        load_production_status(&cli, request)?
+        production_loading::load(&cli, request, model.as_deref())?
     };
     state.library = model
         .as_ref()

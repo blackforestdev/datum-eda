@@ -22,15 +22,21 @@ fn fresh_native_workspace_preserves_existing_projections() {
     };
     let before = std::fs::read(root.join("board/board.json")).unwrap();
     let (state, basis) = load_board_editor_workspace_with_model(&request).unwrap();
-    assert!(
-        production_is_empty(&basis),
-        "existing first-edit design has no production records"
-    );
+
     let cli = cli_prefix().unwrap();
-    assert_eq!(
-        state.production,
-        load_production_status(&cli, &request).unwrap()
+    let legacy_started = std::time::Instant::now();
+    let legacy = load_production_status(&cli, &request).unwrap();
+    let legacy_elapsed = legacy_started.elapsed();
+    let projected_started = std::time::Instant::now();
+    let projected = production_loading::load(&cli, &request, Some(&basis)).unwrap();
+    eprintln!(
+        "production parity: {} proposals, CLI {:?}, fresh model {:?}",
+        basis.proposals.len(),
+        legacy_elapsed,
+        projected_started.elapsed()
     );
+    assert_eq!(state.production, legacy);
+    assert_eq!(projected, legacy);
     assert_eq!(
         state.checks,
         check_runs::loading::load(&cli, &request).unwrap()

@@ -123,7 +123,9 @@ pub use production_proposals::{
     ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,
     ProductionProposalSummary, production_status_from_proposals_json,
 };
-use production_proposals::{ProposalsPayload, attach_proposal_validation, proposal_summaries};
+use production_proposals::{ProposalsPayload, proposal_summaries};
+mod production_loading;
+use production_loading::load_production_status;
 mod board_text_primitives;
 pub use board_text_primitives::{
     Affine2DFixedPrimitive, BoardTextFillPrimitive, BoardTextGeometryPrimitive, BoardTextPrimitive,
@@ -745,56 +747,6 @@ pub fn production_status_from_production_json(
         manufacturing_plans,
         panel_projections,
     ))
-}
-fn load_production_status(cli: &[String], request: &LiveReviewRequest) -> Result<ProductionStatus> {
-    if request.board_file.is_some() {
-        return Ok(ProductionStatus::default());
-    }
-    let project_root = request.project_root.display().to_string();
-    let output_jobs: OutputJobsPayload =
-        match run_cli_json(cli, &["project", "query", &project_root, "output-jobs"]) {
-            Ok(payload) => payload,
-            Err(_) => return Ok(ProductionStatus::default()),
-        };
-    let manufacturing_plans = run_cli_json(
-        cli,
-        &["project", "query", &project_root, "manufacturing-plans"],
-    )
-    .unwrap_or_default();
-    let panel_projections = run_cli_json(
-        cli,
-        &["project", "query", &project_root, "panel-projections"],
-    )
-    .unwrap_or_default();
-    let artifact_list = run_cli_json(cli, &["artifact", "list", &project_root]).unwrap_or_default();
-    let proposals = run_cli_json(cli, &["proposal", "list", &project_root]).unwrap_or_default();
-    let mut status = production_payloads_to_production_status(
-        output_jobs,
-        artifact_list,
-        proposals,
-        manufacturing_plans,
-        panel_projections,
-    );
-    attach_proposal_validation(cli, &project_root, &mut status);
-    if let Some(artifact_id) = focused_artifact_id(&status) {
-        let args = vec![
-            "artifact".to_string(),
-            "files".to_string(),
-            project_root.clone(),
-            "--artifact".to_string(),
-            artifact_id,
-        ];
-        if let Ok(payload) = run_cli_json_owned::<ArtifactFilesPayload>(cli, &args) {
-            let mut detail = artifact_files_payload_to_detail(payload);
-            if let Some(file) = detail.focused_file.as_ref() {
-                detail.focused_preview =
-                    load_artifact_file_preview(cli, &project_root, &detail.artifact_id, &file.path)
-                        .ok();
-            }
-            status.focused_artifact = Some(detail);
-        }
-    }
-    Ok(status)
 }
 
 fn artifact_files_payload_to_detail(payload: ArtifactFilesPayload) -> ProductionArtifactDetail {

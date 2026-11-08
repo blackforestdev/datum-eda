@@ -85,6 +85,10 @@ fn explicit_artifact_refresh_uses_fresh_model_and_canonical_producer_status() {
     let before = history(&root);
     let (initial, model) = load_board_editor_workspace_with_model(&request).unwrap();
     let action = initial.review.proposal_actions[0].action_id.clone();
+    assert_eq!(
+        initial.production,
+        load_production_status(&cli_prefix().unwrap(), &request).unwrap()
+    );
     let projected = project_board_editor_workspace(&request, model.clone()).unwrap();
     assert_eq!(
         initial.review.proposal_actions,
@@ -136,6 +140,10 @@ fn explicit_artifact_refresh_uses_fresh_model_and_canonical_producer_status() {
     ]);
     let applied_model = Arc::new(ProjectResolver::new(&root).resolve().unwrap());
     let applied = project_board_editor_workspace(&request, applied_model.clone()).unwrap();
+    assert_eq!(
+        applied.production,
+        load_production_status(&cli_prefix().unwrap(), &request).unwrap()
+    );
     let native = NativeSelectionResolution::capture(&applied_model).unwrap();
     for subject in [
         SelectionSubject::Proposal(action.clone()),
@@ -154,6 +162,10 @@ fn explicit_artifact_refresh_uses_fresh_model_and_canonical_producer_status() {
     command(&["project", "undo", root.to_str().unwrap()]);
     let restored_model = Arc::new(ProjectResolver::new(&root).resolve().unwrap());
     let restored = project_board_editor_workspace(&request, restored_model.clone()).unwrap();
+    assert_eq!(
+        restored.production,
+        load_production_status(&cli_prefix().unwrap(), &request).unwrap()
+    );
     let native = NativeSelectionResolution::capture(&restored_model).unwrap();
     let producer = restored.review.producer_proposal.as_ref().unwrap();
     assert_eq!(
