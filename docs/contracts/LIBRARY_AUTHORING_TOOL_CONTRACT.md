@@ -181,6 +181,23 @@ not physical/HUMAN qualification or release-GUI execution. General graphics and
 pin-topology authoring, relinking, Package/Entity/Part/PinPadMap editing, approval,
 models and placed-definition updates remain outside this increment.
 
+The new Entity GUI increment (`dat-entity-gate-gui-create-zcp0`) adds project-local
+creation in the shared Library form: explicit name, reference prefix,
+manufacturer, tags and one or more named gates. Each gate selects an existing
+named Unit and a compatible Symbol. The table separates gate, Unit, Symbol and
+reference state; preview lists the resulting fields and links before Commit.
+The shared `datum.library.create` engine adapter independently checks every
+reference, Symbol/Unit compatibility and gate key/UUID identity. Preview and
+Cancel leave source and journal unchanged. One canonical Create transaction,
+Undo/Redo and Save/cold reopen retain Entity/gate identities and links while
+existing definitions and placed circuits remain unchanged. Focused engine/form
+checks and the isolated ordinary App run are recorded in the task; the App uses
+presented controls and logical keys in a debug test profile. This establishes
+neither physical/HUMAN qualification nor universal raw-operation validation.
+Generic raw Entity gate-link admission is separate intake
+`dat-entity-raw-links-ysdr`. Saved Entity editing/relinking, Part/PinPadMap authoring,
+multi-gate placement, approval, models and broader library completion remain open.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

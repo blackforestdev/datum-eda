@@ -14,8 +14,10 @@ use std::{collections::BTreeSet, path::Path};
 use uuid::Uuid;
 
 mod electrical;
+mod entity;
 mod package;
 pub use electrical::ElectricalDraft;
+pub use entity::EntityDraft;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibraryField {
@@ -43,6 +45,7 @@ pub struct LibraryDraft {
     pub terminal_id: Option<Uuid>,
     pub terminals: Map<String, Value>,
     pub electrical: ElectricalDraft,
+    pub entity: EntityDraft,
     pub preview: Option<Value>,
     pub refusal: Option<String>,
 }
@@ -56,15 +59,17 @@ impl LibraryDraft {
     ) -> Result<Self, String> {
         if !matches!(
             kind,
-            "footprints" | "padstacks" | "packages" | "units" | "symbols"
+            "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities"
         ) {
             return Err(
-                "Authoring is available for Unit, Symbol, Footprint, Padstack and Package creation"
+                "Authoring is available for Unit, Symbol, Entity, Footprint, Padstack and Package creation"
                     .into(),
             );
         }
-        if kind == "packages" && entry.is_some() {
-            return Err("Saved Package editing is unavailable in this increment".into());
+        if matches!(kind, "packages" | "entities") && entry.is_some() {
+            return Err(
+                "Saved Package and Entity editing are unavailable in this increment".into(),
+            );
         }
         if kind == "symbols" && browser.choices("units").is_empty() {
             return Err("Create a named Unit before creating its Symbol".into());
@@ -95,6 +100,7 @@ impl LibraryDraft {
             terminal_id: None,
             terminals: Map::new(),
             electrical: ElectricalDraft::default(),
+            entity: EntityDraft::default(),
             preview: None,
             refusal: None,
         };
@@ -105,6 +111,8 @@ impl LibraryDraft {
             if !draft.create {
                 draft.hydrate_saved(raw)?;
             }
+        } else if kind == "entities" {
+            draft.entity_fields(browser);
         } else if kind == "packages" {
             draft.package_fields();
         } else if kind == "padstacks" {
@@ -274,6 +282,8 @@ impl LibraryDraft {
                     | "pin_type"
                     | "anchor_pin"
                     | "anchor_orientation"
+                    | "gate_unit"
+                    | "gate_symbol"
             ),
         });
     }
@@ -302,11 +312,20 @@ impl LibraryDraft {
         {
             self.pad_id = Some(Uuid::new_v4());
         }
+        if self.fields[self.focused].key == "gate_name"
+            && self.entity.gate_id.is_none()
+            && !text.trim().is_empty()
+        {
+            self.entity.gate_id = Some(Uuid::new_v4());
+        }
         let field = &mut self.fields[self.focused];
         field.text = text;
         self.dirty.insert(field.key);
         if self.kind == "symbols" && self.fields[self.focused].key == "unit" {
             self.refresh_unit_pin_choices();
+        }
+        if self.kind == "entities" && self.fields[self.focused].key == "gate_unit" {
+            self.refresh_entity_symbols();
         }
         self.preview = None;
         self.refusal = None;
@@ -335,6 +354,8 @@ impl LibraryDraft {
         }
         if matches!(self.kind.as_str(), "units" | "symbols") {
             self.electrical_request(&mut fields)?;
+        } else if self.kind == "entities" {
+            self.entity_request(&mut fields)?;
         } else if self.kind == "packages" {
             self.package_request(&mut fields)?;
         } else if self.kind == "padstacks" {

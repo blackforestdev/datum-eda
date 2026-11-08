@@ -3,6 +3,8 @@
 use super::*;
 #[path = "native_library_frame_tests/electrical.rs"]
 mod electrical;
+#[path = "native_library_frame_tests/entity.rs"]
+mod entity;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
 #[path = "native_library_frame_tests/package.rs"]
@@ -23,6 +25,7 @@ use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
     Electrical(usize),
+    Entity(usize),
     SavedTabCycle,
     Open,
     Kind(usize),
@@ -183,6 +186,7 @@ impl Fixture {
             }
             Step::CheckPackage(present) => self.check_package(present),
             Step::Electrical(stage) => self.check_electrical(stage),
+            Step::Entity(stage) => self.check_entity(stage),
             Step::SavedTabCycle => self.saved_tab_cycle(),
             Step::RecordFootprint => self.record_footprint(),
             Step::CheckFootprintValue(edited) => self.check_footprint_value(edited),

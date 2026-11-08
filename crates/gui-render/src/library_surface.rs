@@ -9,6 +9,8 @@ use datum_gui_protocol::{
 mod acquisition_panel;
 #[path = "library_electrical_form.rs"]
 mod electrical_form;
+#[path = "library_entity_form.rs"]
+mod entity_form;
 
 struct Painter<'a> {
     rect: RectPx,
@@ -125,6 +127,9 @@ pub(crate) fn render(
         if matches!(d.kind.as_str(), "units" | "symbols") {
             electrical_form::table(&mut p, d, rect);
         }
+        if d.kind == "entities" {
+            entity_form::table(&mut p, d);
+        }
         if matches!(d.kind.as_str(), "footprints" | "packages") {
             let package = d.kind == "packages";
             let records = if package { &d.terminals } else { &d.pads };
@@ -201,7 +206,9 @@ pub(crate) fn render(
                     || {
                         if field.text.is_empty() {
                             "Unavailable / not authored".into()
-                        } else if matches!(d.kind.as_str(), "units" | "symbols") && field.selector {
+                        } else if matches!(d.kind.as_str(), "units" | "symbols" | "entities")
+                            && field.selector
+                        {
                             "Unavailable selection".into()
                         } else {
                             field.text.clone()
@@ -233,14 +240,24 @@ pub(crate) fn render(
         if matches!(d.kind.as_str(), "units" | "symbols") {
             electrical_form::review(&mut p, d);
         }
-        p.button(
-            if matches!(d.kind.as_str(), "packages" | "units" | "symbols") {
-                "Inspect complete refusal in Console"
-            } else {
-                "Inspect complete refusal / process reason in Console"
-            },
-            C::Notice,
-        );
+        if d.kind == "entities"
+            && let Some(raw) = &d.preview
+        {
+            entity_form::review(&mut p, raw);
+        }
+        if d.kind != "entities" || d.refusal.is_some() {
+            p.button(
+                if matches!(
+                    d.kind.as_str(),
+                    "packages" | "units" | "symbols" | "entities"
+                ) {
+                    "Inspect complete refusal in Console"
+                } else {
+                    "Inspect complete refusal / process reason in Console"
+                },
+                C::Notice,
+            );
+        }
         p.y = (rect.y + rect.height - footer).max(p.y);
         if compact {
             let row = p.y;
@@ -372,7 +389,7 @@ pub(crate) fn render(
         }
         if matches!(
             KINDS[state.library.kind].0,
-            "footprints" | "padstacks" | "packages" | "units" | "symbols"
+            "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities"
         ) {
             p.button(
                 &format!("Create {} · target pool", KINDS[state.library.kind].1),
@@ -536,6 +553,10 @@ pub(crate) fn inspector(
                     .and_then(Value::as_str)
                     .unwrap_or("Name unavailable"),
             );
+            if d.kind == "entities" {
+                entity_form::review(&mut p, raw);
+                return;
+            }
             if d.kind == "footprints" {
                 let package = raw.get("package").and_then(Value::as_str);
                 let named = state

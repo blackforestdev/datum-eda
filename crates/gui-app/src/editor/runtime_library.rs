@@ -187,6 +187,26 @@ impl Runtime {
                     Err(e) => self.session.workspace_mut().library.refusal = Some(e),
                 }
             }
+            C::Gate(_) | C::AddGate | C::RemoveGate => {
+                let browser = &mut self.session.workspace_mut().library;
+                if let Some(d) = &mut browser.draft {
+                    let index = if let C::Gate(i) = control {
+                        Some(i)
+                    } else {
+                        None
+                    };
+                    match d.switch_gate(index, control == C::RemoveGate) {
+                        Ok(()) => {
+                            if let Some(i) = d.fields.iter().position(|f| f.key == "gate_name") {
+                                d.focused = i;
+                                d.offset = i;
+                                browser.focus = Some(C::Field(i));
+                            }
+                        }
+                        Err(e) => d.refusal = Some(e),
+                    }
+                }
+            }
             C::Field(index) => {
                 if let Some(d) = &mut self.session.workspace_mut().library.draft {
                     d.focused = index.min(d.fields.len().saturating_sub(1));
@@ -395,6 +415,10 @@ impl Runtime {
                             controls.extend([C::AddAnchor, C::RemoveAnchor]);
                         }
                     }
+                    if d.kind == "entities" {
+                        controls.extend((0..d.entity.gates.len()).map(C::Gate));
+                        controls.extend([C::AddGate, C::RemoveGate]);
+                    }
                     controls.extend((0..d.fields.len()).map(C::Field));
                     if let Some(raw) = &d.preview {
                         controls.extend(
@@ -405,7 +429,10 @@ impl Runtime {
                                 .map(C::PreviewPad),
                         );
                     }
-                    controls.extend([C::Notice, C::Preview, C::Commit, C::Cancel]);
+                    if d.kind != "entities" || d.refusal.is_some() {
+                        controls.push(C::Notice);
+                    }
+                    controls.extend([C::Preview, C::Commit, C::Cancel]);
                 } else {
                     controls.extend([C::BrowseBundled, C::Acquire]);
                     controls.extend((0..8).map(C::Kind));
@@ -413,7 +440,7 @@ impl Runtime {
                     controls.extend(s.library.results().into_iter().map(C::Result));
                     if matches!(
                         KINDS[s.library.kind].0,
-                        "footprints" | "padstacks" | "packages" | "units" | "symbols"
+                        "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities"
                     ) {
                         controls.push(C::New);
                     }

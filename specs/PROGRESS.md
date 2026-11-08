@@ -578,6 +578,14 @@ Imported-board fidelity additionally requires its substrate contracts or an expl
 
 SURFACE-S01–S04 and the combined planning review are accepted. SURFACE-S05 disposition and the bounded PM062 library GUI delivery are landed; broader library authoring remains unfinished. Synthetic studies and fixtures establish neither production-library approval nor native visual delivery. [Detailed evidence](progress/workflow_governance_details.md#library-foundation-investigation--repository-owned-planning).
 
+The bounded Entity creation increment (`dat-entity-gate-gui-create-zcp0`) adds a
+shared form for explicit Entity fields and named gates with compatible existing
+Unit/Symbol pairs. Engine/form tests and the ordinary App create/cancel/commit,
+Undo/Redo, Save and cold-reopen proof preserve identities, links and existing
+placed-circuit sources. Saved Entity editing, Part/PinPadMap authoring, multi-gate
+placement and broader native-library completion remain open. This routine delivery
+does not select a successor milestone or establish full qualification.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).
