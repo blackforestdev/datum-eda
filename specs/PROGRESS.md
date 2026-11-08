@@ -637,6 +637,17 @@ remain recorded; the observed Board header was truthful to a separate adjacent
 pane. No layout/cache rewrite, new compact/overflow control, prototype edit,
 physical/HUMAN observation or full qualification is claimed.
 
+Saved-map discovery (`dat-pin-pad-map-result-label-r0ic`) now derives Library
+browser captions from each PinPadMap's declared Part and Footprint, reusing them
+for results, selected detail and search. Unresolved and genuinely absent references
+stay distinct; equal captions preserve separate identities and source order.
+Seven focused projection/form/check-label tests pass. The isolated ordinary debug
+App passes 42 steps and five inspected captures, finding both saved maps by human
+Part identity, activating declared Part/Footprint relationships and reopening both
+with authored files and journal unchanged. No authored name, mapping/default
+update, renderer redesign, approval, physical/HUMAN, release-GUI execution or full
+qualification is supplied by this read-only increment.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).

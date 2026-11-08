@@ -229,6 +229,18 @@ engine adapter independently validates membership, kinds and referenced revision
 before canonical Create; it introduces neither name matching nor a separate map
 name. Preview and Cancel leave source and journal unchanged.
 
+Saved PinPadMap browser captions (`dat-pin-pad-map-result-label-r0ic`) derive
+readable Part and Footprint identities from their declared references. The same
+caption serves result rows, selected detail and existing search. Exact source
+kind/UUID candidates and existing warnings distinguish missing, malformed,
+wrong-kind, ambiguous and unavailable relationships; an undeclared optional
+Footprint stays explicitly absent. Captions never supply a preferred map or a
+Part default as a substitute. Equal captions retain separate source keys, rows,
+order and relationship targets. This disposable presentation adds no authored
+map name or source write. Focused reference/search checks and ordinary isolated
+App browsing, both relationship roles and cold reopening preserve all authored
+files and journal; approval, compatibility and saved-map editing are unchanged.
+
 An explicit default-assignment choice starts off. It may add a raw-preserving
 Part Set to the same transaction only when the Part's explicit default Footprint
 matches and canonical ownership evidence proves no authored component, package

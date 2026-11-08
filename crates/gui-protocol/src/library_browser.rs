@@ -4,6 +4,9 @@ use serde_json::Value;
 use std::sync::Arc;
 use uuid::Uuid;
 
+#[path = "library_map_labels.rs"]
+mod map_labels;
+
 #[path = "library_acquisition.rs"]
 pub mod acquisition;
 #[path = "library_symbol_geometry.rs"]
@@ -294,6 +297,7 @@ impl LibraryBrowser {
                     Some("Multiple source candidates share this identity; inspection only".into());
             }
         }
+        map_labels::project(&mut browser.entries);
         browser.basis = Some(model);
         browser
     }

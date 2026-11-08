@@ -7,6 +7,8 @@ mod electrical;
 mod entity;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
+#[path = "native_library_frame_tests/map_labels.rs"]
+mod map_labels;
 #[path = "native_library_frame_tests/package.rs"]
 mod package;
 #[path = "native_library_frame_tests/pane_context.rs"]
@@ -32,6 +34,7 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
+    MapLabels(usize),
     PaneContext(pane_context::Action),
     Placement(usize),
     Electrical(usize),
@@ -103,7 +106,7 @@ impl Fixture {
         if r.native_edit.pending()
             || (matches!(
                 self.steps.get(self.stage),
-                Some(Step::Placement(_) | Step::PaneContext(_))
+                Some(Step::Placement(_) | Step::PaneContext(_) | Step::MapLabels(_))
             ) && r.workspace().library.basis.is_none())
             || r.renderer.render_session().has_pending_frame()
             || !r.surface_transaction.has_presented()
@@ -210,6 +213,7 @@ impl Fixture {
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
             Step::Placement(stage) => self.placement_stage(events, stage),
             Step::PaneContext(action) => self.pane_context_action(events, action),
+            Step::MapLabels(stage) => self.check_map_labels(stage),
             Step::SelectMapping => {
                 let i = self.mapping_result_index();
                 self.control(events, HitTarget::Library(C::Result(i)));
