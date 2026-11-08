@@ -60,6 +60,8 @@ pub enum LibraryControl {
     Pin(usize),
     AddPin,
     RemovePin,
+    MappingPad(usize),
+    UnmapPad,
     Gate(usize),
     AddGate,
     RemoveGate,

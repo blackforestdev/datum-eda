@@ -195,7 +195,7 @@ checks and the isolated ordinary App run are recorded in the task; the App uses
 presented controls and logical keys in a debug test profile. This establishes
 neither physical/HUMAN qualification nor universal raw-operation validation.
 Generic raw Entity gate-link admission is separate intake
-`dat-entity-raw-links-ysdr`. Saved Entity/Part editing/relinking, PinPadMap authoring,
+`dat-entity-raw-links-ysdr`. Saved Entity/Part editing/relinking, saved PinPadMap editing,
 multi-gate placement, approval, models and broader library completion remain open.
 
 The creation-only Part GUI increment (`dat-part-gui-create-6zs4`) adds explicit
@@ -213,11 +213,38 @@ identity, entered metadata and chosen links while existing definitions and place
 circuit sources stay unchanged. Focused engine/form and isolated ordinary-App
 proof covers both absent and compatible Footprint choices. That App proof uses
 debug builds, presented controls and logical keys, not physical/HUMAN or release
-qualification. Saved Part editing/relinking, inheritance, pin-pad mapping,
+qualification. Saved Part editing/relinking, inheritance, placed pin-pad updates,
 placement policy, models, approval and broader library completion remain open.
 Generic raw Part/Footprint pair validation is separate intake
 `dat-part-raw-footprint-pair-yjc4`; this increment supplies no universal raw-write
 integrity claim.
+
+The creation-only PinPadMap GUI increment (`dat-pin-pad-map-gui-create-emck`)
+adds named Part and compatible explicit Footprint choices and a table assigning
+Footprint pads to gate-qualified Unit pins. Unmapped pads remain visible;
+nonempty partial maps are valid under the existing rules. Duplicate pads or
+gate/pin pairs are refused, while the same Unit pin under distinct gates is valid.
+Changing source choices clears incompatible draft relationships. The shared
+engine adapter independently validates membership, kinds and referenced revisions
+before canonical Create; it introduces neither name matching nor a separate map
+name. Preview and Cancel leave source and journal unchanged.
+
+An explicit default-assignment choice starts off. It may add a raw-preserving
+Part Set to the same transaction only when the Part's explicit default Footprint
+matches and canonical ownership evidence proves no authored component, package
+or symbol declarations reference that Part, including unresolved persisted owners.
+Missing, unsupported or ambiguous ownership evidence refuses assignment while
+leaving map-only creation available. Canonical component-instance loading now
+reports unavailable inventory, including unreadable entries and nonrepresentable
+JSON paths, rather than treating those cases as proof of no users.
+Focused engine/form and loader checks plus the isolated ordinary App prove
+map-only and eligible atomic default creation, refusals, cancellation, Undo/Redo,
+Save and cold reopening with stable map identities and links. Existing circuit
+sources and unrelated definitions remain unchanged; optional assignment changes
+only the selected Part's default-map field. The App proof uses debug builds,
+presented controls and logical keys. Saved-map editing, placed updates, legacy
+Package-pad authoring, full-coverage/large-map qualification, physical/HUMAN and
+release qualification, models, approval and broader library completion remain open.
 
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate

@@ -8,12 +8,18 @@ use datum_gui_protocol::{
 };
 #[path = "library_acquisition_panel.rs"]
 mod acquisition_panel;
+#[path = "library_definition_review.rs"]
+mod definition_review;
+#[path = "library_definition_table.rs"]
+mod definition_table;
 #[path = "library_electrical_form.rs"]
 mod electrical_form;
 #[path = "library_entity_form.rs"]
 mod entity_form;
 #[path = "library_part_form.rs"]
 mod part_form;
+#[path = "library_pin_pad_map_form.rs"]
+mod pin_pad_map_form;
 
 struct Painter<'a> {
     rect: RectPx,
@@ -136,6 +142,9 @@ pub(crate) fn render(
         if d.kind == "entities" {
             entity_form::table(&mut p, d);
         }
+        if d.kind == "pin_pad_maps" {
+            pin_pad_map_form::table(&mut p, d);
+        }
         if matches!(d.kind.as_str(), "footprints" | "packages") {
             let package = d.kind == "packages";
             let records = if package { &d.terminals } else { &d.pads };
@@ -245,24 +254,13 @@ pub(crate) fn render(
                 );
             }
         }
-        if matches!(d.kind.as_str(), "units" | "symbols") {
-            electrical_form::review(&mut p, d);
-        }
-        if d.kind == "entities"
-            && let Some(raw) = &d.preview
+        definition_review::review(&mut p, d);
+        if !matches!(d.kind.as_str(), "entities" | "parts" | "pin_pad_maps") || d.refusal.is_some()
         {
-            entity_form::review(&mut p, raw);
-        }
-        if d.kind == "parts"
-            && let Some(raw) = &d.preview
-        {
-            part_form::review(&mut p, raw);
-        }
-        if !matches!(d.kind.as_str(), "entities" | "parts") || d.refusal.is_some() {
             p.button(
                 if matches!(
                     d.kind.as_str(),
-                    "packages" | "units" | "symbols" | "entities" | "parts"
+                    "packages" | "units" | "symbols" | "entities" | "parts" | "pin_pad_maps"
                 ) {
                     "Inspect complete refusal in Console"
                 } else {
@@ -558,8 +556,7 @@ pub(crate) fn inspector(
         }
         if let Some(raw) = &d.preview {
             p.line("Validated preview · no source / journal writes");
-            if d.kind == "parts" {
-                part_form::review(&mut p, raw);
+            if definition_review::inspector(&mut p, d) {
                 return;
             }
             p.line(
@@ -567,10 +564,6 @@ pub(crate) fn inspector(
                     .and_then(Value::as_str)
                     .unwrap_or("Name unavailable"),
             );
-            if d.kind == "entities" {
-                entity_form::review(&mut p, raw);
-                return;
-            }
             if d.kind == "footprints" {
                 let package = raw.get("package").and_then(Value::as_str);
                 let named = state

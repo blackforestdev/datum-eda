@@ -17,9 +17,11 @@ mod electrical;
 mod entity;
 mod package;
 mod part;
+mod pin_pad_map;
 pub use electrical::ElectricalDraft;
 pub use entity::EntityDraft;
 pub use part::PartDraft;
+pub use pin_pad_map::{MappingGate, MappingName, PinPadMapDraft};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibraryField {
@@ -49,6 +51,7 @@ pub struct LibraryDraft {
     pub electrical: ElectricalDraft,
     pub entity: EntityDraft,
     pub part: PartDraft,
+    pub pin_pad_map: PinPadMapDraft,
     pub preview: Option<Value>,
     pub refusal: Option<String>,
 }
@@ -56,7 +59,14 @@ impl LibraryDraft {
     pub fn can_create(kind: &str) -> bool {
         matches!(
             kind,
-            "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities" | "parts"
+            "footprints"
+                | "padstacks"
+                | "packages"
+                | "units"
+                | "symbols"
+                | "entities"
+                | "parts"
+                | "pin_pad_maps"
         )
     }
     pub fn begin(
@@ -68,9 +78,12 @@ impl LibraryDraft {
     ) -> Result<Self, String> {
         if !Self::can_create(kind) {
             return Err(
-                "Authoring is available for Unit, Symbol, Entity, Part, Footprint, Padstack and Package creation"
+                "Authoring is available for Unit, Symbol, Entity, Part, Footprint, Padstack, Package and PinPadMap creation"
                     .into(),
             );
+        }
+        if kind == "pin_pad_maps" && entry.is_some() {
+            return Err("Saved PinPadMap editing is unavailable in this increment".into());
         }
         if kind == "parts" && entry.is_some() {
             return Err("Saved Part editing is unavailable in this increment".into());
@@ -111,10 +124,15 @@ impl LibraryDraft {
             electrical: ElectricalDraft::default(),
             entity: EntityDraft::default(),
             part: PartDraft::default(),
+            pin_pad_map: PinPadMapDraft::default(),
             preview: None,
             refusal: None,
         };
         let raw = entry.map(|e| &e.raw).unwrap_or(&Value::Null);
+        if kind == "pin_pad_maps" {
+            draft.pin_pad_map_fields(browser);
+            return Ok(draft);
+        }
         if kind == "parts" {
             draft.part_fields(browser);
             return Ok(draft);
@@ -301,6 +319,12 @@ impl LibraryDraft {
                     | "part_entity"
                     | "part_package"
                     | "part_footprint"
+                    | "map_part"
+                    | "map_footprint"
+                    | "map_pad"
+                    | "map_gate"
+                    | "map_pin"
+                    | "map_default"
             ),
         });
     }
@@ -311,6 +335,18 @@ impl LibraryDraft {
             .map_or("", |f| f.text.as_str())
     }
     pub fn change(&mut self, text: String) {
+        if self.kind == "pin_pad_maps" {
+            let key = self.fields[self.focused].key;
+            match self.before_map_change(key, &text) {
+                Ok(true) => return,
+                Err(error) => {
+                    self.preview = None;
+                    self.refusal = Some(error);
+                    return;
+                }
+                Ok(false) => {}
+            }
+        }
         if self.fields[self.focused].key == "pin_name"
             && self.electrical.pin_id.is_none()
             && !text.trim().is_empty()
@@ -347,6 +383,9 @@ impl LibraryDraft {
         if self.kind == "parts" && self.fields[self.focused].key == "part_package" {
             self.refresh_part_footprints();
         }
+        if self.kind == "pin_pad_maps" {
+            self.after_map_change(self.fields[self.focused].key);
+        }
         self.preview = None;
         self.refusal = None;
     }
@@ -369,11 +408,13 @@ impl LibraryDraft {
     pub fn request(&self) -> Result<LibraryDefinitionRequest, String> {
         let mut fields = Map::new();
         let changed = |keys: &[&str]| self.create || keys.iter().any(|k| self.dirty.contains(k));
-        if self.kind != "parts" && changed(&["name"]) {
+        if !matches!(self.kind.as_str(), "parts" | "pin_pad_maps") && changed(&["name"]) {
             fields.insert("name".into(), json!(self.value("name")));
         }
         if matches!(self.kind.as_str(), "units" | "symbols") {
             self.electrical_request(&mut fields)?;
+        } else if self.kind == "pin_pad_maps" {
+            self.pin_pad_map_request(&mut fields)?;
         } else if self.kind == "parts" {
             self.part_request(&mut fields)?;
         } else if self.kind == "entities" {

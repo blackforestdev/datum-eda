@@ -11,6 +11,8 @@ mod input;
 mod package;
 #[path = "native_library_frame_tests/part.rs"]
 mod part;
+#[path = "native_library_frame_tests/pin_pad_map.rs"]
+mod pin_pad_map;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
 mod proof_assertions;
 use proof_assertions::source_bytes;
@@ -29,6 +31,8 @@ enum Step {
     Electrical(usize),
     Entity(usize),
     Part(usize, bool),
+    Mapping(usize, bool),
+    SelectMapping,
     SavedTabCycle,
     Open,
     Kind(usize),
@@ -108,6 +112,7 @@ impl Fixture {
             Step::Kind(i) => Some(C::Kind(*i)),
             Step::First => Some(C::Result(r.workspace().library.results()[0])),
             Step::Search(_) => Some(C::Search),
+            Step::SelectMapping => Some(C::Result(self.mapping_result_index())),
             Step::Select(name) => r
                 .workspace()
                 .library
@@ -191,6 +196,11 @@ impl Fixture {
             Step::Electrical(stage) => self.check_electrical(stage),
             Step::Entity(stage) => self.check_entity(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
+            Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
+            Step::SelectMapping => {
+                let i = self.mapping_result_index();
+                self.control(events, HitTarget::Library(C::Result(i)));
+            }
             Step::SavedTabCycle => self.saved_tab_cycle(),
             Step::RecordFootprint => self.record_footprint(),
             Step::CheckFootprintValue(edited) => self.check_footprint_value(edited),

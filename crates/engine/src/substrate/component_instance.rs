@@ -214,18 +214,51 @@ pub(super) fn read_component_instance_shards(
     // binding diagnostics are authoritative only after accepted replay finishes.
     let mut provisional_diagnostics = Vec::new();
     let mut diagnostics = Vec::new();
-    let Ok(entries) = std::fs::read_dir(&dir) else {
-        return (shards, sources, diagnostics);
+    let entries = match std::fs::read_dir(&dir) {
+        Ok(entries) => entries,
+        Err(error) => {
+            if error.kind() != std::io::ErrorKind::NotFound
+                || !component_instance_inventory_is_absent(&dir)
+            {
+                diagnostics.push(ResolveDiagnostic {
+                    code: "component_instance_inventory_unavailable".into(),
+                    message: format!("Cannot read ComponentInstance inventory: {error}"),
+                    path: Some(dir.clone()),
+                });
+            }
+            return (shards, sources, diagnostics);
+        }
     };
-    let mut paths = entries
-        .filter_map(Result::ok)
-        .map(|entry| entry.path())
-        .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("json"))
-        .collect::<Vec<_>>();
+    let mut paths = Vec::new();
+    for entry in entries {
+        match entry {
+            Ok(entry) => {
+                let path = entry.path();
+                if path.extension().and_then(|value| value.to_str()) == Some("json") {
+                    paths.push(path);
+                }
+            }
+            Err(error) => diagnostics.push(ResolveDiagnostic {
+                code: "component_instance_inventory_unavailable".into(),
+                message: format!("Cannot read ComponentInstance inventory entry: {error}"),
+                path: Some(dir.clone()),
+            }),
+        }
+    }
     paths.sort();
 
     for path in paths {
         let Some(filename) = path.file_name().and_then(|value| value.to_str()) else {
+            diagnostics.push(ResolveDiagnostic {
+                code: "component_instance_inventory_unavailable".into(),
+                message: format!(
+                    "ComponentInstance JSON path is not canonical UTF-8: {:?}",
+                    path.as_os_str()
+                ),
+                // Keep diagnostics serializable through the native protocol;
+                // the escaped OS path above retains the exact offending bytes.
+                path: Some(dir.clone()),
+            });
             continue;
         };
         let relative_path = format!(".datum/component_instances/{filename}");
@@ -252,6 +285,27 @@ pub(super) fn read_component_instance_shards(
     }
 
     (shards, sources, diagnostics)
+}
+
+// Only actual optional absence is an empty inventory. A dangling inventory or
+// metadata-directory link is a present unusable source, not proof of no owners.
+fn component_instance_inventory_is_absent(dir: &Path) -> bool {
+    if !std::fs::symlink_metadata(dir)
+        .is_err_and(|error| error.kind() == std::io::ErrorKind::NotFound)
+    {
+        return false;
+    }
+    let Some(parent) = dir.parent() else {
+        return false;
+    };
+    match std::fs::symlink_metadata(parent) {
+        Err(error) => error.kind() == std::io::ErrorKind::NotFound,
+        Ok(metadata) if metadata.is_dir() => true,
+        Ok(metadata) if metadata.file_type().is_symlink() => {
+            std::fs::metadata(parent).is_ok_and(|target| target.is_dir())
+        }
+        Ok(_) => false,
+    }
 }
 
 fn read_component_instance_shard(

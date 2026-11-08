@@ -19,6 +19,8 @@ mod entity;
 mod package;
 #[path = "library_gui_part.rs"]
 mod part;
+#[path = "library_gui_pin_pad_map.rs"]
+mod pin_pad_map;
 
 /// GUI intent contains only explicitly edited fields, never a normalized object.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -89,6 +91,9 @@ pub fn build_definition(
     }
     if request.kind == "parts" {
         return part::build(context, provenance, request, create);
+    }
+    if request.kind == "pin_pad_maps" {
+        return pin_pad_map::build(context, provenance, request, create);
     }
     if request.kind == "packages" {
         return package::build(context, provenance, request, create);

@@ -187,6 +187,26 @@ impl Runtime {
                     Err(e) => self.session.workspace_mut().library.refusal = Some(e),
                 }
             }
+            C::MappingPad(_) | C::UnmapPad => {
+                let browser = &mut self.session.workspace_mut().library;
+                if let Some(d) = &mut browser.draft {
+                    let index = if let C::MappingPad(i) = control {
+                        Some(i)
+                    } else {
+                        None
+                    };
+                    match d.select_mapping_pad(index, control == C::UnmapPad) {
+                        Ok(()) => {
+                            if let Some(i) = d.fields.iter().position(|f| f.key == "map_gate") {
+                                d.focused = i;
+                                d.offset = i;
+                                browser.focus = Some(C::Field(i));
+                            }
+                        }
+                        Err(error) => d.refusal = Some(error),
+                    }
+                }
+            }
             C::Gate(_) | C::AddGate | C::RemoveGate => {
                 let browser = &mut self.session.workspace_mut().library;
                 if let Some(d) = &mut browser.draft {
@@ -419,6 +439,10 @@ impl Runtime {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));
                         controls.extend([C::AddGate, C::RemoveGate]);
                     }
+                    if d.kind == "pin_pad_maps" {
+                        controls.extend((0..d.pin_pad_map.pads.len()).map(C::MappingPad));
+                        controls.push(C::UnmapPad);
+                    }
                     controls.extend((0..d.fields.len()).map(C::Field));
                     if let Some(raw) = &d.preview {
                         controls.extend(
@@ -429,7 +453,9 @@ impl Runtime {
                                 .map(C::PreviewPad),
                         );
                     }
-                    if !matches!(d.kind.as_str(), "entities" | "parts") || d.refusal.is_some() {
+                    if !matches!(d.kind.as_str(), "entities" | "parts" | "pin_pad_maps")
+                        || d.refusal.is_some()
+                    {
                         controls.push(C::Notice);
                     }
                     controls.extend([C::Preview, C::Commit, C::Cancel]);

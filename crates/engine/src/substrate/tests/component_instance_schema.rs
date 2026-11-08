@@ -87,3 +87,61 @@ fn resolver_defaults_legacy_component_instance_shard_schema_version() {
         shard.kind == SourceShardKind::ComponentInstance && shard.schema_version.is_none()
     }));
 }
+
+#[test]
+fn component_instance_inventory_distinguishes_absence_and_unusable_path() {
+    let root = temp_project_root("component_inventory_absence");
+    write_minimal_project(&root, Uuid::new_v4(), Uuid::new_v4());
+    let absent = ProjectResolver::new(&root).resolve().unwrap();
+    assert!(
+        !absent
+            .diagnostics
+            .iter()
+            .any(|d| d.code == "component_instance_inventory_unavailable")
+    );
+    std::fs::create_dir_all(root.join(".datum")).unwrap();
+    let path = root.join(".datum/component_instances");
+    std::fs::write(&path, b"not a directory").unwrap();
+    let unavailable = ProjectResolver::new(&root).resolve().unwrap();
+    assert!(
+        unavailable
+            .diagnostics
+            .iter()
+            .any(|d| d.code == "component_instance_inventory_unavailable"
+                && d.path.as_ref() == Some(&path))
+    );
+    assert!(unavailable.component_instances.is_empty());
+}
+
+#[test]
+#[cfg(unix)]
+fn component_instance_inventory_reports_non_utf8_json_and_dangling_links() {
+    use std::os::unix::{ffi::OsStringExt, fs::symlink};
+    let root = temp_project_root("component_inventory_non_utf8");
+    write_minimal_project(&root, Uuid::new_v4(), Uuid::new_v4());
+    let dir = root.join(".datum/component_instances");
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join(std::ffi::OsString::from_vec(b"owner-\xff.json".to_vec()));
+    std::fs::write(&path, b"{}").unwrap();
+    let model = ProjectResolver::new(&root).resolve().unwrap();
+    assert!(
+        model
+            .diagnostics
+            .iter()
+            .any(|d| d.code == "component_instance_inventory_unavailable"
+                && d.path.as_ref() == Some(&dir)
+                && d.message.contains("not canonical UTF-8"))
+    );
+    assert!(serde_json::to_value(&model.diagnostics).is_ok());
+    std::fs::remove_file(&path).unwrap();
+    std::fs::remove_dir(&dir).unwrap();
+    symlink(root.join("missing-ci-target"), &dir).unwrap();
+    let model = ProjectResolver::new(&root).resolve().unwrap();
+    assert!(
+        model
+            .diagnostics
+            .iter()
+            .any(|d| d.code == "component_instance_inventory_unavailable"
+                && d.path.as_ref() == Some(&dir))
+    );
+}

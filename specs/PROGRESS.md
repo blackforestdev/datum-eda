@@ -582,7 +582,7 @@ The bounded Entity creation increment (`dat-entity-gate-gui-create-zcp0`) adds a
 shared form for explicit Entity fields and named gates with compatible existing
 Unit/Symbol pairs. Engine/form tests and the ordinary App create/cancel/commit,
 Undo/Redo, Save and cold-reopen proof preserve identities, links and existing
-placed-circuit sources. Saved Entity/Part editing, PinPadMap authoring, multi-gate
+placed-circuit sources. Saved Entity/Part and PinPadMap editing, multi-gate
 placement and broader native-library completion remain open. This routine delivery
 does not select a successor milestone or establish full qualification.
 
@@ -592,9 +592,23 @@ Footprint, with read-only initial lifecycle Unknown. The shared engine validates
 references independently. Focused tests and the ordinary App prove preview/cancel,
 compatibility clearing, commit/history and Save/cold reopening for absent and
 selected defaults while preserving existing definitions and authored circuits.
-Saved Part editing, pin-pad mapping, placement policy, approval/models and broader
+Saved Part editing, placed pin-pad updates, placement policy, approval/models and broader
 native-library completion remain open; no successor milestone or full
 qualification is selected by this delivery.
+
+The bounded PinPadMap creation increment (`dat-pin-pad-map-gui-create-emck`)
+adds explicit named Part/compatible Footprint choices and pad-to-gate-qualified
+pin rows, including visible unmapped pads and duplicate-pair refusal. Optional
+default assignment begins off and requires a matching explicit Part default
+Footprint and proven absence of authored placed users, including unresolved
+persisted owners; unavailable inventory refuses assignment without blocking
+map-only creation. Focused engine/form/loader tests and the isolated ordinary App
+prove map-only and eligible atomic default creation, cancellation, history, Save
+and cold reopening while preserving existing circuit sources and unrelated data.
+This debug presented-control/logical-key proof supplies no physical/HUMAN or
+release qualification. Saved-map editing, placed updates, full coverage/large-map
+qualification, approval/models and broader native-library completion remain open;
+this routine delivery does not select a successor milestone.
 
 ### Native File-Type Catalog — Owner-Requested Proposal
 
