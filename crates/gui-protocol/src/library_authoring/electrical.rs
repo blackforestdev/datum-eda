@@ -2,8 +2,12 @@
 use super::*;
 use std::collections::BTreeMap;
 
+mod saved;
+
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct ElectricalDraft {
+    pub original: Option<Value>,
+    pub unit_label: Option<String>,
     pub pin_id: Option<Uuid>,
     pub pins: Map<String, Value>,
     pub anchors: Map<String, Value>,
@@ -95,6 +99,9 @@ impl LibraryDraft {
     }
 
     pub fn electrical_pins(&self) -> Result<Map<String, Value>, String> {
+        if !self.create {
+            return self.saved_pins();
+        }
         let mut pins = self.electrical.pins.clone();
         let name = self.value("pin_name").trim();
         if !name.is_empty() {
@@ -121,6 +128,9 @@ impl LibraryDraft {
     }
 
     pub fn electrical_anchors(&self) -> Result<Map<String, Value>, String> {
+        if !self.create {
+            return self.saved_anchors();
+        }
         let mut anchors = self.electrical.anchors.clone();
         if !self.value("anchor_pin").is_empty() {
             let pin = self.uuid("anchor_pin")?;
@@ -160,6 +170,9 @@ impl LibraryDraft {
     }
 
     pub(super) fn electrical_request(&self, fields: &mut Map<String, Value>) -> Result<(), String> {
+        if !self.create {
+            return self.saved_request(fields);
+        }
         if self.kind == "units" {
             fields.insert("pins".into(), self.electrical_pins()?.into());
         } else {
@@ -185,6 +198,9 @@ impl LibraryDraft {
     }
 
     pub fn switch_pin(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        if !self.create && (remove || index.is_none()) {
+            return Err("Saved edits preserve logical pin identities".into());
+        }
         let selected = index
             .and_then(|i| self.electrical.pins.keys().nth(i))
             .cloned();
@@ -205,8 +221,13 @@ impl LibraryDraft {
         for (key, target) in [("pin_name", "name"), ("pin_type", "electrical_type")] {
             let value = raw
                 .as_ref()
-                .and_then(|r| r.get(target))
-                .and_then(Value::as_str)
+                .and_then(|r| {
+                    r.get(target).and_then(Value::as_str).or_else(|| {
+                        (target == "electrical_type")
+                            .then(|| r.get("direction").and_then(Value::as_str))
+                            .flatten()
+                    })
+                })
                 .unwrap_or("");
             self.fields.iter_mut().find(|f| f.key == key).unwrap().text = value.into();
         }
@@ -216,6 +237,9 @@ impl LibraryDraft {
     }
 
     pub fn switch_anchor(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        if !self.create && (remove || index.is_none()) {
+            return Err("Saved edits preserve anchor identities and pin links".into());
+        }
         let selected = index
             .and_then(|i| self.electrical.anchors.keys().nth(i))
             .cloned();
@@ -238,9 +262,20 @@ impl LibraryDraft {
             ("anchor_orientation", "/style/orientation"),
             ("anchor_length", "/style/length_nm"),
         ] {
-            let value = raw.as_ref().and_then(|r| r.pointer(pointer));
-            self.fields.iter_mut().find(|f| f.key == key).unwrap().text =
-                value.map_or_else(String::new, |v| {
+            let value = raw.as_ref().and_then(|r| {
+                let flat = match key {
+                    "anchor_orientation" => r.get("orientation"),
+                    "anchor_length" => r.get("length_nm"),
+                    _ => None,
+                };
+                flat.filter(|v| !v.is_null()).or_else(|| r.pointer(pointer))
+            });
+            let Some(field) = self.fields.iter_mut().find(|f| f.key == key) else {
+                continue;
+            };
+            field.text = value
+                .filter(|v| !v.is_null())
+                .map_or_else(String::new, |v| {
                     v.as_str()
                         .map(str::to_owned)
                         .unwrap_or_else(|| v.to_string())

@@ -82,7 +82,10 @@ impl LibraryEntry {
     pub fn editable(&self) -> bool {
         self.warning.is_none()
             && self.source_path == format!("pool/{}/{}.json", self.kind, self.id)
-            && matches!(self.kind.as_str(), "footprints" | "padstacks")
+            && matches!(
+                self.kind.as_str(),
+                "footprints" | "padstacks" | "units" | "symbols"
+            )
     }
     pub fn label(&self) -> &str {
         KINDS

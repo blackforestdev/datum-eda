@@ -281,10 +281,18 @@ impl Runtime {
                     };
                     match result {
                         Ok(()) => {
-                            let key = if pin { "pin_name" } else { "anchor_pin" };
-                            d.focused = d.fields.iter().position(|f| f.key == key).unwrap();
-                            d.offset = d.focused;
-                            browser.focus = Some(C::Field(d.focused));
+                            let key = if pin {
+                                "pin_name"
+                            } else if d.create {
+                                "anchor_pin"
+                            } else {
+                                "anchor_x"
+                            };
+                            if let Some(focused) = d.fields.iter().position(|f| f.key == key) {
+                                d.focused = focused;
+                                d.offset = focused;
+                                browser.focus = Some(C::Field(focused));
+                            }
                         }
                         Err(error) => d.refusal = Some(error),
                     }
@@ -377,11 +385,15 @@ impl Runtime {
                     }
                     if d.kind == "units" {
                         controls.extend((0..d.electrical.pins.len()).map(C::Pin));
-                        controls.extend([C::AddPin, C::RemovePin]);
+                        if d.create {
+                            controls.extend([C::AddPin, C::RemovePin]);
+                        }
                     }
                     if d.kind == "symbols" {
                         controls.extend((0..d.electrical.anchors.len()).map(C::Anchor));
-                        controls.extend([C::AddAnchor, C::RemoveAnchor]);
+                        if d.create {
+                            controls.extend([C::AddAnchor, C::RemoveAnchor]);
+                        }
                     }
                     controls.extend((0..d.fields.len()).map(C::Field));
                     if let Some(raw) = &d.preview {

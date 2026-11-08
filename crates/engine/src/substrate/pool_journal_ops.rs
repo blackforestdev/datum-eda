@@ -386,7 +386,7 @@ fn delete_pool_shard(project_root: &Path, relative_path: &str) -> StagedShardWri
     }
 }
 
-fn validate_pool_library_object(
+pub(in crate::substrate) fn validate_pool_library_object(
     object_id: uuid::Uuid,
     relative_path: &str,
     object_kind: &str,

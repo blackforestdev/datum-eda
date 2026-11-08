@@ -3,6 +3,9 @@ use super::*;
 use crate::pool::{LibraryPinElectricalType, Primitive, Symbol};
 use std::collections::HashSet;
 
+#[path = "library_gui_electrical_edit.rs"]
+mod edit;
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct PinIntent {
@@ -17,7 +20,7 @@ pub(super) fn build(
     create: bool,
 ) -> Result<PreparedWrite, EngineError> {
     if !create {
-        return Err(refusal("Saved Unit and Symbol editing is unavailable"));
+        return edit::build(context, provenance, request);
     }
     let allowed: &[&str] = match request.kind.as_str() {
         "units" => &["name", "pins"],

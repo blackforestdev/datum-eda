@@ -5,10 +5,19 @@ pub(in crate::substrate) fn resolve_component_instance_sources(
     sources: ComponentInstanceSources,
     objects: &mut BTreeMap<ObjectId, DomainObject>,
     diagnostics: &mut Vec<ResolveDiagnostic>,
+    history: &super::pool_history::PoolHistory<'_>,
 ) -> BTreeMap<ComponentInstanceId, ComponentInstance> {
     let mut instances = BTreeMap::new();
     for (_, (shard, input)) in sources {
-        insert_component_instance(&shard, input, objects, &mut instances, diagnostics, true);
+        insert_component_instance(
+            &shard,
+            input,
+            objects,
+            &mut instances,
+            diagnostics,
+            true,
+            Some(history),
+        );
     }
     instances
 }
@@ -19,6 +28,7 @@ pub(super) fn insert_component_instance(
     instances: &mut BTreeMap<ComponentInstanceId, ComponentInstance>,
     diagnostics: &mut Vec<ResolveDiagnostic>,
     final_state: bool,
+    history: Option<&super::pool_history::PoolHistory<'_>>,
 ) {
     let Some(filename_id) = shard
         .path
@@ -128,7 +138,7 @@ pub(super) fn insert_component_instance(
         });
         return;
     }
-    if let Err(message) = validate_library_bindings(&input, objects) {
+    if let Err(message) = validate_library_bindings(&input, objects, history) {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_invalid_library_binding".to_string(),
             message: format!("component instance {} {message}", input.uuid),
@@ -152,6 +162,7 @@ pub(super) fn insert_component_instance(
 fn validate_library_bindings(
     input: &PersistedComponentInstance,
     objects: &BTreeMap<ObjectId, DomainObject>,
+    history: Option<&super::pool_history::PoolHistory<'_>>,
 ) -> Result<(), String> {
     let mut part_binding = None;
     for (binding_id, binding) in &input.library_bindings {
@@ -168,11 +179,12 @@ fn validate_library_bindings(
             LibraryBindingRole::PinPadMap => "pin_pad_maps",
             LibraryBindingRole::ModelAttachment => "models",
         };
-        if !revisioned_pool_ref_matches(
+        if !pool_ref_matches(
             binding.target_object_id,
             binding.pinned_object_revision,
             objects,
             expected_kind,
+            history,
         ) {
             return Err(format!(
                 "library binding {binding_id} target {} must resolve to current pool {expected_kind}",
@@ -180,11 +192,12 @@ fn validate_library_bindings(
             ));
         }
         for reference in &binding.local_override_refs {
-            if !revisioned_pool_ref_matches(
+            if !pool_ref_matches(
                 reference.object_id,
                 reference.object_revision,
                 objects,
                 expected_kind,
+                history,
             ) {
                 return Err(format!(
                     "library binding {binding_id} local override {} must resolve to current pool {expected_kind}",
@@ -244,4 +257,20 @@ fn revisioned_pool_ref_matches(
                 && object.kind == expected_kind
         })
         .unwrap_or(false)
+}
+
+fn pool_ref_matches(
+    id: ObjectId,
+    revision: ObjectRevision,
+    objects: &BTreeMap<ObjectId, DomainObject>,
+    kind: &str,
+    history: Option<&super::pool_history::PoolHistory<'_>>,
+) -> bool {
+    if kind == "symbols"
+        && let Some(history) = history
+    {
+        history.symbol_ref_matches(objects, id, revision)
+    } else {
+        revisioned_pool_ref_matches(id, revision, objects, kind)
+    }
 }

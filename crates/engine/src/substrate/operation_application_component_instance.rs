@@ -18,13 +18,28 @@ pub(super) fn apply_component_instance_operation(
     diff: &mut CommitDiff,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
+    apply_component_instance_operation_with_basis(model, diff, operation, None)
+}
+
+/// Accepted before-model history remains authoritative when earlier operations
+/// in this atomic batch have advanced the staged Symbol's counter.
+pub(super) fn apply_component_instance_operation_with_basis(
+    model: &mut DesignModel,
+    diff: &mut CommitDiff,
+    operation: &Operation,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
+) -> Result<bool, EngineError> {
     match operation {
         Operation::CreateComponentInstance {
             component_instance_id,
             component_instance,
-        } => {
-            apply_component_instance_create(model, diff, *component_instance_id, component_instance)
-        }
+        } => apply_component_instance_create(
+            model,
+            diff,
+            *component_instance_id,
+            component_instance,
+            history_model,
+        ),
         Operation::DeleteComponentInstance {
             component_instance_id,
             ..
@@ -33,7 +48,13 @@ pub(super) fn apply_component_instance_operation(
             component_instance_id,
             component_instance,
             ..
-        } => apply_component_instance_set(model, diff, *component_instance_id, component_instance),
+        } => apply_component_instance_set(
+            model,
+            diff,
+            *component_instance_id,
+            component_instance,
+            history_model,
+        ),
         _ => return Ok(false),
     }?;
     Ok(true)
@@ -44,6 +65,7 @@ pub(super) fn apply_component_instance_create(
     diff: &mut CommitDiff,
     component_instance_id: ObjectId,
     value: &serde_json::Value,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
 ) -> Result<(), EngineError> {
     let component_instance = persisted_component_instance_from_value(value)?;
     let persisted_component_instance: PersistedComponentInstance =
@@ -54,6 +76,7 @@ pub(super) fn apply_component_instance_create(
         &persisted_component_instance,
         persisted_component_instance.part_ref.as_ref(),
         model,
+        history_model,
     )?;
     let shard_id = authored_shard_id(component_instance_id);
     model.objects.insert(
@@ -91,6 +114,7 @@ pub(super) fn apply_component_instance_set(
     diff: &mut CommitDiff,
     component_instance_id: ObjectId,
     value: &serde_json::Value,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
 ) -> Result<(), EngineError> {
     let component_instance = persisted_component_instance_from_value(value)?;
     let persisted_component_instance: PersistedComponentInstance =
@@ -101,6 +125,7 @@ pub(super) fn apply_component_instance_set(
         &persisted_component_instance,
         persisted_component_instance.part_ref.as_ref(),
         model,
+        history_model,
     )?;
     let shard_id = authored_shard_id(component_instance_id);
     model.objects.insert(
@@ -135,6 +160,7 @@ fn validate_component_instance_refs(
     persisted_component_instance: &PersistedComponentInstance,
     part_ref: Option<&RevisionedRef>,
     model: &DesignModel,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
 ) -> Result<(), EngineError> {
     if component_instance.placed_symbol_refs.is_empty() {
         return Err(EngineError::Validation(format!(
@@ -188,9 +214,10 @@ fn validate_component_instance_refs(
             part_ref.object_id,
             part_ref.object_revision,
             "parts",
+            history_model,
         )?;
     }
-    validate_library_bindings(component_instance, model, part_ref)?;
+    validate_library_bindings(component_instance, model, part_ref, history_model)?;
     Ok(())
 }
 
@@ -198,6 +225,7 @@ fn validate_library_bindings(
     component_instance: &ComponentInstance,
     model: &DesignModel,
     part_ref: Option<&RevisionedRef>,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
 ) -> Result<(), EngineError> {
     let mut part_binding = None;
     for (binding_id, binding) in &component_instance.library_bindings {
@@ -207,7 +235,13 @@ fn validate_library_bindings(
                 component_instance.id, binding_id
             )));
         }
-        validate_library_binding(component_instance.id, *binding_id, binding, model)?;
+        validate_library_binding(
+            component_instance.id,
+            *binding_id,
+            binding,
+            model,
+            history_model,
+        )?;
         if binding.binding_role == LibraryBindingRole::Part
             && part_binding.replace(binding).is_some()
         {
@@ -238,6 +272,7 @@ fn validate_library_binding(
     binding_id: ObjectId,
     binding: &LibraryBinding,
     model: &DesignModel,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
 ) -> Result<(), EngineError> {
     let expected_kind = match binding.binding_role {
         LibraryBindingRole::Part => "parts",
@@ -254,6 +289,7 @@ fn validate_library_binding(
         binding.target_object_id,
         binding.pinned_object_revision,
         expected_kind,
+        history_model,
     )?;
     for reference in &binding.local_override_refs {
         validate_revisioned_pool_ref(
@@ -263,6 +299,7 @@ fn validate_library_binding(
             reference.object_id,
             reference.object_revision,
             expected_kind,
+            history_model,
         )?;
     }
     if binding_id == Uuid::nil() {
@@ -280,6 +317,7 @@ fn validate_revisioned_pool_ref(
     object_id: ObjectId,
     object_revision: super::ObjectRevision,
     expected_kind: &str,
+    history_model: Option<super::component_instance::pool_history::PoolHistoryBasis<'_>>,
 ) -> Result<(), EngineError> {
     let Some(object) = model.objects.get(&object_id) else {
         return Err(EngineError::NotFound {
@@ -287,6 +325,22 @@ fn validate_revisioned_pool_ref(
             uuid: object_id,
         });
     };
+    if expected_kind == "symbols" {
+        let authenticated = match history_model {
+            Some(basis) => basis.symbol_ref_matches(&model.objects, object_id, object_revision),
+            None => super::component_instance::pool_history::PoolHistory {
+                shards: &model.source_shards,
+                journal: &model.journal,
+            }
+            .symbol_ref_matches(&model.objects, object_id, object_revision),
+        };
+        if authenticated {
+            return Ok(());
+        }
+        return Err(EngineError::Validation(format!(
+            "component instance {component_instance_id} {label} has no authenticated Symbol revision"
+        )));
+    }
     if object.object_revision != object_revision
         || object.domain != "pool"
         || object.kind != expected_kind

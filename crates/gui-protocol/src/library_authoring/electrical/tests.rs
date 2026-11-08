@@ -183,3 +183,216 @@ fn electrical_draft_to_native_builder_preserves_identity_units_and_pin_style_wit
     drop(model);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+fn saved_entry(kind: &str, id: Uuid, raw: Value) -> crate::library_browser::LibraryEntry {
+    crate::library_browser::LibraryEntry {
+        id,
+        kind: kind.into(),
+        name: raw["name"].as_str().unwrap().into(),
+        source_path: format!("pool/{kind}/{id}.json"),
+        revision: Some(3),
+        raw,
+        warning: None,
+    }
+}
+
+#[test]
+fn saved_unit_form_edits_existing_metadata_without_defaults_or_raw_row_loss() {
+    let (unit, first, second) = (Uuid::new_v4(), Uuid::new_v4(), Uuid::new_v4());
+    let original = json!({"uuid":unit,"name":"Saved Unit","pins":{
+        first.to_string():{"uuid":first,"name":"A","direction":"Input","electrical_type":null,"swap_group":2,"custom":[7]},
+        second.to_string():{"uuid":second,"name":"B","direction":"Passive","custom":{"keep":true}}
+    },"extension":"exact"});
+    let entry = saved_entry("units", unit, original.clone());
+    let browser = LibraryBrowser {
+        entries: vec![entry.clone()],
+        ..Default::default()
+    };
+    let mut draft = LibraryDraft::begin(
+        &browser,
+        Some(&entry),
+        "units",
+        "saved-revision".into(),
+        None,
+    )
+    .unwrap();
+    assert!(entry.editable());
+    assert!(draft.request().unwrap().fields.is_empty());
+    let index = draft
+        .electrical
+        .pins
+        .keys()
+        .position(|k| k == &first.to_string())
+        .unwrap();
+    draft.switch_pin(Some(index), false).unwrap();
+    assert_eq!(draft.value("pin_type"), "Input");
+    set(&mut draft, "pin_name", "Renamed A");
+    let index = draft
+        .electrical
+        .pins
+        .keys()
+        .position(|k| k == &second.to_string())
+        .unwrap();
+    draft.switch_pin(Some(index), false).unwrap();
+    set(&mut draft, "pin_type", "PowerIn");
+    let request = draft.request().unwrap();
+    let mut expected = original["pins"].clone();
+    expected[first.to_string()]["name"] = json!("Renamed A");
+    expected[second.to_string()]["direction"] = json!("PowerIn");
+    assert_eq!(
+        request.fields,
+        json!({"pins":expected}).as_object().unwrap().clone()
+    );
+    assert_eq!(draft.electrical.original, Some(original));
+    assert!(draft.switch_pin(None, false).is_err());
+    assert!(draft.switch_pin(None, true).is_err());
+}
+
+#[test]
+fn saved_symbol_form_retains_order_graphics_and_legacy_anchor_representation() {
+    let (unit, first, second, symbol) = (
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+    );
+    let logical = saved_entry(
+        "units",
+        unit,
+        json!({"name":"Named Unit","pins":{
+            first.to_string():{"name":"A"},second.to_string():{"name":"B"}
+        }}),
+    );
+    let original = json!({"uuid":symbol,"name":"Saved graphic","unit":unit,
+        "drawings":[{"Circle":{"center":{"x":0,"y":0},"radius":500000,"width":1}}],
+        "fields":[{"key":"note","value":"keep","custom":2}],
+        "pin_anchors":[
+            {"pin":second,"position":{"x":1000000,"y":0},"style":{"orientation":"Left","length_nm":500000,"decoration":"clock","extra":true}},
+            {"pin":first,"position":{"x":-1000000,"y":0,"extra":9},"orientation":"Right","length_nm":500000,"number":"1"}
+        ],"extension":[1,2]});
+    let entry = saved_entry("symbols", symbol, original.clone());
+    let browser = LibraryBrowser {
+        entries: vec![logical, entry.clone()],
+        ..Default::default()
+    };
+    let mut draft = LibraryDraft::begin(
+        &browser,
+        Some(&entry),
+        "symbols",
+        "saved-revision".into(),
+        None,
+    )
+    .unwrap();
+    assert!(entry.editable());
+    assert!(draft.request().unwrap().fields.is_empty());
+    assert_eq!(draft.electrical_unit(), unit.to_string());
+    assert!(
+        draft
+            .fields
+            .iter()
+            .all(|f| f.key != "unit" && f.key != "anchor_pin" && !f.key.starts_with("rect_"))
+    );
+    let index = draft
+        .electrical
+        .anchors
+        .keys()
+        .position(|k| k == &first.to_string())
+        .unwrap();
+    draft.switch_anchor(Some(index), false).unwrap();
+    assert_eq!(draft.value("anchor_orientation"), "Right");
+    set(&mut draft, "anchor_x", "-1.250001mm");
+    set(&mut draft, "anchor_orientation", "Down");
+    let index = draft
+        .electrical
+        .anchors
+        .keys()
+        .position(|k| k == &second.to_string())
+        .unwrap();
+    draft.switch_anchor(Some(index), false).unwrap();
+    set(&mut draft, "anchor_length", "0.75mm");
+    let request = draft.request().unwrap();
+    let mut expected = original["pin_anchors"].clone();
+    expected[1]["position"]["x"] = json!(-1250001);
+    expected[1]["orientation"] = json!("Down");
+    expected[0]["style"]["length_nm"] = json!(750000);
+    assert_eq!(
+        request.fields,
+        json!({"pin_anchors":expected}).as_object().unwrap().clone()
+    );
+    assert_eq!(draft.electrical.original, Some(original));
+    assert!(draft.switch_anchor(None, false).is_err());
+    assert!(draft.switch_anchor(None, true).is_err());
+    set(&mut draft, "anchor_x", "NaN");
+    assert!(draft.request().is_err());
+}
+
+#[test]
+fn saved_symbol_name_only_does_not_materialize_absent_anchor_or_style_defaults() {
+    let unit = Uuid::new_v4();
+    let symbol = Uuid::new_v4();
+    let logical = saved_entry("units", unit, json!({"name":"Unit","pins":{}}));
+    let original = json!({"uuid":symbol,"name":"Before","unit":unit,"extension":null});
+    let entry = saved_entry("symbols", symbol, original.clone());
+    let browser = LibraryBrowser {
+        entries: vec![logical, entry.clone()],
+        ..Default::default()
+    };
+    let mut draft =
+        LibraryDraft::begin(&browser, Some(&entry), "symbols", "revision".into(), None).unwrap();
+    set(&mut draft, "name", "After");
+    assert_eq!(
+        draft.request().unwrap().fields,
+        json!({"name":"After"}).as_object().unwrap().clone()
+    );
+    assert_eq!(draft.electrical.original, Some(original));
+}
+
+#[test]
+fn saved_electrical_forms_refuse_alias_identities_and_preserve_unique_spelling() {
+    let unit = Uuid::new_v4();
+    let symbol = Uuid::new_v4();
+    let pin = Uuid::parse_str("abcdefab-cdef-4abc-8def-abcdefabcdef").unwrap();
+    let lower = pin.to_string();
+    let upper = lower.to_ascii_uppercase();
+    let pins = json!({lower.clone():{"uuid":pin,"name":"Lower","direction":"Input"},upper.clone():{"uuid":pin,"name":"Upper","direction":"Passive"}});
+    let aliased = saved_entry(
+        "units",
+        unit,
+        json!({"uuid":unit,"name":"Aliases","pins":pins}),
+    );
+    let browser = LibraryBrowser {
+        entries: vec![aliased.clone()],
+        ..Default::default()
+    };
+    assert!(LibraryDraft::begin(&browser, Some(&aliased), "units", "r".into(), None).is_err());
+    let unique = saved_entry(
+        "units",
+        unit,
+        json!({"uuid":unit,"name":"Unique","pins":{
+            upper.clone():{"uuid":pin,"name":"A","direction":"Input","metadata":"exact"}
+        }}),
+    );
+    let browser = LibraryBrowser {
+        entries: vec![unique.clone()],
+        ..Default::default()
+    };
+    let mut draft =
+        LibraryDraft::begin(&browser, Some(&unique), "units", "r".into(), None).unwrap();
+    draft.switch_pin(Some(0), false).unwrap();
+    set(&mut draft, "pin_name", "Changed");
+    let request = draft.request().unwrap();
+    assert_eq!(request.fields["pins"][&upper]["name"], json!("Changed"));
+    assert!(request.fields["pins"].get(&lower).is_none());
+    let graphic = saved_entry(
+        "symbols",
+        symbol,
+        json!({"name":"Aliases","unit":unit,"pin_anchors":[
+            {"pin":lower,"position":{"x":0,"y":0}},{"pin":upper,"position":{"x":1,"y":0}}
+        ]}),
+    );
+    let browser = LibraryBrowser {
+        entries: vec![unique, graphic.clone()],
+        ..Default::default()
+    };
+    assert!(LibraryDraft::begin(&browser, Some(&graphic), "symbols", "r".into(), None).is_err());
+}

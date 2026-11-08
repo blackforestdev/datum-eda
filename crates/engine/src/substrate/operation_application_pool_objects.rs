@@ -7,6 +7,21 @@ use serde_json::Value;
 use std::{collections::BTreeMap, path::PathBuf};
 use uuid::Uuid;
 
+/// Root advances already performed by canonical pool application. Promoted
+/// history and exact revision reads must count each operation, not only diffs.
+pub(in crate::substrate) fn root_revision_advance(
+    operation: &super::Operation,
+    id: ObjectId,
+) -> u64 {
+    u64::from(match operation {
+        super::Operation::SetPoolLibraryObject { object_id, .. }
+        | super::Operation::BumpObjectRevision { object_id } => *object_id == id,
+        super::Operation::AttachPoolPartModel { part_id, .. }
+        | super::Operation::DetachPoolPartModel { part_id, .. } => *part_id == id,
+        _ => false,
+    })
+}
+
 fn shard(path: &str) -> SourceShardRef {
     SourceShardRef {
         shard_id: Uuid::new_v5(

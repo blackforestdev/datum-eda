@@ -159,8 +159,27 @@ separate Symbol links to a named Unit and supplies one explicit rectangular body
 and named pin anchors with positions, directions and stub lengths. The form shows
 the pin table, declared geometry preview and change review before Commit; Cancel
 discards the draft. Created Symbols are available to the schematic placement
-picker without requiring a physical Part binding. Saved-definition editing,
-general graphics editing, approval and placed-definition propagation remain open.
+picker without requiring a physical Part binding. That creation increment does
+not establish saved-definition or general graphics editing.
+
+The saved Unit/Symbol property increment (`dat-saved-unit-symbol-edit-qwni`)
+extends the shared form with saved names, existing logical-pin names/electrical
+types and existing anchor positions, directions and stub lengths. Named pin and
+anchor rows select the data to edit; preview, explicit Commit/Cancel, canonical
+Undo/Redo and Save/reopen use the same writer. UUIDs, retained Unit links,
+arbitrary source graphics/field arrays, unknown metadata and absent defaults
+remain intact. Existing placed pin metadata, body and pin graphics remain frozen
+through source edits and history. Declared Symbol revisions and native placement
+transaction before-models supply authenticated source reads. An unavailable frozen
+basis refuses edits that require it; qualified read errors retain per-object
+unavailable inspection. Unbound legacy display does not establish a frozen binding.
+Edits that would
+make an existing pinned revision ambiguous are refused before mutation. Actual
+focused engine/protocol and isolated ordinary-App proof is recorded in the task;
+the App proof uses presented controls and logical keys in a debug test profile,
+not physical/HUMAN qualification or release-GUI execution. General graphics and
+pin-topology authoring, relinking, Package/Entity/Part/PinPadMap editing, approval,
+models and placed-definition updates remain outside this increment.
 
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate

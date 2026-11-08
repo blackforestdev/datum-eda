@@ -18,8 +18,12 @@ pub(super) fn apply_operations(
             .any(|op| super::electrical_identity_store::write(op).is_some())
     {
         let mut candidate = model.clone();
-        for operation in operations {
-            apply_operation(&mut candidate, operation, diff)?;
+        for (index, operation) in operations.iter().enumerate() {
+            if !super::operation_application_component_instance::apply_component_instance_operation_with_basis(
+                &mut candidate, diff, operation, Some(super::component_instance::pool_history::PoolHistoryBasis {model, operations, applied_operations: &operations[..index]}),
+            )? {
+                apply_operation(&mut candidate, operation, diff)?;
+            }
         }
         super::electrical_identity_validation::validate_operations(&candidate, operations)?;
         *model = candidate;

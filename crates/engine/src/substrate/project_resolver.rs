@@ -439,6 +439,10 @@ impl ProjectResolver {
             persisted_component_instances,
             &mut objects,
             &mut diagnostics,
+            &super::component_instance::pool_history::PoolHistory {
+                shards: &shards,
+                journal: &journal,
+            },
         );
         apply_import_map_journal_to_map(&journal, &mut import_map)?;
         let mut persisted_zone_fills = persisted_zone_fills;

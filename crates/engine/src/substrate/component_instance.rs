@@ -12,6 +12,9 @@ use super::{
     source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
+mod placed_symbol_source;
+pub(super) mod pool_history;
+
 #[path = "component_instance_resolution.rs"]
 mod resolution;
 use resolution::insert_component_instance;
@@ -236,6 +239,7 @@ pub(super) fn read_component_instance_shards(
                     &mut instances,
                     &mut provisional_diagnostics,
                     false,
+                    None,
                 );
                 sources.insert(
                     relative_path.clone(),

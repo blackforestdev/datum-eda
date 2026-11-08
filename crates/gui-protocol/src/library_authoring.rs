@@ -63,10 +63,8 @@ impl LibraryDraft {
                     .into(),
             );
         }
-        if matches!(kind, "packages" | "units" | "symbols") && entry.is_some() {
-            return Err(
-                "Saved Package, Unit and Symbol editing is unavailable in this increment".into(),
-            );
+        if kind == "packages" && entry.is_some() {
+            return Err("Saved Package editing is unavailable in this increment".into());
         }
         if kind == "symbols" && browser.choices("units").is_empty() {
             return Err("Create a named Unit before creating its Symbol".into());
@@ -104,6 +102,9 @@ impl LibraryDraft {
         draft.field("name", "Name", raw.get("name"), vec![]);
         if matches!(kind, "units" | "symbols") {
             draft.electrical_fields(browser);
+            if !draft.create {
+                draft.hydrate_saved(raw)?;
+            }
         } else if kind == "packages" {
             draft.package_fields();
         } else if kind == "padstacks" {

@@ -1,12 +1,15 @@
 //! Ordinary App/presented controls and production logical-key consumer proof.
 //! Programmatic dispatch is distinct from physical input and HUMAN qualification.
 use super::*;
+#[path = "native_library_frame_tests/electrical.rs"]
+mod electrical;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
 #[path = "native_library_frame_tests/package.rs"]
 mod package;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
 mod proof_assertions;
+use proof_assertions::source_bytes;
 #[path = "native_library_frame_tests/scenario.rs"]
 mod scenario;
 use crate::runtime_view_actions::action_evidence::EntrySurface;
@@ -19,6 +22,8 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
+    Electrical(usize),
+    SavedTabCycle,
     Open,
     Kind(usize),
     First,
@@ -177,6 +182,8 @@ impl Fixture {
                 );
             }
             Step::CheckPackage(present) => self.check_package(present),
+            Step::Electrical(stage) => self.check_electrical(stage),
+            Step::SavedTabCycle => self.saved_tab_cycle(),
             Step::RecordFootprint => self.record_footprint(),
             Step::CheckFootprintValue(edited) => self.check_footprint_value(edited),
             Step::RecordPlaced(stack) => self.record_placed(stack),
@@ -569,22 +576,4 @@ impl ApplicationHandler for Fixture {
             ControlFlow::WaitUntil(native) => ControlFlow::WaitUntil(native.min(due)),
         });
     }
-}
-fn source_bytes(root: &Path) -> BTreeMap<String, Vec<u8>> {
-    fn visit(root: &Path, dir: &Path, out: &mut BTreeMap<String, Vec<u8>>) {
-        for entry in std::fs::read_dir(dir).unwrap() {
-            let p = entry.unwrap().path();
-            if p.is_dir() {
-                visit(root, &p, out);
-            } else if p.extension().is_some_and(|s| s == "json" || s == "jsonl") {
-                out.insert(
-                    p.strip_prefix(root).unwrap().to_string_lossy().into_owned(),
-                    std::fs::read(p).unwrap(),
-                );
-            }
-        }
-    }
-    let mut out = BTreeMap::new();
-    visit(root, root, &mut out);
-    out
 }

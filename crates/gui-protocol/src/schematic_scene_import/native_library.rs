@@ -35,12 +35,60 @@ pub(crate) fn project_bodies(
             .iter()
             .find(|s| s.shard_id == object.source_shard_id)
             .context("Native symbol source unavailable")?;
-        let symbol: Symbol = serde_json::from_value(
-            model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?,
-        )?;
+        // Native placements resolve their declared revision or authenticated
+        // birth basis once at this cached document projection boundary. Legacy
+        // display-only sources remain unpinned; source geometry edits refuse
+        // them rather than inventing a retrospective binding.
+        let definition = match model.materialized_placed_symbol_definition(placed.uuid, id) {
+            Ok(definition) => definition,
+            Err(error) => {
+                eprintln!(
+                    "datum native library source unavailable [{}]: {error}",
+                    placed.uuid
+                );
+                unavailable_source(scene, placed);
+                continue;
+            }
+        };
+        let raw = match definition {
+            Some(raw) => raw,
+            None => model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?,
+        };
+        let symbol: Symbol = serde_json::from_value(raw)?;
         replace_body(scene, placed, &symbol)?;
     }
     Ok(())
+}
+// Preserve materialized electrical terminals and ordinary document inspection
+// when a declared source cannot be authenticated. Never substitute latest.
+fn unavailable_source(scene: &mut BoardReviewSceneV1, placed: &PlacedSymbol) {
+    let base_id = format!("schematic-symbol:{}", placed.uuid);
+    scene.board_graphics.retain(|g| g.object_id != base_id);
+    let mut sink = SchematicTextSink::default();
+    sink.push_rotated(
+        &mut Vec::new(),
+        placed.uuid,
+        "library-source-unavailable",
+        "Library source unavailable",
+        point_nm(placed.position),
+        LABEL_TEXT_HEIGHT_NM,
+        TextHAlign::Left,
+        TextVAlign::Center,
+        SCHEMATIC_ANNOTATION_TEXT_LAYER_INT,
+        0,
+    );
+    let (texts, geometries, assets) = sink.into_parts();
+    scene.board_texts.extend(texts);
+    scene.board_text_geometries.extend(geometries);
+    for asset in assets {
+        if !scene
+            .glyph_mesh_assets
+            .iter()
+            .any(|existing| existing.handle == asset.handle)
+        {
+            scene.glyph_mesh_assets.push(asset);
+        }
+    }
 }
 pub(crate) fn replace_body(
     scene: &mut BoardReviewSceneV1,
@@ -201,3 +249,7 @@ fn display_point(point: Point, origin: Point, rotation: i32, mirrored: bool) -> 
 #[cfg(test)]
 #[path = "native_library_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "native_library_frozen_tests.rs"]
+mod frozen_tests;

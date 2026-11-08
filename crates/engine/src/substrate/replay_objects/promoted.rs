@@ -121,6 +121,16 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
                             _ => false,
                         })
                         .count() as u64
+                } else if object.domain == "pool" {
+                    transaction
+                        .operations
+                        .iter()
+                        .map(|op| {
+                            super::super::operation_application_pool_objects::root_revision_advance(
+                                op, *object_id,
+                            )
+                        })
+                        .sum()
                 } else {
                     0
                 };

@@ -181,3 +181,33 @@ impl Fixture {
         );
     }
 }
+
+/// Canonical inventory uses the existing native-QA operational exclusions;
+/// terminal context is live editor state, not design or history authority.
+pub(super) fn source_bytes(root: &Path) -> BTreeMap<String, Vec<u8>> {
+    fn visit(root: &Path, dir: &Path, out: &mut BTreeMap<String, Vec<u8>>) {
+        for entry in std::fs::read_dir(dir).unwrap() {
+            let p = entry.unwrap().path();
+            let relative = p.strip_prefix(root).unwrap();
+            if relative == Path::new(".datum/gui-terminal-context.json")
+                || relative == Path::new(".datum/revision/writer.lock")
+                || relative.starts_with(".datum/tool-sessions")
+                || relative.starts_with(".datum/terminal-contexts")
+            {
+                continue;
+            }
+            assert!(!p.is_symlink(), "canonical source symlinks are unavailable");
+            if p.is_dir() {
+                visit(root, &p, out);
+            } else if p.is_file() {
+                out.insert(
+                    relative.to_string_lossy().into_owned(),
+                    std::fs::read(p).unwrap(),
+                );
+            }
+        }
+    }
+    let mut out = BTreeMap::new();
+    visit(root, root, &mut out);
+    out
+}
