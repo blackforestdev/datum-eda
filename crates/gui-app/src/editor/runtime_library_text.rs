@@ -64,17 +64,10 @@ pub(super) fn apply(browser: &mut LibraryBrowser, key: &Key) -> bool {
             browser.result_offset = 0;
         }
         Some(C::Field(_)) => {
-            if let Some(d) = &mut browser.draft
-                && !d.fields[d.focused].selector
-            {
-                let mut value = d.fields[d.focused].text.clone();
-                if let Some(text) = text {
-                    value.push_str(text);
-                } else {
-                    value.pop();
-                }
-                d.change(value);
-            }
+            return browser
+                .draft
+                .as_ref()
+                .is_some_and(|d| d.fields[d.focused].selector);
         }
         _ => {}
     }
@@ -118,30 +111,16 @@ mod tests {
     }
 
     #[test]
-    fn library_named_space_preserves_name_and_search_without_editing_selectors() {
+    fn library_search_keeps_named_space_and_leaves_free_fields_to_shared_editor() {
         let mut browser = LibraryBrowser::default();
         browser.draft =
             Some(LibraryDraft::begin(&browser, None, "units", "revision".into(), None).unwrap());
         browser.focus = Some(C::Field(0));
-        for key in [
-            Key::Character("Manual".into()),
-            Key::Named(NamedKey::Space),
-            Key::Character("Logic".into()),
-            Key::Named(NamedKey::Space),
-            Key::Character("9gtd".into()),
-        ] {
-            assert!(apply(&mut browser, &key));
-        }
-        assert_eq!(
-            browser.draft.as_ref().unwrap().value("name"),
-            "Manual Logic 9gtd"
-        );
-        assert!(apply(&mut browser, &Key::Character(" ".into())));
-        assert!(apply(&mut browser, &Key::Named(NamedKey::Backspace)));
-        assert_eq!(
-            browser.draft.as_ref().unwrap().value("name"),
-            "Manual Logic 9gtd"
-        );
+        assert!(!apply(
+            &mut browser,
+            &Key::Character("Handled by shared editor".into())
+        ));
+        assert_eq!(browser.draft.as_ref().unwrap().value("name"), "");
         browser.focus = Some(C::Search);
         browser.result_offset = 8;
         for key in [

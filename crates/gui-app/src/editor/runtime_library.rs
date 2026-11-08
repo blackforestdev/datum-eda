@@ -37,6 +37,26 @@ impl Runtime {
         self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(id));
         self.invalidate_frame();
     }
+    pub(super) fn activate_library_pointer(&mut self, control: C) -> bool {
+        let field = matches!(control, C::Field(_));
+        let pending = self.native_edit.pending();
+        let handled = self.activate_library(control.clone());
+        if field
+            && !pending
+            && let Some(region) = self
+                .presented_hits
+                .regions()
+                .iter()
+                .find(|region| region.target == HitTarget::Library(control.clone()))
+                .cloned()
+            && let Some((x, y)) = self.last_cursor_pos
+            && region.rect.contains(x, y)
+        {
+            self.start_dialog_editor_pointer(region, x, self.scale_factor);
+            self.finish_dialog_editor_pointer();
+        }
+        handled
+    }
     pub(super) fn activate_library(&mut self, control: C) -> bool {
         if self.native_edit.pending() {
             return true;
@@ -343,8 +363,7 @@ impl Runtime {
         true
     }
     pub(super) fn handle_library_key(&mut self, event: &winit::event::KeyEvent) -> bool {
-        if self.workspace().library.acquisition.is_some()
-            && self.workspace().ui.layout.focused_content() == PaneContent::Library
+        if self.workspace().ui.layout.focused_content() == PaneContent::Library
             && matches!(
                 self.application_focus(),
                 datum_gui_protocol::ApplicationFocus::Editor(_)
@@ -381,6 +400,9 @@ impl Runtime {
             return false;
         }
         if self.native_edit.pending() {
+            return true;
+        }
+        if self.handle_shared_editor_input(key, state) {
             return true;
         }
         let focus = self.workspace().library.focus.clone();

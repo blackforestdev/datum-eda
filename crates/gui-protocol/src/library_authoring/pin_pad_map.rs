@@ -231,7 +231,11 @@ impl LibraryDraft {
         );
     }
     fn map_text(&mut self, key: &str, text: String) {
-        self.fields.iter_mut().find(|f| f.key == key).unwrap().text = text;
+        self.fields
+            .iter_mut()
+            .find(|f| f.key == key)
+            .unwrap()
+            .set_text(text);
     }
     fn map_choices(&mut self, key: &str, options: Vec<(String, String)>) {
         let f = self.fields.iter_mut().find(|f| f.key == key).unwrap();

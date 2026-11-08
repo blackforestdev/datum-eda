@@ -648,6 +648,19 @@ with authored files and journal unchanged. No authored name, mapping/default
 update, renderer redesign, approval, physical/HUMAN, release-GUI execution or full
 qualification is supplied by this read-only increment.
 
+Shared Library form editing (`dat-library-form-caret-editing-4x34`) now provides
+visible caret placement, selection/clipboard and middle-of-value correction in
+free-text and numeric fields using the existing shared editor; selector arrows
+and validation retain their own authority. Twenty-four focused checks pass.
+The isolated debug App passes 57 steps and seven inspected captures, proving
+caret-only preview/dirty preservation, Unicode data insertion, numeric selection
+replacement, explicit saved-anchor selection, Cancel with source/journal bytes
+unchanged, corrected commit, Undo/Redo, Save and exact cold reopening. The initial
+missing-anchor-selection failure is retained. Greek U+03BC renders as a box despite
+correct stored text in both new fields and existing detail UI; PM920 retains the
+actual editing/data scopes with that separate glyph limitation. No readable-Greek,
+physical/HUMAN, release-GUI execution or full qualification is claimed.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).

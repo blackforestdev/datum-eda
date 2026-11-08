@@ -21,6 +21,8 @@ mod part_placement;
 mod pin_pad_map;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
 mod proof_assertions;
+#[path = "native_library_frame_tests/text_fields.rs"]
+mod text_fields;
 use proof_assertions::source_bytes;
 #[path = "native_library_frame_tests/scenario.rs"]
 mod scenario;
@@ -34,6 +36,7 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
+    TextFields(usize),
     MapLabels(usize),
     PaneContext(pane_context::Action),
     Placement(usize),
@@ -79,6 +82,8 @@ enum Step {
     RefusalNotice,
 }
 struct Fixture {
+    key_template: Option<winit::event::KeyEvent>,
+    key_host_focused: bool,
     placement: Option<part_placement::Proof>,
     app: App,
     steps: Vec<Step>,
@@ -106,7 +111,12 @@ impl Fixture {
         if r.native_edit.pending()
             || (matches!(
                 self.steps.get(self.stage),
-                Some(Step::Placement(_) | Step::PaneContext(_) | Step::MapLabels(_))
+                Some(
+                    Step::Placement(_)
+                        | Step::PaneContext(_)
+                        | Step::MapLabels(_)
+                        | Step::TextFields(_)
+                )
             ) && r.workspace().library.basis.is_none())
             || r.renderer.render_session().has_pending_frame()
             || !r.surface_transaction.has_presented()
@@ -115,6 +125,9 @@ impl Fixture {
             return;
         }
         assert!(!r.native_edit.blocked, "writer reconciliation must qualify");
+        if matches!(self.steps.first(), Some(Step::TextFields(_))) && self.wait_for_key_template() {
+            return;
+        }
         if self.stage >= self.steps.len() {
             events.exit();
             return;
@@ -214,6 +227,7 @@ impl Fixture {
             Step::Placement(stage) => self.placement_stage(events, stage),
             Step::PaneContext(action) => self.pane_context_action(events, action),
             Step::MapLabels(stage) => self.check_map_labels(stage),
+            Step::TextFields(stage) => self.text_fields_stage(events, stage),
             Step::SelectMapping => {
                 let i = self.mapping_result_index();
                 self.control(events, HitTarget::Library(C::Result(i)));
@@ -566,6 +580,9 @@ impl ApplicationHandler for Fixture {
         self.app.resumed(events);
     }
     fn window_event(&mut self, events: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
+        if self.capture_key_template(id, &event) {
+            return;
+        }
         if matches!(
             event,
             WindowEvent::CursorMoved { .. }

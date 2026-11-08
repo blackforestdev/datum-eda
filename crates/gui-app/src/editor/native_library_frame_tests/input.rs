@@ -1,14 +1,69 @@
 //! Presented pointer callbacks and shared logical-key input for ordinary App proof.
 use super::*;
 impl Fixture {
+    pub(super) fn wait_for_key_template(&self) -> bool {
+        if self.key_template.is_some() {
+            return false;
+        }
+        let ready = self.output.join("key-template-ready");
+        if !ready.exists() {
+            std::fs::write(ready, "Main presented; waiting for owned native F6 event\n").unwrap();
+        }
+        true
+    }
+    pub(super) fn capture_key_template(&mut self, id: WindowId, event: &WindowEvent) -> bool {
+        if self
+            .app
+            .window
+            .as_ref()
+            .is_none_or(|window| window.id() != id)
+        {
+            return false;
+        }
+        if let WindowEvent::Focused(focused) = event {
+            self.key_host_focused = *focused;
+        }
+        if let WindowEvent::KeyboardInput {
+            event,
+            is_synthetic,
+            ..
+        } = event
+            && self.key_template.is_none()
+            && event.state == ElementState::Pressed
+            && event.logical_key == Key::Named(NamedKey::F6)
+        {
+            assert!(
+                self.key_host_focused,
+                "genuine template comes from focused owned Main"
+            );
+            assert!(!is_synthetic, "backend template must be a native event");
+            self.key_template = Some(event.clone());
+            std::fs::write(self.output.join("key-template.json"),serde_json::to_vec_pretty(&serde_json::json!({
+                "logical":format!("{:?}",event.logical_key),"physical":format!("{:?}",event.physical_key),"native_focused_main":true,"is_synthetic":is_synthetic,"scope":"Native backend template only; subsequent controlled public-key dispatch is programmatic, not physical or HUMAN proof"})).unwrap()).unwrap();
+            self.app.request_workspace_redraw();
+            return true;
+        }
+        false
+    }
     pub(super) fn key(&mut self, key: Key) {
-        assert!(
-            self.app
-                .runtime
-                .as_mut()
-                .unwrap()
-                .handle_library_input(&key, ElementState::Pressed)
-        );
+        let r = self.app.runtime.as_mut().unwrap();
+        let handled = if let Some(template) = &self.key_template {
+            let mut event = template.clone();
+            event.text = match &key {
+                Key::Character(text) => Some(text.clone()),
+                _ => None,
+            };
+            event.logical_key = key;
+            event.physical_key = winit::keyboard::PhysicalKey::Code(winit::keyboard::KeyCode::F24);
+            event.state = ElementState::Pressed;
+            event.repeat = false;
+            r.handle_library_key(&event)
+        } else {
+            // Retained programmatic logical-key proof uses the same shared
+            // controller core. The caret scenario requires a genuine template.
+            r.handle_library_input(&key, ElementState::Pressed)
+        };
+        assert!(handled);
         self.app.request_workspace_redraw();
     }
     pub(super) fn focus_field(&mut self, key: &str) {

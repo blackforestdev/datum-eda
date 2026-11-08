@@ -93,7 +93,7 @@ impl LibraryDraft {
                 .and_then(Value::as_str)
                 .unwrap_or("");
             let field = self.fields.iter_mut().find(|f| f.key == key).unwrap();
-            field.text = value.into();
+            field.set_text(value.into());
             self.dirty.remove(key);
         }
         self.preview = None;

@@ -109,7 +109,7 @@ pub(super) fn render(p: &mut Painter<'_>) {
     p.button("Cancel · leave source and Project unchanged", C::Cancel);
 }
 
-fn field(
+pub(super) fn field(
     p: &mut Painter<'_>,
     value: &str,
     editor: datum_gui_protocol::single_line_editor::SingleLineEditor,

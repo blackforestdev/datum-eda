@@ -229,7 +229,11 @@ impl LibraryDraft {
                     })
                 })
                 .unwrap_or("");
-            self.fields.iter_mut().find(|f| f.key == key).unwrap().text = value.into();
+            self.fields
+                .iter_mut()
+                .find(|f| f.key == key)
+                .unwrap()
+                .set_text(value.into());
         }
         self.preview = None;
         self.refusal = None;
@@ -273,13 +277,15 @@ impl LibraryDraft {
             let Some(field) = self.fields.iter_mut().find(|f| f.key == key) else {
                 continue;
             };
-            field.text = value
-                .filter(|v| !v.is_null())
-                .map_or_else(String::new, |v| {
-                    v.as_str()
-                        .map(str::to_owned)
-                        .unwrap_or_else(|| v.to_string())
-                });
+            field.set_text(
+                value
+                    .filter(|v| !v.is_null())
+                    .map_or_else(String::new, |v| {
+                        v.as_str()
+                            .map(str::to_owned)
+                            .unwrap_or_else(|| v.to_string())
+                    }),
+            );
         }
         self.preview = None;
         self.refusal = None;

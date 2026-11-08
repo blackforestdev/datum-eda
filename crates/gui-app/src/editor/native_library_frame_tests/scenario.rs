@@ -221,6 +221,8 @@ pub(super) fn run(root: PathBuf, output: PathBuf, steps: Vec<Step>, expected_pac
         .build()
         .unwrap();
     let mut fixture = Fixture {
+        key_template: None,
+        key_host_focused: false,
         placement: None,
         app: App::new(args, events.create_proxy()),
         stage: 0,

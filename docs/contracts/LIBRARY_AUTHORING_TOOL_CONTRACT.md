@@ -229,6 +229,23 @@ engine adapter independently validates membership, kinds and referenced revision
 before canonical Create; it introduces neither name matching nor a separate map
 name. Preview and Cancel leave source and journal unchanged.
 
+Library authoring free-text and numeric fields (`dat-library-form-caret-editing-4x34`)
+use the existing shared single-line editor and painter: pointer caret placement,
+keyboard movement, selection, insertion/deletion and clipboard operations act at
+the current position. Field text remains authoritative through the existing draft
+change/validation route; caret-only changes retain previews and do not dirty the
+draft. Field switches preserve their own selection, and rebinding a different
+pin, terminal, pad or gate resets its transient editor state. Selectors retain
+choice behavior even when their candidates are unavailable or empty. Existing
+Preview/Commit/Cancel, canonical history and Save remain the mutation authority.
+Focused checks cover Unicode boundaries and numeric correction; the ordinary App
+checks name/numeric correction, selection/clipboard, cancellation, committed raw
+payload, Undo/Redo and exact cold reopening. Its Greek U+03BC name round-trips
+losslessly but currently displays a missing-glyph box in both field and generic
+detail text; that separate rendering defect supplies no Unicode glyph-coverage
+claim or new restriction on authored metadata. No separate text controller,
+authored schema, default policy or live-source write path is added.
+
 Saved PinPadMap browser captions (`dat-pin-pad-map-result-label-r0ic`) derive
 readable Part and Footprint identities from their declared references. The same
 caption serves result rows, selected detail and existing search. Exact source

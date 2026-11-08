@@ -12,6 +12,8 @@ mod discovery;
 mod editor;
 #[path = "folder_browser_input.rs"]
 mod input;
+#[path = "library_text_editor.rs"]
+mod library_text_editor;
 #[path = "folder_browser_path_assistance.rs"]
 mod path_assistance;
 #[path = "folder_browser_qualification.rs"]

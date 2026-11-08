@@ -127,7 +127,7 @@ pub(crate) fn render(
                 .map_or("Unavailable", |k| k.1)
         ));
         if rect.height > 420. {
-            p.line("Tab: field / action · arrows: choices · Esc: cancel");
+            p.line("Tab: field / action · arrows: caret / choices · Esc: cancel");
         }
         if d.kind == "packages" {
             p.line("Physical body / terminals · no Footprint lands");
@@ -213,6 +213,10 @@ pub(crate) fn render(
         let rows = d.fields.len();
         for (index, field) in d.fields.iter().enumerate().take(rows) {
             p.line(field.label);
+            if !field.selector {
+                acquisition_panel::field(&mut p, &field.text, field.editor, C::Field(index));
+                continue;
+            }
             let shown = field
                 .choices
                 .iter()

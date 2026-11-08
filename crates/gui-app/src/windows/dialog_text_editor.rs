@@ -9,6 +9,7 @@ pub(super) enum Target {
     CoordinateY,
     LibraryPath,
     LibrarySearch,
+    LibraryField(eda_engine::substrate::ObjectId, usize, &'static str),
     SchematicName,
     SchematicLabel,
     SchematicPlacement(PlacementField),
@@ -23,10 +24,10 @@ pub(super) struct EditorDrag {
     region: datum_gui_render::HitRegion,
     scale: f32,
 }
-struct Snapshot {
-    text: String,
-    editor: SingleLineEditor,
-    editable: bool,
+pub(super) struct Snapshot {
+    pub(super) text: String,
+    pub(super) editor: SingleLineEditor,
+    pub(super) editable: bool,
 }
 impl Runtime {
     fn active_editor(&self) -> Option<Target> {
@@ -99,21 +100,7 @@ impl Runtime {
                 self.workspace().schematic_authoring.field,
             ));
         }
-        if self.workspace().ui.layout.focused_content() == PaneContent::Library
-            && matches!(
-                self.application_focus(),
-                datum_gui_protocol::ApplicationFocus::Editor(_)
-            )
-            && self.workspace().library.acquisition.is_some()
-        {
-            use datum_gui_protocol::library_browser::LibraryControl as C;
-            return match self.workspace().library.focus {
-                Some(C::AcquirePath) => Some(Target::LibraryPath),
-                Some(C::AcquireSearch) => Some(Target::LibrarySearch),
-                _ => None,
-            };
-        }
-        None
+        super::library_text_editor::target(self)
     }
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
@@ -175,18 +162,8 @@ impl Runtime {
                         && e.editing.as_ref().is_none_or(|d| d.text_editable()),
                 })
             }
-            Target::LibraryPath | Target::LibrarySearch => {
-                let a = self.workspace().library.acquisition.as_ref()?;
-                let path = target == Target::LibraryPath;
-                Some(Snapshot {
-                    text: if path {
-                        a.path.clone()
-                    } else {
-                        a.search.clone()
-                    },
-                    editor: if path { a.path_editor } else { a.search_editor },
-                    editable: !self.native_edit.pending(),
-                })
+            Target::LibraryPath | Target::LibrarySearch | Target::LibraryField(..) => {
+                super::library_text_editor::snapshot(self, target)
             }
             Target::SchematicName => {
                 self.workspace()
@@ -290,23 +267,8 @@ impl Runtime {
                 }
                 self.invalidate_frame();
             }
-            Target::LibraryPath | Target::LibrarySearch => {
-                if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
-                    if target == Target::LibraryPath {
-                        a.path = snapshot.text;
-                        a.path_editor = snapshot.editor;
-                        if changed {
-                            a.source_changed();
-                        }
-                    } else {
-                        a.search = snapshot.text;
-                        a.search_editor = snapshot.editor;
-                        if changed {
-                            a.search_changed();
-                        }
-                    }
-                }
-                self.invalidate_frame();
+            Target::LibraryPath | Target::LibrarySearch | Target::LibraryField(..) => {
+                super::library_text_editor::store(self, target, snapshot, changed)
             }
             Target::SchematicName => {
                 if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation {
@@ -376,7 +338,10 @@ impl Runtime {
         }
     }
     pub(crate) fn handle_shared_editor_key(&mut self, event: &KeyEvent) -> bool {
-        if event.state != ElementState::Pressed
+        self.handle_shared_editor_input(&event.logical_key, event.state)
+    }
+    pub(crate) fn handle_shared_editor_input(&mut self, key: &Key, state: ElementState) -> bool {
+        if state != ElementState::Pressed
             || self
                 .folder_browser
                 .state
@@ -392,7 +357,6 @@ impl Runtime {
             return false;
         };
         let before = snapshot.text.clone();
-        let key = &event.logical_key;
         let result: Result<(), String> = (|| {
             if self.modifiers.control_key()
                 && !self.modifiers.alt_key()
@@ -486,6 +450,11 @@ impl Runtime {
                         a.refusal = Some(reason);
                     }
                     self.invalidate_frame();
+                } else if matches!(target, Target::LibraryField(..)) {
+                    if let Some(draft) = &mut self.session.workspace_mut().library.draft {
+                        draft.refusal = Some(reason);
+                    }
+                    self.invalidate_frame();
                 } else if matches!(target, Target::SchematicFieldTable(..)) {
                     if let Some(review) = &mut self
                         .session
@@ -536,6 +505,14 @@ impl Runtime {
             HitTarget::Library(
                 datum_gui_protocol::library_browser::LibraryControl::AcquireSearch,
             ) => Target::LibrarySearch,
+            HitTarget::Library(datum_gui_protocol::library_browser::LibraryControl::Field(
+                index,
+            )) => {
+                let Some(target) = super::library_text_editor::field_target(self, index) else {
+                    return false;
+                };
+                target
+            }
             HitTarget::SchematicName => Target::SchematicName,
             HitTarget::SchematicLabelName => Target::SchematicLabel,
             HitTarget::SchematicReference => Target::SchematicPlacement(PlacementField::Reference),
@@ -607,6 +584,7 @@ impl Runtime {
                         datum_gui_protocol::library_browser::LibraryControl::AcquireSearch
                     });
             }
+            Target::LibraryField(..) => {}
             Target::SchematicName => {
                 if let Some(d) = &mut self.session.workspace_mut().schematic_authoring.creation {
                     d.focus = 0;

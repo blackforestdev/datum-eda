@@ -28,9 +28,17 @@ pub struct LibraryField {
     pub key: &'static str,
     pub label: &'static str,
     pub text: String,
+    pub editor: crate::single_line_editor::SingleLineEditor,
     pub choices: Vec<(String, String)>,
     pub selector: bool,
 }
+impl LibraryField {
+    fn set_text(&mut self, text: String) {
+        self.editor = crate::single_line_editor::SingleLineEditor::at_end(&text);
+        self.text = text;
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibraryDraft {
     pub create: bool,
@@ -299,6 +307,7 @@ impl LibraryDraft {
         self.fields.push(LibraryField {
             key,
             label,
+            editor: crate::single_line_editor::SingleLineEditor::at_end(&text),
             text,
             choices,
             selector: matches!(
@@ -372,7 +381,7 @@ impl LibraryDraft {
             self.entity.gate_id = Some(Uuid::new_v4());
         }
         let field = &mut self.fields[self.focused];
-        field.text = text;
+        field.set_text(text);
         self.dirty.insert(field.key);
         if self.kind == "symbols" && self.fields[self.focused].key == "unit" {
             self.refresh_unit_pin_choices();
@@ -624,15 +633,16 @@ impl LibraryDraft {
             ("layer", "/layer"),
         ] {
             let f = self.fields.iter_mut().find(|f| f.key == field).unwrap();
-            f.text = raw
-                .pointer(path)
-                .filter(|v| !v.is_null())
-                .map(|v| {
-                    v.as_str()
-                        .map(str::to_owned)
-                        .unwrap_or_else(|| v.to_string())
-                })
-                .unwrap_or_default();
+            f.set_text(
+                raw.pointer(path)
+                    .filter(|v| !v.is_null())
+                    .map(|v| {
+                        v.as_str()
+                            .map(str::to_owned)
+                            .unwrap_or_else(|| v.to_string())
+                    })
+                    .unwrap_or_default(),
+            );
             self.dirty.remove(field);
         }
         self.dirty.insert("pads");
@@ -656,3 +666,7 @@ fn named(browser: &LibraryBrowser, kind: &str) -> Vec<(String, String)> {
         })
         .collect()
 }
+
+#[cfg(test)]
+#[path = "library_authoring/caret_tests.rs"]
+mod caret_tests;

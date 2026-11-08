@@ -140,22 +140,28 @@ impl LibraryDraft {
             .or_else(|| (!remove).then(Uuid::new_v4));
         let raw = selected.map(|(_, raw)| raw).unwrap_or(Value::Null);
         for (key, property) in [("gate_name", "name"), ("gate_unit", "unit")] {
-            self.fields.iter_mut().find(|f| f.key == key).unwrap().text = raw
-                .get(property)
-                .and_then(Value::as_str)
-                .unwrap_or("")
-                .into();
+            self.fields
+                .iter_mut()
+                .find(|f| f.key == key)
+                .unwrap()
+                .set_text(
+                    raw.get(property)
+                        .and_then(Value::as_str)
+                        .unwrap_or("")
+                        .into(),
+                );
         }
         self.refresh_entity_symbols();
         self.fields
             .iter_mut()
             .find(|f| f.key == "gate_symbol")
             .unwrap()
-            .text = raw
-            .get("symbol")
-            .and_then(Value::as_str)
-            .unwrap_or("")
-            .into();
+            .set_text(
+                raw.get("symbol")
+                    .and_then(Value::as_str)
+                    .unwrap_or("")
+                    .into(),
+            );
         self.preview = None;
         self.refusal = None;
         Ok(())
