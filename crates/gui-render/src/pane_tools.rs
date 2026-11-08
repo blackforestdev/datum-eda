@@ -24,6 +24,58 @@ pub(crate) fn title_bounds(header: RectPx, tools_reserved: f32, focused: bool) -
     }
 }
 
+fn context_text_width(text: &str) -> f32 {
+    crate::control_text::measure_text_width(text, 10.0, TextFace::Mono)
+        .unwrap_or_else(|_| estimated_text_run_width_px(text, 10.0, TextFace::Mono))
+}
+
+/// Allocate the existing inline controls only after the pane-local identity fits.
+/// All actions remain available through their shared menu/command surfaces.
+pub(crate) fn reserve_for(
+    state: &ReviewWorkspaceState,
+    pane: datum_gui_protocol::PaneId,
+    header: RectPx,
+    focused: bool,
+) -> f32 {
+    let reserved = reserve(header);
+    let documents = &state.schematic_documents;
+    if documents.project.is_none() {
+        return reserved;
+    }
+    let context = documents.panes.get(&pane).and_then(|key| {
+        documents.row(key).map(|row| {
+            (
+                format!(
+                    "Occurrence: {}",
+                    documents
+                        .breadcrumbs(key)
+                        .iter()
+                        .map(|row| row.name.as_str())
+                        .collect::<Vec<_>>()
+                        .join(" / ")
+                ),
+                format!(
+                    "Source: {}",
+                    if datum_gui_protocol::camera_scene_for_pane(state, pane).is_some() {
+                        row.source_name.as_str()
+                    } else {
+                        "unavailable"
+                    }
+                ),
+            )
+        })
+    });
+    let (occurrence, source) =
+        context.unwrap_or_else(|| ("Occurrence unavailable".into(), "Source unavailable".into()));
+    let width = context_text_width;
+    let required = width(&occurrence).max(width(&source));
+    if title_bounds(header, reserved, focused).width >= required {
+        reserved
+    } else {
+        0.0
+    }
+}
+
 fn breadcrumb_hits(
     state: &ReviewWorkspaceState,
     pane: datum_gui_protocol::PaneId,
@@ -37,14 +89,17 @@ fn breadcrumb_hits(
     let Some(key) = documents.panes.get(&pane) else {
         return;
     };
-    if documents.row(key).is_none() {
+    if documents.row(key).is_none()
+        || (documents.project.is_some()
+            && datum_gui_protocol::camera_scene_for_pane(state, pane).is_none())
+    {
         return;
     }
     let Some(revision) = &documents.revision else {
         return;
     };
-    let clip = title_bounds(header, reserve(header), focused);
-    let width = |text: &str| estimated_text_run_width_px(text, 10.0, TextFace::Mono);
+    let clip = title_bounds(header, reserve_for(state, pane, header, focused), focused);
+    let width = context_text_width;
     let prefix = "Occurrence: ";
     let paint = |value: &str, x: f32, color, text: &mut Vec<TextRun>| {
         let remaining = (clip.x + clip.width - x).max(0.0);
@@ -149,10 +204,14 @@ pub(super) fn render(
         }
         let header = pane.rect.header;
         let starts = (quads.len(), text.len(), hits.len());
-        let mut x = header.x + header.width - RIGHT_INSET_PX - reserve(header);
         let focused = pane.id == panes.focused;
+        let reserved = reserve_for(state, pane.id, header, focused);
+        let mut x = header.x + header.width - RIGHT_INSET_PX - reserved;
         breadcrumb_hits(state, pane.id, header, focused, quads, text, hits);
-        for (tool, width) in TOOLS {
+        for (tool, width) in TOOLS
+            .into_iter()
+            .take(if reserved > 0.0 { TOOLS.len() } else { 0 })
+        {
             let rect = RectPx {
                 x,
                 y: header.y + 3.0,

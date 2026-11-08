@@ -9,6 +9,8 @@ mod entity;
 mod input;
 #[path = "native_library_frame_tests/package.rs"]
 mod package;
+#[path = "native_library_frame_tests/pane_context.rs"]
+mod pane_context;
 #[path = "native_library_frame_tests/part.rs"]
 mod part;
 #[path = "native_library_frame_tests/part_placement.rs"]
@@ -30,6 +32,7 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
+    PaneContext(pane_context::Action),
     Placement(usize),
     Electrical(usize),
     Entity(usize),
@@ -98,8 +101,10 @@ impl Fixture {
             return;
         };
         if r.native_edit.pending()
-            || (matches!(self.steps.get(self.stage), Some(Step::Placement(_)))
-                && r.workspace().library.basis.is_none())
+            || (matches!(
+                self.steps.get(self.stage),
+                Some(Step::Placement(_) | Step::PaneContext(_))
+            ) && r.workspace().library.basis.is_none())
             || r.renderer.render_session().has_pending_frame()
             || !r.surface_transaction.has_presented()
             || self.since.elapsed() < Duration::from_millis(30)
@@ -204,6 +209,7 @@ impl Fixture {
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
             Step::Placement(stage) => self.placement_stage(events, stage),
+            Step::PaneContext(action) => self.pane_context_action(events, action),
             Step::SelectMapping => {
                 let i = self.mapping_result_index();
                 self.control(events, HitTarget::Library(C::Result(i)));

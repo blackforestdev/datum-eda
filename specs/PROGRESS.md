@@ -626,6 +626,17 @@ physical/HUMAN, release-GUI or full qualification is claimed. Saved library edit
 placed updates, approval/models and broader native-library completion remain open;
 this routine increment does not select a successor milestone.
 
+The pane-context correction (`dat-child-pane-source-header-49i5`) keeps qualified
+source/occurrence text visible before allocating inline tools, using existing
+font measurements, header rows and shared menu commands. Unavailable sources use
+per-pane scene lookup. Seven focused checks and the isolated ordinary debug App
+pass; the latter covers 34 steps and four captures through Board/Root/Child focus,
+Fit and actual cold Child reopening with all authored files and journal unchanged.
+The initial one-pane startup assumption and earlier renderer/test-setup failures
+remain recorded; the observed Board header was truthful to a separate adjacent
+pane. No layout/cache rewrite, new compact/overflow control, prototype edit,
+physical/HUMAN observation or full qualification is claimed.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).

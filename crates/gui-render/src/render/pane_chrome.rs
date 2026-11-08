@@ -47,7 +47,6 @@ fn render_viewport_panes_logical(
     use crate::resource_consumers::{Consumer, Consumers};
     let mut consumers = Consumers::default();
     let panes = layout.viewport_panes(&state.ui.layout);
-    let has_schematic_scene = state.schematic_scene.is_some();
     // The leaf that hosts the live board scene (focus-independent). Its canvas gets
     // the substrate + world PCB; any other board leaf is an inactive placeholder.
     let scene_leaf_id = panes.scene_leaf_id();
@@ -66,6 +65,8 @@ fn render_viewport_panes_logical(
             datum_gui_protocol::PaneContent::Revision(_) => Consumer::Revision,
         });
         let focused = leaf.id == panes.focused;
+        let has_schematic_scene =
+            datum_gui_protocol::camera_scene_for_pane(state, leaf.id).is_some();
         let is_scene_leaf = Some(leaf.id) == scene_leaf_id;
         let title = match leaf.content {
             datum_gui_protocol::PaneContent::Library => "Library Browser",
@@ -108,6 +109,7 @@ fn render_viewport_panes_logical(
             &leaf.rect,
             native_header.as_ref().map_or(title, |header| {
                 if leaf.content == datum_gui_protocol::PaneContent::Schematic
+                    && has_schematic_scene
                     && state
                         .schematic_documents
                         .panes
@@ -128,7 +130,12 @@ fn render_viewport_panes_logical(
                     &PANE_TOOLS
                 },
                 if leaf.content == datum_gui_protocol::PaneContent::Schematic {
-                    crate::menu_chrome::pane_tools::reserve(leaf.rect.header)
+                    crate::menu_chrome::pane_tools::reserve_for(
+                        state,
+                        leaf.id,
+                        leaf.rect.header,
+                        focused,
+                    )
                 } else {
                     0.0
                 },
@@ -154,7 +161,16 @@ fn render_viewport_panes_logical(
                 ));
             }
             datum_gui_protocol::PaneContent::Schematic => {
-                render_pane_placeholder(&leaf.rect, "Schematic (coming)", panel_quads, text_runs);
+                render_pane_placeholder(
+                    &leaf.rect,
+                    if state.schematic_documents.project.is_some() {
+                        "Source unavailable"
+                    } else {
+                        "Schematic (coming)"
+                    },
+                    panel_quads,
+                    text_runs,
+                );
             }
             // A Board leaf that is NOT the live scene leaf (e.g. a second board pane
             // in a split) cannot render live under single-live-scene; label it so it
@@ -583,3 +599,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "pane_context_tests.rs"]
+mod pane_context_tests;

@@ -59,6 +59,17 @@ selection, inspection, mouse/keyboard navigation and exact cold reopening withou
 design writes. Focused checks cover unavailable references; sheet/interface
 authoring and cross-sheet rewiring are not supplied by that read-only increment.
 
+Native schematic pane headers retain their own source and qualified occurrence
+through focus changes and read-only navigation. The existing inline tool cluster
+is shown only when both source and occurrence text fit beside it, using the same
+font measurements and bounds as breadcrumb paint and pointer targets. Otherwise
+the existing menu commands remain available and those header rows show context.
+An unavailable pane scene is labelled unavailable from that pane's own source
+lookup, independently of other visible schematics. The bounded `dat-child-pane-source-header-49i5`
+App check covers Board/Root/Child focus, Fit and opening the Child again after
+cold Project reopening, with authored sources and journal unchanged; this does
+not add layout restoration, compact controls or a new responsive mechanism.
+
 ### Bounded blank child-sheet creation
 
 `dat-schematic-create-child-sheet-g28d` configures `Place > Sheet`, the existing

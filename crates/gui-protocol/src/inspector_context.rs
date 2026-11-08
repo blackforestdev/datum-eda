@@ -423,6 +423,8 @@ pub fn pane_header(
     if !matches!(content, PaneContent::Schematic | PaneContent::Board) {
         return None;
     }
+    let source_available =
+        content != PaneContent::Schematic || crate::camera_scene_for_pane(state, pane).is_some();
     let title = if content == PaneContent::Schematic {
         let row = state
             .schematic_documents
@@ -434,7 +436,11 @@ pub fn pane_header(
             |row| {
                 format!(
                     "Source: {} · Occurrence: {}",
-                    row.source_name,
+                    if source_available {
+                        row.source_name.as_str()
+                    } else {
+                        "unavailable"
+                    },
                     row.breadcrumb.join(" / ")
                 )
             },
@@ -498,7 +504,14 @@ pub fn pane_header(
             .get(&pane)
             .and_then(|key| state.schematic_documents.row(key))
             .map_or(detail.clone(), |row| {
-                format!("Source: {} · {detail}", row.source_name)
+                format!(
+                    "Source: {} · {detail}",
+                    if source_available {
+                        row.source_name.as_str()
+                    } else {
+                        "unavailable"
+                    }
+                )
             })
     } else {
         detail
