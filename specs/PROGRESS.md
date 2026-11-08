@@ -701,8 +701,8 @@ the revised map through the public engine producer and populated-pad explicit
 rematerialization Undo/Redo while the old bound Net remains unchanged. This is
 engine-producer evidence; no manual map-aware materialization surface is claimed.
 That missing surface remains separate intake `dat-manual-map-materialization-bxrt`,
-and the initial empty-package Undo failure remains open as
-`dat-component-pad-initial-undo-absent-sxdi`. Earlier test
+and the initial empty-package Undo failure is retained as original map-revision
+evidence; the follow-up below corrects it. Earlier test
 fixture and historical-Map validator failures retain their original logs and
 scopes. The isolated ordinary debug App passes 69 steps and six inspected captures:
 assignment/unmap and Preview, byte-exact Cancel, map-only commit, Undo/Redo, Save
@@ -710,6 +710,18 @@ and cold reopening retain map identity/fixed links and exact root/child circuitr
 The App proves manual map editing; actual Map-bound physical/Net behavior is
 covered by the engine cases. No physical/HUMAN or release-GUI execution is claimed.
 No implicit placed update, relinking, approval or broad goal acceptance is claimed.
+
+Initial mapped-pad Undo (`dat-component-pad-initial-undo-absent-sxdi`) now restores
+an absent collection without inserting null and retains an explicit empty list
+as empty. Redo keeps the same eight requested Pad IDs, geometry and source choices
+under lawful compensation revisions. Eleven affected engine cases pass: repeated
+history and cold reopening at absent/present states retain current CI/package
+pins, the other connected component/Net, unknown raw siblings and source history,
+with no phantom Pad registrations; malformed collections still refuse without
+writes. This engine producer/history correction supplies no manual map-aware
+surface, App/CLI action, physical/HUMAN, release-GUI execution or whole-goal
+qualification. The earlier je1j initial-Undo failure remains uncredited at its
+original candidate.
 
 ### Native File-Type Catalog — Owner-Requested Proposal
 

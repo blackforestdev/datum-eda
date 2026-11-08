@@ -608,6 +608,8 @@ fn component_binding_context_ambiguous_owners_and_repeated_occurrences_remain_un
     std::fs::remove_dir_all(root).unwrap();
 }
 
+#[path = "component_relations_initial_materialization_tests.rs"]
+mod initial_materialization_tests;
 #[path = "component_relations_map_tests.rs"]
 mod map_tests;
 #[path = "component_relations_physical_fixture.rs"]

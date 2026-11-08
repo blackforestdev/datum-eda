@@ -338,9 +338,9 @@ component and explicit eight-pad materialization, a revised connected
 correspondence, and subsequent populated-pad rematerialization Undo/Redo; the old
 component and Net remain unchanged. This producer proof is not a manual App/CLI
 materialization action. That missing manual surface is separate intake
-`dat-manual-map-materialization-bxrt`; initial materialization Undo with an absent
-prior pad collection fails separately under
-`dat-component-pad-initial-undo-absent-sxdi` and is not credited. Forty-five focused
+`dat-manual-map-materialization-bxrt`. Initial materialization Undo with an absent
+prior pad collection failed in the original map-revision proof and was not
+credited there; its follow-up correction is recorded below. Forty-five focused
 checks establish these engine/form/history scopes. The isolated ordinary debug
 App passes 69 steps and six inspected captures for assignment/unmap, Preview,
 byte-exact Cancel, map-only commit, Undo/Redo, Save and cold reopening, including
@@ -348,6 +348,20 @@ unchanged root/child circuit rendering and resolved component identities. It use
 presented controls and logical keys, not physical/HUMAN or release-GUI execution.
 Relinking, implicit placed updates, approval and full library-to-PCB qualification
 remain open.
+
+Initial mapped materialization history
+(`dat-component-pad-initial-undo-absent-sxdi`) now preserves a genuinely absent
+prior pad collection without inserting `null`, and preserves an explicitly empty
+collection as empty. Redo restores the same eight requested Pad identities,
+geometry and pinned source choices with only the expected compensation revision
+advancement. Two repeated Undo/Redo cycles and cold reopening at both states
+retain the other bound component/Net, source history and authored unknown
+siblings, with no phantom Pad registrations. Malformed null, object and string
+collections still refuse without source or journal writes. Eleven focused
+engine cases cover this correction and affected Map/Part/materialization
+regressions. This is public engine producer/history proof, without a manual
+map-aware surface, App/CLI action, physical/HUMAN or release-GUI execution claim;
+the original map-revision failure remains valid at its earlier candidate.
 
 The initial schematic handoff (`dat-explicit-part-gate-placement-b43w`) adds named
 project-local Part/gate choices to the existing Symbol picker. Distinct choices

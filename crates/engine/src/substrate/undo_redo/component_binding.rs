@@ -358,7 +358,10 @@ pub(super) fn prepare(
                 };
                 pad_revisions.insert(id, revision);
             }
-            if let Some(pads) = materialized["component_pads"].as_array_mut() {
+            if let Some(pads) = materialized
+                .get_mut("component_pads")
+                .and_then(Value::as_array_mut)
+            {
                 for pad in pads {
                     if pad["source_binding"]["component_instance"]["object_id"] != json!(ci)
                         || pad["source_binding"]["component_instance"]["object_revision"]

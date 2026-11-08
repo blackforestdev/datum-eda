@@ -14,7 +14,7 @@ fn reference(model: &DesignModel, id: Uuid) -> RevisionedRef {
         object_revision: model.objects[&id].object_revision,
     }
 }
-fn connected(
+pub(super) fn connected(
     model: &mut DesignModel,
     root: &Path,
     symbol: Uuid,
@@ -363,100 +363,28 @@ fn new_explicit_current_mapping_materialization_keeps_old_bound_net_unchanged() 
     use crate::api::native_write::board_components::pad_materialization::{
         PadLandPatternSource, build_materialize_component_pad_sources,
     };
-    use crate::api::native_write::schematic_library::part_placement::PartGateSelection;
-    let (root, mut model, symbol, ci, part, package, map, mut request) =
-        physical_fixture::eight_pad_fixture("saved-map-new-current-materialization");
-    let (old_net, selected, _) = connected(&mut model, &root, symbol, package, ci, map);
-    let before = ElectricalSelectionSnapshot::capture(&model).unwrap();
-    let old_members = before.global_net(before.revision(), old_net).unwrap().owned;
-    let old_ci = model.component_instances[&ci].clone();
-    let board = model
-        .materialized_source_shard_value(SourceShardKind::BoardRoot)
-        .unwrap();
-    let old_pads = board["component_pads"][package.to_string()].clone();
-    let original = raw(&model, map);
-    let mut mappings = original["mappings"].as_object().unwrap().clone();
-    let other = mappings
-        .keys()
-        .find(|id| id.parse::<Uuid>().unwrap() != selected)
-        .unwrap()
-        .clone();
-    let old = mappings[&selected.to_string()].clone();
-    let replacement = mappings[&other].clone();
-    mappings.insert(selected.to_string(), replacement);
-    mappings.insert(other, old);
-    let p=(find_native_write_verb("datum.library.edit").unwrap().build)(
-        &NativeWriteContext { model:&model,project_root:&root },provenance(),
-        json!({"kind":"pin_pad_maps","object_id":map,"pool_path":"pool","fields":{"mappings":mappings}}),
-    ).unwrap();
-    commit_prepared(&mut model, &root, p).unwrap();
-    let revised = raw(&model, map);
-    assert_ne!(revised["mappings"], original["mappings"]);
-    // A separate ordinary placement chooses the same Part/gate explicitly.
-    // No old binding is retargeted to make the revised map usable.
-    let source = ElectricalSelectionSnapshot::capture(&model).unwrap();
-    let (sheet, old_symbol) = source
-        .schematic_source()
-        .unwrap()
-        .sheets
-        .values()
-        .find_map(|s| s.symbols.get(&symbol).map(|p| (s.uuid, p.clone())))
-        .unwrap();
-    let entity = raw(&model, old_symbol.entity.unwrap());
-    let library_symbol: Uuid = serde_json::from_value(
-        entity["gates"][old_symbol.gate.unwrap().to_string()]["symbol"].clone(),
-    )
-    .unwrap();
-    let intent =
-        PartGateSelection::capture(&model, part, old_symbol.gate.unwrap(), library_symbol).unwrap();
-    let p=(find_native_write_verb("datum.schematic.place_symbol").unwrap().build)(
-        &NativeWriteContext { model:&model,project_root:&root },provenance(),
-        json!({"sheet":sheet,"library_symbol":library_symbol,"explicit_part":intent,"reference":"U2","value":"New current map","x_nm":45_000_000,"y_nm":20_000_000}),
-    ).unwrap();
-    let new_symbol = p.primary_object_id.unwrap();
-    commit_prepared(&mut model, &root, p).unwrap();
-    let new_ci = model
-        .component_instances
-        .values()
-        .find(|c| c.placed_symbol_refs.contains(&new_symbol))
-        .unwrap()
-        .id;
-    let previous = raw(&model, new_ci)["component_instance"].clone();
-    let mut updated = previous.clone();
-    updated["object_revision"] = json!(model.objects[&new_ci].object_revision.0 + 1);
-    updated["library_bindings"][Uuid::new_v4().to_string()] =
-        json!({"target_object_id":map,"pinned_object_revision":1,"binding_role":"pin_pad_map"});
-    let p = BatchComposer::compose(&model, provenance())
-        .push_op(Operation::SetComponentInstance {
-            component_instance_id: new_ci,
-            previous_component_instance: previous,
-            component_instance: updated,
-        })
-        .finish()
-        .unwrap();
-    commit_prepared(&mut model, &root, p).unwrap();
-    let new_package = physical(
-        &mut model,
-        &root,
+    let physical_fixture::CurrentMaterializationFixture {
+        root,
+        mut model,
+        ci,
+        old_ci,
+        old_net,
+        old_members,
+        package,
+        old_pads,
+        map,
+        revised,
         new_symbol,
         new_ci,
-        part,
-        Point::new(45_000_000, 0),
-    );
-    let board = model
-        .materialized_source_shard_value(SourceShardKind::BoardRoot)
-        .unwrap();
-    request.placement =
-        serde_json::from_value(board["packages"][new_package.to_string()].clone()).unwrap();
-    request.component_instance = Some(new_ci);
-    assert!(matches!(
-        request.land_pattern,
-        PadLandPatternSource::Footprint(_)
-    ));
+        new_package,
+        selected,
+        mut request,
+        ..
+    } = physical_fixture::current_materialization_fixture("saved-map-new-current-materialization");
     let p = build_materialize_component_pad_sources(&model, provenance(), &request).unwrap();
     commit_prepared(&mut model, &root, p).unwrap();
-    // The separate initial-empty-package Undo defect is retained as sxdi.
-    // Exercise existing explicit refresh compensation over populated pads,
+    // Initial absent/empty restoration has its own focused history cases.
+    // This case exercises explicit refresh compensation over populated pads,
     // with producer-qualified target captures and exact retained identities.
     let source = model
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
