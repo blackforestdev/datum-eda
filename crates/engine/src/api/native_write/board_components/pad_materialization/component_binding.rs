@@ -62,13 +62,36 @@ pub(super) fn refresh(
         || ci.placed_package_refs[0].object_id != request.placement.uuid
         || !ci.placed_symbol_refs.iter().all(current)
         || !ci.placed_package_refs.iter().all(current)
-        || !ci.part_ref.as_ref().is_none_or(current)
-        || !ci.library_bindings.values().all(|b| {
+        || !ci.part_ref.as_ref().is_none_or(|r| {
             model
-                .objects
-                .get(&b.target_object_id)
-                .is_some_and(|o| o.object_revision == b.pinned_object_revision)
-                && b.local_override_refs.iter().all(current)
+                .materialized_pool_object_revision(r.object_id, "parts", r.object_revision)
+                .is_ok()
+        })
+        || !ci.library_bindings.values().all(|b| {
+            if b.binding_role == crate::substrate::LibraryBindingRole::Part {
+                model
+                    .materialized_pool_object_revision(
+                        b.target_object_id,
+                        "parts",
+                        b.pinned_object_revision,
+                    )
+                    .is_ok()
+                    && b.local_override_refs.iter().all(|r| {
+                        model
+                            .materialized_pool_object_revision(
+                                r.object_id,
+                                "parts",
+                                r.object_revision,
+                            )
+                            .is_ok()
+                    })
+            } else {
+                model
+                    .objects
+                    .get(&b.target_object_id)
+                    .is_some_and(|o| o.object_revision == b.pinned_object_revision)
+                    && b.local_override_refs.iter().all(current)
+            }
         })
     {
         return Err(invalid(

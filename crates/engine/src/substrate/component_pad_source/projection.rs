@@ -57,6 +57,57 @@ pub(crate) fn projection_with_operations(
     board: &Value,
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
+    project_with_part_basis(model, model, board, pending)
+}
+
+/// Compensation stages no pool edits. Its accepted Part basis stays immutable
+/// while the existing view projects the actual pending CI/Pad/net operations.
+pub(crate) fn projection_with_part_basis(
+    model: &DesignModel,
+    part_basis: &DesignModel,
+    board: &Value,
+    pending: &[Operation],
+) -> Result<ComponentPadProjection, EngineError> {
+    let count = part_basis.journal.len();
+    if part_basis.journal_cursor.applied_transaction_count != count
+        || model.journal_cursor != part_basis.journal_cursor
+        || model.project.project_id != part_basis.project.project_id
+        || model.journal.len() != count + 1
+        || model.journal[..count] != part_basis.journal[..]
+        || pending.iter().any(|op| {
+            !matches!(
+                op,
+                Operation::SetBoardPackagePackage { .. }
+                    | Operation::SetComponentInstance { .. }
+                    | Operation::SetElectricalIdentity { .. }
+                    | Operation::GuardObjectRevision { .. }
+            )
+        })
+    {
+        return Err(invalid(
+            "prospective Part basis requires an accepted unchanged pool and exact compensation operations",
+        ));
+    }
+    let staged = &model.journal[count];
+    if staged.before_model_revision != part_basis.model_revision
+        || staged.after_model_revision != model.model_revision
+        || !staged.operations.iter().eq(pending
+            .iter()
+            .filter(|op| !matches!(op, Operation::GuardObjectRevision { .. })))
+    {
+        return Err(invalid(
+            "prospective Part basis differs from the applied operation evidence",
+        ));
+    }
+    project_with_part_basis(model, part_basis, board, pending)
+}
+
+fn project_with_part_basis(
+    model: &DesignModel,
+    part_basis: &DesignModel,
+    board: &Value,
+    pending: &[Operation],
+) -> Result<ComponentPadProjection, EngineError> {
     let board_id: Uuid = serde_json::from_value(board["uuid"].clone())?;
     let mut result = ComponentPadProjection::default();
     let Some(placements) = board.get("component_pads").and_then(Value::as_object) else {
@@ -109,7 +160,12 @@ pub(crate) fn projection_with_operations(
                 }) {
                     return Err(invalid("missing placed Pad source registration"));
                 }
-                let status = pad.materialization_status(model, package.part, package.package);
+                let status = pad.materialization_status_with_part_basis(
+                    model,
+                    part_basis,
+                    package.part,
+                    package.package,
+                );
                 result.statuses.insert(pad.uuid, status);
                 project_pad(&pad, &package, &stackup)
             })();

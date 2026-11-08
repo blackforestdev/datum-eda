@@ -1,6 +1,8 @@
 //! Creation-only orderable Part intent over the canonical library writer.
 use super::*;
 use crate::substrate::Operation;
+#[path = "library_gui_part_edit.rs"]
+mod edit;
 
 pub(super) fn build(
     context: &NativeWriteContext<'_>,
@@ -9,9 +11,7 @@ pub(super) fn build(
     create: bool,
 ) -> Result<PreparedWrite, EngineError> {
     if !create {
-        return Err(refusal(
-            "Saved Part editing is unavailable in this increment",
-        ));
+        return edit::build(context, provenance, request);
     }
     const FIELDS: &[&str] = &[
         "manufacturer",
@@ -119,3 +119,7 @@ pub(super) fn build(
 #[cfg(test)]
 #[path = "library_gui_part_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "library_gui_part_edit_tests.rs"]
+mod edit_tests;

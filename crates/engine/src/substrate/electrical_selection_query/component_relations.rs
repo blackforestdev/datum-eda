@@ -217,7 +217,11 @@ impl ElectricalSelectionSnapshot {
             && source.object_revision == object.object_revision
             && source.placed_symbol_refs.iter().all(current)
             && source.placed_package_refs.iter().all(current)
-            && source.part_ref.as_ref().is_none_or(current)
+            && source.part_ref.as_ref().is_none_or(|r| {
+                self.model
+                    .materialized_pool_object_revision(r.object_id, "parts", r.object_revision)
+                    .is_ok()
+            })
             && source
                 .placed_symbol_refs
                 .iter()
@@ -231,11 +235,30 @@ impl ElectricalSelectionSnapshot {
                 .collect::<Vec<_>>()
                 == owner.placed_package_refs
             && source.library_bindings.values().all(|b| {
-                self.model
-                    .objects
-                    .get(&b.target_object_id)
-                    .is_some_and(|o| o.object_revision == b.pinned_object_revision)
-                    && b.local_override_refs.iter().all(current)
+                if b.binding_role == crate::substrate::LibraryBindingRole::Part {
+                    self.model
+                        .materialized_pool_object_revision(
+                            b.target_object_id,
+                            "parts",
+                            b.pinned_object_revision,
+                        )
+                        .is_ok()
+                        && b.local_override_refs.iter().all(|r| {
+                            self.model
+                                .materialized_pool_object_revision(
+                                    r.object_id,
+                                    "parts",
+                                    r.object_revision,
+                                )
+                                .is_ok()
+                        })
+                } else {
+                    self.model
+                        .objects
+                        .get(&b.target_object_id)
+                        .is_some_and(|o| o.object_revision == b.pinned_object_revision)
+                        && b.local_override_refs.iter().all(current)
+                }
             })
     }
 }

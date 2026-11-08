@@ -674,6 +674,22 @@ qualified schematic scene and actual placed-symbol graphics. No gate relinking,
 prefix-driven renumbering, physical/HUMAN, release-GUI execution or broad goal
 acceptance is claimed.
 
+Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
+manufacturer, MPN, value, description, datasheet reference and tags through the
+shared Library form. Fixed relationships and lifecycle remain read-only. Only
+changed fields enter the canonical raw patch; existing component instances keep
+their declared historical Part revisions, values, annotations and mappings,
+while new placement uses the current revision and value. Forty-six focused checks
+pass, including eight physical pads and five connected-Net materialization cases
+with history, cold reopening and strict prospective-source negative controls.
+The isolated debug App passes 99 steps and eight inspected captures, proving
+Cancel with unchanged files/journal, explicit metadata commit, old root/child
+rendered identity, new placement, Undo/Redo and Save/cold persistence of both.
+Earlier physical-test fixture/assertion failures, the nested prospective Part
+basis failure and the App capture-label failure retain their actual logs and
+scope. No automatic placed update, relinking, approval, readable-Greek repair,
+physical/HUMAN, release-GUI execution or broad goal acceptance is claimed.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).

@@ -16,7 +16,7 @@ fn named(p: &Painter<'_>, kind: &str, id: &Value) -> String {
 }
 pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
     p.line(&format!(
-        "Review: create Part {}",
+        "Review Part {}",
         raw["mpn"].as_str().unwrap_or("Unavailable")
     ));
     for (key, label) in [
@@ -50,5 +50,32 @@ pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
         raw["lifecycle"].as_str().unwrap_or("Unavailable")
     ));
     p.line(&format!("Tags: {}", raw["tags"]));
-    p.line("Pin-pad map: not assigned");
+    p.line(&format!(
+        "Pin-pad map: {}",
+        if raw["default_pin_pad_map"].is_null() {
+            "Not assigned".into()
+        } else {
+            named(p, "pin_pad_maps", &raw["default_pin_pad_map"])
+        }
+    ));
+}
+
+pub(super) fn saved_links(p: &mut Painter<'_>, raw: &Value) {
+    for (key, kind, label) in [
+        ("entity", "entities", "Entity"),
+        ("package", "packages", "Package"),
+        ("default_footprint", "footprints", "Default Footprint"),
+        ("default_pin_pad_map", "pin_pad_maps", "Pin-pad map"),
+    ] {
+        let value = if raw[key].is_null() {
+            "Not assigned".into()
+        } else {
+            named(p, kind, &raw[key])
+        };
+        p.line(&format!("{label}: {value} · read-only"));
+    }
+    p.line(&format!(
+        "Lifecycle: {} · read-only",
+        raw["lifecycle"].as_str().unwrap_or("Unavailable")
+    ));
 }

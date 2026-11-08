@@ -3,6 +3,7 @@ use super::*;
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct PartDraft {
     footprints: Vec<(Uuid, Uuid, String)>,
+    pub original: Option<Value>,
 }
 fn unique(browser: &LibraryBrowser, kind: &str) -> Vec<(String, String)> {
     named(browser, kind)
@@ -18,7 +19,15 @@ fn unique(browser: &LibraryBrowser, kind: &str) -> Vec<(String, String)> {
         .collect()
 }
 impl LibraryDraft {
-    pub(super) fn part_fields(&mut self, browser: &LibraryBrowser) {
+    pub(super) fn part_fields(
+        &mut self,
+        browser: &LibraryBrowser,
+        raw: &Value,
+    ) -> Result<(), String> {
+        if !self.create {
+            let _: eda_engine::pool::Part = serde_json::from_value(raw.clone())
+                .map_err(|_| "Saved Part data is unavailable")?;
+        }
         for (key, label) in [
             ("manufacturer", "Manufacturer"),
             ("mpn", "MPN"),
@@ -27,7 +36,23 @@ impl LibraryDraft {
             ("datasheet", "Datasheet reference"),
             ("tags", "Tags (comma separated)"),
         ] {
-            self.field(key, label, None, vec![]);
+            let value = if key == "tags" {
+                match raw.get(key) {
+                    Some(value) => Some(json!(
+                        serde_json::from_value::<Vec<String>>(value.clone())
+                            .map_err(|_| "Saved Part tags are unavailable")?
+                            .join(", ")
+                    )),
+                    None => None,
+                }
+            } else {
+                raw.get(key).cloned()
+            };
+            self.field(key, label, value.as_ref(), vec![]);
+        }
+        if !self.create {
+            self.part.original = Some(raw.clone());
+            return Ok(());
         }
         self.field(
             "part_entity",
@@ -55,6 +80,7 @@ impl LibraryDraft {
             })
             .collect();
         self.refresh_part_footprints();
+        Ok(())
     }
     pub(super) fn refresh_part_footprints(&mut self) {
         let package = self.value("part_package").parse::<Uuid>().ok();
@@ -73,6 +99,37 @@ impl LibraryDraft {
         }
     }
     pub(super) fn part_request(&self, fields: &mut Map<String, Value>) -> Result<(), String> {
+        if !self.create {
+            for key in [
+                "manufacturer",
+                "mpn",
+                "value",
+                "description",
+                "datasheet",
+                "tags",
+            ] {
+                if !self.dirty.contains(key) {
+                    continue;
+                }
+                let value = self.value(key);
+                if matches!(key, "manufacturer" | "mpn") && value.trim().is_empty() {
+                    return Err("Enter a manufacturer and MPN".into());
+                }
+                let value = if key == "tags" {
+                    json!(
+                        value
+                            .split(',')
+                            .map(str::trim)
+                            .filter(|s| !s.is_empty())
+                            .collect::<BTreeSet<_>>()
+                    )
+                } else {
+                    json!(value)
+                };
+                fields.insert(key.into(), value);
+            }
+            return Ok(());
+        }
         if self.value("manufacturer").trim().is_empty() || self.value("mpn").trim().is_empty() {
             return Err("Enter a manufacturer and MPN".into());
         }
@@ -126,3 +183,6 @@ impl LibraryDraft {
 }
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod edit_tests;

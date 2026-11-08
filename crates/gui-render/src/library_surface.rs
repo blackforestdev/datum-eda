@@ -134,7 +134,11 @@ pub(crate) fn render(
             p.line("Tolerances, terminal positions and governed models unavailable");
         }
         if d.kind == "parts" {
-            p.line("Initial lifecycle: Unknown · read-only");
+            if let Some(raw) = &d.part.original {
+                part_form::saved_links(&mut p, raw);
+            } else {
+                p.line("Initial lifecycle: Unknown · read-only");
+            }
         }
         if matches!(d.kind.as_str(), "units" | "symbols") {
             electrical_form::table(&mut p, d, rect);

@@ -121,17 +121,18 @@ pub(super) fn insert_component_instance(
         return;
     }
     if let Some(part_ref) = &input.part_ref
-        && !revisioned_pool_ref_matches(
+        && !pool_ref_matches(
             part_ref.object_id,
             part_ref.object_revision,
             objects,
             "parts",
+            history,
         )
     {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_invalid_part_ref".to_string(),
             message: format!(
-                "component instance {} part_ref {} must target a current pool parts object",
+                "component instance {} part_ref {} must target an authenticated pool parts revision",
                 input.uuid, part_ref.object_id
             ),
             path: Some(shard.path.clone()),
@@ -266,10 +267,10 @@ fn pool_ref_matches(
     kind: &str,
     history: Option<&super::pool_history::PoolHistory<'_>>,
 ) -> bool {
-    if kind == "symbols"
+    if matches!(kind, "symbols" | "parts")
         && let Some(history) = history
     {
-        history.symbol_ref_matches(objects, id, revision)
+        history.definition_ref_matches(objects, id, revision, kind)
     } else {
         revisioned_pool_ref_matches(id, revision, objects, kind)
     }

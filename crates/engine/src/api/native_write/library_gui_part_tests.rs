@@ -7,10 +7,10 @@ use crate::api::native_write::{
 };
 use crate::substrate::{CommitSource, DesignModel, ProjectResolver};
 use std::path::Path;
-fn provenance() -> WriteProvenance {
+pub(super) fn provenance() -> WriteProvenance {
     WriteProvenance::new("test", CommitSource::Manual, "Author Part")
 }
-fn prepare(
+pub(super) fn prepare(
     model: &DesignModel,
     root: &Path,
     id: Uuid,
@@ -27,7 +27,7 @@ fn prepare(
         json!({"kind":"parts","object_id":id,"pool_path":"pool","fields":fields}),
     )
 }
-fn fixture() -> (std::path::PathBuf, DesignModel, Uuid, Uuid, Uuid, Uuid) {
+pub(super) fn fixture() -> (std::path::PathBuf, DesignModel, Uuid, Uuid, Uuid, Uuid) {
     let root = super::super::super::test_support::temp_project_root("part_form");
     bootstrap_native_project(
         &root,
@@ -91,7 +91,7 @@ fn fixture() -> (std::path::PathBuf, DesignModel, Uuid, Uuid, Uuid, Uuid) {
     }
     (root, model, entity, package, other, footprint)
 }
-fn fields(entity: Uuid, package: Uuid, footprint: Option<Uuid>) -> Value {
+pub(super) fn fields(entity: Uuid, package: Uuid, footprint: Option<Uuid>) -> Value {
     json!({"manufacturer":"Designer","mpn":"PN-1","value":"Value as entered","description":"Description","datasheet":"reference.pdf","tags":["logic"],"entity":entity,"package":package,"default_footprint":footprint})
 }
 #[test]

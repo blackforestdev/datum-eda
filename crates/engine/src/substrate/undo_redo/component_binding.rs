@@ -92,13 +92,36 @@ fn current_ci(
         || ci.placed_package_refs[0].object_id != package
         || !ci.placed_package_refs.iter().all(current)
         || !ci.placed_symbol_refs.iter().all(current)
-        || !ci.part_ref.as_ref().is_none_or(current)
-        || !ci.library_bindings.values().all(|b| {
+        || !ci.part_ref.as_ref().is_none_or(|r| {
             model
-                .objects
-                .get(&b.target_object_id)
-                .is_some_and(|o| o.object_revision == b.pinned_object_revision)
-                && b.local_override_refs.iter().all(current)
+                .materialized_pool_object_revision(r.object_id, "parts", r.object_revision)
+                .is_ok()
+        })
+        || !ci.library_bindings.values().all(|b| {
+            if b.binding_role == crate::substrate::LibraryBindingRole::Part {
+                model
+                    .materialized_pool_object_revision(
+                        b.target_object_id,
+                        "parts",
+                        b.pinned_object_revision,
+                    )
+                    .is_ok()
+                    && b.local_override_refs.iter().all(|r| {
+                        model
+                            .materialized_pool_object_revision(
+                                r.object_id,
+                                "parts",
+                                r.object_revision,
+                            )
+                            .is_ok()
+                    })
+            } else {
+                model
+                    .objects
+                    .get(&b.target_object_id)
+                    .is_some_and(|o| o.object_revision == b.pinned_object_revision)
+                    && b.local_override_refs.iter().all(current)
+            }
         })
     {
         return Err(invalid("changed or stale recorded CI preimage"));
@@ -465,8 +488,49 @@ pub(super) fn prepare(
             pass.apply(operation)?;
         }
     }
-    let final_projection = crate::substrate::component_pad_source::projection_with_operations(
+    #[cfg(test)]
+    if let Some(value) = final_board["component_pads"][package.to_string()]
+        .as_array()
+        .and_then(|pads| pads.first())
+    {
+        use crate::substrate::component_pad_source as source;
+        let pad: source::ComponentPadSource = serde_json::from_value(value.clone())?;
+        let pin = &pad.source_binding.as_ref().unwrap().part;
+        let error = prospective
+            .materialized_pool_object_revision(pin.owner_id, "parts", pin.object_revision)
+            .unwrap_err();
+        assert!(
+            error
+                .to_string()
+                .contains("journal tip is not the resolved source basis")
+        );
+        let rejected = source::projection_with_operations(
+            &prospective,
+            &final_board,
+            &candidate_batch.operations,
+        )?;
+        assert_ne!(
+            rejected.statuses.get(&pad.uuid),
+            Some(&ComponentPadMaterializationStatus::Current)
+        );
+        let mut conflicting = candidate_batch.operations.clone();
+        conflicting.push(Operation::BumpObjectRevision {
+            object_id: pin.owner_id,
+        });
+        assert!(
+            source::projection_with_part_basis(&prospective, model, &final_board, &conflicting)
+                .is_err()
+        );
+        eprintln!(
+            "prospective Part regression: cursor={} journal={} strict_reader={error}; ordinary_status={:?}; conflicting Part operations refused",
+            prospective.journal_cursor.applied_transaction_count,
+            prospective.journal.len(),
+            rejected.statuses.get(&pad.uuid)
+        );
+    }
+    let final_projection = crate::substrate::component_pad_source::projection_with_part_basis(
         &prospective,
+        model,
         &final_board,
         &candidate_batch.operations,
     )?;
@@ -479,8 +543,9 @@ pub(super) fn prepare(
             return Err(invalid("prospective Pad reference graph is incomplete"));
         }
     }
-    let basis = crate::substrate::electrical_basis::ElectricalBasis::new(
+    let basis = crate::substrate::electrical_basis::ElectricalBasis::with_part_basis(
         &prospective,
+        model,
         &candidate_batch.operations,
     )?;
     let membership = crate::substrate::electrical_net_membership::index(

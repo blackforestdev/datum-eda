@@ -15,6 +15,8 @@ use crate::{error::EngineError, substrate::SourceShardKind};
 mod electrical;
 #[path = "library_gui_entity.rs"]
 mod entity;
+#[path = "library_gui_metadata_edit.rs"]
+mod metadata_edit;
 #[path = "library_gui_package.rs"]
 mod package;
 #[path = "library_gui_part.rs"]

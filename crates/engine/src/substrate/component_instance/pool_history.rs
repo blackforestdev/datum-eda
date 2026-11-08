@@ -14,24 +14,29 @@ pub(in crate::substrate) struct PoolHistoryBasis<'a> {
 }
 
 impl PoolHistoryBasis<'_> {
-    pub(in crate::substrate) fn symbol_ref_matches(
+    pub(in crate::substrate) fn definition_ref_matches(
         &self,
         staged: &BTreeMap<ObjectId, DomainObject>,
         id: ObjectId,
         revision: ObjectRevision,
+        kind: &str,
     ) -> bool {
-        self.projected_symbol_ref_matches(staged, id, revision)
+        if !matches!(kind, "symbols" | "parts") {
+            return false;
+        }
+        self.projected_definition_ref_matches(staged, id, revision, kind)
             .unwrap_or(false)
     }
-    fn projected_symbol_ref_matches(
+    fn projected_definition_ref_matches(
         &self,
         staged: &BTreeMap<ObjectId, DomainObject>,
         id: ObjectId,
         revision: ObjectRevision,
+        kind: &str,
     ) -> Result<bool, EngineError> {
         let Some(current) = staged
             .get(&id)
-            .filter(|o| o.domain == "pool" && o.kind == "symbols")
+            .filter(|o| o.domain == "pool" && o.kind == kind)
         else {
             return Ok(false);
         };
@@ -41,9 +46,7 @@ impl PoolHistoryBasis<'_> {
         };
         if history.has_ambiguous_epoch(id) || self.operations.iter().any(|op|matches!(op,Operation::DeletePoolLibraryObject {object_id,..} if *object_id==id)) {return Ok(false);}
         let before = self.model.objects.get(&id).filter(|o| {
-            o.source_shard_id == current.source_shard_id
-                && o.domain == "pool"
-                && o.kind == "symbols"
+            o.source_shard_id == current.source_shard_id && o.domain == "pool" && o.kind == kind
         });
         let pending_source_change = self.operations.iter().any(|op| match op {
             Operation::SetPoolLibraryObject { object_id, .. }
@@ -80,12 +83,10 @@ impl PoolHistoryBasis<'_> {
                         relative_path,
                         object_kind,
                         ..
-                    } if *object_id == id && object_kind == "symbols" => {
-                        Some(relative_path.as_str())
-                    }
+                    } if *object_id == id && object_kind == kind => Some(relative_path.as_str()),
                     _ => None,
                 })
-                .ok_or_else(|| invalid("new Symbol has no applied creation basis"))?;
+                .ok_or_else(|| invalid("new definition has no applied creation basis"))?;
             let shard = Uuid::new_v5(
                 &Uuid::NAMESPACE_URL,
                 format!("datum-eda:source-shard:{path}").as_bytes(),
@@ -96,7 +97,7 @@ impl PoolHistoryBasis<'_> {
             (path, None, 0)
         };
         let mut projection =
-            restore::RevisionProjection::new(id, path, "symbols", revision, state, counter)?;
+            restore::RevisionProjection::new(id, path, kind, revision, state, counter)?;
         if let Some(before) = before
             && let Some(past) = history.payload(before, revision)?
         {
@@ -260,15 +261,19 @@ impl PoolHistory<'_> {
         Ok(captured)
     }
 
-    pub(in crate::substrate) fn symbol_ref_matches(
+    pub(in crate::substrate) fn definition_ref_matches(
         &self,
         objects: &BTreeMap<ObjectId, DomainObject>,
         id: ObjectId,
         revision: ObjectRevision,
+        kind: &str,
     ) -> bool {
+        if !matches!(kind, "symbols" | "parts") {
+            return false;
+        }
         objects
             .get(&id)
-            .filter(|o| o.domain == "pool" && o.kind == "symbols")
+            .filter(|o| o.domain == "pool" && o.kind == kind)
             .is_some_and(|o| {
                 !self.has_ambiguous_epoch(id)
                     && ((o.object_revision == revision && !self.has_restored_epoch(id))
@@ -332,7 +337,7 @@ impl DesignModel {
             )?;
             return Ok(value);
         }
-        if !matches!(kind, "units" | "symbols") {
+        if !matches!(kind, "units" | "symbols" | "parts") {
             return Err(invalid(
                 "historical reads for this definition kind are unavailable",
             ));

@@ -325,20 +325,30 @@ fn validate_revisioned_pool_ref(
             uuid: object_id,
         });
     };
-    if expected_kind == "symbols" {
+    if matches!(expected_kind, "symbols" | "parts") {
         let authenticated = match history_model {
-            Some(basis) => basis.symbol_ref_matches(&model.objects, object_id, object_revision),
+            Some(basis) => basis.definition_ref_matches(
+                &model.objects,
+                object_id,
+                object_revision,
+                expected_kind,
+            ),
             None => super::component_instance::pool_history::PoolHistory {
                 shards: &model.source_shards,
                 journal: &model.journal,
             }
-            .symbol_ref_matches(&model.objects, object_id, object_revision),
+            .definition_ref_matches(
+                &model.objects,
+                object_id,
+                object_revision,
+                expected_kind,
+            ),
         };
         if authenticated {
             return Ok(());
         }
         return Err(EngineError::Validation(format!(
-            "component instance {component_instance_id} {label} has no authenticated Symbol revision"
+            "component instance {component_instance_id} {label} has no authenticated {expected_kind} revision"
         )));
     }
     if object.object_revision != object_revision

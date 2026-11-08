@@ -14,7 +14,9 @@ mod projection;
 mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
 pub use projection::{ComponentPadProjection, component_pad_projection};
-pub(crate) use projection::{project_value, projection_with_operations};
+pub(crate) use projection::{
+    project_value, projection_with_operations, projection_with_part_basis,
+};
 pub(crate) use validation::{touches, touches_batch, validate_batch, validate_native};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -148,23 +150,39 @@ impl ComponentPadSource {
         part: Uuid,
         package: Uuid,
     ) -> ComponentPadMaterializationStatus {
+        self.materialization_status_with_part_basis(model, model, part, package)
+    }
+    fn materialization_status_with_part_basis(
+        &self,
+        model: &DesignModel,
+        part_basis: &DesignModel,
+        part: Uuid,
+        package: Uuid,
+    ) -> ComponentPadMaterializationStatus {
         let Some(b) = &self.source_binding else {
             return ComponentPadMaterializationStatus::Unverified;
         };
-        if self.validate_frozen().is_err() || b.project_id != model.project.project_id {
+        if self.validate_frozen().is_err()
+            || b.project_id != model.project.project_id
+            || part_basis.project.project_id != model.project.project_id
+        {
             return ComponentPadMaterializationStatus::Unverified;
         }
         if b.part.object_id != part
             || b.package.object_id != package
-            || [
-                &b.part,
-                &b.package,
-                &b.land_pattern,
-                &b.library_pad,
-                &b.padstack,
-            ]
-            .into_iter()
-            .any(|p| check_pin(model, p).is_err())
+            || model.objects.get(&b.part.owner_id) != part_basis.objects.get(&b.part.owner_id)
+            || model
+                .source_shards
+                .iter()
+                .find(|s| s.shard_id == b.part.source_shard_id)
+                != part_basis
+                    .source_shards
+                    .iter()
+                    .find(|s| s.shard_id == b.part.source_shard_id)
+            || check_pin(part_basis, &b.part).is_err()
+            || [&b.package, &b.land_pattern, &b.library_pad, &b.padstack]
+                .into_iter()
+                .any(|p| check_pin(model, p).is_err())
             || b.process_snapshot
                 .as_ref()
                 .is_some_and(|s| s.check_current(model).is_err())

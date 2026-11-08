@@ -118,13 +118,36 @@ pub(super) fn final_bindings(
             || refs.placed_package_refs.len() != 1
             || !refs.placed_package_refs.iter().all(pin_current)
             || !refs.placed_symbol_refs.iter().all(pin_current)
-            || !refs.part_ref.as_ref().is_none_or(pin_current)
-            || !refs.library_bindings.values().all(|b| {
+            || !refs.part_ref.as_ref().is_none_or(|r| {
                 model
-                    .objects
-                    .get(&b.target_object_id)
-                    .is_some_and(|o| o.object_revision == b.pinned_object_revision)
-                    && b.local_override_refs.iter().all(pin_current)
+                    .materialized_pool_object_revision(r.object_id, "parts", r.object_revision)
+                    .is_ok()
+            })
+            || !refs.library_bindings.values().all(|b| {
+                if b.binding_role == crate::substrate::LibraryBindingRole::Part {
+                    model
+                        .materialized_pool_object_revision(
+                            b.target_object_id,
+                            "parts",
+                            b.pinned_object_revision,
+                        )
+                        .is_ok()
+                        && b.local_override_refs.iter().all(|r| {
+                            model
+                                .materialized_pool_object_revision(
+                                    r.object_id,
+                                    "parts",
+                                    r.object_revision,
+                                )
+                                .is_ok()
+                        })
+                } else {
+                    model
+                        .objects
+                        .get(&b.target_object_id)
+                        .is_some_and(|o| o.object_revision == b.pinned_object_revision)
+                        && b.local_override_refs.iter().all(pin_current)
+                }
             })
         {
             return Err(invalid(
@@ -247,13 +270,48 @@ pub(super) fn final_bindings(
         }
         let mut prospective = model.clone();
         prospective.commit_without_direct_policy(batch.clone())?;
-        let basis = crate::substrate::electrical_basis::ElectricalBasis::new(
+        let basis = crate::substrate::electrical_basis::ElectricalBasis::with_part_basis(
             &prospective,
+            model,
             &batch.operations,
         )?;
         let membership =
             crate::substrate::electrical_net_membership::index(&prospective, &batch.operations)?;
         for net in required.values() {
+            #[cfg(test)]
+            {
+                let ordinary = crate::substrate::electrical_basis::ElectricalBasis::new(
+                    &prospective,
+                    &batch.operations,
+                )?;
+                let rejected =
+                    crate::substrate::electrical_identity_validation::correspondence_with_basis(
+                        &prospective,
+                        *net,
+                        Some(&ordinary),
+                        Some(&membership),
+                    );
+                assert_ne!(
+                    rejected,
+                    crate::substrate::NetCorrespondenceStatus::Complete
+                );
+                let part = model.component_instances[&ci].part_ref.unwrap();
+                let error = prospective
+                    .materialized_pool_object_revision(
+                        part,
+                        "parts",
+                        model.objects[&part].object_revision,
+                    )
+                    .unwrap_err();
+                assert!(
+                    error
+                        .to_string()
+                        .contains("journal tip is not the resolved source basis")
+                );
+                eprintln!(
+                    "nested prospective Part regression: strict_reader={error}; ordinary_correspondence={rejected:?}; qualified staged Net basis required"
+                );
+            }
             if crate::substrate::electrical_identity_validation::correspondence_with_basis(
                 &prospective,
                 *net,

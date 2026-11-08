@@ -10,6 +10,14 @@ pub(super) struct ElectricalBasis {
     values: BTreeMap<Uuid, Value>,
     classes: class_index::Index,
     query_pads: BTreeMap<Uuid, BTreeMap<Uuid, crate::board::query_pad::QueryPadGeometry>>,
+    part_statuses: Option<(
+        Uuid,
+        super::ModelRevision,
+        BTreeMap<
+            Uuid,
+            BTreeMap<Uuid, super::component_pad_source::ComponentPadMaterializationStatus>,
+        >,
+    )>,
 }
 impl ElectricalBasis {
     pub(super) fn new(model: &DesignModel, operations: &[Operation]) -> Result<Self, EngineError> {
@@ -22,8 +30,35 @@ impl ElectricalBasis {
         operations: &[Operation],
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
     ) -> Result<Self, EngineError> {
+        Self::capture(model, operations, read, None)
+    }
+    pub(super) fn with_part_basis(
+        model: &DesignModel,
+        part_basis: &DesignModel,
+        operations: &[Operation],
+    ) -> Result<Self, EngineError> {
+        Self::capture(
+            model,
+            operations,
+            &|shard| super::journal::materialized_shard_value(model, shard),
+            Some(part_basis),
+        )
+    }
+    fn capture(
+        model: &DesignModel,
+        operations: &[Operation],
+        read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
+        part_basis: Option<&DesignModel>,
+    ) -> Result<Self, EngineError> {
         let mut values = BTreeMap::new();
         let mut query_pads = BTreeMap::new();
+        let mut part_statuses = part_basis.map(|_| {
+            (
+                model.project.project_id,
+                model.model_revision.clone(),
+                BTreeMap::new(),
+            )
+        });
         for shard in &model.source_shards {
             if !matches!(
                 shard.kind,
@@ -118,10 +153,19 @@ impl ElectricalBasis {
                 }
             }
             if shard.kind == SourceShardKind::BoardRoot {
-                let projection = super::component_pad_source::projection_with_operations(
-                    model, &value, operations,
-                )?;
+                let projection = if let Some(accepted) = part_basis {
+                    super::component_pad_source::projection_with_part_basis(
+                        model, accepted, &value, operations,
+                    )?
+                } else {
+                    super::component_pad_source::projection_with_operations(
+                        model, &value, operations,
+                    )?
+                };
                 value = super::component_pad_source::project_value(value, &projection)?;
+                if let Some((_, _, statuses)) = &mut part_statuses {
+                    statuses.insert(shard.shard_id, projection.statuses);
+                }
                 query_pads.insert(shard.shard_id, projection.query_pads);
             }
             values.insert(shard.shard_id, value);
@@ -131,6 +175,7 @@ impl ElectricalBasis {
             values,
             classes,
             query_pads,
+            part_statuses,
         };
         // Provisional assignments allow the existing PM053 certificate to inspect
         // geometry and map correspondence. Only complete evidence survives capture.
@@ -328,6 +373,14 @@ impl ElectricalBasis {
         id: Uuid,
     ) -> Option<super::component_pad_source::ComponentPadMaterializationStatus> {
         let object = model.objects.get(&id)?;
+        // Reuse this same qualified projection's result for its exact view;
+        // never recompute Part history against the unpublished view journal.
+        if let Some((project, revision, statuses)) = &self.part_statuses
+            && *project == model.project.project_id
+            && *revision == model.model_revision
+        {
+            return statuses.get(&object.source_shard_id)?.get(&id).copied();
+        }
         let board = self.values.get(&object.source_shard_id)?;
         for (package, pads) in board.get("component_pads")?.as_object()? {
             for raw in pads.as_array()? {

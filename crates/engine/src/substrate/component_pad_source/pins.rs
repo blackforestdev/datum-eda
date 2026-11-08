@@ -8,6 +8,17 @@ pub(crate) fn hash_value(value: &Value) -> Result<String, EngineError> {
         crate::ir::serialization::to_json_deterministic(value)?.as_bytes(),
     ))
 }
+fn is_part_source(model: &DesignModel, pin: &PinnedPadLibrarySource) -> bool {
+    std::path::Path::new(&pin.relative_path)
+        .parent()
+        .and_then(|p| p.file_name())
+        .and_then(|p| p.to_str())
+        == Some("parts")
+        || model
+            .objects
+            .get(&pin.owner_id)
+            .is_some_and(|o| o.domain == "pool" && o.kind == "parts")
+}
 pub(crate) fn source_value(
     model: &DesignModel,
     pin: &PinnedPadLibrarySource,
@@ -24,6 +35,28 @@ pub(crate) fn source_value(
     let value = model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
     if value.get("uuid").and_then(Value::as_str) != Some(pin.owner_id.to_string().as_str()) {
         return Err(invalid("foreign pinned library owner"));
+    }
+    if is_part_source(model, pin) {
+        if pin.object_id != pin.owner_id {
+            return Err(invalid("Part pin must name its root definition"));
+        }
+        if !model.objects.get(&pin.owner_id).is_some_and(|o| {
+            o.domain == "pool" && o.kind == "parts" && o.source_shard_id == pin.source_shard_id
+        }) {
+            return Err(invalid("Part pin has a foreign source owner or kind"));
+        }
+        let historical =
+            model.materialized_pool_object_revision(pin.owner_id, "parts", pin.object_revision)?;
+        let hash = hash_value(&historical)?;
+        if hash != pin.owner_value_hash
+            || hash != pin.record_hash
+            || incarnation(model, &pin.relative_path, pin.object_id) != pin.incarnation
+        {
+            return Err(invalid(
+                "Part pin differs from authenticated historical source",
+            ));
+        }
+        return Ok(historical);
     }
     Ok(value)
 }
@@ -178,6 +211,16 @@ pub(crate) fn check_pin(
     pin: &PinnedPadLibrarySource,
 ) -> Result<(), EngineError> {
     let now = capture(model, &pin.relative_path, pin.object_id)?;
+    if is_part_source(model, pin) {
+        if now.owner_id != pin.owner_id
+            || now.source_shard_id != pin.source_shard_id
+            || now.incarnation != pin.incarnation
+        {
+            return Err(invalid("foreign or reused Part source pin"));
+        }
+        source_value(model, pin)?;
+        return Ok(());
+    }
     if now.owner_id != pin.owner_id
         || now.source_shard_id != pin.source_shard_id
         || now.object_revision != pin.object_revision

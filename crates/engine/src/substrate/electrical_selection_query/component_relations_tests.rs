@@ -219,6 +219,356 @@ fn component_binding_context_keeps_physical_bidirectional_and_declared_stale_una
     assert_eq!(result.unavailable.len(), 1);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn saved_part_metadata_retains_resolved_physical_binding_history_and_exact_source_pins() {
+    use crate::substrate::component_instance::pool_history::PoolHistoryBasis;
+    use crate::substrate::{ObjectRevision, SourceShardTaxon, component_pad_source as pins};
+    let (root, mut model, symbol, ci, part) = setup("saved-part-history-physical");
+    let package = physical(&mut model, &root, symbol, ci, part);
+    // setup() selects its additional legitimate Part, not the baseline Part
+    // named by the baseline map. Create a separate explicit map for that Part.
+    use crate::api::native_write::library::{
+        self, PoolLibraryObjectTarget as Target, PoolLibraryOperationSpec as Spec,
+    };
+    let map = Uuid::new_v4();
+    let mut mapping = raw(
+        &model,
+        "a0000000-0000-4000-8000-000000000001".parse().unwrap(),
+    );
+    mapping["uuid"] = json!(map);
+    mapping["part"] = json!(part);
+    let p = library::build_pool_library_write(
+        &model,
+        provenance(),
+        Some("pool"),
+        vec![Spec::Create {
+            target: Target::new("pool", "pin_pad_maps", map),
+            object: mapping,
+        }],
+    )
+    .unwrap();
+    commit_prepared(&mut model, &root, p).unwrap();
+    let previous = raw(&model, ci)["component_instance"].clone();
+    let mut next = previous.clone();
+    next["object_revision"] = json!(model.objects[&ci].object_revision.0 + 1);
+    next["library_bindings"][Uuid::new_v4().to_string()] = json!({"target_object_id":map,
+        "pinned_object_revision":model.objects[&map].object_revision.0,"binding_role":"pin_pad_map"});
+    let p = BatchComposer::compose(&model, provenance())
+        .push_op(Operation::SetComponentInstance {
+            component_instance_id: ci,
+            previous_component_instance: previous,
+            component_instance: next,
+        })
+        .finish()
+        .unwrap();
+    commit_prepared(&mut model, &root, p).unwrap();
+    use crate::api::native_write::{
+        board_components::pad_materialization::{
+            ComponentPadMaterializationRequest, PadLandPatternSource,
+            build_materialize_component_pad_sources,
+        },
+        board_layout::source_profile::build_adopt_board_source_profile,
+    };
+    let board = model
+        .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+        .unwrap();
+    let board_id = serde_json::from_value(board["uuid"].clone()).unwrap();
+    let p = build_adopt_board_source_profile(&model, provenance(), board_id).unwrap();
+    commit_prepared(&mut model, &root, p).unwrap();
+    let board = model
+        .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+        .unwrap();
+    let request = ComponentPadMaterializationRequest {
+        placement: serde_json::from_value(board["packages"][package.to_string()].clone()).unwrap(),
+        land_pattern: PadLandPatternSource::Footprint(
+            "60000000-0000-4000-8000-000000000001".parse().unwrap(),
+        ),
+        component_instance: Some(ci),
+        pin_pad_map: Some(map),
+        correspondences: vec![],
+        adopt_existing: false,
+    };
+    let p = build_materialize_component_pad_sources(&model, provenance(), &request).unwrap();
+    commit_prepared(&mut model, &root, p).unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    let board = model
+        .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+        .unwrap();
+    assert_eq!(
+        board["component_pads"][package.to_string()]
+            .as_array()
+            .unwrap()
+            .len(),
+        8
+    );
+    let projected = |model: &DesignModel| {
+        let source = model
+            .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+            .unwrap();
+        let projection = pins::component_pad_projection(model, &source).unwrap();
+        assert!(
+            projection.unavailable.is_empty(),
+            "{:?}",
+            projection.unavailable
+        );
+        assert_eq!(projection.query_pads.len(), 8);
+        json!({"pads":projection.pads,"queries":projection.query_pads.iter().map(|(id,p)|(*id,serde_json::to_value(p.terminal()).unwrap())).collect::<BTreeMap<_,_>>()})
+    };
+    let pad_projection = projected(&model);
+    let before = model.clone();
+    let original = raw(&model, part);
+    let ci_raw = raw(&model, ci);
+    let declared = model.component_instances[&ci].clone();
+    let pin = pins::capture_root(&model, part, SourceShardTaxon::PoolPart).unwrap();
+    let revision = model.objects[&part].object_revision;
+    let prepared = (find_native_write_verb("datum.library.edit").unwrap().build)(
+        &NativeWriteContext {
+            model: &model,
+            project_root: &root,
+        },
+        provenance(),
+        json!({"kind":"parts","object_id":part,"pool_path":"pool",
+            "fields":{"mpn":"REVISED-PART","value":"Revised source value"}}),
+    )
+    .unwrap();
+    let next = ObjectRevision(revision.0 + 1);
+    // A pending later Set is not accepted evidence for an earlier CI operation.
+    let pending = PoolHistoryBasis {
+        model: &before,
+        operations: &prepared.batch.operations,
+        applied_operations: &[],
+    };
+    assert!(!pending.definition_ref_matches(&before.objects, part, next, "parts"));
+    let mut staged = before.objects.clone();
+    staged.get_mut(&part).unwrap().object_revision = next;
+    let applied = PoolHistoryBasis {
+        model: &before,
+        operations: &prepared.batch.operations,
+        applied_operations: &prepared.batch.operations,
+    };
+    assert!(applied.definition_ref_matches(&staged, part, revision, "parts"));
+    assert!(applied.definition_ref_matches(&staged, part, next, "parts"));
+    assert!(!applied.definition_ref_matches(&staged, part, ObjectRevision(next.0 + 1), "parts"));
+    let stale = prepared.clone();
+    commit_prepared(&mut model, &root, prepared).unwrap();
+    let corrected = raw(&model, part);
+    let mut expected = original.clone();
+    expected["mpn"] = json!("REVISED-PART");
+    expected["value"] = json!("Revised source value");
+    assert_eq!(corrected, expected);
+    assert!(commit_prepared(&mut model, &root, stale).is_err());
+    let verify = |model: &DesignModel| {
+        assert_eq!(
+            model
+                .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+                .unwrap(),
+            board
+        );
+        assert_eq!(
+            projected(model),
+            pad_projection,
+            "all8 frozen Pad identities/geometry/mapping query projections remain exact"
+        );
+        assert_eq!(model.component_instances[&ci], declared);
+        assert_eq!(raw(model, ci), ci_raw);
+        assert!(
+            !model
+                .diagnostics
+                .iter()
+                .any(|d| d.code.starts_with("component_instance_")),
+            "{:?}",
+            model.diagnostics
+        );
+        assert_eq!(
+            model
+                .materialized_pool_object_revision(part, "parts", revision)
+                .unwrap(),
+            original
+        );
+        assert_eq!(pins::source_value(model, &pin).unwrap(), original);
+        pins::check_pin(model, &pin).unwrap();
+        for (class, id, other) in [("symbols", symbol, package), ("packages", package, symbol)] {
+            let at = origin(class, id);
+            let result = context(model, at.clone());
+            assert!(result.unavailable.is_empty());
+            assert_eq!(result.bindings[&at].component_instance, ci);
+            assert_eq!(
+                result.bindings[&at].counterpart_status,
+                ComponentCounterpartStatus::Resolved
+            );
+            assert_eq!(result.relations.len(), 1);
+            assert_eq!(
+                result.relations.first().unwrap().counterpart.source_id,
+                other
+            );
+        }
+    };
+    verify(&model);
+    for tamper in 0..4 {
+        let mut bad = pin.clone();
+        match tamper {
+            0 => bad.owner_value_hash = "altered".into(),
+            1 => bad.record_hash = "altered".into(),
+            2 => bad.incarnation = Some(Uuid::new_v4()),
+            _ => bad.source_shard_id = Uuid::new_v4(),
+        }
+        assert!(pins::check_pin(&model, &bad).is_err());
+        assert!(pins::source_value(&model, &bad).is_err());
+    }
+    let mut wrong_kind = model.clone();
+    wrong_kind.objects.get_mut(&part).unwrap().kind = "entities".into();
+    assert!(pins::check_pin(&wrong_kind, &pin).is_err());
+    assert!(pins::source_value(&wrong_kind, &pin).is_err());
+    assert!(
+        model
+            .materialized_pool_object_revision(part, "parts", ObjectRevision(next.0 + 100))
+            .is_err()
+    );
+    // Counterfactual source-evidence controls: deletion/reuse cannot qualify a pin.
+    let mut reused = model.clone();
+    reused
+        .journal
+        .iter_mut()
+        .find(|t| t.transaction_kind == crate::substrate::TransactionKind::Normal)
+        .unwrap()
+        .operations
+        .push(Operation::DeletePoolLibraryObject {
+            object_id: part,
+            relative_path: pin.relative_path.clone(),
+            object_kind: "parts".into(),
+            object: corrected.clone(),
+        });
+    assert!(pins::check_pin(&reused, &pin).is_err());
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(raw(&model, part), original);
+    verify(&model);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    assert_eq!(raw(&model, part), corrected);
+    verify(&model);
+    let cold = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(raw(&cold, part), corrected);
+    verify(&cold);
+    // Separately triggered PM057 rematerialization must remain available. This
+    // is not part of the metadata transaction or automatic reference updating.
+    model = cold;
+    let mut refresh = request.clone();
+    let target_owner = pins::capture_root(
+        &model,
+        "60000000-0000-4000-8000-000000000001".parse().unwrap(),
+        SourceShardTaxon::PoolFootprint,
+    )
+    .unwrap();
+    for value in board["component_pads"][package.to_string()]
+        .as_array()
+        .unwrap()
+    {
+        let pad: pins::ComponentPadSource = serde_json::from_value(value.clone()).unwrap();
+        refresh.correspondences.push(crate::api::native_write::board_components::pad_materialization::PlacedPadCorrespondence {
+            placed_pad_id:pad.uuid,target_library_pad:pins::capture_pad(&model,&target_owner,pad.source_binding.as_ref().unwrap().library_pad.object_id).unwrap()});
+    }
+    let refresh_tip = model.journal.last().unwrap().transaction_id;
+    let refresh_revision = model.objects[&part].object_revision;
+    let refresh_hash = crate::substrate::sha256_hex(
+        crate::ir::serialization::to_json_deterministic(&corrected)
+            .unwrap()
+            .as_bytes(),
+    );
+    let check_refresh = |model: &DesignModel, refreshed: bool| {
+        assert_eq!(raw(model, part), corrected);
+        assert_eq!(
+            projected(model),
+            pad_projection,
+            "all8 Pad IDs and query geometry remain unchanged across explicit refresh/history"
+        );
+        let owner = &model.component_instances[&ci];
+        assert_eq!(owner.part_ref, Some(part));
+        assert!(owner.library_bindings.values().any(|b| b.binding_role
+            == crate::substrate::LibraryBindingRole::Part
+            && b.target_object_id == part
+            && b.pinned_object_revision == revision));
+        assert!(
+            !model
+                .diagnostics
+                .iter()
+                .any(|d| d.code.starts_with("component_instance_"))
+        );
+        let current = model
+            .materialized_source_shard_value(crate::substrate::SourceShardKind::BoardRoot)
+            .unwrap();
+        for value in current["component_pads"][package.to_string()]
+            .as_array()
+            .unwrap()
+        {
+            let old = board["component_pads"][package.to_string()]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|v| v["uuid"] == value["uuid"])
+                .unwrap();
+            assert_eq!(
+                value["source_binding"]["frozen_geometry"],
+                old["source_binding"]["frozen_geometry"]
+            );
+            for key in [
+                "part",
+                "package",
+                "land_pattern",
+                "library_pad",
+                "padstack",
+                "pin_pad_map",
+            ] {
+                let mut expected = old["source_binding"][key].clone();
+                if refreshed {
+                    expected["journal_tip"] = json!(refresh_tip);
+                    if key == "part" {
+                        expected["object_revision"] = json!(refresh_revision.0);
+                        expected["owner_value_hash"] = json!(refresh_hash);
+                        expected["record_hash"] = json!(refresh_hash);
+                    }
+                }
+                assert_eq!(
+                    value["source_binding"][key], expected,
+                    "exact declared source pin {key}, including the known capture tip"
+                );
+            }
+            assert_eq!(
+                value["source_binding"]["component_instance"]["object_revision"],
+                json!(owner.object_revision.0)
+            );
+        }
+        for (class, id, other) in [("symbols", symbol, package), ("packages", package, symbol)] {
+            let at = origin(class, id);
+            let result = context(model, at.clone());
+            assert!(result.unavailable.is_empty());
+            assert_eq!(
+                result.bindings[&at].counterpart_status,
+                ComponentCounterpartStatus::Resolved
+            );
+            assert_eq!(
+                result.relations.first().unwrap().counterpart.source_id,
+                other
+            );
+        }
+    };
+    let p = build_materialize_component_pad_sources(&model, provenance(), &refresh).unwrap();
+    commit_prepared(&mut model, &root, p).unwrap();
+    check_refresh(&model, true);
+    model
+        .commit_journal_undo(&root, provenance().into())
+        .unwrap();
+    check_refresh(&model, false);
+    model
+        .commit_journal_redo(&root, provenance().into())
+        .unwrap();
+    check_refresh(&model, true);
+    check_refresh(&ProjectResolver::new(&root).resolve().unwrap(), true);
+    std::fs::remove_dir_all(root).unwrap();
+}
 #[test]
 fn component_binding_context_ambiguous_owners_and_repeated_occurrences_remain_unavailable() {
     let (root, mut model, symbol, ci, _) = setup("binding-context-ambiguous");

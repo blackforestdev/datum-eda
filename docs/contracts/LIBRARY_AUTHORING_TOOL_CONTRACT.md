@@ -195,7 +195,7 @@ checks and the isolated ordinary App run are recorded in the task; the App uses
 presented controls and logical keys in a debug test profile. This establishes
 neither physical/HUMAN qualification nor universal raw-operation validation.
 Generic raw Entity gate-link admission is separate intake
-`dat-entity-raw-links-ysdr`. Saved Entity gate editing/relinking, saved Part editing,
+`dat-entity-raw-links-ysdr`. Saved Entity gate editing/relinking, saved Part relinking,
 saved PinPadMap editing,
 multi-gate placement, approval, models and broader library completion remain open.
 
@@ -230,11 +230,35 @@ identity, entered metadata and chosen links while existing definitions and place
 circuit sources stay unchanged. Focused engine/form and isolated ordinary-App
 proof covers both absent and compatible Footprint choices. That App proof uses
 debug builds, presented controls and logical keys, not physical/HUMAN or release
-qualification. Saved Part editing/relinking, inheritance, placed pin-pad updates,
+qualification. Saved Part relinking, inheritance, placed pin-pad updates,
 placement policy, models, approval and broader library completion remain open.
 Generic raw Part/Footprint pair validation is separate intake
 `dat-part-raw-footprint-pair-yjc4`; this increment supplies no universal raw-write
 integrity claim.
+
+Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) uses the same
+Library form for manufacturer, MPN, value, description, datasheet reference and
+tags. Entity, Package, default Footprint, PinPadMap and lifecycle remain read-only.
+Only changed metadata fields patch the raw Part through the canonical Set writer;
+unedited fields, ordered collections, unknown metadata and absent defaults remain
+intact. Identity, relationships and policy fields are refused independently by
+the engine, along with ambiguous or noncanonical source ownership. Existing
+component instances retain their exact declared Part revisions, values,
+annotations and mappings; accepted canonical history supplies the exact pinned
+Part payload, with source identity, kind, incarnation and recorded hashes still
+checked. No latest-revision substitution or automatic placed update occurs.
+New placement uses the current Part revision and value through the ordinary
+explicit Part/gate choice. Physical materialization and its Undo/Redo retain
+their existing separate explicit authority; pending net and pad validation uses
+the unchanged accepted Part basis alongside the actual staged operations.
+Forty-six focused checks cover metadata, historical references, forms and
+connected physical materialization. The isolated ordinary debug App passes 99
+steps with eight inspected captures, including byte-exact Cancel, metadata and
+placement Undo/Redo, Save and cold reopening with old and new placements. An
+earlier run stopped at a capture-label assertion before new placement; its
+partial result is retained. Presented controls and programmatic logical input
+establish this bounded behavior, without physical/HUMAN, release-GUI execution,
+relinking, approval or full library qualification claims.
 
 The creation-only PinPadMap GUI increment (`dat-pin-pad-map-gui-create-emck`)
 adds named Part and compatible explicit Footprint choices and a table assigning
