@@ -124,11 +124,15 @@ pub(super) fn final_bindings(
                     .is_ok()
             })
             || !refs.library_bindings.values().all(|b| {
-                if b.binding_role == crate::substrate::LibraryBindingRole::Part {
+                if let Some(kind) = match b.binding_role {
+                    crate::substrate::LibraryBindingRole::Part => Some("parts"),
+                    crate::substrate::LibraryBindingRole::PinPadMap => Some("pin_pad_maps"),
+                    _ => None,
+                } {
                     model
                         .materialized_pool_object_revision(
                             b.target_object_id,
-                            "parts",
+                            kind,
                             b.pinned_object_revision,
                         )
                         .is_ok()
@@ -136,7 +140,7 @@ pub(super) fn final_bindings(
                             model
                                 .materialized_pool_object_revision(
                                     r.object_id,
-                                    "parts",
+                                    kind,
                                     r.object_revision,
                                 )
                                 .is_ok()

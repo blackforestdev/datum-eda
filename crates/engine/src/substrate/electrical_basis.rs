@@ -6,7 +6,9 @@ use std::collections::{BTreeMap, BTreeSet};
 mod class_index;
 use uuid::Uuid;
 
-pub(super) struct ElectricalBasis {
+pub(super) struct ElectricalBasis<'basis> {
+    accepted_library_basis: Option<&'basis DesignModel>,
+    pending_map_changes: BTreeSet<Uuid>,
     values: BTreeMap<Uuid, Value>,
     classes: class_index::Index,
     query_pads: BTreeMap<Uuid, BTreeMap<Uuid, crate::board::query_pad::QueryPadGeometry>>,
@@ -19,7 +21,7 @@ pub(super) struct ElectricalBasis {
         >,
     )>,
 }
-impl ElectricalBasis {
+impl ElectricalBasis<'static> {
     pub(super) fn new(model: &DesignModel, operations: &[Operation]) -> Result<Self, EngineError> {
         Self::with_reader(model, operations, &|shard| {
             super::journal::materialized_shard_value(model, shard)
@@ -32,9 +34,11 @@ impl ElectricalBasis {
     ) -> Result<Self, EngineError> {
         Self::capture(model, operations, read, None)
     }
+}
+impl<'basis> ElectricalBasis<'basis> {
     pub(super) fn with_part_basis(
         model: &DesignModel,
-        part_basis: &DesignModel,
+        part_basis: &'basis DesignModel,
         operations: &[Operation],
     ) -> Result<Self, EngineError> {
         Self::capture(
@@ -48,11 +52,15 @@ impl ElectricalBasis {
         model: &DesignModel,
         operations: &[Operation],
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
-        part_basis: Option<&DesignModel>,
+        part_basis: Option<&'basis DesignModel>,
     ) -> Result<Self, EngineError> {
+        if let Some(accepted) = part_basis {
+            super::component_pad_source::validate_library_basis(model, accepted, operations)?;
+        }
         let mut values = BTreeMap::new();
+        let mut pending_map_changes = BTreeSet::new();
         let mut query_pads = BTreeMap::new();
-        let mut part_statuses = part_basis.map(|_| {
+        let mut part_statuses = Some({
             (
                 model.project.project_id,
                 model.model_revision.clone(),
@@ -118,10 +126,29 @@ impl ElectricalBasis {
                 }
                 _ => None,
             });
+            let pending_creation = pending_create.is_some();
             let mut value = match pending_create {
                 Some(value) => value,
                 None => read(shard)?,
             };
+            // Compare this source only within capture. Retain no second payload
+            // cache: changed pending Map roots are unavailable as declared reads.
+            let map_before = (shard.kind == SourceShardKind::Pool)
+                .then(|| {
+                    value
+                        .get("uuid")
+                        .and_then(Value::as_str)
+                        .and_then(|v| v.parse::<Uuid>().ok())
+                })
+                .flatten()
+                .filter(|id| {
+                    model.objects.get(id).is_some_and(|o| {
+                        o.domain == "pool"
+                            && o.kind == "pin_pad_maps"
+                            && o.source_shard_id == shard.shard_id
+                    })
+                })
+                .map(|id| (id, value.clone()));
             {
                 let mut board_pass = super::board_list_journal_ops::BoardPass::new(&mut value);
                 for operation in operations {
@@ -152,6 +179,31 @@ impl ElectricalBasis {
                     }
                 }
             }
+            if let Some((id, before)) = map_before
+                && (pending_creation
+                    || before != value
+                    || operations.iter().any(|operation| match operation {
+                        Operation::SetPoolLibraryObject {
+                            object_id,
+                            relative_path,
+                            ..
+                        }
+                        | Operation::CreatePoolLibraryObject {
+                            object_id,
+                            relative_path,
+                            ..
+                        }
+                        | Operation::DeletePoolLibraryObject {
+                            object_id,
+                            relative_path,
+                            ..
+                        } => *object_id == id || *relative_path == shard.relative_path,
+                        Operation::BumpObjectRevision { object_id } => *object_id == id,
+                        _ => false,
+                    }))
+            {
+                pending_map_changes.insert(id);
+            }
             if shard.kind == SourceShardKind::BoardRoot {
                 let projection = if let Some(accepted) = part_basis {
                     super::component_pad_source::projection_with_part_basis(
@@ -176,6 +228,8 @@ impl ElectricalBasis {
             classes,
             query_pads,
             part_statuses,
+            accepted_library_basis: part_basis,
+            pending_map_changes,
         };
         // Provisional assignments allow the existing PM053 certificate to inspect
         // geometry and map correspondence. Only complete evidence survives capture.
@@ -427,6 +481,53 @@ impl ElectricalBasis {
                 && object.kind == class)
                 .then_some(value)
         })
+    }
+    /// Read the declared map from this captured frame through the shared
+    /// authenticated history reader. Held snapshots never reread live files.
+    pub(super) fn pinned_map(
+        &self,
+        model: &DesignModel,
+        reference: &super::RevisionedRef,
+    ) -> Result<Value, EngineError> {
+        if self.pending_map_changes.contains(&reference.object_id) {
+            return Err(invalid(
+                "declared Map revision is unavailable in a pending source-change frame",
+            ));
+        }
+        let basis = if let Some(accepted) = self.accepted_library_basis {
+            if !self
+                .part_statuses
+                .as_ref()
+                .is_some_and(|(project, revision, _)| {
+                    *project == model.project.project_id && *revision == model.model_revision
+                })
+                || model.objects.get(&reference.object_id)
+                    != accepted.objects.get(&reference.object_id)
+            {
+                return Err(invalid(
+                    "pinned Map differs from the qualified prospective source basis",
+                ));
+            }
+            accepted
+        } else {
+            model
+        };
+        basis.pool_object_revision_with_reader(
+            reference.object_id,
+            "pin_pad_maps",
+            reference.object_revision,
+            &|shard| {
+                if !model.source_shards.iter().any(|view| view == shard) {
+                    return Err(invalid(
+                        "pinned Map source shard differs from the captured basis",
+                    ));
+                }
+                self.values
+                    .get(&shard.shard_id)
+                    .cloned()
+                    .ok_or_else(|| invalid("pinned Map source is absent from the captured basis"))
+            },
+        )
     }
     pub(super) fn occurrence(
         &self,

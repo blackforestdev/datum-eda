@@ -8,16 +8,24 @@ pub(crate) fn hash_value(value: &Value) -> Result<String, EngineError> {
         crate::ir::serialization::to_json_deterministic(value)?.as_bytes(),
     ))
 }
-fn is_part_source(model: &DesignModel, pin: &PinnedPadLibrarySource) -> bool {
+fn historical_root_kind(model: &DesignModel, pin: &PinnedPadLibrarySource) -> Option<&'static str> {
+    let kind = |name: &str| match name {
+        "parts" => Some("parts"),
+        "pin_pad_maps" => Some("pin_pad_maps"),
+        _ => None,
+    };
     std::path::Path::new(&pin.relative_path)
         .parent()
         .and_then(|p| p.file_name())
         .and_then(|p| p.to_str())
-        == Some("parts")
-        || model
-            .objects
-            .get(&pin.owner_id)
-            .is_some_and(|o| o.domain == "pool" && o.kind == "parts")
+        .and_then(kind)
+        .or_else(|| {
+            model
+                .objects
+                .get(&pin.owner_id)
+                .filter(|o| o.domain == "pool")
+                .and_then(|o| kind(&o.kind))
+        })
 }
 pub(crate) fn source_value(
     model: &DesignModel,
@@ -36,24 +44,24 @@ pub(crate) fn source_value(
     if value.get("uuid").and_then(Value::as_str) != Some(pin.owner_id.to_string().as_str()) {
         return Err(invalid("foreign pinned library owner"));
     }
-    if is_part_source(model, pin) {
+    if let Some(kind) = historical_root_kind(model, pin) {
         if pin.object_id != pin.owner_id {
-            return Err(invalid("Part pin must name its root definition"));
+            return Err(invalid("Definition pin must name its root definition"));
         }
         if !model.objects.get(&pin.owner_id).is_some_and(|o| {
-            o.domain == "pool" && o.kind == "parts" && o.source_shard_id == pin.source_shard_id
+            o.domain == "pool" && o.kind == kind && o.source_shard_id == pin.source_shard_id
         }) {
-            return Err(invalid("Part pin has a foreign source owner or kind"));
+            return Err(invalid("Definition pin has a foreign source owner or kind"));
         }
         let historical =
-            model.materialized_pool_object_revision(pin.owner_id, "parts", pin.object_revision)?;
+            model.materialized_pool_object_revision(pin.owner_id, kind, pin.object_revision)?;
         let hash = hash_value(&historical)?;
         if hash != pin.owner_value_hash
             || hash != pin.record_hash
             || incarnation(model, &pin.relative_path, pin.object_id) != pin.incarnation
         {
             return Err(invalid(
-                "Part pin differs from authenticated historical source",
+                "Definition pin differs from authenticated historical source",
             ));
         }
         return Ok(historical);
@@ -211,12 +219,12 @@ pub(crate) fn check_pin(
     pin: &PinnedPadLibrarySource,
 ) -> Result<(), EngineError> {
     let now = capture(model, &pin.relative_path, pin.object_id)?;
-    if is_part_source(model, pin) {
+    if historical_root_kind(model, pin).is_some() {
         if now.owner_id != pin.owner_id
             || now.source_shard_id != pin.source_shard_id
             || now.incarnation != pin.incarnation
         {
-            return Err(invalid("foreign or reused Part source pin"));
+            return Err(invalid("foreign or reused definition source pin"));
         }
         source_value(model, pin)?;
         return Ok(());

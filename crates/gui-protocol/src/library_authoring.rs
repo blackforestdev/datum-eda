@@ -90,9 +90,6 @@ impl LibraryDraft {
                     .into(),
             );
         }
-        if kind == "pin_pad_maps" && entry.is_some() {
-            return Err("Saved PinPadMap editing is unavailable in this increment".into());
-        }
         if kind == "packages" && entry.is_some() {
             return Err("Saved Package editing is unavailable in this increment".into());
         }
@@ -134,6 +131,9 @@ impl LibraryDraft {
         let raw = entry.map(|e| &e.raw).unwrap_or(&Value::Null);
         if kind == "pin_pad_maps" {
             draft.pin_pad_map_fields(browser);
+            if !draft.create {
+                draft.hydrate_saved_map(raw)?;
+            }
             return Ok(draft);
         }
         if kind == "parts" {

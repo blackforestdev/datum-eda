@@ -98,21 +98,21 @@ fn current_ci(
                 .is_ok()
         })
         || !ci.library_bindings.values().all(|b| {
-            if b.binding_role == crate::substrate::LibraryBindingRole::Part {
+            if let Some(kind) = match b.binding_role {
+                crate::substrate::LibraryBindingRole::Part => Some("parts"),
+                crate::substrate::LibraryBindingRole::PinPadMap => Some("pin_pad_maps"),
+                _ => None,
+            } {
                 model
                     .materialized_pool_object_revision(
                         b.target_object_id,
-                        "parts",
+                        kind,
                         b.pinned_object_revision,
                     )
                     .is_ok()
                     && b.local_override_refs.iter().all(|r| {
                         model
-                            .materialized_pool_object_revision(
-                                r.object_id,
-                                "parts",
-                                r.object_revision,
-                            )
+                            .materialized_pool_object_revision(r.object_id, kind, r.object_revision)
                             .is_ok()
                     })
             } else {

@@ -410,7 +410,11 @@ fn resolved_and_dropped_persisted_ci_ownership_block_assignment_but_allow_map_on
     let batch = native::build_batch(
         &f.model,
         provenance(),
-        vec![Operation::BumpObjectRevision { object_id: f.part }],
+        // Historical Parts remain valid. A genuinely stale placed-Symbol
+        // reference still drops the resolved CI and must not hide its ownership.
+        vec![Operation::BumpObjectRevision {
+            object_id: f.placed,
+        }],
     )
     .unwrap();
     f.model.commit_journaled(&f.root, batch).unwrap();
@@ -549,3 +553,6 @@ fn direct_placed_symbol_and_board_package_declarations_block_default_assignment(
         std::fs::remove_dir_all(f.root).unwrap();
     }
 }
+
+#[path = "library_gui_pin_pad_map_edit_tests.rs"]
+mod saved_edit;

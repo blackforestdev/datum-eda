@@ -15,7 +15,7 @@ mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
 pub use projection::{ComponentPadProjection, component_pad_projection};
 pub(crate) use projection::{
-    project_value, projection_with_operations, projection_with_part_basis,
+    project_value, projection_with_operations, projection_with_part_basis, validate_library_basis,
 };
 pub(crate) use validation::{touches, touches_batch, validate_batch, validate_native};
 
@@ -183,6 +183,18 @@ impl ComponentPadSource {
             || [&b.package, &b.land_pattern, &b.library_pad, &b.padstack]
                 .into_iter()
                 .any(|p| check_pin(model, p).is_err())
+            || b.pin_pad_map.as_ref().is_some_and(|pin| {
+                model.objects.get(&pin.owner_id) != part_basis.objects.get(&pin.owner_id)
+                    || model
+                        .source_shards
+                        .iter()
+                        .find(|s| s.shard_id == pin.source_shard_id)
+                        != part_basis
+                            .source_shards
+                            .iter()
+                            .find(|s| s.shard_id == pin.source_shard_id)
+                    || check_pin(part_basis, pin).is_err()
+            })
             || b.process_snapshot
                 .as_ref()
                 .is_some_and(|s| s.check_current(model).is_err())

@@ -17,6 +17,7 @@ struct MappingPart {
     label: String,
     package: Uuid,
     gates: Vec<MappingGate>,
+    sources_valid: bool,
     default_footprint: Option<Uuid>,
     default_map: Value,
 }
@@ -29,6 +30,7 @@ struct MappingFootprint {
 }
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct PinPadMapDraft {
+    pub original: Option<Value>,
     pub mappings: Map<String, Value>,
     pub pads: Vec<MappingName>,
     pub gates: Vec<MappingGate>,
@@ -165,7 +167,8 @@ impl LibraryDraft {
                 linked(b, "packages", package)?;
                 let entity = linked(b, "entities", uuid(&p.raw, "entity")?)?;
                 let gates = entity.raw.get("gates")?.as_object()?;
-                let gates = names(&entity.raw, "gates")
+                let expected_gates = gates.len();
+                let gates: Vec<_> = names(&entity.raw, "gates")
                     .into_iter()
                     .filter_map(|g| {
                         let id = g.id?;
@@ -185,6 +188,7 @@ impl LibraryDraft {
                     id: p.id,
                     label: format!("{} · {}", p.name, p.source_path),
                     package,
+                    sources_valid: gates.len() == expected_gates,
                     gates,
                     default_footprint: uuid(&p.raw, "default_footprint"),
                     default_map: p
@@ -212,33 +216,109 @@ impl LibraryDraft {
             .iter()
             .map(|p| (p.id.to_string(), p.label.clone()))
             .collect();
-        self.field("map_part", "Named Part", None, parts);
-        self.field("map_footprint", "Compatible named Footprint", None, vec![]);
+        if self.create {
+            self.field("map_part", "Named Part", None, parts);
+            self.field("map_footprint", "Compatible named Footprint", None, vec![]);
+        }
         self.field("map_pad", "Named pad", None, vec![]);
         self.field("map_gate", "Gate / Unit", None, vec![]);
         self.field("map_pin", "Logical pin", None, vec![]);
-        self.field(
-            "map_default",
-            "Default assignment",
-            Some(&json!("false")),
-            choices(&[
-                ("false", "Create map only · do not change Part default"),
-                (
-                    "true",
-                    "Explicitly set this map as the eligible Part default",
-                ),
-            ]),
-        );
+        if self.create {
+            self.field(
+                "map_default",
+                "Default assignment",
+                Some(&json!("false")),
+                choices(&[
+                    ("false", "Create map only · do not change Part default"),
+                    (
+                        "true",
+                        "Explicitly set this map as the eligible Part default",
+                    ),
+                ]),
+            );
+        }
+    }
+    pub fn map_source(&self, key: &str) -> &str {
+        if let Some(raw) = &self.pin_pad_map.original {
+            let name = match key {
+                "map_part" => "part",
+                "map_footprint" => "footprint",
+                _ => return "",
+            };
+            return raw.get(name).and_then(Value::as_str).unwrap_or("");
+        }
+        self.value(key)
+    }
+    pub(super) fn hydrate_saved_map(&mut self, raw: &Value) -> Result<(), String> {
+        let _: eda_engine::pool::PinPadMap = serde_json::from_value(raw.clone())
+            .map_err(|_| "Saved PinPadMap data is unavailable")?;
+        let part = uuid(raw, "part").ok_or("Saved Part source is unavailable")?;
+        let footprint = uuid(raw, "footprint")
+            .ok_or("Saved mapping has no declared Footprint; available for inspection only")?;
+        let p = self
+            .pin_pad_map
+            .parts
+            .iter()
+            .find(|p| p.id == part)
+            .ok_or("Saved Part source is unavailable or ambiguous")?;
+        if !self
+            .pin_pad_map
+            .footprints
+            .iter()
+            .any(|f| f.id == footprint && f.package == p.package)
+        {
+            return Err("Saved Footprint source is unavailable or incompatible".into());
+        }
+        if !p.sources_valid
+            || p.gates
+                .iter()
+                .any(|g| g.pins.iter().any(|pin| pin.id.is_none()))
+        {
+            return Err("Saved gate pin source is unavailable or ambiguous".into());
+        }
+        self.pin_pad_map.original = Some(raw.clone());
+        self.refresh_map_sources();
+        if self.pin_pad_map.pads.iter().any(|p| p.id.is_none()) {
+            return Err("Saved pad source is unavailable or ambiguous".into());
+        }
+        let rows = raw
+            .get("mappings")
+            .and_then(Value::as_object)
+            .ok_or("Saved mapping rows are unavailable")?;
+        let mut mappings = Map::new();
+        for (key, cell) in rows {
+            let pad = key
+                .parse::<Uuid>()
+                .map_err(|_| "Saved pad identity is invalid")?;
+            let gate = uuid(cell, "gate").ok_or("Saved gate identity is invalid")?;
+            let pin = uuid(cell, "pin").ok_or("Saved pin identity is invalid")?;
+            if !self.pin_pad_map.pads.iter().any(|p| p.id == Some(pad))
+                || !self
+                    .pin_pad_map
+                    .gates
+                    .iter()
+                    .any(|g| g.id == gate && g.pins.iter().any(|p| p.id == Some(pin)))
+                || mappings
+                    .insert(pad.to_string(), json!({"gate":gate,"pin":pin}))
+                    .is_some()
+            {
+                return Err("Saved mapping source is unavailable or ambiguous".into());
+            }
+        }
+        self.pin_pad_map.mappings = mappings;
+        self.load_map_pad();
+        self.pin_pad_mappings()?;
+        Ok(())
     }
     fn map_text(&mut self, key: &str, text: String) {
-        self.fields
-            .iter_mut()
-            .find(|f| f.key == key)
-            .unwrap()
-            .set_text(text);
+        if let Some(field) = self.fields.iter_mut().find(|f| f.key == key) {
+            field.set_text(text);
+        }
     }
     fn map_choices(&mut self, key: &str, options: Vec<(String, String)>) {
-        let f = self.fields.iter_mut().find(|f| f.key == key).unwrap();
+        let Some(f) = self.fields.iter_mut().find(|f| f.key == key) else {
+            return;
+        };
         f.choices = options;
         if !f.choices.iter().any(|(key, _)| key == &f.text) {
             f.text.clear();
@@ -263,7 +343,7 @@ impl LibraryDraft {
             .pin_pad_map
             .parts
             .iter()
-            .find(|p| p.id.to_string() == self.value("map_part"))
+            .find(|p| p.id.to_string() == self.map_source("map_part"))
             .cloned();
         self.pin_pad_map.gates = part.as_ref().map_or(vec![], |p| p.gates.clone());
         let options = self
@@ -278,7 +358,7 @@ impl LibraryDraft {
             .pin_pad_map
             .footprints
             .iter()
-            .find(|f| f.id.to_string() == self.value("map_footprint"))
+            .find(|f| f.id.to_string() == self.map_source("map_footprint"))
             .map_or(vec![], |f| f.pads.clone());
         self.map_choices(
             "map_pad",
@@ -392,8 +472,8 @@ impl LibraryDraft {
         Ok(false)
     }
     pub fn select_mapping_pad(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
-        if self.kind != "pin_pad_maps" || !self.create {
-            return Err("Mapping rows require a new PinPadMap draft".into());
+        if self.kind != "pin_pad_maps" {
+            return Err("Mapping rows require a PinPadMap draft".into());
         }
         if remove {
             let pad = self.value("map_pad").to_string();
@@ -426,10 +506,12 @@ impl LibraryDraft {
         fields: &mut Map<String, Value>,
     ) -> Result<(), String> {
         let part = self
-            .uuid("map_part")
+            .map_source("map_part")
+            .parse::<Uuid>()
             .map_err(|_| "Choose an existing named Part")?;
         let footprint = self
-            .uuid("map_footprint")
+            .map_source("map_footprint")
+            .parse::<Uuid>()
             .map_err(|_| "Choose a compatible named Footprint")?;
         if !self.pin_pad_map.parts.iter().any(|p| {
             p.id == part
@@ -444,6 +526,10 @@ impl LibraryDraft {
         let rows = self.pin_pad_mappings()?;
         if rows.is_empty() {
             return Err("Map one or more named pads to gate-qualified pins".into());
+        }
+        if !self.create {
+            fields.insert("mappings".into(), json!(rows));
+            return Ok(());
         }
         let assign = match self.value("map_default") {
             "false" => false,

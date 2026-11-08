@@ -9,6 +9,8 @@ mod entity;
 mod entity_edit;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
+#[path = "native_library_frame_tests/map_edit.rs"]
+mod map_edit;
 #[path = "native_library_frame_tests/map_labels.rs"]
 mod map_labels;
 #[path = "native_library_frame_tests/package.rs"]
@@ -40,6 +42,7 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
+    MapEdit(usize),
     PartEdit(usize),
     EntityEdit(usize),
     TextFields(usize),
@@ -124,6 +127,7 @@ impl Fixture {
                         | Step::TextFields(_)
                         | Step::EntityEdit(_)
                         | Step::PartEdit(_)
+                        | Step::MapEdit(_)
                 )
             ) && r.workspace().library.basis.is_none())
             || r.renderer.render_session().has_pending_frame()
@@ -230,6 +234,7 @@ impl Fixture {
             Step::CheckPackage(present) => self.check_package(present),
             Step::Electrical(stage) => self.check_electrical(stage),
             Step::Entity(stage) => self.check_entity(stage),
+            Step::MapEdit(stage) => self.check_map_edit(stage),
             Step::EntityEdit(stage) => self.check_entity_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

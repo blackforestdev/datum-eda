@@ -21,7 +21,7 @@ impl PoolHistoryBasis<'_> {
         revision: ObjectRevision,
         kind: &str,
     ) -> bool {
-        if !matches!(kind, "symbols" | "parts") {
+        if !matches!(kind, "symbols" | "parts" | "pin_pad_maps") {
             return false;
         }
         self.projected_definition_ref_matches(staged, id, revision, kind)
@@ -268,7 +268,7 @@ impl PoolHistory<'_> {
         revision: ObjectRevision,
         kind: &str,
     ) -> bool {
-        if !matches!(kind, "symbols" | "parts") {
+        if !matches!(kind, "symbols" | "parts" | "pin_pad_maps") {
             return false;
         }
         objects
@@ -299,6 +299,17 @@ impl DesignModel {
         kind: &str,
         revision: ObjectRevision,
     ) -> Result<Value, EngineError> {
+        self.pool_object_revision_with_reader(id, kind, revision, &|shard| {
+            self.materialized_source_shard_value_by_relative_path(&shard.relative_path)
+        })
+    }
+    pub(in crate::substrate) fn pool_object_revision_with_reader(
+        &self,
+        id: ObjectId,
+        kind: &str,
+        revision: ObjectRevision,
+        read: &impl Fn(&SourceShardRef) -> Result<Value, EngineError>,
+    ) -> Result<Value, EngineError> {
         if self.journal_cursor.applied_transaction_count != self.journal.len() {
             return Err(invalid("journal tip is not the resolved source basis"));
         }
@@ -327,8 +338,7 @@ impl DesignModel {
                 .iter()
                 .find(|s| s.shard_id == object.source_shard_id && s.kind == SourceShardKind::Pool)
                 .ok_or_else(|| invalid("pool source is unavailable"))?;
-            let value =
-                self.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
+            let value = read(shard)?;
             super::super::pool_journal_ops::validate_pool_library_object(
                 id,
                 &shard.relative_path,
@@ -337,7 +347,7 @@ impl DesignModel {
             )?;
             return Ok(value);
         }
-        if !matches!(kind, "units" | "symbols" | "parts") {
+        if !matches!(kind, "units" | "symbols" | "parts" | "pin_pad_maps") {
             return Err(invalid(
                 "historical reads for this definition kind are unavailable",
             ));

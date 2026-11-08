@@ -105,6 +105,79 @@ fn draft(x: &Data) -> LibraryDraft {
     set(&mut d, "map_footprint", &x.foot.to_string());
     d
 }
+fn saved(x: &Data, footprint: Value) -> LibraryEntry {
+    let id = Uuid::new_v4();
+    entry(
+        "pin_pad_maps",
+        id,
+        "Saved mapping",
+        json!({"schema_version":1,"uuid":id,"part":x.part,"footprint":footprint,"tags":[],"mappings":{
+            x.pad.to_string():{"gate":x.a,"pin":x.pin,"x_cell":[1,2,1]},
+            x.pad2.to_string():{"gate":x.bgate,"pin":x.pin}
+        }}),
+    )
+}
+#[test]
+fn saved_mapping_rows_edit_and_unmap_without_relationship_controls() {
+    let x = data();
+    let entry = saved(&x, json!(x.foot));
+    assert!(entry.editable());
+    let mut d =
+        LibraryDraft::begin(&x.b, Some(&entry), "pin_pad_maps", "rev".into(), None).unwrap();
+    assert!(!d.create);
+    assert_eq!(d.id, entry.id);
+    assert_eq!(d.map_source("map_part"), x.part.to_string());
+    assert_eq!(d.map_source("map_footprint"), x.foot.to_string());
+    assert!(
+        !d.fields
+            .iter()
+            .any(|f| matches!(f.key, "map_part" | "map_footprint" | "map_default"))
+    );
+    assert_eq!(d.pin_pad_mappings().unwrap().len(), 2);
+    let second = d
+        .pin_pad_map
+        .pads
+        .iter()
+        .position(|p| p.id == Some(x.pad2))
+        .unwrap();
+    d.select_mapping_pad(Some(second), false).unwrap();
+    d.select_mapping_pad(None, true).unwrap();
+    let first = d
+        .pin_pad_map
+        .pads
+        .iter()
+        .position(|p| p.id == Some(x.pad))
+        .unwrap();
+    d.select_mapping_pad(Some(first), false).unwrap();
+    set(&mut d, "map_gate", &x.bgate.to_string());
+    set(&mut d, "map_pin", &x.pin.to_string());
+    let request = d.request().unwrap();
+    assert_eq!(request.fields.len(), 1);
+    assert_eq!(
+        request.fields["mappings"],
+        json!({x.pad.to_string():{"gate":x.bgate,"pin":x.pin}})
+    );
+    assert_eq!(d.pin_pad_map.original.as_ref(), Some(&entry.raw));
+}
+#[test]
+fn saved_mapping_absent_footprint_and_invalid_or_ambiguous_rows_refuse_truthfully() {
+    let x = data();
+    let absent = saved(&x, Value::Null);
+    assert!(
+        LibraryDraft::begin(&x.b, Some(&absent), "pin_pad_maps", "rev".into(), None)
+            .unwrap_err()
+            .contains("no declared Footprint")
+    );
+    let mut invalid = saved(&x, json!(x.foot));
+    invalid.raw["mappings"][x.pad.to_string()]["pin"] = json!(Uuid::new_v4());
+    assert!(LibraryDraft::begin(&x.b, Some(&invalid), "pin_pad_maps", "rev".into(), None).is_err());
+    let mut aliased = saved(&x, json!(x.foot));
+    let cell = aliased.raw["mappings"][x.pad.to_string()].clone();
+    let alias = x.pad.simple().to_string();
+    assert_ne!(alias, x.pad.to_string());
+    aliased.raw["mappings"][alias] = cell;
+    assert!(LibraryDraft::begin(&x.b, Some(&aliased), "pin_pad_maps", "rev".into(), None).is_err());
+}
 #[test]
 fn map_named_rows_partial_duplicate_gate_pin_and_explicit_default_intent() {
     let x = data();

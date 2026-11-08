@@ -72,17 +72,33 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
         );
     }
     p.button("Unmap selected pad", C::UnmapPad);
-    p.line("Default assignment begins off. It requires a matching explicit Part default Footprint and no placed users. Preview checks whether assignment is available.");
+    if d.create {
+        p.line("Default assignment begins off. It requires a matching explicit Part default Footprint and no placed users. Preview checks whether assignment is available.");
+    } else {
+        p.line(&format!(
+            "Part: {} · read-only",
+            d.pin_pad_map.part_label(d.map_source("map_part"))
+        ));
+        p.line(&format!(
+            "Footprint: {} · read-only",
+            d.pin_pad_map.footprint_label(d.map_source("map_footprint"))
+        ));
+        p.line("Existing placed mappings stay pinned; Part default unchanged");
+    }
 }
 pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft, raw: &Value) {
-    p.line("Review: create PinPadMap");
+    p.line(if d.create {
+        "Review: create PinPadMap"
+    } else {
+        "Review: revise PinPadMap assignments"
+    });
     p.line(&format!(
         "Part: {}",
-        d.pin_pad_map.part_label(d.value("map_part"))
+        d.pin_pad_map.part_label(d.map_source("map_part"))
     ));
     p.line(&format!(
         "Footprint: {}",
-        d.pin_pad_map.footprint_label(d.value("map_footprint"))
+        d.pin_pad_map.footprint_label(d.map_source("map_footprint"))
     ));
     let rows = raw.get("mappings").and_then(Value::as_object);
     p.line(&format!(
@@ -103,7 +119,7 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft, raw: &Value) {
         p.line("Also set this new map as the selected Part default in the same transaction");
         p.line(&format!(
             "Previous default: {}",
-            d.pin_pad_map.previous_default(d.value("map_part"))
+            d.pin_pad_map.previous_default(d.map_source("map_part"))
         ));
     } else {
         p.line("Map only · leave the Part default unchanged");

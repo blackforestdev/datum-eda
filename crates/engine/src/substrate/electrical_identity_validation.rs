@@ -317,7 +317,10 @@ pub(super) fn correspondence_with_basis(
                     None => return NetCorrespondenceStatus::Unverified,
                 }
                 if !current(model, &basis.component_instance)
-                    || !current(model, &basis.pin_pad_map)
+                    || !source.map_or_else(
+                        || current(model, &basis.pin_pad_map),
+                        |source| source.pinned_map(model, &basis.pin_pad_map).is_ok(),
+                    )
                     || !current(model, &basis.board_pad)
                 {
                     return NetCorrespondenceStatus::Stale;

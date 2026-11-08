@@ -92,7 +92,13 @@ impl LibraryEntry {
             && self.source_path == format!("pool/{}/{}.json", self.kind, self.id)
             && matches!(
                 self.kind.as_str(),
-                "footprints" | "padstacks" | "units" | "symbols" | "entities" | "parts"
+                "footprints"
+                    | "padstacks"
+                    | "units"
+                    | "symbols"
+                    | "entities"
+                    | "parts"
+                    | "pin_pad_maps"
             )
     }
     pub fn label(&self) -> &str {

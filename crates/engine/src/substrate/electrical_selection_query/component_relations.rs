@@ -235,23 +235,32 @@ impl ElectricalSelectionSnapshot {
                 .collect::<Vec<_>>()
                 == owner.placed_package_refs
             && source.library_bindings.values().all(|b| {
-                if b.binding_role == crate::substrate::LibraryBindingRole::Part {
-                    self.model
-                        .materialized_pool_object_revision(
-                            b.target_object_id,
-                            "parts",
-                            b.pinned_object_revision,
-                        )
-                        .is_ok()
-                        && b.local_override_refs.iter().all(|r| {
-                            self.model
-                                .materialized_pool_object_revision(
-                                    r.object_id,
-                                    "parts",
-                                    r.object_revision,
+                if let Some(kind) = match b.binding_role {
+                    crate::substrate::LibraryBindingRole::Part => Some("parts"),
+                    crate::substrate::LibraryBindingRole::PinPadMap => Some("pin_pad_maps"),
+                    _ => None,
+                } {
+                    let matches = |id, revision| {
+                        if kind == "pin_pad_maps" {
+                            self.basis
+                                .pinned_map(
+                                    &self.model,
+                                    &crate::substrate::RevisionedRef {
+                                        object_id: id,
+                                        object_revision: revision,
+                                    },
                                 )
                                 .is_ok()
-                        })
+                        } else {
+                            self.model
+                                .materialized_pool_object_revision(id, kind, revision)
+                                .is_ok()
+                        }
+                    };
+                    matches(b.target_object_id, b.pinned_object_revision)
+                        && b.local_override_refs
+                            .iter()
+                            .all(|r| matches(r.object_id, r.object_revision))
                 } else {
                     self.model
                         .objects

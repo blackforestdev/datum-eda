@@ -68,6 +68,14 @@ pub(crate) fn projection_with_part_basis(
     board: &Value,
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
+    validate_library_basis(model, part_basis, pending)?;
+    project_with_part_basis(model, part_basis, board, pending)
+}
+pub(crate) fn validate_library_basis(
+    model: &DesignModel,
+    part_basis: &DesignModel,
+    pending: &[Operation],
+) -> Result<(), EngineError> {
     let count = part_basis.journal.len();
     if part_basis.journal_cursor.applied_transaction_count != count
         || model.journal_cursor != part_basis.journal_cursor
@@ -99,7 +107,7 @@ pub(crate) fn projection_with_part_basis(
             "prospective Part basis differs from the applied operation evidence",
         ));
     }
-    project_with_part_basis(model, part_basis, board, pending)
+    Ok(())
 }
 
 fn project_with_part_basis(
@@ -181,7 +189,7 @@ fn project_with_part_basis(
                     }
                     if result.statuses[&pad.uuid] == ComponentPadMaterializationStatus::Current {
                         physical.terminal_mut().net =
-                            authoritative_net(model, physical.terminal(), b);
+                            authoritative_net(model, part_basis, physical.terminal(), b);
                     }
                     if let QueryPadGeometry::Integer(p) = &physical {
                         result.pads.insert(pad.uuid, p.clone());
@@ -357,6 +365,7 @@ pub(super) fn project_pad(
 }
 fn authoritative_net(
     model: &DesignModel,
+    library_basis: &DesignModel,
     pad: &PlacedPad,
     b: &ComponentPadSourceBinding,
 ) -> Option<Uuid> {
@@ -370,7 +379,7 @@ fn authoritative_net(
                 || c.part_ref != Some(b.part.object_id)
                 || !c.placed_package_refs.contains(&pad.package)
         })
-        || check_pin(model, map).is_err()
+        || check_pin(library_basis, map).is_err()
     {
         return None;
     }

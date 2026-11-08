@@ -606,7 +606,7 @@ map-only creation. Focused engine/form/loader tests and the isolated ordinary Ap
 prove map-only and eligible atomic default creation, cancellation, history, Save
 and cold reopening while preserving existing circuit sources and unrelated data.
 This debug presented-control/logical-key proof supplies no physical/HUMAN or
-release qualification. Saved-map editing, placed updates, full coverage/large-map
+release qualification. Map relinking, placed updates, full coverage/large-map
 qualification, approval/models and broader native-library completion remain open;
 this routine delivery does not select a successor milestone.
 
@@ -689,6 +689,27 @@ Earlier physical-test fixture/assertion failures, the nested prospective Part
 basis failure and the App capture-label failure retain their actual logs and
 scope. No automatic placed update, relinking, approval, readable-Greek repair,
 physical/HUMAN, release-GUI execution or broad goal acceptance is claimed.
+
+Saved Footprint-bound map revision (`dat-saved-pin-pad-map-edit-je1j`) adds
+assignment and explicit unmap edits in the existing Library form, with fixed
+Part/Footprint references and no default or approval change. Canonical sparse
+patching preserves raw fields, unknown cell data and unchanged UUID spellings.
+Forty-five focused checks pass, including exact old Map bindings and connected
+eight-pad queries, held-snapshot immutability, restored-counter collisions,
+forward/hash/epoch refusals and cold persistence. A separate new component uses
+the revised map through the public engine producer and populated-pad explicit
+rematerialization Undo/Redo while the old bound Net remains unchanged. This is
+engine-producer evidence; no manual map-aware materialization surface is claimed.
+That missing surface remains separate intake `dat-manual-map-materialization-bxrt`,
+and the initial empty-package Undo failure remains open as
+`dat-component-pad-initial-undo-absent-sxdi`. Earlier test
+fixture and historical-Map validator failures retain their original logs and
+scopes. The isolated ordinary debug App passes 69 steps and six inspected captures:
+assignment/unmap and Preview, byte-exact Cancel, map-only commit, Undo/Redo, Save
+and cold reopening retain map identity/fixed links and exact root/child circuitry.
+The App proves manual map editing; actual Map-bound physical/Net behavior is
+covered by the engine cases. No physical/HUMAN or release-GUI execution is claimed.
+No implicit placed update, relinking, approval or broad goal acceptance is claimed.
 
 ### Native File-Type Catalog — Owner-Requested Proposal
 

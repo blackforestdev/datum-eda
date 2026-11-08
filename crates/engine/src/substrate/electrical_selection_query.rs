@@ -72,7 +72,7 @@ pub struct ElectricalMembership {
 /// mix geometry/bindings in an existing query result. Capture itself writes nothing.
 pub struct ElectricalSelectionSnapshot {
     model: Arc<DesignModel>,
-    basis: super::super::electrical_basis::ElectricalBasis,
+    basis: super::super::electrical_basis::ElectricalBasis<'static>,
     logical: BTreeMap<Uuid, BTreeSet<ElectricalOccurrence>>,
     physical: Vec<BTreeSet<ElectricalOccurrence>>,
     schematic: Option<crate::schematic::Schematic>,

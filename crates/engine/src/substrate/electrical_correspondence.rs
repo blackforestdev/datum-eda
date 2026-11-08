@@ -32,10 +32,7 @@ pub(super) fn certify(
             .get(&reference.object_id)
             .is_some_and(|o| o.object_revision == reference.object_revision)
     };
-    if !current(&evidence.component_instance)
-        || !current(&evidence.pin_pad_map)
-        || !current(&evidence.board_pad)
-    {
+    if !current(&evidence.component_instance) || !current(&evidence.board_pad) {
         return Ok(NetCorrespondenceStatus::Stale);
     }
     if !current(library_pad) {
@@ -50,12 +47,10 @@ pub(super) fn certify(
     else {
         return Ok(NetCorrespondenceStatus::Unverified);
     };
-    let map: crate::pool::PinPadMap = serde_json::from_value(
-        source
-            .object(model, evidence.pin_pad_map.object_id, "pin_pad_maps")
-            .ok_or_else(|| invalid("missing pinned map source"))?
-            .clone(),
-    )?;
+    let map: crate::pool::PinPadMap = match source.pinned_map(model, &evidence.pin_pad_map) {
+        Ok(value) => serde_json::from_value(value)?,
+        Err(_) => return Ok(NetCorrespondenceStatus::Stale),
+    };
     let pad = source
         .pad_terminal(model, evidence.board_pad.object_id)
         .ok_or_else(|| invalid("missing typed Pad source"))?;

@@ -43,19 +43,35 @@ pub(super) fn build(
     request: LibraryDefinitionRequest,
     create: bool,
 ) -> Result<PreparedWrite, EngineError> {
-    if !create {
-        return Err(refusal(
-            "Saved PinPadMap editing is unavailable in this increment",
-        ));
-    }
+    let saved = if create {
+        None
+    } else {
+        Some(saved_source::load(
+            context.model,
+            request.object_id,
+            "pin_pad_maps",
+        )?)
+    };
+    let allowed: &[&str] = if create {
+        &["part", "footprint", "mappings", "assign_default"]
+    } else {
+        &["mappings"]
+    };
     if request
         .fields
         .keys()
-        .any(|k| !["part", "footprint", "mappings", "assign_default"].contains(&k.as_str()))
+        .any(|k| !allowed.contains(&k.as_str()))
     {
-        return Err(refusal("PinPadMap creation contains an unsupported field"));
+        return Err(refusal(
+            "PinPadMap editing refuses identity, relationships and policy fields",
+        ));
     }
-    let fields = Value::Object(request.fields);
+    let mut fields = Value::Object(request.fields);
+    if let Some((_, original)) = &saved {
+        let _: crate::pool::PinPadMap = serde_json::from_value(original.clone())?;
+        fields["part"] = original["part"].clone();
+        fields["footprint"] = original["footprint"].clone();
+    }
     let part_id = reference(&fields, "part")?;
     let footprint_id = reference(&fields, "footprint")?;
     let assign = match fields.get("assign_default") {
@@ -98,15 +114,74 @@ pub(super) fn build(
     }
     // Validate the original list before JSON-object construction could merge aliases.
     maps::validate_pin_pad_map_payload(context.model, part_id, Some(footprint_id), &mappings)?;
-    let mut specs = vec![PoolLibraryOperationSpec::Create {
-        target: PoolLibraryObjectTarget::new("pool", "pin_pad_maps", request.object_id),
-        object: maps::pin_pad_map_payload(
-            request.object_id,
+    let mut specs = if let Some((target, mut original)) = saved {
+        let old = original
+            .get("mappings")
+            .and_then(Value::as_object)
+            .ok_or_else(|| refusal("Saved mapping rows are unavailable"))?;
+        let mut old_cells = std::collections::BTreeMap::new();
+        for (key, cell) in old {
+            let pad = Uuid::parse_str(key).map_err(|_| refusal("Saved pad identity is invalid"))?;
+            if old_cells.insert(pad, (key, cell)).is_some() {
+                return Err(refusal("Saved pad identity is ambiguous"));
+            }
+            // Refuse malformed existing cells rather than dropping them during an edit.
+            reference(cell, "gate")?;
+            reference(cell, "pin")?;
+            row(&footprint, "pads", pad)?;
+        }
+        let original_mappings = old_cells
+            .iter()
+            .map(|(pad, (_, cell))| {
+                Ok(PinPadMapMapping {
+                    pad: *pad,
+                    gate: reference(cell, "gate")?,
+                    pin: reference(cell, "pin")?,
+                })
+            })
+            .collect::<Result<Vec<_>, EngineError>>()?;
+        maps::validate_pin_pad_map_payload(
+            context.model,
             part_id,
             Some(footprint_id),
-            &mappings,
-        ),
-    }];
+            &original_mappings,
+        )?;
+        let mut patched = Map::new();
+        for mapping in &mappings {
+            let (key, mut cell) = old_cells
+                .get(&mapping.pad)
+                .map(|(key, cell)| ((**key).clone(), (**cell).clone()))
+                .unwrap_or_else(|| (mapping.pad.to_string(), json!({})));
+            if reference(&cell, "gate").ok() != Some(mapping.gate) {
+                cell["gate"] = json!(mapping.gate);
+            }
+            if reference(&cell, "pin").ok() != Some(mapping.pin) {
+                cell["pin"] = json!(mapping.pin);
+            }
+            patched.insert(key, cell);
+        }
+        original["mappings"] = Value::Object(patched);
+        saved_source::preserve_pinned_revision(
+            context.model,
+            request.object_id,
+            "pin_pad_maps",
+            &original,
+        )?;
+        vec![PoolLibraryOperationSpec::Set {
+            target,
+            object: original,
+        }]
+    } else {
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new("pool", "pin_pad_maps", request.object_id),
+            object: maps::pin_pad_map_payload(
+                request.object_id,
+                part_id,
+                Some(footprint_id),
+                &mappings,
+            ),
+        }]
+    };
     if assign {
         if part
             .get("default_footprint")

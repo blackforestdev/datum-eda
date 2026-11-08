@@ -23,6 +23,8 @@ mod package;
 mod part;
 #[path = "library_gui_pin_pad_map.rs"]
 mod pin_pad_map;
+#[path = "library_gui_saved_source.rs"]
+mod saved_source;
 
 /// GUI intent contains only explicitly edited fields, never a normalized object.
 #[derive(Debug, Clone, Serialize, Deserialize)]

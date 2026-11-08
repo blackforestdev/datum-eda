@@ -312,9 +312,42 @@ map-only and eligible atomic default creation, refusals, cancellation, Undo/Redo
 Save and cold reopening with stable map identities and links. Existing circuit
 sources and unrelated definitions remain unchanged; optional assignment changes
 only the selected Part's default-map field. The App proof uses debug builds,
-presented controls and logical keys. Saved-map editing, placed updates, legacy
+presented controls and logical keys. Map relinking, placed updates, legacy
 Package-pad authoring, full-coverage/large-map qualification, physical/HUMAN and
 release qualification, models, approval and broader library completion remain open.
+
+Saved Footprint-bound mapping revision (`dat-saved-pin-pad-map-edit-je1j`) reuses
+the named pad / gate / logical-pin table and explicit unmap control. Part,
+Footprint, UUID and Part defaults remain fixed; the engine refuses identity,
+relationship and policy edits independently. A map with no declared Footprint
+remains available for inspection, without substituting a Part default. Missing,
+malformed and ambiguous row sources refuse editing. Nonempty partial maps retain
+visible unmapped pads; no automatic assignment or manufacturing-ready claim is
+introduced. Canonical Set patches assignments while preserving unrelated raw
+fields, unknown cell metadata and unchanged UUID spellings; explicit unmap removes
+only that selected cell.
+
+Existing declared Map bindings, recorded physical source pins, logical terminals
+and Net membership retain their exact authenticated map revisions through edits,
+history and cold reopening. Held query snapshots retain their captured mapping.
+Ordinary pending-source frames refuse declared Map reads rather than label
+replacement cells as old revisions;
+accepted frames still resolve their exact old and current payloads.
+The current-map public engine producer is separately exercised with a new
+component and explicit eight-pad materialization, a revised connected
+correspondence, and subsequent populated-pad rematerialization Undo/Redo; the old
+component and Net remain unchanged. This producer proof is not a manual App/CLI
+materialization action. That missing manual surface is separate intake
+`dat-manual-map-materialization-bxrt`; initial materialization Undo with an absent
+prior pad collection fails separately under
+`dat-component-pad-initial-undo-absent-sxdi` and is not credited. Forty-five focused
+checks establish these engine/form/history scopes. The isolated ordinary debug
+App passes 69 steps and six inspected captures for assignment/unmap, Preview,
+byte-exact Cancel, map-only commit, Undo/Redo, Save and cold reopening, including
+unchanged root/child circuit rendering and resolved component identities. It uses
+presented controls and logical keys, not physical/HUMAN or release-GUI execution.
+Relinking, implicit placed updates, approval and full library-to-PCB qualification
+remain open.
 
 The initial schematic handoff (`dat-explicit-part-gate-placement-b43w`) adds named
 project-local Part/gate choices to the existing Symbol picker. Distinct choices

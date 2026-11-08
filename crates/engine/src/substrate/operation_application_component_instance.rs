@@ -325,7 +325,7 @@ fn validate_revisioned_pool_ref(
             uuid: object_id,
         });
     };
-    if matches!(expected_kind, "symbols" | "parts") {
+    if matches!(expected_kind, "symbols" | "parts" | "pin_pad_maps") {
         let authenticated = match history_model {
             Some(basis) => basis.definition_ref_matches(
                 &model.objects,

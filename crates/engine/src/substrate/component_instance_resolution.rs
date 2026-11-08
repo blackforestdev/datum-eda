@@ -267,7 +267,7 @@ fn pool_ref_matches(
     kind: &str,
     history: Option<&super::pool_history::PoolHistory<'_>>,
 ) -> bool {
-    if matches!(kind, "symbols" | "parts")
+    if matches!(kind, "symbols" | "parts" | "pin_pad_maps")
         && let Some(history) = history
     {
         history.definition_ref_matches(objects, id, revision, kind)
