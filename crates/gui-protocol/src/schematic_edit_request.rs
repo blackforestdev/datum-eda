@@ -86,6 +86,8 @@ pub enum SchematicEditRequest {
         #[serde(default)]
         instance_path: Vec<Uuid>,
         library_symbol: Uuid,
+        #[serde(default)]
+        explicit_part: Option<PartGateSelection>,
         reference: String,
         value: String,
         x_nm: i64,
@@ -276,6 +278,7 @@ impl SchematicEditRequest {
                 sheet,
                 instance_path,
                 library_symbol,
+                explicit_part,
                 reference,
                 value,
                 x_nm,
@@ -284,7 +287,7 @@ impl SchematicEditRequest {
                 mirrored,
             } => (
                 "datum.schematic.place_symbol",
-                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"library_symbol":library_symbol,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
+                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"library_symbol":library_symbol,"explicit_part":explicit_part,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
             ),
             Self::DrawWire {
                 sheet,

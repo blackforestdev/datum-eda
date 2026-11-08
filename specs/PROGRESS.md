@@ -610,6 +610,22 @@ release qualification. Saved-map editing, placed updates, full coverage/large-ma
 qualification, approval/models and broader native-library completion remain open;
 this routine delivery does not select a successor milestone.
 
+The bounded initial Part/Gate placement increment
+(`dat-explicit-part-gate-placement-b43w`) adds explicit named choices to the shared
+Symbol picker, retaining distinct Part/gate identities when they share a Symbol.
+The native verb independently checks the selected chain and revisions and uses
+the existing atomic Symbol/component writer. Focused engine3/picker2 checks pass;
+the ordinary isolated debug App passes 64 steps on root and unique-child sheets,
+including Cancel, placement, history, Save and cold source reopening with pinned
+identities and preserved circuits. PM053 lineage updates are checked exactly.
+Affected pose/later-Gate rows pass within a broader 44-pass/1-fail batch; the
+unchanged annotation expectation is separate intake `dat-project-annotation-root-assertion-i6m9`.
+The legacy Units-initialization replay defect found during fixture setup is
+separate intake `dat-units-init-promoted-replay-v57y`. No annotation or replay fix,
+physical/HUMAN, release-GUI or full qualification is claimed. Saved library editing,
+placed updates, approval/models and broader native-library completion remain open;
+this routine increment does not select a successor milestone.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).

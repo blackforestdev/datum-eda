@@ -171,6 +171,7 @@ fn placement_pose_transforms_asymmetric_body_and_pins_and_resets_on_cancel() {
             sheet: draft.sheet.unwrap(),
             instance_path: vec![],
             library_symbol: draft.choices[choice].id,
+            explicit_part: None,
             reference: draft.reference.clone(),
             value: draft.value.clone(),
             x_nm: 40_000_000,

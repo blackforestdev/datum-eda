@@ -6,6 +6,8 @@ use crate::schematic::{PinElectricalType, SymbolPin};
 use crate::substrate::DesignModel;
 use uuid::Uuid;
 type Result<T> = std::result::Result<T, EngineError>;
+#[path = "schematic_part_placement.rs"]
+pub mod part_placement;
 macro_rules! invalid {
     ($($arg:tt)*) => { EngineError::Validation(format!($($arg)*)) };
 }

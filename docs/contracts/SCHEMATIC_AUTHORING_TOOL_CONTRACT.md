@@ -417,7 +417,7 @@ restated.
 - **(1) Manual UI:** Pick a symbol from the library panel, click to place
   on the active sheet, drag to set position, type reference/value.
 - **(2) Operation:** `PlaceSymbol{sheet_id, library_ref, position,
-  rotation, mirror, component_instance_id}` → single-Operation
+  rotation, mirror, component_instance_id}` → one atomic
   `OperationBatch` through `commit()`. Current CLI uses the journaled
   schematic operation path and, for pool-symbol UUID `lib_id`s that resolve to
   a unique entity/gate/part, batches `CreateSchematicSymbol` with a symbol-first
@@ -444,9 +444,38 @@ restated.
   append-only compensating transaction. The restored geometry is not a rewind
   of journal or revision identity; Redo is another recorded transaction.
 - **(8) Not yet supported:** Compatibility/non-pool symbols do not mint
-  ComponentInstances, ambiguous/unresolved library bindings remain explicit
+  ComponentInstances; in Symbol-only mode ambiguous/unresolved library bindings remain
   non-ComponentInstance placements, and board package refs attach only after
   the physical package exists.
+
+The bounded initial Part/Gate increment (`dat-explicit-part-gate-placement-b43w`)
+configures this same picker with separate named Part/gate rows alongside the
+existing Symbol-only rows. Manufacturer/MPN, gate, Entity and Symbol labels
+distinguish choices that share a real library Symbol UUID. The initial reference
+prefix comes from the Entity and the value from the Part. The ghost retains the
+chosen Part/gate context. No preferred Part or gate is inferred for an explicit
+choice; Symbol-only selection retains its existing inference semantics.
+
+The existing `datum.schematic.place_symbol` verb accepts the captured explicit
+intent and independently checks the Part → Entity → gate → Unit/Symbol chain,
+source identities and referenced revisions. It composes the existing schematic
+Create and authored component binding in one canonical transaction, preserving
+the existing component-ID derivation and Part binding role. Valid multi-gate maps
+remain unchanged. Missing, incompatible, ambiguous or stale explicit intent
+refuses without writes and never falls back to inferred binding.
+
+Focused checks and the isolated ordinary App prove named choice, ghost/Cancel,
+placement, Undo/Redo, Save and cold source reopening on a root and a uniquely
+qualified child. Exact chosen identities, pinned component data, old schematic
+payloads, library/static bytes and schematic net IDs/member runs are retained.
+Canonical PM053 lineage metadata follows its recorded before/after states.
+This is debug App pointer-callback/menu-dispatch proof; visual observations cover
+the picker, ghost and placed states, with stored identities checked after cold
+reopening. It is not physical/HUMAN or release-GUI qualification. Initial creation
+of a new component is the scope; existing Assign Part and Place another Gate
+remain on their current paths. Repeated/shared occurrences, cross-sheet component
+grouping, placed ECO, map/library updates, approval and full qualification remain
+outside this increment.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 

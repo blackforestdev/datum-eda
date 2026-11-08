@@ -75,10 +75,11 @@ impl GatePlacementDraft {
                     .schematic_authoring
                     .choices
                     .iter()
-                    .find(|c| c.id == gate.library_symbol)
+                    .find(|c| c.id == gate.library_symbol && c.explicit_part.is_none())
                     .cloned()
                     .ok_or("Gate library Symbol is unavailable")?;
                 choice.name = format!("{} · {}", gate.gate_name, gate.symbol_name);
+                choice.explicit_part = None;
                 Ok(choice)
             })
             .collect::<Result<Vec<_>, String>>()?;

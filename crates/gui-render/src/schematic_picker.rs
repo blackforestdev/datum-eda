@@ -56,11 +56,56 @@ pub(super) fn render(
         );
         let extra = field_controls::extra(authoring).max(if entries.is_empty() { 0. } else { 34. });
         let width = 480f32.min(layout.top_menu_bar.width - 32.0);
+        let row_label = |choice: &datum_gui_protocol::schematic_authoring::LibrarySymbolChoice| {
+            format!(
+                "{}{} · {} pins{}",
+                if choice.explicit_part.is_none() && authoring.gate_draft.is_none() {
+                    "Symbol: "
+                } else {
+                    ""
+                },
+                choice.name,
+                choice.pins.len(),
+                if choice.refusal.is_some() {
+                    " · unavailable"
+                } else {
+                    ""
+                }
+            )
+        };
+        let row_height = |label: &str| {
+            crate::text_metrics::measured_text_run_height_px(
+                label,
+                (width - 36.).max(1.),
+                12.,
+                TextFace::Ui,
+            )
+            .unwrap_or(16.)
+            .max(15.)
+                + 14.
+        };
+        let list_extra = if compact {
+            0.
+        } else {
+            (authoring
+                .picker_choices()
+                .iter()
+                .skip(authoring.choice_offset)
+                .take(4)
+                .map(|c| row_height(&row_label(c)) + 2.)
+                .sum::<f32>()
+                - 124.)
+                .max(0.)
+        };
         let panel = RectPx {
             x: (layout.top_menu_bar.width - width) / 2.,
             y: 76.,
             width,
-            height: if compact { 235. + extra } else { 350. },
+            height: if compact {
+                235. + extra
+            } else {
+                350. + list_extra
+            },
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         push_rect_border(quads, panel, design_tokens::chrome::BORDER_STRONG, 1.);
@@ -122,11 +167,12 @@ pub(super) fn render(
                 .skip(authoring.choice_offset)
                 .take(4)
             {
+                let label = row_label(choice);
                 let row = RectPx {
                     x: panel.x + 12.,
                     y,
                     width: width - 24.,
-                    height: 29.,
+                    height: row_height(&label),
                 };
                 quads.push(Quad::from_rect(
                     row,
@@ -136,30 +182,23 @@ pub(super) fn render(
                         design_tokens::chrome::SURFACE_01
                     },
                 ));
-                let label = format!(
-                    "{} · {} pins{}",
-                    choice.name,
-                    choice.pins.len(),
-                    if choice.refusal.is_some() {
-                        " · unavailable"
-                    } else {
-                        ""
-                    }
-                );
-                draw_text(
-                    &truncate_text(&label, 58),
+                draw_text_clipped(
+                    &label,
                     row.x + 6.,
                     y + 7.,
                     12.,
                     TEXT_PRIMARY,
                     TextFace::Ui,
+                    row,
                     text,
                 );
+                text.last_mut().unwrap().layout_size =
+                    Some(((row.width - 12.).max(1.), row.height - 14.));
                 hits.push(HitRegion {
                     target: HitTarget::SchematicLibraryChoice(index),
                     rect: row,
                 });
-                y += 31.;
+                y += row.height + 2.;
             }
             if authoring.picker_choices().len() > 4 {
                 button(
@@ -167,7 +206,7 @@ pub(super) fn render(
                     HitTarget::SchematicLibraryPage(false),
                     RectPx {
                         x: panel.x + 16.,
-                        y: panel.y + 177.,
+                        y: panel.y + 177. + list_extra,
                         width: 90.,
                         height: 25.,
                     },
@@ -180,7 +219,7 @@ pub(super) fn render(
                     HitTarget::SchematicLibraryPage(true),
                     RectPx {
                         x: panel.x + width - 106.,
-                        y: panel.y + 177.,
+                        y: panel.y + 177. + list_extra,
                         width: 90.,
                         height: 25.,
                     },
@@ -190,7 +229,7 @@ pub(super) fn render(
                 );
             }
         }
-        y = panel.y + if compact { 60. } else { 215. };
+        y = panel.y + if compact { 60. } else { 215. + list_extra };
         let mut controls = ControlMeshCache::default();
         for (label, value, editor, field, target) in [
             (
@@ -286,7 +325,12 @@ pub(super) fn render(
             draw_text(
                 &truncate_text(refusal, 65),
                 panel.x + 16.,
-                panel.y + if compact { 140. + extra } else { 203. },
+                panel.y
+                    + if compact {
+                        140. + extra
+                    } else {
+                        203. + list_extra
+                    },
                 11.,
                 design_tokens::chrome::STATUS_ERROR,
                 TextFace::Ui,
@@ -321,7 +365,12 @@ pub(super) fn render(
                     },
                 ),
                 panel.x + 16.,
-                panel.y + if compact { 140. + extra } else { 203. },
+                panel.y
+                    + if compact {
+                        140. + extra
+                    } else {
+                        203. + list_extra
+                    },
                 11.,
                 TEXT_MUTED,
                 TextFace::Ui,
@@ -333,7 +382,12 @@ pub(super) fn render(
             HitTarget::SchematicCancel,
             RectPx {
                 x: panel.x + 16.,
-                y: panel.y + if compact { 190. + extra } else { 305. },
+                y: panel.y
+                    + if compact {
+                        190. + extra
+                    } else {
+                        305. + list_extra
+                    },
                 width: 90.,
                 height: 29.,
             },
@@ -350,7 +404,12 @@ pub(super) fn render(
                 "Enter: resume placement"
             },
             panel.x + 16.,
-            panel.y + if compact { 166. + extra } else { 286. },
+            panel.y
+                + if compact {
+                    166. + extra
+                } else {
+                    286. + list_extra
+                },
             11.,
             TEXT_MUTED,
             TextFace::Ui,
@@ -371,7 +430,12 @@ pub(super) fn render(
             },
             RectPx {
                 x: panel.x + width - 106.,
-                y: panel.y + if compact { 190. + extra } else { 305. },
+                y: panel.y
+                    + if compact {
+                        190. + extra
+                    } else {
+                        305. + list_extra
+                    },
                 width: 90.,
                 height: 29.,
             },
@@ -382,11 +446,21 @@ pub(super) fn render(
     } else if authoring.active() {
         let compact =
             authoring.wire || authoring.marker.is_some() || authoring.field_placement().is_some();
+        let explicit_label = authoring
+            .chosen
+            .and_then(|i| authoring.choices.get(i))
+            .filter(|c| c.explicit_part.is_some())
+            .map(|c| c.name.as_str());
+        let label_extra = explicit_label.map_or(0., |label| {
+            crate::text_metrics::measured_text_run_height_px(label, 380., 11., TextFace::Ui)
+                .unwrap_or(16.)
+                + 6.
+        });
         let panel = RectPx {
             x: layout.top_menu_bar.width / 2. - 200.,
             y: 76.,
             width: 400.,
-            height: if compact { 65. } else { 86. },
+            height: if compact { 65. } else { 86. + label_extra },
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         draw_text(
@@ -422,6 +496,25 @@ pub(super) fn render(
             text,
         );
         if !compact {
+            if let Some(label) = explicit_label {
+                let rect = RectPx {
+                    x: panel.x + 10.,
+                    y: panel.y + 30.,
+                    width: 380.,
+                    height: label_extra,
+                };
+                draw_text_clipped(
+                    label,
+                    rect.x,
+                    rect.y,
+                    11.,
+                    TEXT_PRIMARY,
+                    TextFace::Ui,
+                    rect,
+                    text,
+                );
+                text.last_mut().unwrap().layout_size = Some((380., label_extra));
+            }
             draw_text(
                 if authoring.child_draft.is_some() || authoring.design_placement.is_some() {
                     "Esc: cancel"
@@ -429,7 +522,7 @@ pub(super) fn render(
                     "Tab: reference/value · Esc: cancel"
                 },
                 panel.x + 10.,
-                panel.y + 31.,
+                panel.y + 31. + label_extra,
                 11.,
                 TEXT_MUTED,
                 TextFace::Ui,
@@ -441,7 +534,7 @@ pub(super) fn render(
             HitTarget::SchematicCancel,
             RectPx {
                 x: panel.x + 10.,
-                y: panel.y + if compact { 30. } else { 53. },
+                y: panel.y + if compact { 30. } else { 53. + label_extra },
                 width: 90.,
                 height: 26.,
             },

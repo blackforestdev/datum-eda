@@ -246,6 +246,18 @@ presented controls and logical keys. Saved-map editing, placed updates, legacy
 Package-pad authoring, full-coverage/large-map qualification, physical/HUMAN and
 release qualification, models, approval and broader library completion remain open.
 
+The initial schematic handoff (`dat-explicit-part-gate-placement-b43w`) adds named
+project-local Part/gate choices to the existing Symbol picker. Distinct choices
+retain the actual shared Symbol UUID and display manufacturer/MPN, gate, Entity
+and Symbol names. The native placement verb checks the exact selected chain and
+captured revisions before one canonical Symbol/component transaction; explicit
+choices never fall back to automatic Part inference. Root and unique-child
+pointer/ghost/cancellation, placement, history and Save/cold-source checks retain
+the chosen identities and pinned binding while existing library definitions,
+default Footprint/maps and unrelated circuit data stay unchanged. Valid multi-gate
+maps are preserved. This debug App proof does not establish physical/HUMAN,
+release-GUI, approval, placed-update or broader library completion.
+
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
 operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc

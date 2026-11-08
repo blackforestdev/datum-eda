@@ -161,6 +161,8 @@ struct PlaceParams {
     #[serde(default)]
     instance_path: Vec<Uuid>,
     library_symbol: Uuid,
+    #[serde(default)]
+    explicit_part: Option<super::schematic_library::part_placement::PartGateSelection>,
     reference: String,
     value: String,
     x_nm: i64,
@@ -202,8 +204,11 @@ fn place_symbol(
         ));
     }
     let id = params.library_symbol.to_string();
-    let resolved = resolve_pool_symbol_component_binding(context.model, Some(&id))?;
-    let binding = resolved.binding.as_ref();
+    let resolved = match &params.explicit_part {
+        Some(intent) => Some(intent.resolve(context.model, params.library_symbol)?),
+        None => resolve_pool_symbol_component_binding(context.model, Some(&id))?.binding,
+    };
+    let binding = resolved.as_ref();
     let part_binding = binding
         .and_then(|binding| binding.part.as_ref())
         .map(|part| PlacedSymbolPartBinding {
@@ -245,13 +250,16 @@ fn place_symbol(
         pin_overrides: Vec::new(),
         hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
     };
-    let prepared = build_place_schematic_symbol(
+    let mut prepared = build_place_schematic_symbol(
         context.model,
         provenance,
         params.sheet,
         &symbol,
         part_binding.as_ref(),
     )?;
+    if let Some(intent) = &params.explicit_part {
+        intent.guard(&mut prepared);
+    }
     prepare_native_birth(context.model, prepared)
 }
 

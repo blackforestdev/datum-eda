@@ -263,7 +263,11 @@ impl Runtime {
         {
             let editor = &mut self.session.workspace_mut().schematic_authoring;
             editor.chosen = None;
-            if let Some(index) = editor.choices.iter().position(|c| c.id == id) {
+            if let Some(index) = editor
+                .choices
+                .iter()
+                .position(|c| c.id == id && c.explicit_part.is_none())
+            {
                 editor.select(index);
                 editor.choice_offset = (index / 4) * 4;
             } else {

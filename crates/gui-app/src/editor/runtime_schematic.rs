@@ -494,6 +494,7 @@ impl Runtime {
             sheet: e.placement_sheet().unwrap(),
             instance_path: e.placement_path(),
             library_symbol: e.choices[index].id,
+            explicit_part: e.choices[index].explicit_part.clone(),
             reference: e.reference.clone(),
             value: e.value.clone(),
             x_nm: at.x,

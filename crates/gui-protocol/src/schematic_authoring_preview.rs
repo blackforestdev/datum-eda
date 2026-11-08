@@ -198,9 +198,9 @@ impl SchematicAuthoring {
                 }
                 PlacedSymbol {
                     uuid: Uuid::nil(),
-                    part: None,
-                    entity: None,
-                    gate: None,
+                    part: choice.explicit_part.as_ref().map(|s| s.part),
+                    entity: choice.explicit_part.as_ref().map(|s| s.entity),
+                    gate: choice.explicit_part.as_ref().map(|s| s.gate),
                     lib_id: Some(choice.id.to_string()),
                     reference: self.reference.clone(),
                     value: self.value.clone(),

@@ -8,6 +8,9 @@ use eda_engine::schematic::{LabelKind, PortDirection};
 use eda_engine::substrate::{DesignModel, ElectricalSelectionSnapshot};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+#[path = "schematic_part_choices.rs"]
+mod part_choices;
+pub use eda_engine::api::native_write::schematic_library::part_placement::PartGateSelection;
 #[path = "schematic_named_point.rs"]
 mod named_point;
 #[path = "schematic_selection_edit.rs"]
@@ -54,8 +57,10 @@ pub mod project_annotation;
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibrarySymbolChoice {
     pub id: Uuid,
+    pub explicit_part: Option<PartGateSelection>,
     pub name: String,
     pub prefix: String,
+    pub value: String,
     pub symbol: Symbol,
     pub pins: Vec<eda_engine::schematic::SymbolPin>,
     pub binding_status: String,
@@ -65,6 +70,7 @@ pub struct LibrarySymbolChoice {
 impl LibrarySymbolChoice {
     pub fn binding_label(&self) -> &'static str {
         match self.binding_status.as_str() {
+            "explicit_part_gate" => "Explicit Part and gate selected",
             "bound_with_part" => "Part binding resolved",
             "bound_without_part" => "No Part binding: no matching Part",
             "ambiguous_part" => "No Part binding: multiple compatible Parts",
@@ -345,7 +351,9 @@ impl SchematicAuthoring {
                 let binding = resolve_pool_symbol_component_binding(model, Some(&id))?;
                 Ok(LibrarySymbolChoice {
                     id: symbol.uuid,
+                    explicit_part: None,
                     name: symbol.name.clone(),
+                    value: symbol.name.clone(),
                     symbol: symbol.clone(),
                     prefix: symbol
                         .default_refdes_prefix
@@ -369,6 +377,7 @@ impl SchematicAuthoring {
         state
             .choices
             .sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.id.cmp(&b.id)));
+        part_choices::append(&mut state, model);
         Ok(state)
     }
     pub fn picker_choices(&self) -> &[LibrarySymbolChoice] {
@@ -396,7 +405,7 @@ impl SchematicAuthoring {
             })
             .unwrap();
         self.reference = format!("{}{n}", choice.prefix);
-        self.value = choice.name.clone();
+        self.value = choice.value.clone();
         self.reference_editor =
             crate::single_line_editor::SingleLineEditor::at_end(&self.reference);
         self.value_editor = crate::single_line_editor::SingleLineEditor::at_end(&self.value);
