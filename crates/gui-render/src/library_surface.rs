@@ -3,6 +3,7 @@ use crate::*;
 use datum_gui_protocol::LibraryJsonValue as Value;
 use datum_gui_protocol::{
     ReviewWorkspaceState,
+    library_authoring::LibraryDraft,
     library_browser::{KINDS, LibraryControl as C},
 };
 #[path = "library_acquisition_panel.rs"]
@@ -11,6 +12,8 @@ mod acquisition_panel;
 mod electrical_form;
 #[path = "library_entity_form.rs"]
 mod entity_form;
+#[path = "library_part_form.rs"]
+mod part_form;
 
 struct Painter<'a> {
     rect: RectPx,
@@ -124,6 +127,9 @@ pub(crate) fn render(
             p.line("Physical body / terminals · no Footprint lands");
             p.line("Tolerances, terminal positions and governed models unavailable");
         }
+        if d.kind == "parts" {
+            p.line("Initial lifecycle: Unknown · read-only");
+        }
         if matches!(d.kind.as_str(), "units" | "symbols") {
             electrical_form::table(&mut p, d, rect);
         }
@@ -206,8 +212,10 @@ pub(crate) fn render(
                     || {
                         if field.text.is_empty() {
                             "Unavailable / not authored".into()
-                        } else if matches!(d.kind.as_str(), "units" | "symbols" | "entities")
-                            && field.selector
+                        } else if matches!(
+                            d.kind.as_str(),
+                            "units" | "symbols" | "entities" | "parts"
+                        ) && field.selector
                         {
                             "Unavailable selection".into()
                         } else {
@@ -245,11 +253,16 @@ pub(crate) fn render(
         {
             entity_form::review(&mut p, raw);
         }
-        if d.kind != "entities" || d.refusal.is_some() {
+        if d.kind == "parts"
+            && let Some(raw) = &d.preview
+        {
+            part_form::review(&mut p, raw);
+        }
+        if !matches!(d.kind.as_str(), "entities" | "parts") || d.refusal.is_some() {
             p.button(
                 if matches!(
                     d.kind.as_str(),
-                    "packages" | "units" | "symbols" | "entities"
+                    "packages" | "units" | "symbols" | "entities" | "parts"
                 ) {
                     "Inspect complete refusal in Console"
                 } else {
@@ -387,10 +400,7 @@ pub(crate) fn render(
             p.button("Previous results", C::ResultsPage(false));
             p.button("Next results", C::ResultsPage(true));
         }
-        if matches!(
-            KINDS[state.library.kind].0,
-            "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities"
-        ) {
+        if LibraryDraft::can_create(KINDS[state.library.kind].0) {
             p.button(
                 &format!("Create {} · target pool", KINDS[state.library.kind].1),
                 C::New,
@@ -548,6 +558,10 @@ pub(crate) fn inspector(
         }
         if let Some(raw) = &d.preview {
             p.line("Validated preview · no source / journal writes");
+            if d.kind == "parts" {
+                part_form::review(&mut p, raw);
+                return;
+            }
             p.line(
                 raw.get("name")
                     .and_then(Value::as_str)

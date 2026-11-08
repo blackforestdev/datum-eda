@@ -17,6 +17,8 @@ mod electrical;
 mod entity;
 #[path = "library_gui_package.rs"]
 mod package;
+#[path = "library_gui_part.rs"]
+mod part;
 
 /// GUI intent contains only explicitly edited fields, never a normalized object.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -84,6 +86,9 @@ pub fn build_definition(
     }
     if request.kind == "entities" {
         return entity::build(context, provenance, request, create);
+    }
+    if request.kind == "parts" {
+        return part::build(context, provenance, request, create);
     }
     if request.kind == "packages" {
         return package::build(context, provenance, request, create);

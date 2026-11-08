@@ -582,9 +582,19 @@ The bounded Entity creation increment (`dat-entity-gate-gui-create-zcp0`) adds a
 shared form for explicit Entity fields and named gates with compatible existing
 Unit/Symbol pairs. Engine/form tests and the ordinary App create/cancel/commit,
 Undo/Redo, Save and cold-reopen proof preserve identities, links and existing
-placed-circuit sources. Saved Entity editing, Part/PinPadMap authoring, multi-gate
+placed-circuit sources. Saved Entity/Part editing, PinPadMap authoring, multi-gate
 placement and broader native-library completion remain open. This routine delivery
 does not select a successor milestone or establish full qualification.
+
+The bounded Part creation increment (`dat-part-gui-create-6zs4`) adds orderable
+metadata, required named Entity/Package links and an optional compatible default
+Footprint, with read-only initial lifecycle Unknown. The shared engine validates
+references independently. Focused tests and the ordinary App prove preview/cancel,
+compatibility clearing, commit/history and Save/cold reopening for absent and
+selected defaults while preserving existing definitions and authored circuits.
+Saved Part editing, pin-pad mapping, placement policy, approval/models and broader
+native-library completion remain open; no successor milestone or full
+qualification is selected by this delivery.
 
 ### Native File-Type Catalog — Owner-Requested Proposal
 

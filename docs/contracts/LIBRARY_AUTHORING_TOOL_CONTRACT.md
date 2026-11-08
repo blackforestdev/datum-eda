@@ -195,8 +195,29 @@ checks and the isolated ordinary App run are recorded in the task; the App uses
 presented controls and logical keys in a debug test profile. This establishes
 neither physical/HUMAN qualification nor universal raw-operation validation.
 Generic raw Entity gate-link admission is separate intake
-`dat-entity-raw-links-ysdr`. Saved Entity editing/relinking, Part/PinPadMap authoring,
+`dat-entity-raw-links-ysdr`. Saved Entity/Part editing/relinking, PinPadMap authoring,
 multi-gate placement, approval, models and broader library completion remain open.
+
+The creation-only Part GUI increment (`dat-part-gui-create-6zs4`) adds explicit
+manufacturer/MPN, value, description, datasheet reference and tags, with named
+Entity/Package choices and an optional compatible default Footprint. A Package
+change clears an incompatible Footprint selection; no default remains a genuine
+absent link. The shared engine adapter independently checks kinds, references,
+Footprint/Package compatibility and referenced revisions before canonical Create.
+MPN supplies the Part display identity; no separate name field is introduced.
+New Parts use the existing `Unknown` lifecycle, displayed read-only, without an
+approval or Active claim. Existing map/model/parametric/packaging/inheritance
+fields retain their schema-supported empty/absent creation representation.
+Preview/Cancel, canonical Undo/Redo and Save/cold reopen preserve the exact Part
+identity, entered metadata and chosen links while existing definitions and placed
+circuit sources stay unchanged. Focused engine/form and isolated ordinary-App
+proof covers both absent and compatible Footprint choices. That App proof uses
+debug builds, presented controls and logical keys, not physical/HUMAN or release
+qualification. Saved Part editing/relinking, inheritance, pin-pad mapping,
+placement policy, models, approval and broader library completion remain open.
+Generic raw Part/Footprint pair validation is separate intake
+`dat-part-raw-footprint-pair-yjc4`; this increment supplies no universal raw-write
+integrity claim.
 
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate

@@ -429,7 +429,7 @@ impl Runtime {
                                 .map(C::PreviewPad),
                         );
                     }
-                    if d.kind != "entities" || d.refusal.is_some() {
+                    if !matches!(d.kind.as_str(), "entities" | "parts") || d.refusal.is_some() {
                         controls.push(C::Notice);
                     }
                     controls.extend([C::Preview, C::Commit, C::Cancel]);
@@ -438,10 +438,7 @@ impl Runtime {
                     controls.extend((0..8).map(C::Kind));
                     controls.push(C::Search);
                     controls.extend(s.library.results().into_iter().map(C::Result));
-                    if matches!(
-                        KINDS[s.library.kind].0,
-                        "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities"
-                    ) {
+                    if LibraryDraft::can_create(KINDS[s.library.kind].0) {
                         controls.push(C::New);
                     }
                     if s.library

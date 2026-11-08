@@ -9,6 +9,8 @@ mod entity;
 mod input;
 #[path = "native_library_frame_tests/package.rs"]
 mod package;
+#[path = "native_library_frame_tests/part.rs"]
+mod part;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
 mod proof_assertions;
 use proof_assertions::source_bytes;
@@ -26,6 +28,7 @@ use winit::platform::wayland::EventLoopBuilderExtWayland;
 enum Step {
     Electrical(usize),
     Entity(usize),
+    Part(usize, bool),
     SavedTabCycle,
     Open,
     Kind(usize),
@@ -187,6 +190,7 @@ impl Fixture {
             Step::CheckPackage(present) => self.check_package(present),
             Step::Electrical(stage) => self.check_electrical(stage),
             Step::Entity(stage) => self.check_entity(stage),
+            Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::SavedTabCycle => self.saved_tab_cycle(),
             Step::RecordFootprint => self.record_footprint(),
             Step::CheckFootprintValue(edited) => self.check_footprint_value(edited),

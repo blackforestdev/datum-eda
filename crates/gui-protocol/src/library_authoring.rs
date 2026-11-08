@@ -16,8 +16,10 @@ use uuid::Uuid;
 mod electrical;
 mod entity;
 mod package;
+mod part;
 pub use electrical::ElectricalDraft;
 pub use entity::EntityDraft;
+pub use part::PartDraft;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LibraryField {
@@ -46,10 +48,17 @@ pub struct LibraryDraft {
     pub terminals: Map<String, Value>,
     pub electrical: ElectricalDraft,
     pub entity: EntityDraft,
+    pub part: PartDraft,
     pub preview: Option<Value>,
     pub refusal: Option<String>,
 }
 impl LibraryDraft {
+    pub fn can_create(kind: &str) -> bool {
+        matches!(
+            kind,
+            "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities" | "parts"
+        )
+    }
     pub fn begin(
         browser: &LibraryBrowser,
         entry: Option<&LibraryEntry>,
@@ -57,14 +66,14 @@ impl LibraryDraft {
         revision: String,
         tip: Option<Uuid>,
     ) -> Result<Self, String> {
-        if !matches!(
-            kind,
-            "footprints" | "padstacks" | "packages" | "units" | "symbols" | "entities"
-        ) {
+        if !Self::can_create(kind) {
             return Err(
-                "Authoring is available for Unit, Symbol, Entity, Footprint, Padstack and Package creation"
+                "Authoring is available for Unit, Symbol, Entity, Part, Footprint, Padstack and Package creation"
                     .into(),
             );
+        }
+        if kind == "parts" && entry.is_some() {
+            return Err("Saved Part editing is unavailable in this increment".into());
         }
         if matches!(kind, "packages" | "entities") && entry.is_some() {
             return Err(
@@ -101,10 +110,15 @@ impl LibraryDraft {
             terminals: Map::new(),
             electrical: ElectricalDraft::default(),
             entity: EntityDraft::default(),
+            part: PartDraft::default(),
             preview: None,
             refusal: None,
         };
         let raw = entry.map(|e| &e.raw).unwrap_or(&Value::Null);
+        if kind == "parts" {
+            draft.part_fields(browser);
+            return Ok(draft);
+        }
         draft.field("name", "Name", raw.get("name"), vec![]);
         if matches!(kind, "units" | "symbols") {
             draft.electrical_fields(browser);
@@ -284,6 +298,9 @@ impl LibraryDraft {
                     | "anchor_orientation"
                     | "gate_unit"
                     | "gate_symbol"
+                    | "part_entity"
+                    | "part_package"
+                    | "part_footprint"
             ),
         });
     }
@@ -327,6 +344,9 @@ impl LibraryDraft {
         if self.kind == "entities" && self.fields[self.focused].key == "gate_unit" {
             self.refresh_entity_symbols();
         }
+        if self.kind == "parts" && self.fields[self.focused].key == "part_package" {
+            self.refresh_part_footprints();
+        }
         self.preview = None;
         self.refusal = None;
     }
@@ -349,11 +369,13 @@ impl LibraryDraft {
     pub fn request(&self) -> Result<LibraryDefinitionRequest, String> {
         let mut fields = Map::new();
         let changed = |keys: &[&str]| self.create || keys.iter().any(|k| self.dirty.contains(k));
-        if changed(&["name"]) {
+        if self.kind != "parts" && changed(&["name"]) {
             fields.insert("name".into(), json!(self.value("name")));
         }
         if matches!(self.kind.as_str(), "units" | "symbols") {
             self.electrical_request(&mut fields)?;
+        } else if self.kind == "parts" {
+            self.part_request(&mut fields)?;
         } else if self.kind == "entities" {
             self.entity_request(&mut fields)?;
         } else if self.kind == "packages" {
