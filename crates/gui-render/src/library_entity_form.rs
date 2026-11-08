@@ -26,7 +26,7 @@ fn gate_label(p: &Painter<'_>, gate: &Value) -> String {
     )
 }
 
-fn gate_row(p: &mut Painter<'_>, d: &LibraryDraft, gate: &Value, control: C, active: bool) {
+fn gate_row(p: &mut Painter<'_>, d: &LibraryDraft, gate: &Value, control: Option<C>, active: bool) {
     let unit = named(p, "units", &gate["unit"]);
     let symbol = named(p, "symbols", &gate["symbol"]);
     row(
@@ -38,13 +38,15 @@ fn gate_row(p: &mut Painter<'_>, d: &LibraryDraft, gate: &Value, control: C, act
                 .unwrap_or("Name required"),
             &unit,
             &symbol,
-            if d.preview.is_some() {
+            if !d.create {
+                "Retained saved link"
+            } else if d.preview.is_some() {
                 "Validated preview"
             } else {
                 "Preview required"
             },
         ],
-        Some(control),
+        control,
         active,
     );
 }
@@ -58,17 +60,19 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
     for (i, (id, raw)) in d.entity.gates.iter().enumerate() {
         let active = d.entity.gate_id.is_some_and(|v| v.to_string() == *id);
         let gate = if active { pending_gate(d) } else { raw.clone() };
-        gate_row(p, d, &gate, C::Gate(i), active);
+        gate_row(p, d, &gate, d.create.then_some(C::Gate(i)), active);
     }
     if d.entity
         .gate_id
         .is_some_and(|id| !d.entity.gates.contains_key(&id.to_string()))
     {
         let i = d.fields.iter().position(|f| f.key == "gate_name").unwrap();
-        gate_row(p, d, &pending_gate(d), C::Field(i), true);
+        gate_row(p, d, &pending_gate(d), Some(C::Field(i)), true);
     }
-    p.button("Add gate", C::AddGate);
-    p.button("Remove draft gate", C::RemoveGate);
+    if d.create {
+        p.button("Add gate", C::AddGate);
+        p.button("Remove draft gate", C::RemoveGate);
+    }
 }
 fn pending_gate(d: &LibraryDraft) -> Value {
     let mut gate = Value::Object(Default::default());
@@ -85,7 +89,7 @@ fn pending_gate(d: &LibraryDraft) -> Value {
 }
 pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
     p.line(&format!(
-        "Review: create Entity {}",
+        "Review Entity {}",
         raw["name"].as_str().unwrap_or("Unavailable")
     ));
     p.line(&format!(

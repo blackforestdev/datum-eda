@@ -7,10 +7,10 @@ use crate::api::native_write::{
 };
 use crate::substrate::{CommitSource, DesignModel, ProjectResolver};
 use std::path::Path;
-fn provenance() -> WriteProvenance {
+pub(super) fn provenance() -> WriteProvenance {
     WriteProvenance::new("test", CommitSource::Manual, "Create logical Entity")
 }
-fn prepare(
+pub(super) fn prepare(
     model: &DesignModel,
     root: &Path,
     kind: &str,
@@ -34,7 +34,7 @@ fn prepare(
         serde_json::to_value(request).unwrap(),
     )
 }
-fn fixture() -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
+pub(super) fn fixture() -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
     let root = super::super::super::test_support::temp_project_root("entity_gui");
     bootstrap_native_project(
         &root,
@@ -54,7 +54,7 @@ fn fixture() -> (std::path::PathBuf, DesignModel, Uuid, Uuid) {
     commit_prepared(&mut model, &root, p).unwrap();
     (root, model, unit, symbol)
 }
-fn fields(gate: Uuid, unit: Uuid, symbol: Uuid) -> Value {
+pub(super) fn fields(gate: Uuid, unit: Uuid, symbol: Uuid) -> Value {
     json!({"name":"Designer Entity","prefix":"U","manufacturer":"Designer","tags":["logic"],"gates":{gate.to_string():{"uuid":gate,"name":"A","unit":unit,"symbol":symbol}}})
 }
 #[test]

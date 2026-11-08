@@ -661,6 +661,19 @@ correct stored text in both new fields and existing detail UI; PM920 retains the
 actual editing/data scopes with that separate glyph limitation. No readable-Greek,
 physical/HUMAN, release-GUI execution or full qualification is claimed.
 
+Saved Entity metadata editing (`dat-saved-entity-metadata-edit-3y3v`) now supports
+name, reference prefix, manufacturer and tags in the shared Library form, with
+saved gates read-only. Only changed fields patch the raw Entity through the
+canonical writer; the engine rejects structural/identity edits and wrong or
+ambiguous source ownership. Twenty-two focused checks pass. The isolated debug
+App passes 67 steps with six inspected captures: Cancel preserves files/journal;
+metadata-only commit, Undo/Redo and Save/cold retain exact gates, links, Part,
+all other authored files and placed root/child rendered identity. The initial
+fixture's incorrect PCB-component assertion is retained and corrected to the
+qualified schematic scene and actual placed-symbol graphics. No gate relinking,
+prefix-driven renumbering, physical/HUMAN, release-GUI execution or broad goal
+acceptance is claimed.
+
 ### Native File-Type Catalog — Owner-Requested Proposal
 
 Current native loading uses manifest/path context and `.json`. Proposed file types remain pending owner disposition. [Detailed evidence](progress/workflow_governance_details.md#native-file-type-catalog--owner-requested-proposal).

@@ -8,11 +8,34 @@ pub struct EntityDraft {
     symbols: Vec<(Uuid, Uuid, String)>,
 }
 impl LibraryDraft {
-    pub(super) fn entity_fields(&mut self, browser: &LibraryBrowser) {
+    pub(super) fn entity_fields(
+        &mut self,
+        browser: &LibraryBrowser,
+        raw: &Value,
+    ) -> Result<(), String> {
+        self.field("prefix", "Reference prefix", raw.get("prefix"), vec![]);
+        self.field(
+            "manufacturer",
+            "Manufacturer",
+            raw.get("manufacturer"),
+            vec![],
+        );
+        let tags = match raw.get("tags") {
+            None => String::new(),
+            Some(value) => serde_json::from_value::<Vec<String>>(value.clone())
+                .map_err(|_| "Saved Entity tags are unavailable")?
+                .join(", "),
+        };
+        self.field("tags", "Tags (comma separated)", Some(&json!(tags)), vec![]);
+        if !self.create {
+            self.entity.gates = raw
+                .get("gates")
+                .and_then(Value::as_object)
+                .ok_or("Saved Entity gate data is unavailable")?
+                .clone();
+            return Ok(());
+        }
         self.entity.gate_id = Some(Uuid::new_v4());
-        self.field("prefix", "Reference prefix", None, vec![]);
-        self.field("manufacturer", "Manufacturer", None, vec![]);
-        self.field("tags", "Tags (comma separated)", None, vec![]);
         self.field("gate_name", "Gate name", None, vec![]);
         let units = named(browser, "units")
             .into_iter()
@@ -48,6 +71,7 @@ impl LibraryDraft {
                 ))
             })
             .collect();
+        Ok(())
     }
     pub(super) fn refresh_entity_symbols(&mut self) {
         let unit = self.value("gate_unit").parse::<Uuid>().ok();
@@ -104,7 +128,9 @@ impl LibraryDraft {
     }
     pub(super) fn entity_request(&self, fields: &mut Map<String, Value>) -> Result<(), String> {
         for key in ["prefix", "manufacturer"] {
-            fields.insert(key.into(), json!(self.value(key)));
+            if self.create || self.dirty.contains(key) {
+                fields.insert(key.into(), json!(self.value(key)));
+            }
         }
         let tags: BTreeSet<_> = self
             .value("tags")
@@ -112,7 +138,12 @@ impl LibraryDraft {
             .map(str::trim)
             .filter(|v| !v.is_empty())
             .collect();
-        fields.insert("tags".into(), json!(tags));
+        if self.create || self.dirty.contains("tags") {
+            fields.insert("tags".into(), json!(tags));
+        }
+        if !self.create {
+            return Ok(());
+        }
         let gates = self.entity_gates()?;
         if gates.is_empty() {
             return Err("Add one or more named gates".into());
@@ -170,3 +201,6 @@ impl LibraryDraft {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod edit_tests;

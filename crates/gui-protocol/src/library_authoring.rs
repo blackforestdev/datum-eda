@@ -96,10 +96,8 @@ impl LibraryDraft {
         if kind == "parts" && entry.is_some() {
             return Err("Saved Part editing is unavailable in this increment".into());
         }
-        if matches!(kind, "packages" | "entities") && entry.is_some() {
-            return Err(
-                "Saved Package and Entity editing are unavailable in this increment".into(),
-            );
+        if kind == "packages" && entry.is_some() {
+            return Err("Saved Package editing is unavailable in this increment".into());
         }
         if kind == "symbols" && browser.choices("units").is_empty() {
             return Err("Create a named Unit before creating its Symbol".into());
@@ -152,7 +150,7 @@ impl LibraryDraft {
                 draft.hydrate_saved(raw)?;
             }
         } else if kind == "entities" {
-            draft.entity_fields(browser);
+            draft.entity_fields(browser, raw)?;
         } else if kind == "packages" {
             draft.package_fields();
         } else if kind == "padstacks" {

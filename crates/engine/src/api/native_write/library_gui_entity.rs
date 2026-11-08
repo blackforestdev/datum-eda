@@ -3,6 +3,9 @@ use super::*;
 use crate::substrate::Operation;
 use std::collections::HashSet;
 
+#[path = "library_gui_entity_edit.rs"]
+mod edit;
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct GateIntent {
@@ -19,9 +22,7 @@ pub(super) fn build(
     create: bool,
 ) -> Result<PreparedWrite, EngineError> {
     if !create {
-        return Err(refusal(
-            "Saved Entity editing is unavailable in this increment",
-        ));
+        return edit::build(context, provenance, request);
     }
     if request
         .fields
@@ -126,3 +127,7 @@ pub(super) fn build(
 #[cfg(test)]
 #[path = "library_gui_entity_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "library_gui_entity_edit_tests.rs"]
+mod edit_tests;

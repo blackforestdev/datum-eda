@@ -457,7 +457,7 @@ impl Runtime {
                             controls.extend([C::AddAnchor, C::RemoveAnchor]);
                         }
                     }
-                    if d.kind == "entities" {
+                    if d.kind == "entities" && d.create {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));
                         controls.extend([C::AddGate, C::RemoveGate]);
                     }

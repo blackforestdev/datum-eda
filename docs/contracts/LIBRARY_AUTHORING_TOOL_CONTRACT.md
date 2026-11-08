@@ -195,8 +195,25 @@ checks and the isolated ordinary App run are recorded in the task; the App uses
 presented controls and logical keys in a debug test profile. This establishes
 neither physical/HUMAN qualification nor universal raw-operation validation.
 Generic raw Entity gate-link admission is separate intake
-`dat-entity-raw-links-ysdr`. Saved Entity/Part editing/relinking, saved PinPadMap editing,
+`dat-entity-raw-links-ysdr`. Saved Entity gate editing/relinking, saved Part editing,
+saved PinPadMap editing,
 multi-gate placement, approval, models and broader library completion remain open.
+
+Saved Entity metadata editing (`dat-saved-entity-metadata-edit-3y3v`) now uses the
+same Library form for name, reference prefix, manufacturer and tags. Existing
+gates appear as a read-only named Gate / Unit / Symbol / reference-state table.
+Preview and explicit Commit use `datum.library.edit` and the canonical Set writer;
+the engine independently refuses gate, identity, package and unsupported fields,
+ambiguous sources and noncanonical ownership. Only changed metadata fields enter
+the patch. Unedited raw fields, ordered collections, unknown metadata and absent
+defaults remain intact. Prefix revision does not renumber placed references or
+update placed bindings. Cancel leaves all canonical files and journal unchanged;
+Undo/Redo, Save and cold reopening preserve the corrected Entity and unchanged
+gate/link IDs, linked definitions, Part and placed root/child circuitry. Twenty-two
+focused checks and the isolated ordinary debug App's 67 steps and six inspected
+captures establish this bounded behavior. The App uses presented controls and
+programmatic logical keys; no physical/HUMAN, release-GUI execution, gate topology
+policy or full library qualification is claimed.
 
 The creation-only Part GUI increment (`dat-part-gui-create-6zs4`) adds explicit
 manufacturer/MPN, value, description, datasheet reference and tags, with named

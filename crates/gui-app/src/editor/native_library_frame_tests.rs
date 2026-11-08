@@ -5,6 +5,8 @@ use super::*;
 mod electrical;
 #[path = "native_library_frame_tests/entity.rs"]
 mod entity;
+#[path = "native_library_frame_tests/entity_edit.rs"]
+mod entity_edit;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
 #[path = "native_library_frame_tests/map_labels.rs"]
@@ -36,6 +38,7 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
 enum Step {
+    EntityEdit(usize),
     TextFields(usize),
     MapLabels(usize),
     PaneContext(pane_context::Action),
@@ -116,6 +119,7 @@ impl Fixture {
                         | Step::PaneContext(_)
                         | Step::MapLabels(_)
                         | Step::TextFields(_)
+                        | Step::EntityEdit(_)
                 )
             ) && r.workspace().library.basis.is_none())
             || r.renderer.render_session().has_pending_frame()
@@ -222,6 +226,7 @@ impl Fixture {
             Step::CheckPackage(present) => self.check_package(present),
             Step::Electrical(stage) => self.check_electrical(stage),
             Step::Entity(stage) => self.check_entity(stage),
+            Step::EntityEdit(stage) => self.check_entity_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
             Step::Placement(stage) => self.placement_stage(events, stage),
