@@ -328,10 +328,11 @@ successful rename, Undo/Redo and cold reopening.
 The original test-index borrow compile error, duplicate-alias negative-fixture
 assumption and App-test UUID parse-type compile error remain recorded. The general
 writer can retain legacy gate-key aliases; the saved editor refuses ambiguous
-parsed membership without rewriting that source. Separate Inspector path-label
-debt `dat-library-gate-inspector-path-06xw` remains: one second-gate name path uses
-the first gate's caption, while source, editable table and named choices remain
-correct. This does not supply gate add/remove or Unit relinking, inferred placed
+parsed membership without rewriting that source. The Inspector path-label
+report `dat-library-gate-inspector-path-06xw` was retracted after actual metadata,
+shared-font and raster diagnostics: both original name rows are pixel-identical
+to independent cold renders of their correct text. The original visual reading
+was wrong; no production fix or renderer workaround was needed. This does not supply gate add/remove or Unit relinking, inferred placed
 updates/ECO, approval, physical/HUMAN observation, release-GUI execution, complete
 Inspector labeling, full library qualification or broader-goal acceptance.
 

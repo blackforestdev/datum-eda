@@ -728,8 +728,10 @@ inspected captures. All old root/child placed sources, CIs, Maps and Nets remain
 byte-exact without Move/new-placement compensation. A real connected eight-pad
 `Complete` certificate survives successful rename/history/cold, including held
 and fresh membership. Raw compile and negative-fixture failures remain recorded
-at their original scopes. Separate Inspector name-path labeling debt
-`dat-library-gate-inspector-path-06xw` remains; source/table/choices are correct.
+at their original scopes. The Inspector name-path report
+`dat-library-gate-inspector-path-06xw` was retracted: actual metadata/shared-font
+evidence and exact original-row pixel comparisons confirm the correct captions.
+The visual reading was wrong; no production fix or new qualification is claimed.
 No topology editing, implicit placed update/ECO, approval, physical/HUMAN,
 release-GUI execution, full Inspector/library qualification or broader-goal
 acceptance is supplied.
