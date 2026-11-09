@@ -10,12 +10,17 @@ pub fn native_schematic_net_info(
     model: &DesignModel,
     schematic: &Schematic,
 ) -> Result<Vec<SchematicNetInfo>, EngineError> {
-    // Preserve the established legacy/import projection until explicitly adopted
-    // native declarations require recorded scalar authority.
+    // Declarations are not required for explicit native Net adoption. Once any
+    // Net authority is recorded, even retired/partial records must not silently
+    // turn back into coordinate-derived identities. Pure legacy stays unchanged.
     if schematic
         .sheets
         .values()
         .all(|s| s.net_declarations.is_empty())
+        && !model
+            .electrical_identities
+            .values()
+            .any(|record| matches!(record.identity, ElectricalIdentity::Net { .. }))
     {
         return Ok(super::schematic_net_info(schematic));
     }
@@ -122,3 +127,7 @@ pub fn native_schematic_net_info(
     result.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
     Ok(result)
 }
+
+#[cfg(test)]
+#[path = "native_net_info_tests.rs"]
+mod tests;
