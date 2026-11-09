@@ -61,7 +61,7 @@ pub(super) fn description(
         .map(|lod| lod.to_string())
         .unwrap_or_else(|| "Selection appearance awaiting redraw".into());
     match node {
-        Node::Root=>format!("Read-only {}. {}. {} {} unprojected; {} dropped. {} Move, rotate, mirror, lock and group unavailable for read-only selection. {} related identities keep normal authored appearance and are not selected. {lod}.",view.summary(),pane,evaluation,view.unprojected.len(),view.dropped.len(),if view.stale { "Stale previous basis; current geometry unavailable." } else { "Current resolved basis." },view.related.len()),
+        Node::Root=>format!("Read-only inspection of {}. {}. {} {} unprojected; {} dropped. {} Transform support depends on the current editor selection and edit state. Lock and named group creation are unavailable. {} related identities keep normal authored appearance and are not selected. {lod}.",view.summary(),pane,evaluation,view.unprojected.len(),view.dropped.len(),if view.stale { "Stale previous basis; current geometry unavailable." } else { "Current resolved basis." },view.related.len()),
         Node::Member(id) => format!(
             "Selected {}. Sheet occurrence depth {}; hidden {}; locked {}; unprojected {}; selection focus {}; unavailable properties {}; read-only.",
             member_label(view, id), id.instance_path.len(), view.hidden.contains(id), view.locked.contains(id),
