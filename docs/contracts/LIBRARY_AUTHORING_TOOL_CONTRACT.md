@@ -413,6 +413,33 @@ original results. Package relinking, implicit placed updates/ECO, approval,
 physical/HUMAN, release-GUI execution and full library qualification remain outside
 this increment.
 
+Saved Part Package correction (`dat-saved-part-package-4w84`) adds an explicit
+existing named Package choice to the shared form. A compatible default Footprint
+or an explicit empty choice can accompany it; incompatible declared Footprint
+and Map choices stay visible until the designer corrects them. Only requested
+leaves change. Every retained default/nondefault Map and legacy mapping remains
+authoritative. An incompatible Map Footprint/Package relationship or absent
+candidate Package pad membership refuses atomically, including when default
+Footprint and Map are explicitly cleared. A connected eight-pad `Complete`
+certificate, source and journal remain unchanged; no mapped migration is supplied.
+
+Preview/Cancel and Part Undo/Redo preserve old root/child source and CI bytes
+exactly. Old components retain their declared Part revision and editability.
+The subsequent real child Move and four history transactions qualify only actual
+CI/member counters and intended coordinates; cold reopening retains the original
+Part pin and bindings. Later explicit placement uses current Part revision 3 and
+its selected Package, without updating old users.
+
+Thirty-two focused Rust cases and one ordinary isolated debug-App case pass.
+The App completes 90 stages in 23.46 seconds with eight inspected captures.
+The first form attempt retains its raw-versus-canonical UUID assertion failure;
+the first App attempt retains its whole-Net-set assertion failure after legitimate
+new placement. The corrected App checks every baseline Net membership individually
+and preserves the strict source/CI comparisons. Known `dat-2glp` and `dat-6l8l`
+boundaries remain separate. This supplies no implicit placed update/ECO, approval,
+physical/HUMAN observation, release-GUI execution, full library qualification or
+broader-goal acceptance.
+
 The creation-only PinPadMap GUI increment (`dat-pin-pad-map-gui-create-emck`)
 adds named Part and compatible explicit Footprint choices and a table assigning
 Footprint pads to gate-qualified Unit pins. Unmapped pads remain visible;

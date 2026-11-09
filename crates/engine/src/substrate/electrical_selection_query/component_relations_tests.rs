@@ -623,3 +623,6 @@ mod part_default_map_tests;
 
 #[path = "component_relations_part_entity_tests.rs"]
 mod part_entity_tests;
+
+#[path = "component_relations_part_package_tests.rs"]
+mod part_package_tests;

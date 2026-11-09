@@ -334,7 +334,7 @@ impl Fixture {
                         .any(|(id, label)| id == intent["replacement"].as_str().unwrap()
                             && label.starts_with(NAME))
                 );
-                assert!(!d.fields.iter().any(|f| f.key == "part_package"));
+                assert!(d.fields.iter().any(|f| f.key == "part_package"));
             }
             2 => {
                 let d = state.library.draft.as_ref().unwrap();

@@ -43,14 +43,13 @@ fn saved_part_exposes_metadata_and_default_footprint_with_changed_fields_only() 
             "datasheet",
             "tags",
             "part_entity",
+            "part_package",
             "part_footprint",
             "part_map"
         ]
     );
     assert!(d.fields.iter().take(6).all(|f| !f.selector));
-    assert!(d.fields[6].selector);
-    assert!(d.fields[7].selector);
-    assert!(d.fields[8].selector);
+    assert!(d.fields.iter().skip(6).all(|f| f.selector));
     assert_eq!(d.part.original.as_ref(), Some(&raw));
     assert_eq!(d.value("tags"), "z, a, z");
     assert!(d.request().unwrap().fields.is_empty());
@@ -87,7 +86,7 @@ fn saved_part_entity_is_explicit_unique_and_preserves_unedited_raw_declaration()
     });
     let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
     assert_eq!(d.value("part_entity"), original.to_string());
-    assert!(!d.fields.iter().any(|f| f.key == "part_package"));
+    assert!(d.fields.iter().any(|f| f.key == "part_package"));
     assert!(d.request().unwrap().fields.is_empty());
     change_part(&mut d, "description", "Metadata only".into());
     assert_eq!(
@@ -234,7 +233,7 @@ fn saved_default_footprint_uses_fixed_package_and_preserves_untouched_optional_s
         let mut d =
             LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
         assert!(d.request().unwrap().fields.is_empty());
-        assert!(!d.fields.iter().any(|f| f.key == "part_package"));
+        assert!(d.fields.iter().any(|f| f.key == "part_package"));
         let i = d
             .fields
             .iter()
@@ -408,8 +407,8 @@ fn saved_map_choices_preserve_optional_raw_states_and_compose_without_autoclear(
         let (browser, saved, fa, fb, a, b) = map_draft_fixture(state);
         let mut d =
             LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
-        assert_eq!(d.fields.len(), 9);
-        assert!(d.fields[8].selector);
+        assert_eq!(d.fields.len(), 10);
+        assert!(d.fields[9].selector);
         assert!(d.request().unwrap().fields.is_empty());
         assert_eq!(d.value("part_footprint"), fa.to_string());
         assert_eq!(
@@ -421,13 +420,13 @@ fn saved_map_choices_preserve_optional_raw_states_and_compose_without_autoclear(
             }
         );
         assert!(
-            d.fields[8]
+            d.fields[9]
                 .choices
                 .iter()
                 .any(|(id, label)| id == &a.to_string() && label.contains("Map A"))
         );
         assert!(
-            !d.fields[8]
+            !d.fields[9]
                 .choices
                 .iter()
                 .any(|(id, _)| id == &b.to_string())
@@ -446,7 +445,7 @@ fn saved_map_choices_preserve_optional_raw_states_and_compose_without_autoclear(
                 "Footprint choice must not author a Map clear"
             );
             assert!(
-                d.fields[8]
+                d.fields[9]
                     .choices
                     .iter()
                     .any(|(id, label)| id == &a.to_string() && label.contains("Unavailable"))
@@ -494,7 +493,7 @@ fn saved_map_without_default_footprint_never_infers_one_and_creation_has_no_map_
         .remove("default_footprint");
     let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
     assert!(
-        d.fields[8]
+        d.fields[9]
             .choices
             .iter()
             .any(|(id, _)| id == &b.to_string())
@@ -536,7 +535,7 @@ fn saved_unavailable_duplicate_or_foreign_map_declaration_is_not_silently_cleare
             LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
         assert_eq!(d.value("part_map"), a.to_string());
         assert!(
-            d.fields[8]
+            d.fields[9]
                 .choices
                 .iter()
                 .any(|(id, label)| id == &a.to_string() && label.contains("Unavailable"))
@@ -558,4 +557,99 @@ fn saved_unavailable_duplicate_or_foreign_map_declaration_is_not_silently_cleare
         );
         assert_eq!(d.part.original.as_ref(), Some(&saved.raw));
     }
+}
+
+#[test]
+fn saved_package_choice_requires_explicit_compatible_footprint_and_preserves_raw() {
+    let (mut browser, mut saved, _, fb, _, _) = map_draft_fixture(1);
+    let package = Uuid::new_v4();
+    let old: Uuid = serde_json::from_value(saved.raw["package"].clone()).unwrap();
+    saved.raw["package"] = json!(old.simple().to_string());
+    browser.entries.push(LibraryEntry {
+        id: package,
+        kind: "packages".into(),
+        name: "Alternate package".into(),
+        source_path: format!("pool/packages/{package}.json"),
+        revision: Some(0),
+        warning: None,
+        raw: json!({"pads":{}}),
+    });
+    browser.entries.iter_mut().find(|e| e.id == fb).unwrap().raw["package"] = json!(package);
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    assert_eq!(d.value("part_package"), old.to_string());
+    assert!(d.request().unwrap().fields.is_empty());
+    change_part(&mut d, "part_package", package.to_string());
+    assert!(
+        d.fields
+            .iter()
+            .find(|f| f.key == "part_footprint")
+            .unwrap()
+            .choices
+            .iter()
+            .any(|(id, label)| id == d.value("part_footprint") && label.contains("Unavailable"))
+    );
+    assert!(d.request().is_err());
+    change_part(&mut d, "part_footprint", fb.to_string());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"package":package,"default_footprint":fb})
+            .as_object()
+            .unwrap()
+    );
+    change_part(&mut d, "part_footprint", String::new());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"package":package,"default_footprint":null})
+            .as_object()
+            .unwrap()
+    );
+    assert_eq!(d.part.original.as_ref(), Some(&saved.raw));
+    let duplicate = browser.entries.last().unwrap().clone();
+    browser.entries.push(duplicate);
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    change_part(&mut d, "part_package", package.to_string());
+    assert!(d.request().is_err());
+}
+
+#[test]
+fn saved_package_footless_map_checks_candidate_pad_universe_without_inference() {
+    let (mut browser, mut saved, _, _, a, _) = map_draft_fixture(0);
+    saved
+        .raw
+        .as_object_mut()
+        .unwrap()
+        .remove("default_footprint");
+    let (package, pad) = (Uuid::new_v4(), Uuid::new_v4());
+    let map = browser.entries.iter_mut().find(|e| e.id == a).unwrap();
+    map.raw["footprint"] = Value::Null;
+    map.raw["mappings"] = json!({pad.to_string():{"gate":Uuid::new_v4(),"pin":Uuid::new_v4()}});
+    browser.entries.push(LibraryEntry {
+        id: package,
+        kind: "packages".into(),
+        name: "Other package".into(),
+        source_path: format!("pool/packages/{package}.json"),
+        revision: Some(0),
+        warning: None,
+        raw: json!({"pads":{pad.to_string():{}}}),
+    });
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    change_part(&mut d, "part_package", package.to_string());
+    assert_eq!(d.value("part_map"), a.to_string());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"package":package}).as_object().unwrap()
+    );
+    assert_eq!(d.value("part_footprint"), "");
+    browser.entries.last_mut().unwrap().raw = json!({});
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    change_part(&mut d, "part_package", package.to_string());
+    assert_eq!(d.value("part_map"), a.to_string());
+    assert!(d.request().is_err());
+    change_part(&mut d, "part_map", String::new());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"package":package,"default_pin_pad_map":null})
+            .as_object()
+            .unwrap()
+    );
 }

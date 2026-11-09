@@ -17,7 +17,9 @@ pub(super) fn build(
         "tags",
     ];
     let entity_edit = request.fields.contains_key("entity");
+    let package_edit = request.fields.contains_key("package");
     if !entity_edit
+        && !package_edit
         && !request.fields.contains_key("default_footprint")
         && !request.fields.contains_key("default_pin_pad_map")
     {
@@ -35,12 +37,13 @@ pub(super) fn build(
     }
     let (target, mut object) = saved_source::load(context.model, request.object_id, "parts")?;
     for (key, value) in request.fields {
-        if key == "entity" {
-            let entity: Uuid = value
+        if matches!(key.as_str(), "entity" | "package") {
+            let label = if key == "entity" { "Entity" } else { "Package" };
+            let reference: Uuid = value
                 .as_str()
                 .and_then(|s| s.parse().ok())
-                .ok_or_else(|| refusal("Choose an existing named Entity"))?;
-            object["entity"] = json!(entity);
+                .ok_or_else(|| refusal(format!("Choose an existing named {label}")))?;
+            object[&key] = json!(reference);
         } else if matches!(key.as_str(), "default_footprint" | "default_pin_pad_map") {
             let label = if key == "default_footprint" {
                 "Footprint"
@@ -68,7 +71,7 @@ pub(super) fn build(
         } else {
             if !METADATA.contains(&key.as_str()) {
                 return Err(refusal(
-                    "Saved Part editing refuses Package, Map payload, identity and policy changes",
+                    "Saved Part editing refuses Map payload, identity and policy changes",
                 ));
             }
             if key == "tags" {
@@ -91,6 +94,47 @@ pub(super) fn build(
     let (mut graph, counts) = graph(context.model)?;
     for &(id, kind) in &references {
         qualify(context.model, &graph, &counts, id, kind)?;
+    }
+    if package_edit {
+        let package = &graph.packages[&part.package];
+        if package["name"]
+            .as_str()
+            .is_none_or(|name| name.trim().is_empty())
+        {
+            return Err(refusal("Choose an existing named Package"));
+        }
+        let mut seen = BTreeSet::new();
+        for collection in ["terminals", "pads"] {
+            for (key, row) in package
+                .get(collection)
+                .and_then(Value::as_object)
+                .into_iter()
+                .flatten()
+            {
+                let id: Uuid = serde_json::from_value(row["uuid"].clone())?;
+                if key.parse::<Uuid>().ok() != Some(id)
+                    || !seen.insert(id)
+                    || context.model.objects.get(&id).is_none_or(|o| {
+                        o.source_shard_id != context.model.objects[&part.package].source_shard_id
+                    })
+                {
+                    return Err(refusal(
+                        "Package member identity is missing, foreign or ambiguous",
+                    ));
+                }
+            }
+        }
+        let package: crate::pool::Package = serde_json::from_value(package.clone())?;
+        // Missing optional pads is empty membership, never a legacy-map exemption.
+        if part
+            .pad_map
+            .keys()
+            .any(|pad| !package.pads.contains_key(pad))
+        {
+            return Err(refusal(
+                "Retained legacy mapping references a pad outside the selected Package",
+            ));
+        }
     }
     if entity_edit {
         let entity = &graph.entities[&part.entity];
@@ -128,26 +172,35 @@ pub(super) fn build(
                 ));
             }
         }
-        // Nondefault Maps retain authority too: clearing the default does not
-        // retarget their Gate references to the replacement Entity.
-        for (&id, raw) in &graph.pin_pad_maps {
-            if raw["part"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(part.uuid) {
-                qualify(context.model, &graph, &counts, id, "pin_pad_maps")?;
-                references.insert((id, "pin_pad_maps"));
-                let map: crate::pool::PinPadMap = serde_json::from_value(raw.clone())?;
-                if let Some(footprint) = map.footprint {
-                    qualify(context.model, &graph, &counts, footprint, "footprints")?;
-                    references.insert((footprint, "footprints"));
-                }
-            }
-        }
     }
-    if let Some(map_id) = part.default_pin_pad_map {
+    let mut maps: BTreeSet<_> = part.default_pin_pad_map.into_iter().collect();
+    if entity_edit || package_edit {
+        maps.extend(
+            graph
+                .pin_pad_maps
+                .iter()
+                .filter(|(_, raw)| {
+                    raw["part"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(part.uuid)
+                })
+                .map(|(id, _)| *id),
+        );
+    }
+    // Clearing a default never erases retained nondefault Map authority.
+    for map_id in maps {
+        qualify(context.model, &graph, &counts, map_id, "pin_pad_maps")?;
+        references.insert((map_id, "pin_pad_maps"));
         let map: crate::pool::PinPadMap =
             serde_json::from_value(graph.pin_pad_maps[&map_id].clone())?;
         if let Some(footprint) = map.footprint {
             qualify(context.model, &graph, &counts, footprint, "footprints")?;
             references.insert((footprint, "footprints"));
+            let source: crate::pool::Footprint =
+                serde_json::from_value(graph.footprints[&footprint].clone())?;
+            if package_edit && source.package != part.package {
+                return Err(refusal(
+                    "Retained Map Footprint must belong to the selected Part Package",
+                ));
+            }
         }
         let gates = graph.entities[&part.entity]["gates"]
             .as_object()
@@ -190,7 +243,7 @@ pub(super) fn build(
         .pin_pad_maps
         .iter()
         .filter(|(_, raw)| {
-            entity_edit
+            (entity_edit || package_edit)
                 && raw["part"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(part.uuid)
         })
         .filter_map(|(id, _)| graph.subjects.get(id))
@@ -202,10 +255,15 @@ pub(super) fn build(
         .collect();
     for diagnostic in graph.dependency_diagnostics() {
         let related = diagnostic.subject == *part_subject
-            || (entity_edit
+            || ((entity_edit || package_edit)
                 && diagnostic
                     .subject
                     .starts_with(&format!("{part_subject}#pad_map/")))
+            || (package_edit
+                && graph.subjects.get(&part.package).is_some_and(|s| {
+                    diagnostic.subject == *s
+                        || diagnostic.subject.starts_with(&format!("{s}#pads/"))
+                }))
             || affected_maps.iter().any(|s| {
                 diagnostic.subject == **s
                     || diagnostic.subject.starts_with(&format!("{s}#mappings/"))

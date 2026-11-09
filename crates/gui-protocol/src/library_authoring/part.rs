@@ -5,13 +5,16 @@ pub struct PartDraft {
     footprints: Vec<(Uuid, Uuid, String)>,
     maps: Vec<PartMapChoice>,
     entities: BTreeSet<Uuid>,
+    packages: BTreeSet<Uuid>,
+    pads: BTreeMap<Uuid, BTreeSet<Uuid>>,
     pub original: Option<Value>,
 }
 #[derive(Debug, Clone, PartialEq)]
 struct PartMapChoice {
     id: Uuid,
     footprint: Option<Uuid>,
-    package: Uuid,
+    package: Option<Uuid>,
+    pads: BTreeSet<Uuid>,
     label: String,
     entities: BTreeSet<Uuid>,
 }
@@ -140,6 +143,42 @@ impl LibraryDraft {
                 unique(browser, "packages"),
             );
         }
+        if !self.create {
+            let choices = unique(browser, "packages");
+            self.part.packages = choices
+                .iter()
+                .filter_map(|(id, _)| id.parse().ok())
+                .collect();
+            let declared = raw["package"]
+                .as_str()
+                .and_then(|s| s.parse::<Uuid>().ok())
+                .map(|id| json!(id));
+            self.field("part_package", "Named Package", declared.as_ref(), choices);
+            let field = self.fields.last_mut().unwrap();
+            if !field.choices.iter().any(|(id, _)| *id == field.text) {
+                field.choices.push((
+                    field.text.clone(),
+                    format!("Unavailable / ambiguous Package: {}", field.text),
+                ));
+            }
+        }
+        self.part.pads = browser
+            .entries
+            .iter()
+            .filter(|e| matches!(e.kind.as_str(), "packages" | "footprints") && e.warning.is_none())
+            .map(|e| {
+                (
+                    e.id,
+                    e.raw
+                        .get("pads")
+                        .and_then(Value::as_object)
+                        .into_iter()
+                        .flat_map(|p| p.keys())
+                        .filter_map(|id| id.parse().ok())
+                        .collect(),
+                )
+            })
+            .collect();
         let footprint = raw
             .get("default_footprint")
             .and_then(Value::as_str)
@@ -193,18 +232,27 @@ impl LibraryDraft {
                         Some(v) => Some(v.as_str()?.parse::<Uuid>().ok()?),
                     };
                     let package = if let Some(footprint) = footprint {
-                        self.part
-                            .footprints
-                            .iter()
-                            .find(|(id, _, _)| *id == footprint)?
-                            .1
+                        Some(
+                            self.part
+                                .footprints
+                                .iter()
+                                .find(|(id, _, _)| *id == footprint)?
+                                .1,
+                        )
                     } else {
-                        self.part_package()?
+                        None
                     };
                     Some(PartMapChoice {
                         id,
                         footprint,
                         package,
+                        pads: raw
+                            .get("mappings")
+                            .and_then(Value::as_object)
+                            .into_iter()
+                            .flat_map(|rows| rows.keys())
+                            .filter_map(|id| id.parse().ok())
+                            .collect(),
                         label,
                         entities: map_entities(browser, raw),
                     })
@@ -215,15 +263,26 @@ impl LibraryDraft {
         Ok(())
     }
     fn part_package(&self) -> Option<Uuid> {
-        if self.create {
-            self.value("part_package").parse::<Uuid>().ok()
-        } else {
-            self.part
-                .original
-                .as_ref()
-                .and_then(|r| r["package"].as_str()?.parse::<Uuid>().ok())
-        }
+        self.value("part_package").parse::<Uuid>().ok()
     }
+    fn map_package_compatible(&self, map: &PartMapChoice) -> bool {
+        let package = self.part_package();
+        if map.package.is_some() && map.package != package {
+            return false;
+        }
+        if !self.dirty.contains("part_package") {
+            return true;
+        }
+        let source = map
+            .footprint
+            .or_else(|| self.value("part_footprint").parse().ok())
+            .or(package);
+        map.pads.is_empty()
+            || source
+                .and_then(|id| self.part.pads.get(&id))
+                .is_some_and(|pads| map.pads.is_subset(pads))
+    }
+
     pub(super) fn refresh_part_footprints(&mut self) {
         let package = self.part_package();
         if let Some(f) = self.fields.iter_mut().find(|f| f.key == "part_footprint") {
@@ -249,7 +308,13 @@ impl LibraryDraft {
     }
     pub(super) fn refresh_part_maps(&mut self) {
         let footprint = self.value("part_footprint").parse::<Uuid>().ok();
-        let package = self.part_package();
+        let compatible: BTreeSet<_> = self
+            .part
+            .maps
+            .iter()
+            .filter(|m| self.map_package_compatible(m))
+            .map(|m| m.id)
+            .collect();
         let entity = self.value("part_entity").parse::<Uuid>().ok();
         let original_entity = self
             .part
@@ -263,7 +328,7 @@ impl LibraryDraft {
                     .maps
                     .iter()
                     .filter(|m| {
-                        Some(m.package) == package
+                        compatible.contains(&m.id)
                             && (entity.is_none()
                                 || entity == original_entity
                                 || entity.is_some_and(|e| m.entities.contains(&e)))
@@ -289,6 +354,14 @@ impl LibraryDraft {
                     return Err("Choose an available, unique named Entity".into());
                 }
                 fields.insert("entity".into(), json!(entity));
+            }
+            if self.dirty.contains("part_package") {
+                let package = self.uuid("part_package")?;
+                if !self.part.packages.contains(&package) {
+                    return Err("Choose an available, unique named Package".into());
+                }
+                self.part_footprint()?;
+                fields.insert("package".into(), json!(package));
             }
             for key in [
                 "manufacturer",
@@ -324,6 +397,7 @@ impl LibraryDraft {
             if self.dirty.contains("part_map")
                 || self.dirty.contains("part_footprint")
                 || self.dirty.contains("part_entity")
+                || self.dirty.contains("part_package")
             {
                 let map = self.part_map()?;
                 if self.dirty.contains("part_map") {
@@ -392,7 +466,6 @@ impl LibraryDraft {
         }
         let id = self.uuid("part_map")?;
         let footprint = self.part_footprint()?;
-        let package = self.part_package();
         let entity = self.value("part_entity").parse::<Uuid>().ok();
         let original_entity = self
             .part
@@ -402,7 +475,7 @@ impl LibraryDraft {
         if !self.part.maps.iter().any(|m| {
             m.id == id
                 && (entity == original_entity || entity.is_some_and(|e| m.entities.contains(&e)))
-                && Some(m.package) == package
+                && self.map_package_compatible(m)
                 && (m.footprint.is_none() || footprint.is_none() || m.footprint == footprint)
         }) {
             return Err("Choose a compatible named PinPadMap for this Part or no default".into());

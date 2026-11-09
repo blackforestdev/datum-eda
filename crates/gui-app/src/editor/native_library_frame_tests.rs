@@ -31,6 +31,8 @@ mod part_default_map;
 mod part_edit;
 #[path = "native_library_frame_tests/part_entity.rs"]
 mod part_entity;
+#[path = "native_library_frame_tests/part_package.rs"]
+mod part_package;
 #[path = "native_library_frame_tests/part_placement.rs"]
 mod part_placement;
 #[path = "native_library_frame_tests/pin_pad_map.rs"]
@@ -59,6 +61,7 @@ enum Step {
     PartDefaultFootprint(usize),
     PartDefaultMap(usize),
     PartEntity(usize),
+    PartPackage(usize),
     SymbolRectangle(usize),
     EntityEdit(usize),
     EntityGateEdit(usize),
@@ -143,6 +146,7 @@ impl Fixture {
                         | Step::PartDefaultFootprint(_)
                         | Step::PartDefaultMap(_)
                         | Step::PartEntity(_)
+                        | Step::PartPackage(_)
                         | Step::SymbolRectangle(_)
                         | Step::PaneContext(_)
                         | Step::MapLabels(_)
@@ -267,6 +271,7 @@ impl Fixture {
             Step::PartDefaultFootprint(stage) => self.part_default_footprint(events, stage),
             Step::PartDefaultMap(stage) => self.part_default_map(events, stage),
             Step::PartEntity(stage) => self.part_entity(events, stage),
+            Step::PartPackage(stage) => self.part_package(events, stage),
             Step::SymbolRectangle(stage) => self.symbol_rectangle(events, stage),
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
             Step::Placement(stage) => self.placement_stage(events, stage),

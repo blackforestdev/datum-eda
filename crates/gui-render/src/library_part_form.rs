@@ -61,14 +61,6 @@ pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
 }
 
 pub(super) fn saved_links(p: &mut Painter<'_>, raw: &Value) {
-    for (key, kind, label) in [("package", "packages", "Package")] {
-        let value = if raw[key].is_null() {
-            "Not assigned".into()
-        } else {
-            named(p, kind, &raw[key])
-        };
-        p.line(&format!("{label}: {value} · read-only"));
-    }
     p.line(&format!(
         "Lifecycle: {} · read-only",
         raw["lifecycle"].as_str().unwrap_or("Unavailable")

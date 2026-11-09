@@ -57,12 +57,12 @@ impl Fixture {
             1 => {
                 let draft = state.library.draft.as_ref().unwrap();
                 assert!(!draft.create);
-                assert_eq!(draft.fields.len(), 9);
-                assert!(draft.fields[7].selector);
+                assert_eq!(draft.fields.len(), 10);
+                assert!(draft.fields[8].selector);
                 assert_eq!(draft.part.original.as_ref(), Some(&entry.raw));
-                assert!(!draft.fields.iter().any(|f| f.key == "part_package"));
+                assert!(draft.fields.iter().any(|f| f.key == "part_package"));
                 assert!(
-                    draft.fields[7]
+                    draft.fields[8]
                         .choices
                         .iter()
                         .any(|(id, name)| id == intent["replacement"].as_str().unwrap()

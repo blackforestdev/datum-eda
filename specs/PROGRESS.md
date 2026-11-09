@@ -785,6 +785,23 @@ assertion-review finding remain recorded. No mapped migration, Package relink,
 implicit placed update/ECO, approval, physical/HUMAN, release-GUI execution,
 full qualification or broader-goal acceptance is supplied.
 
+Saved Part Package correction (`dat-saved-part-package-4w84`) now supports an
+explicit existing named Package with compatible default Footprint or explicit
+empty choice. Incompatible defaults remain visible until explicit correction;
+all retained Maps and legacy mappings remain authoritative. Incompatible choices
+refuse atomically while preserving an actual connected eight-pad `Complete`
+certificate and source/history. Old root/child components retain their declared
+Part chain and editability; later explicit placement uses current Part pin 3 and
+the selected Package. Plain correction/Cancel/Part history preserve old CI/source
+bytes exactly; actual subsequent Move/history qualifies only real CI/member
+counter changes. Thirty-two focused Rust cases and one ordinary isolated debug-App
+case pass, with 90 stages and eight inspected captures, including Save/cold.
+Original raw-UUID form and whole-Net-set App assertion failures remain recorded;
+the corrected App preserves every baseline Net membership. Known `dat-2glp` and
+`dat-6l8l` boundaries remain separate. No mapped migration, implicit placed update,
+approval, physical/HUMAN, release-GUI execution, full qualification or broader-goal
+acceptance is supplied.
+
 Saved Package metadata editing (`dat-saved-package-metadata-edit-fztr`) now
 supports name, family, code and mounting text in the existing Library form,
 with dimensions and terminal/pad topology read-only. Canonical sparse patches

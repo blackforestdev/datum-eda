@@ -307,7 +307,6 @@ fn saved_part_patch_preserves_unedited_optional_ordered_unknown_metadata_and_ref
     let before = std::fs::read(&journal).unwrap();
     for fields in [
         json!({"uuid":id}),
-        json!({"package":package}),
         json!({"pad_map":{}}),
         json!({"lifecycle":"Active"}),
         json!({"approval_status":"approved"}),
