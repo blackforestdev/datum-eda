@@ -166,19 +166,31 @@ observation; child multi-gate behavior has focused canonical proof, not a GUI
 fixture claim. Failed-write restoration has source review. Full hierarchy,
 physical/ECO workflows and full qualification remain open.
 
-### Ordinary root and child authoring — owner QA open
+### Ordinary root and child authoring — delivered development workflow
 
-The owner-selected goal in `dat-ordinary-circuit-authoring-zvhw` is to finish
-ordinary circuit authoring across root and child sheets: build a circuit, revise
-its symbols, wiring and annotations, connect child sheets, and save/reopen it
-without arbitrary differences between sheets. Earlier bounded delivery receipts
-above retain their original scope. Owner QA reopened the goal after normal
-Select-drag failed on a connected junction in an existing circuit. The earlier
-workflow evidence does not establish that interaction. The correction in
-`dat-schematic-connected-junction-drag-nmu2` passes ordinary Select-drag,
-cancellation, history and Save/cold reopening on a copy of that circuit;
-broader owner usability QA remains open.
-Full schematic qualification remains separate.
+The fixed owner-selected workflow in `dat-ordinary-circuit-authoring-zvhw` has
+composed development delivery: build a circuit, revise its symbols, wiring and
+annotations, connect child sheets, and save/reopen it without arbitrary
+differences between root and unique child occurrences. Cancellation and
+canonical Undo/Redo remain required. Accepted root/child/nested authoring and
+interface evidence includes one Save and cold reopening with seven sheet
+objects, 1,543 canonical files and resolved nets exact; earlier receipts retain
+their original candidates and limits.
+
+The owner-reported connected-junction Select-drag failure was corrected in
+`dat-schematic-connected-junction-drag-nmu2`, with copied-owner drag/cancel
+and history proof. Save/cold reopening retained all 316 canonical files exactly;
+authored NetIds and complete connectivity were preserved through the move.
+Subsequent bounded wire editing, closed native Symbol interior picking and
+source-qualified selection-cache reuse retain their separate accepted proof.
+The recorded native Net query correction in
+`dat-schematic-net-query-authored-identity-vbd3` preserves authored IDs and full
+pin partitions across canonical geometry history without query adoption or
+source writes. These corrections complete the fixed ordinary workflow at
+development availability; they do not extend the earlier integrated GUI proof.
+Broader owner usability QA, full schematic/release qualification, physical,
+HUMAN and Wayland acceptance, and the larger native-library master-goal and
+owner-only boundaries remain open. This is not editor production readiness.
 
 Existing forms and gestures use one captured project/revision/source/ordered-path/
 pane basis for unique root or child occurrences, including revalidation,
