@@ -64,7 +64,6 @@ pub(super) fn saved_links(p: &mut Painter<'_>, raw: &Value) {
     for (key, kind, label) in [
         ("entity", "entities", "Entity"),
         ("package", "packages", "Package"),
-        ("default_footprint", "footprints", "Default Footprint"),
         ("default_pin_pad_map", "pin_pad_maps", "Pin-pad map"),
     ] {
         let value = if raw[key].is_null() {

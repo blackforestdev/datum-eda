@@ -52,21 +52,31 @@ impl LibraryDraft {
         }
         if !self.create {
             self.part.original = Some(raw.clone());
-            return Ok(());
+        } else {
+            self.field(
+                "part_entity",
+                "Named Entity",
+                None,
+                unique(browser, "entities"),
+            );
+            self.field(
+                "part_package",
+                "Named Package",
+                None,
+                unique(browser, "packages"),
+            );
         }
+        let footprint = raw
+            .get("default_footprint")
+            .and_then(Value::as_str)
+            .and_then(|s| s.parse::<Uuid>().ok())
+            .map(|id| json!(id));
         self.field(
-            "part_entity",
-            "Named Entity",
-            None,
-            unique(browser, "entities"),
+            "part_footprint",
+            "Optional default Footprint",
+            footprint.as_ref(),
+            vec![],
         );
-        self.field(
-            "part_package",
-            "Named Package",
-            None,
-            unique(browser, "packages"),
-        );
-        self.field("part_footprint", "Optional default Footprint", None, vec![]);
         self.part.footprints = unique(browser, "footprints")
             .into_iter()
             .filter_map(|(id, label)| {
@@ -83,7 +93,14 @@ impl LibraryDraft {
         Ok(())
     }
     pub(super) fn refresh_part_footprints(&mut self) {
-        let package = self.value("part_package").parse::<Uuid>().ok();
+        let package = if self.create {
+            self.value("part_package").parse::<Uuid>().ok()
+        } else {
+            self.part
+                .original
+                .as_ref()
+                .and_then(|r| r["package"].as_str()?.parse::<Uuid>().ok())
+        };
         if let Some(f) = self.fields.iter_mut().find(|f| f.key == "part_footprint") {
             f.choices = vec![(String::new(), "No default Footprint".into())];
             f.choices.extend(
@@ -94,7 +111,14 @@ impl LibraryDraft {
                     .map(|(id, _, label)| (id.to_string(), label.clone())),
             );
             if !f.choices.iter().any(|(id, _)| id == &f.text) {
-                f.text.clear();
+                if self.create {
+                    f.text.clear();
+                } else {
+                    f.choices.push((
+                        f.text.clone(),
+                        format!("Unavailable / ambiguous Footprint: {}", f.text),
+                    ));
+                }
             }
         }
     }
@@ -128,6 +152,9 @@ impl LibraryDraft {
                 };
                 fields.insert(key.into(), value);
             }
+            if self.dirty.contains("part_footprint") {
+                fields.insert("default_footprint".into(), json!(self.part_footprint()?));
+            }
             return Ok(());
         }
         if self.value("manufacturer").trim().is_empty() || self.value("mpn").trim().is_empty() {
@@ -156,21 +183,7 @@ impl LibraryDraft {
             }
             fields.insert(target.into(), json!(id));
         }
-        let footprint = if self.value("part_footprint").is_empty() {
-            None
-        } else {
-            let id = self.uuid("part_footprint")?;
-            if !self
-                .part
-                .footprints
-                .iter()
-                .any(|(f, p, _)| *f == id && p.to_string() == self.value("part_package"))
-            {
-                return Err("Choose a compatible Footprint or no default".into());
-            }
-            Some(id)
-        };
-        fields.insert("default_footprint".into(), json!(footprint));
+        fields.insert("default_footprint".into(), json!(self.part_footprint()?));
         let tags: BTreeSet<_> = self
             .value("tags")
             .split(',')
@@ -179,6 +192,31 @@ impl LibraryDraft {
             .collect();
         fields.insert("tags".into(), json!(tags));
         Ok(())
+    }
+    fn part_footprint(&self) -> Result<Option<Uuid>, String> {
+        let footprint = if self.value("part_footprint").is_empty() {
+            None
+        } else {
+            let id = self.uuid("part_footprint")?;
+            let package = if self.create {
+                self.value("part_package").parse::<Uuid>().ok()
+            } else {
+                self.part
+                    .original
+                    .as_ref()
+                    .and_then(|r| r["package"].as_str()?.parse::<Uuid>().ok())
+            };
+            if !self
+                .part
+                .footprints
+                .iter()
+                .any(|(f, p, _)| *f == id && Some(*p) == package)
+            {
+                return Err("Choose a compatible Footprint or no default".into());
+            }
+            Some(id)
+        };
+        Ok(footprint)
     }
 }
 #[cfg(test)]

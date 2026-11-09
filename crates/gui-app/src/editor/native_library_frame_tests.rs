@@ -23,6 +23,8 @@ mod package_edit;
 mod pane_context;
 #[path = "native_library_frame_tests/part.rs"]
 mod part;
+#[path = "native_library_frame_tests/part_default_footprint.rs"]
+mod part_default_footprint;
 #[path = "native_library_frame_tests/part_edit.rs"]
 mod part_edit;
 #[path = "native_library_frame_tests/part_placement.rs"]
@@ -48,6 +50,7 @@ use winit::platform::wayland::EventLoopBuilderExtWayland;
 enum Step {
     MapEdit(usize),
     PartEdit(usize),
+    PartDefaultFootprint(usize),
     EntityEdit(usize),
     EntityGateEdit(usize),
     PackageEdit(usize),
@@ -128,6 +131,7 @@ impl Fixture {
                 self.steps.get(self.stage),
                 Some(
                     Step::Placement(_)
+                        | Step::PartDefaultFootprint(_)
                         | Step::PaneContext(_)
                         | Step::MapLabels(_)
                         | Step::TextFields(_)
@@ -248,6 +252,7 @@ impl Fixture {
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),
+            Step::PartDefaultFootprint(stage) => self.part_default_footprint(events, stage),
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
             Step::Placement(stage) => self.placement_stage(events, stage),
             Step::PaneContext(action) => self.pane_context_action(events, action),

@@ -95,6 +95,7 @@ mod main_tests_project_pnp_compare;
 mod main_tests_project_pnp_export;
 mod main_tests_project_pnp_inspect;
 mod main_tests_project_pnp_validate;
+mod main_tests_saved_part_default_footprint;
 
 #[allow(clippy::too_many_arguments)]
 fn modify_board(

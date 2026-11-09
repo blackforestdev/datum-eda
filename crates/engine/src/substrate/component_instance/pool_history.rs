@@ -5,6 +5,9 @@ use super::*;
 use serde_json::Value;
 #[path = "pool_history_restore.rs"]
 mod restore;
+#[path = "pool_history_retained_revisions.rs"]
+mod retained_revisions;
+pub(in crate::substrate) use retained_revisions::part_revision_target;
 
 #[derive(Clone, Copy)]
 pub(in crate::substrate) struct PoolHistoryBasis<'a> {
@@ -14,79 +17,6 @@ pub(in crate::substrate) struct PoolHistoryBasis<'a> {
 }
 
 impl PoolHistoryBasis<'_> {
-    /// Compensation is also a source edit: a reused counter must not change
-    /// a retained Package binding, even when no electrical identity is present.
-    pub(in crate::substrate) fn preserve_package_revisions(
-        &self,
-        staged: &DesignModel,
-    ) -> Result<(), EngineError> {
-        let affected: std::collections::BTreeSet<_> = self
-            .operations
-            .iter()
-            .filter_map(|op| package_revision_target(self.model, op))
-            .collect();
-        if affected.is_empty() {
-            return Ok(());
-        }
-        let check = |id, revision| {
-            if affected.contains(&id)
-                && !self.definition_ref_matches(&staged.objects, id, revision, "packages")
-            {
-                Err(invalid(
-                    "Package source edit or compensation would make a retained revision ambiguous",
-                ))
-            } else {
-                Ok(())
-            }
-        };
-        for ci in staged.component_instances.values() {
-            for binding in ci
-                .library_bindings
-                .values()
-                .filter(|b| b.binding_role == LibraryBindingRole::Package)
-            {
-                check(binding.target_object_id, binding.pinned_object_revision)?;
-                for pin in &binding.local_override_refs {
-                    check(pin.object_id, pin.object_revision)?;
-                }
-            }
-        }
-        for shard in self
-            .model
-            .source_shards
-            .iter()
-            .filter(|s| s.kind == SourceShardKind::BoardRoot)
-        {
-            let mut board = self
-                .model
-                .materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
-            {
-                let mut pass = super::super::board_list_journal_ops::BoardPass::new(&mut board);
-                for op in self.operations {
-                    pass.apply(op)?;
-                }
-            }
-            if let Some(placements) = board.get("component_pads").and_then(Value::as_object) {
-                for pad in placements.values().filter_map(Value::as_array).flatten() {
-                    for field in ["package", "land_pattern"] {
-                        if let Some(pin) = pad
-                            .get("source_binding")
-                            .and_then(|b| b.get(field))
-                            .filter(|p| !p.is_null())
-                        {
-                            let pin: super::super::component_pad_source::PinnedPadLibrarySource =
-                                serde_json::from_value(pin.clone())?;
-                            if pin.object_id == pin.owner_id {
-                                check(pin.object_id, pin.object_revision)?;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Ok(())
-    }
-
     /// Qualify the actual precommit frame for descriptive Package edits only.
     /// The accepted journal is never extended to manufacture a source revision.
     pub(in crate::substrate) fn package_metadata_frame_matches(

@@ -8,10 +8,11 @@ pub(super) fn apply_operations(
     operations: &[Operation],
     diff: &mut CommitDiff,
 ) -> Result<(), EngineError> {
-    let package_change = operations.iter().any(|op| {
+    let retained_source_change = operations.iter().any(|op| {
         super::component_instance::pool_history::package_revision_target(model, op).is_some()
+            || super::component_instance::pool_history::part_revision_target(model, op).is_some()
     });
-    if package_change
+    if retained_source_change
         || model
             .source_shards
             .iter()
@@ -34,7 +35,7 @@ pub(super) fn apply_operations(
             operations,
             applied_operations: operations,
         }
-        .preserve_package_revisions(&candidate)?;
+        .preserve_retained_revisions(&candidate)?;
         super::electrical_identity_validation::validate_operations_with_package_basis(
             &candidate, operations, model,
         )?;

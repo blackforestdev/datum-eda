@@ -597,8 +597,8 @@ Footprint, with read-only initial lifecycle Unknown. The shared engine validates
 references independently. Focused tests and the ordinary App prove preview/cancel,
 compatibility clearing, commit/history and Save/cold reopening for absent and
 selected defaults while preserving existing definitions and authored circuits.
-Saved Part editing, placed pin-pad updates, placement policy, approval/models and broader
-native-library completion remain open; no successor milestone or full
+Saved Part Entity/Package relinking, placed pin-pad updates, placement policy,
+approval/models and broader native-library completion remain open; no successor milestone or full
 qualification is selected by this delivery.
 
 The bounded PinPadMap creation increment (`dat-pin-pad-map-gui-create-emck`)
@@ -700,7 +700,8 @@ acceptance remain open.
 
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
 manufacturer, MPN, value, description, datasheet reference and tags through the
-shared Library form. Fixed relationships and lifecycle remain read-only. Only
+shared Library form. That metadata-only increment kept relationships and lifecycle
+read-only. Only
 changed fields enter the canonical raw patch; existing component instances keep
 their declared historical Part revisions, values, annotations and mappings,
 while new placement uses the current revision and value. Forty-six focused checks
@@ -713,6 +714,22 @@ Earlier physical-test fixture/assertion failures, the nested prospective Part
 basis failure and the App capture-label failure retain their actual logs and
 scope. No automatic placed update, relinking, approval, readable-Greek repair,
 physical/HUMAN, release-GUI execution or broad goal acceptance is claimed.
+
+Saved Part default Footprint correction (`dat-saved-part-default-footprint-vsrh`)
+adds named same-Package change and explicit clear to the shared form. Sparse raw
+patches preserve every other field and untouched optional representation;
+Entity/Package/default Map remain fixed. Existing effective Map validation,
+mapped Unit/source guards and atomic retained-Part counter checks reject unsafe
+edits and compensation without weakening Package or prospective Part safeguards.
+Eight frozen pads, connected Nets, CI/mapping identity and authenticated source
+pins survive history and cold reopening, including frozen physical users without
+a CI. Actual CLI placements consume A, corrected B and the existing fallback A
+after clear, preserving old placements. The ordinary debug App passes 94 stages
+and seven inspected captures for both Cancel paths, change/clear, Undo/Redo,
+Save/cold persistence and unchanged root/child sources and scenes. Earlier raw
+test/fixture/validation failures and the App choice-label assertion failure remain
+recorded. No Entity/Package relink, Map edit, implicit placed update, approval,
+physical/HUMAN, release-GUI or broader goal acceptance is supplied.
 
 Saved Package metadata editing (`dat-saved-package-metadata-edit-fztr`) now
 supports name, family, code and mounting text in the existing Library form,

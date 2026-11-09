@@ -269,10 +269,12 @@ impl Fixture {
                         "value",
                         "description",
                         "datasheet",
-                        "tags"
+                        "tags",
+                        "part_footprint"
                     ]
                 );
-                assert!(d.fields.iter().all(|f| !f.selector));
+                assert!(d.fields.iter().take(6).all(|f| !f.selector));
+                assert!(d.fields[6].selector);
                 assert_eq!(
                     d.part.original.as_ref().unwrap()["entity"],
                     self.part_edit_expected(false)["entity"]

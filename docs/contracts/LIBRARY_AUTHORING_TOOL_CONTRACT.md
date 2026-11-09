@@ -212,7 +212,7 @@ checks and the isolated ordinary App run are recorded in the task; the App uses
 presented controls and logical keys in a debug test profile. This establishes
 neither physical/HUMAN qualification nor universal raw-operation validation.
 Generic raw Entity gate-link admission is separate intake
-`dat-entity-raw-links-ysdr`. Saved Entity gate name/topology/Unit-link editing, saved Part relinking,
+`dat-entity-raw-links-ysdr`. Saved Entity gate name/topology/Unit-link editing, saved Part Entity/Package relinking,
 saved PinPadMap editing,
 multi-gate placement, approval, models and broader library completion remain open.
 
@@ -266,7 +266,7 @@ identity, entered metadata and chosen links while existing definitions and place
 circuit sources stay unchanged. Focused engine/form and isolated ordinary-App
 proof covers both absent and compatible Footprint choices. That App proof uses
 debug builds, presented controls and logical keys, not physical/HUMAN or release
-qualification. Saved Part relinking, inheritance, placed pin-pad updates,
+qualification. Saved Part Entity/Package relinking, inheritance, placed pin-pad updates,
 placement policy, models, approval and broader library completion remain open.
 Generic raw Part/Footprint pair validation is separate intake
 `dat-part-raw-footprint-pair-yjc4`; this increment supplies no universal raw-write
@@ -274,7 +274,8 @@ integrity claim.
 
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) uses the same
 Library form for manufacturer, MPN, value, description, datasheet reference and
-tags. Entity, Package, default Footprint, PinPadMap and lifecycle remain read-only.
+tags. That metadata-only increment kept Entity, Package, default Footprint,
+PinPadMap and lifecycle read-only.
 Only changed metadata fields patch the raw Part through the canonical Set writer;
 unedited fields, ordered collections, unknown metadata and absent defaults remain
 intact. Identity, relationships and policy fields are refused independently by
@@ -295,6 +296,32 @@ earlier run stopped at a capture-label assertion before new placement; its
 partial result is retained. Presented controls and programmatic logical input
 establish this bounded behavior, without physical/HUMAN, release-GUI execution,
 relinking, approval or full library qualification claims.
+
+Saved Part default Footprint correction (`dat-saved-part-default-footprint-vsrh`)
+adds a named same-Package choice and an explicit empty choice to that shared form.
+Entity, Package, default PinPadMap, map definitions and lifecycle remain fixed.
+Untouched absent, null or declared values retain their raw representation; an
+explicit empty choice removes only `default_footprint`. Unavailable or ambiguous
+declared identities stay visible and refuse resubmission rather than becoming an
+implicit clear. Existing LibraryGraph rules validate every retained mapping
+against the candidate effective Footprint or Package, with mapped Gate/Unit
+dependencies and consumed source revisions qualified before commit. Missing
+optional pad collections mean empty membership, not a validation exemption.
+Conflicting retained Part counter reuse, including Undo/Redo compensation,
+refuses before model, source or journal publication. Existing Package revision
+and strict prospective Part-basis safeguards remain unchanged.
+
+Nonempty engine proof preserves eight frozen pads, connected Net membership,
+CI identity, mappings and source pins through change, clear, history and cold
+reopening, including authenticated physical users without a CI. The actual CLI
+materializes later placements from A, corrected B, then existing fallback A after
+clear, while earlier placements remain frozen. The isolated ordinary debug App
+passes 94 stages with seven inspected captures: both Cancel paths preserve files
+and journal; change/clear, Undo/Redo, Save/cold reopening and old root/child scenes
+retain exact circuit sources and Net membership. Earlier fixture, dependency
+validation, revision-collision and App label-assertion failures retain their raw
+results. This supplies no Entity/Package relinking, default-Map edit, implicit
+placed update, approval, physical/HUMAN, release-GUI or full library qualification.
 
 The creation-only PinPadMap GUI increment (`dat-pin-pad-map-gui-create-emck`)
 adds named Part and compatible explicit Footprint choices and a table assigning

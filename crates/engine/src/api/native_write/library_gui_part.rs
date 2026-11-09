@@ -123,3 +123,7 @@ mod tests;
 #[cfg(test)]
 #[path = "library_gui_part_edit_tests.rs"]
 mod edit_tests;
+
+#[cfg(test)]
+#[path = "library_gui_part_default_footprint_tests.rs"]
+mod default_footprint_tests;

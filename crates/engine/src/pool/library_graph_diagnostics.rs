@@ -548,7 +548,11 @@ impl LibraryGraph {
         let Some(package) = self.packages.get(&package_id) else {
             return;
         };
-        let Some(pads) = package.get("pads").and_then(serde_json::Value::as_object) else {
+        let empty_pads = serde_json::Map::new();
+        let Some(pads) = package
+            .get("pads")
+            .map_or(Some(&empty_pads), serde_json::Value::as_object)
+        else {
             return;
         };
         if !pads.contains_key(&pad_id.to_string()) {
@@ -571,7 +575,11 @@ impl LibraryGraph {
         let Some(footprint) = self.footprints.get(&footprint_id) else {
             return;
         };
-        let Some(pads) = footprint.get("pads").and_then(serde_json::Value::as_object) else {
+        let empty_pads = serde_json::Map::new();
+        let Some(pads) = footprint
+            .get("pads")
+            .map_or(Some(&empty_pads), serde_json::Value::as_object)
+        else {
             return;
         };
         if !pads.contains_key(&pad_id.to_string()) {

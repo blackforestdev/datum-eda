@@ -45,24 +45,39 @@ fn legacy_fixture(
     Uuid,
     Value,
 ) {
+    legacy_fixture_at_revision(u64::from(restored))
+}
+pub(super) fn legacy_fixture_at_revision(
+    pinned_revision: u64,
+) -> (
+    std::path::PathBuf,
+    crate::substrate::DesignModel,
+    Uuid,
+    Uuid,
+    Value,
+) {
     use crate::api::native_write::BatchComposer;
     use crate::substrate::{ElectricalSelectionSnapshot, Operation};
     let (root, mut model, entity, package, _, _) = fixture();
     let part = Uuid::new_v4();
     let p = prepare(&model, &root, part, fields(entity, package, None)).unwrap();
     commit_prepared(&mut model, &root, p).unwrap();
-    let p = revise(
-        &model,
-        &root,
-        part,
-        json!({"value":"Historical pinned value"}),
-    )
-    .unwrap();
-    if restored {
-        commit_prepared(&mut model, &root, p).unwrap();
-        model
-            .commit_journal_undo(&root, provenance().into())
+    if pinned_revision > 0 {
+        for i in 0..pinned_revision {
+            let p = revise(
+                &model,
+                &root,
+                part,
+                json!({"value":if i == 0 { "Historical pinned value".into() } else { format!("Historical pinned value {i}") }}),
+            )
             .unwrap();
+            commit_prepared(&mut model, &root, p).unwrap();
+        }
+        for _ in 0..pinned_revision {
+            model
+                .commit_journal_undo(&root, provenance().into())
+                .unwrap();
+        }
         model
             .commit_journal_undo(&root, provenance().into())
             .unwrap();
@@ -72,7 +87,7 @@ fn legacy_fixture(
         model = ProjectResolver::new(&root).resolve().unwrap();
         assert_eq!(model.objects[&part].object_revision.0, 0);
     }
-    let revision = crate::substrate::ObjectRevision(u64::from(restored));
+    let revision = crate::substrate::ObjectRevision(pinned_revision);
     let historical = model
         .materialized_pool_object_revision(part, "parts", revision)
         .unwrap();
@@ -294,7 +309,6 @@ fn saved_part_patch_preserves_unedited_optional_ordered_unknown_metadata_and_ref
         json!({"uuid":id}),
         json!({"entity":entity}),
         json!({"package":package}),
-        json!({"default_footprint":null}),
         json!({"default_pin_pad_map":null}),
         json!({"pad_map":{}}),
         json!({"lifecycle":"Active"}),
